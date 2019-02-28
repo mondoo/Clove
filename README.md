@@ -3,10 +3,12 @@ A garlic Engine
 
 master - the source of truth
 
-f-X - feature branch (i.e. f-jump_mechanics)
+d-X - current development branch (i.e. d-ver_1.3) - branched off of master
 
-b-X - bug fix branch (i.e. b-????)
+f-X - feature branch (i.e. f-jump_mechanics) - branched off a development branch
+
+b-X - bug fix branch (i.e. b-????) - branched off a development branch
+
+All merges must have commits squashed
 
 s-X - staging branch (i.e. s-????) (needed?)
-
-d-X - current development branch (i.e. d-ver_1.3)
