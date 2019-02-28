@@ -3,12 +3,10 @@ A garlic Engine
 
 master - the source of truth
 
-development - current unstable version
+f-X - feature branch (i.e. f-jump_mechanics)
 
-f-X - feature branch
+b-X - bug fix branch (i.e. b-????)
 
-b-X bug fix branch
+s-X - staging branch (i.e. s-????) (needed?)
 
-s-X staging branch
-
-
+d-X - current development branch (i.e. d-ver_1.3)
