@@ -21,4 +21,5 @@ format for squashed commits:
 -BODY-
  
 Squashed commit of the following:
+
 -COMMITS-
