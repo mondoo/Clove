@@ -12,3 +12,13 @@ b-X - bug fix branch (i.e. b-????) - branched off a development branch
 All merges must have commits squashed
 
 s-X - staging branch (i.e. s-????) (needed?)
+
+
+format for squashed commits:
+
+-TITLE-
+  
+-BODY-
+ 
+Squashed commit of the following:
+-COMMITS-
