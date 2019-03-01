@@ -11,10 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Test.h" />
+    <ClInclude Include="src\Clove.h" />
+    <ClInclude Include="src\Clove\Application.h" />
+    <ClInclude Include="src\Clove\Core.h" />
+    <ClInclude Include="src\Clove\EntryPoint.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Test.cpp" />
+    <ClCompile Include="src\Clove\Application.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -62,6 +65,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>CLV_PLATFORM_WINDOWS;CLV_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -72,6 +76,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>CLV_PLATFORM_WINDOWS;CLV_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
