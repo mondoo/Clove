@@ -1,0 +1,3 @@
+[submodule "Clove/vendor/spdlog"]
+	path = Clove/vendor/spdlog
+	url = https://github.com/gabime/spdlog.git

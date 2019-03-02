@@ -3,11 +3,10 @@
 #include "Core.h"
 
 namespace clv{
-
 	class CLV_API Application{
 	public:
-		Application();
-		virtual ~Application();
+		Application() = default;
+		virtual ~Application() = default;
 
 		void run();
 	};
