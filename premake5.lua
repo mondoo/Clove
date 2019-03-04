@@ -17,6 +17,9 @@ project "Clove"
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("intermediate/" .. outputdir .. "/%{prj.name}")
 
+	pchheader "clvpch.h"
+	pchsource "Clove/src/clvpch.cpp"
+
 	files{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp"

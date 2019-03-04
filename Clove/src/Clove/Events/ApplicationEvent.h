@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace clv{
 	class CLV_API WindowResizeEvent : public Event{
 		//VARIABLES

@@ -5,9 +5,9 @@
 		#define	CLV_API __declspec(dllexport)
 	#else
 		#define	CLV_API __declspec(dllimport)
-	#endif // CLV_BUILD_DLL
+	#endif
 #else
 	#error Clove only supports Windows!
-#endif // CLV_PLATFORM_WINDOWS
+#endif
 
 #define BIT(x) (1 << x)

@@ -2,9 +2,6 @@
 
 #include "Clove/Core.h"
 
-#include <string>
-#include <functional>
-
 namespace clv{
 	/*
 	Events in Clove are currently blocking, meaning when an event occurs it
