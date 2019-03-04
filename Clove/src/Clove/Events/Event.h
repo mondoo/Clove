@@ -31,10 +31,12 @@ namespace clv{
 		};
 	}
 
+//Macro containing overrides that deal with the event type
 #define EVENT_CLASS_TYPE(type)	static EventType::Type getStaticType() { return EventType::##type; }\
 								virtual EventType::Type getEventType() const override { return getStaticType(); }\
 								virtual const char* getName() const override { return #type; }
 
+//Macro containing overrides that deal with the event category
 #define EVENT_CLASS_CATEGORY(category) virtual int getCategoryFlags() const override { return category; }
 
 	class CLV_API Event{
@@ -58,8 +60,8 @@ namespace clv{
 	};
 
 	class EventDispatcher{
-		template<typename T>
-		using EventFn = std::function<bool(T&)>;
+		template<typename EventType>
+		using EventReceiverFn = std::function<bool(EventType&)>;
 
 		//VARIABLES
 	private:
@@ -69,10 +71,10 @@ namespace clv{
 	public:
 		EventDispatcher(Event& inEvent) : event(inEvent) {}
 
-		template<typename T>
-		bool dispatch(EventFn<T> func){
-			if(event.getEventType() == T::getStaticType()){
-				event.handled = func(*(T*)&event);
+		template<typename EventType>
+		bool dispatch(EventReceiverFn<EventType> func){
+			if(event.getEventType() == EventType::getStaticType()){
+				event.handled = func(*static_cast<EventType*>(&event));
 				return true;
 			} else{
 				return false;

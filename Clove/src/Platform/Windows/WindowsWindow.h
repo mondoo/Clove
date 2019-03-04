@@ -31,7 +31,7 @@ namespace clv{
 		virtual inline unsigned int getHeight() const override{ return data.height; }
 
 		//Window attributes
-		virtual inline void setEventCallback(const EventCallbackFn& callback) override{ data.eventCallback = callback; }
+		virtual inline void setEventCallbackFunction(const EventCallbackFn& callback) override{ data.eventCallback = callback; }
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVSync() const override;
 

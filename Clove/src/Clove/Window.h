@@ -32,7 +32,7 @@ namespace clv{
 		virtual unsigned int getHeight() const = 0;
 
 		//Window attributes
-		virtual void setEventCallback(const EventCallbackFn& callback) = 0;
+		virtual void setEventCallbackFunction(const EventCallbackFn& callback) = 0;
 		virtual void setVSync(bool enabled) = 0;
 		virtual bool isVSync() const = 0;
 
