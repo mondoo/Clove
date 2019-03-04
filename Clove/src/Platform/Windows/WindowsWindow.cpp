@@ -35,7 +35,7 @@ namespace clv{
 		data.width = props.width;
 		data.height = props.height;
 
-		CLV_CORE_INFO("Creating window {0} ({1}, {2})", data.title, data.width, data.height);
+		CLV_CORE_INFO("Creating window: {0} ({1}, {2})", data.title, data.width, data.height);
 
 		if(!GLFWInitialised){
 			//TODO: glfwTerminate on system shutdown
