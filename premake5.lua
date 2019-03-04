@@ -9,6 +9,13 @@ workspace "Clove"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Inlcude direction relative to the roof folder (solution directory)
+includeDir = {}
+includeDir["GLFW"] = "Clove/vendor/GLFW/include"
+
+-- Includes the premake file
+include "Clove/vendor/GLFW"
+
 project "Clove"
 	location "Clove"
 	kind "SharedLib"
@@ -27,7 +34,13 @@ project "Clove"
 
 	includedirs{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/vendor/spdlog/include",
+		"%{includeDir.GLFW}"
+	}
+
+	links{
+		"GLFW",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -45,7 +58,10 @@ project "Clove"
 		}
 
 	filter "configurations:Debug"
-		defines "CLV_DEBUG"
+		defines{ 
+			"CLV_DEBUG",
+			"CLV_ENABLE_ASSERTS"
+		}
 		symbols "On"
 
 	filter "configurations:Release"
