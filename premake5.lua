@@ -62,14 +62,17 @@ project "Clove"
 			"CLV_DEBUG",
 			"CLV_ENABLE_ASSERTS"
 		}
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "CLV_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "CLV_DIST"
+		buildoptions "/MD"
 		optimize "On"
 
 project "Sandbox"
@@ -106,11 +109,14 @@ project "Sandbox"
 	filter "configurations:Debug"
 		defines "CLV_DEBUG"
 		symbols "On"
+		buildoptions "/MDd"
 
 	filter "configurations:Release"
 		defines "CLV_RELEASE"
 		optimize "On"
+		buildoptions "/MD"
 
 	filter "configurations:Dist"
 		defines "CLV_DIST"
 		optimize "On"
+		buildoptions "/MD"

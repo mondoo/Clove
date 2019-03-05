@@ -1,7 +1,6 @@
 #include "clvpch.h"
 #include "Application.h"
 
-
 #include "Clove/Log.h"
 
 //TODO: Remove
@@ -20,6 +19,10 @@ namespace clv{
 			glClear(GL_COLOR_BUFFER_BIT);
 			//
 
+			for(Layer* layer : layerStack){
+				layer->onUpdate();
+			}
+
 			window->onUpdate();
 		}
 	}
@@ -27,7 +30,20 @@ namespace clv{
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::onWindowClose, this, std::placeholders::_1));
 
-		CLV_CORE_TRACE("{0}", e);
+		for(auto it = layerStack.end(); it != layerStack.begin(); ){
+			(*--it)->onEvent(e);
+			if(e.isHandled()){
+				break;
+			}
+		}
+	}
+
+	void Application::pushLayer(Layer* layer){
+		layerStack.pushLayer(layer);
+	}
+
+	void Application::pushOverlay(Layer* overlay){
+		layerStack.pushOverlay(overlay);
 	}
 
 	bool Application::onWindowClose(WindowCloseEvent& e){

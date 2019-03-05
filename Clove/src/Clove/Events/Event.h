@@ -52,6 +52,8 @@ namespace clv{
 		virtual const char* getName() const = 0;
 		virtual int getCategoryFlags() const = 0;
 
+		inline bool isHandled() const{ return handled; }
+
 		virtual std::string toString() const{ return getName(); }
 
 		inline bool isInCategory(EventCategory::Type category){
