@@ -12,9 +12,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Inlcude direction relative to the roof folder (solution directory)
 includeDir = {}
 includeDir["GLFW"] = "Clove/vendor/GLFW/include"
+includeDir["Glad"] = "Clove/vendor/Glad/include"
 
 -- Includes the premake file
 include "Clove/vendor/GLFW"
+include "Clove/vendor/Glad"
 
 project "Clove"
 	location "Clove"
@@ -35,11 +37,13 @@ project "Clove"
 	includedirs{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{includeDir.GLFW}"
+		"%{includeDir.GLFW}",
+		"%{includeDir.Glad}"
 	}
 
 	links{
 		"GLFW",
+		"Glad",
 		"opengl32.lib"
 	}
 
@@ -50,7 +54,8 @@ project "Clove"
 
 		defines{
 			"CLV_PLATFORM_WINDOWS",
-			"CLV_BUILD_DLL"
+			"CLV_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands{

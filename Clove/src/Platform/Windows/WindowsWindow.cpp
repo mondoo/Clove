@@ -5,6 +5,8 @@
 #include "Clove/Events/MouseEvent.h"
 #include "Clove/Events/KeyEvent.h"
 
+#include <glad/glad.h>
+
 namespace clv{
 	static bool GLFWInitialised = false;
 
@@ -55,6 +57,10 @@ namespace clv{
 
 		window = glfwCreateWindow(static_cast<int>(data.width), static_cast<int>(data.height), data.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(window);
+
+		int status = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+		CLV_CORE_ASSERT(status, "Failed to initialise Glad");
+
 		glfwSetWindowUserPointer(window, &data);
 		setVSync(true);
 

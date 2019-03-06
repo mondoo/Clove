@@ -4,7 +4,7 @@
 #include "Clove/Log.h"
 
 //TODO: Remove
-#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace clv{
 	Application::Application(){
