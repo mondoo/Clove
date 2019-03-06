@@ -7,6 +7,7 @@
 #include "Clove/Application.h"
 #include "Clove/Layer.h"
 #include "Clove/Log.h"
+#include "Clove/ImGui/ImGuiLayer.h"
 
 //----------ENTRY POINT----------
 #include "Clove/EntryPoint.h"

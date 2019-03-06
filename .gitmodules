@@ -5,3 +5,7 @@
 	path = Clove/vendor/GLFW
 	url = https://github.com/TheCherno/glfw.git
 	ignore = dirty
+[submodule "Clove/vendor/imgui"]
+	path = Clove/vendor/imgui
+	url = https://github.com/TheCherno/imgui.git
+	ignore = dirty

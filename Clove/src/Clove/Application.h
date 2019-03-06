@@ -19,6 +19,8 @@ namespace clv{
 		std::unique_ptr<Window> window;
 		bool running = true;
 		LayerStack layerStack;
+
+		static Application* instance;
 		
 		//FUNCTIONS
 	public:
@@ -32,6 +34,8 @@ namespace clv{
 		void pushLayer(Layer* layer);
 		void pushOverlay(Layer* overlay);
 
+		inline static Application& get(){ return *instance; }
+		inline Window& getWindow(){ return *window; }
 	private:
 		bool onWindowClose(WindowCloseEvent& e);
 	};

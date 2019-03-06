@@ -7,7 +7,12 @@
 #include <glad/glad.h>
 
 namespace clv{
+	Application* Application::instance = nullptr;
+
 	Application::Application(){
+		CLV_CORE_ASSERT(!instance, "Application already exists!");
+		instance = this;
+
 		window = std::unique_ptr<Window>(Window::create());
 		window->setEventCallbackFunction(std::bind(&Application::onEvent, this, std::placeholders::_1));
 	}

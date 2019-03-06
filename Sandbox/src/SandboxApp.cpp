@@ -22,6 +22,7 @@ class SandBox : public clv::Application{
 public:
 	SandBox(){
 		pushLayer(new ExampleLayer());
+		pushOverlay(new clv::ImGuiLayer());
 	}
 	~SandBox(){
 
