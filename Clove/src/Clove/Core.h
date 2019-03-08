@@ -19,3 +19,8 @@
 #endif
 
 #define BIT(x) (1 << x)
+
+#define BIND_FUNCTION(func, obj) std::bind(func, obj)
+#define BIND_FUNCTION_OneParam(func, obj) std::bind(func, obj, std::placeholders::_1)
+#define BIND_FUNCTION_TwoParam(func, obj) std::bind(func, obj, std::placeholders::_2)
+#define BIND_FUNCTION_ThreeParam(func, obj) std::bind(func, obj, std::placeholders::_3)

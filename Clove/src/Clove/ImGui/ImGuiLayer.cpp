@@ -90,10 +90,9 @@ namespace clv{
 	void ImGuiLayer::onEvent(Event& e){
 		EventDispatcher dispatcher(e);
 		
-		//TODO: write a macro for binding events
-		dispatcher.dispatch<MouseButtonPressedEvent>(std::bind(&ImGuiLayer::onMouseButtonPressed, this, std::placeholders::_1)); 
-		dispatcher.dispatch<MouseScrolledEvent>(std::bind(&ImGuiLayer::onMouseScrolled, this, std::placeholders::_1));
-		dispatcher.dispatch<KeyPressedEvent>(std::bind(&ImGuiLayer::onKeyPressed, this, std::placeholders::_1));
+		dispatcher.dispatch<MouseButtonPressedEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onMouseButtonPressed, this));
+		dispatcher.dispatch<MouseScrolledEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onMouseScrolled, this));
+		dispatcher.dispatch<KeyPressedEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onKeyPressed, this));
 	}
 
 	bool ImGuiLayer::onMouseButtonPressed(MouseButtonPressedEvent& e){

@@ -14,7 +14,7 @@ namespace clv{
 		instance = this;
 
 		window = std::unique_ptr<Window>(Window::create());
-		window->setEventCallbackFunction(std::bind(&Application::onEvent, this, std::placeholders::_1));
+		window->setEventCallbackFunction(BIND_FUNCTION_OneParam(&Application::onEvent, this));
 	}
 
 	void Application::run(){
@@ -33,7 +33,7 @@ namespace clv{
 	}
 	void Application::onEvent(Event& e){
 		EventDispatcher dispatcher(e);
-		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::onWindowClose, this, std::placeholders::_1));
+		dispatcher.dispatch<WindowCloseEvent>(BIND_FUNCTION_OneParam(&Application::onWindowClose, this));
 
 		for(auto it = layerStack.end(); it != layerStack.begin(); ){
 			(*--it)->onEvent(e);
