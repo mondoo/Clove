@@ -9,6 +9,8 @@ f-X - feature branch (i.e. f-jump_mechanics) - branched off a development branch
 
 b-X - bug fix branch (i.e. b-????) - branched off a development branch
 
+r-X - refactor branch
+
 All merges must have commits squashed
 
 s-X - staging branch (i.e. s-????) (needed?)
