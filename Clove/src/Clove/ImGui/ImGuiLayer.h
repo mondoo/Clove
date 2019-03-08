@@ -28,7 +28,9 @@ namespace clv{
 		bool onMouseButtonPressed(MouseButtonPressedEvent& e);
 		bool onMouseButtonReleased(MouseButtonReleasedEvent& e);
 		bool onMouseScrolled(MouseScrolledEvent& e);
+
 		bool onKeyPressed(KeyPressedEvent& e);
 		bool onKeyReleased(KeyReleasedEvent& e);
+		bool onChar(CharEvent& e);
 	};
 }

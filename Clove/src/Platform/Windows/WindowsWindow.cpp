@@ -91,25 +91,32 @@ namespace clv{
 			switch(action){
 			case GLFW_PRESS:
 			{
-				KeyPressedEvent event(key, 0);
+				KeyPressedEvent event(key, scancode, 0);
 				data.eventCallback(event);
 				break;
 			}
 
 			case GLFW_RELEASE:
 			{
-				KeyReleasedEvent event(key);
+				KeyReleasedEvent event(key, scancode);
 				data.eventCallback(event);
 				break;
 			}
 
 			case GLFW_REPEAT:
 			{
-				KeyPressedEvent event(key, 1); //repeat is manually put to 1 for now
+				KeyPressedEvent event(key, scancode, 1); //repeat is manually put to 1 for now
 				data.eventCallback(event);
 				break;
 			}
 			}
+		});
+
+		glfwSetCharCallback(window, [](GLFWwindow* window, unsigned int character){
+			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+
+			CharEvent event(character);
+			data.eventCallback(event);
 		});
 
 		glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods){

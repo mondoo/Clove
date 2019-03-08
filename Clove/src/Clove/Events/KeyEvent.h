@@ -3,19 +3,41 @@
 #include "Event.h"
 
 namespace clv{
+	class CLV_API CharEvent : public Event{
+		//VARIABLES
+	private:
+		unsigned int character = 0;
+
+		//FUNCTIONS	
+	public:
+		CharEvent(unsigned int inCharacter)
+			: character(inCharacter){
+		}
+
+		inline unsigned int getChar() const{ return character; }
+
+		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryKeyboard | EventCategory::EventCategoryInput)
+		EVENT_CLASS_TYPE(Char)
+	};
+
 	class CLV_API KeyEvent : public Event{
 		//VARIABLES
 	protected:
-		int keycode = 0;
+		int keyCode = 0;
+		int scanCode = 0;
 
 		//FUNCTIONS
 	public:
-		inline int getKeyCode() const{ return keycode; }
+		inline int getKeyCode() const{ return keyCode; }
+		inline int getScanCode() const{ return scanCode; }
 
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryKeyboard | EventCategory::EventCategoryInput)
 
 	protected:
-		KeyEvent(int inKeyCode) : keycode(inKeyCode){}
+		KeyEvent(int inKeyCode, int inScanCode) 
+			: keyCode(inKeyCode)
+			, scanCode(inScanCode){
+		}
 	};
 
 	class CLV_API KeyPressedEvent : public KeyEvent{
@@ -25,8 +47,8 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		KeyPressedEvent(int inKeyCode, int inRepeatCount)
-			: KeyEvent(inKeyCode)
+		KeyPressedEvent(int inKeyCode, int inScanCode, int inRepeatCount)
+			: KeyEvent(inKeyCode, inScanCode)
 			, repeatCount(inRepeatCount){
 		}
 
@@ -34,7 +56,7 @@ namespace clv{
 
 		virtual std::string toString() const override{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << keycode << " (" << repeatCount << " repeats)";
+			ss << "KeyPressedEvent: " << keyCode << " (" << repeatCount << " repeats)";
 			return ss.str();
 		}
 
@@ -44,11 +66,13 @@ namespace clv{
 	class CLV_API KeyReleasedEvent : public KeyEvent{
 		//FUNCTIONS
 	public:
-		KeyReleasedEvent(int inKeyCode) : KeyEvent(inKeyCode){}
+		KeyReleasedEvent(int inKeyCode, int inScanCode) 
+			: KeyEvent(inKeyCode, inScanCode){
+		}
 
 		virtual std::string toString() const override{
 			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << keycode;
+			ss << "KeyReleasedEvent: " << keyCode;
 			return ss.str();
 		}
 

@@ -93,6 +93,7 @@ namespace clv{
 		dispatcher.dispatch<MouseButtonPressedEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onMouseButtonPressed, this));
 		dispatcher.dispatch<MouseScrolledEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onMouseScrolled, this));
 		dispatcher.dispatch<KeyPressedEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onKeyPressed, this));
+		dispatcher.dispatch<CharEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onChar, this));
 	}
 
 	bool ImGuiLayer::onMouseButtonPressed(MouseButtonPressedEvent& e){
@@ -111,12 +112,17 @@ namespace clv{
 	}
 
 	bool ImGuiLayer::onKeyPressed(KeyPressedEvent& e){
-		ImGui_ImplGlfw_KeyCallback(window, e.getKeyCode(), 0, GLFW_PRESS, 0);
+		ImGui_ImplGlfw_KeyCallback(window, e.getKeyCode(), e.getScanCode(), GLFW_PRESS, 0);
 		return true;
 	}
 
 	bool ImGuiLayer::onKeyReleased(KeyReleasedEvent& e){
-		ImGui_ImplGlfw_KeyCallback(window, e.getKeyCode(), 0, GLFW_RELEASE, 0);
+		ImGui_ImplGlfw_KeyCallback(window, e.getKeyCode(), e.getScanCode(), GLFW_RELEASE, 0);
+		return true;
+	}
+
+	bool ImGuiLayer::onChar(CharEvent& e){
+		ImGui_ImplGlfw_CharCallback(window, e.getChar());
 		return true;
 	}
 }

@@ -16,6 +16,7 @@ namespace clv{
 			WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 			AppTick, AppUpdate, AppRender,
 			KeyPressed, KeyReleased,
+			Char,
 			MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 		};
 	}
