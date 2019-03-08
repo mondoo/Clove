@@ -36,6 +36,7 @@ namespace clv{
 
 		inline static Application& get(){ return *instance; }
 		inline Window& getWindow(){ return *window; }
+
 	private:
 		bool onWindowClose(WindowCloseEvent& e);
 	};

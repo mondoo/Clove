@@ -8,3 +8,6 @@ intermediate/
 *.vcxproj
 *.vcxproj.*
 *.sln
+
+# temp
+*.ini

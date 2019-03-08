@@ -10,11 +10,11 @@ public:
 	}
 
 	virtual void onUpdate() override{
-		CLV_INFO("ExampleLayer::onUpdate");
+		
 	}
 
 	virtual void onEvent(clv::Event& e) override{
-		CLV_TRACE("{0}", e);
+		
 	}
 };
 
