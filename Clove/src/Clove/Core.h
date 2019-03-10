@@ -10,7 +10,11 @@
 	#error Clove only supports Windows!
 #endif
 
-#ifdef CLV_ENABLE_ASSERTS
+#if CLV_DEBUG
+	#define CLV_ENABLE_ASSERTS 1
+#endif
+
+#if CLV_ENABLE_ASSERTS
 	#define CLV_ASSERT(x, ...) { if(!(x)){ CLV_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 	#define CLV_CORE_ASSERT(x, ...) { if(!(x)){ CLV_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #else

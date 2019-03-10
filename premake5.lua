@@ -1,5 +1,6 @@
 workspace "Clove"
 	architecture "x64"
+	startproject "Sandbox"
 
 	configurations{
 		"Debug",
@@ -15,15 +16,17 @@ includeDir["GLFW"] = "Clove/vendor/GLFW/include"
 includeDir["Glad"] = "Clove/vendor/Glad/include"
 includeDir["ImGui"] = "Clove/vendor/imgui"
 
--- Includes the premake file
-include "Clove/vendor/GLFW"
-include "Clove/vendor/Glad"
-include "Clove/vendor/imgui"
+group "Dependencies"
+	include "Clove/vendor/GLFW"
+	include "Clove/vendor/Glad"
+	include "Clove/vendor/imgui"
+group ""
 
 project "Clove"
 	location "Clove"
 	kind "SharedLib"
 	language "C++"
+	staticruntime "Off"
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("intermediate/" .. outputdir .. "/%{prj.name}")
@@ -53,7 +56,6 @@ project "Clove"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines{
@@ -63,31 +65,29 @@ project "Clove"
 		}
 
 		postbuildcommands{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
 		}
 
 	filter "configurations:Debug"
-		defines{ 
-			"CLV_DEBUG",
-			"CLV_ENABLE_ASSERTS"
-		}
-		buildoptions "/MDd"
+		defines "CLV_DEBUG=1"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
-		defines "CLV_RELEASE"
-		buildoptions "/MD"
+		defines "CLV_RELEASE=1"
+		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Dist"
-		defines "CLV_DIST"
-		buildoptions "/MD"
+		defines "CLV_DIST=1"
+		runtime "Release"
 		optimize "On"
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	staticruntime "Off"
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("intermediate/" .. outputdir .. "/%{prj.name}")
