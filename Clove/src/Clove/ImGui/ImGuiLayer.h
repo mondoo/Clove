@@ -3,6 +3,7 @@
 #include "Clove/Layer.h"
 #include "Clove/Events/MouseEvent.h"
 #include "Clove/Events/KeyEvent.h"
+#include "Clove/Events/ApplicationEvent.h"
 
 struct GLFWwindow;
 
@@ -25,12 +26,15 @@ namespace clv{
 		virtual void onEvent(Event& e) override;
 
 	private:
-		bool onMouseButtonPressed(MouseButtonPressedEvent& e);
-		bool onMouseButtonReleased(MouseButtonReleasedEvent& e);
-		bool onMouseScrolled(MouseScrolledEvent& e);
+		bool onMouseButtonPressedEvent(MouseButtonPressedEvent& e);
+		bool onMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
+		bool onMouseMovedEvent(MouseMovedEvent& e);
+		bool onMouseScrolledEvent(MouseScrolledEvent& e);
 
-		bool onKeyPressed(KeyPressedEvent& e);
-		bool onKeyReleased(KeyReleasedEvent& e);
-		bool onChar(CharEvent& e);
+		bool onKeyPressedEvent(KeyPressedEvent& e);
+		bool onKeyReleasedEvent(KeyReleasedEvent& e);
+		bool onKeyTypedEvent(KeyTypedEvent& e);
+
+		bool onWindowResizedEvent(WindowResizeEvent& e);
 	};
 }
