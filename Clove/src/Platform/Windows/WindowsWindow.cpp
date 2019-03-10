@@ -40,6 +40,10 @@ namespace clv{
 		return data.vSync;
 	}
 
+	void* WindowsWindow::getNativeWindow() const{
+		return window;
+	}
+
 	void WindowsWindow::init(const WindowProps& props){
 		data.title = props.title;
 		data.width = props.width;

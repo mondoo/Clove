@@ -6,6 +6,8 @@
 //TODO: Remove
 #include <glad/glad.h>
 
+#include "Clove/Input.h"
+
 namespace clv{
 	Application* Application::instance = nullptr;
 

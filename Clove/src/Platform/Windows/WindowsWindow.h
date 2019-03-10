@@ -35,6 +35,8 @@ namespace clv{
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVSync() const override;
 
+		virtual void* getNativeWindow() const override;
+
 	private:
 		virtual void init(const WindowProps& props);
 		virtual void shutdown();
