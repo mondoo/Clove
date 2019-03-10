@@ -69,17 +69,29 @@ project "Clove"
 		}
 
 	filter "configurations:Debug"
-		defines "CLV_DEBUG=1"
+		defines {
+			"CLV_DEBUG=1",
+			"CLV_RELEASE=0",
+			"CLV_DIST=0"
+		}
 		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
-		defines "CLV_RELEASE=1"
+		defines {
+			"CLV_DEBUG=0",
+			"CLV_RELEASE=1",
+			"CLV_DIST=0"
+		}
 		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Dist"
-		defines "CLV_DIST=1"
+		defines {
+			"CLV_DEBUG=0",
+			"CLV_RELEASE=0",
+			"CLV_DIST=1"
+		}
 		runtime "Release"
 		optimize "On"
 
