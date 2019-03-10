@@ -85,14 +85,14 @@ namespace clv{
 	void ImGuiLayer::onEvent(Event& e){
 		EventDispatcher dispatcher(e);
 
-		dispatcher.dispatch<MouseButtonPressedEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onMouseButtonPressedEvent, this));
-		dispatcher.dispatch<MouseButtonReleasedEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onMouseButtonReleasedEvent, this));
-		dispatcher.dispatch<MouseMovedEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onMouseMovedEvent, this));
-		dispatcher.dispatch<MouseScrolledEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onMouseScrolledEvent, this));
-		dispatcher.dispatch<KeyPressedEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onKeyPressedEvent, this));
-		dispatcher.dispatch<KeyReleasedEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onKeyReleasedEvent, this));
-		dispatcher.dispatch<KeyTypedEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onKeyTypedEvent, this));
-		dispatcher.dispatch<WindowResizeEvent>(BIND_FUNCTION_OneParam(&ImGuiLayer::onWindowResizedEvent, this));
+		dispatcher.dispatch<MouseButtonPressedEvent>(CLV_BIND_FUNCTION_1P(&ImGuiLayer::onMouseButtonPressedEvent, this));
+		dispatcher.dispatch<MouseButtonReleasedEvent>(CLV_BIND_FUNCTION_1P(&ImGuiLayer::onMouseButtonReleasedEvent, this));
+		dispatcher.dispatch<MouseMovedEvent>(CLV_BIND_FUNCTION_1P(&ImGuiLayer::onMouseMovedEvent, this));
+		dispatcher.dispatch<MouseScrolledEvent>(CLV_BIND_FUNCTION_1P(&ImGuiLayer::onMouseScrolledEvent, this));
+		dispatcher.dispatch<KeyPressedEvent>(CLV_BIND_FUNCTION_1P(&ImGuiLayer::onKeyPressedEvent, this));
+		dispatcher.dispatch<KeyReleasedEvent>(CLV_BIND_FUNCTION_1P(&ImGuiLayer::onKeyReleasedEvent, this));
+		dispatcher.dispatch<KeyTypedEvent>(CLV_BIND_FUNCTION_1P(&ImGuiLayer::onKeyTypedEvent, this));
+		dispatcher.dispatch<WindowResizeEvent>(CLV_BIND_FUNCTION_1P(&ImGuiLayer::onWindowResizedEvent, this));
 	}
 
 	bool ImGuiLayer::onMouseButtonPressedEvent(MouseButtonPressedEvent& e){
