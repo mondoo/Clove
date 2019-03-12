@@ -54,13 +54,10 @@ namespace clv{
 		Application& app = Application::get();
 		Window& window = app.getWindow();
 
-		CLV_CORE_ASSERT(this->window, "Window object is null!");
-
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
 	void ImGuiLayer::onDetach(){
-		window = nullptr;
 	}
 
 	void ImGuiLayer::onUpdate(){

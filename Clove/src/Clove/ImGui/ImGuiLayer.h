@@ -5,15 +5,11 @@
 #include "Clove/Events/KeyEvent.h"
 #include "Clove/Events/ApplicationEvent.h"
 
-struct GLFWwindow;
-
 namespace clv{
 	class CLV_API ImGuiLayer : public Layer{
 		//VARIABLES
 	private:
 		float time = 0.0f;
-
-		GLFWwindow* window;
 
 		//FUNCTIONS
 	public:
