@@ -12,9 +12,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Inlcude direction relative to the roof folder (solution directory)
 includeDir = {}
-includeDir["GLFW"] = "Clove/vendor/GLFW/include"
-includeDir["Glad"] = "Clove/vendor/Glad/include"
+includeDir["GLFW"]	= "Clove/vendor/GLFW/include"
+includeDir["Glad"]	= "Clove/vendor/Glad/include"
 includeDir["ImGui"] = "Clove/vendor/imgui"
+includeDir["glm"]	= "Clove/vendor/glm"
 
 group "Dependencies"
 	include "Clove/vendor/GLFW"
@@ -36,7 +37,9 @@ project "Clove"
 
 	files{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl",
 	}
 
 	includedirs{
@@ -44,7 +47,8 @@ project "Clove"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{includeDir.GLFW}",
 		"%{includeDir.Glad}",
-		"%{includeDir.ImGui}"
+		"%{includeDir.ImGui}",
+		"%{includeDir.glm}"
 	}
 
 	links{
@@ -111,6 +115,7 @@ project "Sandbox"
 
 	includedirs{
 		"Clove/vendor/spdlog/include",
+		"%{includeDir.glm}",
 		"Clove/src"
 	}
 
