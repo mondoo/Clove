@@ -8,6 +8,8 @@
 #include "Clove/Events/Event.h"
 #include "Clove/Events/ApplicationEvent.h"
 
+#include "Clove/ImGui/ImGuiLayer.h"
+
 namespace clv{
 	class Layer;
 	class Event;
@@ -17,6 +19,8 @@ namespace clv{
 		//VARIABLES
 	private:
 		std::unique_ptr<Window> window;
+		ImGuiLayer* imGuiLayer;
+
 		bool running = true;
 		LayerStack layerStack;
 

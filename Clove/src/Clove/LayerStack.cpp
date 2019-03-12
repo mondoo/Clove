@@ -2,7 +2,6 @@
 #include "LayerStack.h"
 
 clv::LayerStack::LayerStack(){
-	layerInsert = layers.begin();
 }
 
 clv::LayerStack::~LayerStack(){
@@ -12,7 +11,9 @@ clv::LayerStack::~LayerStack(){
 }
 
 void clv::LayerStack::pushLayer(Layer* layer){
-	layerInsert = layers.emplace(layerInsert, layer);
+	layers.emplace(layers.begin() + layerInsertIndex, layer);
+	++layerInsertIndex;
+
 	layer->onAttach();
 }
 
@@ -20,8 +21,9 @@ void clv::LayerStack::popLayer(Layer* layer){
 	auto it = std::find(layers.begin(), layers.end(), layer);
 	if(it != layers.end()){
 		(*it)->onDetach();
+
 		layers.erase(it);
-		--layerInsert;
+		--layerInsertIndex;
 	}
 }
 

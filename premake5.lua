@@ -116,7 +116,8 @@ project "Sandbox"
 	includedirs{
 		"Clove/vendor/spdlog/include",
 		"%{includeDir.glm}",
-		"Clove/src"
+		"Clove/src",
+		"Clove/vendor"
 	}
 
 	links{

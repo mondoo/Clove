@@ -18,19 +18,9 @@ namespace clv{
 
 		virtual void onAttach() override;
 		virtual void onDetach() override;
-		virtual void onUpdate() override;
-		virtual void onEvent(Event& e) override;
+		virtual void onImGuiRender() override;
 
-	private:
-		bool onMouseButtonPressedEvent(MouseButtonPressedEvent& e);
-		bool onMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
-		bool onMouseMovedEvent(MouseMovedEvent& e);
-		bool onMouseScrolledEvent(MouseScrolledEvent& e);
-
-		bool onKeyPressedEvent(KeyPressedEvent& e);
-		bool onKeyReleasedEvent(KeyReleasedEvent& e);
-		bool onKeyTypedEvent(KeyTypedEvent& e);
-
-		bool onWindowResizedEvent(WindowResizeEvent& e);
+		void begin();
+		void end();
 	};
 }

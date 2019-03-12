@@ -16,7 +16,10 @@ namespace clv{
 		instance = this;
 
 		window = std::unique_ptr<Window>(Window::create());
-		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
+		window->setEventCallbackFunction(std::bind(&Application::onEvent, this, std::placeholders::_1));
+
+		imGuiLayer = new ImGuiLayer();
+		pushLayer(imGuiLayer);
 	}
 
 	void Application::run(){
@@ -29,6 +32,12 @@ namespace clv{
 			for(Layer* layer : layerStack){
 				layer->onUpdate();
 			}
+
+			imGuiLayer->begin();
+			for(Layer* layer : layerStack){
+				layer->onImGuiRender();
+			}
+			imGuiLayer->end();
 
 			window->onUpdate();
 		}
