@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "Clove/MouseButtonCodes.h"
 
 namespace clv{
 	class CLV_API MouseMovedEvent : public Event{
@@ -58,22 +59,22 @@ namespace clv{
 	class CLV_API MouseButtonEvent : public Event{
 		//VARIABLES
 	protected:
-		int button;
+		MouseButton button;
 
 		//FUNCTIONS
 	public:
-		inline int getMouseButton() const{ return button; }
+		inline MouseButton getMouseButton() const{ return button; }
 
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryMouse | EventCategory::EventCategoryInput)
 
 	protected:
-		MouseButtonEvent(int inButton) : button(inButton){}
+		MouseButtonEvent(MouseButton inButton) : button(inButton){}
 	};
 
 	class CLV_API MouseButtonPressedEvent : public MouseButtonEvent{
 		//FUNCTIONS
 	public:
-		MouseButtonPressedEvent(int inButton) : MouseButtonEvent(inButton){}
+		MouseButtonPressedEvent(MouseButton inButton) : MouseButtonEvent(inButton){}
 
 		virtual std::string toString() const override{
 			std::stringstream ss;
@@ -87,7 +88,7 @@ namespace clv{
 	class CLV_API MouseButtonReleasedEvent : public MouseButtonEvent{
 		//FUNCTIONS
 	public:
-		MouseButtonReleasedEvent(int inButton) : MouseButtonEvent(inButton){}
+		MouseButtonReleasedEvent(MouseButton inButton) : MouseButtonEvent(inButton){}
 
 		virtual std::string toString() const override{
 			std::stringstream ss;

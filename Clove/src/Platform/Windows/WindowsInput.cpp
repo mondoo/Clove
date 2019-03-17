@@ -13,9 +13,9 @@ namespace clv{
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool WindowsInput::isMouseButtonPressed_Impl(int button){
+	bool WindowsInput::isMouseButtonPressed_Impl(MouseButton button){
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
-		int state = glfwGetMouseButton(window, button);
+		int state = glfwGetMouseButton(window, MouseButtonCodeHelpers::CloveToGLFW(button));
 		return state == GLFW_PRESS;
 	}
 
