@@ -46,6 +46,10 @@ namespace clv{
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<WindowCloseEvent>(CLV_BIND_FUNCTION_1P(&Application::onWindowClose, this));
 
+		if(e.isHandled()){
+			return;
+		}
+
 		for(auto it = layerStack.end(); it != layerStack.begin(); ){
 			(*--it)->onEvent(e);
 			if(e.isHandled()){
