@@ -16,7 +16,7 @@ namespace clv{
 		instance = this;
 
 		window = std::unique_ptr<Window>(Window::create());
-		window->setEventCallbackFunction(std::bind(&Application::onEvent, this, std::placeholders::_1));
+		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
 		imGuiLayer = new ImGuiLayer();
 		pushLayer(imGuiLayer);
