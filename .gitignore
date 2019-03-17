@@ -1,34 +1,13 @@
-*.slo
-*.lo
-*.o
-*.obj
-*.gch
-*.pch
-*.so
-*.dylib
-*.mod
-*.smod
-*.lai
-*.la
-*.a
-#*.lib
-*.out
-*.app
-.vs
-*.VC.opendb
-*.VC.db
-#*.vcxproj
-#*.vcxproj.*
-*.vcxproj.user
-*.idb
-*.pdb
-*.ilk
-*.iobj
-*.ipdb
-*.sdf
-*.log
-*.tlog
-*.xml
-*.lastcodeanalysissucceeded
-*.exe
-*.enc
+# Directories
+.vs/
+bin/
+intermediate/
+
+# Files
+*.user
+*.vcxproj
+*.vcxproj.*
+*.sln
+
+# temp
+*.ini
