@@ -1,22 +1,23 @@
 #pragma once
 
 #include "Event.h"
+#include "Clove/KeyCodes.h"
 
 namespace clv{
 	class CLV_API KeyEvent : public Event{
 		//VARIABLES
 	protected:
-		int keyCode = 0;
+		Key key = Key::_None;
 
 		//FUNCTIONS
 	public:
-		inline int getKeyCode() const{ return keyCode; }
+		inline Key getKey() const{ return key; }
 
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryKeyboard | EventCategory::EventCategoryInput)
 
 	protected:
-		KeyEvent(int inKeyCode) 
-			: keyCode(inKeyCode){
+		KeyEvent(Key inKey)
+			: key(inKey){
 		}
 	};
 
@@ -27,8 +28,8 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		KeyPressedEvent(int inKeyCode, int inRepeatCount)
-			: KeyEvent(inKeyCode)
+		KeyPressedEvent(Key inKey, int inRepeatCount)
+			: KeyEvent(inKey)
 			, repeatCount(inRepeatCount){
 		}
 
@@ -36,7 +37,7 @@ namespace clv{
 
 		virtual std::string toString() const override{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << keyCode << " (" << repeatCount << " repeats)";
+			ss << "KeyPressedEvent: " << key << " (" << repeatCount << " repeats)";
 			return ss.str();
 		}
 
@@ -46,13 +47,13 @@ namespace clv{
 	class CLV_API KeyTypedEvent : public KeyEvent{
 		//FUNCTIONS
 	public:
-		KeyTypedEvent(int inKeyCode)
-			: KeyEvent(inKeyCode){
+		KeyTypedEvent(Key inKey)
+			: KeyEvent(inKey){
 		}
 
 		virtual std::string toString() const override{
 			std::stringstream ss;
-			ss << "KeyTypedEvent: " << keyCode;
+			ss << "KeyTypedEvent: " << key;
 			return ss.str();
 		}
 
@@ -62,13 +63,13 @@ namespace clv{
 	class CLV_API KeyReleasedEvent : public KeyEvent{
 		//FUNCTIONS
 	public:
-		KeyReleasedEvent(int inKeyCode) 
-			: KeyEvent(inKeyCode){
+		KeyReleasedEvent(Key inKey)
+			: KeyEvent(inKey){
 		}
 
 		virtual std::string toString() const override{
 			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << keyCode;
+			ss << "KeyReleasedEvent: " << key;
 			return ss.str();
 		}
 

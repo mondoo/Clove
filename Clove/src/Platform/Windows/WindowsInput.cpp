@@ -7,9 +7,9 @@
 namespace clv{
 	Input* Input::instance = new WindowsInput();
 
-	bool WindowsInput::isKeyPressed_Impl(int keyCode){
+	bool WindowsInput::isKeyPressed_Impl(Key key){
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
-		int state = glfwGetKey(window, keyCode);
+		int state = glfwGetKey(window, KeyCodeHelpers::CloveToGLFW(key));
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
