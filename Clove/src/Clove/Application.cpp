@@ -3,9 +3,6 @@
 
 #include "Clove/Log.h"
 
-//TODO: Remove
-#include <glad/glad.h>
-
 #include "Clove/Input.h"
 
 namespace clv{
@@ -18,26 +15,23 @@ namespace clv{
 		window = std::unique_ptr<Window>(Window::create());
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
-		imGuiLayer = new ImGuiLayer();
-		pushLayer(imGuiLayer);
+		//TEMP: DISABLE IMGUI
+		/*imGuiLayer = new ImGuiLayer();
+		pushLayer(imGuiLayer);*/
 	}
 
 	void Application::run(){
 		while(running){
-			//TODO: Remove
-			glClearColor(1, 0, 1, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
-			//
-
 			for(Layer* layer : layerStack){
 				layer->onUpdate();
 			}
 
-			imGuiLayer->begin();
+			//TEMP: DISABLE IMGUI
+			/*imGuiLayer->begin();
 			for(Layer* layer : layerStack){
 				layer->onImGuiRender();
 			}
-			imGuiLayer->end();
+			imGuiLayer->end();*/
 
 			window->onUpdate();
 		}

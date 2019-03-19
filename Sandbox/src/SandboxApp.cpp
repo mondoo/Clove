@@ -40,10 +40,14 @@ public:
 	}
 };
 
+#include "Clove/RenderLayer.h"
+
 class SandBox : public clv::Application{
 public:
 	SandBox(){
-		pushLayer(new ExampleLayer());
+		//pushLayer(new ExampleLayer());
+
+		pushLayer(new clv::RenderLayer());
 	}
 	~SandBox(){
 
