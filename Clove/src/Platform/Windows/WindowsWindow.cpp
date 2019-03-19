@@ -59,6 +59,12 @@ namespace clv{
 			GLFWInitialised = true;
 		}
 
+		//setting opengl to 3.3.0 core profile
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Set the core profile (basically stricter and does less for us)
+		//
+
 		window = glfwCreateWindow(static_cast<int>(data.width), static_cast<int>(data.height), data.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(window);
 

@@ -9,6 +9,22 @@
 #include <string>
 #include <sstream>
 
+#define GLCall(x)	GLClearError();\
+					x;\
+					CLV_CORE_ASSERT(GLLogCall(), "{0} {1} {2}", #x, __FILE__, __LINE__)
+
+static void GLClearError(){
+	while(glGetError() != GL_NO_ERROR);
+}
+
+static bool GLLogCall(){
+	while(GLenum error = glGetError()){
+		CLV_CORE_ERROR("OpenGL Error! ({0})", error);
+		return false;
+	}
+	return true;
+}
+
 struct ShaderProgramSource{
 	std::string vertexSource;
 	std::string fragmentSource;
@@ -42,20 +58,20 @@ static ShaderProgramSource parseShader(const std::string& filepath){
 }
 
 static unsigned int compileShader(unsigned int type, const std::string& source){
-	unsigned int id = glCreateShader(type);
+	GLCall(unsigned int id = glCreateShader(type));
 	const char* src = source.c_str();
-	glShaderSource(id, 1, &src, nullptr);
-	glCompileShader(id);
+	GLCall(glShaderSource(id, 1, &src, nullptr));
+	GLCall(glCompileShader(id));
 
 	int result;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 	if(result == GL_FALSE){
 		int length;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+		GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
 		char* message = new char [length];
-		glGetShaderInfoLog(id, length, &length, message);
+		GLCall(glGetShaderInfoLog(id, length, &length, message));
 		CLV_CORE_ERROR("Failed to compile {0} shader! {1}", type == GL_VERTEX_SHADER ? "vertex" : "fragment", message);
-		glDeleteShader(id);
+		GLCall(glDeleteShader(id));
 		delete [] message;
 	}
 
@@ -63,17 +79,17 @@ static unsigned int compileShader(unsigned int type, const std::string& source){
 }
 
 static unsigned int createShader(const std::string& vertexShader, const std::string& fragmentShader){
-	unsigned int program = glCreateProgram();
+	GLCall(unsigned int program = glCreateProgram());
 	unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
 	unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
-	glAttachShader(program, vs);
-	glAttachShader(program, fs);
-	glLinkProgram(program);
-	glValidateProgram(program);
+	GLCall(glAttachShader(program, vs));
+	GLCall(glAttachShader(program, fs));
+	GLCall(glLinkProgram(program));
+	GLCall(glValidateProgram(program));
 
-	glDeleteShader(vs);
-	glDeleteShader(fs);
+	GLCall(glDeleteShader(vs));
+	GLCall(glDeleteShader(fs));
 
 	//should also be technically detaching the shader (deleting the source code)
 	//although not doing that means it is easier debug
@@ -85,42 +101,70 @@ namespace clv{
 	void RenderLayer::onAttach(){
 		CLV_CORE_TRACE("GL version: {0}", glGetString(GL_VERSION));
 
+		GLCall(glGenVertexArrays(1, &vao));
+		GLCall(glBindVertexArray(vao));
+
 		//Vertex Buffer
-		unsigned int bufferID = 0;
-		glGenBuffers(1, &bufferID);
-		glBindBuffer(GL_ARRAY_BUFFER, bufferID); //this selects the buffer we want to draw (think of these as layers in photoshop)
-		glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW); //This can happen any time after the buffer is bound (gives the bound buffer the data)
+		GLCall(glGenBuffers(1, &bufferID));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID)); //this selects the buffer we want to draw (think of these as layers in photoshop)
+		GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW)); //This can happen any time after the buffer is bound (gives the bound buffer the data)
 	
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+		GLCall(glEnableVertexAttribArray(0));
+		GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+		//0 is the vertex buffer we bind to the array, if we made a second we'd but 1 here to bind that other buffer
 
 		//Index Buffer
-		unsigned int ibo = 0;
-		glGenBuffers(1, &ibo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
+		GLCall(glGenBuffers(1, &ibo));
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW));
 
 		//Shaders
 		ShaderProgramSource source = parseShader("F:/Clove/Clove/res/Shaders/Basic.shader"); //temp: relative path didn't work
-		CLV_CORE_TRACE("\nVERTEX: \n{0}", source.vertexSource);
-		CLV_CORE_TRACE("\nFRAGMENT: \n{0}", source.fragmentSource);
+		//CLV_CORE_TRACE("\nVERTEX: \n{0}", source.vertexSource);
+		//CLV_CORE_TRACE("\nFRAGMENT: \n{0}", source.fragmentSource);
 
 		shader = createShader(source.vertexSource, source.fragmentSource);
-		glUseProgram(shader);
+		GLCall(glUseProgram(shader)); //Tell open gl to use this shader (for drawing or unforming)
+
+		GLCall(location = glGetUniformLocation(shader, "u_Color"));
+		if(location == -1){
+			CLV_CORE_WARN("Could not get uniform or uniform is not used");
+		}
+		/*GLCall(glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f));*/ //uniforms can send data per update (compared to vertex attributes which are defined when creating the vertex)
+	
+		GLCall(glBindVertexArray(0));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+		GLCall(glUseProgram(0));
 	}
 
 	void RenderLayer::onDetach(){
-		glDeleteProgram(shader);
+		GLCall(glDeleteProgram(shader));
 	}
 
 	void RenderLayer::onUpdate(){
 		//Gl is initialised in window
 
 		//glClearColor(1, 0, 1, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-		glDrawElements(GL_TRIANGLES, sizeof(indicies) / sizeof(unsigned int), GL_UNSIGNED_INT, nullptr); //nullptr because we bound our indicies to a buffer
+		if(r > 1.0f || r < 0.0f){
+			increment = -increment;
+		}
+		r += increment;
+
+		GLCall(glUseProgram(shader));
+		GLCall(glUniform4f(location, r, 1.0f, 1.0f, 1.0f));
 		
+		/*GLCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
+		GLCall(glEnableVertexAttribArray(0));
+		GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));*/
+		
+		//When using a vertex array we no longer need to do the above block of code because we bound that data (earlier up) to the vertex array
+		GLCall(glBindVertexArray(vao));
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+
+		GLCall(glDrawElements(GL_TRIANGLES, sizeof(indicies) / sizeof(unsigned int), GL_UNSIGNED_INT, nullptr)); //nullptr because we bound our indicies to a buffer
 
 		//swap buffers happen in window
 	}
