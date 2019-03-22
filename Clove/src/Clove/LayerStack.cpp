@@ -1,41 +1,38 @@
 #include "clvpch.h"
 #include "LayerStack.h"
+#include "Layer.h"
 
-clv::LayerStack::LayerStack(){
-}
-
-clv::LayerStack::~LayerStack(){
-	for(Layer* layer : layers){
-		delete layer;
+namespace clv{
+	LayerStack::~LayerStack(){
+		for(auto layer : layers){
+			layer->onDetach();
+		}
 	}
-}
 
-void clv::LayerStack::pushLayer(Layer* layer){
-	layers.emplace(layers.begin() + layerInsertIndex, layer);
-	++layerInsertIndex;
-
-	layer->onAttach();
-}
-
-void clv::LayerStack::popLayer(Layer* layer){
-	auto it = std::find(layers.begin(), layers.end(), layer);
-	if(it != layers.end()){
-		(*it)->onDetach();
-
-		layers.erase(it);
-		--layerInsertIndex;
+	void LayerStack::pushLayer(std::shared_ptr<Layer> layer){
+		layers.emplace(layers.begin() + layerInsertIndex, layer);
+		layer->onAttach();
 	}
-}
 
-void clv::LayerStack::pushOverlay(Layer* overlay){
-	layers.emplace_back(overlay);
-	overlay->onAttach();
-}
+	void LayerStack::popLayer(std::shared_ptr<Layer> layer){
+		auto it = std::find(layers.begin(), layers.end(), layer);
+		if(it != layers.end()){
+			layers.erase(it);
+			--layerInsertIndex;
+			(*it)->onDetach();
+		}
+	}
 
-void clv::LayerStack::popOverlay(Layer* overlay){
-	auto it = std::find(layers.begin(), layers.end(), overlay);
-	if(it != layers.end()){
-		(*it)->onDetach();
-		layers.erase(it);
+	void LayerStack::pushOverlay(std::shared_ptr<Layer> overlay){
+		overlay->onAttach();
+		layers.emplace_back(std::move(overlay));
+	}
+
+	void LayerStack::popOverlay(std::shared_ptr<Layer> overlay){
+		auto it = std::find(layers.begin(), layers.end(), overlay);
+		if(it != layers.end()){
+			layers.erase(it);
+			(*it)->onDetach();
+		}
 	}
 }

@@ -18,7 +18,7 @@ namespace clv{
 		window = std::unique_ptr<Window>(Window::create());
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
-		imGuiLayer = new ImGuiLayer();
+		imGuiLayer = std::make_shared<ImGuiLayer>(ImGuiLayer());
 		pushLayer(imGuiLayer);
 	}
 
@@ -29,12 +29,12 @@ namespace clv{
 			glClear(GL_COLOR_BUFFER_BIT);
 			//
 
-			for(Layer* layer : layerStack){
+			for(auto layer : layerStack){
 				layer->onUpdate();
 			}
 
 			imGuiLayer->begin();
-			for(Layer* layer : layerStack){
+			for(auto layer : layerStack){
 				layer->onImGuiRender();
 			}
 			imGuiLayer->end();
@@ -58,11 +58,11 @@ namespace clv{
 		}
 	}
 
-	void Application::pushLayer(Layer* layer){
+	void Application::pushLayer(std::shared_ptr<Layer> layer){
 		layerStack.pushLayer(layer);
 	}
 
-	void Application::pushOverlay(Layer* overlay){
+	void Application::pushOverlay(std::shared_ptr<Layer> overlay){
 		layerStack.pushOverlay(overlay);
 	}
 

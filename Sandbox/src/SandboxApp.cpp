@@ -11,11 +11,11 @@ public:
 	}
 
 	virtual void onAttach() override{
-
+		CLV_TRACE("On attached called");
 	}
 
 	virtual void onDetach() override{
-
+		CLV_TRACE("On detached called");
 	}
 
 	virtual void onUpdate() override{
@@ -34,7 +34,7 @@ public:
 class SandBox : public clv::Application{
 public:
 	SandBox(){
-		pushLayer(new ExampleLayer());
+		pushLayer(std::make_shared<ExampleLayer>(ExampleLayer()));
 	}
 	~SandBox(){
 
