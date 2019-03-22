@@ -37,6 +37,8 @@ namespace clv{
 
 	void RenderLayer::onDetach(){
 		shader.deleteShader();
+		vb.deleteBuffer();
+		ib.deleteBuffer();
 	}
 
 	void RenderLayer::onUpdate(){

@@ -13,16 +13,15 @@ namespace clv{
 		GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
 	}
 
-	VertexBuffer::~VertexBuffer(){
-		//Commented out because it gets called (because the temp object it copys/moves gets deleted)
-		//GLCall(glDeleteBuffers(1, &rendererID));
-	}
-
 	void VertexBuffer::bind() const{
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, rendererID));
 	}
 
 	void VertexBuffer::unbind() const{
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	}
+
+	void VertexBuffer::deleteBuffer(){
+		GLCall(glDeleteBuffers(1, &rendererID));
 	}
 }

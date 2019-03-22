@@ -11,10 +11,11 @@ namespace clv{
 	public:
 		IndexBuffer() = default; //temp
 		IndexBuffer(const unsigned int* data, unsigned int inCount);
-		~IndexBuffer();
 
 		void bind() const;
 		void unbind() const;
+
+		void deleteBuffer();
 
 		inline unsigned int getCount() const{ return count; }
 	};
