@@ -5,6 +5,8 @@
 
 #include "Clove/Input.h"
 
+#include "Clove/RenderLayer.h"
+
 namespace clv{
 	Application* Application::instance = nullptr;
 
@@ -18,6 +20,9 @@ namespace clv{
 		//TEMP: DISABLE IMGUI
 		/*imGuiLayer = new ImGuiLayer();
 		pushLayer(imGuiLayer);*/
+
+		//temp?
+		pushLayer(new RenderLayer());
 	}
 
 	void Application::run(){

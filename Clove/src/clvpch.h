@@ -15,6 +15,7 @@
 #include <unordered_set>
 
 //Clove headers
+#include "Clove/Core.h"
 #include "Clove/Log.h"
 
 //Platform specific headers

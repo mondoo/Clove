@@ -2,15 +2,26 @@
 
 #include "Clove/Layer.h"
 
+#include "Clove/Rendering/API/VertexBuffer.h"
+#include "Clove/Rendering/API/IndexBuffer.h"
+#include "Clove/Rendering/API/VertexArray.h"
+#include "Clove/Rendering/API/VertexBufferLayout.h"
+#include "Clove/Rendering/API/Shader.h"
+
+#include "Clove/Rendering/Renderer.h"
+
 namespace clv{
 	class CLV_API RenderLayer : public Layer{
 		//VARIABLES
 	private:
-		unsigned int bufferID = 0;
-		unsigned int ibo = 0;
-		unsigned int shader = 0;
+		VertexArray va;
 
-		unsigned int vao;
+		VertexBuffer vb;
+		IndexBuffer ib;
+
+		Shader shader;
+
+		Renderer renderer;
 
 		float positions[8] = {
 			-0.5f, -0.5f,
@@ -31,6 +42,8 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
+		RenderLayer();
+
 		virtual void onAttach() override;
 		virtual void onDetach() override;
 		virtual void onUpdate() override;
