@@ -12,7 +12,7 @@ namespace clv{
 	Application* Application::instance = nullptr;
 
 	Application::Application(){
-		CLV_CORE_ASSERT(!instance, "Application already exists!");
+		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
 		window = std::unique_ptr<Window>(Window::create());

@@ -58,14 +58,18 @@ project "Clove"
 		"opengl32.lib"
 	}
 
+	defines{
+		"ENGINE=1",
+		"CLV_BUILD_DLL",
+		"GLFW_INCLUDE_NONE"
+	}
+
 	filter "system:windows"
 		cppdialect "C++17"
 		systemversion "latest"
 
 		defines{
-			"CLV_PLATFORM_WINDOWS",
-			"CLV_BUILD_DLL",
-			"GLFW_INCLUDE_NONE"
+			"CLV_PLATFORM_WINDOWS"
 		}
 
 		postbuildcommands{
@@ -122,6 +126,10 @@ project "Sandbox"
 
 	links{
 		"Clove"
+	}
+
+	defines{
+		"ENGINE=0"
 	}
 
 	filter "system:windows"

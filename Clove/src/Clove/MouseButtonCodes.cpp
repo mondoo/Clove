@@ -25,7 +25,7 @@ namespace clv{
 			case MouseButton::_8:
 				return GLFW_MOUSE_BUTTON_8;
 			default:
-				CLV_CORE_WARN("Invalid mouse button passed in, returning -1");
+				CLV_WARN("Invalid mouse button passed in, returning -1");
 				return -1;
 			}
 		}
