@@ -1,7 +1,7 @@
 #pragma once
 
-#ifdef CLV_PLATFORM_WINDOWS
-	#ifdef CLV_BUILD_DLL
+#if CLV_PLATFORM_WINDOWS
+	#if CLV_BUILD_DLL
 		#define	CLV_API __declspec(dllexport)
 	#else
 		#define	CLV_API __declspec(dllimport)

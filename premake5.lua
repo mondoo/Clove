@@ -60,7 +60,7 @@ project "Clove"
 
 	defines{
 		"ENGINE=1",
-		"CLV_BUILD_DLL",
+		"CLV_BUILD_DLL=1",
 		"GLFW_INCLUDE_NONE"
 	}
 
@@ -129,7 +129,8 @@ project "Sandbox"
 	}
 
 	defines{
-		"ENGINE=0"
+		"ENGINE=0",
+		"CLV_BUILD_DLL=0"
 	}
 
 	filter "system:windows"
@@ -142,16 +143,28 @@ project "Sandbox"
 		}
 
 	filter "configurations:Debug"
-		defines "CLV_DEBUG"
+		defines {
+			"CLV_DEBUG=1",
+			"CLV_RELEASE=0",
+			"CLV_DIST=0"
+		}
 		symbols "On"
 		buildoptions "/MDd"
 
 	filter "configurations:Release"
-		defines "CLV_RELEASE"
+		defines {
+			"CLV_DEBUG=0",
+			"CLV_RELEASE=1",
+			"CLV_DIST=0"
+		}
 		optimize "On"
 		buildoptions "/MD"
 
 	filter "configurations:Dist"
-		defines "CLV_DIST"
+		defines {
+			"CLV_DEBUG=0",
+			"CLV_RELEASE=0",
+			"CLV_DIST=1"
+		}
 		optimize "On"
 		buildoptions "/MD"
