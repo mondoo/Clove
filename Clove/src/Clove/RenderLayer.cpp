@@ -15,8 +15,10 @@ namespace clv{
 	void RenderLayer::onAttach(){
 		CLV_CORE_TRACE("GL version: {0}", glGetString(GL_VERSION));
 
+		//src is from the image - dest is what is already in the buffer
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		GLCall(glEnable(GL_BLEND));
+		//I guess it's called blending because you blend the src with the destination
 
 		//Vertex Buffer
 		vb = VertexBuffer(positions, sizeof(positions));
