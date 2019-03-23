@@ -28,10 +28,10 @@ namespace clv{
 
 		float positions[16] = {
 			//vertex pos | tex coord
-			-0.5f, -0.5f, 0.0f, 0.0f,
-			 0.5f, -0.5f, 1.0f, 0.0f,
-			 0.5f,  0.5f, 1.0f, 1.0f,
-			-0.5f,  0.5f, 0.0f, 1.0f
+			100.0f, 100.0f, 0.0f, 0.0f,
+			200.0f, 100.0f, 1.0f, 0.0f,
+			200.0f, 200.0f, 1.0f, 1.0f,
+			100.0f, 200.0f, 0.0f, 1.0f
 		};
 
 		unsigned int indicies[6] = {

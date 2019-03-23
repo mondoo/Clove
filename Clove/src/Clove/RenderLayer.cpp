@@ -10,6 +10,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Application.h"
+#include "Window.h"
+
 namespace clv{
 	RenderLayer::RenderLayer()
 		: Layer("Render Layer"){
@@ -34,13 +37,24 @@ namespace clv{
 		ib = IndexBuffer(indicies, sizeof(indicies) / sizeof(unsigned int));
 
 		//projection matrix
-		glm::mat4 proj = glm::ortho(-8.0f, 8.0f, -4.5f, 4.5f); //16:9
+
+		//mvp matricies = model (the matrix of the thing we are rendering) | view (matrix of the camera) | projection (our projection matrix)
+
+		unsigned int width = Application::get().getWindow().getWidth();
+		unsigned int height = Application::get().getWindow().getHeight();
+
+		glm::mat4 proj = glm::ortho(0.0f, static_cast<float>(width), -0.0f, static_cast<float>(height)); //16:9
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, 0.0f, 0.0f));
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+
+		//opengl does the proj first
+		glm::mat4 mvp = proj * view * model;
 
 		//Shaders
 		shader = Shader("F:/Clove/Clove/res/Shaders/Basic.shader");
 		shader.bind();
 		shader.setUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
-		shader.setUniformMat4f("u_MVP", proj);
+		shader.setUniformMat4f("u_MVP", mvp);
 
 		texture = Texture("F:/Clove/Clove/res/Textures/Zombie-32x32.png");
 		texture.bind();
