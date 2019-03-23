@@ -49,7 +49,7 @@ namespace clv{
 		data.width = props.width;
 		data.height = props.height;
 
-		CLV_INFO("Creating window: {0} ({1}, {2})", data.title, data.width, data.height);
+		CLV_TRACE("Creating window: {0} ({1}, {2})", data.title, data.width, data.height);
 
 		if(!GLFWInitialised){
 			//TODO: glfwTerminate on system shutdown
@@ -64,6 +64,8 @@ namespace clv{
 
 		int status = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 		CLV_ASSERT(status, "Failed to initialise Glad");
+
+		CLV_INFO("Window created!");
 
 		glfwSetWindowUserPointer(window, &data);
 		setVSync(true);
@@ -156,5 +158,6 @@ namespace clv{
 
 	void WindowsWindow::shutdown(){
 		glfwDestroyWindow(window);
+		CLV_INFO("Window destroyed");
 	}
 }
