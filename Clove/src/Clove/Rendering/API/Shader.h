@@ -24,6 +24,7 @@ namespace clv{
 		void deleteShader();
 
 		//TODO make this set value / set unform templated function
+		void setUniform1i(const std::string& name, int value);
 		void setUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
 
 	private:

@@ -16,6 +16,7 @@ includeDir["GLFW"]	= "Clove/vendor/GLFW/include"
 includeDir["Glad"]	= "Clove/vendor/Glad/include"
 includeDir["ImGui"] = "Clove/vendor/imgui"
 includeDir["glm"]	= "Clove/vendor/glm"
+includeDir["stb"]	= "Clove/vendor/stb"
 
 group "Dependencies"
 	include "Clove/vendor/GLFW"
@@ -38,9 +39,13 @@ project "Clove"
 	files{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+
 		"%{prj.name}/res/**.shader",
+		"%{prj.name}/res/**.png",
+
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/stb/**.cpp",
 	}
 
 	includedirs{
@@ -49,7 +54,8 @@ project "Clove"
 		"%{includeDir.GLFW}",
 		"%{includeDir.Glad}",
 		"%{includeDir.ImGui}",
-		"%{includeDir.glm}"
+		"%{includeDir.glm}",
+		"%{includeDir.stb}"
 	}
 
 	links{
