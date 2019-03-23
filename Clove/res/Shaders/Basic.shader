@@ -1,18 +1,22 @@
 #shader vertex
 #version 330 core
+//Runs once per vertex
 
 layout(location = 0) in vec4 position; //location 0 here refers to the position in the vertex for where to get attribute from (what specified in glVertexAttribPointer)
 layout(location = 1) in vec2 texCoord;
 
 out vec2 v_TexCoord; //This doesn't use a location because we use it to send data to another shader (the fragment shader in this case)
 
+uniform mat4 u_MVP;
+
 void main(){
-   gl_Position = position;
+   gl_Position = u_MVP * position;
    v_TexCoord = texCoord;
 };
 
 #shader fragment
 #version 330 core
+//Runs once per pixel
 
 layout(location = 0) out vec4 color; //0 is less important here because this is a out vector and not an in vector
 

@@ -7,6 +7,9 @@
 
 #include "Clove/Rendering/Renderer.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace clv{
 	RenderLayer::RenderLayer()
 		: Layer("Render Layer"){
@@ -30,10 +33,14 @@ namespace clv{
 		//Index Buffer
 		ib = IndexBuffer(indicies, sizeof(indicies) / sizeof(unsigned int));
 
+		//projection matrix
+		glm::mat4 proj = glm::ortho(-8.0f, 8.0f, -4.5f, 4.5f); //16:9
+
 		//Shaders
 		shader = Shader("F:/Clove/Clove/res/Shaders/Basic.shader");
 		shader.bind();
 		shader.setUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+		shader.setUniformMat4f("u_MVP", proj);
 
 		texture = Texture("F:/Clove/Clove/res/Textures/Zombie-32x32.png");
 		texture.bind();

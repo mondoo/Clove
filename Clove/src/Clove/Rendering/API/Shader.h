@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 namespace clv{
 	struct ShaderProgramSource{
 		std::string vertexSource;
@@ -26,6 +28,7 @@ namespace clv{
 		//TODO make this set value / set unform templated function
 		void setUniform1i(const std::string& name, int value);
 		void setUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
+		void setUniformMat4f(const std::string& name, const glm::mat4& matrix);
 
 	private:
 		ShaderProgramSource parseShader(const std::string& filepath);
