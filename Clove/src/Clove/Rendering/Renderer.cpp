@@ -1,6 +1,10 @@
 #include "clvpch.h"
 #include "Renderer.h"
 
+#include "Clove/Rendering/API/VertexArray.h"
+#include "Clove/Rendering/API/IndexBuffer.h"
+#include "Clove/Rendering/API/Shader.h"
+
 namespace clv{
 	void GLClearError(){
 		while(glGetError() != GL_NO_ERROR);
