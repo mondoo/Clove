@@ -68,5 +68,6 @@ namespace clv{
 		virtual void onAttach() override;
 		virtual void onDetach() override;
 		virtual void onUpdate() override;
+		virtual void onImGuiRender() override;
 	};
 }
