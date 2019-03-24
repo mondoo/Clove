@@ -11,7 +11,7 @@ namespace clv{
 	static bool GLFWInitialised = false;
 
 	static void GFLWErrorCallback(int error, const char* description){
-		CLV_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+		CLV_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
 	Window* Window::create(const WindowProps& props){
@@ -49,12 +49,12 @@ namespace clv{
 		data.width = props.width;
 		data.height = props.height;
 
-		CLV_CORE_INFO("Creating window: {0} ({1}, {2})", data.title, data.width, data.height);
+		CLV_TRACE("Creating window: {0} ({1}, {2})", data.title, data.width, data.height);
 
 		if(!GLFWInitialised){
 			//TODO: glfwTerminate on system shutdown
 			const int success = glfwInit();
-			CLV_CORE_ASSERT(success, "Could not initialise GLFW!");
+			CLV_ASSERT(success, "Could not initialise GLFW!");
 			glfwSetErrorCallback(GFLWErrorCallback);
 			GLFWInitialised = true;
 		}
@@ -63,7 +63,9 @@ namespace clv{
 		glfwMakeContextCurrent(window);
 
 		int status = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
-		CLV_CORE_ASSERT(status, "Failed to initialise Glad");
+		CLV_ASSERT(status, "Failed to initialise Glad");
+
+		CLV_INFO("Window created!");
 
 		glfwSetWindowUserPointer(window, &data);
 		setVSync(true);
@@ -156,5 +158,6 @@ namespace clv{
 
 	void WindowsWindow::shutdown(){
 		glfwDestroyWindow(window);
+		CLV_INFO("Window destroyed");
 	}
 }

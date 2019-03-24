@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Clove/Core.h"
-#include "Clove/Events/Event.h"
-
 namespace clv{
+	class Event;
+
 	class CLV_API Layer{
 		//VARIABLES
 	protected:
