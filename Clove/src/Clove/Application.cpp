@@ -14,12 +14,11 @@ namespace clv{
 		CLV_CORE_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		window = std::unique_ptr<Window>(Window::create());
+		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
-		//TEMP: DISABLE IMGUI
-		/*imGuiLayer = new ImGuiLayer();
-		pushLayer(imGuiLayer);*/
+		imGuiLayer = new ImGuiLayer();
+		pushLayer(imGuiLayer);
 
 		//temp?
 		pushLayer(new RenderLayer());
@@ -31,12 +30,11 @@ namespace clv{
 				layer->onUpdate();
 			}
 
-			//TEMP: DISABLE IMGUI
-			/*imGuiLayer->begin();
+			imGuiLayer->begin();
 			for(Layer* layer : layerStack){
 				layer->onImGuiRender();
 			}
-			imGuiLayer->end();*/
+			imGuiLayer->end();
 
 			window->onUpdate();
 		}

@@ -53,8 +53,14 @@ namespace clv{
 	}
 
 	void ImGuiLayer::onImGuiRender(){
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		//static bool show = true;
+		//ImGui::ShowDemoWindow(&show);
+
+		static float outfloat;
+		
+		//Debug
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::SliderFloat("float", &outfloat, 0.0f, 1.0f);
 	}
 
 	void ImGuiLayer::begin(){
