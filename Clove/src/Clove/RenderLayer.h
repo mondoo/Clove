@@ -26,22 +26,39 @@ namespace clv{
 
 		Renderer renderer;
 
-		float positions[16] = {
+		float positions[24] = {
 			//vertex pos | tex coord
-			100.0f, 100.0f, 0.0f, 0.0f,
-			200.0f, 100.0f, 1.0f, 0.0f,
-			200.0f, 200.0f, 1.0f, 1.0f,
-			100.0f, 200.0f, 0.0f, 1.0f
+			-0.5f, -0.5f, -0.5f, //0.0f, 0.0f,
+			 0.5f, -0.5f, -0.5f, //1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f, //1.0f, 1.0f,
+			-0.5f,  0.5f, -0.5f, //0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f, //0.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f, //0.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f, //0.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f //0.0f, 1.0f,
 		};
 
-		unsigned int indicies[6] = {
-			0, 1, 2,
-			2, 3, 0
+		//float positions[16] = {
+		//	//vertex pos | tex coord
+		//	0.0f,	0.0f, 0.0f, 0.0f,
+		//	100.0f, 0.0f, 1.0f, 0.0f,
+		//	100.0f, 100.0f, 1.0f, 1.0f,
+		//	0.0f,	100.0f, 0.0f, 1.0f
+		//};
+
+		unsigned int indicies[36] = {
+			0, 1, 3, 3, 1, 2,
+			1, 5, 2, 2, 5, 6,
+			5, 4, 6, 6, 4, 7,
+			4, 0, 7, 7, 0, 3,
+			3, 2, 7, 7, 2, 6,
+			4, 5, 0, 0, 5, 1
 		};
 
 		int location = -1;
 
 		float r = 0.0f;
+		float rot = 0.0f;
 		float increment = 0.01f;
 
 		//FUNCTIONS
