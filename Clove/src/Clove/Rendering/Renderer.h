@@ -6,7 +6,7 @@
 
 #define GLCall(x)	clv::GLClearError();\
 					x;\
-					CLV_CORE_ASSERT(clv::GLLogCall(), "{0} {1} {2}", #x, __FILE__, __LINE__)
+					CLV_ASSERT(clv::GLLogCall(), "{0} {1} {2}", #x, __FILE__, __LINE__)
 
 #include "Clove/Rendering/API/VertexArray.h"
 #include "Clove/Rendering/API/IndexBuffer.h"

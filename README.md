@@ -13,6 +13,8 @@ r-X - refactor branch
 
 s-X - staging branch (i.e. s-????) - used to stage merges, usually with cherry picks or branchs that have wildly different histories
 
+v-X - revision branch (i.e. v-????) - used to fix small bugs, gets merged directly into master
+
 All merges must have commits squashed
 
 

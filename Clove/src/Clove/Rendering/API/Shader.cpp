@@ -98,7 +98,7 @@ namespace clv{
 			GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
 			char* message = new char[length];
 			GLCall(glGetShaderInfoLog(id, length, &length, message));
-			CLV_CORE_ERROR("Failed to compile {0} shader! {1}", type == GL_VERTEX_SHADER ? "vertex" : "fragment", message);
+			CLV_ERROR("Failed to compile {0} shader! {1}", type == GL_VERTEX_SHADER ? "vertex" : "fragment", message);
 			GLCall(glDeleteShader(id));
 			delete[] message;
 		}
@@ -113,7 +113,7 @@ namespace clv{
 
 		GLCall(int location = glGetUniformLocation(rendererID, name.c_str()));
 		if(location == -1){
-			CLV_CORE_WARN("Warning: Uniform {0} does not exist!: {1}", name, __FUNCTION__);
+			CLV_WARN("Warning: Uniform {0} does not exist!: {1}", name, __FUNCTION__);
 		} 
 
 		uniformLocationCache[name] = location;

@@ -11,27 +11,27 @@ namespace clv{
 	Application* Application::instance = nullptr;
 
 	Application::Application(){
-		CLV_CORE_ASSERT(!instance, "Application already exists!");
+		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
 		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
-		imGuiLayer = new ImGuiLayer();
+		imGuiLayer = std::make_shared<ImGuiLayer>(ImGuiLayer());
 		pushLayer(imGuiLayer);
 
 		//temp?
-		pushLayer(new RenderLayer());
+		pushLayer(std::make_shared<RenderLayer>(RenderLayer()));
 	}
 
 	void Application::run(){
 		while(running){
-			for(Layer* layer : layerStack){
+			for(auto layer : layerStack){
 				layer->onUpdate();
 			}
 
 			imGuiLayer->begin();
-			for(Layer* layer : layerStack){
+			for(auto layer : layerStack){
 				layer->onImGuiRender();
 			}
 			imGuiLayer->end();
@@ -55,11 +55,11 @@ namespace clv{
 		}
 	}
 
-	void Application::pushLayer(Layer* layer){
+	void Application::pushLayer(std::shared_ptr<Layer> layer){
 		layerStack.pushLayer(layer);
 	}
 
-	void Application::pushOverlay(Layer* overlay){
+	void Application::pushOverlay(std::shared_ptr<Layer> overlay){
 		layerStack.pushOverlay(overlay);
 	}
 

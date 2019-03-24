@@ -18,5 +18,7 @@ namespace clv{
 
 		void bind() const;
 		void unbind() const;
+
+		void deleteArray();
 	};
 }

@@ -21,7 +21,7 @@ namespace clv{
 	}
 
 	void RenderLayer::onAttach(){
-		CLV_CORE_TRACE("GL version: {0}", glGetString(GL_VERSION));
+		CLV_TRACE("GL version: {0}", glGetString(GL_VERSION));
 
 		GLCall(glDepthFunc(GL_LESS));
 		GLCall(glEnable(GL_DEPTH_TEST));
@@ -60,6 +60,7 @@ namespace clv{
 		shader.deleteShader();
 		vb.deleteBuffer();
 		ib.deleteBuffer();
+		va.deleteArray();
 	}
 
 	void RenderLayer::onUpdate(){

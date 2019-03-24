@@ -19,7 +19,7 @@ namespace clv{
 		//VARIABLES
 	private:
 		std::unique_ptr<Window> window;
-		ImGuiLayer* imGuiLayer;
+		std::shared_ptr<ImGuiLayer> imGuiLayer;
 
 		bool running = true;
 		LayerStack layerStack;
@@ -35,8 +35,8 @@ namespace clv{
 
 		void onEvent(Event& e);
 
-		void pushLayer(Layer* layer);
-		void pushOverlay(Layer* overlay);
+		void pushLayer(std::shared_ptr<Layer> layer);
+		void pushOverlay(std::shared_ptr<Layer> overlay);
 
 		inline static Application& get(){ return *instance; }
 		inline Window& getWindow(){ return *window; }

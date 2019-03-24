@@ -23,7 +23,7 @@ namespace clv{
 			case GL_UNSIGNED_BYTE:
 				return 1;
 			default:
-				CLV_CORE_ASSERT(false, "Unsupported type in {0}", __FUNCTION__);
+				CLV_ASSERT(false, "Unsupported type in {0}", __FUNCTION__);
 				return 0;
 			}
 		}
@@ -39,8 +39,7 @@ namespace clv{
 	public:
 		template<typename T>
 		void push(unsigned int count){
-			//static_assert(false);
-			CLV_CORE_ASSERT(false, "Unsupported type for {0}", __FUNCTION__);
+			CLV_ASSERT(false, "Unsupported type for {0}", __FUNCTION__);
 		}
 
 		template <>
