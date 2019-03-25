@@ -5,6 +5,8 @@
 #include "Clove/Events/MouseEvent.h"
 #include "Clove/Events/KeyEvent.h"
 
+#include "Clove/Rendering/Renderer.h"
+
 #include <glad/glad.h>
 
 namespace clv{
@@ -72,6 +74,17 @@ namespace clv{
 		CLV_ASSERT(status, "Failed to initialise Glad");
 
 		CLV_INFO("Window created!");
+		CLV_INFO("GL version: {0}", glGetString(GL_VERSION));
+
+		CLV_TRACE("Enabling Depth buffer");
+		GLCall(glDepthFunc(GL_LESS));
+		GLCall(glEnable(GL_DEPTH_TEST));
+
+		CLV_TRACE("Blend set to: SRC_ALPHA | ONE_MINUS_SRC_ALPHA");
+		//src is from the image - dest is what is already in the buffer
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+		GLCall(glEnable(GL_BLEND));
+		//I guess it's called blending because you blend the src with the destination
 
 		glfwSetWindowUserPointer(window, &data);
 		setVSync(true);

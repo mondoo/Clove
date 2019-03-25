@@ -1,9 +1,5 @@
 #pragma once
 
-#include "Clove/Core.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #define GLCall(x)	clv::GLClearError();\
 					x;\
 					CLV_ASSERT(clv::GLLogCall(), "{0} {1} {2}", #x, __FILE__, __LINE__)
@@ -13,9 +9,9 @@ namespace clv{
 	class IndexBuffer;
 	class Shader;
 
-	void GLClearError();
+	void CLV_API GLClearError();
 
-	bool GLLogCall();
+	bool CLV_API GLLogCall();
 
 	class CLV_API Renderer{
 		//VARIABLES

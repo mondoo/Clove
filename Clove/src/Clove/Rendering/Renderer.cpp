@@ -1,6 +1,9 @@
 #include "clvpch.h"
 #include "Renderer.h"
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "Clove/Rendering/API/VertexArray.h"
 #include "Clove/Rendering/API/IndexBuffer.h"
 #include "Clove/Rendering/API/Shader.h"

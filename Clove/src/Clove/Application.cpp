@@ -1,11 +1,6 @@
 #include "clvpch.h"
 #include "Application.h"
-
-#include "Clove/Log.h"
-
 #include "Clove/Input.h"
-
-#include "Clove/RenderLayer.h"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -19,9 +14,6 @@ namespace clv{
 
 		imGuiLayer = std::make_shared<ImGuiLayer>(ImGuiLayer());
 		pushLayer(imGuiLayer);
-
-		//temp?
-		pushLayer(std::make_shared<RenderLayer>(RenderLayer()));
 	}
 
 	void Application::run(){

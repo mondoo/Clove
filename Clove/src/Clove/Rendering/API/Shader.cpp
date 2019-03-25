@@ -6,6 +6,8 @@
 #include <sstream>
 
 #include "Clove/Rendering/Renderer.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace clv{
 	Shader::Shader(const std::string& filepath)

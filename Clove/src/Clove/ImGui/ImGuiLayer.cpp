@@ -1,20 +1,24 @@
 #include "clvpch.h"
 #include "ImGuiLayer.h"
 
-#include "imgui.h"
+#include "Clove/Events/MouseEvent.h"
+#include "Clove/Events/KeyEvent.h"
+#include "Clove/Events/ApplicationEvent.h"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <imgui.h>
 
 #define IMGUI_IMPL_API
 #include "examples/imgui_impl_glfw.h"
 #include "examples/imgui_impl_opengl3.h"
 
-//Temporary
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
-
 #include "Clove/Application.h"
 
 namespace clv{
-	ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer"){
+	ImGuiLayer::ImGuiLayer() 
+		: Layer("ImGuiLayer"){
 
 	}
 

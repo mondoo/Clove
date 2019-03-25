@@ -3,6 +3,8 @@
 #include "Clove/Rendering/API/VertexBuffer.h"
 #include "Clove/Rendering/API/VertexBufferLayout.h"
 #include "Clove/Rendering/Renderer.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace clv{
 	VertexArray::VertexArray(){

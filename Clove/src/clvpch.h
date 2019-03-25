@@ -19,6 +19,6 @@
 #include "Clove/Log.h"
 
 //Platform specific headers
-#ifdef CLV_PLATFORM_WINDOWS
+#if CLV_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif

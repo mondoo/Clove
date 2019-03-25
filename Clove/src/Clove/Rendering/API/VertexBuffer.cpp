@@ -2,9 +2,8 @@
 #include "VertexBuffer.h"
 
 #include "Clove/Rendering/Renderer.h"
-
-
-//OpenGL specific for now
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace clv{
 	VertexBuffer::VertexBuffer(const void* data, unsigned int size){

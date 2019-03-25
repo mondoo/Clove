@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Clove/Rendering/Renderer.h"
-
 namespace clv{
 	class CLV_API Texture{
 		//VARIABLES
