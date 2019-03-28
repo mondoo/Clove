@@ -150,11 +150,11 @@ project "Clove"
 		"%{prj.name}/src/**.cpp",
 
 		"%{prj.name}/res/**.shader",
-		"%{prj.name}/res/**.png",
 
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/stb/**.cpp",
+		"%{prj.name}/vendor/OBJ-Loader/**.h"
 	}
 
 	includedirs{
@@ -164,7 +164,8 @@ project "Clove"
 		"%{includeDir.Glad}",
 		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
-		"%{includeDir.stb}"
+		"%{includeDir.stb}",
+		"%{prj.name}/vendor/OBJ-Loader/source"
 	}
 
 	links{

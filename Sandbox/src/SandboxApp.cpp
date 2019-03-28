@@ -3,12 +3,7 @@
 //TODO: need abstraction!
 
 //Clove
-#include "Clove/Rendering/API/VertexBuffer.h"
-#include "Clove/Rendering/API/IndexBuffer.h"
-#include "Clove/Rendering/API/VertexArray.h"
-#include "Clove/Rendering/API/VertexBufferLayout.h"
-#include "Clove/Rendering/API/Shader.h"
-#include "Clove/Rendering/API/Texture.h"
+#include "Clove/Model.h"
 
 #include "Clove/Rendering/Renderer.h"
 
@@ -20,47 +15,7 @@
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
-	clv::VertexArray va;
-
-	clv::VertexBuffer vb;
-	clv::IndexBuffer ib;
-
-	clv::Shader shader;
-
-	clv::Texture texture;
-
-	clv::Renderer renderer;
-
-	float positions[24] = {
-		//vertex pos | tex coord
-		-0.5f, -0.5f, -0.5f, //0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f, //1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f, //1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f, //0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, //0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f, //0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f, //0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f //0.0f, 1.0f,
-	};
-
-	//float positions[16] = {
-	//	//vertex pos | tex coord
-	//	0.0f,	0.0f, 0.0f, 0.0f,
-	//	100.0f, 0.0f, 1.0f, 0.0f,
-	//	100.0f, 100.0f, 1.0f, 1.0f,
-	//	0.0f,	100.0f, 0.0f, 1.0f
-	//};
-
-	unsigned int indicies[36] = {
-		0, 1, 3, 3, 1, 2,
-		1, 5, 2, 2, 5, 6,
-		5, 4, 6, 6, 4, 7,
-		4, 0, 7, 7, 0, 3,
-		3, 2, 7, 7, 2, 6,
-		4, 5, 0, 0, 5, 1
-	};
-
-	int location = -1;
+	clv::Model cubeModel;
 
 	float r = 0.0f;
 	float rot = 0.0f;
@@ -81,36 +36,11 @@ public:
 	}
 
 	virtual void onAttach() override{
-		//Vertex Buffer
-		vb = clv::VertexBuffer(positions, sizeof(positions));
-		clv::VertexBufferLayout layout;
-		layout.push<float>(3); //pos
-		//layout.push<float>(2); //tex coord
-		va.addBuffer(vb, layout);
-
-		//Index Buffer
-		ib = clv::IndexBuffer(indicies, sizeof(indicies) / sizeof(unsigned int));
-
-		//Shaders
-		shader = clv::Shader("F:/Clove/Clove/res/Shaders/Basic.shader");
-		shader.bind();
-		shader.setUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
-
-		//texture = Texture("F:/Clove/Clove/res/Textures/Zombie-32x32.png");
-		//texture.bind();
-		//shader.setUniform1i("u_Texture", 0);//<- the 0 is the slot that we bound the texture to
-
-		va.unbind();
-		vb.unbind();
-		ib.unbind();
-		shader.unbind();
+		cubeModel = clv::Model("res/Objects/cube.obj");
 	}
 
 	virtual void onDetach() override{
-		shader.deleteShader();
-		vb.deleteBuffer();
-		ib.deleteBuffer();
-		va.deleteArray();
+		
 	}
 
 	virtual void onUpdate() override{
@@ -122,18 +52,12 @@ public:
 
 		if(clv::Input::isKeyPressed(clv::Key::A)){
 			v_rot -= v_rot_delta;
-			//v_rotAxis.y = 1.0f;
 		} else if(clv::Input::isKeyPressed(clv::Key::D)){
 			v_rot += v_rot_delta;
-			//v_rotAxis.y = -1.0f;
-		} else{
-			//v_rotAxis.y = 0.0f;
-			//v_rot = 0.0f;
 		}
 		
-		renderer.clear();
+		clv::Application::get().getWindow().getRenderer().clear();
 
-		shader.bind();
 
 		float width = static_cast<float>(clv::Application::get().getWindow().getWidth());
 		float height = static_cast<float>(clv::Application::get().getWindow().getHeight());
@@ -154,18 +78,15 @@ public:
 
 		//opengl does the proj first
 		glm::mat4 mvp = proj * view * model;
-
-		//shader.setUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-		shader.setUniformMat4f("u_MVP", mvp);
-
-		renderer.draw(va, ib, shader);
+		
+		cubeModel.setMVP(mvp);
+		cubeModel.draw(clv::Application::get().getWindow().getRenderer());
 
 		if(r > 1.0f || r < 0.0f){
 			increment = -increment;
 		}
 		r += increment;
 		rot += 0.5f;
-		//v_rot += v_rot_delta;
 	}
 
 	virtual void onImGuiRender() override{

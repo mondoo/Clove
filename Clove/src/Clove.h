@@ -8,9 +8,9 @@
 #include "Clove/Layer.h"
 #include "Clove/Events/Event.h"
 
-#include "Clove/Input.h"
-#include "Clove/KeyCodes.h"
-#include "Clove/MouseButtonCodes.h"
+#include "Clove/Input/Input.h"
+#include "Clove/Input/KeyCodes.h"
+#include "Clove/Input/MouseButtonCodes.h"
 
 #include <imgui.h>
 

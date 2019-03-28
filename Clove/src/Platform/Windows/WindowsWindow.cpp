@@ -46,6 +46,10 @@ namespace clv{
 		return window;
 	}
 
+	const Renderer WindowsWindow::getRenderer() const{
+		return renderer;
+	}
+
 	void WindowsWindow::init(const WindowProps& props){
 		data.title = props.title;
 		data.width = props.width;

@@ -2,6 +2,7 @@
 .vs/
 bin/
 intermediate/
+!vendor/*
 
 # Files
 *.user

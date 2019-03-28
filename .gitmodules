@@ -12,3 +12,6 @@
 [submodule "Clove/vendor/glm"]
 	path = Clove/vendor/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "Clove/vendor/OBJ-Loader"]
+	path = Clove/vendor/OBJ-Loader
+	url = https://github.com/Bly7/OBJ-Loader.git

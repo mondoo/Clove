@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Input.h"
+#include "Clove/Input/Input.h"
 
 namespace clv{
 	class WindowsInput : public Input{

@@ -1,6 +1,6 @@
 #include "clvpch.h"
 #include "Application.h"
-#include "Clove/Input.h"
+#include "Clove/Input/Input.h"
 
 namespace clv{
 	Application* Application::instance = nullptr;
