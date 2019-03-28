@@ -8,11 +8,12 @@
 #include "Clove/Rendering/Renderer.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace clv{
 	Shader::Shader(const std::string& filepath)
 		: filepath(filepath){
-		ShaderProgramSource source = parseShader(filepath); //temp: relative path didn't work
+		ShaderProgramSource source = parseShader(filepath);
 		rendererID = createShader(source.vertexSource, source.fragmentSource);
 	}
 
@@ -41,7 +42,7 @@ namespace clv{
 	}
 
 	void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix){
-		GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
+		GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix)));
 	}
 
 	ShaderProgramSource Shader::parseShader(const std::string& filepath){

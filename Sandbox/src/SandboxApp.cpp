@@ -36,7 +36,8 @@ public:
 	}
 
 	virtual void onAttach() override{
-		cubeModel = clv::Model("res/Objects/cube.obj");
+		//cubeModel = clv::Model("res/Objects/cube.obj");
+		cubeModel = clv::Model("res/Objects/cube.obj", "res/Textures/Zombie-32x32.png");
 	}
 
 	virtual void onDetach() override{

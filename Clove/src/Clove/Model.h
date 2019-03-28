@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-
+//TODO: Remove
 #include "Clove/Rendering/API/VertexBuffer.h"
 #include "Clove/Rendering/API/IndexBuffer.h"
 #include "Clove/Rendering/API/VertexArray.h"
@@ -18,6 +18,8 @@ namespace clv{
 	class IndexBuffer;
 	class Shader;
 	class Texture;
+
+	class MeshInfo;
 
 	class CLV_API Model{
 		//VARIABLES
@@ -49,8 +51,11 @@ namespace clv{
 		void draw(const Renderer& renderer);
 
 		Model& operator =(Model&& other);
+
 	private:
 		std::pair<const void*, unsigned int> getVertexData() const;
 		std::pair<const unsigned int*, unsigned int> getIndexData() const;
+
+		void createModelData(const std::string& meshPath, const std::string& texturePath);
 	};
 }

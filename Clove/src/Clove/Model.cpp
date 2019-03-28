@@ -14,55 +14,11 @@
 
 namespace clv{
 	Model::Model(const std::string& mesh){
-		MeshInfo loadedMeshInfo;
-		if (loadOBJ(mesh, loadedMeshInfo)){
-			//Ignoring norm for now
-			const int elementCount = loadedMeshInfo.verticies.size(); //All vectors should be the same size -- add warn or error?
-
-			for(int i = 0; i < elementCount; ++i){
-				vertexData.push_back(loadedMeshInfo.verticies[i].x);
-				vertexData.push_back(loadedMeshInfo.verticies[i].y);
-				vertexData.push_back(loadedMeshInfo.verticies[i].z);
-
-				vertexData.push_back(loadedMeshInfo.texCoords[i].x);
-				vertexData.push_back(loadedMeshInfo.texCoords[i].y);
-			}
-			indices = loadedMeshInfo.indices;
-
-			//Vertex Buffer
-			va = std::make_unique<VertexArray>(VertexArray());
-			auto[vdata, vsize] = getVertexData();
-			vb = std::make_unique<VertexBuffer>(VertexBuffer(vdata, vsize));
-			VertexBufferLayout layout;
-			layout.push<float>(3); //pos
-			layout.push<float>(2); //tex coord
-			va->addBuffer(*vb, layout);
-
-			//Index Buffer
-			auto[idata, icount] = getIndexData();
-			ib = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
-
-			//Shaders
-			shader = std::make_unique<Shader>(Shader("../Clove/res/Shaders/Basic.shader"));
-			shader->bind();
-			/*shader.setUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);*/
-
-			texture = std::make_unique<Texture>(Texture("res/Textures/Zombie-32x32.png"));
-			texture->bind();
-			shader->setUniform1i("u_Texture", 0);//<- 0 here is what ever slot we bind the texture to
-
-			va->unbind();
-			vb->unbind();
-			ib->unbind();
-			shader->unbind();
-
-		} else{
-			CLV_ERROR("Could not load mesh for model");
-		}
+		createModelData(mesh, "../Clove/res/Textures/DefaultTexture.png");
 	}
 
 	Model::Model(const std::string& mesh, const std::string& texture){
-		//TODO
+		createModelData(mesh, texture);
 	}
 
 	Model::Model(Model&& other){
@@ -100,6 +56,10 @@ namespace clv{
 	}
 
 	void Model::draw(const Renderer& renderer){
+		const unsigned int slot = 0;
+		texture->bind(slot);
+		shader->setUniform1i("u_Texture", slot);
+		
 		renderer.draw(*va, *ib, *shader);
 	}
 
@@ -122,5 +82,75 @@ namespace clv{
 
 	std::pair<const unsigned int*, unsigned int> Model::getIndexData() const{
 		return std::pair<const unsigned int*, unsigned int>(indices.data(), indices.size());
+	}
+
+	void Model::createModelData(const std::string& meshPath, const std::string& texturePath)
+	{
+		MeshInfo loadedMeshInfo;
+		if(loadOBJ(meshPath, loadedMeshInfo))
+		{
+			const int vertexCount = loadedMeshInfo.verticies.size();
+			const int texCoordCount = loadedMeshInfo.texCoords.size();
+			const int normalCount = loadedMeshInfo.normals.size();
+
+			VertexBufferLayout layout;
+
+			if(vertexCount > 0){
+				layout.push<float>(3);
+			}
+
+			if(texCoordCount > 0){
+				layout.push<float>(2);
+			}
+
+			if(normalCount > 0){
+				layout.push<float>(3);
+			}
+
+			for(int i = 0; i < vertexCount; ++i){
+				if(vertexCount > 0){
+					vertexData.push_back(loadedMeshInfo.verticies[i].x);
+					vertexData.push_back(loadedMeshInfo.verticies[i].y);
+					vertexData.push_back(loadedMeshInfo.verticies[i].z);
+				}
+
+				if(texCoordCount > 0){
+					vertexData.push_back(loadedMeshInfo.texCoords[i].x);
+					vertexData.push_back(loadedMeshInfo.texCoords[i].y);
+				}
+
+				if(normalCount > 0){
+					vertexData.push_back(loadedMeshInfo.normals[i].x);
+					vertexData.push_back(loadedMeshInfo.normals[i].y);
+					vertexData.push_back(loadedMeshInfo.normals[i].z);
+				}
+			}
+			indices = loadedMeshInfo.indices;
+
+			auto[vdata, vsize] = getVertexData();
+			vb = std::make_unique<VertexBuffer>(VertexBuffer(vdata, vsize));
+
+			va = std::make_unique<VertexArray>(VertexArray());
+			va->addBuffer(*vb, layout);
+
+			auto[idata, icount] = getIndexData();
+			ib = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
+
+			//Shaders
+			shader = std::make_unique<Shader>(Shader("../Clove/res/Shaders/Basic.shader"));
+			shader->bind();
+			shader->setUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
+
+			texture = std::make_unique<Texture>(Texture(texturePath));
+
+			va->unbind();
+			vb->unbind();
+			ib->unbind();
+			shader->unbind();
+		}
+		else
+		{
+			CLV_ERROR("Could not load mesh for model");
+		}
 	}
 }
