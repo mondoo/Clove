@@ -32,24 +32,6 @@ namespace clv{
 		indices = other.indices;
 	}
 
-	Model::~Model(){
-		if(va){
-			va->deleteArray();
-		}
-		if(vb){
-			vb->deleteBuffer();
-		}
-		if(ib){
-			ib->deleteBuffer();
-		}
-		if(shader){
-			shader->deleteShader();
-		}
-		if(texture){
-			texture->deleteTexture();
-		}
-	}
-
 	void Model::setMVP(const glm::mat4& MVP){
 		shader->bind();
 		shader->setUniformMat4f("u_MVP", MVP);
@@ -126,20 +108,20 @@ namespace clv{
 			indices = loadedMeshInfo.indices;
 
 			auto[vdata, vsize] = getVertexData();
-			vb = std::make_unique<VertexBuffer>(VertexBuffer(vdata, vsize));
+			vb = std::unique_ptr<VertexBuffer, VBDeleter>(new VertexBuffer(vdata, vsize));
 
-			va = std::make_unique<VertexArray>(VertexArray());
+			va = std::unique_ptr<VertexArray, VADeleter>(new VertexArray());
 			va->addBuffer(*vb, layout);
 
 			auto[idata, icount] = getIndexData();
-			ib = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
+			ib = std::unique_ptr<IndexBuffer, IBDeleter>(new IndexBuffer(idata, icount));
 
 			//Shaders
-			shader = std::make_unique<Shader>(Shader("../Clove/res/Shaders/Basic.shader"));
+			shader = std::unique_ptr<Shader, ShaderDeleter>(new Shader("../Clove/res/Shaders/Basic.shader"));
 			shader->bind();
 			shader->setUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
 
-			texture = std::make_unique<Texture>(Texture(texturePath));
+			texture = std::unique_ptr<Texture, TextureDeleter>(new Texture(texturePath));
 
 			va->unbind();
 			vb->unbind();

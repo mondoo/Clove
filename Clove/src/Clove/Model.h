@@ -21,6 +21,36 @@ namespace clv{
 
 	class MeshInfo;
 
+	struct VADeleter{
+		void operator ()(VertexArray* va){
+			va->deleteArray();
+		}
+	};
+
+	struct VBDeleter{
+		void operator ()(VertexBuffer* vb){
+			vb->deleteBuffer();
+		}
+	};
+
+	struct IBDeleter{
+		void operator ()(IndexBuffer* ib){
+			ib->deleteBuffer();
+		}
+	};
+
+	struct ShaderDeleter{
+		void operator ()(Shader* sh){
+			sh->deleteShader();
+		}
+	};
+
+	struct TextureDeleter{
+		void operator ()(Texture* tx){
+			tx->deleteTexture();
+		}
+	};
+
 	class CLV_API Model{
 		//VARIABLES
 	private:
@@ -29,11 +59,11 @@ namespace clv{
 		std::vector<float> vertexData;
 		std::vector<unsigned int> indices;
 
-		std::unique_ptr<VertexArray> va;
-		std::unique_ptr<VertexBuffer> vb;
-		std::unique_ptr<IndexBuffer> ib;
-		std::unique_ptr<Shader> shader;
-		std::unique_ptr<Texture> texture;
+		std::unique_ptr<VertexArray, VADeleter> va;
+		std::unique_ptr<VertexBuffer, VBDeleter> vb;
+		std::unique_ptr<IndexBuffer, IBDeleter> ib;
+		std::unique_ptr<Shader, ShaderDeleter> shader;
+		std::unique_ptr<Texture, TextureDeleter> texture;
 
 		//FUNCTIONS
 	public:
@@ -41,8 +71,6 @@ namespace clv{
 		Model(const std::string& mesh);
 		Model(const std::string& mesh, const std::string& texture);
 		Model(Model&& other);
-
-		~Model();
 
 		//temp ish
 		void setMVP(const glm::mat4& MVP);
