@@ -1,3 +1,6 @@
+--GLOBALS
+outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
 workspace "Clove"
 	architecture "x64"
 	startproject "Sandbox"
@@ -8,20 +11,127 @@ workspace "Clove"
 		"Dist"
 	}
 
-outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+--Clove Dependencies
+group "Dependencies"
+--IMGUI
+project "ImGui"
+	location "Clove/vendor/imgui"
+	kind "StaticLib"
+	language "C++"
+		
+	targetdir ("%{prj.location}/bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("%{prj.location}/intermediate/" .. outputdir .. "/%{prj.name}")
 
+	files{
+        "%{prj.location}/imconfig.h",
+        "%{prj.location}/imgui.h",
+        "%{prj.location}/imgui.cpp",
+        "%{prj.location}/imgui_draw.cpp",
+        "%{prj.location}/imgui_internal.h",
+        "%{prj.location}/imgui_widgets.cpp",
+        "%{prj.location}/imstb_rectpack.h",
+        "%{prj.location}/imstb_textedit.h",
+        "%{prj.location}/imstb_truetype.h",
+        "%{prj.location}/imgui_demo.cpp"
+    }
+
+	defines{
+		"IMGUI_USER_CONFIG=\"../../src/Clove/ImGui/ImGuiConfig.h\"",
+		"IMGUI_DISABLE_INCLUDE_IMCONFIG_H"
+	}
+	
+	filter "system:windows"
+	    systemversion "latest"
+	    cppdialect "C++17"
+	    staticruntime "On"
+	    
+	filter { "system:windows", "configurations:Release" }
+	    buildoptions "/MT"
+
+--GFLW
+project "GLFW"
+	location "Clove/vendor/GLFW"
+    kind "StaticLib"
+    language "C"
+    
+	targetdir ("%{prj.location}/bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("%{prj.location}/intermediate/" .. outputdir .. "/%{prj.name}")
+
+	files{
+        "%{prj.location}/include/GLFW/glfw3.h",
+        "%{prj.location}/include/GLFW/glfw3native.h",
+        "%{prj.location}/src/glfw_config.h",
+        "%{prj.location}/src/context.c",
+        "%{prj.location}/src/init.c",
+        "%{prj.location}/src/input.c",
+        "%{prj.location}/src/monitor.c",
+        "%{prj.location}/src/vulkan.c",
+        "%{prj.location}/src/window.c"
+    }
+    
+	filter "system:windows"
+        buildoptions { "-std=c11", "-lgdi32" }
+        systemversion "10.0.17134.0"
+        staticruntime "On"
+        
+        files{
+            "%{prj.location}/src/win32_init.c",
+            "%{prj.location}/src/win32_joystick.c",
+            "%{prj.location}/src/win32_monitor.c",
+            "%{prj.location}/src/win32_time.c",
+            "%{prj.location}/src/win32_thread.c",
+            "%{prj.location}/src/win32_window.c",
+            "%{prj.location}/src/wgl_context.c",
+            "%{prj.location}/src/egl_context.c",
+            "%{prj.location}/src/osmesa_context.c"
+        }
+
+		defines{ 
+            "_GLFW_WIN32",
+            "_CRT_SECURE_NO_WARNINGS"
+		}
+
+    filter { "system:windows", "configurations:Release" }
+        buildoptions "/MT"
+
+--GLAD
+project "Glad"
+	location "Clove/vendor/Glad"
+    kind "StaticLib"
+    language "C"
+    
+	targetdir ("%{prj.location}/bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("%{prj.location}/intermediate/" .. outputdir .. "/%{prj.name}")
+
+	files{
+        "%{prj.location}/include/glad/glad.h",
+        "%{prj.location}/include/KHR/khrplatform.h",
+        "%{prj.location}/src/glad.c"
+    }
+
+	includedirs{
+		"%{prj.location}/include"
+	}
+    
+	filter "system:windows"
+        buildoptions { "-std=c11", "-lgdi32" }
+        systemversion "latest"
+        staticruntime "On"
+        
+    filter { "system:windows", "configurations:Release" }
+        buildoptions "/MT"
+
+--End: Dependencies
+group ""
+
+--CLOVE
 -- Inlcude direction relative to the roof folder (solution directory)
 includeDir = {}
 includeDir["GLFW"]	= "Clove/vendor/GLFW/include"
 includeDir["Glad"]	= "Clove/vendor/Glad/include"
 includeDir["ImGui"] = "Clove/vendor/imgui"
 includeDir["glm"]	= "Clove/vendor/glm"
-
-group "Dependencies"
-	include "Clove/vendor/GLFW"
-	include "Clove/vendor/Glad"
-	include "Clove/vendor/imgui"
-group ""
+includeDir["stb"]	= "Clove/vendor/stb"
 
 project "Clove"
 	location "Clove"
@@ -38,8 +148,13 @@ project "Clove"
 	files{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+
+		"%{prj.name}/res/**.shader",
+
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/stb/**.cpp",
+		"%{prj.name}/vendor/OBJ-Loader/**.h"
 	}
 
 	includedirs{
@@ -48,7 +163,9 @@ project "Clove"
 		"%{includeDir.GLFW}",
 		"%{includeDir.Glad}",
 		"%{includeDir.ImGui}",
-		"%{includeDir.glm}"
+		"%{includeDir.glm}",
+		"%{includeDir.stb}",
+		"%{prj.name}/vendor/OBJ-Loader/source"
 	}
 
 	links{
@@ -103,6 +220,7 @@ project "Clove"
 		runtime "Release"
 		optimize "On"
 
+--SANDBOX
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
@@ -119,13 +237,14 @@ project "Sandbox"
 
 	includedirs{
 		"Clove/vendor/spdlog/include",
+		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
 		"Clove/src",
 		"Clove/vendor"
 	}
 
 	links{
-		"Clove"
+		"Clove",
 	}
 
 	defines{

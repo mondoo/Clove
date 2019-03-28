@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Clove/Core.h"
-#include "Clove/KeyCodes.h"
-#include "Clove/MouseButtonCodes.h"
+#include "Clove/Input/KeyCodes.h"
+#include "Clove/Input/MouseButtonCodes.h"
 
 namespace clv{
 	class CLV_API Input{

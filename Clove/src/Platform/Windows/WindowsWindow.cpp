@@ -5,6 +5,8 @@
 #include "Clove/Events/MouseEvent.h"
 #include "Clove/Events/KeyEvent.h"
 
+#include "Clove/Rendering/Renderer.h"
+
 #include <glad/glad.h>
 
 namespace clv{
@@ -44,6 +46,10 @@ namespace clv{
 		return window;
 	}
 
+	const Renderer WindowsWindow::getRenderer() const{
+		return renderer;
+	}
+
 	void WindowsWindow::init(const WindowProps& props){
 		data.title = props.title;
 		data.width = props.width;
@@ -59,6 +65,12 @@ namespace clv{
 			GLFWInitialised = true;
 		}
 
+		//setting opengl to 3.3.0 core profile
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Set the core profile (basically stricter and does less for us)
+		//
+
 		window = glfwCreateWindow(static_cast<int>(data.width), static_cast<int>(data.height), data.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(window);
 
@@ -66,6 +78,17 @@ namespace clv{
 		CLV_ASSERT(status, "Failed to initialise Glad");
 
 		CLV_INFO("Window created!");
+		CLV_INFO("GL version: {0}", glGetString(GL_VERSION));
+
+		CLV_TRACE("Enabling Depth buffer");
+		GLCall(glDepthFunc(GL_LESS));
+		GLCall(glEnable(GL_DEPTH_TEST));
+
+		CLV_TRACE("Blend set to: SRC_ALPHA | ONE_MINUS_SRC_ALPHA");
+		//src is from the image - dest is what is already in the buffer
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+		GLCall(glEnable(GL_BLEND));
+		//I guess it's called blending because you blend the src with the destination
 
 		glfwSetWindowUserPointer(window, &data);
 		setVSync(true);

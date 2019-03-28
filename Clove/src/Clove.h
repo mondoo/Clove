@@ -2,17 +2,17 @@
 
 //For use by Clove applications
 
-#include "Clove/Core.h"
+#include "clvpch.h"
 
 #include "Clove/Application.h"
 #include "Clove/Layer.h"
-#include "Clove/Log.h"
+#include "Clove/Events/Event.h"
 
-#include "Clove/Input.h"
-#include "Clove/KeyCodes.h"
-#include "Clove/MouseButtonCodes.h"
+#include "Clove/Input/Input.h"
+#include "Clove/Input/KeyCodes.h"
+#include "Clove/Input/MouseButtonCodes.h"
 
-#include "Clove/ImGui/ImGuiLayer.h"
+#include <imgui.h>
 
 //----------ENTRY POINT----------
 #include "Clove/EntryPoint.h"

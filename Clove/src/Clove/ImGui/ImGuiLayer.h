@@ -1,9 +1,6 @@
 #pragma once
 
 #include "Clove/Layer.h"
-#include "Clove/Events/MouseEvent.h"
-#include "Clove/Events/KeyEvent.h"
-#include "Clove/Events/ApplicationEvent.h"
 
 namespace clv{
 	class CLV_API ImGuiLayer : public Layer{

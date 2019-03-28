@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Window.h"
+#include "Clove/Rendering/Renderer.h"
 
 #include <GLFW/glfw3.h>
 
@@ -20,6 +21,8 @@ namespace clv{
 			EventCallbackFn eventCallback;
 		} data;
 
+		Renderer renderer;
+
 		//FUNCTIONS
 	public:
 		WindowsWindow(const WindowProps& props);
@@ -36,6 +39,7 @@ namespace clv{
 		virtual bool isVSync() const override;
 
 		virtual void* getNativeWindow() const override;
+		virtual const Renderer getRenderer() const override;
 
 	private:
 		virtual void init(const WindowProps& props);

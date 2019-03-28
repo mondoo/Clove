@@ -1,12 +1,6 @@
 #include "clvpch.h"
 #include "Application.h"
-
-#include "Clove/Log.h"
-
-//TODO: Remove
-#include <glad/glad.h>
-
-#include "Clove/Input.h"
+#include "Clove/Input/Input.h"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -15,7 +9,7 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		window = std::unique_ptr<Window>(Window::create());
+		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
 		imGuiLayer = std::make_shared<ImGuiLayer>(ImGuiLayer());
@@ -24,11 +18,6 @@ namespace clv{
 
 	void Application::run(){
 		while(running){
-			//TODO: Remove
-			glClearColor(1, 0, 1, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
-			//
-
 			for(auto layer : layerStack){
 				layer->onUpdate();
 			}
