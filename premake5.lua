@@ -247,6 +247,11 @@ project "Sandbox"
 		"Clove",
 	}
 
+	defines{
+		"ENGINE=0",
+		"CLV_BUILD_DLL=0"
+	}
+
 	filter "system:windows"
 		cppdialect "C++17"
 		staticruntime "On"
