@@ -2,17 +2,33 @@
 #include "Model.h"
 #include "Clove/MeshLoader.h"
 #include "Clove/Rendering/Renderer.h"
-//#include "Clove/Rendering/API/VertexBuffer.h"
-//#include "Clove/Rendering/API/IndexBuffer.h"
-//#include "Clove/Rendering/API/VertexArray.h"
-//#include "Clove/Rendering/API/VertexBufferLayout.h"
-//#include "Clove/Rendering/API/Shader.h"
-//#include "Clove/Rendering/API/Texture.h"
+#include "Clove/Rendering/API/VertexBuffer.h"
+#include "Clove/Rendering/API/IndexBuffer.h"
+#include "Clove/Rendering/API/VertexArray.h"
+#include "Clove/Rendering/API/VertexBufferLayout.h"
+#include "Clove/Rendering/API/Shader.h"
+#include "Clove/Rendering/API/Texture.h"
 
 #include <fstream>
 #include <strstream>
 
 namespace clv{
+	void VADeleter::operator()(VertexArray* va){
+		va->deleteArray();
+	}
+	void VBDeleter::operator()(VertexBuffer* vb){
+		vb->deleteBuffer();
+	}
+	void IBDeleter::operator()(IndexBuffer* ib){
+		ib->deleteBuffer();
+	}
+	void ShaderDeleter::operator()(Shader* sh){
+		sh->deleteShader();
+	}
+	void TextureDeleter::operator()(Texture* tx){
+		tx->deleteTexture();
+	}
+
 	Model::Model(const std::string& mesh){
 		createModelData(mesh, "../Clove/res/Textures/DefaultTexture.png");
 	}

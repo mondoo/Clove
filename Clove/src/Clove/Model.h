@@ -2,15 +2,6 @@
 
 #include <glm/glm.hpp>
 
-//TODO: Remove
-#include "Clove/Rendering/API/VertexBuffer.h"
-#include "Clove/Rendering/API/IndexBuffer.h"
-#include "Clove/Rendering/API/VertexArray.h"
-#include "Clove/Rendering/API/VertexBufferLayout.h"
-#include "Clove/Rendering/API/Shader.h"
-#include "Clove/Rendering/API/Texture.h"
-
-
 namespace clv{
 	class Renderer;
 	class VertexArray;
@@ -22,33 +13,23 @@ namespace clv{
 	class MeshInfo;
 
 	struct VADeleter{
-		void operator ()(VertexArray* va){
-			va->deleteArray();
-		}
+		void operator()(VertexArray* va);
 	};
 
 	struct VBDeleter{
-		void operator ()(VertexBuffer* vb){
-			vb->deleteBuffer();
-		}
+		void operator()(VertexBuffer* vb);
 	};
 
 	struct IBDeleter{
-		void operator ()(IndexBuffer* ib){
-			ib->deleteBuffer();
-		}
+		void operator()(IndexBuffer* ib);
 	};
 
 	struct ShaderDeleter{
-		void operator ()(Shader* sh){
-			sh->deleteShader();
-		}
+		void operator()(Shader* sh);
 	};
 
 	struct TextureDeleter{
-		void operator ()(Texture* tx){
-			tx->deleteTexture();
-		}
+		void operator()(Texture* tx);
 	};
 
 	class CLV_API Model{
@@ -78,7 +59,7 @@ namespace clv{
 
 		void draw(const Renderer& renderer);
 
-		Model& operator =(Model&& other);
+		Model& operator=(Model&& other);
 
 	private:
 		std::pair<const void*, unsigned int> getVertexData() const;
