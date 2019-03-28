@@ -84,11 +84,9 @@ namespace clv{
 		return std::pair<const unsigned int*, unsigned int>(indices.data(), indices.size());
 	}
 
-	void Model::createModelData(const std::string& meshPath, const std::string& texturePath)
-	{
+	void Model::createModelData(const std::string& meshPath, const std::string& texturePath){
 		MeshInfo loadedMeshInfo;
-		if(loadOBJ(meshPath, loadedMeshInfo))
-		{
+		if(loadOBJ(meshPath, loadedMeshInfo)){
 			const int vertexCount = loadedMeshInfo.verticies.size();
 			const int texCoordCount = loadedMeshInfo.texCoords.size();
 			const int normalCount = loadedMeshInfo.normals.size();
@@ -147,9 +145,7 @@ namespace clv{
 			vb->unbind();
 			ib->unbind();
 			shader->unbind();
-		}
-		else
-		{
+		} else{
 			CLV_ERROR("Could not load mesh for model");
 		}
 	}
