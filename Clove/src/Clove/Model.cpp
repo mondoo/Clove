@@ -12,21 +12,7 @@
 #include <fstream>
 
 namespace clv{
-	void VADeleter::operator()(VertexArray* va){
-		va->deleteArray();
-	}
-	void VBDeleter::operator()(VertexBuffer* vb){
-		vb->deleteBuffer();
-	}
-	void IBDeleter::operator()(IndexBuffer* ib){
-		ib->deleteBuffer();
-	}
-	void ShaderDeleter::operator()(Shader* sh){
-		sh->deleteShader();
-	}
-	void TextureDeleter::operator()(Texture* tx){
-		tx->deleteTexture();
-	}
+	Model::Model() = default;
 
 	Model::Model(const std::string& mesh){
 		createModelData(mesh, "../Clove/res/Textures/DefaultTexture.png");
@@ -46,6 +32,8 @@ namespace clv{
 		vertexData = other.vertexData;
 		indices = other.indices;
 	}
+
+	Model::~Model() = default;
 
 	void Model::setMVP(const glm::mat4& MVP){
 		shader->bind();
@@ -123,20 +111,20 @@ namespace clv{
 			indices = loadedMeshInfo.indices;
 
 			auto[vdata, vsize] = getVertexData();
-			vb = std::unique_ptr<VertexBuffer, VBDeleter>(new VertexBuffer(vdata, vsize));
+			vb = std::make_unique<VertexBuffer>(VertexBuffer(vdata, vsize));
 
-			va = std::unique_ptr<VertexArray, VADeleter>(new VertexArray());
+			va = std::make_unique<VertexArray>(VertexArray());
 			va->addBuffer(*vb, layout);
 
 			auto[idata, icount] = getIndexData();
-			ib = std::unique_ptr<IndexBuffer, IBDeleter>(new IndexBuffer(idata, icount));
+			ib = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
 
 			//Shaders
-			shader = std::unique_ptr<Shader, ShaderDeleter>(new Shader("../Clove/res/Shaders/Basic.shader"));
+			shader = std::make_unique<Shader>(Shader("../Clove/res/Shaders/Basic.shader"));
 			shader->bind();
 			shader->setUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
 
-			texture = std::unique_ptr<Texture, TextureDeleter>(new Texture(texturePath));
+			texture = std::make_unique<Texture>(Texture(texturePath));
 
 			va->unbind();
 			vb->unbind();

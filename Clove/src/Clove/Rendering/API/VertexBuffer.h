@@ -8,12 +8,14 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		VertexBuffer() = default; //temp
 		VertexBuffer(const void* data, unsigned int size);
+		VertexBuffer(VertexBuffer&& other);
+
+		~VertexBuffer();
 
 		void bind() const;
 		void unbind()  const;
 
-		void deleteBuffer();
+		VertexBuffer& operator=(VertexBuffer&& other);
 	};
 }

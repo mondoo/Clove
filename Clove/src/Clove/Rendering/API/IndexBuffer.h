@@ -9,14 +9,16 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		IndexBuffer() = default; //temp
 		IndexBuffer(const unsigned int* data, unsigned int inCount);
+		IndexBuffer(IndexBuffer&& other);
+
+		~IndexBuffer();
 
 		void bind() const;
 		void unbind() const;
 
-		void deleteBuffer();
-
 		inline unsigned int getCount() const{ return count; }
+
+		IndexBuffer& operator=(IndexBuffer&& other);
 	};
 }

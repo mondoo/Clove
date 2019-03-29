@@ -10,8 +10,15 @@ namespace clv{
 	VertexArray::VertexArray(){
 		GLCall(glGenVertexArrays(1, &rendererID));
 	}
+
+	VertexArray::VertexArray(VertexArray&& other){
+		rendererID = other.rendererID;
+
+		other.rendererID = 0;
+	}
+
 	VertexArray::~VertexArray(){
-		//GLCall(glDeleteVertexArrays(1, &rendererID));
+		GLCall(glDeleteVertexArrays(1, &rendererID));
 	}
 
 	void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout){
@@ -36,7 +43,11 @@ namespace clv{
 		GLCall(glBindVertexArray(0));
 	}
 
-	void VertexArray::deleteArray(){
-		GLCall(glDeleteVertexArrays(1, &rendererID));
+	VertexArray& VertexArray::operator=(VertexArray&& other){
+		rendererID = other.rendererID;
+
+		other.rendererID = 0;
+
+		return *this;
 	}
 }

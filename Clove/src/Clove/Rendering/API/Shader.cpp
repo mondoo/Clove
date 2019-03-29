@@ -17,8 +17,18 @@ namespace clv{
 		rendererID = createShader(source.vertexSource, source.fragmentSource);
 	}
 
+	Shader::Shader(Shader&& other){
+		filepath = other.filepath;
+		rendererID = other.rendererID;
+		uniformLocationCache = other.uniformLocationCache;
+
+		other.filepath.clear();
+		other.rendererID = 0;
+		other.uniformLocationCache.clear();
+	}
+
 	Shader::~Shader(){
-		//GLCall(glDeleteProgram(rendererID));
+		GLCall(glDeleteProgram(rendererID));
 	}
 
 	void Shader::bind() const{
@@ -27,10 +37,6 @@ namespace clv{
 
 	void Shader::unbind() const{
 		GLCall(glUseProgram(0));
-	}
-
-	void Shader::deleteShader(){
-		GLCall(glDeleteProgram(rendererID));
 	}
 
 	void Shader::setUniform1i(const std::string& name, int value){
@@ -43,6 +49,18 @@ namespace clv{
 
 	void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix){
 		GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix)));
+	}
+
+	Shader& Shader::operator=(Shader&& other){
+		filepath = other.filepath;
+		rendererID = other.rendererID;
+		uniformLocationCache = other.uniformLocationCache;
+
+		other.filepath.clear();
+		other.rendererID = 0;
+		other.uniformLocationCache.clear();
+
+		return *this;
 	}
 
 	ShaderProgramSource Shader::parseShader(const std::string& filepath){

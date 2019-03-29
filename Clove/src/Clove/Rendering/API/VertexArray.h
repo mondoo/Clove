@@ -12,6 +12,8 @@ namespace clv{
 		//FUNCTIONS
 	public:
 		VertexArray();
+		VertexArray(VertexArray&& other);
+
 		~VertexArray();
 
 		void addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
@@ -19,6 +21,6 @@ namespace clv{
 		void bind() const;
 		void unbind() const;
 
-		void deleteArray();
+		VertexArray& operator=(VertexArray&& other);
 	};
 }

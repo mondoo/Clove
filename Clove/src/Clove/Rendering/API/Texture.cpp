@@ -30,8 +30,24 @@ namespace clv{
 		}
 	}
 
+	Texture::Texture(Texture&& other){
+		rendererID = other.rendererID;
+		filePath = other.filePath;
+		localBuffer = other.localBuffer;
+		width = other.width;
+		height = other.height;
+		BPP = other.BPP;
+
+		other.rendererID = 0;
+		other.filePath.clear();
+		other.localBuffer = nullptr;
+		other.width = 0;
+		other.height = 0;
+		other.BPP = 0;
+	}
+
 	Texture::~Texture(){
-		//GLCall(glDeleteTextures(1, &rendererID));
+		GLCall(glDeleteTextures(1, &rendererID));
 	}
 
 	void Texture::bind(unsigned int slot) const{
@@ -43,7 +59,21 @@ namespace clv{
 		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 	}
 
-	void Texture::deleteTexture(){
-		GLCall(glDeleteTextures(1, &rendererID));
+	Texture& Texture::operator=(Texture&& other){
+		rendererID = other.rendererID;
+		filePath = other.filePath;
+		localBuffer = other.localBuffer;
+		width = other.width;
+		height = other.height;
+		BPP = other.BPP;
+
+		other.rendererID = 0;
+		other.filePath.clear();
+		other.localBuffer = nullptr;
+		other.width = 0;
+		other.height = 0;
+		other.BPP = 0;
+
+		return *this;
 	}
 }

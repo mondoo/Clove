@@ -12,6 +12,16 @@ namespace clv{
 		GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
 	}
 
+	VertexBuffer::VertexBuffer(VertexBuffer&& other){
+		rendererID = other.rendererID;
+
+		other.rendererID = 0;
+	}
+
+	VertexBuffer::~VertexBuffer(){
+		GLCall(glDeleteBuffers(1, &rendererID));
+	}
+
 	void VertexBuffer::bind() const{
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, rendererID));
 	}
@@ -20,7 +30,11 @@ namespace clv{
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	}
 
-	void VertexBuffer::deleteBuffer(){
-		GLCall(glDeleteBuffers(1, &rendererID));
+	VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other){
+		rendererID = other.rendererID;
+
+		other.rendererID = 0;
+
+		return *this;
 	}
 }
