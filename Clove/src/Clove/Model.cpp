@@ -10,7 +10,6 @@
 #include "Clove/Rendering/API/Texture.h"
 
 #include <fstream>
-#include <strstream>
 
 namespace clv{
 	void VADeleter::operator()(VertexArray* va){
@@ -85,9 +84,9 @@ namespace clv{
 	void Model::createModelData(const std::string& meshPath, const std::string& texturePath){
 		MeshInfo loadedMeshInfo;
 		if(loadOBJ(meshPath, loadedMeshInfo)){
-			const int vertexCount = loadedMeshInfo.verticies.size();
-			const int texCoordCount = loadedMeshInfo.texCoords.size();
-			const int normalCount = loadedMeshInfo.normals.size();
+			const size_t vertexCount = loadedMeshInfo.verticies.size();
+			const size_t texCoordCount = loadedMeshInfo.texCoords.size();
+			const size_t normalCount = loadedMeshInfo.normals.size();
 
 			VertexBufferLayout layout;
 

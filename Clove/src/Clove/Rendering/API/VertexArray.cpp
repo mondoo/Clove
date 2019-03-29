@@ -18,7 +18,7 @@ namespace clv{
 		bind();
 		vb.bind();
 		const auto& elements = layout.getElements();
-		unsigned int offset = 0;
+		unsigned long long offset = 0; //void* expects 64 bits
 		for(unsigned int i = 0; i < elements.size(); ++i){
 			const auto& element = elements[i];
 			GLCall(glEnableVertexAttribArray(i));

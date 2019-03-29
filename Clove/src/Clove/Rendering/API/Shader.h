@@ -14,6 +14,7 @@ namespace clv{
 		std::string filepath;
 		unsigned int rendererID = 0;
 		std::unordered_map<std::string, int> uniformLocationCache;
+
 		//FUNCTIONS
 	public:
 		Shader() = default; //temp

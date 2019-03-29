@@ -10,7 +10,7 @@ namespace clv{
 	class Shader;
 	class Texture;
 
-	class MeshInfo;
+	struct MeshInfo;
 
 	struct VADeleter{
 		void operator()(VertexArray* va);
