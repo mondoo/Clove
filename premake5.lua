@@ -37,7 +37,8 @@ project "ImGui"
 
 	defines{
 		"IMGUI_USER_CONFIG=\"../../src/Clove/ImGui/ImGuiConfig.h\"",
-		"IMGUI_DISABLE_INCLUDE_IMCONFIG_H"
+		"IMGUI_DISABLE_INCLUDE_IMCONFIG_H",
+		"_CRT_SECURE_NO_WARNINGS"
 	}
 	
 	filter "system:windows"
@@ -70,9 +71,9 @@ project "GLFW"
     }
     
 	filter "system:windows"
-        buildoptions { "-std=c11", "-lgdi32" }
-        systemversion "10.0.17134.0"
-        staticruntime "On"
+		systemversion "latest"
+	    cppdialect "C++17"
+	    staticruntime "On"
         
         files{
             "%{prj.location}/src/win32_init.c",
@@ -114,9 +115,9 @@ project "Glad"
 	}
     
 	filter "system:windows"
-        buildoptions { "-std=c11", "-lgdi32" }
         systemversion "latest"
-        staticruntime "On"
+	    cppdialect "C++17"
+	    staticruntime "On"
         
     filter { "system:windows", "configurations:Release" }
         buildoptions "/MT"
