@@ -20,7 +20,7 @@ namespace clv{
 		inline static unsigned int getSizeOfType(unsigned int type);
 	};
 
-	class CLV_API VertexBufferLayout{
+	class VertexBufferLayout{
 		//VARIABLES
 	private:
 		std::vector<VertexBufferElement> elements;

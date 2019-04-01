@@ -1,7 +1,7 @@
 #pragma once
 
 namespace clv{
-	class CLV_API Texture{
+	class Texture{
 		//VARIABLES
 	private:
 		unsigned int rendererID = 0;

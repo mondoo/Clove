@@ -10,7 +10,7 @@ namespace clv{
 
 	struct MeshInfo;
 
-	class CLV_API Model{
+	class Model{
 		//VARIABLES
 	private:
 		bool isUsingTexture = false;
@@ -26,20 +26,20 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		Model();
-		Model(const std::string& mesh);
-		Model(const std::string& mesh, const std::string& texture);
-		Model(Model&& other);
+		CLV_API Model();
+		CLV_API Model(const std::string& mesh);
+		CLV_API Model(const std::string& mesh, const std::string& texture);
+		CLV_API Model(Model&& other);
 
-		~Model();
+		CLV_API ~Model();
 
 		//temp ish
-		void setMVP(const glm::mat4& MVP);
+		CLV_API void setMVP(const glm::mat4& MVP);
 		//~
 
-		void draw(const Renderer& renderer);
+		CLV_API void draw(const Renderer& renderer);
 
-		Model& operator=(Model&& other);
+		CLV_API Model& operator=(Model&& other);
 
 	private:
 		std::pair<const void*, unsigned int> getVertexData() const;

@@ -4,7 +4,7 @@ namespace clv{
 	class VertexBuffer;
 	class VertexBufferLayout;
 
-	class CLV_API VertexArray{
+	class VertexArray{
 		//VARIABLES
 	private:
 		unsigned int rendererID;

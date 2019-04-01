@@ -9,17 +9,18 @@ namespace clv{
 	class IndexBuffer;
 	class Shader;
 
-	void CLV_API GLClearError();
+	void GLClearError();
 
-	bool CLV_API GLLogCall();
+	bool GLLogCall();
 
-	class CLV_API Renderer{
+	class Renderer{
 		//VARIABLES
 
 		//FUNCTIONS
 	public:
-		void clear() const;
+		//CLV_API here is temp - i don't think the client should be exposed to the renderer
+		CLV_API void clear() const;
 
-		void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+		CLV_API void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
 	};
 }

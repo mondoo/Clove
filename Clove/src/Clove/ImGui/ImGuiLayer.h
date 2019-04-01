@@ -3,7 +3,7 @@
 #include "Clove/Layer.h"
 
 namespace clv{
-	class CLV_API ImGuiLayer : public Layer{
+	class ImGuiLayer : public Layer{
 		//VARIABLES
 	private:
 		float time = 0.0f;

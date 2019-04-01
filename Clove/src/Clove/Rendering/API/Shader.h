@@ -8,7 +8,7 @@ namespace clv{
 		std::string fragmentSource;
 	};
 
-	class CLV_API Shader{
+	class Shader{
 		//VARIABLES
 	private:
 		std::string filepath;

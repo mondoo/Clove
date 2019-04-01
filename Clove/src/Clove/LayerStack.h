@@ -3,7 +3,7 @@
 namespace clv{
 	class Layer;
 
-	class CLV_API LayerStack{
+	class LayerStack{
 		//VARIABLES
 	private:
 		std::vector<std::shared_ptr<Layer>> layers;
@@ -12,16 +12,16 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		~LayerStack();
+		CLV_API ~LayerStack();
 
-		void pushLayer(std::shared_ptr<Layer> layer);
-		void popLayer(std::shared_ptr<Layer> layer);
+		CLV_API void pushLayer(std::shared_ptr<Layer> layer);
+		CLV_API void popLayer(std::shared_ptr<Layer> layer);
 		
-		void pushOverlay(std::shared_ptr<Layer> overlay);
-		void popOverlay(std::shared_ptr<Layer> overlay);
+		CLV_API void pushOverlay(std::shared_ptr<Layer> overlay);
+		CLV_API void popOverlay(std::shared_ptr<Layer> overlay);
 
-		std::vector<std::shared_ptr<Layer>>::iterator begin();
-		std::vector<std::shared_ptr<Layer>>::iterator end();
+		CLV_API std::vector<std::shared_ptr<Layer>>::iterator begin();
+		CLV_API std::vector<std::shared_ptr<Layer>>::iterator end();
 	};
 }
 

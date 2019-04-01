@@ -4,7 +4,7 @@
 #include "spdlog/fmt/ostr.h"
 
 namespace clv{
-	class CLV_API Log{
+	class Log{
 		//VARIABLES
 	private:
 		static std::shared_ptr<spdlog::logger> coreLogger;
@@ -12,10 +12,10 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		static void init();
+		CLV_API static void init();
 
-		inline static std::shared_ptr<spdlog::logger>& getCoreLogger();
-		inline static std::shared_ptr<spdlog::logger>& getClientLogger();
+		CLV_API inline static std::shared_ptr<spdlog::logger>& getCoreLogger();
+		CLV_API inline static std::shared_ptr<spdlog::logger>& getClientLogger();
 	};
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 namespace clv{
-	class CLV_API IndexBuffer{
+	class IndexBuffer{
 		//VARIABLES
 	private:
 		unsigned int rendererID = 0;

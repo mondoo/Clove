@@ -3,23 +3,23 @@
 namespace clv{
 	class Event;
 
-	class CLV_API Layer{
+	class Layer{
 		//VARIABLES
 	protected:
 		std::string debugName;
 
 		//FUNCTIONS
 	public:
-		Layer(const std::string& name = "Layer");
-		virtual ~Layer() = default;
+		CLV_API Layer(const std::string& name = "Layer");
+		CLV_API virtual ~Layer() = default;
 
-		virtual void onAttach(){}
-		virtual void onDetach(){}
-		virtual void onUpdate(){}
-		virtual void onImGuiRender(){}
-		virtual void onEvent(Event& e){}
+		CLV_API virtual void onAttach(){}
+		CLV_API virtual void onDetach(){}
+		CLV_API virtual void onUpdate(){}
+		CLV_API virtual void onImGuiRender(){}
+		CLV_API virtual void onEvent(Event& e){}
 
-		inline const std::string& getName() const;
+		CLV_API inline const std::string& getName() const;
 	};
 }
 

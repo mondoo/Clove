@@ -4,19 +4,19 @@
 #include "Clove/Input/MouseButtonCodes.h"
 
 namespace clv{
-	class CLV_API Input{
+	class Input{
 		//VARIABLES
 	private:
 		static Input* instance;
 
 		//FUNCTIONS
 	public:
-		inline static bool isKeyPressed(Key key);
+		CLV_API inline static bool isKeyPressed(Key key);
 
-		inline static bool isMouseButtonPressed(MouseButton button);
-		inline static std::pair<float, float> getMousePosition();
-		inline static float getMouseX();
-		inline static float getMouseY();
+		CLV_API inline static bool isMouseButtonPressed(MouseButton button);
+		CLV_API inline static std::pair<float, float> getMousePosition();
+		CLV_API inline static float getMouseX();
+		CLV_API inline static float getMouseY();
 
 	private:
 		virtual bool isKeyPressed_Impl(Key key) = 0;
