@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Event.h"
+#include "Clove/Events/Event.h"
 #include "Clove/Input/KeyCodes.h"
 
 namespace clv{
@@ -11,14 +11,12 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		inline Key getKey() const{ return key; }
+		inline Key getKey() const;
 
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryKeyboard | EventCategory::EventCategoryInput)
 
 	protected:
-		KeyEvent(Key inKey)
-			: key(inKey){
-		}
+		KeyEvent(Key inKey);
 	};
 
 	class CLV_API KeyPressedEvent : public KeyEvent{
@@ -28,18 +26,11 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		KeyPressedEvent(Key inKey, int inRepeatCount)
-			: KeyEvent(inKey)
-			, repeatCount(inRepeatCount){
-		}
+		KeyPressedEvent(Key inKey, int inRepeatCount);
 
-		inline int getRepeateCount() const{ return repeatCount; }
+		inline int getRepeateCount() const;
 
-		virtual std::string toString() const override{
-			std::stringstream ss;
-			ss << "KeyPressedEvent: " << key << " (" << repeatCount << " repeats)";
-			return ss.str();
-		}
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(KeyPressed)
 	};
@@ -47,15 +38,9 @@ namespace clv{
 	class CLV_API KeyTypedEvent : public KeyEvent{
 		//FUNCTIONS
 	public:
-		KeyTypedEvent(Key inKey)
-			: KeyEvent(inKey){
-		}
+		KeyTypedEvent(Key inKey);
 
-		virtual std::string toString() const override{
-			std::stringstream ss;
-			ss << "KeyTypedEvent: " << key;
-			return ss.str();
-		}
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(KeyTyped)
 	};
@@ -63,15 +48,9 @@ namespace clv{
 	class CLV_API KeyReleasedEvent : public KeyEvent{
 		//FUNCTIONS
 	public:
-		KeyReleasedEvent(Key inKey)
-			: KeyEvent(inKey){
-		}
+		KeyReleasedEvent(Key inKey);
 
-		virtual std::string toString() const override{
-			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << key;
-			return ss.str();
-		}
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(KeyReleased)
 	};

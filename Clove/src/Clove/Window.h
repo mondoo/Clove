@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Clove/Events/Event.h"
-
 namespace clv{
 	class Renderer;
+	class Event;
 
 	struct WindowProps{
 		std::string title;
@@ -39,7 +38,7 @@ namespace clv{
 
 		virtual void* getNativeWindow() const = 0;
 
-		virtual const Renderer getRenderer() const = 0;
+		virtual const Renderer& getRenderer() const = 0;
 
 		static Window* create(const WindowProps& props = WindowProps());
 	};

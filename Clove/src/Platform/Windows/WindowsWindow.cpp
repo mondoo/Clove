@@ -7,6 +7,7 @@
 
 #include "Clove/Rendering/Renderer.h"
 
+#include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
 namespace clv{
@@ -33,6 +34,18 @@ namespace clv{
 		glfwSwapBuffers(window);
 	}
 
+	inline unsigned int WindowsWindow::getWidth() const{
+		return data.width;
+	}
+
+	inline unsigned int WindowsWindow::getHeight() const{
+		return data.height;
+	}
+
+	inline void WindowsWindow::setEventCallbackFunction(const EventCallbackFn& callback){
+		data.eventCallback = callback;
+	}
+
 	void WindowsWindow::setVSync(bool enabled){
 		glfwSwapInterval(enabled ? 1 : 0);
 		data.vSync = enabled;
@@ -46,7 +59,7 @@ namespace clv{
 		return window;
 	}
 
-	const Renderer WindowsWindow::getRenderer() const{
+	const Renderer& WindowsWindow::getRenderer() const{
 		return renderer;
 	}
 

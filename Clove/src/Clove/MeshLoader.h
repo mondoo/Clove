@@ -1,7 +1,5 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
 namespace clv{
 	struct MeshInfo{
 		std::vector<glm::vec3> verticies;

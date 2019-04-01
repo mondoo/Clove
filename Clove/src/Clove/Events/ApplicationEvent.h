@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Event.h"
+#include "Clove/Events/Event.h"
 
 namespace clv{
 	class CLV_API WindowResizeEvent : public Event{
@@ -11,19 +11,12 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		WindowResizeEvent(unsigned int inWidth, unsigned int inHeight)
-			: width(inWidth)
-			, height(inHeight){
-		}
+		WindowResizeEvent(unsigned int inWidth, unsigned int inHeight);
 
-		inline unsigned int getWidth() const{ return width; }
-		inline unsigned int getHeight() const{ return height; }
+		inline unsigned int getWidth() const;
+		inline unsigned int getHeight() const;
 
-		virtual std::string toString() const override{
-			std::stringstream ss;
-			ss << "WindowResizeEvent: " << width << " , " << height;
-			return ss.str();
-		}
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(WindowResize)
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)

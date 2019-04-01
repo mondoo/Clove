@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Clove/Core.h"
 #include "Clove/Input/KeyCodes.h"
 #include "Clove/Input/MouseButtonCodes.h"
 
@@ -12,12 +11,12 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		inline static bool isKeyPressed(Key key){ return instance->isKeyPressed_Impl(key); }
+		inline static bool isKeyPressed(Key key);
 
-		inline static bool isMouseButtonPressed(MouseButton button){ return instance->isMouseButtonPressed_Impl(button); }
-		inline static std::pair<float, float> getMousePosition(){ return instance->getMousePosition_Impl(); }
-		inline static float getMouseX(){ return instance->getMouseX_Impl(); }
-		inline static float getMouseY(){ return instance->getMouseY_Impl(); }
+		inline static bool isMouseButtonPressed(MouseButton button);
+		inline static std::pair<float, float> getMousePosition();
+		inline static float getMouseX();
+		inline static float getMouseY();
 
 	private:
 		virtual bool isKeyPressed_Impl(Key key) = 0;
@@ -28,3 +27,5 @@ namespace clv{
 		virtual float getMouseY_Impl() = 0;
 	};
 }
+
+#include "Clove/Input/Input.inl"

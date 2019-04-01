@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef CLV_PLATFORM_WINDOWS
+#if CLV_PLATFORM_WINDOWS
 
 extern clv::Application* clv::createApplication();
 
@@ -11,4 +11,4 @@ int main(int argc, char** argv){
 	delete app;
 }
 
-#endif // CLV_PLATFORM_WINDOWS
+#endif

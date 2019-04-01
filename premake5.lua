@@ -195,6 +195,7 @@ project "Clove"
 
 	files{
 		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.inl",
 		"%{prj.name}/src/**.cpp",
 
 		"%{prj.name}/res/**.shader",
@@ -208,11 +209,13 @@ project "Clove"
 	includedirs{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
+
 		"%{includeDir.GLFW}",
 		"%{includeDir.Glad}",
 		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
 		"%{includeDir.stb}",
+
 		"%{prj.name}/vendor/OBJ-Loader/source"
 	}
 
@@ -272,8 +275,10 @@ project "Sandbox"
 
 	includedirs{
 		"Clove/vendor/spdlog/include",
+
 		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
+
 		"Clove/src",
 		"Clove/vendor"
 	}

@@ -20,8 +20,8 @@ namespace clv{
 		void pushOverlay(std::shared_ptr<Layer> overlay);
 		void popOverlay(std::shared_ptr<Layer> overlay);
 
-		std::vector<std::shared_ptr<Layer>>::iterator begin(){ return layers.begin(); }
-		std::vector<std::shared_ptr<Layer>>::iterator end(){ return layers.end(); }
+		std::vector<std::shared_ptr<Layer>>::iterator begin();
+		std::vector<std::shared_ptr<Layer>>::iterator end();
 	};
 }
 

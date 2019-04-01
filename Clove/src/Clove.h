@@ -2,6 +2,7 @@
 
 //For use by Clove applications
 
+//Clove headers
 #include "clvpch.h"
 
 #include "Clove/Application.h"
@@ -12,6 +13,7 @@
 #include "Clove/Input/KeyCodes.h"
 #include "Clove/Input/MouseButtonCodes.h"
 
+//Vendor headers
 #include <imgui.h>
 
 //----------ENTRY POINT----------

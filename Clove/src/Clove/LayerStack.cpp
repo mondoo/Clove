@@ -41,4 +41,12 @@ namespace clv{
 			(*it)->onDetach();
 		}
 	}
+
+	std::vector<std::shared_ptr<Layer>>::iterator LayerStack::begin(){
+		return layers.begin();
+	}
+
+	std::vector<std::shared_ptr<Layer>>::iterator LayerStack::end(){
+		return layers.end();
+	}
 }

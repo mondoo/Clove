@@ -19,6 +19,8 @@ namespace clv{
 		virtual void onImGuiRender(){}
 		virtual void onEvent(Event& e){}
 
-		inline const std::string& getName() const{ return debugName; }
+		inline const std::string& getName() const;
 	};
 }
+
+#include "Clove/Layer.inl"

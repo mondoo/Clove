@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Clove/Core.h"
-
 namespace clv{
 	/*
 	Events in Clove are currently blocking, meaning when an event occurs it
@@ -52,13 +50,11 @@ namespace clv{
 		virtual const char* getName() const = 0;
 		virtual int getCategoryFlags() const = 0;
 
-		inline bool isHandled() const{ return handled; }
+		inline bool isHandled() const;
 
-		virtual std::string toString() const{ return getName(); }
+		virtual std::string toString() const;
 
-		inline bool isInCategory(EventCategory::Type category){
-			return getCategoryFlags() & category;
-		}
+		inline bool isInCategory(EventCategory::Type category);
 	};
 
 	class EventDispatcher{
@@ -71,21 +67,13 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		EventDispatcher(Event& inEvent) : event(inEvent) {}
+		EventDispatcher(Event& inEvent);
 
 		template<typename EventType>
-		bool dispatch(EventReceiverFn<EventType> func){
-			if(event.getEventType() == EventType::getStaticType()){
-				event.handled = func(*static_cast<EventType*>(&event));
-				return true;
-			} else{
-				return false;
-			}
-		}
+		bool dispatch(EventReceiverFn<EventType> func);
 	};
 
-	inline std::ostream& operator <<(std::ostream& os, const Event& e){
-		return os << e.toString();
-	}
+	inline std::ostream& operator<<(std::ostream& os, const Event& e);
 }
 
+#include "Clove/Events/Event.inl"

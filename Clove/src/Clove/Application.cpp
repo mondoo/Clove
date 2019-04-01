@@ -1,6 +1,12 @@
 #include "clvpch.h"
 #include "Application.h"
+#include "Clove/Window.h"
 #include "Clove/Input/Input.h"
+#include "Clove/LayerStack.h"
+#include "Clove/Layer.h"
+#include "Clove/Events/Event.h"
+#include "Clove/Events/ApplicationEvent.h"
+#include "Clove/ImGui/ImGuiLayer.h"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -12,18 +18,22 @@ namespace clv{
 		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
+		layerStack = std::make_unique<LayerStack>(LayerStack());
+
 		imGuiLayer = std::make_shared<ImGuiLayer>(ImGuiLayer());
 		pushLayer(imGuiLayer);
 	}
 
+	Application::~Application() = default;
+
 	void Application::run(){
 		while(running){
-			for(auto layer : layerStack){
+			for(auto layer : *layerStack){
 				layer->onUpdate();
 			}
 
 			imGuiLayer->begin();
-			for(auto layer : layerStack){
+			for(auto layer : *layerStack){
 				layer->onImGuiRender();
 			}
 			imGuiLayer->end();
@@ -31,6 +41,7 @@ namespace clv{
 			window->onUpdate();
 		}
 	}
+
 	void Application::onEvent(Event& e){
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<WindowCloseEvent>(CLV_BIND_FUNCTION_1P(&Application::onWindowClose, this));
@@ -39,7 +50,7 @@ namespace clv{
 			return;
 		}
 
-		for(auto it = layerStack.end(); it != layerStack.begin(); ){
+		for(auto it = layerStack->end(); it != layerStack->begin(); ){
 			(*--it)->onEvent(e);
 			if(e.isHandled()){
 				break;
@@ -48,11 +59,11 @@ namespace clv{
 	}
 
 	void Application::pushLayer(std::shared_ptr<Layer> layer){
-		layerStack.pushLayer(layer);
+		layerStack->pushLayer(layer);
 	}
 
 	void Application::pushOverlay(std::shared_ptr<Layer> overlay){
-		layerStack.pushOverlay(overlay);
+		layerStack->pushOverlay(overlay);
 	}
 
 	bool Application::onWindowClose(WindowCloseEvent& e){

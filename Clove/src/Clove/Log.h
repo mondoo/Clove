@@ -1,8 +1,5 @@
 #pragma once
 
-#include <memory>
-
-#include "Core.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
 
@@ -17,10 +14,12 @@ namespace clv{
 	public:
 		static void init();
 
-		inline static std::shared_ptr<spdlog::logger>& getCoreLogger(){ return coreLogger; }
-		inline static std::shared_ptr<spdlog::logger>& getClientLogger(){ return clientLogger; }
+		inline static std::shared_ptr<spdlog::logger>& getCoreLogger();
+		inline static std::shared_ptr<spdlog::logger>& getClientLogger();
 	};
 }
+
+#include "Clove/Log.inl"
 
 #if ENGINE
 	//Core log macros

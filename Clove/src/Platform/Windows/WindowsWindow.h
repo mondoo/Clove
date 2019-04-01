@@ -3,7 +3,7 @@
 #include "Clove/Window.h"
 #include "Clove/Rendering/Renderer.h"
 
-#include <GLFW/glfw3.h>
+struct GLFWwindow;
 
 namespace clv{
 	class WindowsWindow : public Window{
@@ -30,16 +30,16 @@ namespace clv{
 
 		virtual void onUpdate() override;
 
-		virtual inline unsigned int getWidth() const override{ return data.width; }
-		virtual inline unsigned int getHeight() const override{ return data.height; }
+		virtual inline unsigned int getWidth() const override;
+		virtual inline unsigned int getHeight() const override;
 
 		//Window attributes
-		virtual inline void setEventCallbackFunction(const EventCallbackFn& callback) override{ data.eventCallback = callback; }
+		virtual inline void setEventCallbackFunction(const EventCallbackFn& callback) override;
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVSync() const override;
 
 		virtual void* getNativeWindow() const override;
-		virtual const Renderer getRenderer() const override;
+		virtual const Renderer& getRenderer() const override;
 
 	private:
 		virtual void init(const WindowProps& props);

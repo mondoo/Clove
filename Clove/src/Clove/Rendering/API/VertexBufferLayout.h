@@ -1,17 +1,8 @@
 #pragma once
 
-//Temp - this is to get the GL_FLOAT etc (will need to abstract out or copy in somehow)
-//#include <glad/glad.h>
-//#include <GLFW/glfw3.h>
-
-//TODO: abstract properly - taken from the gl headers
-#define CLV_FALSE 0
-#define CLV_TRUE 1
-
-#define CLV_FLOAT 0x1406
-#define CLV_UNSIGNED_INT 0x1405
-#define CLV_UNSIGNED_BYTE 0x1401
-//
+//TODO: Remove (.inl needs the defs)
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace clv{
 	struct VertexBufferElement{
@@ -19,23 +10,14 @@ namespace clv{
 	public:
 		unsigned int type = 0;
 		unsigned int count = 0;
-		unsigned char normalised = CLV_FALSE;
+		unsigned char normalised;
 
 		//FUNCTIONS
 	public:
-		static unsigned int getSizeOfType(unsigned int type){
-			switch(type){
-			case CLV_FLOAT:
-				return 4;
-			case CLV_UNSIGNED_INT:
-				return 4;
-			case CLV_UNSIGNED_BYTE:
-				return 1;
-			default:
-				CLV_ASSERT(false, "Unsupported type in {0}", __FUNCTION__);
-				return 0;
-			}
-		}
+		VertexBufferElement();
+		VertexBufferElement(unsigned int inType, unsigned int inCount, unsigned char inNormalised);
+
+		inline static unsigned int getSizeOfType(unsigned int type);
 	};
 
 	class CLV_API VertexBufferLayout{
@@ -47,29 +29,20 @@ namespace clv{
 		//FUNCTIONS
 	public:
 		template<typename T>
-		void push(unsigned int count){
-			CLV_ASSERT(false, "Unsupported type for {0}", __FUNCTION__);
-		}
+		void push(unsigned int count);
 
 		template <>
-		void push<float>(unsigned int count){
-			elements.push_back({ CLV_FLOAT, count, CLV_FALSE });
-			stride += count * VertexBufferElement::getSizeOfType(CLV_FLOAT);
-		}
+		void push<float>(unsigned int count);
 
 		template <>
-		void push<unsigned int>(unsigned int count){
-			elements.push_back({ CLV_UNSIGNED_INT, count, CLV_FALSE });
-			stride += count * VertexBufferElement::getSizeOfType(CLV_UNSIGNED_INT);
-		}
+		void push<unsigned int>(unsigned int count);
 
 		template <>
-		void push<unsigned char>(unsigned int count){
-			elements.push_back({ CLV_UNSIGNED_BYTE, count, CLV_TRUE });
-			stride += count * VertexBufferElement::getSizeOfType(CLV_UNSIGNED_BYTE);
-		}
+		void push<unsigned char>(unsigned int count);
 
-		inline const std::vector<VertexBufferElement>& getElements() const{ return elements; }
-		inline unsigned int getStride()const{ return stride; }
+		inline const std::vector<VertexBufferElement>& getElements() const;
+		inline unsigned int getStride() const;
 	};
 }
+
+#include "Clove/Rendering/API/VertexBufferLayout.inl"

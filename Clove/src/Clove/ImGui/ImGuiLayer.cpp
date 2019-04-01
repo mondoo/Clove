@@ -14,6 +14,7 @@
 #include "examples/imgui_impl_opengl3.h"
 
 #include "Clove/Application.h"
+#include "Clove/Window.h"
 
 namespace clv{
 	ImGuiLayer::ImGuiLayer() 
