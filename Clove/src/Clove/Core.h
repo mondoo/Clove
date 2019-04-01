@@ -8,7 +8,7 @@
 			#define	CLV_API __declspec(dllimport)
 		#endif
 	#else
-		#define	CLV_API 
+		#define	CLV_API
 	#endif
 #else
 	#error Clove only supports Windows!
