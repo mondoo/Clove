@@ -2,5 +2,7 @@
 
 //Clove ImGui config options
 
-//Even though we statically link we need ImGui to export so that applications including our dll can link ImGui
-#define IMGUI_API __declspec(dllexport)
+//When clv is compiled as a DLL we need to export ImGUI
+#if CLV_DYNAMIC
+	#define IMGUI_API __declspec(dllexport)
+#endif

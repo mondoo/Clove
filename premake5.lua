@@ -1,8 +1,8 @@
 --GLOBALS
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+--Workspace Settings
 workspace "Clove"
-	architecture "x64"
 	startproject "Sandbox"
 
 	configurations{
@@ -10,6 +10,58 @@ workspace "Clove"
 		"Release",
 		"Dist"
 	}
+
+	platforms{
+		"Win64-lib",
+		"Win64-dll"
+	}
+
+	filter "platforms:Win64-lib"
+		system "Windows"
+		architecture "x64"
+
+		defines{
+			"CLV_STATIC=1",
+			"CLV_DYNAMIC=0"
+		}
+
+	filter "platforms:Win64-dll"
+		system "Windows"
+		architecture "x64"
+
+		defines{
+			"CLV_STATIC=0",
+			"CLV_DYNAMIC=1"
+		}
+
+	filter "system:Windows"
+		systemversion "latest"
+		cppdialect "C++17"
+
+		defines{
+			"CLV_PLATFORM_WINDOWS=1"
+		}
+
+	filter "configurations:Debug"
+		defines {
+			"CLV_DEBUG=1",
+			"CLV_RELEASE=0",
+			"CLV_DIST=0"
+		}
+
+	filter "configurations:Release"
+		defines {
+			"CLV_DEBUG=0",
+			"CLV_RELEASE=1",
+			"CLV_DIST=0",
+		}
+
+	filter "configurations:Dist"
+		defines {
+			"CLV_DEBUG=0",
+			"CLV_RELEASE=0",
+			"CLV_DIST=1"
+		}
 
 --Clove Dependencies
 group "Dependencies"
@@ -41,12 +93,10 @@ project "ImGui"
 		"_CRT_SECURE_NO_WARNINGS"
 	}
 	
-	filter "system:windows"
-	    systemversion "latest"
-	    cppdialect "C++17"
+	filter "system:Windows"
 	    staticruntime "On"
 	    
-	filter { "system:windows", "configurations:Release" }
+	filter { "system:Windows", "configurations:Release or Dist" }
 	    buildoptions "/MT"
 
 --GFLW
@@ -69,10 +119,12 @@ project "GLFW"
         "%{prj.location}/src/vulkan.c",
         "%{prj.location}/src/window.c"
     }
+
+	defines{
+		"_CRT_SECURE_NO_WARNINGS"
+	}
     
-	filter "system:windows"
-		systemversion "latest"
-	    cppdialect "C++17"
+	filter "system:Windows"
 	    staticruntime "On"
         
         files{
@@ -88,11 +140,10 @@ project "GLFW"
         }
 
 		defines{ 
-            "_GLFW_WIN32",
-            "_CRT_SECURE_NO_WARNINGS"
+            "_GLFW_WIN32"
 		}
 
-    filter { "system:windows", "configurations:Release" }
+    filter { "system:Windows", "configurations:Release or Dist" }
         buildoptions "/MT"
 
 --GLAD
@@ -114,12 +165,10 @@ project "Glad"
 		"%{prj.location}/include"
 	}
     
-	filter "system:windows"
-        systemversion "latest"
-	    cppdialect "C++17"
+	filter "system:Windows"
 	    staticruntime "On"
         
-    filter { "system:windows", "configurations:Release" }
+    filter { "system:Windows", "configurations:Release or Dist" }
         buildoptions "/MT"
 
 --End: Dependencies
@@ -136,9 +185,7 @@ includeDir["stb"]	= "Clove/vendor/stb"
 
 project "Clove"
 	location "Clove"
-	kind "SharedLib"
 	language "C++"
-	staticruntime "Off"
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("intermediate/" .. outputdir .. "/%{prj.name}")
@@ -178,46 +225,33 @@ project "Clove"
 
 	defines{
 		"ENGINE=1",
-		"CLV_BUILD_DLL=1",
+		"CLV_EXPORT_DLL=1",
 		"GLFW_INCLUDE_NONE"
 	}
 
-	filter "system:windows"
-		cppdialect "C++17"
-		systemversion "latest"
+	filter "platforms:Win64-lib"
+		kind "StaticLib"
+		staticruntime "On"
 
-		defines{
-			"CLV_PLATFORM_WINDOWS"
-		}
+	filter "platforms:Win64-dll"
+		kind "SharedLib"
+		staticruntime "Off"
 
+	filter "kind:SharedLib"
 		postbuildcommands{
 			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
 		}
 
-	filter "configurations:Debug"
-		defines {
-			"CLV_DEBUG=1",
-			"CLV_RELEASE=0",
-			"CLV_DIST=0"
+	filter "system:Windows"
+		defines{
+			"CLV_PLATFORM_WINDOWS=1"
 		}
+
+	filter "configurations:Debug"
 		runtime "Debug"
 		symbols "On"
 
-	filter "configurations:Release"
-		defines {
-			"CLV_DEBUG=0",
-			"CLV_RELEASE=1",
-			"CLV_DIST=0"
-		}
-		runtime "Release"
-		optimize "On"
-
-	filter "configurations:Dist"
-		defines {
-			"CLV_DEBUG=0",
-			"CLV_RELEASE=0",
-			"CLV_DIST=1"
-		}
+	filter "configurations:Release or Dist"
 		runtime "Release"
 		optimize "On"
 
@@ -248,43 +282,23 @@ project "Sandbox"
 		"Clove",
 	}
 
-	defines{
-		"ENGINE=0",
-		"CLV_BUILD_DLL=0"
-	}
-
-	filter "system:windows"
-		cppdialect "C++17"
+	filter "system:Windows"
 		staticruntime "On"
-		systemversion "latest"
-
-		defines{
-			"CLV_PLATFORM_WINDOWS"
-		}
 
 	filter "configurations:Debug"
-		defines {
-			"CLV_DEBUG=1",
-			"CLV_RELEASE=0",
-			"CLV_DIST=0"
-		}
 		symbols "On"
+
+	filter "configurations:Release or Dist"
+		optimize "On"
+
+	filter {"platforms:Win64-lib", "configurations:Debug"}
+		buildoptions "/MTd"
+
+	filter {"platforms:Win64-lib", "configurations:Release or Dist"}
+		buildoptions "/MT"
+
+	filter {"platforms:Win64-dll", "configurations:Debug"}
 		buildoptions "/MDd"
 
-	filter "configurations:Release"
-		defines {
-			"CLV_DEBUG=0",
-			"CLV_RELEASE=1",
-			"CLV_DIST=0"
-		}
-		optimize "On"
-		buildoptions "/MD"
-
-	filter "configurations:Dist"
-		defines {
-			"CLV_DEBUG=0",
-			"CLV_RELEASE=0",
-			"CLV_DIST=1"
-		}
-		optimize "On"
+	filter {"platforms:Win64-dll", "configurations:Release or Dist"}
 		buildoptions "/MD"

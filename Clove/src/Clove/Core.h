@@ -1,10 +1,14 @@
 #pragma once
 
 #if CLV_PLATFORM_WINDOWS
-	#if CLV_BUILD_DLL
-		#define	CLV_API __declspec(dllexport)
+	#if CLV_DYNAMIC
+		#if CLV_EXPORT_DLL
+			#define	CLV_API __declspec(dllexport)
+		#else
+			#define	CLV_API __declspec(dllimport)
+		#endif
 	#else
-		#define	CLV_API __declspec(dllimport)
+		#define	CLV_API 
 	#endif
 #else
 	#error Clove only supports Windows!
