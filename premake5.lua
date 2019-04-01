@@ -227,7 +227,7 @@ project "Clove"
 	}
 
 	defines{
-		"ENGINE=1",
+		"CLV_ENGINE=1",
 		"CLV_EXPORT_DLL=1",
 		"GLFW_INCLUDE_NONE"
 	}

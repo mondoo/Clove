@@ -21,7 +21,7 @@ namespace clv{
 
 #include "Clove/Log.inl"
 
-#if ENGINE
+#if CLV_ENGINE
 	//Core log macros
 	#define CLV_TRACE(...)		::clv::Log::getCoreLogger()->trace(__VA_ARGS__)
 	#define CLV_INFO(...)		::clv::Log::getCoreLogger()->info(__VA_ARGS__)
