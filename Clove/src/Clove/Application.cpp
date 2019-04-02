@@ -42,6 +42,10 @@ namespace clv{
 		}
 	}
 
+	CLV_API void Application::stop(){
+		running = false;
+	}
+
 	void Application::onEvent(Event& e){
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<WindowCloseEvent>(CLV_BIND_FUNCTION_1P(&Application::onWindowClose, this));

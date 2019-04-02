@@ -67,10 +67,10 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		EventDispatcher(Event& inEvent);
+		CLV_API EventDispatcher(Event& inEvent);
 
 		template<typename EventType>
-		bool dispatch(EventReceiverFn<EventType> func);
+		CLV_API bool dispatch(EventReceiverFn<EventType> func);
 	};
 
 	inline std::ostream& operator<<(std::ostream& os, const Event& e);

@@ -106,6 +106,9 @@ namespace clv{
 		glfwSetWindowUserPointer(window, &data);
 		setVSync(true);
 
+		//Set the input mode to hide the mouse
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 		//Set GLFW callbacks
 		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height){
 			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));

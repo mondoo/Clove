@@ -24,6 +24,12 @@ namespace clv{
 		std::unique_ptr<Shader> shader;
 		std::unique_ptr<Texture> texture;
 
+		//Temp
+		float ambientStrength = 1.0f;
+		glm::vec3 lightPosition;
+		glm::vec3 viewPosition;
+		//~
+
 		//FUNCTIONS
 	public:
 		CLV_API Model();
@@ -34,7 +40,13 @@ namespace clv{
 		CLV_API ~Model();
 
 		//temp ish
-		CLV_API void setMVP(const glm::mat4& MVP);
+		CLV_API void setMVP(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
+		//~
+
+		//temp lighting stuff
+		CLV_API void setAmbientStrength(float strength);
+		CLV_API void setLightPosition(const glm::vec3& pos);
+		CLV_API void setViewPosition(const glm::vec3& pos);
 		//~
 
 		CLV_API void draw(const Renderer& renderer);

@@ -25,6 +25,7 @@ namespace clv{
 		CLV_API virtual ~Application();
 
 		CLV_API void run();
+		CLV_API void stop();
 
 		CLV_API void onEvent(Event& e);
 

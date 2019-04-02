@@ -7,14 +7,6 @@ namespace clv{
 		, mouseY(y){
 	}
 
-	inline float MouseMovedEvent::getX() const{
-		return mouseX;
-	}
-
-	inline float MouseMovedEvent::getY() const{
-		return mouseY;
-	}
-
 	std::string MouseMovedEvent::toString() const{
 		std::stringstream ss;
 		ss << "MouseMovedEvent: " << mouseX << " , " << mouseY;
@@ -24,14 +16,6 @@ namespace clv{
 	MouseScrolledEvent::MouseScrolledEvent(float inXOffset, float inYOffset)
 		: xOffset(inXOffset)
 		, yOffset(inYOffset){
-	}
-
-	inline float MouseScrolledEvent::getXOffset() const{
-		return xOffset;
-	}
-
-	inline float MouseScrolledEvent::getYOffset() const{
-		return yOffset;
 	}
 
 	std::string MouseScrolledEvent::toString() const{

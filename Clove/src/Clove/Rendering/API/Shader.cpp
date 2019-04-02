@@ -43,6 +43,14 @@ namespace clv{
 		GLCall(glUniform1i(getUniformLocation(name), value));
 	}
 
+	void Shader::setUniform1f(const std::string& name, float value){
+		GLCall(glUniform1f(getUniformLocation(name), value));
+	}
+
+	void Shader::setUniform3f(const std::string& name, float v0, float v1, float v2){
+		GLCall(glUniform3f(getUniformLocation(name), v0, v1, v2));
+	}
+
 	void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3){
 		GLCall(glUniform4f(getUniformLocation(name), v0, v1, v2, v3));
 	}

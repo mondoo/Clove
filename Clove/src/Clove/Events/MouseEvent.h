@@ -78,3 +78,4 @@ namespace clv{
 	};
 }
 
+#include "Clove/Events/MouseEvent.inl"

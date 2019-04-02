@@ -35,15 +35,33 @@ namespace clv{
 
 	Model::~Model() = default;
 
-	void Model::setMVP(const glm::mat4& MVP){
+	void Model::setMVP(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection){
 		shader->bind();
-		shader->setUniformMat4f("u_MVP", MVP);
+		shader->setUniformMat4f("model", model);
+		shader->setUniformMat4f("view", view);
+		shader->setUniformMat4f("projection", projection);
+	}
+
+	void Model::setAmbientStrength(float strength){
+		ambientStrength = strength;
+	}
+
+	void Model::setLightPosition(const glm::vec3 &pos){
+		lightPosition = pos;
+	}
+
+	void Model::setViewPosition(const glm::vec3& pos){
+		viewPosition = pos;
 	}
 
 	void Model::draw(const Renderer& renderer){
 		const unsigned int slot = 0;
 		texture->bind(slot);
 		shader->setUniform1i("u_Texture", slot);
+
+		shader->setUniform1f("ambientStrength", ambientStrength);
+		shader->setUniform3f("lightPos", lightPosition.x, lightPosition.y, lightPosition.z);
+		shader->setUniform3f("viewPos", viewPosition.x, viewPosition.y, viewPosition.z);
 		
 		renderer.draw(*va, *ib, *shader);
 	}
@@ -70,6 +88,8 @@ namespace clv{
 	}
 
 	void Model::createModelData(const std::string& meshPath, const std::string& texturePath){
+		CLV_TRACE("Creating model with: {0} | {1}", meshPath, texturePath);
+
 		MeshInfo loadedMeshInfo;
 		if(loadOBJ(meshPath, loadedMeshInfo)){
 			const size_t vertexCount = loadedMeshInfo.verticies.size();
@@ -122,7 +142,8 @@ namespace clv{
 			//Shaders
 			shader = std::make_unique<Shader>(Shader("../Clove/res/Shaders/Basic.shader"));
 			shader->bind();
-			shader->setUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
+			shader->setUniform4f("objectColour", 0.65f, 0.65f, 0.65f, 1.0f);
+			shader->setUniform4f("lightColour", 1.0f, 1.0f, 1.0f, 1.0f);
 
 			texture = std::make_unique<Texture>(Texture(texturePath));
 
