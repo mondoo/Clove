@@ -17,10 +17,14 @@ Pi
 Desired Graphics API
 OpenGL
 DirectX
+Vulkan
 
-Desired Scripting Languages
+Potential Scripting Languages
 C# - https://www.mono-project.com/docs/advanced/embedding/
+Java Script
+Python
 
+Hopefully support both lib and dll
 
 What is the goal of this engine?
 -just to have a personal 3d rendering engine?
