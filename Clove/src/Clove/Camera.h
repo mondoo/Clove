@@ -19,7 +19,7 @@ namespace clv{
 
 		CLV_API inline const glm::vec3& getFront() const; //TODO: should take the roll and pitch and yaw or w/e
 		CLV_API inline const glm::vec3& getUp() const; //TODO: should probably be the camera's relative up
-		CLV_API inline const glm::vec3& getRight() const; //TODO: should use the getters (in the inl)
+		CLV_API inline glm::vec3 getRight() const; //TODO: should use the getters (in the inl)
 
 		CLV_API void update(float pitch, float yaw);
 

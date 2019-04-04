@@ -45,4 +45,4 @@ namespace clv{
 	};
 }
 
-#include "Clove/Object.inl""
+#include "Clove/Object.inl"
