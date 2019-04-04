@@ -3,27 +3,29 @@
 #include <glm/glm.hpp>
 
 namespace clv{
-	struct ShaderProgramSource{
-		std::string vertexSource;
-		std::string fragmentSource;
+	enum class ShaderTypes{
+		Vertex,
+		Fragment,
 	};
 
 	class Shader{
 		//VARIABLES
 	private:
-		std::string filepath;
+		//std::string filepath;
 		unsigned int rendererID = 0;
 		std::unordered_map<std::string, int> uniformLocationCache;
 
 		//FUNCTIONS
 	public:
-		Shader(const std::string& filepath);
+		Shader();
 		Shader(Shader&& other);
 
 		~Shader();
 
 		void bind() const;
 		void unbind() const;
+
+		void attachShader(ShaderTypes shaderType, const std::string& path);
 
 		//TODO make this set value / set unform templated function
 		void setUniform1i(const std::string& name, int value);
@@ -35,8 +37,8 @@ namespace clv{
 		Shader& operator=(Shader&& other);
 
 	private:
-		ShaderProgramSource parseShader(const std::string& filepath);
-		unsigned int createShader(const std::string& vertexShader, const std::string& fragmentShader);
+		std::string parseShader(const std::string& filepath);
+		unsigned int createShader();
 		unsigned int compileShader(unsigned int type, const std::string& source);
 
 		int getUniformLocation(const std::string& name);

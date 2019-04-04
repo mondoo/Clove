@@ -156,7 +156,11 @@ namespace clv{
 			ib = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
 
 			//Shaders
-			shader = std::make_unique<Shader>(Shader("../Clove/res/Shaders/BasicShader.glsl"));
+			shader = std::make_unique<Shader>(Shader(/*"../Clove/res/Shaders/BasicShader.glsl"*/));
+
+			shader->attachShader(ShaderTypes::Vertex, "../Clove/res/Shaders/VertexShader.glsl");
+			shader->attachShader(ShaderTypes::Fragment, "../Clove/res/Shaders/FragmentShader.glsl");
+
 			shader->bind();
 			shader->setUniform4f("objectColour", 0.65f, 0.65f, 0.65f, 1.0f);
 			shader->setUniform4f("lightColour", 1.0f, 1.0f, 1.0f, 1.0f);

@@ -11,18 +11,14 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace clv{
-	Shader::Shader(const std::string& filepath)
-		: filepath(filepath){
-		ShaderProgramSource source = parseShader(filepath);
-		rendererID = createShader(source.vertexSource, source.fragmentSource);
+	Shader::Shader(){
+		rendererID = createShader();
 	}
 
 	Shader::Shader(Shader&& other){
-		filepath = other.filepath;
 		rendererID = other.rendererID;
 		uniformLocationCache = other.uniformLocationCache;
 
-		other.filepath.clear();
 		other.rendererID = 0;
 		other.uniformLocationCache.clear();
 	}
@@ -37,6 +33,30 @@ namespace clv{
 
 	void Shader::unbind() const{
 		GLCall(glUseProgram(0));
+	}
+
+	void Shader::attachShader(ShaderTypes shaderType, const std::string& path){
+		//TODO: move to function when other APIs are in
+		unsigned int type = 0;
+		switch(shaderType){
+		case ShaderTypes::Vertex:
+			type = GL_VERTEX_SHADER;
+			break;
+		case ShaderTypes::Fragment:
+			type = GL_FRAGMENT_SHADER;
+			break;
+		}
+
+		CLV_ASSERT(type != 0, "Shader type not set!");
+
+		std::string source = parseShader(path);
+
+		unsigned int id = compileShader(type, source);
+
+		GLCall(glAttachShader(rendererID, id));
+		GLCall(glLinkProgram(rendererID));
+		GLCall(glValidateProgram(rendererID));
+		GLCall(glDeleteShader(id));
 	}
 
 	void Shader::setUniform1i(const std::string& name, int value){
@@ -60,57 +80,29 @@ namespace clv{
 	}
 
 	Shader& Shader::operator=(Shader&& other){
-		filepath = other.filepath;
 		rendererID = other.rendererID;
 		uniformLocationCache = other.uniformLocationCache;
 
-		other.filepath.clear();
 		other.rendererID = 0;
 		other.uniformLocationCache.clear();
 
 		return *this;
 	}
 
-	ShaderProgramSource Shader::parseShader(const std::string& filepath){
+	std::string Shader::parseShader(const std::string& filepath){
 		std::ifstream stream(filepath);
 
-		enum class shaderType{
-			none = -1,
-			vertex = 0,
-			fragment = 1
-		};
-
 		std::string line;
-		std::stringstream ss[2];
-		shaderType type = shaderType::none;
+		std::stringstream ss;
 		while(getline(stream, line)){
-			if(line.find("#shader") != std::string::npos){
-				if(line.find("vertex") != std::string::npos){
-					type = shaderType::vertex;
-				} else if(line.find("fragment") != std::string::npos){
-					type = shaderType::fragment;
-				}
-			} else{
-				ss[static_cast<int>(type)] << line << '\n';
-			}
+			ss << line << '\n';
 		}
 
-		return { ss[0].str(), ss[1].str() };
+		return ss.str();
 	}
 
-	unsigned int Shader::createShader(const std::string& vertexShader, const std::string& fragmentShader){
+	unsigned int Shader::createShader(){
 		GLCall(unsigned int program = glCreateProgram());
-		unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
-		unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-		GLCall(glAttachShader(program, vs));
-		GLCall(glAttachShader(program, fs));
-		GLCall(glLinkProgram(program));
-		GLCall(glValidateProgram(program));
-
-		GLCall(glDeleteShader(vs));
-		GLCall(glDeleteShader(fs));
-
 		return program;
 	}	
 
