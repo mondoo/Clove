@@ -1,5 +1,5 @@
 #include "clvpch.h"
-#include "Model.h"
+#include "Mesh.h"
 #include "Clove/MeshLoader.h"
 #include "Clove/Rendering/Renderer.h"
 #include "Clove/Rendering/API/VertexBuffer.h"
@@ -12,17 +12,22 @@
 #include <fstream>
 
 namespace clv{
-	Model::Model() = default;
+	Mesh::Mesh() = default;
 
-	Model::Model(const std::string& mesh){
-		createModelData(mesh, "../Clove/res/Textures/DefaultTexture.png");
+	Mesh::Mesh(const std::string& meshPath){
+		createModelData(meshPath, "../Clove/res/Textures/DefaultTexture.png");
 	}
 
-	Model::Model(const std::string& mesh, const std::string& texture){
-		createModelData(mesh, texture);
+	Mesh::Mesh(const std::string& meshPath, const std::string& texturePath){
+		createModelData(meshPath, texturePath);
 	}
 
-	Model::Model(Model&& other){
+	Mesh::Mesh(const Mesh& other){
+		CLV_WARN("Copy constructor called for Mesh - creating new model data");
+		createModelData(other.meshPath, other.texturePath);
+	}
+
+	Mesh::Mesh(Mesh&& other){
 		va = std::move(other.va);
 		vb = std::move(other.vb);
 		ib = std::move(other.ib);
@@ -33,28 +38,28 @@ namespace clv{
 		indices = other.indices;
 	}
 
-	Model::~Model() = default;
+	Mesh::~Mesh() = default;
 
-	void Model::setMVP(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection){
+	void Mesh::setMVP(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection){
 		shader->bind();
 		shader->setUniformMat4f("model", model);
 		shader->setUniformMat4f("view", view);
 		shader->setUniformMat4f("projection", projection);
 	}
 
-	void Model::setAmbientStrength(float strength){
+	void Mesh::setAmbientStrength(float strength){
 		ambientStrength = strength;
 	}
 
-	void Model::setLightPosition(const glm::vec3 &pos){
+	void Mesh::setLightPosition(const glm::vec3 &pos){
 		lightPosition = pos;
 	}
 
-	void Model::setViewPosition(const glm::vec3& pos){
+	void Mesh::setViewPosition(const glm::vec3& pos){
 		viewPosition = pos;
 	}
 
-	void Model::draw(const Renderer& renderer){
+	void Mesh::draw(const Renderer& renderer){
 		const unsigned int slot = 0;
 		texture->bind(slot);
 		shader->setUniform1i("u_Texture", slot);
@@ -66,7 +71,15 @@ namespace clv{
 		renderer.draw(*va, *ib, *shader);
 	}
 
-	Model& Model::operator =(Model&& other){
+	Mesh& Mesh::operator=(const Mesh& other){
+		CLV_WARN("Copy assignment operator called for Mesh - creating new model data");
+		createModelData(other.meshPath, other.texturePath);
+
+		return *this;
+	}
+
+	Mesh& Mesh::operator=(Mesh&& other)
+	{
 		va = std::move(other.va);
 		vb = std::move(other.vb);
 		ib = std::move(other.ib);
@@ -79,16 +92,19 @@ namespace clv{
 		return *this;
 	}
 
-	std::pair<const void*, unsigned int> Model::getVertexData() const{
+	std::pair<const void*, unsigned int> Mesh::getVertexData() const{
 		return std::pair<const void*, unsigned int>(vertexData.data(), (vertexData.size() * sizeof(float)));
 	}
 
-	std::pair<const unsigned int*, unsigned int> Model::getIndexData() const{
+	std::pair<const unsigned int*, unsigned int> Mesh::getIndexData() const{
 		return std::pair<const unsigned int*, unsigned int>(indices.data(), indices.size());
 	}
 
-	void Model::createModelData(const std::string& meshPath, const std::string& texturePath){
+	void Mesh::createModelData(const std::string& meshPath, const std::string& texturePath){
 		CLV_TRACE("Creating model with: {0} | {1}", meshPath, texturePath);
+
+		this->meshPath = meshPath;
+		this->texturePath = texturePath;
 
 		MeshInfo loadedMeshInfo;
 		if(loadOBJ(meshPath, loadedMeshInfo)){
@@ -140,7 +156,7 @@ namespace clv{
 			ib = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
 
 			//Shaders
-			shader = std::make_unique<Shader>(Shader("../Clove/res/Shaders/Basic.shader"));
+			shader = std::make_unique<Shader>(Shader("../Clove/res/Shaders/BasicShader.glsl"));
 			shader->bind();
 			shader->setUniform4f("objectColour", 0.65f, 0.65f, 0.65f, 1.0f);
 			shader->setUniform4f("lightColour", 1.0f, 1.0f, 1.0f, 1.0f);

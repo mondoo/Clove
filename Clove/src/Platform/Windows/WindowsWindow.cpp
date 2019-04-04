@@ -32,6 +32,7 @@ namespace clv{
 	void WindowsWindow::onUpdate(){
 		glfwPollEvents();
 		glfwSwapBuffers(window);
+		renderer.clear();
 	}
 
 	inline unsigned int WindowsWindow::getWidth() const{

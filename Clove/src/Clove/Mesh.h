@@ -10,11 +10,9 @@ namespace clv{
 
 	struct MeshInfo;
 
-	class Model{
+	class Mesh{
 		//VARIABLES
 	private:
-		bool isUsingTexture = false;
-
 		std::vector<float> vertexData;
 		std::vector<unsigned int> indices;
 
@@ -30,14 +28,18 @@ namespace clv{
 		glm::vec3 viewPosition;
 		//~
 
+		std::string meshPath;
+		std::string texturePath;
+
 		//FUNCTIONS
 	public:
-		CLV_API Model();
-		CLV_API Model(const std::string& mesh);
-		CLV_API Model(const std::string& mesh, const std::string& texture);
-		CLV_API Model(Model&& other);
+		CLV_API Mesh();
+		CLV_API Mesh(const std::string& meshPath);
+		CLV_API Mesh(const std::string& meshPath, const std::string& texturePath);
+		CLV_API Mesh(const Mesh& other);
+		CLV_API Mesh(Mesh&& other);
 
-		CLV_API ~Model();
+		CLV_API ~Mesh();
 
 		//temp ish
 		CLV_API void setMVP(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
@@ -51,7 +53,8 @@ namespace clv{
 
 		CLV_API void draw(const Renderer& renderer);
 
-		CLV_API Model& operator=(Model&& other);
+		CLV_API Mesh& operator=(const Mesh& other);
+		CLV_API Mesh& operator=(Mesh&& other);
 
 	private:
 		std::pair<const void*, unsigned int> getVertexData() const;

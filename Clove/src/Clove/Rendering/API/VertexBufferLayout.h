@@ -31,17 +31,19 @@ namespace clv{
 		template<typename T>
 		void push(unsigned int count);
 
-		template <>
+		template<>
 		void push<float>(unsigned int count);
 
-		template <>
+		template<>
 		void push<unsigned int>(unsigned int count);
 
-		template <>
+		template<>
 		void push<unsigned char>(unsigned int count);
 
 		inline const std::vector<VertexBufferElement>& getElements() const;
 		inline unsigned int getStride() const;
+
+		void empty();
 	};
 }
 

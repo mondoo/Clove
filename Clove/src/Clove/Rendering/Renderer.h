@@ -15,12 +15,12 @@ namespace clv{
 
 	class Renderer{
 		//VARIABLES
+	private:
 
 		//FUNCTIONS
 	public:
-		//CLV_API here is temp - i don't think the client should be exposed to the renderer
-		CLV_API void clear() const;
+		void clear() const;
 
-		CLV_API void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+		void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
 	};
 }

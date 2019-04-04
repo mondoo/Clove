@@ -11,4 +11,9 @@ namespace clv{
 		, count(inCount)
 		, normalised(inNormalised){
 	}
+
+	void VertexBufferLayout::empty(){
+		elements.clear();
+		stride = 0;
+	}
 }

@@ -21,9 +21,13 @@ namespace clv{
 		void bind(unsigned int slot = 0) const;
 		void unbind() const;
 
-		inline int getWidth() const{ return width; }
-		inline int getHeight() const{ return height; }
+		inline int getWidth() const;
+		inline int getHeight() const;
+
+		inline const std::string getFilePath() const;
 
 		Texture& operator=(Texture&& other);
 	};
 }
+
+#include "Clove/Rendering/API/Texture.inl"

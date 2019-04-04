@@ -28,6 +28,8 @@ namespace clv{
 
 	void Application::run(){
 		while(running){
+			window->onUpdate();
+			
 			for(auto layer : *layerStack){
 				layer->onUpdate();
 			}
@@ -37,8 +39,6 @@ namespace clv{
 				layer->onImGuiRender();
 			}
 			imGuiLayer->end();
-
-			window->onUpdate();
 		}
 	}
 
