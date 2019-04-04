@@ -45,7 +45,7 @@ namespace clv{
 		CLV_API void setMVP(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
 		//~
 
-		//temp lighting stuff
+		//temp lighting stuff TODO: refactor out when there is a concept of a meterial
 		CLV_API void setAmbientStrength(float strength);
 		CLV_API void setLightPosition(const glm::vec3& pos);
 		CLV_API void setViewPosition(const glm::vec3& pos);

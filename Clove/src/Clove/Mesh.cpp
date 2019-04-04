@@ -42,9 +42,9 @@ namespace clv{
 
 	void Mesh::setMVP(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection){
 		shader->bind();
-		shader->setUniformMat4f("model", model);
-		shader->setUniformMat4f("view", view);
-		shader->setUniformMat4f("projection", projection);
+		shader->setUniform("model", model);
+		shader->setUniform("view", view);
+		shader->setUniform("projection", projection);
 	}
 
 	void Mesh::setAmbientStrength(float strength){
@@ -62,11 +62,11 @@ namespace clv{
 	void Mesh::draw(const Renderer& renderer){
 		const unsigned int slot = 0;
 		texture->bind(slot);
-		shader->setUniform1i("u_Texture", slot);
+		shader->setUniform<int>("textureSample", slot);
 
-		shader->setUniform1f("ambientStrength", ambientStrength);
-		shader->setUniform3f("lightPos", lightPosition.x, lightPosition.y, lightPosition.z);
-		shader->setUniform3f("viewPos", viewPosition.x, viewPosition.y, viewPosition.z);
+		shader->setUniform("ambientStrength", ambientStrength);
+		shader->setUniform("lightPos", lightPosition);
+		shader->setUniform("viewPos", viewPosition);
 		
 		renderer.draw(*va, *ib, *shader);
 	}
@@ -156,14 +156,14 @@ namespace clv{
 			ib = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
 
 			//Shaders
-			shader = std::make_unique<Shader>(Shader(/*"../Clove/res/Shaders/BasicShader.glsl"*/));
+			shader = std::make_unique<Shader>(Shader());
 
 			shader->attachShader(ShaderTypes::Vertex, "../Clove/res/Shaders/VertexShader.glsl");
 			shader->attachShader(ShaderTypes::Fragment, "../Clove/res/Shaders/FragmentShader.glsl");
 
 			shader->bind();
-			shader->setUniform4f("objectColour", 0.65f, 0.65f, 0.65f, 1.0f);
-			shader->setUniform4f("lightColour", 1.0f, 1.0f, 1.0f, 1.0f);
+			shader->setUniform("objectColour", glm::vec4(0.65f, 0.65f, 0.65f, 1.0f));
+			shader->setUniform("lightColour", glm::vec3(1.0f, 1.0f, 1.0f));
 
 			texture = std::make_unique<Texture>(Texture(texturePath));
 

@@ -1,6 +1,9 @@
 #pragma once
 
-#include <glm/glm.hpp>
+//TODO: Remove - required by inl file
+#include "Clove/Rendering/Renderer.h"
+#include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace clv{
 	enum class ShaderTypes{
@@ -11,7 +14,6 @@ namespace clv{
 	class Shader{
 		//VARIABLES
 	private:
-		//std::string filepath;
 		unsigned int rendererID = 0;
 		std::unordered_map<std::string, int> uniformLocationCache;
 
@@ -27,12 +29,19 @@ namespace clv{
 
 		void attachShader(ShaderTypes shaderType, const std::string& path);
 
-		//TODO make this set value / set unform templated function
-		void setUniform1i(const std::string& name, int value);
-		void setUniform1f(const std::string& name, float value);
-		void setUniform3f(const std::string& name, float v0, float v1, float v2);
-		void setUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
-		void setUniformMat4f(const std::string& name, const glm::mat4& matrix);
+		template<typename T>
+		void setUniform(const std::string& name, const T& value);
+
+		template<>
+		void setUniform<int>(const std::string& name, const int& value);
+		template<>
+		void setUniform<float>(const std::string& name, const float& value);
+		template<>
+		void setUniform<glm::vec3>(const std::string& name, const glm::vec3& value);
+		template<>
+		void setUniform<glm::vec4>(const std::string& name, const glm::vec4& value);
+		template<>
+		void setUniform<glm::mat4>(const std::string& name, const glm::mat4& matrix);
 
 		Shader& operator=(Shader&& other);
 
@@ -44,3 +53,5 @@ namespace clv{
 		int getUniformLocation(const std::string& name);
 	};
 }
+
+#include "Clove/Rendering/API/Shader.inl"

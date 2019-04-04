@@ -5,11 +5,6 @@
 #include <string>
 #include <sstream>
 
-#include "Clove/Rendering/Renderer.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/gtc/type_ptr.hpp>
-
 namespace clv{
 	Shader::Shader(){
 		rendererID = createShader();
@@ -57,26 +52,6 @@ namespace clv{
 		GLCall(glLinkProgram(rendererID));
 		GLCall(glValidateProgram(rendererID));
 		GLCall(glDeleteShader(id));
-	}
-
-	void Shader::setUniform1i(const std::string& name, int value){
-		GLCall(glUniform1i(getUniformLocation(name), value));
-	}
-
-	void Shader::setUniform1f(const std::string& name, float value){
-		GLCall(glUniform1f(getUniformLocation(name), value));
-	}
-
-	void Shader::setUniform3f(const std::string& name, float v0, float v1, float v2){
-		GLCall(glUniform3f(getUniformLocation(name), v0, v1, v2));
-	}
-
-	void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3){
-		GLCall(glUniform4f(getUniformLocation(name), v0, v1, v2, v3));
-	}
-
-	void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix){
-		GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix)));
 	}
 
 	Shader& Shader::operator=(Shader&& other){
