@@ -26,6 +26,9 @@ private:
 	clv::Object sphere;
 	std::shared_ptr<clv::Material> sphereMaterial;
 
+	clv::Object monkey;
+	std::shared_ptr<clv::Material> monkeyMaterial;
+
 	clv::Object lightCube;
 	std::shared_ptr<clv::Material> lightMaterial;
 
@@ -52,17 +55,22 @@ public:
 	virtual void onAttach() override{
 		cubeMaterial = std::make_shared<clv::Material>(clv::Material("res/Textures/container2.png"));
 		cube = clv::Object(clv::Mesh("res/Objects/cube.obj", cubeMaterial));
-		cube.setPosition(glm::vec3(0.0f, 0.0f, -500.0f));
+		cube.setPosition(glm::vec3(0.0f, 0.0f, -300));
 		cube.setScale(glm::vec3(100.0f, 100.0f, 100.0f));
 
 		sphereMaterial = std::make_shared<clv::Material>(clv::Material());
 		sphere = clv::Object(clv::Mesh("res/Objects/sphere.obj", sphereMaterial));
-		sphere.setPosition(glm::vec3(500.0f, 0.0f, -500.0f));
+		sphere.setPosition(glm::vec3(-500, 0.0f, -900));
 		sphere.setScale(glm::vec3(100.0f, 100.0f, 100.0f));
+
+		monkeyMaterial = std::make_shared<clv::Material>(clv::Material());
+		monkey = clv::Object(clv::Mesh("res/Objects/monkey.obj", monkeyMaterial));
+		monkey.setPosition(glm::vec3(500, 0.0f, -900));
+		monkey.setScale(glm::vec3(100.0f, 100.0f, 100.0f));
 
 		lightMaterial = std::make_shared<clv::Material>(clv::Material());
 		lightCube = clv::Object(clv::Mesh("res/Objects/cube.obj", lightMaterial));
-		lightCube.setPosition(glm::vec3(200.0f, 200.0f, -900.0f));
+		lightCube.setPosition(glm::vec3(0, 200, -900));
 		lightCube.setScale(glm::vec3(25.0f, 25.0f, 25.0f));
 
 		//Material shiz
@@ -83,6 +91,16 @@ public:
 		sphereMaterial->setUniform3f("light.ambient", glm::vec3(0.01f, 0.01f, 0.01f));
 		sphereMaterial->setUniform3f("light.diffuse", glm::vec3(0.75f, 0.75f, 0.75f));
 		sphereMaterial->setUniform3f("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+		//MONKEY
+		//monkeyMaterial->setSpecularTexture("../Clove/res/Textures/DefaultTexture.png");
+
+		monkeyMaterial->setUniform1f("material.shininess", 32.0f);
+
+		monkeyMaterial->setUniform3f("light.ambient", glm::vec3(0.01f, 0.01f, 0.01f));
+		monkeyMaterial->setUniform3f("light.diffuse", glm::vec3(0.75f, 0.75f, 0.75f));
+		monkeyMaterial->setUniform3f("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
 
 		//LIGHT
 		lightMaterial->setUniform1f("material.shininess", 32.0f);
@@ -144,6 +162,14 @@ public:
 		sphereMaterial->setUniform3f("viewPos", cameraPosition);
 
 		sphere.draw(clv::Application::get().getWindow().getRenderer(), view, proj);
+
+		//MONKEY
+		monkey.setRotation(glm::vec3(0.0f, 1.0f, 0.5f), rot);
+
+		monkeyMaterial->setUniform3f("light.position", lightCube.getPosition());
+		monkeyMaterial->setUniform3f("viewPos", cameraPosition);
+
+		monkey.draw(clv::Application::get().getWindow().getRenderer(), view, proj);
 		
 		//LIGHT
 		lightMaterial->setUniform3f("viewPos", cameraPosition);
