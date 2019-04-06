@@ -15,16 +15,29 @@ namespace clv{
 
 	Material::Material(const Material& other){
 		CLV_WARN("Copy constructor called on material - creating new material data");
-		createMaterial(other.texturePath);
+		createMaterial(other.diffuseTexturePath);
+		if(!other.specularTexturePath.empty()){
+			createSpecularTexture(other.specularTexturePath);
+		} else{
+			specularTexturePath.clear();
+			specularTexture.reset();
+		}
 	}
 
 	Material::Material(Material&& other){
 		shader = std::move(other.shader);
-		texture = std::move(other.texture);
-		texturePath = other.texturePath;
+		
+		diffuseTexture = std::move(other.diffuseTexture);
+		specularTexture = std::move(other.specularTexture);
+		
+		diffuseTexturePath = other.diffuseTexturePath;
 	}
 
 	Material::~Material() = default;
+
+	void Material::setSpecularTexture(const std::string& path){
+		createSpecularTexture(path);
+	}
 
 	void Material::bindShader(){
 		shader->bind();
@@ -35,14 +48,22 @@ namespace clv{
 	}
 
 	void Material::bindTexture(){
-		const unsigned int slot = 0;
-		texture->bind(slot);
 		shader->bind();
-		shader->setUniform<int>("textureSample", slot);
+
+		//NOTE: when binding to slot 1 - any unitialised samplers will use that texture
+		//To avoid the spec map using the diffuse map we don't use slot 0
+		//TODO: decide if this is desired or not
+		diffuseTexture->bind(1);
+		shader->setUniform<int>("material.diffuse", 1);
+
+		if(specularTexture){
+			specularTexture->bind(2);
+			shader->setUniform<int>("material.specular", 2);
+		}
 	}
 
 	void Material::unbindTexture(){
-		texture->unbind();
+		diffuseTexture->unbind();
 		shader->unbind();
 	}
 
@@ -73,27 +94,41 @@ namespace clv{
 
 	Material& Material::operator=(const Material& other){
 		CLV_WARN("Copy assignment operator called on material - creating new material data");
-		createMaterial(other.texturePath);
+		createMaterial(other.diffuseTexturePath);
+		if(!other.specularTexturePath.empty()){
+			createSpecularTexture(other.specularTexturePath);
+		} else{
+			specularTexturePath.clear();
+			specularTexture.reset();
+		}
 
 		return *this;
 	}
 
 	Material& Material::operator=(Material&& other){
 		shader = std::move(other.shader);
-		texture = std::move(other.texture);
-		texturePath = other.texturePath;
+		
+		diffuseTexture = std::move(other.diffuseTexture);
+		specularTexture = std::move(other.specularTexture);
+		
+		diffuseTexturePath = other.diffuseTexturePath;
 
 		return *this;
 	}
 
 	void Material::createMaterial(const std::string& texturePath){
-		this->texturePath = texturePath;
+		diffuseTexturePath = texturePath;
 		
 		shader = std::make_unique<Shader>(Shader());
 
 		shader->attachShader(ShaderTypes::Vertex, "../Clove/res/Shaders/VertexShader.glsl");
 		shader->attachShader(ShaderTypes::Fragment, "../Clove/res/Shaders/FragmentShader.glsl");
 
-		texture = std::make_unique<Texture>(Texture(texturePath));
+		diffuseTexture = std::make_unique<Texture>(Texture(texturePath));
+	}
+
+	void Material::createSpecularTexture(const std::string& texturePath){
+		specularTexturePath = texturePath;
+		specularTexture = std::make_unique<Texture>(Texture(texturePath));
 	}
 }

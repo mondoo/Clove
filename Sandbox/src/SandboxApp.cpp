@@ -47,7 +47,7 @@ public:
 	}
 
 	virtual void onAttach() override{
-		cubeMaterial = std::make_shared<clv::Material>(clv::Material());
+		cubeMaterial = std::make_shared<clv::Material>(clv::Material("res/Textures/container2.png"));
 		cube = clv::Object(clv::Mesh("res/Objects/cube.obj", cubeMaterial));
 		cube.setPosition(glm::vec3(0.0f, 0.0f, -500.0f));
 		cube.setScale(glm::vec3(100.0f, 100.0f, 100.0f));
@@ -56,6 +56,23 @@ public:
 		lightCube = clv::Object(clv::Mesh("res/Objects/cube.obj", lightMaterial));
 		lightCube.setPosition(glm::vec3(200.0f, 200.0f, -900.0f));
 		lightCube.setScale(glm::vec3(25.0f, 25.0f, 25.0f));
+
+		//Material shiz
+		//CUBE
+		cubeMaterial->setSpecularTexture("res/Textures/container2_specular.png");
+
+		cubeMaterial->setUniform1f("material.shininess", 32.0f);
+
+		cubeMaterial->setUniform3f("light.ambient", glm::vec3(0.01f, 0.01f, 0.01f));
+		cubeMaterial->setUniform3f("light.diffuse", glm::vec3(0.75f, 0.75f, 0.75f));
+		cubeMaterial->setUniform3f("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+		//LIGHT
+		lightMaterial->setUniform1f("material.shininess", 32.0f);
+
+		lightMaterial->setUniform3f("light.ambient", glm::vec3(1.0f));
+		lightMaterial->setUniform3f("light.diffuse", glm::vec3(1.0f));
+		lightMaterial->setUniform3f("light.specular", glm::vec3(1.0f));
 	}
 
 	virtual void onDetach() override{
@@ -100,29 +117,11 @@ public:
 
 		cubeMaterial->setUniform3f("light.position", lightCube.getPosition());
 		cubeMaterial->setUniform3f("viewPos", cameraPosition);
-
-		cubeMaterial->setUniform3f("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-		cubeMaterial->setUniform3f("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-		cubeMaterial->setUniform3f("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-		cubeMaterial->setUniform1f("material.shininess", 32.0f);
-
-		cubeMaterial->setUniform3f("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-		cubeMaterial->setUniform3f("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-		cubeMaterial->setUniform3f("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 		
 		cube.draw(clv::Application::get().getWindow().getRenderer(), view, proj);
 		
 		//LIGHT
 		lightMaterial->setUniform3f("viewPos", cameraPosition);
-
-		lightMaterial->setUniform3f("material.ambient", glm::vec3(1.0f));
-		lightMaterial->setUniform3f("material.diffuse", glm::vec3(1.0f));
-		lightMaterial->setUniform3f("material.specular", glm::vec3(1.0f));
-		lightMaterial->setUniform1f("material.shininess", 32.0f);
-
-		lightMaterial->setUniform3f("light.ambient", glm::vec3(1.0f));
-		lightMaterial->setUniform3f("light.diffuse", glm::vec3(1.0f));
-		lightMaterial->setUniform3f("light.specular", glm::vec3(1.0f));
 
 		lightCube.draw(clv::Application::get().getWindow().getRenderer(), view, proj);
 

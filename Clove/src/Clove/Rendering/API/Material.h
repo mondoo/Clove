@@ -10,9 +10,12 @@ namespace clv{
 		//VARIABLES
 	private:
 		std::unique_ptr<Shader> shader;
-		std::unique_ptr<Texture> texture;
 
-		std::string texturePath;
+		std::unique_ptr<Texture> diffuseTexture;
+		std::unique_ptr<Texture> specularTexture;
+
+		std::string diffuseTexturePath;
+		std::string specularTexturePath;
 
 		//FUNCTIONS
 	public:
@@ -22,6 +25,8 @@ namespace clv{
 		CLV_API Material(Material&& other);
 
 		CLV_API ~Material();
+
+		CLV_API void setSpecularTexture(const std::string& path);
 
 		void bindShader();
 		void unbindShader();
@@ -34,11 +39,11 @@ namespace clv{
 		//TODO: I'd like this abstracted out but that includes the shader header here and thus causing the client to include glad
 		/*template<typename T>
 		void setUniform(const std::string& name, const T& value);*/
-		void setUniform1i(const std::string& name, int value);
-		void setUniform1f(const std::string& name, float value);
-		void setUniform3f(const std::string& name, const glm::vec3& value);
-		void setUniform4f(const std::string& name, const glm::vec4& value);
-		void setUniform4m(const std::string& name, const glm::mat4& value);
+		CLV_API void setUniform1i(const std::string& name, int value);
+		CLV_API void setUniform1f(const std::string& name, float value);
+		CLV_API void setUniform3f(const std::string& name, const glm::vec3& value);
+		CLV_API void setUniform4f(const std::string& name, const glm::vec4& value);
+		CLV_API void setUniform4m(const std::string& name, const glm::mat4& value);
 		//~END
 
 		CLV_API Material& operator=(const Material& other);
@@ -46,6 +51,8 @@ namespace clv{
 
 	private:
 		void createMaterial(const std::string& texturePath);
+
+		void createSpecularTexture(const std::string& texturePath);
 	};
 }
 
