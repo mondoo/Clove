@@ -12,8 +12,6 @@ namespace clv{
 		glm::vec3 scale		= glm::vec3(1.0f);
 		float rotationAngle = 0.0f;
 
-		//TODO: Temp public!
-	public:
 		std::unique_ptr<Mesh> objectMesh;
 
 		//FUNCTIONS
@@ -45,4 +43,4 @@ namespace clv{
 	};
 }
 
-#include "Clove/Object.inl"
+#include "Object.inl"

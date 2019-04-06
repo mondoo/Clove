@@ -37,7 +37,7 @@ namespace clv{
 	Object::~Object() = default;
 
 	void Object::update(float deltaTime){
-		//Implementation needed?
+		//TODO: This will probably come much much later
 	}
 
 	void Object::draw(const Renderer& renderer, const glm::mat4& view, const glm::mat4& projection){

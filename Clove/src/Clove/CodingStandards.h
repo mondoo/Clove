@@ -33,7 +33,7 @@ namespace clv{
 		//[function.inline] please do not do this!
 		inline void badInlineFunction() { /*do some thing*/ }
 
-		//[function.inline] if you need it inline, mark it as such and declare in cpp
+		//[function.inline] if you need it inline, mark it as such and declare in an inl file
 		inline void goodInlineFunction();
 
 		//[function.const correct] please keep functiosn const correct
@@ -45,3 +45,6 @@ namespace clv{
 	private:
 	};
 }
+
+//[inline.include] make sure the .inl is included (if exists)
+#include "CodingStandards.inl"

@@ -1,14 +1,11 @@
-#include "src\Clove\CodingStandards.h"
 #include "clvpch.h"
-#include "CodingStandards.h"
+#include "CodingStandards.h" //Keep own file inlcudes short
+
+//use verbose includes for other files
 
 //[namespace.source] always wrap the function declarations in clv namespace
 namespace clv{
 	CodingStandards::CodingStandards(){
-	}
-
-	inline void CodingStandards::goodInlineFunction(){
-
 	}
 
 	void CodingStandards::nonMutable() const{

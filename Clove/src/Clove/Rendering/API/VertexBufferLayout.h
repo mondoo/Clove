@@ -47,4 +47,4 @@ namespace clv{
 	};
 }
 
-#include "Clove/Rendering/API/VertexBufferLayout.inl"
+#include "VertexBufferLayout.inl"

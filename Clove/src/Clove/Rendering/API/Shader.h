@@ -1,9 +1,7 @@
 #pragma once
 
-//TODO: Remove - required by inl file
-#include "Clove/Rendering/Renderer.h"
+#include "Clove/Rendering/Renderer.h" //TODO: this is to get the GLCall macro
 #include <glad/glad.h>
-#include <glm/gtc/type_ptr.hpp>
 
 namespace clv{
 	enum class ShaderTypes{
@@ -41,7 +39,7 @@ namespace clv{
 		template<>
 		void setUniform<glm::vec4>(const std::string& name, const glm::vec4& value);
 		template<>
-		void setUniform<glm::mat4>(const std::string& name, const glm::mat4& matrix);
+		void setUniform<glm::mat4>(const std::string& name, const glm::mat4& value);
 
 		Shader& operator=(Shader&& other);
 
@@ -54,4 +52,4 @@ namespace clv{
 	};
 }
 
-#include "Clove/Rendering/API/Shader.inl"
+#include "Shader.inl"

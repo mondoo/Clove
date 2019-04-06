@@ -30,4 +30,4 @@ namespace clv{
 	};
 }
 
-#include "Clove/Rendering/API/Texture.inl"
+#include "Texture.inl"

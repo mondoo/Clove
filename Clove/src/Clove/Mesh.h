@@ -5,10 +5,7 @@ namespace clv{
 	class VertexArray;
 	class VertexBuffer;
 	class IndexBuffer;
-	class Shader;
-	class Texture;
-
-	struct MeshInfo;
+	class Material;
 
 	class Mesh{
 		//VARIABLES
@@ -19,37 +16,22 @@ namespace clv{
 		std::unique_ptr<VertexArray> va;
 		std::unique_ptr<VertexBuffer> vb;
 		std::unique_ptr<IndexBuffer> ib;
-		std::unique_ptr<Shader> shader;
-		std::unique_ptr<Texture> texture;
 
-		//Temp
-		float ambientStrength = 1.0f;
-		glm::vec3 lightPosition;
-		glm::vec3 viewPosition;
-		//~
+		std::shared_ptr<Material> material;
 
 		std::string meshPath;
-		std::string texturePath;
 
 		//FUNCTIONS
 	public:
-		CLV_API Mesh();
+		CLV_API Mesh(); //TODO: should there be a default?
 		CLV_API Mesh(const std::string& meshPath);
-		CLV_API Mesh(const std::string& meshPath, const std::string& texturePath);
+		CLV_API Mesh(const std::string& meshPath, std::shared_ptr<Material> material);
 		CLV_API Mesh(const Mesh& other);
 		CLV_API Mesh(Mesh&& other);
 
 		CLV_API ~Mesh();
 
-		//temp ish
 		CLV_API void setMVP(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
-		//~
-
-		//temp lighting stuff TODO: refactor out when there is a concept of a meterial
-		CLV_API void setAmbientStrength(float strength);
-		CLV_API void setLightPosition(const glm::vec3& pos);
-		CLV_API void setViewPosition(const glm::vec3& pos);
-		//~
 
 		CLV_API void draw(const Renderer& renderer);
 
@@ -60,6 +42,6 @@ namespace clv{
 		std::pair<const void*, unsigned int> getVertexData() const;
 		std::pair<const unsigned int*, unsigned int> getIndexData() const;
 
-		void createModelData(const std::string& meshPath, const std::string& texturePath);
+		void createModelData(const std::string& meshPath);
 	};
 }

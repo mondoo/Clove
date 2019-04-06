@@ -19,7 +19,7 @@ namespace clv{
 	};
 }
 
-#include "Clove/Log.inl"
+#include "Log.inl"
 
 #if CLV_ENGINE
 	//Core log macros

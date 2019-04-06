@@ -1,3 +1,5 @@
+#include <glm/gtc/type_ptr.hpp>
+
 namespace clv{
 	template<typename T>
 	void Shader::setUniform(const std::string& name, const T& value){
@@ -25,7 +27,7 @@ namespace clv{
 	}
 
 	template<>
-	void Shader::setUniform(const std::string& name, const glm::mat4& matrix){
-		GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix)));
+	void Shader::setUniform(const std::string& name, const glm::mat4& value){
+		GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value)));
 	}
 }

@@ -76,4 +76,4 @@ namespace clv{
 	inline std::ostream& operator<<(std::ostream& os, const Event& e);
 }
 
-#include "Clove/Events/Event.inl"
+#include "Event.inl"
