@@ -23,6 +23,9 @@ private:
 	clv::Object cube;
 	std::shared_ptr<clv::Material> cubeMaterial;
 
+	clv::Object sphere;
+	std::shared_ptr<clv::Material> sphereMaterial;
+
 	clv::Object lightCube;
 	std::shared_ptr<clv::Material> lightMaterial;
 
@@ -52,6 +55,11 @@ public:
 		cube.setPosition(glm::vec3(0.0f, 0.0f, -500.0f));
 		cube.setScale(glm::vec3(100.0f, 100.0f, 100.0f));
 
+		sphereMaterial = std::make_shared<clv::Material>(clv::Material());
+		sphere = clv::Object(clv::Mesh("res/Objects/sphere.obj", sphereMaterial));
+		sphere.setPosition(glm::vec3(500.0f, 0.0f, -500.0f));
+		sphere.setScale(glm::vec3(100.0f, 100.0f, 100.0f));
+
 		lightMaterial = std::make_shared<clv::Material>(clv::Material());
 		lightCube = clv::Object(clv::Mesh("res/Objects/cube.obj", lightMaterial));
 		lightCube.setPosition(glm::vec3(200.0f, 200.0f, -900.0f));
@@ -66,6 +74,15 @@ public:
 		cubeMaterial->setUniform3f("light.ambient", glm::vec3(0.01f, 0.01f, 0.01f));
 		cubeMaterial->setUniform3f("light.diffuse", glm::vec3(0.75f, 0.75f, 0.75f));
 		cubeMaterial->setUniform3f("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+		//SPHERE
+		//sphereMaterial->setSpecularTexture("../Clove/res/Textures/DefaultTexture.png");
+
+		sphereMaterial->setUniform1f("material.shininess", 32.0f);
+
+		sphereMaterial->setUniform3f("light.ambient", glm::vec3(0.01f, 0.01f, 0.01f));
+		sphereMaterial->setUniform3f("light.diffuse", glm::vec3(0.75f, 0.75f, 0.75f));
+		sphereMaterial->setUniform3f("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
 		//LIGHT
 		lightMaterial->setUniform1f("material.shininess", 32.0f);
@@ -119,6 +136,14 @@ public:
 		cubeMaterial->setUniform3f("viewPos", cameraPosition);
 		
 		cube.draw(clv::Application::get().getWindow().getRenderer(), view, proj);
+
+		//SPHERE
+		sphere.setRotation(glm::vec3(0.0f, 1.0f, 0.0f), rot);
+
+		sphereMaterial->setUniform3f("light.position", lightCube.getPosition());
+		sphereMaterial->setUniform3f("viewPos", cameraPosition);
+
+		sphere.draw(clv::Application::get().getWindow().getRenderer(), view, proj);
 		
 		//LIGHT
 		lightMaterial->setUniform3f("viewPos", cameraPosition);
