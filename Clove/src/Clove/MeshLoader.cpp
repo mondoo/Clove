@@ -1,5 +1,6 @@
-#include "clvpch.h"
-#include "Clove/MeshLoader.h"
+#include "clvpch.hpp"
+#include "Clove/MeshLoader.hpp"
+
 #include <OBJ_Loader.h>
 
 bool clv::loadOBJ(const std::string& filepath, MeshInfo& outVertexInfo){

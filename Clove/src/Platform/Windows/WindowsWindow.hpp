@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Clove/Window.h"
-#include "Clove/Rendering/Renderer.h"
+#include "Clove/Window.hpp"
+
+#include "Clove/Rendering/Renderer.hpp"
 
 struct GLFWwindow;
 

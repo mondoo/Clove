@@ -88,7 +88,7 @@ project "ImGui"
     }
 
 	defines{
-		"IMGUI_USER_CONFIG=\"../../src/Clove/ImGui/ImGuiConfig.h\"",
+		"IMGUI_USER_CONFIG=\"../../src/Clove/ImGui/ImGuiConfig.hpp\"",
 		"IMGUI_DISABLE_INCLUDE_IMCONFIG_H",
 		"_CRT_SECURE_NO_WARNINGS"
 	}
@@ -190,11 +190,11 @@ project "Clove"
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("intermediate/" .. outputdir .. "/%{prj.name}")
 
-	pchheader "clvpch.h"
+	pchheader "clvpch.hpp"
 	pchsource "Clove/src/clvpch.cpp"
 
 	files{
-		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.hpp",
 		"%{prj.name}/src/**.inl",
 		"%{prj.name}/src/**.cpp",
 
@@ -269,7 +269,8 @@ project "Sandbox"
 	objdir("intermediate/" .. outputdir .. "/%{prj.name}")
 
 	files{
-		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.hpp",
+		"%{prj.name}/src/**.inl",
 		"%{prj.name}/src/**.cpp"
 	}
 

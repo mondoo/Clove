@@ -1,12 +1,13 @@
-#include "clvpch.h"
-#include "Application.h"
-#include "Clove/Window.h"
-#include "Clove/Input/Input.h"
-#include "Clove/LayerStack.h"
-#include "Clove/Layer.h"
-#include "Clove/Events/Event.h"
-#include "Clove/Events/ApplicationEvent.h"
-#include "Clove/ImGui/ImGuiLayer.h"
+#include "clvpch.hpp"
+#include "Application.hpp"
+
+#include "Clove/Window.hpp"
+#include "Clove/Input/Input.hpp"
+#include "Clove/LayerStack.hpp"
+#include "Clove/Layer.hpp"
+#include "Clove/Events/Event.hpp"
+#include "Clove/Events/ApplicationEvent.hpp"
+#include "Clove/ImGui/ImGuiLayer.hpp"
 
 namespace clv{
 	Application* Application::instance = nullptr;

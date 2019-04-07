@@ -1,5 +1,5 @@
-#include "clvpch.h"
-#include "VertexBufferLayout.h"
+#include "clvpch.hpp"
+#include "VertexBufferLayout.hpp"
 
 namespace clv{
 	VertexBufferElement::VertexBufferElement()

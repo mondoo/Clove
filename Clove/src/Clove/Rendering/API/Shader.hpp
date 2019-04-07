@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Clove/Rendering/Renderer.h" //TODO: this is to get the GLCall macro
+#include "Clove/Rendering/Renderer.hpp" //TODO: this is to get the GLCall macro
+
 #include <glad/glad.h>
 
 namespace clv{

@@ -1,5 +1,5 @@
-#include "clvpch.h"
-#include "KeyEvent.h"
+#include "clvpch.hpp"
+#include "KeyEvent.hpp"
 
 namespace clv{
 	inline Key KeyEvent::getKey() const{

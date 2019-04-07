@@ -1,7 +1,5 @@
-#include "clvpch.h"
-#include "Camera.h"
-
-#include <glm/gtc/matrix_transform.hpp>
+#include "clvpch.hpp"
+#include "Camera.hpp"
 
 namespace clv{
 	void Camera::setPosition(const math::Vector3f& newPosition){

@@ -1,13 +1,13 @@
-#include "clvpch.h"
-#include "Mesh.h"
+#include "clvpch.hpp"
+#include "Mesh.hpp"
 
-#include "Clove/MeshLoader.h"
-#include "Clove/Rendering/Renderer.h"
-#include "Clove/Rendering/API/VertexBuffer.h"
-#include "Clove/Rendering/API/IndexBuffer.h"
-#include "Clove/Rendering/API/VertexArray.h"
-#include "Clove/Rendering/API/VertexBufferLayout.h"
-#include "Clove/Rendering/API/Material.h"
+#include "Clove/MeshLoader.hpp"
+#include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Rendering/API/VertexBuffer.hpp"
+#include "Clove/Rendering/API/IndexBuffer.hpp"
+#include "Clove/Rendering/API/VertexArray.hpp"
+#include "Clove/Rendering/API/VertexBufferLayout.hpp"
+#include "Clove/Rendering/API/Material.hpp"
 
 #include <fstream>
 

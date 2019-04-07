@@ -1,5 +1,5 @@
-#include "clvpch.h"
-#include "MouseEvent.h"
+#include "clvpch.hpp"
+#include "MouseEvent.hpp"
 
 namespace clv{
 	MouseMovedEvent::MouseMovedEvent(float x, float y)

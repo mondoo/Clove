@@ -1,6 +1,7 @@
-#include "clvpch.h"
-#include "LayerStack.h"
-#include "Layer.h"
+#include "clvpch.hpp"
+#include "LayerStack.hpp"
+
+#include "Clove/Layer.hpp"
 
 namespace clv{
 	LayerStack::~LayerStack(){

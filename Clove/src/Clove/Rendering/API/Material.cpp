@@ -1,8 +1,8 @@
-#include "clvpch.h"
-#include "Material.h"
+#include "clvpch.hpp"
+#include "Material.hpp"
 
-#include "Clove/Rendering/API/Shader.h"
-#include "Clove/Rendering/API/Texture.h"
+#include "Clove/Rendering/API/Shader.hpp"
+#include "Clove/Rendering/API/Texture.hpp"
 
 namespace clv{
 	Material::Material(){

@@ -1,5 +1,5 @@
-#include "clvpch.h"
-#include "ApplicationEvent.h"
+#include "clvpch.hpp"
+#include "ApplicationEvent.hpp"
 
 namespace clv{
 	WindowResizeEvent::WindowResizeEvent(unsigned int inWidth, unsigned int inHeight)

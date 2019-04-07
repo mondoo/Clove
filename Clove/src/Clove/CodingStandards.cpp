@@ -1,5 +1,5 @@
-#include "clvpch.h"
-#include "CodingStandards.h" //Keep own file inlcudes short
+#include "clvpch.hpp"
+#include "CodingStandards.hpp" //Keep own file inlcudes short
 
 //use verbose includes for other files
 

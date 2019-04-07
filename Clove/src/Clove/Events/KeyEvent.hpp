@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Clove/Events/Event.h"
-#include "Clove/Input/KeyCodes.h"
+#include "Event.hpp"
+
+#include "Clove/Input/KeyCodes.hpp"
 
 namespace clv{
 	class KeyEvent : public Event{

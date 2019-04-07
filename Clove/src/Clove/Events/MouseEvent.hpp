@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Clove/Events/Event.h"
-#include "Clove/Input/MouseButtonCodes.h"
+#include "Event.hpp"
+
+#include "Clove/Input/MouseButtonCodes.hpp"
 
 namespace clv{
 	class MouseMovedEvent : public Event{

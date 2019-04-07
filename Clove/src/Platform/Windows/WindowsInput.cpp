@@ -1,7 +1,7 @@
-#include "clvpch.h"
-#include "WindowsInput.h"
-#include "Clove/Application.h"
-#include "Clove/Window.h"
+#include "clvpch.hpp"
+#include "WindowsInput.hpp"
+#include "Clove/Application.hpp"
+#include "Clove/Window.hpp"
 
 #include <GLFW/glfw3.h> //TODO: abstract GLFW macros
 

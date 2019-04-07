@@ -1,5 +1,5 @@
-#include "clvpch.h"
-#include "Shader.h"
+#include "clvpch.hpp"
+#include "Shader.hpp"
 
 #include <fstream>
 #include <string>

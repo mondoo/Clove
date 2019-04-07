@@ -1,9 +1,9 @@
-#include "clvpch.h"
-#include "VertexBuffer.h"
+#include "clvpch.hpp"
+#include "VertexBuffer.hpp"
 
-#include "Clove/Rendering/Renderer.h"
+#include "Clove/Rendering/Renderer.hpp"
+
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 namespace clv{
 	VertexBuffer::VertexBuffer(const void* data, unsigned int size){

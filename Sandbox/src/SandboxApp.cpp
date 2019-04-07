@@ -1,17 +1,17 @@
-#include <Clove.h>
+#include <Clove.hpp>
 
 //Clove
-#include "Clove/Object.h"
-#include "Clove/Mesh.h"
-#include "Clove/Rendering/API/Material.h"
+#include "Clove/Object.hpp"
+#include "Clove/Mesh.hpp"
+#include "Clove/Rendering/API/Material.hpp"
 
-#include "Clove/Camera.h"
+#include "Clove/Camera.hpp"
 
-#include "Clove/Rendering/Renderer.h"
+#include "Clove/Rendering/Renderer.hpp"
 
-#include "Clove/Window.h"
+#include "Clove/Window.hpp"
 
-#include "Clove/Events/MouseEvent.h"
+#include "Clove/Events/MouseEvent.hpp"
 
 //Vendor
 #include <glm/gtc/matrix_transform.hpp>

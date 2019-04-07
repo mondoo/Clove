@@ -1,5 +1,5 @@
-#include "clvpch.h"
-#include "KeyCodes.h"
+#include "clvpch.hpp"
+#include "KeyCodes.hpp"
 
 #include <GLFW/glfw3.h>
 

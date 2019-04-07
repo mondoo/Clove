@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Clove/Input/KeyCodes.h"
-#include "Clove/Input/MouseButtonCodes.h"
+#include "Clove/Input/KeyCodes.hpp"
+#include "Clove/Input/MouseButtonCodes.hpp"
 
 namespace clv{
 	class Input{

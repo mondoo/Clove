@@ -1,9 +1,7 @@
-#include "clvpch.h"
-#include "Object.h"
-#include "Clove/Mesh.h"
-#include "Clove/Rendering/Renderer.h"
-
-
+#include "clvpch.hpp"
+#include "Object.hpp"
+#include "Clove/Mesh.hpp"
+#include "Clove/Rendering/Renderer.hpp"
 
 namespace clv{
 	Object::Object() = default;

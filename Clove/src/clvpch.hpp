@@ -15,11 +15,11 @@
 #include <unordered_set>
 
 //Clove headers
-#include "Clove/Core.h"
-#include "Clove/Log.h"
-#include "Clove/Maths/MathsTypes.h"
-#include "Clove/Maths/Maths.h"
-#include "Clove/Maths/MathsHelpers.h"
+#include "Clove/Core.hpp"
+#include "Clove/Log.hpp"
+#include "Clove/Maths/MathsTypes.hpp"
+#include "Clove/Maths/Maths.hpp"
+#include "Clove/Maths/MathsHelpers.hpp"
 
 //Vendor headers
 

@@ -1,11 +1,11 @@
-#include "clvpch.h"
-#include "Renderer.h"
+#include "clvpch.hpp"
+#include "Renderer.hpp"
+
+#include "Clove/Rendering/API/VertexArray.hpp"
+#include "Clove/Rendering/API/IndexBuffer.hpp"
+#include "Clove/Rendering/API/Shader.hpp"
 
 #include <glad/glad.h>
-
-#include "Clove/Rendering/API/VertexArray.h"
-#include "Clove/Rendering/API/IndexBuffer.h"
-#include "Clove/Rendering/API/Shader.h"
 
 namespace clv{
 	void GLClearError(){

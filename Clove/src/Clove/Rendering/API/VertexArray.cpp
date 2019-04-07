@@ -1,10 +1,11 @@
-#include "clvpch.h"
-#include "VertexArray.h"
-#include "Clove/Rendering/API/VertexBuffer.h"
-#include "Clove/Rendering/API/VertexBufferLayout.h"
-#include "Clove/Rendering/Renderer.h"
+#include "clvpch.hpp"
+#include "VertexArray.hpp"
+
+#include "Clove/Rendering/API/VertexBuffer.hpp"
+#include "Clove/Rendering/API/VertexBufferLayout.hpp"
+#include "Clove/Rendering/Renderer.hpp"
+
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 namespace clv{
 	VertexArray::VertexArray(){

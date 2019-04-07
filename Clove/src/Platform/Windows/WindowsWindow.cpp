@@ -1,11 +1,11 @@
-#include "clvpch.h"
-#include "WindowsWindow.h"
+#include "clvpch.hpp"
+#include "WindowsWindow.hpp"
 
-#include "Clove/Events/ApplicationEvent.h"
-#include "Clove/Events/MouseEvent.h"
-#include "Clove/Events/KeyEvent.h"
+#include "Clove/Events/ApplicationEvent.hpp"
+#include "Clove/Events/MouseEvent.hpp"
+#include "Clove/Events/KeyEvent.hpp"
 
-#include "Clove/Rendering/Renderer.h"
+#include "Clove/Rendering/Renderer.hpp"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>

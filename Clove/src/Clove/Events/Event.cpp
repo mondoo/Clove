@@ -1,5 +1,5 @@
-#include "clvpch.h"
-#include "Event.h"
+#include "clvpch.hpp"
+#include "Event.hpp"
 
 namespace clv{
 	std::string Event::toString() const{

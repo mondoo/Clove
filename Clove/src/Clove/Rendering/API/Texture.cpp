@@ -1,11 +1,10 @@
-#include "clvpch.h"
-#include "Texture.h"
+#include "clvpch.hpp"
+#include "Texture.hpp"
 
-#include "stb_image.h"
+#include "Clove/Rendering/Renderer.hpp"
 
-#include "Clove/Rendering/Renderer.h"
+#include <stb_image.h>
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 namespace clv{
 	Texture::Texture(const std::string& filePath)

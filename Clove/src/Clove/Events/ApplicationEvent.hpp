@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Events/Event.h"
+#include "Event.hpp"
 
 namespace clv{
 	class WindowResizeEvent : public Event{

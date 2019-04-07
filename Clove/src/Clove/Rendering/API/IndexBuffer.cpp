@@ -1,9 +1,9 @@
-#include "clvpch.h"
-#include "IndexBuffer.h"
+#include "clvpch.hpp"
+#include "IndexBuffer.hpp"
 
-#include "Clove/Rendering/Renderer.h"
+#include "Clove/Rendering/Renderer.hpp"
+
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 namespace clv{
 	IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int inCount)

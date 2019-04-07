@@ -2,7 +2,7 @@
 
 //Wrapping glm in clv::math
 
-#include "Clove/Maths/glmWrappers.h"
+#include "Clove/Maths/glmWrappers.hpp"
 
 #include <glm/glm.hpp>
 
