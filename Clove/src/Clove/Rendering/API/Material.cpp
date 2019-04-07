@@ -77,17 +77,17 @@ namespace clv{
 		shader->setUniform(name, value);
 	}
 
-	void Material::setUniform3f(const std::string& name, const glm::vec3& value){
+	void Material::setUniform3f(const std::string& name, const math::Vector3f& value){
 		shader->bind();
 		shader->setUniform(name, value);
 	}
 
-	void Material::setUniform4f(const std::string& name, const glm::vec4& value){
+	void Material::setUniform4f(const std::string& name, const math::Vector4f& value){
 		shader->bind();
 		shader->setUniform(name, value);
 	}
 
-	void Material::setUniform4m(const std::string& name, const glm::mat4& value){
+	void Material::setUniform4m(const std::string& name, const math::Matrix4f& value){
 		shader->bind();
 		shader->setUniform(name, value);
 	}

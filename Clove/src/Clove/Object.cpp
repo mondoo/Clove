@@ -3,7 +3,7 @@
 #include "Clove/Mesh.h"
 #include "Clove/Rendering/Renderer.h"
 
-#include <glm/gtc/matrix_transform.hpp>
+
 
 namespace clv{
 	Object::Object() = default;
@@ -40,24 +40,24 @@ namespace clv{
 		//TODO: This will probably come much much later
 	}
 
-	void Object::draw(const Renderer& renderer, const glm::mat4& view, const glm::mat4& projection){
+	void Object::draw(const Renderer& renderer, const math::Matrix4f& view, const math::Matrix4f& projection){
 		if(objectMesh){
-			const glm::mat4 matrix = computeMatrix();
+			const math::Matrix4f matrix = computeMatrix();
 			objectMesh->setMVP(matrix, view, projection);
 			objectMesh->draw(renderer);
 		}
 	}
 
-	void Object::setPosition(const glm::vec3& newPosition){
+	void Object::setPosition(const math::Vector3f& newPosition){
 		position = newPosition;
 	}
 
-	void Object::setRotation(const glm::vec3& newRotationAxis, float newRotationAngle){
+	void Object::setRotation(const math::Vector3f& newRotationAxis, float newRotationAngle){
 		rotation = newRotationAxis;
 		rotationAngle = newRotationAngle;
 	}
 
-	void Object::setScale(const glm::vec3& newScale){
+	void Object::setScale(const math::Vector3f& newScale){
 		scale = newScale;
 	}
 
@@ -83,10 +83,12 @@ namespace clv{
 		return *this;
 	}
 
-	glm::mat4 Object::computeMatrix(){
-		const glm::mat4 transformMatrix = glm::translate(glm::mat4(1.0f), position);
-		const glm::mat4 rotationMatrix	= glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), rotation);
-		const glm::mat4 scaleMatrix		= glm::scale(glm::mat4(1.0f), scale);
+	math::Matrix4f Object::computeMatrix(){
+		const math::Matrix4f identity(1.0f);
+
+		const math::Matrix4f transformMatrix	= math::translate<float, math::qualifier::defaultp>(identity, position);
+		const math::Matrix4f rotationMatrix		= math::rotate<float, math::qualifier::defaultp>(identity, math::asRadians(rotationAngle), rotation);
+		const math::Matrix4f scaleMatrix		= math::scale<float, math::qualifier::defaultp>(identity, scale);
 
 		return transformMatrix * rotationMatrix * scaleMatrix;
 	}

@@ -1,17 +1,17 @@
 namespace clv{
-	inline const glm::vec3& Camera::getPosition() const{
+	inline const math::Vector3f& Camera::getPosition() const{
 		return cameraPosition;
 	}
 
-	inline const glm::vec3& Camera::getFront() const{
+	inline const math::Vector3f& Camera::getFront() const{
 		return cameraFront;
 	}
 
-	inline const glm::vec3& Camera::getUp() const{
+	inline const math::Vector3f& Camera::getUp() const{
 		return cameraUp;
 	}
 
-	inline glm::vec3 Camera::getRight() const{
-		return glm::normalize(glm::cross(cameraFront, cameraUp));
+	inline math::Vector3f Camera::getRight() const{
+		return math::normalise(math::cross(cameraFront, cameraUp));
 	}
 }

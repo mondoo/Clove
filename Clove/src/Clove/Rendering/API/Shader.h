@@ -35,11 +35,11 @@ namespace clv{
 		template<>
 		void setUniform<float>(const std::string& name, const float& value);
 		template<>
-		void setUniform<glm::vec3>(const std::string& name, const glm::vec3& value);
+		void setUniform<math::Vector3f>(const std::string& name, const math::Vector3f& value);
 		template<>
-		void setUniform<glm::vec4>(const std::string& name, const glm::vec4& value);
+		void setUniform<math::Vector4f>(const std::string& name, const math::Vector4f& value);
 		template<>
-		void setUniform<glm::mat4>(const std::string& name, const glm::mat4& value);
+		void setUniform<math::Matrix4f>(const std::string& name, const math::Matrix4f& value);
 
 		Shader& operator=(Shader&& other);
 

@@ -10,7 +10,7 @@ namespace clv{
 		: event(inEvent){
 	}
 
-	std::ostream & operator<<(std::ostream& os, const Event& e){
+	std::ostream& operator<<(std::ostream& os, const Event& e){
 		return os << e.toString();
 	}
 }

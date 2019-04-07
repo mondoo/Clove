@@ -17,9 +17,12 @@
 //Clove headers
 #include "Clove/Core.h"
 #include "Clove/Log.h"
+#include "Clove/Maths/MathsTypes.h"
+#include "Clove/Maths/Maths.h"
+#include "Clove/Maths/MathsHelpers.h"
 
 //Vendor headers
-#include <glm/glm.hpp>
+
 
 //Platform specific headers
 #if CLV_PLATFORM_WINDOWS

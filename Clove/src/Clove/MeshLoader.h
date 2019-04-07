@@ -2,9 +2,9 @@
 
 namespace clv{
 	struct MeshInfo{
-		std::vector<glm::vec3> verticies;
-		std::vector<glm::vec2> texCoords;
-		std::vector<glm::vec3> normals;
+		std::vector<math::Vector3f> verticies;
+		std::vector<math::Vector2f> texCoords;
+		std::vector<math::Vector3f> normals;
 
 		std::vector<unsigned int> indices;
 	};

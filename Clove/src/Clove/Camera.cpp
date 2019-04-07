@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace clv{
-	void Camera::setPosition(const glm::vec3& newPosition){
+	void Camera::setPosition(const math::Vector3f& newPosition){
 		cameraPosition = newPosition;
 	}
 	
@@ -16,14 +16,14 @@ namespace clv{
 		cameraDirection.x = cos(glm::radians(yaw));
 		cameraDirection.z = cos(glm::radians(yaw));*/
 
-		glm::vec3 front;
-		front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-		front.y = sin(glm::radians(pitch));
-		front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-		cameraFront = glm::normalize(front);
+		math::Vector3f front;
+		front.x = cos(math::asRadians(yaw)) * cos(math::asRadians(pitch));
+		front.y = sin(math::asRadians(pitch));
+		front.z = sin(math::asRadians(yaw)) * cos(math::asRadians(pitch));
+		cameraFront = math::normalise(front);
 	}
 
-	glm::mat4 Camera::getLookAt(){
-		return glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+	math::Matrix4f Camera::getLookAt(){
+		return math::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 	}
 }

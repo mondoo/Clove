@@ -1,4 +1,4 @@
-#include <glm/gtc/type_ptr.hpp>
+#include "Clove/Maths/MathsHelpers.h"
 
 namespace clv{
 	template<typename T>
@@ -17,17 +17,17 @@ namespace clv{
 	}
 
 	template<>
-	void Shader::setUniform(const std::string& name, const glm::vec3& value){
+	void Shader::setUniform(const std::string& name, const math::Vector3f& value){
 		GLCall(glUniform3f(getUniformLocation(name), value.x, value.y, value.z));
 	}
 
 	template<>
-	void Shader::setUniform(const std::string& name, const glm::vec4& value){
+	void Shader::setUniform(const std::string& name, const math::Vector4f& value){
 		GLCall(glUniform4f(getUniformLocation(name), value.x, value.y, value.z, value.w));
 	}
 
 	template<>
-	void Shader::setUniform(const std::string& name, const glm::mat4& value){
-		GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value)));
+	void Shader::setUniform(const std::string& name, const math::Matrix4f& value){
+		GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, math::valuePtr(value)));
 	}
 }

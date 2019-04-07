@@ -47,7 +47,7 @@ namespace clv{
 
 	Mesh::~Mesh() = default;
 
-	void Mesh::setMVP(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection){
+	void Mesh::setMVP(const math::Matrix4f& model, const math::Matrix4f& view, const math::Matrix4f& projection){
 		material->bindShader();
 		material->setUniform4m("model", model);
 		material->setUniform4m("view", view);

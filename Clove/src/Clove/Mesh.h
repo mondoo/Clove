@@ -31,7 +31,7 @@ namespace clv{
 
 		CLV_API ~Mesh();
 
-		CLV_API void setMVP(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
+		CLV_API void setMVP(const math::Matrix4f& model, const math::Matrix4f& view, const math::Matrix4f& projection);
 
 		CLV_API void draw(const Renderer& renderer);
 

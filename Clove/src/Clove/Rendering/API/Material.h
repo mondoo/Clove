@@ -41,9 +41,9 @@ namespace clv{
 		void setUniform(const std::string& name, const T& value);*/
 		CLV_API void setUniform1i(const std::string& name, int value);
 		CLV_API void setUniform1f(const std::string& name, float value);
-		CLV_API void setUniform3f(const std::string& name, const glm::vec3& value);
-		CLV_API void setUniform4f(const std::string& name, const glm::vec4& value);
-		CLV_API void setUniform4m(const std::string& name, const glm::mat4& value);
+		CLV_API void setUniform3f(const std::string& name, const math::Vector3f& value);
+		CLV_API void setUniform4f(const std::string& name, const math::Vector4f& value);
+		CLV_API void setUniform4m(const std::string& name, const math::Matrix4f& value);
 		//~END
 
 		CLV_API Material& operator=(const Material& other);

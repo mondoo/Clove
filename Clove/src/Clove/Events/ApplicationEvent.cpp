@@ -20,6 +20,4 @@ namespace clv{
 		ss << "WindowResizeEvent: " << width << " , " << height;
 		return ss.str();
 	}
-
-
 }
