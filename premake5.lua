@@ -230,11 +230,9 @@ project "Clove"
 
 	filter "platforms:Win64-lib"
 		kind "StaticLib"
-		staticruntime "On"
 
 	filter "platforms:Win64-dll"
 		kind "SharedLib"
-		staticruntime "Off"
 
 	filter "kind:SharedLib"
 		postbuildcommands{
