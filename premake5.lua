@@ -5,6 +5,9 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 workspace "Clove"
 	startproject "Sandbox"
 
+	systemversion "latest"
+	cppdialect "C++17"
+
 	configurations{
 		"Debug",
 		"Release",
@@ -19,6 +22,7 @@ workspace "Clove"
 	filter "platforms:Win64-lib"
 		system "Windows"
 		architecture "x64"
+		staticruntime "On"
 
 		defines{
 			"CLV_STATIC=1",
@@ -28,6 +32,7 @@ workspace "Clove"
 	filter "platforms:Win64-dll"
 		system "Windows"
 		architecture "x64"
+		staticruntime "Off"
 
 		defines{
 			"CLV_STATIC=0",
@@ -35,14 +40,14 @@ workspace "Clove"
 		}
 
 	filter "system:Windows"
-		systemversion "latest"
-		cppdialect "C++17"
-
 		defines{
 			"CLV_PLATFORM_WINDOWS=1"
 		}
 
 	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "On"
+
 		defines {
 			"CLV_DEBUG=1",
 			"CLV_RELEASE=0",
@@ -50,6 +55,9 @@ workspace "Clove"
 		}
 
 	filter "configurations:Release"
+		runtime "Release"
+		optimize "On"
+
 		defines {
 			"CLV_DEBUG=0",
 			"CLV_RELEASE=1",
@@ -57,6 +65,9 @@ workspace "Clove"
 		}
 
 	filter "configurations:Dist"
+		runtime "Release"
+		optimize "On"
+
 		defines {
 			"CLV_DEBUG=0",
 			"CLV_RELEASE=0",
@@ -71,8 +82,8 @@ project "ImGui"
 	kind "StaticLib"
 	language "C++"
 		
-	targetdir ("%{prj.location}/bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("%{prj.location}/intermediate/" .. outputdir .. "/%{prj.name}")
+	targetdir("bin/" .. outputdir .. "/vendor/%{prj.name}")
+	objdir("intermediate/" .. outputdir .. "/vendor/%{prj.name}")
 
 	files{
         "%{prj.location}/imconfig.h",
@@ -91,13 +102,7 @@ project "ImGui"
 		"IMGUI_USER_CONFIG=\"../../src/Clove/ImGui/ImGuiConfig.hpp\"",
 		"IMGUI_DISABLE_INCLUDE_IMCONFIG_H",
 		"_CRT_SECURE_NO_WARNINGS"
-	}
-	
-	filter "system:Windows"
-	    staticruntime "On"
-	    
-	filter { "system:Windows", "configurations:Release or Dist" }
-	    buildoptions "/MT"
+	}    
 
 --GFLW
 project "GLFW"
@@ -105,8 +110,8 @@ project "GLFW"
     kind "StaticLib"
     language "C"
     
-	targetdir ("%{prj.location}/bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("%{prj.location}/intermediate/" .. outputdir .. "/%{prj.name}")
+	targetdir("bin/" .. outputdir .. "/vendor/%{prj.name}")
+	objdir("intermediate/" .. outputdir .. "/vendor/%{prj.name}")
 
 	files{
         "%{prj.location}/include/GLFW/glfw3.h",
@@ -125,8 +130,6 @@ project "GLFW"
 	}
     
 	filter "system:Windows"
-	    staticruntime "On"
-        
         files{
             "%{prj.location}/src/win32_init.c",
             "%{prj.location}/src/win32_joystick.c",
@@ -143,17 +146,14 @@ project "GLFW"
             "_GLFW_WIN32"
 		}
 
-    filter { "system:Windows", "configurations:Release or Dist" }
-        buildoptions "/MT"
-
 --GLAD
 project "Glad"
 	location "Clove/vendor/Glad"
     kind "StaticLib"
     language "C"
     
-	targetdir ("%{prj.location}/bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("%{prj.location}/intermediate/" .. outputdir .. "/%{prj.name}")
+	targetdir("bin/" .. outputdir .. "/vendor/%{prj.name}")
+	objdir("intermediate/" .. outputdir .. "/vendor/%{prj.name}")
 
 	files{
         "%{prj.location}/include/glad/glad.h",
@@ -165,11 +165,7 @@ project "Glad"
 		"%{prj.location}/include"
 	}
     
-	filter "system:Windows"
-	    staticruntime "On"
-        
-    filter { "system:Windows", "configurations:Release or Dist" }
-        buildoptions "/MT"
+	filter "system:Windows"    
 
 --End: Dependencies
 group ""
@@ -250,20 +246,11 @@ project "Clove"
 			"CLV_PLATFORM_WINDOWS=1"
 		}
 
-	filter "configurations:Debug"
-		runtime "Debug"
-		symbols "On"
-
-	filter "configurations:Release or Dist"
-		runtime "Release"
-		optimize "On"
-
 --SANDBOX
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
-	staticruntime "Off"
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("intermediate/" .. outputdir .. "/%{prj.name}")
@@ -287,24 +274,3 @@ project "Sandbox"
 	links{
 		"Clove",
 	}
-
-	filter "system:Windows"
-		staticruntime "On"
-
-	filter "configurations:Debug"
-		symbols "On"
-
-	filter "configurations:Release or Dist"
-		optimize "On"
-
-	filter {"platforms:Win64-lib", "configurations:Debug"}
-		buildoptions "/MTd"
-
-	filter {"platforms:Win64-lib", "configurations:Release or Dist"}
-		buildoptions "/MT"
-
-	filter {"platforms:Win64-dll", "configurations:Debug"}
-		buildoptions "/MDd"
-
-	filter {"platforms:Win64-dll", "configurations:Release or Dist"}
-		buildoptions "/MD"
