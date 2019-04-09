@@ -23,7 +23,7 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		CLV_API Mesh(); //TODO: should there be a default?
+		CLV_API Mesh();
 		CLV_API Mesh(const std::string& meshPath);
 		CLV_API Mesh(const std::string& meshPath, std::shared_ptr<Material> material);
 		CLV_API Mesh(const Mesh& other);

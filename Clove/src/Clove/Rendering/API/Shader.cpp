@@ -12,10 +12,9 @@ namespace clv{
 
 	Shader::Shader(Shader&& other){
 		rendererID = other.rendererID;
-		uniformLocationCache = other.uniformLocationCache;
+		uniformLocationCache = std::move(other.uniformLocationCache);
 
 		other.rendererID = 0;
-		other.uniformLocationCache.clear();
 	}
 
 	Shader::~Shader(){
@@ -56,10 +55,9 @@ namespace clv{
 
 	Shader& Shader::operator=(Shader&& other){
 		rendererID = other.rendererID;
-		uniformLocationCache = other.uniformLocationCache;
+		uniformLocationCache = std::move(other.uniformLocationCache);
 
 		other.rendererID = 0;
-		other.uniformLocationCache.clear();
 
 		return *this;
 	}

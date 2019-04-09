@@ -10,7 +10,13 @@ namespace clv{
 		objectMesh = std::make_unique<Mesh>(mesh);
 	}
 
+	Object::Object(Mesh&& mesh){
+		objectMesh = std::make_unique<Mesh>(std::move(mesh));
+	}
+
 	Object::Object(const Object& other){
+		CLV_WARN("Copy constructor called on object - creating new object");
+
 		position = other.position;
 		rotation = other.rotation;
 		scale = other.scale;
@@ -24,10 +30,10 @@ namespace clv{
 	}
 
 	Object::Object(Object&& other){
-		position = other.position;
-		rotation = other.rotation;
-		scale = other.scale;
-		rotationAngle = other.rotationAngle;
+		position = std::move(other.position);
+		rotation = std::move(other.rotation);
+		scale = std::move(other.scale);
+		rotationAngle = std::move(other.rotationAngle);
 
 		objectMesh = std::move(other.objectMesh);
 	}
@@ -60,6 +66,8 @@ namespace clv{
 	}
 
 	Object& Object::operator=(const Object& other){
+		CLV_WARN("Copy asignment operator called on object - creating new object");
+		
 		position = other.position;
 		rotation = other.rotation;
 		scale = other.scale;
@@ -71,10 +79,10 @@ namespace clv{
 	}
 
 	Object& Object::operator=(Object&& other){
-		position = other.position;
-		rotation = other.rotation;
-		scale = other.scale;
-		rotationAngle = other.rotationAngle;
+		position = std::move(other.position);
+		rotation = std::move(other.rotation);
+		scale = std::move(other.scale);
+		rotationAngle = std::move(other.rotationAngle);
 
 		objectMesh = std::move(other.objectMesh);
 

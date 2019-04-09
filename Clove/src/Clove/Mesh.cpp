@@ -41,8 +41,8 @@ namespace clv{
 		ib = std::move(other.ib);
 		material = std::move(other.material);
 
-		vertexData = other.vertexData;
-		indices = other.indices;
+		vertexData = std::move(other.vertexData);
+		indices = std::move(other.indices);
 	}
 
 	Mesh::~Mesh() = default;
@@ -79,8 +79,8 @@ namespace clv{
 		ib = std::move(other.ib);
 		material = std::move(other.material);
 
-		vertexData = other.vertexData;
-		indices = other.indices;
+		vertexData = std::move(other.vertexData);
+		indices = std::move(other.indices);
 
 		return *this;
 	}
@@ -94,9 +94,12 @@ namespace clv{
 	}
 
 	void Mesh::createModelData(const std::string& meshPath){
-		CLV_TRACE("Creating model with: {0}", meshPath); //TODO: might be worth getting the texture in here
+		CLV_TRACE("Creating model with: {0}", meshPath);
 
 		this->meshPath = meshPath;
+
+		vertexData.clear();
+		indices.clear();
 
 		MeshInfo loadedMeshInfo;
 		if(loadOBJ(meshPath, loadedMeshInfo)){
@@ -118,22 +121,24 @@ namespace clv{
 				layout.push<float>(3);
 			}
 
+			vertexData.reserve((vertexCount * 3) + (texCoordCount * 2) + (normalCount * 3));
+
 			for(int i = 0; i < vertexCount; ++i){
 				if(vertexCount > 0){
-					vertexData.push_back(loadedMeshInfo.verticies[i].x);
-					vertexData.push_back(loadedMeshInfo.verticies[i].y);
-					vertexData.push_back(loadedMeshInfo.verticies[i].z);
+					vertexData.emplace_back(loadedMeshInfo.verticies[i].x);
+					vertexData.emplace_back(loadedMeshInfo.verticies[i].y);
+					vertexData.emplace_back(loadedMeshInfo.verticies[i].z);
 				}
 
 				if(texCoordCount > 0){
-					vertexData.push_back(loadedMeshInfo.texCoords[i].x);
-					vertexData.push_back(loadedMeshInfo.texCoords[i].y);
+					vertexData.emplace_back(loadedMeshInfo.texCoords[i].x);
+					vertexData.emplace_back(loadedMeshInfo.texCoords[i].y);
 				}
 
 				if(normalCount > 0){
-					vertexData.push_back(loadedMeshInfo.normals[i].x);
-					vertexData.push_back(loadedMeshInfo.normals[i].y);
-					vertexData.push_back(loadedMeshInfo.normals[i].z);
+					vertexData.emplace_back(loadedMeshInfo.normals[i].x);
+					vertexData.emplace_back(loadedMeshInfo.normals[i].y);
+					vertexData.emplace_back(loadedMeshInfo.normals[i].z);
 				}
 			}
 			indices = loadedMeshInfo.indices;

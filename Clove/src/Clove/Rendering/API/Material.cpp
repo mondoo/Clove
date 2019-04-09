@@ -15,7 +15,9 @@ namespace clv{
 
 	Material::Material(const Material& other){
 		CLV_WARN("Copy constructor called on material - creating new material data");
+		
 		createMaterial(other.diffuseTexturePath);
+		
 		if(!other.specularTexturePath.empty()){
 			createSpecularTexture(other.specularTexturePath);
 		} else{
@@ -30,7 +32,8 @@ namespace clv{
 		diffuseTexture = std::move(other.diffuseTexture);
 		specularTexture = std::move(other.specularTexture);
 		
-		diffuseTexturePath = other.diffuseTexturePath;
+		diffuseTexturePath = std::move(other.diffuseTexturePath);
+		specularTexturePath = std::move(other.specularTexturePath);
 	}
 
 	Material::~Material() = default;
@@ -94,7 +97,9 @@ namespace clv{
 
 	Material& Material::operator=(const Material& other){
 		CLV_WARN("Copy assignment operator called on material - creating new material data");
+		
 		createMaterial(other.diffuseTexturePath);
+		
 		if(!other.specularTexturePath.empty()){
 			createSpecularTexture(other.specularTexturePath);
 		} else{
@@ -110,13 +115,16 @@ namespace clv{
 		
 		diffuseTexture = std::move(other.diffuseTexture);
 		specularTexture = std::move(other.specularTexture);
-		
-		diffuseTexturePath = other.diffuseTexturePath;
+
+		diffuseTexturePath = std::move(other.diffuseTexturePath);
+		specularTexturePath = std::move(other.specularTexturePath);
 
 		return *this;
 	}
 
 	void Material::createMaterial(const std::string& texturePath){
+		CLV_TRACE("Creating material with: {0}", texturePath);
+
 		diffuseTexturePath = texturePath;
 		
 		shader = std::make_unique<Shader>(Shader());

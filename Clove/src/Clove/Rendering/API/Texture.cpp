@@ -31,14 +31,13 @@ namespace clv{
 
 	Texture::Texture(Texture&& other){
 		rendererID = other.rendererID;
-		filePath = other.filePath;
+		filePath = std::move(other.filePath);
 		localBuffer = other.localBuffer;
 		width = other.width;
 		height = other.height;
 		BPP = other.BPP;
 
 		other.rendererID = 0;
-		other.filePath.clear();
 		other.localBuffer = nullptr;
 		other.width = 0;
 		other.height = 0;
@@ -60,14 +59,13 @@ namespace clv{
 
 	Texture& Texture::operator=(Texture&& other){
 		rendererID = other.rendererID;
-		filePath = other.filePath;
+		filePath = std::move(other.filePath);
 		localBuffer = other.localBuffer;
 		width = other.width;
 		height = other.height;
 		BPP = other.BPP;
 
 		other.rendererID = 0;
-		other.filePath.clear();
 		other.localBuffer = nullptr;
 		other.width = 0;
 		other.height = 0;

@@ -18,6 +18,7 @@ namespace clv{
 	public:
 		CLV_API Object();
 		CLV_API Object(const Mesh& mesh);
+		CLV_API Object(Mesh&& mesh);
 		CLV_API Object(const Object& other);
 		CLV_API Object(Object&& other);
 
