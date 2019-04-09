@@ -12,7 +12,7 @@ namespace clv{
 		GLCall(glGenVertexArrays(1, &rendererID));
 	}
 
-	VertexArray::VertexArray(VertexArray&& other){
+	VertexArray::VertexArray(VertexArray&& other) noexcept{
 		rendererID = other.rendererID;
 
 		other.rendererID = 0;
@@ -44,7 +44,7 @@ namespace clv{
 		GLCall(glBindVertexArray(0));
 	}
 
-	VertexArray& VertexArray::operator=(VertexArray&& other){
+	VertexArray& VertexArray::operator=(VertexArray&& other) noexcept{
 		rendererID = other.rendererID;
 
 		other.rendererID = 0;

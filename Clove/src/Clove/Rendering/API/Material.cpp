@@ -26,7 +26,7 @@ namespace clv{
 		}
 	}
 
-	Material::Material(Material&& other){
+	Material::Material(Material&& other) noexcept{
 		shader = std::move(other.shader);
 		
 		diffuseTexture = std::move(other.diffuseTexture);
@@ -110,7 +110,7 @@ namespace clv{
 		return *this;
 	}
 
-	Material& Material::operator=(Material&& other){
+	Material& Material::operator=(Material&& other) noexcept{
 		shader = std::move(other.shader);
 		
 		diffuseTexture = std::move(other.diffuseTexture);

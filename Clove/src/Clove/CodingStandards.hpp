@@ -30,6 +30,8 @@ namespace clv{
 		//[destructor.default] no empty constructors! either use default or just remove the definition
 		~CodingStandards() = default;
 
+		//TODO: Add noexcept on moves
+
 		//[function.inline] please do not do this!
 		inline void badInlineFunction() { /*do some thing*/ }
 

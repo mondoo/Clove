@@ -13,7 +13,7 @@ namespace clv{
 		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_STATIC_DRAW));
 	}
 
-	IndexBuffer::IndexBuffer(IndexBuffer&& other){
+	IndexBuffer::IndexBuffer(IndexBuffer&& other) noexcept{
 		rendererID = other.rendererID;
 		count = other.count;
 
@@ -33,7 +33,7 @@ namespace clv{
 		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 	}
 
-	IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other){
+	IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other) noexcept{
 		rendererID = other.rendererID;
 		count = other.count;
 

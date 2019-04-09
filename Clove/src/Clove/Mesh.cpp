@@ -35,7 +35,7 @@ namespace clv{
 		createModelData(other.meshPath);
 	}
 
-	Mesh::Mesh(Mesh&& other){
+	Mesh::Mesh(Mesh&& other) noexcept{
 		va = std::move(other.va);
 		vb = std::move(other.vb);
 		ib = std::move(other.ib);
@@ -73,7 +73,7 @@ namespace clv{
 		return *this;
 	}
 
-	Mesh& Mesh::operator=(Mesh&& other){
+	Mesh& Mesh::operator=(Mesh&& other) noexcept{
 		va = std::move(other.va);
 		vb = std::move(other.vb);
 		ib = std::move(other.ib);

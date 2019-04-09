@@ -22,7 +22,7 @@ namespace clv{
 		CLV_API Material();
 		CLV_API Material(const std::string& texturePath);
 		CLV_API Material(const Material& other);
-		CLV_API Material(Material&& other);
+		CLV_API Material(Material&& other) noexcept;
 
 		CLV_API ~Material();
 
@@ -47,7 +47,7 @@ namespace clv{
 		//~END
 
 		CLV_API Material& operator=(const Material& other);
-		CLV_API Material& operator=(Material&& other);
+		CLV_API Material& operator=(Material&& other) noexcept;
 
 	private:
 		void createMaterial(const std::string& texturePath);

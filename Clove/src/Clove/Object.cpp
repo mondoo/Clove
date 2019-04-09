@@ -29,7 +29,7 @@ namespace clv{
 		}
 	}
 
-	Object::Object(Object&& other){
+	Object::Object(Object&& other) noexcept{
 		position = std::move(other.position);
 		rotation = std::move(other.rotation);
 		scale = std::move(other.scale);
@@ -78,7 +78,7 @@ namespace clv{
 		return *this;
 	}
 
-	Object& Object::operator=(Object&& other){
+	Object& Object::operator=(Object&& other) noexcept{
 		position = std::move(other.position);
 		rotation = std::move(other.rotation);
 		scale = std::move(other.scale);

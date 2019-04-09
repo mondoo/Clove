@@ -12,7 +12,7 @@ namespace clv{
 		GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
 	}
 
-	VertexBuffer::VertexBuffer(VertexBuffer&& other){
+	VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept{
 		rendererID = other.rendererID;
 
 		other.rendererID = 0;
@@ -30,7 +30,7 @@ namespace clv{
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	}
 
-	VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other){
+	VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept{
 		rendererID = other.rendererID;
 
 		other.rendererID = 0;

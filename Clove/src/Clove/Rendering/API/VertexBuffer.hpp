@@ -9,13 +9,13 @@ namespace clv{
 		//FUNCTIONS
 	public:
 		VertexBuffer(const void* data, unsigned int size);
-		VertexBuffer(VertexBuffer&& other);
+		VertexBuffer(VertexBuffer&& other) noexcept;
 
 		~VertexBuffer();
 
 		void bind() const;
 		void unbind()  const;
 
-		VertexBuffer& operator=(VertexBuffer&& other);
+		VertexBuffer& operator=(VertexBuffer&& other) noexcept;
 	};
 }

@@ -20,7 +20,7 @@ namespace clv{
 		CLV_API Object(const Mesh& mesh);
 		CLV_API Object(Mesh&& mesh);
 		CLV_API Object(const Object& other);
-		CLV_API Object(Object&& other);
+		CLV_API Object(Object&& other) noexcept;
 
 		CLV_API ~Object();
 
@@ -37,7 +37,7 @@ namespace clv{
 		CLV_API inline const math::Vector3f& getScale() const;
 
 		CLV_API Object& operator=(const Object& other);
-		CLV_API Object& operator=(Object&& other);
+		CLV_API Object& operator=(Object&& other) noexcept;
 
 	private:
 		math::Matrix4f computeMatrix();

@@ -10,7 +10,7 @@ namespace clv{
 		//FUNCTIONS
 	public:
 		IndexBuffer(const unsigned int* data, unsigned int inCount);
-		IndexBuffer(IndexBuffer&& other);
+		IndexBuffer(IndexBuffer&& other) noexcept;
 
 		~IndexBuffer();
 
@@ -19,6 +19,6 @@ namespace clv{
 
 		inline unsigned int getCount() const{ return count; }
 
-		IndexBuffer& operator=(IndexBuffer&& other);
+		IndexBuffer& operator=(IndexBuffer&& other) noexcept;
 	};
 }

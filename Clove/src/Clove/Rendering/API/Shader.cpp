@@ -10,7 +10,7 @@ namespace clv{
 		rendererID = createShader();
 	}
 
-	Shader::Shader(Shader&& other){
+	Shader::Shader(Shader&& other) noexcept{
 		rendererID = other.rendererID;
 		uniformLocationCache = std::move(other.uniformLocationCache);
 
@@ -53,7 +53,7 @@ namespace clv{
 		GLCall(glDeleteShader(id));
 	}
 
-	Shader& Shader::operator=(Shader&& other){
+	Shader& Shader::operator=(Shader&& other) noexcept{
 		rendererID = other.rendererID;
 		uniformLocationCache = std::move(other.uniformLocationCache);
 

@@ -27,7 +27,7 @@ namespace clv{
 		CLV_API Mesh(const std::string& meshPath);
 		CLV_API Mesh(const std::string& meshPath, std::shared_ptr<Material> material);
 		CLV_API Mesh(const Mesh& other);
-		CLV_API Mesh(Mesh&& other);
+		CLV_API Mesh(Mesh&& other) noexcept;
 
 		CLV_API ~Mesh();
 
@@ -36,7 +36,7 @@ namespace clv{
 		CLV_API void draw(const Renderer& renderer);
 
 		CLV_API Mesh& operator=(const Mesh& other);
-		CLV_API Mesh& operator=(Mesh&& other);
+		CLV_API Mesh& operator=(Mesh&& other) noexcept;
 
 	private:
 		std::pair<const void*, unsigned int> getVertexData() const;

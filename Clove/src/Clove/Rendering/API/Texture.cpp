@@ -29,7 +29,7 @@ namespace clv{
 		}
 	}
 
-	Texture::Texture(Texture&& other){
+	Texture::Texture(Texture&& other) noexcept{
 		rendererID = other.rendererID;
 		filePath = std::move(other.filePath);
 		localBuffer = other.localBuffer;

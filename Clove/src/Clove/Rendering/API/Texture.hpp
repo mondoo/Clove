@@ -6,7 +6,7 @@ namespace clv{
 	private:
 		unsigned int rendererID = 0;
 		std::string filePath;
-		unsigned char* localBuffer = nullptr; //needed as a member variable?
+		unsigned char* localBuffer = nullptr; //TODO: needed as a member variable?
 		int width = 0;
 		int height = 0;
 		int BPP = 0;
@@ -14,7 +14,7 @@ namespace clv{
 		//FUNCTIONS
 	public:
 		Texture(const std::string& filePath);
-		Texture(Texture&& other);
+		Texture(Texture&& other) noexcept;
 
 		~Texture();
 

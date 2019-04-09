@@ -19,7 +19,7 @@ namespace clv{
 		//FUNCTIONS
 	public:
 		Shader();
-		Shader(Shader&& other);
+		Shader(Shader&& other) noexcept;
 
 		~Shader();
 
@@ -42,7 +42,7 @@ namespace clv{
 		template<>
 		void setUniform<math::Matrix4f>(const std::string& name, const math::Matrix4f& value);
 
-		Shader& operator=(Shader&& other);
+		Shader& operator=(Shader&& other) noexcept;
 
 	private:
 		std::string parseShader(const std::string& filepath);
