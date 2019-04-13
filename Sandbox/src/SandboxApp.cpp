@@ -7,15 +7,11 @@
 
 #include "Clove/Camera.hpp"
 
-#include "Clove/Rendering/Renderer.hpp"
-
 #include "Clove/Window.hpp"
 
 #include "Clove/Events/MouseEvent.hpp"
 
-//Vendor
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "Clove/Profiling/Timer.hpp"
 
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
@@ -31,8 +27,6 @@ private:
 
 	clv::Object lightCube;
 	std::shared_ptr<clv::Material> lightMaterial;
-
-	clv::Camera cam;
 
 	float r = 0.0f;
 	float rot = 0.0f;
@@ -54,22 +48,22 @@ public:
 
 	virtual void onAttach() override{
 		cubeMaterial = std::make_shared<clv::Material>(clv::Material("res/Textures/container2.png"));
-		cube = clv::Object(clv::Mesh("res/Objects/cube.obj", cubeMaterial));
+		cube.setMesh(std::make_shared<clv::Mesh>(clv::Mesh("res/Objects/cube.obj", cubeMaterial)));
 		cube.setPosition(clv::math::Vector3f(0.0f, 0.0f, -300));
 		cube.setScale(clv::math::Vector3f(100.0f, 100.0f, 100.0f));
 
 		sphereMaterial = std::make_shared<clv::Material>(clv::Material());
-		sphere = clv::Object(clv::Mesh("res/Objects/sphere.obj", sphereMaterial));
+		sphere.setMesh(std::make_shared<clv::Mesh>(clv::Mesh("res/Objects/sphere.obj", sphereMaterial)));
 		sphere.setPosition(clv::math::Vector3f(-500, 0.0f, -900));
 		sphere.setScale(clv::math::Vector3f(100.0f, 100.0f, 100.0f));
 
 		monkeyMaterial = std::make_shared<clv::Material>(clv::Material());
-		monkey = clv::Object(clv::Mesh("res/Objects/monkey.obj", monkeyMaterial));
+		monkey.setMesh(std::make_shared<clv::Mesh>(clv::Mesh("res/Objects/monkey.obj", monkeyMaterial)));
 		monkey.setPosition(clv::math::Vector3f(500, 0.0f, -900));
 		monkey.setScale(clv::math::Vector3f(100.0f, 100.0f, 100.0f));
 
 		lightMaterial = std::make_shared<clv::Material>(clv::Material());
-		lightCube = clv::Object(clv::Mesh("res/Objects/cube.obj", lightMaterial));
+		lightCube.setMesh(std::make_shared<clv::Mesh>(clv::Mesh("res/Objects/cube.obj", lightMaterial)));
 		lightCube.setPosition(clv::math::Vector3f(0, 200, -900));
 		lightCube.setScale(clv::math::Vector3f(25.0f, 25.0f, 25.0f));
 
@@ -77,37 +71,37 @@ public:
 		//CUBE
 		cubeMaterial->setSpecularTexture("res/Textures/container2_specular.png");
 
-		cubeMaterial->setUniform1f("material.shininess", 32.0f);
+		cubeMaterial->setUniform("material.shininess", 32.0f);
 
-		cubeMaterial->setUniform3f("light.ambient", clv::math::Vector3f(0.01f, 0.01f, 0.01f));
-		cubeMaterial->setUniform3f("light.diffuse", clv::math::Vector3f(0.75f, 0.75f, 0.75f));
-		cubeMaterial->setUniform3f("light.specular", clv::math::Vector3f(1.0f, 1.0f, 1.0f));
+		cubeMaterial->setUniform("light.ambient", clv::math::Vector3f(0.01f, 0.01f, 0.01f));
+		cubeMaterial->setUniform("light.diffuse", clv::math::Vector3f(0.75f, 0.75f, 0.75f));
+		cubeMaterial->setUniform("light.specular", clv::math::Vector3f(1.0f, 1.0f, 1.0f));
 
 		//SPHERE
 		//sphereMaterial->setSpecularTexture("../Clove/res/Textures/DefaultTexture.png");
 
-		sphereMaterial->setUniform1f("material.shininess", 32.0f);
+		sphereMaterial->setUniform("material.shininess", 32.0f);
 
-		sphereMaterial->setUniform3f("light.ambient", clv::math::Vector3f(0.01f, 0.01f, 0.01f));
-		sphereMaterial->setUniform3f("light.diffuse", clv::math::Vector3f(0.75f, 0.75f, 0.75f));
-		sphereMaterial->setUniform3f("light.specular", clv::math::Vector3f(1.0f, 1.0f, 1.0f));
+		sphereMaterial->setUniform("light.ambient", clv::math::Vector3f(0.01f, 0.01f, 0.01f));
+		sphereMaterial->setUniform("light.diffuse", clv::math::Vector3f(0.75f, 0.75f, 0.75f));
+		sphereMaterial->setUniform("light.specular", clv::math::Vector3f(1.0f, 1.0f, 1.0f));
 
 		//MONKEY
 		//monkeyMaterial->setSpecularTexture("../Clove/res/Textures/DefaultTexture.png");
 
-		monkeyMaterial->setUniform1f("material.shininess", 32.0f);
+		monkeyMaterial->setUniform("material.shininess", 32.0f);
 
-		monkeyMaterial->setUniform3f("light.ambient", clv::math::Vector3f(0.01f, 0.01f, 0.01f));
-		monkeyMaterial->setUniform3f("light.diffuse", clv::math::Vector3f(0.75f, 0.75f, 0.75f));
-		monkeyMaterial->setUniform3f("light.specular", clv::math::Vector3f(1.0f, 1.0f, 1.0f));
+		monkeyMaterial->setUniform("light.ambient", clv::math::Vector3f(0.01f, 0.01f, 0.01f));
+		monkeyMaterial->setUniform("light.diffuse", clv::math::Vector3f(0.75f, 0.75f, 0.75f));
+		monkeyMaterial->setUniform("light.specular", clv::math::Vector3f(1.0f, 1.0f, 1.0f));
 
 
 		//LIGHT
-		lightMaterial->setUniform1f("material.shininess", 32.0f);
+		lightMaterial->setUniform("material.shininess", 32.0f);
 
-		lightMaterial->setUniform3f("light.ambient", clv::math::Vector3f(1.0f));
-		lightMaterial->setUniform3f("light.diffuse", clv::math::Vector3f(1.0f));
-		lightMaterial->setUniform3f("light.specular", clv::math::Vector3f(1.0f));
+		lightMaterial->setUniform("light.ambient", clv::math::Vector3f(1.0f));
+		lightMaterial->setUniform("light.diffuse", clv::math::Vector3f(1.0f));
+		lightMaterial->setUniform("light.specular", clv::math::Vector3f(1.0f));
 	}
 
 	virtual void onDetach() override{
@@ -116,6 +110,8 @@ public:
 
 	virtual void onUpdate() override{
 		const float camSpeed = 10.0f;
+
+		clv::Camera& cam = clv::Application::get().getWindow().getCurrentCamera();
 
 		cam.update(pitch, yaw);
 
@@ -144,37 +140,34 @@ public:
 
 		cam.setPosition(cameraPosition);
 
-		clv::math::Matrix4f view = cam.getLookAt();
-		clv::math::Matrix4f proj = clv::math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 1.0f, -1.0f);
-
 		//CUBE
 		cube.setRotation(clv::math::Vector3f(0.0f, 1.0f, 0.0f), rot);
 
-		cubeMaterial->setUniform3f("light.position", lightCube.getPosition());
-		cubeMaterial->setUniform3f("viewPos", cameraPosition);
+		cubeMaterial->setUniform("light.position", lightCube.getPosition());
+		cubeMaterial->setUniform("viewPos", cameraPosition);
 		
-		cube.draw(clv::Application::get().getWindow().getRenderer(), view, proj);
+		cube.draw(clv::Application::get().getWindow());
 
 		//SPHERE
 		sphere.setRotation(clv::math::Vector3f(0.0f, 1.0f, 0.0f), rot);
 
-		sphereMaterial->setUniform3f("light.position", lightCube.getPosition());
-		sphereMaterial->setUniform3f("viewPos", cameraPosition);
+		sphereMaterial->setUniform("light.position", lightCube.getPosition());
+		sphereMaterial->setUniform("viewPos", cameraPosition);
 
-		sphere.draw(clv::Application::get().getWindow().getRenderer(), view, proj);
+		sphere.draw(clv::Application::get().getWindow());
 
 		//MONKEY
 		monkey.setRotation(clv::math::Vector3f(0.0f, 1.0f, 0.5f), rot);
 
-		monkeyMaterial->setUniform3f("light.position", lightCube.getPosition());
-		monkeyMaterial->setUniform3f("viewPos", cameraPosition);
+		monkeyMaterial->setUniform("light.position", lightCube.getPosition());
+		monkeyMaterial->setUniform("viewPos", cameraPosition);
 
-		monkey.draw(clv::Application::get().getWindow().getRenderer(), view, proj);
-		
+		monkey.draw(clv::Application::get().getWindow());
+
 		//LIGHT
-		lightMaterial->setUniform3f("viewPos", cameraPosition);
+		lightMaterial->setUniform("viewPos", cameraPosition);
 
-		lightCube.draw(clv::Application::get().getWindow().getRenderer(), view, proj);
+		lightCube.draw(clv::Application::get().getWindow());
 
 		if(r > 1.0f || r < 0.0f){
 			increment = -increment;

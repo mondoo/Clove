@@ -3,5 +3,7 @@
 #include "Clove/Events/Event.hpp"
 
 namespace clv{
-
+	Camera& Window::getCurrentCamera(){
+		return camera;
+	}
 }

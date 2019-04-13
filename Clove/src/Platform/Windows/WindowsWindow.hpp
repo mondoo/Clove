@@ -22,28 +22,28 @@ namespace clv{
 			EventCallbackFn eventCallback;
 		} data;
 
-		Renderer renderer;
+		std::unique_ptr<Renderer> renderer;
 
 		//FUNCTIONS
 	public:
 		WindowsWindow(const WindowProps& props);
 		virtual ~WindowsWindow();
 
-		virtual void onUpdate() override;
+		virtual void beginFrame() override;
+		virtual void endFrame() override;
 
 		virtual inline unsigned int getWidth() const override;
 		virtual inline unsigned int getHeight() const override;
 
-		//Window attributes
 		virtual inline void setEventCallbackFunction(const EventCallbackFn& callback) override;
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVSync() const override;
 
 		virtual void* getNativeWindow() const override;
-		virtual const Renderer& getRenderer() const override;
+		virtual Renderer& getRenderer() override;
 
 	private:
-		virtual void init(const WindowProps& props);
-		virtual void shutdown();
+		void init(const WindowProps& props);
+		void shutdown();
 	};
 }

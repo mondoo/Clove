@@ -25,73 +25,30 @@ namespace clv{
 	}
 
 	Mesh::Mesh(const Mesh& other){
-		CLV_WARN("Copy constructor called for Mesh - creating new model data");
-		
-		if(other.material){
-			material = other.material;
-		} else{
-			material.reset();
-		}
+		CLV_WARN("Copy constructor called on Mesh - creating new data");
+		material = other.material;
 		createModelData(other.meshPath);
 	}
 
-	Mesh::Mesh(Mesh&& other) noexcept{
-		va = std::move(other.va);
-		vb = std::move(other.vb);
-		ib = std::move(other.ib);
-		material = std::move(other.material);
-
-		vertexData = std::move(other.vertexData);
-		indices = std::move(other.indices);
-	}
+	Mesh::Mesh(Mesh&& other) noexcept = default;
 
 	Mesh::~Mesh() = default;
 
 	void Mesh::setMVP(const math::Matrix4f& model, const math::Matrix4f& view, const math::Matrix4f& projection){
-		material->bindShader();
-		material->setUniform4m("model", model);
-		material->setUniform4m("view", view);
-		material->setUniform4m("projection", projection);
-		material->unbindShader();
-	}
-
-	void Mesh::draw(const Renderer& renderer){
-		material->bindTexture();//TODO: move into renderer?
-		renderer.draw(*va, *ib, material->getShaderData());
-		material->unbindTexture();
+		material->setUniform("model", model);
+		material->setUniform("view", view);
+		material->setUniform("projection", projection);
 	}
 
 	Mesh& Mesh::operator=(const Mesh& other){
-		CLV_WARN("Copy assignment operator called for Mesh - creating new model data");
-		if(other.material){
-			material = std::make_unique<Material>(*other.material);
-		} else{
-			material.reset();
-		}
+		CLV_WARN("Copy assignment operator called on Mesh - creating new data");
+		material = other.material;
 		createModelData(other.meshPath);
 
 		return *this;
 	}
 
-	Mesh& Mesh::operator=(Mesh&& other) noexcept{
-		va = std::move(other.va);
-		vb = std::move(other.vb);
-		ib = std::move(other.ib);
-		material = std::move(other.material);
-
-		vertexData = std::move(other.vertexData);
-		indices = std::move(other.indices);
-
-		return *this;
-	}
-
-	std::pair<const void*, unsigned int> Mesh::getVertexData() const{
-		return std::pair<const void*, unsigned int>(vertexData.data(), (vertexData.size() * sizeof(float)));
-	}
-
-	std::pair<const unsigned int*, unsigned int> Mesh::getIndexData() const{
-		return std::pair<const unsigned int*, unsigned int>(indices.data(), indices.size());
-	}
+	Mesh& Mesh::operator=(Mesh&& other) noexcept = default;
 
 	void Mesh::createModelData(const std::string& meshPath){
 		CLV_TRACE("Creating model with: {0}", meshPath);
@@ -143,18 +100,20 @@ namespace clv{
 			}
 			indices = loadedMeshInfo.indices;
 
-			auto[vdata, vsize] = getVertexData();
-			vb = std::make_unique<VertexBuffer>(VertexBuffer(vdata, vsize));
+			const void* vdata = vertexData.data();
+			unsigned int vsize = (vertexData.size() * sizeof(float));
+			vertexBuffer = std::make_unique<VertexBuffer>(VertexBuffer(vdata, vsize));
 
-			va = std::make_unique<VertexArray>(VertexArray());
-			va->addBuffer(*vb, layout);
+			vertexArray = std::make_unique<VertexArray>(VertexArray());
+			vertexArray->addBuffer(*vertexBuffer, layout);
 
-			auto[idata, icount] = getIndexData();
-			ib = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
+			const unsigned int* idata = indices.data();
+			unsigned int icount = indices.size();
+			indexBuffer = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
 
-			va->unbind();
-			vb->unbind();
-			ib->unbind();
+			vertexArray->unbind();
+			vertexBuffer->unbind();
+			indexBuffer->unbind();
 		} else{
 			CLV_ERROR("Could not load mesh for model");
 		}

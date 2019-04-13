@@ -2,7 +2,7 @@
 
 namespace clv{
 	class Mesh;
-	class Renderer;
+	class Window;
 	
 	class Object{
 		//VARIABLES
@@ -10,23 +10,23 @@ namespace clv{
 		math::Vector3f position	= math::Vector3f(0.0f);
 		math::Vector3f rotation	= math::Vector3f(1.0f);
 		math::Vector3f scale	= math::Vector3f(1.0f);
-		float rotationAngle = 0.0f;
+		float rotationAngle		= 0.0f;
 
-		std::unique_ptr<Mesh> objectMesh;
+		std::shared_ptr<Mesh> objectMesh;
 
 		//FUNCTIONS
 	public:
 		CLV_API Object();
-		CLV_API Object(const Mesh& mesh);
-		CLV_API Object(Mesh&& mesh);
 		CLV_API Object(const Object& other);
 		CLV_API Object(Object&& other) noexcept;
 
 		CLV_API ~Object();
 
-		CLV_API virtual void update(float deltaTime);
-		CLV_API void draw(const Renderer& renderer, const math::Matrix4f& view, const math::Matrix4f& projection);
+		CLV_API void draw(Window& window);
 
+		CLV_API void setMesh(std::shared_ptr<Mesh> inMesh);
+		CLV_API inline std::shared_ptr<Mesh> getMesh() const;
+		
 		CLV_API void setPosition(const math::Vector3f& newPosition);
 		CLV_API inline const math::Vector3f& getPosition() const;
 

@@ -1,4 +1,8 @@
 namespace clv{
+	inline std::shared_ptr<Mesh> Object::getMesh() const{
+		return objectMesh;
+	}
+	
 	inline const math::Vector3f& Object::getPosition() const{
 		return position;
 	}

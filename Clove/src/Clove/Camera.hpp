@@ -1,9 +1,16 @@
 #pragma once
 
 namespace clv{
+	enum class ProjectionMode{
+		orthographic,
+		perspective
+	};
+
 	class Camera{
 		//VARIABLES
 	private:
+		math::Matrix4f currentProjection;
+
 		math::Vector3f cameraPosition	= math::Vector3f(0.0f, -30.0f, 0.0f);
 		//glm::vec3 cameraRotation		= glm::vec3(0.0f, 1.0f, 0.0f);
 		//glm::vec3 cameraTarget		= glm::vec3(0.0f, 0.0f, 0.0f);
@@ -14,6 +21,8 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
+		CLV_API Camera();
+
 		CLV_API void setPosition(const math::Vector3f& newPosition);
 		CLV_API inline const math::Vector3f& getPosition() const;
 
@@ -23,7 +32,12 @@ namespace clv{
 
 		CLV_API void update(float pitch, float yaw);
 
-		CLV_API math::Matrix4f getLookAt();
+		//TODO: Need a get view function to handle both pers / ortho modes
+
+		CLV_API math::Matrix4f getLookAt() const;
+
+		CLV_API void setProjectionMode(ProjectionMode mode);
+		CLV_API const math::Matrix4f& getProjection() const;
 	};
 }
 

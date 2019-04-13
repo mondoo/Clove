@@ -29,10 +29,14 @@ namespace clv{
 		shutdown();
 	}
 
-	void WindowsWindow::onUpdate(){
+	void WindowsWindow::beginFrame(){
 		glfwPollEvents();
 		glfwSwapBuffers(window);
-		renderer.clear();
+		renderer->clear();
+	}
+
+	void WindowsWindow::endFrame(){
+		renderer->drawQueue();
 	}
 
 	inline unsigned int WindowsWindow::getWidth() const{
@@ -60,8 +64,8 @@ namespace clv{
 		return window;
 	}
 
-	const Renderer& WindowsWindow::getRenderer() const{
-		return renderer;
+	Renderer& WindowsWindow::getRenderer(){ //TODO: Add back in const
+		return *renderer;
 	}
 
 	void WindowsWindow::init(const WindowProps& props){
@@ -106,6 +110,8 @@ namespace clv{
 
 		glfwSetWindowUserPointer(window, &data);
 		setVSync(true);
+
+		renderer = std::make_unique<Renderer>();
 
 		//Set the input mode to hide the mouse
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -197,6 +203,7 @@ namespace clv{
 	}
 
 	void WindowsWindow::shutdown(){
+		renderer.reset(); //Destroy renderer before openGL is shut down
 		glfwDestroyWindow(window);
 		CLV_INFO("Window destroyed");
 	}

@@ -16,12 +16,13 @@
 
 #if CLV_DEBUG
 	#define CLV_ENABLE_ASSERTS 1
+	#define CLV_ENABLE_PROFILING 1
 #else
 	#define CLV_ENABLE_ASSERTS 0
+	#define CLV_ENABLE_PROFILING 0
 #endif
 
 #if CLV_ENABLE_ASSERTS
-	//TODO: change to if((x))
 	#define CLV_ASSERT(x, ...) { if(!(x)){ CLV_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #else
 	#define CLV_ASSERT(x, ...) (x)

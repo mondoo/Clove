@@ -27,13 +27,13 @@ namespace clv{
 	}
 
 	Material::Material(Material&& other) noexcept{
-		shader = std::move(other.shader);
-		
 		diffuseTexture = std::move(other.diffuseTexture);
 		specularTexture = std::move(other.specularTexture);
-		
+
 		diffuseTexturePath = std::move(other.diffuseTexturePath);
 		specularTexturePath = std::move(other.specularTexturePath);
+
+		uniformMap = std::move(other.uniformMap);
 	}
 
 	Material::~Material() = default;
@@ -42,57 +42,36 @@ namespace clv{
 		createSpecularTexture(path);
 	}
 
-	void Material::bindShader(){
-		shader->bind();
-	}
-
-	void Material::unbindShader(){
-		shader->unbind();
-	}
-
-	void Material::bindTexture(){
-		shader->bind();
-
-		//NOTE: when binding to slot 1 - any unitialised samplers will use that texture
-		//To avoid the spec map using the diffuse map we don't use slot 0
-		//TODO: decide if this is desired or not
+	void Material::bind(Shader& shader){
 		diffuseTexture->bind(1);
-		shader->setUniform<int>("material.diffuse", 1);
-
+		shader.setUniform<int>("material.diffuse", 1);
 		if(specularTexture){
 			specularTexture->bind(2);
-			shader->setUniform<int>("material.specular", 2);
+			shader.setUniform<int>("material.specular", 2);
+		}
+
+		for(const auto& [key, value] : uniformMap){
+			if(value.type() == typeid(int)){
+				shader.setUniform<int>(key, std::any_cast<int>(value));
+			} else if(value.type() == typeid(float)){
+				shader.setUniform<float>(key, std::any_cast<float>(value));
+			} else if(value.type() == typeid(math::Vector3f)){
+				shader.setUniform<math::Vector3f>(key, std::any_cast<math::Vector3f>(value));
+			} else if(value.type() == typeid(math::Vector4f)){
+				shader.setUniform<math::Vector4f>(key, std::any_cast<math::Vector4f>(value));
+			} else if(value.type() == typeid(math::Matrix4f)){
+				shader.setUniform<math::Matrix4f>(key, std::any_cast<math::Matrix4f>(value));
+			} else{
+				shader.setUniform(key, value);
+			}
 		}
 	}
 
-	void Material::unbindTexture(){
+	void Material::unbind(){
 		diffuseTexture->unbind();
-		shader->unbind();
-	}
-
-	void clv::Material::setUniform1i(const std::string& name, int value){
-		shader->bind();
-		shader->setUniform(name, value);
-	}
-
-	void Material::setUniform1f(const std::string& name, float value){
-		shader->bind();
-		shader->setUniform(name, value);
-	}
-
-	void Material::setUniform3f(const std::string& name, const math::Vector3f& value){
-		shader->bind();
-		shader->setUniform(name, value);
-	}
-
-	void Material::setUniform4f(const std::string& name, const math::Vector4f& value){
-		shader->bind();
-		shader->setUniform(name, value);
-	}
-
-	void Material::setUniform4m(const std::string& name, const math::Matrix4f& value){
-		shader->bind();
-		shader->setUniform(name, value);
+		if(specularTexture){
+			specularTexture->unbind();
+		}
 	}
 
 	Material& Material::operator=(const Material& other){
@@ -110,28 +89,12 @@ namespace clv{
 		return *this;
 	}
 
-	Material& Material::operator=(Material&& other) noexcept{
-		shader = std::move(other.shader);
-		
-		diffuseTexture = std::move(other.diffuseTexture);
-		specularTexture = std::move(other.specularTexture);
-
-		diffuseTexturePath = std::move(other.diffuseTexturePath);
-		specularTexturePath = std::move(other.specularTexturePath);
-
-		return *this;
-	}
+	Material& Material::operator=(Material&& other) noexcept = default;
 
 	void Material::createMaterial(const std::string& texturePath){
 		CLV_TRACE("Creating material with: {0}", texturePath);
 
 		diffuseTexturePath = texturePath;
-		
-		shader = std::make_unique<Shader>(Shader());
-
-		shader->attachShader(ShaderTypes::Vertex, "../Clove/res/Shaders/VertexShader.glsl");
-		shader->attachShader(ShaderTypes::Fragment, "../Clove/res/Shaders/FragmentShader.glsl");
-
 		diffuseTexture = std::make_unique<Texture>(Texture(texturePath));
 	}
 

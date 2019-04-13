@@ -1,26 +1,35 @@
 #pragma once
 
-#define GLCall(x)	clv::GLClearError();\
-					x;\
-					CLV_ASSERT(clv::GLLogCall(), "{0} {1} {2}", #x, __FILE__, __LINE__)
+#include "Clove/Rendering/API/Shader.hpp"
+#include "Clove/Rendering/API/Renderable.hpp"
+
+#include <queue>
 
 namespace clv{
 	class VertexArray;
 	class IndexBuffer;
-	class Shader;
-
-	void GLClearError();
-
-	bool GLLogCall();
+	class Material;
 
 	class Renderer{
 		//VARIABLES
 	private:
+		Shader* currentShader = nullptr;
+		Shader defaultShader;
+
+		ShaderType currentShaderType;
+
+		std::queue<std::weak_ptr<Renderable>> renderQueue;
 
 		//FUNCTIONS
 	public:
+		Renderer();
+
 		void clear() const;
 
-		void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+		void submit(std::weak_ptr<Renderable> renderable);
+		void drawQueue();
+
+	private:
+		void prepareShader(ShaderType type);
 	};
 }

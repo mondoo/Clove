@@ -17,6 +17,7 @@ namespace clv{
 		void bind() const;
 		void unbind() const;
 
+		//TODO: Move to inl
 		inline unsigned int getCount() const{ return count; }
 
 		IndexBuffer& operator=(IndexBuffer&& other) noexcept;

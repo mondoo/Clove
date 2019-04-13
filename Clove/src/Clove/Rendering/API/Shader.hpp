@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Rendering/Renderer.hpp" //TODO: this is to get the GLCall macro
+#include "Clove/Rendering/API/GLHelpers.hpp"
 
 #include <glad/glad.h>
 

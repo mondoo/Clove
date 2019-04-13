@@ -1,5 +1,6 @@
 namespace clv{
-	inline const Shader& Material::getShaderData() const{
-		return *shader;
+	template<typename T>
+	void Material::setUniform(const std::string& name, const T& value){
+		uniformMap[name] = value;
 	}
 }

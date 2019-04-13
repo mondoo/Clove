@@ -29,12 +29,16 @@ namespace clv{
 
 	void Application::run(){
 		while(running){
-			window->onUpdate();
+			window->beginFrame();
 			
 			for(auto layer : *layerStack){
 				layer->onUpdate();
 			}
 
+			//TODO: Layer prep models
+			
+			window->endFrame();
+			
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){
 				layer->onImGuiRender();
