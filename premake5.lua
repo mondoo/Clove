@@ -1,5 +1,5 @@
 --GLOBALS
-outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+outputdir = "%{cfg.buildcfg}-%{cfg.system}/%{cfg.platform}"
 
 --Workspace Settings
 workspace "Clove"
