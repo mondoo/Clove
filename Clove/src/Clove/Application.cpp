@@ -47,7 +47,7 @@ namespace clv{
 		}
 	}
 
-	CLV_API void Application::stop(){
+	void Application::stop(){
 		running = false;
 	}
 
