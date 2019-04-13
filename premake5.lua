@@ -1,5 +1,5 @@
 --GLOBALS
-outputdir = "%{cfg.buildcfg}-%{cfg.system}/%{cfg.platform}"
+outputdir = "%{cfg.buildcfg}/%{cfg.platform}"
 
 --Workspace Settings
 workspace "Clove"
@@ -25,8 +25,7 @@ workspace "Clove"
 		staticruntime "On"
 
 		defines{
-			"CLV_STATIC=1",
-			"CLV_DYNAMIC=0"
+			"CLV_STATIC=1"
 		}
 
 	filter "platforms:Win64-dll"
@@ -35,7 +34,6 @@ workspace "Clove"
 		staticruntime "Off"
 
 		defines{
-			"CLV_STATIC=0",
 			"CLV_DYNAMIC=1"
 		}
 
@@ -49,9 +47,7 @@ workspace "Clove"
 		symbols "On"
 
 		defines {
-			"CLV_DEBUG=1",
-			"CLV_RELEASE=0",
-			"CLV_DIST=0"
+			"CLV_DEBUG=1"
 		}
 
 	filter "configurations:Release"
@@ -59,19 +55,7 @@ workspace "Clove"
 		optimize "On"
 
 		defines {
-			"CLV_DEBUG=0",
-			"CLV_RELEASE=1",
-			"CLV_DIST=0",
-		}
-
-	filter "configurations:Dist"
-		runtime "Release"
-		optimize "On"
-
-		defines {
-			"CLV_DEBUG=0",
-			"CLV_RELEASE=0",
-			"CLV_DIST=1"
+			"CLV_RELEASE=1"
 		}
 
 --Clove Dependencies
@@ -190,16 +174,15 @@ project "Clove"
 	pchsource "Clove/src/clvpch.cpp"
 
 	files{
+		--Clove
 		"%{prj.name}/src/**.hpp",
 		"%{prj.name}/src/**.inl",
 		"%{prj.name}/src/**.cpp",
 
 		"%{prj.name}/res/**.glsl",
 
-		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl",
+		--Non-static vendor *.cpp
 		"%{prj.name}/vendor/stb/**.cpp",
-		"%{prj.name}/vendor/OBJ-Loader/**.h"
 	}
 
 	includedirs{
