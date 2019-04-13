@@ -1,6 +1,12 @@
 --GLOBALS
 outputdir = "%{cfg.buildcfg}/%{cfg.platform}"
 
+targetdir_clv = "Built/bin/" .. outputdir .. "/%{prj.name}"
+objdir_clv = "Built/intermediate/" .. outputdir .. "/%{prj.name}"
+
+targetdir_vendor = "Built/bin/" .. outputdir .. "/vendor/%{prj.name}"
+objdir_vendor = "Built/intermediate/" .. outputdir .. "/vendor/%{prj.name}"
+
 --Workspace Settings
 workspace "Clove"
 	startproject "Sandbox"
@@ -66,8 +72,8 @@ project "ImGui"
 	kind "StaticLib"
 	language "C++"
 		
-	targetdir("bin/" .. outputdir .. "/vendor/%{prj.name}")
-	objdir("intermediate/" .. outputdir .. "/vendor/%{prj.name}")
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
 
 	files{
         "%{prj.location}/imconfig.h",
@@ -94,8 +100,8 @@ project "GLFW"
     kind "StaticLib"
     language "C"
     
-	targetdir("bin/" .. outputdir .. "/vendor/%{prj.name}")
-	objdir("intermediate/" .. outputdir .. "/vendor/%{prj.name}")
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
 
 	files{
         "%{prj.location}/include/GLFW/glfw3.h",
@@ -136,8 +142,8 @@ project "Glad"
     kind "StaticLib"
     language "C"
     
-	targetdir("bin/" .. outputdir .. "/vendor/%{prj.name}")
-	objdir("intermediate/" .. outputdir .. "/vendor/%{prj.name}")
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
 
 	files{
         "%{prj.location}/include/glad/glad.h",
@@ -167,8 +173,8 @@ project "Clove"
 	location "Clove"
 	language "C++"
 
-	targetdir("bin/" .. outputdir .. "/%{prj.name}")
-	objdir("intermediate/" .. outputdir .. "/%{prj.name}")
+	targetdir(targetdir_clv)
+	objdir(objdir_clv)
 
 	pchheader "clvpch.hpp"
 	pchsource "Clove/src/clvpch.cpp"
@@ -219,7 +225,7 @@ project "Clove"
 
 	filter "kind:SharedLib"
 		postbuildcommands{
-			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
+			("{COPY} %{cfg.buildtarget.relpath} \"../Built/bin/" .. outputdir .. "/Sandbox/\"")
 		}
 
 	filter "system:Windows"
@@ -233,8 +239,8 @@ project "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
 
-	targetdir("bin/" .. outputdir .. "/%{prj.name}")
-	objdir("intermediate/" .. outputdir .. "/%{prj.name}")
+	targetdir(targetdir_clv)
+	objdir(objdir_clv)
 
 	files{
 		"%{prj.name}/src/**.hpp",
