@@ -33,8 +33,8 @@ namespace clv{
 		CLV_API Window() = default;
 		CLV_API virtual ~Window() = default;
 
-		CLV_API virtual void beginFrame() = 0;
-		CLV_API virtual void endFrame() = 0;
+		virtual void beginFrame() = 0;
+		virtual void endFrame() = 0;
 
 		CLV_API virtual unsigned int getWidth() const = 0;
 		CLV_API virtual unsigned int getHeight() const = 0;

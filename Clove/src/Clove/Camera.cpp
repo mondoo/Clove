@@ -1,6 +1,10 @@
 #include "clvpch.hpp"
 #include "Camera.hpp"
 
+#include "Clove/Application.hpp"
+#include "Clove/Window.hpp"
+#include "Clove/Rendering/Renderer.hpp"
+
 namespace clv{
 	Camera::Camera(){
 		setProjectionMode(ProjectionMode::perspective);
@@ -8,6 +12,11 @@ namespace clv{
 
 	void Camera::setPosition(const math::Vector3f& newPosition){
 		cameraPosition = newPosition;
+
+		//TODO: Need some sort of scene thing to handle this properly
+		Application::get().getWindow().getRenderer().setGlobalShaderUniform("viewPos", cameraPosition);
+		Application::get().getWindow().getRenderer().setGlobalShaderUniform("view", getLookAt());
+		Application::get().getWindow().getRenderer().setGlobalShaderUniform("projection", getProjection());
 	}
 	
 	void Camera::update(float pitch, float yaw){

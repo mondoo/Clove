@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Clove/Rendering/API/RenderingTypes.hpp"
+
 namespace clv{
 	class VertexArray;
 	class VertexBuffer;
@@ -7,10 +9,6 @@ namespace clv{
 	class Material;
 
 	class Shader;
-
-	enum class ShaderType{
-		standard,
-	};
 
 	class Renderable{
 		//VARIABLES
@@ -23,8 +21,6 @@ namespace clv{
 		std::unique_ptr<IndexBuffer> indexBuffer;
 		std::shared_ptr<Material> material;
 
-		ShaderType shaderType = ShaderType::standard;
-
 		//FUNCTIONS
 	public:
 		Renderable();
@@ -34,7 +30,7 @@ namespace clv{
 		virtual ~Renderable();
 
 		inline unsigned int getIndexBufferCount() const;
-		inline ShaderType getShaderType() const;
+		inline const ShaderType getShaderType() const;
 
 		void bind(Shader& shader);
 		void unbind();

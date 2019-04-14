@@ -34,10 +34,8 @@ namespace clv{
 
 	Mesh::~Mesh() = default;
 
-	void Mesh::setMVP(const math::Matrix4f& model, const math::Matrix4f& view, const math::Matrix4f& projection){
+	void Mesh::setModelMatrix(const math::Matrix4f& model){
 		material->setUniform("model", model);
-		material->setUniform("view", view);
-		material->setUniform("projection", projection);
 	}
 
 	Mesh& Mesh::operator=(const Mesh& other){

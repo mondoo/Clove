@@ -18,8 +18,7 @@ namespace clv{
 
 		CLV_API ~Mesh();
 
-		//TODO: not a big fan of this function
-		CLV_API void setMVP(const math::Matrix4f& model, const math::Matrix4f& view, const math::Matrix4f& projection);
+		CLV_API void setModelMatrix(const math::Matrix4f& model);
 
 		CLV_API Mesh& operator=(const Mesh& other);
 		CLV_API Mesh& operator=(Mesh&& other) noexcept;

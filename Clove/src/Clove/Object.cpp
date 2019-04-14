@@ -15,11 +15,7 @@ namespace clv{
 	Object::~Object() = default;
 
 	void Object::draw(Window& window){
-		const math::Matrix4f model		= computeMatrix();
-		const math::Matrix4f view		= window.getCurrentCamera().getLookAt();
-		const math::Matrix4f projection = window.getCurrentCamera().getProjection();
-
-		objectMesh->setMVP(model, view, projection);
+		objectMesh->setModelMatrix(computeMatrix());
 
 		window.getRenderer().submit(objectMesh);
 	}

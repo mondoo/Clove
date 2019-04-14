@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Clove/Rendering/API/RenderingTypes.hpp"
+
 #include <any>
 
 namespace clv{
@@ -17,10 +19,12 @@ namespace clv{
 
 		std::unordered_map<std::string, std::any> uniformMap;
 
+		ShaderType shaderType;
+
 		//FUNCTIONS
 	public:
-		CLV_API Material();
-		CLV_API Material(const std::string& texturePath);
+		CLV_API Material(ShaderType shaderType = ShaderType::standard);
+		CLV_API Material(const std::string& texturePath, ShaderType shaderType = ShaderType::standard);
 		CLV_API Material(const Material& other);
 		CLV_API Material(Material&& other) noexcept;
 
@@ -33,6 +37,8 @@ namespace clv{
 
 		void bind(Shader& shader);
 		void unbind();
+
+		CLV_API inline const ShaderType getShaderType() const;
 
 		CLV_API Material& operator=(const Material& other);
 		CLV_API Material& operator=(Material&& other) noexcept;

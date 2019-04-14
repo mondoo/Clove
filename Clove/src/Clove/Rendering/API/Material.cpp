@@ -5,11 +5,13 @@
 #include "Clove/Rendering/API/Texture.hpp"
 
 namespace clv{
-	Material::Material(){
+	Material::Material(ShaderType shaderType)
+		: shaderType(shaderType){
 		createMaterial("../Clove/res/Textures/DefaultTexture.png");
 	}
 
-	Material::Material(const std::string& texturePath){
+	Material::Material(const std::string& texturePath, ShaderType shaderType)
+		: shaderType(shaderType){
 		createMaterial(texturePath);
 	}
 
@@ -34,6 +36,8 @@ namespace clv{
 		specularTexturePath = std::move(other.specularTexturePath);
 
 		uniformMap = std::move(other.uniformMap);
+
+		shaderType = std::move(other.shaderType);
 	}
 
 	Material::~Material() = default;

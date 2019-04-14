@@ -255,7 +255,10 @@ project "Sandbox"
 		"%{includeDir.glm}",
 
 		"Clove/src",
-		"Clove/vendor"
+		"Clove/vendor",
+
+		--TODO: Remove this
+		"%{includeDir.Glad}",
 	}
 
 	links{
