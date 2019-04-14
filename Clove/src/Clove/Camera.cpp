@@ -17,6 +17,9 @@ namespace clv{
 		Application::get().getWindow().getRenderer().setGlobalShaderUniform("viewPos", cameraPosition);
 		Application::get().getWindow().getRenderer().setGlobalShaderUniform("view", getLookAt());
 		Application::get().getWindow().getRenderer().setGlobalShaderUniform("projection", getProjection());
+
+		Application::get().getWindow().getRenderer().setGlobalShaderUniform("view", getLookAt(), ShaderType::light);
+		Application::get().getWindow().getRenderer().setGlobalShaderUniform("projection", getProjection(), ShaderType::light);
 	}
 	
 	void Camera::update(float pitch, float yaw){

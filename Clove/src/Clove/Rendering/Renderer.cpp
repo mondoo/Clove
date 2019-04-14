@@ -15,6 +15,9 @@ namespace clv{
 		defaultShader.attachShader(ShaderTypes::Vertex, "../Clove/res/Shaders/VertexShader.glsl");
 		defaultShader.attachShader(ShaderTypes::Fragment, "../Clove/res/Shaders/FragmentShader.glsl");
 
+		lightShader.attachShader(ShaderTypes::Vertex, "../Clove/res/Shaders/VertexShader.glsl");
+		lightShader.attachShader(ShaderTypes::Fragment, "../Clove/res/Shaders/LightFragShader.glsl");
+
 		currentShaderType = ShaderType::standard;
 
 		currentShader = &defaultShader;
@@ -47,7 +50,21 @@ namespace clv{
 
 	void Renderer::prepareShader(ShaderType type){
 		if(type != currentShaderType){
-			CLV_ERROR("Different shader type required but not presented: {0}", __FUNCTION__);
+			switch(type){
+			case ShaderType::standard:
+				currentShader = &defaultShader;
+				break;
+			case ShaderType::light:
+				currentShader = &lightShader;
+				break;
+
+			default:
+				CLV_ASSERT(false, "Shader type not supported!");
+				break;
+			}
+
+			currentShaderType = type;
+			currentShader->bind();
 		}
 	}
 }

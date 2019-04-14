@@ -10,7 +10,9 @@ namespace clv{
 		//VARIABLES
 	private:
 		Shader* currentShader = nullptr;
+		
 		Shader defaultShader;
+		Shader lightShader;
 
 		ShaderType currentShaderType;
 
@@ -27,7 +29,7 @@ namespace clv{
 
 		//TODO: this works for now with one shader but will need to be revisited when others are created
 		template<typename T>
-		void setGlobalShaderUniform(const std::string& name, const T& value);
+		void setGlobalShaderUniform(const std::string& name, const T& value, ShaderType shaderType = ShaderType::standard);
 		// Ideally, things like lighting will be handled in a 'light' object then that data can be sent to the shader
 
 	private:
