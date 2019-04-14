@@ -18,8 +18,8 @@
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
-	clv::Object cube;
-	std::shared_ptr<clv::Material> cubeMaterial;
+	std::array<clv::Object, 10> cubes = { clv::Object() };
+	//std::shared_ptr<clv::Material> cubeMaterial;
 
 	clv::Object sphere;
 	std::shared_ptr<clv::Material> sphereMaterial;
@@ -49,10 +49,26 @@ public:
 	}
 
 	virtual void onAttach() override{
-		cubeMaterial = std::make_shared<clv::Material>(clv::Material("res/Textures/container2.png"));
-		cube.setMesh(std::make_shared<clv::Mesh>(clv::Mesh("res/Objects/cube.obj", cubeMaterial)));
-		cube.setPosition(clv::math::Vector3f(0.0f, 0.0f, -300));
-		cube.setScale(clv::math::Vector3f(100.0f, 100.0f, 100.0f));
+		std::for_each(cubes.begin(), cubes.end(), [](clv::Object& cube){
+			std::shared_ptr<clv::Material> mat = std::make_shared<clv::Material>(clv::Material("res/Textures/container2.png"));
+			
+			mat->setSpecularTexture("res/Textures/container2_specular.png");
+			mat->setUniform("material.shininess", 32.0f);
+			
+			cube.setMesh(std::make_shared<clv::Mesh>(clv::Mesh("res/Objects/cube.obj", mat)));
+			cube.setScale(clv::math::Vector3f(100.0f, 100.0f, 100.0f));
+		});
+		
+		cubes[0].setPosition(clv::math::Vector3f( 0,     0,	   0   ));
+		cubes[1].setPosition(clv::math::Vector3f( 0,     2000, 3000));
+		cubes[2].setPosition(clv::math::Vector3f( 750,  -2000, 3000));
+		cubes[3].setPosition(clv::math::Vector3f( 0,     750,  1500));
+		cubes[4].setPosition(clv::math::Vector3f( 0,    -750, -2000));
+		cubes[5].setPosition(clv::math::Vector3f( 2000,  0,    1750));
+		cubes[6].setPosition(clv::math::Vector3f(-1000, -2200, 500 ));
+		cubes[7].setPosition(clv::math::Vector3f(-1500,  0,    1200));
+		cubes[8].setPosition(clv::math::Vector3f( 0,     0,    1000));
+		cubes[9].setPosition(clv::math::Vector3f( 0,     500, -1000));
 
 		sphereMaterial = std::make_shared<clv::Material>(clv::Material());
 		sphere.setMesh(std::make_shared<clv::Mesh>(clv::Mesh("res/Objects/sphere.obj", sphereMaterial)));
@@ -70,11 +86,6 @@ public:
 		lightCube.setScale(clv::math::Vector3f(25.0f, 25.0f, 25.0f));
 
 		//Material shiz
-		//CUBE
-		cubeMaterial->setSpecularTexture("res/Textures/container2_specular.png");
-
-		cubeMaterial->setUniform("material.shininess", 32.0f);
-
 		//SPHERE
 		//sphereMaterial->setSpecularTexture("../Clove/res/Textures/DefaultTexture.png");
 
@@ -95,12 +106,23 @@ public:
 	}
 
 	virtual void onUpdate() override{
+		clv::Camera& cam = clv::Application::get().getWindow().getCurrentCamera();
+		
 		//TODO: Needs to happen here until the scene thing has been updated properly
 		clv::Application::get().getWindow().getRenderer().setGlobalShaderUniform("light.ambient", clv::math::Vector3f(0.01f, 0.01f, 0.01f));
 		clv::Application::get().getWindow().getRenderer().setGlobalShaderUniform("light.diffuse", clv::math::Vector3f(0.75f, 0.75f, 0.75f));
 		clv::Application::get().getWindow().getRenderer().setGlobalShaderUniform("light.specular", clv::math::Vector3f(1.0f, 1.0f, 1.0f));
 
-		clv::Application::get().getWindow().getRenderer().setGlobalShaderUniform("light.position", lightCube.getPosition());
+		clv::Application::get().getWindow().getRenderer().setGlobalShaderUniform("light.position", cam.getPosition());
+		clv::Application::get().getWindow().getRenderer().setGlobalShaderUniform("light.direction", cam.getFront());
+		clv::Application::get().getWindow().getRenderer().setGlobalShaderUniform("light.cutOff", clv::math::cos(clv::math::asRadians(12.5f)));
+		clv::Application::get().getWindow().getRenderer().setGlobalShaderUniform("light.outerCutOff", clv::math::cos(clv::math::asRadians(17.5f)));
+
+		//these will change for how much of a distance we want the light to cover (could be converted from an 'intesity' variable)
+
+		//clv::Application::get().getWindow().getRenderer().setGlobalShaderUniform("light.constant",	1.0f);
+		//clv::Application::get().getWindow().getRenderer().setGlobalShaderUniform("light.linear",	0.0014f);
+		//clv::Application::get().getWindow().getRenderer().setGlobalShaderUniform("light.quadratic", 0.000007f);
 		//
 
 		lightMaterial->setUniform("light.ambient", clv::math::Vector3f(1.0f));
@@ -109,7 +131,6 @@ public:
 
 		const float camSpeed = 10.0f;
 
-		clv::Camera& cam = clv::Application::get().getWindow().getCurrentCamera();
 
 		cam.update(pitch, yaw);
 
@@ -139,8 +160,14 @@ public:
 		cam.setPosition(cameraPosition);
 
 		//CUBE
-		cube.setRotation(clv::math::Vector3f(0.0f, 1.0f, 0.0f), rot);
-		cube.draw(clv::Application::get().getWindow());
+		for(int i = 0; i < cubes.size(); i++){
+			if(i == 0){
+				cubes[i].setRotation(clv::math::Vector3f(0, 1, 0), 1);
+			} else{
+				cubes[i].setRotation(clv::math::Vector3f(i * 0.25f, i, i * 0.75f), rot);
+			}
+			cubes[i].draw(clv::Application::get().getWindow());
+		}
 
 		//SPHERE
 		sphere.setRotation(clv::math::Vector3f(0.0f, 1.0f, 0.0f), rot);

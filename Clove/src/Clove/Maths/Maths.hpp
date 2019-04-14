@@ -4,6 +4,8 @@
 
 namespace clv{
 	namespace math{
+		inline float cos(float value);
+
 		template<length_t L, typename T, qualifier Q>
 		Vector<L, T, Q> normalise(const Vector<L, T, Q>& v);
 
