@@ -256,9 +256,6 @@ project "Sandbox"
 
 		"Clove/src",
 		"Clove/vendor",
-
-		--TODO: Remove this
-		"%{includeDir.Glad}",
 	}
 
 	links{

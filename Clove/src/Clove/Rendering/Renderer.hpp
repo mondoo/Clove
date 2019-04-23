@@ -1,11 +1,16 @@
 #pragma once
 
 #include "Clove/Rendering/API/Shader.hpp"
-#include "Clove/Rendering/API/Renderable.hpp"
+#include "Clove/Scene/RenderableSceneNode.hpp"
 
 #include <queue>
 
 namespace clv{
+	namespace scene{ 
+		class Scene; 
+		class CameraSceneNode;
+	}
+
 	class Renderer{
 		//VARIABLES
 	private:
@@ -16,24 +21,18 @@ namespace clv{
 
 		ShaderType currentShaderType;
 
-		std::queue<std::weak_ptr<Renderable>> renderQueue;
+		std::queue<std::weak_ptr<scene::RenderableSceneNode>> renderQueue;
 
 		//FUNCTIONS
 	public:
 		Renderer();
 
 		void clear() const;
-
-		void submit(std::weak_ptr<Renderable> renderable);
-		void drawQueue();
-
-		//TODO: this works for now with one shader but will need to be revisited when others are created
-		template<typename T>
-		void setGlobalShaderUniform(const std::string& name, const T& value, ShaderType shaderType = ShaderType::standard);
-		// Ideally, things like lighting will be handled in a 'light' object then that data can be sent to the shader
+		void submit(std::weak_ptr<scene::RenderableSceneNode> renderable);
+		void drawQueue(std::shared_ptr<scene::Scene> currentScene);
 
 	private:
-		void prepareShader(ShaderType type);
+		void prepareShader(ShaderType type, std::shared_ptr<scene::CameraSceneNode> camera);
 	};
 }
 

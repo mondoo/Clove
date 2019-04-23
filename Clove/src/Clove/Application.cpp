@@ -8,6 +8,8 @@
 #include "Clove/Events/Event.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/ImGui/ImGuiLayer.hpp"
+#include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Scene/Scene.hpp"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -23,21 +25,28 @@ namespace clv{
 
 		imGuiLayer = std::make_shared<ImGuiLayer>(ImGuiLayer());
 		pushLayer(imGuiLayer);
+
+		renderer = std::make_unique<Renderer>();
+		scene = std::make_shared<scene::Scene>();
 	}
 
 	Application::~Application() = default;
 
 	void Application::run(){
 		while(running){
-			window->beginFrame();
+			auto currFrameTime = std::chrono::system_clock::now();
+			std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
+			prevFrameTime = currFrameTime;
+
+			window->swapBuffers();
+			renderer->clear();
 			
 			for(auto layer : *layerStack){
 				layer->onUpdate();
 			}
 
-			//TODO: Layer prep models
-			
-			window->endFrame();
+			scene->update(deltaSeonds.count());
+			renderer->drawQueue(scene);
 			
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){

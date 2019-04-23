@@ -4,8 +4,8 @@
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Events/KeyEvent.hpp"
-
 #include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Rendering/API/GLHelpers.hpp"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -29,26 +29,9 @@ namespace clv{
 		shutdown();
 	}
 
-	void WindowsWindow::beginFrame(){
+	void WindowsWindow::swapBuffers(){
 		glfwPollEvents();
 		glfwSwapBuffers(window);
-		renderer->clear();
-	}
-
-	void WindowsWindow::endFrame(){
-		renderer->drawQueue();
-	}
-
-	inline unsigned int WindowsWindow::getWidth() const{
-		return data.width;
-	}
-
-	inline unsigned int WindowsWindow::getHeight() const{
-		return data.height;
-	}
-
-	inline void WindowsWindow::setEventCallbackFunction(const EventCallbackFn& callback){
-		data.eventCallback = callback;
 	}
 
 	void WindowsWindow::setVSync(bool enabled){
@@ -62,10 +45,6 @@ namespace clv{
 
 	void* WindowsWindow::getNativeWindow() const{
 		return window;
-	}
-
-	Renderer& WindowsWindow::getRenderer(){ //TODO: Add back in const
-		return *renderer;
 	}
 
 	void WindowsWindow::init(const WindowProps& props){
@@ -111,10 +90,8 @@ namespace clv{
 		glfwSetWindowUserPointer(window, &data);
 		setVSync(true);
 
-		renderer = std::make_unique<Renderer>();
-
 		//Set the input mode to hide the mouse
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		//Set GLFW callbacks
 		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height){
@@ -203,7 +180,6 @@ namespace clv{
 	}
 
 	void WindowsWindow::shutdown(){
-		renderer.reset(); //Destroy renderer before openGL is shut down
 		glfwDestroyWindow(window);
 		CLV_INFO("Window destroyed");
 	}

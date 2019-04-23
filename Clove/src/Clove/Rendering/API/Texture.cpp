@@ -2,6 +2,7 @@
 #include "Texture.hpp"
 
 #include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Rendering/API/GLHelpers.hpp"
 
 #include <stb_image.h>
 #include <glad/glad.h>

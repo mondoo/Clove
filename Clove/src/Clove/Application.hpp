@@ -7,17 +7,24 @@ namespace clv{
 	class Event;
 	class WindowCloseEvent;
 	class ImGuiLayer;
+	class Renderer;
+	namespace scene{ class Scene; };
 
 	class Application{
 		//VARIABLES
 	private:
 		std::unique_ptr<Window> window;
-		std::shared_ptr<ImGuiLayer> imGuiLayer;
-
+		std::unique_ptr<Renderer> renderer;
+		std::shared_ptr<scene::Scene> scene;
+	
 		bool running = true;
-		std::unique_ptr<LayerStack> layerStack;
 
+		std::unique_ptr<LayerStack> layerStack;
+		std::shared_ptr<ImGuiLayer> imGuiLayer;
+		
 		static Application* instance;
+
+		std::chrono::system_clock::time_point prevFrameTime;
 		
 		//FUNCTIONS
 	public:
@@ -34,6 +41,8 @@ namespace clv{
 
 		CLV_API inline static Application& get();
 		CLV_API inline Window& getWindow();
+		CLV_API inline Renderer& getRenderer();
+		CLV_API inline std::shared_ptr<scene::Scene> getScene();
 
 	private:
 		bool onWindowClose(WindowCloseEvent& e);

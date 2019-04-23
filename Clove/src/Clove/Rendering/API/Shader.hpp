@@ -1,9 +1,5 @@
 #pragma once
 
-#include "Clove/Rendering/API/GLHelpers.hpp"
-
-#include <glad/glad.h>
-
 namespace clv{
 	enum class ShaderTypes{
 		Vertex,
@@ -31,16 +27,11 @@ namespace clv{
 		template<typename T>
 		void setUniform(const std::string& name, const T& value);
 
-		template<>
-		void setUniform<int>(const std::string& name, const int& value);
-		template<>
-		void setUniform<float>(const std::string& name, const float& value);
-		template<>
-		void setUniform<math::Vector3f>(const std::string& name, const math::Vector3f& value);
-		template<>
-		void setUniform<math::Vector4f>(const std::string& name, const math::Vector4f& value);
-		template<>
-		void setUniform<math::Matrix4f>(const std::string& name, const math::Matrix4f& value);
+		void setUniform(const std::string& name, const int& value);
+		void setUniform(const std::string& name, const float& value);
+		void setUniform(const std::string& name, const math::Vector3f& value);
+		void setUniform(const std::string& name, const math::Vector4f& value);
+		void setUniform(const std::string& name, const math::Matrix4f& value);
 
 		Shader& operator=(Shader&& other) noexcept;
 

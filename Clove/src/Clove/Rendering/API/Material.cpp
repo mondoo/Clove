@@ -48,23 +48,23 @@ namespace clv{
 
 	void Material::bind(Shader& shader){
 		diffuseTexture->bind(1);
-		shader.setUniform<int>("material.diffuse", 1);
+		shader.setUniform("material.diffuse", 1);
 		if(specularTexture){
 			specularTexture->bind(2);
-			shader.setUniform<int>("material.specular", 2);
+			shader.setUniform("material.specular", 2);
 		}
 
 		for(const auto& [key, value] : uniformMap){
 			if(value.type() == typeid(int)){
-				shader.setUniform<int>(key, std::any_cast<int>(value));
+				shader.setUniform(key, std::any_cast<int>(value));
 			} else if(value.type() == typeid(float)){
-				shader.setUniform<float>(key, std::any_cast<float>(value));
+				shader.setUniform(key, std::any_cast<float>(value));
 			} else if(value.type() == typeid(math::Vector3f)){
-				shader.setUniform<math::Vector3f>(key, std::any_cast<math::Vector3f>(value));
+				shader.setUniform(key, std::any_cast<math::Vector3f>(value));
 			} else if(value.type() == typeid(math::Vector4f)){
-				shader.setUniform<math::Vector4f>(key, std::any_cast<math::Vector4f>(value));
+				shader.setUniform(key, std::any_cast<math::Vector4f>(value));
 			} else if(value.type() == typeid(math::Matrix4f)){
-				shader.setUniform<math::Matrix4f>(key, std::any_cast<math::Matrix4f>(value));
+				shader.setUniform(key, std::any_cast<math::Matrix4f>(value));
 			} else{
 				shader.setUniform(key, value);
 			}
