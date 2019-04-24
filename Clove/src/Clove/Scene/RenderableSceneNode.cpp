@@ -5,6 +5,7 @@
 #include "Clove/Rendering/API/VertexBuffer.hpp"
 #include "Clove/Rendering/API/Material.hpp"
 #include "Clove/Rendering/API/Shader.hpp"
+#include "Clove/Rendering/Renderer.hpp"
 
 namespace clv{
 	namespace scene{
@@ -16,6 +17,10 @@ namespace clv{
 
 		void RenderableSceneNode::setMaterial(std::shared_ptr<Material> inMaterial){
 			material = inMaterial;
+		}
+
+		void RenderableSceneNode::draw(Renderer& renderer){
+			renderer.submit(std::static_pointer_cast<RenderableSceneNode>(shared_from_this()));
 		}
 
 		void RenderableSceneNode::bind(Shader& shader){

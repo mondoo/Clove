@@ -100,14 +100,14 @@ namespace clv{
 				indices = loadedMeshInfo.indices;
 
 				const void* vdata = vertexData.data();
-				unsigned int vsize = (vertexData.size() * sizeof(float));
+				unsigned int vsize = static_cast<unsigned int>((vertexData.size() * sizeof(float)));
 				vertexBuffer = std::make_unique<VertexBuffer>(VertexBuffer(vdata, vsize));
 
 				vertexArray = std::make_unique<VertexArray>(VertexArray());
 				vertexArray->addBuffer(*vertexBuffer, layout);
 
 				const unsigned int* idata = indices.data();
-				unsigned int icount = indices.size();
+				unsigned int icount = static_cast<unsigned int>(indices.size());
 				indexBuffer = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
 
 				vertexArray->unbind();

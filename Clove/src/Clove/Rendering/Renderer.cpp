@@ -7,6 +7,7 @@
 #include "Clove/Rendering/API/Shader.hpp"
 #include "Clove/Rendering/API/Material.hpp"
 #include "Clove/Scene/Scene.hpp"
+#include "Clove/Scene/RenderableSceneNode.hpp"
 #include "Clove/Scene/CameraSceneNode.hpp"
 #include "Clove/Scene/Lights/PointLightSceneNode.hpp"
 #include "Clove/Scene/Lights/DirectionalLightSceneNode.hpp"
@@ -26,6 +27,8 @@ namespace clv{
 		currentShader = &defaultShader;
 		currentShader->bind();
 	}
+
+	Renderer::~Renderer() = default;
 
 	void Renderer::clear() const{
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));

@@ -187,25 +187,21 @@ public:
 			} else{
 				cubes[i]->setRotation(std::make_pair(clv::math::Vector3f(i * 0.25f, i, i * 0.75f), rot));
 			}
-			//TEMP
-			clv::Application::get().getRenderer().submit(cubes[i]);
+			cubes[i]->draw(clv::Application::get().getRenderer());
 		}
 
 		//SPHERE
 		sphere->setRotation(std::make_pair(clv::math::Vector3f(0.0f, 1.0f, 0.0f), rot));
-		//TEMP
-		clv::Application::get().getRenderer().submit(sphere);
+		sphere->draw(clv::Application::get().getRenderer());
 
 		//MONKEY
 		monkey->setRotation(std::make_pair(clv::math::Vector3f(0.0f, 1.0f, 0.5f), rot));
-		//TEMP
-		clv::Application::get().getRenderer().submit(monkey);
+		monkey->draw(clv::Application::get().getRenderer());
 
 		//LIGHT
 		for(int i = 0; i < lights.size(); ++i){
 			lights[i]->setRotation(std::make_pair(clv::math::Vector3f(0, 1, 0), 1.0f));
-			//TEMP
-			clv::Application::get().getRenderer().submit(lightCubes[i]);
+			lightCubes[i]->draw(clv::Application::get().getRenderer());
 		}
 
 		rot += clv::math::asRadians(0.5f);
@@ -218,12 +214,12 @@ public:
 		parentCube->setPosition(parentPos);
 		parentCube->setRotation(std::make_pair(parentRotV, clv::math::asRadians(parentRotA)));
 		parentCube->setScale(parentScale);
-		clv::Application::get().getRenderer().submit(parentCube);
+		parentCube->draw(clv::Application::get().getRenderer());
 		
 		childCube->setPosition(childPos);
 		childCube->setRotation(std::make_pair(childRotV, clv::math::asRadians(childRotA)));
 		childCube->setScale(childScale);
-		clv::Application::get().getRenderer().submit(childCube);
+		childCube->draw(clv::Application::get().getRenderer());
 	}
 
 	virtual void onImGuiRender() override{

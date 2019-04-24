@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Clove/Rendering/API/Shader.hpp"
-#include "Clove/Scene/RenderableSceneNode.hpp"
+#include "Clove/Rendering/API/RenderingTypes.hpp"
 
 #include <queue>
 
 namespace clv{
 	namespace scene{ 
 		class Scene; 
+		class RenderableSceneNode;
 		class CameraSceneNode;
 	}
 
@@ -26,6 +27,8 @@ namespace clv{
 		//FUNCTIONS
 	public:
 		Renderer();
+
+		~Renderer();
 
 		void clear() const;
 		void submit(std::weak_ptr<scene::RenderableSceneNode> renderable);

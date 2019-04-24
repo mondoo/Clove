@@ -17,17 +17,9 @@ namespace clv{
 
 			//FUNCTIONS
 		public:
-			Timer(const std::string& name)
-				:name(name){
-				start = std::chrono::high_resolution_clock::now();
-			}
+			Timer(const std::string& name);
 
-			~Timer(){
-				end = std::chrono::high_resolution_clock::now();
-				duration = end - start;
-
-				CLV_INFO("Timer completed inside {0} after {1}s", name, duration.count() * 1000.0f);
-			}
+			~Timer();
 		};
 	}
 }

@@ -9,8 +9,8 @@ namespace clv{
 	class VertexBuffer;
 	class IndexBuffer;
 	class Material;
-
 	class Shader;
+	class Renderer;
 
 	namespace scene{
 		class RenderableSceneNode : public SceneNode{
@@ -34,6 +34,8 @@ namespace clv{
 			virtual ~RenderableSceneNode();
 
 			CLV_API void setMaterial(std::shared_ptr<Material> inMaterial);
+
+			CLV_API void draw(Renderer& renderer);
 
 			inline unsigned int getIndexBufferCount() const;
 			inline const ShaderType getShaderType() const;
