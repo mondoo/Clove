@@ -201,7 +201,9 @@ project "Clove"
 		"%{includeDir.glm}",
 		"%{includeDir.stb}",
 
-		"%{prj.name}/vendor/OBJ-Loader/source"
+		"%{prj.name}/vendor/OBJ-Loader/source",
+
+		"%{prj.name}/vendor/Event-Dispatcher"
 	}
 
 	links{
