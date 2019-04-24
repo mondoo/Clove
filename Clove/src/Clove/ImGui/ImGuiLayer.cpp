@@ -1,20 +1,16 @@
-#include "clvpch.h"
-#include "ImGuiLayer.h"
+#include "clvpch.hpp"
+#include "ImGuiLayer.hpp"
 
-#include "Clove/Events/MouseEvent.h"
-#include "Clove/Events/KeyEvent.h"
-#include "Clove/Events/ApplicationEvent.h"
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "Clove/Application.hpp"
+#include "Clove/Window.hpp"
+#include "Clove/Events/MouseEvent.hpp"
+#include "Clove/Events/KeyEvent.hpp"
+#include "Clove/Events/ApplicationEvent.hpp"
 
 #include <imgui.h>
-
-#define IMGUI_IMPL_API
-#include "examples/imgui_impl_glfw.h"
-#include "examples/imgui_impl_opengl3.h"
-
-#include "Clove/Application.h"
+#include <GLFW/glfw3.h>
+#include <examples/imgui_impl_glfw.h>
+#include <examples/imgui_impl_opengl3.h>
 
 namespace clv{
 	ImGuiLayer::ImGuiLayer() 
@@ -69,7 +65,7 @@ namespace clv{
 	void ImGuiLayer::end(){
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::get();
-		io.DisplaySize = ImVec2(app.getWindow().getWidth(), app.getWindow().getHeight());
+		io.DisplaySize = ImVec2(static_cast<float>(app.getWindow().getWidth()), static_cast<float>(app.getWindow().getHeight()));
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

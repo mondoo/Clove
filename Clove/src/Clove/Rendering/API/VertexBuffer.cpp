@@ -1,15 +1,26 @@
-#include "clvpch.h"
-#include "VertexBuffer.h"
+#include "clvpch.hpp"
+#include "VertexBuffer.hpp"
 
-#include "Clove/Rendering/Renderer.h"
+#include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Rendering/API/GLHelpers.hpp"
+
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 namespace clv{
 	VertexBuffer::VertexBuffer(const void* data, unsigned int size){
 		GLCall(glGenBuffers(1, &rendererID));
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, rendererID));
 		GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
+	}
+
+	VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept{
+		rendererID = other.rendererID;
+
+		other.rendererID = 0;
+	}
+
+	VertexBuffer::~VertexBuffer(){
+		GLCall(glDeleteBuffers(1, &rendererID));
 	}
 
 	void VertexBuffer::bind() const{
@@ -20,7 +31,11 @@ namespace clv{
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	}
 
-	void VertexBuffer::deleteBuffer(){
-		GLCall(glDeleteBuffers(1, &rendererID));
+	VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept{
+		rendererID = other.rendererID;
+
+		other.rendererID = 0;
+
+		return *this;
 	}
 }

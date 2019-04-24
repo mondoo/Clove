@@ -1,8 +1,9 @@
-#include "clvpch.h"
-#include "WindowsInput.h"
-#include "Clove/Application.h"
+#include "clvpch.hpp"
+#include "WindowsInput.hpp"
+#include "Clove/Application.hpp"
+#include "Clove/Window.hpp"
 
-#include <GLFW/glfw3.h>
+#include <GLFW/glfw3.h> //TODO: abstract GLFW macros
 
 namespace clv{
 	Input* Input::instance = new WindowsInput();

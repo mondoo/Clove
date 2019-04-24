@@ -1,6 +1,7 @@
-#include "clvpch.h"
-#include "LayerStack.h"
-#include "Layer.h"
+#include "clvpch.hpp"
+#include "LayerStack.hpp"
+
+#include "Clove/Layer.hpp"
 
 namespace clv{
 	LayerStack::~LayerStack(){
@@ -13,7 +14,7 @@ namespace clv{
 
 	void LayerStack::pushLayer(std::shared_ptr<Layer> layer){
 		layers.emplace(layers.begin() + layerInsertIndex, layer);
-		CLV_TRACE("Attached layer: {0}", layer->getName());
+		CLV_INFO("Attached layer: {0}", layer->getName());
 		layer->onAttach();
 	}
 
@@ -22,14 +23,14 @@ namespace clv{
 		if(it != layers.end()){
 			layers.erase(it);
 			--layerInsertIndex;
-			CLV_TRACE("Popped layer: {0}", (*it)->getName());
+			CLV_INFO("Popped layer: {0}", (*it)->getName());
 			(*it)->onDetach();
 		}
 	}
 
 	void LayerStack::pushOverlay(std::shared_ptr<Layer> overlay){
 		overlay->onAttach();
-		CLV_TRACE("Attached overlay: {0}", overlay->getName());
+		CLV_INFO("Attached overlay: {0}", overlay->getName());
 		layers.emplace_back(std::move(overlay));
 	}
 
@@ -37,8 +38,16 @@ namespace clv{
 		auto it = std::find(layers.begin(), layers.end(), overlay);
 		if(it != layers.end()){
 			layers.erase(it);
-			CLV_TRACE("Popped overlay: {0}", (*it)->getName());
+			CLV_INFO("Popped overlay: {0}", (*it)->getName());
 			(*it)->onDetach();
 		}
+	}
+
+	std::vector<std::shared_ptr<Layer>>::iterator LayerStack::begin(){
+		return layers.begin();
+	}
+
+	std::vector<std::shared_ptr<Layer>>::iterator LayerStack::end(){
+		return layers.end();
 	}
 }

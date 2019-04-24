@@ -1,12 +1,13 @@
-#include "clvpch.h"
-#include "WindowsWindow.h"
+#include "clvpch.hpp"
+#include "WindowsWindow.hpp"
 
-#include "Clove/Events/ApplicationEvent.h"
-#include "Clove/Events/MouseEvent.h"
-#include "Clove/Events/KeyEvent.h"
+#include "Clove/Events/ApplicationEvent.hpp"
+#include "Clove/Events/MouseEvent.hpp"
+#include "Clove/Events/KeyEvent.hpp"
+#include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Rendering/API/GLHelpers.hpp"
 
-#include "Clove/Rendering/Renderer.h"
-
+#include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
 namespace clv{
@@ -28,7 +29,7 @@ namespace clv{
 		shutdown();
 	}
 
-	void WindowsWindow::onUpdate(){
+	void WindowsWindow::swapBuffers(){
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
@@ -44,10 +45,6 @@ namespace clv{
 
 	void* WindowsWindow::getNativeWindow() const{
 		return window;
-	}
-
-	const Renderer WindowsWindow::getRenderer() const{
-		return renderer;
 	}
 
 	void WindowsWindow::init(const WindowProps& props){
@@ -92,6 +89,9 @@ namespace clv{
 
 		glfwSetWindowUserPointer(window, &data);
 		setVSync(true);
+
+		//Set the input mode to hide the mouse
+		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		//Set GLFW callbacks
 		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height){

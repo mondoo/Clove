@@ -1,2 +1,6 @@
-#include "clvpch.h"
-#include "Clove/Input/Input.h"
+#include "clvpch.hpp"
+#include "Clove/Input/Input.hpp"
+
+namespace clv{
+	
+}

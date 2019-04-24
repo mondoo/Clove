@@ -1,8 +1,7 @@
 # Directories
 .vs/
-bin/
-intermediate/
-!vendor/*
+Built/
+!Vendor/*
 
 # Files
 *.user

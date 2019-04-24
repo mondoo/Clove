@@ -1,10 +1,13 @@
-#include "clvpch.h"
-#include "Clove/MeshLoader.h"
+#include "clvpch.hpp"
+#include "Clove/MeshLoader.hpp"
+
 #include <OBJ_Loader.h>
 
 bool clv::loadOBJ(const std::string& filepath, MeshInfo& outVertexInfo){
 	objl::Loader objLoader;
 	if (objLoader.LoadFile(filepath)){
+		//TODO: needs reserve and emplace optimisation
+
 		outVertexInfo.verticies.clear();
 		outVertexInfo.texCoords.clear();
 		outVertexInfo.normals.clear();

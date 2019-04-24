@@ -1,15 +1,68 @@
 --GLOBALS
-outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+outputdir = "%{cfg.buildcfg}/%{cfg.platform}"
 
+targetdir_clv = "Built/bin/" .. outputdir .. "/%{prj.name}"
+objdir_clv = "Built/intermediate/" .. outputdir .. "/%{prj.name}"
+
+targetdir_vendor = "Built/bin/" .. outputdir .. "/vendor/%{prj.name}"
+objdir_vendor = "Built/intermediate/" .. outputdir .. "/vendor/%{prj.name}"
+
+--Workspace Settings
 workspace "Clove"
-	architecture "x64"
 	startproject "Sandbox"
+
+	systemversion "latest"
+	cppdialect "C++17"
 
 	configurations{
 		"Debug",
 		"Release",
 		"Dist"
 	}
+
+	platforms{
+		"Win64-lib",
+		"Win64-dll"
+	}
+
+	filter "platforms:Win64-lib"
+		system "Windows"
+		architecture "x64"
+		staticruntime "On"
+
+		defines{
+			"CLV_STATIC=1"
+		}
+
+	filter "platforms:Win64-dll"
+		system "Windows"
+		architecture "x64"
+		staticruntime "Off"
+
+		defines{
+			"CLV_DYNAMIC=1"
+		}
+
+	filter "system:Windows"
+		defines{
+			"CLV_PLATFORM_WINDOWS=1"
+		}
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "On"
+
+		defines {
+			"CLV_DEBUG=1"
+		}
+
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "On"
+
+		defines {
+			"CLV_RELEASE=1"
+		}
 
 --Clove Dependencies
 group "Dependencies"
@@ -19,8 +72,8 @@ project "ImGui"
 	kind "StaticLib"
 	language "C++"
 		
-	targetdir ("%{prj.location}/bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("%{prj.location}/intermediate/" .. outputdir .. "/%{prj.name}")
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
 
 	files{
         "%{prj.location}/imconfig.h",
@@ -36,17 +89,10 @@ project "ImGui"
     }
 
 	defines{
-		"IMGUI_USER_CONFIG=\"../../src/Clove/ImGui/ImGuiConfig.h\"",
-		"IMGUI_DISABLE_INCLUDE_IMCONFIG_H"
-	}
-	
-	filter "system:windows"
-	    systemversion "latest"
-	    cppdialect "C++17"
-	    staticruntime "On"
-	    
-	filter { "system:windows", "configurations:Release" }
-	    buildoptions "/MT"
+		"IMGUI_USER_CONFIG=\"../../src/Clove/ImGui/ImGuiConfig.hpp\"",
+		"IMGUI_DISABLE_INCLUDE_IMCONFIG_H",
+		"_CRT_SECURE_NO_WARNINGS"
+	}    
 
 --GFLW
 project "GLFW"
@@ -54,8 +100,8 @@ project "GLFW"
     kind "StaticLib"
     language "C"
     
-	targetdir ("%{prj.location}/bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("%{prj.location}/intermediate/" .. outputdir .. "/%{prj.name}")
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
 
 	files{
         "%{prj.location}/include/GLFW/glfw3.h",
@@ -68,12 +114,12 @@ project "GLFW"
         "%{prj.location}/src/vulkan.c",
         "%{prj.location}/src/window.c"
     }
+
+	defines{
+		"_CRT_SECURE_NO_WARNINGS"
+	}
     
-	filter "system:windows"
-        buildoptions { "-std=c11", "-lgdi32" }
-        systemversion "10.0.17134.0"
-        staticruntime "On"
-        
+	filter "system:Windows"
         files{
             "%{prj.location}/src/win32_init.c",
             "%{prj.location}/src/win32_joystick.c",
@@ -87,12 +133,8 @@ project "GLFW"
         }
 
 		defines{ 
-            "_GLFW_WIN32",
-            "_CRT_SECURE_NO_WARNINGS"
+            "_GLFW_WIN32"
 		}
-
-    filter { "system:windows", "configurations:Release" }
-        buildoptions "/MT"
 
 --GLAD
 project "Glad"
@@ -100,8 +142,8 @@ project "Glad"
     kind "StaticLib"
     language "C"
     
-	targetdir ("%{prj.location}/bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("%{prj.location}/intermediate/" .. outputdir .. "/%{prj.name}")
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
 
 	files{
         "%{prj.location}/include/glad/glad.h",
@@ -113,13 +155,7 @@ project "Glad"
 		"%{prj.location}/include"
 	}
     
-	filter "system:windows"
-        buildoptions { "-std=c11", "-lgdi32" }
-        systemversion "latest"
-        staticruntime "On"
-        
-    filter { "system:windows", "configurations:Release" }
-        buildoptions "/MT"
+	filter "system:Windows"    
 
 --End: Dependencies
 group ""
@@ -135,37 +171,39 @@ includeDir["stb"]	= "Clove/vendor/stb"
 
 project "Clove"
 	location "Clove"
-	kind "SharedLib"
 	language "C++"
-	staticruntime "Off"
 
-	targetdir("bin/" .. outputdir .. "/%{prj.name}")
-	objdir("intermediate/" .. outputdir .. "/%{prj.name}")
+	targetdir(targetdir_clv)
+	objdir(objdir_clv)
 
-	pchheader "clvpch.h"
+	pchheader "clvpch.hpp"
 	pchsource "Clove/src/clvpch.cpp"
 
 	files{
-		"%{prj.name}/src/**.h",
+		--Clove
+		"%{prj.name}/src/**.hpp",
+		"%{prj.name}/src/**.inl",
 		"%{prj.name}/src/**.cpp",
 
-		"%{prj.name}/res/**.shader",
+		"%{prj.name}/res/**.glsl",
 
-		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl",
+		--Non-static vendor *.cpp
 		"%{prj.name}/vendor/stb/**.cpp",
-		"%{prj.name}/vendor/OBJ-Loader/**.h"
 	}
 
 	includedirs{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
+
 		"%{includeDir.GLFW}",
 		"%{includeDir.Glad}",
 		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
 		"%{includeDir.stb}",
-		"%{prj.name}/vendor/OBJ-Loader/source"
+
+		"%{prj.name}/vendor/OBJ-Loader/source",
+
+		"%{prj.name}/vendor/Event-Dispatcher"
 	}
 
 	links{
@@ -176,114 +214,52 @@ project "Clove"
 	}
 
 	defines{
-		"ENGINE=1",
-		"CLV_BUILD_DLL=1",
+		"CLV_ENGINE=1",
+		"CLV_EXPORT_DLL=1",
 		"GLFW_INCLUDE_NONE"
 	}
 
-	filter "system:windows"
-		cppdialect "C++17"
-		systemversion "latest"
+	filter "platforms:Win64-lib"
+		kind "StaticLib"
 
-		defines{
-			"CLV_PLATFORM_WINDOWS"
-		}
+	filter "platforms:Win64-dll"
+		kind "SharedLib"
 
+	filter "kind:SharedLib"
 		postbuildcommands{
-			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
+			("{COPY} %{cfg.buildtarget.relpath} \"../Built/bin/" .. outputdir .. "/Sandbox/\"")
 		}
 
-	filter "configurations:Debug"
-		defines {
-			"CLV_DEBUG=1",
-			"CLV_RELEASE=0",
-			"CLV_DIST=0"
+	filter "system:Windows"
+		defines{
+			"CLV_PLATFORM_WINDOWS=1"
 		}
-		runtime "Debug"
-		symbols "On"
-
-	filter "configurations:Release"
-		defines {
-			"CLV_DEBUG=0",
-			"CLV_RELEASE=1",
-			"CLV_DIST=0"
-		}
-		runtime "Release"
-		optimize "On"
-
-	filter "configurations:Dist"
-		defines {
-			"CLV_DEBUG=0",
-			"CLV_RELEASE=0",
-			"CLV_DIST=1"
-		}
-		runtime "Release"
-		optimize "On"
 
 --SANDBOX
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
-	staticruntime "Off"
 
-	targetdir("bin/" .. outputdir .. "/%{prj.name}")
-	objdir("intermediate/" .. outputdir .. "/%{prj.name}")
+	targetdir(targetdir_clv)
+	objdir(objdir_clv)
 
 	files{
-		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.hpp",
+		"%{prj.name}/src/**.inl",
 		"%{prj.name}/src/**.cpp"
 	}
 
 	includedirs{
 		"Clove/vendor/spdlog/include",
+
 		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
+
 		"Clove/src",
-		"Clove/vendor"
+		"Clove/vendor",
 	}
 
 	links{
 		"Clove",
 	}
-
-	defines{
-		"ENGINE=0",
-		"CLV_BUILD_DLL=0"
-	}
-
-	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "On"
-		systemversion "latest"
-
-		defines{
-			"CLV_PLATFORM_WINDOWS"
-		}
-
-	filter "configurations:Debug"
-		defines {
-			"CLV_DEBUG=1",
-			"CLV_RELEASE=0",
-			"CLV_DIST=0"
-		}
-		symbols "On"
-		buildoptions "/MDd"
-
-	filter "configurations:Release"
-		defines {
-			"CLV_DEBUG=0",
-			"CLV_RELEASE=1",
-			"CLV_DIST=0"
-		}
-		optimize "On"
-		buildoptions "/MD"
-
-	filter "configurations:Dist"
-		defines {
-			"CLV_DEBUG=0",
-			"CLV_RELEASE=0",
-			"CLV_DIST=1"
-		}
-		optimize "On"
-		buildoptions "/MD"

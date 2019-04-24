@@ -1,9 +1,10 @@
-#include "clvpch.h"
-#include "IndexBuffer.h"
+#include "clvpch.hpp"
+#include "IndexBuffer.hpp"
 
-#include "Clove/Rendering/Renderer.h"
+#include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Rendering/API/GLHelpers.hpp"
+
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 namespace clv{
 	IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int inCount)
@@ -11,6 +12,18 @@ namespace clv{
 		GLCall(glGenBuffers(1, &rendererID));
 		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID));
 		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_STATIC_DRAW));
+	}
+
+	IndexBuffer::IndexBuffer(IndexBuffer&& other) noexcept{
+		rendererID = other.rendererID;
+		count = other.count;
+
+		other.rendererID = 0;
+		other.count = 0;
+	}
+
+	IndexBuffer::~IndexBuffer(){
+		GLCall(glDeleteBuffers(1, &rendererID));
 	}
 
 	void IndexBuffer::bind() const{
@@ -21,7 +34,13 @@ namespace clv{
 		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 	}
 
-	void IndexBuffer::deleteBuffer(){
-		GLCall(glDeleteBuffers(1, &rendererID));
+	IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other) noexcept{
+		rendererID = other.rendererID;
+		count = other.count;
+
+		other.rendererID = 0;
+		other.count = 0;
+
+		return *this;
 	}
 }

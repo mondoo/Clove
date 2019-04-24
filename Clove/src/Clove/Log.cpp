@@ -1,5 +1,4 @@
-#include "clvpch.h"
-#include "Log.h"
+#include "clvpch.hpp"
 
 #include "spdlog/sinks/stdout_color_sinks.h"
 

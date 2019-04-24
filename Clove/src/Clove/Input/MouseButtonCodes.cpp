@@ -1,6 +1,7 @@
-#include "clvpch.h"
-#include "MouseButtonCodes.h"
-#include "Clove/Log.h"
+#include "clvpch.hpp"
+#include "MouseButtonCodes.hpp"
+
+#include "Clove/Log.hpp"
 
 #include <GLFW/glfw3.h>
 
