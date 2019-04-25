@@ -4,6 +4,12 @@
 #include "Clove/Layer.hpp"
 
 namespace clv{
+	LayerStack::LayerStack() = default;
+
+	LayerStack::LayerStack(const LayerStack& other) = default;
+
+	LayerStack::LayerStack(LayerStack&& other) = default;
+
 	LayerStack::~LayerStack(){
 		CLV_TRACE("Deconstructing layer stack...");
 		for(auto layer : layers){
@@ -50,4 +56,8 @@ namespace clv{
 	std::vector<std::shared_ptr<Layer>>::iterator LayerStack::end(){
 		return layers.end();
 	}
+
+	LayerStack& LayerStack::operator=(const LayerStack& other) = default;
+
+	LayerStack& LayerStack::operator=(LayerStack&& other) = default;
 }

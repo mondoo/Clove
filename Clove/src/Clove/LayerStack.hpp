@@ -12,6 +12,10 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
+		CLV_API LayerStack();
+		CLV_API LayerStack(const LayerStack& other);
+		CLV_API LayerStack(LayerStack&& other);
+
 		CLV_API ~LayerStack();
 
 		CLV_API void pushLayer(std::shared_ptr<Layer> layer);
@@ -22,6 +26,9 @@ namespace clv{
 
 		CLV_API std::vector<std::shared_ptr<Layer>>::iterator begin();
 		CLV_API std::vector<std::shared_ptr<Layer>>::iterator end();
+
+		CLV_API LayerStack& operator=(const LayerStack& other);
+		CLV_API LayerStack& operator=(LayerStack&& other);
 	};
 }
 
