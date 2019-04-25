@@ -12,8 +12,20 @@ namespace clv{
 		, normalised(inNormalised){
 	}
 
+	VertexBufferLayout::VertexBufferLayout() = default;
+
+	VertexBufferLayout::VertexBufferLayout(const VertexBufferLayout& other) = default;
+
+	VertexBufferLayout::VertexBufferLayout(VertexBufferLayout&& other) = default;
+
+	VertexBufferLayout::~VertexBufferLayout() = default;
+
 	void VertexBufferLayout::empty(){
 		elements.clear();
 		stride = 0;
 	}
+
+	VertexBufferLayout& VertexBufferLayout::operator=(const VertexBufferLayout& other) = default;
+
+	VertexBufferLayout& VertexBufferLayout::operator=(VertexBufferLayout&& other) = default;
 }
