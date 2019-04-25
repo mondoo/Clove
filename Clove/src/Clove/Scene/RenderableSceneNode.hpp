@@ -16,9 +16,6 @@ namespace clv{
 		class RenderableSceneNode : public SceneNode{
 			//VARIABLES
 		protected:
-			std::vector<float> vertexData;
-			std::vector<unsigned int> indices;
-
 			std::unique_ptr<VertexArray> vertexArray;
 			std::unique_ptr<VertexBuffer> vertexBuffer;
 			std::unique_ptr<IndexBuffer> indexBuffer;
