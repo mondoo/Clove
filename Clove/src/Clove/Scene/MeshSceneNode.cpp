@@ -15,6 +15,14 @@ namespace clv{
 	namespace scene{
 		MeshSceneNode::MeshSceneNode() = default;
 
+		MeshSceneNode::MeshSceneNode(const MeshSceneNode& other){
+			CLV_WARN("Copy constructor called on Mesh - creating new data");
+			material = other.material;
+			createModelData(other.meshPath);
+		}
+
+		MeshSceneNode::MeshSceneNode(MeshSceneNode&& other) noexcept = default;
+
 		MeshSceneNode::MeshSceneNode(const std::string& meshPath){
 			material = std::make_shared<Material>(Material());
 			createModelData(meshPath);
@@ -24,14 +32,6 @@ namespace clv{
 			this->material = material;
 			createModelData(meshPath);
 		}
-
-		MeshSceneNode::MeshSceneNode(const MeshSceneNode& other){
-			CLV_WARN("Copy constructor called on Mesh - creating new data");
-			material = other.material;
-			createModelData(other.meshPath);
-		}
-
-		MeshSceneNode::MeshSceneNode(MeshSceneNode&& other) noexcept = default;
 
 		MeshSceneNode::~MeshSceneNode() = default;
 

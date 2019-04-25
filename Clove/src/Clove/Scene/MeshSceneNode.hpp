@@ -12,10 +12,11 @@ namespace clv{
 			//FUNCTIONS
 		public:
 			CLV_API MeshSceneNode();
-			CLV_API MeshSceneNode(const std::string& meshPath);
-			CLV_API MeshSceneNode(const std::string& meshPath, std::shared_ptr<Material> material);
 			CLV_API MeshSceneNode(const MeshSceneNode& other);
 			CLV_API MeshSceneNode(MeshSceneNode&& other) noexcept;
+			
+			CLV_API MeshSceneNode(const std::string& meshPath);
+			CLV_API MeshSceneNode(const std::string& meshPath, std::shared_ptr<Material> material);
 
 			CLV_API ~MeshSceneNode();
 
