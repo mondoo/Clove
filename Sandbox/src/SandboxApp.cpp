@@ -151,7 +151,7 @@ public:
 	virtual void onUpdate() override{
 		const float camSpeed = 10.0f;
 
-		//cam.update(pitch, yaw);
+		//cam.updateFront(pitch, yaw);
 
 		clv::math::Vector3f cameraPosition = cam->getPosition();
 
