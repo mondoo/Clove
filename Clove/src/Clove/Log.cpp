@@ -12,15 +12,15 @@ namespace clv{
 		coreLogger = spdlog::stdout_color_mt("CLOVE");
 		clientLogger = spdlog::stdout_color_mt("APP");
 
-#if CLV_DEBUG
+	#if CLV_DEBUG
 		coreLogger->set_level(spdlog::level::trace);
 		clientLogger->set_level(spdlog::level::trace);
-#elif CLV_RELEASE
+	#elif CLV_RELEASE
 		coreLogger->set_level(spdlog::level::err);
 		clientLogger->set_level(spdlog::level::err);
-#elif CLV_DIST
+	#elif CLV_DIST
 		coreLogger->set_level(spdlog::level::off);
 		clientLogger->set_level(spdlog::level::off);
-#endif
+	#endif
 	}
 }

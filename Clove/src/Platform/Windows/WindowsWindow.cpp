@@ -114,26 +114,26 @@ namespace clv{
 			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
 			switch(action){
-			case GLFW_PRESS:
-			{
-				KeyPressedEvent event(KeyCodeHelpers::GLFWToClove(key), 0);
-				data.eventCallback(event);
-				break;
-			}
+				case GLFW_PRESS:
+				{
+					KeyPressedEvent event(KeyCodeHelpers::GLFWToClove(key), 0);
+					data.eventCallback(event);
+					break;
+				}
 
-			case GLFW_RELEASE:
-			{
-				KeyReleasedEvent event(KeyCodeHelpers::GLFWToClove(key));
-				data.eventCallback(event);
-				break;
-			}
+				case GLFW_RELEASE:
+				{
+					KeyReleasedEvent event(KeyCodeHelpers::GLFWToClove(key));
+					data.eventCallback(event);
+					break;
+				}
 
-			case GLFW_REPEAT:
-			{
-				KeyPressedEvent event(KeyCodeHelpers::GLFWToClove(key), 1); //repeat is manually put to 1 for now
-				data.eventCallback(event);
-				break;
-			}
+				case GLFW_REPEAT:
+				{
+					KeyPressedEvent event(KeyCodeHelpers::GLFWToClove(key), 1); //repeat is manually put to 1 for now
+					data.eventCallback(event);
+					break;
+				}
 			}
 		});
 
@@ -148,19 +148,19 @@ namespace clv{
 			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
 			switch(action){
-			case GLFW_PRESS:
-			{
-				MouseButtonPressedEvent event(MouseButtonCodeHelpers::GLFWToClove(button));
-				data.eventCallback(event);
-				break;
-			}
+				case GLFW_PRESS:
+				{
+					MouseButtonPressedEvent event(MouseButtonCodeHelpers::GLFWToClove(button));
+					data.eventCallback(event);
+					break;
+				}
 
-			case GLFW_RELEASE:
-			{
-				MouseButtonReleasedEvent event(MouseButtonCodeHelpers::GLFWToClove(button));
-				data.eventCallback(event);
-				break;
-			}
+				case GLFW_RELEASE:
+				{
+					MouseButtonReleasedEvent event(MouseButtonCodeHelpers::GLFWToClove(button));
+					data.eventCallback(event);
+					break;
+				}
 			}
 		});
 

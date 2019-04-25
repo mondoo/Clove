@@ -10,7 +10,7 @@
 namespace clv{
 	Texture::Texture(const std::string& filePath)
 		: filePath(filePath){
-		
+
 		stbi_set_flip_vertically_on_load(1); //Opengl expects our texture to start on the bottom left
 		localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 

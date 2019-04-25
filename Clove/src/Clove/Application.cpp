@@ -40,14 +40,14 @@ namespace clv{
 
 			window->swapBuffers();
 			renderer->clear();
-			
+
 			for(auto layer : *layerStack){
 				layer->onUpdate();
 			}
 
 			scene->update(deltaSeonds.count());
 			renderer->drawQueue(scene);
-			
+
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){
 				layer->onImGuiRender();

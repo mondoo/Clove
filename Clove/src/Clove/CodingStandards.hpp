@@ -33,7 +33,7 @@ namespace clv{
 		//TODO: Add noexcept on moves
 
 		//[function.inline] please do not do this!
-		inline void badInlineFunction() { /*do some thing*/ }
+		inline void badInlineFunction(){ /*do some thing*/ }
 
 		//[function.inline] if you need it inline, mark it as such and declare in an inl file
 		inline void goodInlineFunction();

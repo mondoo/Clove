@@ -32,7 +32,7 @@ namespace clv{
 		: button(inButton){
 	}
 
-	MouseButtonPressedEvent::MouseButtonPressedEvent(MouseButton inButton) 
+	MouseButtonPressedEvent::MouseButtonPressedEvent(MouseButton inButton)
 		: MouseButtonEvent(inButton){
 	}
 

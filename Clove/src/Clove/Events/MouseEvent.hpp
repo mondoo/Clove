@@ -36,7 +36,7 @@ namespace clv{
 
 		CLV_API inline float getXOffset() const;
 		CLV_API inline float getYOffset() const;
-		
+
 		CLV_API virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(MouseScrolled)

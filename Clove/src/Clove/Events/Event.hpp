@@ -29,7 +29,7 @@ namespace clv{
 		};
 	}
 
-//Macro containing overrides that deal with the event type
+	//Macro containing overrides that deal with the event type
 #define EVENT_CLASS_TYPE(type)	CLV_API static EventType::Type getStaticType() { return EventType::##type; }\
 								CLV_API virtual EventType::Type getEventType() const override { return getStaticType(); }\
 								CLV_API virtual const char* getName() const override { return #type; }

@@ -33,16 +33,16 @@ namespace clv{
 
 		void CameraSceneNode::setProjectionMode(ProjectionMode mode){
 			switch(mode){
-			case ProjectionMode::orthographic:
-				currentProjection = math::createOrthographicMatrix(1.0f, -1.0f, -1.0f, 1.0f);
-				break;
+				case ProjectionMode::orthographic:
+					currentProjection = math::createOrthographicMatrix(1.0f, -1.0f, -1.0f, 1.0f);
+					break;
 
-			case ProjectionMode::perspective:
-				currentProjection = clv::math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 1.0f, -1.0f);
-				break;
+				case ProjectionMode::perspective:
+					currentProjection = clv::math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 1.0f, -1.0f);
+					break;
 
-			default:
-				break;
+				default:
+					break;
 			}
 		}
 

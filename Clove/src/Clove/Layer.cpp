@@ -4,7 +4,7 @@
 #include "Clove/Events/Event.hpp"
 
 namespace clv{
-	Layer::Layer(const std::string& name) 
+	Layer::Layer(const std::string& name)
 		: debugName(name){
 	}
 }
