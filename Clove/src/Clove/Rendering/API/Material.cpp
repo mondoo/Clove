@@ -17,9 +17,9 @@ namespace clv{
 
 	Material::Material(const Material& other){
 		CLV_WARN("Copy constructor called on material - creating new material data");
-		
+
 		createMaterial(other.diffuseTexturePath);
-		
+
 		if(!other.specularTexturePath.empty()){
 			createSpecularTexture(other.specularTexturePath);
 		} else{
@@ -54,7 +54,7 @@ namespace clv{
 			shader.setUniform("material.specular", 2);
 		}
 
-		for(const auto& [key, value] : uniformMap){
+		for(const auto&[key, value] : uniformMap){
 			if(value.type() == typeid(int)){
 				shader.setUniform(key, std::any_cast<int>(value));
 			} else if(value.type() == typeid(float)){
@@ -80,9 +80,9 @@ namespace clv{
 
 	Material& Material::operator=(const Material& other){
 		CLV_WARN("Copy assignment operator called on material - creating new material data");
-		
+
 		createMaterial(other.diffuseTexturePath);
-		
+
 		if(!other.specularTexturePath.empty()){
 			createSpecularTexture(other.specularTexturePath);
 		} else{

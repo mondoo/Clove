@@ -24,12 +24,16 @@ namespace clv{
 			//FUNCTIONS
 		public:
 			CLV_API CameraSceneNode();
+			CLV_API CameraSceneNode(const CameraSceneNode& other);
+			CLV_API CameraSceneNode(CameraSceneNode&& other) noexcept;
+
+			CLV_API ~CameraSceneNode();
 
 			CLV_API inline const math::Vector3f& getFront() const; //TODO: should take the roll and pitch and yaw or w/e
 			CLV_API inline const math::Vector3f& getUp() const; //TODO: should probably be the camera's relative up
 			CLV_API inline math::Vector3f getRight() const; //TODO: should use the getters (in the inl)
 
-			CLV_API void update(float pitch, float yaw);
+			CLV_API void updateFront(float pitch, float yaw);
 
 			//TODO: Need a get view function to handle both pers / ortho modes
 
@@ -37,6 +41,9 @@ namespace clv{
 
 			CLV_API void setProjectionMode(ProjectionMode mode);
 			CLV_API const math::Matrix4f& getProjection() const;
+
+			CLV_API CameraSceneNode& operator=(const CameraSceneNode& other);
+			CLV_API CameraSceneNode& operator=(CameraSceneNode&& other) noexcept;
 		};
 	}
 }

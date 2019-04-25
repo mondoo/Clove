@@ -7,16 +7,16 @@
 #include <glad/glad.h>
 
 namespace clv{
-	VertexBuffer::VertexBuffer(const void* data, unsigned int size){
-		GLCall(glGenBuffers(1, &rendererID));
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, rendererID));
-		GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
-	}
-
 	VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept{
 		rendererID = other.rendererID;
 
 		other.rendererID = 0;
+	}
+
+	VertexBuffer::VertexBuffer(const void* data, unsigned int size){
+		GLCall(glGenBuffers(1, &rendererID));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, rendererID));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
 	}
 
 	VertexBuffer::~VertexBuffer(){

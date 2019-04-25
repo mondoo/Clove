@@ -13,7 +13,7 @@
 #include <examples/imgui_impl_opengl3.h>
 
 namespace clv{
-	ImGuiLayer::ImGuiLayer() 
+	ImGuiLayer::ImGuiLayer()
 		: Layer("ImGuiLayer"){
 
 	}

@@ -37,12 +37,12 @@ namespace clv{
 		//TODO: move to function when other APIs are in
 		unsigned int type = 0;
 		switch(shaderType){
-		case ShaderTypes::Vertex:
-			type = GL_VERTEX_SHADER;
-			break;
-		case ShaderTypes::Fragment:
-			type = GL_FRAGMENT_SHADER;
-			break;
+			case ShaderTypes::Vertex:
+				type = GL_VERTEX_SHADER;
+				break;
+			case ShaderTypes::Fragment:
+				type = GL_FRAGMENT_SHADER;
+				break;
 		}
 
 		CLV_ASSERT(type != 0, "Shader type not set!");
@@ -57,23 +57,23 @@ namespace clv{
 		GLCall(glDeleteShader(id));
 	}
 
-	void Shader::setUniform(const std::string& name, const int& value) {
+	void Shader::setUniform(const std::string& name, const int& value){
 		GLCall(glUniform1i(getUniformLocation(name), value));
 	}
 
-	void Shader::setUniform(const std::string& name, const float& value) {
+	void Shader::setUniform(const std::string& name, const float& value){
 		GLCall(glUniform1f(getUniformLocation(name), value));
 	}
 
-	void Shader::setUniform(const std::string& name, const math::Vector3f& value) {
+	void Shader::setUniform(const std::string& name, const math::Vector3f& value){
 		GLCall(glUniform3f(getUniformLocation(name), value.x, value.y, value.z));
 	}
 
-	void Shader::setUniform(const std::string& name, const math::Vector4f& value) {
+	void Shader::setUniform(const std::string& name, const math::Vector4f& value){
 		GLCall(glUniform4f(getUniformLocation(name), value.x, value.y, value.z, value.w));
 	}
 
-	void Shader::setUniform(const std::string& name, const math::Matrix4f& value) {
+	void Shader::setUniform(const std::string& name, const math::Matrix4f& value){
 		GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, math::valuePtr(value)));
 	}
 
@@ -101,7 +101,7 @@ namespace clv{
 	unsigned int Shader::createShader(){
 		GLCall(unsigned int program = glCreateProgram());
 		return program;
-	}	
+	}
 
 	unsigned int Shader::compileShader(unsigned int type, const std::string& source){
 		GLCall(unsigned int id = glCreateShader(type));
@@ -132,7 +132,7 @@ namespace clv{
 		GLCall(int location = glGetUniformLocation(rendererID, name.c_str()));
 		if(location == -1){
 			CLV_WARN("Warning: Uniform {0} does not exist!: {1}", name, __FUNCTION__);
-		} 
+		}
 
 		uniformLocationCache[name] = location;
 		return location;

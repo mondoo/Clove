@@ -16,16 +16,16 @@ namespace clv{
 		std::unique_ptr<Window> window;
 		std::unique_ptr<Renderer> renderer;
 		std::shared_ptr<scene::Scene> scene;
-	
+
 		bool running = true;
 
 		std::unique_ptr<LayerStack> layerStack;
 		std::shared_ptr<ImGuiLayer> imGuiLayer;
-		
+
 		static Application* instance;
 
 		std::chrono::system_clock::time_point prevFrameTime;
-		
+
 		//FUNCTIONS
 	public:
 		CLV_API Application();

@@ -6,7 +6,7 @@ namespace clv{
 		return key;
 	}
 
-	KeyEvent::KeyEvent(Key inKey) 
+	KeyEvent::KeyEvent(Key inKey)
 		: key(inKey){
 	}
 

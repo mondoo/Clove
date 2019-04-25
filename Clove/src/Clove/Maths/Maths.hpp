@@ -17,7 +17,7 @@ namespace clv{
 
 		template<typename T, qualifier Q>
 		Matrix<4, 4, T, Q> lookAt(const Vector<3, T, Q>& eye, const Vector<3, T, Q>& center, const Vector<3, T, Q>& up);
-	
+
 		template<typename T, qualifier Q>
 		Matrix<4, 4, T, Q> translate(const Matrix<4, 4, T, Q>& m, const Vector<3, T, Q>& v);
 

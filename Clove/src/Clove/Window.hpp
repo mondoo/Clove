@@ -21,7 +21,7 @@ namespace clv{
 		//DEFINITIONS
 	protected:
 		using EventCallbackFn = std::function<void(Event&)>;
-		
+
 		//FUNCTIONS
 	public:
 		CLV_API Window() = default;

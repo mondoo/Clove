@@ -9,8 +9,11 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		IndexBuffer(const unsigned int* data, unsigned int inCount);
+		IndexBuffer() = delete;
+		IndexBuffer(const IndexBuffer& other) = delete;
 		IndexBuffer(IndexBuffer&& other) noexcept;
+		
+		IndexBuffer(const unsigned int* data, unsigned int inCount);
 
 		~IndexBuffer();
 
@@ -20,6 +23,7 @@ namespace clv{
 		//TODO: Move to inl
 		inline unsigned int getCount() const{ return count; }
 
+		IndexBuffer& operator=(const IndexBuffer& other) = delete;
 		IndexBuffer& operator=(IndexBuffer&& other) noexcept;
 	};
 }

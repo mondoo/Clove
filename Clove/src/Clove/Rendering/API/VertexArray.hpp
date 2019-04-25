@@ -12,6 +12,7 @@ namespace clv{
 		//FUNCTIONS
 	public:
 		VertexArray();
+		VertexArray(const VertexArray& other) = delete;
 		VertexArray(VertexArray&& other) noexcept;
 
 		~VertexArray();
@@ -21,6 +22,7 @@ namespace clv{
 		void bind() const;
 		void unbind() const;
 
+		VertexArray& operator=(const VertexArray& other) = delete;
 		VertexArray& operator=(VertexArray&& other) noexcept;
 	};
 }

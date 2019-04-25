@@ -21,9 +21,9 @@ namespace clv{
 		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
-		layerStack = std::make_unique<LayerStack>(LayerStack());
+		layerStack = std::make_unique<LayerStack>();
 
-		imGuiLayer = std::make_shared<ImGuiLayer>(ImGuiLayer());
+		imGuiLayer = std::make_shared<ImGuiLayer>();
 		pushLayer(imGuiLayer);
 
 		renderer = std::make_unique<Renderer>();
@@ -40,14 +40,14 @@ namespace clv{
 
 			window->swapBuffers();
 			renderer->clear();
-			
+
 			for(auto layer : *layerStack){
 				layer->onUpdate();
 			}
 
 			scene->update(deltaSeonds.count());
 			renderer->drawQueue(scene);
-			
+
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){
 				layer->onImGuiRender();
