@@ -14,7 +14,7 @@ namespace clv{
 	public:
 		CLV_API LayerStack();
 		CLV_API LayerStack(const LayerStack& other);
-		CLV_API LayerStack(LayerStack&& other);
+		CLV_API LayerStack(LayerStack&& other) noexcept;
 
 		CLV_API ~LayerStack();
 
@@ -28,7 +28,7 @@ namespace clv{
 		CLV_API std::vector<std::shared_ptr<Layer>>::iterator end();
 
 		CLV_API LayerStack& operator=(const LayerStack& other);
-		CLV_API LayerStack& operator=(LayerStack&& other);
+		CLV_API LayerStack& operator=(LayerStack&& other) noexcept;
 	};
 }
 

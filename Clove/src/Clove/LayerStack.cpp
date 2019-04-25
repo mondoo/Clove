@@ -8,7 +8,7 @@ namespace clv{
 
 	LayerStack::LayerStack(const LayerStack& other) = default;
 
-	LayerStack::LayerStack(LayerStack&& other) = default;
+	LayerStack::LayerStack(LayerStack&& other) noexcept = default;
 
 	LayerStack::~LayerStack(){
 		CLV_TRACE("Deconstructing layer stack...");
@@ -59,5 +59,5 @@ namespace clv{
 
 	LayerStack& LayerStack::operator=(const LayerStack& other) = default;
 
-	LayerStack& LayerStack::operator=(LayerStack&& other) = default;
+	LayerStack& LayerStack::operator=(LayerStack&& other) noexcept = default;
 }
