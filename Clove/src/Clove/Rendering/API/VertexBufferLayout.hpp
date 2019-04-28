@@ -2,7 +2,6 @@
 
 //TODO: Remove (.inl needs the defs)
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 namespace clv{
 	struct VertexBufferElement{

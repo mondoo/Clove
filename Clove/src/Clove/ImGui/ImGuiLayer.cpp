@@ -8,8 +8,8 @@
 #include "Clove/Events/ApplicationEvent.hpp"
 
 #include <imgui.h>
-#include <GLFW/glfw3.h>
-#include <examples/imgui_impl_glfw.h>
+
+//#include <examples/imgui_impl_glfw.h>
 #include <examples/imgui_impl_opengl3.h>
 
 namespace clv{
@@ -73,11 +73,11 @@ namespace clv{
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
+		/*if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
 			GLFWwindow* backup_current_context = glfwGetCurrentContext();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
-		}
+		}*/
 	}
 }

@@ -6,6 +6,9 @@
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Rendering/Renderer.hpp"
 
+#include "Clove/Rendering/API/GLHelpers.hpp"
+#include <glad/glad.h>
+
 namespace clv{
 #if CLV_PLATFORM_WINDOWS
 	Window* Window::create(const WindowProps& props){
@@ -37,6 +40,8 @@ namespace clv{
 
 		RegisterClassEx(&wc);
 
+		CLV_TRACE("Windows class registered");
+
 		const std::wstring wideTitle(data.title.begin(), data.title.end());
 
 		DWORD windowStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
@@ -67,15 +72,63 @@ namespace clv{
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
 
+		CLV_TRACE("Window created");
+
+		hDC = GetDC(windowsHandle);
+
+		PIXELFORMATDESCRIPTOR pfd = { 0 };
+		pfd.nSize = sizeof(pfd);
+		pfd.nVersion = 1;
+		pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+		pfd.iPixelType = PFD_TYPE_RGBA;
+		pfd.cColorBits = 32;
+		pfd.cAlphaBits = 8;
+		pfd.cDepthBits = 24;
+
+		int pf;
+		pf = ChoosePixelFormat(hDC, &pfd);
+		if(pf == 0){
+			throw CLV_WINDOWS_LAST_EXCEPTION;
+		}
+
+		if(SetPixelFormat(hDC, pf, &pfd) == FALSE){
+			throw CLV_WINDOWS_LAST_EXCEPTION;
+		}
+		
+		HGLRC hRC = wglCreateContext(hDC);
+		wglMakeCurrent(hDC, hRC);
+
+		CLV_TRACE("Device context created");
+
+		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+
 		ShowWindow(windowsHandle, SW_SHOW);
+
+		CLV_INFO("Window created successfully!");
+		CLV_INFO("GL version: {0}", glGetString(GL_VERSION));
+
+		CLV_TRACE("Enabling Depth buffer");
+		GLCall(glDepthFunc(GL_LESS));
+		GLCall(glEnable(GL_DEPTH_TEST));
+
+		CLV_TRACE("Blend set to: SRC_ALPHA | ONE_MINUS_SRC_ALPHA");
+		//src is from the image - dest is what is already in the buffer
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+		GLCall(glEnable(GL_BLEND));
+		//I guess it's called blending because you blend the src with the destination
+
+		setVSync(true);
 	}
 
 	WindowsWindow::~WindowsWindow(){
 		UnregisterClass(className, instance);
+		ReleaseDC(windowsHandle, hDC);
 		DestroyWindow(windowsHandle);
 	}
 
 	void WindowsWindow::beginFrame(){
+		SwapBuffers(hDC);
+
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
 			if(msg.wParam == CLV_WINDOWS_QUIT){
@@ -90,6 +143,22 @@ namespace clv{
 
 	void WindowsWindow::setVSync(bool enabled){
 		data.vSync = enabled;
+
+		typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
+		PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
+
+		const char *extensions = (char*)glGetString(GL_EXTENSIONS);
+
+		if(strstr(extensions, "WGL_EXT_swap_control") == 0){
+			CLV_ERROR("Could not find the WGL_EXT_swap_control extension");
+			return;
+		} else{
+			wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
+			if(wglSwapIntervalEXT){
+				wglSwapIntervalEXT(enabled ? 1 : 0);
+			}
+		}
 	}
 
 	bool WindowsWindow::isVSync() const{

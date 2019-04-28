@@ -30,8 +30,8 @@ namespace clv{
 		imGuiLayer = std::make_shared<ImGuiLayer>(ImGuiLayer());
 		//pushLayer(imGuiLayer);
 
-		//renderer = std::make_unique<Renderer>();
-		//scene = std::make_shared<scene::Scene>();
+		renderer = std::make_unique<Renderer>();
+		scene = std::make_shared<scene::Scene>();
 	}
 
 	Application::~Application() = default;
@@ -43,7 +43,7 @@ namespace clv{
 			prevFrameTime = currFrameTime;
 
 			window->beginFrame();
-			//renderer->clear();
+			renderer->clear();
 
 			//Temp input handling
 			while(auto e = getWindow().getKeyboard().getKeyEvent()){
@@ -105,8 +105,8 @@ namespace clv{
 				layer->onUpdate();
 			}
 
-			//scene->update(deltaSeonds.count());
-			//renderer->drawQueue(scene);
+			scene->update(deltaSeonds.count());
+			renderer->drawQueue(scene);
 
 			/*imGuiLayer->begin();
 			for(auto layer : *layerStack){

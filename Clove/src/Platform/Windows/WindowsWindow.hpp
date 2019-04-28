@@ -29,6 +29,7 @@ namespace clv{
 		HINSTANCE instance;
 		static constexpr LPWSTR className = L"Clove";
 		HWND windowsHandle;
+		HDC hDC;
 
 		//FUNCTIONS
 	public:

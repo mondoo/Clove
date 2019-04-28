@@ -280,7 +280,7 @@ public:
 class SandBox : public clv::Application{
 public:
 	SandBox(){
-		//pushLayer(std::make_shared<ExampleLayer>(ExampleLayer()));
+		pushLayer(std::make_shared<ExampleLayer>(ExampleLayer()));
 	}
 	~SandBox(){
 
