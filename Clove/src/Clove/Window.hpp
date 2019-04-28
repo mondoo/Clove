@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Clove/Input/Keyboard.hpp"
+#include "Clove/Input/Mouse.hpp"
+
 namespace clv{
 	class Renderer;
 	class Event;
@@ -22,22 +25,37 @@ namespace clv{
 	protected:
 		using EventCallbackFn = std::function<void(Event&)>;
 		
+		//VARIABLES
+	protected:
+		Keyboard keyboard;
+		Mouse mouse;
+
 		//FUNCTIONS
 	public:
-		CLV_API Window() = default;
-		CLV_API virtual ~Window() = default;
+		Window() = default;
+		Window(const Window& other) = delete;
+		Window(Window&& other) noexcept = delete;
 
-		virtual void swapBuffers() = 0;
+		virtual ~Window() = default;
 
+		virtual void beginFrame() = 0;
+
+		virtual void setEventCallbackFunction(const EventCallbackFn& callback) = 0;
+		
 		CLV_API virtual unsigned int getWidth() const = 0;
 		CLV_API virtual unsigned int getHeight() const = 0;
 
-		CLV_API virtual void setEventCallbackFunction(const EventCallbackFn& callback) = 0;
 		CLV_API virtual void setVSync(bool enabled) = 0;
 		CLV_API virtual bool isVSync() const = 0;
 
-		CLV_API virtual void* getNativeWindow() const = 0;
+		CLV_API inline Keyboard& getKeyboard();
+		CLV_API inline Mouse& getMouse();
 
-		CLV_API static Window* create(const WindowProps& props = WindowProps());
+		static Window* create(const WindowProps& props = WindowProps());
+
+		Window& operator=(const Window& other) = delete;
+		Window& operator=(Window&& other) noexcept = delete;
 	};
 }
+
+#include "Window.inl"

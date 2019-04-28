@@ -13,6 +13,8 @@
 #include "Clove/Input/KeyCodes.hpp"
 #include "Clove/Input/MouseButtonCodes.hpp"
 
+#include "Clove/Exception/CloveException.hpp"
+
 //Vendor headers
 #include <imgui.h>
 

@@ -26,5 +26,5 @@
 
 //Platform specific headers
 #if CLV_PLATFORM_WINDOWS
-	#include <Windows.h>
+	#include "Platform/Windows/CloveWindows.hpp"
 #endif

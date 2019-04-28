@@ -2,26 +2,25 @@
 
 namespace clv{
 	enum class MouseButton{
-		_None = 0,
+		None	= -1,
 
-		_1,
-		_2,
-		_3,
-		_4,
-		_5,
-		_6,
-		_7,
-		_8,
-		Last	= _8,
+	#if CLV_PLATFORM_WINDOWS
+		_1		= MK_LBUTTON,
+		_2		= MK_RBUTTON,
+		_3		= MK_MBUTTON,
+		_4		= MK_XBUTTON1,
+		_5		= MK_XBUTTON2,
+	#endif
+
 		Left	= _1,
 		Right	= _2,
 		Middle	= _3,
 	};
 
-	namespace MouseButtonCodeHelpers{
-		int CloveToGLFW(MouseButton button);
-		MouseButton GLFWToClove(int button);
-	}
+#if CLV_PLATFORM_WINDOWS
+	#define CLV_WHEEL_DELTA WHEEL_DELTA
+#endif
+
 
 	inline std::ostream& operator <<(std::ostream& os, MouseButton button){
 		return os << static_cast<int>(button);

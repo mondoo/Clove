@@ -40,15 +40,17 @@ namespace clv{
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		Application& app = Application::get();
+		//TODO: Init for opengl / directed 11 with Wn32 API
+		/*Application& app = Application::get();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.getWindow().getNativeWindow());
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 410");
+		ImGui_ImplOpenGL3_Init("#version 410");*/
 	}
 
 	void ImGuiLayer::onDetach(){
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
+		//TODO: shutdown for opengl / directed 11 with Wn32 API
+		/*ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();*/
 		ImGui::DestroyContext();
 	}
 
@@ -57,8 +59,9 @@ namespace clv{
 	}
 
 	void ImGuiLayer::begin(){
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
+		//TODO: opengl / directed 11 with Wn32 API
+		/*ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();*/
 		ImGui::NewFrame();
 	}
 

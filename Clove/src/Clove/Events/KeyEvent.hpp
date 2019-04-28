@@ -8,7 +8,7 @@ namespace clv{
 	class KeyEvent : public Event{
 		//VARIABLES
 	protected:
-		Key key = Key::_None;
+		Key key = Key::None;
 
 		//FUNCTIONS
 	public:

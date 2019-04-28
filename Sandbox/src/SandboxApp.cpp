@@ -158,23 +158,23 @@ public:
 		clv::math::Vector3f cameraPosition = cam->getPosition();
 
 		const clv::math::Vector3f front = cam->getFront();
-		if(clv::Input::isKeyPressed(clv::Key::W)){
+		if(clv::input::isKeyPressed(clv::Key::W)){
 			cameraPosition += camSpeed * front;
-		} else if(clv::Input::isKeyPressed(clv::Key::S)){
+		} else if(clv::input::isKeyPressed(clv::Key::S)){
 			cameraPosition -= camSpeed * front;
 		}
 
 		const clv::math::Vector3f up = cam->getUp();
-		if(clv::Input::isKeyPressed(clv::Key::Space)){
+		if(clv::input::isKeyPressed(clv::Key::Space)){
 			cameraPosition += camSpeed * up;
-		} else if(clv::Input::isKeyPressed(clv::Key::C)){
+		} else if(clv::input::isKeyPressed(clv::Key::C)){
 			cameraPosition -= camSpeed * up;
 		}
 
 		const clv::math::Vector3f right = cam->getRight();
-		if(clv::Input::isKeyPressed(clv::Key::A)){
+		if(clv::input::isKeyPressed(clv::Key::A)){
 			cameraPosition -= camSpeed * right;
-		} else if(clv::Input::isKeyPressed(clv::Key::D)){
+		} else if(clv::input::isKeyPressed(clv::Key::D)){
 			cameraPosition += camSpeed * right;
 		}
 
@@ -206,7 +206,7 @@ public:
 
 		rot += clv::math::asRadians(0.5f);
 
-		if(clv::Input::isKeyPressed(clv::Key::Escape)){
+		if(clv::input::isKeyPressed(clv::Key::Escape)){
 			clv::Application::get().stop();
 		}
 
@@ -280,7 +280,7 @@ public:
 class SandBox : public clv::Application{
 public:
 	SandBox(){
-		pushLayer(std::make_shared<ExampleLayer>(ExampleLayer()));
+		//pushLayer(std::make_shared<ExampleLayer>(ExampleLayer()));
 	}
 	~SandBox(){
 
