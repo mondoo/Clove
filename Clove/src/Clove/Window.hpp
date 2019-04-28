@@ -42,6 +42,8 @@ namespace clv{
 
 		virtual void setEventCallbackFunction(const EventCallbackFn& callback) = 0;
 		
+		virtual void* getNativeWindow() const = 0;
+
 		CLV_API virtual unsigned int getWidth() const = 0;
 		CLV_API virtual unsigned int getHeight() const = 0;
 

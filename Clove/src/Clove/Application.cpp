@@ -28,7 +28,7 @@ namespace clv{
 		layerStack = std::make_unique<LayerStack>(LayerStack());
 
 		imGuiLayer = std::make_shared<ImGuiLayer>(ImGuiLayer());
-		//pushLayer(imGuiLayer);
+		pushLayer(imGuiLayer);
 
 		renderer = std::make_unique<Renderer>();
 		scene = std::make_shared<scene::Scene>();
@@ -108,11 +108,11 @@ namespace clv{
 			scene->update(deltaSeonds.count());
 			renderer->drawQueue(scene);
 
-			/*imGuiLayer->begin();
+			imGuiLayer->begin();
 			for(auto layer : *layerStack){
 				layer->onImGuiRender();
 			}
-			imGuiLayer->end();*/
+			imGuiLayer->end();
 		}
 	}
 

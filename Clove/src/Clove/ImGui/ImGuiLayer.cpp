@@ -8,9 +8,8 @@
 #include "Clove/Events/ApplicationEvent.hpp"
 
 #include <imgui.h>
-
-//#include <examples/imgui_impl_glfw.h>
 #include <examples/imgui_impl_opengl3.h>
+#include <examples/imgui_impl_win32.h>
 
 namespace clv{
 	ImGuiLayer::ImGuiLayer() 
@@ -40,17 +39,13 @@ namespace clv{
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		//TODO: Init for opengl / directed 11 with Wn32 API
-		/*Application& app = Application::get();
-		GLFWwindow* window = static_cast<GLFWwindow*>(app.getWindow().getNativeWindow());
-		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 410");*/
+		ImGui_ImplOpenGL3_Init("#version 410");
+		ImGui_ImplWin32_Init(static_cast<HWND>(Application::get().getWindow().getNativeWindow()));
 	}
 
 	void ImGuiLayer::onDetach(){
-		//TODO: shutdown for opengl / directed 11 with Wn32 API
-		/*ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();*/
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplWin32_Shutdown();
 		ImGui::DestroyContext();
 	}
 
@@ -59,9 +54,8 @@ namespace clv{
 	}
 
 	void ImGuiLayer::begin(){
-		//TODO: opengl / directed 11 with Wn32 API
-		/*ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();*/
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 	}
 
@@ -73,11 +67,9 @@ namespace clv{
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		/*if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
-			GLFWwindow* backup_current_context = glfwGetCurrentContext();
+		if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(backup_current_context);
-		}*/
+		}
 	}
 }

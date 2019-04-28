@@ -11,6 +11,8 @@ struct GLFWwindow;
 
 #define CLV_WINDOWS_QUIT 25397841
 
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 namespace clv{
 	class WindowsWindow : public Window{
 		//VARIABLES
@@ -26,10 +28,13 @@ namespace clv{
 			EventCallbackFn eventCallback;
 		} data;
 
-		HINSTANCE instance;
 		static constexpr LPWSTR className = L"Clove";
+		
+		HINSTANCE instance;
 		HWND windowsHandle;
-		HDC hDC;
+
+		HDC windowsDeviceContext;
+		HGLRC windowsResourceContext;
 
 		//FUNCTIONS
 	public:
@@ -45,6 +50,8 @@ namespace clv{
 
 		virtual inline void setEventCallbackFunction(const EventCallbackFn& callback) override;
 		
+		virtual void* getNativeWindow() const override;
+
 		virtual inline unsigned int getWidth() const override;
 		virtual inline unsigned int getHeight() const override;
 

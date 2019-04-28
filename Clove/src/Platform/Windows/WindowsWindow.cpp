@@ -74,7 +74,7 @@ namespace clv{
 
 		CLV_TRACE("Window created");
 
-		hDC = GetDC(windowsHandle);
+		windowsDeviceContext = GetDC(windowsHandle);
 
 		PIXELFORMATDESCRIPTOR pfd = { 0 };
 		pfd.nSize = sizeof(pfd);
@@ -86,17 +86,17 @@ namespace clv{
 		pfd.cDepthBits = 24;
 
 		int pf;
-		pf = ChoosePixelFormat(hDC, &pfd);
+		pf = ChoosePixelFormat(windowsDeviceContext, &pfd);
 		if(pf == 0){
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
 
-		if(SetPixelFormat(hDC, pf, &pfd) == FALSE){
+		if(SetPixelFormat(windowsDeviceContext, pf, &pfd) == FALSE){
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
 		
-		HGLRC hRC = wglCreateContext(hDC);
-		wglMakeCurrent(hDC, hRC);
+		windowsResourceContext = wglCreateContext(windowsDeviceContext);
+		wglMakeCurrent(windowsDeviceContext, windowsResourceContext);
 
 		CLV_TRACE("Device context created");
 
@@ -122,12 +122,13 @@ namespace clv{
 
 	WindowsWindow::~WindowsWindow(){
 		UnregisterClass(className, instance);
-		ReleaseDC(windowsHandle, hDC);
+		ReleaseDC(windowsHandle, windowsDeviceContext);
+		wglDeleteContext(windowsResourceContext);
 		DestroyWindow(windowsHandle);
 	}
 
 	void WindowsWindow::beginFrame(){
-		SwapBuffers(hDC);
+		SwapBuffers(windowsDeviceContext);
 
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
@@ -139,6 +140,10 @@ namespace clv{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+	}
+
+	void* WindowsWindow::getNativeWindow() const{
+		return windowsHandle;
 	}
 
 	void WindowsWindow::setVSync(bool enabled){
@@ -187,6 +192,10 @@ namespace clv{
 	}
 
 	LRESULT WindowsWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
+		if(ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)){
+			return true;
+		}
+		
 		const POINTS pt = MAKEPOINTS(lParam);
 
 		switch(msg){
