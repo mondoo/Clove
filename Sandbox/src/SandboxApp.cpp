@@ -23,6 +23,8 @@
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
+	std::shared_ptr<clv::scene::Scene> scene;
+
 	std::array<std::shared_ptr<clv::scene::MeshSceneNode>, 10> cubes;
 	//std::shared_ptr<clv::Material> cubeMaterial;
 
@@ -32,8 +34,8 @@ private:
 	std::shared_ptr<clv::scene::MeshSceneNode> monkey;
 	std::shared_ptr<clv::Material> monkeyMaterial;
 
-	std::array<std::shared_ptr<clv::scene::PointLightSceneNode>, 4> lights;
-	std::array<std::shared_ptr<clv::scene::MeshSceneNode>, 4> lightCubes;
+	std::vector<std::shared_ptr<clv::scene::PointLightSceneNode>> lights;
+	std::vector<std::shared_ptr<clv::scene::MeshSceneNode>> lightCubes;
 	std::shared_ptr<clv::scene::DirectionalLightSceneNode> dirLight;
 	//std::shared_ptr<clv::Material> lightMaterial;
 
@@ -67,6 +69,8 @@ private:
 
 	//~
 
+	std::shared_ptr<clv::Material> lightMaterial;
+
 	//FUNCTIONS
 public:
 	ExampleLayer()
@@ -74,7 +78,7 @@ public:
 	}
 
 	virtual void onAttach() override{
-		std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
+		scene = clv::Application::get().getScene();
 		cam = scene->createCameraSceneNode();
 
 		std::shared_ptr<clv::Material> mat = std::make_shared<clv::Material>(clv::Material("res/Textures/container2.png"));
@@ -111,8 +115,8 @@ public:
 		monkey->setMaterial(monkeyMaterial);
 		monkey->setPosition(clv::math::Vector3f(5, 0.0f, -9));
 
-		std::shared_ptr<clv::Material> lightMaterial = std::make_shared<clv::Material>(clv::Material(ShaderType::light));
-		for(int i = 0; i < lights.size(); ++i){
+		/*std::shared_ptr<clv::Material>*/ lightMaterial = std::make_shared<clv::Material>(clv::Material(ShaderType::light));
+		/*for(int i = 0; i < lights.size(); ++i){
 			lights[i] = scene->createPointLightSceneNode();
 			lightCubes[i] = scene->createMeshSceneNode(lights[i]);
 
@@ -124,9 +128,9 @@ public:
 		lights[0]->setPosition(clv::math::Vector3f(0, 2, -9));
 		lights[1]->setPosition(clv::math::Vector3f(1, 1, 1));
 		lights[2]->setPosition(clv::math::Vector3f(0, -10, 0));
-		lights[3]->setPosition(clv::math::Vector3f(5, 7.5f, 0));
+		lights[3]->setPosition(clv::math::Vector3f(5, 7.5f, 0));*/
 
-		dirLight = scene->createDirectionalLightSceneNode();
+		//dirLight = scene->createDirectionalLightSceneNode();
 
 		//Material shiz
 		//SPHERE
@@ -213,7 +217,7 @@ public:
 		parentCube->setRotation(std::make_pair(parentRotV, clv::math::asRadians(parentRotA)));
 		parentCube->setScale(parentScale);
 		parentCube->draw(clv::Application::get().getRenderer());
-		
+
 		childCube->setPosition(childPos);
 		childCube->setRotation(std::make_pair(childRotV, clv::math::asRadians(childRotA)));
 		childCube->setScale(childScale);
@@ -222,14 +226,14 @@ public:
 
 	virtual void onImGuiRender() override{
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	
+
 		ImGui::Spacing();
 
 		ImGui::SliderFloat3("Parent Cube Position", clv::math::valuePtr(parentPos), -50, 50);
 		ImGui::SliderFloat3("Parent Cube Rotation Vector", clv::math::valuePtr(parentRotV), 0, 1);
 		ImGui::SliderFloat("Parent Cube Rotation Angle", &parentRotA, 0, 360);
 		ImGui::SliderFloat3("Parent Cube Scale", clv::math::valuePtr(parentScale), 1, 2);
-		
+
 		ImGui::Spacing();
 		ImGui::Spacing();
 		ImGui::Spacing();
@@ -238,6 +242,31 @@ public:
 		ImGui::SliderFloat3("Child Cube Rotation Vector", clv::math::valuePtr(childRotV), 0, 1);
 		ImGui::SliderFloat("Child Cube Rotation Angle", &childRotA, 0, 360);
 		ImGui::SliderFloat3("Child Cube Scale", clv::math::valuePtr(childScale), 1, 2);
+
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Spacing();
+
+		if(!dirLight){
+			if(ImGui::Button("Spawn Dir Light", ImVec2(500, 30))){
+				dirLight = scene->createDirectionalLightSceneNode();
+			}
+		}
+
+		if(ImGui::Button("Spawn Point Light", ImVec2(500, 30))){
+			std::shared_ptr<clv::scene::PointLightSceneNode> light = scene->createPointLightSceneNode();
+			std::shared_ptr<clv::scene::MeshSceneNode> cube = scene->createMeshSceneNode(light);
+
+			cube->setMesh("res/Objects/cube.obj");
+			cube->setMaterial(lightMaterial);
+			cube->setScale(clv::math::Vector3f(0.25f, 0.25f, 0.25f));
+
+			//light->setPosition(cam->getPosition());
+			light->setPosition(clv::math::Vector3f(0, 2, -9));
+
+			lights.push_back(light);
+			lightCubes.push_back(cube);
+		}
 	}
 
 	virtual void onEvent(clv::Event& e) override{

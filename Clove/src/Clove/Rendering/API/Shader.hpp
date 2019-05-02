@@ -12,6 +12,11 @@ namespace clv{
 		unsigned int rendererID = 0;
 		std::unordered_map<std::string, int> uniformLocationCache;
 
+		std::unordered_map<ShaderTypes, std::string> attachedShaders;
+		
+		int numOfPointLights = 0;
+		int numOfDirectionalLights = 0;
+
 		//FUNCTIONS
 	public:
 		Shader();
@@ -24,6 +29,9 @@ namespace clv{
 		void unbind() const;
 
 		void attachShader(ShaderTypes shaderType, const std::string& path);
+
+		void setNumberOfDirectionalLights(int num);
+		void setNumberOfPointLights(int num);
 
 		template<typename T>
 		void setUniform(const std::string& name, const T& value);
@@ -38,11 +46,15 @@ namespace clv{
 		Shader& operator=(Shader&& other) noexcept;
 
 	private:
-		std::string parseShader(const std::string& filepath);
 		unsigned int createShader();
+		std::string parseShader(const std::string& filepath);
 		unsigned int compileShader(unsigned int type, const std::string& source);
 
 		int getUniformLocation(const std::string& name);
+
+		void insertShaderDefines();
+
+		void linkShader(unsigned int shaderID);
 	};
 }
 

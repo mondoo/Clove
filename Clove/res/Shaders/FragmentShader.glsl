@@ -42,11 +42,15 @@ struct SpotLight{
 	float outerCutOff;
 };
 
-#define NUM_POINT_LIGHTS 4
-
 uniform Material material;
-uniform DirectionalLight directionLight;
+
+#if NUM_DIR_LIGHTS
+uniform DirectionalLight directionLights[NUM_DIR_LIGHTS];
+#endif
+
+#if NUM_POINT_LIGHTS
 uniform PointLight pointLights[NUM_POINT_LIGHTS];
+#endif
 
 uniform vec3 viewPos;
 
@@ -60,11 +64,19 @@ void main(){
 	vec3 fragNorm		= normalize(vertNormal);
 	vec3 viewDir		= normalize(viewPos - vertPos);
 
-	vec3 lighting = CalculateDirectionalLighting(directionLight, fragNorm, viewDir);
+	vec3 lighting;
 
+#if NUM_DIR_LIGHTS
+	for(int i = 0; i < NUM_DIR_LIGHTS; i++){
+		lighting += CalculateDirectionalLighting(directionLights[i], fragNorm, viewDir);
+	}
+#endif
+
+#if NUM_POINT_LIGHTS
 	for(int i = 0; i < NUM_POINT_LIGHTS; i++){
 		lighting += CalculatePointLight(pointLights[i], fragNorm, vertPos, viewDir);
 	}
+#endif
 
 	fragmentColour = vec4(lighting, 1.0);
 };

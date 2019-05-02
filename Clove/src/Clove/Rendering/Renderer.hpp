@@ -24,6 +24,9 @@ namespace clv{
 
 		std::queue<std::weak_ptr<scene::RenderableSceneNode>> renderQueue;
 
+		size_t prevDirLightSize = 0;
+		size_t prevPointLightSize = 0;
+
 		//FUNCTIONS
 	public:
 		Renderer();

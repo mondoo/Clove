@@ -27,9 +27,9 @@ namespace clv{
 					meshInfo.normals.reserve(verticesSize);
 
 					for(const auto& vertex : objLoader.LoadedVertices){
-						meshInfo.verticies.push_back({ vertex.Position.X, vertex.Position.Y, vertex.Position.Z });
-						meshInfo.texCoords.push_back({ vertex.TextureCoordinate.X, vertex.TextureCoordinate.Y });
-						meshInfo.normals.push_back({ vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z });
+						meshInfo.verticies.emplace_back(vertex.Position.X, vertex.Position.Y, vertex.Position.Z);
+						meshInfo.texCoords.emplace_back(vertex.TextureCoordinate.X, vertex.TextureCoordinate.Y);
+						meshInfo.normals.emplace_back(vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z);
 					}
 
 					meshInfo.indices = objLoader.LoadedIndices;

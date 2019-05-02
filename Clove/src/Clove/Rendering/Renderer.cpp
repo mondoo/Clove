@@ -49,29 +49,43 @@ namespace clv{
 			return;
 		}
 
+		const size_t directionalLightNum	= currentScene->getDirectionalLights().size();
+		const size_t pointLightNum			= currentScene->getPointLights().size();
+
+		if(prevDirLightSize != directionalLightNum){
+			defaultShader.setNumberOfDirectionalLights(directionalLightNum);
+			prevDirLightSize = directionalLightNum;
+		}
+
+		if(prevPointLightSize != pointLightNum){
+			defaultShader.setNumberOfPointLights(pointLightNum);
+			prevPointLightSize = pointLightNum;
+		}
+
 		currentShader->setUniform("viewPos", camera->getPosition());
 		currentShader->setUniform("view", camera->getLookAt());
 		currentShader->setUniform("projection", camera->getProjection());
 
-		//NOTE: just having the default shader be effected by the lights
-		std::shared_ptr<scene::DirectionalLightSceneNode> dirLight = currentScene->getDirectionalLights()[0]; //We only support one directional light
-		defaultShader.setUniform("directionLight.direction", dirLight->getDirection());
+		std::vector < std::shared_ptr<scene::DirectionalLightSceneNode>> dirLight = currentScene->getDirectionalLights();
+		for(int i = 0; i < directionalLightNum; ++i){
+			defaultShader.setUniform("directionLights[" + std::to_string(i) + "].direction", dirLight[i]->getDirection());
 
-		defaultShader.setUniform("directionLight.ambient", dirLight->getAmbientColour());
-		defaultShader.setUniform("directionLight.diffuse", dirLight->getDiffuseColour());
-		defaultShader.setUniform("directionLight.specular", dirLight->getSpecularColour());
+			defaultShader.setUniform("directionLights[" + std::to_string(i) + "].ambient",	dirLight[i]->getAmbientColour());
+			defaultShader.setUniform("directionLights[" + std::to_string(i) + "].diffuse",	dirLight[i]->getDiffuseColour());
+			defaultShader.setUniform("directionLights[" + std::to_string(i) + "].specular", dirLight[i]->getSpecularColour());
+		}
 
 		std::vector<std::shared_ptr<scene::PointLightSceneNode>> lights = currentScene->getPointLights();
-		for(int i = 0; i < 4; ++i){ //We only support four lights currently
-			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].position", lights[i]->getPosition());
+		for(int i = 0; i < pointLightNum; ++i){
+			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].position",		lights[i]->getPosition());
 
-			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].ambient", lights[i]->getAmbientColour());
-			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].diffuse", lights[i]->getDiffuseColour());
-			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].specular", lights[i]->getSpecularColour());
+			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].ambient",		lights[i]->getAmbientColour());
+			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].diffuse",		lights[i]->getDiffuseColour());
+			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].specular",		lights[i]->getSpecularColour());
 
-			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].constant", lights[i]->getConstant());
-			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].linear", lights[i]->getLinear());
-			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].quadratic", lights[i]->getQuadratic());
+			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].constant",		lights[i]->getConstant());
+			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].linear",		lights[i]->getLinear());
+			defaultShader.setUniform("pointLights[" + std::to_string(i) + "].quadratic",	lights[i]->getQuadratic());
 		}
 
 		while(!renderQueue.empty()){

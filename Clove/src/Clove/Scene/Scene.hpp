@@ -22,7 +22,7 @@ namespace clv{
 		public:
 			Scene();
 			Scene(const Scene& other) = delete;
-			Scene(Scene&& other) = delete;
+			Scene(Scene&& other) noexcept = delete;
 
 			~Scene();
 
@@ -45,6 +45,10 @@ namespace clv{
 			CLV_API std::shared_ptr<DirectionalLightSceneNode> createDirectionalLightSceneNode(std::shared_ptr<SceneNode> parent);
 
 			CLV_API inline const std::vector<std::shared_ptr<DirectionalLightSceneNode>>& getDirectionalLights();
+
+			Scene& operator=(const Scene& other) = delete;
+			Scene& operator=(Scene&& other) noexcept = delete;
+
 		private:
 			template<typename T>
 			std::shared_ptr<T> createNode(std::shared_ptr<SceneNode> parent);

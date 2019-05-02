@@ -13,6 +13,12 @@ namespace clv{
 
 			//FUNCTIONS
 		public:
+			CLV_API LightSceneNode();
+			CLV_API LightSceneNode(const LightSceneNode& other);
+			CLV_API LightSceneNode(LightSceneNode&& other);
+
+			CLV_API virtual ~LightSceneNode();
+
 			CLV_API inline void setAmbientColour(const math::Vector3f& colour);
 			CLV_API inline const math::Vector3f& getAmbientColour() const;
 
@@ -21,6 +27,9 @@ namespace clv{
 
 			CLV_API inline void setSpecularColour(const math::Vector3f& colour);
 			CLV_API inline const math::Vector3f& getSpecularColour() const;
+
+			CLV_API LightSceneNode& operator=(const LightSceneNode& other);
+			CLV_API LightSceneNode& operator=(LightSceneNode&&) noexcept;
 		};
 	}
 }

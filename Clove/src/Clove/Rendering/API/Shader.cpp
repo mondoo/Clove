@@ -17,6 +17,7 @@ namespace clv{
 	Shader::Shader(Shader&& other) noexcept{
 		rendererID = other.rendererID;
 		uniformLocationCache = std::move(other.uniformLocationCache);
+		attachedShaders = std::move(other.attachedShaders);
 
 		other.rendererID = 0;
 	}
@@ -34,7 +35,6 @@ namespace clv{
 	}
 
 	void Shader::attachShader(ShaderTypes shaderType, const std::string& path){
-		//TODO: move to function when other APIs are in
 		unsigned int type = 0;
 		switch(shaderType){
 			case ShaderTypes::Vertex:
@@ -46,15 +46,20 @@ namespace clv{
 		}
 
 		CLV_ASSERT(type != 0, "Shader type not set!");
+		
+		attachedShaders[shaderType] = parseShader(path);
 
-		std::string source = parseShader(path);
+		insertShaderDefines();
+	}
 
-		unsigned int id = compileShader(type, source);
+	void Shader::setNumberOfDirectionalLights(int num){
+		numOfDirectionalLights = num;
+		insertShaderDefines();
+	}
 
-		GLCall(glAttachShader(rendererID, id));
-		GLCall(glLinkProgram(rendererID));
-		GLCall(glValidateProgram(rendererID));
-		GLCall(glDeleteShader(id));
+	void Shader::setNumberOfPointLights(int num){
+		numOfPointLights = num;
+		insertShaderDefines();
 	}
 
 	void Shader::setUniform(const std::string& name, const int& value){
@@ -80,10 +85,16 @@ namespace clv{
 	Shader& Shader::operator=(Shader&& other) noexcept{
 		rendererID = other.rendererID;
 		uniformLocationCache = std::move(other.uniformLocationCache);
+		attachedShaders = std::move(other.attachedShaders);
 
 		other.rendererID = 0;
 
 		return *this;
+	}
+
+	unsigned int Shader::createShader(){
+		GLCall(unsigned int program = glCreateProgram());
+		return program;
 	}
 
 	std::string Shader::parseShader(const std::string& filepath){
@@ -96,11 +107,6 @@ namespace clv{
 		}
 
 		return ss.str();
-	}
-
-	unsigned int Shader::createShader(){
-		GLCall(unsigned int program = glCreateProgram());
-		return program;
 	}
 
 	unsigned int Shader::compileShader(unsigned int type, const std::string& source){
@@ -136,5 +142,53 @@ namespace clv{
 
 		uniformLocationCache[name] = location;
 		return location;
+	}
+
+	void Shader::insertShaderDefines(){
+		if(attachedShaders.find(ShaderTypes::Fragment) != attachedShaders.end()){
+			CLV_WARN(__FUNCTION__ " called, tearing down shader and recompiling");
+
+			std::string defaultShaderSource = attachedShaders[ShaderTypes::Fragment];
+			
+			unbind();
+
+			int newRendererID = createShader();
+			GLCall(glDeleteProgram(rendererID));
+			rendererID = newRendererID;
+
+			std::string::iterator sourceIterator = defaultShaderSource.begin() + defaultShaderSource.find("\n") + 2;
+
+			CLV_ASSERT(sourceIterator != defaultShaderSource.end(), "Reached end of file before finding new line segment");
+
+			if(numOfDirectionalLights != 0){
+				const std::string seq = "#define NUM_DIR_LIGHTS " + std::to_string(numOfDirectionalLights) + "\n";
+				sourceIterator = defaultShaderSource.insert(sourceIterator, seq.begin(), seq.end());
+			}
+
+			if(numOfPointLights != 0){
+				const std::string seq = "#define NUM_POINT_LIGHTS " + std::to_string(numOfPointLights) + "\n";
+				sourceIterator = defaultShaderSource.insert(sourceIterator, seq.begin(), seq.end());
+			}
+
+			unsigned int id = compileShader(GL_FRAGMENT_SHADER, defaultShaderSource);
+
+			linkShader(id);
+
+			if(attachedShaders.find(ShaderTypes::Vertex) != attachedShaders.end()){
+				unsigned int id = compileShader(GL_VERTEX_SHADER, attachedShaders[ShaderTypes::Vertex]);
+				linkShader(id);
+			}
+
+			uniformLocationCache.clear();
+
+			bind();
+		}
+	}
+
+	void Shader::linkShader(unsigned int shaderID){
+		GLCall(glAttachShader(rendererID, shaderID));
+		GLCall(glLinkProgram(rendererID));
+		GLCall(glValidateProgram(rendererID));
+		GLCall(glDeleteShader(shaderID));
 	}
 }
