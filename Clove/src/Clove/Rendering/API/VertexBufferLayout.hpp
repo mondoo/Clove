@@ -27,6 +27,12 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
+		VertexBufferLayout();
+		VertexBufferLayout(const VertexBufferLayout& other);
+		VertexBufferLayout(VertexBufferLayout&& other);
+
+		~VertexBufferLayout();
+
 		template<typename T>
 		void push(unsigned int count);
 
@@ -43,6 +49,9 @@ namespace clv{
 		inline unsigned int getStride() const;
 
 		void empty();
+
+		VertexBufferLayout& operator=(const VertexBufferLayout& other);
+		VertexBufferLayout& operator=(VertexBufferLayout&& other);
 	};
 }
 

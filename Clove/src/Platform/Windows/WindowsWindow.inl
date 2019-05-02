@@ -7,7 +7,7 @@ namespace clv {
 		return data.width;
 	}
 
-	inline unsigned int WindowsWindow::getHeight() const {
+	inline unsigned int WindowsWindow::getHeight() const{
 		return data.height;
 	}
 }

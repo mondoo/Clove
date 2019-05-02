@@ -16,9 +16,6 @@ namespace clv{
 		class RenderableSceneNode : public SceneNode{
 			//VARIABLES
 		protected:
-			std::vector<float> vertexData;
-			std::vector<unsigned int> indices;
-
 			std::unique_ptr<VertexArray> vertexArray;
 			std::unique_ptr<VertexBuffer> vertexBuffer;
 			std::unique_ptr<IndexBuffer> indexBuffer;
@@ -28,7 +25,7 @@ namespace clv{
 			//FUNCTIONS
 		public:
 			RenderableSceneNode();
-			RenderableSceneNode(const RenderableSceneNode& other) = delete; //TODO: is there a way to not delete this?
+			RenderableSceneNode(const RenderableSceneNode& other) = delete;
 			RenderableSceneNode(RenderableSceneNode&& other) noexcept;
 
 			virtual ~RenderableSceneNode();
@@ -43,6 +40,7 @@ namespace clv{
 			void bind(Shader& shader);
 			void unbind();
 
+			RenderableSceneNode& operator=(const RenderableSceneNode& other) = delete;
 			RenderableSceneNode& operator=(RenderableSceneNode&& other) noexcept;
 		};
 	}

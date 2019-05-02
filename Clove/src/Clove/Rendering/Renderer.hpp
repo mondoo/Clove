@@ -6,8 +6,8 @@
 #include <queue>
 
 namespace clv{
-	namespace scene{ 
-		class Scene; 
+	namespace scene{
+		class Scene;
 		class RenderableSceneNode;
 		class CameraSceneNode;
 	}
@@ -16,7 +16,7 @@ namespace clv{
 		//VARIABLES
 	private:
 		Shader* currentShader = nullptr;
-		
+
 		Shader defaultShader;
 		Shader lightShader;
 

@@ -37,7 +37,7 @@ namespace clv{
 			CLV_API inline const math::Vector3f& getScale() const;
 
 			CLV_API math::Matrix4f getWorldTransform();
-			
+
 			CLV_API inline std::vector<std::shared_ptr<SceneNode>>::const_iterator GetChildBeginIterator() const;
 			CLV_API inline std::vector<std::shared_ptr<SceneNode>>::const_iterator GetChildEndIterator() const;
 

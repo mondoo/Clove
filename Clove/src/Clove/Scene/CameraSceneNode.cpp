@@ -11,7 +11,13 @@ namespace clv{
 			setProjectionMode(ProjectionMode::perspective);
 		}
 
-		void CameraSceneNode::update(float pitch, float yaw){
+		CameraSceneNode::CameraSceneNode(const CameraSceneNode& other) = default;
+
+		CameraSceneNode::CameraSceneNode(CameraSceneNode&& other) noexcept = default;
+
+		CameraSceneNode::~CameraSceneNode() = default;
+
+		void CameraSceneNode::updateFront(float pitch, float yaw){
 			//glm::vec3 cameraDirection = glm::normalize(cameraPosition - cameraTarget);
 			//glm::vec3 cameraRight = glm::normalize(glm::cross(cameraUp, cameraDirection));
 
@@ -33,21 +39,25 @@ namespace clv{
 
 		void CameraSceneNode::setProjectionMode(ProjectionMode mode){
 			switch(mode){
-			case ProjectionMode::orthographic:
-				currentProjection = math::createOrthographicMatrix(1.0f, -1.0f, -1.0f, 1.0f);
-				break;
+				case ProjectionMode::orthographic:
+					currentProjection = math::createOrthographicMatrix(1.0f, -1.0f, -1.0f, 1.0f);
+					break;
 
-			case ProjectionMode::perspective:
-				currentProjection = clv::math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 1.0f, -1.0f);
-				break;
+				case ProjectionMode::perspective:
+					currentProjection = clv::math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 1.0f, -1.0f);
+					break;
 
-			default:
-				break;
+				default:
+					break;
 			}
 		}
 
 		const math::Matrix4f& CameraSceneNode::getProjection() const{
 			return currentProjection;
 		}
+
+		CameraSceneNode& CameraSceneNode::operator=(const CameraSceneNode& other) = default;
+
+		CameraSceneNode& CameraSceneNode::operator=(CameraSceneNode&& other) noexcept = default;
 	}
 }

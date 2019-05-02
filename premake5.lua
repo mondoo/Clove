@@ -16,8 +16,7 @@ workspace "Clove"
 
 	configurations{
 		"Debug",
-		"Release",
-		"Dist"
+		"Release"
 	}
 
 	platforms{

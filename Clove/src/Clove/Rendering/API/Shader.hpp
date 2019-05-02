@@ -15,6 +15,7 @@ namespace clv{
 		//FUNCTIONS
 	public:
 		Shader();
+		Shader(const Shader& other) = delete;
 		Shader(Shader&& other) noexcept;
 
 		~Shader();
@@ -33,6 +34,7 @@ namespace clv{
 		void setUniform(const std::string& name, const math::Vector4f& value);
 		void setUniform(const std::string& name, const math::Matrix4f& value);
 
+		Shader& operator=(const Shader& other) = delete;
 		Shader& operator=(Shader&& other) noexcept;
 
 	private:

@@ -77,10 +77,9 @@ public:
 		std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
 		cam = scene->createCameraSceneNode();
 
+		std::shared_ptr<clv::Material> mat = std::make_shared<clv::Material>(clv::Material("res/Textures/container2.png"));
 		std::for_each(cubes.begin(), cubes.end(), [&](std::shared_ptr<clv::scene::MeshSceneNode>& cube){
 			cube = scene->createMeshSceneNode();
-	
-			std::shared_ptr<clv::Material> mat = std::make_shared<clv::Material>(clv::Material("res/Textures/container2.png"));
 
 			mat->setSpecularTexture("res/Textures/container2_specular.png");
 			mat->setUniform("material.shininess", 32.0f);
@@ -112,11 +111,10 @@ public:
 		monkey->setMaterial(monkeyMaterial);
 		monkey->setPosition(clv::math::Vector3f(5, 0.0f, -9));
 
+		std::shared_ptr<clv::Material> lightMaterial = std::make_shared<clv::Material>(clv::Material(ShaderType::light));
 		for(int i = 0; i < lights.size(); ++i){
 			lights[i] = scene->createPointLightSceneNode();
 			lightCubes[i] = scene->createMeshSceneNode(lights[i]);
-
-			std::shared_ptr<clv::Material> lightMaterial = std::make_shared<clv::Material>(clv::Material(ShaderType::light));
 
 			lightCubes[i]->setMesh("res/Objects/cube.obj");
 			lightCubes[i]->setMaterial(lightMaterial);
@@ -153,7 +151,7 @@ public:
 	virtual void onUpdate() override{
 		const float camSpeed = 10.0f;
 
-		//cam.update(pitch, yaw);
+		//cam.updateFront(pitch, yaw);
 
 		clv::math::Vector3f cameraPosition = cam->getPosition();
 

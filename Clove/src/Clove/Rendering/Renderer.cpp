@@ -81,7 +81,7 @@ namespace clv{
 				prepareShader(renderable->getShaderType(), camera);
 
 				currentShader->setUniform("model", renderable->getWorldTransform());
-				
+
 				renderable->bind(*currentShader);
 				GLCall(glDrawElements(GL_TRIANGLES, renderable->getIndexBufferCount(), GL_UNSIGNED_INT, nullptr));
 				renderable->unbind();
@@ -94,17 +94,17 @@ namespace clv{
 	void Renderer::prepareShader(ShaderType type, std::shared_ptr<scene::CameraSceneNode> camera){
 		if(type != currentShaderType){
 			switch(type){
-			case ShaderType::standard:
-				currentShader = &defaultShader;
-				break;
-			case ShaderType::light:
-				currentShader = &lightShader;
-				break;
+				case ShaderType::standard:
+					currentShader = &defaultShader;
+					break;
+				case ShaderType::light:
+					currentShader = &lightShader;
+					break;
 
-			default:
-				CLV_ERROR("Shader type {0} not supported! Using default shader", static_cast<int>(type));
-				currentShader = &defaultShader;
-				break;
+				default:
+					CLV_ERROR("Shader type {0} not supported! Using default shader", static_cast<int>(type));
+					currentShader = &defaultShader;
+					break;
 			}
 
 			currentShaderType = type;

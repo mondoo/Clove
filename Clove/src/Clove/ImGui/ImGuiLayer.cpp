@@ -12,7 +12,7 @@
 #include <examples/imgui_impl_win32.h>
 
 namespace clv{
-	ImGuiLayer::ImGuiLayer() 
+	ImGuiLayer::ImGuiLayer()
 		: Layer("ImGuiLayer"){
 
 	}

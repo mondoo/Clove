@@ -26,20 +26,31 @@ namespace clv{
 		//[order.section.functions] functions second with comment please!
 		//FUNCTIONS
 	public:
+		//[constructors] all constructors should be explicitly defined, default ones are done in the cpp
 		CodingStandards();
-		//[destructor.default] no empty constructors! either use default or just remove the definition
-		~CodingStandards() = default;
+		CodingStandards(const CodingStandards& other) = delete;
+		CodingStandards(CodingStandards&& other) noexcept; //always noexcept move ctor or operator if they don't throw exceptions
+
+		//None standard constructors go inbetween ctor and detor
+		CodingStandards(int a, int b);
+
+		~CodingStandards();
 
 		//TODO: Add noexcept on moves
 
 		//[function.inline] please do not do this!
-		inline void badInlineFunction() { /*do some thing*/ }
+		inline void badInlineFunction(){ /*do some thing*/ }
 
 		//[function.inline] if you need it inline, mark it as such and declare in an inl file
 		inline void goodInlineFunction();
 
 		//[function.const correct] please keep functiosn const correct
 		void nonMutable() const;
+
+		//Operators at the end of public defs
+		//alwas define copy and move operators
+		CodingStandards& operator=(const CodingStandards& other) = delete;
+		CodingStandards& operator=(CodingStandards&& other) noexcept;
 
 	protected:
 		void constInFunction();

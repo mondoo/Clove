@@ -15,6 +15,14 @@ namespace clv{
 	namespace scene{
 		MeshSceneNode::MeshSceneNode() = default;
 
+		MeshSceneNode::MeshSceneNode(const MeshSceneNode& other){
+			CLV_WARN("Copy constructor called on Mesh - creating new data");
+			material = other.material;
+			createModelData(other.meshPath);
+		}
+
+		MeshSceneNode::MeshSceneNode(MeshSceneNode&& other) noexcept = default;
+
 		MeshSceneNode::MeshSceneNode(const std::string& meshPath){
 			material = std::make_shared<Material>(Material());
 			createModelData(meshPath);
@@ -24,14 +32,6 @@ namespace clv{
 			this->material = material;
 			createModelData(meshPath);
 		}
-
-		MeshSceneNode::MeshSceneNode(const MeshSceneNode& other){
-			CLV_WARN("Copy constructor called on Mesh - creating new data");
-			material = other.material;
-			createModelData(other.meshPath);
-		}
-
-		MeshSceneNode::MeshSceneNode(MeshSceneNode&& other) noexcept = default;
 
 		MeshSceneNode::~MeshSceneNode() = default;
 
@@ -50,72 +50,42 @@ namespace clv{
 		MeshSceneNode& MeshSceneNode::operator=(MeshSceneNode&& other) noexcept = default;
 
 		void MeshSceneNode::createModelData(const std::string& meshPath){
-			CLV_TRACE("Creating model with: {0}", meshPath);
-
 			this->meshPath = meshPath;
 
-			vertexData.clear();
-			indices.clear();
+			const loader::MeshInfo& loadedMeshInfo = loader::MeshLoader::loadOBJ(meshPath);
 
-			MeshInfo loadedMeshInfo;
-			if(loadOBJ(meshPath, loadedMeshInfo)){
-				const size_t vertexCount = loadedMeshInfo.verticies.size();
-				const size_t texCoordCount = loadedMeshInfo.texCoords.size();
-				const size_t normalCount = loadedMeshInfo.normals.size();
+			const size_t vertexCount = loadedMeshInfo.verticies.size();
+			const size_t texCoordCount = loadedMeshInfo.texCoords.size();
+			const size_t normalCount = loadedMeshInfo.normals.size();
 
-				VertexBufferLayout layout;
+			VertexBufferLayout layout;
 
-				if(vertexCount > 0){
-					layout.push<float>(3);
-				}
-
-				if(texCoordCount > 0){
-					layout.push<float>(2);
-				}
-
-				if(normalCount > 0){
-					layout.push<float>(3);
-				}
-
-				vertexData.reserve((vertexCount * 3) + (texCoordCount * 2) + (normalCount * 3));
-
-				for(int i = 0; i < vertexCount; ++i){
-					if(vertexCount > 0){
-						vertexData.emplace_back(loadedMeshInfo.verticies[i].x);
-						vertexData.emplace_back(loadedMeshInfo.verticies[i].y);
-						vertexData.emplace_back(loadedMeshInfo.verticies[i].z);
-					}
-
-					if(texCoordCount > 0){
-						vertexData.emplace_back(loadedMeshInfo.texCoords[i].x);
-						vertexData.emplace_back(loadedMeshInfo.texCoords[i].y);
-					}
-
-					if(normalCount > 0){
-						vertexData.emplace_back(loadedMeshInfo.normals[i].x);
-						vertexData.emplace_back(loadedMeshInfo.normals[i].y);
-						vertexData.emplace_back(loadedMeshInfo.normals[i].z);
-					}
-				}
-				indices = loadedMeshInfo.indices;
-
-				const void* vdata = vertexData.data();
-				unsigned int vsize = static_cast<unsigned int>((vertexData.size() * sizeof(float)));
-				vertexBuffer = std::make_unique<VertexBuffer>(VertexBuffer(vdata, vsize));
-
-				vertexArray = std::make_unique<VertexArray>(VertexArray());
-				vertexArray->addBuffer(*vertexBuffer, layout);
-
-				const unsigned int* idata = indices.data();
-				unsigned int icount = static_cast<unsigned int>(indices.size());
-				indexBuffer = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
-
-				vertexArray->unbind();
-				vertexBuffer->unbind();
-				indexBuffer->unbind();
-			} else{
-				CLV_ERROR("Could not load mesh for model");
+			if(vertexCount > 0){
+				layout.push<float>(3);
 			}
+
+			if(texCoordCount > 0){
+				layout.push<float>(2);
+			}
+
+			if(normalCount > 0){
+				layout.push<float>(3);
+			}
+
+			const void* vdata = loadedMeshInfo.vertexData.data();
+			unsigned int vsize = static_cast<unsigned int>((loadedMeshInfo.vertexData.size() * sizeof(float)));
+			vertexBuffer = std::make_unique<VertexBuffer>(VertexBuffer(vdata, vsize));
+
+			vertexArray = std::make_unique<VertexArray>(VertexArray());
+			vertexArray->addBuffer(*vertexBuffer, layout);
+
+			const unsigned int* idata = loadedMeshInfo.indices.data();
+			unsigned int icount = static_cast<unsigned int>(loadedMeshInfo.indices.size());
+			indexBuffer = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
+
+			vertexArray->unbind();
+			vertexBuffer->unbind();
+			indexBuffer->unbind();
 		}
 	}
 }
