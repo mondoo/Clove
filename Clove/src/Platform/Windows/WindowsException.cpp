@@ -19,18 +19,6 @@ namespace clv{
 		return whatBuffer.c_str();
 	}
 
-	const char* WindowsException::getType() const noexcept{
-		return "Clove Windows Exception";
-	}
-
-	HRESULT WindowsException::getErrorCode() const noexcept{
-		return hr;
-	}
-
-	std::string WindowsException::getErrorString() const noexcept{
-		return translateErrorCode(hr);
-	}
-
 	std::string WindowsException::translateErrorCode(HRESULT hr) noexcept{
 		wchar_t* msgBuff = nullptr;
 		DWORD msgLen = FormatMessage(

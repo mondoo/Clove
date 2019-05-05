@@ -3,7 +3,7 @@
 
 #include "Clove/Application.hpp"
 #include "Clove/Window.hpp"
-#include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 
 namespace clv{
 	namespace scene{

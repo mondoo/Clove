@@ -18,12 +18,11 @@ namespace clv{
 
 		virtual ~WindowsException();
 
-		const char* what() const noexcept override;
+		virtual const char* what() const noexcept override;
+		inline virtual const char* getType() const noexcept override;
 
-		virtual const char* getType() const noexcept override;
-
-		HRESULT getErrorCode() const noexcept;
-		std::string getErrorString() const noexcept;
+		inline HRESULT getErrorCode() const noexcept;
+		inline std::string getErrorString() const noexcept;
 
 		static std::string translateErrorCode(HRESULT hr) noexcept;
 
@@ -31,3 +30,8 @@ namespace clv{
 		WindowsException& operator=(WindowsException&& other) noexcept = delete;
 	};
 }
+
+#include "WindowsException.inl"
+
+#define CLV_WINDOWS_EXCEPTION(hr) WindowsException(__LINE__, __FILE__, hr)
+#define CLV_WINDOWS_LAST_EXCEPTION WindowsException(__LINE__, __FILE__, GetLastError())

@@ -3,6 +3,7 @@
 namespace clv{
 	namespace scene{
 		class SceneNode;
+		class RenderableSceneNode;
 		class MeshSceneNode;
 		class CameraSceneNode;
 		class PointLightSceneNode;
@@ -14,6 +15,8 @@ namespace clv{
 			std::shared_ptr<SceneNode> rootNode;
 
 			std::shared_ptr<CameraSceneNode> activeCamera;
+
+			std::vector<std::shared_ptr<RenderableSceneNode>> renderables;
 
 			std::vector<std::shared_ptr<PointLightSceneNode>> pointLights;
 			std::vector<std::shared_ptr<DirectionalLightSceneNode>> directionalLights;
@@ -30,6 +33,8 @@ namespace clv{
 
 			CLV_API std::shared_ptr<MeshSceneNode> createMeshSceneNode();
 			CLV_API std::shared_ptr<MeshSceneNode> createMeshSceneNode(std::shared_ptr<SceneNode> parent);
+
+			CLV_API inline const std::vector<std::shared_ptr<RenderableSceneNode>>& getRenderables();
 
 			CLV_API std::shared_ptr<CameraSceneNode> createCameraSceneNode();
 			CLV_API std::shared_ptr<CameraSceneNode> createCameraSceneNode(std::shared_ptr<SceneNode> parent);

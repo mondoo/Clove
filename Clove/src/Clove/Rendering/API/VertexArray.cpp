@@ -3,7 +3,7 @@
 
 #include "Clove/Rendering/API/VertexBuffer.hpp"
 #include "Clove/Rendering/API/VertexBufferLayout.hpp"
-#include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Rendering/API/GLHelpers.hpp"
 
 #include <glad/glad.h>

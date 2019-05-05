@@ -27,7 +27,9 @@ namespace clv{
 		}
 
 		std::shared_ptr<MeshSceneNode> Scene::createMeshSceneNode(std::shared_ptr<SceneNode> parent){
-			return createNode<MeshSceneNode>(parent);
+			std::shared_ptr<MeshSceneNode> node = createNode<MeshSceneNode>(parent);
+			renderables.push_back(node);
+			return node;
 		}
 
 		std::shared_ptr<CameraSceneNode> Scene::createCameraSceneNode(){

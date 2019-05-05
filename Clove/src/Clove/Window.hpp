@@ -4,8 +4,11 @@
 #include "Clove/Input/Mouse.hpp"
 
 namespace clv{
-	class Renderer;
 	class Event;
+	namespace graphics{
+		class Renderer;
+		enum class API;
+	}
 
 	struct WindowProps{
 		std::string title;
@@ -29,6 +32,7 @@ namespace clv{
 	protected:
 		Keyboard keyboard;
 		Mouse mouse;
+		std::unique_ptr<graphics::Renderer> renderer;
 
 		//FUNCTIONS
 	public:
@@ -39,6 +43,7 @@ namespace clv{
 		virtual ~Window() = default;
 
 		virtual void beginFrame() = 0;
+		virtual void endFrame() = 0;
 
 		virtual void setEventCallbackFunction(const EventCallbackFn& callback) = 0;
 		
@@ -57,6 +62,9 @@ namespace clv{
 
 		Window& operator=(const Window& other) = delete;
 		Window& operator=(Window&& other) noexcept = delete;
+
+	protected:
+		void initialiseRenderer(graphics::API api);
 	};
 }
 

@@ -32,8 +32,6 @@ namespace clv{
 
 			CLV_API void setMaterial(std::shared_ptr<Material> inMaterial);
 
-			CLV_API void draw(Renderer& renderer);
-
 			inline unsigned int getIndexBufferCount() const;
 			inline const ShaderType getShaderType() const;
 

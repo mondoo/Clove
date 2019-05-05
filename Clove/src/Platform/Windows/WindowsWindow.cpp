@@ -4,18 +4,11 @@
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Events/KeyEvent.hpp"
-#include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 
-#include "Clove/Rendering/API/GLHelpers.hpp"
-#include <glad/glad.h>
+#include "Clove/Application.hpp"
 
 namespace clv{
-#if CLV_PLATFORM_WINDOWS
-	Window* Window::create(const WindowProps& props){
-		return new WindowsWindow(props);
-	}
-#endif
-
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 		: instance(GetModuleHandle(nullptr)){
 
@@ -72,63 +65,22 @@ namespace clv{
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
 
-		CLV_TRACE("Window created");
-
-		windowsDeviceContext = GetDC(windowsHandle);
-
-		PIXELFORMATDESCRIPTOR pfd = { 0 };
-		pfd.nSize = sizeof(pfd);
-		pfd.nVersion = 1;
-		pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-		pfd.iPixelType = PFD_TYPE_RGBA;
-		pfd.cColorBits = 32;
-		pfd.cAlphaBits = 8;
-		pfd.cDepthBits = 24;
-
-		int pf;
-		pf = ChoosePixelFormat(windowsDeviceContext, &pfd);
-		if(pf == 0){
-			throw CLV_WINDOWS_LAST_EXCEPTION;
-		}
-
-		if(SetPixelFormat(windowsDeviceContext, pf, &pfd) == FALSE){
-			throw CLV_WINDOWS_LAST_EXCEPTION;
-		}
-		
-		windowsResourceContext = wglCreateContext(windowsDeviceContext);
-		wglMakeCurrent(windowsDeviceContext, windowsResourceContext);
-
-		CLV_TRACE("Device context created");
-
-		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+		CLV_INFO("Window created");
 
 		ShowWindow(windowsHandle, SW_SHOW);
 
-		CLV_INFO("Window created successfully!");
-		CLV_INFO("GL version: {0}", glGetString(GL_VERSION));
+		initialiseRenderer(graphics::API::DX11);
 
-		CLV_TRACE("Enabling Depth buffer");
-		GLCall(glDepthFunc(GL_LESS));
-		GLCall(glEnable(GL_DEPTH_TEST));
-
-		CLV_TRACE("Blend set to: SRC_ALPHA | ONE_MINUS_SRC_ALPHA");
-		//src is from the image - dest is what is already in the buffer
-		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-		GLCall(glEnable(GL_BLEND));
-		//I guess it's called blending because you blend the src with the destination
-
-		setVSync(true);
+		//setVSync(true);
 	}
 
 	WindowsWindow::~WindowsWindow(){
 		UnregisterClass(className, instance);
-		ReleaseDC(windowsHandle, windowsDeviceContext);
-		wglDeleteContext(windowsResourceContext);
 		DestroyWindow(windowsHandle);
 	}
 
 	void WindowsWindow::beginFrame(){
-		SwapBuffers(windowsDeviceContext);
+		renderer->clear();
 
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
@@ -142,6 +94,10 @@ namespace clv{
 		}
 	}
 
+	void WindowsWindow::endFrame(){
+		renderer->drawScene(Application::get().getScene()); //Maybe not do it like this - pass it through? tell the window to render that scene?
+	}
+
 	void* WindowsWindow::getNativeWindow() const{
 		return windowsHandle;
 	}
@@ -149,7 +105,8 @@ namespace clv{
 	void WindowsWindow::setVSync(bool enabled){
 		data.vSync = enabled;
 
-		typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
+		//move to renderer?
+		/*typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
 		PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
 
 		const char *extensions = (char*)glGetString(GL_EXTENSIONS);
@@ -163,7 +120,7 @@ namespace clv{
 			if(wglSwapIntervalEXT){
 				wglSwapIntervalEXT(enabled ? 1 : 0);
 			}
-		}
+		}*/
 	}
 
 	bool WindowsWindow::isVSync() const{
@@ -273,4 +230,10 @@ namespace clv{
 		}
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
+
+#if CLV_PLATFORM_WINDOWS
+	Window* Window::create(const WindowProps& props){
+		return new WindowsWindow(props);
+	}
+#endif
 }

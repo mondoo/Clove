@@ -3,7 +3,7 @@ namespace clv{
 		return keyboard;
 	}
 
-	inline CLV_API Mouse& Window::getMouse(){
+	inline Mouse& Window::getMouse(){
 		return mouse;
 	}
 }

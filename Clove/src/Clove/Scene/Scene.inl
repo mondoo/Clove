@@ -1,5 +1,9 @@
 namespace clv{
 	namespace scene{
+		inline const std::vector<std::shared_ptr<RenderableSceneNode>>& clv::scene::Scene::getRenderables(){
+			return renderables;
+		}
+
 		inline std::shared_ptr<CameraSceneNode> Scene::getActiveCamera(){
 			return activeCamera;
 		}

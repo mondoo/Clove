@@ -8,7 +8,6 @@
 #include "Clove/Events/Event.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/ImGui/ImGuiLayer.hpp"
-#include "Clove/Rendering/Renderer.hpp"
 #include "Clove/Scene/Scene.hpp"
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
@@ -24,14 +23,12 @@ namespace clv{
 
 		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
+		scene = std::make_shared<scene::Scene>();
 
 		layerStack = std::make_unique<LayerStack>();
 
-		imGuiLayer = std::make_shared<ImGuiLayer>();
-		pushLayer(imGuiLayer);
-
-		renderer = std::make_unique<Renderer>();
-		scene = std::make_shared<scene::Scene>();
+		//imGuiLayer = std::make_shared<ImGuiLayer>();
+		//pushLayer(imGuiLayer);
 	}
 
 	Application::~Application() = default;
@@ -43,7 +40,6 @@ namespace clv{
 			prevFrameTime = currFrameTime;
 
 			window->beginFrame();
-			renderer->clear();
 
 			//Temp input handling
 			while(auto e = getWindow().getKeyboard().getKeyEvent()){
@@ -106,7 +102,7 @@ namespace clv{
 			}
 
 			scene->update(deltaSeonds.count());
-			renderer->drawQueue(scene);
+			window->endFrame();
 
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){

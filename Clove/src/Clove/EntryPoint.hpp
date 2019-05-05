@@ -21,5 +21,6 @@ int main(int argc, char** argv){
 		MessageBoxA(nullptr, "No details available", "Standard Exception", MB_OK | MB_ICONEXCLAMATION);
 	#endif
 	}
+
 	return 0;
 }

@@ -2,7 +2,7 @@
 #include "MeshSceneNode.hpp"
 
 #include "Clove/MeshLoader.hpp"
-#include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Rendering/API/VertexBuffer.hpp"
 #include "Clove/Rendering/API/IndexBuffer.hpp"
 #include "Clove/Rendering/API/VertexArray.hpp"

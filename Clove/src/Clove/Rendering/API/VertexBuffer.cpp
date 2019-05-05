@@ -1,7 +1,7 @@
 #include "clvpch.hpp"
 #include "VertexBuffer.hpp"
 
-#include "Clove/Rendering/Renderer.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Rendering/API/GLHelpers.hpp"
 
 #include <glad/glad.h>

@@ -1,11 +1,14 @@
 --GLOBALS
 outputdir = "%{cfg.buildcfg}/%{cfg.platform}"
 
-targetdir_clv = "Built/bin/" .. outputdir .. "/%{prj.name}"
-objdir_clv = "Built/intermediate/" .. outputdir .. "/%{prj.name}"
+targetdir_clv = "Built/bin/"..outputdir.."/%{prj.name}"
+objdir_clv = "Built/intermediate/"..outputdir.."/%{prj.name}"
 
-targetdir_vendor = "Built/bin/" .. outputdir .. "/vendor/%{prj.name}"
-objdir_vendor = "Built/intermediate/" .. outputdir .. "/vendor/%{prj.name}"
+targetdir_vendor = "Built/bin/"..outputdir.."/vendor/%{prj.name}"
+objdir_vendor = "Built/intermediate/"..outputdir.."/vendor/%{prj.name}"
+
+hlslout_dir = "../Sandbox/"
+hlslout_com = hlslout_dir.."%{file.basename}"..".cso"
 
 --Workspace Settings
 workspace "Clove"
@@ -142,9 +145,11 @@ project "Clove"
 		"%{prj.name}/src/**.cpp",
 
 		"%{prj.name}/res/**.glsl",
+		"%{prj.name}/res/**.hlsl",
 
 		--Non-static vendor *.cpp
 		"%{prj.name}/vendor/stb/**.cpp",
+		"%{prj.name}/vendor/dxerr/**.cpp"
 	}
 
 	includedirs{
@@ -158,7 +163,9 @@ project "Clove"
 
 		"%{prj.name}/vendor/OBJ-Loader/source",
 
-		"%{prj.name}/vendor/Event-Dispatcher"
+		"%{prj.name}/vendor/Event-Dispatcher",
+
+		"%{prj.name}/vendor/dxerr"
 	}
 
 	links{
@@ -173,6 +180,20 @@ project "Clove"
 		"GLFW_INCLUDE_NONE"
 	}
 
+	postbuildcommands{
+		("{COPY} "..hlslout_dir.."**.cso \"../Built/bin/"..outputdir.."/Sandbox/\"")
+	}
+
+	--hlsl shaders
+	filter "files:**.hlsl"
+		shadermodel "5.0"
+		shaderobjectfileoutput(hlslout_com)
+	filter "files:**-vs.hlsl"
+		shadertype "Vertex"
+	filter "files:**-ps.hlsl"
+		shadertype "Pixel"
+
+	--platforms
 	filter "platforms:Win64-lib"
 		kind "StaticLib"
 
@@ -181,7 +202,7 @@ project "Clove"
 
 	filter "kind:SharedLib"
 		postbuildcommands{
-			("{COPY} %{cfg.buildtarget.relpath} \"../Built/bin/" .. outputdir .. "/Sandbox/\"")
+			("{COPY} %{cfg.buildtarget.relpath} \"../Built/bin/"..outputdir.."/Sandbox/\"")
 		}
 
 	filter "system:Windows"

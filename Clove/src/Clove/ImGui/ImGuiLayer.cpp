@@ -39,13 +39,13 @@ namespace clv{
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		ImGui_ImplOpenGL3_Init("#version 410");
-		ImGui_ImplWin32_Init(static_cast<HWND>(Application::get().getWindow().getNativeWindow()));
+		/*ImGui_ImplOpenGL3_Init("#version 410");
+		ImGui_ImplWin32_Init(static_cast<HWND>(Application::get().getWindow().getNativeWindow()));*/
 	}
 
 	void ImGuiLayer::onDetach(){
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplWin32_Shutdown();
+		/*ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplWin32_Shutdown();*/
 		ImGui::DestroyContext();
 	}
 
@@ -54,13 +54,13 @@ namespace clv{
 	}
 
 	void ImGuiLayer::begin(){
-		ImGui_ImplOpenGL3_NewFrame();
+		/*ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
+		ImGui::NewFrame();*/
 	}
 
 	void ImGuiLayer::end(){
-		ImGuiIO& io = ImGui::GetIO();
+		/*ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::get();
 		io.DisplaySize = ImVec2(static_cast<float>(app.getWindow().getWidth()), static_cast<float>(app.getWindow().getHeight()));
 
@@ -70,6 +70,6 @@ namespace clv{
 		if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
-		}
+		}*/
 	}
 }

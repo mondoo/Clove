@@ -17,10 +17,6 @@ namespace clv{
 		return whatBuffer.c_str();
 	}
 
-	const char* CloveException::getType() const noexcept{
-		return "Clove Exception";
-	}
-
 	std::string CloveException::getOriginString() const noexcept{
 		std::ostringstream oss;
 		oss << "[FILE] " << file << std::endl

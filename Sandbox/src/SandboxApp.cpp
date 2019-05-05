@@ -16,10 +16,6 @@
 
 #include "Clove/Scene/Scene.hpp"
 
-//REMOVE
-#include "Clove/Rendering/Renderer.hpp"
-//
-
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
@@ -146,6 +142,8 @@ public:
 		childCube = scene->createMeshSceneNode(parentCube);
 		childCube->setMesh("res/Objects/cube.obj");
 		childCube->setMaterial(std::make_shared<clv::Material>());
+
+		dirLight = scene->createDirectionalLightSceneNode();
 	}
 
 	virtual void onDetach() override{
@@ -189,21 +187,17 @@ public:
 			} else{
 				cubes[i]->setRotation(std::make_pair(clv::math::Vector3f(i * 0.25f, i, i * 0.75f), rot));
 			}
-			cubes[i]->draw(clv::Application::get().getRenderer());
 		}
 
 		//SPHERE
 		sphere->setRotation(std::make_pair(clv::math::Vector3f(0.0f, 1.0f, 0.0f), rot));
-		sphere->draw(clv::Application::get().getRenderer());
 
 		//MONKEY
 		monkey->setRotation(std::make_pair(clv::math::Vector3f(0.0f, 1.0f, 0.5f), rot));
-		monkey->draw(clv::Application::get().getRenderer());
 
 		//LIGHT
 		for(int i = 0; i < lights.size(); ++i){
 			lights[i]->setRotation(std::make_pair(clv::math::Vector3f(0, 1, 0), 1.0f));
-			lightCubes[i]->draw(clv::Application::get().getRenderer());
 		}
 
 		rot += clv::math::asRadians(0.5f);
@@ -216,15 +210,15 @@ public:
 		parentCube->setPosition(parentPos);
 		parentCube->setRotation(std::make_pair(parentRotV, clv::math::asRadians(parentRotA)));
 		parentCube->setScale(parentScale);
-		parentCube->draw(clv::Application::get().getRenderer());
 
 		childCube->setPosition(childPos);
 		childCube->setRotation(std::make_pair(childRotV, clv::math::asRadians(childRotA)));
 		childCube->setScale(childScale);
-		childCube->draw(clv::Application::get().getRenderer());
 	}
 
 	virtual void onImGuiRender() override{
+		return;
+
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 		ImGui::Spacing();
@@ -249,7 +243,7 @@ public:
 
 		if(!dirLight){
 			if(ImGui::Button("Spawn Dir Light", ImVec2(500, 30))){
-				dirLight = scene->createDirectionalLightSceneNode();
+				/*dirLight = scene->createDirectionalLightSceneNode();*/
 			}
 		}
 
@@ -307,7 +301,7 @@ public:
 class SandBox : public clv::Application{
 public:
 	SandBox(){
-		pushLayer(std::make_shared<ExampleLayer>(ExampleLayer()));
+		//pushLayer(std::make_shared<ExampleLayer>(ExampleLayer()));
 	}
 	~SandBox(){
 
