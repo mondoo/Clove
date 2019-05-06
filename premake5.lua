@@ -78,18 +78,17 @@ project "ImGui"
 	objdir(objdir_vendor)
 
 	files{
-        "%{prj.location}/imconfig.h",
-        "%{prj.location}/imgui.h",
-        "%{prj.location}/imgui.cpp",
-        "%{prj.location}/imgui_draw.cpp",
-        "%{prj.location}/imgui_internal.h",
-        "%{prj.location}/imgui_widgets.cpp",
-        "%{prj.location}/imstb_rectpack.h",
-        "%{prj.location}/imstb_textedit.h",
-        "%{prj.location}/imstb_truetype.h",
-        "%{prj.location}/imgui_demo.cpp"
+        "%{prj.location}/**.h",
+        "%{prj.location}/**.cpp",
     }
-
+	
+	excludes{
+		"%{prj.location}/examples/**.h",
+		"%{prj.location}/examples/**.cpp",
+		"%{prj.location}/misc/**.h",
+		"%{prj.location}/misc/**.cpp",
+	}
+	
 	defines{
 		"IMGUI_USER_CONFIG=\"../../src/Clove/ImGui/ImGuiConfig.hpp\"",
 		"IMGUI_DISABLE_INCLUDE_IMCONFIG_H",
@@ -106,16 +105,43 @@ project "Glad"
 	objdir(objdir_vendor)
 
 	files{
-        "%{prj.location}/include/glad/glad.h",
-        "%{prj.location}/include/KHR/khrplatform.h",
-        "%{prj.location}/src/glad.c"
+        "%{prj.location}/include/**.h",
+        "%{prj.location}/include/**.h",
+        "%{prj.location}/src/**.c"
     }
 
 	includedirs{
 		"%{prj.location}/include"
 	}
-    
-	filter "system:Windows"    
+
+--dxerr
+project "dxerr"
+	location "Clove/vendor/dxerr"
+	kind "StaticLib"
+	language "C++"
+
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
+
+	files{
+		"%{prj.location}/**.h",
+		"%{prj.location}/**.inl",
+		"%{prj.location}/**.cpp",
+	}
+	
+--stb
+project "stb"
+	location "Clove/vendor/stb"
+	kind "StaticLib"
+	language "C++"
+	
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
+	
+	files{
+		"%{prj.location}/**.h",
+		"%{prj.location}/**.cpp",
+	}
 
 --End: Dependencies
 group ""
@@ -127,6 +153,7 @@ includeDir["Glad"]	= "Clove/vendor/Glad/include"
 includeDir["ImGui"] = "Clove/vendor/imgui"
 includeDir["glm"]	= "Clove/vendor/glm"
 includeDir["stb"]	= "Clove/vendor/stb"
+includeDir["dxerr"]	= "Clove/vendor/dxerr"
 
 project "Clove"
 	location "Clove"
@@ -139,38 +166,39 @@ project "Clove"
 	pchsource "Clove/src/clvpch.cpp"
 
 	files{
-		--Clove
+		--src
 		"%{prj.name}/src/**.hpp",
 		"%{prj.name}/src/**.inl",
 		"%{prj.name}/src/**.cpp",
 
+		--shader
 		"%{prj.name}/res/**.glsl",
 		"%{prj.name}/res/**.hlsl",
-
-		--Non-static vendor *.cpp
-		"%{prj.name}/vendor/stb/**.cpp",
-		"%{prj.name}/vendor/dxerr/**.cpp"
 	}
 
 	includedirs{
+		--Clove
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include",
-
+		
+		--Libs
 		"%{includeDir.Glad}",
 		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
 		"%{includeDir.stb}",
+		"%{includeDir.dxerr}",
 
+		--Misc vendor
+		"%{prj.name}/vendor/spdlog/include",
 		"%{prj.name}/vendor/OBJ-Loader/source",
-
 		"%{prj.name}/vendor/Event-Dispatcher",
-
-		"%{prj.name}/vendor/dxerr"
 	}
 
 	links{
 		"Glad",
 		"ImGui",
+		"dxerr",
+		"stb",
+		
 		"opengl32.lib"
 	}
 
