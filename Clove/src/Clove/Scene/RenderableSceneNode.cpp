@@ -1,10 +1,10 @@
 #include "clvpch.hpp"
 #include "RenderableSceneNode.hpp"
 
-#include "Clove/Rendering/API/VertexArray.hpp"
-#include "Clove/Rendering/API/VertexBuffer.hpp"
-#include "Clove/Rendering/API/Material.hpp"
-#include "Clove/Rendering/API/Shader.hpp"
+#include "GraphicsAPI/GL/OLD/VertexArray.hpp"
+#include "GraphicsAPI/GL/OLD/VertexBuffer.hpp"
+#include "GraphicsAPI/GL/OLD/Material.hpp"
+#include "GraphicsAPI/GL/OLD/Shader.hpp"
 #include "Clove/Graphics/Renderer.hpp"
 
 namespace clv{

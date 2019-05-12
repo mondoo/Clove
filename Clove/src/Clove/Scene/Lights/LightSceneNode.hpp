@@ -7,7 +7,7 @@ namespace clv{
 		class LightSceneNode : public SceneNode{
 			//VARIABLES
 		private:
-			math::Vector3f ambientColour = math::Vector3f(0.01f, 0.01f, 0.01f);
+			math::Vector3f ambientColour = math::Vector3f(0.5f, 0.5f, 0.5f);
 			math::Vector3f diffuseColour = math::Vector3f(0.75f, 0.75f, 0.75f);
 			math::Vector3f specularColour = math::Vector3f(1.0f, 1.0f, 1.0f);
 

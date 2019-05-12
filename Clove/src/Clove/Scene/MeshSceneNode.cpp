@@ -3,11 +3,11 @@
 
 #include "Clove/MeshLoader.hpp"
 #include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Rendering/API/VertexBuffer.hpp"
-#include "Clove/Rendering/API/IndexBuffer.hpp"
-#include "Clove/Rendering/API/VertexArray.hpp"
-#include "Clove/Rendering/API/VertexBufferLayout.hpp"
-#include "Clove/Rendering/API/Material.hpp"
+#include "GraphicsAPI/GL/OLD/VertexBuffer.hpp"
+#include "GraphicsAPI/GL/OLD/IndexBuffer.hpp"
+#include "GraphicsAPI/GL/OLD/VertexArray.hpp"
+#include "GraphicsAPI/GL/OLD/VertexBufferLayout.hpp"
+#include "GraphicsAPI/GL/OLD/Material.hpp"
 
 #include <fstream>
 
@@ -74,14 +74,14 @@ namespace clv{
 
 			const void* vdata = loadedMeshInfo.vertexData.data();
 			unsigned int vsize = static_cast<unsigned int>((loadedMeshInfo.vertexData.size() * sizeof(float)));
-			vertexBuffer = std::make_unique<VertexBuffer>(VertexBuffer(vdata, vsize));
+			vertexBuffer = std::make_unique<VertexBuffer>(vdata, vsize);
 
-			vertexArray = std::make_unique<VertexArray>(VertexArray());
+			vertexArray = std::make_unique<VertexArray>();
 			vertexArray->addBuffer(*vertexBuffer, layout);
 
 			const unsigned int* idata = loadedMeshInfo.indices.data();
 			unsigned int icount = static_cast<unsigned int>(loadedMeshInfo.indices.size());
-			indexBuffer = std::make_unique<IndexBuffer>(IndexBuffer(idata, icount));
+			indexBuffer = std::make_unique<IndexBuffer>(idata, icount);
 
 			vertexArray->unbind();
 			vertexBuffer->unbind();

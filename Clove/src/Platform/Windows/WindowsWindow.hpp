@@ -36,10 +36,11 @@ namespace clv{
 		WindowsWindow() = delete;
 		WindowsWindow(const WindowsWindow& other) = delete;
 		WindowsWindow(WindowsWindow&& other) noexcept = delete;
-
-		WindowsWindow(const WindowProps& props);
-		
+		WindowsWindow& operator=(const WindowsWindow& other) = delete;
+		WindowsWindow& operator=(WindowsWindow&& other) noexcept = delete;
 		virtual ~WindowsWindow();
+		
+		WindowsWindow(const WindowProps& props);
 
 		virtual void beginFrame() override;
 		virtual void endFrame() override;
@@ -53,9 +54,6 @@ namespace clv{
 
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVSync() const override;
-
-		WindowsWindow& operator=(const WindowsWindow& other) = delete;
-		WindowsWindow& operator=(WindowsWindow&& other) noexcept = delete;
 
 	private:
 		static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

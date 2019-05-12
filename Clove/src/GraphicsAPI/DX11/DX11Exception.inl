@@ -1,6 +1,6 @@
 #include "DX11Exception.hpp"
 namespace clv{
-	namespace graphics{
+	namespace gfx{
 		inline const char* DX11Exception::getType() const noexcept{
 			return "Clove DX11 Exception";
 		}

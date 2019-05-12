@@ -2,10 +2,11 @@
 
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
+#include "Clove/Graphics/RendererContext.hpp"
 
 namespace clv{
 	class Event;
-	namespace graphics{
+	namespace gfx{
 		class Renderer;
 		enum class API;
 	}
@@ -32,14 +33,15 @@ namespace clv{
 	protected:
 		Keyboard keyboard;
 		Mouse mouse;
-		std::unique_ptr<graphics::Renderer> renderer;
+		gfx::RendererContext rendererContext;
 
 		//FUNCTIONS
 	public:
 		Window() = default;
 		Window(const Window& other) = delete;
 		Window(Window&& other) noexcept = delete;
-
+		Window& operator=(const Window& other) = delete;
+		Window& operator=(Window&& other) noexcept = delete;
 		virtual ~Window() = default;
 
 		virtual void beginFrame() = 0;
@@ -59,12 +61,6 @@ namespace clv{
 		CLV_API inline Mouse& getMouse();
 
 		static Window* create(const WindowProps& props = WindowProps());
-
-		Window& operator=(const Window& other) = delete;
-		Window& operator=(Window&& other) noexcept = delete;
-
-	protected:
-		void initialiseRenderer(graphics::API api);
 	};
 }
 

@@ -4,15 +4,28 @@
 #include "Clove/Window.hpp"
 #include "GraphicsAPI/DX11/DX11Exception.hpp"
 
+#include "Clove/Input/Input.hpp"
+
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include <DirectXMath.h>
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
+//temp
+#include "GraphicsAPI/DX11/Bindables/DX11VertexBuffer.hpp"
+#include "GraphicsAPI/DX11/Bindables/DX11IndexBuffer.hpp"
+#include "GraphicsAPI/DX11/Bindables/DX11ConstantBuffer.hpp"
+#include "GraphicsAPI/DX11/Bindables/DX11VertexShader.hpp"
+#include "GraphicsAPI/DX11/Bindables/DX11PixelShader.hpp"
+#include "GraphicsAPI/DX11/Bindables/DX11InputLayout.hpp"
+
 namespace clv{
-	namespace graphics{
-		clv::graphics::DX11Renderer::DX11Renderer(const Window& window){
+	namespace gfx{
+		DX11Renderer::~DX11Renderer() = default;
+
+		clv::gfx::DX11Renderer::DX11Renderer(const Window& window){
 		#if CLV_PLATFORM_WINDOWS
 			windowsHandle = reinterpret_cast<HWND>(window.getNativeWindow());
 
@@ -55,23 +68,71 @@ namespace clv{
 				&d3dDeviceContext
 			));
 
+			//Get access to the texture subresource (back buffer)
 			Microsoft::WRL::ComPtr<ID3D11Resource> backBuffer;
 			DX11_THROW_INFO(swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer));
 			DX11_THROW_INFO(d3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, &target));
+
+			//Create depth stencil state
+			D3D11_DEPTH_STENCIL_DESC depthDesc = {};
+			depthDesc.DepthEnable = TRUE;
+			depthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+			depthDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> dsstate;
+			DX11_THROW_INFO(d3dDevice->CreateDepthStencilState(&depthDesc, &dsstate));
+
+			//Bind depth state
+			d3dDeviceContext->OMSetDepthStencilState(dsstate.Get(), 1u);
+
+			//Create depth stencil texture
+			D3D11_TEXTURE2D_DESC depthTexDesc = {};
+			depthTexDesc.Width = 1920u;
+			depthTexDesc.Height = 1080u; //should match the swap chain (we used 0 to let d3d figure it out)
+			depthTexDesc.MipLevels = 1u;
+			depthTexDesc.ArraySize = 1u;
+			depthTexDesc.Format = DXGI_FORMAT_D32_FLOAT; //D for depth
+			depthTexDesc.SampleDesc.Count = 1u;
+			depthTexDesc.SampleDesc.Quality = 0u;
+			depthTexDesc.Usage = D3D11_USAGE_DEFAULT;
+			depthTexDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil;
+			DX11_THROW_INFO(d3dDevice->CreateTexture2D(&depthTexDesc, nullptr, &depthStencil));
+
+			//Create view of depth stencil texture
+			D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+			dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
+			dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+			dsvDesc.Texture2D.MipSlice = 0u;
+
+			DX11_THROW_INFO(d3dDevice->CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &dsv));
+
+			//Bind depth stencil view to output merger
+			d3dDeviceContext->OMSetRenderTargets(1u, target.GetAddressOf(), dsv.Get());
+
 		#endif
 		}
-
-		DX11Renderer::~DX11Renderer() = default;
 
 		void DX11Renderer::clear(){
 			float colour[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 			d3dDeviceContext->ClearRenderTargetView(target.Get(), colour);
+			d3dDeviceContext->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 		}
 
-		void DX11Renderer::drawScene(std::shared_ptr<scene::Scene> scene){
+		void DX11Renderer::drawScene(const std::shared_ptr<scene::Scene>& scene){
 			HRESULT hr;
 
-			drawTestTriangle();
+			auto[fmx, fmy] = input::getMousePosition();
+			//Scaling by viewport size
+			fmx = (fmx / 960) - 1.0f;
+			fmy = (fmy / 540) - 1.0f;
+
+			static float angle = 0.0f;
+			angle += 0.01f;
+			drawTestTriangle(angle, 0, 0);
+
+			//drawTestTriangle(angle, fmx, -fmy);
 
 		#if CLV_DEBUG
 			infoManager.set();
@@ -85,80 +146,119 @@ namespace clv{
 			}
 		}
 
-		void DX11Renderer::drawTestTriangle(){
+		void DX11Renderer::drawTestTriangle(float angle, float x, float z){
 			HRESULT hr;
 
-			struct vertex{
-				float x = 0;
-				float y = 0;
+			/*struct vertex{
+				struct{
+					float x = 0;
+					float y = 0;
+					float z = 0;
+				} pos;
+			};*/
+
+			//Create vertex buffer
+			const std::vector<float> vertices = {
+				-1.0f, -1.0f, -1.0f , //0
+				 1.0f, -1.0f, -1.0f , //1
+				-1.0f,  1.0f, -1.0f , //2
+				 1.0f,  1.0f, -1.0f , //3
+				-1.0f, -1.0f,  1.0f , //4
+				 1.0f, -1.0f,  1.0f , //5
+				-1.0f,  1.0f,  1.0f , //6
+				 1.0f,  1.0f,  1.0f , //7
 			};
 
-			const vertex vertices[] = {
-				{ 0.0f,  0.5f},
-				{ 0.5f, -0.5f},
-				{-0.5f, -0.5f}
-			};
-			
-			
-			D3D11_BUFFER_DESC bd = { 0 };
-			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-			bd.Usage = D3D11_USAGE_DEFAULT;
-			bd.CPUAccessFlags = 0;
-			bd.MiscFlags = 0u;
-			bd.ByteWidth = sizeof(vertices);
-			bd.StructureByteStride = sizeof(vertex);
-
-			D3D11_SUBRESOURCE_DATA srd = { 0 };
-			srd.pSysMem = vertices;
-
-			Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
-			
-			DX11_THROW_INFO(d3dDevice->CreateBuffer(&bd, &srd, &vertexBuffer));
+			DX11VertexBuffer vb(vertices, this);
 
 			//Bind VB into pipeline
-			const UINT stride = sizeof(vertex);
-			const UINT offset = 0u;
-			d3dDeviceContext->IASetVertexBuffers(0u, 1u, vertexBuffer.GetAddressOf(), &stride, &offset);
+			vb.bind(this);
 
-			Microsoft::WRL::ComPtr<ID3DBlob> blob;
+			//Create index buffer
+			const std::vector<unsigned short> indices = {
+				0, 2, 1,	2, 3, 1,
+				1, 3, 5,	3, 7, 5,
+				2, 6, 3,	3, 6, 7,
+				4, 5, 7,	4, 7, 6,
+				0, 4, 2,	2, 4, 6,
+				0, 1, 4,	1, 5, 4
+			};
+
+			DX11IndexBuffer ib(indices, this);
+
+			//Bind IB into pipeline
+			ib.bind(this);
+
+			//Create constant buffer for transformation matrix (like with uniforms looks like dx calls them constants)
+			struct ConstantBuffer{
+				DirectX::XMMATRIX transform;
+			};
+			const ConstantBuffer cb = {
+				{ //rot scale trans for dx
+					DirectX::XMMatrixTranspose(
+						DirectX::XMMatrixRotationZ(angle) * //Need to transpose matrix from row major to colum major for the gpu
+						DirectX::XMMatrixRotationX(angle) *
+						DirectX::XMMatrixTranslation(x, 0.0f, z + 4.0f) *
+						DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 10.0f)
+					)
+				}
+			};
+			VertexConstantBuffer vbc(cb, this);
+
+			//Bind constant buffer to vertex shader
+			vbc.bind(this);
+
+			//Create constant buffer for face colour
+			struct ConstantBuffer2{
+				struct{
+					float r = 0.0f;
+					float g = 0.0f;
+					float b = 0.0f;
+					float a = 0.0f;
+				} faceColours[6];
+			};
+			const ConstantBuffer2 cb2{
+				{
+					{1.0f, 0.0f, 1.0f, 1.0f},
+					{1.0f, 0.0f, 0.0f, 1.0f},
+					{0.0f, 1.0f, 0.0f, 1.0f},
+					{0.0f, 0.3f, 1.0f, 1.0f},
+					{1.0f, 1.0f, 0.0f, 1.0f},
+					{0.0f, 1.0f, 1.0f, 1.0f},
+				}
+			};
+			PixelConstantBuffer pcb(cb2, this);
+
+			//Bind constant buffer to the pixel shader
+			pcb.update(cb2, this);
+			pcb.bind(this);
 
 			//Create pixel shader
-			Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
-			DX11_THROW_INFO(D3DReadFileToBlob(L"Default-ps.cso", &blob));
-			DX11_THROW_INFO(d3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &pixelShader));
+			DX11PixelShader ps(L"Default-ps.cso", this);
 			//Bind
-			d3dDeviceContext->PSSetShader(pixelShader.Get(), nullptr, 0u);
+			ps.bind(this);
 
 			//Create vertex shader
-			Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
-			DX11_THROW_INFO(D3DReadFileToBlob(L"Default-vs.cso", &blob));
-			DX11_THROW_INFO(d3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &vertexShader));
+			DX11VertexShader vs(L"Default-vs.cso", this);
+			
 			//Bind
-			d3dDeviceContext->VSSetShader(vertexShader.Get(), nullptr, 0u);
+			vs.bind(this);
 
-			//Input layout object (I'm guessing this is similar to what we do with opengl vertex array)
-			Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
-			const D3D11_INPUT_ELEMENT_DESC ied[] = {
-				{"Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
+			//Input layout object (I'm guessing this is similar to what we do with opengl vertex array) (it is, think vertexattribpointer with the vb layout)
+			const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
+				{ "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 			};
-			DX11_THROW_INFO(d3dDevice->CreateInputLayout(
-				ied, static_cast<UINT>(std::size(ied)),
-				blob->GetBufferPointer(),
-				blob->GetBufferSize(),
-				&inputLayout
-			));
+			DX11InputLayout ipl(ied, vs.getByteCode(), this);
+			
 			//Bind
-			d3dDeviceContext->IASetInputLayout(inputLayout.Get());
-
-			//Bind render target
-			d3dDeviceContext->OMSetRenderTargets(1u, target.GetAddressOf(), nullptr);
+			ipl.bind(this);
 
 			//Set primitive topology to triangle list (groups of 3 verticies)
 			d3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 			//Configure viewport (maps the render space to an area on screen)
 			D3D11_VIEWPORT vp = { 0 };
-			vp.Width = 1920; //will need to pull this from window or where to put the port
+			vp.Width = 1920; //will need to pull this from window or where to put/size the view port
 			vp.Height = 1080;
 			vp.MinDepth = 0;
 			vp.MaxDepth = 1;
@@ -166,11 +266,7 @@ namespace clv{
 			vp.TopLeftY = 0;
 			d3dDeviceContext->RSSetViewports(1u, &vp);
 
-			DX11_THROW_INFO_ONLY(d3dDeviceContext->Draw(static_cast<UINT>(std::size(vertices)), 0u));
-		}
-
-		Renderer* Renderer::createDirectX11Renderer(const Window& window){
-			return new DX11Renderer(window);
+			DX11_THROW_INFO_ONLY(d3dDeviceContext->DrawIndexed(static_cast<UINT>(indices.size()), 0u, 0u));
 		}
 	}
 }

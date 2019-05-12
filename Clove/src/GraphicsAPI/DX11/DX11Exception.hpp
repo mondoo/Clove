@@ -3,7 +3,7 @@
 #include "Clove/Exception/CloveException.hpp"
 
 namespace clv{
-	namespace graphics{
+	namespace gfx{
 		class DX11Exception : public CloveException{
 			//VARIABLES
 		public:
@@ -82,17 +82,21 @@ namespace clv{
 
 #include "DX11Exception.inl"
 
-#define DX11_EXCEPT_NOINFO(hr) clv::graphics::DX11Exception(__LINE__, __FILE__, (hr))
+#define DX11_EXCEPT_NOINFO(hr) clv::gfx::DX11Exception(__LINE__, __FILE__, (hr))
 #define DX11_THROW_NOINFO(hrcall) { if(FAILED(hr = (hrcall))){ throw DX11_EXCEPT_NOINFO(hr); } }
 
 #if CLV_DEBUG
-	#define DX11_EXCEPT(hr) clv::graphics::DX11Exception(__LINE__, __FILE__, (hr), infoManager.getMessages())
+	#define DX11_EXCEPT(hr) clv::gfx::DX11Exception(__LINE__, __FILE__, (hr), infoManager.getMessages())
 	#define DX11_THROW_INFO(hrcall) infoManager.set(); if(FAILED(hr = (hrcall))) throw DX11_EXCEPT(hr)
-	#define DX11_DEVICE_REMOVED_EXCPTION(hr) clv::graphics::DeviceRemovedException(__LINE__, __FILE__, (hr), infoManager.getMessages())
-	#define DX11_THROW_INFO_ONLY(call) infoManager.set(); (call); { auto v = infoManager.getMessages(); if(!v.empty()){ throw clv::graphics::InfoException(__LINE__, __FILE__, v); } }
+	#define DX11_DEVICE_REMOVED_EXCPTION(hr) clv::gfx::DeviceRemovedException(__LINE__, __FILE__, (hr), infoManager.getMessages())
+	#define DX11_THROW_INFO_ONLY(call) infoManager.set(); (call); { auto v = infoManager.getMessages(); if(!v.empty()){ throw clv::gfx::InfoException(__LINE__, __FILE__, v); } }
+
+	#define DX11_INFO_PROVIDER(renderer) HRESULT hr; DXGIInfoManager& infoManager = renderer->getInfoManager();
 #else
-	#define DX11_EXCEPT(hr) clv::graphics::DX11Exception(__LINE__, __FILE__, (hr))
+	#define DX11_EXCEPT(hr) clv::gfx::DX11Exception(__LINE__, __FILE__, (hr))
 	#define DX11_THROW_INFO(hrcall) DX11_THROW_NOINFO(hrcall)
-	#define DX11_DEVICE_REMOVED_EXCPTION(hr) clv::graphics::DeviceRemovedException(__LINE__, __FILE__, (hr))
+	#define DX11_DEVICE_REMOVED_EXCPTION(hr) clv::gfx::DeviceRemovedException(__LINE__, __FILE__, (hr))
 	#define DX11_THROW_INFO_ONLY(call) (call)
+
+	#define DX11_INFO_PROVIDER(renderer) HRESULT hr;
 #endif

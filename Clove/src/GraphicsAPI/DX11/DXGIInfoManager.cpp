@@ -9,7 +9,7 @@
 #pragma comment(lib, "dxguid.lib")
 
 namespace clv{
-	namespace graphics{
+	namespace gfx{
 		DXGIInfoManager::DXGIInfoManager(){
 			//define function signature of DXGIGetDebugInterface
 			typedef HRESULT(WINAPI* DXGIGetDebugInterface)(REFIID, void**);

@@ -172,8 +172,8 @@ project "Clove"
 		"%{prj.name}/src/**.cpp",
 
 		--shader
-		"%{prj.name}/res/**.glsl",
-		"%{prj.name}/res/**.hlsl",
+		"%{prj.name}/src/**.glsl",
+		"%{prj.name}/src/**.hlsl",
 	}
 
 	includedirs{

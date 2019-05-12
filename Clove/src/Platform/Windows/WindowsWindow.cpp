@@ -69,7 +69,7 @@ namespace clv{
 
 		ShowWindow(windowsHandle, SW_SHOW);
 
-		initialiseRenderer(graphics::API::DX11);
+		rendererContext.initialise(*this, gfx::API::DirectX11);
 
 		//setVSync(true);
 	}
@@ -80,7 +80,7 @@ namespace clv{
 	}
 
 	void WindowsWindow::beginFrame(){
-		renderer->clear();
+		rendererContext.clear();
 
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
@@ -95,7 +95,7 @@ namespace clv{
 	}
 
 	void WindowsWindow::endFrame(){
-		renderer->drawScene(Application::get().getScene()); //Maybe not do it like this - pass it through? tell the window to render that scene?
+		rendererContext.drawScene(Application::get().getScene()); //Maybe not do it like this - pass it through? tell the window to render that scene?
 	}
 
 	void* WindowsWindow::getNativeWindow() const{

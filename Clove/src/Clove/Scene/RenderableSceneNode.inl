@@ -1,5 +1,5 @@
-#include "Clove/Rendering/API/IndexBuffer.hpp"
-#include "Clove/Rendering/API/Material.hpp"
+#include "GraphicsAPI/GL/OLD/IndexBuffer.hpp"
+#include "GraphicsAPI/GL/OLD/Material.hpp"
 
 namespace clv{
 	namespace scene{
@@ -7,7 +7,7 @@ namespace clv{
 			return indexBuffer->getCount();
 		}
 
-		inline const ShaderType RenderableSceneNode::getShaderType() const{
+		inline const gfx::ShaderType RenderableSceneNode::getShaderType() const{
 			return material->getShaderType();
 		}
 	}

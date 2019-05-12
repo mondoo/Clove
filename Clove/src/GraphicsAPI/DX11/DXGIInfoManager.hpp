@@ -5,7 +5,7 @@
 struct IDXGIInfoQueue;
 
 namespace clv{
-	namespace graphics{
+	namespace gfx{
 		class DXGIInfoManager{
 			//VARIABLES
 		private:

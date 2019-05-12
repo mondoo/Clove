@@ -2,7 +2,7 @@
 
 #include "Clove/Scene/SceneNode.hpp"
 
-#include "Clove/Rendering/API/RenderingTypes.hpp"
+#include "Clove/Graphics/RenderingTypes.hpp"
 
 namespace clv{
 	class VertexArray;
@@ -33,7 +33,7 @@ namespace clv{
 			CLV_API void setMaterial(std::shared_ptr<Material> inMaterial);
 
 			inline unsigned int getIndexBufferCount() const;
-			inline const ShaderType getShaderType() const;
+			inline const gfx::ShaderType getShaderType() const;
 
 			void bind(Shader& shader);
 			void unbind();

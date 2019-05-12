@@ -4,7 +4,7 @@
 #include <dxerr.h>
 
 namespace clv{
-	namespace graphics{
+	namespace gfx{
 		DX11Exception::DX11Exception(int lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages)
 			: CloveException(lineNum, file)
 			, hr(hr){
