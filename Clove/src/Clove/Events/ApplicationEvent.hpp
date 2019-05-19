@@ -11,12 +11,12 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		CLV_API WindowResizeEvent(unsigned int inWidth, unsigned int inHeight);
+		WindowResizeEvent(unsigned int inWidth, unsigned int inHeight);
 
-		CLV_API inline unsigned int getWidth() const;
-		CLV_API inline unsigned int getHeight() const;
+		inline unsigned int getWidth() const;
+		inline unsigned int getHeight() const;
 
-		CLV_API virtual std::string toString() const override;
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(WindowResize)
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
@@ -25,7 +25,7 @@ namespace clv{
 	class WindowCloseEvent : public Event{
 		//FUNCTIONS
 	public:
-		CLV_API WindowCloseEvent() = default;
+		WindowCloseEvent() = default;
 
 		EVENT_CLASS_TYPE(WindowClose)
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
@@ -34,7 +34,7 @@ namespace clv{
 	class AppTickEvent : public Event{
 		//FUNCTIONS
 	public:
-		CLV_API AppTickEvent() = default;
+		AppTickEvent() = default;
 
 		EVENT_CLASS_TYPE(AppTick)
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
@@ -43,7 +43,7 @@ namespace clv{
 	class AppUpdateEvent : public Event{
 		//FUNCTIONS
 	public:
-		CLV_API AppUpdateEvent() = default;
+		AppUpdateEvent() = default;
 
 		EVENT_CLASS_TYPE(AppUpdate)
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
@@ -52,7 +52,7 @@ namespace clv{
 	class AppRenderEvent : public Event{
 		//FUNCTIONS
 	public:
-		CLV_API AppRenderEvent() = default;
+		AppRenderEvent() = default;
 
 		EVENT_CLASS_TYPE(AppRender)
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)

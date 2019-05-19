@@ -11,11 +11,11 @@ namespace clv{
 		const MeshInfo& MeshLoader::loadOBJ(const std::string& filepath){
 			auto mapIt = loadedMeshes.find(filepath);
 			if(mapIt != loadedMeshes.end()){
-				CLV_TRACE("Reusing model data for: {0}", filepath);
+				CLV_LOG_TRACE("Reusing model data for: {0}", filepath);
 
 				return mapIt->second;
 			} else{
-				CLV_WARN("Creating a new model with: {0}", filepath);
+				CLV_LOG_WARN("Creating a new model with: {0}", filepath);
 
 				objl::Loader objLoader;
 				if(objLoader.LoadFile(filepath)){
@@ -63,7 +63,7 @@ namespace clv{
 
 					return loadedMeshes[filepath];
 				} else{
-					CLV_ERROR("Could not load file: {0}", filepath);
+					CLV_LOG_ERROR("Could not load file: {0}", filepath);
 
 					return emptyMeshInfo;
 				}

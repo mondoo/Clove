@@ -81,7 +81,7 @@ namespace clv::gfx{
 				offset += element.count * GLVertexBufferElement::getSizeOfType(element.type);
 			}
 		} else{
-			CLV_ERROR(__FUNCTION__ " Wrong typed passed, can't create layout");
+			CLV_LOG_ERROR(__FUNCTION__ " Wrong typed passed, can't create layout");
 		}
 	}
 

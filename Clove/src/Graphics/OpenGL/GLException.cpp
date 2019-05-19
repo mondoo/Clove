@@ -11,7 +11,7 @@ namespace clv{
 
 		bool GLLogCall(){
 			while(GLenum error = glGetError()){
-				CLV_ERROR("OpenGL Error! ({0})", error);
+				CLV_LOG_ERROR("OpenGL Error! ({0})", error);
 				return false;
 			}
 			return true;

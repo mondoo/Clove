@@ -13,23 +13,23 @@ namespace clv{
 
 			//FUNCTIONS
 		public:
-			CLV_API LightSceneNode();
-			CLV_API LightSceneNode(const LightSceneNode& other);
-			CLV_API LightSceneNode(LightSceneNode&& other);
+			LightSceneNode();
+			LightSceneNode(const LightSceneNode& other);
+			LightSceneNode(LightSceneNode&& other);
 
-			CLV_API virtual ~LightSceneNode();
+			virtual ~LightSceneNode();
 
-			CLV_API inline void setAmbientColour(const math::Vector3f& colour);
-			CLV_API inline const math::Vector3f& getAmbientColour() const;
+			inline void setAmbientColour(const math::Vector3f& colour);
+			inline const math::Vector3f& getAmbientColour() const;
 
-			CLV_API inline void setDiffuseColour(const math::Vector3f& colour);
-			CLV_API inline const math::Vector3f& getDiffuseColour() const;
+			inline void setDiffuseColour(const math::Vector3f& colour);
+			inline const math::Vector3f& getDiffuseColour() const;
 
-			CLV_API inline void setSpecularColour(const math::Vector3f& colour);
-			CLV_API inline const math::Vector3f& getSpecularColour() const;
+			inline void setSpecularColour(const math::Vector3f& colour);
+			inline const math::Vector3f& getSpecularColour() const;
 
-			CLV_API LightSceneNode& operator=(const LightSceneNode& other);
-			CLV_API LightSceneNode& operator=(LightSceneNode&&) noexcept;
+			LightSceneNode& operator=(const LightSceneNode& other);
+			LightSceneNode& operator=(LightSceneNode&&) noexcept;
 		};
 	}
 }

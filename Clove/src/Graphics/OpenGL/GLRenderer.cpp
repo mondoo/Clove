@@ -96,19 +96,19 @@ void APIENTRY errorCallback(GLenum source, GLenum type, GLuint id,
 
 	switch(severity){
 		case GL_DEBUG_SEVERITY_HIGH:
-			CLV_ERROR(format.c_str(), msgSource, msgType, "HIGH", mesage);
+			CLV_LOG_ERROR(format.c_str(), msgSource, msgType, "HIGH", mesage);
 			break;
 
 		case GL_DEBUG_SEVERITY_MEDIUM:
-			CLV_WARN(format.c_str(), msgSource, msgType, "MEDIUM", mesage);
+			CLV_LOG_WARN(format.c_str(), msgSource, msgType, "MEDIUM", mesage);
 			break;
 
 		case GL_DEBUG_SEVERITY_LOW:
-			CLV_TRACE(format.c_str(), msgSource, msgType, "LOW", mesage);
+			CLV_LOG_WARN(format.c_str(), msgSource, msgType, "LOW", mesage);
 			break;
 
 		case GL_DEBUG_SEVERITY_NOTIFICATION:
-			CLV_TRACE(format.c_str(), msgSource, msgType, "NOTIFICATION", mesage);
+			CLV_LOG_TRACE(format.c_str(), msgSource, msgType, "NOTIFICATION", mesage);
 			break;
 	}
 }
@@ -169,9 +169,9 @@ namespace clv::gfx{
 			//Swap in the fancy new one
 			wglMakeCurrent(windowsDeviceContext, windowsResourceContext);
 
-			CLV_INFO("Succesfully created an OpenGL 4.6 context");
+			CLV_LOG_INFO("Succesfully created an OpenGL 4.6 context");
 		} else{
-			CLV_WARN("Could not retrieve wglCreateContextAttribsARB. Application might not support OpenGL 3.2+ contexts");
+			CLV_LOG_WARN("Could not retrieve wglCreateContextAttribsARB. Application might not support OpenGL 3.2+ contexts");
 
 			windowsResourceContext = wglCreateContext(windowsDeviceContext);
 			wglMakeCurrent(windowsDeviceContext, windowsResourceContext);
@@ -179,18 +179,18 @@ namespace clv::gfx{
 
 	#endif
 
-		CLV_TRACE("Device context created");
+		CLV_LOG_DEBUG("Device context created");
 
 		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
 
-		CLV_INFO("Rendering environment created successfully!");
-		CLV_INFO("GL version: {0}", glGetString(GL_VERSION));
+		CLV_LOG_INFO("Rendering environment created successfully!");
+		CLV_LOG_INFO("GL version: {0}", glGetString(GL_VERSION));
 
-		CLV_TRACE("Enabling Depth buffer");
+		CLV_LOG_TRACE("Enabling Depth buffer");
 		GLCall(glDepthFunc(GL_LESS));
 		GLCall(glEnable(GL_DEPTH_TEST));
 
-		CLV_TRACE("Blend set to: SRC_ALPHA | ONE_MINUS_SRC_ALPHA");
+		CLV_LOG_TRACE("Blend set to: SRC_ALPHA | ONE_MINUS_SRC_ALPHA");
 		//src is from the image - dest is what is already in the buffer
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		GLCall(glEnable(GL_BLEND));

@@ -16,22 +16,25 @@ namespace clv::gfx{
 		
 		switch(api){
 			case API::OpenGL:
-				CLV_TRACE("Creating OpenGL renderer");
+				CLV_LOG_TRACE("Creating OpenGL renderer");
 				renderer = std::make_unique<GLRenderer>(window);
 				break;
 
 			case API::DirectX11:
-				CLV_TRACE("Creating DirectX11 renderer");
+				CLV_LOG_TRACE("Creating DirectX11 renderer");
 				renderer = std::make_unique<DX11Renderer>(window);
 				break;
 
 			default:
-				CLV_ERROR(__FUNCTION__ ": Default statement hit. No renderer initialised");
+				CLV_LOG_ERROR(__FUNCTION__ ": Default statement hit. No renderer initialised");
 				break;
 		}
 
-		CLV_ASSERT(renderer != nullptr, "Renderer failed to initialise!");
-		CLV_INFO("Renderer created succesfully");
+		if(renderer == nullptr){
+			CLV_ASSERT(false, "Renderer failed to initialise!");
+		} else{
+			CLV_LOG_INFO("Renderer created succesfully");
+		}
 
 		return renderer;
 	}

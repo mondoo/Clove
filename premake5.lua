@@ -1,5 +1,5 @@
 --GLOBALS
-outputdir = "%{cfg.buildcfg}/%{cfg.platform}"
+outputdir = "%{cfg.platform}/%{cfg.buildcfg}"
 
 targetdir_clv = "Built/bin/"..outputdir.."/%{prj.name}"
 objdir_clv = "Built/intermediate/"..outputdir.."/%{prj.name}"
@@ -19,48 +19,59 @@ workspace "Clove"
 
 	configurations{
 		"Debug",
+		"Development",
+		"Profiling",
 		"Release"
 	}
 
 	platforms{
-		"Win64-lib",
-		"Win64-dll"
+		"Win64"
 	}
 
-	filter "platforms:Win64-lib"
+	--Platform filters
+	filter "platforms:Win64"
 		system "Windows"
 		architecture "x64"
 		staticruntime "On"
 
-		defines{
-			"CLV_STATIC=1"
-		}
-
-	filter "platforms:Win64-dll"
-		system "Windows"
-		architecture "x64"
-		staticruntime "Off"
-
-		defines{
-			"CLV_DYNAMIC=1"
-		}
-
+	--System filters
 	filter "system:Windows"
 		defines{
 			"CLV_PLATFORM_WINDOWS=1"
 		}
 
+	--Configuration filters
 	filter "configurations:Debug"
 		runtime "Debug"
 		symbols "On"
+		optimize "Off"
 
 		defines {
 			"CLV_DEBUG=1"
 		}
+		
+	filter "configurations:Development"
+		runtime "Debug"
+		symbols "On"
+		optimize "Debug"
+
+		defines {
+			"CLV_DEVELOPMENT=1"
+		}
+		
+	filter "configurations:Profiling"
+		runtime "Release"
+		symbols "Off"
+		optimize "On"
+
+		defines {
+			"CLV_PROFILING=1"
+		}
 
 	filter "configurations:Release"
 		runtime "Release"
-		optimize "On"
+		symbols "Off"
+		optimize "Full"
 
 		defines {
 			"CLV_RELEASE=1"
@@ -144,7 +155,6 @@ project "stb"
 	}
 
 --End: Dependencies
-group ""
 
 --CLOVE
 -- Inlcude direction relative to the roof folder (solution directory)
@@ -155,9 +165,11 @@ includeDir["glm"]	= "Clove/vendor/glm"
 includeDir["stb"]	= "Clove/vendor/stb"
 includeDir["dxerr"]	= "Clove/vendor/dxerr"
 
+group ""
 project "Clove"
 	location "Clove"
 	language "C++"
+	kind "StaticLib"
 
 	targetdir(targetdir_clv)
 	objdir(objdir_clv)
@@ -205,7 +217,6 @@ project "Clove"
 
 	defines{
 		"CLV_ENGINE=1",
-		"CLV_EXPORT_DLL=1",
 		"GLFW_INCLUDE_NONE"
 	}
 
@@ -222,24 +233,8 @@ project "Clove"
 	filter "files:**-ps.hlsl"
 		shadertype "Pixel"
 
-	--platforms
-	filter "platforms:Win64-lib"
-		kind "StaticLib"
-
-	filter "platforms:Win64-dll"
-		kind "SharedLib"
-
-	filter "kind:SharedLib"
-		postbuildcommands{
-			("{COPY} %{cfg.buildtarget.relpath} \"../Built/bin/"..outputdir.."/Sandbox/\"")
-		}
-
-	filter "system:Windows"
-		defines{
-			"CLV_PLATFORM_WINDOWS=1"
-		}
-
---SANDBOX
+--Sandbox
+group ""
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"

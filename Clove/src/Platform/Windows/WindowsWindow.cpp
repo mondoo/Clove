@@ -19,7 +19,7 @@ namespace clv{
 		data.width = props.width;
 		data.height = props.height;
 
-		CLV_TRACE("Creating window: {0} ({1}, {2})", data.title, data.width, data.height);
+		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", data.title, data.width, data.height);
 
 		WNDCLASSEX wc = { 0 };
 		wc.cbSize = sizeof(wc);
@@ -36,7 +36,7 @@ namespace clv{
 
 		RegisterClassEx(&wc);
 
-		CLV_TRACE("Windows class registered");
+		CLV_LOG_DEBUG("Windows class registered");
 
 		const std::wstring wideTitle(data.title.begin(), data.title.end());
 
@@ -68,7 +68,7 @@ namespace clv{
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
 
-		CLV_INFO("Window created");
+		CLV_LOG_INFO("Window created");
 
 		ShowWindow(windowsHandle, SW_SHOW);
 

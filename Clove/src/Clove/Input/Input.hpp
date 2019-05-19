@@ -5,11 +5,11 @@
 
 namespace clv{
 	namespace input{
-		CLV_API bool isKeyPressed(Key key);
+		bool isKeyPressed(Key key);
 
-		CLV_API bool isMouseButtonPressed(MouseButton button);
-		CLV_API std::pair<float, float> getMousePosition();
-		CLV_API float getMouseX();
-		CLV_API float getMouseY();
+		bool isMouseButtonPressed(MouseButton button);
+		std::pair<float, float> getMousePosition();
+		float getMouseX();
+		float getMouseY();
 	};
 }

@@ -17,32 +17,32 @@ namespace clv{
 
 			//FUNCTIONS
 		public:
-			CLV_API SceneNode();
-			CLV_API SceneNode(const SceneNode& other);
-			CLV_API SceneNode(SceneNode&& other) noexcept;
+			SceneNode();
+			SceneNode(const SceneNode& other);
+			SceneNode(SceneNode&& other) noexcept;
 
-			CLV_API virtual ~SceneNode();
+			virtual ~SceneNode();
 
-			CLV_API virtual void update(float deltaSeconds);
+			virtual void update(float deltaSeconds);
 
-			CLV_API void addChild(std::shared_ptr<SceneNode> child);
+			void addChild(std::shared_ptr<SceneNode> child);
 
-			CLV_API inline void setPosition(const math::Vector3f& inPosition);
-			CLV_API inline const math::Vector3f& getPosition() const;
+			inline void setPosition(const math::Vector3f& inPosition);
+			inline const math::Vector3f& getPosition() const;
 
-			CLV_API inline void setRotation(const std::pair<math::Vector3f, float>& inRotation);
-			CLV_API inline const std::pair<math::Vector3f, float>& getRotation() const;
+			inline void setRotation(const std::pair<math::Vector3f, float>& inRotation);
+			inline const std::pair<math::Vector3f, float>& getRotation() const;
 
-			CLV_API inline void setScale(const math::Vector3f& inScale);
-			CLV_API inline const math::Vector3f& getScale() const;
+			inline void setScale(const math::Vector3f& inScale);
+			inline const math::Vector3f& getScale() const;
 
-			CLV_API math::Matrix4f getWorldTransform();
+			math::Matrix4f getWorldTransform();
 
-			CLV_API inline std::vector<std::shared_ptr<SceneNode>>::const_iterator GetChildBeginIterator() const;
-			CLV_API inline std::vector<std::shared_ptr<SceneNode>>::const_iterator GetChildEndIterator() const;
+			inline std::vector<std::shared_ptr<SceneNode>>::const_iterator GetChildBeginIterator() const;
+			inline std::vector<std::shared_ptr<SceneNode>>::const_iterator GetChildEndIterator() const;
 
-			CLV_API SceneNode& operator=(const SceneNode& other);
-			CLV_API SceneNode& operator=(SceneNode&& other) noexcept;
+			SceneNode& operator=(const SceneNode& other);
+			SceneNode& operator=(SceneNode&& other) noexcept;
 
 		};
 	}

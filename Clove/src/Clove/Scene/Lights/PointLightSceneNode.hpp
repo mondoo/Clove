@@ -13,22 +13,22 @@ namespace clv{
 
 			//FUNCTIONS
 		public:
-			CLV_API PointLightSceneNode();
-			CLV_API PointLightSceneNode(const PointLightSceneNode& other);
-			CLV_API PointLightSceneNode(PointLightSceneNode&& other) noexcept;
+			PointLightSceneNode();
+			PointLightSceneNode(const PointLightSceneNode& other);
+			PointLightSceneNode(PointLightSceneNode&& other) noexcept;
 
-			CLV_API virtual ~PointLightSceneNode();
+			virtual ~PointLightSceneNode();
 
-			CLV_API inline float getConstant() const;
+			inline float getConstant() const;
 
-			CLV_API inline void setLinear(float linear);
-			CLV_API inline float getLinear() const;
+			inline void setLinear(float linear);
+			inline float getLinear() const;
 
-			CLV_API inline void setQuadratic(float quadratic);
-			CLV_API inline float getQuadratic() const;
+			inline void setQuadratic(float quadratic);
+			inline float getQuadratic() const;
 
-			CLV_API PointLightSceneNode& operator=(const PointLightSceneNode& other);
-			CLV_API PointLightSceneNode& operator=(PointLightSceneNode&& other) noexcept;
+			PointLightSceneNode& operator=(const PointLightSceneNode& other);
+			PointLightSceneNode& operator=(PointLightSceneNode&& other) noexcept;
 		};
 	}
 }

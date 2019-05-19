@@ -35,20 +35,20 @@ namespace clv{
 			/*CLV_API std::shared_ptr<MeshSceneNode> createMeshSceneNode();
 			CLV_API std::shared_ptr<MeshSceneNode> createMeshSceneNode(std::shared_ptr<SceneNode> parent);
 
-			CLV_API inline const std::vector<std::shared_ptr<RenderableSceneNode>>& getRenderables();
+			inline const std::vector<std::shared_ptr<RenderableSceneNode>>& getRenderables();
 
-			CLV_API std::shared_ptr<CameraSceneNode> createCameraSceneNode();
-			CLV_API std::shared_ptr<CameraSceneNode> createCameraSceneNode(std::shared_ptr<SceneNode> parent);
+			std::shared_ptr<CameraSceneNode> createCameraSceneNode();
+			std::shared_ptr<CameraSceneNode> createCameraSceneNode(std::shared_ptr<SceneNode> parent);
 
-			CLV_API inline std::shared_ptr<CameraSceneNode> getActiveCamera();
+			inline std::shared_ptr<CameraSceneNode> getActiveCamera();
 
-			CLV_API std::shared_ptr<PointLightSceneNode> createPointLightSceneNode();
-			CLV_API std::shared_ptr<PointLightSceneNode> createPointLightSceneNode(std::shared_ptr<SceneNode> parent);
+			std::shared_ptr<PointLightSceneNode> createPointLightSceneNode();
+			std::shared_ptr<PointLightSceneNode> createPointLightSceneNode(std::shared_ptr<SceneNode> parent);
 
-			CLV_API inline const std::vector<std::shared_ptr<PointLightSceneNode>>& getPointLights();
+			inline const std::vector<std::shared_ptr<PointLightSceneNode>>& getPointLights();
 
-			CLV_API std::shared_ptr<DirectionalLightSceneNode> createDirectionalLightSceneNode();
-			CLV_API std::shared_ptr<DirectionalLightSceneNode> createDirectionalLightSceneNode(std::shared_ptr<SceneNode> parent);
+			std::shared_ptr<DirectionalLightSceneNode> createDirectionalLightSceneNode();
+			std::shared_ptr<DirectionalLightSceneNode> createDirectionalLightSceneNode(std::shared_ptr<SceneNode> parent);
 
 			CLV_API inline const std::vector<std::shared_ptr<DirectionalLightSceneNode>>& getDirectionalLights();*/
 

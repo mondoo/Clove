@@ -20,7 +20,7 @@ namespace clv{
 			specularColour = colour;
 		}
 
-		inline CLV_API const math::Vector3f& LightSceneNode::getSpecularColour() const{
+		inline const math::Vector3f& LightSceneNode::getSpecularColour() const{
 			return specularColour;
 		}
 	}

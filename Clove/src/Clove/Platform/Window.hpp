@@ -50,14 +50,14 @@ namespace clv{
 		
 		virtual void* getNativeWindow() const = 0;
 
-		CLV_API virtual unsigned int getWidth() const = 0;
-		CLV_API virtual unsigned int getHeight() const = 0;
+		virtual unsigned int getWidth() const = 0;
+		virtual unsigned int getHeight() const = 0;
 
-		CLV_API virtual void setVSync(bool enabled) = 0;
-		CLV_API virtual bool isVSync() const = 0;
+		virtual void setVSync(bool enabled) = 0;
+		virtual bool isVSync() const = 0;
 
-		CLV_API inline Keyboard& getKeyboard();
-		CLV_API inline Mouse& getMouse();
+		inline Keyboard& getKeyboard();
+		inline Mouse& getMouse();
 
 		static Window* create(const WindowProps& props = WindowProps());
 	};
