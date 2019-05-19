@@ -2,7 +2,7 @@
 #include "CameraSceneNode.hpp"
 
 #include "Clove/Application.hpp"
-#include "Clove/Window.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Clove/Graphics/Renderer.hpp"
 
 namespace clv{

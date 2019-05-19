@@ -1,6 +1,6 @@
 namespace clv{
 	namespace scene{
-		inline const std::vector<std::shared_ptr<RenderableSceneNode>>& clv::scene::Scene::getRenderables(){
+		/*inline const std::vector<std::shared_ptr<RenderableSceneNode>>& clv::scene::Scene::getRenderables(){
 			return renderables;
 		}
 
@@ -14,7 +14,7 @@ namespace clv{
 
 		inline const std::vector<std::shared_ptr<DirectionalLightSceneNode>>& Scene::getDirectionalLights(){
 			return directionalLights;
-		}
+		}*/
 
 		template<typename T>
 		inline std::shared_ptr<T> Scene::createNode(std::shared_ptr<SceneNode> parent){

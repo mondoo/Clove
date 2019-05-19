@@ -191,6 +191,7 @@ project "Clove"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{prj.name}/vendor/OBJ-Loader/source",
 		"%{prj.name}/vendor/Event-Dispatcher",
+		"%{prj.name}/vendor/wglext",
 	}
 
 	links{

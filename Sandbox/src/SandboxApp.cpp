@@ -1,14 +1,11 @@
 #include <Clove.hpp>
 
 //Clove
-#include "Clove/Scene/MeshSceneNode.hpp"
-#include "GraphicsAPI/GL/OLD/Material.hpp"
-
 #include "Clove/Scene/CameraSceneNode.hpp"
 #include "Clove/Scene/Lights/PointLightSceneNode.hpp"
 #include "Clove/Scene/Lights/DirectionalLightSceneNode.hpp"
 
-#include "Clove/Window.hpp"
+#include "Clove/Platform/Window.hpp"
 
 #include "Clove/Events/MouseEvent.hpp"
 
@@ -33,14 +30,14 @@ public:
 	}
 
 	virtual void onAttach() override{
-		std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
+		/*std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
 
 		cam = scene->createCameraSceneNode();
 
 		cube = scene->createMeshSceneNode();
 		cube->setMesh("res/Objects/cube.obj");
 		cube->setMaterial(std::make_shared<clv::Material>());
-		cube->setPosition(clv::math::Vector3f(0.0f, 0.0f, -5.0f));
+		cube->setPosition(clv::math::Vector3f(0.0f, 0.0f, -5.0f));*/
 	}
 
 	virtual void onDetach() override{
@@ -48,8 +45,8 @@ public:
 	}
 
 	virtual void onUpdate() override{
-		cube->setRotation({ clv::math::Vector3f(0.0f, 1.0f, 0.0f), rotDelta});
-		rotDelta += 0.01f;
+		/*cube->setRotation({ clv::math::Vector3f(0.0f, 1.0f, 0.0f), rotDelta});
+		rotDelta += 0.01f;*/
 	}
 
 	virtual void onImGuiRender() override{

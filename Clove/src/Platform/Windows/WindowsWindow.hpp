@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Window.hpp"
+#include "Clove/Platform/Window.hpp"
 
 #include "Platform/Windows/WindowsException.hpp"
 
@@ -9,6 +9,10 @@ struct GLFWwindow;
 #define CLV_WINDOWS_QUIT 25397841
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+namespace clv::gfx{
+	class Mesh;
+}
 
 namespace clv{
 	class WindowsWindow : public Window{
@@ -30,6 +34,10 @@ namespace clv{
 
 		HINSTANCE instance;
 		HWND windowsHandle;
+
+		//TEST
+		std::shared_ptr<gfx::Mesh> testMesh;
+		//
 
 		//FUNCTIONS
 	public:

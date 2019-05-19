@@ -2,7 +2,7 @@
 #include "Clove/Input/Input.hpp"
 
 #include "Clove/Application.hpp"
-#include "Clove/Window.hpp"
+#include "Clove/Platform/Window.hpp"
 
 namespace clv{
 	namespace input{

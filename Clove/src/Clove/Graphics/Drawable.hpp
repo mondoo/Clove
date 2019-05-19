@@ -2,29 +2,31 @@
 
 namespace clv{
 	namespace gfx{
+		class Renderer;
 		class Bindable;
+		class IndexBuffer;
 
 		class Drawable{
 			//VARIABLES
 		private:
 			std::vector<std::unique_ptr<Bindable>> bindables;
 
+			IndexBuffer* indexBuffer = nullptr;
+
 			//FUNCTIONS
 		public:
 			Drawable();
 			Drawable(const Drawable& other) = delete;
 			Drawable(Drawable&& other) noexcept;
-
-			virtual ~Drawable();
-
-			//Draw?
-
-			//Will need a way to get the index count
-
-			void addBindable(std::unique_ptr<Bindable> bindable);
-
 			Drawable& operator=(const Drawable& other) = delete;
 			Drawable& operator=(Drawable&& other) noexcept;
+			virtual ~Drawable();
+
+			void draw(Renderer& renderer);
+
+		protected:
+			void addBindable(std::unique_ptr<Bindable> bindable);
+			void addIndexBuffer(std::unique_ptr<IndexBuffer> indexBuffer);
 		};
 	}
 }

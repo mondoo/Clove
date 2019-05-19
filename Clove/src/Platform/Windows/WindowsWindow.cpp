@@ -1,12 +1,15 @@
 #include "clvpch.hpp"
 #include "WindowsWindow.hpp"
 
+#include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Events/KeyEvent.hpp"
-#include "Clove/Graphics/Renderer.hpp"
-
 #include "Clove/Application.hpp"
+
+//TEST
+#include "Clove/Graphics/Mesh.hpp"
+//
 
 namespace clv{
 	WindowsWindow::WindowsWindow(const WindowProps& props)
@@ -69,9 +72,13 @@ namespace clv{
 
 		ShowWindow(windowsHandle, SW_SHOW);
 
-		rendererContext.initialise(*this, gfx::API::DirectX11);
+		renderer = gfx::Renderer::createRenderer(*this, gfx::API::OpenGL);
 
 		//setVSync(true);
+
+		//TEST
+		testMesh = std::make_shared<gfx::Mesh>(*renderer);
+		//
 	}
 
 	WindowsWindow::~WindowsWindow(){
@@ -80,7 +87,7 @@ namespace clv{
 	}
 
 	void WindowsWindow::beginFrame(){
-		rendererContext.clear();
+		renderer->clear();
 
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
@@ -92,10 +99,14 @@ namespace clv{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+
+		//TEST
+		renderer->submit(testMesh);
+		//
 	}
 
 	void WindowsWindow::endFrame(){
-		rendererContext.drawScene(Application::get().getScene()); //Maybe not do it like this - pass it through? tell the window to render that scene?
+		renderer->draw();
 	}
 
 	void* WindowsWindow::getNativeWindow() const{

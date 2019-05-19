@@ -1,7 +1,7 @@
 #include "clvpch.hpp"
 #include "Application.hpp"
 
-#include "Clove/Window.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Clove/Input/Input.hpp"
 #include "Clove/LayerStack.hpp"
 #include "Clove/Layer.hpp"

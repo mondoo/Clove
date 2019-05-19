@@ -2,10 +2,10 @@
 #include "Scene.hpp"
 
 #include "Clove/Scene/SceneNode.hpp"
-#include "Clove/Scene/MeshSceneNode.hpp"
-#include "Clove/Scene/CameraSceneNode.hpp"
-#include "Clove/Scene/Lights/PointLightSceneNode.hpp"
-#include "Clove/Scene/Lights/DirectionalLightSceneNode.hpp"
+//#include "Clove/Scene/MeshSceneNode.hpp"
+//#include "Clove/Scene/CameraSceneNode.hpp"
+//#include "Clove/Scene/Lights/PointLightSceneNode.hpp"
+//#include "Clove/Scene/Lights/DirectionalLightSceneNode.hpp"
 
 namespace clv{
 	namespace scene{
@@ -22,7 +22,7 @@ namespace clv{
 			rootNode->update(deltaSeconds);
 		}
 
-		std::shared_ptr<MeshSceneNode> Scene::createMeshSceneNode(){
+		/*std::shared_ptr<MeshSceneNode> Scene::createMeshSceneNode(){
 			return createMeshSceneNode(rootNode);
 		}
 
@@ -64,6 +64,6 @@ namespace clv{
 			std::shared_ptr<DirectionalLightSceneNode> light = createNode<DirectionalLightSceneNode>(parent);
 			directionalLights.push_back(light);
 			return light;
-		}
+		}*/
 	}
 }
