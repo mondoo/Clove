@@ -11,8 +11,17 @@ namespace clv{
 
 			//FUNCTIONS
 		public:
-			CLV_API inline void setDirection(const math::Vector3f& direction);
-			CLV_API inline const math::Vector3f& getDirection() const;
+			DirectionalLightSceneNode();
+			DirectionalLightSceneNode(const DirectionalLightSceneNode& other);
+			DirectionalLightSceneNode(DirectionalLightSceneNode&& other) noexcept;
+
+			virtual ~DirectionalLightSceneNode();
+
+			inline void setDirection(const math::Vector3f& direction);
+			inline const math::Vector3f& getDirection() const;
+
+			DirectionalLightSceneNode& operator=(const DirectionalLightSceneNode& other);
+			DirectionalLightSceneNode& operator=(DirectionalLightSceneNode&& other) noexcept;
 		};
 	}
 }

@@ -15,10 +15,10 @@ namespace clv{
 	public:
 		MouseMovedEvent(float x, float y);
 
-		CLV_API inline float getX() const;
-		CLV_API inline float getY() const;
+		inline float getX() const;
+		inline float getY() const;
 
-		CLV_API virtual std::string toString() const override;
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(MouseMoved)
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryMouse | EventCategory::EventCategoryInput)
@@ -34,10 +34,10 @@ namespace clv{
 	public:
 		MouseScrolledEvent(float inXOffset, float inYOffset);
 
-		CLV_API inline float getXOffset() const;
-		CLV_API inline float getYOffset() const;
+		inline float getXOffset() const;
+		inline float getYOffset() const;
 
-		CLV_API virtual std::string toString() const override;
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(MouseScrolled)
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryMouse | EventCategory::EventCategoryInput)
@@ -50,7 +50,7 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		CLV_API inline MouseButton getMouseButton() const;
+		inline MouseButton getMouseButton() const;
 
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryMouse | EventCategory::EventCategoryInput)
 
@@ -63,7 +63,7 @@ namespace clv{
 	public:
 		MouseButtonPressedEvent(MouseButton inButton);
 
-		CLV_API virtual std::string toString() const override;
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
@@ -73,7 +73,7 @@ namespace clv{
 	public:
 		MouseButtonReleasedEvent(MouseButton inButton);
 
-		CLV_API virtual std::string toString() const override;
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(MouseButtonReleased)
 	};

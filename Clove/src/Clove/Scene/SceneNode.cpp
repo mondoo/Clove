@@ -22,16 +22,12 @@ namespace clv{
 			child->parent = weak_from_this();
 		}
 
-		SceneNode& SceneNode::operator=(const SceneNode& other) = default;
-
-		SceneNode& SceneNode::operator=(SceneNode&& other) noexcept = default;
-
 		math::Matrix4f SceneNode::getWorldTransform(){
 			const auto&[rotVector, rotAngle] = localRotation;
 
-			math::Matrix4f translation	= math::translate(math::Matrix4f(1.0f), localPosition);
-			math::Matrix4f rotation		= math::rotate(math::Matrix4f(1.0f), rotAngle, rotVector);
-			math::Matrix4f scale		= math::scale(math::Matrix4f(1.0f), localScale);
+			math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), localPosition);
+			math::Matrix4f rotation = math::rotate(math::Matrix4f(1.0f), rotAngle, rotVector);
+			math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), localScale);
 
 			math::Matrix4f transform = translation * rotation * scale;
 
@@ -41,5 +37,9 @@ namespace clv{
 				return transform;
 			}
 		}
+
+		SceneNode& SceneNode::operator=(const SceneNode& other) = default;
+
+		SceneNode& SceneNode::operator=(SceneNode&& other) noexcept = default;
 	}
 }

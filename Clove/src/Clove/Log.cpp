@@ -15,12 +15,15 @@ namespace clv{
 	#if CLV_DEBUG
 		coreLogger->set_level(spdlog::level::trace);
 		clientLogger->set_level(spdlog::level::trace);
+	#elif CLV_DEVELOPMENT
+		coreLogger->set_level(spdlog::level::debug);
+		clientLogger->set_level(spdlog::level::debug);
+	#elif CLV_PROFILING
+		coreLogger->set_level(spdlog::level::warn);
+		clientLogger->set_level(spdlog::level::warn);
 	#elif CLV_RELEASE
 		coreLogger->set_level(spdlog::level::err);
 		clientLogger->set_level(spdlog::level::err);
-	#elif CLV_DIST
-		coreLogger->set_level(spdlog::level::off);
-		clientLogger->set_level(spdlog::level::off);
 	#endif
 	}
 }

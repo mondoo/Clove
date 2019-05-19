@@ -1,15 +1,18 @@
 #include "clvpch.hpp"
 #include "Application.hpp"
 
-#include "Clove/Window.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Clove/Input/Input.hpp"
 #include "Clove/LayerStack.hpp"
 #include "Clove/Layer.hpp"
 #include "Clove/Events/Event.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/ImGui/ImGuiLayer.hpp"
-#include "Clove/Rendering/Renderer.hpp"
 #include "Clove/Scene/Scene.hpp"
+#include "Clove/Input/Keyboard.hpp"
+#include "Clove/Input/Mouse.hpp"
+#include "Clove/Events/KeyEvent.hpp"
+#include "Clove/Events/MouseEvent.hpp"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -20,14 +23,12 @@ namespace clv{
 
 		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
+		scene = std::make_shared<scene::Scene>();
 
 		layerStack = std::make_unique<LayerStack>();
 
-		imGuiLayer = std::make_shared<ImGuiLayer>();
-		pushLayer(imGuiLayer);
-
-		renderer = std::make_unique<Renderer>();
-		scene = std::make_shared<scene::Scene>();
+		//imGuiLayer = std::make_shared<ImGuiLayer>();
+		//pushLayer(imGuiLayer);
 	}
 
 	Application::~Application() = default;
@@ -38,15 +39,70 @@ namespace clv{
 			std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
 			prevFrameTime = currFrameTime;
 
-			window->swapBuffers();
-			renderer->clear();
+			window->beginFrame();
+
+			//Temp input handling
+			while(auto e = getWindow().getKeyboard().getKeyEvent()){
+				Keyboard::Event keyEvent = e.value();
+				if(keyEvent.isPressed()){
+					KeyPressedEvent kpe(keyEvent.getKey(), -1); //TODO: might need to get rid of the keyevent
+					onEvent(kpe);
+				} else if(keyEvent.isReleased()){
+					KeyReleasedEvent kre(keyEvent.getKey());
+					onEvent(kre);
+				}
+			}
+
+			while(auto e = getWindow().getKeyboard().getCharEvent()){
+				char character = e.value();
+				KeyTypedEvent kte(static_cast<Key>(character));
+				onEvent(kte);
+			}
+
+			while(auto e = getWindow().getMouse().getEvent()){
+				Mouse::Event mouseEvent = e.value();
+				switch(mouseEvent.getType()){
+					case Mouse::Event::Type::Move:
+						{
+							const auto[x, y] = mouseEvent.getPos();
+							MouseMovedEvent mme(x, y);
+							onEvent(mme);
+						}
+						break;
+					case Mouse::Event::Type::Pressed:
+						{
+							MouseButtonPressedEvent mbpe(mouseEvent.getButton());
+							onEvent(mbpe);
+						}
+						break;
+					case Mouse::Event::Type::Released:
+						{
+							MouseButtonReleasedEvent mbre(mouseEvent.getButton());
+							onEvent(mbre);
+						}
+						break;
+					case Mouse::Event::Type::WheelUp:
+						{
+							MouseScrolledEvent mse(1, 0);
+							onEvent(mse);
+						}
+						break;
+					case Mouse::Event::Type::WheelDown:
+						{
+							MouseScrolledEvent mse(-1, 0);
+							onEvent(mse);
+						}
+						break;
+				}
+			}
+			//~Temp
 
 			for(auto layer : *layerStack){
 				layer->onUpdate();
 			}
 
 			scene->update(deltaSeonds.count());
-			renderer->drawQueue(scene);
+			window->endFrame();
 
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){

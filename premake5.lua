@@ -1,11 +1,14 @@
 --GLOBALS
-outputdir = "%{cfg.buildcfg}/%{cfg.platform}"
+outputdir = "%{cfg.platform}/%{cfg.buildcfg}"
 
-targetdir_clv = "Built/bin/" .. outputdir .. "/%{prj.name}"
-objdir_clv = "Built/intermediate/" .. outputdir .. "/%{prj.name}"
+targetdir_clv = "Built/bin/"..outputdir.."/%{prj.name}"
+objdir_clv = "Built/intermediate/"..outputdir.."/%{prj.name}"
 
-targetdir_vendor = "Built/bin/" .. outputdir .. "/vendor/%{prj.name}"
-objdir_vendor = "Built/intermediate/" .. outputdir .. "/vendor/%{prj.name}"
+targetdir_vendor = "Built/bin/"..outputdir.."/vendor/%{prj.name}"
+objdir_vendor = "Built/intermediate/"..outputdir.."/vendor/%{prj.name}"
+
+hlslout_dir = "../Sandbox/"
+hlslout_com = hlslout_dir.."%{file.basename}"..".cso"
 
 --Workspace Settings
 workspace "Clove"
@@ -16,48 +19,59 @@ workspace "Clove"
 
 	configurations{
 		"Debug",
+		"Development",
+		"Profiling",
 		"Release"
 	}
 
 	platforms{
-		"Win64-lib",
-		"Win64-dll"
+		"Win64"
 	}
 
-	filter "platforms:Win64-lib"
+	--Platform filters
+	filter "platforms:Win64"
 		system "Windows"
 		architecture "x64"
 		staticruntime "On"
 
-		defines{
-			"CLV_STATIC=1"
-		}
-
-	filter "platforms:Win64-dll"
-		system "Windows"
-		architecture "x64"
-		staticruntime "Off"
-
-		defines{
-			"CLV_DYNAMIC=1"
-		}
-
+	--System filters
 	filter "system:Windows"
 		defines{
 			"CLV_PLATFORM_WINDOWS=1"
 		}
 
+	--Configuration filters
 	filter "configurations:Debug"
 		runtime "Debug"
 		symbols "On"
+		optimize "Off"
 
 		defines {
 			"CLV_DEBUG=1"
 		}
+		
+	filter "configurations:Development"
+		runtime "Debug"
+		symbols "On"
+		optimize "Debug"
+
+		defines {
+			"CLV_DEVELOPMENT=1"
+		}
+		
+	filter "configurations:Profiling"
+		runtime "Release"
+		symbols "Off"
+		optimize "On"
+
+		defines {
+			"CLV_PROFILING=1"
+		}
 
 	filter "configurations:Release"
 		runtime "Release"
-		optimize "On"
+		symbols "Off"
+		optimize "Full"
 
 		defines {
 			"CLV_RELEASE=1"
@@ -75,65 +89,22 @@ project "ImGui"
 	objdir(objdir_vendor)
 
 	files{
-        "%{prj.location}/imconfig.h",
-        "%{prj.location}/imgui.h",
-        "%{prj.location}/imgui.cpp",
-        "%{prj.location}/imgui_draw.cpp",
-        "%{prj.location}/imgui_internal.h",
-        "%{prj.location}/imgui_widgets.cpp",
-        "%{prj.location}/imstb_rectpack.h",
-        "%{prj.location}/imstb_textedit.h",
-        "%{prj.location}/imstb_truetype.h",
-        "%{prj.location}/imgui_demo.cpp"
+        "%{prj.location}/**.h",
+        "%{prj.location}/**.cpp",
     }
-
+	
+	excludes{
+		"%{prj.location}/examples/**.h",
+		"%{prj.location}/examples/**.cpp",
+		"%{prj.location}/misc/**.h",
+		"%{prj.location}/misc/**.cpp",
+	}
+	
 	defines{
 		"IMGUI_USER_CONFIG=\"../../src/Clove/ImGui/ImGuiConfig.hpp\"",
 		"IMGUI_DISABLE_INCLUDE_IMCONFIG_H",
 		"_CRT_SECURE_NO_WARNINGS"
 	}    
-
---GFLW
-project "GLFW"
-	location "Clove/vendor/GLFW"
-    kind "StaticLib"
-    language "C"
-    
-	targetdir(targetdir_vendor)
-	objdir(objdir_vendor)
-
-	files{
-        "%{prj.location}/include/GLFW/glfw3.h",
-        "%{prj.location}/include/GLFW/glfw3native.h",
-        "%{prj.location}/src/glfw_config.h",
-        "%{prj.location}/src/context.c",
-        "%{prj.location}/src/init.c",
-        "%{prj.location}/src/input.c",
-        "%{prj.location}/src/monitor.c",
-        "%{prj.location}/src/vulkan.c",
-        "%{prj.location}/src/window.c"
-    }
-
-	defines{
-		"_CRT_SECURE_NO_WARNINGS"
-	}
-    
-	filter "system:Windows"
-        files{
-            "%{prj.location}/src/win32_init.c",
-            "%{prj.location}/src/win32_joystick.c",
-            "%{prj.location}/src/win32_monitor.c",
-            "%{prj.location}/src/win32_time.c",
-            "%{prj.location}/src/win32_thread.c",
-            "%{prj.location}/src/win32_window.c",
-            "%{prj.location}/src/wgl_context.c",
-            "%{prj.location}/src/egl_context.c",
-            "%{prj.location}/src/osmesa_context.c"
-        }
-
-		defines{ 
-            "_GLFW_WIN32"
-		}
 
 --GLAD
 project "Glad"
@@ -145,32 +116,60 @@ project "Glad"
 	objdir(objdir_vendor)
 
 	files{
-        "%{prj.location}/include/glad/glad.h",
-        "%{prj.location}/include/KHR/khrplatform.h",
-        "%{prj.location}/src/glad.c"
+        "%{prj.location}/include/**.h",
+        "%{prj.location}/include/**.h",
+        "%{prj.location}/src/**.c"
     }
 
 	includedirs{
 		"%{prj.location}/include"
 	}
-    
-	filter "system:Windows"    
+
+--dxerr
+project "dxerr"
+	location "Clove/vendor/dxerr"
+	kind "StaticLib"
+	language "C++"
+
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
+
+	files{
+		"%{prj.location}/**.h",
+		"%{prj.location}/**.inl",
+		"%{prj.location}/**.cpp",
+	}
+	
+--stb
+project "stb"
+	location "Clove/vendor/stb"
+	kind "StaticLib"
+	language "C++"
+	
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
+	
+	files{
+		"%{prj.location}/**.h",
+		"%{prj.location}/**.cpp",
+	}
 
 --End: Dependencies
-group ""
 
 --CLOVE
 -- Inlcude direction relative to the roof folder (solution directory)
 includeDir = {}
-includeDir["GLFW"]	= "Clove/vendor/GLFW/include"
 includeDir["Glad"]	= "Clove/vendor/Glad/include"
 includeDir["ImGui"] = "Clove/vendor/imgui"
 includeDir["glm"]	= "Clove/vendor/glm"
 includeDir["stb"]	= "Clove/vendor/stb"
+includeDir["dxerr"]	= "Clove/vendor/dxerr"
 
+group ""
 project "Clove"
 	location "Clove"
 	language "C++"
+	kind "StaticLib"
 
 	targetdir(targetdir_clv)
 	objdir(objdir_clv)
@@ -179,62 +178,63 @@ project "Clove"
 	pchsource "Clove/src/clvpch.cpp"
 
 	files{
-		--Clove
+		--src
 		"%{prj.name}/src/**.hpp",
 		"%{prj.name}/src/**.inl",
 		"%{prj.name}/src/**.cpp",
 
-		"%{prj.name}/res/**.glsl",
-
-		--Non-static vendor *.cpp
-		"%{prj.name}/vendor/stb/**.cpp",
+		--shader
+		"%{prj.name}/src/**.glsl",
+		"%{prj.name}/src/**.hlsl",
 	}
 
 	includedirs{
+		--Clove
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include",
-
-		"%{includeDir.GLFW}",
+		
+		--Libs
 		"%{includeDir.Glad}",
 		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
 		"%{includeDir.stb}",
+		"%{includeDir.dxerr}",
 
+		--Misc vendor
+		"%{prj.name}/vendor/spdlog/include",
 		"%{prj.name}/vendor/OBJ-Loader/source",
-
-		"%{prj.name}/vendor/Event-Dispatcher"
+		"%{prj.name}/vendor/Event-Dispatcher",
+		"%{prj.name}/vendor/wglext",
 	}
 
 	links{
-		"GLFW",
 		"Glad",
 		"ImGui",
+		"dxerr",
+		"stb",
+		
 		"opengl32.lib"
 	}
 
 	defines{
 		"CLV_ENGINE=1",
-		"CLV_EXPORT_DLL=1",
 		"GLFW_INCLUDE_NONE"
 	}
 
-	filter "platforms:Win64-lib"
-		kind "StaticLib"
+	postbuildcommands{
+		("{COPY} "..hlslout_dir.."**.cso \"../Built/bin/"..outputdir.."/Sandbox/\"")
+	}
 
-	filter "platforms:Win64-dll"
-		kind "SharedLib"
+	--hlsl shaders
+	filter "files:**.hlsl"
+		shadermodel "5.0"
+		shaderobjectfileoutput(hlslout_com)
+	filter "files:**-vs.hlsl"
+		shadertype "Vertex"
+	filter "files:**-ps.hlsl"
+		shadertype "Pixel"
 
-	filter "kind:SharedLib"
-		postbuildcommands{
-			("{COPY} %{cfg.buildtarget.relpath} \"../Built/bin/" .. outputdir .. "/Sandbox/\"")
-		}
-
-	filter "system:Windows"
-		defines{
-			"CLV_PLATFORM_WINDOWS=1"
-		}
-
---SANDBOX
+--Sandbox
+group ""
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"

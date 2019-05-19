@@ -7,19 +7,28 @@ namespace clv{
 		class PointLightSceneNode : public LightSceneNode{
 			//VARIABLES
 		private:
-			const float constant = 1.0f;
+			float constant = 1.0f;
 			float linear = 0.0014f;
 			float quadratic = 0.000007f;
 
 			//FUNCTIONS
 		public:
-			CLV_API inline float getConstant() const;
+			PointLightSceneNode();
+			PointLightSceneNode(const PointLightSceneNode& other);
+			PointLightSceneNode(PointLightSceneNode&& other) noexcept;
 
-			CLV_API inline void setLinear(float linear);
-			CLV_API inline float getLinear() const;
+			virtual ~PointLightSceneNode();
 
-			CLV_API inline void setQuadratic(float quadratic);
-			CLV_API inline float getQuadratic() const;
+			inline float getConstant() const;
+
+			inline void setLinear(float linear);
+			inline float getLinear() const;
+
+			inline void setQuadratic(float quadratic);
+			inline float getQuadratic() const;
+
+			PointLightSceneNode& operator=(const PointLightSceneNode& other);
+			PointLightSceneNode& operator=(PointLightSceneNode&& other) noexcept;
 		};
 	}
 }
