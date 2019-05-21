@@ -6,6 +6,10 @@ namespace clv{
 	class Window;
 }
 
+namespace clv::scene{
+	class Camera;
+}
+
 namespace clv::gfx{
 	class Drawable;
 
@@ -20,6 +24,8 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		std::queue<std::weak_ptr<Drawable>> drawables;
+
+		scene::Camera* activeCamera = nullptr;
 
 		//FUNCTIONS
 	public:
@@ -39,7 +45,12 @@ namespace clv::gfx{
 
 		inline virtual API getAPI() const = 0;
 
+		void setActiveCamera(scene::Camera* cam);
+		inline const scene::Camera& getActiveCamera() const; //TODO: the renderer was supposed to give the camera to the drawables, is this better?
+
 	protected:
 		virtual void drawIndexed(const unsigned int count) = 0;
 	};
 }
+
+#include "Renderer.inl"

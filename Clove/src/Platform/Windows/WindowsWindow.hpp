@@ -35,10 +35,6 @@ namespace clv{
 		HINSTANCE instance;
 		HWND windowsHandle;
 
-		//TEST
-		std::shared_ptr<gfx::Mesh> testMesh;
-		//
-
 		//FUNCTIONS
 	public:
 		WindowsWindow() = delete;

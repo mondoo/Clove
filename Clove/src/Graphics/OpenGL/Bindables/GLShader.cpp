@@ -68,11 +68,11 @@ namespace clv::gfx{
 		GLCall(glDeleteShader(shaderID));
 	}
 
-	void GLShader::setModelMatrix(const math::Matrix4f& model){
+	void GLShader::setWorldMatrix(const math::Matrix4f& world){
 		if(isBound){
-			GLCall(glUniformMatrix4fv(getUniformLocation("model"), 1, GL_FALSE, math::valuePtr(model)));
+			GLCall(glUniformMatrix4fv(getUniformLocation("world"), 1, GL_FALSE, math::valuePtr(world)));
 		}
-		mvpMap["model"] = model;
+		mvpMap["world"] = world;
 	}
 
 	void GLShader::setViewMatrix(const math::Matrix4f& view){

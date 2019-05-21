@@ -36,12 +36,12 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		Window() = default;
+		Window();
 		Window(const Window& other) = delete;
 		Window(Window&& other) noexcept = delete;
 		Window& operator=(const Window& other) = delete;
 		Window& operator=(Window&& other) noexcept = delete;
-		virtual ~Window() = default;
+		virtual ~Window();
 
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;
@@ -58,6 +58,7 @@ namespace clv{
 
 		inline Keyboard& getKeyboard();
 		inline Mouse& getMouse();
+		gfx::Renderer& getRenderer();
 
 		static Window* create(const WindowProps& props = WindowProps());
 	};

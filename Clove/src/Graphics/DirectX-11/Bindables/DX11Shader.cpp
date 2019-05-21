@@ -79,8 +79,8 @@ namespace clv::gfx{
 		}
 	}
 
-	void DX11Shader::setModelMatrix(const math::Matrix4f& model){
-		vertTransforms.model = model;
+	void DX11Shader::setWorldMatrix(const math::Matrix4f& world){
+		vertTransforms.world = world;
 	}
 
 	void DX11Shader::setViewMatrix(const math::Matrix4f& view){

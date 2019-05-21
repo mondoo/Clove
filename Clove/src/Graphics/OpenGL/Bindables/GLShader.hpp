@@ -29,7 +29,7 @@ namespace clv::gfx{
 
 		virtual void attachShader(ShaderTypes type, Renderer& renderer) override;
 
-		virtual void setModelMatrix(const math::Matrix4f& model) override;
+		virtual void setWorldMatrix(const math::Matrix4f& world) override;
 		virtual void setViewMatrix(const math::Matrix4f& view) override;
 		virtual void setProjectionMatrix(const math::Matrix4f& projection) override;
 

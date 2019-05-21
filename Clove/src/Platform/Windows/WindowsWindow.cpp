@@ -7,10 +7,6 @@
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Application.hpp"
 
-//TEST
-#include "Clove/Graphics/Mesh.hpp"
-//
-
 namespace clv{
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 		: instance(GetModuleHandle(nullptr)){
@@ -75,10 +71,6 @@ namespace clv{
 		renderer = gfx::Renderer::createRenderer(*this, gfx::API::OpenGL);
 
 		//setVSync(true);
-
-		//TEST
-		testMesh = std::make_shared<gfx::Mesh>(*renderer);
-		//
 	}
 
 	WindowsWindow::~WindowsWindow(){
@@ -99,10 +91,6 @@ namespace clv{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-
-		//TEST
-		renderer->submit(testMesh);
-		//
 	}
 
 	void WindowsWindow::endFrame(){

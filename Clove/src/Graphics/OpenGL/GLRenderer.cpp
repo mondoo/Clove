@@ -3,10 +3,6 @@
 
 #include "Clove/Platform/Window.hpp"
 #include "Graphics/OpenGL/GLException.hpp"
-#include "Clove/Scene/Scene.hpp"
-#include "Clove/Scene/CameraSceneNode.hpp"
-#include "Clove/Scene/Lights/PointLightSceneNode.hpp"
-#include "Clove/Scene/Lights/DirectionalLightSceneNode.hpp"
 
 #if CLV_PLATFORM_WINDOWS
 #include "Platform/Windows/WindowsException.hpp"

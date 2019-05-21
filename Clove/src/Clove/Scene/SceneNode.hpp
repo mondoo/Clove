@@ -20,12 +20,13 @@ namespace clv{
 			SceneNode();
 			SceneNode(const SceneNode& other);
 			SceneNode(SceneNode&& other) noexcept;
-
+			SceneNode& operator=(const SceneNode& other);
+			SceneNode& operator=(SceneNode&& other) noexcept;
 			virtual ~SceneNode();
 
 			virtual void update(float deltaSeconds);
 
-			void addChild(std::shared_ptr<SceneNode> child);
+			void addChild(const std::shared_ptr<SceneNode>& child);
 
 			inline void setPosition(const math::Vector3f& inPosition);
 			inline const math::Vector3f& getPosition() const;
@@ -36,14 +37,10 @@ namespace clv{
 			inline void setScale(const math::Vector3f& inScale);
 			inline const math::Vector3f& getScale() const;
 
-			math::Matrix4f getWorldTransform();
+			math::Matrix4f getWorldTransform() const;
 
 			inline std::vector<std::shared_ptr<SceneNode>>::const_iterator GetChildBeginIterator() const;
 			inline std::vector<std::shared_ptr<SceneNode>>::const_iterator GetChildEndIterator() const;
-
-			SceneNode& operator=(const SceneNode& other);
-			SceneNode& operator=(SceneNode&& other) noexcept;
-
 		};
 	}
 }

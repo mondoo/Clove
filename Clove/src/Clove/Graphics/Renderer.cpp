@@ -3,8 +3,8 @@
 
 #include "Graphics/OpenGL/GLRenderer.hpp"
 #include "Graphics/DirectX-11/DX11Renderer.hpp"
-
 #include "Clove/Graphics/Drawable.hpp"
+#include "Clove/Scene/Camera.hpp"
 
 namespace clv::gfx{
 	Renderer::Renderer() = default;
@@ -50,5 +50,10 @@ namespace clv::gfx{
 				drawables.pop();
 			}
 		}
+	}
+
+	void Renderer::setActiveCamera(scene::Camera* cam){
+		CLV_ASSERT(activeCamera != nullptr, "Active camera already set!");
+		activeCamera = cam;
 	}
 }
