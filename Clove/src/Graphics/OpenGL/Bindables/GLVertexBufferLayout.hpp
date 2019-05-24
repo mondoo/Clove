@@ -44,7 +44,7 @@ namespace clv::gfx{
 		~GLVertexBufferLayout();
 
 		virtual void pushElement(const std::string& elementName, BufferElementFormat elementFormat) override;
-		virtual void createLayout(Bindable& bindable, Renderer& renderer) override;
+		virtual void createLayout(Bindable& bindable) override;
 		virtual void resetLayout() override;
 
 		virtual void bind(Renderer& renderer) override;

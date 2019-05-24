@@ -10,7 +10,7 @@
 namespace clv::ecs{
 	Entity::Entity()
 		: scene::SceneNode(){
-		mesh = std::make_shared<gfx::Mesh>(Application::get().getWindow().getRenderer());
+		mesh = std::make_shared<gfx::Mesh>();
 
 		//Temp
 		//mesh->setViewMatrix(math::Matrix4f(1.0f));
@@ -32,7 +32,8 @@ namespace clv::ecs{
 
 		mesh->setWorldMatrix(getWorldTransform());
 
-		gfx::Renderer& renderer = Application::get().getWindow().getRenderer();
+		gfx::Renderer& renderer = Application::get().getWindow().getRenderer();  //TODO: Correct?
+
 		mesh->setViewMatrix(renderer.getActiveCamera().getWorldTransform());
 		mesh->setProjection(renderer.getActiveCamera().getProjection());
 

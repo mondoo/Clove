@@ -25,7 +25,7 @@ namespace clv::gfx{
 		DX11IndexBuffer& operator=(DX11IndexBuffer&& other) noexcept;
 		~DX11IndexBuffer();
 
-		DX11IndexBuffer(const std::vector<unsigned int>& indices, Renderer& renderer);
+		DX11IndexBuffer(const std::vector<unsigned int>& indices);
 
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;

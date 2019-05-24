@@ -7,6 +7,7 @@
 #include "Clove/Profiling/Timer.hpp"
 #include "Clove/Scene/Scene.hpp"
 #include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/Mesh.hpp"
 
 #include "Clove/ECS/Entity.hpp"
 
@@ -38,6 +39,7 @@ public:
 		scene->addNode(entity);
 		scene->addNode(cam);
 
+		entity->mesh->setTexture("res/Textures/container2.png");
 		entity->setPosition({ 0.0f, 0.0f, -4.0f });
 	}
 

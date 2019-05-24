@@ -6,13 +6,13 @@ namespace clv::gfx{
 	class Shader;
 	class VertexBufferLayout;
 	class Renderer;
-
-	class BindableFactory{
-		//FUNCTIONS
-	public:
-		static std::unique_ptr<Bindable>			createVertexBuffer(const std::vector<float>& vertexData, Renderer& renderer);
-		static std::unique_ptr<IndexBuffer>			createIndexBuffer(const std::vector<unsigned int>& indexData, Renderer& renderer);
-		static std::unique_ptr<Shader>				createShader(Renderer& renderer);
-		static std::unique_ptr<VertexBufferLayout>	createVertexBufferLayout(Renderer& renderer);
-	};
+	class Texture;
 }
+
+namespace clv::gfx::BindableFactory{
+	std::unique_ptr<Bindable>			createVertexBuffer(const std::vector<float>& vertexData);
+	std::unique_ptr<IndexBuffer>		createIndexBuffer(const std::vector<unsigned int>& indexData);
+	std::unique_ptr<Shader>				createShader();
+	std::unique_ptr<VertexBufferLayout>	createVertexBufferLayout();
+	std::unique_ptr<Texture>			createTexture(const std::string& filePath);
+};

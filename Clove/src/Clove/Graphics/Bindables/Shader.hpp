@@ -20,7 +20,7 @@ namespace clv::gfx{
 		Shader& operator=(Shader&& other) noexcept;
 		virtual ~Shader();
 
-		virtual void attachShader(ShaderTypes type, Renderer& renderer) = 0;
+		virtual void attachShader(ShaderTypes type) = 0;
 
 		virtual void setWorldMatrix(const math::Matrix4f& world) = 0;
 		virtual void setViewMatrix(const math::Matrix4f& view) = 0;

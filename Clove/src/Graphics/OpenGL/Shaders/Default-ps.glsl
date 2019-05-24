@@ -82,8 +82,7 @@ void main(){
 
 	//Temp falling back to what ever the diffuse is
 //#if NUM_POINT_LIGHTS == 0 && NUM_DIR_LIGHTS == 0
-	//lighting = vec3(texture(material.diffuse, vertTexCoord));
-	lighting = vec3(1.0, 1.0, 1.0);
+	lighting = vec3(texture(material.diffuse, vertTexCoord));
 //#endif
 
 	fragmentColour = vec4(lighting, 1.0);

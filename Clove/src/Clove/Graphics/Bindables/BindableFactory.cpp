@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "BindableFactory.hpp"
 
+#include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Clove/Graphics/Bindables/Bindable.hpp"
 #include "Clove/Graphics/Renderer.hpp"
 
@@ -9,21 +11,23 @@
 #include "Graphics/OpenGL/Bindables/GLIndexBuffer.hpp"
 #include "Graphics/OpenGL/Bindables/GLShader.hpp"
 #include "Graphics/OpenGL/Bindables/GLVertexBufferLayout.hpp"
+#include "Graphics/OpenGL/Bindables/GLTexture.hpp"
 
 //DX
 #include "Graphics/DirectX-11/Bindables/DX11VertexBuffer.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11Shader.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11VertexBufferLayout.hpp"
+#include "Graphics/DirectX-11/Bindables/DX11Texture.hpp"
 
-namespace clv::gfx{
-	std::unique_ptr<Bindable> BindableFactory::createVertexBuffer(const std::vector<float>& vertexData, Renderer& renderer){
-		switch(renderer.getAPI()){
+namespace clv::gfx::BindableFactory{
+	std::unique_ptr<Bindable> createVertexBuffer(const std::vector<float>& vertexData){
+		switch(Application::get().getWindow().getRenderer().getAPI()){
 			case API::OpenGL:
 				return std::make_unique<GLVertexBuffer>(vertexData);
 
 			case API::DirectX11:
-				return std::make_unique<DX11VertexBuffer>(vertexData, renderer);
+				return std::make_unique<DX11VertexBuffer>(vertexData);
 
 			default:
 				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);
@@ -31,13 +35,13 @@ namespace clv::gfx{
 		}
 	}
 
-	std::unique_ptr<IndexBuffer> BindableFactory::createIndexBuffer(const std::vector<unsigned int>& indexData, Renderer& renderer){
-		switch(renderer.getAPI()){
+	std::unique_ptr<IndexBuffer> createIndexBuffer(const std::vector<unsigned int>& indexData){
+		switch(Application::get().getWindow().getRenderer().getAPI()){
 			case API::OpenGL:
 				return std::make_unique<GLIndexBuffer>(indexData);
 
 			case API::DirectX11:
-				return std::make_unique<DX11IndexBuffer>(indexData, renderer);
+				return std::make_unique<DX11IndexBuffer>(indexData);
 
 			default:
 				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);
@@ -45,13 +49,13 @@ namespace clv::gfx{
 		}
 	}
 
-	std::unique_ptr<Shader> BindableFactory::createShader(Renderer& renderer){
-		switch(renderer.getAPI()){
+	std::unique_ptr<Shader> createShader(){
+		switch(Application::get().getWindow().getRenderer().getAPI()){
 			case API::OpenGL:
 				return std::make_unique<GLShader>();
 
 			case API::DirectX11:
-				return std::make_unique<DX11Shader>(renderer);
+				return std::make_unique<DX11Shader>();
 
 			default:
 				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);
@@ -59,8 +63,8 @@ namespace clv::gfx{
 		}
 	}
 
-	std::unique_ptr<VertexBufferLayout> BindableFactory::createVertexBufferLayout(Renderer& renderer){
-		switch(renderer.getAPI()){
+	std::unique_ptr<VertexBufferLayout> createVertexBufferLayout(){
+		switch(Application::get().getWindow().getRenderer().getAPI()){
 			case API::OpenGL:
 				return std::make_unique<GLVertexBufferLayout>();
 
@@ -70,6 +74,20 @@ namespace clv::gfx{
 			default:
 				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);
 				return std::unique_ptr<VertexBufferLayout>();
+		}
+	}
+
+	std::unique_ptr<Texture> createTexture(const std::string& filePath){
+		switch(Application::get().getWindow().getRenderer().getAPI()){
+			case API::OpenGL:
+				return std::make_unique<GLTexture>(filePath);
+
+			case API::DirectX11:
+				return std::make_unique<DX11Texture>(filePath);
+
+			default:
+				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);
+				return std::unique_ptr<Texture>();
 		}
 	}
 }

@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "GLVertexBufferLayout.hpp"
 
+#include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Graphics/OpenGL/GLException.hpp"
 #include "Graphics/OpenGL/Bindables/GLVertexBuffer.hpp"
 
@@ -67,8 +69,9 @@ namespace clv::gfx{
 		}
 	}
 
-	void GLVertexBufferLayout::createLayout(Bindable& bindable, Renderer& renderer){
+	void GLVertexBufferLayout::createLayout(Bindable& bindable){
 		if(GLVertexBuffer* vb = dynamic_cast<GLVertexBuffer*>(&bindable)){
+			Renderer& renderer = Application::get().getWindow().getRenderer();
 			bind(renderer);
 			vb->bind(renderer);
 

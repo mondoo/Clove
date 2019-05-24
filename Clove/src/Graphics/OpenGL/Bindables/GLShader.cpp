@@ -39,6 +39,9 @@ namespace clv::gfx{
 		for(const auto&[uniformName, value] : mvpMap){
 			GLCall(glUniformMatrix4fv(getUniformLocation(uniformName), 1, GL_FALSE, math::valuePtr(value)));
 		}
+
+		//TEMP: tell the gl pipeline which slot the diffuse texture is in (what is set in GLTexture::bind)
+		GLCall(glUniform1i(getUniformLocation("material.diffuse"), 1));
 	}
 
 	void GLShader::unbind(){
@@ -46,7 +49,7 @@ namespace clv::gfx{
 		isBound = false;
 	}
 
-	void GLShader::attachShader(ShaderTypes type, Renderer& renderer){
+	void GLShader::attachShader(ShaderTypes type){
 		unsigned int gltype = 0;
 		switch(type){
 			case ShaderTypes::Vertex:

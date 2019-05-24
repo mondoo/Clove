@@ -1,7 +1,7 @@
-cbuffer CBuff{
-	float4 faceColours[6];
-};
+Texture2D tex : register(t0);
 
-float4 main(uint tid : SV_PrimitiveID) : SV_Target{
-	return faceColours[tid / 2];
+SamplerState splr : register(s0);
+
+float4 main(float2 texCoord : TexCoord) : SV_Target{
+	return tex.Sample(splr, texCoord);
 }

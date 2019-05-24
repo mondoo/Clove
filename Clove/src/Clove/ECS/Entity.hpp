@@ -9,6 +9,7 @@ namespace clv::gfx{
 namespace clv::ecs{
 	class Entity : public scene::SceneNode{
 		//VARIABLES
+	//private:
 		//Temp: just giving them all a mesh until this gets set up
 	public:
 		std::shared_ptr<gfx::Mesh> mesh;

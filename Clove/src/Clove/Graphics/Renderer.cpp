@@ -53,7 +53,7 @@ namespace clv::gfx{
 	}
 
 	void Renderer::setActiveCamera(scene::Camera* cam){
-		CLV_ASSERT(activeCamera != nullptr, "Active camera already set!");
+		CLV_ASSERT(activeCamera == nullptr, "Active camera already set!");
 		activeCamera = cam;
 	}
 }

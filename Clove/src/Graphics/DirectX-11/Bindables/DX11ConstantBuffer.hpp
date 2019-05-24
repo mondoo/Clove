@@ -17,15 +17,14 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		DX11ConstantBuffer() = delete;
+		DX11ConstantBuffer();
 		DX11ConstantBuffer(const DX11ConstantBuffer& other) = delete;
 		DX11ConstantBuffer(DX11ConstantBuffer&& other) noexcept;
 		DX11ConstantBuffer<T>& operator=(const DX11ConstantBuffer& other) = delete;
 		DX11ConstantBuffer<T>& operator=(DX11ConstantBuffer&& other) noexcept;
 		virtual ~DX11ConstantBuffer();
 
-		DX11ConstantBuffer(const T& data, Renderer& renderer);
-		DX11ConstantBuffer(Renderer& renderer);
+		DX11ConstantBuffer(const T& data);
 
 		void update(const T& data, Renderer& renderer);
 	};

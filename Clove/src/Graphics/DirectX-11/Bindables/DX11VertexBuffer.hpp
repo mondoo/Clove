@@ -23,7 +23,7 @@ namespace clv::gfx{
 		DX11VertexBuffer& operator=(DX11VertexBuffer&& other) noexcept;
 		~DX11VertexBuffer();
 
-		DX11VertexBuffer(const std::vector<float>& vertices, Renderer& renderer);
+		DX11VertexBuffer(const std::vector<float>& vertices);
 
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;
