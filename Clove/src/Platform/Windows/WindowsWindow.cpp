@@ -68,7 +68,7 @@ namespace clv{
 
 		ShowWindow(windowsHandle, SW_SHOW);
 
-		renderer = gfx::Renderer::createRenderer(*this, gfx::API::DirectX11);
+		renderer = gfx::Renderer::createRenderer(*this, gfx::API::OpenGL);
 
 		//setVSync(true);
 	}

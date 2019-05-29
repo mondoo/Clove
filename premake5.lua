@@ -219,8 +219,6 @@ project "Clove"
 		"ImGui",
 		"dxerr",
 		"stb",
-		
-		"opengl32.lib"
 	}
 
 	defines{
