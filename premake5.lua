@@ -49,6 +49,7 @@ workspace "Clove"
 		runtime "Debug"
 		symbols "On"
 		optimize "Off"
+		warnings "Extra"
 
 		defines {
 			"CLV_DEBUG=1"
@@ -58,6 +59,7 @@ workspace "Clove"
 		runtime "Debug"
 		symbols "On"
 		optimize "Debug"
+		warnings "Default"
 
 		defines {
 			"CLV_DEVELOPMENT=1"
@@ -67,6 +69,7 @@ workspace "Clove"
 		runtime "Release"
 		symbols "Off"
 		optimize "On"
+		warnings "Off"
 
 		defines {
 			"CLV_PROFILING=1"
@@ -76,6 +79,7 @@ workspace "Clove"
 		runtime "Release"
 		symbols "Off"
 		optimize "Full"
+		warnings "Off"
 
 		defines {
 			"CLV_RELEASE=1"
