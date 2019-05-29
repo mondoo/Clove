@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Clove/Graphics/GraphicsTypes.hpp"
+
 #include <queue>
 
 namespace clv{
@@ -12,11 +14,6 @@ namespace clv::scene{
 
 namespace clv::gfx{
 	class Drawable;
-
-	enum class API{
-		OpenGL,
-		DirectX11
-	};
 
 	class Renderer{
 		friend class Drawable;

@@ -2,11 +2,15 @@
 
 #include "Clove/Layer.hpp"
 
+#include "Clove/Graphics/GraphicsTypes.hpp"
+
 namespace clv{
 	class ImGuiLayer : public Layer{
 		//VARIABLES
 	private:
 		float time = 0.0f;
+
+		gfx::API currentAPI;
 
 		//FUNCTIONS
 	public:
