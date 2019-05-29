@@ -26,18 +26,8 @@ namespace clv::gfx{
 			indices.push_back(i);
 		}
 
-		//This won't be neccessary once normals are in
-		for(int i = 0; i < info.verticies.size(); ++i){
-			vertices.push_back(info.verticies[i].x);
-			vertices.push_back(info.verticies[i].y);
-			vertices.push_back(info.verticies[i].z);
-
-			vertices.push_back(info.texCoords[i].x);
-			vertices.push_back(info.texCoords[i].y);
-		}
-
 		//VB
-		std::unique_ptr<Bindable> vertexBuffer = BindableFactory::createVertexBuffer(vertices);
+		std::unique_ptr<Bindable> vertexBuffer = BindableFactory::createVertexBuffer(info.vertexData);
 
 		//IB
 		addIndexBuffer(BindableFactory::createIndexBuffer(indices));
@@ -53,6 +43,7 @@ namespace clv::gfx{
 		std::unique_ptr<VertexBufferLayout> layout = BindableFactory::createVertexBufferLayout();
 		layout->pushElement("Position", BufferElementFormat::FLOAT_3);
 		layout->pushElement("TexCoord", BufferElementFormat::FLOAT_2);
+		layout->pushElement("Normal", BufferElementFormat::FLOAT_3);
 		switch(Application::get().getWindow().getRenderer().getAPI()){//TODO: how to remove this check?
 			case API::OpenGL:
 				layout->createLayout(*vertexBuffer);
@@ -67,23 +58,19 @@ namespace clv::gfx{
 		addBindable(std::move(shader));
 	}
 
-	void Mesh::setWorldMatrix(const math::Matrix4f& world){
-		shader->setWorldMatrix(world);
+	void Mesh::setModelMatrix(const math::Matrix4f& model){
+		shader->setModelMatrix(model);
 	}
 
-	void Mesh::setViewMatrix(const math::Matrix4f& view){
-		shader->setViewMatrix(view);
+	void Mesh::setDiffuseTexture(const std::string& path){
+		addBindable(BindableFactory::createTexture(path, 1u));
 	}
 
-	void Mesh::setProjection(const math::Matrix4f& projection){
-		shader->setProjectionMatrix(projection);
+	void Mesh::setSpecularTexture(const std::string& path){
+		addBindable(BindableFactory::createTexture(path, 2u));
 	}
 
-	void Mesh::setTexture(const std::string& path){
-		addBindable(BindableFactory::createTexture(path));
-	}
-
-	void Mesh::setTexture(std::unique_ptr<Texture> texture){
+	/*void Mesh::setTexture(std::unique_ptr<Texture> texture){
 		addBindable(std::move(texture));
-	}
+	}*/
 }

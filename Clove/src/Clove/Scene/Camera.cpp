@@ -4,23 +4,41 @@
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
 #include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/Bindables/BindableFactory.hpp"
 
 namespace clv::scene{
 	Camera::Camera(){
 		setProjectionMode(ProjectionMode::perspective);
 
 		Application::get().getWindow().getRenderer().setActiveCamera(this);
+
+		sboMat = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderTypes::Vertex, 0u);
+		sboMat->bind(Application::get().getWindow().getRenderer());
+
+		sboPos = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderTypes::Pixel, 2u);
+		sboPos->bind(Application::get().getWindow().getRenderer());
 	}
 
-	Camera::Camera(const Camera& other) = default;
+	//Camera::Camera(const Camera& other) = default;
 
 	Camera::Camera(Camera&& other) noexcept = default;
 
-	Camera& Camera::operator=(const Camera& other) = default;
+	//Camera& Camera::operator=(const Camera& other) = default;
 
 	Camera& Camera::operator=(Camera&& other) noexcept = default;
 
 	Camera::~Camera() = default;
+
+	void Camera::update(float deltaSeconds){
+		SceneNode::update(deltaSeconds);
+
+		viewData.view = getLookAt();
+		viewData.projection = currentProjection;
+		sboMat->update(viewData, Application::get().getWindow().getRenderer());
+
+		pos.pos = getPosition();
+		sboPos->update(pos, Application::get().getWindow().getRenderer());
+	}
 
 	void Camera::updateFront(float pitch, float yaw){
 		//glm::vec3 cameraDirection = glm::normalize(cameraPosition - cameraTarget);

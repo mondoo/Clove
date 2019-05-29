@@ -16,7 +16,8 @@ namespace clv::gfx{
 
 	DX11Texture::~DX11Texture() = default;
 
-	DX11Texture::DX11Texture(const std::string& filePath){
+	DX11Texture::DX11Texture(const std::string& filePath, unsigned int bindingPoint)
+		: bindingPoint(bindingPoint){
 		Renderer& renderer = Application::get().getWindow().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
@@ -73,9 +74,8 @@ namespace clv::gfx{
 
 	void DX11Texture::bind(Renderer& renderer){
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
-			//First param is register being access on shader side
-			dxrenderer->getContext().PSSetShaderResources(0u, 1u, textureView.GetAddressOf());
-			dxrenderer->getContext().PSSetSamplers(0u, 1u, sampler.GetAddressOf());
+			dxrenderer->getContext().PSSetShaderResources(bindingPoint, 1u, textureView.GetAddressOf());
+			dxrenderer->getContext().PSSetSamplers(bindingPoint, 1u, sampler.GetAddressOf());
 		}
 	}
 

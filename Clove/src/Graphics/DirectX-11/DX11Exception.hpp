@@ -2,82 +2,74 @@
 
 #include "Clove/Exception/CloveException.hpp"
 
-namespace clv{
-	namespace gfx{
-		class DX11Exception : public CloveException{
-			//VARIABLES
-		public:
-			HRESULT hr;
-			std::string info;
+namespace clv::gfx{
+	class DX11Exception : public CloveException{
+		//VARIABLES
+	public:
+		HRESULT hr;
+		std::string info;
 
-			//FUNCTIONS
-		public:
-			DX11Exception() = delete;
-			DX11Exception(const DX11Exception& other) = delete;
-			DX11Exception(DX11Exception&& other) noexcept = delete;
+		//FUNCTIONS
+	public:
+		DX11Exception() = delete;
+		DX11Exception(const DX11Exception& other) = delete;
+		DX11Exception(DX11Exception&& other) noexcept = delete;
+		CloveException& operator=(const CloveException& other) = delete;
+		CloveException& operator=(CloveException&& other) noexcept = delete;
+		virtual ~DX11Exception();
 
-			DX11Exception(int lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages = {});
+		DX11Exception(int lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages = {});
 
-			virtual ~DX11Exception();
+		virtual const char* what() const noexcept override;
+		inline virtual const char* getType() const noexcept override;
 
-			virtual const char* what() const noexcept override;
-			inline virtual const char* getType() const noexcept override;
+		inline HRESULT getErrorCode() const noexcept;
 
-			inline HRESULT getErrorCode() const noexcept;
+		std::string getErrorString() const noexcept;
+		std::string getErrorDescription() const noexcept;
+		inline std::string getErrorInfo() const noexcept;
+	};
 
-			std::string getErrorString() const noexcept;
-			std::string getErrorDescription() const noexcept;
-			inline std::string getErrorInfo() const noexcept;
+	class DeviceRemovedException : public DX11Exception{
+		using DX11Exception::DX11Exception;
 
-			CloveException& operator=(const CloveException& other) = delete;
-			CloveException& operator=(CloveException&& other) noexcept = delete;
-		};
+		//VARIABLES
+	private:
+		std::string reason;
 
-		class DeviceRemovedException : public DX11Exception{
-			using DX11Exception::DX11Exception;
-			
-			//VARIABLES
-		private:
-			std::string reason;
+		//FUNCTIONS
+	public:
+		DeviceRemovedException() = delete;
+		DeviceRemovedException(const DeviceRemovedException& other) = delete;
+		DeviceRemovedException(DeviceRemovedException&& other) noexcept = delete;
+		DeviceRemovedException& operator=(const DeviceRemovedException& other) = delete;
+		DeviceRemovedException& operator=(DeviceRemovedException&& other) noexcept = delete;
+		~DeviceRemovedException();
 
-			//FUNCTIONS
-		public:
-			DeviceRemovedException() = delete;
-			DeviceRemovedException(const DeviceRemovedException& other) = delete;
-			DeviceRemovedException(DeviceRemovedException&& other) noexcept = delete;
+		inline virtual const char* getType() const noexcept override;
+	};
 
-			~DeviceRemovedException();
+	class InfoException : public CloveException{
+		//VARIABLES
+	private:
+		std::string info;
 
-			inline virtual const char* getType() const noexcept override;
+		//FUNCTIONS
+	public:
+		InfoException() = delete;
+		InfoException(const InfoException& other) = delete;
+		InfoException(InfoException&& other) noexcept = delete;
+		InfoException& operator=(const InfoException& other) = delete;
+		InfoException& operator=(InfoException&& other) noexcept = delete;
+		~InfoException();
 
-			DeviceRemovedException& operator=(const DeviceRemovedException& other) = delete;
-			DeviceRemovedException& operator=(DeviceRemovedException&& other) noexcept = delete;
-		};
+		InfoException(int lineNum, const char* file, const std::vector<std::string>& messages);
 
-		class InfoException : public CloveException{
-			//VARIABLES
-		private:
-			std::string info;
+		virtual const char* what() const noexcept override;
+		inline virtual const char* getType() const noexcept override;
 
-			//FUNCTIONS
-		public:
-			InfoException() = delete;
-			InfoException(const InfoException& other) = delete;
-			InfoException(InfoException&& other) noexcept = delete;
-
-			InfoException(int lineNum, const char* file, const std::vector<std::string>& messages);
-
-			~InfoException();
-
-			virtual const char* what() const noexcept override;
-			inline virtual const char* getType() const noexcept override;
-
-			inline std::string getErrorInfo() const noexcept;
-
-			InfoException& operator=(const InfoException& other) = delete;
-			InfoException& operator=(InfoException&& other) noexcept = delete;
-		};
-	}
+		inline std::string getErrorInfo() const noexcept;
+	};
 }
 
 #include "DX11Exception.inl"

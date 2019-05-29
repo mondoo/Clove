@@ -36,11 +36,15 @@
 #endif
 
 //Utility defines
-#if CLV_DEBUG
+#if CLV_DEBUG || CLV_DEVELOPMENT
 	#define CLV_ENABLE_ASSERTS 1
-	#define CLV_ENABLE_PROFILING 1
 #else
 	#define CLV_ENABLE_ASSERTS 0
+#endif
+
+#if CLV_PROFILING
+	#define CLV_ENABLE_PROFILING 1
+#else
 	#define CLV_ENABLE_PROFILING 0
 #endif
 

@@ -37,7 +37,7 @@ namespace clv::gfx{
 
 	void DX11VertexBuffer::bind(Renderer& renderer){
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
-			const UINT stride = sizeof(float) * 5; //TODO: This needs to keep increasing when adding new elements - replace the data with a vertex struct so we can just size of that
+			const UINT stride = sizeof(float) * 8; //TODO: This needs to keep increasing when adding new elements - replace the data with a vertex struct so we can just size of that
 			const UINT offset = 0u;
 			dxrenderer->getContext().IASetVertexBuffers(0u, 1u, vertexBuffer.GetAddressOf(), &stride, &offset);
 		}

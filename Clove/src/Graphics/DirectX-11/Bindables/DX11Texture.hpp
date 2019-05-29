@@ -22,6 +22,8 @@ namespace clv::gfx{
 		int height = 0;
 		int BPP = 0;
 
+		unsigned int bindingPoint = 0;
+
 		//FUNCTIONS
 	public:
 		DX11Texture() = delete;
@@ -31,7 +33,7 @@ namespace clv::gfx{
 		DX11Texture& operator=(DX11Texture&& other) noexcept;
 		virtual ~DX11Texture();
 
-		DX11Texture(const std::string& filePath);
+		DX11Texture(const std::string& filePath, unsigned int bindingPoint);
 
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;

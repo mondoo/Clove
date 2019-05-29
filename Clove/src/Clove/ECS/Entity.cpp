@@ -30,12 +30,9 @@ namespace clv::ecs{
 	void Entity::update(float deltaSeconds){
 		scene::SceneNode::update(deltaSeconds);
 
-		mesh->setWorldMatrix(getWorldTransform());
+		mesh->setModelMatrix(getWorldTransform());
 
 		gfx::Renderer& renderer = Application::get().getWindow().getRenderer();  //TODO: Correct?
-
-		mesh->setViewMatrix(renderer.getActiveCamera().getWorldTransform());
-		mesh->setProjection(renderer.getActiveCamera().getProjection());
 
 		renderer.submit(mesh);
 	}

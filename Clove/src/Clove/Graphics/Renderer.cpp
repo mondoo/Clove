@@ -50,6 +50,8 @@ namespace clv::gfx{
 				drawables.pop();
 			}
 		}
+
+		swapBuffers();
 	}
 
 	void Renderer::setActiveCamera(scene::Camera* cam){

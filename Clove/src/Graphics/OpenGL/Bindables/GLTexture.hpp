@@ -13,6 +13,8 @@ namespace clv::gfx{
 		int height = 0;
 		int BPP = 0;
 
+		unsigned int bindingPoint = 0;
+
 		//FUNCTIONS
 	public:
 		GLTexture() = delete;
@@ -22,7 +24,7 @@ namespace clv::gfx{
 		GLTexture& operator=(GLTexture&& other) noexcept;
 		virtual ~GLTexture();
 
-		GLTexture(const std::string& filePath);
+		GLTexture(const std::string& filePath, unsigned int bindingPoint);
 
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;

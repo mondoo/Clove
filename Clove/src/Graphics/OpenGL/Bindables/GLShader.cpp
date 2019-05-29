@@ -8,24 +8,13 @@
 #include <sstream>
 
 namespace clv::gfx{
-	GLShader::GLShader(){
-		GLCall(programID = glCreateProgram());
-	}
-
-	GLShader::GLShader(GLShader&& other) noexcept{
-		programID = other.programID;
-		other.programID = 0;
-
-		uniformLocationCache = other.uniformLocationCache;
-	}
-
-	GLShader& GLShader::operator=(GLShader&& other) noexcept{
-		programID = other.programID;
-		other.programID = 0;
-
-		uniformLocationCache = other.uniformLocationCache;
-
-		return *this;
+	GLShader::GLShader()
+		: programID(glCreateProgram())
+		, modelUniform("model")
+		, normalMatrixUniform("normalMatrix")
+		, diffuseSlotUniform("material.diffuse", 1) //This is tell opengl which slot this texture is in
+		, specularSlotUniform("material.specular", 2)
+		, matShininess("material.shininess", 32.0f){
 	}
 
 	GLShader::~GLShader(){
@@ -34,19 +23,16 @@ namespace clv::gfx{
 
 	void GLShader::bind(Renderer& renderer){
 		GLCall(glUseProgram(programID));
-		isBound = true;
 
-		for(const auto&[uniformName, value] : mvpMap){
-			GLCall(glUniformMatrix4fv(getUniformLocation(uniformName), 1, GL_FALSE, math::valuePtr(value)));
-		}
-
-		//TEMP: tell the gl pipeline which slot the diffuse texture is in (what is set in GLTexture::bind)
-		GLCall(glUniform1i(getUniformLocation("material.diffuse"), 1));
+		modelUniform.bind(programID);
+		normalMatrixUniform.bind(programID);
+		diffuseSlotUniform.bind(programID);
+		specularSlotUniform.bind(programID);
+		matShininess.bind(programID);
 	}
 
 	void GLShader::unbind(){
 		GLCall(glUseProgram(0));
-		isBound = false;
 	}
 
 	void GLShader::attachShader(ShaderTypes type){
@@ -71,26 +57,9 @@ namespace clv::gfx{
 		GLCall(glDeleteShader(shaderID));
 	}
 
-	void GLShader::setWorldMatrix(const math::Matrix4f& world){
-		if(isBound){
-			GLCall(glUniformMatrix4fv(getUniformLocation("world"), 1, GL_FALSE, math::valuePtr(world)));
-		}
-		mvpMap["world"] = world;
-	}
-
-	void GLShader::setViewMatrix(const math::Matrix4f& view){
-		if(isBound){
-			GLCall(glUniformMatrix4fv(getUniformLocation("view"), 1, GL_FALSE, math::valuePtr(view)));
-		}
-		mvpMap["view"] = view;
-
-	}
-
-	void GLShader::setProjectionMatrix(const math::Matrix4f& projection){
-		if(isBound){
-			GLCall(glUniformMatrix4fv(getUniformLocation("projection"), 1, GL_FALSE, math::valuePtr(projection)));
-		}
-		mvpMap["projection"] = projection;
+	void GLShader::setModelMatrix(const math::Matrix4f& model){
+		modelUniform.update(model);
+		normalMatrixUniform.update(math::transpose(math::inverse(model)));
 	}
 
 	std::string GLShader::getPathForShader(ShaderTypes shader){
@@ -141,19 +110,5 @@ namespace clv::gfx{
 		}
 
 		return id;
-	}
-
-	int GLShader::getUniformLocation(const std::string& name){
-		if(uniformLocationCache.find(name) != uniformLocationCache.end()){
-			return uniformLocationCache[name];
-		}
-
-		GLCall(int location = glGetUniformLocation(programID, name.c_str()));
-		if(location == -1){
-			CLV_LOG_WARN("Warning: Uniform {0} does not exist!: {1}", name, __FUNCTION__);
-		}
-
-		uniformLocationCache[name] = location;
-		return location;
 	}
 }

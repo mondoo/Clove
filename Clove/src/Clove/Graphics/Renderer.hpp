@@ -50,6 +50,8 @@ namespace clv::gfx{
 
 	protected:
 		virtual void drawIndexed(const unsigned int count) = 0;
+
+		virtual void swapBuffers() = 0;
 	};
 }
 

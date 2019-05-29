@@ -7,7 +7,17 @@
 
 namespace clv::gfx{
 	template<typename T>
-	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(){
+	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(DX11ConstantBuffer&& other) noexcept = default;
+
+	template<typename T>
+	inline DX11ConstantBuffer<T>& DX11ConstantBuffer<T>::operator=(DX11ConstantBuffer&& other) noexcept = default;
+
+	template<typename T>
+	inline DX11ConstantBuffer<T>::~DX11ConstantBuffer() = default;
+
+	template<typename T>
+	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint)
+		: bindingPoint(bindingPoint){
 		Renderer& renderer = Application::get().getWindow().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
@@ -25,16 +35,8 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(DX11ConstantBuffer&& other) noexcept = default;
-
-	template<typename T>
-	inline DX11ConstantBuffer<T>& DX11ConstantBuffer<T>::operator=(DX11ConstantBuffer&& other) noexcept = default;
-
-	template<typename T>
-	inline DX11ConstantBuffer<T>::~DX11ConstantBuffer() = default;
-
-	template<typename T>
-	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(const T& data){
+	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint, const T& data)
+		: bindingPoint(bindingPoint){
 		Renderer& renderer = Application::get().getWindow().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
@@ -75,7 +77,7 @@ namespace clv::gfx{
 	template<typename T>
 	inline void DX11VertexConstantBuffer<T>::bind(Renderer& renderer){
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
-			dxrenderer->getContext().VSSetConstantBuffers(0u, 1u, constantBuffer.GetAddressOf());
+			dxrenderer->getContext().VSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
 		}
 	}
 
@@ -86,7 +88,7 @@ namespace clv::gfx{
 	template<typename T>
 	inline void DX11PixelConstantBuffer<T>::bind(Renderer& renderer){
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
-			dxrenderer->getContext().PSSetConstantBuffers(0u, 1u, constantBuffer.GetAddressOf());
+			dxrenderer->getContext().PSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
 		}
 	}
 

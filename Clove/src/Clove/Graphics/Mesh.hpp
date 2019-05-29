@@ -24,11 +24,10 @@ namespace clv::gfx{
 		Mesh& operator=(Mesh&& other) noexcept;
 		virtual ~Mesh();
 
-		void setWorldMatrix(const math::Matrix4f& world);
-		void setViewMatrix(const math::Matrix4f& view);
-		void setProjection(const math::Matrix4f& projection);
+		void setModelMatrix(const math::Matrix4f& model);
 
-		void setTexture(const std::string& path);
-		void setTexture(std::unique_ptr<Texture> texture);
+		void setDiffuseTexture(const std::string& path);
+		void setSpecularTexture(const std::string& path);
+		//void setTexture(std::unique_ptr<Texture> texture);
 	};
 }

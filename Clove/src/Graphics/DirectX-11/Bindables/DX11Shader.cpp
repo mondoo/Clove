@@ -11,11 +11,16 @@
 
 namespace clv::gfx{
 	DX11Shader::DX11Shader()
-		: vertCB(){
+		: vertCB(3u)
+		, materialCB(4u){
+
+		mData.sininess = 32.0f;
+		materialCB.update(mData, Application::get().getWindow().getRenderer());
 	}
 
 	DX11Shader::DX11Shader(DX11Shader&& other) noexcept
-		: vertCB(std::move(other.vertCB)){
+		: vertCB(std::move(other.vertCB))
+		, materialCB(std::move(other.materialCB)){
 		shaders = std::move(other.shaders);
 		vertexShader = other.vertexShader;
 		other.vertexShader = nullptr;
@@ -27,6 +32,7 @@ namespace clv::gfx{
 		other.vertexShader = nullptr;
 
 		vertCB = std::move(other.vertCB);
+		materialCB = std::move(other.materialCB);
 
 		return *this;
 	}
@@ -38,8 +44,10 @@ namespace clv::gfx{
 			shader->bind(renderer);
 		}
 
-		vertCB.update(vertTransforms, renderer);
+		vertCB.update(vData, renderer);
 		vertCB.bind(renderer);
+
+		materialCB.bind(renderer);
 	}
 
 	void DX11Shader::unbind(){
@@ -64,16 +72,9 @@ namespace clv::gfx{
 		}
 	}
 
-	void DX11Shader::setWorldMatrix(const math::Matrix4f& world){
-		vertTransforms.world = world;
-	}
-
-	void DX11Shader::setViewMatrix(const math::Matrix4f& view){
-		vertTransforms.view = view;
-	}
-
-	void DX11Shader::setProjectionMatrix(const math::Matrix4f& projection){
-		vertTransforms.projection = projection;
+	void DX11Shader::setModelMatrix(const math::Matrix4f& model){
+		vData.model = model;
+		vData.normalMatrix = math::transpose(math::inverse(model));
 	}
 
 	DX11VertexShader::DX11VertexShader(DX11VertexShader&& other) noexcept = default;

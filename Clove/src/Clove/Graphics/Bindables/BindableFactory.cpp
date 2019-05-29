@@ -77,13 +77,13 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::unique_ptr<Texture> createTexture(const std::string& filePath){
+	std::unique_ptr<Texture> createTexture(const std::string& filePath, unsigned int bindingPoint){
 		switch(Application::get().getWindow().getRenderer().getAPI()){
 			case API::OpenGL:
-				return std::make_unique<GLTexture>(filePath);
+				return std::make_unique<GLTexture>(filePath, bindingPoint);
 
 			case API::DirectX11:
-				return std::make_unique<DX11Texture>(filePath);
+				return std::make_unique<DX11Texture>(filePath, bindingPoint);
 
 			default:
 				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);

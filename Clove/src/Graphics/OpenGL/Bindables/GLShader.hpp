@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/Bindables/Shader.hpp"
 
+#include "Graphics/OpenGL/GLUniform.hpp"
+
 namespace clv::gfx{
 	class Renderer;
 
@@ -9,19 +11,20 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		unsigned int programID = 0;
-		std::unordered_map<std::string, int> uniformLocationCache;
 
-		std::unordered_map<std::string, math::Matrix4f> mvpMap;
-
-		bool isBound = false;
+		GLUniform<math::Matrix4f> modelUniform;
+		GLUniform<math::Matrix4f> normalMatrixUniform;
+		GLUniform<int> diffuseSlotUniform;
+		GLUniform<int> specularSlotUniform;
+		GLUniform<float> matShininess;
 
 		//FUNCTIONS
 	public:
 		GLShader();
 		GLShader(const GLShader& other) = delete;
-		GLShader(GLShader&& other) noexcept;
+		GLShader(GLShader&& other) noexcept = default;
 		GLShader& operator=(const GLShader& other) = delete;
-		GLShader& operator=(GLShader&& other) noexcept;
+		GLShader& operator=(GLShader&& other) noexcept = default;
 		~GLShader();
 
 		virtual void bind(Renderer& renderer) override;
@@ -29,16 +32,12 @@ namespace clv::gfx{
 
 		virtual void attachShader(ShaderTypes type) override;
 
-		virtual void setWorldMatrix(const math::Matrix4f& world) override;
-		virtual void setViewMatrix(const math::Matrix4f& view) override;
-		virtual void setProjectionMatrix(const math::Matrix4f& projection) override;
+		virtual void setModelMatrix(const math::Matrix4f& world) override;
 
 	private:
 		std::string getPathForShader(ShaderTypes shader);
 
 		std::string parseShader(const std::string& filepath);
 		unsigned int compileShader(unsigned int type, const std::string& source);
-
-		int getUniformLocation(const std::string& name);
 	};
 }

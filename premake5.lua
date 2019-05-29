@@ -28,6 +28,10 @@ workspace "Clove"
 		"Win64"
 	}
 
+	defines{
+		"_ENABLE_EXTENDED_ALIGNED_STORAGE"
+	}
+
 	--Platform filters
 	filter "platforms:Win64"
 		system "Windows"

@@ -3,6 +3,7 @@
 
 #include "Clove/Platform/Window.hpp"
 #include "Graphics/OpenGL/GLException.hpp"
+#include "Clove/Profiling/Timer.hpp"
 
 #if CLV_PLATFORM_WINDOWS
 #include "Platform/Windows/WindowsException.hpp"
@@ -202,13 +203,18 @@ namespace clv::gfx{
 	}
 
 	void GLRenderer::clear(){
-	#if CLV_PLATFORM_WINDOWS
-		SwapBuffers(windowsDeviceContext);
-	#endif
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	}
 
 	void GLRenderer::drawIndexed(const unsigned int count){
+		CLV_TIME_SCOPE("OpenGL4: DrawIndexed");
+
 		GLCall(glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr));
+	}
+
+	void GLRenderer::swapBuffers(){
+	#if CLV_PLATFORM_WINDOWS
+		SwapBuffers(windowsDeviceContext);
+	#endif
 	}
 }

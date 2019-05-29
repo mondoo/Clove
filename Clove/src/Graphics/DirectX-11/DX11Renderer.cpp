@@ -3,8 +3,8 @@
 
 #include "Clove/Platform/Window.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
-
 #include "Clove/Input/Input.hpp"
+#include "Clove/Profiling/Timer.hpp"
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -17,7 +17,6 @@ namespace clv::gfx{
 	DX11Renderer::~DX11Renderer() = default;
 
 	DX11Renderer::DX11Renderer(const Window& window){
-	#if CLV_PLATFORM_WINDOWS
 		windowsHandle = reinterpret_cast<HWND>(window.getNativeWindow());
 
 		DXGI_SWAP_CHAIN_DESC scd = { 0 };
@@ -58,6 +57,8 @@ namespace clv::gfx{
 			nullptr,
 			&d3dDeviceContext
 		));
+
+		CLV_LOG_INFO("Successfuly created a DirectX 11 context");
 
 		//Get access to the texture subresource (back buffer)
 		Microsoft::WRL::ComPtr<ID3D11Resource> backBuffer;
@@ -125,7 +126,6 @@ namespace clv::gfx{
 		DX11_THROW_INFO(d3dDevice->CreateRasterizerState(&rdesc, &rstate));
 
 		d3dDeviceContext->RSSetState(rstate.Get());
-	#endif
 	}
 
 	void DX11Renderer::clear(){
@@ -135,9 +135,15 @@ namespace clv::gfx{
 	}
 
 	void DX11Renderer::drawIndexed(const unsigned int count){
+		CLV_TIME_SCOPE("DX11: DrawIndexed");
+
 		HRESULT hr;
 
 		DX11_THROW_INFO_ONLY(d3dDeviceContext->DrawIndexed(static_cast<UINT>(count), 0u, 0u));
+	}
+
+	void DX11Renderer::swapBuffers(){
+		HRESULT hr;
 
 	#if CLV_DEBUG
 		infoManager.set();

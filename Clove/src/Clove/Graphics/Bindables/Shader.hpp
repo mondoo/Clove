@@ -2,13 +2,10 @@
 
 #include "Clove/Graphics/Bindables/Bindable.hpp"
 
+#include "Clove/Graphics/GraphicsTypes.hpp"
+
 namespace clv::gfx{
 	class Renderer;
-
-	enum class ShaderTypes{
-		Vertex,
-		Pixel,
-	};
 
 	class Shader : public Bindable{
 		//FUNCTIONS
@@ -22,8 +19,6 @@ namespace clv::gfx{
 
 		virtual void attachShader(ShaderTypes type) = 0;
 
-		virtual void setWorldMatrix(const math::Matrix4f& world) = 0;
-		virtual void setViewMatrix(const math::Matrix4f& view) = 0;
-		virtual void setProjectionMatrix(const math::Matrix4f& projection) = 0;
+		virtual void setModelMatrix(const math::Matrix4f& world) = 0;
 	};
 }
