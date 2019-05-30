@@ -10,10 +10,10 @@ namespace clv::scene{
 	Camera::Camera(){
 		setProjectionMode(ProjectionMode::perspective);
 
-		sboMat = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderTypes::Vertex, 0u);
+		sboMat = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderTypes::Vertex, gfx::BBP_CameraMatrices);
 		sboMat->bind(Application::get().getWindow().getRenderer());
 
-		sboPos = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderTypes::Pixel, 2u);
+		sboPos = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderTypes::Pixel, gfx::BBP_ViewData);
 		sboPos->bind(Application::get().getWindow().getRenderer());
 	}
 

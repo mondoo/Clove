@@ -16,7 +16,7 @@ namespace clv::scene{
 			quadratic
 		};
 
-		sbo = gfx::BindableFactory::createShaderBufferObject<LightData>(gfx::ShaderTypes::Pixel, 1u);
+		sbo = gfx::BindableFactory::createShaderBufferObject<LightData>(gfx::ShaderTypes::Pixel, gfx::BBP_PointLightData);
 		sbo->bind(Application::get().getWindow().getRenderer());
 	}
 

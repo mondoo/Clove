@@ -11,8 +11,8 @@
 
 namespace clv::gfx{
 	DX11Shader::DX11Shader()
-		: vertCB(3u)
-		, materialCB(4u){
+		: vertCB(BBP_ModelData)
+		, materialCB(BBP_MaterialData){
 
 		mData.sininess = 32.0f;
 		materialCB.update(mData, Application::get().getWindow().getRenderer());

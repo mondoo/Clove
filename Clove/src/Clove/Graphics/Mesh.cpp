@@ -63,11 +63,11 @@ namespace clv::gfx{
 	}
 
 	void Mesh::setDiffuseTexture(const std::string& path){
-		addBindable(BindableFactory::createTexture(path, 1u));
+		addBindable(BindableFactory::createTexture(path, gfx::TBP_Diffuse));
 	}
 
 	void Mesh::setSpecularTexture(const std::string& path){
-		addBindable(BindableFactory::createTexture(path, 2u));
+		addBindable(BindableFactory::createTexture(path, gfx::TBP_Specular));
 	}
 
 	/*void Mesh::setTexture(std::unique_ptr<Texture> texture){

@@ -3,6 +3,11 @@
 #include "Clove/Graphics/Bindables/Bindable.hpp"
 
 namespace clv::gfx{
+	enum TextureBindingPoint{
+		TBP_Diffuse		= 1u,
+		TBP_Specular	= 2u,
+	};
+
 	class Texture : public Bindable{
 		//FUNCTIONS
 	public:

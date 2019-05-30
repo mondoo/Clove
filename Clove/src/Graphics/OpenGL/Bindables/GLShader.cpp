@@ -2,6 +2,7 @@
 #include "GLShader.hpp"
 
 #include "Graphics/OpenGL/GLException.hpp"
+#include "Clove/Graphics/Bindables/Texture.hpp"
 
 #include <glad/glad.h>
 #include <fstream>
@@ -12,8 +13,8 @@ namespace clv::gfx{
 		: programID(glCreateProgram())
 		, modelUniform("model")
 		, normalMatrixUniform("normalMatrix")
-		, diffuseSlotUniform("material.diffuse", 1) //This is tell opengl which slot this texture is in
-		, specularSlotUniform("material.specular", 2)
+		, diffuseSlotUniform("material.diffuse", TBP_Diffuse) //This is tell opengl which slot this texture is in
+		, specularSlotUniform("material.specular", TBP_Specular)
 		, matShininess("material.shininess", 32.0f){
 	}
 
