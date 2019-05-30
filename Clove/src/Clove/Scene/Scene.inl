@@ -16,7 +16,7 @@ namespace clv{
 			return directionalLights;
 		}*/
 
-		template<typename T>
+		/*template<typename T>
 		inline std::shared_ptr<T> Scene::createNode(std::shared_ptr<SceneNode> parent){
 			std::shared_ptr<T> outNode = std::make_shared<T>();
 
@@ -29,6 +29,6 @@ namespace clv{
 			}
 
 			return outNode;
-		}
+		}*/
 	}
 }

@@ -53,8 +53,8 @@ namespace clv{
 			CLV_API inline const std::vector<std::shared_ptr<DirectionalLightSceneNode>>& getDirectionalLights();*/
 
 		private:
-			template<typename T>
-			std::shared_ptr<T> createNode(std::shared_ptr<SceneNode> parent);
+			/*template<typename T>
+			std::shared_ptr<T> createNode(std::shared_ptr<SceneNode> parent);*/
 		};
 	}
 }

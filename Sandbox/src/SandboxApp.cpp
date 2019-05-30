@@ -5,7 +5,7 @@
 #include "Clove/Scene/Lights/PointLightSceneNode.hpp"
 #include "Clove/Scene/Lights/DirectionalLightSceneNode.hpp"
 
-#include "Clove/Platform/Window.hpp"
+//#include "Clove/Platform/Window.hpp"
 
 #include "Clove/Events/MouseEvent.hpp"
 

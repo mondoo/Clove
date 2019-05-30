@@ -9,12 +9,17 @@
 #include "Clove/Scene/Lights/DirectionalLightSceneNode.hpp"
 
 #if CLV_PLATFORM_WINDOWS
-#include "Platform/Windows/WindowsException.hpp"
+	#include "Platform/Windows/WindowsException.hpp"
 #endif
 
 #include <glad/glad.h>
-#include <gl/GL.h>
-#include <wglext.h>
+#include <GL/gl.h>
+
+#if CLV_PLATFORM_WINDOWS
+	#include <wglext.h>
+#elif CLV_PLATFORM_LINUX
+
+#endif
 
 void APIENTRY errorCallback(GLenum source, GLenum type, GLuint id,
 							GLenum severity, GLsizei length,
@@ -118,6 +123,8 @@ namespace clv::gfx{
 	#if CLV_PLATFORM_WINDOWS
 		ReleaseDC(windowsHandle, windowsDeviceContext);
 		wglDeleteContext(windowsResourceContext);
+	#elif CLV_PLATFORM_LINUX
+
 	#endif
 	}
 
@@ -176,6 +183,7 @@ namespace clv::gfx{
 			windowsResourceContext = wglCreateContext(windowsDeviceContext);
 			wglMakeCurrent(windowsDeviceContext, windowsResourceContext);
 		}
+	#elif CLV_PLATFORM_LINUX
 
 	#endif
 
@@ -208,6 +216,8 @@ namespace clv::gfx{
 	void GLRenderer::clear(){
 	#if CLV_PLATFORM_WINDOWS
 		SwapBuffers(windowsDeviceContext);
+	#elif CLV_PLATFORM_LINUX
+
 	#endif
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	}

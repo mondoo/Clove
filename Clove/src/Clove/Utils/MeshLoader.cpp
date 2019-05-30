@@ -1,7 +1,9 @@
 #include "clvpch.hpp"
 #include "MeshLoader.hpp"
 
-#include <OBJ_Loader.h>
+//TODO: Why won't this compile on clang++/g++
+
+//#include <OBJ_Loader.h>
 
 namespace clv{
 	namespace loader{
@@ -15,6 +17,7 @@ namespace clv{
 
 				return mapIt->second;
 			} else{
+				/*
 				CLV_LOG_WARN("Creating a new model with: {0}", filepath);
 
 				objl::Loader objLoader;
@@ -67,6 +70,7 @@ namespace clv{
 
 					return emptyMeshInfo;
 				}
+				*/
 			}
 		}
 	}

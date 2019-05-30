@@ -11,7 +11,9 @@ namespace clv::gfx{
 
 	enum class API{
 		OpenGL,
+	#if CLV_PLATFORM_WINDOWS
 		DirectX11
+	#endif
 	};
 
 	class Renderer{

@@ -11,7 +11,7 @@ namespace clv{
 			constant	= other.constant;
 			linear		= other.linear;
 			quadratic	= other.quadratic;
-			LightSceneNode::LightSceneNode(std::move(other));
+			LightSceneNode(std::move(other));
 		}
 
 		PointLightSceneNode::~PointLightSceneNode() = default;

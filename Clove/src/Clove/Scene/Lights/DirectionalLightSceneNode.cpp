@@ -9,7 +9,7 @@ namespace clv{
 
 		DirectionalLightSceneNode::DirectionalLightSceneNode(DirectionalLightSceneNode&& other) noexcept{
 			direction = std::move(other.direction);
-			LightSceneNode::LightSceneNode(std::move(other));
+			LightSceneNode(std::move(other));
 		}
 
 		DirectionalLightSceneNode::~DirectionalLightSceneNode() = default;

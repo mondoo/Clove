@@ -2,7 +2,9 @@
 #include "Renderer.hpp"
 
 #include "Graphics/OpenGL/GLRenderer.hpp"
-#include "Graphics/DirectX-11/DX11Renderer.hpp"
+#if CLV_PLATFORM_WINDOWS
+	#include "Graphics/DirectX-11/DX11Renderer.hpp"
+#endif
 
 #include "Clove/Graphics/Drawable.hpp"
 
@@ -19,14 +21,15 @@ namespace clv::gfx{
 				CLV_LOG_TRACE("Creating OpenGL renderer");
 				renderer = std::make_unique<GLRenderer>(window);
 				break;
-
+			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
 				CLV_LOG_TRACE("Creating DirectX11 renderer");
 				renderer = std::make_unique<DX11Renderer>(window);
 				break;
-
+			#endif
 			default:
-				CLV_LOG_ERROR(__FUNCTION__ ": Default statement hit. No renderer initialised");
+				//CLV_LOG_ERROR(__FUNCTION__ ": Default statement hit. No renderer initialised");
+				//TODO: figure out above for different compilers
 				break;
 		}
 

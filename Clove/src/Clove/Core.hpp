@@ -26,7 +26,11 @@
 	#define CLV_PLATFORM_WINDOWS 0
 #endif
 
-#if (CLV_PLATFORM_WINDOWS) != 1
+#ifndef CLV_PLATFORM_LINUX
+	#define CLV_PLATFORM_LINUX 0
+#endif
+
+#if (CLV_PLATFORM_WINDOWS + CLV_PLATFORM_LINUX) != 1
 	#error Invalid platform!
 #endif
 

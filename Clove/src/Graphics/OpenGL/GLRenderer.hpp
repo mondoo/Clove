@@ -10,6 +10,8 @@ namespace clv::gfx{
 		HWND windowsHandle = nullptr;
 		HDC windowsDeviceContext = nullptr;
 		HGLRC windowsResourceContext = nullptr;
+	#elif CLV_PLATFORM_LINUX
+
 	#endif
 
 		//FUNCTIONS

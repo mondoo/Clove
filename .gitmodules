@@ -14,3 +14,6 @@
 [submodule "Clove/vendor/Event-Dispatcher"]
 	path = Clove/vendor/Event-Dispatcher
 	url = https://github.com/AGarlicMonkey/Event-Dispatcher.git
+[submodule "Vendor/bin/premake/premake-cmake"]
+	path = Vendor/bin/premake/premake-cmake
+	url = https://github.com/TurkeyMan/premake-cmake.git

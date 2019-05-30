@@ -11,6 +11,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 
+#ifdef _WIN32
+
 #pragma once
 #include <windows.h>
 #include <sal.h>
@@ -101,3 +103,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif //__cplusplus
+
+#endif //_WIN32

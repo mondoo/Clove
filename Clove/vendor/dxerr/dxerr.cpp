@@ -10,6 +10,8 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
+#ifdef _WIN32
+
 #include "dxerr.h"
 
 #include <stdio.h>
@@ -218,3 +220,5 @@ HRESULT WINAPI DXTraceA(_In_z_ const CHAR* strFile, _In_ DWORD dwLine, _In_ HRES
 #undef DX_OUTPUTDEBUGSTRING
 #undef DX_GETERRORSTRING
 }
+
+#endif //_WIN32
