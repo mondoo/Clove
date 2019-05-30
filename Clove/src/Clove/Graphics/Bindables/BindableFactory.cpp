@@ -3,7 +3,6 @@
 
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
-#include "Clove/Graphics/Bindables/Bindable.hpp"
 #include "Clove/Graphics/Renderer.hpp"
 
 //GL
@@ -21,7 +20,7 @@
 #include "Graphics/DirectX-11/Bindables/DX11Texture.hpp"
 
 namespace clv::gfx::BindableFactory{
-	std::unique_ptr<Bindable> createVertexBuffer(const std::vector<float>& vertexData){
+	std::unique_ptr<VertexBuffer> createVertexBuffer(const std::vector<Vertex>& vertexData){
 		switch(Application::get().getWindow().getRenderer().getAPI()){
 			case API::OpenGL4:
 				return std::make_unique<GL4VertexBuffer>(vertexData);
@@ -31,7 +30,7 @@ namespace clv::gfx::BindableFactory{
 
 			default:
 				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);
-				return std::unique_ptr<Bindable>();
+				return std::unique_ptr<VertexBuffer>();
 		}
 	}
 

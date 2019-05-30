@@ -1,15 +1,13 @@
 #pragma once
 
-#include "Clove/Graphics/Bindables/Bindable.hpp"
-
-#include "Graphics/DirectX-11/DX11Exception.hpp"
+#include "Clove/Graphics/Bindables/VertexBuffer.hpp"
 
 #include <wrl.h>
 
 struct ID3D11Buffer;
 
 namespace clv::gfx{
-	class DX11VertexBuffer : public Bindable{
+	class DX11VertexBuffer : public VertexBuffer{
 		//VARIABLES
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
@@ -23,7 +21,7 @@ namespace clv::gfx{
 		DX11VertexBuffer& operator=(DX11VertexBuffer&& other) noexcept;
 		~DX11VertexBuffer();
 
-		DX11VertexBuffer(const std::vector<float>& vertices);
+		DX11VertexBuffer(const std::vector<Vertex>& vertices);
 
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;

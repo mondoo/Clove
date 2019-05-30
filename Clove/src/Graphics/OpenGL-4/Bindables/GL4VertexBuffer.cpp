@@ -12,8 +12,8 @@ namespace clv::gfx{
 		glDeleteBuffers(1, &bufferID);
 	}
 
-	GL4VertexBuffer::GL4VertexBuffer(const std::vector<float>& vertices){
-		const unsigned int size = static_cast<unsigned int>(vertices.size() * sizeof(float));
+	GL4VertexBuffer::GL4VertexBuffer(const std::vector<Vertex>& vertices){
+		const unsigned int size = static_cast<unsigned int>(sizeof(vertices) * sizeof(Vertex));
 		const void* data = vertices.data();
 
 		glGenBuffers(1, &bufferID);

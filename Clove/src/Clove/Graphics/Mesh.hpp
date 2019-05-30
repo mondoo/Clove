@@ -6,11 +6,12 @@ namespace clv::gfx{
 	class Renderer;
 	class Shader;
 	class Texture;
+	struct Vertex;
 
 	class Mesh : public Drawable{
 		//VARIABLES
 	private:
-		std::vector<float> vertices;
+		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
 
 		Shader* shader = nullptr;
