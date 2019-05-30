@@ -19,11 +19,11 @@ namespace clv::gfx{
 	}
 
 	GLShader::~GLShader(){
-		GLCall(glDeleteProgram(programID));
+		glDeleteProgram(programID);
 	}
 
 	void GLShader::bind(Renderer& renderer){
-		GLCall(glUseProgram(programID));
+		glUseProgram(programID);
 
 		modelUniform.bind(programID);
 		normalMatrixUniform.bind(programID);
@@ -33,7 +33,7 @@ namespace clv::gfx{
 	}
 
 	void GLShader::unbind(){
-		GLCall(glUseProgram(0));
+		glUseProgram(0);
 	}
 
 	void GLShader::attachShader(ShaderTypes type){
@@ -52,10 +52,10 @@ namespace clv::gfx{
 		std::string shaderSource = parseShader(getPathForShader(type));
 		unsigned int shaderID = compileShader(gltype, shaderSource);
 
-		GLCall(glAttachShader(programID, shaderID));
-		GLCall(glLinkProgram(programID));
-		GLCall(glValidateProgram(programID));
-		GLCall(glDeleteShader(shaderID));
+		glAttachShader(programID, shaderID);
+		glLinkProgram(programID);
+		glValidateProgram(programID);
+		glDeleteShader(shaderID);
 	}
 
 	void GLShader::setModelMatrix(const math::Matrix4f& model){
@@ -93,20 +93,20 @@ namespace clv::gfx{
 	}
 
 	unsigned int GLShader::compileShader(unsigned int type, const std::string& source){
-		GLCall(unsigned int id = glCreateShader(type));
+		unsigned int id = glCreateShader(type);
 		const char* src = source.c_str();
-		GLCall(glShaderSource(id, 1, &src, nullptr));
-		GLCall(glCompileShader(id));
+		glShaderSource(id, 1, &src, nullptr);
+		glCompileShader(id);
 
 		int result;
 		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 		if(result == GL_FALSE){
 			int length;
-			GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 			char* message = new char[length];
-			GLCall(glGetShaderInfoLog(id, length, &length, message));
+			glGetShaderInfoLog(id, length, &length, message);
 			CLV_LOG_ERROR("Failed to compile {0} shader! {1}", type == GL_VERTEX_SHADER ? "vertex" : "fragment", message);
-			GLCall(glDeleteShader(id));
+			glDeleteShader(id);
 			delete[] message;
 		}
 

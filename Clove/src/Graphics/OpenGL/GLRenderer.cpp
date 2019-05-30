@@ -15,103 +15,6 @@
 
 #pragma comment(lib, "opengl32.lib")
 
-void APIENTRY errorCallback(GLenum source, GLenum type, GLuint id,
-							GLenum severity, GLsizei length,
-							const GLchar *msg, const void *data){
-	std::string format = "GL Debug message:\n| Source: {0} | Type: {1} | Severity: {2} |\nMessage {3}";
-
-	std::string mesage = msg;
-
-	//TODO: Move to GLException
-	//TODO: Remove the GLCall shinangins I guess
-
-	std::string msgSource;
-	std::string msgType;
-
-	switch(source){
-		case GL_DEBUG_SOURCE_API:
-			msgSource = "API";
-			break;
-
-		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-			msgSource = "WINDOW SYSTEM";
-			break;
-
-		case GL_DEBUG_SOURCE_SHADER_COMPILER:
-			msgSource = "SHADER COMPILER";
-			break;
-
-		case GL_DEBUG_SOURCE_THIRD_PARTY:
-			msgSource = "THIRD PARTY";
-			break;
-
-		case GL_DEBUG_SOURCE_APPLICATION:
-			msgSource = "APPLICATION";
-			break;
-
-		case GL_DEBUG_SOURCE_OTHER:
-			msgSource = "UNKNOWN";
-			break;
-
-		default:
-			msgSource = "UNKNOWN";
-			break;
-	}
-
-	switch(type){
-		case GL_DEBUG_TYPE_ERROR:
-			msgType = "ERROR";
-			break;
-
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-			msgType = "DEPRECATED BEHAVIOR";
-			break;
-
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-			msgType = "UDEFINED BEHAVIOR";
-			break;
-
-		case GL_DEBUG_TYPE_PORTABILITY:
-			msgType = "PORTABILITY";
-			break;
-
-		case GL_DEBUG_TYPE_PERFORMANCE:
-			msgType = "PERFORMANCE";
-			break;
-
-		case GL_DEBUG_TYPE_OTHER:
-			msgType = "OTHER";
-			break;
-
-		case GL_DEBUG_TYPE_MARKER:
-			msgType = "MARKER";
-			break;
-
-		default:
-			msgType = "UNKNOWN";
-			break;
-	}
-
-
-	switch(severity){
-		case GL_DEBUG_SEVERITY_HIGH:
-			CLV_LOG_ERROR(format.c_str(), msgSource, msgType, "HIGH", mesage);
-			break;
-
-		case GL_DEBUG_SEVERITY_MEDIUM:
-			CLV_LOG_WARN(format.c_str(), msgSource, msgType, "MEDIUM", mesage);
-			break;
-
-		case GL_DEBUG_SEVERITY_LOW:
-			CLV_LOG_WARN(format.c_str(), msgSource, msgType, "LOW", mesage);
-			break;
-
-		case GL_DEBUG_SEVERITY_NOTIFICATION:
-			CLV_LOG_TRACE(format.c_str(), msgSource, msgType, "NOTIFICATION", mesage);
-			break;
-	}
-}
-
 namespace clv::gfx{
 	GLRenderer::~GLRenderer(){
 	#if CLV_PLATFORM_WINDOWS
@@ -186,32 +89,32 @@ namespace clv::gfx{
 		CLV_LOG_INFO("GL version: {0}", glGetString(GL_VERSION));
 
 		CLV_LOG_TRACE("Enabling Depth buffer");
-		GLCall(glDepthFunc(GL_LESS));
-		GLCall(glEnable(GL_DEPTH_TEST));
+		glDepthFunc(GL_LESS);
+		glEnable(GL_DEPTH_TEST);
 
 		CLV_LOG_TRACE("Blend set to: SRC_ALPHA | ONE_MINUS_SRC_ALPHA");
 		//src is from the image - dest is what is already in the buffer
-		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-		GLCall(glEnable(GL_BLEND));
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 		//I guess it's called blending because you blend the src with the destination
 
-		GLCall(glClearColor(0.0f, 0.0f, 1.0f, 1.0f));
+		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
-		GLCall(glFrontFace(GL_CCW));
+		glFrontFace(GL_CCW);
 
-		GLCall(glDebugMessageCallback(errorCallback, nullptr));
-		GLCall(glEnable(GL_DEBUG_OUTPUT));
-		GLCall(glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS));
+		glDebugMessageCallback(errorCallback, nullptr);
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	}
 
 	void GLRenderer::clear(){
-		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void GLRenderer::drawIndexed(const unsigned int count){
 		CLV_TIME_SCOPE("OpenGL4: DrawIndexed");
 
-		GLCall(glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr));
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
 	}
 
 	void GLRenderer::swapBuffers(){

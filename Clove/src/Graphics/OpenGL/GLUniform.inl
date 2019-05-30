@@ -30,7 +30,7 @@ namespace clv::gfx{
 
 	template<typename T>
 	inline void GLUniform<T>::initialiseUniformLocation(unsigned int programID){
-		GLCall(int location = glGetUniformLocation(programID, uniformName.c_str()));
+		int location = glGetUniformLocation(programID, uniformName.c_str());
 		if(location == -1){
 			CLV_LOG_WARN("Warning: Uniform {0} does not exist!: {1}", uniformName, __FUNCTION__);
 		}
@@ -43,22 +43,22 @@ namespace clv::gfx{
 	}
 
 	inline void GLUniform<int>::applyValue(){
-		GLCall(glUniform1i(cachedUniformLocation, uniformValue));
+		glUniform1i(cachedUniformLocation, uniformValue);
 	}
 
 	inline void GLUniform<float>::applyValue(){
-		GLCall(glUniform1f(cachedUniformLocation, uniformValue));
+		glUniform1f(cachedUniformLocation, uniformValue);
 	}
 
 	inline void GLUniform<math::Vector2f>::applyValue(){
-		GLCall(glUniform2fv(cachedUniformLocation, GL_FALSE, math::valuePtr(uniformValue)));
+		glUniform2fv(cachedUniformLocation, GL_FALSE, math::valuePtr(uniformValue));
 	}
 
 	inline void GLUniform<math::Vector3f>::applyValue(){
-		GLCall(glUniform3fv(cachedUniformLocation, GL_FALSE, math::valuePtr(uniformValue)));
+		glUniform3fv(cachedUniformLocation, GL_FALSE, math::valuePtr(uniformValue));
 	}
 
 	inline void GLUniform<math::Matrix4f>::applyValue(){
-		GLCall(glUniformMatrix4fv(cachedUniformLocation, 1, GL_FALSE, math::valuePtr(uniformValue)));
+		glUniformMatrix4fv(cachedUniformLocation, 1, GL_FALSE, math::valuePtr(uniformValue));
 	}
 }

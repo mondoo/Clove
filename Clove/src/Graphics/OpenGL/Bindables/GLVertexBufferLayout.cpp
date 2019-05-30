@@ -40,7 +40,7 @@ namespace clv::gfx{
 	}
 
 	GLVertexBufferLayout::GLVertexBufferLayout(){
-		GLCall(glGenVertexArrays(1, &arrayID));
+		glGenVertexArrays(1, &arrayID);
 	}
 
 	GLVertexBufferLayout::GLVertexBufferLayout(GLVertexBufferLayout&& other) noexcept = default;
@@ -48,7 +48,7 @@ namespace clv::gfx{
 	GLVertexBufferLayout& GLVertexBufferLayout::operator=(GLVertexBufferLayout&& other) noexcept = default;
 
 	GLVertexBufferLayout::~GLVertexBufferLayout(){
-		GLCall(glDeleteVertexArrays(1, &arrayID));
+		glDeleteVertexArrays(1, &arrayID);
 	}
 
 	void GLVertexBufferLayout::pushElement(const std::string& elementName, BufferElementFormat elementFormat){
@@ -78,9 +78,9 @@ namespace clv::gfx{
 			unsigned long long offset = 0; //void* expects 64 bits
 			for(unsigned int i = 0; i < elements.size(); ++i){
 				const auto& element = elements[i];
-				GLCall(glEnableVertexAttribArray(i));
+				glEnableVertexAttribArray(i);
 				//i is used here to communicate with the shader for what position the 'in' parameter is (see shader)
-				GLCall(glVertexAttribPointer(i, element.count, element.type, element.normalised, stride, reinterpret_cast<const void*>(offset)));
+				glVertexAttribPointer(i, element.count, element.type, element.normalised, stride, reinterpret_cast<const void*>(offset));
 				offset += element.count * GLVertexBufferElement::getSizeOfType(element.type);
 			}
 		} else{
@@ -93,10 +93,10 @@ namespace clv::gfx{
 	}
 
 	void GLVertexBufferLayout::bind(Renderer& renderer){
-		GLCall(glBindVertexArray(arrayID));
+		glBindVertexArray(arrayID);
 	}
 
 	void GLVertexBufferLayout::unbind(){
-		GLCall(glBindVertexArray(0));
+		glBindVertexArray(0);
 	}
 }
