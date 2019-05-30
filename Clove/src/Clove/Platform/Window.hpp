@@ -4,6 +4,7 @@
 #include "Clove/Input/Mouse.hpp"
 
 namespace clv::gfx{
+	enum class API;
 	class Renderer;
 }
 
@@ -30,6 +31,12 @@ namespace clv{
 		
 		//VARIABLES
 	protected:
+		EventCallbackFn eventCallback;
+
+		WindowProps data;
+
+		bool vSync = true;
+
 		Keyboard keyboard;
 		Mouse mouse;
 		std::unique_ptr<gfx::Renderer> renderer;
@@ -46,12 +53,12 @@ namespace clv{
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;
 
-		virtual void setEventCallbackFunction(const EventCallbackFn& callback) = 0;
+		void setEventCallbackFunction(const EventCallbackFn& callback);
 		
 		virtual void* getNativeWindow() const = 0;
 
-		virtual unsigned int getWidth() const = 0;
-		virtual unsigned int getHeight() const = 0;
+		unsigned int getWidth() const;
+		unsigned int getHeight() const;
 
 		virtual void setVSync(bool enabled) = 0;
 		virtual bool isVSync() const = 0;
@@ -60,7 +67,9 @@ namespace clv{
 		inline Mouse& getMouse();
 		gfx::Renderer& getRenderer();
 
+		//Defined in derived class
 		static Window* create(const WindowProps& props = WindowProps());
+		static Window* create(const WindowProps& props, gfx::API api);
 	};
 }
 

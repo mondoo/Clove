@@ -2,9 +2,7 @@
 
 //Clove
 #include "Clove/Scene/Camera.hpp"
-#include "Clove/Platform/Window.hpp"
 #include "Clove/Events/MouseEvent.hpp"
-#include "Clove/Profiling/Timer.hpp"
 #include "Clove/Scene/Scene.hpp"
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/Mesh.hpp"

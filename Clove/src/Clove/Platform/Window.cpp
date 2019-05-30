@@ -8,6 +8,18 @@ namespace clv{
 
 	Window::~Window() = default;
 
+	void Window::setEventCallbackFunction(const EventCallbackFn& callback){
+		eventCallback = callback;
+	}
+
+	unsigned int Window::getWidth() const{
+		return data.width;
+	}
+
+	unsigned int Window::getHeight() const{
+		return data.height;
+	}
+
 	gfx::Renderer& Window::getRenderer(){
 		return *renderer;
 	}

@@ -23,6 +23,7 @@ namespace clv{
 
 		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
+		
 		scene = std::make_shared<scene::Scene>();
 
 		layerStack = std::make_unique<LayerStack>();

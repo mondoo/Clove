@@ -10,8 +10,6 @@ namespace clv::scene{
 	Camera::Camera(){
 		setProjectionMode(ProjectionMode::perspective);
 
-		Application::get().getWindow().getRenderer().setActiveCamera(this);
-
 		sboMat = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderTypes::Vertex, 0u);
 		sboMat->bind(Application::get().getWindow().getRenderer());
 

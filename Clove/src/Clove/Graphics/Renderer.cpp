@@ -53,9 +53,4 @@ namespace clv::gfx{
 
 		swapBuffers();
 	}
-
-	void Renderer::setActiveCamera(scene::Camera* cam){
-		CLV_ASSERT(activeCamera == nullptr, "Active camera already set!");
-		activeCamera = cam;
-	}
 }
