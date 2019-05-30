@@ -21,7 +21,7 @@ private:
 	float rotDelta = 0.0f;
 
 	std::shared_ptr<clv::scene::Camera> cam;
-	std::shared_ptr<clv::ecs::Entity> entity;
+	std::array<std::shared_ptr<clv::ecs::Entity>, 100> entities;
 	std::shared_ptr<clv::scene::PointLight> light;
 	std::shared_ptr<clv::ecs::Entity> lightEntity;
 
@@ -39,19 +39,22 @@ public:
 
 	virtual void onAttach() override{
 		cam = std::make_shared<clv::scene::Camera>();
-		entity = std::make_shared<clv::ecs::Entity>();
+		std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
+		
+		for(int i = 0; i < entities.size(); ++i){
+			entities[i] = std::make_shared<clv::ecs::Entity>();
+			scene->addNode(entities[i]);
+			
+			entities[i]->mesh->setDiffuseTexture("res/Textures/container2.png");
+			entities[i]->mesh->setSpecularTexture("res/Textures/container2_specular.png");
+			entities[i]->setPosition({ i * 4.0f, 0.0f, -4.0f });
+		}
+		
 		light = std::make_unique<clv::scene::PointLight>();
 		lightEntity = std::make_unique<clv::ecs::Entity>();
 
-		std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
-
-		scene->addNode(entity);
 		scene->addNode(cam);
 		scene->addNode(light);
-
-		entity->mesh->setDiffuseTexture("res/Textures/container2.png");
-		entity->mesh->setSpecularTexture("res/Textures/container2_specular.png");
-		entity->setPosition({ 0.0f, 0.0f, -4.0f });
 
 		light->setPosition({ 0.0f, 2.0f, -6.0f });
 		light->addChild(lightEntity);
@@ -99,7 +102,9 @@ public:
 		cam->setPosition(cameraPosition);
 		cam->updateFront(0.0f, yaw);
 
-		entity->setRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
+		for(auto& entity : entities){
+			entity->setRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
+		}
 		rotDelta += 0.01f;
 
 		if(clv::input::isKeyPressed(clv::Key::Escape)){

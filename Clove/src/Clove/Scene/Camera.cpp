@@ -65,7 +65,7 @@ namespace clv::scene{
 				break;
 
 			case ProjectionMode::perspective:
-				currentProjection = clv::math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 0.5f, 50.0f);
+				currentProjection = clv::math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 0.5f, 10000.0f);
 				break;
 
 			default:
