@@ -8,11 +8,11 @@ namespace clv{
 	class KeyEvent : public Event{
 		//VARIABLES
 	protected:
-		Key key = Key::_None;
+		Key key = Key::None;
 
 		//FUNCTIONS
 	public:
-		CLV_API inline Key getKey() const;
+		inline Key getKey() const;
 
 		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryKeyboard | EventCategory::EventCategoryInput)
 
@@ -27,11 +27,11 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		CLV_API KeyPressedEvent(Key inKey, int inRepeatCount);
+		KeyPressedEvent(Key inKey, int inRepeatCount);
 
-		CLV_API inline int getRepeateCount() const;
+		inline int getRepeateCount() const;
 
-		CLV_API virtual std::string toString() const override;
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(KeyPressed)
 	};
@@ -39,9 +39,9 @@ namespace clv{
 	class KeyTypedEvent : public KeyEvent{
 		//FUNCTIONS
 	public:
-		CLV_API KeyTypedEvent(Key inKey);
+		KeyTypedEvent(Key inKey);
 
-		CLV_API virtual std::string toString() const override;
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(KeyTyped)
 	};
@@ -49,9 +49,9 @@ namespace clv{
 	class KeyReleasedEvent : public KeyEvent{
 		//FUNCTIONS
 	public:
-		CLV_API KeyReleasedEvent(Key inKey);
+		KeyReleasedEvent(Key inKey);
 
-		CLV_API virtual std::string toString() const override;
+		virtual std::string toString() const override;
 
 		EVENT_CLASS_TYPE(KeyReleased)
 	};

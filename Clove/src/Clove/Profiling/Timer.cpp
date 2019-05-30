@@ -13,7 +13,7 @@ namespace clv{
 			end = std::chrono::high_resolution_clock::now();
 			duration = end - start;
 
-			CLV_INFO("Timer completed inside {0} after {1}s", name, duration.count() * 1000.0f);
+			CLV_LOG_INFO("Timer completed inside {0} after {1}s", name, duration.count() * 1000.0f);
 		}
 	}
 }

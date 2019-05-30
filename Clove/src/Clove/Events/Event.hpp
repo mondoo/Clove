@@ -30,12 +30,12 @@ namespace clv{
 	}
 
 	//Macro containing overrides that deal with the event type
-#define EVENT_CLASS_TYPE(type)	CLV_API static EventType::Type getStaticType() { return EventType::##type; }\
-								CLV_API virtual EventType::Type getEventType() const override { return getStaticType(); }\
-								CLV_API virtual const char* getName() const override { return #type; }
+#define EVENT_CLASS_TYPE(type)	static EventType::Type getStaticType() { return EventType::##type; }\
+								virtual EventType::Type getEventType() const override { return getStaticType(); }\
+								virtual const char* getName() const override { return #type; }
 
 //Macro containing overrides that deal with the event category
-#define EVENT_CLASS_CATEGORY(category) CLV_API virtual int getCategoryFlags() const override { return category; }
+#define EVENT_CLASS_CATEGORY(category) virtual int getCategoryFlags() const override { return category; }
 
 	class Event{
 		friend class EventDispatcher;
@@ -46,15 +46,15 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		CLV_API virtual EventType::Type getEventType() const = 0;
-		CLV_API virtual const char* getName() const = 0;
-		CLV_API virtual int getCategoryFlags() const = 0;
+		virtual EventType::Type getEventType() const = 0;
+		virtual const char* getName() const = 0;
+		virtual int getCategoryFlags() const = 0;
 
-		CLV_API inline bool isHandled() const;
+		inline bool isHandled() const;
 
-		CLV_API virtual std::string toString() const;
+		virtual std::string toString() const;
 
-		CLV_API inline bool isInCategory(EventCategory::Type category);
+		inline bool isInCategory(EventCategory::Type category);
 	};
 
 	class EventDispatcher{
@@ -67,7 +67,7 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		CLV_API EventDispatcher(Event& inEvent);
+		EventDispatcher(Event& inEvent);
 
 		template<typename EventType>
 		bool dispatch(EventReceiverFn<EventType> func);

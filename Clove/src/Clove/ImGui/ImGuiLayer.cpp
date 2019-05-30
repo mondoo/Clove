@@ -2,15 +2,16 @@
 #include "ImGuiLayer.hpp"
 
 #include "Clove/Application.hpp"
-#include "Clove/Window.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
+#include "Graphics/DirectX-11/DX11Renderer.hpp"
 
 #include <imgui.h>
-#include <GLFW/glfw3.h>
-#include <examples/imgui_impl_glfw.h>
 #include <examples/imgui_impl_opengl3.h>
+#include <examples/imgui_impl_dx11.h>>
+#include <examples/imgui_impl_win32.h>
 
 namespace clv{
 	ImGuiLayer::ImGuiLayer()
@@ -40,15 +41,40 @@ namespace clv{
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		Application& app = Application::get();
-		GLFWwindow* window = static_cast<GLFWwindow*>(app.getWindow().getNativeWindow());
-		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 410");
+		currentAPI = Application::get().getWindow().getRenderer().getAPI();
+
+		switch(currentAPI){
+			case gfx::API::OpenGL4:
+				ImGui_ImplOpenGL3_Init("#version 430");
+				break;
+
+			case gfx::API::DirectX11:
+				if(gfx::DX11Renderer* dxrenderer = dynamic_cast<gfx::DX11Renderer*>(&Application::get().getWindow().getRenderer())){
+					ImGui_ImplDX11_Init(&dxrenderer->getDevice(), &dxrenderer->getContext());
+				}
+				break;
+			default:
+				break;
+		}
+
+		ImGui_ImplWin32_Init(static_cast<HWND>(Application::get().getWindow().getNativeWindow()));
 	}
 
 	void ImGuiLayer::onDetach(){
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
+		switch(currentAPI){
+			case gfx::API::OpenGL4:
+				ImGui_ImplOpenGL3_Shutdown();
+				break;
+
+			case gfx::API::DirectX11:
+				ImGui_ImplDX11_Shutdown();
+				break;
+			default:
+				break;
+		}
+
+		ImGui_ImplWin32_Shutdown();
+		
 		ImGui::DestroyContext();
 	}
 
@@ -57,8 +83,20 @@ namespace clv{
 	}
 
 	void ImGuiLayer::begin(){
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
+		switch(currentAPI){
+			case gfx::API::OpenGL4:
+				ImGui_ImplOpenGL3_NewFrame();
+				break;
+
+			case gfx::API::DirectX11:
+				ImGui_ImplDX11_NewFrame();
+				break;
+			default:
+				break;
+		}
+
+		ImGui_ImplWin32_NewFrame();
+
 		ImGui::NewFrame();
 	}
 
@@ -68,13 +106,22 @@ namespace clv{
 		io.DisplaySize = ImVec2(static_cast<float>(app.getWindow().getWidth()), static_cast<float>(app.getWindow().getHeight()));
 
 		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		switch(currentAPI){
+			case gfx::API::OpenGL4:
+				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+				break;
+
+			case gfx::API::DirectX11:
+				ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+				break;
+			default:
+				break;
+		}
 
 		if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
-			GLFWwindow* backup_current_context = glfwGetCurrentContext();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(backup_current_context);
 		}
 	}
 }

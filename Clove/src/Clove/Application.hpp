@@ -7,14 +7,12 @@ namespace clv{
 	class Event;
 	class WindowCloseEvent;
 	class ImGuiLayer;
-	class Renderer;
 	namespace scene{ class Scene; };
 
 	class Application{
 		//VARIABLES
 	private:
 		std::unique_ptr<Window> window;
-		std::unique_ptr<Renderer> renderer;
 		std::shared_ptr<scene::Scene> scene;
 
 		bool running = true;
@@ -28,21 +26,20 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		CLV_API Application();
-		CLV_API virtual ~Application();
+		Application();
+		virtual ~Application();
 
-		CLV_API void run();
-		CLV_API void stop();
+		void run();
+		void stop();
 
-		CLV_API void onEvent(Event& e);
+		void onEvent(Event& e);
 
-		CLV_API void pushLayer(std::shared_ptr<Layer> layer);
-		CLV_API void pushOverlay(std::shared_ptr<Layer> overlay);
+		void pushLayer(std::shared_ptr<Layer> layer);
+		void pushOverlay(std::shared_ptr<Layer> overlay);
 
-		CLV_API inline static Application& get();
-		CLV_API inline Window& getWindow();
-		CLV_API inline Renderer& getRenderer();
-		CLV_API inline std::shared_ptr<scene::Scene> getScene();
+		inline static Application& get();
+		inline Window& getWindow();
+		inline std::shared_ptr<scene::Scene> getScene();
 
 	private:
 		bool onWindowClose(WindowCloseEvent& e);

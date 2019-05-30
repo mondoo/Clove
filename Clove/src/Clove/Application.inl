@@ -7,10 +7,6 @@ namespace clv{
 		return *window;
 	}
 
-	inline Renderer& Application::getRenderer(){
-		return *renderer;
-	}
-
 	inline std::shared_ptr<scene::Scene> Application::getScene(){
 		return scene;
 	}
