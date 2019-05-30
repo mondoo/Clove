@@ -3,7 +3,7 @@
 #include "Clove/Graphics/Renderer.hpp"
 
 namespace clv::gfx{
-	class GLRenderer : public Renderer{
+	class GL4Renderer : public Renderer{
 		//VARIABLES
 	private:
 	#if CLV_PLATFORM_WINDOWS
@@ -14,14 +14,14 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		GLRenderer() = delete;
-		GLRenderer(const GLRenderer& other) = delete;
-		GLRenderer(GLRenderer&& other) noexcept = delete;
-		GLRenderer& operator=(const GLRenderer& other) = delete;
-		GLRenderer& operator=(GLRenderer&& other) noexcept = delete;
-		~GLRenderer();
+		GL4Renderer() = delete;
+		GL4Renderer(const GL4Renderer& other) = delete;
+		GL4Renderer(GL4Renderer&& other) noexcept = delete;
+		GL4Renderer& operator=(const GL4Renderer& other) = delete;
+		GL4Renderer& operator=(GL4Renderer&& other) noexcept = delete;
+		~GL4Renderer();
 
-		GLRenderer(const Window& window);
+		GL4Renderer(const Window& window);
 
 		virtual void clear() override;
 
@@ -34,4 +34,4 @@ namespace clv::gfx{
 	};
 }
 
-#include "GLRenderer.inl"
+#include "GL4Renderer.inl"

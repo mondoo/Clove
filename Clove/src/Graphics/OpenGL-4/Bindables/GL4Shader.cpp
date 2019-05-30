@@ -1,7 +1,6 @@
 #include "clvpch.hpp"
-#include "GLShader.hpp"
+#include "GL4Shader.hpp"
 
-#include "Graphics/OpenGL/GLException.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
 
 #include <glad/glad.h>
@@ -9,7 +8,7 @@
 #include <sstream>
 
 namespace clv::gfx{
-	GLShader::GLShader()
+	GL4Shader::GL4Shader()
 		: programID(glCreateProgram())
 		, modelUniform("model")
 		, normalMatrixUniform("normalMatrix")
@@ -18,11 +17,11 @@ namespace clv::gfx{
 		, matShininess("material.shininess", 32.0f){
 	}
 
-	GLShader::~GLShader(){
+	GL4Shader::~GL4Shader(){
 		glDeleteProgram(programID);
 	}
 
-	void GLShader::bind(Renderer& renderer){
+	void GL4Shader::bind(Renderer& renderer){
 		glUseProgram(programID);
 
 		modelUniform.bind(programID);
@@ -32,11 +31,11 @@ namespace clv::gfx{
 		matShininess.bind(programID);
 	}
 
-	void GLShader::unbind(){
+	void GL4Shader::unbind(){
 		glUseProgram(0);
 	}
 
-	void GLShader::attachShader(ShaderTypes type){
+	void GL4Shader::attachShader(ShaderTypes type){
 		unsigned int gltype = 0;
 		switch(type){
 			case ShaderTypes::Vertex:
@@ -58,19 +57,19 @@ namespace clv::gfx{
 		glDeleteShader(shaderID);
 	}
 
-	void GLShader::setModelMatrix(const math::Matrix4f& model){
+	void GL4Shader::setModelMatrix(const math::Matrix4f& model){
 		modelUniform.update(model);
 		normalMatrixUniform.update(math::transpose(math::inverse(model)));
 	}
 
-	std::string GLShader::getPathForShader(ShaderTypes shader){
+	std::string GL4Shader::getPathForShader(ShaderTypes shader){
 		switch(shader){
 			case ShaderTypes::Vertex:
-				return "../Clove/src/Graphics/OpenGL/Shaders/Default-vs.glsl";
+				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-vs.glsl";
 				break;
 
 			case ShaderTypes::Pixel:
-				return "../Clove/src/Graphics/OpenGL/Shaders/Default-ps.glsl";
+				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-ps.glsl";
 				break;
 
 			default:
@@ -80,7 +79,7 @@ namespace clv::gfx{
 		}
 	}
 
-	std::string GLShader::parseShader(const std::string& filepath){
+	std::string GL4Shader::parseShader(const std::string& filepath){
 		std::ifstream stream(filepath);
 
 		std::string line;
@@ -92,7 +91,7 @@ namespace clv::gfx{
 		return ss.str();
 	}
 
-	unsigned int GLShader::compileShader(unsigned int type, const std::string& source){
+	unsigned int GL4Shader::compileShader(unsigned int type, const std::string& source){
 		unsigned int id = glCreateShader(type);
 		const char* src = source.c_str();
 		glShaderSource(id, 1, &src, nullptr);

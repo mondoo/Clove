@@ -1,21 +1,19 @@
 #include "clvpch.hpp"
-#include "GLTexture.hpp"
-
-#include "Graphics/OpenGL/GLException.hpp"
+#include "GL4Texture.hpp"
 
 #include <glad/glad.h>
 #include <stb_image.h>
 
 namespace clv::gfx{
-	GLTexture::GLTexture(GLTexture&& other) noexcept = default;
+	GL4Texture::GL4Texture(GL4Texture&& other) noexcept = default;
 
-	GLTexture& GLTexture::operator=(GLTexture&& other) noexcept = default;
+	GL4Texture& GL4Texture::operator=(GL4Texture&& other) noexcept = default;
 
-	GLTexture::~GLTexture(){
+	GL4Texture::~GL4Texture(){
 		glDeleteTextures(1, &rendererID);
 	}
 
-	GLTexture::GLTexture(const std::string& filePath, unsigned int bindingPoint)
+	GL4Texture::GL4Texture(const std::string& filePath, unsigned int bindingPoint)
 		: filePath(filePath)
 		, bindingPoint(bindingPoint){
 		stbi_set_flip_vertically_on_load(1); //Opengl expects our texture to start on the bottom left
@@ -37,20 +35,20 @@ namespace clv::gfx{
 		}
 	}
 
-	void GLTexture::bind(Renderer& renderer){
+	void GL4Texture::bind(Renderer& renderer){
 		glActiveTexture(GL_TEXTURE0 + bindingPoint);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
 	}
 
-	void GLTexture::unbind(){
+	void GL4Texture::unbind(){
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	int GLTexture::getWidth() const{
+	int GL4Texture::getWidth() const{
 		return width;
 	}
 
-	int GLTexture::getHeight() const{
+	int GL4Texture::getHeight() const{
 		return height;
 	}
 }

@@ -1,31 +1,31 @@
 #include "clvpch.hpp"
-#include "GLVertexBufferLayout.hpp"
+#include "GL4VertexBufferLayout.hpp"
 
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
-#include "Graphics/OpenGL/GLException.hpp"
-#include "Graphics/OpenGL/Bindables/GLVertexBuffer.hpp"
+#include "Graphics/OpenGL-4/GL4Exception.hpp"
+#include "Graphics/OpenGL-4/Bindables/GL4VertexBuffer.hpp"
 
 #include <glad/glad.h>
 
 namespace clv::gfx{
-	GLVertexBufferElement::GLVertexBufferElement()
+	GL4VertexBufferElement::GL4VertexBufferElement()
 		: normalised(GL_FALSE){
 	}
 
-	GLVertexBufferElement::GLVertexBufferElement(GLVertexBufferElement&& other) noexcept = default;
+	GL4VertexBufferElement::GL4VertexBufferElement(GL4VertexBufferElement&& other) noexcept = default;
 
-	GLVertexBufferElement& GLVertexBufferElement::operator=(GLVertexBufferElement&& other) noexcept = default;
+	GL4VertexBufferElement& GL4VertexBufferElement::operator=(GL4VertexBufferElement&& other) noexcept = default;
 
-	GLVertexBufferElement::~GLVertexBufferElement() = default;
+	GL4VertexBufferElement::~GL4VertexBufferElement() = default;
 
-	GLVertexBufferElement::GLVertexBufferElement(unsigned int inType, unsigned int inCount, unsigned char inNormalised)
+	GL4VertexBufferElement::GL4VertexBufferElement(unsigned int inType, unsigned int inCount, unsigned char inNormalised)
 		: type(inType)
 		, count(inCount)
 		, normalised(inNormalised){
 	}
 
-	unsigned int GLVertexBufferElement::getSizeOfType(unsigned int type){
+	unsigned int GL4VertexBufferElement::getSizeOfType(unsigned int type){
 		switch(type){
 			case GL_FLOAT:
 				return 4;
@@ -55,12 +55,12 @@ namespace clv::gfx{
 		switch(elementFormat){
 			case BufferElementFormat::FLOAT_2:
 				elements.emplace_back(GL_FLOAT, 2, GL_FALSE);
-				stride += 2 * GLVertexBufferElement::getSizeOfType(GL_FLOAT);
+				stride += 2 * GL4VertexBufferElement::getSizeOfType(GL_FLOAT);
 				break;
 
 			case BufferElementFormat::FLOAT_3:
 				elements.emplace_back(GL_FLOAT, 3, GL_FALSE);
-				stride += 3 * GLVertexBufferElement::getSizeOfType(GL_FLOAT);
+				stride += 3 * GL4VertexBufferElement::getSizeOfType(GL_FLOAT);
 				break;
 
 			default:
@@ -70,7 +70,7 @@ namespace clv::gfx{
 	}
 
 	void GLVertexBufferLayout::createLayout(Bindable& bindable){
-		if(GLVertexBuffer* vb = dynamic_cast<GLVertexBuffer*>(&bindable)){
+		if(GL4VertexBuffer* vb = dynamic_cast<GL4VertexBuffer*>(&bindable)){
 			Renderer& renderer = Application::get().getWindow().getRenderer();
 			bind(renderer);
 			vb->bind(renderer);
@@ -81,7 +81,7 @@ namespace clv::gfx{
 				glEnableVertexAttribArray(i);
 				//i is used here to communicate with the shader for what position the 'in' parameter is (see shader)
 				glVertexAttribPointer(i, element.count, element.type, element.normalised, stride, reinterpret_cast<const void*>(offset));
-				offset += element.count * GLVertexBufferElement::getSizeOfType(element.type);
+				offset += element.count * GL4VertexBufferElement::getSizeOfType(element.type);
 			}
 		} else{
 			CLV_LOG_ERROR(__FUNCTION__ " Wrong typed passed, can't create layout");

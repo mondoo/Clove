@@ -1,5 +1,5 @@
 #include "clvpch.hpp"
-#include "GLException.hpp"
+#include "GL4Exception.hpp"
 
 #include <glad/glad.h>
 

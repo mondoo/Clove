@@ -1,8 +1,8 @@
 #include "clvpch.hpp"
-#include "GLRenderer.hpp"
+#include "GL4Renderer.hpp"
 
 #include "Clove/Platform/Window.hpp"
-#include "Graphics/OpenGL/GLException.hpp"
+#include "Graphics/OpenGL-4/GL4Exception.hpp"
 #include "Clove/Profiling/Timer.hpp"
 
 #if CLV_PLATFORM_WINDOWS
@@ -16,14 +16,14 @@
 #pragma comment(lib, "opengl32.lib")
 
 namespace clv::gfx{
-	GLRenderer::~GLRenderer(){
+	GL4Renderer::~GL4Renderer(){
 	#if CLV_PLATFORM_WINDOWS
 		ReleaseDC(windowsHandle, windowsDeviceContext);
 		wglDeleteContext(windowsResourceContext);
 	#endif
 	}
 
-	GLRenderer::GLRenderer(const Window& window){
+	GL4Renderer::GL4Renderer(const Window& window){
 	#if CLV_PLATFORM_WINDOWS
 		windowsHandle = reinterpret_cast<HWND>(window.getNativeWindow());
 
@@ -107,17 +107,17 @@ namespace clv::gfx{
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	}
 
-	void GLRenderer::clear(){
+	void GL4Renderer::clear(){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void GLRenderer::drawIndexed(const unsigned int count){
+	void GL4Renderer::drawIndexed(const unsigned int count){
 		CLV_TIME_SCOPE("OpenGL4: DrawIndexed");
 
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
 	}
 
-	void GLRenderer::swapBuffers(){
+	void GL4Renderer::swapBuffers(){
 	#if CLV_PLATFORM_WINDOWS
 		SwapBuffers(windowsDeviceContext);
 	#endif

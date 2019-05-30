@@ -1,20 +1,18 @@
 #include "clvpch.hpp"
-#include "GLVertexBuffer.hpp"
-
-#include "Graphics/OpenGL/GLException.hpp"
+#include "GL4VertexBuffer.hpp"
 
 #include <glad/glad.h>
 
 namespace clv::gfx{
-	GLVertexBuffer::GLVertexBuffer(GLVertexBuffer&& other) noexcept = default;
+	GL4VertexBuffer::GL4VertexBuffer(GL4VertexBuffer&& other) noexcept = default;
 
-	GLVertexBuffer& GLVertexBuffer::operator=(GLVertexBuffer&& other) noexcept = default;
+	GL4VertexBuffer& GL4VertexBuffer::operator=(GL4VertexBuffer&& other) noexcept = default;
 
-	GLVertexBuffer::~GLVertexBuffer(){
+	GL4VertexBuffer::~GL4VertexBuffer(){
 		glDeleteBuffers(1, &bufferID);
 	}
 
-	GLVertexBuffer::GLVertexBuffer(const std::vector<float>& vertices){
+	GL4VertexBuffer::GL4VertexBuffer(const std::vector<float>& vertices){
 		const unsigned int size = static_cast<unsigned int>(vertices.size() * sizeof(float));
 		const void* data = vertices.data();
 
@@ -23,11 +21,11 @@ namespace clv::gfx{
 		glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 	}
 
-	void GLVertexBuffer::bind(Renderer& renderer){
+	void GL4VertexBuffer::bind(Renderer& renderer){
 		glBindBuffer(GL_ARRAY_BUFFER, bufferID);
 	}
 
-	void GLVertexBuffer::unbind(){
+	void GL4VertexBuffer::unbind(){
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }

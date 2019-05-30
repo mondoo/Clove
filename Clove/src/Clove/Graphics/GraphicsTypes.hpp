@@ -2,7 +2,7 @@
 
 namespace clv::gfx{
 	enum class API{
-		OpenGL,
+		OpenGL4,
 		DirectX11
 	};
 

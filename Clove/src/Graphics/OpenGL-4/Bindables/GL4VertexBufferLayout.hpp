@@ -5,7 +5,7 @@
 namespace clv::gfx{
 	class Renderer;
 
-	struct GLVertexBufferElement{
+	struct GL4VertexBufferElement{
 		//VARIABLES
 	public:
 		unsigned int type = 0;
@@ -14,14 +14,14 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		GLVertexBufferElement();
-		GLVertexBufferElement(const GLVertexBufferElement& other) = delete;
-		GLVertexBufferElement(GLVertexBufferElement&& other) noexcept;
-		GLVertexBufferElement& operator=(const GLVertexBufferElement& other) = delete;
-		GLVertexBufferElement& operator=(GLVertexBufferElement&& other) noexcept;
-		~GLVertexBufferElement();
+		GL4VertexBufferElement();
+		GL4VertexBufferElement(const GL4VertexBufferElement& other) = delete;
+		GL4VertexBufferElement(GL4VertexBufferElement&& other) noexcept;
+		GL4VertexBufferElement& operator=(const GL4VertexBufferElement& other) = delete;
+		GL4VertexBufferElement& operator=(GL4VertexBufferElement&& other) noexcept;
+		~GL4VertexBufferElement();
 
-		GLVertexBufferElement(unsigned int inType, unsigned int inCount, unsigned char inNormalised);
+		GL4VertexBufferElement(unsigned int inType, unsigned int inCount, unsigned char inNormalised);
 
 		static unsigned int getSizeOfType(unsigned int type);
 	};
@@ -32,7 +32,7 @@ namespace clv::gfx{
 		unsigned int arrayID = 0;
 
 		unsigned int stride = 0;
-		std::vector<GLVertexBufferElement> elements;
+		std::vector<GL4VertexBufferElement> elements;
 
 		//FUNCTIONS
 	public:

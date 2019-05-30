@@ -1,5 +1,5 @@
 //GL
-#include "Graphics/OpenGL/Bindables/GLUniformBufferObject.hpp"
+#include "Graphics/OpenGL-4/Bindables/GL4UniformBufferObject.hpp"
 
 //DX
 #include "Graphics/DirectX-11/Bindables/DX11ConstantBuffer.hpp"
@@ -8,8 +8,8 @@ namespace clv::gfx::BindableFactory{
 	template<typename T>
 	std::unique_ptr<ShaderBufferObject<T>> createShaderBufferObject(ShaderTypes shaderType, unsigned int bindingPoint){
 		switch(Application::get().getWindow().getRenderer().getAPI()){
-			case API::OpenGL:
-				return std::make_unique<UniformBufferObject<T>>(bindingPoint);
+			case API::OpenGL4:
+				return std::make_unique<GL4UniformBufferObject<T>>(bindingPoint);
 
 			case API::DirectX11:
 				switch(shaderType){

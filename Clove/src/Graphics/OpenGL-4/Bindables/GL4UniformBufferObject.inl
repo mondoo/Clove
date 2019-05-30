@@ -2,12 +2,12 @@
 
 namespace clv::gfx{
 	template<typename T>
-	inline UniformBufferObject<T>::~UniformBufferObject(){
+	inline GL4UniformBufferObject<T>::~GL4UniformBufferObject(){
 		glDeleteBuffers(1, &uboID);
 	}
 
 	template<typename T>
-	inline UniformBufferObject<T>::UniformBufferObject(unsigned int bindingPoint){
+	inline GL4UniformBufferObject<T>::GL4UniformBufferObject(unsigned int bindingPoint){
 		glGenBuffers(1, &uboID);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, uboID);
@@ -18,15 +18,15 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	inline void UniformBufferObject<T>::bind(Renderer& renderer){
+	inline void GL4UniformBufferObject<T>::bind(Renderer& renderer){
 	}
 
 	template<typename T>
-	inline void UniformBufferObject<T>::unbind(){
+	inline void GL4UniformBufferObject<T>::unbind(){
 	}
 
 	template<typename T>
-	inline void UniformBufferObject<T>::update(const T& data, Renderer& renderer){
+	inline void GL4UniformBufferObject<T>::update(const T& data, Renderer& renderer){
 		glBindBuffer(GL_UNIFORM_BUFFER, uboID);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(T), &data);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);

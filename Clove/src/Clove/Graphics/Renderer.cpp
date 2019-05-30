@@ -1,7 +1,7 @@
 #include "clvpch.hpp"
 #include "Renderer.hpp"
 
-#include "Graphics/OpenGL/GLRenderer.hpp"
+#include "Graphics/OpenGL-4/GL4Renderer.hpp"
 #include "Graphics/DirectX-11/DX11Renderer.hpp"
 #include "Clove/Graphics/Drawable.hpp"
 #include "Clove/Scene/Camera.hpp"
@@ -15,9 +15,9 @@ namespace clv::gfx{
 		std::unique_ptr<Renderer> renderer;
 		
 		switch(api){
-			case API::OpenGL:
+			case API::OpenGL4:
 				CLV_LOG_TRACE("Creating OpenGL renderer");
-				renderer = std::make_unique<GLRenderer>(window);
+				renderer = std::make_unique<GL4Renderer>(window);
 				break;
 
 			case API::DirectX11:

@@ -45,7 +45,7 @@ namespace clv::gfx{
 		layout->pushElement("TexCoord", BufferElementFormat::FLOAT_2);
 		layout->pushElement("Normal", BufferElementFormat::FLOAT_3);
 		switch(Application::get().getWindow().getRenderer().getAPI()){//TODO: how to remove this check?
-			case API::OpenGL:
+			case API::OpenGL4:
 				layout->createLayout(*vertexBuffer);
 				break;
 			case API::DirectX11:

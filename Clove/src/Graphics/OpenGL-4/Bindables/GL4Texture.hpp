@@ -3,7 +3,7 @@
 #include "Clove/Graphics/Bindables/Texture.hpp"
 
 namespace clv::gfx{
-	class GLTexture : public Texture{
+	class GL4Texture : public Texture{
 		//VARIABLES
 	private:
 		unsigned int rendererID = 0;
@@ -17,14 +17,14 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		GLTexture() = delete;
-		GLTexture(const GLTexture& other) = delete;
-		GLTexture(GLTexture&& other) noexcept;
-		GLTexture& operator=(const GLTexture& other) = delete;
-		GLTexture& operator=(GLTexture&& other) noexcept;
-		virtual ~GLTexture();
+		GL4Texture() = delete;
+		GL4Texture(const GL4Texture& other) = delete;
+		GL4Texture(GL4Texture&& other) noexcept;
+		GL4Texture& operator=(const GL4Texture& other) = delete;
+		GL4Texture& operator=(GL4Texture&& other) noexcept;
+		virtual ~GL4Texture();
 
-		GLTexture(const std::string& filePath, unsigned int bindingPoint);
+		GL4Texture(const std::string& filePath, unsigned int bindingPoint);
 
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;

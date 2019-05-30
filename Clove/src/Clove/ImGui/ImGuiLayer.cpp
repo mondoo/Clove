@@ -44,7 +44,7 @@ namespace clv{
 		currentAPI = Application::get().getWindow().getRenderer().getAPI();
 
 		switch(currentAPI){
-			case gfx::API::OpenGL:
+			case gfx::API::OpenGL4:
 				ImGui_ImplOpenGL3_Init("#version 430");
 				break;
 
@@ -62,7 +62,7 @@ namespace clv{
 
 	void ImGuiLayer::onDetach(){
 		switch(currentAPI){
-			case gfx::API::OpenGL:
+			case gfx::API::OpenGL4:
 				ImGui_ImplOpenGL3_Shutdown();
 				break;
 
@@ -84,7 +84,7 @@ namespace clv{
 
 	void ImGuiLayer::begin(){
 		switch(currentAPI){
-			case gfx::API::OpenGL:
+			case gfx::API::OpenGL4:
 				ImGui_ImplOpenGL3_NewFrame();
 				break;
 
@@ -108,7 +108,7 @@ namespace clv{
 		ImGui::Render();
 
 		switch(currentAPI){
-			case gfx::API::OpenGL:
+			case gfx::API::OpenGL4:
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 				break;
 
