@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "DX11IndexBuffer.hpp"
 
+#include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
 #include "Graphics/DirectX-11/DX11Renderer.hpp"
 #include "Clove/Graphics/Renderer.hpp"
@@ -14,7 +16,8 @@ namespace clv::gfx{
 
 	DX11IndexBuffer::~DX11IndexBuffer() = default;
 
-	DX11IndexBuffer::DX11IndexBuffer(const std::vector<unsigned int>& indices, Renderer& renderer){
+	DX11IndexBuffer::DX11IndexBuffer(const std::vector<unsigned int>& indices){
+		Renderer& renderer = Application::get().getWindow().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
 

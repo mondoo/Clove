@@ -29,24 +29,28 @@ workspace "Clove"
 		"Linux",
 	}
 
+	defines{
+		"_ENABLE_EXTENDED_ALIGNED_STORAGE"
+	}
+
 	--Platform filters
 	filter "platforms:Win64"
-		system "Windows"
+		system "windows"
 		architecture "x86_64"
-		staticruntime "On"
+		staticruntime "on"
 
 	filter "platforms:Linux"
-		system "Linux"
+		system "linux"
 		architecture "x86_64"
-		staticruntime "On"
+		staticruntime "on"
 
 	--System filters
-	filter "system:Windows"
+	filter "system:windows"
 		defines{
 			"CLV_PLATFORM_WINDOWS=1"
 		}
 
-	filter "system:Linux"
+	filter "system:linux"
 		defines{
 			"CLV_PLATFORM_LINUX=1"
 		}
@@ -56,6 +60,7 @@ workspace "Clove"
 		runtime "Debug"
 		symbols "On"
 		optimize "Off"
+		warnings "Extra"
 
 		defines {
 			"CLV_DEBUG=1"
@@ -65,6 +70,7 @@ workspace "Clove"
 		runtime "Debug"
 		symbols "On"
 		optimize "Debug"
+		warnings "Default"
 
 		defines{
 			"CLV_DEVELOPMENT=1"
@@ -74,6 +80,7 @@ workspace "Clove"
 		runtime "Release"
 		symbols "Off"
 		optimize "On"
+		warnings "Off"
 
 		defines{
 			"CLV_PROFILING=1"
@@ -83,10 +90,13 @@ workspace "Clove"
 		runtime "Release"
 		symbols "Off"
 		optimize "Full"
+		warnings "Off"
 
 		defines{
 			"CLV_RELEASE=1"
 		}
+	
+	filter ""
 
 --Clove Dependencies
 group "Dependencies"
@@ -104,7 +114,7 @@ project "ImGui"
 		"%{prj.location}/**.cpp",
 	}
 	
-	excludes{
+	removefiles{
 		"%{prj.location}/examples/**.h",
 		"%{prj.location}/examples/**.cpp",
 		"%{prj.location}/misc/**.h",
@@ -189,20 +199,10 @@ project "Clove"
 	pchsource "Clove/src/clvpch.cpp"
 
 	files{
-		"%{prj.location}/src/Clove/**.hpp",
-		"%{prj.location}/src/Clove/**.inl",
-		"%{prj.location}/src/Clove/**.cpp",
-
+		"%{prj.location}/src/**.hpp",
+		"%{prj.location}/src/**.inl",
+		"%{prj.location}/src/**.cpp",
 		"%{prj.location}/src/**.glsl",
-
-		"%{prj.location}/src/Graphics/OpenGL/**.hpp",
-		"%{prj.location}/src/Graphics/OpenGL/**.inl",
-		"%{prj.location}/src/Graphics/OpenGL/**.cpp",
-
-		"%{prj.location}/src/Clove.hpp",
-		
-		"%{prj.location}/src/clvpch.hpp",
-		"%{prj.location}/src/clvpch.cpp",
 	}
 
 	includedirs{
@@ -218,48 +218,61 @@ project "Clove"
 
 		--Misc vendor
 		"%{prj.location}/vendor/spdlog/include",
-		"%{prj.location}/vendor/OBJ-Loader/source",
+		"%{prj.location}/vendor/OBJ-Loader/Source",
 		"%{prj.location}/vendor/Event-Dispatcher",
-		"%{prj.location}/vendor/wglext",
 	}
 
 	links{
 		"Glad",
 		"ImGui",
-		"dxerr",
 		"stb",
-		
-		"opengl32.lib"
 	}
 
 	defines{
-		"CLV_ENGINE=1",
-		"GLFW_INCLUDE_NONE"
+		"CLV_ENGINE=1"
 	}
 
 	--platform specifics
-	filter "system:Windows"
+	filter "system:windows"
 		files{
-			"%{prj.location}/src/Graphics/DirectX-11/**.hpp",
-			"%{prj.location}/src/Graphics/DirectX-11/**.inl",
-			"%{prj.location}/src/Graphics/DirectX-11/**.cpp",
-
-			"%{prj.location}/src/Platform/Windows/**.hpp",
-			"%{prj.location}/src/Platform/Windows/**.inl",
-			"%{prj.location}/src/Platform/Windows/**.cpp",
-
 			"%{prj.location}/src/**.hlsl",
+		}
+
+		removefiles{
+			"%{prj.location}/src/Platform/Linux/**.hpp",
+			"%{prj.location}/src/Platform/Linux/**.inl",
+			"%{prj.location}/src/Platform/Linux/**.cpp",
+		}
+
+		includedirs{
+			"%{prj.location}/vendor/wglext",
+		}
+
+		links{
+			"dxerr",
+			"opengl32.lib",
+			"d3d11.lib",
+			"d3dcompiler.lib",
 		}
 
 		postbuildcommands{
 			("{COPY} "..hlslout_dir.."**.cso \"../Built/bin/"..outputdir.."/Sandbox/\"")
 		}
 
-	filter "system:Linux"
-		files{
-			"%{prj.location}/src/Platform/Linux/**.hpp",
-			"%{prj.location}/src/Platform/Linux/**.inl",
-			"%{prj.location}/src/Platform/Linux/**.cpp",
+	filter "system:linux"
+		removefiles{
+			"%{prj.location}/src/Graphics/DirectX-11/**.hpp",
+			"%{prj.location}/src/Graphics/DirectX-11/**.inl",
+			"%{prj.location}/src/Graphics/DirectX-11/**.cpp",
+			"%{prj.location}/src/Platform/Windows/**.hpp",
+			"%{prj.location}/src/Platform/Windows/**.inl",
+			"%{prj.location}/src/Platform/Windows/**.cpp",
+		}
+
+		links{
+			"GL",
+			"GLU",
+			"X11"
 		}
 
 	--hlsl shaders
@@ -270,6 +283,8 @@ project "Clove"
 		shadertype "Vertex"
 	filter "files:**-ps.hlsl"
 		shadertype "Pixel"
+
+	filter ""
 
 --Sandbox
 group ""
@@ -293,16 +308,19 @@ project "Sandbox"
 		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
 
-		"Clove/src",
-		"Clove/vendor",
+		"Clove/src"
 	}
 
 	links{
 		"Clove",
 	}
 
-	filter "system:Linux"
+	--gmake doesn't unpack static dependencies the same way msvc does
+	filter "action:gmake2"
 		links{
+			"Glad",
+			"ImGui",
 			"X11",
-			"ImGui"
+			"stb",
+			"dl"
 		}

@@ -1,6 +1,9 @@
 #include "clvpch.hpp"
 #include "DX11VertexBuffer.hpp"
 
+#include "Graphics/DirectX-11/DX11Exception.hpp"
+#include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Graphics/DirectX-11/DX11Renderer.hpp"
 
 #include <d3d11.h>
@@ -12,7 +15,8 @@ namespace clv::gfx{
 
 	DX11VertexBuffer::~DX11VertexBuffer() = default;
 
-	DX11VertexBuffer::DX11VertexBuffer(const std::vector<float>& vertices, Renderer& renderer){
+	DX11VertexBuffer::DX11VertexBuffer(const std::vector<Vertex>& vertices){
+		Renderer& renderer = Application::get().getWindow().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
 
@@ -21,8 +25,8 @@ namespace clv::gfx{
 			vbd.Usage = D3D11_USAGE_DEFAULT;
 			vbd.CPUAccessFlags = 0;
 			vbd.MiscFlags = 0u;
-			vbd.ByteWidth = vertices.size() * sizeof(float);
-			vbd.StructureByteStride = sizeof(float);
+			vbd.ByteWidth = sizeof(vertices) * sizeof(Vertex);
+			vbd.StructureByteStride = sizeof(Vertex);
 
 			D3D11_SUBRESOURCE_DATA vsrd = {};
 			vsrd.pSysMem = vertices.data();
@@ -34,7 +38,7 @@ namespace clv::gfx{
 
 	void DX11VertexBuffer::bind(Renderer& renderer){
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
-			const UINT stride = sizeof(float) * 3; //TODO: this will change when tex coords + normals get thrown into the mix
+			const UINT stride = sizeof(Vertex);
 			const UINT offset = 0u;
 			dxrenderer->getContext().IASetVertexBuffers(0u, 1u, vertexBuffer.GetAddressOf(), &stride, &offset);
 		}

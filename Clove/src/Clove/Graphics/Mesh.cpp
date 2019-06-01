@@ -1,71 +1,89 @@
 #include "clvpch.hpp"
 #include "Mesh.hpp"
 
+#include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Graphics/Bindables/Bindable.hpp"
 #include "Clove/Graphics/Bindables/BindableFactory.hpp"
+#include "Clove/Graphics/Bindables/VertexBuffer.hpp"
 #include "Clove/Graphics/Bindables/IndexBuffer.hpp"
 #include "Clove/Graphics/Bindables/Shader.hpp"
 #include "Clove/Graphics/Bindables/VertexBufferLayout.hpp"
+#include "Clove/Graphics/Bindables/Texture.hpp"
 #include "Clove/Utils/MeshLoader.hpp"
 
 namespace clv::gfx{
-	Mesh::Mesh(Renderer& renderer){
+	Mesh::Mesh(Mesh&& other) noexcept = default;
+
+	Mesh& Mesh::operator=(Mesh&& other) noexcept = default;
+
+	Mesh::~Mesh() = default;
+
+	Mesh::Mesh(){
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ("res/Objects/cube.obj");
+
+		//TODO: This will break if the mesh does not have a texture mapping or normal mapping
+		for(int i = 0; i < info.verticies.size(); ++i){
+			vertices.push_back(
+				{ 
+					info.verticies[i].x, info.verticies[i].y, info.verticies[i].z,
+					info.texCoords[i].x, info.texCoords[i].y,
+					info.normals[i].x, info.normals[i].y, info.normals[i].z 
+				}
+			);
+		}
 
 		for(const auto i : info.indices){
 			indices.push_back(i);
 		}
 
-		for(const auto& v : info.verticies){
-			vertices.push_back(v.x);
-			vertices.push_back(v.y);
-			vertices.push_back(v.z);
-		}
-
 		//VB
-		std::unique_ptr<Bindable> vertexBuffer = BindableFactory::createVertexBuffer(vertices, renderer);
+		std::unique_ptr<VertexBuffer> vertexBuffer = BindableFactory::createVertexBuffer(vertices);
 
 		//IB
-		addIndexBuffer(BindableFactory::createIndexBuffer(indices, renderer));
+		addIndexBuffer(BindableFactory::createIndexBuffer(indices));
 
 		//Shader
-		std::unique_ptr<Shader> shader = BindableFactory::createShader(renderer);
-		shader->attachShader(ShaderTypes::Vertex, renderer);
-		shader->attachShader(ShaderTypes::Pixel, renderer);
-		shader->bind(renderer);
+		std::unique_ptr<Shader> shader = BindableFactory::createShader();
+		shader->attachShader(ShaderTypes::Vertex);
+		shader->attachShader(ShaderTypes::Pixel);
+		shader->bind(Application::get().getWindow().getRenderer());
+		this->shader = shader.get();
 
 		//VBL (maybe call this a VBO?)
-		std::unique_ptr<VertexBufferLayout> layout = BindableFactory::createVertexBufferLayout(renderer);
+		std::unique_ptr<VertexBufferLayout> layout = BindableFactory::createVertexBufferLayout();
 		layout->pushElement("Position", BufferElementFormat::FLOAT_3);
-		switch(renderer.getAPI()){//TODO: how to remove this check?
-			case API::OpenGL:
-				layout->createLayout(*vertexBuffer, renderer);
+		layout->pushElement("TexCoord", BufferElementFormat::FLOAT_2);
+		layout->pushElement("Normal", BufferElementFormat::FLOAT_3);
+		switch(Application::get().getWindow().getRenderer().getAPI()){//TODO: how to remove this check?
+			case API::OpenGL4:
+				layout->createLayout(*vertexBuffer);
 				break;
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				layout->createLayout(*shader, renderer);
+				layout->createLayout(*shader);
 				break;
 			#endif
 		}
+
 		addBindable(std::move(vertexBuffer));
 		addBindable(std::move(layout));
-
-		//Temp stuff to get it drawing
-		math::Vector3f meshPos = { 0.0f, 0.0f, -4.0f };
-		math::Vector3f meshRot = { 0.5f, 1.0f, 0.0f };
-		math::Vector3f meshScale = { 1.0f, 1.0f, 1.0f };
-
-		math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), meshPos);
-		math::Matrix4f rotation = math::rotate(math::Matrix4f(1.0f), math::asRadians(90.0f), meshRot);
-		math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), meshScale);
-
-		math::Matrix4f trans = translation * rotation * scale;
-
-		shader->setModelMatrix(trans);
-		shader->setViewMatrix(math::Matrix4f(1.0f));
-		shader->setProjectionMatrix(math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 0.5f, 50.0f));
-
 		addBindable(std::move(shader));
 	}
+
+	void Mesh::setModelMatrix(const math::Matrix4f& model){
+		shader->setModelMatrix(model);
+	}
+
+	void Mesh::setDiffuseTexture(const std::string& path){
+		addBindable(BindableFactory::createTexture(path, gfx::TBP_Diffuse));
+	}
+
+	void Mesh::setSpecularTexture(const std::string& path){
+		addBindable(BindableFactory::createTexture(path, gfx::TBP_Specular));
+	}
+
+	/*void Mesh::setTexture(std::unique_ptr<Texture> texture){
+		addBindable(std::move(texture));
+	}*/
 }

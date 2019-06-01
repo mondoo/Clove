@@ -7,78 +7,13 @@
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Application.hpp"
 
-//TEST
-#include "Clove/Graphics/Mesh.hpp"
-//
-
 namespace clv{
-	WindowsWindow::WindowsWindow(const WindowProps& props)
-		: instance(GetModuleHandle(nullptr)){
+	WindowsWindow::WindowsWindow(const WindowProps& props){
+		initialiseWindow(props, gfx::API::DirectX11);
+	}
 
-		data.title = props.title;
-		data.width = props.width;
-		data.height = props.height;
-
-		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", data.title, data.width, data.height);
-
-		WNDCLASSEX wc = { 0 };
-		wc.cbSize = sizeof(wc);
-		wc.style = CS_OWNDC;
-		wc.lpfnWndProc = HandleMsgSetup;
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = 0;
-		wc.hInstance = instance;
-		wc.hIcon = nullptr;
-		wc.hCursor = nullptr;
-		wc.hbrBackground = nullptr;
-		wc.lpszMenuName = nullptr;
-		wc.lpszClassName = className;
-
-		RegisterClassEx(&wc);
-
-		CLV_LOG_DEBUG("Windows class registered");
-
-		const std::wstring wideTitle(data.title.begin(), data.title.end());
-
-		DWORD windowStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
-
-		//Create a rect so we can adjust the resolution to be the client region not the entire window size
-		RECT wr;
-		wr.left = 100;
-		wr.right = data.width + wr.left;
-		wr.top = 100;
-		wr.bottom = data.height + wr.top;
-		if(!AdjustWindowRect(&wr, windowStyle, FALSE)){
-			throw CLV_WINDOWS_LAST_EXCEPTION;
-		}
-
-		windowsHandle = CreateWindow(
-			wc.lpszClassName,
-			wideTitle.c_str(),
-			windowStyle,
-			CW_USEDEFAULT, CW_USEDEFAULT,
-			wr.right - wr.left, wr.bottom - wr.top,
-			nullptr,
-			nullptr,
-			instance,
-			this
-		);
-
-		if(!windowsHandle){
-			throw CLV_WINDOWS_LAST_EXCEPTION;
-		}
-
-		CLV_LOG_INFO("Window created");
-
-		ShowWindow(windowsHandle, SW_SHOW);
-
-		renderer = gfx::Renderer::createRenderer(*this, gfx::API::OpenGL);
-
-		//setVSync(true);
-
-		//TEST
-		testMesh = std::make_shared<gfx::Mesh>(*renderer);
-		//
+	WindowsWindow::WindowsWindow(const WindowProps& props, gfx::API api){
+		initialiseWindow(props, api);
 	}
 
 	WindowsWindow::~WindowsWindow(){
@@ -93,16 +28,12 @@ namespace clv{
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
 			if(msg.wParam == CLV_WINDOWS_QUIT){
 				WindowCloseEvent event;
-				data.eventCallback(event);
+				eventCallback(event);
 			}
 
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-
-		//TEST
-		renderer->submit(testMesh);
-		//
 	}
 
 	void WindowsWindow::endFrame(){
@@ -114,7 +45,7 @@ namespace clv{
 	}
 
 	void WindowsWindow::setVSync(bool enabled){
-		data.vSync = enabled;
+		vSync = enabled;
 
 		//move to renderer?
 		/*typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
@@ -135,7 +66,7 @@ namespace clv{
 	}
 
 	bool WindowsWindow::isVSync() const{
-		return data.vSync;
+		return vSync;
 	}
 
 	LRESULT CALLBACK WindowsWindow::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
@@ -242,9 +173,78 @@ namespace clv{
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
+	void WindowsWindow::initialiseWindow(const WindowProps& props, gfx::API api){
+		instance = GetModuleHandle(nullptr);
+
+		data.title = props.title;
+		data.width = props.width;
+		data.height = props.height;
+
+		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", data.title, data.width, data.height);
+
+		WNDCLASSEX wc = { 0 };
+		wc.cbSize = sizeof(wc);
+		wc.style = CS_OWNDC;
+		wc.lpfnWndProc = HandleMsgSetup;
+		wc.cbClsExtra = 0;
+		wc.cbWndExtra = 0;
+		wc.hInstance = instance;
+		wc.hIcon = nullptr;
+		wc.hCursor = nullptr;
+		wc.hbrBackground = nullptr;
+		wc.lpszMenuName = nullptr;
+		wc.lpszClassName = className;
+
+		RegisterClassEx(&wc);
+
+		CLV_LOG_DEBUG("Windows class registered");
+
+		const std::wstring wideTitle(data.title.begin(), data.title.end());
+
+		DWORD windowStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
+
+		//Create a rect so we can adjust the resolution to be the client region not the entire window size
+		RECT wr;
+		wr.left = 100;
+		wr.right = data.width + wr.left;
+		wr.top = 100;
+		wr.bottom = data.height + wr.top;
+		if(!AdjustWindowRect(&wr, windowStyle, FALSE)){
+			throw CLV_WINDOWS_LAST_EXCEPTION;
+		}
+
+		windowsHandle = CreateWindow(
+			wc.lpszClassName,
+			wideTitle.c_str(),
+			windowStyle,
+			CW_USEDEFAULT, CW_USEDEFAULT,
+			wr.right - wr.left, wr.bottom - wr.top,
+			nullptr,
+			nullptr,
+			instance,
+			this
+		);
+
+		if(!windowsHandle){
+			throw CLV_WINDOWS_LAST_EXCEPTION;
+		}
+
+		CLV_LOG_INFO("Window created");
+
+		ShowWindow(windowsHandle, SW_SHOW);
+
+		renderer = gfx::Renderer::createRenderer(*this, api);
+
+		setVSync(true);
+	}
+
 #if CLV_PLATFORM_WINDOWS
 	Window* Window::create(const WindowProps& props){
 		return new WindowsWindow(props);
+	}
+
+	Window* Window::create(const WindowProps& props, gfx::API api){
+		return new WindowsWindow(props, api);
 	}
 #endif
 }

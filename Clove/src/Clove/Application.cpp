@@ -22,14 +22,15 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1280, 720 }));
+		window = std::unique_ptr<Window>(Window::create());
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
+		
 		scene = std::make_shared<scene::Scene>();
 
 		layerStack = std::make_unique<LayerStack>();
 
-		//imGuiLayer = std::make_shared<ImGuiLayer>();
-		//pushLayer(imGuiLayer);
+		imGuiLayer = std::make_shared<ImGuiLayer>();
+		pushLayer(imGuiLayer);
 	}
 
 	Application::~Application() = default;
@@ -103,13 +104,14 @@ namespace clv{
 			}
 
 			scene->update(deltaSeonds.count());
-			window->endFrame();
 
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){
 				layer->onImGuiRender();
 			}
 			imGuiLayer->end();
+			
+			window->endFrame();
 		}
 	}
 

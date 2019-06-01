@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "DX11Shader.hpp"
 
+#include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
 #include "Graphics/DirectX-11/DX11Renderer.hpp"
 
@@ -8,9 +10,17 @@
 #include <d3dcompiler.h>
 
 namespace clv::gfx{
+	DX11Shader::DX11Shader()
+		: vertCB(BBP_ModelData)
+		, materialCB(BBP_MaterialData){
+
+		mData.sininess = 32.0f;
+		materialCB.update(mData, Application::get().getWindow().getRenderer());
+	}
+
 	DX11Shader::DX11Shader(DX11Shader&& other) noexcept
 		: vertCB(std::move(other.vertCB))
-		, pixelCB(std::move(other.pixelCB)){
+		, materialCB(std::move(other.materialCB)){
 		shaders = std::move(other.shaders);
 		vertexShader = other.vertexShader;
 		other.vertexShader = nullptr;
@@ -22,55 +32,38 @@ namespace clv::gfx{
 		other.vertexShader = nullptr;
 
 		vertCB = std::move(other.vertCB);
-		pixelCB = std::move(other.pixelCB);
+		materialCB = std::move(other.materialCB);
 
 		return *this;
 	}
 
 	DX11Shader::~DX11Shader() = default;
 
-	DX11Shader::DX11Shader(Renderer& renderer)
-		: vertCB(renderer)
-		, pixelCB(renderer){
-
-		pixelColours = {
-			{
-				{1.0f, 0.0f, 1.0f, 1.0f},
-				{1.0f, 0.0f, 0.0f, 1.0f},
-				{0.0f, 1.0f, 0.0f, 1.0f},
-				{0.0f, 0.3f, 1.0f, 1.0f},
-				{1.0f, 1.0f, 0.0f, 1.0f},
-				{0.0f, 1.0f, 1.0f, 1.0f},
-			}
-		};
-	}
-
 	void DX11Shader::bind(Renderer& renderer){
 		for(const auto&[key, shader] : shaders){
 			shader->bind(renderer);
 		}
 
-		vertCB.update(vertTransforms, renderer);
+		vertCB.update(vData, renderer);
 		vertCB.bind(renderer);
 
-		pixelCB.update(pixelColours, renderer);
-		pixelCB.bind(renderer);
+		materialCB.bind(renderer);
 	}
 
 	void DX11Shader::unbind(){
 	}
 
-	void DX11Shader::attachShader(ShaderTypes type, Renderer& renderer){
+	void DX11Shader::attachShader(ShaderTypes type){
 		switch(type){
 			case ShaderTypes::Vertex:
 				{
-					auto vs = std::make_unique<DX11VertexShader>(L"Default-vs.cso", renderer);
+					auto vs = std::make_unique<DX11VertexShader>(L"Default-vs.cso");
 					vertexShader = vs.get();
 					shaders[type] = std::move(vs);
 				}
 				break;
 			case ShaderTypes::Pixel:
-				shaders[type] = std::make_unique<DX11PixelShader>(L"Default-ps.cso", renderer);
+				shaders[type] = std::make_unique<DX11PixelShader>(L"Default-ps.cso");
 				break;
 
 			default:
@@ -80,15 +73,8 @@ namespace clv::gfx{
 	}
 
 	void DX11Shader::setModelMatrix(const math::Matrix4f& model){
-		vertTransforms.model = model;
-	}
-
-	void DX11Shader::setViewMatrix(const math::Matrix4f& view){
-		vertTransforms.view = view;
-	}
-
-	void DX11Shader::setProjectionMatrix(const math::Matrix4f& projection){
-		vertTransforms.projection = projection;
+		vData.model = model;
+		vData.normalMatrix = math::transpose(math::inverse(model));
 	}
 
 	DX11VertexShader::DX11VertexShader(DX11VertexShader&& other) noexcept = default;
@@ -97,7 +83,8 @@ namespace clv::gfx{
 
 	DX11VertexShader::~DX11VertexShader() = default;
 
-	DX11VertexShader::DX11VertexShader(const std::wstring& path, Renderer& renderer){
+	DX11VertexShader::DX11VertexShader(const std::wstring& path){
+		Renderer& renderer = Application::get().getWindow().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
 
@@ -121,7 +108,8 @@ namespace clv::gfx{
 
 	DX11PixelShader::~DX11PixelShader() = default;
 
-	DX11PixelShader::DX11PixelShader(const std::wstring& path, Renderer& renderer){
+	DX11PixelShader::DX11PixelShader(const std::wstring& path){
+		Renderer& renderer = Application::get().getWindow().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
 

@@ -18,26 +18,10 @@ namespace clv{
 	class WindowsWindow : public Window{
 		//VARIABLES
 	private:
-		//Get rid of this thing
-		//TODO: Do we need this without glfw?
-		//For GLFW 
-		struct WindowData{
-			std::string title = "";
-			unsigned int width = 0;
-			unsigned int height = 0;
-			bool vSync = false;
-
-			EventCallbackFn eventCallback;
-		} data;
-
 		static constexpr LPWSTR className = L"Clove";
 
 		HINSTANCE instance;
 		HWND windowsHandle;
-
-		//TEST
-		std::shared_ptr<gfx::Mesh> testMesh;
-		//
 
 		//FUNCTIONS
 	public:
@@ -49,16 +33,12 @@ namespace clv{
 		virtual ~WindowsWindow();
 		
 		WindowsWindow(const WindowProps& props);
+		WindowsWindow(const WindowProps& props, gfx::API api);
 
 		virtual void beginFrame() override;
 		virtual void endFrame() override;
 
-		virtual inline void setEventCallbackFunction(const EventCallbackFn& callback) override;
-		
 		virtual void* getNativeWindow() const override;
-
-		virtual inline unsigned int getWidth() const override;
-		virtual inline unsigned int getHeight() const override;
 
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVSync() const override;
@@ -67,7 +47,7 @@ namespace clv{
 		static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 		static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 		LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+		void initialiseWindow(const WindowProps& props, gfx::API api);
 	};
 }
-
-#include "WindowsWindow.inl"

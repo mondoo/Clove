@@ -19,7 +19,7 @@ namespace clv::gfx{
 		~VertexBufferLayout();
 
 		virtual void pushElement(const std::string& elementName, BufferElementFormat elementFormat) = 0;
-		virtual void createLayout(Bindable& bindable, Renderer& renderer) = 0;
+		virtual void createLayout(Bindable& bindable) = 0;
 		virtual void resetLayout() = 0;
 	};
 }

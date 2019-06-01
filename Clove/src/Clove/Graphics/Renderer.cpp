@@ -1,12 +1,12 @@
 #include "clvpch.hpp"
 #include "Renderer.hpp"
 
-#include "Graphics/OpenGL/GLRenderer.hpp"
+#include "Graphics/OpenGL-4/GL4Renderer.hpp"
 #if CLV_PLATFORM_WINDOWS
-	#include "Graphics/DirectX-11/DX11Renderer.hpp"
+#include "Graphics/DirectX-11/DX11Renderer.hpp"
 #endif
-
 #include "Clove/Graphics/Drawable.hpp"
+#include "Clove/Scene/Camera.hpp"
 
 namespace clv::gfx{
 	Renderer::Renderer() = default;
@@ -17,9 +17,9 @@ namespace clv::gfx{
 		std::unique_ptr<Renderer> renderer;
 		
 		switch(api){
-			case API::OpenGL:
+			case API::OpenGL4:
 				CLV_LOG_TRACE("Creating OpenGL renderer");
-				renderer = std::make_unique<GLRenderer>(window);
+				renderer = std::make_unique<GL4Renderer>(window);
 				break;
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
@@ -53,5 +53,7 @@ namespace clv::gfx{
 				drawables.pop();
 			}
 		}
+
+		swapBuffers();
 	}
 }

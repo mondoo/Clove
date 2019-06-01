@@ -1,20 +1,19 @@
 #pragma once
 
+#include "Clove/Graphics/GraphicsTypes.hpp"
+
 #include <queue>
 
 namespace clv{
 	class Window;
 }
 
+namespace clv::scene{
+	class Camera;
+}
+
 namespace clv::gfx{
 	class Drawable;
-
-	enum class API{
-		OpenGL,
-	#if CLV_PLATFORM_WINDOWS
-		DirectX11
-	#endif
-	};
 
 	class Renderer{
 		friend class Drawable;
@@ -43,5 +42,7 @@ namespace clv::gfx{
 
 	protected:
 		virtual void drawIndexed(const unsigned int count) = 0;
+
+		virtual void swapBuffers() = 0;
 	};
 }

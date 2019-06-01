@@ -19,8 +19,8 @@ namespace clv{
 		coreLogger->set_level(spdlog::level::debug);
 		clientLogger->set_level(spdlog::level::debug);
 	#elif CLV_PROFILING
-		coreLogger->set_level(spdlog::level::warn);
-		clientLogger->set_level(spdlog::level::warn);
+		coreLogger->set_level(spdlog::level::info);
+		clientLogger->set_level(spdlog::level::info);
 	#elif CLV_RELEASE
 		coreLogger->set_level(spdlog::level::err);
 		clientLogger->set_level(spdlog::level::err);

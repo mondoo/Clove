@@ -9,6 +9,10 @@ namespace clv{
 
 		SceneNode::SceneNode(SceneNode&& other) noexcept = default;
 
+		SceneNode& SceneNode::operator=(const SceneNode& other) = default;
+
+		SceneNode& SceneNode::operator=(SceneNode&& other) noexcept = default;
+
 		SceneNode::~SceneNode() = default;
 
 		void SceneNode::update(float deltaSeconds){
@@ -17,12 +21,12 @@ namespace clv{
 			}
 		}
 
-		void SceneNode::addChild(std::shared_ptr<SceneNode> child){
+		void SceneNode::addChild(const std::shared_ptr<SceneNode>& child){
 			children.push_back(child);
 			child->parent = weak_from_this();
 		}
 
-		math::Matrix4f SceneNode::getWorldTransform(){
+		math::Matrix4f SceneNode::getWorldTransform() const{
 			const auto&[rotVector, rotAngle] = localRotation;
 
 			math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), localPosition);
@@ -37,9 +41,5 @@ namespace clv{
 				return transform;
 			}
 		}
-
-		SceneNode& SceneNode::operator=(const SceneNode& other) = default;
-
-		SceneNode& SceneNode::operator=(SceneNode&& other) noexcept = default;
 	}
 }

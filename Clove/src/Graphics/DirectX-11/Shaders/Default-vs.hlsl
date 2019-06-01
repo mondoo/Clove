@@ -1,21 +1,31 @@
-cbuffer Cbuff{
-	matrix model;
+cbuffer viewBuffer : register(b0){
 	matrix view;
 	matrix projection;
-
-	//matrix transform;
 };
 
-float4 main(float3 pos : Position) : SV_Position{
-	//return mul(float4(pos, 1.0f),  model * /*view **/ projection);
-	//matrix mvp = mul(model, projection);
-	//matrix mvp = model * /*view **/ projection;
-	//matrix mvp = projection * model;
-	//matrix mvp = mul(model, mul(view, projection));
+cbuffer modelBuffer : register(b3){
+    matrix model;
+    matrix normalMatrix;
+}
 
-	matrix mvp = mul(projection, mul(view, model));
-	return mul(mvp, float4(pos, 1.0f));
+struct VSOut{
+    float2 tex : TexCoord;
+    float3 verp : VertPos;
+    float3 vern : VertNormal;
+	float4 pos : SV_Position;
+};
 
-	//return mul(float4(pos, 1.0f), mvp);
-	//return mul(transform, float4(pos, 1.0f));
+VSOut main(float3 pos : Position, float2 tex : TexCoord, float3 norm : Normal){
+	VSOut vso;
+
+    matrix mvp = mul(projection, mul(view, model));
+    vso.pos = mul(mvp, float4(pos, 1.0f));
+	
+	vso.tex = tex;
+
+    //Convert frag and normal to world space
+    vso.verp = (float3)mul(model, float4(pos, 1.0f));
+    vso.vern = mul((float3x3)normalMatrix, norm);
+
+	return vso;
 }

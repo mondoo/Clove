@@ -13,6 +13,45 @@ namespace clv{
     }
 
     LinuxWindow::LinuxWindow(const WindowProps& props){
+        initialiseWindow(props, gfx::API::OpenGL4);
+    }
+
+    LinuxWindow::LinuxWindow(const WindowProps& props, gfx::API api){
+        initialiseWindow(props, api);
+    }
+
+    void LinuxWindow::beginFrame(){
+        //clear frame
+        
+        XNextEvent(display, &xevent);
+        if(xevent.type == ClientMessage){
+            //if(xevent.xclient.data.l[0] == wmDeleteMessage){
+            //    WindowCloseEvent event;
+			//	eventCallback(event);
+            //}
+        }else if(xevent.type == DestroyNotify){
+            WindowCloseEvent event;
+			eventCallback(event);
+        }
+    }
+
+	void LinuxWindow::endFrame(){
+        //draw
+    }
+
+	void* LinuxWindow::getNativeWindow() const{
+        return display;
+    }
+
+	void LinuxWindow::setVSync(bool enabled){
+
+    }
+
+	bool LinuxWindow::isVSync() const{
+        return false;
+    }
+
+    void LinuxWindow::initialiseWindow(const WindowProps& props, gfx::API api){
         display = XOpenDisplay(nullptr);
 
         if(display == nullptr){
@@ -36,52 +75,13 @@ namespace clv{
         CLV_LOG_INFO("Created X11 Window");
     }
 
-    void LinuxWindow::beginFrame(){
-        //clear frame
-        
-        XNextEvent(display, &xevent);
-        if(xevent.type == ClientMessage){
-            //if(xevent.xclient.data.l[0] == wmDeleteMessage){
-            //    WindowCloseEvent event;
-			//	eventCallback(event);
-            //}
-        }else if(xevent.type == DestroyNotify){
-            WindowCloseEvent event;
-			eventCallback(event);
-        }
-    }
-
-	void LinuxWindow::endFrame(){
-        //draw
-    }
-
-	void LinuxWindow::setEventCallbackFunction(const EventCallbackFn& callback){
-        eventCallback = callback;
-    }
-		
-	void* LinuxWindow::getNativeWindow() const{
-        return display;
-    }
-
-	unsigned int LinuxWindow::getWidth() const{
-        return 0u;
-    }
-
-	unsigned int LinuxWindow::getHeight() const{
-        return 0u;
-    }
-
-	void LinuxWindow::setVSync(bool enabled){
-
-    }
-
-	bool LinuxWindow::isVSync() const{
-        return false;
-    }
-
 #if CLV_PLATFORM_LINUX
 	Window* Window::create(const WindowProps& props){
 		return new LinuxWindow(props);
 	}
+
+    Window* Window::create(const WindowProps& props, gfx::API api){
+        return new LinuxWindow(props, api);
+    }
 #endif
 }

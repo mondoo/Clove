@@ -10,7 +10,6 @@ namespace clv{
 		int screenID;
         ::Window windowID;
         XEvent xevent;
-		EventCallbackFn eventCallback;
 
         //FUNCTIONS
     public:
@@ -22,18 +21,17 @@ namespace clv{
 		virtual ~LinuxWindow();
 		
 		LinuxWindow(const WindowProps& props);
+		LinuxWindow(const WindowProps& props, gfx::API api);
 		
 		virtual void beginFrame() override;
 		virtual void endFrame() override;
 
-		virtual void setEventCallbackFunction(const EventCallbackFn& callback) override;
-		
 		virtual void* getNativeWindow() const override;
-
-		virtual unsigned int getWidth() const override;
-		virtual unsigned int getHeight() const override;
 
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVSync() const override;
+
+	private:
+		void initialiseWindow(const WindowProps& props, gfx::API api);
     };
 }
