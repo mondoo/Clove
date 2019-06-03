@@ -270,8 +270,7 @@ project "Clove"
 		}
 
 		links{
-			"GL",
-			"GLU",
+			"GLX",
 			"X11"
 		}
 
@@ -320,6 +319,7 @@ project "Sandbox"
 		links{
 			"Glad",
 			"ImGui",
+			"GLX",
 			"X11",
 			"stb",
 			"dl"

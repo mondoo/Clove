@@ -38,7 +38,7 @@ namespace clv::gfx{
 		virtual void clear() = 0;
 		void draw();
 
-		inline virtual API getAPI() const = 0;
+		virtual API getAPI() const = 0;
 
 	protected:
 		virtual void drawIndexed(const unsigned int count) = 0;

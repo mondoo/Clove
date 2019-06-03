@@ -135,6 +135,10 @@ namespace clv::gfx{
 		d3dDeviceContext->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
 	}
 
+	API DX11Renderer::getAPI() const{
+		return API::DirectX11;
+	}
+
 	void DX11Renderer::drawIndexed(const unsigned int count){
 		CLV_TIME_SCOPE("DX11: DrawIndexed");
 

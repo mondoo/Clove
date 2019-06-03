@@ -45,8 +45,8 @@ public:
 			entities[i] = std::make_shared<clv::ecs::Entity>();
 			scene->addNode(entities[i]);
 			
-			entities[i]->mesh->setDiffuseTexture("res/Textures/container2.png");
-			entities[i]->mesh->setSpecularTexture("res/Textures/container2_specular.png");
+			entities[i]->mesh->setDiffuseTexture("Sandbox/res/Textures/container2.png");  //Note: Dependant on execution location!
+			entities[i]->mesh->setSpecularTexture("Sandbox/res/Textures/container2_specular.png");  //Note: Dependant on execution location!
 			entities[i]->setPosition({ i * 4.0f, 0.0f, -4.0f });
 		}
 		
@@ -113,7 +113,7 @@ public:
 	}
 
 	virtual void onImGuiRender() override{
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	}
 
 	virtual void onEvent(clv::Event& e) override{

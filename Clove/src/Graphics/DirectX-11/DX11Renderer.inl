@@ -1,8 +1,4 @@
 namespace clv::gfx{
-	inline API DX11Renderer::getAPI() const{
-		return API::DirectX11;
-	}
-
 	inline ID3D11Device& DX11Renderer::getDevice() const{
 		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null device");
 		return *d3dDevice.Get();

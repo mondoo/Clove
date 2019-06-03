@@ -1,6 +1,6 @@
 # Directories
 .vs/
-.vscode/
+.vscode/ipch/
 .codelite/
 Built/
 !Vendor/*

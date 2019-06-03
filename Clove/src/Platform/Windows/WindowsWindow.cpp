@@ -174,11 +174,11 @@ namespace clv{
 	}
 
 	void WindowsWindow::initialiseWindow(const WindowProps& props, gfx::API api){
-		instance = GetModuleHandle(nullptr);
-
 		data.title = props.title;
 		data.width = props.width;
 		data.height = props.height;
+		
+		instance = GetModuleHandle(nullptr);
 
 		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", data.title, data.width, data.height);
 

@@ -65,11 +65,11 @@ namespace clv::gfx{
 	std::string GL4Shader::getPathForShader(ShaderTypes shader){
 		switch(shader){
 			case ShaderTypes::Vertex:
-				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-vs.glsl";
+				return "Clove/src/Graphics/OpenGL-4/Shaders/Default-vs.glsl"; //Note: Dependant on execution location!
 				break;
 
 			case ShaderTypes::Pixel:
-				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-ps.glsl";
+				return "Clove/src/Graphics/OpenGL-4/Shaders/Default-ps.glsl"; //Note: Dependant on execution location!
 				break;
 
 			default:

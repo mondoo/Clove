@@ -10,6 +10,8 @@ namespace clv{
 	class Keyboard{
 	#if CLV_PLATFORM_WINDOWS
 		friend class WindowsWindow;
+	#elif CLV_PLATFORM_LINUX
+		friend class LinuxWindow;
 	#endif
 		
 		//DEFINITIONS

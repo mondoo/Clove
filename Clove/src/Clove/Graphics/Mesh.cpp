@@ -20,7 +20,7 @@ namespace clv::gfx{
 	Mesh::~Mesh() = default;
 
 	Mesh::Mesh(){
-		loader::MeshInfo info = loader::MeshLoader::loadOBJ("res/Objects/cube.obj");
+		loader::MeshInfo info = loader::MeshLoader::loadOBJ("Sandbox/res/Objects/cube.obj"); //Note: Dependant on execution location!
 
 		//TODO: This will break if the mesh does not have a texture mapping or normal mapping
 		for(int i = 0; i < info.verticies.size(); ++i){

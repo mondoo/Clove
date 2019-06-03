@@ -2,14 +2,29 @@
 
 #include "Clove/Platform/Window.hpp"
 
+//TODO: Move to renderer
+#include <GL/glx.h>
+//~
+
 namespace clv{
     class LinuxWindow : public Window{
         //VARIABLES
 	private:
-		Display* display;
+		Display* display = nullptr;
+		Screen* screen = nullptr;
 		int screenID;
-        ::Window windowID;
+        ::Window window;
+
         XEvent xevent;
+
+		XVisualInfo* visual = nullptr;
+		XSetWindowAttributes windowAttribs;
+
+		Atom atomWmDeleteWindow;
+
+		//TODO: Move to renderer
+		GLXContext context = nullptr;
+		//~
 
         //FUNCTIONS
     public:

@@ -11,6 +11,8 @@
 #include <glad/glad.h>
 #if CLV_PLATFORM_WINDOWS
 #include <wglext.h>
+#elif CLV_PLATFORM_LINUX
+#include <GL/glx.h>
 #endif
 
 namespace clv::gfx{
@@ -18,6 +20,8 @@ namespace clv::gfx{
 	#if CLV_PLATFORM_WINDOWS
 		ReleaseDC(windowsHandle, windowsDeviceContext);
 		wglDeleteContext(windowsResourceContext);
+	#elif CLV_PLATFORM_LINUX
+		
 	#endif
 	}
 
@@ -76,7 +80,10 @@ namespace clv::gfx{
 			windowsResourceContext = wglCreateContext(windowsDeviceContext);
 			wglMakeCurrent(windowsDeviceContext, windowsResourceContext);
 		}
+	#elif CLV_PLATFORM_LINUX
+		linuxDisplay = reinterpret_cast<Display*>(window.getNativeWindow());
 
+		
 	#endif
 
 		CLV_LOG_DEBUG("Device context created");
@@ -109,6 +116,10 @@ namespace clv::gfx{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
+	API GL4Renderer::getAPI() const{
+		return API::OpenGL4;
+	}
+
 	void GL4Renderer::drawIndexed(const unsigned int count){
 		CLV_TIME_SCOPE("OpenGL4: DrawIndexed");
 
@@ -118,6 +129,8 @@ namespace clv::gfx{
 	void GL4Renderer::swapBuffers(){
 	#if CLV_PLATFORM_WINDOWS
 		SwapBuffers(windowsDeviceContext);
+	#elif CLV_PLATFORM_LINUX
+
 	#endif
 	}
 }

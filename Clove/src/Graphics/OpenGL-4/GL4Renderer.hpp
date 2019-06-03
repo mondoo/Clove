@@ -11,7 +11,7 @@ namespace clv::gfx{
 		HDC windowsDeviceContext = nullptr;
 		HGLRC windowsResourceContext = nullptr;
 	#elif CLV_PLATFORM_LINUX
-
+		Display* linuxDisplay = nullptr;
 	#endif
 
 		//FUNCTIONS
@@ -27,7 +27,7 @@ namespace clv::gfx{
 
 		virtual void clear() override;
 
-		inline virtual API getAPI() const override;
+		virtual API getAPI() const override;
 
 	protected:
 		virtual void drawIndexed(const unsigned int count) override;
@@ -35,5 +35,3 @@ namespace clv::gfx{
 		virtual void swapBuffers() override;
 	};
 }
-
-#include "GL4Renderer.inl"
