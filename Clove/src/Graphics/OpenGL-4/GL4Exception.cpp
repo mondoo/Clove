@@ -7,7 +7,7 @@ namespace clv::gfx{
 	void APIENTRY errorCallback(unsigned int source, unsigned int type, unsigned int id,
 								unsigned int severity, int length,
 								const char *msg, const void *data){
-		std::string format = "GL Debug message:\n| Source: {0} | Type: {1} | Severity: {2} |\nMessage {3}";
+		std::string format = "GL Debug message:\nSource:\n{0}\n\nType:\n{1}\n\nSeverity:\n{2}\n\nMessage\n{3}";
 
 		std::string mesage = msg;
 
