@@ -331,7 +331,6 @@ namespace clv{
         CLV_LOG_INFO("Created X11 Window");
     }
 
-#if CLV_PLATFORM_LINUX
 	Window* Window::create(const WindowProps& props){
 		return new LinuxWindow(props);
 	}
@@ -339,5 +338,4 @@ namespace clv{
     Window* Window::create(const WindowProps& props, gfx::API api){
         return new LinuxWindow(props, api);
     }
-#endif
 }

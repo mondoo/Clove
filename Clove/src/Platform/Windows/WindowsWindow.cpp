@@ -238,7 +238,6 @@ namespace clv{
 		setVSync(true);
 	}
 
-#if CLV_PLATFORM_WINDOWS
 	Window* Window::create(const WindowProps& props){
 		return new WindowsWindow(props);
 	}
@@ -246,5 +245,4 @@ namespace clv{
 	Window* Window::create(const WindowProps& props, gfx::API api){
 		return new WindowsWindow(props, api);
 	}
-#endif
 }
