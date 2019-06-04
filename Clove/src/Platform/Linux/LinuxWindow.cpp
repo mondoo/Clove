@@ -256,21 +256,11 @@ namespace clv{
                                     CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, 
                                     &windowAttribs);
 
-        //window = XCreateSimpleWindow(display, RootWindow(display, screenID), 
-        //                            0, 0, data.width, data.height,
-        //                            1, BlackPixel(display, screenID), WhitePixel(display, screenID));
-        
-        //TODO: Move to renderer
-        //GLXContext context = glXCreateContext(display, visual, nullptr, GL_TRUE);
-        //glXMakeCurrent(display, window, context);
-        
-        //GLXContext tempContext = glXCreateNewContext(display, glFBC, GLX_RGBA_TYPE, 0, true);
-        //glXMakeCurrent(display, window, tempContext);
-
         //Remap the delete window message so we can gracefully close the application
-        atomWmDeleteWindow = XInternAtom(display, "WM_DELTE_WNDOW", false);
+        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
         XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
 
+        //TODO: Move to renderer
         //glxCreateContextAttribsARBProc glxCreateContextAttribsARB = 0;
         PFNGLXCREATECONTEXTATTRIBSARBPROC glxCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC) glXGetProcAddressARB((const GLubyte*) "glxCreateContextAttribsARB");
         if(!glxCreateContextAttribsARB){
