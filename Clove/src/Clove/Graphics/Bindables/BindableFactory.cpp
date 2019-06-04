@@ -12,8 +12,8 @@
 #include "Graphics/OpenGL-4/Bindables/GL4VertexBufferLayout.hpp"
 #include "Graphics/OpenGL-4/Bindables/GL4Texture.hpp"
 
-#if CLV_PLATFORM_WINDOWS
 //DX
+#if CLV_PLATFORM_WINDOWS
 #include "Graphics/DirectX-11/Bindables/DX11VertexBuffer.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11Shader.hpp"
