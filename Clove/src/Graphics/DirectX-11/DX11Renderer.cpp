@@ -17,8 +17,6 @@ namespace clv::gfx{
 	DX11Renderer::~DX11Renderer() = default;
 
 	DX11Renderer::DX11Renderer(const Window& window){
-		windowsHandle = reinterpret_cast<HWND>(window.getNativeWindow());
-
 		DXGI_SWAP_CHAIN_DESC scd = { 0 };
 		scd.BufferDesc.Width = 0;
 		scd.BufferDesc.Height = 0;
@@ -31,7 +29,7 @@ namespace clv::gfx{
 		scd.SampleDesc.Quality = 0;
 		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		scd.BufferCount = 1;
-		scd.OutputWindow = windowsHandle;
+		scd.OutputWindow = reinterpret_cast<HWND>(window.getNativeWindow());
 		scd.Windowed = TRUE;
 		scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		scd.Flags = 0;

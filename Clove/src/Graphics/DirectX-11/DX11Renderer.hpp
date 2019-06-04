@@ -16,8 +16,6 @@ namespace clv::gfx{
 	class DX11Renderer : public Renderer{
 		//VARIABLES
 	private:
-		HWND windowsHandle = nullptr;
-
 		Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice; //Device creates
 		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dDeviceContext; //Context issues commands
