@@ -20,6 +20,14 @@ namespace clv{
 		return data.height;
 	}
 
+	Keyboard& Window::getKeyboard(){
+		return keyboard;
+	}
+
+	Mouse& Window::getMouse(){
+		return mouse;
+	}
+
 	gfx::Renderer& Window::getRenderer(){
 		return *renderer;
 	}

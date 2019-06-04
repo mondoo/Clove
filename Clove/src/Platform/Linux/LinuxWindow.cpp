@@ -255,6 +255,10 @@ namespace clv{
                                     0, visual->depth, InputOutput, visual->visual,
                                     CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, 
                                     &windowAttribs);
+
+        //window = XCreateSimpleWindow(display, RootWindow(display, screenID), 
+        //                            0, 0, data.width, data.height,
+        //                            1, BlackPixel(display, screenID), WhitePixel(display, screenID));
         
         //TODO: Move to renderer
         //GLXContext context = glXCreateContext(display, visual, nullptr, GL_TRUE);
@@ -297,7 +301,7 @@ namespace clv{
             context = glXCreateNewContext(display, glFBC, GLX_RGBA_TYPE, 0, true);
         }
 
-        XSync(display, false); //What does this do?
+        XSync(display, false); //Passing true here flushes the event queue
         
         if(!glXIsDirect(display, context)){
             CLV_LOG_TRACE("Indirect GLX rendering context obtained");

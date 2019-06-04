@@ -63,8 +63,8 @@ namespace clv{
 		virtual void setVSync(bool enabled) = 0;
 		virtual bool isVSync() const = 0;
 
-		inline Keyboard& getKeyboard();
-		inline Mouse& getMouse();
+		Keyboard& getKeyboard();
+		Mouse& getMouse();
 		gfx::Renderer& getRenderer();
 
 		//Defined in derived class
@@ -72,5 +72,3 @@ namespace clv{
 		static Window* create(const WindowProps& props, gfx::API api);
 	};
 }
-
-#include "Window.inl"
