@@ -111,8 +111,8 @@ namespace clv::gfx{
 
 		//Configure viewport (maps the render space to an area on screen)
 		D3D11_VIEWPORT vp = { 0 };
-		vp.Width = 1920; //will need to pull this from window or where to put/size the view port
-		vp.Height = 1080;
+		vp.Width = window.getWidth();
+		vp.Height = window.getHeight();
 		vp.MinDepth = 0;
 		vp.MaxDepth = 1;
 		vp.TopLeftX = 0;
