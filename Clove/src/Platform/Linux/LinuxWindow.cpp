@@ -6,45 +6,6 @@
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Events/KeyEvent.hpp"
 
-#include <X11/Xresource.h>
-
-//TODO: Move to renderer
-//#include <GL/gl.h>
-//#include <GL/glx.h> 
-typedef GLXContext (*glxCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, bool, const int*);
-
-static bool isExtensionSupported(const char* extList, const char* extension){
-    const char* start;
-    const char* where;
-    const char* terminator;
-
-    where = strchr(extension, ' ');
-    if(where || *extension == '\0'){
-        return false;
-    }
-
-    for(start=extList;;){
-        where = strstr(start, extension);
-        if(!where){
-            break;
-        }
-
-        terminator = where + strlen(extension);
-
-        if(where == start || *(where - 1) == ' '){
-            if(*terminator == ' ' || *terminator == '\0'){
-                return true;
-            }
-        }
-
-        start = terminator;
-    }
-
-    return false;
-}
-
-//~
-
 namespace clv{
     LinuxWindow::~LinuxWindow(){
         //TODO: Move to renderer
@@ -179,65 +140,21 @@ namespace clv{
             XCloseDisplay(display);
             return;
         }
-        
+
         GLint glxAttribs[] = {
-            GLX_X_RENDERABLE,   true,
-            GLX_DRAWABLE_TYPE,  GLX_WINDOW_BIT,
-            GLX_RENDER_TYPE,    GLX_RGBA_BIT,
-            GLX_X_VISUAL_TYPE,  GLX_TRUE_COLOR,
-            GLX_RED_SIZE,       8,
-            GLX_GREEN_SIZE,     8,
-            GLX_BLUE_SIZE,      8,
-            GLX_ALPHA_SIZE,     8,
-            GLX_DEPTH_SIZE,     24,
-            GLX_STENCIL_SIZE,   8,
-            GLX_DOUBLEBUFFER,   true,
-            0,
+            GLX_RGBA,
+            GLX_DEPTH_SIZE, 24,
+            GLX_DOUBLEBUFFER,
+            0
         };
 
-        int fbcount = 0;
-        GLXFBConfig* fbc = glXChooseFBConfig(display, screenID, glxAttribs, &fbcount);
-        if(!fbc){
-            //TODO: Exception
-            CLV_LOG_CRITICAL("Failed to retrieve frame buffer");
-            return;
-        }
-
-        //Get the frame buffer with the most samples per pixel
-        int bestfbc = -1;
-        int worstfbc = -1;
-        int bestNumSamp = 0;
-        int worstNumSamp = 999;
-        for(int i = 0; i < fbcount; ++i){
-            XVisualInfo* vi = glXGetVisualFromFBConfig(display, fbc[i]);
-            if(vi){
-                int sampBuff;
-                int samples;
-                glXGetFBConfigAttrib(display, fbc[i], GLX_SAMPLE_BUFFERS, &sampBuff);
-                glXGetFBConfigAttrib(display, fbc[i], GLX_SAMPLES, &samples);
-
-                if(bestfbc < 0 || (sampBuff && samples > bestNumSamp)){
-                    bestfbc = i;
-                    bestNumSamp = samples;
-                }
-                if(worstfbc < 0 || !sampBuff || samples < worstNumSamp){
-                    worstfbc = i;
-                }
-                worstNumSamp = samples;
-            }
-            XFree(vi);
-        }
-
-        GLXFBConfig glFBC = fbc[bestfbc];
-        XFree(fbc);
-        //~
-
-        visual = glXGetVisualFromFBConfig(display, glFBC);
+        visual = glXChooseVisual(display, 0, glxAttribs);
         if(!visual){
             //TODO: Exception
             CLV_LOG_CRITICAL("Could not create visual");
             return;
         }
+        //~
 
         if(screenID != visual->screen){
             //TODO: Exception
@@ -250,6 +167,7 @@ namespace clv{
         windowAttribs.override_redirect = true;
         windowAttribs.colormap = XCreateColormap(display, RootWindow(display, screenID), visual->visual, AllocNone);
         windowAttribs.event_mask = ExposureMask;
+        
         window = XCreateWindow(display, RootWindow(display, screenID), 
                                     0, 0, data.width, data.height,
                                     0, visual->depth, InputOutput, visual->visual,
@@ -261,34 +179,12 @@ namespace clv{
         XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
 
         //TODO: Move to renderer
-        //glxCreateContextAttribsARBProc glxCreateContextAttribsARB = 0;
-        PFNGLXCREATECONTEXTATTRIBSARBPROC glxCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC) glXGetProcAddressARB((const GLubyte*) "glxCreateContextAttribsARB");
-        if(!glxCreateContextAttribsARB){
-            //TODO: Exception
-            CLV_LOG_CRITICAL("glxCreateContextAttribsARB not found!");
+        context = glXCreateContext(display, visual, nullptr, GL_TRUE);
+        
+        if(!context){
+            //TODO:Exception
+            CLV_LOG_CRITICAL("Could not create context");
             return;
-        }
-
-        const char* glxExts = glXQueryExtensionsString(display, screenID);
-
-        int contextAttribs[] = {
-            GLX_CONTEXT_MAJOR_VERSION_ARB, 4,
-            GLX_CONTEXT_MINOR_VERSION_ARB, 6,
-            GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-            0
-        };
-
-        if(!isExtensionSupported(glxExts, "GLX_ARB_create_context")){
-            CLV_LOG_DEBUG("Extension isn't supported");
-            context = glXCreateNewContext(display, glFBC, GLX_RGBA_TYPE, 0, true);
-        }else{
-            CLV_LOG_DEBUG("Extension is supported");
-            context = glxCreateContextAttribsARB(display, glFBC, 0, true, contextAttribs);
-        }
-
-        if (!context){
-            CLV_LOG_WARN("Could not create context, platform might not support opengl4.6");
-            context = glXCreateNewContext(display, glFBC, GLX_RGBA_TYPE, 0, true);
         }
 
         XSync(display, false); //Passing true here flushes the event queue
@@ -298,9 +194,6 @@ namespace clv{
         }else{
             CLV_LOG_TRACE("Direct GLX rendering context obtained");
         }
-
-        //glXMakeCurrent(nullptr, 0, nullptr);
-        //glXDestroyContext(display, tempContext);
 
         CLV_LOG_TRACE("Making context current");
         glXMakeCurrent(display, window, context);
