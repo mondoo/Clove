@@ -2,6 +2,10 @@
 
 #include "Clove/Platform/Window.hpp"
 
+//TODO: Move to renderer
+#include <GL/glx.h>
+//~
+
 namespace clv{
     class LinuxWindow : public Window{
         //VARIABLES
@@ -17,7 +21,11 @@ namespace clv{
 		XSetWindowAttributes windowAttribs;
 
 		Atom atomWmDeleteWindow;
-		
+
+		//TODO: Move to renderer
+		GLXContext context = nullptr;
+		//~
+
         //FUNCTIONS
     public:
         LinuxWindow() = delete;

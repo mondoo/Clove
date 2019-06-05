@@ -6,22 +6,22 @@
 #include "Clove/Profiling/Timer.hpp"
 #if CLV_PLATFORM_WINDOWS
 #include "Platform/Windows/WindowsException.hpp"
-#elif CLV_PLATFORM_LINUX
-#include "Platform/Linux/XLibHelpers.hpp"
 #endif
 
-#if CLV_PLATFORM_WINDOWS
 #include <glad/glad.h>
+#if CLV_PLATFORM_WINDOWS
 #include <wglext.h>
+#elif CLV_PLATFORM_LINUX
+#include <GL/glx.h>
 #endif
 
 namespace clv::gfx{
 	GL4Renderer::~GL4Renderer(){
 	#if CLV_PLATFORM_WINDOWS
 		ReleaseDC(windowsHandle, windowsDeviceContext);
-		wglDeleteContext(wglContext);
+		wglDeleteContext(windowsResourceContext);
 	#elif CLV_PLATFORM_LINUX
-		glXDestroyContext(xDisplay, glxContext);
+		
 	#endif
 	}
 
@@ -64,43 +64,26 @@ namespace clv::gfx{
 			};
 
 			//Create the new 4.6 context
-			wglContext = wglCreateContextAttribsARB(windowsDeviceContext, NULL, attributes);
+			windowsResourceContext = wglCreateContextAttribsARB(windowsDeviceContext, NULL, attributes);
 
 			//Remove the old temp one
 			wglMakeCurrent(NULL, NULL);
 			wglDeleteContext(tempOpenGLContext);
 
 			//Swap in the fancy new one
-			wglMakeCurrent(windowsDeviceContext, wglContext);
+			wglMakeCurrent(windowsDeviceContext, windowsResourceContext);
 
 			CLV_LOG_INFO("Succesfully created an OpenGL 4.6 context");
 		} else{
 			CLV_LOG_WARN("Could not retrieve wglCreateContextAttribsARB. Application might not support OpenGL 3.2+ contexts");
 
-			wglContext = wglCreateContext(windowsDeviceContext);
-			wglMakeCurrent(windowsDeviceContext, wglContext);
+			windowsResourceContext = wglCreateContext(windowsDeviceContext);
+			wglMakeCurrent(windowsDeviceContext, windowsResourceContext);
 		}
 	#elif CLV_PLATFORM_LINUX
-		Screen* xScreen = reinterpret_cast<Screen*>(window.getNativeWindow());
-		xDisplay = xScreen->display;
-		xWindow = xScreen->root; //Note this is the root window ID - might cause issues when having multiple windows
+		linuxDisplay = reinterpret_cast<Display*>(window.getNativeWindow());
 
-		XVisualInfo* visual = XLibHelpers::getVisualInfo(xDisplay, API::OpenGL4);
-        if(!visual){
-            //TODO: Exception
-            CLV_LOG_CRITICAL("Could not get VisualInfo");
-        }
-
-		glxContext = glXCreateContext(xDisplay, visual, nullptr, GL_TRUE);
-        
-        if(!glxContext){
-            //TODO:Exception
-            CLV_LOG_CRITICAL("Could not create context");
-            return;
-        }
-	
-        CLV_LOG_TRACE("Making context current");
-        glXMakeCurrent(xDisplay, xWindow, glxContext);
+		
 	#endif
 
 		CLV_LOG_DEBUG("Device context created");
@@ -147,7 +130,7 @@ namespace clv::gfx{
 	#if CLV_PLATFORM_WINDOWS
 		SwapBuffers(windowsDeviceContext);
 	#elif CLV_PLATFORM_LINUX
-		glXSwapBuffers(xDisplay, xWindow);
+
 	#endif
 	}
 }

@@ -5,10 +5,13 @@
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Events/KeyEvent.hpp"
-#include "Platform/Linux/XLibHelpers.hpp"
 
 namespace clv{
     LinuxWindow::~LinuxWindow(){
+        //TODO: Move to renderer
+        glXDestroyContext(display, context);
+        //~
+
         XFree(visual);
         XFreeColormap(display, windowAttribs.colormap);
         XDestroyWindow(display, window);
@@ -92,10 +95,14 @@ namespace clv{
 
 	void LinuxWindow::endFrame(){
         renderer->draw();
+
+        //TEMP: manually swapping buffers here:
+        glXSwapBuffers(display, window);
+        //~
     }
 
 	void* LinuxWindow::getNativeWindow() const{
-        return screen;
+        return display;
     }
 
 	void LinuxWindow::setVSync(bool enabled){
@@ -122,11 +129,21 @@ namespace clv{
         screen = DefaultScreenOfDisplay(display); //Get the screen of the display
         screenID = DefaultScreen(display);
 
-        visual = XLibHelpers::getVisualInfo(display, api);
+        //We need to create the window after we've defined the openGL attributes because we need the data from it
+        GLint glxAttribs[] = {
+            GLX_RGBA,
+            GLX_DEPTH_SIZE, 24,
+            GLX_DOUBLEBUFFER,
+            0
+        };
+
+        visual = glXChooseVisual(display, 0, glxAttribs);
         if(!visual){
             //TODO: Exception
-            CLV_LOG_CRITICAL("Could not get VisualInfo");
+            CLV_LOG_CRITICAL("Could not create visual");
+            return;
         }
+        //~
 
         if(screenID != visual->screen){
             //TODO: Exception
@@ -147,6 +164,18 @@ namespace clv{
                                     CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, 
                                     &windowAttribs);
 
+        //TODO: Move to renderer
+        context = glXCreateContext(display, visual, nullptr, GL_TRUE);
+        
+        if(!context){
+            //TODO:Exception
+            CLV_LOG_CRITICAL("Could not create context");
+            return;
+        }
+
+        CLV_LOG_TRACE("Making context current");
+        glXMakeCurrent(display, window, context);
+        //~
 
         //Remap the delete window message so we can gracefully close the application
         atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
