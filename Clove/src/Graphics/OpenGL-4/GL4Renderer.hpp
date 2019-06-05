@@ -2,6 +2,11 @@
 
 #include "Clove/Graphics/Renderer.hpp"
 
+#if CLV_PLATFORM_LINUX
+#include <glad/glad.h>
+#include <GL/glx.h> //Need glad first
+#endif
+
 namespace clv::gfx{
 	class GL4Renderer : public Renderer{
 		//VARIABLES
@@ -9,9 +14,13 @@ namespace clv::gfx{
 	#if CLV_PLATFORM_WINDOWS
 		HWND windowsHandle = nullptr;
 		HDC windowsDeviceContext = nullptr;
-		HGLRC windowsResourceContext = nullptr;
+
+		HGLRC wglContext = nullptr;
 	#elif CLV_PLATFORM_LINUX
-		Display* linuxDisplay = nullptr;
+		Display* xDisplay = nullptr;
+		::Window xWindow;
+
+		GLXContext glxContext = nullptr;
 	#endif
 
 		//FUNCTIONS
