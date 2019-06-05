@@ -12,7 +12,7 @@ namespace clv{
         glXDestroyContext(display, context);
         //~
 
-        XFree(screen);
+        XFree(visual);
         XFreeColormap(display, windowAttribs.colormap);
         XDestroyWindow(display, window);
         XCloseDisplay(display);
@@ -162,6 +162,7 @@ namespace clv{
             return;
         }
 
+        windowAttribs = { 0 };
         windowAttribs.border_pixel = BlackPixel(display, screenID);
         windowAttribs.background_pixel = WhitePixel(display, screenID);
         windowAttribs.override_redirect = true;
