@@ -130,17 +130,6 @@ namespace clv{
         screenID = DefaultScreen(display);
 
         //We need to create the window after we've defined the openGL attributes because we need the data from it
-        //TODO: Move to renderer
-        GLint majorGLX;
-        GLint minorGLX;
-        glXQueryVersion(display, &majorGLX, &minorGLX);
-        if(majorGLX <= 1 && minorGLX < 2){
-            //TODO: Exception
-            CLV_LOG_CRITICAL("GLX 1.2 or greater is required");
-            XCloseDisplay(display);
-            return;
-        }
-
         GLint glxAttribs[] = {
             GLX_RGBA,
             GLX_DEPTH_SIZE, 24,
@@ -175,10 +164,6 @@ namespace clv{
                                     CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, 
                                     &windowAttribs);
 
-        //Remap the delete window message so we can gracefully close the application
-        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
-        XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
-
         //TODO: Move to renderer
         context = glXCreateContext(display, visual, nullptr, GL_TRUE);
         
@@ -188,17 +173,15 @@ namespace clv{
             return;
         }
 
-        XSync(display, false); //Passing true here flushes the event queue
-        
-        if(!glXIsDirect(display, context)){
-            CLV_LOG_TRACE("Indirect GLX rendering context obtained");
-        }else{
-            CLV_LOG_TRACE("Direct GLX rendering context obtained");
-        }
-
         CLV_LOG_TRACE("Making context current");
         glXMakeCurrent(display, window, context);
         //~
+
+        //Remap the delete window message so we can gracefully close the application
+        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
+        XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
+        
+        XSync(display, false); //Passing true here flushes the event queue
 
         const long keyboardMask = KeyPressMask | KeyReleaseMask | KeymapStateMask;
         const long mouseMask = PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask;
