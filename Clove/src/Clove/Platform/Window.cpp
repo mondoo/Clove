@@ -2,6 +2,7 @@
 #include "Window.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/Context.hpp"
 
 namespace clv{
 	Window::Window() = default;

@@ -264,6 +264,7 @@ project "Clove"
 			"%{prj.location}/src/Graphics/DirectX-11/**.hpp",
 			"%{prj.location}/src/Graphics/DirectX-11/**.inl",
 			"%{prj.location}/src/Graphics/DirectX-11/**.cpp",
+			"%{prj.location}/src/Graphics/OpenGL-4/WGLContext.*",
 			"%{prj.location}/src/Platform/Windows/**.hpp",
 			"%{prj.location}/src/Platform/Windows/**.inl",
 			"%{prj.location}/src/Platform/Windows/**.cpp",

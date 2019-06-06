@@ -6,6 +6,7 @@
 namespace clv::gfx{
 	enum class API;
 	class Renderer;
+	class Context;
 }
 
 namespace clv{
@@ -39,7 +40,9 @@ namespace clv{
 
 		Keyboard keyboard;
 		Mouse mouse;
+
 		std::unique_ptr<gfx::Renderer> renderer;
+		std::unique_ptr<gfx::Context> context;
 
 		//FUNCTIONS
 	public:

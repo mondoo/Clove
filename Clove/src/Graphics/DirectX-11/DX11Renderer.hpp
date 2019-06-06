@@ -13,6 +13,8 @@ struct ID3D11RenderTargetView;
 struct ID3D11DepthStencilView;
 
 namespace clv::gfx{
+	class Context;
+
 	class DX11Renderer : public Renderer{
 		//VARIABLES
 	private:
@@ -36,7 +38,7 @@ namespace clv::gfx{
 		DX11Renderer& operator=(DX11Renderer&& other) noexcept = delete;
 		~DX11Renderer();
 
-		DX11Renderer(const Window& window);
+		DX11Renderer(const Context& context);
 
 		virtual void clear() override;
 

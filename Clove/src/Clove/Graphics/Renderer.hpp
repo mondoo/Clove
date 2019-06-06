@@ -4,16 +4,9 @@
 
 #include <queue>
 
-namespace clv{
-	class Window;
-}
-
-namespace clv::scene{
-	class Camera;
-}
-
 namespace clv::gfx{
 	class Drawable;
+	class Context;
 
 	class Renderer{
 		friend class Drawable;
@@ -31,7 +24,7 @@ namespace clv::gfx{
 		Renderer& operator=(Renderer&& other) noexcept = delete;
 		virtual ~Renderer();
 
-		static std::unique_ptr<Renderer> createRenderer(const Window& window, API api);
+		static std::unique_ptr<Renderer> createRenderer(const Context& context, API api);
 
 		void submit(const std::shared_ptr<Drawable>& drawable);
 

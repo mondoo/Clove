@@ -3,14 +3,12 @@
 #include "Clove/Graphics/Renderer.hpp"
 
 namespace clv::gfx{
+	class Context;
+
 	class GL4Renderer : public Renderer{
 		//VARIABLES
 	private:
-	#if CLV_PLATFORM_WINDOWS
-		HWND windowsHandle = nullptr;
-		HDC windowsDeviceContext = nullptr;
-		HGLRC windowsResourceContext = nullptr;
-	#elif CLV_PLATFORM_LINUX
+	#if CLV_PLATFORM_LINUX
 		Display* linuxDisplay = nullptr;
 	#endif
 
@@ -23,7 +21,7 @@ namespace clv::gfx{
 		GL4Renderer& operator=(GL4Renderer&& other) noexcept = delete;
 		~GL4Renderer();
 
-		GL4Renderer(const Window& window);
+		GL4Renderer(const Context& context);
 
 		virtual void clear() override;
 

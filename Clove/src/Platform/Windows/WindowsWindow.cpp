@@ -2,6 +2,7 @@
 #include "WindowsWindow.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/Context.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Events/KeyEvent.hpp"
@@ -38,6 +39,7 @@ namespace clv{
 
 	void WindowsWindow::endFrame(){
 		renderer->draw();
+		context->present();
 	}
 
 	void* WindowsWindow::getNativeWindow() const{
@@ -233,7 +235,8 @@ namespace clv{
 
 		ShowWindow(windowsHandle, SW_SHOW);
 
-		renderer = gfx::Renderer::createRenderer(*this, api);
+		context = gfx::Context::createContext(windowsHandle, api);
+		renderer = gfx::Renderer::createRenderer(*context, api);
 
 		setVSync(true);
 	}

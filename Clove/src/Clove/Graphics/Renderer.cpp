@@ -13,18 +13,18 @@ namespace clv::gfx{
 
 	Renderer::~Renderer() = default;
 
-	std::unique_ptr<Renderer> Renderer::createRenderer(const Window& window, API api){
+	std::unique_ptr<Renderer> Renderer::createRenderer(const Context& context, API api){
 		std::unique_ptr<Renderer> renderer;
 		
 		switch(api){
 			case API::OpenGL4:
 				CLV_LOG_TRACE("Creating OpenGL renderer");
-				renderer = std::make_unique<GL4Renderer>(window);
+				renderer = std::make_unique<GL4Renderer>(context);
 				break;
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
 				CLV_LOG_TRACE("Creating DirectX11 renderer");
-				renderer = std::make_unique<DX11Renderer>(window);
+				renderer = std::make_unique<DX11Renderer>(context);
 				break;
 			#endif
 			default:
