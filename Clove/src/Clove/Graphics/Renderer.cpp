@@ -53,7 +53,5 @@ namespace clv::gfx{
 				drawables.pop();
 			}
 		}
-
-		swapBuffers();
 	}
 }

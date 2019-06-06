@@ -6,7 +6,7 @@ namespace clv::gfx{
 
 	inline ID3D11DeviceContext& DX11Renderer::getContext() const{
 		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null context");
-		return *d3dDeviceContext.Get();
+		return *d3dContext.Get();
 	}
 
 #if CLV_DEBUG

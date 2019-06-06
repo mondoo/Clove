@@ -57,15 +57,6 @@ namespace clv::gfx{
 
 	void GL4Renderer::drawIndexed(const unsigned int count){
 		CLV_TIME_SCOPE("OpenGL4: DrawIndexed");
-
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
-	}
-
-	void GL4Renderer::swapBuffers(){
-	#if CLV_PLATFORM_WINDOWS
-		
-	#elif CLV_PLATFORM_LINUX
-
-	#endif
 	}
 }

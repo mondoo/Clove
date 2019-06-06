@@ -4,6 +4,7 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 #if CLV_PLATFORM_WINDOWS
 #include "Graphics/OpenGL-4/WGLContext.hpp"
+#include "Graphics/DirectX-11/DXContext.hpp"
 #elif CLV_PLATFORM_LINUX
 
 #endif
@@ -25,7 +26,7 @@ namespace clv::gfx{
 			#endif
 
 			case API::DirectX11:
-				return std::unique_ptr<Context>(); //TODO
+				return std::make_unique<DXContext>(windowData);
 
 			default:
 				CLV_LOG_ERROR("Default statement hit. No context initialised {0}", __func__);

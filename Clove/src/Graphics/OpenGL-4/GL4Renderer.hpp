@@ -29,7 +29,5 @@ namespace clv::gfx{
 
 	protected:
 		virtual void drawIndexed(const unsigned int count) override;
-
-		virtual void swapBuffers() override;
 	};
 }

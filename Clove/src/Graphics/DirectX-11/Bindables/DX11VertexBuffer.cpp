@@ -31,7 +31,6 @@ namespace clv::gfx{
 			D3D11_SUBRESOURCE_DATA vsrd = {};
 			vsrd.pSysMem = vertices.data();
 
-			//TODO: This will only compile on release without the info manager
 			DX11_THROW_INFO(dxrenderer->getDevice().CreateBuffer(&vbd, &vsrd, &vertexBuffer));
 		}
 	}

@@ -7,7 +7,6 @@
 #include <wrl.h>
 
 struct ID3D11Device;
-struct IDXGISwapChain;
 struct ID3D11DeviceContext;
 struct ID3D11RenderTargetView;
 struct ID3D11DepthStencilView;
@@ -19,10 +18,9 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice; //Device creates
-		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dDeviceContext; //Context issues commands
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext; //Context issues commands
+		
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> target;
-
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> dsv;
 
 	#if CLV_DEBUG
@@ -53,8 +51,6 @@ namespace clv::gfx{
 
 	protected:
 		virtual void drawIndexed(const unsigned int count) override;
-
-		virtual void swapBuffers() override;
 	};
 }
 
