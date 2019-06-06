@@ -17,7 +17,7 @@ namespace clv{
 
         XEvent xevent;
 
-		XVisualInfo* visual = nullptr;
+		XVisualInfo* visual = nullptr; //TODO: unique_ptr with custom deleter
 		XSetWindowAttributes windowAttribs;
 
 		Atom atomWmDeleteWindow;
