@@ -9,8 +9,6 @@
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct IDXGISwapChain;
-struct ID3D11RenderTargetView;
-struct ID3D11DepthStencilView;
 
 namespace clv::gfx{
 	class DXContext : public Context{
@@ -21,9 +19,6 @@ namespace clv::gfx{
 		
 		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
 
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> target;
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> dsv;
-
 		//TEMP: just smashing it in here
 	#if CLV_DEBUG
 		DXGIInfoManager infoManager; //Used by certain DX11 exception macros
@@ -33,17 +28,16 @@ namespace clv::gfx{
 	public:
 		DXContext() = delete;
 		DXContext(const DXContext& other) = delete;
-		DXContext(DXContext&& other) noexcept = delete;
+		DXContext(DXContext&& other) noexcept;
 		DXContext& operator=(const DXContext& other) = delete;
-		DXContext& operator=(DXContext&& other) noexcept = delete;
+		DXContext& operator=(DXContext&& other) noexcept;
 		virtual ~DXContext();
 
 		DXContext(void* windowData);
 
 		Microsoft::WRL::ComPtr<ID3D11Device> getDevice() const;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> getContext() const;
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> getTarget() const;
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> getDSV() const;
+		Microsoft::WRL::ComPtr<IDXGISwapChain> getSwapChain() const;
 
 		virtual void present() override;
 	};

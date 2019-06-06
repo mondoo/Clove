@@ -34,7 +34,7 @@ namespace clv{
 
 		DXGIInfoManager::DXGIInfoManager(DXGIInfoManager&& other) noexcept = default;
 
-		DXGIInfoManager& DXGIInfoManager::operator=(DXGIInfoManager&& other) noexcept = default
+		DXGIInfoManager& DXGIInfoManager::operator=(DXGIInfoManager&& other) noexcept = default;
 
 		DXGIInfoManager::~DXGIInfoManager() = default;
 
