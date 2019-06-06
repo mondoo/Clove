@@ -207,7 +207,7 @@ namespace clv{
 
 		//Create a rect so we can adjust the resolution to be the client region not the entire window size
 		RECT wr;
-		wr.left = 100;
+		wr.left = 100; //What is with these 100s???
 		wr.right = data.width + wr.left;
 		wr.top = 100;
 		wr.bottom = data.height + wr.top;
