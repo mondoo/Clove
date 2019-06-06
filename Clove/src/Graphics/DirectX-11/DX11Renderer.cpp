@@ -13,8 +13,6 @@ namespace clv::gfx{
 	DX11Renderer::~DX11Renderer() = default;
 
 	DX11Renderer::DX11Renderer(const Window& window){
-		windowsHandle = reinterpret_cast<HWND>(window.getNativeWindow());
-
 		DXGI_SWAP_CHAIN_DESC scd = { 0 };
 		scd.BufferDesc.Width = 0;
 		scd.BufferDesc.Height = 0;
@@ -27,7 +25,7 @@ namespace clv::gfx{
 		scd.SampleDesc.Quality = 0;
 		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		scd.BufferCount = 1;
-		scd.OutputWindow = windowsHandle;
+		scd.OutputWindow = reinterpret_cast<HWND>(window.getNativeWindow());
 		scd.Windowed = TRUE;
 		scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		scd.Flags = 0;
@@ -109,8 +107,8 @@ namespace clv::gfx{
 
 		//Configure viewport (maps the render space to an area on screen)
 		D3D11_VIEWPORT vp = { 0 };
-		vp.Width = 1920; //will need to pull this from window or where to put/size the view port
-		vp.Height = 1080;
+		vp.Width = window.getWidth();
+		vp.Height = window.getHeight();
 		vp.MinDepth = 0;
 		vp.MaxDepth = 1;
 		vp.TopLeftX = 0;
