@@ -6,21 +6,11 @@
 #include "Clove/Profiling/Timer.hpp"
 
 #include <glad/glad.h>
-#if CLV_PLATFORM_LINUX
-#include <GL/glx.h>
-#endif
 
 namespace clv::gfx{
-	GL4Renderer::~GL4Renderer(){
-	#if CLV_PLATFORM_LINUX
-		
-	#endif
-	}
+	GL4Renderer::~GL4Renderer() = default;
 
 	GL4Renderer::GL4Renderer(const Context& context){
-	#if  CLV_PLATFORM_LINUX
-		linuxDisplay = reinterpret_cast<Display*>(window.getNativeWindow());
-	#endif
 		CLV_LOG_DEBUG("Device context created");
 
 		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");

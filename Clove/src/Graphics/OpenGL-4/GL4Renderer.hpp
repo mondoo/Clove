@@ -6,12 +6,6 @@ namespace clv::gfx{
 	class Context;
 
 	class GL4Renderer : public Renderer{
-		//VARIABLES
-	private:
-	#if CLV_PLATFORM_LINUX
-		Display* linuxDisplay = nullptr;
-	#endif
-
 		//FUNCTIONS
 	public:
 		GL4Renderer() = delete;
