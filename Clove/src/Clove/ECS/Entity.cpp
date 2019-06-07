@@ -1,20 +1,10 @@
 #include "clvpch.hpp"
 #include "Entity.hpp"
 
-#include "Clove/Graphics/Mesh.hpp"
-#include "Clove/Application.hpp"
-#include "Clove/Platform/Window.hpp"
-#include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Scene/Camera.hpp"
-
 namespace clv::ecs{
 	Entity::Entity()
-		: scene::SceneNode(){
-		mesh = std::make_shared<gfx::Mesh>();
-
-		//Temp
-		//mesh->setViewMatrix(math::Matrix4f(1.0f));
-		//mesh->setProjection(math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 0.5f, 50.0f));
+		/*: scene::SceneNode()*/{
+	
 	}
 
 	Entity::Entity(const Entity& other) = default;
@@ -27,13 +17,7 @@ namespace clv::ecs{
 
 	Entity::~Entity() = default;
 
-	void Entity::update(float deltaSeconds){
+	/*void Entity::update(float deltaSeconds){
 		scene::SceneNode::update(deltaSeconds);
-
-		mesh->setModelMatrix(getWorldTransform());
-
-		gfx::Renderer& renderer = Application::get().getWindow().getRenderer();  //TODO: Correct?
-
-		renderer.submit(mesh);
-	}
+	}*/
 }

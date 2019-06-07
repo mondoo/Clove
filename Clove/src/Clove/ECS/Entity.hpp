@@ -1,19 +1,12 @@
 #pragma once
 
-#include "Clove/Scene/SceneNode.hpp"
-
-namespace clv::gfx{
-	class Mesh;
-}
+//#include "Clove/Scene/SceneNode.hpp"
 
 namespace clv::ecs{
-	class Entity : public scene::SceneNode{
+	class Entity/* : public scene::SceneNode*/{
 		//VARIABLES
-	//private:
-		//Temp: just giving them all a mesh until this gets set up
-	public:
-		std::shared_ptr<gfx::Mesh> mesh;
-		//
+	private:
+
 
 		//FUNCTIONS
 	public:
@@ -24,6 +17,6 @@ namespace clv::ecs{
 		Entity& operator=(Entity&& other) noexcept;
 		virtual ~Entity();
 
-		virtual void update(float deltaSeconds) override;
+		/*virtual void update(float deltaSeconds) override;*/
 	};
 }
