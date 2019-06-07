@@ -150,6 +150,10 @@ namespace clv::gfx{
 		return dsv;
 	}
 
+	void DXContext::makeCurrent(){
+		//Empty
+	}
+
 	void DXContext::present(){
 		HRESULT hr;
 

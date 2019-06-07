@@ -2,16 +2,13 @@
 #include "LinuxWindow.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/Context.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Events/KeyEvent.hpp"
 
 namespace clv{
 	LinuxWindow::~LinuxWindow(){
-		//TODO: Move to renderer
-		glXDestroyContext(display, context);
-		//~
-
 		XFree(visual);
 		XFreeColormap(display, windowAttribs.colormap);
 		XDestroyWindow(display, window);
@@ -95,10 +92,7 @@ namespace clv{
 
 	void LinuxWindow::endFrame(){
 		renderer->draw();
-
-		//TEMP: manually swapping buffers here:
-		glXSwapBuffers(display, window);
-		//~
+        context->present();
 	}
 
 	void* LinuxWindow::getNativeWindow() const{
@@ -129,21 +123,9 @@ namespace clv{
 		screen = DefaultScreenOfDisplay(display); //Get the screen of the display
 		screenID = DefaultScreen(display);
 
-		//We need to create the window after we've defined the openGL attributes because we need the data from it
-		GLint glxAttribs[] = {
-			GLX_RGBA,
-			GLX_DEPTH_SIZE, 24,
-			GLX_DOUBLEBUFFER,
-			0
-		};
-
-		visual = glXChooseVisual(display, 0, glxAttribs);
-		if(!visual){
-			//TODO: Exception
-			CLV_LOG_CRITICAL("Could not create visual");
-			return;
-		}
-		//~
+        //Create the context first to get the visual info
+        data = { display, &window, &visual };
+        context = gfx::Context::createContext(&data, api);
 
 		if(screenID != visual->screen){
 			//TODO: Exception
@@ -157,6 +139,7 @@ namespace clv{
 		windowAttribs.override_redirect = true;
 		windowAttribs.colormap = XCreateColormap(display, RootWindow(display, screenID), visual->visual, AllocNone);
 		windowAttribs.event_mask = ExposureMask;
+        
 
 		window = XCreateWindow(display, RootWindow(display, screenID),
 							   0, 0, windowProperties.width, windowProperties.height,
@@ -164,18 +147,8 @@ namespace clv{
 							   CWBackPixel | CWColormap | CWBorderPixel | CWEventMask,
 							   &windowAttribs);
 
-		//TODO: Move to renderer
-		context = glXCreateContext(display, visual, nullptr, GL_TRUE);
-
-		if(!context){
-			//TODO:Exception
-			CLV_LOG_CRITICAL("Could not create context");
-			return;
-		}
-
-		CLV_LOG_TRACE("Making context current");
-		glXMakeCurrent(display, window, context);
-		//~
+        //Now that we have a window, we can make the context current
+        context->makeCurrent();
 
 		//Remap the delete window message so we can gracefully close the application
 		atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
@@ -193,7 +166,7 @@ namespace clv{
 		XClearWindow(display, window);
 		XMapRaised(display, window);
 
-		renderer = gfx::Renderer::createRenderer(*this, api);
+		renderer = gfx::Renderer::createRenderer(*context, api);
 
 		CLV_LOG_INFO("Created X11 Window");
 	}

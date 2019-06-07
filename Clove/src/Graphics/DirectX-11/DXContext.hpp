@@ -46,6 +46,8 @@ namespace clv::gfx{
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> getTarget() const;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> getDSV() const;
 
+		virtual void makeCurrent() override;
+
 		virtual void present() override;
 	};
 }

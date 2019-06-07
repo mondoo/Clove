@@ -21,6 +21,8 @@ namespace clv::gfx{
 
 		WGLContext(void* windowData);
 
+		virtual void makeCurrent() override;
+
 		virtual void present() override;
 	};
 }

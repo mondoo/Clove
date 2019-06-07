@@ -15,6 +15,8 @@ namespace clv::gfx{
 
 		static std::unique_ptr<Context> createContext(void* windowData, API api);
 
+		virtual void makeCurrent() = 0;
+
 		virtual void present() = 0;
 	};
 }

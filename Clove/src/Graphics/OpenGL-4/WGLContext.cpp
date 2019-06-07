@@ -61,16 +61,16 @@ namespace clv::gfx{
 			wglMakeCurrent(NULL, NULL);
 			wglDeleteContext(tempOpenGLContext);
 
-			//Swap in the fancy new one
-			wglMakeCurrent(windowsDeviceContext, wglContext);
-
 			CLV_LOG_INFO("Succesfully created an OpenGL 4.6 context");
 		} else{
 			CLV_LOG_WARN("Could not retrieve wglCreateContextAttribsARB. Application might not support OpenGL 3.2+ contexts");
 
 			wglContext = wglCreateContext(windowsDeviceContext);
-			wglMakeCurrent(windowsDeviceContext, wglContext);
 		}
+	}
+
+	void WGLContext::makeCurrent(){
+		wglMakeCurrent(windowsDeviceContext, wglContext);
 	}
 
 	void WGLContext::present(){

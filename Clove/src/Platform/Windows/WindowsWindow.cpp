@@ -238,6 +238,7 @@ namespace clv{
 		data = { windowsHandle, windowProperties.width, windowProperties.height };
 
 		context = gfx::Context::createContext(&data, api);
+		context->makeCurrent();
 		renderer = gfx::Renderer::createRenderer(*context, api);
 
 		setVSync(true);

@@ -242,6 +242,7 @@ project "Clove"
 			"%{prj.location}/src/Platform/Linux/**.hpp",
 			"%{prj.location}/src/Platform/Linux/**.inl",
 			"%{prj.location}/src/Platform/Linux/**.cpp",
+			"%{prj.location}/src/Graphics/OpenGL-4/GLXContext.*",
 		}
 
 		includedirs{

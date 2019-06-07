@@ -6,7 +6,7 @@
 #include "Graphics/OpenGL-4/WGLContext.hpp"
 #include "Graphics/DirectX-11/DXContext.hpp"
 #elif CLV_PLATFORM_LINUX
-
+#include "Graphics/OpenGL-4/GLXContext.hpp"
 #endif
 
 namespace clv::gfx{
@@ -22,7 +22,7 @@ namespace clv::gfx{
 			#if CLV_PLATFORM_WINDOWS
 				return std::make_unique<WGLContext>(windowData);
 			#elif CLV_PLATFORM_LINUX
-				return std::unique_ptr<Context>(); //TODO
+				return std::make_unique<GLXContext>(windowData);
 			#endif
 
 			#if CLV_PLATFORM_WINDOWS
