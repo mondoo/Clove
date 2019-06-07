@@ -34,7 +34,7 @@ namespace clv{
 	protected:
 		EventCallbackFn eventCallback;
 
-		WindowProps data;
+		WindowProps windowProperties;
 
 		bool vSync = true;
 

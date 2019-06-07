@@ -1,6 +1,7 @@
 #include "clvpch.hpp"
 #include "WGLContext.hpp"
 
+#include "Platform/Windows/WindowsWindow.hpp"
 #include "Platform/Windows/WindowsException.hpp"
 
 #include <glad/glad.h>
@@ -17,7 +18,7 @@ namespace clv::gfx{
 	}
 
 	WGLContext::WGLContext(void* windowData){
-		windowsHandle = reinterpret_cast<HWND>(windowData);
+		windowsHandle = reinterpret_cast<WindowsData*>(windowData)->handle;
 
 		windowsDeviceContext = GetDC(windowsHandle);
 

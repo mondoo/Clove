@@ -14,11 +14,11 @@ namespace clv{
 	}
 
 	unsigned int Window::getWidth() const{
-		return data.width;
+		return windowProperties.width;
 	}
 
 	unsigned int Window::getHeight() const{
-		return data.height;
+		return windowProperties.height;
 	}
 
 	Keyboard& Window::getKeyboard(){

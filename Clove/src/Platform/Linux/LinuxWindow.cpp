@@ -114,9 +114,9 @@ namespace clv{
 	}
 
 	void LinuxWindow::initialiseWindow(const WindowProps& props, gfx::API api){
-		data.title = props.title;
-		data.width = props.width;
-		data.height = props.height;
+		windowProperties.title = props.title;
+		windowProperties.width = props.width;
+		windowProperties.height = props.height;
 
 		display = XOpenDisplay(nullptr); //makes the connection to the client, where to display the window
 
@@ -159,7 +159,7 @@ namespace clv{
 		windowAttribs.event_mask = ExposureMask;
 
 		window = XCreateWindow(display, RootWindow(display, screenID),
-							   0, 0, data.width, data.height,
+							   0, 0, windowProperties.width, windowProperties.height,
 							   0, visual->depth, InputOutput, visual->visual,
 							   CWBackPixel | CWColormap | CWBorderPixel | CWEventMask,
 							   &windowAttribs);
@@ -188,7 +188,7 @@ namespace clv{
 
 		XSelectInput(display, window, keyboardMask | mouseMask);
 
-		XStoreName(display, window, data.title.c_str());
+		XStoreName(display, window, windowProperties.title.c_str());
 
 		XClearWindow(display, window);
 		XMapRaised(display, window);

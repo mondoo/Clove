@@ -9,6 +9,8 @@
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct IDXGISwapChain;
+struct ID3D11RenderTargetView;
+struct ID3D11DepthStencilView;
 
 namespace clv::gfx{
 	class DXContext : public Context{
@@ -18,6 +20,9 @@ namespace clv::gfx{
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext; 
 		
 		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
+
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> target;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> dsv;
 
 		//TEMP: just smashing it in here
 	#if CLV_DEBUG
@@ -38,6 +43,8 @@ namespace clv::gfx{
 		Microsoft::WRL::ComPtr<ID3D11Device> getDevice() const;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> getContext() const;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> getSwapChain() const;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> getTarget() const;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> getDSV() const;
 
 		virtual void present() override;
 	};

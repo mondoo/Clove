@@ -8,7 +8,14 @@
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+
 namespace clv{
+	struct WindowsData{
+		HWND handle;
+		unsigned int width;
+		unsigned int height;
+	};
+
 	class WindowsWindow : public Window{
 		//VARIABLES
 	private:
@@ -16,6 +23,8 @@ namespace clv{
 
 		HINSTANCE instance;
 		HWND windowsHandle;
+
+		WindowsData data;
 
 		//FUNCTIONS
 	public:
