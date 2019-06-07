@@ -1,6 +1,10 @@
 #pragma once
 
+//does not have functionality
+
 //#include "Clove/Scene/SceneNode.hpp"
+
+//Entity is a thing that has components
 
 namespace clv::ecs{
 	class Entity/* : public scene::SceneNode*/{
