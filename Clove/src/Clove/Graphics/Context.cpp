@@ -25,9 +25,11 @@ namespace clv::gfx{
 				return std::unique_ptr<Context>(); //TODO
 			#endif
 
+			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
 				return std::make_unique<DXContext>(windowData);
-
+			#endif
+			
 			default:
 				CLV_LOG_ERROR("Default statement hit. No context initialised {0}", __func__);
 				return std::unique_ptr<Context>();
