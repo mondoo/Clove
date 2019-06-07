@@ -31,9 +31,17 @@ namespace clv::ecs{
 
 		EntityID getID() const;
 
+		//add components
+		//no dupes!
+
 		template<typename T>
 		T* getComponent() const{
 			//Find the nreturn etc.
+		}
+
+		//TODO:: ????
+		std::unordered_map<ComponentID, Component*>& getComponents() const{
+			return components;
 		}
 
 		/*virtual void update(float deltaSeconds) override;*/
