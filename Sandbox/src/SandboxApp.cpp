@@ -22,8 +22,12 @@ public:
 		std::unique_ptr<clv::gfx::Mesh> mesh = std::make_unique<clv::gfx::Mesh>();
 		mesh->setDiffuseTexture("res/Textures/container2.png");
 		mesh->setSpecularTexture("res/Textures/container2_specular.png");
+		mesh->entityID = ID;
 
-		components[clv::ecs::TransformComponent::ID] = std::make_unique<clv::ecs::TransformComponent>();
+		std::unique_ptr<clv::ecs::TransformComponent> trans = std::make_unique<clv::ecs::TransformComponent>();
+		trans->entityID = ID;
+
+		components[clv::ecs::TransformComponent::ID] = std::move(trans);
 		components[clv::ecs::RenderableComponent::ID] = std::move(mesh);
 	}
 };

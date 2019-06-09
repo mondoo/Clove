@@ -12,6 +12,9 @@ namespace clv::gfx{
 namespace clv::ecs{
 	class RenderSystem : public System<TransformComponent, RenderableComponent>{
 		//VARIABLES
+	public:
+		static constexpr SystemID ID = 0x1ae78643; //VS generated GUID
+
 	/*private:*/
 	public://Public until i figure out this jank renderer shit
 		//Should the render system own the renderer or just hold it?

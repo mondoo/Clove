@@ -4,14 +4,10 @@
 #include "Clove/ECS/Component.hpp"
 
 namespace clv::ecs{
-	//Entity::Entity(const Entity& other) = default;
-
 	Entity::Entity(Entity&& other) noexcept{
 		ID = other.ID;
 		components = std::move(other.components);
 	}
-
-	//Entity& Entity::operator=(const Entity& other) = default;
 
 	Entity& Entity::operator=(Entity&& other) noexcept{
 		ID = other.ID;

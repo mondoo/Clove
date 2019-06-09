@@ -39,6 +39,6 @@ namespace clv::ecs{
 			renderer->drawIndexed(renderable->indexBuffer->getIndexCount());
 		}
 
-		renderer->swapBuffers(); //TODO: Swap here?
+		renderer->swapBuffers();
 	}
 }

@@ -16,14 +16,12 @@ namespace clv::ecs{
 		//VARIABLES
 	private:
 		std::unordered_map<EntityID, std::unique_ptr<Entity>> entities;
-		std::vector<std::unique_ptr<SystemBase>> systems;
-		
-		//TODO: Why do we need? might just delete
-		//really not sure why we need a vector of every component?
-		//are these unique? do we duplicate them for each entity?
-		//std::vector<std::vector<Component*>> components; //TODO: unique ptr
+		std::unordered_map<SystemID, std::unique_ptr<SystemBase>> systems; 
+		//TODO: I'm not sure mapping it is really any better
+		//But considering we only really want a single instance of each system
+		//it kind of works
 
-
+	
 		//FUNCTIONS
 	public:
 		Manager();
@@ -35,8 +33,14 @@ namespace clv::ecs{
 
 		void update(float deltaTime);
 
-		//TODO: this is purely temp to hook in the renderer system
-		std::unique_ptr<gfx::Renderer>& getRenderer();
+		//TODO: .inl
+		template<typename T>
+		T* getSystem(){
+			if(auto foundSystem = systems.find(T::ID); foundSystem != systems.end()){
+				return static_cast<T*>(foundSystem->second.get());
+			}
+			return nullptr;
+		}
 
 		//TODO: .inl
 		template<typename T>
@@ -46,15 +50,13 @@ namespace clv::ecs{
 			EntityID ID = ++nextID;
 
 			std::unique_ptr<T> entity = std::make_unique<T>(ID);
-			for(const auto& system : systems){
+			for(const auto& [sysID, system] : systems){
 				system->onEntityCreated(*entity);
 			}
 			entities[ID] = std::move(entity);
 
 			return ID;
 		}
-
-		//TODO: get entity?
 
 		void destroyEntity(EntityID ID);
 	};

@@ -6,7 +6,7 @@ namespace clv::ecs{
 	class Component{
 		//VARIABLES
 	public:
-		EntityID entityID = INVALID_ENTITY_ID; //TODO: When will this get set? when the entity is constructed?
+		EntityID entityID = INVALID_ENTITY_ID;
 
 		//FUNCTIONS
 	public:

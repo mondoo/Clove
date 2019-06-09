@@ -15,8 +15,6 @@ namespace clv::ecs{
 
 		//FUNCTIONS
 	public:
-		//TODO: is funny about the map when copying (probably from the unique_ptrs)
-
 		Entity() = delete;
 		Entity(const Entity& other) = delete;
 		Entity(Entity&& other) noexcept;
@@ -32,7 +30,7 @@ namespace clv::ecs{
 		template<typename T>
 		T* getComponent() const{
 			if(const auto foundComp = components.find(T::ID); foundComp != components.end()){
-				return foundComp->second;
+				return static_cast<T*>(foundComp->second);
 			}
 			return nullptr;
 		}

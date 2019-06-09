@@ -15,6 +15,7 @@
 #include "Clove/Events/MouseEvent.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
+#include "Clove/ECS/Systems/RenderSystem.hpp"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -27,7 +28,8 @@ namespace clv{
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
 		//
-		ECSManager.getRenderer() = gfx::Renderer::createRenderer(*window, gfx::API::DirectX11);
+		//This is still so wtf
+		ecsManager.getSystem<ecs::RenderSystem>()->renderer = gfx::Renderer::createRenderer(*window, gfx::API::DirectX11);
 		//
 
 		scene = std::make_shared<scene::Scene>();
@@ -49,7 +51,7 @@ namespace clv{
 			window->beginFrame();
 
 			//
-			ECSManager.getRenderer()->clear();
+			ecsManager.getSystem<ecs::RenderSystem>()->renderer->clear();
 			//
 
 			//Temp input handling
@@ -122,7 +124,7 @@ namespace clv{
 			imGuiLayer->end();
 			
 			window->endFrame();
-			ECSManager.update(deltaSeonds.count());
+			ecsManager.update(deltaSeonds.count());
 		}
 	}
 
@@ -155,7 +157,11 @@ namespace clv{
 	}
 
 	gfx::Renderer& Application::getRenderer(){
-		return *ECSManager.getRenderer();
+		return *ecsManager.getSystem<ecs::RenderSystem>()->renderer;
+	}
+
+	ecs::Manager& Application::getManager(){
+		return ecsManager;
 	}
 
 	bool Application::onWindowClose(WindowCloseEvent& e){

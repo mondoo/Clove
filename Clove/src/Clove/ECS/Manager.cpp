@@ -5,23 +5,15 @@
 
 namespace clv::ecs{
 	Manager::Manager(){
-		systems.resize(1);
-		systems[0] = std::make_unique<RenderSystem>();
-
-		//init all components?
+		systems[RenderSystem::ID] = std::make_unique<RenderSystem>();
 	}
 
 	Manager::~Manager() = default;
 
 	void Manager::update(float deltaTime){
-		for(const auto& system : systems){
+		for(const auto& [ID, system] : systems){
 			system->update(deltaTime);
 		}
-	}
-
-	//TODO: This will be delete
-	std::unique_ptr<gfx::Renderer>& Manager::getRenderer(){
-		return static_cast<RenderSystem*>(systems[0].get())->renderer;
 	}
 
 	void Manager::destroyEntity(EntityID ID){
@@ -30,7 +22,7 @@ namespace clv::ecs{
 		}
 
 		std::unique_ptr<Entity> entity = std::move(entities[ID]);
-		for(const auto& system : systems){
+		for(const auto& [ID, system] : systems){
 			system->onEntityDestroyed(*entity);
 		}
 		entity.reset();

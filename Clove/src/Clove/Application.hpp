@@ -23,7 +23,7 @@ namespace clv{
 	private:
 		std::unique_ptr<Window> window;
 		std::shared_ptr<scene::Scene> scene;
-		ecs::Manager ECSManager;
+		ecs::Manager ecsManager;
 
 		bool running = true;
 
@@ -48,12 +48,10 @@ namespace clv{
 		void pushOverlay(std::shared_ptr<Layer> overlay);
 
 		inline static Application& get();
+		
 		inline Window& getWindow();
-
-		//TODO:
 		gfx::Renderer& getRenderer();
-		ecs::Manager& getManager(){ return ECSManager; }
-		//
+		ecs::Manager& getManager();
 
 		inline std::shared_ptr<scene::Scene> getScene();
 
