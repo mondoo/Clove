@@ -1,7 +1,5 @@
 #pragma once
 
-//Entity is a thing that has components
-
 #include "Clove/ECS/ECSTypes.hpp"
 
 namespace clv::ecs{
@@ -9,21 +7,24 @@ namespace clv::ecs{
 
 	class Entity{
 		//VARIABLES
-	private:
-		EntityID id;
+	protected:
+		std::unordered_map<ComponentID, std::unique_ptr<Component>> components;
 
-		std::unordered_map<ComponentID, Component*> components; //unique_ptr?
+	private:
+		EntityID ID;
 
 		//FUNCTIONS
 	public:
+		//TODO: is funny about the map when copying (probably from the unique_ptrs)
+
 		Entity() = delete;
-		Entity(const Entity& other);
+		Entity(const Entity& other) = delete;
 		Entity(Entity&& other) noexcept;
-		Entity& operator=(const Entity& other);
+		Entity& operator=(const Entity& other) = delete;
 		Entity& operator=(Entity&& other) noexcept;
 		virtual ~Entity();
 
-		Entity(EntityID id);
+		Entity(EntityID ID);
 
 		EntityID getID() const;
 
@@ -36,6 +37,6 @@ namespace clv::ecs{
 			return nullptr;
 		}
 
-		const std::unordered_map<ComponentID, Component*>& getComponents() const;
+		const std::unordered_map<ComponentID, std::unique_ptr<Component>>& getComponents() const;
 	};
 }

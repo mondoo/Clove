@@ -50,7 +50,7 @@ namespace clv::gfx{
 
 	void DX11VertexBufferLayout::createLayout(Bindable& bindable){
 		if(DX11Shader* shader = dynamic_cast<DX11Shader*>(&bindable)){
-			Renderer& renderer = Application::get().getWindow().getRenderer();
+			Renderer& renderer = Application::get().getRenderer();
 			if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 				DX11_INFO_PROVIDER(dxrenderer);
 

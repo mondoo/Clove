@@ -5,7 +5,6 @@
 
 namespace clv::gfx{
 	enum class API;
-	class Renderer;
 }
 
 namespace clv{
@@ -39,7 +38,6 @@ namespace clv{
 
 		Keyboard keyboard;
 		Mouse mouse;
-		[[depreacted("Being moved to ecs::RenderSystem")]] std::unique_ptr<gfx::Renderer> renderer;
 
 		//FUNCTIONS
 	public:
@@ -65,11 +63,9 @@ namespace clv{
 
 		inline Keyboard& getKeyboard();
 		inline Mouse& getMouse();
-		gfx::Renderer& getRenderer();
 
 		//Defined in derived class
 		static Window* create(const WindowProps& props = WindowProps());
-		static Window* create(const WindowProps& props, gfx::API api);
 	};
 }
 

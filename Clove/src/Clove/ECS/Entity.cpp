@@ -1,30 +1,36 @@
 #include "clvpch.hpp"
 #include "Entity.hpp"
 
+#include "Clove/ECS/Component.hpp"
+
 namespace clv::ecs{
-	Entity::Entity(const Entity& other) = default;
+	//Entity::Entity(const Entity& other) = default;
 
 	Entity::Entity(Entity&& other) noexcept{
-		id = other.id;
+		ID = other.ID;
 		components = std::move(other.components);
 	}
 
-	Entity& Entity::operator=(const Entity& other) = default;
+	//Entity& Entity::operator=(const Entity& other) = default;
 
-	Entity& Entity::operator=(Entity&& other) noexcept = default;
+	Entity& Entity::operator=(Entity&& other) noexcept{
+		ID = other.ID;
+		components = std::move(other.components);
+
+		return *this;
+	}
 
 	Entity::~Entity() = default;
 
-	Entity::Entity(EntityID id)
-		: id(id){
-
+	Entity::Entity(EntityID ID)
+		: ID(ID){
 	}
 
 	EntityID Entity::getID() const{
-		return id;
+		return ID;
 	}
 
-	const std::unordered_map<ComponentID, Component*>& Entity::getComponents() const{
+	const std::unordered_map<ComponentID, std::unique_ptr<Component>>& Entity::getComponents() const{
 		return components;
 	}
 }

@@ -1,17 +1,12 @@
 #pragma once
 
-//components hold data
-//has no functionality
-
 #include "Clove/ECS/ECSTypes.hpp"
 
 namespace clv::ecs{
-	class Component{ //struct?
+	class Component{
 		//VARIABLES
 	public:
-		//Getters for these?
-		EntityID entityID = INVALID_ENTITY_ID;
-		//size_t poolIndex = INVALID_POOL_INDEX; //size_t ???
+		EntityID entityID = INVALID_ENTITY_ID; //TODO: When will this get set? when the entity is constructed?
 
 		//FUNCTIONS
 	public:
@@ -21,8 +16,5 @@ namespace clv::ecs{
 		Component& operator=(const Component& other) = delete;
 		Component& operator=(Component&& other) noexcept;
 		virtual ~Component();
-		
-		//virtual void init() = 0; //init on construct?
-
 	};
 }

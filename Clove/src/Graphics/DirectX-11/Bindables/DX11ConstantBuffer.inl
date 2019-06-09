@@ -18,7 +18,7 @@ namespace clv::gfx{
 	template<typename T>
 	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint)
 		: bindingPoint(bindingPoint){
-		Renderer& renderer = Application::get().getWindow().getRenderer();
+		Renderer& renderer = Application::get().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
 
@@ -37,7 +37,7 @@ namespace clv::gfx{
 	template<typename T>
 	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint, const T& data)
 		: bindingPoint(bindingPoint){
-		Renderer& renderer = Application::get().getWindow().getRenderer();
+		Renderer& renderer = Application::get().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
 

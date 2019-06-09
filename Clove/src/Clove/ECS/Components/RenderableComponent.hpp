@@ -2,10 +2,6 @@
 
 #include "Clove/ECS/Component.hpp"
 
-/*
-I think the renderable component is just going to straight replace the Drawable class
-*/
-
 namespace clv::gfx{
 	class Bindable;
 	class IndexBuffer;

@@ -17,7 +17,7 @@ namespace clv::scene{
 		};
 
 		sbo = gfx::BindableFactory::createShaderBufferObject<LightData>(gfx::ShaderTypes::Pixel, gfx::BBP_PointLightData);
-		sbo->bind(Application::get().getWindow().getRenderer());
+		sbo->bind(Application::get().getRenderer());
 	}
 
 	//PointLight::PointLight(const PointLight& other) = default;
@@ -35,6 +35,6 @@ namespace clv::scene{
 
 		lightData.position = getPosition();
 
-		sbo->update(lightData, Application::get().getWindow().getRenderer());
+		sbo->update(lightData, Application::get().getRenderer());
 	}
 }

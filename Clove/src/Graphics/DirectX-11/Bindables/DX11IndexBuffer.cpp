@@ -17,7 +17,7 @@ namespace clv::gfx{
 	DX11IndexBuffer::~DX11IndexBuffer() = default;
 
 	DX11IndexBuffer::DX11IndexBuffer(const std::vector<unsigned int>& indices){
-		Renderer& renderer = Application::get().getWindow().getRenderer();
+		Renderer& renderer = Application::get().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
 

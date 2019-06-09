@@ -7,10 +7,18 @@
 #include "Clove/Graphics/Bindables/Shader.hpp"
 
 namespace clv::ecs{
+	RenderSystem::RenderSystem() = default;
+
+	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;
+
+	RenderSystem& RenderSystem::operator=(RenderSystem&& other) noexcept = default;
+
+	RenderSystem::~RenderSystem() = default;
+
 	void RenderSystem::update(float deltaTime){
-		for(auto& compTuple : components){
-			TransformComponent* transform = std::get<TransformComponent*>(compTuple);
-			RenderableComponent* renderable = std::get<RenderableComponent*>(compTuple);
+		for(auto& componentTuple : components){
+			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
+			RenderableComponent* renderable = std::get<RenderableComponent*>(componentTuple);
 
 			const auto& [rot, angle] = transform->rotation;
 
@@ -19,6 +27,8 @@ namespace clv::ecs{
 			math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), transform->scale);
 
 			math::Matrix4f transformMat = translation * rotation * scale;
+
+			//TODO: need a way to parent transforms together
 
 			renderable->shader->setModelMatrix(transformMat);
 

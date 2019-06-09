@@ -71,7 +71,7 @@ namespace clv::gfx{
 
 	void GLVertexBufferLayout::createLayout(Bindable& bindable){
 		if(GL4VertexBuffer* vb = dynamic_cast<GL4VertexBuffer*>(&bindable)){
-			Renderer& renderer = Application::get().getWindow().getRenderer();
+			Renderer& renderer = Application::get().getRenderer();
 			bind(renderer);
 			vb->bind(renderer);
 

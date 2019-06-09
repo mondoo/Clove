@@ -1,21 +1,28 @@
 #pragma once
 
 #include "Clove/ECS/ECSTypes.hpp"
+#include "Clove/ECS/System.hpp"
 
-//TODO: Live on application
+namespace clv::gfx{
+	class Renderer;
+}
 
 namespace clv::ecs{
 	class Entity;
 	class Component;
-	class BaseSystem;
+	class SystemBase;
 
 	class Manager{
 		//VARIABLES
 	private:
-		//These guys are all of everything
-		std::unordered_map<EntityID, Entity*> entities; //TODO: ordered map?
-		std::vector<std::vector<Component*>> components; //TODO: unique ptr --- this is every single component
-		std::vector<BaseSystem*> systems; //TODO: unique_ptr?
+		std::unordered_map<EntityID, std::unique_ptr<Entity>> entities;
+		std::vector<std::unique_ptr<SystemBase>> systems;
+		
+		//TODO: Why do we need? might just delete
+		//really not sure why we need a vector of every component?
+		//are these unique? do we duplicate them for each entity?
+		//std::vector<std::vector<Component*>> components; //TODO: unique ptr
+
 
 		//FUNCTIONS
 	public:
@@ -28,7 +35,27 @@ namespace clv::ecs{
 
 		void update(float deltaTime);
 
-		EntityID createEntity();
-		void destroyEntity(EntityID);
+		//TODO: this is purely temp to hook in the renderer system
+		std::unique_ptr<gfx::Renderer>& getRenderer();
+
+		//TODO: .inl
+		template<typename T>
+		EntityID createEntity(){
+			static EntityID nextID = 0; //TODO: have a better system for generating and reusing IDs
+
+			EntityID ID = ++nextID;
+
+			std::unique_ptr<T> entity = std::make_unique<T>(ID);
+			for(const auto& system : systems){
+				system->onEntityCreated(*entity);
+			}
+			entities[ID] = std::move(entity);
+
+			return ID;
+		}
+
+		//TODO: get entity?
+
+		void destroyEntity(EntityID ID);
 	};
 }

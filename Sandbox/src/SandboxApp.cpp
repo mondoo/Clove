@@ -10,6 +10,24 @@
 #include "Clove/Scene/Lights/PointLight.hpp"
 #include "Clove/Input/Input.hpp"
 
+#include "Clove/ECS/Entity.hpp"
+#include "Clove/ECS/Components/TransformComponent.hpp"
+#include "Clove/ECS/Components/RenderableComponent.hpp"
+
+class TestEntity : public clv::ecs::Entity{
+public:
+	TestEntity(clv::ecs::EntityID ID)
+		: clv::ecs::Entity(ID){
+
+		std::unique_ptr<clv::gfx::Mesh> mesh = std::make_unique<clv::gfx::Mesh>();
+		mesh->setDiffuseTexture("res/Textures/container2.png");
+		mesh->setSpecularTexture("res/Textures/container2_specular.png");
+
+		components[clv::ecs::TransformComponent::ID] = std::make_unique<clv::ecs::TransformComponent>();
+		components[clv::ecs::RenderableComponent::ID] = std::move(mesh);
+	}
+};
+
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
@@ -21,8 +39,8 @@ private:
 	float rotDelta = 0.0f;
 
 	std::shared_ptr<clv::scene::Camera> cam;
-	//std::array<std::shared_ptr<clv::ecs::Entity>, 100> entities;
-	//std::shared_ptr<clv::scene::PointLight> light;
+	std::array<std::shared_ptr<TestEntity>, 1 /*100*/> entities;
+	std::shared_ptr<clv::scene::PointLight> light;
 	//std::shared_ptr<clv::ecs::Entity> lightEntity;
 
 	bool firstMouse = false;
@@ -41,22 +59,24 @@ public:
 		cam = std::make_shared<clv::scene::Camera>();
 		std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
 		
-		/*for(int i = 0; i < entities.size(); ++i){
-			entities[i] = std::make_shared<clv::ecs::Entity>();
-			scene->addNode(entities[i]);
+		clv::Application::get().getManager().createEntity<TestEntity>();
+
+		for(int i = 0; i < entities.size(); ++i){
+			//entities[i] = std::make_shared<TestEntity>(clv::Application::get().getManager);
+			//scene->addNode(entities[i]);
 			
-			entities[i]->mesh->setDiffuseTexture("res/Textures/container2.png");
-			entities[i]->mesh->setSpecularTexture("res/Textures/container2_specular.png");
-			entities[i]->setPosition({ i * 4.0f, 0.0f, -4.0f });
-		}*/
+			//entities[i]->mesh->setDiffuseTexture("res/Textures/container2.png");
+			//entities[i]->mesh->setSpecularTexture("res/Textures/container2_specular.png");
+			//entities[i]->setPosition({ i * 4.0f, 0.0f, -4.0f });
+		}
 		
-		//light = std::make_unique<clv::scene::PointLight>();
+		light = std::make_unique<clv::scene::PointLight>();
 		//lightEntity = std::make_unique<clv::ecs::Entity>();
 
-		//scene->addNode(cam);
-		//scene->addNode(light);
+		scene->addNode(cam);
+		scene->addNode(light);
 
-		//light->setPosition({ 0.0f, 2.0f, -6.0f });
+		light->setPosition({ 0.0f, 2.0f, -6.0f });
 		//light->addChild(lightEntity);
 		//lightEntity->mesh->setDiffuseTexture("res/Textures/container2.png");
 		//lightEntity->setScale({ 0.25f, 0.25f, 0.25f });

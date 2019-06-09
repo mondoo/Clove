@@ -14,6 +14,8 @@
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 
+#include "Clove/Graphics/Renderer.hpp"
+
 namespace clv{
 	Application* Application::instance = nullptr;
 
@@ -23,7 +25,11 @@ namespace clv{
 
 		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
-		
+
+		//
+		ECSManager.getRenderer() = gfx::Renderer::createRenderer(*window, gfx::API::DirectX11);
+		//
+
 		scene = std::make_shared<scene::Scene>();
 
 		layerStack = std::make_unique<LayerStack>();
@@ -41,6 +47,10 @@ namespace clv{
 			prevFrameTime = currFrameTime;
 
 			window->beginFrame();
+
+			//
+			ECSManager.getRenderer()->clear();
+			//
 
 			//Temp input handling
 			while(auto e = getWindow().getKeyboard().getKeyEvent()){
@@ -98,6 +108,7 @@ namespace clv{
 			}
 			//~Temp
 
+
 			for(auto layer : *layerStack){
 				layer->onUpdate();
 			}
@@ -111,6 +122,7 @@ namespace clv{
 			imGuiLayer->end();
 			
 			window->endFrame();
+			ECSManager.update(deltaSeonds.count());
 		}
 	}
 
@@ -140,6 +152,10 @@ namespace clv{
 
 	void Application::pushOverlay(std::shared_ptr<Layer> overlay){
 		layerStack->pushOverlay(overlay);
+	}
+
+	gfx::Renderer& Application::getRenderer(){
+		return *ECSManager.getRenderer();
 	}
 
 	bool Application::onWindowClose(WindowCloseEvent& e){

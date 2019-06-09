@@ -22,8 +22,6 @@ namespace clv{
 	}
 
 	void WindowsWindow::beginFrame(){
-		renderer->clear();
-
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
 			if(msg.wParam == CLV_WINDOWS_QUIT){
@@ -37,7 +35,7 @@ namespace clv{
 	}
 
 	void WindowsWindow::endFrame(){
-		renderer->draw();
+		//TODO: Delete
 	}
 
 	void* WindowsWindow::getNativeWindow() const{
@@ -233,18 +231,12 @@ namespace clv{
 
 		ShowWindow(windowsHandle, SW_SHOW);
 
-		renderer = gfx::Renderer::createRenderer(*this, api);
-
 		setVSync(true);
 	}
 
 #if CLV_PLATFORM_WINDOWS
 	Window* Window::create(const WindowProps& props){
 		return new WindowsWindow(props);
-	}
-
-	Window* Window::create(const WindowProps& props, gfx::API api){
-		return new WindowsWindow(props, api);
 	}
 #endif
 }

@@ -47,7 +47,7 @@ namespace clv::gfx{
 		std::unique_ptr<Shader> shader = BindableFactory::createShader();
 		shader->attachShader(ShaderTypes::Vertex);
 		shader->attachShader(ShaderTypes::Pixel);
-		shader->bind(Application::get().getWindow().getRenderer());
+		shader->bind(Application::get().getRenderer());
 		this->shader = shader.get();
 
 		//VBL (maybe call this a VBO?)
@@ -55,7 +55,7 @@ namespace clv::gfx{
 		layout->pushElement("Position", BufferElementFormat::FLOAT_3);
 		layout->pushElement("TexCoord", BufferElementFormat::FLOAT_2);
 		layout->pushElement("Normal", BufferElementFormat::FLOAT_3);
-		switch(Application::get().getWindow().getRenderer().getAPI()){//TODO: how to remove this check?
+		switch(Application::get().getRenderer().getAPI()){//TODO: how to remove this check?
 			case API::OpenGL4:
 				layout->createLayout(*vertexBuffer);
 				break;
@@ -66,7 +66,7 @@ namespace clv::gfx{
 
 		addBindable(std::move(vertexBuffer));
 		addBindable(std::move(layout));
-		addBindable(std::move(shader));
+		addShader(std::move(shader));
 	}
 
 	void Mesh::setModelMatrix(const math::Matrix4f& model){

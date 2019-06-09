@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Drawable.hpp"
+#include "Clove/ECS/Components/RenderableComponent.hpp"
 
 namespace clv::gfx{
 	class Renderer;
@@ -8,7 +8,7 @@ namespace clv::gfx{
 	class Texture;
 	struct Vertex;
 
-	class Mesh : public Drawable{
+	class Mesh : public ecs::RenderableComponent{ //TODO: do i want this? I guess just call it a mesh component and slam it in the ECS
 		//VARIABLES
 	private:
 		std::vector<Vertex> vertices;

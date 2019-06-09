@@ -19,8 +19,4 @@ namespace clv{
 	unsigned int Window::getHeight() const{
 		return data.height;
 	}
-
-	gfx::Renderer& Window::getRenderer(){
-		return *renderer;
-	}
 }

@@ -11,10 +11,10 @@ namespace clv::scene{
 		setProjectionMode(ProjectionMode::perspective);
 
 		sboMat = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderTypes::Vertex, gfx::BBP_CameraMatrices);
-		sboMat->bind(Application::get().getWindow().getRenderer());
+		sboMat->bind(Application::get().getRenderer());
 
 		sboPos = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderTypes::Pixel, gfx::BBP_ViewData);
-		sboPos->bind(Application::get().getWindow().getRenderer());
+		sboPos->bind(Application::get().getRenderer());
 	}
 
 	//Camera::Camera(const Camera& other) = default;
@@ -32,10 +32,10 @@ namespace clv::scene{
 
 		viewData.view = getLookAt();
 		viewData.projection = currentProjection;
-		sboMat->update(viewData, Application::get().getWindow().getRenderer());
+		sboMat->update(viewData, Application::get().getRenderer());
 
 		pos.pos = getPosition();
-		sboPos->update(pos, Application::get().getWindow().getRenderer());
+		sboPos->update(pos, Application::get().getRenderer());
 	}
 
 	void Camera::updateFront(float pitch, float yaw){

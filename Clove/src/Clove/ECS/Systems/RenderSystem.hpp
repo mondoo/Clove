@@ -5,8 +5,6 @@
 #include "Clove/ECS/Components/TransformComponent.hpp"
 #include "Clove/ECS/Components/RenderableComponent.hpp"
 
-//TODO: Init renderer
-
 namespace clv::gfx{
 	class Renderer;
 }
@@ -14,11 +12,20 @@ namespace clv::gfx{
 namespace clv::ecs{
 	class RenderSystem : public System<TransformComponent, RenderableComponent>{
 		//VARIABLES
-	private:
-		std::unique_ptr<gfx::Renderer> renderer;
+	/*private:*/
+	public://Public until i figure out this jank renderer shit
+		//Should the render system own the renderer or just hold it?
+		std::unique_ptr<gfx::Renderer> renderer; //TODO: Init renderer
 
 		//FUNCTIONS
 	public:
+		RenderSystem();
+		RenderSystem(const RenderSystem& other) = delete;
+		RenderSystem(RenderSystem&& other) noexcept;
+		RenderSystem& operator=(const RenderSystem& other) = delete;
+		RenderSystem& operator=(RenderSystem&& other) noexcept;
+		virtual ~RenderSystem();
+
 		virtual void update(float deltaTime) override;
 	};
 }

@@ -15,7 +15,7 @@ namespace clv::gfx{
 		, materialCB(BBP_MaterialData){
 
 		mData.sininess = 32.0f;
-		materialCB.update(mData, Application::get().getWindow().getRenderer());
+		materialCB.update(mData, Application::get().getRenderer());
 	}
 
 	DX11Shader::DX11Shader(DX11Shader&& other) noexcept
@@ -84,7 +84,7 @@ namespace clv::gfx{
 	DX11VertexShader::~DX11VertexShader() = default;
 
 	DX11VertexShader::DX11VertexShader(const std::wstring& path){
-		Renderer& renderer = Application::get().getWindow().getRenderer();
+		Renderer& renderer = Application::get().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
 
@@ -109,7 +109,7 @@ namespace clv::gfx{
 	DX11PixelShader::~DX11PixelShader() = default;
 
 	DX11PixelShader::DX11PixelShader(const std::wstring& path){
-		Renderer& renderer = Application::get().getWindow().getRenderer();
+		Renderer& renderer = Application::get().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
 
