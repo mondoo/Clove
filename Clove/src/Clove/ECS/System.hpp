@@ -1,6 +1,7 @@
 #pragma once
 
 //systems provide functionality
+//holds no data
 
 #include "Clove/ECS/Entity.hpp"
 
@@ -22,11 +23,11 @@ namespace clv::ecs{
 		//care about x entities that have specific components (render needs trans + render)
 
 		using EntityIDToIndexMap = std::unordered_map<EntityID, size_t, std::hash<EntityID>, std::equal_to<EntityID>/*, PooledAllocator*/>;
-		EntityIDToIndexMap entityIdToIndexMap; //So we can pair an entity id to an index we have in oru vec?
+		EntityIDToIndexMap entityIdToIndexMap; //So we can pair an entity id to an index we have in oru vec
 
 		//VARIABLES
 	protected:
-		//TODO: Look up what this add pointer thing really does! (why do i need it?)
+		//TODO: Look up what this add pointer thing really does! (why do i need it?) - I'm fairly certain it'll make the types passed in as ptr types instead of value types
 		using CompTuple = std::tuple<std::add_pointer_t<Comps>...>; //makes a tuple of all components passed in
 		std::vector<CompTuple/*, PooledAllocator*/> components; //TODO: using default allocator but we'd want a custom one to allign memory for iterating
 	
@@ -41,9 +42,8 @@ namespace clv::ecs{
 			//loop through all comps on entity and see if any match our tuple
 			CompTuple comptuple;
 			size_t matchingComps = 0;
-			for(auto&[id, comp]: entity.getComponents()){
+			for(const auto&[id, comp] : entity.getComponents()){
 				if(proccessEntityComponent<0, Comps...>(id, comp, comptuple)){
-					//Add them on????
 					++matchingComps;
 					if(matchingComps == sizeof...(Comps)){ //if the size is equal to the size of our variadic template...
 						//THen we're done!

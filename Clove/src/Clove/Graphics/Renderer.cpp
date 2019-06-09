@@ -38,19 +38,4 @@ namespace clv::gfx{
 
 		return renderer;
 	}
-
-	void Renderer::submit(const std::shared_ptr<Drawable>& drawable){
-		drawables.push(drawable);
-	}
-
-	void Renderer::draw(){
-		while(drawables.size() > 0){
-			if(std::shared_ptr<Drawable> drawable = drawables.front().lock()){
-				drawable->draw(*this);
-				drawables.pop();
-			}
-		}
-
-		swapBuffers();
-	}
 }

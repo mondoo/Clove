@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Bindables/Bindable.hpp"
+#include "Clove/Graphics/Bindable.hpp"
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
 

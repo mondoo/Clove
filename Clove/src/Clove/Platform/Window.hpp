@@ -39,7 +39,7 @@ namespace clv{
 
 		Keyboard keyboard;
 		Mouse mouse;
-		std::unique_ptr<gfx::Renderer> renderer;
+		[[depreacted("Being moved to ecs::RenderSystem")]] std::unique_ptr<gfx::Renderer> renderer;
 
 		//FUNCTIONS
 	public:

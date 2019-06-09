@@ -1,21 +1,17 @@
 #pragma once
 
 //components hold data
+//has no functionality
 
 #include "Clove/ECS/ECSTypes.hpp"
 
 namespace clv::ecs{
 	class Component{ //struct?
 		//VARIABLES
-	protected:
-		//TODO: this is my jank way of tracking IDs - sort this out (there's a few ways to generate a GUID)
-		static unsigned int nextID;
-
-	/*private:*/
-	public://public while i protottype
+	public:
 		//Getters for these?
 		EntityID entityID = INVALID_ENTITY_ID;
-		size_t poolIndex = INVALID_POOL_INDEX; //size_t ???
+		//size_t poolIndex = INVALID_POOL_INDEX; //size_t ???
 
 		//FUNCTIONS
 	public:

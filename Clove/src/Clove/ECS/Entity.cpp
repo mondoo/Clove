@@ -2,14 +2,12 @@
 #include "Entity.hpp"
 
 namespace clv::ecs{
-	//Entity::Entity()
-	//	/*: scene::SceneNode()*/{
-	//
-	//}
-
 	Entity::Entity(const Entity& other) = default;
 
-	Entity::Entity(Entity&& other) noexcept = default;
+	Entity::Entity(Entity&& other) noexcept{
+		id = other.id;
+		components = std::move(other.components);
+	}
 
 	Entity& Entity::operator=(const Entity& other) = default;
 
@@ -26,7 +24,7 @@ namespace clv::ecs{
 		return id;
 	}
 
-	/*void Entity::update(float deltaSeconds){
-		scene::SceneNode::update(deltaSeconds);
-	}*/
+	const std::unordered_map<ComponentID, Component*>& Entity::getComponents() const{
+		return components;
+	}
 }

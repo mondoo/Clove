@@ -2,6 +2,8 @@
 
 #include "Clove/ECS/ECSTypes.hpp"
 
+//TODO: Live on application
+
 namespace clv::ecs{
 	class Entity;
 	class Component;

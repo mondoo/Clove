@@ -1,9 +1,5 @@
 #pragma once
 
-//does not have functionality
-
-//#include "Clove/Scene/SceneNode.hpp"
-
 //Entity is a thing that has components
 
 #include "Clove/ECS/ECSTypes.hpp"
@@ -11,12 +7,12 @@
 namespace clv::ecs{
 	class Component;
 
-	class Entity/* : public scene::SceneNode*/{
+	class Entity{
 		//VARIABLES
 	private:
 		EntityID id;
 
-		std::unordered_map<ComponentID, Component*> components; //map?? unique_ptr?
+		std::unordered_map<ComponentID, Component*> components; //unique_ptr?
 
 		//FUNCTIONS
 	public:
@@ -31,19 +27,15 @@ namespace clv::ecs{
 
 		EntityID getID() const;
 
-		//add components
-		//no dupes!
-
+		//TODO: .inl
 		template<typename T>
 		T* getComponent() const{
-			//Find the nreturn etc.
+			if(const auto foundComp = components.find(T::ID); foundComp != components.end()){
+				return foundComp->second;
+			}
+			return nullptr;
 		}
 
-		//TODO:: ????
-		std::unordered_map<ComponentID, Component*>& getComponents() const{
-			return components;
-		}
-
-		/*virtual void update(float deltaSeconds) override;*/
+		const std::unordered_map<ComponentID, Component*>& getComponents() const;
 	};
 }
