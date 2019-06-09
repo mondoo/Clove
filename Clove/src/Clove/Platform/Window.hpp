@@ -49,7 +49,6 @@ namespace clv{
 		virtual ~Window();
 
 		virtual void beginFrame() = 0;
-		virtual void endFrame() = 0;
 
 		void setEventCallbackFunction(const EventCallbackFn& callback);
 		

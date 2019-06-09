@@ -51,7 +51,7 @@ namespace clv{
 			window->beginFrame();
 
 			//
-			ecsManager.getSystem<ecs::RenderSystem>()->renderer->clear();
+			//ecsManager.getSystem<ecs::RenderSystem>()->renderer->clear();
 			//
 
 			//Temp input handling
@@ -123,7 +123,6 @@ namespace clv{
 			}
 			imGuiLayer->end();
 			
-			window->endFrame();
 			ecsManager.update(deltaSeonds.count());
 		}
 	}

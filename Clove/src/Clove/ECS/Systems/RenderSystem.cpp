@@ -16,6 +16,8 @@ namespace clv::ecs{
 	RenderSystem::~RenderSystem() = default;
 
 	void RenderSystem::update(float deltaTime){
+		renderer->clear(); //NOTE: putting it here will clear the imgui shiz
+
 		for(auto& componentTuple : components){
 			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
 			RenderableComponent* renderable = std::get<RenderableComponent*>(componentTuple);

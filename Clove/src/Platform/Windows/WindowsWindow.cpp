@@ -34,10 +34,6 @@ namespace clv{
 		}
 	}
 
-	void WindowsWindow::endFrame(){
-		//TODO: Delete
-	}
-
 	void* WindowsWindow::getNativeWindow() const{
 		return windowsHandle;
 	}

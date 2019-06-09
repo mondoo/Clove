@@ -20,6 +20,13 @@ namespace clv::ecs{
 		//Should the render system own the renderer or just hold it?
 		std::unique_ptr<gfx::Renderer> renderer; //TODO: Init renderer
 
+
+		//I think this class will just need a lot more wrappers tbh
+		//at the moment it only has update which is ambitious for the renderersystem
+		//I'm worried it'll make the renderer redundant??
+		//But I guess the renderer is supposed to be nore stupid and handle API calls
+		//where the render system just handles the preparation of the renderables
+
 		//FUNCTIONS
 	public:
 		RenderSystem();

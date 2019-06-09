@@ -14,6 +14,7 @@ namespace clv::ecs{
 		math::Vector3f						position = { 0.0f, 0.0f, 0.0f };
 		std::pair<math::Vector3f, float>	rotation = std::pair<math::Vector3f, float>(math::Vector3f(1.0f), 0.0f);
 		math::Vector3f						scale	= { 1.0f, 1.0f, 1.0f };
+		//The above are the transform's local position etc.
 
 		//FUNCTIONS
 	public:
