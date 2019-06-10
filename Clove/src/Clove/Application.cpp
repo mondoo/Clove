@@ -110,13 +110,15 @@ namespace clv{
 
 			scene->update(deltaSeonds.count());
 
+			ecsManager.update(deltaSeonds.count());
+
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){
 				layer->onImGuiRender();
 			}
 			imGuiLayer->end();
 			
-			ecsManager.update(deltaSeonds.count());
+			window->endFrame();
 		}
 	}
 

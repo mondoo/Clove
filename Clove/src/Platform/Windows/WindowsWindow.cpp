@@ -34,6 +34,10 @@ namespace clv{
 		}
 	}
 
+	void WindowsWindow::endFrame(){
+		//TODO: Present buffers
+	}
+
 	void* WindowsWindow::getNativeWindow() const{
 		return windowsHandle;
 	}

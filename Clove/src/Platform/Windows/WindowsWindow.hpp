@@ -36,6 +36,7 @@ namespace clv{
 		WindowsWindow(const WindowProps& props, gfx::API api);
 
 		virtual void beginFrame() override;
+		virtual void endFrame() override;
 
 		virtual void* getNativeWindow() const override;
 
