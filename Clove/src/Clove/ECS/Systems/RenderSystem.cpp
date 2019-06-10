@@ -22,11 +22,11 @@ namespace clv::ecs{
 			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
 			RenderableComponent* renderable = std::get<RenderableComponent*>(componentTuple);
 
-			const auto& [rot, angle] = transform->rotation;
+			const auto& [rot, angle] = transform->getLocalRotation();
 
-			math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), transform->position);
+			math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), transform->getLocalPosition());
 			math::Matrix4f rotation = math::rotate(math::Matrix4f(1.0f), angle, rot);
-			math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), transform->scale);
+			math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), transform->getLocalScale());
 
 			math::Matrix4f transformMat = translation * rotation * scale;
 

@@ -30,22 +30,27 @@ public:
 		components[clv::ecs::TransformComponent::ID] = std::move(trans);
 		components[clv::ecs::RenderableComponent::ID] = std::move(mesh);
 	}
+
+	void setPosition(const clv::math::Vector3f& pos){
+		getComponent<clv::ecs::TransformComponent>()->setLocalPosition(pos);
+	}
+
+	void setRotation(const std::pair<clv::math::Vector3f, float>& rotation){
+		getComponent<clv::ecs::TransformComponent>()->setLocalRotation(rotation);
+	}
 };
 
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
-	/*std::shared_ptr<clv::scene::CameraSceneNode> cam;
-
-	std::shared_ptr<clv::scene::MeshSceneNode> cube;
-	*/
-
 	float rotDelta = 0.0f;
 
 	std::shared_ptr<clv::scene::Camera> cam;
-	std::array<std::shared_ptr<TestEntity>, 1 /*100*/> entities;
+	//std::array<std::shared_ptr<TestEntity>, 1 /*100*/> entities;
 	std::shared_ptr<clv::scene::PointLight> light;
 	//std::shared_ptr<clv::ecs::Entity> lightEntity;
+
+	TestEntity* ent1 = nullptr;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -63,17 +68,16 @@ public:
 		cam = std::make_shared<clv::scene::Camera>();
 		std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
 		
-		clv::Application::get().getManager().createEntity<TestEntity>();
-
-		for(int i = 0; i < entities.size(); ++i){
-			//entities[i] = std::make_shared<TestEntity>(clv::Application::get().getManager);
-			//scene->addNode(entities[i]);
-			
-			//entities[i]->mesh->setDiffuseTexture("res/Textures/container2.png");
-			//entities[i]->mesh->setSpecularTexture("res/Textures/container2_specular.png");
-			//entities[i]->setPosition({ i * 4.0f, 0.0f, -4.0f });
-		}
+		clv::ecs::EntityID entID1 = clv::Application::get().getManager().createEntity<TestEntity>();
+		clv::ecs::EntityID entID2 = clv::Application::get().getManager().createEntity<TestEntity>();
 		
+		ent1 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID1));
+		//TestEntity* ent2 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID2));
+
+		//ent1->addChild(*ent2);
+
+		ent1->setPosition({ 0.0f, 0.0f, 3.0f });
+
 		light = std::make_unique<clv::scene::PointLight>();
 		//lightEntity = std::make_unique<clv::ecs::Entity>();
 
@@ -126,8 +130,10 @@ public:
 		cam->setPosition(cameraPosition);
 		cam->updateFront(0.0f, yaw);
 
+		ent1->setRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
+
 		/*for(auto& entity : entities){
-			entity->setRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
+			entity->setRotation();
 		}*/
 		rotDelta += 0.01f;
 

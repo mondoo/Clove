@@ -27,4 +27,11 @@ namespace clv::ecs{
 		}
 		entity.reset();
 	}
+
+	Entity* Manager::getEntity(EntityID ID){
+		if(const auto foundEnt = entities.find(ID); foundEnt != entities.end()){
+			return foundEnt->second.get();
+		}
+		return nullptr;
+	}
 }
