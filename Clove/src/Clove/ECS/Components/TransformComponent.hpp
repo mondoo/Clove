@@ -9,9 +9,12 @@ namespace clv::ecs{
 		static constexpr ComponentID ID = 0x3ac0b673; //VS Generated GUID
 
 	private:
-		math::Vector3f						localPosition = { 0.0f, 0.0f, 0.0f };
-		std::pair<math::Vector3f, float>	localRotation = std::pair<math::Vector3f, float>(math::Vector3f(1.0f), 0.0f);
-		math::Vector3f						localScale	= { 1.0f, 1.0f, 1.0f };
+		math::Vector3f						localPosition	= { 0.0f, 0.0f, 0.0f };
+		std::pair<math::Vector3f, float>	localRotation	= std::pair<math::Vector3f, float>(math::Vector3f(1.0f), 0.0f);
+		math::Vector3f						localScale		= { 1.0f, 1.0f, 1.0f };
+
+		TransformComponent* parent = nullptr;
+		std::vector<TransformComponent*> children;
 
 		//FUNCTIONS
 	public:
@@ -30,5 +33,8 @@ namespace clv::ecs{
 
 		void setLocalScale(const math::Vector3f& inLocalScale);
 		const math::Vector3f& getLocalScale() const;
+
+		TransformComponent* getParent() const;
+		void addChild(TransformComponent* child);
 	};
 }

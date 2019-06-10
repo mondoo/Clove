@@ -28,7 +28,7 @@ public:
 		trans->entityID = ID;
 
 		components[clv::ecs::TransformComponent::ID] = std::move(trans);
-		components[clv::ecs::RenderableComponent::ID] = std::move(mesh);
+		components[clv::gfx::Mesh::ID] = std::move(mesh);
 	}
 
 	void setPosition(const clv::math::Vector3f& pos){
@@ -37,6 +37,10 @@ public:
 
 	void setRotation(const std::pair<clv::math::Vector3f, float>& rotation){
 		getComponent<clv::ecs::TransformComponent>()->setLocalRotation(rotation);
+	}
+
+	void addChild(Entity* entity){
+		getComponent<clv::ecs::TransformComponent>()->addChild(entity->getComponent<clv::ecs::TransformComponent>());
 	}
 };
 
@@ -51,6 +55,8 @@ private:
 	//std::shared_ptr<clv::ecs::Entity> lightEntity;
 
 	TestEntity* ent1 = nullptr;
+	TestEntity* ent2 = nullptr;
+	TestEntity* ent3 = nullptr;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -70,13 +76,23 @@ public:
 		
 		clv::ecs::EntityID entID1 = clv::Application::get().getManager().createEntity<TestEntity>();
 		clv::ecs::EntityID entID2 = clv::Application::get().getManager().createEntity<TestEntity>();
+		clv::ecs::EntityID entID3 = clv::Application::get().getManager().createEntity<TestEntity>();
 		
 		ent1 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID1));
-		//TestEntity* ent2 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID2));
+		ent2 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID2));
+		ent3 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID3));
+
 
 		//ent1->addChild(*ent2);
 
-		ent1->setPosition({ 0.0f, 0.0f, 3.0f });
+		ent1->setPosition({ 0.0f, 0.0f, 0.0f });
+		ent2->setPosition({ 0.0f, 0.0f, 3.0f });
+		ent3->setPosition({ 0.0f, 3.0f, 0.0f });
+
+		ent1->addChild(ent2);
+		ent2->addChild(ent3);
+
+		//clv::Application::get().getManager().destroyEntity(entID3);
 
 		light = std::make_unique<clv::scene::PointLight>();
 		//lightEntity = std::make_unique<clv::ecs::Entity>();

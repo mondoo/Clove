@@ -36,5 +36,8 @@ namespace clv::ecs{
 
 		void initialiseRenderer(const Window& window, gfx::API api);
 		gfx::Renderer& getRenderer();
+
+	private:
+		math::Matrix4f getTransformWorldMatrix(TransformComponent* component);
 	};
 }

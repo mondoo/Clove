@@ -8,7 +8,15 @@ namespace clv::ecs{
 
 	TransformComponent& TransformComponent::operator=(TransformComponent&& other) noexcept = default;
 
-	TransformComponent::~TransformComponent() = default;
+	TransformComponent::~TransformComponent(){
+		if(parent){
+			std::remove(parent->children.begin(), parent->children.end(), this);
+		}
+
+		for(auto* child : children){
+			child->parent = nullptr;
+		}
+	}
 
 	void TransformComponent::setLocalPosition(const math::Vector3f& inLocalPosition){
 		localPosition = inLocalPosition;
@@ -32,5 +40,16 @@ namespace clv::ecs{
 
 	const math::Vector3f& TransformComponent::getLocalScale() const{
 		return localScale;
+	}
+
+	TransformComponent* TransformComponent::getParent() const{
+		return parent;
+	}
+
+	void TransformComponent::addChild(TransformComponent* child){
+		if(child && child != this){
+			children.push_back(child);
+			child->parent = this;
+		}
 	}
 }
