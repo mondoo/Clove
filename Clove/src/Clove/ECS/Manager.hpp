@@ -17,10 +17,6 @@ namespace clv::ecs{
 	private:
 		std::unordered_map<EntityID, std::unique_ptr<Entity>> entities;
 		std::unordered_map<SystemID, std::unique_ptr<SystemBase>> systems; 
-		//TODO: I'm not sure mapping it is really any better
-		//But considering we only really want a single instance of each system
-		//it kind of works
-
 	
 		//FUNCTIONS
 	public:
@@ -33,31 +29,14 @@ namespace clv::ecs{
 
 		void update(float deltaTime);
 
-		//TODO: .inl
 		template<typename T>
-		T* getSystem(){
-			if(auto foundSystem = systems.find(T::ID); foundSystem != systems.end()){
-				return static_cast<T*>(foundSystem->second.get());
-			}
-			return nullptr;
-		}
+		T* getSystem();
 
-		//TODO: .inl
 		template<typename T>
-		EntityID createEntity(){
-			static EntityID nextID = 0; //TODO: have a better system for generating and reusing IDs
-
-			EntityID ID = ++nextID;
-
-			std::unique_ptr<T> entity = std::make_unique<T>(ID);
-			for(const auto& [sysID, system] : systems){
-				system->onEntityCreated(*entity);
-			}
-			entities[ID] = std::move(entity);
-
-			return ID;
-		}
+		EntityID createEntity();
 
 		void destroyEntity(EntityID ID);
 	};
 }
+
+#include "Manager.inl"

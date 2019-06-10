@@ -26,15 +26,11 @@ namespace clv::ecs{
 
 		EntityID getID() const;
 
-		//TODO: .inl
 		template<typename T>
-		T* getComponent() const{
-			if(const auto foundComp = components.find(T::ID); foundComp != components.end()){
-				return static_cast<T*>(foundComp->second);
-			}
-			return nullptr;
-		}
+		T* getComponent() const;
 
 		const std::unordered_map<ComponentID, std::unique_ptr<Component>>& getComponents() const;
 	};
 }
+
+#include "Entity.inl"
