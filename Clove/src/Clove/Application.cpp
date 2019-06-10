@@ -27,10 +27,7 @@ namespace clv{
 		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
-		//
-		//This is still so wtf
-		ecsManager.getSystem<ecs::RenderSystem>()->renderer = gfx::Renderer::createRenderer(*window, gfx::API::DirectX11);
-		//
+		ecsManager.getSystem<ecs::RenderSystem>()->initialiseRenderer(*window, gfx::API::DirectX11);
 
 		scene = std::make_shared<scene::Scene>();
 
@@ -49,10 +46,6 @@ namespace clv{
 			prevFrameTime = currFrameTime;
 
 			window->beginFrame();
-
-			//
-			//ecsManager.getSystem<ecs::RenderSystem>()->renderer->clear();
-			//
 
 			//Temp input handling
 			while(auto e = getWindow().getKeyboard().getKeyEvent()){
@@ -156,7 +149,7 @@ namespace clv{
 	}
 
 	gfx::Renderer& Application::getRenderer(){
-		return *ecsManager.getSystem<ecs::RenderSystem>()->renderer;
+		return ecsManager.getSystem<ecs::RenderSystem>()->getRenderer();
 	}
 
 	ecs::Manager& Application::getManager(){

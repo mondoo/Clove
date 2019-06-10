@@ -5,8 +5,13 @@
 #include "Clove/ECS/Components/TransformComponent.hpp"
 #include "Clove/ECS/Components/RenderableComponent.hpp"
 
+namespace clv{
+	class Window;
+}
+
 namespace clv::gfx{
 	class Renderer;
+	enum class API;
 }
 
 namespace clv::ecs{
@@ -15,17 +20,8 @@ namespace clv::ecs{
 	public:
 		static constexpr SystemID ID = 0x1ae78643; //VS generated GUID
 
-	/*private:*/
-	public://Public until i figure out this jank renderer shit
-		//Should the render system own the renderer or just hold it?
-		std::unique_ptr<gfx::Renderer> renderer; //TODO: Init renderer
-
-
-		//I think this class will just need a lot more wrappers tbh
-		//at the moment it only has update which is ambitious for the renderersystem
-		//I'm worried it'll make the renderer redundant??
-		//But I guess the renderer is supposed to be nore stupid and handle API calls
-		//where the render system just handles the preparation of the renderables
+	private:
+		std::unique_ptr<gfx::Renderer> renderer;
 
 		//FUNCTIONS
 	public:
@@ -37,5 +33,8 @@ namespace clv::ecs{
 		virtual ~RenderSystem();
 
 		virtual void update(float deltaTime) override;
+
+		void initialiseRenderer(const Window& window, gfx::API api);
+		gfx::Renderer& getRenderer();
 	};
 }

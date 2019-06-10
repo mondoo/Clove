@@ -43,4 +43,12 @@ namespace clv::ecs{
 
 		renderer->swapBuffers();
 	}
+
+	void RenderSystem::initialiseRenderer(const Window& window, gfx::API api){
+		renderer = gfx::Renderer::createRenderer(window, api);
+	}
+
+	gfx::Renderer& RenderSystem::getRenderer(){
+		return *renderer;
+	}
 }
