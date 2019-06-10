@@ -36,11 +36,13 @@ namespace clv::ecs{
 			components[findIt->second] = std::move(components.back());
 			components.pop_back();
 
-			const auto& movedComponent = std::get<0>(components[findIt->second]);
-			auto movedTupleIt = entityIdToIndexMap.find(movedComponent->entityID);
+			if(findIt->second < components.size()){
+				const auto& movedComponent = std::get<0>(components[findIt->second]);
+				auto movedTupleIt = entityIdToIndexMap.find(movedComponent->entityID);
 
-			CLV_ASSERT(movedTupleIt == entityIdToIndexMap.end(), "Entity ID not tracked!");
-			movedTupleIt->second = findIt->second;
+				CLV_ASSERT(movedTupleIt != entityIdToIndexMap.end(), "Entity ID not tracked!");
+				movedTupleIt->second = findIt->second;
+			}
 		}
 	}
 

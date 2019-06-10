@@ -22,6 +22,7 @@ namespace clv::ecs{
 		}
 
 		std::unique_ptr<Entity> entity = std::move(entities[ID]);
+		entities.erase(ID);
 		for(const auto& [ID, system] : systems){
 			system->onEntityDestroyed(*entity);
 		}
