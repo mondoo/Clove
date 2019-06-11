@@ -1,7 +1,7 @@
 #include "clvpch.hpp"
 #include "PointLight.hpp"
 
-#include "Clove/Graphics/Bindables/BindableFactory.hpp"
+#include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
 namespace clv::scene{

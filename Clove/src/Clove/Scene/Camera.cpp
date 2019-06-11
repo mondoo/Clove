@@ -4,7 +4,7 @@
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
 #include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Graphics/Bindables/BindableFactory.hpp"
+#include "Clove/Graphics/BindableFactory.hpp"
 
 namespace clv::scene{
 	Camera::Camera(){
