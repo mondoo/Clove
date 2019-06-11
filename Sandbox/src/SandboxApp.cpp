@@ -5,21 +5,20 @@
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Scene/Scene.hpp"
 #include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Graphics/Mesh.hpp"
 #include "Clove/ECS/Entity.hpp"
 #include "Clove/Scene/Lights/PointLight.hpp"
 #include "Clove/Input/Input.hpp"
 
 #include "Clove/ECS/Entity.hpp"
 #include "Clove/ECS/Components/TransformComponent.hpp"
-#include "Clove/ECS/Components/RenderableComponent.hpp"
+#include "Clove/ECS/Components/MeshComponent.hpp"
 
 class TestEntity : public clv::ecs::Entity{
 public:
 	TestEntity(clv::ecs::EntityID ID)
 		: clv::ecs::Entity(ID){
 
-		std::unique_ptr<clv::gfx::Mesh> mesh = std::make_unique<clv::gfx::Mesh>();
+		std::unique_ptr<clv::ecs::MeshComponent> mesh = std::make_unique<clv::ecs::MeshComponent>();
 		mesh->setDiffuseTexture("res/Textures/container2.png");
 		mesh->setSpecularTexture("res/Textures/container2_specular.png");
 		mesh->entityID = ID;
@@ -28,7 +27,7 @@ public:
 		trans->entityID = ID;
 
 		components[clv::ecs::TransformComponent::ID] = std::move(trans);
-		components[clv::gfx::Mesh::ID] = std::move(mesh);
+		components[clv::ecs::MeshComponent::ID] = std::move(mesh);
 	}
 
 	void setPosition(const clv::math::Vector3f& pos){

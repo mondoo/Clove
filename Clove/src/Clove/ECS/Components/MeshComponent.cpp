@@ -1,5 +1,5 @@
 #include "clvpch.hpp"
-#include "Mesh.hpp"
+#include "MeshComponent.hpp"
 
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
@@ -12,14 +12,14 @@
 #include "Clove/Graphics/Bindables/Texture.hpp"
 #include "Clove/Utils/MeshLoader.hpp"
 
-namespace clv::gfx{
-	Mesh::Mesh(Mesh&& other) noexcept = default;
+namespace clv::ecs{
+	MeshComponent::MeshComponent(MeshComponent&& other) noexcept = default;
 
-	Mesh& Mesh::operator=(Mesh&& other) noexcept = default;
+	MeshComponent& MeshComponent::operator=(MeshComponent&& other) noexcept = default;
 
-	Mesh::~Mesh() = default;
+	MeshComponent::~MeshComponent() = default;
 
-	Mesh::Mesh(){
+	MeshComponent::MeshComponent(){
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ("res/Objects/cube.obj");
 
 		//TODO: This will break if the mesh does not have a texture mapping or normal mapping
@@ -38,28 +38,28 @@ namespace clv::gfx{
 		}
 
 		//VB
-		std::unique_ptr<VertexBuffer> vertexBuffer = BindableFactory::createVertexBuffer(vertices);
+		std::unique_ptr<gfx::VertexBuffer> vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertices);
 
 		//IB
-		addIndexBuffer(BindableFactory::createIndexBuffer(indices));
+		addIndexBuffer(gfx::BindableFactory::createIndexBuffer(indices));
 
 		//Shader
-		std::unique_ptr<Shader> shader = BindableFactory::createShader();
-		shader->attachShader(ShaderTypes::Vertex);
-		shader->attachShader(ShaderTypes::Pixel);
+		std::unique_ptr<gfx::Shader> shader = gfx::BindableFactory::createShader();
+		shader->attachShader(gfx::ShaderTypes::Vertex);
+		shader->attachShader(gfx::ShaderTypes::Pixel);
 		shader->bind(Application::get().getRenderer());
 		this->shader = shader.get();
 
 		//VBL (maybe call this a VBO?)
-		std::unique_ptr<VertexBufferLayout> layout = BindableFactory::createVertexBufferLayout();
-		layout->pushElement("Position", BufferElementFormat::FLOAT_3);
-		layout->pushElement("TexCoord", BufferElementFormat::FLOAT_2);
-		layout->pushElement("Normal", BufferElementFormat::FLOAT_3);
+		std::unique_ptr<gfx::VertexBufferLayout> layout = gfx::BindableFactory::createVertexBufferLayout();
+		layout->pushElement("Position", gfx::BufferElementFormat::FLOAT_3);
+		layout->pushElement("TexCoord", gfx::BufferElementFormat::FLOAT_2);
+		layout->pushElement("Normal", gfx::BufferElementFormat::FLOAT_3);
 		switch(Application::get().getRenderer().getAPI()){//TODO: how to remove this check?
-			case API::OpenGL4:
+			case gfx::API::OpenGL4:
 				layout->createLayout(*vertexBuffer);
 				break;
-			case API::DirectX11:
+			case gfx::API::DirectX11:
 				layout->createLayout(*shader);
 				break;
 		}
@@ -69,19 +69,15 @@ namespace clv::gfx{
 		addShader(std::move(shader));
 	}
 
-	void Mesh::setModelMatrix(const math::Matrix4f& model){
+	void MeshComponent::setModelMatrix(const math::Matrix4f& model){
 		shader->setModelMatrix(model);
 	}
 
-	void Mesh::setDiffuseTexture(const std::string& path){
-		addBindable(BindableFactory::createTexture(path, gfx::TBP_Diffuse));
+	void MeshComponent::setDiffuseTexture(const std::string& path){
+		addBindable(gfx::BindableFactory::createTexture(path, gfx::TBP_Diffuse));
 	}
 
-	void Mesh::setSpecularTexture(const std::string& path){
-		addBindable(BindableFactory::createTexture(path, gfx::TBP_Specular));
+	void MeshComponent::setSpecularTexture(const std::string& path){
+		addBindable(gfx::BindableFactory::createTexture(path, gfx::TBP_Specular));
 	}
-
-	/*void Mesh::setTexture(std::unique_ptr<Texture> texture){
-		addBindable(std::move(texture));
-	}*/
 }
