@@ -18,6 +18,9 @@ namespace clv{
 	}
 
 	WindowsWindow::~WindowsWindow(){
+		//Reset context first, before the window is destroyed
+		context.reset();
+
 		UnregisterClass(className, instance);
 		DestroyWindow(windowsHandle);
 	}

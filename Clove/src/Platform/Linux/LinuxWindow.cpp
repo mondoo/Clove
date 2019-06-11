@@ -9,6 +9,9 @@
 
 namespace clv{
 	LinuxWindow::~LinuxWindow(){
+		//Reset context first, before the display is closed
+		context.reset();
+
 		XFree(visual);
 		XFreeColormap(display, windowAttribs.colormap);
 		XDestroyWindow(display, window);
