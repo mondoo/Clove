@@ -18,16 +18,11 @@ public:
 	TestEntity(clv::ecs::EntityID ID)
 		: clv::ecs::Entity(ID){
 
-		std::unique_ptr<clv::ecs::MeshComponent> mesh = std::make_unique<clv::ecs::MeshComponent>();
+		clv::ecs::MeshComponent* mesh = addComponent<clv::ecs::MeshComponent>();
 		mesh->setDiffuseTexture("res/Textures/container2.png");
 		mesh->setSpecularTexture("res/Textures/container2_specular.png");
-		mesh->entityID = ID;
 
-		std::unique_ptr<clv::ecs::TransformComponent> trans = std::make_unique<clv::ecs::TransformComponent>();
-		trans->entityID = ID;
-
-		components[clv::ecs::TransformComponent::ID] = std::move(trans);
-		components[clv::ecs::MeshComponent::ID] = std::move(mesh);
+		clv::ecs::TransformComponent* trans = addComponent<clv::ecs::TransformComponent>();
 	}
 
 	void setPosition(const clv::math::Vector3f& pos){

@@ -6,4 +6,15 @@ namespace clv::ecs{
 		}
 		return nullptr;
 	}
+
+	template<typename T>
+	inline T* Entity::addComponent(){
+		std::unique_ptr<T> component = std::make_unique<T>();
+		component->entityID = ID;
+
+		T* outPTr = component.get();
+		components[T::ID] = std::move(component);
+
+		return outPTr;
+	}
 }

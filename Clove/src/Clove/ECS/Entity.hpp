@@ -30,6 +30,10 @@ namespace clv::ecs{
 		T* getComponent() const;
 
 		const std::unordered_map<ComponentID, std::unique_ptr<Component>>& getComponents() const;
+
+	protected:
+		template<typename T>
+		T* addComponent();
 	};
 }
 
