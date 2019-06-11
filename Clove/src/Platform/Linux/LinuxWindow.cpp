@@ -23,9 +23,19 @@ namespace clv{
 		initialiseWindow(props, api);
 	}
 
-	void LinuxWindow::beginFrame(){
-		renderer->clear();
+	void* LinuxWindow::getNativeWindow() const{
+		return display;
+	}
 
+	void LinuxWindow::setVSync(bool enabled){
+
+	}
+
+	bool LinuxWindow::isVSync() const{
+		return false;
+	}
+
+	void LinuxWindow::processInput(){
 		if(XPending(display) > 0){
 			KeySym xkeysym = 0;
 
@@ -88,23 +98,6 @@ namespace clv{
 					break;
 			}
 		}
-	}
-
-	void LinuxWindow::endFrame(){
-		renderer->draw();
-        context->present();
-	}
-
-	void* LinuxWindow::getNativeWindow() const{
-		return display;
-	}
-
-	void LinuxWindow::setVSync(bool enabled){
-
-	}
-
-	bool LinuxWindow::isVSync() const{
-		return false;
 	}
 
 	void LinuxWindow::initialiseWindow(const WindowProps& props, gfx::API api){

@@ -22,26 +22,6 @@ namespace clv{
 		DestroyWindow(windowsHandle);
 	}
 
-	void WindowsWindow::beginFrame(){
-		renderer->clear();
-
-		MSG msg;
-		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
-			if(msg.wParam == CLV_WINDOWS_QUIT){
-				WindowCloseEvent event;
-				eventCallback(event);
-			}
-
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-
-	void WindowsWindow::endFrame(){
-		renderer->draw();
-		context->present();
-	}
-
 	void* WindowsWindow::getNativeWindow() const{
 		return windowsHandle;
 	}
@@ -65,6 +45,19 @@ namespace clv{
 				wglSwapIntervalEXT(enabled ? 1 : 0);
 			}
 		}*/
+	}
+
+	void WindowsWindow::processInput(){
+		MSG msg;
+		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
+			if(msg.wParam == CLV_WINDOWS_QUIT){
+				WindowCloseEvent event;
+				eventCallback(event);
+			}
+
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
 
 	bool WindowsWindow::isVSync() const{

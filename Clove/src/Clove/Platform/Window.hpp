@@ -53,8 +53,8 @@ namespace clv{
 		Window& operator=(Window&& other) noexcept = delete;
 		virtual ~Window();
 
-		virtual void beginFrame() = 0;
-		virtual void endFrame() = 0;
+		void beginFrame();
+		void endFrame();
 
 		void setEventCallbackFunction(const EventCallbackFn& callback);
 		
@@ -73,5 +73,8 @@ namespace clv{
 		//Defined in derived class
 		static Window* create(const WindowProps& props = WindowProps());
 		static Window* create(const WindowProps& props, gfx::API api);
+
+	protected:
+		virtual void processInput() = 0;
 	};
 }

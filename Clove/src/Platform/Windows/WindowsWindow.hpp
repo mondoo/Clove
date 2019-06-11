@@ -8,7 +8,6 @@
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-
 namespace clv{
 	struct WindowsData{
 		HWND handle;
@@ -38,13 +37,13 @@ namespace clv{
 		WindowsWindow(const WindowProps& props);
 		WindowsWindow(const WindowProps& props, gfx::API api);
 
-		virtual void beginFrame() override;
-		virtual void endFrame() override;
-
 		virtual void* getNativeWindow() const override;
 
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVSync() const override;
+
+	protected:
+		virtual void processInput() override;
 
 	private:
 		static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

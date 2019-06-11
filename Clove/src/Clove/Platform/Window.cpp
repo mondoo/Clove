@@ -9,6 +9,16 @@ namespace clv{
 
 	Window::~Window() = default;
 
+	void Window::beginFrame(){
+		renderer->clear();
+		processInput();
+	}
+
+	void Window::endFrame(){
+		renderer->draw();
+		context->present();
+	}
+
 	void Window::setEventCallbackFunction(const EventCallbackFn& callback){
 		eventCallback = callback;
 	}

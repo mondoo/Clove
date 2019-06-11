@@ -38,14 +38,14 @@ namespace clv{
 		
 		LinuxWindow(const WindowProps& props);
 		LinuxWindow(const WindowProps& props, gfx::API api);
-		
-		virtual void beginFrame() override;
-		virtual void endFrame() override;
 
 		virtual void* getNativeWindow() const override;
 
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVSync() const override;
+
+	protected:
+		virtual void processInput() override;
 
 	private:
 		void initialiseWindow(const WindowProps& props, gfx::API api);
