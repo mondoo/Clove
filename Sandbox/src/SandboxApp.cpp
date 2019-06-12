@@ -100,26 +100,21 @@ public:
 		std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
 		//
 
-		clv::ecs::EntityID entID1 = clv::Application::get().getManager().createEntity<TestEntity>();
-		clv::ecs::EntityID entID2 = clv::Application::get().getManager().createEntity<TestEntity>();
-		clv::ecs::EntityID entID3 = clv::Application::get().getManager().createEntity<TestEntity>();
+		ent1 = clv::Application::get().getManager().createEntity<TestEntity>();
+		ent2 = clv::Application::get().getManager().createEntity<TestEntity>();
+		ent3 = clv::Application::get().getManager().createEntity<TestEntity>();
 
-		clv::ecs::EntityID lghtID1 = clv::Application::get().getManager().createEntity<TestLight>();
-		clv::ecs::EntityID ltEntID1 = clv::Application::get().getManager().createEntity<TestEntity>();
-		
-		ent1 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID1));
-		ent2 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID2));
-		ent3 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID3));
-
-		lght1 = dynamic_cast<TestLight*>(clv::Application::get().getManager().getEntity(lghtID1));
-		ltEnt = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(ltEntID1));
-
+		lght1 = clv::Application::get().getManager().createEntity<TestLight>();
+		ltEnt = clv::Application::get().getManager().createEntity<TestEntity>();
+	
 		ent1->setPosition({ 0.0f, 0.0f, 0.0f });
 		ent2->setPosition({ 0.0f, 0.0f, 3.0f });
 		ent3->setPosition({ 0.0f, 3.0f, 0.0f });
 
 		ent1->addChild(ent2);
 		ent2->addChild(ent3);
+
+		//clv::Application::get().getManager().destroyEntity(ent2->getID());
 
 		lght1->setPosition({ 0.0f, 2.0f, -6.0f });
 		lght1->addChild(ltEnt);

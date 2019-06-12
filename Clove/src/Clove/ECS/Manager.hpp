@@ -35,7 +35,7 @@ namespace clv::ecs{
 		T* getSystem();
 
 		template<typename T>
-		EntityID createEntity(); //TODO: should this return the entity or the ID? is the ID even relevant? (in this instance it allows for fast look up)
+		T* createEntity();
 		void destroyEntity(EntityID ID);
 		Entity* getEntity(EntityID ID);
 	};
