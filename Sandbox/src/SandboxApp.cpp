@@ -69,6 +69,7 @@ class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
 	float rotDelta = 0.0f;
+	float rotDelta2 = 0.0f;
 
 	std::shared_ptr<clv::scene::Camera> cam;
 	//std::array<std::shared_ptr<TestEntity>, 1 /*100*/> entities;
@@ -116,7 +117,6 @@ public:
 
 		//clv::Application::get().getManager().destroyEntity(ent2->getID());
 
-		lght1->setPosition({ 0.0f, 2.0f, -6.0f });
 		lght1->addChild(ltEnt);
 		ltEnt->setScale({ 0.25f, 0.25f, 0.25f });
 		
@@ -166,11 +166,13 @@ public:
 		cam->updateFront(0.0f, yaw);
 
 		ent1->setRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
+		lght1->setPosition({ sin(rotDelta2) * 6.0f, 2.0f, cos(rotDelta2) * 6.0f });
 
 		/*for(auto& entity : entities){
 			entity->setRotation();
 		}*/
 		rotDelta += 0.01f;
+		rotDelta2 -= 0.01f;
 
 		if(clv::input::isKeyPressed(clv::Key::Escape)){
 			clv::Application::get().stop();
