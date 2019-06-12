@@ -29,12 +29,12 @@ namespace clv::ecs{
 
 		//FUNCTIONS
 	public:
-		System() = default;
+		System();
 		System(const System& other) = delete;
 		System(System&& other) noexcept;
 		System& operator=(const System& other) = delete;
 		System& operator=(System&& other) noexcept;
-		virtual ~System() = default;
+		virtual ~System();
 
 		virtual void onEntityCreated(const Entity& entity) override final;
 		virtual void onEntityDestroyed(const Entity& entity) override final;

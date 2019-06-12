@@ -8,9 +8,7 @@ namespace clv::ecs{
 	}
 
 	template<typename T>
-	inline EntityID Manager::createEntity(){
-		static EntityID nextID = 0; //TODO: have a better system for generating and reusing IDs
-
+	EntityID Manager::createEntity(){
 		EntityID ID = ++nextID;
 
 		std::unique_ptr<T> entity = std::make_unique<T>(ID);

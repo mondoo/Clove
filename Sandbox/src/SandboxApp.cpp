@@ -6,12 +6,13 @@
 #include "Clove/Scene/Scene.hpp"
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/ECS/Entity.hpp"
-#include "Clove/Scene/Lights/PointLight.hpp"
+//#include "Clove/Scene/Lights/PointLight.hpp"
 #include "Clove/Input/Input.hpp"
 
 #include "Clove/ECS/Entity.hpp"
 #include "Clove/ECS/Components/TransformComponent.hpp"
 #include "Clove/ECS/Components/MeshComponent.hpp"
+#include "Clove/ECS/Components/LightComponent.hpp"
 
 class TestEntity : public clv::ecs::Entity{
 public:
@@ -22,6 +23,32 @@ public:
 		mesh->setDiffuseTexture("res/Textures/container2.png");
 		mesh->setSpecularTexture("res/Textures/container2_specular.png");
 
+		clv::ecs::TransformComponent* trans = addComponent<clv::ecs::TransformComponent>();
+	}
+
+	void setPosition(const clv::math::Vector3f& pos){
+		getComponent<clv::ecs::TransformComponent>()->setLocalPosition(pos);
+	}
+
+	void setRotation(const std::pair<clv::math::Vector3f, float>& rotation){
+		getComponent<clv::ecs::TransformComponent>()->setLocalRotation(rotation);
+	}
+
+	void setScale(const clv::math::Vector3f& scale){
+		getComponent<clv::ecs::TransformComponent>()->setLocalScale(scale);
+	}
+
+	void addChild(Entity* entity){
+		getComponent<clv::ecs::TransformComponent>()->addChild(entity->getComponent<clv::ecs::TransformComponent>());
+	}
+};
+
+class TestLight : public clv::ecs::Entity{
+public:
+	TestLight(clv::ecs::EntityID ID)
+		: clv::ecs::Entity(ID){
+
+		clv::ecs::LightComponent* light = addComponent<clv::ecs::LightComponent>();
 		clv::ecs::TransformComponent* trans = addComponent<clv::ecs::TransformComponent>();
 	}
 
@@ -45,12 +72,15 @@ private:
 
 	std::shared_ptr<clv::scene::Camera> cam;
 	//std::array<std::shared_ptr<TestEntity>, 1 /*100*/> entities;
-	std::shared_ptr<clv::scene::PointLight> light;
+	//std::shared_ptr<clv::scene::PointLight> light;
 	//std::shared_ptr<clv::ecs::Entity> lightEntity;
 
 	TestEntity* ent1 = nullptr;
 	TestEntity* ent2 = nullptr;
 	TestEntity* ent3 = nullptr;
+
+	TestLight* lght1 = nullptr;
+	TestEntity* ltEnt = nullptr;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -65,19 +95,24 @@ public:
 	}
 
 	virtual void onAttach() override{
+		//
 		cam = std::make_shared<clv::scene::Camera>();
 		std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
-		
+		//
+
 		clv::ecs::EntityID entID1 = clv::Application::get().getManager().createEntity<TestEntity>();
 		clv::ecs::EntityID entID2 = clv::Application::get().getManager().createEntity<TestEntity>();
 		clv::ecs::EntityID entID3 = clv::Application::get().getManager().createEntity<TestEntity>();
+
+		clv::ecs::EntityID lghtID1 = clv::Application::get().getManager().createEntity<TestLight>();
+		clv::ecs::EntityID ltEntID1 = clv::Application::get().getManager().createEntity<TestEntity>();
 		
 		ent1 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID1));
 		ent2 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID2));
 		ent3 = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(entID3));
 
-
-		//ent1->addChild(*ent2);
+		lght1 = dynamic_cast<TestLight*>(clv::Application::get().getManager().getEntity(lghtID1));
+		ltEnt = dynamic_cast<TestEntity*>(clv::Application::get().getManager().getEntity(ltEntID1));
 
 		ent1->setPosition({ 0.0f, 0.0f, 0.0f });
 		ent2->setPosition({ 0.0f, 0.0f, 3.0f });
@@ -86,18 +121,13 @@ public:
 		ent1->addChild(ent2);
 		ent2->addChild(ent3);
 
-		//clv::Application::get().getManager().destroyEntity(entID3);
-
-		light = std::make_unique<clv::scene::PointLight>();
-		//lightEntity = std::make_unique<clv::ecs::Entity>();
-
+		lght1->setPosition({ 0.0f, 2.0f, -6.0f });
+		lght1->addChild(ltEnt);
+		ltEnt->setScale({ 0.25f, 0.25f, 0.25f });
+		
+		//
 		scene->addNode(cam);
-		scene->addNode(light);
-
-		light->setPosition({ 0.0f, 2.0f, -6.0f });
-		//light->addChild(lightEntity);
-		//lightEntity->mesh->setDiffuseTexture("res/Textures/container2.png");
-		//lightEntity->setScale({ 0.25f, 0.25f, 0.25f });
+		//
 	}
 
 	virtual void onDetach() override{

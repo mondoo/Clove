@@ -2,10 +2,14 @@
 #include "Manager.hpp"
 
 #include "Clove/ECS/Systems/RenderSystem.hpp"
+#include "Clove/ECS/Systems/LightSystem.hpp"
 
 namespace clv::ecs{
+	EntityID Manager::nextID = 0;
+
 	Manager::Manager(){
 		systems[RenderSystem::ID] = std::make_unique<RenderSystem>();
+		systems[LightSystem::ID] = std::make_unique<LightSystem>();
 	}
 
 	Manager::~Manager() = default;
