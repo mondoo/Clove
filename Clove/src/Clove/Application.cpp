@@ -8,7 +8,6 @@
 #include "Clove/Events/Event.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/ImGui/ImGuiLayer.hpp"
-#include "Clove/Scene/Scene.hpp"
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Events/KeyEvent.hpp"
@@ -28,8 +27,6 @@ namespace clv{
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
 		ecsManager.getSystem<ecs::RenderSystem>()->initialiseRenderer(*window, gfx::API::DirectX11);
-
-		scene = std::make_shared<scene::Scene>();
 
 		layerStack = std::make_unique<LayerStack>();
 
@@ -108,16 +105,13 @@ namespace clv{
 				layer->onUpdate();
 			}
 
-			scene->update(deltaSeonds.count());
-
-			ecsManager.update(deltaSeonds.count());
-
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){
 				layer->onImGuiRender();
 			}
 			imGuiLayer->end();
 			
+			ecsManager.update(deltaSeonds.count());
 			window->endFrame();
 		}
 	}

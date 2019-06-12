@@ -2,10 +2,6 @@
 
 #include "Clove/ECS/Manager.hpp"
 
-namespace clv::scene{
-	class Scene;
-}
-
 namespace clv::gfx{
 	class Renderer;
 }
@@ -22,7 +18,6 @@ namespace clv{
 		//VARIABLES
 	private:
 		std::unique_ptr<Window> window;
-		std::shared_ptr<scene::Scene> scene;
 		ecs::Manager ecsManager;
 
 		bool running = true;
@@ -52,8 +47,6 @@ namespace clv{
 		inline Window& getWindow();
 		gfx::Renderer& getRenderer();
 		ecs::Manager& getManager();
-
-		inline std::shared_ptr<scene::Scene> getScene();
 
 	private:
 		bool onWindowClose(WindowCloseEvent& e);

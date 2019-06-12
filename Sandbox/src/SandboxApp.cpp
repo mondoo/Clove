@@ -2,10 +2,8 @@
 
 //Clove
 #include "Clove/Events/MouseEvent.hpp"
-#include "Clove/Scene/Scene.hpp"
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/ECS/Entity.hpp"
-//#include "Clove/Scene/Lights/PointLight.hpp"
 #include "Clove/Input/Input.hpp"
 
 #include "Clove/ECS/Entity.hpp"
