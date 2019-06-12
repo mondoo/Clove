@@ -3,8 +3,6 @@
 
 #include "Graphics/OpenGL-4/GL4Renderer.hpp"
 #include "Graphics/DirectX-11/DX11Renderer.hpp"
-#include "Clove/Graphics/Drawable.hpp"
-#include "Clove/Scene/Camera.hpp"
 
 namespace clv::gfx{
 	Renderer::Renderer() = default;

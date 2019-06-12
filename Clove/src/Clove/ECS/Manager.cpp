@@ -3,6 +3,7 @@
 
 #include "Clove/ECS/Systems/RenderSystem.hpp"
 #include "Clove/ECS/Systems/LightSystem.hpp"
+#include "Clove/ECS/Systems/CameraSystem.hpp"
 
 namespace clv::ecs{
 	EntityID Manager::nextID = 0;
@@ -10,6 +11,7 @@ namespace clv::ecs{
 	Manager::Manager(){
 		systems[RenderSystem::ID] = std::make_unique<RenderSystem>();
 		systems[LightSystem::ID] = std::make_unique<LightSystem>();
+		systems[CameraSystem::ID] = std::make_unique<CameraSystem>();
 	}
 
 	Manager::~Manager() = default;

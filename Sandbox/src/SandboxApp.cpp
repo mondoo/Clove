@@ -1,7 +1,6 @@
 #include <Clove.hpp>
 
 //Clove
-#include "Clove/Scene/Camera.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Scene/Scene.hpp"
 #include "Clove/Graphics/Renderer.hpp"
@@ -13,6 +12,7 @@
 #include "Clove/ECS/Components/TransformComponent.hpp"
 #include "Clove/ECS/Components/MeshComponent.hpp"
 #include "Clove/ECS/Components/LightComponent.hpp"
+#include "Clove/ECS/Components/CameraComponent.hpp"
 
 class TestEntity : public clv::ecs::Entity{
 public:
@@ -65,16 +65,44 @@ public:
 	}
 };
 
+class TestCamera : public clv::ecs::Entity{
+public:
+	TestCamera(clv::ecs::EntityID ID)
+		: clv::ecs::Entity(ID){
+
+		clv::ecs::CameraComponent* cam = addComponent<clv::ecs::CameraComponent>();
+		clv::ecs::TransformComponent* trans = addComponent<clv::ecs::TransformComponent>();
+	}
+
+	void setPosition(const clv::math::Vector3f& pos){
+		getComponent<clv::ecs::TransformComponent>()->setLocalPosition(pos);
+	}
+
+	const clv::math::Vector3f& getPosition(){
+		return getComponent<clv::ecs::TransformComponent>()->getLocalPosition();
+	}
+
+	const clv::math::Vector3f& getFront(){
+		return getComponent<clv::ecs::CameraComponent>()->getFront();
+	}
+
+	const clv::math::Vector3f& getUp(){
+		return getComponent<clv::ecs::CameraComponent>()->getUp();
+	}
+
+	const clv::math::Vector3f& getRight(){
+		return getComponent<clv::ecs::CameraComponent>()->getRight();
+	}
+
+	void updateFront(float pitch, float yaw){
+		getComponent<clv::ecs::CameraComponent>()->updateFront(pitch, yaw);
+	}
+};
+
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
 	float rotDelta = 0.0f;
-	float rotDelta2 = 0.0f;
-
-	std::shared_ptr<clv::scene::Camera> cam;
-	//std::array<std::shared_ptr<TestEntity>, 1 /*100*/> entities;
-	//std::shared_ptr<clv::scene::PointLight> light;
-	//std::shared_ptr<clv::ecs::Entity> lightEntity;
 
 	TestEntity* ent1 = nullptr;
 	TestEntity* ent2 = nullptr;
@@ -82,6 +110,8 @@ private:
 
 	TestLight* lght1 = nullptr;
 	TestEntity* ltEnt = nullptr;
+
+	TestCamera* cam = nullptr;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -96,17 +126,14 @@ public:
 	}
 
 	virtual void onAttach() override{
-		//
-		cam = std::make_shared<clv::scene::Camera>();
-		std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
-		//
-
 		ent1 = clv::Application::get().getManager().createEntity<TestEntity>();
 		ent2 = clv::Application::get().getManager().createEntity<TestEntity>();
 		ent3 = clv::Application::get().getManager().createEntity<TestEntity>();
 
 		lght1 = clv::Application::get().getManager().createEntity<TestLight>();
 		ltEnt = clv::Application::get().getManager().createEntity<TestEntity>();
+
+		cam = clv::Application::get().getManager().createEntity<TestCamera>();
 	
 		ent1->setPosition({ 0.0f, 0.0f, 0.0f });
 		ent2->setPosition({ 0.0f, 0.0f, 3.0f });
@@ -119,10 +146,6 @@ public:
 
 		lght1->addChild(ltEnt);
 		ltEnt->setScale({ 0.25f, 0.25f, 0.25f });
-		
-		//
-		scene->addNode(cam);
-		//
 	}
 
 	virtual void onDetach() override{
@@ -166,13 +189,10 @@ public:
 		cam->updateFront(0.0f, yaw);
 
 		ent1->setRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
-		lght1->setPosition({ sin(rotDelta2) * 6.0f, 2.0f, cos(rotDelta2) * 6.0f });
+		const float radius = 6.0f;
+		lght1->setPosition({ cos(rotDelta) * radius, 2.0f, sin(rotDelta) * radius });
 
-		/*for(auto& entity : entities){
-			entity->setRotation();
-		}*/
 		rotDelta += 0.01f;
-		rotDelta2 -= 0.01f;
 
 		if(clv::input::isKeyPressed(clv::Key::Escape)){
 			clv::Application::get().stop();
