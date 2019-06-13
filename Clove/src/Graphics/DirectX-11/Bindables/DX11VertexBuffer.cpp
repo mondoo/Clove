@@ -16,7 +16,7 @@ namespace clv::gfx{
 	DX11VertexBuffer::~DX11VertexBuffer() = default;
 
 	DX11VertexBuffer::DX11VertexBuffer(const std::vector<Vertex>& vertices){
-		Renderer& renderer = Application::get().getWindow().getRenderer();
+		Renderer& renderer = Application::get().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
 

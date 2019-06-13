@@ -18,7 +18,7 @@ namespace clv::gfx{
 
 	DX11Texture::DX11Texture(const std::string& filePath, unsigned int bindingPoint)
 		: bindingPoint(bindingPoint){
-		Renderer& renderer = Application::get().getWindow().getRenderer();
+		Renderer& renderer = Application::get().getRenderer();
 		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
 			DX11_INFO_PROVIDER(dxrenderer);
 

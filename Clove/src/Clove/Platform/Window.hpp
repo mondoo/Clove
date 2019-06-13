@@ -5,7 +5,6 @@
 
 namespace clv::gfx{
 	enum class API;
-	class Renderer;
 	class Context;
 }
 
@@ -40,8 +39,6 @@ namespace clv{
 
 		Keyboard keyboard;
 		Mouse mouse;
-
-		std::unique_ptr<gfx::Renderer> renderer;
 		std::unique_ptr<gfx::Context> context;
 
 		//FUNCTIONS
@@ -68,12 +65,12 @@ namespace clv{
 
 		Keyboard& getKeyboard();
 		Mouse& getMouse();
-		gfx::Renderer& getRenderer();
+
+		gfx::Context& getContext();
 
 		//Defined in derived class
 		static Window* create(const WindowProps& props = WindowProps());
 		static Window* create(const WindowProps& props, gfx::API api);
-
 	protected:
 		virtual void processInput() = 0;
 	};

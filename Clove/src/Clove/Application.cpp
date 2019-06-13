@@ -8,12 +8,14 @@
 #include "Clove/Events/Event.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/ImGui/ImGuiLayer.hpp"
-#include "Clove/Scene/Scene.hpp"
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Graphics/Renderer.hpp"
+
+#include "Clove/Graphics/Renderer.hpp"
+#include "Clove/ECS/Systems/RenderSystem.hpp"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -22,10 +24,11 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		window = std::unique_ptr<Window>(Window::create());
+		window = std::unique_ptr<Window>(Window::create({}, gfx::API::OpenGL4));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
-		
-		scene = std::make_shared<scene::Scene>();
+
+		//TODO: Get api from context
+		ecsManager.getSystem<ecs::RenderSystem>()->initialiseRenderer(window->getContext(), gfx::API::OpenGL4);
 
 		layerStack = std::make_unique<LayerStack>();
 
@@ -103,11 +106,12 @@ namespace clv{
 			}
 			//~Temp
 
+
 			for(auto layer : *layerStack){
 				layer->onUpdate();
 			}
 
-			scene->update(deltaSeonds.count());
+			ecsManager.update(deltaSeonds.count());
 
 		#if CLV_PLATFORM_WINDOWS
 			imGuiLayer->begin();
@@ -116,7 +120,7 @@ namespace clv{
 			}
 			imGuiLayer->end();
 		#endif
-
+			
 			window->endFrame();
 		}
 	}
@@ -147,6 +151,14 @@ namespace clv{
 
 	void Application::pushOverlay(std::shared_ptr<Layer> overlay){
 		layerStack->pushOverlay(overlay);
+	}
+
+	gfx::Renderer& Application::getRenderer(){
+		return ecsManager.getSystem<ecs::RenderSystem>()->getRenderer();
+	}
+
+	ecs::Manager& Application::getManager(){
+		return ecsManager;
 	}
 
 	bool Application::onWindowClose(WindowCloseEvent& e){

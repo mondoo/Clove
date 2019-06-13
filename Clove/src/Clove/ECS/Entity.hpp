@@ -1,29 +1,40 @@
 #pragma once
 
-#include "Clove/Scene/SceneNode.hpp"
-
-namespace clv::gfx{
-	class Mesh;
-}
+#include "Clove/ECS/ECSTypes.hpp"
 
 namespace clv::ecs{
-	class Entity : public scene::SceneNode{
+	class Component;
+
+	class Entity{
 		//VARIABLES
-	//private:
-		//Temp: just giving them all a mesh until this gets set up
-	public:
-		std::shared_ptr<gfx::Mesh> mesh;
-		//
+	protected:
+		std::unordered_map<ComponentID, std::unique_ptr<Component>> components;
+
+	private:
+		EntityID ID;
 
 		//FUNCTIONS
 	public:
-		Entity();
-		Entity(const Entity& other);
+		Entity() = delete;
+		Entity(const Entity& other) = delete;
 		Entity(Entity&& other) noexcept;
-		Entity& operator=(const Entity& other);
+		Entity& operator=(const Entity& other) = delete;
 		Entity& operator=(Entity&& other) noexcept;
 		virtual ~Entity();
 
-		virtual void update(float deltaSeconds) override;
+		Entity(EntityID ID);
+
+		EntityID getID() const;
+
+		template<typename T>
+		T* getComponent() const;
+
+		const std::unordered_map<ComponentID, std::unique_ptr<Component>>& getComponents() const;
+
+	protected:
+		template<typename T>
+		T* addComponent();
 	};
 }
+
+#include "Entity.inl"

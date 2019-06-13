@@ -1,29 +1,115 @@
 #include <Clove.hpp>
 
 //Clove
-#include "Clove/Scene/Camera.hpp"
 #include "Clove/Events/MouseEvent.hpp"
-#include "Clove/Scene/Scene.hpp"
 #include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Graphics/Mesh.hpp"
 #include "Clove/ECS/Entity.hpp"
-#include "Clove/Scene/Lights/PointLight.hpp"
 #include "Clove/Input/Input.hpp"
+
+#include "Clove/ECS/Entity.hpp"
+#include "Clove/ECS/Components/TransformComponent.hpp"
+#include "Clove/ECS/Components/MeshComponent.hpp"
+#include "Clove/ECS/Components/LightComponent.hpp"
+#include "Clove/ECS/Components/CameraComponent.hpp"
+
+class TestEntity : public clv::ecs::Entity{
+public:
+	TestEntity(clv::ecs::EntityID ID)
+		: clv::ecs::Entity(ID){
+
+		clv::ecs::MeshComponent* mesh = addComponent<clv::ecs::MeshComponent>();
+		mesh->setDiffuseTexture("res/Textures/container2.png");
+		mesh->setSpecularTexture("res/Textures/container2_specular.png");
+
+		clv::ecs::TransformComponent* trans = addComponent<clv::ecs::TransformComponent>();
+	}
+
+	void setPosition(const clv::math::Vector3f& pos){
+		getComponent<clv::ecs::TransformComponent>()->setLocalPosition(pos);
+	}
+
+	void setRotation(const std::pair<clv::math::Vector3f, float>& rotation){
+		getComponent<clv::ecs::TransformComponent>()->setLocalRotation(rotation);
+	}
+
+	void setScale(const clv::math::Vector3f& scale){
+		getComponent<clv::ecs::TransformComponent>()->setLocalScale(scale);
+	}
+
+	void addChild(Entity* entity){
+		getComponent<clv::ecs::TransformComponent>()->addChild(entity->getComponent<clv::ecs::TransformComponent>());
+	}
+};
+
+class TestLight : public clv::ecs::Entity{
+public:
+	TestLight(clv::ecs::EntityID ID)
+		: clv::ecs::Entity(ID){
+
+		clv::ecs::LightComponent* light = addComponent<clv::ecs::LightComponent>();
+		clv::ecs::TransformComponent* trans = addComponent<clv::ecs::TransformComponent>();
+	}
+
+	void setPosition(const clv::math::Vector3f& pos){
+		getComponent<clv::ecs::TransformComponent>()->setLocalPosition(pos);
+	}
+
+	void setRotation(const std::pair<clv::math::Vector3f, float>& rotation){
+		getComponent<clv::ecs::TransformComponent>()->setLocalRotation(rotation);
+	}
+
+	void addChild(Entity* entity){
+		getComponent<clv::ecs::TransformComponent>()->addChild(entity->getComponent<clv::ecs::TransformComponent>());
+	}
+};
+
+class TestCamera : public clv::ecs::Entity{
+public:
+	TestCamera(clv::ecs::EntityID ID)
+		: clv::ecs::Entity(ID){
+
+		clv::ecs::CameraComponent* cam = addComponent<clv::ecs::CameraComponent>();
+		clv::ecs::TransformComponent* trans = addComponent<clv::ecs::TransformComponent>();
+	}
+
+	void setPosition(const clv::math::Vector3f& pos){
+		getComponent<clv::ecs::TransformComponent>()->setLocalPosition(pos);
+	}
+
+	const clv::math::Vector3f& getPosition(){
+		return getComponent<clv::ecs::TransformComponent>()->getLocalPosition();
+	}
+
+	const clv::math::Vector3f& getFront(){
+		return getComponent<clv::ecs::CameraComponent>()->getFront();
+	}
+
+	const clv::math::Vector3f& getUp(){
+		return getComponent<clv::ecs::CameraComponent>()->getUp();
+	}
+
+	const clv::math::Vector3f& getRight(){
+		return getComponent<clv::ecs::CameraComponent>()->getRight();
+	}
+
+	void updateFront(float pitch, float yaw){
+		getComponent<clv::ecs::CameraComponent>()->updateFront(pitch, yaw);
+	}
+};
 
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
-	/*std::shared_ptr<clv::scene::CameraSceneNode> cam;
-
-	std::shared_ptr<clv::scene::MeshSceneNode> cube;
-	*/
-
 	float rotDelta = 0.0f;
 
-	std::shared_ptr<clv::scene::Camera> cam;
-	std::array<std::shared_ptr<clv::ecs::Entity>, 100> entities;
-	std::shared_ptr<clv::scene::PointLight> light;
-	std::shared_ptr<clv::ecs::Entity> lightEntity;
+	TestEntity* ent1 = nullptr;
+	TestEntity* ent2 = nullptr;
+	TestEntity* ent3 = nullptr;
+
+	TestLight* lght1 = nullptr;
+	TestEntity* ltEnt = nullptr;
+
+	TestCamera* cam = nullptr;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -38,28 +124,26 @@ public:
 	}
 
 	virtual void onAttach() override{
-		cam = std::make_shared<clv::scene::Camera>();
-		std::shared_ptr<clv::scene::Scene> scene = clv::Application::get().getScene();
-		
-		for(int i = 0; i < entities.size(); ++i){
-			entities[i] = std::make_shared<clv::ecs::Entity>();
-			scene->addNode(entities[i]);
-			
-			entities[i]->mesh->setDiffuseTexture("res/Textures/container2.png");
-			entities[i]->mesh->setSpecularTexture("res/Textures/container2_specular.png");
-			entities[i]->setPosition({ i * 4.0f, 0.0f, -4.0f });
-		}
-		
-		light = std::make_unique<clv::scene::PointLight>();
-		lightEntity = std::make_unique<clv::ecs::Entity>();
+		ent1 = clv::Application::get().getManager().createEntity<TestEntity>();
+		ent2 = clv::Application::get().getManager().createEntity<TestEntity>();
+		ent3 = clv::Application::get().getManager().createEntity<TestEntity>();
 
-		scene->addNode(cam);
-		scene->addNode(light);
+		lght1 = clv::Application::get().getManager().createEntity<TestLight>();
+		ltEnt = clv::Application::get().getManager().createEntity<TestEntity>();
 
-		light->setPosition({ 0.0f, 2.0f, -6.0f });
-		light->addChild(lightEntity);
-		lightEntity->mesh->setDiffuseTexture("res/Textures/container2.png");
-		lightEntity->setScale({ 0.25f, 0.25f, 0.25f });
+		cam = clv::Application::get().getManager().createEntity<TestCamera>();
+	
+		ent1->setPosition({ 0.0f, 0.0f, 0.0f });
+		ent2->setPosition({ 0.0f, 0.0f, 3.0f });
+		ent3->setPosition({ 0.0f, 3.0f, 0.0f });
+
+		ent1->addChild(ent2);
+		ent2->addChild(ent3);
+
+		//clv::Application::get().getManager().destroyEntity(ent2->getID());
+
+		lght1->addChild(ltEnt);
+		ltEnt->setScale({ 0.25f, 0.25f, 0.25f });
 	}
 
 	virtual void onDetach() override{
@@ -102,9 +186,10 @@ public:
 		cam->setPosition(cameraPosition);
 		cam->updateFront(0.0f, yaw);
 
-		for(auto& entity : entities){
-			entity->setRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
-		}
+		ent1->setRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
+		const float radius = 6.0f;
+		lght1->setPosition({ cos(rotDelta) * radius, 2.0f, sin(rotDelta) * radius });
+
 		rotDelta += 0.01f;
 
 		if(clv::input::isKeyPressed(clv::Key::Escape)){

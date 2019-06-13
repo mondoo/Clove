@@ -46,7 +46,7 @@ namespace clv{
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		currentAPI = Application::get().getWindow().getRenderer().getAPI();
+		currentAPI = Application::get().getRenderer().getAPI();
 
 		switch(currentAPI){
 			case gfx::API::OpenGL4:
@@ -55,7 +55,7 @@ namespace clv{
 
 			#if CLV_PLATFORM_WINDOWS
 			case gfx::API::DirectX11:
-				if(gfx::DX11Renderer * dxrenderer = dynamic_cast<gfx::DX11Renderer*>(&Application::get().getWindow().getRenderer())){
+				if(gfx::DX11Renderer* dxrenderer = dynamic_cast<gfx::DX11Renderer*>(&Application::get().getRenderer())){
 					ImGui_ImplDX11_Init(&dxrenderer->getDevice(), &dxrenderer->getContext());
 				}
 				break;

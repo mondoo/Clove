@@ -10,12 +10,10 @@ namespace clv{
 	Window::~Window() = default;
 
 	void Window::beginFrame(){
-		renderer->clear();
 		processInput();
 	}
 
 	void Window::endFrame(){
-		renderer->draw();
 		context->present();
 	}
 
@@ -39,7 +37,7 @@ namespace clv{
 		return mouse;
 	}
 
-	gfx::Renderer& Window::getRenderer(){
-		return *renderer;
+	gfx::Context& Window::getContext(){
+		return *context.get();
 	}
 }

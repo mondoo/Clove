@@ -162,8 +162,6 @@ namespace clv{
 		XClearWindow(display, window);
 		XMapRaised(display, window);
 
-		renderer = gfx::Renderer::createRenderer(*context, api);
-
 		CLV_LOG_INFO("Created X11 Window");
 	}
 

@@ -6,8 +6,4 @@ namespace clv{
 	inline Window& Application::getWindow(){
 		return *window;
 	}
-
-	inline std::shared_ptr<scene::Scene> Application::getScene(){
-		return scene;
-	}
 }

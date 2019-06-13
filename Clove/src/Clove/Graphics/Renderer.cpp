@@ -5,8 +5,6 @@
 #if CLV_PLATFORM_WINDOWS
 #include "Graphics/DirectX-11/DX11Renderer.hpp"
 #endif
-#include "Clove/Graphics/Drawable.hpp"
-#include "Clove/Scene/Camera.hpp"
 
 namespace clv::gfx{
 	Renderer::Renderer() = default;
@@ -40,18 +38,5 @@ namespace clv::gfx{
 		}
 
 		return renderer;
-	}
-
-	void Renderer::submit(const std::shared_ptr<Drawable>& drawable){
-		drawables.push(drawable);
-	}
-
-	void Renderer::draw(){
-		while(drawables.size() > 0){
-			if(std::shared_ptr<Drawable> drawable = drawables.front().lock()){
-				drawable->draw(*this);
-				drawables.pop();
-			}
-		}
 	}
 }

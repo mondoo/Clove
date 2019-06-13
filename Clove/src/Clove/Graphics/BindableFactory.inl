@@ -13,7 +13,7 @@
 namespace clv::gfx::BindableFactory{
 	template<typename T>
 	std::unique_ptr<ShaderBufferObject<T>> createShaderBufferObject(ShaderTypes shaderType, unsigned int bindingPoint){
-		switch(Application::get().getWindow().getRenderer().getAPI()){
+		switch(Application::get().getRenderer().getAPI()){
 			case API::OpenGL4:
 				return std::make_unique<GL4UniformBufferObject<T>>(bindingPoint);
 

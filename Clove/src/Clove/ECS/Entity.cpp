@@ -1,39 +1,32 @@
 #include "clvpch.hpp"
 #include "Entity.hpp"
 
-#include "Clove/Graphics/Mesh.hpp"
-#include "Clove/Application.hpp"
-#include "Clove/Platform/Window.hpp"
-#include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Scene/Camera.hpp"
+#include "Clove/ECS/Component.hpp"
 
 namespace clv::ecs{
-	Entity::Entity()
-		: scene::SceneNode(){
-		mesh = std::make_shared<gfx::Mesh>();
-
-		//Temp
-		//mesh->setViewMatrix(math::Matrix4f(1.0f));
-		//mesh->setProjection(math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 0.5f, 50.0f));
+	Entity::Entity(Entity&& other) noexcept{
+		ID = other.ID;
+		components = std::move(other.components);
 	}
 
-	Entity::Entity(const Entity& other) = default;
+	Entity& Entity::operator=(Entity&& other) noexcept{
+		ID = other.ID;
+		components = std::move(other.components);
 
-	Entity::Entity(Entity&& other) noexcept = default;
-
-	Entity& Entity::operator=(const Entity& other) = default;
-
-	Entity& Entity::operator=(Entity&& other) noexcept = default;
+		return *this;
+	}
 
 	Entity::~Entity() = default;
 
-	void Entity::update(float deltaSeconds){
-		scene::SceneNode::update(deltaSeconds);
+	Entity::Entity(EntityID ID)
+		: ID(ID){
+	}
 
-		mesh->setModelMatrix(getWorldTransform());
+	EntityID Entity::getID() const{
+		return ID;
+	}
 
-		gfx::Renderer& renderer = Application::get().getWindow().getRenderer();  //TODO: Correct?
-
-		renderer.submit(mesh);
+	const std::unordered_map<ComponentID, std::unique_ptr<Component>>& Entity::getComponents() const{
+		return components;
 	}
 }
