@@ -3,7 +3,7 @@
 
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
-#include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/Context.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
@@ -46,7 +46,7 @@ namespace clv{
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		currentAPI = Application::get().getRenderer().getAPI();
+		currentAPI = Application::get().getWindow().getContext().getAPI();
 
 		switch(currentAPI){
 			case gfx::API::OpenGL4:

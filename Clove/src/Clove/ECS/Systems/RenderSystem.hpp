@@ -31,7 +31,7 @@ namespace clv::ecs{
 
 		virtual void update(float deltaTime) override;
 
-		void initialiseRenderer(const gfx::Context& context, gfx::API api);
+		void initialiseRenderer(const gfx::Context& context);
 		gfx::Renderer& getRenderer();
 
 	private:

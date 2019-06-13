@@ -40,8 +40,6 @@ namespace clv::gfx{
 
 		virtual void clear() override;
 
-		virtual API getAPI() const override;
-
 		inline ID3D11Device& getDevice() const;
 		inline ID3D11DeviceContext& getContext() const;
 

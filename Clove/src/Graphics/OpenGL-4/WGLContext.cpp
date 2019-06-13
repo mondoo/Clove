@@ -3,6 +3,7 @@
 
 #include "Platform/Windows/WindowsWindow.hpp"
 #include "Platform/Windows/WindowsException.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
 
 #include <glad/glad.h>
 #include <wglext.h>
@@ -71,6 +72,10 @@ namespace clv::gfx{
 
 	void WGLContext::makeCurrent(){
 		wglMakeCurrent(windowsDeviceContext, wglContext);
+	}
+
+	API WGLContext::getAPI() const{
+		return API::OpenGL4;
 	}
 
 	void WGLContext::present(){

@@ -48,6 +48,8 @@ namespace clv::gfx{
 
 		virtual void makeCurrent() override;
 
+		virtual API getAPI() const override;
+
 		virtual void present() override;
 	};
 }

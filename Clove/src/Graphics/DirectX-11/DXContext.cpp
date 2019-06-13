@@ -3,6 +3,7 @@
 
 #include "Graphics/DirectX-11/DX11Exception.hpp"
 #include "Platform/Windows/WindowsWindow.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
 
 #include <d3d11.h>
 
@@ -152,6 +153,10 @@ namespace clv::gfx{
 
 	void DXContext::makeCurrent(){
 		//Empty
+	}
+
+	API DXContext::getAPI() const{
+		return API::DirectX11;
 	}
 
 	void DXContext::present(){

@@ -3,7 +3,7 @@
 
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
-#include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/Context.hpp"
 #include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/Bindables/VertexBuffer.hpp"
 #include "Clove/Graphics/Bindables/IndexBuffer.hpp"
@@ -55,7 +55,7 @@ namespace clv::ecs{
 		layout->pushElement("Position", gfx::BufferElementFormat::FLOAT_3);
 		layout->pushElement("TexCoord", gfx::BufferElementFormat::FLOAT_2);
 		layout->pushElement("Normal", gfx::BufferElementFormat::FLOAT_3);
-		switch(Application::get().getRenderer().getAPI()){//TODO: how to remove this check?
+		switch(Application::get().getWindow().getContext().getAPI()){//TODO: how to remove this check?
 			case gfx::API::OpenGL4:
 				layout->createLayout(*vertexBuffer);
 				break;

@@ -32,8 +32,8 @@ namespace clv::ecs{
 		}
 	}
 
-	void RenderSystem::initialiseRenderer(const gfx::Context& context, gfx::API api){
-		renderer = gfx::Renderer::createRenderer(context, api);
+	void RenderSystem::initialiseRenderer(const gfx::Context& context){
+		renderer = gfx::Renderer::createRenderer(context);
 	}
 
 	gfx::Renderer& RenderSystem::getRenderer(){

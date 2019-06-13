@@ -16,10 +16,9 @@ namespace clv::gfx{
 		Renderer& operator=(Renderer&& other) noexcept = delete;
 		virtual ~Renderer();
 
-		static std::unique_ptr<Renderer> createRenderer(const Context& context, API api);
+		static std::unique_ptr<Renderer> createRenderer(const Context& context);
 
 		virtual void clear() = 0;
 		virtual void drawIndexed(const unsigned int count) = 0;
-		inline virtual API getAPI() const = 0;
 	};
 }

@@ -24,11 +24,10 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		window = std::unique_ptr<Window>(Window::create({}, gfx::API::OpenGL4));
+		window = std::unique_ptr<Window>(Window::create());
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
-		//TODO: Get api from context
-		ecsManager.getSystem<ecs::RenderSystem>()->initialiseRenderer(window->getContext(), gfx::API::OpenGL4);
+		ecsManager.getSystem<ecs::RenderSystem>()->initialiseRenderer(window->getContext());
 
 		layerStack = std::make_unique<LayerStack>();
 

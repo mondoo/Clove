@@ -5,16 +5,17 @@
 #if CLV_PLATFORM_WINDOWS
 #include "Graphics/DirectX-11/DX11Renderer.hpp"
 #endif
+#include "Clove/Graphics/Context.hpp"
 
 namespace clv::gfx{
 	Renderer::Renderer() = default;
 
 	Renderer::~Renderer() = default;
 
-	std::unique_ptr<Renderer> Renderer::createRenderer(const Context& context, API api){
+	std::unique_ptr<Renderer> Renderer::createRenderer(const Context& context){
 		std::unique_ptr<Renderer> renderer;
 		
-		switch(api){
+		switch(context.getAPI()){
 			case API::OpenGL4:
 				CLV_LOG_TRACE("Creating OpenGL renderer");
 				renderer = std::make_unique<GL4Renderer>(context);

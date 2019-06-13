@@ -41,10 +41,6 @@ namespace clv::gfx{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	API GL4Renderer::getAPI() const{
-		return API::OpenGL4;
-	}
-
 	void GL4Renderer::drawIndexed(const unsigned int count){
 		CLV_TIME_SCOPE("OpenGL4: DrawIndexed");
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);

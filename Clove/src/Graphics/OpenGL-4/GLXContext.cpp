@@ -2,6 +2,7 @@
 #include "GLXContext.hpp"
 
 #include "Platform/Linux/LinuxWindow.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{
 	GLXContext::GLXContext(GLXContext&& other) = default;
@@ -44,6 +45,10 @@ namespace clv::gfx{
 	void GLXContext::makeCurrent(){
 		CLV_LOG_TRACE("Making context current");
 		glXMakeCurrent(display, *window, context);
+	}
+
+	API GLXContext::getAPI() const{
+		return API::OpenGL4;
 	}
 
 	void GLXContext::present(){

@@ -19,8 +19,6 @@ namespace clv::gfx{
 
 		virtual void clear() override;
 
-		virtual API getAPI() const override;
-
 	protected:
 		virtual void drawIndexed(const unsigned int count) override;
 	};

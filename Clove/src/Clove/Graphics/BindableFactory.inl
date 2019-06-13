@@ -1,19 +1,19 @@
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
-#include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/Context.hpp"
 
 //GL
 #include "Graphics/OpenGL-4/Bindables/GL4UniformBufferObject.hpp"
 
-#if CLV_PLATFORM_WINDOWS
 //DX
+#if CLV_PLATFORM_WINDOWS
 #include "Graphics/DirectX-11/Bindables/DX11ConstantBuffer.hpp"
 #endif
 
 namespace clv::gfx::BindableFactory{
 	template<typename T>
 	std::unique_ptr<ShaderBufferObject<T>> createShaderBufferObject(ShaderTypes shaderType, unsigned int bindingPoint){
-		switch(Application::get().getRenderer().getAPI()){
+		switch(Application::get().getWindow().getContext().getAPI()){
 			case API::OpenGL4:
 				return std::make_unique<GL4UniformBufferObject<T>>(bindingPoint);
 
