@@ -154,6 +154,14 @@ namespace clv{
 		layerStack->pushOverlay(overlay);
 	}
 
+	Application& Application::get(){
+		return *instance;
+	}
+
+	Window& Application::getWindow(){
+		return *window;
+	}
+
 	gfx::Renderer& Application::getRenderer(){
 		return ecsManager.getSystem<ecs::RenderSystem>()->getRenderer();
 	}

@@ -15,8 +15,8 @@ namespace clv{
 	public:
 		MouseMovedEvent(float x, float y);
 
-		inline float getX() const;
-		inline float getY() const;
+		float getX() const;
+		float getY() const;
 
 		virtual std::string toString() const override;
 
@@ -34,8 +34,8 @@ namespace clv{
 	public:
 		MouseScrolledEvent(float inXOffset, float inYOffset);
 
-		inline float getXOffset() const;
-		inline float getYOffset() const;
+		float getXOffset() const;
+		float getYOffset() const;
 
 		virtual std::string toString() const override;
 
@@ -78,5 +78,3 @@ namespace clv{
 		EVENT_CLASS_TYPE(MouseButtonReleased)
 	};
 }
-
-#include "MouseEvent.inl"

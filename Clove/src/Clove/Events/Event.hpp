@@ -53,11 +53,11 @@ namespace clv{
 		virtual const char* getName() const = 0;
 		virtual int getCategoryFlags() const = 0;
 
-		inline bool isHandled() const;
+		bool isHandled() const;
 
 		virtual std::string toString() const;
 
-		inline bool isInCategory(EventCategory category);
+		bool isInCategory(EventCategory category);
 	};
 
 	class EventDispatcher{
@@ -76,7 +76,7 @@ namespace clv{
 		bool dispatch(EventReceiverFn<EventType> func);
 	};
 
-	inline std::ostream& operator<<(std::ostream& os, const Event& e);
+	std::ostream& operator<<(std::ostream& os, const Event& e);
 }
 
 #include "Event.inl"

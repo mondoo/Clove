@@ -42,9 +42,9 @@ namespace clv{
 		void pushLayer(std::shared_ptr<Layer> layer);
 		void pushOverlay(std::shared_ptr<Layer> overlay);
 
-		inline static Application& get();
+		static Application& get();
 		
-		inline Window& getWindow();
+		Window& getWindow();
 		gfx::Renderer& getRenderer();
 		ecs::Manager& getManager();
 
@@ -55,5 +55,3 @@ namespace clv{
 	//To be defined in CLIENT
 	Application* createApplication();
 }
-
-#include "Application.inl"

@@ -19,8 +19,6 @@ namespace clv{
 		virtual void onImGuiRender(){}
 		virtual void onEvent(Event& e){}
 
-		inline const std::string& getName() const;
+		const std::string& getName() const;
 	};
 }
-
-#include "Layer.inl"

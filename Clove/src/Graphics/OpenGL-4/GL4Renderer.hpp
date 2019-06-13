@@ -18,8 +18,6 @@ namespace clv::gfx{
 		GL4Renderer(const Context& context);
 
 		virtual void clear() override;
-
-	protected:
 		virtual void drawIndexed(const unsigned int count) override;
 	};
 }

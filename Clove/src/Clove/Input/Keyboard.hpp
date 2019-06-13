@@ -35,11 +35,11 @@ namespace clv{
 			Event();
 			Event(Type type, Key key);
 
-			inline bool isPressed() const;
-			inline bool isReleased() const;
-			inline bool isValid() const;
+			bool isPressed() const;
+			bool isReleased() const;
+			bool isValid() const;
 
-			inline Key getKey() const;
+			Key getKey() const;
 		};
 
 		//VARIABLES
@@ -60,20 +60,20 @@ namespace clv{
 
 		~Keyboard();
 
-		inline bool isKeyPressed(Key key) const;
+		bool isKeyPressed(Key key) const;
 		std::optional<Event> getKeyEvent();
-		inline bool isKeyBufferEmpty() const;
+		bool isKeyBufferEmpty() const;
 
 		std::optional<char> getCharEvent();
-		inline bool isCharBufferEmpty() const;
+		bool isCharBufferEmpty() const;
 
 		void flushKeyBuffer();
 		void flushCharBuffer();
 		void flush();
 
-		inline void enableAutoRepeat();
-		inline void disableAutoRepeat();
-		inline bool isAutoRepeatEnabled() const;
+		void enableAutoRepeat();
+		void disableAutoRepeat();
+		bool isAutoRepeatEnabled() const;
 
 		Keyboard& operator=(const Keyboard& other) = delete;
 		Keyboard& operator=(Keyboard&& other) noexcept = delete;

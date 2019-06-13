@@ -9,9 +9,37 @@ namespace clv{
 		, key(key){
 	}
 
+	bool Keyboard::Event::isPressed() const{
+		return type == Type::Pressed;
+	}
+
+	bool Keyboard::Event::isReleased() const{
+		return type == Type::Released;
+	}
+
+	bool Keyboard::Event::isValid() const{
+		return type != Type::Invalid;
+	}
+
+	Key Keyboard::Event::getKey() const{
+		return key;
+	}
+
 	Keyboard::Keyboard() = default;
 
 	Keyboard::~Keyboard() = default;
+
+	bool Keyboard::isKeyPressed(Key key) const{
+		if(const auto keyIt = keyStates.find(key); keyIt != keyStates.end()){
+			return keyIt->second;
+		} else{
+			return false;
+		}
+	}
+
+	bool Keyboard::isKeyBufferEmpty() const{
+		return keyBuffer.empty();
+	}
 
 	std::optional<Keyboard::Event> Keyboard::getKeyEvent(){
 		if(!isKeyBufferEmpty()){
@@ -41,9 +69,25 @@ namespace clv{
 		charBuffer = std::queue<char>();
 	}
 
+	bool Keyboard::isCharBufferEmpty() const{
+		return charBuffer.empty();
+	}
+
 	void Keyboard::flush(){
 		flushKeyBuffer();
 		flushCharBuffer();
+	}
+
+	void Keyboard::enableAutoRepeat(){
+		autoRepeatEnabled = true;
+	}
+
+	void Keyboard::disableAutoRepeat(){
+		autoRepeatEnabled = false;
+	}
+
+	bool Keyboard::isAutoRepeatEnabled() const{
+		return autoRepeatEnabled;
 	}
 
 	void Keyboard::onKeyPressed(Key key){

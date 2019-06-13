@@ -23,15 +23,13 @@ namespace clv{
 		virtual ~CloveException();
 
 		virtual const char* what() const noexcept override;
-		inline virtual const char* getType() const noexcept;
+		virtual const char* getType() const noexcept;
 
-		inline int getLineNum() const noexcept;
-		inline const std::string& getFile() const noexcept;
+		int getLineNum() const noexcept;
+		const std::string& getFile() const noexcept;
 		std::string getOriginString() const noexcept;
 
 		CloveException& operator=(const CloveException& other) = delete;
 		CloveException& operator=(CloveException&& other) noexcept = delete;
 	};
 }
-
-#include "CloveException.inl"

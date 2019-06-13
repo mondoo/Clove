@@ -43,12 +43,12 @@ namespace clv{
 			Event();
 			Event(Type type, MouseButton button, int x, int y);
 
-			inline Type getType() const;
-			inline bool isValid() const;
+			Type getType() const;
+			bool isValid() const;
 
-			inline std::pair<int, int> getPos() const;
+			std::pair<int, int> getPos() const;
 
-			inline MouseButton getButton() const;
+			MouseButton getButton() const;
 		};
 
 		//VARIABLES
@@ -73,14 +73,14 @@ namespace clv{
 
 		~Mouse();
 
-		inline bool isButtonPressed(MouseButton button) const;
+		bool isButtonPressed(MouseButton button) const;
 		std::optional<Event> getEvent();
 		
-		inline std::pair<int, int> getPosition() const;
+		std::pair<int, int> getPosition() const;
 
-		inline bool isInWindow() const;
+		bool isInWindow() const;
 		
-		inline bool isBufferEmpty() const;
+		bool isBufferEmpty() const;
 
 		void flush();
 
@@ -105,5 +105,3 @@ namespace clv{
 		void trimBuffer();
 	};
 }
-
-#include "Mouse.inl"

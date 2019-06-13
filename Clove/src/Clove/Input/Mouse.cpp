@@ -11,9 +11,33 @@ namespace clv{
 		, y(y){
 	}
 
+	Mouse::Event::Type Mouse::Event::getType() const{
+		return type;
+	}
+
+	bool Mouse::Event::isValid() const{
+		return type != Type::Invalid;
+	}
+
+	std::pair<int, int> Mouse::Event::getPos() const{
+		return { x, y };
+	}
+
+	MouseButton Mouse::Event::getButton() const{
+		return button;
+	}
+
 	Mouse::Mouse() = default;
 
 	Mouse::~Mouse() = default;
+
+	bool Mouse::isButtonPressed(MouseButton button) const{
+		if(const auto buttonIt = buttonStates.find(button); buttonIt != buttonStates.end()){
+			return buttonIt->second;
+		} else{
+			return false;
+		}
+	}
 
 	std::optional<Mouse::Event> Mouse::getEvent(){
 		if(!isBufferEmpty()){
@@ -23,6 +47,18 @@ namespace clv{
 		} else{
 			return {};
 		}
+	}
+
+	std::pair<int, int> Mouse::getPosition() const{
+		return { x, y };
+	}
+
+	bool Mouse::isInWindow() const{
+		return inWindow;
+	}
+
+	bool Mouse::isBufferEmpty() const{
+		return buffer.empty();
 	}
 
 	void Mouse::flush(){

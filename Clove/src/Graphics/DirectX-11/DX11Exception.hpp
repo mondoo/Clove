@@ -21,13 +21,13 @@ namespace clv::gfx{
 		DX11Exception(int lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages = {});
 
 		virtual const char* what() const noexcept override;
-		inline virtual const char* getType() const noexcept override;
+		virtual const char* getType() const noexcept override;
 
-		inline HRESULT getErrorCode() const noexcept;
+		HRESULT getErrorCode() const noexcept;
 
 		std::string getErrorString() const noexcept;
 		std::string getErrorDescription() const noexcept;
-		inline std::string getErrorInfo() const noexcept;
+		std::string getErrorInfo() const noexcept;
 	};
 
 	class DeviceRemovedException : public DX11Exception{
@@ -46,7 +46,7 @@ namespace clv::gfx{
 		DeviceRemovedException& operator=(DeviceRemovedException&& other) noexcept = delete;
 		~DeviceRemovedException();
 
-		inline virtual const char* getType() const noexcept override;
+		virtual const char* getType() const noexcept override;
 	};
 
 	class InfoException : public CloveException{
@@ -66,13 +66,11 @@ namespace clv::gfx{
 		InfoException(int lineNum, const char* file, const std::vector<std::string>& messages);
 
 		virtual const char* what() const noexcept override;
-		inline virtual const char* getType() const noexcept override;
+		virtual const char* getType() const noexcept override;
 
-		inline std::string getErrorInfo() const noexcept;
+		std::string getErrorInfo() const noexcept;
 	};
 }
-
-#include "DX11Exception.inl"
 
 #define DX11_EXCEPT_NOINFO(hr) clv::gfx::DX11Exception(__LINE__, __FILE__, (hr))
 #define DX11_THROW_NOINFO(hrcall) { if(FAILED(hr = (hrcall))){ throw DX11_EXCEPT_NOINFO(hr); } }

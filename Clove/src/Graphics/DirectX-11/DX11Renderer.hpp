@@ -39,17 +39,13 @@ namespace clv::gfx{
 		DX11Renderer(const Context& context);
 
 		virtual void clear() override;
+		virtual void drawIndexed(const unsigned int count) override;
 
-		inline ID3D11Device& getDevice() const;
-		inline ID3D11DeviceContext& getContext() const;
+		ID3D11Device& getDevice() const;
+		ID3D11DeviceContext& getContext() const;
 
 	#if CLV_DEBUG
-		inline DXGIInfoManager& getInfoManager();
+		DXGIInfoManager& getInfoManager();
 	#endif
-
-	protected:
-		virtual void drawIndexed(const unsigned int count) override;
 	};
 }
-
-#include "DX11Renderer.inl"

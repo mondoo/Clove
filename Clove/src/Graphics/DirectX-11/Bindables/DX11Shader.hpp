@@ -53,7 +53,7 @@ namespace clv::gfx{
 
 		virtual void setModelMatrix(const math::Matrix4f& world) override;
 
-		inline DX11VertexShader& getVertexShader();
+		DX11VertexShader& getVertexShader();
 	};
 
 	class DX11VertexShader : public Bindable{
@@ -76,7 +76,7 @@ namespace clv::gfx{
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;
 
-		inline ID3DBlob* getByteCode() const;
+		ID3DBlob* getByteCode() const;
 	};
 
 	class DX11PixelShader : public Bindable{
@@ -99,8 +99,6 @@ namespace clv::gfx{
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;
 
-		inline ID3DBlob* getByteCode() const;
+		ID3DBlob* getByteCode() const;
 	};
 }
-
-#include "DX11Shader.inl"

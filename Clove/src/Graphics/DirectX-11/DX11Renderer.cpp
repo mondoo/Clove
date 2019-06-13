@@ -32,4 +32,20 @@ namespace clv::gfx{
 		HRESULT hr;
 		DX11_THROW_INFO_ONLY(d3dContext->DrawIndexed(static_cast<UINT>(count), 0u, 0u));
 	}
+
+	ID3D11Device& DX11Renderer::getDevice() const{
+		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null device");
+		return *d3dDevice.Get();
+	}
+
+	ID3D11DeviceContext& DX11Renderer::getContext() const{
+		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null context");
+		return *d3dContext.Get();
+	}
+
+#if CLV_DEBUG
+	DXGIInfoManager& DX11Renderer::getInfoManager(){
+		return infoManager;
+	}
+#endif
 }

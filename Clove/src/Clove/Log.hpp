@@ -14,12 +14,10 @@ namespace clv{
 	public:
 		static void init();
 
-		inline static std::shared_ptr<spdlog::logger>& getCoreLogger();
-		inline static std::shared_ptr<spdlog::logger>& getClientLogger();
+		static std::shared_ptr<spdlog::logger>& getCoreLogger();
+		static std::shared_ptr<spdlog::logger>& getClientLogger();
 	};
 }
-
-#include "Log.inl"
 
 #if CLV_ENGINE
 	//Core log macros

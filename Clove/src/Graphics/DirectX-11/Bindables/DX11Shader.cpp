@@ -77,6 +77,11 @@ namespace clv::gfx{
 		vData.normalMatrix = math::transpose(math::inverse(model));
 	}
 
+	DX11VertexShader& DX11Shader::getVertexShader(){
+		CLV_ASSERT(vertexShader != nullptr, "No vertex shader attached!");
+		return *vertexShader;
+	}
+
 	DX11VertexShader::DX11VertexShader(DX11VertexShader&& other) noexcept = default;
 
 	DX11VertexShader& DX11VertexShader::operator=(DX11VertexShader&& other) noexcept = default;
@@ -102,6 +107,10 @@ namespace clv::gfx{
 	void DX11VertexShader::unbind(){
 	}
 
+	ID3DBlob* DX11VertexShader::getByteCode() const{
+		return byteCode.Get();
+	}
+
 	DX11PixelShader::DX11PixelShader(DX11PixelShader&& other) noexcept = default;
 
 	DX11PixelShader& DX11PixelShader::operator=(DX11PixelShader&& other) noexcept = default;
@@ -125,5 +134,9 @@ namespace clv::gfx{
 	}
 
 	void DX11PixelShader::unbind(){
+	}
+
+	ID3DBlob* DX11PixelShader::getByteCode() const{
+		return byteCode.Get();
 	}
 }

@@ -26,4 +26,12 @@ namespace clv{
 		clientLogger->set_level(spdlog::level::err);
 	#endif
 	}
+
+	std::shared_ptr<spdlog::logger>& Log::getCoreLogger(){
+		return coreLogger;
+	}
+
+	std::shared_ptr<spdlog::logger>& Log::getClientLogger(){
+		return clientLogger;
+	}
 }

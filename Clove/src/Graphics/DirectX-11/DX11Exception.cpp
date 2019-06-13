@@ -36,6 +36,14 @@ namespace clv::gfx{
 		return whatBuffer.c_str();
 	}
 
+	const char* DX11Exception::getType() const noexcept{
+		return "Clove DX11 Exception";
+	}
+
+	HRESULT DX11Exception::getErrorCode() const noexcept{
+		return hr;
+	}
+
 	std::string DX11Exception::getErrorString() const noexcept{
 		return DXGetErrorStringA(hr);
 	}
@@ -46,7 +54,15 @@ namespace clv::gfx{
 		return buff;
 	}
 
+	std::string DX11Exception::getErrorInfo() const noexcept{
+		return info;
+	}
+
 	DeviceRemovedException::~DeviceRemovedException() = default;
+
+	const char* DeviceRemovedException::getType() const noexcept{
+		return "Clove DX11 Exception [DEVICE REMOVED] (GXGI_ERROR_DEVICE_REMOVED)";
+	}
 
 	InfoException::~InfoException() = default;
 
@@ -70,5 +86,13 @@ namespace clv::gfx{
 		oss << getOriginString();
 		whatBuffer = oss.str();
 		return whatBuffer.c_str();
+	}
+
+	const char* InfoException::getType() const noexcept{
+		return "Clove DX11 Info Exception";
+	}
+
+	std::string InfoException::getErrorInfo() const noexcept{
+		return info;
 	}
 }
