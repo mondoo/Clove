@@ -111,6 +111,8 @@ namespace clv{
 				layer->onUpdate();
 			}
 
+			ecsManager.update(deltaSeonds.count());
+
 		#if CLV_PLATFORM_WINDOWS
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){
@@ -119,7 +121,6 @@ namespace clv{
 			imGuiLayer->end();
 		#endif
 			
-			ecsManager.update(deltaSeonds.count());
 			window->endFrame();
 		}
 	}
