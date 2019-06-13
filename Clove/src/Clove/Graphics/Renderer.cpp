@@ -35,7 +35,7 @@ namespace clv::gfx{
 		if(renderer == nullptr){
 			CLV_ASSERT(false, "Renderer failed to initialise!");
 		} else{
-			CLV_LOG_INFO("Renderer created succesfully");
+			CLV_LOG_DEBUG("Renderer created succesfully");
 		}
 
 		return renderer;

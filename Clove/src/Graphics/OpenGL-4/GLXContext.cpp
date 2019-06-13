@@ -39,6 +39,8 @@ namespace clv::gfx{
 			return;
 		}
 
+		CLV_LOG_DEBUG("Succesfully created an OpenGL context");
+
 		*data->visual = visual;
 	}
 

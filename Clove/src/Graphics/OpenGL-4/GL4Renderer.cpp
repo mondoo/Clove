@@ -11,12 +11,9 @@ namespace clv::gfx{
 	GL4Renderer::~GL4Renderer() = default;
 
 	GL4Renderer::GL4Renderer(const Context& context){
-		CLV_LOG_DEBUG("Device context created");
-
 		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
 
-		CLV_LOG_INFO("Rendering environment created successfully!");
-		CLV_LOG_INFO("GL version: {0}", glGetString(GL_VERSION));
+		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
 
 		CLV_LOG_TRACE("Enabling Depth buffer");
 		glDepthFunc(GL_LESS);

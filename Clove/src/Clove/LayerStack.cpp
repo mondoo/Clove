@@ -14,13 +14,13 @@ namespace clv{
 		CLV_LOG_TRACE("Deconstructing layer stack...");
 		for(auto layer : layers){
 			layer->onDetach();
-			CLV_LOG_INFO("{0} detached", layer->getName());
+			CLV_LOG_DEBUG("{0} detached", layer->getName());
 		}
 	}
 
 	void LayerStack::pushLayer(std::shared_ptr<Layer> layer){
 		layers.emplace(layers.begin() + layerInsertIndex, layer);
-		CLV_LOG_INFO("Attached layer: {0}", layer->getName());
+		CLV_LOG_DEBUG("Attached layer: {0}", layer->getName());
 		layer->onAttach();
 	}
 
@@ -29,14 +29,14 @@ namespace clv{
 		if(it != layers.end()){
 			layers.erase(it);
 			--layerInsertIndex;
-			CLV_LOG_INFO("Popped layer: {0}", (*it)->getName());
+			CLV_LOG_DEBUG("Popped layer: {0}", (*it)->getName());
 			(*it)->onDetach();
 		}
 	}
 
 	void LayerStack::pushOverlay(std::shared_ptr<Layer> overlay){
 		overlay->onAttach();
-		CLV_LOG_INFO("Attached overlay: {0}", overlay->getName());
+		CLV_LOG_DEBUG("Attached overlay: {0}", overlay->getName());
 		layers.emplace_back(std::move(overlay));
 	}
 
@@ -44,7 +44,7 @@ namespace clv{
 		auto it = std::find(layers.begin(), layers.end(), overlay);
 		if(it != layers.end()){
 			layers.erase(it);
-			CLV_LOG_INFO("Popped overlay: {0}", (*it)->getName());
+			CLV_LOG_DEBUG("Popped overlay: {0}", (*it)->getName());
 			(*it)->onDetach();
 		}
 	}

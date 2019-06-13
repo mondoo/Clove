@@ -62,7 +62,7 @@ namespace clv::gfx{
 			wglMakeCurrent(NULL, NULL);
 			wglDeleteContext(tempOpenGLContext);
 
-			CLV_LOG_INFO("Succesfully created an OpenGL 4.6 context");
+			CLV_LOG_DEBUG("Succesfully created an OpenGL 4.6 context");
 		} else{
 			CLV_LOG_WARN("Could not retrieve wglCreateContextAttribsARB. Application might not support OpenGL 3.2+ contexts");
 

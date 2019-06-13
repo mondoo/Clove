@@ -162,7 +162,7 @@ namespace clv{
 		XClearWindow(display, window);
 		XMapRaised(display, window);
 
-		CLV_LOG_INFO("Created X11 Window");
+		CLV_LOG_DEBUG("Window created");
 	}
 
 	Window* Window::create(const WindowProps& props){

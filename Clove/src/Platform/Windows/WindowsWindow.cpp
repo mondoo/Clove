@@ -195,7 +195,7 @@ namespace clv{
 
 		RegisterClassEx(&wc);
 
-		CLV_LOG_DEBUG("Windows class registered");
+		CLV_LOG_TRACE("Windows class registered");
 
 		const std::wstring wideTitle(windowProperties.title.begin(), windowProperties.title.end());
 
@@ -227,7 +227,7 @@ namespace clv{
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
 
-		CLV_LOG_INFO("Window created");
+		CLV_LOG_DEBUG("Window created");
 
 		ShowWindow(windowsHandle, SW_SHOW);
 

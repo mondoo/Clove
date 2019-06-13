@@ -37,6 +37,8 @@ namespace clv{
 	#else
 		CLV_LOG_WARN("IMGUI Disabled for non windows builds");
 	#endif
+
+		CLV_LOG_INFO("Successfully initialised Clove");
 	}
 
 	Application::~Application() = default;

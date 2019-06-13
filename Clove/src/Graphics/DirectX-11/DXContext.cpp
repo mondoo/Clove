@@ -128,7 +128,7 @@ namespace clv::gfx{
 
 		d3dContext->RSSetState(rstate.Get());
 
-		CLV_LOG_INFO("Successfuly created a DirectX 11 context");
+		CLV_LOG_DEBUG("Successfuly created a DirectX 11 context");
 	}
 
 	Microsoft::WRL::ComPtr<ID3D11Device> DXContext::getDevice() const{
