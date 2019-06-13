@@ -55,7 +55,7 @@ namespace clv{
 
 			#if CLV_PLATFORM_WINDOWS
 			case gfx::API::DirectX11:
-				if(gfx::DX11Renderer* dxrenderer = dynamic_cast<gfx::DX11Renderer*>(&Application::get().getWindow().getRenderer())){
+				if(gfx::DX11Renderer * dxrenderer = dynamic_cast<gfx::DX11Renderer*>(&Application::get().getWindow().getRenderer())){
 					ImGui_ImplDX11_Init(&dxrenderer->getDevice(), &dxrenderer->getContext());
 				}
 				break;
@@ -65,9 +65,9 @@ namespace clv{
 				break;
 		}
 
-		#if CLV_PLATFORM_WINDOWS
+	#if CLV_PLATFORM_WINDOWS
 		ImGui_ImplWin32_Init(static_cast<HWND>(Application::get().getWindow().getNativeWindow()));
-		#endif
+	#endif
 	}
 
 	void ImGuiLayer::onDetach(){
@@ -86,9 +86,9 @@ namespace clv{
 				break;
 		}
 
-		#if CLV_PLATFORM_WINDOWS
+	#if CLV_PLATFORM_WINDOWS
 		ImGui_ImplWin32_Shutdown();
-		#endif
+	#endif
 
 		ImGui::DestroyContext();
 	}
@@ -113,9 +113,9 @@ namespace clv{
 				break;
 		}
 
-		#if CLV_PLATFORM_WINDOWS
+	#if CLV_PLATFORM_WINDOWS
 		ImGui_ImplWin32_NewFrame();
-		#endif
+	#endif
 
 		ImGui::NewFrame();
 	}
@@ -142,11 +142,11 @@ namespace clv{
 				break;
 		}
 
-		#if CLV_PLATFORM_WINDOWS
+	#if CLV_PLATFORM_WINDOWS
 		if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 		}
-		#endif
+	#endif
 	}
 }
