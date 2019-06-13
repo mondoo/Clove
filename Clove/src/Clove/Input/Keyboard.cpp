@@ -47,13 +47,13 @@ namespace clv{
 	}
 
 	void Keyboard::onKeyPressed(Key key){
-		keyStates[static_cast<char>(key)] = true;
+		keyStates[key] = true;
 		keyBuffer.push({ Keyboard::Event::Type::Pressed, key });
 		trimBuffer(keyBuffer);
 	}
 
 	void Keyboard::onKeyReleased(Key key){
-		keyStates[static_cast<char>(key)] = false;
+		keyStates[key] = false;
 		keyBuffer.push({ Keyboard::Event::Type::Released, key });
 		trimBuffer(keyBuffer);
 	}
@@ -64,6 +64,6 @@ namespace clv{
 	}
 
 	void Keyboard::clearState(){
-		keyStates.reset();
+		keyStates.empty();
 	}
 }

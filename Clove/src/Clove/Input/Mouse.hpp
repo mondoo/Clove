@@ -53,7 +53,6 @@ namespace clv{
 
 		//VARIABLES
 	private:
-		static constexpr unsigned int numButtons = 256u;
 		static constexpr unsigned int bufferSize = 16u;
 
 		int x = 0;
@@ -63,7 +62,7 @@ namespace clv{
 
 		bool inWindow = false;
 
-		std::bitset<numButtons> buttonStates;
+		std::unordered_map<MouseButton, bool> buttonStates;
 		std::queue<Event> buffer;
 
 		//FUNCTIONS

@@ -44,12 +44,11 @@ namespace clv{
 
 		//VARIABLES
 	private:
-		static constexpr unsigned int numKeys		= 256u;
 		static constexpr unsigned int bufferSize	= 16u;
 
 		bool autoRepeatEnabled = false;
 
-		std::bitset<numKeys> keyStates;
+		std::unordered_map<Key, bool> keyStates;
 		std::queue<Event> keyBuffer;
 		std::queue<char> charBuffer;
 
