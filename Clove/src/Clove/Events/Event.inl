@@ -3,7 +3,7 @@ namespace clv{
 		return handled;
 	}
 
-	inline bool Event::isInCategory(EventCategory::Type category){
+	inline bool Event::isInCategory(EventCategory category){
 		return getCategoryFlags() & category;
 	}
 

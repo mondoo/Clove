@@ -3,15 +3,20 @@
 
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
+#if CLV_PLATFORM_WINDOWS
 #include "Graphics/DirectX-11/DX11Renderer.hpp"
+#endif
 
 #include <imgui.h>
 #include <examples/imgui_impl_opengl3.h>
+#if CLV_PLATFORM_WINDOWS
 #include <examples/imgui_impl_dx11.h>>
 #include <examples/imgui_impl_win32.h>
+#endif
 
 namespace clv{
 	ImGuiLayer::ImGuiLayer()
@@ -48,16 +53,21 @@ namespace clv{
 				ImGui_ImplOpenGL3_Init("#version 430");
 				break;
 
+			#if CLV_PLATFORM_WINDOWS
 			case gfx::API::DirectX11:
-				if(gfx::DX11Renderer* dxrenderer = dynamic_cast<gfx::DX11Renderer*>(&Application::get().getWindow().getRenderer())){
+				if(gfx::DX11Renderer * dxrenderer = dynamic_cast<gfx::DX11Renderer*>(&Application::get().getWindow().getRenderer())){
 					ImGui_ImplDX11_Init(&dxrenderer->getDevice(), &dxrenderer->getContext());
 				}
 				break;
+			#endif
+
 			default:
 				break;
 		}
 
+	#if CLV_PLATFORM_WINDOWS
 		ImGui_ImplWin32_Init(static_cast<HWND>(Application::get().getWindow().getNativeWindow()));
+	#endif
 	}
 
 	void ImGuiLayer::onDetach(){
@@ -66,15 +76,20 @@ namespace clv{
 				ImGui_ImplOpenGL3_Shutdown();
 				break;
 
+			#if CLV_PLATFORM_WINDOWS
 			case gfx::API::DirectX11:
 				ImGui_ImplDX11_Shutdown();
 				break;
+			#endif
+
 			default:
 				break;
 		}
 
+	#if CLV_PLATFORM_WINDOWS
 		ImGui_ImplWin32_Shutdown();
-		
+	#endif
+
 		ImGui::DestroyContext();
 	}
 
@@ -88,14 +103,19 @@ namespace clv{
 				ImGui_ImplOpenGL3_NewFrame();
 				break;
 
+			#if CLV_PLATFORM_WINDOWS
 			case gfx::API::DirectX11:
 				ImGui_ImplDX11_NewFrame();
 				break;
+			#endif
+
 			default:
 				break;
 		}
 
+	#if CLV_PLATFORM_WINDOWS
 		ImGui_ImplWin32_NewFrame();
+	#endif
 
 		ImGui::NewFrame();
 	}
@@ -112,16 +132,21 @@ namespace clv{
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 				break;
 
+			#if CLV_PLATFORM_WINDOWS
 			case gfx::API::DirectX11:
 				ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 				break;
+			#endif
+
 			default:
 				break;
 		}
 
+	#if CLV_PLATFORM_WINDOWS
 		if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 		}
+	#endif
 	}
 }

@@ -16,7 +16,11 @@ namespace clv{
 	}
 
 	inline bool Keyboard::isKeyPressed(Key key) const{
-		return keyStates[static_cast<unsigned char>(key)];
+		if(const auto keyIt = keyStates.find(key); keyIt != keyStates.end()){
+			return keyIt->second;
+		}else{
+			return false;
+		}
 	}
 
 	inline bool Keyboard::isKeyBufferEmpty() const{

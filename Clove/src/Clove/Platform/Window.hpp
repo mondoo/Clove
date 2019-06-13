@@ -6,6 +6,7 @@
 namespace clv::gfx{
 	enum class API;
 	class Renderer;
+	class Context;
 }
 
 namespace clv{
@@ -33,13 +34,15 @@ namespace clv{
 	protected:
 		EventCallbackFn eventCallback;
 
-		WindowProps data;
+		WindowProps windowProperties;
 
 		bool vSync = true;
 
 		Keyboard keyboard;
 		Mouse mouse;
+
 		std::unique_ptr<gfx::Renderer> renderer;
+		std::unique_ptr<gfx::Context> context;
 
 		//FUNCTIONS
 	public:
@@ -50,8 +53,8 @@ namespace clv{
 		Window& operator=(Window&& other) noexcept = delete;
 		virtual ~Window();
 
-		virtual void beginFrame() = 0;
-		virtual void endFrame() = 0;
+		void beginFrame();
+		void endFrame();
 
 		void setEventCallbackFunction(const EventCallbackFn& callback);
 		
@@ -63,14 +66,15 @@ namespace clv{
 		virtual void setVSync(bool enabled) = 0;
 		virtual bool isVSync() const = 0;
 
-		inline Keyboard& getKeyboard();
-		inline Mouse& getMouse();
+		Keyboard& getKeyboard();
+		Mouse& getMouse();
 		gfx::Renderer& getRenderer();
 
 		//Defined in derived class
 		static Window* create(const WindowProps& props = WindowProps());
 		static Window* create(const WindowProps& props, gfx::API api);
+
+	protected:
+		virtual void processInput() = 0;
 	};
 }
-
-#include "Window.inl"

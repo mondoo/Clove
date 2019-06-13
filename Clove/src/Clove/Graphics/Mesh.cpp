@@ -59,9 +59,11 @@ namespace clv::gfx{
 			case API::OpenGL4:
 				layout->createLayout(*vertexBuffer);
 				break;
+			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
 				layout->createLayout(*shader);
 				break;
+			#endif
 		}
 
 		addBindable(std::move(vertexBuffer));

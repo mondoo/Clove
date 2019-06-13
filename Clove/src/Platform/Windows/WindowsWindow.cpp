@@ -2,6 +2,7 @@
 #include "WindowsWindow.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/Context.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Events/KeyEvent.hpp"
@@ -17,27 +18,11 @@ namespace clv{
 	}
 
 	WindowsWindow::~WindowsWindow(){
+		//Reset context first, before the window is destroyed
+		context.reset();
+
 		UnregisterClass(className, instance);
 		DestroyWindow(windowsHandle);
-	}
-
-	void WindowsWindow::beginFrame(){
-		renderer->clear();
-
-		MSG msg;
-		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
-			if(msg.wParam == CLV_WINDOWS_QUIT){
-				WindowCloseEvent event;
-				eventCallback(event);
-			}
-
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-
-	void WindowsWindow::endFrame(){
-		renderer->draw();
 	}
 
 	void* WindowsWindow::getNativeWindow() const{
@@ -63,6 +48,19 @@ namespace clv{
 				wglSwapIntervalEXT(enabled ? 1 : 0);
 			}
 		}*/
+	}
+
+	void WindowsWindow::processInput(){
+		MSG msg;
+		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
+			if(msg.wParam == CLV_WINDOWS_QUIT){
+				WindowCloseEvent event;
+				eventCallback(event);
+			}
+
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
 
 	bool WindowsWindow::isVSync() const{
@@ -125,7 +123,7 @@ namespace clv{
 
 				//Mouse
 			case WM_MOUSEMOVE:
-				if(pt.x >= 0 && pt.x < data.width && pt.y >= 0 && pt.y < data.height){
+				if(pt.x >= 0 && pt.x < windowProperties.width && pt.y >= 0 && pt.y < windowProperties.height){
 					mouse.onMouseMove(pt.x, pt.y);
 					if(!mouse.isInWindow()){
 						mouse.onMouseEnter();
@@ -174,13 +172,13 @@ namespace clv{
 	}
 
 	void WindowsWindow::initialiseWindow(const WindowProps& props, gfx::API api){
+		windowProperties.title = props.title;
+		windowProperties.width = props.width;
+		windowProperties.height = props.height;
+		
 		instance = GetModuleHandle(nullptr);
 
-		data.title = props.title;
-		data.width = props.width;
-		data.height = props.height;
-
-		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", data.title, data.width, data.height);
+		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", windowProperties.title, windowProperties.width, windowProperties.height);
 
 		WNDCLASSEX wc = { 0 };
 		wc.cbSize = sizeof(wc);
@@ -199,16 +197,16 @@ namespace clv{
 
 		CLV_LOG_DEBUG("Windows class registered");
 
-		const std::wstring wideTitle(data.title.begin(), data.title.end());
+		const std::wstring wideTitle(windowProperties.title.begin(), windowProperties.title.end());
 
 		DWORD windowStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
 
 		//Create a rect so we can adjust the resolution to be the client region not the entire window size
 		RECT wr;
-		wr.left = 100;
-		wr.right = data.width + wr.left;
+		wr.left = 100; //What is with these 100s???
+		wr.right = windowProperties.width + wr.left;
 		wr.top = 100;
-		wr.bottom = data.height + wr.top;
+		wr.bottom = windowProperties.height + wr.top;
 		if(!AdjustWindowRect(&wr, windowStyle, FALSE)){
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
@@ -233,12 +231,15 @@ namespace clv{
 
 		ShowWindow(windowsHandle, SW_SHOW);
 
-		renderer = gfx::Renderer::createRenderer(*this, api);
+		data = { windowsHandle, windowProperties.width, windowProperties.height };
+
+		context = gfx::Context::createContext(&data, api);
+		context->makeCurrent();
+		renderer = gfx::Renderer::createRenderer(*context, api);
 
 		setVSync(true);
 	}
 
-#if CLV_PLATFORM_WINDOWS
 	Window* Window::create(const WindowProps& props){
 		return new WindowsWindow(props);
 	}
@@ -246,5 +247,4 @@ namespace clv{
 	Window* Window::create(const WindowProps& props, gfx::API api){
 		return new WindowsWindow(props, api);
 	}
-#endif
 }

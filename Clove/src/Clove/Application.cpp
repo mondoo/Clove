@@ -13,6 +13,7 @@
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -21,15 +22,19 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
+		window = std::unique_ptr<Window>(Window::create());
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 		
 		scene = std::make_shared<scene::Scene>();
 
 		layerStack = std::make_unique<LayerStack>();
 
+	#if CLV_PLATFORM_WINDOWS
 		imGuiLayer = std::make_shared<ImGuiLayer>();
 		pushLayer(imGuiLayer);
+	#else
+		CLV_LOG_WARN("IMGUI Disabled for non windows builds");
+	#endif
 	}
 
 	Application::~Application() = default;
@@ -104,12 +109,14 @@ namespace clv{
 
 			scene->update(deltaSeonds.count());
 
+		#if CLV_PLATFORM_WINDOWS
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){
 				layer->onImGuiRender();
 			}
 			imGuiLayer->end();
-			
+		#endif
+
 			window->endFrame();
 		}
 	}

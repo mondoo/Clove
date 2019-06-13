@@ -16,7 +16,11 @@ namespace clv{
 	}
 
 	inline bool Mouse::isButtonPressed(MouseButton button) const{
-		return buttonStates[static_cast<unsigned char>(button)];
+		if(const auto buttonIt = buttonStates.find(button); buttonIt != buttonStates.end()){
+			return buttonIt->second;
+		}else{
+			return false;
+		}
 	}
 
 	inline std::pair<int, int> Mouse::getPosition() const{

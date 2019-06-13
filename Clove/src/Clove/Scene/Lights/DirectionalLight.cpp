@@ -9,7 +9,7 @@ namespace clv{
 
 		DirectionalLight::DirectionalLight(DirectionalLight&& other) noexcept{
 			direction = std::move(other.direction);
-			Light::Light(std::move(other));
+			Light(std::move(other));
 		}
 
 		DirectionalLight::~DirectionalLight() = default;

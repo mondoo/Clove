@@ -41,7 +41,7 @@ namespace clv{
 		this->x = x;
 		this->y = y;
 
-		buttonStates[static_cast<unsigned char>(button)] = true;
+		buttonStates[button] = true;
 		buffer.push({ Mouse::Event::Type::Pressed, button, x, y });
 		trimBuffer();
 	}
@@ -50,7 +50,7 @@ namespace clv{
 		this->x = x;
 		this->y = y;
 
-		buttonStates[static_cast<unsigned char>(button)] = false;
+		buttonStates[button] = false;
 		buffer.push({ Mouse::Event::Type::Released, button, x, y });
 		trimBuffer();
 	}
@@ -98,7 +98,7 @@ namespace clv{
 	}
 
 	void Mouse::clearState(){
-		buttonStates.reset();
+		buttonStates.empty();
 	}
 
 	void Mouse::trimBuffer(){
