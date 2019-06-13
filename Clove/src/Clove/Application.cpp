@@ -29,8 +29,12 @@ namespace clv{
 
 		layerStack = std::make_unique<LayerStack>();
 
-		//imGuiLayer = std::make_shared<ImGuiLayer>();
-		//pushLayer(imGuiLayer);
+	#if CLV_PLATFORM_WINDOWS
+		imGuiLayer = std::make_shared<ImGuiLayer>();
+		pushLayer(imGuiLayer);
+	#else
+		CLV_LOG_WARN("IMGUI Disabled for non windows builds");
+	#endif
 	}
 
 	Application::~Application() = default;
@@ -105,12 +109,14 @@ namespace clv{
 
 			scene->update(deltaSeonds.count());
 
-			//imGuiLayer->begin();
-			//for(auto layer : *layerStack){
-			//	layer->onImGuiRender();
-			//}
-			//imGuiLayer->end();
-			
+		#if CLV_PLATFORM_WINDOWS
+			imGuiLayer->begin();
+			for(auto layer : *layerStack){
+				layer->onImGuiRender();
+			}
+			imGuiLayer->end();
+		#endif
+
 			window->endFrame();
 		}
 	}
