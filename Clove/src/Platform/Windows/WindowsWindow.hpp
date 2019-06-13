@@ -4,17 +4,17 @@
 
 #include "Platform/Windows/WindowsException.hpp"
 
-struct GLFWwindow;
-
-#define CLV_WINDOWS_QUIT 25397841
+#define CLV_WINDOWS_QUIT 25397841 //Note: this number is completely random
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-namespace clv::gfx{
-	class Mesh;
-}
-
 namespace clv{
+	struct WindowsData{
+		HWND handle;
+		unsigned int width;
+		unsigned int height;
+	};
+
 	class WindowsWindow : public Window{
 		//VARIABLES
 	private:
@@ -22,6 +22,8 @@ namespace clv{
 
 		HINSTANCE instance;
 		HWND windowsHandle;
+
+		WindowsData data;
 
 		//FUNCTIONS
 	public:
@@ -35,13 +37,13 @@ namespace clv{
 		WindowsWindow(const WindowProps& props);
 		WindowsWindow(const WindowProps& props, gfx::API api);
 
-		virtual void beginFrame() override;
-		virtual void endFrame() override;
-
 		virtual void* getNativeWindow() const override;
 
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVSync() const override;
+
+	protected:
+		virtual void processInput() override;
 
 	private:
 		static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

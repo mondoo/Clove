@@ -32,6 +32,10 @@ namespace clv{
 			DX11_THROW_NOINFO(DXGIDebugInterface(__uuidof(IDXGIInfoQueue), &DXGIInfoQueue));
 		}
 
+		DXGIInfoManager::DXGIInfoManager(DXGIInfoManager&& other) noexcept = default;
+
+		DXGIInfoManager& DXGIInfoManager::operator=(DXGIInfoManager&& other) noexcept = default;
+
 		DXGIInfoManager::~DXGIInfoManager() = default;
 
 		void DXGIInfoManager::set() noexcept{

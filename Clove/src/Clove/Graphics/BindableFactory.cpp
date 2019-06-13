@@ -13,11 +13,13 @@
 #include "Graphics/OpenGL-4/Bindables/GL4Texture.hpp"
 
 //DX
+#if CLV_PLATFORM_WINDOWS
 #include "Graphics/DirectX-11/Bindables/DX11VertexBuffer.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11Shader.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11VertexBufferLayout.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11Texture.hpp"
+#endif
 
 namespace clv::gfx::BindableFactory{
 	std::unique_ptr<VertexBuffer> createVertexBuffer(const std::vector<Vertex>& vertexData){
@@ -25,11 +27,13 @@ namespace clv::gfx::BindableFactory{
 			case API::OpenGL4:
 				return std::make_unique<GL4VertexBuffer>(vertexData);
 
+			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
 				return std::make_unique<DX11VertexBuffer>(vertexData);
+			#endif
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);
+				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
 				return std::unique_ptr<VertexBuffer>();
 		}
 	}
@@ -39,11 +43,13 @@ namespace clv::gfx::BindableFactory{
 			case API::OpenGL4:
 				return std::make_unique<GL4IndexBuffer>(indexData);
 
+			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
 				return std::make_unique<DX11IndexBuffer>(indexData);
+			#endif
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);
+				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
 				return std::unique_ptr<IndexBuffer>();
 		}
 	}
@@ -53,11 +59,13 @@ namespace clv::gfx::BindableFactory{
 			case API::OpenGL4:
 				return std::make_unique<GL4Shader>();
 
+			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
 				return std::make_unique<DX11Shader>();
+			#endif
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);
+				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
 				return std::unique_ptr<Shader>();
 		}
 	}
@@ -67,11 +75,13 @@ namespace clv::gfx::BindableFactory{
 			case API::OpenGL4:
 				return std::make_unique<GLVertexBufferLayout>();
 
+			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
 				return std::make_unique<DX11VertexBufferLayout>();
+			#endif
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);
+				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
 				return std::unique_ptr<VertexBufferLayout>();
 		}
 	}
@@ -81,11 +91,13 @@ namespace clv::gfx::BindableFactory{
 			case API::OpenGL4:
 				return std::make_unique<GL4Texture>(filePath, bindingPoint);
 
+			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
 				return std::make_unique<DX11Texture>(filePath, bindingPoint);
+			#endif
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: " __FUNCTION__);
+				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
 				return std::unique_ptr<Texture>();
 		}
 	}

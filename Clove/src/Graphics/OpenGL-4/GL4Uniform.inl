@@ -42,22 +42,27 @@ namespace clv::gfx{
 		CLV_ASSERT(false, "Unsupported type!");
 	}
 
+	template<>
 	inline void GL4Uniform<int>::applyValue(){
 		glUniform1i(cachedUniformLocation, uniformValue);
 	}
 
+	template<>
 	inline void GL4Uniform<float>::applyValue(){
 		glUniform1f(cachedUniformLocation, uniformValue);
 	}
 
+	template<>
 	inline void GL4Uniform<math::Vector2f>::applyValue(){
 		glUniform2fv(cachedUniformLocation, GL_FALSE, math::valuePtr(uniformValue));
 	}
 
+	template<>
 	inline void GL4Uniform<math::Vector3f>::applyValue(){
 		glUniform3fv(cachedUniformLocation, GL_FALSE, math::valuePtr(uniformValue));
 	}
 
+	template<>
 	inline void GL4Uniform<math::Matrix4f>::applyValue(){
 		glUniformMatrix4fv(cachedUniformLocation, 1, GL_FALSE, math::valuePtr(uniformValue));
 	}

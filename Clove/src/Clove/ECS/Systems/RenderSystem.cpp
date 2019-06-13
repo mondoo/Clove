@@ -30,12 +30,10 @@ namespace clv::ecs{
 
 			renderer->drawIndexed(renderable->indexBuffer->getIndexCount());
 		}
-
-		renderer->swapBuffers(); //TODO: Delete. This will be moved onto the window with the context
 	}
 
-	void RenderSystem::initialiseRenderer(const Window& window, gfx::API api){
-		renderer = gfx::Renderer::createRenderer(window, api);
+	void RenderSystem::initialiseRenderer(const gfx::Context& context, gfx::API api){
+		renderer = gfx::Renderer::createRenderer(context, api);
 	}
 
 	gfx::Renderer& RenderSystem::getRenderer(){

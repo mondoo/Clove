@@ -1,5 +1,7 @@
 # Directories
 .vs/
+.vscode/ipch/
+.codelite/
 Built/
 !Vendor/*
 
@@ -9,6 +11,10 @@ Built/
 *.vcxproj.*
 *.sln
 *.cso
+Makefile
+*.project
+*.workspace
+*.mk
 
 # temp
 *.ini

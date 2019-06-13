@@ -12,6 +12,7 @@
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/ECS/Systems/RenderSystem.hpp"
@@ -23,15 +24,20 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		window = std::unique_ptr<Window>(Window::create({ "Clove Engine", 1920, 1080 }));
+		window = std::unique_ptr<Window>(Window::create({}, gfx::API::OpenGL4));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
-		ecsManager.getSystem<ecs::RenderSystem>()->initialiseRenderer(*window, gfx::API::DirectX11);
+		//TODO: Get api from context
+		ecsManager.getSystem<ecs::RenderSystem>()->initialiseRenderer(window->getContext(), gfx::API::OpenGL4);
 
 		layerStack = std::make_unique<LayerStack>();
 
+	#if CLV_PLATFORM_WINDOWS
 		imGuiLayer = std::make_shared<ImGuiLayer>();
 		pushLayer(imGuiLayer);
+	#else
+		CLV_LOG_WARN("IMGUI Disabled for non windows builds");
+	#endif
 	}
 
 	Application::~Application() = default;
@@ -105,11 +111,13 @@ namespace clv{
 				layer->onUpdate();
 			}
 
+		#if CLV_PLATFORM_WINDOWS
 			imGuiLayer->begin();
 			for(auto layer : *layerStack){
 				layer->onImGuiRender();
 			}
 			imGuiLayer->end();
+		#endif
 			
 			ecsManager.update(deltaSeonds.count());
 			window->endFrame();

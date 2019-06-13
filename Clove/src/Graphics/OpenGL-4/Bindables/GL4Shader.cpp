@@ -73,7 +73,7 @@ namespace clv::gfx{
 				break;
 
 			default:
-				CLV_ASSERT(false, "Unknown type! " __FUNCTION__);
+				CLV_ASSERT(false, "Unknown type! {0}", __func__);
 				return std::string();
 				break;
 		}

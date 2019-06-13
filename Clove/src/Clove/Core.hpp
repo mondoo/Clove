@@ -26,7 +26,11 @@
 	#define CLV_PLATFORM_WINDOWS 0
 #endif
 
-#if (CLV_PLATFORM_WINDOWS) != 1
+#ifndef CLV_PLATFORM_LINUX
+	#define CLV_PLATFORM_LINUX 0
+#endif
+
+#if (CLV_PLATFORM_WINDOWS + CLV_PLATFORM_LINUX) != 1
 	#error Invalid platform!
 #endif
 
@@ -36,6 +40,14 @@
 #endif
 
 //Utility defines
+#if CLV_PLATFORM_WINDOWS
+	#define CLV_DEBUG_BREAK __debugbreak()
+#elif CLV_PLATFORM_LINUX
+	#define CLV_DEBUG_BREAK __builtin_trap()
+#else
+	#define CLV_DEBUG_BREAK
+#endif
+
 #if CLV_DEBUG || CLV_DEVELOPMENT
 	#define CLV_ENABLE_ASSERTS 1
 #else
@@ -49,7 +61,7 @@
 #endif
 
 #if CLV_ENABLE_ASSERTS
-	#define CLV_ASSERT(x, ...) { if(!(x)){ CLV_LOG_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+	#define CLV_ASSERT(x, ...) { if(!(x)){ CLV_LOG_ERROR("Assertion Failed: {0}", __VA_ARGS__); CLV_DEBUG_BREAK; } }
 #else
 	#define CLV_ASSERT(x, ...) (x)
 #endif

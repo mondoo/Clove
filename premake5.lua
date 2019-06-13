@@ -25,7 +25,8 @@ workspace "Clove"
 	}
 
 	platforms{
-		"Win64"
+		"Win64",
+		"Linux",
 	}
 
 	defines{
@@ -34,14 +35,24 @@ workspace "Clove"
 
 	--Platform filters
 	filter "platforms:Win64"
-		system "Windows"
-		architecture "x64"
-		staticruntime "On"
+		system "windows"
+		architecture "x86_64"
+		staticruntime "on"
+
+	filter "platforms:Linux"
+		system "linux"
+		architecture "x86_64"
+		staticruntime "on"
 
 	--System filters
-	filter "system:Windows"
+	filter "system:windows"
 		defines{
 			"CLV_PLATFORM_WINDOWS=1"
+		}
+
+	filter "system:linux"
+		defines{
+			"CLV_PLATFORM_LINUX=1"
 		}
 
 	--Configuration filters
@@ -61,7 +72,7 @@ workspace "Clove"
 		optimize "Debug"
 		warnings "Default"
 
-		defines {
+		defines{
 			"CLV_DEVELOPMENT=1"
 		}
 		
@@ -71,7 +82,7 @@ workspace "Clove"
 		optimize "On"
 		warnings "Off"
 
-		defines {
+		defines{
 			"CLV_PROFILING=1"
 		}
 
@@ -81,9 +92,11 @@ workspace "Clove"
 		optimize "Full"
 		warnings "Off"
 
-		defines {
+		defines{
 			"CLV_RELEASE=1"
 		}
+	
+	filter ""
 
 --Clove Dependencies
 group "Dependencies"
@@ -97,11 +110,11 @@ project "ImGui"
 	objdir(objdir_vendor)
 
 	files{
-        "%{prj.location}/**.h",
-        "%{prj.location}/**.cpp",
-    }
+		"%{prj.location}/**.h",
+		"%{prj.location}/**.cpp",
+	}
 	
-	excludes{
+	removefiles{
 		"%{prj.location}/examples/**.h",
 		"%{prj.location}/examples/**.cpp",
 		"%{prj.location}/misc/**.h",
@@ -186,19 +199,15 @@ project "Clove"
 	pchsource "Clove/src/clvpch.cpp"
 
 	files{
-		--src
-		"%{prj.name}/src/**.hpp",
-		"%{prj.name}/src/**.inl",
-		"%{prj.name}/src/**.cpp",
-
-		--shader
-		"%{prj.name}/src/**.glsl",
-		"%{prj.name}/src/**.hlsl",
+		"%{prj.location}/src/**.hpp",
+		"%{prj.location}/src/**.inl",
+		"%{prj.location}/src/**.cpp",
+		"%{prj.location}/src/**.glsl",
 	}
 
 	includedirs{
 		--Clove
-		"%{prj.name}/src",
+		"%{prj.location}/src",
 		
 		--Libs
 		"%{includeDir.Glad}",
@@ -208,27 +217,64 @@ project "Clove"
 		"%{includeDir.dxerr}",
 
 		--Misc vendor
-		"%{prj.name}/vendor/spdlog/include",
-		"%{prj.name}/vendor/OBJ-Loader/source",
-		"%{prj.name}/vendor/Event-Dispatcher",
-		"%{prj.name}/vendor/wglext",
+		"%{prj.location}/vendor/spdlog/include",
+		"%{prj.location}/vendor/OBJ-Loader/Source",
+		"%{prj.location}/vendor/Event-Dispatcher",
 	}
 
 	links{
 		"Glad",
 		"ImGui",
-		"dxerr",
 		"stb",
 	}
 
 	defines{
-		"CLV_ENGINE=1",
-		"GLFW_INCLUDE_NONE"
+		"CLV_ENGINE=1"
 	}
 
-	postbuildcommands{
-		("{COPY} "..hlslout_dir.."**.cso \"../Built/bin/"..outputdir.."/Sandbox/\"")
-	}
+	--platform specifics
+	filter "system:windows"
+		files{
+			"%{prj.location}/src/**.hlsl",
+		}
+
+		removefiles{
+			"%{prj.location}/src/Platform/Linux/**.hpp",
+			"%{prj.location}/src/Platform/Linux/**.inl",
+			"%{prj.location}/src/Platform/Linux/**.cpp",
+			"%{prj.location}/src/Graphics/OpenGL-4/GLXContext.*",
+		}
+
+		includedirs{
+			"%{prj.location}/vendor/wglext",
+		}
+
+		links{
+			"dxerr",
+			"opengl32.lib",
+			"d3d11.lib",
+			"d3dcompiler.lib",
+		}
+
+		postbuildcommands{
+			("{COPY} "..hlslout_dir.."**.cso \"../Built/bin/"..outputdir.."/Sandbox/\"")
+		}
+
+	filter "system:linux"
+		removefiles{
+			"%{prj.location}/src/Graphics/DirectX-11/**.hpp",
+			"%{prj.location}/src/Graphics/DirectX-11/**.inl",
+			"%{prj.location}/src/Graphics/DirectX-11/**.cpp",
+			"%{prj.location}/src/Graphics/OpenGL-4/WGLContext.*",
+			"%{prj.location}/src/Platform/Windows/**.hpp",
+			"%{prj.location}/src/Platform/Windows/**.inl",
+			"%{prj.location}/src/Platform/Windows/**.cpp",
+		}
+
+		links{
+			"GLX",
+			"X11"
+		}
 
 	--hlsl shaders
 	filter "files:**.hlsl"
@@ -238,6 +284,8 @@ project "Clove"
 		shadertype "Vertex"
 	filter "files:**-ps.hlsl"
 		shadertype "Pixel"
+
+	filter ""
 
 --Sandbox
 group ""
@@ -250,9 +298,9 @@ project "Sandbox"
 	objdir(objdir_clv)
 
 	files{
-		"%{prj.name}/src/**.hpp",
-		"%{prj.name}/src/**.inl",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.location}/src/**.hpp",
+		"%{prj.location}/src/**.inl",
+		"%{prj.location}/src/**.cpp"
 	}
 
 	includedirs{
@@ -261,10 +309,20 @@ project "Sandbox"
 		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
 
-		"Clove/src",
-		"Clove/vendor",
+		"Clove/src"
 	}
 
 	links{
 		"Clove",
 	}
+
+	--gmake doesn't unpack static dependencies the same way msvc does
+	filter "action:gmake2"
+		links{
+			"Glad",
+			"ImGui",
+			"GLX",
+			"X11",
+			"stb",
+			"dl"
+		}

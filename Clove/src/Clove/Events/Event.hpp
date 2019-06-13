@@ -8,34 +8,37 @@ namespace clv{
 	bus and process them during the "event" part of the update stage.
 	*/
 
-	namespace EventType{
-		enum Type{
-			None = 0,
-			WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
-			AppTick, AppUpdate, AppRender,
-			KeyPressed, KeyReleased, KeyTyped,
-			MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
-		};
-	}
+	enum EventType{
+		ET_None = 0,
+		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
+		AppTick, AppUpdate, AppRender,
+		KeyPressed, KeyReleased, KeyTyped,
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+	};
 
-	namespace EventCategory{
-		enum Type{
-			None = 0,
-			EventCategoryApplication	= BIT(0),
-			EventCategoryInput			= BIT(1),
-			EventCategoryKeyboard		= BIT(2),
-			EventCategoryMouse			= BIT(3),
-			EventCategoryMouseButton	= BIT(4)
-		};
-	}
+	enum EventCategory{
+		EC_None = 0,
+		EventCategoryApplication	= BIT(0),
+		EventCategoryInput			= BIT(1),
+		EventCategoryKeyboard		= BIT(2),
+		EventCategoryMouse			= BIT(3),
+		EventCategoryMouseButton	= BIT(4)
+	};
+
 
 	//Macro containing overrides that deal with the event type
-#define EVENT_CLASS_TYPE(type)	static EventType::Type getStaticType() { return EventType::##type; }\
-								virtual EventType::Type getEventType() const override { return getStaticType(); }\
-								virtual const char* getName() const override { return #type; }
-
-//Macro containing overrides that deal with the event category
-#define EVENT_CLASS_CATEGORY(category) virtual int getCategoryFlags() const override { return category; }
+	#if CLV_PLATFORM_WINDOWS
+		#define EVENT_CLASS_TYPE(type)	static EventType getStaticType() { return EventType::##type; }\
+										virtual EventType getEventType() const override { return getStaticType(); }\
+										virtual const char* getName() const override { return #type; }
+	#else
+		#define EVENT_CLASS_TYPE(type)	static EventType getStaticType() { return EventType::type; }\
+										virtual EventType getEventType() const override { return getStaticType(); }\
+										virtual const char* getName() const override { return #type; }
+	#endif
+	
+	//Macro containing overrides that deal with the event category
+	#define EVENT_CLASS_CATEGORY(category) virtual int getCategoryFlags() const override { return category; }
 
 	class Event{
 		friend class EventDispatcher;
@@ -46,7 +49,7 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
-		virtual EventType::Type getEventType() const = 0;
+		virtual EventType getEventType() const = 0;
 		virtual const char* getName() const = 0;
 		virtual int getCategoryFlags() const = 0;
 
@@ -54,7 +57,7 @@ namespace clv{
 
 		virtual std::string toString() const;
 
-		inline bool isInCategory(EventCategory::Type category);
+		inline bool isInCategory(EventCategory category);
 	};
 
 	class EventDispatcher{

@@ -5,12 +5,9 @@
 #include "Clove/ECS/Components/TransformComponent.hpp"
 #include "Clove/ECS/Components/RenderableComponent.hpp"
 
-namespace clv{
-	class Window;
-}
-
 namespace clv::gfx{
 	class Renderer;
+	class Context;
 	enum class API;
 }
 
@@ -34,7 +31,7 @@ namespace clv::ecs{
 
 		virtual void update(float deltaTime) override;
 
-		void initialiseRenderer(const Window& window, gfx::API api);
+		void initialiseRenderer(const gfx::Context& context, gfx::API api);
 		gfx::Renderer& getRenderer();
 
 	private:
