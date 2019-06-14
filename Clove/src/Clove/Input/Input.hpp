@@ -8,8 +8,8 @@ namespace clv{
 		bool isKeyPressed(Key key);
 
 		bool isMouseButtonPressed(MouseButton button);
-		std::pair<float, float> getMousePosition();
-		float getMouseX();
-		float getMouseY();
+		std::pair<int, int> getMousePosition();
+		int getMouseX();
+		int getMouseY();
 	};
 }

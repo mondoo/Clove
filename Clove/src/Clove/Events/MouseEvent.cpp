@@ -2,16 +2,16 @@
 #include "MouseEvent.hpp"
 
 namespace clv{
-	MouseMovedEvent::MouseMovedEvent(float x, float y)
+	MouseMovedEvent::MouseMovedEvent(int x, int y)
 		: mouseX(x)
 		, mouseY(y){
 	}
 
-	float MouseMovedEvent::getX() const{
+	int MouseMovedEvent::getX() const{
 		return mouseX;
 	}
 
-	float MouseMovedEvent::getY() const{
+	int MouseMovedEvent::getY() const{
 		return mouseY;
 	}
 

@@ -8,15 +8,15 @@ namespace clv{
 	class MouseMovedEvent : public Event{
 		//VARIABLES
 	private:
-		float mouseX = 0;
-		float mouseY = 0;
+		int mouseX = 0;
+		int mouseY = 0;
 
 		//FUNCTIONS
 	public:
-		MouseMovedEvent(float x, float y);
+		MouseMovedEvent(int x, int y);
 
-		float getX() const;
-		float getY() const;
+		int getX() const;
+		int getY() const;
 
 		virtual std::string toString() const override;
 

@@ -114,8 +114,8 @@ private:
 	bool firstMouse = false;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
-	float lastMouseX = 0.0f;
-	float lastMouseY = 0.0f;
+	int lastMouseX = 0.0f;
+	int lastMouseY = 0.0f;
 
 	//FUNCTIONS
 public:
@@ -215,8 +215,8 @@ public:
 			firstMouse = false;
 		}
 
-		float xoffset = e.getX() - lastMouseX;
-		float yoffset = lastMouseY - e.getY();
+		float xoffset = static_cast<float>(e.getX() - lastMouseX);
+		float yoffset = static_cast<float>(lastMouseY - e.getY());
 		lastMouseX = e.getX();
 		lastMouseY = e.getY();
 
