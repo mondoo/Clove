@@ -1,8 +1,6 @@
 #include "clvpch.hpp"
 #include "WindowsException.hpp"
 
-#include <codecvt>
-
 namespace clv{
 	WindowsException::WindowsException(int lineNum, const char* file, HRESULT hr)
 		: CloveException(lineNum, file)
@@ -10,7 +8,7 @@ namespace clv{
 	}
 
 	WindowsException::~WindowsException() = default;
-	
+
 	const char* WindowsException::what() const noexcept{
 		std::ostringstream oss;
 		oss << getType() << std::endl
@@ -49,8 +47,18 @@ namespace clv{
 			return "Unidentified error code";
 		}
 
-		std::wstring errorString = msgBuff;
+		std::wstring wideString = msgBuff;
+		std::string string;
+		int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, &wideString[0], static_cast<int>(wideString.size()), nullptr, 0, nullptr, nullptr);
+
+		if(sizeNeeded <= 0){
+			CLV_LOG_ERROR("Was unable to convert wide char to multi byte");
+			CLV_LOG_ERROR(GetLastError());
+		} else{
+			WideCharToMultiByte(CP_UTF8, 0, &wideString[0], static_cast<int>(wideString.size()), &string[0], sizeNeeded, nullptr, nullptr);
+		}
+
 		LocalFree(msgBuff);
-		return std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(errorString);
+		return string;
 	}
 }
