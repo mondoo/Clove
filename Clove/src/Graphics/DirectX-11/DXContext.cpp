@@ -111,8 +111,8 @@ namespace clv::gfx{
 		D3D11_VIEWPORT vp = { 0 };
 		vp.TopLeftX = 0;
 		vp.TopLeftY = 0;
-		vp.Width = data->width;
-		vp.Height = data->height;
+		vp.Width = static_cast<FLOAT>(data->width);
+		vp.Height = static_cast<FLOAT>(data->height);
 		vp.MinDepth = 0;
 		vp.MaxDepth = 1;
 		d3dContext->RSSetViewports(1u, &vp);

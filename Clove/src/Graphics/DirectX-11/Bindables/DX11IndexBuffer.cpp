@@ -28,7 +28,7 @@ namespace clv::gfx{
 			ibd.Usage = D3D11_USAGE_DEFAULT;
 			ibd.CPUAccessFlags = 0;
 			ibd.MiscFlags = 0u;
-			ibd.ByteWidth = indices.size() * sizeof(unsigned int);
+			ibd.ByteWidth = static_cast<UINT>(indices.size() * sizeof(unsigned int));
 			ibd.StructureByteStride = sizeof(unsigned int);
 
 			D3D11_SUBRESOURCE_DATA isrd = { };

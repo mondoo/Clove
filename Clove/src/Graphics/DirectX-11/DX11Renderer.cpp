@@ -29,7 +29,6 @@ namespace clv::gfx{
 
 	void DX11Renderer::drawIndexed(const unsigned int count){
 		CLV_TIME_SCOPE("DX11: DrawIndexed");
-		HRESULT hr;
 		DX11_THROW_INFO_ONLY(d3dContext->DrawIndexed(static_cast<UINT>(count), 0u, 0u));
 	}
 

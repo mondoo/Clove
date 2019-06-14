@@ -13,7 +13,7 @@ namespace clv::gfx{
 	}
 
 	GL4IndexBuffer::GL4IndexBuffer(const std::vector<unsigned int>& indices){
-		count = indices.size();
+		count = static_cast<unsigned int>(indices.size());
 		const auto dataSize = count * static_cast<GLsizeiptr>(sizeof(unsigned int));
 
 		glGenBuffers(1, &bufferID);
