@@ -10,7 +10,8 @@ namespace clv::ecs{
 
 	TransformComponent::~TransformComponent(){
 		if(parent){
-			std::remove(parent->children.begin(), parent->children.end(), this);
+			auto removeIter = std::remove(parent->children.begin(), parent->children.end(), this);
+			parent->children.erase(removeIter, parent->children.end());
 		}
 
 		for(auto* child : children){
