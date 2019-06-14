@@ -134,7 +134,7 @@ namespace clv{
 	}
 
 	void Mouse::clearState(){
-		buttonStates.empty();
+		buttonStates.clear();
 	}
 
 	void Mouse::trimBuffer(){

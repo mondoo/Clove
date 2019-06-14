@@ -108,6 +108,6 @@ namespace clv{
 	}
 
 	void Keyboard::clearState(){
-		keyStates.empty();
+		keyStates.clear();
 	}
 }
