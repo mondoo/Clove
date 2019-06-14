@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "WindowsException.hpp"
 
+#include <codecvt>
+
 namespace clv{
 	WindowsException::WindowsException(int lineNum, const char* file, HRESULT hr)
 		: CloveException(lineNum, file)
@@ -49,6 +51,6 @@ namespace clv{
 
 		std::wstring errorString = msgBuff;
 		LocalFree(msgBuff);
-		return std::string(errorString.begin(), errorString.end());
+		return std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(errorString);
 	}
 }
