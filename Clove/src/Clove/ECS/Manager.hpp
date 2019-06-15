@@ -9,6 +9,10 @@
 //The problem I'm trying to fix is that currently entities and components can be dangling 
 
 
+//TEMP: nneed this header for the ID in the pointer
+#include "Clove/ECS/Component.hpp"
+
+
 namespace clv::gfx{
 	class Renderer;
 }
@@ -19,7 +23,9 @@ namespace clv::ecs{
 	class SystemBase;
 
 	class Manager{
-		friend struct EntityPtr; //Me being lazy
+		//Me being lazy
+		friend struct EntityPtr;
+		friend struct ComponentPtrBase;
 
 		//VARIABLES
 	private:
@@ -44,14 +50,77 @@ namespace clv::ecs{
 		T* getSystem();
 
 		template<typename T>
-		EntityPtr createEntity();
+		EntityPtr createEntity(); //Should this just take a list of components to create the entity with? 
 		void destroyEntity(EntityID ID);
 		EntityPtr getEntity(EntityID ID); //
 	};
 
 	//Temp move to own header / cpp ect.
-	struct EntityPtr{ //Lazy work around for now
+	struct ComponentPtrBase{
 	protected:
+		Manager* manager = nullptr;
+		EntityID entityID = INVALID_ENTITY_ID;
+
+	public:
+		ComponentPtrBase() = default;
+		ComponentPtrBase(Manager* manager, EntityID entityID)
+			: manager(manager)
+			, entityID(entityID){
+
+		}
+
+	protected:
+		bool isValid(ComponentID ID) const{
+			if(entityID == INVALID_ENTITY_ID){
+				return false;
+			}
+
+			const auto it = manager->entities.find(entityID);
+			if(it == manager->entities.end()){
+				return false;
+			}
+
+			return manager->entities[entityID]->components.find(ID) != manager->entities[entityID]->components.end();
+		}
+
+		Component* getComponent(ComponentID ID){
+			return manager->entities[entityID]->components[ID].get();
+		}
+	};
+
+	template<typename T>
+	struct ComponentPtr : public ComponentPtrBase{
+	public:
+		ComponentPtr() = default;
+		ComponentPtr(Manager* manager, EntityID entityID)
+			: ComponentPtrBase(manager, entityID){
+
+		}
+	public:
+		bool isValid() const{
+			return ComponentPtrBase::isValid(T::ID);
+		}
+
+		T* operator->(){
+			if(ComponentPtrBase::isValid(T::ID)){
+				static_cast<T*>(getComponent(T::ID));
+			} else{
+				return nullptr;
+			}
+		}
+
+		//Temp: This is for the add child thing but I want avoid people having access to the pointers underneath
+		T* get(){
+			if(ComponentPtrBase::isValid(T::ID)){
+				static_cast<T*>(getComponent(T::ID));
+			} else{
+				return nullptr;
+			}
+		}
+	};
+
+	struct EntityPtr{
+	private:
 		Manager* manager = nullptr;
 		EntityID entityID = INVALID_ENTITY_ID;
 
@@ -73,11 +142,13 @@ namespace clv::ecs{
 		}
 
 		template<typename ComponentType>
-		ComponentType* getComponent() const{
+		ComponentPtr<ComponentType> getComponent() const{
 			if(isValid()){
-				manager->entities[entityID]->getComponent<ComponentType>();
+				if(manager->entities[entityID]->getComponent<ComponentType>() != nullptr){
+					return { manager, entityID };
+				}
 			} else{
-				return false;
+				return {};
 			}
 		}
 

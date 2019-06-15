@@ -7,7 +7,8 @@ namespace clv::ecs{
 
 	class Entity{
 		//VARIABLES
-	protected:
+	/*protected:*/
+	public: //TEMP PUBLIC
 		std::unordered_map<ComponentID, std::unique_ptr<Component>> components;
 
 	private:

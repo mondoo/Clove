@@ -85,12 +85,12 @@ public:
 		ent2.getComponent<clv::ecs::TransformComponent>()->setLocalPosition({ 0.0f, 0.0f, 3.0f });
 		ent3.getComponent<clv::ecs::TransformComponent>()->setLocalPosition({ 0.0f, 3.0f, 0.0f });
 
-		ent1.getComponent<clv::ecs::TransformComponent>()->addChild(ent2.getComponent<clv::ecs::TransformComponent>());
-		ent2.getComponent<clv::ecs::TransformComponent>()->addChild(ent3.getComponent<clv::ecs::TransformComponent>());
+		ent1.getComponent<clv::ecs::TransformComponent>()->addChild(ent2.getComponent<clv::ecs::TransformComponent>().get());
+		ent2.getComponent<clv::ecs::TransformComponent>()->addChild(ent3.getComponent<clv::ecs::TransformComponent>().get());
 
 		//clv::Application::get().getManager().destroyEntity(ent2.getID());
 
-		lght1.getComponent<clv::ecs::TransformComponent>()->addChild(ltEnt.getComponent<clv::ecs::TransformComponent>());
+		lght1.getComponent<clv::ecs::TransformComponent>()->addChild(ltEnt.getComponent<clv::ecs::TransformComponent>().get());
 		ltEnt.getComponent<clv::ecs::TransformComponent>()->setLocalScale({ 0.25f, 0.25f, 0.25f });
 	}
 
