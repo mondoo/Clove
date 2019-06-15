@@ -7,13 +7,24 @@ namespace clv::ecs{
 		return nullptr;
 	}
 
-	template<typename T>
-	inline T* Entity::addComponent(){
-		std::unique_ptr<T> component = std::make_unique<T>();
+	template<typename EntityType>
+	inline EntityType* Entity::addComponent(){
+		std::unique_ptr<EntityType> component = std::make_unique<EntityType>();
 		component->entityID = ID;
 
-		T* outPTr = component.get();
-		components[T::ID] = std::move(component);
+		EntityType* outPTr = component.get();
+		components[EntityType::ID] = std::move(component);
+
+		return outPTr;
+	}
+
+	template<typename EntityType, typename ...ConstructTypes>
+	inline EntityType* Entity::addComponent(ConstructTypes&&... args){
+		std::unique_ptr<EntityType> component = std::make_unique<EntityType>(args...);
+		component->entityID = ID;
+
+		EntityType* outPTr = component.get();
+		components[EntityType::ID] = std::move(component);
 
 		return outPTr;
 	}

@@ -17,7 +17,7 @@ public:
 	TestEntity(clv::ecs::EntityID ID)
 		: clv::ecs::Entity(ID){
 
-		clv::ecs::MeshComponent* mesh = addComponent<clv::ecs::MeshComponent>();
+		clv::ecs::MeshComponent* mesh = addComponent<clv::ecs::MeshComponent>("res/Objects/cube.obj");
 		mesh->setDiffuseTexture("res/Textures/container2.png");
 		mesh->setSpecularTexture("res/Textures/container2_specular.png");
 

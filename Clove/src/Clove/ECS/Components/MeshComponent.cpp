@@ -19,8 +19,8 @@ namespace clv::ecs{
 
 	MeshComponent::~MeshComponent() = default;
 
-	MeshComponent::MeshComponent(){
-		loader::MeshInfo info = loader::MeshLoader::loadOBJ("res/Objects/cube.obj");
+	MeshComponent::MeshComponent(const std::string& filePath){
+		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
 		//TODO: This will break if the mesh does not have a texture mapping or normal mapping
 		for(int i = 0; i < info.verticies.size(); ++i){

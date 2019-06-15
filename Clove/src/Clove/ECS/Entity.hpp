@@ -32,8 +32,11 @@ namespace clv::ecs{
 		const std::unordered_map<ComponentID, std::unique_ptr<Component>>& getComponents() const;
 
 	protected:
-		template<typename T>
-		T* addComponent();
+		template<typename EntityType>
+		EntityType* addComponent();
+		
+		template<typename EntityType, typename ...ConstructTypes>
+		EntityType* addComponent(ConstructTypes&&... args);
 	};
 }
 

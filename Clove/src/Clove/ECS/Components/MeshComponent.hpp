@@ -20,12 +20,14 @@ namespace clv::ecs{
 
 		//FUNCTIONS
 	public:
-		MeshComponent();
+		MeshComponent() = delete;
 		MeshComponent(const MeshComponent& other) = delete;
 		MeshComponent(MeshComponent&& other) noexcept;
 		MeshComponent& operator=(const MeshComponent& other) = delete;
 		MeshComponent& operator=(MeshComponent&& other) noexcept;
 		virtual ~MeshComponent();
+
+		MeshComponent(const std::string& filePath);
 
 		void setModelMatrix(const math::Matrix4f& model);
 
