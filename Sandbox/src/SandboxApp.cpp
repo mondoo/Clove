@@ -13,31 +13,35 @@
 #include "Clove/ECS/Components/CameraComponent.hpp"
 
 class TestEntity : public clv::ecs::Entity{
+private:
+	clv::ecs::MeshComponent* mesh = nullptr;
+	clv::ecs::TransformComponent* trans = nullptr;
+
 public:
 	TestEntity(clv::ecs::EntityID ID)
 		: clv::ecs::Entity(ID){
 
-		clv::ecs::MeshComponent* mesh = addComponent<clv::ecs::MeshComponent>("res/Objects/cube.obj");
+		mesh = addComponent<clv::ecs::MeshComponent>("res/Objects/cube.obj");
 		mesh->setDiffuseTexture("res/Textures/container2.png");
 		mesh->setSpecularTexture("res/Textures/container2_specular.png");
 
-		clv::ecs::TransformComponent* trans = addComponent<clv::ecs::TransformComponent>();
+		trans = addComponent<clv::ecs::TransformComponent>();
 	}
 
 	void setPosition(const clv::math::Vector3f& pos){
-		getComponent<clv::ecs::TransformComponent>()->setLocalPosition(pos);
+		trans->setLocalPosition(pos);
 	}
 
 	void setRotation(const std::pair<clv::math::Vector3f, float>& rotation){
-		getComponent<clv::ecs::TransformComponent>()->setLocalRotation(rotation);
+		trans->setLocalRotation(rotation);
 	}
 
 	void setScale(const clv::math::Vector3f& scale){
-		getComponent<clv::ecs::TransformComponent>()->setLocalScale(scale);
+		trans->setLocalScale(scale);
 	}
 
 	void addChild(Entity* entity){
-		getComponent<clv::ecs::TransformComponent>()->addChild(entity->getComponent<clv::ecs::TransformComponent>());
+		trans->addChild(entity->getComponent<clv::ecs::TransformComponent>());
 	}
 };
 

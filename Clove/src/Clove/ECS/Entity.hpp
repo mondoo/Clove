@@ -26,8 +26,8 @@ namespace clv::ecs{
 
 		EntityID getID() const;
 
-		template<typename T>
-		T* getComponent() const;
+		template<typename EntityType>
+		EntityType* getComponent() const;
 
 		const std::unordered_map<ComponentID, std::unique_ptr<Component>>& getComponents() const;
 

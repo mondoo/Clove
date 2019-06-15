@@ -1,8 +1,8 @@
 namespace clv::ecs{
-	template<typename T>
-	inline T* Entity::getComponent() const{
-		if(const auto foundComp = components.find(T::ID); foundComp != components.end()){
-			return static_cast<T*>(foundComp->second.get());
+	template<typename EntityType>
+	inline EntityType* Entity::getComponent() const{
+		if(const auto foundComp = components.find(EntityType::ID); foundComp != components.end()){
+			return static_cast<EntityType*>(foundComp->second.get());
 		}
 		return nullptr;
 	}
