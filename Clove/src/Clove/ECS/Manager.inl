@@ -8,17 +8,15 @@ namespace clv::ecs{
 	}
 
 	template<typename T>
-	T* Manager::createEntity(){
+	EntityPtr Manager::createEntity(){
 		EntityID ID = ++nextID;
 
 		std::unique_ptr<T> entity = std::make_unique<T>(ID);
-		T* retPtr = entity.get();
-
 		for(const auto& [sysID, system] : systems){
 			system->onEntityCreated(*entity);
 		}
 		entities[ID] = std::move(entity);
 
-		return retPtr;
+		return { this, ID };
 	}
 }
