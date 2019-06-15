@@ -1,30 +1,30 @@
 namespace clv::ecs{
-	template<typename EntityType>
-	inline EntityType* Entity::getComponent() const{
-		if(const auto foundComp = components.find(EntityType::ID); foundComp != components.end()){
-			return static_cast<EntityType*>(foundComp->second.get());
+	template<typename ComponentType>
+	inline ComponentType* Entity::getComponent() const{
+		if(const auto foundComp = components.find(ComponentType::ID); foundComp != components.end()){
+			return static_cast<ComponentType*>(foundComp->second.get());
 		}
 		return nullptr;
 	}
 
-	template<typename EntityType>
-	inline EntityType* Entity::addComponent(){
-		std::unique_ptr<EntityType> component = std::make_unique<EntityType>();
+	template<typename ComponentType>
+	inline ComponentType* Entity::addComponent(){
+		std::unique_ptr<ComponentType> component = std::make_unique<ComponentType>();
 		component->entityID = ID;
 
-		EntityType* outPTr = component.get();
-		components[EntityType::ID] = std::move(component);
+		ComponentType* outPTr = component.get();
+		components[ComponentType::ID] = std::move(component);
 
 		return outPTr;
 	}
 
-	template<typename EntityType, typename ...ConstructTypes>
-	inline EntityType* Entity::addComponent(ConstructTypes&&... args){
-		std::unique_ptr<EntityType> component = std::make_unique<EntityType>(args...);
+	template<typename ComponentType, typename ...ConstructTypes>
+	inline ComponentType* Entity::addComponent(ConstructTypes&&... args){
+		std::unique_ptr<ComponentType> component = std::make_unique<ComponentType>(args...);
 		component->entityID = ID;
 
-		EntityType* outPTr = component.get();
-		components[EntityType::ID] = std::move(component);
+		ComponentType* outPTr = component.get();
+		components[ComponentType::ID] = std::move(component);
 
 		return outPTr;
 	}
