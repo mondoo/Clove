@@ -6,31 +6,12 @@ namespace clv::ecs{
 	class Manager;
 	class Component;
 
-	class ComponentPtrBase{
+	template<typename ComponentType>
+	class ComponentPtr{
 		//VARIABLES
-	protected:
+	private:
 		Manager* manager = nullptr;
 		EntityID entityID = INVALID_ENTITY_ID;
-
-		//FUNCTIONS
-	public:
-		ComponentPtrBase();
-		ComponentPtrBase(const ComponentPtrBase& other);
-		ComponentPtrBase(ComponentPtrBase&& other) noexcept;
-		ComponentPtrBase& operator=(const ComponentPtrBase& other);
-		ComponentPtrBase& operator=(ComponentPtrBase&& other) noexcept;
-		~ComponentPtrBase();
-
-		ComponentPtrBase(Manager* manager, EntityID entityID);
-
-	protected:
-		bool isValid(ComponentID ID) const;
-		Component* getComponent(ComponentID ID);
-	};
-
-	template<typename ComponentType>
-	class ComponentPtr : public ComponentPtrBase{
-		//VARIABLES
 
 		//FUNCTIONS
 	public:
@@ -49,12 +30,15 @@ namespace clv::ecs{
 
 		//Temp: This is for the add child thing but I want avoid people having access to the pointers underneath
 		ComponentType* get(){
-			if(ComponentPtrBase::isValid(ComponentType::ID)){
-				static_cast<ComponentType*>(getComponent(ComponentType::ID));
+			if(isValid()){
+				static_cast<ComponentType*>(getComponent());
 			} else{
 				return nullptr;
 			}
 		}
+
+	protected:
+		ComponentType* getComponent() const;
 	};
 }
 

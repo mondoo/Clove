@@ -15,9 +15,8 @@ namespace clv::ecs{
 	class SystemBase;
 
 	class Manager{
-		//TODO: Delete, me being lazy
 		friend class Entity;
-		friend class ComponentPtrBase;
+		template<typename T> friend class ComponentPtr;
 
 		//VARIABLES
 	private:

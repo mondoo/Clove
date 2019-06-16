@@ -21,18 +21,33 @@ namespace clv::ecs{
 
 	template<typename ComponentType>
 	ComponentPtr<ComponentType>::ComponentPtr(Manager* manager, EntityID entityID)
-		: ComponentPtrBase(manager, entityID){
+		: manager(manager)
+		, entityID(entityID){
 	}
 
 	template<typename ComponentType>
 	bool ComponentPtr<ComponentType>::isValid() const{
-		return ComponentPtrBase::isValid(ComponentType::ID);
+		if(entityID == INVALID_ENTITY_ID){
+			return false;
+		}
+
+		const auto it = manager->components.find(entityID);
+		if(it == manager->components.end()){
+			return false;
+		}
+
+		return manager->components[entityID].find(ComponentType::ID) != manager->components[entityID].end();
 	}
 
 	template<typename ComponentType>
 	ComponentType* ComponentPtr<ComponentType>::operator->(){
+		return getComponent();
+	}
+
+	template<typename ComponentType>
+	ComponentType* ComponentPtr<ComponentType>::getComponent() const{
 		if(isValid()){
-			static_cast<ComponentType*>(getComponent(ComponentType::ID));
+			return static_cast<ComponentType*>(manager->components[entityID][ComponentType::ID].get());
 		} else{
 			return nullptr;
 		}
