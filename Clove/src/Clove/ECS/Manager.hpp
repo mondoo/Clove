@@ -2,6 +2,8 @@
 
 #include "Clove/ECS/ECSTypes.hpp"
 #include "Clove/ECS/System.hpp"
+#include "Clove/ECS/Entity.hpp"
+#include "Clove/ECS/ComponentPtr.hpp"
 
 namespace clv::gfx{
 	class Renderer;
@@ -13,13 +15,16 @@ namespace clv::ecs{
 	class SystemBase;
 
 	class Manager{
+		friend class Entity;
+		template<typename T> friend class ComponentPtr;
+
 		//VARIABLES
 	private:
-		std::unordered_map<EntityID, std::unique_ptr<Entity>> entities;
-		std::unordered_map<SystemID, std::unique_ptr<SystemBase>> systems; 
+		std::unordered_map<EntityID, std::unordered_map<ComponentID, std::unique_ptr<Component>>> components;
+		std::unordered_map<SystemID, std::unique_ptr<SystemBase>> systems;
 
 		static EntityID nextID; //TODO: have a better system for generating and reusing IDs
-	
+
 		//FUNCTIONS
 	public:
 		Manager();
@@ -32,12 +37,18 @@ namespace clv::ecs{
 		void update(float deltaTime);
 
 		template<typename T>
-		T* getSystem();
+		T* getSystem(); //TODO: I don't really want people accessing systems (but we need to for the renderer)
 
-		template<typename T>
-		T* createEntity();
+		template<typename... EntityComponents>
+		Entity createEntity();
 		void destroyEntity(EntityID ID);
-		Entity* getEntity(EntityID ID);
+		Entity getEntity(EntityID ID);
+
+	private:
+		template<size_t index, typename EntityComponent, typename... EntityComponents>
+		void buildComponentMap(std::unordered_map<ComponentID, std::unique_ptr<Component>>& map);
+		template<size_t index>
+		void buildComponentMap(std::unordered_map<ComponentID, std::unique_ptr<Component>>& map);
 	};
 }
 

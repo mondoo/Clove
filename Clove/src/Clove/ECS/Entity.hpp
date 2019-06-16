@@ -1,42 +1,34 @@
 #pragma once
 
 #include "Clove/ECS/ECSTypes.hpp"
+#include "Clove/ECS/ComponentPtr.hpp"
 
 namespace clv::ecs{
-	class Component;
+	class Manager;
 
 	class Entity{
 		//VARIABLES
-	protected:
-		std::unordered_map<ComponentID, std::unique_ptr<Component>> components;
-
 	private:
-		EntityID ID;
+		Manager* manager = nullptr;
+		EntityID entityID = INVALID_ENTITY_ID;
 
 		//FUNCTIONS
 	public:
-		Entity() = delete;
-		Entity(const Entity& other) = delete;
+		Entity();
+		Entity(const Entity& other);
 		Entity(Entity&& other) noexcept;
-		Entity& operator=(const Entity& other) = delete;
+		Entity& operator=(const Entity& other);
 		Entity& operator=(Entity&& other) noexcept;
-		virtual ~Entity();
+		~Entity();
 
-		Entity(EntityID ID);
+		Entity(Manager* manager, EntityID entityID);
 
-		EntityID getID() const;
+		bool isValid() const;
+
+		EntityID getID();
 
 		template<typename ComponentType>
-		ComponentType* getComponent() const;
-
-		const std::unordered_map<ComponentID, std::unique_ptr<Component>>& getComponents() const;
-
-	protected:
-		template<typename ComponentType>
-		ComponentType* addComponent();
-		
-		template<typename ComponentType, typename ...ConstructTypes>
-		ComponentType* addComponent(ConstructTypes&&... args);
+		ComponentPtr<ComponentType> getComponent() const;
 	};
 }
 

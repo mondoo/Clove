@@ -3,117 +3,26 @@
 //Clove
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Graphics/Renderer.hpp"
-#include "Clove/ECS/Entity.hpp"
 #include "Clove/Input/Input.hpp"
 
-#include "Clove/ECS/Entity.hpp"
 #include "Clove/ECS/Components/TransformComponent.hpp"
 #include "Clove/ECS/Components/MeshComponent.hpp"
 #include "Clove/ECS/Components/LightComponent.hpp"
 #include "Clove/ECS/Components/CameraComponent.hpp"
-
-class TestEntity : public clv::ecs::Entity{
-private:
-	clv::ecs::MeshComponent* mesh = nullptr;
-	clv::ecs::TransformComponent* trans = nullptr;
-
-public:
-	TestEntity(clv::ecs::EntityID ID)
-		: clv::ecs::Entity(ID){
-
-		mesh = addComponent<clv::ecs::MeshComponent>("res/Objects/cube.obj");
-		mesh->setDiffuseTexture("res/Textures/container2.png");
-		mesh->setSpecularTexture("res/Textures/container2_specular.png");
-
-		trans = addComponent<clv::ecs::TransformComponent>();
-	}
-
-	void setPosition(const clv::math::Vector3f& pos){
-		trans->setLocalPosition(pos);
-	}
-
-	void setRotation(const std::pair<clv::math::Vector3f, float>& rotation){
-		trans->setLocalRotation(rotation);
-	}
-
-	void setScale(const clv::math::Vector3f& scale){
-		trans->setLocalScale(scale);
-	}
-
-	void addChild(Entity* entity){
-		trans->addChild(entity->getComponent<clv::ecs::TransformComponent>());
-	}
-};
-
-class TestLight : public clv::ecs::Entity{
-public:
-	TestLight(clv::ecs::EntityID ID)
-		: clv::ecs::Entity(ID){
-
-		clv::ecs::LightComponent* light = addComponent<clv::ecs::LightComponent>();
-		clv::ecs::TransformComponent* trans = addComponent<clv::ecs::TransformComponent>();
-	}
-
-	void setPosition(const clv::math::Vector3f& pos){
-		getComponent<clv::ecs::TransformComponent>()->setLocalPosition(pos);
-	}
-
-	void setRotation(const std::pair<clv::math::Vector3f, float>& rotation){
-		getComponent<clv::ecs::TransformComponent>()->setLocalRotation(rotation);
-	}
-
-	void addChild(Entity* entity){
-		getComponent<clv::ecs::TransformComponent>()->addChild(entity->getComponent<clv::ecs::TransformComponent>());
-	}
-};
-
-class TestCamera : public clv::ecs::Entity{
-public:
-	TestCamera(clv::ecs::EntityID ID)
-		: clv::ecs::Entity(ID){
-
-		clv::ecs::CameraComponent* cam = addComponent<clv::ecs::CameraComponent>();
-		clv::ecs::TransformComponent* trans = addComponent<clv::ecs::TransformComponent>();
-	}
-
-	void setPosition(const clv::math::Vector3f& pos){
-		getComponent<clv::ecs::TransformComponent>()->setLocalPosition(pos);
-	}
-
-	const clv::math::Vector3f& getPosition(){
-		return getComponent<clv::ecs::TransformComponent>()->getLocalPosition();
-	}
-
-	const clv::math::Vector3f& getFront(){
-		return getComponent<clv::ecs::CameraComponent>()->getFront();
-	}
-
-	const clv::math::Vector3f& getUp(){
-		return getComponent<clv::ecs::CameraComponent>()->getUp();
-	}
-
-	const clv::math::Vector3f& getRight(){
-		return getComponent<clv::ecs::CameraComponent>()->getRight();
-	}
-
-	void updateFront(float pitch, float yaw){
-		getComponent<clv::ecs::CameraComponent>()->updateFront(pitch, yaw);
-	}
-};
 
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
 	float rotDelta = 0.0f;
 
-	TestEntity* ent1 = nullptr;
-	TestEntity* ent2 = nullptr;
-	TestEntity* ent3 = nullptr;
+	clv::ecs::Entity ent1;
+	clv::ecs::Entity ent2;
+	clv::ecs::Entity ent3;
 
-	TestLight* lght1 = nullptr;
-	TestEntity* ltEnt = nullptr;
+	clv::ecs::Entity lght1;
+	clv::ecs::Entity ltEnt;
 
-	TestCamera* cam = nullptr;
+	clv::ecs::Entity cam;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -128,26 +37,41 @@ public:
 	}
 
 	virtual void onAttach() override{
-		ent1 = clv::Application::get().getManager().createEntity<TestEntity>();
-		ent2 = clv::Application::get().getManager().createEntity<TestEntity>();
-		ent3 = clv::Application::get().getManager().createEntity<TestEntity>();
+		ent1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::TransformComponent>();
+		ent2 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::TransformComponent>();
+		ent3 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::TransformComponent>();
 
-		lght1 = clv::Application::get().getManager().createEntity<TestLight>();
-		ltEnt = clv::Application::get().getManager().createEntity<TestEntity>();
+		lght1 = clv::Application::get().getManager().createEntity<clv::ecs::LightComponent, clv::ecs::TransformComponent>();
+		ltEnt = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::TransformComponent>();
 
-		cam = clv::Application::get().getManager().createEntity<TestCamera>();
+		cam = clv::Application::get().getManager().createEntity<clv::ecs::CameraComponent, clv::ecs::TransformComponent>();
 	
-		ent1->setPosition({ 0.0f, 0.0f, 0.0f });
-		ent2->setPosition({ 0.0f, 0.0f, 3.0f });
-		ent3->setPosition({ 0.0f, 3.0f, 0.0f });
+		ent1.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
+		ent1.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
+		ent1.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
-		ent1->addChild(ent2);
-		ent2->addChild(ent3);
+		ent2.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
+		ent2.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
+		ent2.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
-		//clv::Application::get().getManager().destroyEntity(ent2->getID());
+		ent3.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
+		ent3.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
+		ent3.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
-		lght1->addChild(ltEnt);
-		ltEnt->setScale({ 0.25f, 0.25f, 0.25f });
+		ent1.getComponent<clv::ecs::TransformComponent>()->setLocalPosition({ 0.0f, 0.0f, 0.0f });
+		ent2.getComponent<clv::ecs::TransformComponent>()->setLocalPosition({ 0.0f, 0.0f, 3.0f });
+		ent3.getComponent<clv::ecs::TransformComponent>()->setLocalPosition({ 0.0f, 3.0f, 0.0f });
+
+		ent1.getComponent<clv::ecs::TransformComponent>()->addChild(ent2.getComponent<clv::ecs::TransformComponent>());
+		ent2.getComponent<clv::ecs::TransformComponent>()->addChild(ent3.getComponent<clv::ecs::TransformComponent>());
+
+		//clv::Application::get().getManager().destroyEntity(ent2.getID());
+
+		lght1.getComponent<clv::ecs::TransformComponent>()->addChild(ltEnt.getComponent<clv::ecs::TransformComponent>());
+		ltEnt.getComponent<clv::ecs::TransformComponent>()->setLocalScale({ 0.25f, 0.25f, 0.25f });
+		ltEnt.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
+		ltEnt.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
+		ltEnt.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 	}
 
 	virtual void onDetach() override{
@@ -156,25 +80,25 @@ public:
 
 	virtual void onUpdate() override{
 		const float camSpeed = 0.1f;
-		clv::math::Vector3f cameraPosition = cam->getPosition();
+		clv::math::Vector3f cameraPosition = cam.getComponent<clv::ecs::TransformComponent>()->getLocalPosition();
 
 		//cam->updateFront(pitch, yaw); //TODO: proper first person implementation
 
-		const clv::math::Vector3f front = cam->getFront();
+		const clv::math::Vector3f front = cam.getComponent<clv::ecs::CameraComponent>()->getFront();
 		if(clv::input::isKeyPressed(clv::Key::W)){
 			cameraPosition += camSpeed * front;
 		} else if(clv::input::isKeyPressed(clv::Key::S)){
 			cameraPosition -= camSpeed * front;
 		}
 
-		const clv::math::Vector3f up = cam->getUp();
+		const clv::math::Vector3f up = cam.getComponent<clv::ecs::CameraComponent>()->getUp();
 		if(clv::input::isKeyPressed(clv::Key::Space)){
 			cameraPosition += camSpeed * up;
 		} else if(clv::input::isKeyPressed(clv::Key::C)){
 			cameraPosition -= camSpeed * up;
 		}
 
-		const clv::math::Vector3f right = cam->getRight();
+		const clv::math::Vector3f right = cam.getComponent<clv::ecs::CameraComponent>()->getRight();
 		if(clv::input::isKeyPressed(clv::Key::A)){
 			cameraPosition -= camSpeed * right;
 		} else if(clv::input::isKeyPressed(clv::Key::D)){
@@ -187,12 +111,12 @@ public:
 			yaw += camSpeed * 10.0f;
 		}
 
-		cam->setPosition(cameraPosition);
-		cam->updateFront(0.0f, yaw);
+		cam.getComponent<clv::ecs::TransformComponent>()->setLocalPosition(cameraPosition);
+		cam.getComponent<clv::ecs::CameraComponent>()->updateFront(0.0f, yaw);
 
-		ent1->setRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
+		ent1.getComponent<clv::ecs::TransformComponent>()->setLocalRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
 		const float radius = 6.0f;
-		lght1->setPosition({ cos(rotDelta) * radius, 2.0f, sin(rotDelta) * radius });
+		lght1.getComponent<clv::ecs::TransformComponent>()->setLocalPosition({ cos(rotDelta) * radius, 2.0f, sin(rotDelta) * radius });
 
 		rotDelta += 0.01f;
 

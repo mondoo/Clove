@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/ECS/Entity.hpp"
+#include "Clove/ECS/ECSTypes.hpp"
 
 namespace clv::ecs{
 	class Component;
@@ -10,12 +10,12 @@ namespace clv::ecs{
 	public:
 		virtual ~SystemBase() = default;
 
-		virtual void onEntityCreated(const Entity& entity) = 0;
-		virtual void onEntityDestroyed(const Entity& entity) = 0;
+		virtual void onEntityCreated(EntityID entity, const std::unordered_map<ComponentID, std::unique_ptr<Component>>& entityComponents) = 0;
+		virtual void onEntityDestroyed(EntityID entity) = 0;
 		virtual void update(float deltaTime) = 0;
 	};
 
-	template<typename ...ComponentTypes>
+	template<typename... ComponentTypes>
 	class System : public SystemBase{
 		using ComponentTuple = std::tuple<std::add_pointer_t<ComponentTypes>...>;
 		using EntityIDToIndexMap = std::unordered_map<EntityID, size_t, std::hash<EntityID>, std::equal_to<EntityID>/*, PooledAllocator*/>;
@@ -36,13 +36,12 @@ namespace clv::ecs{
 		System& operator=(System&& other) noexcept;
 		virtual ~System();
 
-		virtual void onEntityCreated(const Entity& entity) override final;
-		virtual void onEntityDestroyed(const Entity& entity) override final;
+		virtual void onEntityCreated(EntityID entity, const std::unordered_map<ComponentID, std::unique_ptr<Component>>& entityComponents) override final;
+		virtual void onEntityDestroyed(EntityID entity) override final;
 
 	private:
-		template<size_t index, typename ComponentType, typename ...ComponentArgs>
+		template<size_t index, typename ComponentType, typename... ComponentArgs>
 		bool proccessEntityComponent(ComponentID componentID, Component* component, ComponentTuple& tupleToFill);
-
 		template<size_t index>
 		bool proccessEntityComponent(ComponentID componentID, Component* component, ComponentTuple& tupleToFill);
 	};

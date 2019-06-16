@@ -13,22 +13,28 @@
 #include "Clove/Utils/MeshLoader.hpp"
 
 namespace clv::ecs{
+	MeshComponent::MeshComponent() = default;
+
 	MeshComponent::MeshComponent(MeshComponent&& other) noexcept = default;
 
 	MeshComponent& MeshComponent::operator=(MeshComponent&& other) noexcept = default;
 
 	MeshComponent::~MeshComponent() = default;
 
-	MeshComponent::MeshComponent(const std::string& filePath){
+	void MeshComponent::setModelMatrix(const math::Matrix4f& model){
+		shader->setModelMatrix(model);
+	}
+
+	void MeshComponent::setMesh(const std::string& filePath){
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
 		//TODO: This will break if the mesh does not have a texture mapping or normal mapping
 		for(int i = 0; i < info.verticies.size(); ++i){
 			vertices.push_back(
-				{ 
+				{
 					info.verticies[i].x, info.verticies[i].y, info.verticies[i].z,
 					info.texCoords[i].x, info.texCoords[i].y,
-					info.normals[i].x, info.normals[i].y, info.normals[i].z 
+					info.normals[i].x, info.normals[i].y, info.normals[i].z
 				}
 			);
 		}
@@ -59,20 +65,16 @@ namespace clv::ecs{
 			case gfx::API::OpenGL4:
 				layout->createLayout(*vertexBuffer);
 				break;
-		#if CLV_PLATFORM_WINDOWS
+			#if CLV_PLATFORM_WINDOWS
 			case gfx::API::DirectX11:
 				layout->createLayout(*shader);
 				break;
-		#endif
+			#endif
 		}
 
 		addBindable(std::move(vertexBuffer));
 		addBindable(std::move(layout));
 		addShader(std::move(shader));
-	}
-
-	void MeshComponent::setModelMatrix(const math::Matrix4f& model){
-		shader->setModelMatrix(model);
 	}
 
 	void MeshComponent::setDiffuseTexture(const std::string& path){
