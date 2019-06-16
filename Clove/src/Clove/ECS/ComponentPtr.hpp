@@ -26,19 +26,8 @@ namespace clv::ecs{
 
 		bool isValid() const;
 
-		ComponentType* operator->();
-
-		//Temp: This is for the add child thing but I want avoid people having access to the pointers underneath
-		ComponentType* get(){
-			if(isValid()){
-				static_cast<ComponentType*>(getComponent());
-			} else{
-				return nullptr;
-			}
-		}
-
-	protected:
-		ComponentType* getComponent() const;
+		ComponentType* operator->() const;
+		ComponentType* get() const;
 	};
 }
 

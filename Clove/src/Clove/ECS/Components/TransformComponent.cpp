@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "TransformComponent.hpp"
 
+#include "Clove/ECS/ComponentPtr.hpp"
+
 namespace clv::ecs{
 	TransformComponent::TransformComponent() = default;
 
@@ -52,5 +54,8 @@ namespace clv::ecs{
 			children.push_back(child);
 			child->parent = this;
 		}
+	}
+	void TransformComponent::addChild(ComponentPtr<TransformComponent> child){
+		addChild(child.get());
 	}
 }

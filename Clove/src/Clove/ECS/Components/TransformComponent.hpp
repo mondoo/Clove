@@ -3,6 +3,8 @@
 #include "Clove/ECS/Component.hpp"
 
 namespace clv::ecs{
+	template<typename T> class ComponentPtr;
+
 	class TransformComponent : public Component{
 		//VARIABLES
 	public:
@@ -36,5 +38,6 @@ namespace clv::ecs{
 
 		TransformComponent* getParent() const;
 		void addChild(TransformComponent* child);
+		void addChild(ComponentPtr<TransformComponent> child);
 	};
 }

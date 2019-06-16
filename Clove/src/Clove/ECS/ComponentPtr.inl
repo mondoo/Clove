@@ -1,4 +1,5 @@
 #include "Clove/ECS/Component.hpp"
+#include "Clove/ECS/Manager.hpp"
 
 namespace clv::ecs{
 	template<typename ComponentType>
@@ -40,12 +41,12 @@ namespace clv::ecs{
 	}
 
 	template<typename ComponentType>
-	ComponentType* ComponentPtr<ComponentType>::operator->(){
-		return getComponent();
+	ComponentType* ComponentPtr<ComponentType>::operator->() const{
+		return get();
 	}
 
 	template<typename ComponentType>
-	ComponentType* ComponentPtr<ComponentType>::getComponent() const{
+	ComponentType* ComponentPtr<ComponentType>::get() const{
 		if(isValid()){
 			return static_cast<ComponentType*>(manager->components[entityID][ComponentType::ID].get());
 		} else{
