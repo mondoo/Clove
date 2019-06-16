@@ -27,16 +27,14 @@ namespace clv::ecs{
 			return;
 		}
 
-		std::unique_ptr<Entity> entity = std::move(entities[ID]);
-		entities.erase(ID);
+		components.erase(ID);
 		for(const auto& [ID, system] : systems){
-			system->onEntityDestroyed(*entity);
+			system->onEntityDestroyed(ID);
 		}
-		entity.reset();
 	}
 
 	EntityPtr Manager::getEntity(EntityID ID){
-		if(const auto foundEnt = entities.find(ID); foundEnt != entities.end()){
+		if(const auto foundEnt = components.find(ID); foundEnt != components.end()){
 			return { this, ID };
 		}
 		return {};

@@ -15,14 +15,14 @@ namespace clv::ecs{
 	class SystemBase;
 
 	class Manager{
-		//Me being lazy
+		//TODO: Delete, me being lazy
 		friend class EntityPtr;
 		friend class ComponentPtrBase;
 
 		//VARIABLES
 	private:
-		std::unordered_map<EntityID, std::unique_ptr<Entity>> entities;
-		//std::unordered_map<EntityID, std::unordered_map<ComponentID, std::unique_ptr<Component>>> components;
+		//std::unordered_map<EntityID, std::unique_ptr<Entity>> entities;
+		std::unordered_map<EntityID, std::unordered_map<ComponentID, std::unique_ptr<Component>>> components;
 		std::unordered_map<SystemID, std::unique_ptr<SystemBase>> systems;
 
 		static EntityID nextID; //TODO: have a better system for generating and reusing IDs
@@ -41,10 +41,16 @@ namespace clv::ecs{
 		template<typename T>
 		T* getSystem(); //TODO: I don't really want people accessing systems (but we need to for the renderer)
 
-		template<typename T>
-		EntityPtr createEntity(); //Should this just take a list of components to create the entity with? 
+		template<typename... EntityComponents>
+		EntityPtr createEntity();
 		void destroyEntity(EntityID ID);
 		EntityPtr getEntity(EntityID ID); //
+
+	private:
+		template<size_t index, typename EntityComponent, typename... EntityComponents>
+		void buildComponentMap(std::unordered_map<ComponentID, std::unique_ptr<Component>>& map);
+		template<size_t index>
+		void buildComponentMap(std::unordered_map<ComponentID, std::unique_ptr<Component>>& map);
 	};
 }
 

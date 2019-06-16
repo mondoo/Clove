@@ -23,8 +23,8 @@ namespace clv::ecs{
 			return false;
 		}
 
-		const auto it = manager->entities.find(entityID);
-		return it != manager->entities.end();
+		const auto it = manager->components.find(entityID);
+		return it != manager->components.end();
 	}
 
 	EntityID EntityPtr::getID(){

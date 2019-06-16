@@ -4,7 +4,7 @@ namespace clv::ecs{
 	template<typename ComponentType>
 	ComponentPtr<ComponentType> EntityPtr::getComponent() const{
 		if(isValid()){
-			if(manager->entities[entityID]->getComponent<ComponentType>() != nullptr){
+			if(manager->components[entityID][ComponentType::ID] != nullptr){
 				return { manager, entityID };
 			}
 		}

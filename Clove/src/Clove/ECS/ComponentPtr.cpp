@@ -26,15 +26,15 @@ namespace clv::ecs{
 			return false;
 		}
 
-		const auto it = manager->entities.find(entityID);
-		if(it == manager->entities.end()){
+		const auto it = manager->components.find(entityID);
+		if(it == manager->components.end()){
 			return false;
 		}
 
-		return manager->entities[entityID]->components.find(ID) != manager->entities[entityID]->components.end();
+		return manager->components[entityID].find(ID) != manager->components[entityID].end();
 	}
 
 	Component* ComponentPtrBase::getComponent(ComponentID ID){
-		return manager->entities[entityID]->components[ID].get();
+		return manager->components[entityID][ID].get();
 	}
 }

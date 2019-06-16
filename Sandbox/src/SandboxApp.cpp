@@ -12,39 +12,6 @@
 #include "Clove/ECS/Components/LightComponent.hpp"
 #include "Clove/ECS/Components/CameraComponent.hpp"
 
-class TestEntity : public clv::ecs::Entity{
-public:
-	TestEntity(clv::ecs::EntityID ID)
-		: clv::ecs::Entity(ID){
-
-		clv::ecs::MeshComponent* mesh = addComponent<clv::ecs::MeshComponent>("res/Objects/cube.obj");
-		mesh->setDiffuseTexture("res/Textures/container2.png");
-		mesh->setSpecularTexture("res/Textures/container2_specular.png");
-
-		addComponent<clv::ecs::TransformComponent>();
-	}
-};
-
-class TestLight : public clv::ecs::Entity{
-public:
-	TestLight(clv::ecs::EntityID ID)
-		: clv::ecs::Entity(ID){
-
-		addComponent<clv::ecs::LightComponent>();
-		addComponent<clv::ecs::TransformComponent>();
-	}
-};
-
-class TestCamera : public clv::ecs::Entity{
-public:
-	TestCamera(clv::ecs::EntityID ID)
-		: clv::ecs::Entity(ID){
-
-		addComponent<clv::ecs::CameraComponent>();
-		addComponent<clv::ecs::TransformComponent>();
-	}
-};
-
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
@@ -72,15 +39,27 @@ public:
 	}
 
 	virtual void onAttach() override{
-		ent1 = clv::Application::get().getManager().createEntity<TestEntity>();
-		ent2 = clv::Application::get().getManager().createEntity<TestEntity>();
-		ent3 = clv::Application::get().getManager().createEntity<TestEntity>();
+		ent1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::TransformComponent>();
+		ent2 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::TransformComponent>();
+		ent3 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::TransformComponent>();
 
-		lght1 = clv::Application::get().getManager().createEntity<TestLight>();
-		ltEnt = clv::Application::get().getManager().createEntity<TestEntity>();
+		lght1 = clv::Application::get().getManager().createEntity<clv::ecs::LightComponent, clv::ecs::TransformComponent>();
+		ltEnt = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::TransformComponent>();
 
-		cam = clv::Application::get().getManager().createEntity<TestCamera>();
+		cam = clv::Application::get().getManager().createEntity<clv::ecs::CameraComponent, clv::ecs::TransformComponent>();
 	
+		ent1.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
+		ent1.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
+		ent1.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
+
+		ent2.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
+		ent2.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
+		ent2.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
+
+		ent3.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
+		ent3.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
+		ent3.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
+
 		ent1.getComponent<clv::ecs::TransformComponent>()->setLocalPosition({ 0.0f, 0.0f, 0.0f });
 		ent2.getComponent<clv::ecs::TransformComponent>()->setLocalPosition({ 0.0f, 0.0f, 3.0f });
 		ent3.getComponent<clv::ecs::TransformComponent>()->setLocalPosition({ 0.0f, 3.0f, 0.0f });
@@ -92,6 +71,9 @@ public:
 
 		lght1.getComponent<clv::ecs::TransformComponent>()->addChild(ltEnt.getComponent<clv::ecs::TransformComponent>().get());
 		ltEnt.getComponent<clv::ecs::TransformComponent>()->setLocalScale({ 0.25f, 0.25f, 0.25f });
+		ltEnt.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
+		ltEnt.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
+		ltEnt.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 	}
 
 	virtual void onDetach() override{
