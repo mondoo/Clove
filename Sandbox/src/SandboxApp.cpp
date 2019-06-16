@@ -15,14 +15,14 @@ class ExampleLayer : public clv::Layer{
 private:
 	float rotDelta = 0.0f;
 
-	clv::ecs::EntityPtr ent1;
-	clv::ecs::EntityPtr ent2;
-	clv::ecs::EntityPtr ent3;
+	clv::ecs::Entity ent1;
+	clv::ecs::Entity ent2;
+	clv::ecs::Entity ent3;
 
-	clv::ecs::EntityPtr lght1;
-	clv::ecs::EntityPtr ltEnt;
+	clv::ecs::Entity lght1;
+	clv::ecs::Entity ltEnt;
 
-	clv::ecs::EntityPtr cam;
+	clv::ecs::Entity cam;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;

@@ -6,7 +6,7 @@
 namespace clv::ecs{
 	class Manager;
 
-	class EntityPtr{
+	class Entity{
 		//VARIABLES
 	private:
 		Manager* manager = nullptr;
@@ -14,14 +14,14 @@ namespace clv::ecs{
 
 		//FUNCTIONS
 	public:
-		EntityPtr();
-		EntityPtr(const EntityPtr& other);
-		EntityPtr(EntityPtr&& other) noexcept;
-		EntityPtr& operator=(const EntityPtr& other);
-		EntityPtr& operator=(EntityPtr&& other) noexcept;
-		~EntityPtr();
+		Entity();
+		Entity(const Entity& other);
+		Entity(Entity&& other) noexcept;
+		Entity& operator=(const Entity& other);
+		Entity& operator=(Entity&& other) noexcept;
+		~Entity();
 
-		EntityPtr(Manager* manager, EntityID entityID);
+		Entity(Manager* manager, EntityID entityID);
 
 		bool isValid() const;
 
@@ -32,4 +32,4 @@ namespace clv::ecs{
 	};
 }
 
-#include "EntityPtr.inl"
+#include "Entity.inl"

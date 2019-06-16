@@ -2,7 +2,7 @@
 
 #include "Clove/ECS/ECSTypes.hpp"
 #include "Clove/ECS/System.hpp"
-#include "Clove/ECS/EntityPtr.hpp"
+#include "Clove/ECS/Entity.hpp"
 #include "Clove/ECS/ComponentPtr.hpp"
 
 namespace clv::gfx{
@@ -16,7 +16,7 @@ namespace clv::ecs{
 
 	class Manager{
 		//TODO: Delete, me being lazy
-		friend class EntityPtr;
+		friend class Entity;
 		friend class ComponentPtrBase;
 
 		//VARIABLES
@@ -41,9 +41,9 @@ namespace clv::ecs{
 		T* getSystem(); //TODO: I don't really want people accessing systems (but we need to for the renderer)
 
 		template<typename... EntityComponents>
-		EntityPtr createEntity();
+		Entity createEntity();
 		void destroyEntity(EntityID ID);
-		EntityPtr getEntity(EntityID ID);
+		Entity getEntity(EntityID ID);
 
 	private:
 		template<size_t index, typename EntityComponent, typename... EntityComponents>

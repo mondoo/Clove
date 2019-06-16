@@ -33,7 +33,7 @@ namespace clv::ecs{
 		}
 	}
 
-	EntityPtr Manager::getEntity(EntityID ID){
+	Entity Manager::getEntity(EntityID ID){
 		if(const auto foundEnt = components.find(ID); foundEnt != components.end()){
 			return { this, ID };
 		}

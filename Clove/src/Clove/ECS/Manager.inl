@@ -8,7 +8,7 @@ namespace clv::ecs{
 	}
 
 	template<typename... EntityComponents>
-	EntityPtr Manager::createEntity(){
+	Entity Manager::createEntity(){
 		EntityID ID = ++nextID;
 
 		buildComponentMap<0, EntityComponents...>(components[ID]);
