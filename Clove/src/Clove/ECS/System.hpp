@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/ECS/Entity.hpp"
+#include "Clove/ECS/ECSTypes.hpp"
 
 namespace clv::ecs{
 	class Component;

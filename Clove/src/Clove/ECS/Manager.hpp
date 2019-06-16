@@ -11,7 +11,7 @@ namespace clv::gfx{
 
 namespace clv::ecs{
 	class Entity;
-	//class Component;
+	class Component;
 	class SystemBase;
 
 	class Manager{
@@ -21,7 +21,6 @@ namespace clv::ecs{
 
 		//VARIABLES
 	private:
-		//std::unordered_map<EntityID, std::unique_ptr<Entity>> entities;
 		std::unordered_map<EntityID, std::unordered_map<ComponentID, std::unique_ptr<Component>>> components;
 		std::unordered_map<SystemID, std::unique_ptr<SystemBase>> systems;
 
@@ -44,7 +43,7 @@ namespace clv::ecs{
 		template<typename... EntityComponents>
 		EntityPtr createEntity();
 		void destroyEntity(EntityID ID);
-		EntityPtr getEntity(EntityID ID); //
+		EntityPtr getEntity(EntityID ID);
 
 	private:
 		template<size_t index, typename EntityComponent, typename... EntityComponents>

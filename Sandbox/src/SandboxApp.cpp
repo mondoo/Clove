@@ -3,10 +3,8 @@
 //Clove
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Graphics/Renderer.hpp"
-#include "Clove/ECS/Entity.hpp"
 #include "Clove/Input/Input.hpp"
 
-#include "Clove/ECS/Entity.hpp"
 #include "Clove/ECS/Components/TransformComponent.hpp"
 #include "Clove/ECS/Components/MeshComponent.hpp"
 #include "Clove/ECS/Components/LightComponent.hpp"

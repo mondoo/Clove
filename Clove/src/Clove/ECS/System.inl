@@ -1,3 +1,5 @@
+#include "Clove/ECS/Component.hpp"
+
 namespace clv::ecs{
 	template<typename... ComponentTypes>
 	 System<ComponentTypes...>::System() = default;
