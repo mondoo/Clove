@@ -7,6 +7,10 @@ namespace clv::gfx{
 	class Context;
 
 	class Renderer{
+		//VARIABLES
+	protected:
+		static constexpr math::Vector4f clearColor = { 0.01f, 0.01f, 0.01f, 1.0f };
+
 		//FUNCTIONS
 	public:
 		Renderer();

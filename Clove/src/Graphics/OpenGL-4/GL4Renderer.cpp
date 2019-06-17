@@ -25,7 +25,7 @@ namespace clv::gfx{
 		glEnable(GL_BLEND);
 		//I guess it's called blending because you blend the src with the destination
 
-		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+		glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
 		glFrontFace(GL_CCW);
 

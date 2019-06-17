@@ -22,8 +22,7 @@ namespace clv::gfx{
 	}
 
 	void DX11Renderer::clear(){
-		float colour[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		d3dContext->ClearRenderTargetView(target.Get(), colour);
+		d3dContext->ClearRenderTargetView(target.Get(), math::valuePtr(clearColor));
 		d3dContext->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
 	}
 
