@@ -2,13 +2,10 @@
 
 namespace clv::ecs{
 	template<typename ComponentType>
-	ComponentPtr<ComponentType> Entity::getComponent() const{
+	ComponentType* Entity::getComponent() const{
 		if(isValid()){
-			if(manager->components[entityID][ComponentType::ID] != nullptr){
-				return { manager, entityID };
-			}
+			return static_cast<ComponentType*>(manager->components[entityID][ComponentType::ID].get());
 		}
-
-		return {};
+		return nullptr;
 	}
 }

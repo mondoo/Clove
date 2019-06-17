@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Clove/ECS/ECSTypes.hpp"
-#include "Clove/ECS/ComponentPtr.hpp"
 
 namespace clv::ecs{
 	class Manager;
@@ -28,7 +27,7 @@ namespace clv::ecs{
 		EntityID getID();
 
 		template<typename ComponentType>
-		ComponentPtr<ComponentType> getComponent() const;
+		ComponentType* getComponent() const;
 	};
 }
 
