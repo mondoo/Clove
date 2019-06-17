@@ -9,8 +9,8 @@ namespace clv::gfx{
 }
 
 namespace clv::ecs{
-	class RenderableComponent : public Component{
-		friend class RenderSystem;
+	class Renderable3DComponent : public Component{
+		friend class Render3DSystem;
 
 		//VARIABLES
 	public:
@@ -23,12 +23,12 @@ namespace clv::ecs{
 
 		//FUNCTIONS
 	public:
-		RenderableComponent();
-		RenderableComponent(const RenderableComponent& other) = delete;
-		RenderableComponent(RenderableComponent&& other) noexcept;
-		RenderableComponent& operator=(const RenderableComponent& other) = delete;
-		RenderableComponent& operator=(RenderableComponent&& other) noexcept;
-		virtual ~RenderableComponent();
+		Renderable3DComponent();
+		Renderable3DComponent(const Renderable3DComponent& other) = delete;
+		Renderable3DComponent(Renderable3DComponent&& other) noexcept;
+		Renderable3DComponent& operator=(const Renderable3DComponent& other) = delete;
+		Renderable3DComponent& operator=(Renderable3DComponent&& other) noexcept;
+		virtual ~Renderable3DComponent();
 
 	protected:
 		void addBindable(std::unique_ptr<gfx::Bindable> bindable);
