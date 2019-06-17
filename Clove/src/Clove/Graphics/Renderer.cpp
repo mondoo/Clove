@@ -27,8 +27,7 @@ namespace clv::gfx{
 				break;
 			#endif
 			default:
-				//CLV_LOG_ERROR(__FUNCTION__ ": Default statement hit. No renderer initialised");
-				//TODO: figure out above for different compilers
+				CLV_LOG_ERROR("Default statement hit. No renderer initialised: {0}", __func__);
 				break;
 		}
 
