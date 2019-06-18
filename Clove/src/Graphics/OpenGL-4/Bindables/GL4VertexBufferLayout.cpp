@@ -51,53 +51,53 @@ namespace clv::gfx{
 		glDeleteVertexArrays(1, &arrayID);
 	}
 
-	void GLVertexBufferLayout::pushElement(const std::string& elementName, BufferElementFormat elementFormat){
-		switch(elementFormat){
-			case BufferElementFormat::FLOAT_2:
-				elements.emplace_back(GL_FLOAT, 2, GL_FALSE);
-				stride += 2 * GL4VertexBufferElement::getSizeOfType(GL_FLOAT);
-				break;
+	//void GLVertexBufferLayout::pushElement(const std::string& elementName, BufferElementFormat elementFormat){
+	//	switch(elementFormat){
+	//		case BufferElementFormat::FLOAT_2:
+	//			elements.emplace_back(GL_FLOAT, 2, GL_FALSE);
+	//			stride += 2 * GL4VertexBufferElement::getSizeOfType(GL_FLOAT);
+	//			break;
 
-			case BufferElementFormat::FLOAT_3:
-				elements.emplace_back(GL_FLOAT, 3, GL_FALSE);
-				stride += 3 * GL4VertexBufferElement::getSizeOfType(GL_FLOAT);
-				break;
+	//		case BufferElementFormat::FLOAT_3:
+	//			elements.emplace_back(GL_FLOAT, 3, GL_FALSE);
+	//			stride += 3 * GL4VertexBufferElement::getSizeOfType(GL_FLOAT);
+	//			break;
 
-			default:
-				CLV_ASSERT(false, "Unsupported type in {0}", __FUNCTION__);
-				break;
-		}
-	}
+	//		default:
+	//			CLV_ASSERT(false, "Unsupported type in {0}", __FUNCTION__);
+	//			break;
+	//	}
+	//}
 
-	void GLVertexBufferLayout::createLayout(Bindable& bindable){
-		if(GL4VertexBuffer* vb = dynamic_cast<GL4VertexBuffer*>(&bindable)){
-			Renderer& renderer = Application::get().getRenderer();
-			bind(renderer);
-			vb->bind(renderer);
+	//void GLVertexBufferLayout::createLayout(Bindable& bindable){
+	//	if(GL4VertexBuffer* vb = dynamic_cast<GL4VertexBuffer*>(&bindable)){
+	//		Renderer& renderer = Application::get().getRenderer();
+	//		bind(renderer);
+	//		vb->bind(renderer);
 
-			unsigned long long offset = 0; //void* expects 64 bits
-			for(unsigned int i = 0; i < elements.size(); ++i){
-				const auto& element = elements[i];
-				glEnableVertexAttribArray(i);
-				//i is used here to communicate with the shader for what position the 'in' parameter is (see shader)
-				glVertexAttribPointer(i, element.count, element.type, element.normalised, stride, reinterpret_cast<const void*>(offset));
-				offset += element.count * GL4VertexBufferElement::getSizeOfType(element.type);
-			}
-		} else{
-			//CLV_LOG_ERROR(__FUNCTION__ " Wrong typed passed, can't create layout");
-			//TODO: Platform thing
-		}
-	}
+	//		unsigned long long offset = 0; //void* expects 64 bits
+	//		for(unsigned int i = 0; i < elements.size(); ++i){
+	//			const auto& element = elements[i];
+	//			glEnableVertexAttribArray(i);
+	//			//i is used here to communicate with the shader for what position the 'in' parameter is (see shader)
+	//			glVertexAttribPointer(i, element.count, element.type, element.normalised, stride, reinterpret_cast<const void*>(offset));
+	//			offset += element.count * GL4VertexBufferElement::getSizeOfType(element.type);
+	//		}
+	//	} else{
+	//		//CLV_LOG_ERROR(__FUNCTION__ " Wrong typed passed, can't create layout");
+	//		//TODO: Platform thing
+	//	}
+	//}
 
-	void GLVertexBufferLayout::resetLayout(){
-		elements.clear();
-	}
+	//void GLVertexBufferLayout::resetLayout(){
+	//	elements.clear();
+	//}
 
-	void GLVertexBufferLayout::bind(Renderer& renderer){
-		glBindVertexArray(arrayID);
-	}
+	//void GLVertexBufferLayout::bind(Renderer& renderer){
+	//	glBindVertexArray(arrayID);
+	//}
 
-	void GLVertexBufferLayout::unbind(){
-		glBindVertexArray(0);
-	}
+	//void GLVertexBufferLayout::unbind(){
+	//	glBindVertexArray(0);
+	//}
 }

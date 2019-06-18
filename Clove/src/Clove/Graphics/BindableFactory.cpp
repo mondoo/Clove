@@ -70,21 +70,21 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::unique_ptr<VertexBufferLayout> createVertexBufferLayout(){
-		switch(Application::get().getWindow().getContext().getAPI()){
-			case API::OpenGL4:
-				return std::make_unique<GLVertexBufferLayout>();
+	//std::unique_ptr<VertexLayout> createVertexBufferLayout(){
+	//	switch(Application::get().getWindow().getContext().getAPI()){
+	//		case API::OpenGL4:
+	//			return std::make_unique<GLVertexBufferLayout>();
 
-			#if CLV_PLATFORM_WINDOWS
-			case API::DirectX11:
-				return std::make_unique<DX11VertexBufferLayout>();
-			#endif
+	//		#if CLV_PLATFORM_WINDOWS
+	//		case API::DirectX11:
+	//			return std::make_unique<DX11VertexBufferLayout>();
+	//		#endif
 
-			default:
-				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
-				return std::unique_ptr<VertexBufferLayout>();
-		}
-	}
+	//		default:
+	//			CLV_ASSERT(false, "Unkown API in: {0}", __func__);
+	//			return std::unique_ptr<VertexLayout>();
+	//	}
+	//}
 
 	std::unique_ptr<Texture> createTexture(const std::string& filePath, unsigned int bindingPoint){
 		switch(Application::get().getWindow().getContext().getAPI()){

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Bindables/VertexBufferLayout.hpp"
+//#include "Clove/Graphics/Bindables/VertexBufferLayout.hpp"
 
 namespace clv::gfx{
 	class Renderer;
@@ -26,7 +26,7 @@ namespace clv::gfx{
 		static unsigned int getSizeOfType(unsigned int type);
 	};
 
-	class GLVertexBufferLayout : public VertexBufferLayout{
+	class GLVertexBufferLayout/* : public VertexLayout*/{
 		//VARIABLES
 	private:
 		unsigned int arrayID = 0;
@@ -43,11 +43,11 @@ namespace clv::gfx{
 		GLVertexBufferLayout& operator=(GLVertexBufferLayout&& other) noexcept;
 		~GLVertexBufferLayout();
 
-		virtual void pushElement(const std::string& elementName, BufferElementFormat elementFormat) override;
+		/*virtual void pushElement(const std::string& elementName, BufferElementFormat elementFormat) override;
 		virtual void createLayout(Bindable& bindable) override;
 		virtual void resetLayout() override;
 
 		virtual void bind(Renderer& renderer) override;
-		virtual void unbind() override;
+		virtual void unbind() override;*/
 	};
 }

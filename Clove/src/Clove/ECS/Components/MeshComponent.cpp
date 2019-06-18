@@ -8,7 +8,7 @@
 #include "Clove/Graphics/Bindables/VertexBuffer.hpp"
 #include "Clove/Graphics/Bindables/IndexBuffer.hpp"
 #include "Clove/Graphics/Bindables/Shader.hpp"
-#include "Clove/Graphics/Bindables/VertexBufferLayout.hpp"
+//#include "Clove/Graphics/Bindables/VertexBufferLayout.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
 #include "Clove/Utils/MeshLoader.hpp"
 
@@ -57,23 +57,23 @@ namespace clv::ecs{
 		this->shader = shader.get();
 
 		//VBL (maybe call this a VBO?)
-		std::unique_ptr<gfx::VertexBufferLayout> layout = gfx::BindableFactory::createVertexBufferLayout();
-		layout->pushElement("Position", gfx::BufferElementFormat::FLOAT_3);
-		layout->pushElement("TexCoord", gfx::BufferElementFormat::FLOAT_2);
-		layout->pushElement("Normal", gfx::BufferElementFormat::FLOAT_3);
-		switch(Application::get().getWindow().getContext().getAPI()){//TODO: how to remove this check?
-			case gfx::API::OpenGL4:
-				layout->createLayout(*vertexBuffer);
-				break;
-			#if CLV_PLATFORM_WINDOWS
-			case gfx::API::DirectX11:
-				layout->createLayout(*shader);
-				break;
-			#endif
-		}
+		//std::unique_ptr<gfx::VertexLayout> layout = gfx::BindableFactory::createVertexBufferLayout();
+		//layout->pushElement("Position", gfx::BufferElementFormat::FLOAT_3);
+		//layout->pushElement("TexCoord", gfx::BufferElementFormat::FLOAT_2);
+		//layout->pushElement("Normal", gfx::BufferElementFormat::FLOAT_3);
+		//switch(Application::get().getWindow().getContext().getAPI()){//TODO: how to remove this check?
+		//	case gfx::API::OpenGL4:
+		//		layout->createLayout(*vertexBuffer);
+		//		break;
+		//	#if CLV_PLATFORM_WINDOWS
+		//	case gfx::API::DirectX11:
+		//		layout->createLayout(*shader);
+		//		break;
+		//	#endif
+		//}
 
 		addBindable(std::move(vertexBuffer));
-		addBindable(std::move(layout));
+		//addBindable(std::move(layout));
 		addShader(std::move(shader));
 	}
 

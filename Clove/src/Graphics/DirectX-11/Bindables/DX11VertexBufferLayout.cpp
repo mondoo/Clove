@@ -18,7 +18,7 @@ namespace clv::gfx{
 
 	DX11VertexBufferLayout::~DX11VertexBufferLayout() = default;
 
-	void DX11VertexBufferLayout::pushElement(const std::string& elementName, BufferElementFormat elementFormat){
+	/*void DX11VertexBufferLayout::pushElement(const std::string& elementName, BufferElementFormat elementFormat){
 		const UINT alignmentOffset = (elements.size() > 0) ? D3D11_APPEND_ALIGNED_ELEMENT : 0;
 
 		nameCache.push_back(elementName);
@@ -77,5 +77,5 @@ namespace clv::gfx{
 	}
 
 	void DX11VertexBufferLayout::unbind(){
-	}
+	}*/
 }
