@@ -1,12 +1,7 @@
 #pragma once
 
 namespace clv::gfx{
-	/*enum class BufferElementFormat{
-		FLOAT_2,
-		FLOAT_3
-	};*/
-
-	enum class BufferElementType{
+	enum class VertexElementType{
 		position2D,
 		position3D,
 		texture2D,
@@ -16,12 +11,12 @@ namespace clv::gfx{
 	class VertexElement{
 		//VARIABLES
 	private:
-		BufferElementType type;
+		VertexElementType type;
 		size_t offset;
 
 		//FUNCTIONS
 	public:
-		VertexElement(BufferElementType type, size_t offset)
+		VertexElement(VertexElementType type, size_t offset)
 			: type(type)
 			, offset(offset){
 		}
@@ -37,19 +32,19 @@ namespace clv::gfx{
 			return sizeOf(type);
 		}
 
-		BufferElementType getType() const{
+		VertexElementType getType() const{
 			return type;
 		}
 
-		static constexpr size_t sizeOf(BufferElementType type){
+		static constexpr size_t sizeOf(VertexElementType type){
 			switch(type){
-				case BufferElementType::position2D:
+				case VertexElementType::position2D:
 					return sizeof(math::Vector2f);
-				case BufferElementType::position3D:
+				case VertexElementType::position3D:
 					return sizeof(math::Vector3f);
-				case BufferElementType::texture2D:
+				case VertexElementType::texture2D:
 					return sizeof(math::Vector2f);
-				case BufferElementType::normal:
+				case VertexElementType::normal:
 					return sizeof(math::Vector2f);
 				default:
 					CLV_ASSERT(false, "Invalid element type");
@@ -65,20 +60,19 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		VertexLayout& add(BufferElementType type){
+		VertexLayout& add(VertexElementType type){
 			elements.emplace_back(type, size());
 			return *this;
 		}
 
-		size_t size(){
+		size_t size() const{
 			return elements.empty() ? 0u : elements.back().getOffsetAfter();
 		}
-		size_t count(){
+		size_t count() const{
 			return elements.size();
 		}
 
-		template<BufferElementType type>
-		const VertexElement& resolve(){
+		const VertexElement& resolve(VertexElementType type) const{
 			for(auto& element : elements){
 				if(element.getType() == type){
 					return element;
@@ -87,9 +81,15 @@ namespace clv::gfx{
 			CLV_ASSERT(false, "Could not find element of type");
 			return elements.front();
 		}
+
+		const VertexElement& resolve(size_t i) const{
+			return elements[i];
+		}
 	};
 
 	class Vertex{
+		friend class VertexArray;
+
 		//VARIABLES
 	private:
 		char* data = nullptr;
@@ -97,17 +97,17 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		template<BufferElementType type>
-		auto& attribute(){
-			char* attributeData = data + layout.resolve<type>().getOffset();
+		template<VertexElementType type>
+		auto& getAttribute(){
+			char* attributeData = data + layout.resolve(type).getOffset();
 
-			if constexpr(type == BufferElementType::position2D){
+			if constexpr(type == VertexElementType::position2D){
 				return *reinterpret_cast<math::Vector2f*>(attributeData);
-			} else if constexpr(type == BufferElementType::position3D){
+			} else if constexpr(type == VertexElementType::position3D){
 				return *reinterpret_cast<math::Vector3f*>(attributeData);
-			} else if constexpr(type == BufferElementType::texture2D){
+			} else if constexpr(type == VertexElementType::texture2D){
 				return *reinterpret_cast<math::Vector2f*>(attributeData);
-			} else if constexpr(type == BufferElementType::normal){
+			} else if constexpr(type == VertexElementType::normal){
 				return *reinterpret_cast<math::Vector2f*>(attributeData);
 			} else{
 				CLV_ASSERT(false, "Unable to resolve element type");
@@ -115,8 +115,34 @@ namespace clv::gfx{
 			}
 		}
 
-		//Set attribute
-		//with recursion
+		//TODO: Set attribute?
+
+		template<typename T>
+		void setAttributeByIndex(size_t i, T&& val){
+			const auto& element = layout.resolve(i);
+			char* attribute = data + element.getOffset();
+			switch(element.getType()){
+				case VertexElementType::position2D:
+					setAttribute<math::Vector2f>(attribute, std::forward<T>(val));
+					break;
+
+				case VertexElementType::position3D:
+					setAttribute<math::Vector3f>(attribute, std::forward<T>(val));
+					break;
+
+				case VertexElementType::texture2D:
+					setAttribute<math::Vector2f>(attribute, std::forward<T>(val));
+					break;
+
+				case VertexElementType::normal:
+					setAttribute<math::Vector2f>(attribute, std::forward<T>(val));
+					break;
+
+				default:
+					CLV_ASSERT(false, "Element type is not supported");
+					break;
+			}
+		}
 
 	protected:
 		Vertex(char* data, const VertexLayout& layout)
@@ -124,12 +150,28 @@ namespace clv::gfx{
 			, layout(layout){
 			CLV_ASSERT(data != nullptr, "Data is nullptr");
 		}
+
+	private:
+		template<typename DestDataType, typename SourceDataType>
+		void setAttribute(char* attribute, SourceDataType&& value){
+			if constexpr(std::is_assignable_v<DestDataType, SourceDataType>){
+				*reinterpret_cast<DestDataType*>(attribute) = value;
+			}else{
+				CLV_ASSERT(false, "Types are not assignable");
+			}
+		}
+
+		template<typename First, typename ...Rest>
+		void setAttributeByIndex(size_t i, First&& first, Rest&& ... rest){
+			setAttributeByIndex(i, std::forward<First>(first));
+			setAttributeByIndex(i + 1, std::forward<Rest>(rest)...);
+		}
 	};
 
 	class VertexArray{
 		//VARIABLES
 	private:
-		std::vector<char> buffer; //shouldn't this be an array of vertices? perhaps not because we don't know what the data is
+		std::vector<char> buffer;
 		VertexLayout layout;
 
 		//FUNCTIONS
@@ -138,20 +180,23 @@ namespace clv::gfx{
 			: layout(std::move(layout)){
 		}
 
+		//TODO: reserve?
+
 		template<typename ...Args>
 		void emplaceBack(Args&&... args){
-			//todo add on args to the back
+			buffer.resize(buffer.size() + layout.size());
+			back().setAttributeByIndex(0u, std::forward<Args>(args)...);
 		}
 
-		Vertex front() const{
-			//TODO:
+		Vertex front(){
+			return { buffer.data(), layout };
 		}
-		Vertex back() const{
-			//TODO:
+		Vertex back(){
+			return { (buffer.data() + buffer.size()) - layout.size(), layout };
 		}
 
-		Vertex operator[](size_t i) const{
-			//TODO:
+		Vertex operator[](size_t i){
+			return { buffer.data() + (layout.size() * i), layout };
 		}
 	};
 }
