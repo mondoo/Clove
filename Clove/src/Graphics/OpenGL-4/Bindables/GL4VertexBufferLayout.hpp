@@ -14,7 +14,7 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		GL4VertexBufferElement();
+		/*GL4VertexBufferElement();
 		GL4VertexBufferElement(const GL4VertexBufferElement& other) = delete;
 		GL4VertexBufferElement(GL4VertexBufferElement&& other) noexcept;
 		GL4VertexBufferElement& operator=(const GL4VertexBufferElement& other) = delete;
@@ -23,7 +23,7 @@ namespace clv::gfx{
 
 		GL4VertexBufferElement(unsigned int inType, unsigned int inCount, unsigned char inNormalised);
 
-		static unsigned int getSizeOfType(unsigned int type);
+		static unsigned int getSizeOfType(unsigned int type);*/
 	};
 
 	class GLVertexBufferLayout/* : public VertexLayout*/{
@@ -32,7 +32,7 @@ namespace clv::gfx{
 		unsigned int arrayID = 0;
 
 		unsigned int stride = 0;
-		std::vector<GL4VertexBufferElement> elements;
+		//std::vector<GL4VertexBufferElement> elements;
 
 		//FUNCTIONS
 	public:

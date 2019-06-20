@@ -136,7 +136,7 @@ namespace clv::gfx{
 		}
 
 		template<typename First, typename ...Rest>
-		void setAttributeByIndex(size_t i, First&& first, Rest&& ... rest){
+		void setAttributeByIndex(size_t i, First&& first, Rest&&... rest){
 			setAttributeByIndex(i, std::forward<First>(first));
 			setAttributeByIndex(i + 1, std::forward<Rest>(rest)...);
 		}

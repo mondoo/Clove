@@ -77,6 +77,21 @@ namespace clv::ecs{
 			//or merge it into other things?
 			//either way - the layout should be how it is in the new system. A ver ysimple structure that just defines the layout of the vertex buffer (my initial implementation was too complicated / had too much responsibility)
 
+
+			//Have the vertex buffer handle everything?
+			//---Is this going to shoot me in the foot later?
+			//We build the data with our new fancy system
+			//Then pass that to a vertex buffer with a shader
+			//Then the layout and everything gets handled in there?
+			//---I think this will work because the layout won't change
+			//I guess the down side is that I couldn't reuse the input layout / vertex array for multiple things?
+			//---but would I want / be able to, considering their differences?
+			//------I think it's possible but a future optimisation
+			//---and again, do they really offer much differences once set up??
+			//---research time!
+			//If we do this it'll make the API more simple for clove and we can even investigate removing the bindable system (which will save us some virtual calls)
+			//---maybe
+
 			const auto pos = math::Vector3f{
 					info.verticies[i].x,
 					info.verticies[i].y,

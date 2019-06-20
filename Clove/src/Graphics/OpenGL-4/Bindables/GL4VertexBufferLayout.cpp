@@ -9,7 +9,7 @@
 #include <glad/glad.h>
 
 namespace clv::gfx{
-	GL4VertexBufferElement::GL4VertexBufferElement()
+	/*GL4VertexBufferElement::GL4VertexBufferElement()
 		: normalised(GL_FALSE){
 	}
 
@@ -37,7 +37,7 @@ namespace clv::gfx{
 				CLV_ASSERT(false, "Unsupported type in {0}", __FUNCTION__);
 				return 0;
 		}
-	}
+	}*/
 
 	GLVertexBufferLayout::GLVertexBufferLayout(){
 		glGenVertexArrays(1, &arrayID);
