@@ -32,7 +32,7 @@ namespace clv::ecs{
 
 		gfx::VertexLayout layout;
 		layout.add(gfx::VertexElementType::position3D).add(gfx::VertexElementType::texture2D).add(gfx::VertexElementType::normal);
-		gfx::VertexArray vertexArray{ std::move(layout) };
+		gfx::VertexBufferData vertexArray{ std::move(layout) };
 		for(int i = 0; i < info.verticies.size(); ++i){
 			//Should the original vertex buffer be removed and inherit from this new one?
 			//---no it should to the vertex array (really need a better name because it conflicts with opengl)

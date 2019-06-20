@@ -90,7 +90,7 @@ namespace clv::gfx{
 	};
 
 	class Vertex{
-		friend class VertexArray;
+		friend class VertexBufferData;
 
 		//VARIABLES
 	private:
@@ -119,6 +119,28 @@ namespace clv::gfx{
 
 		//TODO: Set attribute?
 
+	private:
+		Vertex(char* data, const VertexLayout& layout)
+			: data(data)
+			, layout(layout){
+			CLV_ASSERT(data != nullptr, "Data is nullptr");
+		}
+
+		template<typename DestDataType, typename SourceDataType>
+		void setAttribute(char* attribute, SourceDataType&& value){
+			if constexpr(std::is_assignable_v<DestDataType, SourceDataType>){
+				*reinterpret_cast<DestDataType*>(attribute) = value;
+			}else{
+				CLV_ASSERT(false, "Types are not assignable");
+			}
+		}
+
+		template<typename First, typename ...Rest>
+		void setAttributeByIndex(size_t i, First&& first, Rest&& ... rest){
+			setAttributeByIndex(i, std::forward<First>(first));
+			setAttributeByIndex(i + 1, std::forward<Rest>(rest)...);
+		}
+
 		template<typename T>
 		void setAttributeByIndex(size_t i, T&& val){
 			const auto& element = layout.resolve(i);
@@ -145,31 +167,9 @@ namespace clv::gfx{
 					break;
 			}
 		}
-
-	private:
-		Vertex(char* data, const VertexLayout& layout)
-			: data(data)
-			, layout(layout){
-			CLV_ASSERT(data != nullptr, "Data is nullptr");
-		}
-
-		template<typename DestDataType, typename SourceDataType>
-		void setAttribute(char* attribute, SourceDataType&& value){
-			if constexpr(std::is_assignable_v<DestDataType, SourceDataType>){
-				*reinterpret_cast<DestDataType*>(attribute) = value;
-			}else{
-				CLV_ASSERT(false, "Types are not assignable");
-			}
-		}
-
-		template<typename First, typename ...Rest>
-		void setAttributeByIndex(size_t i, First&& first, Rest&& ... rest){
-			setAttributeByIndex(i, std::forward<First>(first));
-			setAttributeByIndex(i + 1, std::forward<Rest>(rest)...);
-		}
 	};
 
-	class VertexArray{
+	class VertexBufferData{
 		//VARIABLES
 	private:
 		std::vector<char> buffer;
@@ -177,7 +177,7 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		VertexArray(VertexLayout layout)
+		VertexBufferData(VertexLayout layout)
 			: layout(std::move(layout)){
 		}
 

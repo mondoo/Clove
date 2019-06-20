@@ -25,11 +25,11 @@ namespace clv::gfx{
 			vbd.Usage = D3D11_USAGE_DEFAULT;
 			vbd.CPUAccessFlags = 0;
 			vbd.MiscFlags = 0u;
-			vbd.ByteWidth = sizeof(vertices) * sizeof(Vertex); //will be VertexArray::size
+			vbd.ByteWidth = sizeof(vertices) * sizeof(Vertex); //will be VertexBufferData::size
 			vbd.StructureByteStride = sizeof(Vertex); //will be VertexLayout::size
 
 			D3D11_SUBRESOURCE_DATA vsrd = {};
-			vsrd.pSysMem = vertices.data(); //will be VertexArray::data
+			vsrd.pSysMem = vertices.data(); //will be VertexBufferData::data
 
 			DX11_THROW_INFO(dxrenderer->getDevice().CreateBuffer(&vbd, &vsrd, &vertexBuffer));
 		}
