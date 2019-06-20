@@ -22,21 +22,21 @@
 #endif
 
 namespace clv::gfx::BindableFactory{
-	std::unique_ptr<VertexBuffer> createVertexBuffer(const std::vector<Vertex>& vertexData){
-		switch(Application::get().getWindow().getContext().getAPI()){
-			case API::OpenGL4:
-				return std::make_unique<GL4VertexBuffer>(vertexData);
+	//std::unique_ptr<VertexBuffer> createVertexBuffer(const std::vector<Vertex>& vertexData){
+	//	switch(Application::get().getWindow().getContext().getAPI()){
+	//		case API::OpenGL4:
+	//			return std::make_unique<GL4VertexBuffer>(vertexData);
 
-			#if CLV_PLATFORM_WINDOWS
-			case API::DirectX11:
-				return std::make_unique<DX11VertexBuffer>(vertexData);
-			#endif
+	//		#if CLV_PLATFORM_WINDOWS
+	//		case API::DirectX11:
+	//			return std::make_unique<DX11VertexBuffer>(vertexData);
+	//		#endif
 
-			default:
-				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
-				return std::unique_ptr<VertexBuffer>();
-		}
-	}
+	//		default:
+	//			CLV_ASSERT(false, "Unkown API in: {0}", __func__);
+	//			return std::unique_ptr<VertexBuffer>();
+	//	}
+	//}
 
 	std::unique_ptr<IndexBuffer> createIndexBuffer(const std::vector<unsigned int>& indexData){
 		switch(Application::get().getWindow().getContext().getAPI()){

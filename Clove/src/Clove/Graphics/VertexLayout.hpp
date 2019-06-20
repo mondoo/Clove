@@ -1,5 +1,7 @@
 #pragma once
 
+//TODO: Move all of this to .cpp/.inl
+
 namespace clv::gfx{
 	enum class VertexElementType{
 		position2D,
@@ -144,14 +146,13 @@ namespace clv::gfx{
 			}
 		}
 
-	protected:
+	private:
 		Vertex(char* data, const VertexLayout& layout)
 			: data(data)
 			, layout(layout){
 			CLV_ASSERT(data != nullptr, "Data is nullptr");
 		}
 
-	private:
 		template<typename DestDataType, typename SourceDataType>
 		void setAttribute(char* attribute, SourceDataType&& value){
 			if constexpr(std::is_assignable_v<DestDataType, SourceDataType>){
@@ -197,6 +198,18 @@ namespace clv::gfx{
 
 		Vertex operator[](size_t i){
 			return { buffer.data() + (layout.size() * i), layout };
+		}
+
+		const char* data(){
+			return buffer.data();
+		}
+
+		size_t size(){
+			return buffer.size() / layout.size();
+		}
+
+		const VertexLayout& getLayout(){
+			return layout;
 		}
 	};
 }

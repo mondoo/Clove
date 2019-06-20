@@ -13,13 +13,7 @@
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Graphics/Renderer.hpp"
-
-#include "Clove/Graphics/Renderer.hpp"
 #include "Clove/ECS/Systems/RenderSystem.hpp"
-
-
-#include "Clove/Graphics/VertexLayout.hpp"
-
 namespace clv{
 	Application* Application::instance = nullptr;
 
@@ -42,14 +36,6 @@ namespace clv{
 	#endif
 
 		CLV_LOG_INFO("Successfully initialised Clove");
-
-		//TEST
-		gfx::VertexLayout layout;
-		layout.add(gfx::VertexElementType::position3D).add(gfx::VertexElementType::texture2D);
-		gfx::VertexArray varr(std::move(layout));
-		varr.emplaceBack(math::Vector3f{ 0.1f, 0.4f, 1.0f }, math::Vector2f{ 1.0f, 0.0f });
-		auto position = varr[0].getAttribute<gfx::VertexElementType::position3D>();
-		//
 	}
 
 	Application::~Application() = default;

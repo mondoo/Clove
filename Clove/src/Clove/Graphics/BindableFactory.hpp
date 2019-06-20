@@ -14,7 +14,7 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx::BindableFactory{
-	std::unique_ptr<VertexBuffer>			createVertexBuffer(const std::vector<Vertex>& vertexData);
+	//std::unique_ptr<VertexBuffer>			createVertexBuffer(const std::vector<Vertex>& vertexData);
 	std::unique_ptr<IndexBuffer>			createIndexBuffer(const std::vector<unsigned int>& indexData);
 	std::unique_ptr<Shader>					createShader();
 	//std::unique_ptr<VertexLayout>			createVertexBufferLayout();

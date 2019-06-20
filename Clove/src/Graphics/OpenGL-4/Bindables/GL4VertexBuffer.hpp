@@ -17,7 +17,7 @@ namespace clv::gfx{
 		GL4VertexBuffer& operator=(GL4VertexBuffer&& other) noexcept;
 		~GL4VertexBuffer();
 
-		GL4VertexBuffer(const std::vector<Vertex>& vertices);
+		/*GL4VertexBuffer(const std::vector<Vertex>& vertices);*/
 
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;

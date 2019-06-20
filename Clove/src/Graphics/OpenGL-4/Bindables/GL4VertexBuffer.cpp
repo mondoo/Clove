@@ -12,14 +12,14 @@ namespace clv::gfx{
 		glDeleteBuffers(1, &bufferID);
 	}
 
-	GL4VertexBuffer::GL4VertexBuffer(const std::vector<Vertex>& vertices){
-		const unsigned int size = static_cast<unsigned int>(sizeof(vertices) * sizeof(Vertex));
-		const void* data = vertices.data();
+	//GL4VertexBuffer::GL4VertexBuffer(const std::vector<Vertex>& vertices){
+	//	const unsigned int size = static_cast<unsigned int>(sizeof(vertices) * sizeof(Vertex));
+	//	const void* data = vertices.data();
 
-		glGenBuffers(1, &bufferID);
-		glBindBuffer(GL_ARRAY_BUFFER, bufferID);
-		glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
-	}
+	//	glGenBuffers(1, &bufferID);
+	//	glBindBuffer(GL_ARRAY_BUFFER, bufferID);
+	//	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+	//}
 
 	void GL4VertexBuffer::bind(Renderer& renderer){
 		glBindBuffer(GL_ARRAY_BUFFER, bufferID);
