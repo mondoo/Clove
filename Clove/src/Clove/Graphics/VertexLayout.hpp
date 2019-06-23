@@ -207,6 +207,9 @@ namespace clv::gfx{
 		size_t size(){
 			return buffer.size() / layout.size();
 		}
+		size_t sizeBytes(){
+			return buffer.size();
+		}
 
 		const VertexLayout& getLayout(){
 			return layout;

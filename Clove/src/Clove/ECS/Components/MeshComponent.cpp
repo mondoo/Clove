@@ -123,12 +123,6 @@ namespace clv::ecs{
 			indices.push_back(i);
 		}
 
-		//VB
-		//std::unique_ptr<gfx::VertexBuffer> vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertices);
-
-		//IB
-		addIndexBuffer(gfx::BindableFactory::createIndexBuffer(indices));
-
 		//Shader
 		std::unique_ptr<gfx::Shader> shader = gfx::BindableFactory::createShader();
 		shader->attachShader(gfx::ShaderTypes::Vertex);
@@ -136,23 +130,13 @@ namespace clv::ecs{
 		shader->bind(Application::get().getRenderer());
 		this->shader = shader.get();
 
-		//VBL (maybe call this a VBO?)
-		//std::unique_ptr<gfx::VertexLayout> layout = gfx::BindableFactory::createVertexBufferLayout();
-		//layout->pushElement("Position", gfx::BufferElementFormat::FLOAT_3);
-		//layout->pushElement("TexCoord", gfx::BufferElementFormat::FLOAT_2);
-		//layout->pushElement("Normal", gfx::BufferElementFormat::FLOAT_3);
-		//switch(Application::get().getWindow().getContext().getAPI()){//TODO: how to remove this check?
-		//	case gfx::API::OpenGL4:
-		//		layout->createLayout(*vertexBuffer);
-		//		break;
-		//	#if CLV_PLATFORM_WINDOWS
-		//	case gfx::API::DirectX11:
-		//		layout->createLayout(*shader);
-		//		break;
-		//	#endif
-		//}
+		//VB
+		std::unique_ptr<gfx::VertexBuffer> vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *shader);
 
-		//addBindable(std::move(vertexBuffer));
+		//IB
+		addIndexBuffer(gfx::BindableFactory::createIndexBuffer(indices));
+
+		addBindable(std::move(vertexBuffer));
 		//addBindable(std::move(layout));
 		addShader(std::move(shader));
 	}

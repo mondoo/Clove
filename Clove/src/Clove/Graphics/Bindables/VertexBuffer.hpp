@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/Bindable.hpp"
 
+#include "Clove/Graphics/VertexLayout.hpp"
+
 namespace clv::gfx{
 	class VertexBuffer : public Bindable{
 		//FUNCTIONS
