@@ -61,7 +61,7 @@ namespace clv::gfx{
 		static constexpr unsigned int countOf(VertexElementType type){
 			switch(type){
 				case VertexElementType::position2D:
-					return 2u;
+					return 2u; //sizeof(math::Vector2f) / size(float) ???
 				case VertexElementType::position3D:
 					return 3u;
 				case VertexElementType::texture2D:
