@@ -14,6 +14,7 @@
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/ECS/Systems/RenderSystem.hpp"
+
 namespace clv{
 	Application* Application::instance = nullptr;
 

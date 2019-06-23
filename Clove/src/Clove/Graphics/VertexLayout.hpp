@@ -34,6 +34,10 @@ namespace clv::gfx{
 			return sizeOf(type);
 		}
 
+		unsigned int getCount() const{
+			return countOf(type);
+		}
+
 		VertexElementType getType() const{
 			return type;
 		}
@@ -48,6 +52,22 @@ namespace clv::gfx{
 					return sizeof(math::Vector2f);
 				case VertexElementType::normal:
 					return sizeof(math::Vector3f);
+				default:
+					CLV_ASSERT(false, "Invalid element type");
+					return 0u;
+			}
+		}
+
+		static constexpr unsigned int countOf(VertexElementType type){
+			switch(type){
+				case VertexElementType::position2D:
+					return 2u;
+				case VertexElementType::position3D:
+					return 3u;
+				case VertexElementType::texture2D:
+					return 2u;
+				case VertexElementType::normal:
+					return 3u;
 				default:
 					CLV_ASSERT(false, "Invalid element type");
 					return 0u;
