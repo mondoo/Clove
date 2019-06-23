@@ -47,7 +47,7 @@ namespace clv::gfx{
 				case VertexElementType::texture2D:
 					return sizeof(math::Vector2f);
 				case VertexElementType::normal:
-					return sizeof(math::Vector2f);
+					return sizeof(math::Vector3f);
 				default:
 					CLV_ASSERT(false, "Invalid element type");
 					return 0u;
@@ -110,7 +110,7 @@ namespace clv::gfx{
 			} else if constexpr(type == VertexElementType::texture2D){
 				return *reinterpret_cast<math::Vector2f*>(attributeData);
 			} else if constexpr(type == VertexElementType::normal){
-				return *reinterpret_cast<math::Vector2f*>(attributeData);
+				return *reinterpret_cast<math::Vector3f*>(attributeData);
 			} else{
 				CLV_ASSERT(false, "Unable to resolve element type");
 				return *reinterpret_cast<char*>(attributeData);
@@ -159,7 +159,7 @@ namespace clv::gfx{
 					break;
 
 				case VertexElementType::normal:
-					setAttribute<math::Vector2f>(attribute, std::forward<T>(val));
+					setAttribute<math::Vector3f>(attribute, std::forward<T>(val));
 					break;
 
 				default:

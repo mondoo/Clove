@@ -106,9 +106,10 @@ namespace clv::ecs{
 					info.texCoords[i].x,
 					info.texCoords[i].y
 				},
-				math::Vector2f{
+				math::Vector3f{
 					info.normals[i].x,
-					info.normals[i].y
+					info.normals[i].y,
+					info.normals[i].z,
 				}
 
 				//Testing what happens if too many are added

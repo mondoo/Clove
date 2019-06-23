@@ -69,7 +69,7 @@ namespace clv::gfx{
 						case VertexElementType::normal:
 							/*format = DXGI_FORMAT_R32G32_FLOAT;
 							name = "Normal";*/
-							dxElements.push_back({ "Normal", 0, DXGI_FORMAT_R32G32_FLOAT, 0, alignmentOffset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+							dxElements.push_back({ "Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, alignmentOffset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 
 							break;
 						default:
