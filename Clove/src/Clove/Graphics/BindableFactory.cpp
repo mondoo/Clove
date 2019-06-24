@@ -9,7 +9,6 @@
 #include "Graphics/OpenGL-4/Bindables/GL4VertexBuffer.hpp"
 #include "Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp"
 #include "Graphics/OpenGL-4/Bindables/GL4Shader.hpp"
-#include "Graphics/OpenGL-4/Bindables/GL4VertexBufferLayout.hpp"
 #include "Graphics/OpenGL-4/Bindables/GL4Texture.hpp"
 
 //DX
@@ -17,19 +16,18 @@
 #include "Graphics/DirectX-11/Bindables/DX11VertexBuffer.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11Shader.hpp"
-#include "Graphics/DirectX-11/Bindables/DX11VertexBufferLayout.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11Texture.hpp"
 #endif
 
 namespace clv::gfx::BindableFactory{
-	std::unique_ptr<VertexBuffer> createVertexBuffer(const std::vector<Vertex>& vertexData){
+	std::unique_ptr<VertexBuffer> createVertexBuffer(const VertexBufferData& bufferData, Shader& shader){
 		switch(Application::get().getWindow().getContext().getAPI()){
 			case API::OpenGL4:
-				return std::make_unique<GL4VertexBuffer>(vertexData);
+				return std::make_unique<GL4VertexBuffer>(bufferData, shader);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_unique<DX11VertexBuffer>(vertexData);
+				return std::make_unique<DX11VertexBuffer>(bufferData, shader);
 			#endif
 
 			default:
@@ -67,22 +65,6 @@ namespace clv::gfx::BindableFactory{
 			default:
 				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
 				return std::unique_ptr<Shader>();
-		}
-	}
-
-	std::unique_ptr<VertexBufferLayout> createVertexBufferLayout(){
-		switch(Application::get().getWindow().getContext().getAPI()){
-			case API::OpenGL4:
-				return std::make_unique<GLVertexBufferLayout>();
-
-			#if CLV_PLATFORM_WINDOWS
-			case API::DirectX11:
-				return std::make_unique<DX11VertexBufferLayout>();
-			#endif
-
-			default:
-				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
-				return std::unique_ptr<VertexBufferLayout>();
 		}
 	}
 

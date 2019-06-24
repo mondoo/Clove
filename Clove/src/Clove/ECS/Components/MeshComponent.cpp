@@ -8,9 +8,10 @@
 #include "Clove/Graphics/Bindables/VertexBuffer.hpp"
 #include "Clove/Graphics/Bindables/IndexBuffer.hpp"
 #include "Clove/Graphics/Bindables/Shader.hpp"
-#include "Clove/Graphics/Bindables/VertexBufferLayout.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
 #include "Clove/Utils/MeshLoader.hpp"
+
+#include "Clove/Graphics/VertexLayout.hpp"
 
 namespace clv::ecs{
 	MeshComponent::MeshComponent() = default;
@@ -28,13 +29,24 @@ namespace clv::ecs{
 	void MeshComponent::setMesh(const std::string& filePath){
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
-		//TODO: This will break if the mesh does not have a texture mapping or normal mapping
+		gfx::VertexLayout layout;
+		layout.add(gfx::VertexElementType::position3D).add(gfx::VertexElementType::texture2D).add(gfx::VertexElementType::normal);
+		gfx::VertexBufferData vertexArray{ std::move(layout) };
 		for(int i = 0; i < info.verticies.size(); ++i){
-			vertices.push_back(
-				{
-					info.verticies[i].x, info.verticies[i].y, info.verticies[i].z,
-					info.texCoords[i].x, info.texCoords[i].y,
-					info.normals[i].x, info.normals[i].y, info.normals[i].z
+			vertexArray.emplaceBack(
+				math::Vector3f{
+					info.verticies[i].x,
+					info.verticies[i].y,
+					info.verticies[i].z
+				},
+				math::Vector2f{
+					info.texCoords[i].x,
+					info.texCoords[i].y
+				},
+				math::Vector3f{
+					info.normals[i].x,
+					info.normals[i].y,
+					info.normals[i].z,
 				}
 			);
 		}
@@ -43,12 +55,6 @@ namespace clv::ecs{
 			indices.push_back(i);
 		}
 
-		//VB
-		std::unique_ptr<gfx::VertexBuffer> vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertices);
-
-		//IB
-		addIndexBuffer(gfx::BindableFactory::createIndexBuffer(indices));
-
 		//Shader
 		std::unique_ptr<gfx::Shader> shader = gfx::BindableFactory::createShader();
 		shader->attachShader(gfx::ShaderTypes::Vertex);
@@ -56,24 +62,13 @@ namespace clv::ecs{
 		shader->bind(Application::get().getRenderer());
 		this->shader = shader.get();
 
-		//VBL (maybe call this a VBO?)
-		std::unique_ptr<gfx::VertexBufferLayout> layout = gfx::BindableFactory::createVertexBufferLayout();
-		layout->pushElement("Position", gfx::BufferElementFormat::FLOAT_3);
-		layout->pushElement("TexCoord", gfx::BufferElementFormat::FLOAT_2);
-		layout->pushElement("Normal", gfx::BufferElementFormat::FLOAT_3);
-		switch(Application::get().getWindow().getContext().getAPI()){//TODO: how to remove this check?
-			case gfx::API::OpenGL4:
-				layout->createLayout(*vertexBuffer);
-				break;
-			#if CLV_PLATFORM_WINDOWS
-			case gfx::API::DirectX11:
-				layout->createLayout(*shader);
-				break;
-			#endif
-		}
+		//VB
+		std::unique_ptr<gfx::VertexBuffer> vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *shader);
+
+		//IB
+		addIndexBuffer(gfx::BindableFactory::createIndexBuffer(indices));
 
 		addBindable(std::move(vertexBuffer));
-		addBindable(std::move(layout));
 		addShader(std::move(shader));
 	}
 

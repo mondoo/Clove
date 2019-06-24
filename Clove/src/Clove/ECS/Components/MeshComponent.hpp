@@ -6,14 +6,12 @@ namespace clv::gfx{
 	class Renderer;
 	class Shader;
 	class Texture;
-	struct Vertex;
 }
 
 namespace clv::ecs{
 	class MeshComponent : public ecs::Renderable3DComponent{
 		//VARIABLES
 	private:
-		std::vector<gfx::Vertex> vertices;
 		std::vector<unsigned int> indices;
 
 		gfx::Shader* shader = nullptr;

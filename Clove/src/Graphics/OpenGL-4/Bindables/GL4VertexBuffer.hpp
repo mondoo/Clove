@@ -3,10 +3,15 @@
 #include "Clove/Graphics/Bindables/VertexBuffer.hpp"
 
 namespace clv::gfx{
+	class Shader;
+
 	class GL4VertexBuffer : public VertexBuffer{
 		//VARIABLES
 	private:
+		VertexBufferData bufferData; //TODO: Put in base?
+		
 		unsigned int bufferID = 0;
+		unsigned int arrayID = 0;
 
 		//FUNCTIONS
 	public:
@@ -17,7 +22,7 @@ namespace clv::gfx{
 		GL4VertexBuffer& operator=(GL4VertexBuffer&& other) noexcept;
 		~GL4VertexBuffer();
 
-		GL4VertexBuffer(const std::vector<Vertex>& vertices);
+		GL4VertexBuffer(const VertexBufferData& bufferData, Shader& shader);
 
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;
