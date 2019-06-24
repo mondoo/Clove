@@ -2,7 +2,7 @@
 
 #include "Clove/Graphics/Context.hpp"
 
-#include "Graphics/DirectX-11/DXGIInfoManager.hpp"
+#include "Clove/Graphics/DirectX-11/DXGIInfoManager.hpp"
 
 #include <wrl.h>
 

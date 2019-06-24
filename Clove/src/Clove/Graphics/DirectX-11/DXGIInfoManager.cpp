@@ -1,8 +1,8 @@
 #include "clvpch.hpp"
 #include "DXGIInfoManager.hpp"
 
-#include "Graphics/DirectX-11/DX11Exception.hpp"
-#include "Platform/Windows/WindowsException.hpp"
+#include "Clove/Graphics/DirectX-11/DX11Exception.hpp"
+#include "Clove/Platform/Windows/WindowsException.hpp"
 
 #include <dxgidebug.h>
 
