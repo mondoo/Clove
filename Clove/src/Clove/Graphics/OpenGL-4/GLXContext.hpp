@@ -14,6 +14,8 @@ namespace clv::gfx{
 		XVisualInfo* visual = nullptr;
 
 		::GLXContext context = nullptr;
+
+		PFNGLXSWAPINTERVALEXTPROC glxSwapIntervalEXT = nullptr;
 		
 		//FUNCTIONS
 	public:
