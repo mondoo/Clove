@@ -2,7 +2,7 @@
 
 #include "Clove/Graphics/Bindables/Shader.hpp"
 
-#include "Graphics/OpenGL-4/GL4Uniform.hpp"
+#include "Clove/Graphics/OpenGL-4/GL4Uniform.hpp"
 
 namespace clv::gfx{
 	class Renderer;

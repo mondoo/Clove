@@ -1,5 +1,5 @@
 #include "clvpch.hpp"
-#include "RenderSystem.hpp"
+#include "Render3DSystem.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/Bindable.hpp"
@@ -7,20 +7,20 @@
 #include "Clove/Graphics/Bindables/Shader.hpp"
 
 namespace clv::ecs{
-	RenderSystem::RenderSystem() = default;
+	Render3DSystem::Render3DSystem() = default;
 
-	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;
+	Render3DSystem::Render3DSystem(Render3DSystem&& other) noexcept = default;
 
-	RenderSystem& RenderSystem::operator=(RenderSystem&& other) noexcept = default;
+	Render3DSystem& Render3DSystem::operator=(Render3DSystem&& other) noexcept = default;
 
-	RenderSystem::~RenderSystem() = default;
+	Render3DSystem::~Render3DSystem() = default;
 
-	void RenderSystem::update(float deltaTime){
+	void Render3DSystem::update(float deltaTime){
 		renderer->clear(); //NOTE: putting it here will clear the imgui shiz
 
 		for(auto& componentTuple : components){
 			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
-			RenderableComponent* renderable = std::get<RenderableComponent*>(componentTuple);
+			Renderable3DComponent* renderable = std::get<Renderable3DComponent*>(componentTuple);
 
 			renderable->shader->setModelMatrix(getTransformWorldMatrix(transform));
 
@@ -32,14 +32,14 @@ namespace clv::ecs{
 		}
 	}
 
-	void RenderSystem::initialiseRenderer(const gfx::Context& context){
+	void Render3DSystem::initialiseRenderer(const gfx::Context& context){
 		renderer = gfx::Renderer::createRenderer(context);
 	}
 
-	gfx::Renderer& RenderSystem::getRenderer(){
+	gfx::Renderer& Render3DSystem::getRenderer(){
 		return *renderer;
 	}
-	math::Matrix4f RenderSystem::getTransformWorldMatrix(TransformComponent* component){
+	math::Matrix4f Render3DSystem::getTransformWorldMatrix(TransformComponent* component){
 		const auto& [rot, angle] = component->getLocalRotation();
 
 		math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), component->getLocalPosition());

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/ECS/Components/RenderableComponent.hpp"
+#include "Clove/ECS/Components/Renderable3DComponent.hpp"
 
 namespace clv::gfx{
 	class Renderer;
@@ -9,7 +9,7 @@ namespace clv::gfx{
 }
 
 namespace clv::ecs{
-	class MeshComponent : public ecs::RenderableComponent{
+	class MeshComponent : public ecs::Renderable3DComponent{
 		//VARIABLES
 	private:
 		std::vector<unsigned int> indices;

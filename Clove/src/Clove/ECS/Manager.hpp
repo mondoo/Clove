@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Clove/ECS/ECSTypes.hpp"
-#include "Clove/ECS/System.hpp"
 #include "Clove/ECS/Entity.hpp"
-#include "Clove/ECS/ComponentPtr.hpp"
 
 namespace clv::gfx{
 	class Renderer;

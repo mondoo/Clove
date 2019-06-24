@@ -3,7 +3,7 @@
 #include "Clove/ECS/System.hpp"
 
 #include "Clove/ECS/Components/TransformComponent.hpp"
-#include "Clove/ECS/Components/RenderableComponent.hpp"
+#include "Clove/ECS/Components/Renderable3DComponent.hpp"
 
 namespace clv::gfx{
 	class Renderer;
@@ -12,7 +12,7 @@ namespace clv::gfx{
 }
 
 namespace clv::ecs{
-	class RenderSystem : public System<TransformComponent, RenderableComponent>{
+	class Render3DSystem : public System<TransformComponent, Renderable3DComponent>{
 		//VARIABLES
 	public:
 		static constexpr SystemID ID = 0x1ae78643; //VS generated GUID
@@ -22,12 +22,12 @@ namespace clv::ecs{
 
 		//FUNCTIONS
 	public:
-		RenderSystem();
-		RenderSystem(const RenderSystem& other) = delete;
-		RenderSystem(RenderSystem&& other) noexcept;
-		RenderSystem& operator=(const RenderSystem& other) = delete;
-		RenderSystem& operator=(RenderSystem&& other) noexcept;
-		virtual ~RenderSystem();
+		Render3DSystem();
+		Render3DSystem(const Render3DSystem& other) = delete;
+		Render3DSystem(Render3DSystem&& other) noexcept;
+		Render3DSystem& operator=(const Render3DSystem& other) = delete;
+		Render3DSystem& operator=(Render3DSystem&& other) noexcept;
+		virtual ~Render3DSystem();
 
 		virtual void update(float deltaTime) override;
 

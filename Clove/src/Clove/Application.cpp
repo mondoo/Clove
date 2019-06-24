@@ -13,7 +13,9 @@
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Graphics/Renderer.hpp"
-#include "Clove/ECS/Systems/RenderSystem.hpp"
+
+#include "Clove/Graphics/Renderer.hpp"
+#include "Clove/ECS/Systems/Render3DSystem.hpp"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -25,7 +27,7 @@ namespace clv{
 		window = std::unique_ptr<Window>(Window::create());
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 
-		ecsManager.getSystem<ecs::RenderSystem>()->initialiseRenderer(window->getContext());
+		ecsManager.getSystem<ecs::Render3DSystem>()->initialiseRenderer(window->getContext());
 
 		layerStack = std::make_unique<LayerStack>();
 
@@ -161,7 +163,7 @@ namespace clv{
 	}
 
 	gfx::Renderer& Application::getRenderer(){
-		return ecsManager.getSystem<ecs::RenderSystem>()->getRenderer();
+		return ecsManager.getSystem<ecs::Render3DSystem>()->getRenderer();
 	}
 
 	ecs::Manager& Application::getManager(){

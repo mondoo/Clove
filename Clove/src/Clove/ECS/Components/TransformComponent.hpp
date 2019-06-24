@@ -38,6 +38,5 @@ namespace clv::ecs{
 
 		TransformComponent* getParent() const;
 		void addChild(TransformComponent* child);
-		void addChild(ComponentPtr<TransformComponent> child);
 	};
 }

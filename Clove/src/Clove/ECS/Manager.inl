@@ -1,3 +1,5 @@
+#include "Clove/ECS/System.hpp"
+
 namespace clv::ecs{
 	template<typename T>
 	T* Manager::getSystem(){

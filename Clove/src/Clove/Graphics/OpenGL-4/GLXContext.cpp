@@ -1,7 +1,7 @@
 #include "clvpch.hpp"
 #include "GLXContext.hpp"
 
-#include "Platform/Linux/LinuxWindow.hpp"
+#include "Clove/Platform/Linux/LinuxWindow.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{

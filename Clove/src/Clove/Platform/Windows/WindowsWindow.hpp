@@ -2,7 +2,7 @@
 
 #include "Clove/Platform/Window.hpp"
 
-#include "Platform/Windows/WindowsException.hpp"
+#include "Clove/Platform/Windows/WindowsException.hpp"
 
 #define CLV_WINDOWS_QUIT 25397841 //Note: this number is completely random
 

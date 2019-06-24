@@ -6,17 +6,17 @@
 #include "Clove/Graphics/Context.hpp"
 
 //GL
-#include "Graphics/OpenGL-4/Bindables/GL4VertexBuffer.hpp"
-#include "Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp"
-#include "Graphics/OpenGL-4/Bindables/GL4Shader.hpp"
-#include "Graphics/OpenGL-4/Bindables/GL4Texture.hpp"
+#include "Clove/Graphics/OpenGL-4/Bindables/GL4VertexBuffer.hpp"
+#include "Clove/Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp"
+#include "Clove/Graphics/OpenGL-4/Bindables/GL4Shader.hpp"
+#include "Clove/Graphics/OpenGL-4/Bindables/GL4Texture.hpp"
 
 //DX
 #if CLV_PLATFORM_WINDOWS
-#include "Graphics/DirectX-11/Bindables/DX11VertexBuffer.hpp"
-#include "Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp"
-#include "Graphics/DirectX-11/Bindables/DX11Shader.hpp"
-#include "Graphics/DirectX-11/Bindables/DX11Texture.hpp"
+#include "Clove/Graphics/DirectX-11/Bindables/DX11VertexBuffer.hpp"
+#include "Clove/Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp"
+#include "Clove/Graphics/DirectX-11/Bindables/DX11Shader.hpp"
+#include "Clove/Graphics/DirectX-11/Bindables/DX11Texture.hpp"
 #endif
 
 namespace clv::gfx::BindableFactory{
