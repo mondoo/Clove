@@ -210,8 +210,6 @@ namespace clv{
 
 		context = gfx::Context::createContext(&data, api);
 		context->makeCurrent();
-
-		setVSync(true);
 	}
 
 	Window* Window::create(const WindowProps& props){
