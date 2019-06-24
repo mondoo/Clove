@@ -29,6 +29,14 @@ namespace clv{
 		return windowProperties.height;
 	}
 
+	void Window::setVSync(bool enabled){
+		context->setVSync(enabled);
+	}
+
+	bool Window::isVSync() const{
+		return context->isVsync();
+	}
+
 	Keyboard& Window::getKeyboard(){
 		return keyboard;
 	}

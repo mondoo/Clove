@@ -17,6 +17,9 @@ namespace clv::gfx{
 
 		virtual void makeCurrent() = 0;
 
+		virtual void setVSync(bool vsync) = 0;
+		virtual bool isVsync() const = 0;
+
 		virtual API getAPI() const = 0;
 
 		virtual void present() = 0;

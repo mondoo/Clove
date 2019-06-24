@@ -155,6 +155,15 @@ namespace clv::gfx{
 		//Empty
 	}
 
+	void DXContext::setVSync(bool enabled){
+		//TODO
+	}
+
+	bool DXContext::isVsync() const{
+		//TODO
+		return false;
+	}
+
 	API DXContext::getAPI() const{
 		return API::DirectX11;
 	}

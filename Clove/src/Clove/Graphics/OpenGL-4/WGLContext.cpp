@@ -74,6 +74,31 @@ namespace clv::gfx{
 		wglMakeCurrent(windowsDeviceContext, wglContext);
 	}
 
+	void WGLContext::setVSync(bool enabled){
+		//TODO
+
+		/*typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
+		PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
+
+		const char *extensions = (char*)glGetString(GL_EXTENSIONS);
+
+		if(strstr(extensions, "WGL_EXT_swap_control") == 0){
+			CLV_ERROR("Could not find the WGL_EXT_swap_control extension");
+			return;
+		} else{
+			wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
+			if(wglSwapIntervalEXT){
+				wglSwapIntervalEXT(enabled ? 1 : 0);
+			}
+		}*/
+	}
+
+	bool WGLContext::isVsync() const{
+		//TODO
+		return false;
+	}
+
 	API WGLContext::getAPI() const{
 		return API::OpenGL4;
 	}

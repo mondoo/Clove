@@ -49,6 +49,15 @@ namespace clv::gfx{
 		glXMakeCurrent(display, *window, context);
 	}
 
+	void GLXContext::setVSync(bool enabled){
+		//TODO
+	}
+
+	bool GLXContext::isVsync() const{
+		//TODO
+		return false;
+	}
+
 	API GLXContext::getAPI() const{
 		return API::OpenGL4;
 	}

@@ -41,9 +41,6 @@ namespace clv{
 
 		virtual void* getNativeWindow() const override;
 
-		virtual void setVSync(bool enabled) override;
-		virtual bool isVSync() const override;
-
 	protected:
 		virtual void processInput() override;
 

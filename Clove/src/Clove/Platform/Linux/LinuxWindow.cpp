@@ -30,14 +30,6 @@ namespace clv{
 		return display;
 	}
 
-	void LinuxWindow::setVSync(bool enabled){
-
-	}
-
-	bool LinuxWindow::isVSync() const{
-		return false;
-	}
-
 	void LinuxWindow::processInput(){
 		if(XPending(display) > 0){
 			KeySym xkeysym = 0;

@@ -23,9 +23,7 @@ namespace clv{
 		}
 	};
 
-	//Interface representing a desktop system based window
 	class Window{
-		//DEFINITIONS
 	protected:
 		using EventCallbackFn = std::function<void(Event&)>;
 		
@@ -34,8 +32,6 @@ namespace clv{
 		EventCallbackFn eventCallback;
 
 		WindowProps windowProperties;
-
-		bool vSync = true;
 
 		Keyboard keyboard;
 		Mouse mouse;
@@ -60,8 +56,8 @@ namespace clv{
 		unsigned int getWidth() const;
 		unsigned int getHeight() const;
 
-		virtual void setVSync(bool enabled) = 0;
-		virtual bool isVSync() const = 0;
+		void setVSync(bool enabled);
+		bool isVSync() const;
 
 		Keyboard& getKeyboard();
 		Mouse& getMouse();

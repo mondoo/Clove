@@ -23,6 +23,9 @@ namespace clv::gfx{
 
 		virtual void makeCurrent() override;
 
+		virtual void setVSync(bool enabled) override;
+		virtual bool isVsync() const override;
+
 		virtual API getAPI() const override;
 
 		virtual void present() override;
