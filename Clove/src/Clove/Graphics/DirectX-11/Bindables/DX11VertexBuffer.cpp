@@ -16,8 +16,9 @@ namespace clv::gfx{
 			case VertexElementType::position3D:
 				return DXGI_FORMAT_R32G32B32_FLOAT;
 			case VertexElementType::texture2D:
-			case VertexElementType::normal:
 				return DXGI_FORMAT_R32G32_FLOAT;
+			case VertexElementType::normal:
+				return DXGI_FORMAT_R32G32B32_FLOAT;
 			default:
 				CLV_ASSERT(false, "Invalid element type");
 				return DXGI_FORMAT_R32G32B32_FLOAT;
