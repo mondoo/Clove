@@ -9,7 +9,7 @@ namespace clv::gfx{
 	class Renderer{
 		//VARIABLES
 	protected:
-		static constexpr math::Vector4f clearColor = { 0.01f, 0.01f, 0.01f, 1.0f };
+		static constexpr math::Vector4f clearColor = { 1.01f, 0.5f, 0.5f, 1.0f };
 
 		//FUNCTIONS
 	public:
