@@ -1,7 +1,5 @@
 #pragma once
 
-//TODO: Move all of this to .cpp/.inl
-
 namespace clv::gfx{
 	enum class VertexElementType{
 		position2D,
@@ -18,61 +16,26 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		VertexElement(VertexElementType type, size_t offset)
-			: type(type)
-			, offset(offset){
-		}
+		VertexElement() = delete;
+		VertexElement(const VertexElement& other);
+		VertexElement(VertexElement&& other) noexcept;
+		VertexElement& operator=(const VertexElement& other);
+		VertexElement& operator=(VertexElement&& other) noexcept;
+		~VertexElement();
 
-		size_t getOffset() const{
-			return offset;
-		}
-		size_t getOffsetAfter() const{
-			return getOffset() + getSize();
-		}
+		VertexElement(VertexElementType type, size_t offset);
 
-		size_t getSize() const{
-			return sizeOf(type);
-		}
+		size_t getOffset() const;
+		size_t getOffsetAfter() const;
 
-		unsigned int getCount() const{
-			return countOf(type);
-		}
+		size_t getSize() const;
 
-		VertexElementType getType() const{
-			return type;
-		}
+		unsigned int getCount() const;
 
-		static constexpr size_t sizeOf(VertexElementType type){
-			switch(type){
-				case VertexElementType::position2D:
-					return sizeof(math::Vector2f);
-				case VertexElementType::position3D:
-					return sizeof(math::Vector3f);
-				case VertexElementType::texture2D:
-					return sizeof(math::Vector2f);
-				case VertexElementType::normal:
-					return sizeof(math::Vector3f);
-				default:
-					CLV_ASSERT(false, "Invalid element type");
-					return 0u;
-			}
-		}
+		VertexElementType getType() const;
 
-		static constexpr unsigned int countOf(VertexElementType type){
-			switch(type){
-				case VertexElementType::position2D:
-					return 2u; //sizeof(math::Vector2f) / size(float) ???
-				case VertexElementType::position3D:
-					return 3u;
-				case VertexElementType::texture2D:
-					return 2u;
-				case VertexElementType::normal:
-					return 3u;
-				default:
-					CLV_ASSERT(false, "Invalid element type");
-					return 0u;
-			}
-		}
+		static constexpr size_t sizeOf(VertexElementType type);
+		static constexpr unsigned int countOf(VertexElementType type);
 	};
 
 	class VertexLayout{
@@ -82,31 +45,20 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		VertexLayout& add(VertexElementType type){
-			elements.emplace_back(type, size());
-			return *this;
-		}
+		VertexLayout();
+		VertexLayout(const VertexLayout& other);
+		VertexLayout(VertexLayout&& other) noexcept;
+		VertexLayout& operator=(const VertexLayout& other);
+		VertexLayout& operator=(VertexLayout&& other) noexcept;
+		~VertexLayout();
 
-		size_t size() const{
-			return elements.empty() ? 0u : elements.back().getOffsetAfter();
-		}
-		size_t count() const{
-			return elements.size();
-		}
+		VertexLayout& add(VertexElementType type);
 
-		const VertexElement& resolve(VertexElementType type) const{
-			for(auto& element : elements){
-				if(element.getType() == type){
-					return element;
-				}
-			}
-			CLV_ASSERT(false, "Could not find element of type");
-			return elements.front();
-		}
+		size_t size() const;
+		size_t count() const;
 
-		const VertexElement& resolve(size_t i) const{
-			return elements[i];
-		}
+		const VertexElement& resolve(VertexElementType type) const;
+		const VertexElement& resolve(size_t i) const;
 	};
 
 	class Vertex{
@@ -119,74 +71,29 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		template<VertexElementType type>
-		auto& getAttribute(){
-			char* attributeData = data + layout.resolve(type).getOffset();
+		Vertex() = delete;
+		Vertex(const Vertex& other) = delete;
+		Vertex(Vertex&& other) noexcept = delete;
+		Vertex& operator=(const Vertex& other) = delete;
+		Vertex& operator=(Vertex&& other) noexcept = delete;
+		~Vertex();
 
-			if constexpr(type == VertexElementType::position2D){
-				return *reinterpret_cast<math::Vector2f*>(attributeData);
-			} else if constexpr(type == VertexElementType::position3D){
-				return *reinterpret_cast<math::Vector3f*>(attributeData);
-			} else if constexpr(type == VertexElementType::texture2D){
-				return *reinterpret_cast<math::Vector2f*>(attributeData);
-			} else if constexpr(type == VertexElementType::normal){
-				return *reinterpret_cast<math::Vector3f*>(attributeData);
-			} else{
-				CLV_ASSERT(false, "Unable to resolve element type");
-				return *reinterpret_cast<char*>(attributeData);
-			}
-		}
+		template<VertexElementType type>
+		auto& getAttribute();
 
 		//TODO: Set attribute?
 
 	private:
-		Vertex(char* data, const VertexLayout& layout)
-			: data(data)
-			, layout(layout){
-			CLV_ASSERT(data != nullptr, "Data is nullptr");
-		}
+		Vertex(char* data, const VertexLayout& layout);
 
 		template<typename DestDataType, typename SourceDataType>
-		void setAttribute(char* attribute, SourceDataType&& value){
-			if constexpr(std::is_assignable_v<DestDataType, SourceDataType>){
-				*reinterpret_cast<DestDataType*>(attribute) = value;
-			}else{
-				CLV_ASSERT(false, "Types are not assignable");
-			}
-		}
+		void setAttribute(char* attribute, SourceDataType&& value);
 
 		template<typename First, typename ...Rest>
-		void setAttributeByIndex(size_t i, First&& first, Rest&&... rest){
-			setAttributeByIndex(i, std::forward<First>(first));
-			setAttributeByIndex(i + 1, std::forward<Rest>(rest)...);
-		}
+		void setAttributeByIndex(size_t i, First&& first, Rest&& ... rest);
 
 		template<typename T>
-		void setAttributeByIndex(size_t i, T&& val){
-			const auto& element = layout.resolve(i);
-			char* attribute = data + element.getOffset();
-			switch(element.getType()){
-				case VertexElementType::position2D:
-					setAttribute<math::Vector2f>(attribute, std::forward<T>(val));
-					break;
-
-				case VertexElementType::position3D:
-					setAttribute<math::Vector3f>(attribute, std::forward<T>(val));
-					break;
-
-				case VertexElementType::texture2D:
-					setAttribute<math::Vector2f>(attribute, std::forward<T>(val));
-					break;
-
-				case VertexElementType::normal:
-					setAttribute<math::Vector3f>(attribute, std::forward<T>(val));
-					break;
-
-				default:
-					CLV_ASSERT(false, "Element type is not supported");
-					break;
-			}
-		}
+		void setAttributeByIndex(size_t i, T&& val);
 	};
 
 	class VertexBufferData{
@@ -197,42 +104,32 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		VertexBufferData(VertexLayout layout)
-			: layout(std::move(layout)){
-		}
+		VertexBufferData() = delete;
+		VertexBufferData(const VertexBufferData& other);
+		VertexBufferData(VertexBufferData&& other) noexcept;
+		VertexBufferData& operator=(const VertexBufferData& other);
+		VertexBufferData& operator=(VertexBufferData&& other) noexcept;
+		~VertexBufferData();
+
+		VertexBufferData(VertexLayout layout);
 
 		//TODO: reserve?
 
 		template<typename ...Args>
-		void emplaceBack(Args&&... args){
-			buffer.resize(buffer.size() + layout.size());
-			back().setAttributeByIndex(0u, std::forward<Args>(args)...);
-		}
+		void emplaceBack(Args&&... args);
 
-		Vertex front(){
-			return { buffer.data(), layout };
-		}
-		Vertex back(){
-			return { (buffer.data() + buffer.size()) - layout.size(), layout };
-		}
+		Vertex front();
+		Vertex back();
 
-		Vertex operator[](size_t i){
-			return { buffer.data() + (layout.size() * i), layout };
-		}
+		Vertex operator[](size_t i);
 
-		const char* data(){
-			return buffer.data();
-		}
+		const char* data() const;
 
-		size_t size(){
-			return buffer.size() / layout.size();
-		}
-		size_t sizeBytes(){
-			return buffer.size();
-		}
+		size_t size() const;
+		size_t sizeBytes() const;
 
-		const VertexLayout& getLayout(){
-			return layout;
-		}
+		const VertexLayout& getLayout() const;
 	};
 }
+
+#include "VertexLayout.inl"
