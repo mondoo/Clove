@@ -14,7 +14,6 @@ namespace clv::gfx{
 	class DX11VertexBuffer : public VertexBuffer{
 		//VARIABLES
 	private:
-		VertexBufferData bufferData; //TODO: Put in base?
 		Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 

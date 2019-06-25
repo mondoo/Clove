@@ -8,8 +8,6 @@ namespace clv::gfx{
 	class GL4VertexBuffer : public VertexBuffer{
 		//VARIABLES
 	private:
-		VertexBufferData bufferData; //TODO: Put in base?
-		
 		unsigned int bufferID = 0;
 		unsigned int arrayID = 0;
 
