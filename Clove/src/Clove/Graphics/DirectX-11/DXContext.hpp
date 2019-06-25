@@ -29,6 +29,8 @@ namespace clv::gfx{
 		DXGIInfoManager infoManager; //Used by certain DX11 exception macros
 	#endif
 
+		unsigned int swapInterval = 1u;
+
 		//FUNCTIONS
 	public:
 		DXContext() = delete;
