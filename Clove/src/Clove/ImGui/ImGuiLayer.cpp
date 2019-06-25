@@ -8,7 +8,7 @@
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
 #if CLV_PLATFORM_WINDOWS
-#include "Clove/Graphics/DirectX-11/DX11Renderer.hpp"
+#include "Graphics/DirectX-11/DX11Renderer.hpp"
 #endif
 
 #include <imgui.h>

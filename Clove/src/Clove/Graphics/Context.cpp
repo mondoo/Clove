@@ -3,10 +3,10 @@
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
 #if CLV_PLATFORM_WINDOWS
-#include "Clove/Graphics/OpenGL-4/WGLContext.hpp"
-#include "Clove/Graphics/DirectX-11/DXContext.hpp"
+#include "Graphics/OpenGL-4/WGLContext.hpp"
+#include "Graphics/DirectX-11/DXContext.hpp"
 #elif CLV_PLATFORM_LINUX
-#include "Clove/Graphics/OpenGL-4/GLXContext.hpp"
+#include "Graphics/OpenGL-4/GLXContext.hpp"
 #endif
 
 namespace clv::gfx{

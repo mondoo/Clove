@@ -1,9 +1,9 @@
 #include "clvpch.hpp"
 #include "Renderer.hpp"
 
-#include "Clove/Graphics/OpenGL-4/GL4Renderer.hpp"
+#include "Graphics/OpenGL-4/GL4Renderer.hpp"
 #if CLV_PLATFORM_WINDOWS
-#include "Clove/Graphics/DirectX-11/DX11Renderer.hpp"
+#include "Graphics/DirectX-11/DX11Renderer.hpp"
 #endif
 #include "Clove/Graphics/Context.hpp"
 

@@ -1,8 +1,8 @@
 #include "clvpch.hpp"
 #include "WGLContext.hpp"
 
-#include "Clove/Platform/Windows/WindowsWindow.hpp"
-#include "Clove/Platform/Windows/WindowsException.hpp"
+#include "Platform/Windows/WindowsWindow.hpp"
+#include "Platform/Windows/WindowsException.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{

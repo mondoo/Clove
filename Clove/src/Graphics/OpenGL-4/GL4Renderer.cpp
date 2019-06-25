@@ -2,7 +2,7 @@
 #include "GL4Renderer.hpp"
 
 #include "Clove/Platform/Window.hpp"
-#include "Clove/Graphics/OpenGL-4/GL4Exception.hpp"
+#include "Graphics/OpenGL-4/GL4Exception.hpp"
 #include "Clove/Profiling/Timer.hpp"
 
 #include <glad/glad.h>
