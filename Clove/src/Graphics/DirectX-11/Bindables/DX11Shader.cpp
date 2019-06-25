@@ -40,7 +40,7 @@ namespace clv::gfx{
 	DX11Shader::~DX11Shader() = default;
 
 	void DX11Shader::bind(Renderer& renderer){
-		for(const auto&[key, shader] : shaders){
+		for(const auto& [key, shader] : shaders){
 			shader->bind(renderer);
 		}
 
@@ -89,19 +89,16 @@ namespace clv::gfx{
 	DX11VertexShader::~DX11VertexShader() = default;
 
 	DX11VertexShader::DX11VertexShader(const std::wstring& path){
-		Renderer& renderer = Application::get().getRenderer();
-		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
-			DX11_INFO_PROVIDER(dxrenderer);
+		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&Application::get().getRenderer());
+		DX11_INFO_PROVIDER(dxrenderer);
 
-			DX11_THROW_INFO(D3DReadFileToBlob(path.c_str(), &byteCode));
-			DX11_THROW_INFO(dxrenderer->getDevice().CreateVertexShader(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), nullptr, &vertexShader));
-		}
+		DX11_THROW_INFO(D3DReadFileToBlob(path.c_str(), &byteCode));
+		DX11_THROW_INFO(dxrenderer->getDevice().CreateVertexShader(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), nullptr, &vertexShader));
 	}
 
 	void DX11VertexShader::bind(Renderer& renderer){
-		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
-			dxrenderer->getContext().VSSetShader(vertexShader.Get(), nullptr, 0u);
-		}
+		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
+		dxrenderer->getContext().VSSetShader(vertexShader.Get(), nullptr, 0u);
 	}
 
 	void DX11VertexShader::unbind(){
@@ -118,19 +115,16 @@ namespace clv::gfx{
 	DX11PixelShader::~DX11PixelShader() = default;
 
 	DX11PixelShader::DX11PixelShader(const std::wstring& path){
-		Renderer& renderer = Application::get().getRenderer();
-		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
-			DX11_INFO_PROVIDER(dxrenderer);
+		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&Application::get().getRenderer());
+		DX11_INFO_PROVIDER(dxrenderer);
 
-			DX11_THROW_INFO(D3DReadFileToBlob(path.c_str(), &byteCode));
-			DX11_THROW_INFO(dxrenderer->getDevice().CreatePixelShader(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), nullptr, &pixelShader));
-		}
+		DX11_THROW_INFO(D3DReadFileToBlob(path.c_str(), &byteCode));
+		DX11_THROW_INFO(dxrenderer->getDevice().CreatePixelShader(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), nullptr, &pixelShader));
 	}
 
 	void DX11PixelShader::bind(Renderer& renderer){
-		if(DX11Renderer* dxrenderer = dynamic_cast<DX11Renderer*>(&renderer)){
-			dxrenderer->getContext().PSSetShader(pixelShader.Get(), nullptr, 0u);
-		}
+		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
+		dxrenderer->getContext().PSSetShader(pixelShader.Get(), nullptr, 0u);
 	}
 
 	void DX11PixelShader::unbind(){
