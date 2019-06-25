@@ -29,6 +29,8 @@ namespace clv::gfx{
 		DXGIInfoManager infoManager; //Used by certain DX11 exception macros
 	#endif
 
+		unsigned int swapInterval = 1u;
+
 		//FUNCTIONS
 	public:
 		DXContext() = delete;
@@ -47,6 +49,9 @@ namespace clv::gfx{
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> getDSV() const;
 
 		virtual void makeCurrent() override;
+
+		virtual void setVSync(bool enabled) override;
+		virtual bool isVsync() const override;
 
 		virtual API getAPI() const override;
 

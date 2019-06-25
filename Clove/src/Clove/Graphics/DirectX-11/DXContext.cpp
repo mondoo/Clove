@@ -155,6 +155,15 @@ namespace clv::gfx{
 		//Empty
 	}
 
+	void DXContext::setVSync(bool enabled){
+		swapInterval = enabled ? 1u : 0u;
+		CLV_LOG_TRACE("Swap interval for DirectX was set to: {0}", swapInterval);
+	}
+
+	bool DXContext::isVsync() const{
+		return (swapInterval > 0u);
+	}
+
 	API DXContext::getAPI() const{
 		return API::DirectX11;
 	}
@@ -165,7 +174,7 @@ namespace clv::gfx{
 	#if CLV_DEBUG
 		infoManager.set();
 	#endif
-		if(FAILED(hr = swapChain->Present(1u, 0u))){
+		if(FAILED(hr = swapChain->Present(swapInterval, 0u))){
 			if(hr == DXGI_ERROR_DEVICE_REMOVED){
 				throw DX11_DEVICE_REMOVED_EXCPTION(d3dDevice->GetDeviceRemovedReason());
 			} else{

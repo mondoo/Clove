@@ -28,28 +28,7 @@ namespace clv{
 	void* WindowsWindow::getNativeWindow() const{
 		return windowsHandle;
 	}
-
-	void WindowsWindow::setVSync(bool enabled){
-		vSync = enabled;
-
-		//move to renderer?
-		/*typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
-		PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
-
-		const char *extensions = (char*)glGetString(GL_EXTENSIONS);
-
-		if(strstr(extensions, "WGL_EXT_swap_control") == 0){
-			CLV_ERROR("Could not find the WGL_EXT_swap_control extension");
-			return;
-		} else{
-			wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
-
-			if(wglSwapIntervalEXT){
-				wglSwapIntervalEXT(enabled ? 1 : 0);
-			}
-		}*/
-	}
-
+	
 	void WindowsWindow::processInput(){
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
@@ -61,10 +40,6 @@ namespace clv{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-	}
-
-	bool WindowsWindow::isVSync() const{
-		return vSync;
 	}
 
 	LRESULT CALLBACK WindowsWindow::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
@@ -235,8 +210,6 @@ namespace clv{
 
 		context = gfx::Context::createContext(&data, api);
 		context->makeCurrent();
-
-		setVSync(true);
 	}
 
 	Window* Window::create(const WindowProps& props){

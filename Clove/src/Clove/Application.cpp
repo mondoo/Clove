@@ -26,6 +26,7 @@ namespace clv{
 
 		window = std::unique_ptr<Window>(Window::create());
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
+		window->setVSync(true);
 
 		ecsManager.getSystem<ecs::Render3DSystem>()->initialiseRenderer(window->getContext());
 

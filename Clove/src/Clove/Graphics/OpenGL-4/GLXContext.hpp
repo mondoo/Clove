@@ -14,6 +14,8 @@ namespace clv::gfx{
 		XVisualInfo* visual = nullptr;
 
 		::GLXContext context = nullptr;
+
+		PFNGLXSWAPINTERVALEXTPROC glxSwapIntervalEXT = nullptr;
 		
 		//FUNCTIONS
 	public:
@@ -27,6 +29,9 @@ namespace clv::gfx{
 		GLXContext(void* windowData);
 
 		virtual void makeCurrent() override;
+
+		virtual void setVSync(bool enabled) override;
+		virtual bool isVsync() const override;
 
 		virtual API getAPI() const override;
 

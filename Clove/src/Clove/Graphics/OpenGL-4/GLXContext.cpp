@@ -47,6 +47,42 @@ namespace clv::gfx{
 	void GLXContext::makeCurrent(){
 		CLV_LOG_TRACE("Making context current");
 		glXMakeCurrent(display, *window, context);
+
+		if(!glxSwapIntervalEXT){
+			const char* extensions = (char*)glXQueryExtensionsString(display, visual->screen);
+			if(strstr(extensions, "GLX_EXT_swap_control") != 0){
+				glxSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC)glXGetProcAddress((GLubyte*)"glxSwapIntervalEXT");
+			} else{
+				CLV_LOG_ERROR("Could not find the GLX_EXT_swap_control. Cannot enable / disable vsync");
+			}
+		}
+	}
+
+	void GLXContext::setVSync(bool enabled){
+		if(glxSwapIntervalEXT){
+			GLXDrawable drawable = glXGetCurrentDrawable();
+	
+			const int interval = enabled ? 1 : 0;
+			glxSwapIntervalEXT(display, drawable, interval);
+	
+			CLV_LOG_TRACE("Swap interval for GLX was set to: {0}", interval);
+		}else{
+			CLV_LOG_ERROR("Could not set swap interval. glxSwapIntervalEXT is unitialised. Please make sure this context is current");
+		}
+	}
+
+	bool GLXContext::isVsync() const{
+		if(glxSwapIntervalEXT){
+			GLXDrawable drawable = glXGetCurrentDrawable();
+
+			unsigned int interval = 0;
+			glXQueryDrawable(display, drawable, GLX_SWAP_INTERVAL_EXT, &interval);
+		
+			return (interval > 0);
+		}else{
+			CLV_LOG_ERROR("glxSwapIntervalEXT is unitialised. Could not retrieve swap interval. Please make sure this context is current");
+			return false;
+		}
 	}
 
 	API GLXContext::getAPI() const{
