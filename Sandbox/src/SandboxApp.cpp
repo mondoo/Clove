@@ -125,12 +125,6 @@ public:
 		}
 	}
 
-	virtual void onImGuiRender() override{
-	#if CLV_PLATFORM_WINDOWS
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	#endif
-	}
-
 	virtual void onEvent(clv::Event& e) override{
 		//clv::EventDispatcher dispatcher(e);
 		//dispatcher.dispatch<clv::MouseMovedEvent>(CLV_BIND_FUNCTION_1P(&ExampleLayer::onMouseMoved, this));

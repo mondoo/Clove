@@ -23,7 +23,6 @@ namespace clv{
 		bool running = true;
 
 		std::unique_ptr<LayerStack> layerStack;
-		std::shared_ptr<ImGuiLayer> imGuiLayer;
 
 		static Application* instance;
 
