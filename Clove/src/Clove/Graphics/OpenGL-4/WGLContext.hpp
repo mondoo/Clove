@@ -2,6 +2,9 @@
 
 #include "Clove/Graphics/Context.hpp"
 
+#include <glad/glad.h>
+#include <wglext.h>
+
 namespace clv::gfx{
 	class WGLContext : public Context{
 		//VARIABLES
@@ -9,6 +12,9 @@ namespace clv::gfx{
 		HWND windowsHandle = nullptr;
 		HDC windowsDeviceContext = nullptr;
 		HGLRC wglContext = nullptr;
+
+		PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
+		PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT = nullptr;
 
 		//FUNCTIONS
 	public:

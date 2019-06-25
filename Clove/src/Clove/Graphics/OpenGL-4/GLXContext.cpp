@@ -75,10 +75,10 @@ namespace clv::gfx{
 		if(glxSwapIntervalEXT){
 			GLXDrawable drawable = glXGetCurrentDrawable();
 
-			unsigned int swap = 0;
-			glXQueryDrawable(display, drawable, GLX_SWAP_INTERVAL_EXT, &swap);
+			unsigned int interval = 0;
+			glXQueryDrawable(display, drawable, GLX_SWAP_INTERVAL_EXT, &interval);
 		
-			return (swap > 0);
+			return (interval > 0);
 		}else{
 			CLV_LOG_ERROR("glxSwapIntervalEXT is unitialised. Could not retrieve swap interval. Please make sure this context is current");
 			return false;

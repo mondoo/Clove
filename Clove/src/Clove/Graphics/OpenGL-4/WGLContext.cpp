@@ -5,9 +5,6 @@
 #include "Clove/Platform/Windows/WindowsException.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
-#include <glad/glad.h>
-#include <wglext.h>
-
 namespace clv::gfx{
 	WGLContext::WGLContext(WGLContext&& other) noexcept = default;
 
@@ -72,31 +69,38 @@ namespace clv::gfx{
 
 	void WGLContext::makeCurrent(){
 		wglMakeCurrent(windowsDeviceContext, wglContext);
+
+		if(!wglSwapIntervalEXT || !wglGetSwapIntervalEXT){
+			PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = (PFNWGLGETEXTENSIONSSTRINGARBPROC)wglGetProcAddress("wglGetExtensionsStringARB");
+			const char* extensions = wglGetExtensionsStringARB(windowsDeviceContext);
+			if(strstr(extensions, "WGL_EXT_swap_control") != 0){
+				wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
+				wglGetSwapIntervalEXT = (PFNWGLGETSWAPINTERVALEXTPROC)wglGetProcAddress("wglGetSwapIntervalEXT");
+			} else{
+				CLV_LOG_ERROR("Could not find the WGL_EXT_swap_control extension");
+			}
+		}
 	}
 
 	void WGLContext::setVSync(bool enabled){
-		//TODO
+		if(wglSwapIntervalEXT){
+			const int interval = enabled ? 1 : 0;
+			wglSwapIntervalEXT(interval);
 
-		/*typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
-		PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
-
-		const char *extensions = (char*)glGetString(GL_EXTENSIONS);
-
-		if(strstr(extensions, "WGL_EXT_swap_control") == 0){
-			CLV_ERROR("Could not find the WGL_EXT_swap_control extension");
-			return;
+			CLV_LOG_TRACE("Swap interval for WGL was set to: {0}", interval);
 		} else{
-			wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
-
-			if(wglSwapIntervalEXT){
-				wglSwapIntervalEXT(enabled ? 1 : 0);
-			}
-		}*/
+			CLV_LOG_ERROR("Could not set swap interval. wglSwapIntervalEXT is unitialised. Please make sure this context is current");
+		}
 	}
 
 	bool WGLContext::isVsync() const{
-		//TODO
-		return false;
+		if(wglGetSwapIntervalEXT){
+			const unsigned int interval = wglGetSwapIntervalEXT();
+			return (interval > 0);
+		} else{
+			CLV_LOG_ERROR("wglGetSwapIntervalEXT is unitialised. Could not retrieve swap interval. Please make sure this context is current");
+			return false;
+		}
 	}
 
 	API WGLContext::getAPI() const{
