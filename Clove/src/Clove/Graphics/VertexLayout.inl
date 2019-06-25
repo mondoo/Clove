@@ -10,7 +10,7 @@ namespace clv::gfx{
 			case VertexElementType::normal:
 				return sizeof(VertexElementData<VertexElementType::normal>::DataType);
 			default:
-				CLV_ASSERT(false, "Invalid element type");
+				CLV_ASSERT(false, "Invalid element type. {0}", __func__);
 				return 0u;
 		}
 	}
@@ -26,8 +26,24 @@ namespace clv::gfx{
 			case VertexElementType::normal:
 				return VertexElementData<VertexElementType::normal>::elementCount;
 			default:
-				CLV_ASSERT(false, "Invalid element type");
+				CLV_ASSERT(false, "Invalid element type. {0}", __func__);
 				return 0u;
+		}
+	}
+
+	constexpr const char* VertexElement::semanticOf(VertexElementType type){
+		switch(type){
+			case VertexElementType::position2D:
+				return VertexElementData<VertexElementType::position2D>::semantic;
+			case VertexElementType::position3D:
+				return VertexElementData<VertexElementType::position3D>::semantic;
+			case VertexElementType::texture2D:
+				return VertexElementData<VertexElementType::texture2D>::semantic;
+			case VertexElementType::normal:
+				return VertexElementData<VertexElementType::normal>::semantic;
+			default:
+				CLV_ASSERT(false, "Invalid element type. {0}", __func__);
+				return nullptr;
 		}
 	}
 

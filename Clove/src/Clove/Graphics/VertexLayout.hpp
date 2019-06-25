@@ -51,13 +51,14 @@ namespace clv::gfx{
 		size_t getOffsetAfter() const;
 
 		size_t getSize() const;
-
 		unsigned int getCount() const;
+		const char* getSemantic() const;
 
 		VertexElementType getType() const;
 
 		static constexpr size_t sizeOf(VertexElementType type);
 		static constexpr unsigned int countOf(VertexElementType type);
+		static constexpr const char* semanticOf(VertexElementType type);
 	};
 
 	class VertexLayout{

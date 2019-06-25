@@ -32,6 +32,10 @@ namespace clv::gfx{
 	unsigned int VertexElement::getCount() const{
 		return countOf(type);
 	}
+
+	const char* VertexElement::getSemantic() const{
+		return semanticOf(type);
+	}
 	
 	VertexElementType VertexElement::getType() const{
 		return type;
