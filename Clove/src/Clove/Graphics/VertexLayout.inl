@@ -2,13 +2,13 @@ namespace clv::gfx{
 	constexpr size_t VertexElement::sizeOf(VertexElementType type){
 		switch(type){
 			case VertexElementType::position2D:
-				return sizeof(math::Vector2f);
+				return sizeof(VertexElementData<VertexElementType::position2D>::DataType);
 			case VertexElementType::position3D:
-				return sizeof(math::Vector3f);
+				return sizeof(VertexElementData<VertexElementType::position3D>::DataType);
 			case VertexElementType::texture2D:
-				return sizeof(math::Vector2f);
+				return sizeof(VertexElementData<VertexElementType::texture2D>::DataType);
 			case VertexElementType::normal:
-				return sizeof(math::Vector3f);
+				return sizeof(VertexElementData<VertexElementType::normal>::DataType);
 			default:
 				CLV_ASSERT(false, "Invalid element type");
 				return 0u;
@@ -18,43 +18,32 @@ namespace clv::gfx{
 	constexpr unsigned int VertexElement::countOf(VertexElementType type){
 		switch(type){
 			case VertexElementType::position2D:
-				return 2u; //sizeof(math::Vector2f) / size(float) ???
+				return VertexElementData<VertexElementType::position2D>::elementCount;
 			case VertexElementType::position3D:
-				return 3u;
+				return VertexElementData<VertexElementType::position3D>::elementCount;
 			case VertexElementType::texture2D:
-				return 2u;
+				return VertexElementData<VertexElementType::texture2D>::elementCount;
 			case VertexElementType::normal:
-				return 3u;
+				return VertexElementData<VertexElementType::normal>::elementCount;
 			default:
 				CLV_ASSERT(false, "Invalid element type");
 				return 0u;
 		}
 	}
 
-	template<VertexElementType type>
+	template<VertexElementType Type>
 	auto& gfx::Vertex::getAttribute(){
 		char* attributeData = data + layout.resolve(type).getOffset();
-
-		if constexpr(type == VertexElementType::position2D){
-			return *reinterpret_cast<math::Vector2f*>(attributeData);
-		} else if constexpr(type == VertexElementType::position3D){
-			return *reinterpret_cast<math::Vector3f*>(attributeData);
-		} else if constexpr(type == VertexElementType::texture2D){
-			return *reinterpret_cast<math::Vector2f*>(attributeData);
-		} else if constexpr(type == VertexElementType::normal){
-			return *reinterpret_cast<math::Vector3f*>(attributeData);
-		} else{
-			CLV_ASSERT(false, "Unable to resolve element type");
-			return *reinterpret_cast<char*>(attributeData);
-		}
+		return *reinterpret_cast<VertexElementData<Type>::DataType*>(attributeData);
 	}
 
-	template<typename DestDataType, typename SourceDataType>
+	template<VertexElementType DestType, typename SourceDataType>
 	void Vertex::setAttribute(char* attribute, SourceDataType&& value){
+		using DestDataType = typename VertexElementData<DestType>::DataType;
 		if constexpr(std::is_assignable_v<DestDataType, SourceDataType>){
 			*reinterpret_cast<DestDataType*>(attribute) = value;
 		} else{
-			CLV_ASSERT(false, "Types are not assignable");
+			CLV_ASSERT(false, "Types are not assignable. {0}", __func__);
 		}
 	}
 
@@ -70,19 +59,19 @@ namespace clv::gfx{
 		char* attribute = data + element.getOffset();
 		switch(element.getType()){
 			case VertexElementType::position2D:
-				setAttribute<math::Vector2f>(attribute, std::forward<T>(val));
+				setAttribute<VertexElementType::position2D>(attribute, std::forward<T>(val));
 				break;
 
 			case VertexElementType::position3D:
-				setAttribute<math::Vector3f>(attribute, std::forward<T>(val));
+				setAttribute<VertexElementType::position3D>(attribute, std::forward<T>(val));
 				break;
 
 			case VertexElementType::texture2D:
-				setAttribute<math::Vector2f>(attribute, std::forward<T>(val));
+				setAttribute<VertexElementType::texture2D>(attribute, std::forward<T>(val));
 				break;
 
 			case VertexElementType::normal:
-				setAttribute<math::Vector3f>(attribute, std::forward<T>(val));
+				setAttribute<VertexElementType::normal>(attribute, std::forward<T>(val));
 				break;
 
 			default:
