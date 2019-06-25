@@ -33,7 +33,7 @@ namespace clv::gfx{
 
 	template<VertexElementType Type>
 	auto& gfx::Vertex::getAttribute(){
-		char* attributeData = data + layout.resolve(type).getOffset();
+		char* attributeData = data + layout.resolve(Type).getOffset();
 		return *reinterpret_cast<VertexElementData<Type>::DataType*>(attributeData);
 	}
 

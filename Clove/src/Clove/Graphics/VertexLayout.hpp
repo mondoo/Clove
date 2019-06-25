@@ -103,8 +103,6 @@ namespace clv::gfx{
 		template<VertexElementType Type>
 		auto& getAttribute();
 
-		//TODO: Set attribute?
-
 	private:
 		Vertex(char* data, const VertexLayout& layout);
 
@@ -134,8 +132,6 @@ namespace clv::gfx{
 		~VertexBufferData();
 
 		VertexBufferData(VertexLayout layout);
-
-		//TODO: reserve?
 
 		template<typename ...Args>
 		void emplaceBack(Args&&... args);
