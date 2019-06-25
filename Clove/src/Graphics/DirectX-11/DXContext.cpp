@@ -1,8 +1,8 @@
 #include "clvpch.hpp"
 #include "DXContext.hpp"
 
-#include "Clove/Graphics/DirectX-11/DX11Exception.hpp"
-#include "Clove/Platform/Windows/WindowsWindow.hpp"
+#include "Graphics/DirectX-11/DX11Exception.hpp"
+#include "Platform/Windows/WindowsWindow.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
 #include <d3d11.h>

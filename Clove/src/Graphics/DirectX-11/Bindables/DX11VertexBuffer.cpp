@@ -2,9 +2,9 @@
 #include "DX11VertexBuffer.hpp"
 
 #include "Clove/Application.hpp"
-#include "Clove/Graphics/DirectX-11/DX11Exception.hpp"
-#include "Clove/Graphics/DirectX-11/DX11Renderer.hpp"
-#include "Clove/Graphics/DirectX-11/Bindables/DX11Shader.hpp"
+#include "Graphics/DirectX-11/DX11Exception.hpp"
+#include "Graphics/DirectX-11/DX11Renderer.hpp"
+#include "Graphics/DirectX-11/Bindables/DX11Shader.hpp"
 
 #include <d3d11.h>
 

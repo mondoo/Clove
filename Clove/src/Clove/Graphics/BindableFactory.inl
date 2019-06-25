@@ -3,11 +3,11 @@
 #include "Clove/Graphics/Context.hpp"
 
 //GL
-#include "Clove/Graphics/OpenGL-4/Bindables/GL4UniformBufferObject.hpp"
+#include "Graphics/OpenGL-4/Bindables/GL4UniformBufferObject.hpp"
 
 //DX
 #if CLV_PLATFORM_WINDOWS
-#include "Clove/Graphics/DirectX-11/Bindables/DX11ConstantBuffer.hpp"
+#include "Graphics/DirectX-11/Bindables/DX11ConstantBuffer.hpp"
 #endif
 
 namespace clv::gfx::BindableFactory{

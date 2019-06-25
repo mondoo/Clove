@@ -1,8 +1,8 @@
 #include "clvpch.hpp"
 #include "DX11Renderer.hpp"
 
-#include "Clove/Graphics/DirectX-11/DXContext.hpp"
-#include "Clove/Graphics/DirectX-11/DX11Exception.hpp"
+#include "Graphics/DirectX-11/DXContext.hpp"
+#include "Graphics/DirectX-11/DX11Exception.hpp"
 #include "Clove/Input/Input.hpp"
 #include "Clove/Profiling/Timer.hpp"
 

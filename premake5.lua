@@ -239,11 +239,11 @@ project "Clove"
 		}
 
 		removefiles{
-			"%{prj.location}/src/Clove/Platform/Linux/**.hpp",
-			"%{prj.location}/src/Clove/Platform/Linux/**.inl",
-			"%{prj.location}/src/Clove/Platform/Linux/**.cpp",
+			"%{prj.location}/src/Platform/Linux/**.hpp",
+			"%{prj.location}/src/Platform/Linux/**.inl",
+			"%{prj.location}/src/Platform/Linux/**.cpp",
 			
-			"%{prj.location}/src/Clove/Graphics/OpenGL-4/GLXContext.*",
+			"%{prj.location}/src/Graphics/OpenGL-4/GLXContext.*",
 		}
 
 		includedirs{
@@ -263,15 +263,15 @@ project "Clove"
 
 	filter "system:linux"
 		removefiles{
-			"%{prj.location}/src/Clove/Platform/Windows/**.hpp",
-			"%{prj.location}/src/Clove/Platform/Windows/**.inl",
-			"%{prj.location}/src/Clove/Platform/Windows/**.cpp",
+			"%{prj.location}/src/Platform/Windows/**.hpp",
+			"%{prj.location}/src/Platform/Windows/**.inl",
+			"%{prj.location}/src/Platform/Windows/**.cpp",
 
-			"%{prj.location}/src/Clove/Graphics/DirectX-11/**.hpp",
-			"%{prj.location}/src/Clove/Graphics/DirectX-11/**.inl",
-			"%{prj.location}/src/Clove/Graphics/DirectX-11/**.cpp",
+			"%{prj.location}/src/Graphics/DirectX-11/**.hpp",
+			"%{prj.location}/src/Graphics/DirectX-11/**.inl",
+			"%{prj.location}/src/Graphics/DirectX-11/**.cpp",
 
-			"%{prj.location}/src/Clove/Graphics/OpenGL-4/WGLContext.*",
+			"%{prj.location}/src/Graphics/OpenGL-4/WGLContext.*",
 		}
 
 		links{
