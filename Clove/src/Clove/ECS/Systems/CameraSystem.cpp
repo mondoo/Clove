@@ -14,7 +14,7 @@ namespace clv::ecs{
 	
 	void CameraSystem::update(float deltaTime){
 		for(auto& componentTuple : components){
-			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
+			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			CameraComponent* camera = std::get<CameraComponent*>(componentTuple);
 
 			const math::Vector3f position = transform->getLocalPosition();

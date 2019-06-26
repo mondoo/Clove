@@ -19,7 +19,7 @@ namespace clv::ecs{
 		renderer->clear(); //NOTE: putting it here will clear the imgui shiz
 
 		for(auto& componentTuple : components){
-			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
+			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			Renderable3DComponent* renderable = std::get<Renderable3DComponent*>(componentTuple);
 
 			renderable->shader->setModelMatrix(getTransformWorldMatrix(transform));
@@ -39,7 +39,7 @@ namespace clv::ecs{
 	gfx::Renderer& Render3DSystem::getRenderer(){
 		return *renderer;
 	}
-	math::Matrix4f Render3DSystem::getTransformWorldMatrix(TransformComponent* component){
+	math::Matrix4f Render3DSystem::getTransformWorldMatrix(Transform3DComponent* component){
 		const auto& [rot, angle] = component->getLocalRotation();
 
 		math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), component->getLocalPosition());
@@ -48,7 +48,7 @@ namespace clv::ecs{
 
 		math::Matrix4f transform = translation * rotation * scale;
 
-		if(TransformComponent* parent = component->getParent()){
+		if(Transform3DComponent* parent = component->getParent()){
 			return getTransformWorldMatrix(parent) * transform;
 		} else{
 			return transform;

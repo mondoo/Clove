@@ -6,7 +6,7 @@
 #include "Clove/ECS/Components/CameraComponent.hpp"
 
 namespace clv::ecs{
-	class CameraSystem : public System<TransformComponent, CameraComponent>{
+	class CameraSystem : public System<Transform3DComponent, CameraComponent>{
 		//VARIABLES
 	public:
 		static constexpr SystemID ID = 0xdcd2f589;
