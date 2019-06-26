@@ -32,8 +32,8 @@ namespace clv::ecs{
 		}
 	}
 
-	void Render3DSystem::initialiseRenderer(const gfx::Context& context){
-		renderer = gfx::Renderer::createRenderer(context);
+	void Render3DSystem::initialiseRenderer(const std::shared_ptr<gfx::Renderer>& renderer){
+		this->renderer = renderer;
 	}
 
 	gfx::Renderer& Render3DSystem::getRenderer(){

@@ -7,8 +7,6 @@
 
 namespace clv::gfx{
 	class Renderer;
-	class Context;
-	enum class API;
 }
 
 namespace clv::ecs{
@@ -31,7 +29,7 @@ namespace clv::ecs{
 
 		virtual void update(float deltaTime) override;
 
-		void initialiseRenderer(const gfx::Context& context);
+		void initialiseRenderer(const std::shared_ptr<gfx::Renderer>& renderer);
 		gfx::Renderer& getRenderer();
 
 	private:
