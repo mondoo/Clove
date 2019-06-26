@@ -2,7 +2,7 @@
 
 #include "Clove/ECS/System.hpp"
 
-#include "Clove/ECS/Components/TransformComponent.hpp"
+#include "Clove/ECS/Components/Transform3DComponent.hpp"
 #include "Clove/ECS/Components/CameraComponent.hpp"
 
 namespace clv::ecs{
