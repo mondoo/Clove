@@ -14,7 +14,7 @@ namespace clv::ecs{
 
 	void LightSystem::update(float deltaTime){
 		for(auto& componentTuple : components){
-			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
+			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			LightComponent* light = std::get<LightComponent*>(componentTuple);
 
 			light->lightData.position = transform->getLocalPosition();
