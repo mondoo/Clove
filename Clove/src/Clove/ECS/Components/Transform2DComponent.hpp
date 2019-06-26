@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Clove/ECS/Component.hpp"
-#include <Clove\ECS\Components\Transform3DComponent.cpp>
 
 namespace clv::ecs{
 	class Transform2DComponent : public Component{

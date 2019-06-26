@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "Renderable2DComponent.hpp"
 
+#include "Clove/Graphics/Bindables/Texture.hpp"
+
 namespace clv::ecs{
 	Renderable2DComponent::Renderable2DComponent() = default;
 
