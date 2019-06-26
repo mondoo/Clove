@@ -20,7 +20,7 @@ namespace clv::gfx{
 		Renderer& operator=(Renderer&& other) noexcept = delete;
 		virtual ~Renderer();
 
-		static std::unique_ptr<Renderer> createRenderer(const Context& context);
+		static std::shared_ptr<Renderer> createRenderer(const Context& context);
 
 		virtual void clear() = 0;
 		virtual void drawIndexed(const unsigned int count) = 0;

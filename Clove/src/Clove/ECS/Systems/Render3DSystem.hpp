@@ -18,7 +18,7 @@ namespace clv::ecs{
 		static constexpr SystemID ID = 0x1ae78643; //VS generated GUID
 
 	private:
-		std::unique_ptr<gfx::Renderer> renderer;
+		std::shared_ptr<gfx::Renderer> renderer;
 
 		//FUNCTIONS
 	public:
