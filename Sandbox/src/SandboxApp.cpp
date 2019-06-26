@@ -5,7 +5,7 @@
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Input/Input.hpp"
 
-#include "Clove/ECS/Components/TransformComponent.hpp"
+#include "Clove/ECS/Components/Transform3DComponent.hpp"
 #include "Clove/ECS/Components/MeshComponent.hpp"
 #include "Clove/ECS/Components/LightComponent.hpp"
 #include "Clove/ECS/Components/CameraComponent.hpp"
