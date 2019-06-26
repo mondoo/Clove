@@ -16,8 +16,6 @@ namespace clv::ecs{
 	Render3DSystem::~Render3DSystem() = default;
 
 	void Render3DSystem::update(float deltaTime){
-		renderer->clear();
-
 		for(auto& componentTuple : components){
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			Renderable3DComponent* renderable = std::get<Renderable3DComponent*>(componentTuple);
