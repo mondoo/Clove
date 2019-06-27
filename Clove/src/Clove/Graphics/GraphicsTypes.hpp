@@ -8,7 +8,7 @@ namespace clv::gfx{
 	#endif
 	};
 
-	enum class ShaderTypes{
+	enum class ShaderType{
 		Vertex,
 		Pixel,
 	};

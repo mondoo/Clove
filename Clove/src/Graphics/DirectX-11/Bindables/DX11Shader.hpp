@@ -28,7 +28,7 @@ namespace clv::gfx{
 	class DX11Shader : public Shader{
 		//VARIABLES
 	private:
-		std::unordered_map<ShaderTypes, std::unique_ptr<Bindable>> shaders;
+		std::unordered_map<ShaderType, std::unique_ptr<Bindable>> shaders;
 		DX11VertexShader* vertexShader = nullptr;
 
 		DX11VertexConstantBuffer<VertexData> vertCB;
@@ -49,7 +49,7 @@ namespace clv::gfx{
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;
 
-		virtual void attachShader(ShaderTypes type) override;
+		virtual void attachShader(ShaderType type) override;
 
 		virtual void setModelMatrix(const math::Matrix4f& world) override;
 

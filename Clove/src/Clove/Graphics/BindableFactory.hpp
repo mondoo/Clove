@@ -20,7 +20,7 @@ namespace clv::gfx::BindableFactory{
 	std::unique_ptr<Texture>				createTexture(const std::string& filePath, unsigned int bindingPoint);
 
 	template<typename T>
-	std::unique_ptr<ShaderBufferObject<T>>	createShaderBufferObject(ShaderTypes shaderType, unsigned int bindingPoint);
+	std::unique_ptr<ShaderBufferObject<T>>	createShaderBufferObject(ShaderType shaderType, unsigned int bindingPoint);
 };
 
 #include "BindableFactory.inl"

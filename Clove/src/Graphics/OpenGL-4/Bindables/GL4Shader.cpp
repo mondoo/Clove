@@ -35,13 +35,13 @@ namespace clv::gfx{
 		glUseProgram(0);
 	}
 
-	void GL4Shader::attachShader(ShaderTypes type){
+	void GL4Shader::attachShader(ShaderType type){
 		unsigned int gltype = 0;
 		switch(type){
-			case ShaderTypes::Vertex:
+			case ShaderType::Vertex:
 				gltype = GL_VERTEX_SHADER;
 				break;
-			case ShaderTypes::Pixel:
+			case ShaderType::Pixel:
 				gltype = GL_FRAGMENT_SHADER;
 				break;
 		}
@@ -62,13 +62,13 @@ namespace clv::gfx{
 		normalMatrixUniform.update(math::transpose(math::inverse(model)));
 	}
 
-	std::string GL4Shader::getPathForShader(ShaderTypes shader){
+	std::string GL4Shader::getPathForShader(ShaderType shader){
 		switch(shader){
-			case ShaderTypes::Vertex:
+			case ShaderType::Vertex:
 				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-vs.glsl";
 				break;
 
-			case ShaderTypes::Pixel:
+			case ShaderType::Pixel:
 				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-ps.glsl";
 				break;
 

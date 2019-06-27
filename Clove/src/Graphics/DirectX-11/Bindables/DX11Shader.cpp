@@ -53,16 +53,16 @@ namespace clv::gfx{
 	void DX11Shader::unbind(){
 	}
 
-	void DX11Shader::attachShader(ShaderTypes type){
+	void DX11Shader::attachShader(ShaderType type){
 		switch(type){
-			case ShaderTypes::Vertex:
+			case ShaderType::Vertex:
 				{
 					auto vs = std::make_unique<DX11VertexShader>(L"Default-vs.cso");
 					vertexShader = vs.get();
 					shaders[type] = std::move(vs);
 				}
 				break;
-			case ShaderTypes::Pixel:
+			case ShaderType::Pixel:
 				shaders[type] = std::make_unique<DX11PixelShader>(L"Default-ps.cso");
 				break;
 
