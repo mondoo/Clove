@@ -7,6 +7,9 @@
 
 namespace clv::gfx{
 	class Renderer;
+	class Shader;
+	class VertexBuffer;
+	class IndexBuffer;
 }
 
 namespace clv::ecs{
@@ -17,6 +20,10 @@ namespace clv::ecs{
 
 	private:
 		std::shared_ptr<gfx::Renderer> renderer;
+
+		std::unique_ptr<gfx::Shader> quadShader;
+		std::unique_ptr<gfx::VertexBuffer> quadVBBuffer;
+		std::unique_ptr<gfx::IndexBuffer> quadIBBuffer;
 
 		//FUNCTIONS
 	public:
