@@ -32,7 +32,7 @@ namespace clv::gfx{
 
 		virtual void attachShader(ShaderTypes type) override;
 
-		virtual void setModelMatrix(const math::Matrix4f& world) override;
+		virtual void setModelMatrix(const math::Matrix4f& model) override;
 
 	private:
 		std::string getPathForShader(ShaderTypes shader);
