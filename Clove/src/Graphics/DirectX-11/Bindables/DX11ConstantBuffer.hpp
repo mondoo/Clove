@@ -9,6 +9,8 @@ struct ID3D11Buffer;
 namespace clv::gfx{
 	class Renderer;
 
+	//TODO: Rename when base class is figure out
+
 	template <typename T>
 	class DX11ConstantBuffer : public ShaderBufferObject<T>{
 		//VARIABLES
