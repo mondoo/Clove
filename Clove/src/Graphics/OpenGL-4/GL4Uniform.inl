@@ -18,6 +18,7 @@ namespace clv::gfx{
 	inline void GL4Uniform<T>::bind(unsigned int programID){
 		if(cachedProgramID != programID){
 			initialiseUniformLocation(programID);
+			cachedProgramID = programID;
 		}
 
 		applyValue();
