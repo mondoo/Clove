@@ -12,7 +12,7 @@ namespace clv::gfx{
 		: programID(glCreateProgram())
 		, modelUniform("model")
 		, normalMatrixUniform("normalMatrix")
-		, diffuseSlotUniform("material.diffuse", TBP_Diffuse) //This is tell opengl which slot this texture is in
+		, diffuseSlotUniform("material.diffuse", TBP_Diffuse) //This is tell opengl which slot this texture is in (basically the same as doing like t(1) in dx)
 		, specularSlotUniform("material.specular", TBP_Specular)
 		, matShininess("material.shininess", 32.0f){
 	}

@@ -31,10 +31,10 @@ namespace clv::gfx{
 		std::unordered_map<ShaderTypes, std::unique_ptr<Bindable>> shaders;
 		DX11VertexShader* vertexShader = nullptr;
 
-		DX11VertexConstantBuffer<VertexData> vertCB;
+		DX11VertexConstantBuffer<VertexData> vertCB; //Not all shaders will need / use this
 		VertexData vData;
 
-		DX11PixelConstantBuffer<MaterialData> materialCB;
+		DX11PixelConstantBuffer<MaterialData> materialCB; //Not all shaders will need / use this
 		MaterialData mData;
 
 		//FUNCTIONS	
