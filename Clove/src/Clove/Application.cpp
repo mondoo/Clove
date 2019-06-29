@@ -24,7 +24,7 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		window = std::unique_ptr<Window>(Window::create());
+		window = std::unique_ptr<Window>(Window::create({}, gfx::API::OpenGL4));
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 		window->setVSync(true);
 

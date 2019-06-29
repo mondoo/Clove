@@ -3,8 +3,6 @@
 #include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
 
 namespace clv::gfx{
-	//TODO: Rename when base class is figure out
-
 	template<typename T>
 	class GL4UniformBufferObject : public ShaderBufferObject<T>{
 		//VARIABLES
