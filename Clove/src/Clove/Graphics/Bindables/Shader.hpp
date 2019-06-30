@@ -17,6 +17,6 @@ namespace clv::gfx{
 		Shader& operator=(Shader&& other) noexcept;
 		virtual ~Shader();
 
-		virtual void attachShader(ShaderTypes type) = 0;
+		virtual void attachShader(ShaderType type) = 0;
 	};
 }

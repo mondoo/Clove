@@ -6,6 +6,7 @@
 #include "Clove/Graphics/Bindables/VertexBuffer.hpp"
 #include "Clove/Graphics/Bindables/IndexBuffer.hpp"
 #include "Clove/Graphics/BindableFactory.hpp"
+#include "Clove/Graphics/Bindables/Shader.hpp"
 
 namespace clv::ecs{
 	Render2DSystem::Render2DSystem(){

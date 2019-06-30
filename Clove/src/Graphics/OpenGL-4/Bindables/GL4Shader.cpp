@@ -50,7 +50,7 @@ namespace clv::gfx{
 		glDeleteShader(shaderID);
 	}
 
-	std::string GL4Shader::getPathForShader(ShaderTypes shader){
+	std::string GL4Shader::getPathForShader(ShaderType shader){
 		switch(shader){
 			case ShaderType::Vertex:
 				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-vs.glsl";

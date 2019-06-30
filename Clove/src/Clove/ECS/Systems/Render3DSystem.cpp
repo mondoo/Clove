@@ -17,8 +17,6 @@ namespace clv::ecs{
 	Render3DSystem::~Render3DSystem() = default;
 
 	void Render3DSystem::update(float deltaTime){
-		renderer->clear(); //NOTE: putting it here will clear the imgui shiz
-
 		//TODO: Temp just putting it here for now
 		vertCB->bind(*renderer);
 		materialCB->bind(*renderer);
@@ -44,12 +42,12 @@ namespace clv::ecs{
 		}
 	}
 
-	void Render3DSystem::initialiseRenderer(const gfx::Context& context){
-		renderer = gfx::Renderer::createRenderer(context);
+	void Render3DSystem::initialiseRenderer(const std::shared_ptr<gfx::Renderer>& renderer){
+		this->renderer = renderer;
 
 		//TODO: Temp?
-		vertCB = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderTypes::Vertex, gfx::BBP_ModelData);
-		materialCB = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderTypes::Pixel, gfx::BBP_MaterialData);
+		vertCB = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
+		materialCB = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
 	
 		mData.sininess = 32.0f;
 		materialCB->update(mData, *renderer);
