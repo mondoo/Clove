@@ -41,6 +41,7 @@ public:
 		ent2 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 		ent3 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 
+		//Couldn't i just smash the mesh component on the light?
 		lght1 = clv::Application::get().getManager().createEntity<clv::ecs::LightComponent, clv::ecs::Transform3DComponent>();
 		ltEnt = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 

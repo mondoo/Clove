@@ -14,28 +14,12 @@ namespace clv::gfx{
 	class Renderer;
 
 	class DX11VertexShader;
-	class DX11PixelShader;
-
-	struct VertexData{
-		math::Matrix4f model;
-		math::Matrix4f normalMatrix;
-	};
-
-	struct MaterialData{
-		alignas(16) float sininess;
-	};
 
 	class DX11Shader : public Shader{
 		//VARIABLES
 	private:
 		std::unordered_map<ShaderType, std::unique_ptr<Bindable>> shaders;
 		DX11VertexShader* vertexShader = nullptr;
-
-		DX11VertexConstantBuffer<VertexData> vertCB;
-		VertexData vData;
-
-		DX11PixelConstantBuffer<MaterialData> materialCB;
-		MaterialData mData;
 
 		//FUNCTIONS	
 	public:
@@ -50,8 +34,6 @@ namespace clv::gfx{
 		virtual void unbind() override;
 
 		virtual void attachShader(ShaderType type) override;
-
-		virtual void setModelMatrix(const math::Matrix4f& world) override;
 
 		DX11VertexShader& getVertexShader();
 	};

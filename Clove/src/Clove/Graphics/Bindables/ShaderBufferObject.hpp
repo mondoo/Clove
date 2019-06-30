@@ -13,9 +13,6 @@ namespace clv::gfx{
 
 	template<typename T>
 	class ShaderBufferObject : public Bindable{
-		//VARIABLES
-	private:
-
 		//FUNCTIONS
 	public:
 		ShaderBufferObject() = default;
@@ -28,5 +25,3 @@ namespace clv::gfx{
 		virtual void update(const T& data, Renderer& renderer) = 0;
 	};
 }
-
-#include "ShaderBufferObject.inl"

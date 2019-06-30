@@ -43,7 +43,7 @@ namespace clv::gfx{
 		cbd.Usage = D3D11_USAGE_DYNAMIC;
 		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = sizeof(data);
+		cbd.ByteWidth = sizeof(T);
 		cbd.StructureByteStride = 0;
 
 		D3D11_SUBRESOURCE_DATA csrd = { };
@@ -65,7 +65,7 @@ namespace clv::gfx{
 			0u,
 			&msr
 		));
-		memcpy(msr.pData, &data, sizeof(data));
+		memcpy(msr.pData, &data, sizeof(T));
 		dxrenderer->getContext().Unmap(constantBuffer.Get(), 0u);
 	}
 

@@ -22,10 +22,6 @@ namespace clv::ecs{
 
 	MeshComponent::~MeshComponent() = default;
 
-	void MeshComponent::setModelMatrix(const math::Matrix4f& model){
-		shader->setModelMatrix(model);
-	}
-
 	void MeshComponent::setMesh(const std::string& filePath){
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
@@ -60,7 +56,6 @@ namespace clv::ecs{
 		shader->attachShader(gfx::ShaderType::Vertex);
 		shader->attachShader(gfx::ShaderType::Pixel);
 		shader->bind(Application::get().getRenderer());
-		this->shader = shader.get();
 
 		//VB
 		std::unique_ptr<gfx::VertexBuffer> vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *shader);
@@ -69,7 +64,7 @@ namespace clv::ecs{
 		addIndexBuffer(gfx::BindableFactory::createIndexBuffer(indices));
 
 		addBindable(std::move(vertexBuffer));
-		addShader(std::move(shader));
+		addBindable(std::move(shader));
 	}
 
 	void MeshComponent::setDiffuseTexture(const std::string& path){
