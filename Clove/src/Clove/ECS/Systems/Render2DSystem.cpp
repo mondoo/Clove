@@ -19,13 +19,13 @@ namespace clv::ecs{
 		//Shader
 		
 		//VB
-		gfx::VertexLayout layout;
+		/*gfx::VertexLayout layout;
 		layout.add(gfx::VertexElementType::position3D).add(gfx::VertexElementType::texture2D);
 		gfx::VertexBufferData bufferData(std::move(layout));
 		bufferData.emplaceBack(math::Vector2f{ 1.0f, 1.0f }, math::Vector2f{ 1.0f, 1.0f });
 		bufferData.emplaceBack(math::Vector2f{ 0.0f, 1.0f }, math::Vector2f{ 0.0f, 1.0f });
 		bufferData.emplaceBack(math::Vector2f{ 0.0f, 0.0f }, math::Vector2f{ 0.0f, 0.0f });
-		bufferData.emplaceBack(math::Vector2f{ 1.0f, 0.0f }, math::Vector2f{ 1.0f, 0.0f });
+		bufferData.emplaceBack(math::Vector2f{ 1.0f, 0.0f }, math::Vector2f{ 1.0f, 0.0f });*/
 
 		//quadVBBuffer = gfx::BindableFactory::createVertexBuffer(bufferData, );
 

@@ -10,7 +10,7 @@ namespace clv::ecs{
 	EntityID Manager::nextID = 0;
 
 	Manager::Manager(){
-		systems[Render2DSystem::ID] = std::make_unique<Render3DSystem>();
+		systems[Render2DSystem::ID] = std::make_unique<Render2DSystem>();
 		systems[Render3DSystem::ID] = std::make_unique<Render3DSystem>();
 		systems[LightSystem::ID] = std::make_unique<LightSystem>();
 		systems[CameraSystem::ID] = std::make_unique<CameraSystem>();
