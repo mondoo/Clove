@@ -9,13 +9,12 @@
 
 namespace clv::gfx{
 	GL4Shader::GL4Shader()
-		: programID(glCreateProgram())
-		, vertCB(BBP_ModelData)
-		, materialCB(BBP_MaterialData){
-
-		mData.sininess = 32.0f;
-		materialCB.update(mData, Application::get().getRenderer());
+		: programID(glCreateProgram()){
 	}
+
+	GL4Shader::GL4Shader(GL4Shader&& other) noexcept = default;
+
+	GL4Shader& GL4Shader::operator=(GL4Shader&& other) noexcept = default;
 
 	GL4Shader::~GL4Shader(){
 		glDeleteProgram(programID);
@@ -23,11 +22,6 @@ namespace clv::gfx{
 
 	void GL4Shader::bind(Renderer& renderer){
 		glUseProgram(programID);
-
-		vertCB.update(vData, renderer);
-		vertCB.bind(renderer);
-
-		materialCB.bind(renderer);
 	}
 
 	void GL4Shader::unbind(){
@@ -54,11 +48,6 @@ namespace clv::gfx{
 		glLinkProgram(programID);
 		glValidateProgram(programID);
 		glDeleteShader(shaderID);
-	}
-
-	void GL4Shader::setModelMatrix(const math::Matrix4f& model){
-		vData.model = model;
-		vData.normalMatrix = math::transpose(math::inverse(model));
 	}
 
 	std::string GL4Shader::getPathForShader(ShaderTypes shader){

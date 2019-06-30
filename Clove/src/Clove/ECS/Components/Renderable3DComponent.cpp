@@ -25,10 +25,4 @@ namespace clv::ecs{
 		this->indexBuffer = indexBuffer.get();
 		bindables.push_back(std::move(indexBuffer));
 	}
-
-	void Renderable3DComponent::addShader(std::unique_ptr<gfx::Shader> shader){
-		CLV_ASSERT(this->shader == nullptr, "Shader already set!");
-		this->shader = shader.get();
-		bindables.push_back(std::move(shader));
-	}
 }
