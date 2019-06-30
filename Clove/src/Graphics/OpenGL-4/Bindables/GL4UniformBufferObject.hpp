@@ -9,6 +9,8 @@ namespace clv::gfx{
 	private:
 		unsigned int uboID = 0;
 
+		unsigned int bindingPoint = 0;
+
 		//FUNCTIONS
 	public:
 		GL4UniformBufferObject() = delete;
@@ -19,6 +21,7 @@ namespace clv::gfx{
 		~GL4UniformBufferObject();
 
 		GL4UniformBufferObject(unsigned int bindingPoint);
+		GL4UniformBufferObject(unsigned int bindingPoint, const T& data);
 
 		virtual void bind(Renderer& renderer) override;
 		virtual void unbind() override;

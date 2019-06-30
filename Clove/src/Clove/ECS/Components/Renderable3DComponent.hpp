@@ -19,7 +19,6 @@ namespace clv::ecs{
 	private:
 		std::vector<std::unique_ptr<gfx::Bindable>> bindables;
 		gfx::IndexBuffer* indexBuffer = nullptr;
-		gfx::Shader* shader = nullptr;
 
 		//FUNCTIONS
 	public:
@@ -33,6 +32,5 @@ namespace clv::ecs{
 	protected:
 		void addBindable(std::unique_ptr<gfx::Bindable> bindable);
 		void addIndexBuffer(std::unique_ptr<gfx::IndexBuffer> indexBuffer);
-		void addShader(std::unique_ptr<gfx::Shader> shader);
 	};
 }

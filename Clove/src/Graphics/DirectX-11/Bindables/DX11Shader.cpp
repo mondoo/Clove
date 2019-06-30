@@ -10,29 +10,16 @@
 #include <d3dcompiler.h>
 
 namespace clv::gfx{
-	DX11Shader::DX11Shader()
-		: vertCB(BBP_ModelData)
-		, materialCB(BBP_MaterialData){
+	DX11Shader::DX11Shader() = default;
 
-		mData.sininess = 32.0f;
-		materialCB.update(mData, Application::get().getRenderer());
-	}
-
-	DX11Shader::DX11Shader(DX11Shader&& other) noexcept
-		: vertCB(std::move(other.vertCB))
-		, materialCB(std::move(other.materialCB)){
+	DX11Shader::DX11Shader(DX11Shader&& other) noexcept{
 		shaders = std::move(other.shaders);
 		vertexShader = other.vertexShader;
-		other.vertexShader = nullptr;
 	}
 
 	DX11Shader& DX11Shader::operator=(DX11Shader&& other) noexcept{
 		shaders = std::move(other.shaders);
 		vertexShader = other.vertexShader;
-		other.vertexShader = nullptr;
-
-		vertCB = std::move(other.vertCB);
-		materialCB = std::move(other.materialCB);
 
 		return *this;
 	}
@@ -43,11 +30,6 @@ namespace clv::gfx{
 		for(const auto& [key, shader] : shaders){
 			shader->bind(renderer);
 		}
-
-		vertCB.update(vData, renderer);
-		vertCB.bind(renderer);
-
-		materialCB.bind(renderer);
 	}
 
 	void DX11Shader::unbind(){
@@ -70,11 +52,6 @@ namespace clv::gfx{
 				CLV_ASSERT(false, "Unknown type! " __FUNCTION__);
 				break;
 		}
-	}
-
-	void DX11Shader::setModelMatrix(const math::Matrix4f& model){
-		vData.model = model;
-		vData.normalMatrix = math::transpose(math::inverse(model));
 	}
 
 	DX11VertexShader& DX11Shader::getVertexShader(){

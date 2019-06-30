@@ -1,7 +1,7 @@
 #include "clvpch.hpp"
 #include "GL4Shader.hpp"
 
-#include "Clove/Graphics/Bindables/Texture.hpp"
+#include "Clove/Application.hpp"
 
 #include <glad/glad.h>
 #include <fstream>
@@ -9,13 +9,12 @@
 
 namespace clv::gfx{
 	GL4Shader::GL4Shader()
-		: programID(glCreateProgram())
-		, modelUniform("model")
-		, normalMatrixUniform("normalMatrix")
-		, diffuseSlotUniform("material.diffuse", TBP_Diffuse) //This is tell opengl which slot this texture is in
-		, specularSlotUniform("material.specular", TBP_Specular)
-		, matShininess("material.shininess", 32.0f){
+		: programID(glCreateProgram()){
 	}
+
+	GL4Shader::GL4Shader(GL4Shader&& other) noexcept = default;
+
+	GL4Shader& GL4Shader::operator=(GL4Shader&& other) noexcept = default;
 
 	GL4Shader::~GL4Shader(){
 		glDeleteProgram(programID);
@@ -23,12 +22,6 @@ namespace clv::gfx{
 
 	void GL4Shader::bind(Renderer& renderer){
 		glUseProgram(programID);
-
-		modelUniform.bind(programID);
-		normalMatrixUniform.bind(programID);
-		diffuseSlotUniform.bind(programID);
-		specularSlotUniform.bind(programID);
-		matShininess.bind(programID);
 	}
 
 	void GL4Shader::unbind(){
@@ -55,11 +48,6 @@ namespace clv::gfx{
 		glLinkProgram(programID);
 		glValidateProgram(programID);
 		glDeleteShader(shaderID);
-	}
-
-	void GL4Shader::setModelMatrix(const math::Matrix4f& model){
-		modelUniform.update(model);
-		normalMatrixUniform.update(math::transpose(math::inverse(model)));
 	}
 
 	std::string GL4Shader::getPathForShader(ShaderTypes shader){

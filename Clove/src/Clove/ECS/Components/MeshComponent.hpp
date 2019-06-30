@@ -14,8 +14,6 @@ namespace clv::ecs{
 	private:
 		std::vector<unsigned int> indices;
 
-		gfx::Shader* shader = nullptr;
-
 		//FUNCTIONS
 	public:
 		MeshComponent();
@@ -24,8 +22,6 @@ namespace clv::ecs{
 		MeshComponent& operator=(const MeshComponent& other) = delete;
 		MeshComponent& operator=(MeshComponent&& other) noexcept;
 		virtual ~MeshComponent();
-
-		void setModelMatrix(const math::Matrix4f& model);
 
 		void setMesh(const std::string& filePath);
 

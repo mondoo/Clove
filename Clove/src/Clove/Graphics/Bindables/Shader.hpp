@@ -18,7 +18,5 @@ namespace clv::gfx{
 		virtual ~Shader();
 
 		virtual void attachShader(ShaderTypes type) = 0;
-
-		virtual void setModelMatrix(const math::Matrix4f& world) = 0;
 	};
 }

@@ -4,6 +4,7 @@
 
 #include "Clove/ECS/Components/Transform3DComponent.hpp"
 #include "Clove/ECS/Components/Renderable3DComponent.hpp"
+#include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
 
 namespace clv::gfx{
 	class Renderer;
@@ -12,6 +13,17 @@ namespace clv::gfx{
 }
 
 namespace clv::ecs{
+	//TODO: Temp putting these here
+	struct VertexData{
+		math::Matrix4f model;
+		math::Matrix4f normalMatrix;
+	};
+
+	struct MaterialData{
+		alignas(16) float sininess;
+	};
+	//
+
 	class Render3DSystem : public System<Transform3DComponent, Renderable3DComponent>{
 		//VARIABLES
 	public:
@@ -19,6 +31,14 @@ namespace clv::ecs{
 
 	private:
 		std::unique_ptr<gfx::Renderer> renderer;
+
+		//TODO: Temp putting these here
+		std::unique_ptr<gfx::ShaderBufferObject<VertexData>> vertCB;
+		VertexData vData{};
+
+		std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> materialCB;
+		MaterialData mData{};
+		//
 
 		//FUNCTIONS
 	public:
