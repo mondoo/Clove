@@ -48,6 +48,17 @@ namespace clv::gfx{
 				shaders[type] = std::make_unique<DX11PixelShader>(L"Default-ps.cso");
 				break;
 
+			case ShaderType::Vertex2D:
+				{
+					auto vs = std::make_unique<DX11VertexShader>(L"2D-vs.cso");
+					vertexShader = vs.get();
+					shaders[type] = std::move(vs);
+				}
+				break;
+			case ShaderType::Pixel2D:
+				shaders[type] = std::make_unique<DX11PixelShader>(L"2D-ps.cso");
+				break;
+
 			default:
 				CLV_ASSERT(false, "Unknown type! " __FUNCTION__);
 				break;

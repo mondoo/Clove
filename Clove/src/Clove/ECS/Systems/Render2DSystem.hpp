@@ -25,6 +25,8 @@ namespace clv::ecs{
 		std::unique_ptr<gfx::VertexBuffer> quadVBBuffer;
 		std::unique_ptr<gfx::IndexBuffer> quadIBBuffer;
 
+		std::vector<unsigned int> indices;
+
 		//FUNCTIONS
 	public:
 		Render2DSystem();

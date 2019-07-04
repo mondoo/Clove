@@ -1,3 +1,3 @@
-float4 main( float4 pos : POSITION ) : SV_POSITION{
-	return pos;
+float4 main(float2 pos : Position, float2 tex : TexCoord) : SV_POSITION{
+	return float4(pos, 0.0f, 1.0f);
 }
