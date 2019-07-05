@@ -30,12 +30,6 @@ namespace clv::ecs{
 
 		//Temp? Needs window and that to be initialised
 
-		/*
-		TODO:
-		Setting up 2D shaders but the shader system is too coupled to the current shaders
-		so this will need to be refactored before continuing
-		*/
-
 		//Shader
 		quadShader = gfx::BindableFactory::createShader();
 		quadShader->attachShader(gfx::ShaderType::Vertex2D);
@@ -54,8 +48,8 @@ namespace clv::ecs{
 
 		//IB
 		indices = {
-			0, 2, 3,
-			0, 3, 1
+			1, 3, 0,
+			3, 2, 0
 		};
 		quadIBBuffer = gfx::BindableFactory::createIndexBuffer(indices);
 
