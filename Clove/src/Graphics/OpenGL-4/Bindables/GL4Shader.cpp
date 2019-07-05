@@ -32,9 +32,11 @@ namespace clv::gfx{
 		unsigned int gltype = 0;
 		switch(type){
 			case ShaderType::Vertex:
+			case ShaderType::Vertex2D:
 				gltype = GL_VERTEX_SHADER;
 				break;
 			case ShaderType::Pixel:
+			case ShaderType::Pixel2D:
 				gltype = GL_FRAGMENT_SHADER;
 				break;
 		}
@@ -58,6 +60,14 @@ namespace clv::gfx{
 
 			case ShaderType::Pixel:
 				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-ps.glsl";
+				break;
+
+			case ShaderType::Vertex2D:
+				return "../Clove/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl";
+				break;
+
+			case ShaderType::Pixel2D:
+				return "../Clove/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl";
 				break;
 
 			default:

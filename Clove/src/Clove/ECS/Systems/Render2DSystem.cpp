@@ -18,11 +18,25 @@ namespace clv::ecs{
 	Render2DSystem::~Render2DSystem() = default;
 
 	void Render2DSystem::update(float deltaTime){
+		std::vector<math::Vector2f> testPos{
+			{0.0f, 0.0f},
+			{-500.0f, 0.0f},
+			{-500.0f, 300.0f},
+			{560.0f, 82.0f},
+		};
+
 		quadShader->bind(*renderer);
 		quadVBBuffer->bind(*renderer);
 		quadIBBuffer->bind(*renderer);
+		SBO->bind(*renderer);
 
-		renderer->drawIndexed(quadIBBuffer->getIndexCount());
+		for(auto& pos : testPos){
+			math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), math::Vector3f(pos, 0.0f));
+			math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), math::Vector3f(math::Vector2f(50, 50), 0.0f));
+			data.modelProjection = proj * (translation * scale);
+			SBO->update(data, *renderer);
+			renderer->drawIndexed(quadIBBuffer->getIndexCount());
+		}
 	}
 
 	void Render2DSystem::initialiseRenderer(const std::shared_ptr<gfx::Renderer>& renderer){
@@ -53,5 +67,12 @@ namespace clv::ecs{
 		};
 		quadIBBuffer = gfx::BindableFactory::createIndexBuffer(indices);
 
+		//SBO
+		const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;
+		const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
+
+		proj = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
+
+		SBO = gfx::BindableFactory::createShaderBufferObject<ShaderData>(gfx::ShaderType::Vertex, gfx::BBP_2DData);
 	}
 }

@@ -8,7 +8,7 @@ namespace clv::gfx{
 	#endif
 	};
 
-	//TODO: These need adjusting
+	//TODO: These need adjusting. Also probably need a different way of doing this because the SBO uses this
 	enum class ShaderType{
 		Vertex,
 		Pixel,
