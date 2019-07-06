@@ -1,0 +1,44 @@
+maybe this is the point where i need the renderer command thing
+
+-submit 3d shit
+-submit 2d shit
+-renderer draws the 3d shit then the 2d shit#
+	-that way I can enable and disable depth buffering in one place
+
+the 'systems' should just be responsible for passing and preparing the data from the components
+
+-maybe I do need to it the cherno way then. Have a class for the API calls, a class for the command queue, a class for the higher level render shit
+	-the problem with the way I have done it with the systems is that a) I can'tr guarentee the order and b) it's happening in two places
+
+
+I think the 'systems' should just be responsible for parsing the data from the components. That's it
+Looks like I'll need to refactor my rendering system.
+
+Render2D/3DSystem
+	-Takes all data from the components and parses it into the Renderer
+
+Render:
+	-High level
+	-No  abstraction
+	-Will recieve all draw commands from systems within clove
+	-Can sort / optimise everything
+	-Submit those commands into a command queue
+	-Manages shaders
+	-Only API will basically be to submit things
+
+RenderCommand(?):
+	-Stores all commands from the renderer ready to be submitted to the renderer api
+	-Will have the API for all the commands Clove supports (Clear, Draw w/e)
+
+RenderAPI(?):
+	-Contains all of the api commands
+	-Is the abstraction
+
+
+
+I can do without the RenderCommand but I might as well if I'm restructuring everything. 
+The important part is seperating the API call from the high level render shinanagins and not giving too responsibility to the systems
+
+Is there anything I want to do to change the context while I'm in here. should this just be merged into the render api abstraction?
+-The only thing the context currently does is abstract opengl stuff and cause film flams for dx
+-Will have to put more thought into this
