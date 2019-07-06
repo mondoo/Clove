@@ -28,6 +28,8 @@ namespace clv::gfx{
 		glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
 		glFrontFace(GL_CCW);
+		glCullFace(GL_BACK);
+		glEnable(GL_CULL_FACE);
 
 		glDebugMessageCallback(errorCallback, nullptr);
 		glEnable(GL_DEBUG_OUTPUT);
