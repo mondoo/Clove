@@ -28,7 +28,7 @@ namespace clv::ecs{
 		}
 
 		components.erase(ID);
-		for(const auto& [ID, system] : systems){
+		for(const auto& [sysID, system] : systems){
 			system->onEntityDestroyed(ID);
 		}
 	}
