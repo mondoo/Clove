@@ -17,6 +17,10 @@ namespace clv::ecs{
 	Render3DSystem::~Render3DSystem() = default;
 
 	void Render3DSystem::update(float deltaTime){
+		//Note: How do I want the below to look?
+		//I like the idea of the system just parsing the data then giving it to the renderer
+		//	-but what will the renderer need?
+
 		//renderer->clear(); //NOTE: putting it here will clear the imgui shiz
 
 		for(auto& componentTuple : components){

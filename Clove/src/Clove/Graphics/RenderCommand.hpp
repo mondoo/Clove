@@ -16,6 +16,22 @@ namespace clv::gfx{
 
 		static void setClearColour(const math::Vector4f& colour);
 
+		//Do we have the bind calls here then?
+		/*
+		bindVB(const VerteBuffer& buff)
+		bindIB(const IndexBuffer& buff)
+		...
+		*/
+
+		//I still like the idea of the bindables binding themselves though
+		//either way I think there'll have to be a call to the render command - just not sure on the best way to do it
+		//	-I think it's fine to put it on the bindables (somehow) - the idea being that renderer will just tell it bind when it's issuing the commands
+
+		//And what about initialisation? 
+		//	-really though what are the bindables purpose? just to store data related to that specific bindable really?
+
+		//I think this class would make more sense if it was like the render API - not the other way around. And the bindables need to bind through the renderAPI
+
 		//TODO: Like this?
 		static void initialiseRenderAPI(const Context& context);
 		

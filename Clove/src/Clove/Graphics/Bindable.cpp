@@ -1,8 +1,6 @@
 #include "clvpch.hpp"
 #include "Bindable.hpp"
 
-#include "Clove/Graphics/Renderer.hpp"
-
 namespace clv::gfx{
 	Bindable::Bindable() = default;
 

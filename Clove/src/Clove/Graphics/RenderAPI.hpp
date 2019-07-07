@@ -18,6 +18,8 @@ namespace clv::gfx{
 		virtual void drawIndexed(const unsigned int count) = 0;
 
 		virtual void setClearColour(const math::Vector4f& colour) = 0;
+/*
+		virtual void setIndexBuffer*/
 
 		//TODO: Should we do this here?
 		static std::unique_ptr<RenderAPI> initialiseRenderAPI(const Context& context);

@@ -31,11 +31,17 @@ namespace clv::gfx{
 	}
 
 	void Renderer::submitMesh(const math::Matrix4f& model, IndexBuffer* IB, const std::vector<std::unique_ptr<Bindable>>& bindables){
+		//What data am i expecting here?
+		//Will this just add data to an array?
+		//It will basically hold the bindables and then bind and draw them at the end of the scene?
+		
 		//TODO: How to get index buffer?
+
+
 		
 		//TODO: Temp just putting it here for now
-		vertCB->bind(*renderer); //TODO: How on earth do I bind them now?
-		materialCB->bind(*renderer);
+		vertCB->bind();
+		materialCB->bind();
 		//
 
 		//TODO: Temp just putting it here for now
@@ -45,7 +51,7 @@ namespace clv::gfx{
 		//
 
 		for(const auto& bindable : bindables){
-			bindable->bind(*renderer);
+			bindable->bind();
 		}
 
 		//TODO: Need IB

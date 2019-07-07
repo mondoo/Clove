@@ -19,6 +19,15 @@ namespace clv::gfx{
 	};
 	//
 
+	//Submit something like this?
+	struct SubmissionData{
+		int indexCount = 0;
+		math::Matrix4f modelData;
+		std::vector<std::unique_ptr<Bindable>>& bindables;
+	};
+
+	//Explore this - then figure out how the bindables will bind and create themselves
+
 	class Renderer{
 		//VARIABLES
 	protected:
@@ -31,6 +40,8 @@ namespace clv::gfx{
 		static std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> materialCB;
 		static MaterialData mData{};
 		//
+
+		//should this hold the context?
 
 		//FUNCTIONS
 	public:
@@ -52,7 +63,8 @@ namespace clv::gfx{
 		static void beginScene();
 		static void endScene();
 
-		//TODO: Need better parameters
+		//TODO: Need better parameters - could just pass the renderable component here?
 		static void submitMesh(const math::Matrix4f& model, IndexBuffer* IB, const std::vector<std::unique_ptr<Bindable>>& bindables);
+
 	};
 }

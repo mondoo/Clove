@@ -40,7 +40,7 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		virtual void bind(Renderer& renderer) override;
+		virtual void bind() override;
 		virtual void unbind() override;
 	};
 
@@ -52,7 +52,7 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		virtual void bind(Renderer& renderer) override;
+		virtual void bind() override;
 		virtual void unbind() override;
 	};
 }

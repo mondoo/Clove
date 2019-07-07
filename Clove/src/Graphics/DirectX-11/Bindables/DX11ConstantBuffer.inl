@@ -70,7 +70,7 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	inline void DX11VertexConstantBuffer<T>::bind(Renderer& renderer){
+	inline void DX11VertexConstantBuffer<T>::bind(){
 		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
 		dxrenderer->getContext().VSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
 	}
@@ -80,7 +80,7 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	inline void DX11PixelConstantBuffer<T>::bind(Renderer& renderer){
+	inline void DX11PixelConstantBuffer<T>::bind(){
 		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
 		dxrenderer->getContext().PSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
 	}

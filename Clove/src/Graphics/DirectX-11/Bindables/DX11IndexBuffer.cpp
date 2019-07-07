@@ -36,9 +36,42 @@ namespace clv::gfx{
 		DX11_THROW_INFO(dxrenderer->getDevice().CreateBuffer(&ibd, &isrd, &indexBuffer));
 	}
 
-	void DX11IndexBuffer::bind(Renderer& renderer){
+	void DX11IndexBuffer::bind(){
 		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
 		dxrenderer->getContext().IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
+		//should the context here literally just be the context class?
+		//the device issues the commands and the context creates. so it could work?
+		//how are the opengl context expected to work?
+		//How should the context class in general work now?
+		//	-it's the other way around. Device creates, context issue commands
+		//	-opeengl context is really only there to handle different platforms
+
+		//How do I get access to the device or context now though? The render api is tucked away
+
+		/*
+		Do we event want objects to be able to get access to the raw renderapi like that?
+		I have a feeling that everything should go through the command so it won't flim flam the threading.
+		Although, it's only supposed to represent 'commands' so can we bypass it to create our objects?
+
+		Is there a part of DX I can use to get around this?
+
+		Do I call off to the render command to create these?
+			-Haven't seen people do that, usually they pass the devices / contexts down here
+
+		Do I just pass the actual context down instead of the renderer?
+			-How does creation / binding of objects work for multi threading
+
+		Do I make a render command to set the index buffer??????
+			-Looking like I might have to. In DX it's the context that gets deffered where as the device isn't
+				-And it is technically a render command
+				-How do I abstract this though?
+				-The only way I think this wouldn't be like this is if there was another class involved?
+			-Will I even use the in built dx functionality for rendering?
+				-I mean I should, and I'll at least follow the structure (command lists etc)
+
+
+		Also should the context be called the RenderPlatformContext?
+		*/
 	}
 
 	void DX11IndexBuffer::unbind(){

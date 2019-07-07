@@ -21,7 +21,7 @@ namespace clv::gfx{
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, dataSize, indices.data(), GL_STATIC_DRAW);
 	}
 
-	void GL4IndexBuffer::bind(Renderer& renderer){
+	void GL4IndexBuffer::bind(){
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
 	}
 
