@@ -45,7 +45,7 @@ namespace clv{
 		static Application& get();
 		
 		Window& getWindow();
-		gfx::Renderer& getRenderer();
+		//gfx::Renderer& getRenderer();
 		ecs::Manager& getManager();
 
 	private:

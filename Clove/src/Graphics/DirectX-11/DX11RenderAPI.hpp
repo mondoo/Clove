@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/RenderAPI.hpp"
 
 #include "Graphics/DirectX-11/DXGIInfoManager.hpp"
 
@@ -14,7 +14,7 @@ struct ID3D11DepthStencilView;
 namespace clv::gfx{
 	class Context;
 
-	class DX11Renderer : public Renderer{
+	class DX11RenderAPI : public RenderAPI{
 		//VARIABLES
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice; //Device creates
@@ -27,22 +27,28 @@ namespace clv::gfx{
 		DXGIInfoManager infoManager; //Used by certain DX11 exception macros
 	#endif
 
+		math::Vector4f clearColour = { 0.0f, 0.0f, 0.0f, 0.0f };
+
 		//FUNCTIONS
 	public:
-		DX11Renderer() = delete;
-		DX11Renderer(const DX11Renderer& other) = delete;
-		DX11Renderer(DX11Renderer&& other) noexcept = delete;
-		DX11Renderer& operator=(const DX11Renderer& other) = delete;
-		DX11Renderer& operator=(DX11Renderer&& other) noexcept = delete;
-		~DX11Renderer();
+		DX11RenderAPI() = delete;
+		DX11RenderAPI(const DX11RenderAPI& other) = delete;
+		DX11RenderAPI(DX11RenderAPI&& other) noexcept = delete;
+		DX11RenderAPI& operator=(const DX11RenderAPI& other) = delete;
+		DX11RenderAPI& operator=(DX11RenderAPI&& other) noexcept = delete;
+		~DX11RenderAPI();
 
-		DX11Renderer(const Context& context);
+		DX11RenderAPI(const Context& context);
 
 		virtual void clear() override;
 		virtual void drawIndexed(const unsigned int count) override;
 
+		virtual void setClearColour(const math::Vector4f& colour) override;
+
+		//TODO: Is there anyway to get rid of these?
 		ID3D11Device& getDevice() const;
 		ID3D11DeviceContext& getContext() const;
+		//...
 
 	#if CLV_DEBUG
 		DXGIInfoManager& getInfoManager();

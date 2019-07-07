@@ -1,7 +1,6 @@
 #include "clvpch.hpp"
 #include "Context.hpp"
 
-#include "Clove/Graphics/GraphicsTypes.hpp"
 #if CLV_PLATFORM_WINDOWS
 #include "Graphics/OpenGL-4/WGLContext.hpp"
 #include "Graphics/DirectX-11/DXContext.hpp"

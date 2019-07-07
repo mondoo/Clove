@@ -2,10 +2,10 @@
 #include "Render3DSystem.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Graphics/Bindable.hpp"
-#include "Clove/Graphics/Bindables/IndexBuffer.hpp"
-#include "Clove/Graphics/Bindables/Shader.hpp"
-#include "Clove/Graphics/BindableFactory.hpp"
+//#include "Clove/Graphics/Bindable.hpp"
+//#include "Clove/Graphics/Bindables/IndexBuffer.hpp"
+//#include "Clove/Graphics/Bindables/Shader.hpp"
+//#include "Clove/Graphics/BindableFactory.hpp"
 
 namespace clv::ecs{
 	Render3DSystem::Render3DSystem() = default;
@@ -17,12 +17,7 @@ namespace clv::ecs{
 	Render3DSystem::~Render3DSystem() = default;
 
 	void Render3DSystem::update(float deltaTime){
-		renderer->clear(); //NOTE: putting it here will clear the imgui shiz
-
-		//TODO: Temp just putting it here for now
-		vertCB->bind(*renderer);
-		materialCB->bind(*renderer);
-		//
+		//renderer->clear(); //NOTE: putting it here will clear the imgui shiz
 
 		for(auto& componentTuple : components){
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
@@ -30,35 +25,32 @@ namespace clv::ecs{
 
 			const math::Matrix4f modelMat = getTransformWorldMatrix(transform);
 
-			//TODO: Temp just putting it here for now
-			vData.model = modelMat;
-			vData.normalMatrix = math::transpose(math::inverse(modelMat));
-			vertCB->update(vData, *renderer);
-			//
-
-			for(const auto& bindable : renderable->bindables){
+			gfx::Renderer::submitMesh(modelMat, renderable->indexBuffer, renderable->bindables);
+			
+			/*for(const auto& bindable : renderable->bindables){
 				bindable->bind(*renderer);
-			}
+			}*/
 
-			renderer->drawIndexed(renderable->indexBuffer->getIndexCount());
+			//renderer->drawIndexed(renderable->indexBuffer->getIndexCount());
 		}
 	}
 
-	void Render3DSystem::initialiseRenderer(const gfx::Context& context){
-		renderer = gfx::Renderer::createRenderer(context);
+	//void Render3DSystem::initialiseRenderer(const gfx::Context& context){
+	//	renderer = gfx::Renderer::createRenderer(context);
 
-		//TODO: Temp?
-		vertCB = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderTypes::Vertex, gfx::BBP_ModelData);
-		materialCB = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderTypes::Pixel, gfx::BBP_MaterialData);
-	
-		mData.sininess = 32.0f;
-		materialCB->update(mData, *renderer);
-		//
-	}
+	//	//TODO: Temp?
+	//	vertCB = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderTypes::Vertex, gfx::BBP_ModelData);
+	//	materialCB = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderTypes::Pixel, gfx::BBP_MaterialData);
+	//
+	//	mData.sininess = 32.0f;
+	//	materialCB->update(mData, *renderer);
+	//	//
+	//}
 
-	gfx::Renderer& Render3DSystem::getRenderer(){
+	/*gfx::Renderer& Render3DSystem::getRenderer(){
 		return *renderer;
-	}
+	}*/
+
 	math::Matrix4f Render3DSystem::getTransformWorldMatrix(Transform3DComponent* component){
 		const auto& [rot, angle] = component->getLocalRotation();
 

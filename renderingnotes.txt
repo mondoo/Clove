@@ -26,11 +26,11 @@ Render:
 	-Manages shaders
 	-Only API will basically be to submit things
 
-RenderCommand(?):
+RenderCommand:
 	-Stores all commands from the renderer ready to be submitted to the renderer api
 	-Will have the API for all the commands Clove supports (Clear, Draw w/e)
 
-RenderAPI(?):
+RenderAPI:
 	-Contains all of the api commands
 	-Is the abstraction
 

@@ -1,5 +1,5 @@
 #include "clvpch.hpp"
-#include "GL4Renderer.hpp"
+#include "GL4RenderAPI.hpp"
 
 #include "Clove/Platform/Window.hpp"
 #include "Graphics/OpenGL-4/GL4Exception.hpp"
@@ -8,9 +8,9 @@
 #include <glad/glad.h>
 
 namespace clv::gfx{
-	GL4Renderer::~GL4Renderer() = default;
+	GL4RenderAPI::~GL4RenderAPI() = default;
 
-	GL4Renderer::GL4Renderer(const Context& context){
+	GL4RenderAPI::GL4RenderAPI(const Context& context){
 		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
 
 		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
@@ -25,8 +25,6 @@ namespace clv::gfx{
 		glEnable(GL_BLEND);
 		//I guess it's called blending because you blend the src with the destination
 
-		glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-
 		glFrontFace(GL_CCW);
 		glCullFace(GL_BACK);
 		glEnable(GL_CULL_FACE);
@@ -36,12 +34,16 @@ namespace clv::gfx{
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	}
 
-	void GL4Renderer::clear(){
+	void GL4RenderAPI::clear(){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void GL4Renderer::drawIndexed(const unsigned int count){
+	void GL4RenderAPI::drawIndexed(const unsigned int count){
 		CLV_TIME_SCOPE("OpenGL4: DrawIndexed");
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
+	}
+
+	void GL4RenderAPI::setClearColour(const math::Vector4f& colour){
+		glClearColor(colour.r, colour.g, colour.b, colour.a);
 	}
 }
