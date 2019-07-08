@@ -5,6 +5,7 @@
 
 //Keeping?
 #include "Clove/Graphics/Bindables/IndexBuffer.hpp"
+#include "Clove/Graphics/BindableFactory.hpp"
 
 namespace clv::gfx{
 	Renderer::Renderer(){
@@ -16,7 +17,7 @@ namespace clv::gfx{
 		materialCB = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderTypes::Pixel, gfx::BBP_MaterialData);
 
 		mData.sininess = 32.0f;
-		materialCB->update(mData, *renderer);
+		materialCB->update(mData, /**renderer*/);
 		//
 	}
 
@@ -30,7 +31,10 @@ namespace clv::gfx{
 		//TODO
 	}
 
-	void Renderer::submitMesh(const math::Matrix4f& model, IndexBuffer* IB, const std::vector<std::unique_ptr<Bindable>>& bindables){
+	//How would I choose the correct shader? should that still be done on the render system?
+
+	void Renderer::submitMesh(SubmitData data){//TODO: Should I just make a Drawable or something that the RenderableComponents hold?
+	//void Renderer::submitMesh(const math::Matrix4f& model, IndexBuffer* IB, const std::vector<std::unique_ptr<Bindable>>& bindables){
 		//What data am i expecting here?
 		//Will this just add data to an array?
 		//It will basically hold the bindables and then bind and draw them at the end of the scene?
@@ -45,17 +49,16 @@ namespace clv::gfx{
 		//
 
 		//TODO: Temp just putting it here for now
-		vData.model = model;
-		vData.normalMatrix = math::transpose(math::inverse(model));
-		vertCB->update(vData, *renderer);
+		vData.model = data.modelData;
+		vData.normalMatrix = math::transpose(math::inverse(data.modelData));
+		vertCB->update(vData);
 		//
 
-		for(const auto& bindable : bindables){
+		for(const auto& bindable : data.bindables){
 			bindable->bind();
 		}
 
-		//TODO: Need IB
-		RenderCommand::drawIndexed(IB->getIndexCount());
+		RenderCommand::drawIndexed(data.indexCount);
 	}
 
 	//std::unique_ptr<Renderer> Renderer::createRenderer(const Context& context){

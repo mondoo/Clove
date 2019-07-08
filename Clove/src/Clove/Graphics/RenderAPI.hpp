@@ -11,7 +11,6 @@ namespace clv::gfx{
 	class Context;
 
 	class RenderAPI{
-
 		//FUNCTIONS
 	public:
 		virtual void clear() = 0;

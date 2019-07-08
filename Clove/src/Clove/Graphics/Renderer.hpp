@@ -7,6 +7,7 @@
 namespace clv::gfx{
 	class Bindable;
 	class IndexBuffer;
+	enum class API;
 
 	//TODO: Temp putting these here
 	struct VertexData{
@@ -20,9 +21,9 @@ namespace clv::gfx{
 	//
 
 	//Submit something like this?
-	struct SubmissionData{
+	struct SubmitData{
 		int indexCount = 0;
-		math::Matrix4f modelData;
+		math::Matrix4f modelData{};
 		std::vector<std::unique_ptr<Bindable>>& bindables;
 	};
 
@@ -64,7 +65,7 @@ namespace clv::gfx{
 		static void endScene();
 
 		//TODO: Need better parameters - could just pass the renderable component here?
-		static void submitMesh(const math::Matrix4f& model, IndexBuffer* IB, const std::vector<std::unique_ptr<Bindable>>& bindables);
-
+		//static void submitMesh(const math::Matrix4f& model, IndexBuffer* IB, const std::vector<std::unique_ptr<Bindable>>& bindables);
+		static void submitMesh(SubmitData data);
 	};
 }

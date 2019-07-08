@@ -4,8 +4,8 @@
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
-#include "Graphics/DirectX-11/DX11Renderer.hpp"
-#include "Clove/Graphics/Renderer.hpp"
+//#include "Graphics/DirectX-11/DX11Renderer.hpp"
+//#include "Clove/Graphics/Renderer.hpp"
 
 #include <d3d11.h>
 

@@ -3,7 +3,7 @@
 
 #include "Clove/Graphics/Renderer.hpp"
 //#include "Clove/Graphics/Bindable.hpp"
-//#include "Clove/Graphics/Bindables/IndexBuffer.hpp"
+#include "Clove/Graphics/Bindables/IndexBuffer.hpp"
 //#include "Clove/Graphics/Bindables/Shader.hpp"
 //#include "Clove/Graphics/BindableFactory.hpp"
 
@@ -29,7 +29,7 @@ namespace clv::ecs{
 
 			const math::Matrix4f modelMat = getTransformWorldMatrix(transform);
 
-			gfx::Renderer::submitMesh(modelMat, renderable->indexBuffer, renderable->bindables);
+			gfx::Renderer::submitMesh(std::move(gfx::SubmitData{ renderable->indexBuffer->getIndexCount(), modelMat, renderable->bindables }));
 			
 			/*for(const auto& bindable : renderable->bindables){
 				bindable->bind(*renderer);
