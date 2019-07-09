@@ -36,22 +36,16 @@ namespace clv::gfx{
 
 		//TODO: Temp putting these here
 		static std::unique_ptr<gfx::ShaderBufferObject<VertexData>> vertCB;
-		static VertexData vData{};
+		static VertexData vData;
 
 		static std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> materialCB;
-		static MaterialData mData{};
+		static MaterialData mData;
 		//
 
 		//should this hold the context?
 
 		//FUNCTIONS
 	public:
-		Renderer();
-		Renderer(const Renderer& other) = delete;
-		Renderer(Renderer&& other) noexcept = delete;
-		Renderer& operator=(const Renderer& other) = delete;
-		Renderer& operator=(Renderer&& other) noexcept = delete;
-		~Renderer();
 
 		//TODO: Does this still recieve the context?
 		//	-The only reason the api recieves it is so DX can grab it's boys

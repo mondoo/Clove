@@ -3,9 +3,6 @@
 
 #include "Graphics/DirectX-11/DX11Exception.hpp"
 #include "Graphics/DirectX-11/DX11RenderAPI.hpp"
-//#include "Graphics/DirectX-11/DX11Renderer.hpp"
-//#include "Clove/Graphics/Renderer.hpp"
-//#include "Clove/Graphics/RenderCommand.hpp"
 
 #include <d3d11.h>
 
@@ -17,8 +14,6 @@ namespace clv::gfx{
 	DX11IndexBuffer::~DX11IndexBuffer() = default;
 
 	DX11IndexBuffer::DX11IndexBuffer(const std::vector<unsigned int>& indices){
-		DX11_INFO_PROVIDER;
-
 		count = static_cast<unsigned int>(indices.size());
 
 		D3D11_BUFFER_DESC  ibd = { };
@@ -32,6 +27,7 @@ namespace clv::gfx{
 		D3D11_SUBRESOURCE_DATA isrd = { };
 		isrd.pSysMem = indices.data();
 
+		DX11_INFO_PROVIDER;
 		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateBuffer(&ibd, &isrd, &indexBuffer));
 	}
 

@@ -35,13 +35,9 @@ namespace clv::gfx{
 		}
 	}
 
-	void GL4Texture::bind(Renderer& renderer){
+	void GL4Texture::bind(){
 		glActiveTexture(GL_TEXTURE0 + bindingPoint);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
-	}
-
-	void GL4Texture::unbind(){
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	int GL4Texture::getWidth() const{

@@ -8,22 +8,18 @@
 #include "Clove/Graphics/BindableFactory.hpp"
 
 namespace clv::gfx{
-	Renderer::Renderer(){
-		//TODO: Initialise API here?
+	VertexData Renderer::vData{};
+	MaterialData Renderer::mData{};
 
-
+	void Renderer::beginScene(){
 		//TODO: Temp?
 		vertCB = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderTypes::Vertex, gfx::BBP_ModelData);
 		materialCB = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderTypes::Pixel, gfx::BBP_MaterialData);
 
 		mData.sininess = 32.0f;
-		materialCB->update(mData, /**renderer*/);
+		materialCB->update(mData/**, renderer*/);
 		//
-	}
-
-	Renderer::~Renderer() = default;
-
-	void Renderer::beginScene(){
+		
 		RenderCommand::clear();
 	}
 
