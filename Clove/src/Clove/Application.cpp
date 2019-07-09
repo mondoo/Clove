@@ -28,7 +28,6 @@ namespace clv{
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 		window->setVSync(true);
 
-		//ecsManager.getSystem<ecs::Render3DSystem>()->initialiseRenderer(window->getContext());
 		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
 
 		layerStack = std::make_unique<LayerStack>();
@@ -163,10 +162,6 @@ namespace clv{
 	Window& Application::getWindow(){
 		return *window;
 	}
-
-	//gfx::Renderer& Application::getRenderer(){
-	//	return ecsManager.getSystem<ecs::Render3DSystem>()->getRenderer();
-	//}
 
 	ecs::Manager& Application::getManager(){
 		return ecsManager;
