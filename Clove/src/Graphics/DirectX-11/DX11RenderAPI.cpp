@@ -9,6 +9,13 @@
 #include <d3dcompiler.h>
 
 namespace clv::gfx{
+	Microsoft::WRL::ComPtr<ID3D11Device> DX11RenderAPI::d3dDevice;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> DX11RenderAPI::d3dContext;
+
+#if CLV_DEBUG
+	DXGIInfoManager DX11RenderAPI::infoManager;
+#endif
+
 	DX11RenderAPI::~DX11RenderAPI() = default;
 
 	DX11RenderAPI::DX11RenderAPI(const Context& context){

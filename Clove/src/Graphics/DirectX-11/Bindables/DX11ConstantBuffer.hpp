@@ -41,7 +41,6 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		virtual void bind() override;
-		virtual void unbind() override;
 	};
 
 	template <typename T>
@@ -53,7 +52,6 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		virtual void bind() override;
-		virtual void unbind() override;
 	};
 }
 

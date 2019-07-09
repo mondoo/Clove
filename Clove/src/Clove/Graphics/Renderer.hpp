@@ -22,7 +22,7 @@ namespace clv::gfx{
 
 	//Submit something like this?
 	struct SubmitData{
-		int indexCount = 0;
+		unsigned int indexCount = 0;
 		math::Matrix4f modelData{};
 		std::vector<std::unique_ptr<Bindable>>& bindables;
 	};

@@ -34,10 +34,10 @@ namespace clv::ecs{
 
 			camera->viewData.view = lookAt;
 			camera->viewData.projection = camera->currentProjection;
-			camera->sboMat->update(camera->viewData, Application::get().getRenderer());
+			camera->sboMat->update(camera->viewData);
 
 			camera->pos.pos = position;
-			camera->sboPos->update(camera->pos, Application::get().getRenderer());
+			camera->sboPos->update(camera->pos);
 		}
 	}
 }

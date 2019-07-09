@@ -24,7 +24,6 @@ namespace clv::gfx{
 		GL4UniformBufferObject(unsigned int bindingPoint, const T& data);
 
 		virtual void bind() override;
-		virtual void unbind() override;
 
 		virtual void update(const T& data) override;
 	};

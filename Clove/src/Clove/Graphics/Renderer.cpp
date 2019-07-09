@@ -8,7 +8,9 @@
 #include "Clove/Graphics/BindableFactory.hpp"
 
 namespace clv::gfx{
+	std::unique_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertCB;
 	VertexData Renderer::vData{};
+	std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialCB;
 	MaterialData Renderer::mData{};
 
 	void Renderer::beginScene(){

@@ -8,6 +8,8 @@
 #include "Clove/Graphics/Context.hpp"
 
 namespace clv::gfx{
+	std::unique_ptr<RenderAPI> RenderCommand::renderAPI;
+
 	void RenderCommand::clear(){
 		renderAPI->clear();
 	}

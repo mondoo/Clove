@@ -14,8 +14,8 @@
 #include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Graphics/Renderer.hpp"
 
+#include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/RenderCommand.hpp"
-#include "Clove/ECS/Systems/Render3DSystem.hpp"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -29,6 +29,7 @@ namespace clv{
 		window->setVSync(true);
 
 		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
+		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
 		layerStack = std::make_unique<LayerStack>();
 
@@ -113,6 +114,7 @@ namespace clv{
 				layer->onUpdate();
 			}
 
+			gfx::Renderer::beginScene();
 			ecsManager.update(deltaSeonds.count());
 
 		#if CLV_PLATFORM_WINDOWS
@@ -123,6 +125,7 @@ namespace clv{
 			imGuiLayer->end();
 		#endif
 			
+			gfx::Renderer::endScene();
 			window->endFrame();
 		}
 	}
