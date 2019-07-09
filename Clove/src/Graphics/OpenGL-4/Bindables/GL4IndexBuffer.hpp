@@ -26,5 +26,6 @@ namespace clv::gfx{
 		virtual void unbind() override;
 
 		virtual unsigned int getIndexCount() const override;
+		unsigned int getBufferID() const;
 	};
 }

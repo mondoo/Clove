@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "GL4IndexBuffer.hpp"
 
+#include "Clove/Graphics/RenderCommand.hpp"
+
 #include <glad/glad.h>
 
 namespace clv::gfx{
@@ -22,7 +24,7 @@ namespace clv::gfx{
 	}
 
 	void GL4IndexBuffer::bind(){
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
+		RenderCommand::setIndexBuffer(*this);
 	}
 
 	void GL4IndexBuffer::unbind(){
@@ -31,5 +33,9 @@ namespace clv::gfx{
 
 	unsigned int GL4IndexBuffer::getIndexCount() const{
 		return count;
+	}
+	
+	unsigned int GL4IndexBuffer::getBufferID() const{
+		return bufferID;
 	}
 }

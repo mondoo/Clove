@@ -1,7 +1,11 @@
 #include "clvpch.hpp"
 #include "RenderCommand.hpp"
 
-#include "Clove/Graphics/RenderAPI.hpp"
+#include "Graphics/OpenGL-4/GL4RenderAPI.hpp"
+#if CLV_PLATFORM_WINDOWS
+#include "Graphics/DirectX-11/DX11RenderAPI.hpp"
+#endif
+#include "Clove/Graphics/Context.hpp"
 
 namespace clv::gfx{
 	void RenderCommand::clear(){
@@ -16,7 +20,27 @@ namespace clv::gfx{
 		renderAPI->setClearColour(colour);
 	}
 
+	void RenderCommand::setIndexBuffer(const IndexBuffer& buffer){
+		renderAPI->setIndexBuffer(buffer);
+	}
+
 	void RenderCommand::initialiseRenderAPI(const Context& context){
-		renderAPI = RenderAPI::initialiseRenderAPI(context);
+		switch(context.getAPI()){
+			case API::OpenGL4:
+				CLV_LOG_TRACE("Creating OpenGL renderer");
+				renderAPI = std::make_unique<GL4RenderAPI>(context);
+				break;
+
+			#if CLV_PLATFORM_WINDOWS
+			case API::DirectX11:
+				CLV_LOG_TRACE("Creating DirectX11 renderer");
+				renderAPI = std::make_unique<DX11RenderAPI>(context);
+				break;
+			#endif
+
+			default:
+				CLV_LOG_ERROR("Default statement hit. Could not initialise RenderAPI: {0}", __func__);
+				break;
+		}
 	}
 }

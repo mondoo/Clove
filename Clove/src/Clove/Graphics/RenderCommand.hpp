@@ -16,6 +16,18 @@ namespace clv::gfx{
 
 		static void setClearColour(const math::Vector4f& colour);
 
+		static void setIndexBuffer(const IndexBuffer& buffer);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		//Do we have the bind calls here then?
 		/*
 		bindVB(const VerteBuffer& buff)

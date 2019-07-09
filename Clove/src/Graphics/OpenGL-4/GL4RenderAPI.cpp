@@ -1,9 +1,8 @@
 #include "clvpch.hpp"
 #include "GL4RenderAPI.hpp"
 
-#include "Clove/Platform/Window.hpp"
 #include "Graphics/OpenGL-4/GL4Exception.hpp"
-#include "Clove/Profiling/Timer.hpp"
+#include "Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp"
 
 #include <glad/glad.h>
 
@@ -39,11 +38,15 @@ namespace clv::gfx{
 	}
 
 	void GL4RenderAPI::drawIndexed(const unsigned int count){
-		CLV_TIME_SCOPE("OpenGL4: DrawIndexed");
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
 	}
 
 	void GL4RenderAPI::setClearColour(const math::Vector4f& colour){
 		glClearColor(colour.r, colour.g, colour.b, colour.a);
+	}
+
+	void GL4RenderAPI::setIndexBuffer(const IndexBuffer& buffer){
+		const GL4IndexBuffer& glBuff = static_cast<const GL4IndexBuffer&>(buffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glBuff.getBufferID());
 	}
 }

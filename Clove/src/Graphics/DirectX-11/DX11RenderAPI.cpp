@@ -3,8 +3,7 @@
 
 #include "Graphics/DirectX-11/DXContext.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
-#include "Clove/Input/Input.hpp"
-#include "Clove/Profiling/Timer.hpp"
+#include "Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp"
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -27,7 +26,6 @@ namespace clv::gfx{
 	}
 
 	void DX11RenderAPI::drawIndexed(const unsigned int count){
-		CLV_TIME_SCOPE("DX11: DrawIndexed");
 		DX11_THROW_INFO_ONLY(d3dContext->DrawIndexed(static_cast<UINT>(count), 0u, 0u));
 	}
 
@@ -35,15 +33,20 @@ namespace clv::gfx{
 		clearColour = colour;
 	}
 
-	ID3D11Device& DX11RenderAPI::getDevice() const{
-		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null device");
-		return *d3dDevice.Get();
+	void DX11RenderAPI::setIndexBuffer(const IndexBuffer& buffer){
+		const DX11IndexBuffer& dxBuff = static_cast<const DX11IndexBuffer&>(buffer);
+		d3dContext->IASetIndexBuffer(dxBuff.getBuffer(), DXGI_FORMAT_R32_UINT, 0u);
 	}
 
-	ID3D11DeviceContext& DX11RenderAPI::getContext() const{
+	/*ID3D11Device& DX11RenderAPI::getDevice() const{
+		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null device");
+		return *d3dDevice.Get();
+	}*/
+
+	/*ID3D11DeviceContext& DX11RenderAPI::getContext() const{
 		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null context");
 		return *d3dContext.Get();
-	}
+	}*/
 
 #if CLV_DEBUG
 	DXGIInfoManager& DX11RenderAPI::getInfoManager(){

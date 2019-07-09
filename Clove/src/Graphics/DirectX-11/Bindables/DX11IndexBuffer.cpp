@@ -6,6 +6,7 @@
 #include "Graphics/DirectX-11/DX11Exception.hpp"
 //#include "Graphics/DirectX-11/DX11Renderer.hpp"
 //#include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/RenderCommand.hpp"
 
 #include <d3d11.h>
 
@@ -37,8 +38,14 @@ namespace clv::gfx{
 	}
 
 	void DX11IndexBuffer::bind(){
-		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
-		dxrenderer->getContext().IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
+		RenderCommand::setIndexBuffer(*this); //TODO: This is how I'm thinking at the moment - could change
+		//Thinking about it this _might_ be moved onto the render. It it's going to batch everything
+		//That's not a problem for now though, because batching would require a rethink of how renderables
+		//would store this data.
+
+		//DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
+		//dxrenderer->getContext().IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
+
 		//should the context here literally just be the context class?
 		//the device issues the commands and the context creates. so it could work?
 		//how are the opengl context expected to work?
@@ -79,5 +86,9 @@ namespace clv::gfx{
 
 	unsigned int DX11IndexBuffer::getIndexCount() const{
 		return count;
+	}
+	
+	ID3D11Buffer* DX11IndexBuffer::getBuffer() const{
+		return indexBuffer.Get();
 	}
 }
