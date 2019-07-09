@@ -33,20 +33,15 @@ namespace clv::gfx{
 		clearColour = colour;
 	}
 
-	void DX11RenderAPI::setIndexBuffer(const IndexBuffer& buffer){
-		const DX11IndexBuffer& dxBuff = static_cast<const DX11IndexBuffer&>(buffer);
-		d3dContext->IASetIndexBuffer(dxBuff.getBuffer(), DXGI_FORMAT_R32_UINT, 0u);
-	}
-
-	/*ID3D11Device& DX11RenderAPI::getDevice() const{
+	ID3D11Device& DX11RenderAPI::getDevice(){
 		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null device");
 		return *d3dDevice.Get();
-	}*/
+	}
 
-	/*ID3D11DeviceContext& DX11RenderAPI::getContext() const{
-		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null context");
+	ID3D11DeviceContext& DX11RenderAPI::getContext(){
+		CLV_ASSERT(d3dContext != nullptr, __FUNCTION__" called with null context");
 		return *d3dContext.Get();
-	}*/
+	}
 
 #if CLV_DEBUG
 	DXGIInfoManager& DX11RenderAPI::getInfoManager(){

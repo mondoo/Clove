@@ -24,11 +24,7 @@ namespace clv::gfx{
 	}
 
 	void GL4IndexBuffer::bind(){
-		RenderCommand::setIndexBuffer(*this);
-	}
-
-	void GL4IndexBuffer::unbind(){
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
 	}
 
 	unsigned int GL4IndexBuffer::getIndexCount() const{

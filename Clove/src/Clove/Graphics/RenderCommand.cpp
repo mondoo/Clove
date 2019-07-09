@@ -20,9 +20,9 @@ namespace clv::gfx{
 		renderAPI->setClearColour(colour);
 	}
 
-	void RenderCommand::setIndexBuffer(const IndexBuffer& buffer){
+	/*void RenderCommand::setIndexBuffer(const IndexBuffer& buffer){
 		renderAPI->setIndexBuffer(buffer);
-	}
+	}*/
 
 	void RenderCommand::initialiseRenderAPI(const Context& context){
 		switch(context.getAPI()){

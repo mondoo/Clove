@@ -22,6 +22,6 @@ namespace clv::gfx{
 
 		virtual void setClearColour(const math::Vector4f& colour) override;
 
-		virtual void setIndexBuffer(const IndexBuffer& buffer) override;
+		/*virtual void setIndexBuffer(const IndexBuffer& buffer) override;*/
 	};
 }

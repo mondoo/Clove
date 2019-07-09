@@ -19,7 +19,7 @@ namespace clv::gfx{
 
 		virtual void setClearColour(const math::Vector4f& colour) = 0;
 
-		virtual void setIndexBuffer(const IndexBuffer& buffer) = 0;
+		/*virtual void setIndexBuffer(const IndexBuffer& buffer) = 0;*/
 
 
 

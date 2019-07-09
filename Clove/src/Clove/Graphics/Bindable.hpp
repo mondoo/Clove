@@ -12,6 +12,5 @@ namespace clv::gfx{
 		virtual ~Bindable();
 
 		virtual void bind() = 0;
-		virtual void unbind() = 0;
 	};
 }

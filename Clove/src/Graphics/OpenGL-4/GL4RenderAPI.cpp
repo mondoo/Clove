@@ -45,8 +45,8 @@ namespace clv::gfx{
 		glClearColor(colour.r, colour.g, colour.b, colour.a);
 	}
 
-	void GL4RenderAPI::setIndexBuffer(const IndexBuffer& buffer){
+	/*void GL4RenderAPI::setIndexBuffer(const IndexBuffer& buffer){
 		const GL4IndexBuffer& glBuff = static_cast<const GL4IndexBuffer&>(buffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glBuff.getBufferID());
-	}
+	}*/
 }

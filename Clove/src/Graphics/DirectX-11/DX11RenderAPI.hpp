@@ -17,14 +17,14 @@ namespace clv::gfx{
 	class DX11RenderAPI : public RenderAPI{
 		//VARIABLES
 	private:
-		Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice; //Device creates
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext; //Context issues commands
+		static Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice;			//Device creates
+		static Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext;	//Context issues commands
 		
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> target;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> dsv;
 
 	#if CLV_DEBUG
-		DXGIInfoManager infoManager; //Used by certain DX11 exception macros
+		static DXGIInfoManager infoManager; //Used by certain DX11 exception macros
 	#endif
 
 		math::Vector4f clearColour = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -45,15 +45,11 @@ namespace clv::gfx{
 
 		virtual void setClearColour(const math::Vector4f& colour) override;
 
-		virtual void setIndexBuffer(const IndexBuffer& buffer) override;
-
-		//TODO: Is there anyway to get rid of these?
-		//ID3D11Device& getDevice() const;
-		//ID3D11DeviceContext& getContext() const;
-		//...
+		static ID3D11Device& getDevice();
+		static ID3D11DeviceContext& getContext();
 
 	#if CLV_DEBUG
-		DXGIInfoManager& getInfoManager();
+		static DXGIInfoManager& getInfoManager();
 	#endif
 	};
 }

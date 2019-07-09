@@ -23,7 +23,6 @@ namespace clv::gfx{
 		GL4IndexBuffer(const std::vector<unsigned int>& indices);
 
 		virtual void bind() override;
-		virtual void unbind() override;
 
 		virtual unsigned int getIndexCount() const override;
 		unsigned int getBufferID() const;

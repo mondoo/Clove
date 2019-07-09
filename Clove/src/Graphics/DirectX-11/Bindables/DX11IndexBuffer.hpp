@@ -26,7 +26,6 @@ namespace clv::gfx{
 		DX11IndexBuffer(const std::vector<unsigned int>& indices);
 
 		virtual void bind() override;
-		virtual void unbind() override;
 
 		virtual unsigned int getIndexCount() const override;
 		ID3D11Buffer* getBuffer() const;
