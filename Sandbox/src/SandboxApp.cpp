@@ -10,6 +10,8 @@
 #include "Clove/ECS/Components/LightComponent.hpp"
 #include "Clove/ECS/Components/CameraComponent.hpp"
 
+#include "Clove/Utils/Time.hpp"
+
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
@@ -80,36 +82,39 @@ public:
 	}
 
 	virtual void onUpdate() override{
-		const float camSpeed = 0.1f;
+		const float camSpeed = 15.0f;
+		const float rotSpeed = 1.5f;
+		const float deltaTime = clv::utl::Time::getDeltaTime();
+
 		clv::math::Vector3f cameraPosition = cam.getComponent<clv::ecs::Transform3DComponent>()->getLocalPosition();
 
 		//cam->updateFront(pitch, yaw); //TODO: proper first person implementation
 
 		const clv::math::Vector3f front = cam.getComponent<clv::ecs::CameraComponent>()->getFront();
 		if(clv::input::isKeyPressed(clv::Key::W)){
-			cameraPosition += camSpeed * front;
+			cameraPosition += camSpeed * front * deltaTime;
 		} else if(clv::input::isKeyPressed(clv::Key::S)){
-			cameraPosition -= camSpeed * front;
+			cameraPosition -= camSpeed * front * deltaTime;
 		}
 
 		const clv::math::Vector3f up = cam.getComponent<clv::ecs::CameraComponent>()->getUp();
 		if(clv::input::isKeyPressed(clv::Key::Space)){
-			cameraPosition += camSpeed * up;
+			cameraPosition += camSpeed * up * deltaTime;
 		} else if(clv::input::isKeyPressed(clv::Key::C)){
-			cameraPosition -= camSpeed * up;
+			cameraPosition -= camSpeed * up * deltaTime;
 		}
 
 		const clv::math::Vector3f right = cam.getComponent<clv::ecs::CameraComponent>()->getRight();
 		if(clv::input::isKeyPressed(clv::Key::A)){
-			cameraPosition -= camSpeed * right;
+			cameraPosition -= camSpeed * right * deltaTime;
 		} else if(clv::input::isKeyPressed(clv::Key::D)){
-			cameraPosition += camSpeed * right;
+			cameraPosition += camSpeed * right * deltaTime;
 		}
 
 		if(clv::input::isKeyPressed(clv::Key::Q)){
-			yaw -= camSpeed * 10.0f;
+			yaw -= camSpeed * 10.0f * deltaTime;
 		} else if(clv::input::isKeyPressed(clv::Key::E)){
-			yaw += camSpeed * 10.0f;
+			yaw += camSpeed * 10.0f * deltaTime;
 		}
 
 		cam.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition(cameraPosition);
@@ -119,7 +124,7 @@ public:
 		const float radius = 6.0f;
 		lght1.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition({ cos(rotDelta) * radius, 2.0f, sin(rotDelta) * radius });
 
-		rotDelta += 0.01f;
+		rotDelta += rotSpeed * deltaTime;
 
 		if(clv::input::isKeyPressed(clv::Key::Escape)){
 			clv::Application::get().stop();

@@ -12,7 +12,7 @@
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/MouseEvent.hpp"
-#include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Utils/Time.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/RenderCommand.hpp"
@@ -43,6 +43,8 @@ namespace clv{
 	#endif
 
 		CLV_LOG_INFO("Successfully initialised Clove");
+
+		prevFrameTime = std::chrono::system_clock::now();
 	}
 
 	Application::~Application() = default;
@@ -52,6 +54,8 @@ namespace clv{
 			auto currFrameTime = std::chrono::system_clock::now();
 			std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
 			prevFrameTime = currFrameTime;
+
+			utl::Time::deltaTime = deltaSeonds.count();
 
 			window->beginFrame();
 
