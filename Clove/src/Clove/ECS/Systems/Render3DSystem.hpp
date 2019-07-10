@@ -11,9 +11,6 @@ namespace clv::ecs{
 	public:
 		static constexpr SystemID ID = 0x1ae78643; //VS generated GUID
 
-	private:
-		/*std::unique_ptr<gfx::Renderer> renderer;*/
-
 		//FUNCTIONS
 	public:
 		Render3DSystem();
@@ -24,9 +21,6 @@ namespace clv::ecs{
 		virtual ~Render3DSystem();
 
 		virtual void update(float deltaTime) override;
-
-		/*void initialiseRenderer(const gfx::Context& context);
-		gfx::Renderer& getRenderer();*/
 
 	private:
 		math::Matrix4f getTransformWorldMatrix(Transform3DComponent* component);

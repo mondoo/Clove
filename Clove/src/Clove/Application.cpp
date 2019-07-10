@@ -31,6 +31,8 @@ namespace clv{
 		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
 		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
+		gfx::Renderer::initialise();
+
 		layerStack = std::make_unique<LayerStack>();
 
 	#if CLV_PLATFORM_WINDOWS
