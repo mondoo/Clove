@@ -53,9 +53,9 @@ namespace clv::ecs{
 
 		//Shader
 		std::unique_ptr<gfx::Shader> shader = gfx::BindableFactory::createShader();
-		shader->attachShader(gfx::ShaderType::Vertex);
-		shader->attachShader(gfx::ShaderType::Pixel);
-		shader->bind(Application::get().getRenderer());
+		shader->attachShader(gfx::ShaderTypes::Vertex);
+		shader->attachShader(gfx::ShaderTypes::Pixel);
+		shader->bind();
 
 		//VB
 		std::unique_ptr<gfx::VertexBuffer> vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *shader);

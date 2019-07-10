@@ -81,12 +81,12 @@ namespace clv::gfx{
 	#define DX11_DEVICE_REMOVED_EXCPTION(hr) clv::gfx::DeviceRemovedException(__LINE__, __FILE__, (hr), infoManager.getMessages())
 	#define DX11_THROW_INFO_ONLY(call) infoManager.set(); (call); { auto v = infoManager.getMessages(); if(!v.empty()){ throw clv::gfx::InfoException(__LINE__, __FILE__, v); } }
 
-	#define DX11_INFO_PROVIDER(renderer) HRESULT hr; DXGIInfoManager& infoManager = renderer->getInfoManager();
+	#define DX11_INFO_PROVIDER HRESULT hr; DXGIInfoManager& infoManager = DX11RenderAPI::getInfoManager();
 #else
 	#define DX11_EXCEPT(hr) clv::gfx::DX11Exception(__LINE__, __FILE__, (hr))
 	#define DX11_THROW_INFO(hrcall) DX11_THROW_NOINFO(hrcall)
 	#define DX11_DEVICE_REMOVED_EXCPTION(hr) clv::gfx::DeviceRemovedException(__LINE__, __FILE__, (hr))
 	#define DX11_THROW_INFO_ONLY(call) (call)
 
-	#define DX11_INFO_PROVIDER(renderer) HRESULT hr;
+	#define DX11_INFO_PROVIDER HRESULT hr;
 #endif

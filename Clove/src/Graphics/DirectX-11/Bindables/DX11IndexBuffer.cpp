@@ -1,11 +1,8 @@
 #include "clvpch.hpp"
 #include "DX11IndexBuffer.hpp"
 
-#include "Clove/Application.hpp"
-#include "Clove/Platform/Window.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
-#include "Graphics/DirectX-11/DX11Renderer.hpp"
-#include "Clove/Graphics/Renderer.hpp"
+#include "Graphics/DirectX-11/DX11RenderAPI.hpp"
 
 #include <d3d11.h>
 
@@ -17,9 +14,6 @@ namespace clv::gfx{
 	DX11IndexBuffer::~DX11IndexBuffer() = default;
 
 	DX11IndexBuffer::DX11IndexBuffer(const std::vector<unsigned int>& indices){
-		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&Application::get().getRenderer());
-		DX11_INFO_PROVIDER(dxrenderer);
-
 		count = static_cast<unsigned int>(indices.size());
 
 		D3D11_BUFFER_DESC  ibd = { };
@@ -33,18 +27,19 @@ namespace clv::gfx{
 		D3D11_SUBRESOURCE_DATA isrd = { };
 		isrd.pSysMem = indices.data();
 
-		DX11_THROW_INFO(dxrenderer->getDevice().CreateBuffer(&ibd, &isrd, &indexBuffer));
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateBuffer(&ibd, &isrd, &indexBuffer));
 	}
 
-	void DX11IndexBuffer::bind(Renderer& renderer){
-		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
-		dxrenderer->getContext().IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
-	}
-
-	void DX11IndexBuffer::unbind(){
+	void DX11IndexBuffer::bind(){
+		DX11RenderAPI::getContext().IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
 	}
 
 	unsigned int DX11IndexBuffer::getIndexCount() const{
 		return count;
+	}
+	
+	ID3D11Buffer* DX11IndexBuffer::getBuffer() const{
+		return indexBuffer.Get();
 	}
 }

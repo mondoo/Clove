@@ -21,8 +21,7 @@ namespace clv::gfx{
 		GL4Shader& operator=(GL4Shader&& other) noexcept;
 		~GL4Shader();
 
-		virtual void bind(Renderer& renderer) override;
-		virtual void unbind() override;
+		virtual void bind() override;
 
 		virtual void attachShader(ShaderType type) override;
 

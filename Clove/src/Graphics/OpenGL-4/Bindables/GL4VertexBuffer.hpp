@@ -22,7 +22,6 @@ namespace clv::gfx{
 
 		GL4VertexBuffer(const VertexBufferData& bufferData, Shader& shader);
 
-		virtual void bind(Renderer& renderer) override;
-		virtual void unbind() override;
+		virtual void bind() override;
 	};
 }

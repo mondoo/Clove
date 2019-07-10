@@ -30,8 +30,7 @@ namespace clv::gfx{
 		DX11Shader& operator=(DX11Shader&& other) noexcept;
 		~DX11Shader();
 
-		virtual void bind(Renderer& renderer) override;
-		virtual void unbind() override;
+		virtual void bind() override;
 
 		virtual void attachShader(ShaderType type) override;
 
@@ -55,8 +54,7 @@ namespace clv::gfx{
 
 		DX11VertexShader(const std::wstring& path);
 
-		virtual void bind(Renderer& renderer) override;
-		virtual void unbind() override;
+		virtual void bind() override;
 
 		ID3DBlob* getByteCode() const;
 	};
@@ -78,8 +76,7 @@ namespace clv::gfx{
 
 		DX11PixelShader(const std::wstring& path);
 
-		virtual void bind(Renderer& renderer) override;
-		virtual void unbind() override;
+		virtual void bind() override;
 
 		ID3DBlob* getByteCode() const;
 	};

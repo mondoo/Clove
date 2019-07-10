@@ -4,7 +4,7 @@
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
-#include "Graphics/DirectX-11/DX11Renderer.hpp"
+#include "Graphics/DirectX-11/DX11RenderAPI.hpp"
 
 #include <d3d11.h>
 #include <stb_image.h>
@@ -18,9 +18,6 @@ namespace clv::gfx{
 
 	DX11Texture::DX11Texture(const std::string& filePath, unsigned int bindingPoint)
 		: bindingPoint(bindingPoint){
-		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&Application::get().getRenderer());
-		DX11_INFO_PROVIDER(dxrenderer);
-
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
 		//Create the texture itself
@@ -43,7 +40,8 @@ namespace clv::gfx{
 
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
 
-		DX11_THROW_INFO(dxrenderer->getDevice().CreateTexture2D(&textureDesc, &data, &texture));
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateTexture2D(&textureDesc, &data, &texture));
 
 		if(localBuffer){
 			stbi_image_free(localBuffer);
@@ -56,7 +54,7 @@ namespace clv::gfx{
 		viewDesc.Texture2D.MostDetailedMip = 0;
 		viewDesc.Texture2D.MipLevels = 1;
 
-		DX11_THROW_INFO(dxrenderer->getDevice().CreateShaderResourceView(texture.Get(), &viewDesc, &textureView));
+		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateShaderResourceView(texture.Get(), &viewDesc, &textureView));
 
 		//TODO: consider putting this in it's own bindable so it can be reused for multiple textures
 		//(will requrie a bit of work though because I'd need to make an interface for OpenGL)
@@ -67,16 +65,12 @@ namespace clv::gfx{
 		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
-		DX11_THROW_INFO(dxrenderer->getDevice().CreateSamplerState(&samplerDesc, &sampler));
+		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateSamplerState(&samplerDesc, &sampler));
 	}
 
-	void DX11Texture::bind(Renderer& renderer){
-		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
-		dxrenderer->getContext().PSSetShaderResources(bindingPoint, 1u, textureView.GetAddressOf());
-		dxrenderer->getContext().PSSetSamplers(bindingPoint, 1u, sampler.GetAddressOf());
-	}
-
-	void DX11Texture::unbind(){
+	void DX11Texture::bind(){
+		DX11RenderAPI::getContext().PSSetShaderResources(bindingPoint, 1u, textureView.GetAddressOf());
+		DX11RenderAPI::getContext().PSSetSamplers(bindingPoint, 1u, sampler.GetAddressOf());
 	}
 
 	int DX11Texture::getWidth() const{

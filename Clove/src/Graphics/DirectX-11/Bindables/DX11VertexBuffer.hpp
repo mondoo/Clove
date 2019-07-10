@@ -4,7 +4,6 @@
 
 #include <wrl.h>
 
-
 struct ID3D11Buffer;
 struct ID3D11InputLayout;
 
@@ -28,7 +27,6 @@ namespace clv::gfx{
 
 		DX11VertexBuffer(const VertexBufferData& bufferData, Shader& shader);
 
-		virtual void bind(Renderer& renderer) override;
-		virtual void unbind() override;
+		virtual void bind() override;
 	};
 }

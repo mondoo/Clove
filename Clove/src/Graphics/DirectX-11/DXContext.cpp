@@ -122,6 +122,7 @@ namespace clv::gfx{
 		rdesc.FillMode = D3D11_FILL_SOLID;
 		rdesc.CullMode = D3D11_CULL_BACK;
 		rdesc.FrontCounterClockwise = TRUE; //We need to set the front face to CCW to be compatable with opengl/glm
+		rdesc.DepthClipEnable = TRUE;
 
 		Microsoft::WRL::ComPtr<ID3D11RasterizerState> rstate;
 		DX11_THROW_INFO(d3dDevice->CreateRasterizerState(&rdesc, &rstate));

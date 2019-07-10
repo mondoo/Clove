@@ -20,12 +20,8 @@ namespace clv::gfx{
 		glDeleteProgram(programID);
 	}
 
-	void GL4Shader::bind(Renderer& renderer){
+	void GL4Shader::bind(){
 		glUseProgram(programID);
-	}
-
-	void GL4Shader::unbind(){
-		glUseProgram(0);
 	}
 
 	void GL4Shader::attachShader(ShaderType type){

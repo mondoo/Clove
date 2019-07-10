@@ -1,8 +1,6 @@
 #pragma once
 
 namespace clv::gfx{
-	class Renderer;
-
 	class Bindable{
 		//FUNCTIONS
 	public:
@@ -13,7 +11,6 @@ namespace clv::gfx{
 		Bindable& operator=(Bindable&& other) noexcept;
 		virtual ~Bindable();
 
-		virtual void bind(Renderer& renderer) = 0;
-		virtual void unbind() = 0;
+		virtual void bind() = 0;
 	};
 }
