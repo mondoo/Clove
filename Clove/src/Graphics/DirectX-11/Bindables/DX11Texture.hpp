@@ -35,8 +35,7 @@ namespace clv::gfx{
 
 		DX11Texture(const std::string& filePath, unsigned int bindingPoint);
 
-		virtual void bind(Renderer& renderer) override;
-		virtual void unbind() override;
+		virtual void bind() override;
 
 		virtual int getWidth() const override;
 		virtual int getHeight() const override;

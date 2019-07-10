@@ -2,27 +2,42 @@
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
+#include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
+
 namespace clv::gfx{
-	class Drawable;
-	class Context;
+	class Bindable;
+
+	struct VertexData{
+		math::Matrix4f model;
+		math::Matrix4f normalMatrix;
+	};
+
+	struct MaterialData{
+		alignas(16) float sininess;
+	};
+
+	struct SubmitData{ //TODO: Should I just make a Drawable or something that the RenderableComponents hold?
+		unsigned int indexCount = 0;
+		math::Matrix4f modelData{};
+		std::vector<std::unique_ptr<Bindable>>& bindables;
+	};
 
 	class Renderer{
 		//VARIABLES
 	protected:
-		static constexpr math::Vector4f clearColor = { 1.01f, 0.5f, 0.5f, 1.0f };
+		static std::unique_ptr<gfx::ShaderBufferObject<VertexData>> vertCB;
+		static VertexData vData;
+
+		static std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> materialCB;
+		static MaterialData mData;
 
 		//FUNCTIONS
 	public:
-		Renderer();
-		Renderer(const Renderer& other) = delete;
-		Renderer(Renderer&& other) noexcept = delete;
-		Renderer& operator=(const Renderer& other) = delete;
-		Renderer& operator=(Renderer&& other) noexcept = delete;
-		virtual ~Renderer();
+		static void initialise();
 
-		static std::unique_ptr<Renderer> createRenderer(const Context& context);
+		static void beginScene();
+		static void endScene();
 
-		virtual void clear() = 0;
-		virtual void drawIndexed(const unsigned int count) = 0;
+		static void submitMesh(SubmitData data);
 	};
 }

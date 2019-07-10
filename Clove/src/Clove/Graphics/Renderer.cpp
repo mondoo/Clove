@@ -1,42 +1,45 @@
 #include "clvpch.hpp"
 #include "Renderer.hpp"
 
-#include "Graphics/OpenGL-4/GL4Renderer.hpp"
-#if CLV_PLATFORM_WINDOWS
-#include "Graphics/DirectX-11/DX11Renderer.hpp"
-#endif
-#include "Clove/Graphics/Context.hpp"
+#include "Clove/Graphics/RenderCommand.hpp"
+#include "Clove/Graphics/Bindables/IndexBuffer.hpp"
+#include "Clove/Graphics/BindableFactory.hpp"
 
 namespace clv::gfx{
-	Renderer::Renderer() = default;
+	std::unique_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertCB;
+	VertexData Renderer::vData{};
 
-	Renderer::~Renderer() = default;
+	std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialCB;
+	MaterialData Renderer::mData{};
 
-	std::unique_ptr<Renderer> Renderer::createRenderer(const Context& context){
-		std::unique_ptr<Renderer> renderer;
+	void Renderer::initialise(){
+		vertCB = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderTypes::Vertex, gfx::BBP_ModelData);
+		materialCB = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderTypes::Pixel, gfx::BBP_MaterialData);
+
+		mData.sininess = 32.0f;
+		materialCB->update(mData);
+	}
+
+	void Renderer::beginScene(){
+		RenderCommand::clear();
+
+		vertCB->bind();
+		materialCB->bind();
+	}
+
+	void Renderer::endScene(){
 		
-		switch(context.getAPI()){
-			case API::OpenGL4:
-				CLV_LOG_TRACE("Creating OpenGL renderer");
-				renderer = std::make_unique<GL4Renderer>(context);
-				break;
-			#if CLV_PLATFORM_WINDOWS
-			case API::DirectX11:
-				CLV_LOG_TRACE("Creating DirectX11 renderer");
-				renderer = std::make_unique<DX11Renderer>(context);
-				break;
-			#endif
-			default:
-				CLV_LOG_ERROR("Default statement hit. No renderer initialised: {0}", __func__);
-				break;
+	}
+
+	void Renderer::submitMesh(SubmitData data){
+		vData.model = data.modelData;
+		vData.normalMatrix = math::transpose(math::inverse(data.modelData));
+		vertCB->update(vData);
+
+		for(const auto& bindable : data.bindables){
+			bindable->bind();
 		}
 
-		if(renderer == nullptr){
-			CLV_ASSERT(false, "Renderer failed to initialise!");
-		} else{
-			CLV_LOG_DEBUG("Renderer created succesfully");
-		}
-
-		return renderer;
+		RenderCommand::drawIndexed(data.indexCount);
 	}
 }

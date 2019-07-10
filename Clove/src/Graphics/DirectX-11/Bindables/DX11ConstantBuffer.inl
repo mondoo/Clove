@@ -1,7 +1,7 @@
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
-#include "Graphics/DirectX-11/DX11Renderer.hpp"
+#include "Graphics/DirectX-11/DX11RenderAPI.hpp"
 
 #include <d3d11.h>
 
@@ -18,8 +18,6 @@ namespace clv::gfx{
 	template<typename T>
 	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint)
 		: bindingPoint(bindingPoint){
-		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&Application::get().getRenderer());
-		DX11_INFO_PROVIDER(dxrenderer);
 
 		D3D11_BUFFER_DESC cbd = { };
 		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -29,14 +27,13 @@ namespace clv::gfx{
 		cbd.ByteWidth = sizeof(T);
 		cbd.StructureByteStride = 0;
 
-		DX11_THROW_INFO(dxrenderer->getDevice().CreateBuffer(&cbd, nullptr, &constantBuffer));
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateBuffer(&cbd, nullptr, &constantBuffer));
 	}
 
 	template<typename T>
 	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint, const T& data)
 		: bindingPoint(bindingPoint){
-		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&Application::get().getRenderer());
-		DX11_INFO_PROVIDER(dxrenderer);
 
 		D3D11_BUFFER_DESC cbd = { };
 		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -49,16 +46,16 @@ namespace clv::gfx{
 		D3D11_SUBRESOURCE_DATA csrd = { };
 		csrd.pSysMem = &data;
 
-		DX11_THROW_INFO(dxrenderer->getDevice().CreateBuffer(&cbd, &csrd, &constantBuffer));
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateBuffer(&cbd, &csrd, &constantBuffer));
 	}
 
 	template<typename T>
-	inline void DX11ConstantBuffer<T>::update(const T& data, Renderer& renderer){
-		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
-		DX11_INFO_PROVIDER(dxrenderer);
+	inline void DX11ConstantBuffer<T>::update(const T& data){
 
 		D3D11_MAPPED_SUBRESOURCE msr = { };
-		DX11_THROW_INFO(dxrenderer->getContext().Map(
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(DX11RenderAPI::getContext().Map(
 			constantBuffer.Get(),
 			0u,
 			D3D11_MAP_WRITE_DISCARD,
@@ -66,26 +63,16 @@ namespace clv::gfx{
 			&msr
 		));
 		memcpy(msr.pData, &data, sizeof(T));
-		dxrenderer->getContext().Unmap(constantBuffer.Get(), 0u);
+		DX11RenderAPI::getContext().Unmap(constantBuffer.Get(), 0u);
 	}
 
 	template<typename T>
-	inline void DX11VertexConstantBuffer<T>::bind(Renderer& renderer){
-		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
-		dxrenderer->getContext().VSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
+	inline void DX11VertexConstantBuffer<T>::bind(){
+		DX11RenderAPI::getContext().VSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
 	}
 
 	template<typename T>
-	inline void DX11VertexConstantBuffer<T>::unbind(){
-	}
-
-	template<typename T>
-	inline void DX11PixelConstantBuffer<T>::bind(Renderer& renderer){
-		DX11Renderer* dxrenderer = static_cast<DX11Renderer*>(&renderer);
-		dxrenderer->getContext().PSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
-	}
-
-	template<typename T>
-	inline void DX11PixelConstantBuffer<T>::unbind(){
+	inline void DX11PixelConstantBuffer<T>::bind(){
+		DX11RenderAPI::getContext().PSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
 	}
 }

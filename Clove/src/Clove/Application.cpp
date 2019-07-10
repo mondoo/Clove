@@ -15,7 +15,7 @@
 #include "Clove/Graphics/Renderer.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
-#include "Clove/ECS/Systems/Render3DSystem.hpp"
+#include "Clove/Graphics/RenderCommand.hpp"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -28,7 +28,10 @@ namespace clv{
 		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 		window->setVSync(true);
 
-		ecsManager.getSystem<ecs::Render3DSystem>()->initialiseRenderer(window->getContext());
+		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
+		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+
+		gfx::Renderer::initialise();
 
 		layerStack = std::make_unique<LayerStack>();
 
@@ -113,6 +116,7 @@ namespace clv{
 				layer->onUpdate();
 			}
 
+			gfx::Renderer::beginScene();
 			ecsManager.update(deltaSeonds.count());
 
 		#if CLV_PLATFORM_WINDOWS
@@ -123,6 +127,7 @@ namespace clv{
 			imGuiLayer->end();
 		#endif
 			
+			gfx::Renderer::endScene();
 			window->endFrame();
 		}
 	}
@@ -161,10 +166,6 @@ namespace clv{
 
 	Window& Application::getWindow(){
 		return *window;
-	}
-
-	gfx::Renderer& Application::getRenderer(){
-		return ecsManager.getSystem<ecs::Render3DSystem>()->getRenderer();
 	}
 
 	ecs::Manager& Application::getManager(){

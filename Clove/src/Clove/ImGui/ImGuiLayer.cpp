@@ -8,7 +8,7 @@
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
 #if CLV_PLATFORM_WINDOWS
-#include "Graphics/DirectX-11/DX11Renderer.hpp"
+#include "Graphics/DirectX-11/DX11RenderAPI.hpp"
 #endif
 
 #include <imgui.h>
@@ -55,9 +55,7 @@ namespace clv{
 
 			#if CLV_PLATFORM_WINDOWS
 			case gfx::API::DirectX11:
-				if(gfx::DX11Renderer* dxrenderer = dynamic_cast<gfx::DX11Renderer*>(&Application::get().getRenderer())){
-					ImGui_ImplDX11_Init(&dxrenderer->getDevice(), &dxrenderer->getContext());
-				}
+				ImGui_ImplDX11_Init(&gfx::DX11RenderAPI::getDevice(), &gfx::DX11RenderAPI::getContext());
 				break;
 			#endif
 

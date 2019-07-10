@@ -62,13 +62,8 @@ namespace clv::gfx{
 		}
 	}
 
-	void GL4VertexBuffer::bind(Renderer& renderer){
+	void GL4VertexBuffer::bind(){
 		glBindVertexArray(arrayID);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferID);
-	}
-
-	void GL4VertexBuffer::unbind(){
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }

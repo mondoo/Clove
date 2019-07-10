@@ -19,7 +19,7 @@ namespace clv::ecs{
 
 			light->lightData.position = transform->getLocalPosition();
 
-			light->sbo->update(light->lightData, Application::get().getRenderer());
+			light->sbo->update(light->lightData);
 		}
 	}
 }

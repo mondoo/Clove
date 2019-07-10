@@ -7,8 +7,6 @@
 struct ID3D11Buffer;
 
 namespace clv::gfx{
-	class Renderer;
-
 	class DX11IndexBuffer : public IndexBuffer{
 		//VARIABLES
 	private:
@@ -27,9 +25,9 @@ namespace clv::gfx{
 
 		DX11IndexBuffer(const std::vector<unsigned int>& indices);
 
-		virtual void bind(Renderer& renderer) override;
-		virtual void unbind() override;
+		virtual void bind() override;
 
 		virtual unsigned int getIndexCount() const override;
+		ID3D11Buffer* getBuffer() const;
 	};
 }
