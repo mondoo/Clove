@@ -38,6 +38,8 @@ namespace clv::gfx{
 		static void beginScene();
 		static void endScene();
 
+		//TODO: Make const ref? relying on the invoking call to move
 		static void submitMesh(SubmitData data);
+		static void submitSprite(SubmitData data);
 	};
 }

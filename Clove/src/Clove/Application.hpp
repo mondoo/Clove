@@ -18,7 +18,6 @@ namespace clv{
 		//VARIABLES
 	private:
 		std::unique_ptr<Window> window;
-		std::shared_ptr<gfx::Renderer> renderer;
 		ecs::Manager ecsManager;
 
 		bool running = true;

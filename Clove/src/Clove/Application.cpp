@@ -46,7 +46,6 @@ namespace clv{
 			prevFrameTime = currFrameTime;
 
 			window->beginFrame();
-			renderer->clear();
 
 			//Temp input handling
 			while(auto e = getWindow().getKeyboard().getKeyEvent()){
@@ -110,6 +109,7 @@ namespace clv{
 			}
 
 			gfx::Renderer::beginScene();
+
 			ecsManager.update(deltaSeonds.count());
 
             gfx::Renderer::endScene();

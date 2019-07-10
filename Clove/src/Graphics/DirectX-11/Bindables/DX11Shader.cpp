@@ -32,7 +32,7 @@ namespace clv::gfx{
 		}
 	}
 
-	void DX11Shader::attachShader(ShaderTypes type){
+	void DX11Shader::attachShader(ShaderType type){
 		switch(type){
 			case ShaderType::Vertex:
 				{

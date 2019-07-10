@@ -53,8 +53,8 @@ namespace clv::ecs{
 
 		//Shader
 		std::unique_ptr<gfx::Shader> shader = gfx::BindableFactory::createShader();
-		shader->attachShader(gfx::ShaderTypes::Vertex);
-		shader->attachShader(gfx::ShaderTypes::Pixel);
+		shader->attachShader(gfx::ShaderType::Vertex);
+		shader->attachShader(gfx::ShaderType::Pixel);
 		shader->bind();
 
 		//VB

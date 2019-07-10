@@ -24,8 +24,6 @@ namespace clv::ecs{
 		static constexpr SystemID ID = 0xfa8540b2; //VS Generated GUID
 
 	private:
-		std::shared_ptr<gfx::Renderer> renderer;
-
 		std::unique_ptr<gfx::Shader> quadShader;
 		std::unique_ptr<gfx::VertexBuffer> quadVBBuffer;
 		std::unique_ptr<gfx::IndexBuffer> quadIBBuffer;
@@ -46,7 +44,5 @@ namespace clv::ecs{
 		virtual ~Render2DSystem();
 
 		virtual void update(float deltaTime) override;
-
-		void initialiseRenderer(const std::shared_ptr<gfx::Renderer>& renderer);
 	};
 }

@@ -13,8 +13,8 @@ namespace clv::gfx{
 	MaterialData Renderer::mData{};
 
 	void Renderer::initialise(){
-		vertCB = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderTypes::Vertex, gfx::BBP_ModelData);
-		materialCB = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderTypes::Pixel, gfx::BBP_MaterialData);
+		vertCB = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
+		materialCB = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
 
 		mData.sininess = 32.0f;
 		materialCB->update(mData);
@@ -41,5 +41,9 @@ namespace clv::gfx{
 		}
 
 		RenderCommand::drawIndexed(data.indexCount);
+	}
+
+	void Renderer::submitSprite(SubmitData data){
+
 	}
 }
