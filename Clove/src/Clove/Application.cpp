@@ -32,6 +32,7 @@ namespace clv{
 
 		gfx::Renderer::initialise();
 
+		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
 
 		CLV_LOG_INFO("Successfully initialised Clove");
@@ -110,7 +111,7 @@ namespace clv{
 
 			gfx::Renderer::beginScene();
 
-			ecsManager.update(deltaSeonds.count());
+			ecsManager->update(deltaSeonds.count());
 
             gfx::Renderer::endScene();
 			window->endFrame();
@@ -154,7 +155,7 @@ namespace clv{
 	}
 
 	ecs::Manager& Application::getManager(){
-		return ecsManager;
+		return *ecsManager;
 	}
 
 	bool Application::onWindowClose(WindowCloseEvent& e){

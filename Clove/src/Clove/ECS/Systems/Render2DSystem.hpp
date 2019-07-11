@@ -10,13 +10,14 @@ namespace clv::gfx{
 	class Shader;
 	class VertexBuffer;
 	class IndexBuffer;
-	template<typename T> class ShaderBufferObject;
+	//template<typename T> class ShaderBufferObject;
+	class Bindable;
 }
 
 namespace clv::ecs{
-	struct ShaderData{
+	/*struct ShaderData{
 		math::Matrix4f modelProjection;
-	};
+	};*/
 
 	class Render2DSystem : public System<Transform2DComponent, Renderable2DComponent>{
 		//VARIABLES
@@ -24,15 +25,12 @@ namespace clv::ecs{
 		static constexpr SystemID ID = 0xfa8540b2; //VS Generated GUID
 
 	private:
-		std::unique_ptr<gfx::Shader> quadShader;
-		std::unique_ptr<gfx::VertexBuffer> quadVBBuffer;
-		std::unique_ptr<gfx::IndexBuffer> quadIBBuffer;
-
-		ShaderData data;
+		//ShaderData data;
 		math::Matrix4f proj;
-		std::unique_ptr<gfx::ShaderBufferObject<ShaderData>> SBO;
 
 		std::vector<unsigned int> indices;
+
+		std::vector<std::unique_ptr<gfx::Bindable>> quadBindables;
 
 		//FUNCTIONS
 	public:

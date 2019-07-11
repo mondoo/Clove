@@ -16,6 +16,10 @@ namespace clv::gfx{
 		alignas(16) float sininess;
 	};
 
+	struct SpriteShaderData{
+		math::Matrix4f modelProjection;
+	};
+
 	struct SubmitData{ //TODO: Should I just make a Drawable or something that the RenderableComponents hold?
 		unsigned int indexCount = 0;
 		math::Matrix4f modelData{};
@@ -30,6 +34,9 @@ namespace clv::gfx{
 
 		static std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> materialCB;
 		static MaterialData mData;
+
+		static std::unique_ptr<gfx::ShaderBufferObject<SpriteShaderData>> spriteSBO;
+		static SpriteShaderData sData;
 
 		//FUNCTIONS
 	public:
