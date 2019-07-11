@@ -33,6 +33,9 @@ namespace clv::gfx{
 		static std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO;
 		static std::unique_ptr<gfx::ShaderBufferObject<SpriteShaderData>> spriteSBO;
 
+		static std::vector<SubmitData> meshSubmissionData;
+		static std::vector<SubmitData> spriteSubmissionData;
+
 		//FUNCTIONS
 	public:
 		static void initialise();
