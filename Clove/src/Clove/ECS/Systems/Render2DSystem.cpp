@@ -39,13 +39,10 @@ namespace clv::ecs{
 
 		proj = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 
-		//std::unique_ptr<gfx::ShaderBufferObject<ShaderData>> SBO = gfx::BindableFactory::createShaderBufferObject<ShaderData>(gfx::ShaderType::Vertex, gfx::BBP_2DData);
-
-		quadBindables.reserve(/*4*/3);
+		quadBindables.reserve(3);
 		quadBindables.emplace_back(std::move(quadShader));
 		quadBindables.emplace_back(std::move(quadVBBuffer));
 		quadBindables.emplace_back(std::move(quadIBBuffer));
-		//quadBindables.emplace_back(std::move(SBO));
 	}
 
 	Render2DSystem::Render2DSystem(Render2DSystem&& other) noexcept = default;
@@ -66,8 +63,6 @@ namespace clv::ecs{
 			math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), math::Vector3f(pos, 0.0f));
 			math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), math::Vector3f(math::Vector2f(50, 50), 0.0f));
 			const math::Matrix4f modProj = proj * (translation * scale);
-			//SBO->update(data);
-			//renderer->drawIndexed(quadIBBuffer->getIndexCount());
 
 			gfx::Renderer::submitSprite(std::move(gfx::SubmitData{ static_cast<unsigned int>(indices.size()), modProj, quadBindables}));
 		}

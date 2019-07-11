@@ -29,14 +29,9 @@ namespace clv::gfx{
 	class Renderer{
 		//VARIABLES
 	protected:
-		static std::unique_ptr<gfx::ShaderBufferObject<VertexData>> vertCB;
-		static VertexData vData;
-
-		static std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> materialCB;
-		static MaterialData mData;
-
+		static std::unique_ptr<gfx::ShaderBufferObject<VertexData>> vertSBO;
+		static std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO;
 		static std::unique_ptr<gfx::ShaderBufferObject<SpriteShaderData>> spriteSBO;
-		static SpriteShaderData sData;
 
 		//FUNCTIONS
 	public:

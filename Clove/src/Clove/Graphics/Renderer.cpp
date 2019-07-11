@@ -6,29 +6,23 @@
 #include "Clove/Graphics/BindableFactory.hpp"
 
 namespace clv::gfx{
-	std::unique_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertCB;
-	VertexData Renderer::vData{};
-
-	std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialCB;
-	MaterialData Renderer::mData{};
-
+	std::unique_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertSBO;
+	std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
 	std::unique_ptr<gfx::ShaderBufferObject<SpriteShaderData>> Renderer::spriteSBO;
-	SpriteShaderData Renderer::sData{};
 
 	void Renderer::initialise(){
-		vertCB = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
-		materialCB = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
+		vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
+		materialSBO = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
 		spriteSBO = gfx::BindableFactory::createShaderBufferObject<SpriteShaderData>(gfx::ShaderType::Vertex, gfx::BBP_2DData);
 
-		mData.sininess = 32.0f;
-		materialCB->update(mData);
+		materialSBO->update({ 32.0f });
 	}
 
 	void Renderer::beginScene(){
 		RenderCommand::clear();
 
-		vertCB->bind();
-		materialCB->bind();
+		vertSBO->bind();
+		materialSBO->bind();
 		spriteSBO->bind();
 	}
 
@@ -37,9 +31,7 @@ namespace clv::gfx{
 	}
 
 	void Renderer::submitMesh(SubmitData data){
-		vData.model = data.modelData;
-		vData.normalMatrix = math::transpose(math::inverse(data.modelData));
-		vertCB->update(vData);
+		vertSBO->update({ data.modelData, math::transpose(math::inverse(data.modelData)) });
 
 		for(const auto& bindable : data.bindables){
 			bindable->bind();
@@ -49,8 +41,7 @@ namespace clv::gfx{
 	}
 
 	void Renderer::submitSprite(SubmitData data){
-		sData.modelProjection = data.modelData;
-		spriteSBO->update(sData);
+		spriteSBO->update({ data.modelData });
 
 		for(const auto& bindable : data.bindables){
 			bindable->bind();
