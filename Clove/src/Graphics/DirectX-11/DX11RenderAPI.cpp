@@ -41,6 +41,14 @@ namespace clv::gfx{
 		clearColour = colour;
 	}
 
+	void DX11RenderAPI::setDepthBuffer(bool enabled){
+		//TODO
+	}
+
+	void DX11RenderAPI::setBlendState(bool enabled){
+		//TODO
+	}
+
 	ID3D11Device& DX11RenderAPI::getDevice(){
 		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null device");
 		return *d3dDevice.Get();

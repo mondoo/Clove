@@ -16,15 +16,9 @@ namespace clv::gfx{
 
 		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
 
-		CLV_LOG_TRACE("Enabling Depth buffer");
-		glDepthFunc(GL_LESS);
-		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS); //TODO: Expose to function call
 
-		//CLV_LOG_TRACE("Blend set to: SRC_ALPHA | ONE_MINUS_SRC_ALPHA");
-		////src is from the image - dest is what is already in the buffer
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		//glEnable(GL_BLEND);
-		////I guess it's called blending because you blend the src with the destination
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //TODO: Expose to function call
 
 		glFrontFace(GL_CCW);
 		glCullFace(GL_BACK);
@@ -45,5 +39,21 @@ namespace clv::gfx{
 
 	void GL4RenderAPI::setClearColour(const math::Vector4f& colour){
 		glClearColor(colour.r, colour.g, colour.b, colour.a);
+	}
+	
+	void GL4RenderAPI::setDepthBuffer(bool enabled){
+		if(enabled){
+			glEnable(GL_DEPTH_TEST);
+		} else{
+			glDisable(GL_DEPTH_TEST);
+		}
+	}
+	
+	void GL4RenderAPI::setBlendState(bool enabled){
+		if(enabled){
+			glEnable(GL_BLEND);
+		} else{
+			glDisable(GL_BLEND);
+		}
 	}
 }

@@ -18,18 +18,22 @@ namespace clv::gfx{
 		materialSBO = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
 		spriteSBO = gfx::BindableFactory::createShaderBufferObject<SpriteShaderData>(gfx::ShaderType::Vertex, gfx::BBP_2DData);
 
+		vertSBO->bind();
+		materialSBO->bind();
+		spriteSBO->bind();
+
 		materialSBO->update({ 32.0f });
+
+		RenderCommand::setBlendState(true);
 	}
 
 	void Renderer::beginScene(){
 		RenderCommand::clear();
-
-		vertSBO->bind();
-		materialSBO->bind();
-		spriteSBO->bind();
 	}
 
 	void Renderer::endScene(){
+		//Mesh
+		RenderCommand::setDepthBuffer(true);
 		for(auto& data : meshSubmissionData){
 			vertSBO->update({ data.modelData, math::transpose(math::inverse(data.modelData)) });
 			for(const auto& bindable : data.bindables){
@@ -39,6 +43,8 @@ namespace clv::gfx{
 		}
 		meshSubmissionData.clear();
 
+		//Sprite
+		RenderCommand::setDepthBuffer(false);
 		for(auto& data : spriteSubmissionData){
 			spriteSBO->update({ data.modelData });
 			for(const auto& bindable : data.bindables){
