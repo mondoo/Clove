@@ -7,6 +7,7 @@
 #include "Clove/Graphics/Bindables/IndexBuffer.hpp"
 #include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/Bindables/Shader.hpp"
+#include "Clove/Graphics/Bindables/Texture.hpp"
 
 namespace clv::ecs{
 	Render2DSystem::Render2DSystem(){
@@ -39,10 +40,14 @@ namespace clv::ecs{
 
 		proj = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 
-		quadBindables.reserve(3);
+		//Test texture
+		std::unique_ptr<gfx::Texture> tex = gfx::BindableFactory::createTexture("res/Textures/Zombie-32x32.png", gfx::TBP_Sprite);
+
+		quadBindables.reserve(4);
 		quadBindables.emplace_back(std::move(quadShader));
 		quadBindables.emplace_back(std::move(quadVBBuffer));
 		quadBindables.emplace_back(std::move(quadIBBuffer));
+		quadBindables.emplace_back(std::move(tex));
 	}
 
 	Render2DSystem::Render2DSystem(Render2DSystem&& other) noexcept = default;

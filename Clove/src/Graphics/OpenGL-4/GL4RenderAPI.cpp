@@ -20,11 +20,11 @@ namespace clv::gfx{
 		glDepthFunc(GL_LESS);
 		glEnable(GL_DEPTH_TEST);
 
-		CLV_LOG_TRACE("Blend set to: SRC_ALPHA | ONE_MINUS_SRC_ALPHA");
-		//src is from the image - dest is what is already in the buffer
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-		//I guess it's called blending because you blend the src with the destination
+		//CLV_LOG_TRACE("Blend set to: SRC_ALPHA | ONE_MINUS_SRC_ALPHA");
+		////src is from the image - dest is what is already in the buffer
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glEnable(GL_BLEND);
+		////I guess it's called blending because you blend the src with the destination
 
 		glFrontFace(GL_CCW);
 		glCullFace(GL_BACK);

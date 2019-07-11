@@ -1,3 +1,6 @@
-float4 main() : SV_TARGET{
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+Texture2D spriteTexture : register(t3);
+SamplerState spriteSampler : register(s3);
+
+float4 main(float2 texCoord : TexCoord) : SV_TARGET{
+	return spriteTexture.Sample(spriteSampler, texCoord);
 }
