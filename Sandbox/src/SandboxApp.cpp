@@ -22,7 +22,6 @@ private:
 	clv::ecs::Entity ent3;
 
 	clv::ecs::Entity lght1;
-	clv::ecs::Entity ltEnt;
 
 	clv::ecs::Entity cam;
 
@@ -43,9 +42,7 @@ public:
 		ent2 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 		ent3 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 
-		//Couldn't i just smash the mesh component on the light?
-		lght1 = clv::Application::get().getManager().createEntity<clv::ecs::LightComponent, clv::ecs::Transform3DComponent>();
-		ltEnt = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
+		lght1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::LightComponent, clv::ecs::Transform3DComponent>();
 
 		cam = clv::Application::get().getManager().createEntity<clv::ecs::CameraComponent, clv::ecs::Transform3DComponent>();
 	
@@ -70,11 +67,10 @@ public:
 
 		//clv::Application::get().getManager().destroyEntity(ent2.getID());
 
-		lght1.getComponent<clv::ecs::Transform3DComponent>()->addChild(ltEnt.getComponent<clv::ecs::Transform3DComponent>());
-		ltEnt.getComponent<clv::ecs::Transform3DComponent>()->setLocalScale({ 0.25f, 0.25f, 0.25f });
-		ltEnt.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
-		ltEnt.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
-		ltEnt.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
+		lght1.getComponent<clv::ecs::Transform3DComponent>()->setLocalScale({ 0.25f, 0.25f, 0.25f });
+		lght1.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
+		lght1.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
+		lght1.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 	}
 
 	virtual void onDetach() override{
