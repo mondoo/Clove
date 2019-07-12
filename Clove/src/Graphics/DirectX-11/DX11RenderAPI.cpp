@@ -28,6 +28,17 @@ namespace clv::gfx{
 
 			DX11_INFO_PROVIDER;
 
+			//Setting up the default depth stencil
+			D3D11_DEPTH_STENCIL_DESC depthDesc = {};
+			depthDesc.DepthEnable = TRUE;
+			depthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+			depthDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> dsstate;
+			DX11_THROW_INFO(d3dDevice->CreateDepthStencilState(&depthDesc, &dsstate));
+
+			d3dContext->OMSetDepthStencilState(dsstate.Get(), 1u);
+
 			//Setting up the default blend state
 			D3D11_BLEND_DESC blendDesc = { };
 			blendDesc.AlphaToCoverageEnable = FALSE;
@@ -45,6 +56,21 @@ namespace clv::gfx{
 			DX11_THROW_INFO(d3dDevice->CreateBlendState(&blendDesc, &blendState));
 
 			d3dContext->OMSetBlendState(blendState.Get(), nullptr, 0xffffffff);
+
+			//Set primitive topology to triangle list (groups of 3 verticies)
+			d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+			//Setting up the default resterizer state
+			D3D11_RASTERIZER_DESC rdesc = {};
+			rdesc.FillMode = D3D11_FILL_SOLID;
+			rdesc.CullMode = D3D11_CULL_BACK;
+			rdesc.FrontCounterClockwise = TRUE; //We need to set the front face to CCW to be compatable with opengl/glm
+			rdesc.DepthClipEnable = TRUE;
+
+			Microsoft::WRL::ComPtr<ID3D11RasterizerState> rstate;
+			DX11_THROW_INFO(d3dDevice->CreateRasterizerState(&rdesc, &rstate));
+
+			d3dContext->RSSetState(rstate.Get());
 		}
 	}
 
