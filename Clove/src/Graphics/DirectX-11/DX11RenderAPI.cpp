@@ -62,7 +62,17 @@ namespace clv::gfx{
 	}
 
 	void DX11RenderAPI::setDepthBuffer(bool enabled){
-		//TODO
+		DX11_INFO_PROVIDER;
+
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> dsstate;
+		D3D11_DEPTH_STENCIL_DESC depthDesc = {};
+		UINT stencilRef;
+
+		d3dContext->OMGetDepthStencilState(&dsstate, &stencilRef);
+		dsstate->GetDesc(&depthDesc);
+		depthDesc.DepthEnable = enabled ? TRUE : FALSE;
+		DX11_THROW_INFO(d3dDevice->CreateDepthStencilState(&depthDesc, &dsstate));
+		d3dContext->OMSetDepthStencilState(dsstate.Get(), stencilRef);
 	}
 
 	void DX11RenderAPI::setBlendState(bool enabled){
@@ -70,12 +80,14 @@ namespace clv::gfx{
 
 		Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
 		D3D11_BLEND_DESC blendDesc = { };
+		FLOAT blendFactor[4];
+		UINT sampleMask;
 
-		d3dContext->OMGetBlendState(&blendState, nullptr, nullptr);
+		d3dContext->OMGetBlendState(&blendState, blendFactor, &sampleMask);
 		blendState->GetDesc(&blendDesc);
 		blendDesc.RenderTarget[0].BlendEnable = enabled ? TRUE : FALSE;
 		DX11_THROW_INFO(d3dDevice->CreateBlendState(&blendDesc, &blendState));
-		d3dContext->OMSetBlendState(blendState.Get(), nullptr, 0xffffffff);
+		d3dContext->OMSetBlendState(blendState.Get(), blendFactor, sampleMask);
 	}
 
 	ID3D11Device& DX11RenderAPI::getDevice(){
