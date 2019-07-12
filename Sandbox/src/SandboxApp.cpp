@@ -121,6 +121,9 @@ public:
 		cam.getComponent<clv::ecs::CameraComponent>()->updateFront(0.0f, yaw);
 
 		ent1.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
+		ent2.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 0.0f, 0.0f, 1.0f }, rotDelta });
+		ent3.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 1.0f, 0.0f, 0.0f }, rotDelta });
+
 		const float radius = 6.0f;
 		lght1.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition({ cos(rotDelta) * radius, 2.0f, sin(rotDelta) * radius });
 
