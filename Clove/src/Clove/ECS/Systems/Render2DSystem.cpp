@@ -59,7 +59,7 @@ namespace clv::ecs{
 	void Render2DSystem::update(float deltaTime){
 		std::vector<math::Vector2f> testPos{
 			{0.0f, 0.0f},
-			{-500.0f, 0.0f},
+			{-15.0f, 0.0f},
 			{-500.0f, 300.0f},
 			{560.0f, 82.0f},
 		};

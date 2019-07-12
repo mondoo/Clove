@@ -25,6 +25,26 @@ namespace clv::gfx{
 			d3dContext = dxCon->getContext();
 			target = dxCon->getTarget();
 			dsv = dxCon->getDSV();
+
+			DX11_INFO_PROVIDER;
+
+			//Setting up the default blend state
+			D3D11_BLEND_DESC blendDesc = { };
+			blendDesc.AlphaToCoverageEnable = FALSE;
+			blendDesc.IndependentBlendEnable = FALSE;
+			blendDesc.RenderTarget[0].BlendEnable = TRUE;
+			blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+			blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+			blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+			blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+			blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+			blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+			blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+			Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
+			DX11_THROW_INFO(d3dDevice->CreateBlendState(&blendDesc, &blendState));
+
+			d3dContext->OMSetBlendState(blendState.Get(), nullptr, 0xffffffff);
 		}
 	}
 
@@ -46,7 +66,16 @@ namespace clv::gfx{
 	}
 
 	void DX11RenderAPI::setBlendState(bool enabled){
-		//TODO
+		DX11_INFO_PROVIDER;
+
+		Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
+		D3D11_BLEND_DESC blendDesc = { };
+
+		d3dContext->OMGetBlendState(&blendState, nullptr, nullptr);
+		blendState->GetDesc(&blendDesc);
+		blendDesc.RenderTarget[0].BlendEnable = enabled ? TRUE : FALSE;
+		DX11_THROW_INFO(d3dDevice->CreateBlendState(&blendDesc, &blendState));
+		d3dContext->OMSetBlendState(blendState.Get(), nullptr, 0xffffffff);
 	}
 
 	ID3D11Device& DX11RenderAPI::getDevice(){
