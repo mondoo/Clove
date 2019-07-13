@@ -12,7 +12,7 @@ namespace clv::gfx{
 		glGenBuffers(1, &uboID);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, uboID);
-		glBufferData(GL_UNIFORM_BUFFER, sizeof(T), NULL, GL_STATIC_DRAW);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(T), NULL, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
@@ -21,7 +21,7 @@ namespace clv::gfx{
 		glGenBuffers(1, &uboID);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, uboID);
-		glBufferData(GL_UNIFORM_BUFFER, sizeof(T), &data, GL_STATIC_DRAW);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(T), &data, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
