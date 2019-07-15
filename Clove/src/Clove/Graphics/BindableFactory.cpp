@@ -20,67 +20,67 @@
 #endif
 
 namespace clv::gfx::BindableFactory{
-	std::unique_ptr<VertexBuffer> createVertexBuffer(const VertexBufferData& bufferData, Shader& shader){
+	std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexBufferData& bufferData, Shader& shader){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
-				return std::make_unique<GL4VertexBuffer>(bufferData, shader);
+				return std::make_shared<GL4VertexBuffer>(bufferData, shader);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_unique<DX11VertexBuffer>(bufferData, shader);
+				return std::make_shared<DX11VertexBuffer>(bufferData, shader);
 			#endif
 
 			default:
 				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
-				return std::unique_ptr<VertexBuffer>();
+				return std::shared_ptr<VertexBuffer>();
 		}
 	}
 
-	std::unique_ptr<IndexBuffer> createIndexBuffer(const std::vector<unsigned int>& indexData){
+	std::shared_ptr<IndexBuffer> createIndexBuffer(const std::vector<unsigned int>& indexData){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
-				return std::make_unique<GL4IndexBuffer>(indexData);
+				return std::make_shared<GL4IndexBuffer>(indexData);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_unique<DX11IndexBuffer>(indexData);
+				return std::make_shared<DX11IndexBuffer>(indexData);
 			#endif
 
 			default:
 				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
-				return std::unique_ptr<IndexBuffer>();
+				return std::shared_ptr<IndexBuffer>();
 		}
 	}
 
-	std::unique_ptr<Shader> createShader(){
+	std::shared_ptr<Shader> createShader(){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
-				return std::make_unique<GL4Shader>();
+				return std::make_shared<GL4Shader>();
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_unique<DX11Shader>();
+				return std::make_shared<DX11Shader>();
 			#endif
 
 			default:
 				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
-				return std::unique_ptr<Shader>();
+				return std::shared_ptr<Shader>();
 		}
 	}
 
-	std::unique_ptr<Texture> createTexture(const std::string& filePath, unsigned int bindingPoint){
+	std::shared_ptr<Texture> createTexture(const std::string& filePath, unsigned int bindingPoint){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
-				return std::make_unique<GL4Texture>(filePath, bindingPoint);
+				return std::make_shared<GL4Texture>(filePath, bindingPoint);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_unique<DX11Texture>(filePath, bindingPoint);
+				return std::make_shared<DX11Texture>(filePath, bindingPoint);
 			#endif
 
 			default:
 				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
-				return std::unique_ptr<Texture>();
+				return std::shared_ptr<Texture>();
 		}
 	}
 }

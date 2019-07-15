@@ -36,7 +36,7 @@ namespace clv::ecs{
 
 		LightData lightData;
 
-		std::unique_ptr<gfx::ShaderBufferObject<LightData>> sbo;
+		std::shared_ptr<gfx::ShaderBufferObject<LightData>> sbo;
 
 		//FUNCTIONS
 	public:

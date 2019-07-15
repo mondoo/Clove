@@ -37,9 +37,9 @@ namespace clv::ecs{
 		float yaw = 0.0f;
 
 		ViewData viewData;
-		std::unique_ptr<gfx::ShaderBufferObject<ViewData>> sboMat;
+		std::shared_ptr<gfx::ShaderBufferObject<ViewData>> sboMat;
 		ViewPos pos;
-		std::unique_ptr<gfx::ShaderBufferObject<ViewPos>> sboPos;
+		std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> sboPos;
 
 		//FUNCTIONS
 	public:

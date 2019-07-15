@@ -13,7 +13,7 @@ namespace clv::ecs{
 	SpriteComponent::SpriteComponent(){
 		//Temp - moved here until bindables are shared_ptrs
 		//Shader
-		std::unique_ptr<gfx::Shader> quadShader = gfx::BindableFactory::createShader();
+		std::shared_ptr<gfx::Shader> quadShader = gfx::BindableFactory::createShader();
 		quadShader->attachShader(gfx::ShaderType::Vertex2D);
 		quadShader->attachShader(gfx::ShaderType::Pixel2D);
 
@@ -26,14 +26,14 @@ namespace clv::ecs{
 		bufferData.emplaceBack(math::Vector2f{ -0.5f,  0.5f }, math::Vector2f{ 0.0f, 1.0f });
 		bufferData.emplaceBack(math::Vector2f{ 0.5f,  0.5f }, math::Vector2f{ 1.0f, 1.0f });
 
-		std::unique_ptr<gfx::VertexBuffer> quadVBBuffer = gfx::BindableFactory::createVertexBuffer(bufferData, *quadShader);
+		std::shared_ptr<gfx::VertexBuffer> quadVBBuffer = gfx::BindableFactory::createVertexBuffer(bufferData, *quadShader);
 
 		//IB
 		indices = {
 			1, 3, 0,
 			3, 2, 0
 		};
-		std::unique_ptr<gfx::IndexBuffer> quadIBBuffer = gfx::BindableFactory::createIndexBuffer(indices);
+		std::shared_ptr<gfx::IndexBuffer> quadIBBuffer = gfx::BindableFactory::createIndexBuffer(indices);
 
 		//Proj
 		//const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;

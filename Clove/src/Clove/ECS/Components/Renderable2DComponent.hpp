@@ -19,7 +19,7 @@ namespace clv::ecs{
 	protected:
 		//Temp - moved here until bindables are shared_ptrs
 		std::vector<unsigned int> indices;
-		std::vector<std::unique_ptr<gfx::Bindable>> quadBindables;
+		std::vector<std::shared_ptr<gfx::Bindable>> quadBindables;
 
 	private:
 		//Temp - need bindables as shared_ptrs

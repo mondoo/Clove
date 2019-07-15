@@ -23,15 +23,15 @@ namespace clv::gfx{
 	struct SubmitData{ //TODO: Should I just make a Drawable or something that the RenderableComponents hold?
 		unsigned int indexCount = 0;
 		math::Matrix4f modelData{};
-		std::vector<std::unique_ptr<Bindable>>& bindables;
+		std::vector<std::shared_ptr<Bindable>>& bindables;
 	};
 
 	class Renderer{
 		//VARIABLES
 	protected:
-		static std::unique_ptr<gfx::ShaderBufferObject<VertexData>> vertSBO;
-		static std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO;
-		static std::unique_ptr<gfx::ShaderBufferObject<SpriteShaderData>> spriteSBO;
+		static std::shared_ptr<gfx::ShaderBufferObject<VertexData>> vertSBO;
+		static std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO;
+		static std::shared_ptr<gfx::ShaderBufferObject<SpriteShaderData>> spriteSBO;
 
 		static std::vector<SubmitData> meshSubmissionData;
 		static std::vector<SubmitData> spriteSubmissionData;

@@ -14,15 +14,15 @@ namespace clv::ecs{
 
 	Renderable3DComponent::~Renderable3DComponent() = default;
 
-	void Renderable3DComponent::addBindable(std::unique_ptr<gfx::Bindable> bindable){
+	void Renderable3DComponent::addBindable(const std::shared_ptr<gfx::Bindable>& bindable){
 		CLV_ASSERT(typeid(bindable) != typeid(gfx::IndexBuffer), "Index buffer found, please use Drawable::addIndexBuffer");
 		CLV_ASSERT(typeid(bindable) != typeid(gfx::Shader), "Shaderr found, please use Drawable::addIndexBuffer");
-		bindables.push_back(std::move(bindable));
+		bindables.push_back(bindable);
 	}
 
-	void Renderable3DComponent::addIndexBuffer(std::unique_ptr<gfx::IndexBuffer> indexBuffer){
+	void Renderable3DComponent::addIndexBuffer(const std::shared_ptr<gfx::IndexBuffer>& indexBuffer){
 		CLV_ASSERT(this->indexBuffer == nullptr, "Index buffer already set!");
 		this->indexBuffer = indexBuffer.get();
-		bindables.push_back(std::move(indexBuffer));
+		bindables.push_back(indexBuffer);
 	}
 }

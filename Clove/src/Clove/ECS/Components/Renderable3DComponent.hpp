@@ -17,7 +17,7 @@ namespace clv::ecs{
 		static constexpr ComponentID ID = 0x7dfb2c10; //VS Generated GUID
 
 	private:
-		std::vector<std::unique_ptr<gfx::Bindable>> bindables;
+		std::vector<std::shared_ptr<gfx::Bindable>> bindables;
 		gfx::IndexBuffer* indexBuffer = nullptr;
 
 		//FUNCTIONS
@@ -30,7 +30,7 @@ namespace clv::ecs{
 		virtual ~Renderable3DComponent();
 
 	protected:
-		void addBindable(std::unique_ptr<gfx::Bindable> bindable);
-		void addIndexBuffer(std::unique_ptr<gfx::IndexBuffer> indexBuffer);
+		void addBindable(const std::shared_ptr<gfx::Bindable>& bindable);
+		void addIndexBuffer(const std::shared_ptr<gfx::IndexBuffer>& indexBuffer);
 	};
 }

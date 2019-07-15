@@ -52,13 +52,13 @@ namespace clv::ecs{
 		}
 
 		//Shader
-		std::unique_ptr<gfx::Shader> shader = gfx::BindableFactory::createShader();
+		std::shared_ptr<gfx::Shader> shader = gfx::BindableFactory::createShader();
 		shader->attachShader(gfx::ShaderType::Vertex);
 		shader->attachShader(gfx::ShaderType::Pixel);
 		shader->bind();
 
 		//VB
-		std::unique_ptr<gfx::VertexBuffer> vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *shader);
+		std::shared_ptr<gfx::VertexBuffer> vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *shader);
 
 		//IB
 		addIndexBuffer(gfx::BindableFactory::createIndexBuffer(indices));

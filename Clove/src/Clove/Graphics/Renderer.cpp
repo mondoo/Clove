@@ -6,9 +6,9 @@
 #include "Clove/Graphics/BindableFactory.hpp"
 
 namespace clv::gfx{
-	std::unique_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertSBO;
-	std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
-	std::unique_ptr<gfx::ShaderBufferObject<SpriteShaderData>> Renderer::spriteSBO;
+	std::shared_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertSBO;
+	std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
+	std::shared_ptr<gfx::ShaderBufferObject<SpriteShaderData>> Renderer::spriteSBO;
 
 	std::vector<SubmitData> Renderer::meshSubmissionData;
 	std::vector<SubmitData> Renderer::spriteSubmissionData;
