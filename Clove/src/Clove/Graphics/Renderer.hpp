@@ -23,7 +23,7 @@ namespace clv::gfx{
 	struct SubmitData{ //TODO: Should I just make a Drawable or something that the RenderableComponents hold?
 		unsigned int indexCount = 0;
 		math::Matrix4f modelData{};
-		std::vector<std::shared_ptr<Bindable>>& bindables;
+		std::vector<std::shared_ptr<Bindable>> bindables; //Will require an atomic lock. Could be quite expensive
 	};
 
 	class Renderer{

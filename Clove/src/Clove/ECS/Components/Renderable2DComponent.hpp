@@ -4,8 +4,6 @@
 
 namespace clv::gfx{
 	class Texture;
-	//Temp
-	class Bindable;
 }
 
 namespace clv::ecs{
@@ -16,14 +14,8 @@ namespace clv::ecs{
 	public:
 		static constexpr ComponentID ID = 0x28fcf790; //VS Generated GUID
 
-	protected:
-		//Temp - moved here until bindables are shared_ptrs
-		std::vector<unsigned int> indices;
-		std::vector<std::shared_ptr<gfx::Bindable>> quadBindables;
-
 	private:
-		//Temp - need bindables as shared_ptrs
-		//std::unique_ptr<gfx::Texture> texture;
+		std::shared_ptr<gfx::Texture> texture;
 
 		//FUNCTIONS	
 	public:
@@ -35,7 +27,6 @@ namespace clv::ecs{
 		virtual ~Renderable2DComponent();
 
 	protected:
-		//Temp - need bindables as shared_ptrs
-		//void setTexture(std::unique_ptr<gfx::Texture> texture);
+		void setTexture(const std::shared_ptr<gfx::Texture>& texture);
 	};
 }

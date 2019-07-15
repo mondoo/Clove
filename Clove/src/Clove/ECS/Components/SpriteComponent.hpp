@@ -4,9 +4,6 @@
 
 namespace clv::ecs{
 	class SpriteComponent : public Renderable2DComponent{
-		//VARIABLES
-	private:
-		
 		//FUNCTIONS
 	public:
 		SpriteComponent();

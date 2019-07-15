@@ -21,8 +21,8 @@ namespace clv::ecs{
 
 	private:
 		math::Matrix4f proj = {};
-		/*std::vector<unsigned int> indices;
-		std::vector<std::unique_ptr<gfx::Bindable>> quadBindables;*/
+		std::vector<unsigned int> indices;
+		std::vector<std::shared_ptr<gfx::Bindable>> quadBindables;
 
 		//FUNCTIONS
 	public:
