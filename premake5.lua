@@ -100,33 +100,6 @@ workspace "Clove"
 
 --Clove Dependencies
 group "Dependencies"
---IMGUI
-project "ImGui"
-	location "Clove/vendor/imgui"
-	kind "StaticLib"
-	language "C++"
-		
-	targetdir(targetdir_vendor)
-	objdir(objdir_vendor)
-
-	files{
-		"%{prj.location}/**.h",
-		"%{prj.location}/**.cpp",
-	}
-	
-	removefiles{
-		"%{prj.location}/examples/**.h",
-		"%{prj.location}/examples/**.cpp",
-		"%{prj.location}/misc/**.h",
-		"%{prj.location}/misc/**.cpp",
-	}
-	
-	defines{
-		"IMGUI_USER_CONFIG=\"../../src/Clove/ImGui/ImGuiConfig.hpp\"",
-		"IMGUI_DISABLE_INCLUDE_IMCONFIG_H",
-		"_CRT_SECURE_NO_WARNINGS"
-	}    
-
 --GLAD
 project "Glad"
 	location "Clove/vendor/Glad"
@@ -181,7 +154,6 @@ project "stb"
 -- Inlcude direction relative to the roof folder (solution directory)
 includeDir = {}
 includeDir["Glad"]	= "Clove/vendor/Glad/include"
-includeDir["ImGui"] = "Clove/vendor/imgui"
 includeDir["glm"]	= "Clove/vendor/glm"
 includeDir["stb"]	= "Clove/vendor/stb"
 includeDir["dxerr"]	= "Clove/vendor/dxerr"
@@ -211,7 +183,6 @@ project "Clove"
 		
 		--Libs
 		"%{includeDir.Glad}",
-		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
 		"%{includeDir.stb}",
 		"%{includeDir.dxerr}",
@@ -224,7 +195,6 @@ project "Clove"
 
 	links{
 		"Glad",
-		"ImGui",
 		"stb",
 	}
 
@@ -309,7 +279,6 @@ project "Sandbox"
 	includedirs{
 		"Clove/vendor/spdlog/include",
 
-		"%{includeDir.ImGui}",
 		"%{includeDir.glm}",
 
 		"Clove/src"
@@ -323,7 +292,6 @@ project "Sandbox"
 	filter "action:gmake2"
 		links{
 			"Glad",
-			"ImGui",
 			"GLX",
 			"X11",
 			"stb",

@@ -10,10 +10,10 @@ namespace clv::ecs{
 	CameraComponent::CameraComponent(){
 		setProjectionMode(ProjectionMode::perspective);
 
-		sboMat = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderTypes::Vertex, gfx::BBP_CameraMatrices);
+		sboMat = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderType::Vertex, gfx::BBP_CameraMatrices);
 		sboMat->bind();
 
-		sboPos = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderTypes::Pixel, gfx::BBP_ViewData);
+		sboPos = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderType::Pixel, gfx::BBP_ViewData);
 		sboPos->bind();
 	}
 
@@ -43,11 +43,12 @@ namespace clv::ecs{
 	void CameraComponent::setProjectionMode(ProjectionMode mode){
 		switch(mode){
 			case ProjectionMode::orthographic:
-				currentProjection = math::createOrthographicMatrix(1.0f, -1.0f, -1.0f, 1.0f);
+				//TODO: Need to get the window dimensions (ie. left = -(1920 / 2))
+				currentProjection = math::createOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0f);
 				break;
 
 			case ProjectionMode::perspective:
-				currentProjection = clv::math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 0.5f, 10000.0f);
+				currentProjection = math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 0.5f, 10000.0f);
 				break;
 
 			default:

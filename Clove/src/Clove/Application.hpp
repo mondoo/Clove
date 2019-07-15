@@ -18,12 +18,11 @@ namespace clv{
 		//VARIABLES
 	private:
 		std::unique_ptr<Window> window;
-		ecs::Manager ecsManager;
+		std::unique_ptr<ecs::Manager> ecsManager;
 
 		bool running = true;
 
 		std::unique_ptr<LayerStack> layerStack;
-		std::shared_ptr<ImGuiLayer> imGuiLayer;
 
 		static Application* instance;
 

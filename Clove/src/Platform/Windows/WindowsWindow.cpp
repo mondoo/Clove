@@ -64,10 +64,6 @@ namespace clv{
 	}
 
 	LRESULT WindowsWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
-		if(ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)){
-			return true;
-		}
-		
 		const POINTS pt = MAKEPOINTS(lParam);
 
 		switch(msg){

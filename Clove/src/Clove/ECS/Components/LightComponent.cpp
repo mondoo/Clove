@@ -16,7 +16,7 @@ namespace clv::ecs{
 			quadratic
 		};
 
-		sbo = gfx::BindableFactory::createShaderBufferObject<LightData>(gfx::ShaderTypes::Pixel, gfx::BBP_PointLightData);
+		sbo = gfx::BindableFactory::createShaderBufferObject<LightData>(gfx::ShaderType::Pixel, gfx::BBP_PointLightData);
 		sbo->bind();
 	}
 

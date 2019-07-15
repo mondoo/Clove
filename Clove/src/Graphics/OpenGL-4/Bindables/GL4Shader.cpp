@@ -24,13 +24,15 @@ namespace clv::gfx{
 		glUseProgram(programID);
 	}
 
-	void GL4Shader::attachShader(ShaderTypes type){
+	void GL4Shader::attachShader(ShaderType type){
 		unsigned int gltype = 0;
 		switch(type){
-			case ShaderTypes::Vertex:
+			case ShaderType::Vertex:
+			case ShaderType::Vertex2D:
 				gltype = GL_VERTEX_SHADER;
 				break;
-			case ShaderTypes::Pixel:
+			case ShaderType::Pixel:
+			case ShaderType::Pixel2D:
 				gltype = GL_FRAGMENT_SHADER;
 				break;
 		}
@@ -46,14 +48,22 @@ namespace clv::gfx{
 		glDeleteShader(shaderID);
 	}
 
-	std::string GL4Shader::getPathForShader(ShaderTypes shader){
+	std::string GL4Shader::getPathForShader(ShaderType shader){
 		switch(shader){
-			case ShaderTypes::Vertex:
+			case ShaderType::Vertex:
 				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-vs.glsl";
 				break;
 
-			case ShaderTypes::Pixel:
+			case ShaderType::Pixel:
 				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-ps.glsl";
+				break;
+
+			case ShaderType::Vertex2D:
+				return "../Clove/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl";
+				break;
+
+			case ShaderType::Pixel2D:
+				return "../Clove/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl";
 				break;
 
 			default:

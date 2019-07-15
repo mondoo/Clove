@@ -16,7 +16,7 @@
 #include "Clove/Exception/CloveException.hpp"
 
 //Vendor headers
-#include <imgui.h>
+
 
 //----------ENTRY POINT----------
 #include "Clove/EntryPoint.hpp"

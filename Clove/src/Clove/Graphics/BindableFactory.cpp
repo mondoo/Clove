@@ -21,7 +21,7 @@
 
 namespace clv::gfx::BindableFactory{
 	std::unique_ptr<VertexBuffer> createVertexBuffer(const VertexBufferData& bufferData, Shader& shader){
-		switch(Application::get().getWindow().getContext().getAPI()){
+		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
 				return std::make_unique<GL4VertexBuffer>(bufferData, shader);
 
@@ -37,7 +37,7 @@ namespace clv::gfx::BindableFactory{
 	}
 
 	std::unique_ptr<IndexBuffer> createIndexBuffer(const std::vector<unsigned int>& indexData){
-		switch(Application::get().getWindow().getContext().getAPI()){
+		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
 				return std::make_unique<GL4IndexBuffer>(indexData);
 
@@ -53,7 +53,7 @@ namespace clv::gfx::BindableFactory{
 	}
 
 	std::unique_ptr<Shader> createShader(){
-		switch(Application::get().getWindow().getContext().getAPI()){
+		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
 				return std::make_unique<GL4Shader>();
 
@@ -69,7 +69,7 @@ namespace clv::gfx::BindableFactory{
 	}
 
 	std::unique_ptr<Texture> createTexture(const std::string& filePath, unsigned int bindingPoint){
-		switch(Application::get().getWindow().getContext().getAPI()){
+		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
 				return std::make_unique<GL4Texture>(filePath, bindingPoint);
 

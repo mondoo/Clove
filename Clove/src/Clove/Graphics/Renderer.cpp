@@ -6,40 +6,60 @@
 #include "Clove/Graphics/BindableFactory.hpp"
 
 namespace clv::gfx{
-	std::unique_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertCB;
-	VertexData Renderer::vData{};
+	std::unique_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertSBO;
+	std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
+	std::unique_ptr<gfx::ShaderBufferObject<SpriteShaderData>> Renderer::spriteSBO;
 
-	std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialCB;
-	MaterialData Renderer::mData{};
+	std::vector<SubmitData> Renderer::meshSubmissionData;
+	std::vector<SubmitData> Renderer::spriteSubmissionData;
 
 	void Renderer::initialise(){
-		vertCB = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderTypes::Vertex, gfx::BBP_ModelData);
-		materialCB = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderTypes::Pixel, gfx::BBP_MaterialData);
+		vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
+		materialSBO = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
+		spriteSBO = gfx::BindableFactory::createShaderBufferObject<SpriteShaderData>(gfx::ShaderType::Vertex, gfx::BBP_2DData);
 
-		mData.sininess = 32.0f;
-		materialCB->update(mData);
+		vertSBO->bind();
+		materialSBO->bind();
+		spriteSBO->bind();
+
+		materialSBO->update({ 32.0f });
+
+		RenderCommand::setBlendState(true);
 	}
 
 	void Renderer::beginScene(){
 		RenderCommand::clear();
-
-		vertCB->bind();
-		materialCB->bind();
 	}
 
 	void Renderer::endScene(){
-		
+		//Mesh
+		RenderCommand::setDepthBuffer(true);
+		for(auto& data : meshSubmissionData){
+			vertSBO->update({ data.modelData, math::transpose(math::inverse(data.modelData)) });
+			for(const auto& bindable : data.bindables){
+				bindable->bind();
+			}
+			RenderCommand::drawIndexed(data.indexCount);
+		}
+		meshSubmissionData.clear();
+
+		//Sprite
+		RenderCommand::setDepthBuffer(false);
+		for(auto& data : spriteSubmissionData){
+			spriteSBO->update({ data.modelData });
+			for(const auto& bindable : data.bindables){
+				bindable->bind();
+			}
+			RenderCommand::drawIndexed(data.indexCount);
+		}
+		spriteSubmissionData.clear();
 	}
 
 	void Renderer::submitMesh(SubmitData data){
-		vData.model = data.modelData;
-		vData.normalMatrix = math::transpose(math::inverse(data.modelData));
-		vertCB->update(vData);
+		meshSubmissionData.emplace_back(std::move(data));
+	}
 
-		for(const auto& bindable : data.bindables){
-			bindable->bind();
-		}
-
-		RenderCommand::drawIndexed(data.indexCount);
+	void Renderer::submitSprite(SubmitData data){
+		spriteSubmissionData.emplace_back(std::move(data));
 	}
 }

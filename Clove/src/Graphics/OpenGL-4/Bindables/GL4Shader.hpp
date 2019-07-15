@@ -23,10 +23,10 @@ namespace clv::gfx{
 
 		virtual void bind() override;
 
-		virtual void attachShader(ShaderTypes type) override;
+		virtual void attachShader(ShaderType type) override;
 
 	private:
-		std::string getPathForShader(ShaderTypes shader);
+		std::string getPathForShader(ShaderType shader);
 
 		std::string parseShader(const std::string& filepath);
 		unsigned int compileShader(unsigned int type, const std::string& source);

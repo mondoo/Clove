@@ -7,7 +7,6 @@
 #include "Clove/Layer.hpp"
 #include "Clove/Events/Event.hpp"
 #include "Clove/Events/ApplicationEvent.hpp"
-#include "Clove/ImGui/ImGuiLayer.hpp"
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Events/KeyEvent.hpp"
@@ -33,14 +32,8 @@ namespace clv{
 
 		gfx::Renderer::initialise();
 
+		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
-
-	#if CLV_PLATFORM_WINDOWS
-		imGuiLayer = std::make_shared<ImGuiLayer>();
-		pushLayer(imGuiLayer);
-	#else
-		CLV_LOG_WARN("IMGUI Disabled for non windows builds");
-	#endif
 
 		CLV_LOG_INFO("Successfully initialised Clove");
 
@@ -121,17 +114,10 @@ namespace clv{
 			}
 
 			gfx::Renderer::beginScene();
-			ecsManager.update(deltaSeonds.count());
 
-		#if CLV_PLATFORM_WINDOWS
-			imGuiLayer->begin();
-			for(auto layer : *layerStack){
-				layer->onImGuiRender();
-			}
-			imGuiLayer->end();
-		#endif
-			
-			gfx::Renderer::endScene();
+			ecsManager->update(deltaSeonds.count());
+
+            gfx::Renderer::endScene();
 			window->endFrame();
 		}
 	}
@@ -173,7 +159,7 @@ namespace clv{
 	}
 
 	ecs::Manager& Application::getManager(){
-		return ecsManager;
+		return *ecsManager;
 	}
 
 	bool Application::onWindowClose(WindowCloseEvent& e){

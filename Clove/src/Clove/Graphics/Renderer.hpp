@@ -16,6 +16,10 @@ namespace clv::gfx{
 		alignas(16) float sininess;
 	};
 
+	struct SpriteShaderData{
+		math::Matrix4f modelProjection;
+	};
+
 	struct SubmitData{ //TODO: Should I just make a Drawable or something that the RenderableComponents hold?
 		unsigned int indexCount = 0;
 		math::Matrix4f modelData{};
@@ -25,11 +29,12 @@ namespace clv::gfx{
 	class Renderer{
 		//VARIABLES
 	protected:
-		static std::unique_ptr<gfx::ShaderBufferObject<VertexData>> vertCB;
-		static VertexData vData;
+		static std::unique_ptr<gfx::ShaderBufferObject<VertexData>> vertSBO;
+		static std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO;
+		static std::unique_ptr<gfx::ShaderBufferObject<SpriteShaderData>> spriteSBO;
 
-		static std::unique_ptr<gfx::ShaderBufferObject<MaterialData>> materialCB;
-		static MaterialData mData;
+		static std::vector<SubmitData> meshSubmissionData;
+		static std::vector<SubmitData> spriteSubmissionData;
 
 		//FUNCTIONS
 	public:
@@ -38,6 +43,8 @@ namespace clv::gfx{
 		static void beginScene();
 		static void endScene();
 
+		//TODO: Make const ref? relying on the invoking call to move
 		static void submitMesh(SubmitData data);
+		static void submitSprite(SubmitData data);
 	};
 }

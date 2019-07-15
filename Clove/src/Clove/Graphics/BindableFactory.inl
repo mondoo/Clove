@@ -12,19 +12,19 @@
 
 namespace clv::gfx::BindableFactory{
 	template<typename T>
-	std::unique_ptr<ShaderBufferObject<T>> createShaderBufferObject(ShaderTypes shaderType, unsigned int bindingPoint){
-		switch(Application::get().getWindow().getContext().getAPI()){
+	std::unique_ptr<ShaderBufferObject<T>> createShaderBufferObject(ShaderType shaderType, unsigned int bindingPoint){
+		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
 				return std::make_unique<GL4UniformBufferObject<T>>(bindingPoint);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
 				switch(shaderType){
-					case ShaderTypes::Vertex:
+					case ShaderType::Vertex:
 						return std::make_unique<DX11VertexConstantBuffer<T>>(bindingPoint);
 						break;
 
-					case ShaderTypes::Pixel:
+					case ShaderType::Pixel:
 						return std::make_unique<DX11PixelConstantBuffer<T>>(bindingPoint);
 						break;
 

@@ -6,8 +6,6 @@
 
 #define CLV_WINDOWS_QUIT 25397841 //Note: this number is completely random
 
-extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
 namespace clv{
 	struct WindowsData{
 		HWND handle;
