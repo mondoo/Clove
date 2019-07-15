@@ -12,7 +12,8 @@ namespace clv::ecs{
 
 	Renderable2DComponent::~Renderable2DComponent() = default;
 
-	void Renderable2DComponent::setTexture(std::unique_ptr<gfx::Texture> texture){
+	//Temp - need bindables as shared_ptrs
+	/*void Renderable2DComponent::setTexture(std::unique_ptr<gfx::Texture> texture){
 		this->texture = std::move(texture);
-	}
+	}*/
 }

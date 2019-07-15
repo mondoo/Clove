@@ -5,7 +5,9 @@
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Input/Input.hpp"
 
+#include "Clove/ECS/Components/Transform2DComponent.hpp"
 #include "Clove/ECS/Components/Transform3DComponent.hpp"
+#include "Clove/ECS/Components/SpriteComponent.hpp"
 #include "Clove/ECS/Components/MeshComponent.hpp"
 #include "Clove/ECS/Components/LightComponent.hpp"
 #include "Clove/ECS/Components/CameraComponent.hpp"
@@ -18,6 +20,8 @@ private:
 	clv::ecs::Entity ent1;
 	clv::ecs::Entity ent2;
 	clv::ecs::Entity ent3;
+
+	clv::ecs::Entity sprtEnt1;
 
 	clv::ecs::Entity lght1;
 	clv::ecs::Entity ltEnt;
@@ -40,6 +44,8 @@ public:
 		ent1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 		ent2 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 		ent3 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
+
+		sprtEnt1 = clv::Application::get().getManager().createEntity<clv::ecs::SpriteComponent, clv::ecs::Transform2DComponent>();
 
 		//Couldn't i just smash the mesh component on the light?
 		lght1 = clv::Application::get().getManager().createEntity<clv::ecs::LightComponent, clv::ecs::Transform3DComponent>();
@@ -67,6 +73,9 @@ public:
 		ent2.getComponent<clv::ecs::Transform3DComponent>()->addChild(ent3.getComponent<clv::ecs::Transform3DComponent>());
 
 		//clv::Application::get().getManager().destroyEntity(ent2.getID());
+
+		sprtEnt1.getComponent<clv::ecs::SpriteComponent>()->setTexture("res/Textures/Zombie-32x32.png");
+		sprtEnt1.getComponent<clv::ecs::Transform2DComponent>()->setLocalScale(clv::math::Vector2f(32.0f, 32.0f));
 
 		lght1.getComponent<clv::ecs::Transform3DComponent>()->addChild(ltEnt.getComponent<clv::ecs::Transform3DComponent>());
 		ltEnt.getComponent<clv::ecs::Transform3DComponent>()->setLocalScale({ 0.25f, 0.25f, 0.25f });
@@ -118,6 +127,8 @@ public:
 		ent1.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
 		const float radius = 6.0f;
 		lght1.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition({ cos(rotDelta) * radius, 2.0f, sin(rotDelta) * radius });
+
+		sprtEnt1.getComponent<clv::ecs::Transform2DComponent>()->setLocalPosition(clv::math::Vector2f(cos(rotDelta) * radius * 5.0f, 0.0f));
 
 		rotDelta += 0.01f;
 

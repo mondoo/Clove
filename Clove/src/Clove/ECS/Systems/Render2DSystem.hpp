@@ -20,9 +20,9 @@ namespace clv::ecs{
 		static constexpr SystemID ID = 0xfa8540b2; //VS Generated GUID
 
 	private:
-		math::Matrix4f proj;
-		std::vector<unsigned int> indices;
-		std::vector<std::unique_ptr<gfx::Bindable>> quadBindables;
+		math::Matrix4f proj = {};
+		/*std::vector<unsigned int> indices;
+		std::vector<std::unique_ptr<gfx::Bindable>> quadBindables;*/
 
 		//FUNCTIONS
 	public:
