@@ -34,9 +34,6 @@ namespace clv::ecs{
 
 		void update(float deltaTime);
 
-		template<typename T>
-		T* getSystem(); //TODO: I don't really want people accessing systems (but we need to for the renderer)
-
 		template<typename... EntityComponents>
 		Entity createEntity();
 		void destroyEntity(EntityID ID);

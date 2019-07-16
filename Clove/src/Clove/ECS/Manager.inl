@@ -1,14 +1,6 @@
 #include "Clove/ECS/System.hpp"
 
 namespace clv::ecs{
-	template<typename T>
-	T* Manager::getSystem(){
-		if(auto foundSystem = systems.find(T::ID); foundSystem != systems.end()){
-			return static_cast<T*>(foundSystem->second.get());
-		}
-		return nullptr;
-	}
-
 	template<typename... EntityComponents>
 	Entity Manager::createEntity(){
 		EntityID ID = ++nextID;
