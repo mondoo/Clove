@@ -15,6 +15,8 @@ namespace clv::ecs{
 		std::shared_ptr<gfx::Shader> quadShader = gfx::BindableFactory::createShader();
 		quadShader->attachShader(gfx::ShaderType::Vertex2D);
 		quadShader->attachShader(gfx::ShaderType::Pixel2D);
+		//^^ note that it'll be better to have a shader on each child. So it can store the data when it's down in
+		//I think we can only batch the VB / IB for now - which is still a win
 
 		//VB
 		gfx::VertexLayout layout;
