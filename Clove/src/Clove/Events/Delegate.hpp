@@ -21,10 +21,10 @@ namespace clv::evt{//Maybe move to utils?
 			T* context = nullptr;
 			FunctionPrototype function;
 
-			/*Invoker(T* inContext, FunctionPrototype inFunction)
+			Invoker(T* inContext, FunctionPrototype inFunction)
 				: context(inContext)
 				, function(inFunction){
-			}*/
+			}
 			/*Invoker(const Invoker& other) = default;
 			Invoker(Invoker&& other) noexcept = default;
 			Invoker& operator=(const Invoker& other) = default;
@@ -39,13 +39,17 @@ namespace clv::evt{//Maybe move to utils?
 	private:
 		//FunctionPrototype* function = nullptr;
 
-		//std::unique_ptr<int> invoker; //doesn't work for some weird reason
-		InvokerBase* invoker = nullptr;
+		std::unique_ptr<InvokerBase> invoker; //doesn't work for some weird reason
+		//InvokerBase* invoker = nullptr;
 
 		//FUNCTIONS
 	public:
 		//TODO: Constructors and stuff
-
+		Delegate() = default;
+		Delegate(const Delegate& other) = delete; //Deleting because of unique ptr - will need a custom copy
+		Delegate(Delegate&& other) noexcept = default;
+		Delegate& operator=(const Delegate& other) = delete;
+		Delegate& operator=(Delegate&& other) noexcept = default;
 		~Delegate() = default; //Note we need to delete invoker or we'll leak
 
 		void bind(FunctionPrototype function){
@@ -54,11 +58,11 @@ namespace clv::evt{//Maybe move to utils?
 
 		template<typename T>
 		void bind(T* context, FunctionPrototype function){
-			//invoker = std::make_unique<Invoker<T>>(context, function);
-			Invoker<T>* inv = new Invoker<T>();
-			inv->context = context;
-			inv->function = function;
-			invoker = inv;
+			invoker = std::make_unique<Invoker<T>>(context, function);
+			//Invoker<T>* inv = new Invoker<T>();
+			//inv->context = context;
+			//inv->function = function;
+			//invoker = inv;
 		}
 
 		void broadcast(){
