@@ -14,6 +14,8 @@
 
 #include "Clove/Utils/Time.hpp"
 
+#include "Clove/Events/Delegate.hpp"
+
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
@@ -29,6 +31,8 @@ private:
 
 	clv::ecs::Entity cam;
 
+	clv::evt::Delegate<void()> del;
+
 	bool firstMouse = false;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
@@ -41,7 +45,16 @@ public:
 		: Layer("Sanbox render test"){
 	}
 
+	void TestFunc(){
+		CLV_LOG_INFO("FUNCTION WAS CALLED!");
+	}
+
 	virtual void onAttach() override{
+		del.bind([](){
+			CLV_LOG_INFO("LAMBDA WAS CALLED!");
+		});
+		del.broadcast();
+
 		ent1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 		ent2 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 		ent3 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
