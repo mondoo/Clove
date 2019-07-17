@@ -73,6 +73,12 @@ namespace clv::evt{//Maybe move to utils?
 		void broadcast(){
 			invoker->invoke();
 		}
+
+		//TODO: Allow for perfect forwarding
+		//template<typename ...Args>
+		//void broadcast(Args&& ...args){
+		//	invoker->invoke(std::forward<Args>(args...));
+		//}
 	};
 
 	//Friend function def outside of class
