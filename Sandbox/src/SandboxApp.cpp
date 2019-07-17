@@ -32,7 +32,7 @@ private:
 	clv::ecs::Entity cam;
 
 	clv::evt::Delegate<void()> delLam = {};
-	clv::evt::Delegate<void(ExampleLayer::*)()> delFunc = {};
+	clv::evt::Delegate<void()> delFunc = {};
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -56,7 +56,7 @@ public:
 		});
 		delLam.broadcast();*/
 
-		delFunc.bind(this, &ExampleLayer::TestFunc);
+		delFunc = clv::evt::bind<ExampleLayer, void(ExampleLayer::*)(), void()>(this, &ExampleLayer::TestFunc);
 		delFunc.broadcast();
 
 		ent1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
