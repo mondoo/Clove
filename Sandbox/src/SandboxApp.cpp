@@ -31,7 +31,8 @@ private:
 
 	clv::ecs::Entity cam;
 
-	clv::evt::Delegate<void()> del;
+	clv::evt::Delegate<void()> delLam = {};
+	clv::evt::Delegate<void(ExampleLayer::*)()> delFunc = {};
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -50,10 +51,13 @@ public:
 	}
 
 	virtual void onAttach() override{
-		del.bind([](){
+		/*delLam.bind([](){
 			CLV_LOG_INFO("LAMBDA WAS CALLED!");
 		});
-		del.broadcast();
+		delLam.broadcast();*/
+
+		delFunc.bind(this, &ExampleLayer::TestFunc);
+		delFunc.broadcast();
 
 		ent1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 		ent2 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
