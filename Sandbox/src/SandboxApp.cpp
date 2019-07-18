@@ -32,7 +32,7 @@ private:
 	clv::ecs::Entity cam;
 
 	clv::evt::Delegate<void()> delLam = {};
-	clv::evt::Delegate<void()> delFunc = {};
+	clv::evt::Delegate<void(ExampleLayer::*)()> delFunc = {};
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -46,18 +46,20 @@ public:
 		: Layer("Sanbox render test"){
 	}
 
-	void TestFunc(){
+	void testFunc(){
 		CLV_LOG_INFO("FUNCTION WAS CALLED!");
 	}
 
 	virtual void onAttach() override{
-		/*delLam.bind([](){
+		delLam.bind([](){
 			CLV_LOG_INFO("LAMBDA WAS CALLED!");
 		});
-		delLam.broadcast();*/
+		delLam.broadcast();
 
-		delFunc = clv::evt::bind<void()>(this, &ExampleLayer::TestFunc);
+		delFunc.bind(this, &ExampleLayer::testFunc);
 		delFunc.broadcast();
+
+		//testFunc(this);
 
 		ent1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 		ent2 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
@@ -196,7 +198,7 @@ public:
 class SandBox : public clv::Application{
 public:
 	SandBox(){
-		pushLayer(std::make_shared<ExampleLayer>(ExampleLayer()));
+		pushLayer(std::make_shared<ExampleLayer>());
 	}
 	~SandBox(){
 
