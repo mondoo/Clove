@@ -31,8 +31,8 @@ private:
 
 	clv::ecs::Entity cam;
 
-	clv::evt::Delegate<void(*)()> delLam = {};
-	clv::evt::Delegate<void(ExampleLayer::*)()> delFunc = {};
+	clv::evt::Delegate<void()> delLam;
+	clv::evt::Delegate<void()> delFunc;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -56,7 +56,7 @@ public:
 		});
 		delLam.broadcast();
 
-		delFunc.bind(this, &ExampleLayer::testFunc);
+		delFunc.bind(&ExampleLayer::testFunc, this);
 		delFunc.broadcast();
 
 		//testFunc(this);
