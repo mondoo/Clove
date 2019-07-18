@@ -82,7 +82,7 @@ namespace clv::evt{//Maybe move to utils?
 	};
 
 	//Friend function def outside of class
-	template<typename T, typename FunctionPrototypeA, typename FunProt>
+	template<typename FunProt, typename T, typename FunctionPrototypeA>
 	Delegate<FunProt> bind(T* context, FunctionPrototypeA function){
 		Delegate<FunProt> del{};
 		del.invoker = std::make_unique<clv::evt::Delegate<FunProt>::Invoker<T, FunctionPrototypeA>>(context, function);

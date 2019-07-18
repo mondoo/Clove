@@ -56,7 +56,7 @@ public:
 		});
 		delLam.broadcast();*/
 
-		delFunc = clv::evt::bind<ExampleLayer, void(ExampleLayer::*)(), void()>(this, &ExampleLayer::TestFunc);
+		delFunc = clv::evt::bind<void()>(this, &ExampleLayer::TestFunc);
 		delFunc.broadcast();
 
 		ent1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
