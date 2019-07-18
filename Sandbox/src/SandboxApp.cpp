@@ -31,7 +31,7 @@ private:
 
 	clv::ecs::Entity cam;
 
-	clv::evt::Delegate<void()> delLam = {};
+	clv::evt::Delegate<void(*)()> delLam = {};
 	clv::evt::Delegate<void(ExampleLayer::*)()> delFunc = {};
 
 	bool firstMouse = false;
