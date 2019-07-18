@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/RenderAPI.hpp"
 
 namespace clv::gfx{
 	class VertexBuffer;

@@ -1,10 +1,6 @@
 #include "clvpch.hpp"
 #include "BindableFactory.hpp"
 
-#include "Clove/Application.hpp"
-#include "Clove/Platform/Window.hpp"
-#include "Clove/Graphics/Context.hpp"
-
 //GL
 #include "Graphics/OpenGL-4/Bindables/GL4VertexBuffer.hpp"
 #include "Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp"
