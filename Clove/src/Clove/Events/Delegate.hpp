@@ -4,6 +4,13 @@
 #include <map>
 
 namespace clv::evt{
+	namespace utility{
+		template<typename RetType, typename ObjectType, typename ...Args>
+		constexpr auto getArgumentCount(RetType(ObjectType::*)(Args...)){
+			return std::integral_constant<size_t, sizeof ...(Args)>{};
+		}
+	}
+
 	template<typename FunctionPrototype>
 	class SingleCastDelegate{
 		//VARIABLES
@@ -34,7 +41,7 @@ namespace clv::evt{
 		MultiCastDelegateHandle(int ID) : ID(ID){}
 
 		operator int() const{ return ID.value_or(-1); }
-		
+
 		bool operator <(const MultiCastDelegateHandle& rhs) const{ return ID.value_or(-1) < rhs.ID.value_or(-1); }
 	};
 
