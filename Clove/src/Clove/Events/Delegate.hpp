@@ -11,13 +11,6 @@ namespace clv::evt{//Maybe move to utils?
 
 		//FUNCTIONS
 	public:
-		Delegate() = default;
-		Delegate(const Delegate& other) = delete; 
-		Delegate(Delegate&& other) noexcept = default;
-		Delegate& operator=(const Delegate& other) = delete;
-		Delegate& operator=(Delegate&& other) noexcept = default;
-		~Delegate() = default;
-
 		template<typename BindFunctionPrototype, typename ...Args>
 		void bindMemberFunction(BindFunctionPrototype&& function, Args&& ...args){
 			functionPointer = std::bind(std::forward<BindFunctionPrototype>(function), std::forward<Args>(args)...);
@@ -28,9 +21,15 @@ namespace clv::evt{//Maybe move to utils?
 			functionPointer = function;
 		}
 
+		void unbind(){
+			functionPointer = nullptr;
+		}
+
 		template<typename ...Args>
 		auto broadcast(Args&& ...args){
-			return functionPointer(std::forward<Args>(args)...);
+			if(functionPointer){
+				return functionPointer(std::forward<Args>(args)...);
+			}
 		}
 	};
 }
