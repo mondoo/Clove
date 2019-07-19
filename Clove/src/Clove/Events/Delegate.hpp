@@ -20,7 +20,7 @@ namespace clv::evt{
 		void unbind();
 
 		template<typename ...Args>
-		auto broadcast(Args&& ...args);
+		auto broadcast(Args&& ...args) const;
 	};
 
 	struct MultiCastDelegateHandle{
@@ -57,7 +57,7 @@ namespace clv::evt{
 		void unbindAll();
 
 		template<typename ...Args>
-		void broadcast(Args&& ...args);
+		void broadcast(Args&& ...args) const;
 	};
 }
 

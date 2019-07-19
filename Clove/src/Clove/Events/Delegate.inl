@@ -18,7 +18,7 @@ namespace clv::evt{
 
 	template<typename FunctionPrototype>
 	template<typename ...Args>
-	auto SingleCastDelegate<FunctionPrototype>::broadcast(Args&& ...args){
+	auto SingleCastDelegate<FunctionPrototype>::broadcast(Args&& ...args) const{
 		if(functionPointer){
 			return functionPointer(std::forward<Args>(args)...);
 		}
@@ -53,7 +53,7 @@ namespace clv::evt{
 
 	template<typename FunctionPrototype>
 	template<typename ...Args>
-	void MultiCastDelegate<FunctionPrototype>::broadcast(Args&& ...args){
+	void MultiCastDelegate<FunctionPrototype>::broadcast(Args&& ...args) const{
 		for(auto& [handle, function] : functionPointers){
 			if(function){
 				function(std::forward<Args>(args)...);
