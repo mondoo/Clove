@@ -31,9 +31,6 @@ private:
 
 	clv::ecs::Entity cam;
 
-	clv::evt::MultiCastDelegate<void()> del;
-	clv::evt::SingleCastDelegate<void()> del2;
-
 	bool firstMouse = false;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
@@ -46,36 +43,7 @@ public:
 		: Layer("Sanbox render test"){
 	}
 
-	int testFunc(){
-		CLV_LOG_INFO("FUNCTION WAS CALLED!");
-		return 6;
-	}
-
 	virtual void onAttach() override{
-		auto lamHan = del.bindLambda([](){
-			CLV_LOG_INFO("LAMBDA WAS CALLED! {0}");
-		});
-		auto funHan = del.bindMemberFunction(&ExampleLayer::testFunc, this);
-
-		del.broadcast();
-
-		del.unbind(funHan);
-
-		del.broadcast();
-
-		del.unbind(funHan);
-		del.unbindAll();
-
-		del.broadcast();
-
-		del2.bindLambda([](){
-			CLV_LOG_INFO("LAMBDA WAS CALLED 2!");
-		});
-
-		del2.broadcast();
-
-		//testFunc(this);
-
 		ent1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 		ent2 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 		ent3 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
