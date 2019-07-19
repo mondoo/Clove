@@ -19,8 +19,13 @@ namespace clv::evt{//Maybe move to utils?
 		~Delegate() = default;
 
 		template<typename BindFunctionPrototype, typename ...Args>
-		void bind(BindFunctionPrototype&& function, Args&& ...args){
+		void bindMemberFunction(BindFunctionPrototype&& function, Args&& ...args){
 			functionPointer = std::bind(std::forward<BindFunctionPrototype>(function), std::forward<Args>(args)...);
+		}
+
+		template<typename BindFunctionPrototype>
+		void bindLambda(BindFunctionPrototype&& function){
+			functionPointer = function;
 		}
 
 		template<typename ...Args>

@@ -31,8 +31,8 @@ private:
 
 	clv::ecs::Entity cam;
 
-	clv::evt::Delegate<void()> delLam;
-	clv::evt::Delegate<void()> delFunc;
+	clv::evt::Delegate<void(int)> delLam;
+	clv::evt::Delegate<int()> delFunc;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -46,18 +46,21 @@ public:
 		: Layer("Sanbox render test"){
 	}
 
-	void testFunc(){
+	int testFunc(){
 		CLV_LOG_INFO("FUNCTION WAS CALLED!");
+		return 6;
 	}
 
 	virtual void onAttach() override{
-		delLam.bind([](){
-			CLV_LOG_INFO("LAMBDA WAS CALLED!");
+		delLam.bindLambda([](int x) -> void{
+			CLV_LOG_INFO("LAMBDA WAS CALLED! {0}", x);
 		});
-		delLam.broadcast();
+		delLam.broadcast(5);
 
-		delFunc.bind(&ExampleLayer::testFunc, this);
-		delFunc.broadcast();
+		delFunc.bindMemberFunction(&ExampleLayer::testFunc, this);
+		if(delFunc.broadcast() == 6){
+			CLV_LOG_INFO("it was 6");
+		}
 
 		//testFunc(this);
 
