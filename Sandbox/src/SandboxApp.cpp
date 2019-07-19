@@ -31,8 +31,7 @@ private:
 
 	clv::ecs::Entity cam;
 
-	clv::evt::Delegate<void(int)> delLam;
-	clv::evt::Delegate<int()> delFunc;
+	clv::evt::MultiCastDelegate<void()> del;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -52,15 +51,21 @@ public:
 	}
 
 	virtual void onAttach() override{
-		delLam.bindLambda([](int x) -> void{
-			CLV_LOG_INFO("LAMBDA WAS CALLED! {0}", x);
+		auto lamHan = del.bindLambda([](){
+			CLV_LOG_INFO("LAMBDA WAS CALLED! {0}");
 		});
-		delLam.broadcast(5);
+		auto funHan = del.bindMemberFunction(&ExampleLayer::testFunc, this);
 
-		delFunc.bindMemberFunction(&ExampleLayer::testFunc, this);
-		if(delFunc.broadcast() == 6){
-			CLV_LOG_INFO("it was 6");
-		}
+		del.broadcast();
+
+		del.unbind(funHan);
+
+		del.broadcast();
+
+		del.unbind(funHan);
+		del.unbindAll();
+
+		del.broadcast();
 
 		//testFunc(this);
 
