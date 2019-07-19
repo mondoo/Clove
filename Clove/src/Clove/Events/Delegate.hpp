@@ -1,11 +1,9 @@
 #pragma once
 
-//TODO: .inl stuff
-
 #include <optional>
 #include <map>
 
-namespace clv::evt{//Maybe move to utils?
+namespace clv::evt{
 	template<typename FunctionPrototype>
 	class SingleCastDelegate{
 		//VARIABLES
@@ -15,32 +13,28 @@ namespace clv::evt{//Maybe move to utils?
 		//FUNCTIONS
 	public:
 		template<typename BindFunctionPrototype, typename ...Args>
-		void bindMemberFunction(BindFunctionPrototype&& function, Args&& ...args){
-			functionPointer = std::bind(std::forward<BindFunctionPrototype>(function), std::forward<Args>(args)...);
-		}
-
+		void bindMemberFunction(BindFunctionPrototype&& function, Args&& ...args);
 		template<typename BindFunctionPrototype>
-		void bindLambda(BindFunctionPrototype&& function){
-			functionPointer = function;
-		}
+		void bindLambda(BindFunctionPrototype&& function);
 
-		void unbind(){
-			functionPointer = nullptr;
-		}
+		void unbind();
 
 		template<typename ...Args>
-		auto broadcast(Args&& ...args){
-			if(functionPointer){
-				return functionPointer(std::forward<Args>(args)...);
-			}
-		}
+		auto broadcast(Args&& ...args);
 	};
 
 	struct MultiCastDelegateHandle{
+		//VARIABLES
+	public:
 		const std::optional<int> ID = {};
+
+		//FUNCTIONS
+	public:
 		MultiCastDelegateHandle() = default;
 		MultiCastDelegateHandle(int ID) : ID(ID){}
+
 		operator int() const{ return ID.value_or(-1); }
+		
 		bool operator <(const MultiCastDelegateHandle& rhs) const{ return ID.value_or(-1) < rhs.ID.value_or(-1); }
 	};
 
@@ -55,36 +49,15 @@ namespace clv::evt{//Maybe move to utils?
 		//FUNCTIONS
 	public:
 		template<typename BindFunctionPrototype, typename ...Args>
-		MultiCastDelegateHandle bindMemberFunction(BindFunctionPrototype&& function, Args&& ...args){
-			auto handle = MultiCastDelegateHandle{ nextID++ };
-			auto functionPointer = std::bind(std::forward<BindFunctionPrototype>(function), std::forward<Args>(args)...);
-			functionPointers.emplace(handle, functionPointer);
-			return handle;
-		}
-
+		MultiCastDelegateHandle bindMemberFunction(BindFunctionPrototype&& function, Args&& ...args);
 		template<typename BindFunctionPrototype>
-		MultiCastDelegateHandle bindLambda(BindFunctionPrototype&& function){
-			auto handle = MultiCastDelegateHandle{ nextID++ };
-			functionPointers.emplace(handle, function);
-			return handle;
-		}
+		MultiCastDelegateHandle bindLambda(BindFunctionPrototype&& function);
 
-		void unbind(const MultiCastDelegateHandle& handle){
-			functionPointers.erase(handle);
-		}
-
-		void unbindAll(){
-			functionPointers.clear();
-		}
+		void unbind(const MultiCastDelegateHandle& handle);
+		void unbindAll();
 
 		template<typename ...Args>
-		void broadcast(Args&& ...args){
-			for(auto& [handle, function] : functionPointers){
-				if(function){
-					function(std::forward<Args>(args)...);
-				}
-			}
-		}
+		void broadcast(Args&& ...args);
 	};
 }
 

@@ -32,6 +32,7 @@ private:
 	clv::ecs::Entity cam;
 
 	clv::evt::MultiCastDelegate<void()> del;
+	clv::evt::SingleCastDelegate<void()> del2;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
@@ -66,6 +67,12 @@ public:
 		del.unbindAll();
 
 		del.broadcast();
+
+		del2.bindLambda([](){
+			CLV_LOG_INFO("LAMBDA WAS CALLED 2!");
+		});
+
+		del2.broadcast();
 
 		//testFunc(this);
 
