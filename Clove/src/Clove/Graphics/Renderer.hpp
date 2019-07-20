@@ -114,5 +114,30 @@ namespace clv::gfx{
 
 		//Also, maybe not have an array of bindables on the renderable components and just call out the bindables
 		//individually? we need to know what type they are a lot more than performing bulk operations on them
+
+
+
+
+		//so the renderer should have some knowledge of the lights and cameras for the scene
+		//But they're tied into the ECS - how do i change?
+
+		//I've thought about putting the render commands in the systems but there needs to be one object
+		//that knows about all the render data to be able to eprform culling and optimisations
+
+
+		//Fresh ideas:
+		//RENDERING
+		//Make a renderable class that will store everything this renderer will need to do the render (easy access)
+		//RenderableComponent has a renderable object and pretty much just wraps it.
+		//The 2D / 3D system will handle all the bespoke calcs. for example the 2D system will do all of the screen space stuff
+		//and the 3D system will handle the scene graph
+
+		//LIGHTS / CAMERA
+		//The systems will submit the data to the renderer. Then the renderer can handle the shader data
+
+		//SHADERS
+		//the systems can handle the object specific values (model etc.). The renderer can handle any global values
+		//(view, light pos etc.)
+		//	I like this because the systems and renderer will know what these shaders should have for uniforms / constant buffers
 	};
 }
