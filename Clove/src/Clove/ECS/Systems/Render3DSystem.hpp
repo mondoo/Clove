@@ -7,10 +7,6 @@
 
 namespace clv::ecs{
 	class Render3DSystem : public System<Transform3DComponent, Renderable3DComponent>{
-		//VARIABLES
-	public:
-		static constexpr SystemID ID = 0x1ae78643; //VS generated GUID
-
 		//FUNCTIONS
 	public:
 		Render3DSystem();

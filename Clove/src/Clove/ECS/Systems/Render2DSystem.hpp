@@ -16,9 +16,6 @@ namespace clv::gfx{
 namespace clv::ecs{
 	class Render2DSystem : public System<Transform2DComponent, Renderable2DComponent>{
 		//VARIABLES
-	public:
-		static constexpr SystemID ID = 0xfa8540b2; //VS Generated GUID
-
 	private:
 		math::Matrix4f proj = {};
 		std::vector<unsigned int> indices;

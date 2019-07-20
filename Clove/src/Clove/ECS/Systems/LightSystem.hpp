@@ -7,10 +7,6 @@
 
 namespace clv::ecs{
 	class LightSystem : public System<Transform3DComponent, LightComponent>{
-		//VARIABLES
-	public:
-		static constexpr SystemID ID = 0xb46079ac;
-
 		//FUNCTIONS
 	public:
 		LightSystem();
