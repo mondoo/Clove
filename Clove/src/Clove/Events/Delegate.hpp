@@ -21,10 +21,6 @@ namespace clv::evt{
 
 		template<typename ...Args>
 		auto broadcast(Args&& ...args) const;
-
-	private:
-		template<typename BindFunctionPrototype, typename ObjectType, int ...indices>
-		void dobind(BindFunctionPrototype&& function, ObjectType* object, std::integer_sequence<int, indices...>);
 	};
 
 	struct MultiCastDelegateHandle{
@@ -52,10 +48,10 @@ namespace clv::evt{
 
 		//FUNCTIONS
 	public:
-		template<typename BindFunctionPrototype, typename ...Args>
-		MultiCastDelegateHandle bindMemberFunction(BindFunctionPrototype&& function, Args&& ...args);
+		template<typename BindFunctionPrototype, typename ObjectType>
+		MultiCastDelegateHandle bind(BindFunctionPrototype&& function, ObjectType* object);
 		template<typename BindFunctionPrototype>
-		MultiCastDelegateHandle bindLambda(BindFunctionPrototype&& function);
+		MultiCastDelegateHandle bind(BindFunctionPrototype&& function);
 
 		void unbind(const MultiCastDelegateHandle& handle);
 		void unbindAll();
