@@ -46,6 +46,8 @@ namespace clv::gfx{
 		glLinkProgram(programID);
 		glValidateProgram(programID);
 		glDeleteShader(shaderID);
+
+		//Would have something here just to set up the points on the textures depending on shader type
 	}
 
 	std::string GL4Shader::getPathForShader(ShaderType shader){

@@ -7,10 +7,6 @@
 
 namespace clv::ecs{
 	class CameraSystem : public System<Transform3DComponent, CameraComponent>{
-		//VARIABLES
-	public:
-		static constexpr SystemID ID = 0xdcd2f589;
-
 		//FUNCTIONS
 	public:
 		CameraSystem();

@@ -1,7 +1,7 @@
 #include "clvpch.hpp"
 #include "CameraSystem.hpp"
 
-#include "Clove/Application.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 
 namespace clv::ecs{
 	CameraSystem::CameraSystem() = default;
@@ -32,12 +32,13 @@ namespace clv::ecs{
 			//update right
 			camera->cameraRight = math::normalise(math::cross(camera->cameraFront, camera->cameraUp));
 
-			camera->viewData.view = lookAt;
-			camera->viewData.projection = camera->currentProjection;
-			camera->sboMat->update(camera->viewData);
+			camera->cameraRenderData.lookAt = lookAt;
+			camera->cameraRenderData.position = position;
+			camera->cameraRenderData.projection = camera->currentProjection;
 
-			camera->pos.pos = position;
-			camera->sboPos->update(camera->pos);
+			//Assuming a single camera. but will just use the last to update if there are multiple
+			//will need to change
+			gfx::Renderer::setCamera(camera->cameraRenderData);
 		}
 	}
 }

@@ -15,9 +15,6 @@ namespace clv::ecs{
 			linear,
 			quadratic
 		};
-
-		sbo = gfx::BindableFactory::createShaderBufferObject<LightData>(gfx::ShaderType::Pixel, gfx::BBP_PointLightData);
-		sbo->bind();
 	}
 
 	LightComponent::LightComponent(LightComponent&& other) noexcept = default;

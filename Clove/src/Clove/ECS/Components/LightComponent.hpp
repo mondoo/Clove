@@ -2,21 +2,9 @@
 
 #include "Clove/ECS/Component.hpp"
 
-#include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 
 namespace clv::ecs{
-	struct LightData{
-		alignas(16) math::Vector3f position;
-
-		alignas(16) math::Vector3f ambient;
-		alignas(16) math::Vector3f diffuse;
-		alignas(16) math::Vector3f specular;
-
-		/*alignas(16)*/ float constant;
-		/*alignas(16)*/ float linear;
-		/*alignas(16)*/ float quadratic;
-	};
-
 	class LightComponent : public Component{
 		friend class LightSystem;
 
@@ -34,9 +22,7 @@ namespace clv::ecs{
 		float linear = 0.0014f;
 		float quadratic = 0.000007f;
 
-		LightData lightData;
-
-		std::shared_ptr<gfx::ShaderBufferObject<LightData>> sbo;
+		gfx::LightData lightData;
 
 		//FUNCTIONS
 	public:

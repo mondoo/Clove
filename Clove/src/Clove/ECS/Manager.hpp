@@ -19,7 +19,7 @@ namespace clv::ecs{
 		//VARIABLES
 	private:
 		std::unordered_map<EntityID, std::unordered_map<ComponentID, std::unique_ptr<Component>>> components;
-		std::unordered_map<SystemID, std::unique_ptr<SystemBase>> systems;
+		std::vector<std::unique_ptr<SystemBase>> systems;
 
 		static EntityID nextID; //TODO: have a better system for generating and reusing IDs
 

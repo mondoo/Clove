@@ -9,12 +9,6 @@
 namespace clv::ecs{
 	CameraComponent::CameraComponent(){
 		setProjectionMode(ProjectionMode::perspective);
-
-		sboMat = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderType::Vertex, gfx::BBP_CameraMatrices);
-		sboMat->bind();
-
-		sboPos = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderType::Pixel, gfx::BBP_ViewData);
-		sboPos->bind();
 	}
 
 	CameraComponent::CameraComponent(CameraComponent&& other) noexcept = default;

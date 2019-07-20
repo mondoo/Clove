@@ -2,6 +2,7 @@
 #include "SpriteComponent.hpp"
 
 #include "Clove/Graphics/BindableFactory.hpp"
+#include "Clove/Graphics/Bindables/Shader.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
 
 namespace clv::ecs{
@@ -14,6 +15,6 @@ namespace clv::ecs{
 	SpriteComponent::~SpriteComponent() = default;
 
 	void SpriteComponent::setTexture(const std::string& path){
-		Renderable2DComponent::setTexture(gfx::BindableFactory::createTexture(path, gfx::TBP_Sprite));
+		submissionData.texture = gfx::BindableFactory::createTexture(path, gfx::TBP_Sprite);
 	}
 }
