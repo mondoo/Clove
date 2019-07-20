@@ -7,6 +7,3 @@
 [submodule "Clove/vendor/OBJ-Loader"]
 	path = Clove/vendor/OBJ-Loader
 	url = https://github.com/Bly7/OBJ-Loader.git
-[submodule "Clove/vendor/Event-Dispatcher"]
-	path = Clove/vendor/Event-Dispatcher
-	url = https://github.com/AGarlicMonkey/Event-Dispatcher.git
