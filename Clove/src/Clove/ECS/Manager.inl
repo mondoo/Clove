@@ -10,7 +10,11 @@ namespace clv::ecs{
 			system->onEntityCreated(ID, components[ID]);
 		}
 
-		return { this, ID };
+		Entity entity{ ID };
+		entity.onComponentRequestedDelegate.bind(&Manager::getComponentForEntity, this);
+		entity.isEntityIdValidDelegate.bind(&Manager::isEntityValid, this);
+
+		return entity;
 	}
 
 	template<size_t index, typename EntityComponent, typename... EntityComponents>
