@@ -40,8 +40,8 @@ namespace clv::gfx{
 		vbd.Usage = D3D11_USAGE_DEFAULT;
 		vbd.CPUAccessFlags = 0;
 		vbd.MiscFlags = 0u;
-		vbd.ByteWidth = bufferData.sizeBytes();
-		vbd.StructureByteStride = bufferData.getLayout().size();
+		vbd.ByteWidth = static_cast<UINT>(bufferData.sizeBytes());
+		vbd.StructureByteStride = static_cast<UINT>(bufferData.getLayout().size());
 
 		D3D11_SUBRESOURCE_DATA vsrd = {};
 		vsrd.pSysMem = bufferData.data();
@@ -70,7 +70,7 @@ namespace clv::gfx{
 	}
 
 	void DX11VertexBuffer::bind(){
-		const UINT stride = bufferData.getLayout().size();
+		const UINT stride = static_cast<UINT>(bufferData.getLayout().size());
 		const UINT offset = 0u;
 		DX11RenderAPI::getContext().IASetVertexBuffers(0u, 1u, vertexBuffer.GetAddressOf(), &stride, &offset);
 		DX11RenderAPI::getContext().IASetInputLayout(inputLayout.Get());
