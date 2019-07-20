@@ -1,7 +1,6 @@
 namespace clv::evt::utility{
 	template<int amount> struct placeholderSequence{ static placeholderSequence ph; };
 	template<int amount> placeholderSequence<amount> placeholderSequence<amount>::ph;
-	template<int num> struct ::std::is_placeholder<placeholderSequence<num>> : std::integral_constant<int, num>{};
 
 	template<typename RetType, typename ObjectType, typename ...Args>
 	constexpr auto getArgumentCount(RetType(ObjectType::*)(Args...)){
@@ -12,6 +11,10 @@ namespace clv::evt::utility{
 	auto dobind(BindFunctionPrototype&& function, ObjectType* object, std::integer_sequence<int, indices...>){
 		return std::bind(std::forward<BindFunctionPrototype>(function), object, utility::placeholderSequence<indices + 1>::ph...);
 	}
+}
+
+namespace std{
+	template<int num> struct is_placeholder<clv::evt::utility::placeholderSequence<num>> : std::integral_constant<int, num>{};
 }
 
 namespace clv::evt{
