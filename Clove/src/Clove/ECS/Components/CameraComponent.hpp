@@ -2,7 +2,6 @@
 
 #include "Clove/ECS/Component.hpp"
 
-#include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
 #include "Clove/Graphics/Renderer.hpp"
 
 namespace clv::ecs{

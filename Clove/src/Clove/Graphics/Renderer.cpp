@@ -25,6 +25,11 @@ namespace clv::gfx{
 	std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
 	std::shared_ptr<gfx::ShaderBufferObject<SpriteShaderData>> Renderer::spriteSBO;
 
+	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO;
+	std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> Renderer::viewPosSBO;
+
+	std::shared_ptr<gfx::ShaderBufferObject<LightData>> Renderer::lightDataSBO;
+
 	std::vector<MeshRenderData> Renderer::meshSubmissionData;
 	std::vector<SpriteRenderData> Renderer::spriteSubmissionData;
 	CameraRenderData Renderer::cameraSubmissionData;
@@ -34,9 +39,6 @@ namespace clv::gfx{
 	std::shared_ptr<Shader> Renderer::spriteShader;
 	math::Matrix4f Renderer::spriteProj = {};
 
-	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO;
-	std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> Renderer::viewPosSBO;
-
 	void Renderer::initialise(){
 		vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
 		materialSBO = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
@@ -45,12 +47,16 @@ namespace clv::gfx{
 		viewDataSBO = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderType::Vertex, gfx::BBP_CameraMatrices);
 		viewPosSBO = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderType::Pixel, gfx::BBP_ViewData);
 		
+		lightDataSBO = gfx::BindableFactory::createShaderBufferObject<LightData>(gfx::ShaderType::Pixel, gfx::BBP_PointLightData);
+
 		vertSBO->bind();
 		materialSBO->bind();
 		spriteSBO->bind();
 
 		viewDataSBO->bind();
 		viewPosSBO->bind();
+
+		lightDataSBO->bind();
 
 		materialSBO->update({ 32.0f });
 
@@ -131,5 +137,9 @@ namespace clv::gfx{
 	void Renderer::setCamera(const CameraRenderData& data){
 		viewDataSBO->update({ data.lookAt, data.projection });
 		viewPosSBO->update({ data.position });
+	}
+
+	void Renderer::submitLight(const LightData& data){
+		lightDataSBO->update(data);
 	}
 }

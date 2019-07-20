@@ -56,6 +56,18 @@ namespace clv::gfx{
 		math::Matrix4f projection;
 	};
 
+	struct LightData{
+		alignas(16) math::Vector3f position;
+
+		alignas(16) math::Vector3f ambient;
+		alignas(16) math::Vector3f diffuse;
+		alignas(16) math::Vector3f specular;
+
+		/*alignas(16)*/ float constant;
+		/*alignas(16)*/ float linear;
+		/*alignas(16)*/ float quadratic;
+	};
+
 	class Renderer{
 		//VARIABLES
 	protected:
@@ -65,6 +77,8 @@ namespace clv::gfx{
 
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewData>> viewDataSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> viewPosSBO;
+
+		static std::shared_ptr<gfx::ShaderBufferObject<LightData>> lightDataSBO;
 
 		static std::vector<MeshRenderData> meshSubmissionData;
 		static std::vector<SpriteRenderData> spriteSubmissionData;
@@ -85,5 +99,6 @@ namespace clv::gfx{
 		static void submitMesh(const MeshRenderData& data);
 		static void submitSprite(const SpriteRenderData& data);
 		static void setCamera(const CameraRenderData& data);
+		static void submitLight(const LightData& data);
 	};
 }

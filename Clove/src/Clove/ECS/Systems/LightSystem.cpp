@@ -1,7 +1,7 @@
 #include "clvpch.hpp"
 #include "LightSystem.hpp"
 
-#include "Clove/Application.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 
 namespace clv::ecs{
 	LightSystem::LightSystem() = default;
@@ -19,7 +19,7 @@ namespace clv::ecs{
 
 			light->lightData.position = transform->getLocalPosition();
 
-			light->sbo->update(light->lightData);
+			gfx::Renderer::submitLight(light->lightData);
 		}
 	}
 }
