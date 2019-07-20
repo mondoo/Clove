@@ -16,11 +16,12 @@ namespace clv::ecs{
 	void Render3DSystem::update(float deltaTime){
 		for(auto& componentTuple : components){
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
-			Renderable3DComponent* renderable = std::get<Renderable3DComponent*>(componentTuple);
+			MeshComponent* renderable = std::get<MeshComponent*>(componentTuple);
 
 			const math::Matrix4f modelMat = getTransformWorldMatrix(transform);
+			renderable->submissionData.modelData = modelMat;
 
-			gfx::Renderer::submitMesh(std::move(gfx::SubmitData{ renderable->indexBuffer->getIndexCount(), modelMat, renderable->bindables }));
+			gfx::Renderer::submitMesh(renderable->submissionData);
 		}
 	}
 

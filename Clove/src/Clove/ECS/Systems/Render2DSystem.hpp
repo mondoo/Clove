@@ -3,7 +3,7 @@
 #include "Clove/ECS/System.hpp"
 
 #include "Clove/ECS/Components/Transform2DComponent.hpp"
-#include "Clove/ECS/Components/Renderable2DComponent.hpp"
+#include "Clove/ECS/Components/SpriteComponent.hpp"
 
 namespace clv::gfx{
 	class Renderer;
@@ -14,13 +14,7 @@ namespace clv::gfx{
 }
 
 namespace clv::ecs{
-	class Render2DSystem : public System<Transform2DComponent, Renderable2DComponent>{
-		//VARIABLES
-	private:
-		math::Matrix4f proj = {};
-		std::vector<unsigned int> indices;
-		std::vector<std::shared_ptr<gfx::Bindable>> quadBindables;
-
+	class Render2DSystem : public System<Transform2DComponent, SpriteComponent>{
 		//FUNCTIONS
 	public:
 		Render2DSystem();

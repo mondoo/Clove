@@ -47,12 +47,8 @@ namespace clv::ecs{
 			);
 		}
 
-		for(const auto i : info.indices){
-			indices.push_back(i);
-		}
-
 		//Shader
-		std::shared_ptr<gfx::Shader> shader = gfx::BindableFactory::createShader();
+		auto shader = gfx::BindableFactory::createShader();
 		shader->attachShader(gfx::ShaderType::Vertex);
 		shader->attachShader(gfx::ShaderType::Pixel);
 		shader->bind();
@@ -61,17 +57,16 @@ namespace clv::ecs{
 		std::shared_ptr<gfx::VertexBuffer> vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *shader);
 
 		//IB
-		addIndexBuffer(gfx::BindableFactory::createIndexBuffer(indices));
-
-		addBindable(std::move(vertexBuffer));
-		addBindable(std::move(shader));
+		submissionData.vertexBuffer = std::move(vertexBuffer);
+		submissionData.indexBuffer = gfx::BindableFactory::createIndexBuffer(info.indices);
+		submissionData.shader = std::move(shader);
 	}
 
 	void MeshComponent::setDiffuseTexture(const std::string& path){
-		addBindable(gfx::BindableFactory::createTexture(path, gfx::TBP_Diffuse));
+		submissionData.diffTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Diffuse);
 	}
 
 	void MeshComponent::setSpecularTexture(const std::string& path){
-		addBindable(gfx::BindableFactory::createTexture(path, gfx::TBP_Specular));
+		submissionData.specTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Specular);
 	}
 }
