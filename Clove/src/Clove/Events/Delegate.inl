@@ -1,13 +1,30 @@
+namespace clv::evt::utility{
+	template<typename RetType, typename ObjectType, typename ...Args>
+	constexpr auto getArgumentCount(RetType(ObjectType::*)(Args...)){
+		return std::integral_constant<size_t, sizeof ...(Args)>{};
+	}
+
+	template<int N>
+	struct my_placeholder{ static my_placeholder ph; };
+
+	template<int N>
+	my_placeholder<N> my_placeholder<N>::ph;
+
+	template<int N>
+	struct ::std::is_placeholder<my_placeholder<N>> : std::integral_constant<int, N>{};
+}
+
 namespace clv::evt{
 	template<typename FunctionPrototype>
-	template<typename BindFunctionPrototype, typename ...Args>
-	void SingleCastDelegate<FunctionPrototype>::bindMemberFunction(BindFunctionPrototype&& function, Args&& ...args){
-		functionPointer = std::bind(std::forward<BindFunctionPrototype>(function), std::forward<Args>(args)...);
+	template<typename BindFunctionPrototype, typename ObjectType>
+	void SingleCastDelegate<FunctionPrototype>::bind(BindFunctionPrototype&& function, ObjectType* object){
+		constexpr size_t argumentCount = decltype(utility::getArgumentCount(function))::value;
+		dobind(std::forward<BindFunctionPrototype>(function), object, std::make_integer_sequence<int, argumentCount>());
 	}
 
 	template<typename FunctionPrototype>
 	template<typename BindFunctionPrototype>
-	void SingleCastDelegate<FunctionPrototype>::bindLambda(BindFunctionPrototype&& function){
+	void SingleCastDelegate<FunctionPrototype>::bind(BindFunctionPrototype&& function){
 		functionPointer = function;
 	}
 
@@ -22,6 +39,12 @@ namespace clv::evt{
 		if(functionPointer){
 			return functionPointer(std::forward<Args>(args)...);
 		}
+	}
+
+	template<typename FunctionPrototype>
+	template<typename BindFunctionPrototype, typename ObjectType, int ...indices>
+	void SingleCastDelegate<FunctionPrototype>::dobind(BindFunctionPrototype&& function, ObjectType* object, std::integer_sequence<int, indices...>){
+		functionPointer = std::bind(std::forward<BindFunctionPrototype>(function), object, utility::my_placeholder<indices+1>::ph...);
 	}
 
 	template<typename FunctionPrototype>

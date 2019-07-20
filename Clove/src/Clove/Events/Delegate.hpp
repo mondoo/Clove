@@ -4,13 +4,6 @@
 #include <map>
 
 namespace clv::evt{
-	namespace utility{
-		template<typename RetType, typename ObjectType, typename ...Args>
-		constexpr auto getArgumentCount(RetType(ObjectType::*)(Args...)){
-			return std::integral_constant<size_t, sizeof ...(Args)>{};
-		}
-	}
-
 	template<typename FunctionPrototype>
 	class SingleCastDelegate{
 		//VARIABLES
@@ -19,15 +12,19 @@ namespace clv::evt{
 
 		//FUNCTIONS
 	public:
-		template<typename BindFunctionPrototype, typename ...Args>
-		void bindMemberFunction(BindFunctionPrototype&& function, Args&& ...args);
+		template<typename BindFunctionPrototype, typename ObjectType>
+		void bind(BindFunctionPrototype&& function, ObjectType* object);
 		template<typename BindFunctionPrototype>
-		void bindLambda(BindFunctionPrototype&& function);
+		void bind(BindFunctionPrototype&& function);
 
 		void unbind();
 
 		template<typename ...Args>
 		auto broadcast(Args&& ...args) const;
+
+	private:
+		template<typename BindFunctionPrototype, typename ObjectType, int ...indices>
+		void dobind(BindFunctionPrototype&& function, ObjectType* object, std::integer_sequence<int, indices...>);
 	};
 
 	struct MultiCastDelegateHandle{
