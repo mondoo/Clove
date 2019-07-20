@@ -27,20 +27,30 @@ namespace clv::gfx{
 
 	std::vector<MeshRenderData> Renderer::meshSubmissionData;
 	std::vector<SpriteRenderData> Renderer::spriteSubmissionData;
+	CameraRenderData Renderer::cameraSubmissionData;
 
 	std::shared_ptr<VertexBuffer> Renderer::spriteVBBuffer;
 	std::shared_ptr<IndexBuffer> Renderer::spriteIBBuffer;
 	std::shared_ptr<Shader> Renderer::spriteShader;
 	math::Matrix4f Renderer::spriteProj = {};
 
+	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO;
+	std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> Renderer::viewPosSBO;
+
 	void Renderer::initialise(){
 		vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
 		materialSBO = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
 		spriteSBO = gfx::BindableFactory::createShaderBufferObject<SpriteShaderData>(gfx::ShaderType::Vertex, gfx::BBP_2DData);
 
+		viewDataSBO = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderType::Vertex, gfx::BBP_CameraMatrices);
+		viewPosSBO = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderType::Pixel, gfx::BBP_ViewData);
+		
 		vertSBO->bind();
 		materialSBO->bind();
 		spriteSBO->bind();
+
+		viewDataSBO->bind();
+		viewPosSBO->bind();
 
 		materialSBO->update({ 32.0f });
 
@@ -116,5 +126,10 @@ namespace clv::gfx{
 
 	void Renderer::submitSprite(const SpriteRenderData& data){
 		spriteSubmissionData.emplace_back(data);
+	}
+
+	void Renderer::setCamera(const CameraRenderData& data){
+		viewDataSBO->update({ data.lookAt, data.projection });
+		viewPosSBO->update({ data.position });
 	}
 }

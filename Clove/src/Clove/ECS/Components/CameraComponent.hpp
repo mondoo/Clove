@@ -3,20 +3,12 @@
 #include "Clove/ECS/Component.hpp"
 
 #include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
+#include "Clove/Graphics/Renderer.hpp"
 
 namespace clv::ecs{
 	enum class ProjectionMode{
 		orthographic,
 		perspective
-	};
-
-	struct ViewData{
-		math::Matrix4f view;
-		math::Matrix4f projection;
-	};
-
-	struct ViewPos{
-		alignas(16) math::Vector3f pos;
 	};
 
 	class CameraComponent : public Component{
@@ -36,10 +28,7 @@ namespace clv::ecs{
 		float pitch = 0.0f;
 		float yaw = 0.0f;
 
-		ViewData viewData;
-		std::shared_ptr<gfx::ShaderBufferObject<ViewData>> sboMat;
-		ViewPos pos;
-		std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> sboPos;
+		gfx::CameraRenderData cameraRenderData;
 
 		//FUNCTIONS
 	public:
