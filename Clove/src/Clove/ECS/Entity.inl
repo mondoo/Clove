@@ -1,10 +1,8 @@
-#include "Clove/ECS/Manager.hpp"
-
 namespace clv::ecs{
 	template<typename ComponentType>
 	ComponentType* Entity::getComponent() const{
 		if(isValid()){
-			return static_cast<ComponentType*>(manager->components[entityID][ComponentType::ID].get());
+			return static_cast<ComponentType*>(onComponentRequestedDelegate.broadcast(entityID, ComponentType::ID));
 		}
 		return nullptr;
 	}

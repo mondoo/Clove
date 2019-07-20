@@ -44,6 +44,9 @@ namespace clv::ecs{
 		void buildComponentMap(std::unordered_map<ComponentID, std::unique_ptr<Component>>& map);
 		template<size_t index>
 		void buildComponentMap(std::unordered_map<ComponentID, std::unique_ptr<Component>>& map);
+
+		Component* getComponentForEntity(EntityID entityID, ComponentID componentID);
+		bool isEntityValid(EntityID entityID);
 	};
 }
 
