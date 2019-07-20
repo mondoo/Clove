@@ -20,6 +20,7 @@
 #include "Clove/Maths/MathsTypes.hpp"
 #include "Clove/Maths/Maths.hpp"
 #include "Clove/Maths/MathsHelpers.hpp"
+#include "Clove/Events/Delegate.hpp"
 
 //Vendor headers
 //...

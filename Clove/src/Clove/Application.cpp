@@ -113,11 +113,14 @@ namespace clv{
 				layer->onUpdate();
 			}
 
+			gfx::RenderCommand::clear();
+
 			gfx::Renderer::beginScene();
 
 			ecsManager->update(deltaSeonds.count());
 
             gfx::Renderer::endScene();
+			
 			window->endFrame();
 		}
 	}

@@ -12,22 +12,22 @@ namespace clv::gfx{
 	template<> struct VertexElementData<VertexElementType::position2D>{
 		using DataType = math::Vector2f;
 		static constexpr unsigned int elementCount = 2u;
-		static constexpr char* semantic = "Position";
+		static constexpr char semantic[] = "Position";
 	};
 	template<> struct VertexElementData<VertexElementType::position3D>{
 		using DataType = math::Vector3f;
 		static constexpr unsigned int elementCount = 3u;
-		static constexpr char* semantic = "Position";
+		static constexpr char semantic[] = "Position";
 	};
 	template<> struct VertexElementData<VertexElementType::texture2D>{
 		using DataType = math::Vector2f;
 		static constexpr unsigned int elementCount = 2u;
-		static constexpr char* semantic = "TexCoord";
+		static constexpr char semantic[] = "TexCoord";
 	};
 	template<> struct VertexElementData<VertexElementType::normal>{
 		using DataType = math::Vector3f;
 		static constexpr unsigned int elementCount = 3u;
-		static constexpr char* semantic = "Normal";
+		static constexpr char semantic[] = "Normal";
 	};
 
 	class VertexElement{

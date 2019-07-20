@@ -28,7 +28,7 @@ namespace clv::gfx{
 	}
 
 	void Renderer::beginScene(){
-		RenderCommand::clear();
+		
 	}
 
 	void Renderer::endScene(){

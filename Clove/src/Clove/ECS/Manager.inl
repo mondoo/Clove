@@ -1,14 +1,6 @@
 #include "Clove/ECS/System.hpp"
 
 namespace clv::ecs{
-	template<typename T>
-	T* Manager::getSystem(){
-		if(auto foundSystem = systems.find(T::ID); foundSystem != systems.end()){
-			return static_cast<T*>(foundSystem->second.get());
-		}
-		return nullptr;
-	}
-
 	template<typename... EntityComponents>
 	Entity Manager::createEntity(){
 		EntityID ID = ++nextID;
@@ -18,7 +10,11 @@ namespace clv::ecs{
 			system->onEntityCreated(ID, components[ID]);
 		}
 
-		return { this, ID };
+		Entity entity{ ID };
+		entity.onComponentRequestedDelegate.bind(&Manager::getComponentForEntity, this);
+		entity.isEntityIdValidDelegate.bind(&Manager::isEntityValid, this);
+
+		return entity;
 	}
 
 	template<size_t index, typename EntityComponent, typename... EntityComponents>

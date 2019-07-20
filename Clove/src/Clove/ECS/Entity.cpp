@@ -5,17 +5,28 @@ namespace clv::ecs{
 	Entity::Entity() = default;
 	Entity::Entity(const Entity& other) = default;
 
-	Entity::Entity(Entity&& other) noexcept = default;
+	Entity::Entity(Entity&& other) noexcept{
+		entityID = other.entityID;
+
+		onComponentRequestedDelegate = std::move(other.onComponentRequestedDelegate);
+		isEntityIdValidDelegate = std::move(other.isEntityIdValidDelegate);
+	}
 
 	Entity& Entity::operator=(const Entity& other) = default;
 
-	Entity& Entity::operator=(Entity&& other) noexcept = default;
+	Entity& Entity::operator=(Entity&& other) noexcept{
+		entityID = other.entityID;
+
+		onComponentRequestedDelegate = std::move(other.onComponentRequestedDelegate);
+		isEntityIdValidDelegate = std::move(other.isEntityIdValidDelegate);
+
+		return *this;
+	}
 
 	Entity::~Entity() = default;
 
-	Entity::Entity(Manager* manager, EntityID entityID)
-		: manager(manager)
-		, entityID(entityID){
+	Entity::Entity(EntityID entityID)
+		: entityID(entityID){
 	}
 
 	bool Entity::isValid() const{
@@ -23,11 +34,10 @@ namespace clv::ecs{
 			return false;
 		}
 
-		const auto it = manager->components.find(entityID);
-		return it != manager->components.end();
+		return isEntityIdValidDelegate.broadcast(entityID);
 	}
 
-	EntityID Entity::getID(){
+	EntityID Entity::getID() const{
 		return entityID;
 	}
 }

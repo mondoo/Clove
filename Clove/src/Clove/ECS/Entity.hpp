@@ -3,12 +3,15 @@
 #include "Clove/ECS/ECSTypes.hpp"
 
 namespace clv::ecs{
-	class Manager;
+	class Component;
 
 	class Entity{
 		//VARIABLES
+	public:
+		evt::SingleCastDelegate<Component*(EntityID, ComponentID)> onComponentRequestedDelegate;
+		evt::SingleCastDelegate<bool(EntityID)> isEntityIdValidDelegate;
+
 	private:
-		Manager* manager = nullptr;
 		EntityID entityID = INVALID_ENTITY_ID;
 
 		//FUNCTIONS
@@ -20,11 +23,11 @@ namespace clv::ecs{
 		Entity& operator=(Entity&& other) noexcept;
 		~Entity();
 
-		Entity(Manager* manager, EntityID entityID);
+		Entity(EntityID entityID);
 
 		bool isValid() const;
 
-		EntityID getID();
+		EntityID getID() const;
 
 		template<typename ComponentType>
 		ComponentType* getComponent() const;

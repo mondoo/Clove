@@ -14,6 +14,8 @@
 
 #include "Clove/Utils/Time.hpp"
 
+#include "Clove/Events/Delegate.hpp"
+
 class ExampleLayer : public clv::Layer{
 	//VARIABLES
 private:
@@ -179,7 +181,7 @@ public:
 class SandBox : public clv::Application{
 public:
 	SandBox(){
-		pushLayer(std::make_shared<ExampleLayer>(ExampleLayer()));
+		pushLayer(std::make_shared<ExampleLayer>());
 	}
 	~SandBox(){
 

@@ -34,9 +34,6 @@ namespace clv::ecs{
 
 		void update(float deltaTime);
 
-		template<typename T>
-		T* getSystem(); //TODO: I don't really want people accessing systems (but we need to for the renderer)
-
 		template<typename... EntityComponents>
 		Entity createEntity();
 		void destroyEntity(EntityID ID);
@@ -47,6 +44,9 @@ namespace clv::ecs{
 		void buildComponentMap(std::unordered_map<ComponentID, std::unique_ptr<Component>>& map);
 		template<size_t index>
 		void buildComponentMap(std::unordered_map<ComponentID, std::unique_ptr<Component>>& map);
+
+		Component* getComponentForEntity(EntityID entityID, ComponentID componentID);
+		bool isEntityValid(EntityID entityID);
 	};
 }
 

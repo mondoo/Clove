@@ -37,8 +37,21 @@ namespace clv::ecs{
 
 	Entity Manager::getEntity(EntityID ID){
 		if(const auto foundEnt = components.find(ID); foundEnt != components.end()){
-			return { this, ID };
+			Entity entity{ ID };
+			entity.onComponentRequestedDelegate.bind(&Manager::getComponentForEntity, this);
+			entity.isEntityIdValidDelegate.bind(&Manager::isEntityValid, this);
+
+			return entity;
 		}
 		return {};
+	}
+
+	Component* Manager::getComponentForEntity(EntityID entityID, ComponentID componentID){
+		return components[entityID][componentID].get();
+	}
+
+	bool Manager::isEntityValid(EntityID entityID){
+		const auto it = components.find(entityID);
+		return it != components.end();
 	}
 }
