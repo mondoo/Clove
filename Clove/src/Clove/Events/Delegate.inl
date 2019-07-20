@@ -4,14 +4,9 @@ namespace clv::evt::utility{
 		return std::integral_constant<size_t, sizeof ...(Args)>{};
 	}
 
-	template<int N>
-	struct my_placeholder{ static my_placeholder ph; };
-
-	template<int N>
-	my_placeholder<N> my_placeholder<N>::ph;
-
-	template<int N>
-	struct ::std::is_placeholder<my_placeholder<N>> : std::integral_constant<int, N>{};
+	template<int amount> struct placeholderSequence{ static placeholderSequence ph; };
+	template<int amount> placeholderSequence<amount> placeholderSequence<amount>::ph;
+	template<int num> struct ::std::is_placeholder<placeholderSequence<num>> : std::integral_constant<int, num>{};
 }
 
 namespace clv::evt{
@@ -44,7 +39,7 @@ namespace clv::evt{
 	template<typename FunctionPrototype>
 	template<typename BindFunctionPrototype, typename ObjectType, int ...indices>
 	void SingleCastDelegate<FunctionPrototype>::dobind(BindFunctionPrototype&& function, ObjectType* object, std::integer_sequence<int, indices...>){
-		functionPointer = std::bind(std::forward<BindFunctionPrototype>(function), object, utility::my_placeholder<indices+1>::ph...);
+		functionPointer = std::bind(std::forward<BindFunctionPrototype>(function), object, utility::placeholderSequence<indices+1>::ph...);
 	}
 
 	template<typename FunctionPrototype>
