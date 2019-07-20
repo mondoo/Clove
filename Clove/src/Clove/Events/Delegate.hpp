@@ -19,8 +19,12 @@ namespace clv::evt{
 
 		void unbind();
 
+		bool isBound() const;
+
 		template<typename ...Args>
 		auto broadcast(Args&& ...args) const;
+
+		operator bool() const;
 	};
 
 	struct MultiCastDelegateHandle{

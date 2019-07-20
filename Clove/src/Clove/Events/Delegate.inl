@@ -37,11 +37,19 @@ namespace clv::evt{
 	}
 
 	template<typename FunctionPrototype>
+	bool SingleCastDelegate<FunctionPrototype>::isBound() const{
+		return functionPointer;
+	}
+
+	template<typename FunctionPrototype>
+	SingleCastDelegate<FunctionPrototype>::operator bool() const{
+		return isBound();
+	}
+
+	template<typename FunctionPrototype>
 	template<typename ...Args>
 	auto SingleCastDelegate<FunctionPrototype>::broadcast(Args&& ...args) const{
-		if(functionPointer){
-			return functionPointer(std::forward<Args>(args)...);
-		}
+		return functionPointer(std::forward<Args>(args)...);
 	}
 
 	template<typename FunctionPrototype>
