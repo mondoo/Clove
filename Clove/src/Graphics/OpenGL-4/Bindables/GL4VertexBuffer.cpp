@@ -57,7 +57,7 @@ namespace clv::gfx{
 			const VertexElementType elementType = element.getType();
 
 			glEnableVertexAttribArray(i);
-			glVertexAttribPointer(i, element.getCount(), getGLElementType(elementType), isTypeNormalised(elementType), bufferData.getLayout().size(), reinterpret_cast<const void*>(offset));
+			glVertexAttribPointer(i, element.getCount(), getGLElementType(elementType), isTypeNormalised(elementType), static_cast<GLsizei>(bufferData.getLayout().size()), reinterpret_cast<const void*>(offset));
 			offset += VertexElement::sizeOf(element.getType());
 		}
 	}

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Clove/Utils/Time.hpp"
+
 namespace clv{
 	class Event;
 
@@ -15,7 +17,7 @@ namespace clv{
 
 		virtual void onAttach(){}
 		virtual void onDetach(){}
-		virtual void onUpdate(){}
+		virtual void onUpdate(utl::DeltaTime deltaTime){}
 		virtual void onEvent(Event& e){}
 
 		const std::string& getName() const;

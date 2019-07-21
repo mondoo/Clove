@@ -7,10 +7,6 @@
 
 namespace clv::ecs{
 	class CameraSystem : public System<Transform3DComponent, CameraComponent>{
-		//VARIABLES
-	public:
-		static constexpr SystemID ID = 0xdcd2f589;
-
 		//FUNCTIONS
 	public:
 		CameraSystem();
@@ -20,6 +16,6 @@ namespace clv::ecs{
 		CameraSystem& operator=(CameraSystem&& other) noexcept;
 		virtual ~CameraSystem();
 
-		virtual void update(float deltaTime) override;
+		virtual void update(utl::DeltaTime deltaTime) override;
 	};
 }

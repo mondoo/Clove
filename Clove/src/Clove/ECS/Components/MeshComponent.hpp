@@ -1,18 +1,19 @@
 #pragma once
 
-#include "Clove/ECS/Components/Renderable3DComponent.hpp"
+#include "Clove/ECS/Component.hpp"
 
-namespace clv::gfx{
-	class Renderer;
-	class Shader;
-	class Texture;
-}
+#include "Clove/Graphics/Renderer.hpp"
 
 namespace clv::ecs{
-	class MeshComponent : public ecs::Renderable3DComponent{
+	class MeshComponent : public Component{
+		friend class Render3DSystem;
+
 		//VARIABLES
+	public:
+		static constexpr ComponentID ID = 0x7dfb2c10; //VS Generated GUID
+
 	private:
-		std::vector<unsigned int> indices;
+		gfx::MeshRenderData submissionData;
 
 		//FUNCTIONS
 	public:

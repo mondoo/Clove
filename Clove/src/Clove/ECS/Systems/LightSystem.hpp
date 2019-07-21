@@ -7,10 +7,6 @@
 
 namespace clv::ecs{
 	class LightSystem : public System<Transform3DComponent, LightComponent>{
-		//VARIABLES
-	public:
-		static constexpr SystemID ID = 0xb46079ac;
-
 		//FUNCTIONS
 	public:
 		LightSystem();
@@ -20,6 +16,6 @@ namespace clv::ecs{
 		LightSystem& operator=(LightSystem&& other) noexcept;
 		virtual ~LightSystem();
 
-		virtual void update(float deltaTime) override;
+		virtual void update(utl::DeltaTime deltaTime) override;
 	};
 }

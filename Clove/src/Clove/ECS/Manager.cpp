@@ -10,16 +10,17 @@ namespace clv::ecs{
 	EntityID Manager::nextID = 0;
 
 	Manager::Manager(){
-		systems[Render2DSystem::ID] = std::make_unique<Render2DSystem>();
-		systems[Render3DSystem::ID] = std::make_unique<Render3DSystem>();
-		systems[LightSystem::ID] = std::make_unique<LightSystem>();
-		systems[CameraSystem::ID] = std::make_unique<CameraSystem>();
+		systems.reserve(4);
+		systems.emplace_back(std::make_unique<Render2DSystem>());
+		systems.emplace_back(std::make_unique<Render3DSystem>());
+		systems.emplace_back(std::make_unique<LightSystem>());
+		systems.emplace_back(std::make_unique<CameraSystem>());
 	}
 
 	Manager::~Manager() = default;
 
-	void Manager::update(float deltaTime){
-		for(const auto& [ID, system] : systems){
+	void Manager::update(utl::DeltaTime deltaTime){
+		for(const auto& system : systems){
 			system->update(deltaTime);
 		}
 	}
@@ -30,7 +31,7 @@ namespace clv::ecs{
 		}
 
 		components.erase(ID);
-		for(const auto& [sysID, system] : systems){
+		for(const auto& system : systems){
 			system->onEntityDestroyed(ID);
 		}
 	}

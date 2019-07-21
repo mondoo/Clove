@@ -6,7 +6,7 @@ namespace clv::ecs{
 		EntityID ID = ++nextID;
 
 		buildComponentMap<0, EntityComponents...>(components[ID]);
-		for(const auto& [sysID, system] : systems){
+		for(const auto& system : systems){
 			system->onEntityCreated(ID, components[ID]);
 		}
 

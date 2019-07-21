@@ -5,15 +5,24 @@ namespace clv{
 }
 
 namespace clv::utl{
-	class Time{
-		friend class clv::Application;
-
+	class DeltaTime{
 		//VARIABLES
 	private:
-		static float deltaTime;
+		float deltaSeconds = 0.0f;
 
 		//FUNCTIONS
 	public:
-		static float getDeltaTime();
+		DeltaTime();
+		DeltaTime(const DeltaTime& other);
+		DeltaTime& operator=(const DeltaTime& other);
+		DeltaTime(DeltaTime&& other) noexcept;
+		DeltaTime& operator=(DeltaTime&& other) noexcept;
+		~DeltaTime();
+
+		DeltaTime(float deltaSeconds);
+
+		float getDeltaSeconds() const;
+
+		operator float() const;
 	};
 }
