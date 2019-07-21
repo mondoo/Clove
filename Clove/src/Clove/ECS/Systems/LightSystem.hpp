@@ -16,6 +16,6 @@ namespace clv::ecs{
 		LightSystem& operator=(LightSystem&& other) noexcept;
 		virtual ~LightSystem();
 
-		virtual void update(float deltaTime) override;
+		virtual void update(utl::DeltaTime deltaTime) override;
 	};
 }

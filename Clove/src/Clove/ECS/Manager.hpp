@@ -2,6 +2,7 @@
 
 #include "Clove/ECS/ECSTypes.hpp"
 #include "Clove/ECS/Entity.hpp"
+#include "Clove/Utils/Time.hpp"
 
 namespace clv::gfx{
 	class Renderer;
@@ -32,7 +33,7 @@ namespace clv::ecs{
 		Manager& operator=(Manager&& other) noexcept = delete;
 		~Manager();
 
-		void update(float deltaTime);
+		void update(utl::DeltaTime deltaTime);
 
 		template<typename... EntityComponents>
 		Entity createEntity();

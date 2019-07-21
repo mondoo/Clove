@@ -62,10 +62,13 @@ void TestLayer::onDetach(){
 
 }
 
-void TestLayer::onUpdate(){
+void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	const float camSpeed = 15.0f;
+	const float camDelta = camSpeed * deltaTime;
 	const float rotSpeed = 1.5f;
-	const float deltaTime = clv::utl::Time::getDeltaTime();
+	//const float deltaTime = deltaTime;
+
+	float s = 6 * deltaTime;
 
 	clv::math::Vector3f cameraPosition = cam.getComponent<clv::ecs::Transform3DComponent>()->getLocalPosition();
 
@@ -73,29 +76,29 @@ void TestLayer::onUpdate(){
 
 	const clv::math::Vector3f front = cam.getComponent<clv::ecs::CameraComponent>()->getFront();
 	if(clv::input::isKeyPressed(clv::Key::W)){
-		cameraPosition += camSpeed * front * deltaTime;
+		cameraPosition += front * camDelta;
 	} else if(clv::input::isKeyPressed(clv::Key::S)){
-		cameraPosition -= camSpeed * front * deltaTime;
+		cameraPosition -= front * camDelta;
 	}
 
 	const clv::math::Vector3f up = cam.getComponent<clv::ecs::CameraComponent>()->getUp();
 	if(clv::input::isKeyPressed(clv::Key::Space)){
-		cameraPosition += camSpeed * up * deltaTime;
+		cameraPosition += up * camDelta;
 	} else if(clv::input::isKeyPressed(clv::Key::C)){
-		cameraPosition -= camSpeed * up * deltaTime;
+		cameraPosition -= up * camDelta;
 	}
 
 	const clv::math::Vector3f right = cam.getComponent<clv::ecs::CameraComponent>()->getRight();
 	if(clv::input::isKeyPressed(clv::Key::A)){
-		cameraPosition -= camSpeed * right * deltaTime;
+		cameraPosition -= right * camDelta;
 	} else if(clv::input::isKeyPressed(clv::Key::D)){
-		cameraPosition += camSpeed * right * deltaTime;
+		cameraPosition += right * camDelta;
 	}
 
 	if(clv::input::isKeyPressed(clv::Key::Q)){
-		yaw -= camSpeed * 10.0f * deltaTime;
+		yaw -= camDelta * 10.0f;
 	} else if(clv::input::isKeyPressed(clv::Key::E)){
-		yaw += camSpeed * 10.0f * deltaTime;
+		yaw += camDelta * 10.0f;
 	}
 
 	cam.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition(cameraPosition);

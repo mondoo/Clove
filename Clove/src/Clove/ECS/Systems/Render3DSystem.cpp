@@ -13,7 +13,7 @@ namespace clv::ecs{
 
 	Render3DSystem::~Render3DSystem() = default;
 
-	void Render3DSystem::update(float deltaTime){
+	void Render3DSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			MeshComponent* renderable = std::get<MeshComponent*>(componentTuple);

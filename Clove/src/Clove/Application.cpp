@@ -48,8 +48,6 @@ namespace clv{
 			std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
 			prevFrameTime = currFrameTime;
 
-			utl::Time::deltaTime = deltaSeonds.count();
-
 			window->beginFrame();
 
 			//Temp input handling
@@ -110,7 +108,7 @@ namespace clv{
 
 
 			for(auto layer : *layerStack){
-				layer->onUpdate();
+				layer->onUpdate(deltaSeonds.count());
 			}
 
 			gfx::RenderCommand::clear();

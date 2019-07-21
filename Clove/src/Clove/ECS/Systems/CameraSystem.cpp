@@ -12,7 +12,7 @@ namespace clv::ecs{
 
 	CameraSystem::~CameraSystem() = default;
 	
-	void CameraSystem::update(float deltaTime){
+	void CameraSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			CameraComponent* camera = std::get<CameraComponent*>(componentTuple);

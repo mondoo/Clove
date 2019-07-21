@@ -19,7 +19,7 @@ namespace clv::ecs{
 
 	Manager::~Manager() = default;
 
-	void Manager::update(float deltaTime){
+	void Manager::update(utl::DeltaTime deltaTime){
 		for(const auto& system : systems){
 			system->update(deltaTime);
 		}

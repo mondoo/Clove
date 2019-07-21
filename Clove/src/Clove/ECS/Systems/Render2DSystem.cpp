@@ -18,7 +18,7 @@ namespace clv::ecs{
 
 	Render2DSystem::~Render2DSystem() = default;
 
-	void Render2DSystem::update(float deltaTime){
+	void Render2DSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
 			Transform2DComponent* transform = std::get<Transform2DComponent*>(componentTuple);
 			SpriteComponent* sprite = std::get<SpriteComponent*>(componentTuple);

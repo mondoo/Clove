@@ -24,6 +24,6 @@ namespace clv::ecs{
 		Render2DSystem& operator=(Render2DSystem&& other) noexcept;
 		virtual ~Render2DSystem();
 
-		virtual void update(float deltaTime) override;
+		virtual void update(utl::DeltaTime deltaTime) override;
 	};
 }

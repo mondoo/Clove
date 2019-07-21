@@ -16,6 +16,6 @@ namespace clv::ecs{
 		CameraSystem& operator=(CameraSystem&& other) noexcept;
 		virtual ~CameraSystem();
 
-		virtual void update(float deltaTime) override;
+		virtual void update(utl::DeltaTime deltaTime) override;
 	};
 }

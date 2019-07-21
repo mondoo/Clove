@@ -23,8 +23,8 @@ private:
 	bool firstMouse = false;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
-	int lastMouseX = 0.0f;
-	int lastMouseY = 0.0f;
+	int lastMouseX = 0;
+	int lastMouseY = 0;
 
 	//FUNCTIONS
 public:
@@ -33,7 +33,7 @@ public:
 	virtual void onAttach() override;
 	virtual void onDetach() override;
 
-	virtual void onUpdate() override;
+	virtual void onUpdate(clv::utl::DeltaTime deltaTime) override;
 
 	virtual void onEvent(clv::Event& e) override;
 

@@ -16,7 +16,7 @@ namespace clv::ecs{
 		Render3DSystem& operator=(Render3DSystem&& other) noexcept;
 		virtual ~Render3DSystem();
 
-		virtual void update(float deltaTime) override;
+		virtual void update(utl::DeltaTime deltaTime) override;
 
 	private:
 		math::Matrix4f getTransformWorldMatrix(Transform3DComponent* component);

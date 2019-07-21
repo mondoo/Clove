@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/ECS/ECSTypes.hpp"
+#include "Clove/Utils/Time.hpp"
 
 namespace clv::ecs{
 	class Component;
@@ -12,7 +13,7 @@ namespace clv::ecs{
 
 		virtual void onEntityCreated(EntityID entity, const std::unordered_map<ComponentID, std::unique_ptr<Component>>& entityComponents) = 0;
 		virtual void onEntityDestroyed(EntityID entity) = 0;
-		virtual void update(float deltaTime) = 0;
+		virtual void update(utl::DeltaTime deltaTime) = 0;
 	};
 
 	template<typename... ComponentTypes>
