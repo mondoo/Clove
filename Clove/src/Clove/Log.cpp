@@ -14,17 +14,16 @@ namespace clv{
 
 	#if CLV_DEBUG
 		coreLogger->set_level(spdlog::level::trace);
-		clientLogger->set_level(spdlog::level::trace);
 	#elif CLV_DEVELOPMENT
 		coreLogger->set_level(spdlog::level::debug);
-		clientLogger->set_level(spdlog::level::debug);
 	#elif CLV_PROFILING
 		coreLogger->set_level(spdlog::level::info);
-		clientLogger->set_level(spdlog::level::info);
 	#elif CLV_RELEASE
 		coreLogger->set_level(spdlog::level::err);
-		clientLogger->set_level(spdlog::level::err);
 	#endif
+
+		//TODO: Should implement a way for client applications to control the log level
+		clientLogger->set_level(spdlog::level::trace);
 	}
 
 	std::shared_ptr<spdlog::logger>& Log::getCoreLogger(){
