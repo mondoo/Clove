@@ -5,7 +5,7 @@
 #include "Clove/ECS/Entity.hpp"
 #include "Clove/Events/MouseEvent.hpp"
 
-class ExampleLayer : public clv::Layer{
+class TestLayer : public clv::Layer{
 	//VARIABLES
 private:
 	float rotDelta = 0.0f;
@@ -28,7 +28,7 @@ private:
 
 	//FUNCTIONS
 public:
-	ExampleLayer();
+	TestLayer();
 
 	virtual void onAttach() override;
 	virtual void onDetach() override;

@@ -1,12 +1,12 @@
 #include <Clove.hpp>
 
-#include "ExampleLayer.hpp"
+#include "TestLayer.hpp"
 #include "GameLayer.hpp"
 
 class SandBox : public clv::Application{
 public:
 	SandBox(){
-		//pushLayer(std::make_shared<ExampleLayer>());
+		//pushLayer(std::make_shared<TestLayer>());
 		pushLayer(std::make_shared<GameLayer>());
 	}
 	~SandBox(){

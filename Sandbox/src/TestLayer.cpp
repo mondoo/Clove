@@ -1,5 +1,5 @@
 #include "clvpch.hpp" //will generate a tonne of compile errors with the pch - should I remove it from the library?
-#include "ExampleLayer.hpp"
+#include "TestLayer.hpp"
 
 #include "Clove/Application.hpp"
 #include "Clove/ECS/Manager.hpp"
@@ -13,11 +13,11 @@
 #include "Clove/Input/Input.hpp"
 #include "Clove/Utils/Time.hpp"
 
-ExampleLayer::ExampleLayer()
+TestLayer::TestLayer()
 	: Layer("Example Layer"){
 }
 
-void ExampleLayer::onAttach(){
+void TestLayer::onAttach(){
 	ent1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 	ent2 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 	ent3 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
@@ -58,11 +58,11 @@ void ExampleLayer::onAttach(){
 	lght1.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 }
 
-void ExampleLayer::onDetach(){
+void TestLayer::onDetach(){
 
 }
 
-void ExampleLayer::onUpdate(){
+void TestLayer::onUpdate(){
 	const float camSpeed = 15.0f;
 	const float rotSpeed = 1.5f;
 	const float deltaTime = clv::utl::Time::getDeltaTime();
@@ -117,12 +117,12 @@ void ExampleLayer::onUpdate(){
 	}
 }
 
-void ExampleLayer::onEvent(clv::Event& e){
+void TestLayer::onEvent(clv::Event& e){
 	//clv::EventDispatcher dispatcher(e);
-	//dispatcher.dispatch<clv::MouseMovedEvent>(CLV_BIND_FUNCTION_1P(&ExampleLayer::onMouseMoved, this));
+	//dispatcher.dispatch<clv::MouseMovedEvent>(CLV_BIND_FUNCTION_1P(&TestLayer::onMouseMoved, this));
 }
 
-bool ExampleLayer::onMouseMoved(clv::MouseMovedEvent e){
+bool TestLayer::onMouseMoved(clv::MouseMovedEvent e){
 	if(firstMouse){
 		lastMouseX = e.getX();
 		lastMouseY = e.getY();
