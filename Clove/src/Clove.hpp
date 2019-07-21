@@ -3,7 +3,9 @@
 //For use by Clove applications
 
 //Clove headers
-#include "clvpch.hpp"
+#include "Clove/Core.hpp"
+#include "Clove/Log.hpp"
+#include "Clove/Events/Delegate.hpp"
 
 #include "Clove/Application.hpp"
 #include "Clove/Layer.hpp"
@@ -15,8 +17,11 @@
 
 #include "Clove/Exception/CloveException.hpp"
 
-//Vendor headers
+#include "Clove/Maths/MathsTypes.hpp"
+#include "Clove/Maths/Maths.hpp"
 
+//Vendor headers
+//...
 
 //----------ENTRY POINT----------
 #include "Clove/EntryPoint.hpp"
