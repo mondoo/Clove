@@ -14,7 +14,9 @@ namespace clv::gfx{
 		indexBuffer->bind();
 		shader->bind();
 		diffTexture->bind();
-		specTexture->bind();
+		if(specTexture){ //Spec can be nullptr
+			specTexture->bind();
+		}
 	}
 
 	void SpriteRenderData::bind() const{
