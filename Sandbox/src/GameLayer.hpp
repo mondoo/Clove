@@ -11,6 +11,7 @@ private:
 	clv::ecs::Entity sphereEntity;
 
 	clv::ecs::Entity tempLight;
+	clv::ecs::Entity tempCube;
 
 	//FUNCTIONS
 public:
