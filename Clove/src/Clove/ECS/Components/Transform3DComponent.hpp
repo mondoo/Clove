@@ -3,9 +3,9 @@
 #include "Clove/ECS/Component.hpp"
 
 namespace clv::ecs{
-	template<typename T> class ComponentPtr;
-
 	class Transform3DComponent : public Component{
+		friend class Transform3DSystem;
+
 		//VARIABLES
 	public:
 		static constexpr ComponentID ID = 0x3ac0b673; //VS Generated GUID
@@ -14,6 +14,9 @@ namespace clv::ecs{
 		math::Vector3f						localPosition	= { 0.0f, 0.0f, 0.0f };
 		std::pair<math::Vector3f, float>	localRotation	= std::pair<math::Vector3f, float>(math::Vector3f(1.0f), 0.0f);
 		math::Vector3f						localScale		= { 1.0f, 1.0f, 1.0f };
+
+		//TODO: Would like world pos/rot/scale - but this'll do for now
+		math::Matrix4f worldTransformMatrix = math::Matrix4f(1.0f);
 
 		Transform3DComponent* parent = nullptr;
 		std::vector<Transform3DComponent*> children;
@@ -35,6 +38,8 @@ namespace clv::ecs{
 
 		void setLocalScale(const math::Vector3f& inLocalScale);
 		const math::Vector3f& getLocalScale() const;
+
+		const math::Matrix4f& getWorldTransformMatrix() const;
 
 		Transform3DComponent* getParent() const;
 		void addChild(Transform3DComponent* child);

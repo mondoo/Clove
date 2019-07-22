@@ -18,26 +18,9 @@ namespace clv::ecs{
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			MeshComponent* renderable = std::get<MeshComponent*>(componentTuple);
 
-			const math::Matrix4f modelMat = getTransformWorldMatrix(transform);
-			renderable->submissionData.modelData = modelMat;
+			renderable->submissionData.modelData = transform->getWorldTransformMatrix();
 
 			gfx::Renderer::submitMesh(renderable->submissionData);
-		}
-	}
-
-	math::Matrix4f Render3DSystem::getTransformWorldMatrix(Transform3DComponent* component){
-		const auto& [rot, angle] = component->getLocalRotation();
-
-		math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), component->getLocalPosition());
-		math::Matrix4f rotation = math::rotate(math::Matrix4f(1.0f), angle, rot);
-		math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), component->getLocalScale());
-
-		math::Matrix4f transform = translation * rotation * scale;
-
-		if(Transform3DComponent* parent = component->getParent()){
-			return getTransformWorldMatrix(parent) * transform;
-		} else{
-			return transform;
 		}
 	}
 }
