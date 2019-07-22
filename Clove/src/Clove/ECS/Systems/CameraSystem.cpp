@@ -17,7 +17,12 @@ namespace clv::ecs{
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			CameraComponent* camera = std::get<CameraComponent*>(componentTuple);
 
-			const math::Vector3f position = transform->getLocalPosition();
+			const math::Vector3f position = transform->getLocalPosition(); //TODO: How do I get world position?
+			//Gotta look up that maths and shit - looks like it is possible (will need to change to quaternions)
+			//Just need to understand the math and refactor the function out of how clove handles transforms
+
+			//I think it would make sense to make the world transforms the dominant ones
+			//and then calculate the local transforms from those
 
 			//update front
 			math::Vector3f front;
