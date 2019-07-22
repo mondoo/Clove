@@ -128,6 +128,14 @@ namespace clv{
 	}
 
 	void Application::onEvent(Event& e){
+		//-Make events not blocking (some sort of queue)
+		//-Integrate new delegate system
+		//-Consder ways to make the event system better for people using the engine
+
+		//What would be nice is if classes could bind to the event dispatcher and then you can tell it to
+		//dispatch an event, it will add it to the dispatch queue and then that can be broadcast to all
+		//listeners
+
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<WindowCloseEvent>(CLV_BIND_FUNCTION_1P(&Application::onWindowClose, this));
 
