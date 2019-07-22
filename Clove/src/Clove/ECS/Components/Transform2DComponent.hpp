@@ -4,6 +4,8 @@
 
 namespace clv::ecs{
 	class Transform2DComponent : public Component{
+		friend class Transform2DSystem;
+
 		//VARIABLES
 	public:
 		static constexpr ComponentID ID = 0x1ae98fd4; //VS Generated GUID
@@ -12,6 +14,9 @@ namespace clv::ecs{
 		math::Vector2f						localPosition = { 0.0f, 0.0f };
 		std::pair<math::Vector2f, float>	localRotation = std::pair<math::Vector2f, float>(math::Vector2f(1.0f), 0.0f);
 		math::Vector2f						localScale = { 1.0f, 1.0f };
+
+		//TODO: Would like world pos/rot/scale - but this'll do for now
+		math::Matrix4f worldTransformMatrix = math::Matrix4f(1.0f);
 
 		Transform2DComponent* parent = nullptr;
 		std::vector<Transform2DComponent*> children;
@@ -33,6 +38,8 @@ namespace clv::ecs{
 
 		void setLocalScale(const math::Vector2f& inLocalScale);
 		const math::Vector2f& getLocalScale() const;
+
+		const math::Matrix4f& getWorldTransformMatrix() const;
 
 		Transform2DComponent* getParent() const;
 		void addChild(Transform2DComponent* child);

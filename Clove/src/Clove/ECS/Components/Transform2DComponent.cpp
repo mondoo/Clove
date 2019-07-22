@@ -34,6 +34,10 @@ namespace clv::ecs{
 		return localScale;
 	}
 
+	const math::Matrix4f& Transform2DComponent::getWorldTransformMatrix() const{
+		return worldTransformMatrix;
+	}
+
 	Transform2DComponent* Transform2DComponent::getParent() const{
 		return parent;
 	}
