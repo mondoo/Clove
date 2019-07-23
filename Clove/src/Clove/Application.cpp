@@ -25,7 +25,7 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		evt::InternalEventDispatcher<WindowCloseEvent>::bind(&Application::onWindowClose, this);
+		evt::EventDispatcher<WindowCloseEvent>::bind(&Application::onWindowClose, this);
 
 		window = std::unique_ptr<Window>(Window::create());
 		window->setVSync(true);
@@ -109,6 +109,7 @@ namespace clv{
 			}
 			//~Temp
 
+			//TODO: Process event queue here
 
 			for(auto layer : *layerStack){
 				layer->onUpdate(deltaSeonds.count());

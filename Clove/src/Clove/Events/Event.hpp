@@ -52,7 +52,7 @@ namespace clv{
 		//I don't think I'll need an event class
 
 		enum class DispatchType{
-			imediate,
+			immediate,
 			deferred,
 		};
 
@@ -80,30 +80,30 @@ namespace clv{
 			}*/
 		};
 
-		class EventDispatcher{ //Do I even need this wrapper?
-			//VARIABLES
-		private:
-			//static std::unordered_map<EventType, 
+		//class EventDispatcher{ //Do I even need this wrapper?
+		//	//VARIABLES
+		//private:
+		//	//static std::unordered_map<EventType, 
 
-			//FUNCTIONS
-		public:
-			template<typename EventType, typename Function, typename Object>
-			static void bind(Function&& function, Object* object){
-				//wrap the internal somehow - internal could probably just be static too?
-			}
+		//	//FUNCTIONS
+		//public:
+		//	template<typename EventType, typename Function, typename Object>
+		//	static void bind(Function&& function, Object* object){
+		//		//wrap the internal somehow - internal could probably just be static too?
+		//	}
 
-			//unbind?
+		//	//unbind?
 
-			template<typename EventType>
-			static void dispatch(EventType&& event, DispatchType dispatchType){
-				//wrap the internal somehow - internal could probably just be static too?
-			}
+		//	template<typename EventType>
+		//	static void dispatch(EventType&& event, DispatchType dispatchType){
+		//		//wrap the internal somehow - internal could probably just be static too?
+		//	}
 
-			static void processEventQueue(){
-				//You'd expect this to wrap all of the listeners
-				//wrap the internal somehow - internal could probably just be static too?
-			}
-		};
+		//	static void processEventQueue(){
+		//		//You'd expect this to wrap all of the listeners
+		//		//wrap the internal somehow - internal could probably just be static too?
+		//	}
+		//};
 
 		//I'm a bit unsure on the perfect forwarding. I'd need to decided if I want these as lvales or just values
 
@@ -111,8 +111,11 @@ namespace clv{
 
 		};*/
 
+		//TODO: how to porcess queue now?
+		//base class?
+
 		template<typename EventType>
-		class InternalEventDispatcher /*: public InternalEventDispatcherBase*/{
+		class EventDispatcher /*: public InternalEventDispatcherBase*/{
 			//VARIABLES
 		private:
 			static std::queue<EventType> eventQueue;
@@ -157,8 +160,8 @@ namespace clv{
 			}
 		};
 
-		template<typename EventType> std::queue<EventType> InternalEventDispatcher<EventType>::eventQueue;
-		template<typename EventType> std::vector<Listener<EventType>> InternalEventDispatcher<EventType>::listeners;
+		template<typename EventType> std::queue<EventType> EventDispatcher<EventType>::eventQueue;
+		template<typename EventType> std::vector<Listener<EventType>> EventDispatcher<EventType>::listeners;
 	}
 
 	//OLD--------------------------------------------------
