@@ -38,14 +38,12 @@ namespace clv{
 			switch(xevent.type){
 				case ClientMessage:
 					if(xevent.xclient.data.l[0] == atomWmDeleteWindow){
-						WindowCloseEvent event;
-						eventCallback(event);
+						evt::InternalEventDispatcher<WindowCloseEvent>::dispatch({}, evt::DispatchType::imediate);
 					}
 					break;
 				case DestroyNotify:
 					{
-						WindowCloseEvent event;
-						eventCallback(event);
+						evt::InternalEventDispatcher<WindowCloseEvent>::dispatch({}, evt::DispatchType::imediate);
 					}
 					break;
 

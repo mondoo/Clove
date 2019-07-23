@@ -16,6 +16,8 @@
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/RenderCommand.hpp"
 
+#include "Clove/Events/Event.hpp"
+
 namespace clv{
 	Application* Application::instance = nullptr;
 
@@ -23,8 +25,9 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
+		evt::InternalEventDispatcher<WindowCloseEvent>::bind(&Application::onWindowClose, this);
+
 		window = std::unique_ptr<Window>(Window::create());
-		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
 		window->setVSync(true);
 
 		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
@@ -136,8 +139,8 @@ namespace clv{
 		//dispatch an event, it will add it to the dispatch queue and then that can be broadcast to all
 		//listeners
 
-		EventDispatcher dispatcher(e);
-		dispatcher.dispatch<WindowCloseEvent>(CLV_BIND_FUNCTION_1P(&Application::onWindowClose, this));
+		/*EventDispatcher dispatcher(e);
+		dispatcher.dispatch<WindowCloseEvent>(CLV_BIND_FUNCTION_1P(&Application::onWindowClose, this));*/
 
 		if(e.isHandled()){
 			return;
@@ -171,8 +174,8 @@ namespace clv{
 		return *ecsManager;
 	}
 
-	bool Application::onWindowClose(WindowCloseEvent& e){
+	evt::HandledType Application::onWindowClose(WindowCloseEvent& e){
 		running = false;
-		return true;
+		return evt::HandledType::handled_stop;
 	}
 }

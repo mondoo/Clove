@@ -6,6 +6,10 @@ namespace clv::gfx{
 	class Renderer;
 }
 
+namespace clv::evt{
+	enum class HandledType;
+}
+
 namespace clv{
 	class Window;
 	class LayerStack;
@@ -47,7 +51,7 @@ namespace clv{
 		ecs::Manager& getManager();
 
 	private:
-		bool onWindowClose(WindowCloseEvent& e);
+		evt::HandledType onWindowClose(WindowCloseEvent& e);
 	};
 
 	//To be defined in CLIENT

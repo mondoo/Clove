@@ -139,7 +139,7 @@ namespace clv{
 				}
 			}
 
-			static virtual void processEventQueue() override{
+			static void processEventQueue(){
 				while(!eventQueue.empty()){
 					doDispatch(eventQueue.front());
 					eventQueue.pop();
@@ -149,7 +149,7 @@ namespace clv{
 		private:
 			static void doDispatch(EventType&& event){
 				for(auto& listener : listeners){
-					const HandledType handledState = listener.del.broadcast(eventQueue.front);
+					const HandledType handledState = listener.del.broadcast(event);
 					if(handledState == HandledType::handled_stop){
 						break;
 					}
@@ -157,8 +157,8 @@ namespace clv{
 			}
 		};
 
-		std::queue<EventType> InternalEventDispatcher<EventType>::eventQueue;
-		std::vector<Listener<EventType>> InternalEventDispatcher<EventType>::listeners;
+		template<typename EventType> std::queue<EventType> InternalEventDispatcher<EventType>::eventQueue;
+		template<typename EventType> std::vector<Listener<EventType>> InternalEventDispatcher<EventType>::listeners;
 	}
 
 	//OLD--------------------------------------------------

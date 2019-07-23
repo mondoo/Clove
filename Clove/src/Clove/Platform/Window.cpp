@@ -17,10 +17,6 @@ namespace clv{
 		context->present();
 	}
 
-	void Window::setEventCallbackFunction(const EventCallbackFn& callback){
-		eventCallback = callback;
-	}
-
 	unsigned int Window::getWidth() const{
 		return windowProperties.width;
 	}

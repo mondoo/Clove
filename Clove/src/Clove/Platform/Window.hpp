@@ -24,13 +24,8 @@ namespace clv{
 	};
 
 	class Window{
-	protected:
-		using EventCallbackFn = std::function<void(Event&)>;
-		
 		//VARIABLES
 	protected:
-		EventCallbackFn eventCallback;
-
 		WindowProps windowProperties;
 
 		Keyboard keyboard;
@@ -48,8 +43,6 @@ namespace clv{
 
 		void beginFrame();
 		void endFrame();
-
-		void setEventCallbackFunction(const EventCallbackFn& callback);
 		
 		virtual void* getNativeWindow() const = 0;
 

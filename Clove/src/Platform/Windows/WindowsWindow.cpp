@@ -8,6 +8,8 @@
 #include "Clove/Events/KeyEvent.hpp"
 #include "Clove/Application.hpp"
 
+#include "Clove/Events/Event.hpp"
+
 namespace clv{
 	WindowsWindow::WindowsWindow(const WindowProps& props){
 		initialiseWindow(props, gfx::API::DirectX11);
@@ -33,8 +35,7 @@ namespace clv{
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
 			if(msg.wParam == CLV_WINDOWS_QUIT){
-				WindowCloseEvent event;
-				eventCallback(event);
+				evt::InternalEventDispatcher<WindowCloseEvent>::dispatch({}, evt::DispatchType::imediate);
 			}
 
 			TranslateMessage(&msg);
