@@ -3,12 +3,13 @@
 #include <queue>
 
 namespace clv{
-	/*
-	Events in Clove are currently blocking, meaning when an event occurs it
-	immediately gets dispatched and must be dealt with right then and there.
-	For the future, a better strategy might be to buffer events in an event
-	bus and process them during the "event" part of the update stage.
-	*/
+	enum EventType{
+		ET_None = 0,
+		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
+		AppTick, AppUpdate, AppRender,
+		KeyPressed, KeyReleased, KeyTyped,
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+	};
 
 	enum EventCategory{
 		EC_None = 0,
@@ -22,96 +23,127 @@ namespace clv{
 
 	//Macro containing overrides that deal with the event type
 	#if CLV_PLATFORM_WINDOWS
-		#define EVENT_CLASS_TYPE(type)	virtual const char* getName() const override { return #type; }
+		#define EVENT_CLASS_TYPE(type)	static EventType getStaticType() { return EventType::##type; }\
+										virtual EventType getEventType() const override { return getStaticType(); }\
+										virtual const char* getName() const override { return #type; }
 	#else
-		#define EVENT_CLASS_TYPE(type)	virtual const char* getName() const override { return #type; }
+		#define EVENT_CLASS_TYPE(type)	static EventType getStaticType() { return EventType::type; }\
+										virtual EventType getEventType() const override { return getStaticType(); }\
+										virtual const char* getName() const override { return #type; }
 	#endif
 	
 	//Macro containing overrides that deal with the event category
 	#define EVENT_CLASS_CATEGORY(category) virtual int getCategoryFlags() const override { return category; }
 
-	enum class DispatchType{
-		deferred,
-		immediate
-	};
+	namespace evt{
+		//I Want:
+		//A queue of events that happen
+		//certain point in game loop this queue will get processed
+		//Any listener can, at any point, bind to these events
+		//This listener has to return that it has handle the event
+		//no more listeners will be notified once the event is handled
+		//ideally I'd like it all to be type deductable (no casts) but am willing to compromise
 
-	class Event2{
+		//So what would I need?
+		//A disptacher class which would:
+		//	collect all of the listeners
+		//	receive events and either fire these immediately or queue them
+		//A listener class that wraps a delegate which binds to a function on the actual listener
+		//I don't think I'll need an event class
 
-	};
+		enum class DispatchType{
+			imediate,
+			deferred,
+		};
 
-	template<typename EventType>
-	class Listener2{
-		//VARIABLES
-	private:
-		evt::SingleCastDelegate<bool(EventType)> delegate;
+		enum class HandledType{
+			handled_continue,
+			handled_stop,
+			unhandled
 
-		//FUNCTIONS
-	public:
-		Listener2(evt::SingleCastDelegate<bool(EventType)> delegate)
-			: delegate(delegate){
+			/*continue,
+			stop*/
+		};
 
-		}
+		//Do I need this or just take the std::function?
+		template<typename EventType>
+		class Listener{
+			//VARIABLES
+		/*private:*/
+		public:
+			SingleCastDelegate<HandledType(EventType&)> del;
 
-		template<typename ...Args>
-		void operator ()(Args&& ...args){
-			delegate.broadcast(std::forward<Args>(args)...);
-		}
-	};
+			//FUNCTIONS
+		};
 
-	class EventDispatcher2{
-		//VARIABLES
-	private:
-		std::queue<Event2> eventqueue;
+		class EventDispatcher{
+			//VARIABLES
 
-		//how to store the listeners?
-		//-will it really just loop through a second array?
-		//-is there a way I can put these in a map?
+			//FUNCTIONS
+		public:
+			template<typename EventType, typename Function, typename Object>
+			static void bind(Function&& function, Object* object){
+				//wrap the internal somehow - internal could probably just be static too?
+			}
 
-		//The listeners will be forever stored (until they remove themselves)
-		//when an event is added that gets put on the queue
-		//we then process the queue we loop through the listeners for that event
-		//break on the first one that handles it
+			//unbind?
 
-		//FUNCTIONS
-	public:
-		template<typename EventType, typename FunctionPrototye, typename ObjectType>
-		void bindToEvent(FunctionPrototye func, ObjectType* obj){
-			evt::SingleCastDelegate<bool(EventType) del;
-			del.bind(func, obj);
-			Listener2<EventType> listener(std::move(del));
-			//put listener to some container
-			//add event type to queue
-		}
+			template<typename EventType>
+			static void dispatch(EventType&& event, DispatchType dispatchType){
+				//wrap the internal somehow - internal could probably just be static too?
+			}
+
+			static void processEventQueue(){
+				//wrap the internal somehow - internal could probably just be static too?
+			}
+		};
+
+		//I'm a bit unsure on the perfect forwarding. I'd need to decided if I want these as lvales or just values
 
 		template<typename EventType>
-		void disptachEvent(EventType event, DispatchType disptachType){
-			switch(disptachType){
-				case DispatchType::deferred:
-					eventqueue.push(event);
-					break;
-				
-				case DispatchType::immediate:
-					doDispatch(event);
-					break;
-				
-				default:
-					break;
+		class InternalEventDispatcher{
+			//VARIABLES
+		private:
+			std::queue<EventType> eventQueue;
+			std::vector<Listener<EventType>> listeners;
+
+			//FUNCTIONS
+		public:
+			template<typename Function, typename Object>
+			void bind(Function&& function, Object* object){
+				//TODO:
 			}
-		}
 
-		void processEventQueue(){
-			while(!eventqueue.empty()){
-				doDispatch(eventqueue.back());
-				eventqueue.pop();
+			//unbind?
+
+			void dispatch(EventType&& event, DispatchType dispatchType){
+				if(dispatchType == DispatchType::deferred){
+					eventQueue.push(event);
+				} else{
+					doDispatch(std::forward<EventType>(event)); 
+				}
 			}
-		}
 
-	private:
-		void doDispatch(Event2 event){
-			//go through listeners for event type
-		}
-	};
+			void processEventQueue(){
+				while(!eventQueue.empty()){
+					doDispatch(eventQueue.front());
+					eventQueue.pop();
+				}
+			}
 
+		private:
+			void doDispatch(EventType&& event){
+				for(auto& listener : listeners){
+					const HandledType handledState = listener.del.broadcast(eventQueue.front);
+					if(handledState == HandledType::handled_stop){
+						break;
+					}
+				}
+			}
+		};
+	}
+
+	//OLD--------------------------------------------------
 	class Event{
 		friend class EventDispatcher;
 
@@ -121,6 +153,7 @@ namespace clv{
 
 		//FUNCTIONS
 	public:
+		virtual EventType getEventType() const = 0;
 		virtual const char* getName() const = 0;
 		virtual int getCategoryFlags() const = 0;
 
