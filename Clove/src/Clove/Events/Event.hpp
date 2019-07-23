@@ -74,10 +74,16 @@ namespace clv{
 			SingleCastDelegate<HandledType(EventType&)> del;
 
 			//FUNCTIONS
+			/*template<typename Object>
+			Listener(HandledType(EventType&) func, Object* obj){
+				del.bind(func, obj);
+			}*/
 		};
 
-		class EventDispatcher{
+		class EventDispatcher{ //Do I even need this wrapper?
 			//VARIABLES
+		private:
+			//static std::unordered_map<EventType, 
 
 			//FUNCTIONS
 		public:
@@ -94,29 +100,38 @@ namespace clv{
 			}
 
 			static void processEventQueue(){
+				//You'd expect this to wrap all of the listeners
 				//wrap the internal somehow - internal could probably just be static too?
 			}
 		};
 
 		//I'm a bit unsure on the perfect forwarding. I'd need to decided if I want these as lvales or just values
 
+		/*class InternalEventDispatcherBase{
+
+		};*/
+
 		template<typename EventType>
-		class InternalEventDispatcher{
+		class InternalEventDispatcher /*: public InternalEventDispatcherBase*/{
 			//VARIABLES
 		private:
-			std::queue<EventType> eventQueue;
-			std::vector<Listener<EventType>> listeners;
+			static std::queue<EventType> eventQueue;
+			static std::vector<Listener<EventType>> listeners;
 
 			//FUNCTIONS
 		public:
 			template<typename Function, typename Object>
-			void bind(Function&& function, Object* object){
-				//TODO:
+			static void bind(Function&& function, Object* object){
+				//bind lambdas?
+
+				Listener<EventType> listener{};
+				listener.del.bind(std::forward<Function>(function), object);
+				listeners.emplace_back(std::move(listener));
 			}
 
 			//unbind?
 
-			void dispatch(EventType&& event, DispatchType dispatchType){
+			static void dispatch(EventType&& event, DispatchType dispatchType){
 				if(dispatchType == DispatchType::deferred){
 					eventQueue.push(event);
 				} else{
@@ -124,7 +139,7 @@ namespace clv{
 				}
 			}
 
-			void processEventQueue(){
+			static virtual void processEventQueue() override{
 				while(!eventQueue.empty()){
 					doDispatch(eventQueue.front());
 					eventQueue.pop();
@@ -132,7 +147,7 @@ namespace clv{
 			}
 
 		private:
-			void doDispatch(EventType&& event){
+			static void doDispatch(EventType&& event){
 				for(auto& listener : listeners){
 					const HandledType handledState = listener.del.broadcast(eventQueue.front);
 					if(handledState == HandledType::handled_stop){
@@ -141,6 +156,9 @@ namespace clv{
 				}
 			}
 		};
+
+		std::queue<EventType> InternalEventDispatcher<EventType>::eventQueue;
+		std::vector<Listener<EventType>> InternalEventDispatcher<EventType>::listeners;
 	}
 
 	//OLD--------------------------------------------------
