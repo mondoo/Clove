@@ -6,12 +6,14 @@ namespace clv::gfx{
 	class Renderer;
 }
 
+namespace clv::evt{
+	enum class HandledType;
+}
+
 namespace clv{
 	class Window;
 	class LayerStack;
 	class Layer;
-	class Event;
-	class WindowCloseEvent;
 	class ImGuiLayer;
 
 	class Application{
@@ -36,8 +38,6 @@ namespace clv{
 		void run();
 		void stop();
 
-		void onEvent(Event& e);
-
 		void pushLayer(std::shared_ptr<Layer> layer);
 		void pushOverlay(std::shared_ptr<Layer> overlay);
 
@@ -47,7 +47,7 @@ namespace clv{
 		ecs::Manager& getManager();
 
 	private:
-		bool onWindowClose(WindowCloseEvent& e);
+		void onWindowClose();
 	};
 
 	//To be defined in CLIENT

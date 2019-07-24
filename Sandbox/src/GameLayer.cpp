@@ -47,7 +47,3 @@ void GameLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 		sphereEntity.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition(spherePos);
 	}
 }
-
-void GameLayer::onEvent(clv::Event& e){
-
-}

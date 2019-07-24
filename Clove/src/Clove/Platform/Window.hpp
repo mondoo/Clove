@@ -2,6 +2,7 @@
 
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
+#include "Clove/Utils/Delegate.hpp"
 
 namespace clv::gfx{
 	enum class API;
@@ -9,8 +10,6 @@ namespace clv::gfx{
 }
 
 namespace clv{
-	class Event;
-
 	struct WindowProps{
 		std::string title;
 		unsigned int width;
@@ -24,17 +23,16 @@ namespace clv{
 	};
 
 	class Window{
-	protected:
-		using EventCallbackFn = std::function<void(Event&)>;
-		
 		//VARIABLES
-	protected:
-		EventCallbackFn eventCallback;
+	public:
+		utl::SingleCastDelegate<void()> onWindowCloseDelegate;
 
+	protected:
 		WindowProps windowProperties;
 
 		Keyboard keyboard;
 		Mouse mouse;
+
 		std::unique_ptr<gfx::Context> context;
 
 		//FUNCTIONS
@@ -48,8 +46,6 @@ namespace clv{
 
 		void beginFrame();
 		void endFrame();
-
-		void setEventCallbackFunction(const EventCallbackFn& callback);
 		
 		virtual void* getNativeWindow() const = 0;
 
@@ -67,6 +63,7 @@ namespace clv{
 		//Defined in derived class
 		static Window* create(const WindowProps& props = WindowProps());
 		static Window* create(const WindowProps& props, gfx::API api);
+
 	protected:
 		virtual void processInput() = 0;
 	};
