@@ -35,7 +35,7 @@ namespace clv{
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
 			if(msg.wParam == CLV_WINDOWS_QUIT){
-				evt::EventDispatcher<WindowCloseEvent>::dispatch({}, evt::DispatchType::immediate);
+				evt::EventDispatcher::dispatch<WindowCloseEvent>({}, evt::DispatchType::immediate);
 			}
 
 			TranslateMessage(&msg);

@@ -21,4 +21,8 @@ namespace clv{
 	std::ostream& operator<<(std::ostream& os, const Event& e){
 		return os << e.toString();
 	}
+
+	namespace evt{
+		std::vector<std::unique_ptr<InternalEventDispatcherBase>> EventDispatcher::dispatchers;
+	}
 }

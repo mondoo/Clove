@@ -72,59 +72,47 @@ namespace clv{
 		/*private:*/
 		public:
 			SingleCastDelegate<HandledType(EventType&)> del;
-
-			//FUNCTIONS
-			/*template<typename Object>
-			Listener(HandledType(EventType&) func, Object* obj){
-				del.bind(func, obj);
-			}*/
 		};
 
-		//class EventDispatcher{ //Do I even need this wrapper?
-		//	//VARIABLES
-		//private:
-		//	//static std::unordered_map<EventType, 
-
-		//	//FUNCTIONS
-		//public:
-		//	template<typename EventType, typename Function, typename Object>
-		//	static void bind(Function&& function, Object* object){
-		//		//wrap the internal somehow - internal could probably just be static too?
-		//	}
-
-		//	//unbind?
-
-		//	template<typename EventType>
-		//	static void dispatch(EventType&& event, DispatchType dispatchType){
-		//		//wrap the internal somehow - internal could probably just be static too?
-		//	}
-
-		//	static void processEventQueue(){
-		//		//You'd expect this to wrap all of the listeners
-		//		//wrap the internal somehow - internal could probably just be static too?
-		//	}
-		//};
-
-		//I'm a bit unsure on the perfect forwarding. I'd need to decided if I want these as lvales or just values
-
-		/*class InternalEventDispatcherBase{
-
-		};*/
-
-		//TODO: how to porcess queue now?
-		//base class?
+		class InternalEventDispatcherBase{
+		public:
+			virtual void processEventQueue() = 0;
+		};
 
 		template<typename EventType>
-		class EventDispatcher /*: public InternalEventDispatcherBase*/{
+		class InteralEventDispatcher : public InternalEventDispatcherBase{
 			//VARIABLES
 		private:
-			static std::queue<EventType> eventQueue;
-			static std::vector<Listener<EventType>> listeners;
+			std::queue<EventType> eventQueue;
+			std::vector<Listener<EventType>> listeners;
+
+			static bool initialised;
+			static InteralEventDispatcher<EventType>* instance;
 
 			//FUNCTIONS
 		public:
+			InteralEventDispatcher(){
+				initialised = true;
+				instance = this;
+			}
+
+			~InteralEventDispatcher(){
+				//Doesn't look like this is ever called
+
+				CLV_DEBUG_BREAK;
+
+			}
+
+			static bool isInitialised(){
+				return initialised;
+			}
+
+			static InteralEventDispatcher<EventType>* get(){
+				return instance;
+			}
+
 			template<typename Function, typename Object>
-			static void bind(Function&& function, Object* object){
+			void bind(Function&& function, Object* object){
 				//bind lambdas?
 
 				Listener<EventType> listener{};
@@ -134,15 +122,15 @@ namespace clv{
 
 			//unbind?
 
-			static void dispatch(EventType&& event, DispatchType dispatchType){
+			void dispatch(EventType&& event, DispatchType dispatchType){
 				if(dispatchType == DispatchType::deferred){
 					eventQueue.push(event);
 				} else{
-					doDispatch(std::forward<EventType>(event)); 
+					doDispatch(std::forward<EventType>(event));
 				}
 			}
 
-			static void processEventQueue(){
+			virtual void processEventQueue() override{
 				while(!eventQueue.empty()){
 					doDispatch(eventQueue.front());
 					eventQueue.pop();
@@ -150,7 +138,8 @@ namespace clv{
 			}
 
 		private:
-			static void doDispatch(EventType&& event){
+			template<typename EventType>
+			void doDispatch(EventType&& event){
 				for(auto& listener : listeners){
 					const HandledType handledState = listener.del.broadcast(event);
 					if(handledState == HandledType::handled_stop){
@@ -160,8 +149,40 @@ namespace clv{
 			}
 		};
 
-		template<typename EventType> std::queue<EventType> EventDispatcher<EventType>::eventQueue;
-		template<typename EventType> std::vector<Listener<EventType>> EventDispatcher<EventType>::listeners;
+		template<typename EventType> bool InteralEventDispatcher<EventType>::initialised = false;
+		template<typename EventType> InteralEventDispatcher<EventType>* InteralEventDispatcher<EventType>::instance = nullptr;
+
+
+		class EventDispatcher{
+			//VARIABLES
+		private:
+			static std::vector<std::unique_ptr<InternalEventDispatcherBase>> dispatchers;
+
+			//FUNCTIONS
+		public:
+			template<typename EventType, typename Function, typename Object>
+			static void bind(Function&& function, Object* object){
+				if(!InteralEventDispatcher<EventType>::isInitialised()){
+					dispatchers.emplace_back(std::make_unique<InteralEventDispatcher<EventType>>());
+				}
+				InteralEventDispatcher<EventType>::get()->bind(std::forward<Function>(function), object);
+			}
+
+			//unbind?
+
+			template<typename EventType>
+			static void dispatch(EventType&& event, DispatchType dispatchType){
+				if(InteralEventDispatcher<EventType>::isInitialised()){
+					InteralEventDispatcher<EventType>::get()->dispatch(std::forward<EventType>(event), dispatchType);
+				}
+			}
+
+			static void processEventQueue(){
+				for(auto& dispatcher : dispatchers){
+					dispatcher->processEventQueue();
+				}
+			}
+		};
 	}
 
 	//OLD--------------------------------------------------

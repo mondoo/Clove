@@ -25,7 +25,7 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		evt::EventDispatcher<WindowCloseEvent>::bind(&Application::onWindowClose, this);
+		evt::EventDispatcher::bind<WindowCloseEvent>(&Application::onWindowClose, this);
 
 		window = std::unique_ptr<Window>(Window::create());
 		window->setVSync(true);
