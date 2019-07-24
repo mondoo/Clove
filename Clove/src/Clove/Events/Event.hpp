@@ -76,6 +76,7 @@ namespace clv{
 
 		class InternalEventDispatcherBase{
 		public:
+			virtual ~InternalEventDispatcherBase() = default;
 			virtual void processEventQueue() = 0;
 		};
 
@@ -96,7 +97,7 @@ namespace clv{
 				instance = this;
 			}
 
-			~InteralEventDispatcher(){
+			virtual ~InteralEventDispatcher(){
 				//Doesn't look like this is ever called
 
 				CLV_DEBUG_BREAK;
