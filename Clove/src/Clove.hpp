@@ -5,11 +5,10 @@
 //Clove headers
 #include "Clove/Core.hpp"
 #include "Clove/Log.hpp"
-#include "Clove/Events/Delegate.hpp"
+#include "Clove/Utils/Delegate.hpp"
 
 #include "Clove/Application.hpp"
 #include "Clove/Layer.hpp"
-#include "Clove/Events/Event.hpp"
 
 #include "Clove/Input/Input.hpp"
 #include "Clove/Input/KeyCodes.hpp"
