@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/ECS/ECSTypes.hpp"
+#include "Clove/Utils/Delegate.hpp"
 
 namespace clv::ecs{
 	class Component;
@@ -8,8 +9,8 @@ namespace clv::ecs{
 	class Entity{
 		//VARIABLES
 	public:
-		evt::SingleCastDelegate<Component*(EntityID, ComponentID)> onComponentRequestedDelegate;
-		evt::SingleCastDelegate<bool(EntityID)> isEntityIdValidDelegate;
+		utl::SingleCastDelegate<Component*(EntityID, ComponentID)> onComponentRequestedDelegate;
+		utl::SingleCastDelegate<bool(EntityID)> isEntityIdValidDelegate;
 
 	private:
 		EntityID entityID = INVALID_ENTITY_ID;

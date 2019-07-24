@@ -1,8 +1,6 @@
 #include "clvpch.hpp"
 #include "Keyboard.hpp"
 
-#include "Clove/Events/Event.hpp"
-
 namespace clv{
 	Keyboard::Event::Event() = default;
 
@@ -96,20 +94,17 @@ namespace clv{
 		keyStates[key] = true;
 		keyBuffer.push({ Keyboard::Event::Type::Pressed, key });
 		trimBuffer(keyBuffer);
-		evt::EventDispatcher::dispatch<KeyPressedEvent>({ key, -1 }, evt::DispatchType::deferred);
 	}
 
 	void Keyboard::onKeyReleased(Key key){
 		keyStates[key] = false;
 		keyBuffer.push({ Keyboard::Event::Type::Released, key });
 		trimBuffer(keyBuffer);
-		evt::EventDispatcher::dispatch<KeyReleasedEvent>({ key }, evt::DispatchType::deferred);
 	}
 
 	void Keyboard::onChar(char character){
 		charBuffer.push(character);
 		trimBuffer(charBuffer);
-		evt::EventDispatcher::dispatch<KeyTypedEvent>({ static_cast<Key>(character) }, evt::DispatchType::deferred);
 	}
 
 	void Keyboard::clearState(){

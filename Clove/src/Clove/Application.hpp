@@ -47,7 +47,7 @@ namespace clv{
 		ecs::Manager& getManager();
 
 	private:
-		evt::HandledType onWindowClose(struct WindowCloseEvent& e);
+		void onWindowClose();
 	};
 
 	//To be defined in CLIENT

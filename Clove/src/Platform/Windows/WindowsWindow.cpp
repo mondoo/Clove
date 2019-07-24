@@ -3,7 +3,6 @@
 
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/Context.hpp"
-#include "Clove/Events/Event.hpp"
 
 namespace clv{
 	WindowsWindow::WindowsWindow(const WindowProps& props){
@@ -30,7 +29,7 @@ namespace clv{
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
 			if(msg.wParam == CLV_WINDOWS_QUIT){
-				evt::EventDispatcher::dispatch<WindowCloseEvent>({}, evt::DispatchType::immediate);
+				onWindowCloseDelegate.broadcast();
 			}
 
 			TranslateMessage(&msg);

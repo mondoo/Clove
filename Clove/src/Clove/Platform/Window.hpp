@@ -2,6 +2,7 @@
 
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
+#include "Clove/Utils/Delegate.hpp"
 
 namespace clv::gfx{
 	enum class API;
@@ -9,10 +10,6 @@ namespace clv::gfx{
 }
 
 namespace clv{
-	struct WindowCloseEvent{
-		//Empty
-	};
-
 	struct WindowProps{
 		std::string title;
 		unsigned int width;
@@ -27,6 +24,9 @@ namespace clv{
 
 	class Window{
 		//VARIABLES
+	public:
+		utl::SingleCastDelegate<void()> onWindowCloseDelegate;
+
 	protected:
 		WindowProps windowProperties;
 

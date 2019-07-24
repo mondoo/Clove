@@ -7,28 +7,6 @@
 #include <optional>
 
 namespace clv{
-	struct MouseMovedEvent{
-		int mouseX = 0;
-		int mouseY = 0;
-	};
-
-	struct MouseScrolledEvent{
-		float xOffset = 0;
-		float yOffset = 0;
-	};
-
-	struct MouseButtonEvent{
-		MouseButton button;
-	};
-
-	struct MouseButtonPressedEvent : public MouseButtonEvent{
-
-	};
-
-	struct MouseButtonReleasedEvent : public MouseButtonEvent{
-
-	};
-
 	class Mouse{
 	#if CLV_PLATFORM_WINDOWS
 		friend class WindowsWindow;

@@ -1,4 +1,4 @@
-namespace clv::evt::utility{
+namespace clv::utl{
 	template<int amount> struct placeholderSequence{ static placeholderSequence ph; };
 	template<int amount> placeholderSequence<amount> placeholderSequence<amount>::ph;
 
@@ -8,21 +8,21 @@ namespace clv::evt::utility{
 	}
 
 	template<typename BindFunctionPrototype, typename ObjectType, int ...indices>
-	auto dobind(BindFunctionPrototype&& function, ObjectType* object, std::integer_sequence<int, indices...>){
-		return std::bind(std::forward<BindFunctionPrototype>(function), object, utility::placeholderSequence<indices + 1>::ph...);
+	auto doBind(BindFunctionPrototype&& function, ObjectType* object, std::integer_sequence<int, indices...>){
+		return std::bind(std::forward<BindFunctionPrototype>(function), object, placeholderSequence<indices + 1>::ph...);
 	}
 }
 
 namespace std{
-	template<int num> struct is_placeholder<clv::evt::utility::placeholderSequence<num>> : std::integral_constant<int, num>{};
+	template<int num> struct is_placeholder<clv::utl::placeholderSequence<num>> : std::integral_constant<int, num>{};
 }
 
-namespace clv::evt{
+namespace clv::utl{
 	template<typename FunctionPrototype>
 	template<typename BindFunctionPrototype, typename ObjectType>
 	void SingleCastDelegate<FunctionPrototype>::bind(BindFunctionPrototype&& function, ObjectType* object){
-		constexpr size_t argumentCount = decltype(utility::getArgumentCount(function))::value;
-		functionPointer = utility::dobind(std::forward<BindFunctionPrototype>(function), object, std::make_integer_sequence<int, argumentCount>());
+		constexpr size_t argumentCount = decltype(getArgumentCount(function))::value;
+		functionPointer = doBind(std::forward<BindFunctionPrototype>(function), object, std::make_integer_sequence<int, argumentCount>());
 	}
 
 	template<typename FunctionPrototype>
@@ -55,8 +55,8 @@ namespace clv::evt{
 	template<typename FunctionPrototype>
 	template<typename BindFunctionPrototype, typename ObjectType>
 	MultiCastDelegateHandle MultiCastDelegate<FunctionPrototype>::bind(BindFunctionPrototype&& function, ObjectType* object){
-		constexpr size_t argumentCount = decltype(utility::getArgumentCount(function))::value;
-		auto functionPointer = utility::dobind(std::forward<BindFunctionPrototype>(function), object, std::make_integer_sequence<int, argumentCount>());
+		constexpr size_t argumentCount = decltype(getArgumentCount(function))::value;
+		auto functionPointer = doBind(std::forward<BindFunctionPrototype>(function), object, std::make_integer_sequence<int, argumentCount>());
 		
 		auto handle = MultiCastDelegateHandle{ nextID++ };
 		functionPointers.emplace(std::make_pair(handle, functionPointer));

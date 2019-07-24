@@ -7,22 +7,6 @@
 #include <optional>
 
 namespace clv{
-	struct KeyEvent{
-		Key key = Key::None;
-	};
-
-	struct KeyPressedEvent : public KeyEvent{
-		int repeatCount = 0;
-	};
-
-	struct KeyTypedEvent : public KeyEvent{
-
-	};
-
-	struct KeyReleasedEvent : public KeyEvent{
-
-	};
-
 	class Keyboard{
 	#if CLV_PLATFORM_WINDOWS
 		friend class WindowsWindow;

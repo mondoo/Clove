@@ -5,13 +5,10 @@
 #include "Clove/Input/Input.hpp"
 #include "Clove/LayerStack.hpp"
 #include "Clove/Layer.hpp"
-#include "Clove/Events/Event.hpp"
 #include "Clove/Utils/Time.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/RenderCommand.hpp"
-
-#include "Clove/Events/Event.hpp"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -20,9 +17,8 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		evt::EventDispatcher::bind<WindowCloseEvent>(&Application::onWindowClose, this);
-
 		window = std::unique_ptr<Window>(Window::create());
+		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
 		window->setVSync(true);
 
 		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
@@ -47,8 +43,6 @@ namespace clv{
 			prevFrameTime = currFrameTime;
 
 			window->beginFrame();
-
-			evt::EventDispatcher::processEventQueue();
 
 			for(auto layer : *layerStack){
 				layer->onUpdate(deltaSeonds.count());
@@ -90,8 +84,7 @@ namespace clv{
 		return *ecsManager;
 	}
 
-	evt::HandledType Application::onWindowClose(WindowCloseEvent& e){
+	void Application::onWindowClose(){
 		running = false;
-		return evt::HandledType::handled_stop;
 	}
 }
