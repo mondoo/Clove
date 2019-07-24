@@ -31,7 +31,3 @@ void GameLayer::onDetach(){
 void GameLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 
 }
-
-void GameLayer::onEvent(clv::Event& e){
-
-}

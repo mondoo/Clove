@@ -14,8 +14,6 @@ namespace clv{
 	class Window;
 	class LayerStack;
 	class Layer;
-	class Event;
-	class WindowCloseEvent;
 	class ImGuiLayer;
 
 	class Application{
@@ -40,8 +38,6 @@ namespace clv{
 		void run();
 		void stop();
 
-		void onEvent(Event& e);
-
 		void pushLayer(std::shared_ptr<Layer> layer);
 		void pushOverlay(std::shared_ptr<Layer> overlay);
 
@@ -51,7 +47,7 @@ namespace clv{
 		ecs::Manager& getManager();
 
 	private:
-		evt::HandledType onWindowClose(WindowCloseEvent& e);
+		evt::HandledType onWindowClose(struct WindowCloseEvent& e);
 	};
 
 	//To be defined in CLIENT

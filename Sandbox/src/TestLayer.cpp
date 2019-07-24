@@ -120,36 +120,31 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	}
 }
 
-void TestLayer::onEvent(clv::Event& e){
-	//clv::EventDispatcher dispatcher(e);
-	//dispatcher.dispatch<clv::MouseMovedEvent>(CLV_BIND_FUNCTION_1P(&TestLayer::onMouseMoved, this));
-}
-
-bool TestLayer::onMouseMoved(clv::MouseMovedEvent e){
-	if(firstMouse){
-		lastMouseX = e.getX();
-		lastMouseY = e.getY();
-		firstMouse = false;
-	}
-
-	float xoffset = static_cast<float>(e.getX() - lastMouseX);
-	float yoffset = static_cast<float>(lastMouseY - e.getY());
-	lastMouseX = e.getX();
-	lastMouseY = e.getY();
-
-	float sensitivity = 0.05f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	if(pitch > 89.0f){
-		pitch = 89.0f;
-	}
-	if(pitch < -89.0f){
-		pitch = -89.0f;
-	}
-
-	return true;
-}
+//bool TestLayer::onMouseMoved(clv::MouseMovedEvent e){
+//	if(firstMouse){
+//		lastMouseX = e.getX();
+//		lastMouseY = e.getY();
+//		firstMouse = false;
+//	}
+//
+//	float xoffset = static_cast<float>(e.getX() - lastMouseX);
+//	float yoffset = static_cast<float>(lastMouseY - e.getY());
+//	lastMouseX = e.getX();
+//	lastMouseY = e.getY();
+//
+//	float sensitivity = 0.05f;
+//	xoffset *= sensitivity;
+//	yoffset *= sensitivity;
+//
+//	yaw += xoffset;
+//	pitch += yoffset;
+//
+//	if(pitch > 89.0f){
+//		pitch = 89.0f;
+//	}
+//	if(pitch < -89.0f){
+//		pitch = -89.0f;
+//	}
+//
+//	return true;
+//}

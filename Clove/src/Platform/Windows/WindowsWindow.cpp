@@ -3,11 +3,6 @@
 
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/Context.hpp"
-#include "Clove/Events/ApplicationEvent.hpp"
-#include "Clove/Events/MouseEvent.hpp"
-#include "Clove/Events/KeyEvent.hpp"
-#include "Clove/Application.hpp"
-
 #include "Clove/Events/Event.hpp"
 
 namespace clv{

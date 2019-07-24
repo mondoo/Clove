@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "Mouse.hpp"
 
+#include "Clove/Events/Event.hpp"
+
 namespace clv{
 	Mouse::Event::Event() = default;
 
@@ -71,6 +73,8 @@ namespace clv{
 
 		buffer.push({ Mouse::Event::Type::Move, MouseButton::None, x, y });
 		trimBuffer();
+
+		evt::EventDispatcher::dispatch<MouseMovedEvent>({ x, y }, evt::DispatchType::deferred);
 	}
 
 	void Mouse::onButtonPressed(MouseButton button, int x, int y){
@@ -80,6 +84,9 @@ namespace clv{
 		buttonStates[button] = true;
 		buffer.push({ Mouse::Event::Type::Pressed, button, x, y });
 		trimBuffer();
+
+		evt::EventDispatcher::dispatch<MouseButtonPressedEvent>({ button }, evt::DispatchType::deferred);
+
 	}
 
 	void Mouse::onButtonReleased(MouseButton button, int x, int y){
@@ -89,6 +96,8 @@ namespace clv{
 		buttonStates[button] = false;
 		buffer.push({ Mouse::Event::Type::Released, button, x, y });
 		trimBuffer();
+
+		evt::EventDispatcher::dispatch<MouseButtonReleasedEvent>({ button }, evt::DispatchType::deferred);
 	}
 
 	void Mouse::onWheelDelta(int delta, int x, int y){
@@ -109,6 +118,8 @@ namespace clv{
 
 		buffer.push({ Mouse::Event::Type::WheelUp, MouseButton::None, x, y });
 		trimBuffer();
+
+		evt::EventDispatcher::dispatch<MouseScrolledEvent>({ 1, 0 }, evt::DispatchType::deferred);
 	}
 
 	void Mouse::onWheelDown(int x, int y){
@@ -117,6 +128,8 @@ namespace clv{
 
 		buffer.push({ Mouse::Event::Type::WheelDown, MouseButton::None, x, y });
 		trimBuffer();
+
+		evt::EventDispatcher::dispatch<MouseScrolledEvent>({ -1, 0 }, evt::DispatchType::deferred);
 	}
 
 	void Mouse::onMouseLeave(){

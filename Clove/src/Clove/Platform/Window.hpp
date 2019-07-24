@@ -9,7 +9,9 @@ namespace clv::gfx{
 }
 
 namespace clv{
-	class Event;
+	struct WindowCloseEvent{
+		//Empty
+	};
 
 	struct WindowProps{
 		std::string title;

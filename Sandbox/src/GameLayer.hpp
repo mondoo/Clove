@@ -20,6 +20,4 @@ public:
 	virtual void onDetach() override;
 
 	virtual void onUpdate(clv::utl::DeltaTime deltaTime) override;
-
-	virtual void onEvent(clv::Event& e) override;
 };

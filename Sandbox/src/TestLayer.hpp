@@ -3,7 +3,6 @@
 #include "Clove/Layer.hpp"
 
 #include "Clove/ECS/Entity.hpp"
-#include "Clove/Events/MouseEvent.hpp"
 
 class TestLayer : public clv::Layer{
 	//VARIABLES
@@ -34,8 +33,4 @@ public:
 	virtual void onDetach() override;
 
 	virtual void onUpdate(clv::utl::DeltaTime deltaTime) override;
-
-	virtual void onEvent(clv::Event& e) override;
-
-	bool onMouseMoved(clv::MouseMovedEvent e);
 };
