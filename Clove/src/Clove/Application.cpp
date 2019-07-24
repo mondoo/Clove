@@ -44,6 +44,9 @@ namespace clv{
 
 			window->beginFrame();
 
+			//TODO:
+			//Will need process the mouse and keyboard events here eventually
+
 			for(auto layer : *layerStack){
 				layer->onUpdate(deltaSeonds.count());
 			}

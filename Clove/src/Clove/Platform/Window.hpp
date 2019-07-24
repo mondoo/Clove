@@ -32,6 +32,7 @@ namespace clv{
 
 		Keyboard keyboard;
 		Mouse mouse;
+
 		std::unique_ptr<gfx::Context> context;
 
 		//FUNCTIONS
@@ -62,6 +63,7 @@ namespace clv{
 		//Defined in derived class
 		static Window* create(const WindowProps& props = WindowProps());
 		static Window* create(const WindowProps& props, gfx::API api);
+
 	protected:
 		virtual void processInput() = 0;
 	};
