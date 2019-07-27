@@ -19,37 +19,62 @@ namespace clv::ecs{
 		}
 	}
 
-	void Transform3DComponent::setLocalPosition(const math::Vector3f& inLocalPosition){
-		localPosition = inLocalPosition;
+
+	const math::Vector3f& Transform3DComponent::getPosition() const{
+		return position;
 	}
 
 	const math::Vector3f& Transform3DComponent::getLocalPosition() const{
 		return localPosition;
 	}
-
-	void Transform3DComponent::setLocalRotation(const std::pair<math::Vector3f, float>& inLocalRotation){
-		localRotation = inLocalRotation;
+	
+	const std::pair<math::Vector3f, float>& Transform3DComponent::getRotation() const{
+		return rotation;
 	}
 
 	const std::pair<math::Vector3f, float>& Transform3DComponent::getLocalRotation() const{
 		return localRotation;
 	}
-
-	void Transform3DComponent::setLocalScale(const math::Vector3f& inLocalScale){
-		localScale = inLocalScale;
+	
+	const math::Vector3f& Transform3DComponent::getScale() const{
+		return scale;
 	}
 
 	const math::Vector3f& Transform3DComponent::getLocalScale() const{
 		return localScale;
 	}
+	
+	void Transform3DComponent::setPosition(const math::Vector3f& inPosition){
+		desiredPosition = inPosition;
+	}
 
-	const math::Matrix4f& Transform3DComponent::getWorldTransformMatrix() const{
+	void Transform3DComponent::setLocalPosition(const math::Vector3f& inLocalPosition){
+		desiredLocalPosition = inLocalPosition;
+	}
+
+	void Transform3DComponent::setRotation(const std::pair<math::Vector3f, float>& inRotation){
+		desiredRotation = inRotation;
+	}
+
+	void Transform3DComponent::setLocalRotation(const std::pair<math::Vector3f, float>& inLocalRotation){
+		desiredLocalRotation = inLocalRotation;
+	}
+
+	void Transform3DComponent::setScale(const math::Vector3f& inScale){
+		desiredScale = inScale;
+	}
+
+	void Transform3DComponent::setLocalScale(const math::Vector3f& inLocalScale){
+		desiredLocalScale = inLocalScale;
+	}
+
+	/*const math::Matrix4f& Transform3DComponent::getWorldTransformMatrix() const{
 		return worldTransformMatrix;
-	}
+	}*/
 
-	Transform3DComponent* Transform3DComponent::getParent() const{
+	/*Transform3DComponent* Transform3DComponent::getParent() const{
 		return parent;
-	}
+	}*/
 
 	void Transform3DComponent::addChild(Transform3DComponent* child){
 		if(child && child != this){

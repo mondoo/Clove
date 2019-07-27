@@ -40,9 +40,9 @@ void TestLayer::onAttach(){
 	ent3.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
 	ent3.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
-	ent1.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition({ 0.0f, 0.0f, 0.0f });
-	ent2.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition({ 0.0f, 0.0f, 3.0f });
-	ent3.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition({ 0.0f, 3.0f, 0.0f });
+	ent1.getComponent<clv::ecs::Transform3DComponent>()->setPosition({ 0.0f, 0.0f, 0.0f });
+	ent2.getComponent<clv::ecs::Transform3DComponent>()->setPosition({ 0.0f, 0.0f, 3.0f });
+	ent3.getComponent<clv::ecs::Transform3DComponent>()->setPosition({ 0.0f, 3.0f, 0.0f });
 
 	ent1.getComponent<clv::ecs::Transform3DComponent>()->addChild(ent2.getComponent<clv::ecs::Transform3DComponent>());
 	ent2.getComponent<clv::ecs::Transform3DComponent>()->addChild(ent3.getComponent<clv::ecs::Transform3DComponent>());
@@ -52,7 +52,7 @@ void TestLayer::onAttach(){
 	sprtEnt1.getComponent<clv::ecs::SpriteComponent>()->setTexture("res/Textures/Zombie-32x32.png");
 	sprtEnt1.getComponent<clv::ecs::Transform2DComponent>()->setLocalScale(clv::math::Vector2f(32.0f, 32.0f));
 
-	lght1.getComponent<clv::ecs::Transform3DComponent>()->setLocalScale({ 0.25f, 0.25f, 0.25f });
+	lght1.getComponent<clv::ecs::Transform3DComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
 	lght1.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
 	lght1.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
 	lght1.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
@@ -70,7 +70,7 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 
 	float s = 6 * deltaTime;
 
-	clv::math::Vector3f cameraPosition = cam.getComponent<clv::ecs::Transform3DComponent>()->getLocalPosition();
+	clv::math::Vector3f cameraPosition = cam.getComponent<clv::ecs::Transform3DComponent>()->getPosition();
 
 	//cam->updateFront(pitch, yaw); //TODO: proper first person implementation
 
@@ -101,15 +101,18 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 		yaw += camDelta * 10.0f;
 	}
 
-	cam.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition(cameraPosition);
+	const float radius = 6.0f;
+	
+	cam.getComponent<clv::ecs::Transform3DComponent>()->setPosition(cameraPosition);
 	cam.getComponent<clv::ecs::CameraComponent>()->updateFront(0.0f, yaw);
 
-	ent1.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
-	ent2.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 0.0f, 0.0f, 1.0f }, rotDelta });
-	ent3.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 1.0f, 0.0f, 0.0f }, rotDelta });
+	//ent1.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
+	//ent2.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 0.0f, 0.0f, 1.0f }, rotDelta });
+	//ent3.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 1.0f, 0.0f, 0.0f }, rotDelta });
 
-	const float radius = 6.0f;
-	lght1.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition({ cos(rotDelta) * radius, 2.0f, sin(rotDelta) * radius });
+	ent1.getComponent<clv::ecs::Transform3DComponent>()->setPosition({ cos(rotDelta) * radius, 0.0f, 0.0f });
+
+	lght1.getComponent<clv::ecs::Transform3DComponent>()->setPosition({ cos(rotDelta * 1.5f) * radius * 2.0f, 2.0f, sin(rotDelta * 1.5f) * radius * 2.0f });
 
 	sprtEnt1.getComponent<clv::ecs::Transform2DComponent>()->setLocalPosition(clv::math::Vector2f(cos(rotDelta) * radius * 5.0f, 0.0f));
 

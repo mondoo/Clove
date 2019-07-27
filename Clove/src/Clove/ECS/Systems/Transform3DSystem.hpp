@@ -16,8 +16,5 @@ namespace clv::ecs{
 		virtual ~Transform3DSystem();
 
 		virtual void update(utl::DeltaTime deltaTime) override;
-
-	private:
-		math::Matrix4f getTransformWorldMatrix(Transform3DComponent* component);
 	};
 }

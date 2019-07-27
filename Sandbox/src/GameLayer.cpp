@@ -22,7 +22,7 @@ void GameLayer::onAttach(){
 	tempLight = clv::Application::get().getManager().createEntity<clv::ecs::LightComponent, clv::ecs::Transform3DComponent>();
 
 	sphereEntity.getComponent<clv::ecs::Transform3DComponent>()->addChild(cameraEntity.getComponent<clv::ecs::Transform3DComponent>());
-	cameraEntity.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition({ -5.0f, 0.0f, 0.0f });
+	//cameraEntity.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition({ -5.0f, 0.0f, 0.0f });
 
 	sphereEntity.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/sphere.obj");
 	sphereEntity.getComponent<clv::ecs::MeshComponent>()->setDiffuseTexture("res/Textures/container2.png");
@@ -38,13 +38,13 @@ void GameLayer::onDetach(){
 
 void GameLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	if(clv::input::isKeyPressed(clv::Key::W)){
-		clv::math::Vector3f spherePos = sphereEntity.getComponent<clv::ecs::Transform3DComponent>()->getLocalPosition();
+		clv::math::Vector3f spherePos = sphereEntity.getComponent<clv::ecs::Transform3DComponent>()->getPosition();
 		spherePos.x += 5 * deltaTime;
-		sphereEntity.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition(spherePos);
+		//sphereEntity.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition(spherePos);
 	}else if(clv::input::isKeyPressed(clv::Key::S)){
-		clv::math::Vector3f spherePos = sphereEntity.getComponent<clv::ecs::Transform3DComponent>()->getLocalPosition();
+		clv::math::Vector3f spherePos = sphereEntity.getComponent<clv::ecs::Transform3DComponent>()->getPosition();
 		spherePos.x -= 5 * deltaTime;
-		sphereEntity.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition(spherePos);
+		//sphereEntity.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition(spherePos);
 	}
 }
 

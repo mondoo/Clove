@@ -18,7 +18,12 @@ namespace clv::ecs{
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			MeshComponent* renderable = std::get<MeshComponent*>(componentTuple);
 
-			renderable->submissionData.modelData = transform->getWorldTransformMatrix();
+			const auto& [rot, angle] = transform->getRotation();
+			math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), transform->getPosition());
+			math::Matrix4f rotation = math::rotate(math::Matrix4f(1.0f), angle, rot);
+			math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), transform->getScale());
+
+			renderable->submissionData.modelData = translation * rotation * scale;
 
 			gfx::Renderer::submitMesh(renderable->submissionData);
 		}

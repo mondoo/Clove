@@ -13,23 +13,31 @@ namespace clv::ecs{
 	void Transform3DSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
-			transform->worldTransformMatrix = getTransformWorldMatrix(transform);
-		}
-	}
 
-	math::Matrix4f Transform3DSystem::getTransformWorldMatrix(Transform3DComponent* component){
-		const auto& [rot, angle] = component->getLocalRotation();
+			if(transform->parent){
+				if(transform->desiredLocalPosition){
+					transform->localPosition = transform->desiredLocalPosition.value();
 
-		math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), component->getLocalPosition());
-		math::Matrix4f rotation = math::rotate(math::Matrix4f(1.0f), angle, rot);
-		math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), component->getLocalScale());
+					transform->desiredLocalPosition.reset();
+				} else if(transform->desiredPosition){
+					transform->localPosition = transform->desiredPosition.value() - transform->parent->position;
 
-		math::Matrix4f transform = translation * rotation * scale;
+					transform->desiredPosition.reset();
+				}
+					
+				transform->position = transform->localPosition + transform->parent->position;
+			} else{
+				if(transform->desiredLocalPosition){
+					transform->localPosition	= transform->desiredLocalPosition.value();
+					transform->position			= transform->localPosition;
+					
+					transform->desiredLocalPosition.reset();
+				} else if(transform->desiredPosition){
+					transform->position = transform->desiredPosition.value();
 
-		if(Transform3DComponent* parent = component->getParent()){
-			return getTransformWorldMatrix(parent) * transform;
-		} else{
-			return transform;
+					transform->desiredPosition.reset();
+				}
+			}
 		}
 	}
 }
