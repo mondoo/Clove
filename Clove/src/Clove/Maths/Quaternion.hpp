@@ -8,7 +8,7 @@
 
 namespace clv::math{
 	template<typename T, qualifier Q>
-	using Quaternion = glm::quat<T, Q>;
+	using Quaternion = glm::qua<T, Q>;
 
 	using Quaternionf = Quaternion<float, qualifier::defaultp>;
 

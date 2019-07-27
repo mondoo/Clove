@@ -41,8 +41,8 @@ void TestLayer::onAttach(){
 	ent3.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
 	ent1.getComponent<clv::ecs::Transform3DComponent>()->setPosition({ 0.0f, 0.0f, 0.0f });
-	ent2.getComponent<clv::ecs::Transform3DComponent>()->setPosition({ 0.0f, 0.0f, 3.0f });
-	ent3.getComponent<clv::ecs::Transform3DComponent>()->setPosition({ 0.0f, 3.0f, 0.0f });
+	ent2.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition({ 0.0f, 0.0f, 3.0f });
+	ent3.getComponent<clv::ecs::Transform3DComponent>()->setLocalPosition({ 0.0f, 3.0f, 0.0f });
 
 	ent1.getComponent<clv::ecs::Transform3DComponent>()->addChild(ent2.getComponent<clv::ecs::Transform3DComponent>());
 	ent2.getComponent<clv::ecs::Transform3DComponent>()->addChild(ent3.getComponent<clv::ecs::Transform3DComponent>());
@@ -106,9 +106,9 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	cam.getComponent<clv::ecs::Transform3DComponent>()->setPosition(cameraPosition);
 	cam.getComponent<clv::ecs::CameraComponent>()->updateFront(0.0f, yaw);
 
-	//ent1.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 0.0f, 1.0f, 0.0f }, rotDelta });
-	//ent2.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 0.0f, 0.0f, 1.0f }, rotDelta });
-	//ent3.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation({ { 1.0f, 0.0f, 0.0f }, rotDelta });
+	ent1.getComponent<clv::ecs::Transform3DComponent>()->setRotation(clv::math::asQuaternion(rotDelta, clv::math::Vector3f{ 0.0f, 1.0f, 0.0f }));
+	ent2.getComponent<clv::ecs::Transform3DComponent>()->setRotation(clv::math::asQuaternion(rotDelta, clv::math::Vector3f{ 0.0f, 0.0f, 1.0f }));
+	ent3.getComponent<clv::ecs::Transform3DComponent>()->setRotation(clv::math::asQuaternion(rotDelta, clv::math::Vector3f{ 1.0f, 0.0f, 0.0f }));
 
 	ent1.getComponent<clv::ecs::Transform3DComponent>()->setPosition({ cos(rotDelta) * radius, 0.0f, 0.0f });
 

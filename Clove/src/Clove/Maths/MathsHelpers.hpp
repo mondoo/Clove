@@ -18,6 +18,15 @@ namespace clv::math{
 
 	template<typename T>
 	Matrix<4, 4, T, qualifier::defaultp> createPerspectiveMatrix(T fovy, T aspect, T zNear, T zFar);
+
+	template<typename T, qualifier Q>
+	Quaternion<T, Q> asQuaternion(T angle, const Vector<3, T, Q>& axis);
+
+	template<typename T, qualifier Q>
+	Matrix<3, 3, T, Q> quaternionToMatrix3(const Quaternion<T, Q>& quat);
+
+	template<typename T, qualifier Q>
+	Matrix<4, 4, T, Q> quaternionToMatrix4(const Quaternion<T, Q>& quat);
 }
 
 #include "MathsHelpers.inl"

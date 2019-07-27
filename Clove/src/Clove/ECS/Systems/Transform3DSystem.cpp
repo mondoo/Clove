@@ -14,6 +14,7 @@ namespace clv::ecs{
 		for(auto& componentTuple : components){
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 
+			//Position
 			if(transform->parent){
 				if(transform->desiredLocalPosition){
 					transform->localPosition = transform->desiredLocalPosition.value();
@@ -37,6 +38,21 @@ namespace clv::ecs{
 
 					transform->desiredPosition.reset();
 				}
+			}
+
+			//Rotation
+			if(transform->parent){
+				//This will have to do some shit with rotating around the parent etc.
+				//Adjusting the position
+			} else{
+				//Just rotate it in world space - easy
+			}
+
+			//Scale
+			if(transform->parent){
+				
+			} else{
+			
 			}
 		}
 	}

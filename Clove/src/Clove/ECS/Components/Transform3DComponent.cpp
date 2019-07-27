@@ -28,11 +28,11 @@ namespace clv::ecs{
 		return localPosition;
 	}
 	
-	const std::pair<math::Vector3f, float>& Transform3DComponent::getRotation() const{
+	const math::Quaternionf& Transform3DComponent::getRotation() const{
 		return rotation;
 	}
 
-	const std::pair<math::Vector3f, float>& Transform3DComponent::getLocalRotation() const{
+	const math::Quaternionf& Transform3DComponent::getLocalRotation() const{
 		return localRotation;
 	}
 	
@@ -52,11 +52,11 @@ namespace clv::ecs{
 		desiredLocalPosition = inLocalPosition;
 	}
 
-	void Transform3DComponent::setRotation(const std::pair<math::Vector3f, float>& inRotation){
+	void Transform3DComponent::setRotation(const math::Quaternionf& inRotation){
 		desiredRotation = inRotation;
 	}
 
-	void Transform3DComponent::setLocalRotation(const std::pair<math::Vector3f, float>& inLocalRotation){
+	void Transform3DComponent::setLocalRotation(const math::Quaternionf& inLocalRotation){
 		desiredLocalRotation = inLocalRotation;
 	}
 
