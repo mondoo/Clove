@@ -68,13 +68,9 @@ namespace clv::ecs{
 		desiredLocalScale = inLocalScale;
 	}
 
-	/*const math::Matrix4f& Transform3DComponent::getWorldTransformMatrix() const{
-		return worldTransformMatrix;
-	}*/
-
-	/*Transform3DComponent* Transform3DComponent::getParent() const{
+	Transform3DComponent* Transform3DComponent::getParent() const{
 		return parent;
-	}*/
+	}
 
 	void Transform3DComponent::addChild(Transform3DComponent* child){
 		if(child && child != this){

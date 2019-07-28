@@ -18,6 +18,7 @@ namespace clv::ecs{
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			MeshComponent* renderable = std::get<MeshComponent*>(componentTuple);
 
+			//TODO: Save some computations and use the matrices in the transform
 			math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), transform->getPosition());
 			math::Matrix4f rotation = math::quaternionToMatrix4(transform->getRotation());
 			math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), transform->getScale());

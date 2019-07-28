@@ -107,8 +107,8 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	cam.getComponent<clv::ecs::CameraComponent>()->updateFront(0.0f, yaw);
 
 	ent1.getComponent<clv::ecs::Transform3DComponent>()->setRotation(clv::math::asQuaternion(rotDelta, clv::math::Vector3f{ 0.0f, 1.0f, 0.0f }));
-	ent2.getComponent<clv::ecs::Transform3DComponent>()->setRotation(clv::math::asQuaternion(rotDelta, clv::math::Vector3f{ 0.0f, 0.0f, 1.0f }));
-	ent3.getComponent<clv::ecs::Transform3DComponent>()->setRotation(clv::math::asQuaternion(rotDelta, clv::math::Vector3f{ 1.0f, 0.0f, 0.0f }));
+	ent2.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation(clv::math::asQuaternion(rotDelta, clv::math::Vector3f{ 0.0f, 0.0f, 1.0f }));
+	ent3.getComponent<clv::ecs::Transform3DComponent>()->setLocalRotation(clv::math::asQuaternion(rotDelta, clv::math::Vector3f{ 1.0f, 0.0f, 0.0f }));
 
 	ent1.getComponent<clv::ecs::Transform3DComponent>()->setPosition({ cos(rotDelta) * radius, 0.0f, 0.0f });
 

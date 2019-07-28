@@ -27,8 +27,8 @@ namespace clv::ecs{
 		std::optional<math::Quaternionf>	desiredLocalRotation;
 		std::optional<math::Vector3f>		desiredLocalScale;
 
-		//TODO: Would like world pos/rot/scale - but this'll do for now
-		//math::Matrix4f worldTransformMatrix = math::Matrix4f(1.0f);
+		math::Matrix4f localTransformMatrix = math::Matrix4f(1.0f);
+		math::Matrix4f worldTransformMatrix = math::Matrix4f(1.0f);
 
 		Transform3DComponent* parent = nullptr;
 		std::vector<Transform3DComponent*> children;
@@ -60,9 +60,7 @@ namespace clv::ecs{
 		void setScale(const math::Vector3f& inScale);
 		void setLocalScale(const math::Vector3f& inLocalScale);
 
-		//const math::Matrix4f& getWorldTransformMatrix() const;
-
-		//Transform3DComponent* getParent() const;
+		Transform3DComponent* getParent() const;
 		void addChild(Transform3DComponent* child);
 	};
 }
