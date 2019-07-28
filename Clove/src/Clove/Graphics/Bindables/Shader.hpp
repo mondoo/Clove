@@ -5,13 +5,6 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{
-	class Renderer;
-
-	enum class ShaderValueType{
-		VS_View,
-
-	};
-
 	class Shader : public Bindable{
 		//FUNCTIONS
 	public:
@@ -23,8 +16,5 @@ namespace clv::gfx{
 		virtual ~Shader();
 
 		virtual void attachShader(ShaderType type) = 0;
-
-		//I am thinking something like this for the shaders
-		//virtual void setValueOnShader(/*some enum type for what it is (model data etc.)*/);
 	};
 }
