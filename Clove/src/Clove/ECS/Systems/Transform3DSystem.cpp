@@ -18,49 +18,7 @@ namespace clv::ecs{
 			math::Matrix4f localRotationMatrix = math::Matrix4f(1.0f);
 			math::Matrix4f localScaleMatrix = math::Matrix4f(1.0f);
 
-			//Yeah I think it would be the whole transform matrix
-
-			//So calculate the local
-			//Caclulate world with parent->world + local
-
-			//extract local data
-			//extract world data
-
-			//put everything together to get the world matrix
-			//get world valeus from that
-
-			//--------------
-
-			//maybe I should do it the other way around?
-			//So i work out just the world matrix and do the locals as their individual components?
-			//	-They're all just added on to the parent anyway
-
-			//not sure how that would work
-
-			//so with or without a preant, if the desired worlds have values then we just use those
-			//	no but the problem is that we still would want to retrieve this values. So they'll still need to be calculated
-			//		is it though? the local pos it just the difference and if that's not set the we can set it
-
 			//Position
-			//if(Transform3DComponent* parent = transform->parent){
-			//	if(transform->desiredLocalPosition){
-			//		math::Matrix4f localTranslationMatrix = math::translate(math::Matrix4f(1.0f), transform->desiredLocalPosition.value());
-			//		transform->desiredLocalPosition.reset();
-			//	} else if(transform->desiredPosition){
-			//		math::Matrix4f localTranslationMatrix = math::translate(math::Matrix4f(1.0f), transform->desiredPosition.value() - transform->parent->position);
-			//		transform->desiredPosition.reset();
-			//	}
-			//} else{
-			//	if(transform->desiredLocalPosition){
-			//		//How do these?
-			//	} else if(transform->desiredPosition){
-			//		//How do these?
-			//	}
-			//}
-
-			//Set all the values here from the matrices
-
-			////Position
 			if(transform->parent){
 				if(transform->desiredLocalPosition){
 					transform->localPosition = transform->desiredLocalPosition.value();
@@ -71,12 +29,9 @@ namespace clv::ecs{
 
 					transform->desiredPosition.reset();
 				}
-
-				//transform->position = transform->localPosition + transform->parent->position;
 			} else{
 				if(transform->desiredLocalPosition){
 					transform->localPosition = transform->desiredLocalPosition.value();
-					//transform->position			= transform->localPosition;
 
 					transform->desiredLocalPosition.reset();
 				} else if(transform->desiredPosition){
@@ -105,11 +60,9 @@ namespace clv::ecs{
 					transform->desiredRotation.reset();
 				}
 
-				//transform->rotation = transform->localRotation + transform->parent->rotation;
 			} else{
 				if(transform->desiredLocalRotation){
 					transform->localRotation = transform->desiredLocalRotation.value();
-					//transform->rotation = transform->localRotation;
 
 					transform->desiredLocalRotation.reset();
 				} else if(transform->desiredRotation){
