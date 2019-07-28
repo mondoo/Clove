@@ -17,7 +17,7 @@ namespace clv::ecs{
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			CameraComponent* camera = std::get<CameraComponent*>(componentTuple);
 
-			const math::Vector3f position = transform->getLocalPosition();
+			const math::Vector3f& position = transform->getPosition();
 
 			//update front
 			math::Vector3f front;

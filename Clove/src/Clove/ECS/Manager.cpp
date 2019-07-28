@@ -3,6 +3,8 @@
 
 #include "Clove/ECS/Systems/Render2DSystem.hpp"
 #include "Clove/ECS/Systems/Render3DSystem.hpp"
+#include "Clove/ECS/Systems/Transform2DSystem.hpp"
+#include "Clove/ECS/Systems/Transform3DSystem.hpp"
 #include "Clove/ECS/Systems/LightSystem.hpp"
 #include "Clove/ECS/Systems/CameraSystem.hpp"
 
@@ -10,9 +12,11 @@ namespace clv::ecs{
 	EntityID Manager::nextID = 0;
 
 	Manager::Manager(){
-		systems.reserve(4);
+		systems.reserve(6);
 		systems.emplace_back(std::make_unique<Render2DSystem>());
 		systems.emplace_back(std::make_unique<Render3DSystem>());
+		systems.emplace_back(std::make_unique<Transform2DSystem>());
+		systems.emplace_back(std::make_unique<Transform3DSystem>());
 		systems.emplace_back(std::make_unique<LightSystem>());
 		systems.emplace_back(std::make_unique<CameraSystem>());
 	}

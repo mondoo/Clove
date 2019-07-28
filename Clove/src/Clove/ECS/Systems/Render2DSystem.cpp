@@ -23,11 +23,7 @@ namespace clv::ecs{
 			Transform2DComponent* transform = std::get<Transform2DComponent*>(componentTuple);
 			SpriteComponent* sprite = std::get<SpriteComponent*>(componentTuple);
 
-			math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), math::Vector3f(transform->getLocalPosition(), 0.0f));
-			math::Matrix4f scale = math::scale(math::Matrix4f(1.0f), math::Vector3f(transform->getLocalScale(), 0.0f));
-			const math::Matrix4f model = translation * scale;
-
-			sprite->submissionData.modelData = model;
+			sprite->submissionData.modelData = transform->getWorldTransformMatrix();
 
 			gfx::Renderer::submitSprite(sprite->submissionData);
 		}

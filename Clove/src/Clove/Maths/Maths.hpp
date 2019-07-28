@@ -14,6 +14,9 @@ namespace clv::math{
 	template<length_t L, typename T, qualifier Q>
 	Vector<L, T, Q> dot(const Vector<L, T, Q>& v1, const Vector<L, T, Q>& v2);
 
+	template<length_t L, typename T, qualifier Q>
+	T distance(const Vector<L, T, Q>& v1, const Vector<L, T, Q>& v2);
+
 	template<typename T, qualifier Q>
 	Matrix<4, 4, T, Q> lookAt(const Vector<3, T, Q>& eye, const Vector<3, T, Q>& center, const Vector<3, T, Q>& up);
 
