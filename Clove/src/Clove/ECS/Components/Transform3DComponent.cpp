@@ -78,4 +78,12 @@ namespace clv::ecs{
 			child->parent = this;
 		}
 	}
+	
+	const math::Matrix4f& Transform3DComponent::getLocalTransformMatrix() const{
+		return localTransformMatrix;
+	}
+	
+	const math::Matrix4f& Transform3DComponent::getWorldTransformMatrix() const{
+		return worldTransformMatrix;
+	}
 }

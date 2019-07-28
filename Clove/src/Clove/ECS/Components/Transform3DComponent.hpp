@@ -62,5 +62,8 @@ namespace clv::ecs{
 
 		Transform3DComponent* getParent() const;
 		void addChild(Transform3DComponent* child);
+
+		const math::Matrix4f& getLocalTransformMatrix() const;
+		const math::Matrix4f& getWorldTransformMatrix() const;
 	};
 }
