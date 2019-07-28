@@ -2,6 +2,8 @@
 
 #include "Clove/ECS/Component.hpp"
 
+#include <optional>
+
 namespace clv::ecs{
 	class Transform3DComponent : public Component{
 		friend class Transform3DSystem;
