@@ -1,9 +1,5 @@
 #pragma once
 
-namespace clv{
-	class Application;
-}
-
 namespace clv::utl{
 	class DeltaTime{
 		//VARIABLES

@@ -5,7 +5,7 @@
 #include "Clove/Input/Input.hpp"
 #include "Clove/LayerStack.hpp"
 #include "Clove/Layer.hpp"
-#include "Clove/Utils/Time.hpp"
+#include "Clove/Utils/DeltaTime.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/RenderCommand.hpp"

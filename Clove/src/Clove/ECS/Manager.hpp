@@ -2,7 +2,7 @@
 
 #include "Clove/ECS/ECSTypes.hpp"
 #include "Clove/ECS/Entity.hpp"
-#include "Clove/Utils/Time.hpp"
+#include "Clove/Utils/DeltaTime.hpp"
 
 namespace clv::gfx{
 	class Renderer;

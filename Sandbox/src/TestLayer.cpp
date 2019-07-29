@@ -11,7 +11,7 @@
 #include "Clove/ECS/Components/LightComponent.hpp"
 #include "Clove/Maths/Vector.hpp"
 #include "Clove/Input/Input.hpp"
-#include "Clove/Utils/Time.hpp"
+#include "Clove/Utils/DeltaTime.hpp"
 
 TestLayer::TestLayer()
 	: Layer("Example Layer"){

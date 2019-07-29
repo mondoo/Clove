@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Clove/ECS/ECSTypes.hpp"
-#include "Clove/Utils/Time.hpp"
+#include "Clove/Utils/DeltaTime.hpp"
 
 namespace clv::ecs{
 	class Component;
