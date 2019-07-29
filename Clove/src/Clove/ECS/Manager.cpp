@@ -1,12 +1,12 @@
 #include "clvpch.hpp"
 #include "Manager.hpp"
 
-#include "Clove/ECS/Systems/Render2DSystem.hpp"
-#include "Clove/ECS/Systems/Render3DSystem.hpp"
-#include "Clove/ECS/Systems/Transform2DSystem.hpp"
-#include "Clove/ECS/Systems/Transform3DSystem.hpp"
-#include "Clove/ECS/Systems/LightSystem.hpp"
-#include "Clove/ECS/Systems/CameraSystem.hpp"
+#include "Clove/ECS/2D/Systems/Render2DSystem.hpp"
+#include "Clove/ECS/3D/Systems/Render3DSystem.hpp"
+#include "Clove/ECS/2D/Systems/Transform2DSystem.hpp"
+#include "Clove/ECS/3D/Systems/Transform3DSystem.hpp"
+#include "Clove/ECS/3D/Systems/LightSystem.hpp"
+#include "Clove/ECS/3D/Systems/CameraSystem.hpp"
 
 namespace clv::ecs{
 	EntityID Manager::nextID = 0;

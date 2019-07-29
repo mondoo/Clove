@@ -2,7 +2,7 @@
 
 #include "Clove/ECS/System.hpp"
 
-#include "Clove/ECS/Components/Transform3DComponent.hpp"
+#include "Clove/ECS/3D/Components/Transform3DComponent.hpp"
 
 #include <optional>
 #include <tuple>

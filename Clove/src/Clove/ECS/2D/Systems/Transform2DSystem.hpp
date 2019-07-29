@@ -2,7 +2,7 @@
 
 #include "Clove/ECS/System.hpp"
 
-#include "Clove/ECS/Components/Transform2DComponent.hpp"
+#include "Clove/ECS/2D/Components/Transform2DComponent.hpp"
 
 namespace clv::ecs{
 	class Transform2DSystem : public System<Transform2DComponent>{

@@ -2,11 +2,11 @@
 #include "GameLayer.hpp"
 
 #include "Clove/Application.hpp"
-#include "Clove/ECS/Components/CameraComponent.hpp"
-#include "Clove/ECS/Components/MeshComponent.hpp"
-#include "Clove/ECS/Components/Transform3DComponent.hpp"
+#include "Clove/ECS/3D/Components/CameraComponent.hpp"
+#include "Clove/ECS/3D/Components/MeshComponent.hpp"
+#include "Clove/ECS/3D/Components/Transform3DComponent.hpp"
 
-#include "Clove/ECS/Components/LightComponent.hpp"
+#include "Clove/ECS/3D/Components/LightComponent.hpp"
 
 #include "Clove/Input/Input.hpp"
 

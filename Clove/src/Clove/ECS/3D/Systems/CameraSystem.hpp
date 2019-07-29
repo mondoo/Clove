@@ -2,8 +2,8 @@
 
 #include "Clove/ECS/System.hpp"
 
-#include "Clove/ECS/Components/Transform3DComponent.hpp"
-#include "Clove/ECS/Components/CameraComponent.hpp"
+#include "Clove/ECS/3D/Components/Transform3DComponent.hpp"
+#include "Clove/ECS/3D/Components/CameraComponent.hpp"
 
 namespace clv::ecs{
 	class CameraSystem : public System<Transform3DComponent, CameraComponent>{

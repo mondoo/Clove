@@ -2,8 +2,8 @@
 
 #include "Clove/ECS/System.hpp"
 
-#include "Clove/ECS/Components/Transform2DComponent.hpp"
-#include "Clove/ECS/Components/SpriteComponent.hpp"
+#include "Clove/ECS/2D/Components/Transform2DComponent.hpp"
+#include "Clove/ECS/2D/Components/SpriteComponent.hpp"
 
 namespace clv::gfx{
 	class Renderer;
