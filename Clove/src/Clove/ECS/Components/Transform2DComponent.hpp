@@ -29,8 +29,8 @@ namespace clv::ecs{
 		std::optional<float>			desiredLocalRotation;
 		std::optional<math::Vector2f>	desiredLocalScale;
 
-		math::Matrix3f worldTransformMatrix = math::Matrix4f(1.0f);
-		math::Matrix3f localTransformMatrix = math::Matrix4f(1.0f);
+		math::Matrix4f worldTransformMatrix = math::Matrix4f(1.0f);
+		math::Matrix4f localTransformMatrix = math::Matrix4f(1.0f);
 
 		Transform2DComponent* parent = nullptr;
 		std::vector<Transform2DComponent*> children;
@@ -65,7 +65,7 @@ namespace clv::ecs{
 		Transform2DComponent* getParent() const;
 		void addChild(Transform2DComponent* child);
 
-		const math::Matrix3f& getWorldTransformMatrix() const;
-		const math::Matrix3f& getLocalTransformMatrix() const;
+		const math::Matrix4f& getWorldTransformMatrix() const;
+		const math::Matrix4f& getLocalTransformMatrix() const;
 	};
 }

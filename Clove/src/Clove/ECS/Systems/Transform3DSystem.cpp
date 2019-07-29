@@ -11,6 +11,8 @@ namespace clv::ecs{
 	Transform3DSystem::~Transform3DSystem() = default;
 
 	void Transform3DSystem::update(utl::DeltaTime deltaTime){
+		//TODO: Remove all GLM calls
+
 		for(auto& componentTuple : components){
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			Transform3DComponent* transformParent = transform->parent;

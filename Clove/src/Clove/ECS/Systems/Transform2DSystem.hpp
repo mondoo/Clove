@@ -18,6 +18,9 @@ namespace clv::ecs{
 		virtual void update(utl::DeltaTime deltaTime) override;
 
 	private:
-		//math::Matrix4f getTransformWorldMatrix(Transform2DComponent* component);
+		math::Vector2f getValueFromOptional(std::optional<math::Vector2f>& optional);
+		float getValueFromOptional(std::optional<float>& optional);
+
+		std::tuple<math::Vector2f, float, math::Vector2f> breakoutTransforms(math::Matrix4f transformMatrix);
 	};
 }

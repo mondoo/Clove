@@ -69,11 +69,11 @@ namespace clv::ecs{
 		}
 	}
 
-	const math::Matrix3f& Transform2DComponent::getWorldTransformMatrix() const{
+	const math::Matrix4f& Transform2DComponent::getWorldTransformMatrix() const{
 		return worldTransformMatrix;
 	}
 
-	const math::Matrix3f& Transform2DComponent::getLocalTransformMatrix() const{
+	const math::Matrix4f& Transform2DComponent::getLocalTransformMatrix() const{
 		return localTransformMatrix;
 	}
 }

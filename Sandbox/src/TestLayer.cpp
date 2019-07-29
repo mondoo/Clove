@@ -23,6 +23,7 @@ void TestLayer::onAttach(){
 	ent3 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::Transform3DComponent>();
 
 	sprtEnt1 = clv::Application::get().getManager().createEntity<clv::ecs::SpriteComponent, clv::ecs::Transform2DComponent>();
+	sprtEnt2 = clv::Application::get().getManager().createEntity<clv::ecs::SpriteComponent, clv::ecs::Transform2DComponent>();
 
 	lght1 = clv::Application::get().getManager().createEntity<clv::ecs::MeshComponent, clv::ecs::LightComponent, clv::ecs::Transform3DComponent>();
 
@@ -50,7 +51,12 @@ void TestLayer::onAttach(){
 	//clv::Application::get().getManager().destroyEntity(ent2.getID());
 
 	sprtEnt1.getComponent<clv::ecs::SpriteComponent>()->setTexture("res/Textures/Zombie-32x32.png");
-	sprtEnt1.getComponent<clv::ecs::Transform2DComponent>()->setLocalScale(clv::math::Vector2f(32.0f, 32.0f));
+	sprtEnt1.getComponent<clv::ecs::Transform2DComponent>()->setScale(clv::math::Vector2f(32.0f, 32.0f));
+
+	sprtEnt2.getComponent<clv::ecs::SpriteComponent>()->setTexture("res/Textures/Zombie-32x32.png");
+	sprtEnt2.getComponent<clv::ecs::Transform2DComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 1.0f));
+
+	sprtEnt1.getComponent<clv::ecs::Transform2DComponent>()->addChild(sprtEnt2.getComponent<clv::ecs::Transform2DComponent>());
 
 	lght1.getComponent<clv::ecs::Transform3DComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
 	lght1.getComponent<clv::ecs::MeshComponent>()->setMesh("res/Objects/cube.obj");
@@ -114,7 +120,8 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 
 	lght1.getComponent<clv::ecs::Transform3DComponent>()->setPosition({ cos(rotDelta * 1.5f) * radius * 2.0f, 2.0f, sin(rotDelta * 1.5f) * radius * 2.0f });
 
-	sprtEnt1.getComponent<clv::ecs::Transform2DComponent>()->setLocalPosition(clv::math::Vector2f(cos(rotDelta) * radius * 5.0f, 0.0f));
+	sprtEnt1.getComponent<clv::ecs::Transform2DComponent>()->setPosition(clv::math::Vector2f(cos(rotDelta) * radius * 5.0f, 0.0f));
+	sprtEnt1.getComponent<clv::ecs::Transform2DComponent>()->setRotation(rotDelta);
 
 	rotDelta += rotSpeed * deltaTime;
 
