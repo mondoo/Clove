@@ -19,7 +19,6 @@ namespace clv::ecs{
 		}
 	}
 
-
 	const math::Vector3f& Transform3DComponent::getPosition() const{
 		return position;
 	}

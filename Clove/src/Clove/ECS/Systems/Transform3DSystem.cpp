@@ -13,126 +13,105 @@ namespace clv::ecs{
 	void Transform3DSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
-
-			math::Matrix4f localTranslationMatrix = math::Matrix4f(1.0f);
-			math::Matrix4f localRotationMatrix = math::Matrix4f(1.0f);
-			math::Matrix4f localScaleMatrix = math::Matrix4f(1.0f);
+			Transform3DComponent* transformParent = transform->parent;
 
 			//Position
-			if(transform->parent){
-				if(transform->desiredLocalPosition){
-					transform->localPosition = transform->desiredLocalPosition.value();
-
-					transform->desiredLocalPosition.reset();
-				} else if(transform->desiredPosition){
-					transform->localPosition = transform->desiredPosition.value() - transform->parent->position;
-
-					transform->desiredPosition.reset();
-				}
-			} else{
-				if(transform->desiredLocalPosition){
-					transform->localPosition = transform->desiredLocalPosition.value();
-
-					transform->desiredLocalPosition.reset();
-				} else if(transform->desiredPosition){
-					transform->localPosition = transform->desiredPosition.value();
-
-					transform->desiredPosition.reset();
+			if(transform->desiredLocalPosition){
+				transform->localPosition = getValueFromOptional(transform->desiredLocalPosition);
+			} else if(transform->desiredPosition){
+				if(transformParent){
+					transform->localPosition = getValueFromOptional(transform->desiredPosition) - transformParent->position;
+				} else{
+					transform->localPosition = getValueFromOptional(transform->desiredPosition);
 				}
 			}
-
-			localTranslationMatrix = math::translate(math::Matrix4f(1.0f), transform->localPosition);
 
 			//Rotation
-			if(transform->parent){
-				if(transform->desiredLocalRotation){
-					transform->localRotation = transform->desiredLocalRotation.value();
-
-					transform->desiredLocalRotation.reset();
-				} else if(transform->desiredRotation){
-					//TODO: I think this is right
-					const auto desiredRot = math::quaternionToMatrix4(transform->desiredRotation.value());
-					const auto parentRot = math::quaternionToMatrix4(transform->parent->rotation);
+			if(transform->desiredLocalRotation){
+				transform->localRotation = getValueFromOptional(transform->desiredLocalRotation);
+			} else if(transform->desiredRotation){
+				if(transformParent){
+					const auto desiredRot = math::quaternionToMatrix4(getValueFromOptional(transform->desiredRotation));
+					const auto parentRot = math::quaternionToMatrix4(transformParent->rotation);
 					const auto adjustedRot = parentRot / desiredRot;
 
-					transform->localRotation = glm::toQuat(adjustedRot);;
-
-					transform->desiredRotation.reset();
-				}
-
-			} else{
-				if(transform->desiredLocalRotation){
-					transform->localRotation = transform->desiredLocalRotation.value();
-
-					transform->desiredLocalRotation.reset();
-				} else if(transform->desiredRotation){
-					transform->localRotation = transform->desiredRotation.value();
-
-					transform->desiredRotation.reset();
+					transform->localRotation = glm::toQuat(adjustedRot);
+				} else{
+					transform->localRotation = getValueFromOptional(transform->desiredRotation);
 				}
 			}
-
-			localRotationMatrix = math::quaternionToMatrix4(transform->localRotation);
 
 			//Scale
-			if(transform->parent){
-				if(transform->desiredLocalScale){
-					transform->localScale = transform->desiredLocalScale.value();
-
-					transform->desiredLocalScale.reset();
-				} else if(transform->desiredScale){
-					transform->localScale = transform->desiredScale.value() / transform->parent->scale;
-
-					transform->desiredScale.reset();
-				}
-			} else{
-				if(transform->desiredLocalScale){
-					transform->localScale = transform->desiredLocalScale.value();
-
-					transform->desiredLocalScale.reset();
-				} else if(transform->desiredScale){
-					transform->localScale = transform->desiredScale.value();
-
-					transform->desiredScale.reset();
+			if(transform->desiredLocalScale){
+				transform->localScale = getValueFromOptional(transform->desiredLocalScale);
+			} else if(transform->desiredScale){
+				if(transformParent){
+					transform->localScale = getValueFromOptional(transform->desiredScale) / transformParent->scale;
+				} else{
+					transform->localScale = getValueFromOptional(transform->desiredScale);
 				}
 			}
 
-			localScaleMatrix = math::scale(math::Matrix4f(1.0f), transform->localScale);
+			const math::Matrix4f localTranslationMatrix = math::translate(math::Matrix4f(1.0f), transform->localPosition);
+			const math::Matrix4f localRotationMatrix	= math::quaternionToMatrix4(transform->localRotation);
+			const math::Matrix4f localScaleMatrix		= math::scale(math::Matrix4f(1.0f), transform->localScale);
 
 			transform->localTransformMatrix = localTranslationMatrix * localRotationMatrix * localScaleMatrix;
 
-			if(transform->parent){
-				transform->worldTransformMatrix = transform->parent->worldTransformMatrix * transform->localTransformMatrix;
+			if(transformParent){
+				transform->worldTransformMatrix = transformParent->worldTransformMatrix * transform->localTransformMatrix;
 			} else{
 				transform->worldTransformMatrix = transform->localTransformMatrix;
 			}
 
-			math::Matrix4f worldCopy = transform->worldTransformMatrix;
-
-			//Get world stuff
-			transform->position = { worldCopy[3][0], worldCopy[3][1], worldCopy[3][2] };
-			worldCopy[3][0] = 0.0f;
-			worldCopy[3][1] = 0.0f;
-			worldCopy[3][2] = 0.0f;
-
-			const math::Vector3f scaleX = { worldCopy[0][0], worldCopy[0][1], worldCopy[0][2] };
-			const math::Vector3f scaleY = { worldCopy[1][0], worldCopy[1][1], worldCopy[1][2] };
-			const math::Vector3f scaleZ = { worldCopy[2][0], worldCopy[2][1], worldCopy[2][2] };
-			transform->scale = { glm::length(scaleX), glm::length(scaleY), glm::length(scaleZ) };
-
-			worldCopy[0][0] /= transform->scale.x;
-			worldCopy[0][1] /= transform->scale.x;
-			worldCopy[0][2] /= transform->scale.x;
-
-			worldCopy[1][0] /= transform->scale.y;
-			worldCopy[1][1] /= transform->scale.y;
-			worldCopy[1][2] /= transform->scale.y;
-
-			worldCopy[2][0] /= transform->scale.z;
-			worldCopy[2][1] /= transform->scale.z;
-			worldCopy[2][2] /= transform->scale.z;
-
-			transform->rotation = glm::toQuat(worldCopy);
+			auto [position, rotation, scale] = breakoutTransforms(transform->worldTransformMatrix);
+			transform->position = position;
+			transform->rotation = rotation;
+			transform->scale	= scale;
 		}
+	}
+
+	math::Vector3f Transform3DSystem::getValueFromOptional(std::optional<math::Vector3f>& optional){
+		math::Vector3f retVal;
+		retVal = optional.value();
+		optional.reset();
+		return retVal;
+	}
+
+	math::Quaternionf Transform3DSystem::getValueFromOptional(std::optional<math::Quaternionf>& optional){
+		math::Quaternionf retVal;
+		retVal = optional.value();
+		optional.reset();
+		return retVal;
+	}
+
+	std::tuple<math::Vector3f, math::Quaternionf, math::Vector3f> Transform3DSystem::breakoutTransforms(math::Matrix4f transformMatrix){
+		math::Vector3f position = { transformMatrix[3][0], transformMatrix[3][1], transformMatrix[3][2] };
+
+		transformMatrix[3][0] = 0.0f;
+		transformMatrix[3][1] = 0.0f;
+		transformMatrix[3][2] = 0.0f;
+
+		const math::Vector3f scaleX = { transformMatrix[0][0], transformMatrix[0][1], transformMatrix[0][2] };
+		const math::Vector3f scaleY = { transformMatrix[1][0], transformMatrix[1][1], transformMatrix[1][2] };
+		const math::Vector3f scaleZ = { transformMatrix[2][0], transformMatrix[2][1], transformMatrix[2][2] };
+
+		math::Vector3f scale = { glm::length(scaleX), glm::length(scaleY), glm::length(scaleZ) };
+
+		transformMatrix[0][0] /= scale.x;
+		transformMatrix[0][1] /= scale.x;
+		transformMatrix[0][2] /= scale.x;
+
+		transformMatrix[1][0] /= scale.y;
+		transformMatrix[1][1] /= scale.y;
+		transformMatrix[1][2] /= scale.y;
+
+		transformMatrix[2][0] /= scale.z;
+		transformMatrix[2][1] /= scale.z;
+		transformMatrix[2][2] /= scale.z;
+
+		math::Quaternionf rotation = glm::toQuat(transformMatrix);
+
+		return { position, rotation, scale };
 	}
 }
