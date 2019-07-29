@@ -20,7 +20,7 @@ namespace clv::gfx{
 
 	DX11RenderAPI::DX11RenderAPI(const Context& context)
 		: RenderAPI(context.getAPI()){
-		if(const DXContext* dxCon = dynamic_cast<const DXContext*>(&context)){
+		if(const DXContext * dxCon = dynamic_cast<const DXContext*>(&context)){
 			d3dDevice = dxCon->getDevice();
 			d3dContext = dxCon->getContext();
 			target = dxCon->getTarget();
@@ -71,6 +71,10 @@ namespace clv::gfx{
 			DX11_THROW_INFO(d3dDevice->CreateRasterizerState(&rdesc, &rstate));
 
 			d3dContext->RSSetState(rstate.Get());
+
+			CLV_LOG_DEBUG("Created DX11 renderer");
+		} else{
+			CLV_LOG_ERROR("Couldn't retrieve data from context, unable to create DX11 renderer properly");
 		}
 	}
 

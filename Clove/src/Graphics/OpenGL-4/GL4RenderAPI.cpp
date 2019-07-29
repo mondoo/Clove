@@ -15,6 +15,7 @@ namespace clv::gfx{
 		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
 
 		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
+		CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 		glDepthFunc(GL_LESS); //TODO: Expose to function call
 
@@ -27,6 +28,8 @@ namespace clv::gfx{
 		glDebugMessageCallback(errorCallback, nullptr);
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+		CLV_LOG_DEBUG("Created OpenGL4 renderer");
 	}
 
 	void GL4RenderAPI::clear(){
