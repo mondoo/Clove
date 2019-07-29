@@ -43,28 +43,28 @@ namespace clv::ecs{
 		return localScale;
 	}
 	
-	void Transform3DComponent::setPosition(const math::Vector3f& inPosition){
-		desiredPosition = inPosition;
+	void Transform3DComponent::setPosition(const math::Vector3f& position){
+		desiredPosition = position;
 	}
 
-	void Transform3DComponent::setLocalPosition(const math::Vector3f& inLocalPosition){
-		desiredLocalPosition = inLocalPosition;
+	void Transform3DComponent::setLocalPosition(const math::Vector3f& position){
+		desiredLocalPosition = position;
 	}
 
-	void Transform3DComponent::setRotation(const math::Quaternionf& inRotation){
-		desiredRotation = inRotation;
+	void Transform3DComponent::setRotation(const math::Quaternionf& rotation){
+		desiredRotation = rotation;
 	}
 
-	void Transform3DComponent::setLocalRotation(const math::Quaternionf& inLocalRotation){
-		desiredLocalRotation = inLocalRotation;
+	void Transform3DComponent::setLocalRotation(const math::Quaternionf& rotation){
+		desiredLocalRotation = rotation;
 	}
 
-	void Transform3DComponent::setScale(const math::Vector3f& inScale){
-		desiredScale = inScale;
+	void Transform3DComponent::setScale(const math::Vector3f& scale){
+		desiredScale = scale;
 	}
 
-	void Transform3DComponent::setLocalScale(const math::Vector3f& inLocalScale){
-		desiredLocalScale = inLocalScale;
+	void Transform3DComponent::setLocalScale(const math::Vector3f& scale){
+		desiredLocalScale = scale;
 	}
 
 	Transform3DComponent* Transform3DComponent::getParent() const{
@@ -78,11 +78,11 @@ namespace clv::ecs{
 		}
 	}
 	
-	const math::Matrix4f& Transform3DComponent::getLocalTransformMatrix() const{
-		return localTransformMatrix;
-	}
-	
 	const math::Matrix4f& Transform3DComponent::getWorldTransformMatrix() const{
 		return worldTransformMatrix;
+	}
+
+	const math::Matrix4f& Transform3DComponent::getLocalTransformMatrix() const{
+		return localTransformMatrix;
 	}
 }
