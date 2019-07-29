@@ -3,7 +3,7 @@
 
 #include "Clove/Graphics/Renderer.hpp"
 
-namespace clv::ecs{
+namespace clv::ecs::d3{
 	LightSystem::LightSystem() = default;
 
 	LightSystem::LightSystem(LightSystem&& other) noexcept = default;
@@ -14,7 +14,7 @@ namespace clv::ecs{
 
 	void LightSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
-			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
+			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
 			LightComponent* light = std::get<LightComponent*>(componentTuple);
 
 			light->lightData.position = transform->getPosition();

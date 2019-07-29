@@ -3,7 +3,7 @@
 
 #include "Clove/Graphics/Renderer.hpp"
 
-namespace clv::ecs{
+namespace clv::ecs::d3{
 	CameraSystem::CameraSystem() = default;
 
 	CameraSystem::CameraSystem(CameraSystem&& other) noexcept = default;
@@ -14,7 +14,7 @@ namespace clv::ecs{
 	
 	void CameraSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
-			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
+			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
 			CameraComponent* camera = std::get<CameraComponent*>(componentTuple);
 
 			const math::Vector3f& position = transform->getPosition();

@@ -1,19 +1,19 @@
 #include "clvpch.hpp"
-#include "Transform3DSystem.hpp"
+#include "TransformSystem.hpp"
 
-namespace clv::ecs{
-	Transform3DSystem::Transform3DSystem() = default;
+namespace clv::ecs::d2{
+	TransformSystem::TransformSystem() = default;
 
-	Transform3DSystem::Transform3DSystem(Transform3DSystem&& other) noexcept = default;
+	TransformSystem::TransformSystem(TransformSystem&& other) noexcept = default;
 
-	Transform3DSystem& Transform3DSystem::operator=(Transform3DSystem&& other) noexcept = default;
+	TransformSystem& TransformSystem::operator=(TransformSystem&& other) noexcept = default;
 
-	Transform3DSystem::~Transform3DSystem() = default;
+	TransformSystem::~TransformSystem() = default;
 
-	void Transform3DSystem::update(utl::DeltaTime deltaTime){
+	void TransformSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
-			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
-			Transform3DComponent* transformParent = transform->parent;
+			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
+			TransformComponent* transformParent = transform->parent;
 
 			//Position
 			if(transform->desiredLocalPosition){
@@ -31,11 +31,7 @@ namespace clv::ecs{
 				transform->localRotation = getValueFromOptional(transform->desiredLocalRotation);
 			} else if(transform->desiredRotation){
 				if(transformParent){
-					const math::Matrix4f desiredRot = math::quaternionToMatrix4(getValueFromOptional(transform->desiredRotation));
-					const math::Matrix4f parentRot = math::quaternionToMatrix4(transformParent->rotation);
-					const math::Matrix4f adjustedRot = parentRot / desiredRot;
-
-					transform->localRotation = math::matrixToQuaternion(adjustedRot);
+					transform->localRotation = getValueFromOptional(transform->desiredRotation) - transformParent->rotation;
 				} else{
 					transform->localRotation = getValueFromOptional(transform->desiredRotation);
 				}
@@ -52,9 +48,9 @@ namespace clv::ecs{
 				}
 			}
 
-			const math::Matrix4f localTranslationMatrix = math::translate(math::Matrix4f(1.0f), transform->localPosition);
-			const math::Matrix4f localRotationMatrix	= math::quaternionToMatrix4(transform->localRotation);
-			const math::Matrix4f localScaleMatrix		= math::scale(math::Matrix4f(1.0f), transform->localScale);
+			const math::Matrix4f localTranslationMatrix = math::translate(math::Matrix4f(1.0f), math::Vector3f{ transform->localPosition, 0.0f });
+			const math::Matrix4f localRotationMatrix	= math::rotate(math::Matrix4f(1.0f), transform->localRotation, {0.0f, 0.0f, 1.0f});
+			const math::Matrix4f localScaleMatrix		= math::scale(math::Matrix4f(1.0f), math::Vector3f{ transform->localScale, 0.0f });
 
 			transform->localTransformMatrix = localTranslationMatrix * localRotationMatrix * localScaleMatrix;
 
@@ -67,26 +63,26 @@ namespace clv::ecs{
 			auto [position, rotation, scale] = breakoutTransforms(transform->worldTransformMatrix);
 			transform->position = position;
 			transform->rotation = rotation;
-			transform->scale	= scale;
+			transform->scale = scale;
 		}
 	}
 
-	math::Vector3f Transform3DSystem::getValueFromOptional(std::optional<math::Vector3f>& optional){
-		math::Vector3f retVal;
+	math::Vector2f TransformSystem::getValueFromOptional(std::optional<math::Vector2f>& optional){
+		math::Vector2f retVal;
 		retVal = optional.value();
 		optional.reset();
 		return retVal;
 	}
 
-	math::Quaternionf Transform3DSystem::getValueFromOptional(std::optional<math::Quaternionf>& optional){
-		math::Quaternionf retVal;
+	float TransformSystem::getValueFromOptional(std::optional<float>& optional){
+		float retVal;
 		retVal = optional.value();
 		optional.reset();
 		return retVal;
 	}
 
-	std::tuple<math::Vector3f, math::Quaternionf, math::Vector3f> Transform3DSystem::breakoutTransforms(math::Matrix4f transformMatrix){
-		math::Vector3f position = { transformMatrix[3][0], transformMatrix[3][1], transformMatrix[3][2] };
+	std::tuple<math::Vector2f, float, math::Vector2f> TransformSystem::breakoutTransforms(math::Matrix4f transformMatrix){
+		math::Vector2f position = { transformMatrix[3][0], transformMatrix[3][1] };
 
 		transformMatrix[3][0] = 0.0f;
 		transformMatrix[3][1] = 0.0f;
@@ -96,7 +92,7 @@ namespace clv::ecs{
 		const math::Vector3f scaleY = { transformMatrix[1][0], transformMatrix[1][1], transformMatrix[1][2] };
 		const math::Vector3f scaleZ = { transformMatrix[2][0], transformMatrix[2][1], transformMatrix[2][2] };
 
-		math::Vector3f scale = { math::length(scaleX), math::length(scaleY), math::length(scaleZ) };
+		math::Vector2f scale = { math::length(scaleX), math::length(scaleY) };
 
 		transformMatrix[0][0] /= scale.x;
 		transformMatrix[0][1] /= scale.x;
@@ -106,11 +102,9 @@ namespace clv::ecs{
 		transformMatrix[1][1] /= scale.y;
 		transformMatrix[1][2] /= scale.y;
 
-		transformMatrix[2][0] /= scale.z;
-		transformMatrix[2][1] /= scale.z;
-		transformMatrix[2][2] /= scale.z;
+		math::Quaternionf qrot = math::matrixToQuaternion(transformMatrix);
 
-		math::Quaternionf rotation = math::matrixToQuaternion(transformMatrix);
+		float rotation = math::quaternionToEuler(qrot).y;
 
 		return { position, rotation, scale };
 	}

@@ -2,21 +2,21 @@
 
 #include "Clove/ECS/System.hpp"
 
-#include "Clove/ECS/3D/Components/Transform3DComponent.hpp"
+#include "Clove/ECS/3D/Components/TransformComponent.hpp"
 
 #include <optional>
 #include <tuple>
 
-namespace clv::ecs{
-	class Transform3DSystem : public System<Transform3DComponent>{
+namespace clv::ecs::d3{
+	class TransformSystem : public System<TransformComponent>{
 		//FUNCTIONS
 	public:
-		Transform3DSystem();
-		Transform3DSystem(const Transform3DSystem& other) = delete;
-		Transform3DSystem(Transform3DSystem&& other) noexcept;
-		Transform3DSystem& operator=(const Transform3DSystem& other) = delete;
-		Transform3DSystem& operator=(Transform3DSystem&& other) noexcept;
-		virtual ~Transform3DSystem();
+		TransformSystem();
+		TransformSystem(const TransformSystem& other) = delete;
+		TransformSystem(TransformSystem&& other) noexcept;
+		TransformSystem& operator=(const TransformSystem& other) = delete;
+		TransformSystem& operator=(TransformSystem&& other) noexcept;
+		virtual ~TransformSystem();
 
 		virtual void update(utl::DeltaTime deltaTime) override;
 

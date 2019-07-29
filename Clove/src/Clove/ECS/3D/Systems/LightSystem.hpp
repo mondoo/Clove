@@ -2,11 +2,11 @@
 
 #include "Clove/ECS/System.hpp"
 
-#include "Clove/ECS/3D/Components/Transform3DComponent.hpp"
+#include "Clove/ECS/3D/Components/TransformComponent.hpp"
 #include "Clove/ECS/3D/Components/LightComponent.hpp"
 
-namespace clv::ecs{
-	class LightSystem : public System<Transform3DComponent, LightComponent>{
+namespace clv::ecs::d3{
+	class LightSystem : public System<TransformComponent, LightComponent>{
 		//FUNCTIONS
 	public:
 		LightSystem();

@@ -4,9 +4,9 @@
 
 #include <optional>
 
-namespace clv::ecs{
-	class Transform2DComponent : public Component{
-		friend class Transform2DSystem;
+namespace clv::ecs::d2{
+	class TransformComponent : public Component{
+		friend class TransformSystem;
 
 		//VARIABLES
 	public:
@@ -32,17 +32,17 @@ namespace clv::ecs{
 		math::Matrix4f worldTransformMatrix = math::Matrix4f(1.0f);
 		math::Matrix4f localTransformMatrix = math::Matrix4f(1.0f);
 
-		Transform2DComponent* parent = nullptr;
-		std::vector<Transform2DComponent*> children;
+		TransformComponent* parent = nullptr;
+		std::vector<TransformComponent*> children;
 
 		//FUNCTIONS	
 	public:
-		Transform2DComponent();
-		Transform2DComponent(const Transform2DComponent& other) = delete;
-		Transform2DComponent(Transform2DComponent&& other) noexcept;
-		Transform2DComponent& operator=(const Transform2DComponent& other) = delete;
-		Transform2DComponent& operator=(Transform2DComponent&& other) noexcept;
-		virtual ~Transform2DComponent();
+		TransformComponent();
+		TransformComponent(const TransformComponent& other) = delete;
+		TransformComponent(TransformComponent&& other) noexcept;
+		TransformComponent& operator=(const TransformComponent& other) = delete;
+		TransformComponent& operator=(TransformComponent&& other) noexcept;
+		virtual ~TransformComponent();
 
 		const math::Vector2f& getPosition() const;
 		const math::Vector2f& getLocalPosition() const;
@@ -62,8 +62,8 @@ namespace clv::ecs{
 		void setScale(const math::Vector2f& scale);
 		void setLocalScale(const math::Vector2f& scale);
 
-		Transform2DComponent* getParent() const;
-		void addChild(Transform2DComponent* child);
+		TransformComponent* getParent() const;
+		void addChild(TransformComponent* child);
 
 		const math::Matrix4f& getWorldTransformMatrix() const;
 		const math::Matrix4f& getLocalTransformMatrix() const;

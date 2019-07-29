@@ -6,7 +6,7 @@
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/BindableFactory.hpp"
 
-namespace clv::ecs{
+namespace clv::ecs::d3{
 	CameraComponent::CameraComponent(){
 		setProjectionMode(ProjectionMode::perspective);
 	}

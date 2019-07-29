@@ -4,9 +4,9 @@
 
 #include <optional>
 
-namespace clv::ecs{
-	class Transform3DComponent : public Component{
-		friend class Transform3DSystem;
+namespace clv::ecs::d3{
+	class TransformComponent : public Component{
+		friend class TransformSystem;
 
 		//VARIABLES
 	public:
@@ -32,17 +32,17 @@ namespace clv::ecs{
 		math::Matrix4f worldTransformMatrix = math::Matrix4f(1.0f);
 		math::Matrix4f localTransformMatrix = math::Matrix4f(1.0f);
 
-		Transform3DComponent* parent = nullptr;
-		std::vector<Transform3DComponent*> children;
+		TransformComponent* parent = nullptr;
+		std::vector<TransformComponent*> children;
 
 		//FUNCTIONS
 	public:
-		Transform3DComponent();
-		Transform3DComponent(const Transform3DComponent& other) = delete;
-		Transform3DComponent(Transform3DComponent&& other) noexcept;
-		Transform3DComponent& operator=(const Transform3DComponent& other) = delete;
-		Transform3DComponent& operator=(Transform3DComponent&& other) noexcept;
-		virtual ~Transform3DComponent();
+		TransformComponent();
+		TransformComponent(const TransformComponent& other) = delete;
+		TransformComponent(TransformComponent&& other) noexcept;
+		TransformComponent& operator=(const TransformComponent& other) = delete;
+		TransformComponent& operator=(TransformComponent&& other) noexcept;
+		virtual ~TransformComponent();
 
 		const math::Vector3f& getPosition() const;
 		const math::Vector3f& getLocalPosition() const;
@@ -62,8 +62,8 @@ namespace clv::ecs{
 		void setScale(const math::Vector3f& scale);
 		void setLocalScale(const math::Vector3f& scale);
 
-		Transform3DComponent* getParent() const;
-		void addChild(Transform3DComponent* child);
+		TransformComponent* getParent() const;
+		void addChild(TransformComponent* child);
 
 		const math::Matrix4f& getWorldTransformMatrix() const;
 		const math::Matrix4f& getLocalTransformMatrix() const;

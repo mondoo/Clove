@@ -1,10 +1,10 @@
 #include "clvpch.hpp"
 #include "Manager.hpp"
 
-#include "Clove/ECS/2D/Systems/Render2DSystem.hpp"
-#include "Clove/ECS/3D/Systems/Render3DSystem.hpp"
-#include "Clove/ECS/2D/Systems/Transform2DSystem.hpp"
-#include "Clove/ECS/3D/Systems/Transform3DSystem.hpp"
+#include "Clove/ECS/2D/Systems/RenderSystem.hpp"
+#include "Clove/ECS/3D/Systems/RenderSystem.hpp"
+#include "Clove/ECS/2D/Systems/TransformSystem.hpp"
+#include "Clove/ECS/3D/Systems/TransformSystem.hpp"
 #include "Clove/ECS/3D/Systems/LightSystem.hpp"
 #include "Clove/ECS/3D/Systems/CameraSystem.hpp"
 
@@ -13,12 +13,12 @@ namespace clv::ecs{
 
 	Manager::Manager(){
 		systems.reserve(6);
-		systems.emplace_back(std::make_unique<Render2DSystem>());
-		systems.emplace_back(std::make_unique<Render3DSystem>());
-		systems.emplace_back(std::make_unique<Transform2DSystem>());
-		systems.emplace_back(std::make_unique<Transform3DSystem>());
-		systems.emplace_back(std::make_unique<LightSystem>());
-		systems.emplace_back(std::make_unique<CameraSystem>());
+		systems.emplace_back(std::make_unique<d2::RenderSystem>());
+		systems.emplace_back(std::make_unique<d3::RenderSystem>());
+		systems.emplace_back(std::make_unique<d2::TransformSystem>());
+		systems.emplace_back(std::make_unique<d3::TransformSystem>());
+		systems.emplace_back(std::make_unique<d3::LightSystem>());
+		systems.emplace_back(std::make_unique<d3::CameraSystem>());
 	}
 
 	Manager::~Manager() = default;
