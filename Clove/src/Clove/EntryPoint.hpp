@@ -12,6 +12,7 @@ int main(int argc, char** argv){
 	#if CLV_PLATFORM_WINDOWS
 		MessageBoxA(nullptr, e.what(), e.getType(), MB_OK | MB_ICONEXCLAMATION);
 	#endif
+	#if	CLV_RELEASE
 	} catch(const std::exception& e){
 	#if CLV_PLATFORM_WINDOWS
 		MessageBoxA(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONEXCLAMATION);
@@ -19,6 +20,7 @@ int main(int argc, char** argv){
 	} catch(...){
 	#if CLV_PLATFORM_WINDOWS
 		MessageBoxA(nullptr, "No details available", "Standard Exception", MB_OK | MB_ICONEXCLAMATION);
+	#endif
 	#endif
 	}
 
