@@ -13,11 +13,11 @@ namespace clv::ecs{
 	void Transform2DSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
 			Transform2DComponent* transform = std::get<Transform2DComponent*>(componentTuple);
-			transform->worldTransformMatrix = getTransformWorldMatrix(transform);
+			//transform->worldTransformMatrix = getTransformWorldMatrix(transform);
 		}
 	}
 
-	math::Matrix4f Transform2DSystem::getTransformWorldMatrix(Transform2DComponent* component){
+	/*math::Matrix4f Transform2DSystem::getTransformWorldMatrix(Transform2DComponent* component){
 		const auto& [rot, angle] = component->getLocalRotation();
 
 		math::Matrix4f translation = math::translate(math::Matrix4f(1.0f), math::Vector3f(component->getLocalPosition(), 0.0f));
@@ -31,5 +31,5 @@ namespace clv::ecs{
 		} else{
 			return transform;
 		}
-	}
+	}*/
 }

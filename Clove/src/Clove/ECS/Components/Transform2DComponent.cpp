@@ -10,32 +10,52 @@ namespace clv::ecs{
 
 	Transform2DComponent::~Transform2DComponent() = default;
 
-	void Transform2DComponent::setLocalPosition(const math::Vector2f& inLocalPosition){
-		localPosition = inLocalPosition;
+	const math::Vector2f& Transform2DComponent::getPosition() const{
+		return position;
 	}
 
 	const math::Vector2f& Transform2DComponent::getLocalPosition() const{
 		return localPosition;
 	}
 
-	void Transform2DComponent::setLocalRotation(const std::pair<math::Vector2f, float>& inLocalRotation){
-		localRotation = inLocalRotation;
+	float Transform2DComponent::getRotation() const{
+		return rotation;
 	}
 
-	const std::pair<math::Vector2f, float>& Transform2DComponent::getLocalRotation() const{
+	float Transform2DComponent::getLocalRotation() const{
 		return localRotation;
 	}
 
-	void Transform2DComponent::setLocalScale(const math::Vector2f& inLocalScale){
-		localScale = inLocalScale;
+	const math::Vector2f& Transform2DComponent::getScale() const{
+		return scale;
 	}
 
 	const math::Vector2f& Transform2DComponent::getLocalScale() const{
 		return localScale;
 	}
 
-	const math::Matrix4f& Transform2DComponent::getWorldTransformMatrix() const{
-		return worldTransformMatrix;
+	void Transform2DComponent::setPosition(const math::Vector2f& position){
+		desiredPosition = position;
+	}
+
+	void Transform2DComponent::setLocalPosition(const math::Vector2f& position){
+		desiredLocalPosition = position;
+	}
+
+	void Transform2DComponent::setRotation(float rotation){
+		desiredRotation = rotation;
+	}
+
+	void Transform2DComponent::setLocalRotation(float rotation){
+		desiredLocalRotation = rotation;
+	}
+
+	void Transform2DComponent::setScale(const math::Vector2f& scale){
+		desiredScale = scale;
+	}
+
+	void Transform2DComponent::setLocalScale(const math::Vector2f& scale){
+		desiredLocalScale = scale;
 	}
 
 	Transform2DComponent* Transform2DComponent::getParent() const{
@@ -47,5 +67,13 @@ namespace clv::ecs{
 			children.push_back(child);
 			child->parent = this;
 		}
+	}
+
+	const math::Matrix3f& Transform2DComponent::getWorldTransformMatrix() const{
+		return worldTransformMatrix;
+	}
+
+	const math::Matrix3f& Transform2DComponent::getLocalTransformMatrix() const{
+		return localTransformMatrix;
 	}
 }
