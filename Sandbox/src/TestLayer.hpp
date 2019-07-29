@@ -14,6 +14,7 @@ private:
 	clv::ecs::Entity ent3;
 
 	clv::ecs::Entity sprtEnt1;
+	clv::ecs::Entity sprtEnt2;
 
 	clv::ecs::Entity lght1;
 

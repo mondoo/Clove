@@ -4,7 +4,7 @@
 
 #include "Clove/Graphics/Renderer.hpp"
 
-namespace clv::ecs{
+namespace clv::ecs::d3{
 	class LightComponent : public Component{
 		friend class LightSystem;
 

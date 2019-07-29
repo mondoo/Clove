@@ -27,6 +27,15 @@ namespace clv::math{
 
 	template<typename T, qualifier Q>
 	Matrix<4, 4, T, Q> quaternionToMatrix4(const Quaternion<T, Q>& quat);
+
+	template<typename T, qualifier Q>
+	Quaternion<T, Q> matrixToQuaternion(const Matrix<3, 3, T, Q>& mat);
+
+	template<typename T, qualifier Q>
+	Quaternion<T, Q> matrixToQuaternion(const Matrix<4, 4, T, Q>& mat);
+
+	template<typename T, qualifier Q>
+	Vector<3, T, Q> quaternionToEuler(const Quaternion<T, Q>& quat);
 }
 
 #include "MathsHelpers.inl"

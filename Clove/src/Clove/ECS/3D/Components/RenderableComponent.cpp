@@ -1,5 +1,5 @@
 #include "clvpch.hpp"
-#include "MeshComponent.hpp"
+#include "RenderableComponent.hpp"
 
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
@@ -13,16 +13,16 @@
 
 #include "Clove/Graphics/VertexLayout.hpp"
 
-namespace clv::ecs{
-	MeshComponent::MeshComponent() = default;
+namespace clv::ecs::d3{
+	RenderableComponent::RenderableComponent() = default;
 
-	MeshComponent::MeshComponent(MeshComponent&& other) noexcept = default;
+	RenderableComponent::RenderableComponent(RenderableComponent&& other) noexcept = default;
 
-	MeshComponent& MeshComponent::operator=(MeshComponent&& other) noexcept = default;
+	RenderableComponent& RenderableComponent::operator=(RenderableComponent&& other) noexcept = default;
 
-	MeshComponent::~MeshComponent() = default;
+	RenderableComponent::~RenderableComponent() = default;
 
-	void MeshComponent::setMesh(const std::string& filePath){
+	void RenderableComponent::setMesh(const std::string& filePath){
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
 		gfx::VertexLayout layout;
@@ -62,11 +62,11 @@ namespace clv::ecs{
 		submissionData.shader = std::move(shader);
 	}
 
-	void MeshComponent::setDiffuseTexture(const std::string& path){
+	void RenderableComponent::setDiffuseTexture(const std::string& path){
 		submissionData.diffTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Diffuse);
 	}
 
-	void MeshComponent::setSpecularTexture(const std::string& path){
+	void RenderableComponent::setSpecularTexture(const std::string& path){
 		submissionData.specTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Specular);
 	}
 }

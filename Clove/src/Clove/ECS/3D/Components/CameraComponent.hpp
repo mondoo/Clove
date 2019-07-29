@@ -4,7 +4,7 @@
 
 #include "Clove/Graphics/Renderer.hpp"
 
-namespace clv::ecs{
+namespace clv::ecs::d3{
 	enum class ProjectionMode{
 		orthographic,
 		perspective

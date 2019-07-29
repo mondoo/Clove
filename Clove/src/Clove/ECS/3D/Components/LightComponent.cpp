@@ -1,10 +1,7 @@
 #include "clvpch.hpp"
 #include "LightComponent.hpp"
 
-#include "Clove/Graphics/BindableFactory.hpp"
-#include "Clove/Application.hpp"
-
-namespace clv::ecs{
+namespace clv::ecs::d3{
 	LightComponent::LightComponent(){
 		lightData = {
 			{0.0f, 0.0f, 0.0f},
