@@ -3,8 +3,6 @@
 #include "Clove/Utils/Time.hpp"
 
 namespace clv{
-	class Event;
-
 	class Layer{
 		//VARIABLES
 	protected:
@@ -18,7 +16,6 @@ namespace clv{
 		virtual void onAttach(){}
 		virtual void onDetach(){}
 		virtual void onUpdate(utl::DeltaTime deltaTime){}
-		virtual void onEvent(Event& e){}
 
 		const std::string& getName() const;
 	};

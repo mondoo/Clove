@@ -3,9 +3,6 @@
 
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/Context.hpp"
-#include "Clove/Events/ApplicationEvent.hpp"
-#include "Clove/Events/MouseEvent.hpp"
-#include "Clove/Events/KeyEvent.hpp"
 
 namespace clv{
 	LinuxWindow::~LinuxWindow(){
@@ -38,15 +35,11 @@ namespace clv{
 			switch(xevent.type){
 				case ClientMessage:
 					if(xevent.xclient.data.l[0] == atomWmDeleteWindow){
-						WindowCloseEvent event;
-						eventCallback(event);
+						onWindowCloseDelegate.broadcast();
 					}
 					break;
 				case DestroyNotify:
-					{
-						WindowCloseEvent event;
-						eventCallback(event);
-					}
+					onWindowCloseDelegate.broadcast();
 					break;
 
 				case FocusOut:

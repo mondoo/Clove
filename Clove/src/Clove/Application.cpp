@@ -5,12 +5,6 @@
 #include "Clove/Input/Input.hpp"
 #include "Clove/LayerStack.hpp"
 #include "Clove/Layer.hpp"
-#include "Clove/Events/Event.hpp"
-#include "Clove/Events/ApplicationEvent.hpp"
-#include "Clove/Input/Keyboard.hpp"
-#include "Clove/Input/Mouse.hpp"
-#include "Clove/Events/KeyEvent.hpp"
-#include "Clove/Events/MouseEvent.hpp"
 #include "Clove/Utils/Time.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
@@ -24,7 +18,7 @@ namespace clv{
 		instance = this;
 
 		window = std::unique_ptr<Window>(Window::create());
-		window->setEventCallbackFunction(CLV_BIND_FUNCTION_1P(&Application::onEvent, this));
+		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
 		window->setVSync(true);
 
 		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
@@ -50,62 +44,8 @@ namespace clv{
 
 			window->beginFrame();
 
-			//Temp input handling
-			while(auto e = getWindow().getKeyboard().getKeyEvent()){
-				Keyboard::Event keyEvent = e.value();
-				if(keyEvent.isPressed()){
-					KeyPressedEvent kpe(keyEvent.getKey(), -1); //TODO: might need to get rid of the keyevent
-					onEvent(kpe);
-				} else if(keyEvent.isReleased()){
-					KeyReleasedEvent kre(keyEvent.getKey());
-					onEvent(kre);
-				}
-			}
-
-			while(auto e = getWindow().getKeyboard().getCharEvent()){
-				char character = e.value();
-				KeyTypedEvent kte(static_cast<Key>(character));
-				onEvent(kte);
-			}
-
-			while(auto e = getWindow().getMouse().getEvent()){
-				Mouse::Event mouseEvent = e.value();
-				switch(mouseEvent.getType()){
-					case Mouse::Event::Type::Move:
-						{
-							const auto[x, y] = mouseEvent.getPos();
-							MouseMovedEvent mme(x, y);
-							onEvent(mme);
-						}
-						break;
-					case Mouse::Event::Type::Pressed:
-						{
-							MouseButtonPressedEvent mbpe(mouseEvent.getButton());
-							onEvent(mbpe);
-						}
-						break;
-					case Mouse::Event::Type::Released:
-						{
-							MouseButtonReleasedEvent mbre(mouseEvent.getButton());
-							onEvent(mbre);
-						}
-						break;
-					case Mouse::Event::Type::WheelUp:
-						{
-							MouseScrolledEvent mse(1, 0);
-							onEvent(mse);
-						}
-						break;
-					case Mouse::Event::Type::WheelDown:
-						{
-							MouseScrolledEvent mse(-1, 0);
-							onEvent(mse);
-						}
-						break;
-				}
-			}
-			//~Temp
-
+			//TODO:
+			//Will need process the mouse and keyboard events here eventually
 
 			for(auto layer : *layerStack){
 				layer->onUpdate(deltaSeonds.count());
@@ -125,22 +65,6 @@ namespace clv{
 
 	void Application::stop(){
 		running = false;
-	}
-
-	void Application::onEvent(Event& e){
-		EventDispatcher dispatcher(e);
-		dispatcher.dispatch<WindowCloseEvent>(CLV_BIND_FUNCTION_1P(&Application::onWindowClose, this));
-
-		if(e.isHandled()){
-			return;
-		}
-
-		for(auto it = layerStack->end(); it != layerStack->begin(); ){
-			(*--it)->onEvent(e);
-			if(e.isHandled()){
-				break;
-			}
-		}
 	}
 
 	void Application::pushLayer(std::shared_ptr<Layer> layer){
@@ -163,8 +87,7 @@ namespace clv{
 		return *ecsManager;
 	}
 
-	bool Application::onWindowClose(WindowCloseEvent& e){
+	void Application::onWindowClose(){
 		running = false;
-		return true;
 	}
 }
