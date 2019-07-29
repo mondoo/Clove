@@ -11,8 +11,6 @@ namespace clv::ecs{
 	Transform2DSystem::~Transform2DSystem() = default;
 
 	void Transform2DSystem::update(utl::DeltaTime deltaTime){
-		//TODO: Remove all GLM calls
-
 		for(auto& componentTuple : components){
 			Transform2DComponent* transform = std::get<Transform2DComponent*>(componentTuple);
 			Transform2DComponent* transformParent = transform->parent;
@@ -94,7 +92,7 @@ namespace clv::ecs{
 		const math::Vector3f scaleY = { transformMatrix[1][0], transformMatrix[1][1], transformMatrix[1][2] };
 		const math::Vector3f scaleZ = { transformMatrix[2][0], transformMatrix[2][1], transformMatrix[2][2] };
 
-		math::Vector2f scale = { glm::length(scaleX), glm::length(scaleY) };
+		math::Vector2f scale = { math::length(scaleX), math::length(scaleY) };
 
 		transformMatrix[0][0] /= scale.x;
 		transformMatrix[0][1] /= scale.x;
@@ -104,9 +102,9 @@ namespace clv::ecs{
 		transformMatrix[1][1] /= scale.y;
 		transformMatrix[1][2] /= scale.y;
 
-		math::Quaternionf qrot = glm::toQuat(transformMatrix);
+		math::Quaternionf qrot = math::matrixToQuaternion(transformMatrix);
 
-		float rotation = glm::eulerAngles(qrot).y;
+		float rotation = math::quaternionToEuler(qrot).y;
 
 		return { position, rotation, scale };
 	}

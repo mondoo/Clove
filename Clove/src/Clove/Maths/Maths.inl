@@ -25,6 +25,11 @@ namespace clv::math{
 		return glm::distance(v1, v2);
 	}
 
+	template<length_t L, typename T, qualifier Q>
+	T length(const Vector<L, T, Q>& vec){
+		return glm::length(vec);
+	}
+
 	template<typename T, qualifier Q>
 	Matrix<4, 4, T, Q> lookAt(const Vector<3, T, Q>& eye, const Vector<3, T, Q>& center, const Vector<3, T, Q>& up){
 		return glm::lookAt(eye, center, up);

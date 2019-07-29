@@ -11,8 +11,6 @@ namespace clv::ecs{
 	Transform3DSystem::~Transform3DSystem() = default;
 
 	void Transform3DSystem::update(utl::DeltaTime deltaTime){
-		//TODO: Remove all GLM calls
-
 		for(auto& componentTuple : components){
 			Transform3DComponent* transform = std::get<Transform3DComponent*>(componentTuple);
 			Transform3DComponent* transformParent = transform->parent;
@@ -33,11 +31,11 @@ namespace clv::ecs{
 				transform->localRotation = getValueFromOptional(transform->desiredLocalRotation);
 			} else if(transform->desiredRotation){
 				if(transformParent){
-					const auto desiredRot = math::quaternionToMatrix4(getValueFromOptional(transform->desiredRotation));
-					const auto parentRot = math::quaternionToMatrix4(transformParent->rotation);
-					const auto adjustedRot = parentRot / desiredRot;
+					const math::Matrix4f desiredRot = math::quaternionToMatrix4(getValueFromOptional(transform->desiredRotation));
+					const math::Matrix4f parentRot = math::quaternionToMatrix4(transformParent->rotation);
+					const math::Matrix4f adjustedRot = parentRot / desiredRot;
 
-					transform->localRotation = glm::toQuat(adjustedRot);
+					transform->localRotation = math::matrixToQuaternion(adjustedRot);
 				} else{
 					transform->localRotation = getValueFromOptional(transform->desiredRotation);
 				}
@@ -98,7 +96,7 @@ namespace clv::ecs{
 		const math::Vector3f scaleY = { transformMatrix[1][0], transformMatrix[1][1], transformMatrix[1][2] };
 		const math::Vector3f scaleZ = { transformMatrix[2][0], transformMatrix[2][1], transformMatrix[2][2] };
 
-		math::Vector3f scale = { glm::length(scaleX), glm::length(scaleY), glm::length(scaleZ) };
+		math::Vector3f scale = { math::length(scaleX), math::length(scaleY), math::length(scaleZ) };
 
 		transformMatrix[0][0] /= scale.x;
 		transformMatrix[0][1] /= scale.x;
@@ -112,7 +110,7 @@ namespace clv::ecs{
 		transformMatrix[2][1] /= scale.z;
 		transformMatrix[2][2] /= scale.z;
 
-		math::Quaternionf rotation = glm::toQuat(transformMatrix);
+		math::Quaternionf rotation = math::matrixToQuaternion(transformMatrix);
 
 		return { position, rotation, scale };
 	}

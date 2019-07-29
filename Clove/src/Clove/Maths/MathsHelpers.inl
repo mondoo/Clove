@@ -46,4 +46,19 @@ namespace clv::math{
 	Matrix<4, 4, T, Q> quaternionToMatrix4(const Quaternion<T, Q>& quat){
 		return glm::toMat4(quat);
 	}
+
+	template<typename T, qualifier Q>
+	Quaternion<T, Q> matrixToQuaternion(const Matrix<3, 3, T, Q>& mat){
+		return glm::toQuat(mat);
+	}
+
+	template<typename T, qualifier Q>
+	Quaternion<T, Q> matrixToQuaternion(const Matrix<4, 4, T, Q>& mat){
+		return glm::toQuat(mat);
+	}
+
+	template<typename T, qualifier Q>
+	Vector<3, T, Q> quaternionToEuler(const Quaternion<T, Q>& quat){
+		return glm::eulerAngles(quat);
+	}
 }
