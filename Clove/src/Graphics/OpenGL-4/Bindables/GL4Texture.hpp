@@ -7,7 +7,7 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		unsigned int rendererID = 0;
-		std::string filePath;
+		std::string filePath = "";
 
 		int width = 0;
 		int height = 0;
@@ -25,6 +25,7 @@ namespace clv::gfx{
 		virtual ~GL4Texture();
 
 		GL4Texture(const std::string& filePath, unsigned int bindingPoint);
+		GL4Texture(int width, int height, unsigned int bindingPoint);
 
 		virtual void bind() override;
 

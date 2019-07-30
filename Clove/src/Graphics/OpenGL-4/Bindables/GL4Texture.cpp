@@ -35,6 +35,19 @@ namespace clv::gfx{
 		}
 	}
 
+	GL4Texture::GL4Texture(int width, int height, unsigned int bindingPoint)
+		: width(width)
+		, height(height){
+		glGenTextures(1, &rendererID);
+		glBindTexture(GL_TEXTURE_2D, rendererID);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	void GL4Texture::bind(){
 		glActiveTexture(GL_TEXTURE0 + bindingPoint);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
