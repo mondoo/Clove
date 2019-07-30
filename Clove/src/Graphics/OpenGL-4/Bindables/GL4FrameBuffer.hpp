@@ -18,5 +18,9 @@ namespace clv::gfx{
 		virtual ~GL4FrameBuffer();
 
 		virtual void bind() override;
+
+		virtual void attachTexture(Texture& Texture) override;
+
+		virtual bool isComplete() const override;
 	};
 }

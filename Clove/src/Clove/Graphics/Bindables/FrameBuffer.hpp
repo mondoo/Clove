@@ -3,6 +3,8 @@
 #include "Clove/Graphics/Bindable.hpp"
 
 namespace clv::gfx{
+	class Texture;
+
 	class FrameBuffer : public Bindable{
 		//FUNCTIONS
 	public:
@@ -12,5 +14,9 @@ namespace clv::gfx{
 		FrameBuffer& operator=(const FrameBuffer& other) = delete;
 		FrameBuffer& operator=(FrameBuffer&& other) noexcept;
 		virtual ~FrameBuffer();
+
+		virtual void attachTexture(Texture& Texture) = 0;
+
+		virtual bool isComplete() const = 0;
 	};
 }

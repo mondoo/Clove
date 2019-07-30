@@ -19,4 +19,19 @@ namespace clv::gfx{
 	void GL4FrameBuffer::bind(){
 		glBindFramebuffer(GL_FRAMEBUFFER, renderID);
 	}
+
+	//TODO: add an isBound function to the bindable class
+
+	void GL4FrameBuffer::attachTexture(Texture& texture){
+		glBindFramebuffer(GL_FRAMEBUFFER, renderID);
+		//TODO
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	bool GL4FrameBuffer::isComplete() const{
+		glBindFramebuffer(GL_FRAMEBUFFER, renderID);
+		const bool result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		return result;
+	}
 }
