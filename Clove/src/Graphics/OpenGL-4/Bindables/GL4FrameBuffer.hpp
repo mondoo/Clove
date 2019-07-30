@@ -6,8 +6,7 @@ namespace clv::gfx{
 	class GL4FrameBuffer : public FrameBuffer{
 		//VARIABLES
 	private:
-
-		//TODO
+		unsigned int renderID = 0;
 
 		//FUNCTIONS
 	public:

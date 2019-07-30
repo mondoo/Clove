@@ -29,3 +29,8 @@
 --this seems overly complex
 
 -seems like a lot of places are saying to use deferred shading
+
+
+NOTE:
+with rendering to textures GL also has renderbuffer objects that are good for just writing data to (to display later) in the tutorial I am following we bind the colour to a texture to pass to a shader and everything else on a render buffer.
+Is there a similar feature in DX or am i limited to textures?
