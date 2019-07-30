@@ -6,6 +6,7 @@
 #include "Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp"
 #include "Graphics/OpenGL-4/Bindables/GL4Shader.hpp"
 #include "Graphics/OpenGL-4/Bindables/GL4Texture.hpp"
+#include "Graphics/OpenGL-4/Bindables/GL4FrameBuffer.hpp"
 
 //DX
 #if CLV_PLATFORM_WINDOWS
@@ -13,6 +14,7 @@
 #include "Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11Shader.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11Texture.hpp"
+#include "Graphics/DirectX-11/Bindables/DX11FrameBuffer.hpp"
 #endif
 
 namespace clv::gfx::BindableFactory{
@@ -77,6 +79,22 @@ namespace clv::gfx::BindableFactory{
 			default:
 				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
 				return std::shared_ptr<Texture>();
+		}
+	}
+
+	std::shared_ptr<FrameBuffer> createFrameBuffer(){
+		switch(RenderAPI::getAPIType()){
+			case API::OpenGL4:
+				return std::make_shared<GL4FrameBuffer>();
+
+			#if CLV_PLATFORM_WINDOWS
+			case API::DirectX11:
+				return std::make_shared<DX11FrameBuffer>();
+			#endif
+
+			default:
+				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
+				return std::shared_ptr<FrameBuffer>();
 		}
 	}
 }
