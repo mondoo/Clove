@@ -37,7 +37,8 @@ namespace clv::gfx{
 
 	GL4Texture::GL4Texture(int width, int height, TextureUsage usageType, unsigned int bindingPoint)
 		: width(width)
-		, height(height){
+		, height(height)
+		, bindingPoint(bindingPoint){
 		glGenTextures(1, &rendererID);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
 
