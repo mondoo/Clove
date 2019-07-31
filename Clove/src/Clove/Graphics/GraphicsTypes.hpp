@@ -14,6 +14,8 @@ namespace clv::gfx{
 		Vertex,
 		Pixel,
 		Vertex2D,
-		Pixel2D
+		Pixel2D,
+		VertexFB,
+		PixelFB
 	};
 }

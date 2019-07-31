@@ -7,6 +7,7 @@ namespace clv::gfx{
 		TBP_Diffuse		= 1u,
 		TBP_Specular	= 2u,
 		TBP_Sprite		= 3u,
+		TBP_FrameBuffer	= 4u
 	};
 
 	class Texture : public Bindable{
