@@ -9,6 +9,7 @@ namespace clv::gfx{
 	class IndexBuffer;
 	class Shader;
 	class Texture;
+	class FrameBuffer;
 
 	struct VertexData{
 		math::Matrix4f model;
@@ -88,6 +89,13 @@ namespace clv::gfx{
 		static std::shared_ptr<IndexBuffer> spriteIBBuffer;
 		static std::shared_ptr<Shader> spriteShader;
 		static math::Matrix4f spriteProj;
+
+		static std::shared_ptr<FrameBuffer> frameBuffer;
+		static std::shared_ptr<VertexBuffer> frameBufferVB;
+		static std::shared_ptr<IndexBuffer> frameBufferIB;
+		static std::shared_ptr<Shader> frameBufferShader;
+		static std::shared_ptr<Texture> frameBufferColourText;
+		static std::shared_ptr<Texture> frameBufferDepthStencilText;
 
 		//FUNCTIONS
 	public:

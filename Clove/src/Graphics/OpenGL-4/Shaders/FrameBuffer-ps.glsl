@@ -7,5 +7,5 @@ layout(binding = 4) uniform sampler2D frameBufferSampler;
 layout(location = 0) out vec4 fragmentColour;
 
 void main(){
-	fragmentColour = vec4(texture(frameBufferSampler, vertTexCoord));
+	fragmentColour = texture(frameBufferSampler, vertTexCoord);
 }

@@ -2,12 +2,15 @@
 
 #include "Clove/Graphics/Bindable.hpp"
 
+#include "Clove/Graphics/GraphicsTypes.hpp"
+
 namespace clv::gfx{
 	enum TextureBindingPoint{
 		TBP_Diffuse		= 1u,
 		TBP_Specular	= 2u,
 		TBP_Sprite		= 3u,
-		TBP_FrameBuffer	= 4u
+		TBP_FrameBuffer	= 4u,
+		TBP_None		= 5u
 	};
 
 	class Texture : public Bindable{

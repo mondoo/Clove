@@ -62,4 +62,8 @@ namespace clv::gfx{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		return result;
 	}
+
+	const unsigned int GL4FrameBuffer::getRenderID() const{
+		return renderID;
+	}
 }

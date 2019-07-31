@@ -59,4 +59,8 @@ namespace clv::gfx{
 			glDisable(GL_BLEND);
 		}
 	}
+
+	void GL4RenderAPI::resetFrameBuffer(){
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 }

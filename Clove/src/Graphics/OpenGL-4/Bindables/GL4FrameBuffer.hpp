@@ -22,5 +22,7 @@ namespace clv::gfx{
 		virtual void attachTexture(Texture& Texture, AttachmentType attachmentType) override;
 
 		virtual bool isComplete() const override;
+
+		const unsigned int getRenderID() const;
 	};
 }

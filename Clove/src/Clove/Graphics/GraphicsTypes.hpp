@@ -18,4 +18,11 @@ namespace clv::gfx{
 		VertexFB,
 		PixelFB
 	};
+
+	enum class TextureUsage{
+		Default,
+		Depth,
+		Stencil,
+		Depth_Stencil,
+	};
 }

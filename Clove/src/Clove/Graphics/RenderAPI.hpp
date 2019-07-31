@@ -3,6 +3,8 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{
+	class FrameBuffer;
+
 	class RenderAPI{
 		//VARIABLES
 	private:
@@ -25,6 +27,7 @@ namespace clv::gfx{
 		virtual void setClearColour(const math::Vector4f& colour) = 0;
 		virtual void setDepthBuffer(bool enabled) = 0;
 		virtual void setBlendState(bool enabled) = 0;
+		virtual void resetFrameBuffer() = 0;
 
 		static API getAPIType();
 	};

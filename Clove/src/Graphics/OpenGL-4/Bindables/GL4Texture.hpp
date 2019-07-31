@@ -13,7 +13,7 @@ namespace clv::gfx{
 		int height = 0;
 		int BPP = 0;
 
-		unsigned int bindingPoint = 0;
+		unsigned int bindingPoint = TBP_None;
 
 		//FUNCTIONS
 	public:
@@ -25,7 +25,7 @@ namespace clv::gfx{
 		virtual ~GL4Texture();
 
 		GL4Texture(const std::string& filePath, unsigned int bindingPoint);
-		GL4Texture(int width, int height, unsigned int bindingPoint);
+		GL4Texture(int width, int height, TextureUsage usageType, unsigned int bindingPoint);
 
 		virtual void bind() override;
 

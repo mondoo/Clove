@@ -35,7 +35,7 @@ namespace clv::gfx{
 		}
 	}
 
-	GL4Texture::GL4Texture(int width, int height, unsigned int bindingPoint)
+	GL4Texture::GL4Texture(int width, int height, TextureUsage usageType, unsigned int bindingPoint)
 		: width(width)
 		, height(height){
 		glGenTextures(1, &rendererID);
@@ -44,7 +44,20 @@ namespace clv::gfx{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		switch (usageType){ //Temp only handling a few
+			case TextureUsage::Default:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+				break;
+
+			case TextureUsage::Depth_Stencil:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+				break;
+		
+			default:
+				CLV_ASSERT(false, "TODO: Finish Gl4Texture constructor");
+				break;
+		}
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 

@@ -30,6 +30,10 @@ namespace clv::gfx{
 		renderAPI->setBlendState(enabled);
 	}
 
+	void RenderCommand::resetFrameBuffer(){
+		renderAPI->resetFrameBuffer();
+	}
+
 	void RenderCommand::initialiseRenderAPI(const Context& context){
 		switch(context.getAPI()){
 			case API::OpenGL4:

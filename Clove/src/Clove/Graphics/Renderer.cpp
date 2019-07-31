@@ -7,6 +7,7 @@
 #include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/Bindables/Shader.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
+#include "Clove/Graphics/Bindables/FrameBuffer.hpp"
 
 namespace clv::gfx{
 	void MeshRenderData::bind() const{
@@ -41,6 +42,13 @@ namespace clv::gfx{
 	std::shared_ptr<Shader> Renderer::spriteShader;
 	math::Matrix4f Renderer::spriteProj = {};
 
+	std::shared_ptr<FrameBuffer> Renderer::frameBuffer;
+	std::shared_ptr<VertexBuffer> Renderer::frameBufferVB;
+	std::shared_ptr<IndexBuffer> Renderer::frameBufferIB;
+	std::shared_ptr<Shader> Renderer::frameBufferShader;
+	std::shared_ptr<Texture> Renderer::frameBufferColourText;
+	std::shared_ptr<Texture> Renderer::frameBufferDepthStencilText;
+
 	void Renderer::initialise(){
 		vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
 		materialSBO = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
@@ -74,9 +82,9 @@ namespace clv::gfx{
 		gfx::VertexLayout layout;
 		layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
 		gfx::VertexBufferData bufferData(std::move(layout));
-		bufferData.emplaceBack(math::Vector2f{ -0.5f, -0.5f }, math::Vector2f{ 0.0f, 0.0f });
+		bufferData.emplaceBack(math::Vector2f{-0.5f, -0.5f }, math::Vector2f{ 0.0f, 0.0f });
 		bufferData.emplaceBack(math::Vector2f{ 0.5f, -0.5f }, math::Vector2f{ 1.0f, 0.0f });
-		bufferData.emplaceBack(math::Vector2f{ -0.5f,  0.5f }, math::Vector2f{ 0.0f, 1.0f });
+		bufferData.emplaceBack(math::Vector2f{-0.5f,  0.5f }, math::Vector2f{ 0.0f, 1.0f });
 		bufferData.emplaceBack(math::Vector2f{ 0.5f,  0.5f }, math::Vector2f{ 1.0f, 1.0f });
 
 		spriteVBBuffer = gfx::BindableFactory::createVertexBuffer(bufferData, *spriteShader);
@@ -93,14 +101,50 @@ namespace clv::gfx{
 		const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
 
 		spriteProj = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
+
+		//FRAME BUFFER STUFF
+		//Frame buffer
+		frameBuffer = BindableFactory::createFrameBuffer();
+
+		//Shader
+		frameBufferShader = BindableFactory::createShader();
+		frameBufferShader->attachShader(ShaderType::VertexFB);
+		frameBufferShader->attachShader(ShaderType::PixelFB);
+
+		//VB
+		VertexLayout fblayout;
+		fblayout.add(VertexElementType::position2D).add(VertexElementType::texture2D);
+		VertexBufferData fbbufferData(std::move(fblayout));
+		fbbufferData.emplaceBack(math::Vector2f{-1.0f, -1.0f }, math::Vector2f{ 0.0f, 0.0f });
+		fbbufferData.emplaceBack(math::Vector2f{ 1.0f, -1.0f }, math::Vector2f{ 1.0f, 0.0f });
+		fbbufferData.emplaceBack(math::Vector2f{-1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
+		fbbufferData.emplaceBack(math::Vector2f{ 1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
+
+		frameBufferVB = BindableFactory::createVertexBuffer(fbbufferData, *frameBufferShader);
+
+		//IB
+		frameBufferIB = BindableFactory::createIndexBuffer(indices);
+
+		//Textures
+		frameBufferColourText = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::Default, TBP_FrameBuffer);
+		frameBufferDepthStencilText = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::Depth_Stencil, TBP_FrameBuffer);
+
+		frameBuffer->attachTexture(*frameBufferColourText, AttachmentType::Colour);
+		frameBuffer->attachTexture(*frameBufferDepthStencilText, AttachmentType::Depth_Stencil);
 	}
 
 	void Renderer::beginScene(){
-		
+		frameBuffer->bind();
+		RenderCommand::clear();
+		RenderCommand::setClearColour({0.5f, 0.3f, 0.8, 1.0f});
+		RenderCommand::resetFrameBuffer();		
 	}
 
 	void Renderer::endScene(){
-		//Mesh
+		//MESH
+		//First pass
+		frameBuffer->bind();
+
 		RenderCommand::setDepthBuffer(true);
 
 		for(auto& data : meshSubmissionData){
@@ -111,9 +155,19 @@ namespace clv::gfx{
 
 		meshSubmissionData.clear();
 
-		//Sprite
+		
+		//Second pass
+		RenderCommand::resetFrameBuffer();
 		RenderCommand::setDepthBuffer(false);
+		
+		frameBufferVB->bind();
+		frameBufferIB->bind();
+		frameBufferShader->bind();
+		frameBufferColourText->bind();
+		
+		RenderCommand::drawIndexed(frameBufferIB->getIndexCount());
 
+		//SPRITE
 		spriteVBBuffer->bind();
 		spriteIBBuffer->bind();
 		spriteShader->bind();

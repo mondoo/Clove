@@ -20,7 +20,7 @@ namespace clv::gfx::BindableFactory{
 	std::shared_ptr<IndexBuffer>			createIndexBuffer(const std::vector<unsigned int>& indexData);
 	std::shared_ptr<Shader>					createShader();
 	std::shared_ptr<Texture>				createTexture(const std::string& filePath, unsigned int bindingPoint);
-	std::shared_ptr<Texture>				createTexture(int width, int height, unsigned int bindingPoint);
+	std::shared_ptr<Texture>				createTexture(int width, int height, TextureUsage usageType, unsigned int bindingPoint);
 	std::shared_ptr<FrameBuffer>			createFrameBuffer();
 
 	template<typename T>

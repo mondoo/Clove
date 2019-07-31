@@ -18,6 +18,7 @@ namespace clv::gfx{
 		static void setClearColour(const math::Vector4f& colour);
 		static void setDepthBuffer(bool enabled);
 		static void setBlendState(bool enabled);
+		static void resetFrameBuffer();
 
 		static void initialiseRenderAPI(const Context& context);
 	};
