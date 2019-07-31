@@ -120,6 +120,10 @@ namespace clv::gfx{
 		d3dContext->OMSetBlendState(blendState.Get(), blendFactor, sampleMask);
 	}
 
+	void DX11RenderAPI::resetFrameBuffer(){
+		CLV_ASSERT(false, "TODO");
+	}
+
 	ID3D11Device& DX11RenderAPI::getDevice(){
 		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null device");
 		return *d3dDevice.Get();

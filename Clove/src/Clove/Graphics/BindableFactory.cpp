@@ -88,8 +88,10 @@ namespace clv::gfx::BindableFactory{
 				return std::make_shared<GL4Texture>(width, height, usageType, bindingPoint);
 
 			#if CLV_PLATFORM_WINDOWS
-			case API::DirectX11:
-				return std::make_shared<DX11Texture>(width, height, usageType, bindingPoint);
+			//case API::DirectX11:
+			//	return std::make_shared<DX11Texture>(width, height, usageType, bindingPoint);
+				CLV_ASSERT(false, "TODO: DX11 texture thing");
+				return std::shared_ptr<Texture>();
 			#endif
 
 			default:
@@ -104,8 +106,10 @@ namespace clv::gfx::BindableFactory{
 				return std::make_shared<GL4FrameBuffer>();
 
 			#if CLV_PLATFORM_WINDOWS
-			case API::DirectX11:
-				return std::make_shared<DX11FrameBuffer>();
+			//case API::DirectX11:
+			//	return std::make_shared<DX11FrameBuffer>();
+				CLV_ASSERT(false, "TODO: DX11 frame buffer");
+				return std::shared_ptr<FrameBuffer>();
 			#endif
 
 			default:
