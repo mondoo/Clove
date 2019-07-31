@@ -155,7 +155,6 @@ namespace clv::gfx{
 
 		meshSubmissionData.clear();
 
-		
 		//Second pass
 		RenderCommand::resetFrameBuffer();
 		RenderCommand::setDepthBuffer(false);
