@@ -60,4 +60,8 @@ namespace clv::gfx{
 	int GL4Texture::getHeight() const{
 		return height;
 	}
+
+	const unsigned int GL4Texture::getRenderID() const{
+		return rendererID;
+	}
 }

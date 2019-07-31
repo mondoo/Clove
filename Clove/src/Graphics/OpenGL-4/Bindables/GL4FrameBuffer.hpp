@@ -19,7 +19,7 @@ namespace clv::gfx{
 
 		virtual void bind() override;
 
-		virtual void attachTexture(Texture& Texture) override;
+		virtual void attachTexture(Texture& Texture, AttachmentType attachmentType) override;
 
 		virtual bool isComplete() const override;
 	};

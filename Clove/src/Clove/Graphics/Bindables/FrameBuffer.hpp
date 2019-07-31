@@ -3,6 +3,13 @@
 #include "Clove/Graphics/Bindable.hpp"
 
 namespace clv::gfx{
+	enum class AttachmentType{
+		Colour,
+		Depth,
+		Stencil,
+		Depth_Stencil
+	};
+
 	class Texture;
 
 	class FrameBuffer : public Bindable{
@@ -15,7 +22,7 @@ namespace clv::gfx{
 		FrameBuffer& operator=(FrameBuffer&& other) noexcept;
 		virtual ~FrameBuffer();
 
-		virtual void attachTexture(Texture& Texture) = 0;
+		virtual void attachTexture(Texture& Texture, AttachmentType attachmentType) = 0;
 
 		virtual bool isComplete() const = 0;
 	};

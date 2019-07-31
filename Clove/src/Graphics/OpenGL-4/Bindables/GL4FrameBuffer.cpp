@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "GL4FrameBuffer.hpp"
 
+#include "Graphics/OpenGL-4/Bindables/GL4Texture.hpp"
+
 #include <glad/glad.h>
 
 namespace clv::gfx{
@@ -22,9 +24,35 @@ namespace clv::gfx{
 
 	//TODO: add an isBound function to the bindable class
 
-	void GL4FrameBuffer::attachTexture(Texture& texture){
+	void GL4FrameBuffer::attachTexture(Texture& texture, AttachmentType attachmentType){
 		glBindFramebuffer(GL_FRAMEBUFFER, renderID);
-		//TODO
+		
+		const unsigned int textureRenderID = static_cast<GL4Texture&>(texture).getRenderID();
+		int glAttachType = -1;
+		switch (attachmentType){
+			case AttachmentType::Colour:
+				glAttachType = GL_COLOR_ATTACHMENT0;
+				break;
+
+			case AttachmentType::Depth:
+				glAttachType = GL_DEPTH_ATTACHMENT;
+				break;
+
+			case AttachmentType::Stencil:
+				glAttachType = GL_STENCIL_ATTACHMENT;
+				break;
+
+			case AttachmentType::Depth_Stencil:
+				glAttachType = GL_DEPTH_STENCIL_ATTACHMENT;
+				break;
+		
+			default:
+				CLV_ASSERT(false, "{0}: Unhandled attachment type", __func__);
+				break;
+		}
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, glAttachType, GL_TEXTURE_2D, textureRenderID, 0);
+
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
