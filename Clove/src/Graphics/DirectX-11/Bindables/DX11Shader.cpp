@@ -36,13 +36,13 @@ namespace clv::gfx{
 		switch(type){
 			case ShaderType::Vertex:
 				{
-					auto vs = std::make_unique<DX11VertexShader>(L"Default-vs.cso");
+					auto vs = std::make_unique<DX11VertexShader>(L"Lit-vs.cso");
 					vertexShader = vs.get();
 					shaders[type] = std::move(vs);
 				}
 				break;
 			case ShaderType::Pixel:
-				shaders[type] = std::make_unique<DX11PixelShader>(L"Default-ps.cso");
+				shaders[type] = std::make_unique<DX11PixelShader>(L"Lit-ps.cso");
 				break;
 
 			case ShaderType::Vertex2D:
