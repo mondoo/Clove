@@ -24,25 +24,27 @@ namespace clv::gfx{
 
 	//TODO: add an isBound function to the bindable class
 
-	void GL4FrameBuffer::attachTexture(Texture& texture, AttachmentType attachmentType){
+	void GL4FrameBuffer::attachTexture(Texture& texture){
 		glBindFramebuffer(GL_FRAMEBUFFER, renderID);
 		
-		const unsigned int textureRenderID = static_cast<GL4Texture&>(texture).getRenderID();
+		GL4Texture& glTexture = static_cast<GL4Texture&>(texture);
+		const unsigned int textureRenderID = glTexture.getRenderID();
+
 		int glAttachType = -1;
-		switch (attachmentType){
-			case AttachmentType::Colour:
+		switch (glTexture.getUsageType()){
+			case TextureUsage::Colour:
 				glAttachType = GL_COLOR_ATTACHMENT0;
 				break;
 
-			case AttachmentType::Depth:
+			case TextureUsage::Depth:
 				glAttachType = GL_DEPTH_ATTACHMENT;
 				break;
 
-			case AttachmentType::Stencil:
+			case TextureUsage::Stencil:
 				glAttachType = GL_STENCIL_ATTACHMENT;
 				break;
 
-			case AttachmentType::Depth_Stencil:
+			case TextureUsage::Depth_Stencil:
 				glAttachType = GL_DEPTH_STENCIL_ATTACHMENT;
 				break;
 		

@@ -8,6 +8,7 @@ namespace clv::gfx{
 	private:
 		unsigned int rendererID = 0;
 		std::string filePath = "";
+		TextureUsage usageType = TextureUsage::Default;
 
 		int width = 0;
 		int height = 0;
@@ -32,6 +33,11 @@ namespace clv::gfx{
 		virtual int getWidth() const override;
 		virtual int getHeight() const override;
 
+		virtual TextureUsage getUsageType() const override;
+
 		const unsigned int getRenderID() const;
+
+	private:
+		void createTexture(TextureUsage usage, void* pixels);
 	};
 }

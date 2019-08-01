@@ -39,5 +39,7 @@ namespace clv::gfx{
 
 		virtual int getWidth() const override;
 		virtual int getHeight() const override;
+
+		virtual TextureUsage getUsageType() const override;
 	};
 }

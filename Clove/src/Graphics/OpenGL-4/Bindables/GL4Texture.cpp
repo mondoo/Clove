@@ -27,7 +27,8 @@ namespace clv::gfx{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer);
+		createTexture(TextureUsage::Default, localBuffer);
+
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		if(localBuffer){
@@ -38,6 +39,7 @@ namespace clv::gfx{
 	GL4Texture::GL4Texture(int width, int height, TextureUsage usageType, unsigned int bindingPoint)
 		: width(width)
 		, height(height)
+		, usageType(usageType)
 		, bindingPoint(bindingPoint){
 		glGenTextures(1, &rendererID);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
@@ -45,20 +47,8 @@ namespace clv::gfx{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		switch (usageType){ //Temp only handling a few
-			case TextureUsage::Default:
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-				break;
+		createTexture(usageType, nullptr);
 
-			case TextureUsage::Depth_Stencil:
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
-				break;
-		
-			default:
-				CLV_ASSERT(false, "TODO: Finish Gl4Texture constructor");
-				break;
-		}
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -75,7 +65,39 @@ namespace clv::gfx{
 		return height;
 	}
 
+	TextureUsage GL4Texture::getUsageType() const{
+		return usageType;
+	}
+
 	const unsigned int GL4Texture::getRenderID() const{
 		return rendererID;
+	}
+
+	void GL4Texture::createTexture(TextureUsage usage, void* pixels){
+		switch(usage){
+			case TextureUsage::Default:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+				break;
+
+			case TextureUsage::Colour:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+				break;
+
+			case TextureUsage::Depth:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, pixels);
+				break;
+
+			case TextureUsage::Stencil:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_STENCIL_INDEX, width, height, 0, GL_STENCIL_INDEX, GL_UNSIGNED_INT, pixels);
+				break;
+
+			case TextureUsage::Depth_Stencil:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, pixels);
+				break;
+
+			default:
+				CLV_ASSERT(false, "{0}: Unhandled texture type", __func__);
+				break;
+		}
 	}
 }

@@ -21,6 +21,7 @@ namespace clv::gfx{
 
 	enum class TextureUsage{
 		Default,
+		Colour,
 		Depth,
 		Stencil,
 		Depth_Stencil,

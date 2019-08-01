@@ -81,4 +81,9 @@ namespace clv::gfx{
 	int DX11Texture::getHeight() const{
 		return height;
 	}
+
+	TextureUsage DX11Texture::getUsageType() const{
+		//TODO
+		return TextureUsage::Default;
+	}
 }

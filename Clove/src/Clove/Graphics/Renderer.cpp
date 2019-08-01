@@ -47,7 +47,7 @@ namespace clv::gfx{
 	std::shared_ptr<IndexBuffer> Renderer::frameBufferIB;
 	std::shared_ptr<Shader> Renderer::frameBufferShader;
 	std::shared_ptr<Texture> Renderer::frameBufferColourText;
-	std::shared_ptr<Texture> Renderer::frameBufferDepthStencilText;
+	std::shared_ptr<Texture> Renderer::frameBufferDepthText;
 
 	void Renderer::initialise(){
 		vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
@@ -126,11 +126,11 @@ namespace clv::gfx{
 		frameBufferIB = BindableFactory::createIndexBuffer(indices);
 
 		//Textures
-		frameBufferColourText = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::Default, TBP_FrameBuffer);
-		frameBufferDepthStencilText = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::Depth_Stencil, TBP_FrameBuffer);
+		frameBufferColourText = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::Colour, TBP_FrameBuffer);
+		frameBufferDepthText = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::Depth, TBP_FrameBuffer);
 
-		frameBuffer->attachTexture(*frameBufferColourText, AttachmentType::Colour);
-		frameBuffer->attachTexture(*frameBufferDepthStencilText, AttachmentType::Depth_Stencil);
+		frameBuffer->attachTexture(*frameBufferColourText);
+		frameBuffer->attachTexture(*frameBufferDepthText);
 	}
 
 	void Renderer::beginScene(){

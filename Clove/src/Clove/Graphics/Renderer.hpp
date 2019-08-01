@@ -95,7 +95,7 @@ namespace clv::gfx{
 		static std::shared_ptr<IndexBuffer> frameBufferIB;
 		static std::shared_ptr<Shader> frameBufferShader;
 		static std::shared_ptr<Texture> frameBufferColourText;
-		static std::shared_ptr<Texture> frameBufferDepthStencilText;
+		static std::shared_ptr<Texture> frameBufferDepthText;
 
 		//FUNCTIONS
 	public:
