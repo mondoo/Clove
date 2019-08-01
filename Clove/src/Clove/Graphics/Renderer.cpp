@@ -30,7 +30,8 @@ namespace clv::gfx{
 	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO;
 	std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> Renderer::viewPosSBO;
 
-	std::shared_ptr<gfx::ShaderBufferObject<LightData>> Renderer::lightDataSBO;
+	std::shared_ptr<gfx::ShaderBufferObject<LightInfo>> Renderer::lightDataSBO;
+	LightInfo Renderer::currentLightInfo;
 
 	std::vector<MeshRenderData> Renderer::meshSubmissionData;
 	std::vector<SpriteRenderData> Renderer::spriteSubmissionData;
@@ -49,7 +50,7 @@ namespace clv::gfx{
 		viewDataSBO = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderType::Vertex, gfx::BBP_CameraMatrices);
 		viewPosSBO = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderType::Pixel, gfx::BBP_ViewData);
 		
-		lightDataSBO = gfx::BindableFactory::createShaderBufferObject<LightData>(gfx::ShaderType::Pixel, gfx::BBP_PointLightData);
+		lightDataSBO = gfx::BindableFactory::createShaderBufferObject<LightInfo>(gfx::ShaderType::Pixel, gfx::BBP_PointLightData);
 
 		vertSBO->bind();
 		materialSBO->bind();
@@ -96,10 +97,12 @@ namespace clv::gfx{
 	}
 
 	void Renderer::beginScene(){
-		
+		currentLightInfo.numLights = 0;
 	}
 
 	void Renderer::endScene(){
+		lightDataSBO->update(currentLightInfo);
+
 		//Mesh
 		RenderCommand::setDepthBuffer(true);
 
@@ -142,6 +145,7 @@ namespace clv::gfx{
 	}
 
 	void Renderer::submitLight(const LightData& data){
-		lightDataSBO->update(data);
+		//lightDataSBO->update(data);
+		currentLightInfo.lights[currentLightInfo.numLights++] = data;
 	}
 }

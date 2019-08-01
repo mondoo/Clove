@@ -52,7 +52,8 @@ uniform DirectionalLight directionLights[NUM_DIR_LIGHTS];
 #endif
 
 layout (std140, binding = 1) uniform PointLightData{
-	PointLight light;
+	PointLight lights[100]; //100 max for now
+	int numLights;
 };
 
 layout (std140, binding = 2) uniform ViewData{
@@ -78,9 +79,9 @@ void main(){
 #endif
 
 //#if NUM_POINT_LIGHTS
-	//for(int i = 0; i < NUM_POINT_LIGHTS; i++){
-		lighting += CalculatePointLight(/*pointLights[i]*/light, fragNorm, vertPos, viewDir);
-	//}
+	for(int i = 0; i < numLights; i++){
+		lighting += CalculatePointLight(/*pointLights[i]*/lights[i], fragNorm, vertPos, viewDir);
+	}
 //#endif
 
 	//Falling back to what ever the diffuse is

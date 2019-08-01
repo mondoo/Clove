@@ -67,6 +67,10 @@ namespace clv::gfx{
 		/*alignas(16)*/ float linear;
 		/*alignas(16)*/ float quadratic;
 	};
+	struct LightInfo{//Rename
+		LightData lights[100];
+		int numLights = 0;
+	};
 
 	class Renderer{
 		//VARIABLES
@@ -78,7 +82,8 @@ namespace clv::gfx{
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewData>> viewDataSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> viewPosSBO;
 
-		static std::shared_ptr<gfx::ShaderBufferObject<LightData>> lightDataSBO;
+		static std::shared_ptr<gfx::ShaderBufferObject<LightInfo>> lightDataSBO;
+		static LightInfo currentLightInfo;
 
 		static std::vector<MeshRenderData> meshSubmissionData;
 		static std::vector<SpriteRenderData> spriteSubmissionData;
