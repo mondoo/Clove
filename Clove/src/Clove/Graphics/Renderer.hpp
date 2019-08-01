@@ -90,6 +90,10 @@ namespace clv::gfx{
 		static std::shared_ptr<Shader> spriteShader;
 		static math::Matrix4f spriteProj;
 
+		//TODO:
+		//Before merging this how can we set a render target and manipulate it from client side?
+		//Try making a render of the current scene then putting it on a 2d sprite somewhere in the screen
+
 		static std::shared_ptr<RenderTarget> renderTarget;
 		static std::shared_ptr<VertexBuffer> renderTargetVB;
 		static std::shared_ptr<IndexBuffer> renderTargetIB;
