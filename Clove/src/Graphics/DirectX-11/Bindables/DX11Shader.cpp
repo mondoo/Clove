@@ -58,13 +58,13 @@ namespace clv::gfx{
 
 			case ShaderType::VertexFB:
 				{
-					auto vs = std::make_unique<DX11VertexShader>(L"FrameBuffer-vs.cso");
+					auto vs = std::make_unique<DX11VertexShader>(L"RT-vs.cso");
 					vertexShader = vs.get();
 					shaders[type] = std::move(vs);
 				}
 				break;
 			case ShaderType::PixelFB:
-				shaders[type] = std::make_unique<DX11PixelShader>(L"FrameBuffer-ps.cso");
+				shaders[type] = std::make_unique<DX11PixelShader>(L"RT-ps.cso");
 				break;
 
 			default:

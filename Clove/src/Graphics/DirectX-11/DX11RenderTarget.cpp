@@ -1,5 +1,5 @@
 #include "clvpch.hpp"
-#include "DX11FrameBuffer.hpp"
+#include "DX11RenderTarget.hpp"
 
 #include "Graphics/DirectX-11/Bindables/DX11Texture.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
@@ -8,22 +8,13 @@
 #include <d3d11.h>
 
 namespace clv::gfx{
-	DX11FrameBuffer::DX11FrameBuffer(){
-		//TODO:
-		//probably need to create the default one here rather than in attach texture
-	}
+	DX11RenderTarget::DX11RenderTarget(DX11RenderTarget&& other) noexcept = default;
 
-	DX11FrameBuffer::DX11FrameBuffer(DX11FrameBuffer&& other) noexcept = default;
+	DX11RenderTarget& DX11RenderTarget::operator=(DX11RenderTarget&& other) noexcept = default;
 
-	DX11FrameBuffer& DX11FrameBuffer::operator=(DX11FrameBuffer&& other) noexcept = default;
+	DX11RenderTarget::~DX11RenderTarget() = default;
 
-	DX11FrameBuffer::~DX11FrameBuffer() = default;
-
-	void DX11FrameBuffer::bind(){
-		//TODO
-	}
-
-	void DX11FrameBuffer::attachTexture(Texture& texture){
+	DX11RenderTarget::DX11RenderTarget(Texture& texture){
 		DX11Texture& dxTexture = static_cast<DX11Texture&>(texture);
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> textureSource = dxTexture.getTexture();
 
@@ -39,8 +30,7 @@ namespace clv::gfx{
 		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateRenderTargetView(textureSource.Get(), &rtvdsc, &renderTargetView));
 	}
 
-	bool DX11FrameBuffer::isComplete() const{
-		//TODO
-		return false;
+	const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& DX11RenderTarget::getRenderTargetView() const{
+		return renderTargetView;
 	}
 }

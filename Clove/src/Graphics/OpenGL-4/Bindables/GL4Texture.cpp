@@ -79,20 +79,8 @@ namespace clv::gfx{
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 				break;
 
-			case TextureUsage::Colour:
+			case TextureUsage::RenderTarget:
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-				break;
-
-			case TextureUsage::Depth:
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, pixels);
-				break;
-
-			case TextureUsage::Stencil:
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_STENCIL_INDEX, width, height, 0, GL_STENCIL_INDEX, GL_UNSIGNED_INT, pixels);
-				break;
-
-			case TextureUsage::Depth_Stencil:
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, pixels);
 				break;
 
 			default:

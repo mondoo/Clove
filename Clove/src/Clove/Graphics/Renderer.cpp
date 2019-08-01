@@ -7,7 +7,7 @@
 #include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/Bindables/Shader.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
-#include "Clove/Graphics/Bindables/FrameBuffer.hpp"
+#include "Clove/Graphics/RenderTarget.hpp"
 
 namespace clv::gfx{
 	void MeshRenderData::bind() const{
@@ -42,12 +42,11 @@ namespace clv::gfx{
 	std::shared_ptr<Shader> Renderer::spriteShader;
 	math::Matrix4f Renderer::spriteProj = {};
 
-	std::shared_ptr<FrameBuffer> Renderer::frameBuffer;
-	std::shared_ptr<VertexBuffer> Renderer::frameBufferVB;
-	std::shared_ptr<IndexBuffer> Renderer::frameBufferIB;
-	std::shared_ptr<Shader> Renderer::frameBufferShader;
-	std::shared_ptr<Texture> Renderer::frameBufferColourText;
-	std::shared_ptr<Texture> Renderer::frameBufferDepthText;
+	std::shared_ptr<RenderTarget> Renderer::renderTarget;
+	std::shared_ptr<VertexBuffer> Renderer::renderTargetVB;
+	std::shared_ptr<IndexBuffer> Renderer::renderTargetIB;
+	std::shared_ptr<Shader> Renderer::renderTargetShader;
+	std::shared_ptr<Texture> Renderer::renderTargetTexture;
 
 	void Renderer::initialise(){
 		vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
@@ -103,13 +102,10 @@ namespace clv::gfx{
 		spriteProj = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 
 		//FRAME BUFFER STUFF
-		//Frame buffer
-		frameBuffer = BindableFactory::createFrameBuffer();
-
 		//Shader
-		frameBufferShader = BindableFactory::createShader();
-		frameBufferShader->attachShader(ShaderType::VertexFB);
-		frameBufferShader->attachShader(ShaderType::PixelFB);
+		renderTargetShader = BindableFactory::createShader();
+		renderTargetShader->attachShader(ShaderType::VertexFB);
+		renderTargetShader->attachShader(ShaderType::PixelFB);
 
 		//VB
 		VertexLayout fblayout;
@@ -120,45 +116,26 @@ namespace clv::gfx{
 		fbbufferData.emplaceBack(math::Vector2f{-1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
 		fbbufferData.emplaceBack(math::Vector2f{ 1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
 
-		frameBufferVB = BindableFactory::createVertexBuffer(fbbufferData, *frameBufferShader);
+		renderTargetVB = BindableFactory::createVertexBuffer(fbbufferData, *renderTargetShader);
 
 		//IB
-		frameBufferIB = BindableFactory::createIndexBuffer(indices);
+		renderTargetIB = BindableFactory::createIndexBuffer(indices);
 
 		//Textures
-		frameBufferColourText = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::Colour, TBP_FrameBuffer);
-		//It looks like we don't do this part for dx?
-		frameBufferDepthText = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::Depth, TBP_FrameBuffer);
-
-		frameBuffer->attachTexture(*frameBufferColourText);
-		//It looks like we don't do this part for dx? - or maybe we do just to be able to attach the depth stuff to it
-		frameBuffer->attachTexture(*frameBufferDepthText);
-
-		//TODO: Going to change everything over to 'render targets' instead
-		//--should i?
-
-		//it's a similar situation to the VAOs
-		//opengl merges thew VB and IB into one basically
-		//with th FB opengl has merged the render target and depth / stencil target into one
-		//DX keeps these seperate
-
-		//I think if I make a 'render target' base and port all of the opengl stuff to that
-		//Then the api will get a 'set render target' function (opengl will just bind the 'rt')
-		//DX will do the DX thing
+		renderTargetTexture = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::RenderTarget, TBP_FrameBuffer);
+		
+		renderTarget = RenderTarget::createRenderTarget(*renderTargetTexture);
 	}
 
 	void Renderer::beginScene(){
-		frameBuffer->bind();
-		RenderCommand::clear();
-		RenderCommand::setClearColour({0.5f, 0.3f, 0.8, 1.0f});
-		RenderCommand::resetFrameBuffer();		
+		
 	}
 
 	void Renderer::endScene(){
 		//MESH
 		//First pass
-		frameBuffer->bind();
-
+		RenderCommand::setRenderTarget(*renderTarget);
+		RenderCommand::clear(); //make sure it's clean
 		RenderCommand::setDepthBuffer(true);
 
 		for(auto& data : meshSubmissionData){
@@ -170,15 +147,15 @@ namespace clv::gfx{
 		meshSubmissionData.clear();
 
 		//Second pass
-		RenderCommand::resetFrameBuffer();
+		RenderCommand::resetRenderTarget();
 		RenderCommand::setDepthBuffer(false);
 		
-		frameBufferVB->bind();
-		frameBufferIB->bind();
-		frameBufferShader->bind();
-		frameBufferColourText->bind();
+		renderTargetVB->bind();
+		renderTargetIB->bind();
+		renderTargetShader->bind();
+		renderTargetTexture->bind();
 		
-		RenderCommand::drawIndexed(frameBufferIB->getIndexCount());
+		RenderCommand::drawIndexed(renderTargetIB->getIndexCount());
 
 		//SPRITE
 		spriteVBBuffer->bind();

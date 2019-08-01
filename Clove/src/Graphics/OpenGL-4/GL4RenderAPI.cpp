@@ -3,7 +3,7 @@
 
 #include "Clove/Graphics/Context.hpp"
 #include "Graphics/OpenGL-4/GL4Exception.hpp"
-#include "Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp"
+#include "Graphics/OpenGL-4/GL4RenderTarget.hpp"
 
 #include <glad/glad.h>
 
@@ -60,7 +60,12 @@ namespace clv::gfx{
 		}
 	}
 
-	void GL4RenderAPI::resetFrameBuffer(){
+	void GL4RenderAPI::setRenderTarget(RenderTarget& renderTarget){
+		GL4RenderTarget& glRenderTarget = static_cast<GL4RenderTarget&>(renderTarget);
+		glBindFramebuffer(GL_FRAMEBUFFER, glRenderTarget.getRenderID());
+	}
+
+	void GL4RenderAPI::resetRenderTarget(){
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 }

@@ -30,8 +30,12 @@ namespace clv::gfx{
 		renderAPI->setBlendState(enabled);
 	}
 
-	void RenderCommand::resetFrameBuffer(){
-		renderAPI->resetFrameBuffer();
+	void RenderCommand::setRenderTarget(RenderTarget& renderTarget){
+		renderAPI->setRenderTarget(renderTarget);
+	}
+
+	void RenderCommand::resetRenderTarget(){
+		renderAPI->resetRenderTarget();
 	}
 
 	void RenderCommand::initialiseRenderAPI(const Context& context){

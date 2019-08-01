@@ -4,7 +4,8 @@ struct VSOut{
 };
 
 VSOut main(float2 pos : Position, float2 tex : TexCoord){
-	VSOut.tex = tex;
-	VSOut.pos = pos;
-	return VSOut;
+	VSOut vsout;
+	vsout.tex = tex;
+	vsout.pos = float4(pos, 0.0f, 1.0f);
+	return vsout;
 }

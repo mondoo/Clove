@@ -23,6 +23,7 @@ namespace clv::gfx{
 		virtual void setClearColour(const math::Vector4f& colour) override;
 		virtual void setDepthBuffer(bool enabled) override;
 		virtual void setBlendState(bool enabled) override;
-		virtual void resetFrameBuffer() override;
+		virtual void setRenderTarget(RenderTarget& renderTarget) override;
+		virtual void resetRenderTarget() override;
 	};
 }

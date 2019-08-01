@@ -76,6 +76,11 @@ namespace clv::gfx{
 		//TODO: Usage type??? - is it needed for this? only difference is D3D11_BIND_RENDER_TARGET
 		//should probably prefix the usage types with like RenderTarget_Colour etc.
 
+		UINT textureBindFlags = D3D11_BIND_SHADER_RESOURCE;
+		if(usageType == TextureUsage::RenderTarget){
+			textureBindFlags |= D3D11_BIND_RENDER_TARGET;
+		}
+
 		//Create the texture itself
 		D3D11_TEXTURE2D_DESC textureDesc = { };
 		textureDesc.Width = width;
@@ -86,7 +91,7 @@ namespace clv::gfx{
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
-		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.BindFlags = textureBindFlags;
 		textureDesc.CPUAccessFlags = 0;
 		textureDesc.MiscFlags = 0;
 

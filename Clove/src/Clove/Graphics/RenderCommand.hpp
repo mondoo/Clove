@@ -3,6 +3,7 @@
 namespace clv::gfx{
 	class RenderAPI;
 	class Context;
+	class RenderTarget;
 
 	//NOTE: This will be used to create a multithreaded renderer. But for now it just wraps the API calls
 	class RenderCommand{
@@ -18,7 +19,8 @@ namespace clv::gfx{
 		static void setClearColour(const math::Vector4f& colour);
 		static void setDepthBuffer(bool enabled);
 		static void setBlendState(bool enabled);
-		static void resetFrameBuffer();
+		static void setRenderTarget(RenderTarget& renderTarget);
+		static void resetRenderTarget();
 
 		static void initialiseRenderAPI(const Context& context);
 	};

@@ -71,11 +71,11 @@ namespace clv::gfx{
 				break;
 
 			case ShaderType::VertexFB:
-				return "../Clove/src/Graphics/OpenGL-4/Shaders/FrameBuffer-vs.glsl";
+				return "../Clove/src/Graphics/OpenGL-4/Shaders/RT-vs.glsl";
 				break;
 
 			case ShaderType::PixelFB:
-				return "../Clove/src/Graphics/OpenGL-4/Shaders/FrameBuffer-ps.glsl";
+				return "../Clove/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl";
 				break;
 
 			default:
