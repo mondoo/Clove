@@ -127,10 +127,24 @@ namespace clv::gfx{
 
 		//Textures
 		frameBufferColourText = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::Colour, TBP_FrameBuffer);
+		//It looks like we don't do this part for dx?
 		frameBufferDepthText = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::Depth, TBP_FrameBuffer);
 
 		frameBuffer->attachTexture(*frameBufferColourText);
+		//It looks like we don't do this part for dx? - or maybe we do just to be able to attach the depth stuff to it
 		frameBuffer->attachTexture(*frameBufferDepthText);
+
+		//TODO: Going to change everything over to 'render targets' instead
+		//--should i?
+
+		//it's a similar situation to the VAOs
+		//opengl merges thew VB and IB into one basically
+		//with th FB opengl has merged the render target and depth / stencil target into one
+		//DX keeps these seperate
+
+		//I think if I make a 'render target' base and port all of the opengl stuff to that
+		//Then the api will get a 'set render target' function (opengl will just bind the 'rt')
+		//DX will do the DX thing
 	}
 
 	void Renderer::beginScene(){

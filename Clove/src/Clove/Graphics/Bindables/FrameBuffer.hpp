@@ -15,7 +15,7 @@ namespace clv::gfx{
 		FrameBuffer& operator=(FrameBuffer&& other) noexcept;
 		virtual ~FrameBuffer();
 
-		virtual void attachTexture(Texture& Texture) = 0;
+		virtual void attachTexture(Texture& texture) = 0;
 
 		virtual bool isComplete() const = 0;
 	};

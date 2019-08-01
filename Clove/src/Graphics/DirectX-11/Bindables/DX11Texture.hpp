@@ -13,6 +13,7 @@ namespace clv::gfx{
 	class DX11Texture : public Texture{
 		//VARIABLES
 	private:
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView;
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler;
 		
@@ -34,6 +35,7 @@ namespace clv::gfx{
 		virtual ~DX11Texture();
 
 		DX11Texture(const std::string& filePath, unsigned int bindingPoint);
+		DX11Texture(int width, int height, TextureUsage usageType, unsigned int bindingPoint);
 
 		virtual void bind() override;
 
@@ -41,5 +43,7 @@ namespace clv::gfx{
 		virtual int getHeight() const override;
 
 		virtual TextureUsage getUsageType() const override;
+
+		const Microsoft::WRL::ComPtr<ID3D11Texture2D>& getTexture() const;
 	};
 }

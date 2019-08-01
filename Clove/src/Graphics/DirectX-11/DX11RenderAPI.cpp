@@ -121,7 +121,7 @@ namespace clv::gfx{
 	}
 
 	void DX11RenderAPI::resetFrameBuffer(){
-		CLV_ASSERT(false, "TODO");
+		d3dContext->OMSetRenderTargets(1u, target.GetAddressOf(), dsv.Get());
 	}
 
 	ID3D11Device& DX11RenderAPI::getDevice(){

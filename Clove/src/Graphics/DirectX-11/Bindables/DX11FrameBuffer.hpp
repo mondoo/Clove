@@ -2,12 +2,15 @@
 
 #include "Clove/Graphics/Bindables/FrameBuffer.hpp"
 
+#include <wrl.h>
+
+struct ID3D11RenderTargetView;
+
 namespace clv::gfx{
 	class DX11FrameBuffer : public FrameBuffer{
 		//VARIABLES
 	private:
-
-		//TODO
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
 
 		//FUNCTIONS
 	public:
@@ -19,5 +22,9 @@ namespace clv::gfx{
 		virtual ~DX11FrameBuffer();
 
 		virtual void bind() override;
+
+		virtual void attachTexture(Texture& texture) override;
+
+		virtual bool isComplete() const override;
 	};
 }
