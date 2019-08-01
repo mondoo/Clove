@@ -52,15 +52,7 @@ uniform DirectionalLight directionLights[NUM_DIR_LIGHTS];
 #endif
 
 layout (std140, binding = 1) uniform PointLightData{
-	vec3 position;
-   
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-
-	float constant;
-    float linear;
-    float quadratic;
+	PointLight light;
 };
 
 layout (std140, binding = 2) uniform ViewData{
@@ -85,18 +77,9 @@ void main(){
 	}
 #endif
 
-	PointLight plight;
-	plight.position = position;
-	plight.ambient = ambient;
-	plight.diffuse = diffuse;
-	plight.specular = specular;
-	plight.constant = constant;
-	plight.linear = linear;
-	plight.quadratic = quadratic;
-
 //#if NUM_POINT_LIGHTS
 	//for(int i = 0; i < NUM_POINT_LIGHTS; i++){
-		lighting += CalculatePointLight(/*pointLights[i]*/plight, fragNorm, vertPos, viewDir);
+		lighting += CalculatePointLight(/*pointLights[i]*/light, fragNorm, vertPos, viewDir);
 	//}
 //#endif
 
