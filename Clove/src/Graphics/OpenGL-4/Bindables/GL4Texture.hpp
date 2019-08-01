@@ -7,6 +7,7 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		unsigned int rendererID = 0;
+
 		std::string filePath = "";
 		TextureUsage usageType = TextureUsage::Default;
 

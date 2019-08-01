@@ -19,6 +19,7 @@ namespace clv::gfx{
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler;
 		
 		std::string filePath;
+		TextureUsage usage = TextureUsage::Default;
 
 		int width = 0;
 		int height = 0;
@@ -46,5 +47,8 @@ namespace clv::gfx{
 		virtual TextureUsage getUsageType() const override;
 
 		const Microsoft::WRL::ComPtr<ID3D11Texture2D>& getTexture() const;
+
+	private:
+		void createTexture(TextureUsage usageType, void* pixels);
 	};
 }
