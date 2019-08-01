@@ -2,8 +2,6 @@
 
 #include "Clove/Graphics/Bindable.hpp"
 
-#include "Clove/Graphics/GraphicsTypes.hpp"
-
 namespace clv::gfx{
 	class Texture;
 

@@ -3,8 +3,6 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{
-	class FrameBuffer;
-
 	class RenderAPI{
 		//VARIABLES
 	private:
