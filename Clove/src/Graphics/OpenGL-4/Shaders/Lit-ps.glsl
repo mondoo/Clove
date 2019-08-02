@@ -52,8 +52,8 @@ uniform DirectionalLight directionLights[NUM_DIR_LIGHTS];
 #endif
 
 layout (std140, binding = 1) uniform PointLightData{
-	PointLight lights[100]; //100 max for now
 	int numLights;
+	PointLight lights[100]; //100 max for now
 };
 
 layout (std140, binding = 2) uniform ViewData{

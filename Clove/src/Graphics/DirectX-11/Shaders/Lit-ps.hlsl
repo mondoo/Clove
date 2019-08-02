@@ -16,8 +16,8 @@ struct Light{
 	float quadratic;
 };
 cbuffer PointLightBuffer : register(b1){
-	Light lights[100]; //100 max for now
 	int numLights;
+	Light lights[100]; //100 max for now
 };
 
 cbuffer ViewBuffer : register(b2){

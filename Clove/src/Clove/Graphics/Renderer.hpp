@@ -68,8 +68,8 @@ namespace clv::gfx{
 		/*alignas(16)*/ float quadratic;
 	};
 	struct LightInfo{//Rename
-		LightData lights[100];
 		int numLights = 0;
+		LightData lights[100];
 	};
 
 	class Renderer{
