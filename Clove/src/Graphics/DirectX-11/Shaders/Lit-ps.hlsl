@@ -1,5 +1,5 @@
-Texture2D diffuseTexture : register(t1);
-SamplerState diffuseSampler : register(s1);
+Texture2D albedoTexture : register(t1);
+SamplerState albedoSampler : register(s1);
 
 Texture2D specularTexture : register(t2);
 SamplerState specularSampler : register(s2);
@@ -46,11 +46,11 @@ float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, floa
 	float3 lightDir = normalize(light.position - fragPos);
 
 	//Ambient
-	float3 ambient = light.ambient * (float3)diffuseTexture.Sample(diffuseSampler, texCoord);
+	float3 ambient = light.ambient * (float3)albedoTexture.Sample(albedoSampler, texCoord);
 
 	//Diffuse
 	float3 diff = max(dot(normal, lightDir), 0.0f);
-	float3 diffuse = light.diffuse * diff * (float3)diffuseTexture.Sample(diffuseSampler, texCoord);
+	float3 diffuse = light.diffuse * diff * (float3)albedoTexture.Sample(albedoSampler, texCoord);
 
 	//Specular
 	float3 reflectDir = reflect(-lightDir, normal);

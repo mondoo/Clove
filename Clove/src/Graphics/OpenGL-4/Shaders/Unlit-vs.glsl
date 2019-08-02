@@ -15,8 +15,6 @@ layout(std140, binding = 3) uniform modelBuffer {
 };
 
 out vec2 vertTexCoord;
-out vec3 vertPos;
-out vec3 vertNormal;
 
 void main(){
 	const vec4 pos4D = vec4(position, 1.0f);
@@ -24,8 +22,4 @@ void main(){
 	gl_Position = projection * view * model * pos4D;
   
 	vertTexCoord = texCoord;
-
-	//Convert frag and normal to world space
-	vertPos		= vec3(model * pos4D);
-	vertNormal	= mat3(normalMatrix) * normal;
 };

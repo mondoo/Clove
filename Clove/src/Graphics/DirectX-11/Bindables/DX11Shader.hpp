@@ -23,18 +23,21 @@ namespace clv::gfx{
 
 		//FUNCTIONS	
 	public:
-		DX11Shader();
+		DX11Shader() = delete;
 		DX11Shader(const DX11Shader& other) = delete;
 		DX11Shader(DX11Shader&& other) noexcept;
 		DX11Shader& operator=(const DX11Shader& other) = delete;
 		DX11Shader& operator=(DX11Shader&& other) noexcept;
 		~DX11Shader();
 
+		DX11Shader(ShaderStyle style);
+
 		virtual void bind() override;
 
-		virtual void attachShader(ShaderType type) override;
-
 		DX11VertexShader& getVertexShader();
+
+	private:
+		void initialise(ShaderStyle style);
 	};
 
 	class DX11VertexShader : public Bindable{

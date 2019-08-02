@@ -67,9 +67,7 @@ namespace clv::gfx{
 
 		//QUAD STUFF
 		//Shader
-		spriteShader = gfx::BindableFactory::createShader();
-		spriteShader->attachShader(gfx::ShaderType::Vertex2D);
-		spriteShader->attachShader(gfx::ShaderType::Pixel2D);
+		spriteShader = gfx::BindableFactory::createShader(ShaderStyle::_2D);
 
 		//VB
 		gfx::VertexLayout layout;
