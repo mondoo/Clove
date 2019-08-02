@@ -4,7 +4,7 @@ SamplerState diffuseSampler : register(s1);
 Texture2D specularTexture : register(t2);
 SamplerState specularSampler : register(s2);
 
-struct Light{
+struct PointLight{
 	float3 position;
 
 	float3 ambient;
@@ -17,7 +17,7 @@ struct Light{
 };
 cbuffer PointLightBuffer : register(b1){
 	int numLights;
-	Light lights[100]; //100 max for now
+	PointLight lights[10]; //Temp 10 max
 };
 
 cbuffer ViewBuffer : register(b2){
@@ -28,36 +28,42 @@ cbuffer MaterialBuffer : register(b4){
     float shininess;
 }
 
+float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord);
+
 float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNormal : VertNormal) : SV_Target{
     float3 normal       = normalize(vertNormal);
     float3 viewDir      = normalize(viewPos - vertPos);
     
 	float3 lighting;
 	for(int i = 0; i < numLights; ++i){
-		float3 lightDir = normalize(lights[i].position - vertPos);
-
-		//Ambient
-		float3 lambient = lights[i].ambient * (float3)diffuseTexture.Sample(diffuseSampler, texCoord);
-
-		//Diffuse
-		float3 diff = max(dot(normal, lightDir), 0.0f);
-		float3 ldiffuse = lights[i].diffuse * diff * (float3)diffuseTexture.Sample(diffuseSampler, texCoord);
-
-		//Specular
-		float3 reflectDir = reflect(-lightDir, normal);
-		float spec = pow(max(dot(viewDir, reflectDir), 0.0f), shininess);
-		float3 lspecular = lights[i].specular * spec * (float3)specularTexture.Sample(specularSampler, texCoord);
-
-		//Attenuation
-		float distance = length(lights[i].position - vertPos);
-		float attenuation = 1.0f / (lights[i].constant + (lights[i].linearV * distance) + (lights[i].quadratic * (distance * distance)));
-
-		lambient *= attenuation;
-		ldiffuse *= attenuation;
-		lspecular *= attenuation;
-
-		lighting += (lambient + ldiffuse + lspecular);
+		lighting += calculatePointLight(lights[i], normal, vertPos, viewDir, texCoord);
 	}
 
     return float4(lighting, 1.0f);
+}
+
+float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord){
+	float3 lightDir = normalize(light.position - fragPos);
+
+	//Ambient
+	float3 ambient = light.ambient * (float3)diffuseTexture.Sample(diffuseSampler, texCoord);
+
+	//Diffuse
+	float3 diff = max(dot(normal, lightDir), 0.0f);
+	float3 diffuse = light.diffuse * diff * (float3)diffuseTexture.Sample(diffuseSampler, texCoord);
+
+	//Specular
+	float3 reflectDir = reflect(-lightDir, normal);
+	float spec = pow(max(dot(viewDirection, reflectDir), 0.0f), shininess);
+	float3 specular = light.specular * spec * (float3)specularTexture.Sample(specularSampler, texCoord);
+
+	//Attenuation
+	float distance = length(light.position - fragPos);
+	float attenuation = 1.0f / (light.constant + (light.linearV * distance) + (light.quadratic * (distance * distance)));
+
+	ambient		*= attenuation;
+	diffuse		*= attenuation;
+	specular	*= attenuation;
+
+	return (ambient + diffuse + specular);
 }

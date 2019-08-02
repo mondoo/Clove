@@ -43,17 +43,9 @@ struct SpotLight{
 	float outerCutOff;
 };
 
-#if NUM_DIR_LIGHTS
-uniform DirectionalLight directionLights[NUM_DIR_LIGHTS];
-#endif
-
-#if NUM_POINT_LIGHTS
-//uniform PointLight pointLights[NUM_POINT_LIGHTS];
-#endif
-
 layout (std140, binding = 1) uniform PointLightData{
 	int numLights;
-	PointLight lights[100]; //100 max for now
+	PointLight lights[10]; //10 max for now
 };
 
 layout (std140, binding = 2) uniform ViewData{
@@ -72,22 +64,13 @@ void main(){
 
 	vec3 lighting;
 
-#if NUM_DIR_LIGHTS
-	for(int i = 0; i < NUM_DIR_LIGHTS; i++){
-		lighting += CalculateDirectionalLighting(directionLights[i], fragNorm, viewDir);
-	}
-#endif
+//	for(int i = 0; i < NUM_DIR_LIGHTS; i++){
+//		lighting += CalculateDirectionalLighting(directionLights[i], fragNorm, viewDir);
+//	}
 
-//#if NUM_POINT_LIGHTS
 	for(int i = 0; i < numLights; i++){
-		lighting += CalculatePointLight(/*pointLights[i]*/lights[i], fragNorm, vertPos, viewDir);
+		lighting += CalculatePointLight(lights[i], fragNorm, vertPos, viewDir);
 	}
-//#endif
-
-	//Falling back to what ever the diffuse is
-//#if NUM_POINT_LIGHTS == 0 && NUM_DIR_LIGHTS == 0
-//	lighting = vec3(texture(material.diffuse, vertTexCoord));
-//#endif
 
 	fragmentColour = vec4(lighting, 1.0);
 };
