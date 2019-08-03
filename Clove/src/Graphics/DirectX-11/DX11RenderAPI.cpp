@@ -24,6 +24,7 @@ namespace clv::gfx{
 			d3dDevice = dxCon->getDevice();
 			d3dContext = dxCon->getContext();
 			defaultRenderTarget = dxCon->getTarget();
+			currentRenderTarget = defaultRenderTarget;
 			dsv = dxCon->getDSV();
 
 			DX11_INFO_PROVIDER;
