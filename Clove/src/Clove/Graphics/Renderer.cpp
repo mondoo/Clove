@@ -8,6 +8,8 @@
 #include "Clove/Graphics/Bindables/Shader.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
 #include "Clove/Graphics/RenderTarget.hpp"
+#include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 
 namespace clv::gfx{
 	void MeshRenderData::bind() const{

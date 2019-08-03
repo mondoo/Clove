@@ -2,6 +2,7 @@
 #include "TestLayer.hpp"
 
 #include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Clove/ECS/Manager.hpp"
 #include "Clove/ECS/3D/Components/RenderableComponent.hpp"
 #include "Clove/ECS/2D/Components/RenderableComponent.hpp"
