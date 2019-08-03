@@ -8,10 +8,6 @@
 #include <sstream>
 
 namespace clv::gfx{
-	GL4Shader::GL4Shader()
-		: programID(glCreateProgram()){
-	}
-
 	GL4Shader::GL4Shader(GL4Shader&& other) noexcept = default;
 
 	GL4Shader& GL4Shader::operator=(GL4Shader&& other) noexcept = default;
@@ -20,54 +16,47 @@ namespace clv::gfx{
 		glDeleteProgram(programID);
 	}
 
+	GL4Shader::GL4Shader(ShaderStyle style)
+		: programID(glCreateProgram()){
+		initialise(style);
+	}
+
 	void GL4Shader::bind(){
 		glUseProgram(programID);
 	}
 
-	void GL4Shader::attachShader(ShaderType type){
-		unsigned int gltype = 0;
-		switch(type){
-			case ShaderType::Vertex:
-			case ShaderType::Vertex2D:
-			case ShaderType::VertexFB:
-				gltype = GL_VERTEX_SHADER;
+	void GL4Shader::initialise(ShaderStyle style){
+		unsigned int vertexID = 0;
+		unsigned int pixelID = 0;
+		
+		switch(style){
+			case ShaderStyle::Lit:
+				{
+					std::string vertexSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl");
+					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
+
+					std::string pixelSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl");
+					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+				}
 				break;
-			case ShaderType::Pixel:
-			case ShaderType::Pixel2D:
-			case ShaderType::PixelFB:
-				gltype = GL_FRAGMENT_SHADER;
-				break;
-		}
+			case ShaderStyle::Unlit:
+				{
+					std::string vertexSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl");
+					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
 
-		CLV_ASSERT(gltype != 0, "Shader type not set!");
-
-		std::string shaderSource = parseShader(getPathForShader(type));
-		unsigned int shaderID = compileShader(gltype, shaderSource);
-
-		glAttachShader(programID, shaderID);
-		glLinkProgram(programID);
-		glValidateProgram(programID);
-		glDeleteShader(shaderID);
-
-		//Would have something here just to set up the points on the textures depending on shader type
-	}
-
-	std::string GL4Shader::getPathForShader(ShaderType shader){
-		switch(shader){
-			case ShaderType::Vertex:
-				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-vs.glsl";
+					std::string pixelSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl");
+					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+				}
 				break;
 
-			case ShaderType::Pixel:
-				return "../Clove/src/Graphics/OpenGL-4/Shaders/Default-ps.glsl";
-				break;
+			case ShaderStyle::_2D:
+				{
+					std::string vertexSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl");
+					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
 
-			case ShaderType::Vertex2D:
-				return "../Clove/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl";
-				break;
-
-			case ShaderType::Pixel2D:
-				return "../Clove/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl";
+					std::string pixelSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl");
+					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+				}
 				break;
 
 			case ShaderType::VertexFB:
@@ -80,9 +69,20 @@ namespace clv::gfx{
 
 			default:
 				CLV_ASSERT(false, "Unknown type! {0}", __func__);
-				return std::string();
 				break;
 		}
+
+		CLV_ASSERT(vertexID != 0 && pixelID != 0, "Pixel or vertex shader not set!");
+
+		glAttachShader(programID, vertexID);
+		glLinkProgram(programID);
+		glValidateProgram(programID);
+		glDeleteShader(vertexID);
+
+		glAttachShader(programID, pixelID);
+		glLinkProgram(programID);
+		glValidateProgram(programID);
+		glDeleteShader(pixelID);
 	}
 
 	std::string GL4Shader::parseShader(const std::string& filepath){

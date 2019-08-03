@@ -22,7 +22,7 @@ namespace clv::ecs::d3{
 		float linear = 0.0014f;
 		float quadratic = 0.000007f;
 
-		gfx::LightData lightData;
+		gfx::PointLightData lightData;
 
 		//FUNCTIONS
 	public:

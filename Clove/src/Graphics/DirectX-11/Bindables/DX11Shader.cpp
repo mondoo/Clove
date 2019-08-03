@@ -10,8 +10,6 @@
 #include <d3dcompiler.h>
 
 namespace clv::gfx{
-	DX11Shader::DX11Shader() = default;
-
 	DX11Shader::DX11Shader(DX11Shader&& other) noexcept{
 		shaders = std::move(other.shaders);
 		vertexShader = other.vertexShader;
@@ -26,34 +24,51 @@ namespace clv::gfx{
 
 	DX11Shader::~DX11Shader() = default;
 
+	DX11Shader::DX11Shader(ShaderStyle style){
+		initialise(style);
+	}
+
 	void DX11Shader::bind(){
 		for(const auto& [key, shader] : shaders){
 			shader->bind();
 		}
 	}
 
-	void DX11Shader::attachShader(ShaderType type){
-		switch(type){
-			case ShaderType::Vertex:
+	DX11VertexShader& DX11Shader::getVertexShader(){
+		CLV_ASSERT(vertexShader != nullptr, "No vertex shader attached!");
+		return *vertexShader;
+	}
+
+	void DX11Shader::initialise(ShaderStyle style){
+		switch(style){
+			case ShaderStyle::Lit:
 				{
-					auto vs = std::make_unique<DX11VertexShader>(L"Default-vs.cso");
+					auto vs = std::make_unique<DX11VertexShader>(L"Lit-vs.cso");
 					vertexShader = vs.get();
-					shaders[type] = std::move(vs);
+
+					shaders[ShaderType::Vertex] = std::move(vs);
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"Lit-ps.cso");
 				}
 				break;
-			case ShaderType::Pixel:
-				shaders[type] = std::make_unique<DX11PixelShader>(L"Default-ps.cso");
+
+			case ShaderStyle::Unlit:
+				{
+					auto vs = std::make_unique<DX11VertexShader>(L"Unlit-vs.cso");
+					vertexShader = vs.get();
+
+					shaders[ShaderType::Vertex] = std::move(vs);
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"Unlit-ps.cso");
+				}
 				break;
 
-			case ShaderType::Vertex2D:
+			case ShaderStyle::_2D:
 				{
 					auto vs = std::make_unique<DX11VertexShader>(L"2D-vs.cso");
 					vertexShader = vs.get();
-					shaders[type] = std::move(vs);
+
+					shaders[ShaderType::Vertex] = std::move(vs);
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"2D-ps.cso");
 				}
-				break;
-			case ShaderType::Pixel2D:
-				shaders[type] = std::make_unique<DX11PixelShader>(L"2D-ps.cso");
 				break;
 
 			case ShaderType::VertexFB:
@@ -68,14 +83,9 @@ namespace clv::gfx{
 				break;
 
 			default:
-				CLV_ASSERT(false, "Unknown type! " __FUNCTION__);
+				CLV_ASSERT(false, "Unknown type! {0}", __func__);
 				break;
 		}
-	}
-
-	DX11VertexShader& DX11Shader::getVertexShader(){
-		CLV_ASSERT(vertexShader != nullptr, "No vertex shader attached!");
-		return *vertexShader;
 	}
 
 	DX11VertexShader::DX11VertexShader(DX11VertexShader&& other) noexcept = default;

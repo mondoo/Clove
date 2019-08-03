@@ -9,18 +9,14 @@ namespace clv::gfx{
 	#endif
 	};
 
-	//TODO: These need adjusting. Also probably need a different way of doing this because the SBO uses this
 	enum class ShaderType{
 		Vertex,
 		Pixel,
-		Vertex2D,
-		Pixel2D,
-		VertexFB,
-		PixelFB
 	};
 
-	enum class TextureUsage{
-		Default,
-		RenderTarget
+	enum class ShaderStyle{
+		Lit,
+		Unlit,
+		_2D
 	};
 }

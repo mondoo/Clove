@@ -25,11 +25,11 @@ void GameLayer::onAttach(){
 	cameraEntity.getComponent<clv::ecs::d3::TransformComponent>()->setLocalPosition({ -5.0f, 0.0f, 0.0f });
 
 	sphereEntity.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/sphere.obj");
-	sphereEntity.getComponent<clv::ecs::d3::RenderableComponent>()->setDiffuseTexture("res/Textures/container2.png");
+	sphereEntity.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
 	//sphereEntity.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
 	tempCube.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
-	tempCube.getComponent<clv::ecs::d3::RenderableComponent>()->setDiffuseTexture("res/Textures/container2.png");
+	tempCube.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
 }
 
 void GameLayer::onDetach(){

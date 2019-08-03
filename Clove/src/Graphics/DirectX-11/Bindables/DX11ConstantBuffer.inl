@@ -7,16 +7,16 @@
 
 namespace clv::gfx{
 	template<typename T>
-	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(DX11ConstantBuffer&& other) noexcept = default;
+	DX11ConstantBuffer<T>::DX11ConstantBuffer(DX11ConstantBuffer&& other) noexcept = default;
 
 	template<typename T>
-	inline DX11ConstantBuffer<T>& DX11ConstantBuffer<T>::operator=(DX11ConstantBuffer&& other) noexcept = default;
+	DX11ConstantBuffer<T>& DX11ConstantBuffer<T>::operator=(DX11ConstantBuffer&& other) noexcept = default;
 
 	template<typename T>
-	inline DX11ConstantBuffer<T>::~DX11ConstantBuffer() = default;
+	DX11ConstantBuffer<T>::~DX11ConstantBuffer() = default;
 
 	template<typename T>
-	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint)
+	DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint)
 		: bindingPoint(bindingPoint){
 
 		D3D11_BUFFER_DESC cbd = { };
@@ -32,7 +32,7 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	inline DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint, const T& data)
+	DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint, const T& data)
 		: bindingPoint(bindingPoint){
 
 		D3D11_BUFFER_DESC cbd = { };
@@ -51,7 +51,7 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	inline void DX11ConstantBuffer<T>::update(const T& data){
+	void DX11ConstantBuffer<T>::update(const T& data){
 
 		D3D11_MAPPED_SUBRESOURCE msr = { };
 		DX11_INFO_PROVIDER;
@@ -67,12 +67,12 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	inline void DX11VertexConstantBuffer<T>::bind(){
+	void DX11VertexConstantBuffer<T>::bind(){
 		DX11RenderAPI::getContext().VSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
 	}
 
 	template<typename T>
-	inline void DX11PixelConstantBuffer<T>::bind(){
+	void DX11PixelConstantBuffer<T>::bind(){
 		DX11RenderAPI::getContext().PSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
 	}
 }

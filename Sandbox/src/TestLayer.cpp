@@ -32,19 +32,20 @@ void TestLayer::onAttach(){
 	sprtEnt2 = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
 
 	lght1 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
+	lght2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
 
 	cam = clv::Application::get().getManager().createEntity<clv::ecs::d3::CameraComponent, clv::ecs::d3::TransformComponent>();
 	
 	ent1.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
-	ent1.getComponent<clv::ecs::d3::RenderableComponent>()->setDiffuseTexture("res/Textures/container2.png");
+	ent1.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
 	ent1.getComponent<clv::ecs::d3::RenderableComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
 	ent2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
-	ent2.getComponent<clv::ecs::d3::RenderableComponent>()->setDiffuseTexture("res/Textures/container2.png");
+	ent2.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
 	ent2.getComponent<clv::ecs::d3::RenderableComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
 	ent3.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
-	ent3.getComponent<clv::ecs::d3::RenderableComponent>()->setDiffuseTexture("res/Textures/container2.png");
+	ent3.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
 	ent3.getComponent<clv::ecs::d3::RenderableComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
 	ent1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ 0.0f, 0.0f, 0.0f });
@@ -64,17 +65,23 @@ void TestLayer::onAttach(){
 	clv::gfx::Renderer::setRenderTarget(renderTarget);
 
 	sprtEnt1.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture("res/Textures/Zombie-32x32.png");
-	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(32.0f, 32.0f));
+	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 
 	sprtEnt2.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture("res/Textures/Zombie-32x32.png");
-	sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 1.0f));
+	sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 2.0f));
+	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->addChild(sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>());
 
 	lght1.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
 	lght1.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
-	lght1.getComponent<clv::ecs::d3::RenderableComponent>()->setDiffuseTexture("res/Textures/container2.png");
+	lght1.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
 	lght1.getComponent<clv::ecs::d3::RenderableComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
+
+	lght2.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
+	lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
+	lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
+	lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 }
 
 void TestLayer::onDetach(){
@@ -131,7 +138,8 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 
 	ent1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta) * radius, 0.0f, 0.0f });
 
-	lght1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta * 1.5f) * radius * 2.0f, 2.0f, sin(rotDelta * 1.5f) * radius * 2.0f });
+	lght1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta * 1.5f) * radius * 2.0f, 0.0f, sin(rotDelta * 1.5f) * radius * 2.0f });
+	lght2.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta) * radius * 2.0f, sin(rotDelta) * radius * 2.0f, 0.0f });
 
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setPosition(clv::math::Vector2f(cos(rotDelta) * radius * 5.0f, 0.0f));
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setRotation(rotDelta);

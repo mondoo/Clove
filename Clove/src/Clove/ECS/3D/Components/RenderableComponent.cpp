@@ -48,9 +48,7 @@ namespace clv::ecs::d3{
 		}
 
 		//Shader
-		auto shader = gfx::BindableFactory::createShader();
-		shader->attachShader(gfx::ShaderType::Vertex);
-		shader->attachShader(gfx::ShaderType::Pixel);
+		auto shader = gfx::BindableFactory::createShader(gfx::ShaderStyle::Lit);
 		shader->bind();
 
 		//VB
@@ -62,8 +60,8 @@ namespace clv::ecs::d3{
 		submissionData.shader = std::move(shader);
 	}
 
-	void RenderableComponent::setDiffuseTexture(const std::string& path){
-		submissionData.diffTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Diffuse);
+	void RenderableComponent::setAlbedoTexture(const std::string& path){
+		submissionData.diffTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Albedo);
 	}
 
 	void RenderableComponent::setSpecularTexture(const std::string& path){
