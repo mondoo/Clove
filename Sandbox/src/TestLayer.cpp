@@ -52,10 +52,11 @@ void TestLayer::onAttach(){
 	//clv::Application::get().getManager().destroyEntity(ent2.getID());
 
 	sprtEnt1.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture("res/Textures/Zombie-32x32.png");
-	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(32.0f, 32.0f));
+	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 
 	sprtEnt2.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture("res/Textures/Zombie-32x32.png");
-	sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 1.0f));
+	sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 2.0f));
+	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->addChild(sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>());
 
