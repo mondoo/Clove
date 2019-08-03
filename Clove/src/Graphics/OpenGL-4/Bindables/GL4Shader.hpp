@@ -14,19 +14,19 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		GL4Shader();
+		GL4Shader() = delete;
 		GL4Shader(const GL4Shader& other) = delete;
 		GL4Shader(GL4Shader&& other) noexcept;
 		GL4Shader& operator=(const GL4Shader& other) = delete;
 		GL4Shader& operator=(GL4Shader&& other) noexcept;
 		~GL4Shader();
 
+		GL4Shader(ShaderStyle style);
+
 		virtual void bind() override;
 
-		virtual void attachShader(ShaderType type) override;
-
 	private:
-		std::string getPathForShader(ShaderType shader);
+		void initialise(ShaderStyle style);
 
 		std::string parseShader(const std::string& filepath);
 		unsigned int compileShader(unsigned int type, const std::string& source);

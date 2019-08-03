@@ -4,7 +4,7 @@ in vec2 vertTexCoord;
 in vec3 vertPos;
 in vec3 vertNormal;
 
-layout(binding = 1) uniform sampler2D diffuseSampler; //the diffuse map is basically the texture of our object
+layout(binding = 1) uniform sampler2D albedoSampler;
 layout(binding = 2) uniform sampler2D specularSampler;
 
 layout(std140, binding = 4) uniform Material{
@@ -43,24 +43,9 @@ struct SpotLight{
 	float outerCutOff;
 };
 
-#if NUM_DIR_LIGHTS
-uniform DirectionalLight directionLights[NUM_DIR_LIGHTS];
-#endif
-
-#if NUM_POINT_LIGHTS
-//uniform PointLight pointLights[NUM_POINT_LIGHTS];
-#endif
-
 layout (std140, binding = 1) uniform PointLightData{
-	vec3 position;
-   
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-
-	float constant;
-    float linear;
-    float quadratic;
+	int numLights;
+	PointLight lights[10]; //10 max for now
 };
 
 layout (std140, binding = 2) uniform ViewData{
@@ -79,31 +64,13 @@ void main(){
 
 	vec3 lighting;
 
-#if NUM_DIR_LIGHTS
-	for(int i = 0; i < NUM_DIR_LIGHTS; i++){
-		lighting += CalculateDirectionalLighting(directionLights[i], fragNorm, viewDir);
+//	for(int i = 0; i < NUM_DIR_LIGHTS; i++){
+//		lighting += CalculateDirectionalLighting(directionLights[i], fragNorm, viewDir);
+//	}
+
+	for(int i = 0; i < numLights; i++){
+		lighting += CalculatePointLight(lights[i], fragNorm, vertPos, viewDir);
 	}
-#endif
-
-	PointLight plight;
-	plight.position = position;
-	plight.ambient = ambient;
-	plight.diffuse = diffuse;
-	plight.specular = specular;
-	plight.constant = constant;
-	plight.linear = linear;
-	plight.quadratic = quadratic;
-
-//#if NUM_POINT_LIGHTS
-	//for(int i = 0; i < NUM_POINT_LIGHTS; i++){
-		lighting += CalculatePointLight(/*pointLights[i]*/plight, fragNorm, vertPos, viewDir);
-	//}
-//#endif
-
-	//Falling back to what ever the diffuse is
-//#if NUM_POINT_LIGHTS == 0 && NUM_DIR_LIGHTS == 0
-//	lighting = vec3(texture(material.diffuse, vertTexCoord));
-//#endif
 
 	fragmentColour = vec4(lighting, 1.0);
 };
@@ -112,11 +79,11 @@ vec3 CalculateDirectionalLighting(DirectionalLight light, vec3 normal, vec3 view
 	vec3 lightDir			= normalize(-light.direction); //vec pointing away from light source
 
 	//Ambient
-	vec3 ambient			= light.ambient * vec3(texture(diffuseSampler, vertTexCoord));
+	vec3 ambient			= light.ambient * vec3(texture(albedoSampler, vertTexCoord));
 	
 	//Diffuse
 	float diff				= max(dot(normal, lightDir), 0.0);
-	vec3 diffuse			= light.diffuse * diff * vec3(texture(diffuseSampler, vertTexCoord));
+	vec3 diffuse			= light.diffuse * diff * vec3(texture(albedoSampler, vertTexCoord));
 
 	//Specular
 	vec3 reflectDirection	= reflect(-lightDir, normal);
@@ -130,11 +97,11 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	vec3 lightDir			= normalize(light.position - fragPos); //vec pointing towards light source
 
 	//Ambient
-	vec3 ambient			= light.ambient * vec3(texture(diffuseSampler, vertTexCoord));
+	vec3 ambient			= light.ambient * vec3(texture(albedoSampler, vertTexCoord));
 	
 	//Diffuse
 	float diff				= max(dot(normal, lightDir), 0.0);
-	vec3 diffuse			= light.diffuse * diff * vec3(texture(diffuseSampler, vertTexCoord));
+	vec3 diffuse			= light.diffuse * diff * vec3(texture(albedoSampler, vertTexCoord));
 
 	//Specular
 	vec3 reflectDirection	= reflect(-lightDir, normal);

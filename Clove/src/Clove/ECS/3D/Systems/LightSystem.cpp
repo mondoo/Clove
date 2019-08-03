@@ -19,7 +19,7 @@ namespace clv::ecs::d3{
 
 			light->lightData.position = transform->getPosition();
 
-			gfx::Renderer::submitLight(light->lightData);
+			gfx::Renderer::submitPointLight(light->lightData);
 		}
 	}
 }

@@ -14,6 +14,6 @@ namespace clv::ecs::d2{
 	RenderableComponent::~RenderableComponent() = default;
 
 	void RenderableComponent::setTexture(const std::string& path){
-		submissionData.texture = gfx::BindableFactory::createTexture(path, gfx::TBP_Sprite);
+		submissionData.texture = gfx::BindableFactory::createTexture(path, gfx::TBP_Albedo);
 	}
 }

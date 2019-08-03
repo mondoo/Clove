@@ -48,14 +48,14 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::shared_ptr<Shader> createShader(){
+	std::shared_ptr<Shader> createShader(ShaderStyle style){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
-				return std::make_shared<GL4Shader>();
+				return std::make_shared<GL4Shader>(style);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_shared<DX11Shader>();
+				return std::make_shared<DX11Shader>(style);
 			#endif
 
 			default:

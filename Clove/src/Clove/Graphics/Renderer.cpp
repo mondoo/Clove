@@ -30,7 +30,8 @@ namespace clv::gfx{
 	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO;
 	std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> Renderer::viewPosSBO;
 
-	std::shared_ptr<gfx::ShaderBufferObject<LightData>> Renderer::lightDataSBO;
+	std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> Renderer::lightDataSBO;
+	PointLightShaderData Renderer::currentLightInfo;
 
 	std::vector<MeshRenderData> Renderer::meshSubmissionData;
 	std::vector<SpriteRenderData> Renderer::spriteSubmissionData;
@@ -49,7 +50,7 @@ namespace clv::gfx{
 		viewDataSBO = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderType::Vertex, gfx::BBP_CameraMatrices);
 		viewPosSBO = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderType::Pixel, gfx::BBP_ViewData);
 		
-		lightDataSBO = gfx::BindableFactory::createShaderBufferObject<LightData>(gfx::ShaderType::Pixel, gfx::BBP_PointLightData);
+		lightDataSBO = gfx::BindableFactory::createShaderBufferObject<PointLightShaderData>(gfx::ShaderType::Pixel, gfx::BBP_PointLightData);
 
 		vertSBO->bind();
 		materialSBO->bind();
@@ -66,9 +67,7 @@ namespace clv::gfx{
 
 		//QUAD STUFF
 		//Shader
-		spriteShader = gfx::BindableFactory::createShader();
-		spriteShader->attachShader(gfx::ShaderType::Vertex2D);
-		spriteShader->attachShader(gfx::ShaderType::Pixel2D);
+		spriteShader = gfx::BindableFactory::createShader(ShaderStyle::_2D);
 
 		//VB
 		gfx::VertexLayout layout;
@@ -96,10 +95,12 @@ namespace clv::gfx{
 	}
 
 	void Renderer::beginScene(){
-		
+		currentLightInfo.numLights = 0;
 	}
 
 	void Renderer::endScene(){
+		lightDataSBO->update(currentLightInfo);
+
 		//Mesh
 		RenderCommand::setDepthBuffer(true);
 
@@ -141,7 +142,8 @@ namespace clv::gfx{
 		viewPosSBO->update({ data.position });
 	}
 
-	void Renderer::submitLight(const LightData& data){
-		lightDataSBO->update(data);
+	void Renderer::submitPointLight(const PointLightData& data){
+		//lightDataSBO->update(data);
+		currentLightInfo.lights[currentLightInfo.numLights++] = data;
 	}
 }

@@ -4,9 +4,8 @@
 
 namespace clv::gfx{
 	enum TextureBindingPoint{
-		TBP_Diffuse		= 1u,
+		TBP_Albedo		= 1u,
 		TBP_Specular	= 2u,
-		TBP_Sprite		= 3u,
 	};
 
 	class Texture : public Bindable{

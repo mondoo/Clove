@@ -26,7 +26,7 @@ namespace clv::ecs::d3{
 
 		void setMesh(const std::string& filePath);
 
-		void setDiffuseTexture(const std::string& path);
+		void setAlbedoTexture(const std::string& path);
 		void setSpecularTexture(const std::string& path);
 	};
 }

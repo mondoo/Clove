@@ -56,7 +56,7 @@ namespace clv::gfx{
 		math::Matrix4f projection;
 	};
 
-	struct LightData{
+	struct PointLightData{
 		alignas(16) math::Vector3f position;
 
 		alignas(16) math::Vector3f ambient;
@@ -66,6 +66,10 @@ namespace clv::gfx{
 		/*alignas(16)*/ float constant;
 		/*alignas(16)*/ float linear;
 		/*alignas(16)*/ float quadratic;
+	};
+	struct PointLightShaderData{
+		int numLights = 0;
+		PointLightData lights[10];
 	};
 
 	class Renderer{
@@ -78,7 +82,8 @@ namespace clv::gfx{
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewData>> viewDataSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> viewPosSBO;
 
-		static std::shared_ptr<gfx::ShaderBufferObject<LightData>> lightDataSBO;
+		static std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> lightDataSBO;
+		static PointLightShaderData currentLightInfo;
 
 		static std::vector<MeshRenderData> meshSubmissionData;
 		static std::vector<SpriteRenderData> spriteSubmissionData;
@@ -99,6 +104,6 @@ namespace clv::gfx{
 		static void submitMesh(const MeshRenderData& data);
 		static void submitSprite(const SpriteRenderData& data);
 		static void setCamera(const CameraRenderData& data);
-		static void submitLight(const LightData& data);
+		static void submitPointLight(const PointLightData& data);
 	};
 }
