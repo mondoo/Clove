@@ -43,10 +43,6 @@ namespace clv::gfx{
 	math::Matrix4f Renderer::spriteProj = {};
 
 	std::shared_ptr<RenderTarget> Renderer::renderTarget;
-	std::shared_ptr<VertexBuffer> Renderer::renderTargetVB;
-	std::shared_ptr<IndexBuffer> Renderer::renderTargetIB;
-	std::shared_ptr<Shader> Renderer::renderTargetShader;
-	std::shared_ptr<Texture> Renderer::renderTargetTexture;
 
 	void Renderer::initialise(){
 		vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
@@ -100,31 +96,6 @@ namespace clv::gfx{
 		const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
 
 		spriteProj = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
-
-		//FRAME BUFFER STUFF
-		//Shader
-		renderTargetShader = BindableFactory::createShader();
-		renderTargetShader->attachShader(ShaderType::VertexFB);
-		renderTargetShader->attachShader(ShaderType::PixelFB);
-
-		//VB
-		VertexLayout fblayout;
-		fblayout.add(VertexElementType::position2D).add(VertexElementType::texture2D);
-		VertexBufferData fbbufferData(std::move(fblayout));
-		fbbufferData.emplaceBack(math::Vector2f{-1.0f, -1.0f }, math::Vector2f{ 0.0f, 0.0f });
-		fbbufferData.emplaceBack(math::Vector2f{ 1.0f, -1.0f }, math::Vector2f{ 1.0f, 0.0f });
-		fbbufferData.emplaceBack(math::Vector2f{-1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
-		fbbufferData.emplaceBack(math::Vector2f{ 1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
-
-		renderTargetVB = BindableFactory::createVertexBuffer(fbbufferData, *renderTargetShader);
-
-		//IB
-		renderTargetIB = BindableFactory::createIndexBuffer(indices);
-
-		//Textures
-		renderTargetTexture = BindableFactory::createTexture(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight(), TextureUsage::RenderTarget, TBP_FrameBuffer);
-		
-		renderTarget = RenderTarget::createRenderTarget(*renderTargetTexture);
 	}
 
 	void Renderer::beginScene(){
@@ -132,10 +103,12 @@ namespace clv::gfx{
 	}
 
 	void Renderer::endScene(){
+		if(renderTarget){
+			RenderCommand::setRenderTarget(*renderTarget);
+			RenderCommand::clear(); //make sure it's clean
+		}
+
 		//MESH
-		//First pass
-		RenderCommand::setRenderTarget(*renderTarget);
-		RenderCommand::clear(); //make sure it's clean
 		RenderCommand::setDepthBuffer(true);
 
 		for(auto& data : meshSubmissionData){
@@ -146,18 +119,13 @@ namespace clv::gfx{
 
 		meshSubmissionData.clear();
 
-		//Second pass
-		RenderCommand::resetRenderTarget();
-		RenderCommand::setDepthBuffer(false);
-		
-		renderTargetVB->bind();
-		renderTargetIB->bind();
-		renderTargetShader->bind();
-		renderTargetTexture->bind();
-		
-		RenderCommand::drawIndexed(renderTargetIB->getIndexCount());
+		if(renderTarget){
+			RenderCommand::resetRenderTarget();
+		}
 
 		//SPRITE
+		RenderCommand::setDepthBuffer(false);
+
 		spriteVBBuffer->bind();
 		spriteIBBuffer->bind();
 		spriteShader->bind();
@@ -170,6 +138,10 @@ namespace clv::gfx{
 		}
 
 		spriteSubmissionData.clear();
+	}
+
+	void Renderer::setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget){
+		renderTarget = inRenderTarget;
 	}
 
 	void Renderer::submitMesh(const MeshRenderData& data){

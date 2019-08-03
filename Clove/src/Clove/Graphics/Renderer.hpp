@@ -90,15 +90,7 @@ namespace clv::gfx{
 		static std::shared_ptr<Shader> spriteShader;
 		static math::Matrix4f spriteProj;
 
-		//TODO:
-		//Before merging this how can we set a render target and manipulate it from client side?
-		//Try making a render of the current scene then putting it on a 2d sprite somewhere in the screen
-
 		static std::shared_ptr<RenderTarget> renderTarget;
-		static std::shared_ptr<VertexBuffer> renderTargetVB;
-		static std::shared_ptr<IndexBuffer> renderTargetIB;
-		static std::shared_ptr<Shader> renderTargetShader;
-		static std::shared_ptr<Texture> renderTargetTexture;
 
 		//FUNCTIONS
 	public:
@@ -106,6 +98,8 @@ namespace clv::gfx{
 
 		static void beginScene(); //How would I begin scene with the ecs?
 		static void endScene();
+
+		static void setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget);
 
 		static void submitMesh(const MeshRenderData& data);
 		static void submitSprite(const SpriteRenderData& data);
