@@ -57,7 +57,7 @@ void TestLayer::onAttach(){
 
 	//clv::Application::get().getManager().destroyEntity(ent2.getID());
 
-	auto rtTexture = clv::gfx::BindableFactory::createTexture(clv::Application::get().getWindow().getWidth(), clv::Application::get().getWindow().getHeight(), clv::gfx::TextureUsage::RenderTarget, clv::gfx::TBP_Sprite);
+	auto rtTexture = clv::gfx::BindableFactory::createTexture(clv::Application::get().getWindow().getWidth(), clv::Application::get().getWindow().getHeight(), clv::gfx::TextureUsage::RenderTarget, clv::gfx::TBP_Albedo);
 	rtEnt.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture(rtTexture);
 	rtEnt.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(clv::Application::get().getWindow().getWidth(), clv::Application::get().getWindow().getHeight()));
 

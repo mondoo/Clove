@@ -71,15 +71,14 @@ namespace clv::gfx{
 				}
 				break;
 
-			case ShaderType::VertexFB:
+			case ShaderStyle::RT:
 				{
 					auto vs = std::make_unique<DX11VertexShader>(L"RT-vs.cso");
 					vertexShader = vs.get();
-					shaders[type] = std::move(vs);
+					
+					shaders[ShaderType::Vertex] = std::move(vs);
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"RT-ps.cso");
 				}
-				break;
-			case ShaderType::PixelFB:
-				shaders[type] = std::make_unique<DX11PixelShader>(L"RT-ps.cso");
 				break;
 
 			default:

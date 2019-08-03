@@ -59,12 +59,14 @@ namespace clv::gfx{
 				}
 				break;
 
-			case ShaderType::VertexFB:
-				return "../Clove/src/Graphics/OpenGL-4/Shaders/RT-vs.glsl";
-				break;
+			case ShaderStyle::RT:
+				{
+					std::string vertexSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/RT-vs.glsl");
+					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
 
-			case ShaderType::PixelFB:
-				return "../Clove/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl";
+					std::string pixelSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl");
+					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+				}
 				break;
 
 			default:

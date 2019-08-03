@@ -17,6 +17,12 @@ namespace clv::gfx{
 	enum class ShaderStyle{
 		Lit,
 		Unlit,
-		_2D
+		_2D,
+		RT
+	};
+
+	enum class TextureUsage{
+		Default,
+		RenderTarget
 	};
 }
