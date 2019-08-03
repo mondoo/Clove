@@ -100,6 +100,7 @@ namespace clv::gfx{
 		static void endScene();
 
 		static void setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget);
+		static void removeRenderTarget();
 
 		static void submitMesh(const MeshRenderData& data);
 		static void submitSprite(const SpriteRenderData& data);

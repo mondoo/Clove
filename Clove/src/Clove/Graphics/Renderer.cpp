@@ -146,6 +146,11 @@ namespace clv::gfx{
 		renderTarget = inRenderTarget;
 	}
 
+	void Renderer::removeRenderTarget(){
+		renderTarget.reset();
+		RenderCommand::resetRenderTarget();
+	}
+
 	void Renderer::submitMesh(const MeshRenderData& data){
 		meshSubmissionData.emplace_back(data);
 	}
