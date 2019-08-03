@@ -20,7 +20,8 @@ namespace clv::gfx{
 		static Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice;			//Device creates
 		static Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext;	//Context issues commands
 		
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> target;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> defaultRenderTarget;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> currentRenderTarget;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> dsv;
 
 	#if CLV_DEBUG
@@ -46,6 +47,8 @@ namespace clv::gfx{
 		virtual void setClearColour(const math::Vector4f& colour) override;
 		virtual void setDepthBuffer(bool enabled) override;
 		virtual void setBlendState(bool enabled) override;
+		virtual void setRenderTarget(RenderTarget& renderTarget) override;
+		virtual void resetRenderTarget() override;
 
 		static ID3D11Device& getDevice();
 		static ID3D11DeviceContext& getContext();
@@ -53,5 +56,8 @@ namespace clv::gfx{
 	#if CLV_DEBUG
 		static DXGIInfoManager& getInfoManager();
 	#endif
+
+	private:
+		void setRenderTargetToCurrent();
 	};
 }

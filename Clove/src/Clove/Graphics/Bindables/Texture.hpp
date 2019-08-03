@@ -2,10 +2,13 @@
 
 #include "Clove/Graphics/Bindable.hpp"
 
+#include "Clove/Graphics/GraphicsTypes.hpp"
+
 namespace clv::gfx{
 	enum TextureBindingPoint{
 		TBP_Albedo		= 1u,
 		TBP_Specular	= 2u,
+		TBP_None        = 3u
 	};
 
 	class Texture : public Bindable{
@@ -20,5 +23,7 @@ namespace clv::gfx{
 
 		virtual int getWidth() const = 0;
 		virtual int getHeight() const = 0;
+
+		virtual TextureUsage getUsageType() const = 0;
 	};
 }

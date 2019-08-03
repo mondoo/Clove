@@ -27,12 +27,29 @@ namespace clv::gfx{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer);
+		createTexture(TextureUsage::Default, localBuffer);
+
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		if(localBuffer){
 			stbi_image_free(localBuffer);
 		}
+	}
+
+	GL4Texture::GL4Texture(int width, int height, TextureUsage usageType, unsigned int bindingPoint)
+		: width(width)
+		, height(height)
+		, usageType(usageType)
+		, bindingPoint(bindingPoint){
+		glGenTextures(1, &rendererID);
+		glBindTexture(GL_TEXTURE_2D, rendererID);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		createTexture(usageType, nullptr);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void GL4Texture::bind(){
@@ -46,5 +63,29 @@ namespace clv::gfx{
 
 	int GL4Texture::getHeight() const{
 		return height;
+	}
+
+	TextureUsage GL4Texture::getUsageType() const{
+		return usageType;
+	}
+
+	const unsigned int GL4Texture::getRenderID() const{
+		return rendererID;
+	}
+
+	void GL4Texture::createTexture(TextureUsage usage, void* pixels){
+		switch(usage){
+			case TextureUsage::Default:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+				break;
+
+			case TextureUsage::RenderTarget:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+				break;
+
+			default:
+				CLV_ASSERT(false, "{0}: Unhandled texture type", __func__);
+				break;
+		}
 	}
 }

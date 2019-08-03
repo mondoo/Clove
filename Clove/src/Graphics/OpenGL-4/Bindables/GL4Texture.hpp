@@ -7,13 +7,15 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		unsigned int rendererID = 0;
-		std::string filePath;
+
+		std::string filePath = "";
+		TextureUsage usageType = TextureUsage::Default;
 
 		int width = 0;
 		int height = 0;
 		int BPP = 0;
 
-		unsigned int bindingPoint = 0;
+		unsigned int bindingPoint = TBP_None;
 
 		//FUNCTIONS
 	public:
@@ -25,10 +27,18 @@ namespace clv::gfx{
 		virtual ~GL4Texture();
 
 		GL4Texture(const std::string& filePath, unsigned int bindingPoint);
+		GL4Texture(int width, int height, TextureUsage usageType, unsigned int bindingPoint);
 
 		virtual void bind() override;
 
 		virtual int getWidth() const override;
 		virtual int getHeight() const override;
+
+		virtual TextureUsage getUsageType() const override;
+
+		const unsigned int getRenderID() const;
+
+	private:
+		void createTexture(TextureUsage usage, void* pixels);
 	};
 }

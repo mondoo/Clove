@@ -30,6 +30,14 @@ namespace clv::gfx{
 		renderAPI->setBlendState(enabled);
 	}
 
+	void RenderCommand::setRenderTarget(RenderTarget& renderTarget){
+		renderAPI->setRenderTarget(renderTarget);
+	}
+
+	void RenderCommand::resetRenderTarget(){
+		renderAPI->resetRenderTarget();
+	}
+
 	void RenderCommand::initialiseRenderAPI(const Context& context){
 		switch(context.getAPI()){
 			case API::OpenGL4:

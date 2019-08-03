@@ -1,0 +1,36 @@
+-should the context be agnostic of the api version?
+-should dxgi be represented as the context?
+
+-the problem with the rendering system (or more specifically the shaders)
+--not a whole lot of control. Has to have exactly one light and one texture
+---what do I do if I just want it to have a colour? or no lights? or 5 lights?
+---what if I want the object to be unlit?
+---what if I want a colour applied over the top?
+--set values on them is weird. it heavily uses cb and ubos but I have no idea how good that is
+
+
+-should the renderer really just have all of this const buffer data just there?
+-could this be what the 'material' does. Help choose which shader to use?
+--if we set the material to unlit then don't bother having the lighting shader
+--materials could help be that abstraction between what a shader does and how we want the object to look
+--One draw back is that it sounds like a material system is a lot of work. It needs to know what shader to use and what values it has etc.
+
+-I think a good start would be setting up multiple shaders for what I want to achieve and then take it from there
+
+-shader includes????
+--sounds like hlsl can just include other shaders like you can with c?
+--glsl is different but we have the 'program' that we can sttach things to
+
+-do i write shader chuncks? lit / 1 < lit etc.?  spot light chunk? and compile these together? 
+--could be based off of the scene data the renderer recieves
+
+-so like the meterial holds the params and perhaps what type of shader we want (metal? wood? unlit? lit?)
+-then the renderer will use the scene data to compile the appropriate shader or create one or w/e
+--this seems overly complex
+
+-seems like a lot of places are saying to use deferred shading
+
+
+NOTE:
+with rendering to textures GL also has renderbuffer objects that are good for just writing data to (to display later) in the tutorial I am following we bind the colour to a texture to pass to a shader and everything else on a render buffer.
+Is there a similar feature in DX or am i limited to textures?

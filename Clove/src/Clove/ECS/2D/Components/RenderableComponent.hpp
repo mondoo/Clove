@@ -4,6 +4,10 @@
 
 #include "Clove/Graphics/Renderer.hpp"
 
+namespace clv::gfx{
+	class Texture;
+}
+
 namespace clv::ecs::d2{
 	class RenderableComponent : public Component{
 		friend class RenderSystem;
@@ -25,6 +29,7 @@ namespace clv::ecs::d2{
 		virtual ~RenderableComponent();
 
 		void setTexture(const std::string& path);
+		void setTexture(const std::shared_ptr<gfx::Texture>& texture);
 	};
 }
 

@@ -3,7 +3,7 @@
 
 #include "Graphics/DirectX-11/DXContext.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
-#include "Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp"
+#include "Graphics/DirectX-11/DX11RenderTarget.hpp"
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -23,7 +23,8 @@ namespace clv::gfx{
 		if(const DXContext * dxCon = dynamic_cast<const DXContext*>(&context)){
 			d3dDevice = dxCon->getDevice();
 			d3dContext = dxCon->getContext();
-			target = dxCon->getTarget();
+			defaultRenderTarget = dxCon->getTarget();
+			currentRenderTarget = defaultRenderTarget;
 			dsv = dxCon->getDSV();
 
 			DX11_INFO_PROVIDER;
@@ -79,7 +80,7 @@ namespace clv::gfx{
 	}
 
 	void DX11RenderAPI::clear(){
-		d3dContext->ClearRenderTargetView(target.Get(), math::valuePtr(clearColour));
+		d3dContext->ClearRenderTargetView(currentRenderTarget.Get(), math::valuePtr(clearColour));
 		d3dContext->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
 	}
 
@@ -120,6 +121,17 @@ namespace clv::gfx{
 		d3dContext->OMSetBlendState(blendState.Get(), blendFactor, sampleMask);
 	}
 
+	void DX11RenderAPI::setRenderTarget(RenderTarget& renderTarget){
+		DX11RenderTarget& dxRenderTarget = static_cast<DX11RenderTarget&>(renderTarget);
+		currentRenderTarget = dxRenderTarget.getRenderTargetView();
+		setRenderTargetToCurrent();
+	}
+
+	void DX11RenderAPI::resetRenderTarget(){
+		currentRenderTarget = defaultRenderTarget;
+		setRenderTargetToCurrent();
+	}
+
 	ID3D11Device& DX11RenderAPI::getDevice(){
 		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null device");
 		return *d3dDevice.Get();
@@ -135,4 +147,8 @@ namespace clv::gfx{
 		return infoManager;
 	}
 #endif
+
+	void DX11RenderAPI::setRenderTargetToCurrent(){
+		d3dContext->OMSetRenderTargets(1u, currentRenderTarget.GetAddressOf(), dsv.Get());
+	}
 }

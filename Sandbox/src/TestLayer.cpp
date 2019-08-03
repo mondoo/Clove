@@ -2,6 +2,7 @@
 #include "TestLayer.hpp"
 
 #include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 #include "Clove/ECS/Manager.hpp"
 #include "Clove/ECS/3D/Components/RenderableComponent.hpp"
 #include "Clove/ECS/2D/Components/RenderableComponent.hpp"
@@ -12,6 +13,9 @@
 #include "Clove/Maths/Vector.hpp"
 #include "Clove/Input/Input.hpp"
 #include "Clove/Utils/DeltaTime.hpp"
+#include "Clove/Graphics/BindableFactory.hpp"
+#include "Clove/Graphics/Bindables/Texture.hpp"
+#include "Clove/Graphics/RenderTarget.hpp"
 
 TestLayer::TestLayer()
 	: Layer("Example Layer"){
@@ -21,6 +25,8 @@ void TestLayer::onAttach(){
 	ent1 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
 	ent2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
 	ent3 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
+
+	//rtEnt = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
 
 	sprtEnt1 = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
 	sprtEnt2 = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
@@ -50,6 +56,13 @@ void TestLayer::onAttach(){
 	ent2.getComponent<clv::ecs::d3::TransformComponent>()->addChild(ent3.getComponent<clv::ecs::d3::TransformComponent>());
 
 	//clv::Application::get().getManager().destroyEntity(ent2.getID());
+
+	/*auto rtTexture = clv::gfx::BindableFactory::createTexture(clv::Application::get().getWindow().getWidth(), clv::Application::get().getWindow().getHeight(), clv::gfx::TextureUsage::RenderTarget, clv::gfx::TBP_Albedo);
+	rtEnt.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture(rtTexture);
+	rtEnt.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(clv::Application::get().getWindow().getWidth() / 2, clv::Application::get().getWindow().getHeight() / 2));
+
+	auto renderTarget = clv::gfx::RenderTarget::createRenderTarget(*rtTexture);
+	clv::gfx::Renderer::setRenderTarget(renderTarget);*/
 
 	sprtEnt1.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture("res/Textures/Zombie-32x32.png");
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));

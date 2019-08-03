@@ -7,6 +7,9 @@
 #include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/Bindables/Shader.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
+#include "Clove/Graphics/RenderTarget.hpp"
+#include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 
 namespace clv::gfx{
 	void MeshRenderData::bind() const{
@@ -41,6 +44,8 @@ namespace clv::gfx{
 	std::shared_ptr<IndexBuffer> Renderer::spriteIBBuffer;
 	std::shared_ptr<Shader> Renderer::spriteShader;
 	math::Matrix4f Renderer::spriteProj = {};
+
+	std::shared_ptr<RenderTarget> Renderer::renderTarget;
 
 	void Renderer::initialise(){
 		vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
@@ -101,7 +106,12 @@ namespace clv::gfx{
 	void Renderer::endScene(){
 		lightDataSBO->update(currentLightInfo);
 
-		//Mesh
+		if(renderTarget){
+			RenderCommand::setRenderTarget(*renderTarget);
+			RenderCommand::clear(); //make sure it's clean
+		}
+
+		//MESH
 		RenderCommand::setDepthBuffer(true);
 
 		for(auto& data : meshSubmissionData){
@@ -112,7 +122,11 @@ namespace clv::gfx{
 
 		meshSubmissionData.clear();
 
-		//Sprite
+		if(renderTarget){
+			RenderCommand::resetRenderTarget();
+		}
+
+		//SPRITE
 		RenderCommand::setDepthBuffer(false);
 
 		spriteVBBuffer->bind();
@@ -127,6 +141,15 @@ namespace clv::gfx{
 		}
 
 		spriteSubmissionData.clear();
+	}
+
+	void Renderer::setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget){
+		renderTarget = inRenderTarget;
+	}
+
+	void Renderer::removeRenderTarget(){
+		renderTarget.reset();
+		RenderCommand::resetRenderTarget();
 	}
 
 	void Renderer::submitMesh(const MeshRenderData& data){

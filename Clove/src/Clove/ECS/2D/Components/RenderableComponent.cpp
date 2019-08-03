@@ -16,4 +16,8 @@ namespace clv::ecs::d2{
 	void RenderableComponent::setTexture(const std::string& path){
 		submissionData.texture = gfx::BindableFactory::createTexture(path, gfx::TBP_Albedo);
 	}
+
+	void RenderableComponent::setTexture(const std::shared_ptr<gfx::Texture>& texture){
+		submissionData.texture = texture;
+	}
 }

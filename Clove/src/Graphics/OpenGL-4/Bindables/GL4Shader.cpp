@@ -59,6 +59,16 @@ namespace clv::gfx{
 				}
 				break;
 
+			case ShaderStyle::RT:
+				{
+					std::string vertexSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/RT-vs.glsl");
+					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
+
+					std::string pixelSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl");
+					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+				}
+				break;
+
 			default:
 				CLV_ASSERT(false, "Unknown type! {0}", __func__);
 				break;

@@ -9,6 +9,7 @@ namespace clv::gfx{
 	class IndexBuffer;
 	class Shader;
 	class Texture;
+	class RenderTarget;
 
 	struct VertexData{
 		math::Matrix4f model;
@@ -94,12 +95,17 @@ namespace clv::gfx{
 		static std::shared_ptr<Shader> spriteShader;
 		static math::Matrix4f spriteProj;
 
+		static std::shared_ptr<RenderTarget> renderTarget;
+
 		//FUNCTIONS
 	public:
 		static void initialise();
 
 		static void beginScene(); //How would I begin scene with the ecs?
 		static void endScene();
+
+		static void setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget);
+		static void removeRenderTarget();
 
 		static void submitMesh(const MeshRenderData& data);
 		static void submitSprite(const SpriteRenderData& data);

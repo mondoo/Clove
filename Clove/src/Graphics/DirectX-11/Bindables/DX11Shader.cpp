@@ -71,6 +71,16 @@ namespace clv::gfx{
 				}
 				break;
 
+			case ShaderStyle::RT:
+				{
+					auto vs = std::make_unique<DX11VertexShader>(L"RT-vs.cso");
+					vertexShader = vs.get();
+					
+					shaders[ShaderType::Vertex] = std::move(vs);
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"RT-ps.cso");
+				}
+				break;
+
 			default:
 				CLV_ASSERT(false, "Unknown type! {0}", __func__);
 				break;

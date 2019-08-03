@@ -279,6 +279,7 @@ project "Sandbox"
 	includedirs{
 		"Clove/vendor/spdlog/include",
 
+		"%{includeDir.Glad}",
 		"%{includeDir.glm}",
 
 		"Clove/src"
