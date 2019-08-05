@@ -33,17 +33,6 @@ namespace clv::gfx{
 		alignas(16) math::Vector3f pos;
 	};
 
-	struct MeshRenderData{
-		math::Matrix4f modelData{}; //Set on shader in renderer????
-		std::shared_ptr<VertexBuffer> vertexBuffer;
-		std::shared_ptr<IndexBuffer> indexBuffer;
-		std::shared_ptr<Shader> shader;
-		std::shared_ptr<Texture> diffTexture;
-		std::shared_ptr<Texture> specTexture;
-
-		void bind() const;
-	};
-	
 	struct SpriteRenderData{
 		math::Matrix4f modelData{};
 		std::shared_ptr<Texture> texture;
@@ -86,7 +75,7 @@ namespace clv::gfx{
 		static std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> lightDataSBO;
 		static PointLightShaderData currentLightInfo;
 
-		static std::vector<MeshRenderData> meshSubmissionData;
+		//static std::vector<MeshRenderData> meshSubmissionData;
 		static std::vector<SpriteRenderData> spriteSubmissionData;
 		static CameraRenderData cameraSubmissionData;
 
@@ -111,5 +100,9 @@ namespace clv::gfx{
 		static void submitSprite(const SpriteRenderData& data);
 		static void setCamera(const CameraRenderData& data);
 		static void submitPointLight(const PointLightData& data);
+
+		//Better way to submit the data?
+		//-Have a drawable base?
+		//--The two components can inherit it or atleast the 3d one can
 	};
 }

@@ -12,16 +12,6 @@
 #include "Clove/Platform/Window.hpp"
 
 namespace clv::gfx{
-	void MeshRenderData::bind() const{
-		vertexBuffer->bind();
-		indexBuffer->bind();
-		shader->bind();
-		diffTexture->bind();
-		if(specTexture){ //Spec can be nullptr
-			specTexture->bind();
-		}
-	}
-
 	void SpriteRenderData::bind() const{
 		texture->bind();
 	}
@@ -36,7 +26,7 @@ namespace clv::gfx{
 	std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> Renderer::lightDataSBO;
 	PointLightShaderData Renderer::currentLightInfo;
 
-	std::vector<MeshRenderData> Renderer::meshSubmissionData;
+	//std::vector<MeshRenderData> Renderer::meshSubmissionData;
 	std::vector<SpriteRenderData> Renderer::spriteSubmissionData;
 	CameraRenderData Renderer::cameraSubmissionData;
 

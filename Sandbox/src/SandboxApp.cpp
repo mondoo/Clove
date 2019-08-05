@@ -6,8 +6,8 @@
 class SandBox : public clv::Application{
 public:
 	SandBox(){
-		//pushLayer(std::make_shared<TestLayer>());
-		pushLayer(std::make_shared<GameLayer>());
+		pushLayer(std::make_shared<TestLayer>());
+		//pushLayer(std::make_shared<GameLayer>());
 	}
 	~SandBox(){
 

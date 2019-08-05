@@ -19,13 +19,19 @@ namespace clv::ecs::d2{
 	RenderSystem::~RenderSystem() = default;
 
 	void RenderSystem::update(utl::DeltaTime deltaTime){
+		//Submit quad to be used for sprites?
+
 		for(auto& componentTuple : components){
 			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
 			RenderableComponent* renderable = std::get<RenderableComponent*>(componentTuple);
 
 			renderable->submissionData.modelData = transform->getWorldTransformMatrix();
 
+			//Do this part
+
 			gfx::Renderer::submitSprite(renderable->submissionData);
 		}
+
+		//Finished submitting sprite quads
 	}
 }
