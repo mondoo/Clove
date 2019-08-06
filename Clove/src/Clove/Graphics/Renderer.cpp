@@ -17,7 +17,7 @@ namespace clv::gfx{
 	}
 
 	std::shared_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertSBO;
-	std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
+	//std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
 	std::shared_ptr<gfx::ShaderBufferObject<SpriteShaderData>> Renderer::spriteSBO;
 
 	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO;
@@ -105,7 +105,7 @@ namespace clv::gfx{
 		RenderCommand::setDepthBuffer(true);
 
 		for(auto& data : meshSubmissionData){
-			vertSBO->update({ data.modelData, math::transpose(math::inverse(data.modelData)) });
+			vertSBO->update({ data.modelData, math::transpose(math::inverse(data.modelData)) }); //This'll probably be done in the render system
 			data.bind();
 			RenderCommand::drawIndexed(data.indexBuffer->getIndexCount());
 		}

@@ -16,9 +16,9 @@ namespace clv::gfx{
 		math::Matrix4f normalMatrix;
 	};
 
-	struct MaterialData{
+	/*struct MaterialData{
 		alignas(16) float sininess;
-	};
+	};*/
 
 	struct SpriteShaderData{
 		math::Matrix4f modelProjection;
@@ -66,7 +66,7 @@ namespace clv::gfx{
 		//VARIABLES
 	protected:
 		static std::shared_ptr<gfx::ShaderBufferObject<VertexData>> vertSBO;
-		static std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO;
+		//static std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<SpriteShaderData>> spriteSBO;
 
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewData>> viewDataSBO;

@@ -4,8 +4,8 @@
 #include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/Bindables/VertexBuffer.hpp"
 #include "Clove/Graphics/Bindables/IndexBuffer.hpp"
+#include "Clove/Graphics/Material.hpp"
 #include "Clove/Graphics/Bindables/Shader.hpp"
-#include "Clove/Graphics/Bindables/Texture.hpp"
 #include "Clove/Graphics/VertexLayout.hpp"
 #include "Clove/Utils/MeshLoader.hpp"
 
@@ -51,6 +51,17 @@ namespace clv::gfx{
 		shader = gfx::BindableFactory::createShader(gfx::ShaderStyle::Lit);
 		shader->bind();
 
+		//TODO: Need shader from material
+		//Or do i give the shader to the material?
+		//..
+		/*
+		Is there anyway I can seperate out the inputlayout from the vertex buffer? (and subsiquently the vertex arrays)
+		-The shader below is just for the input layout for the vertex buffer but I think this could be generated seperately
+		--This means the material could just bind it and we don't have to worry about giving it to the vertex buffer
+		-Might be difficult because they both need the same vertex buffer data (vb needs the actual data and the layout needs the layout info)
+		
+		*/
+
 		//VB
 		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *shader);
 
@@ -58,29 +69,10 @@ namespace clv::gfx{
 		indexBuffer = gfx::BindableFactory::createIndexBuffer(info.indices);
 	}
 
-	void Mesh::setAlbedoTexture(const std::string& path){
-		albedoTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Albedo);
-	}
-
-	void Mesh::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
-		albedoTexture = texture;
-	}
-
-	void Mesh::setSpecularTexture(const std::string& path){
-		specTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Specular);
-	}
-
-	void Mesh::setSpecularTexture(const std::shared_ptr<Texture>& texture){
-		specTexture = texture;
-	}
-
 	void Mesh::bind(){
 		vertexBuffer->bind();
 		indexBuffer->bind();
+		material->bind();
 		shader->bind();
-		albedoTexture->bind();
-		if(specTexture){
-			specTexture->bind();
-		}
 	}
 }
