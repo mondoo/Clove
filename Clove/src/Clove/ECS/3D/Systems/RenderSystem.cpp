@@ -20,6 +20,11 @@ namespace clv::ecs::d3{
 
 			renderable->submissionData.modelData = transform->getWorldTransformMatrix();
 
+			/*
+			this will end up like:
+			renderable->material->setData(BBP_ModelData, transform->getWorldTransformMatrix());
+			*/
+
 			gfx::Renderer::submitMesh(renderable->submissionData);
 		}
 	}

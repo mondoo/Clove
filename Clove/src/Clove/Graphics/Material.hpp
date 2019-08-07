@@ -2,6 +2,7 @@
 
 //#include "Clove/Graphics/MaterialData.hpp"
 #include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
+#include "Clove/Graphics/BindableFactory.hpp"
 
 namespace clv::gfx{
 	class Shader;
@@ -16,6 +17,7 @@ namespace clv::gfx{
 		//std::shared_ptr<Shader> shader;
 		std::shared_ptr<Texture> albedoTexture;
 		std::shared_ptr<Texture> specTexture;
+		std::unordered_map<BufferBindingPoint, std::shared_ptr<Bindable>> shaderData;
 
 		/*
 		holds data about a mesh looks (and maybe sprites?)
@@ -23,22 +25,6 @@ namespace clv::gfx{
 		-holds the sbos (or the BufferData class/struct that will replace)
 		-I think it should hold the shader but that might be difficult
 		*/
-
-		/*
-		How do I want to handle the data coming in?
-		-Was thinking of abstracting away behind some class. 
-		--it gives us a char array and a binding point
-		--gets converted to a ubo or cb somewhere down the line
-
-		-How do i know what type of data to give it?
-		--Some will get handled by the render system
-		--some I'll just have to do myself for now
-		*/
-
-		/*
-		something like this perhaps
-		*/
-		std::unordered_map<BufferBindingPoint, std::shared_ptr<ShaderBufferObject>> data;
 
 
 		//FUNCTIONS
@@ -52,7 +38,18 @@ namespace clv::gfx{
 
 		void bind(); //this'll bind the shader and textures
 
-		void setData(BufferBindingPoint bindingPoint, const std::shared_ptr<ShaderBufferObject>& bufferObject);
+		//TODO: inl
+		template<typename T>
+		void setData(BufferBindingPoint bindingPoint, T&& data){
+			if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
+				if(auto sbo = std::dynamic_pointer_cast<ShaderBufferObject<T>(iter->second)){
+					sbo->update(data);
+					return;
+				}
+			}
+
+			shaderData[bindingPoint] = BindableFactory::createShaderBufferObject<T>(bindingPoint, data);
+		}
 
 		void setAlbedoTexture(const std::string& path);
 		void setAlbedoTexture(const std::shared_ptr<Texture>& texture);

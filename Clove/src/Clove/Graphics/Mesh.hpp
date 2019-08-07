@@ -4,6 +4,7 @@ namespace clv::gfx{
 	class VertexBuffer;
 	class IndexBuffer;
 	class Material;
+	class Shader;
 	
 	class Mesh{
 		//VARIABLES

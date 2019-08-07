@@ -8,8 +8,9 @@ struct ID3D11Buffer;
 
 namespace clv::gfx{
 	class Renderer;
-
-	class DX11ConstantBuffer : public ShaderBufferObject{
+	
+	template<typename T>
+	class DX11ConstantBuffer : public ShaderBufferObject<T>{
 		//VARIABLES
 	protected:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
@@ -26,20 +27,28 @@ namespace clv::gfx{
 		virtual ~DX11ConstantBuffer();
 
 		DX11ConstantBuffer(unsigned int bindingPoint);
-		DX11ConstantBuffer(unsigned int bindingPoint, const MaterialData& data);
+		DX11ConstantBuffer(unsigned int bindingPoint, const T& data);
 
-		virtual void update(const MaterialData& data) override;
+		virtual void update(const T& data) override;
 	};
 
-	class DX11VertexConstantBuffer : public DX11ConstantBuffer{
+	template<typename T>
+	class DX11VertexConstantBuffer : public DX11ConstantBuffer<T>{
+		using DX11ConstantBuffer<T>::DX11ConstantBuffer;
+
 		//FUNCTIONS
 	public:
 		virtual void bind() override;
 	};
 
-	class DX11PixelConstantBuffer : public DX11ConstantBuffer{
+	template<typename T>
+	class DX11PixelConstantBuffer : public DX11ConstantBuffer<T>{
+		using DX11ConstantBuffer<T>::DX11ConstantBuffer;
+
 		//FUNCTIONS
 	public:
 		virtual void bind() override;
 	};
 }
+
+#include "DX11ConstantBuffer.inl"

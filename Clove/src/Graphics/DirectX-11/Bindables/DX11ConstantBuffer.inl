@@ -1,6 +1,3 @@
-#include "clvpch.hpp"
-#include "DX11ConstantBuffer.hpp"
-
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
@@ -9,13 +6,17 @@
 #include <d3d11.h>
 
 namespace clv::gfx{
-	DX11ConstantBuffer::DX11ConstantBuffer(DX11ConstantBuffer&& other) noexcept = default;
+	template<typename T>
+	DX11ConstantBuffer<T>::DX11ConstantBuffer(DX11ConstantBuffer&& other) noexcept = default;
 
-	DX11ConstantBuffer& DX11ConstantBuffer::operator=(DX11ConstantBuffer&& other) noexcept = default;
+	template<typename T>
+	DX11ConstantBuffer<T>& DX11ConstantBuffer<T>::operator=(DX11ConstantBuffer&& other) noexcept = default;
 
-	DX11ConstantBuffer::~DX11ConstantBuffer() = default;
+	template<typename T>
+	DX11ConstantBuffer<T>::~DX11ConstantBuffer() = default;
 
-	DX11ConstantBuffer::DX11ConstantBuffer(unsigned int bindingPoint)
+	template<typename T>
+	DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint)
 		: bindingPoint(bindingPoint){
 
 		D3D11_BUFFER_DESC cbd = { };
@@ -23,15 +24,15 @@ namespace clv::gfx{
 		cbd.Usage = D3D11_USAGE_DYNAMIC;
 		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = sizeof(T); //fok - will need to take some arbitrary size
+		cbd.ByteWidth = sizeof(T);
 		cbd.StructureByteStride = 0;
 
 		DX11_INFO_PROVIDER;
 		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateBuffer(&cbd, nullptr, &constantBuffer));
 	}
 
-	//This is the constructor that isn't used
-	DX11ConstantBuffer::DX11ConstantBuffer(unsigned int bindingPoint, const MaterialData& data)
+	template<typename T>
+	DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint, const T& data)
 		: bindingPoint(bindingPoint){
 
 		D3D11_BUFFER_DESC cbd = { };
@@ -39,17 +40,18 @@ namespace clv::gfx{
 		cbd.Usage = D3D11_USAGE_DYNAMIC;
 		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = data.getSize();
+		cbd.ByteWidth = sizeof(T);
 		cbd.StructureByteStride = 0;
 
 		D3D11_SUBRESOURCE_DATA csrd = { };
-		csrd.pSysMem = data.getBuffer();
+		csrd.pSysMem = &data;
 
 		DX11_INFO_PROVIDER;
 		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateBuffer(&cbd, &csrd, &constantBuffer));
 	}
 
-	void DX11ConstantBuffer::update(const MaterialData& data){
+	template<typename T>
+	void DX11ConstantBuffer<T>::update(const T& data){
 
 		D3D11_MAPPED_SUBRESOURCE msr = { };
 		DX11_INFO_PROVIDER;
@@ -64,11 +66,13 @@ namespace clv::gfx{
 		DX11RenderAPI::getContext().Unmap(constantBuffer.Get(), 0u);
 	}
 
-	void DX11VertexConstantBuffer::bind(){
+	template<typename T>
+	void DX11VertexConstantBuffer<T>::bind(){
 		DX11RenderAPI::getContext().VSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
 	}
 
-	void DX11PixelConstantBuffer::bind(){
+	template<typename T>
+	void DX11PixelConstantBuffer<T>::bind(){
 		DX11RenderAPI::getContext().PSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
 	}
 }

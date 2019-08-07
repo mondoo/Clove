@@ -2,8 +2,6 @@
 
 #include "Clove/Graphics/Bindable.hpp"
 
-#include "Clove/Graphics/MaterialData.hpp"
-
 namespace clv::gfx{
 	enum BufferBindingPoint{
 		BBP_CameraMatrices	= 0u,
@@ -14,16 +12,17 @@ namespace clv::gfx{
 		BBP_2DData			= 5u
 	};
 
+	template<typename T>
 	class ShaderBufferObject : public Bindable{
 		//FUNCTIONS
 	public:
-		ShaderBufferObject();
+		ShaderBufferObject() = default;
 		ShaderBufferObject(const ShaderBufferObject& other) = delete;
-		ShaderBufferObject(ShaderBufferObject&& other);
+		ShaderBufferObject(ShaderBufferObject&& other) = default;
 		ShaderBufferObject& operator=(const ShaderBufferObject& other) = delete;
-		ShaderBufferObject& operator=(ShaderBufferObject&& other);
-		virtual ~ShaderBufferObject();
+		ShaderBufferObject& operator=(ShaderBufferObject&& other) = default;
+		virtual ~ShaderBufferObject() = default;
 
-		virtual void update(const MaterialData& data) = 0;
+		virtual void update(const T& data) = 0;
 	};
 }

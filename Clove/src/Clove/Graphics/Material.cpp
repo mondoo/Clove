@@ -12,7 +12,13 @@ namespace clv::gfx{
 
 	Material& Material::operator=(const Material& other) = default;
 
-	Material::Material(Material&& other) noexcept = default;
+	Material::Material(Material&& other) noexcept{
+		modelData = std::move(other.modelData);
+
+		albedoTexture = std::move(other.albedoTexture);
+		specTexture = std::move(other.specTexture);
+		shaderData = std::move(other.shaderData);
+	}
 
 	Material& Material::operator=(Material&& other) noexcept = default;
 
@@ -24,10 +30,9 @@ namespace clv::gfx{
 		if(specTexture){
 			specTexture->bind();
 		}
-	}
-
-	void Material::setData(BufferBindingPoint bindingPoint, const std::shared_ptr<ShaderBufferObject>& bufferObject){
-		data[bindingPoint] = bufferObject;
+		for(auto& [key, val] : shaderData){
+			val->bind();
+		}
 	}
 
 	void Material::setAlbedoTexture(const std::string& path){

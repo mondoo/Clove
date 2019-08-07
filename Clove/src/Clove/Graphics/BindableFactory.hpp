@@ -23,6 +23,8 @@ namespace clv::gfx::BindableFactory{
 
 	template<typename T>
 	std::shared_ptr<ShaderBufferObject<T>>	createShaderBufferObject(ShaderType shaderType, unsigned int bindingPoint);
+	template<typename T>
+	std::shared_ptr<ShaderBufferObject<T>>	createShaderBufferObject(ShaderType shaderType, unsigned int bindingPoint, T&& data);
 };
 
 #include "BindableFactory.inl"
