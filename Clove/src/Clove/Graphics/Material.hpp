@@ -1,5 +1,8 @@
 #pragma once
 
+//#include "Clove/Graphics/MaterialData.hpp"
+#include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
+
 namespace clv::gfx{
 	class Shader;
 	class Texture;
@@ -32,6 +35,12 @@ namespace clv::gfx{
 		--some I'll just have to do myself for now
 		*/
 
+		/*
+		something like this perhaps
+		*/
+		std::unordered_map<BufferBindingPoint, std::shared_ptr<ShaderBufferObject>> data;
+
+
 		//FUNCTIONS
 	public:
 		Material();
@@ -42,6 +51,8 @@ namespace clv::gfx{
 		~Material();
 
 		void bind(); //this'll bind the shader and textures
+
+		void setData(BufferBindingPoint bindingPoint, const std::shared_ptr<ShaderBufferObject>& bufferObject);
 
 		void setAlbedoTexture(const std::string& path);
 		void setAlbedoTexture(const std::shared_ptr<Texture>& texture);

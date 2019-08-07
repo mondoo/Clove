@@ -26,6 +26,10 @@ namespace clv::gfx{
 		}
 	}
 
+	void Material::setData(BufferBindingPoint bindingPoint, const std::shared_ptr<ShaderBufferObject>& bufferObject){
+		data[bindingPoint] = bufferObject;
+	}
+
 	void Material::setAlbedoTexture(const std::string& path){
 		albedoTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Albedo);
 	}
