@@ -16,7 +16,7 @@ namespace clv::ecs::d3{
 		mesh = std::make_unique<gfx::Mesh>(filePath);
 	}
 
-	void RenderableComponent::setMesh(std::unique_ptr<gfx::Mesh> mesh){
-		this->mesh = std::move(mesh);
+	void RenderableComponent::setMesh(const std::shared_ptr<gfx::Mesh>& mesh){
+		this->mesh = mesh;
 	}
 }

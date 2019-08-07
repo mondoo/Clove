@@ -69,6 +69,10 @@ namespace clv::gfx{
 		indexBuffer = gfx::BindableFactory::createIndexBuffer(info.indices);
 	}
 
+	unsigned int Mesh::getIndexCount(){
+		return indexBuffer->getIndexCount();
+	}
+
 	void Mesh::bind(){
 		vertexBuffer->bind();
 		indexBuffer->bind();

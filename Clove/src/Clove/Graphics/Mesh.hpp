@@ -27,6 +27,13 @@ namespace clv::gfx{
 
 		Mesh(std::string filePath);
 
+		//TODO: shared_ptr or ref?
+		Material& getMaterial(){
+			return *material;
+		}
+
+		unsigned int getIndexCount();
+
 		void bind();
 	};
 }

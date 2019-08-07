@@ -4,21 +4,24 @@
 
 #include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
 
+#include <queue>
+
 namespace clv::gfx{
 	class VertexBuffer;
 	class IndexBuffer;
 	class Shader;
 	class Texture;
 	class RenderTarget;
+	class Mesh;
 
-	struct VertexData{
+	/*struct VertexData{
 		math::Matrix4f model;
 		math::Matrix4f normalMatrix;
-	};
-
-	/*struct MaterialData{
-		alignas(16) float sininess;
 	};*/
+
+	struct MaterialData{
+		alignas(16) float sininess;
+	};
 
 	struct SpriteShaderData{
 		math::Matrix4f modelProjection;
@@ -65,8 +68,8 @@ namespace clv::gfx{
 	class Renderer{
 		//VARIABLES
 	protected:
-		static std::shared_ptr<gfx::ShaderBufferObject<VertexData>> vertSBO;
-		//static std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO;
+		//static std::shared_ptr<gfx::ShaderBufferObject<VertexData>> vertSBO;
+		static std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO; //TODO: MOVE TO MATERIAL
 		static std::shared_ptr<gfx::ShaderBufferObject<SpriteShaderData>> spriteSBO;
 
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewData>> viewDataSBO;
@@ -75,7 +78,7 @@ namespace clv::gfx{
 		static std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> lightDataSBO;
 		static PointLightShaderData currentLightInfo;
 
-		//static std::vector<MeshRenderData> meshSubmissionData;
+		static std::queue<std::shared_ptr<Mesh>> meshRenderQueue;
 		static std::vector<SpriteRenderData> spriteSubmissionData;
 		static CameraRenderData cameraSubmissionData;
 
@@ -96,7 +99,7 @@ namespace clv::gfx{
 		static void setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget);
 		static void removeRenderTarget();
 
-		static void submitMesh(const MeshRenderData& data);
+		static void submitMesh(const std::shared_ptr<Mesh>& data);
 		static void submitSprite(const SpriteRenderData& data);
 		static void setCamera(const CameraRenderData& data);
 		static void submitPointLight(const PointLightData& data);

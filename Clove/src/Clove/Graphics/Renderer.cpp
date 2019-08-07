@@ -10,14 +10,15 @@
 #include "Clove/Graphics/RenderTarget.hpp"
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
+#include "Clove/Graphics/Mesh.hpp"
 
 namespace clv::gfx{
 	void SpriteRenderData::bind() const{
 		texture->bind();
 	}
 
-	std::shared_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertSBO;
-	//std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
+	//std::shared_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertSBO;
+	std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
 	std::shared_ptr<gfx::ShaderBufferObject<SpriteShaderData>> Renderer::spriteSBO;
 
 	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO;
@@ -26,7 +27,7 @@ namespace clv::gfx{
 	std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> Renderer::lightDataSBO;
 	PointLightShaderData Renderer::currentLightInfo;
 
-	//std::vector<MeshRenderData> Renderer::meshSubmissionData;
+	std::queue<std::shared_ptr<Mesh>> Renderer::meshRenderQueue;
 	std::vector<SpriteRenderData> Renderer::spriteSubmissionData;
 	CameraRenderData Renderer::cameraSubmissionData;
 
@@ -38,7 +39,7 @@ namespace clv::gfx{
 	std::shared_ptr<RenderTarget> Renderer::renderTarget;
 
 	void Renderer::initialise(){
-		vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
+		//vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
 		materialSBO = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
 		spriteSBO = gfx::BindableFactory::createShaderBufferObject<SpriteShaderData>(gfx::ShaderType::Vertex, gfx::BBP_2DData);
 
@@ -47,7 +48,7 @@ namespace clv::gfx{
 		
 		lightDataSBO = gfx::BindableFactory::createShaderBufferObject<PointLightShaderData>(gfx::ShaderType::Pixel, gfx::BBP_PointLightData);
 
-		vertSBO->bind();
+		//vertSBO->bind();
 		materialSBO->bind();
 		spriteSBO->bind();
 
@@ -104,13 +105,12 @@ namespace clv::gfx{
 		//MESH
 		RenderCommand::setDepthBuffer(true);
 
-		for(auto& data : meshSubmissionData){
-			vertSBO->update({ data.modelData, math::transpose(math::inverse(data.modelData)) }); //This'll probably be done in the render system
-			data.bind();
-			RenderCommand::drawIndexed(data.indexBuffer->getIndexCount());
+		while(!meshRenderQueue.empty()){
+			auto& mesh = meshRenderQueue.front();
+			mesh->bind();
+			RenderCommand::drawIndexed(mesh->getIndexCount());
+			meshRenderQueue.pop();
 		}
-
-		meshSubmissionData.clear();
 
 		if(renderTarget){
 			RenderCommand::resetRenderTarget();
@@ -142,8 +142,8 @@ namespace clv::gfx{
 		RenderCommand::resetRenderTarget();
 	}
 
-	void Renderer::submitMesh(const MeshRenderData& data){
-		meshSubmissionData.emplace_back(data);
+	void Renderer::submitMesh(const std::shared_ptr<Mesh>& data){
+		meshRenderQueue.push(data);
 	}
 
 	void Renderer::submitSprite(const SpriteRenderData& data){

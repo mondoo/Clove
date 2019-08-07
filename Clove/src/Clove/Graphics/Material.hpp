@@ -42,12 +42,15 @@ namespace clv::gfx{
 		template<typename T>
 		void setData(BufferBindingPoint bindingPoint, T&& data){
 			if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
-				if(auto sbo = std::dynamic_pointer_cast<ShaderBufferObject<T>(iter->second)){
+				if(auto sbo = std::dynamic_pointer_cast<ShaderBufferObject<T>>(iter->second)){
 					sbo->update(data);
 					return;
 				}
 			}
-
+			/*
+			TODO:
+			The below needs the shader type! :(
+			*/
 			shaderData[bindingPoint] = BindableFactory::createShaderBufferObject<T>(bindingPoint, data);
 		}
 

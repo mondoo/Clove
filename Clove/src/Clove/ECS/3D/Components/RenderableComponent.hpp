@@ -15,8 +15,9 @@ namespace clv::ecs::d3{
 		static constexpr ComponentID ID = 0x7dfb2c10; //VS Generated GUID
 
 	private:
-		std::unique_ptr<gfx::Mesh> mesh; 
+		std::shared_ptr<gfx::Mesh> mesh; 
 		//shared ptr? then things can use the same mesh?
+		//unique_ptr? do we want to manage the mesh another way?
 		//textures can be stored in a material?
 
 		//FUNCTIONS
@@ -29,6 +30,6 @@ namespace clv::ecs::d3{
 		virtual ~RenderableComponent();
 
 		void setMesh(const std::string& filePath);
-		void setMesh(std::unique_ptr<gfx::Mesh> mesh);
+		void setMesh(const std::shared_ptr<gfx::Mesh>& mesh);
 	};
 }
