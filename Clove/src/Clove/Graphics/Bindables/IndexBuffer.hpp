@@ -13,6 +13,6 @@ namespace clv::gfx{
 		IndexBuffer& operator=(IndexBuffer&& other) noexcept;
 		virtual ~IndexBuffer();
 
-		virtual unsigned int getIndexCount() const = 0;
+		virtual uint32 getIndexCount() const = 0;
 	};
 }

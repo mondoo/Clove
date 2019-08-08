@@ -52,7 +52,7 @@ namespace clv::gfx{
 		std::vector<D3D11_INPUT_ELEMENT_DESC> dxElements;
 		dxElements.reserve(bufferData.getLayout().count());
 
-		for(int i = 0; i < bufferData.getLayout().count(); ++i){
+		for(int32 i = 0; i < bufferData.getLayout().count(); ++i){
 			const auto& element = bufferData.getLayout().resolve(i);
 			const VertexElementType elementType = element.getType();
 			const UINT alignmentOffset = (i > 0) ? D3D11_APPEND_ALIGNED_ELEMENT : 0;

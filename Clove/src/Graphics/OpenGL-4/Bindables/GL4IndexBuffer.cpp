@@ -14,9 +14,9 @@ namespace clv::gfx{
 		glDeleteBuffers(1, &bufferID);
 	}
 
-	GL4IndexBuffer::GL4IndexBuffer(const std::vector<unsigned int>& indices){
-		count = static_cast<unsigned int>(indices.size());
-		const auto dataSize = count * static_cast<GLsizeiptr>(sizeof(unsigned int));
+	GL4IndexBuffer::GL4IndexBuffer(const std::vector<uint32>& indices){
+		count = static_cast<uint32>(indices.size());
+		const auto dataSize = count * static_cast<GLsizeiptr>(sizeof(uint32));
 
 		glGenBuffers(1, &bufferID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
@@ -27,11 +27,11 @@ namespace clv::gfx{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
 	}
 
-	unsigned int GL4IndexBuffer::getIndexCount() const{
+	uint32 GL4IndexBuffer::getIndexCount() const{
 		return count;
 	}
 	
-	unsigned int GL4IndexBuffer::getBufferID() const{
+	uint32 GL4IndexBuffer::getBufferID() const{
 		return bufferID;
 	}
 }

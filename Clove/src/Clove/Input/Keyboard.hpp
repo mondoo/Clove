@@ -44,7 +44,7 @@ namespace clv{
 
 		//VARIABLES
 	private:
-		static constexpr unsigned int bufferSize = 16u;
+		static constexpr uint32 bufferSize = 16u;
 
 		bool autoRepeatEnabled = false;
 

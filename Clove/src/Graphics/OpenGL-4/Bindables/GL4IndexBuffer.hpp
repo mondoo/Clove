@@ -8,8 +8,8 @@ namespace clv::gfx{
 	class GL4IndexBuffer : public IndexBuffer{
 		//VARIABLES
 	private:
-		unsigned int bufferID = 0;
-		unsigned int count = 0;
+		uint32 bufferID = 0;
+		uint32 count = 0;
 
 		//FUNCTIONS
 	public:
@@ -20,11 +20,11 @@ namespace clv::gfx{
 		GL4IndexBuffer& operator=(GL4IndexBuffer&& other) noexcept;
 		~GL4IndexBuffer();
 
-		GL4IndexBuffer(const std::vector<unsigned int>& indices);
+		GL4IndexBuffer(const std::vector<uint32>& indices);
 
 		virtual void bind() override;
 
-		virtual unsigned int getIndexCount() const override;
-		unsigned int getBufferID() const;
+		virtual uint32 getIndexCount() const override;
+		uint32 getBufferID() const;
 	};
 }

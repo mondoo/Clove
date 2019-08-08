@@ -18,7 +18,7 @@ namespace clv::gfx{
 		CloveException& operator=(CloveException&& other) noexcept = delete;
 		virtual ~DX11Exception();
 
-		DX11Exception(int lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages = {});
+		DX11Exception(int32 lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages = {});
 
 		virtual const char* what() const noexcept override;
 		virtual const char* getType() const noexcept override;
@@ -63,7 +63,7 @@ namespace clv::gfx{
 		InfoException& operator=(InfoException&& other) noexcept = delete;
 		~InfoException();
 
-		InfoException(int lineNum, const char* file, const std::vector<std::string>& messages);
+		InfoException(int32 lineNum, const char* file, const std::vector<std::string>& messages);
 
 		virtual const char* what() const noexcept override;
 		virtual const char* getType() const noexcept override;

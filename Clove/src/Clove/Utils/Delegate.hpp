@@ -30,12 +30,12 @@ namespace clv::utl{
 	struct MultiCastDelegateHandle{
 		//VARIABLES
 	public:
-		const std::optional<int> ID = {};
+		const std::optional<int32> ID = {};
 
 		//FUNCTIONS
 	public:
 		MultiCastDelegateHandle() = default;
-		MultiCastDelegateHandle(int ID) : ID(ID){}
+		MultiCastDelegateHandle(int32 ID) : ID(ID){}
 
 		operator int() const{ return ID.value_or(-1); }
 
@@ -48,7 +48,7 @@ namespace clv::utl{
 	private:
 		std::map<MultiCastDelegateHandle, std::function<FunctionPrototype>> functionPointers;
 
-		int nextID = 0;
+		int32 nextID = 0;
 
 		//FUNCTIONS
 	public:

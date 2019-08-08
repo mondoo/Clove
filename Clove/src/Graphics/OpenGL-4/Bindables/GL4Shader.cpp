@@ -26,8 +26,8 @@ namespace clv::gfx{
 	}
 
 	void GL4Shader::initialise(ShaderStyle style){
-		unsigned int vertexID = 0;
-		unsigned int pixelID = 0;
+		uint32 vertexID = 0;
+		uint32 pixelID = 0;
 		
 		switch(style){
 			case ShaderStyle::Lit:
@@ -99,16 +99,16 @@ namespace clv::gfx{
 		return ss.str();
 	}
 
-	unsigned int GL4Shader::compileShader(unsigned int type, const std::string& source){
-		unsigned int id = glCreateShader(type);
+	uint32 GL4Shader::compileShader(uint32 type, const std::string& source){
+		uint32 id = glCreateShader(type);
 		const char* src = source.c_str();
 		glShaderSource(id, 1, &src, nullptr);
 		glCompileShader(id);
 
-		int result;
+		int32 result;
 		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 		if(result == GL_FALSE){
-			int length;
+			int32 length;
 			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 			char* message = new char[length];
 			glGetShaderInfoLog(id, length, &length, message);

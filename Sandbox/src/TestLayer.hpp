@@ -26,7 +26,7 @@ private:
 	bool firstMouse = false;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
-	int lastMouseX = 0;
+	int32_t lastMouseX = 0;
 	int lastMouseY = 0;
 
 	//FUNCTIONS

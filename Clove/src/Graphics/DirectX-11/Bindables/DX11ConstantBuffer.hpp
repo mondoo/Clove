@@ -15,7 +15,7 @@ namespace clv::gfx{
 	protected:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
 
-		unsigned int bindingPoint = 0;
+		uint32 bindingPoint = 0;
 
 		//FUNCTIONS
 	public:
@@ -26,8 +26,8 @@ namespace clv::gfx{
 		DX11ConstantBuffer<T>& operator=(DX11ConstantBuffer&& other) noexcept;
 		virtual ~DX11ConstantBuffer();
 
-		DX11ConstantBuffer(unsigned int bindingPoint);
-		DX11ConstantBuffer(unsigned int bindingPoint, const T& data);
+		DX11ConstantBuffer(uint32 bindingPoint);
+		DX11ConstantBuffer(uint32 bindingPoint, const T& data);
 
 		virtual void update(const T& data) override;
 	};

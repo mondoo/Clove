@@ -7,7 +7,7 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	GL4UniformBufferObject<T>::GL4UniformBufferObject(unsigned int bindingPoint)
+	GL4UniformBufferObject<T>::GL4UniformBufferObject(uint32 bindingPoint)
 		: bindingPoint(bindingPoint){
 		glGenBuffers(1, &uboID);
 
@@ -17,7 +17,7 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	GL4UniformBufferObject<T>::GL4UniformBufferObject(unsigned int bindingPoint, const T& data){
+	GL4UniformBufferObject<T>::GL4UniformBufferObject(uint32 bindingPoint, const T& data){
 		glGenBuffers(1, &uboID);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, uboID);

@@ -15,7 +15,7 @@ namespace clv::gfx{
 
 	DX11Texture::~DX11Texture() = default;
 
-	DX11Texture::DX11Texture(const std::string& filePath, unsigned int bindingPoint)
+	DX11Texture::DX11Texture(const std::string& filePath, uint32 bindingPoint)
 		: bindingPoint(bindingPoint){
 		
 		stbi_set_flip_vertically_on_load(1); //DirectX expects our texture to start on the bottom left
@@ -28,7 +28,7 @@ namespace clv::gfx{
 		}
 	}
 
-	DX11Texture::DX11Texture(int width, int height, TextureUsage usageType, unsigned int bindingPoint)
+	DX11Texture::DX11Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint)
 		: width(width)
 		, height(height)
 		, usage(usageType)
@@ -42,11 +42,11 @@ namespace clv::gfx{
 		DX11RenderAPI::getContext().PSSetSamplers(bindingPoint, 1u, sampler.GetAddressOf());
 	}
 
-	int DX11Texture::getWidth() const{
+	int32 DX11Texture::getWidth() const{
 		return width;
 	}
 
-	int DX11Texture::getHeight() const{
+	int32 DX11Texture::getHeight() const{
 		return height;
 	}
 

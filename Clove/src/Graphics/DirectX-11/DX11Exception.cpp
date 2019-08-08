@@ -6,7 +6,7 @@
 namespace clv::gfx{
 	DX11Exception::~DX11Exception() = default;
 
-	DX11Exception::DX11Exception(int lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages)
+	DX11Exception::DX11Exception(int32 lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages)
 		: CloveException(lineNum, file)
 		, hr(hr){
 		for(const auto& message : messages){
@@ -66,7 +66,7 @@ namespace clv::gfx{
 
 	InfoException::~InfoException() = default;
 
-	InfoException::InfoException(int lineNum, const char* file, const std::vector<std::string>& messages)
+	InfoException::InfoException(int32 lineNum, const char* file, const std::vector<std::string>& messages)
 		: CloveException(lineNum, file){
 
 		for(const auto& message : messages){

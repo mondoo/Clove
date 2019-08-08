@@ -32,7 +32,7 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::shared_ptr<IndexBuffer> createIndexBuffer(const std::vector<unsigned int>& indexData){
+	std::shared_ptr<IndexBuffer> createIndexBuffer(const std::vector<uint32>& indexData){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
 				return std::make_shared<GL4IndexBuffer>(indexData);
@@ -64,7 +64,7 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::shared_ptr<Texture> createTexture(const std::string& filePath, unsigned int bindingPoint){
+	std::shared_ptr<Texture> createTexture(const std::string& filePath, uint32 bindingPoint){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
 				return std::make_shared<GL4Texture>(filePath, bindingPoint);
@@ -80,7 +80,7 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::shared_ptr<Texture> createTexture(int width, int height, TextureUsage usageType, unsigned int bindingPoint){
+	std::shared_ptr<Texture> createTexture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
 				return std::make_shared<GL4Texture>(width, height, usageType, bindingPoint);

@@ -11,22 +11,22 @@ namespace clv::gfx{
 	template<VertexElementType> struct VertexElementData;
 	template<> struct VertexElementData<VertexElementType::position2D>{
 		using DataType = math::Vector2f;
-		static constexpr unsigned int elementCount = 2u;
+		static constexpr uint32 elementCount = 2u;
 		static constexpr char semantic[] = "Position";
 	};
 	template<> struct VertexElementData<VertexElementType::position3D>{
 		using DataType = math::Vector3f;
-		static constexpr unsigned int elementCount = 3u;
+		static constexpr uint32 elementCount = 3u;
 		static constexpr char semantic[] = "Position";
 	};
 	template<> struct VertexElementData<VertexElementType::texture2D>{
 		using DataType = math::Vector2f;
-		static constexpr unsigned int elementCount = 2u;
+		static constexpr uint32 elementCount = 2u;
 		static constexpr char semantic[] = "TexCoord";
 	};
 	template<> struct VertexElementData<VertexElementType::normal>{
 		using DataType = math::Vector3f;
-		static constexpr unsigned int elementCount = 3u;
+		static constexpr uint32 elementCount = 3u;
 		static constexpr char semantic[] = "Normal";
 	};
 
@@ -51,13 +51,13 @@ namespace clv::gfx{
 		size_t getOffsetAfter() const;
 
 		size_t getSize() const;
-		unsigned int getCount() const;
+		uint32 getCount() const;
 		const char* getSemantic() const;
 
 		VertexElementType getType() const;
 
 		static constexpr size_t sizeOf(VertexElementType type);
-		static constexpr unsigned int countOf(VertexElementType type);
+		static constexpr uint32 countOf(VertexElementType type);
 		static constexpr const char* semanticOf(VertexElementType type);
 	};
 

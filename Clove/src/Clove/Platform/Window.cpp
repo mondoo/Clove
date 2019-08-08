@@ -17,11 +17,11 @@ namespace clv{
 		context->present();
 	}
 
-	unsigned int Window::getWidth() const{
+	uint32 Window::getWidth() const{
 		return windowProperties.width;
 	}
 
-	unsigned int Window::getHeight() const{
+	uint32 Window::getHeight() const{
 		return windowProperties.height;
 	}
 

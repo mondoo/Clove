@@ -14,16 +14,16 @@ namespace clv{
 			return Application::get().getWindow().getMouse().isButtonPressed(button);
 		}
 
-		std::pair<int, int> getMousePosition(){
+		std::pair<int32, int32> getMousePosition(){
 			return Application::get().getWindow().getMouse().getPosition();
 		}
 
-		int getMouseX(){
+		int32 getMouseX(){
 			auto[x, y] = getMousePosition();
 			return x;
 		}
 
-		int getMouseY(){
+		int32 getMouseY(){
 			auto[x, y] = getMousePosition();
 			return y;
 		}

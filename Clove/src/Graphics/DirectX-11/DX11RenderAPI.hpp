@@ -42,7 +42,7 @@ namespace clv::gfx{
 		DX11RenderAPI(const Context& context);
 
 		virtual void clear() override;
-		virtual void drawIndexed(const unsigned int count) override;
+		virtual void drawIndexed(const uint32 count) override;
 
 		virtual void setClearColour(const math::Vector4f& colour) override;
 		virtual void setDepthBuffer(bool enabled) override;

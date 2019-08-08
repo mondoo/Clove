@@ -22,7 +22,7 @@ namespace clv::gfx{
 		RenderAPI(API apiType);
 
 		virtual void clear() = 0;
-		virtual void drawIndexed(const unsigned int count) = 0;
+		virtual void drawIndexed(const uint32 count) = 0;
 
 		virtual void setClearColour(const math::Vector4f& colour) = 0;
 		virtual void setDepthBuffer(bool enabled) = 0;

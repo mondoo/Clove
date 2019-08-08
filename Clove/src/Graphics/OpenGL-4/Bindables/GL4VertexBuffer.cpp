@@ -41,7 +41,7 @@ namespace clv::gfx{
 
 	GL4VertexBuffer::GL4VertexBuffer(const VertexBufferData& bufferData, Shader& shader)
 		: VertexBuffer(bufferData){
-		const unsigned int size = static_cast<unsigned int>(this->bufferData.sizeBytes());
+		const uint32 size = static_cast<uint32>(this->bufferData.sizeBytes());
 		const void* data = bufferData.data();
 
 		glGenVertexArrays(1, &arrayID);
@@ -51,8 +51,8 @@ namespace clv::gfx{
 		glBindBuffer(GL_ARRAY_BUFFER, bufferID);
 		glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 
-		unsigned long long offset = 0; //void* expects 64 bits
-		for(unsigned int i = 0; i < bufferData.getLayout().count(); ++i){
+		uint64 offset = 0; //void* expects 64 bits
+		for(uint32 i = 0; i < bufferData.getLayout().count(); ++i){
 			const auto& element = bufferData.getLayout().resolve(i);
 			const VertexElementType elementType = element.getType();
 

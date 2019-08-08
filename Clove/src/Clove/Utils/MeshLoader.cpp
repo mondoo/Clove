@@ -40,7 +40,7 @@ namespace clv{
 
 					meshInfo.vertexData.reserve((vertexCount * 3) + (texCoordCount * 2) + (normalCount * 3));
 
-					for(int i = 0; i < vertexCount; ++i){
+					for(int32 i = 0; i < vertexCount; ++i){
 						if(vertexCount > 0){
 							meshInfo.vertexData.emplace_back(meshInfo.verticies[i].x);
 							meshInfo.vertexData.emplace_back(meshInfo.verticies[i].y);

@@ -9,8 +9,8 @@
 namespace clv{
 	struct WindowsData{
 		HWND handle;
-		unsigned int width;
-		unsigned int height;
+		uint32 width;
+		uint32 height;
 	};
 
 	class WindowsWindow : public Window{

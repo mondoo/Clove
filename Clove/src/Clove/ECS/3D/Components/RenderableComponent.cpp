@@ -28,7 +28,7 @@ namespace clv::ecs::d3{
 		gfx::VertexLayout layout;
 		layout.add(gfx::VertexElementType::position3D).add(gfx::VertexElementType::texture2D).add(gfx::VertexElementType::normal);
 		gfx::VertexBufferData vertexArray{ std::move(layout) };
-		for(int i = 0; i < info.verticies.size(); ++i){
+		for(int32 i = 0; i < info.verticies.size(); ++i){
 			vertexArray.emplaceBack(
 				math::Vector3f{
 					info.verticies[i].x,

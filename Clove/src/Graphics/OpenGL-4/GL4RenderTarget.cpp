@@ -20,7 +20,7 @@ namespace clv::gfx{
 		glBindFramebuffer(GL_FRAMEBUFFER, renderID);
 
 		GL4Texture& glTexture = static_cast<GL4Texture&>(texture);
-		const unsigned int textureRenderID = glTexture.getRenderID();
+		const uint32 textureRenderID = glTexture.getRenderID();
 
 		CLV_ASSERT(glTexture.getUsageType() == TextureUsage::RenderTarget, "Incorrect texture type");
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureRenderID, 0);
@@ -36,7 +36,7 @@ namespace clv::gfx{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	const unsigned int GL4RenderTarget::getRenderID() const{
+	const uint32 GL4RenderTarget::getRenderID() const{
 		return renderID;
 	}
 }
