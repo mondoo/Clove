@@ -51,7 +51,9 @@ namespace clv::gfx{
 		}
 
 		void setAlbedoTexture(const std::string& path);
-		void setAlbedoTexture(const std::shared_ptr<Texture>& texture);
+		//Note, doing it this way means we have no control over if this is actual albedo texture or not
+		//because it's done on the binding point for the texture itself
+		void setAlbedoTexture(const std::shared_ptr<Texture>& texture); 
 
 		void setSpecularTexture(const std::string& path);
 		void setSpecularTexture(const std::shared_ptr<Texture>& texture);

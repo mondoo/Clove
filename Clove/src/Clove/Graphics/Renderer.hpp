@@ -60,7 +60,7 @@ namespace clv::gfx{
 		/*alignas(16)*/ float linear;
 		/*alignas(16)*/ float quadratic;
 	};
-	struct PointLightShaderData{
+	struct PointLightShaderData{ //I guess the lighting system could handle this
 		int numLights = 0;
 		PointLightData lights[10];
 	};
@@ -82,6 +82,11 @@ namespace clv::gfx{
 		static std::vector<SpriteRenderData> spriteSubmissionData;
 		static CameraRenderData cameraSubmissionData;
 
+		/*
+		move all of this somewhere
+		-what to do about the proj matrix?
+		--probably have that as a seperate param for the shader
+		*/
 		static std::shared_ptr<VertexBuffer> spriteVBBuffer;
 		static std::shared_ptr<IndexBuffer> spriteIBBuffer;
 		static std::shared_ptr<Shader> spriteShader;
