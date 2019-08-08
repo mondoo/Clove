@@ -12,10 +12,6 @@ namespace clv::ecs::d3{
 
 	RenderableComponent::~RenderableComponent() = default;
 
-	void RenderableComponent::setMesh(const std::string& filePath){
-		mesh = std::make_unique<gfx::Mesh>(filePath);
-	}
-
 	void RenderableComponent::setMesh(const std::shared_ptr<gfx::Mesh>& mesh){
 		this->mesh = mesh;
 	}

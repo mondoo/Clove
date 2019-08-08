@@ -5,7 +5,8 @@
 #include "Clove/ECS/3D/Components/CameraComponent.hpp"
 #include "Clove/ECS/3D/Components/RenderableComponent.hpp"
 #include "Clove/ECS/3D/Components/TransformComponent.hpp"
-
+#include "Clove/Graphics/Mesh.hpp"
+#include "Clove/Graphics/Material.hpp"
 #include "Clove/ECS/3D/Components/LightComponent.hpp"
 
 #include "Clove/Input/Input.hpp"
@@ -24,12 +25,22 @@ void GameLayer::onAttach(){
 	sphereEntity.getComponent<clv::ecs::d3::TransformComponent>()->addChild(cameraEntity.getComponent<clv::ecs::d3::TransformComponent>());
 	cameraEntity.getComponent<clv::ecs::d3::TransformComponent>()->setLocalPosition({ -5.0f, 0.0f, 0.0f });
 
-	sphereEntity.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/sphere.obj");
-	sphereEntity.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
+	auto sphereMesh = std::make_shared<clv::gfx::Mesh>("res/Objects/sphere.obj");
+	auto sphereMaterial = std::make_shared<clv::gfx::Material>();
+	sphereMesh->setMaterial(sphereMaterial);
+	sphereMaterial->setAlbedoTexture("res/Textures/container2.png");
+
+	sphereEntity.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(sphereMesh);
+	//sphereEntity.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
 	//sphereEntity.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
-	tempCube.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
-	tempCube.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
+	auto cubeMesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj");
+	auto cubeMaterial = std::make_shared<clv::gfx::Material>();
+	cubeMesh->setMaterial(sphereMaterial);
+	cubeMaterial->setAlbedoTexture("res/Textures/container2.png");
+
+	tempCube.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(cubeMesh);
+	//tempCube.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
 }
 
 void GameLayer::onDetach(){

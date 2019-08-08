@@ -29,7 +29,6 @@ namespace clv::ecs::d3{
 		RenderableComponent& operator=(RenderableComponent&& other) noexcept;
 		virtual ~RenderableComponent();
 
-		void setMesh(const std::string& filePath);
 		void setMesh(const std::shared_ptr<gfx::Mesh>& mesh);
 	};
 }

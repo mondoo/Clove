@@ -69,6 +69,10 @@ namespace clv::gfx{
 		indexBuffer = gfx::BindableFactory::createIndexBuffer(info.indices);
 	}
 
+	void Mesh::setMaterial(const std::shared_ptr<Material>& material){
+		this->material = material;
+	}
+
 	unsigned int Mesh::getIndexCount(){
 		return indexBuffer->getIndexCount();
 	}

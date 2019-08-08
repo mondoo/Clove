@@ -27,6 +27,8 @@ namespace clv::gfx{
 
 		Mesh(std::string filePath);
 
+		void setMaterial(const std::shared_ptr<Material>& material);
+
 		//TODO: shared_ptr or ref?
 		Material& getMaterial(){
 			return *material;
