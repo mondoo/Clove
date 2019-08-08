@@ -13,8 +13,8 @@ namespace clv::gfx{
 
 	DX11IndexBuffer::~DX11IndexBuffer() = default;
 
-	DX11IndexBuffer::DX11IndexBuffer(const std::vector<unsigned int>& indices){
-		count = static_cast<unsigned int>(indices.size());
+	DX11IndexBuffer::DX11IndexBuffer(const std::vector<uint32>& indices){
+		count = static_cast<uint32>(indices.size());
 
 		D3D11_BUFFER_DESC  ibd = { };
 		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -35,7 +35,7 @@ namespace clv::gfx{
 		DX11RenderAPI::getContext().IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
 	}
 
-	unsigned int DX11IndexBuffer::getIndexCount() const{
+	uint32 DX11IndexBuffer::getIndexCount() const{
 		return count;
 	}
 	

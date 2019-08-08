@@ -7,9 +7,9 @@ namespace clv::gfx{
 	class GL4UniformBufferObject : public ShaderBufferObject<T>{
 		//VARIABLES
 	private:
-		unsigned int uboID = 0;
+		uint32 uboID = 0;
 
-		unsigned int bindingPoint = 0;
+		uint32 bindingPoint = 0;
 
 		//FUNCTIONS
 	public:
@@ -20,8 +20,8 @@ namespace clv::gfx{
 		GL4UniformBufferObject& operator=(GL4UniformBufferObject&& other) = default;
 		~GL4UniformBufferObject();
 
-		GL4UniformBufferObject(unsigned int bindingPoint);
-		GL4UniformBufferObject(unsigned int bindingPoint, const T& data);
+		GL4UniformBufferObject(uint32 bindingPoint);
+		GL4UniformBufferObject(uint32 bindingPoint, const T& data);
 
 		virtual void bind() override;
 

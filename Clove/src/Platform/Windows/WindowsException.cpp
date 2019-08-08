@@ -49,13 +49,13 @@ namespace clv{
 
 		std::wstring wideString = msgBuff;
 		std::string string;
-		int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, &wideString[0], static_cast<int>(wideString.size()), nullptr, 0, nullptr, nullptr);
+		int32 sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, &wideString[0], static_cast<int32>(wideString.size()), nullptr, 0, nullptr, nullptr);
 
 		if(sizeNeeded <= 0){
 			CLV_LOG_ERROR("Was unable to convert wide char to multi byte");
 			CLV_LOG_ERROR(GetLastError());
 		} else{
-			WideCharToMultiByte(CP_UTF8, 0, &wideString[0], static_cast<int>(wideString.size()), &string[0], sizeNeeded, nullptr, nullptr);
+			WideCharToMultiByte(CP_UTF8, 0, &wideString[0], static_cast<int32>(wideString.size()), &string[0], sizeNeeded, nullptr, nullptr);
 		}
 
 		LocalFree(msgBuff);

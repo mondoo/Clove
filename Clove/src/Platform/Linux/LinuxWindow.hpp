@@ -15,7 +15,7 @@ namespace clv{
 	private:
 		Display* display = nullptr;
 		Screen* screen = nullptr;
-		int screenID;
+		int32 screenID;
         ::Window window;
 
         XEvent xevent;

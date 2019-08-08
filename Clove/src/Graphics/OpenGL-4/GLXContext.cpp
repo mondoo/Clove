@@ -62,7 +62,7 @@ namespace clv::gfx{
 		if(glxSwapIntervalEXT){
 			GLXDrawable drawable = glXGetCurrentDrawable();
 	
-			const int interval = enabled ? 1 : 0;
+			const int32 interval = enabled ? 1 : 0;
 			glxSwapIntervalEXT(display, drawable, interval);
 	
 			CLV_LOG_TRACE("Swap interval for GLX was set to: {0}", interval);
@@ -75,7 +75,7 @@ namespace clv::gfx{
 		if(glxSwapIntervalEXT){
 			GLXDrawable drawable = glXGetCurrentDrawable();
 
-			unsigned int interval = 0;
+			uint32 interval = 0;
 			glXQueryDrawable(display, drawable, GLX_SWAP_INTERVAL_EXT, &interval);
 		
 			return (interval > 0);

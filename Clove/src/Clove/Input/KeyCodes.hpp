@@ -247,6 +247,6 @@ namespace clv{
 	};
 
 	inline std::ostream& operator <<(std::ostream& os, Key key){
-		return os << static_cast<int>(key);
+		return os << static_cast<int32>(key);
 	}
 }

@@ -12,7 +12,7 @@ namespace clv::gfx{
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
 
-		unsigned int count = 0;
+		uint32 count = 0;
 
 		//FUNCTIONS
 	public:
@@ -23,11 +23,11 @@ namespace clv::gfx{
 		DX11IndexBuffer& operator=(DX11IndexBuffer&& other) noexcept;
 		~DX11IndexBuffer();
 
-		DX11IndexBuffer(const std::vector<unsigned int>& indices);
+		DX11IndexBuffer(const std::vector<uint32>& indices);
 
 		virtual void bind() override;
 
-		virtual unsigned int getIndexCount() const override;
+		virtual uint32 getIndexCount() const override;
 		ID3D11Buffer* getBuffer() const;
 	};
 }

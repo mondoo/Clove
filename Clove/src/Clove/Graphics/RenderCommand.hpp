@@ -14,7 +14,7 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		static void clear();
-		static void drawIndexed(const unsigned int count);
+		static void drawIndexed(const uint32 count);
 
 		static void setClearColour(const math::Vector4f& colour);
 		static void setDepthBuffer(bool enabled);

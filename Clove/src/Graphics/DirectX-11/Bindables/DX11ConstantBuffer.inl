@@ -16,7 +16,7 @@ namespace clv::gfx{
 	DX11ConstantBuffer<T>::~DX11ConstantBuffer() = default;
 
 	template<typename T>
-	DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint)
+	DX11ConstantBuffer<T>::DX11ConstantBuffer(uint32 bindingPoint)
 		: bindingPoint(bindingPoint){
 
 		D3D11_BUFFER_DESC cbd = { };
@@ -32,7 +32,7 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	DX11ConstantBuffer<T>::DX11ConstantBuffer(unsigned int bindingPoint, const T& data)
+	DX11ConstantBuffer<T>::DX11ConstantBuffer(uint32 bindingPoint, const T& data)
 		: bindingPoint(bindingPoint){
 
 		D3D11_BUFFER_DESC cbd = { };

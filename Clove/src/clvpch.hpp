@@ -17,6 +17,7 @@
 //Clove headers
 #include "Clove/Core.hpp"
 #include "Clove/Log.hpp"
+#include "Clove/IntTypes.hpp"
 #include "Clove/Maths/MathsTypes.hpp"
 #include "Clove/Maths/Maths.hpp"
 #include "Clove/Maths/MathsHelpers.hpp"

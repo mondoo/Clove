@@ -4,7 +4,7 @@
 namespace clv{
 	Mouse::Event::Event() = default;
 
-	Mouse::Event::Event(Type type, MouseButton button, int x, int y)
+	Mouse::Event::Event(Type type, MouseButton button, int32 x, int32 y)
 		: type(type)
 		, button(button)
 		, x(x)
@@ -19,7 +19,7 @@ namespace clv{
 		return type != Type::Invalid;
 	}
 
-	std::pair<int, int> Mouse::Event::getPos() const{
+	std::pair<int32, int32> Mouse::Event::getPos() const{
 		return { x, y };
 	}
 
@@ -65,7 +65,7 @@ namespace clv{
 		buffer = std::queue<Mouse::Event>();
 	}
 
-	void Mouse::onMouseMove(int x, int y){
+	void Mouse::onMouseMove(int32 x, int32 y){
 		this->x = x;
 		this->y = y;
 
@@ -73,7 +73,7 @@ namespace clv{
 		trimBuffer();
 	}
 
-	void Mouse::onButtonPressed(MouseButton button, int x, int y){
+	void Mouse::onButtonPressed(MouseButton button, int32 x, int32 y){
 		this->x = x;
 		this->y = y;
 
@@ -82,7 +82,7 @@ namespace clv{
 		trimBuffer();
 	}
 
-	void Mouse::onButtonReleased(MouseButton button, int x, int y){
+	void Mouse::onButtonReleased(MouseButton button, int32 x, int32 y){
 		this->x = x;
 		this->y = y;
 
@@ -91,7 +91,7 @@ namespace clv{
 		trimBuffer();
 	}
 
-	void Mouse::onWheelDelta(int delta, int x, int y){
+	void Mouse::onWheelDelta(int32 delta, int32 x, int32 y){
 		wheelDelta += delta;
 		while(wheelDelta >= CLV_WHEEL_DELTA){
 			wheelDelta -= CLV_WHEEL_DELTA;
@@ -103,7 +103,7 @@ namespace clv{
 		}
 	}
 
-	void Mouse::onWheelUp(int x, int y){
+	void Mouse::onWheelUp(int32 x, int32 y){
 		this->x = x;
 		this->y = y;
 
@@ -111,7 +111,7 @@ namespace clv{
 		trimBuffer();
 	}
 
-	void Mouse::onWheelDown(int x, int y){
+	void Mouse::onWheelDown(int32 x, int32 y){
 		this->x = x;
 		this->y = y;
 

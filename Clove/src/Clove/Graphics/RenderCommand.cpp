@@ -14,7 +14,7 @@ namespace clv::gfx{
 		renderAPI->clear();
 	}
 
-	void RenderCommand::drawIndexed(const unsigned int count){
+	void RenderCommand::drawIndexed(const uint32 count){
 		renderAPI->drawIndexed(count);
 	}
 

@@ -8,7 +8,7 @@ namespace clv{
 	private:
 		std::vector<std::shared_ptr<Layer>> layers;
 
-		unsigned int layerInsertIndex = 0;
+		uint32 layerInsertIndex = 0;
 
 		//FUNCTIONS
 	public:

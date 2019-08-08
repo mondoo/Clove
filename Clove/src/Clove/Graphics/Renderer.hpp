@@ -69,7 +69,7 @@ namespace clv::gfx{
 		/*alignas(16)*/ float quadratic;
 	};
 	struct PointLightShaderData{
-		int numLights = 0;
+		int32 numLights = 0;
 		PointLightData lights[10];
 	};
 
