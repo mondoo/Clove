@@ -14,7 +14,7 @@ namespace clv{
 		WindowsException(const WindowsException& other) = delete;
 		WindowsException(WindowsException&& other) noexcept = delete;
 
-		WindowsException(int lineNum, const char* file, HRESULT hr);
+		WindowsException(int32 lineNum, const char* file, HRESULT hr);
 
 		virtual ~WindowsException();
 

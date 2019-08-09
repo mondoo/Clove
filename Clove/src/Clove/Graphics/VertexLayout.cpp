@@ -29,7 +29,7 @@ namespace clv::gfx{
 		return sizeOf(type);
 	}
 	
-	unsigned int VertexElement::getCount() const{
+	uint32 VertexElement::getCount() const{
 		return countOf(type);
 	}
 

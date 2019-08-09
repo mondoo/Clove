@@ -6,8 +6,8 @@ namespace clv::gfx{
 	class GL4RenderTarget : public RenderTarget{
 		//VARIABLES
 	private:
-		unsigned int renderID = 0;
-		unsigned int renderBufferID = 0;
+		uint32 renderID = 0;
+		uint32 renderBufferID = 0;
 
 		//FUNCTIONS
 	public:
@@ -20,6 +20,6 @@ namespace clv::gfx{
 
 		GL4RenderTarget(Texture& texture);
 
-		const unsigned int getRenderID() const;
+		const uint32 getRenderID() const;
 	};
 }

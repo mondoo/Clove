@@ -84,7 +84,7 @@ namespace clv::gfx{
 		d3dContext->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
 	}
 
-	void DX11RenderAPI::drawIndexed(const unsigned int count){
+	void DX11RenderAPI::drawIndexed(const uint32 count){
 		DX11_THROW_INFO_ONLY(d3dContext->DrawIndexed(static_cast<UINT>(count), 0u, 0u));
 	}
 

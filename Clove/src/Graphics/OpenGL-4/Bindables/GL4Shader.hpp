@@ -10,7 +10,7 @@ namespace clv::gfx{
 	class GL4Shader : public Shader{
 		//VARIABLES
 	private:
-		unsigned int programID = 0;
+		uint32 programID = 0;
 
 		//FUNCTIONS
 	public:
@@ -29,6 +29,6 @@ namespace clv::gfx{
 		void initialise(ShaderStyle style);
 
 		std::string parseShader(const std::string& filepath);
-		unsigned int compileShader(unsigned int type, const std::string& source);
+		uint32 compileShader(uint32 type, const std::string& source);
 	};
 }

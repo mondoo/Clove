@@ -21,8 +21,8 @@ namespace clv::gfx{
 		Texture& operator=(Texture&& other) noexcept;
 		virtual ~Texture();
 
-		virtual int getWidth() const = 0;
-		virtual int getHeight() const = 0;
+		virtual int32 getWidth() const = 0;
+		virtual int32 getHeight() const = 0;
 
 		virtual TextureUsage getUsageType() const = 0;
 	};

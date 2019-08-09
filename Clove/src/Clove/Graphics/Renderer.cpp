@@ -77,7 +77,7 @@ namespace clv::gfx{
 		spriteVBBuffer = gfx::BindableFactory::createVertexBuffer(bufferData, *spriteShader);
 
 		//IB
-		std::vector<unsigned int> indices = {
+		std::vector<uint32> indices = {
 			1, 3, 0,
 			3, 2, 0
 		};

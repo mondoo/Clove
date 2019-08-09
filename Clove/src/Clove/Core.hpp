@@ -68,7 +68,8 @@
 
 #define BIT(x) (1 << x)
 
-#define CLV_BIND_FUNCTION_0P(func, obj) std::bind(func, obj)
-#define CLV_BIND_FUNCTION_1P(func, obj) std::bind(func, obj, std::placeholders::_1)
-#define CLV_BIND_FUNCTION_2P(func, obj) std::bind(func, obj, std::placeholders::_2)
-#define CLV_BIND_FUNCTION_3P(func, obj) std::bind(func, obj, std::placeholders::_3)
+#if CLV_PLATFORM_WINDOWS
+	#define CLV_APIENTRY APIENTRY
+#else
+	#define CLV_APIENTRY
+#endif

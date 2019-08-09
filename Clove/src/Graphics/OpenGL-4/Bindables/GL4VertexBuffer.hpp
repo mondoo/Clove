@@ -8,8 +8,8 @@ namespace clv::gfx{
 	class GL4VertexBuffer : public VertexBuffer{
 		//VARIABLES
 	private:
-		unsigned int bufferID = 0;
-		unsigned int arrayID = 0;
+		uint32 bufferID = 0;
+		uint32 arrayID = 0;
 
 		//FUNCTIONS
 	public:

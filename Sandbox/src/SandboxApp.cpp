@@ -1,3 +1,4 @@
+#include "clvpch.hpp"//TODO: See note in example layer
 #include <Clove.hpp>
 
 #include "TestLayer.hpp"

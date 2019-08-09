@@ -35,30 +35,30 @@ namespace clv{
 			Type type = Type::Invalid;
 			MouseButton button = MouseButton::None;
 			
-			int x = 0;
-			int y = 0;
+			int32 x = 0;
+			int32 y = 0;
 
 			//FUNCTIONS
 		public:
 			Event();
-			Event(Type type, MouseButton button, int x, int y);
+			Event(Type type, MouseButton button, int32 x, int32 y);
 
 			Type getType() const;
 			bool isValid() const;
 
-			std::pair<int, int> getPos() const;
+			std::pair<int32, int32> getPos() const;
 
 			MouseButton getButton() const;
 		};
 
 		//VARIABLES
 	private:
-		static constexpr unsigned int bufferSize = 16u;
+		static constexpr uint32 bufferSize = 16u;
 
-		int x = 0;
-		int y = 0;
+		int32 x = 0;
+		int32 y = 0;
 
-		int wheelDelta = 0;
+		int32 wheelDelta = 0;
 
 		bool inWindow = false;
 
@@ -76,7 +76,7 @@ namespace clv{
 		bool isButtonPressed(MouseButton button) const;
 		std::optional<Event> getEvent();
 		
-		std::pair<int, int> getPosition() const;
+		std::pair<int32, int32> getPosition() const;
 
 		bool isInWindow() const;
 		
@@ -88,14 +88,14 @@ namespace clv{
 		Mouse& operator=(Mouse&& other) noexcept = delete;
 
 	private:
-		void onMouseMove(int x, int y);
+		void onMouseMove(int32 x, int32 y);
 
-		void onButtonPressed(MouseButton button, int x, int y);
-		void onButtonReleased(MouseButton button, int x, int y);
+		void onButtonPressed(MouseButton button, int32 x, int32 y);
+		void onButtonReleased(MouseButton button, int32 x, int32 y);
 
-		void onWheelDelta(int delta, int x, int y);
-		void onWheelUp(int x, int y);
-		void onWheelDown(int x, int y);
+		void onWheelDelta(int32 delta, int32 x, int32 y);
+		void onWheelUp(int32 x, int32 y);
+		void onWheelDown(int32 x, int32 y);
 
 		void onMouseLeave();
 		void onMouseEnter();

@@ -4,9 +4,9 @@
 #include <glad/glad.h>
 
 namespace clv::gfx{
-	void errorCallback(unsigned int source, unsigned int type, unsigned int id,
-								unsigned int severity, int length,
-								const char *msg, const void *data){
+	void CLV_APIENTRY errorCallback(uint32 source, uint32 type, uint32 id,
+					   uint32 severity, int32 length,
+					   const char* msg, const void* data){
 		std::string format = "GL Debug message:\nSource:\n{0}\n\nType:\n{1}\n\nSeverity:\n{2}\n\nMessage\n{3}";
 
 		std::string mesage = msg;

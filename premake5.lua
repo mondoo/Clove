@@ -25,6 +25,7 @@ workspace "Clove"
 	}
 
 	platforms{
+		"Win32",
 		"Win64",
 		"Linux",
 	}
@@ -34,6 +35,11 @@ workspace "Clove"
 	}
 
 	--Platform filters
+	filter "platforms:Win32"
+		system "windows"
+		architecture "x86"
+		staticruntime "on"
+
 	filter "platforms:Win64"
 		system "windows"
 		architecture "x86_64"

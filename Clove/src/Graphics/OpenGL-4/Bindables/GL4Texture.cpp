@@ -13,7 +13,7 @@ namespace clv::gfx{
 		glDeleteTextures(1, &rendererID);
 	}
 
-	GL4Texture::GL4Texture(const std::string& filePath, unsigned int bindingPoint)
+	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint)
 		: filePath(filePath)
 		, bindingPoint(bindingPoint){
 		stbi_set_flip_vertically_on_load(1); //Opengl expects our texture to start on the bottom left
@@ -36,7 +36,7 @@ namespace clv::gfx{
 		}
 	}
 
-	GL4Texture::GL4Texture(int width, int height, TextureUsage usageType, unsigned int bindingPoint)
+	GL4Texture::GL4Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint)
 		: width(width)
 		, height(height)
 		, usageType(usageType)
@@ -57,11 +57,11 @@ namespace clv::gfx{
 		glBindTexture(GL_TEXTURE_2D, rendererID);
 	}
 
-	int GL4Texture::getWidth() const{
+	int32 GL4Texture::getWidth() const{
 		return width;
 	}
 
-	int GL4Texture::getHeight() const{
+	int32 GL4Texture::getHeight() const{
 		return height;
 	}
 
@@ -69,7 +69,7 @@ namespace clv::gfx{
 		return usageType;
 	}
 
-	const unsigned int GL4Texture::getRenderID() const{
+	const uint32 GL4Texture::getRenderID() const{
 		return rendererID;
 	}
 

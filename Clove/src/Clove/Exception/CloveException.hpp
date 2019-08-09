@@ -9,7 +9,7 @@ namespace clv{
 		mutable std::string whatBuffer;
 
 	private:
-		int lineNum = -1;
+		int32 lineNum = -1;
 		std::string file = "";
 
 		//FUNCTIONS
@@ -18,14 +18,14 @@ namespace clv{
 		CloveException(const CloveException& other) = delete;
 		CloveException(CloveException&& other) noexcept = delete;
 
-		CloveException(int lineNum, const char* file);
+		CloveException(int32 lineNum, const char* file);
 
 		virtual ~CloveException();
 
 		virtual const char* what() const noexcept override;
 		virtual const char* getType() const noexcept;
 
-		int getLineNum() const noexcept;
+		int32 getLineNum() const noexcept;
 		const std::string& getFile() const noexcept;
 		std::string getOriginString() const noexcept;
 

@@ -12,10 +12,10 @@ namespace clv::gfx{
 namespace clv{
 	struct WindowProps{
 		std::string title;
-		unsigned int width;
-		unsigned int height;
+		uint32 width;
+		uint32 height;
 
-		WindowProps(const std::string& inTitle = "Clove Engine", unsigned int inWidth = 1280, unsigned int inHeight = 720)
+		WindowProps(const std::string& inTitle = "Clove Engine", uint32 inWidth = 1280u, uint32 inHeight = 720u)
 			: title(inTitle)
 			, width(inWidth)
 			, height(inHeight){
@@ -49,8 +49,8 @@ namespace clv{
 		
 		virtual void* getNativeWindow() const = 0;
 
-		unsigned int getWidth() const;
-		unsigned int getHeight() const;
+		uint32 getWidth() const;
+		uint32 getHeight() const;
 
 		void setVSync(bool enabled);
 		bool isVSync() const;
