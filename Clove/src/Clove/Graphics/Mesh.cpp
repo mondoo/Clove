@@ -73,7 +73,7 @@ namespace clv::gfx{
 		this->material = material;
 	}
 
-	unsigned int Mesh::getIndexCount(){
+	uint32 Mesh::getIndexCount(){
 		return indexBuffer->getIndexCount();
 	}
 

@@ -38,7 +38,7 @@ namespace clv::gfx::BindableFactory{
 	}
 
 	template<typename T>
-	std::shared_ptr<ShaderBufferObject<T>> createShaderBufferObject(ShaderType shaderType, unsigned int bindingPoint, T&& data){
+	std::shared_ptr<ShaderBufferObject<T>> createShaderBufferObject(ShaderType shaderType, uint32 bindingPoint, T&& data){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
 				return std::make_shared<GL4UniformBufferObject<T>>(bindingPoint, std::forward<T>(data));

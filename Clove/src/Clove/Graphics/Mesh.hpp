@@ -34,7 +34,7 @@ namespace clv::gfx{
 			return *material;
 		}
 
-		unsigned int getIndexCount();
+		uint32 getIndexCount();
 
 		void bind();
 	};

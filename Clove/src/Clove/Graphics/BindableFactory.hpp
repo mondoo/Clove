@@ -22,9 +22,9 @@ namespace clv::gfx::BindableFactory{
 	std::shared_ptr<Texture>				createTexture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint);
 
 	template<typename T>
-	std::shared_ptr<ShaderBufferObject<T>>	createShaderBufferObject(ShaderType shaderType, unsigned int bindingPoint);
+	std::shared_ptr<ShaderBufferObject<T>>	createShaderBufferObject(ShaderType shaderType, uint32 bindingPoint);
 	template<typename T>
-	std::shared_ptr<ShaderBufferObject<T>>	createShaderBufferObject(ShaderType shaderType, unsigned int bindingPoint, T&& data);
+	std::shared_ptr<ShaderBufferObject<T>>	createShaderBufferObject(ShaderType shaderType, uint32 bindingPoint, T&& data);
 };
 
 #include "BindableFactory.inl"
