@@ -16,8 +16,6 @@ namespace clv::gfx{
 		std::shared_ptr<IndexBuffer> indexBuffer;
 		std::shared_ptr<Material> material;
 		std::shared_ptr<Shader> shader;//Temp????
-		/*std::shared_ptr<Texture> albedoTexture;
-		std::shared_ptr<Texture> specTexture;*/
 
 		//FUNCTIONS
 	public:

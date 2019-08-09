@@ -65,9 +65,7 @@ namespace clv::gfx{
 	class Renderer{
 		//VARIABLES
 	protected:
-		//static std::shared_ptr<gfx::ShaderBufferObject<VertexData>> vertSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO; //TODO: MOVE TO MATERIAL
-		//static std::shared_ptr<gfx::ShaderBufferObject<SpriteShaderData>> spriteSBO;
 
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewData>> viewDataSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> viewPosSBO;

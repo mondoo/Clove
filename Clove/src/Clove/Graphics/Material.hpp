@@ -11,21 +11,11 @@ namespace clv::gfx{
 	class Material{
 		//VARIABLES
 	private:
-		math::Matrix4f modelData{}; //This should be an sbo
-
 		//Not quite sure how this will hold the shader. Need to look at perhaps refactoring how the vertex layout is done for dx to remove the dependancy 
 		//std::shared_ptr<Shader> shader;
 		std::shared_ptr<Texture> albedoTexture;
 		std::shared_ptr<Texture> specTexture;
 		std::unordered_map<BufferBindingPoint, std::shared_ptr<Bindable>> shaderData;
-
-		/*
-		holds data about a mesh looks (and maybe sprites?)
-		-holds the textures
-		-holds the sbos (or the BufferData class/struct that will replace)
-		-I think it should hold the shader but that might be difficult
-		*/
-
 
 		//FUNCTIONS
 	public:

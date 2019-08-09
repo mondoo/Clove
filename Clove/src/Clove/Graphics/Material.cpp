@@ -13,8 +13,6 @@ namespace clv::gfx{
 	Material& Material::operator=(const Material& other) = default;
 
 	Material::Material(Material&& other) noexcept{
-		modelData = std::move(other.modelData);
-
 		albedoTexture = std::move(other.albedoTexture);
 		specTexture = std::move(other.specTexture);
 		shaderData = std::move(other.shaderData);

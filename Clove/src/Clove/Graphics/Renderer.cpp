@@ -15,9 +15,7 @@
 #include "Clove/Graphics/Sprite.hpp"
 
 namespace clv::gfx{
-	//std::shared_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::vertSBO;
 	std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
-	//std::shared_ptr<gfx::ShaderBufferObject<SpriteShaderData>> Renderer::spriteSBO;
 
 	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO;
 	std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> Renderer::viewPosSBO;
@@ -34,18 +32,14 @@ namespace clv::gfx{
 	std::shared_ptr<RenderTarget> Renderer::renderTarget;
 
 	void Renderer::initialise(){
-		//vertSBO = gfx::BindableFactory::createShaderBufferObject<VertexData>(gfx::ShaderType::Vertex, gfx::BBP_ModelData);
 		materialSBO = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
-		//spriteSBO = gfx::BindableFactory::createShaderBufferObject<SpriteShaderData>(gfx::ShaderType::Vertex, gfx::BBP_2DData);
 
 		viewDataSBO = gfx::BindableFactory::createShaderBufferObject<ViewData>(gfx::ShaderType::Vertex, gfx::BBP_CameraMatrices);
 		viewPosSBO = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderType::Pixel, gfx::BBP_ViewData);
 		
 		lightDataSBO = gfx::BindableFactory::createShaderBufferObject<PointLightShaderData>(gfx::ShaderType::Pixel, gfx::BBP_PointLightData);
 
-		//vertSBO->bind();
 		materialSBO->bind();
-		//spriteSBO->bind();
 
 		viewDataSBO->bind();
 		viewPosSBO->bind();
@@ -123,7 +117,6 @@ namespace clv::gfx{
 	}
 
 	void Renderer::submitPointLight(const PointLightData& data){
-		//lightDataSBO->update(data);
 		currentLightInfo.lights[currentLightInfo.numLights++] = data;
 	}
 }

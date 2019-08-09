@@ -10,7 +10,12 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		//TODO ctors
+		Sprite();
+		Sprite(const Sprite& other);
+		Sprite& operator=(const Sprite& other);
+		Sprite(Sprite&& other) noexcept;
+		Sprite& operator=(Sprite&& other) noexcept;
+		~Sprite();
 
 		void setMaterial(const std::shared_ptr<Material>& material);
 		//TODO: shared_ptr or ref?
