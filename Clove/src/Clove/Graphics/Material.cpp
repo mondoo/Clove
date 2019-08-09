@@ -38,6 +38,7 @@ namespace clv::gfx{
 	}
 
 	void Material::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
+		CLV_ASSERT(texture->getBindingPoint() == gfx::TBP_Albedo, "Incorrect binding point for an albedo texture!");
 		albedoTexture = texture;
 	}
 
@@ -46,6 +47,7 @@ namespace clv::gfx{
 	}
 
 	void Material::setSpecularTexture(const std::shared_ptr<Texture>& texture){
+		CLV_ASSERT(texture->getBindingPoint() == gfx::TBP_Specular, "Incorrect binding point for a specular texture!");
 		specTexture = texture;
 	}
 }

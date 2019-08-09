@@ -50,6 +50,10 @@ namespace clv::gfx{
 		return height;
 	}
 
+	TextureBindingPoint DX11Texture::getBindingPoint() const{
+		return static_cast<TextureBindingPoint>(bindingPoint);
+	}
+
 	TextureUsage DX11Texture::getUsageType() const{
 		return usage;
 	}

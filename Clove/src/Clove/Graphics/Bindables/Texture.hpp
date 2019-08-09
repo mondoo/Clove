@@ -24,6 +24,7 @@ namespace clv::gfx{
 		virtual int32 getWidth() const = 0;
 		virtual int32 getHeight() const = 0;
 
+		virtual TextureBindingPoint getBindingPoint() const = 0;
 		virtual TextureUsage getUsageType() const = 0;
 	};
 }
