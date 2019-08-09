@@ -17,6 +17,7 @@
 #include "Clove/Graphics/Bindables/Texture.hpp"
 #include "Clove/Graphics/RenderTarget.hpp"
 #include "Clove/Graphics/Mesh.hpp"
+#include "Clove/Graphics/Sprite.hpp"
 #include "Clove/Graphics/Material.hpp"
 
 TestLayer::TestLayer()
@@ -81,12 +82,24 @@ void TestLayer::onAttach(){
 	auto renderTarget = clv::gfx::RenderTarget::createRenderTarget(*rtTexture);
 	clv::gfx::Renderer::setRenderTarget(renderTarget);*/
 
-	sprtEnt1.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture("res/Textures/Zombie-32x32.png");
-	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+	{
+		auto sprite = std::make_shared<clv::gfx::Sprite>();
+		auto material = std::make_shared<clv::gfx::Material>();
+		material->setAlbedoTexture("res/Textures/Zombie-32x32.png");
+		sprite->setMaterial(material);
+		sprtEnt1.getComponent<clv::ecs::d2::RenderableComponent>()->setSprite(sprite);
+		sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+	}
 
-	sprtEnt2.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture("res/Textures/Zombie-32x32.png");
-	sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 2.0f));
-	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+	{
+		auto sprite = std::make_shared<clv::gfx::Sprite>();
+		auto material = std::make_shared<clv::gfx::Material>();
+		material->setAlbedoTexture("res/Textures/Zombie-32x32.png");
+		sprite->setMaterial(material);
+		sprtEnt2.getComponent<clv::ecs::d2::RenderableComponent>()->setSprite(sprite);
+		sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 2.0f));
+		sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+	}
 
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->addChild(sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>());
 

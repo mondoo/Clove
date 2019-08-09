@@ -1,10 +1,13 @@
 #pragma once
 
+#include "Clove/Graphics/GraphicsTypes.hpp"
+
 namespace clv::gfx{
 	class VertexBuffer;
 	class IndexBuffer;
 	class Material;
 	class Shader;
+	class VertexBufferData;
 	
 	class Mesh{
 		//VARIABLES
@@ -26,6 +29,7 @@ namespace clv::gfx{
 		~Mesh();
 
 		Mesh(std::string filePath);
+		Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, ShaderStyle shaderStyle);
 
 		void setMaterial(const std::shared_ptr<Material>& material);
 

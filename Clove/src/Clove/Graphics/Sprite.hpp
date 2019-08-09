@@ -1,30 +1,23 @@
 #pragma once
 
 namespace clv::gfx{
-	/*
-	This would just be a texture?
-	do we need a sprite class?
-	-maybe just for abstraction and expandability
-
-	how wil lthis help refactor the renderer?
-	all the renderer needs is the texture, the model and proj data can be handled in the render system
-	should this have the sbo for the model / proj?
-
-	
-	*/
-
-	class Texture;
+	class Material;
 
 	class Sprite{
 		//VARIABLES
 	private:
-		std::shared_ptr<Texture> texture;
+		std::shared_ptr<Material> material;
 
 		//FUNCTIONS
 	public:
 		//TODO ctors
 
-		void setTexture(const std::string& path);
-		//void setTexture(const std::shared_ptr<Texture>& texture);
+		void setMaterial(const std::shared_ptr<Material>& material);
+		//TODO: shared_ptr or ref?
+		Material& getMaterial(){
+			return *material;
+		}
+
+		void bind();
 	};
 }

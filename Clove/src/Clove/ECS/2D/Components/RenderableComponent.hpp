@@ -5,7 +5,7 @@
 #include "Clove/Graphics/Renderer.hpp"
 
 namespace clv::gfx{
-	class Texture;
+	class Sprite;
 }
 
 namespace clv::ecs::d2{
@@ -17,7 +17,7 @@ namespace clv::ecs::d2{
 		static constexpr ComponentID ID = 0x28fcf790; //VS Generated GUID
 
 	private:
-		gfx::SpriteRenderData submissionData;
+		std::shared_ptr<gfx::Sprite> sprite;
 
 		//FUNCTIONS
 	public:
@@ -28,8 +28,7 @@ namespace clv::ecs::d2{
 		RenderableComponent& operator=(RenderableComponent&& other) noexcept;
 		virtual ~RenderableComponent();
 
-		void setTexture(const std::string& path);
-		void setTexture(const std::shared_ptr<gfx::Texture>& texture);
+		void setSprite(const std::shared_ptr<gfx::Sprite>& sprite);
 	};
 }
 

@@ -69,6 +69,18 @@ namespace clv::gfx{
 		indexBuffer = gfx::BindableFactory::createIndexBuffer(info.indices);
 	}
 
+	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, ShaderStyle shaderStyle){
+		//Shader
+		shader = gfx::BindableFactory::createShader(shaderStyle);
+		shader->bind();
+
+		//VB
+		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vbData, *shader);
+
+		//IB
+		indexBuffer = gfx::BindableFactory::createIndexBuffer(indices);
+	}
+
 	void Mesh::setMaterial(const std::shared_ptr<Material>& material){
 		this->material = material;
 	}
@@ -80,7 +92,9 @@ namespace clv::gfx{
 	void Mesh::bind(){
 		vertexBuffer->bind();
 		indexBuffer->bind();
-		material->bind();
+		if(material){ //Can be null - should we use a different mesh type?
+			material->bind();
+		}
 		shader->bind();
 	}
 }
