@@ -117,7 +117,6 @@ project "Glad"
 
 	files{
         "%{prj.location}/include/**.h",
-        "%{prj.location}/include/**.h",
         "%{prj.location}/src/**.c"
     }
 
@@ -154,15 +153,107 @@ project "stb"
 		"%{prj.location}/**.cpp",
 	}
 
+project "PortAudio"
+	location "Clove/vendor/portaudio"
+	kind "StaticLib"
+	language "C"
+
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
+
+	files{
+		"%{prj.location}/include/portaudio.h",
+
+		"%{prj.location}/src/common/pa_allocation.h",
+		"%{prj.location}/src/common/pa_allocation.c",
+  		"%{prj.location}/src/common/pa_converters.h",
+		"%{prj.location}/src/common/pa_converters.c",
+  		"%{prj.location}/src/common/pa_cpuload.h",
+		"%{prj.location}/src/common/pa_cpuload.c",
+  		"%{prj.location}/src/common/pa_debugprint.h",
+		"%{prj.location}/src/common/pa_debugprint.c",
+  		"%{prj.location}/src/common/pa_dither.h",
+		"%{prj.location}/src/common/pa_dither.c",
+		"%{prj.location}/src/common/pa_process.h",
+		"%{prj.location}/src/common/pa_process.c",
+		"%{prj.location}/src/common/pa_ringbuffer.h",
+		"%{prj.location}/src/common/pa_ringbuffer.c",
+		"%{prj.location}/src/common/pa_stream.h",
+		"%{prj.location}/src/common/pa_stream.c",
+		"%{prj.location}/src/common/pa_trace.h",
+		"%{prj.location}/src/common/pa_trace.c",
+		
+		"%{prj.location}/src/common/pa_endianness.h",
+		"%{prj.location}/src/common/pa_hostapi.h",
+		"%{prj.location}/src/common/pa_memorybarrier.h",
+  		"%{prj.location}/src/common/pa_types.h",
+		"%{prj.location}/src/common/pa_util.h",
+		  
+		"%{prj.location}/src/common/pa_front.c",
+		  
+		--"%{prj.location}/**.h",
+		--"%{prj.location}/**.c",
+		--"%{prj.location}/**.cpp",
+	}
+
+	includedirs{
+		"%{prj.location}/include/",
+		"%{prj.location}/src/common",
+
+		--"%{prj.location}/include",
+		--"%{prj.location}/src/common",
+		--"%{prj.location}/src/hostapi/asio",
+	}
+
+	--filter "system:windows"
+	defines{
+		"_CRT_SECURE_NO_WARNINGS",
+		"PA_USE_ASIO=1",
+		--"PA_USE_DS",
+		--"PA_USE_WMME",
+		--"PA_USE_WASAPI",
+		--"PA_USE_WDMKS",
+		--"PA_USE_SKELETON",	
+	}
+
+	filter "system:windows"
+		files{
+			"%{prj.location}/src/os/win/pa_win_wdmks_utils.h",
+			"%{prj.location}/src/os/win/pa_win_wdmks_utils.c",
+			"%{prj.location}/src/os/win/pa_win_coinitialize.h",
+			"%{prj.location}/src/os/win/pa_win_coinitialize.c",
+			
+			"%{prj.location}/src/os/win/pa_win_hostapis.c",
+			"%{prj.location}/src/os/win/pa_win_waveformat.c",
+			"%{prj.location}/src/os/win/pa_win_util.c",
+		}
+
+		--includedirs{
+		--
+		--}
+
+		--removefiles{
+		--	"%{prj.location}/src/hostapi/alsa/**.h",
+		--	"%{prj.location}/src/hostapi/alsa/**.c",
+		--	"%{prj.location}/src/hostapi/asihpi/**.h",
+		--	"%{prj.location}/src/hostapi/asihpi/**.c",
+		--	"%{prj.location}/src/hostapi/coreaudio/**.h",
+		--	"%{prj.location}/src/hostapi/coreaudio/**.c",
+		--	"%{prj.location}/src/hostapi/oss/**.h",
+		--	"%{prj.location}/src/hostapi/oss/**.c",
+		--	"%{prj.location}/src/os/unix/**.h",
+		--	"%{prj.location}/src/os/unix/**.c",
+		--}
 --End: Dependencies
 
 --CLOVE
 -- Inlcude direction relative to the roof folder (solution directory)
 includeDir = {}
-includeDir["Glad"]	= "Clove/vendor/Glad/include"
-includeDir["glm"]	= "Clove/vendor/glm"
-includeDir["stb"]	= "Clove/vendor/stb"
-includeDir["dxerr"]	= "Clove/vendor/dxerr"
+includeDir["Glad"]		= "Clove/vendor/Glad/include"
+includeDir["glm"]		= "Clove/vendor/glm"
+includeDir["stb"]		= "Clove/vendor/stb"
+includeDir["dxerr"]		= "Clove/vendor/dxerr"
+includeDir["portaudio"] = "Clove/vendor/portaudio/include"
 
 group ""
 project "Clove"
@@ -192,6 +283,7 @@ project "Clove"
 		"%{includeDir.glm}",
 		"%{includeDir.stb}",
 		"%{includeDir.dxerr}",
+		"%{includeDir.portaudio}",
 
 		--Misc vendor
 		"%{prj.location}/vendor/spdlog/include",
@@ -202,6 +294,7 @@ project "Clove"
 	links{
 		"Glad",
 		"stb",
+		"portaudio"
 	}
 
 	defines{

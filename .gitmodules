@@ -10,3 +10,4 @@
 [submodule "Clove/vendor/portaudio"]
 	path = Clove/vendor/portaudio
 	url = https://git.assembla.com/portaudio.git
+	ignore = dirty
