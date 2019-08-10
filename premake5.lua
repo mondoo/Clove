@@ -224,10 +224,6 @@ project "PortAudio"
 			"%{prj.location}/src/os/win"
 		}
 
-		links{
-			"dsound.dll",
-		}
-
 		defines{
 			"PA_USE_DS",
 			"PAWIN_USE_DIRECTSOUNDFULLDUPLEXCREATE"
@@ -237,6 +233,16 @@ project "PortAudio"
 		files{
 			"%{prj.location}/src/os/unix/pa_unix_hostapis.c",
 			"%{prj.location}/src/os/unix/pa_unix_util.c",
+			"%{prj.location}/include/pa_linux_alsa.h",
+			"%{prj.location}/src/hostapi/alsa/pa_linux_alsa.c",
+		}
+
+		includedirs{
+			"%{prj.location}/src/os/unix"
+		}
+
+		defines{
+			"PA_USE_ALSA"
 		}
 --End: Dependencies
 
@@ -389,5 +395,10 @@ project "Sandbox"
 			"GLX",
 			"X11",
 			"stb",
-			"dl"
+			"dl",
+			"portaudio",
+			"pthread",
+			"asound",
+			"rt",
+			"m"
 		}
