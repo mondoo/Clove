@@ -161,6 +161,7 @@ project "PortAudio"
 	targetdir(targetdir_vendor)
 	objdir(objdir_vendor)
 
+	--converted from CMakeLists.txt in "Clove/vendor/portaudio"
 	files{
 		"%{prj.location}/include/portaudio.h",
 
@@ -197,22 +198,39 @@ project "PortAudio"
 		"%{prj.location}/src/common",
 	}
 
-	--filter "system:windows"
 	defines{
 		"_CRT_SECURE_NO_WARNINGS",
-		--"PA_USE_ASIO=1",	
 	}
 
 	filter "system:windows"
 		files{
+			"%{prj.location}/include/pa_win_ds.h",
+			"%{prj.location}/include/pa_win_waveformat.h",
+
 			"%{prj.location}/src/os/win/pa_win_wdmks_utils.h",
 			"%{prj.location}/src/os/win/pa_win_wdmks_utils.c",
 			"%{prj.location}/src/os/win/pa_win_coinitialize.h",
 			"%{prj.location}/src/os/win/pa_win_coinitialize.c",
-			
+			"%{prj.location}/src/hostapi/dsound/pa_win_ds_dynlink.h",
+			"%{prj.location}/src/hostapi/dsound/pa_win_ds_dynlink.c",
+
 			"%{prj.location}/src/os/win/pa_win_hostapis.c",
 			"%{prj.location}/src/os/win/pa_win_waveformat.c",
 			"%{prj.location}/src/os/win/pa_win_util.c",
+			"%{prj.location}/src/hostapi/dsound/pa_win_ds.c"
+		}
+
+		includedirs{
+			"%{prj.location}/src/os/win"
+		}
+
+		links{
+			"dsound.dll",
+		}
+
+		defines{
+			"PA_USE_DS",
+			"PAWIN_USE_DIRECTSOUNDFULLDUPLEXCREATE"
 		}
 	
 	filter "system:linux"
