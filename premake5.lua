@@ -190,30 +190,17 @@ project "PortAudio"
 		"%{prj.location}/src/common/pa_util.h",
 		  
 		"%{prj.location}/src/common/pa_front.c",
-		  
-		--"%{prj.location}/**.h",
-		--"%{prj.location}/**.c",
-		--"%{prj.location}/**.cpp",
 	}
 
 	includedirs{
 		"%{prj.location}/include/",
 		"%{prj.location}/src/common",
-
-		--"%{prj.location}/include",
-		--"%{prj.location}/src/common",
-		--"%{prj.location}/src/hostapi/asio",
 	}
 
 	--filter "system:windows"
 	defines{
 		"_CRT_SECURE_NO_WARNINGS",
-		"PA_USE_ASIO=1",
-		--"PA_USE_DS",
-		--"PA_USE_WMME",
-		--"PA_USE_WASAPI",
-		--"PA_USE_WDMKS",
-		--"PA_USE_SKELETON",	
+		--"PA_USE_ASIO=1",	
 	}
 
 	filter "system:windows"
@@ -227,23 +214,12 @@ project "PortAudio"
 			"%{prj.location}/src/os/win/pa_win_waveformat.c",
 			"%{prj.location}/src/os/win/pa_win_util.c",
 		}
-
-		--includedirs{
-		--
-		--}
-
-		--removefiles{
-		--	"%{prj.location}/src/hostapi/alsa/**.h",
-		--	"%{prj.location}/src/hostapi/alsa/**.c",
-		--	"%{prj.location}/src/hostapi/asihpi/**.h",
-		--	"%{prj.location}/src/hostapi/asihpi/**.c",
-		--	"%{prj.location}/src/hostapi/coreaudio/**.h",
-		--	"%{prj.location}/src/hostapi/coreaudio/**.c",
-		--	"%{prj.location}/src/hostapi/oss/**.h",
-		--	"%{prj.location}/src/hostapi/oss/**.c",
-		--	"%{prj.location}/src/os/unix/**.h",
-		--	"%{prj.location}/src/os/unix/**.c",
-		--}
+	
+	filter "system:linux"
+		files{
+			"%{prj.location}/src/os/unix/pa_unix_hostapis.c",
+			"%{prj.location}/src/os/unix/pa_unix_util.c",
+		}
 --End: Dependencies
 
 --CLOVE
