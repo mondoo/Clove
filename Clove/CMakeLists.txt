@@ -1,6 +1,22 @@
-add_library(GLOB Clove STATIC
-    *.hpp
-    *.cpp
+#Clove CMake list
+
+project(Clove)
+
+file(
+	GLOB clove_src
+    src/*.hpp
+	src/*.cpp
+	src/Clove/*.hpp
+    src/Clove/*.cpp
 )
 
-target_link_libraries(Clove PRIVATE glm)
+add_library(
+	Clove STATIC
+	${clove_src}
+)
+
+target_link_libraries(
+	Clove PRIVATE 
+	glm
+	spdlog
+)
