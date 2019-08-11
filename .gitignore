@@ -3,6 +3,7 @@
 .vscode/
 .codelite/
 Built/
+build/
 !Vendor/*
 
 # Files
