@@ -12,7 +12,7 @@
 
 //audio test
 #include <portaudio.h>
-#include <sndfile.hh>
+#include <sndfile.h>
 
 //audio test
 struct paTestData{

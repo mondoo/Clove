@@ -380,11 +380,7 @@ project "libsndfile"
 		"_USE_MATH_DEFINES",
 		"_CRT_SECURE_NO_WARNINGS"
 	}
-
-	postbuildcommands{
-		("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
-	}
-
+	
 	filter "system:windows"
 		files{
 			"%{prj.location}/src/windows.c",
