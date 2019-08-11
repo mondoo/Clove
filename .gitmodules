@@ -11,3 +11,7 @@
 	path = Clove/vendor/portaudio
 	url = https://git.assembla.com/portaudio.git
 	ignore = dirty
+[submodule "Clove/vendor/libsndfile"]
+	path = Clove/vendor/libsndfile
+	url = https://github.com/erikd/libsndfile.git
+	ignore = dirty

@@ -38,17 +38,14 @@ workspace "Clove"
 	filter "platforms:Win32"
 		system "windows"
 		architecture "x86"
-		staticruntime "on"
 
 	filter "platforms:Win64"
 		system "windows"
 		architecture "x86_64"
-		staticruntime "on"
 
 	filter "platforms:Linux"
 		system "linux"
 		architecture "x86_64"
-		staticruntime "on"
 
 	--System filters
 	filter "system:windows"
@@ -110,7 +107,8 @@ group "Dependencies"
 project "Glad"
 	location "Clove/vendor/Glad"
     kind "StaticLib"
-    language "C"
+	staticruntime "on"
+	language "C"
     
 	targetdir(targetdir_vendor)
 	objdir(objdir_vendor)
@@ -128,6 +126,7 @@ project "Glad"
 project "dxerr"
 	location "Clove/vendor/dxerr"
 	kind "StaticLib"
+	staticruntime "on"
 	language "C++"
 
 	targetdir(targetdir_vendor)
@@ -143,6 +142,7 @@ project "dxerr"
 project "stb"
 	location "Clove/vendor/stb"
 	kind "StaticLib"
+	staticruntime "on"
 	language "C++"
 	
 	targetdir(targetdir_vendor)
@@ -156,6 +156,7 @@ project "stb"
 project "PortAudio"
 	location "Clove/vendor/portaudio"
 	kind "StaticLib"
+	staticruntime "on"
 	language "C"
 
 	targetdir(targetdir_vendor)
@@ -244,6 +245,151 @@ project "PortAudio"
 		defines{
 			"PA_USE_ALSA"
 		}
+
+project "libsndfile"
+	location "Clove/vendor/libsndfile"
+	kind "StaticLib"
+	staticruntime "off"
+	language "C"
+
+	targetdir(targetdir_vendor)
+	objdir(objdir_vendor)
+
+	--converted from CMakeLists.txt in "Clove/vendor/libsndfile"
+	files{
+		"%{prj.location}/src/sfconfig.h",
+		"%{prj.location}/src/sfendian.h",
+		"%{prj.location}/src/sf_unistd.h",
+		"%{prj.location}/src/common.h",
+		"%{prj.location}/src/common.c",
+		"%{prj.location}/src/file_io.c",
+		"%{prj.location}/src/command.c",
+		"%{prj.location}/src/pcm.c",
+		"%{prj.location}/src/ulaw.c",
+		"%{prj.location}/src/alaw.c",
+		"%{prj.location}/src/float32.c",
+		"%{prj.location}/src/double64.c",
+		"%{prj.location}/src/ima_adpcm.c",
+		"%{prj.location}/src/ms_adpcm.c",
+		"%{prj.location}/src/gsm610.c",
+		"%{prj.location}/src/dwvw.c",
+		"%{prj.location}/src/vox_adpcm.c",
+		"%{prj.location}/src/interleave.c",
+		"%{prj.location}/src/strings.c",
+		"%{prj.location}/src/dither.c",
+		"%{prj.location}/src/cart.c",
+		"%{prj.location}/src/broadcast.c",
+		"%{prj.location}/src/audio_detect.c",
+ 		"%{prj.location}/src/ima_oki_adpcm.c",
+		"%{prj.location}/src/ima_oki_adpcm.h",
+		"%{prj.location}/src/alac.c",
+		"%{prj.location}/src/chunk.c",
+		"%{prj.location}/src/ogg.h",
+		"%{prj.location}/src/ogg.c",
+		"%{prj.location}/src/chanmap.h",
+		"%{prj.location}/src/chanmap.c",
+		"%{prj.location}/src/id3.c",
+		"%{prj.location}/src/sndfile.c",
+		"%{prj.location}/src/aiff.c",
+		"%{prj.location}/src/au.c",
+		"%{prj.location}/src/avr.c",
+		"%{prj.location}/src/caf.c",
+		"%{prj.location}/src/dwd.c",
+		"%{prj.location}/src/flac.c",
+		"%{prj.location}/src/g72x.c",
+		"%{prj.location}/src/htk.c",
+		"%{prj.location}/src/ircam.c",
+		"%{prj.location}/src/macos.c",
+		"%{prj.location}/src/mat4.c",
+		"%{prj.location}/src/mat5.c",
+		"%{prj.location}/src/nist.c",
+		"%{prj.location}/src/paf.c",
+		"%{prj.location}/src/pvf.c",
+		"%{prj.location}/src/raw.c",
+		"%{prj.location}/src/rx2.c",
+		"%{prj.location}/src/sd2.c",
+		"%{prj.location}/src/sds.c",
+		"%{prj.location}/src/svx.c",
+		"%{prj.location}/src/txw.c",
+		"%{prj.location}/src/voc.c",
+		"%{prj.location}/src/wve.c",
+		"%{prj.location}/src/w64.c",
+		"%{prj.location}/src/wavlike.h",
+		"%{prj.location}/src/wavlike.c",
+		"%{prj.location}/src/wav.c",
+		"%{prj.location}/src/xi.c",
+		"%{prj.location}/src/mpc2k.c",
+		"%{prj.location}/src/rf64.c",
+		"%{prj.location}/src/ogg_vorbis.c",
+		"%{prj.location}/src/ogg_speex.c",
+		"%{prj.location}/src/ogg_pcm.c",
+		"%{prj.location}/src/ogg_opus.c",
+		"%{prj.location}/src/ogg_vcomment.c",
+		"%{prj.location}/src/nms_adpcm.c",
+		"%{prj.location}/src/GSM610/config.h",
+		"%{prj.location}/src/GSM610/gsm.h",
+		"%{prj.location}/src/GSM610/gsm610_priv.h",
+		"%{prj.location}/src/GSM610/add.c",
+		"%{prj.location}/src/GSM610/code.c",
+		"%{prj.location}/src/GSM610/decode.c",
+		"%{prj.location}/src/GSM610/gsm_create.c",
+		"%{prj.location}/src/GSM610/gsm_decode.c",
+		"%{prj.location}/src/GSM610/gsm_destroy.c",
+		"%{prj.location}/src/GSM610/gsm_encode.c",
+		"%{prj.location}/src/GSM610/gsm_option.c",
+		"%{prj.location}/src/GSM610/long_term.c",
+		"%{prj.location}/src/GSM610/lpc.c",
+		"%{prj.location}/src/GSM610/preprocess.c",
+		"%{prj.location}/src/GSM610/rpe.c",
+		"%{prj.location}/src/GSM610/short_term.c",
+		"%{prj.location}/src/GSM610/table.c",
+		"%{prj.location}/src/G72x/g72x.h",
+		"%{prj.location}/src/G72x/g72x_priv.h",
+		"%{prj.location}/src/G72x/g721.c",
+		"%{prj.location}/src/G72x/g723_16.c",
+		"%{prj.location}/src/G72x/g723_24.c",
+		"%{prj.location}/src/G72x/g723_40.c",
+		"%{prj.location}/src/G72x/g72x.c",
+		"%{prj.location}/src/ALAC/ALACAudioTypes.h",
+		"%{prj.location}/src/ALAC/ALACBitUtilities.h",
+		"%{prj.location}/src/ALAC/EndianPortable.h",
+		"%{prj.location}/src/ALAC/aglib.h",
+		"%{prj.location}/src/ALAC/dplib.h",
+		"%{prj.location}/src/ALAC/matrixlib.h",
+		"%{prj.location}/src/ALAC/alac_codec.h",
+		"%{prj.location}/src/ALAC/shift.h",
+		"%{prj.location}/src/ALAC/ALACBitUtilities.c",
+		"%{prj.location}/src/ALAC/ag_dec.c",
+		"%{prj.location}/src/ALAC/ag_enc.c",
+		"%{prj.location}/src/ALAC/dp_dec.c",
+		"%{prj.location}/src/ALAC/dp_enc.c",
+		"%{prj.location}/src/ALAC/matrix_dec.c",
+		"%{prj.location}/src/ALAC/matrix_enc.c",
+		"%{prj.location}/src/ALAC/alac_decoder.c",
+		"%{prj.location}/src/ALAC/alac_encoder.c",
+		"%{prj.location}/src/sndfile.hh",
+		"%{prj.location}/src/sndfile.h",
+		"%{prj.location}/src/config.h",
+	}
+
+	includedirs{
+		"%{prj.location}/src"
+	}
+
+	defines{
+		"_USE_MATH_DEFINES",
+		"_CRT_SECURE_NO_WARNINGS"
+	}
+
+	postbuildcommands{
+		("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
+	}
+
+	filter "system:windows"
+		files{
+			"%{prj.location}/src/windows.c",
+		}
+
 --End: Dependencies
 
 --CLOVE
@@ -254,12 +400,14 @@ includeDir["glm"]		= "Clove/vendor/glm"
 includeDir["stb"]		= "Clove/vendor/stb"
 includeDir["dxerr"]		= "Clove/vendor/dxerr"
 includeDir["portaudio"] = "Clove/vendor/portaudio/include"
+includeDir["libsndfile"] = "Clove/vendor/libsndfile/src"
 
 group ""
 project "Clove"
 	location "Clove"
-	language "C++"
 	kind "StaticLib"
+	staticruntime "on"
+	language "C++"
 
 	targetdir(targetdir_clv)
 	objdir(objdir_clv)
@@ -284,6 +432,7 @@ project "Clove"
 		"%{includeDir.stb}",
 		"%{includeDir.dxerr}",
 		"%{includeDir.portaudio}",
+		"%{includeDir.libsndfile}",
 
 		--Misc vendor
 		"%{prj.location}/vendor/spdlog/include",
@@ -294,7 +443,8 @@ project "Clove"
 	links{
 		"Glad",
 		"stb",
-		"portaudio"
+		"portaudio",
+		"libsndfile"
 	}
 
 	defines{
@@ -364,6 +514,7 @@ group ""
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
+	staticruntime "on"
 	language "C++"
 
 	targetdir(targetdir_clv)

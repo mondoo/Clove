@@ -10,10 +10,11 @@
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/RenderCommand.hpp"
 
-//port audio test
+//audio test
 #include <portaudio.h>
+#include <sndfile.h>
 
-//port audio test
+//audio test
 struct paTestData{
 	float left_phase;
 	float right_phase;
@@ -68,7 +69,7 @@ namespace clv{
 		prevFrameTime = std::chrono::system_clock::now();
 
 		CLV_LOG_DEBUG("Start port audio test");
-		//port audio test
+		//audio test
 		auto err = Pa_Initialize();
 		if(err == paNoError){
 			paTestData data = { 1.0f, 1.0f };
