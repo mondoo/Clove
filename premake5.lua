@@ -249,7 +249,7 @@ project "PortAudio"
 project "libsndfile"
 	location "Clove/vendor/libsndfile"
 	kind "StaticLib"
-	staticruntime "off"
+	staticruntime "on"
 	language "C"
 
 	targetdir(targetdir_vendor)

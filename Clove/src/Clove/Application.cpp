@@ -12,7 +12,7 @@
 
 //audio test
 #include <portaudio.h>
-#include <sndfile.h>
+#include <sndfile.hh>
 
 //audio test
 struct paTestData{
@@ -20,29 +20,35 @@ struct paTestData{
 	float right_phase;
 };
 
+struct callback_data_s{
+	SNDFILE* file;
+	SF_INFO      info;
+};
+
 static int patestCallback(const void* inputBuffer, void* outputBuffer,
 						  unsigned long framesPerBuffer,
 						  const PaStreamCallbackTimeInfo* timeInfo,
 						  PaStreamCallbackFlags statusFlags,
 						  void* userData){
-	/* Cast data passed through stream to our structure. */
-	paTestData* data = (paTestData*)userData;
-	float* out = (float*)outputBuffer;
-	unsigned int i;
-	(void)inputBuffer; /* Prevent unused variable warning. */
+	float* out;
+	callback_data_s* p_data = (callback_data_s*)userData;
+	sf_count_t       num_read;
 
-	for(i = 0; i < framesPerBuffer; i++){
-		*out++ = data->left_phase;  /* left */
-		*out++ = data->right_phase;  /* right */
-		/* Generate simple sawtooth phaser that ranges between -1.0 and 1.0. */
-		data->left_phase += 0.01f;
-		/* When signal reaches top, drop back down. */
-		if(data->left_phase >= 1.0f) data->left_phase -= 2.0f;
-		/* higher pitch so we can distinguish left and right. */
-		data->right_phase += 0.03f;
-		if(data->right_phase >= 1.0f) data->right_phase -= 2.0f;
+	out = (float*)outputBuffer;
+	p_data = (callback_data_s*)userData;
+
+	/* clear output buffer */
+	memset(out, 0, sizeof(float) * framesPerBuffer * p_data->info.channels);
+
+	/* read directly into output buffer */
+	num_read = sf_read_float(p_data->file, out, framesPerBuffer * p_data->info.channels);
+
+	/*  If we couldn't read a full frameCount of samples we've reached EOF */
+	if(num_read < framesPerBuffer){
+		return paComplete;
 	}
-	return 0;
+
+	return paContinue;
 }
 
 namespace clv{
@@ -67,21 +73,29 @@ namespace clv{
 		CLV_LOG_INFO("Successfully initialised Clove");
 
 		prevFrameTime = std::chrono::system_clock::now();
+		
+		/*auto file = SndfileHandle("res/Audio/Test.wav");
+		int16 buffer[1024];
+		file.read(buffer, 1024);*/
+
+		callback_data_s data;
+		data.file = sf_open("res/Audio/Test.wav", SFM_READ, &data.info);
+		
 
 		CLV_LOG_DEBUG("Start port audio test");
 		//audio test
 		auto err = Pa_Initialize();
 		if(err == paNoError){
-			paTestData data = { 1.0f, 1.0f };
+			//paTestData data = { 1.0f, 1.0f };
 			PaStream* stream;
 			PaError err;
 			/* Open an audio I/O stream. */
 			err = Pa_OpenDefaultStream(&stream,
 									   0,          /* no input channels */
-									   2,          /* stereo output */
+									   data.info.channels,          /* stereo output */
 									   paFloat32,  /* 32 bit floating point output */
-									   44100,
-									   256,        /* frames per buffer, i.e. the number
+									   data.info.samplerate,
+									   512,        /* frames per buffer, i.e. the number
 														  of sample frames that PortAudio will
 														  request from the callback. Many apps
 														  may want to use
@@ -95,11 +109,19 @@ namespace clv{
 				err = Pa_StartStream(stream);
 
 				if(err == paNoError){
-					Pa_Sleep(1 * 1000);
+					Pa_Sleep(5 * 1000);
+
+					/*while(Pa_IsStreamActive(stream)){
+						Pa_Sleep(100);
+					}*/
 
 					Pa_StopStream(stream);
 
+					sf_close(data.file);
+
 					err = Pa_CloseStream(stream);
+
+					Pa_Terminate();
 					if(err == paNoError){
 
 					} else{
@@ -116,9 +138,7 @@ namespace clv{
 		}
 	}
 
-	Application::~Application(){
-		Pa_Terminate();
-	}
+	Application::~Application() = default;
 
 	void Application::run(){
 		while(running){
