@@ -1,5 +1,5 @@
 #Root CMake list
-cmake_minimum_required(VERSION 3.14.0)
+cmake_minimum_required(VERSION 3.10.0)
 project(Clove)
 set(CMAKE_BUILD_TYPE Debug)
 
