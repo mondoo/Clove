@@ -1,5 +1,7 @@
 #Sandbox CMake list
 
+project(Sandbox)
+
 file(
 	GLOB sandbox_src
     src/*.hpp

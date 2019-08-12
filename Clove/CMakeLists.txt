@@ -214,6 +214,8 @@ endif()
 
 target_link_libraries(
 	Clove PRIVATE 
+	dxerr #TODO: Only add on windows?
+	Glad
 	glm
 	spdlog
 )
