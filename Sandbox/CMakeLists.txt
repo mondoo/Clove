@@ -13,4 +13,10 @@ add_executable(
 	${sandbox_src}
 )
 
+target_include_directories(
+	Sandbox
+	PUBLIC
+		src
+)
+
 target_link_libraries(Sandbox PRIVATE Engine)

@@ -7,3 +7,9 @@ add_library(
     include/KHR/khrplatform.h
     src/glad.c
 )
+
+target_include_directories(
+    Glad
+    PUBLIC
+        include
+)

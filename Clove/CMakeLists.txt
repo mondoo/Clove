@@ -4,16 +4,6 @@ project(Clove)
 
 add_library(Clove STATIC)
 
-target_include_directories(
-	Clove
-	PUBLIC
-		src
-		src/Clove
-	PRIVATE
-		src/Graphics
-		src/Platform
-)
-
 #Clove
 target_sources(
 	Clove
@@ -211,11 +201,44 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	)
 endif()
 
+target_include_directories(
+	Clove
+
+	#Clove
+	PUBLIC
+		src
+		src/Clove
+	PRIVATE
+		src/Graphics
+		src/Platform
+
+	#Libraries
+	PUBLIC
+	PRIVATE
+		vendor/dxerr
+		#vendor/Glad/include
+		vendor/glm
+		#vendor/spdlog/include
+		vendor/wglext/
+
+)
 
 target_link_libraries(
-	Clove PRIVATE 
-	dxerr #TODO: Only add on windows?
-	Glad
-	glm
-	spdlog
+	Clove 
+	PRIVATE 
+		dxerr #TODO: Only add on windows?
+		Glad
+		glm
+		spdlog
 )
+
+#Precompiled header
+#??? - should hopefully fix those errors?
+
+##How to get everywhere?
+if(CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_CONFIGURATION_TYPES Debug Development Profiling Release)
+  set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
+    "Reset the configurations to what we need"
+    FORCE)
+endif()
