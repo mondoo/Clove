@@ -4,6 +4,16 @@ project(Clove)
 
 add_library(Clove STATIC)
 
+target_include_directories(
+	Clove
+	PUBLIC
+		src
+		src/Clove
+	PRIVATE
+		src/Graphics
+		src/Platform
+)
+
 #Clove
 target_sources(
 	Clove
