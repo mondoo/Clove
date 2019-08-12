@@ -8,6 +8,31 @@ add_library(Clove STATIC)
 target_sources(
 	Clove
 	PUBLIC
+		src/clvpch.hpp
+		src/clvpch.cpp
+		src/Clove.hpp
+		src/Clove/Core.hpp
+		src/Clove/EntryPoint.hpp
+		src/Clove/IntTypes.hpp
+		src/Clove/Layer.hpp
+		src/Clove/Layer.cpp
+		src/Clove/LayerStack.hpp
+		src/Clove/LayerStack.cpp
+		src/Clove/Log.hpp
+		src/Clove/Log.cpp
+		src/Clove/Application.hpp
+		src/Clove/Application.cpp
+		src/Clove/ECS/Component.hpp
+		src/Clove/ECS/Component.cpp
+		src/Clove/ECS/ECSTypes.hpp
+		src/Clove/ECS/Entity.hpp
+		src/Clove/ECS/Entity.inl
+		src/Clove/ECS/Entity.cpp
+		src/Clove/ECS/Manager.hpp
+		src/Clove/ECS/Manager.inl
+		src/Clove/ECS/Manager.cpp
+		src/Clove/ECS/System.hpp
+		src/Clove/ECS/System.inl
 		src/Clove/ECS/2D/Components/RenderableComponent.hpp
 		src/Clove/ECS/2D/Components/RenderableComponent.cpp
 		src/Clove/ECS/2D/Components/TransformComponent.hpp
@@ -30,17 +55,6 @@ target_sources(
 		src/Clove/ECS/3D/Systems/RenderSystem.cpp
 		src/Clove/ECS/3D/Systems/TransformSystem.hpp
 		src/Clove/ECS/3D/Systems/TransformSystem.cpp
-		src/Clove/ECS/Component.hpp
-		src/Clove/ECS/Component.cpp
-		src/Clove/ECS/ECSTypes.hpp
-		src/Clove/ECS/Entity.hpp
-		src/Clove/ECS/Entity.inl
-		src/Clove/ECS/Entity.cpp
-		src/Clove/ECS/Manager.hpp
-		src/Clove/ECS/Manager.inl
-		src/Clove/ECS/Manager.cpp
-		src/Clove/ECS/System.hpp
-		src/Clove/ECS/System.inl
 		src/Clove/Exception/CloveException.hpp
 		src/Clove/Exception/CloveException.cpp
 		src/Clove/Graphics/Bindables/IndexBuffer.hpp
@@ -99,20 +113,6 @@ target_sources(
 		src/Clove/Utils/DeltaTime.cpp
 		src/Clove/Utils/MeshLoader.hpp
 		src/Clove/Utils/MeshLoader.cpp
-		src/Clove/Application.hpp
-		src/Clove/Application.cpp
-		src/Clove/Core.hpp
-		src/Clove/EntryPoint.hpp
-		src/Clove/IntTypes.hpp
-		src/Clove/Layer.hpp
-		src/Clove/Layer.cpp
-		src/Clove/LayerStack.hpp
-		src/Clove/LayerStack.cpp
-		src/Clove/Log.hpp
-		src/Clove/Log.cpp
-		src/Clove.hpp
-		src/clvpch.hpp
-		src/clvpch.cpp
 )
 
 #Graphics
@@ -232,13 +232,16 @@ target_link_libraries(
 		spdlog
 )
 
-#Precompiled header
-#??? - should hopefully fix those errors?
-
 ##How to get everywhere?
-if(CMAKE_CONFIGURATION_TYPES)
-  set(CMAKE_CONFIGURATION_TYPES Debug Development Profiling Release)
-  set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
-    "Reset the configurations to what we need"
-    FORCE)
+#if(CMAKE_CONFIGURATION_TYPES)
+#  set(CMAKE_CONFIGURATION_TYPES Debug Development Profiling Release)
+#  set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
+#    "Reset the configurations to what we need"
+#    FORCE)
+#endif()
+
+#Precompiled header
+if(MSVC)
+	set_target_properties(Clove PROPERTIES COMPILE_FLAGS "/Yuclvpch.hpp")
+	set_source_files_properties(src/clvpch.cpp PROPERTIES COMPILE_FLAGS "/Ycclvpch.hpp" OBJECT_OUTPUTS "$(IntDir)/clvpch.pch")
 endif()

@@ -19,4 +19,4 @@ target_include_directories(
 		src
 )
 
-target_link_libraries(Sandbox PRIVATE Engine)
+target_link_libraries(Sandbox PRIVATE Clove)

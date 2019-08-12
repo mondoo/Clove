@@ -1,6 +1,6 @@
 #Root CMake list
 cmake_minimum_required(VERSION 3.14.0)
-project(Clove)
+project(Clove-Engine)
 
 ##TODO: Add all of the platforms and configurations
 
