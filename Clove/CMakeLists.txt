@@ -39,6 +39,8 @@ target_sources(
 		src/Clove/ECS/2D/Components/TransformComponent.cpp
 		src/Clove/ECS/2D/Systems/RenderSystem.hpp
 		src/Clove/ECS/2D/Systems/RenderSystem.cpp
+		src/Clove/ECS/2D/Systems/TransformSystem.hpp
+		src/Clove/ECS/2D/Systems/TransformSystem.cpp
 		src/Clove/ECS/3D/Components/CameraComponent.hpp
 		src/Clove/ECS/3D/Components/CameraComponent.cpp
 		src/Clove/ECS/3D/Components/LightComponent.hpp
@@ -204,6 +206,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 		PRIVATE
 			src/Platform/Windows/WindowsWindow.hpp
 			src/Platform/Windows/WindowsWindow.cpp
+			src/Platform/Windows/WindowsException.hpp
+			src/Platform/Windows/WindowsException.cpp
 	)
 endif()
 
@@ -246,6 +250,10 @@ target_link_libraries(
 	Clove
 	PUBLIC
 		stb
+		#what about linux?
+		"opengl32.lib"
+		"d3d11.lib"
+		"d3dcompiler.lib"
 	PRIVATE 
 		dxerr #TODO: Only add on windows?
 		Glad
