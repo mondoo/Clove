@@ -236,7 +236,7 @@ target_include_directories(
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 target_include_directories(
 		Clove
-		PRIVATE
+		PUBLIC
 			vendor/wglext
 	)
 endif()
@@ -245,11 +245,11 @@ endif()
 target_link_libraries(
 	Clove
 	PUBLIC
+		stb
 	PRIVATE 
 		dxerr #TODO: Only add on windows?
 		Glad
 		glm
-		stb
 		spdlog
 )
 
@@ -318,3 +318,5 @@ if(MSVC)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_MODEL 6.3)
 endif()
+
+message(CMAKE_WINDOWS_KITS_10_DIR)
