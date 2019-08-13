@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #Defs - TEMP
-add_compile_definitions(CLV_DEVELOPMENT=1 CLV_PLATFORM_WINDOWS=1)
+#add_compile_definitions(CLV_DEVELOPMENT=1 CLV_PLATFORM_WINDOWS=1)
 #add_compile_options()
 
 #Clove dependencies

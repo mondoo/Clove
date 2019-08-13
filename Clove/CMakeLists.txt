@@ -4,7 +4,7 @@ project(Clove)
 
 add_library(Clove STATIC)
 
-#Clove
+#Files - Clove
 target_sources(
 	Clove
 	PUBLIC
@@ -115,7 +115,7 @@ target_sources(
 		src/Clove/Utils/MeshLoader.cpp
 )
 
-#Graphics
+#Files - Graphics
 target_sources(
 	Clove
 	PRIVATE
@@ -184,7 +184,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	)
 endif()
 
-#Platform
+#Files - Platform
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	target_sources(
 		Clove
@@ -201,16 +201,17 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	)
 endif()
 
+#Includes
 target_include_directories(
 	Clove
 
 	#Clove
 	PUBLIC
-		src
-		src/Clove
+		src		#does this null out the two privates below?
+		#src/Clove
 	PRIVATE
 		src/Graphics
-		src/Platform
+		src/Platform	
 
 	#Libraries
 	PUBLIC
@@ -219,10 +220,10 @@ target_include_directories(
 		#vendor/Glad/include
 		vendor/glm
 		#vendor/spdlog/include
-		vendor/wglext/
-
+		vendor/wglext
 )
 
+#Libraries
 target_link_libraries(
 	Clove 
 	PRIVATE 
@@ -244,4 +245,56 @@ target_link_libraries(
 if(MSVC)
 	set_target_properties(Clove PROPERTIES COMPILE_FLAGS "/Yuclvpch.hpp")
 	set_source_files_properties(src/clvpch.cpp PROPERTIES COMPILE_FLAGS "/Ycclvpch.hpp" OBJECT_OUTPUTS "$(IntDir)/clvpch.pch")
+endif()
+
+#Preprocessor
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	target_compile_definitions(
+		Clove
+		PUBLIC
+			CLV_PLATFORM_WINDOWS=1
+			CLV_PLATFORM_LINUX=0
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	target_compile_definitions(
+		Clove
+		PUBLIC
+			CLV_PLATFORM_WINDOWS=0
+			CLV_PLATFORM_LINUX=1
+	)
+endif()
+
+target_compile_definitions(
+	Clove
+	PUBLIC
+		CLV_DEVELOPMENT=1
+	INTERFACE
+		CLV_ENGINE=0
+	PRIVATE
+		CLV_ENGINE=1
+)
+
+#Shaders
+if(MSVC)
+	set(pixelShaders
+		src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
+		src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
+		src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
+		src/Graphics/DirectX-11/Shaders/Unlit-ps.hlsl
+	)
+	
+	set(vertexShaders
+		src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+		src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
+		src/Graphics/DirectX-11/Shaders/RT-vs.hlsl
+		src/Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
+	)
+
+	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
+	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
+	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_MODEL 6.3)
+
+	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
+	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
+	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_MODEL 6.3)
 endif()
