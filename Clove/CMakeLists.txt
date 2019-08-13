@@ -245,21 +245,36 @@ target_include_directories(
 	)
 endif()
 
-#Libraries
+#Libraries - cross platform
 target_link_libraries(
 	Clove
 	PUBLIC
 		stb
-		#what about linux?
-		"opengl32.lib"
-		"d3d11.lib"
-		"d3dcompiler.lib"
 	PRIVATE 
 		dxerr #TODO: Only add on windows?
 		Glad
 		glm
 		spdlog
 )
+
+#Libraries - platform specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	target_link_libraries(
+		Clove
+		PRIVATE
+			"opengl32.lib"
+			"d3d11.lib"
+			"d3dcompiler.lib"
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	target_link_libraries(
+		Clove
+		PRIVATE
+			"GLX"
+			"X11"
+			"dl"
+	)
+endif()
 
 ##How to get everywhere?
 #if(CMAKE_CONFIGURATION_TYPES)
@@ -393,3 +408,29 @@ add_custom_command(
                 ${CMAKE_BINARY_DIR}/Sandbox/Debug
 )
 endif()
+
+#GL shader copying
+set(GLShaders
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-vs.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
+)
+
+#NOTE the /Debug isn't the directory used for linux - but I'm not sure where it's put. The regular one wors perfectly though
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${GLShaders}
+                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${GLShaders}
+                ${CMAKE_BINARY_DIR}/Sandbox
+)
