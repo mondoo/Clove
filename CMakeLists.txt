@@ -16,6 +16,7 @@ add_subdirectory(Clove/vendor/dxerr) #TODO: Only add on windows?
 add_subdirectory(Clove/vendor/Glad)
 add_subdirectory(Clove/vendor/glm)
 add_subdirectory(Clove/vendor/spdlog)
+add_subdirectory(Clove/vendor/stb)
 #TODO: add other vendor folders manually
 
 #Clove

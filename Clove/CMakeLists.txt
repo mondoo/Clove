@@ -143,16 +143,15 @@ target_sources(
 		src/Graphics/OpenGL-4/GL4RenderAPI.cpp
 		src/Graphics/OpenGL-4/GL4RenderTarget.hpp
 		src/Graphics/OpenGL-4/GL4RenderTarget.cpp
-		src/Graphics/OpenGL-4/GLXContext.hpp
-		src/Graphics/OpenGL-4/GLXContext.cpp
-		src/Graphics/OpenGL-4/WGLContext.hpp
-		src/Graphics/OpenGL-4/WGLContext.cpp
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	target_sources(
 		Clove
 		PRIVATE
+			src/Graphics/OpenGL-4/WGLContext.hpp
+			src/Graphics/OpenGL-4/WGLContext.cpp
+
 			src/Graphics/DirectX-11/Bindables/DX11ConstantBuffer.hpp
 			src/Graphics/DirectX-11/Bindables/DX11ConstantBuffer.inl
 			src/Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp
@@ -181,6 +180,13 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/DXContext.cpp
 			src/Graphics/DirectX-11/DXGIInfoManager.hpp
 			src/Graphics/DirectX-11/DXGIInfoManager.cpp
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	target_sources(
+		Clove
+		PRIVATE
+			src/Graphics/OpenGL-4/GLXContext.hpp
+			src/Graphics/OpenGL-4/GLXContext.cpp
 	)
 endif()
 
@@ -215,21 +221,35 @@ target_include_directories(
 
 	#Libraries
 	PUBLIC
+		vendor/glm
+		vendor/OBJ-Loader/Source
+	INTERFACE
+		vendor/spdlog/include
+		vendor/Glad/include #would like to remove but the SBO forces it
 	PRIVATE
 		vendor/dxerr
 		#vendor/Glad/include
-		vendor/glm
-		#vendor/spdlog/include
-		vendor/wglext
+		#vendor/wglext
+		#vendor/stb
 )
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+target_include_directories(
+		Clove
+		PRIVATE
+			vendor/wglext
+	)
+endif()
 
 #Libraries
 target_link_libraries(
-	Clove 
+	Clove
+	PUBLIC
 	PRIVATE 
 		dxerr #TODO: Only add on windows?
 		Glad
 		glm
+		stb
 		spdlog
 )
 
