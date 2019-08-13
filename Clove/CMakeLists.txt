@@ -320,11 +320,76 @@ if(MSVC)
 
 	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
 	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
-	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_MODEL 6.3)
+	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_MODEL 5.0)
 
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
-	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_MODEL 6.3)
+	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_MODEL 5.0)
 endif()
 
-message(CMAKE_WINDOWS_KITS_10_DIR)
+#copy resource files - TODO: fix up sandbox / debug references
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/Sandbox/res
+                ${CMAKE_BINARY_DIR}/Sandbox/Debug/res
+)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/Sandbox/res
+                ${CMAKE_BINARY_DIR}/Sandbox/res
+)
+
+if(MSVC)
+#copy files to executable binary location (also need to do it the solution location)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/Debug/2D-ps.cso
+                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/Debug/Lit-ps.cso
+                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/Debug/RT-ps.cso
+                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-ps.cso
+                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+)
+
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/Debug/2D-vs.cso
+                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/Debug/Lit-vs.cso
+                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/Debug/RT-vs.cso
+                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-vs.cso
+                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+)
+endif()
