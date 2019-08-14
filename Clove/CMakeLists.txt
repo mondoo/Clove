@@ -230,15 +230,15 @@ target_include_directories(
 		vendor/glm
 		vendor/spdlog/include
 		vendor/Glad/include #would like to remove but the SBO forces it
-	PRIVATE
-		vendor/dxerr
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 target_include_directories(
 		Clove
 		PUBLIC
-			vendor/wglext
+			vendor/wglext #private?
+		PRIVATE
+			vendor/dxerr
 	)
 endif()
 
@@ -248,7 +248,6 @@ target_link_libraries(
 	PUBLIC
 		stb
 	PRIVATE 
-		dxerr #TODO: Only add on windows?
 		Glad
 		glm
 		spdlog
@@ -259,6 +258,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	target_link_libraries(
 		Clove
 		PRIVATE
+			dxerr #TODO: Only add on windows?
 			"opengl32.lib"
 			"d3d11.lib"
 			"d3dcompiler.lib"
@@ -308,9 +308,9 @@ endif()
 target_compile_definitions(
 	Clove
 	PUBLIC
-		CLV_DEVELOPMENT=1
+		CLV_DEVELOPMENT=1 #TODO: Base this off of the configuration type
 	INTERFACE
-		CLV_ENGINE=0
+		CLV_ENGINE=0 #NOTE: this only causes the CLOVE: flag in the private sources and APP: in the public ones
 	PRIVATE
 		CLV_ENGINE=1
 )
