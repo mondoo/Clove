@@ -15,7 +15,7 @@ namespace clv{
 			typedef HRESULT(WINAPI* DXGIGetDebugInterface)(REFIID, void**);
 
 			//load the dll that contains the function
-			const auto hModDXGIDebug = LoadLibraryEx(L"dxgidebug.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+			const auto hModDXGIDebug = LoadLibraryEx("dxgidebug.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
 			if(hModDXGIDebug == nullptr){
 				throw CLV_WINDOWS_LAST_EXCEPTION;
 			}

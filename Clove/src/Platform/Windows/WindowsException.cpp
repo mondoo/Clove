@@ -38,7 +38,7 @@ namespace clv{
 			nullptr,
 			hr,
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			reinterpret_cast<LPWSTR>(&msgBuff),
+			reinterpret_cast<LPSTR>(&msgBuff),
 			0,
 			nullptr
 		);
