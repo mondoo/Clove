@@ -285,6 +285,7 @@ endif()
 #endif()
 
 #Precompiled header
+#note: when not using the project view in VS this gets borked again - but everything is put into an 'out' directory (including the pch file) does this need to be moved?
 if(MSVC)
 	set_target_properties(Clove PROPERTIES COMPILE_FLAGS "/Yuclvpch.hpp")
 	set_source_files_properties(src/clvpch.cpp PROPERTIES COMPILE_FLAGS "/Ycclvpch.hpp" OBJECT_OUTPUTS "$(IntDir)/clvpch.pch")
@@ -317,7 +318,7 @@ target_compile_definitions(
 		CLV_ENGINE=1
 )
 
-#Shaders
+#DX Shaders
 if(MSVC)
 	set(pixelShaders
 		src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
@@ -340,7 +341,59 @@ if(MSVC)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_MODEL 5.0)
+
+	set(shaderCSO
+		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/2D-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/2D-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Lit-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Lit-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/RT-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/RT-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-vs.cso
+	)
+
+	add_custom_command(
+		TARGET Clove POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+				${shaderCSO}
+				${CMAKE_BINARY_DIR}/Sandbox/Debug
+	)
+	add_custom_command(
+		TARGET Clove POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+				${shaderCSO}
+				${CMAKE_BINARY_DIR}/Sandbox
+	)
 endif()
+
+
+#GL Shaders
+set(GLShaders
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-vs.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
+)
+
+#NOTE the /Debug isn't the directory used for linux - but I'm not sure where it's put. The regular one wors perfectly though
+#maybe they're in the 'out' directory?
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${GLShaders}
+                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${GLShaders}
+                ${CMAKE_BINARY_DIR}/Sandbox
+)
 
 #copy resource files - TODO: fix up sandbox / debug references
 add_custom_command(
@@ -354,83 +407,4 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${CMAKE_SOURCE_DIR}/Sandbox/res
                 ${CMAKE_BINARY_DIR}/Sandbox/res
-)
-
-if(MSVC)
-#copy files to executable binary location (also need to do it the solution location)
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_BINARY_DIR}/Debug/2D-ps.cso
-                ${CMAKE_BINARY_DIR}/Sandbox/Debug
-)
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_BINARY_DIR}/Debug/Lit-ps.cso
-                ${CMAKE_BINARY_DIR}/Sandbox/Debug
-)
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_BINARY_DIR}/Debug/RT-ps.cso
-                ${CMAKE_BINARY_DIR}/Sandbox/Debug
-)
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-ps.cso
-                ${CMAKE_BINARY_DIR}/Sandbox/Debug
-)
-
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_BINARY_DIR}/Debug/2D-vs.cso
-                ${CMAKE_BINARY_DIR}/Sandbox/Debug
-)
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_BINARY_DIR}/Debug/Lit-vs.cso
-                ${CMAKE_BINARY_DIR}/Sandbox/Debug
-)
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_BINARY_DIR}/Debug/RT-vs.cso
-                ${CMAKE_BINARY_DIR}/Sandbox/Debug
-)
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-vs.cso
-                ${CMAKE_BINARY_DIR}/Sandbox/Debug
-)
-endif()
-
-#GL shader copying
-set(GLShaders
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
-)
-
-#NOTE the /Debug isn't the directory used for linux - but I'm not sure where it's put. The regular one wors perfectly though
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${GLShaders}
-                ${CMAKE_BINARY_DIR}/Sandbox/Debug
-)
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${GLShaders}
-                ${CMAKE_BINARY_DIR}/Sandbox
 )
