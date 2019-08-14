@@ -12,7 +12,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #add_compile_options()
 
 #Clove dependencies
-add_subdirectory(Clove/vendor/dxerr) #TODO: Only add on windows?
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	add_subdirectory(Clove/vendor/dxerr)
+endif()
 
 add_subdirectory(Clove/vendor/Glad)
 
