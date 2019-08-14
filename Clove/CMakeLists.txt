@@ -225,16 +225,13 @@ target_include_directories(
 
 	#Libraries
 	PUBLIC
-		vendor/glm
 		vendor/OBJ-Loader/Source
 	INTERFACE
+		vendor/glm
 		vendor/spdlog/include
 		vendor/Glad/include #would like to remove but the SBO forces it
 	PRIVATE
 		vendor/dxerr
-		#vendor/Glad/include
-		#vendor/wglext
-		#vendor/stb
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
