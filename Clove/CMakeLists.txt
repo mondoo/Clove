@@ -226,10 +226,14 @@ target_include_directories(
 	#Libraries
 	PUBLIC
 		vendor/OBJ-Loader/Source
+		vendor/portaudio/include
+		vendor/libsndfile/src
+		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src #to get the files generated from the .in headers
 	INTERFACE
 		vendor/glm
 		vendor/spdlog/include
 		vendor/Glad/include #would like to remove but the SBO forces it
+	PRIVATE
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -249,6 +253,8 @@ target_link_libraries(
 	PRIVATE 
 		Glad
 		glm
+		sndfile
+		portaudio_static
 )
 
 #Libraries - platform specific
