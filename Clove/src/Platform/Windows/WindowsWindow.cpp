@@ -163,7 +163,7 @@ namespace clv{
 
 		CLV_LOG_TRACE("Windows class registered");
 
-		const std::wstring wideTitle(windowProperties.title.begin(), windowProperties.title.end());
+		const std::string wideTitle(windowProperties.title.begin(), windowProperties.title.end());
 
 		DWORD windowStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
 
