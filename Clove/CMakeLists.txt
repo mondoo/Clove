@@ -236,9 +236,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 target_include_directories(
 		Clove
 		PUBLIC
-			vendor/wglext #private?
-		PRIVATE
-			vendor/dxerr
+			vendor/wglext
 	)
 endif()
 
@@ -247,10 +245,10 @@ target_link_libraries(
 	Clove
 	PUBLIC
 		stb
+		spdlog
 	PRIVATE 
 		Glad
 		glm
-		spdlog
 )
 
 #Libraries - platform specific
@@ -258,7 +256,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	target_link_libraries(
 		Clove
 		PRIVATE
-			dxerr #TODO: Only add on windows?
+			dxerr
 			"opengl32.lib"
 			"d3d11.lib"
 			"d3dcompiler.lib"
