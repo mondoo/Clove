@@ -349,12 +349,12 @@ if(MSVC)
 		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-vs.cso
 	)
 
-	add_custom_command(
-		TARGET Clove POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
-				${shaderCSO}
-				${CMAKE_BINARY_DIR}/Sandbox/Debug
-	)
+	#add_custom_command(
+	#	TARGET Clove POST_BUILD
+	#	COMMAND ${CMAKE_COMMAND} -E copy
+	#			${shaderCSO}
+	#			${CMAKE_BINARY_DIR}/Sandbox/Debug
+	#)
 	add_custom_command(
 		TARGET Clove POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy
@@ -376,14 +376,15 @@ set(GLShaders
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
 )
 
-#NOTE the /Debug isn't the directory used for linux - but I'm not sure where it's put. The regular one wors perfectly though
-#maybe they're in the 'out' directory?
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${GLShaders}
-                ${CMAKE_BINARY_DIR}/Sandbox/Debug
-)
+#copy resource files - TODO: fix up sandbox / debug references
+if(MSVC)
+	add_custom_command(
+	        TARGET Clove POST_BUILD
+	        COMMAND ${CMAKE_COMMAND} -E copy
+	                ${GLShaders}
+	                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+	)
+endif()
 add_custom_command(
         TARGET Clove POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
@@ -391,13 +392,14 @@ add_custom_command(
                 ${CMAKE_BINARY_DIR}/Sandbox
 )
 
-#copy resource files - TODO: fix up sandbox / debug references
-add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/Sandbox/res
-                ${CMAKE_BINARY_DIR}/Sandbox/Debug/res
-)
+if(MSVC)
+	add_custom_command(
+	        TARGET Clove POST_BUILD
+	        COMMAND ${CMAKE_COMMAND} -E copy_directory
+	                ${CMAKE_SOURCE_DIR}/Sandbox/res
+	                ${CMAKE_BINARY_DIR}/Sandbox/Debug/res
+	)
+endif()
 add_custom_command(
         TARGET Clove POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
