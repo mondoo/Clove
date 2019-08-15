@@ -7,7 +7,7 @@ add_library(Clove STATIC)
 #Files - Clove
 target_sources(
 	Clove
-	PUBLIC
+	PRIVATE
 		src/clvpch.hpp
 		src/clvpch.cpp
 		src/Clove.hpp
@@ -225,17 +225,18 @@ target_include_directories(
 
 	#Libraries
 	PUBLIC
-		vendor/OBJ-Loader/Source
 	INTERFACE
 		vendor/glm
 		vendor/spdlog/include
 		vendor/Glad/include #would like to remove but the SBO forces it
+	PRIVATE
+		vendor/OBJ-Loader/Source
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 target_include_directories(
 		Clove
-		PUBLIC
+		PRIVATE
 			vendor/wglext
 	)
 endif()
@@ -244,9 +245,9 @@ endif()
 target_link_libraries(
 	Clove
 	PUBLIC
-		stb
-		spdlog
 	PRIVATE 
+		spdlog
+		stb
 		Glad
 		glm
 )
