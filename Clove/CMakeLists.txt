@@ -76,6 +76,10 @@ target_sources(
 		src/Clove/Graphics/Context.hpp
 		src/Clove/Graphics/Context.cpp
 		src/Clove/Graphics/GraphicsTypes.hpp
+		src/Clove/Graphics/Material.hpp
+		src/Clove/Graphics/Material.cpp
+		src/Clove/Graphics/Mesh.hpp
+		src/Clove/Graphics/Mesh.cpp
 		src/Clove/Graphics/RenderAPI.hpp
 		src/Clove/Graphics/RenderAPI.cpp
 		src/Clove/Graphics/RenderCommand.hpp
@@ -84,6 +88,8 @@ target_sources(
 		src/Clove/Graphics/Renderer.cpp
 		src/Clove/Graphics/RenderTarget.hpp
 		src/Clove/Graphics/RenderTarget.cpp
+		src/Clove/Graphics/Sprite.hpp
+		src/Clove/Graphics/Sprite.cpp
 		src/Clove/Graphics/VertexLayout.hpp
 		src/Clove/Graphics/VertexLayout.inl
 		src/Clove/Graphics/VertexLayout.cpp
