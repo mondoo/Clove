@@ -78,6 +78,7 @@ target_sources(
 		src/Clove/Graphics/GraphicsTypes.hpp
 		src/Clove/Graphics/Material.hpp
 		src/Clove/Graphics/Material.cpp
+		src/Clove/Graphics/Material.inl
 		src/Clove/Graphics/Mesh.hpp
 		src/Clove/Graphics/Mesh.cpp
 		src/Clove/Graphics/RenderAPI.hpp

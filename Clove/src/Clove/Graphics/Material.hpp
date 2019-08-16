@@ -1,6 +1,5 @@
 #pragma once
 
-//#include "Clove/Graphics/MaterialData.hpp"
 #include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
 #include "Clove/Graphics/BindableFactory.hpp"
 
@@ -28,17 +27,8 @@ namespace clv::gfx{
 
 		void bind(); //this'll bind the shader and textures
 
-		//TODO: inl
 		template<typename T>
-		void setData(BufferBindingPoint bindingPoint, T&& data, gfx::ShaderType shaderType){
-			if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
-				if(auto sbo = std::dynamic_pointer_cast<ShaderBufferObject<T>>(iter->second)){
-					sbo->update(std::forward<T>(data));
-					return;
-				}
-			}
-			shaderData[bindingPoint] = BindableFactory::createShaderBufferObject<T>(shaderType, bindingPoint, std::forward<T>(data));
-		}
+		void setData(BufferBindingPoint bindingPoint, T&& data, gfx::ShaderType shaderType);
 
 		void setAlbedoTexture(const std::string& path);
 		void setAlbedoTexture(const std::shared_ptr<Texture>& texture); 
@@ -48,3 +38,4 @@ namespace clv::gfx{
 	};
 }
 
+#include "Material.inl"
