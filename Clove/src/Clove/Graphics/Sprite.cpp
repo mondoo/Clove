@@ -20,6 +20,10 @@ namespace clv::gfx{
 		this->material = material;
 	}
 
+	const std::shared_ptr<Material>& Sprite::getMaterial() const{
+		return material;
+	}
+
 	void Sprite::bind(){
 		material->bind();
 	}

@@ -30,11 +30,7 @@ namespace clv::gfx{
 		Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, ShaderStyle shaderStyle);
 
 		void setMaterial(const std::shared_ptr<Material>& material);
-
-		//TODO: shared_ptr or ref?
-		Material& getMaterial(){
-			return *material;
-		}
+		const std::shared_ptr<Material>& getMaterial() const;
 
 		uint32 getIndexCount();
 

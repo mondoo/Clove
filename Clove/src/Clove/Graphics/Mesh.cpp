@@ -85,6 +85,10 @@ namespace clv::gfx{
 		this->material = material;
 	}
 
+	const std::shared_ptr<Material>& Mesh::getMaterial() const{
+		return material;
+	}
+
 	uint32 Mesh::getIndexCount(){
 		return indexBuffer->getIndexCount();
 	}
