@@ -6,6 +6,7 @@
 namespace clv::gfx{
 	class Shader;
 	class Texture;
+	class MaterialInstance;
 
 	class Material{
 		//VARIABLES
@@ -30,6 +31,10 @@ namespace clv::gfx{
 		~Material();
 
 		void bind(); //this'll bind the shader and textures
+
+		void linkShader(const std::shared_ptr<Shader>& shader);
+
+		std::unique_ptr<MaterialInstance> createInstance() const;
 
 		template<typename T>
 		void setData(BufferBindingPoint bindingPoint, T&& data, gfx::ShaderType shaderType);

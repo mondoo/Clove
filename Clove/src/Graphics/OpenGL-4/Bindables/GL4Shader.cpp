@@ -25,6 +25,31 @@ namespace clv::gfx{
 		glUseProgram(programID);
 	}
 
+	std::vector<ShaderReflectionData> GL4Shader::getReflectionData(){
+		GLint uniformCount = 0;
+		GLint uniformBlockCount = 0;
+
+		glGetProgramiv(programID, GL_ACTIVE_UNIFORMS, &uniformCount);
+		glGetProgramiv(programID, GL_ACTIVE_UNIFORM_BLOCKS, &uniformBlockCount);
+
+		CLV_LOG_DEBUG("SID:{0} | Active uniforms on shader: {1}", programID, uniformCount);
+		CLV_LOG_DEBUG("SID:{0} | Active uniform blocks on shader: {1}", programID, uniformBlockCount);
+
+		CLV_LOG_DEBUG("SID:{0} | Block binding points for current shader as follows:", programID);
+		
+		for(int32 i = 0; i < uniformBlockCount; ++i){
+			GLint bindingPoint = 0;
+			GLint size = 0;
+			glGetActiveUniformBlockiv(programID, static_cast<GLuint>(i), GL_UNIFORM_BLOCK_BINDING, &bindingPoint);
+			glGetActiveUniformBlockiv(programID, static_cast<GLuint>(i), GL_UNIFORM_BLOCK_DATA_SIZE, &size);
+
+			CLV_LOG_DEBUG("	| binding point: {0}", bindingPoint);
+			CLV_LOG_DEBUG("	| size: {0}", size);
+		}
+
+		return {}; //Empty boy for testing
+	}
+
 	void GL4Shader::initialise(ShaderStyle style){
 		uint32 vertexID = 0;
 		uint32 pixelID = 0;

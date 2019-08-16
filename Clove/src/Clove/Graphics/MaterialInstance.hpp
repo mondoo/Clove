@@ -1,5 +1,6 @@
 #pragma once
 
+//TODO: Move this into the material file???
 namespace clv::gfx{
 	class MaterialInstance{
 		/*
@@ -16,5 +17,14 @@ namespace clv::gfx{
 
 		-Maybe I should try and move the shader to the material first???
 		*/
+
+		//VARIABLES
+	private:
+		//Ref to material
+
+		//FUNCTIONS
+	public:
+		//bind function that'll bind the material underneath
+
 	};
 }

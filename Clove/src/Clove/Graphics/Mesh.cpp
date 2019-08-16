@@ -83,6 +83,15 @@ namespace clv::gfx{
 
 	void Mesh::setMaterial(const std::shared_ptr<Material>& material){
 		this->material = material;
+		/*
+		TODO: Link shader to material here
+		*/
+		//This is just a temp test
+		material->linkShader(shader);
+
+		/*
+		This will take a material instance, so the shader should probably belong in the material
+		 */
 	}
 
 	const std::shared_ptr<Material>& Mesh::getMaterial() const{
