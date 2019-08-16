@@ -33,7 +33,7 @@ namespace clv::gfx{
 		void setData(BufferBindingPoint bindingPoint, T&& data, gfx::ShaderType shaderType){
 			if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
 				if(auto sbo = std::dynamic_pointer_cast<ShaderBufferObject<T>>(iter->second)){
-					sbo->update(data);
+					sbo->update(std::forward<T>(data));
 					return;
 				}
 			}
