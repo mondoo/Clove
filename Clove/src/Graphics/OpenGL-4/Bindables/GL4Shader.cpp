@@ -32,39 +32,39 @@ namespace clv::gfx{
 		switch(style){
 			case ShaderStyle::Lit:
 				{
-					std::string vertexSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl");
+					std::string vertexSource = parseShader("Lit-vs.glsl");
 					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
 
-					std::string pixelSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl");
+					std::string pixelSource = parseShader("Lit-ps.glsl");
 					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
 				}
 				break;
 			case ShaderStyle::Unlit:
 				{
-					std::string vertexSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl");
+					std::string vertexSource = parseShader("Unlit-vs.glsl");
 					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
 
-					std::string pixelSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl");
+					std::string pixelSource = parseShader("Unlit-ps.glsl");
 					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
 				}
 				break;
 
 			case ShaderStyle::_2D:
 				{
-					std::string vertexSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl");
+					std::string vertexSource = parseShader("2D-vs.glsl");
 					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
 
-					std::string pixelSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl");
+					std::string pixelSource = parseShader("2D-ps.glsl");
 					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
 				}
 				break;
 
 			case ShaderStyle::RT:
 				{
-					std::string vertexSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/RT-vs.glsl");
+					std::string vertexSource = parseShader("RT-vs.glsl");
 					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
 
-					std::string pixelSource = parseShader("../Clove/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl");
+					std::string pixelSource = parseShader("RT-ps.glsl");
 					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
 				}
 				break;

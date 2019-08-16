@@ -16,7 +16,7 @@ namespace clv{
 	class WindowsWindow : public Window{
 		//VARIABLES
 	private:
-		static constexpr LPWSTR className = L"Clove";
+		static constexpr LPCSTR className = "Clove";
 
 		HINSTANCE instance;
 		HWND windowsHandle;
