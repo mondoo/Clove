@@ -16,6 +16,10 @@ namespace clv::gfx{
 		std::shared_ptr<Texture> specTexture;
 		std::unordered_map<BufferBindingPoint, std::shared_ptr<Bindable>> shaderData;
 
+		/*
+		How would I handle multiple objects sharing a material, but having different positions?
+		*/
+
 		//FUNCTIONS
 	public:
 		Material();
