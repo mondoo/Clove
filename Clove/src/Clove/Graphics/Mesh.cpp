@@ -25,6 +25,9 @@ namespace clv::gfx{
 	Mesh::Mesh(std::string filePath){
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
+		//The shader reflection system can get this information.
+		//I think the flow should then be the VBD gets build from the shader reflection
+		//then passed onto the vertex buffer
 		gfx::VertexLayout layout;
 		layout.add(gfx::VertexElementType::position3D).add(gfx::VertexElementType::texture2D).add(gfx::VertexElementType::normal);
 		gfx::VertexBufferData vertexArray{ std::move(layout) };

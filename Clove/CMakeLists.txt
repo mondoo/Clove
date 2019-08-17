@@ -269,6 +269,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			dxerr
 			"opengl32.lib"
 			"d3d11.lib"
+			"dxguid.lib"
 			"d3dcompiler.lib"
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")

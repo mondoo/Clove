@@ -9,6 +9,8 @@ namespace clv::gfx{
 		//IN PROGRESS - what other info do I need?
 
 		//BufferBindingPoint bindingPoint;
+
+		//This should contain the vertexBufferData and array of binding points
 	};
 
 	class Shader : public Bindable{

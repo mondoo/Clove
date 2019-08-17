@@ -33,6 +33,8 @@ namespace clv::gfx{
 		DX11Shader(ShaderStyle style);
 
 		virtual void bind() override;
+		
+		virtual std::vector<ShaderReflectionData> getReflectionData() override;
 
 		DX11VertexShader& getVertexShader();
 
@@ -43,6 +45,8 @@ namespace clv::gfx{
 	class DX11VertexShader : public Bindable{
 		//VARIABLES
 	private:
+		//TEMP: For reflection
+	public:
 		Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 		Microsoft::WRL::ComPtr<ID3DBlob> byteCode;
 

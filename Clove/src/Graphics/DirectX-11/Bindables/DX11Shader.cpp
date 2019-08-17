@@ -34,6 +34,32 @@ namespace clv::gfx{
 		}
 	}
 
+	std::vector<ShaderReflectionData> DX11Shader::getReflectionData(){
+		//TODO
+		Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflector;
+
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(D3DReflect(vertexShader->byteCode->GetBufferPointer(), vertexShader->byteCode->GetBufferSize(), IID_ID3D11ShaderReflection, &reflector));
+
+		CLV_LOG_DEBUG("Reflecting DX11 vertex shader");
+
+		D3D11_SHADER_DESC shaderDescription; 
+		DX11_THROW_INFO(reflector->GetDesc(&shaderDescription));
+		
+		CLV_LOG_DEBUG("Shader has the following input parameters:");
+		for(UINT i = 0; i < shaderDescription.InputParameters; ++i){
+			D3D11_SIGNATURE_PARAMETER_DESC inputParamDescription;
+			DX11_THROW_INFO(reflector->GetInputParameterDesc(i, &inputParamDescription));
+			CLV_LOG_DEBUG("	Name: {0}", inputParamDescription.SemanticName);
+			CLV_LOG_DEBUG("	Index: {0}", inputParamDescription.SemanticIndex);
+			CLV_LOG_DEBUG("	System Value Type: {0}", inputParamDescription.SystemValueType);
+			CLV_LOG_DEBUG("	Component Type: {0}", inputParamDescription.ComponentType);
+			CLV_LOG_DEBUG("	------");
+		}
+
+		return {};
+	}
+
 	DX11VertexShader& DX11Shader::getVertexShader(){
 		CLV_ASSERT(vertexShader != nullptr, "No vertex shader attached!");
 		return *vertexShader;
