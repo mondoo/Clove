@@ -34,7 +34,7 @@ namespace clv::gfx{
 
 		virtual void bind() override;
 		
-		virtual std::vector<ShaderReflectionData> getReflectionData() override;
+		virtual ShaderReflectionData getReflectionData() override;
 
 		DX11VertexShader& getVertexShader();
 

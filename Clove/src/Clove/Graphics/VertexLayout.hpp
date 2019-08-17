@@ -9,15 +9,16 @@ namespace clv::gfx{
 	};
 
 	template<VertexElementType> struct VertexElementData;
+
 	template<> struct VertexElementData<VertexElementType::position2D>{
 		using DataType = math::Vector2f;
 		static constexpr uint32 elementCount = 2u;
-		static constexpr char semantic[] = "Position";
+		static constexpr char semantic[] = "Position2D";
 	};
 	template<> struct VertexElementData<VertexElementType::position3D>{
 		using DataType = math::Vector3f;
 		static constexpr uint32 elementCount = 3u;
-		static constexpr char semantic[] = "Position";
+		static constexpr char semantic[] = "Position3D";
 	};
 	template<> struct VertexElementData<VertexElementType::texture2D>{
 		using DataType = math::Vector2f;
@@ -29,6 +30,23 @@ namespace clv::gfx{
 		static constexpr uint32 elementCount = 3u;
 		static constexpr char semantic[] = "Normal";
 	};
+
+	//TODO: Wrap in namespace?
+	//TODO: constexpr?
+	inline VertexElementType getTypeFromSemantic(const std::string& semantic){
+		if (VertexElementData<VertexElementType::position2D>::semantic == semantic){
+			return VertexElementType::position2D;
+		} else if(VertexElementData<VertexElementType::position3D>::semantic == semantic){
+			return VertexElementType::position3D;
+		} else if(VertexElementData<VertexElementType::texture2D>::semantic == semantic){
+			return VertexElementType::texture2D;
+		} else if(VertexElementData<VertexElementType::normal>::semantic == semantic){
+			return VertexElementType::normal;
+		}
+
+		CLV_ASSERT(false, "Could not find proper elemt type");
+		return VertexElementType::position2D;
+	}
 
 	class VertexElement{
 		//VARIABLES

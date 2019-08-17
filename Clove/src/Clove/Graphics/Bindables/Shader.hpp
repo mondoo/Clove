@@ -3,14 +3,13 @@
 #include "Clove/Graphics/Bindable.hpp"
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/VertexLayout.hpp" //TODO: Remove? to get the input types
 
 namespace clv::gfx{
 	struct ShaderReflectionData{
-		//IN PROGRESS - what other info do I need?
-
-		//BufferBindingPoint bindingPoint;
-
-		//This should contain the vertexBufferData and array of binding points
+		//std::vector<std::string> inputArgumentTypes;
+		//std::vector<int32> sboBindingPoints; //TODO: Do I need to do this or is the current system suffcient
+		VertexLayout vertexBufferLayout;
 	};
 
 	class Shader : public Bindable{
@@ -23,8 +22,6 @@ namespace clv::gfx{
 		Shader& operator=(Shader&& other) noexcept;
 		virtual ~Shader();
 
-		//TODO: This will have to be handled in each shader class
-		//Or maybe they'll call off to some helper functions
-		virtual std::vector<ShaderReflectionData> getReflectionData() = 0;
+		virtual ShaderReflectionData getReflectionData() = 0;
 	};
 }

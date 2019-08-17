@@ -25,7 +25,7 @@ namespace clv::gfx{
 		glUseProgram(programID);
 	}
 
-	std::vector<ShaderReflectionData> GL4Shader::getReflectionData(){
+	ShaderReflectionData GL4Shader::getReflectionData(){
 		GLint uniformCount = 0;
 		GLint uniformBlockCount = 0;
 

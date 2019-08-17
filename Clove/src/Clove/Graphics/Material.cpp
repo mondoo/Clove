@@ -44,10 +44,10 @@ namespace clv::gfx{
 		
 		*/
 
-		for(ShaderReflectionData& data : shader->getReflectionData()){
-			//This data will need either need to be used as is or converted into some form of material data
-			//Will these just be used to make the UBOs???
-		}
+		//for(ShaderReflectionData& data : shader->getReflectionData()){
+		//	//This data will need either need to be used as is or converted into some form of material data
+		//	//Will these just be used to make the UBOs???
+		//}
 	}
 
 	std::unique_ptr<MaterialInstance> Material::createInstance() const{
