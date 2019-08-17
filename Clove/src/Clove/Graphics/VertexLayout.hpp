@@ -10,6 +10,7 @@ namespace clv::gfx{
 
 	template<VertexElementType> struct VertexElementData;
 
+	//TODO: make the semantics lower case now thay're used for the shaders
 	template<> struct VertexElementData<VertexElementType::position2D>{
 		using DataType = math::Vector2f;
 		static constexpr uint32 elementCount = 2u;
@@ -44,7 +45,7 @@ namespace clv::gfx{
 			return VertexElementType::normal;
 		}
 
-		CLV_ASSERT(false, "Could not find proper elemt type");
+		CLV_ASSERT(false, "Could not find proper element type");
 		return VertexElementType::position2D;
 	}
 

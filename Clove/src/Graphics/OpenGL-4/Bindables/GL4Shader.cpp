@@ -26,28 +26,28 @@ namespace clv::gfx{
 	}
 
 	ShaderReflectionData GL4Shader::getReflectionData(){
-		GLint uniformCount = 0;
-		GLint uniformBlockCount = 0;
+		GLint attribCount = 0;
 
-		glGetProgramiv(programID, GL_ACTIVE_UNIFORMS, &uniformCount);
-		glGetProgramiv(programID, GL_ACTIVE_UNIFORM_BLOCKS, &uniformBlockCount);
+		glGetProgramiv(programID, GL_ACTIVE_ATTRIBUTES, &attribCount);
 
-		CLV_LOG_DEBUG("SID:{0} | Active uniforms on shader: {1}", programID, uniformCount);
-		CLV_LOG_DEBUG("SID:{0} | Active uniform blocks on shader: {1}", programID, uniformBlockCount);
+		ShaderReflectionData outData;
+		for(int32 i = 0; i < attribCount; ++i){
+			GLchar name[255];
+			GLsizei length;
+			GLint size;
+			GLenum type;
 
-		CLV_LOG_DEBUG("SID:{0} | Block binding points for current shader as follows:", programID);
-		
-		for(int32 i = 0; i < uniformBlockCount; ++i){
-			GLint bindingPoint = 0;
-			GLint size = 0;
-			glGetActiveUniformBlockiv(programID, static_cast<GLuint>(i), GL_UNIFORM_BLOCK_BINDING, &bindingPoint);
-			glGetActiveUniformBlockiv(programID, static_cast<GLuint>(i), GL_UNIFORM_BLOCK_DATA_SIZE, &size);
+			glGetActiveAttrib(programID, static_cast<GLuint>(i), 255, &length, &size, &type, name);
 
-			CLV_LOG_DEBUG("	| binding point: {0}", bindingPoint);
-			CLV_LOG_DEBUG("	| size: {0}", size);
+			//TODO: Is there an easier way than using the semantics?
+			outData.vertexBufferLayout.add(getTypeFromSemantic(name));
 		}
 
-		return {}; //Empty boy for testing
+		return outData;
+	}
+
+	uint32 GL4Shader::getProgramID() const{
+		return programID;
 	}
 
 	void GL4Shader::initialise(ShaderStyle style){

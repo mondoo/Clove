@@ -26,6 +26,7 @@ namespace clv::gfx{
 		Mesh& operator=(Mesh&& other) noexcept;
 		~Mesh();
 
+		//TODO: I think the constructor should take the material instance. Then we can retrieve the shader from the material
 		Mesh(std::string filePath);
 		Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, ShaderStyle shaderStyle);
 

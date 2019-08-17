@@ -27,6 +27,8 @@ namespace clv::gfx{
 
 		virtual ShaderReflectionData getReflectionData() override;
 
+		uint32 getProgramID() const;
+
 	private:
 		void initialise(ShaderStyle style);
 

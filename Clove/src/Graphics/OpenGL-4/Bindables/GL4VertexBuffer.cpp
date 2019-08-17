@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "GL4VertexBuffer.hpp"
 
+#include "Graphics/OpenGL-4/Bindables/GL4Shader.hpp"
+
 #include <glad/glad.h>
 
 namespace clv::gfx{
@@ -41,6 +43,7 @@ namespace clv::gfx{
 
 	GL4VertexBuffer::GL4VertexBuffer(const VertexBufferData& bufferData, Shader& shader)
 		: VertexBuffer(bufferData){
+		GL4Shader* glShader = static_cast<GL4Shader*>(&shader);
 		const uint32 size = static_cast<uint32>(this->bufferData.sizeBytes());
 		const void* data = bufferData.data();
 
@@ -56,8 +59,10 @@ namespace clv::gfx{
 			const auto& element = bufferData.getLayout().resolve(i);
 			const VertexElementType elementType = element.getType();
 
-			glEnableVertexAttribArray(i);
-			glVertexAttribPointer(i, element.getCount(), getGLElementType(elementType), isTypeNormalised(elementType), static_cast<GLsizei>(bufferData.getLayout().size()), reinterpret_cast<const void*>(offset));
+			GLint attribLoc = glGetAttribLocation(glShader->getProgramID(), element.getSemantic());
+
+			glEnableVertexAttribArray(attribLoc);
+			glVertexAttribPointer(attribLoc, element.getCount(), getGLElementType(elementType), isTypeNormalised(elementType), static_cast<GLsizei>(bufferData.getLayout().size()), reinterpret_cast<const void*>(offset));
 			offset += VertexElement::sizeOf(element.getType());
 		}
 	}

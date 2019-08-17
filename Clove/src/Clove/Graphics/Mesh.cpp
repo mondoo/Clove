@@ -30,9 +30,19 @@ namespace clv::gfx{
 		shader->bind();
 
 		gfx::VertexLayout layout = shader->getReflectionData().vertexBufferLayout;
-		gfx::VertexBufferData vertexArray{ std::move(layout) };
+		gfx::VertexBufferData vertexArray{ layout };
+
+		auto param1 = layout.resolve(0);
+		
+		//TODO: auto order this
+		//Would we want it the other way around? the mesh decides which shader to use?
 		for(int i = 0; i < info.verticies.size(); ++i){
 			vertexArray.emplaceBack(
+				math::Vector3f{
+					info.normals[i].x,
+					info.normals[i].y,
+					info.normals[i].z,
+				},
 				math::Vector3f{
 					info.verticies[i].x,
 					info.verticies[i].y,
@@ -41,11 +51,6 @@ namespace clv::gfx{
 				math::Vector2f{
 					info.texCoords[i].x,
 					info.texCoords[i].y
-				},
-				math::Vector3f{
-					info.normals[i].x,
-					info.normals[i].y,
-					info.normals[i].z,
 				}
 			);
 		}
