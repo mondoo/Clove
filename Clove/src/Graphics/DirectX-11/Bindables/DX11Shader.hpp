@@ -2,8 +2,6 @@
 
 #include "Clove/Graphics/Bindables/Shader.hpp"
 
-#include "Graphics/DirectX-11/Bindables/DX11ConstantBuffer.hpp"
-
 #include <wrl.h>
 #include <d3dcommon.h>
 

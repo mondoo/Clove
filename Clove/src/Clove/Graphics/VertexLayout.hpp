@@ -120,7 +120,7 @@ namespace clv::gfx{
 		Vertex& operator=(Vertex&& other) noexcept = delete;
 		~Vertex();
 
-		template<VertexElementType Type>
+		template<VertexElementType type>
 		auto& getAttribute();
 
 	private:
@@ -132,6 +132,7 @@ namespace clv::gfx{
 		template<typename First, typename ...Rest>
 		void setAttributeByIndex(size_t i, First&& first, Rest&& ... rest);
 
+	public: //THIS IS TEMP TO TEST AN IDEA - I'd want to keep this private, maybe do a get attribute with an index too?
 		template<typename T>
 		void setAttributeByIndex(size_t i, T&& val);
 	};
@@ -155,6 +156,11 @@ namespace clv::gfx{
 
 		template<typename ...Args>
 		void emplaceBack(Args&&... args);
+
+		//THIS IS TEMP TO TEST AN IDEA
+		void addOne(){
+			buffer.resize(buffer.size() + layout.size());
+		}
 
 		Vertex front();
 		Vertex back();

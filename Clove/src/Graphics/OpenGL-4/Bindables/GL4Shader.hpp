@@ -2,8 +2,6 @@
 
 #include "Clove/Graphics/Bindables/Shader.hpp"
 
-#include "Graphics/OpenGL-4/Bindables/GL4UniformBufferObject.hpp"
-
 namespace clv::gfx{
 	class Renderer;
 
