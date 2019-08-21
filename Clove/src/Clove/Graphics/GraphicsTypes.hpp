@@ -25,4 +25,11 @@ namespace clv::gfx{
 		Default,
 		RenderTarget
 	};
+
+	enum class VertexElementType{
+		position2D,
+		position3D,
+		texture2D,
+		normal,
+	};
 }

@@ -1,13 +1,8 @@
 #pragma once
 
-namespace clv::gfx{
-	enum class VertexElementType{
-		position2D,
-		position3D,
-		texture2D,
-		normal,
-	};
+#include "Clove/Graphics/GraphicsTypes.hpp"
 
+namespace clv::gfx{
 	template<VertexElementType> struct VertexElementData;
 
 	//TODO: make the semantics lower case now thay're used for the shaders
@@ -34,6 +29,7 @@ namespace clv::gfx{
 
 	//TODO: Wrap in namespace?
 	//TODO: constexpr?
+	//TODO: inl?
 	inline VertexElementType getTypeFromSemantic(const std::string& semantic){
 		if (VertexElementData<VertexElementType::position2D>::semantic == semantic){
 			return VertexElementType::position2D;
@@ -45,7 +41,7 @@ namespace clv::gfx{
 			return VertexElementType::normal;
 		}
 
-		CLV_ASSERT(false, "Could not find proper element type");
+		CLV_ASSERT(false, "{0} could not find proper element type", __func__);
 		return VertexElementType::position2D;
 	}
 
@@ -132,7 +128,6 @@ namespace clv::gfx{
 		template<typename First, typename ...Rest>
 		void setAttributeByIndex(size_t i, First&& first, Rest&& ... rest);
 
-	public: //THIS IS TEMP TO TEST AN IDEA - I'd want to keep this private, maybe do a get attribute with an index too?
 		template<typename T>
 		void setAttributeByIndex(size_t i, T&& val);
 	};
@@ -154,13 +149,10 @@ namespace clv::gfx{
 
 		VertexBufferData(VertexLayout layout);
 
+		void resize(size_t size);
+
 		template<typename ...Args>
 		void emplaceBack(Args&&... args);
-
-		//THIS IS TEMP TO TEST AN IDEA
-		void addOne(){
-			buffer.resize(buffer.size() + layout.size());
-		}
 
 		Vertex front();
 		Vertex back();

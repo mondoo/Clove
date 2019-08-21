@@ -101,6 +101,10 @@ namespace clv::gfx{
 	VertexBufferData::VertexBufferData(VertexLayout layout)
 		: layout(std::move(layout)){
 	}
+
+	void VertexBufferData::resize(size_t size){
+		buffer.resize(size * layout.size());
+	}
 	
 	Vertex VertexBufferData::front(){
 		return { buffer.data(), layout };
