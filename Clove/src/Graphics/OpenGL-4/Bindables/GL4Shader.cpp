@@ -39,8 +39,7 @@ namespace clv::gfx{
 
 			glGetActiveAttrib(programID, static_cast<GLuint>(i), 255, &length, &size, &type, name);
 
-			//TODO: Is there an easier way than using the semantics?
-			outData.vertexBufferLayout.add(getTypeFromSemantic(name));
+			outData.vertexBufferLayout.add(VertexElement::getTypeFromSemantic(name));
 		}
 
 		return outData;

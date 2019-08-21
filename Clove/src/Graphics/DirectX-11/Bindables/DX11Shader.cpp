@@ -51,8 +51,7 @@ namespace clv::gfx{
 			D3D11_SIGNATURE_PARAMETER_DESC inputParamDescription;
 			DX11_THROW_INFO(reflector->GetInputParameterDesc(i, &inputParamDescription));
 	
-			//TODO: Is there an easier way than using the semantics?
-			outData.vertexBufferLayout.add(getTypeFromSemantic(inputParamDescription.SemanticName));
+			outData.vertexBufferLayout.add(VertexElement::getTypeFromSemantic(inputParamDescription.SemanticName));
 		}
 
 		return outData;

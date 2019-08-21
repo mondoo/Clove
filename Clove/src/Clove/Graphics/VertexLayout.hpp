@@ -27,24 +27,6 @@ namespace clv::gfx{
 		static constexpr char semantic[] = "Normal";
 	};
 
-	//TODO: Wrap in namespace?
-	//TODO: constexpr?
-	//TODO: inl?
-	inline VertexElementType getTypeFromSemantic(const std::string& semantic){
-		if (VertexElementData<VertexElementType::position2D>::semantic == semantic){
-			return VertexElementType::position2D;
-		} else if(VertexElementData<VertexElementType::position3D>::semantic == semantic){
-			return VertexElementType::position3D;
-		} else if(VertexElementData<VertexElementType::texture2D>::semantic == semantic){
-			return VertexElementType::texture2D;
-		} else if(VertexElementData<VertexElementType::normal>::semantic == semantic){
-			return VertexElementType::normal;
-		}
-
-		CLV_ASSERT(false, "{0} could not find proper element type", __func__);
-		return VertexElementType::position2D;
-	}
-
 	class VertexElement{
 		//VARIABLES
 	private:
@@ -74,6 +56,7 @@ namespace clv::gfx{
 		static constexpr size_t sizeOf(VertexElementType type);
 		static constexpr uint32 countOf(VertexElementType type);
 		static constexpr const char* semanticOf(VertexElementType type);
+		static VertexElementType getTypeFromSemantic(const std::string& semantic);
 	};
 
 	class VertexLayout{
