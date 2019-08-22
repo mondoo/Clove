@@ -1,5 +1,5 @@
 #Root CMake list
-cmake_minimum_required(VERSION 3.14.0)
+cmake_minimum_required(VERSION 3.15.0)
 project(Clove-Engine)
 
 set(CMAKE_CXX_STANDARD 17)
