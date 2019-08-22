@@ -9,6 +9,15 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(EngineFolder "Clove")
 set(DependencyFolder "Clove/Dependencies")
 
+#Build configurations
+if(CMAKE_CONFIGURATION_TYPES)
+	#Set custom build types
+	set(CMAKE_CONFIGURATION_TYPES Debug Development Profiling Release)
+	set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Reset the configurations to what we need" FORCE)
+
+	#TODO: set them to be built as debug/release and set clove pre processors
+endif()
+
 #Clove dependencies
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	add_subdirectory(Clove/vendor/dxerr)

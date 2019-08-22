@@ -281,14 +281,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	)
 endif()
 
-##How to get everywhere?
-#if(CMAKE_CONFIGURATION_TYPES)
-#  set(CMAKE_CONFIGURATION_TYPES Debug Development Profiling Release)
-#  set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
-#    "Reset the configurations to what we need"
-#    FORCE)
-#endif()
-
 #Precompiled header
 #note: when not using the project view in VS this gets borked again - but everything is put into an 'out' directory (including the pch file) does this need to be moved?
 if(MSVC)
@@ -348,22 +340,29 @@ if(MSVC)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_MODEL 5.0)
 
 	set(shaderCSO
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/2D-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/2D-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Lit-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Lit-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/RT-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/RT-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/2D-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/2D-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Lit-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Lit-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/RT-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/RT-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Unlit-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Unlit-vs.cso
 	)
 
 	add_custom_command(
 		TARGET Clove POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy
 				${shaderCSO}
+				${CMAKE_BINARY_DIR}/Sandbox/$<CONFIGURATION>
+	)
+	add_custom_command(
+		TARGET Clove POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+				${shaderCSO}
 				${CMAKE_BINARY_DIR}/Sandbox
 	)
+
 endif()
 
 
@@ -379,13 +378,13 @@ set(GLShaders
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
 )
 
-#copy resource files - TODO: fix up sandbox / debug references
+#copy resource files - TODO: fix up sandbox references
 if(MSVC)
 	add_custom_command(
 	        TARGET Clove POST_BUILD
 	        COMMAND ${CMAKE_COMMAND} -E copy
 	                ${GLShaders}
-	                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIGURATION>
 	)
 endif()
 add_custom_command(
@@ -400,7 +399,7 @@ if(MSVC)
 	        TARGET Clove POST_BUILD
 	        COMMAND ${CMAKE_COMMAND} -E copy_directory
 	                ${CMAKE_SOURCE_DIR}/Sandbox/res
-	                ${CMAKE_BINARY_DIR}/Sandbox/Debug/res
+	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIGURATION>/res
 	)
 endif()
 add_custom_command(
