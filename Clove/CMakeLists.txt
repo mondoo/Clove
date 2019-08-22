@@ -307,8 +307,6 @@ endif()
 
 target_compile_definitions(
 	Clove
-	PUBLIC
-		CLV_DEVELOPMENT=1 #TODO: Base this off of the configuration type
 	INTERFACE
 		CLV_ENGINE=0
 	PRIVATE
