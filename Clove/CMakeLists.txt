@@ -227,8 +227,7 @@ target_include_directories(
 
 	#Clove
 	PUBLIC
-		src		#does this null out the two privates below?
-		#src/Clove
+		src
 	PRIVATE
 		src/Graphics
 		src/Platform	
@@ -359,12 +358,6 @@ if(MSVC)
 		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-vs.cso
 	)
 
-	#add_custom_command(
-	#	TARGET Clove POST_BUILD
-	#	COMMAND ${CMAKE_COMMAND} -E copy
-	#			${shaderCSO}
-	#			${CMAKE_BINARY_DIR}/Sandbox/Debug
-	#)
 	add_custom_command(
 		TARGET Clove POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy
