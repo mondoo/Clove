@@ -5,9 +5,8 @@ project(Clove)
 add_library(Clove STATIC)
 
 #Files - Clove
-target_sources(
-	Clove
-	PRIVATE
+set(
+	CloveFiles
 		src/clvpch.hpp
 		src/clvpch.cpp
 		src/Clove.hpp
@@ -118,9 +117,8 @@ target_sources(
 )
 
 #Files - Graphics
-target_sources(
-	Clove
-	PRIVATE
+set(
+	GraphicsFiles
 		src/Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp
 		src/Graphics/OpenGL-4/Bindables/GL4IndexBuffer.cpp
 		src/Graphics/OpenGL-4/Bindables/GL4Shader.hpp
@@ -148,9 +146,10 @@ target_sources(
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_sources(
-		Clove
-		PRIVATE
+	set(
+		GraphicsFiles
+			${GraphicsFiles}	
+
 			src/Graphics/OpenGL-4/WGLContext.hpp
 			src/Graphics/OpenGL-4/WGLContext.cpp
 
@@ -184,9 +183,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/DXGIInfoManager.cpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_sources(
-		Clove
-		PRIVATE
+	set(
+		GraphicsFiles
+			${GraphicsFiles}
+
 			src/Graphics/OpenGL-4/GLXContext.hpp
 			src/Graphics/OpenGL-4/GLXContext.cpp
 	)
@@ -194,22 +194,32 @@ endif()
 
 #Files - Platform
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_sources(
-		Clove
-		PRIVATE
+	set(
+		PlatformFiles
 			src/Platform/Linux/LinuxWindow.hpp
 			src/Platform/Linux/LinuxWindow.cpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_sources(
-		Clove
-		PRIVATE
+	set(
+		PlatformFiles
 			src/Platform/Windows/WindowsWindow.hpp
 			src/Platform/Windows/WindowsWindow.cpp
 			src/Platform/Windows/WindowsException.hpp
 			src/Platform/Windows/WindowsException.cpp
 	)
 endif()
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${CloveFiles})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GraphicsFiles})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${PlatformFiles})
+
+target_sources(
+	Clove
+	PRIVATE
+	${CloveFiles}
+	${GraphicsFiles}
+	${PlatformFiles}
+)
 
 #Includes
 target_include_directories(
