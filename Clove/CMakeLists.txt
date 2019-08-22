@@ -319,7 +319,7 @@ target_compile_definitions(
 	PUBLIC
 		CLV_DEVELOPMENT=1 #TODO: Base this off of the configuration type
 	INTERFACE
-		CLV_ENGINE=0 #NOTE: this only causes the CLOVE: flag in the private sources and APP: in the public ones
+		CLV_ENGINE=0
 	PRIVATE
 		CLV_ENGINE=1
 )
