@@ -14,7 +14,7 @@ namespace clv::gfx{
 		Pixel,
 	};
 
-	enum class ShaderStyle{
+	enum class ShaderStyle{ //TODO: Rename to material style
 		Lit,
 		Unlit,
 		_2D,

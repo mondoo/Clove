@@ -9,6 +9,9 @@
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
 
+#include "Clove/Graphics/Material.hpp"
+#include "Clove/Graphics/MaterialInstance.hpp"
+
 namespace clv::ecs::d2{
 	RenderSystem::RenderSystem(){
 		//VB
@@ -26,7 +29,8 @@ namespace clv::ecs::d2{
 			3, 2, 0
 		};
 		
-		spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, gfx::ShaderStyle::_2D);
+		std::shared_ptr<gfx::Material> material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
+		spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, material->createInstance());
 
 		//Proj
 		const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;

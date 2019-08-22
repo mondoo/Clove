@@ -12,6 +12,11 @@ namespace clv::gfx{
 		BBP_2DData			= 5u
 	};
 
+	/*
+	Am i going to have to change these to take void* data?
+	
+	*/
+
 	template<typename T>
 	class ShaderBufferObject : public Bindable{
 		//FUNCTIONS

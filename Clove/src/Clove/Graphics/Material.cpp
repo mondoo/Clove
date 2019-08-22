@@ -2,60 +2,55 @@
 #include "Material.hpp"
 
 #include "Clove/Graphics/Bindables/Texture.hpp"
-#include "Clove/Graphics/Bindables/Shader.hpp"
+//#include "Clove/Graphics/Bindables/Shader.hpp"
 #include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/MaterialInstance.hpp"
 
 namespace clv::gfx{
-	Material::Material() = default;
-
 	Material::Material(const Material& other) = default;
 
 	Material& Material::operator=(const Material& other) = default;
 
-	Material::Material(Material&& other) noexcept{
-		albedoTexture = std::move(other.albedoTexture);
-		specTexture = std::move(other.specTexture);
-		shaderData = std::move(other.shaderData);
-	}
+	Material::Material(Material&& other) noexcept = default;
 
 	Material& Material::operator=(Material&& other) noexcept = default;
 
 	Material::~Material() = default;
 
+	Material::Material(ShaderStyle shaderStyle){
+		shader = gfx::BindableFactory::createShader(shaderStyle);
+
+		reflectionData = shader->getReflectionData();
+		//TODO: Loop through all available CBs / UBOs and generate UBOs for them 
+		for(const auto& bufferDesc : reflectionData.bufferDescriptions){
+			//....
+		}
+	}
+
 	void Material::bind(){
-		//shader->bind();
-		albedoTexture->bind();
+		shader->bind();
+		if(albedoTexture){ //TODO: This shouldn't really be nullptr - but how will solid colour shaders work?
+			albedoTexture->bind();
+		}
 		if(specTexture){
 			specTexture->bind();
 		}
-		for(auto& [key, val] : shaderData){
+		/*for(auto& [key, val] : shaderData){
 			val->bind();
-		}
+		}*/
 	}
 
-	void Material::linkShader(const std::shared_ptr<Shader>& shader){
-		/*
-		TODO (also isn't called yet):
-		https://docs.microsoft.com/en-us/windows/win32/api/d3d11shader/nn-d3d11shader-id3d11shaderreflection
-		https://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
-		https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetActiveUniformBlock.xhtml
-		
-		
-		*/
-
-		//for(ShaderReflectionData& data : shader->getReflectionData()){
-		//	//This data will need either need to be used as is or converted into some form of material data
-		//	//Will these just be used to make the UBOs???
-		//}
+	MaterialInstance Material::createInstance(){
+		//WARNING: shared_from_this doesn't seem to be enabled when using make_shared??????
+		return { shared_from_this() };
 	}
 
-	std::unique_ptr<MaterialInstance> Material::createInstance() const{
-		//TODO:
-		/*
-		probably give the material instance the binding points etc.
-		*/
-		return {};
+	const ShaderReflectionData& Material::getReflectionData() const{
+		return reflectionData;
+	}
+
+	const std::shared_ptr<Shader>& Material::getShader() const{
+		return shader;
 	}
 
 	void Material::setAlbedoTexture(const std::string& path){

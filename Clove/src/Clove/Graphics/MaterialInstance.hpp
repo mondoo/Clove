@@ -1,30 +1,29 @@
 #pragma once
 
+#include "Clove/Graphics/Bindables/Shader.hpp" //TODO: Remove? needed for the shader reflection data
+
 //TODO: Move this into the material file???
 namespace clv::gfx{
+	class Material;
+
 	class MaterialInstance{
-		/*
-		How this can work:
-		Material will set a bunch of base values
-		instances will change them
-
-		-should positions etc. (model data) be handled outside of the materials?
-			or should it all specifically be through the materials
-
-		-also, how will an instance know what params there are?
-		
-		-Is it too early for something like this?
-
-		-Maybe I should try and move the shader to the material first???
-		*/
-
 		//VARIABLES
 	private:
-		//Ref to material
+		std::shared_ptr<Material> material;
 
 		//FUNCTIONS
 	public:
-		//bind function that'll bind the material underneath
+		MaterialInstance() = delete;
+		MaterialInstance(const MaterialInstance& other) = default;
+		MaterialInstance& operator=(const MaterialInstance& other) = default;
+		MaterialInstance(MaterialInstance&& other) noexcept = default;
+		MaterialInstance& operator=(MaterialInstance&& other) noexcept = default;
 
+		MaterialInstance(std::shared_ptr<Material> material);
+
+		void bind();
+
+		const ShaderReflectionData& getReflectionData() const;
+		const std::shared_ptr<Shader>& getShader() const;
 	};
 }

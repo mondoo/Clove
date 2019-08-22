@@ -39,7 +39,7 @@ namespace clv::gfx{
 
 		//TODO: warn if vertex shader is nullptr?
 		DX11_INFO_PROVIDER;
-		DX11_THROW_INFO(D3DReflect(vertexShader->byteCode->GetBufferPointer(), vertexShader->byteCode->GetBufferSize(), IID_ID3D11ShaderReflection, &reflector));
+		DX11_THROW_INFO(D3DReflect(vertexShader->getByteCode()->GetBufferPointer(), vertexShader->getByteCode()->GetBufferSize(), IID_ID3D11ShaderReflection, &reflector));
 
 		D3D11_SHADER_DESC shaderDescription; 
 		DX11_THROW_INFO(reflector->GetDesc(&shaderDescription));

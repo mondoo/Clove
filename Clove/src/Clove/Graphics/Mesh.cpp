@@ -10,8 +10,6 @@
 #include "Clove/Utils/MeshLoader.hpp"
 
 namespace clv::gfx{
-	Mesh::Mesh() = default;
-
 	Mesh::Mesh(const Mesh& other) = default;
 
 	Mesh& Mesh::operator=(const Mesh& other) = default;
@@ -22,16 +20,15 @@ namespace clv::gfx{
 
 	Mesh::~Mesh() = default;
 
-	Mesh::Mesh(std::string filePath){
+	Mesh::Mesh(std::string filePath, MaterialInstance materialInstance)
+		: materialInstance(std::move(materialInstance)){
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
-		//Shader
-		shader = gfx::BindableFactory::createShader(gfx::ShaderStyle::Lit);
-		shader->bind();
+		materialInstance.bind();
 
 		const int32 vertexCount = info.verticies.size();
 
-		gfx::VertexLayout layout = shader->getReflectionData().vertexBufferLayout;
+		gfx::VertexLayout layout = materialInstance.getReflectionData().vertexBufferLayout;
 		gfx::VertexBufferData vertexArray{ layout };
 		vertexArray.resize(vertexCount);
 		
@@ -56,39 +53,26 @@ namespace clv::gfx{
 		}
 
 		//VB
-		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *shader);
+		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *materialInstance.getShader());
 
 		//IB
 		indexBuffer = gfx::BindableFactory::createIndexBuffer(info.indices);
 	}
 
-	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, ShaderStyle shaderStyle){
-		//Shader
-		shader = gfx::BindableFactory::createShader(shaderStyle);
-		shader->bind();
+	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, MaterialInstance materialInstance)
+		: materialInstance(std::move(materialInstance)){
+		
+		materialInstance.bind();
 
 		//VB
-		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vbData, *shader);
+		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vbData, *materialInstance.getShader());
 
 		//IB
 		indexBuffer = gfx::BindableFactory::createIndexBuffer(indices);
 	}
 
-	void Mesh::setMaterial(const std::shared_ptr<Material>& material){
-		this->material = material;
-		/*
-		TODO: Link shader to material here
-		*/
-		//This is just a temp test
-		material->linkShader(shader);
-
-		/*
-		This will take a material instance, so the shader should probably belong in the material
-		 */
-	}
-
-	const std::shared_ptr<Material>& Mesh::getMaterial() const{
-		return material;
+	MaterialInstance& Mesh::getMaterialInstance(){
+		return materialInstance;
 	}
 
 	uint32 Mesh::getIndexCount(){
@@ -98,9 +82,6 @@ namespace clv::gfx{
 	void Mesh::bind(){
 		vertexBuffer->bind();
 		indexBuffer->bind();
-		if(material){ //Can be null - should we use a different mesh type?
-			material->bind();
-		}
-		shader->bind();
+		materialInstance.bind();
 	}
 }

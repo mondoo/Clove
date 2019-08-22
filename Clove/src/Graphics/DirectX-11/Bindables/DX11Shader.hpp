@@ -43,8 +43,6 @@ namespace clv::gfx{
 	class DX11VertexShader : public Bindable{
 		//VARIABLES
 	private:
-		//TEMP: For reflection
-	public:
 		Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 		Microsoft::WRL::ComPtr<ID3DBlob> byteCode;
 

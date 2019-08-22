@@ -6,10 +6,16 @@
 #include "Clove/Graphics/VertexLayout.hpp" //TODO: Remove? to get the input types
 
 namespace clv::gfx{
+	struct ShaderBufferDescription{
+		std::string bufferName;
+		//How will I represent what types the buffer has inside it?
+		//--CBs will have a list of variables inside the cb
+		//--Looks like it might be possible with UBOS? can get the number / indicies of the uniforms in the buffer
+	};
+
 	struct ShaderReflectionData{
-		//std::vector<std::string> inputArgumentTypes;
-		//std::vector<int32> sboBindingPoints; //TODO: Do I need to do this or is the current system suffcient
 		VertexLayout vertexBufferLayout;
+		std::vector<ShaderBufferDescription> bufferDescriptions;
 	};
 
 	class Shader : public Bindable{

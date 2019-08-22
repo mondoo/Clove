@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/MaterialInstance.hpp"
 
 namespace clv::gfx{
 	class VertexBuffer;
@@ -14,24 +15,21 @@ namespace clv::gfx{
 	private:
 		std::shared_ptr<VertexBuffer> vertexBuffer;
 		std::shared_ptr<IndexBuffer> indexBuffer;
-		std::shared_ptr<Material> material;
-		std::shared_ptr<Shader> shader;//Temp????
+		MaterialInstance materialInstance;
 
 		//FUNCTIONS
 	public:
-		Mesh();
+		Mesh() = delete;
 		Mesh(const Mesh& other);
 		Mesh& operator=(const Mesh& other);
 		Mesh(Mesh&& other) noexcept;
 		Mesh& operator=(Mesh&& other) noexcept;
 		~Mesh();
 
-		//TODO: I think the constructor should take the material instance. Then we can retrieve the shader from the material
-		Mesh(std::string filePath);
-		Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, ShaderStyle shaderStyle);
+		Mesh(std::string filePath, MaterialInstance materialInstance);
+		Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, MaterialInstance materialInstance);
 
-		void setMaterial(const std::shared_ptr<Material>& material);
-		const std::shared_ptr<Material>& getMaterial() const;
+		MaterialInstance& getMaterialInstance();
 
 		uint32 getIndexCount();
 

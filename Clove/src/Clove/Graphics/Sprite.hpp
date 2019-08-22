@@ -17,7 +17,7 @@ namespace clv::gfx{
 		Sprite& operator=(Sprite&& other) noexcept;
 		~Sprite();
 
-		void setMaterial(const std::shared_ptr<Material>& material);
+		void setMaterial(const std::shared_ptr<Material>& material); //TODO: should construct with material instance
 		const std::shared_ptr<Material>& getMaterial() const;
 
 		void bind();
