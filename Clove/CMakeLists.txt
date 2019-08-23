@@ -282,7 +282,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 #Precompiled header
-#note: when not using the project view in VS this gets borked again - but everything is put into an 'out' directory (including the pch file) does this need to be moved?
 if(MSVC)
 	set_target_properties(Clove PROPERTIES COMPILE_FLAGS "/Yuclvpch.hpp")
 	set_source_files_properties(src/clvpch.cpp PROPERTIES COMPILE_FLAGS "/Ycclvpch.hpp" OBJECT_OUTPUTS "$(IntDir)/clvpch.pch")
