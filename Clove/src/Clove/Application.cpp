@@ -11,45 +11,8 @@
 #include "Clove/Graphics/RenderCommand.hpp"
 
 //audio test
-#include <portaudio.h>
-#include <sndfile.h>
-
-//audio test
-struct paTestData{
-	float left_phase;
-	float right_phase;
-};
-
-struct callback_data_s{
-	SNDFILE* file;
-	SF_INFO      info;
-};
-
-static int patestCallback(const void* inputBuffer, void* outputBuffer,
-						  unsigned long framesPerBuffer,
-						  const PaStreamCallbackTimeInfo* timeInfo,
-						  PaStreamCallbackFlags statusFlags,
-						  void* userData){
-	float* out;
-	callback_data_s* p_data = (callback_data_s*)userData;
-	sf_count_t       num_read;
-
-	out = (float*)outputBuffer;
-	p_data = (callback_data_s*)userData;
-
-	/* clear output buffer */
-	memset(out, 0, sizeof(float) * framesPerBuffer * p_data->info.channels);
-
-	/* read directly into output buffer */
-	num_read = sf_read_float(p_data->file, out, framesPerBuffer * p_data->info.channels);
-
-	/*  If we couldn't read a full frameCount of samples we've reached EOF */
-	if(num_read < framesPerBuffer){
-		return paComplete;
-	}
-
-	return paContinue;
-}
+#include "Clove/Audio/AudioPlayer.hpp"
+#include "Clove/Audio/Sound.hpp"
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -73,69 +36,13 @@ namespace clv{
 		CLV_LOG_INFO("Successfully initialised Clove");
 
 		prevFrameTime = std::chrono::system_clock::now();
-		
-		/*auto file = SndfileHandle("res/Audio/Test.wav");
-		int16 buffer[1024];
-		file.read(buffer, 1024);*/
 
-		callback_data_s data;
-		data.file = sf_open("res/Audio/Test.wav", SFM_READ, &data.info);
-		
 
-		CLV_LOG_DEBUG("Start port audio test");
-		//audio test
-		auto err = Pa_Initialize();
-		if(err == paNoError){
-			//paTestData data = { 1.0f, 1.0f };
-			PaStream* stream;
-			PaError err;
-			/* Open an audio I/O stream. */
-			err = Pa_OpenDefaultStream(&stream,
-									   0,          /* no input channels */
-									   data.info.channels,          /* stereo output */
-									   paFloat32,  /* 32 bit floating point output */
-									   data.info.samplerate,
-									   512,        /* frames per buffer, i.e. the number
-														  of sample frames that PortAudio will
-														  request from the callback. Many apps
-														  may want to use
-														  paFramesPerBufferUnspecified, which
-														  tells PortAudio to pick the best,
-														  possibly changing, buffer size.*/
-									   patestCallback, /* this is your callback function */
-									   &data); /*This is a pointer that will be passed to
-														  your callback*/
-			if(err == paNoError){
-				err = Pa_StartStream(stream);
+		CLV_LOG_DEBUG("Audio Test!");
 
-				if(err == paNoError){
-					Pa_Sleep(5 * 1000);
-
-					/*while(Pa_IsStreamActive(stream)){
-						Pa_Sleep(100);
-					}*/
-
-					Pa_StopStream(stream);
-
-					sf_close(data.file);
-
-					err = Pa_CloseStream(stream);
-
-					Pa_Terminate();
-					if(err == paNoError){
-
-					} else{
-						CLV_LOG_ERROR("Port audio error: {0} ", Pa_GetErrorText(err));
-					}
-				} else{
-					CLV_LOG_ERROR("Port audio error: {0} ", Pa_GetErrorText(err));
-				}
-			} else{
-				CLV_LOG_ERROR("Port audio error: {0} ", Pa_GetErrorText(err));
-			}
-		} else{
-			CLV_LOG_ERROR("Port audio error: {0} ", Pa_GetErrorText(err));
-		}
+		auto snd = sfx::Sound("res/Audio/Test.wav");
+		sfx::AudioPlayer player;
+		player.playSound(snd);
 	}
 
 	Application::~Application() = default;
