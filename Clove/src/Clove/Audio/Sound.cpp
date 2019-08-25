@@ -1,7 +1,7 @@
 #include "clvpch.hpp"
 #include "Sound.hpp"
 
-namespace clv::sfx{
+namespace clv::aud{
 	Sound::Sound(const Sound& other) = default;
 
 	Sound& Sound::operator=(const Sound& other) = default;

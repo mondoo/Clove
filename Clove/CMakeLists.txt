@@ -21,8 +21,8 @@ set(
 		src/Clove/Log.cpp
 		src/Clove/Application.hpp
 		src/Clove/Application.cpp
-		src/Clove/Audio/AudioPlayer.hpp
-		src/Clove/Audio/AudioPlayer.cpp
+		src/Clove/Audio/SoundPlayer.hpp
+		src/Clove/Audio/SoundPlayer.cpp
 		src/Clove/Audio/Sound.hpp
 		src/Clove/Audio/Sound.cpp
 		src/Clove/ECS/Component.hpp

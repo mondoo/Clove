@@ -2,7 +2,7 @@
 
 #include <sndfile.h> //TODO: move to cpp
 
-namespace clv::sfx{
+namespace clv::aud{
 	class Sound{
 		//VARIABLES
 	private:
