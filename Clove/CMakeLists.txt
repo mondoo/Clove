@@ -230,9 +230,6 @@ target_include_directories(
 	#Libraries
 	PUBLIC
 		vendor/OBJ-Loader/Source
-		vendor/portaudio/include
-		vendor/libsndfile/src
-		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src #to get the files generated from the .in headers
 	INTERFACE
 		vendor/glm
 		vendor/spdlog/include
