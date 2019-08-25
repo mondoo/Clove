@@ -5,8 +5,7 @@
 namespace clv::sfx{
 	class Sound{
 		//VARIABLES
-	//private:
-	public: //temp public
+	private:
 		SNDFILE* file;
 		SF_INFO info;
 
@@ -19,6 +18,11 @@ namespace clv::sfx{
 		Sound& operator=(Sound&& other) noexcept;
 		~Sound();
 
-		Sound(std::string filePath);
+		Sound(const std::string &filePath);
+
+		int32 getChannels() const;
+		int32 getSampleRate() const;
+
+		SNDFILE* getFile() const;
 	};
 }

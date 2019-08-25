@@ -14,7 +14,19 @@ namespace clv::sfx{
 		sf_close(file);
 	}
 	
-	Sound::Sound(std::string filePath){ //const ref? am i storing it?
+	Sound::Sound(const std::string& filePath){
 		file = sf_open(filePath.c_str(), SFM_READ, &info);
+	}
+
+	int32 Sound::getChannels() const{
+		return info.channels;
+	}
+
+	int32 Sound::getSampleRate() const{
+		return info.samplerate;
+	}
+
+	SNDFILE* Sound::getFile() const{
+		return file;
 	}
 }

@@ -6,7 +6,7 @@ namespace clv::sfx{
 	class AudioPlayer{ //Rename to SoundPlayer?
 		//VARIABLES
 	private:
-		//Keep track of open streams?
+		
 
 		//FUNCTIONS
 	public:
