@@ -5,9 +5,8 @@ project(Clove)
 add_library(Clove STATIC)
 
 #Files - Clove
-target_sources(
-	Clove
-	PRIVATE
+set(
+	CloveFiles
 		src/clvpch.hpp
 		src/clvpch.cpp
 		src/Clove.hpp
@@ -122,9 +121,8 @@ target_sources(
 )
 
 #Files - Graphics
-target_sources(
-	Clove
-	PRIVATE
+set(
+	GraphicsFiles
 		src/Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp
 		src/Graphics/OpenGL-4/Bindables/GL4IndexBuffer.cpp
 		src/Graphics/OpenGL-4/Bindables/GL4Shader.hpp
@@ -152,9 +150,10 @@ target_sources(
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_sources(
-		Clove
-		PRIVATE
+	set(
+		GraphicsFiles
+			${GraphicsFiles}	
+
 			src/Graphics/OpenGL-4/WGLContext.hpp
 			src/Graphics/OpenGL-4/WGLContext.cpp
 
@@ -188,9 +187,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/DXGIInfoManager.cpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_sources(
-		Clove
-		PRIVATE
+	set(
+		GraphicsFiles
+			${GraphicsFiles}
+
 			src/Graphics/OpenGL-4/GLXContext.hpp
 			src/Graphics/OpenGL-4/GLXContext.cpp
 	)
@@ -198,16 +198,14 @@ endif()
 
 #Files - Platform
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_sources(
-		Clove
-		PRIVATE
+	set(
+		PlatformFiles
 			src/Platform/Linux/LinuxWindow.hpp
 			src/Platform/Linux/LinuxWindow.cpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_sources(
-		Clove
-		PRIVATE
+	set(
+		PlatformFiles
 			src/Platform/Windows/WindowsWindow.hpp
 			src/Platform/Windows/WindowsWindow.cpp
 			src/Platform/Windows/WindowsException.hpp
@@ -215,14 +213,25 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	)
 endif()
 
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${CloveFiles})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GraphicsFiles})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${PlatformFiles})
+
+target_sources(
+	Clove
+	PRIVATE
+	${CloveFiles}
+	${GraphicsFiles}
+	${PlatformFiles}
+)
+
 #Includes
 target_include_directories(
 	Clove
 
 	#Clove
 	PUBLIC
-		src		#does this null out the two privates below?
-		#src/Clove
+		src
 	PRIVATE
 		src/Graphics
 		src/Platform	
@@ -279,16 +288,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	)
 endif()
 
-##How to get everywhere?
-#if(CMAKE_CONFIGURATION_TYPES)
-#  set(CMAKE_CONFIGURATION_TYPES Debug Development Profiling Release)
-#  set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
-#    "Reset the configurations to what we need"
-#    FORCE)
-#endif()
-
 #Precompiled header
-#note: when not using the project view in VS this gets borked again - but everything is put into an 'out' directory (including the pch file) does this need to be moved?
 if(MSVC)
 	set_target_properties(Clove PROPERTIES COMPILE_FLAGS "/Yuclvpch.hpp")
 	set_source_files_properties(src/clvpch.cpp PROPERTIES COMPILE_FLAGS "/Ycclvpch.hpp" OBJECT_OUTPUTS "$(IntDir)/clvpch.pch")
@@ -313,10 +313,8 @@ endif()
 
 target_compile_definitions(
 	Clove
-	PUBLIC
-		CLV_DEVELOPMENT=1 #TODO: Base this off of the configuration type
 	INTERFACE
-		CLV_ENGINE=0 #NOTE: this only causes the CLOVE: flag in the private sources and APP: in the public ones
+		CLV_ENGINE=0
 	PRIVATE
 		CLV_ENGINE=1
 )
@@ -346,28 +344,29 @@ if(MSVC)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_MODEL 5.0)
 
 	set(shaderCSO
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/2D-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/2D-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Lit-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Lit-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/RT-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/RT-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/Debug/Unlit-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/2D-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/2D-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Lit-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Lit-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/RT-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/RT-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Unlit-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Unlit-vs.cso
 	)
 
-	#add_custom_command(
-	#	TARGET Clove POST_BUILD
-	#	COMMAND ${CMAKE_COMMAND} -E copy
-	#			${shaderCSO}
-	#			${CMAKE_BINARY_DIR}/Sandbox/Debug
-	#)
+	add_custom_command(
+		TARGET Clove POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+				${shaderCSO}
+				${CMAKE_BINARY_DIR}/Sandbox/$<CONFIGURATION>
+	)
 	add_custom_command(
 		TARGET Clove POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy
 				${shaderCSO}
 				${CMAKE_BINARY_DIR}/Sandbox
 	)
+
 endif()
 
 
@@ -383,13 +382,13 @@ set(GLShaders
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
 )
 
-#copy resource files - TODO: fix up sandbox / debug references
+#copy resource files - TODO: fix up sandbox references
 if(MSVC)
 	add_custom_command(
 	        TARGET Clove POST_BUILD
 	        COMMAND ${CMAKE_COMMAND} -E copy
 	                ${GLShaders}
-	                ${CMAKE_BINARY_DIR}/Sandbox/Debug
+	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIGURATION>
 	)
 endif()
 add_custom_command(
@@ -404,7 +403,7 @@ if(MSVC)
 	        TARGET Clove POST_BUILD
 	        COMMAND ${CMAKE_COMMAND} -E copy_directory
 	                ${CMAKE_SOURCE_DIR}/Sandbox/res
-	                ${CMAKE_BINARY_DIR}/Sandbox/Debug/res
+	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIGURATION>/res
 	)
 endif()
 add_custom_command(
