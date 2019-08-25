@@ -69,6 +69,7 @@ set_target_properties(spdlog PROPERTIES FOLDER ${DependencyFolder})
 add_subdirectory(Clove/vendor/stb)
 set_target_properties(stb PROPERTIES FOLDER ${DependencyFolder})
 
+#-portaudio
 set(PA_BUILD_SHARED OFF CACHE BOOL "Build shared/dynamic library")
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(PA_USE_DS ON CACHE BOOL "Enable support for DirectSound")
@@ -82,7 +83,9 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(PA_USE_ALSA ON CACHE BOOL "Enable support for ALSA")
 endif()
 add_subdirectory(Clove/vendor/portaudio)
+set_target_properties(portaudio_static PROPERTIES FOLDER ${DependencyFolder})
 
+#-libsndfile
 set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
 set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 #set(BUILD_TESTING OFF CACHE BOOL)
@@ -91,6 +94,7 @@ if (MSVC OR MINGW)
 	set (ENABLE_STATIC_RUNTIME ON CACHE BOOL "Enable static runtime")
 endif()
 add_subdirectory(Clove/vendor/libsndfile)
+set_target_properties(sndfile PROPERTIES FOLDER ${DependencyFolder})
 
 #Clove
 add_subdirectory(Clove)
