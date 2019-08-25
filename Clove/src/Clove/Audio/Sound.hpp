@@ -4,11 +4,6 @@
 
 namespace clv::sfx{
 	class Sound{
-		//friend class AudioPlayer; //Might change
-
-		//TODO
-		//Reprensts a sound - something the audio player will use to play'
-
 		//VARIABLES
 	//private:
 	public: //temp public

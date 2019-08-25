@@ -13,6 +13,7 @@
 //audio test
 #include "Clove/Audio/AudioPlayer.hpp"
 #include "Clove/Audio/Sound.hpp"
+//
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -37,12 +38,12 @@ namespace clv{
 
 		prevFrameTime = std::chrono::system_clock::now();
 
-
+		//Audio stuff
 		CLV_LOG_DEBUG("Audio Test!");
-
 		auto snd = sfx::Sound("res/Audio/Test.wav");
 		sfx::AudioPlayer player;
 		player.playSound(snd);
+		//
 	}
 
 	Application::~Application() = default;

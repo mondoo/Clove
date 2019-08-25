@@ -3,7 +3,7 @@
 #include "Clove/Audio/Sound.hpp"
 
 namespace clv::sfx{
-	class AudioPlayer{
+	class AudioPlayer{ //Rename to SoundPlayer?
 		//VARIABLES
 	private:
 		//Keep track of open streams?
