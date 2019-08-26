@@ -243,6 +243,10 @@ target_include_directories(
 		vendor/glm
 		vendor/spdlog/include
 		vendor/Glad/include #would like to remove but the SBO forces it
+		#temp while testing audio
+		vendor/libsndfile/src
+		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
+		vendor/portaudio/include
 	PRIVATE
 		vendor/OBJ-Loader/Source
 )

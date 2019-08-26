@@ -26,6 +26,10 @@ namespace clv::aud{
 		return info.samplerate;
 	}
 
+	int32 Sound::getFrames() const{
+		return info.frames;
+	}
+
 	SNDFILE* Sound::getFile() const{
 		return file;
 	}

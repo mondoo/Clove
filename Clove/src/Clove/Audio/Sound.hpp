@@ -8,10 +8,13 @@ namespace clv::aud{
 	private:
 		SNDFILE* file;
 		SF_INFO info;
+		//Again, temp
+	public:
+	int32 position;
 
 		//FUNCTIONS
 	public:
-		Sound() = delete;
+		Sound() = default; //Temp default;
 		Sound(const Sound& other);
 		Sound& operator=(const Sound& other);
 		Sound(Sound&& other) noexcept;
@@ -22,6 +25,7 @@ namespace clv::aud{
 
 		int32 getChannels() const;
 		int32 getSampleRate() const;
+		int32 getFrames() const;
 
 		SNDFILE* getFile() const;
 	};

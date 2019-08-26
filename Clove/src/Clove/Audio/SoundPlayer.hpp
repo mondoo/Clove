@@ -2,11 +2,22 @@
 
 #include "Clove/Audio/Sound.hpp"
 
+#include <portaudio.h> //TODO: move to cpp
+//Temp
+#include "Sound.hpp"
+
 namespace clv::aud{
+	struct AudioStreamID{
+		int32 ID = -1;
+	};
+
 	class SoundPlayer{
 		//VARIABLES
 	private:
-		
+		//TODO: int32 here, write own hashing function for the struct
+		std::unordered_map<int32, PaStream*> openStreams;
+
+		Sound theSound;
 
 		//FUNCTIONS
 	public:
@@ -17,6 +28,10 @@ namespace clv::aud{
 		SoundPlayer& operator=(SoundPlayer&& other) = delete;
 		~SoundPlayer();
 
-		void playSound(/*const*/ Sound& sound);
+		AudioStreamID playSound(/*const*/ Sound& sound);
+		void stopSound(AudioStreamID ID);
+
+	private:
+		AudioStreamID generateNextID();
 	};
 }

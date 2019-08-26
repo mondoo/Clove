@@ -41,7 +41,7 @@ namespace clv{
 		//Audio stuff
 		CLV_LOG_DEBUG("Audio Test!");
 		auto snd = aud::Sound("res/Audio/Test.wav");
-		aud::SoundPlayer player;
+		//aud::SoundPlayer player;
 		player.playSound(snd);
 		//
 	}
