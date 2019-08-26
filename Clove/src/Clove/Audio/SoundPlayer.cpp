@@ -90,11 +90,14 @@ namespace clv::aud{
 		PACall(Pa_OpenDefaultStream(&stream, 0, sound.getChannels(), paFloat32, sound.getSampleRate(), paFramesPerBufferUnspecified, soundPlayback, &theSound));
 		PACall(Pa_StartStream(stream));
 
-		openStreams[generateNextID().ID] = stream;
+		auto ID = generateNextID();
+		openStreams[ID.ID] = stream;
 
 		//Pa_Sleep(5 * 1000);
 
 		//PACall(Pa_CloseStream(stream));
+
+		return ID;
 	}
 
 	void SoundPlayer::stopSound(AudioStreamID ID){
@@ -104,6 +107,6 @@ namespace clv::aud{
 
 	AudioStreamID SoundPlayer::generateNextID(){
 		static int32 ID = 0; //TODO: Make a proper ID system
-
+		return { ID };
 	}
 }
