@@ -19,6 +19,9 @@ namespace clv::aud{
 
 		Sound theSound;
 
+		//Do I even need this class? or could I just do everything through the sound file?
+		//What would be the benefit of a manager? (would probably be something I realise later)
+
 		//FUNCTIONS
 	public:
 		SoundPlayer();
