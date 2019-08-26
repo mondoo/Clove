@@ -4,7 +4,7 @@
 #include <portaudio.h>
 #include <sndfile.h>
 
-#define PACall(x) { auto err = x; if(err != paNoError) { CLV_ASSERT(false, "Port audio assertion: {0}", Pa_GetErrorText(err)); } }
+#define PACall(x) { auto err = x; if(err != paNoError) { CLV_ASSERT(false, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(err)); } }
 
 //TODO:
 //Play streams without sleeping?
@@ -16,33 +16,39 @@ namespace clv::aud{
 		//float* out = static_cast<float*>(outputBuffer);
 		//Sound* data = static_cast<Sound*>(userData);
 		//sf_count_t num_read;
-//
-		//memset(out, 0, sizeof(float) * framesPerBuffer * data->getChannels());
-//
-		//num_read = sf_read_float(data->getFile(), out, framesPerBuffer * data->getChannels());
-//
-		//CLV_LOG_DEBUG("(num_Read){0} : (framesPerBuffer){1}", num_read, framesPerBuffer);
+		//
+		//memset(out, 0, sizeof(float) * frameCount * data->getChannels());
+		//
+		//num_read = sf_read_float(data->getFile(), out, frameCount * data->getChannels());
+		//
+		////CLV_LOG_DEBUG("(num_Read){0} : (framesPerBuffer){1}", num_read, framesPerBuffer);
 		////??????
-		//if(num_read < framesPerBuffer){
+		//if(num_read < frameCount){
 		//	return paComplete;
 		//}
-//
+		//
 		//return paContinue;
 
 		CLV_LOG_DEBUG("Called");
 
+		/*
+		TODO: 
+		it sounds like new data isn't being written into the buffer after the sleep.
+		but why?
+		*/
+		
 		Sound* data = static_cast<Sound*>(userData); /* we passed a data structure
 		into the callback so we have something to work with */
-		int *cursor; /* current pointer into the output */
-		int *out = (int *)outputBuffer;
-		int thisSize = frameCount;
-		int thisRead;
-
-		cursor = out; /* set the output cursor to the beginning */
+		int32* out = static_cast<int32*>(outputBuffer);
+		int32* cursor = out; /* current pointer into the output */
+		int32 thisSize = frameCount;
+		int32 thisRead = 0;
+		
+		//cursor = out; /* set the output cursor to the beginning */
 		while (thisSize > 0){
 			/* seek to our current file position */
 			sf_seek(data->getFile(), data->position, SEEK_SET);
-	
+		
 			/* are we going to read past the end of the file?*/
 			if (thisSize > (data->getFrames() - data->position)){
 				/*if we are, only read to the end of the file*/
@@ -64,7 +70,7 @@ namespace clv::aud{
 			/* decrement the number of samples left to process */
 			thisSize -= thisRead;
 		}
-
+		
 		return paContinue;
 	}
 
@@ -87,13 +93,20 @@ namespace clv::aud{
 		
 		PaStream* stream;
 
-		PACall(Pa_OpenDefaultStream(&stream, 0, sound.getChannels(), paFloat32, sound.getSampleRate(), paFramesPerBufferUnspecified, soundPlayback, &theSound));
+		PaStreamParameters outputParameters;
+		outputParameters.device = Pa_GetDefaultOutputDevice();
+		outputParameters.sampleFormat = paInt32;
+		outputParameters.channelCount = sound.getChannels();
+		outputParameters.suggestedLatency = 0.2f;
+		outputParameters.hostApiSpecificStreamInfo = nullptr;
+
+		PACall(Pa_OpenStream(&stream, 0, &outputParameters, sound.getSampleRate(), paFramesPerBufferUnspecified, paNoFlag, soundPlayback, &theSound));
 		PACall(Pa_StartStream(stream));
 
 		auto ID = generateNextID();
 		openStreams[ID.ID] = stream;
 
-		//Pa_Sleep(5 * 1000);
+		Pa_Sleep(5 * 1000);
 
 		//PACall(Pa_CloseStream(stream));
 

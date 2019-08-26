@@ -6,11 +6,11 @@ namespace clv::aud{
 	class Sound{
 		//VARIABLES
 	private:
-		SNDFILE* file;
-		SF_INFO info;
 		//Again, temp
 	public:
-	int32 position;
+		SNDFILE* file = nullptr;
+		SF_INFO info = {};
+		int32 position = 0;
 
 		//FUNCTIONS
 	public:
