@@ -13,30 +13,6 @@
 
 namespace clv::aud{
 	static int soundPlayback(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
-		//float* out = static_cast<float*>(outputBuffer);
-		//Sound* data = static_cast<Sound*>(userData);
-		//sf_count_t num_read;
-		//
-		//memset(out, 0, sizeof(float) * frameCount * data->getChannels());
-		//
-		//num_read = sf_read_float(data->getFile(), out, frameCount * data->getChannels());
-		//
-		////CLV_LOG_DEBUG("(num_Read){0} : (framesPerBuffer){1}", num_read, framesPerBuffer);
-		////??????
-		//if(num_read < frameCount){
-		//	return paComplete;
-		//}
-		//
-		//return paContinue;
-
-		CLV_LOG_DEBUG("Called");
-
-		/*
-		TODO: 
-		it sounds like new data isn't being written into the buffer after the sleep.
-		but why?
-		*/
-		
 		Sound* data = static_cast<Sound*>(userData); /* we passed a data structure
 		into the callback so we have something to work with */
 		int32* out = static_cast<int32*>(outputBuffer);
