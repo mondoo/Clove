@@ -1,15 +1,14 @@
 #pragma once
 
-#include <sndfile.h> //TODO: move to cpp
+#include <sndfile.hh> //TODO: move to cpp???
 
 namespace clv::aud{
 	class Sound{
 		//VARIABLES
 	private:
-		//Again, temp
 	public:
-		SNDFILE* file = nullptr;
-		SF_INFO info = {};
+		SndfileHandle file;
+
 		int32 position = 0;
 
 		//I think these should hold the stream, then they can try and close it when the deconstruct????
@@ -20,8 +19,8 @@ namespace clv::aud{
 		Sound() = default; //Temp default;
 		Sound(const Sound& other);
 		Sound& operator=(const Sound& other);
-		Sound(Sound&& other) noexcept;
-		Sound& operator=(Sound&& other) noexcept;
+		Sound(Sound&& other);
+		Sound& operator=(Sound&& other);
 		~Sound();
 
 		Sound(const std::string &filePath);
@@ -30,6 +29,6 @@ namespace clv::aud{
 		int32 getSampleRate() const;
 		int32 getFrames() const;
 
-		SNDFILE* getFile() const;
+		SNDFILE* getFile();
 	};
 }

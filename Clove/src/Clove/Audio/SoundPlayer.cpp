@@ -76,10 +76,6 @@ namespace clv::aud{
 		auto ID = generateNextID();
 		openStreams[ID.ID] = stream;
 
-		//Pa_Sleep(5 * 1000);
-
-		//PACall(Pa_CloseStream(stream));
-
 		return ID;
 	}
 

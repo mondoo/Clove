@@ -6,33 +6,29 @@ namespace clv::aud{
 
 	Sound& Sound::operator=(const Sound& other) = default;
 
-	Sound::Sound(Sound&& other) noexcept = default;
+	Sound::Sound(Sound&& other) = default;
 	
-	Sound& Sound::operator=(Sound&& other) noexcept = default;
+	Sound& Sound::operator=(Sound&& other) = default;
 
-	Sound::~Sound(){
-		//This is the error, file closes so audio can't be read after the fact
-		//TODO: maybe some sort of ref count? seeing as we track things by streams from the PA side
-		//sf_close(file);
-	}
+	Sound::~Sound() = default;
 	
 	Sound::Sound(const std::string& filePath){
-		file = sf_open(filePath.c_str(), SFM_READ, &info);
+		file = SndfileHandle(filePath.c_str(), SFM_READ);
 	}
 
 	int32 Sound::getChannels() const{
-		return info.channels;
+		return file.channels();
 	}
 
 	int32 Sound::getSampleRate() const{
-		return info.samplerate;
+		return file.samplerate();
 	}
 
 	int32 Sound::getFrames() const{
-		return info.frames;
+		return file.frames();
 	}
 
-	SNDFILE* Sound::getFile() const{
-		return file;
+	SNDFILE* Sound::getFile(){
+		return file.rawHandle();
 	}
 }
