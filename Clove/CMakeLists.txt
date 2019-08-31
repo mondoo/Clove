@@ -60,6 +60,10 @@ set(
 		src/Clove/ECS/3D/Systems/RenderSystem.cpp
 		src/Clove/ECS/3D/Systems/TransformSystem.hpp
 		src/Clove/ECS/3D/Systems/TransformSystem.cpp
+		src/Clove/ECS/Audio/Components/AudioComponent.hpp
+		src/Clove/ECS/Audio/Components/AudioComponent.cpp
+		src/Clove/ECS/Audio/Systems/AudioSystem.hpp
+		src/Clove/ECS/Audio/Systems/AudioSystem.cpp
 		src/Clove/Exception/CloveException.hpp
 		src/Clove/Exception/CloveException.cpp
 		src/Clove/Graphics/Bindables/IndexBuffer.hpp

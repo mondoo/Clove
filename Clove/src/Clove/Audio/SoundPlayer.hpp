@@ -6,6 +6,13 @@
 //Temp
 #include "Sound.hpp"
 
+/*
+Do we need a single sound player?
+can things just make a sound player when they need to play sound??
+
+I guess there'll only be one audio system and all the components will have the sounds?
+*/
+
 namespace clv::aud{
 	struct AudioStreamID{
 		int32 ID = -1;
