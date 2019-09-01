@@ -24,11 +24,11 @@ namespace clv::gfx{
 		: materialInstance(std::move(materialInstance)){
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
-		materialInstance.bind();
+		this->materialInstance.bind();
 
 		const int32 vertexCount = info.verticies.size();
 
-		gfx::VertexLayout layout = materialInstance.getReflectionData().vertexBufferLayout;
+		gfx::VertexLayout layout = this->materialInstance.getReflectionData().vertexBufferLayout;
 		gfx::VertexBufferData vertexArray{ layout };
 		vertexArray.resize(vertexCount);
 		
@@ -53,7 +53,7 @@ namespace clv::gfx{
 		}
 
 		//VB
-		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *materialInstance.getShader());
+		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *this->materialInstance.getShader());
 
 		//IB
 		indexBuffer = gfx::BindableFactory::createIndexBuffer(info.indices);
@@ -62,10 +62,10 @@ namespace clv::gfx{
 	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, MaterialInstance materialInstance)
 		: materialInstance(std::move(materialInstance)){
 		
-		materialInstance.bind();
+		this->materialInstance.bind();
 
 		//VB
-		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vbData, *materialInstance.getShader());
+		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vbData, *this->materialInstance.getShader());
 
 		//IB
 		indexBuffer = gfx::BindableFactory::createIndexBuffer(indices);

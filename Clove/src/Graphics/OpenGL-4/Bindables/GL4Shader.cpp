@@ -47,9 +47,6 @@ namespace clv::gfx{
 		Currently I am trying to figure out what to put in ShaderBufferDescription so we know what values we can set in buffers
 		-The documentation on DX seems good enough and the implementation seems good enough to do anything I want
 		-Currently seeing what info I can get out of OpenGL and what similarities they share to go off of that
-		
-
-		-There is a bug with MaterialInstance Material::createInstance (see function)
 
 		-There is also a bunch of stuff commented out to get it working and TODOs all over the place
 		*/
