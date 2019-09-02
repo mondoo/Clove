@@ -177,10 +177,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/DX11RenderAPI.cpp
 			src/Graphics/DirectX-11/DX11RenderTarget.hpp
 			src/Graphics/DirectX-11/DX11RenderTarget.cpp
-			src/Graphics/DirectX-11/DXContext.hpp
-			src/Graphics/DirectX-11/DXContext.cpp
 			src/Graphics/DirectX-11/DXGIInfoManager.hpp
 			src/Graphics/DirectX-11/DXGIInfoManager.cpp
+			
+			src/Graphics/DirectX-11/DXContext.hpp
+			src/Graphics/DirectX-11/DXContext.cpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
@@ -193,19 +194,19 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 #Files - Platform
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set(
-		PlatformFiles
-			src/Platform/Linux/LinuxWindow.hpp
-			src/Platform/Linux/LinuxWindow.cpp
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		PlatformFiles
 			src/Platform/Windows/WindowsWindow.hpp
 			src/Platform/Windows/WindowsWindow.cpp
 			src/Platform/Windows/WindowsException.hpp
 			src/Platform/Windows/WindowsException.cpp
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(
+		PlatformFiles
+			src/Platform/Linux/LinuxWindow.hpp
+			src/Platform/Linux/LinuxWindow.cpp
 	)
 endif()
 
@@ -216,9 +217,9 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${PlatformFiles})
 target_sources(
 	Clove
 	PRIVATE
-	${CloveFiles}
-	${GraphicsFiles}
-	${PlatformFiles}
+		${CloveFiles}
+		${GraphicsFiles}
+		${PlatformFiles}
 )
 
 #Includes
@@ -337,21 +338,21 @@ if(MSVC)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_MODEL 5.0)
 
 	set(shaderCSO
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/2D-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/2D-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Lit-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Lit-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/RT-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/RT-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Unlit-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/Unlit-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/RT-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/RT-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Unlit-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Unlit-vs.cso
 	)
 
 	add_custom_command(
 		TARGET Clove POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy
 				${shaderCSO}
-				${CMAKE_BINARY_DIR}/Sandbox/$<CONFIGURATION>
+				${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>
 	)
 	add_custom_command(
 		TARGET Clove POST_BUILD
@@ -381,7 +382,7 @@ if(MSVC)
 	        TARGET Clove POST_BUILD
 	        COMMAND ${CMAKE_COMMAND} -E copy
 	                ${GLShaders}
-	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIGURATION>
+	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>
 	)
 endif()
 add_custom_command(
@@ -396,7 +397,7 @@ if(MSVC)
 	        TARGET Clove POST_BUILD
 	        COMMAND ${CMAKE_COMMAND} -E copy_directory
 	                ${CMAKE_SOURCE_DIR}/Sandbox/res
-	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIGURATION>/res
+	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>/res
 	)
 endif()
 add_custom_command(
