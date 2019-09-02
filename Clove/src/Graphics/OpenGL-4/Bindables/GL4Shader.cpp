@@ -37,33 +37,40 @@ namespace clv::gfx{
 			GLint size;
 			GLenum type;
 
-			glGetActiveAttrib(programID, static_cast<GLuint>(i), 255, &length, &size, &type, name);
+			glGetActiveAttrib(programID, static_cast<GLuint>(i), sizeof(name), &length, &size, &type, name);
 
 			outData.vertexBufferLayout.add(VertexElement::getTypeFromSemantic(name));
 		}
-
-		/*
-		START HERE:
-		Currently I am trying to figure out what to put in ShaderBufferDescription so we know what values we can set in buffers
-		-The documentation on DX seems good enough and the implementation seems good enough to do anything I want
-		-Currently seeing what info I can get out of OpenGL and what similarities they share to go off of that
-
-		-There is also a bunch of stuff commented out to get it working and TODOs all over the place
-		*/
 
 		//NOTE: Opengl experimentation - DELETE
 		GLint ubCount;
 		glGetProgramiv(programID, GL_ACTIVE_UNIFORM_BLOCKS, &ubCount);
 		for(int32 i = 0; i < ubCount; ++i){
 			GLint activeUniforms;
-			GLint activeUniformIndices;
+			GLint activeUniformIndices[100];
 
+			GLchar ubname[255];
+			GLsizei ublength;
+			glGetActiveUniformBlockName(programID, i, sizeof(ubname), &ublength, ubname);
 			glGetActiveUniformBlockiv(programID, i, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
-			glGetActiveUniformBlockiv(programID, i, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, &activeUniformIndices);
+			glGetActiveUniformBlockiv(programID, i, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, activeUniformIndices);
 
-			
+			for(int32 j = 0; j < activeUniforms; ++j){
+				GLchar name[255];
+				GLsizei length;
+				GLint size;
+				GLenum type;
+
+				glGetActiveUniform(programID, activeUniformIndices[j], sizeof(name), &length, &size, &type, name);
+
+				/*
+				in the lit shader, it returns a seperate param for each light array element
+				*/
+
+				int x = 5; //Used to break
+			}
 		}
-		//
+		//~~~~~~~~
 
 		//glgetactiveun
 

@@ -54,6 +54,28 @@ namespace clv::gfx{
 			outData.vertexBufferLayout.add(VertexElement::getTypeFromSemantic(inputParamDescription.SemanticName));
 		}
 
+		//NOTE: DirectX experimentation - DELETE
+		const UINT constantBuffers = shaderDescription.ConstantBuffers;
+		for(UINT i = 0; i < constantBuffers; ++i){
+			ID3D11ShaderReflectionConstantBuffer* constantBuffer = reflector->GetConstantBufferByIndex(i);
+			D3D11_SHADER_BUFFER_DESC bufferDescription;
+			DX11_THROW_INFO(constantBuffer->GetDesc(&bufferDescription));
+			const UINT variables = bufferDescription.Variables;
+
+			for(UINT j = 0; j < variables; ++j){
+				ID3D11ShaderReflectionVariable* variable = constantBuffer->GetVariableByIndex(j);
+				D3D11_SHADER_VARIABLE_DESC variableDescription;
+				DX11_THROW_INFO(variable->GetDesc(&variableDescription));
+
+				ID3D11ShaderReflectionType* variableType = variable->GetType();
+				D3D11_SHADER_TYPE_DESC typeDescription;
+				DX11_THROW_INFO(variableType->GetDesc(&typeDescription));
+
+				int x = 5; //Used to break
+			}
+		}
+		//~~~~~~~~
+
 		return outData;
 	}
 
