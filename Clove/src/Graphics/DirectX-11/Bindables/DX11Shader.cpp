@@ -35,48 +35,47 @@ namespace clv::gfx{
 	}
 
 	ShaderReflectionData DX11Shader::getReflectionData(){
-		Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflector;
+		return reflectionData;
 
-		//TODO: warn if vertex shader is nullptr?
-		DX11_INFO_PROVIDER;
-		DX11_THROW_INFO(D3DReflect(vertexShader->getByteCode()->GetBufferPointer(), vertexShader->getByteCode()->GetBufferSize(), IID_ID3D11ShaderReflection, &reflector));
+		//ShaderReflectionData outData;
+		//
+		//Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflector;
 
-		D3D11_SHADER_DESC shaderDescription; 
-		DX11_THROW_INFO(reflector->GetDesc(&shaderDescription));
-		
-		const UINT inputParamNum = shaderDescription.InputParameters;
+		////TODO: warn if vertex shader is nullptr?
+		//DX11_INFO_PROVIDER;
+		//DX11_THROW_INFO(D3DReflect(vertexShader->getByteCode()->GetBufferPointer(), vertexShader->getByteCode()->GetBufferSize(), IID_ID3D11ShaderReflection, &reflector));
 
-		ShaderReflectionData outData;
-		for(UINT i = 0; i < inputParamNum; ++i){
-			D3D11_SIGNATURE_PARAMETER_DESC inputParamDescription;
-			DX11_THROW_INFO(reflector->GetInputParameterDesc(i, &inputParamDescription));
+		//D3D11_SHADER_DESC shaderDescription; 
+		//DX11_THROW_INFO(reflector->GetDesc(&shaderDescription));
+		//
+		//const UINT inputParamNum = shaderDescription.InputParameters;
+
+		//for(UINT i = 0; i < inputParamNum; ++i){
+		//	D3D11_SIGNATURE_PARAMETER_DESC inputParamDescription;
+		//	DX11_THROW_INFO(reflector->GetInputParameterDesc(i, &inputParamDescription));
 	
-			outData.vertexBufferLayout.add(VertexElement::getTypeFromSemantic(inputParamDescription.SemanticName));
-		}
+		//	outData.vertexBufferLayout.add(VertexElement::getTypeFromSemantic(inputParamDescription.SemanticName));
+		//}
 
-		//NOTE: DirectX experimentation - DELETE
-		const UINT constantBuffers = shaderDescription.ConstantBuffers;
-		for(UINT i = 0; i < constantBuffers; ++i){
-			ID3D11ShaderReflectionConstantBuffer* constantBuffer = reflector->GetConstantBufferByIndex(i);
-			D3D11_SHADER_BUFFER_DESC bufferDescription;
-			DX11_THROW_INFO(constantBuffer->GetDesc(&bufferDescription));
-			const UINT variables = bufferDescription.Variables;
+		//const UINT constantBuffers = shaderDescription.ConstantBuffers;
+		//for(UINT i = 0; i < constantBuffers; ++i){
+		//	ID3D11ShaderReflectionConstantBuffer* constantBuffer = reflector->GetConstantBufferByIndex(i);
+		//	D3D11_SHADER_BUFFER_DESC bufferDescription;
+		//	DX11_THROW_INFO(constantBuffer->GetDesc(&bufferDescription));
+		//	const UINT variables = bufferDescription.Variables;
 
-			for(UINT j = 0; j < variables; ++j){
-				ID3D11ShaderReflectionVariable* variable = constantBuffer->GetVariableByIndex(j);
-				D3D11_SHADER_VARIABLE_DESC variableDescription;
-				DX11_THROW_INFO(variable->GetDesc(&variableDescription));
+		//	for(UINT j = 0; j < variables; ++j){
+		//		ID3D11ShaderReflectionVariable* variable = constantBuffer->GetVariableByIndex(j);
+		//		D3D11_SHADER_VARIABLE_DESC variableDescription;
+		//		DX11_THROW_INFO(variable->GetDesc(&variableDescription));
 
-				ID3D11ShaderReflectionType* variableType = variable->GetType();
-				D3D11_SHADER_TYPE_DESC typeDescription;
-				DX11_THROW_INFO(variableType->GetDesc(&typeDescription));
+		//		ID3D11ShaderReflectionType* variableType = variable->GetType();
+		//		D3D11_SHADER_TYPE_DESC typeDescription;
+		//		DX11_THROW_INFO(variableType->GetDesc(&typeDescription));
+		//	}
+		//}
 
-				int x = 5; //Used to break
-			}
-		}
-		//~~~~~~~~
-
-		return outData;
+		//return outData;
 	}
 
 	DX11VertexShader& DX11Shader::getVertexShader(){
@@ -131,6 +130,76 @@ namespace clv::gfx{
 				break;
 		}
 	}
+
+	void DX11Shader::reflectVertexShader(ID3DBlob* byteCode){
+		//ShaderReflectionData outData;
+
+		Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflector;
+
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(D3DReflect(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), IID_ID3D11ShaderReflection, &reflector));
+
+		D3D11_SHADER_DESC shaderDescription;
+		DX11_THROW_INFO(reflector->GetDesc(&shaderDescription));
+
+		const UINT inputParamNum = shaderDescription.InputParameters;
+
+		for(UINT i = 0; i < inputParamNum; ++i){
+			D3D11_SIGNATURE_PARAMETER_DESC inputParamDescription;
+			DX11_THROW_INFO(reflector->GetInputParameterDesc(i, &inputParamDescription));
+
+			reflectionData.vertexBufferLayout.add(VertexElement::getTypeFromSemantic(inputParamDescription.SemanticName));
+		}
+
+		//TODO: set up the static casts
+
+		const UINT constantBuffers = shaderDescription.ConstantBuffers;
+		for(UINT i = 0; i < constantBuffers; ++i){
+			ShaderBufferDescription shaderBufferDescription;
+			
+			ID3D11ShaderReflectionConstantBuffer* constantBuffer = reflector->GetConstantBufferByIndex(i);
+			D3D11_SHADER_BUFFER_DESC bufferDescription;
+			DX11_THROW_INFO(constantBuffer->GetDesc(&bufferDescription));
+
+			const UINT variables = bufferDescription.Variables;
+			
+			shaderBufferDescription.name = bufferDescription.Name;
+			//shaderBufferDescription.bindingPoint = //no bp?
+			shaderBufferDescription.totalSize = bufferDescription.Size;
+			shaderBufferDescription.variables.reserve(variables);
+
+			for(UINT j = 0; j < variables; ++j){
+				ID3D11ShaderReflectionVariable* variable = constantBuffer->GetVariableByIndex(j);
+				D3D11_SHADER_VARIABLE_DESC variableDescription;
+				DX11_THROW_INFO(variable->GetDesc(&variableDescription));
+
+				ID3D11ShaderReflectionType* variableType = variable->GetType();
+				D3D11_SHADER_TYPE_DESC typeDescription;
+				DX11_THROW_INFO(variableType->GetDesc(&typeDescription));
+
+				ShaderBufferVariable bufferVariable;
+				bufferVariable.name = variableDescription.Name;
+				bufferVariable.size = variableDescription.Size;
+				//bufferVariable.type = typeDescription. //TODO: Type
+			}
+
+			reflectionData.bufferDescriptions.push_back(shaderBufferDescription);
+		}
+
+		/*return outData;*/
+	}
+
+	void DX11Shader::reflectPixelShader(ID3DBlob* byteCode){
+		//TODO:
+	}
+
+	DX11ShaderElement::DX11ShaderElement() = default;
+
+	DX11ShaderElement::DX11ShaderElement(DX11ShaderElement&& other) noexcept = default;
+
+	DX11ShaderElement& DX11ShaderElement::operator=(DX11ShaderElement&& other) noexcept = default;
+
+	DX11ShaderElement::~DX11ShaderElement() = default;
 
 	DX11VertexShader::DX11VertexShader(DX11VertexShader&& other) noexcept = default;
 
