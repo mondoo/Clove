@@ -36,33 +36,17 @@ namespace clv::gfx{
 		MaterialInstance createInstance(); //wish it could be const :(
 
 		//TODO: Maybe not have these getters?
-		const ShaderReflectionData& getReflectionData() const;
+		const ShaderReflectionData& getReflectionData() const;//Have a function to get vertex layout?
 		const std::shared_ptr<Shader>& getShader() const;
-
-		/*
-		how do i want the interface to look?
-
-		I'd want to only make SBOs for the buffers a shader has (not like below where it'll just make one)
-		The instances will cache of data for these buffers and set them when binding
-
-		If i can get the binding point from the CBs then I just need to figure out what types
-		the buffers will take to construct the sbos
-			--types are possible with DX
-			--binding points are possible with OpenGL
-
-		then I just need to figure out how to check for all of this
-
-		honestly though the SBOs only need types for their benefit - ut does just get sent as raw data
-			--Can get size of CB with DX
-			--Can get size of UBO with GL
-
-		how will I identify what buffers to set? using the name?
-			--I think the name is the best way, then I can use the data avilable to check for types etc.
-		*/
-
 
 		template<typename T>
 		void setData(BufferBindingPoint bindingPoint, T&& data, gfx::ShaderType shaderType);
+
+		/*
+		Thinking something like this
+		*/
+		//template<typename T>
+		//void setData(std::string bufferName, T&& data);
 
 		void setAlbedoTexture(const std::string& path);
 		void setAlbedoTexture(const std::shared_ptr<Texture>& texture); 

@@ -3,7 +3,7 @@
 #include "Clove/Graphics/Bindable.hpp"
 
 namespace clv::gfx{
-	enum BufferBindingPoint{
+	enum BufferBindingPoint{ //Will this be needed?
 		BBP_CameraMatrices	= 0u,
 		BBP_PointLightData	= 1u,
 		BBP_ViewData		= 2u,

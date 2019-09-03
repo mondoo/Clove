@@ -36,18 +36,33 @@ namespace clv::gfx{
 	-it might be easier to have GL and DX version (we'll see though)
 	*/
 
-	struct ShaderBufferVariable{
+	/*
+	make sbo buffer size of the ub / cb, then it can divide that into sections or what ever depending
+	on the size of each individual param
+	*/
 
+	enum class BufferVariableType{
+		int1,
+		float1,
+		float2,
+		float3,
+		float4,
+		float4_4
+	};
+
+	struct ShaderBufferVariable{
+		std::string name;
+		BufferVariableType type;
+		size_t size; //in gl this'll always be 1 unless the variable is a struct or array
+					//worst come I'll have to figure out the size from the types
+					//still not sure how to handle the arrays though
 	};
 
 	struct ShaderBufferDescription{
-		std::string bufferName;
-		BufferBindingPoint bindingPoint;
-		std::vector<ShaderBufferVariable> bufferVariables;
-
-		//How will I represent what types the buffer has inside it?
-		//--CBs will have a list of variables inside the cb
-		//--Looks like it might be possible with UBOS? can get the number / indicies of the uniforms in the buffer
+		std::string name;
+		uint32 bindingPoint;
+		size_t totalSize;
+		std::vector<ShaderBufferVariable> variables;
 	};
 
 	struct ShaderReflectionData{
