@@ -70,6 +70,8 @@ namespace clv::gfx{
 			GLint uboUniformIndices[100] = { 0 };
 			glGetActiveUniformBlockiv(programID, i, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, uboUniformIndices);
 
+			//TODO: We'll probably need to author a way to detect arrays (if opengl doesn't have anything to help with that)
+
 			for(int32 j = 0; j < uboUniformCount; ++j){
 				GLchar name[255];
 				GLsizei length;

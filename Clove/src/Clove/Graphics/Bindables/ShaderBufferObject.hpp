@@ -14,7 +14,7 @@ namespace clv::gfx{
 
 	/*
 	Am i going to have to change these to take void* data?
-	
+	- I feel like this will turn into the vertex layout equivalent
 	*/
 
 	template<typename T>

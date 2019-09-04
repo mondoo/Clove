@@ -11,6 +11,7 @@ struct ID3D11PixelShader;
 namespace clv::gfx{
 	class Renderer;
 
+	class DX11ShaderElement;
 	class DX11VertexShader;
 	//class DX11PixelShader;
 
@@ -49,6 +50,8 @@ namespace clv::gfx{
 
 		void reflectVertexShader(ID3DBlob* byteCode);
 		void reflectPixelShader(ID3DBlob* byteCode);
+
+		//BufferVariableType getVariableType(const D3D11_SHADER_TYPE_DESC& shaderTypeDesc);
 	};
 
 	//TODO: move all of this out of this header?

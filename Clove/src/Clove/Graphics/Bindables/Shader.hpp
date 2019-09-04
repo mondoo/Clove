@@ -41,6 +41,7 @@ namespace clv::gfx{
 	on the size of each individual param
 	*/
 
+	//TODO: Move all of this into another class
 	enum class BufferVariableType{
 		int1,
 		float1,
@@ -48,6 +49,11 @@ namespace clv::gfx{
 		float3,
 		float4,
 		float4_4
+	};
+	
+	template<BufferVariableType> struct BufferVariable;
+	template<> struct BufferVariable<BufferVariableType::int1>{
+		//Something like this?
 	};
 
 	struct ShaderBufferVariable{
@@ -64,6 +70,7 @@ namespace clv::gfx{
 		size_t totalSize;
 		std::vector<ShaderBufferVariable> variables;
 	};
+	//~TODO
 
 	struct ShaderReflectionData{
 		VertexLayout vertexBufferLayout;
