@@ -25,6 +25,7 @@ set(
 		src/Clove/Audio/SoundPlayer.cpp
 		src/Clove/Audio/Sound.hpp
 		src/Clove/Audio/Sound.cpp
+		src/Clove/Audio/SoundTypes.hpp
 		src/Clove/ECS/Component.hpp
 		src/Clove/ECS/Component.cpp
 		src/Clove/ECS/ECSTypes.hpp

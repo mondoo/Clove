@@ -2,9 +2,14 @@
 #include "Sound.hpp"
 
 namespace clv::aud{
-	Sound::Sound(const Sound& other) = default;
+	Sound::Sound(const Sound& other){
+		file = other.file;
+	}
 
-	Sound& Sound::operator=(const Sound& other) = default;
+	Sound& Sound::operator=(const Sound& other){
+		file = other.file;
+		return *this;
+	}
 
 	Sound::Sound(Sound&& other) = default;
 	

@@ -11,7 +11,54 @@
 //Stop playing sounds?
 
 namespace clv::aud{
-	static int soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
+	SoundPlayer::SoundPlayer(){
+		CLV_LOG_TRACE("Sound player intialised");
+		PACall(Pa_Initialize());
+	}
+
+	SoundPlayer::~SoundPlayer(){
+		CLV_LOG_TRACE("Sound player shutdown");
+		for (auto& [key, val] : openStreams){
+			PACall(Pa_CloseStream(val));
+		}
+		
+		PACall(Pa_Terminate());
+	}
+
+	void SoundPlayer::playSound(Sound& sound){
+		PaStream* stream;
+
+		theSound = sound; //TODO: we still need to copy here
+
+		PaStreamParameters outputParameters;
+		outputParameters.device = Pa_GetDefaultOutputDevice();
+		outputParameters.sampleFormat = paInt32;
+		outputParameters.channelCount = sound.getChannels();
+		outputParameters.suggestedLatency = 0.2f;
+		outputParameters.hostApiSpecificStreamInfo = nullptr;
+
+		PACall(Pa_OpenStream(&stream, 0, &outputParameters, sound.getSampleRate(), paFramesPerBufferUnspecified, paNoFlag, &SoundPlayer::soundPlayback_Once, &theSound));
+		PACall(Pa_StartStream(stream));
+
+		sound.streamID = generateNextID();
+
+		//TODO: Attach to delegate for when a sound is deconstructed, so it can close
+	}
+
+	bool SoundPlayer::isSoundPlaying(const Sound& sound){
+		PACall(Pa_IsStreamActive(openStreams[sound.streamID.ID]));
+	}
+
+	void SoundPlayer::stopSound(const Sound& sound){
+		PACall(Pa_CloseStream(openStreams[sound.streamID.ID]));
+	}
+
+	AudioStreamID SoundPlayer::generateNextID(){
+		static int32 ID = 0; //TODO: Make a proper ID system
+		return { ID };
+	}
+
+	int SoundPlayer::soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
 		Sound* data = static_cast<Sound*>(userData);
 		int32* out = static_cast<int32*>(outputBuffer);
 		int32* cursor = out;
@@ -41,7 +88,7 @@ namespace clv::aud{
 		return paContinue;
 	}
 
-	static int soundPlayback_Once(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
+	int SoundPlayer::soundPlayback_Once(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
 		Sound* data = static_cast<Sound*>(userData);
 		int32* out = static_cast<int32*>(outputBuffer);
 		int32* cursor = out;
@@ -68,50 +115,5 @@ namespace clv::aud{
 		}
 		
 		return paContinue;
-	}
-
-	SoundPlayer::SoundPlayer(){
-		CLV_LOG_DEBUG("Sound player init");
-		PACall(Pa_Initialize());
-	}
-
-	SoundPlayer::~SoundPlayer(){
-		CLV_LOG_DEBUG("Sound player shutdown");
-		for (auto& [key, val] : openStreams){
-			PACall(Pa_CloseStream(val));
-		}
-		
-		PACall(Pa_Terminate());
-	}
-
-	AudioStreamID SoundPlayer::playSound(/*const*/ Sound& sound){
-		theSound = sound;
-		
-		PaStream* stream;
-
-		PaStreamParameters outputParameters;
-		outputParameters.device = Pa_GetDefaultOutputDevice();
-		outputParameters.sampleFormat = paInt32;
-		outputParameters.channelCount = sound.getChannels();
-		outputParameters.suggestedLatency = 0.2f;
-		outputParameters.hostApiSpecificStreamInfo = nullptr;
-
-		PACall(Pa_OpenStream(&stream, 0, &outputParameters, sound.getSampleRate(), paFramesPerBufferUnspecified, paNoFlag, soundPlayback_Once, &theSound));
-		PACall(Pa_StartStream(stream));
-
-		auto ID = generateNextID();
-		openStreams[ID.ID] = stream;
-
-		return ID;
-	}
-
-	void SoundPlayer::stopSound(AudioStreamID ID){
-		//Pa_StopStream .. ??
-		PACall(Pa_CloseStream(openStreams[ID.ID])); //Do I need to do this when it finishes?
-	}
-
-	AudioStreamID SoundPlayer::generateNextID(){
-		static int32 ID = 0; //TODO: Make a proper ID system
-		return { ID };
 	}
 }

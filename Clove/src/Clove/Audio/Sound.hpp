@@ -1,19 +1,19 @@
 #pragma once
 
+#include "Clove/Audio/SoundTypes.hpp"
+
 #include <sndfile.hh> //TODO: move to cpp???
 
 namespace clv::aud{
 	class Sound{
+		friend class SoundPlayer;
+
 		//VARIABLES
 	private:
-	public:
 		SndfileHandle file;
-
 		int32 position = 0;
+		AudioStreamID streamID;
 
-		//I think these should hold the stream, then they can try and close it when the deconstruct????
-		//If this had access to the PA interface we could put a lot of utility into this class
-		
 		//FUNCTIONS
 	public:
 		Sound() = default; //Temp default;

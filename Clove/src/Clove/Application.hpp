@@ -3,6 +3,7 @@
 #include "Clove/ECS/Manager.hpp"
 //Audio test
 #include "Clove/Audio/SoundPlayer.hpp"
+#include "Clove/Audio/Sound.hpp"
 //
 
 namespace clv::gfx{
@@ -35,6 +36,7 @@ namespace clv{
 
 		//Audio test
 		aud::SoundPlayer player;
+		aud::Sound snd;
 		//
 
 		//FUNCTIONS

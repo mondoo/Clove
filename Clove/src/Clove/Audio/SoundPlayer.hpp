@@ -1,10 +1,9 @@
 #pragma once
 
 #include "Clove/Audio/Sound.hpp"
+#include "Clove/Audio/SoundTypes.hpp"
 
 #include <portaudio.h> //TODO: move to cpp
-//Temp
-#include "Sound.hpp"
 
 /*
 Do we need a single sound player?
@@ -14,10 +13,6 @@ I guess there'll only be one audio system and all the components will have the s
 */
 
 namespace clv::aud{
-	struct AudioStreamID{
-		int32 ID = -1;
-	};
-
 	class SoundPlayer{
 		//VARIABLES
 	private:
@@ -25,10 +20,6 @@ namespace clv::aud{
 		std::unordered_map<int32, PaStream*> openStreams;
 
 		Sound theSound;
-
-		//Do I even need this class? or could I just do everything through the sound file?
-		//What would be the benefit of a manager? (would probably be something I realise later)
-		//--I guess separation of concearn and all that
 
 		//FUNCTIONS
 	public:
@@ -39,10 +30,14 @@ namespace clv::aud{
 		SoundPlayer& operator=(SoundPlayer&& other) = delete;
 		~SoundPlayer();
 
-		AudioStreamID playSound(/*const*/ Sound& sound);
-		void stopSound(AudioStreamID ID);
+		void playSound(Sound& sound);
+		bool isSoundPlaying(const Sound& sound);
+		void stopSound(const Sound& sound);
 
 	private:
 		AudioStreamID generateNextID();
+
+		static int soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);
+		static int soundPlayback_Once(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);
 	};
 }
