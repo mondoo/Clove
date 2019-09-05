@@ -11,10 +11,7 @@
 //Stop playing sounds?
 
 namespace clv::aud{
-	//TODO: Rename this one to the loopy boy
-	//Nonb looping one will just put the whole data into the output buffer?
-	//Not sure if it works like that because the frame count changes
-	static int soundPlayback(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
+	static int soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
 		Sound* data = static_cast<Sound*>(userData);
 		int32* out = static_cast<int32*>(outputBuffer);
 		int32* cursor = out;
@@ -29,6 +26,35 @@ namespace clv::aud{
 			if (currentFrameCount > (data->getFrames() - data->position)){
 				frameCountToRead = data->getFrames() - data->position;
 				data->position = 0;
+			}else{
+				frameCountToRead = currentFrameCount;
+				data->position += frameCountToRead;
+			}
+			
+			//Read X amount of frames into cursor
+			sf_readf_int(data->getFile(), cursor, frameCountToRead);
+			
+			cursor += frameCountToRead;
+			currentFrameCount -= frameCountToRead;
+		}
+		
+		return paContinue;
+	}
+
+	static int soundPlayback_Once(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
+		Sound* data = static_cast<Sound*>(userData);
+		int32* out = static_cast<int32*>(outputBuffer);
+		int32* cursor = out;
+		int32 currentFrameCount = frameCount;
+		int32 frameCountToRead = 0;
+		
+		while(currentFrameCount > 0){
+			//Seek to the position
+			sf_seek(data->getFile(), data->position, SEEK_SET);
+		
+			//Get the amount of frames to read
+			if (currentFrameCount > (data->getFrames() - data->position)){
+				return paComplete;
 			}else{
 				frameCountToRead = currentFrameCount;
 				data->position += frameCountToRead;
@@ -70,7 +96,7 @@ namespace clv::aud{
 		outputParameters.suggestedLatency = 0.2f;
 		outputParameters.hostApiSpecificStreamInfo = nullptr;
 
-		PACall(Pa_OpenStream(&stream, 0, &outputParameters, sound.getSampleRate(), paFramesPerBufferUnspecified, paNoFlag, soundPlayback, &theSound));
+		PACall(Pa_OpenStream(&stream, 0, &outputParameters, sound.getSampleRate(), paFramesPerBufferUnspecified, paNoFlag, soundPlayback_Once, &theSound));
 		PACall(Pa_StartStream(stream));
 
 		auto ID = generateNextID();
