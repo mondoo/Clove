@@ -71,17 +71,6 @@ set_target_properties(stb PROPERTIES FOLDER ${DependencyFolder})
 
 #-portaudio
 set(PA_BUILD_SHARED OFF CACHE BOOL "Build shared/dynamic library")
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set(PA_USE_DS ON CACHE BOOL "Enable support for DirectSound")
-	set(PA_USE_ASIO OFF CACHE BOOL "Enable support for ASIO")
-	set(PA_USE_WMME OFF CACHE BOOL "Enable support for MME")
-	set(PA_USE_WASAPI OFF CACHE BOOL "Enable support for WASAPI")
-	set(PA_USE_WDMKS OFF CACHE BOOL "Enable support for WDMKS")
-	set(PA_USE_WDMKS_DEVICE_INFO OFF CACHE BOOL "Use WDM/KS API for device info")
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set(PA_USE_JACK OFF CACHE BOOL "Enable support for Jack")
-	set(PA_USE_ALSA ON CACHE BOOL "Enable support for ALSA")
-endif()
 add_subdirectory(Clove/vendor/portaudio)
 set_target_properties(portaudio_static PROPERTIES FOLDER ${DependencyFolder})
 
