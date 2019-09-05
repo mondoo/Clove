@@ -46,7 +46,8 @@ namespace clv::aud{
 	}
 
 	bool SoundPlayer::isSoundPlaying(const Sound& sound){
-		PACall(Pa_IsStreamActive(openStreams[sound.streamID.ID]));
+		//PACall(const bool isActive = Pa_IsStreamActive(openStreams[sound.streamID.ID]));
+		return false; //Temp
 	}
 
 	void SoundPlayer::stopSound(const Sound& sound){
