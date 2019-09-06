@@ -35,6 +35,8 @@ namespace clv::aud{
 		outputParameters.suggestedLatency = 0.2f;
 		outputParameters.hostApiSpecificStreamInfo = nullptr;
 
+		//Want to pass the SndFileHandle here so we can copy sound files, but how to keep track of position?
+		//Or the sound should be equipped with being able to be copied in here and kept alive?
 		PACall(Pa_OpenStream(&stream, 0, &outputParameters, sound.getSampleRate(), paFramesPerBufferUnspecified, paNoFlag, &SoundPlayer::soundPlayback_Once, &sound));
 		PACall(Pa_StartStream(stream));
 
@@ -66,7 +68,7 @@ namespace clv::aud{
 		
 		while(currentFrameCount > 0){
 			//Seek to the position
-			sf_seek(data->getFile(), data->position, SEEK_SET);
+			sf_seek(data->file.rawHandle(), data->position, SEEK_SET);
 		
 			//Get the amount of frames to read
 			if (currentFrameCount > (data->getFrames() - data->position)){
@@ -78,7 +80,7 @@ namespace clv::aud{
 			}
 			
 			//Read X amount of frames into cursor
-			sf_readf_int(data->getFile(), cursor, frameCountToRead);
+			sf_readf_int(data->file.rawHandle(), cursor, frameCountToRead);
 			
 			cursor += frameCountToRead;
 			currentFrameCount -= frameCountToRead;
@@ -96,7 +98,7 @@ namespace clv::aud{
 		
 		while(currentFrameCount > 0){
 			//Seek to the position
-			sf_seek(data->getFile(), data->position, SEEK_SET);
+			sf_seek(data->file.rawHandle(), data->position, SEEK_SET);
 		
 			//Get the amount of frames to read
 			if (currentFrameCount > (data->getFrames() - data->position)){
@@ -107,7 +109,7 @@ namespace clv::aud{
 			}
 			
 			//Read X amount of frames into cursor
-			sf_readf_int(data->getFile(), cursor, frameCountToRead);
+			sf_readf_int(data->file.rawHandle(), cursor, frameCountToRead);
 			
 			cursor += frameCountToRead;
 			currentFrameCount -= frameCountToRead;

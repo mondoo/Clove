@@ -41,6 +41,7 @@ namespace clv{
 		//Audio stuff
 		CLV_LOG_DEBUG("Audio Test!");
 		snd = aud::Sound("res/Audio/Test.wav");
+		auto copy = snd;
 		//aud::SoundPlayer player;
 		player.playSound(snd);
 		//
@@ -69,8 +70,8 @@ namespace clv{
 
 			ecsManager->update(deltaSeonds.count());
 
-            gfx::Renderer::endScene();
-			
+			gfx::Renderer::endScene();
+
 			window->endFrame();
 		}
 	}

@@ -2,20 +2,19 @@
 #include "Sound.hpp"
 
 namespace clv::aud{
-	Sound::Sound(const Sound& other){
-		file = other.file;
-	}
+	Sound::Sound(const Sound& other) = default;
 
-	Sound& Sound::operator=(const Sound& other){
-		file = other.file;
-		return *this;
-	}
+	Sound& Sound::operator=(const Sound& other) = default;
 
 	Sound::Sound(Sound&& other) = default;
 	
 	Sound& Sound::operator=(Sound&& other) = default;
 
-	Sound::~Sound() = default;
+	Sound::~Sound(){
+		//TODO:
+		//Check if this will delete the file - if so, check if stream is active, warn user and then call back to close stream
+		//Waiting on refactor on sound player to point to the file and not the sound class (or something to that effect)
+	}
 	
 	Sound::Sound(const std::string& filePath){
 		file = SndfileHandle(filePath.c_str(), SFM_READ);
@@ -31,9 +30,5 @@ namespace clv::aud{
 
 	int32 Sound::getFrames() const{
 		return file.frames();
-	}
-
-	SNDFILE* Sound::getFile(){
-		return file.rawHandle();
 	}
 }

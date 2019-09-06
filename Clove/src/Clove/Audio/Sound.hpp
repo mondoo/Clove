@@ -28,7 +28,5 @@ namespace clv::aud{
 		int32 getChannels() const;
 		int32 getSampleRate() const;
 		int32 getFrames() const;
-
-		SNDFILE* getFile();
 	};
 }
