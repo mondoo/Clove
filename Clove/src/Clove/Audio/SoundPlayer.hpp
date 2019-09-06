@@ -19,8 +19,6 @@ namespace clv::aud{
 		//TODO: int32 here, write own hashing function for the struct
 		std::unordered_map<int32, PaStream*> openStreams;
 
-		Sound theSound;
-
 		//FUNCTIONS
 	public:
 		SoundPlayer();

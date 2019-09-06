@@ -28,8 +28,6 @@ namespace clv::aud{
 	void SoundPlayer::playSound(Sound& sound){
 		PaStream* stream;
 
-		theSound = sound; //TODO: we still need to copy here
-
 		PaStreamParameters outputParameters;
 		outputParameters.device = Pa_GetDefaultOutputDevice();
 		outputParameters.sampleFormat = paInt32;
@@ -37,7 +35,7 @@ namespace clv::aud{
 		outputParameters.suggestedLatency = 0.2f;
 		outputParameters.hostApiSpecificStreamInfo = nullptr;
 
-		PACall(Pa_OpenStream(&stream, 0, &outputParameters, sound.getSampleRate(), paFramesPerBufferUnspecified, paNoFlag, &SoundPlayer::soundPlayback_Once, &theSound));
+		PACall(Pa_OpenStream(&stream, 0, &outputParameters, sound.getSampleRate(), paFramesPerBufferUnspecified, paNoFlag, &SoundPlayer::soundPlayback_Once, &sound));
 		PACall(Pa_StartStream(stream));
 
 		sound.streamID = generateNextID();
