@@ -2,6 +2,7 @@
 #include "Sprite.hpp"
 
 #include "Clove/Graphics/Material.hpp"
+#include "Clove/Graphics/BindableFactory.hpp"
 
 namespace clv::gfx{
 	Sprite::Sprite(const Sprite& other) = default;
@@ -14,15 +15,26 @@ namespace clv::gfx{
 
 	Sprite::~Sprite() = default;
 
-	Sprite::Sprite(MaterialInstance materialInstance)
-		: materialInstance(std::move(materialInstance)){
+	Sprite::Sprite(const std::string& pathToTexture){
+		texture = BindableFactory::createTexture(pathToTexture, TBP_Albedo);
+		initialise();
 	}
 
-	MaterialInstance& Sprite::getMaterialInstance(){
-		return materialInstance;
+	Sprite::Sprite(std::shared_ptr<Texture> texture)
+		: texture(std::move(texture)){
+		initialise();
 	}
 
 	void Sprite::bind(){
-		materialInstance.bind();
+		texture->bind();
+		modelData->bind();
+	}
+
+	void Sprite::setModelData(const math::Matrix4f& modelData){
+		this->modelData->update(modelData);
+	}
+
+	void Sprite::initialise(){
+		modelData = BindableFactory::createShaderBufferObject<math::Matrix4f>(ShaderType::Vertex, BBP_2DData);
 	}
 }

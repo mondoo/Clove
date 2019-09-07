@@ -57,18 +57,20 @@ namespace clv::gfx{
 	}
 
 	void MaterialInstance::setAlbedoTexture(const std::string& path){
-		material->setAlbedoTexture(path);
+		albedoTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Albedo);
 	}
 
 	void MaterialInstance::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
-		material->setAlbedoTexture(texture);
+		CLV_ASSERT(texture->getBindingPoint() == gfx::TBP_Albedo, "Incorrect binding point for an albedo texture!");
+		albedoTexture = texture;
 	}
 
 	void MaterialInstance::setSpecularTexture(const std::string& path){
-		material->setSpecularTexture(path);
+		specTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Specular);
 	}
 
 	void MaterialInstance::setSpecularTexture(const std::shared_ptr<Texture>& texture){
-		material->setSpecularTexture(texture);
+		CLV_ASSERT(texture->getBindingPoint() == gfx::TBP_Specular, "Incorrect binding point for a specular texture!");
+		specTexture = texture;
 	}
 }

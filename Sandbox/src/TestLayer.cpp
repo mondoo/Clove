@@ -68,22 +68,21 @@ void TestLayer::onAttach(){
 	//clv::Application::get().getManager().destroyEntity(ent2.getID());
 
 	/*auto rtTexture = clv::gfx::BindableFactory::createTexture(clv::Application::get().getWindow().getWidth(), clv::Application::get().getWindow().getHeight(), clv::gfx::TextureUsage::RenderTarget, clv::gfx::TBP_Albedo);
-	rtEnt.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture(rtTexture);
+	auto sprite = std::make_shared<clv::gfx::Sprite>(rtTexture);
+	rtEnt.getComponent<clv::ecs::d2::RenderableComponent>()->setSprite(sprite);
 	rtEnt.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(clv::Application::get().getWindow().getWidth() / 2, clv::Application::get().getWindow().getHeight() / 2));
 
 	auto renderTarget = clv::gfx::RenderTarget::createRenderTarget(*rtTexture);
 	clv::gfx::Renderer::setRenderTarget(renderTarget);*/
 
-	auto spriteMaterial = std::make_shared<clv::gfx::Material>(clv::gfx::ShaderStyle::_2D);
-	spriteMaterial->setAlbedoTexture("res/Textures/Zombie-32x32.png");
 	{
-		auto sprite = std::make_shared<clv::gfx::Sprite>(spriteMaterial);
+		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
 		sprtEnt1.getComponent<clv::ecs::d2::RenderableComponent>()->setSprite(sprite);
 		sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 	}
 
 	{
-		auto sprite = std::make_shared<clv::gfx::Sprite>(spriteMaterial);
+		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
 		sprtEnt2.getComponent<clv::ecs::d2::RenderableComponent>()->setSprite(sprite);
 		sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 2.0f));
 		sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));

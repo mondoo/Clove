@@ -53,7 +53,7 @@ namespace clv::ecs::d2{
 			RenderableComponent* renderable = std::get<RenderableComponent*>(componentTuple);
 
 			const math::Matrix4f modelData = transform->getWorldTransformMatrix();
-			renderable->sprite->getMaterialInstance().setData(gfx::BBP_2DData, spriteProj * modelData, gfx::ShaderType::Vertex);
+			renderable->sprite->setModelData(spriteProj * modelData);
 
 			gfx::Renderer::submitSprite(renderable->sprite);
 		}

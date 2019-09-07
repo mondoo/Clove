@@ -1,12 +1,14 @@
 #pragma once
 
-#include "Clove/Graphics/MaterialInstance.hpp"
+#include "Clove/Graphics/Bindables/Texture.hpp"
+#include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
 
 namespace clv::gfx{
 	class Sprite{
 		//VARIABLES
 	private:
-		MaterialInstance materialInstance;
+		std::shared_ptr<Texture> texture;
+		std::shared_ptr<ShaderBufferObject<math::Matrix4f>> modelData;
 
 		//FUNCTIONS
 	public:
@@ -17,10 +19,14 @@ namespace clv::gfx{
 		Sprite& operator=(Sprite&& other) noexcept;
 		~Sprite();
 
-		Sprite(MaterialInstance materialInstance);
-
-		MaterialInstance& getMaterialInstance();
+		Sprite(const std::string& pathToTexture);
+		Sprite(std::shared_ptr<Texture> texture);
 
 		void bind();
+
+		void setModelData(const math::Matrix4f& modelData);
+
+	private:
+		void initialise();
 	};
 }
