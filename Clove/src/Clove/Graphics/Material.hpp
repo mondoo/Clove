@@ -11,6 +11,8 @@ namespace clv::gfx{
 	class Bindable;
 
 	class Material : public std::enable_shared_from_this<Material>{
+		friend class MaterialInstance;
+
 		//VARIABLES
 	private:
 		std::shared_ptr<Shader> shader;

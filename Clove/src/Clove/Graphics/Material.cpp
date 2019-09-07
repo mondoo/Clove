@@ -10,7 +10,12 @@ namespace clv::gfx{
 
 	Material& Material::operator=(const Material& other) = default;
 
-	Material::Material(Material&& other) noexcept = default;
+	Material::Material(Material&& other) noexcept{
+		shader = std::move(other.shader);
+		albedoTexture = std::move(other.albedoTexture);
+		specTexture = std::move(other.specTexture);
+		shaderData = std::move(other.shaderData);
+	}
 
 	Material& Material::operator=(Material&& other) noexcept = default;
 
@@ -24,19 +29,19 @@ namespace clv::gfx{
 
 	void Material::bind(){
 		shader->bind();
-		if(albedoTexture){ //TODO: This shouldn't really be nullptr - but how will solid colour shaders work?
-			albedoTexture->bind();
-		}
-		if(specTexture){
-			specTexture->bind();
-		}
-		for(auto& [key, val] : shaderData){
+		//if(albedoTexture){ //TODO: This shouldn't really be nullptr - but how will solid colour shaders work?
+		//	albedoTexture->bind();
+		//}
+		//if(specTexture){
+		//	specTexture->bind();
+		//}
+		/*for(auto& [key, val] : shaderData){
 			val->bind();
-		}
+		}*/
 	}
 
 	MaterialInstance Material::createInstance(){
-		return { shared_from_this() };
+		return MaterialInstance{ shared_from_this() };
 	}
 
 	const ShaderReflectionData& Material::getReflectionData() const{

@@ -1,3 +1,5 @@
+#include "Clove/Graphics/BindableFactory.hpp"
+
 namespace clv::gfx{
 template<typename T>
 	void Material::setData(BufferBindingPoint bindingPoint, T&& data, gfx::ShaderType shaderType){
