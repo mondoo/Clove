@@ -2,13 +2,13 @@
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
-#include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/Bindables/Shader.hpp" //TODO: remove? needed for the reflection data
 
 namespace clv::gfx{
 	class Shader;
 	class Texture;
 	class MaterialInstance;
+	class Bindable;
 
 	class Material : public std::enable_shared_from_this<Material>{
 		//VARIABLES
@@ -16,7 +16,7 @@ namespace clv::gfx{
 		std::shared_ptr<Shader> shader;
 		std::shared_ptr<Texture> albedoTexture;
 		std::shared_ptr<Texture> specTexture;
-		//std::unordered_map<BufferBindingPoint, std::shared_ptr<Bindable>> shaderData;
+		std::unordered_map<BufferBindingPoint, std::shared_ptr<Bindable>> shaderData;
 
 		ShaderReflectionData reflectionData;
 
@@ -33,20 +33,13 @@ namespace clv::gfx{
 
 		void bind();
 
-		MaterialInstance createInstance(); //wish it could be const :(
+		MaterialInstance createInstance();
 
-		//TODO: Maybe not have these getters?
-		const ShaderReflectionData& getReflectionData() const;//Have a function to get vertex layout?
+		const ShaderReflectionData& getReflectionData() const;
 		const std::shared_ptr<Shader>& getShader() const;
 
 		template<typename T>
 		void setData(BufferBindingPoint bindingPoint, T&& data, gfx::ShaderType shaderType);
-
-		/*
-		Thinking something like this
-		*/
-		//template<typename T>
-		//void setData(std::string bufferName, T&& data);
 
 		void setAlbedoTexture(const std::string& path);
 		void setAlbedoTexture(const std::shared_ptr<Texture>& texture); 

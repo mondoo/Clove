@@ -2,7 +2,6 @@
 #include "Material.hpp"
 
 #include "Clove/Graphics/Bindables/Texture.hpp"
-//#include "Clove/Graphics/Bindables/Shader.hpp"
 #include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/MaterialInstance.hpp"
 
@@ -31,13 +30,12 @@ namespace clv::gfx{
 		if(specTexture){
 			specTexture->bind();
 		}
-		/*for(auto& [key, val] : shaderData){
+		for(auto& [key, val] : shaderData){
 			val->bind();
-		}*/
+		}
 	}
 
 	MaterialInstance Material::createInstance(){
-		//WARNING: shared_from_this doesn't seem to be enabled when using make_shared??????
 		return { shared_from_this() };
 	}
 
