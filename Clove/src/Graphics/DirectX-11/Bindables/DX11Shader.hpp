@@ -13,18 +13,12 @@ namespace clv::gfx{
 
 	class DX11ShaderElement;
 	class DX11VertexShader;
-	//class DX11PixelShader;
 
 	class DX11Shader : public Shader{
 		//VARIABLES
 	private:
 		std::unordered_map<ShaderType, std::unique_ptr<DX11ShaderElement>> shaders;
 		DX11VertexShader* vertexShader = nullptr;
-		//DX11PixelShader* pixelShader = nullptr;
-
-		/*
-		perhaps not cache this off. and just generate the shader reflection data as the shader is being constructed
-		*/
 
 		ShaderReflectionData reflectionData;
 
@@ -47,14 +41,9 @@ namespace clv::gfx{
 
 	private:
 		void initialise(ShaderStyle style);
-
-		void reflectVertexShader(ID3DBlob* byteCode);
-		void reflectPixelShader(ID3DBlob* byteCode);
-
-		//BufferVariableType getVariableType(const D3D11_SHADER_TYPE_DESC& shaderTypeDesc);
 	};
 
-	//TODO: move all of this out of this header?
+	//TODO: move all of this out of this header
 
 	class DX11ShaderElement : public Bindable{
 		//FUNCTIONS	

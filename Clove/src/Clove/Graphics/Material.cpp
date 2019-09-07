@@ -21,10 +21,6 @@ namespace clv::gfx{
 		shader = gfx::BindableFactory::createShader(shaderStyle);
 
 		reflectionData = shader->getReflectionData();
-		//TODO: Loop through all available CBs / UBOs and generate UBOs for them 
-		for(const auto& bufferDesc : reflectionData.bufferDescriptions){
-			//....
-		}
 	}
 
 	void Material::bind(){

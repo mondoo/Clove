@@ -40,52 +40,6 @@ namespace clv::gfx{
 			outData.vertexBufferLayout.add(VertexElement::getTypeFromSemantic(name));
 		}
 
-		GLint uboCount = 0;
-		glGetProgramiv(programID, GL_ACTIVE_UNIFORM_BLOCKS, &uboCount);
-		outData.bufferDescriptions.reserve(uboCount);
-		for(int32 i = 0; i < uboCount; ++i){
-			ShaderBufferDescription bufferDescription;
-
-			GLchar uboName[255];
-			GLsizei uboNameLength = 0;
-			glGetActiveUniformBlockName(programID, i, sizeof(uboName), &uboNameLength, uboName);
-			
-			bufferDescription.name = uboName;
-
-			GLint uboBindingPoint = 0;
-			glGetActiveUniformBlockiv(programID, i, GL_UNIFORM_BLOCK_BINDING, &uboBindingPoint);
-
-			bufferDescription.bindingPoint = static_cast<uint32>(uboBindingPoint);
-
-			GLint uboSize = 0;
-			glGetActiveUniformBlockiv(programID, i, GL_UNIFORM_BLOCK_DATA_SIZE, &uboSize);
-
-			bufferDescription.totalSize = static_cast<size_t>(uboSize);
-
-			GLint uboUniformCount = 0;
-			glGetActiveUniformBlockiv(programID, i, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &uboUniformCount);
-			
-			bufferDescription.variables.reserve(static_cast<size_t>(uboUniformCount));
-			
-			GLint uboUniformIndices[100] = { 0 };
-			glGetActiveUniformBlockiv(programID, i, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, uboUniformIndices);
-
-			//TODO: We'll probably need to author a way to detect arrays (if opengl doesn't have anything to help with that)
-
-			for(int32 j = 0; j < uboUniformCount; ++j){
-				GLchar name[255];
-				GLsizei length;
-				GLint size;
-				GLenum type;
-
-				glGetActiveUniform(programID, uboUniformIndices[j], sizeof(name), &length, &size, &type, name);
-
-				bufferDescription.variables.push_back({ name, getVariableType(type), static_cast<size_t>(size) });
-			}
-
-			outData.bufferDescriptions.push_back(bufferDescription);
-		}
-
 		return outData;
 	}
 
@@ -186,27 +140,5 @@ namespace clv::gfx{
 		}
 
 		return id;
-	}
-
-	BufferVariableType GL4Shader::getVariableType(GLenum glType){
-		switch(glType){
-			case GL_INT:
-				return BufferVariableType::int1;
-			case GL_FLOAT:
-				return BufferVariableType::float1;
-			case GL_FLOAT_VEC2:
-				return BufferVariableType::float2;
-			case GL_FLOAT_VEC3:
-				return BufferVariableType::float3;
-			case GL_FLOAT_VEC4:
-				return BufferVariableType::float4;
-			case GL_FLOAT_MAT4:
-				return BufferVariableType::float4_4;
-
-			default:
-				CLV_ASSERT(false, "Unhandled GL uniform type {0}", __func__);
-				return BufferVariableType::float1;
-				break;
-		}
 	}
 }
