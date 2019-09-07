@@ -20,11 +20,10 @@ namespace clv::utl{
 		void unbind();
 
 		bool isBound() const;
+		operator bool() const;
 
 		template<typename ...Args>
 		auto broadcast(Args&& ...args) const;
-
-		operator bool() const;
 	};
 
 	struct MultiCastDelegateHandle{

@@ -8,7 +8,7 @@ namespace clv::utl{
 	}
 
 	template<typename BindFunctionPrototype, typename ObjectType, int32 ...indices>
-	auto doBind(BindFunctionPrototype&& function, ObjectType* object, std::integer_sequence<int, indices...>){
+	auto doBind(BindFunctionPrototype&& function, ObjectType* object, std::integer_sequence<int32, indices...>){
 		return std::bind(std::forward<BindFunctionPrototype>(function), object, placeholderSequence<indices + 1>::ph...);
 	}
 }
