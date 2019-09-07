@@ -29,15 +29,6 @@ namespace clv::gfx{
 
 	void Material::bind(){
 		shader->bind();
-		//if(albedoTexture){ //TODO: This shouldn't really be nullptr - but how will solid colour shaders work?
-		//	albedoTexture->bind();
-		//}
-		//if(specTexture){
-		//	specTexture->bind();
-		//}
-		/*for(auto& [key, val] : shaderData){
-			val->bind();
-		}*/
 	}
 
 	MaterialInstance Material::createInstance(){
