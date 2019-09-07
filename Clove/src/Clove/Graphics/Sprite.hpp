@@ -1,24 +1,25 @@
 #pragma once
 
-namespace clv::gfx{
-	class Material;
+#include "Clove/Graphics/MaterialInstance.hpp"
 
+namespace clv::gfx{
 	class Sprite{
 		//VARIABLES
 	private:
-		std::shared_ptr<Material> material;
+		MaterialInstance materialInstance;
 
 		//FUNCTIONS
 	public:
-		Sprite();
+		Sprite() = delete;
 		Sprite(const Sprite& other);
 		Sprite& operator=(const Sprite& other);
 		Sprite(Sprite&& other) noexcept;
 		Sprite& operator=(Sprite&& other) noexcept;
 		~Sprite();
 
-		void setMaterial(const std::shared_ptr<Material>& material); //TODO: should construct with material instance
-		const std::shared_ptr<Material>& getMaterial() const;
+		Sprite(MaterialInstance materialInstance);
+
+		MaterialInstance& getMaterialInstance();
 
 		void bind();
 	};

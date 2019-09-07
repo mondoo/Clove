@@ -29,7 +29,7 @@ namespace clv::ecs::d2{
 			3, 2, 0
 		};
 		
-		std::shared_ptr<gfx::Material> material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
+		auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
 		spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, material->createInstance());
 
 		//Proj
@@ -53,10 +53,9 @@ namespace clv::ecs::d2{
 			RenderableComponent* renderable = std::get<RenderableComponent*>(componentTuple);
 
 			const math::Matrix4f modelData = transform->getWorldTransformMatrix();
-			//TODO: Add back in
-			//renderable->sprite->getMaterial()->setData(gfx::BBP_2DData, spriteProj * modelData, gfx::ShaderType::Vertex);
+			renderable->sprite->getMaterialInstance().setData(gfx::BBP_2DData, spriteProj * modelData, gfx::ShaderType::Vertex);
 
-			//gfx::Renderer::submitSprite(renderable->sprite);
+			gfx::Renderer::submitSprite(renderable->sprite);
 		}
 	}
 }

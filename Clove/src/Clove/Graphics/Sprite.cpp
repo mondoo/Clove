@@ -4,8 +4,6 @@
 #include "Clove/Graphics/Material.hpp"
 
 namespace clv::gfx{
-	Sprite::Sprite() = default;
-
 	Sprite::Sprite(const Sprite& other) = default;
 
 	Sprite& Sprite::operator=(const Sprite& other) = default;
@@ -16,15 +14,15 @@ namespace clv::gfx{
 
 	Sprite::~Sprite() = default;
 
-	void Sprite::setMaterial(const std::shared_ptr<Material>& material){
-		this->material = material;
+	Sprite::Sprite(MaterialInstance materialInstance)
+		: materialInstance(std::move(materialInstance)){
 	}
 
-	const std::shared_ptr<Material>& Sprite::getMaterial() const{
-		return material;
+	MaterialInstance& Sprite::getMaterialInstance(){
+		return materialInstance;
 	}
 
 	void Sprite::bind(){
-		material->bind();
+		materialInstance.bind();
 	}
 }
