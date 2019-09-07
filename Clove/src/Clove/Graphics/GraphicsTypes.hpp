@@ -14,7 +14,7 @@ namespace clv::gfx{
 		Pixel,
 	};
 
-	enum class ShaderStyle{
+	enum class ShaderStyle{ //TODO: Rename to material style
 		Lit,
 		Unlit,
 		_2D,
@@ -24,5 +24,12 @@ namespace clv::gfx{
 	enum class TextureUsage{
 		Default,
 		RenderTarget
+	};
+
+	enum class VertexElementType{
+		position2D,
+		position3D,
+		texture2D,
+		normal,
 	};
 }

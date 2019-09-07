@@ -47,10 +47,10 @@ namespace clv::gfx{
 		}
 	}
 
-	template<VertexElementType Type>
+	template<VertexElementType type>
 	auto& gfx::Vertex::getAttribute(){
-		char* attributeData = data + layout.resolve(Type).getOffset();
-		return *reinterpret_cast<typename VertexElementData<Type>::DataType*>(attributeData);
+		char* attributeData = data + layout.resolve(type).getOffset();
+		return *reinterpret_cast<typename VertexElementData<type>::DataType*>(attributeData);
 	}
 
 	template<VertexElementType DestType, typename SourceDataType>

@@ -3,7 +3,6 @@
 
 #include "Clove/Application.hpp"
 
-#include <glad/glad.h>
 #include <fstream>
 #include <sstream>
 
@@ -23,6 +22,29 @@ namespace clv::gfx{
 
 	void GL4Shader::bind(){
 		glUseProgram(programID);
+	}
+
+	ShaderReflectionData GL4Shader::getReflectionData(){
+		ShaderReflectionData outData;
+
+		GLint attribCount = 0;
+		glGetProgramiv(programID, GL_ACTIVE_ATTRIBUTES, &attribCount);
+		for(int32 i = 0; i < attribCount; ++i){
+			GLchar name[255];
+			GLsizei length = 0;
+			GLint size = 0;
+			GLenum type = 0;
+
+			glGetActiveAttrib(programID, static_cast<GLuint>(i), sizeof(name), &length, &size, &type, name);
+
+			outData.vertexBufferLayout.add(VertexElement::getTypeFromSemantic(name));
+		}
+
+		return outData;
+	}
+
+	uint32 GL4Shader::getProgramID() const{
+		return programID;
 	}
 
 	void GL4Shader::initialise(ShaderStyle style){

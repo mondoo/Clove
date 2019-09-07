@@ -15,7 +15,7 @@ namespace clv::gfx{
 		int32 height = 0;
 		int32 BPP = 0;
 
-		unsigned int bindingPoint = TBP_None;
+		uint32 bindingPoint = TBP_None;
 
 		//FUNCTIONS
 	public:
@@ -34,6 +34,7 @@ namespace clv::gfx{
 		virtual int32 getWidth() const override;
 		virtual int32 getHeight() const override;
 
+		virtual TextureBindingPoint getBindingPoint() const override;
 		virtual TextureUsage getUsageType() const override;
 
 		const uint32 getRenderID() const;

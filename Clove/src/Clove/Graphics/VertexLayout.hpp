@@ -1,23 +1,20 @@
 #pragma once
 
-namespace clv::gfx{
-	enum class VertexElementType{
-		position2D,
-		position3D,
-		texture2D,
-		normal,
-	};
+#include "Clove/Graphics/GraphicsTypes.hpp"
 
+namespace clv::gfx{
 	template<VertexElementType> struct VertexElementData;
+
+	//TODO: make the semantics lower case now thay're used for the shaders
 	template<> struct VertexElementData<VertexElementType::position2D>{
 		using DataType = math::Vector2f;
 		static constexpr uint32 elementCount = 2u;
-		static constexpr char semantic[] = "Position";
+		static constexpr char semantic[] = "Position2D";
 	};
 	template<> struct VertexElementData<VertexElementType::position3D>{
 		using DataType = math::Vector3f;
 		static constexpr uint32 elementCount = 3u;
-		static constexpr char semantic[] = "Position";
+		static constexpr char semantic[] = "Position3D";
 	};
 	template<> struct VertexElementData<VertexElementType::texture2D>{
 		using DataType = math::Vector2f;
@@ -59,6 +56,7 @@ namespace clv::gfx{
 		static constexpr size_t sizeOf(VertexElementType type);
 		static constexpr uint32 countOf(VertexElementType type);
 		static constexpr const char* semanticOf(VertexElementType type);
+		static VertexElementType getTypeFromSemantic(const std::string& semantic);
 	};
 
 	class VertexLayout{
@@ -101,7 +99,7 @@ namespace clv::gfx{
 		Vertex& operator=(Vertex&& other) noexcept = delete;
 		~Vertex();
 
-		template<VertexElementType Type>
+		template<VertexElementType type>
 		auto& getAttribute();
 
 	private:
@@ -133,6 +131,8 @@ namespace clv::gfx{
 		~VertexBufferData();
 
 		VertexBufferData(VertexLayout layout);
+
+		void resize(size_t size);
 
 		template<typename ...Args>
 		void emplaceBack(Args&&... args);

@@ -41,6 +41,21 @@ namespace clv::gfx{
 		return type;
 	}
 
+	VertexElementType VertexElement::getTypeFromSemantic(const std::string& semantic){
+		if(VertexElementData<VertexElementType::position2D>::semantic == semantic){
+			return VertexElementType::position2D;
+		} else if(VertexElementData<VertexElementType::position3D>::semantic == semantic){
+			return VertexElementType::position3D;
+		} else if(VertexElementData<VertexElementType::texture2D>::semantic == semantic){
+			return VertexElementType::texture2D;
+		} else if(VertexElementData<VertexElementType::normal>::semantic == semantic){
+			return VertexElementType::normal;
+		}
+
+		CLV_ASSERT(false, "{0} could not find proper element type", __func__);
+		return VertexElementType::position2D;
+	}
+
 	VertexLayout::VertexLayout() = default;
 
 	VertexLayout::VertexLayout(const VertexLayout& other) = default;
@@ -100,6 +115,10 @@ namespace clv::gfx{
 	
 	VertexBufferData::VertexBufferData(VertexLayout layout)
 		: layout(std::move(layout)){
+	}
+
+	void VertexBufferData::resize(size_t size){
+		buffer.resize(size * layout.size());
 	}
 	
 	Vertex VertexBufferData::front(){

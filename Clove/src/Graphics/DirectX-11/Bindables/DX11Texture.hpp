@@ -44,6 +44,7 @@ namespace clv::gfx{
 		virtual int32 getWidth() const override;
 		virtual int32 getHeight() const override;
 
+		virtual TextureBindingPoint getBindingPoint() const override;
 		virtual TextureUsage getUsageType() const override;
 
 		const Microsoft::WRL::ComPtr<ID3D11Texture2D>& getTexture() const;

@@ -2,7 +2,7 @@
 
 #include "Clove/Graphics/Bindables/Shader.hpp"
 
-#include "Graphics/OpenGL-4/Bindables/GL4UniformBufferObject.hpp"
+#include <glad/glad.h>
 
 namespace clv::gfx{
 	class Renderer;
@@ -24,6 +24,10 @@ namespace clv::gfx{
 		GL4Shader(ShaderStyle style);
 
 		virtual void bind() override;
+
+		virtual ShaderReflectionData getReflectionData() override;
+
+		uint32 getProgramID() const;
 
 	private:
 		void initialise(ShaderStyle style);

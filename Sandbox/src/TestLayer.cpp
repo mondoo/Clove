@@ -16,6 +16,9 @@
 #include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
 #include "Clove/Graphics/RenderTarget.hpp"
+#include "Clove/Graphics/Mesh.hpp"
+#include "Clove/Graphics/Sprite.hpp"
+#include "Clove/Graphics/Material.hpp"
 
 TestLayer::TestLayer()
 	: Layer("Example Layer"){
@@ -35,18 +38,25 @@ void TestLayer::onAttach(){
 	lght2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
 
 	cam = clv::Application::get().getManager().createEntity<clv::ecs::d3::CameraComponent, clv::ecs::d3::TransformComponent>();
-	
-	ent1.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
-	ent1.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
-	ent1.getComponent<clv::ecs::d3::RenderableComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
-	ent2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
-	ent2.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
-	ent2.getComponent<clv::ecs::d3::RenderableComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
+	auto cubeMaterial = std::make_shared<clv::gfx::Material>(clv::gfx::ShaderStyle::Lit);
+	cubeMaterial->setAlbedoTexture("res/Textures/container2.png");
+	cubeMaterial->setSpecularTexture("res/Textures/container2_specular.png");
 
-	ent3.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
-	ent3.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
-	ent3.getComponent<clv::ecs::d3::RenderableComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
+	{
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+		ent1.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
+	}
+
+	{
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+		ent2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
+	}
+
+	{
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+		ent3.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
+	}
 
 	ent1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ 0.0f, 0.0f, 0.0f });
 	ent2.getComponent<clv::ecs::d3::TransformComponent>()->setLocalPosition({ 0.0f, 0.0f, 3.0f });
@@ -58,30 +68,39 @@ void TestLayer::onAttach(){
 	//clv::Application::get().getManager().destroyEntity(ent2.getID());
 
 	/*auto rtTexture = clv::gfx::BindableFactory::createTexture(clv::Application::get().getWindow().getWidth(), clv::Application::get().getWindow().getHeight(), clv::gfx::TextureUsage::RenderTarget, clv::gfx::TBP_Albedo);
-	rtEnt.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture(rtTexture);
+	auto sprite = std::make_shared<clv::gfx::Sprite>(rtTexture);
+	rtEnt.getComponent<clv::ecs::d2::RenderableComponent>()->setSprite(sprite);
 	rtEnt.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(clv::Application::get().getWindow().getWidth() / 2, clv::Application::get().getWindow().getHeight() / 2));
 
 	auto renderTarget = clv::gfx::RenderTarget::createRenderTarget(*rtTexture);
 	clv::gfx::Renderer::setRenderTarget(renderTarget);*/
 
-	sprtEnt1.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture("res/Textures/Zombie-32x32.png");
-	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+	{
+		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
+		sprtEnt1.getComponent<clv::ecs::d2::RenderableComponent>()->setSprite(sprite);
+		sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+	}
 
-	sprtEnt2.getComponent<clv::ecs::d2::RenderableComponent>()->setTexture("res/Textures/Zombie-32x32.png");
-	sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 2.0f));
-	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+	{
+		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
+		sprtEnt2.getComponent<clv::ecs::d2::RenderableComponent>()->setSprite(sprite);
+		sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 2.0f));
+		sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+	}
 
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->addChild(sprtEnt2.getComponent<clv::ecs::d2::TransformComponent>());
 
-	lght1.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
-	lght1.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
-	lght1.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
-	lght1.getComponent<clv::ecs::d3::RenderableComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
+	{
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+		lght1.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
+		lght1.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
+	}
 
-	lght2.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
-	lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh("res/Objects/cube.obj");
-	lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
-	lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
+	{
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+		lght2.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
+		lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
+	}
 }
 
 void TestLayer::onDetach(){
@@ -128,7 +147,7 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	}
 
 	const float radius = 6.0f;
-	
+
 	cam.getComponent<clv::ecs::d3::TransformComponent>()->setPosition(cameraPosition);
 	cam.getComponent<clv::ecs::d3::CameraComponent>()->updateFront(0.0f, yaw);
 

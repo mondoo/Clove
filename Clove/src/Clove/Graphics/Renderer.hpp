@@ -4,25 +4,25 @@
 
 #include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
 
-namespace clv::gfx{
-	class VertexBuffer;
-	class IndexBuffer;
-	class Shader;
-	class Texture;
-	class RenderTarget;
+#include <queue>
 
-	struct VertexData{
+namespace clv::gfx{
+	class RenderTarget;
+	class Mesh;
+	class Sprite;
+
+	/*struct VertexData{
 		math::Matrix4f model;
 		math::Matrix4f normalMatrix;
-	};
+	};*/
 
 	struct MaterialData{
 		alignas(16) float sininess;
 	};
 
-	struct SpriteShaderData{
+	/*struct SpriteShaderData{
 		math::Matrix4f modelProjection;
-	};
+	};*/
 
 	struct ViewData{
 		math::Matrix4f view;
@@ -33,23 +33,12 @@ namespace clv::gfx{
 		alignas(16) math::Vector3f pos;
 	};
 
-	struct MeshRenderData{
-		math::Matrix4f modelData{}; //Set on shader in renderer????
-		std::shared_ptr<VertexBuffer> vertexBuffer;
-		std::shared_ptr<IndexBuffer> indexBuffer;
-		std::shared_ptr<Shader> shader;
-		std::shared_ptr<Texture> diffTexture;
-		std::shared_ptr<Texture> specTexture;
+	//struct SpriteRenderData{
+	//	math::Matrix4f modelData{};
+	//	std::shared_ptr<Texture> texture;
 
-		void bind() const;
-	};
-	
-	struct SpriteRenderData{
-		math::Matrix4f modelData{};
-		std::shared_ptr<Texture> texture;
-
-		void bind() const;
-	};
+	//	void bind() const;
+	//};
 
 	struct CameraRenderData{
 		math::Vector3f position;
@@ -68,7 +57,7 @@ namespace clv::gfx{
 		/*alignas(16)*/ float linear;
 		/*alignas(16)*/ float quadratic;
 	};
-	struct PointLightShaderData{
+	struct PointLightShaderData{ //I guess the lighting system could handle this
 		int32 numLights = 0;
 		PointLightData lights[10];
 	};
@@ -76,9 +65,7 @@ namespace clv::gfx{
 	class Renderer{
 		//VARIABLES
 	protected:
-		static std::shared_ptr<gfx::ShaderBufferObject<VertexData>> vertSBO;
-		static std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO;
-		static std::shared_ptr<gfx::ShaderBufferObject<SpriteShaderData>> spriteSBO;
+		static std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO; //TODO: MOVE TO MATERIAL
 
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewData>> viewDataSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> viewPosSBO;
@@ -86,14 +73,11 @@ namespace clv::gfx{
 		static std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> lightDataSBO;
 		static PointLightShaderData currentLightInfo;
 
-		static std::vector<MeshRenderData> meshSubmissionData;
-		static std::vector<SpriteRenderData> spriteSubmissionData;
-		static CameraRenderData cameraSubmissionData;
+		static std::queue<std::shared_ptr<Mesh>> meshRenderQueue;
+		static std::queue<std::shared_ptr<Sprite>> spriteRenderQueue;
+		static std::shared_ptr<Mesh> spriteMesh;
 
-		static std::shared_ptr<VertexBuffer> spriteVBBuffer;
-		static std::shared_ptr<IndexBuffer> spriteIBBuffer;
-		static std::shared_ptr<Shader> spriteShader;
-		static math::Matrix4f spriteProj;
+		static CameraRenderData cameraSubmissionData;
 
 		static std::shared_ptr<RenderTarget> renderTarget;
 
@@ -107,8 +91,10 @@ namespace clv::gfx{
 		static void setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget);
 		static void removeRenderTarget();
 
-		static void submitMesh(const MeshRenderData& data);
-		static void submitSprite(const SpriteRenderData& data);
+		static void setSpriteMesh(const std::shared_ptr<Mesh>& mesh);
+
+		static void submitMesh(const std::shared_ptr<Mesh>& mesh);
+		static void submitSprite(const std::shared_ptr<Sprite>& sprite);
 		static void setCamera(const CameraRenderData& data);
 		static void submitPointLight(const PointLightData& data);
 	};

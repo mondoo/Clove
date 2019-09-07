@@ -64,6 +64,10 @@ namespace clv::gfx{
 		return height;
 	}
 
+	TextureBindingPoint GL4Texture::getBindingPoint() const{
+		return static_cast<TextureBindingPoint>(bindingPoint);
+	}
+
 	TextureUsage GL4Texture::getUsageType() const{
 		return usageType;
 	}
