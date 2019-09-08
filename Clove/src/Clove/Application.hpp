@@ -2,7 +2,6 @@
 
 #include "Clove/ECS/Manager.hpp"
 //Audio test
-#include "Clove/Audio/SoundPlayer.hpp"
 #include "Clove/Audio/Sound.hpp"
 //
 
@@ -35,7 +34,6 @@ namespace clv{
 		std::chrono::system_clock::time_point prevFrameTime;
 
 		//Audio test
-		aud::SoundPlayer player;
 		aud::Sound snd;
 		//
 

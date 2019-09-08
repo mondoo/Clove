@@ -11,8 +11,7 @@
 #include "Clove/Graphics/RenderCommand.hpp"
 
 //audio test
-#include "Clove/Audio/SoundPlayer.hpp"
-#include "Clove/Audio/Sound.hpp"
+//#include "Clove/Audio/Sound.hpp"
 //
 
 namespace clv{
@@ -41,9 +40,8 @@ namespace clv{
 		//Audio stuff
 		CLV_LOG_DEBUG("Audio Test!");
 		snd = aud::Sound("res/Audio/Test.wav");
-		auto copy = snd;
-		//aud::SoundPlayer player;
-		player.playSound(snd);
+		snd.play();
+		//auto copy = snd;
 		//
 	}
 
