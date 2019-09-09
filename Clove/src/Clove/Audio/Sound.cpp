@@ -40,7 +40,7 @@ namespace clv::aud{
 	void Sound::play(PlaybackMode playback){
 		if(isPlaying()){
 			if(currentPlaybackMode.has_value() && currentPlaybackMode.value() != playback){
-				CLV_LOG_TRACE("{0} : Play back mode is different than current mode, restarting", __func__);
+				CLV_LOG_TRACE("{0} : Play back mode is different than current mode, restarting", CLV_FUNCTION_NAME);
 				stop();
 			} else{
 				return;
@@ -68,7 +68,7 @@ namespace clv::aud{
 					PACall(Pa_OpenStream(&openStream, 0, &outputParameters, file.samplerate(), paFramesPerBufferUnspecified, paNoFlag, &Sound::soundPlayback_Loop, &activeStreamData));
 					break;
 				default:
-					CLV_ASSERT(false, "{0} : Invalid playback mode!", __func__);
+					CLV_ASSERT(false, "{0} : Invalid playback mode!", CLV_FUNCTION_NAME);
 					currentPlaybackMode.reset();
 					break;
 			}
