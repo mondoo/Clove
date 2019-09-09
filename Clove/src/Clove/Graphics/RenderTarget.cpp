@@ -27,7 +27,7 @@ namespace clv::gfx{
 			#endif
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
+				CLV_ASSERT(false, "Unkown API in: {0}", CLV_FUNCTION_NAME);
 				return std::shared_ptr<RenderTarget>();
 		}
 	}

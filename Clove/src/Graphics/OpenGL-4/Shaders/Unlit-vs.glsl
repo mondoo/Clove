@@ -1,8 +1,8 @@
 #version 460 core
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 texCoord;
-layout(location = 2) in vec3 normal;
+layout(location = 0) in vec3 Position3D;
+layout(location = 1) in vec2 TexCoord;
+layout(location = 2) in vec3 Normal; //TODO: Remove now that we have shader reflection
 
 layout(std140, binding = 0) uniform CameraMatrices {
 	mat4 view;
@@ -17,9 +17,9 @@ layout(std140, binding = 3) uniform modelBuffer {
 out vec2 vertTexCoord;
 
 void main(){
-	const vec4 pos4D = vec4(position, 1.0f);
+	const vec4 pos4D = vec4(Position3D, 1.0f);
 
 	gl_Position = projection * view * model * pos4D;
   
-	vertTexCoord = texCoord;
+	vertTexCoord = TexCoord;
 };

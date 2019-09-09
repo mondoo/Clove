@@ -41,6 +41,21 @@ namespace clv::gfx{
 		return type;
 	}
 
+	VertexElementType VertexElement::getTypeFromSemantic(const std::string& semantic){
+		if(VertexElementData<VertexElementType::position2D>::semantic == semantic){
+			return VertexElementType::position2D;
+		} else if(VertexElementData<VertexElementType::position3D>::semantic == semantic){
+			return VertexElementType::position3D;
+		} else if(VertexElementData<VertexElementType::texture2D>::semantic == semantic){
+			return VertexElementType::texture2D;
+		} else if(VertexElementData<VertexElementType::normal>::semantic == semantic){
+			return VertexElementType::normal;
+		}
+
+		CLV_ASSERT(false, "{0} could not find proper element type", CLV_FUNCTION_NAME);
+		return VertexElementType::position2D;
+	}
+
 	VertexLayout::VertexLayout() = default;
 
 	VertexLayout::VertexLayout(const VertexLayout& other) = default;
@@ -72,7 +87,7 @@ namespace clv::gfx{
 				return element;
 			}
 		}
-		CLV_ASSERT(false, "Could not find element of type. {0}", __func__);
+		CLV_ASSERT(false, "Could not find element of type. {0}", CLV_FUNCTION_NAME);
 		return elements.front();
 	}
 
@@ -85,7 +100,7 @@ namespace clv::gfx{
 	Vertex::Vertex(char* data, const VertexLayout& layout)
 		: data(data)
 		, layout(layout){
-		CLV_ASSERT(data != nullptr, "Data is nullptr. {0}", __func__);
+		CLV_ASSERT(data != nullptr, "Data is nullptr. {0}", CLV_FUNCTION_NAME);
 	}
 
 	VertexBufferData::VertexBufferData(const VertexBufferData& other) = default;
@@ -100,6 +115,10 @@ namespace clv::gfx{
 	
 	VertexBufferData::VertexBufferData(VertexLayout layout)
 		: layout(std::move(layout)){
+	}
+
+	void VertexBufferData::resize(size_t size){
+		buffer.resize(size * layout.size());
 	}
 	
 	Vertex VertexBufferData::front(){

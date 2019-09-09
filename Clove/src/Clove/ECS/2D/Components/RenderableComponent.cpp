@@ -1,8 +1,7 @@
 #include "clvpch.hpp"
 #include "RenderableComponent.hpp"
 
-#include "Clove/Graphics/BindableFactory.hpp"
-#include "Clove/Graphics/Bindables/Texture.hpp"
+#include "Clove/Graphics/Sprite.hpp"
 
 namespace clv::ecs::d2{
 	RenderableComponent::RenderableComponent() = default;
@@ -13,11 +12,7 @@ namespace clv::ecs::d2{
 
 	RenderableComponent::~RenderableComponent() = default;
 
-	void RenderableComponent::setTexture(const std::string& path){
-		submissionData.texture = gfx::BindableFactory::createTexture(path, gfx::TBP_Albedo);
-	}
-
-	void RenderableComponent::setTexture(const std::shared_ptr<gfx::Texture>& texture){
-		submissionData.texture = texture;
+	void RenderableComponent::setSprite(const std::shared_ptr<gfx::Sprite>& sprite){
+		this->sprite = sprite;
 	}
 }

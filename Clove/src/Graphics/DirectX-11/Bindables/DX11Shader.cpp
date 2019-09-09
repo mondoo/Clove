@@ -34,6 +34,34 @@ namespace clv::gfx{
 		}
 	}
 
+	ShaderReflectionData DX11Shader::getReflectionData(){
+		ShaderReflectionData outData;
+		
+		Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflector;
+
+		if(vertexShader == nullptr){
+			CLV_LOG_ERROR("{0}: vertex shader hasn't been initialised, potentially calling function too early!");
+			return outData;
+		}
+		
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(D3DReflect(vertexShader->getByteCode()->GetBufferPointer(), vertexShader->getByteCode()->GetBufferSize(), IID_ID3D11ShaderReflection, &reflector));
+
+		D3D11_SHADER_DESC shaderDescription; 
+		DX11_THROW_INFO(reflector->GetDesc(&shaderDescription));
+		
+		const UINT inputParamNum = shaderDescription.InputParameters;
+
+		for(UINT i = 0; i < inputParamNum; ++i){
+			D3D11_SIGNATURE_PARAMETER_DESC inputParamDescription;
+			DX11_THROW_INFO(reflector->GetInputParameterDesc(i, &inputParamDescription));
+	
+			outData.vertexBufferLayout.add(VertexElement::getTypeFromSemantic(inputParamDescription.SemanticName));
+		}
+
+		return outData;
+	}
+
 	DX11VertexShader& DX11Shader::getVertexShader(){
 		CLV_ASSERT(vertexShader != nullptr, "No vertex shader attached!");
 		return *vertexShader;
@@ -82,10 +110,18 @@ namespace clv::gfx{
 				break;
 
 			default:
-				CLV_ASSERT(false, "Unknown type! {0}", __func__);
+				CLV_ASSERT(false, "Unknown type! {0}", CLV_FUNCTION_NAME);
 				break;
 		}
 	}
+
+	DX11ShaderElement::DX11ShaderElement() = default;
+
+	DX11ShaderElement::DX11ShaderElement(DX11ShaderElement&& other) noexcept = default;
+
+	DX11ShaderElement& DX11ShaderElement::operator=(DX11ShaderElement&& other) noexcept = default;
+
+	DX11ShaderElement::~DX11ShaderElement() = default;
 
 	DX11VertexShader::DX11VertexShader(DX11VertexShader&& other) noexcept = default;
 

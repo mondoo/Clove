@@ -16,6 +16,10 @@ namespace clv::gfx{
 		Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
+		//could have a thing on this to rfresh the layout
+		//or rebind the shader. Assert in the bindy boys if that hasn't happened yet
+		//I think the complicated because of the input layout
+
 		//FUNCTIONS
 	public:
 		DX11VertexBuffer() = delete;

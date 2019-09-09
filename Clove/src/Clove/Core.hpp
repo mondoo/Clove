@@ -1,14 +1,6 @@
 #pragma once
 
 //Utility defines
-#if CLV_PLATFORM_WINDOWS
-	#define CLV_DEBUG_BREAK __debugbreak()
-#elif CLV_PLATFORM_LINUX
-	#define CLV_DEBUG_BREAK __builtin_trap()
-#else
-	#define CLV_DEBUG_BREAK
-#endif
-
 #if CLV_DEBUG || CLV_DEVELOPMENT
 	#define CLV_ENABLE_ASSERTS 1
 #else
@@ -28,6 +20,22 @@
 #endif
 
 #define BIT(x) (1 << x)
+
+//TODO: Should check for MSVC instead of windows
+#if CLV_PLATFORM_WINDOWS
+	#define CLV_DEBUG_BREAK __debugbreak()
+#elif CLV_PLATFORM_LINUX
+	#define CLV_DEBUG_BREAK __builtin_trap()
+#else
+	#define CLV_DEBUG_BREAK
+#endif
+
+//TODO: Should check for MSVC instead of windows
+#if CLV_PLATFORM_WINDOWS
+	#define	CLV_FUNCTION_NAME __FUNCTION__
+#else 
+	#define	CLV_FUNCTION_NAME __func__
+#endif
 
 #if CLV_PLATFORM_WINDOWS
 	#define CLV_APIENTRY APIENTRY

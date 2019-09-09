@@ -3,7 +3,7 @@
 #include "Clove/Graphics/Bindable.hpp"
 
 namespace clv::gfx{
-	enum BufferBindingPoint{
+	enum BufferBindingPoint{ //Will this be needed?
 		BBP_CameraMatrices	= 0u,
 		BBP_PointLightData	= 1u,
 		BBP_ViewData		= 2u,
@@ -11,6 +11,11 @@ namespace clv::gfx{
 		BBP_MaterialData	= 4u,
 		BBP_2DData			= 5u
 	};
+
+	/*
+	Am i going to have to change these to take void* data?
+	- I feel like this will turn into the vertex layout equivalent
+	*/
 
 	template<typename T>
 	class ShaderBufferObject : public Bindable{

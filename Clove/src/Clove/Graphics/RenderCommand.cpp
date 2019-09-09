@@ -53,7 +53,7 @@ namespace clv::gfx{
 			#endif
 
 			default:
-				CLV_LOG_ERROR("Default statement hit. Could not initialise RenderAPI: {0}", __func__);
+				CLV_LOG_ERROR("Default statement hit. Could not initialise RenderAPI: {0}", CLV_FUNCTION_NAME);
 				break;
 		}
 	}

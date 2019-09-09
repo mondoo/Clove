@@ -64,6 +64,10 @@ namespace clv::gfx{
 		return height;
 	}
 
+	TextureBindingPoint GL4Texture::getBindingPoint() const{
+		return static_cast<TextureBindingPoint>(bindingPoint);
+	}
+
 	TextureUsage GL4Texture::getUsageType() const{
 		return usageType;
 	}
@@ -83,7 +87,7 @@ namespace clv::gfx{
 				break;
 
 			default:
-				CLV_ASSERT(false, "{0}: Unhandled texture type", __func__);
+				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
 				break;
 		}
 	}

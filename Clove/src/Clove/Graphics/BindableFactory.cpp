@@ -27,7 +27,7 @@ namespace clv::gfx::BindableFactory{
 			#endif
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
+				CLV_ASSERT(false, "Unkown API in: {0}", CLV_FUNCTION_NAME);
 				return std::shared_ptr<VertexBuffer>();
 		}
 	}
@@ -43,7 +43,7 @@ namespace clv::gfx::BindableFactory{
 			#endif
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
+				CLV_ASSERT(false, "Unkown API in: {0}", CLV_FUNCTION_NAME);
 				return std::shared_ptr<IndexBuffer>();
 		}
 	}
@@ -59,7 +59,7 @@ namespace clv::gfx::BindableFactory{
 			#endif
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
+				CLV_ASSERT(false, "Unkown API in: {0}", CLV_FUNCTION_NAME);
 				return std::shared_ptr<Shader>();
 		}
 	}
@@ -75,7 +75,7 @@ namespace clv::gfx::BindableFactory{
 			#endif
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
+				CLV_ASSERT(false, "Unkown API in: {0}", CLV_FUNCTION_NAME);
 				return std::shared_ptr<Texture>();
 		}
 	}
@@ -91,7 +91,7 @@ namespace clv::gfx::BindableFactory{
 			#endif
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
+				CLV_ASSERT(false, "Unkown API in: {0}", CLV_FUNCTION_NAME);
 				return std::shared_ptr<Texture>();
 		}
 	}
