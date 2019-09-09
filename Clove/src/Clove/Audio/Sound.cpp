@@ -110,8 +110,7 @@ namespace clv::aud{
 
 		while(currentFrameCount > 0){
 			//Seek to the position
-			sf_seek(data->file.rawHandle(), data->position, SEEK_SET);
-			//data->file.seek(data->position, SEEK_SET);
+			data->file.seek(data->position, SEEK_SET);
 
 			//Get the amount of frames to read
 			if(currentFrameCount > (data->file.frames() - data->position)){
@@ -141,7 +140,7 @@ namespace clv::aud{
 
 		while(currentFrameCount > 0){
 			//Seek to the position
-			sf_seek(data->file.rawHandle(), data->position, SEEK_SET);
+			data->file.seek(data->position, SEEK_SET);
 
 			//Get the amount of frames to read
 			if(currentFrameCount > (data->file.frames() - data->position)){
