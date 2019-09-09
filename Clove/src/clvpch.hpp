@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <functional>
 #include <sstream>
+#include <optional>
 
 //Data structures
 #include <string>
