@@ -22,6 +22,7 @@ namespace clv::aud{
 		PaStream* openStream = nullptr;
 		SndfileHandle file;
 		
+		std::optional<PlaybackMode> currentPlaybackMode;
 		StreamData activeStreamData;
 
 		//FUNCTIONS

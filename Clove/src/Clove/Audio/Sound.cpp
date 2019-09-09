@@ -6,7 +6,7 @@
 namespace clv::aud{
 	Sound::Sound(){
 		CLV_LOG_TRACE("Sound player intialised");
-		PACall(Pa_Initialize());
+		PACall(Pa_Initialize()); //TODO: Initialise in ECS system?
 	}
 
 	Sound::Sound(const Sound& other){
@@ -24,7 +24,8 @@ namespace clv::aud{
 
 	Sound::~Sound(){
 		if(isPlaying()){
-
+			CLV_LOG_WARN("Sound object was deconstructed while playing... stopping sound");
+			stop();
 		}
 		CLV_LOG_TRACE("Sound player shutdown");
 		PACall(Pa_Terminate());
@@ -37,34 +38,67 @@ namespace clv::aud{
 	}
 
 	void Sound::play(PlaybackMode playback){
-		activeStreamData.position = 0;
-		activeStreamData.file = file;
+		if(isPlaying()){
+			if(currentPlaybackMode.has_value() && currentPlaybackMode.value() != playback){
+				CLV_LOG_TRACE("{0} : Play back mode is different than current mode, restarting", __func__);
+				stop();
+			} else{
+				return;
+			}
+		}
 
-		PaStreamParameters outputParameters;
-		outputParameters.device = Pa_GetDefaultOutputDevice();
-		outputParameters.sampleFormat = paInt32;
-		outputParameters.channelCount = file.channels();
-		outputParameters.suggestedLatency = 0.2f;
-		outputParameters.hostApiSpecificStreamInfo = nullptr;
+		if(!openStream){
+			activeStreamData.position = 0;
+			activeStreamData.file = file;
 
-		//Want to pass the SndFileHandle here so we can copy sound files, but how to keep track of position?
-		//Or the sound should be equipped with being able to be copied in here and kept alive?
-		PACall(Pa_OpenStream(&openStream, 0, &outputParameters, file.samplerate(), paFramesPerBufferUnspecified, paNoFlag, &Sound::soundPlayback_Once, &activeStreamData));
+			PaStreamParameters outputParameters;
+			outputParameters.device = Pa_GetDefaultOutputDevice();
+			outputParameters.sampleFormat = paInt32;
+			outputParameters.channelCount = file.channels();
+			outputParameters.suggestedLatency = 0.2f;
+			outputParameters.hostApiSpecificStreamInfo = nullptr;
+
+			currentPlaybackMode = playback;
+
+			switch(playback){
+				case PlaybackMode::once:
+					PACall(Pa_OpenStream(&openStream, 0, &outputParameters, file.samplerate(), paFramesPerBufferUnspecified, paNoFlag, &Sound::soundPlayback_Once, &activeStreamData));
+					break;
+				case PlaybackMode::repeat:
+					PACall(Pa_OpenStream(&openStream, 0, &outputParameters, file.samplerate(), paFramesPerBufferUnspecified, paNoFlag, &Sound::soundPlayback_Loop, &activeStreamData));
+					break;
+				default:
+					CLV_ASSERT(false, "{0} : Invalid playback mode!", __func__);
+					currentPlaybackMode.reset();
+					break;
+			}
+		}
+
 		PACall(Pa_StartStream(openStream));
-
-		//Pa_is
 	}
 
 	void Sound::pause(){
-		//PACall(Pa_StopStream(openStreams[sound.streamID.ID]));
+		if(isPlaying()){
+			PACall(Pa_StopStream(openStream));
+		}
 	}
 
 	void Sound::stop(){
-		//PACall(Pa_CloseStream(openStreams[sound.streamID.ID]));
+		if(openStream){
+			PACall(Pa_CloseStream(openStream));
+			openStream = nullptr;
+			currentPlaybackMode.reset();
+		}
 	}
 
 	bool Sound::isPlaying(){
-		return false;
+		if(!openStream){
+			return false;
+		}
+
+		const PaError errorCode = Pa_IsStreamActive(openStream);
+		CLV_ASSERT(errorCode >= 0, Pa_GetErrorText(errorCode));
+		return errorCode == 1;
 	}
 
 	int Sound::soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
