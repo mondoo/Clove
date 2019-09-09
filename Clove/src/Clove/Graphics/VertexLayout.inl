@@ -10,7 +10,7 @@ namespace clv::gfx{
 			case VertexElementType::normal:
 				return sizeof(VertexElementData<VertexElementType::normal>::DataType);
 			default:
-				CLV_ASSERT(false, "Invalid element type. {0}", __func__);
+				CLV_ASSERT(false, "Invalid element type. {0}", CLV_FUNCTION_NAME);
 				return 0u;
 		}
 	}
@@ -26,7 +26,7 @@ namespace clv::gfx{
 			case VertexElementType::normal:
 				return VertexElementData<VertexElementType::normal>::elementCount;
 			default:
-				CLV_ASSERT(false, "Invalid element type. {0}", __func__);
+				CLV_ASSERT(false, "Invalid element type. {0}", CLV_FUNCTION_NAME);
 				return 0u;
 		}
 	}
@@ -42,7 +42,7 @@ namespace clv::gfx{
 			case VertexElementType::normal:
 				return VertexElementData<VertexElementType::normal>::semantic;
 			default:
-				CLV_ASSERT(false, "Invalid element type. {0}", __func__);
+				CLV_ASSERT(false, "Invalid element type. {0}", CLV_FUNCTION_NAME);
 				return nullptr;
 		}
 	}
@@ -59,7 +59,7 @@ namespace clv::gfx{
 		if constexpr(std::is_assignable_v<DestDataType, SourceDataType>){
 			*reinterpret_cast<DestDataType*>(attribute) = value;
 		} else{
-			CLV_ASSERT(false, "Types are not assignable. {0}", __func__);
+			CLV_ASSERT(false, "Types are not assignable. {0}", CLV_FUNCTION_NAME);
 		}
 	}
 

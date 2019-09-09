@@ -25,14 +25,14 @@ namespace clv::gfx::BindableFactory{
 						break;
 
 					default:
-						CLV_ASSERT(false, "Unkown ShaderType in: {0}", __func__);
+						CLV_ASSERT(false, "Unkown ShaderType in: {0}", CLV_FUNCTION_NAME);
 						return std::shared_ptr<ShaderBufferObject<T>>();
 						break;
 				}
 			#endif	
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
+				CLV_ASSERT(false, "Unkown API in: {0}", CLV_FUNCTION_NAME);
 				return std::shared_ptr<ShaderBufferObject<T>>();
 		}
 	}
@@ -55,14 +55,14 @@ namespace clv::gfx::BindableFactory{
 						break;
 
 					default:
-						CLV_ASSERT(false, "Unkown ShaderType in: {0}", __func__);
+						CLV_ASSERT(false, "Unkown ShaderType in: {0}", CLV_FUNCTION_NAME);
 						return std::shared_ptr<ShaderBufferObject<T>>();
 						break;
 				}
 			#endif	
 
 			default:
-				CLV_ASSERT(false, "Unkown API in: {0}", __func__);
+				CLV_ASSERT(false, "Unkown API in: {0}", CLV_FUNCTION_NAME);
 				return std::shared_ptr<ShaderBufferObject<T>>();
 		}
 	}

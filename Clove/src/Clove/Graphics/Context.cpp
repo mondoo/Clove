@@ -31,7 +31,7 @@ namespace clv::gfx{
 			#endif
 			
 			default:
-				CLV_LOG_ERROR("Default statement hit. No context initialised {0}", __func__);
+				CLV_LOG_ERROR("Default statement hit. No context initialised {0}", CLV_FUNCTION_NAME);
 				return std::unique_ptr<Context>();
 		}
 

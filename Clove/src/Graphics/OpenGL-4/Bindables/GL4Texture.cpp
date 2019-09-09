@@ -87,7 +87,7 @@ namespace clv::gfx{
 				break;
 
 			default:
-				CLV_ASSERT(false, "{0}: Unhandled texture type", __func__);
+				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
 				break;
 		}
 	}
