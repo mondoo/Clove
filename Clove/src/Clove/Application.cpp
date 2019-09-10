@@ -6,13 +6,10 @@
 #include "Clove/LayerStack.hpp"
 #include "Clove/Layer.hpp"
 #include "Clove/Utils/DeltaTime.hpp"
+#include "Clove/ECS/Manager.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/RenderCommand.hpp"
-
-//audio test
-//#include "Clove/Audio/Sound.hpp"
-//
 
 namespace clv{
 	Application* Application::instance = nullptr;
@@ -36,13 +33,6 @@ namespace clv{
 		CLV_LOG_INFO("Successfully initialised Clove");
 
 		prevFrameTime = std::chrono::system_clock::now();
-
-		//Audio stuff
-		CLV_LOG_DEBUG("Audio Test!");
-		snd = aud::Sound("res/Audio/Test.wav");
-		snd.play();
-		//auto copy = snd;
-		//
 	}
 
 	Application::~Application() = default;

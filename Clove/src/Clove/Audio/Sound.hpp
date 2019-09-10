@@ -1,29 +1,22 @@
 #pragma once
 
 #include <sndfile.hh> //TODO: move to cpp???
-#include <portaudio.h>
 
 namespace clv::aud{
-	struct StreamData{
+	/*struct StreamData{
 		uint32 position = 0;
 		SndfileHandle file;
-	};
-
-	enum class PlaybackMode{
-		once,
-		repeat
-	};
+	};*/
 
 	class Sound{
 		friend class SoundPlayer;
 
 		//VARIABLES
 	private:
-		PaStream* openStream = nullptr;
+		//PaStream* openStream = nullptr;
 		SndfileHandle file;
-		
-		std::optional<PlaybackMode> currentPlaybackMode;
-		StreamData activeStreamData;
+
+		//StreamData activeStreamData;
 
 		//FUNCTIONS
 	public:
@@ -34,16 +27,14 @@ namespace clv::aud{
 		Sound& operator=(Sound&& other);
 		~Sound();
 
-		Sound(const std::string &filePath);
+		Sound(const std::string& filePath);
 
-		void play(PlaybackMode playback = PlaybackMode::once);
-		void pause();
-		void stop();
+		//TODO: Rename / retype these wrappers
+		sf_count_t seek(sf_count_t frames, int whence);
+		sf_count_t readf(int* ptr, sf_count_t frames);
 
-		bool isPlaying();
-
-	private:
-		static int soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);
-		static int soundPlayback_Once(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);
+		int32 getChannels();
+		int32 getSamplerate();
+		int32 getFrames();
 	};
 }

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Clove/ECS/Manager.hpp"
-//Audio test
-#include "Clove/Audio/Sound.hpp"
-//
+namespace clv::ecs{
+	class Manager;
+}
 
 namespace clv::gfx{
 	class Renderer;
@@ -32,10 +31,6 @@ namespace clv{
 		static Application* instance;
 
 		std::chrono::system_clock::time_point prevFrameTime;
-
-		//Audio test
-		aud::Sound snd;
-		//
 
 		//FUNCTIONS
 	public:

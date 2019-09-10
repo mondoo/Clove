@@ -10,6 +10,7 @@
 #include "Clove/ECS/3D/Components/TransformComponent.hpp"
 #include "Clove/ECS/3D/Components/CameraComponent.hpp"
 #include "Clove/ECS/3D/Components/LightComponent.hpp"
+#include "Clove/ECS/Audio/Components/AudioComponent.hpp"
 #include "Clove/Maths/Vector.hpp"
 #include "Clove/Input/Input.hpp"
 #include "Clove/Utils/DeltaTime.hpp"
@@ -38,6 +39,8 @@ void TestLayer::onAttach(){
 	lght2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
 
 	cam = clv::Application::get().getManager().createEntity<clv::ecs::d3::CameraComponent, clv::ecs::d3::TransformComponent>();
+
+	sound = clv::Application::get().getManager().createEntity<clv::ecs::aud::AudioComponent>();
 
 	auto cubeMaterial = std::make_shared<clv::gfx::Material>(clv::gfx::ShaderStyle::Lit);
 	cubeMaterial->setAlbedoTexture("res/Textures/container2.png");
@@ -100,6 +103,12 @@ void TestLayer::onAttach(){
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 		lght2.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
 		lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
+	}
+
+	{
+		auto soundBuffer = clv::aud::Sound("res/Audio/Test.wav");
+		sound.getComponent<clv::ecs::aud::AudioComponent>()->setSound(soundBuffer);
+		sound.getComponent<clv::ecs::aud::AudioComponent>()->play();
 	}
 }
 

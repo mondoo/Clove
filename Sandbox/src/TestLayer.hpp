@@ -23,6 +23,8 @@ private:
 
 	clv::ecs::Entity cam;
 
+	clv::ecs::Entity sound;
+
 	bool firstMouse = false;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
