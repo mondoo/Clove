@@ -36,10 +36,10 @@ namespace clv::ecs{
 			return;
 		}
 
-		components.erase(ID);
 		for(const auto& system : systems){
 			system->onEntityDestroyed(ID);
 		}
+		components.erase(ID);
 	}
 
 	Entity Manager::getEntity(EntityID ID){
