@@ -3,12 +3,12 @@
 
 //#include <portaudio.h>
 
-#define PACall(x) { auto err = x; if(err != paNoError) { CLV_ASSERT(false, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(err)); } }
+#define PACall(x) { auto err = x; CLV_ASSERT(err == paNoError, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(err)); }
 
 namespace clv::ecs::aud{
 	AudioSystem::AudioSystem(){
 		CLV_LOG_TRACE("Portaudio intialised");
-		PACall(Pa_Initialize()); //TODO: Initialise in ECS system?
+		PACall(Pa_Initialize());
 	}
 
 	AudioSystem::~AudioSystem(){
@@ -55,6 +55,7 @@ namespace clv::ecs::aud{
 		}
 
 		PACall(Pa_StartStream(component->stream));
+		component->playing = true;
 	}
 
 	void AudioSystem::pauseStream(PaStream* stream){
@@ -63,6 +64,14 @@ namespace clv::ecs::aud{
 
 	void AudioSystem::stopStream(PaStream* stream){
 		PACall(Pa_CloseStream(stream));
+	}
+
+	void AudioSystem::handleEntityDestruction(const ComponentTuple& componentTuple){
+		AudioComponent* component = std::get<AudioComponent*>(componentTuple);
+		if(component->isPlaying()){
+			component->playing = false;
+			stopStream(component->stream);
+		}
 	}
 	
 	int AudioSystem::soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){

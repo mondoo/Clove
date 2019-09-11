@@ -3,20 +3,12 @@
 #include <sndfile.hh> //TODO: move to cpp???
 
 namespace clv::aud{
-	/*struct StreamData{
-		uint32 position = 0;
-		SndfileHandle file;
-	};*/
-
 	class Sound{
 		friend class SoundPlayer;
 
 		//VARIABLES
 	private:
-		//PaStream* openStream = nullptr;
 		SndfileHandle file;
-
-		//StreamData activeStreamData;
 
 		//FUNCTIONS
 	public:

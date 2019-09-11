@@ -3,22 +3,18 @@
 
 namespace clv::aud{
 	Sound::Sound(){
-		//Still needed?
+		//Still needed? would like to get rid of it
 	}
 
 	Sound::Sound(const Sound& other) = default;
 
 	Sound& Sound::operator=(const Sound& other) = default;
+	
 	Sound::Sound(Sound&& other) = default;
 
 	Sound& Sound::operator=(Sound&& other) = default;
 
-	Sound::~Sound(){
-		/*if(isPlaying()){
-			CLV_LOG_WARN("Sound object was deconstructed while playing... stopping sound");
-			stop();
-		}*/
-	}
+	Sound::~Sound() = default;
 
 	Sound::Sound(const std::string& filePath)
 		: file(filePath.c_str()){

@@ -177,6 +177,10 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	if(clv::input::isKeyPressed(clv::Key::Escape)){
 		clv::Application::get().stop();
 	}
+
+	if(clv::input::isKeyPressed(clv::Key::P)){
+		clv::Application::get().getManager().destroyEntity(sound.getID());
+	}
 }
 
 //bool TestLayer::onMouseMoved(clv::MouseMovedEvent e){
