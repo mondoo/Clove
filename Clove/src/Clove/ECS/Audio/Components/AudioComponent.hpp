@@ -43,6 +43,7 @@ namespace clv::ecs::aud{
 
 		void play(PlaybackMode playback = PlaybackMode::once);
 		void pause();
+		void resume();
 		void stop();
 
 		bool isPlaying();

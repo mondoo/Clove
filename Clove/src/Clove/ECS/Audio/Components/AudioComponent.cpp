@@ -16,6 +16,13 @@ namespace clv::ecs::aud{
 		requestedStopMode = StopMode::pause;
 	}
 
+	void AudioComponent::resume(){
+		//TODO error if no sound file attached
+		if(currentPlayback && !isPlaying()){
+			requestedPlayback = currentPlayback;
+		}
+	}
+
 	void AudioComponent::stop(){
 		//TODO error if no sound file attached
 		requestedStopMode = StopMode::stop;

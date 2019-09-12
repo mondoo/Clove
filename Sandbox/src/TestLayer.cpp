@@ -178,6 +178,7 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 		clv::Application::get().stop();
 	}
 
+	//Audio testing
 	if(clv::input::isKeyPressed(clv::Key::P)){
 		sound.getComponent<clv::ecs::aud::AudioComponent>()->pause();
 	}
@@ -192,6 +193,10 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 
 	if(clv::input::isKeyPressed(clv::Key::K)){
 		sound.getComponent<clv::ecs::aud::AudioComponent>()->play(clv::ecs::aud::PlaybackMode::repeat);
+	}
+
+	if(clv::input::isKeyPressed(clv::Key::Semicolon)){
+		sound.getComponent<clv::ecs::aud::AudioComponent>()->resume();
 	}
 }
 
