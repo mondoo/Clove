@@ -179,7 +179,15 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	}
 
 	if(clv::input::isKeyPressed(clv::Key::P)){
-		clv::Application::get().getManager().destroyEntity(sound.getID());
+		sound.getComponent<clv::ecs::aud::AudioComponent>()->pause();
+	}
+
+	if(clv::input::isKeyPressed(clv::Key::O)){
+		sound.getComponent<clv::ecs::aud::AudioComponent>()->stop();
+	}
+
+	if(clv::input::isKeyPressed(clv::Key::L)){
+		sound.getComponent<clv::ecs::aud::AudioComponent>()->play();
 	}
 }
 

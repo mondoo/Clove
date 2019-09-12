@@ -13,12 +13,12 @@ namespace clv::ecs::aud{
 
 	void AudioComponent::pause(){
 		//TODO error if no sound file attached
-
+		requestedState = StateRequest::pause;
 	}
 
 	void AudioComponent::stop(){
 		//TODO error if no sound file attached
-
+		requestedState = StateRequest::stop;
 	}
 
 	bool AudioComponent::isPlaying(){

@@ -20,9 +20,11 @@ namespace clv::ecs::aud{
 		virtual void update(utl::DeltaTime deltaTime) override;
 
 	private:
-		void startStream(AudioComponent* component, PlaybackMode playback);
-		void pauseStream(PaStream* stream);
-		void stopStream(PaStream* stream);
+		void startSound(AudioComponent* component, PlaybackMode playback);
+		void pauseSound(AudioComponent* component);
+		void stopSound(AudioComponent* component);
+
+		bool isStreamActive(PaStream* stream);
 
 		virtual void handleEntityDestruction(const ComponentTuple& componentTuple) override;
 

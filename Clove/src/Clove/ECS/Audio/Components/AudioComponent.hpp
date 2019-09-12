@@ -11,6 +11,11 @@ namespace clv::ecs::aud{
 		repeat
 	};
 
+	enum class StateRequest{
+		pause,
+		stop
+	};
+
 	class AudioComponent : public Component{
 		friend class AudioSystem;
 
@@ -24,7 +29,10 @@ namespace clv::ecs::aud{
 		PaStream* stream = nullptr;
 
 		uint32 playbackPosition = 0;
+
 		std::optional<PlaybackMode> currentPlaybackMode;
+		std::optional<StateRequest> requestedState;
+
 		bool playing = false;
 
 		//FUNCTIONS

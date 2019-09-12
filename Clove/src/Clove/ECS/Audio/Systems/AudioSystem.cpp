@@ -20,16 +20,34 @@ namespace clv::ecs::aud{
 		for(auto& componentTuple : components){
 			AudioComponent* component = std::get<AudioComponent*>(componentTuple);
 			if(component->currentPlaybackMode){
-				startStream(component, component->currentPlaybackMode.value());
+				startSound(component, component->currentPlaybackMode.value());
 				component->currentPlaybackMode.reset();
+			} else if(component->requestedState){
+				switch(component->requestedState.value()){
+					case StateRequest::pause:
+						pauseSound(component);
+						break;
+
+					case StateRequest::stop:
+						stopSound(component);
+						break;
+
+					default:
+						CLV_ASSERT(false, "{0}: Unhandled state", CLV_FUNCTION_NAME);
+						break;
+				}
+				component->requestedState.reset();
 			}
 		}
 	}
 
-	void AudioSystem::startStream(AudioComponent* component, PlaybackMode playback){
-		if(!component->stream){
+	void AudioSystem::startSound(AudioComponent* component, PlaybackMode playback){
+		if(isStreamActive(component->stream)){
+			return;
+		}
+		
+		if(!component->stream){ //TODO: Handle if current playback mode is different
 			component->playbackPosition = 0;
-			//activeStreamData.file = file;
 
 			PaStreamParameters outputParameters;
 			outputParameters.device = Pa_GetDefaultOutputDevice();
@@ -37,8 +55,6 @@ namespace clv::ecs::aud{
 			outputParameters.channelCount = component->sound.getChannels();
 			outputParameters.suggestedLatency = 0.2f;
 			outputParameters.hostApiSpecificStreamInfo = nullptr;
-
-			//currentPlaybackMode = playback;
 
 			switch(playback){
 				case PlaybackMode::once:
@@ -49,7 +65,6 @@ namespace clv::ecs::aud{
 					break;
 				default:
 					CLV_ASSERT(false, "{0} : Invalid playback mode!", CLV_FUNCTION_NAME);
-					//currentPlaybackMode.reset();
 					break;
 			}
 		}
@@ -58,19 +73,35 @@ namespace clv::ecs::aud{
 		component->playing = true;
 	}
 
-	void AudioSystem::pauseStream(PaStream* stream){
-		PACall(Pa_StopStream(stream));
+	void AudioSystem::pauseSound(AudioComponent* component){
+		if(isStreamActive(component->stream)){
+			PACall(Pa_StopStream(component->stream));
+			component->playing = false;
+		}
 	}
 
-	void AudioSystem::stopStream(PaStream* stream){
-		PACall(Pa_CloseStream(stream));
+	void AudioSystem::stopSound(AudioComponent* component){
+		if(isStreamActive(component->stream)){
+			PACall(Pa_CloseStream(component->stream));
+			component->stream = nullptr;
+			component->playing = false;
+		}
+	}
+
+	bool AudioSystem::isStreamActive(PaStream* stream){
+		if(!stream){
+			return false;
+		}
+
+		PaError error = Pa_IsStreamActive(stream);
+		CLV_ASSERT(error >= 0, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(error));
+		return error > 0;
 	}
 
 	void AudioSystem::handleEntityDestruction(const ComponentTuple& componentTuple){
 		AudioComponent* component = std::get<AudioComponent*>(componentTuple);
 		if(component->isPlaying()){
-			component->playing = false;
-			stopStream(component->stream);
+			stopSound(component);
 		}
 	}
 	
