@@ -19,16 +19,16 @@ namespace clv::ecs::aud{
 	void AudioSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
 			AudioComponent* component = std::get<AudioComponent*>(componentTuple);
-			if(component->currentPlaybackMode){
-				startSound(component, component->currentPlaybackMode.value());
-				component->currentPlaybackMode.reset();
-			} else if(component->requestedState){
-				switch(component->requestedState.value()){
-					case StateRequest::pause:
+			if(component->requestedPlayback){
+				startSound(component, component->requestedPlayback.value());
+				component->requestedPlayback.reset();
+			} else if(component->requestedStopMode){
+				switch(component->requestedStopMode.value()){
+					case StopMode::pause:
 						pauseSound(component);
 						break;
 
-					case StateRequest::stop:
+					case StopMode::stop:
 						stopSound(component);
 						break;
 
@@ -36,17 +36,19 @@ namespace clv::ecs::aud{
 						CLV_ASSERT(false, "{0}: Unhandled state", CLV_FUNCTION_NAME);
 						break;
 				}
-				component->requestedState.reset();
+				component->requestedStopMode.reset();
 			}
 		}
 	}
 
 	void AudioSystem::startSound(AudioComponent* component, PlaybackMode playback){
-		if(isStreamActive(component->stream)){
+		if(component->currentPlayback.has_value() && component->currentPlayback != playback){
+			stopSound(component);
+		} else if(isStreamActive(component->stream)){
 			return;
 		}
 		
-		if(!component->stream){ //TODO: Handle if current playback mode is different
+		if(!component->stream){
 			component->playbackPosition = 0;
 
 			PaStreamParameters outputParameters;
@@ -67,6 +69,8 @@ namespace clv::ecs::aud{
 					CLV_ASSERT(false, "{0} : Invalid playback mode!", CLV_FUNCTION_NAME);
 					break;
 			}
+
+			component->currentPlayback = playback;
 		}
 
 		PACall(Pa_StartStream(component->stream));
@@ -85,6 +89,7 @@ namespace clv::ecs::aud{
 			PACall(Pa_CloseStream(component->stream));
 			component->stream = nullptr;
 			component->playing = false;
+			component->currentPlayback.reset();
 		}
 	}
 

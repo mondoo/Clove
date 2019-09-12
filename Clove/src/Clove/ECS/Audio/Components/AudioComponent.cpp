@@ -8,17 +8,17 @@ namespace clv::ecs::aud{
 
 	void AudioComponent::play(PlaybackMode playback){
 		//TODO error if no sound file attached
-		currentPlaybackMode = playback;
+		requestedPlayback = playback;
 	}
 
 	void AudioComponent::pause(){
 		//TODO error if no sound file attached
-		requestedState = StateRequest::pause;
+		requestedStopMode = StopMode::pause;
 	}
 
 	void AudioComponent::stop(){
 		//TODO error if no sound file attached
-		requestedState = StateRequest::stop;
+		requestedStopMode = StopMode::stop;
 	}
 
 	bool AudioComponent::isPlaying(){
