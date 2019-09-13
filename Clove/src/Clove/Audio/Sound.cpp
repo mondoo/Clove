@@ -2,9 +2,7 @@
 #include "Sound.hpp"
 
 namespace clv::aud{
-	Sound::Sound(){
-		//Still needed? would like to get rid of it
-	}
+	Sound::Sound() = default;
 
 	Sound::Sound(const Sound& other) = default;
 
@@ -20,6 +18,10 @@ namespace clv::aud{
 		: file(filePath.c_str()){
 	}
 
+	bool Sound::isValid() const{
+		return file.refCount() > 0;
+	}
+
 	sf_count_t Sound::seek(sf_count_t frames, int whence){
 		return file.seek(frames, whence);
 	}
@@ -28,15 +30,15 @@ namespace clv::aud{
 		return file.readf(ptr, frames);
 	}
 
-	int32 Sound::getChannels(){
+	int32 Sound::getChannels() const{
 		return file.channels();
 	}
 
-	int32 Sound::getSamplerate(){
+	int32 Sound::getSamplerate() const{
 		return file.samplerate();
 	}
 
-	int32 Sound::getFrames(){
+	int32 Sound::getFrames() const{
 		return file.frames();
 	}
 }

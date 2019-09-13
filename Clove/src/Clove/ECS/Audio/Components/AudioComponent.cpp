@@ -9,25 +9,37 @@ namespace clv::ecs::aud{
 	}
 
 	void AudioComponent::play(PlaybackMode playback){
-		//TODO error if no sound file attached
-		requestedPlayback = playback;
+		if(sound.isValid()){
+			requestedPlayback = playback;
+		} else{
+			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class");
+		}
 	}
 
 	void AudioComponent::pause(){
-		//TODO error if no sound file attached
-		requestedStopMode = StopMode::pause;
+		if(sound.isValid()){
+			requestedStopMode = StopMode::pause;
+		} else{
+			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class");
+		}
 	}
 
 	void AudioComponent::resume(){
-		//TODO error if no sound file attached
-		if(currentPlayback && !isPlaying()){
-			requestedPlayback = currentPlayback;
+		if(sound.isValid()){
+			if(currentPlayback && !isPlaying()){
+				requestedPlayback = currentPlayback;
+			}
+		} else{
+			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class");
 		}
 	}
 
 	void AudioComponent::stop(){
-		//TODO error if no sound file attached
-		requestedStopMode = StopMode::stop;
+		if(sound.isValid()){
+			requestedStopMode = StopMode::stop;
+		} else{
+			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class");
+		}
 	}
 
 	bool AudioComponent::isPlaying(){

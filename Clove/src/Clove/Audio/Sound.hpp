@@ -22,12 +22,14 @@ namespace clv::aud{
 
 		Sound(const std::string& filePath);
 
+		bool isValid() const;
+
 		//TODO: Rename / retype these wrappers
 		sf_count_t seek(sf_count_t frames, int whence);
 		sf_count_t readf(int* ptr, sf_count_t frames);
 
-		int32 getChannels();
-		int32 getSamplerate();
-		int32 getFrames();
+		int32 getChannels() const;
+		int32 getSamplerate() const;
+		int32 getFrames() const;
 	};
 }
