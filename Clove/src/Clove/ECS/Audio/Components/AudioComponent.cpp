@@ -20,7 +20,7 @@ namespace clv::ecs::aud{
 		if(sound.isValid()){
 			requestedPlayback = playback;
 		} else{
-			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class");
+			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
 		}
 	}
 
@@ -28,7 +28,7 @@ namespace clv::ecs::aud{
 		if(sound.isValid()){
 			requestedStopMode = StopMode::pause;
 		} else{
-			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class");
+			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
 		}
 	}
 
@@ -38,7 +38,7 @@ namespace clv::ecs::aud{
 				requestedPlayback = currentPlayback;
 			}
 		} else{
-			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class");
+			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
 		}
 	}
 
@@ -46,7 +46,7 @@ namespace clv::ecs::aud{
 		if(sound.isValid()){
 			requestedStopMode = StopMode::stop;
 		} else{
-			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class");
+			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
 		}
 	}
 
