@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Clove/ECS/Manager.hpp"
+namespace clv::ecs{
+	class Manager;
+}
 
 namespace clv::gfx{
 	class Renderer;

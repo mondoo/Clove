@@ -21,6 +21,8 @@ set(
 		src/Clove/Log.cpp
 		src/Clove/Application.hpp
 		src/Clove/Application.cpp
+		src/Clove/Audio/Sound.hpp
+		src/Clove/Audio/Sound.cpp
 		src/Clove/ECS/Component.hpp
 		src/Clove/ECS/Component.cpp
 		src/Clove/ECS/ECSTypes.hpp
@@ -56,6 +58,10 @@ set(
 		src/Clove/ECS/3D/Systems/RenderSystem.cpp
 		src/Clove/ECS/3D/Systems/TransformSystem.hpp
 		src/Clove/ECS/3D/Systems/TransformSystem.cpp
+		src/Clove/ECS/Audio/Components/AudioComponent.hpp
+		src/Clove/ECS/Audio/Components/AudioComponent.cpp
+		src/Clove/ECS/Audio/Systems/AudioSystem.hpp
+		src/Clove/ECS/Audio/Systems/AudioSystem.cpp
 		src/Clove/Exception/CloveException.hpp
 		src/Clove/Exception/CloveException.cpp
 		src/Clove/Graphics/Bindables/IndexBuffer.hpp
@@ -244,10 +250,14 @@ target_include_directories(
 
 	#Libraries
 	PUBLIC
+		vendor/OBJ-Loader/Source
 	INTERFACE
 		vendor/glm
 		vendor/spdlog/include
 		vendor/Glad/include #would like to remove but the SBO forces it
+		#TODO: Get rid of the lbsndfile paths below (see Sound.hpp)
+		vendor/libsndfile/src
+		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
 	PRIVATE
 		vendor/OBJ-Loader/Source
 )
@@ -269,6 +279,8 @@ target_link_libraries(
 		stb
 		Glad
 		glm
+		sndfile
+		portaudio_static
 )
 
 #Libraries - platform specific

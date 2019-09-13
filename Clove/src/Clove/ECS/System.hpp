@@ -18,6 +18,7 @@ namespace clv::ecs{
 
 	template<typename... ComponentTypes>
 	class System : public SystemBase{
+	protected:
 		using ComponentTuple = std::tuple<std::add_pointer_t<ComponentTypes>...>;
 		using EntityIDToIndexMap = std::unordered_map<EntityID, size_t, std::hash<EntityID>, std::equal_to<EntityID>/*, PooledAllocator*/>;
 
@@ -41,6 +42,10 @@ namespace clv::ecs{
 		virtual void onEntityDestroyed(EntityID entity) override final;
 
 	private:
+		//TODO: Would prefer these to be pure virtual but optionally overriden
+		virtual void handleEntityCreation(const ComponentTuple& componentTuple){}
+		virtual void handleEntityDestruction(const ComponentTuple& componentTuple){}
+
 		template<size_t index, typename ComponentType, typename... ComponentArgs>
 		bool proccessEntityComponent(ComponentID componentID, Component* component, ComponentTuple& tupleToFill);
 		template<size_t index>

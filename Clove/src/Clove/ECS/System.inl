@@ -31,6 +31,7 @@ namespace clv::ecs{
 				if(matchingComps == sizeof...(ComponentTypes)){
 					components.emplace_back(comptuple);
 					entityIdToIndexMap[entity] = components.size() - 1;
+					handleEntityCreation(comptuple);
 					break;
 				}
 			}
@@ -41,15 +42,17 @@ namespace clv::ecs{
 	void System<ComponentTypes...>::onEntityDestroyed(EntityID entity){
 		const auto findIt = entityIdToIndexMap.find(entity);
 		if(findIt != entityIdToIndexMap.end()){
+			handleEntityDestruction(components[findIt->second]);
+
 			components[findIt->second] = std::move(components.back());
 			components.pop_back();
 
 			if(findIt->second < components.size()){
-				const auto& movedComponent = std::get<0>(components[findIt->second]);
-				auto movedTupleIt = entityIdToIndexMap.find(movedComponent->entityID);
+				const auto& movedComponent = std::get<0>(components[findIt->second]); //We just need any component to do the look up
+				auto movedTupleIdIndex = entityIdToIndexMap.find(movedComponent->entityID);
 
-				CLV_ASSERT(movedTupleIt != entityIdToIndexMap.end(), "Entity ID not tracked!");
-				movedTupleIt->second = findIt->second;
+				CLV_ASSERT(movedTupleIdIndex != entityIdToIndexMap.end(), "Entity ID not tracked!");
+				movedTupleIdIndex->second = findIt->second;
 			}
 		}
 	}

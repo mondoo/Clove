@@ -7,3 +7,11 @@
 [submodule "Clove/vendor/OBJ-Loader"]
 	path = Clove/vendor/OBJ-Loader
 	url = https://github.com/Bly7/OBJ-Loader.git
+[submodule "Clove/vendor/portaudio"]
+	path = Clove/vendor/portaudio
+	url = https://git.assembla.com/portaudio.git
+	ignore = dirty
+[submodule "Clove/vendor/libsndfile"]
+	path = Clove/vendor/libsndfile
+	url = https://github.com/erikd/libsndfile.git
+	ignore = dirty

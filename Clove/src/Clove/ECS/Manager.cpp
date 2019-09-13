@@ -7,6 +7,7 @@
 #include "Clove/ECS/3D/Systems/TransformSystem.hpp"
 #include "Clove/ECS/3D/Systems/LightSystem.hpp"
 #include "Clove/ECS/3D/Systems/CameraSystem.hpp"
+#include "Clove/ECS/Audio/Systems/AudioSystem.hpp"
 
 namespace clv::ecs{
 	EntityID Manager::nextID = 0;
@@ -19,6 +20,7 @@ namespace clv::ecs{
 		systems.emplace_back(std::make_unique<d3::TransformSystem>());
 		systems.emplace_back(std::make_unique<d3::LightSystem>());
 		systems.emplace_back(std::make_unique<d3::CameraSystem>());
+		systems.emplace_back(std::make_unique<aud::AudioSystem>());
 	}
 
 	Manager::~Manager() = default;
@@ -34,10 +36,10 @@ namespace clv::ecs{
 			return;
 		}
 
-		components.erase(ID);
 		for(const auto& system : systems){
 			system->onEntityDestroyed(ID);
 		}
+		components.erase(ID);
 	}
 
 	Entity Manager::getEntity(EntityID ID){
