@@ -3,7 +3,8 @@
 #include "Clove/ECS/Component.hpp"
 #include "Clove/Audio/Sound.hpp"
 
-#include <portaudio.h> //TODO: cpp
+//PortAudio type def (see portaudio.h)
+typedef void PaStream;
 
 namespace clv::ecs::aud{
 	enum class PlaybackMode{

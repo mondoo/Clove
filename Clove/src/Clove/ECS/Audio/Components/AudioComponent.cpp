@@ -1,6 +1,8 @@
 #include "clvpch.hpp"
 #include "AudioComponent.hpp"
 
+#include <portaudio.h>
+
 namespace clv::ecs::aud{
 	void AudioComponent::setSound(const clv::aud::Sound& sound){
 		this->sound = sound;

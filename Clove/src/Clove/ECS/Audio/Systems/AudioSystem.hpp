@@ -3,8 +3,11 @@
 #include "Clove/ECS/System.hpp"
 #include "Clove/ECS/Audio/Components/AudioComponent.hpp"
 
-//TODO: cpp
-#include <portaudio.h>
+//PortAudio type defas (see portaudio.h)
+typedef void PaStream;
+typedef unsigned long PaStreamCallbackFlags;
+
+struct PaStreamCallbackTimeInfo;
 
 namespace clv::ecs::aud{
 	class AudioSystem : public System<AudioComponent>{

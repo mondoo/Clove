@@ -258,7 +258,6 @@ target_include_directories(
 		#temp while testing audio
 		vendor/libsndfile/src
 		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
-		vendor/portaudio/include
 	PRIVATE
 		vendor/OBJ-Loader/Source
 )

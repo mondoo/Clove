@@ -1,7 +1,7 @@
 #include "clvpch.hpp"
 #include "AudioSystem.hpp"
 
-//#include <portaudio.h>
+#include <portaudio.h>
 
 #define PACall(x) { auto err = x; CLV_ASSERT(err == paNoError, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(err)); }
 
