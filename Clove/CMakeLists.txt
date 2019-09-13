@@ -255,7 +255,7 @@ target_include_directories(
 		vendor/glm
 		vendor/spdlog/include
 		vendor/Glad/include #would like to remove but the SBO forces it
-		#temp while testing audio
+		#TODO: Get rid of the lbsndfile paths below (see Sound.hpp)
 		vendor/libsndfile/src
 		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
 	PRIVATE

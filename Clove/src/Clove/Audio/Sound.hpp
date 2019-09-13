@@ -8,6 +8,7 @@ namespace clv::aud{
 
 		//VARIABLES
 	private:
+		//TODO: Rewrite this to use the raw ptr? just to remove the header dependency
 		SndfileHandle file;
 
 		//FUNCTIONS
