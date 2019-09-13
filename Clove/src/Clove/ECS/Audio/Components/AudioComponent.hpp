@@ -38,7 +38,12 @@ namespace clv::ecs::aud{
 
 		//FUNCTIONS
 	public:
-		//TODO: Ctors
+		AudioComponent();
+		AudioComponent(const AudioComponent& other) = delete;
+		AudioComponent(AudioComponent&& other);
+		AudioComponent& operator=(const AudioComponent& other) = delete;
+		AudioComponent& operator=(AudioComponent&& other);
+		virtual ~AudioComponent();
 
 		void setSound(const clv::aud::Sound& sound); //TODO: make val?
 

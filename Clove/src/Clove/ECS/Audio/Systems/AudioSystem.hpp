@@ -16,8 +16,11 @@ namespace clv::ecs::aud{
 
 		//FUNCTIONS
 	public:
-		//TODO: others
 		AudioSystem();
+		AudioSystem(const AudioSystem& other) = delete;
+		AudioSystem(AudioSystem&& other) noexcept;
+		AudioSystem& operator=(const AudioSystem& other) = delete;
+		AudioSystem& operator=(AudioSystem&& other) noexcept;
 		~AudioSystem();
 
 		virtual void update(utl::DeltaTime deltaTime) override;

@@ -11,6 +11,10 @@ namespace clv::ecs::aud{
 		PACall(Pa_Initialize());
 	}
 
+	AudioSystem::AudioSystem(AudioSystem&& other) noexcept = default;
+
+	AudioSystem& AudioSystem::operator=(AudioSystem&& other) noexcept = default;
+
 	AudioSystem::~AudioSystem(){
 		CLV_LOG_TRACE("Portaudio shutdown");
 		PACall(Pa_Terminate());

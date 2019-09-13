@@ -4,6 +4,14 @@
 #include <portaudio.h>
 
 namespace clv::ecs::aud{
+	AudioComponent::AudioComponent() = default;
+
+	AudioComponent::AudioComponent(AudioComponent&& other) = default;
+
+	AudioComponent& AudioComponent::operator=(AudioComponent&& other) = default;
+
+	AudioComponent::~AudioComponent() = default;
+
 	void AudioComponent::setSound(const clv::aud::Sound& sound){
 		this->sound = sound;
 	}
