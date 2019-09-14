@@ -24,8 +24,8 @@ if(MSVC)
 else()
 	set(debug_flags 		"-O0 -Wall -Wextra ${debug_flags}")
 	set(development_flags 	"-O0 -Wall ${development_flags}")
-	set(profiling_flags 	"-O3 -w ${profiling_flags}")
-	set(release_flags 		"-O3 -w ${release_flags}")
+	set(profiling_flags 	"-DNDEBUG -O3 -w ${profiling_flags}")
+	set(release_flags 		"-DNDEBUG -O3 -w ${release_flags}")
 endif()
 
 #Set custom build types
