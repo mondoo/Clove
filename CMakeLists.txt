@@ -5,10 +5,6 @@ project(Clove-Engine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set(EngineFolder "Clove")
-set(DependencyFolder "Clove/Dependencies")
-
 #Build configurations
 if(CMAKE_CONFIGURATION_TYPES)
 	#Set custom build types
@@ -45,6 +41,10 @@ else()
 endif()
 
 #Clove dependencies
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(EngineFolder "Clove")
+set(DependencyFolder "Clove/Dependencies")
+
 #-dxerr
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	add_subdirectory(Clove/vendor/dxerr)
@@ -56,13 +56,11 @@ add_subdirectory(Clove/vendor/Glad)
 set_target_properties(Glad PROPERTIES FOLDER ${DependencyFolder})
 
 #-glm
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared library" FORCE)
-set(GLM_TEST_ENABLE  OFF CACHE BOOL "Build unit tests" FORCE)
 add_subdirectory(Clove/vendor/glm)
-set_target_properties(glm_static PROPERTIES FOLDER ${DependencyFolder})
+set_target_properties(glm_static PROPERTIES FOLDER ${DependencyFolder}/glm)
+set_target_properties(uninstall PROPERTIES FOLDER ${DependencyFolder}/glm)
 
 #-spdlog
-set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
 add_subdirectory(Clove/vendor/spdlog)
 set_target_properties(spdlog PROPERTIES FOLDER ${DependencyFolder})
 
@@ -71,18 +69,10 @@ add_subdirectory(Clove/vendor/stb)
 set_target_properties(stb PROPERTIES FOLDER ${DependencyFolder})
 
 #-portaudio
-set(PA_BUILD_SHARED OFF CACHE BOOL "Build shared/dynamic library")
 add_subdirectory(Clove/vendor/portaudio)
 set_target_properties(portaudio_static PROPERTIES FOLDER ${DependencyFolder})
 
 #-libsndfile
-set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
-set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
-#set(BUILD_TESTING OFF CACHE BOOL)
-set(ENABLE_CPACK ON CACHE BOOL "Enable CPack support")
-if (MSVC OR MINGW)
-	set (ENABLE_STATIC_RUNTIME ON CACHE BOOL "Enable static runtime")
-endif()
 add_subdirectory(Clove/vendor/libsndfile)
 set_target_properties(sndfile PROPERTIES FOLDER ${DependencyFolder})
 
