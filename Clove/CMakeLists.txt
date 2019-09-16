@@ -122,7 +122,7 @@ set(
 		src/Clove/Platform/Window.hpp
 		src/Clove/Platform/Window.cpp
 		src/Clove/Profiling/Timer.hpp
-		src/Clove/Profiling/Timer.hpp
+		src/Clove/Profiling/Timer.cpp
 		src/Clove/Utils/Delegate.hpp
 		src/Clove/Utils/Delegate.inl
 		src/Clove/Utils/DeltaTime.hpp
