@@ -46,7 +46,7 @@ namespace clv::ecs::d2{
 	RenderSystem::~RenderSystem() = default;
 
 	void RenderSystem::update(utl::DeltaTime deltaTime){
-		gfx::Renderer::setSpriteMesh(spriteMesh);
+		gfx::Renderer::setSpriteMesh(spriteMesh); //TODO: update this to a Renderer2D so we don't need to set a quad
 
 		for(auto& componentTuple : components){
 			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);

@@ -9,10 +9,12 @@ TODO: put inside utility???
 namespace clv::ui{
 	class Font{
 		//VARIABLES
+	private:
 
 		//FUNCTIONS
 	public:
 		//TODO: others
+		Font();
 
 		Font(const std::string& filePath);
 	};
