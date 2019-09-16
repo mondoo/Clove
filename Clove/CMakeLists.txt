@@ -419,6 +419,12 @@ add_custom_command(
                 ${GLShaders}
                 ${CMAKE_BINARY_DIR}/Sandbox
 )
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/Clove/res
+                ${CMAKE_BINARY_DIR}/Sandbox/res
+)
 
 if(MSVC)
 	add_custom_command(
