@@ -126,7 +126,7 @@ set(
 		src/Clove/Platform/Window.hpp
 		src/Clove/Platform/Window.cpp
 		src/Clove/Profiling/Timer.hpp
-		src/Clove/Profiling/Timer.hpp
+		src/Clove/Profiling/Timer.cpp
 		src/Clove/UI/Font.hpp
 		src/Clove/UI/Font.cpp
 		src/Clove/Utils/Delegate.hpp

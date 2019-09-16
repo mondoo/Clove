@@ -36,7 +36,7 @@ namespace clv::gfx{
 		}
 
 		for(auto& [key, val] : material->shaderData){
-			if(!shaderData[key]){
+			if(auto iter = shaderData.find(key); iter == shaderData.end()){
 				val->bind();
 			}
 		}
