@@ -62,6 +62,10 @@ set(
 		src/Clove/ECS/Audio/Components/AudioComponent.cpp
 		src/Clove/ECS/Audio/Systems/AudioSystem.hpp
 		src/Clove/ECS/Audio/Systems/AudioSystem.cpp
+		src/Clove/ECS/UI/Components/FontComponent.hpp
+		src/Clove/ECS/UI/Components/FontComponent.cpp
+		src/Clove/ECS/UI/Systems/FontSystem.hpp
+		src/Clove/ECS/UI/Systems/FontSystem.cpp
 		src/Clove/Exception/CloveException.hpp
 		src/Clove/Exception/CloveException.cpp
 		src/Clove/Graphics/Bindables/IndexBuffer.hpp
@@ -110,7 +114,7 @@ set(
 		src/Clove/Input/Mouse.hpp
 		src/Clove/Input/Mouse.cpp
 		src/Clove/Input/MouseButtonCodes.hpp
-		src/Clove/Maths/glmWrappers.hpp
+		src/Clove/Maths/glmWrappers
 		src/Clove/Maths/Maths.hpp
 		src/Clove/Maths/Maths.inl
 		src/Clove/Maths/MathsHelpers.hpp
@@ -123,6 +127,8 @@ set(
 		src/Clove/Platform/Window.cpp
 		src/Clove/Profiling/Timer.hpp
 		src/Clove/Profiling/Timer.hpp
+		src/Clove/UI/Font.hpp
+		src/Clove/UI/Font.cpp
 		src/Clove/Utils/Delegate.hpp
 		src/Clove/Utils/Delegate.inl
 		src/Clove/Utils/DeltaTime.hpp
