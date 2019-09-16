@@ -7,14 +7,14 @@
 
 
 //Temp
-#include "Clove/Graphics/Sprite.hpp"
+//#include "Clove/Graphics/Sprite.hpp"
 
 namespace clv::ecs::ui{
 	class FontSystem : public System<FontComponent, d2::TransformComponent>{
 		//VARIABLES
 	public:
 		//TEMP:
-		std::shared_ptr<gfx::Sprite> sprite;
+		//std::shared_ptr<gfx::Sprite> sprite;
 
 		//FUNCTIONS
 	public:
