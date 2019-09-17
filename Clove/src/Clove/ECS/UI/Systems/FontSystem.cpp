@@ -49,14 +49,29 @@ namespace clv::ecs::ui{
 				-convert it to a proper system
 			*/
 
+			//image dimensions
+			const float imageSize = 512.0f;
+
+			//106
+
+			const float x = 0.0f;
+			const float y = 0.0f;
+			const float width = 78.0f;
+			const float height = 80.0f;
+
+			const math::Vector2f topLeft = { x / imageSize, y / imageSize };
+			const math::Vector2f topRight = { (x + width) / imageSize, y / imageSize };
+			const math::Vector2f bottomLeft = { x / imageSize, (y + height) / imageSize };
+			const math::Vector2f bottomRight = { (x + width) / imageSize, (y + height) / imageSize };
+
 			//VB
 			gfx::VertexLayout layout;
 			layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
 			gfx::VertexBufferData bufferData(std::move(layout));
-			bufferData.emplaceBack(math::Vector2f{ -1.0f, -1.0f }, math::Vector2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(math::Vector2f{ 1.0f, -1.0f }, math::Vector2f{ 1.0f, 0.0f });
-			bufferData.emplaceBack(math::Vector2f{ -1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
-			bufferData.emplaceBack(math::Vector2f{ 1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(math::Vector2f{ -1.0f, -1.0f }, bottomLeft); //Bottom left
+			bufferData.emplaceBack(math::Vector2f{ 1.0f, -1.0f }, bottomRight); //Bottom right
+			bufferData.emplaceBack(math::Vector2f{ -1.0f,  1.0f }, topLeft); //Top left
+			bufferData.emplaceBack(math::Vector2f{ 1.0f,  1.0f }, topRight); //Top right
 
 			//IB
 			std::vector<uint32> indices = {
@@ -65,7 +80,7 @@ namespace clv::ecs::ui{
 			};
 
 			auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
-			material->setAlbedoTexture("res/Textures/Zombie-32x32.png");
+			material->setAlbedoTexture("res/Fonts/fnt/arial.png");
 			material->setData(gfx::BBP_2DData, spriteProj * model, gfx::ShaderType::Vertex);
 
 			auto instance = material->createInstance();
