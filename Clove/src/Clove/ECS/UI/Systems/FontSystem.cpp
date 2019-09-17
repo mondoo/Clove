@@ -8,8 +8,9 @@
 #include "Clove/Graphics/VertexLayout.hpp"
 #include "Clove/Graphics/Mesh.hpp"
 #include "Clove/Graphics/Material.hpp"
-
+#include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/Bindables/Texture.hpp"
 
 namespace clv::ecs::ui{
 	FontSystem::FontSystem(){
@@ -37,22 +38,15 @@ namespace clv::ecs::ui{
 
 			//gfx::Renderer::submitSprite(sprite);
 
-			/*
-			I'll need to construct the vertex buffer in here by the looks of things.
-
-			To get an MVP of font rendering set up I need to put in custom texture coords
-			-Might need to refactor the renderer into a 2D (if not now then at least before this gets checked in)
-			
-			TODO:
-				-set it up as a mesh for now (just make one every frame or something)
-				-prove out the font rendering basics
-				-convert it to a proper system
-			*/
-
 			//image dimensions
 			const float imageSize = 512.0f;
 
 			//106
+
+			/*
+			 TODO:
+			 	-Now need to render strings of text
+			 */
 
 			const float x = 0.0f;
 			const float y = 0.0f;
@@ -80,7 +74,8 @@ namespace clv::ecs::ui{
 			};
 
 			auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
-			material->setAlbedoTexture("res/Fonts/fnt/arial.png");
+			//We do not want to flip the texture
+			material->setAlbedoTexture(gfx::BindableFactory::createTexture("res/Fonts/fnt/arial.png", gfx::TBP_Albedo, false));
 			material->setData(gfx::BBP_2DData, spriteProj * model, gfx::ShaderType::Vertex);
 
 			auto instance = material->createInstance();

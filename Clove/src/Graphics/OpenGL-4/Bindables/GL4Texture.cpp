@@ -13,10 +13,10 @@ namespace clv::gfx{
 		glDeleteTextures(1, &rendererID);
 	}
 
-	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint)
+	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint, bool flipOnLoad)
 		: filePath(filePath)
 		, bindingPoint(bindingPoint){
-		stbi_set_flip_vertically_on_load(1); //Opengl expects our texture to start on the bottom left
+		stbi_set_flip_vertically_on_load(flipOnLoad); //Opengl expects our texture to start on the bottom left
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
 		glGenTextures(1, &rendererID);

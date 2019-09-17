@@ -26,7 +26,7 @@ namespace clv::gfx{
 		GL4Texture& operator=(GL4Texture&& other) noexcept;
 		virtual ~GL4Texture();
 
-		GL4Texture(const std::string& filePath, uint32 bindingPoint);
+		GL4Texture(const std::string& filePath, uint32 bindingPoint, bool flipOnLoad = true);
 		GL4Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint);
 
 		virtual void bind() override;

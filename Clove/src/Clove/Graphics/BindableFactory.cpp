@@ -64,10 +64,10 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::shared_ptr<Texture> createTexture(const std::string& filePath, uint32 bindingPoint){
+	std::shared_ptr<Texture> createTexture(const std::string& filePath, uint32 bindingPoint, bool flipOnLoad){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
-				return std::make_shared<GL4Texture>(filePath, bindingPoint);
+				return std::make_shared<GL4Texture>(filePath, bindingPoint, flipOnLoad);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
