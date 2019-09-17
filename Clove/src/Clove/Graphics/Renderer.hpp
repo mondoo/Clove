@@ -74,8 +74,6 @@ namespace clv::gfx{
 		static PointLightShaderData currentLightInfo;
 
 		static std::queue<std::shared_ptr<Mesh>> meshRenderQueue;
-		static std::queue<std::shared_ptr<Sprite>> spriteRenderQueue;
-		static std::shared_ptr<Mesh> spriteMesh;
 
 		static CameraRenderData cameraSubmissionData;
 
@@ -91,10 +89,7 @@ namespace clv::gfx{
 		static void setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget);
 		static void removeRenderTarget();
 
-		static void setSpriteMesh(const std::shared_ptr<Mesh>& mesh);
-
 		static void submitMesh(const std::shared_ptr<Mesh>& mesh);
-		static void submitSprite(const std::shared_ptr<Sprite>& sprite);
 		static void setCamera(const CameraRenderData& data);
 		static void submitPointLight(const PointLightData& data);
 	};

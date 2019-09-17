@@ -24,8 +24,6 @@ namespace clv::gfx{
 	PointLightShaderData Renderer::currentLightInfo;
 
 	std::queue<std::shared_ptr<Mesh>> Renderer::meshRenderQueue;
-	std::queue<std::shared_ptr<Sprite>> Renderer::spriteRenderQueue;
-	std::shared_ptr<Mesh> Renderer::spriteMesh;
 
 	CameraRenderData Renderer::cameraSubmissionData;
 
@@ -76,18 +74,6 @@ namespace clv::gfx{
 		if(renderTarget){
 			RenderCommand::resetRenderTarget();
 		}
-
-		//SPRITE
-		RenderCommand::setDepthBuffer(false);
-
-		spriteMesh->bind();
-
-		while(!spriteRenderQueue.empty()){
-			auto& sprite = spriteRenderQueue.front();
-			sprite->bind();
-			RenderCommand::drawIndexed(spriteMesh->getIndexCount());
-			spriteRenderQueue.pop();
-		}
 	}
 
 	void Renderer::setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget){
@@ -99,16 +85,8 @@ namespace clv::gfx{
 		RenderCommand::resetRenderTarget();
 	}
 
-	void Renderer::setSpriteMesh(const std::shared_ptr<Mesh>& mesh){
-		spriteMesh = mesh;
-	}
-
 	void Renderer::submitMesh(const std::shared_ptr<Mesh>& mesh){
 		meshRenderQueue.push(mesh);
-	}
-
-	void Renderer::submitSprite(const std::shared_ptr<Sprite>& sprite){
-		spriteRenderQueue.push(sprite);
 	}
 
 	void Renderer::setCamera(const CameraRenderData& data){

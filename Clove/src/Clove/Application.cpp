@@ -9,6 +9,7 @@
 #include "Clove/ECS/Manager.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/Renderer2D.hpp"
 #include "Clove/Graphics/RenderCommand.hpp"
 
 namespace clv{
@@ -26,6 +27,7 @@ namespace clv{
 		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
 		gfx::Renderer::initialise();
+		gfx::Renderer2D::initialise();
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
@@ -55,10 +57,12 @@ namespace clv{
 			gfx::RenderCommand::clear();
 
 			gfx::Renderer::beginScene();
+			gfx::Renderer2D::beginScene();
 
 			ecsManager->update(deltaSeonds.count());
 
 			gfx::Renderer::endScene();
+			gfx::Renderer2D::endScene();
 
 			window->endFrame();
 		}
