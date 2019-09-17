@@ -8,7 +8,7 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		std::shared_ptr<Texture> texture;
-		std::shared_ptr<ShaderBufferObject<math::Matrix4f>> modelData;
+		math::Matrix4f modelData;
 
 		//FUNCTIONS
 	public:
@@ -22,11 +22,9 @@ namespace clv::gfx{
 		Sprite(const std::string& pathToTexture);
 		Sprite(std::shared_ptr<Texture> texture);
 
-		void bind();
+		const std::shared_ptr<Texture>& getTexture() const;
 
 		void setModelData(const math::Matrix4f& modelData);
-
-	private:
-		void initialise();
+		const math::Matrix4f& getModelData() const;
 	};
 }

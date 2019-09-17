@@ -43,8 +43,11 @@ namespace clv::gfx {
 
 		while(!renderQueue.empty()){
 			auto& sprite = renderQueue.front();
-			sprite->bind();
+
+			meshMaterial->setAlbedoTexture(sprite->getTexture());
+			meshMaterial->setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
 			RenderCommand::drawIndexed(renderMesh->getIndexCount());
+
 			renderQueue.pop();
 		}
 	}
