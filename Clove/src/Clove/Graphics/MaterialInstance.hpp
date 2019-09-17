@@ -32,18 +32,8 @@ namespace clv::gfx{
 		const ShaderReflectionData& getReflectionData() const;
 		const std::shared_ptr<Shader>& getShader() const;
 
-		//Temp: straight up wrapper
-		//TODO: inl
-		template<typename T>
-		void setData(BufferBindingPoint bindingPoint, T&& data, gfx::ShaderType shaderType){
-			if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
-				if(auto sbo = std::dynamic_pointer_cast<ShaderBufferObject<T>>(iter->second)){
-					sbo->update(std::forward<T>(data));
-					return;
-				}
-			}
-			shaderData[bindingPoint] = BindableFactory::createShaderBufferObject<T>(shaderType, bindingPoint, std::forward<T>(data));
-		}
+		template<typename DataType>
+		void setData(BufferBindingPoint bindingPoint, DataType&& data, gfx::ShaderType shaderType);
 
 		void setAlbedoTexture(const std::string& path);
 		void setAlbedoTexture(const std::shared_ptr<Texture>& texture);
@@ -52,3 +42,5 @@ namespace clv::gfx{
 		void setSpecularTexture(const std::shared_ptr<Texture>& texture);
 	};
 }
+
+#include "MaterialInstance.inl"

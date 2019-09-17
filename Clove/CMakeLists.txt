@@ -82,9 +82,10 @@ set(
 		src/Clove/Graphics/Context.cpp
 		src/Clove/Graphics/GraphicsTypes.hpp
 		src/Clove/Graphics/Material.hpp
-		src/Clove/Graphics/Material.cpp
 		src/Clove/Graphics/Material.inl
+		src/Clove/Graphics/Material.cpp
 		src/Clove/Graphics/MaterialInstance.hpp
+		src/Clove/Graphics/MaterialInstance.inl
 		src/Clove/Graphics/MaterialInstance.cpp
 		src/Clove/Graphics/Mesh.hpp
 		src/Clove/Graphics/Mesh.cpp
