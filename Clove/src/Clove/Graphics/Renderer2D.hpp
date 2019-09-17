@@ -11,7 +11,6 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		static std::shared_ptr<gfx::Mesh> renderMesh;
-		static std::shared_ptr<Material> meshMaterial;
 
 		static std::queue<std::shared_ptr<Sprite>> renderQueue;
 

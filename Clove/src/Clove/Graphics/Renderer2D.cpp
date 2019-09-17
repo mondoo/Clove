@@ -8,7 +8,6 @@
 
 namespace clv::gfx {
 	std::shared_ptr<gfx::Mesh> Renderer2D::renderMesh;
-	std::shared_ptr<Material> Renderer2D::meshMaterial;
 
 	std::queue<std::shared_ptr<Sprite>> Renderer2D::renderQueue;
 
@@ -28,7 +27,7 @@ namespace clv::gfx {
 			3, 2, 0
 		};
 
-		meshMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
+		auto meshMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
 		renderMesh = std::make_shared<gfx::Mesh>(bufferData, indices, meshMaterial->createInstance());
 	}
 
@@ -39,14 +38,14 @@ namespace clv::gfx {
 	void Renderer2D::endScene() {
 		RenderCommand::setDepthBuffer(false);
 
-		renderMesh->bind();
-
 		while(!renderQueue.empty()){
 			auto& sprite = renderQueue.front();
 
-			meshMaterial->setAlbedoTexture(sprite->getTexture());
-			meshMaterial->setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
-			meshMaterial->bind();
+			auto& renderMeshMaterial = renderMesh->getMaterialInstance();
+			renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
+			renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
+			renderMesh->bind();
+
 			RenderCommand::drawIndexed(renderMesh->getIndexCount());
 
 			renderQueue.pop();

@@ -33,8 +33,6 @@ namespace clv::gfx{
 
 		Material(ShaderStyle shaderStyle);
 
-		void bind();
-
 		MaterialInstance createInstance();
 
 		const ShaderReflectionData& getReflectionData() const;

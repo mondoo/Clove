@@ -45,7 +45,7 @@ namespace clv::gfx{
 			val->bind();
 		}
 
-		material->bind();
+		material->shader->bind();
 	}
 
 	const ShaderReflectionData& MaterialInstance::getReflectionData() const{

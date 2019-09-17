@@ -27,10 +27,6 @@ namespace clv::gfx{
 		reflectionData = shader->getReflectionData();
 	}
 
-	void Material::bind(){
-		shader->bind();
-	}
-
 	MaterialInstance Material::createInstance(){
 		return MaterialInstance{ shared_from_this() };
 	}
