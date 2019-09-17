@@ -94,6 +94,8 @@ set(
 		src/Clove/Graphics/RenderCommand.cpp
 		src/Clove/Graphics/Renderer.hpp
 		src/Clove/Graphics/Renderer.cpp
+		src/Clove/Graphics/Renderer2D.hpp
+		src/Clove/Graphics/Renderer2D.cpp
 		src/Clove/Graphics/RenderTarget.hpp
 		src/Clove/Graphics/RenderTarget.cpp
 		src/Clove/Graphics/Sprite.hpp
