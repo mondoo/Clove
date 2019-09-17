@@ -5,16 +5,10 @@
 #include "Clove/ECS/2D/Components/TransformComponent.hpp"
 #include "Clove/ECS/2D/Components/RenderableComponent.hpp"
 
-namespace clv::gfx{
-	class Mesh;
-}
-
 namespace clv::ecs::d2{
 	class RenderSystem : public System<TransformComponent, RenderableComponent>{
 		//VARIABLES
 	private:
-		std::shared_ptr<gfx::Mesh> spriteMesh;
-		
 		math::Matrix4f spriteProj;
 
 		//FUNCTIONS

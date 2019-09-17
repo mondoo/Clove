@@ -17,24 +17,21 @@ namespace clv::gfx{
 
 	Sprite::Sprite(const std::string& pathToTexture){
 		texture = BindableFactory::createTexture(pathToTexture, TBP_Albedo);
-		initialise();
 	}
 
 	Sprite::Sprite(std::shared_ptr<Texture> texture)
 		: texture(std::move(texture)){
-		initialise();
 	}
 
-	void Sprite::bind(){
-		texture->bind();
-		modelData->bind();
+	const std::shared_ptr<Texture> &Sprite::getTexture() const {
+		return texture;
 	}
 
 	void Sprite::setModelData(const math::Matrix4f& modelData){
-		this->modelData->update(modelData);
+		this->modelData = modelData;
 	}
 
-	void Sprite::initialise(){
-		modelData = BindableFactory::createShaderBufferObject<math::Matrix4f>(ShaderType::Vertex, BBP_2DData);
+	const math::Matrix4f &Sprite::getModelData() const {
+		return modelData;
 	}
 }
