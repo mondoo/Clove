@@ -46,6 +46,7 @@ namespace clv::gfx {
 
 			meshMaterial->setAlbedoTexture(sprite->getTexture());
 			meshMaterial->setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
+			meshMaterial->bind();
 			RenderCommand::drawIndexed(renderMesh->getIndexCount());
 
 			renderQueue.pop();
