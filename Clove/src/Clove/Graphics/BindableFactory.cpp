@@ -71,7 +71,7 @@ namespace clv::gfx::BindableFactory{
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_shared<DX11Texture>(filePath, bindingPoint);
+				return std::make_shared<DX11Texture>(filePath, bindingPoint, flipOnLoad);
 			#endif
 
 			default:
