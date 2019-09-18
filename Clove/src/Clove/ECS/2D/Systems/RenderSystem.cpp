@@ -1,37 +1,14 @@
 #include "clvpch.hpp"
 #include "RenderSystem.hpp"
 
-#include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Graphics/VertexLayout.hpp"
-#include "Clove/Graphics/Mesh.hpp"
+#include "Clove/Graphics/Renderer2D.hpp"
 #include "Clove/Graphics/Sprite.hpp"
-#include "Clove/Graphics/Material.hpp"
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
 
-#include "Clove/Graphics/Material.hpp"
-#include "Clove/Graphics/MaterialInstance.hpp"
 
 namespace clv::ecs::d2{
 	RenderSystem::RenderSystem(){
-		//VB
-		gfx::VertexLayout layout;
-		layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
-		gfx::VertexBufferData bufferData(std::move(layout));
-		bufferData.emplaceBack(math::Vector2f{ -1.0f, -1.0f }, math::Vector2f{ 0.0f, 0.0f });
-		bufferData.emplaceBack(math::Vector2f{ 1.0f, -1.0f }, math::Vector2f{ 1.0f, 0.0f });
-		bufferData.emplaceBack(math::Vector2f{ -1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
-		bufferData.emplaceBack(math::Vector2f{ 1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
-
-		//IB
-		std::vector<uint32> indices = {
-			1, 3, 0,
-			3, 2, 0
-		};
-		
-		auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
-		spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, material->createInstance());
-
 		//Proj
 		const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;
 		const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
@@ -46,8 +23,6 @@ namespace clv::ecs::d2{
 	RenderSystem::~RenderSystem() = default;
 
 	void RenderSystem::update(utl::DeltaTime deltaTime){
-		gfx::Renderer::setSpriteMesh(spriteMesh); //TODO: update this to a Renderer2D so we don't need to set a quad
-
 		for(auto& componentTuple : components){
 			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
 			RenderableComponent* renderable = std::get<RenderableComponent*>(componentTuple);
@@ -55,7 +30,7 @@ namespace clv::ecs::d2{
 			const math::Matrix4f modelData = transform->getWorldTransformMatrix();
 			renderable->sprite->setModelData(spriteProj * modelData);
 
-			gfx::Renderer::submitSprite(renderable->sprite);
+			gfx::Renderer2D::submitSprite(renderable->sprite);
 		}
 	}
 }

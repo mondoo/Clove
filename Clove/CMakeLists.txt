@@ -86,9 +86,10 @@ set(
 		src/Clove/Graphics/Context.cpp
 		src/Clove/Graphics/GraphicsTypes.hpp
 		src/Clove/Graphics/Material.hpp
-		src/Clove/Graphics/Material.cpp
 		src/Clove/Graphics/Material.inl
+		src/Clove/Graphics/Material.cpp
 		src/Clove/Graphics/MaterialInstance.hpp
+		src/Clove/Graphics/MaterialInstance.inl
 		src/Clove/Graphics/MaterialInstance.cpp
 		src/Clove/Graphics/Mesh.hpp
 		src/Clove/Graphics/Mesh.cpp
@@ -98,6 +99,8 @@ set(
 		src/Clove/Graphics/RenderCommand.cpp
 		src/Clove/Graphics/Renderer.hpp
 		src/Clove/Graphics/Renderer.cpp
+		src/Clove/Graphics/Renderer2D.hpp
+		src/Clove/Graphics/Renderer2D.cpp
 		src/Clove/Graphics/RenderTarget.hpp
 		src/Clove/Graphics/RenderTarget.cpp
 		src/Clove/Graphics/Sprite.hpp
