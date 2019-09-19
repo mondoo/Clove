@@ -12,6 +12,9 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
 
+//Temp
+#include <fstream>
+
 namespace clv::ecs::ui{
 	FontSystem::FontSystem(){
 		//Just getting something on the screen for now
@@ -47,6 +50,68 @@ namespace clv::ecs::ui{
 			 TODO:
 			 	-Now need to render strings of text
 			 */
+
+			const std::string text = "Hello, World!";
+
+			//Parse the file and load the font map
+			struct FontData{
+				float x = 0.0f;
+				float y = 0.0f;
+				float width = 0.0f;
+				float height = 0.0f;
+				float xoffset = 0.0f;
+				float yoffset = 0.0f;
+				float xadvance = 0.0f;
+			};
+			std::unordered_map<char, FontData> charMap;
+
+			//Read file
+			std::string rawFontData;
+			std::ifstream in("res/Fonts/fnt/arial.fnt", std::ios::in | std::ios::binary);
+			CLV_ASSERT(in, "Didn't work!");
+			in.seekg(0, std::ios::end);
+			rawFontData.resize(in.tellg());
+			in.seekg(0, std::ios::beg);
+			in.read(&rawFontData[0], rawFontData.size());
+			in.close();
+
+			/*
+			do i want the reverse iterator,
+			shouldn't just be a case of looping through the interator line by line?
+			*/
+
+			auto findBegining = [&](){ //From here, the junk at the top has been trimmed
+				const std::string lineBegin = "char "; //trailing space is important
+				return std::search(rawFontData.begin(), rawFontData.end(), lineBegin.begin(), lineBegin.end());
+			};
+
+			auto findNextSet = [](std::string::iterator& iter){ //maybe do this to instead be find next line? -- then all search data can be in the for loop
+				//while(*iter == *" "){
+					++iter;
+				//}
+			};
+
+			/*
+			Is looping through each char the way to go?
+			
+			would it then be easier to earch for more sub strings?
+			
+			*/
+
+			//Lets do it element by element first and see what happens
+			for(auto useDataIter = findBegining(); useDataIter != rawFontData.end(); findNextSet(useDataIter)){
+				if(*useDataIter == *"id"){ //This works -- just need to pull the data from each section
+					CLV_DEBUG_BREAK;
+				}
+			}
+
+
+			//size_t pos = rawFontData.find();
+
+
+			/*while(pos != std::string::npos){
+
+			}*/
 
 			const float x = 0.0f;
 			const float y = 0.0f;
