@@ -28,7 +28,7 @@ namespace clv::ecs::ui{
 
 			//Using hard coded values for now - needs transform component
 
-			const math::Matrix4f model = transform->getWorldTransformMatrix();
+			const math::Matrix4f model = math::Matrix4f(1.0f); /*transform->getWorldTransformMatrix();*/
 			
 			const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;
 			const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
@@ -53,6 +53,9 @@ namespace clv::ecs::ui{
 			const float width = 78.0f;
 			const float height = 80.0f;
 
+			const float halfWidth_text = width / 2.0f;
+			const float halfHeight_text = height / 2.0f;
+
 			const math::Vector2f topLeft = { x / imageSize, y / imageSize };
 			const math::Vector2f topRight = { (x + width) / imageSize, y / imageSize };
 			const math::Vector2f bottomLeft = { x / imageSize, (y + height) / imageSize };
@@ -62,15 +65,15 @@ namespace clv::ecs::ui{
 			gfx::VertexLayout layout;
 			layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
 			gfx::VertexBufferData bufferData(std::move(layout));
-			bufferData.emplaceBack(math::Vector2f{ -1.0f, -1.0f }, bottomLeft); //Bottom left
-			bufferData.emplaceBack(math::Vector2f{ 1.0f, -1.0f }, bottomRight); //Bottom right
-			bufferData.emplaceBack(math::Vector2f{ -1.0f,  1.0f }, topLeft); //Top left
-			bufferData.emplaceBack(math::Vector2f{ 1.0f,  1.0f }, topRight); //Top right
+			bufferData.emplaceBack(math::Vector2f{ -halfWidth_text, -halfHeight_text }, bottomLeft); //Bottom left
+			bufferData.emplaceBack(math::Vector2f{ halfWidth_text, -halfHeight_text }, bottomRight); //Bottom right
+			bufferData.emplaceBack(math::Vector2f{ -halfWidth_text, halfHeight_text }, topLeft); //Top left
+			bufferData.emplaceBack(math::Vector2f{ halfWidth_text, halfHeight_text }, topRight); //Top right
 
 			//IB
 			std::vector<uint32> indices = {
-					1, 3, 0,
-					3, 2, 0
+				1, 3, 0,
+				3, 2, 0
 			};
 
 			auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
@@ -82,6 +85,7 @@ namespace clv::ecs::ui{
 
 			auto spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, instance);
 
+			//TEMP: still renderer for now - needs to be moved to the 2d renderer
 			gfx::Renderer::submitMesh(spriteMesh);
 		}
 	}
