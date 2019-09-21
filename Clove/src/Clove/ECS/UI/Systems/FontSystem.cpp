@@ -14,6 +14,7 @@
 
 //Temp
 #include <fstream>
+#include <strstream>
 
 namespace clv::ecs::ui{
 	FontSystem::FontSystem(){
@@ -51,7 +52,7 @@ namespace clv::ecs::ui{
 			 	-Now need to render strings of text
 			 */
 
-			const std::string text = "Hello, World!";
+			//const std::string text = "Hello, World!";
 
 			//Parse the file and load the font map
 			struct FontData{
@@ -80,31 +81,94 @@ namespace clv::ecs::ui{
 			shouldn't just be a case of looping through the interator line by line?
 			*/
 
-			auto findBegining = [&](){ //From here, the junk at the top has been trimmed
-				const std::string lineBegin = "char "; //trailing space is important
-				return std::search(rawFontData.begin(), rawFontData.end(), lineBegin.begin(), lineBegin.end());
-			};
 
-			auto findNextSet = [](std::string::iterator& iter){ //maybe do this to instead be find next line? -- then all search data can be in the for loop
-				//while(*iter == *" "){
-					++iter;
-				//}
-			};
+			std::unordered_map<int32, FontData> fontMap;
 
-			/*
-			Is looping through each char the way to go?
-			
-			would it then be easier to earch for more sub strings?
-			
-			*/
+			std::stringstream stream(rawFontData);
+			std::string line;
+			std::getline(stream, line, '\n');
+			std::getline(stream, line, '\n');
+			std::getline(stream, line, '\n');
+			std::getline(stream, line, '\n');
 
-			//Lets do it element by element first and see what happens
-			for(auto useDataIter = findBegining(); useDataIter != rawFontData.end(); findNextSet(useDataIter)){
-				if(*useDataIter == *"id"){ //This works -- just need to pull the data from each section
-					CLV_DEBUG_BREAK;
+			while (!stream.eof()){
+				std::getline(stream, line, '\n'); //Loop through each line
+
+				int32 id;
+				FontData data;
+				
+				std::stringstream lineStream(line);
+
+				while(!lineStream.eof()){
+					std::string section;
+					std::getline(lineStream, section, ' ');
+
+					if (section.compare("") == 0){
+						continue;
+					}
+
+					std::stringstream sectionStream(section);
+					std::string identifier;
+					std::string val;
+					std::getline(sectionStream, identifier, '=');
+					std::getline(sectionStream, val, ' ');
+
+					CLV_LOG_DEBUG("current section: {0} = {1}", identifier, val);
+
+					if (identifier == "id"){
+						id = std::atoi(val.c_str());
+						continue;
+					}
+
+					if (identifier == "x"){
+						data.x = std::atoi(val.c_str());
+						continue;
+					}
+
+					if (identifier == "y"){
+						data.y = std::atoi(val.c_str());
+						continue;
+					}
+
+					if (identifier == "width"){
+						data.width = std::atoi(val.c_str());
+						continue;
+					}
+
+					if (identifier == "height"){
+						data.height = std::atoi(val.c_str());
+						continue;
+					}
+
+					if (identifier == "xoffset"){
+						data.xoffset = std::atoi(val.c_str());
+						continue;
+					}
+
+					if (identifier == "yoffset"){
+						data.yoffset = std::atoi(val.c_str());
+						continue;
+					}
+
+					if (identifier == "xadvance"){
+						data.xadvance = std::atoi(val.c_str());
+						continue;
+					}
 				}
-			}
 
+				CLV_LOG_DEBUG("Adding: {0}", id);
+
+				CLV_LOG_DEBUG("    x: {0}", data.x);
+				CLV_LOG_DEBUG("    y: {0}", data.y);
+				CLV_LOG_DEBUG("    width: {0}", data.width);
+				CLV_LOG_DEBUG("    height: {0}", data.height);
+				CLV_LOG_DEBUG("    xoffset: {0}", data.xoffset);
+				CLV_LOG_DEBUG("    yoffset: {0}", data.yoffset);
+				CLV_LOG_DEBUG("    xadvance: {0}", data.xadvance);
+
+				fontMap[id] = data;
+			}
+			
 
 			//size_t pos = rawFontData.find();
 
@@ -112,11 +176,24 @@ namespace clv::ecs::ui{
 			/*while(pos != std::string::npos){
 
 			}*/
+			
+			int32 theOne = 32;
 
-			const float x = 0.0f;
-			const float y = 0.0f;
-			const float width = 78.0f;
-			const float height = 80.0f;
+			CLV_LOG_DEBUG("the one: {0}", theOne);
+
+			CLV_LOG_DEBUG("    x: {0}", fontMap[theOne].x);
+			CLV_LOG_DEBUG("    y: {0}", fontMap[theOne].y);
+			CLV_LOG_DEBUG("    width: {0}", fontMap[theOne].width);
+			CLV_LOG_DEBUG("    height: {0}", fontMap[theOne].height);
+			CLV_LOG_DEBUG("    xoffset: {0}", fontMap[theOne].xoffset);
+			CLV_LOG_DEBUG("    yoffset: {0}", fontMap[theOne].yoffset);
+			CLV_LOG_DEBUG("    xadvance: {0}", fontMap[theOne].xadvance);
+
+
+			const float x = fontMap[theOne].x;
+			const float y = fontMap[theOne].y;
+			const float width = fontMap[theOne].width;
+			const float height = fontMap[theOne].height;
 
 			const float halfWidth_text = width / 2.0f;
 			const float halfHeight_text = height / 2.0f;
