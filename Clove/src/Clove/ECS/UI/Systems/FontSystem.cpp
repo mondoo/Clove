@@ -113,7 +113,7 @@ namespace clv::ecs::ui{
 					std::getline(sectionStream, identifier, '=');
 					std::getline(sectionStream, val, ' ');
 
-					CLV_LOG_DEBUG("current section: {0} = {1}", identifier, val);
+					//CLV_LOG_DEBUG("current section: {0} = {1}", identifier, val);
 
 					if (identifier == "id"){
 						id = std::atoi(val.c_str());
@@ -156,7 +156,7 @@ namespace clv::ecs::ui{
 					}
 				}
 
-				CLV_LOG_DEBUG("Adding: {0}", id);
+				/*CLV_LOG_DEBUG("Adding: {0}", id);
 
 				CLV_LOG_DEBUG("    x: {0}", data.x);
 				CLV_LOG_DEBUG("    y: {0}", data.y);
@@ -164,7 +164,7 @@ namespace clv::ecs::ui{
 				CLV_LOG_DEBUG("    height: {0}", data.height);
 				CLV_LOG_DEBUG("    xoffset: {0}", data.xoffset);
 				CLV_LOG_DEBUG("    yoffset: {0}", data.yoffset);
-				CLV_LOG_DEBUG("    xadvance: {0}", data.xadvance);
+				CLV_LOG_DEBUG("    xadvance: {0}", data.xadvance);*/
 
 				fontMap[id] = data;
 			}
@@ -177,9 +177,9 @@ namespace clv::ecs::ui{
 
 			}*/
 			
-			int32 theOne = 32;
+			int32 theOne = 'f';
 
-			CLV_LOG_DEBUG("the one: {0}", theOne);
+			/*CLV_LOG_DEBUG("the one: {0}", theOne);
 
 			CLV_LOG_DEBUG("    x: {0}", fontMap[theOne].x);
 			CLV_LOG_DEBUG("    y: {0}", fontMap[theOne].y);
@@ -187,8 +187,11 @@ namespace clv::ecs::ui{
 			CLV_LOG_DEBUG("    height: {0}", fontMap[theOne].height);
 			CLV_LOG_DEBUG("    xoffset: {0}", fontMap[theOne].xoffset);
 			CLV_LOG_DEBUG("    yoffset: {0}", fontMap[theOne].yoffset);
-			CLV_LOG_DEBUG("    xadvance: {0}", fontMap[theOne].xadvance);
+			CLV_LOG_DEBUG("    xadvance: {0}", fontMap[theOne].xadvance);*/
 
+			/*
+			TODO: write hello world!
+			*/
 
 			const float x = fontMap[theOne].x;
 			const float y = fontMap[theOne].y;
