@@ -32,7 +32,7 @@ namespace clv::ecs::ui{
 
 			//Using hard coded values for now - needs transform component
 
-			const math::Matrix4f model = math::Matrix4f(1.0f); /*transform->getWorldTransformMatrix();*/
+			/*const*/ math::Matrix4f model = math::Matrix4f(1.0f); /*transform->getWorldTransformMatrix();*/
 			
 			const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;
 			const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
@@ -177,7 +177,7 @@ namespace clv::ecs::ui{
 
 			}*/
 			
-			int32 theOne = 'f';
+			//int32 theOne = 'f';
 
 			/*CLV_LOG_DEBUG("the one: {0}", theOne);
 
@@ -189,49 +189,57 @@ namespace clv::ecs::ui{
 			CLV_LOG_DEBUG("    yoffset: {0}", fontMap[theOne].yoffset);
 			CLV_LOG_DEBUG("    xadvance: {0}", fontMap[theOne].xadvance);*/
 
-			/*
-			TODO: write hello world!
-			*/
+			std::string text = "Hello, World!";
 
-			const float x = fontMap[theOne].x;
-			const float y = fontMap[theOne].y;
-			const float width = fontMap[theOne].width;
-			const float height = fontMap[theOne].height;
+			float cursorPos = 0.0f;
+			for(auto stringIter = text.begin(); stringIter != text.end(); ++stringIter){
+				int8_t c = *stringIter;
 
-			const float halfWidth_text = width / 2.0f;
-			const float halfHeight_text = height / 2.0f;
+				const float x = fontMap[c].x;
+				const float y = fontMap[c].y;
+				const float width = fontMap[c].width;
+				const float height = fontMap[c].height;
 
-			const math::Vector2f topLeft = { x / imageSize, y / imageSize };
-			const math::Vector2f topRight = { (x + width) / imageSize, y / imageSize };
-			const math::Vector2f bottomLeft = { x / imageSize, (y + height) / imageSize };
-			const math::Vector2f bottomRight = { (x + width) / imageSize, (y + height) / imageSize };
+				const float halfWidth_text = width / 2.0f;
+				const float halfHeight_text = height / 2.0f;
 
-			//VB
-			gfx::VertexLayout layout;
-			layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
-			gfx::VertexBufferData bufferData(std::move(layout));
-			bufferData.emplaceBack(math::Vector2f{ -halfWidth_text, -halfHeight_text }, bottomLeft); //Bottom left
-			bufferData.emplaceBack(math::Vector2f{ halfWidth_text, -halfHeight_text }, bottomRight); //Bottom right
-			bufferData.emplaceBack(math::Vector2f{ -halfWidth_text, halfHeight_text }, topLeft); //Top left
-			bufferData.emplaceBack(math::Vector2f{ halfWidth_text, halfHeight_text }, topRight); //Top right
+				const math::Vector2f topLeft = { x / imageSize, y / imageSize };
+				const math::Vector2f topRight = { (x + width) / imageSize, y / imageSize };
+				const math::Vector2f bottomLeft = { x / imageSize, (y + height) / imageSize };
+				const math::Vector2f bottomRight = { (x + width) / imageSize, (y + height) / imageSize };
 
-			//IB
-			std::vector<uint32> indices = {
-				1, 3, 0,
-				3, 2, 0
-			};
+				//VB
+				gfx::VertexLayout layout;
+				layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
+				gfx::VertexBufferData bufferData(std::move(layout));
+				bufferData.emplaceBack(math::Vector2f{ -halfWidth_text, -halfHeight_text }, bottomLeft); //Bottom left
+				bufferData.emplaceBack(math::Vector2f{ halfWidth_text, -halfHeight_text }, bottomRight); //Bottom right
+				bufferData.emplaceBack(math::Vector2f{ -halfWidth_text, halfHeight_text }, topLeft); //Top left
+				bufferData.emplaceBack(math::Vector2f{ halfWidth_text, halfHeight_text }, topRight); //Top right
 
-			auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
-			//We do not want to flip the texture
-			material->setAlbedoTexture(gfx::BindableFactory::createTexture("res/Fonts/fnt/arial.png", gfx::TBP_Albedo, false));
-			material->setData(gfx::BBP_2DData, spriteProj * model, gfx::ShaderType::Vertex);
+				//IB
+				std::vector<uint32> indices = {
+					1, 3, 0,
+					3, 2, 0
+				};
 
-			auto instance = material->createInstance();
+				model = math::translate(math::Matrix4f(1.0f), { cursorPos + fontMap[c].xoffset, -fontMap[c].yoffset, 0.0f });
 
-			auto spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, instance);
+				auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
+				//We do not want to flip the texture
+				material->setAlbedoTexture(gfx::BindableFactory::createTexture("res/Fonts/fnt/arial.png", gfx::TBP_Albedo, false));
+				material->setData(gfx::BBP_2DData, spriteProj * model, gfx::ShaderType::Vertex);
 
-			//TEMP: still renderer for now - needs to be moved to the 2d renderer
-			gfx::Renderer::submitMesh(spriteMesh);
+				auto instance = material->createInstance();
+
+				auto spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, instance);
+
+				//TEMP: still renderer for now - needs to be moved to the 2d renderer
+				gfx::Renderer::submitMesh(spriteMesh);
+
+				
+				cursorPos += fontMap[c].xadvance/* + halfWidth_text*/;
+			}
 		}
 	}
 }
