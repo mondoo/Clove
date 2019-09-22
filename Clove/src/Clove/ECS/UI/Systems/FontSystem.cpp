@@ -189,11 +189,11 @@ namespace clv::ecs::ui{
 			CLV_LOG_DEBUG("    yoffset: {0}", fontMap[theOne].yoffset);
 			CLV_LOG_DEBUG("    xadvance: {0}", fontMap[theOne].xadvance);*/
 
-			std::string text = "Hello, World!";
+			std::string text = "AbcdefghijklmnopqrstuvWxyz";
 
-			float cursorPos = 0.0f;
+			float cursorPos = -550.0f;
 			for(auto stringIter = text.begin(); stringIter != text.end(); ++stringIter){
-				int8_t c = *stringIter;
+				int8 c = *stringIter;
 
 				const float x = fontMap[c].x;
 				const float y = fontMap[c].y;
@@ -212,10 +212,10 @@ namespace clv::ecs::ui{
 				gfx::VertexLayout layout;
 				layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
 				gfx::VertexBufferData bufferData(std::move(layout));
-				bufferData.emplaceBack(math::Vector2f{ -halfWidth_text, -halfHeight_text }, bottomLeft); //Bottom left
-				bufferData.emplaceBack(math::Vector2f{ halfWidth_text, -halfHeight_text }, bottomRight); //Bottom right
-				bufferData.emplaceBack(math::Vector2f{ -halfWidth_text, halfHeight_text }, topLeft); //Top left
-				bufferData.emplaceBack(math::Vector2f{ halfWidth_text, halfHeight_text }, topRight); //Top right
+				bufferData.emplaceBack(math::Vector2f{ 0,		0 },		bottomLeft);	//Bottom left
+				bufferData.emplaceBack(math::Vector2f{ width,	0 },		bottomRight);	//Bottom right
+				bufferData.emplaceBack(math::Vector2f{ 0,		height },	topLeft);		//Top left
+				bufferData.emplaceBack(math::Vector2f{ width,	height },	topRight);		//Top right
 
 				//IB
 				std::vector<uint32> indices = {
@@ -223,7 +223,14 @@ namespace clv::ecs::ui{
 					3, 2, 0
 				};
 
-				model = math::translate(math::Matrix4f(1.0f), { cursorPos + fontMap[c].xoffset, -fontMap[c].yoffset, 0.0f });
+				//const float ydiff = fontMap[c].yoffset - height; 
+				//so I'm assuming it sligns to the tallest char
+				//I need to draw this from the top - otherwise I'll have to go and find the tallest one
+
+				const float xpos = cursorPos + fontMap[c].xoffset;
+				const float ypos = 0.0f;
+
+				model = math::translate(math::Matrix4f(1.0f), { xpos, ypos, 0.0f });
 
 				auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
 				//We do not want to flip the texture
