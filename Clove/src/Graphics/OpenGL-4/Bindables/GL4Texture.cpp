@@ -39,7 +39,8 @@ namespace clv::gfx{
 	GL4Texture::GL4Texture(void* bufferData, int32 width, int32 height, uint32 bindingPoint)
 		: width(width)
 		, height(height)
-		, bindingPoint(bindingPoint){
+		, bindingPoint(bindingPoint)
+		, BPP(1){ //TEMP: putting this to 1
 		glGenTextures(1, &rendererID);
 
 		glBindTexture(GL_TEXTURE_2D, rendererID);

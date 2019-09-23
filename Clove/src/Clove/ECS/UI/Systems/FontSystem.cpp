@@ -15,11 +15,28 @@
 //Temp
 #include <fstream>
 #include <strstream>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 namespace clv::ecs::ui{
 	FontSystem::FontSystem(){
 		//Just getting something on the screen for now
 		//sprite = std::make_shared<gfx::Sprite>("res/Textures/Zombie-32x32.png");
+
+		if(FT_Init_FreeType(&ft)){
+			CLV_ASSERT(false, "Could not load freetype");
+		}
+
+		if(FT_New_Face(ft, "res/Fonts/Roboto/Roboto-Black.ttf", 0, &face)){
+			CLV_ASSERT(false, "Could not load font");
+		}
+
+		FT_Set_Pixel_Sizes(face, 0, 48);
+	}
+
+	FontSystem::~FontSystem(){
+		FT_Done_Face(face);
+		FT_Done_FreeType(ft);
 	}
 
 	void FontSystem::update(utl::DeltaTime deltaTime){
@@ -66,157 +83,29 @@ namespace clv::ecs::ui{
 			};
 			std::unordered_map<char, FontData> charMap;
 
-			//Read file
-			std::string rawFontData;
-			std::ifstream in("res/Fonts/fnt/arial.fnt", std::ios::in | std::ios::binary);
-			CLV_ASSERT(in, "Didn't work!");
-			in.seekg(0, std::ios::end);
-			rawFontData.resize(in.tellg());
-			in.seekg(0, std::ios::beg);
-			in.read(&rawFontData[0], rawFontData.size());
-			in.close();
 
-			/*
-			do i want the reverse iterator,
-			shouldn't just be a case of looping through the interator line by line?
-			*/
-
-
-			std::unordered_map<int32, FontData> fontMap;
-
-			std::stringstream stream(rawFontData);
-			std::string line;
-			std::getline(stream, line, '\n');
-			std::getline(stream, line, '\n');
-			std::getline(stream, line, '\n');
-			std::getline(stream, line, '\n');
-
-			while (!stream.eof()){
-				std::getline(stream, line, '\n'); //Loop through each line
-
-				int32 id;
-				FontData data;
-				
-				std::stringstream lineStream(line);
-
-				while(!lineStream.eof()){
-					std::string section;
-					std::getline(lineStream, section, ' ');
-
-					if (section.compare("") == 0){
-						continue;
-					}
-
-					std::stringstream sectionStream(section);
-					std::string identifier;
-					std::string val;
-					std::getline(sectionStream, identifier, '=');
-					std::getline(sectionStream, val, ' ');
-
-					//CLV_LOG_DEBUG("current section: {0} = {1}", identifier, val);
-
-					if (identifier == "id"){
-						id = std::atoi(val.c_str());
-						continue;
-					}
-
-					if (identifier == "x"){
-						data.x = std::atoi(val.c_str());
-						continue;
-					}
-
-					if (identifier == "y"){
-						data.y = std::atoi(val.c_str());
-						continue;
-					}
-
-					if (identifier == "width"){
-						data.width = std::atoi(val.c_str());
-						continue;
-					}
-
-					if (identifier == "height"){
-						data.height = std::atoi(val.c_str());
-						continue;
-					}
-
-					if (identifier == "xoffset"){
-						data.xoffset = std::atoi(val.c_str());
-						continue;
-					}
-
-					if (identifier == "yoffset"){
-						data.yoffset = std::atoi(val.c_str());
-						continue;
-					}
-
-					if (identifier == "xadvance"){
-						data.xadvance = std::atoi(val.c_str());
-						continue;
-					}
-				}
-
-				/*CLV_LOG_DEBUG("Adding: {0}", id);
-
-				CLV_LOG_DEBUG("    x: {0}", data.x);
-				CLV_LOG_DEBUG("    y: {0}", data.y);
-				CLV_LOG_DEBUG("    width: {0}", data.width);
-				CLV_LOG_DEBUG("    height: {0}", data.height);
-				CLV_LOG_DEBUG("    xoffset: {0}", data.xoffset);
-				CLV_LOG_DEBUG("    yoffset: {0}", data.yoffset);
-				CLV_LOG_DEBUG("    xadvance: {0}", data.xadvance);*/
-
-				fontMap[id] = data;
-			}
-			
-
-			//size_t pos = rawFontData.find();
-
-
-			/*while(pos != std::string::npos){
-
-			}*/
-			
-			//int32 theOne = 'f';
-
-			/*CLV_LOG_DEBUG("the one: {0}", theOne);
-
-			CLV_LOG_DEBUG("    x: {0}", fontMap[theOne].x);
-			CLV_LOG_DEBUG("    y: {0}", fontMap[theOne].y);
-			CLV_LOG_DEBUG("    width: {0}", fontMap[theOne].width);
-			CLV_LOG_DEBUG("    height: {0}", fontMap[theOne].height);
-			CLV_LOG_DEBUG("    xoffset: {0}", fontMap[theOne].xoffset);
-			CLV_LOG_DEBUG("    yoffset: {0}", fontMap[theOne].yoffset);
-			CLV_LOG_DEBUG("    xadvance: {0}", fontMap[theOne].xadvance);*/
-
-			std::string text = "Hello, World!";
+			std::string text = "Hello!"; //TODO: Need to sort out spaces
 
 			float cursorPos = -550.0f;
 			for(auto stringIter = text.begin(); stringIter != text.end(); ++stringIter){
 				int8 c = *stringIter;
 
-				const float x = fontMap[c].x;
-				const float y = fontMap[c].y;
-				const float width = fontMap[c].width;
-				const float height = fontMap[c].height;
+				FT_Load_Char(face, c, FT_LOAD_RENDER);
 
-				const float halfWidth_text = width / 2.0f;
-				const float halfHeight_text = height / 2.0f;
+				auto texture = gfx::BindableFactory::createTexture(face->glyph->bitmap.buffer, face->glyph->bitmap.width, face->glyph->bitmap.rows, gfx::TBP_Albedo);
 
-				const math::Vector2f topLeft = { x / imageSize, y / imageSize };
-				const math::Vector2f topRight = { (x + width) / imageSize, y / imageSize };
-				const math::Vector2f bottomLeft = { x / imageSize, (y + height) / imageSize };
-				const math::Vector2f bottomRight = { (x + width) / imageSize, (y + height) / imageSize };
+				const float width = face->glyph->bitmap.width;
+				const float height = face->glyph->bitmap.rows;
 
 				//VB
 				gfx::VertexLayout layout;
 				layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
 				gfx::VertexBufferData bufferData(std::move(layout));
 				//-height because it's easier to draw top down when dealing with the yoffset
-				bufferData.emplaceBack(math::Vector2f{ 0,		-height },	bottomLeft);	//Bottom left
-				bufferData.emplaceBack(math::Vector2f{ width,	-height },	bottomRight);	//Bottom right
-				bufferData.emplaceBack(math::Vector2f{ 0,		0 },		topLeft);		//Top left
-				bufferData.emplaceBack(math::Vector2f{ width,	0 },		topRight);		//Top right
+				bufferData.emplaceBack(math::Vector2f{ 0,		-height },	math::Vector2f{ 0.0f, 1.0f });	//Bottom left
+				bufferData.emplaceBack(math::Vector2f{ width,	-height },	math::Vector2f{ 1.0f, 1.0f });	//Bottom right
+				bufferData.emplaceBack(math::Vector2f{ 0,		0 },		math::Vector2f{ 0.0f, 0.0f });	//Top left
+				bufferData.emplaceBack(math::Vector2f{ width,	0 },		math::Vector2f{ 1.0f, 0.0f });	//Top right
 
 				//IB
 				std::vector<uint32> indices = {
@@ -224,14 +113,13 @@ namespace clv::ecs::ui{
 					3, 2, 0
 				};
 
-				const float xpos = cursorPos + fontMap[c].xoffset;
-				const float ypos = -fontMap[c].yoffset;
+				const float xpos = cursorPos; //TODO: bearing.x
+				const float ypos = 0.0f;
 
 				model = math::translate(math::Matrix4f(1.0f), { xpos, ypos, 0.0f });
 
 				auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
-				//We do not want to flip the texture
-				material->setAlbedoTexture(gfx::BindableFactory::createTexture("res/Fonts/fnt/arial.png", gfx::TBP_Albedo, false));
+				material->setAlbedoTexture(texture);
 				material->setData(gfx::BBP_2DData, spriteProj * model, gfx::ShaderType::Vertex);
 
 				auto instance = material->createInstance();
@@ -242,7 +130,7 @@ namespace clv::ecs::ui{
 				gfx::Renderer::submitMesh(spriteMesh);
 
 				
-				cursorPos += fontMap[c].xadvance/* + halfWidth_text*/;
+				cursorPos += face->glyph->advance.x;
 			}
 		}
 	}

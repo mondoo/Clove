@@ -31,7 +31,8 @@ namespace clv::gfx{
 	DX11Texture::DX11Texture(void* bufferData, int32 width, int32 height, uint32 bindingPoint)
 		: width(width)
 		, height(height)
-		, bindingPoint(bindingPoint){
+		, bindingPoint(bindingPoint)
+		, BPP(1){  //TEMP: putting this to 1
 
 		createTexture(usage, bufferData);
 	}
