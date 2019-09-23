@@ -189,7 +189,7 @@ namespace clv::ecs::ui{
 			CLV_LOG_DEBUG("    yoffset: {0}", fontMap[theOne].yoffset);
 			CLV_LOG_DEBUG("    xadvance: {0}", fontMap[theOne].xadvance);*/
 
-			std::string text = "AbcdefghijklmnopqrstuvWxyz";
+			std::string text = "Hello, World!";
 
 			float cursorPos = -550.0f;
 			for(auto stringIter = text.begin(); stringIter != text.end(); ++stringIter){
@@ -212,10 +212,11 @@ namespace clv::ecs::ui{
 				gfx::VertexLayout layout;
 				layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
 				gfx::VertexBufferData bufferData(std::move(layout));
-				bufferData.emplaceBack(math::Vector2f{ 0,		0 },		bottomLeft);	//Bottom left
-				bufferData.emplaceBack(math::Vector2f{ width,	0 },		bottomRight);	//Bottom right
-				bufferData.emplaceBack(math::Vector2f{ 0,		height },	topLeft);		//Top left
-				bufferData.emplaceBack(math::Vector2f{ width,	height },	topRight);		//Top right
+				//-height because it's easier to draw top down when dealing with the yoffset
+				bufferData.emplaceBack(math::Vector2f{ 0,		-height },	bottomLeft);	//Bottom left
+				bufferData.emplaceBack(math::Vector2f{ width,	-height },	bottomRight);	//Bottom right
+				bufferData.emplaceBack(math::Vector2f{ 0,		0 },		topLeft);		//Top left
+				bufferData.emplaceBack(math::Vector2f{ width,	0 },		topRight);		//Top right
 
 				//IB
 				std::vector<uint32> indices = {
@@ -223,12 +224,8 @@ namespace clv::ecs::ui{
 					3, 2, 0
 				};
 
-				//const float ydiff = fontMap[c].yoffset - height; 
-				//so I'm assuming it sligns to the tallest char
-				//I need to draw this from the top - otherwise I'll have to go and find the tallest one
-
 				const float xpos = cursorPos + fontMap[c].xoffset;
-				const float ypos = 0.0f;
+				const float ypos = -fontMap[c].yoffset;
 
 				model = math::translate(math::Matrix4f(1.0f), { xpos, ypos, 0.0f });
 
