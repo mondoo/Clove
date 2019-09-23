@@ -15,3 +15,6 @@
 	path = Clove/vendor/libsndfile
 	url = https://github.com/erikd/libsndfile.git
 	ignore = dirty
+[submodule "Clove/vendor/freetype2"]
+	path = Clove/vendor/freetype2
+	url = https://git.savannah.gnu.org/git/freetype/freetype2.git

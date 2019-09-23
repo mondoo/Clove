@@ -80,6 +80,10 @@ set_target_properties(portaudio_static PROPERTIES FOLDER ${DependencyFolder})
 add_subdirectory(Clove/vendor/libsndfile)
 set_target_properties(sndfile PROPERTIES FOLDER ${DependencyFolder})
 
+#-freetype2
+add_subdirectory(Clove/vendor/freetype2)
+set_target_properties(freetype PROPERTIES FOLDER ${DependencyFolder})
+
 #Clove
 add_subdirectory(Clove)
 set_target_properties(Clove PROPERTIES FOLDER ${EngineFolder})

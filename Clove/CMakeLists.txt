@@ -269,6 +269,7 @@ target_include_directories(
 		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
 	PRIVATE
 		vendor/OBJ-Loader/Source
+		vendor/freetype2/include
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -290,6 +291,7 @@ target_link_libraries(
 		glm
 		sndfile
 		portaudio_static
+		freetype
 )
 
 #Libraries - platform specific
