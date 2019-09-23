@@ -36,7 +36,8 @@ namespace clv::gfx{
 		DX11Texture& operator=(DX11Texture&& other) noexcept;
 		virtual ~DX11Texture();
 
-		DX11Texture(const std::string& filePath, uint32 bindingPoint, bool flipOnLoad = true);
+		DX11Texture(const std::string& filePath, uint32 bindingPoint);
+		DX11Texture(void* bufferData, int32 width, int32 height, uint32 bindingPoint);
 		DX11Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint);
 
 		virtual void bind() override;

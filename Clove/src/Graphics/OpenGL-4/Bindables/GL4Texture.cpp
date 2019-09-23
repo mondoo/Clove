@@ -13,10 +13,10 @@ namespace clv::gfx{
 		glDeleteTextures(1, &rendererID);
 	}
 
-	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint, bool flipOnLoad)
+	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint)
 		: filePath(filePath)
 		, bindingPoint(bindingPoint){
-		stbi_set_flip_vertically_on_load(flipOnLoad); //Opengl expects our texture to start on the bottom left
+		stbi_set_flip_vertically_on_load(true); //Opengl expects our texture to start on the bottom left
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
 		glGenTextures(1, &rendererID);
@@ -27,7 +27,7 @@ namespace clv::gfx{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		createTexture(TextureUsage::Default, localBuffer);
+		createTexture(usage, localBuffer);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -36,10 +36,28 @@ namespace clv::gfx{
 		}
 	}
 
+	GL4Texture::GL4Texture(void* bufferData, int32 width, int32 height, uint32 bindingPoint)
+		: width(width)
+		, height(height)
+		, bindingPoint(bindingPoint){
+		glGenTextures(1, &rendererID);
+
+		glBindTexture(GL_TEXTURE_2D, rendererID);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		createTexture(usage, bufferData);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	GL4Texture::GL4Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint)
 		: width(width)
 		, height(height)
-		, usageType(usageType)
+		, usage(usageType)
 		, bindingPoint(bindingPoint){
 		glGenTextures(1, &rendererID);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
@@ -69,7 +87,7 @@ namespace clv::gfx{
 	}
 
 	TextureUsage GL4Texture::getUsageType() const{
-		return usageType;
+		return usage;
 	}
 
 	const uint32 GL4Texture::getRenderID() const{

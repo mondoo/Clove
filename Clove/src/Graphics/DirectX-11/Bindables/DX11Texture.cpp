@@ -15,10 +15,10 @@ namespace clv::gfx{
 
 	DX11Texture::~DX11Texture() = default;
 
-	DX11Texture::DX11Texture(const std::string& filePath, uint32 bindingPoint, bool flipOnLoad)
+	DX11Texture::DX11Texture(const std::string& filePath, uint32 bindingPoint)
 		: bindingPoint(bindingPoint){
 		
-		stbi_set_flip_vertically_on_load(flipOnLoad); //DirectX expects our texture to start on the bottom left
+		stbi_set_flip_vertically_on_load(true); //DirectX expects our texture to start on the bottom left
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
 		createTexture(usage, localBuffer);
@@ -26,6 +26,14 @@ namespace clv::gfx{
 		if(localBuffer){
 			stbi_image_free(localBuffer);
 		}
+	}
+
+	DX11Texture::DX11Texture(void* bufferData, int32 width, int32 height, uint32 bindingPoint)
+		: width(width)
+		, height(height)
+		, bindingPoint(bindingPoint){
+
+		createTexture(usage, bufferData);
 	}
 
 	DX11Texture::DX11Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint)
