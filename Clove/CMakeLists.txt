@@ -155,6 +155,8 @@ set(
 		src/Graphics/OpenGL-4/Bindables/GL4VertexBuffer.cpp
 		src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
 		src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
+		src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
 		src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
 		src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
 		src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
@@ -189,6 +191,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/Bindables/DX11VertexBuffer.cpp
 			src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
 			src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/Font-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/Font-vs.hlsl
 			src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
 			src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
 			src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
@@ -350,6 +354,7 @@ target_compile_definitions(
 if(MSVC)
 	set(pixelShaders
 		src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
+		src/Graphics/DirectX-11/Shaders/Font-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/Unlit-ps.hlsl
@@ -357,6 +362,7 @@ if(MSVC)
 	
 	set(vertexShaders
 		src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+		src/Graphics/DirectX-11/Shaders/Font-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/RT-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
@@ -373,6 +379,8 @@ if(MSVC)
 	set(shaderCSO
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-ps.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Font-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Font-vs.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-ps.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-vs.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/RT-ps.cso
@@ -401,6 +409,8 @@ endif()
 set(GLShaders
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl

@@ -91,6 +91,16 @@ namespace clv::gfx{
 				}
 				break;
 
+			case ShaderStyle::Font:
+				{
+					std::string vertexSource = parseShader("Font-vs.glsl");
+					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
+
+					std::string pixelSource = parseShader("Font-ps.glsl");
+					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+				}
+				break;
+
 			default:
 				CLV_ASSERT(false, "Unknown type! {0}", CLV_FUNCTION_NAME);
 				break;

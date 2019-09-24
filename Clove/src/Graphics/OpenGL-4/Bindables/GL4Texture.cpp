@@ -109,7 +109,7 @@ namespace clv::gfx{
 
 			case TextureUsage::Font:
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, pixels);
-				//glPixelStorei(GL_UNPACK_ALIGNMENT, 1); ????
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //We have 1 BPP so make sure OpenGL is aware of this
 				break;
 
 			default:
