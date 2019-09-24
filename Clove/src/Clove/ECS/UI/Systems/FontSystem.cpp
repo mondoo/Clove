@@ -84,7 +84,7 @@ namespace clv::ecs::ui{
 			std::unordered_map<char, FontData> charMap;
 
 
-			std::string text = "Hello!"; //TODO: Need to sort out spaces
+			std::string text = "Hello, World! AV"; //TODO: Need to sort out spaces
 
 			float cursorPos = -550.0f;
 			for(auto stringIter = text.begin(); stringIter != text.end(); ++stringIter){
@@ -107,10 +107,10 @@ namespace clv::ecs::ui{
 				layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
 				gfx::VertexBufferData bufferData(std::move(layout));
 				//-height because it's easier to draw top down when dealing with the yoffset
-				bufferData.emplaceBack(math::Vector2f{ x,			y },			math::Vector2f{ 0.0f, 1.0f });	//Bottom left
-				bufferData.emplaceBack(math::Vector2f{ x + width,	y },			math::Vector2f{ 1.0f, 1.0f });	//Bottom right
-				bufferData.emplaceBack(math::Vector2f{ x,			y + height },	math::Vector2f{ 0.0f, 0.0f });	//Top left
-				bufferData.emplaceBack(math::Vector2f{ x + width,	y + height },	math::Vector2f{ 1.0f, 0.0f });	//Top right
+				bufferData.emplaceBack(math::Vector2f{ 0,		0 },		math::Vector2f{ 0.0f, 1.0f });	//Bottom left
+				bufferData.emplaceBack(math::Vector2f{ width,	0 },		math::Vector2f{ 1.0f, 1.0f });	//Bottom right
+				bufferData.emplaceBack(math::Vector2f{ 0,		height },	math::Vector2f{ 0.0f, 0.0f });	//Top left
+				bufferData.emplaceBack(math::Vector2f{ width,	height },	math::Vector2f{ 1.0f, 0.0f });	//Top right
 
 				//IB
 				const std::vector<uint32> indices = {
@@ -119,7 +119,7 @@ namespace clv::ecs::ui{
 				};
 
 				const float xpos = cursorPos; //TODO: bearing.x
-				const float ypos = 0.0f;
+				const float ypos = -y;
 
 				model = math::translate(math::Matrix4f(1.0f), { xpos, ypos, 0.0f });
 
