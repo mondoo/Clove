@@ -13,9 +13,10 @@ namespace clv::gfx{
 		glDeleteTextures(1, &rendererID);
 	}
 
-	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint)
+	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint, TextureUsage usageType)
 		: filePath(filePath)
-		, bindingPoint(bindingPoint){
+		, bindingPoint(bindingPoint)
+		, usage(usageType){
 		stbi_set_flip_vertically_on_load(true); //Opengl expects our texture to start on the bottom left
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
@@ -36,10 +37,11 @@ namespace clv::gfx{
 		}
 	}
 
-	GL4Texture::GL4Texture(void* bufferData, int32 width, int32 height, uint32 bindingPoint)
+	GL4Texture::GL4Texture(void* bufferData, int32 width, int32 height, uint32 bindingPoint, TextureUsage usageType)
 		: width(width)
 		, height(height)
 		, bindingPoint(bindingPoint)
+		, usage(usageType)
 		, BPP(1){ //TEMP: putting this to 1
 		glGenTextures(1, &rendererID);
 
@@ -55,11 +57,11 @@ namespace clv::gfx{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	GL4Texture::GL4Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint)
+	GL4Texture::GL4Texture(int32 width, int32 height, uint32 bindingPoint, TextureUsage usageType)
 		: width(width)
 		, height(height)
-		, usage(usageType)
-		, bindingPoint(bindingPoint){
+		, bindingPoint(bindingPoint)
+		, usage(usageType){
 		glGenTextures(1, &rendererID);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
 
@@ -103,6 +105,11 @@ namespace clv::gfx{
 
 			case TextureUsage::RenderTarget:
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+				break;
+
+			case TextureUsage::Font:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, pixels);
+				//glPixelStorei(GL_UNPACK_ALIGNMENT, 1); ????
 				break;
 
 			default:

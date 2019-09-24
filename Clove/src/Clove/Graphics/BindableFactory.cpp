@@ -64,14 +64,14 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::shared_ptr<Texture> createTexture(const std::string& filePath, uint32 bindingPoint){
+	std::shared_ptr<Texture> createTexture(const std::string& filePath, uint32 bindingPoint, TextureUsage usageType){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
-				return std::make_shared<GL4Texture>(filePath, bindingPoint);
+				return std::make_shared<GL4Texture>(filePath, bindingPoint, usageType);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_shared<DX11Texture>(filePath, bindingPoint);
+				return std::make_shared<DX11Texture>(filePath, bindingPoint, usageType);
 			#endif
 
 			default:
@@ -80,14 +80,14 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::shared_ptr<Texture> createTexture(void* bufferData, int32 width, int32 height, uint32 bindingPoint){
+	std::shared_ptr<Texture> createTexture(void* bufferData, int32 width, int32 height, uint32 bindingPoint, TextureUsage usageType){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
-				return std::make_shared<GL4Texture>(bufferData, width, height, bindingPoint);
+				return std::make_shared<GL4Texture>(bufferData, width, height, bindingPoint, usageType);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_shared<DX11Texture>(bufferData, width, height, bindingPoint);
+				return std::make_shared<DX11Texture>(bufferData, width, height, bindingPoint, usageType);
 			#endif
 
 			default:
@@ -96,14 +96,14 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::shared_ptr<Texture> createTexture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint){
+	std::shared_ptr<Texture> createTexture(int32 width, int32 height, uint32 bindingPoint, TextureUsage usageType){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
-				return std::make_shared<GL4Texture>(width, height, usageType, bindingPoint);
+				return std::make_shared<GL4Texture>(width, height, bindingPoint, usageType);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_shared<DX11Texture>(width, height, usageType, bindingPoint);
+				return std::make_shared<DX11Texture>(width, height, bindingPoint, usageType);
 			#endif
 
 			default:
