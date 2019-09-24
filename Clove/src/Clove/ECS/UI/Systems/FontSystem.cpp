@@ -92,23 +92,28 @@ namespace clv::ecs::ui{
 
 				FT_Load_Char(face, c, FT_LOAD_RENDER);
 
-				auto texture = gfx::BindableFactory::createTexture(face->glyph->bitmap.buffer, face->glyph->bitmap.width, face->glyph->bitmap.rows, gfx::TBP_Albedo);
+				const auto bearing = math::Vector2f{ face->glyph->bitmap_left, face->glyph->bitmap_top };
 
 				const float width = face->glyph->bitmap.width;
 				const float height = face->glyph->bitmap.rows;
+				
+				const float x = bearing.x;
+				const float y = (height - bearing.y);
+
+				auto texture = gfx::BindableFactory::createTexture(face->glyph->bitmap.buffer, width, height, gfx::TBP_Albedo, gfx::TextureUsage::Font);
 
 				//VB
 				gfx::VertexLayout layout;
 				layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
 				gfx::VertexBufferData bufferData(std::move(layout));
 				//-height because it's easier to draw top down when dealing with the yoffset
-				bufferData.emplaceBack(math::Vector2f{ 0,		-height },	math::Vector2f{ 0.0f, 1.0f });	//Bottom left
-				bufferData.emplaceBack(math::Vector2f{ width,	-height },	math::Vector2f{ 1.0f, 1.0f });	//Bottom right
-				bufferData.emplaceBack(math::Vector2f{ 0,		0 },		math::Vector2f{ 0.0f, 0.0f });	//Top left
-				bufferData.emplaceBack(math::Vector2f{ width,	0 },		math::Vector2f{ 1.0f, 0.0f });	//Top right
+				bufferData.emplaceBack(math::Vector2f{ x,			y },			math::Vector2f{ 0.0f, 1.0f });	//Bottom left
+				bufferData.emplaceBack(math::Vector2f{ x + width,	y },			math::Vector2f{ 1.0f, 1.0f });	//Bottom right
+				bufferData.emplaceBack(math::Vector2f{ x,			y + height },	math::Vector2f{ 0.0f, 0.0f });	//Top left
+				bufferData.emplaceBack(math::Vector2f{ x + width,	y + height },	math::Vector2f{ 1.0f, 0.0f });	//Top right
 
 				//IB
-				std::vector<uint32> indices = {
+				const std::vector<uint32> indices = {
 					1, 3, 0,
 					3, 2, 0
 				};
@@ -118,7 +123,7 @@ namespace clv::ecs::ui{
 
 				model = math::translate(math::Matrix4f(1.0f), { xpos, ypos, 0.0f });
 
-				auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
+				auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::Font);
 				material->setAlbedoTexture(texture);
 				material->setData(gfx::BBP_2DData, spriteProj * model, gfx::ShaderType::Vertex);
 
@@ -130,7 +135,7 @@ namespace clv::ecs::ui{
 				gfx::Renderer::submitMesh(spriteMesh);
 
 				
-				cursorPos += face->glyph->advance.x;
+				cursorPos += (face->glyph->advance.x >> 6); //shift by 6 because the advance is 1/64
 			}
 		}
 	}
