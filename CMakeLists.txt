@@ -44,18 +44,20 @@ set(CMAKE_C_FLAGS_PROFILING "${profiling_flags}")
 set(CMAKE_CXX_FLAGS_RELEASE "${release_flags}")
 set(CMAKE_C_FLAGS_RELEASE "${release_flags}")
 
+#default settings
+set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
+set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
+set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
+
+set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
+set(PA_BUILD_SHARED OFF CACHE BOOL "Build shared/dynamic library")
+set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
+
 #Clove dependencies
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(EngineFolder "Clove")
 set(DependencyFolder "Clove/Dependencies")
-
-#default vendor settings
-set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
-set(PA_BUILD_SHARED OFF CACHE BOOL "Build shared/dynamic library")
-set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
-set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
-set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
-set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #-dxerr
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
