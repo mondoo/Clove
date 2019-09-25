@@ -49,6 +49,14 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(EngineFolder "Clove")
 set(DependencyFolder "Clove/Dependencies")
 
+#default vendor settings
+set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
+set(PA_BUILD_SHARED OFF CACHE BOOL "Build shared/dynamic library")
+set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
+set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
+set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
+set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
+
 #-dxerr
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	add_subdirectory(Clove/vendor/dxerr)
