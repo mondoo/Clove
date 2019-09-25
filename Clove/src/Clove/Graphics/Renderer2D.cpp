@@ -9,7 +9,7 @@
 namespace clv::gfx {
 	std::shared_ptr<gfx::Mesh> Renderer2D::renderMesh;
 
-	std::queue<std::shared_ptr<Sprite>> Renderer2D::renderQueue;
+	std::vector<std::shared_ptr<Sprite>> Renderer2D::spritesToRender;
 
 	void Renderer2D::initialise() {
 		//VB
@@ -38,21 +38,21 @@ namespace clv::gfx {
 	void Renderer2D::endScene() {
 		RenderCommand::setDepthBuffer(false);
 
-		while(!renderQueue.empty()){
-			auto& sprite = renderQueue.front();
-
+		const auto draw = [](const std::shared_ptr<Sprite>& sprite){
 			auto& renderMeshMaterial = renderMesh->getMaterialInstance();
 			renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 			renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
 			renderMesh->bind();
 
 			RenderCommand::drawIndexed(renderMesh->getIndexCount());
+		};
 
-			renderQueue.pop();
-		}
+		std::for_each(spritesToRender.begin(), spritesToRender.end(), draw);
+
+		spritesToRender.clear();
 	}
 
 	void Renderer2D::submitSprite(const std::shared_ptr<Sprite> &sprite){
-		renderQueue.push(sprite);
+		spritesToRender.push_back(sprite);
 	}
 }

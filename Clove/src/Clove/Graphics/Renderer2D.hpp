@@ -12,7 +12,7 @@ namespace clv::gfx{
 	private:
 		static std::shared_ptr<gfx::Mesh> renderMesh;
 
-		static std::queue<std::shared_ptr<Sprite>> renderQueue;
+		static std::vector<std::shared_ptr<Sprite>> spritesToRender;
 
 		//FUNCTIONS
 	public:
