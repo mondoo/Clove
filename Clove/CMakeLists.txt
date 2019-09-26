@@ -132,6 +132,8 @@ set(
 		src/Clove/Profiling/Timer.cpp
 		src/Clove/UI/Font.hpp
 		src/Clove/UI/Font.cpp
+		src/Clove/UI/Text.hpp
+		src/Clove/UI/Text.cpp
 		src/Clove/Utils/Delegate.hpp
 		src/Clove/Utils/Delegate.inl
 		src/Clove/Utils/DeltaTime.hpp

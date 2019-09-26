@@ -31,7 +31,7 @@ namespace clv::ecs::ui{
 			CLV_ASSERT(false, "Could not load font");
 		}
 
-		FT_Set_Pixel_Sizes(face, 0, 48);
+		FT_Set_Pixel_Sizes(face, 0, 78); //This could be done on a text box or something
 	}
 
 	FontSystem::~FontSystem(){

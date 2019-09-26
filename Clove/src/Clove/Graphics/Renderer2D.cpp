@@ -50,6 +50,10 @@ namespace clv::gfx {
 
 			renderQueue.pop();
 		}
+
+		/*
+		Will I need an extra loop to render the text?
+		*/
 	}
 
 	void Renderer2D::submitSprite(const std::shared_ptr<Sprite> &sprite){
