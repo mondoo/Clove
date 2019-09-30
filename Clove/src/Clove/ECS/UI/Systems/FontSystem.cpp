@@ -92,48 +92,50 @@ namespace clv::ecs::ui{
 
 				FT_Load_Char(face, c, FT_LOAD_RENDER);
 
-				const auto bearing = math::Vector2f{ face->glyph->bitmap_left, face->glyph->bitmap_top };
+				//For spaces we just skip and proceed
+				if(face->glyph->bitmap.buffer){
+					const auto bearing = math::Vector2f{ face->glyph->bitmap_left, face->glyph->bitmap_top };
 
-				const float width = face->glyph->bitmap.width;
-				const float height = face->glyph->bitmap.rows;
-				
-				const float x = bearing.x;
-				const float y = (height - bearing.y);
+					const float width = face->glyph->bitmap.width;
+					const float height = face->glyph->bitmap.rows;
 
-				auto texture = gfx::BindableFactory::createTexture(face->glyph->bitmap.buffer, width, height, gfx::TBP_Albedo, gfx::TextureUsage::Font);
+					const float x = bearing.x;
+					const float y = (height - bearing.y);
 
-				//VB
-				gfx::VertexLayout layout;
-				layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
-				gfx::VertexBufferData bufferData(std::move(layout));
-				//-height because it's easier to draw top down when dealing with the yoffset
-				bufferData.emplaceBack(math::Vector2f{ 0,		0 },		math::Vector2f{ 0.0f, 1.0f });	//Bottom left
-				bufferData.emplaceBack(math::Vector2f{ width,	0 },		math::Vector2f{ 1.0f, 1.0f });	//Bottom right
-				bufferData.emplaceBack(math::Vector2f{ 0,		height },	math::Vector2f{ 0.0f, 0.0f });	//Top left
-				bufferData.emplaceBack(math::Vector2f{ width,	height },	math::Vector2f{ 1.0f, 0.0f });	//Top right
+					auto texture = gfx::BindableFactory::createTexture(face->glyph->bitmap.buffer, width, height, gfx::TBP_Albedo, gfx::TextureUsage::Font);
 
-				//IB
-				const std::vector<uint32> indices = {
-					1, 3, 0,
-					3, 2, 0
-				};
+					//VB
+					gfx::VertexLayout layout;
+					layout.add(gfx::VertexElementType::position2D).add(gfx::VertexElementType::texture2D);
+					gfx::VertexBufferData bufferData(std::move(layout));
+					//-height because it's easier to draw top down when dealing with the yoffset
+					bufferData.emplaceBack(math::Vector2f{ 0,		0 }, math::Vector2f{ 0.0f, 1.0f });	//Bottom left
+					bufferData.emplaceBack(math::Vector2f{ width,	0 }, math::Vector2f{ 1.0f, 1.0f });	//Bottom right
+					bufferData.emplaceBack(math::Vector2f{ 0,		height }, math::Vector2f{ 0.0f, 0.0f });	//Top left
+					bufferData.emplaceBack(math::Vector2f{ width,	height }, math::Vector2f{ 1.0f, 0.0f });	//Top right
 
-				const float xpos = cursorPos; //TODO: bearing.x
-				const float ypos = -y;
+					//IB
+					const std::vector<uint32> indices = {
+						1, 3, 0,
+						3, 2, 0
+					};
 
-				model = math::translate(math::Matrix4f(1.0f), { xpos, ypos, 0.0f });
+					const float xpos = cursorPos; //TODO: bearing.x
+					const float ypos = -y;
 
-				auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::Font);
-				material->setAlbedoTexture(texture);
-				material->setData(gfx::BBP_2DData, spriteProj * model, gfx::ShaderType::Vertex);
+					model = math::translate(math::Matrix4f(1.0f), { xpos, ypos, 0.0f });
 
-				auto instance = material->createInstance();
+					auto material = std::make_shared<gfx::Material>(gfx::ShaderStyle::Font);
+					material->setAlbedoTexture(texture);
+					material->setData(gfx::BBP_2DData, spriteProj * model, gfx::ShaderType::Vertex);
 
-				auto spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, instance);
+					auto instance = material->createInstance();
 
-				//TEMP: still renderer for now - needs to be moved to the 2d renderer
-				gfx::Renderer::submitMesh(spriteMesh);
+					auto spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, instance);
 
+					//TEMP: still renderer for now - needs to be moved to the 2d renderer
+					gfx::Renderer::submitMesh(spriteMesh);
+				}
 				
 				cursorPos += (face->glyph->advance.x >> 6); //shift by 6 because the advance is 1/64
 			}
