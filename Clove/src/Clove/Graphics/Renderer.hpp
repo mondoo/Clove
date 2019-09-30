@@ -73,7 +73,7 @@ namespace clv::gfx{
 		static std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> lightDataSBO;
 		static PointLightShaderData currentLightInfo;
 
-		static std::queue<std::shared_ptr<Mesh>> meshRenderQueue;
+		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
 
 		static CameraRenderData cameraSubmissionData;
 

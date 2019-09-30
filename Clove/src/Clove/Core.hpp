@@ -21,17 +21,15 @@
 
 #define BIT(x) (1 << x)
 
-//TODO: Should check for MSVC instead of windows
-#if CLV_PLATFORM_WINDOWS
-	#define CLV_DEBUG_BREAK __debugbreak()
-#elif CLV_PLATFORM_LINUX
+#if defined(__clang__)
+	#define CLV_DEBUG_BREAK __builtin_debugtrap()
+#elif (defined(__GNUC__) || defined(__GNUG__))
 	#define CLV_DEBUG_BREAK __builtin_trap()
-#else
-	#define CLV_DEBUG_BREAK
+#elif defined(_MSC_VER)
+	#define CLV_DEBUG_BREAK __debugbreak()
 #endif
 
-//TODO: Should check for MSVC instead of windows
-#if CLV_PLATFORM_WINDOWS
+#if defined(_MSC_VER)
 	#define	CLV_FUNCTION_NAME __FUNCTION__
 #else 
 	#define	CLV_FUNCTION_NAME __func__

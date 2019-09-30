@@ -23,7 +23,7 @@ namespace clv::gfx{
 	std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> Renderer::lightDataSBO;
 	PointLightShaderData Renderer::currentLightInfo;
 
-	std::queue<std::shared_ptr<Mesh>> Renderer::meshRenderQueue;
+	std::vector<std::shared_ptr<Mesh>> Renderer::meshesToRender;
 
 	CameraRenderData Renderer::cameraSubmissionData;
 
@@ -58,22 +58,23 @@ namespace clv::gfx{
 
 		if(renderTarget){
 			RenderCommand::setRenderTarget(*renderTarget);
-			RenderCommand::clear(); //make sure it's clean
+			RenderCommand::clear();
 		}
 
-		//MESH
 		RenderCommand::setDepthBuffer(true);
 
-		while(!meshRenderQueue.empty()){
-			auto& mesh = meshRenderQueue.front();
+		const auto draw = [](const std::shared_ptr<Mesh>& mesh){
 			mesh->bind();
 			RenderCommand::drawIndexed(mesh->getIndexCount());
-			meshRenderQueue.pop();
-		}
+		};
+
+		std::for_each(meshesToRender.begin(), meshesToRender.end(), draw);
 
 		if(renderTarget){
 			RenderCommand::resetRenderTarget();
 		}
+
+		meshesToRender.clear();
 	}
 
 	void Renderer::setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget){
@@ -86,7 +87,7 @@ namespace clv::gfx{
 	}
 
 	void Renderer::submitMesh(const std::shared_ptr<Mesh>& mesh){
-		meshRenderQueue.push(mesh);
+		meshesToRender.push_back(mesh);
 	}
 
 	void Renderer::setCamera(const CameraRenderData& data){

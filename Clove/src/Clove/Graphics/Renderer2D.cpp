@@ -10,7 +10,7 @@ namespace clv::gfx{
 	std::shared_ptr<gfx::Mesh> Renderer2D::spriteMesh;
 	std::shared_ptr<gfx::Mesh> Renderer2D::characterMesh;
 
-	std::queue<std::shared_ptr<Sprite>> Renderer2D::spriteQueue;
+	std::vector<std::shared_ptr<Sprite>> Renderer2D::spritesToRender;
 	std::queue<std::shared_ptr<Sprite>> Renderer2D::characterQueue;
 
 	void Renderer2D::initialise(){
@@ -55,18 +55,18 @@ namespace clv::gfx{
 	void Renderer2D::endScene(){
 		RenderCommand::setDepthBuffer(false);
 
-		while(!spriteQueue.empty()){
-			auto& sprite = spriteQueue.front();
-
-			auto& renderMeshMaterial = spriteMesh->getMaterialInstance();
+		const auto draw = [](const std::shared_ptr<Sprite>& sprite){
+			auto& renderMeshMaterial = renderMesh->getMaterialInstance();
 			renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 			renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
 			spriteMesh->bind();
 
-			RenderCommand::drawIndexed(spriteMesh->getIndexCount());
+			RenderCommand::drawIndexed(renderMesh->getIndexCount());
+		};
 
-			spriteQueue.pop();
-		}
+		std::for_each(spritesToRender.begin(), spritesToRender.end(), draw);
+
+		spritesToRender.clear();
 
 		while(!characterQueue.empty()){
 			auto& character = characterQueue.front();
@@ -82,8 +82,8 @@ namespace clv::gfx{
 		}
 	}
 
-	void Renderer2D::submitSprite(const std::shared_ptr<Sprite>& sprite){
-		spriteQueue.push(sprite);
+	void Renderer2D::submitSprite(const std::shared_ptr<Sprite> &sprite){
+		spritesToRender.push_back(sprite);
 	}
 
 	void Renderer2D::submitCharacter(const std::shared_ptr<Sprite>& character){
