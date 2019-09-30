@@ -14,7 +14,7 @@ namespace clv::gfx{
 		static std::shared_ptr<gfx::Mesh> characterMesh;
 
 		static std::vector<std::shared_ptr<Sprite>> spritesToRender;
-		static std::queue<std::shared_ptr<Sprite>> characterQueue; //TODO: merge main and make this not a queue
+		static std::vector<std::shared_ptr<Sprite>> charactersToRender;
 
 		//FUNCTIONS
 	public:

@@ -11,7 +11,7 @@ namespace clv::gfx{
 	std::shared_ptr<gfx::Mesh> Renderer2D::characterMesh;
 
 	std::vector<std::shared_ptr<Sprite>> Renderer2D::spritesToRender;
-	std::queue<std::shared_ptr<Sprite>> Renderer2D::characterQueue;
+	std::vector<std::shared_ptr<Sprite>> Renderer2D::charactersToRender;
 
 	void Renderer2D::initialise(){
 		const std::vector<uint32> indices = {
@@ -55,30 +55,36 @@ namespace clv::gfx{
 	void Renderer2D::endScene(){
 		RenderCommand::setDepthBuffer(false);
 
-		const auto draw = [](const std::shared_ptr<Sprite>& sprite){
-			auto& renderMeshMaterial = spriteMesh->getMaterialInstance();
-			renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
-			renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
-			spriteMesh->bind();
+		//Sprites
+		{
+			const auto draw = [](const std::shared_ptr<Sprite>& sprite){
+				auto& renderMeshMaterial = spriteMesh->getMaterialInstance();
+				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
+				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
+				spriteMesh->bind();
 
-			RenderCommand::drawIndexed(spriteMesh->getIndexCount());
-		};
+				RenderCommand::drawIndexed(spriteMesh->getIndexCount());
+			};
 
-		std::for_each(spritesToRender.begin(), spritesToRender.end(), draw);
+			std::for_each(spritesToRender.begin(), spritesToRender.end(), draw);
 
-		spritesToRender.clear();
+			spritesToRender.clear();
+		}
 
-		while(!characterQueue.empty()){
-			auto& character = characterQueue.front();
+		//Characters
+		{
+			const auto draw = [](const std::shared_ptr<Sprite>& character){
+				auto& charMat = characterMesh->getMaterialInstance();
+				charMat.setAlbedoTexture(character->getTexture());
+				charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);
+				characterMesh->bind();
 
-			auto& charMat = characterMesh->getMaterialInstance();
-			charMat.setAlbedoTexture(character->getTexture());
-			charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);
-			characterMesh->bind();
+				RenderCommand::drawIndexed(characterMesh->getIndexCount());
+			};
 
-			RenderCommand::drawIndexed(characterMesh->getIndexCount());
+			std::for_each(charactersToRender.begin(), charactersToRender.end(), draw);
 
-			characterQueue.pop();
+			charactersToRender.clear();
 		}
 	}
 
@@ -87,6 +93,6 @@ namespace clv::gfx{
 	}
 
 	void Renderer2D::submitCharacter(const std::shared_ptr<Sprite>& character){
-		characterQueue.push(character);
+		charactersToRender.push_back(character);
 	}
 }
