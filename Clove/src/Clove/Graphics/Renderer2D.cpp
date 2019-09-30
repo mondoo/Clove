@@ -6,57 +6,87 @@
 #include "Clove/Graphics/Mesh.hpp"
 #include "Clove/Graphics/VertexLayout.hpp"
 
-namespace clv::gfx {
-	std::shared_ptr<gfx::Mesh> Renderer2D::renderMesh;
+namespace clv::gfx{
+	std::shared_ptr<gfx::Mesh> Renderer2D::spriteMesh;
+	std::shared_ptr<gfx::Mesh> Renderer2D::characterMesh;
 
-	std::queue<std::shared_ptr<Sprite>> Renderer2D::renderQueue;
+	std::queue<std::shared_ptr<Sprite>> Renderer2D::spriteQueue;
+	std::queue<std::shared_ptr<Sprite>> Renderer2D::characterQueue;
 
-	void Renderer2D::initialise() {
-		//VB
-		VertexLayout layout;
-		layout.add(gfx::VertexElementType::position2D).add(VertexElementType::texture2D);
-		VertexBufferData bufferData(std::move(layout));
-		bufferData.emplaceBack(math::Vector2f{ -1.0f, -1.0f }, math::Vector2f{ 0.0f, 0.0f });
-		bufferData.emplaceBack(math::Vector2f{ 1.0f, -1.0f }, math::Vector2f{ 1.0f, 0.0f });
-		bufferData.emplaceBack(math::Vector2f{ -1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
-		bufferData.emplaceBack(math::Vector2f{ 1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
-
-		//IB
-		std::vector<uint32> indices = {
+	void Renderer2D::initialise(){
+		const std::vector<uint32> indices = {
 			1, 3, 0,
 			3, 2, 0
 		};
 
-		auto meshMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
-		renderMesh = std::make_shared<gfx::Mesh>(bufferData, indices, meshMaterial->createInstance());
+		//Sprite mesh
+		{
+			VertexLayout layout;
+			layout.add(gfx::VertexElementType::position2D).add(VertexElementType::texture2D);
+			VertexBufferData bufferData(std::move(layout));
+			bufferData.emplaceBack(math::Vector2f{ -1.0f, -1.0f }, math::Vector2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(math::Vector2f{  1.0f, -1.0f }, math::Vector2f{ 1.0f, 0.0f });
+			bufferData.emplaceBack(math::Vector2f{ -1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(math::Vector2f{  1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
+
+			auto spriteMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
+			spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
+		}
+
+		//Font mesh
+		{
+			VertexLayout layout;
+			layout.add(gfx::VertexElementType::position2D).add(VertexElementType::texture2D);
+			VertexBufferData bufferData(std::move(layout));
+			bufferData.emplaceBack(math::Vector2f{ 0,  0 }, math::Vector2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(math::Vector2f{ 1,  0 }, math::Vector2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(math::Vector2f{ 0,  1 }, math::Vector2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(math::Vector2f{ 1,  1 }, math::Vector2f{ 1.0f, 0.0f });
+
+			auto characterMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::Font);
+			characterMesh = std::make_shared<gfx::Mesh>(bufferData, indices, characterMaterial->createInstance());
+		}
 	}
 
-	void Renderer2D::beginScene() {
+	void Renderer2D::beginScene(){
 		//TODO
 	}
 
-	void Renderer2D::endScene() {
+	void Renderer2D::endScene(){
 		RenderCommand::setDepthBuffer(false);
 
-		while(!renderQueue.empty()){
-			auto& sprite = renderQueue.front();
+		while(!spriteQueue.empty()){
+			auto& sprite = spriteQueue.front();
 
-			auto& renderMeshMaterial = renderMesh->getMaterialInstance();
+			auto& renderMeshMaterial = spriteMesh->getMaterialInstance();
 			renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 			renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
-			renderMesh->bind();
+			spriteMesh->bind();
 
-			RenderCommand::drawIndexed(renderMesh->getIndexCount());
+			RenderCommand::drawIndexed(spriteMesh->getIndexCount());
 
-			renderQueue.pop();
+			spriteQueue.pop();
 		}
 
-		/*
-		Will I need an extra loop to render the text?
-		*/
+		while(!characterQueue.empty()){
+			auto& character = characterQueue.front();
+
+			auto& charMat = characterMesh->getMaterialInstance();
+			charMat.setAlbedoTexture(character->getTexture());
+			charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);
+			characterMesh->bind();
+
+			RenderCommand::drawIndexed(characterMesh->getIndexCount());
+
+			characterQueue.pop();
+		}
 	}
 
-	void Renderer2D::submitSprite(const std::shared_ptr<Sprite> &sprite){
-		renderQueue.push(sprite);
+	void Renderer2D::submitSprite(const std::shared_ptr<Sprite>& sprite){
+		spriteQueue.push(sprite);
+	}
+
+	void Renderer2D::submitCharacter(const std::shared_ptr<Sprite>& character){
+		characterQueue.push(character);
 	}
 }
