@@ -56,12 +56,12 @@ namespace clv::gfx{
 		RenderCommand::setDepthBuffer(false);
 
 		const auto draw = [](const std::shared_ptr<Sprite>& sprite){
-			auto& renderMeshMaterial = renderMesh->getMaterialInstance();
+			auto& renderMeshMaterial = spriteMesh->getMaterialInstance();
 			renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 			renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
 			spriteMesh->bind();
 
-			RenderCommand::drawIndexed(renderMesh->getIndexCount());
+			RenderCommand::drawIndexed(spriteMesh->getIndexCount());
 		};
 
 		std::for_each(spritesToRender.begin(), spritesToRender.end(), draw);
