@@ -15,29 +15,16 @@
 //Temp
 #include <fstream>
 #include <strstream>
-#include <ft2build.h>
-#include FT_FREETYPE_H
+//#include <ft2build.h>
+//#include FT_FREETYPE_H
+
+#include "Clove/UI/Font.hpp"
+#include "Clove/UI/Text.hpp"
 
 namespace clv::ecs::ui{
-	TextSystem::TextSystem(){
-		//Just getting something on the screen for now
-		//sprite = std::make_shared<gfx::Sprite>("res/Textures/Zombie-32x32.png");
+	TextSystem::TextSystem() = default;
 
-		if(FT_Init_FreeType(&ft)){
-			CLV_ASSERT(false, "Could not load freetype");
-		}
-
-		if(FT_New_Face(ft, "res/Fonts/Roboto/Roboto-Black.ttf", 0, &face)){
-			CLV_ASSERT(false, "Could not load font");
-		}
-
-		FT_Set_Pixel_Sizes(face, 0, 78); //This could be done on a text box or something
-	}
-
-	TextSystem::~TextSystem(){
-		FT_Done_Face(face);
-		FT_Done_FreeType(ft);
-	}
+	TextSystem::~TextSystem() = default;
 
 	void TextSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
@@ -52,28 +39,26 @@ namespace clv::ecs::ui{
 			const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
 			const auto spriteProj = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 
-			std::string text = "Hello, World! AV\n"; //TODO: Need to sort out spaces
+			clv::ui::Text text(clv::ui::Font("res/Fonts/Roboto/Roboto-Black.ttf"));
+			text.setSize(72);
+			text.setText("Hello, World!");
 
 			float cursorPos = -550.0f;
-			for(auto stringIter = text.begin(); stringIter != text.end(); ++stringIter){
-				int8 c = *stringIter;
-
-				FT_Load_Char(face, c, FT_LOAD_RENDER);
+			for(size_t i = 0; i < text.getTextLength(); ++i){
+				clv::ui::Glyph glyph = text.getBufferForCharAt(i);
 
 				//For spaces we just skip and proceed
-				if(face->glyph->bitmap.buffer){
-					const auto bearing = math::Vector2f{ face->glyph->bitmap_left, face->glyph->bitmap_top };
+				if(glyph.buffer){
+					const float width = glyph.size.x;
+					const float height = glyph.size.y;
 
-					const float width = face->glyph->bitmap.width;
-					const float height = face->glyph->bitmap.rows;
-
-					const float x = bearing.x;
-					const float y = (height - bearing.y);
+					const float x = glyph.bearing.x;
+					const float y = (height - glyph.bearing.y);
 
 					const float xpos = cursorPos + x;
 					const float ypos = -y;
 
-					auto texture = gfx::BindableFactory::createTexture(face->glyph->bitmap.buffer, width, height, gfx::TBP_Albedo, gfx::TextureUsage::Font);
+					auto texture = gfx::BindableFactory::createTexture(glyph.buffer, width, height, gfx::TBP_Albedo, gfx::TextureUsage::Font);
 
 					math::Matrix4f model = math::Matrix4f(1.0f);
 					model = math::translate(math::Matrix4f(1.0f), { xpos, ypos, 0.0f });
@@ -85,7 +70,7 @@ namespace clv::ecs::ui{
 					gfx::Renderer2D::submitCharacter(character);
 				}
 				
-				cursorPos += (face->glyph->advance.x >> 6); //shift by 6 because the advance is 1/64
+				cursorPos += glyph.advance.x;
 			}
 		}
 	}

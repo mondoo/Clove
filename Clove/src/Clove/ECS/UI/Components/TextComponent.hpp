@@ -19,8 +19,8 @@ namespace clv::ecs::ui{
 
 		//Temp public
 	public:
-		clv::ui::Font font;
-		std::string text;
+		//clv::ui::Font font;
+		//std::string text;
 
 		//FUNCTIONS
 	public:
