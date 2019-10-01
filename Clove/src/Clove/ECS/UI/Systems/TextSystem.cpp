@@ -1,5 +1,5 @@
 #include "clvpch.hpp"
-#include "FontSystem.hpp"
+#include "TextSystem.hpp"
 
 //Should all be temp
 #include "Clove/Application.hpp"
@@ -19,7 +19,7 @@
 #include FT_FREETYPE_H
 
 namespace clv::ecs::ui{
-	FontSystem::FontSystem(){
+	TextSystem::TextSystem(){
 		//Just getting something on the screen for now
 		//sprite = std::make_shared<gfx::Sprite>("res/Textures/Zombie-32x32.png");
 
@@ -34,15 +34,15 @@ namespace clv::ecs::ui{
 		FT_Set_Pixel_Sizes(face, 0, 78); //This could be done on a text box or something
 	}
 
-	FontSystem::~FontSystem(){
+	TextSystem::~TextSystem(){
 		FT_Done_Face(face);
 		FT_Done_FreeType(ft);
 	}
 
-	void FontSystem::update(utl::DeltaTime deltaTime){
+	void TextSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
 			d2::TransformComponent* transform = std::get<d2::TransformComponent*>(componentTuple);
-			FontComponent* fontComp = std::get<FontComponent*>(componentTuple);
+			TextComponent* fontComp = std::get<TextComponent*>(componentTuple);
 
 			//TODO: Using hard coded values for now - needs transform component
 

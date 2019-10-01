@@ -62,10 +62,10 @@ set(
 		src/Clove/ECS/Audio/Components/AudioComponent.cpp
 		src/Clove/ECS/Audio/Systems/AudioSystem.hpp
 		src/Clove/ECS/Audio/Systems/AudioSystem.cpp
-		src/Clove/ECS/UI/Components/FontComponent.hpp
-		src/Clove/ECS/UI/Components/FontComponent.cpp
-		src/Clove/ECS/UI/Systems/FontSystem.hpp
-		src/Clove/ECS/UI/Systems/FontSystem.cpp
+		src/Clove/ECS/UI/Components/TextComponent.hpp
+		src/Clove/ECS/UI/Components/TextComponent.cpp
+		src/Clove/ECS/UI/Systems/TextSystem.hpp
+		src/Clove/ECS/UI/Systems/TextSystem.cpp
 		src/Clove/Exception/CloveException.hpp
 		src/Clove/Exception/CloveException.cpp
 		src/Clove/Graphics/Bindables/IndexBuffer.hpp

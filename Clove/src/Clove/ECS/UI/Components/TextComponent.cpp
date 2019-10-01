@@ -1,5 +1,5 @@
 #include "clvpch.hpp"
-#include "FontComponent.hpp"
+#include "TextComponent.hpp"
 
 namespace clv::ecs::ui{
 

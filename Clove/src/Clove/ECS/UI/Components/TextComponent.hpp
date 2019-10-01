@@ -5,7 +5,7 @@
 #include "Clove/UI/Font.hpp"
 
 namespace clv::ecs::ui{
-	class FontComponent : public Component{
+	class TextComponent : public Component{
 		friend class FontSystem;
 
 		//VARIABLES

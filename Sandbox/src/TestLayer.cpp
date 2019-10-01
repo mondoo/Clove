@@ -11,7 +11,7 @@
 #include "Clove/ECS/3D/Components/CameraComponent.hpp"
 #include "Clove/ECS/3D/Components/LightComponent.hpp"
 #include "Clove/ECS/Audio/Components/AudioComponent.hpp"
-#include "Clove/ECS/UI/Components/FontComponent.hpp"
+#include "Clove/ECS/UI/Components/TextComponent.hpp"
 #include "Clove/Maths/Vector.hpp"
 #include "Clove/Input/Input.hpp"
 #include "Clove/Utils/DeltaTime.hpp"
@@ -114,7 +114,7 @@ void TestLayer::onAttach(){
 
 	//Fonts
 	{
-		fontEnt = clv::Application::get().getManager().createEntity<clv::ecs::ui::FontComponent, clv::ecs::d2::TransformComponent>();
+		fontEnt = clv::Application::get().getManager().createEntity<clv::ecs::ui::TextComponent, clv::ecs::d2::TransformComponent>();
 		fontEnt.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 	}
 }
