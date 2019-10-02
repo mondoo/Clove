@@ -13,14 +13,14 @@ namespace clv::ui{
 		FT_Face face;
 
 		//TODO: This should only happen once
-		if(FT_Init_FreeType(&library)){
+		if(FT_Init_FreeType(&library) != FT_Err_Ok){
 			CLV_ASSERT(false, "Could not load freetype");
 		} else{
 			CLV_LOG_TRACE("Constructed FreeType library");
 		}
 		//
 
-		if(FT_New_Face(library, filePath.c_str(), 0, &face)){
+		if(FT_New_Face(library, filePath.c_str(), 0, &face) != FT_Err_Ok){
 			CLV_ASSERT(false, "Could not load font");
 		} else{
 			CLV_LOG_TRACE("Constructed FreeType font {0}", face->family_name);
