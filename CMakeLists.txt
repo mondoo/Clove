@@ -57,7 +57,8 @@ set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 #Clove dependencies
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(EngineFolder "Clove")
-set(DependencyFolder "Clove/Dependencies")
+set(EditorFolder "Editor")
+set(DependencyFolder "${EngineFolder}/Dependencies")
 
 #-dxerr
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -97,3 +98,9 @@ set_target_properties(Clove PROPERTIES FOLDER ${EngineFolder})
 #Sandbox
 add_subdirectory(Sandbox)
 set_target_properties(Sandbox PROPERTIES FOLDER ${EngineFolder})
+
+#Editor
+if(MSVC) #not currently supported without MSVC
+	add_subdirectory(Editor)
+	set_target_properties(CloveEditor PROPERTIES FOLDER ${EditorFolder})
+endif()
