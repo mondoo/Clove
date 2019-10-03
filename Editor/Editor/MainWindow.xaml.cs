@@ -22,6 +22,9 @@ namespace Editor
     {
         public MainWindow() {
             InitializeComponent();
+            
+            //TESTING RUNNING CLOVE HERE
+
         }
     }
 }

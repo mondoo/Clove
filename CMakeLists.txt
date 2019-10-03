@@ -57,7 +57,7 @@ set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 #Clove dependencies
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(EngineFolder "Clove")
-set(EditorFolder "Editor")
+set(EditorFolder "${EngineFolder}/Editor")
 set(DependencyFolder "${EngineFolder}/Dependencies")
 
 #-dxerr
@@ -102,5 +102,6 @@ set_target_properties(Sandbox PROPERTIES FOLDER ${EngineFolder})
 #Editor
 if(MSVC) #not currently supported without MSVC
 	add_subdirectory(Editor)
+	set_target_properties(CloveWrapper PROPERTIES FOLDER ${EditorFolder})
 	set_target_properties(CloveEditor PROPERTIES FOLDER ${EditorFolder})
 endif()

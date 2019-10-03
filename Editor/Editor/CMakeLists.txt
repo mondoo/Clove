@@ -62,3 +62,11 @@ set_property(
 		"System.Xml.Linq"
 		"WindowsBase"
 )
+
+#Link to wrapper
+target_link_libraries(
+	CloveEditor
+		PUBLIC
+		PRIVATE
+			CloveWrapper
+)
