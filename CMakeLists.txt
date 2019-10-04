@@ -4,6 +4,7 @@ project(Clove-Engine)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CSharp_FLAGS "/langversion:8.0")
 
 #Build configurations
 set(debug_flags 		"-DCLV_DEBUG=1 -DCLV_DEVELOPMENT=0 -DCLV_PROFILING=0 -DCLV_RELEASE=0")
@@ -11,38 +12,51 @@ set(development_flags 	"-DCLV_DEBUG=0 -DCLV_DEVELOPMENT=1 -DCLV_PROFILING=0 -DCL
 set(profiling_flags 	"-DCLV_DEBUG=0 -DCLV_DEVELOPMENT=0 -DCLV_PROFILING=1 -DCLV_RELEASE=0")
 set(release_flags 		"-DCLV_DEBUG=0 -DCLV_DEVELOPMENT=0 -DCLV_PROFILING=0 -DCLV_RELEASE=1")
 
+set(cxx_debug_flags)
+set(cxx_development_flags)
+set(cxx_profiling_flags)
+set(cxx_release_flags)
+
 if(MSVC)
-	set(debug_flags 		"/Od /Ob0 /Zi /RTC1 /Wall ${debug_flags}")
-	set(development_flags 	"/Od /Ob0 /Zi /RTC1 /W3 ${development_flags}")
-	set(profiling_flags 	"/DNDEBUG /O2 /Ob3 /W0 ${profiling_flags}")
-	set(release_flags 		"/DNDEBUG /O2 /Ob3 /W0 ${release_flags}")
+	set(cxx_debug_flags 		"/Od /Ob0 /Zi /RTC1 /Wall ${debug_flags}")
+	set(cxx_development_flags 	"/Od /Ob0 /Zi /RTC1 /W3 ${development_flags}")
+	set(cxx_profiling_flags 	"/DNDEBUG /O2 /Ob3 /W0 ${profiling_flags}")
+	set(cxx_release_flags 		"/DNDEBUG /O2 /Ob3 /W0 ${release_flags}")
 
 	set(CMAKE_EXE_LINKER_FLAGS_DEBUG		"/debug /INCREMENTAL")
 	set(CMAKE_EXE_LINKER_FLAGS_DEVELOPMENT	"/debug /INCREMENTAL")
 	set(CMAKE_EXE_LINKER_FLAGS_PROFILING	"/INCREMENTAL:NO")
 	set(CMAKE_EXE_LINKER_FLAGS_RELEASE		"/INCREMENTAL:NO")
 else()
-	set(debug_flags 		"-O0 -g -Wall -Wextra ${debug_flags}")
-	set(development_flags 	"-O0 -g -Wall ${development_flags}")
-	set(profiling_flags 	"-DNDEBUG -O3 -w ${profiling_flags}")
-	set(release_flags 		"-DNDEBUG -O3 -w ${release_flags}")
+	set(cxx_debug_flags 		"-O0 -g -Wall -Wextra ${debug_flags}")
+	set(cxx_development_flags 	"-O0 -g -Wall ${development_flags}")
+	set(cxx_profiling_flags 	"-DNDEBUG -O3 -w ${profiling_flags}")
+	set(cxx_release_flags 		"-DNDEBUG -O3 -w ${release_flags}")
 endif()
+
+set(csharp_debug_flags			"/debug:full /optimize- /warn:3 /errorreport:prompt /define:DEBUG")
+set(csharp_development_flags	"/debug:full /optimize- /warn:3 /errorreport:prompt /define:DEBUG")
+set(csharp_profiling_flags		"/debug:none /optimize")
+set(csharp_release_flags		"/debug:none /optimize")
 
 #Set custom build types
 set(CMAKE_CONFIGURATION_TYPES Debug Development Profiling Release)
 set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Custom Clove configuration types" FORCE)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${debug_flags}")
-set(CMAKE_C_FLAGS_DEBUG "${debug_flags}")
+set(CMAKE_C_FLAGS_DEBUG				"${cxx_debug_flags}")
+set(CMAKE_C_FLAGS_DEVELOPMENT		"${cxx_development_flags}")
+set(CMAKE_C_FLAGS_PROFILING			"${cxx_profiling_flags}")
+set(CMAKE_C_FLAGS_RELEASE			"${cxx_release_flags}")
 
-set(CMAKE_CXX_FLAGS_DEVELOPMENT "${development_flags}")
-set(CMAKE_C_FLAGS_DEVELOPMENT "${development_flags}")
+set(CMAKE_CXX_FLAGS_DEBUG			"${cxx_debug_flags}")
+set(CMAKE_CXX_FLAGS_DEVELOPMENT		"${cxx_development_flags}")
+set(CMAKE_CXX_FLAGS_PROFILING		"${cxx_profiling_flags}")
+set(CMAKE_CXX_FLAGS_RELEASE			"${cxx_release_flags}")
 
-set(CMAKE_CXX_FLAGS_PROFILING "${profiling_flags}")
-set(CMAKE_C_FLAGS_PROFILING "${profiling_flags}")
-
-set(CMAKE_CXX_FLAGS_RELEASE "${release_flags}")
-set(CMAKE_C_FLAGS_RELEASE "${release_flags}")
+set(CMAKE_CSharp_FLAGS_DEBUG		"${csharp_debug_flags}")
+set(CMAKE_CSharp_FLAGS_DEVELOPMENT	"${csharp_development_flags}")
+set(CMAKE_CSharp_FLAGS_PROFILING	"${csharp_profiling_flags}")
+set(CMAKE_CSharp_FLAGS_RELEASE		"${csharp_release_flags}")
 
 #default settings
 set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
