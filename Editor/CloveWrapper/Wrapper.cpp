@@ -21,15 +21,9 @@ clv::Application* clv::createApplication(){
 	return new Editor;
 }
 
-void Set(int val){
-	globaldata = val;
-
+void OpenClove(){
 	clv::Log::init();
 	auto* app = clv::createApplication();
 	app->run();
 	delete app;
-}
-
-int Get(){
-	return globaldata;
 }
