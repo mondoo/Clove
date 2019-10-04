@@ -27,5 +27,6 @@ add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_BINARY_DIR}/Editor/CloveWrapper/$<CONFIG>/CloveWrapper.dll
-                ${CMAKE_BINARY_DIR}/Editor/Editor/$<CONFIG>
+				${CMAKE_BINARY_DIR}/Editor/Editor/$<CONFIG>
+                #$<TARGET_FILE_DIR:Clove> <-- this will put the file in that projects executable location!
 )

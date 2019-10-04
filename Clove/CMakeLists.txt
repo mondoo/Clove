@@ -377,13 +377,13 @@ if(MSVC)
 		TARGET Clove POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy
 				${shaderCSO}
-				${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>
+				${CMAKE_BINARY_DIR}/Editor/Editor/$<CONFIG>
 	)
 	add_custom_command(
 		TARGET Clove POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy
 				${shaderCSO}
-				${CMAKE_BINARY_DIR}/Sandbox
+				${CMAKE_BINARY_DIR}/Editor/Editor
 	)
 
 endif()
@@ -407,14 +407,14 @@ if(MSVC)
 	        TARGET Clove POST_BUILD
 	        COMMAND ${CMAKE_COMMAND} -E copy
 	                ${GLShaders}
-	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>
+	                ${CMAKE_BINARY_DIR}/Editor/Editor/$<CONFIG>
 	)
 endif()
 add_custom_command(
         TARGET Clove POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${GLShaders}
-                ${CMAKE_BINARY_DIR}/Sandbox
+                ${CMAKE_BINARY_DIR}/Editor/Editor
 )
 
 if(MSVC)
