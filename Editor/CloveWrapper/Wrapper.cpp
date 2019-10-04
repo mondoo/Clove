@@ -1,7 +1,13 @@
 #include "Wrapper.hpp"
 
-#include "clvpch.hpp"//TODO: See note in example layer
-#include <Clove.hpp>
+//Reg C++ (Works)
+//#include "clvpch.hpp"//TODO: See note in example layer
+//#include <Clove.hpp>
+
+//Reg C++/CLR (No works :( )
+#include <memory>
+#include <chrono>
+#include "Clove/Application.hpp"
 
 class Editor : public clv::Application{
 public:
@@ -21,9 +27,18 @@ clv::Application* clv::createApplication(){
 	return new Editor;
 }
 
-void OpenClove(){
-	clv::Log::init();
+//Reg C++/CLR (No works :( )
+void CloveWrapper::Wrapper::OpenClove(){
+	//clv::Log::init();
 	auto* app = clv::createApplication();
 	app->run();
 	delete app;
 }
+
+//Reg C++ (Works)
+//void OpenClove(){
+//	clv::Log::init();
+//	auto* app = clv::createApplication();
+//	app->run();
+//	delete app;
+//}

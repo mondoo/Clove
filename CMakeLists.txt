@@ -27,6 +27,12 @@ if(MSVC)
 	set(CMAKE_EXE_LINKER_FLAGS_DEVELOPMENT	"/debug /INCREMENTAL")
 	set(CMAKE_EXE_LINKER_FLAGS_PROFILING	"/INCREMENTAL:NO")
 	set(CMAKE_EXE_LINKER_FLAGS_RELEASE		"/INCREMENTAL:NO")
+
+	#this does a weird thing with C++/CLR
+	#set(CMAKE_SHARED_LINKER_FLAGS_DEBUG			"/debug /INCREMENTAL")
+	#set(CMAKE_SHARED_LINKER_FLAGS_DEVELOPMENT	"/debug /INCREMENTAL")
+	#set(CMAKE_SHARED_LINKER_FLAGS_PROFILING		"/INCREMENTAL:NO")
+	#set(CMAKE_SHARED_LINKER_FLAGS_RELEASE		"/INCREMENTAL:NO")
 else()
 	set(cxx_debug_flags 		"-O0 -g -Wall -Wextra ${debug_flags}")
 	set(cxx_development_flags 	"-O0 -g -Wall ${development_flags}")

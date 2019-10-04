@@ -44,7 +44,7 @@ set_property(SOURCE App.xaml PROPERTY VS_XAML_TYPE "ApplicationDefinition")
 
 #Set other csproj file flags
 set_property(TARGET CloveEditor PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
-set_property(TARGET CloveEditor PROPERTY WIN32_EXECUTABLE TRUE)
+#set_property(TARGET CloveEditor PROPERTY WIN64_EXECUTABLE TRUE)
 
 #Add libraries
 set_property(
