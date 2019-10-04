@@ -23,4 +23,9 @@ target_link_libraries(
 		
 )
 
-#TODO copy across dll
+add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_BINARY_DIR}/Editor/CloveWrapper/$<CONFIG>/CloveWrapper.dll
+                ${CMAKE_BINARY_DIR}/Editor/Editor/$<CONFIG>
+)
