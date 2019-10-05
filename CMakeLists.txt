@@ -59,10 +59,12 @@ set(CMAKE_CXX_FLAGS_DEVELOPMENT		"${cxx_development_flags}")
 set(CMAKE_CXX_FLAGS_PROFILING		"${cxx_profiling_flags}")
 set(CMAKE_CXX_FLAGS_RELEASE			"${cxx_release_flags}")
 
+set(CMAKE_CSharp_FLAGS				"${CMAKE_CSharp_FLAGS} /platform:x64") #Note forcing it to x64 but this should be what ever the wrapper dll gets built as (anycpu seems to prefer 32 bit)
 set(CMAKE_CSharp_FLAGS_DEBUG		"${csharp_debug_flags}")
 set(CMAKE_CSharp_FLAGS_DEVELOPMENT	"${csharp_development_flags}")
 set(CMAKE_CSharp_FLAGS_PROFILING	"${csharp_profiling_flags}")
 set(CMAKE_CSharp_FLAGS_RELEASE		"${csharp_release_flags}")
+
 
 #default settings
 set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")

@@ -5,8 +5,6 @@ using System;
 using CloveWrapper;
 
 namespace Editor {
-    //NOTE: this has to be on the x64 CPU (proj -> properties -> build)
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
