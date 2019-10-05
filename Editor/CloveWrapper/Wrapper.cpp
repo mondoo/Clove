@@ -1,13 +1,16 @@
 #include "Wrapper.hpp"
 
-//Reg C++ (Works)
-//#include "clvpch.hpp"//TODO: See note in example layer
-//#include <Clove.hpp>
-
-//Reg C++/CLR (No works :( )
 #include <memory>
 #include <chrono>
+
 #include "Clove/Application.hpp"
+
+/*
+something inside https://help.veracode.com/reader/4EKhlLSMHm5jC8P8j3XccQ/UWyzuOKNbFbwQACRLkZVjA
+helped debug - TODO: Set these up in CMake (bar RTC1)
+
+also fix the C# platform
+*/
 
 class Editor : public clv::Application{
 public:
@@ -27,18 +30,9 @@ clv::Application* clv::createApplication(){
 	return new Editor;
 }
 
-//Reg C++/CLR (No works :( )
 void CloveWrapper::Wrapper::OpenClove(){
 	//clv::Log::init();
 	auto* app = clv::createApplication();
 	app->run();
 	delete app;
 }
-
-//Reg C++ (Works)
-//void OpenClove(){
-//	clv::Log::init();
-//	auto* app = clv::createApplication();
-//	app->run();
-//	delete app;
-//}
