@@ -336,6 +336,7 @@ target_compile_definitions(
 		CLV_ENGINE=0
 	PRIVATE
 		CLV_ENGINE=1
+		CLV_ENABLE_LOGGING=0 #TEMPORARY - this is so the logging macros can be empty and not break clove with the CLR wrapper - need to refactor how logging works
 )
 
 #DX Shaders
