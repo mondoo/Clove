@@ -137,6 +137,8 @@ set(
 #Files - Graphics
 set(
 	GraphicsFiles
+		src/Graphics/OpenGL-4/Bindables/GL4CubemapTexture.hpp
+		src/Graphics/OpenGL-4/Bindables/GL4CubemapTexture.cpp
 		src/Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp
 		src/Graphics/OpenGL-4/Bindables/GL4IndexBuffer.cpp
 		src/Graphics/OpenGL-4/Bindables/GL4Shader.hpp
