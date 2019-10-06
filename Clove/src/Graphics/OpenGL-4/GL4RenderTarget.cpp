@@ -22,9 +22,15 @@ namespace clv::gfx{
 		GL4Texture& glTexture = static_cast<GL4Texture&>(texture);
 		const uint32 textureRenderID = glTexture.getRenderID();
 
-		CLV_ASSERT(glTexture.getUsageType() == TextureUsage::RenderTarget, "Incorrect texture type");
+		/*
+		if it's a render target texture use as colour buffer and set 
+		*/
+
+		//Colour buffer
+		CLV_ASSERT(glTexture.getUsageType() == TextureUsage::RenderTarget_Colour, "Incorrect texture type");
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureRenderID, 0);
 
+		//Depth buffer
 		//Setting up the depth buffer manually for GL render targets for now
 		glGenRenderbuffers(1, &renderBufferID);
 		glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);

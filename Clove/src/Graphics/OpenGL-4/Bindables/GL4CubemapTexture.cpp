@@ -52,6 +52,6 @@ namespace clv::gfx{
 	}
 
 	TextureUsage GL4CubemapTexture::getUsageType() const{
-		return TextureUsage::DepthStencil;
+		return TextureUsage::RenderTarget_Depth;
 	}
 }

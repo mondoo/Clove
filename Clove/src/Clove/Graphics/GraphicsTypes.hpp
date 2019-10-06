@@ -23,8 +23,8 @@ namespace clv::gfx{
 
 	enum class TextureUsage{
 		Default,
-		RenderTarget,
-		DepthStencil
+		RenderTarget_Colour,
+		RenderTarget_Depth
 	};
 
 	enum class VertexElementType{

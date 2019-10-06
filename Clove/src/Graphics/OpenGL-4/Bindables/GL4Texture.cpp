@@ -82,7 +82,7 @@ namespace clv::gfx{
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 				break;
 
-			case TextureUsage::RenderTarget:
+			case TextureUsage::RenderTarget_Colour:
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 				break;
 

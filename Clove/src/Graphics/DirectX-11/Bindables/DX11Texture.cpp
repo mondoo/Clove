@@ -64,7 +64,7 @@ namespace clv::gfx{
 
 	void DX11Texture::createTexture(TextureUsage usageType, void* pixels){
 		UINT textureBindFlags = D3D11_BIND_SHADER_RESOURCE;
-		if(usageType == TextureUsage::RenderTarget){
+		if(usageType == TextureUsage::RenderTarget_Colour){
 			textureBindFlags |= D3D11_BIND_RENDER_TARGET;
 		}
 
