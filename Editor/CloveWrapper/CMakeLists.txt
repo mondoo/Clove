@@ -8,13 +8,9 @@ add_library(
 		Wrapper.cpp
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES COMMON_LANGUAGE_RUNTIME "") #for some reason this doesn't work and still needs to be doner manually'
+set_target_properties(${PROJECT_NAME} PROPERTIES COMMON_LANGUAGE_RUNTIME "")
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_DOTNET_REFERENCES "System")
-
-string(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-string(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
-string(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS_DEVELOPMENT "${CMAKE_CXX_FLAGS_DEVELOPMENT}")
 
 target_link_libraries(
 	${PROJECT_NAME}
