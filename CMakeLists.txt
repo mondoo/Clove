@@ -39,7 +39,7 @@ else()
 	set(cxx_release_flags 		"-DNDEBUG -O3 -w ${release_flags}")
 endif()
 
-set(csharp_debug_flags			"/debug:full /optimize- /warn:3 /errorreport:prompt /define:DEBUG")
+set(csharp_debug_flags			"/debug:full /optimize- /warn:4 /errorreport:prompt /define:DEBUG")
 set(csharp_development_flags	"/debug:full /optimize- /warn:3 /errorreport:prompt /define:DEBUG")
 set(csharp_profiling_flags		"/debug:none /optimize")
 set(csharp_release_flags		"/debug:none /optimize")
