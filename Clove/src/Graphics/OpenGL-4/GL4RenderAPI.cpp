@@ -68,4 +68,8 @@ namespace clv::gfx{
 	void GL4RenderAPI::resetRenderTarget(){
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
+	
+	void GL4RenderAPI::setViewportSize(float width, float height){
+		glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+	}
 }

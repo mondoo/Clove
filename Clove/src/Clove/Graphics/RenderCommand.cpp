@@ -38,6 +38,10 @@ namespace clv::gfx{
 		renderAPI->resetRenderTarget();
 	}
 
+	void RenderCommand::setViewPortSize(float width, float height){
+		renderAPI->setViewportSize(width, height);
+	}
+
 	void RenderCommand::initialiseRenderAPI(const Context& context){
 		switch(context.getAPI()){
 			case API::OpenGL4:

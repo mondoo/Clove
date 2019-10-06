@@ -132,6 +132,18 @@ namespace clv::gfx{
 		setRenderTargetToCurrent();
 	}
 
+	void DX11RenderAPI::setViewportSize(float width, float height){
+		D3D11_VIEWPORT vp = { 0 };
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
+		vp.Width = static_cast<FLOAT>(width);
+		vp.Height = static_cast<FLOAT>(height);
+		vp.MinDepth = 0;
+		vp.MaxDepth = 1;
+
+		d3dContext->RSSetViewports(1u, &vp);
+	}
+
 	ID3D11Device& DX11RenderAPI::getDevice(){
 		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null device");
 		return *d3dDevice.Get();

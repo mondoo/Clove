@@ -45,10 +45,15 @@ namespace clv::gfx{
 		virtual void drawIndexed(const uint32 count) override;
 
 		virtual void setClearColour(const math::Vector4f& colour) override;
+
 		virtual void setDepthBuffer(bool enabled) override;
+
 		virtual void setBlendState(bool enabled) override;
+
 		virtual void setRenderTarget(RenderTarget& renderTarget) override;
 		virtual void resetRenderTarget() override;
+
+		virtual void setViewportSize(float width, float height) override;
 
 		static ID3D11Device& getDevice();
 		static ID3D11DeviceContext& getContext();
