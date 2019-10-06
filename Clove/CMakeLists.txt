@@ -175,6 +175,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
 			src/Graphics/DirectX-11/Bindables/DX11ConstantBuffer.hpp
 			src/Graphics/DirectX-11/Bindables/DX11ConstantBuffer.inl
+			src/Graphics/DirectX-11/Bindables/DX11CubemapTexture.hpp
+			src/Graphics/DirectX-11/Bindables/DX11CubemapTexture.cpp
 			src/Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp
 			src/Graphics/DirectX-11/Bindables/DX11IndexBuffer.cpp
 			src/Graphics/DirectX-11/Bindables/DX11Shader.hpp
