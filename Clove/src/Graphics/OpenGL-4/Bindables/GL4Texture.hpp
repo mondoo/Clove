@@ -10,6 +10,7 @@ namespace clv::gfx{
 
 		std::string filePath = "";
 		TextureUsage usageType = TextureUsage::Default;
+		TextureStyle style = TextureStyle::Default;
 
 		int32 width = 0;
 		int32 height = 0;
@@ -26,8 +27,8 @@ namespace clv::gfx{
 		GL4Texture& operator=(GL4Texture&& other) noexcept;
 		virtual ~GL4Texture();
 
-		GL4Texture(const std::string& filePath, uint32 bindingPoint);
-		GL4Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint);
+		GL4Texture(const std::string& filePath, uint32 bindingPoint, TextureStyle style);
+		GL4Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style);
 
 		virtual void bind() override;
 
@@ -36,10 +37,15 @@ namespace clv::gfx{
 
 		virtual TextureBindingPoint getBindingPoint() const override;
 		virtual TextureUsage getUsageType() const override;
+		virtual TextureStyle getTextureStyle() const override;
 
 		const uint32 getRenderID() const;
 
 	private:
-		void createTexture(TextureUsage usage, void* pixels);
+		void createDefaultTexture(TextureUsage usage, void* pixels);
+		void createCubemapTexture(TextureUsage usage, void* pixels);
+
+		//TODO: Set up enums for nearest / clamp etc
+		void setTextureParameters();
 	};
 }

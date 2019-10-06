@@ -21,6 +21,11 @@ namespace clv::gfx{
 		RT
 	};
 
+	enum class TextureStyle{
+		Default,
+		Cubemap
+	};
+
 	enum class TextureUsage{
 		Default,
 		RenderTarget_Colour,

@@ -18,9 +18,8 @@ namespace clv::gfx::BindableFactory{
 	std::shared_ptr<VertexBuffer>			createVertexBuffer(const VertexBufferData& bufferData, Shader& shader);
 	std::shared_ptr<IndexBuffer>			createIndexBuffer(const std::vector<uint32>& indexData);
 	std::shared_ptr<Shader>					createShader(ShaderStyle style);
-	std::shared_ptr<Texture>				createTexture(const std::string& filePath, uint32 bindingPoint);
-	std::shared_ptr<Texture>				createTexture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint);
-	std::shared_ptr<Texture>				createCubemapTexture(int32 width, int32 height, uint32 bindingPoint);
+	std::shared_ptr<Texture>				createTexture(const std::string& filePath, uint32 bindingPoint, TextureStyle style = TextureStyle::Default);
+	std::shared_ptr<Texture>				createTexture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style = TextureStyle::Default);
 
 	template<typename T>
 	std::shared_ptr<ShaderBufferObject<T>>	createShaderBufferObject(ShaderType shaderType, uint32 bindingPoint);

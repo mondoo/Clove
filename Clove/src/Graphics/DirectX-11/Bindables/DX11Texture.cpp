@@ -15,9 +15,12 @@ namespace clv::gfx{
 
 	DX11Texture::~DX11Texture() = default;
 
-	DX11Texture::DX11Texture(const std::string& filePath, uint32 bindingPoint)
-		: bindingPoint(bindingPoint){
+	DX11Texture::DX11Texture(const std::string& filePath, uint32 bindingPoint, TextureStyle style)
+		: bindingPoint(bindingPoint)
+		, style(style){
 		
+		//TODO: Handle non-default texture styles
+
 		stbi_set_flip_vertically_on_load(1); //DirectX expects our texture to start on the bottom left
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
@@ -28,11 +31,14 @@ namespace clv::gfx{
 		}
 	}
 
-	DX11Texture::DX11Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint)
+	DX11Texture::DX11Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style)
 		: width(width)
 		, height(height)
 		, usage(usageType)
-		, bindingPoint(bindingPoint){
+		, bindingPoint(bindingPoint)
+		, style(style){
+
+		//TODO: Handle non-default texture styles
 
 		createTexture(usage, nullptr);
 	}
@@ -56,6 +62,10 @@ namespace clv::gfx{
 
 	TextureUsage DX11Texture::getUsageType() const{
 		return usage;
+	}
+
+	TextureStyle DX11Texture::getTextureStyle() const{
+		return style;
 	}
 
 	const Microsoft::WRL::ComPtr<ID3D11Texture2D>& DX11Texture::getTexture() const{

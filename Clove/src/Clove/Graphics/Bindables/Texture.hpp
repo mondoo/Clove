@@ -27,5 +27,6 @@ namespace clv::gfx{
 
 		virtual TextureBindingPoint getBindingPoint() const = 0;
 		virtual TextureUsage getUsageType() const = 0;
+		virtual TextureStyle getTextureStyle() const = 0;
 	};
 }

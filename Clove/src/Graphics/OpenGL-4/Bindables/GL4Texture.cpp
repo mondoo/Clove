@@ -13,21 +13,29 @@ namespace clv::gfx{
 		glDeleteTextures(1, &rendererID);
 	}
 
-	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint)
+	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint, TextureStyle style)
 		: filePath(filePath)
-		, bindingPoint(bindingPoint){
+		, bindingPoint(bindingPoint)
+		, style(style){
 		stbi_set_flip_vertically_on_load(1); //Opengl expects our texture to start on the bottom left
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
 		glGenTextures(1, &rendererID);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		setTextureParameters();
 
-		createTexture(TextureUsage::Default, localBuffer);
+		switch(style){
+			case TextureStyle::Default:
+				createDefaultTexture(TextureUsage::Default, localBuffer);
+				break;
+			case TextureStyle::Cubemap:
+				createCubemapTexture(TextureUsage::Default, localBuffer);
+				break;
+			default:
+				CLV_ASSERT(false, "{0}: Unhandled usage type", CLV_FUNCTION_NAME);
+				break;
+		}
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -36,18 +44,27 @@ namespace clv::gfx{
 		}
 	}
 
-	GL4Texture::GL4Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint)
+	GL4Texture::GL4Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style)
 		: width(width)
 		, height(height)
 		, usageType(usageType)
-		, bindingPoint(bindingPoint){
+		, style(style){
 		glGenTextures(1, &rendererID);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		setTextureParameters();
 
-		createTexture(usageType, nullptr);
+		switch(style){
+			case TextureStyle::Default:
+				createDefaultTexture(usageType, nullptr);
+				break;
+			case TextureStyle::Cubemap:
+				createCubemapTexture(usageType, nullptr);
+				break;
+			default:
+				CLV_ASSERT(false, "{0}: Unhandled usage type", CLV_FUNCTION_NAME);
+				break;
+		}
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -72,11 +89,15 @@ namespace clv::gfx{
 		return usageType;
 	}
 
+	TextureStyle GL4Texture::getTextureStyle() const{
+		return style;
+	}
+
 	const uint32 GL4Texture::getRenderID() const{
 		return rendererID;
 	}
 
-	void GL4Texture::createTexture(TextureUsage usage, void* pixels){
+	void GL4Texture::createDefaultTexture(TextureUsage usage, void* pixels){
 		switch(usage){
 			case TextureUsage::Default:
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
@@ -86,8 +107,48 @@ namespace clv::gfx{
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 				break;
 
+			case TextureUsage::RenderTarget_Depth:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, pixels);
+				break;
+
 			default:
 				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+				break;
+		}
+	}
+
+	void GL4Texture::createCubemapTexture(TextureUsage usage, void* pixels){
+		const uint8 cubeFaces = 6;
+		switch(usage){
+			case TextureUsage::RenderTarget_Depth:
+				for(uint8 i = 0; i < cubeFaces; ++i){
+					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, pixels);
+				}
+				break;
+
+			default:
+				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+				break;
+		}
+	}
+
+	void GL4Texture::setTextureParameters(){
+		switch(style){
+			case TextureStyle::Default:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				break;
+			case TextureStyle::Cubemap:
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+				break;
+			default:
+				CLV_ASSERT(false, "{0}: Unhandled usage type", CLV_FUNCTION_NAME);
 				break;
 		}
 	}

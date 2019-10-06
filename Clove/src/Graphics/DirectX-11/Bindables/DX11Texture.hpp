@@ -20,6 +20,7 @@ namespace clv::gfx{
 		
 		std::string filePath;
 		TextureUsage usage = TextureUsage::Default;
+		TextureStyle style = TextureStyle::Default;
 
 		int32 width = 0;
 		int32 height = 0;
@@ -36,8 +37,8 @@ namespace clv::gfx{
 		DX11Texture& operator=(DX11Texture&& other) noexcept;
 		virtual ~DX11Texture();
 
-		DX11Texture(const std::string& filePath, uint32 bindingPoint);
-		DX11Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint);
+		DX11Texture(const std::string& filePath, uint32 bindingPoint, TextureStyle style);
+		DX11Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style);
 
 		virtual void bind() override;
 
@@ -46,6 +47,7 @@ namespace clv::gfx{
 
 		virtual TextureBindingPoint getBindingPoint() const override;
 		virtual TextureUsage getUsageType() const override;
+		virtual TextureStyle getTextureStyle() const override;
 
 		const Microsoft::WRL::ComPtr<ID3D11Texture2D>& getTexture() const;
 
