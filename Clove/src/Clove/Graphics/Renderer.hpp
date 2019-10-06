@@ -10,6 +10,7 @@ namespace clv::gfx{
 	class RenderTarget;
 	class Mesh;
 	class Sprite;
+	class Texture;
 
 	/*struct VertexData{
 		math::Matrix4f model;
@@ -77,7 +78,12 @@ namespace clv::gfx{
 
 		static CameraRenderData cameraSubmissionData;
 
-		static std::shared_ptr<RenderTarget> renderTarget;
+		static std::shared_ptr<RenderTarget> shadowMapRenderTarget;
+		static std::shared_ptr<Texture> shadowMapTexture;
+
+		static std::shared_ptr<RenderTarget> customRenderTarget;
+
+		static constexpr uint32 shadowMapSize = 1024; //arbitrary shadowmap size
 
 		//FUNCTIONS
 	public:
@@ -87,6 +93,7 @@ namespace clv::gfx{
 		static void endScene();
 
 		static void setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget);
+		static void clearRenderTargets();
 		static void removeRenderTarget();
 
 		static void submitMesh(const std::shared_ptr<Mesh>& mesh);

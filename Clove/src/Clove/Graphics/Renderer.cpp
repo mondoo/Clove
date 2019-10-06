@@ -13,6 +13,8 @@
 #include "Clove/Graphics/Material.hpp"
 #include "Clove/Graphics/Mesh.hpp"
 #include "Clove/Graphics/Sprite.hpp"
+#include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 
 namespace clv::gfx{
 	std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
@@ -27,7 +29,10 @@ namespace clv::gfx{
 
 	CameraRenderData Renderer::cameraSubmissionData;
 
-	std::shared_ptr<RenderTarget> Renderer::renderTarget;
+	std::shared_ptr<RenderTarget> Renderer::shadowMapRenderTarget;
+	std::shared_ptr<Texture> Renderer::shadowMapTexture;
+	
+	std::shared_ptr<RenderTarget> Renderer::customRenderTarget;
 
 	void Renderer::initialise(){
 		materialSBO = gfx::BindableFactory::createShaderBufferObject<MaterialData>(gfx::ShaderType::Pixel, gfx::BBP_MaterialData);
@@ -46,6 +51,9 @@ namespace clv::gfx{
 
 		materialSBO->update({ 32.0f });
 
+		shadowMapTexture = BindableFactory::createTexture(shadowMapSize, shadowMapSize, TextureUsage::RenderTarget_Depth, TBP_Shadow, TextureStyle::Cubemap);
+		shadowMapRenderTarget = RenderTarget::createRenderTarget(nullptr, shadowMapTexture.get());
+
 		RenderCommand::setBlendState(true);
 	}
 
@@ -56,33 +64,51 @@ namespace clv::gfx{
 	void Renderer::endScene(){
 		lightDataSBO->update(currentLightInfo);
 
-		if(renderTarget){
-			RenderCommand::setRenderTarget(*renderTarget);
-			RenderCommand::clear();
-		}
-
-		RenderCommand::setDepthBuffer(true);
-
 		const auto draw = [](const std::shared_ptr<Mesh>& mesh){
 			mesh->bind();
 			RenderCommand::drawIndexed(mesh->getIndexCount());
 		};
 
-		std::for_each(meshesToRender.begin(), meshesToRender.end(), draw);
+		RenderCommand::setDepthBuffer(true);
 
-		if(renderTarget){
-			RenderCommand::resetRenderTarget();
+		//Calculate shadow map
+		RenderCommand::setViewPortSize(shadowMapSize, shadowMapSize);
+		RenderCommand::setRenderTarget(*shadowMapRenderTarget);
+		std::for_each(meshesToRender.begin(), meshesToRender.end(), draw);
+		RenderCommand::setViewPortSize(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight());
+
+		shadowMapTexture->bind();
+
+		//Render any other render targets
+		if(customRenderTarget){
+			RenderCommand::setRenderTarget(*customRenderTarget);
+			std::for_each(meshesToRender.begin(), meshesToRender.end(), draw);
 		}
+
+		RenderCommand::resetRenderTarget();
+
+		//Render scene
+		std::for_each(meshesToRender.begin(), meshesToRender.end(), draw);
 
 		meshesToRender.clear();
 	}
 
 	void Renderer::setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget){
-		renderTarget = inRenderTarget;
+		customRenderTarget = inRenderTarget;
+	}
+
+	void Renderer::clearRenderTargets(){
+		RenderCommand::setRenderTarget(*shadowMapRenderTarget);
+		RenderCommand::clear(); //TODO: Might need to just do a clear depth command
+		if(customRenderTarget){
+			RenderCommand::setRenderTarget(*customRenderTarget);
+			RenderCommand::clear();
+		}
+		RenderCommand::resetRenderTarget();
 	}
 
 	void Renderer::removeRenderTarget(){
-		renderTarget.reset();
+		customRenderTarget.reset();
 		RenderCommand::resetRenderTarget();
 	}
 
