@@ -8,7 +8,9 @@ namespace clv::gfx{
 
 	GL4CubemapTexture& GL4CubemapTexture::operator=(GL4CubemapTexture&& other) noexcept = default;
 
-	GL4CubemapTexture::~GL4CubemapTexture() = default;
+	GL4CubemapTexture::~GL4CubemapTexture(){
+		glDeleteTextures(1, &rendererID);
+	}
 
 	GL4CubemapTexture::GL4CubemapTexture(int32 width, int32 height, uint32 bindingPoint)
 		: width(width)
