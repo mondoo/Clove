@@ -25,7 +25,7 @@ namespace clv::gfx{
 		static void setRenderTarget(RenderTarget& renderTarget);
 		static void resetRenderTarget();
 
-		static void setViewPortSize(float width, float height);
+		static void setViewPortSize(uint32 width, uint32 height);
 
 		static void initialiseRenderAPI(const Context& context);
 	};

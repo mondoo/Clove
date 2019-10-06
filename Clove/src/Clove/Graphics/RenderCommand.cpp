@@ -38,7 +38,7 @@ namespace clv::gfx{
 		renderAPI->resetRenderTarget();
 	}
 
-	void RenderCommand::setViewPortSize(float width, float height){
+	void RenderCommand::setViewPortSize(uint32 width, uint32 height){
 		renderAPI->setViewportSize(width, height);
 	}
 

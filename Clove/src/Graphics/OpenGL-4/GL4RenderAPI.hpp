@@ -29,6 +29,6 @@ namespace clv::gfx{
 		virtual void setRenderTarget(RenderTarget& renderTarget) override;
 		virtual void resetRenderTarget() override;
 
-		virtual void setViewportSize(float width, float height) override;
+		virtual void setViewportSize(uint32 width, uint32 height) override;
 	};
 }

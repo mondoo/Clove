@@ -132,7 +132,7 @@ namespace clv::gfx{
 		setRenderTargetToCurrent();
 	}
 
-	void DX11RenderAPI::setViewportSize(float width, float height){
+	void DX11RenderAPI::setViewportSize(uint32 width, uint32 height){
 		D3D11_VIEWPORT vp = { 0 };
 		vp.TopLeftX = 0;
 		vp.TopLeftY = 0;

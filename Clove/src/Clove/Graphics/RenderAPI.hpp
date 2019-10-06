@@ -33,7 +33,7 @@ namespace clv::gfx{
 		virtual void setRenderTarget(RenderTarget& renderTarget) = 0;
 		virtual void resetRenderTarget() = 0;
 
-		virtual void setViewportSize(float width, float height) = 0;
+		virtual void setViewportSize(uint32 width, uint32 height) = 0;
 
 		static API getAPIType();
 	};
