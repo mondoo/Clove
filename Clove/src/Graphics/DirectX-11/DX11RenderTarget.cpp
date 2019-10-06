@@ -14,9 +14,12 @@ namespace clv::gfx{
 
 	DX11RenderTarget::~DX11RenderTarget() = default;
 
-	DX11RenderTarget::DX11RenderTarget(Texture& texture){
-		DX11Texture& dxTexture = static_cast<DX11Texture&>(texture);
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> textureSource = dxTexture.getTexture();
+	DX11RenderTarget::DX11RenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
+		//TODO: Handle depth/stencil textures
+		//TODO: Handle nullptr
+
+		DX11Texture* dxTexture = static_cast<DX11Texture*>(colourTexture);
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> textureSource = dxTexture->getTexture();
 
 		D3D11_TEXTURE2D_DESC textureDesc;
 		textureSource->GetDesc(&textureDesc);

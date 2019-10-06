@@ -21,7 +21,7 @@ namespace clv::gfx{
 		DX11RenderTarget& operator=(DX11RenderTarget&& other) noexcept;
 		virtual ~DX11RenderTarget();
 		
-		DX11RenderTarget(Texture& texture);
+		DX11RenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
 
 		const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& getRenderTargetView() const;
 	};
