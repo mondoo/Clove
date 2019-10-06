@@ -20,24 +20,25 @@ namespace clv::gfx{
 		stbi_set_flip_vertically_on_load(1); //Opengl expects our texture to start on the bottom left
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
-		glGenTextures(1, &rendererID);
-		glBindTexture(GL_TEXTURE_2D, rendererID);
-
-		setTextureParameters();
-
 		switch(style){
 			case TextureStyle::Default:
+				glBindTexture(GL_TEXTURE_2D, rendererID);
+				setTextureParameters();
 				createDefaultTexture(TextureUsage::Default, localBuffer);
+				glBindTexture(GL_TEXTURE_2D, 0);
 				break;
+
 			case TextureStyle::Cubemap:
+				glBindTexture(GL_TEXTURE_CUBE_MAP, rendererID);
+				setTextureParameters();
 				createCubemapTexture(TextureUsage::Default, localBuffer);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 				break;
+
 			default:
 				CLV_ASSERT(false, "{0}: Unhandled usage type", CLV_FUNCTION_NAME);
 				break;
 		}
-
-		glBindTexture(GL_TEXTURE_2D, 0);
 
 		if(localBuffer){
 			stbi_image_free(localBuffer);
@@ -50,23 +51,25 @@ namespace clv::gfx{
 		, usageType(usageType)
 		, style(style){
 		glGenTextures(1, &rendererID);
-		glBindTexture(GL_TEXTURE_2D, rendererID);
-
-		setTextureParameters();
 
 		switch(style){
 			case TextureStyle::Default:
+				glBindTexture(GL_TEXTURE_2D, rendererID);
+				setTextureParameters();
 				createDefaultTexture(usageType, nullptr);
+				glBindTexture(GL_TEXTURE_2D, 0);
 				break;
 			case TextureStyle::Cubemap:
-				createCubemapTexture(usageType, nullptr);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, rendererID);
+				setTextureParameters();
+				createCubemapTexture(TextureUsage::Default, nullptr);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 				break;
 			default:
 				CLV_ASSERT(false, "{0}: Unhandled usage type", CLV_FUNCTION_NAME);
 				break;
 		}
 
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void GL4Texture::bind(){
