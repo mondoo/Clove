@@ -6,6 +6,7 @@
 #include "Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp"
 #include "Graphics/OpenGL-4/Bindables/GL4Shader.hpp"
 #include "Graphics/OpenGL-4/Bindables/GL4Texture.hpp"
+#include "Graphics/OpenGL-4/Bindables/GL4CubemapTexture.hpp"
 
 //DX
 #if CLV_PLATFORM_WINDOWS
@@ -13,6 +14,7 @@
 #include "Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11Shader.hpp"
 #include "Graphics/DirectX-11/Bindables/DX11Texture.hpp"
+#include "Graphics/DirectX-11/Bindables/DX11CubemapTexture.hpp"
 #endif
 
 namespace clv::gfx::BindableFactory{
@@ -92,6 +94,22 @@ namespace clv::gfx::BindableFactory{
 
 			default:
 				CLV_ASSERT(false, "Unkown API in: {0}", CLV_FUNCTION_NAME);
+				return std::shared_ptr<Texture>();
+		}
+	}
+
+	std::shared_ptr<Texture> createCubemapTexture(int32 width, int32 height, uint32 bindingPoint){
+		switch(RenderAPI::getAPIType()){
+			case API::OpenGL4:
+				return std::make_shared<GL4CubemapTexture>(width, height, usageType, bindingPoint);
+
+			#if	CLV_PLATFORM_WINDOWS
+			case API::DirectX11:
+				return std::make_shared<DX11CubemapTexture>(width, height, usageType, bindingPoint);
+			#endif
+
+			default:
+				CLV_ASSERT(false, "Unknown API in: {0}", CLV_FUNCTION_NAME);
 				return std::shared_ptr<Texture>();
 		}
 	}
