@@ -15,7 +15,6 @@ namespace clv::ecs{
 
 	class Manager{
 		friend class Entity;
-		template<typename T> friend class ComponentPtr;
 
 		//VARIABLES
 	private:
