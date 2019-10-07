@@ -2,7 +2,7 @@
 
 #include "Clove/ECS/Component.hpp"
 
-#include "Clove/UI/Font.hpp"
+#include "Clove/UI/Text.hpp"
 
 namespace clv::ecs::ui{
 	class TextComponent : public Component{
@@ -13,17 +13,21 @@ namespace clv::ecs::ui{
 		static constexpr ComponentID ID = 0xdf019850; //VS Generated GUID
 
 	private:
-		/*
-		holds the font, holds the string?
-		*/
-
-		//Temp public
-	public:
-		//clv::ui::Font font;
-		//std::string text;
+		clv::ui::Text text;
 
 		//FUNCTIONS
 	public:
 		//TODO: ctor
+
+		/*
+		STEPS TODO NEXT:
+		-Currently adding the text class to the textcomponent to link in font rendering to the ECS
+		-The text class needs to be constructed with a font class but components can't use constructors
+		-Going to refactor the ECS to be able to use those constructors
+		-Then update this accordingly 
+		*/
+
+	//	void setFont(const std::string& path);
+	//	void setText(const std::string& text);
 	};
 }
