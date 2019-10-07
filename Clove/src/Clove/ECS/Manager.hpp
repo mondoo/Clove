@@ -4,10 +4,6 @@
 #include "Clove/ECS/Entity.hpp"
 #include "Clove/Utils/DeltaTime.hpp"
 
-namespace clv::gfx{
-	class Renderer;
-}
-
 namespace clv::ecs{
 	class Entity;
 	class Component;
