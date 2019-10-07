@@ -20,6 +20,8 @@ namespace clv::gfx{
 		stbi_set_flip_vertically_on_load(1); //Opengl expects our texture to start on the bottom left
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
+		glGenTextures(1, &rendererID);
+
 		switch(style){
 			case TextureStyle::Default:
 				glBindTexture(GL_TEXTURE_2D, rendererID);
@@ -71,7 +73,6 @@ namespace clv::gfx{
 				CLV_ASSERT(false, "{0}: Unhandled usage type", CLV_FUNCTION_NAME);
 				break;
 		}
-
 	}
 
 	void GL4Texture::bind(){
