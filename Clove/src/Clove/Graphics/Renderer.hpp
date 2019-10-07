@@ -12,18 +12,9 @@ namespace clv::gfx{
 	class Sprite;
 	class Texture;
 
-	/*struct VertexData{
-		math::Matrix4f model;
-		math::Matrix4f normalMatrix;
-	};*/
-
 	struct MaterialData{
 		alignas(16) float sininess;
 	};
-
-	/*struct SpriteShaderData{
-		math::Matrix4f modelProjection;
-	};*/
 
 	struct ViewData{
 		math::Matrix4f view;
@@ -33,13 +24,6 @@ namespace clv::gfx{
 	struct ViewPos{
 		alignas(16) math::Vector3f pos;
 	};
-
-	//struct SpriteRenderData{
-	//	math::Matrix4f modelData{};
-	//	std::shared_ptr<Texture> texture;
-
-	//	void bind() const;
-	//};
 
 	struct CameraRenderData{
 		math::Vector3f position;
@@ -63,8 +47,30 @@ namespace clv::gfx{
 		PointLightData lights[10];
 	};
 
+	/*
+	TODO:
+	-Currently I am setting up the shader to render the scene from the light's perspective
+		-To do that I need an array of 6 directions from the lights position
+			-Can be handle on the light system
+	-I then need to bind that shader into the pipeline when rendering the scene from the light's perspective
+	-Then update the lit shaders to take the cubemap as a seperate param
+	-Then do a bunch of depth testing
+	
+	STEPS TO DO NEXT:
+	-Add a struct that wraps the point light data and the shadow direction array
+		-point light data will be sent to the lit shader, direction to the shadow depth shader
+	-Create the shader for generating the cube map
+	-Update render pipeline to use this shader instead of the mesh's shader (not sure how DX will handle it)
+	-Update lit shader to take in the cube map and then do the depth testing
+
+	*/
+
 	class Renderer{
 		//VARIABLES
+	public:
+		//TODO: Is there a better place to encapsulate this?
+		static constexpr uint32 shadowMapSize = 1024; //arbitrary shadowmap size
+
 	protected:
 		static std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO; //TODO: MOVE TO MATERIAL
 
@@ -82,8 +88,6 @@ namespace clv::gfx{
 		static std::shared_ptr<Texture> shadowMapTexture;
 
 		static std::shared_ptr<RenderTarget> customRenderTarget;
-
-		static constexpr uint32 shadowMapSize = 1024; //arbitrary shadowmap size
 
 		//FUNCTIONS
 	public:
