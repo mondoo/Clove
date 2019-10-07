@@ -59,12 +59,14 @@ namespace clv::gfx{
 				createDefaultTexture(usageType, nullptr);
 				glBindTexture(GL_TEXTURE_2D, 0);
 				break;
+
 			case TextureStyle::Cubemap:
 				glBindTexture(GL_TEXTURE_CUBE_MAP, rendererID);
 				setTextureParameters();
-				createCubemapTexture(TextureUsage::Default, nullptr);
+				createCubemapTexture(usageType, nullptr);
 				glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 				break;
+
 			default:
 				CLV_ASSERT(false, "{0}: Unhandled usage type", CLV_FUNCTION_NAME);
 				break;
