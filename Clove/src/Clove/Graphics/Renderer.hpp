@@ -58,7 +58,6 @@ namespace clv::gfx{
 
 	/*
 	STEPS TO DO NEXT:
-	-Create the shader for generating the cube map
 	-Update render pipeline to use this shader instead of the mesh's shader (not sure how DX will handle it)
 	-Update lit shader to take in the cube map and then do the depth testing
 
