@@ -34,5 +34,7 @@ namespace clv::gfx{
 
 		std::string parseShader(const std::string& filepath);
 		uint32 compileShader(uint32 type, const std::string& source);
+
+		void attachAndLinkShader(uint32 shaderID);
 	};
 }

@@ -183,6 +183,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/Bindables/DX11VertexBuffer.cpp
 			src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
 			src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+			src/Graphics/OpenGL-4/Shaders/CubeShadowMap-gs.glsl
+			src/Graphics/OpenGL-4/Shaders/CubeShadowMap-ps.glsl
+			src/Graphics/OpenGL-4/Shaders/CubeShadowMap-vs.glsl
 			src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
 			src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
 			src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
@@ -393,6 +396,9 @@ endif()
 set(GLShaders
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/CubeShadowMap-gs.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/CubeShadowMap-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/CubeShadowMap-vs.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl

@@ -18,7 +18,8 @@ namespace clv::gfx{
 		Lit,
 		Unlit,
 		_2D,
-		RT
+		RT,
+		CubeShadowMap
 	};
 
 	enum class TextureStyle{

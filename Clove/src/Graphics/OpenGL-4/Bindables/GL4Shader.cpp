@@ -50,6 +50,7 @@ namespace clv::gfx{
 	void GL4Shader::initialise(ShaderStyle style){
 		uint32 vertexID = 0;
 		uint32 pixelID = 0;
+		uint32 geometryID = 0;
 		
 		switch(style){
 			case ShaderStyle::Lit:
@@ -91,6 +92,19 @@ namespace clv::gfx{
 				}
 				break;
 
+			case ShaderStyle::CubeShadowMap:
+				{
+					std::string vertexSource = parseShader("CubeShadowMap-vs.glsl");
+					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
+
+					std::string pixelSource = parseShader("CubeShadowMap-ps.glsl");
+					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+
+					std::string geometrySource = parseShader("CubeShadowMap-gs.glsl");
+					geometryID = compileShader(GL_GEOMETRY_SHADER, geometrySource);
+				}
+				break;
+
 			default:
 				CLV_ASSERT(false, "Unknown type! {0}", CLV_FUNCTION_NAME);
 				break;
@@ -98,15 +112,11 @@ namespace clv::gfx{
 
 		CLV_ASSERT(vertexID != 0 && pixelID != 0, "Pixel or vertex shader not set!");
 
-		glAttachShader(programID, vertexID);
-		glLinkProgram(programID);
-		glValidateProgram(programID);
-		glDeleteShader(vertexID);
-
-		glAttachShader(programID, pixelID);
-		glLinkProgram(programID);
-		glValidateProgram(programID);
-		glDeleteShader(pixelID);
+		attachAndLinkShader(vertexID);
+		attachAndLinkShader(pixelID);
+		if(geometryID != 0){
+			attachAndLinkShader(geometryID);
+		}
 	}
 
 	std::string GL4Shader::parseShader(const std::string& filepath){
@@ -140,5 +150,12 @@ namespace clv::gfx{
 		}
 
 		return id;
+	}
+
+	void GL4Shader::attachAndLinkShader(uint32 shaderID){
+		glAttachShader(programID, shaderID);
+		glLinkProgram(programID);
+		glValidateProgram(programID);
+		glDeleteShader(shaderID);
 	}
 }
