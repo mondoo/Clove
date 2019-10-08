@@ -17,7 +17,8 @@ namespace clv::ecs::d3{
 			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
 			LightComponent* light = std::get<LightComponent*>(componentTuple);
 
-			light->lightData.position = transform->getPosition();
+			light->lightData.intensity.position = transform->getPosition();
+			//light->lightData.shadowTransforms = ; //TODO
 
 			gfx::Renderer::submitPointLight(light->lightData);
 		}

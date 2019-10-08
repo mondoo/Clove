@@ -24,6 +24,8 @@ namespace clv::gfx{
 
 	std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> Renderer::lightDataSBO;
 	PointLightShaderData Renderer::currentLightInfo;
+	std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> Renderer::shadowDataSBO;
+	PointShadowShaderData Renderer::currentShadowInfo;
 
 	std::vector<std::shared_ptr<Mesh>> Renderer::meshesToRender;
 
@@ -41,6 +43,7 @@ namespace clv::gfx{
 		viewPosSBO = gfx::BindableFactory::createShaderBufferObject<ViewPos>(gfx::ShaderType::Pixel, gfx::BBP_ViewData);
 		
 		lightDataSBO = gfx::BindableFactory::createShaderBufferObject<PointLightShaderData>(gfx::ShaderType::Pixel, gfx::BBP_PointLightData);
+		shadowDataSBO = gfx::BindableFactory::createShaderBufferObject<PointShadowShaderData>(gfx::ShaderType::Pixel, gfx::BBP_ShadowData);
 
 		materialSBO->bind();
 
@@ -63,6 +66,7 @@ namespace clv::gfx{
 
 	void Renderer::endScene(){
 		lightDataSBO->update(currentLightInfo);
+		shadowDataSBO->update(currentShadowInfo);
 
 		const auto draw = [](const std::shared_ptr<Mesh>& mesh){
 			mesh->bind();
@@ -122,6 +126,8 @@ namespace clv::gfx{
 	}
 
 	void Renderer::submitPointLight(const PointLightData& data){
-		currentLightInfo.lights[currentLightInfo.numLights++] = data;
+		const int32 lightIndex = currentLightInfo.numLights++;
+		currentLightInfo.intensities[lightIndex] = data.intensity;
+		currentShadowInfo.shadowTransforms[lightIndex] = data.shadowTransforms;
 	}
 }

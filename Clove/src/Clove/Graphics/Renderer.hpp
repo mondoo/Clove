@@ -31,34 +31,33 @@ namespace clv::gfx{
 		math::Matrix4f projection;
 	};
 
+
+	struct PointLightIntesity{
+		alignas(16) math::Vector3f position = { };
+
+		alignas(16) math::Vector3f ambient = { };
+		alignas(16) math::Vector3f diffuse = { };
+		alignas(16) math::Vector3f specular = { };
+
+		/*alignas(16)*/ float constant = 0;
+		/*alignas(16)*/ float linear = 0;
+		/*alignas(16)*/ float quadratic = 0;
+	};
 	struct PointLightData{
-		alignas(16) math::Vector3f position;
-
-		alignas(16) math::Vector3f ambient;
-		alignas(16) math::Vector3f diffuse;
-		alignas(16) math::Vector3f specular;
-
-		/*alignas(16)*/ float constant;
-		/*alignas(16)*/ float linear;
-		/*alignas(16)*/ float quadratic;
+		PointLightIntesity intensity = { };
+		std::array<math::Matrix4f, 6> shadowTransforms = { };
 	};
 	struct PointLightShaderData{ //I guess the lighting system could handle this
 		int32 numLights = 0;
-		PointLightData lights[10];
+		std::array<PointLightIntesity, 10> intensities = { };
+	};
+	struct PointShadowShaderData{
+		int32 numLights = 0;
+		std::array<std::array<math::Matrix4f, 6>, 10> shadowTransforms = { };
 	};
 
 	/*
-	TODO:
-	-Currently I am setting up the shader to render the scene from the light's perspective
-		-To do that I need an array of 6 directions from the lights position
-			-Can be handle on the light system
-	-I then need to bind that shader into the pipeline when rendering the scene from the light's perspective
-	-Then update the lit shaders to take the cubemap as a seperate param
-	-Then do a bunch of depth testing
-	
 	STEPS TO DO NEXT:
-	-Add a struct that wraps the point light data and the shadow direction array
-		-point light data will be sent to the lit shader, direction to the shadow depth shader
 	-Create the shader for generating the cube map
 	-Update render pipeline to use this shader instead of the mesh's shader (not sure how DX will handle it)
 	-Update lit shader to take in the cube map and then do the depth testing
@@ -71,7 +70,7 @@ namespace clv::gfx{
 		//TODO: Is there a better place to encapsulate this?
 		static constexpr uint32 shadowMapSize = 1024; //arbitrary shadowmap size
 
-	protected:
+	private:
 		static std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO; //TODO: MOVE TO MATERIAL
 
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewData>> viewDataSBO;
@@ -79,6 +78,8 @@ namespace clv::gfx{
 
 		static std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> lightDataSBO;
 		static PointLightShaderData currentLightInfo;
+		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> shadowDataSBO;
+		static PointShadowShaderData currentShadowInfo;
 
 		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
 
