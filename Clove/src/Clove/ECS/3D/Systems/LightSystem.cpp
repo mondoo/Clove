@@ -17,8 +17,15 @@ namespace clv::ecs::d3{
 			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
 			LightComponent* light = std::get<LightComponent*>(componentTuple);
 
-			light->lightData.intensity.position = transform->getPosition();
-			//light->lightData.shadowTransforms = ; //TODO
+			const auto& position = transform->getPosition();
+
+			light->lightData.intensity.position = position;
+			light->lightData.shadowTransforms[0] = math::lookAt(position, position + math::Vector3f{ 1.0, 0.0, 0.0}, math::Vector3f{0.0,-1.0, 0.0});
+			light->lightData.shadowTransforms[1] = math::lookAt(position, position + math::Vector3f{-1.0, 0.0, 0.0}, math::Vector3f{0.0,-1.0, 0.0});
+			light->lightData.shadowTransforms[2] = math::lookAt(position, position + math::Vector3f{ 0.0, 1.0, 0.0}, math::Vector3f{0.0, 0.0, 1.0});
+			light->lightData.shadowTransforms[3] = math::lookAt(position, position + math::Vector3f{ 0.0,-1.0, 0.0}, math::Vector3f{0.0, 0.0,-1.0});
+			light->lightData.shadowTransforms[4] = math::lookAt(position, position + math::Vector3f{ 0.0, 0.0, 1.0}, math::Vector3f{0.0,-1.0, 0.0});
+			light->lightData.shadowTransforms[5] = math::lookAt(position, position + math::Vector3f{ 0.0, 0.0,-1.0}, math::Vector3f{0.0,-1.0, 0.0});
 
 			gfx::Renderer::submitPointLight(light->lightData);
 		}
