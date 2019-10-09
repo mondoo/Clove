@@ -62,6 +62,7 @@ namespace clv::gfx{
 					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
 				}
 				break;
+
 			case ShaderStyle::Unlit:
 				{
 					std::string vertexSource = parseShader("Unlit-vs.glsl");
