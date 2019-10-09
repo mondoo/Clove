@@ -81,14 +81,20 @@ clv::Application* clv::createApplication(){
 
 void CloveWrapper::Wrapper::OpenClove(){
 	//clv::Log::init();
-	auto* app = clv::createApplication();
+	app = clv::createApplication();
 	app->run();
 	delete app;
+	app = nullptr;
 }
 
 void CloveWrapper::Wrapper::OpenClove(IntPtr hWnd){
 	std::unique_ptr<EditorWindow> window = std::make_unique<EditorWindow>(hWnd);
-	auto* app = new clv::Application(std::move(window));
-	app->run();
+	app = new clv::Application(std::move(window));
+	app->run(); //Thread gets stuck here, Clove will need be on another thread than the editor (Bulb)
 	delete app;
+	app = nullptr;
+}
+
+void CloveWrapper::Wrapper::StopClove(){
+	app->stop();
 }

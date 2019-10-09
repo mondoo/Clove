@@ -8,7 +8,8 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Button Name="Button" Click="Button_Click" Width="100" Height="100" Content="Open Clove">
-            
+
         </Button>
+        <Button Name="Button2" Click="Button2_Click" Content="Close?" Margin="636,390,10,10"/>
     </Grid>
 </Window>
