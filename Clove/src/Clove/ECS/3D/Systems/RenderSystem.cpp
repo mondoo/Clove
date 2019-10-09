@@ -20,7 +20,7 @@ namespace clv::ecs::d3{
 			RenderableComponent* renderable = std::get<RenderableComponent*>(componentTuple);
 
 			const math::Matrix4f model = transform->getWorldTransformMatrix();
-			renderable->mesh->getMaterialInstance().setData(gfx::BBP_ModelData, VertexData{ model, math::transpose(math::inverse(model)) }, gfx::ShaderType::Vertex);
+			renderable->mesh->getMaterialInstance().setData(gfx::BBP_ModelData, gfx::VertexData{ model, math::transpose(math::inverse(model)) }, gfx::ShaderType::Vertex);
 
 			gfx::Renderer::submitMesh(renderable->mesh);
 		}
