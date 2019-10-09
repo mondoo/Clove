@@ -110,7 +110,7 @@ namespace clv::gfx{
 		std::for_each(meshesToRender.begin(), meshesToRender.end(), drawShadow);
 		RenderCommand::setViewPortSize(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight());
 
-		shadowMapTexture->bind();
+		shadowMapTexture->bind(); //Bind this in before rendering the real mesh
 
 		//Render any other render targets
 		if(customRenderTarget){
