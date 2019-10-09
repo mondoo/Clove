@@ -37,6 +37,8 @@ namespace clv{
 		Application();
 		virtual ~Application();
 
+		Application(std::unique_ptr<Window>&& window);
+
 		void run();
 		void stop();
 

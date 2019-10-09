@@ -39,6 +39,30 @@ namespace clv{
 
 	Application::~Application() = default;
 
+	Application::Application(std::unique_ptr<Window>&& window){
+		//Allowing clove to be opened with a custom window
+
+		CLV_ASSERT(!instance, "Application already exists!");
+		instance = this;
+
+		this->window = std::move(window);
+		this->window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
+		this->window->setVSync(true);
+
+		gfx::RenderCommand::initialiseRenderAPI(this->window->getContext());
+		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+
+		gfx::Renderer::initialise();
+		gfx::Renderer2D::initialise();
+
+		ecsManager = std::make_unique<ecs::Manager>();
+		layerStack = std::make_unique<LayerStack>();
+
+		CLV_LOG_INFO("Successfully initialised Clove");
+
+		prevFrameTime = std::chrono::system_clock::now();
+	}
+
 	void Application::run(){
 		while(running){
 			auto currFrameTime = std::chrono::system_clock::now();
