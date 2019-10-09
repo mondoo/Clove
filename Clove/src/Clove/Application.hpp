@@ -52,6 +52,8 @@ namespace clv{
 
 	private:
 		void onWindowClose();
+
+		void initialise(std::unique_ptr<Window>&& window);
 	};
 
 	//To be defined in CLIENT

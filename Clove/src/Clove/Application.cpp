@@ -16,51 +16,13 @@ namespace clv{
 	Application* Application::instance = nullptr;
 
 	Application::Application(){
-		CLV_ASSERT(!instance, "Application already exists!");
-		instance = this;
-
-		window = std::unique_ptr<Window>(Window::create());
-		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
-		window->setVSync(true);
-
-		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
-		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
-
-		gfx::Renderer::initialise();
-		gfx::Renderer2D::initialise();
-
-		ecsManager = std::make_unique<ecs::Manager>();
-		layerStack = std::make_unique<LayerStack>();
-
-		CLV_LOG_INFO("Successfully initialised Clove");
-
-		prevFrameTime = std::chrono::system_clock::now();
+		initialise(std::unique_ptr<Window>(Window::create()));
 	}
 
 	Application::~Application() = default;
 
 	Application::Application(std::unique_ptr<Window>&& window){
-		//Allowing clove to be opened with a custom window
-
-		CLV_ASSERT(!instance, "Application already exists!");
-		instance = this;
-
-		this->window = std::move(window);
-		this->window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
-		this->window->setVSync(true);
-
-		gfx::RenderCommand::initialiseRenderAPI(this->window->getContext());
-		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
-
-		gfx::Renderer::initialise();
-		gfx::Renderer2D::initialise();
-
-		ecsManager = std::make_unique<ecs::Manager>();
-		layerStack = std::make_unique<LayerStack>();
-
-		CLV_LOG_INFO("Successfully initialised Clove");
-
-		prevFrameTime = std::chrono::system_clock::now();
+		initialise(std::move(window));
 	}
 
 	void Application::run(){
@@ -118,5 +80,27 @@ namespace clv{
 
 	void Application::onWindowClose(){
 		running = false;
+	}
+
+	void Application::initialise(std::unique_ptr<Window>&& window){
+		CLV_ASSERT(!instance, "Application already exists!");
+		instance = this;
+
+		this->window = std::move(window);
+		this->window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
+		this->window->setVSync(true);
+
+		gfx::RenderCommand::initialiseRenderAPI(this->window->getContext());
+		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+
+		gfx::Renderer::initialise();
+		gfx::Renderer2D::initialise();
+
+		ecsManager = std::make_unique<ecs::Manager>();
+		layerStack = std::make_unique<LayerStack>();
+
+		CLV_LOG_INFO("Successfully initialised Clove");
+
+		prevFrameTime = std::chrono::system_clock::now();
 	}
 }
