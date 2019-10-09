@@ -11,7 +11,8 @@ namespace clv::ecs::d3{
 			constant,
 			linear,
 			quadratic },
-			{}
+			{},
+			farDist
 		};
 	}
 

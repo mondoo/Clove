@@ -51,6 +51,7 @@ namespace clv::gfx{
 	struct PointLightData{
 		PointLightIntesity intensity = { };
 		std::array<math::Matrix4f, 6> shadowTransforms = { };
+		float farPlane;
 	};
 	struct PointLightShaderData{ //I guess the lighting system could handle this
 		//int32 numLights = 0;
@@ -97,12 +98,6 @@ namespace clv::gfx{
 		static std::shared_ptr<gfx::ShaderBufferObject<VertexData>> shadowModelData;
 		//sbo for the model data
 		//shader for generating the cube map
-
-		//TODO: should this go inside the light?
-		static constexpr float aspect = 1.0f; //shadow width / shadow height
-		static constexpr float nearDist = 1.0f;
-		static constexpr float farDist = 25.0f;
-		static const math::Matrix4f shadowProj;
 
 		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
 

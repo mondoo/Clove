@@ -32,7 +32,6 @@ namespace clv::gfx{
 
 	std::shared_ptr<gfx::Shader> Renderer::cubeShadowMapShader;
 	std::shared_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::shadowModelData;
-	const math::Matrix4f Renderer::shadowProj = math::createPerspectiveMatrix(math::asRadians(90.0f), aspect, nearDist, farDist);
 
 	std::vector<std::shared_ptr<Mesh>> Renderer::meshesToRender;
 
@@ -161,7 +160,7 @@ namespace clv::gfx{
 
 		currentShadowInfo.shadowTransforms/*.shadowTransforms[lightIndex]*/ = data.shadowTransforms;
 
-		currentShadowDepth.farPlane = farDist;
+		currentShadowDepth.farPlane = data.farPlane;
 		currentShadowDepth.lightPos = data.intensity.position;
 	}
 }

@@ -24,6 +24,11 @@ namespace clv::ecs::d3{
 
 		gfx::PointLightData lightData;
 
+		float aspect = 1.0f; //shadow width / shadow height
+		float nearDist = 0.5f;
+		float farDist = 10000.0f;
+		math::Matrix4f shadowProj = math::createPerspectiveMatrix(math::asRadians(90.0f), aspect, nearDist, farDist);
+
 		//FUNCTIONS
 	public:
 		LightComponent();
