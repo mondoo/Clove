@@ -4,7 +4,7 @@ namespace clv{
 	class Application;
 }
 
-namespace CloveWrapper{
+namespace Bulb::Engine{
 	public ref class Wrapper {
 	private:
 		clv::Application* app;

@@ -2,10 +2,10 @@
 using System.Runtime.InteropServices;
 using System.Threading;
 using System;
-using CloveWrapper;
 using System.Threading.Tasks;
+using Bulb.Engine;
 
-namespace Editor {
+namespace Bulb.Desktop.Windows {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -35,10 +35,6 @@ namespace Editor {
             //or (more appropriately) not have the while loop in run
             Task testTask = new Task(async () => await (runClove(token, hWnd)));
             testTask.Start();
-
-            Console.WriteLine("click");
-
-            //Console.ReadLine();
         }
 
         private void Button2_Click(object sender, RoutedEventArgs e) {

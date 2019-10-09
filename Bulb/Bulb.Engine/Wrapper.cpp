@@ -79,7 +79,7 @@ clv::Application* clv::createApplication(){
 	return new Editor;
 }
 
-void CloveWrapper::Wrapper::OpenClove(){
+void Bulb::Engine::Wrapper::OpenClove(){
 	//clv::Log::init();
 	app = clv::createApplication();
 	app->run();
@@ -87,14 +87,18 @@ void CloveWrapper::Wrapper::OpenClove(){
 	app = nullptr;
 }
 
-void CloveWrapper::Wrapper::OpenClove(IntPtr hWnd){
+void Bulb::Engine::Wrapper::OpenClove(IntPtr hWnd){
 	std::unique_ptr<EditorWindow> window = std::make_unique<EditorWindow>(hWnd);
 	app = new clv::Application(std::move(window));
-	app->run(); //Thread gets stuck here, Clove will need be on another thread than the editor (Bulb)
+	try{
+		app->run(); //Thread gets stuck here, Clove will need be on another thread than the editor (Bulb)
+	} catch(Exception^ e){
+		Console::WriteLine(e);
+	}
 	delete app;
 	app = nullptr;
 }
 
-void CloveWrapper::Wrapper::StopClove(){
+void Bulb::Engine::Wrapper::StopClove(){
 	app->stop();
 }

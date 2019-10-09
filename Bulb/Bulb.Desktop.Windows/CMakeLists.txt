@@ -1,12 +1,12 @@
 #Editor CMake list
 
-project(CloveEditor LANGUAGES CSharp)
+project(Bulb.Desktop.Windows LANGUAGES CSharp)
 
 include(CSharpUtilities)
 
 #Add all c# files
 add_executable(
-	CloveEditor
+	${PROJECT_NAME}
 		App.config
 		App.xaml
 		App.xaml.cs
@@ -43,12 +43,12 @@ csharp_set_xaml_cs_properties(
 set_property(SOURCE App.xaml PROPERTY VS_XAML_TYPE "ApplicationDefinition")
 
 #Set other csproj file flags
-set_property(TARGET CloveEditor PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
-#set_property(TARGET CloveEditor PROPERTY WIN64_EXECUTABLE TRUE)
+set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+#set_property(TARGET ${PROJECT_NAME} PROPERTY WIN64_EXECUTABLE TRUE)
 
 #Add libraries
 set_property(
-	TARGET CloveEditor PROPERTY VS_DOTNET_REFERENCES
+	TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_REFERENCES
 		"Microsoft.CSharp"
 		"PresentationCore"
 		"PresentationFramework"
@@ -65,8 +65,8 @@ set_property(
 
 #Link to wrapper
 target_link_libraries(
-	CloveEditor
+	${PROJECT_NAME}
 		PUBLIC
 		PRIVATE
-			CloveWrapper
+			Bulb.Engine
 )
