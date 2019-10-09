@@ -51,6 +51,7 @@ namespace clv::gfx{
 		: width(width)
 		, height(height)
 		, usageType(usageType)
+		, bindingPoint(bindingPoint)
 		, style(style){
 		glGenTextures(1, &rendererID);
 
