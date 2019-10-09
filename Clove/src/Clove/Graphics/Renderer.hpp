@@ -11,6 +11,7 @@ namespace clv::gfx{
 	class Mesh;
 	class Sprite;
 	class Texture;
+	class Shader;
 
 	struct MaterialData{
 		alignas(16) float sininess;
@@ -31,6 +32,10 @@ namespace clv::gfx{
 		math::Matrix4f projection;
 	};
 
+	struct VertexData{
+		math::Matrix4f model;
+		math::Matrix4f normalMatrix;
+	};
 
 	struct PointLightIntesity{
 		alignas(16) math::Vector3f position = { };
@@ -48,17 +53,22 @@ namespace clv::gfx{
 		std::array<math::Matrix4f, 6> shadowTransforms = { };
 	};
 	struct PointLightShaderData{ //I guess the lighting system could handle this
-		int32 numLights = 0;
-		std::array<PointLightIntesity, 10> intensities = { };
+		//int32 numLights = 0;
+		//std::array<PointLightIntesity, 10> intensities = { };
+		PointLightIntesity intensity = { }; //Supporting one for now
 	};
 	struct PointShadowShaderData{
-		int32 numLights = 0;
-		std::array<std::array<math::Matrix4f, 6>, 10> shadowTransforms = { };
+		//int32 numLights = 0;
+		//std::array<std::array<math::Matrix4f, 6>, 10> shadowTransforms = { };
+		std::array<math::Matrix4f, 6> shadowTransforms = { }; //Supporting one for now
+	};
+	struct PointShadowDepthData{ //It's not depth - this needs a better name
+		math::Vector3f lightPos = { };
+		float farPlane = 0;
 	};
 
 	/*
 	STEPS TO DO NEXT:
-	-Update render pipeline to use this shader instead of the mesh's shader (not sure how DX will handle it)
 	-Update lit shader to take in the cube map and then do the depth testing
 
 	*/
@@ -79,6 +89,20 @@ namespace clv::gfx{
 		static PointLightShaderData currentLightInfo;
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> shadowDataSBO;
 		static PointShadowShaderData currentShadowInfo;
+		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> shadowDepthData;
+		static PointShadowDepthData currentShadowDepth;
+
+		//TODO: material?
+		static std::shared_ptr<gfx::Shader> cubeShadowMapShader;
+		static std::shared_ptr<gfx::ShaderBufferObject<VertexData>> shadowModelData;
+		//sbo for the model data
+		//shader for generating the cube map
+
+		//TODO: should this go inside the light?
+		static constexpr float aspect = 1.0f; //shadow width / shadow height
+		static constexpr float nearDist = 1.0f;
+		static constexpr float farDist = 25.0f;
+		static const math::Matrix4f shadowProj;
 
 		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
 

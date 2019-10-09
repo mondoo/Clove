@@ -36,7 +36,7 @@ void TestLayer::onAttach(){
 	sprtEnt2 = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
 
 	lght1 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
-	lght2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
+	//lght2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
 
 	cam = clv::Application::get().getManager().createEntity<clv::ecs::d3::CameraComponent, clv::ecs::d3::TransformComponent>();
 
@@ -100,15 +100,15 @@ void TestLayer::onAttach(){
 	}
 
 	{
-		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
-		lght2.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
-		lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
+		//auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+		//lght2.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
+		//lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
 	}
 
 	{
 		auto soundBuffer = clv::aud::Sound("res/Audio/Test.wav");
 		sound.getComponent<clv::ecs::aud::AudioComponent>()->setSound(soundBuffer);
-		sound.getComponent<clv::ecs::aud::AudioComponent>()->play();
+		//sound.getComponent<clv::ecs::aud::AudioComponent>()->play();
 	}
 }
 
@@ -167,7 +167,7 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	ent1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta) * radius, 0.0f, 0.0f });
 
 	lght1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta * 1.5f) * radius * 2.0f, 0.0f, sin(rotDelta * 1.5f) * radius * 2.0f });
-	lght2.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta) * radius * 2.0f, sin(rotDelta) * radius * 2.0f, 0.0f });
+	//lght2.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta) * radius * 2.0f, sin(rotDelta) * radius * 2.0f, 0.0f });
 
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setPosition(clv::math::Vector2f(cos(rotDelta) * radius * 5.0f, 0.0f));
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setRotation(rotDelta);

@@ -6,11 +6,6 @@
 #include "Clove/Graphics/MaterialInstance.hpp"
 
 namespace clv::ecs::d3{
-	struct VertexData{
-		math::Matrix4f model;
-		math::Matrix4f normalMatrix;
-	};
-
 	RenderSystem::RenderSystem() = default;
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;

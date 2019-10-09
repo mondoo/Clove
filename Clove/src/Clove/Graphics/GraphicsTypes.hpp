@@ -12,6 +12,7 @@ namespace clv::gfx{
 	enum class ShaderType{
 		Vertex,
 		Pixel,
+		Geometry
 	};
 
 	enum class ShaderStyle{ //TODO: Rename to material style
