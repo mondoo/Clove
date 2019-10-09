@@ -4,7 +4,6 @@ extern clv::Application* clv::createApplication();
 
 int main(int argc, char** argv){
 	try{
-		clv::Log::init();
 		auto* app = clv::createApplication();
 		app->run();
 		delete app;
