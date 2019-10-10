@@ -19,7 +19,9 @@ namespace clv{
 		initialise(std::unique_ptr<Window>(Window::create()));
 	}
 
-	Application::~Application() = default;
+	Application::~Application(){
+		CLV_LOG_INFO("Clove shutting down...");
+	}
 
 	Application::Application(std::unique_ptr<Window>&& window){
 		initialise(std::move(window));
