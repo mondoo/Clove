@@ -137,6 +137,7 @@ namespace clv::gfx{
 			RenderCommand::clear();
 		}
 		RenderCommand::resetRenderTarget();
+		RenderCommand::clear();
 	}
 
 	void Renderer::removeRenderTarget(){
