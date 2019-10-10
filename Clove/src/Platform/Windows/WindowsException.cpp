@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "WindowsException.hpp"
 
 namespace clv{

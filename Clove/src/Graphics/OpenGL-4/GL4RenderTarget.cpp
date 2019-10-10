@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "GL4RenderTarget.hpp"
 
 #include "Graphics/OpenGL-4/Bindables/GL4Texture.hpp"

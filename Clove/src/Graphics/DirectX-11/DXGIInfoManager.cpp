@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "DXGIInfoManager.hpp"
 
 #include "Graphics/DirectX-11/DX11Exception.hpp"

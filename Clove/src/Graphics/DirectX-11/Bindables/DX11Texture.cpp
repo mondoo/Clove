@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "DX11Texture.hpp"
 
 #include "Clove/Application.hpp"

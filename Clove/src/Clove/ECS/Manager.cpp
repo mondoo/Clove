@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Manager.hpp"
 
 #include "Clove/ECS/2D/Systems/RenderSystem.hpp"

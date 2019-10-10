@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "GL4Exception.hpp"
 
 #include <glad/glad.h>

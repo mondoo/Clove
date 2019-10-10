@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "CameraSystem.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"

@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "AudioComponent.hpp"
 
 #include <portaudio.h>

@@ -1,4 +1,3 @@
-#include "clvpch.hpp" //will generate a tonne of compile errors with the pch - should I remove it from the library?
 #include "TestLayer.hpp"
 
 #include "Clove/Application.hpp"

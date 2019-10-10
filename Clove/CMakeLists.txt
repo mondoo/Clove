@@ -7,8 +7,6 @@ add_library(Clove STATIC)
 #Files - Clove
 set(
 	CloveFiles
-		src/clvpch.hpp
-		src/clvpch.cpp
 		src/Clove.hpp
 		src/Clove/Core.hpp
 		src/Clove/EntryPoint.hpp
@@ -133,6 +131,21 @@ set(
 		src/Clove/Utils/MeshLoader.hpp
 		src/Clove/Utils/MeshLoader.cpp
 )
+
+#source_group does not support generator expressions so add the platform headers here
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	set(
+		CloveFiles
+			${CloveFiles}
+			src/CloveWindows.hpp
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(
+		CloveFiles
+			${CloveFiles}
+			src/CloveLinux.hpp
+	)
+endif()
 
 #Files - Graphics
 set(
@@ -308,10 +321,37 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 #Precompiled header
-if(MSVC)
-	set_target_properties(Clove PROPERTIES COMPILE_FLAGS "/Yuclvpch.hpp")
-	set_source_files_properties(src/clvpch.cpp PROPERTIES COMPILE_FLAGS "/Ycclvpch.hpp" OBJECT_OUTPUTS "$(IntDir)/clvpch.pch")
-endif()
+target_precompile_headers(
+	${PROJECT_NAME}
+	PUBLIC
+		#Generic headers
+			<iostream>
+			<memory>
+			<utility>
+			<algorithm>
+			<functional>
+			<sstream>
+			<optional>
+		#Data structures
+			<string>
+			<vector>
+			<unordered_map>
+			<unordered_set>
+		#Clove headers
+			src/Clove/Core.hpp
+			src/Clove/Log.hpp
+			src/Clove/IntTypes.hpp
+			src/Clove/Maths/MathsTypes.hpp
+			src/Clove/Maths/Maths.hpp
+			src/Clove/Maths/MathsHelpers.hpp
+		#Platform headers
+			$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/src/CloveWindows.hpp>
+			$<$<PLATFORM_ID:Linux>:${CMAKE_CURRENT_SOURCE_DIR}/src/CloveLinux.hpp>
+)
+source_group(PCH FILES 
+	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.hxx 
+	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.cxx
+)
 
 #Preprocessor
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")

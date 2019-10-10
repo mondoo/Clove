@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Renderer2D.hpp"
 
 #include "Clove/Graphics/RenderCommand.hpp"

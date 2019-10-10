@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Entity.hpp"
 
 namespace clv::ecs{

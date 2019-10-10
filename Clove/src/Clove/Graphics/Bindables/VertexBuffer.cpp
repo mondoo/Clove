@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "VertexBuffer.hpp"
 
 namespace clv::gfx{
