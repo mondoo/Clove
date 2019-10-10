@@ -29,11 +29,14 @@ void TestLayer::onAttach(){
 	ent1 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
 	ent2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
 	ent3 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
+	
+	bigBoy = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
 
 	//rtEnt = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
 
 	sprtEnt1 = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
 	sprtEnt2 = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
+
 
 	lght1 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
 	//lght2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
@@ -61,12 +64,20 @@ void TestLayer::onAttach(){
 		ent3.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
 	}
 
+	{
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+		bigBoy.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
+	}
+
 	ent1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ 0.0f, 0.0f, 0.0f });
 	ent2.getComponent<clv::ecs::d3::TransformComponent>()->setLocalPosition({ 0.0f, 0.0f, 3.0f });
 	ent3.getComponent<clv::ecs::d3::TransformComponent>()->setLocalPosition({ 0.0f, 3.0f, 0.0f });
 
 	ent1.getComponent<clv::ecs::d3::TransformComponent>()->addChild(ent2.getComponent<clv::ecs::d3::TransformComponent>());
 	ent2.getComponent<clv::ecs::d3::TransformComponent>()->addChild(ent3.getComponent<clv::ecs::d3::TransformComponent>());
+
+	bigBoy.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ 20.0f, 0.0f, 0.0f });
+	bigBoy.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 10.0f, 10.0f, 10.0f });
 
 	//clv::Application::get().getManager().destroyEntity(ent2.getID());
 
@@ -96,6 +107,7 @@ void TestLayer::onAttach(){
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 		lght1.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
+		lght1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ -10.0f, 0.0f, 0.0f });
 		lght1.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
 	}
 
@@ -166,7 +178,7 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 
 	ent1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta) * radius, 0.0f, 0.0f });
 
-	lght1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta * 1.5f) * radius * 2.0f, 0.0f, sin(rotDelta * 1.5f) * radius * 2.0f });
+	//lght1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta * 1.5f) * radius * 2.0f, 0.0f, sin(rotDelta * 1.5f) * radius * 2.0f });
 	//lght2.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta) * radius * 2.0f, sin(rotDelta) * radius * 2.0f, 0.0f });
 
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setPosition(clv::math::Vector2f(cos(rotDelta) * radius * 5.0f, 0.0f));
