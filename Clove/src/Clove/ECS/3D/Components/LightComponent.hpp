@@ -26,7 +26,7 @@ namespace clv::ecs::d3{
 
 		float aspect = 1.0f; //shadow width / shadow height
 		float nearDist = 0.5f;
-		float farDist = 10000.0f;
+		float farDist = 25.0f;
 		math::Matrix4f shadowProj = math::createPerspectiveMatrix(math::asRadians(90.0f), aspect, nearDist, farDist);
 
 		//FUNCTIONS
