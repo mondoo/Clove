@@ -68,12 +68,6 @@ namespace clv::gfx{
 		float farPlane = 0;
 	};
 
-	/*
-	STEPS TO DO NEXT:
-	-Update lit shader to take in the cube map and then do the depth testing
-
-	*/
-
 	class Renderer{
 		//VARIABLES
 	public:

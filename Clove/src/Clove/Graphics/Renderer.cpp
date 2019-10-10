@@ -96,14 +96,6 @@ namespace clv::gfx{
 		RenderCommand::setDepthBuffer(true);
 
 		//Calculate shadow map
-		/*
-		NOTE:
-		It looks like I might need to generate a cube map texture for every light and then pass those to the lighting shader
-			-This seems pretty nuts - I should get this working for one light first and then expand
-				-I was thinking about all lights writing to the same cube map but that'll produce hard shadows and might overwrite some
-				 I think I'll literally need to render the scene for every light
-			-Unless there is some way to bind an array of cube maps into the shader. I'll do the mad expensive way first then investigate
-		*/
 		RenderCommand::setViewPortSize(shadowMapSize, shadowMapSize);
 		RenderCommand::setRenderTarget(*shadowMapRenderTarget);
 		std::for_each(meshesToRender.begin(), meshesToRender.end(), drawShadow);
