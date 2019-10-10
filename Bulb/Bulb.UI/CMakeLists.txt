@@ -5,7 +5,7 @@ project(Bulb.UI LANGUAGES CSharp)
 include(CSharpUtilities)
 
 #Add all c# files
-add_executable(
+add_library(
 	${PROJECT_NAME}
 	Temp.cs
 	#TODO
