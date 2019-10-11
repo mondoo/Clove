@@ -276,49 +276,32 @@ target_include_directories(
 		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
 	PRIVATE
 		vendor/OBJ-Loader/Source
+		$<$<PLATFORM_ID:Windows>:${CMAKE_SOURCE_DIR}/Clove/vendor/wglext>
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-target_include_directories(
-		Clove
-		PRIVATE
-			vendor/wglext
-	)
-endif()
-
-#Libraries - cross platform
+#Libraries
 target_link_libraries(
 	Clove
 	PUBLIC
 	PRIVATE 
+		#Cross platform
 		spdlog
 		stb
 		Glad
 		glm
 		sndfile
 		portaudio_static
+		#Windows
+		$<$<PLATFORM_ID:Windows>:dxerr>
+		$<$<PLATFORM_ID:Windows>:opengl32>
+		$<$<PLATFORM_ID:Windows>:d3d11>
+		$<$<PLATFORM_ID:Windows>:dxguid>
+		$<$<PLATFORM_ID:Windows>:d3dcompiler>
+		#Linux
+		$<$<PLATFORM_ID:Linux>:GLX>
+		$<$<PLATFORM_ID:Linux>:X11>
+		$<$<PLATFORM_ID:Linux>:dl>
 )
-
-#Libraries - platform specific
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_link_libraries(
-		Clove
-		PRIVATE
-			dxerr
-			"opengl32.lib"
-			"d3d11.lib"
-			"dxguid.lib"
-			"d3dcompiler.lib"
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_link_libraries(
-		Clove
-		PRIVATE
-			"GLX"
-			"X11"
-			"dl"
-	)
-endif()
 
 #Precompiled header
 target_precompile_headers(
@@ -354,22 +337,12 @@ source_group(PCH FILES
 )
 
 #Preprocessor
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_compile_definitions(
-		Clove
-		PUBLIC
-			CLV_PLATFORM_WINDOWS=1
-			CLV_PLATFORM_LINUX=0
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_compile_definitions(
-		Clove
-		PUBLIC
-			CLV_PLATFORM_WINDOWS=0
-			CLV_PLATFORM_LINUX=1
-	)
-endif()
-
+target_compile_definitions(
+	Clove
+	PUBLIC
+		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
+		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
+)
 target_compile_definitions(
 	Clove
 	INTERFACE
