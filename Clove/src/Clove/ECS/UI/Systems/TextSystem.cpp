@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "TextSystem.hpp"
 
 //Should all be temp

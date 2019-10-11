@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Text.hpp"
 
 namespace clv::ui{

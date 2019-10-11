@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Font.hpp"
 
 #include <ft2build.h>
