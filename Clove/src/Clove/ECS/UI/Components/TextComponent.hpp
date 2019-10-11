@@ -13,7 +13,7 @@ namespace clv::ecs::ui{
 		static constexpr ComponentID ID = 0xdf019850; //VS Generated GUID
 
 	private:
-		clv::ui::Text text;
+		//clv::ui::Text text;
 
 		//FUNCTIONS
 	public:
