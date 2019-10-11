@@ -39,6 +39,6 @@ namespace clv::ecs{
 		Component* getComponentForEntity(EntityID entityID, ComponentID componentID);
 		bool isEntityValid(EntityID entityID);
 
-		void bindEntity(Entity entity);
+		void bindEntity(Entity& entity);
 	};
 }

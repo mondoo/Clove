@@ -78,7 +78,7 @@ namespace clv::ecs{
 		return it != components.end();
 	}
 	
-	void Manager::bindEntity(Entity entity){
+	void Manager::bindEntity(Entity& entity){
 		entity.onComponentCreated.bind(&Manager::onEntityCreateComponent, this);
 		entity.onComponentRequestedDelegate.bind(&Manager::getComponentForEntity, this);
 		entity.isEntityIdValidDelegate.bind(&Manager::isEntityValid, this);
