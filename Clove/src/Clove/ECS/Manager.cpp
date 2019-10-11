@@ -31,6 +31,15 @@ namespace clv::ecs{
 		}
 	}
 
+	Entity Manager::createEntity(){
+		EntityID ID = ++nextID;
+
+		Entity entity{ ID };
+		bindEntity(entity);
+
+		return entity;
+	}
+
 	void Manager::destroyEntity(EntityID ID){
 		if(ID == INVALID_ENTITY_ID){
 			return;
@@ -45,12 +54,19 @@ namespace clv::ecs{
 	Entity Manager::getEntity(EntityID ID){
 		if(const auto foundEnt = components.find(ID); foundEnt != components.end()){
 			Entity entity{ ID };
-			entity.onComponentRequestedDelegate.bind(&Manager::getComponentForEntity, this);
-			entity.isEntityIdValidDelegate.bind(&Manager::isEntityValid, this);
+			bindEntity(entity);
 
 			return entity;
 		}
 		return {};
+	}
+
+	void Manager::onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component){
+		components[entityID][componentID] = std::move(component);
+
+		for(auto& system : systems){
+			system->onEntityComponentAdded(entityID, components[entityID]);
+		}
 	}
 
 	Component* Manager::getComponentForEntity(EntityID entityID, ComponentID componentID){
@@ -60,5 +76,11 @@ namespace clv::ecs{
 	bool Manager::isEntityValid(EntityID entityID){
 		const auto it = components.find(entityID);
 		return it != components.end();
+	}
+	
+	void Manager::bindEntity(Entity entity){
+		entity.onComponentCreated.bind(&Manager::onEntityCreateComponent, this);
+		entity.onComponentRequestedDelegate.bind(&Manager::getComponentForEntity, this);
+		entity.isEntityIdValidDelegate.bind(&Manager::isEntityValid, this);
 	}
 }

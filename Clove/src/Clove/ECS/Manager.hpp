@@ -30,20 +30,15 @@ namespace clv::ecs{
 
 		void update(utl::DeltaTime deltaTime);
 
-		template<typename... EntityComponents>
 		Entity createEntity();
 		void destroyEntity(EntityID ID);
 		Entity getEntity(EntityID ID);
 
 	private:
-		template<size_t index, typename EntityComponent, typename... EntityComponents>
-		void buildComponentMap(std::unordered_map<ComponentID, std::unique_ptr<Component>>& map);
-		template<size_t index>
-		void buildComponentMap(std::unordered_map<ComponentID, std::unique_ptr<Component>>& map);
-
+		void onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component);
 		Component* getComponentForEntity(EntityID entityID, ComponentID componentID);
 		bool isEntityValid(EntityID entityID);
+
+		void bindEntity(Entity entity);
 	};
 }
-
-#include "Manager.inl"

@@ -30,7 +30,6 @@ set(
 		src/Clove/ECS/Entity.inl
 		src/Clove/ECS/Entity.cpp
 		src/Clove/ECS/Manager.hpp
-		src/Clove/ECS/Manager.inl
 		src/Clove/ECS/Manager.cpp
 		src/Clove/ECS/System.hpp
 		src/Clove/ECS/System.inl
