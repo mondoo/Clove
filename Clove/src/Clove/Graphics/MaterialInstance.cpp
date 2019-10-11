@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "MaterialInstance.hpp"
 
 #include "Clove/Graphics/Material.hpp"

@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "DX11VertexBuffer.hpp"
 
 #include "Clove/Application.hpp"

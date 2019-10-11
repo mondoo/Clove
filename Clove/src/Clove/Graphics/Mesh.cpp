@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Mesh.hpp"
 
 #include "Clove/Graphics/BindableFactory.hpp"

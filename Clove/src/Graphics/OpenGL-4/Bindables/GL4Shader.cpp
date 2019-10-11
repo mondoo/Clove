@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "GL4Shader.hpp"
 
 #include "Clove/Application.hpp"

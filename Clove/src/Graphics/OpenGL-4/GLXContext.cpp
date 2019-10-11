@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "GLXContext.hpp"
 
 #include "Platform/Linux/LinuxWindow.hpp"

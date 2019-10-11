@@ -7,8 +7,6 @@ add_library(Clove STATIC)
 #Files - Clove
 set(
 	CloveFiles
-		src/clvpch.hpp
-		src/clvpch.cpp
 		src/Clove.hpp
 		src/Clove/Core.hpp
 		src/Clove/EntryPoint.hpp
@@ -30,7 +28,6 @@ set(
 		src/Clove/ECS/Entity.inl
 		src/Clove/ECS/Entity.cpp
 		src/Clove/ECS/Manager.hpp
-		src/Clove/ECS/Manager.inl
 		src/Clove/ECS/Manager.cpp
 		src/Clove/ECS/System.hpp
 		src/Clove/ECS/System.inl
@@ -141,6 +138,21 @@ set(
 		src/Clove/Utils/MeshLoader.hpp
 		src/Clove/Utils/MeshLoader.cpp
 )
+
+#source_group does not support generator expressions so add the platform headers here
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	set(
+		CloveFiles
+			${CloveFiles}
+			src/CloveWindows.hpp
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(
+		CloveFiles
+			${CloveFiles}
+			src/CloveLinux.hpp
+	)
+endif()
 
 #Files - Graphics
 set(
@@ -276,21 +288,15 @@ target_include_directories(
 	PRIVATE
 		vendor/OBJ-Loader/Source
 		vendor/freetype2/include
+		$<$<PLATFORM_ID:Windows>:${CMAKE_SOURCE_DIR}/Clove/vendor/wglext>
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-target_include_directories(
-		Clove
-		PRIVATE
-			vendor/wglext
-	)
-endif()
-
-#Libraries - cross platform
+#Libraries
 target_link_libraries(
 	Clove
 	PUBLIC
 	PRIVATE 
+		#Cross platform
 		spdlog
 		stb
 		Glad
@@ -298,52 +304,58 @@ target_link_libraries(
 		sndfile
 		portaudio_static
 		freetype
+		#Windows
+		$<$<PLATFORM_ID:Windows>:dxerr>
+		$<$<PLATFORM_ID:Windows>:opengl32>
+		$<$<PLATFORM_ID:Windows>:d3d11>
+		$<$<PLATFORM_ID:Windows>:dxguid>
+		$<$<PLATFORM_ID:Windows>:d3dcompiler>
+		#Linux
+		$<$<PLATFORM_ID:Linux>:GLX>
+		$<$<PLATFORM_ID:Linux>:X11>
+		$<$<PLATFORM_ID:Linux>:dl>
 )
 
-#Libraries - platform specific
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_link_libraries(
-		Clove
-		PRIVATE
-			dxerr
-			"opengl32.lib"
-			"d3d11.lib"
-			"dxguid.lib"
-			"d3dcompiler.lib"
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_link_libraries(
-		Clove
-		PRIVATE
-			"GLX"
-			"X11"
-			"dl"
-	)
-endif()
-
 #Precompiled header
-if(MSVC)
-	set_target_properties(Clove PROPERTIES COMPILE_FLAGS "/Yuclvpch.hpp")
-	set_source_files_properties(src/clvpch.cpp PROPERTIES COMPILE_FLAGS "/Ycclvpch.hpp" OBJECT_OUTPUTS "$(IntDir)/clvpch.pch")
-endif()
+target_precompile_headers(
+	${PROJECT_NAME}
+	PUBLIC
+		#Generic headers
+			<iostream>
+			<memory>
+			<utility>
+			<algorithm>
+			<functional>
+			<sstream>
+			<optional>
+		#Data structures
+			<string>
+			<vector>
+			<unordered_map>
+			<unordered_set>
+		#Clove headers
+			src/Clove/Core.hpp
+			src/Clove/Log.hpp
+			src/Clove/IntTypes.hpp
+			src/Clove/Maths/MathsTypes.hpp
+			src/Clove/Maths/Maths.hpp
+			src/Clove/Maths/MathsHelpers.hpp
+		#Platform headers
+			$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/src/CloveWindows.hpp>
+			$<$<PLATFORM_ID:Linux>:${CMAKE_CURRENT_SOURCE_DIR}/src/CloveLinux.hpp>
+)
+source_group(PCH FILES 
+	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.hxx 
+	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.cxx
+)
 
 #Preprocessor
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_compile_definitions(
-		Clove
-		PUBLIC
-			CLV_PLATFORM_WINDOWS=1
-			CLV_PLATFORM_LINUX=0
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_compile_definitions(
-		Clove
-		PUBLIC
-			CLV_PLATFORM_WINDOWS=0
-			CLV_PLATFORM_LINUX=1
-	)
-endif()
-
+target_compile_definitions(
+	Clove
+	PUBLIC
+		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
+		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
+)
 target_compile_definitions(
 	Clove
 	INTERFACE

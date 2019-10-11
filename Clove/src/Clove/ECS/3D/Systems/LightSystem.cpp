@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "LightSystem.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"

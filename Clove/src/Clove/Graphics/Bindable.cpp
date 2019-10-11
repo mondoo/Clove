@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Bindable.hpp"
 
 namespace clv::gfx{

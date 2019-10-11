@@ -1,16 +1,16 @@
 #include "Clove/ECS/Component.hpp"
 
 namespace clv::ecs{
-	template<typename... ComponentTypes>
+	template<typename ...ComponentTypes>
 	 System<ComponentTypes...>::System() = default;
 
-	template<typename... ComponentTypes>
+	template<typename ...ComponentTypes>
 	System<ComponentTypes...>::System(System&& other) noexcept{
 		components = std::move(other.components);
 		entityIdToIndexMap = std::move(other.entityIdToIndexMap);
 	}
 
-	template<typename... ComponentTypes>
+	template<typename ...ComponentTypes>
 	System<ComponentTypes...>& System<ComponentTypes...>::operator=(System&& other) noexcept{
 		components = std::move(other.components);
 		entityIdToIndexMap = std::move(other.entityIdToIndexMap);
@@ -18,11 +18,15 @@ namespace clv::ecs{
 		return *this;
 	}
 
-	template<typename... ComponentTypes>
+	template<typename ...ComponentTypes>
 	System<ComponentTypes...>::~System() = default;
 
-	template<typename... ComponentTypes>
-	void System<ComponentTypes...>::onEntityCreated(EntityID entity, const std::unordered_map<ComponentID, std::unique_ptr<Component>>& entityComponents){
+	template<typename ...ComponentTypes>
+	void System<ComponentTypes...>::onEntityComponentAdded(EntityID entity, const std::unordered_map<ComponentID, std::unique_ptr<Component>>& entityComponents){
+		if(entityIdToIndexMap.find(entity) != entityIdToIndexMap.end()){
+			return;
+		}
+		
 		ComponentTuple comptuple;
 		size_t matchingComps = 0;
 		for(const auto& [compID, comp] : entityComponents){
@@ -38,26 +42,28 @@ namespace clv::ecs{
 		}
 	}
 
-	template<typename... ComponentTypes>
+	template<typename ...ComponentTypes>
 	void System<ComponentTypes...>::onEntityDestroyed(EntityID entity){
 		const auto findIt = entityIdToIndexMap.find(entity);
 		if(findIt != entityIdToIndexMap.end()){
-			handleEntityDestruction(components[findIt->second]);
+			const size_t componentIndex = findIt->second;
 
-			components[findIt->second] = std::move(components.back());
+			handleEntityDestruction(components[componentIndex]);
+
+			components[componentIndex] = std::move(components.back());
 			components.pop_back();
 
 			if(findIt->second < components.size()){
-				const auto& movedComponent = std::get<0>(components[findIt->second]); //We just need any component to do the look up
+				const auto& movedComponent = std::get<0>(components[componentIndex]); //We just need any component to do the look up
 				auto movedTupleIdIndex = entityIdToIndexMap.find(movedComponent->entityID);
 
 				CLV_ASSERT(movedTupleIdIndex != entityIdToIndexMap.end(), "Entity ID not tracked!");
-				movedTupleIdIndex->second = findIt->second;
+				movedTupleIdIndex->second = componentIndex;
 			}
 		}
 	}
 
-	template<typename... ComponentTypes>
+	template<typename ...ComponentTypes>
 	template<size_t index, typename ComponentType, typename... ComponentArgs>
 	bool System<ComponentTypes...>::proccessEntityComponent(ComponentID componentID, Component* component, ComponentTuple& tupleToFill){
 		if(ComponentType::ID == componentID){
@@ -68,7 +74,7 @@ namespace clv::ecs{
 		}
 	}
 
-	template<typename... ComponentTypes>
+	template<typename ...ComponentTypes>
 	template<size_t index>
 	bool System<ComponentTypes...>::proccessEntityComponent(ComponentID componentID, Component* component, ComponentTuple& tupleToFill){
 		return false;
