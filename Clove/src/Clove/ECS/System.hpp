@@ -11,12 +11,13 @@ namespace clv::ecs{
 	public:
 		virtual ~SystemBase() = default;
 
-		virtual void onEntityCreated(EntityID entity, const std::unordered_map<ComponentID, std::unique_ptr<Component>>& entityComponents) = 0;
+		virtual void onEntityComponentAdded(EntityID entity, const std::unordered_map<ComponentID, std::unique_ptr<Component>>& entityComponents) = 0;
 		virtual void onEntityDestroyed(EntityID entity) = 0;
+
 		virtual void update(utl::DeltaTime deltaTime) = 0;
 	};
 
-	template<typename... ComponentTypes>
+	template<typename ...ComponentTypes>
 	class System : public SystemBase{
 	protected:
 		using ComponentTuple = std::tuple<std::add_pointer_t<ComponentTypes>...>;
@@ -38,7 +39,7 @@ namespace clv::ecs{
 		System& operator=(System&& other) noexcept;
 		virtual ~System();
 
-		virtual void onEntityCreated(EntityID entity, const std::unordered_map<ComponentID, std::unique_ptr<Component>>& entityComponents) override final;
+		virtual void onEntityComponentAdded(EntityID entity, const std::unordered_map<ComponentID, std::unique_ptr<Component>>& entityComponents) override final;
 		virtual void onEntityDestroyed(EntityID entity) override final;
 
 	private:
@@ -46,7 +47,7 @@ namespace clv::ecs{
 		virtual void handleEntityCreation(const ComponentTuple& componentTuple){}
 		virtual void handleEntityDestruction(const ComponentTuple& componentTuple){}
 
-		template<size_t index, typename ComponentType, typename... ComponentArgs>
+		template<size_t index, typename ComponentType, typename ...ComponentArgs>
 		bool proccessEntityComponent(ComponentID componentID, Component* component, ComponentTuple& tupleToFill);
 		template<size_t index>
 		bool proccessEntityComponent(ComponentID componentID, Component* component, ComponentTuple& tupleToFill);

@@ -9,6 +9,7 @@ namespace clv::ecs{
 	class Entity{
 		//VARIABLES
 	public:
+		utl::SingleCastDelegate<void(EntityID, ComponentID, std::unique_ptr<Component>)> onComponentCreated;
 		utl::SingleCastDelegate<Component*(EntityID, ComponentID)> onComponentRequestedDelegate;
 		utl::SingleCastDelegate<bool(EntityID)> isEntityIdValidDelegate;
 
@@ -30,6 +31,8 @@ namespace clv::ecs{
 
 		EntityID getID() const;
 
+		template<typename ComponentType, typename ...ConstructorArgs>
+		ComponentType* addComponent(ConstructorArgs&& ...args);
 		template<typename ComponentType>
 		ComponentType* getComponent() const;
 	};

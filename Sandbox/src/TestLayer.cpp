@@ -25,21 +25,44 @@ TestLayer::TestLayer()
 }
 
 void TestLayer::onAttach(){
-	ent1 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
-	ent2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
-	ent3 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
+	ent1 = clv::Application::get().getManager().createEntity();
+	ent1.addComponent<clv::ecs::d3::RenderableComponent>();
+	ent1.addComponent<clv::ecs::d3::TransformComponent>();
+
+	ent2 = clv::Application::get().getManager().createEntity();
+	ent2.addComponent<clv::ecs::d3::RenderableComponent>();
+	ent2.addComponent<clv::ecs::d3::TransformComponent>();
+
+	ent3 = clv::Application::get().getManager().createEntity();
+	ent3.addComponent<clv::ecs::d3::RenderableComponent>();
+	ent3.addComponent<clv::ecs::d3::TransformComponent>();
 
 	//rtEnt = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
 
-	sprtEnt1 = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
-	sprtEnt2 = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
+	sprtEnt1 = clv::Application::get().getManager().createEntity();
+	sprtEnt1.addComponent<clv::ecs::d2::RenderableComponent>();
+	sprtEnt1.addComponent<clv::ecs::d2::TransformComponent>();
 
-	lght1 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
-	lght2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
+	sprtEnt2 = clv::Application::get().getManager().createEntity();
+	sprtEnt2.addComponent<clv::ecs::d2::RenderableComponent>();
+	sprtEnt2.addComponent<clv::ecs::d2::TransformComponent>();
+	
+	lght1 = clv::Application::get().getManager().createEntity();
+	lght1.addComponent<clv::ecs::d3::RenderableComponent>();
+	lght1.addComponent<clv::ecs::d3::LightComponent>();
+	lght1.addComponent<clv::ecs::d3::TransformComponent>();
 
-	cam = clv::Application::get().getManager().createEntity<clv::ecs::d3::CameraComponent, clv::ecs::d3::TransformComponent>();
+	lght2 = clv::Application::get().getManager().createEntity();
+	lght2.addComponent<clv::ecs::d3::RenderableComponent>();
+	lght2.addComponent<clv::ecs::d3::LightComponent>();
+	lght2.addComponent<clv::ecs::d3::TransformComponent>();
+	
+	cam = clv::Application::get().getManager().createEntity();
+	cam.addComponent<clv::ecs::d3::CameraComponent>();
+	cam.addComponent<clv::ecs::d3::TransformComponent>();
 
-	sound = clv::Application::get().getManager().createEntity<clv::ecs::aud::AudioComponent>();
+	sound = clv::Application::get().getManager().createEntity();
+	sound.addComponent<clv::ecs::aud::AudioComponent>();
 
 	auto cubeMaterial = std::make_shared<clv::gfx::Material>(clv::gfx::ShaderStyle::Lit);
 	cubeMaterial->setAlbedoTexture("res/Textures/container2.png");
