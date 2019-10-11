@@ -38,9 +38,7 @@ namespace clv::ecs::ui{
 			const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
 			const auto spriteProj = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 
-			clv::ui::Text text(clv::ui::Font("res/Fonts/Roboto/Roboto-Black.ttf"));
-			text.setSize(72);
-			text.setText("Hello, World!");
+			const clv::ui::Text& text = fontComp->text;
 
 			float cursorPos = -550.0f;
 			for(size_t i = 0; i < text.getTextLength(); ++i){
