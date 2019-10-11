@@ -136,8 +136,9 @@ void TestLayer::onAttach(){
 
 	//Fonts
 	{
-		fontEnt = clv::Application::get().getManager().createEntity<clv::ecs::ui::TextComponent, clv::ecs::d2::TransformComponent>();
-		fontEnt.getComponent<clv::ecs::d2::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+		fontEnt = clv::Application::get().getManager().createEntity();
+		fontEnt.addComponent<clv::ecs::ui::TextComponent>();
+		fontEnt.addComponent<clv::ecs::d2::TransformComponent>();
 	}
 }
 
