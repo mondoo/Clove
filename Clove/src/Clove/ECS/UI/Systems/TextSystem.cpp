@@ -1,13 +1,10 @@
 #include "TextSystem.hpp"
 
 #include "Clove/Graphics/Renderer2D.hpp"
-#include "Clove/Graphics/VertexLayout.hpp"
 #include "Clove/Graphics/Sprite.hpp"
-#include "Clove/Graphics/Material.hpp"
 #include "Clove/Graphics/BindableFactory.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
-
 #include "Clove/UI/Font.hpp"
 #include "Clove/UI/Text.hpp"
 
