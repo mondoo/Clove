@@ -1,6 +1,12 @@
 #include "Text.hpp"
 
 namespace clv::ui{
+	Text::Text(Text &&other) = default;
+
+	Text &Text::operator=(Text &&other) = default;
+
+	Text::~Text() = default;
+
 	Text::Text(Font font)
 		: font(std::move(font)){
 	}

@@ -11,10 +11,14 @@ namespace clv::ui{
 
 		//FUNCTIONS
 	public:
-		//TODO: others
-		//font as pointer?
-		Text(Font font);
+		Text() = delete;
+		Text(const Text& other) = delete;
+		Text(Text&& other);
+		Text& operator=(const Text& other) = delete;
+		Text& operator=(Text&& other);
+		~Text();
 
+		Text(Font font);
 
 		void setText(std::string text);
 		void setSize(uint32 size);
