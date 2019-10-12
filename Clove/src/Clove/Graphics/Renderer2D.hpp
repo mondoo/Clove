@@ -1,7 +1,5 @@
 #pragma once
 
-#include <queue>
-
 namespace clv::gfx{
 	class Sprite;
 	class Mesh;
