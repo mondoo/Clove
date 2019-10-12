@@ -3,7 +3,6 @@
 namespace clv::gfx{
 	class Sprite;
 	class Mesh;
-	class Material;
 
 	class Renderer2D{
 		//VARIABLES
