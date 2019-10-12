@@ -24,8 +24,8 @@ namespace clv::ui{
 	public:
 		Font() = delete;
 		Font(const Font& other) = delete;
-		Font& operator=(const Font& other) = delete;
 		Font(Font&& other) noexcept;
+		Font& operator=(const Font& other) = delete;
 		Font& operator=(Font&& other) noexcept;
 		~Font();
 
