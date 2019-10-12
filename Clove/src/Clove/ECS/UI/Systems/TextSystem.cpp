@@ -11,12 +11,6 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/Bindables/Texture.hpp"
 
-//Temp
-#include <fstream>
-#include <strstream>
-//#include <ft2build.h>
-//#include FT_FREETYPE_H
-
 #include "Clove/UI/Font.hpp"
 #include "Clove/UI/Text.hpp"
 
@@ -30,17 +24,13 @@ namespace clv::ecs::ui{
 			d2::TransformComponent* transform = std::get<d2::TransformComponent*>(componentTuple);
 			TextComponent* fontComp = std::get<TextComponent*>(componentTuple);
 
-			//TODO: Using hard coded values for now - needs transform component
-
-			///*const*/ math::Matrix4f model = math::Matrix4f(1.0f); /*transform->getWorldTransformMatrix();*/
-			
 			const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;
 			const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
 			const auto spriteProj = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 
 			const clv::ui::Text& text = fontComp->text;
+			math::Vector2f cursorPos = transform->getPosition();
 
-			float cursorPos = -550.0f;
 			for(size_t i = 0; i < text.getTextLength(); ++i){
 				clv::ui::Glyph glyph = text.getBufferForCharAt(i);
 
@@ -49,11 +39,8 @@ namespace clv::ecs::ui{
 					const float width = glyph.size.x;
 					const float height = glyph.size.y;
 
-					const float x = glyph.bearing.x;
-					const float y = (height - glyph.bearing.y);
-
-					const float xpos = cursorPos + x;
-					const float ypos = -y;
+					const float xpos = cursorPos.x + glyph.bearing.x;
+					const float ypos = cursorPos.y - (height - glyph.bearing.y);
 
 					auto texture = gfx::BindableFactory::createTexture(glyph.buffer, width, height, gfx::TBP_Albedo, gfx::TextureUsage::Font);
 
@@ -67,7 +54,7 @@ namespace clv::ecs::ui{
 					gfx::Renderer2D::submitCharacter(character);
 				}
 				
-				cursorPos += glyph.advance.x;
+				cursorPos.x += glyph.advance.x;
 			}
 		}
 	}

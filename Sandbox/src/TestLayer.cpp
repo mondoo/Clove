@@ -138,7 +138,7 @@ void TestLayer::onAttach(){
 	{
 		fontEnt = clv::Application::get().getManager().createEntity();
 		fontEnt.addComponent<clv::ecs::ui::TextComponent>(clv::ui::Font("res/Fonts/Roboto/Roboto-Black.ttf"));
-		fontEnt.addComponent<clv::ecs::d2::TransformComponent>();
+		fontEnt.addComponent<clv::ecs::d2::TransformComponent>()->setPosition(clv::math::Vector2f{-550.0, 300.0f});
 
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("Hello, World!");
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(72);
