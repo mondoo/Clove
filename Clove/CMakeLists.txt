@@ -59,6 +59,10 @@ set(
 		src/Clove/ECS/Audio/Components/AudioComponent.cpp
 		src/Clove/ECS/Audio/Systems/AudioSystem.hpp
 		src/Clove/ECS/Audio/Systems/AudioSystem.cpp
+		src/Clove/ECS/UI/Components/TextComponent.hpp
+		src/Clove/ECS/UI/Components/TextComponent.cpp
+		src/Clove/ECS/UI/Systems/TextSystem.hpp
+		src/Clove/ECS/UI/Systems/TextSystem.cpp
 		src/Clove/Exception/CloveException.hpp
 		src/Clove/Exception/CloveException.cpp
 		src/Clove/Graphics/Bindables/IndexBuffer.hpp
@@ -110,7 +114,7 @@ set(
 		src/Clove/Input/Mouse.hpp
 		src/Clove/Input/Mouse.cpp
 		src/Clove/Input/MouseButtonCodes.hpp
-		src/Clove/Maths/glmWrappers.hpp
+		src/Clove/Maths/glmWrappers
 		src/Clove/Maths/Maths.hpp
 		src/Clove/Maths/Maths.inl
 		src/Clove/Maths/MathsHelpers.hpp
@@ -123,6 +127,10 @@ set(
 		src/Clove/Platform/Window.cpp
 		src/Clove/Profiling/Timer.hpp
 		src/Clove/Profiling/Timer.cpp
+		src/Clove/UI/Font.hpp
+		src/Clove/UI/Font.cpp
+		src/Clove/UI/Text.hpp
+		src/Clove/UI/Text.cpp
 		src/Clove/Utils/Delegate.hpp
 		src/Clove/Utils/Delegate.inl
 		src/Clove/Utils/DeltaTime.hpp
@@ -161,6 +169,8 @@ set(
 		src/Graphics/OpenGL-4/Bindables/GL4VertexBuffer.cpp
 		src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
 		src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
+		src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
 		src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
 		src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
 		src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
@@ -195,6 +205,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/Bindables/DX11VertexBuffer.cpp
 			src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
 			src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/Font-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/Font-vs.hlsl
 			src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
 			src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
 			src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
@@ -275,6 +287,7 @@ target_include_directories(
 		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
 	PRIVATE
 		vendor/OBJ-Loader/Source
+		vendor/freetype2/include
 		$<$<PLATFORM_ID:Windows>:${CMAKE_SOURCE_DIR}/Clove/vendor/wglext>
 )
 
@@ -290,6 +303,7 @@ target_link_libraries(
 		glm
 		sndfile
 		portaudio_static
+		freetype
 		#Windows
 		$<$<PLATFORM_ID:Windows>:dxerr>
 		$<$<PLATFORM_ID:Windows>:opengl32>
@@ -354,6 +368,7 @@ target_compile_definitions(
 if(MSVC)
 	set(pixelShaders
 		src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
+		src/Graphics/DirectX-11/Shaders/Font-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/Unlit-ps.hlsl
@@ -361,6 +376,7 @@ if(MSVC)
 	
 	set(vertexShaders
 		src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+		src/Graphics/DirectX-11/Shaders/Font-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/RT-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
@@ -377,6 +393,8 @@ if(MSVC)
 	set(shaderCSO
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-ps.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Font-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Font-vs.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-ps.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-vs.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/RT-ps.cso
@@ -405,6 +423,8 @@ endif()
 set(GLShaders
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
@@ -427,6 +447,12 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${GLShaders}
                 ${CMAKE_BINARY_DIR}/Sandbox
+)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/Clove/res
+                ${CMAKE_BINARY_DIR}/Sandbox/res
 )
 
 if(MSVC)

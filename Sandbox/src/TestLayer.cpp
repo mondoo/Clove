@@ -10,6 +10,7 @@
 #include "Clove/ECS/3D/Components/CameraComponent.hpp"
 #include "Clove/ECS/3D/Components/LightComponent.hpp"
 #include "Clove/ECS/Audio/Components/AudioComponent.hpp"
+#include "Clove/ECS/UI/Components/TextComponent.hpp"
 #include "Clove/Maths/Vector.hpp"
 #include "Clove/Input/Input.hpp"
 #include "Clove/Utils/DeltaTime.hpp"
@@ -131,6 +132,16 @@ void TestLayer::onAttach(){
 		auto soundBuffer = clv::aud::Sound("res/Audio/Test.wav");
 		sound.getComponent<clv::ecs::aud::AudioComponent>()->setSound(soundBuffer);
 		sound.getComponent<clv::ecs::aud::AudioComponent>()->play();
+	}
+
+	//Fonts
+	{
+		fontEnt = clv::Application::get().getManager().createEntity();
+		fontEnt.addComponent<clv::ecs::ui::TextComponent>(clv::ui::Font("res/Fonts/Roboto/Roboto-Black.ttf"));
+		fontEnt.addComponent<clv::ecs::d2::TransformComponent>()->setPosition(clv::math::Vector2f{-550.0, 300.0f});
+
+		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("Hello, World!");
+		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(72);
 	}
 }
 

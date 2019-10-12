@@ -102,9 +102,19 @@ namespace clv::gfx{
 				{
 					auto vs = std::make_unique<DX11VertexShader>(L"RT-vs.cso");
 					vertexShader = vs.get();
-					
+
 					shaders[ShaderType::Vertex] = std::move(vs);
 					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"RT-ps.cso");
+				}
+				break;
+
+			case ShaderStyle::Font:
+				{
+					auto vs = std::make_unique<DX11VertexShader>(L"Font-vs.cso");
+					vertexShader = vs.get();
+
+					shaders[ShaderType::Vertex] = std::move(vs);
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"Font-ps.cso");
 				}
 				break;
 

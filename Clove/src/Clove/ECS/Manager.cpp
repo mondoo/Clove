@@ -7,6 +7,7 @@
 #include "Clove/ECS/3D/Systems/LightSystem.hpp"
 #include "Clove/ECS/3D/Systems/CameraSystem.hpp"
 #include "Clove/ECS/Audio/Systems/AudioSystem.hpp"
+#include "Clove/ECS/UI/Systems/TextSystem.hpp"
 
 namespace clv::ecs{
 	EntityID Manager::nextID = 0;
@@ -20,6 +21,7 @@ namespace clv::ecs{
 		systems.emplace_back(std::make_unique<d3::LightSystem>());
 		systems.emplace_back(std::make_unique<d3::CameraSystem>());
 		systems.emplace_back(std::make_unique<aud::AudioSystem>());
+		systems.emplace_back(std::make_unique<ui::TextSystem>());
 	}
 
 	Manager::~Manager() = default;

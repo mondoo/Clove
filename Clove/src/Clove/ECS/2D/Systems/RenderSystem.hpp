@@ -7,10 +7,6 @@
 
 namespace clv::ecs::d2{
 	class RenderSystem : public System<TransformComponent, RenderableComponent>{
-		//VARIABLES
-	private:
-		math::Matrix4f spriteProj;
-
 		//FUNCTIONS
 	public:
 		RenderSystem();

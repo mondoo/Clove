@@ -14,10 +14,11 @@ namespace clv::gfx{
 
 	DX11Texture::~DX11Texture() = default;
 
-	DX11Texture::DX11Texture(const std::string& filePath, uint32 bindingPoint)
-		: bindingPoint(bindingPoint){
+	DX11Texture::DX11Texture(const std::string& filePath, uint32 bindingPoint, TextureUsage usageType)
+		: bindingPoint(bindingPoint)
+		, usage(usageType){
 		
-		stbi_set_flip_vertically_on_load(1); //DirectX expects our texture to start on the bottom left
+		stbi_set_flip_vertically_on_load(true); //DirectX expects our texture to start on the bottom left
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
 		createTexture(usage, localBuffer);
@@ -27,11 +28,21 @@ namespace clv::gfx{
 		}
 	}
 
-	DX11Texture::DX11Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint)
+	DX11Texture::DX11Texture(void* bufferData, int32 width, int32 height, uint32 bindingPoint, TextureUsage usageType)
 		: width(width)
 		, height(height)
+		, bindingPoint(bindingPoint)
 		, usage(usageType)
-		, bindingPoint(bindingPoint){
+		, BPP(1){  //TEMP: putting this to 1
+
+		createTexture(usage, bufferData);
+	}
+
+	DX11Texture::DX11Texture(int32 width, int32 height, uint32 bindingPoint, TextureUsage usageType)
+		: width(width)
+		, height(height)
+		, bindingPoint(bindingPoint)
+		, usage(usageType){
 
 		createTexture(usage, nullptr);
 	}
@@ -67,13 +78,19 @@ namespace clv::gfx{
 			textureBindFlags |= D3D11_BIND_RENDER_TARGET;
 		}
 
+		//TODO: const
+		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		if(usageType == TextureUsage::Font){
+			format = DXGI_FORMAT_R8_UNORM;
+		}
+
 		//Create the texture itself
 		D3D11_TEXTURE2D_DESC textureDesc = { };
 		textureDesc.Width = width;
 		textureDesc.Height = height;
 		textureDesc.MipLevels = 1;
 		textureDesc.ArraySize = 1; //Creating a single texture
-		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		textureDesc.Format = format;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
