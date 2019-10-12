@@ -4,6 +4,8 @@
 #include "Clove/Graphics/Sprite.hpp"
 #include "Clove/Graphics/Mesh.hpp"
 #include "Clove/Graphics/VertexLayout.hpp"
+#include "Clove/Application.hpp"
+#include "Clove/Platform/Window.hpp"
 
 namespace clv::gfx{
 	std::shared_ptr<gfx::Mesh> Renderer2D::spriteMesh;
@@ -11,6 +13,8 @@ namespace clv::gfx{
 
 	std::vector<std::shared_ptr<Sprite>> Renderer2D::spritesToRender;
 	std::vector<std::shared_ptr<Sprite>> Renderer2D::charactersToRender;
+
+	math::Matrix4f Renderer2D::projection;
 
 	void Renderer2D::initialise(){
 		const std::vector<uint32> indices = {
@@ -45,6 +49,12 @@ namespace clv::gfx{
 			auto characterMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::Font);
 			characterMesh = std::make_shared<gfx::Mesh>(bufferData, indices, characterMaterial->createInstance());
 		}
+
+		//Projection
+		const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;
+		const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
+
+		projection = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 	}
 
 	void Renderer2D::beginScene(){
@@ -93,5 +103,9 @@ namespace clv::gfx{
 
 	void Renderer2D::submitCharacter(const std::shared_ptr<Sprite>& character){
 		charactersToRender.push_back(character);
+	}
+
+	const math::Matrix4f &Renderer2D::getSpriteProjection(){
+		return projection;
 	}
 }

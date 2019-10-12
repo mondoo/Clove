@@ -13,6 +13,8 @@ namespace clv::gfx{
 		static std::vector<std::shared_ptr<Sprite>> spritesToRender;
 		static std::vector<std::shared_ptr<Sprite>> charactersToRender;
 
+		static math::Matrix4f projection;
+
 		//FUNCTIONS
 	public:
 		static void initialise();
@@ -22,5 +24,7 @@ namespace clv::gfx{
 
 		static void submitSprite(const std::shared_ptr<Sprite>& sprite);
 		static void submitCharacter(const std::shared_ptr<Sprite>& character);
+
+		static const math::Matrix4f& getSpriteProjection();
 	};
 }

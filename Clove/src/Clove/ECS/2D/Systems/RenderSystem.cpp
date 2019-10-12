@@ -7,13 +7,7 @@
 
 
 namespace clv::ecs::d2{
-	RenderSystem::RenderSystem(){
-		//Proj
-		const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;
-		const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
-
-		spriteProj = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
-	}
+	RenderSystem::RenderSystem() = default;
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;
 
@@ -27,7 +21,7 @@ namespace clv::ecs::d2{
 			RenderableComponent* renderable = std::get<RenderableComponent*>(componentTuple);
 
 			const math::Matrix4f modelData = transform->getWorldTransformMatrix();
-			renderable->sprite->setModelData(spriteProj * modelData);
+			renderable->sprite->setModelData(gfx::Renderer2D::getSpriteProjection() * modelData);
 
 			gfx::Renderer2D::submitSprite(renderable->sprite);
 		}

@@ -1,8 +1,5 @@
 #include "TextSystem.hpp"
 
-//Should all be temp
-#include "Clove/Application.hpp"
-#include "Clove/Platform/Window.hpp"
 #include "Clove/Graphics/Renderer2D.hpp"
 #include "Clove/Graphics/VertexLayout.hpp"
 #include "Clove/Graphics/Sprite.hpp"
@@ -23,10 +20,6 @@ namespace clv::ecs::ui{
 		for(auto& componentTuple : components){
 			d2::TransformComponent* transform = std::get<d2::TransformComponent*>(componentTuple);
 			TextComponent* fontComp = std::get<TextComponent*>(componentTuple);
-
-			const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;
-			const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
-			const auto spriteProj = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 
 			const clv::ui::Text& text = fontComp->text;
 			math::Vector2f cursorPos = transform->getPosition();
@@ -49,7 +42,7 @@ namespace clv::ecs::ui{
 					model *= math::scale(math::Matrix4f(1.0f), { width, height, 0.0f });
 
 					auto character = std::make_shared<gfx::Sprite>(texture);
-					character->setModelData(spriteProj * model);
+					character->setModelData(gfx::Renderer2D::getSpriteProjection() * model);
 
 					gfx::Renderer2D::submitCharacter(character);
 				}
