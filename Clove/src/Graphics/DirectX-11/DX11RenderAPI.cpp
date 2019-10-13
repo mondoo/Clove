@@ -26,6 +26,7 @@ namespace clv::gfx{
 			defaultRenderTarget = dxCon->getTarget();
 			currentRenderTarget = defaultRenderTarget;
 			defaultDepthStencil = dxCon->getDSV();
+			currentDepthStencil = defaultDepthStencil;
 
 			DX11_INFO_PROVIDER;
 
