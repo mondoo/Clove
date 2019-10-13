@@ -334,15 +334,15 @@ target_precompile_headers(
 			<unordered_map>
 			<unordered_set>
 		#Clove headers
-			src/Clove/Core.hpp
-			src/Clove/Log.hpp
-			src/Clove/IntTypes.hpp
-			src/Clove/Maths/MathsTypes.hpp
-			src/Clove/Maths/Maths.hpp
-			src/Clove/Maths/MathsHelpers.hpp
+			[["Clove/Core.hpp"]]
+			[["Clove/Log.hpp"]]
+			[["Clove/IntTypes.hpp"]]
+			[["Clove/Maths/MathsTypes.hpp"]]
+			[["Clove/Maths/Maths.hpp"]]
+			[["Clove/Maths/MathsHelpers.hpp"]]
 		#Platform headers
-			$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/src/CloveWindows.hpp>
-			$<$<PLATFORM_ID:Linux>:${CMAKE_CURRENT_SOURCE_DIR}/src/CloveLinux.hpp>
+			$<$<PLATFORM_ID:Windows>:CloveWindows.hpp>
+			$<$<PLATFORM_ID:Linux>:CloveLinux.hpp>
 )
 source_group(PCH FILES 
 	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.hxx 
