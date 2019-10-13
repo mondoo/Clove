@@ -76,6 +76,7 @@ namespace clv::gfx{
 			textureBindFlags |= D3D11_BIND_DEPTH_STENCIL;
 		}
 
+		const DXGI_FORMAT format = usageType == TextureUsage::RenderTarget_Depth ? DXGI_FORMAT_D32_FLOAT : DXGI_FORMAT_R8G8B8A8_UNORM;
 		const UINT arraySize = styleType == TextureStyle::Cubemap ? 6 : 1;
 		const D3D11_SRV_DIMENSION viewDimension = styleType == TextureStyle::Cubemap ? D3D11_SRV_DIMENSION_TEXTURECUBE : D3D11_SRV_DIMENSION_TEXTURE2D;
 
@@ -85,7 +86,7 @@ namespace clv::gfx{
 		textureDesc.Height = height;
 		textureDesc.MipLevels = 1;
 		textureDesc.ArraySize = arraySize;
-		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		textureDesc.Format = format;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
