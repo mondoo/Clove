@@ -186,6 +186,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/Bindables/DX11VertexBuffer.cpp
 			src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
 			src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/CubeShadowMap-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/CubeShadowMap-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/CubeShadowMap-gs.hlsl
 			src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
 			src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
 			src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
@@ -345,6 +348,7 @@ target_compile_definitions(
 if(MSVC)
 	set(pixelShaders
 		src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
+		src/Graphics/DirectX-11/Shaders/CubeShadowMap-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/Unlit-ps.hlsl
@@ -352,13 +356,14 @@ if(MSVC)
 	
 	set(vertexShaders
 		src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+		src/Graphics/DirectX-11/Shaders/CubeShadowMap-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/RT-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
 	)
 
 	set(geometryShaders
-		
+		src/Graphics/DirectX-11/Shaders/CubeShadowMap-gs.hlsl
 	)
 
 	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
@@ -370,7 +375,7 @@ if(MSVC)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_MODEL 5.0)
 
 	set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_TYPE Geometry)
-	set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_ENTRYPOINT Geometry)
+	set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
 	set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_MODEL 5.0)
 
 	set(shaderCSO
