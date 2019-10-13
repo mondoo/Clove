@@ -109,6 +109,17 @@ namespace clv::gfx{
 				}
 				break;
 
+			case ShaderStyle::CubeShadowMap:
+				{
+					auto vs = std::make_unique<DX11VertexShader>(L"CubeShadowMap-vs.cso");
+					vertexShader = vs.get();
+
+					shaders[ShaderType::Vertex] = std::move(vs);
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"CubeShadowMap-ps.cso");
+					shaders[ShaderType::Geometry] = std::make_unique<DX11GeometryShader>(L"CubeShadowMap-gs.cso");
+				}
+				break;
+
 			default:
 				CLV_ASSERT(false, "Unknown type! {0}", CLV_FUNCTION_NAME);
 				break;
