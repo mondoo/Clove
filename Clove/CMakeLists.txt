@@ -114,7 +114,7 @@ set(
 		src/Clove/Input/Mouse.hpp
 		src/Clove/Input/Mouse.cpp
 		src/Clove/Input/MouseButtonCodes.hpp
-		src/Clove/Maths/glmWrappers
+		src/Clove/Maths/glmWrappers.hpp
 		src/Clove/Maths/Maths.hpp
 		src/Clove/Maths/Maths.inl
 		src/Clove/Maths/MathsHelpers.hpp
