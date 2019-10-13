@@ -52,6 +52,6 @@ namespace clv::gfx{
 		const Microsoft::WRL::ComPtr<ID3D11Texture2D>& getTexture() const;
 
 	private:
-		void createTexture(TextureUsage usageType, void* pixels);
+		void createTexture(TextureUsage usageType, TextureStyle styleType, void* pixels);
 	};
 }

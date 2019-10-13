@@ -18,13 +18,11 @@ namespace clv::gfx{
 	DX11Texture::DX11Texture(const std::string& filePath, uint32 bindingPoint, TextureStyle style)
 		: bindingPoint(bindingPoint)
 		, style(style){
-		
-		//TODO: Handle non-default texture styles
 
 		stbi_set_flip_vertically_on_load(1); //DirectX expects our texture to start on the bottom left
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
-		createTexture(usage, localBuffer);
+		createTexture(usage, style, localBuffer);
 
 		if(localBuffer){
 			stbi_image_free(localBuffer);
@@ -38,9 +36,7 @@ namespace clv::gfx{
 		, bindingPoint(bindingPoint)
 		, style(style){
 
-		//TODO: Handle non-default texture styles
-
-		createTexture(usage, nullptr);
+		createTexture(usage, style, nullptr);
 	}
 
 	void DX11Texture::bind(){
@@ -72,18 +68,23 @@ namespace clv::gfx{
 		return texture;
 	}
 
-	void DX11Texture::createTexture(TextureUsage usageType, void* pixels){
+	void DX11Texture::createTexture(TextureUsage usageType, TextureStyle styleType, void* pixels){
 		UINT textureBindFlags = D3D11_BIND_SHADER_RESOURCE;
 		if(usageType == TextureUsage::RenderTarget_Colour){
 			textureBindFlags |= D3D11_BIND_RENDER_TARGET;
+		} else if(usageType == TextureUsage::RenderTarget_Depth){
+			textureBindFlags |= D3D11_BIND_DEPTH_STENCIL;
 		}
+
+		const UINT arraySize = styleType == TextureStyle::Cubemap ? 6 : 1;
+		const D3D11_SRV_DIMENSION viewDimension = styleType == TextureStyle::Cubemap ? D3D11_SRV_DIMENSION_TEXTURECUBE : D3D11_SRV_DIMENSION_TEXTURE2D;
 
 		//Create the texture itself
 		D3D11_TEXTURE2D_DESC textureDesc = { };
 		textureDesc.Width = width;
 		textureDesc.Height = height;
 		textureDesc.MipLevels = 1;
-		textureDesc.ArraySize = 1; //Creating a single texture
+		textureDesc.ArraySize = arraySize;
 		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
@@ -95,6 +96,8 @@ namespace clv::gfx{
 		DX11_INFO_PROVIDER;
 
 		if(pixels){
+			CLV_ASSERT(arraySize == 1, "DX Textures with array size greater than 1 not supported");
+
 			D3D11_SUBRESOURCE_DATA data = { };
 			data.pSysMem = pixels;
 			data.SysMemPitch = width * BPP;
@@ -107,9 +110,11 @@ namespace clv::gfx{
 		//Create the view on the texture (what we bind to the pipeline)
 		D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc = { };
 		viewDesc.Format = textureDesc.Format;
-		viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		viewDesc.ViewDimension = viewDimension;
 		viewDesc.Texture2D.MostDetailedMip = 0;
-		viewDesc.Texture2D.MipLevels = 1;
+		viewDesc.Texture2D.MipLevels = textureDesc.MipLevels;
+		viewDesc.TextureCube.MostDetailedMip = 0;
+		viewDesc.TextureCube.MipLevels = textureDesc.MipLevels;
 
 		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateShaderResourceView(texture.Get(), &viewDesc, &textureView));
 
