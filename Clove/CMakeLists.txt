@@ -381,6 +381,9 @@ if(MSVC)
 	set(shaderCSO
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-ps.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/CubeShadowMap-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/CubeShadowMap-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/CubeShadowMap-gs.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-ps.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-vs.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/RT-ps.cso
