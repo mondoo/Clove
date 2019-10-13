@@ -7,6 +7,7 @@
 
 struct ID3D11VertexShader;
 struct ID3D11PixelShader;
+struct ID3D11GeometryShader;
 
 namespace clv::gfx{
 	class Renderer;
