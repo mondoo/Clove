@@ -80,7 +80,9 @@ namespace clv::gfx{
 	}
 
 	void DX11RenderAPI::clear(){
-		d3dContext->ClearRenderTargetView(currentRenderTarget.Get(), math::valuePtr(clearColour));
+		if(currentRenderTarget){
+			d3dContext->ClearRenderTargetView(currentRenderTarget.Get(), math::valuePtr(clearColour));
+		}
 		d3dContext->ClearDepthStencilView(currentDepthStencil.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
 	}
 
