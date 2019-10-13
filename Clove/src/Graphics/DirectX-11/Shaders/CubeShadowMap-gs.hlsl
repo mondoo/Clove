@@ -3,8 +3,8 @@ cbuffer shadowMatBuffer : register(b6){
 }
 
 struct GSOutPut{
-	uint face : SV_RenderTargetArrayIndex;
 	float4 vertPos : VertPos;
+	uint face : SV_RenderTargetArrayIndex;
 };
 
 [maxvertexcount(18)]
