@@ -321,28 +321,28 @@ target_precompile_headers(
 	${PROJECT_NAME}
 	PUBLIC
 		#Generic headers
-			<iostream>
-			<memory>
-			<utility>
-			<algorithm>
-			<functional>
-			<sstream>
-			<optional>
+		<iostream>
+		<memory>
+		<utility>
+		<algorithm>
+		<functional>
+		<sstream>
+		<optional>
 		#Data structures
-			<string>
-			<vector>
-			<unordered_map>
-			<unordered_set>
+		<string>
+		<vector>
+		<unordered_map>
+		<unordered_set>
 		#Clove headers
-			[["Clove/Core.hpp"]]
-			[["Clove/Log.hpp"]]
-			[["Clove/IntTypes.hpp"]]
-			[["Clove/Maths/MathsTypes.hpp"]]
-			[["Clove/Maths/Maths.hpp"]]
-			[["Clove/Maths/MathsHelpers.hpp"]]
+		[["Clove/Core.hpp"]]
+		[["Clove/Log.hpp"]]
+		[["Clove/IntTypes.hpp"]]
+		[["Clove/Maths/MathsTypes.hpp"]]
+		[["Clove/Maths/Maths.hpp"]]
+		[["Clove/Maths/MathsHelpers.hpp"]]
 		#Platform headers
-			$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>
-			$<$<PLATFORM_ID:Linux>:Platform/Linux/CloveLinux.hpp>
+		$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>
+		$<$<PLATFORM_ID:Linux>:Platform/Linux/CloveLinux.hpp>
 )
 source_group(PCH FILES 
 	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.hxx 
