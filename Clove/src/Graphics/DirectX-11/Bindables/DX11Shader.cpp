@@ -162,4 +162,24 @@ namespace clv::gfx{
 	ID3DBlob* DX11PixelShader::getByteCode() const{
 		return byteCode.Get();
 	}
+
+	DX11GeometryShader::DX11GeometryShader(DX11GeometryShader&& other) noexcept = default;
+
+	DX11GeometryShader& DX11GeometryShader::operator=(DX11GeometryShader&& other) noexcept = default;
+
+	DX11GeometryShader::~DX11GeometryShader() = default;
+
+	DX11GeometryShader::DX11GeometryShader(const std::wstring& path){
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(D3DReadFileToBlob(path.c_str(), &byteCode));
+		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateGeometryShader(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), nullptr, &geometryShader));
+	}
+
+	void DX11GeometryShader::bind(){
+		DX11RenderAPI::getContext().GSSetShader(geometryShader.Get(), nullptr, 0u);
+	}
+
+	ID3DBlob* DX11GeometryShader::getByteCode() const{
+		return nullptr;
+	}
 }
