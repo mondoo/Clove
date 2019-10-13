@@ -144,13 +144,13 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		CloveFiles
 			${CloveFiles}
-			src/CloveWindows.hpp
+			src/Platform/Windows/CloveWindows.hpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
 		CloveFiles
 			${CloveFiles}
-			src/CloveLinux.hpp
+			src/Platform/Linux/CloveLinux.hpp
 	)
 endif()
 
@@ -341,8 +341,8 @@ target_precompile_headers(
 			[["Clove/Maths/Maths.hpp"]]
 			[["Clove/Maths/MathsHelpers.hpp"]]
 		#Platform headers
-			$<$<PLATFORM_ID:Windows>:CloveWindows.hpp>
-			$<$<PLATFORM_ID:Linux>:CloveLinux.hpp>
+			$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>
+			$<$<PLATFORM_ID:Linux>:Platform/Linux/CloveLinux.hpp>
 )
 source_group(PCH FILES 
 	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.hxx 
