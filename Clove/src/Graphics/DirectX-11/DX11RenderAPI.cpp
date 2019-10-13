@@ -25,7 +25,7 @@ namespace clv::gfx{
 			d3dContext = dxCon->getContext();
 			defaultRenderTarget = dxCon->getTarget();
 			currentRenderTarget = defaultRenderTarget;
-			dsv = dxCon->getDSV();
+			defaultDepthStencil = dxCon->getDSV();
 
 			DX11_INFO_PROVIDER;
 
@@ -81,7 +81,7 @@ namespace clv::gfx{
 
 	void DX11RenderAPI::clear(){
 		d3dContext->ClearRenderTargetView(currentRenderTarget.Get(), math::valuePtr(clearColour));
-		d3dContext->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
+		d3dContext->ClearDepthStencilView(currentDepthStencil.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
 	}
 
 	void DX11RenderAPI::drawIndexed(const uint32 count){
@@ -124,11 +124,13 @@ namespace clv::gfx{
 	void DX11RenderAPI::setRenderTarget(RenderTarget& renderTarget){
 		DX11RenderTarget& dxRenderTarget = static_cast<DX11RenderTarget&>(renderTarget);
 		currentRenderTarget = dxRenderTarget.getRenderTargetView();
+		currentDepthStencil = dxRenderTarget.getDepthStencilView();
 		setRenderTargetToCurrent();
 	}
 
 	void DX11RenderAPI::resetRenderTarget(){
 		currentRenderTarget = defaultRenderTarget;
+		currentDepthStencil = defaultDepthStencil;
 		setRenderTargetToCurrent();
 	}
 
@@ -161,6 +163,12 @@ namespace clv::gfx{
 #endif
 
 	void DX11RenderAPI::setRenderTargetToCurrent(){
-		d3dContext->OMSetRenderTargets(1u, currentRenderTarget.GetAddressOf(), dsv.Get());
+		auto dsv = currentDepthStencil ? currentDepthStencil : nullptr;
+
+		if(currentRenderTarget){
+			d3dContext->OMSetRenderTargets(1u, currentRenderTarget.GetAddressOf(), dsv.Get());
+		} else{
+			d3dContext->OMSetRenderTargets(0u, nullptr, dsv.Get());
+		}
 	}
 }

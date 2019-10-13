@@ -22,7 +22,9 @@ namespace clv::gfx{
 		
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> defaultRenderTarget;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> currentRenderTarget;
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> dsv;
+
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> defaultDepthStencil;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> currentDepthStencil;
 
 	#if CLV_DEBUG
 		static DXGIInfoManager infoManager; //Used by certain DX11 exception macros
