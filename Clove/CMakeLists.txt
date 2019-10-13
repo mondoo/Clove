@@ -357,6 +357,10 @@ if(MSVC)
 		src/Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
 	)
 
+	set(geometryShaders
+		
+	)
+
 	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
 	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
 	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_MODEL 5.0)
@@ -364,6 +368,10 @@ if(MSVC)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_MODEL 5.0)
+
+	set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_TYPE Geometry)
+	set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_ENTRYPOINT Geometry)
+	set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_MODEL 5.0)
 
 	set(shaderCSO
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-ps.cso
