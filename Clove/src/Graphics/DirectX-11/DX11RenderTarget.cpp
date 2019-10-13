@@ -45,7 +45,7 @@ namespace clv::gfx{
 			textureSource->GetDesc(&textureDesc);
 
 			D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
-			dsvDesc.Format = textureDesc.Format;
+			dsvDesc.Format = DXGI_FORMAT_D32_FLOAT; //NOTE: not supporting stencil at the moment
 			dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 			dsvDesc.Texture2D.MipSlice = 0u;
 
