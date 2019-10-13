@@ -92,8 +92,8 @@ namespace clv::gfx{
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		textureDesc.BindFlags = textureBindFlags;
 		textureDesc.CPUAccessFlags = 0;
-		textureDesc.MiscFlags = 0;
-		
+		textureDesc.MiscFlags = styleType == TextureStyle::Cubemap ? D3D11_RESOURCE_MISC_TEXTURECUBE : 0;
+
 		DX11_INFO_PROVIDER;
 
 		if(pixels){
