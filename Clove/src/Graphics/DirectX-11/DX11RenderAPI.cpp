@@ -166,12 +166,13 @@ namespace clv::gfx{
 #endif
 
 	void DX11RenderAPI::setRenderTargetToCurrent(){
-		auto dsv = currentDepthStencil ? currentDepthStencil : nullptr;
-
+		//TODO: should maybe use a null depth stencil?
+		auto dsv = currentDepthStencil ? currentDepthStencil : defaultDepthStencil;
 		if(currentRenderTarget){
 			d3dContext->OMSetRenderTargets(1u, currentRenderTarget.GetAddressOf(), dsv.Get());
 		} else{
-			d3dContext->OMSetRenderTargets(0u, nullptr, dsv.Get());
+			ID3D11RenderTargetView* nullRTV[1] = { nullptr };
+			d3dContext->OMSetRenderTargets(1u, nullRTV, dsv.Get());
 		}
 	}
 }
