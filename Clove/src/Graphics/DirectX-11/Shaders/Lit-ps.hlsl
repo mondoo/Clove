@@ -82,7 +82,7 @@ float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, floa
 	//Shadow
 	float shadow = shadowCalculation(fragPos);
 
-	return (ambient + 1.0 - shadow) * (diffuse + specular);
+	return (ambient + (1.0f - shadow) * (diffuse + specular));
 }
 
 float shadowCalculation(float3 fragPos){
