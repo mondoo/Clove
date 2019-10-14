@@ -3,7 +3,7 @@ cbuffer lighthPosBuffer : register (b7){
 	float farplane;
 }
 
-float main(float4 vertPosition : VertPos) : SV_Depth{
+float main(float4 vertPosition : SV_Position) : SV_Depth{
 	const float lightDistance = length(vertPosition.xyz - lightPosition) / farplane;
 	return lightDistance;
 }
