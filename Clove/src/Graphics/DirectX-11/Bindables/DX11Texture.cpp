@@ -110,12 +110,15 @@ namespace clv::gfx{
 
 		//Create the view on the texture (what we bind to the pipeline)
 		D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc = { };
-		viewDesc.Format = format == DXGI_FORMAT_R32_TYPELESS ? DXGI_FORMAT_R32_FLOAT : format;
+		viewDesc.Format = usageType == TextureUsage::RenderTarget_Depth ? DXGI_FORMAT_R32_FLOAT : format;
 		viewDesc.ViewDimension = viewDimension;
-		viewDesc.Texture2D.MostDetailedMip = 0;
-		viewDesc.Texture2D.MipLevels = textureDesc.MipLevels;
-		viewDesc.TextureCube.MostDetailedMip = 0;
-		viewDesc.TextureCube.MipLevels = textureDesc.MipLevels;
+		if(styleType == TextureStyle::Cubemap){
+			viewDesc.TextureCube.MostDetailedMip = 0;
+			viewDesc.TextureCube.MipLevels = textureDesc.MipLevels;
+		} else{
+			viewDesc.Texture2D.MostDetailedMip = 0;
+			viewDesc.Texture2D.MipLevels = textureDesc.MipLevels;
+		}
 
 		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateShaderResourceView(texture.Get(), &viewDesc, &textureView));
 
@@ -124,9 +127,9 @@ namespace clv::gfx{
 
 		D3D11_SAMPLER_DESC samplerDesc = { };
 		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; //min - minification, mag - magnification, min - mip levels.. can also set like anisotrpic here too!
-		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 
 		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateSamplerState(&samplerDesc, &sampler));
 	}
