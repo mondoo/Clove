@@ -44,10 +44,18 @@ namespace clv::gfx{
 			D3D11_TEXTURE2D_DESC textureDesc = {};
 			textureSource->GetDesc(&textureDesc);
 
+			const D3D11_DSV_DIMENSION dimension = dxTexture->getTextureStyle() == TextureStyle::Cubemap ? D3D11_DSV_DIMENSION_TEXTURE2DARRAY : D3D11_DSV_DIMENSION_TEXTURE2D;
+
 			D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
 			dsvDesc.Format = DXGI_FORMAT_D32_FLOAT; //NOTE: not supporting stencil at the moment
-			dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-			dsvDesc.Texture2D.MipSlice = 0u;
+			dsvDesc.ViewDimension = dimension;
+			if(dxTexture->getTextureStyle() == TextureStyle::Cubemap){
+				dsvDesc.Texture2DArray.ArraySize = textureDesc.ArraySize;
+				dsvDesc.Texture2DArray.FirstArraySlice = 0u;
+				dsvDesc.Texture2DArray.MipSlice = 0u;
+			} else{
+				dsvDesc.Texture2D.MipSlice = 0u;
+			}
 
 			DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateDepthStencilView(textureSource.Get(), &dsvDesc, &depthStencilView));
 		}
