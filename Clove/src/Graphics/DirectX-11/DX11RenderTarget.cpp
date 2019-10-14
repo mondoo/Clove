@@ -32,7 +32,6 @@ namespace clv::gfx{
 			rtvdsc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			rtvdsc.Texture2D.MipSlice = 0;
 
-			
 			DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateRenderTargetView(textureSource.Get(), &rtvdsc, &renderTargetView));
 		}
 
