@@ -12,6 +12,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES COMMON_LANGUAGE_RUNTIME "")
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_DOTNET_REFERENCES "System")
 
+#Disable PCHs for the CLR project to avoid issues with compilation
+set_target_properties(${PROJECT_NAME} PROPERTIES DISABLE_PRECOMPILE_HEADERS ON)
+
 target_link_libraries(
 	${PROJECT_NAME}
 		PUBLIC
