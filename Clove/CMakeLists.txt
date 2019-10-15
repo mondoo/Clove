@@ -336,6 +336,7 @@ target_precompile_headers(
 		<optional>
 		#Data structures
 		<string>
+		<array>
 		<vector>
 		<unordered_map>
 		<unordered_set>
