@@ -53,10 +53,10 @@ void TestLayer::onAttach(){
 	lght1.addComponent<clv::ecs::d3::LightComponent>();
 	lght1.addComponent<clv::ecs::d3::TransformComponent>();
 
-	lght2 = clv::Application::get().getManager().createEntity();
+	/*lght2 = clv::Application::get().getManager().createEntity();
 	lght2.addComponent<clv::ecs::d3::RenderableComponent>();
 	lght2.addComponent<clv::ecs::d3::LightComponent>();
-	lght2.addComponent<clv::ecs::d3::TransformComponent>();
+	lght2.addComponent<clv::ecs::d3::TransformComponent>();*/
 	
 	cam = clv::Application::get().getManager().createEntity();
 	cam.addComponent<clv::ecs::d3::CameraComponent>();
@@ -64,6 +64,10 @@ void TestLayer::onAttach(){
 
 	sound = clv::Application::get().getManager().createEntity();
 	sound.addComponent<clv::ecs::aud::AudioComponent>();
+
+	bigBoy = clv::Application::get().getManager().createEntity();
+	bigBoy.addComponent<clv::ecs::d3::RenderableComponent>();
+	bigBoy.addComponent<clv::ecs::d3::TransformComponent>();
 
 	auto cubeMaterial = std::make_shared<clv::gfx::Material>(clv::gfx::ShaderStyle::Lit);
 	cubeMaterial->setAlbedoTexture("res/Textures/container2.png");
