@@ -1,4 +1,3 @@
-#include "clvpch.hpp" //will generate a tonne of compile errors with the pch - should I remove it from the library?
 #include "TestLayer.hpp"
 
 #include "Clove/Application.hpp"
@@ -11,6 +10,7 @@
 #include "Clove/ECS/3D/Components/CameraComponent.hpp"
 #include "Clove/ECS/3D/Components/LightComponent.hpp"
 #include "Clove/ECS/Audio/Components/AudioComponent.hpp"
+#include "Clove/ECS/UI/Components/TextComponent.hpp"
 #include "Clove/Maths/Vector.hpp"
 #include "Clove/Input/Input.hpp"
 #include "Clove/Utils/DeltaTime.hpp"
@@ -26,21 +26,44 @@ TestLayer::TestLayer()
 }
 
 void TestLayer::onAttach(){
-	ent1 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
-	ent2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
-	ent3 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::TransformComponent>();
+	ent1 = clv::Application::get().getManager().createEntity();
+	ent1.addComponent<clv::ecs::d3::RenderableComponent>();
+	ent1.addComponent<clv::ecs::d3::TransformComponent>();
+
+	ent2 = clv::Application::get().getManager().createEntity();
+	ent2.addComponent<clv::ecs::d3::RenderableComponent>();
+	ent2.addComponent<clv::ecs::d3::TransformComponent>();
+
+	ent3 = clv::Application::get().getManager().createEntity();
+	ent3.addComponent<clv::ecs::d3::RenderableComponent>();
+	ent3.addComponent<clv::ecs::d3::TransformComponent>();
 
 	//rtEnt = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
 
-	sprtEnt1 = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
-	sprtEnt2 = clv::Application::get().getManager().createEntity<clv::ecs::d2::RenderableComponent, clv::ecs::d2::TransformComponent>();
+	sprtEnt1 = clv::Application::get().getManager().createEntity();
+	sprtEnt1.addComponent<clv::ecs::d2::RenderableComponent>();
+	sprtEnt1.addComponent<clv::ecs::d2::TransformComponent>();
 
-	lght1 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
-	lght2 = clv::Application::get().getManager().createEntity<clv::ecs::d3::RenderableComponent, clv::ecs::d3::LightComponent, clv::ecs::d3::TransformComponent>();
+	sprtEnt2 = clv::Application::get().getManager().createEntity();
+	sprtEnt2.addComponent<clv::ecs::d2::RenderableComponent>();
+	sprtEnt2.addComponent<clv::ecs::d2::TransformComponent>();
+	
+	lght1 = clv::Application::get().getManager().createEntity();
+	lght1.addComponent<clv::ecs::d3::RenderableComponent>();
+	lght1.addComponent<clv::ecs::d3::LightComponent>();
+	lght1.addComponent<clv::ecs::d3::TransformComponent>();
 
-	cam = clv::Application::get().getManager().createEntity<clv::ecs::d3::CameraComponent, clv::ecs::d3::TransformComponent>();
+	lght2 = clv::Application::get().getManager().createEntity();
+	lght2.addComponent<clv::ecs::d3::RenderableComponent>();
+	lght2.addComponent<clv::ecs::d3::LightComponent>();
+	lght2.addComponent<clv::ecs::d3::TransformComponent>();
+	
+	cam = clv::Application::get().getManager().createEntity();
+	cam.addComponent<clv::ecs::d3::CameraComponent>();
+	cam.addComponent<clv::ecs::d3::TransformComponent>();
 
-	sound = clv::Application::get().getManager().createEntity<clv::ecs::aud::AudioComponent>();
+	sound = clv::Application::get().getManager().createEntity();
+	sound.addComponent<clv::ecs::aud::AudioComponent>();
 
 	auto cubeMaterial = std::make_shared<clv::gfx::Material>(clv::gfx::ShaderStyle::Lit);
 	cubeMaterial->setAlbedoTexture("res/Textures/container2.png");
@@ -109,6 +132,16 @@ void TestLayer::onAttach(){
 		auto soundBuffer = clv::aud::Sound("res/Audio/Test.wav");
 		sound.getComponent<clv::ecs::aud::AudioComponent>()->setSound(soundBuffer);
 		sound.getComponent<clv::ecs::aud::AudioComponent>()->play();
+	}
+
+	//Fonts
+	{
+		fontEnt = clv::Application::get().getManager().createEntity();
+		fontEnt.addComponent<clv::ecs::ui::TextComponent>(clv::ui::Font("res/Fonts/Roboto/Roboto-Black.ttf"));
+		fontEnt.addComponent<clv::ecs::d2::TransformComponent>()->setPosition(clv::math::Vector2f{-550.0, 300.0f});
+
+		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("Hello, World!");
+		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(72);
 	}
 }
 

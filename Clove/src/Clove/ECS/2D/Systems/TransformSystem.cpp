@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "TransformSystem.hpp"
 
 namespace clv::ecs::d2{

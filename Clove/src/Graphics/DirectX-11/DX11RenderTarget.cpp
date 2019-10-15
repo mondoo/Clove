@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "DX11RenderTarget.hpp"
 
 #include "Graphics/DirectX-11/Bindables/DX11Texture.hpp"

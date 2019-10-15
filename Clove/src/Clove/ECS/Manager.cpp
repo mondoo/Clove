@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Manager.hpp"
 
 #include "Clove/ECS/2D/Systems/RenderSystem.hpp"
@@ -8,6 +7,7 @@
 #include "Clove/ECS/3D/Systems/LightSystem.hpp"
 #include "Clove/ECS/3D/Systems/CameraSystem.hpp"
 #include "Clove/ECS/Audio/Systems/AudioSystem.hpp"
+#include "Clove/ECS/UI/Systems/TextSystem.hpp"
 
 namespace clv::ecs{
 	EntityID Manager::nextID = 0;
@@ -21,6 +21,7 @@ namespace clv::ecs{
 		systems.emplace_back(std::make_unique<d3::LightSystem>());
 		systems.emplace_back(std::make_unique<d3::CameraSystem>());
 		systems.emplace_back(std::make_unique<aud::AudioSystem>());
+		systems.emplace_back(std::make_unique<ui::TextSystem>());
 	}
 
 	Manager::~Manager() = default;
@@ -29,6 +30,15 @@ namespace clv::ecs{
 		for(const auto& system : systems){
 			system->update(deltaTime);
 		}
+	}
+
+	Entity Manager::createEntity(){
+		EntityID ID = ++nextID;
+
+		Entity entity{ ID };
+		bindEntity(entity);
+
+		return entity;
 	}
 
 	void Manager::destroyEntity(EntityID ID){
@@ -45,12 +55,19 @@ namespace clv::ecs{
 	Entity Manager::getEntity(EntityID ID){
 		if(const auto foundEnt = components.find(ID); foundEnt != components.end()){
 			Entity entity{ ID };
-			entity.onComponentRequestedDelegate.bind(&Manager::getComponentForEntity, this);
-			entity.isEntityIdValidDelegate.bind(&Manager::isEntityValid, this);
+			bindEntity(entity);
 
 			return entity;
 		}
 		return {};
+	}
+
+	void Manager::onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component){
+		components[entityID][componentID] = std::move(component);
+
+		for(auto& system : systems){
+			system->onEntityComponentAdded(entityID, components[entityID]);
+		}
 	}
 
 	Component* Manager::getComponentForEntity(EntityID entityID, ComponentID componentID){
@@ -60,5 +77,11 @@ namespace clv::ecs{
 	bool Manager::isEntityValid(EntityID entityID){
 		const auto it = components.find(entityID);
 		return it != components.end();
+	}
+	
+	void Manager::bindEntity(Entity& entity){
+		entity.onComponentCreated.bind(&Manager::onEntityCreateComponent, this);
+		entity.onComponentRequestedDelegate.bind(&Manager::getComponentForEntity, this);
+		entity.isEntityIdValidDelegate.bind(&Manager::isEntityValid, this);
 	}
 }

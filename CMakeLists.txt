@@ -1,5 +1,5 @@
 #Root CMake list
-cmake_minimum_required(VERSION 3.15.0)
+cmake_minimum_required(VERSION 3.16.0)
 project(Clove-Engine)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -111,6 +111,10 @@ set_target_properties(portaudio_static PROPERTIES FOLDER ${DependencyFolder})
 #-libsndfile
 add_subdirectory(Clove/vendor/libsndfile)
 set_target_properties(sndfile PROPERTIES FOLDER ${DependencyFolder})
+
+#-freetype2
+add_subdirectory(Clove/vendor/freetype2)
+set_target_properties(freetype PROPERTIES FOLDER ${DependencyFolder})
 
 #Clove
 add_subdirectory(Clove)

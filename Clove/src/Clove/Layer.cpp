@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Layer.hpp"
 
 namespace clv{

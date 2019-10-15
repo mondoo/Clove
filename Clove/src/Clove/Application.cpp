@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Application.hpp"
 
 #include "Clove/Platform/Window.hpp"

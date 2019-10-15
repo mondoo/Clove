@@ -1,4 +1,3 @@
-#include "clvpch.hpp" //TODO: See note in example layer
 #include "GameLayer.hpp"
 
 #include "Clove/Application.hpp"

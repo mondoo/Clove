@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "GL4Texture.hpp"
 
 #include <glad/glad.h>
@@ -13,10 +12,11 @@ namespace clv::gfx{
 		glDeleteTextures(1, &rendererID);
 	}
 
-	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint)
+	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint, TextureUsage usageType)
 		: filePath(filePath)
-		, bindingPoint(bindingPoint){
-		stbi_set_flip_vertically_on_load(1); //Opengl expects our texture to start on the bottom left
+		, bindingPoint(bindingPoint)
+		, usage(usageType){
+		stbi_set_flip_vertically_on_load(true); //Opengl expects our texture to start on the bottom left
 		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
 		glGenTextures(1, &rendererID);
@@ -27,7 +27,7 @@ namespace clv::gfx{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		createTexture(TextureUsage::Default, localBuffer);
+		createTexture(usage, localBuffer);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -36,11 +36,31 @@ namespace clv::gfx{
 		}
 	}
 
-	GL4Texture::GL4Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint)
+	GL4Texture::GL4Texture(void* bufferData, int32 width, int32 height, uint32 bindingPoint, TextureUsage usageType)
 		: width(width)
 		, height(height)
-		, usageType(usageType)
-		, bindingPoint(bindingPoint){
+		, bindingPoint(bindingPoint)
+		, usage(usageType)
+		, BPP(1){ //TEMP: putting this to 1
+		glGenTextures(1, &rendererID);
+
+		glBindTexture(GL_TEXTURE_2D, rendererID);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		createTexture(usage, bufferData);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	GL4Texture::GL4Texture(int32 width, int32 height, uint32 bindingPoint, TextureUsage usageType)
+		: width(width)
+		, height(height)
+		, bindingPoint(bindingPoint)
+		, usage(usageType){
 		glGenTextures(1, &rendererID);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
 
@@ -69,7 +89,7 @@ namespace clv::gfx{
 	}
 
 	TextureUsage GL4Texture::getUsageType() const{
-		return usageType;
+		return usage;
 	}
 
 	const uint32 GL4Texture::getRenderID() const{
@@ -84,6 +104,11 @@ namespace clv::gfx{
 
 			case TextureUsage::RenderTarget:
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+				break;
+
+			case TextureUsage::Font:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, pixels);
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //We have 1 BPP so make sure OpenGL is aware of this
 				break;
 
 			default:

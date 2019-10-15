@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Context.hpp"
 
 #include "Clove/Graphics/GraphicsTypes.hpp"

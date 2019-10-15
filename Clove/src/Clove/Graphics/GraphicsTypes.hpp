@@ -18,12 +18,14 @@ namespace clv::gfx{
 		Lit,
 		Unlit,
 		_2D,
-		RT
+		RT,
+		Font
 	};
 
 	enum class TextureUsage{
 		Default,
-		RenderTarget
+		RenderTarget,
+		Font
 	};
 
 	enum class VertexElementType{

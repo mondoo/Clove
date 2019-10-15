@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "WindowsWindow.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"

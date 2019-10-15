@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Material.hpp"
 
 #include "Clove/Graphics/Bindables/Texture.hpp"

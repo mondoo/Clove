@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "GL4Shader.hpp"
 
 #include "Clove/Application.hpp"
@@ -87,6 +86,16 @@ namespace clv::gfx{
 					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
 
 					std::string pixelSource = parseShader("RT-ps.glsl");
+					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+				}
+				break;
+
+			case ShaderStyle::Font:
+				{
+					std::string vertexSource = parseShader("Font-vs.glsl");
+					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
+
+					std::string pixelSource = parseShader("Font-ps.glsl");
 					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
 				}
 				break;

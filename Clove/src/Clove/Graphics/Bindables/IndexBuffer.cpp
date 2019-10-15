@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "IndexBuffer.hpp"
 
 namespace clv::gfx{

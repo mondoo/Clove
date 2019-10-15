@@ -4,14 +4,6 @@ namespace clv::ecs{
 	class Manager;
 }
 
-namespace clv::gfx{
-	class Renderer;
-}
-
-namespace clv::evt{
-	enum class HandledType;
-}
-
 namespace clv{
 	class Window;
 	class LayerStack;

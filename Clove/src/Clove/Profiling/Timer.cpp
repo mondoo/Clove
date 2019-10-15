@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Timer.hpp"
 
 #if CLV_ENABLE_PROFILING

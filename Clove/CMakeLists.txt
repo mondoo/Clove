@@ -7,8 +7,6 @@ add_library(Clove STATIC)
 #Files - Clove
 set(
 	CloveFiles
-		src/clvpch.hpp
-		src/clvpch.cpp
 		src/Clove.hpp
 		src/Clove/Core.hpp
 		src/Clove/EntryPoint.hpp
@@ -30,7 +28,6 @@ set(
 		src/Clove/ECS/Entity.inl
 		src/Clove/ECS/Entity.cpp
 		src/Clove/ECS/Manager.hpp
-		src/Clove/ECS/Manager.inl
 		src/Clove/ECS/Manager.cpp
 		src/Clove/ECS/System.hpp
 		src/Clove/ECS/System.inl
@@ -62,6 +59,10 @@ set(
 		src/Clove/ECS/Audio/Components/AudioComponent.cpp
 		src/Clove/ECS/Audio/Systems/AudioSystem.hpp
 		src/Clove/ECS/Audio/Systems/AudioSystem.cpp
+		src/Clove/ECS/UI/Components/TextComponent.hpp
+		src/Clove/ECS/UI/Components/TextComponent.cpp
+		src/Clove/ECS/UI/Systems/TextSystem.hpp
+		src/Clove/ECS/UI/Systems/TextSystem.cpp
 		src/Clove/Exception/CloveException.hpp
 		src/Clove/Exception/CloveException.cpp
 		src/Clove/Graphics/Bindables/IndexBuffer.hpp
@@ -126,6 +127,10 @@ set(
 		src/Clove/Platform/Window.cpp
 		src/Clove/Profiling/Timer.hpp
 		src/Clove/Profiling/Timer.cpp
+		src/Clove/UI/Font.hpp
+		src/Clove/UI/Font.cpp
+		src/Clove/UI/Text.hpp
+		src/Clove/UI/Text.cpp
 		src/Clove/Utils/Delegate.hpp
 		src/Clove/Utils/Delegate.inl
 		src/Clove/Utils/DeltaTime.hpp
@@ -133,6 +138,21 @@ set(
 		src/Clove/Utils/MeshLoader.hpp
 		src/Clove/Utils/MeshLoader.cpp
 )
+
+#source_group does not support generator expressions so add the platform headers here
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	set(
+		CloveFiles
+			${CloveFiles}
+			src/Platform/Windows/CloveWindows.hpp
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(
+		CloveFiles
+			${CloveFiles}
+			src/Platform/Linux/CloveLinux.hpp
+	)
+endif()
 
 #Files - Graphics
 set(
@@ -149,6 +169,8 @@ set(
 		src/Graphics/OpenGL-4/Bindables/GL4VertexBuffer.cpp
 		src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
 		src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
+		src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
 		src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
 		src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
 		src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
@@ -183,6 +205,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/Bindables/DX11VertexBuffer.cpp
 			src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
 			src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/Font-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/Font-vs.hlsl
 			src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
 			src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
 			src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
@@ -263,73 +287,75 @@ target_include_directories(
 		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
 	PRIVATE
 		vendor/OBJ-Loader/Source
+		vendor/freetype2/include
+		$<$<PLATFORM_ID:Windows>:${CMAKE_SOURCE_DIR}/Clove/vendor/wglext>
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-target_include_directories(
-		Clove
-		PRIVATE
-			vendor/wglext
-	)
-endif()
-
-#Libraries - cross platform
+#Libraries
 target_link_libraries(
 	Clove
 	PUBLIC
 	PRIVATE 
+		#Cross platform
 		spdlog
 		stb
 		Glad
 		glm
 		sndfile
 		portaudio_static
+		freetype
+		#Windows
+		$<$<PLATFORM_ID:Windows>:dxerr>
+		$<$<PLATFORM_ID:Windows>:opengl32>
+		$<$<PLATFORM_ID:Windows>:d3d11>
+		$<$<PLATFORM_ID:Windows>:dxguid>
+		$<$<PLATFORM_ID:Windows>:d3dcompiler>
+		#Linux
+		$<$<PLATFORM_ID:Linux>:GLX>
+		$<$<PLATFORM_ID:Linux>:X11>
+		$<$<PLATFORM_ID:Linux>:dl>
 )
 
-#Libraries - platform specific
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_link_libraries(
-		Clove
-		PRIVATE
-			dxerr
-			"opengl32.lib"
-			"d3d11.lib"
-			"dxguid.lib"
-			"d3dcompiler.lib"
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_link_libraries(
-		Clove
-		PRIVATE
-			"GLX"
-			"X11"
-			"dl"
-	)
-endif()
-
 #Precompiled header
-if(MSVC)
-	set_target_properties(Clove PROPERTIES COMPILE_FLAGS "/Yuclvpch.hpp")
-	set_source_files_properties(src/clvpch.cpp PROPERTIES COMPILE_FLAGS "/Ycclvpch.hpp" OBJECT_OUTPUTS "$(IntDir)/clvpch.pch")
-endif()
+target_precompile_headers(
+	${PROJECT_NAME}
+	PUBLIC
+		#Generic headers
+		<iostream>
+		<memory>
+		<utility>
+		<algorithm>
+		<functional>
+		<sstream>
+		<optional>
+		#Data structures
+		<string>
+		<vector>
+		<unordered_map>
+		<unordered_set>
+		#Clove headers
+		[["Clove/Core.hpp"]]
+		[["Clove/Log.hpp"]]
+		[["Clove/IntTypes.hpp"]]
+		[["Clove/Maths/MathsTypes.hpp"]]
+		[["Clove/Maths/Maths.hpp"]]
+		[["Clove/Maths/MathsHelpers.hpp"]]
+		#Platform headers
+		$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>
+		$<$<PLATFORM_ID:Linux>:Platform/Linux/CloveLinux.hpp>
+)
+source_group(PCH FILES 
+	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.hxx 
+	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.cxx
+)
 
 #Preprocessor
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_compile_definitions(
-		Clove
-		PUBLIC
-			CLV_PLATFORM_WINDOWS=1
-			CLV_PLATFORM_LINUX=0
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_compile_definitions(
-		Clove
-		PUBLIC
-			CLV_PLATFORM_WINDOWS=0
-			CLV_PLATFORM_LINUX=1
-	)
-endif()
-
+target_compile_definitions(
+	Clove
+	PUBLIC
+		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
+		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
+)
 target_compile_definitions(
 	Clove
 	INTERFACE
@@ -342,6 +368,7 @@ target_compile_definitions(
 if(MSVC)
 	set(pixelShaders
 		src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
+		src/Graphics/DirectX-11/Shaders/Font-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
 		src/Graphics/DirectX-11/Shaders/Unlit-ps.hlsl
@@ -349,6 +376,7 @@ if(MSVC)
 	
 	set(vertexShaders
 		src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+		src/Graphics/DirectX-11/Shaders/Font-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/RT-vs.hlsl
 		src/Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
@@ -365,6 +393,8 @@ if(MSVC)
 	set(shaderCSO
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-ps.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-vs.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Font-ps.cso
+		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Font-vs.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-ps.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-vs.cso
 		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/RT-ps.cso
@@ -393,6 +423,8 @@ endif()
 set(GLShaders
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
@@ -415,6 +447,12 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${GLShaders}
                 ${CMAKE_BINARY_DIR}/Bulb/Bulb.Desktop.Windows
+)
+add_custom_command(
+        TARGET Clove POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/Clove/res
+                ${CMAKE_BINARY_DIR}/Sandbox/res
 )
 
 if(MSVC)
