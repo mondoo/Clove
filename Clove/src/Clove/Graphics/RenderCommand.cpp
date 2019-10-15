@@ -42,6 +42,14 @@ namespace clv::gfx{
 		renderAPI->setViewportSize(width, height);
 	}
 
+	void RenderCommand::removeCurrentGeometryShader(){
+		renderAPI->removeCurrentGeometryShader();
+	}
+
+	void RenderCommand::removeTextureAtSlot(uint32 slot){
+		renderAPI->removeTextureAtSlot(slot);
+	}
+
 	void RenderCommand::initialiseRenderAPI(const Context& context){
 		switch(context.getAPI()){
 			case API::OpenGL4:

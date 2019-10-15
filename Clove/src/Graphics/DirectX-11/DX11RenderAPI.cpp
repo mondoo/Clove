@@ -149,6 +149,17 @@ namespace clv::gfx{
 		d3dContext->RSSetViewports(1u, &vp);
 	}
 
+	void DX11RenderAPI::removeCurrentGeometryShader(){
+		d3dContext->GSSetShader(nullptr, nullptr, 0u);
+	}
+
+	void DX11RenderAPI::removeTextureAtSlot(uint32 slot){
+		ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+		ID3D11SamplerState* nullST[1] = { nullptr };
+		d3dContext->PSSetShaderResources(slot, 1u, nullSRV);
+		d3dContext->PSSetSamplers(slot, 1u, nullST);
+	}
+
 	ID3D11Device& DX11RenderAPI::getDevice(){
 		CLV_ASSERT(d3dDevice != nullptr, __FUNCTION__" called with null device");
 		return *d3dDevice.Get();

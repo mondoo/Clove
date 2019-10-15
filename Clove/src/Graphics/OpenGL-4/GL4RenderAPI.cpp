@@ -72,4 +72,12 @@ namespace clv::gfx{
 	void GL4RenderAPI::setViewportSize(uint32 width, uint32 height){
 		glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 	}
+
+	void GL4RenderAPI::removeCurrentGeometryShader(){
+		glUseProgram(0);
+	}
+
+	void GL4RenderAPI::removeTextureAtSlot(uint32 slot){
+		glBindTextureUnit(slot, 0);
+	}
 }

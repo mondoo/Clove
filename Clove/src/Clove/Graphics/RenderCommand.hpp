@@ -27,6 +27,11 @@ namespace clv::gfx{
 
 		static void setViewPortSize(uint32 width, uint32 height);
 
+		//TEMP: Need an 'unbind' function or to refactor the bindable system
+		static void removeCurrentGeometryShader();
+		static void removeTextureAtSlot(uint32 slot);
+		//
+
 		static void initialiseRenderAPI(const Context& context);
 	};
 }
