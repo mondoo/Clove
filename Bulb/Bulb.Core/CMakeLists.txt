@@ -6,7 +6,7 @@ include(CSharpUtilities)
 
 #Add all c# files
 add_library(
-	${PROJECT_NAME}
+	${PROJECT_NAME} SHARED
 	Temp.cs
 	#TODO
 )
