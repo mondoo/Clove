@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Clove/Input/Input.hpp"
 
 #include "Clove/Application.hpp"

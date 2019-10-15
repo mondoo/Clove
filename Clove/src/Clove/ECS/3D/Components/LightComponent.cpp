@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "LightComponent.hpp"
 
 namespace clv::ecs::d3{

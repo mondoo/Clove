@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "WGLContext.hpp"
 
 #include "Platform/Windows/WindowsWindow.hpp"

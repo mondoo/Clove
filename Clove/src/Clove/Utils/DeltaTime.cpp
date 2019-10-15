@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "DeltaTime.hpp"
 
 namespace clv::utl{

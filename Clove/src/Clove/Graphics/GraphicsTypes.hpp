@@ -20,6 +20,7 @@ namespace clv::gfx{
 		Unlit,
 		_2D,
 		RT,
+		Font
 		CubeShadowMap
 	};
 
@@ -32,6 +33,7 @@ namespace clv::gfx{
 		Default,
 		RenderTarget_Colour,
 		RenderTarget_Depth
+		Font
 	};
 
 	enum class VertexElementType{

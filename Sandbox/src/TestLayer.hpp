@@ -27,6 +27,8 @@ private:
 
 	clv::ecs::Entity sound;
 
+	clv::ecs::Entity fontEnt;
+
 	bool firstMouse = false;
 	float pitch = 0.0f;
 	float yaw = 0.0f;

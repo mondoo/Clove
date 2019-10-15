@@ -1,5 +1,3 @@
-#include "clvpch.hpp"
-
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace clv{

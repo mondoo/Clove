@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "RenderCommand.hpp"
 
 #include "Graphics/OpenGL-4/GL4RenderAPI.hpp"

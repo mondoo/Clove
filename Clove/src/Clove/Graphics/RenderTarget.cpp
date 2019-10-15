@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "RenderTarget.hpp"
 
 #include "Clove/Graphics/RenderAPI.hpp"

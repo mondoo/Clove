@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "RenderableComponent.hpp"
 
 #include "Clove/Graphics/Sprite.hpp"

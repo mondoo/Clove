@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "GL4Texture.hpp"
 
 #include <glad/glad.h>
@@ -93,7 +92,7 @@ namespace clv::gfx{
 	}
 
 	TextureUsage GL4Texture::getUsageType() const{
-		return usageType;
+		return usage;
 	}
 
 	TextureStyle GL4Texture::getTextureStyle() const{
@@ -116,6 +115,11 @@ namespace clv::gfx{
 
 			case TextureUsage::RenderTarget_Depth:
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, pixels);
+				break;
+
+			case TextureUsage::Font:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, pixels);
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //We have 1 BPP so make sure OpenGL is aware of this
 				break;
 
 			default:

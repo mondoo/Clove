@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "MeshLoader.hpp"
 
 #include <OBJ_Loader.h>

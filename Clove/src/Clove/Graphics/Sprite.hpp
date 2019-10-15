@@ -8,7 +8,7 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		std::shared_ptr<Texture> texture;
-		math::Matrix4f modelData;
+		math::Matrix4f modelData = {};
 
 		//FUNCTIONS
 	public:

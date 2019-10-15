@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "DX11Exception.hpp"
 
 #include <dxerr.h>

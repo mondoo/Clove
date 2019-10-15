@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "DX11Texture.hpp"
 
 #include "Clove/Application.hpp"
@@ -32,6 +31,7 @@ namespace clv::gfx{
 	DX11Texture::DX11Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style)
 		: width(width)
 		, height(height)
+		, bindingPoint(bindingPoint)
 		, usage(usageType)
 		, bindingPoint(bindingPoint)
 		, style(style){
@@ -76,7 +76,14 @@ namespace clv::gfx{
 			textureBindFlags |= D3D11_BIND_DEPTH_STENCIL;
 		}
 
-		const DXGI_FORMAT format = usageType == TextureUsage::RenderTarget_Depth ? DXGI_FORMAT_R32_TYPELESS : DXGI_FORMAT_R8G8B8A8_UNORM;
+		//TODO: const
+		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		if(usageType == TextureUsage::Font){
+			format = DXGI_FORMAT_R8_UNORM;
+		}else if(usageType == TextureUsage::RenderTarget_Depth){
+            format = DXGI_FORMAT_R32_TYPELESS;
+        }
+
 		const UINT arraySize = styleType == TextureStyle::Cubemap ? 6 : 1;
 		const D3D11_SRV_DIMENSION viewDimension = styleType == TextureStyle::Cubemap ? D3D11_SRV_DIMENSION_TEXTURECUBE : D3D11_SRV_DIMENSION_TEXTURE2D;
 

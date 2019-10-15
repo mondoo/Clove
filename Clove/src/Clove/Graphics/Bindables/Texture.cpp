@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Texture.hpp"
 
 namespace clv::gfx{

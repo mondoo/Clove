@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "Shader.hpp"
 
 namespace clv::gfx{

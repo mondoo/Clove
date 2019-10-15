@@ -1,4 +1,3 @@
-#include "clvpch.hpp"
 #include "GL4IndexBuffer.hpp"
 
 #include "Clove/Graphics/RenderCommand.hpp"
