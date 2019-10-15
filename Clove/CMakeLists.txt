@@ -139,21 +139,6 @@ set(
 		src/Clove/Utils/MeshLoader.cpp
 )
 
-#source_group does not support generator expressions so add the platform headers here
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set(
-		CloveFiles
-			${CloveFiles}
-			src/Platform/Windows/CloveWindows.hpp
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set(
-		CloveFiles
-			${CloveFiles}
-			src/Platform/Linux/CloveLinux.hpp
-	)
-endif()
-
 #Files - Graphics
 set(
 	GraphicsFiles
@@ -239,6 +224,7 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		PlatformFiles
+			src/Platform/Windows/CloveWindows.hpp
 			src/Platform/Windows/WindowsWindow.hpp
 			src/Platform/Windows/WindowsWindow.cpp
 			src/Platform/Windows/WindowsException.hpp
@@ -247,8 +233,16 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
 		PlatformFiles
+			src/Platform/Linux/CloveLinux.hpp
 			src/Platform/Linux/LinuxWindow.hpp
 			src/Platform/Linux/LinuxWindow.cpp
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	set(
+		PlatformFiles
+			src/Platform/Mac/CloveMac.hpp
+			src/Platform/Mac/MacWindow.hpp
+			src/Platform/Mac/MacWindow.cpp
 	)
 endif()
 
@@ -343,6 +337,7 @@ target_precompile_headers(
 		#Platform headers
 		$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>
 		$<$<PLATFORM_ID:Linux>:Platform/Linux/CloveLinux.hpp>
+		$<$<PLATFORM_ID:Darwin>:Platform/Mac/CloveMac.hpp>
 )
 source_group(PCH FILES 
 	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.hxx 
@@ -355,6 +350,7 @@ target_compile_definitions(
 	PUBLIC
 		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
 		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
+		CLV_PLATFORM_MACOS=$<PLATFORM_ID:Darwin>
 )
 target_compile_definitions(
 	Clove
