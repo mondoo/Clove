@@ -28,12 +28,21 @@ namespace clv::gfx{
 		}
 	}
 
+	DX11Texture::DX11Texture(void* bufferData, int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style)
+		: width(width)
+		, height(height)
+		, bindingPoint(bindingPoint)
+		, usage(usageType)
+		, style(style){
+
+		createTexture(usage, style, bufferData);
+	}
+
 	DX11Texture::DX11Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style)
 		: width(width)
 		, height(height)
 		, bindingPoint(bindingPoint)
 		, usage(usageType)
-		, bindingPoint(bindingPoint)
 		, style(style){
 
 		createTexture(usage, style, nullptr);
@@ -69,6 +78,11 @@ namespace clv::gfx{
 	}
 
 	void DX11Texture::createTexture(TextureUsage usageType, TextureStyle styleType, void* pixels){
+		//If this is being used as a font then the BPP needs to be 1
+		if(usageType == TextureUsage::Font){
+			BPP = 1;
+		}
+
 		UINT textureBindFlags = D3D11_BIND_SHADER_RESOURCE;
 		if(usageType == TextureUsage::RenderTarget_Colour){
 			textureBindFlags |= D3D11_BIND_RENDER_TARGET;

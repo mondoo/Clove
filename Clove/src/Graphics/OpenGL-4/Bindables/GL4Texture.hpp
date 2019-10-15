@@ -28,6 +28,7 @@ namespace clv::gfx{
 		virtual ~GL4Texture();
 
 		GL4Texture(const std::string& filePath, uint32 bindingPoint, TextureStyle style);
+		GL4Texture(void* bufferData, int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style);
 		GL4Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style);
 
 		virtual void bind() override;

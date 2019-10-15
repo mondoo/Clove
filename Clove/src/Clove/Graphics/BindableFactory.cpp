@@ -79,14 +79,14 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::shared_ptr<Texture> createTexture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style){
+	std::shared_ptr<Texture> createTexture(void* bufferData, int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
-				return std::make_shared<GL4Texture>(width, height, usageType, bindingPoint, style);
+				return std::make_shared<GL4Texture>(bufferData, width, height, usageType, bindingPoint, style);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_shared<DX11Texture>(width, height, usageType, bindingPoint, style);
+				return std::make_shared<DX11Texture>(bufferData, width, height, usageType, bindingPoint, style);
 			#endif
 
 			default:
@@ -95,14 +95,14 @@ namespace clv::gfx::BindableFactory{
 		}
 	}
 
-	std::shared_ptr<Texture> createTexture(int32 width, int32 height, uint32 bindingPoint, TextureUsage usageType){
+	std::shared_ptr<Texture> createTexture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style){
 		switch(RenderAPI::getAPIType()){
 			case API::OpenGL4:
-				return std::make_shared<GL4Texture>(width, height, bindingPoint, usageType);
+				return std::make_shared<GL4Texture>(width, height, usageType, bindingPoint, style);
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				return std::make_shared<DX11Texture>(width, height, bindingPoint, usageType);
+				return std::make_shared<DX11Texture>(width, height, usageType, bindingPoint, style);
 			#endif
 
 			default:

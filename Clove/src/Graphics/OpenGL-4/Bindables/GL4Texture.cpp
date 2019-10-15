@@ -46,6 +46,35 @@ namespace clv::gfx{
 		}
 	}
 
+	GL4Texture::GL4Texture(void* bufferData, int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style)
+		: width(width)
+		, height(height)
+		, usageType(usageType)
+		, bindingPoint(bindingPoint)
+		, style(style){
+		glGenTextures(1, &rendererID);
+
+		switch(style){
+			case TextureStyle::Default:
+				glBindTexture(GL_TEXTURE_2D, rendererID);
+				setTextureParameters();
+				createDefaultTexture(usageType, bufferData);
+				glBindTexture(GL_TEXTURE_2D, 0);
+				break;
+
+			case TextureStyle::Cubemap:
+				glBindTexture(GL_TEXTURE_CUBE_MAP, rendererID);
+				setTextureParameters();
+				createCubemapTexture(usageType, bufferData);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+				break;
+
+			default:
+				CLV_ASSERT(false, "{0}: Unhandled usage type", CLV_FUNCTION_NAME);
+				break;
+		}
+	}
+
 	GL4Texture::GL4Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style)
 		: width(width)
 		, height(height)
@@ -92,7 +121,7 @@ namespace clv::gfx{
 	}
 
 	TextureUsage GL4Texture::getUsageType() const{
-		return usage;
+		return usageType;
 	}
 
 	TextureStyle GL4Texture::getTextureStyle() const{
@@ -118,8 +147,9 @@ namespace clv::gfx{
 				break;
 
 			case TextureUsage::Font:
+				BPP = 1;
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, pixels);
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //We have 1 BPP so make sure OpenGL is aware of this
+				glPixelStorei(GL_UNPACK_ALIGNMENT, BPP); //We have 1 BPP so make sure OpenGL is aware of this
 				break;
 
 			default:

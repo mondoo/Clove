@@ -38,6 +38,7 @@ namespace clv::gfx{
 		virtual ~DX11Texture();
 
 		DX11Texture(const std::string& filePath, uint32 bindingPoint, TextureStyle style);
+		DX11Texture(void* bufferData, int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style);
 		DX11Texture(int32 width, int32 height, TextureUsage usageType, uint32 bindingPoint, TextureStyle style);
 
 		virtual void bind() override;
