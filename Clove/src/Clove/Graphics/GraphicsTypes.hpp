@@ -20,7 +20,7 @@ namespace clv::gfx{
 		Unlit,
 		_2D,
 		RT,
-		Font
+		Font,
 		CubeShadowMap
 	};
 
@@ -32,7 +32,7 @@ namespace clv::gfx{
 	enum class TextureUsage{
 		Default,
 		RenderTarget_Colour,
-		RenderTarget_Depth
+		RenderTarget_Depth,
 		Font
 	};
 
