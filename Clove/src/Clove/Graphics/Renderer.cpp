@@ -100,6 +100,10 @@ namespace clv::gfx{
 		RenderCommand::setRenderTarget(*shadowMapRenderTarget);
 		std::for_each(meshesToRender.begin(), meshesToRender.end(), drawShadow);
 		RenderCommand::setViewPortSize(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight());
+		
+		RenderCommand::removeCurrentGeometryShader();
+
+		RenderCommand::resetRenderTarget(); //Reset render target before binding the shadow map
 
 		shadowMapTexture->bind(); //Bind this in before rendering the real mesh
 
@@ -107,12 +111,13 @@ namespace clv::gfx{
 		if(customRenderTarget){
 			RenderCommand::setRenderTarget(*customRenderTarget);
 			std::for_each(meshesToRender.begin(), meshesToRender.end(), draw);
+			RenderCommand::resetRenderTarget();
 		}
-
-		RenderCommand::resetRenderTarget();
 
 		//Render scene
 		std::for_each(meshesToRender.begin(), meshesToRender.end(), draw);
+
+		RenderCommand::removeTextureAtSlot(TBP_Shadow);
 
 		meshesToRender.clear();
 	}
