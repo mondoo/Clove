@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Platform/Window"
+#include "Clove/Platform/Window.hpp"
 
 namespace clv{
     class MacWindow : public Window{
@@ -18,5 +18,10 @@ namespace clv{
         
         MacWindow(const WindowProps& props);
         MacWindow(const WindowProps& props, gfx::API api);
+		
+		virtual void* getNativeWindow() const override;
+		
+	protected:
+		virtual void processInput() override;
     };
 }

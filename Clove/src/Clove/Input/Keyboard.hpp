@@ -12,6 +12,8 @@ namespace clv{
 		friend class WindowsWindow;
 	#elif CLV_PLATFORM_LINUX
 		friend class LinuxWindow;
+	#elif CLV_PLATFORM_MACOS
+		friend class MacWindow;
 	#endif
 		
 		//DEFINITIONS

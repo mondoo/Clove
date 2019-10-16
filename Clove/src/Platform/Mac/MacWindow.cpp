@@ -10,6 +10,15 @@ namespace clv {
     MacWindow::MacWindow(const WindowProps& props, gfx::API api){
         //TODO
     }
+	
+	void* MacWindow::getNativeWindow() const{
+		//TODO
+		return nullptr;
+	}
+	
+	void MacWindow::processInput(){
+		//TODO
+	}
 
     Window* Window::create(const WindowProps& props){
         return new MacWindow(props);
