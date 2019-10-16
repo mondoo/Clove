@@ -1,10 +1,13 @@
 namespace clv::ecs{
 	template<typename ComponentType, typename ...ConstructorArgs>
 	ComponentType* Entity::addComponent(ConstructorArgs&& ...args){
-		auto comp = std::make_unique<ComponentType>(std::forward<ConstructorArgs>(args)...);
-		ComponentType* compPtr = comp.get();
-		onComponentCreated.broadcast(entityID, ComponentType::ID, std::move(comp));
-		return compPtr;
+		if (entityID != INVALID_ENTITY_ID){
+			auto comp = std::make_unique<ComponentType>(std::forward<ConstructorArgs>(args)...);
+			ComponentType* compPtr = comp.get();
+			onComponentCreated.broadcast(entityID, ComponentType::ID, std::move(comp));
+			return compPtr;
+		}
+		return nullptr;
 	}
 	
 	template<typename ComponentType>
