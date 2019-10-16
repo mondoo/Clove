@@ -283,11 +283,6 @@ target_include_directories(
 		vendor/OBJ-Loader/Source
 		vendor/freetype2/include
 		$<$<PLATFORM_ID:Windows>:${CMAKE_SOURCE_DIR}/Clove/vendor/wglext>
-
-	#System
-	SYSTEM
-	PUBLIC
-		$<$<PLATFORM_ID:Darwin>:/opt/X11/include>
 )
 
 #Libraries

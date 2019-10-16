@@ -1,1 +1,0 @@
-install Xquarts to get x11

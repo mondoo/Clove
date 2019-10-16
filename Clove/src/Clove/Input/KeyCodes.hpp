@@ -126,7 +126,7 @@ namespace clv{
 		Alt_Right		= VK_MENU,
 		Super_Left		= VK_LWIN,
 		Super_Right		= VK_RWIN
-	#elif CLV_PLATFORM_LINUX || CLV_PLATFORM_MACOS
+	#elif CLV_PLATFORM_LINUX
 		//Regular keys
 		Space			= XK_space,
 		Apostrophe		= XK_apostrophe,
