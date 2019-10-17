@@ -1,4 +1,4 @@
-#define LIGHT_NUM 10
+#define MAX_LIGHTS 10
 
 Texture2D albedoTexture : register(t1);
 SamplerState albedoSampler : register(s1);
@@ -6,8 +6,8 @@ SamplerState albedoSampler : register(s1);
 Texture2D specularTexture : register(t2);
 SamplerState specularSampler : register(s2);
 
-TextureCube shadowDepthMap : register(t3);
-SamplerState shadowDepthSampler : register(s3);
+TextureCube shadowDepthMap[MAX_LIGHTS] : register(t3);
+SamplerState shadowDepthSampler[MAX_LIGHTS] : register(s3); //TODO: We should really reuse the samplers for these
 
 struct PointLight{
 	float3 position;
@@ -19,7 +19,7 @@ struct PointLight{
 	float3 specular;
 };
 cbuffer PointLightBuffer : register(b1){
-	PointLight lights[LIGHT_NUM]; //Temp 10 max
+	PointLight lights[MAX_LIGHTS]; //Temp 10 max
 };
 
 cbuffer ViewBuffer : register(b2){
@@ -41,7 +41,7 @@ cbuffer lightNumBuffer : register(b8){
 
 float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord);
 
-float shadowCalculation(float3 fragPos);
+float shadowCalculation(float3 fragPos, unsigned int shadowIndex);
 
 float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNormal : VertNormal) : SV_Target{
     float3 normal       = normalize(vertNormal);
@@ -79,17 +79,21 @@ float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, floa
 	specular	*= attenuation;
 
 	//Shadow
-	float shadow = shadowCalculation(fragPos);
+	float shadow = 0.0f;
+	for(unsigned int i = 0; i < numLights; ++i){
+		shadow += 1.0f - shadowCalculation(fragPos, 0);
+	}
+	shadow /= numLights;
 
 	//TODO: Calculate multiple shadows
-	return (ambient + (1.0f - shadow) * (diffuse + specular));
+	return (ambient + (shadow * (diffuse + specular)));
 }
 
-float shadowCalculation(float3 fragPos){
+float shadowCalculation(float3 fragPos, unsigned int shadowIndex){
 	float3 fragToLight = fragPos - lightPosition;
 	float currentDepth = length(fragToLight);
 
-	float closestDepth = shadowDepthMap.Sample(shadowDepthSampler, fragToLight).r;
+	float closestDepth = shadowDepthMap[shadowIndex].Sample(shadowDepthSampler[shadowIndex], fragToLight).r;
 	closestDepth *= farplane;
 
 	float bias = 0.05;

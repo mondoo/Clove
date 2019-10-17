@@ -1,6 +1,6 @@
 #version 460 core
 
-#define LIGHT_NUM 10
+#define MAX_LIGHTS 10
 
 in vec2 vertTexCoord;
 in vec3 vertPos;
@@ -8,7 +8,7 @@ in vec3 vertNormal;
 
 layout(binding = 1) uniform sampler2D albedoSampler;
 layout(binding = 2) uniform sampler2D specularSampler;
-layout(binding = 3) uniform samplerCube shadowDepthMap;
+layout(binding = 3) uniform samplerCube shadowDepthMap[MAX_LIGHTS];
 
 struct DirectionalLight{
 	vec3 direction;
@@ -41,7 +41,7 @@ struct SpotLight{
 };
 
 layout (std140, binding = 1) uniform PointLightData{
-	PointLight lights[10];
+	PointLight lights[MAX_LIGHTS];
 };
 
 layout (std140, binding = 2) uniform ViewData{
@@ -68,7 +68,7 @@ layout(location = 0) out vec4 fragmentColour;
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDirection);
 //vec3 CalculateSpotLight(SpotLight light,  vec3 normal, vec3 fragPos, vec3 viewDirection);
 
-float shadowCalculation(vec3 fragPos);
+float shadowCalculation(vec3 fragPos, unsigned int shadowIndex);
 
 void main(){
 	vec3 fragNorm		= normalize(vertNormal);
@@ -129,10 +129,13 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     specular *= attenuation;
 
 	//Shadow
-	float shadow = shadowCalculation(fragPos);
+	float shadow = 0.0f;
+	for(unsigned int i = 0; i< numLights; i++){
+		shadow += 1.0f - shadowCalculation(fragPos, i);
+	}
 
 	//TODO: Calculate multiple shadows
-	return (ambient + (1.0 - shadow) * (diffuse + specular));
+	return (ambient + (shadow * (diffuse + specular)));
 }
 
 //vec3 CalculateSpotLight(SpotLight light,  vec3 normal, vec3 fragPos, vec3 viewDirection){
@@ -161,11 +164,11 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 //	return (ambient + diffuse + specular);
 //}
 
-float shadowCalculation(vec3 fragPos){
+float shadowCalculation(vec3 fragPos, unsigned int shadowIndex){
 	vec3 fragToLight = fragPos - lightPosition;
 	float currentDepth = length(fragToLight);
 
-	float closestDepth = texture(shadowDepthMap, fragToLight).r;
+	float closestDepth = texture(shadowDepthMap[shadowIndex], fragToLight).r;
 	closestDepth *= farPlane;
 
 	float bias = 0.05;
