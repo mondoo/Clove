@@ -4,8 +4,6 @@
 
 #include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
 
-#include <queue>
-
 namespace clv::gfx{
 	class RenderTarget;
 	class Mesh;
