@@ -15,12 +15,10 @@ struct PointLight{
 	float3 diffuse;
 	float quadratic;
 	float3 specular;
-
 };
 cbuffer PointLightBuffer : register(b1){
-	//int numLights;
-	//PointLight lights[10]; //Temp 10 max
-	PointLight light; //doing one for now
+	int numLights;
+	PointLight lights[10]; //Temp 10 max
 };
 
 cbuffer ViewBuffer : register(b2){
@@ -46,11 +44,9 @@ float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNor
     float3 viewDir      = normalize(viewPos - vertPos);
     
 	float3 lighting = float3(0.0f, 0.0f, 0.0f);
-	//for(int i = 0; i < numLights; ++i){
-	//	lighting += calculatePointLight(lights[i], normal, vertPos, viewDir, texCoord);
-	//}
-
-	lighting += calculatePointLight(light, normal, vertPos, viewDir, texCoord);
+	for(int i = 0; i < numLights; ++i){
+		lighting += calculatePointLight(lights[i], normal, vertPos, viewDir, texCoord);
+	}
 
     return float4(lighting, 1.0f);
 }
@@ -81,6 +77,7 @@ float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, floa
 	//Shadow
 	float shadow = shadowCalculation(fragPos);
 
+	//TODO: Calculate multiple shadows
 	return (ambient + (1.0f - shadow) * (diffuse + specular));
 }
 

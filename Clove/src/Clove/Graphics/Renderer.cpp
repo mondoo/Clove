@@ -72,7 +72,7 @@ namespace clv::gfx{
 	}
 
 	void Renderer::beginScene(){
-		//currentLightInfo.numLights = 0;
+		currentLightInfo.numLights = 0;
 	}
 
 	void Renderer::endScene(){
@@ -151,9 +151,8 @@ namespace clv::gfx{
 	}
 
 	void Renderer::submitPointLight(const PointLightData& data){
-		//const int32 lightIndex = currentLightInfo.numLights++;
-
-		currentLightInfo.intensity/*.intensities[lightIndex]*/ = data.intensity;
+		const int32 lightIndex = currentLightInfo.numLights++;
+		currentLightInfo.intensities[lightIndex] = data.intensity;
 
 		currentShadowInfo.shadowTransforms/*.shadowTransforms[lightIndex]*/ = data.shadowTransforms;
 

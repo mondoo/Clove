@@ -49,9 +49,8 @@ struct SpotLight{
 };
 
 layout (std140, binding = 1) uniform PointLightData{
-	//int numLights;
-	//PointLight lights[10]; //10 max for now
-	PointLight lights; //Doing one for now
+	int numLights;
+	PointLight lights[10];
 };
 
 layout (std140, binding = 2) uniform ViewData{
@@ -76,11 +75,9 @@ void main(){
 //		lighting += CalculateDirectionalLighting(directionLights[i], fragNorm, viewDir);
 //	}
 
-	//for(int i = 0; i < numLights; i++){
-	//	lighting += CalculatePointLight(lights[i], fragNorm, vertPos, viewDir);
-	//}
-
-	lighting += CalculatePointLight(lights, fragNorm, vertPos, viewDir);
+	for(int i = 0; i < numLights; i++){
+		lighting += CalculatePointLight(lights[i], fragNorm, vertPos, viewDir);
+	}
 
 	fragmentColour = vec4(lighting, 1.0);
 };
@@ -129,7 +126,8 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	//Shadow
 	float shadow = shadowCalculation(fragPos);
 
-	return (ambient + (1.0 - shadow) * (diffuse + specular)); //TODO: No * colour???
+	//TODO: Calculate multiple shadows
+	return (ambient + (1.0 - shadow) * (diffuse + specular));
 }
 
 //vec3 CalculateSpotLight(SpotLight light,  vec3 normal, vec3 fragPos, vec3 viewDirection){

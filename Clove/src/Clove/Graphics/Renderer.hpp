@@ -50,9 +50,8 @@ namespace clv::gfx{
 		float farPlane;
 	};
 	struct PointLightShaderData{ //I guess the lighting system could handle this
-		//int32 numLights = 0;
-		//std::array<PointLightIntesity, 10> intensities = { };
-		PointLightIntesity intensity = { }; //Supporting one for now
+		int32 numLights = 0;
+		std::array<PointLightIntesity, 10> intensities = {};
 	};
 	struct PointShadowShaderData{
 		//int32 numLights = 0;
