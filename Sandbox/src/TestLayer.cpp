@@ -251,7 +251,7 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	}
 
 	std::ostringstream outStream;
-	outStream << "FPS: " << avgFPS;
+	outStream << "Average FPS: " << avgFPS;
 	fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setText(outStream.str());
 
 	++countedFrames;
