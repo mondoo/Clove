@@ -42,4 +42,11 @@ namespace clv::gfx{
 		texture2D,
 		normal,
 	};
+
+	struct TextureDescriptor{
+		TextureStyle style = TextureStyle::Default;
+		TextureUsage usage = TextureUsage::Default;
+		math::Vector<2, uint32, math::qualifier::defaultp> dimensions = { 0, 0 };
+		uint8 arraySize = 1;
+	};
 }

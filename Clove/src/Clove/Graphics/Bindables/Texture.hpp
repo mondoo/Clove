@@ -22,9 +22,8 @@ namespace clv::gfx{
 		Texture& operator=(Texture&& other) noexcept;
 		virtual ~Texture();
 
-		//TODO: should be unsigned
-		virtual int32 getWidth() const = 0;
-		virtual int32 getHeight() const = 0;
+		virtual uint32 getWidth() const = 0;
+		virtual uint32 getHeight() const = 0;
 
 		virtual TextureBindingPoint getBindingPoint() const = 0;
 		virtual TextureUsage getUsageType() const = 0;

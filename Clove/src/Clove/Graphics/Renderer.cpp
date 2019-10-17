@@ -67,7 +67,7 @@ namespace clv::gfx{
 
 		materialSBO->update({ 32.0f });
 
-		shadowMapTexture = BindableFactory::createTexture(shadowMapSize, shadowMapSize, TextureUsage::RenderTarget_Depth, TBP_Shadow, TextureStyle::Cubemap);
+		shadowMapTexture = BindableFactory::createTexture(TBP_Shadow, { TextureStyle::Cubemap, TextureUsage::RenderTarget_Depth, { shadowMapSize, shadowMapSize }, 1 });
 		shadowMapRenderTarget = RenderTarget::createRenderTarget(nullptr, shadowMapTexture.get());
 
 		RenderCommand::setBlendState(true);
