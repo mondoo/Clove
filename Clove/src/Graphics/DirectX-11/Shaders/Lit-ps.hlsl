@@ -1,3 +1,5 @@
+#define LIGHT_NUM 10
+
 Texture2D albedoTexture : register(t1);
 SamplerState albedoSampler : register(s1);
 
@@ -17,8 +19,7 @@ struct PointLight{
 	float3 specular;
 };
 cbuffer PointLightBuffer : register(b1){
-	int numLights;
-	PointLight lights[10]; //Temp 10 max
+	PointLight lights[LIGHT_NUM]; //Temp 10 max
 };
 
 cbuffer ViewBuffer : register(b2){
@@ -29,10 +30,13 @@ cbuffer MaterialBuffer : register(b4){
     float shininess;
 }
 
-//TODO: This will need  to be updated for multiple lights
 cbuffer lightPosBuffer : register(b7){
 	float3 lightPosition;
 	float farplane;
+}
+
+cbuffer lightNumBuffer : register(b8){
+	unsigned int numLights;
 }
 
 float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord);
@@ -44,7 +48,7 @@ float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNor
     float3 viewDir      = normalize(viewPos - vertPos);
     
 	float3 lighting = float3(0.0f, 0.0f, 0.0f);
-	for(int i = 0; i < numLights; ++i){
+	for(unsigned int i = 0; i < numLights; ++i){
 		lighting += calculatePointLight(lights[i], normal, vertPos, viewDir, texCoord);
 	}
 

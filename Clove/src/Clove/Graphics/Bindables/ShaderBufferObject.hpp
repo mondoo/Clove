@@ -11,7 +11,8 @@ namespace clv::gfx{
 		BBP_MaterialData	= 4u,
 		BBP_2DData			= 5u,
 		BBP_ShadowData		= 6u,
-		BBP_CubeDepthData	= 7u
+		BBP_CubeDepthData	= 7u,
+		BBP_CurrentLights	= 8u
 	};
 
 	/*

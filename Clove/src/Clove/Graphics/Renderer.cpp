@@ -28,9 +28,10 @@ namespace clv::gfx{
 	PointShadowShaderData Renderer::currentShadowInfo;
 	std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> Renderer::shadowDepthData;
 	PointShadowDepthData Renderer::currentShadowDepth;
-
-	std::shared_ptr<gfx::Shader> Renderer::cubeShadowMapShader;
 	std::shared_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::shadowModelData;
+	std::shared_ptr<gfx::Shader> Renderer::cubeShadowMapShader;
+	std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> Renderer::lightNumSBO;
+	uint32 Renderer::numLights;
 
 	std::vector<std::shared_ptr<Mesh>> Renderer::meshesToRender;
 
@@ -49,10 +50,10 @@ namespace clv::gfx{
 		
 		lightDataSBO = BindableFactory::createShaderBufferObject<PointLightShaderData>(ShaderType::Pixel, BBP_PointLightData);
 		shadowDataSBO = BindableFactory::createShaderBufferObject<PointShadowShaderData>(ShaderType::Geometry, BBP_ShadowData);
-
-		cubeShadowMapShader = gfx::BindableFactory::createShader(gfx::ShaderStyle::CubeShadowMap);
-		shadowModelData = BindableFactory::createShaderBufferObject<VertexData>(ShaderType::Vertex, BBP_ModelData);
 		shadowDepthData = BindableFactory::createShaderBufferObject<PointShadowDepthData>(ShaderType::Pixel, BBP_CubeDepthData);
+		shadowModelData = BindableFactory::createShaderBufferObject<VertexData>(ShaderType::Vertex, BBP_ModelData);
+		cubeShadowMapShader = BindableFactory::createShader(gfx::ShaderStyle::CubeShadowMap);
+		lightNumSBO = BindableFactory::createShaderBufferObject<LightNumAlignment>(ShaderType::Pixel, BBP_CurrentLights);
 
 		materialSBO->bind();
 
@@ -62,6 +63,7 @@ namespace clv::gfx{
 		lightDataSBO->bind();
 		shadowDataSBO->bind();
 		shadowDepthData->bind();
+		lightNumSBO->bind();
 
 		materialSBO->update({ 32.0f });
 
@@ -72,13 +74,14 @@ namespace clv::gfx{
 	}
 
 	void Renderer::beginScene(){
-		currentLightInfo.numLights = 0;
+		numLights = 0;
 	}
 
 	void Renderer::endScene(){
 		lightDataSBO->update(currentLightInfo);
 		shadowDataSBO->update(currentShadowInfo);
 		shadowDepthData->update(currentShadowDepth);
+		lightNumSBO->update({ numLights });
 
 		const auto draw = [](const std::shared_ptr<Mesh>& mesh){
 			mesh->bind();
@@ -151,7 +154,7 @@ namespace clv::gfx{
 	}
 
 	void Renderer::submitPointLight(const PointLightData& data){
-		const int32 lightIndex = currentLightInfo.numLights++;
+		const int32 lightIndex = numLights++;
 		currentLightInfo.intensities[lightIndex] = data.intensity;
 
 		currentShadowInfo.shadowTransforms/*.shadowTransforms[lightIndex]*/ = data.shadowTransforms;

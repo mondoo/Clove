@@ -49,8 +49,7 @@ namespace clv::gfx{
 		std::array<math::Matrix4f, 6> shadowTransforms = { };
 		float farPlane;
 	};
-	struct PointLightShaderData{ //I guess the lighting system could handle this
-		int32 numLights = 0;
+	struct PointLightShaderData{
 		std::array<PointLightIntesity, 10> intensities = {};
 	};
 	struct PointShadowShaderData{
@@ -61,6 +60,10 @@ namespace clv::gfx{
 	struct PointShadowDepthData{ //It's not depth - this needs a better name
 		math::Vector3f lightPos = { };
 		float farPlane = 0;
+	};
+
+	struct LightNumAlignment{
+		alignas(16) uint32 numLights;
 	};
 
 	class Renderer{
@@ -81,12 +84,10 @@ namespace clv::gfx{
 		static PointShadowShaderData currentShadowInfo;
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> shadowDepthData;
 		static PointShadowDepthData currentShadowDepth;
-
-		//TODO: material?
-		static std::shared_ptr<gfx::Shader> cubeShadowMapShader;
 		static std::shared_ptr<gfx::ShaderBufferObject<VertexData>> shadowModelData;
-		//sbo for the model data
-		//shader for generating the cube map
+		static std::shared_ptr<gfx::Shader> cubeShadowMapShader;
+		static std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> lightNumSBO;
+		static uint32 numLights;
 
 		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
 

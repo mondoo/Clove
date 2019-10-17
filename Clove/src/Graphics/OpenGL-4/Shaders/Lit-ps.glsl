@@ -1,5 +1,7 @@
 #version 460 core
 
+#define LIGHT_NUM 10
+
 in vec2 vertTexCoord;
 in vec3 vertPos;
 in vec3 vertNormal;
@@ -7,16 +9,6 @@ in vec3 vertNormal;
 layout(binding = 1) uniform sampler2D albedoSampler;
 layout(binding = 2) uniform sampler2D specularSampler;
 layout(binding = 3) uniform samplerCube shadowDepthMap;
-
-layout(std140, binding = 4) uniform Material{
-	float shininess;
-};
-
-//TODO: This will need  to be updated for multiple lights
-layout(std140, binding = 7) uniform lightPosBuffer {
-	vec3 lightPosition;
-	float farPlane;
-};
 
 struct DirectionalLight{
 	vec3 direction;
@@ -49,12 +41,25 @@ struct SpotLight{
 };
 
 layout (std140, binding = 1) uniform PointLightData{
-	int numLights;
 	PointLight lights[10];
 };
 
 layout (std140, binding = 2) uniform ViewData{
 	vec3 viewPos;
+};
+
+layout(std140, binding = 4) uniform Material{
+	float shininess;
+};
+
+//TODO: This will need  to be updated for multiple lights
+layout(std140, binding = 7) uniform lightPosBuffer {
+	vec3 lightPosition;
+	float farPlane;
+};
+
+layout(std140, binding = 8) uniform numLightBuffer{
+	unsigned int numLights;
 };
 
 layout(location = 0) out vec4 fragmentColour;
@@ -75,7 +80,7 @@ void main(){
 //		lighting += CalculateDirectionalLighting(directionLights[i], fragNorm, viewDir);
 //	}
 
-	for(int i = 0; i < numLights; i++){
+	for(unsigned int i = 0; i < numLights; i++){
 		lighting += CalculatePointLight(lights[i], fragNorm, vertPos, viewDir);
 	}
 
