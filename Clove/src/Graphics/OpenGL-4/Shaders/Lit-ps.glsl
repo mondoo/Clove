@@ -28,14 +28,12 @@ struct DirectionalLight{
 
 struct PointLight{
 	vec3 position;
-   
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-
 	float constant;
+    vec3 ambient;
     float linear;
+    vec3 diffuse;
     float quadratic; 
+    vec3 specular;
 };
 
 struct SpotLight{

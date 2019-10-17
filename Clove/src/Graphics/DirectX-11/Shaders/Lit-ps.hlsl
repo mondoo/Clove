@@ -9,14 +9,13 @@ SamplerState shadowDepthSampler : register(s3);
 
 struct PointLight{
 	float3 position;
-
+	float constant;
 	float3 ambient;
+	float linearV;
 	float3 diffuse;
+	float quadratic;
 	float3 specular;
 
-	float constant;
-	float linearV;
-	float quadratic;
 };
 cbuffer PointLightBuffer : register(b1){
 	//int numLights;

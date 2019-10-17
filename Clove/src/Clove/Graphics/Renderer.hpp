@@ -38,15 +38,13 @@ namespace clv::gfx{
 	};
 
 	struct PointLightIntesity{
-		alignas(16) math::Vector3f position = { };
-
-		alignas(16) math::Vector3f ambient = { };
-		alignas(16) math::Vector3f diffuse = { };
+		math::Vector3f position = { };
+		float constant = 0;
+		math::Vector3f ambient = { };
+		float linear = 0;
+		math::Vector3f diffuse = { };
+		float quadratic = 0;
 		alignas(16) math::Vector3f specular = { };
-
-		/*alignas(16)*/ float constant = 0;
-		/*alignas(16)*/ float linear = 0;
-		/*alignas(16)*/ float quadratic = 0;
 	};
 	struct PointLightData{
 		PointLightIntesity intensity = { };

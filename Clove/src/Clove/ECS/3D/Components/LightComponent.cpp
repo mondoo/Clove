@@ -4,12 +4,12 @@ namespace clv::ecs::d3{
 	LightComponent::LightComponent(){
 		lightData = {
 			{ { 0.0f, 0.0f, 0.0f },
-			getAmbientColour(),
-			getDiffuseColour(),
-			getSpecularColour(),
 			constant,
+			getAmbientColour(),
 			linear,
-			quadratic },
+			getDiffuseColour(),
+			quadratic,
+			getSpecularColour(), },
 			{},
 			farDist
 		};
