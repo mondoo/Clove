@@ -20,12 +20,14 @@ namespace clv::ui{
 		std::shared_ptr<std::remove_pointer_t<FT_Library>> ftLibReference;
 		std::unique_ptr<std::remove_pointer_t<FT_Face>, void(*)(FT_Face)> face;
 
+		std::string filePath;
+
 		//FUNCTIONS
 	public:
 		Font() = delete;
-		Font(const Font& other) = delete;
+		Font(const Font& other);
 		Font(Font&& other) noexcept;
-		Font& operator=(const Font& other) = delete;
+		Font& operator=(const Font& other);
 		Font& operator=(Font&& other) noexcept;
 		~Font();
 
@@ -33,5 +35,8 @@ namespace clv::ui{
 		
 		void setSize(uint32 size);
 		Glyph getChar(char ch) const;
+
+	private:
+		std::unique_ptr<std::remove_pointer_t<FT_Face>, void(*)(FT_Face)> createFace(const std::string& filePath);
 	};
 }
