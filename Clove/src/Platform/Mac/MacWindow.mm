@@ -1,4 +1,4 @@
-#include "MacWindow.hpp"
+#include "MacWindow.h"
 
 namespace clv {
     MacWindow::~MacWindow() = default;

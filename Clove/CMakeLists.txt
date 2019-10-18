@@ -241,8 +241,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	set(
 		PlatformFiles
 			src/Platform/Mac/CloveMac.hpp
-			src/Platform/Mac/MacWindow.hpp
-			src/Platform/Mac/MacWindow.cpp
+			src/Platform/Mac/MacWindow.h
+			src/Platform/Mac/MacWindow.mm
 	)
 endif()
 
