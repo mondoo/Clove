@@ -58,9 +58,12 @@ namespace clv::gfx{
 		//std::array<std::array<math::Matrix4f, 6>, 10> shadowTransforms = { };
 		std::array<math::Matrix4f, 6> shadowTransforms = { }; //Supporting one for now
 	};
-	struct PointShadowDepthData{ //It's not depth - this needs a better name
+	struct PointShadowData{
 		math::Vector3f lightPos = { };
 		float farPlane = 0;
+	};
+	struct PointShadowDepthData{ //It's not depth - this needs a better name
+		std::array<PointShadowData, MAX_LIGHTS> depths = {};
 	};
 
 	struct LightNumAlignment{

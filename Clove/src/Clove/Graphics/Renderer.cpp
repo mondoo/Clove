@@ -159,7 +159,7 @@ namespace clv::gfx{
 
 		currentShadowInfo.shadowTransforms/*.shadowTransforms[lightIndex]*/ = data.shadowTransforms;
 
-		currentShadowDepth.farPlane = data.farPlane;
-		currentShadowDepth.lightPos = data.intensity.position;
+		currentShadowDepth.depths[lightIndex].farPlane = data.farPlane;
+		currentShadowDepth.depths[lightIndex].lightPos = data.intensity.position;
 	}
 }

@@ -19,7 +19,7 @@ struct PointLight{
 	float3 specular;
 };
 cbuffer PointLightBuffer : register(b1){
-	PointLight lights[MAX_LIGHTS]; //Temp 10 max
+	PointLight lights[MAX_LIGHTS];
 };
 
 cbuffer ViewBuffer : register(b2){
@@ -30,9 +30,12 @@ cbuffer MaterialBuffer : register(b4){
     float shininess;
 }
 
-cbuffer lightPosBuffer : register(b7){
+struct LightPos{
 	float3 lightPosition;
 	float farplane;
+};
+cbuffer lightPosBuffer : register(b7){
+	LightPos lightPositions[MAX_LIGHTS];
 }
 
 cbuffer lightNumBuffer : register(b8){
@@ -85,16 +88,15 @@ float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, floa
 	}
 	shadow /= numLights;
 
-	//TODO: Calculate multiple shadows
 	return (ambient + (shadow * (diffuse + specular)));
 }
 
 float shadowCalculation(float3 fragPos, unsigned int shadowIndex){
-	float3 fragToLight = fragPos - lightPosition;
+	float3 fragToLight = fragPos - lightPositions[shadowIndex].lightPosition;
 	float currentDepth = length(fragToLight);
 
 	float closestDepth = shadowDepthMap.Sample(shadowDepthSampler, float4(fragToLight, shadowIndex)).r;
-	closestDepth *= farplane;
+	closestDepth *= lightPositions[shadowIndex].farplane;
 
 	float bias = 0.05;
 	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
