@@ -3,6 +3,7 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
 #include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
+#include "Clove/Graphics/GraphicsConstants.hpp"
 
 namespace clv::gfx{
 	class RenderTarget;
@@ -50,7 +51,7 @@ namespace clv::gfx{
 		float farPlane;
 	};
 	struct PointLightShaderData{
-		std::array<PointLightIntesity, 10> intensities = {};
+		std::array<PointLightIntesity, MAX_LIGHTS> intensities = {};
 	};
 	struct PointShadowShaderData{
 		//int32 numLights = 0;

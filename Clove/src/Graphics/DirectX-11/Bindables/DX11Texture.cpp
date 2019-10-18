@@ -121,12 +121,34 @@ namespace clv::gfx{
 		viewDesc.Format = getFormatForShaderView(descriptor.usage);
 		viewDesc.ViewDimension = getViewDimension(descriptor.style, descriptor.arraySize);
 		
-		if(descriptor.style == TextureStyle::Cubemap){
-			viewDesc.TextureCube.MostDetailedMip = 0;
-			viewDesc.TextureCube.MipLevels = 1;
-		} else{
-			viewDesc.Texture2D.MostDetailedMip = 0;
-			viewDesc.Texture2D.MipLevels = 1;
+		switch(viewDesc.ViewDimension){
+			case D3D11_SRV_DIMENSION_TEXTURE2D:
+				viewDesc.Texture2D.MostDetailedMip = 0u;
+				viewDesc.Texture2D.MipLevels = 1u;
+				break;
+
+			case D3D11_SRV_DIMENSION_TEXTURE2DARRAY:
+				viewDesc.Texture2DArray.MostDetailedMip = 0u;
+				viewDesc.Texture2DArray.MipLevels = 1u;
+				viewDesc.Texture2DArray.FirstArraySlice = 0u;
+				viewDesc.Texture2DArray.ArraySize = descriptor.arraySize;
+				break;
+
+			case D3D11_SRV_DIMENSION_TEXTURECUBE:
+				viewDesc.TextureCube.MostDetailedMip = 0u;
+				viewDesc.TextureCube.MipLevels = 1u;
+				break;
+
+			case D3D11_SRV_DIMENSION_TEXTURECUBEARRAY:
+				viewDesc.TextureCubeArray.MostDetailedMip = 0u;
+				viewDesc.TextureCubeArray.MipLevels = 1u;
+				viewDesc.TextureCubeArray.First2DArrayFace = 0u;
+				viewDesc.TextureCubeArray.NumCubes = descriptor.arraySize;
+				break;
+
+			default:
+				CLV_ASSERT(false, "Unhandled dimension in {0}" CLV_FUNCTION_NAME);
+				break;
 		}
 
 		return viewDesc;

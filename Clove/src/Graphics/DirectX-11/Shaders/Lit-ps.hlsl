@@ -6,8 +6,8 @@ SamplerState albedoSampler : register(s1);
 Texture2D specularTexture : register(t2);
 SamplerState specularSampler : register(s2);
 
-TextureCube shadowDepthMap[MAX_LIGHTS] : register(t3);
-SamplerState shadowDepthSampler[MAX_LIGHTS] : register(s3); //TODO: We should really reuse the samplers for these
+TextureCubeArray shadowDepthMap : register(t3);
+SamplerState shadowDepthSampler : register(s3); //TODO: We should really reuse the samplers for these
 
 struct PointLight{
 	float3 position;
@@ -81,7 +81,7 @@ float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, floa
 	//Shadow
 	float shadow = 0.0f;
 	for(unsigned int i = 0; i < numLights; ++i){
-		shadow += 1.0f - shadowCalculation(fragPos, 0);
+		shadow += 1.0f - shadowCalculation(fragPos, i);
 	}
 	shadow /= numLights;
 
@@ -93,7 +93,7 @@ float shadowCalculation(float3 fragPos, unsigned int shadowIndex){
 	float3 fragToLight = fragPos - lightPosition;
 	float currentDepth = length(fragToLight);
 
-	float closestDepth = shadowDepthMap[shadowIndex].Sample(shadowDepthSampler[shadowIndex], fragToLight).r;
+	float closestDepth = shadowDepthMap.Sample(shadowDepthSampler, float4(fragToLight, shadowIndex)).r;
 	closestDepth *= farplane;
 
 	float bias = 0.05;
