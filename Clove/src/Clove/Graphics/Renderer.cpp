@@ -27,11 +27,15 @@ namespace clv::gfx{
 	std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> Renderer::shadowDataSBO;
 	PointShadowShaderData Renderer::currentShadowInfo;
 	std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> Renderer::shadowDepthData;
+	std::shared_ptr<gfx::ShaderBufferObject<PointShadowData>> Renderer::currentDepthData;
 	PointShadowDepthData Renderer::currentShadowDepth;
 	std::shared_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::shadowModelData;
 	std::shared_ptr<gfx::Shader> Renderer::cubeShadowMapShader;
 	std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> Renderer::lightNumSBO;
+	std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> Renderer::lightNumSBOGS;
 	uint32 Renderer::numLights;
+
+	std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> Renderer::shadowTransforms = {};
 
 	std::vector<std::shared_ptr<Mesh>> Renderer::meshesToRender;
 
@@ -51,9 +55,11 @@ namespace clv::gfx{
 		lightDataSBO = BindableFactory::createShaderBufferObject<PointLightShaderData>(ShaderType::Pixel, BBP_PointLightData);
 		shadowDataSBO = BindableFactory::createShaderBufferObject<PointShadowShaderData>(ShaderType::Geometry, BBP_ShadowData);
 		shadowDepthData = BindableFactory::createShaderBufferObject<PointShadowDepthData>(ShaderType::Pixel, BBP_CubeDepthData);
+		currentDepthData = BindableFactory::createShaderBufferObject<PointShadowData>(ShaderType::Pixel, BBP_CurrentDepthData);
 		shadowModelData = BindableFactory::createShaderBufferObject<VertexData>(ShaderType::Vertex, BBP_ModelData);
 		cubeShadowMapShader = BindableFactory::createShader(gfx::ShaderStyle::CubeShadowMap);
 		lightNumSBO = BindableFactory::createShaderBufferObject<LightNumAlignment>(ShaderType::Pixel, BBP_CurrentLights);
+		lightNumSBOGS = BindableFactory::createShaderBufferObject<LightNumAlignment>(ShaderType::Geometry, BBP_CurrentLightIndex);
 
 		materialSBO->bind();
 
@@ -64,6 +70,7 @@ namespace clv::gfx{
 		shadowDataSBO->bind();
 		shadowDepthData->bind();
 		lightNumSBO->bind();
+		lightNumSBOGS->bind();
 
 		materialSBO->update({ 32.0f });
 
@@ -79,7 +86,6 @@ namespace clv::gfx{
 
 	void Renderer::endScene(){
 		lightDataSBO->update(currentLightInfo);
-		shadowDataSBO->update(currentShadowInfo);
 		shadowDepthData->update(currentShadowDepth);
 		lightNumSBO->update({ numLights });
 
@@ -98,10 +104,19 @@ namespace clv::gfx{
 		RenderCommand::setDepthBuffer(true);
 
 		//Calculate shadow map
-		RenderCommand::setViewPortSize(shadowMapSize, shadowMapSize);
-		RenderCommand::setRenderTarget(*shadowMapRenderTarget);
-		std::for_each(meshesToRender.begin(), meshesToRender.end(), drawShadow);
-		RenderCommand::setViewPortSize(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight());
+		for(uint32 i = 0; i < numLights; i++){ //TODO: Remove raw loop
+			shadowDataSBO->bind();
+			shadowDataSBO->update({ shadowTransforms[i] });
+			currentDepthData->bind();
+			currentDepthData->update({ currentShadowDepth.depths[i] });
+
+			lightNumSBOGS->update({ i * 6 });
+
+			RenderCommand::setViewPortSize(shadowMapSize, shadowMapSize);
+			RenderCommand::setRenderTarget(*shadowMapRenderTarget); //TODO: How to set view level????
+			std::for_each(meshesToRender.begin(), meshesToRender.end(), drawShadow);
+			RenderCommand::setViewPortSize(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight());
+		}
 		
 		RenderCommand::removeCurrentGeometryShader();
 
@@ -157,7 +172,7 @@ namespace clv::gfx{
 		const int32 lightIndex = numLights++;
 		currentLightInfo.intensities[lightIndex] = data.intensity;
 
-		currentShadowInfo.shadowTransforms/*.shadowTransforms[lightIndex]*/ = data.shadowTransforms;
+		shadowTransforms[lightIndex] = data.shadowTransforms;
 
 		currentShadowDepth.depths[lightIndex].farPlane = data.farPlane;
 		currentShadowDepth.depths[lightIndex].lightPos = data.intensity.position;

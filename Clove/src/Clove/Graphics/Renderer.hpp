@@ -54,9 +54,7 @@ namespace clv::gfx{
 		std::array<PointLightIntesity, MAX_LIGHTS> intensities = {};
 	};
 	struct PointShadowShaderData{
-		//int32 numLights = 0;
-		//std::array<std::array<math::Matrix4f, 6>, 10> shadowTransforms = { };
-		std::array<math::Matrix4f, 6> shadowTransforms = { }; //Supporting one for now
+		std::array<math::Matrix4f, 6> shadowTransforms = {};
 	};
 	struct PointShadowData{
 		math::Vector3f lightPos = { };
@@ -87,11 +85,15 @@ namespace clv::gfx{
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> shadowDataSBO;
 		static PointShadowShaderData currentShadowInfo;
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> shadowDepthData;
+		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowData>> currentDepthData; //For CubeShadowMap
 		static PointShadowDepthData currentShadowDepth;
 		static std::shared_ptr<gfx::ShaderBufferObject<VertexData>> shadowModelData;
 		static std::shared_ptr<gfx::Shader> cubeShadowMapShader;
 		static std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> lightNumSBO;
+		static std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> lightNumSBOGS;
 		static uint32 numLights;
+
+		static std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> shadowTransforms;
 
 		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
 

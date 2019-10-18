@@ -2,6 +2,10 @@ cbuffer shadowMatBuffer : register(b6){
 	matrix shadowMatrices[6];
 }
 
+cbuffer lightNumBuffer : register(b9){
+	unsigned int currentLightIndex;
+}
+
 struct GSOutPut{
 	float4 vertPos : VertPos;
 	float4 adjustedVertPos : SV_Position;
@@ -27,7 +31,7 @@ void main(triangle float4 inTriangle[3] : SV_Position, inout TriangleStream<GSOu
 	for(int face = 0; face < 6; face++){
 		//We flip the Y axis here to account of the coord system DirectX uses for textures
 		matrix faceMat = scale(shadowMatrices[face], float3(1.0, -1.0, 1.0)); 
-		outPut.face = face;
+		outPut.face = face + currentLightIndex;
 		for(int i = 0; i < 3; i++){
 			outPut.vertPos = inTriangle[i];
 			outPut.adjustedVertPos = mul(faceMat, outPut.vertPos);

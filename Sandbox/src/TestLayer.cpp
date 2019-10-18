@@ -53,10 +53,10 @@ void TestLayer::onAttach(){
 	lght1.addComponent<clv::ecs::d3::LightComponent>();
 	lght1.addComponent<clv::ecs::d3::TransformComponent>();
 
-	/*lght2 = clv::Application::get().getManager().createEntity();
+	lght2 = clv::Application::get().getManager().createEntity();
 	lght2.addComponent<clv::ecs::d3::RenderableComponent>();
 	lght2.addComponent<clv::ecs::d3::LightComponent>();
-	lght2.addComponent<clv::ecs::d3::TransformComponent>();*/
+	lght2.addComponent<clv::ecs::d3::TransformComponent>();
 	
 	cam = clv::Application::get().getManager().createEntity();
 	cam.addComponent<clv::ecs::d3::CameraComponent>();
@@ -136,9 +136,10 @@ void TestLayer::onAttach(){
 	}
 
 	{
-		//auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
-		//lght2.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
-		//lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+		lght2.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
+		lght2.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ -10.0f, -5.0f, 0.0f });
+		lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
 	}
 
 	{
