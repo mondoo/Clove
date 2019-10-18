@@ -81,6 +81,7 @@ set(
 		src/Clove/Graphics/BindableFactory.cpp
 		src/Clove/Graphics/Context.hpp
 		src/Clove/Graphics/Context.cpp
+		src/Clove/Graphics/GraphicsConstants.hpp
 		src/Clove/Graphics/GraphicsTypes.hpp
 		src/Clove/Graphics/Material.hpp
 		src/Clove/Graphics/Material.inl
