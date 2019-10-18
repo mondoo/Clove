@@ -129,11 +129,7 @@ namespace clv::gfx{
 		const uint8 cubeFaces = 6;
 
 		if(arraySize > 1){
-			for(uint8 i = 0; i < cubeFaces; ++i){
-				for(uint8 j = 0; j < arraySize; ++j){
-					glTexImage3D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, height, j, 0, format, type, pixels);
-				}
-			}
+			glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, internalFormat, width, height, cubeFaces * arraySize, 0, format, type, nullptr);
 		} else{
 			for(uint8 i = 0; i < cubeFaces; ++i){
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, height, 0, format, type, pixels);

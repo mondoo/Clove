@@ -8,7 +8,7 @@ in vec3 vertNormal;
 
 layout(binding = 1) uniform sampler2D albedoSampler;
 layout(binding = 2) uniform sampler2D specularSampler;
-layout(binding = 3) uniform samplerCube shadowDepthMap[MAX_LIGHTS];
+layout(binding = 3) uniform samplerCubeArray shadowDepthMap;
 
 struct DirectionalLight{
 	vec3 direction;
@@ -52,10 +52,12 @@ layout(std140, binding = 4) uniform Material{
 	float shininess;
 };
 
-//TODO: This will need  to be updated for multiple lights
-layout(std140, binding = 7) uniform lightPosBuffer {
+struct LightPos{
 	vec3 lightPosition;
 	float farPlane;
+};
+layout(std140, binding = 7) uniform lightPosBuffer {
+	LightPos lightPositions[MAX_LIGHTS];
 };
 
 layout(std140, binding = 8) uniform numLightBuffer{
@@ -130,11 +132,11 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 
 	//Shadow
 	float shadow = 0.0f;
-	for(unsigned int i = 0; i< numLights; i++){
+	for(unsigned int i = 0; i < numLights; i++){
 		shadow += 1.0f - shadowCalculation(fragPos, i);
 	}
+	shadow /= numLights;
 
-	//TODO: Calculate multiple shadows
 	return (ambient + (shadow * (diffuse + specular)));
 }
 
@@ -165,11 +167,11 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 //}
 
 float shadowCalculation(vec3 fragPos, unsigned int shadowIndex){
-	vec3 fragToLight = fragPos - lightPosition;
+	vec3 fragToLight = fragPos - lightPositions[shadowIndex].lightPosition;
 	float currentDepth = length(fragToLight);
 
-	float closestDepth = texture(shadowDepthMap[shadowIndex], fragToLight).r;
-	closestDepth *= farPlane;
+	float closestDepth = texture(shadowDepthMap, vec4(fragToLight, shadowIndex)).r;
+	closestDepth *= lightPositions[shadowIndex].farPlane;
 
 	float bias = 0.05;
 	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
