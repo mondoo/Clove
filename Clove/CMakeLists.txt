@@ -285,6 +285,9 @@ target_include_directories(
 		$<$<PLATFORM_ID:Windows>:${CMAKE_SOURCE_DIR}/Clove/vendor/wglext>
 )
 
+#temp - only find on mac?
+find_library(COCOA_LIB Cocoa)
+
 #Libraries
 target_link_libraries(
 	Clove
@@ -308,6 +311,8 @@ target_link_libraries(
 		$<$<PLATFORM_ID:Linux>:GLX>
 		$<$<PLATFORM_ID:Linux>:X11>
 		$<$<PLATFORM_ID:Linux>:dl>
+		#Mac
+		$<$<PLATFORM_ID:Darwin>:${COCOA_LIB}>
 )
 
 #Precompiled header

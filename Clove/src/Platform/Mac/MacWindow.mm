@@ -1,14 +1,16 @@
 #include "MacWindow.h"
 
+#include "Clove/Graphics/Renderer.hpp"
+
 namespace clv {
     MacWindow::~MacWindow() = default;
 
     MacWindow::MacWindow(const WindowProps& props){
-        //TODO
+		initialiseWindow(props, gfx::API::OpenGL4);
     }
     
     MacWindow::MacWindow(const WindowProps& props, gfx::API api){
-        //TODO
+		initialiseWindow(props, api);
     }
 	
 	void* MacWindow::getNativeWindow() const{
@@ -18,6 +20,18 @@ namespace clv {
 	
 	void MacWindow::processInput(){
 		//TODO
+	}
+	
+	void MacWindow::initialiseWindow(const WindowProps& props, gfx::API api){
+		window = [[NSWindow alloc] init];
+		controller = [[NSWindowController alloc] init];
+		
+		[window initWithContentRect:NSMakeRect(100, 100, 800, 600) styleMask:NSWindowStyleMaskTitled backing:NSBackingStoreBuffered defer:false screen:nil];
+		
+		[controller initWithWindow:window];
+		[controller showWindow:nil]; //TODO: Does not open
+		
+		//[window makeKeyAndOrderFront:nil];
 	}
 
     Window* Window::create(const WindowProps& props){

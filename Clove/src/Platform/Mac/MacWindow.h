@@ -2,11 +2,16 @@
 
 #include "Clove/Platform/Window.hpp"
 
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSWindowController.h>
+
 namespace clv{
     class MacWindow : public Window{
         //VARIABLES
     private:
-        
+		NSWindow* window;
+		NSWindowController* controller;
+			
         //FUNCTIONS
     public:
         MacWindow() = delete;
@@ -23,5 +28,8 @@ namespace clv{
 		
 	protected:
 		virtual void processInput() override;
+		
+	private:
+		void initialiseWindow(const WindowProps& props, gfx::API api);
     };
 }
