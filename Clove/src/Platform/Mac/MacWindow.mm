@@ -1,6 +1,7 @@
-#include "MacWindow.h"
+#import "Platform/Mac/CloveMac.h"
+#import "MacWindow.hpp"
 
-#include "Clove/Graphics/Renderer.hpp"
+#import "Clove/Graphics/Renderer.hpp"
 
 namespace clv {
     MacWindow::~MacWindow() = default;

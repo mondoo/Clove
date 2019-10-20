@@ -239,8 +239,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	set(
 		PlatformFiles
-			src/Platform/Mac/CloveMac.hpp
-			src/Platform/Mac/MacWindow.h
+			src/Platform/Mac/CloveMac.h
+			src/Platform/Mac/MacWindow.hpp
 			src/Platform/Mac/MacWindow.mm
 	)
 endif()
@@ -341,7 +341,6 @@ target_precompile_headers(
 		#Platform headers
 		$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>
 		$<$<PLATFORM_ID:Linux>:Platform/Linux/CloveLinux.hpp>
-		$<$<PLATFORM_ID:Darwin>:Platform/Mac/CloveMac.hpp>
 )
 source_group(PCH FILES 
 	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.hxx 
