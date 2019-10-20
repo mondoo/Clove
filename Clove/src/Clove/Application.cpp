@@ -15,6 +15,8 @@ namespace clv{
 	Application* Application::instance = nullptr;
 
 	Application::Application(){
+		clv::Log::init();
+
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 

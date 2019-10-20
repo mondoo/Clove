@@ -9,7 +9,6 @@ set(
 	CloveFiles
 		src/Clove.hpp
 		src/Clove/Core.hpp
-		src/Clove/EntryPoint.hpp
 		src/Clove/IntTypes.hpp
 		src/Clove/Layer.hpp
 		src/Clove/Layer.cpp

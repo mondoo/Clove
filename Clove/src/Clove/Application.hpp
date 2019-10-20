@@ -45,5 +45,5 @@ namespace clv{
 	};
 
 	//To be defined in CLIENT
-	Application* createApplication();
+	//Application* createApplication();
 }
