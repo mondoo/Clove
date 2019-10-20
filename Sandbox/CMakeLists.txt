@@ -2,10 +2,12 @@
 
 project(Sandbox)
 
-file(
-	GLOB sandbox_src
-    src/*.hpp
-    src/*.cpp
+set(
+	sandbox_src
+    src/GameLayer.hpp
+	src/GameLayer.cpp
+	src/TestLayer.hpp
+	src/TestLayer.cpp
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
@@ -13,11 +15,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 		Sandbox
 		MACOSX_BUNDLE
 		${sandbox_src}
+		src/SandboxApp.mm
+		src/AppDelegate.h
+		src/AppDelegate.m
 	)
 else()
 	add_executable(
 		Sandbox
 		${sandbox_src}
+		src/SandboxApp.cpp
 	)
 endif()
 
