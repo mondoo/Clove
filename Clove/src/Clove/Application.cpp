@@ -40,37 +40,39 @@ namespace clv{
 
 	Application::~Application() = default;
 
-	void Application::run(){
-		while(running){
-			auto currFrameTime = std::chrono::system_clock::now();
-			std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
-			prevFrameTime = currFrameTime;
+	void Application::update(){
+		auto currFrameTime = std::chrono::system_clock::now();
+		std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
+		prevFrameTime = currFrameTime;
 
-			window->beginFrame();
+		window->beginFrame();
 
-			//TODO:
-			//Will need process the mouse and keyboard events here eventually
+		//TODO:
+		//Will need process the mouse and keyboard events here eventually
 
-			for(auto layer : *layerStack){
-				layer->onUpdate(deltaSeonds.count());
-			}
-
-			gfx::RenderCommand::clear();
-
-			gfx::Renderer::beginScene();
-			gfx::Renderer2D::beginScene();
-
-			ecsManager->update(deltaSeonds.count());
-
-			gfx::Renderer::endScene();
-			gfx::Renderer2D::endScene();
-
-			window->endFrame();
+		for(auto layer : *layerStack){
+			layer->onUpdate(deltaSeonds.count());
 		}
+
+		gfx::RenderCommand::clear();
+
+		gfx::Renderer::beginScene();
+		gfx::Renderer2D::beginScene();
+
+		ecsManager->update(deltaSeonds.count());
+
+		gfx::Renderer::endScene();
+		gfx::Renderer2D::endScene();
+
+		window->endFrame();
+	}
+
+	ApplicationState Application::getState() const{
+		return currentState;
 	}
 
 	void Application::stop(){
-		running = false;
+		currentState = ApplicationState::stopped;
 	}
 
 	void Application::pushLayer(std::shared_ptr<Layer> layer){
@@ -94,6 +96,6 @@ namespace clv{
 	}
 
 	void Application::onWindowClose(){
-		running = false;
+		stop();
 	}
 }

@@ -5,10 +5,13 @@
 
 int main(int argc, char** argv){
 	auto* app = new clv::Application();
+
 	app->pushLayer(std::make_shared<TestLayer>());
 	//app->pushLayer(std::make_shared<GameLayer>());
 
-	app->run();
+	while(app->getState() == clv::ApplicationState::running){
+		app->update();
+	}
 
 	delete app;
 
