@@ -7,7 +7,6 @@ namespace clv{
         //VARIABLES
     private:
 		NSWindow* window;
-		NSWindowController* controller;
 			
         //FUNCTIONS
     public:
