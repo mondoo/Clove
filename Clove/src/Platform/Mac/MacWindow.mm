@@ -27,7 +27,10 @@ namespace clv {
 		//TODO: Process input events (here or with a window delegate)
 		NSEvent* event;
 		do {
-			event = [NSApp nextEventMatchingMask: NSEventMaskAny untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+			event = [NSApp nextEventMatchingMask:NSEventMaskAny
+									   untilDate:nil
+										  inMode:NSDefaultRunLoopMode
+										 dequeue:YES];
 			
 			switch ([event type]) {
 				default:
@@ -44,7 +47,10 @@ namespace clv {
 		NSRect rect = NSMakeRect(100, 100, props.width, props.height);
 		NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 		
-		window = [[NSWindow alloc] initWithContentRect:rect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
+		window = [[NSWindow alloc] initWithContentRect:rect
+											 styleMask:styleMask
+											   backing:NSBackingStoreBuffered
+												 defer:NO];
 		[window setBackgroundColor:NSColor.redColor];
 		[window setTitle:[NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]]];
 		[window makeKeyAndOrderFront:nil];
