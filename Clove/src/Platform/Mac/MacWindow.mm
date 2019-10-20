@@ -22,35 +22,32 @@ namespace clv {
 	}
 	
 	void MacWindow::processInput(){
-		//TODO
+		[window isVisible];
+		
+		//TODO: Process input events (here or with a window delegate)
+		NSEvent* event;
+		do {
+			event = [NSApp nextEventMatchingMask: NSEventMaskAny untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+			
+			switch ([event type]) {
+				default:
+				[NSApp sendEvent: event];
+			}
+		} while (event != nil);
 	}
 	
 	void MacWindow::initialiseWindow(const WindowProps& props, gfx::API api){
-		CLV_LOG_DEBUG("here");
+		windowProperties.width = props.width;
+		windowProperties.height = props.height;
+		windowProperties.title = props.title;
 		
-		//NOTE: The below works when running the executable manually (not through xcode)
-		
-		NSRect rect = NSMakeRect(100, 100, 800, 600);
+		NSRect rect = NSMakeRect(100, 100, props.width, props.height);
 		NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 		
 		window = [[NSWindow alloc] initWithContentRect:rect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
 		[window setBackgroundColor:NSColor.redColor];
-		[window setTitle:@"CLOVE!!!!"];
+		[window setTitle:[NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]]];
 		[window makeKeyAndOrderFront:nil];
-		
-		//What will become provess input
-		while(true) {
-			NSEvent* event;
-			do { //This will be in process input
-				event = [NSApp nextEventMatchingMask: NSEventMaskAny untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
-				
-				switch ([event type]) {
-					default:
-					[NSApp sendEvent: event];
-				}
-			} while (event != nil);}
-		
-		CLV_LOG_DEBUG("Finished");
 	}
 
     Window* Window::create(const WindowProps& props){
