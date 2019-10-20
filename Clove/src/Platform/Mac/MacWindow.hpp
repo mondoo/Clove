@@ -2,9 +2,6 @@
 
 #include "Clove/Platform/Window.hpp"
 
-#import <AppKit/NSWindow.h>
-#import <AppKit/NSWindowController.h>
-
 namespace clv{
     class MacWindow : public Window{
         //VARIABLES
