@@ -167,6 +167,16 @@ set(
 		src/Graphics/OpenGL-4/Bindables/GL4UniformBufferObject.inl
 		src/Graphics/OpenGL-4/Bindables/GL4VertexBuffer.hpp
 		src/Graphics/OpenGL-4/Bindables/GL4VertexBuffer.cpp
+		src/Graphics/OpenGL-4/GL4Exception.hpp
+		src/Graphics/OpenGL-4/GL4Exception.cpp
+		src/Graphics/OpenGL-4/GL4RenderAPI.hpp
+		src/Graphics/OpenGL-4/GL4RenderAPI.cpp
+		src/Graphics/OpenGL-4/GL4RenderTarget.hpp
+		src/Graphics/OpenGL-4/GL4RenderTarget.cpp
+)
+
+set(
+	GLSLShaderFiles
 		src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
 		src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
 		src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
@@ -177,12 +187,6 @@ set(
 		src/Graphics/OpenGL-4/Shaders/RT-vs.glsl
 		src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl
 		src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
-		src/Graphics/OpenGL-4/GL4Exception.hpp
-		src/Graphics/OpenGL-4/GL4Exception.cpp
-		src/Graphics/OpenGL-4/GL4RenderAPI.hpp
-		src/Graphics/OpenGL-4/GL4RenderAPI.cpp
-		src/Graphics/OpenGL-4/GL4RenderTarget.hpp
-		src/Graphics/OpenGL-4/GL4RenderTarget.cpp
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -252,16 +256,41 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	)
 endif()
 
+#Parse the glsl shader files into a header 
+set(ParsedShaders)
+set(ShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/ShaderStrings.hpp)
+file(WRITE ${ShaderIncludeFile} "//cmake generated header file\n\n")
+foreach(shaderFile ${GLSLShaderFiles})
+	file(READ ${shaderFile} FILE_CONTENTS)
+	get_filename_component(fileName ${shaderFile} NAME_WLE)
+
+	string(REPLACE "-" "_" STRING_NAME ${fileName})
+	set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Strings/${fileName}.hpp)
+
+	configure_file(cmake/glslHeader.in ${outFilePath})
+
+	set(ParsedShaders ${ParsedShaders} ${outFilePath})
+	file(APPEND ${ShaderIncludeFile} "#include \"Strings/${fileName}.hpp\"\n")
+endforeach()
+
+#Organise the source tree
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${CloveFiles})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GraphicsFiles})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${PlatformFiles})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GLSLShaderFiles})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${ParsedShaders})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${ShaderIncludeFile})
 
+#Set the target source files
 target_sources(
 	${PROJECT_NAME}
 	PRIVATE
 		${CloveFiles}
 		${GraphicsFiles}
 		${PlatformFiles}
+		${GLSLShaderFiles}
+		${ParsedShaders}
+		${ShaderIncludeFile}
 )
 
 #Includes
@@ -417,35 +446,7 @@ if(MSVC)
 	)
 endif()
 
-#GL Shaders
-set(GLShaders
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
-)
-
 #copy resource files - TODO: fix up sandbox references
-if(MSVC)
-	add_custom_command(
-	        TARGET ${PROJECT_NAME} POST_BUILD
-	        COMMAND ${CMAKE_COMMAND} -E copy
-	                ${GLShaders}
-	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>
-	)
-endif()
-add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${GLShaders}
-                ${CMAKE_BINARY_DIR}/Sandbox
-)
 add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -467,3 +468,6 @@ add_custom_command(
                 ${CMAKE_SOURCE_DIR}/Sandbox/res
                 ${CMAKE_BINARY_DIR}/Sandbox/res
 )
+
+
+

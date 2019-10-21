@@ -32,7 +32,6 @@ namespace clv::gfx{
 	private:
 		void initialise(ShaderStyle style);
 
-		std::string parseShader(const std::string& filepath);
 		uint32 compileShader(uint32 type, const std::string& source);
 	};
 }
