@@ -1,7 +1,7 @@
 #include "GL4Shader.hpp"
 
 #include "Clove/Application.hpp"
-#include "Graphics/OpenGL-4/Shaders/ShaderStrings.hpp"
+#include "Graphics/OpenGL-4/ShaderStrings.hpp"
 
 #include <fstream>
 #include <sstream>

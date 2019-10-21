@@ -189,6 +189,9 @@ set(
 		src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
 )
 
+set(HLSLShaders)
+set(HLSLParsedShaders)
+set(HLSLShaderIncludeFile)
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		GraphicsFiles
@@ -229,6 +232,55 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/DXContext.hpp
 			src/Graphics/DirectX-11/DXContext.cpp
 	)
+
+	#DX Shaders
+	if(MSVC)
+	set(
+		pixelShaders
+			src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/Font-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/Unlit-ps.hlsl
+	)
+
+	set(
+		vertexShaders
+			src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/Font-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/RT-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
+	)
+
+	set(
+		HLSLShaders
+			${pixelShaders}
+			${vertexShaders}
+	)
+
+	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
+	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
+
+	set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
+	set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_MODEL 5.0)
+
+	#get each shader to compile into a header
+	set(HLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/DirectX-11/ShaderHeaders.hpp)
+	file(WRITE ${HLSLShaderIncludeFile} "//cmake generated header file\n\n")
+	foreach(shaderFile ${HLSLShaders})
+		get_filename_component(fileName ${shaderFile} NAME_WLE)
+
+		string(REPLACE "-" "_" STRING_NAME ${fileName})
+		set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/DirectX-11/Shaders/${fileName}.hpp)
+
+		set(HLSLParsedShaders ${HLSLParsedShaders} ${outFilePath})
+
+		set_property(SOURCE ${shaderFile} PROPERTY VS_SHADER_FLAGS "/Vn shader_${STRING_NAME} /Fh ${outFilePath}")
+		file(APPEND ${HLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
+	endforeach()
+
+	endif()
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
 		GraphicsFiles
@@ -257,20 +309,20 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 #Parse the glsl shader files into a header 
-set(ParsedShaders)
-set(ShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/ShaderStrings.hpp)
-file(WRITE ${ShaderIncludeFile} "//cmake generated header file\n\n")
+set(GLSLParsedShaders)
+set(GLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/ShaderStrings.hpp)
+file(WRITE ${GLSLShaderIncludeFile} "//cmake generated header file\n\n")
 foreach(shaderFile ${GLSLShaderFiles})
 	file(READ ${shaderFile} FILE_CONTENTS)
 	get_filename_component(fileName ${shaderFile} NAME_WLE)
 
 	string(REPLACE "-" "_" STRING_NAME ${fileName})
-	set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Strings/${fileName}.hpp)
+	set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/${fileName}.hpp)
 
 	configure_file(cmake/glslHeader.in ${outFilePath})
 
-	set(ParsedShaders ${ParsedShaders} ${outFilePath})
-	file(APPEND ${ShaderIncludeFile} "#include \"Strings/${fileName}.hpp\"\n")
+	set(GLSLParsedShaders ${GLSLParsedShaders} ${outFilePath})
+	file(APPEND ${GLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
 endforeach()
 
 #Organise the source tree
@@ -278,8 +330,12 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${CloveFiles})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GraphicsFiles})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${PlatformFiles})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GLSLShaderFiles})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${ParsedShaders})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${ShaderIncludeFile})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${HLSLShaderFiles})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GLSLParsedShaders})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${HLSLParsedShaders})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GLSLShaderIncludeFile})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${HLSLShaderIncludeFile})
+
 
 #Set the target source files
 target_sources(
@@ -288,9 +344,12 @@ target_sources(
 		${CloveFiles}
 		${GraphicsFiles}
 		${PlatformFiles}
+
 		${GLSLShaderFiles}
-		${ParsedShaders}
-		${ShaderIncludeFile}
+		${HLSLShaderFiles}
+
+		${GLSLShaderIncludeFile}
+		${HLSLShaderIncludeFile}
 )
 
 #Includes
@@ -392,59 +451,6 @@ target_compile_definitions(
 	PRIVATE
 		CLV_ENGINE=1
 )
-
-#DX Shaders
-if(MSVC)
-	set(pixelShaders
-		src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
-		src/Graphics/DirectX-11/Shaders/Font-ps.hlsl
-		src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
-		src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
-		src/Graphics/DirectX-11/Shaders/Unlit-ps.hlsl
-	)
-	
-	set(vertexShaders
-		src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
-		src/Graphics/DirectX-11/Shaders/Font-vs.hlsl
-		src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
-		src/Graphics/DirectX-11/Shaders/RT-vs.hlsl
-		src/Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
-	)
-
-	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
-	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
-	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_MODEL 5.0)
-
-	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
-	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
-	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_MODEL 5.0)
-
-	set(shaderCSO
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Font-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Font-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/RT-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/RT-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Unlit-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Unlit-vs.cso
-	)
-
-	add_custom_command(
-		TARGET Clove POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
-				${shaderCSO}
-				${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>
-	)
-	add_custom_command(
-		TARGET Clove POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
-				${shaderCSO}
-				${CMAKE_BINARY_DIR}/Sandbox
-	)
-endif()
 
 #copy resource files - TODO: fix up sandbox references
 add_custom_command(

@@ -4,6 +4,7 @@
 #include "Clove/Platform/Window.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
 #include "Graphics/DirectX-11/DX11RenderAPI.hpp"
+#include "Graphics/DirectX-11/ShaderHeaders.hpp"
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -44,7 +45,7 @@ namespace clv::gfx{
 		}
 		
 		DX11_INFO_PROVIDER;
-		DX11_THROW_INFO(D3DReflect(vertexShader->getByteCode()->GetBufferPointer(), vertexShader->getByteCode()->GetBufferSize(), IID_ID3D11ShaderReflection, &reflector));
+		DX11_THROW_INFO(D3DReflect(vertexShader->getBytePointer(), vertexShader->getByteSize(), IID_ID3D11ShaderReflection, &reflector));
 
 		D3D11_SHADER_DESC shaderDescription; 
 		DX11_THROW_INFO(reflector->GetDesc(&shaderDescription));
@@ -70,51 +71,51 @@ namespace clv::gfx{
 		switch(style){
 			case ShaderStyle::Lit:
 				{
-					auto vs = std::make_unique<DX11VertexShader>(L"Lit-vs.cso");
+					auto vs = std::make_unique<DX11VertexShader>(shader_Lit_vs, sizeof(shader_Lit_vs));
 					vertexShader = vs.get();
 
 					shaders[ShaderType::Vertex] = std::move(vs);
-					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"Lit-ps.cso");
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(shader_Lit_ps, sizeof(shader_Lit_ps));
 				}
 				break;
 
 			case ShaderStyle::Unlit:
 				{
-					auto vs = std::make_unique<DX11VertexShader>(L"Unlit-vs.cso");
+					auto vs = std::make_unique<DX11VertexShader>(shader_Unlit_vs, sizeof(shader_Unlit_vs));
 					vertexShader = vs.get();
 
 					shaders[ShaderType::Vertex] = std::move(vs);
-					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"Unlit-ps.cso");
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(shader_Unlit_ps, sizeof(shader_Unlit_ps));
 				}
 				break;
 
 			case ShaderStyle::_2D:
 				{
-					auto vs = std::make_unique<DX11VertexShader>(L"2D-vs.cso");
+					auto vs = std::make_unique<DX11VertexShader>(shader_2D_vs, sizeof(shader_2D_vs));
 					vertexShader = vs.get();
 
 					shaders[ShaderType::Vertex] = std::move(vs);
-					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"2D-ps.cso");
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(shader_2D_ps, sizeof(shader_2D_ps));
 				}
 				break;
 
 			case ShaderStyle::RT:
 				{
-					auto vs = std::make_unique<DX11VertexShader>(L"RT-vs.cso");
+					auto vs = std::make_unique<DX11VertexShader>(shader_RT_vs, sizeof(shader_RT_vs));
 					vertexShader = vs.get();
 
 					shaders[ShaderType::Vertex] = std::move(vs);
-					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"RT-ps.cso");
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(shader_RT_ps, sizeof(shader_RT_ps));
 				}
 				break;
 
 			case ShaderStyle::Font:
 				{
-					auto vs = std::make_unique<DX11VertexShader>(L"Font-vs.cso");
+					auto vs = std::make_unique<DX11VertexShader>(shader_Font_vs, sizeof(shader_Font_vs));
 					vertexShader = vs.get();
 
 					shaders[ShaderType::Vertex] = std::move(vs);
-					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"Font-ps.cso");
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(shader_Font_ps, sizeof(shader_Font_ps));
 				}
 				break;
 
@@ -138,18 +139,24 @@ namespace clv::gfx{
 
 	DX11VertexShader::~DX11VertexShader() = default;
 
-	DX11VertexShader::DX11VertexShader(const std::wstring& path){
+	DX11VertexShader::DX11VertexShader(const BYTE* shaderByteData, SIZE_T shaderByteSize){
+		this->shaderByteData = shaderByteData;
+		this->shaderByteSize = shaderByteSize;
+		
 		DX11_INFO_PROVIDER;
-		DX11_THROW_INFO(D3DReadFileToBlob(path.c_str(), &byteCode));
-		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateVertexShader(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), nullptr, &vertexShader));
+		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateVertexShader(shaderByteData, shaderByteSize, nullptr, &vertexShader));
 	}
 
 	void DX11VertexShader::bind(){
 		DX11RenderAPI::getContext().VSSetShader(vertexShader.Get(), nullptr, 0u);
 	}
 
-	ID3DBlob* DX11VertexShader::getByteCode() const{
-		return byteCode.Get();
+	const BYTE* DX11VertexShader::getBytePointer() const{
+		return shaderByteData;
+	}
+
+	SIZE_T DX11VertexShader::getByteSize() const{
+		return shaderByteSize;
 	}
 
 	DX11PixelShader::DX11PixelShader(DX11PixelShader&& other) noexcept = default;
@@ -158,17 +165,23 @@ namespace clv::gfx{
 
 	DX11PixelShader::~DX11PixelShader() = default;
 
-	DX11PixelShader::DX11PixelShader(const std::wstring& path){
+	DX11PixelShader::DX11PixelShader(const BYTE* shaderByteData, SIZE_T shaderByteSize){
+		this->shaderByteData = shaderByteData;
+		this->shaderByteSize = shaderByteSize;
+
 		DX11_INFO_PROVIDER;
-		DX11_THROW_INFO(D3DReadFileToBlob(path.c_str(), &byteCode));
-		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreatePixelShader(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), nullptr, &pixelShader));
+		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreatePixelShader(shaderByteData, shaderByteSize, nullptr, &pixelShader));
 	}
 
 	void DX11PixelShader::bind(){
 		DX11RenderAPI::getContext().PSSetShader(pixelShader.Get(), nullptr, 0u);
 	}
 
-	ID3DBlob* DX11PixelShader::getByteCode() const{
-		return byteCode.Get();
+	const BYTE* DX11PixelShader::getBytePointer() const{
+		return shaderByteData;
+	}
+
+	SIZE_T DX11PixelShader::getByteSize() const{
+		return shaderByteSize;
 	}
 }
