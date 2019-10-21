@@ -2,7 +2,7 @@
 
 project(Clove)
 
-add_library(Clove STATIC)
+add_library(${PROJECT_NAME} STATIC)
 
 #Files - Clove
 set(
@@ -257,7 +257,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GraphicsFiles})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${PlatformFiles})
 
 target_sources(
-	Clove
+	${PROJECT_NAME}
 	PRIVATE
 		${CloveFiles}
 		${GraphicsFiles}
@@ -266,7 +266,7 @@ target_sources(
 
 #Includes
 target_include_directories(
-	Clove
+	${PROJECT_NAME}
 
 	#Clove
 	PUBLIC
@@ -293,7 +293,7 @@ target_include_directories(
 
 #Libraries
 target_link_libraries(
-	Clove
+	${PROJECT_NAME}
 	PUBLIC
 	PRIVATE 
 		#Cross platform
@@ -351,13 +351,13 @@ source_group(PCH FILES
 
 #Preprocessor
 target_compile_definitions(
-	Clove
+	${PROJECT_NAME}
 	PUBLIC
 		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
 		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
 )
 target_compile_definitions(
-	Clove
+	${PROJECT_NAME}
 	INTERFACE
 		CLV_ENGINE=0
 	PRIVATE
@@ -415,9 +415,7 @@ if(MSVC)
 				${shaderCSO}
 				${CMAKE_BINARY_DIR}/Sandbox
 	)
-
 endif()
-
 
 #GL Shaders
 set(GLShaders
@@ -436,35 +434,35 @@ set(GLShaders
 #copy resource files - TODO: fix up sandbox references
 if(MSVC)
 	add_custom_command(
-	        TARGET Clove POST_BUILD
+	        TARGET ${PROJECT_NAME} POST_BUILD
 	        COMMAND ${CMAKE_COMMAND} -E copy
 	                ${GLShaders}
 	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>
 	)
 endif()
 add_custom_command(
-        TARGET Clove POST_BUILD
+        TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${GLShaders}
                 ${CMAKE_BINARY_DIR}/Sandbox
 )
 add_custom_command(
-        TARGET Clove POST_BUILD
+        TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/Clove/res
+                ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/res
                 ${CMAKE_BINARY_DIR}/Sandbox/res
 )
 
 if(MSVC)
 	add_custom_command(
-	        TARGET Clove POST_BUILD
+	        TARGET ${PROJECT_NAME} POST_BUILD
 	        COMMAND ${CMAKE_COMMAND} -E copy_directory
 	                ${CMAKE_SOURCE_DIR}/Sandbox/res
 	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>/res
 	)
 endif()
 add_custom_command(
-        TARGET Clove POST_BUILD
+        TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${CMAKE_SOURCE_DIR}/Sandbox/res
                 ${CMAKE_BINARY_DIR}/Sandbox/res
