@@ -95,4 +95,3 @@ set_target_properties(Clove PROPERTIES FOLDER ${EngineFolder})
 
 #Sandbox
 add_subdirectory(Sandbox)
-set_target_properties(Sandbox PROPERTIES FOLDER ${EngineFolder})
