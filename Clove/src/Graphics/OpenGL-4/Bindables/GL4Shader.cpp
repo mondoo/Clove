@@ -90,14 +90,9 @@ namespace clv::gfx{
 
 			case ShaderStyle::CubeShadowMap:
 				{
-					std::string vertexSource = parseShader("CubeShadowMap-vs.glsl");
-					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
-
-					std::string pixelSource = parseShader("CubeShadowMap-ps.glsl");
-					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
-
-					std::string geometrySource = parseShader("CubeShadowMap-gs.glsl");
-					geometryID = compileShader(GL_GEOMETRY_SHADER, geometrySource);
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_CubeShadowMap_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_CubeShadowMap_ps);
+					geometryID = compileShader(GL_GEOMETRY_SHADER, shader_CubeShadowMap_gs);
 				}
 				break;
 
@@ -128,7 +123,7 @@ namespace clv::gfx{
 			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 			char* message = new char[length];
 			glGetShaderInfoLog(id, length, &length, message);
-			CLV_LOG_ERROR("Failed to compile {0} shader! {1}", type == GL_VERTEX_SHADER ? "vertex" : "fragment", message);
+			CLV_LOG_ERROR("Failed to compile {0} shader! {1}", getStringFromShaderType(type), message);
 			glDeleteShader(id);
 			delete[] message;
 		}
@@ -141,5 +136,19 @@ namespace clv::gfx{
 		glLinkProgram(programID);
 		glValidateProgram(programID);
 		glDeleteShader(shaderID);
+	}
+
+	std::string GL4Shader::getStringFromShaderType(GLuint glShaderType){
+		switch(glShaderType){
+			case GL_VERTEX_SHADER:
+				return "vertex";
+			case GL_FRAGMENT_SHADER:
+				return "pixel";
+			case GL_GEOMETRY_SHADER:
+				return "geometry";
+			default:
+				CLV_ASSERT(false, "Uknown type in {0}", CLV_FUNCTION_NAME);
+				return "unkown";
+		}
 	}
 }
