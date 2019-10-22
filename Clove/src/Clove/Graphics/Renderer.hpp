@@ -75,8 +75,6 @@ namespace clv::gfx{
 		static constexpr uint32 shadowMapSize = 1024; //arbitrary shadowmap size
 
 	private:
-		static std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> materialSBO; //TODO: MOVE TO MATERIAL
-
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewData>> viewDataSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> viewPosSBO;
 

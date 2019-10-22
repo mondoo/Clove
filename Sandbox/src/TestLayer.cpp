@@ -74,6 +74,7 @@ void TestLayer::onAttach(){
 	auto cubeMaterial = std::make_shared<clv::gfx::Material>(clv::gfx::ShaderStyle::Lit);
 	cubeMaterial->setAlbedoTexture("res/Textures/container2.png");
 	cubeMaterial->setSpecularTexture("res/Textures/container2_specular.png");
+	cubeMaterial->setData(clv::gfx::BBP_MaterialData, clv::gfx::MaterialData{ 32.0f }, clv::gfx::ShaderType::Pixel);
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());

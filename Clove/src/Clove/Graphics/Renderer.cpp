@@ -17,7 +17,7 @@
 #include "Clove/Graphics/Bindables/Shader.hpp"
 
 namespace clv::gfx{
-	std::shared_ptr<gfx::ShaderBufferObject<MaterialData>> Renderer::materialSBO;
+	
 
 	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO;
 	std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> Renderer::viewPosSBO;
