@@ -21,6 +21,8 @@
 #include "Clove/Graphics/Sprite.hpp"
 #include "Clove/Graphics/Material.hpp"
 
+#include <ostream>
+
 TestLayer::TestLayer()
 	: Layer("Example Layer"){
 }
@@ -150,12 +152,21 @@ void TestLayer::onAttach(){
 
 	//Fonts
 	{
+		auto font = clv::ui::Font("res/Fonts/Roboto/Roboto-Black.ttf");
+
 		fontEnt = clv::Application::get().getManager().createEntity();
-		fontEnt.addComponent<clv::ecs::ui::TextComponent>(clv::ui::Font("res/Fonts/Roboto/Roboto-Black.ttf"));
+		fontEnt.addComponent<clv::ecs::ui::TextComponent>(font);
 		fontEnt.addComponent<clv::ecs::d2::TransformComponent>()->setPosition(clv::math::Vector2f{-550.0, 300.0f});
 
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("Hello, World!");
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(72);
+
+		fpsEnt = clv::Application::get().getManager().createEntity();
+		fpsEnt.addComponent<clv::ecs::ui::TextComponent>(font);
+		fpsEnt.addComponent<clv::ecs::d2::TransformComponent>()->setPosition(clv::math::Vector2f{-550.0, 100.0f});
+
+		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("not set :(");
+		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(30);
 	}
 }
 
@@ -245,6 +256,19 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	if(clv::input::isKeyPressed(clv::Key::Semicolon)){
 		sound.getComponent<clv::ecs::aud::AudioComponent>()->resume();
 	}
+
+	//Print FPS
+	secondsPassed += deltaTime;
+	clv::uint64 avgFPS = countedFrames / (secondsPassed); //This needs to be total seconds passed not time between frames
+	if(avgFPS > 20000){
+		avgFPS = 0;
+	}
+
+	std::ostringstream outStream;
+	outStream << "Average FPS: " << avgFPS;
+	fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setText(outStream.str());
+
+	++countedFrames;
 }
 
 //bool TestLayer::onMouseMoved(clv::MouseMovedEvent e){

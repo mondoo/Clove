@@ -1,6 +1,7 @@
 #include "GL4Shader.hpp"
 
 #include "Clove/Application.hpp"
+#include "Graphics/OpenGL-4/ShaderStrings.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -54,51 +55,36 @@ namespace clv::gfx{
 		switch(style){
 			case ShaderStyle::Lit:
 				{
-					std::string vertexSource = parseShader("Lit-vs.glsl");
-					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
-
-					std::string pixelSource = parseShader("Lit-ps.glsl");
-					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_Lit_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_Lit_ps);
 				}
 				break;
 
 			case ShaderStyle::Unlit:
 				{
-					std::string vertexSource = parseShader("Unlit-vs.glsl");
-					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
-
-					std::string pixelSource = parseShader("Unlit-ps.glsl");
-					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_Unlit_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_Unlit_ps);
 				}
 				break;
 
 			case ShaderStyle::_2D:
 				{
-					std::string vertexSource = parseShader("2D-vs.glsl");
-					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
-
-					std::string pixelSource = parseShader("2D-ps.glsl");
-					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_2D_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_2D_ps);
 				}
 				break;
 
 			case ShaderStyle::RT:
 				{
-					std::string vertexSource = parseShader("RT-vs.glsl");
-					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
-
-					std::string pixelSource = parseShader("RT-ps.glsl");
-					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_RT_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_RT_ps);
 				}
 				break;
 
 			case ShaderStyle::Font:
 				{
-					std::string vertexSource = parseShader("Font-vs.glsl");
-					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
-
-					std::string pixelSource = parseShader("Font-ps.glsl");
-					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_Font_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_Font_ps);
 				}
 				break;
 
@@ -127,18 +113,6 @@ namespace clv::gfx{
 		if(geometryID != 0){
 			attachAndLinkShader(geometryID);
 		}
-	}
-
-	std::string GL4Shader::parseShader(const std::string& filepath){
-		std::ifstream stream(filepath);
-
-		std::string line;
-		std::stringstream ss;
-		while(getline(stream, line)){
-			ss << line << '\n';
-		}
-
-		return ss.str();
 	}
 
 	uint32 GL4Shader::compileShader(uint32 type, const std::string& source){

@@ -2,7 +2,7 @@
 
 project(Clove)
 
-add_library(Clove STATIC)
+add_library(${PROJECT_NAME} STATIC)
 
 #Files - Clove
 set(
@@ -140,22 +140,7 @@ set(
 		src/Clove/Utils/MeshLoader.cpp
 )
 
-#source_group does not support generator expressions so add the platform headers here
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set(
-		CloveFiles
-			${CloveFiles}
-			src/Platform/Windows/CloveWindows.hpp
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set(
-		CloveFiles
-			${CloveFiles}
-			src/Platform/Linux/CloveLinux.hpp
-	)
-endif()
-
-#Files - Graphics
+#Files - Graphics | OpenGL
 set(
 	GraphicsFiles
 		src/Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp
@@ -168,19 +153,6 @@ set(
 		src/Graphics/OpenGL-4/Bindables/GL4UniformBufferObject.inl
 		src/Graphics/OpenGL-4/Bindables/GL4VertexBuffer.hpp
 		src/Graphics/OpenGL-4/Bindables/GL4VertexBuffer.cpp
-		src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
-		src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
-		src/Graphics/OpenGL-4/Shaders/CubeShadowMap-gs.glsl
-		src/Graphics/OpenGL-4/Shaders/CubeShadowMap-ps.glsl
-		src/Graphics/OpenGL-4/Shaders/CubeShadowMap-vs.glsl
-		src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
-		src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
-		src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
-		src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
-		src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
-		src/Graphics/OpenGL-4/Shaders/RT-vs.glsl
-		src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl
-		src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
 		src/Graphics/OpenGL-4/GL4Exception.hpp
 		src/Graphics/OpenGL-4/GL4Exception.cpp
 		src/Graphics/OpenGL-4/GL4RenderAPI.hpp
@@ -188,15 +160,27 @@ set(
 		src/Graphics/OpenGL-4/GL4RenderTarget.hpp
 		src/Graphics/OpenGL-4/GL4RenderTarget.cpp
 )
-
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		GraphicsFiles
 			${GraphicsFiles}	
-
 			src/Graphics/OpenGL-4/WGLContext.hpp
 			src/Graphics/OpenGL-4/WGLContext.cpp
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(
+		GraphicsFiles
+			${GraphicsFiles}
+			src/Graphics/OpenGL-4/GLXContext.hpp
+			src/Graphics/OpenGL-4/GLXContext.cpp
+	)
+endif()
 
+#Files - Graphics | DirectX
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	set(
+		GraphicsFiles
+			${GraphicsFiles}	
 			src/Graphics/DirectX-11/Bindables/DX11ConstantBuffer.hpp
 			src/Graphics/DirectX-11/Bindables/DX11ConstantBuffer.inl
 			src/Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp
@@ -232,13 +216,107 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/DXContext.hpp
 			src/Graphics/DirectX-11/DXContext.cpp
 	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set(
-		GraphicsFiles
-			${GraphicsFiles}
+endif()
 
-			src/Graphics/OpenGL-4/GLXContext.hpp
-			src/Graphics/OpenGL-4/GLXContext.cpp
+#Files - Graphics | Shaders
+set(
+	GLSLShaders
+		src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
+        src/Graphics/OpenGL-4/Shaders/CubeShadowMap-gs.glsl
+		src/Graphics/OpenGL-4/Shaders/CubeShadowMap-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/CubeShadowMap-vs.glsl
+		src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
+		src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
+		src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/RT-vs.glsl
+		src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
+)
+
+#Parse the glsl shader files into a header 
+set(GLSLParsedShaders)
+set(GLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/ShaderStrings.hpp)
+file(WRITE ${GLSLShaderIncludeFile} "//cmake generated header file\n\n")
+foreach(shaderFile ${GLSLShaders})
+	file(READ ${shaderFile} FILE_CONTENTS)
+	get_filename_component(fileName ${shaderFile} NAME_WLE)
+
+	string(REPLACE "-" "_" STRING_NAME ${fileName})
+	set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/${fileName}.hpp)
+
+	configure_file(cmake/glslHeader.in ${outFilePath})
+
+	set(GLSLParsedShaders ${GLSLParsedShaders} ${outFilePath})
+	file(APPEND ${GLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
+endforeach()
+
+set(
+	GraphicsFiles
+		${GraphicsFiles}
+		${GLSLShaders}
+		${GLSLShaderIncludeFile}
+)
+
+if(MSVC)
+	set(
+		pixelShaders
+			src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
+            src/Graphics/DirectX-11/Shaders/CubeShadowMap-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/Font-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
+			src/Graphics/DirectX-11/Shaders/Unlit-ps.hlsl
+	)
+
+	set(
+		vertexShaders
+			src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
+		    src/Graphics/DirectX-11/Shaders/CubeShadowMap-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/Font-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/RT-vs.hlsl
+			src/Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
+	)
+    
+    set(geometryShaders
+		src/Graphics/DirectX-11/Shaders/CubeShadowMap-gs.hlsl
+	)
+
+	set(
+		HLSLShaders
+			${pixelShaders}
+			${vertexShaders}
+            ${geometryShaders}
+	)
+
+	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
+	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
+    set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_TYPE Geometry)
+
+	set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
+	set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_MODEL 5.0)
+
+	#get each shader to compile into a header
+	set(HLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/DirectX-11/ShaderHeaders.hpp)
+	file(WRITE ${HLSLShaderIncludeFile} "//cmake generated header file\n\n")
+	foreach(shaderFile ${HLSLShaders})
+		get_filename_component(fileName ${shaderFile} NAME_WLE)
+
+		string(REPLACE "-" "_" STRING_NAME ${fileName})
+		set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/DirectX-11/Shaders/${fileName}.hpp)
+
+		set_property(SOURCE ${shaderFile} PROPERTY VS_SHADER_FLAGS "/Vn shader_${STRING_NAME} /Fh ${outFilePath}")
+		file(APPEND ${HLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
+	endforeach()
+
+	set(
+	GraphicsFiles
+		${GraphicsFiles}
+		${HLSLShaders}
+		${HLSLShaderIncludeFile}
 	)
 endif()
 
@@ -246,6 +324,7 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		PlatformFiles
+			src/Platform/Windows/CloveWindows.hpp
 			src/Platform/Windows/WindowsWindow.hpp
 			src/Platform/Windows/WindowsWindow.cpp
 			src/Platform/Windows/WindowsException.hpp
@@ -254,17 +333,20 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
 		PlatformFiles
+			src/Platform/Linux/CloveLinux.hpp
 			src/Platform/Linux/LinuxWindow.hpp
 			src/Platform/Linux/LinuxWindow.cpp
 	)
 endif()
 
+#Organise the source tree
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${CloveFiles})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GraphicsFiles})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${PlatformFiles})
 
+#Set the target source files
 target_sources(
-	Clove
+	${PROJECT_NAME}
 	PRIVATE
 		${CloveFiles}
 		${GraphicsFiles}
@@ -273,15 +355,13 @@ target_sources(
 
 #Includes
 target_include_directories(
-	Clove
-
+	${PROJECT_NAME}
 	#Clove
 	PUBLIC
 		src
 	PRIVATE
 		src/Graphics
 		src/Platform	
-
 	#Libraries
 	PUBLIC
 		vendor/OBJ-Loader/Source
@@ -300,10 +380,9 @@ target_include_directories(
 
 #Libraries
 target_link_libraries(
-	Clove
-	PUBLIC
+	${PROJECT_NAME}
+	#Cross platform
 	PRIVATE 
-		#Cross platform
 		spdlog
 		stb
 		Glad
@@ -311,13 +390,15 @@ target_link_libraries(
 		sndfile
 		portaudio_static
 		freetype
-		#Windows
+	#Windows
+	PRIVATE
 		$<$<PLATFORM_ID:Windows>:dxerr>
 		$<$<PLATFORM_ID:Windows>:opengl32>
 		$<$<PLATFORM_ID:Windows>:d3d11>
 		$<$<PLATFORM_ID:Windows>:dxguid>
 		$<$<PLATFORM_ID:Windows>:d3dcompiler>
-		#Linux
+	#Linux
+	PRIVATE
 		$<$<PLATFORM_ID:Linux>:GLX>
 		$<$<PLATFORM_ID:Linux>:X11>
 		$<$<PLATFORM_ID:Linux>:dl>
@@ -326,8 +407,8 @@ target_link_libraries(
 #Precompiled header
 target_precompile_headers(
 	${PROJECT_NAME}
+	#Generic headers
 	PUBLIC
-		#Generic headers
 		<iostream>
 		<memory>
 		<utility>
@@ -335,162 +416,69 @@ target_precompile_headers(
 		<functional>
 		<sstream>
 		<optional>
-		#Data structures
+	#Data structures
+	PUBLIC
 		<string>
 		<array>
 		<vector>
 		<unordered_map>
 		<unordered_set>
-		#Clove headers
+	#Clove headers
+	PUBLIC
 		[["Clove/Core.hpp"]]
 		[["Clove/Log.hpp"]]
 		[["Clove/IntTypes.hpp"]]
 		[["Clove/Maths/MathsTypes.hpp"]]
 		[["Clove/Maths/Maths.hpp"]]
 		[["Clove/Maths/MathsHelpers.hpp"]]
-		#Platform headers
+	#Platform headers
+	PUBLIC
 		$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>
 		$<$<PLATFORM_ID:Linux>:Platform/Linux/CloveLinux.hpp>
 )
-source_group(PCH FILES 
-	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.hxx 
-	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.cxx
+source_group(${PROJECT_NAME} FILES 
+	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx 
+	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
 )
 
 #Preprocessor
 target_compile_definitions(
-	Clove
+	${PROJECT_NAME}
+	#Config
+	PUBLIC
+		CLV_DEBUG=$<CONFIG:Debug>
+		CLV_DEVELOPMENT=$<CONFIG:Development>
+		CLV_PROFILING=$<CONFIG:Profiling>
+		CLV_RELEASE=$<CONFIG:Release>
+	#Platform
 	PUBLIC
 		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
 		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
-)
-target_compile_definitions(
-	Clove
+	#Engine
 	INTERFACE
 		CLV_ENGINE=0
 	PRIVATE
 		CLV_ENGINE=1
 )
 
-#DX Shaders
-if(MSVC)
-	set(pixelShaders
-		src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
-		src/Graphics/DirectX-11/Shaders/CubeShadowMap-ps.hlsl
-		src/Graphics/DirectX-11/Shaders/Font-ps.hlsl
-		src/Graphics/DirectX-11/Shaders/Lit-ps.hlsl
-		src/Graphics/DirectX-11/Shaders/RT-ps.hlsl
-		src/Graphics/DirectX-11/Shaders/Unlit-ps.hlsl
-	)
-	
-	set(vertexShaders
-		src/Graphics/DirectX-11/Shaders/2D-vs.hlsl
-		src/Graphics/DirectX-11/Shaders/CubeShadowMap-vs.hlsl
-		src/Graphics/DirectX-11/Shaders/Font-vs.hlsl
-		src/Graphics/DirectX-11/Shaders/Lit-vs.hlsl
-		src/Graphics/DirectX-11/Shaders/RT-vs.hlsl
-		src/Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
-	)
-
-	set(geometryShaders
-		src/Graphics/DirectX-11/Shaders/CubeShadowMap-gs.hlsl
-	)
-
-	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
-	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
-	set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_TYPE Geometry)
-
-	set(allShaders
-		${pixelShaders}
-		${vertexShaders}
-		${geometryShaders}
-	)
-
-	set_property(SOURCE ${allShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
-	set_property(SOURCE ${allShaders} PROPERTY VS_SHADER_MODEL 5.0)
-	#set_property(SOURCE ${allShaders} PROPERTY VS_SHADER_FLAGS "/Zi /Od")
-
-	set(shaderCSO
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/2D-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/CubeShadowMap-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/CubeShadowMap-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/CubeShadowMap-gs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Font-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Font-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Lit-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/RT-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/RT-vs.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Unlit-ps.cso
-		 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/Unlit-vs.cso
-	)
-
-	add_custom_command(
-		TARGET Clove POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
-				${shaderCSO}
-				${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>
-	)
-	add_custom_command(
-		TARGET Clove POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
-				${shaderCSO}
-				${CMAKE_BINARY_DIR}/Sandbox
-	)
-
-endif()
-
-
-#GL Shaders
-set(GLShaders
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/CubeShadowMap-gs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/CubeShadowMap-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/CubeShadowMap-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/RT-vs.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
-)
-
 #copy resource files - TODO: fix up sandbox references
-if(MSVC)
-	add_custom_command(
-	        TARGET Clove POST_BUILD
-	        COMMAND ${CMAKE_COMMAND} -E copy
-	                ${GLShaders}
-	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>
-	)
-endif()
 add_custom_command(
-        TARGET Clove POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${GLShaders}
-                ${CMAKE_BINARY_DIR}/Sandbox
-)
-add_custom_command(
-        TARGET Clove POST_BUILD
+        TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/Clove/res
+                ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/res
                 ${CMAKE_BINARY_DIR}/Sandbox/res
 )
 
 if(MSVC)
 	add_custom_command(
-	        TARGET Clove POST_BUILD
+	        TARGET ${PROJECT_NAME} POST_BUILD
 	        COMMAND ${CMAKE_COMMAND} -E copy_directory
 	                ${CMAKE_SOURCE_DIR}/Sandbox/res
 	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>/res
 	)
 endif()
 add_custom_command(
-        TARGET Clove POST_BUILD
+        TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${CMAKE_SOURCE_DIR}/Sandbox/res
                 ${CMAKE_BINARY_DIR}/Sandbox/res

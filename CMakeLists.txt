@@ -6,11 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #Build configurations
-set(debug_flags 		"-DCLV_DEBUG=1 -DCLV_DEVELOPMENT=0 -DCLV_PROFILING=0 -DCLV_RELEASE=0")
-set(development_flags 	"-DCLV_DEBUG=0 -DCLV_DEVELOPMENT=1 -DCLV_PROFILING=0 -DCLV_RELEASE=0")
-set(profiling_flags 	"-DCLV_DEBUG=0 -DCLV_DEVELOPMENT=0 -DCLV_PROFILING=1 -DCLV_RELEASE=0")
-set(release_flags 		"-DCLV_DEBUG=0 -DCLV_DEVELOPMENT=0 -DCLV_PROFILING=0 -DCLV_RELEASE=1")
-
 if(MSVC)
 	set(debug_flags 		"/Od /Ob0 /Zi /RTC1 /Wall ${debug_flags}")
 	set(development_flags 	"/Od /Ob0 /Zi /RTC1 /W3 ${development_flags}")
@@ -100,4 +95,3 @@ set_target_properties(Clove PROPERTIES FOLDER ${EngineFolder})
 
 #Sandbox
 add_subdirectory(Sandbox)
-set_target_properties(Sandbox PROPERTIES FOLDER ${EngineFolder})
