@@ -433,8 +433,8 @@ target_precompile_headers(
 		$<$<PLATFORM_ID:Linux>:Platform/Linux/CloveLinux.hpp>
 )
 source_group(PCH FILES 
-	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.hxx 
-	${CMAKE_BINARY_DIR}/Clove/CmakeFiles/Clove.dir/cmake_pch.cxx
+	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx 
+	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
 )
 
 #Preprocessor
