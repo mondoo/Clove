@@ -139,22 +139,7 @@ set(
 		src/Clove/Utils/MeshLoader.cpp
 )
 
-#source_group does not support generator expressions so add the platform headers here
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set(
-		CloveFiles
-			${CloveFiles}
-			src/Platform/Windows/CloveWindows.hpp
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set(
-		CloveFiles
-			${CloveFiles}
-			src/Platform/Linux/CloveLinux.hpp
-	)
-endif()
-
-#Files - Graphics
+#Files - Graphics | OpenGL
 set(
 	GraphicsFiles
 		src/Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp
@@ -174,32 +159,27 @@ set(
 		src/Graphics/OpenGL-4/GL4RenderTarget.hpp
 		src/Graphics/OpenGL-4/GL4RenderTarget.cpp
 )
-
-set(
-	GLSLShaderFiles
-		src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
-		src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
-		src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
-		src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
-		src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
-		src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
-		src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
-		src/Graphics/OpenGL-4/Shaders/RT-vs.glsl
-		src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl
-		src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
-)
-
-set(HLSLShaders)
-set(HLSLParsedShaders)
-set(HLSLShaderIncludeFile)
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		GraphicsFiles
 			${GraphicsFiles}	
-
 			src/Graphics/OpenGL-4/WGLContext.hpp
 			src/Graphics/OpenGL-4/WGLContext.cpp
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(
+		GraphicsFiles
+			${GraphicsFiles}
+			src/Graphics/OpenGL-4/GLXContext.hpp
+			src/Graphics/OpenGL-4/GLXContext.cpp
+	)
+endif()
 
+#Files - Graphics | DirectX
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	set(
+		GraphicsFiles
+			${GraphicsFiles}	
 			src/Graphics/DirectX-11/Bindables/DX11ConstantBuffer.hpp
 			src/Graphics/DirectX-11/Bindables/DX11ConstantBuffer.inl
 			src/Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp
@@ -232,9 +212,48 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			src/Graphics/DirectX-11/DXContext.hpp
 			src/Graphics/DirectX-11/DXContext.cpp
 	)
+endif()
 
-	#DX Shaders
-	if(MSVC)
+#Files - Graphics | Shaders
+set(
+	GLSLShaders
+		src/Graphics/OpenGL-4/Shaders/2D-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/2D-vs.glsl
+		src/Graphics/OpenGL-4/Shaders/Font-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/Font-vs.glsl
+		src/Graphics/OpenGL-4/Shaders/Lit-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/Lit-vs.glsl
+		src/Graphics/OpenGL-4/Shaders/RT-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/RT-vs.glsl
+		src/Graphics/OpenGL-4/Shaders/Unlit-ps.glsl
+		src/Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
+)
+
+#Parse the glsl shader files into a header 
+set(GLSLParsedShaders)
+set(GLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/ShaderStrings.hpp)
+file(WRITE ${GLSLShaderIncludeFile} "//cmake generated header file\n\n")
+foreach(shaderFile ${GLSLShaders})
+	file(READ ${shaderFile} FILE_CONTENTS)
+	get_filename_component(fileName ${shaderFile} NAME_WLE)
+
+	string(REPLACE "-" "_" STRING_NAME ${fileName})
+	set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/${fileName}.hpp)
+
+	configure_file(cmake/glslHeader.in ${outFilePath})
+
+	set(GLSLParsedShaders ${GLSLParsedShaders} ${outFilePath})
+	file(APPEND ${GLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
+endforeach()
+
+set(
+	GraphicsFiles
+		${GraphicsFiles}
+		${GLSLShaders}
+		${GLSLShaderIncludeFile}
+)
+
+if(MSVC)
 	set(
 		pixelShaders
 			src/Graphics/DirectX-11/Shaders/2D-ps.hlsl
@@ -274,20 +293,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 		string(REPLACE "-" "_" STRING_NAME ${fileName})
 		set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/DirectX-11/Shaders/${fileName}.hpp)
 
-		set(HLSLParsedShaders ${HLSLParsedShaders} ${outFilePath})
-
 		set_property(SOURCE ${shaderFile} PROPERTY VS_SHADER_FLAGS "/Vn shader_${STRING_NAME} /Fh ${outFilePath}")
 		file(APPEND ${HLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
 	endforeach()
 
-	endif()
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
-		GraphicsFiles
-			${GraphicsFiles}
-
-			src/Graphics/OpenGL-4/GLXContext.hpp
-			src/Graphics/OpenGL-4/GLXContext.cpp
+	GraphicsFiles
+		${GraphicsFiles}
+		${HLSLShaders}
+		${HLSLShaderIncludeFile}
 	)
 endif()
 
@@ -295,6 +309,7 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		PlatformFiles
+			src/Platform/Windows/CloveWindows.hpp
 			src/Platform/Windows/WindowsWindow.hpp
 			src/Platform/Windows/WindowsWindow.cpp
 			src/Platform/Windows/WindowsException.hpp
@@ -303,39 +318,16 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
 		PlatformFiles
+			src/Platform/Linux/CloveLinux.hpp
 			src/Platform/Linux/LinuxWindow.hpp
 			src/Platform/Linux/LinuxWindow.cpp
 	)
 endif()
 
-#Parse the glsl shader files into a header 
-set(GLSLParsedShaders)
-set(GLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/ShaderStrings.hpp)
-file(WRITE ${GLSLShaderIncludeFile} "//cmake generated header file\n\n")
-foreach(shaderFile ${GLSLShaderFiles})
-	file(READ ${shaderFile} FILE_CONTENTS)
-	get_filename_component(fileName ${shaderFile} NAME_WLE)
-
-	string(REPLACE "-" "_" STRING_NAME ${fileName})
-	set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/OpenGL-4/Shaders/${fileName}.hpp)
-
-	configure_file(cmake/glslHeader.in ${outFilePath})
-
-	set(GLSLParsedShaders ${GLSLParsedShaders} ${outFilePath})
-	file(APPEND ${GLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
-endforeach()
-
 #Organise the source tree
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${CloveFiles})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GraphicsFiles})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${PlatformFiles})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GLSLShaderFiles})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${HLSLShaderFiles})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GLSLParsedShaders})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${HLSLParsedShaders})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${GLSLShaderIncludeFile})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${HLSLShaderIncludeFile})
-
 
 #Set the target source files
 target_sources(
@@ -344,25 +336,17 @@ target_sources(
 		${CloveFiles}
 		${GraphicsFiles}
 		${PlatformFiles}
-
-		${GLSLShaderFiles}
-		${HLSLShaderFiles}
-
-		${GLSLShaderIncludeFile}
-		${HLSLShaderIncludeFile}
 )
 
 #Includes
 target_include_directories(
 	${PROJECT_NAME}
-
 	#Clove
 	PUBLIC
 		src
 	PRIVATE
 		src/Graphics
 		src/Platform	
-
 	#Libraries
 	PUBLIC
 		vendor/OBJ-Loader/Source
@@ -382,9 +366,8 @@ target_include_directories(
 #Libraries
 target_link_libraries(
 	${PROJECT_NAME}
-	PUBLIC
+	#Cross platform
 	PRIVATE 
-		#Cross platform
 		spdlog
 		stb
 		Glad
@@ -392,13 +375,15 @@ target_link_libraries(
 		sndfile
 		portaudio_static
 		freetype
-		#Windows
+	#Windows
+	PRIVATE
 		$<$<PLATFORM_ID:Windows>:dxerr>
 		$<$<PLATFORM_ID:Windows>:opengl32>
 		$<$<PLATFORM_ID:Windows>:d3d11>
 		$<$<PLATFORM_ID:Windows>:dxguid>
 		$<$<PLATFORM_ID:Windows>:d3dcompiler>
-		#Linux
+	#Linux
+	PRIVATE
 		$<$<PLATFORM_ID:Linux>:GLX>
 		$<$<PLATFORM_ID:Linux>:X11>
 		$<$<PLATFORM_ID:Linux>:dl>
@@ -407,8 +392,8 @@ target_link_libraries(
 #Precompiled header
 target_precompile_headers(
 	${PROJECT_NAME}
+	#Generic headers
 	PUBLIC
-		#Generic headers
 		<iostream>
 		<memory>
 		<utility>
@@ -416,23 +401,26 @@ target_precompile_headers(
 		<functional>
 		<sstream>
 		<optional>
-		#Data structures
+	#Data structures
+	PUBLIC
 		<string>
 		<vector>
 		<unordered_map>
 		<unordered_set>
-		#Clove headers
+	#Clove headers
+	PUBLIC
 		[["Clove/Core.hpp"]]
 		[["Clove/Log.hpp"]]
 		[["Clove/IntTypes.hpp"]]
 		[["Clove/Maths/MathsTypes.hpp"]]
 		[["Clove/Maths/Maths.hpp"]]
 		[["Clove/Maths/MathsHelpers.hpp"]]
-		#Platform headers
+	#Platform headers
+	PUBLIC
 		$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>
 		$<$<PLATFORM_ID:Linux>:Platform/Linux/CloveLinux.hpp>
 )
-source_group(PCH FILES 
+source_group(${PROJECT_NAME} FILES 
 	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx 
 	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
 )
@@ -440,15 +428,17 @@ source_group(PCH FILES
 #Preprocessor
 target_compile_definitions(
 	${PROJECT_NAME}
+	#Config
 	PUBLIC
-		#Config
 		CLV_DEBUG=$<CONFIG:Debug>
 		CLV_DEVELOPMENT=$<CONFIG:Development>
 		CLV_PROFILING=$<CONFIG:Profiling>
 		CLV_RELEASE=$<CONFIG:Release>
-		#Platform
+	#Platform
+	PUBLIC
 		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
 		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
+	#Engine
 	INTERFACE
 		CLV_ENGINE=0
 	PRIVATE
