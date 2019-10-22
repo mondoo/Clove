@@ -154,6 +154,8 @@ void TestLayer::onAttach(){
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("not set :(");
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(30);
 	}
+
+	CLV_LOG_DEBUG("Testlayer has done a thing!");
 }
 
 void TestLayer::onDetach(){

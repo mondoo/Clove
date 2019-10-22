@@ -352,7 +352,6 @@ target_include_directories(
 		../vendor/OBJ-Loader/Source
 	INTERFACE
         ../vendor/glm
-        ../vendor/spdlog/include
         ../vendor/Glad/include #would like to remove but the SBO forces it
 		#TODO: Get rid of the lbsndfile paths below (see Sound.hpp)
 		../vendor/libsndfile/src
@@ -366,9 +365,10 @@ target_include_directories(
 #Libraries
 target_link_libraries(
 	${PROJECT_NAME}
-	#Cross platform
+    #Cross platform
+    PUBLIC
+        spdlog
 	PRIVATE 
-		spdlog
 		stb
 		Glad
 		glm
