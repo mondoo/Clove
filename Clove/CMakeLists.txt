@@ -441,11 +441,14 @@ source_group(PCH FILES
 target_compile_definitions(
 	${PROJECT_NAME}
 	PUBLIC
+		#Config
+		CLV_DEBUG=$<CONFIG:Debug>
+		CLV_DEVELOPMENT=$<CONFIG:Development>
+		CLV_PROFILING=$<CONFIG:Profiling>
+		CLV_RELEASE=$<CONFIG:Release>
+		#Platform
 		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
 		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
-)
-target_compile_definitions(
-	${PROJECT_NAME}
 	INTERFACE
 		CLV_ENGINE=0
 	PRIVATE
@@ -474,6 +477,3 @@ add_custom_command(
                 ${CMAKE_SOURCE_DIR}/Sandbox/res
                 ${CMAKE_BINARY_DIR}/Sandbox/res
 )
-
-
-
