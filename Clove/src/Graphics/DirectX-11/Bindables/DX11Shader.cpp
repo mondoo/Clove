@@ -121,12 +121,12 @@ namespace clv::gfx{
 
 			case ShaderStyle::CubeShadowMap:
 				{
-					auto vs = std::make_unique<DX11VertexShader>(L"CubeShadowMap-vs.cso");
+					auto vs = std::make_unique<DX11VertexShader>(shader_CubeShadowMap_vs, sizeof(shader_CubeShadowMap_vs));
 					vertexShader = vs.get();
 
 					shaders[ShaderType::Vertex] = std::move(vs);
-					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(L"CubeShadowMap-ps.cso");
-					shaders[ShaderType::Geometry] = std::make_unique<DX11GeometryShader>(L"CubeShadowMap-gs.cso");
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(shader_CubeShadowMap_ps, sizeof(shader_CubeShadowMap_ps));
+					shaders[ShaderType::Geometry] = std::make_unique<DX11GeometryShader>(shader_CubeShadowMap_gs, sizeof(shader_CubeShadowMap_gs));
 				}
 				break;
 
@@ -202,17 +202,23 @@ namespace clv::gfx{
 
 	DX11GeometryShader::~DX11GeometryShader() = default;
 
-	DX11GeometryShader::DX11GeometryShader(const std::wstring& path){
+	DX11GeometryShader::DX11GeometryShader(const BYTE* shaderByteData, SIZE_T shaderByteSize){
+		this->shaderByteData = shaderByteData;
+		this->shaderByteSize = shaderByteSize;
+
 		DX11_INFO_PROVIDER;
-		DX11_THROW_INFO(D3DReadFileToBlob(path.c_str(), &byteCode));
-		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateGeometryShader(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), nullptr, &geometryShader));
+		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateGeometryShader(shaderByteData, shaderByteSize, nullptr, &geometryShader));
 	}
 
 	void DX11GeometryShader::bind(){
 		DX11RenderAPI::getContext().GSSetShader(geometryShader.Get(), nullptr, 0u);
 	}
 
-	ID3DBlob* DX11GeometryShader::getByteCode() const{
-		return nullptr;
+	const BYTE* DX11GeometryShader::getBytePointer() const{
+		return shaderByteData;
+	}
+
+	SIZE_T DX11GeometryShader::getByteSize() const{
+		return shaderByteSize;
 	}
 }

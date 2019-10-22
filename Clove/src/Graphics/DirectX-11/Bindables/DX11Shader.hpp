@@ -114,7 +114,9 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		Microsoft::WRL::ComPtr<ID3D11GeometryShader> geometryShader;
-		Microsoft::WRL::ComPtr<ID3DBlob> byteCode;
+		
+		const BYTE* shaderByteData;
+		SIZE_T shaderByteSize;
 
 		//FUNCTIONS
 	public:
@@ -125,10 +127,11 @@ namespace clv::gfx{
 		DX11GeometryShader& operator=(DX11GeometryShader&& other) noexcept;
 		~DX11GeometryShader();
 
-		DX11GeometryShader(const std::wstring& path);
+		DX11GeometryShader(const BYTE* shaderByteData, SIZE_T shaderByteSize);
 
 		virtual void bind() override;
 
-		virtual ID3DBlob* getByteCode() const override;
+		virtual const BYTE* getBytePointer() const override;
+		virtual SIZE_T getByteSize() const override;
 	};
 }
