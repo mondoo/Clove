@@ -36,7 +36,9 @@ namespace clv{
 		prevFrameTime = std::chrono::system_clock::now();
 	}
 
-	Application::~Application() = default;
+	Application::~Application(){
+		gfx::Renderer::shutDown();
+	}
 
 	void Application::run(){
 		while(running){

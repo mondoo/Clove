@@ -77,6 +77,11 @@ namespace clv::gfx{
 		RenderCommand::setBlendState(true);
 	}
 
+	void Renderer::shutDown(){
+		CLV_LOG_TRACE("Shutting down renderer");
+
+	}
+
 	void Renderer::beginScene(){
 		numLights = 0;
 	}

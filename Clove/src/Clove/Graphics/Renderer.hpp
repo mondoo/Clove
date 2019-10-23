@@ -103,6 +103,7 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		static void initialise();
+		static void shutDown();
 
 		static void beginScene(); //How would I begin scene with the ecs?
 		static void endScene();
