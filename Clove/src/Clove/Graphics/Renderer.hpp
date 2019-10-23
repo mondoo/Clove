@@ -75,25 +75,6 @@ namespace clv::gfx{
 		//TODO: Is there a better place to encapsulate this?
 		static constexpr uint32 shadowMapSize = 1024; //arbitrary shadowmap size
 
-	private:
-		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
-
-		//Temp unique ptr
-		static std::unique_ptr<MaterialInstance> cubeShadowMaterial;
-
-		//
-		static CameraRenderData currentCamData;
-		static PointLightShaderData currentLightInfo;
-		static PointShadowDepthData currentShadowDepth;
-		static uint32 numLights;
-		static std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> shadowTransforms;
-		//
-
-		static std::shared_ptr<RenderTarget> shadowMapRenderTarget;
-		static std::shared_ptr<Texture> shadowMapTexture;
-
-		static std::shared_ptr<RenderTarget> customRenderTarget;
-
 		//FUNCTIONS
 	public:
 		static void initialise();

@@ -17,56 +17,49 @@
 #include "Clove/Graphics/Bindables/Shader.hpp"
 
 namespace clv::gfx{
-	//struct SceneData{
-	//
-	//	-camera
-	//	-lights
-	//	-mesh
-	//
-	// etc
-	//
-	//} *currentSceneData;
+	struct SceneData{
+		//Mesh
+		std::vector<std::shared_ptr<Mesh>> meshesToRender;
 
-	//Mesh
-	std::vector<std::shared_ptr<Mesh>> Renderer::meshesToRender;
+		//Raw data on the lights (without being separated to SBOs)
+		PointLightShaderData currentLightInfo; //Collects the current light info to bind in
+		PointShadowDepthData currentShadowDepth; //Collects the current depth info to bind in
+		uint32 numLights;
+		std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> shadowTransforms = {}; //Each light's shadow transform
 
-	//Raw data on the lights (without being separated to SBOs)
-	PointLightShaderData Renderer::currentLightInfo; //Collects the current light info to bind in
-	PointShadowDepthData Renderer::currentShadowDepth; //Collects the current depth info to bind in
-	uint32 Renderer::numLights;
-	std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> Renderer::shadowTransforms = {}; //Each light's shadow transform
+		CameraRenderData currentCamData;
 
-	CameraRenderData Renderer::currentCamData;
+		std::unique_ptr<MaterialInstance> cubeShadowMaterial;
 
-	std::unique_ptr<MaterialInstance> Renderer::cubeShadowMaterial;
+		//Other
+		std::shared_ptr<RenderTarget> shadowMapRenderTarget; //Render target for the shadow map
+		std::shared_ptr<Texture> shadowMapTexture; //Texture for the shadow map
 
-	//Other
-	std::shared_ptr<RenderTarget> Renderer::shadowMapRenderTarget; //Render target for the shadow map
-	std::shared_ptr<Texture> Renderer::shadowMapTexture; //Texture for the shadow map
-	
-	std::shared_ptr<RenderTarget> Renderer::customRenderTarget;
+		std::shared_ptr<RenderTarget> customRenderTarget;
+	} *currentSceneData = nullptr;
+
+
 
 	void Renderer::initialise(){
 		CLV_LOG_TRACE("Initialising renderer");
 
-		//currentSceneData = new SceneData();
+		currentSceneData = new SceneData();
 
-		cubeShadowMaterial = std::make_unique<MaterialInstance>(std::make_shared<Material>(ShaderStyle::CubeShadowMap));
+		currentSceneData->cubeShadowMaterial = std::make_unique<MaterialInstance>(std::make_shared<Material>(ShaderStyle::CubeShadowMap));
 
-		shadowMapTexture = BindableFactory::createTexture(TBP_Shadow, { TextureStyle::Cubemap, TextureUsage::RenderTarget_Depth, { shadowMapSize, shadowMapSize }, MAX_LIGHTS });
-		shadowMapRenderTarget = RenderTarget::createRenderTarget(nullptr, shadowMapTexture.get());
+		currentSceneData->shadowMapTexture = BindableFactory::createTexture(TBP_Shadow, { TextureStyle::Cubemap, TextureUsage::RenderTarget_Depth, { shadowMapSize, shadowMapSize }, MAX_LIGHTS });
+		currentSceneData->shadowMapRenderTarget = RenderTarget::createRenderTarget(nullptr, currentSceneData->shadowMapTexture.get());
 
 		RenderCommand::setBlendState(true);
 	}
 
 	void Renderer::shutDown(){
 		CLV_LOG_TRACE("Shutting down renderer");
-
-		//delete currentSceneData;
+		delete currentSceneData;
 	}
 
 	void Renderer::beginScene(){
-		numLights = 0;
+		currentSceneData->numLights = 0;
 	}
 
 	void Renderer::endScene(){
@@ -77,13 +70,13 @@ namespace clv::gfx{
 			//Perhaps some sort of 'material codex' where I can pull the base material for a shader type?
 
 			//Camera
-			meshMaterial.setData(BBP_CameraMatrices, ViewData{ currentCamData.lookAt, currentCamData.projection }, ShaderType::Vertex);
-			meshMaterial.setData(BBP_ViewData, ViewPos{ currentCamData.position }, ShaderType::Pixel);
+			meshMaterial.setData(BBP_CameraMatrices, ViewData{ currentSceneData->currentCamData.lookAt, currentSceneData->currentCamData.projection }, ShaderType::Vertex);
+			meshMaterial.setData(BBP_ViewData, ViewPos{ currentSceneData->currentCamData.position }, ShaderType::Pixel);
 			
 			//Lights
-			meshMaterial.setData(BBP_PointLightData, PointLightShaderData{ currentLightInfo }, ShaderType::Pixel);
-			meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ currentShadowDepth }, ShaderType::Pixel);
-			meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ numLights }, ShaderType::Pixel);
+			meshMaterial.setData(BBP_PointLightData, PointLightShaderData{ currentSceneData->currentLightInfo }, ShaderType::Pixel);
+			meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ currentSceneData->currentShadowDepth }, ShaderType::Pixel);
+			meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ currentSceneData->numLights }, ShaderType::Pixel);
 
 			mesh->bind();
 
@@ -92,21 +85,21 @@ namespace clv::gfx{
 
 		const auto generateShadowMap = [](const std::shared_ptr<Mesh>& mesh){
 			mesh->bind();
-			cubeShadowMaterial->bind(); //Bind in the shader / SBOs for generating the cubemap
+			currentSceneData->cubeShadowMaterial->bind(); //Bind in the shader / SBOs for generating the cubemap
 			RenderCommand::drawIndexed(mesh->getIndexCount());
 		};
 
 		RenderCommand::setDepthBuffer(true);
 
 		//Calculate shadow map
-		for(uint32 i = 0; i < numLights; i++){
-			cubeShadowMaterial->setData(BBP_ShadowData, PointShadowShaderData{ shadowTransforms[i] }, ShaderType::Geometry);
-			cubeShadowMaterial->setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
-			cubeShadowMaterial->setData(BBP_CurrentDepthData, PointShadowData{ currentShadowDepth.depths[i] }, ShaderType::Pixel);
+		for(uint32 i = 0; i < currentSceneData->numLights; i++){
+			currentSceneData->cubeShadowMaterial->setData(BBP_ShadowData, PointShadowShaderData{ currentSceneData->shadowTransforms[i] }, ShaderType::Geometry);
+			currentSceneData->cubeShadowMaterial->setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
+			currentSceneData->cubeShadowMaterial->setData(BBP_CurrentDepthData, PointShadowData{ currentSceneData->currentShadowDepth.depths[i] }, ShaderType::Pixel);
 
 			RenderCommand::setViewPortSize(shadowMapSize, shadowMapSize);
-			RenderCommand::setRenderTarget(*shadowMapRenderTarget);
-			std::for_each(meshesToRender.begin(), meshesToRender.end(), generateShadowMap);
+			RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
+			std::for_each(currentSceneData->meshesToRender.begin(), currentSceneData->meshesToRender.end(), generateShadowMap);
 			RenderCommand::setViewPortSize(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight());
 		}
 		
@@ -114,32 +107,32 @@ namespace clv::gfx{
 
 		RenderCommand::resetRenderTarget(); //Reset render target before binding the shadow map
 
-		shadowMapTexture->bind(); //Bind this in before rendering the real mesh
+		currentSceneData->shadowMapTexture->bind(); //Bind this in before rendering the real mesh
 
 		//Render any other render targets
-		if(customRenderTarget){
-			RenderCommand::setRenderTarget(*customRenderTarget);
-			std::for_each(meshesToRender.begin(), meshesToRender.end(), draw);
+		if(currentSceneData->customRenderTarget){
+			RenderCommand::setRenderTarget(*currentSceneData->customRenderTarget);
+			std::for_each(currentSceneData->meshesToRender.begin(), currentSceneData->meshesToRender.end(), draw);
 			RenderCommand::resetRenderTarget();
 		}
 
 		//Render scene
-		std::for_each(meshesToRender.begin(), meshesToRender.end(), draw);
+		std::for_each(currentSceneData->meshesToRender.begin(), currentSceneData->meshesToRender.end(), draw);
 
 		RenderCommand::removeTextureAtSlot(TBP_Shadow);
 
-		meshesToRender.clear();
+		currentSceneData->meshesToRender.clear();
 	}
 
 	void Renderer::setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget){
-		customRenderTarget = inRenderTarget;
+		currentSceneData->customRenderTarget = inRenderTarget;
 	}
 
 	void Renderer::clearRenderTargets(){
-		RenderCommand::setRenderTarget(*shadowMapRenderTarget);
+		RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
 		RenderCommand::clear(); //TODO: Might need to just do a clear depth command
-		if(customRenderTarget){
-			RenderCommand::setRenderTarget(*customRenderTarget);
+		if(currentSceneData->customRenderTarget){
+			RenderCommand::setRenderTarget(*currentSceneData->customRenderTarget);
 			RenderCommand::clear();
 		}
 		RenderCommand::resetRenderTarget();
@@ -147,25 +140,25 @@ namespace clv::gfx{
 	}
 
 	void Renderer::removeRenderTarget(){
-		customRenderTarget.reset();
+		currentSceneData->customRenderTarget.reset();
 		RenderCommand::resetRenderTarget();
 	}
 
 	void Renderer::submitMesh(const std::shared_ptr<Mesh>& mesh){
-		meshesToRender.push_back(mesh);
+		currentSceneData->meshesToRender.push_back(mesh);
 	}
 
 	void Renderer::setCamera(const CameraRenderData& data){
-		currentCamData = data;
+		currentSceneData->currentCamData = data;
 	}
 
 	void Renderer::submitPointLight(const PointLightData& data){
-		const int32 lightIndex = numLights++;
-		currentLightInfo.intensities[lightIndex] = data.intensity;
+		const int32 lightIndex = currentSceneData->numLights++;
+		currentSceneData->currentLightInfo.intensities[lightIndex] = data.intensity;
 
-		shadowTransforms[lightIndex] = data.shadowTransforms;
+		currentSceneData->shadowTransforms[lightIndex] = data.shadowTransforms;
 
-		currentShadowDepth.depths[lightIndex].farPlane = data.farPlane;
-		currentShadowDepth.depths[lightIndex].lightPos = data.intensity.position;
+		currentSceneData->currentShadowDepth.depths[lightIndex].farPlane = data.farPlane;
+		currentSceneData->currentShadowDepth.depths[lightIndex].lightPos = data.intensity.position;
 	}
 }
