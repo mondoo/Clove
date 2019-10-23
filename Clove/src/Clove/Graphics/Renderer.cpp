@@ -19,8 +19,7 @@
 namespace clv::gfx{
 	
 
-	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO;
-	std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> Renderer::viewPosSBO;
+	
 
 	std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> Renderer::lightDataSBO;
 	PointLightShaderData Renderer::currentLightInfo;
@@ -38,8 +37,6 @@ namespace clv::gfx{
 	std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> Renderer::shadowTransforms = {};
 
 	std::vector<std::shared_ptr<Mesh>> Renderer::meshesToRender;
-
-	CameraRenderData Renderer::cameraSubmissionData;
 
 	std::shared_ptr<RenderTarget> Renderer::shadowMapRenderTarget;
 	std::shared_ptr<Texture> Renderer::shadowMapTexture;

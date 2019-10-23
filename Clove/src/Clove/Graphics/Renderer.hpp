@@ -95,8 +95,6 @@ namespace clv::gfx{
 
 		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
 
-		static CameraRenderData cameraSubmissionData;
-
 		static std::shared_ptr<RenderTarget> shadowMapRenderTarget;
 		static std::shared_ptr<Texture> shadowMapTexture;
 
