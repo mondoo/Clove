@@ -27,31 +27,35 @@ namespace clv::gfx{
 	//
 	//} *currentSceneData;
 
-	//Camera
-	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO; //Matrices for vertex shader
-	std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> Renderer::viewPosSBO; //position for pixel shader
+	/*
+	Now that I have materials I think that these could be bound in onto the mesh as we're rendering
+	*/
 
 	//Lights
 	std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> Renderer::lightDataSBO; //Data about each light
 	std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> Renderer::shadowDepthData; //Data about each light's pos / farplane specifically for the lit ps
 	std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> Renderer::lightNumSBO; //Total number of lights
 
-	//Shadows
+	//Shadows (these 3 need to remain until the shadow shader has it's own material
 	std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> Renderer::shadowDataSBO; //Binds in each individual transform from the light for the geometry shader
 	std::shared_ptr<gfx::ShaderBufferObject<PointShadowData>> Renderer::currentDepthData; //for shadow map generation (a specific light for the gs)
 	std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> Renderer::faceIndexStartSBO; //Which face the Geometry shader starts on (when sending data to the pixel shader)
 	
-	std::shared_ptr<gfx::Shader> Renderer::cubeShadowMapShader; //Shadow for generating the shadow map
+	std::shared_ptr<gfx::Shader> Renderer::cubeShadowMapShader; //Shader that generates the shadow map
+	//This might need a material for how I'm about to refactor everthing
 
 	//Mesh
 	std::vector<std::shared_ptr<Mesh>> Renderer::meshesToRender;
 
+	//Raw data on the lights (without being separated to SBOs)
 	PointLightShaderData Renderer::currentLightInfo; //Collects the current light info to bind in
 	PointShadowDepthData Renderer::currentShadowDepth; //Collects the current depth info to bind in
 	uint32 Renderer::numLights;
-
 	std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> Renderer::shadowTransforms = {}; //Each light's shadow transform
 
+	CameraRenderData Renderer::currentCamData;
+
+	//Other
 	std::shared_ptr<RenderTarget> Renderer::shadowMapRenderTarget; //Render target for the shadow map
 	std::shared_ptr<Texture> Renderer::shadowMapTexture; //Texture for the shadow map
 	
@@ -62,9 +66,6 @@ namespace clv::gfx{
 
 		//currentSceneData = new SceneData();
 
-		viewDataSBO = BindableFactory::createShaderBufferObject<ViewData>(ShaderType::Vertex, BBP_CameraMatrices);
-		viewPosSBO = BindableFactory::createShaderBufferObject<ViewPos>(ShaderType::Pixel, BBP_ViewData);
-		
 		lightDataSBO = BindableFactory::createShaderBufferObject<PointLightShaderData>(ShaderType::Pixel, BBP_PointLightData);
 
 		shadowDataSBO = BindableFactory::createShaderBufferObject<PointShadowShaderData>(ShaderType::Geometry, BBP_ShadowData);
@@ -72,12 +73,8 @@ namespace clv::gfx{
 		shadowDepthData = BindableFactory::createShaderBufferObject<PointShadowDepthData>(ShaderType::Pixel, BBP_CubeDepthData);
 		currentDepthData = BindableFactory::createShaderBufferObject<PointShadowData>(ShaderType::Pixel, BBP_CurrentDepthData);
 
-		cubeShadowMapShader = BindableFactory::createShader(gfx::ShaderStyle::CubeShadowMap);
 		lightNumSBO = BindableFactory::createShaderBufferObject<LightNumAlignment>(ShaderType::Pixel, BBP_CurrentLights);
 		faceIndexStartSBO = BindableFactory::createShaderBufferObject<LightNumAlignment>(ShaderType::Geometry, BBP_CurrentFaceIndex);
-
-		viewDataSBO->bind();
-		viewPosSBO->bind();
 
 		lightDataSBO->bind();
 		shadowDataSBO->bind();
@@ -85,6 +82,8 @@ namespace clv::gfx{
 		lightNumSBO->bind();
 		faceIndexStartSBO->bind();
 
+		cubeShadowMapShader = BindableFactory::createShader(gfx::ShaderStyle::CubeShadowMap);
+		
 		shadowMapTexture = BindableFactory::createTexture(TBP_Shadow, { TextureStyle::Cubemap, TextureUsage::RenderTarget_Depth, { shadowMapSize, shadowMapSize }, MAX_LIGHTS });
 		shadowMapRenderTarget = RenderTarget::createRenderTarget(nullptr, shadowMapTexture.get());
 
@@ -107,7 +106,12 @@ namespace clv::gfx{
 		lightNumSBO->update({ numLights });
 
 		const auto draw = [](const std::shared_ptr<Mesh>& mesh){
+			auto& meshMaterial = mesh->getMaterialInstance();
+			meshMaterial.setData(BBP_CameraMatrices, ViewData{ currentCamData.lookAt, currentCamData.projection }, ShaderType::Vertex);
+			meshMaterial.setData(BBP_ViewData, ViewPos{ currentCamData.position }, ShaderType::Pixel);
+			
 			mesh->bind();
+
 			RenderCommand::drawIndexed(mesh->getIndexCount());
 		};
 
@@ -181,8 +185,7 @@ namespace clv::gfx{
 	}
 
 	void Renderer::setCamera(const CameraRenderData& data){
-		viewDataSBO->update({ data.lookAt, data.projection });
-		viewPosSBO->update({ data.position });
+		currentCamData = data;
 	}
 
 	void Renderer::submitPointLight(const PointLightData& data){

@@ -75,23 +75,23 @@ namespace clv::gfx{
 		static constexpr uint32 shadowMapSize = 1024; //arbitrary shadowmap size
 
 	private:
-		static std::shared_ptr<gfx::ShaderBufferObject<ViewData>> viewDataSBO;
-		static std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> viewPosSBO;
-
 		static std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> lightDataSBO;
-		static PointLightShaderData currentLightInfo;
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> shadowDataSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> shadowDepthData;
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowData>> currentDepthData; //For CubeShadowMap
-		static PointShadowDepthData currentShadowDepth;
 		static std::shared_ptr<gfx::Shader> cubeShadowMapShader;
 		static std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> lightNumSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> faceIndexStartSBO;
 
 		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
-		static uint32 numLights;
 
+		//
+		static CameraRenderData currentCamData;
+		static PointLightShaderData currentLightInfo;
+		static PointShadowDepthData currentShadowDepth;
+		static uint32 numLights;
 		static std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> shadowTransforms;
+		//
 
 		static std::shared_ptr<RenderTarget> shadowMapRenderTarget;
 		static std::shared_ptr<Texture> shadowMapTexture;
