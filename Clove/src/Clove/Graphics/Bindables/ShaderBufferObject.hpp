@@ -13,7 +13,7 @@ namespace clv::gfx{
 		BBP_ShadowData			= 6u,
 		BBP_CubeDepthData		= 7u,
 		BBP_CurrentLights		= 8u,
-		BBP_CurrentLightIndex	= 9u,
+		BBP_CurrentFaceIndex	= 9u,
 		BBP_CurrentDepthData	= 10u,
 	};
 

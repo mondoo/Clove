@@ -17,48 +17,64 @@
 #include "Clove/Graphics/Bindables/Shader.hpp"
 
 namespace clv::gfx{
+	//struct SceneData{
+	//
+	//	-camera
+	//	-lights
+	//	-mesh
+	//
+	// etc
+	//
+	//} *currentSceneData;
+
+	//Camera
+	std::shared_ptr<gfx::ShaderBufferObject<ViewData>> Renderer::viewDataSBO; //Matrices for vertex shader
+	std::shared_ptr<gfx::ShaderBufferObject<ViewPos>> Renderer::viewPosSBO; //position for pixel shader
+
+	//Lights
+	std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> Renderer::lightDataSBO; //Data about each light
+	std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> Renderer::shadowDepthData; //Data about each light's pos / farplane specifically for the lit ps
+	std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> Renderer::lightNumSBO; //Total number of lights
+
+	//Shadows
+	std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> Renderer::shadowDataSBO; //Binds in each individual transform from the light for the geometry shader
+	std::shared_ptr<gfx::ShaderBufferObject<PointShadowData>> Renderer::currentDepthData; //for shadow map generation (a specific light for the gs)
+	std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> Renderer::faceIndexStartSBO; //Which face the Geometry shader starts on (when sending data to the pixel shader)
 	
+	std::shared_ptr<gfx::Shader> Renderer::cubeShadowMapShader; //Shadow for generating the shadow map
 
-	
-
-	std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> Renderer::lightDataSBO;
-	PointLightShaderData Renderer::currentLightInfo;
-	std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> Renderer::shadowDataSBO;
-	PointShadowShaderData Renderer::currentShadowInfo;
-	std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> Renderer::shadowDepthData;
-	std::shared_ptr<gfx::ShaderBufferObject<PointShadowData>> Renderer::currentDepthData;
-	PointShadowDepthData Renderer::currentShadowDepth;
-	std::shared_ptr<gfx::ShaderBufferObject<VertexData>> Renderer::shadowModelData;
-	std::shared_ptr<gfx::Shader> Renderer::cubeShadowMapShader;
-	std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> Renderer::lightNumSBO;
-	std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> Renderer::lightNumSBOGS;
-	uint32 Renderer::numLights;
-
-	std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> Renderer::shadowTransforms = {};
-
+	//Mesh
 	std::vector<std::shared_ptr<Mesh>> Renderer::meshesToRender;
 
-	std::shared_ptr<RenderTarget> Renderer::shadowMapRenderTarget;
-	std::shared_ptr<Texture> Renderer::shadowMapTexture;
+	PointLightShaderData Renderer::currentLightInfo; //Collects the current light info to bind in
+	PointShadowDepthData Renderer::currentShadowDepth; //Collects the current depth info to bind in
+	uint32 Renderer::numLights;
+
+	std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> Renderer::shadowTransforms = {}; //Each light's shadow transform
+
+	std::shared_ptr<RenderTarget> Renderer::shadowMapRenderTarget; //Render target for the shadow map
+	std::shared_ptr<Texture> Renderer::shadowMapTexture; //Texture for the shadow map
 	
 	std::shared_ptr<RenderTarget> Renderer::customRenderTarget;
 
 	void Renderer::initialise(){
-		materialSBO = BindableFactory::createShaderBufferObject<MaterialData>(ShaderType::Pixel, BBP_MaterialData);
+		CLV_LOG_TRACE("Initialising renderer");
+
+		//currentSceneData = new SceneData();
 
 		viewDataSBO = BindableFactory::createShaderBufferObject<ViewData>(ShaderType::Vertex, BBP_CameraMatrices);
 		viewPosSBO = BindableFactory::createShaderBufferObject<ViewPos>(ShaderType::Pixel, BBP_ViewData);
 		
 		lightDataSBO = BindableFactory::createShaderBufferObject<PointLightShaderData>(ShaderType::Pixel, BBP_PointLightData);
+
 		shadowDataSBO = BindableFactory::createShaderBufferObject<PointShadowShaderData>(ShaderType::Geometry, BBP_ShadowData);
+
 		shadowDepthData = BindableFactory::createShaderBufferObject<PointShadowDepthData>(ShaderType::Pixel, BBP_CubeDepthData);
 		currentDepthData = BindableFactory::createShaderBufferObject<PointShadowData>(ShaderType::Pixel, BBP_CurrentDepthData);
-		shadowModelData = BindableFactory::createShaderBufferObject<VertexData>(ShaderType::Vertex, BBP_ModelData);
+
 		cubeShadowMapShader = BindableFactory::createShader(gfx::ShaderStyle::CubeShadowMap);
 		lightNumSBO = BindableFactory::createShaderBufferObject<LightNumAlignment>(ShaderType::Pixel, BBP_CurrentLights);
-		lightNumSBOGS = BindableFactory::createShaderBufferObject<LightNumAlignment>(ShaderType::Geometry, BBP_CurrentLightIndex);
-
-		materialSBO->bind();
+		faceIndexStartSBO = BindableFactory::createShaderBufferObject<LightNumAlignment>(ShaderType::Geometry, BBP_CurrentFaceIndex);
 
 		viewDataSBO->bind();
 		viewPosSBO->bind();
@@ -67,9 +83,7 @@ namespace clv::gfx{
 		shadowDataSBO->bind();
 		shadowDepthData->bind();
 		lightNumSBO->bind();
-		lightNumSBOGS->bind();
-
-		materialSBO->update({ 32.0f });
+		faceIndexStartSBO->bind();
 
 		shadowMapTexture = BindableFactory::createTexture(TBP_Shadow, { TextureStyle::Cubemap, TextureUsage::RenderTarget_Depth, { shadowMapSize, shadowMapSize }, MAX_LIGHTS });
 		shadowMapRenderTarget = RenderTarget::createRenderTarget(nullptr, shadowMapTexture.get());
@@ -80,6 +94,7 @@ namespace clv::gfx{
 	void Renderer::shutDown(){
 		CLV_LOG_TRACE("Shutting down renderer");
 
+		//delete currentSceneData;
 	}
 
 	void Renderer::beginScene(){
@@ -112,7 +127,7 @@ namespace clv::gfx{
 			currentDepthData->bind();
 			currentDepthData->update({ currentShadowDepth.depths[i] });
 
-			lightNumSBOGS->update({ i * 6 });
+			faceIndexStartSBO->update({ i * 6 });
 
 			RenderCommand::setViewPortSize(shadowMapSize, shadowMapSize);
 			RenderCommand::setRenderTarget(*shadowMapRenderTarget); //TODO: How to set view level????

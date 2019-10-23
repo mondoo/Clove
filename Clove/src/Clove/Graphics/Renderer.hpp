@@ -81,19 +81,17 @@ namespace clv::gfx{
 		static std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> lightDataSBO;
 		static PointLightShaderData currentLightInfo;
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> shadowDataSBO;
-		static PointShadowShaderData currentShadowInfo;
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> shadowDepthData;
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowData>> currentDepthData; //For CubeShadowMap
 		static PointShadowDepthData currentShadowDepth;
-		static std::shared_ptr<gfx::ShaderBufferObject<VertexData>> shadowModelData;
 		static std::shared_ptr<gfx::Shader> cubeShadowMapShader;
 		static std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> lightNumSBO;
-		static std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> lightNumSBOGS;
+		static std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> faceIndexStartSBO;
+
+		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
 		static uint32 numLights;
 
 		static std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> shadowTransforms;
-
-		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
 
 		static std::shared_ptr<RenderTarget> shadowMapRenderTarget;
 		static std::shared_ptr<Texture> shadowMapTexture;
