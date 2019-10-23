@@ -1,5 +1,4 @@
 #Clove dependencies
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(EngineFolder "Clove")
 set(DependencyFolder "Clove/Dependencies")
 
