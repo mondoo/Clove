@@ -9,8 +9,8 @@
 #include "Clove/Graphics/RenderTarget.hpp"
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
-#include "Clove/Graphics/Material.hpp"
 #include "Clove/Graphics/Mesh.hpp"
+#include "Clove/Graphics/Material.hpp"
 #include "Clove/Graphics/Sprite.hpp"
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
@@ -27,18 +27,6 @@ namespace clv::gfx{
 	//
 	//} *currentSceneData;
 
-	/*
-	Now that I have materials I think that these could be bound in onto the mesh as we're rendering
-	*/
-
-	//Shadows (these 3 need to remain until the shadow shader has it's own material
-	std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> Renderer::shadowDataSBO; //Binds in each individual transform from the light for the geometry shader
-	std::shared_ptr<gfx::ShaderBufferObject<PointShadowData>> Renderer::currentDepthData; //for shadow map generation (a specific light for the gs)
-	std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> Renderer::faceIndexStartSBO; //Which face the Geometry shader starts on (when sending data to the pixel shader)
-	
-	std::shared_ptr<gfx::Shader> Renderer::cubeShadowMapShader; //Shader that generates the shadow map
-	//This might need a material for how I'm about to refactor everthing
-
 	//Mesh
 	std::vector<std::shared_ptr<Mesh>> Renderer::meshesToRender;
 
@@ -49,6 +37,8 @@ namespace clv::gfx{
 	std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> Renderer::shadowTransforms = {}; //Each light's shadow transform
 
 	CameraRenderData Renderer::currentCamData;
+
+	std::unique_ptr<MaterialInstance> Renderer::cubeShadowMaterial;
 
 	//Other
 	std::shared_ptr<RenderTarget> Renderer::shadowMapRenderTarget; //Render target for the shadow map
@@ -61,15 +51,8 @@ namespace clv::gfx{
 
 		//currentSceneData = new SceneData();
 
-		shadowDataSBO = BindableFactory::createShaderBufferObject<PointShadowShaderData>(ShaderType::Geometry, BBP_ShadowData);
-		currentDepthData = BindableFactory::createShaderBufferObject<PointShadowData>(ShaderType::Pixel, BBP_CurrentDepthData);
-		faceIndexStartSBO = BindableFactory::createShaderBufferObject<LightNumAlignment>(ShaderType::Geometry, BBP_CurrentFaceIndex);
+		cubeShadowMaterial = std::make_unique<MaterialInstance>(std::make_shared<Material>(ShaderStyle::CubeShadowMap));
 
-		shadowDataSBO->bind();
-		faceIndexStartSBO->bind();
-
-		cubeShadowMapShader = BindableFactory::createShader(gfx::ShaderStyle::CubeShadowMap);
-		
 		shadowMapTexture = BindableFactory::createTexture(TBP_Shadow, { TextureStyle::Cubemap, TextureUsage::RenderTarget_Depth, { shadowMapSize, shadowMapSize }, MAX_LIGHTS });
 		shadowMapRenderTarget = RenderTarget::createRenderTarget(nullptr, shadowMapTexture.get());
 
@@ -107,10 +90,9 @@ namespace clv::gfx{
 			RenderCommand::drawIndexed(mesh->getIndexCount());
 		};
 
-		//TODO: anyway to use above lambda?
-		const auto drawShadow = [](const std::shared_ptr<Mesh>& mesh){
+		const auto generateShadowMap = [](const std::shared_ptr<Mesh>& mesh){
 			mesh->bind();
-			cubeShadowMapShader->bind(); //Slide in the shadow shader
+			cubeShadowMaterial->bind(); //Bind in the shader / SBOs for generating the cubemap
 			RenderCommand::drawIndexed(mesh->getIndexCount());
 		};
 
@@ -118,16 +100,13 @@ namespace clv::gfx{
 
 		//Calculate shadow map
 		for(uint32 i = 0; i < numLights; i++){ //TODO: Remove raw loop
-			shadowDataSBO->bind();
-			shadowDataSBO->update({ shadowTransforms[i] });
-			currentDepthData->bind();
-			currentDepthData->update({ currentShadowDepth.depths[i] });
-
-			faceIndexStartSBO->update({ i * 6 });
+			cubeShadowMaterial->setData(BBP_ShadowData, PointShadowShaderData{ shadowTransforms[i] }, ShaderType::Geometry);
+			cubeShadowMaterial->setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
+			cubeShadowMaterial->setData(BBP_CurrentDepthData, PointShadowData{ currentShadowDepth.depths[i] }, ShaderType::Pixel);
 
 			RenderCommand::setViewPortSize(shadowMapSize, shadowMapSize);
 			RenderCommand::setRenderTarget(*shadowMapRenderTarget); //TODO: How to set view level????
-			std::for_each(meshesToRender.begin(), meshesToRender.end(), drawShadow);
+			std::for_each(meshesToRender.begin(), meshesToRender.end(), generateShadowMap);
 			RenderCommand::setViewPortSize(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight());
 		}
 		

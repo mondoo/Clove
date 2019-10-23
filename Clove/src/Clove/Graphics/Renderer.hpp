@@ -4,6 +4,7 @@
 
 #include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
 #include "Clove/Graphics/GraphicsConstants.hpp"
+#include "Clove/Graphics/MaterialInstance.hpp"
 
 namespace clv::gfx{
 	class RenderTarget;
@@ -60,7 +61,7 @@ namespace clv::gfx{
 		math::Vector3f lightPos = { };
 		float farPlane = 0;
 	};
-	struct PointShadowDepthData{ //It's not depth - this needs a better name
+	struct PointShadowDepthData{ //It's not depth - this needs a better name (so does the BBP for it)
 		std::array<PointShadowData, MAX_LIGHTS> depths = {};
 	};
 
@@ -75,12 +76,10 @@ namespace clv::gfx{
 		static constexpr uint32 shadowMapSize = 1024; //arbitrary shadowmap size
 
 	private:
-		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> shadowDataSBO;
-		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowData>> currentDepthData; //For CubeShadowMap
-		static std::shared_ptr<gfx::Shader> cubeShadowMapShader;
-		static std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> faceIndexStartSBO;
-
 		static std::vector<std::shared_ptr<Mesh>> meshesToRender;
+
+		//Temp unique ptr
+		static std::unique_ptr<MaterialInstance> cubeShadowMaterial;
 
 		//
 		static CameraRenderData currentCamData;
