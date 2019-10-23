@@ -75,12 +75,9 @@ namespace clv::gfx{
 		static constexpr uint32 shadowMapSize = 1024; //arbitrary shadowmap size
 
 	private:
-		static std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> lightDataSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> shadowDataSBO;
-		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> shadowDepthData;
 		static std::shared_ptr<gfx::ShaderBufferObject<PointShadowData>> currentDepthData; //For CubeShadowMap
 		static std::shared_ptr<gfx::Shader> cubeShadowMapShader;
-		static std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> lightNumSBO;
 		static std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> faceIndexStartSBO;
 
 		static std::vector<std::shared_ptr<Mesh>> meshesToRender;

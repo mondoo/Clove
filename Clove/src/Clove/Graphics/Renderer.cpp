@@ -31,11 +31,6 @@ namespace clv::gfx{
 	Now that I have materials I think that these could be bound in onto the mesh as we're rendering
 	*/
 
-	//Lights
-	std::shared_ptr<gfx::ShaderBufferObject<PointLightShaderData>> Renderer::lightDataSBO; //Data about each light
-	std::shared_ptr<gfx::ShaderBufferObject<PointShadowDepthData>> Renderer::shadowDepthData; //Data about each light's pos / farplane specifically for the lit ps
-	std::shared_ptr<gfx::ShaderBufferObject<LightNumAlignment>> Renderer::lightNumSBO; //Total number of lights
-
 	//Shadows (these 3 need to remain until the shadow shader has it's own material
 	std::shared_ptr<gfx::ShaderBufferObject<PointShadowShaderData>> Renderer::shadowDataSBO; //Binds in each individual transform from the light for the geometry shader
 	std::shared_ptr<gfx::ShaderBufferObject<PointShadowData>> Renderer::currentDepthData; //for shadow map generation (a specific light for the gs)
@@ -66,20 +61,11 @@ namespace clv::gfx{
 
 		//currentSceneData = new SceneData();
 
-		lightDataSBO = BindableFactory::createShaderBufferObject<PointLightShaderData>(ShaderType::Pixel, BBP_PointLightData);
-
 		shadowDataSBO = BindableFactory::createShaderBufferObject<PointShadowShaderData>(ShaderType::Geometry, BBP_ShadowData);
-
-		shadowDepthData = BindableFactory::createShaderBufferObject<PointShadowDepthData>(ShaderType::Pixel, BBP_CubeDepthData);
 		currentDepthData = BindableFactory::createShaderBufferObject<PointShadowData>(ShaderType::Pixel, BBP_CurrentDepthData);
-
-		lightNumSBO = BindableFactory::createShaderBufferObject<LightNumAlignment>(ShaderType::Pixel, BBP_CurrentLights);
 		faceIndexStartSBO = BindableFactory::createShaderBufferObject<LightNumAlignment>(ShaderType::Geometry, BBP_CurrentFaceIndex);
 
-		lightDataSBO->bind();
 		shadowDataSBO->bind();
-		shadowDepthData->bind();
-		lightNumSBO->bind();
 		faceIndexStartSBO->bind();
 
 		cubeShadowMapShader = BindableFactory::createShader(gfx::ShaderStyle::CubeShadowMap);
@@ -101,15 +87,21 @@ namespace clv::gfx{
 	}
 
 	void Renderer::endScene(){
-		lightDataSBO->update(currentLightInfo);
-		shadowDepthData->update(currentShadowDepth);
-		lightNumSBO->update({ numLights });
-
 		const auto draw = [](const std::shared_ptr<Mesh>& mesh){
 			auto& meshMaterial = mesh->getMaterialInstance();
+
+			//TODO: I like setting them on the material, but I either need a global material or set it on the base material
+			//Perhaps some sort of 'material codex' where I can pull the base material for a shader type?
+
+			//Camera
 			meshMaterial.setData(BBP_CameraMatrices, ViewData{ currentCamData.lookAt, currentCamData.projection }, ShaderType::Vertex);
 			meshMaterial.setData(BBP_ViewData, ViewPos{ currentCamData.position }, ShaderType::Pixel);
 			
+			//Lights
+			meshMaterial.setData(BBP_PointLightData, PointLightShaderData{ currentLightInfo }, ShaderType::Pixel);
+			meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ currentShadowDepth }, ShaderType::Pixel);
+			meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ numLights }, ShaderType::Pixel);
+
 			mesh->bind();
 
 			RenderCommand::drawIndexed(mesh->getIndexCount());
@@ -118,7 +110,7 @@ namespace clv::gfx{
 		//TODO: anyway to use above lambda?
 		const auto drawShadow = [](const std::shared_ptr<Mesh>& mesh){
 			mesh->bind();
-			cubeShadowMapShader->bind(); //Will DX like this?
+			cubeShadowMapShader->bind(); //Slide in the shadow shader
 			RenderCommand::drawIndexed(mesh->getIndexCount());
 		};
 
