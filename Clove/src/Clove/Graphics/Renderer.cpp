@@ -99,13 +99,13 @@ namespace clv::gfx{
 		RenderCommand::setDepthBuffer(true);
 
 		//Calculate shadow map
-		for(uint32 i = 0; i < numLights; i++){ //TODO: Remove raw loop
+		for(uint32 i = 0; i < numLights; i++){
 			cubeShadowMaterial->setData(BBP_ShadowData, PointShadowShaderData{ shadowTransforms[i] }, ShaderType::Geometry);
 			cubeShadowMaterial->setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
 			cubeShadowMaterial->setData(BBP_CurrentDepthData, PointShadowData{ currentShadowDepth.depths[i] }, ShaderType::Pixel);
 
 			RenderCommand::setViewPortSize(shadowMapSize, shadowMapSize);
-			RenderCommand::setRenderTarget(*shadowMapRenderTarget); //TODO: How to set view level????
+			RenderCommand::setRenderTarget(*shadowMapRenderTarget);
 			std::for_each(meshesToRender.begin(), meshesToRender.end(), generateShadowMap);
 			RenderCommand::setViewPortSize(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight());
 		}
