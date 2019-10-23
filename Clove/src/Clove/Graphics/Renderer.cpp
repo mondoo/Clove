@@ -15,6 +15,7 @@
 #include "Clove/Application.hpp"
 #include "Clove/Platform/Window.hpp"
 #include "Clove/Graphics/Bindables/Shader.hpp"
+#include "Clove/Graphics/ShaderBufferTypes.hpp"
 
 namespace clv::gfx{
 	struct SceneData{

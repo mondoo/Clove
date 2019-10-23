@@ -2,7 +2,7 @@
 
 #include "Clove/ECS/Component.hpp"
 
-#include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/ShaderBufferTypes.hpp"
 
 namespace clv::ecs::d3{
 	class LightComponent : public Component{

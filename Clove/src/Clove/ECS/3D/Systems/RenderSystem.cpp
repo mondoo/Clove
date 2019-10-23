@@ -1,6 +1,7 @@
 #include "RenderSystem.hpp"
 
 #include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/ShaderBufferTypes.hpp"
 #include "Clove/Graphics/Mesh.hpp"
 #include "Clove/Graphics/MaterialInstance.hpp"
 

@@ -100,6 +100,7 @@ set(
 		Clove/Graphics/Renderer2D.cpp
 		Clove/Graphics/RenderTarget.hpp
 		Clove/Graphics/RenderTarget.cpp
+		Clove/Graphics/ShaderBufferTypes.hpp
 		Clove/Graphics/Sprite.hpp
 		Clove/Graphics/Sprite.cpp
 		Clove/Graphics/VertexLayout.hpp
