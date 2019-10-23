@@ -13,11 +13,6 @@ namespace clv::gfx{
 	struct PointLightData;
 
 	class Renderer{
-		//VARIABLES
-	public:
-		//TODO: Is there a better place to encapsulate this?
-		static constexpr uint32 shadowMapSize = 1024; //arbitrary shadowmap size
-
 		//FUNCTIONS
 	public:
 		static void initialise();

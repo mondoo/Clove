@@ -39,8 +39,6 @@ namespace clv::gfx{
 		std::shared_ptr<RenderTarget> customRenderTarget;
 	} *currentSceneData = nullptr;
 
-
-
 	void Renderer::initialise(){
 		CLV_LOG_TRACE("Initialising renderer");
 
@@ -93,7 +91,7 @@ namespace clv::gfx{
 		RenderCommand::setDepthBuffer(true);
 
 		//Calculate shadow map
-		for(uint32 i = 0; i < currentSceneData->numLights; i++){
+		for(uint8 i = 0; i < currentSceneData->numLights; ++i){
 			currentSceneData->cubeShadowMaterial->setData(BBP_ShadowData, PointShadowShaderData{ currentSceneData->shadowTransforms[i] }, ShaderType::Geometry);
 			currentSceneData->cubeShadowMaterial->setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
 			currentSceneData->cubeShadowMaterial->setData(BBP_CurrentDepthData, PointShadowData{ currentSceneData->currentShadowDepth.depths[i] }, ShaderType::Pixel);
