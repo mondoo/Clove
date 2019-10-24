@@ -38,6 +38,7 @@ namespace clv{
 
 	Application::~Application(){
 		gfx::Renderer::shutDown();
+		gfx::Renderer2D::shutDown();
 	}
 
 	void Application::run(){
