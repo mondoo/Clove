@@ -49,6 +49,15 @@ namespace clv::gfx{
 	public:
 		virtual void bind() override;
 	};
+
+	template<typename T>
+	class DX11GeometryConstantBuffer : public DX11ConstantBuffer<T>{
+		using DX11ConstantBuffer<T>::DX11ConstantBuffer;
+
+		//FUNCTIONS
+	public:
+		virtual void bind() override;
+	};
 }
 
 #include "DX11ConstantBuffer.inl"

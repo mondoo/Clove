@@ -2,7 +2,7 @@
 
 #include "Clove/ECS/Component.hpp"
 
-#include "Clove/Graphics/Renderer.hpp"
+#include "Clove/Graphics/ShaderBufferTypes.hpp"
 
 namespace clv::ecs::d3{
 	class LightComponent : public Component{
@@ -23,6 +23,11 @@ namespace clv::ecs::d3{
 		float quadratic = 0.000007f;
 
 		gfx::PointLightData lightData;
+
+		float aspect = 1.0f; //shadow width / shadow height
+		float nearDist = 0.5f;
+		float farDist = 25.0f;
+		math::Matrix4f shadowProj = math::createPerspectiveMatrix(math::asRadians(90.0f), aspect, nearDist, farDist);
 
 		//FUNCTIONS
 	public:

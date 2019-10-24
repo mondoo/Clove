@@ -24,6 +24,10 @@ namespace clv::gfx::BindableFactory{
 						return std::make_shared<DX11PixelConstantBuffer<T>>(bindingPoint);
 						break;
 
+					case ShaderType::Geometry:
+						return std::make_shared<DX11GeometryConstantBuffer<T>>(bindingPoint);
+						break;
+
 					default:
 						CLV_ASSERT(false, "Unkown ShaderType in: {0}", CLV_FUNCTION_NAME);
 						return std::shared_ptr<ShaderBufferObject<T>>();
@@ -52,6 +56,10 @@ namespace clv::gfx::BindableFactory{
 
 					case ShaderType::Pixel:
 						return std::make_shared<DX11PixelConstantBuffer<T>>(bindingPoint, std::forward<T>(data));
+						break;
+
+					case ShaderType::Geometry:
+						return std::make_shared<DX11GeometryConstantBuffer<T>>(bindingPoint, std::forward<T>(data));
 						break;
 
 					default:

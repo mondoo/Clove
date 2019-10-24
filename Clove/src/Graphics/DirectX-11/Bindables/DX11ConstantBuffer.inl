@@ -75,4 +75,9 @@ namespace clv::gfx{
 	void DX11PixelConstantBuffer<T>::bind(){
 		DX11RenderAPI::getContext().PSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
 	}
+
+	template<typename T>
+	void DX11GeometryConstantBuffer<T>::bind(){
+		DX11RenderAPI::getContext().GSSetConstantBuffers(bindingPoint, 1u, constantBuffer.GetAddressOf());
+	}
 }

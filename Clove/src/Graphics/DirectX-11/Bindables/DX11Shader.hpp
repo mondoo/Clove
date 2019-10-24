@@ -7,6 +7,7 @@
 
 struct ID3D11VertexShader;
 struct ID3D11PixelShader;
+struct ID3D11GeometryShader;
 
 namespace clv::gfx{
 	class Renderer;
@@ -102,6 +103,31 @@ namespace clv::gfx{
 		~DX11PixelShader();
 
 		DX11PixelShader(const BYTE* shaderByteData, SIZE_T shaderByteSize);
+
+		virtual void bind() override;
+
+		virtual const BYTE* getBytePointer() const override;
+		virtual SIZE_T getByteSize() const override;
+	};
+
+	class DX11GeometryShader : public DX11ShaderElement{
+		//VARIABLES
+	private:
+		Microsoft::WRL::ComPtr<ID3D11GeometryShader> geometryShader;
+		
+		const BYTE* shaderByteData;
+		SIZE_T shaderByteSize;
+
+		//FUNCTIONS
+	public:
+		DX11GeometryShader() = delete;
+		DX11GeometryShader(const DX11GeometryShader& other) = delete;
+		DX11GeometryShader(DX11GeometryShader&& other) noexcept;
+		DX11GeometryShader& operator=(const DX11GeometryShader& other) = delete;
+		DX11GeometryShader& operator=(DX11GeometryShader&& other) noexcept;
+		~DX11GeometryShader();
+
+		DX11GeometryShader(const BYTE* shaderByteData, SIZE_T shaderByteSize);
 
 		virtual void bind() override;
 

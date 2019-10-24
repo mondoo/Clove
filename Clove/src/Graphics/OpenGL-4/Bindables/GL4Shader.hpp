@@ -33,5 +33,9 @@ namespace clv::gfx{
 		void initialise(ShaderStyle style);
 
 		uint32 compileShader(uint32 type, const std::string& source);
+
+		void attachAndLinkShader(uint32 shaderID);
+
+		std::string getStringFromShaderType(GLuint glShaderType);
 	};
 }

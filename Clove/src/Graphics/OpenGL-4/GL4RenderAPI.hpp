@@ -21,9 +21,19 @@ namespace clv::gfx{
 		virtual void drawIndexed(const uint32 count) override;
 
 		virtual void setClearColour(const math::Vector4f& colour) override;
+
 		virtual void setDepthBuffer(bool enabled) override;
+
 		virtual void setBlendState(bool enabled) override;
+
 		virtual void setRenderTarget(RenderTarget& renderTarget) override;
 		virtual void resetRenderTarget() override;
+
+		virtual void setViewportSize(uint32 width, uint32 height) override;
+
+		//TEMP: Need an 'unbind' function or to refactor the bindable system
+		virtual void removeCurrentGeometryShader() override;
+		virtual void removeTextureAtSlot(uint32 slot) override;
+		//
 	};
 }

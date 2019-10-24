@@ -8,15 +8,20 @@
 #include "Clove/Platform/Window.hpp"
 
 namespace clv::gfx{
-	std::shared_ptr<gfx::Mesh> Renderer2D::spriteMesh;
-	std::shared_ptr<gfx::Mesh> Renderer2D::characterMesh;
+	struct SceneData2D{
+		std::shared_ptr<gfx::Mesh> spriteMesh;
+		std::shared_ptr<gfx::Mesh> characterMesh;
 
-	std::vector<std::shared_ptr<Sprite>> Renderer2D::spritesToRender;
-	std::vector<std::shared_ptr<Sprite>> Renderer2D::charactersToRender;
+		std::vector<std::shared_ptr<Sprite>> spritesToRender;
+		std::vector<std::shared_ptr<Sprite>> charactersToRender;
 
-	math::Matrix4f Renderer2D::projection;
+		math::Matrix4f projection; //Effectively the 'camera'
+	} *currentSceneData;
 
 	void Renderer2D::initialise(){
+		CLV_LOG_TRACE("Initialising renderer");
+		currentSceneData = new SceneData2D();
+
 		const std::vector<uint32> indices = {
 			1, 3, 0,
 			3, 2, 0
@@ -33,7 +38,7 @@ namespace clv::gfx{
 			bufferData.emplaceBack(math::Vector2f{  1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
 
 			auto spriteMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
-			spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
+			currentSceneData->spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
 		}
 
 		//Font mesh
@@ -47,14 +52,19 @@ namespace clv::gfx{
 			bufferData.emplaceBack(math::Vector2f{ 1,  1 }, math::Vector2f{ 1.0f, 0.0f });
 
 			auto characterMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::Font);
-			characterMesh = std::make_shared<gfx::Mesh>(bufferData, indices, characterMaterial->createInstance());
+			currentSceneData->characterMesh = std::make_shared<gfx::Mesh>(bufferData, indices, characterMaterial->createInstance());
 		}
 
 		//Projection
 		const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;
 		const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
 
-		projection = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
+		currentSceneData->projection = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
+	}
+
+	void Renderer2D::shutDown(){
+		CLV_LOG_TRACE("Shutting down renderer");
+		delete currentSceneData;
 	}
 
 	void Renderer2D::beginScene(){
@@ -67,45 +77,45 @@ namespace clv::gfx{
 		//Sprites
 		{
 			const auto draw = [](const std::shared_ptr<Sprite>& sprite){
-				auto& renderMeshMaterial = spriteMesh->getMaterialInstance();
+				auto& renderMeshMaterial = currentSceneData->spriteMesh->getMaterialInstance();
 				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
-				spriteMesh->bind();
+				currentSceneData->spriteMesh->bind();
 
-				RenderCommand::drawIndexed(spriteMesh->getIndexCount());
+				RenderCommand::drawIndexed(currentSceneData->spriteMesh->getIndexCount());
 			};
 
-			std::for_each(spritesToRender.begin(), spritesToRender.end(), draw);
+			std::for_each(currentSceneData->spritesToRender.begin(), currentSceneData->spritesToRender.end(), draw);
 
-			spritesToRender.clear();
+			currentSceneData->spritesToRender.clear();
 		}
 
 		//Characters
 		{
 			const auto draw = [](const std::shared_ptr<Sprite>& character){
-				auto& charMat = characterMesh->getMaterialInstance();
+				auto& charMat = currentSceneData->characterMesh->getMaterialInstance();
 				charMat.setAlbedoTexture(character->getTexture());
 				charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);
-				characterMesh->bind();
+				currentSceneData->characterMesh->bind();
 
-				RenderCommand::drawIndexed(characterMesh->getIndexCount());
+				RenderCommand::drawIndexed(currentSceneData->characterMesh->getIndexCount());
 			};
 
-			std::for_each(charactersToRender.begin(), charactersToRender.end(), draw);
+			std::for_each(currentSceneData->charactersToRender.begin(), currentSceneData->charactersToRender.end(), draw);
 
-			charactersToRender.clear();
+			currentSceneData->charactersToRender.clear();
 		}
 	}
 
 	void Renderer2D::submitSprite(const std::shared_ptr<Sprite> &sprite){
-		spritesToRender.push_back(sprite);
+		currentSceneData->spritesToRender.push_back(sprite);
 	}
 
 	void Renderer2D::submitCharacter(const std::shared_ptr<Sprite>& character){
-		charactersToRender.push_back(character);
+		currentSceneData->charactersToRender.push_back(character);
 	}
 
 	const math::Matrix4f &Renderer2D::getSpriteProjection(){
-		return projection;
+		return currentSceneData->projection;
 	}
 }

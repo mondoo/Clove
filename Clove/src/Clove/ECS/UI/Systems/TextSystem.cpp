@@ -32,7 +32,15 @@ namespace clv::ecs::ui{
 					const float xpos = cursorPos.x + glyph.bearing.x;
 					const float ypos = cursorPos.y - (height - glyph.bearing.y);
 
-					auto texture = gfx::BindableFactory::createTexture(glyph.buffer, width, height, gfx::TBP_Albedo, gfx::TextureUsage::Font);
+					const uint8 textureArraySize = 1;
+					const gfx::TextureDescriptor descriptor = {
+						gfx::TextureStyle::Default,
+						gfx::TextureUsage::Font,
+						{ width, height },
+						textureArraySize
+					};
+
+					auto texture = gfx::BindableFactory::createTexture(glyph.buffer, gfx::TBP_Albedo, descriptor);
 
 					math::Matrix4f model = math::Matrix4f(1.0f);
 					model = math::translate(math::Matrix4f(1.0f), { xpos, ypos, 0.0f });

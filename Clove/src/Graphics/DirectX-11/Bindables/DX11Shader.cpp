@@ -119,6 +119,17 @@ namespace clv::gfx{
 				}
 				break;
 
+			case ShaderStyle::CubeShadowMap:
+				{
+					auto vs = std::make_unique<DX11VertexShader>(shader_CubeShadowMap_vs, sizeof(shader_CubeShadowMap_vs));
+					vertexShader = vs.get();
+
+					shaders[ShaderType::Vertex] = std::move(vs);
+					shaders[ShaderType::Pixel] = std::make_unique<DX11PixelShader>(shader_CubeShadowMap_ps, sizeof(shader_CubeShadowMap_ps));
+					shaders[ShaderType::Geometry] = std::make_unique<DX11GeometryShader>(shader_CubeShadowMap_gs, sizeof(shader_CubeShadowMap_gs));
+				}
+				break;
+
 			default:
 				CLV_ASSERT(false, "Unknown type! {0}", CLV_FUNCTION_NAME);
 				break;
@@ -182,6 +193,32 @@ namespace clv::gfx{
 	}
 
 	SIZE_T DX11PixelShader::getByteSize() const{
+		return shaderByteSize;
+	}
+
+	DX11GeometryShader::DX11GeometryShader(DX11GeometryShader&& other) noexcept = default;
+
+	DX11GeometryShader& DX11GeometryShader::operator=(DX11GeometryShader&& other) noexcept = default;
+
+	DX11GeometryShader::~DX11GeometryShader() = default;
+
+	DX11GeometryShader::DX11GeometryShader(const BYTE* shaderByteData, SIZE_T shaderByteSize){
+		this->shaderByteData = shaderByteData;
+		this->shaderByteSize = shaderByteSize;
+
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateGeometryShader(shaderByteData, shaderByteSize, nullptr, &geometryShader));
+	}
+
+	void DX11GeometryShader::bind(){
+		DX11RenderAPI::getContext().GSSetShader(geometryShader.Get(), nullptr, 0u);
+	}
+
+	const BYTE* DX11GeometryShader::getBytePointer() const{
+		return shaderByteData;
+	}
+
+	SIZE_T DX11GeometryShader::getByteSize() const{
 		return shaderByteSize;
 	}
 }

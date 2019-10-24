@@ -50,6 +50,7 @@ namespace clv::gfx{
 	void GL4Shader::initialise(ShaderStyle style){
 		uint32 vertexID = 0;
 		uint32 pixelID = 0;
+		uint32 geometryID = 0;
 		
 		switch(style){
 			case ShaderStyle::Lit:
@@ -58,6 +59,7 @@ namespace clv::gfx{
 					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_Lit_ps);
 				}
 				break;
+
 			case ShaderStyle::Unlit:
 				{
 					vertexID = compileShader(GL_VERTEX_SHADER, shader_Unlit_vs);
@@ -86,6 +88,14 @@ namespace clv::gfx{
 				}
 				break;
 
+			case ShaderStyle::CubeShadowMap:
+				{
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_CubeShadowMap_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_CubeShadowMap_ps);
+					geometryID = compileShader(GL_GEOMETRY_SHADER, shader_CubeShadowMap_gs);
+				}
+				break;
+
 			default:
 				CLV_ASSERT(false, "Unknown type! {0}", CLV_FUNCTION_NAME);
 				break;
@@ -93,15 +103,11 @@ namespace clv::gfx{
 
 		CLV_ASSERT(vertexID != 0 && pixelID != 0, "Pixel or vertex shader not set!");
 
-		glAttachShader(programID, vertexID);
-		glLinkProgram(programID);
-		glValidateProgram(programID);
-		glDeleteShader(vertexID);
-
-		glAttachShader(programID, pixelID);
-		glLinkProgram(programID);
-		glValidateProgram(programID);
-		glDeleteShader(pixelID);
+		attachAndLinkShader(vertexID);
+		attachAndLinkShader(pixelID);
+		if(geometryID != 0){
+			attachAndLinkShader(geometryID);
+		}
 	}
 
 	uint32 GL4Shader::compileShader(uint32 type, const std::string& source){
@@ -117,11 +123,32 @@ namespace clv::gfx{
 			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 			char* message = new char[length];
 			glGetShaderInfoLog(id, length, &length, message);
-			CLV_LOG_ERROR("Failed to compile {0} shader! {1}", type == GL_VERTEX_SHADER ? "vertex" : "fragment", message);
+			CLV_LOG_ERROR("Failed to compile {0} shader! {1}", getStringFromShaderType(type), message);
 			glDeleteShader(id);
 			delete[] message;
 		}
 
 		return id;
+	}
+
+	void GL4Shader::attachAndLinkShader(uint32 shaderID){
+		glAttachShader(programID, shaderID);
+		glLinkProgram(programID);
+		glValidateProgram(programID);
+		glDeleteShader(shaderID);
+	}
+
+	std::string GL4Shader::getStringFromShaderType(GLuint glShaderType){
+		switch(glShaderType){
+			case GL_VERTEX_SHADER:
+				return "vertex";
+			case GL_FRAGMENT_SHADER:
+				return "pixel";
+			case GL_GEOMETRY_SHADER:
+				return "geometry";
+			default:
+				CLV_ASSERT(false, "Uknown type in {0}", CLV_FUNCTION_NAME);
+				return "unkown";
+		}
 	}
 }

@@ -100,6 +100,7 @@ set(
 		Clove/Graphics/Renderer2D.cpp
 		Clove/Graphics/RenderTarget.hpp
 		Clove/Graphics/RenderTarget.cpp
+		Clove/Graphics/ShaderBufferTypes.hpp
 		Clove/Graphics/Sprite.hpp
 		Clove/Graphics/Sprite.cpp
 		Clove/Graphics/VertexLayout.hpp
@@ -218,7 +219,10 @@ endif()
 set(
 	GLSLShaders
 		Graphics/OpenGL-4/Shaders/2D-ps.glsl
-		Graphics/OpenGL-4/Shaders/2D-vs.glsl
+        Graphics/OpenGL-4/Shaders/2D-vs.glsl
+        Graphics/OpenGL-4/Shaders/CubeShadowMap-gs.glsl
+		Graphics/OpenGL-4/Shaders/CubeShadowMap-ps.glsl
+		Graphics/OpenGL-4/Shaders/CubeShadowMap-vs.glsl
 		Graphics/OpenGL-4/Shaders/Font-ps.glsl
 		Graphics/OpenGL-4/Shaders/Font-vs.glsl
 		Graphics/OpenGL-4/Shaders/Lit-ps.glsl
@@ -256,7 +260,8 @@ set(
 if(MSVC)
 	set(
 		pixelShaders
-			Graphics/DirectX-11/Shaders/2D-ps.hlsl
+            Graphics/DirectX-11/Shaders/2D-ps.hlsl
+            Graphics/DirectX-11/Shaders/CubeShadowMap-ps.hlsl
 			Graphics/DirectX-11/Shaders/Font-ps.hlsl
 			Graphics/DirectX-11/Shaders/Lit-ps.hlsl
 			Graphics/DirectX-11/Shaders/RT-ps.hlsl
@@ -265,7 +270,8 @@ if(MSVC)
 
 	set(
 		vertexShaders
-			Graphics/DirectX-11/Shaders/2D-vs.hlsl
+            Graphics/DirectX-11/Shaders/2D-vs.hlsl
+            Graphics/DirectX-11/Shaders/CubeShadowMap-vs.hlsl
 			Graphics/DirectX-11/Shaders/Font-vs.hlsl
 			Graphics/DirectX-11/Shaders/Lit-vs.hlsl
 			Graphics/DirectX-11/Shaders/RT-vs.hlsl
@@ -273,13 +279,20 @@ if(MSVC)
 	)
 
 	set(
+        geometryShaders
+		    Graphics/DirectX-11/Shaders/CubeShadowMap-gs.hlsl
+    )
+    
+	set(
 		HLSLShaders
 			${pixelShaders}
 			${vertexShaders}
-	)
-
-	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
+            ${geometryShaders}
+    )
+    
+    set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_TYPE Geometry)
 	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
+	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
 
 	set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
 	set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_MODEL 5.0)
@@ -403,7 +416,8 @@ target_precompile_headers(
 		<optional>
 	#Data structures
 	PUBLIC
-		<string>
+        <string>
+        <array>
 		<vector>
 		<unordered_map>
 		<unordered_set>

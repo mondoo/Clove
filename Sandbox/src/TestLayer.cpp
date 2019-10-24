@@ -67,9 +67,14 @@ void TestLayer::onAttach(){
 	sound = clv::Application::get().getManager().createEntity();
 	sound.addComponent<clv::ecs::aud::AudioComponent>();
 
+	bigBoy = clv::Application::get().getManager().createEntity();
+	bigBoy.addComponent<clv::ecs::d3::RenderableComponent>();
+	bigBoy.addComponent<clv::ecs::d3::TransformComponent>();
+
 	auto cubeMaterial = std::make_shared<clv::gfx::Material>(clv::gfx::ShaderStyle::Lit);
 	cubeMaterial->setAlbedoTexture("res/Textures/container2.png");
 	cubeMaterial->setSpecularTexture("res/Textures/container2_specular.png");
+	cubeMaterial->setData(clv::gfx::BBP_MaterialData, clv::gfx::MaterialData{ 32.0f }, clv::gfx::ShaderType::Pixel);
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
@@ -86,12 +91,20 @@ void TestLayer::onAttach(){
 		ent3.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
 	}
 
+	{
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+		bigBoy.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
+	}
+
 	ent1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ 0.0f, 0.0f, 0.0f });
 	ent2.getComponent<clv::ecs::d3::TransformComponent>()->setLocalPosition({ 0.0f, 0.0f, 3.0f });
 	ent3.getComponent<clv::ecs::d3::TransformComponent>()->setLocalPosition({ 0.0f, 3.0f, 0.0f });
 
 	ent1.getComponent<clv::ecs::d3::TransformComponent>()->addChild(ent2.getComponent<clv::ecs::d3::TransformComponent>());
 	ent2.getComponent<clv::ecs::d3::TransformComponent>()->addChild(ent3.getComponent<clv::ecs::d3::TransformComponent>());
+
+	bigBoy.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ 20.0f, 0.0f, 0.0f });
+	bigBoy.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 10.0f, 10.0f, 10.0f });
 
 	//clv::Application::get().getManager().destroyEntity(ent2.getID());
 
@@ -121,19 +134,21 @@ void TestLayer::onAttach(){
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 		lght1.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
+		lght1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ -10.0f, 0.0f, 0.0f });
 		lght1.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
 	}
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 		lght2.getComponent<clv::ecs::d3::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
+		lght2.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ -10.0f, -5.0f, 0.0f });
 		lght2.getComponent<clv::ecs::d3::RenderableComponent>()->setMesh(mesh);
 	}
 
 	{
 		auto soundBuffer = clv::aud::Sound("res/Audio/Test.wav");
 		sound.getComponent<clv::ecs::aud::AudioComponent>()->setSound(soundBuffer);
-		sound.getComponent<clv::ecs::aud::AudioComponent>()->play();
+		//sound.getComponent<clv::ecs::aud::AudioComponent>()->play();
 	}
 
 	//Fonts
@@ -212,8 +227,8 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 
 	ent1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta) * radius, 0.0f, 0.0f });
 
-	lght1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta * 1.5f) * radius * 2.0f, 0.0f, sin(rotDelta * 1.5f) * radius * 2.0f });
-	lght2.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta) * radius * 2.0f, sin(rotDelta) * radius * 2.0f, 0.0f });
+	//lght1.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta * 1.5f) * radius * 2.0f, 0.0f, sin(rotDelta * 1.5f) * radius * 2.0f });
+	//lght2.getComponent<clv::ecs::d3::TransformComponent>()->setPosition({ cos(rotDelta) * radius * 2.0f, sin(rotDelta) * radius * 2.0f, 0.0f });
 
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setPosition(clv::math::Vector2f(cos(rotDelta) * radius * 5.0f, 0.0f));
 	sprtEnt1.getComponent<clv::ecs::d2::TransformComponent>()->setRotation(rotDelta);

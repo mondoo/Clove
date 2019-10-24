@@ -24,7 +24,8 @@ namespace clv::gfx{
 			d3dContext = dxCon->getContext();
 			defaultRenderTarget = dxCon->getTarget();
 			currentRenderTarget = defaultRenderTarget;
-			dsv = dxCon->getDSV();
+			defaultDepthStencil = dxCon->getDSV();
+			currentDepthStencil = defaultDepthStencil;
 
 			DX11_INFO_PROVIDER;
 
@@ -79,8 +80,10 @@ namespace clv::gfx{
 	}
 
 	void DX11RenderAPI::clear(){
-		d3dContext->ClearRenderTargetView(currentRenderTarget.Get(), math::valuePtr(clearColour));
-		d3dContext->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
+		if(currentRenderTarget){
+			d3dContext->ClearRenderTargetView(currentRenderTarget.Get(), math::valuePtr(clearColour));
+		}
+		d3dContext->ClearDepthStencilView(currentDepthStencil.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
 	}
 
 	void DX11RenderAPI::drawIndexed(const uint32 count){
@@ -123,12 +126,37 @@ namespace clv::gfx{
 	void DX11RenderAPI::setRenderTarget(RenderTarget& renderTarget){
 		DX11RenderTarget& dxRenderTarget = static_cast<DX11RenderTarget&>(renderTarget);
 		currentRenderTarget = dxRenderTarget.getRenderTargetView();
+		currentDepthStencil = dxRenderTarget.getDepthStencilView();
 		setRenderTargetToCurrent();
 	}
 
 	void DX11RenderAPI::resetRenderTarget(){
 		currentRenderTarget = defaultRenderTarget;
+		currentDepthStencil = defaultDepthStencil;
 		setRenderTargetToCurrent();
+	}
+
+	void DX11RenderAPI::setViewportSize(uint32 width, uint32 height){
+		D3D11_VIEWPORT vp = { 0 };
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
+		vp.Width = static_cast<FLOAT>(width);
+		vp.Height = static_cast<FLOAT>(height);
+		vp.MinDepth = 0;
+		vp.MaxDepth = 1;
+
+		d3dContext->RSSetViewports(1u, &vp);
+	}
+
+	void DX11RenderAPI::removeCurrentGeometryShader(){
+		d3dContext->GSSetShader(nullptr, nullptr, 0u);
+	}
+
+	void DX11RenderAPI::removeTextureAtSlot(uint32 slot){
+		ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+		ID3D11SamplerState* nullST[1] = { nullptr };
+		d3dContext->PSSetShaderResources(slot, 1u, nullSRV);
+		d3dContext->PSSetSamplers(slot, 1u, nullST);
 	}
 
 	ID3D11Device& DX11RenderAPI::getDevice(){
@@ -148,6 +176,13 @@ namespace clv::gfx{
 #endif
 
 	void DX11RenderAPI::setRenderTargetToCurrent(){
-		d3dContext->OMSetRenderTargets(1u, currentRenderTarget.GetAddressOf(), dsv.Get());
+		//TODO: should maybe use a null depth stencil?
+		auto dsv = currentDepthStencil ? currentDepthStencil : defaultDepthStencil;
+		if(currentRenderTarget){
+			d3dContext->OMSetRenderTargets(1u, currentRenderTarget.GetAddressOf(), dsv.Get());
+		} else{
+			ID3D11RenderTargetView* nullRTV[1] = { nullptr };
+			d3dContext->OMSetRenderTargets(1u, nullRTV, dsv.Get());
+		}
 	}
 }
