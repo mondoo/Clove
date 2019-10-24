@@ -7,20 +7,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #Build configurations
 if(MSVC)
-	set(debug_flags 		"/Od /Ob0 /Zi /RTC1 /Wall ${debug_flags}")
-	set(development_flags 	"/Od /Ob0 /Zi /RTC1 /W3 ${development_flags}")
-	set(profiling_flags 	"/DNDEBUG /O2 /Ob3 /W0 ${profiling_flags}")
-	set(release_flags 		"/DNDEBUG /O2 /Ob3 /W0 ${release_flags}")
+	set(debug_flags 		"/Od /Ob0 /Zi /RTC1 /Wall")
+	set(development_flags 	"/Od /Ob0 /Zi /RTC1 /W3")
+	set(profiling_flags 	"/DNDEBUG /O2 /Ob3 /W0")
+	set(release_flags 		"/DNDEBUG /O2 /Ob3 /W0")
 
 	set(CMAKE_EXE_LINKER_FLAGS_DEBUG		"/debug /INCREMENTAL")
 	set(CMAKE_EXE_LINKER_FLAGS_DEVELOPMENT	"/debug /INCREMENTAL")
 	set(CMAKE_EXE_LINKER_FLAGS_PROFILING	"/INCREMENTAL:NO")
 	set(CMAKE_EXE_LINKER_FLAGS_RELEASE		"/INCREMENTAL:NO")
 else()
-	set(debug_flags 		"-O0 -g -Wall -Wextra ${debug_flags}")
-	set(development_flags 	"-O0 -g -Wall ${development_flags}")
-	set(profiling_flags 	"-DNDEBUG -O3 -w ${profiling_flags}")
-	set(release_flags 		"-DNDEBUG -O3 -w ${release_flags}")
+	set(debug_flags 		"-O0 -g -Wall -Wextra")
+	set(development_flags 	"-O0 -g -Wall")
+	set(profiling_flags 	"-DNDEBUG -O3 -w")
+	set(release_flags 		"-DNDEBUG -O3 -w")
 endif()
 
 #Set custom build types
