@@ -71,8 +71,4 @@ add_subdirectory(Sandbox)
 #Editor
 if(MSVC) #not currently supported without MSVC
 	add_subdirectory(Bulb)
-	set_target_properties(Bulb.Core PROPERTIES FOLDER ${EditorFolder})
-	set_target_properties(Bulb.UI PROPERTIES FOLDER ${EditorFolder})
-	set_target_properties(Bulb.Engine PROPERTIES FOLDER ${EditorFolder})
-	set_target_properties(Bulb.Desktop.Windows PROPERTIES FOLDER ${EditorFolder})
 endif()
