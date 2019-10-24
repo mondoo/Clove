@@ -92,14 +92,34 @@ float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, floa
 }
 
 float shadowCalculation(float3 fragPos, unsigned int shadowIndex){
+	const float3 shadowSampleOffsetDirections[20] = {
+		float3(1,  1,  1), float3( 1, -1,  1), float3(-1, -1,  1), float3(-1, 1,  1),
+		float3(1,  1, -1), float3( 1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
+		float3(1,  1,  0), float3( 1, -1,  0), float3(-1, -1,  0), float3(-1, 1,  0),
+		float3(1,  0,  1), float3(-1,  0,  1), float3( 1,  0, -1), float3(-1, 0, -1),
+		float3(0,  1,  1), float3( 0, -1,  1), float3( 0, -1, -1), float3( 0, 1, -1)
+	};
+
+	const float farPlane = lightPositions[shadowIndex].farplane;
+
 	float3 fragToLight = fragPos - lightPositions[shadowIndex].lightPosition;
 	float currentDepth = length(fragToLight);
 
-	float closestDepth = shadowDepthMap.Sample(shadowDepthSampler, float4(fragToLight, shadowIndex)).r;
-	closestDepth *= lightPositions[shadowIndex].farplane;
+	float shadow = 0.0;
+	const float bias = 0.15;
+	const int samples = 20;
+	const float viewDistance = length(viewPos - fragPos);
+	const float diskRadius = (1.0f + (viewDistance / farPlane)) / 25.0f; //25 being the max far plane of the light
 
-	float bias = 0.05;
-	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+	for(int i = 0; i < samples; ++i){
+		const float3 sampleLocation = fragToLight + shadowSampleOffsetDirections[i] * diskRadius;
+		float closestDepth = shadowDepthMap.Sample(shadowDepthSampler, float4(sampleLocation, shadowIndex)).r;
+		closestDepth *= farPlane;
+		if((currentDepth - bias) > closestDepth){
+			shadow += 1.0;
+		}
+	}
+	shadow /= samples;
 
 	return shadow;
 }

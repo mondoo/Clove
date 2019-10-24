@@ -170,14 +170,35 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 //}
 
 float shadowCalculation(vec3 fragPos, unsigned int shadowIndex){
+	vec3 shadowSampleOffsetDirections[20] = vec3[](
+		vec3(1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), (-1, 1,  1),
+		vec3(1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), (-1, 1, -1),
+		vec3(1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), (-1, 1,  0),
+		vec3(1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), (-1, 0, -1),
+		vec3(0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), ( 0, 1, -1)
+	); //OpenGL doesn't like this being const
+
+	const float farPlane = lightPositions[shadowIndex].farPlane;
+	
 	vec3 fragToLight = fragPos - lightPositions[shadowIndex].lightPosition;
 	float currentDepth = length(fragToLight);
 
-	float closestDepth = texture(shadowDepthMap, vec4(fragToLight, shadowIndex)).r;
-	closestDepth *= lightPositions[shadowIndex].farPlane;
+	float shadow = 0.0f;
+	const float bias = 0.15f;
+	const int samples = 20;
+	const float viewDistance = length(viewPos - fragPos);
+	const float diskRadius = (1.0f + (viewDistance / farPlane)) / 25.0f;  //25 being the max far plane of the light  
+	
+	for(int i = 0; i < samples; ++i){
+		const vec3 sampleLocation = fragToLight + shadowSampleOffsetDirections[i] * diskRadius;
+		float closestDepth = texture(shadowDepthMap, vec4(sampleLocation, shadowIndex)).r;
+		closestDepth *= farPlane;
+		if((currentDepth - bias) > closestDepth){
+			shadow += 1.0f;
+		}
+	}
 
-	float bias = 0.05;
-	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+	shadow /= float(samples);
 
 	return shadow;
 }
