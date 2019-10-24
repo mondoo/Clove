@@ -458,26 +458,3 @@ target_compile_definitions(
 	PRIVATE
 		CLV_ENGINE=1
 )
-
-#copy resource files - TODO: fix up sandbox references
-add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/res
-                ${CMAKE_BINARY_DIR}/Sandbox/res
-)
-
-if(MSVC)
-	add_custom_command(
-	        TARGET ${PROJECT_NAME} POST_BUILD
-	        COMMAND ${CMAKE_COMMAND} -E copy_directory
-	                ${CMAKE_SOURCE_DIR}/Sandbox/res
-	                ${CMAKE_BINARY_DIR}/Sandbox/$<CONFIG>/res
-	)
-endif()
-add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/Sandbox/res
-                ${CMAKE_BINARY_DIR}/Sandbox/res
-)
