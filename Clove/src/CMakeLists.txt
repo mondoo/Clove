@@ -9,7 +9,6 @@ set(
 	CloveFiles
 		Clove.hpp
 		Clove/Core.hpp
-		Clove/EntryPoint.hpp
 		Clove/IntTypes.hpp
 		Clove/Layer.hpp
 		Clove/Layer.cpp
@@ -335,6 +334,13 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 			Platform/Linux/LinuxWindow.hpp
 			Platform/Linux/LinuxWindow.cpp
 	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	set(
+		PlatformFiles
+			Platform/Mac/CloveMac.h
+			Platform/Mac/MacWindow.hpp
+			Platform/Mac/MacWindow.mm
+	)
 endif()
 
 #Organise the source tree
@@ -376,6 +382,10 @@ target_include_directories(
 )
 
 #Libraries
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	find_library(COCOA_LIB Cocoa)
+endif()
+
 target_link_libraries(
 	${PROJECT_NAME}
     #Cross platform
@@ -400,6 +410,9 @@ target_link_libraries(
 		$<$<PLATFORM_ID:Linux>:GLX>
 		$<$<PLATFORM_ID:Linux>:X11>
 		$<$<PLATFORM_ID:Linux>:dl>
+	#MacOS
+	PRIVATE
+		$<$<PLATFORM_ID:Darwin>:${COCOA_LIB}>
 )
 
 #Precompiled header
@@ -452,6 +465,7 @@ target_compile_definitions(
 	PUBLIC
 		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
 		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
+		CLV_PLATFORM_MACOS=$<PLATFORM_ID:Darwin>
 	#Engine
 	INTERFACE
 		CLV_ENGINE=0
