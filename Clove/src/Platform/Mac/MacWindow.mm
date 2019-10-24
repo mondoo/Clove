@@ -21,19 +21,66 @@ namespace clv {
 	}
 	
 	void MacWindow::processInput(){
-		[window isVisible];
-		
 		//TODO: Process input events (here or with a window delegate)
 		NSEvent* event;
-		do {
+		do{
 			event = [NSApp nextEventMatchingMask:NSEventMaskAny
 									   untilDate:nil
 										  inMode:NSDefaultRunLoopMode
 										 dequeue:YES];
 			
-			switch ([event type]) {
+			switch ([event type]){
+				//TODO: Close
+				
+				case NSEventTypeKeyDown:
+					keyboard.onKeyPressed(static_cast<Key>([event keyCode]));
+					break;
+					
+				case NSEventTypeKeyUp:
+					keyboard.onKeyReleased(static_cast<Key>([event keyCode]));
+					break;
+					
+				//TODO: Char
+				
+				case NSEventTypeMouseEntered:
+					mouse.onMouseEnter();
+					break;
+					
+				case NSEventTypeMouseExited:
+					mouse.onMouseLeave();
+					break;
+					
+				case NSEventTypeLeftMouseDown:
+					//TODO mouse pos?:
+					break;
+					
+				case NSEventTypeLeftMouseUp:
+					//TODO mouse pos?:
+					break;
+					
+				case NSEventTypeRightMouseDown:
+					//TODO mouse pos?:
+					break;
+					
+				case NSEventTypeRightMouseUp:
+					//TODO mouse pos?:
+					break;
+					
+				case NSEventTypeOtherMouseDown:
+					//TODO mouse pos?:
+					break;
+					
+				case NSEventTypeOtherMouseUp:
+					//TODO mouse pos?:
+					break;
+					
+				case NSEventTypeScrollWheel:
+					//TODO:
+					break;
+					
 				default:
-				[NSApp sendEvent: event];
+					[NSApp sendEvent: event];
+					break;
 			}
 		} while (event != nil);
 	}
