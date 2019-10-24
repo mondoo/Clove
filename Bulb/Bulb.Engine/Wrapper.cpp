@@ -8,6 +8,10 @@
 #include <functional>
 #include <sstream>
 
+//Includes required when not using pch
+#include "Clove/Maths/MathsTypes.hpp"
+#include "Clove/Maths/Maths.hpp"
+#include "Clove/Maths/MathsHelpers.hpp"
 #include "Clove/Application.hpp"
 #include "Clove/IntTypes.hpp"
 #include "Clove/Platform/Window.hpp"
