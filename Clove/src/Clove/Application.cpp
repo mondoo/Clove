@@ -38,7 +38,10 @@ namespace clv{
 		prevFrameTime = std::chrono::system_clock::now();
 	}
 
-	Application::~Application() = default;
+	Application::~Application(){
+		gfx::Renderer::shutDown();
+		gfx::Renderer2D::shutDown();
+	}
 
 	void Application::update(){
 		auto currFrameTime = std::chrono::system_clock::now();
@@ -54,7 +57,7 @@ namespace clv{
 			layer->onUpdate(deltaSeonds.count());
 		}
 
-		gfx::RenderCommand::clear();
+			gfx::Renderer::clearRenderTargets();
 
 		gfx::Renderer::beginScene();
 		gfx::Renderer2D::beginScene();

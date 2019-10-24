@@ -18,7 +18,7 @@ namespace clv::gfx{
 		GL4RenderTarget& operator=(GL4RenderTarget&& other) noexcept;
 		virtual ~GL4RenderTarget();
 
-		GL4RenderTarget(Texture& texture);
+		GL4RenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
 
 		const uint32 getRenderID() const;
 	};

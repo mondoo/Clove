@@ -12,6 +12,7 @@ namespace clv::gfx{
 	enum class ShaderType{
 		Vertex,
 		Pixel,
+		Geometry
 	};
 
 	enum class ShaderStyle{ //TODO: Rename to material style
@@ -19,12 +20,19 @@ namespace clv::gfx{
 		Unlit,
 		_2D,
 		RT,
-		Font
+		Font,
+		CubeShadowMap
+	};
+
+	enum class TextureStyle{
+		Default,
+		Cubemap
 	};
 
 	enum class TextureUsage{
 		Default,
-		RenderTarget,
+		RenderTarget_Colour,
+		RenderTarget_Depth,
 		Font
 	};
 
@@ -33,5 +41,12 @@ namespace clv::gfx{
 		position3D,
 		texture2D,
 		normal,
+	};
+
+	struct TextureDescriptor{
+		TextureStyle style = TextureStyle::Default;
+		TextureUsage usage = TextureUsage::Default;
+		math::Vector<2, uint32, math::qualifier::defaultp> dimensions = { 0, 0 };
+		uint8 arraySize = 1;
 	};
 }

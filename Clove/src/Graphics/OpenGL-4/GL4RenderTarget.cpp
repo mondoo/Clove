@@ -14,23 +14,46 @@ namespace clv::gfx{
 		glDeleteRenderbuffers(1, &renderBufferID);
 	}
 
-	GL4RenderTarget::GL4RenderTarget(Texture& texture){
+	GL4RenderTarget::GL4RenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
 		glGenFramebuffers(1, &renderID);
 		glBindFramebuffer(GL_FRAMEBUFFER, renderID);
 
-		GL4Texture& glTexture = static_cast<GL4Texture&>(texture);
-		const uint32 textureRenderID = glTexture.getRenderID();
+		CLV_ASSERT(colourTexture != nullptr || depthStencilTexture != nullptr, "{0}: Render target needs at least one valid texture", CLV_FUNCTION_NAME);
 
-		CLV_ASSERT(glTexture.getUsageType() == TextureUsage::RenderTarget, "Incorrect texture type");
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureRenderID, 0);
+		//Colour buffer
+		if(colourTexture){
+			CLV_ASSERT(colourTexture->getUsageType() == TextureUsage::RenderTarget_Colour, "Incorrect texture type for colour texture");
+			
+			GL4Texture* glColourTexture = static_cast<GL4Texture*>(colourTexture);
+			const uint32 textureRenderID = glColourTexture->getRenderID();
+			
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureRenderID, 0);
+		} else{
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
+		}
 
-		//Setting up the depth buffer manually for GL render targets for now
-		glGenRenderbuffers(1, &renderBufferID);
-		glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, glTexture.getWidth(), glTexture.getHeight());
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		//Depth / Stencil buffer
+		if(depthStencilTexture){
+			//NOTE: Asserting here but this will need to change when adding stencil buffers
+			CLV_ASSERT(depthStencilTexture->getUsageType() == TextureUsage::RenderTarget_Depth, "Incorrect texture type for depth stencil texture");
 
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderBufferID);
+			GL4Texture* gldepthStencilTexture = static_cast<GL4Texture*>(depthStencilTexture);
+			const uint32 textureRenderID = gldepthStencilTexture->getRenderID();
+
+			if(depthStencilTexture->getTextureStyle() == TextureStyle::Default){
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureRenderID, 0);
+			} else if(depthStencilTexture->getTextureStyle() == TextureStyle::Cubemap){
+				glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureRenderID, 0);
+			}
+		} else{
+			glGenRenderbuffers(1, &renderBufferID);
+			glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, colourTexture->getWidth(), colourTexture->getHeight());
+			glBindRenderbuffer(GL_RENDERBUFFER, 0);
+			
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderBufferID);
+		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}

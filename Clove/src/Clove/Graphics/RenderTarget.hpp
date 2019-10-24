@@ -13,6 +13,6 @@ namespace clv::gfx{
 		RenderTarget& operator=(RenderTarget&& other) noexcept;
 		virtual ~RenderTarget();
 
-		static std::shared_ptr<RenderTarget> createRenderTarget(Texture& writeTexture);
+		static std::shared_ptr<RenderTarget> createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
 	};
 }

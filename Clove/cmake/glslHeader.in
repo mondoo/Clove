@@ -1,0 +1,5 @@
+//cmake generated header file
+
+static const std::string shader_@STRING_NAME@ = R"(
+@FILE_CONTENTS@
+)";
