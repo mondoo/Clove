@@ -17,8 +17,7 @@ namespace clv {
     }
 	
 	void* MacWindow::getNativeWindow() const{
-		//TODO
-		return nullptr;
+		return window;
 	}
 	
 	void MacWindow::processInput(){
@@ -54,6 +53,9 @@ namespace clv {
 		[window setBackgroundColor:NSColor.redColor];
 		[window setTitle:[NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]]];
 		[window makeKeyAndOrderFront:nil];
+		
+		//Pack data and send to context
+		
 	}
 
     Window* Window::create(const WindowProps& props){
