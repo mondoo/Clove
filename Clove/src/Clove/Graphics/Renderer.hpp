@@ -18,7 +18,7 @@ namespace clv::gfx{
 		static void initialise();
 		static void shutDown();
 
-		static void beginScene(); //How would I begin scene with the ecs?
+		static void beginScene();
 		static void endScene();
 
 		static void setRenderTarget(const std::shared_ptr<RenderTarget>& inRenderTarget);
