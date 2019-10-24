@@ -17,15 +17,17 @@ namespace clv{
 	Application::Application(){
 		initialise(std::unique_ptr<Window>(Window::create()));
 	}
-
-	Application::~Application(){
-		CLV_LOG_INFO("Clove shutting down...");
+    
+    Application::~Application(){
+        CLV_LOG_INFO("Clove shutting down...");
+		gfx::Renderer::shutDown();
+		gfx::Renderer2D::shutDown();
 	}
-
+    
 	Application::Application(std::unique_ptr<Window>&& window){
 		initialise(std::move(window));
 	}
-
+    
 	void Application::run(){
 		while(running){
 			auto currFrameTime = std::chrono::system_clock::now();
@@ -41,7 +43,7 @@ namespace clv{
 				layer->onUpdate(deltaSeonds.count());
 			}
 
-			gfx::RenderCommand::clear();
+			gfx::Renderer::clearRenderTargets();
 
 			gfx::Renderer::beginScene();
 			gfx::Renderer2D::beginScene();

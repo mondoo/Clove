@@ -1,15 +1,14 @@
 #version 460 core
 
+#define MAX_LIGHTS 10
+
 in vec2 vertTexCoord;
 in vec3 vertPos;
 in vec3 vertNormal;
 
 layout(binding = 1) uniform sampler2D albedoSampler;
 layout(binding = 2) uniform sampler2D specularSampler;
-
-layout(std140, binding = 4) uniform Material{
-	float shininess;
-};
+layout(binding = 3) uniform samplerCubeArray shadowDepthMap;
 
 struct DirectionalLight{
 	vec3 direction;
@@ -21,14 +20,12 @@ struct DirectionalLight{
 
 struct PointLight{
 	vec3 position;
-   
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-
 	float constant;
+    vec3 ambient;
     float linear;
+    vec3 diffuse;
     float quadratic; 
+    vec3 specular;
 };
 
 struct SpotLight{
@@ -44,19 +41,36 @@ struct SpotLight{
 };
 
 layout (std140, binding = 1) uniform PointLightData{
-	int numLights;
-	PointLight lights[10]; //10 max for now
+	PointLight lights[MAX_LIGHTS];
 };
 
 layout (std140, binding = 2) uniform ViewData{
 	vec3 viewPos;
 };
 
+layout(std140, binding = 4) uniform Material{
+	float shininess;
+};
+
+struct LightPos{
+	vec3 lightPosition;
+	float farPlane;
+};
+layout(std140, binding = 7) uniform lightPosBuffer {
+	LightPos lightPositions[MAX_LIGHTS];
+};
+
+layout(std140, binding = 8) uniform numLightBuffer{
+	unsigned int numLights;
+};
+
 layout(location = 0) out vec4 fragmentColour;
 
-vec3 CalculateDirectionalLighting(DirectionalLight light, vec3 normal, vec3 viewDirection);
+//vec3 CalculateDirectionalLighting(DirectionalLight light, vec3 normal, vec3 viewDirection);
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDirection);
 //vec3 CalculateSpotLight(SpotLight light,  vec3 normal, vec3 fragPos, vec3 viewDirection);
+
+float shadowCalculation(vec3 fragPos, unsigned int shadowIndex);
 
 void main(){
 	vec3 fragNorm		= normalize(vertNormal);
@@ -68,30 +82,30 @@ void main(){
 //		lighting += CalculateDirectionalLighting(directionLights[i], fragNorm, viewDir);
 //	}
 
-	for(int i = 0; i < numLights; i++){
+	for(unsigned int i = 0; i < numLights; i++){
 		lighting += CalculatePointLight(lights[i], fragNorm, vertPos, viewDir);
 	}
 
 	fragmentColour = vec4(lighting, 1.0);
 };
 
-vec3 CalculateDirectionalLighting(DirectionalLight light, vec3 normal, vec3 viewDirection){
-	vec3 lightDir			= normalize(-light.direction); //vec pointing away from light source
-
-	//Ambient
-	vec3 ambient			= light.ambient * vec3(texture(albedoSampler, vertTexCoord));
-	
-	//Diffuse
-	float diff				= max(dot(normal, lightDir), 0.0);
-	vec3 diffuse			= light.diffuse * diff * vec3(texture(albedoSampler, vertTexCoord));
-
-	//Specular
-	vec3 reflectDirection	= reflect(-lightDir, normal);
-	float spec				= pow(max(dot(viewDirection, reflectDirection), 0.0), shininess);
-	vec3 specular			= light.specular * spec * vec3(texture(specularSampler, vertTexCoord));
-
-	return (ambient + diffuse + specular);
-}
+//vec3 CalculateDirectionalLighting(DirectionalLight light, vec3 normal, vec3 viewDirection){
+//	vec3 lightDir			= normalize(-light.direction); //vec pointing away from light source
+//
+//	//Ambient
+//	vec3 ambient			= light.ambient * vec3(texture(albedoSampler, vertTexCoord));
+//	
+//	//Diffuse
+//	float diff				= max(dot(normal, lightDir), 0.0);
+//	vec3 diffuse			= light.diffuse * diff * vec3(texture(albedoSampler, vertTexCoord));
+//
+//	//Specular
+//	vec3 reflectDirection	= reflect(-lightDir, normal);
+//	float spec				= pow(max(dot(viewDirection, reflectDirection), 0.0), shininess);
+//	vec3 specular			= light.specular * spec * vec3(texture(specularSampler, vertTexCoord));
+//
+//	return (ambient + diffuse + specular);
+//}
 
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDirection){
 	vec3 lightDir			= normalize(light.position - fragPos); //vec pointing towards light source
@@ -116,7 +130,14 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     diffuse  *= attenuation;
     specular *= attenuation;
 
-	return (ambient + diffuse + specular);
+	//Shadow
+	float shadow = 0.0f;
+	for(unsigned int i = 0; i < numLights; i++){
+		shadow += 1.0f - shadowCalculation(fragPos, i);
+	}
+	shadow /= numLights;
+
+	return (ambient + (shadow * (diffuse + specular)));
 }
 
 //vec3 CalculateSpotLight(SpotLight light,  vec3 normal, vec3 fragPos, vec3 viewDirection){
@@ -144,3 +165,37 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 //
 //	return (ambient + diffuse + specular);
 //}
+
+float shadowCalculation(vec3 fragPos, unsigned int shadowIndex){
+	vec3 shadowSampleOffsetDirections[20] = vec3[](
+		vec3(1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), (-1, 1,  1),
+		vec3(1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), (-1, 1, -1),
+		vec3(1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), (-1, 1,  0),
+		vec3(1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), (-1, 0, -1),
+		vec3(0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), ( 0, 1, -1)
+	); //OpenGL doesn't like this being const
+
+	const float farPlane = lightPositions[shadowIndex].farPlane;
+	
+	vec3 fragToLight = fragPos - lightPositions[shadowIndex].lightPosition;
+	float currentDepth = length(fragToLight);
+
+	float shadow = 0.0f;
+	const float bias = 0.15f;
+	const int samples = 20;
+	const float viewDistance = length(viewPos - fragPos);
+	const float diskRadius = (1.0f + (viewDistance / farPlane)) / 25.0f;  //25 being the max far plane of the light  
+	
+	for(int i = 0; i < samples; ++i){
+		const vec3 sampleLocation = fragToLight + shadowSampleOffsetDirections[i] * diskRadius;
+		float closestDepth = texture(shadowDepthMap, vec4(sampleLocation, shadowIndex)).r;
+		closestDepth *= farPlane;
+		if((currentDepth - bias) > closestDepth){
+			shadow += 1.0f;
+		}
+	}
+
+	shadow /= float(samples);
+
+	return shadow;
+}

@@ -8,7 +8,8 @@ namespace clv::gfx{
 	enum TextureBindingPoint{
 		TBP_Albedo		= 1u,
 		TBP_Specular	= 2u,
-		TBP_None        = 3u
+		TBP_Shadow		= 3u,
+		TBP_None        = 4u
 	};
 
 	class Texture : public Bindable{
@@ -21,10 +22,11 @@ namespace clv::gfx{
 		Texture& operator=(Texture&& other) noexcept;
 		virtual ~Texture();
 
-		virtual int32 getWidth() const = 0;
-		virtual int32 getHeight() const = 0;
+		virtual uint32 getWidth() const = 0;
+		virtual uint32 getHeight() const = 0;
 
 		virtual TextureBindingPoint getBindingPoint() const = 0;
 		virtual TextureUsage getUsageType() const = 0;
+		virtual TextureStyle getTextureStyle() const = 0;
 	};
 }

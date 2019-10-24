@@ -1,6 +1,7 @@
 #include "GL4Shader.hpp"
 
 #include "Clove/Application.hpp"
+#include "Graphics/OpenGL-4/ShaderStrings.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -49,54 +50,49 @@ namespace clv::gfx{
 	void GL4Shader::initialise(ShaderStyle style){
 		uint32 vertexID = 0;
 		uint32 pixelID = 0;
+		uint32 geometryID = 0;
 		
 		switch(style){
 			case ShaderStyle::Lit:
 				{
-					std::string vertexSource = parseShader("Lit-vs.glsl");
-					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
-
-					std::string pixelSource = parseShader("Lit-ps.glsl");
-					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_Lit_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_Lit_ps);
 				}
 				break;
+
 			case ShaderStyle::Unlit:
 				{
-					std::string vertexSource = parseShader("Unlit-vs.glsl");
-					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
-
-					std::string pixelSource = parseShader("Unlit-ps.glsl");
-					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_Unlit_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_Unlit_ps);
 				}
 				break;
 
 			case ShaderStyle::_2D:
 				{
-					std::string vertexSource = parseShader("2D-vs.glsl");
-					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
-
-					std::string pixelSource = parseShader("2D-ps.glsl");
-					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_2D_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_2D_ps);
 				}
 				break;
 
 			case ShaderStyle::RT:
 				{
-					std::string vertexSource = parseShader("RT-vs.glsl");
-					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
-
-					std::string pixelSource = parseShader("RT-ps.glsl");
-					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_RT_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_RT_ps);
 				}
 				break;
 
 			case ShaderStyle::Font:
 				{
-					std::string vertexSource = parseShader("Font-vs.glsl");
-					vertexID = compileShader(GL_VERTEX_SHADER, vertexSource);
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_Font_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_Font_ps);
+				}
+				break;
 
-					std::string pixelSource = parseShader("Font-ps.glsl");
-					pixelID = compileShader(GL_FRAGMENT_SHADER, pixelSource);
+			case ShaderStyle::CubeShadowMap:
+				{
+					vertexID = compileShader(GL_VERTEX_SHADER, shader_CubeShadowMap_vs);
+					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_CubeShadowMap_ps);
+					geometryID = compileShader(GL_GEOMETRY_SHADER, shader_CubeShadowMap_gs);
 				}
 				break;
 
@@ -107,27 +103,11 @@ namespace clv::gfx{
 
 		CLV_ASSERT(vertexID != 0 && pixelID != 0, "Pixel or vertex shader not set!");
 
-		glAttachShader(programID, vertexID);
-		glLinkProgram(programID);
-		glValidateProgram(programID);
-		glDeleteShader(vertexID);
-
-		glAttachShader(programID, pixelID);
-		glLinkProgram(programID);
-		glValidateProgram(programID);
-		glDeleteShader(pixelID);
-	}
-
-	std::string GL4Shader::parseShader(const std::string& filepath){
-		std::ifstream stream(filepath);
-
-		std::string line;
-		std::stringstream ss;
-		while(getline(stream, line)){
-			ss << line << '\n';
+		attachAndLinkShader(vertexID);
+		attachAndLinkShader(pixelID);
+		if(geometryID != 0){
+			attachAndLinkShader(geometryID);
 		}
-
-		return ss.str();
 	}
 
 	uint32 GL4Shader::compileShader(uint32 type, const std::string& source){
@@ -143,11 +123,32 @@ namespace clv::gfx{
 			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 			char* message = new char[length];
 			glGetShaderInfoLog(id, length, &length, message);
-			CLV_LOG_ERROR("Failed to compile {0} shader! {1}", type == GL_VERTEX_SHADER ? "vertex" : "fragment", message);
+			CLV_LOG_ERROR("Failed to compile {0} shader! {1}", getStringFromShaderType(type), message);
 			glDeleteShader(id);
 			delete[] message;
 		}
 
 		return id;
+	}
+
+	void GL4Shader::attachAndLinkShader(uint32 shaderID){
+		glAttachShader(programID, shaderID);
+		glLinkProgram(programID);
+		glValidateProgram(programID);
+		glDeleteShader(shaderID);
+	}
+
+	std::string GL4Shader::getStringFromShaderType(GLuint glShaderType){
+		switch(glShaderType){
+			case GL_VERTEX_SHADER:
+				return "vertex";
+			case GL_FRAGMENT_SHADER:
+				return "pixel";
+			case GL_GEOMETRY_SHADER:
+				return "geometry";
+			default:
+				CLV_ASSERT(false, "Uknown type in {0}", CLV_FUNCTION_NAME);
+				return "unkown";
+		}
 	}
 }

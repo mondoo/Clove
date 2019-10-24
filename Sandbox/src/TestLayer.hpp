@@ -13,6 +13,8 @@ private:
 	clv::ecs::Entity ent2;
 	clv::ecs::Entity ent3;
 
+	clv::ecs::Entity bigBoy;
+
 	clv::ecs::Entity rtEnt;
 
 	clv::ecs::Entity sprtEnt1;
@@ -26,12 +28,16 @@ private:
 	clv::ecs::Entity sound;
 
 	clv::ecs::Entity fontEnt;
+	clv::ecs::Entity fpsEnt;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
 	int32_t lastMouseX = 0;
 	int lastMouseY = 0;
+
+	clv::uint64 countedFrames = 0;
+	double secondsPassed = 0.0;
 
 	//FUNCTIONS
 public:

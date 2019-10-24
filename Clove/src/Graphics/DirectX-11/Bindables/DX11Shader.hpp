@@ -7,6 +7,7 @@
 
 struct ID3D11VertexShader;
 struct ID3D11PixelShader;
+struct ID3D11GeometryShader;
 
 namespace clv::gfx{
 	class Renderer;
@@ -55,14 +56,17 @@ namespace clv::gfx{
 		DX11ShaderElement& operator=(DX11ShaderElement&& other) noexcept;
 		virtual ~DX11ShaderElement();
 
-		virtual ID3DBlob* getByteCode() const = 0;
+		virtual const BYTE* getBytePointer() const = 0;
+		virtual SIZE_T getByteSize() const = 0;
 	};
 
 	class DX11VertexShader : public DX11ShaderElement{
 		//VARIABLES
 	private:
 		Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
-		Microsoft::WRL::ComPtr<ID3DBlob> byteCode;
+		
+		const BYTE* shaderByteData;
+		SIZE_T shaderByteSize;
 
 		//FUNCTIONS
 	public:
@@ -73,18 +77,21 @@ namespace clv::gfx{
 		DX11VertexShader& operator=(DX11VertexShader&& other) noexcept;
 		~DX11VertexShader();
 
-		DX11VertexShader(const std::wstring& path);
+		DX11VertexShader(const BYTE* shaderByteData, SIZE_T shaderByteSize);
 
 		virtual void bind() override;
 
-		virtual ID3DBlob* getByteCode() const override;
+		virtual const BYTE* getBytePointer() const override;
+		virtual SIZE_T getByteSize() const override;
 	};
 
 	class DX11PixelShader : public DX11ShaderElement{
 		//VARIABLES
 	private:
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
-		Microsoft::WRL::ComPtr<ID3DBlob> byteCode;
+
+		const BYTE* shaderByteData;
+		SIZE_T shaderByteSize;
 
 		//FUNCTIONS
 	public:
@@ -95,10 +102,36 @@ namespace clv::gfx{
 		DX11PixelShader& operator=(DX11PixelShader&& other) noexcept;
 		~DX11PixelShader();
 
-		DX11PixelShader(const std::wstring& path);
+		DX11PixelShader(const BYTE* shaderByteData, SIZE_T shaderByteSize);
 
 		virtual void bind() override;
 
-		virtual ID3DBlob* getByteCode() const override;
+		virtual const BYTE* getBytePointer() const override;
+		virtual SIZE_T getByteSize() const override;
+	};
+
+	class DX11GeometryShader : public DX11ShaderElement{
+		//VARIABLES
+	private:
+		Microsoft::WRL::ComPtr<ID3D11GeometryShader> geometryShader;
+		
+		const BYTE* shaderByteData;
+		SIZE_T shaderByteSize;
+
+		//FUNCTIONS
+	public:
+		DX11GeometryShader() = delete;
+		DX11GeometryShader(const DX11GeometryShader& other) = delete;
+		DX11GeometryShader(DX11GeometryShader&& other) noexcept;
+		DX11GeometryShader& operator=(const DX11GeometryShader& other) = delete;
+		DX11GeometryShader& operator=(DX11GeometryShader&& other) noexcept;
+		~DX11GeometryShader();
+
+		DX11GeometryShader(const BYTE* shaderByteData, SIZE_T shaderByteSize);
+
+		virtual void bind() override;
+
+		virtual const BYTE* getBytePointer() const override;
+		virtual SIZE_T getByteSize() const override;
 	};
 }

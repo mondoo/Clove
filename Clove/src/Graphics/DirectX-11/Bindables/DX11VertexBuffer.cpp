@@ -62,8 +62,8 @@ namespace clv::gfx{
 		DX11_THROW_INFO(DX11RenderAPI::getDevice().CreateInputLayout(
 			dxElements.data(),
 			static_cast<UINT>(dxElements.size()),
-			dxshader->getVertexShader().getByteCode()->GetBufferPointer(),
-			dxshader->getVertexShader().getByteCode()->GetBufferSize(),
+			dxshader->getVertexShader().getBytePointer(),
+			dxshader->getVertexShader().getByteSize(),
 			&inputLayout
 		));
 	}
