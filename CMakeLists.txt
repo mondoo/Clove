@@ -25,7 +25,7 @@ endif()
 
 #Set custom build types
 set(CMAKE_CONFIGURATION_TYPES Debug Development Profiling Release)
-set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Custom Clove configuration types" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Custom Garlic configuration types" FORCE)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${debug_flags}")
 set(CMAKE_C_FLAGS_DEBUG "${debug_flags}")
