@@ -62,18 +62,19 @@ set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #-custom
 option(GAR_BUILD_SANDBOX "Build the Sandbox project used for testing" ON)
+option(GAR_BUILD_BULB "Build the Bulb editor" ON)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #Clove
 add_subdirectory(Clove)
 
+#Builb
+if(MSVC AND GAR_BUILD_BULB) #not currently supported without MSVC
+	add_subdirectory(Bulb)
+endif()
+
 #Sandbox
 if(GAR_BUILD_SANDBOX)
 	add_subdirectory(Sandbox)
-endif()
-
-#Editor
-if(MSVC) #not currently supported without MSVC
-	add_subdirectory(Bulb)
 endif()
