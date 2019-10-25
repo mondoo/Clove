@@ -57,7 +57,7 @@ namespace clv{
 			layer->onUpdate(deltaSeonds.count());
 		}
 
-			gfx::Renderer::clearRenderTargets();
+		gfx::Renderer::clearRenderTargets();
 
 		gfx::Renderer::beginScene();
 		gfx::Renderer2D::beginScene();
