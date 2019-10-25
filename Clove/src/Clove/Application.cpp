@@ -1,5 +1,6 @@
 #include "Application.hpp"
 
+#include "Clove/Platform/Platform.hpp"
 #include "Clove/Platform/Window.hpp"
 #include "Clove/Input/Input.hpp"
 #include "Clove/LayerStack.hpp"
@@ -20,7 +21,7 @@ namespace clv{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		window = std::unique_ptr<Window>(Window::create());
+		window = clv::plt::createWindow();
 		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
 		window->setVSync(true);
 
@@ -90,7 +91,7 @@ namespace clv{
 		return *instance;
 	}
 
-	Window& Application::getWindow(){
+	plt::Window& Application::getWindow(){
 		return *window;
 	}
 

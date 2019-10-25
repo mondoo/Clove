@@ -6,7 +6,7 @@
 
 #define CLV_WINDOWS_QUIT 25397841 //Note: this number is completely random
 
-namespace clv{
+namespace clv::plt{
 	struct WindowsData{
 		HWND handle;
 		uint32 width;

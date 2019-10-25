@@ -123,6 +123,8 @@ set(
 		Clove/Maths/Matrix.hpp
 		Clove/Maths/Quaternion.hpp
 		Clove/Maths/Vector.hpp
+		Clove/Platform/Platform.hpp
+		Clove/Platform/PlatformTypes.hpp
 		Clove/Platform/Window.hpp
 		Clove/Platform/Window.cpp
 		Clove/Profiling/Timer.hpp
@@ -322,10 +324,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		PlatformFiles
 			Platform/Windows/CloveWindows.hpp
-			Platform/Windows/WindowsWindow.hpp
-			Platform/Windows/WindowsWindow.cpp
 			Platform/Windows/WindowsException.hpp
 			Platform/Windows/WindowsException.cpp
+			Platform/Windows/WindowsPlatform.cpp
+			Platform/Windows/WindowsWindow.hpp
+			Platform/Windows/WindowsWindow.cpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(

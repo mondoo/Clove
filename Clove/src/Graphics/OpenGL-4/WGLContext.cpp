@@ -15,7 +15,7 @@ namespace clv::gfx{
 	}
 
 	WGLContext::WGLContext(void* windowData){
-		windowsHandle = reinterpret_cast<WindowsData*>(windowData)->handle;
+		windowsHandle = reinterpret_cast<plt::WindowsData*>(windowData)->handle;
 
 		windowsDeviceContext = GetDC(windowsHandle);
 

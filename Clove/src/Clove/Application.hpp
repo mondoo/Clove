@@ -4,8 +4,11 @@ namespace clv::ecs{
 	class Manager;
 }
 
-namespace clv{
+namespace clv::plt{
 	class Window;
+}
+
+namespace clv{
 	class LayerStack;
 	class Layer;
 	class ImGuiLayer;
@@ -18,7 +21,7 @@ namespace clv{
 	class Application{
 		//VARIABLES
 	private:
-		std::unique_ptr<Window> window;
+		std::unique_ptr<plt::Window> window;
 		std::unique_ptr<ecs::Manager> ecsManager;
 
 		ApplicationState currentState = ApplicationState::running;
@@ -44,7 +47,7 @@ namespace clv{
 
 		static Application& get();
 		
-		Window& getWindow();
+		plt::Window& getWindow();
 		ecs::Manager& getManager();
 
 	private:
