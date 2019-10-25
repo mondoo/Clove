@@ -2,7 +2,7 @@
 
 #include "Clove/Platform/Window.hpp"
 
-namespace clv{
+namespace clv::plt{
     class MacWindow : public Window{
         //VARIABLES
     private:

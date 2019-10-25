@@ -1,11 +1,10 @@
 #import "Platform/Mac/CloveMac.h"
 #import "MacWindow.hpp"
 
-#import <AppKit/AppKit.h>
-
 #import "Clove/Graphics/Renderer.hpp"
+#import "Clove/Graphics/Context.hpp"
 
-namespace clv {
+namespace clv::plt{
 	MacWindow::~MacWindow(){
 		//[window release];
 	}
@@ -121,14 +120,5 @@ namespace clv {
 		[window makeKeyAndOrderFront:nil];
 		
 		//Pack data and send to context
-		
 	}
-
-    Window* Window::create(const WindowProps& props){
-        return new MacWindow(props);
-    }
-
-    Window* Window::create(const WindowProps& props, gfx::API api){
-        return new MacWindow(props, api);
-    }
 }
