@@ -1,6 +1,8 @@
 #import "Platform/Mac/CloveMac.h"
 #import "MacWindow.hpp"
 
+#import <AppKit/AppKit.h>
+
 #import "Clove/Graphics/Renderer.hpp"
 
 namespace clv {
@@ -29,6 +31,7 @@ namespace clv {
 										  inMode:NSDefaultRunLoopMode
 										 dequeue:YES];
 			
+			math::Vector<2, int32, math::qualifier::defaultp> mouseLoc{ static_cast<int32>([NSEvent mouseLocation].x), static_cast<int32>([NSEvent mouseLocation].y) };
 			switch ([event type]){
 				//TODO: Close
 				
@@ -50,32 +53,48 @@ namespace clv {
 					mouse.onMouseLeave();
 					break;
 					
+				case NSEventTypeMouseMoved:
+					mouse.onMouseMove(mouseLoc.x, mouseLoc.y);
+					break;
+					
 				case NSEventTypeLeftMouseDown:
-					//TODO mouse pos?:
+					mouse.onButtonPressed(MouseButton::_1, mouseLoc.x, mouseLoc.y);
 					break;
 					
 				case NSEventTypeLeftMouseUp:
-					//TODO mouse pos?:
+					mouse.onButtonReleased(MouseButton::_1, mouseLoc.x, mouseLoc.y);
 					break;
 					
 				case NSEventTypeRightMouseDown:
-					//TODO mouse pos?:
+					mouse.onButtonPressed(MouseButton::_2, mouseLoc.x, mouseLoc.y);
 					break;
 					
 				case NSEventTypeRightMouseUp:
-					//TODO mouse pos?:
+					mouse.onButtonReleased(MouseButton::_2, mouseLoc.x, mouseLoc.y);
 					break;
 					
 				case NSEventTypeOtherMouseDown:
-					//TODO mouse pos?:
+					if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_3)) != 0){
+						mouse.onButtonPressed(MouseButton::_3, mouseLoc.x, mouseLoc.y);
+					}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_4)) != 0){
+						mouse.onButtonPressed(MouseButton::_4, mouseLoc.x, mouseLoc.y);
+					}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_5)) != 0){
+						mouse.onButtonPressed(MouseButton::_5, mouseLoc.x, mouseLoc.y);
+					}
 					break;
 					
 				case NSEventTypeOtherMouseUp:
-					//TODO mouse pos?:
+					if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_3)) != 0){
+						mouse.onButtonReleased(MouseButton::_3, mouseLoc.x, mouseLoc.y);
+					}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_4)) != 0){
+						mouse.onButtonReleased(MouseButton::_4, mouseLoc.x, mouseLoc.y);
+					}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_5)) != 0){
+						mouse.onButtonReleased(MouseButton::_5, mouseLoc.x, mouseLoc.y);
+					}
 					break;
 					
 				case NSEventTypeScrollWheel:
-					//TODO:
+					mouse.onWheelDelta(static_cast<int32>([event scrollingDeltaY]), mouseLoc.x, mouseLoc.y);
 					break;
 					
 				default:
