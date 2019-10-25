@@ -15,7 +15,7 @@ namespace clv{
 	}
 
 	bool Mouse::Event::isValid() const{
-		return type != Type::Invalid;
+		return type != Type::Invalid && button > MouseButton::Undefined;
 	}
 
 	std::pair<int32, int32> Mouse::Event::getPos() const{
