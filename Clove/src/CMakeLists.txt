@@ -334,6 +334,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
 		PlatformFiles
 			Platform/Linux/CloveLinux.hpp
+			Platform/Linux/LinuxPlatform.cpp
 			Platform/Linux/LinuxWindow.hpp
 			Platform/Linux/LinuxWindow.cpp
 	)
