@@ -39,11 +39,15 @@ set(CMAKE_C_FLAGS_PROFILING "${profiling_flags}")
 set(CMAKE_CXX_FLAGS_RELEASE "${release_flags}")
 set(CMAKE_C_FLAGS_RELEASE "${release_flags}")
 
-#default settings
+#Garlic settings
+#-defaults
 set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
 set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
+
+#-custom
+option(GAR_BUILD_SANDBOX "Build the Sandbox project used for testing" ON)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -51,4 +55,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory(Clove)
 
 #Sandbox
-add_subdirectory(Sandbox)
+if(GAR_BUILD_SANDBOX)
+	add_subdirectory(Sandbox)
+endif()
