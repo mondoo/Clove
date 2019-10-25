@@ -2,11 +2,14 @@
 
 #include "Clove/Platform/Window.hpp"
 
+#import "Platform/Mac/MacWindowDelegate.h"
+
 namespace clv::plt{
     class MacWindow : public Window{
         //VARIABLES
     private:
 		NSWindow* window;
+		MacWindowDelegate* delegate;
 			
         //FUNCTIONS
     public:
