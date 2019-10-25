@@ -16,12 +16,12 @@ namespace clv{
 	Application* Application::instance = nullptr;
 
 	Application::Application(){
-		clv::Log::init();
+		Log::init();
 
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		window = clv::plt::createWindow();
+		window = plt::Platform::createWindow();
 		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
 		window->setVSync(true);
 

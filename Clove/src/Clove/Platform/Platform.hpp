@@ -6,6 +6,10 @@
 namespace clv::plt{
 	class Window;
 
-	std::unique_ptr<Window> createWindow(const WindowProps& props = WindowProps());
-	std::unique_ptr<Window> createWindow(const WindowProps& props, gfx::API api);
+	class Platform{
+		//FUNCTIONS
+	public:
+		static std::unique_ptr<Window> createWindow(const WindowProps& props = WindowProps());
+		static std::unique_ptr<Window> createWindow(const WindowProps& props, gfx::API api);
+	};
 }
