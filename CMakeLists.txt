@@ -1,6 +1,6 @@
 #Root CMake list
 cmake_minimum_required(VERSION 3.16.0)
-project(Clove-Engine)
+project(Garlic)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -60,13 +60,18 @@ set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
 set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
+#-custom
+option(GAR_BUILD_SANDBOX "Build the Sandbox project used for testing" ON)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #Clove
 add_subdirectory(Clove)
 
 #Sandbox
-add_subdirectory(Sandbox)
+if(GAR_BUILD_SANDBOX)
+	add_subdirectory(Sandbox)
+endif()
 
 #Editor
 if(MSVC) #not currently supported without MSVC
