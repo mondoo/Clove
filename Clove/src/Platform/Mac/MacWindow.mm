@@ -108,17 +108,18 @@ namespace clv::plt{
 		windowProperties.height = props.height;
 		windowProperties.title = props.title;
 		
-		NSRect rect = NSMakeRect(100, 100, props.width, props.height);
-		NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
+		const NSRect rect = NSMakeRect(100, 100, props.width, props.height);
+		const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 		
 		window = [[NSWindow alloc] initWithContentRect:rect
 											 styleMask:styleMask
 											   backing:NSBackingStoreBuffered
 												 defer:NO];
+		
 		[window setBackgroundColor:NSColor.redColor];
 		[window setTitle:[NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]]];
 		[window makeKeyAndOrderFront:nil];
 		
-		//Pack data and send to context
+		//TODO: Pack data and send to context
 	}
 }
