@@ -8,17 +8,10 @@ file(
     src/*.cpp
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-	add_executable(
-		Sandbox MACOSX_BUNDLE
-		${sandbox_src}
-	)
-else()
-	add_executable(
-		Sandbox
-		${sandbox_src}
-	)
-endif()
+add_executable(
+	Sandbox
+	${sandbox_src}
+)
 
 target_include_directories(
 	Sandbox
