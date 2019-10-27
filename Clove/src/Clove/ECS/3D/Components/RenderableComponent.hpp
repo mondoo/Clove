@@ -16,9 +16,6 @@ namespace clv::ecs::d3{
 
 	private:
 		std::shared_ptr<gfx::Mesh> mesh; 
-		//shared ptr? then things can use the same mesh?
-		//unique_ptr? do we want to manage the mesh another way?
-		//textures can be stored in a material?
 
 		//FUNCTIONS
 	public:
