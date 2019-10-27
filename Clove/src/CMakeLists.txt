@@ -395,7 +395,8 @@ target_include_directories(
 
 #Libraries
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-	find_library(COCOA_LIB Cocoa)
+	find_library(CLV_COCOA_LIB Cocoa)
+	find_library(CLV_MACOS_OPENGL_LIB OpenGL)
 endif()
 
 target_link_libraries(
@@ -424,7 +425,8 @@ target_link_libraries(
 		$<$<PLATFORM_ID:Linux>:dl>
 	#MacOS
 	PRIVATE
-		$<$<PLATFORM_ID:Darwin>:${COCOA_LIB}>
+		$<$<PLATFORM_ID:Darwin>:${CLV_COCOA_LIB}>
+		$<$<PLATFORM_ID:Darwin>:${CLV_MACOS_OPENGL_LIB}>
 )
 
 #Precompiled header
@@ -478,6 +480,8 @@ target_compile_definitions(
 		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
 		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
 		CLV_PLATFORM_MACOS=$<PLATFORM_ID:Darwin>
+	PRIVATE
+		$<$<PLATFORM_ID:Darwin>:GL_SILENCE_DEPRECATION> #Silences the MacOS gl deprecation messages
 	#Engine
 	INTERFACE
 		CLV_ENGINE=0

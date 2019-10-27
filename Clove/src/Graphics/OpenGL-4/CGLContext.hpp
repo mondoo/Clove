@@ -2,10 +2,16 @@
 
 #include "Clove/Graphics/Context.hpp"
 
+#include <OpenGL/OpenGL.h>
+
 namespace clv::gfx{
 	class CGLContext : public Context{
 		//VARIABLES
 	private:
+		CGLContextObj contextObject = nullptr;
+		CGLPixelFormatObj pixelFormatObject = nullptr;
+		
+		GLint vsyncInt = 0;
 		
 		//FUNCTIONS
 	public:

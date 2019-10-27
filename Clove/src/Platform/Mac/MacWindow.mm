@@ -133,5 +133,8 @@ namespace clv::plt{
 															 height:props.height
 															   name:nameString];
 		windowProxy.cloveWindow = this;
+		
+		context = gfx::Context::createContext(nullptr, api);
+		context->makeCurrent();
 	}
 }
