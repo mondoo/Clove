@@ -175,6 +175,13 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 			Graphics/OpenGL-4/GLXContext.hpp
 			Graphics/OpenGL-4/GLXContext.cpp
 	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	set(
+		GraphicsFiles
+			${GraphicsFiles}
+			Graphics/OpenGL-4/CGLContext.hpp
+			Graphics/OpenGL-4/CGLContext.mm
+	)
 endif()
 
 #Files - Graphics | DirectX

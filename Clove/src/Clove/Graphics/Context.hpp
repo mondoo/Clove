@@ -6,7 +6,7 @@ namespace clv::gfx{
 	class Context{
 		//FUNCTIONS
 	public:
-		Context() = default;
+		Context();
 		Context(const Context& other) = delete;
 		Context(Context&& other) noexcept;
 		Context& operator=(const Context& other) = delete;
