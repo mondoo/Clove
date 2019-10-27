@@ -64,7 +64,7 @@ namespace clv::plt{
 						keyboard.onKeyReleased(static_cast<Key>([event keyCode]));
 						break;
 					
-					//TODO: Char
+					//TODO: Is there a char or key typed event?
 				
 					case NSEventTypeMouseEntered:
 						mouse.onMouseEnter();
