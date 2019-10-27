@@ -16,6 +16,8 @@ namespace clv::gfx{
 	}
 	
 	CGLContext::CGLContext(void* windowData){
+		CLV_LOG_WARN("Warning! Clove with OpenGL on macOS has been halted. This is due to the fact that macOS only supports up to OpenGL 4.1. Clove currently does not work on macOS");
+		
 		CGLPixelFormatAttribute formatAttribs[] = {
 			kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_GL4_Core,
 			kCGLPFADoubleBuffer,
