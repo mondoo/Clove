@@ -375,9 +375,6 @@ target_include_directories(
 	#Clove
 	PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
-	PRIVATE
-		Graphics
-		Platform	
 	#Libraries
 	PUBLIC
 		../vendor/OBJ-Loader/Source
