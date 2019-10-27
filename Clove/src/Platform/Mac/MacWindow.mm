@@ -13,8 +13,7 @@
 										 styleMask:styleMask
 										   backing:NSBackingStoreBuffered
 											 defer:NO];
-	
-	[_window setBackgroundColor:NSColor.redColor];
+
 	[_window setTitle:name];
 	[_window setDelegate:self];
 	[_window makeKeyAndOrderFront:nil];
