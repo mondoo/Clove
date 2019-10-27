@@ -101,11 +101,7 @@ namespace clv::plt{
 		}
 	}
 	
-	void MacWindow::initialiseWindow(const WindowProps& props, gfx::API api){
-		//Marked // could be moved into the platform
-		[NSApplication sharedApplication]; //
-		[NSApp finishLaunching]; //
-		
+	void MacWindow::initialiseWindow(const WindowProps& props, gfx::API api){		
 		windowProperties.width = props.width;
 		windowProperties.height = props.height;
 		windowProperties.title = props.title;
@@ -121,8 +117,5 @@ namespace clv::plt{
 		[window setBackgroundColor:NSColor.redColor];
 		[window setTitle:[NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]]];
 		[window makeKeyAndOrderFront:nil];
-		
-		//This makes it get treated like an app
-		[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 	}
 }

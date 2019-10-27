@@ -9,6 +9,8 @@ namespace clv::plt{
 	class Platform{
 		//FUNCTIONS
 	public:
+		static void prepare();
+		
 		static std::unique_ptr<Window> createWindow(const WindowProps& props = WindowProps());
 		static std::unique_ptr<Window> createWindow(const WindowProps& props, gfx::API api);
 	};

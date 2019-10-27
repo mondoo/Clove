@@ -20,6 +20,8 @@ namespace clv{
 
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
+		
+		plt::Platform::prepare();
 
 		window = plt::Platform::createWindow();
 		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
