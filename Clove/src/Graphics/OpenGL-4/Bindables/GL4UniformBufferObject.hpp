@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Bindables/ShaderBufferObject.hpp"
+#include "Core/Graphics/Bindables/ShaderBufferObject.hpp"
 
 namespace clv::gfx{
 	template<typename T>

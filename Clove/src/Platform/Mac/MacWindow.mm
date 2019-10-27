@@ -1,8 +1,8 @@
 #import "Platform/Mac/CloveMac.h"
 #import "MacWindow.hpp"
 
-#import "Clove/Graphics/Renderer.hpp"
-#import "Clove/Graphics/Context.hpp"
+#import "Core/Graphics/Renderer.hpp"
+#import "Core/Graphics/Context.hpp"
 
 @implementation MacWindowProxy
 - (instancetype)initWithWindowData:(unsigned int)width height:(unsigned int)height name:(NSString*)name{

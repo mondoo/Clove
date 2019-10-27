@@ -2,7 +2,7 @@
 
 #include "Platform/Windows/WindowsWindow.hpp"
 #include "Platform/Windows/WindowsException.hpp"
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Core/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{
 	WGLContext::WGLContext(WGLContext&& other) noexcept = default;

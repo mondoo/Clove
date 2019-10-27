@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Context.hpp"
+#include "Core/Graphics/Context.hpp"
 
 #include <GL/glx.h>
 

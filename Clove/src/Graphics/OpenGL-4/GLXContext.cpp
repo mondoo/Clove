@@ -1,7 +1,7 @@
 #include "GLXContext.hpp"
 
 #include "Platform/Linux/LinuxWindow.hpp"
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Core/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{
 	GLXContext::GLXContext(GLXContext&& other) = default;

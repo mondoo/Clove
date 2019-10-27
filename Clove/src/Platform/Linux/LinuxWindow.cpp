@@ -1,7 +1,7 @@
 #include "LinuxWindow.hpp"
 
-#include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Graphics/Context.hpp"
+#include "Core/Graphics/Renderer.hpp"
+#include "Core/Graphics/Context.hpp"
 
 namespace clv::plt{
 	LinuxWindow::~LinuxWindow(){

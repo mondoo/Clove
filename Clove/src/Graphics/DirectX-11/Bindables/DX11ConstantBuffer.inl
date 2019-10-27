@@ -1,5 +1,5 @@
-#include "Clove/Application.hpp"
-#include "Clove/Platform/Window.hpp"
+#include "Core/Application.hpp"
+#include "Core/Platform/Window.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
 #include "Graphics/DirectX-11/DX11RenderAPI.hpp"
 

@@ -2,7 +2,7 @@
 
 #include "Graphics/DirectX-11/DX11Exception.hpp"
 #include "Platform/Windows/WindowsWindow.hpp"
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Core/Graphics/GraphicsTypes.hpp"
 
 #include <d3d11.h>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Bindables/Texture.hpp"
+#include "Core/Graphics/Bindables/Texture.hpp"
 
 #include <wrl.h>
 #include <d3d11.h>

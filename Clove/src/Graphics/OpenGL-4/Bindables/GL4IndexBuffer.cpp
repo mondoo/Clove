@@ -1,6 +1,6 @@
 #include "GL4IndexBuffer.hpp"
 
-#include "Clove/Graphics/RenderCommand.hpp"
+#include "Core/Graphics/RenderCommand.hpp"
 
 #include <glad/glad.h>
 

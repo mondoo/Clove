@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Bindables/VertexBuffer.hpp"
+#include "Core/Graphics/Bindables/VertexBuffer.hpp"
 
 namespace clv::gfx{
 	class Shader;

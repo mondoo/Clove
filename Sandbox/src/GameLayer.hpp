@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Clove/Layer.hpp"
+#include "Core/Layer.hpp"
 
-#include "Clove/ECS/Entity.hpp"
+#include "Core/ECS/Entity.hpp"
 
 class GameLayer : public clv::Layer{
 	//VARAIBLES

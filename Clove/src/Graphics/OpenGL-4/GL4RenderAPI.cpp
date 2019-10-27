@@ -1,6 +1,6 @@
 #include "GL4RenderAPI.hpp"
 
-#include "Clove/Graphics/Context.hpp"
+#include "Core/Graphics/Context.hpp"
 #include "Graphics/OpenGL-4/GL4Exception.hpp"
 #include "Graphics/OpenGL-4/GL4RenderTarget.hpp"
 

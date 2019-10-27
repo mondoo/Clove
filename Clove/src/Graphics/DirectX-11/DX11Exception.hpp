@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Exception/CloveException.hpp"
+#include "Core/Exception/CloveException.hpp"
 
 namespace clv::gfx{
 	class DX11Exception : public CloveException{
