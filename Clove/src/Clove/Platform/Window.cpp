@@ -3,7 +3,7 @@
 #include "Clove/Graphics/Renderer.hpp"
 #include "Clove/Graphics/Context.hpp"
 
-namespace clv{
+namespace clv::plt{
 	Window::Window() = default;
 
 	Window::~Window() = default;

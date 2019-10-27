@@ -13,7 +13,7 @@ namespace clv::gfx{
 	}
 
 	GLXContext::GLXContext(void* windowData){
-		LinuxData* data = reinterpret_cast<LinuxData*>(windowData);
+		plt::LinuxData* data = reinterpret_cast<plt::LinuxData*>(windowData);
 		display = data->display;
 		window = data->window;
 

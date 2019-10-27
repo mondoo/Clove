@@ -17,6 +17,7 @@ Makefile
 *.project
 *.workspace
 *.mk
+*.DS_Store
 
 # temp
 *.ini

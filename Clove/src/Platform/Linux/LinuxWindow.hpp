@@ -2,7 +2,7 @@
 
 #include "Clove/Platform/Window.hpp"
 
-namespace clv{
+namespace clv::plt{
 	struct LinuxData{
 		Display* display = nullptr;
 		::Window* window;

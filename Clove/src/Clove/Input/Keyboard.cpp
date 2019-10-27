@@ -17,7 +17,7 @@ namespace clv{
 	}
 
 	bool Keyboard::Event::isValid() const{
-		return type != Type::Invalid;
+		return type != Type::Invalid && key > Key::Undefined;
 	}
 
 	Key Keyboard::Event::getKey() const{

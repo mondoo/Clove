@@ -9,7 +9,6 @@ set(
 	CloveFiles
 		Clove.hpp
 		Clove/Core.hpp
-		Clove/EntryPoint.hpp
 		Clove/IntTypes.hpp
 		Clove/Layer.hpp
 		Clove/Layer.cpp
@@ -124,6 +123,8 @@ set(
 		Clove/Maths/Matrix.hpp
 		Clove/Maths/Quaternion.hpp
 		Clove/Maths/Vector.hpp
+		Clove/Platform/Platform.hpp
+		Clove/Platform/PlatformTypes.hpp
 		Clove/Platform/Window.hpp
 		Clove/Platform/Window.cpp
 		Clove/Profiling/Timer.hpp
@@ -173,6 +174,13 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 			${GraphicsFiles}
 			Graphics/OpenGL-4/GLXContext.hpp
 			Graphics/OpenGL-4/GLXContext.cpp
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	set(
+		GraphicsFiles
+			${GraphicsFiles}
+			Graphics/OpenGL-4/CGLContext.hpp
+			Graphics/OpenGL-4/CGLContext.mm
 	)
 endif()
 
@@ -323,17 +331,27 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		PlatformFiles
 			Platform/Windows/CloveWindows.hpp
-			Platform/Windows/WindowsWindow.hpp
-			Platform/Windows/WindowsWindow.cpp
 			Platform/Windows/WindowsException.hpp
 			Platform/Windows/WindowsException.cpp
+			Platform/Windows/WindowsPlatform.cpp
+			Platform/Windows/WindowsWindow.hpp
+			Platform/Windows/WindowsWindow.cpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
 		PlatformFiles
 			Platform/Linux/CloveLinux.hpp
+			Platform/Linux/LinuxPlatform.cpp
 			Platform/Linux/LinuxWindow.hpp
 			Platform/Linux/LinuxWindow.cpp
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	set(
+		PlatformFiles
+			Platform/Mac/CloveMac.h
+			Platform/Mac/MacPlatform.mm
+			Platform/Mac/MacWindow.hpp
+			Platform/Mac/MacWindow.mm
 	)
 endif()
 
@@ -376,6 +394,11 @@ target_include_directories(
 )
 
 #Libraries
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	find_library(CLV_COCOA_LIB Cocoa)
+	find_library(CLV_MACOS_OPENGL_LIB OpenGL)
+endif()
+
 target_link_libraries(
 	${PROJECT_NAME}
     #Cross platform
@@ -400,6 +423,10 @@ target_link_libraries(
 		$<$<PLATFORM_ID:Linux>:GLX>
 		$<$<PLATFORM_ID:Linux>:X11>
 		$<$<PLATFORM_ID:Linux>:dl>
+	#MacOS
+	PRIVATE
+		$<$<PLATFORM_ID:Darwin>:${CLV_COCOA_LIB}>
+		$<$<PLATFORM_ID:Darwin>:${CLV_MACOS_OPENGL_LIB}>
 )
 
 #Precompiled header
@@ -452,6 +479,9 @@ target_compile_definitions(
 	PUBLIC
 		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
 		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
+		CLV_PLATFORM_MACOS=$<PLATFORM_ID:Darwin>
+	PRIVATE
+		$<$<PLATFORM_ID:Darwin>:GL_SILENCE_DEPRECATION> #Silences the MacOS gl deprecation messages
 	#Engine
 	INTERFACE
 		CLV_ENGINE=0

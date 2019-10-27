@@ -6,9 +6,13 @@
 #include "Graphics/DirectX-11/DXContext.hpp"
 #elif CLV_PLATFORM_LINUX
 #include "Graphics/OpenGL-4/GLXContext.hpp"
+#elif CLV_PLATFORM_MACOS
+#include "Graphics/OpenGL-4/CGLContext.hpp"
 #endif
 
 namespace clv::gfx{
+	Context::Context() = default;
+	
 	Context::Context(Context&& other) noexcept = default;
 
 	Context& Context::operator=(Context&& other) noexcept = default;
@@ -22,6 +26,8 @@ namespace clv::gfx{
 				return std::make_unique<WGLContext>(windowData);
 			#elif CLV_PLATFORM_LINUX
 				return std::make_unique<GLXContext>(windowData);
+			#elif CLV_PLATFORM_MACOS
+				return std::make_unique<CGLContext>(windowData);
 			#endif
 
 			#if CLV_PLATFORM_WINDOWS

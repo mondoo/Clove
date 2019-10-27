@@ -14,7 +14,7 @@ namespace clv::gfx{
 	DXContext::~DXContext() = default;
 
 	DXContext::DXContext(void* windowData){
-		clv::WindowsData* data = reinterpret_cast<clv::WindowsData*>(windowData);
+		plt::WindowsData* data = reinterpret_cast<plt::WindowsData*>(windowData);
 
 		DXGI_SWAP_CHAIN_DESC scd = { 0 };
 		scd.BufferDesc.Width = data->width;

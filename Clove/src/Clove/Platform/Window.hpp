@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Clove/Platform/PlatformTypes.hpp"
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Utils/Delegate.hpp"
@@ -9,19 +10,7 @@ namespace clv::gfx{
 	class Context;
 }
 
-namespace clv{
-	struct WindowProps{
-		std::string title;
-		uint32 width;
-		uint32 height;
-
-		WindowProps(const std::string& inTitle = "Clove Engine", uint32 inWidth = 1280u, uint32 inHeight = 720u)
-			: title(inTitle)
-			, width(inWidth)
-			, height(inHeight){
-		}
-	};
-
+namespace clv::plt{
 	class Window{
 		//VARIABLES
 	public:
@@ -59,10 +48,6 @@ namespace clv{
 		Mouse& getMouse();
 
 		gfx::Context& getContext();
-
-		//Defined in derived class
-		static Window* create(const WindowProps& props = WindowProps());
-		static Window* create(const WindowProps& props, gfx::API api);
 
 	protected:
 		virtual void processInput() = 0;

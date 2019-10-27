@@ -15,7 +15,7 @@ namespace clv::gfx{
 	}
 
 	WGLContext::WGLContext(void* windowData){
-		windowsHandle = reinterpret_cast<WindowsData*>(windowData)->handle;
+		windowsHandle = reinterpret_cast<plt::WindowsData*>(windowData)->handle;
 
 		windowsDeviceContext = GetDC(windowsHandle);
 
@@ -44,9 +44,12 @@ namespace clv::gfx{
 
 		PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
 		if(wglCreateContextAttribsARB){
+			int32 major = 4;
+			int32 minor = 1;
+			
 			int32 attributes[] = {
-				WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
-				WGL_CONTEXT_MINOR_VERSION_ARB, 6,
+				WGL_CONTEXT_MAJOR_VERSION_ARB, major,
+				WGL_CONTEXT_MINOR_VERSION_ARB, minor,
 				WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
 				0
 			};
@@ -58,7 +61,7 @@ namespace clv::gfx{
 			wglMakeCurrent(NULL, NULL);
 			wglDeleteContext(tempOpenGLContext);
 
-			CLV_LOG_DEBUG("Succesfully created an OpenGL 4.6 context");
+			CLV_LOG_DEBUG("Succesfully created an OpenGL {0}.{1} context", major, minor);
 		} else{
 			CLV_LOG_WARN("Could not retrieve wglCreateContextAttribsARB. Application might not support OpenGL 3.2+ contexts");
 

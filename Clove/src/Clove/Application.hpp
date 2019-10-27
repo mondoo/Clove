@@ -4,19 +4,27 @@ namespace clv::ecs{
 	class Manager;
 }
 
-namespace clv{
+namespace clv::plt{
 	class Window;
+}
+
+namespace clv{
 	class LayerStack;
 	class Layer;
 	class ImGuiLayer;
 
+	enum class ApplicationState{
+		running,
+		stopped
+	};
+
 	class Application{
 		//VARIABLES
 	private:
-		std::unique_ptr<Window> window;
+		std::unique_ptr<plt::Window> window;
 		std::unique_ptr<ecs::Manager> ecsManager;
 
-		bool running = true;
+		ApplicationState currentState = ApplicationState::running;
 
 		std::unique_ptr<LayerStack> layerStack;
 
@@ -29,7 +37,9 @@ namespace clv{
 		Application();
 		virtual ~Application();
 
-		void run();
+		void update();
+		ApplicationState getState() const;
+
 		void stop();
 
 		void pushLayer(std::shared_ptr<Layer> layer);
@@ -37,7 +47,7 @@ namespace clv{
 
 		static Application& get();
 		
-		Window& getWindow();
+		plt::Window& getWindow();
 		ecs::Manager& getManager();
 
 	private:
@@ -45,5 +55,5 @@ namespace clv{
 	};
 
 	//To be defined in CLIENT
-	Application* createApplication();
+	//Application* createApplication();
 }

@@ -18,10 +18,3 @@
 
 #include "Clove/Maths/MathsTypes.hpp"
 #include "Clove/Maths/Maths.hpp"
-
-//Vendor headers
-//...
-
-//----------ENTRY POINT----------
-#include "Clove/EntryPoint.hpp"
-//-------------------------------

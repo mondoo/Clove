@@ -1,20 +1,34 @@
-#include <Clove.hpp>
+#import "Platform/Mac/CloveMac.h"
+#import "AppDelegate.hpp"
 
-#include "TestLayer.hpp"
-#include "GameLayer.hpp"
+/*#import <Clove.hpp>*/
 
-int main(int argc, char** argv){
+#import "TestLayer.hpp"
+#import "GameLayer.hpp"
+
+#import "Clove/Application.hpp"
+
+@implementation AppDelegate
+
+- (void)dealloc{
+    [super dealloc];
+}
+	
+- (void)applicationDidBecomeActive:(NSNotification *)aNotification{
+	/*
 	try{
-		auto* app = new clv::Application();
+	 */
+		clv::Application* app = new clv::Application();
 
-		app->pushLayer(std::make_shared<TestLayer>());
+		//app->pushLayer(std::make_shared<TestLayer>());
 		//app->pushLayer(std::make_shared<GameLayer>());
 
-		while(app->getState() == clv::ApplicationState::running){
-			app->update();
-		}
+		//while(app->getState() == clv::ApplicationState::running){
+		//	app->update();
+		//}
 
-		delete app;
+		//delete app;
+	/*
 	} catch(const clv::CloveException & e){
 	#if CLV_PLATFORM_WINDOWS
 		MessageBoxA(nullptr, e.what(), e.getType(), MB_OK | MB_ICONEXCLAMATION);
@@ -30,6 +44,7 @@ int main(int argc, char** argv){
 	#endif
 	#endif
 	}
-	
-	return 0;
+	 */
 }
+
+@end
