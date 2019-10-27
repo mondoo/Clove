@@ -10,7 +10,7 @@ namespace clv::plt{
     private:
 		NSWindow* window;
 		MacWindowDelegate* delegate;
-			
+
         //FUNCTIONS
     public:
         MacWindow() = delete;
