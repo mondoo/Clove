@@ -345,8 +345,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 			Platform/Mac/MacPlatform.mm
 			Platform/Mac/MacWindow.hpp
 			Platform/Mac/MacWindow.mm
-			Platform/Mac/MacWindowDelegate.h
-			Platform/Mac/MacWindowDelegate.m
 	)
 endif()
 

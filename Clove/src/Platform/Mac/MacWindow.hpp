@@ -2,15 +2,25 @@
 
 #include "Clove/Platform/Window.hpp"
 
-#import "Platform/Mac/MacWindowDelegate.h"
+namespace clv::plt{
+	class MacWindow;
+}
+
+@interface MacWindowProxy : NSObject <NSWindowDelegate>
+
+@property(readonly) NSWindow* window;
+@property clv::plt::MacWindow* cloveWindow;
+
+- (instancetype)initWithWindowData:(unsigned int)width height:(unsigned int)height name:(NSString*)name;
+
+@end
 
 namespace clv::plt{
     class MacWindow : public Window{
         //VARIABLES
     private:
-		NSWindow* window;
-		MacWindowDelegate* delegate;
-
+		MacWindowProxy* windowProxy;
+		
         //FUNCTIONS
     public:
         MacWindow() = delete;

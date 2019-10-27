@@ -4,9 +4,33 @@
 #import "Clove/Graphics/Renderer.hpp"
 #import "Clove/Graphics/Context.hpp"
 
+@implementation MacWindowProxy
+- (instancetype)initWithWindowData:(unsigned int)width height:(unsigned int)height name:(NSString*)name{
+	const NSRect rect = NSMakeRect(0, 0, width, height);
+	const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
+	
+	_window = [[NSWindow alloc] initWithContentRect:rect
+										 styleMask:styleMask
+										   backing:NSBackingStoreBuffered
+											 defer:NO];
+	
+	[_window setBackgroundColor:NSColor.redColor];
+	[_window setTitle:name];
+	[_window setDelegate:self];
+	[_window makeKeyAndOrderFront:nil];
+	
+	return self;
+}
+
+- (void)windowWillClose:(NSNotification *)notification{
+	//The application shouldn't shut down when a window closes on MacOS, but this'll do for now
+	_cloveWindow->onWindowCloseDelegate.broadcast();
+}
+@end
+
 namespace clv::plt{
 	MacWindow::~MacWindow(){
-		//[window release];
+		[windowProxy release];
 	}
 
     MacWindow::MacWindow(const WindowProps& props){
@@ -18,7 +42,7 @@ namespace clv::plt{
     }
 	
 	void* MacWindow::getNativeWindow() const{
-		return window;
+		return [windowProxy window];
 	}
 	
 	void MacWindow::processInput(){
@@ -32,8 +56,6 @@ namespace clv::plt{
 			
 				math::Vector<2, int32, math::qualifier::defaultp> mouseLoc{ static_cast<int32>([NSEvent mouseLocation].x), static_cast<int32>([NSEvent mouseLocation].y) };
 				switch ([event type]){
-						//TODO: Close
-				
 					case NSEventTypeKeyDown:
 						keyboard.onKeyPressed(static_cast<Key>([event keyCode]));
 						break;
@@ -42,7 +64,7 @@ namespace clv::plt{
 						keyboard.onKeyReleased(static_cast<Key>([event keyCode]));
 						break;
 					
-						//TODO: Char
+					//TODO: Char
 				
 					case NSEventTypeMouseEntered:
 						mouse.onMouseEnter();
@@ -106,16 +128,11 @@ namespace clv::plt{
 		windowProperties.height = props.height;
 		windowProperties.title = props.title;
 		
-		const NSRect rect = NSMakeRect(0, 0, props.width, props.height);
-		const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
+		NSString* nameString = [NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]];
 		
-		window = [[NSWindow alloc] initWithContentRect:rect
-											 styleMask:styleMask
-											   backing:NSBackingStoreBuffered
-												 defer:NO];
-		
-		[window setBackgroundColor:NSColor.redColor];
-		[window setTitle:[NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]]];
-		[window makeKeyAndOrderFront:nil];
+		windowProxy = [[MacWindowProxy alloc] initWithWindowData:props.width
+															 height:props.height
+															   name:nameString];
+		windowProxy.cloveWindow = this;
 	}
 }
