@@ -27,9 +27,9 @@ namespace clv::gfx{
 		virtual ~DX11ConstantBuffer();
 
 		DX11ConstantBuffer(uint32 bindingPoint);
-		DX11ConstantBuffer(uint32 bindingPoint, const T& data);
+		DX11ConstantBuffer(uint32 bindingPoint, T&& data);
 
-		virtual void update(const T& data) override;
+		virtual void update(T&& data) override;
 	};
 
 	template<typename T>

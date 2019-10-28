@@ -33,6 +33,6 @@ namespace clv::gfx{
 		ShaderBufferObject& operator=(ShaderBufferObject&& other) = default;
 		virtual ~ShaderBufferObject() = default;
 
-		virtual void update(const T& data) = 0;
+		virtual void update(T&& data) = 0;
 	};
 }

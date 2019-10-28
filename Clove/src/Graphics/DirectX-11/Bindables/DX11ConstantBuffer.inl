@@ -32,7 +32,7 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	DX11ConstantBuffer<T>::DX11ConstantBuffer(uint32 bindingPoint, const T& data)
+	DX11ConstantBuffer<T>::DX11ConstantBuffer(uint32 bindingPoint, T&& data)
 		: bindingPoint(bindingPoint){
 
 		D3D11_BUFFER_DESC cbd = { };
@@ -51,7 +51,7 @@ namespace clv::gfx{
 	}
 
 	template<typename T>
-	void DX11ConstantBuffer<T>::update(const T& data){
+	void DX11ConstantBuffer<T>::update(T&& data){
 
 		D3D11_MAPPED_SUBRESOURCE msr = { };
 		DX11_INFO_PROVIDER;

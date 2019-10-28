@@ -21,11 +21,11 @@ namespace clv::gfx{
 		~GL4UniformBufferObject();
 
 		GL4UniformBufferObject(uint32 bindingPoint);
-		GL4UniformBufferObject(uint32 bindingPoint, const T& data);
+		GL4UniformBufferObject(uint32 bindingPoint, T&& data);
 
 		virtual void bind() override;
 
-		virtual void update(const T& data) override;
+		virtual void update(T&& data) override;
 	};
 }
 
