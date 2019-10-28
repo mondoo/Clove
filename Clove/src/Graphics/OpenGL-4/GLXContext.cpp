@@ -1,7 +1,7 @@
 #include "GLXContext.hpp"
 
 #include "Platform/Linux/LinuxWindow.hpp"
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Core/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{
 	GLXContext::GLXContext(GLXContext&& other) = default;
@@ -13,7 +13,7 @@ namespace clv::gfx{
 	}
 
 	GLXContext::GLXContext(void* windowData){
-		LinuxData* data = reinterpret_cast<LinuxData*>(windowData);
+		plt::LinuxData* data = reinterpret_cast<plt::LinuxData*>(windowData);
 		display = data->display;
 		window = data->window;
 

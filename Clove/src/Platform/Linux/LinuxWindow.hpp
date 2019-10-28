@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Clove/Platform/Window.hpp"
+#include "Core/Platform/Window.hpp"
 
-namespace clv{
+namespace clv::plt{
 	struct LinuxData{
 		Display* display = nullptr;
 		::Window* window;

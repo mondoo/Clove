@@ -8,7 +8,7 @@ Currently, Garlic supports the following platforms:
 
 - Windows
 - Linux
-- Mac [in progress]
+- Mac [in progress / halted]
 
 Currently, Garlic supports the following graphics APIs:
 

@@ -1,9 +1,9 @@
 #include "LinuxWindow.hpp"
 
-#include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Graphics/Context.hpp"
+#include "Core/Graphics/Renderer.hpp"
+#include "Core/Graphics/Context.hpp"
 
-namespace clv{
+namespace clv::plt{
 	LinuxWindow::~LinuxWindow(){
 		//Reset context first, before the display is closed
 		context.reset();
@@ -147,13 +147,5 @@ namespace clv{
 		XMapRaised(display, window);
 
 		CLV_LOG_DEBUG("Window created");
-	}
-
-	Window* Window::create(const WindowProps& props){
-		return new LinuxWindow(props);
-	}
-
-	Window* Window::create(const WindowProps& props, gfx::API api){
-		return new LinuxWindow(props, api);
 	}
 }

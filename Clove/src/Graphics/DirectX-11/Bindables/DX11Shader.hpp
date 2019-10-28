@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Bindables/Shader.hpp"
+#include "Core/Graphics/Bindables/Shader.hpp"
 
 #include <wrl.h>
 #include <d3dcommon.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/RenderTarget.hpp"
+#include "Core/Graphics/RenderTarget.hpp"
 
 namespace clv::gfx{
 	class GL4RenderTarget : public RenderTarget{

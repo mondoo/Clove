@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Bindables/Texture.hpp"
+#include "Core/Graphics/Bindables/Texture.hpp"
 
 #include <glad/glad.h>
 

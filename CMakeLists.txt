@@ -36,7 +36,7 @@ set(csharp_release_flags		"/debug:none /optimize")
 
 #Set custom build types
 set(CMAKE_CONFIGURATION_TYPES Debug Development Profiling Release)
-set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Custom Clove configuration types" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Custom Garlic configuration types" FORCE)
 
 set(CMAKE_C_FLAGS_DEBUG				"${cxx_debug_flags}")
 set(CMAKE_C_FLAGS_DEVELOPMENT		"${cxx_development_flags}")

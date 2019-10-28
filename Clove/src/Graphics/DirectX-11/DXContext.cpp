@@ -2,7 +2,7 @@
 
 #include "Graphics/DirectX-11/DX11Exception.hpp"
 #include "Platform/Windows/WindowsWindow.hpp"
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Core/Graphics/GraphicsTypes.hpp"
 
 #include <d3d11.h>
 
@@ -14,7 +14,7 @@ namespace clv::gfx{
 	DXContext::~DXContext() = default;
 
 	DXContext::DXContext(void* windowData){
-		clv::WindowsData* data = reinterpret_cast<clv::WindowsData*>(windowData);
+		plt::WindowsData* data = reinterpret_cast<plt::WindowsData*>(windowData);
 
 		DXGI_SWAP_CHAIN_DESC scd = { 0 };
 		scd.BufferDesc.Width = data->width;

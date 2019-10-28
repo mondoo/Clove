@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/RenderTarget.hpp"
+#include "Core/Graphics/RenderTarget.hpp"
 
 #include <wrl.h>
 

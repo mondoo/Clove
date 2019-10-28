@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Bindables/IndexBuffer.hpp"
+#include "Core/Graphics/Bindables/IndexBuffer.hpp"
 
 #include <wrl.h>
 

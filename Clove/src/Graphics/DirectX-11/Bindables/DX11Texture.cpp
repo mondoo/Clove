@@ -1,6 +1,6 @@
 #include "DX11Texture.hpp"
 
-#include "Clove/Application.hpp"
+#include "Core/Application.hpp"
 #include "Graphics/DirectX-11/DX11Exception.hpp"
 #include "Graphics/DirectX-11/DX11RenderAPI.hpp"
 

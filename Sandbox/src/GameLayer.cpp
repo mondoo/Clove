@@ -1,14 +1,14 @@
 #include "GameLayer.hpp"
 
-#include "Clove/Application.hpp"
-#include "Clove/ECS/3D/Components/CameraComponent.hpp"
-#include "Clove/ECS/3D/Components/RenderableComponent.hpp"
-#include "Clove/ECS/3D/Components/TransformComponent.hpp"
-#include "Clove/Graphics/Mesh.hpp"
-#include "Clove/Graphics/Material.hpp"
-#include "Clove/ECS/3D/Components/LightComponent.hpp"
+#include "Core/Application.hpp"
+#include "Core/ECS/3D/Components/CameraComponent.hpp"
+#include "Core/ECS/3D/Components/RenderableComponent.hpp"
+#include "Core/ECS/3D/Components/TransformComponent.hpp"
+#include "Core/Graphics/Mesh.hpp"
+#include "Core/Graphics/Material.hpp"
+#include "Core/ECS/3D/Components/LightComponent.hpp"
 
-#include "Clove/Input/Input.hpp"
+#include "Core/Input/Input.hpp"
 
 GameLayer::GameLayer()
 	: Layer("Game Layer"){

@@ -3,25 +3,18 @@
 //For use by Clove applications
 
 //Clove headers
-#include "Clove/Core.hpp"
-#include "Clove/Log.hpp"
-#include "Clove/Utils/Delegate.hpp"
+#include "Core/Core.hpp"
+#include "Core/Log.hpp"
+#include "Core/Utils/Delegate.hpp"
 
-#include "Clove/Application.hpp"
-#include "Clove/Layer.hpp"
+#include "Core/Application.hpp"
+#include "Core/Layer.hpp"
 
-#include "Clove/Input/Input.hpp"
-#include "Clove/Input/KeyCodes.hpp"
-#include "Clove/Input/MouseButtonCodes.hpp"
+#include "Core/Input/Input.hpp"
+#include "Core/Input/KeyCodes.hpp"
+#include "Core/Input/MouseButtonCodes.hpp"
 
-#include "Clove/Exception/CloveException.hpp"
+#include "Core/Exception/CloveException.hpp"
 
-#include "Clove/Maths/MathsTypes.hpp"
-#include "Clove/Maths/Maths.hpp"
-
-//Vendor headers
-//...
-
-//----------ENTRY POINT----------
-#include "Clove/EntryPoint.hpp"
-//-------------------------------
+#include "Core/Maths/MathsTypes.hpp"
+#include "Core/Maths/Maths.hpp"

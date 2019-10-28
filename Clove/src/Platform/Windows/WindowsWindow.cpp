@@ -1,9 +1,9 @@
 #include "WindowsWindow.hpp"
 
-#include "Clove/Graphics/Renderer.hpp"
-#include "Clove/Graphics/Context.hpp"
+#include "Core/Graphics/Renderer.hpp"
+#include "Core/Graphics/Context.hpp"
 
-namespace clv{
+namespace clv::plt{
 	WindowsWindow::WindowsWindow(const WindowProps& props){
 		initialiseWindow(props, gfx::API::DirectX11);
 	}
@@ -200,13 +200,5 @@ namespace clv{
 
 		context = gfx::Context::createContext(&data, api);
 		context->makeCurrent();
-	}
-
-	Window* Window::create(const WindowProps& props){
-		return new WindowsWindow(props);
-	}
-
-	Window* Window::create(const WindowProps& props, gfx::API api){
-		return new WindowsWindow(props, api);
 	}
 }
