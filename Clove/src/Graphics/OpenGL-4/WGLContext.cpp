@@ -45,7 +45,7 @@ namespace clv::gfx{
 		PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
 		if(wglCreateContextAttribsARB){
 			int32 major = 4;
-			int32 minor = 1;
+			int32 minor = 6;
 			
 			int32 attributes[] = {
 				WGL_CONTEXT_MAJOR_VERSION_ARB, major,
