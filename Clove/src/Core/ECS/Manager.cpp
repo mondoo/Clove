@@ -14,18 +14,17 @@ namespace clv::ecs{
 
 	Manager::Manager(){
 		//Order is somewhat important
-		systems.reserve(6);
-		systems.emplace_back(std::make_unique<_2D::TransformSystem>());
-		systems.emplace_back(std::make_unique<_2D::RenderSystem>());
+		systems[0] = std::make_unique<_2D::TransformSystem>();
+		systems[1] = std::make_unique<_2D::RenderSystem>();
 
-		systems.emplace_back(std::make_unique<_3D::TransformSystem>());
-		systems.emplace_back(std::make_unique<_3D::RenderSystem>());
-		systems.emplace_back(std::make_unique<_3D::LightSystem>());
-		systems.emplace_back(std::make_unique<_3D::CameraSystem>());
+		systems[2] = std::make_unique<_3D::TransformSystem>();
+		systems[3] = std::make_unique<_3D::RenderSystem>();
+		systems[4] = std::make_unique<_3D::LightSystem>();
+		systems[5] = std::make_unique<_3D::CameraSystem>();
 
-		systems.emplace_back(std::make_unique<aud::AudioSystem>());
+		systems[6] = std::make_unique<aud::AudioSystem>();
 
-		systems.emplace_back(std::make_unique<ui::TextSystem>());
+		systems[7] = std::make_unique<ui::TextSystem>();
 	}
 
 	Manager::~Manager() = default;
