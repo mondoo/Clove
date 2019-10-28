@@ -9,34 +9,19 @@
 #include <sstream>
 
 //Includes required when not using pch
-#include "Clove/Maths/MathsTypes.hpp"
-#include "Clove/Maths/Maths.hpp"
-#include "Clove/Maths/MathsHelpers.hpp"
-#include "Clove/Application.hpp"
-#include "Clove/IntTypes.hpp"
-#include "Clove/Platform/Window.hpp"
-#include "Clove/Graphics/GraphicsTypes.hpp"
-#include "Clove/Graphics/Context.hpp"
+#include "Core/Maths/MathsTypes.hpp"
+#include "Core/Maths/Maths.hpp"
+#include "Core/Maths/MathsHelpers.hpp"
+#include "Core/Application.hpp"
+#include "Core/IntTypes.hpp"
+#include "Core/Platform/Window.hpp"
+#include "Core/Graphics/GraphicsTypes.hpp"
+#include "Core/Graphics/Context.hpp"
 
 using namespace System::Windows;
 //using namespace System::Runtime::RuntimeInteropServices;
 using namespace System::Threading;
 using namespace System;
-
-class Editor : public clv::Application{
-public:
-	Editor(){
-		
-	}
-	~Editor(){
-
-	}
-
-private:
-
-};
-
-//Creating an 'Editor Window' that will have the hWnd for the C# window
 
 //Copied from WindowsWindow
 struct WindowsData{
@@ -46,7 +31,7 @@ struct WindowsData{
 };
 
 //Create the context with the windows data
-class EditorWindow : public clv::Window{
+class EditorWindow : public clv::plt::Window{
 	//VARIABLES
 private:
 	HWND handle;
@@ -72,33 +57,15 @@ protected:
 		//Empty for now
 	}
 };
-//
-
-//data = { windowsHandle, windowProperties.width, windowProperties.height };
-
-//context = gfx::Context::createContext(&data, api);
-//context->makeCurrent();
-
-clv::Application* clv::createApplication(){
-	return new Editor;
-}
-
-void Bulb::Engine::Wrapper::OpenClove(){
-	//clv::Log::init();
-	app = clv::createApplication();
-	app->run();
-	delete app;
-	app = nullptr;
-}
 
 void Bulb::Engine::Wrapper::OpenClove(IntPtr hWnd){
 	std::unique_ptr<EditorWindow> window = std::make_unique<EditorWindow>(hWnd);
 	app = new clv::Application(std::move(window));
-	try{
-		app->run(); //Thread gets stuck here, Clove will need be on another thread than the editor (Bulb)
-	} catch(Exception^ e){
-		Console::WriteLine(e);
+	
+	while(app->getState() == clv::ApplicationState::running){
+		app->update();
 	}
+
 	delete app;
 	app = nullptr;
 }
