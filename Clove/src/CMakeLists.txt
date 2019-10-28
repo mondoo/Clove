@@ -44,6 +44,8 @@ set(
 		Core/ECS/3D/Components/LightComponent.cpp
 		Core/ECS/3D/Components/RenderableComponent.hpp
 		Core/ECS/3D/Components/RenderableComponent.cpp
+		Core/ECS/3D/Components/RigidBodyComponent.hpp
+		Core/ECS/3D/Components/RigidBodyComponent.cpp
 		Core/ECS/3D/Components/TransformComponent.hpp
 		Core/ECS/3D/Components/TransformComponent.cpp
 		Core/ECS/3D/Systems/CameraSystem.hpp
@@ -52,6 +54,8 @@ set(
 		Core/ECS/3D/Systems/LightSystem.cpp
 		Core/ECS/3D/Systems/RenderSystem.hpp
 		Core/ECS/3D/Systems/RenderSystem.cpp
+		Core/ECS/3D/Systems/PhysicsSystem.hpp
+		Core/ECS/3D/Systems/PhysicsSystem.cpp
 		Core/ECS/3D/Systems/TransformSystem.hpp
 		Core/ECS/3D/Systems/TransformSystem.cpp
 		Core/ECS/Audio/Components/AudioComponent.hpp
