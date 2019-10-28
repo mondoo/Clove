@@ -4,7 +4,7 @@
 
 #include "Core/ECS/2D/Components/TransformComponent.hpp"
 
-namespace clv::ecs::d2{
+namespace clv::ecs::_2D{
 	class TransformSystem : public System<TransformComponent>{
 		//FUNCTIONS
 	public:

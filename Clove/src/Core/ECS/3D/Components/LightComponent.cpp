@@ -1,6 +1,6 @@
 #include "LightComponent.hpp"
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	LightComponent::LightComponent(){
 		lightData = {
 			{ { 0.0f, 0.0f, 0.0f },

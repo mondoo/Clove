@@ -1,6 +1,6 @@
 #include "TransformComponent.hpp"
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	TransformComponent::TransformComponent() = default;
 
 	TransformComponent::TransformComponent(TransformComponent&& other) noexcept = default;

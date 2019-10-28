@@ -2,7 +2,7 @@
 
 #include "Core/Graphics/Renderer.hpp"
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	LightSystem::LightSystem() = default;
 
 	LightSystem::LightSystem(LightSystem&& other) noexcept = default;

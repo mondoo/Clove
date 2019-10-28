@@ -6,7 +6,7 @@ namespace clv::gfx{
 	class Mesh;
 }
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	class RenderableComponent : public Component{
 		friend class RenderSystem;
 

@@ -2,7 +2,7 @@
 
 #include "Core/Graphics/Mesh.hpp"
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	RenderableComponent::RenderableComponent() = default;
 
 	RenderableComponent::RenderableComponent(RenderableComponent&& other) noexcept = default;

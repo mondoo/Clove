@@ -2,7 +2,7 @@
 
 #include "Core/Graphics/Sprite.hpp"
 
-namespace clv::ecs::d2{
+namespace clv::ecs::_2D{
 	RenderableComponent::RenderableComponent() = default;
 
 	RenderableComponent::RenderableComponent(RenderableComponent&& other) noexcept = default;

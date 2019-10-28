@@ -6,7 +6,7 @@
 #include "Core/ECS/2D/Components/TransformComponent.hpp" //TODO: This will probably have to be a UI position component
 
 namespace clv::ecs::ui{
-	class TextSystem : public System<TextComponent, d2::TransformComponent>{
+	class TextSystem : public System<TextComponent, _2D::TransformComponent>{
 		//FUNCTIONS
 	public:
 		//TODO: The rest

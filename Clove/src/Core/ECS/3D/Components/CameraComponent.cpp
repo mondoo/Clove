@@ -5,7 +5,7 @@
 #include "Core/Graphics/Renderer.hpp"
 #include "Core/Graphics/BindableFactory.hpp"
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	CameraComponent::CameraComponent(){
 		setProjectionMode(ProjectionMode::perspective);
 	}

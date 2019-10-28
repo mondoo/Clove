@@ -5,7 +5,7 @@
 #include "Core/Graphics/Mesh.hpp"
 #include "Core/Graphics/MaterialInstance.hpp"
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	RenderSystem::RenderSystem() = default;
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;

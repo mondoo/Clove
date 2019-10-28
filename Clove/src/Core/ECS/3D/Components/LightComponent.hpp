@@ -4,7 +4,7 @@
 
 #include "Core/Graphics/ShaderBufferTypes.hpp"
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	class LightComponent : public Component{
 		friend class LightSystem;
 

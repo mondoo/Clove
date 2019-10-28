@@ -14,12 +14,12 @@ namespace clv::ecs{
 
 	Manager::Manager(){
 		systems.reserve(6);
-		systems.emplace_back(std::make_unique<d2::RenderSystem>());
-		systems.emplace_back(std::make_unique<d3::RenderSystem>());
-		systems.emplace_back(std::make_unique<d2::TransformSystem>());
-		systems.emplace_back(std::make_unique<d3::TransformSystem>());
-		systems.emplace_back(std::make_unique<d3::LightSystem>());
-		systems.emplace_back(std::make_unique<d3::CameraSystem>());
+		systems.emplace_back(std::make_unique<_2D::RenderSystem>());
+		systems.emplace_back(std::make_unique<_3D::RenderSystem>());
+		systems.emplace_back(std::make_unique<_2D::TransformSystem>());
+		systems.emplace_back(std::make_unique<_3D::TransformSystem>());
+		systems.emplace_back(std::make_unique<_3D::LightSystem>());
+		systems.emplace_back(std::make_unique<_3D::CameraSystem>());
 		systems.emplace_back(std::make_unique<aud::AudioSystem>());
 		systems.emplace_back(std::make_unique<ui::TextSystem>());
 	}

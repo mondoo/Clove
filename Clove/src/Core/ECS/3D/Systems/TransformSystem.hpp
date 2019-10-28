@@ -7,7 +7,7 @@
 #include <optional>
 #include <tuple>
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	class TransformSystem : public System<TransformComponent>{
 		//FUNCTIONS
 	public:

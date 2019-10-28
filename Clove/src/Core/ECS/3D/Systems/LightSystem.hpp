@@ -5,7 +5,7 @@
 #include "Core/ECS/3D/Components/TransformComponent.hpp"
 #include "Core/ECS/3D/Components/LightComponent.hpp"
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	class LightSystem : public System<TransformComponent, LightComponent>{
 		//FUNCTIONS
 	public:

@@ -8,7 +8,7 @@ namespace clv::gfx{
 	class Sprite;
 }
 
-namespace clv::ecs::d2{
+namespace clv::ecs::_2D{
 	class RenderableComponent : public Component{
 		friend class RenderSystem;
 

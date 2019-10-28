@@ -5,7 +5,7 @@
 #include "Core/ECS/3D/Components/TransformComponent.hpp"
 #include "Core/ECS/3D/Components/RenderableComponent.hpp"
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	class RenderSystem : public System<TransformComponent, RenderableComponent>{
 		//FUNCTIONS
 	public:

@@ -2,7 +2,7 @@
 
 #include "Core/ECS/Component.hpp"
 
-namespace clv::ecs::d2{
+namespace clv::ecs::_2D{
 	class TransformComponent : public Component{
 		friend class TransformSystem;
 

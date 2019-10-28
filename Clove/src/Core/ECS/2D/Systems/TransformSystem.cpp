@@ -1,6 +1,6 @@
 #include "TransformSystem.hpp"
 
-namespace clv::ecs::d2{
+namespace clv::ecs::_2D{
 	TransformSystem::TransformSystem() = default;
 
 	TransformSystem::TransformSystem(TransformSystem&& other) noexcept = default;

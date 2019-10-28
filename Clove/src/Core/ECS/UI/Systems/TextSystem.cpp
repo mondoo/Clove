@@ -15,7 +15,7 @@ namespace clv::ecs::ui{
 
 	void TextSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
-			d2::TransformComponent* transform = std::get<d2::TransformComponent*>(componentTuple);
+			_2D::TransformComponent* transform = std::get<_2D::TransformComponent*>(componentTuple);
 			TextComponent* fontComp = std::get<TextComponent*>(componentTuple);
 
 			const clv::ui::Text& text = fontComp->text;

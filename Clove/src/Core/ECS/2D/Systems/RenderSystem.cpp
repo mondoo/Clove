@@ -6,7 +6,7 @@
 #include "Core/Platform/Window.hpp"
 
 
-namespace clv::ecs::d2{
+namespace clv::ecs::_2D{
 	RenderSystem::RenderSystem() = default;
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;

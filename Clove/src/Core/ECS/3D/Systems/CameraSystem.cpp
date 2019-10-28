@@ -2,7 +2,7 @@
 
 #include "Core/Graphics/Renderer.hpp"
 
-namespace clv::ecs::d3{
+namespace clv::ecs::_3D{
 	CameraSystem::CameraSystem() = default;
 
 	CameraSystem::CameraSystem(CameraSystem&& other) noexcept = default;
