@@ -4,6 +4,7 @@
 #include "Core/ECS/3D/Systems/RenderSystem.hpp"
 #include "Core/ECS/2D/Systems/TransformSystem.hpp"
 #include "Core/ECS/3D/Systems/TransformSystem.hpp"
+#include "Core/ECS/3D/Systems/PhysicsSystem.hpp"
 #include "Core/ECS/3D/Systems/LightSystem.hpp"
 #include "Core/ECS/3D/Systems/CameraSystem.hpp"
 #include "Core/ECS/Audio/Systems/AudioSystem.hpp"
@@ -14,17 +15,19 @@ namespace clv::ecs{
 
 	Manager::Manager(){
 		//Order is somewhat important
-		systems[0] = std::make_unique<_2D::TransformSystem>();
-		systems[1] = std::make_unique<_2D::RenderSystem>();
+		std::size_t index = 0;
+		systems[index++] = std::make_unique<_2D::TransformSystem>();
+		systems[index++] = std::make_unique<_2D::RenderSystem>();
 
-		systems[2] = std::make_unique<_3D::TransformSystem>();
-		systems[3] = std::make_unique<_3D::RenderSystem>();
-		systems[4] = std::make_unique<_3D::LightSystem>();
-		systems[5] = std::make_unique<_3D::CameraSystem>();
+		systems[index++] = std::make_unique<_3D::TransformSystem>();
+		systems[index++] = std::make_unique<_3D::PhysicsSystem>();
+		systems[index++] = std::make_unique<_3D::RenderSystem>();
+		systems[index++] = std::make_unique<_3D::LightSystem>();
+		systems[index++] = std::make_unique<_3D::CameraSystem>();
 
-		systems[6] = std::make_unique<aud::AudioSystem>();
+		systems[index++] = std::make_unique<aud::AudioSystem>();
 
-		systems[7] = std::make_unique<ui::TextSystem>();
+		systems[index++] = std::make_unique<ui::TextSystem>();
 	}
 
 	Manager::~Manager() = default;
