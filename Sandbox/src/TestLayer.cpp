@@ -9,6 +9,7 @@
 #include "Core/ECS/3D/Components/TransformComponent.hpp"
 #include "Core/ECS/3D/Components/CameraComponent.hpp"
 #include "Core/ECS/3D/Components/LightComponent.hpp"
+#include "Core/ECS/3D/Components/RigidBodyComponent.hpp"
 #include "Core/ECS/Audio/Components/AudioComponent.hpp"
 #include "Core/ECS/UI/Components/TextComponent.hpp"
 #include "Core/Maths/Vector.hpp"
@@ -170,6 +171,16 @@ void TestLayer::onAttach(){
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(30);
 	}
 
+	//Physics
+	{
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+
+		rigidBody = clv::Application::get().getManager().createEntity();
+		rigidBody.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{0.0f, 15.0f, 0.0f});
+		rigidBody.addComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
+		rigidBody.addComponent<clv::ecs::_3D::RigidBodyComponent>(10.0f);
+	}
+
 	CLV_LOG_DEBUG("Testlayer has done a thing!");
 }
 
@@ -258,6 +269,11 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 
 	if(clv::input::isKeyPressed(clv::Key::Semicolon)){
 		sound.getComponent<clv::ecs::aud::AudioComponent>()->resume();
+	}
+
+	//Physics testing
+	if(clv::input::isKeyPressed(clv::Key::U)){
+		rigidBody.getComponent<clv::ecs::_3D::RigidBodyComponent>()->applyForce({ 0.0f, 100.0f, 0.0f });
 	}
 
 	//Print FPS
