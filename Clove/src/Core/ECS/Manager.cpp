@@ -13,14 +13,18 @@ namespace clv::ecs{
 	EntityID Manager::nextID = 0;
 
 	Manager::Manager(){
+		//Order is somewhat important
 		systems.reserve(6);
-		systems.emplace_back(std::make_unique<_2D::RenderSystem>());
-		systems.emplace_back(std::make_unique<_3D::RenderSystem>());
 		systems.emplace_back(std::make_unique<_2D::TransformSystem>());
+		systems.emplace_back(std::make_unique<_2D::RenderSystem>());
+
 		systems.emplace_back(std::make_unique<_3D::TransformSystem>());
+		systems.emplace_back(std::make_unique<_3D::RenderSystem>());
 		systems.emplace_back(std::make_unique<_3D::LightSystem>());
 		systems.emplace_back(std::make_unique<_3D::CameraSystem>());
+
 		systems.emplace_back(std::make_unique<aud::AudioSystem>());
+
 		systems.emplace_back(std::make_unique<ui::TextSystem>());
 	}
 
