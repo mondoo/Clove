@@ -30,9 +30,9 @@ namespace clv::ecs{
 	Manager::~Manager() = default;
 
 	void Manager::update(utl::DeltaTime deltaTime){
-		for(const auto& system : systems){
+		std::for_each(systems.begin(), systems.end(), [deltaTime](const std::unique_ptr<SystemBase>& system){
 			system->update(deltaTime);
-		}
+		});
 	}
 
 	Entity Manager::createEntity(){
@@ -49,9 +49,9 @@ namespace clv::ecs{
 			return;
 		}
 
-		for(const auto& system : systems){
+		std::for_each(systems.begin(), systems.end(), [ID](const std::unique_ptr<SystemBase>& system){
 			system->onEntityDestroyed(ID);
-		}
+		});
 		components.erase(ID);
 	}
 
@@ -68,9 +68,10 @@ namespace clv::ecs{
 	void Manager::onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component){
 		components[entityID][componentID] = std::move(component);
 
-		for(auto& system : systems){
+		auto& components = this->components;
+		std::for_each(systems.begin(), systems.end(), [entityID, &components](const std::unique_ptr<SystemBase>& system){
 			system->onEntityComponentAdded(entityID, components[entityID]);
-		}
+		});
 	}
 
 	Component* Manager::getComponentForEntity(EntityID entityID, ComponentID componentID){
