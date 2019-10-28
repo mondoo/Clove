@@ -89,8 +89,6 @@ namespace clv{
 	}
 
 	void Application::initialise(std::unique_ptr<plt::Window>&& window){
-		//Log::init();
-
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
