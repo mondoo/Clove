@@ -15,19 +15,20 @@ namespace clv::ecs{
 
 	Manager::Manager(){
 		//Order is somewhat important
-		std::size_t index = 0;
-		systems[index++] = std::make_unique<_2D::TransformSystem>();
-		systems[index++] = std::make_unique<_2D::RenderSystem>();
+		systems = {
+			std::make_unique<_2D::TransformSystem>(),
+			std::make_unique<_2D::RenderSystem>(),
 
-		systems[index++] = std::make_unique<_3D::TransformSystem>();
-		systems[index++] = std::make_unique<_3D::PhysicsSystem>();
-		systems[index++] = std::make_unique<_3D::RenderSystem>();
-		systems[index++] = std::make_unique<_3D::LightSystem>();
-		systems[index++] = std::make_unique<_3D::CameraSystem>();
+			std::make_unique<_3D::TransformSystem>(),
+			std::make_unique<_3D::PhysicsSystem>(),
+			std::make_unique<_3D::RenderSystem>(),
+			std::make_unique<_3D::LightSystem>(),
+			std::make_unique<_3D::CameraSystem>(),
 
-		systems[index++] = std::make_unique<aud::AudioSystem>();
+			std::make_unique<aud::AudioSystem>(),
 
-		systems[index++] = std::make_unique<ui::TextSystem>();
+			std::make_unique<ui::TextSystem>()
+		};
 	}
 
 	Manager::~Manager() = default;
