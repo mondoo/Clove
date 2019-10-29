@@ -390,7 +390,8 @@ target_include_directories(
 		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
 	PRIVATE
         ../vendor/OBJ-Loader/Source
-        ../vendor/freetype2/include
+		../vendor/freetype2/include
+		../vendor/bullet3/src
 		$<$<PLATFORM_ID:Windows>:${CMAKE_SOURCE_DIR}/Clove/vendor/wglext>
 )
 
@@ -412,6 +413,9 @@ target_link_libraries(
 		sndfile
 		portaudio_static
 		freetype
+		BulletCollision
+		BulletDynamics
+		LinearMath
 	#Windows
 	PRIVATE
 		$<$<PLATFORM_ID:Windows>:dxerr>

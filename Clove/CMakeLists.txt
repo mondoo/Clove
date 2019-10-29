@@ -52,6 +52,17 @@ set_target_properties(freetype PROPERTIES FOLDER ${DependencyFolder})
 
 #-bullet3
 add_subdirectory(vendor/bullet3)
+set_target_properties(Bullet2FileLoader PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+set_target_properties(Bullet3Collision PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+set_target_properties(Bullet3Common PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+set_target_properties(Bullet3Dynamics PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+set_target_properties(Bullet3Geometry PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+set_target_properties(Bullet3OpenCL_clew PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+set_target_properties(BulletCollision PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+set_target_properties(BulletDynamics PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+set_target_properties(BulletInverseDynamics PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+set_target_properties(BulletSoftBody PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+set_target_properties(LinearMath PROPERTIES FOLDER ${DependencyFolder}/bullet3)
 
 #Clove
 add_subdirectory(src)

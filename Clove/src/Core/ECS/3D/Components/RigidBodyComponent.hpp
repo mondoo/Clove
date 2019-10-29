@@ -2,6 +2,9 @@
 
 #include "Core/ECS/Component.hpp"
 
+class btCollisionShape;
+class btRigidBody;
+
 namespace clv::ecs::_3D{
 	class RigidBodyComponent : public Component{
 		friend class PhysicsSystem;
@@ -11,6 +14,9 @@ namespace clv::ecs::_3D{
 		static constexpr ComponentID ID = 555555; //Temp - needs VS GUID
 
 	private:
+		btCollisionShape* collisionShape = nullptr;
+		btRigidBody* rigidBody = nullptr;
+
 		float mass = 0.0f;
 		math::Vector3f force = {};
 
@@ -28,5 +34,8 @@ namespace clv::ecs::_3D{
 		RigidBodyComponent(float mass);
 
 		void applyForce(math::Vector3f force);
+
+	private:
+		void initialise();
 	};
 }
