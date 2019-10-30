@@ -26,24 +26,12 @@ namespace clv::ecs::_3D{
 	}
 
 	void RigidBodyComponent::initialise(){
-		collisionShape = new btBoxShape(btVector3(1, 1, 1));
 		//TODO: Make shape around correct size
 		//Probably manually specify like most things do
-
-		btTransform startTransform;
-		startTransform.setIdentity();
-
-		btScalar mass(this->mass);
-
-		btVector3 localInertia(0, 0, 0);
-		if(mass != 0.0f){
-			collisionShape->calculateLocalInertia(mass, localInertia);
-		}
-
-		startTransform.setOrigin(btVector3(0, 0, 0));
-
-		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, collisionShape, localInertia);
+		collisionShape = new btBoxShape(btVector3(1, 1, 1));
+		
+		btDefaultMotionState* myMotionState = new btDefaultMotionState();
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, collisionShape);
 		rigidBody = new btRigidBody(rbInfo);
 	}
 }
