@@ -2,13 +2,15 @@
 
 #include "Core/ECS/Component.hpp"
 
+#include "Core/Utils/HashString.hpp"
+
 namespace clv::ecs::_2D{
 	class TransformComponent : public Component{
 		friend class TransformSystem;
 
 		//VARIABLES
 	public:
-		static constexpr ComponentID ID = 0x1ae98fd4; //VS Generated GUID
+		static constexpr ComponentID ID = HASH_CLASS(_2D::TransformComponent);
 
 	private:
 		math::Vector2f	position	= { 0.0f, 0.0f };

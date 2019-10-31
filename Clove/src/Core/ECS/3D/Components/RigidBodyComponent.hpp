@@ -2,6 +2,8 @@
 
 #include "Core/ECS/Component.hpp"
 
+#include "Core/Utils/HashString.hpp"
+
 class btCollisionShape;
 class btRigidBody;
 
@@ -11,7 +13,7 @@ namespace clv::ecs::_3D{
 
 		//VARIABLES
 	public:
-		static constexpr ComponentID ID = 555555; //Temp - needs VS GUID
+		static constexpr ComponentID ID = HASH_CLASS(RigidBodyComponent);
 
 	private:
 		btCollisionShape* collisionShape = nullptr;

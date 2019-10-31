@@ -3,6 +3,7 @@
 #include "Core/ECS/Component.hpp"
 
 #include "Core/UI/Text.hpp"
+#include "Core/Utils/HashString.hpp"
 
 namespace clv::ecs::ui{
 	class TextComponent : public Component{
@@ -10,7 +11,7 @@ namespace clv::ecs::ui{
 
 		//VARIABLES
 	public:
-		static constexpr ComponentID ID = 0xdf019850; //VS Generated GUID
+		static constexpr ComponentID ID = HASH_CLASS(TextComponent);
 
 	private:
 		clv::ui::Text text;

@@ -141,6 +141,7 @@ set(
 		Core/Utils/Delegate.inl
 		Core/Utils/DeltaTime.hpp
 		Core/Utils/DeltaTime.cpp
+		Core/Utils/HashString.hpp
 		Core/Utils/MeshLoader.hpp
 		Core/Utils/MeshLoader.cpp
 )
