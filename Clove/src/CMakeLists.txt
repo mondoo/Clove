@@ -410,9 +410,10 @@ target_link_libraries(
 		sndfile
 		portaudio_static
 		freetype
-		BulletCollision
-		BulletDynamics
-		LinearMath
+		#Order of these are important
+        BulletDynamics
+        BulletCollision
+        LinearMath
 	#Windows
 	PRIVATE
 		$<$<PLATFORM_ID:Windows>:dxerr>
