@@ -14,6 +14,8 @@ set(BUILD_ENET OFF CACHE BOOL "Set when you want to build apps with enet UDP net
 set(BUILD_EXTRAS OFF CACHE BOOL "Set when you want to build extras")
 set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "Set when you want to build Bullet 3 OpenGL3+ demos")
 set(BUILD_UNIT_TESTS OFF CACHE BOOL "Build unit tests")
+set(USE_GLUT OFF CACHE BOOL "Use GLUT")
+set(USE_GRAPHICAL_BENCHMARK OFF CACHE BOOL "Use graphical benchmark")
 
 #-dxerr
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
