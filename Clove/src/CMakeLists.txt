@@ -459,6 +459,7 @@ target_precompile_headers(
 		[["Core/Maths/MathsTypes.hpp"]]
 		[["Core/Maths/Maths.hpp"]]
 		[["Core/Maths/MathsHelpers.hpp"]]
+		[["Core/Utils/Delegate.hpp"]]
 	#Platform headers
 	PUBLIC
 		$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>
