@@ -31,7 +31,7 @@ namespace clv::ecs::_3D{
 			TransformComponent* transform = std::get<TransformComponent*>(tuple);
 
 			btTransform btTrans;
-			rigidBody->rigidBody->getMotionState()->getWorldTransform(btTrans);
+			rigidBody->body->getMotionState()->getWorldTransform(btTrans);
 
 			transform->setPosition({ btTrans.getOrigin().getX(), btTrans.getOrigin().getY(), btTrans.getOrigin().getZ() });
 			//TODO: Rotation
@@ -39,15 +39,31 @@ namespace clv::ecs::_3D{
 
 		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 		std::for_each(components.begin(), components.end(), updateTransform);
+
+		int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
+		for(int i = 0; i < numManifolds; ++i){
+			btPersistentManifold* manifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+			int numContacts = manifold->getNumContacts();
+			if(numContacts > 0){
+				const btCollisionObject* obA = manifold->getBody0();
+				const btCollisionObject* obB = manifold->getBody1();
+
+				RigidBodyComponent* bodyA = static_cast<RigidBodyComponent*>(obA->getUserPointer());
+				RigidBodyComponent* bodyB = static_cast<RigidBodyComponent*>(obB->getUserPointer());
+
+				bodyA->onBodyCollision.broadcast(bodyB);
+				bodyB->onBodyCollision.broadcast(bodyA);
+			}
+		}
 	}
 
 	void PhysicsSystem::handleEntityCreation(const ComponentTuple& componentTuple){
 		RigidBodyComponent* rigidBody = std::get<RigidBodyComponent*>(componentTuple);
-		dynamicsWorld->addRigidBody(rigidBody->rigidBody);
+		dynamicsWorld->addRigidBody(rigidBody->body.get());
 	}
 
 	void PhysicsSystem::handleEntityDestruction(const ComponentTuple& componentTuple){
 		RigidBodyComponent* rigidBody = std::get<RigidBodyComponent*>(componentTuple);
-		dynamicsWorld->removeCollisionObject(rigidBody->rigidBody);
+		dynamicsWorld->removeCollisionObject(rigidBody->body.get());
 	}
 }

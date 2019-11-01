@@ -15,14 +15,14 @@ namespace clv::ecs::_3D{
 	public:
 		static constexpr ComponentID ID = HASH_CLASS(RigidBodyComponent);
 
+		utl::MultiCastDelegate<void(RigidBodyComponent*)> onBodyCollision;
+
 	private:
-		btCollisionShape* collisionShape = nullptr;
-		btRigidBody* rigidBody = nullptr;
+		std::unique_ptr<btCollisionShape> collisionShape;
+		std::unique_ptr<btRigidBody> body;
 
 		float mass = 0.0f;
-		math::Vector3f force = {};
-
-		math::Vector3f velocity = {};
+		bool isKinematic = false;
 
 		//FUNCTIONS
 	public:
@@ -33,9 +33,7 @@ namespace clv::ecs::_3D{
 		RigidBodyComponent& operator=(RigidBodyComponent&& other) noexcept;
 		virtual ~RigidBodyComponent();
 
-		RigidBodyComponent(float mass);
-
-		void applyForce(math::Vector3f force);
+		RigidBodyComponent(float mass, bool isKinematic);
 
 	private:
 		void initialise();
