@@ -36,8 +36,6 @@ set(
 		Core/ECS/2D/Components/TransformComponent.cpp
 		Core/ECS/2D/Systems/RenderSystem.hpp
 		Core/ECS/2D/Systems/RenderSystem.cpp
-		Core/ECS/2D/Systems/TransformSystem.hpp
-		Core/ECS/2D/Systems/TransformSystem.cpp
 		Core/ECS/3D/Components/CameraComponent.hpp
 		Core/ECS/3D/Components/CameraComponent.cpp
 		Core/ECS/3D/Components/LightComponent.hpp

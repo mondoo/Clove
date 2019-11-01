@@ -13,24 +13,9 @@ namespace clv::ecs::_2D{
 		static constexpr ComponentID ID = HASH_CLASS(_2D::TransformComponent);
 
 	private:
-		math::Vector2f	position	= { 0.0f, 0.0f };
-		float			rotation	= 0.0f;
-		math::Vector2f	scale		= { 1.0f, 1.0f };
-
-		std::optional<math::Vector2f>	desiredPosition;
-		std::optional<float>			desiredRotation;
-		std::optional<math::Vector2f>	desiredScale;
-
 		math::Vector2f	localPosition	= { 0.0f, 0.0f };
 		float			localRotation	= 0.0f;
 		math::Vector2f	localScale		= { 1.0f, 1.0f };
-
-		std::optional<math::Vector2f>	desiredLocalPosition;
-		std::optional<float>			desiredLocalRotation;
-		std::optional<math::Vector2f>	desiredLocalScale;
-
-		math::Matrix4f worldTransformMatrix = math::Matrix4f(1.0f);
-		math::Matrix4f localTransformMatrix = math::Matrix4f(1.0f);
 
 		TransformComponent* parent = nullptr;
 		std::vector<TransformComponent*> children;
@@ -44,13 +29,13 @@ namespace clv::ecs::_2D{
 		TransformComponent& operator=(TransformComponent&& other) noexcept;
 		virtual ~TransformComponent();
 
-		const math::Vector2f& getPosition() const;
+		math::Vector2f getPosition() const;
 		const math::Vector2f& getLocalPosition() const;
 		
 		float getRotation() const;
 		float getLocalRotation() const;
 		
-		const math::Vector2f& getScale() const;
+		math::Vector2f getScale() const;
 		const math::Vector2f& getLocalScale() const;
 		
 		void setPosition(const math::Vector2f& position);
@@ -65,7 +50,7 @@ namespace clv::ecs::_2D{
 		TransformComponent* getParent() const;
 		void addChild(TransformComponent* child);
 
-		const math::Matrix4f& getWorldTransformMatrix() const;
-		const math::Matrix4f& getLocalTransformMatrix() const;
+		math::Matrix4f getWorldTransformMatrix() const;
+		math::Matrix4f getLocalTransformMatrix() const;
 	};
 }

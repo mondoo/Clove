@@ -2,7 +2,6 @@
 
 #include "Core/ECS/2D/Systems/RenderSystem.hpp"
 #include "Core/ECS/3D/Systems/RenderSystem.hpp"
-#include "Core/ECS/2D/Systems/TransformSystem.hpp"
 #include "Core/ECS/3D/Systems/PhysicsSystem.hpp"
 #include "Core/ECS/3D/Systems/LightSystem.hpp"
 #include "Core/ECS/3D/Systems/CameraSystem.hpp"
@@ -15,7 +14,6 @@ namespace clv::ecs{
 	Manager::Manager(){
 		//Order is somewhat important
 		systems = {
-			std::make_unique<_2D::TransformSystem>(),
 			std::make_unique<_2D::RenderSystem>(),
 
 			std::make_unique<_3D::PhysicsSystem>(),
