@@ -178,7 +178,7 @@ void TestLayer::onAttach(){
 		rigidBody1 = clv::Application::get().getManager().createEntity();
 		rigidBody1.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 10.0f, 0.0f });
 		rigidBody1.addComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
-		rigidBody1.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, true);
+		rigidBody1.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, true, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
 	}
 
 	{
@@ -187,9 +187,7 @@ void TestLayer::onAttach(){
 		rigidBody2 = clv::Application::get().getManager().createEntity();
 		rigidBody2.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 30.0f, 0.0f });
 		rigidBody2.addComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
-		rigidBody2.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, false)->onBodyCollision.bind([](clv::ecs::_3D::RigidBodyComponent* comp){
-			CLV_LOG_DEBUG("Collision!");
-		});
+		rigidBody2.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, false, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
 	}
 
 	CLV_LOG_DEBUG("Testlayer has done a thing!");

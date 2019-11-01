@@ -4,7 +4,7 @@
 
 namespace clv::ecs::_3D{
 	RigidBodyComponent::RigidBodyComponent(){
-		initialise();
+		initialise({ 1.0f, 1.0f, 1.0f });
 	}
 
 	RigidBodyComponent::RigidBodyComponent(RigidBodyComponent&& other) noexcept{
@@ -31,16 +31,14 @@ namespace clv::ecs::_3D{
 
 	RigidBodyComponent::~RigidBodyComponent() = default;
 
-	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic)
+	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic, const math::Vector3f& cubeSize)
 		: mass(mass)
 		, isKinematic(isKinematic){
-		initialise();
+		initialise(cubeSize);
 	}
 
-	void RigidBodyComponent::initialise(){
-		//TODO: Make shape around correct size
-		//Probably manually specify like most things do
-		collisionShape = std::make_unique<btBoxShape>(btVector3(1, 1, 1)); //Note: The scale is accurate here (1 - 1 with our world)
+	void RigidBodyComponent::initialise(const math::Vector3f& cubeSize){
+		collisionShape = std::make_unique<btBoxShape>(btVector3{ cubeSize.x, cubeSize.y, cubeSize.z });
 
 		btVector3 localInertia(0, 0, 0);
 		btTransform startTransform;
