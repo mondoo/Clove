@@ -31,10 +31,12 @@ namespace clv::ecs::_3D{
 			TransformComponent* transform = std::get<TransformComponent*>(tuple);
 
 			const auto pos = transform->getPosition();
+			const auto rot = transform->getRotation();
 
 			btTransform btTrans = rigidBody->body->getWorldTransform();
 			btTrans.setOrigin({ pos.x, pos.y, pos.z });
-			//TODO: Rotation
+			//GLM is pitch yaw roll while Bullet is yaw pitch roll
+			btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w });
 
 			rigidBody->body->setWorldTransform(btTrans);
 		};
@@ -44,9 +46,12 @@ namespace clv::ecs::_3D{
 			TransformComponent* transform = std::get<TransformComponent*>(tuple);
 
 			btTransform btTrans = rigidBody->body->getWorldTransform();
+			const auto pos = btTrans.getOrigin();
+			const auto rot = btTrans.getRotation();
 
-			transform->setPosition({ btTrans.getOrigin().getX(), btTrans.getOrigin().getY(), btTrans.getOrigin().getZ() });
-			//TODO: Rotation
+			transform->setPosition({ pos.getX(), pos.getY(), pos.getZ() });
+			//GLM is pitch yaw roll while Bullet is yaw pitch roll
+			transform->setRotation({ rot.getW(), rot.getX(), rot.getY(), rot.getZ() });
 		};
 
 		std::for_each(components.begin(), components.end(), updateRigidBody);
