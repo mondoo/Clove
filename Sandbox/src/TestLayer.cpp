@@ -180,7 +180,7 @@ void TestLayer::onAttach(){
 		rigidBody1.addComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
 		rigidBody1.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, true, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
 
-		rigidBody1.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::math::asQuaternion(13.0f, clv::math::Vector3f{ 1.0f, 0.0f, 0.0f }));
+		rigidBody1.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::math::asQuaternion(13.0f, clv::math::Vector3f{ 0.0f, 0.0f, 0.5f }));
 	}
 
 	{
@@ -190,6 +190,8 @@ void TestLayer::onAttach(){
 		rigidBody2.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 30.0f, 0.0f });
 		rigidBody2.addComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
 		rigidBody2.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, false, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
+
+		rigidBody2.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::math::asQuaternion(13.0f, clv::math::Vector3f{ 1.0f, 0.0f, 0.0f }));
 	}
 
 	CLV_LOG_DEBUG("Testlayer has done a thing!");

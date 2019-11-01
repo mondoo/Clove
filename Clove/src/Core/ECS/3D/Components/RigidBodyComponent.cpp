@@ -47,6 +47,8 @@ namespace clv::ecs::_3D{
 		if(isKinematic){
 			CLV_LOG_WARN("Kinematic body has non 0 mass. Setting to 0");
 			mass = 0.0f;
+		} else{
+			collisionShape->calculateLocalInertia(mass, localInertia);
 		}
 
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
