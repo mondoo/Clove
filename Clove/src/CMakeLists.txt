@@ -56,8 +56,6 @@ set(
 		Core/ECS/3D/Systems/RenderSystem.cpp
 		Core/ECS/3D/Systems/PhysicsSystem.hpp
 		Core/ECS/3D/Systems/PhysicsSystem.cpp
-		Core/ECS/3D/Systems/TransformSystem.hpp
-		Core/ECS/3D/Systems/TransformSystem.cpp
 		Core/ECS/Audio/Components/AudioComponent.hpp
 		Core/ECS/Audio/Components/AudioComponent.cpp
 		Core/ECS/Audio/Systems/AudioSystem.hpp
