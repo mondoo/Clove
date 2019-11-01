@@ -176,16 +176,16 @@ void TestLayer::onAttach(){
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 
 		rigidBody1 = clv::Application::get().getManager().createEntity();
-		rigidBody1.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 10.0f, 15.0f, 0.0f });
+		rigidBody1.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 10.0f, 0.0f });
 		rigidBody1.addComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
-		rigidBody1.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, false);
+		rigidBody1.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, true);
 	}
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 
 		rigidBody2 = clv::Application::get().getManager().createEntity();
-		rigidBody2.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 15.0f, 0.0f });
+		rigidBody2.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 30.0f, 0.0f });
 		rigidBody2.addComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
 		rigidBody2.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, false)->onBodyCollision.bind([](clv::ecs::_3D::RigidBodyComponent* comp){
 			CLV_LOG_DEBUG("Collision!");

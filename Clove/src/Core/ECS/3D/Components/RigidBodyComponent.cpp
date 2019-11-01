@@ -46,13 +46,18 @@ namespace clv::ecs::_3D{
 		btTransform startTransform;
 		startTransform.setIdentity();
 
+		if(isKinematic){
+			CLV_LOG_WARN("Kinematic body has non 0 mass. Setting to 0");
+			mass = 0.0f;
+		}
+
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, collisionShape.get(), localInertia);
 
 		body = std::make_unique<btRigidBody>(rbInfo);
 		body->setUserPointer(this);
 		if(isKinematic){
-			body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+			body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT); //Kinematic objects can't move but static can - seems to be the opposite of what I read
 		}
 	}
 }
