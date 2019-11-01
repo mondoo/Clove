@@ -35,8 +35,7 @@ namespace clv::ecs::_3D{
 
 			btTransform btTrans = rigidBody->body->getWorldTransform();
 			btTrans.setOrigin({ pos.x, pos.y, pos.z });
-			//GLM is pitch yaw roll while Bullet is yaw pitch roll
-			btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w });
+			btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w }); //GLM is pitch yaw roll while Bullet is yaw pitch roll
 
 			rigidBody->body->setWorldTransform(btTrans);
 		};
@@ -50,8 +49,7 @@ namespace clv::ecs::_3D{
 			const auto rot = btTrans.getRotation();
 
 			transform->setPosition({ pos.getX(), pos.getY(), pos.getZ() });
-			//GLM is pitch yaw roll while Bullet is yaw pitch roll
-			transform->setRotation({ rot.getW(), rot.getX(), rot.getY(), rot.getZ() });
+			transform->setRotation({ rot.getW(), rot.getX(), rot.getY(), rot.getZ() }); //GLM is pitch yaw roll while Bullet is yaw pitch roll
 		};
 
 		std::for_each(components.begin(), components.end(), updateRigidBody);
