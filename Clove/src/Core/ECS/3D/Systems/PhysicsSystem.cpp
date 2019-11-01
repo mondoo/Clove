@@ -12,9 +12,9 @@ namespace clv::ecs::_3D{
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 	}
 
-	PhysicsSystem::PhysicsSystem(PhysicsSystem &&other) noexcept = default;
+	PhysicsSystem::PhysicsSystem(PhysicsSystem&& other) noexcept = default;
 
-	PhysicsSystem &PhysicsSystem::operator=(PhysicsSystem &&other) noexcept = default;
+	PhysicsSystem& PhysicsSystem::operator=(PhysicsSystem&& other) noexcept = default;
 
 	PhysicsSystem::~PhysicsSystem(){
 		delete dynamicsWorld;
@@ -26,30 +26,7 @@ namespace clv::ecs::_3D{
 	}
 
 	void PhysicsSystem::update(utl::DeltaTime deltaTime){
-		/*const auto updatePosition = [deltaTime](const ComponentTuple& tuple){
-			RigidBodyComponent* rigidBody = std::get<RigidBodyComponent*>(tuple);
-			TransformComponent* transform = std::get<TransformComponent*>(tuple);
-
-			if(rigidBody->mass == 0.0f){
-				return;
-			}
-
-			math::Vector3f velocity = rigidBody->velocity + (rigidBody->force / rigidBody->mass) * deltaTime.getDeltaSeconds();
-			math::Vector3f position = transform->getLocalPosition() + velocity * deltaTime.getDeltaSeconds();
-
-			rigidBody->velocity = velocity;
-			transform->setPosition(position);
-		};
-
-		std::for_each(components.begin(), components.end(), updatePosition);*/
-
-		//set positions / forces etc.
-		//step simulation
-		//feed the data back
-
-		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
-
-		std::for_each(components.begin(), components.end(), [](const ComponentTuple& tuple){
+		const auto updateTransform = [](const ComponentTuple& tuple){
 			RigidBodyComponent* rigidBody = std::get<RigidBodyComponent*>(tuple);
 			TransformComponent* transform = std::get<TransformComponent*>(tuple);
 
@@ -57,19 +34,19 @@ namespace clv::ecs::_3D{
 			rigidBody->rigidBody->getMotionState()->getWorldTransform(btTrans);
 
 			transform->setPosition({ btTrans.getOrigin().getX(), btTrans.getOrigin().getY(), btTrans.getOrigin().getZ() });
-		});
+			//TODO: Rotation
+		};
+
+		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
+		std::for_each(components.begin(), components.end(), updateTransform);
 	}
 
 	void PhysicsSystem::handleEntityCreation(const ComponentTuple& componentTuple){
-		//Add rigid bodies here
-
 		RigidBodyComponent* rigidBody = std::get<RigidBodyComponent*>(componentTuple);
 		dynamicsWorld->addRigidBody(rigidBody->rigidBody);
 	}
 
 	void PhysicsSystem::handleEntityDestruction(const ComponentTuple& componentTuple){
-		//Remove rigid bodies here
-
 		RigidBodyComponent* rigidBody = std::get<RigidBodyComponent*>(componentTuple);
 		dynamicsWorld->removeCollisionObject(rigidBody->rigidBody);
 	}
