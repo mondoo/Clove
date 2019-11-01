@@ -40,17 +40,11 @@ namespace clv::ecs::_3D{
 	void RigidBodyComponent::initialise(){
 		//TODO: Make shape around correct size
 		//Probably manually specify like most things do
-		collisionShape = std::make_unique<btBoxShape>(btVector3(1, 1, 1));
+		collisionShape = std::make_unique<btBoxShape>(btVector3(1, 1, 1)); //Note: The scale is accurate here (1 - 1 with our world)
 
 		btVector3 localInertia(0, 0, 0);
 		btTransform startTransform;
 		startTransform.setIdentity();
-
-		//Test
-		if(!isKinematic){
-			collisionShape->calculateLocalInertia(mass, localInertia);
-			startTransform.setOrigin(btVector3(0, 10, 0));
-		}
 
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, collisionShape.get(), localInertia);

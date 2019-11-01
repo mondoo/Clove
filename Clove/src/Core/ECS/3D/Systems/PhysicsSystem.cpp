@@ -26,17 +26,30 @@ namespace clv::ecs::_3D{
 	}
 
 	void PhysicsSystem::update(utl::DeltaTime deltaTime){
+		const auto updateRigidBody = [](const ComponentTuple& tuple){
+			RigidBodyComponent* rigidBody = std::get<RigidBodyComponent*>(tuple);
+			TransformComponent* transform = std::get<TransformComponent*>(tuple);
+
+			const auto pos = transform->getPosition();
+
+			btTransform btTrans = rigidBody->body->getWorldTransform();
+			btTrans.setOrigin({ pos.x, pos.y, pos.z });
+			//TODO: Rotation
+
+			rigidBody->body->setWorldTransform(btTrans);
+		};
+
 		const auto updateTransform = [](const ComponentTuple& tuple){
 			RigidBodyComponent* rigidBody = std::get<RigidBodyComponent*>(tuple);
 			TransformComponent* transform = std::get<TransformComponent*>(tuple);
 
-			btTransform btTrans;
-			rigidBody->body->getMotionState()->getWorldTransform(btTrans);
+			btTransform btTrans = rigidBody->body->getWorldTransform();
 
 			transform->setPosition({ btTrans.getOrigin().getX(), btTrans.getOrigin().getY(), btTrans.getOrigin().getZ() });
 			//TODO: Rotation
 		};
 
+		std::for_each(components.begin(), components.end(), updateRigidBody);
 		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 		std::for_each(components.begin(), components.end(), updateTransform);
 
