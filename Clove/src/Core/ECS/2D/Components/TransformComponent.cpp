@@ -42,7 +42,7 @@ namespace clv::ecs::_2D{
 
 		math::Quaternionf qrot = math::matrixToQuaternion(transformMatrix);
 
-		return math::quaternionToEuler(qrot).y;
+		return math::quaternionToEuler(qrot).z;
 	}
 
 	float TransformComponent::getLocalRotation() const{
