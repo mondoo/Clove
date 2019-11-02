@@ -11,13 +11,14 @@ namespace clv::utl{
 		MultiCastDelegateHandle() = default;
 		MultiCastDelegateHandle(int32 ID) : ID(ID){}
 
-		operator int() const{ return ID.value_or(-1); }
+		operator int() const noexcept{ return ID.value_or(-1); }
 	};
 }
 
 namespace std{
-	template<> struct hash<clv::utl::MultiCastDelegateHandle>{
-		size_t operator()(const clv::utl::MultiCastDelegateHandle& handle){
+	template<>
+	struct hash<clv::utl::MultiCastDelegateHandle>{
+		std::size_t operator()(const clv::utl::MultiCastDelegateHandle& handle) const noexcept{
 			return hash<int>()(handle);
 		}
 	};
