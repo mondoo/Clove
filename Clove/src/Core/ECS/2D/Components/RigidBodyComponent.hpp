@@ -7,13 +7,13 @@
 class btCollisionShape;
 class btRigidBody;
 
-namespace clv::ecs::_3D{
+namespace clv::ecs::_2D{
 	class RigidBodyComponent : public Component{
 		friend class PhysicsSystem;
 
 		//VARIABLES
 	public:
-		static constexpr ComponentID ID = HASH_CLASS(_3D::RigidBodyComponent);
+		static constexpr ComponentID ID = HASH_CLASS(_2D::RigidBodyComponent);
 
 		utl::MultiCastDelegate<void(RigidBodyComponent*)> onBodyCollision;
 
@@ -33,10 +33,10 @@ namespace clv::ecs::_3D{
 		RigidBodyComponent& operator=(RigidBodyComponent&& other) noexcept;
 		virtual ~RigidBodyComponent();
 
-		//Note: Only supporting collision cubes for now
-		RigidBodyComponent(float mass, bool isKinematic, const math::Vector3f& cubeSize);
+		//Note: Only supporting collision squares for now
+		RigidBodyComponent(float mass, bool isKinematic, const math::Vector2f& squareSize);
 
 	private:
-		void initialise(const math::Vector3f& cubeSize);
+		void initialise(const math::Vector2f& cubeSize);
 	};
 }
