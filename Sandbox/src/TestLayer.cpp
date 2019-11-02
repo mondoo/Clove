@@ -4,7 +4,7 @@
 #include "Core/Platform/Window.hpp"
 #include "Core/ECS/Manager.hpp"
 #include "Core/ECS/3D/Components/RenderableComponent.hpp"
-#include "Core/ECS/2D/Components/RenderableComponent.hpp"
+#include "Core/ECS/2D/Components/SpriteComponent.hpp"
 #include "Core/ECS/2D/Components/TransformComponent.hpp"
 #include "Core/ECS/2D/Components/RigidBodyComponent.hpp"
 #include "Core/ECS/3D/Components/TransformComponent.hpp"
@@ -42,14 +42,14 @@ void TestLayer::onAttach(){
 	ent3.addComponent<clv::ecs::_3D::RenderableComponent>();
 	ent3.addComponent<clv::ecs::_3D::TransformComponent>();
 
-	//rtEnt = clv::Application::get().getManager().createEntity<clv::ecs::_2D::RenderableComponent, clv::ecs::_2D::TransformComponent>();
+	//rtEnt = clv::Application::get().getManager().createEntity<clv::ecs::_2D::SpriteComponent, clv::ecs::_2D::TransformComponent>();
 
 	sprtEnt1 = clv::Application::get().getManager().createEntity();
-	sprtEnt1.addComponent<clv::ecs::_2D::RenderableComponent>();
+	sprtEnt1.addComponent<clv::ecs::_2D::SpriteComponent>();
 	sprtEnt1.addComponent<clv::ecs::_2D::TransformComponent>();
 
 	sprtEnt2 = clv::Application::get().getManager().createEntity();
-	sprtEnt2.addComponent<clv::ecs::_2D::RenderableComponent>();
+	sprtEnt2.addComponent<clv::ecs::_2D::SpriteComponent>();
 	sprtEnt2.addComponent<clv::ecs::_2D::TransformComponent>();
 	
 	lght1 = clv::Application::get().getManager().createEntity();
@@ -112,7 +112,7 @@ void TestLayer::onAttach(){
 
 	/*auto rtTexture = clv::gfx::BindableFactory::createTexture(clv::Application::get().getWindow().getWidth(), clv::Application::get().getWindow().getHeight(), clv::gfx::TextureUsage::RenderTarget, clv::gfx::TBP_Albedo);
 	auto sprite = std::make_shared<clv::gfx::Sprite>(rtTexture);
-	rtEnt.getComponent<clv::ecs::_2D::RenderableComponent>()->setSprite(sprite);
+	rtEnt.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
 	rtEnt.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(clv::Application::get().getWindow().getWidth() / 2, clv::Application::get().getWindow().getHeight() / 2));
 
 	auto renderTarget = clv::gfx::RenderTarget::createRenderTarget(*rtTexture);
@@ -120,13 +120,13 @@ void TestLayer::onAttach(){
 
 	{
 		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
-		sprtEnt1.getComponent<clv::ecs::_2D::RenderableComponent>()->setSprite(sprite);
+		sprtEnt1.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
 		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 	}
 
 	{
 		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
-		sprtEnt2.getComponent<clv::ecs::_2D::RenderableComponent>()->setSprite(sprite);
+		sprtEnt2.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
 		sprtEnt2.getComponent<clv::ecs::_2D::TransformComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 2.0f));
 		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 	}
@@ -199,7 +199,7 @@ void TestLayer::onAttach(){
 		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
 
 		rigidSprite1 = clv::Application::get().getManager().createEntity();
-		rigidSprite1.addComponent<clv::ecs::_2D::RenderableComponent>()->setSprite(sprite);
+		rigidSprite1.addComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
 		rigidSprite1.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 		rigidSprite1.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, true, clv::math::Vector2f{ 20.0f, 20.0f });
 
@@ -211,7 +211,7 @@ void TestLayer::onAttach(){
 		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
 
 		rigidSprite2 = clv::Application::get().getManager().createEntity();
-		rigidSprite2.addComponent<clv::ecs::_2D::RenderableComponent>()->setSprite(sprite);
+		rigidSprite2.addComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
 		rigidSprite2.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 		rigidSprite2.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, false, clv::math::Vector2f{ 20.0f, 20.0f });
 

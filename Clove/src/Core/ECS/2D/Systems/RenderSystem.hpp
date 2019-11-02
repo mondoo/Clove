@@ -3,10 +3,10 @@
 #include "Core/ECS/System.hpp"
 
 #include "Core/ECS/2D/Components/TransformComponent.hpp"
-#include "Core/ECS/2D/Components/RenderableComponent.hpp"
+#include "Core/ECS/2D/Components/SpriteComponent.hpp"
 
 namespace clv::ecs::_2D{
-	class RenderSystem : public System<TransformComponent, RenderableComponent>{
+	class RenderSystem : public System<TransformComponent, SpriteComponent>{
 		//FUNCTIONS
 	public:
 		RenderSystem();

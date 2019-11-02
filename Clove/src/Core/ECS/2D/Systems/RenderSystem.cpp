@@ -18,7 +18,7 @@ namespace clv::ecs::_2D{
 	void RenderSystem::update(utl::DeltaTime deltaTime){
 		for(auto& componentTuple : components){
 			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
-			RenderableComponent* renderable = std::get<RenderableComponent*>(componentTuple);
+			SpriteComponent* renderable = std::get<SpriteComponent*>(componentTuple);
 
 			const math::Matrix4f modelData = transform->getWorldTransformMatrix();
 			renderable->sprite->setModelData(gfx::Renderer2D::getSpriteProjection() * modelData);
