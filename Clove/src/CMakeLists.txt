@@ -44,8 +44,8 @@ set(
 		Core/ECS/3D/Components/CameraComponent.cpp
 		Core/ECS/3D/Components/LightComponent.hpp
 		Core/ECS/3D/Components/LightComponent.cpp
-		Core/ECS/3D/Components/RenderableComponent.hpp
-		Core/ECS/3D/Components/RenderableComponent.cpp
+		Core/ECS/3D/Components/MeshComponent.hpp
+		Core/ECS/3D/Components/MeshComponent.cpp
 		Core/ECS/3D/Components/RigidBodyComponent.hpp
 		Core/ECS/3D/Components/RigidBodyComponent.cpp
 		Core/ECS/3D/Components/TransformComponent.hpp

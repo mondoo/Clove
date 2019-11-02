@@ -3,10 +3,10 @@
 #include "Core/ECS/System.hpp"
 
 #include "Core/ECS/3D/Components/TransformComponent.hpp"
-#include "Core/ECS/3D/Components/RenderableComponent.hpp"
+#include "Core/ECS/3D/Components/MeshComponent.hpp"
 
 namespace clv::ecs::_3D{
-	class RenderSystem : public System<TransformComponent, RenderableComponent>{
+	class RenderSystem : public System<TransformComponent, MeshComponent>{
 		//FUNCTIONS
 	public:
 		RenderSystem();

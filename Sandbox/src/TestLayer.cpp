@@ -3,7 +3,7 @@
 #include "Core/Application.hpp"
 #include "Core/Platform/Window.hpp"
 #include "Core/ECS/Manager.hpp"
-#include "Core/ECS/3D/Components/RenderableComponent.hpp"
+#include "Core/ECS/3D/Components/MeshComponent.hpp"
 #include "Core/ECS/2D/Components/SpriteComponent.hpp"
 #include "Core/ECS/2D/Components/TransformComponent.hpp"
 #include "Core/ECS/2D/Components/RigidBodyComponent.hpp"
@@ -31,15 +31,15 @@ TestLayer::TestLayer()
 
 void TestLayer::onAttach(){
 	ent1 = clv::Application::get().getManager().createEntity();
-	ent1.addComponent<clv::ecs::_3D::RenderableComponent>();
+	ent1.addComponent<clv::ecs::_3D::MeshComponent>();
 	ent1.addComponent<clv::ecs::_3D::TransformComponent>();
 
 	ent2 = clv::Application::get().getManager().createEntity();
-	ent2.addComponent<clv::ecs::_3D::RenderableComponent>();
+	ent2.addComponent<clv::ecs::_3D::MeshComponent>();
 	ent2.addComponent<clv::ecs::_3D::TransformComponent>();
 
 	ent3 = clv::Application::get().getManager().createEntity();
-	ent3.addComponent<clv::ecs::_3D::RenderableComponent>();
+	ent3.addComponent<clv::ecs::_3D::MeshComponent>();
 	ent3.addComponent<clv::ecs::_3D::TransformComponent>();
 
 	//rtEnt = clv::Application::get().getManager().createEntity<clv::ecs::_2D::SpriteComponent, clv::ecs::_2D::TransformComponent>();
@@ -53,12 +53,12 @@ void TestLayer::onAttach(){
 	sprtEnt2.addComponent<clv::ecs::_2D::TransformComponent>();
 	
 	lght1 = clv::Application::get().getManager().createEntity();
-	lght1.addComponent<clv::ecs::_3D::RenderableComponent>();
+	lght1.addComponent<clv::ecs::_3D::MeshComponent>();
 	lght1.addComponent<clv::ecs::_3D::LightComponent>();
 	lght1.addComponent<clv::ecs::_3D::TransformComponent>();
 
 	lght2 = clv::Application::get().getManager().createEntity();
-	lght2.addComponent<clv::ecs::_3D::RenderableComponent>();
+	lght2.addComponent<clv::ecs::_3D::MeshComponent>();
 	lght2.addComponent<clv::ecs::_3D::LightComponent>();
 	lght2.addComponent<clv::ecs::_3D::TransformComponent>();
 	
@@ -70,7 +70,7 @@ void TestLayer::onAttach(){
 	sound.addComponent<clv::ecs::aud::AudioComponent>();
 
 	bigBoy = clv::Application::get().getManager().createEntity();
-	bigBoy.addComponent<clv::ecs::_3D::RenderableComponent>();
+	bigBoy.addComponent<clv::ecs::_3D::MeshComponent>();
 	bigBoy.addComponent<clv::ecs::_3D::TransformComponent>();
 
 	auto cubeMaterial = std::make_shared<clv::gfx::Material>(clv::gfx::ShaderStyle::Lit);
@@ -80,22 +80,22 @@ void TestLayer::onAttach(){
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
-		ent1.getComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
+		ent1.getComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 	}
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
-		ent2.getComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
+		ent2.getComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 	}
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
-		ent3.getComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
+		ent3.getComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 	}
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
-		bigBoy.getComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
+		bigBoy.getComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 	}
 
 	ent1.getComponent<clv::ecs::_3D::TransformComponent>()->setPosition({ 0.0f, 0.0f, 0.0f });
@@ -137,14 +137,14 @@ void TestLayer::onAttach(){
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 		lght1.getComponent<clv::ecs::_3D::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
 		lght1.getComponent<clv::ecs::_3D::TransformComponent>()->setPosition({ -10.0f, 0.0f, 0.0f });
-		lght1.getComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
+		lght1.getComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 	}
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 		lght2.getComponent<clv::ecs::_3D::TransformComponent>()->setScale({ 0.25f, 0.25f, 0.25f });
 		lght2.getComponent<clv::ecs::_3D::TransformComponent>()->setPosition({ -10.0f, -5.0f, 0.0f });
-		lght2.getComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
+		lght2.getComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 	}
 
 	{
@@ -178,7 +178,7 @@ void TestLayer::onAttach(){
 
 		rigidBody1 = clv::Application::get().getManager().createEntity();
 		rigidBody1.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 10.0f, 10.0f });
-		rigidBody1.addComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
+		rigidBody1.addComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 		rigidBody1.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, true, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
 
 		rigidBody1.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::math::asQuaternion(13.0f, clv::math::Vector3f{ 0.0f, 0.0f, 0.5f }));
@@ -189,7 +189,7 @@ void TestLayer::onAttach(){
 
 		rigidBody2 = clv::Application::get().getManager().createEntity();
 		rigidBody2.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 30.0f, 10.0f });
-		rigidBody2.addComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
+		rigidBody2.addComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 		rigidBody2.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, false, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
 
 		rigidBody2.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::math::asQuaternion(13.0f, clv::math::Vector3f{ 1.0f, 0.0f, 0.0f }));

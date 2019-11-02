@@ -2,7 +2,7 @@
 
 #include "Core/Application.hpp"
 #include "Core/ECS/3D/Components/CameraComponent.hpp"
-#include "Core/ECS/3D/Components/RenderableComponent.hpp"
+#include "Core/ECS/3D/Components/MeshComponent.hpp"
 #include "Core/ECS/3D/Components/TransformComponent.hpp"
 #include "Core/Graphics/Mesh.hpp"
 #include "Core/Graphics/Material.hpp"
@@ -16,9 +16,9 @@ GameLayer::GameLayer()
 
 void GameLayer::onAttach(){
 	//cameraEntity = clv::Application::get().getManager().createEntity<clv::ecs::_3D::CameraComponent, clv::ecs::_3D::TransformComponent>();
-	//sphereEntity = clv::Application::get().getManager().createEntity<clv::ecs::_3D::RenderableComponent, clv::ecs::_3D::TransformComponent>();
+	//sphereEntity = clv::Application::get().getManager().createEntity<clv::ecs::_3D::MeshComponent, clv::ecs::_3D::TransformComponent>();
 	//
-	//tempCube = clv::Application::get().getManager().createEntity<clv::ecs::_3D::RenderableComponent, clv::ecs::_3D::TransformComponent>();
+	//tempCube = clv::Application::get().getManager().createEntity<clv::ecs::_3D::MeshComponent, clv::ecs::_3D::TransformComponent>();
 	//tempLight = clv::Application::get().getManager().createEntity<clv::ecs::_3D::LightComponent, clv::ecs::_3D::TransformComponent>();
 
 	//sphereEntity.getComponent<clv::ecs::_3D::TransformComponent>()->addChild(cameraEntity.getComponent<clv::ecs::_3D::TransformComponent>());
@@ -29,8 +29,8 @@ void GameLayer::onAttach(){
 	//sphereMesh->setMaterial(sphereMaterial);
 	//sphereMaterial->setAlbedoTexture("res/Textures/container2.png");
 
-	//sphereEntity.getComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(sphereMesh);
-	////sphereEntity.getComponent<clv::ecs::_3D::RenderableComponent>()->setAlbedoTexture("res/Textures/container2.png");
+	//sphereEntity.getComponent<clv::ecs::_3D::MeshComponent>()->setMesh(sphereMesh);
+	////sphereEntity.getComponent<clv::ecs::_3D::MeshComponent>()->setAlbedoTexture("res/Textures/container2.png");
 	////sphereEntity.getComponent<clv::ecs::MeshComponent>()->setSpecularTexture("res/Textures/container2_specular.png");
 
 	//auto cubeMesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj");
