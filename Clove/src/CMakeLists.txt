@@ -453,7 +453,9 @@ target_precompile_headers(
         <string>
         <array>
 		<vector>
+		<map>
 		<unordered_map>
+		<set>
 		<unordered_set>
 	#Clove headers
 	PUBLIC
