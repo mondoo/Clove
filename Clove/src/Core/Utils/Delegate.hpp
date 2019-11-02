@@ -1,8 +1,5 @@
 #pragma once
 
-#include <optional>
-#include <map>
-
 namespace clv::utl{
 	template<typename FunctionPrototype>
 	class SingleCastDelegate{
