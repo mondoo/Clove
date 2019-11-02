@@ -2,6 +2,7 @@
 
 namespace clv::ecs{
 	Entity::Entity() = default;
+
 	Entity::Entity(const Entity& other) = default;
 
 	Entity::Entity(Entity&& other) noexcept{

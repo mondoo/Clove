@@ -2,6 +2,8 @@
 
 #include "Core/ECS/Component.hpp"
 
+#include "Core/Utils/HashString.hpp"
+
 namespace clv::gfx{
 	class Mesh;
 }
@@ -12,7 +14,7 @@ namespace clv::ecs::_3D{
 
 		//VARIABLES
 	public:
-		static constexpr ComponentID ID = 0x7dfb2c10; //VS Generated GUID
+		static constexpr ComponentID ID = HASH_CLASS(RenderableComponent);
 
 	private:
 		std::shared_ptr<gfx::Mesh> mesh; 

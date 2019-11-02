@@ -1,9 +1,9 @@
 #include "Manager.hpp"
 
 #include "Core/ECS/2D/Systems/RenderSystem.hpp"
+#include "Core/ECS/2D/Systems/PhysicsSystem.hpp"
 #include "Core/ECS/3D/Systems/RenderSystem.hpp"
-#include "Core/ECS/2D/Systems/TransformSystem.hpp"
-#include "Core/ECS/3D/Systems/TransformSystem.hpp"
+#include "Core/ECS/3D/Systems/PhysicsSystem.hpp"
 #include "Core/ECS/3D/Systems/LightSystem.hpp"
 #include "Core/ECS/3D/Systems/CameraSystem.hpp"
 #include "Core/ECS/Audio/Systems/AudioSystem.hpp"
@@ -13,23 +13,28 @@ namespace clv::ecs{
 	EntityID Manager::nextID = 0;
 
 	Manager::Manager(){
-		systems.reserve(6);
-		systems.emplace_back(std::make_unique<_2D::RenderSystem>());
-		systems.emplace_back(std::make_unique<_3D::RenderSystem>());
-		systems.emplace_back(std::make_unique<_2D::TransformSystem>());
-		systems.emplace_back(std::make_unique<_3D::TransformSystem>());
-		systems.emplace_back(std::make_unique<_3D::LightSystem>());
-		systems.emplace_back(std::make_unique<_3D::CameraSystem>());
-		systems.emplace_back(std::make_unique<aud::AudioSystem>());
-		systems.emplace_back(std::make_unique<ui::TextSystem>());
+		//Order is somewhat important
+		systems = {
+			std::make_unique<_2D::PhysicsSystem>(),
+			std::make_unique<_2D::RenderSystem>(),
+
+			std::make_unique<_3D::PhysicsSystem>(),
+			std::make_unique<_3D::RenderSystem>(),
+			std::make_unique<_3D::LightSystem>(),
+			std::make_unique<_3D::CameraSystem>(),
+
+			std::make_unique<aud::AudioSystem>(),
+
+			std::make_unique<ui::TextSystem>()
+		};
 	}
 
 	Manager::~Manager() = default;
 
 	void Manager::update(utl::DeltaTime deltaTime){
-		for(const auto& system : systems){
+		std::for_each(systems.begin(), systems.end(), [deltaTime](const std::unique_ptr<SystemBase>& system){
 			system->update(deltaTime);
-		}
+		});
 	}
 
 	Entity Manager::createEntity(){
@@ -46,9 +51,9 @@ namespace clv::ecs{
 			return;
 		}
 
-		for(const auto& system : systems){
+		std::for_each(systems.begin(), systems.end(), [ID](const std::unique_ptr<SystemBase>& system){
 			system->onEntityDestroyed(ID);
-		}
+		});
 		components.erase(ID);
 	}
 
@@ -65,9 +70,10 @@ namespace clv::ecs{
 	void Manager::onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component){
 		components[entityID][componentID] = std::move(component);
 
-		for(auto& system : systems){
+		auto& components = this->components;
+		std::for_each(systems.begin(), systems.end(), [entityID, &components](const std::unique_ptr<SystemBase>& system){
 			system->onEntityComponentAdded(entityID, components[entityID]);
-		}
+		});
 	}
 
 	Component* Manager::getComponentForEntity(EntityID entityID, ComponentID componentID){

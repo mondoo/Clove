@@ -32,18 +32,22 @@ set(
 		Core/ECS/System.inl
 		Core/ECS/2D/Components/RenderableComponent.hpp
 		Core/ECS/2D/Components/RenderableComponent.cpp
+		Core/ECS/2D/Components/RigidBodyComponent.hpp
+		Core/ECS/2D/Components/RigidBodyComponent.cpp
 		Core/ECS/2D/Components/TransformComponent.hpp
 		Core/ECS/2D/Components/TransformComponent.cpp
 		Core/ECS/2D/Systems/RenderSystem.hpp
 		Core/ECS/2D/Systems/RenderSystem.cpp
-		Core/ECS/2D/Systems/TransformSystem.hpp
-		Core/ECS/2D/Systems/TransformSystem.cpp
+		Core/ECS/2D/Systems/PhysicsSystem.hpp
+		Core/ECS/2D/Systems/PhysicsSystem.cpp
 		Core/ECS/3D/Components/CameraComponent.hpp
 		Core/ECS/3D/Components/CameraComponent.cpp
 		Core/ECS/3D/Components/LightComponent.hpp
 		Core/ECS/3D/Components/LightComponent.cpp
 		Core/ECS/3D/Components/RenderableComponent.hpp
 		Core/ECS/3D/Components/RenderableComponent.cpp
+		Core/ECS/3D/Components/RigidBodyComponent.hpp
+		Core/ECS/3D/Components/RigidBodyComponent.cpp
 		Core/ECS/3D/Components/TransformComponent.hpp
 		Core/ECS/3D/Components/TransformComponent.cpp
 		Core/ECS/3D/Systems/CameraSystem.hpp
@@ -52,8 +56,8 @@ set(
 		Core/ECS/3D/Systems/LightSystem.cpp
 		Core/ECS/3D/Systems/RenderSystem.hpp
 		Core/ECS/3D/Systems/RenderSystem.cpp
-		Core/ECS/3D/Systems/TransformSystem.hpp
-		Core/ECS/3D/Systems/TransformSystem.cpp
+		Core/ECS/3D/Systems/PhysicsSystem.hpp
+		Core/ECS/3D/Systems/PhysicsSystem.cpp
 		Core/ECS/Audio/Components/AudioComponent.hpp
 		Core/ECS/Audio/Components/AudioComponent.cpp
 		Core/ECS/Audio/Systems/AudioSystem.hpp
@@ -137,6 +141,7 @@ set(
 		Core/Utils/Delegate.inl
 		Core/Utils/DeltaTime.hpp
 		Core/Utils/DeltaTime.cpp
+		Core/Utils/HashString.hpp
 		Core/Utils/MeshLoader.hpp
 		Core/Utils/MeshLoader.cpp
 )
@@ -386,7 +391,8 @@ target_include_directories(
 		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
 	PRIVATE
         ../vendor/OBJ-Loader/Source
-        ../vendor/freetype2/include
+		../vendor/freetype2/include
+		../vendor/bullet3/src
 		$<$<PLATFORM_ID:Windows>:${CMAKE_SOURCE_DIR}/Clove/vendor/wglext>
 )
 
@@ -408,6 +414,10 @@ target_link_libraries(
 		sndfile
 		portaudio_static
 		freetype
+		#Order of these are important
+        BulletDynamics
+        BulletCollision
+        LinearMath
 	#Windows
 	PRIVATE
 		$<$<PLATFORM_ID:Windows>:dxerr>
@@ -453,6 +463,7 @@ target_precompile_headers(
 		[["Core/Maths/MathsTypes.hpp"]]
 		[["Core/Maths/Maths.hpp"]]
 		[["Core/Maths/MathsHelpers.hpp"]]
+		[["Core/Utils/Delegate.hpp"]]
 	#Platform headers
 	PUBLIC
 		$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>

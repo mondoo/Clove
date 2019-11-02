@@ -30,6 +30,12 @@ private:
 	clv::ecs::Entity fontEnt;
 	clv::ecs::Entity fpsEnt;
 
+	clv::ecs::Entity rigidBody1;
+	clv::ecs::Entity rigidBody2;
+
+	clv::ecs::Entity rigidSprite1;
+	clv::ecs::Entity rigidSprite2;
+
 	bool firstMouse = false;
 	float pitch = 0.0f;
 	float yaw = 0.0f;

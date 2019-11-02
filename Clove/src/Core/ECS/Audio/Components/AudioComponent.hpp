@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Core/ECS/Component.hpp"
+
 #include "Core/Audio/Sound.hpp"
+#include "Core/Utils/HashString.hpp"
 
 //PortAudio type def (see portaudio.h)
 typedef void PaStream;
@@ -22,7 +24,7 @@ namespace clv::ecs::aud{
 
 		//VARIABLES
 	public:
-		static constexpr ComponentID ID = 0x7c10e639; //VS Generated GUID
+		static constexpr ComponentID ID = HASH_CLASS(AudioComponent);
 
 	private:
 		clv::aud::Sound sound;

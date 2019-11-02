@@ -2,7 +2,7 @@
 
 #include "Core/ECS/Component.hpp"
 
-#include "Core/Graphics/Renderer.hpp"
+#include "Core/Utils/HashString.hpp"
 
 namespace clv::gfx{
 	class Sprite;
@@ -14,7 +14,7 @@ namespace clv::ecs::_2D{
 
 		//VARIABLES
 	public:
-		static constexpr ComponentID ID = 0x28fcf790; //VS Generated GUID
+		static constexpr ComponentID ID = HASH_CLASS(RenderableComponent);
 
 	private:
 		std::shared_ptr<gfx::Sprite> sprite;

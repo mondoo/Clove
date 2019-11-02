@@ -6,9 +6,11 @@
 #include "Core/ECS/3D/Components/RenderableComponent.hpp"
 #include "Core/ECS/2D/Components/RenderableComponent.hpp"
 #include "Core/ECS/2D/Components/TransformComponent.hpp"
+#include "Core/ECS/2D/Components/RigidBodyComponent.hpp"
 #include "Core/ECS/3D/Components/TransformComponent.hpp"
 #include "Core/ECS/3D/Components/CameraComponent.hpp"
 #include "Core/ECS/3D/Components/LightComponent.hpp"
+#include "Core/ECS/3D/Components/RigidBodyComponent.hpp"
 #include "Core/ECS/Audio/Components/AudioComponent.hpp"
 #include "Core/ECS/UI/Components/TextComponent.hpp"
 #include "Core/Maths/Vector.hpp"
@@ -168,6 +170,52 @@ void TestLayer::onAttach(){
 
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("not set :(");
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(30);
+	}
+
+	//Physics
+	{
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+
+		rigidBody1 = clv::Application::get().getManager().createEntity();
+		rigidBody1.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 10.0f, 10.0f });
+		rigidBody1.addComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
+		rigidBody1.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, true, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
+
+		rigidBody1.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::math::asQuaternion(13.0f, clv::math::Vector3f{ 0.0f, 0.0f, 0.5f }));
+	}
+
+	{
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+
+		rigidBody2 = clv::Application::get().getManager().createEntity();
+		rigidBody2.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 30.0f, 10.0f });
+		rigidBody2.addComponent<clv::ecs::_3D::RenderableComponent>()->setMesh(mesh);
+		rigidBody2.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, false, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
+
+		rigidBody2.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::math::asQuaternion(13.0f, clv::math::Vector3f{ 1.0f, 0.0f, 0.0f }));
+	}
+
+	{
+		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
+
+		rigidSprite1 = clv::Application::get().getManager().createEntity();
+		rigidSprite1.addComponent<clv::ecs::_2D::RenderableComponent>()->setSprite(sprite);
+		rigidSprite1.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+		rigidSprite1.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, true, clv::math::Vector2f{ 20.0f, 20.0f });
+
+		rigidSprite1.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::math::Vector2f{ -100.0f, 0.0f });
+		rigidSprite1.getComponent<clv::ecs::_2D::TransformComponent>()->setRotation(clv::math::asRadians(45.0f));
+	}
+
+	{
+		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
+
+		rigidSprite2 = clv::Application::get().getManager().createEntity();
+		rigidSprite2.addComponent<clv::ecs::_2D::RenderableComponent>()->setSprite(sprite);
+		rigidSprite2.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+		rigidSprite2.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, false, clv::math::Vector2f{ 20.0f, 20.0f });
+
+		rigidSprite2.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::math::Vector2f{ -125.0f, 200.0f });
 	}
 
 	CLV_LOG_DEBUG("Testlayer has done a thing!");

@@ -3,6 +3,7 @@
 #include "Core/ECS/Component.hpp"
 
 #include "Core/Graphics/ShaderBufferTypes.hpp"
+#include "Core/Utils/HashString.hpp"
 
 namespace clv::ecs::_3D{
 	class LightComponent : public Component{
@@ -10,7 +11,7 @@ namespace clv::ecs::_3D{
 
 		//VARIABLES
 	public:
-		static constexpr ComponentID ID = 0x62fe5696; //VS generated GUID
+		static constexpr ComponentID ID = HASH_CLASS(LightComponent);
 
 	private:
 		math::Vector3f ambientColour = math::Vector3f(0.01f, 0.01f, 0.01f);

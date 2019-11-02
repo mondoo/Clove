@@ -3,6 +3,7 @@
 #include "Core/ECS/Component.hpp"
 
 #include "Core/Graphics/ShaderBufferTypes.hpp"
+#include "Core/Utils/HashString.hpp"
 
 namespace clv::ecs::_3D{
 	enum class ProjectionMode{
@@ -15,7 +16,7 @@ namespace clv::ecs::_3D{
 
 		//VARIABLES
 	public:
-		static constexpr ComponentID ID = 0x11eb9bf5;
+		static constexpr ComponentID ID = HASH_CLASS(CameraComponent);
 
 	private:
 		math::Matrix4f currentProjection = math::Matrix4f(1.0f);
