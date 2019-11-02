@@ -3,7 +3,6 @@
 #include "Core/Platform/PlatformTypes.hpp"
 #include "Core/Input/Keyboard.hpp"
 #include "Core/Input/Mouse.hpp"
-#include "Core/Utils/Delegate.hpp"
 
 namespace clv::gfx{
 	enum class API;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/ECS/ECSTypes.hpp"
-#include "Core/Utils/Delegate.hpp"
 
 namespace clv::ecs{
 	class Component;
