@@ -20,6 +20,8 @@ namespace clv::ecs::_2D{
 	}
 
 	float TransformComponent::getRotation() const{
+		//return localRotation;
+
 		math::Matrix4f transformMatrix = getWorldTransformMatrix();
 
 		transformMatrix[3][0] = 0.0f;
@@ -40,9 +42,9 @@ namespace clv::ecs::_2D{
 		transformMatrix[1][1] /= scale.y;
 		transformMatrix[1][2] /= scale.y;
 
-		math::Quaternionf qrot = math::matrixToQuaternion(transformMatrix);
+		const math::Vector3f euler = math::eulerFromMatrix(transformMatrix);
 
-		return math::quaternionToEuler(qrot).z;
+		return euler.z;
 	}
 
 	float TransformComponent::getLocalRotation() const{

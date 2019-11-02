@@ -1,5 +1,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 namespace clv::math{
 	template<typename T>
@@ -60,5 +61,12 @@ namespace clv::math{
 	template<typename T, qualifier Q>
 	Vector<3, T, Q> quaternionToEuler(const Quaternion<T, Q>& quat){
 		return glm::eulerAngles(quat);
+	}
+
+	template<typename T, qualifier Q>
+	Vector<3, T, Q> eulerFromMatrix(const Matrix<4, 4, T, Q>& mat){
+		Vector<3, T, Q> vec;
+		glm::extractEulerAngleXYZ(mat, vec.x, vec.y, vec.z);
+		return vec;
 	}
 }

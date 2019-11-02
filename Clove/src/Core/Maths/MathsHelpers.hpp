@@ -36,6 +36,9 @@ namespace clv::math{
 
 	template<typename T, qualifier Q>
 	Vector<3, T, Q> quaternionToEuler(const Quaternion<T, Q>& quat);
+
+	template<typename T, qualifier Q>
+	Vector<3, T, Q> eulerFromMatrix(const Matrix<4, 4, T, Q>& mat);
 }
 
 #include "MathsHelpers.inl"
