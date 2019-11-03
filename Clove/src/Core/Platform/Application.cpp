@@ -11,8 +11,10 @@
 #include "Core/Graphics/Renderer2D.hpp"
 #include "Core/Graphics/RenderCommand.hpp"
 
-#ifdef CLV_PLATFORM_WINDOWS
+#if CLV_PLATFORM_WINDOWS
 	#include "Platform/Windows/WindowsApplication.hpp"
+#elif CLV_PLATFORM_LINUX
+	#include "Platform/Linux/LinuxApplication.hpp"
 #endif
 
 namespace clv::plt{
@@ -108,8 +110,10 @@ namespace clv::plt{
 	}
 
 	std::unique_ptr<Application> Application::createApplication(){
-	#ifdef CLV_PLATFORM_WINDOWS
+	#if CLV_PLATFORM_WINDOWS
 		return std::make_unique<WindowsApplication>();
+	#elif CLV_PLATFORM_LINUX
+		return std::make_unique<LinuxApplication>();
 	#endif
 	}
 
