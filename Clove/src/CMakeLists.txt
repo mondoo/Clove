@@ -335,9 +335,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		PlatformFiles
 			Platform/Windows/CloveWindows.hpp
+			Platform/Windows/WindowsApplication.hpp
+			Platform/Windows/WindowsApplication.cpp
 			Platform/Windows/WindowsException.hpp
 			Platform/Windows/WindowsException.cpp
-			Platform/Windows/WindowsPlatform.cpp
 			Platform/Windows/WindowsWindow.hpp
 			Platform/Windows/WindowsWindow.cpp
 	)
