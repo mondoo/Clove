@@ -1,20 +1,20 @@
 #include "Core/Input/Input.hpp"
 
-#include "Core/Application.hpp"
+#include "Core/Platform/Application.hpp"
 #include "Core/Platform/Window.hpp"
 
 namespace clv{
 	namespace input{
 		bool isKeyPressed(Key key){
-			return Application::get().getWindow().getKeyboard().isKeyPressed(key);
+			return plt::Application::get().getWindow().getKeyboard().isKeyPressed(key);
 		}
 
 		bool isMouseButtonPressed(MouseButton button){
-			return Application::get().getWindow().getMouse().isButtonPressed(button);
+			return plt::Application::get().getWindow().getMouse().isButtonPressed(button);
 		}
 
 		std::pair<int32, int32> getMousePosition(){
-			return Application::get().getWindow().getMouse().getPosition();
+			return plt::Application::get().getWindow().getMouse().getPosition();
 		}
 
 		int32 getMouseX(){
