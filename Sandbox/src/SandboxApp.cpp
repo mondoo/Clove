@@ -7,6 +7,8 @@ int main(int argc, char** argv){
 	try{
 		auto app = clv::plt::Application::createApplication();
 
+		app->start();
+
 		app->pushLayer(std::make_shared<TestLayer>());
 		//app->pushLayer(std::make_shared<GameLayer>());
 

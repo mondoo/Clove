@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Core/Platform/PlatformTypes.hpp"
+#include "Core/Graphics/GraphicsTypes.hpp"
+
 namespace clv{
 	class LayerStack;
 	class Layer;
@@ -36,10 +39,11 @@ namespace clv::plt{
 		Application();
 		virtual ~Application();
 
+		void start();
 		void update();
-		ApplicationState getState() const;
-
 		void stop();
+
+		ApplicationState getState() const;
 
 		void pushLayer(std::shared_ptr<Layer> layer);
 		void pushOverlay(std::shared_ptr<Layer> overlay);

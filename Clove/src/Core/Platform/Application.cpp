@@ -19,20 +19,10 @@ namespace clv::plt{
 	Application* Application::instance = nullptr;
 
 	Application::Application(){
-		Log::init();
-
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		window = createWindow();
-		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
-		window->setVSync(true);
-
-		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
-		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
-
-		gfx::Renderer::initialise();
-		gfx::Renderer2D::initialise();
+		Log::init();
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
@@ -45,6 +35,21 @@ namespace clv::plt{
 	Application::~Application(){
 		gfx::Renderer::shutDown();
 		gfx::Renderer2D::shutDown();
+	}
+
+	void Application::start(){
+		//TODO: Added a 'start' function to handle not calling a virtual from the ctor
+		//Would like as minimal api as possible when starting the application
+
+		window = createWindow();
+		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
+		window->setVSync(true);
+
+		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
+		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+
+		gfx::Renderer::initialise();
+		gfx::Renderer2D::initialise();
 	}
 
 	void Application::update(){
@@ -74,12 +79,12 @@ namespace clv::plt{
 		window->endFrame();
 	}
 
-	ApplicationState Application::getState() const{
-		return currentState;
-	}
-
 	void Application::stop(){
 		currentState = ApplicationState::stopped;
+	}
+
+	ApplicationState Application::getState() const{
+		return currentState;
 	}
 
 	void Application::pushLayer(std::shared_ptr<Layer> layer){
