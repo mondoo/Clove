@@ -11,6 +11,10 @@
 #include "Core/Graphics/Renderer2D.hpp"
 #include "Core/Graphics/RenderCommand.hpp"
 
+#ifdef CLV_PLATFORM_WINDOWS
+	#include "Platform/Windows/WindowsApplication.hpp"
+#endif
+
 namespace clv::plt{
 	Application* Application::instance = nullptr;
 
@@ -96,6 +100,12 @@ namespace clv::plt{
 
 	ecs::Manager& Application::getManager(){
 		return *ecsManager;
+	}
+
+	std::unique_ptr<Application> Application::createApplication(){
+	#ifdef CLV_PLATFORM_WINDOWS
+		return std::make_unique<WindowsApplication>();
+	#endif
 	}
 
 	void Application::onWindowClose(){
