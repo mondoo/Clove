@@ -1,17 +1,16 @@
 #pragma once
 
+namespace clv{
+	class LayerStack;
+	class Layer;
+}
+
 namespace clv::ecs{
 	class Manager;
 }
 
 namespace clv::plt{
 	class Window;
-}
-
-namespace clv{
-	class LayerStack;
-	class Layer;
-	class ImGuiLayer;
 
 	enum class ApplicationState{
 		running,
@@ -50,10 +49,12 @@ namespace clv{
 		plt::Window& getWindow();
 		ecs::Manager& getManager();
 
+		static std::unique_ptr<Application> createApplication();
+
 	private:
 		void onWindowClose();
-	};
 
-	//To be defined in CLIENT
-	//Application* createApplication();
+		virtual std::unique_ptr<Window> createWindow(const WindowProps& props = WindowProps()) = 0;
+		virtual std::unique_ptr<Window> createWindow(const WindowProps& props, gfx::API api) = 0;
+	};
 }

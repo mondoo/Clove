@@ -16,8 +16,6 @@ set(
 		Core/LayerStack.cpp
 		Core/Log.hpp
 		Core/Log.cpp
-		Core/Application.hpp
-		Core/Application.cpp
 		Core/Audio/Sound.hpp
 		Core/Audio/Sound.cpp
 		Core/ECS/Component.hpp
@@ -127,7 +125,8 @@ set(
 		Core/Maths/Matrix.hpp
 		Core/Maths/Quaternion.hpp
 		Core/Maths/Vector.hpp
-		Core/Platform/Platform.hpp
+		Core/Platform/Application.hpp
+		Core/Platform/Application.cpp
 		Core/Platform/PlatformTypes.hpp
 		Core/Platform/Window.hpp
 		Core/Platform/Window.cpp

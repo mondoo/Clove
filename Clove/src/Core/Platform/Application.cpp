@@ -1,6 +1,5 @@
 #include "Application.hpp"
 
-#include "Core/Platform/Platform.hpp"
 #include "Core/Platform/Window.hpp"
 #include "Core/Input/Input.hpp"
 #include "Core/LayerStack.hpp"
@@ -12,7 +11,7 @@
 #include "Core/Graphics/Renderer2D.hpp"
 #include "Core/Graphics/RenderCommand.hpp"
 
-namespace clv{
+namespace clv::plt{
 	Application* Application::instance = nullptr;
 
 	Application::Application(){
@@ -20,10 +19,8 @@ namespace clv{
 
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
-		
-		plt::Platform::prepare();
 
-		window = plt::Platform::createWindow();
+		window = createWindow();
 		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
 		window->setVSync(true);
 

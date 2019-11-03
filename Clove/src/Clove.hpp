@@ -6,7 +6,7 @@
 #include "Core/Core.hpp"
 #include "Core/Log.hpp"
 
-#include "Core/Application.hpp"
+#include "Core/Platform/Application.hpp"
 #include "Core/Layer.hpp"
 
 #include "Core/Input/Input.hpp"
