@@ -15,6 +15,8 @@
 	#include "Platform/Windows/WindowsApplication.hpp"
 #elif CLV_PLATFORM_LINUX
 	#include "Platform/Linux/LinuxApplication.hpp"
+#elif CLV_PLATFORM_MACOS
+	#include "Platform/Mac/MacApplication.hpp"
 #endif
 
 namespace clv::plt{
@@ -114,6 +116,8 @@ namespace clv::plt{
 		return std::make_unique<WindowsApplication>();
 	#elif CLV_PLATFORM_LINUX
 		return std::make_unique<LinuxApplication>();
+	#elif CLV_PLATFORM_MACOS
+		return std::make_unique<MacApplication>();
 	#endif
 	}
 
