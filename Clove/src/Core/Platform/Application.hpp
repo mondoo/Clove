@@ -23,7 +23,7 @@ namespace clv::plt{
 	class Application{
 		//VARIABLES
 	private:
-		std::unique_ptr<plt::Window> window;
+		std::unique_ptr<Window> window;
 		std::unique_ptr<ecs::Manager> ecsManager;
 
 		ApplicationState currentState = ApplicationState::running;
@@ -50,7 +50,7 @@ namespace clv::plt{
 
 		static Application& get();
 		
-		plt::Window& getWindow();
+		Window& getWindow();
 		ecs::Manager& getManager();
 
 		static std::unique_ptr<Application> createApplication();

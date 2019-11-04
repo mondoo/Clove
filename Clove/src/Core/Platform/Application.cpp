@@ -103,7 +103,7 @@ namespace clv::plt{
 		return *instance;
 	}
 
-	plt::Window& Application::getWindow(){
+	Window& Application::getWindow(){
 		return *window;
 	}
 
