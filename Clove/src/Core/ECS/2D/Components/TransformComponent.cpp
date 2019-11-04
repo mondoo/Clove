@@ -7,7 +7,16 @@ namespace clv::ecs::_2D{
 
 	TransformComponent& TransformComponent::operator=(TransformComponent&& other) noexcept = default;
 
-	TransformComponent::~TransformComponent() = default;
+	TransformComponent::~TransformComponent(){
+		if(parent){
+			auto removeIter = std::remove(parent->children.begin(), parent->children.end(), this);
+			parent->children.erase(removeIter, parent->children.end());
+		}
+
+		for(auto* child : children){
+			child->parent = nullptr;
+		}
+	}
 
 	math::Vector2f TransformComponent::getPosition() const{
 		const math::Matrix4f transformMatrix = getWorldTransformMatrix();
