@@ -1,10 +1,10 @@
 #import "Platform/Mac/CloveMac.h"
-#import "Core/Platform/Platform.hpp"
+#import "MacApplication.hpp"
 
 #import "Platform/Mac/MacWindow.hpp"
 
 namespace clv::plt{
-	void Platform::prepare(){
+	MacApplication::MacApplication(){
 		[NSApplication sharedApplication];
 		[NSApp finishLaunching];
 		
@@ -12,11 +12,11 @@ namespace clv::plt{
 		[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 	}
 	
-	std::unique_ptr<Window> Platform::createWindow(const WindowProps& props){
+	std::unique_ptr<Window> MacApplication::createWindow(const WindowProps& props){
         return std::make_unique<MacWindow>(props);
     }
 
-    std::unique_ptr<Window> Platform::createWindow(const WindowProps& props, gfx::API api){
+    std::unique_ptr<Window> MacApplication::createWindow(const WindowProps& props, gfx::API api){
         return std::make_unique<MacWindow>(props, api);
     }
 }

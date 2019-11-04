@@ -1,17 +1,19 @@
 #pragma once
 
+#include "Core/Platform/PlatformTypes.hpp"
+#include "Core/Graphics/GraphicsTypes.hpp"
+
+namespace clv{
+	class LayerStack;
+	class Layer;
+}
+
 namespace clv::ecs{
 	class Manager;
 }
 
 namespace clv::plt{
 	class Window;
-}
-
-namespace clv{
-	class LayerStack;
-	class Layer;
-	class ImGuiLayer;
 
 	enum class ApplicationState{
 		running,
@@ -21,7 +23,7 @@ namespace clv{
 	class Application{
 		//VARIABLES
 	private:
-		std::unique_ptr<plt::Window> window;
+		std::unique_ptr<Window> window;
 		std::unique_ptr<ecs::Manager> ecsManager;
 
 		ApplicationState currentState = ApplicationState::running;
@@ -37,23 +39,26 @@ namespace clv{
 		Application();
 		virtual ~Application();
 
+		void start();
 		void update();
-		ApplicationState getState() const;
-
 		void stop();
+
+		ApplicationState getState() const;
 
 		void pushLayer(std::shared_ptr<Layer> layer);
 		void pushOverlay(std::shared_ptr<Layer> overlay);
 
 		static Application& get();
 		
-		plt::Window& getWindow();
+		Window& getWindow();
 		ecs::Manager& getManager();
+
+		static std::unique_ptr<Application> createApplication();
 
 	private:
 		void onWindowClose();
-	};
 
-	//To be defined in CLIENT
-	//Application* createApplication();
+		virtual std::unique_ptr<Window> createWindow(const WindowProps& props = WindowProps()) = 0;
+		virtual std::unique_ptr<Window> createWindow(const WindowProps& props, gfx::API api) = 0;
+	};
 }

@@ -16,8 +16,6 @@ set(
 		Core/LayerStack.cpp
 		Core/Log.hpp
 		Core/Log.cpp
-		Core/Application.hpp
-		Core/Application.cpp
 		Core/Audio/Sound.hpp
 		Core/Audio/Sound.cpp
 		Core/ECS/Component.hpp
@@ -127,7 +125,8 @@ set(
 		Core/Maths/Matrix.hpp
 		Core/Maths/Quaternion.hpp
 		Core/Maths/Vector.hpp
-		Core/Platform/Platform.hpp
+		Core/Platform/Application.hpp
+		Core/Platform/Application.cpp
 		Core/Platform/PlatformTypes.hpp
 		Core/Platform/Window.hpp
 		Core/Platform/Window.cpp
@@ -336,9 +335,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		PlatformFiles
 			Platform/Windows/CloveWindows.hpp
+			Platform/Windows/WindowsApplication.hpp
+			Platform/Windows/WindowsApplication.cpp
 			Platform/Windows/WindowsException.hpp
 			Platform/Windows/WindowsException.cpp
-			Platform/Windows/WindowsPlatform.cpp
 			Platform/Windows/WindowsWindow.hpp
 			Platform/Windows/WindowsWindow.cpp
 	)
@@ -346,7 +346,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
 		PlatformFiles
 			Platform/Linux/CloveLinux.hpp
-			Platform/Linux/LinuxPlatform.cpp
+			Platform/Linux/LinuxApplication.hpp
+			Platform/Linux/LinuxApplication.cpp
 			Platform/Linux/LinuxWindow.hpp
 			Platform/Linux/LinuxWindow.cpp
 	)
@@ -354,7 +355,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	set(
 		PlatformFiles
 			Platform/Mac/CloveMac.h
-			Platform/Mac/MacPlatform.mm
+			Platform/Mac/MacApplication.hpp
+			Platform/Mac/MacApplication.mm
 			Platform/Mac/MacWindow.hpp
 			Platform/Mac/MacWindow.mm
 	)

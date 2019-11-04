@@ -7,12 +7,11 @@
 #include "Core/Graphics/Bindables/Shader.hpp"
 #include "Core/Graphics/Bindables/Texture.hpp"
 #include "Core/Graphics/RenderTarget.hpp"
-#include "Core/Application.hpp"
+#include "Core/Platform/Application.hpp"
 #include "Core/Platform/Window.hpp"
 #include "Core/Graphics/Mesh.hpp"
 #include "Core/Graphics/Material.hpp"
 #include "Core/Graphics/Sprite.hpp"
-#include "Core/Application.hpp"
 #include "Core/Platform/Window.hpp"
 #include "Core/Graphics/Bindables/Shader.hpp"
 #include "Core/Graphics/ShaderBufferTypes.hpp"
@@ -108,7 +107,7 @@ namespace clv::gfx{
 			RenderCommand::setViewPortSize(shadowMapSize, shadowMapSize);
 			RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
 			currentSceneData->forEachMesh(generateShadowMap);
-			RenderCommand::setViewPortSize(Application::get().getWindow().getWidth(), Application::get().getWindow().getHeight());
+			RenderCommand::setViewPortSize(plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight());
 		}
 		
 		RenderCommand::removeCurrentGeometryShader();

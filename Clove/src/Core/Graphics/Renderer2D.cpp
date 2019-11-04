@@ -4,7 +4,7 @@
 #include "Core/Graphics/Sprite.hpp"
 #include "Core/Graphics/Mesh.hpp"
 #include "Core/Graphics/VertexLayout.hpp"
-#include "Core/Application.hpp"
+#include "Core/Platform/Application.hpp"
 #include "Core/Platform/Window.hpp"
 
 namespace clv::gfx{
@@ -56,8 +56,8 @@ namespace clv::gfx{
 		}
 
 		//Projection
-		const float halfWidth = static_cast<float>(Application::get().getWindow().getWidth()) / 2;
-		const float halfHeight = static_cast<float>(Application::get().getWindow().getHeight()) / 2;
+		const float halfWidth = static_cast<float>(plt::Application::get().getWindow().getWidth()) / 2;
+		const float halfHeight = static_cast<float>(plt::Application::get().getWindow().getHeight()) / 2;
 
 		currentSceneData2D->projection = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 	}

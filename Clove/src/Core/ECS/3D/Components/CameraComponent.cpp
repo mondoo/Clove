@@ -1,6 +1,5 @@
 #include "CameraComponent.hpp"
 
-#include "Core/Application.hpp"
 #include "Core/Platform/Window.hpp"
 #include "Core/Graphics/Renderer.hpp"
 #include "Core/Graphics/BindableFactory.hpp"

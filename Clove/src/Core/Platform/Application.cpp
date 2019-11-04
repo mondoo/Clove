@@ -1,6 +1,5 @@
 #include "Application.hpp"
 
-#include "Core/Platform/Platform.hpp"
 #include "Core/Platform/Window.hpp"
 #include "Core/Input/Input.hpp"
 #include "Core/LayerStack.hpp"
@@ -12,26 +11,22 @@
 #include "Core/Graphics/Renderer2D.hpp"
 #include "Core/Graphics/RenderCommand.hpp"
 
-namespace clv{
+#if CLV_PLATFORM_WINDOWS
+	#include "Platform/Windows/WindowsApplication.hpp"
+#elif CLV_PLATFORM_LINUX
+	#include "Platform/Linux/LinuxApplication.hpp"
+#elif CLV_PLATFORM_MACOS
+	#include "Platform/Mac/MacApplication.hpp"
+#endif
+
+namespace clv::plt{
 	Application* Application::instance = nullptr;
 
 	Application::Application(){
-		Log::init();
-
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
-		
-		plt::Platform::prepare();
 
-		window = plt::Platform::createWindow();
-		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
-		window->setVSync(true);
-
-		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
-		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
-
-		gfx::Renderer::initialise();
-		gfx::Renderer2D::initialise();
+		Log::init();
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
@@ -44,6 +39,21 @@ namespace clv{
 	Application::~Application(){
 		gfx::Renderer::shutDown();
 		gfx::Renderer2D::shutDown();
+	}
+
+	void Application::start(){
+		//TODO: Added a 'start' function to handle not calling a virtual from the ctor
+		//Would like as minimal api as possible when starting the application
+
+		window = createWindow();
+		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
+		window->setVSync(true);
+
+		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
+		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+
+		gfx::Renderer::initialise();
+		gfx::Renderer2D::initialise();
 	}
 
 	void Application::update(){
@@ -73,12 +83,12 @@ namespace clv{
 		window->endFrame();
 	}
 
-	ApplicationState Application::getState() const{
-		return currentState;
-	}
-
 	void Application::stop(){
 		currentState = ApplicationState::stopped;
+	}
+
+	ApplicationState Application::getState() const{
+		return currentState;
 	}
 
 	void Application::pushLayer(std::shared_ptr<Layer> layer){
@@ -93,12 +103,22 @@ namespace clv{
 		return *instance;
 	}
 
-	plt::Window& Application::getWindow(){
+	Window& Application::getWindow(){
 		return *window;
 	}
 
 	ecs::Manager& Application::getManager(){
 		return *ecsManager;
+	}
+
+	std::unique_ptr<Application> Application::createApplication(){
+	#if CLV_PLATFORM_WINDOWS
+		return std::make_unique<WindowsApplication>();
+	#elif CLV_PLATFORM_LINUX
+		return std::make_unique<LinuxApplication>();
+	#elif CLV_PLATFORM_MACOS
+		return std::make_unique<MacApplication>();
+	#endif
 	}
 
 	void Application::onWindowClose(){

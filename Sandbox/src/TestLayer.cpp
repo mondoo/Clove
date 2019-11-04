@@ -1,6 +1,6 @@
 #include "TestLayer.hpp"
 
-#include "Core/Application.hpp"
+#include "Core/Platform/Application.hpp"
 #include "Core/Platform/Window.hpp"
 #include "Core/ECS/Manager.hpp"
 #include "Core/ECS/3D/Components/MeshComponent.hpp"
@@ -30,46 +30,46 @@ TestLayer::TestLayer()
 }
 
 void TestLayer::onAttach(){
-	ent1 = clv::Application::get().getManager().createEntity();
+	ent1 = clv::plt::Application::get().getManager().createEntity();
 	ent1.addComponent<clv::ecs::_3D::MeshComponent>();
 	ent1.addComponent<clv::ecs::_3D::TransformComponent>();
 
-	ent2 = clv::Application::get().getManager().createEntity();
+	ent2 = clv::plt::Application::get().getManager().createEntity();
 	ent2.addComponent<clv::ecs::_3D::MeshComponent>();
 	ent2.addComponent<clv::ecs::_3D::TransformComponent>();
 
-	ent3 = clv::Application::get().getManager().createEntity();
+	ent3 = clv::plt::Application::get().getManager().createEntity();
 	ent3.addComponent<clv::ecs::_3D::MeshComponent>();
 	ent3.addComponent<clv::ecs::_3D::TransformComponent>();
 
 	//rtEnt = clv::Application::get().getManager().createEntity<clv::ecs::_2D::SpriteComponent, clv::ecs::_2D::TransformComponent>();
 
-	sprtEnt1 = clv::Application::get().getManager().createEntity();
+	sprtEnt1 = clv::plt::Application::get().getManager().createEntity();
 	sprtEnt1.addComponent<clv::ecs::_2D::SpriteComponent>();
 	sprtEnt1.addComponent<clv::ecs::_2D::TransformComponent>();
 
-	sprtEnt2 = clv::Application::get().getManager().createEntity();
+	sprtEnt2 = clv::plt::Application::get().getManager().createEntity();
 	sprtEnt2.addComponent<clv::ecs::_2D::SpriteComponent>();
 	sprtEnt2.addComponent<clv::ecs::_2D::TransformComponent>();
 	
-	lght1 = clv::Application::get().getManager().createEntity();
+	lght1 = clv::plt::Application::get().getManager().createEntity();
 	lght1.addComponent<clv::ecs::_3D::MeshComponent>();
 	lght1.addComponent<clv::ecs::_3D::LightComponent>();
 	lght1.addComponent<clv::ecs::_3D::TransformComponent>();
 
-	lght2 = clv::Application::get().getManager().createEntity();
+	lght2 = clv::plt::Application::get().getManager().createEntity();
 	lght2.addComponent<clv::ecs::_3D::MeshComponent>();
 	lght2.addComponent<clv::ecs::_3D::LightComponent>();
 	lght2.addComponent<clv::ecs::_3D::TransformComponent>();
 	
-	cam = clv::Application::get().getManager().createEntity();
+	cam = clv::plt::Application::get().getManager().createEntity();
 	cam.addComponent<clv::ecs::_3D::CameraComponent>();
 	cam.addComponent<clv::ecs::_3D::TransformComponent>();
 
-	sound = clv::Application::get().getManager().createEntity();
+	sound = clv::plt::Application::get().getManager().createEntity();
 	sound.addComponent<clv::ecs::aud::AudioComponent>();
 
-	bigBoy = clv::Application::get().getManager().createEntity();
+	bigBoy = clv::plt::Application::get().getManager().createEntity();
 	bigBoy.addComponent<clv::ecs::_3D::MeshComponent>();
 	bigBoy.addComponent<clv::ecs::_3D::TransformComponent>();
 
@@ -157,14 +157,14 @@ void TestLayer::onAttach(){
 	{
 		auto font = clv::ui::Font("res/Fonts/Roboto/Roboto-Black.ttf");
 
-		fontEnt = clv::Application::get().getManager().createEntity();
+		fontEnt = clv::plt::Application::get().getManager().createEntity();
 		fontEnt.addComponent<clv::ecs::ui::TextComponent>(font);
 		fontEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::math::Vector2f{-550.0, 300.0f});
 
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("Hello, World!");
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(72);
 
-		fpsEnt = clv::Application::get().getManager().createEntity();
+		fpsEnt = clv::plt::Application::get().getManager().createEntity();
 		fpsEnt.addComponent<clv::ecs::ui::TextComponent>(font);
 		fpsEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::math::Vector2f{-550.0, 100.0f});
 
@@ -176,7 +176,7 @@ void TestLayer::onAttach(){
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 
-		rigidBody1 = clv::Application::get().getManager().createEntity();
+		rigidBody1 = clv::plt::Application::get().getManager().createEntity();
 		rigidBody1.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 10.0f, 10.0f });
 		rigidBody1.addComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 		rigidBody1.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, true, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
@@ -187,7 +187,7 @@ void TestLayer::onAttach(){
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 
-		rigidBody2 = clv::Application::get().getManager().createEntity();
+		rigidBody2 = clv::plt::Application::get().getManager().createEntity();
 		rigidBody2.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 30.0f, 10.0f });
 		rigidBody2.addComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 		rigidBody2.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, false, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
@@ -198,7 +198,7 @@ void TestLayer::onAttach(){
 	{
 		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
 
-		rigidSprite1 = clv::Application::get().getManager().createEntity();
+		rigidSprite1 = clv::plt::Application::get().getManager().createEntity();
 		rigidSprite1.addComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
 		rigidSprite1.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 		rigidSprite1.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, true, clv::math::Vector2f{ 20.0f, 20.0f });
@@ -210,7 +210,7 @@ void TestLayer::onAttach(){
 	{
 		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
 
-		rigidSprite2 = clv::Application::get().getManager().createEntity();
+		rigidSprite2 = clv::plt::Application::get().getManager().createEntity();
 		rigidSprite2.addComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
 		rigidSprite2.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 		rigidSprite2.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, false, clv::math::Vector2f{ 20.0f, 20.0f });
@@ -284,7 +284,7 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	rotDelta += rotSpeed * deltaTime;
 
 	if(clv::input::isKeyPressed(clv::Key::Escape)){
-		clv::Application::get().stop();
+		clv::plt::Application::get().stop();
 	}
 
 	//Audio testing

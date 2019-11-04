@@ -1,6 +1,5 @@
 #include "GameLayer.hpp"
 
-#include "Core/Application.hpp"
 #include "Core/ECS/3D/Components/CameraComponent.hpp"
 #include "Core/ECS/3D/Components/MeshComponent.hpp"
 #include "Core/ECS/3D/Components/TransformComponent.hpp"
