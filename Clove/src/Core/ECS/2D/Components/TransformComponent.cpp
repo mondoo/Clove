@@ -34,17 +34,13 @@ namespace clv::ecs::_2D{
 	}
 
 	float TransformComponent::getRotation() const{
-		//return localRotation;
-
 		math::Matrix4f transformMatrix = getWorldTransformMatrix();
 
 		transformMatrix[3][0] = 0.0f;
 		transformMatrix[3][1] = 0.0f;
-		transformMatrix[3][2] = 0.0f;
 
 		const math::Vector3f scaleX = { transformMatrix[0][0], transformMatrix[0][1], transformMatrix[0][2] };
 		const math::Vector3f scaleY = { transformMatrix[1][0], transformMatrix[1][1], transformMatrix[1][2] };
-		const math::Vector3f scaleZ = { transformMatrix[2][0], transformMatrix[2][1], transformMatrix[2][2] };
 
 		math::Vector2f scale = { math::length(scaleX), math::length(scaleY) };
 
@@ -70,7 +66,6 @@ namespace clv::ecs::_2D{
 
 		const math::Vector3f scaleX = { transformMatrix[0][0], transformMatrix[0][1], transformMatrix[0][2] };
 		const math::Vector3f scaleY = { transformMatrix[1][0], transformMatrix[1][1], transformMatrix[1][2] };
-		const math::Vector3f scaleZ = { transformMatrix[2][0], transformMatrix[2][1], transformMatrix[2][2] };
 
 		return { math::length(scaleX), math::length(scaleY) };
 	}
