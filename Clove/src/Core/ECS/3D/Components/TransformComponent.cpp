@@ -1,6 +1,11 @@
 #include "TransformComponent.hpp"
 
 namespace clv::ecs::_3D{
+	static void removeItemFromVector(TransformComponent* item, std::vector<TransformComponent*>& vector){
+		auto removeIter = std::remove(vector.begin(), vector.end(), item);
+		vector.erase(removeIter, vector.end());
+	}
+
 	TransformComponent::TransformComponent() = default;
 
 	TransformComponent::TransformComponent(TransformComponent&& other) noexcept = default;
@@ -9,8 +14,7 @@ namespace clv::ecs::_3D{
 
 	TransformComponent::~TransformComponent(){
 		if(parent){
-			auto removeIter = std::remove(parent->children.begin(), parent->children.end(), this);
-			parent->children.erase(removeIter, parent->children.end());
+			removeItemFromVector(this, parent->children);
 		}
 
 		for(auto* child : children){
@@ -121,6 +125,9 @@ namespace clv::ecs::_3D{
 	void TransformComponent::addChild(TransformComponent* child){
 		if(child && child != this){
 			children.push_back(child);
+			if(child->parent){
+				removeItemFromVector(child, child->parent->children);
+			}
 			child->parent = this;
 		}
 	}
