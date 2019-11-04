@@ -44,16 +44,15 @@ namespace clv::ecs{
 
 	template<typename ...ComponentTypes>
 	void System<ComponentTypes...>::onEntityDestroyed(EntityID entity){
-		const auto findIt = entityIdToIndexMap.find(entity);
-		if(findIt != entityIdToIndexMap.end()){
-			const size_t componentIndex = findIt->second;
+		if(const auto findIt = entityIdToIndexMap.find(entity); findIt != entityIdToIndexMap.end()){
+			const std::size_t componentIndex = findIt->second;
 
 			handleEntityDestruction(components[componentIndex]);
 
 			components[componentIndex] = std::move(components.back());
 			components.pop_back();
 
-			if(findIt->second < components.size()){
+			if(componentIndex < components.size()){
 				const auto& movedComponent = std::get<0>(components[componentIndex]); //We just need any component to do the look up
 				auto movedTupleIdIndex = entityIdToIndexMap.find(movedComponent->entityID);
 
