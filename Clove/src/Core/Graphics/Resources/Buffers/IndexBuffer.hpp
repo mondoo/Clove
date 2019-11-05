@@ -1,17 +1,17 @@
 #pragma once
 
-#include "Core/Graphics/Bindable.hpp"
+#include "Core/Graphics/Resources/Buffer.hpp"
 
 namespace clv::gfx{
-	class IndexBuffer : public Bindable{
+	class IndexBuffer : public Buffer{
 		//FUNCTIONS
 	public:
-		IndexBuffer();
+		IndexBuffer() = default;
 		IndexBuffer(const IndexBuffer& other) = delete;
-		IndexBuffer(IndexBuffer&& other) noexcept;
+		IndexBuffer(IndexBuffer&& other) noexcept = default;
 		IndexBuffer& operator=(const IndexBuffer& other) = delete;
-		IndexBuffer& operator=(IndexBuffer&& other) noexcept;
-		virtual ~IndexBuffer();
+		IndexBuffer& operator=(IndexBuffer&& other) noexcept = default;
+		virtual ~IndexBuffer() = default;
 
 		virtual uint32 getIndexCount() const = 0;
 	};

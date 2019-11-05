@@ -104,7 +104,6 @@ set(
 		Core/Graphics/Resources/Buffer.hpp
 		Core/Graphics/Resources/Texture.hpp
 		Core/Graphics/Resources/Buffers/IndexBuffer.hpp
-		Core/Graphics/Resources/Buffers/IndexBuffer.cpp
 		Core/Graphics/Resources/Buffers/VertexBuffer.hpp
 		Core/Input/Input.hpp
 		Core/Input/Input.cpp
