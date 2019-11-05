@@ -8,7 +8,7 @@ Currently, Garlic supports the following platforms:
 
 |**Platforms**|**API**|
 |-------------|-------|
-|Windows|DirectX 11, OpenGL 4.6|
+|Windows|Direct3D 11, OpenGL 4.6|
 |Linux|OpenGL 4.6|
 |MacOS(WIP)|OpenGL 4.1|
 
