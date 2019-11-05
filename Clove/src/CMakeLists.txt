@@ -66,15 +66,6 @@ set(
 		Core/ECS/UI/Systems/TextSystem.cpp
 		Core/Exception/CloveException.hpp
 		Core/Exception/CloveException.cpp
-		Core/Graphics/Bindables/IndexBuffer.hpp
-		Core/Graphics/Bindables/IndexBuffer.cpp
-		Core/Graphics/Bindables/Shader.hpp
-		Core/Graphics/Bindables/Shader.cpp
-		Core/Graphics/Bindables/ShaderBufferObject.hpp
-		Core/Graphics/Bindables/Texture.hpp
-		Core/Graphics/Bindables/Texture.cpp
-		Core/Graphics/Bindables/VertexBuffer.hpp
-		Core/Graphics/Bindables/VertexBuffer.cpp
 		Core/Graphics/Bindable.hpp
 		Core/Graphics/Bindable.cpp
 		Core/Graphics/BindableFactory.hpp
@@ -107,6 +98,15 @@ set(
 		Core/Graphics/VertexLayout.hpp
 		Core/Graphics/VertexLayout.inl
 		Core/Graphics/VertexLayout.cpp
+		Core/Graphics/Shader.hpp
+		Core/Graphics/Shader.cpp
+		Core/Graphics/ShaderBufferObject.hpp
+		Core/Graphics/Resources/Buffer.hpp
+		Core/Graphics/Resources/Texture.hpp
+		Core/Graphics/Resources/Buffers/IndexBuffer.hpp
+		Core/Graphics/Resources/Buffers/IndexBuffer.cpp
+		Core/Graphics/Resources/Buffers/VertexBuffer.hpp
+		Core/Graphics/Resources/Buffers/VertexBuffer.cpp
 		Core/Input/Input.hpp
 		Core/Input/Input.cpp
 		Core/Input/Keyboard.hpp
