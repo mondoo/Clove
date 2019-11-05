@@ -6,15 +6,10 @@ The Garlic game engine is comprised of the following components:
 
 Currently, Garlic supports the following platforms:
 
-- Windows
-- Linux
-- Mac [in progress / halted]
-
-Currently, Garlic supports the following graphics APIs:
-
-- OpenGL
-- DirectX
-- Metal [planned]
-- Vulkan [planned]
+|**Platforms**|**API**|
+|-------------|-------|
+|Windows|DirectX 11, OpenGL 4.6|
+|Linux|OpenGL 4.6|
+|MacOS(WIP)|OpenGL 4.1|
 
 [For more info: visit the wiki](https://github.com/AGarlicMonkey/Clove/wiki)
