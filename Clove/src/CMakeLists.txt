@@ -106,7 +106,6 @@ set(
 		Core/Graphics/Resources/Buffers/IndexBuffer.hpp
 		Core/Graphics/Resources/Buffers/IndexBuffer.cpp
 		Core/Graphics/Resources/Buffers/VertexBuffer.hpp
-		Core/Graphics/Resources/Buffers/VertexBuffer.cpp
 		Core/Input/Input.hpp
 		Core/Input/Input.cpp
 		Core/Input/Keyboard.hpp
