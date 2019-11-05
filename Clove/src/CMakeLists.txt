@@ -89,6 +89,8 @@ set(
 		Core/Graphics/RenderFactory.hpp
 		Core/Graphics/RenderTarget.hpp
 		Core/Graphics/RenderTarget.cpp
+		Core/Graphics/Shader.hpp
+		Core/Graphics/Shader.cpp
 		Core/Graphics/ShaderBufferTypes.hpp
 		Core/Graphics/Sprite.hpp
 		Core/Graphics/Sprite.cpp
@@ -97,8 +99,8 @@ set(
 		Core/Graphics/VertexLayout.hpp
 		Core/Graphics/VertexLayout.inl
 		Core/Graphics/VertexLayout.cpp
-		Core/Graphics/Shader.hpp
-		Core/Graphics/Shader.cpp
+		Core/Graphics/Viewport.hpp
+		Core/Graphics/Viewport.cpp
 		Core/Graphics/Resources/Buffer.hpp
 		Core/Graphics/Resources/Texture.hpp
 		Core/Graphics/Resources/Buffers/IndexBuffer.hpp
