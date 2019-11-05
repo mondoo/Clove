@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Core/Graphics/Bindable.hpp"
-
 #include "Core/Graphics/GraphicsTypes.hpp"
 #include "Core/Graphics/VertexLayout.hpp"
 
@@ -10,7 +8,7 @@ namespace clv::gfx{
 		VertexLayout vertexBufferLayout;
 	};
 
-	class Shader : public Bindable{
+	class Shader{
 		//FUNCTIONS
 	public:
 		Shader();

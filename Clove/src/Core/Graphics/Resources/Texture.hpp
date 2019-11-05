@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Core/Graphics/Bindable.hpp"
-
 #include "Core/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{
@@ -18,7 +16,7 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx{
-	class Texture : public Bindable{
+	class Texture{
 		//FUNCTIONS
 	public:
 		Texture() = default;

@@ -66,8 +66,6 @@ set(
 		Core/ECS/UI/Systems/TextSystem.cpp
 		Core/Exception/CloveException.hpp
 		Core/Exception/CloveException.cpp
-		Core/Graphics/Bindable.hpp
-		Core/Graphics/Bindable.cpp
 		Core/Graphics/Context.hpp
 		Core/Graphics/Context.cpp
 		Core/Graphics/GraphicsTypes.hpp
