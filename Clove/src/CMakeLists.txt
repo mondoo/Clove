@@ -82,7 +82,6 @@ set(
 		Core/Graphics/RenderCommand.hpp
 		Core/Graphics/RenderCommand.cpp
 		Core/Graphics/RenderDevice.hpp
-		Core/Graphics/RenderDevice.cpp
 		Core/Graphics/Renderer.hpp
 		Core/Graphics/Renderer.cpp
 		Core/Graphics/Renderer2D.hpp

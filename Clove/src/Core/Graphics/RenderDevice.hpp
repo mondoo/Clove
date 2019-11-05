@@ -6,20 +6,14 @@ namespace clv::gfx{
 	class RenderTarget;
 
 	class RenderDevice{
-		//VARIABLES
-	private:
-		static API api;
-
 		//FUNCTIONS
 	public:
-		RenderDevice() = delete;
+		RenderDevice() = default;
 		RenderDevice(const RenderDevice& other) = delete;
-		RenderDevice(RenderDevice&& other) noexcept;
+		RenderDevice(RenderDevice&& other) noexcept = default;
 		RenderDevice& operator=(const RenderDevice& other) = delete;
-		RenderDevice& operator=(RenderDevice&& other) noexcept;
-		virtual ~RenderDevice();
-
-		RenderDevice(API apiType);
+		RenderDevice& operator=(RenderDevice&& other) noexcept = default;
+		virtual ~RenderDevice() = default;
 
 		virtual void clear() = 0;
 		virtual void drawIndexed(const uint32 count) = 0;
@@ -40,6 +34,6 @@ namespace clv::gfx{
 		virtual void removeTextureAtSlot(uint32 slot) = 0;
 		//
 
-		static API getAPIType();
+		/*static API getAPIType();*/ //Hopefully not needed anymore
 	};
 }
