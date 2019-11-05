@@ -5,6 +5,12 @@
 //#include "Core/Graphics/VertexLayout.hpp"
 
 namespace clv::gfx{
+	struct VertexBufferDescriptor{
+		//TODO
+	};
+}
+
+namespace clv::gfx{
 	class VertexBuffer : public Buffer{
 		//VARIABLES
 	protected:

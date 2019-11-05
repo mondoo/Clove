@@ -5,13 +5,19 @@
 #include "Core/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{
-	enum TextureBindingPoint{
-		TBP_Albedo		= 1u,
-		TBP_Specular	= 2u,
-		TBP_Shadow		= 3u,
-		TBP_None        = 4u
+	struct TextureDescriptor{
+		//TODO
 	};
 
+	enum TextureBindingPoint{
+		TBP_Albedo = 1u,
+		TBP_Specular = 2u,
+		TBP_Shadow = 3u,
+		TBP_None = 4u
+	};
+}
+
+namespace clv::gfx{
 	class Texture : public Bindable{
 		//FUNCTIONS
 	public:
