@@ -68,9 +68,6 @@ set(
 		Core/Exception/CloveException.cpp
 		Core/Graphics/Bindable.hpp
 		Core/Graphics/Bindable.cpp
-		Core/Graphics/BindableFactory.hpp
-		Core/Graphics/BindableFactory.inl
-		Core/Graphics/BindableFactory.cpp
 		Core/Graphics/Context.hpp
 		Core/Graphics/Context.cpp
 		Core/Graphics/GraphicsTypes.hpp
@@ -90,6 +87,7 @@ set(
 		Core/Graphics/Renderer.cpp
 		Core/Graphics/Renderer2D.hpp
 		Core/Graphics/Renderer2D.cpp
+		Core/Graphics/RenderFactory.hpp
 		Core/Graphics/RenderTarget.hpp
 		Core/Graphics/RenderTarget.cpp
 		Core/Graphics/ShaderBufferTypes.hpp
