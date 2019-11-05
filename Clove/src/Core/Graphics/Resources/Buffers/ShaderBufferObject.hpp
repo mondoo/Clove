@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Graphics/Bindable.hpp"
+#include "Core/Graphics/Resources/Buffer.hpp"
 
 namespace clv::gfx{
 	enum BufferBindingPoint{ //Will this be needed?
@@ -23,7 +23,7 @@ namespace clv::gfx{
 	*/
 
 	template<typename T>
-	class ShaderBufferObject : public Bindable{
+	class ShaderBufferObject : public Buffer{
 		//FUNCTIONS
 	public:
 		ShaderBufferObject() = default;

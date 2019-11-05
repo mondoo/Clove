@@ -100,10 +100,10 @@ set(
 		Core/Graphics/VertexLayout.cpp
 		Core/Graphics/Shader.hpp
 		Core/Graphics/Shader.cpp
-		Core/Graphics/ShaderBufferObject.hpp
 		Core/Graphics/Resources/Buffer.hpp
 		Core/Graphics/Resources/Texture.hpp
 		Core/Graphics/Resources/Buffers/IndexBuffer.hpp
+		Core/Graphics/Resources/Buffers/ShaderBufferObject.hpp
 		Core/Graphics/Resources/Buffers/VertexBuffer.hpp
 		Core/Input/Input.hpp
 		Core/Input/Input.cpp
