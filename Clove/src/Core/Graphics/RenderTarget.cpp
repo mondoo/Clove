@@ -16,7 +16,7 @@ namespace clv::gfx{
 	RenderTarget::~RenderTarget() = default;
 
 	std::shared_ptr<RenderTarget> RenderTarget::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
-		switch(RenderAPI::getAPIType()){
+		switch(RenderDevice::getAPIType()){
 			case API::OpenGL4:
 				return std::make_shared<GL4RenderTarget>(colourTexture, depthStencilTexture);
 

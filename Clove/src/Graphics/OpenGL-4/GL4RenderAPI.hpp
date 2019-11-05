@@ -5,7 +5,7 @@
 namespace clv::gfx{
 	class Context;
 
-	class GL4RenderAPI : public RenderAPI{
+	class GL4RenderAPI : public RenderDevice{
 		//FUNCTIONS
 	public:
 		GL4RenderAPI() = delete;

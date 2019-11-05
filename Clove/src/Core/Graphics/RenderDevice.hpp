@@ -5,21 +5,21 @@
 namespace clv::gfx{
 	class RenderTarget;
 
-	class RenderAPI{
+	class RenderDevice{
 		//VARIABLES
 	private:
 		static API api;
 
 		//FUNCTIONS
 	public:
-		RenderAPI() = delete;
-		RenderAPI(const RenderAPI& other) = delete;
-		RenderAPI(RenderAPI&& other) noexcept;
-		RenderAPI& operator=(const RenderAPI& other) = delete;
-		RenderAPI& operator=(RenderAPI&& other) noexcept;
-		virtual ~RenderAPI();
+		RenderDevice() = delete;
+		RenderDevice(const RenderDevice& other) = delete;
+		RenderDevice(RenderDevice&& other) noexcept;
+		RenderDevice& operator=(const RenderDevice& other) = delete;
+		RenderDevice& operator=(RenderDevice&& other) noexcept;
+		virtual ~RenderDevice();
 
-		RenderAPI(API apiType);
+		RenderDevice(API apiType);
 
 		virtual void clear() = 0;
 		virtual void drawIndexed(const uint32 count) = 0;

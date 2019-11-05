@@ -18,7 +18,7 @@ namespace clv::gfx{
 	DX11RenderAPI::~DX11RenderAPI() = default;
 
 	DX11RenderAPI::DX11RenderAPI(const Context& context)
-		: RenderAPI(context.getAPI()){
+		: RenderDevice(context.getAPI()){
 		if(const DXContext * dxCon = dynamic_cast<const DXContext*>(&context)){
 			d3dDevice = dxCon->getDevice();
 			d3dContext = dxCon->getContext();

@@ -14,7 +14,7 @@ struct ID3D11DepthStencilView;
 namespace clv::gfx{
 	class Context;
 
-	class DX11RenderAPI : public RenderAPI{
+	class DX11RenderAPI : public RenderDevice{
 		//VARIABLES
 	private:
 		static Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice;			//Device creates

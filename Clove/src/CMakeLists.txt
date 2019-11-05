@@ -82,10 +82,10 @@ set(
 		Core/Graphics/MaterialInstance.cpp
 		Core/Graphics/Mesh.hpp
 		Core/Graphics/Mesh.cpp
-		Core/Graphics/RenderAPI.hpp
-		Core/Graphics/RenderAPI.cpp
 		Core/Graphics/RenderCommand.hpp
 		Core/Graphics/RenderCommand.cpp
+		Core/Graphics/RenderDevice.hpp
+		Core/Graphics/RenderDevice.cpp
 		Core/Graphics/Renderer.hpp
 		Core/Graphics/Renderer.cpp
 		Core/Graphics/Renderer2D.hpp

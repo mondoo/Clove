@@ -10,7 +10,7 @@ namespace clv::gfx{
 	GL4RenderAPI::~GL4RenderAPI() = default;
 
 	GL4RenderAPI::GL4RenderAPI(const Context& context)
-		: RenderAPI(context.getAPI()){
+		: RenderDevice(context.getAPI()){
 		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
 
 		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));

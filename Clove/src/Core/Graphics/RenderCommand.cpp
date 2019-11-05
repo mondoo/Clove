@@ -7,7 +7,7 @@
 #include "Core/Graphics/Context.hpp"
 
 namespace clv::gfx{
-	std::unique_ptr<RenderAPI> RenderCommand::renderAPI;
+	std::unique_ptr<RenderDevice> RenderCommand::renderAPI;
 
 	void RenderCommand::clear(){
 		renderAPI->clear();

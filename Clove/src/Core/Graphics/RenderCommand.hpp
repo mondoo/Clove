@@ -1,7 +1,7 @@
 #pragma once
 
 namespace clv::gfx{
-	class RenderAPI;
+	class RenderDevice;
 	class Context;
 	class RenderTarget;
 
@@ -9,7 +9,7 @@ namespace clv::gfx{
 	class RenderCommand{
 		//VARIABLES
 	private:
-		static std::unique_ptr<RenderAPI> renderAPI;
+		static std::unique_ptr<RenderDevice> renderAPI;
 
 		//FUNCTIONS
 	public:
