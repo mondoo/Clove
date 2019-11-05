@@ -88,7 +88,6 @@ set(
 		Core/Graphics/RenderTarget.hpp
 		Core/Graphics/RenderTarget.cpp
 		Core/Graphics/Shader.hpp
-		Core/Graphics/Shader.cpp
 		Core/Graphics/ShaderBufferTypes.hpp
 		Core/Graphics/Sprite.hpp
 		Core/Graphics/Sprite.cpp

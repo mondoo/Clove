@@ -7,16 +7,18 @@ namespace clv::gfx{
 	struct ShaderReflectionData{
 		VertexLayout vertexBufferLayout;
 	};
+}
 
+namespace clv::gfx{
 	class Shader{
 		//FUNCTIONS
 	public:
-		Shader();
+		Shader() = default;
 		Shader(const Shader& other) = delete;
-		Shader(Shader&& other) noexcept;
+		Shader(Shader&& other) noexcept = default;
 		Shader& operator=(const Shader& other) = delete;
-		Shader& operator=(Shader&& other) noexcept;
-		virtual ~Shader();
+		Shader& operator=(Shader&& other) noexcept = default;
+		virtual ~Shader() = default;
 
 		virtual ShaderReflectionData getReflectionData() = 0;
 	};
