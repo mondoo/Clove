@@ -23,10 +23,9 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx{
-	template<typename T>
 	class ShaderResource : public Buffer{
 		//FUNCTIONS
 	public:
-		virtual void update(T&& data) = 0;
+		virtual void update(void* data) = 0;
 	};
 }
