@@ -9,6 +9,8 @@ namespace clv::gfx{
 	struct VertexBufferDescriptor;
 	class Texture;
 	struct TextureDescriptor;
+	class Surface;
+	class Viewport;
 }
 
 namespace clv::gfx{
@@ -20,5 +22,9 @@ namespace clv::gfx{
 		virtual std::unique_ptr<VertexBuffer> createVertexBuffer(const VertexBufferDescriptor& descriptor) = 0;
 
 		virtual std::unique_ptr<Texture> createTexture(const TextureDescriptor& descriptor) = 0;
+
+		virtual std::unique_ptr<Surface> createSurface() = 0;
+
+		virtual std::unique_ptr<Viewport> createViewport() = 0;
 	};
 }
