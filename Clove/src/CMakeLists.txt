@@ -142,43 +142,43 @@ set(
 #Files - Graphics | OpenGL
 set(
 	GraphicsFiles
-		Graphics/OpenGL-4/Bindables/GL4IndexBuffer.hpp
-		Graphics/OpenGL-4/Bindables/GL4IndexBuffer.cpp
-		Graphics/OpenGL-4/Bindables/GL4Shader.hpp
-		Graphics/OpenGL-4/Bindables/GL4Shader.cpp
-		Graphics/OpenGL-4/Bindables/GL4Texture.hpp
-		Graphics/OpenGL-4/Bindables/GL4Texture.cpp
-		Graphics/OpenGL-4/Bindables/GL4UniformBufferObject.hpp
-		Graphics/OpenGL-4/Bindables/GL4UniformBufferObject.inl
-		Graphics/OpenGL-4/Bindables/GL4VertexBuffer.hpp
-		Graphics/OpenGL-4/Bindables/GL4VertexBuffer.cpp
-		Graphics/OpenGL-4/GL4Exception.hpp
-		Graphics/OpenGL-4/GL4Exception.cpp
-		Graphics/OpenGL-4/GL4RenderAPI.hpp
-		Graphics/OpenGL-4/GL4RenderAPI.cpp
-		Graphics/OpenGL-4/GL4RenderTarget.hpp
-		Graphics/OpenGL-4/GL4RenderTarget.cpp
+		Graphics/OpenGL/Bindables/GL4IndexBuffer.hpp
+		Graphics/OpenGL/Bindables/GL4IndexBuffer.cpp
+		Graphics/OpenGL/Bindables/GL4Shader.hpp
+		Graphics/OpenGL/Bindables/GL4Shader.cpp
+		Graphics/OpenGL/Bindables/GL4Texture.hpp
+		Graphics/OpenGL/Bindables/GL4Texture.cpp
+		Graphics/OpenGL/Bindables/GL4UniformBufferObject.hpp
+		Graphics/OpenGL/Bindables/GL4UniformBufferObject.inl
+		Graphics/OpenGL/Bindables/GL4VertexBuffer.hpp
+		Graphics/OpenGL/Bindables/GL4VertexBuffer.cpp
+		Graphics/OpenGL/GL4Exception.hpp
+		Graphics/OpenGL/GL4Exception.cpp
+		Graphics/OpenGL/GL4RenderAPI.hpp
+		Graphics/OpenGL/GL4RenderAPI.cpp
+		Graphics/OpenGL/GL4RenderTarget.hpp
+		Graphics/OpenGL/GL4RenderTarget.cpp
 )
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		GraphicsFiles
 			${GraphicsFiles}	
-			Graphics/OpenGL-4/WGLContext.hpp
-			Graphics/OpenGL-4/WGLContext.cpp
+			Graphics/OpenGL/WGLContext.hpp
+			Graphics/OpenGL/WGLContext.cpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
 		GraphicsFiles
 			${GraphicsFiles}
-			Graphics/OpenGL-4/GLXContext.hpp
-			Graphics/OpenGL-4/GLXContext.cpp
+			Graphics/OpenGL/GLXContext.hpp
+			Graphics/OpenGL/GLXContext.cpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	set(
 		GraphicsFiles
 			${GraphicsFiles}
-			Graphics/OpenGL-4/CGLContext.hpp
-			Graphics/OpenGL-4/CGLContext.mm
+			Graphics/OpenGL/CGLContext.hpp
+			Graphics/OpenGL/CGLContext.mm
 	)
 endif()
 
@@ -224,31 +224,31 @@ endif()
 #Files - Graphics | Shaders
 set(
 	GLSLShaders
-		Graphics/OpenGL-4/Shaders/2D-ps.glsl
-        Graphics/OpenGL-4/Shaders/2D-vs.glsl
-        Graphics/OpenGL-4/Shaders/CubeShadowMap-gs.glsl
-		Graphics/OpenGL-4/Shaders/CubeShadowMap-ps.glsl
-		Graphics/OpenGL-4/Shaders/CubeShadowMap-vs.glsl
-		Graphics/OpenGL-4/Shaders/Font-ps.glsl
-		Graphics/OpenGL-4/Shaders/Font-vs.glsl
-		Graphics/OpenGL-4/Shaders/Lit-ps.glsl
-		Graphics/OpenGL-4/Shaders/Lit-vs.glsl
-		Graphics/OpenGL-4/Shaders/RT-ps.glsl
-		Graphics/OpenGL-4/Shaders/RT-vs.glsl
-		Graphics/OpenGL-4/Shaders/Unlit-ps.glsl
-		Graphics/OpenGL-4/Shaders/Unlit-vs.glsl
+		Graphics/OpenGL/Shaders/2D-ps.glsl
+        Graphics/OpenGL/Shaders/2D-vs.glsl
+        Graphics/OpenGL/Shaders/CubeShadowMap-gs.glsl
+		Graphics/OpenGL/Shaders/CubeShadowMap-ps.glsl
+		Graphics/OpenGL/Shaders/CubeShadowMap-vs.glsl
+		Graphics/OpenGL/Shaders/Font-ps.glsl
+		Graphics/OpenGL/Shaders/Font-vs.glsl
+		Graphics/OpenGL/Shaders/Lit-ps.glsl
+		Graphics/OpenGL/Shaders/Lit-vs.glsl
+		Graphics/OpenGL/Shaders/RT-ps.glsl
+		Graphics/OpenGL/Shaders/RT-vs.glsl
+		Graphics/OpenGL/Shaders/Unlit-ps.glsl
+		Graphics/OpenGL/Shaders/Unlit-vs.glsl
 )
 
 #Parse the glsl shader files into a header 
 set(GLSLParsedShaders)
-set(GLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/OpenGL-4/ShaderStrings.hpp)
+set(GLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/OpenGL/ShaderStrings.hpp)
 file(WRITE ${GLSLShaderIncludeFile} "//cmake generated header file\n\n")
 foreach(shaderFile ${GLSLShaders})
 	file(READ ${shaderFile} FILE_CONTENTS)
 	get_filename_component(fileName ${shaderFile} NAME_WLE)
 
 	string(REPLACE "-" "_" STRING_NAME ${fileName})
-	set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/OpenGL-4/Shaders/${fileName}.hpp)
+	set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/OpenGL/Shaders/${fileName}.hpp)
 
 	configure_file(../cmake/glslHeader.in ${outFilePath})
 
