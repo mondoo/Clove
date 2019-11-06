@@ -2,8 +2,8 @@
 
 namespace clv::gfx{
 	class IndexBuffer;
-	class ShaderResource;
 	class VertexBuffer;
+	class ShaderResource;
 	class Texture;
 	class RenderTarget;
 	class Shader;
@@ -15,8 +15,9 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		virtual void bindIndexBuffer(IndexBuffer& buffer) = 0;
-		virtual void bindShaderBufferObject(ShaderResource& buffer, uint32 bindingPoint) = 0; //Temp uint32 - should be the enum
 		virtual void bindVertexBuffer(VertexBuffer& buffer) = 0;
+		
+		virtual void bindShaderResource(ShaderResource& resource, uint32 bindingPoint) = 0; //Temp uint32 - should be the enum
 
 		virtual void bindTexture(Texture& texture, uint32 bindingPoint) = 0; //Temp uint32 - should be the enum
 

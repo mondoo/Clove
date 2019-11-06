@@ -1,56 +1,72 @@
 #include "RenderCommand.hpp"
 
-#include "Graphics/OpenGL-4/GL4RenderAPI.hpp"
-#if CLV_PLATFORM_WINDOWS
-#include "Graphics/DirectX-11/DX11RenderAPI.hpp"
-#endif
-#include "Core/Graphics/Context.hpp"
+#include "Core/Graphics/RenderDevice.hpp"
+#include "Core/Graphics/Resources/Buffers/IndexBuffer.hpp"
+#include "Core/Graphics/Resources/Buffers/VertexBuffer.hpp"
+#include "Core/Graphics/Resources/ShaderResource.hpp"
+#include "Core/Graphics/Resources/Texture.hpp"
+#include "Core/Graphics/Shader.hpp"
+#include "Core/Graphics/RenderTarget.hpp"
+#include "Core/Graphics/Viewport.hpp"
+
+//#include "Graphics/OpenGL-4/GL4RenderAPI.hpp"
+//#if CLV_PLATFORM_WINDOWS
+//#include "Graphics/DirectX-11/DX11RenderAPI.hpp"
+//#endif
 
 namespace clv::gfx{
-	std::unique_ptr<RenderDevice> RenderCommand::renderAPI;
+	std::unique_ptr<RenderDevice> RenderCommand::device;
 
-	void RenderCommand::clear(){
-		renderAPI->clear();
+	void RenderCommand::bindIndexBuffer(IndexBuffer& buffer){
+		device->bindIndexBuffer(buffer);
 	}
 
-	void RenderCommand::drawIndexed(const uint32 count){
-		renderAPI->drawIndexed(count);
+	void RenderCommand::bindVertexBuffer(VertexBuffer& buffer){
+		device->bindVertexBuffer(buffer);
 	}
 
-	void RenderCommand::setClearColour(const math::Vector4f& colour){
-		renderAPI->setClearColour(colour);
+	void RenderCommand::bindShaderResource(ShaderResource& resource, uint32 bindingPoint){
+		device->bindShaderResource(resource, bindingPoint);
 	}
 
-	void RenderCommand::setDepthBuffer(bool enabled){
-		renderAPI->setDepthBuffer(enabled);
+	void RenderCommand::bindTexture(Texture& texture, uint32 bindingPoint){
+		device->bindTexture(texture, bindingPoint);
 	}
 
-	void RenderCommand::setBlendState(bool enabled){
-		renderAPI->setBlendState(enabled);
+	void RenderCommand::bindShader(Shader& shader){
+		device->bindShader(shader);
 	}
 
 	void RenderCommand::setRenderTarget(RenderTarget& renderTarget){
-		renderAPI->setRenderTarget(renderTarget);
+		device->setRenderTarget(renderTarget);
 	}
 
-	void RenderCommand::resetRenderTarget(){
-		renderAPI->resetRenderTarget();
+	void RenderCommand::setViewport(const Viewport& viewport){
+		device->setViewport(viewport);
 	}
 
-	void RenderCommand::setViewPortSize(uint32 width, uint32 height){
-		renderAPI->setViewportSize(width, height);
+	void RenderCommand::clear(){
+		device->clear();
 	}
 
-	void RenderCommand::removeCurrentGeometryShader(){
-		renderAPI->removeCurrentGeometryShader();
+	void RenderCommand::drawIndexed(const uint32 count){
+		device->drawIndexed(count);
 	}
 
-	void RenderCommand::removeTextureAtSlot(uint32 slot){
-		renderAPI->removeTextureAtSlot(slot);
+	void RenderCommand::setClearColour(const math::Vector4f& colour){
+		device->setClearColour(colour);
 	}
 
-	void RenderCommand::initialiseRenderAPI(const Context& context){
-		switch(context.getAPI()){
+	void RenderCommand::setDepthBuffer(bool enabled){
+		device->setDepthBuffer(enabled);
+	}
+
+	void RenderCommand::setBlendState(bool enabled){
+		device->setBlendState(enabled);
+	}
+
+	void RenderCommand::initialiseRenderDevice(){
+		/*switch(context.getAPI()){
 			case API::OpenGL4:
 				CLV_LOG_TRACE("Creating OpenGL renderer");
 				renderAPI = std::make_unique<GL4RenderAPI>(context);
@@ -66,6 +82,6 @@ namespace clv::gfx{
 			default:
 				CLV_LOG_ERROR("Default statement hit. Could not initialise RenderAPI: {0}", CLV_FUNCTION_NAME);
 				break;
-		}
+		}*/
 	}
 }
