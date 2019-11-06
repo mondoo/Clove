@@ -10,7 +10,7 @@ namespace clv::gfx{
 	class Renderer;
 	
 	template<typename T>
-	class DX11ConstantBuffer : public ShaderBufferObject<T>{
+	class DX11ConstantBuffer : public ShaderResource<T>{
 		//VARIABLES
 	protected:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;

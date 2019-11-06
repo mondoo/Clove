@@ -4,7 +4,7 @@
 
 namespace clv::gfx{
 	template<typename T>
-	class GL4UniformBufferObject : public ShaderBufferObject<T>{
+	class GL4UniformBufferObject : public ShaderResource<T>{
 		//VARIABLES
 	private:
 		uint32 uboID = 0;

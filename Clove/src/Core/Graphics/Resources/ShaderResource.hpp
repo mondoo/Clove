@@ -3,7 +3,7 @@
 #include "Core/Graphics/Resources/Buffer.hpp"
 
 namespace clv::gfx{
-	struct ShaderBufferObjectDescriptor{
+	struct ShaderResourceDescriptor{
 		//TODO
 	};
 
@@ -24,7 +24,7 @@ namespace clv::gfx{
 
 namespace clv::gfx{
 	template<typename T>
-	class ShaderBufferObject : public Buffer{
+	class ShaderResource : public Buffer{
 		//FUNCTIONS
 	public:
 		virtual void update(T&& data) = 0;

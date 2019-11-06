@@ -99,9 +99,9 @@ set(
 		Core/Graphics/Viewport.hpp
 		Core/Graphics/Viewport.cpp
 		Core/Graphics/Resources/Buffer.hpp
+		Core/Graphics/Resources/ShaderResource.hpp
 		Core/Graphics/Resources/Texture.hpp
 		Core/Graphics/Resources/Buffers/IndexBuffer.hpp
-		Core/Graphics/Resources/Buffers/ShaderBufferObject.hpp
 		Core/Graphics/Resources/Buffers/VertexBuffer.hpp
 		Core/Input/Input.hpp
 		Core/Input/Input.cpp
