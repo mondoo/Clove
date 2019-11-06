@@ -187,37 +187,37 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		GraphicsFiles
 			${GraphicsFiles}	
-			Graphics/DirectX-11/Bindables/DX11ConstantBuffer.hpp
-			Graphics/DirectX-11/Bindables/DX11ConstantBuffer.inl
-			Graphics/DirectX-11/Bindables/DX11IndexBuffer.hpp
-			Graphics/DirectX-11/Bindables/DX11IndexBuffer.cpp
-			Graphics/DirectX-11/Bindables/DX11Shader.hpp
-			Graphics/DirectX-11/Bindables/DX11Shader.cpp
-			Graphics/DirectX-11/Bindables/DX11Texture.hpp
-			Graphics/DirectX-11/Bindables/DX11Texture.cpp
-			Graphics/DirectX-11/Bindables/DX11VertexBuffer.hpp
-			Graphics/DirectX-11/Bindables/DX11VertexBuffer.cpp
-			Graphics/DirectX-11/Shaders/2D-ps.hlsl
-			Graphics/DirectX-11/Shaders/2D-vs.hlsl
-			Graphics/DirectX-11/Shaders/Font-ps.hlsl
-			Graphics/DirectX-11/Shaders/Font-vs.hlsl
-			Graphics/DirectX-11/Shaders/Lit-ps.hlsl
-			Graphics/DirectX-11/Shaders/Lit-vs.hlsl
-			Graphics/DirectX-11/Shaders/RT-ps.hlsl
-			Graphics/DirectX-11/Shaders/RT-vs.hlsl
-			Graphics/DirectX-11/Shaders/Unlit-ps.hlsl
-			Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
-			Graphics/DirectX-11/DX11Exception.hpp
-			Graphics/DirectX-11/DX11Exception.cpp
-			Graphics/DirectX-11/DX11RenderAPI.hpp
-			Graphics/DirectX-11/DX11RenderAPI.cpp
-			Graphics/DirectX-11/DX11RenderTarget.hpp
-			Graphics/DirectX-11/DX11RenderTarget.cpp
-			Graphics/DirectX-11/DXGIInfoManager.hpp
-			Graphics/DirectX-11/DXGIInfoManager.cpp
+			Graphics/Direct3D/Bindables/DX11ConstantBuffer.hpp
+			Graphics/Direct3D/Bindables/DX11ConstantBuffer.inl
+			Graphics/Direct3D/Bindables/DX11IndexBuffer.hpp
+			Graphics/Direct3D/Bindables/DX11IndexBuffer.cpp
+			Graphics/Direct3D/Bindables/DX11Shader.hpp
+			Graphics/Direct3D/Bindables/DX11Shader.cpp
+			Graphics/Direct3D/Bindables/DX11Texture.hpp
+			Graphics/Direct3D/Bindables/DX11Texture.cpp
+			Graphics/Direct3D/Bindables/DX11VertexBuffer.hpp
+			Graphics/Direct3D/Bindables/DX11VertexBuffer.cpp
+			Graphics/Direct3D/Shaders/2D-ps.hlsl
+			Graphics/Direct3D/Shaders/2D-vs.hlsl
+			Graphics/Direct3D/Shaders/Font-ps.hlsl
+			Graphics/Direct3D/Shaders/Font-vs.hlsl
+			Graphics/Direct3D/Shaders/Lit-ps.hlsl
+			Graphics/Direct3D/Shaders/Lit-vs.hlsl
+			Graphics/Direct3D/Shaders/RT-ps.hlsl
+			Graphics/Direct3D/Shaders/RT-vs.hlsl
+			Graphics/Direct3D/Shaders/Unlit-ps.hlsl
+			Graphics/Direct3D/Shaders/Unlit-vs.hlsl
+			Graphics/Direct3D/DX11Exception.hpp
+			Graphics/Direct3D/DX11Exception.cpp
+			Graphics/Direct3D/DX11RenderAPI.hpp
+			Graphics/Direct3D/DX11RenderAPI.cpp
+			Graphics/Direct3D/DX11RenderTarget.hpp
+			Graphics/Direct3D/DX11RenderTarget.cpp
+			Graphics/Direct3D/DXGIInfoManager.hpp
+			Graphics/Direct3D/DXGIInfoManager.cpp
 			
-			Graphics/DirectX-11/DXContext.hpp
-			Graphics/DirectX-11/DXContext.cpp
+			Graphics/Direct3D/DXContext.hpp
+			Graphics/Direct3D/DXContext.cpp
 	)
 endif()
 
@@ -266,27 +266,27 @@ set(
 if(MSVC)
 	set(
 		pixelShaders
-            Graphics/DirectX-11/Shaders/2D-ps.hlsl
-            Graphics/DirectX-11/Shaders/CubeShadowMap-ps.hlsl
-			Graphics/DirectX-11/Shaders/Font-ps.hlsl
-			Graphics/DirectX-11/Shaders/Lit-ps.hlsl
-			Graphics/DirectX-11/Shaders/RT-ps.hlsl
-			Graphics/DirectX-11/Shaders/Unlit-ps.hlsl
+            Graphics/Direct3D/Shaders/2D-ps.hlsl
+            Graphics/Direct3D/Shaders/CubeShadowMap-ps.hlsl
+			Graphics/Direct3D/Shaders/Font-ps.hlsl
+			Graphics/Direct3D/Shaders/Lit-ps.hlsl
+			Graphics/Direct3D/Shaders/RT-ps.hlsl
+			Graphics/Direct3D/Shaders/Unlit-ps.hlsl
 	)
 
 	set(
 		vertexShaders
-            Graphics/DirectX-11/Shaders/2D-vs.hlsl
-            Graphics/DirectX-11/Shaders/CubeShadowMap-vs.hlsl
-			Graphics/DirectX-11/Shaders/Font-vs.hlsl
-			Graphics/DirectX-11/Shaders/Lit-vs.hlsl
-			Graphics/DirectX-11/Shaders/RT-vs.hlsl
-			Graphics/DirectX-11/Shaders/Unlit-vs.hlsl
+            Graphics/Direct3D/Shaders/2D-vs.hlsl
+            Graphics/Direct3D/Shaders/CubeShadowMap-vs.hlsl
+			Graphics/Direct3D/Shaders/Font-vs.hlsl
+			Graphics/Direct3D/Shaders/Lit-vs.hlsl
+			Graphics/Direct3D/Shaders/RT-vs.hlsl
+			Graphics/Direct3D/Shaders/Unlit-vs.hlsl
 	)
 
 	set(
         geometryShaders
-		    Graphics/DirectX-11/Shaders/CubeShadowMap-gs.hlsl
+		    Graphics/Direct3D/Shaders/CubeShadowMap-gs.hlsl
     )
     
 	set(
@@ -304,13 +304,13 @@ if(MSVC)
 	set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_MODEL 5.0)
 
 	#get each shader to compile into a header
-	set(HLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/DirectX-11/ShaderHeaders.hpp)
+	set(HLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Direct3D/ShaderHeaders.hpp)
 	file(WRITE ${HLSLShaderIncludeFile} "//cmake generated header file\n\n")
 	foreach(shaderFile ${HLSLShaders})
 		get_filename_component(fileName ${shaderFile} NAME_WLE)
 
 		string(REPLACE "-" "_" STRING_NAME ${fileName})
-		set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/DirectX-11/Shaders/${fileName}.hpp)
+		set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Direct3D/Shaders/${fileName}.hpp)
 
 		set_property(SOURCE ${shaderFile} PROPERTY VS_SHADER_FLAGS "/Vn shader_${STRING_NAME} /Fh ${outFilePath}")
 		file(APPEND ${HLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
