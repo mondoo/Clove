@@ -27,13 +27,6 @@ namespace clv::gfx{
 	class ShaderBufferObject : public Buffer{
 		//FUNCTIONS
 	public:
-		ShaderBufferObject() = default;
-		ShaderBufferObject(const ShaderBufferObject& other) = delete;
-		ShaderBufferObject(ShaderBufferObject&& other) = default;
-		ShaderBufferObject& operator=(const ShaderBufferObject& other) = delete;
-		ShaderBufferObject& operator=(ShaderBufferObject&& other) = default;
-		virtual ~ShaderBufferObject() = default;
-
 		virtual void update(T&& data) = 0;
 	};
 }

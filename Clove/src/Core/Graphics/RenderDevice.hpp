@@ -14,13 +14,6 @@ namespace clv::gfx{
 	class RenderDevice{
 		//FUNCTIONS
 	public:
-		RenderDevice() = default;
-		RenderDevice(const RenderDevice& other) = delete;
-		RenderDevice(RenderDevice&& other) noexcept = default;
-		RenderDevice& operator=(const RenderDevice& other) = delete;
-		RenderDevice& operator=(RenderDevice&& other) noexcept = default;
-		virtual ~RenderDevice() = default;
-
 		virtual void bindIndexBuffer(IndexBuffer& buffer) = 0;
 		virtual void bindShaderBufferObject(ShaderBufferObject& buffer, uint32 bindingPoint) = 0; //Temp uint32 - should be the enum
 		virtual void bindVertexBuffer(VertexBuffer& buffer) = 0;

@@ -22,13 +22,6 @@ namespace clv::gfx{
 	class Texture{
 		//FUNCTIONS
 	public:
-		Texture() = default;
-		Texture(const Texture& other) = delete;
-		Texture(Texture&& other) noexcept = default;
-		Texture& operator=(const Texture& other) = delete;
-		Texture& operator=(Texture&& other) noexcept = default;
-		virtual ~Texture() = default;
-
 		virtual uint32 getWidth() const = 0;
 		virtual uint32 getHeight() const = 0;
 
