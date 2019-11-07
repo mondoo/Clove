@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Core/Graphics/Bindables/Texture.hpp"
-#include "Core/Graphics/Bindables/ShaderBufferObject.hpp"
+namespace clv::gfx{
+	class Texture;
+}
 
 namespace clv::gfx{
 	class Sprite{

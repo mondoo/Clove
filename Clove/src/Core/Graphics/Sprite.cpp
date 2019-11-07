@@ -1,7 +1,8 @@
 #include "Sprite.hpp"
 
+#include "Core/Graphics/RenderCommand.hpp"
+#include "Core/Graphics/Resources/Texture.hpp"
 #include "Core/Graphics/Material.hpp"
-#include "Core/Graphics/BindableFactory.hpp"
 
 namespace clv::gfx{
 	Sprite::Sprite(const Sprite& other) = default;
@@ -15,7 +16,7 @@ namespace clv::gfx{
 	Sprite::~Sprite() = default;
 
 	Sprite::Sprite(const std::string& pathToTexture){
-		texture = BindableFactory::createTexture(pathToTexture, TBP_Albedo);
+		texture = RenderCommand::createTexture({});
 	}
 
 	Sprite::Sprite(std::shared_ptr<Texture> texture)
