@@ -4,7 +4,7 @@
 
 namespace clv::gfx{
 	struct ShaderResourceDescriptor{
-		//TODO
+		uint32 bufferSize = 0;
 	};
 
 	enum BufferBindingPoint{ //Will this be needed?
@@ -26,6 +26,6 @@ namespace clv::gfx{
 	class ShaderResource : public Buffer{
 		//FUNCTIONS
 	public:
-		virtual void update(void* data) = 0;
+		virtual void setData(void* data) = 0;
 	};
 }
