@@ -4,6 +4,10 @@
 #include "Core/Graphics/VertexLayout.hpp"
 
 namespace clv::gfx{
+	struct ShaderDescriptor{
+		ShaderStyle style;
+	};
+
 	struct ShaderReflectionData{
 		VertexLayout vertexBufferLayout;
 	};

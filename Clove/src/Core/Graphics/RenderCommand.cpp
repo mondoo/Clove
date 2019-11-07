@@ -65,27 +65,31 @@ namespace clv::gfx{
 		device->setBlendState(enabled);
 	}
 
-	std::unique_ptr<IndexBuffer> RenderCommand::createIndexBuffer(const IndexBufferDescriptor& descriptor){
+	std::shared_ptr<IndexBuffer> RenderCommand::createIndexBuffer(const IndexBufferDescriptor& descriptor){
 		return factory->createIndexBuffer(descriptor);
 	}
 
-	std::unique_ptr<VertexBuffer> RenderCommand::createVertexBuffer(const VertexBufferDescriptor& descriptor){
+	std::shared_ptr<VertexBuffer> RenderCommand::createVertexBuffer(const VertexBufferDescriptor& descriptor){
 		return factory->createVertexBuffer(descriptor);
 	}
 
-	std::unique_ptr<ShaderResource> RenderCommand::createShaderResource(const ShaderResourceDescriptor& descriptor){
+	std::shared_ptr<ShaderResource> RenderCommand::createShaderResource(const ShaderResourceDescriptor& descriptor){
 		return factory->createShaderResource(descriptor);
 	}
 
-	std::unique_ptr<Texture> RenderCommand::createTexture(const TextureDescriptor& descriptor){
+	std::shared_ptr<Texture> RenderCommand::createTexture(const TextureDescriptor& descriptor){
 		return factory->createTexture(descriptor);
 	}
 
-	std::unique_ptr<Surface> RenderCommand::createSurface(){
+	std::shared_ptr<Shader> RenderCommand::createShader(const ShaderDescriptor& descriptor){
+		return factory->createShader(descriptor);
+	}
+
+	std::shared_ptr<Surface> RenderCommand::createSurface(){
 		return factory->createSurface();
 	}
 
-	std::unique_ptr<Viewport> RenderCommand::createViewport(){
+	std::shared_ptr<Viewport> RenderCommand::createViewport(){
 		return factory->createViewport();
 	}
 

@@ -9,6 +9,8 @@ namespace clv::gfx{
 	struct VertexBufferDescriptor;
 	class Texture;
 	struct TextureDescriptor;
+	class Shader;
+	struct ShaderDescriptor;
 	class Surface;
 	class Viewport;
 }
@@ -23,6 +25,8 @@ namespace clv::gfx{
 		virtual std::shared_ptr<ShaderResource> createShaderResource(const ShaderResourceDescriptor& descriptor) = 0;
 
 		virtual std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor) = 0;
+
+		virtual std::shared_ptr<Shader> createShader(const ShaderDescriptor& descriptor) = 0;
 
 		virtual std::shared_ptr<Surface> createSurface() = 0;
 

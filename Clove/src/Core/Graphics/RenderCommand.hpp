@@ -45,6 +45,8 @@ namespace clv::gfx{
 
 		static std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor);
 
+		static std::shared_ptr<Shader> createShader(const ShaderDescriptor& descriptor);
+
 		static std::shared_ptr<Surface> createSurface();
 
 		static std::shared_ptr<Viewport> createViewport();
