@@ -2,12 +2,15 @@
 
 #include "Core/Graphics/Resources/Buffer.hpp"
 
+#include "Core/Graphics/VertexLayout.hpp"
+
 namespace clv::gfx{
 	class Shader;
 
 	struct VertexBufferDescriptor{
-		VertexBufferData bufferData;
-		std::shared_ptr<Shader> shader;
+		VertexLayout layout;
+		uint32 elementSize = 0;
+		uint32 bufferSize = 0;
 	};
 }
 
@@ -15,7 +18,7 @@ namespace clv::gfx{
 	class VertexBuffer : public Buffer{
 		//FUNCTIONS
 	public:
-		//TODO
+		virtual void setData(const VertexBufferData& data) = 0;
 	};
 }
 
