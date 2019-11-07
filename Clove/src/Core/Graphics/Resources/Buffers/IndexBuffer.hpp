@@ -4,7 +4,7 @@
 
 namespace clv::gfx{
 	struct IndexBufferDescriptor{
-		//TODO
+		std::vector<uint32> indices;
 	};
 }
 
