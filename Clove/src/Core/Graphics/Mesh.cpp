@@ -21,7 +21,7 @@ namespace clv::gfx{
 		: materialInstance(std::move(materialInstance)){
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
-		this->materialInstance.bind();
+		this->materialInstance.bind(); //TODO: Needed?
 
 		const int32 vertexCount = info.verticies.size();
 
@@ -49,23 +49,13 @@ namespace clv::gfx{
 			}
 		}
 
-		//VB
-		vertexBuffer = RenderCommand::createVertexBuffer({ vertexArray, this->materialInstance.getShader() });
-
-		//IB
-		indexBuffer = RenderCommand::createIndexBuffer({ info.indices });
+		createBuffers(vertexArray, info.indices);
 	}
 
 	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, MaterialInstance materialInstance)
 		: materialInstance(std::move(materialInstance)){
-		
-		this->materialInstance.bind();
-
-		//VB
-		vertexBuffer = RenderCommand::createVertexBuffer({ vbData, this->materialInstance.getShader() });
-
-		//IB
-		indexBuffer = RenderCommand::createIndexBuffer({ indices });
+		this->materialInstance.bind(); //TODO: Needed?
+		createBuffers(vbData, indices);
 	}
 
 	MaterialInstance& Mesh::getMaterialInstance(){
@@ -80,5 +70,26 @@ namespace clv::gfx{
 		RenderCommand::bindVertexBuffer(*vertexBuffer);
 		RenderCommand::bindIndexBuffer(*indexBuffer);
 		materialInstance.bind();
+	}
+
+	void Mesh::createBuffers(const VertexBufferData& vbData, const std::vector<uint32>& indices){
+		//VB
+		VertexBufferDescriptor vbdesc{
+			vbData.getLayout(),
+			this->materialInstance.getShader(),
+			vbData.getLayout().size(),
+			vbData.sizeBytes()
+		};
+		vertexBuffer = RenderCommand::createVertexBuffer(vbdesc);
+		vertexBuffer->setData(vbData);
+
+		//IB
+		const std::size_t indexSize = sizeof(uint32);
+		IndexBufferDescriptor ibdesc{
+			indexSize,
+			indices.size() * indexSize
+		};
+		indexBuffer = RenderCommand::createIndexBuffer(ibdesc);
+		indexBuffer->setIndices(indices);
 	}
 }

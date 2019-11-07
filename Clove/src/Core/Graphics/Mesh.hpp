@@ -36,5 +36,8 @@ namespace clv::gfx{
 		uint32 getIndexCount();
 
 		void bind();
+
+	private:
+		void createBuffers(const VertexBufferData& vbData, const std::vector<uint32>& indices);
 	};
 }
