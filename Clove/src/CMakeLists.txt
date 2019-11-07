@@ -90,7 +90,6 @@ set(
 		Core/Graphics/Sprite.hpp
 		Core/Graphics/Sprite.cpp
 		Core/Graphics/Surface.hpp
-		Core/Graphics/Surface.cpp
 		Core/Graphics/VertexLayout.hpp
 		Core/Graphics/VertexLayout.inl
 		Core/Graphics/VertexLayout.cpp

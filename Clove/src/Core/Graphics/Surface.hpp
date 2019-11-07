@@ -13,8 +13,6 @@ namespace clv::gfx{
 	class Surface{
 		//FUNCTIONS
 	public:
-		//TODO ctor
-
 		virtual void makeCurrent(RenderDevice& device) = 0;
 
 		virtual void setVSync(bool vsync) = 0;
