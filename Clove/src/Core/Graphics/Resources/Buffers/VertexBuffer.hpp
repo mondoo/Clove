@@ -9,6 +9,7 @@ namespace clv::gfx{
 
 	struct VertexBufferDescriptor{
 		VertexLayout layout;
+		std::shared_ptr<Shader> shader;
 		uint32 elementSize = 0;
 		uint32 bufferSize = 0;
 	};
