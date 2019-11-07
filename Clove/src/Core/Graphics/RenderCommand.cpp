@@ -25,12 +25,12 @@ namespace clv::gfx{
 		device->bindVertexBuffer(buffer);
 	}
 
-	void RenderCommand::bindShaderResource(ShaderResource& resource, uint32 bindingPoint){
-		device->bindShaderResource(resource, bindingPoint);
+	void RenderCommand::bindShaderResource(ShaderResource& resource){
+		device->bindShaderResource(resource);
 	}
 
-	void RenderCommand::bindTexture(Texture& texture, uint32 bindingPoint){
-		device->bindTexture(texture, bindingPoint);
+	void RenderCommand::bindTexture(Texture& texture){
+		device->bindTexture(texture);
 	}
 
 	void RenderCommand::bindShader(Shader& shader){

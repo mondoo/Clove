@@ -16,9 +16,9 @@ namespace clv::gfx{
 		static void bindIndexBuffer(IndexBuffer& buffer);
 		static void bindVertexBuffer(VertexBuffer& buffer);
 		
-		static void bindShaderResource(ShaderResource& resource, uint32 bindingPoint); //Temp uint32 - should be the enum
+		static void bindShaderResource(ShaderResource& resource);
 
-		static void bindTexture(Texture& texture, uint32 bindingPoint); //Temp uint32 - should be the enum
+		static void bindTexture(Texture& texture);
 
 		static void bindShader(Shader& shader);
 
