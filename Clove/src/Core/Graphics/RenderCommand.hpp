@@ -1,14 +1,7 @@
 #pragma once
 
-namespace clv::gfx{
-	class RenderDevice;
-	class IndexBuffer;
-	class VertexBuffer;
-	class Texture;
-	class RenderTarget;
-	class Shader;
-	class Viewport;
-}
+#include "Core/Graphics/RenderDevice.hpp"
+#include "Core/Graphics/RenderFactory.hpp"
 
 namespace clv::gfx{
 	//NOTE: This will be used to create a multithreaded renderer. But for now it just wraps the API calls
@@ -16,6 +9,7 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		static std::unique_ptr<RenderDevice> device;
+		static std::unique_ptr<RenderFactory> factory;
 
 		//FUNCTIONS
 	public:
@@ -43,6 +37,17 @@ namespace clv::gfx{
 		//static void removeCurrentGeometryShader();
 		//static void removeTextureAtSlot(uint32 slot);
 		//
+
+		static std::shared_ptr<IndexBuffer> createIndexBuffer(const IndexBufferDescriptor& descriptor);
+		static std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexBufferDescriptor& descriptor);
+
+		static std::shared_ptr<ShaderResource> createShaderResource(const ShaderResourceDescriptor& descriptor);
+
+		static std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor);
+
+		static std::shared_ptr<Surface> createSurface();
+
+		static std::shared_ptr<Viewport> createViewport();
 
 		static void initialiseRenderDevice();
 	};
