@@ -1,14 +1,15 @@
-#include "Core/Graphics/BindableFactory.hpp"
-
 namespace clv::gfx{
-template<typename T>
-	void Material::setData(BufferBindingPoint bindingPoint, T&& data, gfx::ShaderType shaderType){
+	template<typename DataType>
+	void Material::setData(BufferBindingPoint bindingPoint, DataType&& data, ShaderType shaderType){
 		if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
-			if(auto sbo = std::dynamic_pointer_cast<ShaderResource<T>>(iter->second)){
-				sbo->update(std::forward<T>(data));
-				return;
-			}
+			iter->second->setData(std::forward<DataType>(data));
+		} else{
+			ShaderResourceDescriptor srdesc = {};
+			srdesc.bindingPoint = bindingPoint;
+			srdesc.shaderType = shaderType;
+			srdesc.bufferSize = sizeof(data);
+			shaderData[bindingPoint] = RenderCommand::createShaderResource(srdesc);
+			shaderData[bindingPoint]->setData(std::forward<DataType>(data));
 		}
-		shaderData[bindingPoint] = BindableFactory::createShaderBufferObject<T>(shaderType, bindingPoint, std::forward<T>(data));
 	}
 }

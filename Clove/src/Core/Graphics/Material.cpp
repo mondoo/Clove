@@ -1,8 +1,8 @@
 #include "Material.hpp"
 
-#include "Core/Graphics/Bindables/Texture.hpp"
-#include "Core/Graphics/BindableFactory.hpp"
+#include "Core/Graphics/Resources/Texture.hpp"
 #include "Core/Graphics/MaterialInstance.hpp"
+#include "Core/Graphics/RenderCommand.hpp"
 
 namespace clv::gfx{
 	Material::Material(const Material& other) = default;
@@ -21,7 +21,7 @@ namespace clv::gfx{
 	Material::~Material() = default;
 
 	Material::Material(ShaderStyle shaderStyle){
-		shader = gfx::BindableFactory::createShader(shaderStyle);
+		shader = RenderCommand::createShader({ shaderStyle });
 
 		reflectionData = shader->getReflectionData();
 	}
@@ -39,7 +39,10 @@ namespace clv::gfx{
 	}
 
 	void Material::setAlbedoTexture(const std::string& path){
-		albedoTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Albedo);
+		TextureDescriptor tdesc = {};
+		tdesc.bindingPoint = TBP_Albedo;
+		albedoTexture = RenderCommand::createTexture(tdesc);
+		albedoTexture->map(path);
 	}
 
 	void Material::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
@@ -48,7 +51,10 @@ namespace clv::gfx{
 	}
 
 	void Material::setSpecularTexture(const std::string& path){
-		specTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Specular);
+		TextureDescriptor tdesc = {};
+		tdesc.bindingPoint = TBP_Specular;
+		albedoTexture = RenderCommand::createTexture(tdesc);
+		albedoTexture->map(path);
 	}
 
 	void Material::setSpecularTexture(const std::shared_ptr<Texture>& texture){

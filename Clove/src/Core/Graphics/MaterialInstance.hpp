@@ -1,21 +1,23 @@
 #pragma once
 
 #include "Core/Graphics/Material.hpp"
-#include "Core/Graphics/Bindables/ShaderBufferObject.hpp"
-#include "Core/Graphics/Bindables/Shader.hpp" //TODO: Remove? needed for the shader reflection data
+#include "Core/Graphics/Resources/ShaderResource.hpp"
+#include "Core/Graphics/Shader.hpp" //TODO: remove? needed for the reflection data
 
 //TODO: Move this into the material file???
 namespace clv::gfx{
 	class Material;
 	class Texture;
+}
 
+namespace clv::gfx{
 	class MaterialInstance{
 		//VARIABLES
 	private:
 		std::shared_ptr<Material> material;
 		std::shared_ptr<Texture> albedoTexture;
 		std::shared_ptr<Texture> specTexture;
-		std::unordered_map<BufferBindingPoint, std::shared_ptr<Bindable>> shaderData;
+		std::unordered_map<BufferBindingPoint, std::shared_ptr<ShaderResource>> shaderData;
 
 		//FUNCTIONS
 	public:

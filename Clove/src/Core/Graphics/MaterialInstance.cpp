@@ -1,7 +1,8 @@
 #include "MaterialInstance.hpp"
 
 #include "Core/Graphics/Material.hpp"
-#include "Core/Graphics/Bindables/Texture.hpp"
+#include "Core/Graphics/Resources/Texture.hpp"
+#include "Core/Graphics/RenderCommand.hpp"
 
 namespace clv::gfx{
 	MaterialInstance::MaterialInstance(const MaterialInstance& other) = default;
@@ -23,28 +24,28 @@ namespace clv::gfx{
 
 	void MaterialInstance::bind(){
 		if(albedoTexture){
-			albedoTexture->bind();
-		} else if(material->albedoTexture){ //TODO: This shouldn't really be nullptr - but how will solid colour shaders work?
-			material->albedoTexture->bind();
+			RenderCommand::bindTexture(*albedoTexture);
+		} else { 
+			RenderCommand::bindTexture(*material->albedoTexture);
 		}
 
 		if(specTexture){
-			specTexture->bind();
+			RenderCommand::bindTexture(*specTexture);
 		} else if(material->specTexture){
-			material->specTexture->bind();
+			RenderCommand::bindTexture(*material->specTexture);
 		}
 
 		for(auto& [key, val] : material->shaderData){
 			if(auto iter = shaderData.find(key); iter == shaderData.end()){
-				val->bind();
+				RenderCommand::bindShaderResource(*val);
 			}
 		}
 
 		for(auto& [key, val] : shaderData){
-			val->bind();
+			RenderCommand::bindShaderResource(*val);
 		}
 
-		material->shader->bind();
+		RenderCommand::bindShader(*material->shader);
 	}
 
 	const ShaderReflectionData& MaterialInstance::getReflectionData() const{
@@ -56,7 +57,10 @@ namespace clv::gfx{
 	}
 
 	void MaterialInstance::setAlbedoTexture(const std::string& path){
-		albedoTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Albedo);
+		TextureDescriptor tdesc = {};
+		tdesc.bindingPoint = TBP_Albedo;
+		albedoTexture = RenderCommand::createTexture(tdesc);
+		albedoTexture->map(path);
 	}
 
 	void MaterialInstance::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
@@ -65,7 +69,10 @@ namespace clv::gfx{
 	}
 
 	void MaterialInstance::setSpecularTexture(const std::string& path){
-		specTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Specular);
+		TextureDescriptor tdesc = {};
+		tdesc.bindingPoint = TBP_Specular;
+		albedoTexture = RenderCommand::createTexture(tdesc);
+		albedoTexture->map(path);
 	}
 
 	void MaterialInstance::setSpecularTexture(const std::shared_ptr<Texture>& texture){
