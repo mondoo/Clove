@@ -17,6 +17,7 @@ namespace clv::gfx{
 
 	Sprite::Sprite(const std::string& pathToTexture){
 		texture = RenderCommand::createTexture({});
+		texture->map(pathToTexture);
 	}
 
 	Sprite::Sprite(std::shared_ptr<Texture> texture)
