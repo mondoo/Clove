@@ -94,8 +94,6 @@ set(
 		Core/Graphics/VertexLayout.hpp
 		Core/Graphics/VertexLayout.inl
 		Core/Graphics/VertexLayout.cpp
-		Core/Graphics/Viewport.hpp
-		Core/Graphics/Viewport.cpp
 		Core/Graphics/Resources/Buffer.hpp
 		Core/Graphics/Resources/ShaderResource.hpp
 		Core/Graphics/Resources/Texture.hpp

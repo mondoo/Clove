@@ -42,4 +42,11 @@ namespace clv::gfx{
 		texture2D,
 		normal,
 	};
+
+	struct ViewPort{
+		uint32 x = 0;
+		uint32 y = 0;
+		uint32 width = 0;
+		uint32 height = 0;
+	};
 }
