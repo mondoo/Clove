@@ -1,10 +1,8 @@
 #include "Mesh.hpp"
 
-#include "Core/Graphics/BindableFactory.hpp"
-#include "Core/Graphics/Bindables/VertexBuffer.hpp"
-#include "Core/Graphics/Bindables/IndexBuffer.hpp"
-#include "Core/Graphics/Material.hpp"
-#include "Core/Graphics/Bindables/Shader.hpp"
+#include "Core/Graphics/RenderCommand.hpp"
+#include "Core/Graphics/Resources/Buffers/VertexBuffer.hpp"
+#include "Core/Graphics/Resources/Buffers/IndexBuffer.hpp"
 #include "Core/Graphics/VertexLayout.hpp"
 #include "Core/Utils/MeshLoader.hpp"
 
@@ -52,10 +50,10 @@ namespace clv::gfx{
 		}
 
 		//VB
-		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vertexArray, *this->materialInstance.getShader());
+		vertexBuffer = RenderCommand::createVertexBuffer({ vertexArray, this->materialInstance.getShader() });
 
 		//IB
-		indexBuffer = gfx::BindableFactory::createIndexBuffer(info.indices);
+		indexBuffer = RenderCommand::createIndexBuffer({ info.indices });
 	}
 
 	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, MaterialInstance materialInstance)
@@ -64,10 +62,10 @@ namespace clv::gfx{
 		this->materialInstance.bind();
 
 		//VB
-		vertexBuffer = gfx::BindableFactory::createVertexBuffer(vbData, *this->materialInstance.getShader());
+		vertexBuffer = RenderCommand::createVertexBuffer({ vbData, this->materialInstance.getShader() });
 
 		//IB
-		indexBuffer = gfx::BindableFactory::createIndexBuffer(indices);
+		indexBuffer = RenderCommand::createIndexBuffer({ indices });
 	}
 
 	MaterialInstance& Mesh::getMaterialInstance(){
@@ -79,8 +77,8 @@ namespace clv::gfx{
 	}
 
 	void Mesh::bind(){
-		vertexBuffer->bind();
-		indexBuffer->bind();
+		RenderCommand::bindVertexBuffer(*vertexBuffer);
+		RenderCommand::bindIndexBuffer(*indexBuffer);
 		materialInstance.bind();
 	}
 }

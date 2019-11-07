@@ -9,7 +9,9 @@ namespace clv::gfx{
 	class Material;
 	class Shader;
 	class VertexBufferData;
-	
+}
+
+namespace clv::gfx{
 	class Mesh{
 		//VARIABLES
 	private:
