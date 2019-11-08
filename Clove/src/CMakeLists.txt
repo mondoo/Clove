@@ -183,7 +183,14 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		GraphicsFiles
-			${GraphicsFiles}	
+			${GraphicsFiles}
+			Graphics/Direct3D/D3D.hpp
+			Graphics/Direct3D/D3D.cpp
+			Graphics/Direct3D/D3DRenderDevice.hpp
+			Graphics/Direct3D/D3DRenderDevice.cpp
+			Graphics/Direct3D/D3DRenderFactory.hpp
+			Graphics/Direct3D/D3DRenderFactory.cpp
+
 			Graphics/Direct3D/Bindables/DX11ConstantBuffer.hpp
 			Graphics/Direct3D/Bindables/DX11ConstantBuffer.inl
 			Graphics/Direct3D/Bindables/DX11IndexBuffer.hpp
@@ -206,8 +213,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			Graphics/Direct3D/Shaders/Unlit-vs.hlsl
 			Graphics/Direct3D/DX11Exception.hpp
 			Graphics/Direct3D/DX11Exception.cpp
-			Graphics/Direct3D/DX11RenderAPI.hpp
-			Graphics/Direct3D/DX11RenderAPI.cpp
 			Graphics/Direct3D/DX11RenderTarget.hpp
 			Graphics/Direct3D/DX11RenderTarget.cpp
 			Graphics/Direct3D/DXGIInfoManager.hpp
