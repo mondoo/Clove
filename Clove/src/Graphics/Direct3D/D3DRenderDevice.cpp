@@ -112,7 +112,7 @@ namespace clv::gfx::d3d::_11{
 	}
 
 #if CLV_DEBUG
-	DXGIInfoManager& DX11RenderAPI::getInfoManager(){
+	DXGIInfoManager& D3DRenderDevice::getInfoManager(){
 		return infoManager;
 	}
 #endif
