@@ -51,8 +51,9 @@ namespace clv::gfx::d3d::_11{
 
 		virtual void bindShader(Shader& shader) override;
 
+		virtual void makeSurfaceCurrent(const Surface& surface) override;
+
 		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface
-		virtual void setDefaultRenderTarget(RenderTarget& renderTarget) override;
 		virtual void setRenderTarget(RenderTarget& renderTarget) override;
 		virtual void resetRenderTargetToDefault() override;
 		//

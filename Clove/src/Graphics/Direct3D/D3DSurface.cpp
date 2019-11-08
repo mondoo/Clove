@@ -72,6 +72,8 @@ namespace clv::gfx::d3d::_11{
 
 		DX11_THROW_INFO(d3dDevice.CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
 
+		renderTarget = std::make_unique<D3DRenderTarget>(renderTargetView, depthStencilView);
+
 		//Bind depth stencil view to output merger
 		//d3dContext->OMSetRenderTargets(1u, target.GetAddressOf(), dsv.Get());
 
@@ -91,10 +93,6 @@ namespace clv::gfx::d3d::_11{
 	D3DSurface& D3DSurface::operator=(D3DSurface&& other) noexcept = default;
 
 	D3DSurface::~D3DSurface() = default;
-
-	void D3DSurface::makeCurrent(RenderDevice& device){
-		//TODO - Need new RT
-	}
 
 	void D3DSurface::setVSync(bool enabled){
 		swapInterval = enabled ? 1u : 0u;
@@ -120,8 +118,8 @@ namespace clv::gfx::d3d::_11{
 		}
 	}
 
-	RenderTarget& D3DSurface::getTarget() const{
-		//TODO - Need new RT
+	D3DRenderTarget& D3DSurface::getTarget() const{
+		return *renderTarget;
 	}
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> D3DSurface::getSwapChain() const{

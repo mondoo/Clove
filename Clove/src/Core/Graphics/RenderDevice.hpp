@@ -7,6 +7,7 @@ namespace clv::gfx{
 	class Texture;
 	class RenderTarget;
 	class Shader;
+	class Surface;
 	class Viewport;
 }
 
@@ -23,8 +24,9 @@ namespace clv::gfx{
 
 		virtual void bindShader(Shader& shader) = 0;
 
+		virtual void makeSurfaceCurrent(const Surface& surface) = 0;
+
 		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface
-		virtual void setDefaultRenderTarget(RenderTarget& renderTarget) = 0;
 		virtual void setRenderTarget(RenderTarget& renderTarget) = 0;
 		virtual void resetRenderTargetToDefault() = 0;
 		//

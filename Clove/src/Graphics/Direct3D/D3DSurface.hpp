@@ -8,6 +8,10 @@ struct ID3D11Device;
 struct IDXGISwapChain;
 
 namespace clv::gfx::d3d::_11{
+	class D3DRenderTarget;
+}
+
+namespace clv::gfx::d3d::_11{
 	class D3DSurface : public Surface{
 		//VARIABLES
 	public:
@@ -15,8 +19,9 @@ namespace clv::gfx::d3d::_11{
 
 	private:	
 		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
-
 		uint32 swapInterval = 1u;
+
+		std::unique_ptr<D3DRenderTarget> renderTarget;
 
 		//FUNCTIONS
 	public:
@@ -28,14 +33,12 @@ namespace clv::gfx::d3d::_11{
 		D3DSurface& operator=(D3DSurface&& other) noexcept;
 		virtual ~D3DSurface();
 
-		virtual void makeCurrent(RenderDevice& device) override;
-
 		virtual void setVSync(bool vsync) override;
 		virtual bool isVsync() const override;
 
 		virtual void present() override;
 
-		virtual RenderTarget& getTarget() const override;
+		D3DRenderTarget& getTarget() const;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain> getSwapChain() const;
 	};

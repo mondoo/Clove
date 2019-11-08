@@ -13,13 +13,9 @@ namespace clv::gfx{
 	class Surface{
 		//FUNCTIONS
 	public:
-		virtual void makeCurrent(RenderDevice& device) = 0;
-
 		virtual void setVSync(bool vsync) = 0;
 		virtual bool isVsync() const = 0;
 
 		virtual void present() = 0;
-
-		virtual RenderTarget& getTarget() const = 0;
 	};
 }

@@ -37,6 +37,10 @@ namespace clv::gfx::d3d::_11{
 		//TODO:
 	}
 
+	void D3DRenderDevice::makeSurfaceCurrent(const Surface& surface){
+		//TODO:
+	}
+
 	void D3DRenderDevice::setViewport(const Viewport& viewport){
 		//TODO:
 	}
@@ -83,9 +87,6 @@ namespace clv::gfx::d3d::_11{
 		blendDesc.RenderTarget[0].BlendEnable = enabled ? TRUE : FALSE;
 		DX11_THROW_INFO(d3dDevice->CreateBlendState(&blendDesc, &blendState));
 		d3dContext->OMSetBlendState(blendState.Get(), blendFactor, sampleMask);
-	}
-
-	void D3DRenderDevice::setDefaultRenderTarget(RenderTarget& renderTarget){
 	}
 
 	void D3DRenderDevice::setRenderTarget(RenderTarget& renderTarget){
