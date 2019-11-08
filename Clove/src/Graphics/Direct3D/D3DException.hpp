@@ -3,7 +3,7 @@
 #include "Core/Exception/CloveException.hpp"
 
 namespace clv::gfx{
-	class DX11Exception : public CloveException{
+	class D3DException : public CloveException{
 		//VARIABLES
 	public:
 		HRESULT hr;
@@ -11,14 +11,14 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		DX11Exception() = delete;
-		DX11Exception(const DX11Exception& other) = delete;
-		DX11Exception(DX11Exception&& other) noexcept = delete;
+		D3DException() = delete;
+		D3DException(const D3DException& other) = delete;
+		D3DException(D3DException&& other) noexcept = delete;
 		CloveException& operator=(const CloveException& other) = delete;
 		CloveException& operator=(CloveException&& other) noexcept = delete;
-		virtual ~DX11Exception();
+		virtual ~D3DException();
 
-		DX11Exception(int32 lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages = {});
+		D3DException(int32 lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages = {});
 
 		virtual const char* what() const noexcept override;
 		virtual const char* getType() const noexcept override;
@@ -30,8 +30,8 @@ namespace clv::gfx{
 		std::string getErrorInfo() const noexcept;
 	};
 
-	class DeviceRemovedException : public DX11Exception{
-		using DX11Exception::DX11Exception;
+	class DeviceRemovedException : public D3DException{
+		using D3DException::D3DException;
 
 		//VARIABLES
 	private:
@@ -72,18 +72,18 @@ namespace clv::gfx{
 	};
 }
 
-#define DX11_EXCEPT_NOINFO(hr) clv::gfx::DX11Exception(__LINE__, __FILE__, (hr))
+#define DX11_EXCEPT_NOINFO(hr) clv::gfx::D3DException(__LINE__, __FILE__, (hr))
 #define DX11_THROW_NOINFO(hrcall) { if(FAILED(hr = (hrcall))){ throw DX11_EXCEPT_NOINFO(hr); } }
 
 #if CLV_DEBUG
-	#define DX11_EXCEPT(hr) clv::gfx::DX11Exception(__LINE__, __FILE__, (hr), infoManager.getMessages())
+	#define DX11_EXCEPT(hr) clv::gfx::D3DException(__LINE__, __FILE__, (hr), infoManager.getMessages())
 	#define DX11_THROW_INFO(hrcall) infoManager.set(); if(FAILED(hr = (hrcall))) throw DX11_EXCEPT(hr)
 	#define DX11_DEVICE_REMOVED_EXCPTION(hr) clv::gfx::DeviceRemovedException(__LINE__, __FILE__, (hr), infoManager.getMessages())
 	#define DX11_THROW_INFO_ONLY(call) infoManager.set(); (call); { auto v = infoManager.getMessages(); if(!v.empty()){ throw clv::gfx::InfoException(__LINE__, __FILE__, v); } }
 
 	#define DX11_INFO_PROVIDER HRESULT hr; DXGIInfoManager& infoManager = DX11RenderAPI::getInfoManager();
 #else
-	#define DX11_EXCEPT(hr) clv::gfx::DX11Exception(__LINE__, __FILE__, (hr))
+	#define DX11_EXCEPT(hr) clv::gfx::D3DException(__LINE__, __FILE__, (hr))
 	#define DX11_THROW_INFO(hrcall) DX11_THROW_NOINFO(hrcall)
 	#define DX11_DEVICE_REMOVED_EXCPTION(hr) clv::gfx::DeviceRemovedException(__LINE__, __FILE__, (hr))
 	#define DX11_THROW_INFO_ONLY(call) (call)

@@ -1,6 +1,6 @@
 #include "D3DRenderDevice.hpp"
 
-#include "Graphics/Direct3D/DX11Exception.hpp"
+#include "Graphics/Direct3D/D3DException.hpp"
 #include "Graphics/Direct3D/DX11RenderTarget.hpp"
 
 #include <d3d11.h>

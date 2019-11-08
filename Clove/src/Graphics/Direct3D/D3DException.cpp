@@ -1,11 +1,11 @@
-#include "DX11Exception.hpp"
+#include "D3DException.hpp"
 
 #include <dxerr.h>
 
 namespace clv::gfx{
-	DX11Exception::~DX11Exception() = default;
+	D3DException::~D3DException() = default;
 
-	DX11Exception::DX11Exception(int32 lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages)
+	D3DException::D3DException(int32 lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages)
 		: CloveException(lineNum, file)
 		, hr(hr){
 		for(const auto& message : messages){
@@ -18,7 +18,7 @@ namespace clv::gfx{
 		}
 	}
 
-	const char* DX11Exception::what() const noexcept{
+	const char* D3DException::what() const noexcept{
 		std::ostringstream oss;
 		oss << getType() << std::endl
 			<< "[ERROR CODE] 0x" << std::hex << std::uppercase << getErrorCode()
@@ -35,25 +35,25 @@ namespace clv::gfx{
 		return whatBuffer.c_str();
 	}
 
-	const char* DX11Exception::getType() const noexcept{
+	const char* D3DException::getType() const noexcept{
 		return "Clove DX11 Exception";
 	}
 
-	HRESULT DX11Exception::getErrorCode() const noexcept{
+	HRESULT D3DException::getErrorCode() const noexcept{
 		return hr;
 	}
 
-	std::string DX11Exception::getErrorString() const noexcept{
+	std::string D3DException::getErrorString() const noexcept{
 		return DXGetErrorStringA(hr);
 	}
 
-	std::string DX11Exception::getErrorDescription() const noexcept{
+	std::string D3DException::getErrorDescription() const noexcept{
 		char buff[512];
 		DXGetErrorDescriptionA(hr, buff, sizeof(buff));
 		return buff;
 	}
 
-	std::string DX11Exception::getErrorInfo() const noexcept{
+	std::string D3DException::getErrorInfo() const noexcept{
 		return info;
 	}
 
