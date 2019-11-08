@@ -2,7 +2,7 @@
 
 #include <dxerr.h>
 
-namespace clv::gfx{
+namespace clv::gfx::d3d::_11{
 	D3DException::~D3DException() = default;
 
 	D3DException::D3DException(int32 lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages)
