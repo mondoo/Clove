@@ -35,7 +35,7 @@ namespace clv::gfx{
 
 		HRESULT hr; //Used by DX11_THROW_FAILED macro
 
-		UINT flags = 0;
+		/*UINT flags = 0;
 	#if CLV_DEBUG
 		flags |= D3D11_CREATE_DEVICE_DEBUG;
 	#endif
@@ -43,7 +43,7 @@ namespace clv::gfx{
 		D3D_FEATURE_LEVEL featureLevels[] = {
 			D3D_FEATURE_LEVEL_11_1,
 			D3D_FEATURE_LEVEL_11_0
-		};
+		};*/
 
 		DX11_THROW_INFO(D3D11CreateDeviceAndSwapChain(
 			nullptr,
