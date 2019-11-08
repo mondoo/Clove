@@ -22,7 +22,11 @@ namespace clv::gfx{
 
 		static void bindShader(Shader& shader);
 
+		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface
+		static void setDefaultRenderTarget(RenderTarget& renderTarget);
 		static void setRenderTarget(RenderTarget& renderTarget);
+		static void resetRenderTargetToDefault();
+		//
 
 		static void setViewport(const Viewport& viewport);
 

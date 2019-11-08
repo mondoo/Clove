@@ -37,8 +37,16 @@ namespace clv::gfx{
 		device->bindShader(shader);
 	}
 
+	void RenderCommand::setDefaultRenderTarget(RenderTarget& renderTarget){
+		device->setDefaultRenderTarget(renderTarget);
+	}
+
 	void RenderCommand::setRenderTarget(RenderTarget& renderTarget){
 		device->setRenderTarget(renderTarget);
+	}
+
+	void RenderCommand::resetRenderTargetToDefault(){
+		device->resetRenderTargetToDefault();
 	}
 
 	void RenderCommand::setViewport(const Viewport& viewport){
