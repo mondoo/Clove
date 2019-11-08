@@ -9,9 +9,9 @@
 #include "Core/Graphics/RenderTarget.hpp"
 
 //#include "Graphics/OpenGL-4/GL4RenderAPI.hpp"
-//#if CLV_PLATFORM_WINDOWS
-//#include "Graphics/DirectX-11/DX11RenderAPI.hpp"
-//#endif
+#if CLV_PLATFORM_WINDOWS
+#include "Graphics/Direct3D/D3D.hpp"
+#endif
 
 namespace clv::gfx{
 	std::unique_ptr<RenderDevice> RenderCommand::device;
@@ -104,23 +104,30 @@ namespace clv::gfx{
 		return factory->createSurface();
 	}
 
-	void RenderCommand::initialiseRenderDevice(){
-		/*switch(context.getAPI()){
+	void RenderCommand::initialise(gfx::API api){
+		switch(api){
 			case API::OpenGL4:
 				CLV_LOG_TRACE("Creating OpenGL renderer");
-				renderAPI = std::make_unique<GL4RenderAPI>(context);
-				break;
+				//renderAPI = std::make_unique<GL4RenderAPI>(context);
+				//break;
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				CLV_LOG_TRACE("Creating DirectX11 renderer");
-				renderAPI = std::make_unique<DX11RenderAPI>(context);
-				break;
+				{
+					CLV_LOG_TRACE("Creating Direct3D API");
+					auto pair = d3d::_11::initialiseD3D();
+					device = std::move(pair.first);
+					factory = std::move(pair.second);
+					break;
+				}
 			#endif
 
 			default:
 				CLV_LOG_ERROR("Default statement hit. Could not initialise RenderAPI: {0}", CLV_FUNCTION_NAME);
 				break;
-		}*/
+		}
+	}
+
+	void RenderCommand::initialiseRenderDevice(){
 	}
 }

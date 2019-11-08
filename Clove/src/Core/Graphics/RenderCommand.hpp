@@ -53,8 +53,6 @@ namespace clv::gfx{
 
 		static std::shared_ptr<Surface> createSurface();
 
-		static std::shared_ptr<Viewport> createViewport();
-
-		static void initialiseRenderDevice();
+		static void initialise(gfx::API api);
 	};
 }
