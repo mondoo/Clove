@@ -7,7 +7,6 @@
 #include "Core/Graphics/Resources/Texture.hpp"
 #include "Core/Graphics/Shader.hpp"
 #include "Core/Graphics/RenderTarget.hpp"
-#include "Core/Graphics/Viewport.hpp"
 
 //#include "Graphics/OpenGL-4/GL4RenderAPI.hpp"
 //#if CLV_PLATFORM_WINDOWS
