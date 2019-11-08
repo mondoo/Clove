@@ -183,6 +183,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			${GraphicsFiles}
 			Graphics/Direct3D/Resources/D3DBuffer.hpp
 			Graphics/Direct3D/Resources/D3DBuffer.cpp
+			Graphics/Direct3D/Resources/D3DTexture.hpp
+			Graphics/Direct3D/Resources/D3DTexture.cpp
 			Graphics/Direct3D/D3D.hpp
 			Graphics/Direct3D/D3D.cpp
 			Graphics/Direct3D/D3DException.hpp
@@ -197,8 +199,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			
 			Graphics/Direct3D/Bindables/DX11Shader.hpp
 			Graphics/Direct3D/Bindables/DX11Shader.cpp
-			Graphics/Direct3D/Bindables/DX11Texture.hpp
-			Graphics/Direct3D/Bindables/DX11Texture.cpp
 			Graphics/Direct3D/Bindables/DX11VertexBuffer.hpp
 			Graphics/Direct3D/Bindables/DX11VertexBuffer.cpp
 			Graphics/Direct3D/Shaders/2D-ps.hlsl

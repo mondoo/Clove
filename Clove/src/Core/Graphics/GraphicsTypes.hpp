@@ -24,18 +24,6 @@ namespace clv::gfx{
 		CubeShadowMap
 	};
 
-	enum class TextureStyle{
-		Default,
-		Cubemap
-	};
-
-	enum class TextureUsage{
-		Default,
-		RenderTarget_Colour,
-		RenderTarget_Depth,
-		Font
-	};
-
 	enum class VertexElementType{
 		position2D,
 		position3D,
@@ -62,5 +50,12 @@ namespace clv::gfx{
 		BBP_CurrentLights = 8u,
 		BBP_CurrentFaceIndex = 9u,
 		BBP_CurrentDepthData = 10u,
+	};
+
+	enum TextureBindingPoint{
+		TBP_Albedo = 1u,
+		TBP_Specular = 2u,
+		TBP_Shadow = 3u,
+		TBP_None = 4u
 	};
 }
