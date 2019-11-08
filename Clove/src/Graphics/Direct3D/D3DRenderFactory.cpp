@@ -30,7 +30,7 @@ namespace clv::gfx::d3d::_11{
 	}
 
 	std::shared_ptr<Surface> D3DRenderFactory::createSurface(){
-		//TODO
+		//TODO + listen to device removed delegate
 	}
 	
 }

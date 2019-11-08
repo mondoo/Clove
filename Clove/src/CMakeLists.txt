@@ -195,6 +195,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			Graphics/Direct3D/D3DRenderFactory.cpp
 			Graphics/Direct3D/D3DShader.hpp
 			Graphics/Direct3D/D3DShader.cpp
+			Graphics/Direct3D/D3DSurface.hpp
+			Graphics/Direct3D/D3DSurface.cpp
 			
 			Graphics/Direct3D/Shaders/2D-ps.hlsl
 			Graphics/Direct3D/Shaders/2D-vs.hlsl
@@ -212,8 +214,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			Graphics/Direct3D/DXGIInfoManager.hpp
 			Graphics/Direct3D/DXGIInfoManager.cpp
 			
-			Graphics/Direct3D/DXContext.hpp
-			Graphics/Direct3D/DXContext.cpp
 	)
 endif()
 

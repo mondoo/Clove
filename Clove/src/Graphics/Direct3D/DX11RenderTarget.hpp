@@ -24,6 +24,7 @@ namespace clv::gfx{
 		virtual ~DX11RenderTarget();
 		
 		DX11RenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
+		DX11RenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView);
 
 		const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& getRenderTargetView() const;
 		const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& getDepthStencilView() const;

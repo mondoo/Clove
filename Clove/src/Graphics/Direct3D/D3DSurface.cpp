@@ -1,0 +1,130 @@
+#include "D3DSurface.hpp"
+
+#include "Graphics/Direct3D/D3DException.hpp"
+#include "Platform/Windows/WindowsWindow.hpp"
+#include "Core/Graphics/GraphicsTypes.hpp"
+#include "Core/Graphics/RenderDevice.hpp"
+
+#include <d3d11.h>
+
+namespace clv::gfx::d3d::_11{
+	D3DSurface::D3DSurface(ID3D11Device& d3dDevice, void* windowData){
+		plt::WindowsData* data = reinterpret_cast<plt::WindowsData*>(windowData);
+
+		DX11_INFO_PROVIDER;
+
+		DXGI_SWAP_CHAIN_DESC swapChainDesc{};
+		swapChainDesc.BufferDesc.Width						= data->width;
+		swapChainDesc.BufferDesc.Height						= data->height;
+		swapChainDesc.BufferDesc.Format						= DXGI_FORMAT_B8G8R8A8_UNORM;
+		swapChainDesc.BufferDesc.RefreshRate.Numerator		= 0u;
+		swapChainDesc.BufferDesc.RefreshRate.Denominator	= 0u;
+		swapChainDesc.BufferDesc.Scaling					= DXGI_MODE_SCALING_UNSPECIFIED;
+		swapChainDesc.BufferDesc.ScanlineOrdering			= DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		swapChainDesc.SampleDesc.Count						= 1u;
+		swapChainDesc.SampleDesc.Quality					= 0u;
+		swapChainDesc.BufferUsage							= DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapChainDesc.BufferCount							= 1u;
+		swapChainDesc.OutputWindow							= data->handle;
+		swapChainDesc.Windowed								= TRUE;
+		swapChainDesc.SwapEffect							= DXGI_SWAP_EFFECT_DISCARD;
+		swapChainDesc.Flags									= 0;
+
+		Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice = nullptr;
+		DX11_THROW_INFO(d3dDevice.QueryInterface(__uuidof(IDXGIDevice), &dxgiDevice));
+
+		Microsoft::WRL::ComPtr<IDXGIAdapter> dxgiAdapter = nullptr;
+		DX11_THROW_INFO(dxgiDevice->GetAdapter(&dxgiAdapter));
+
+		Microsoft::WRL::ComPtr<IDXGIFactory> dxgiFactory = nullptr;
+		dxgiAdapter->GetParent(__uuidof(IDXGIFactory), &dxgiFactory);
+
+		DX11_THROW_INFO(dxgiFactory->CreateSwapChain(&d3dDevice, &swapChainDesc, &swapChain));
+
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
+
+		//Get access to the texture subresource (back buffer)
+		Microsoft::WRL::ComPtr<ID3D11Resource> backBuffer;
+		DX11_THROW_INFO(swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer));
+		DX11_THROW_INFO(d3dDevice.CreateRenderTargetView(backBuffer.Get(), nullptr, &renderTargetView));
+
+		//Create depth stencil texture
+		D3D11_TEXTURE2D_DESC depthTexDesc{};
+		depthTexDesc.Width				= data->width;
+		depthTexDesc.Height				= data->height;
+		depthTexDesc.MipLevels			= 1u;
+		depthTexDesc.ArraySize			= 1u;
+		depthTexDesc.Format				= DXGI_FORMAT_D32_FLOAT;
+		depthTexDesc.SampleDesc.Count	= 1u;
+		depthTexDesc.SampleDesc.Quality = 0u;
+		depthTexDesc.Usage				= D3D11_USAGE_DEFAULT;
+		depthTexDesc.BindFlags			= D3D11_BIND_DEPTH_STENCIL;
+
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil;
+		DX11_THROW_INFO(d3dDevice.CreateTexture2D(&depthTexDesc, nullptr, &depthStencil));
+
+		//Create view of depth stencil texture
+		D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+		dsvDesc.Format = depthTexDesc.Format;
+		dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		dsvDesc.Texture2D.MipSlice = 0u;
+
+		DX11_THROW_INFO(d3dDevice.CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
+
+		//Bind depth stencil view to output merger
+		//d3dContext->OMSetRenderTargets(1u, target.GetAddressOf(), dsv.Get());
+
+		//Configure viewport (maps the render space to an area on screen)
+		//D3D11_VIEWPORT vp{};
+		//vp.TopLeftX = 0;
+		//vp.TopLeftY = 0;
+		//vp.Width	= static_cast<FLOAT>(data->width);
+		//vp.Height	= static_cast<FLOAT>(data->height);
+		//vp.MinDepth = 0;
+		//vp.MaxDepth = 1;
+		//d3dContext->RSSetViewports(1u, &vp);
+	}
+
+	D3DSurface::D3DSurface(D3DSurface&& other) noexcept = default;
+
+	D3DSurface& D3DSurface::operator=(D3DSurface&& other) noexcept = default;
+
+	D3DSurface::~D3DSurface() = default;
+
+	void D3DSurface::makeCurrent(RenderDevice& device){
+		//TODO - Need new RT
+	}
+
+	void D3DSurface::setVSync(bool enabled){
+		swapInterval = enabled ? 1u : 0u;
+		CLV_LOG_TRACE("Swap interval for DirectX was set to: {0}", swapInterval);
+	}
+
+	bool D3DSurface::isVsync() const{
+		return (swapInterval > 0u);
+	}
+
+	void D3DSurface::present(){
+		DX11_INFO_PROVIDER;
+
+	#if CLV_DEBUG
+		infoManager.set();
+	#endif
+		if(FAILED(hr = swapChain->Present(swapInterval, 0u))){
+			if(hr == DXGI_ERROR_DEVICE_REMOVED){
+				onDeviceRemoved.broadcast();
+			} else{
+				DX11_EXCEPT(hr);
+			}
+		}
+	}
+
+	RenderTarget& D3DSurface::getTarget() const{
+		//TODO - Need new RT
+	}
+
+	Microsoft::WRL::ComPtr<IDXGISwapChain> D3DSurface::getSwapChain() const{
+		return swapChain;
+	}
+}

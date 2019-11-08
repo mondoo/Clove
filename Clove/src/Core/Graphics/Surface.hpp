@@ -20,6 +20,6 @@ namespace clv::gfx{
 
 		virtual void present() = 0;
 
-		virtual RenderTarget& getTarget() = 0;
+		virtual RenderTarget& getTarget() const = 0;
 	};
 }

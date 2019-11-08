@@ -59,6 +59,11 @@ namespace clv::gfx{
 		}
 	}
 
+	DX11RenderTarget::DX11RenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView)
+		: renderTargetView(renderTargetView)
+		, depthStencilView(depthStencilView){
+	}
+
 	const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& DX11RenderTarget::getRenderTargetView() const{
 		return renderTargetView;
 	}
