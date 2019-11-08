@@ -37,7 +37,7 @@ namespace clv::gfx{
 			bufferData.emplaceBack(math::Vector2f{ -1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
 			bufferData.emplaceBack(math::Vector2f{  1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
 
-			auto spriteMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
+			auto spriteMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::Unlit_2D);
 			currentSceneData2D->spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
 		}
 

@@ -52,21 +52,21 @@ namespace clv::gfx{
 		uint32 geometryID = 0;
 		
 		switch(style){
-			case ShaderStyle::Lit:
+			case ShaderStyle::Lit_3D:
 				{
 					vertexID = compileShader(GL_VERTEX_SHADER, shader_Lit_vs);
 					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_Lit_ps);
 				}
 				break;
 
-			case ShaderStyle::Unlit:
+			case ShaderStyle::Unlit_3D:
 				{
 					vertexID = compileShader(GL_VERTEX_SHADER, shader_Unlit_vs);
 					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_Unlit_ps);
 				}
 				break;
 
-			case ShaderStyle::_2D:
+			case ShaderStyle::Unlit_2D:
 				{
 					vertexID = compileShader(GL_VERTEX_SHADER, shader_2D_vs);
 					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_2D_ps);

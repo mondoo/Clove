@@ -15,10 +15,10 @@ namespace clv::gfx{
 		Geometry
 	};
 
-	enum class ShaderStyle{ //TODO: Rename to material style
-		Lit,
-		Unlit,
-		_2D,
+	enum class ShaderStyle{
+		Lit_3D,
+		Unlit_3D,
+		Unlit_2D,
 		RT,
 		Font,
 		CubeShadowMap

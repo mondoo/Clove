@@ -193,10 +193,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			Graphics/Direct3D/D3DRenderDevice.cpp
 			Graphics/Direct3D/D3DRenderFactory.hpp
 			Graphics/Direct3D/D3DRenderFactory.cpp
-
+			Graphics/Direct3D/D3DShader.hpp
+			Graphics/Direct3D/D3DShader.cpp
 			
-			Graphics/Direct3D/Bindables/DX11Shader.hpp
-			Graphics/Direct3D/Bindables/DX11Shader.cpp
 			Graphics/Direct3D/Shaders/2D-ps.hlsl
 			Graphics/Direct3D/Shaders/2D-vs.hlsl
 			Graphics/Direct3D/Shaders/Font-ps.hlsl

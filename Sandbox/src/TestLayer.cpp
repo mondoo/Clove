@@ -73,7 +73,7 @@ void TestLayer::onAttach(){
 	bigBoy.addComponent<clv::ecs::_3D::MeshComponent>();
 	bigBoy.addComponent<clv::ecs::_3D::TransformComponent>();
 
-	auto cubeMaterial = std::make_shared<clv::gfx::Material>(clv::gfx::ShaderStyle::Lit);
+	auto cubeMaterial = std::make_shared<clv::gfx::Material>(clv::gfx::ShaderStyle::Lit_3D);
 	cubeMaterial->setAlbedoTexture("res/Textures/container2.png");
 	cubeMaterial->setSpecularTexture("res/Textures/container2_specular.png");
 	cubeMaterial->setData(clv::gfx::BBP_MaterialData, clv::gfx::MaterialData{ 32.0f }, clv::gfx::ShaderType::Pixel);
