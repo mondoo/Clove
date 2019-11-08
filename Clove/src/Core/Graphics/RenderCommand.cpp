@@ -104,10 +104,6 @@ namespace clv::gfx{
 		return factory->createSurface();
 	}
 
-	std::shared_ptr<Viewport> RenderCommand::createViewport(){
-		return factory->createViewport();
-	}
-
 	void RenderCommand::initialiseRenderDevice(){
 		/*switch(context.getAPI()){
 			case API::OpenGL4:
