@@ -65,6 +65,14 @@ namespace clv::gfx{
 		device->setBlendState(enabled);
 	}
 
+	void RenderCommand::removeCurrentGeometryShader(){
+		device->removeCurrentGeometryShader();
+	}
+
+	void RenderCommand::removeTextureAtSlot(uint32 slot){
+		device->removeTextureAtSlot(slot);
+	}
+
 	std::shared_ptr<IndexBuffer> RenderCommand::createIndexBuffer(const IndexBufferDescriptor& descriptor){
 		return factory->createIndexBuffer(descriptor);
 	}

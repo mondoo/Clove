@@ -33,9 +33,9 @@ namespace clv::gfx{
 		static void setDepthBuffer(bool enabled);
 		static void setBlendState(bool enabled);
 
-		//TEMP: Need an 'unbind' function or to refactor the bindable system
-		//static void removeCurrentGeometryShader();
-		//static void removeTextureAtSlot(uint32 slot);
+		//TEMP: Need an 'unbind' function (perhaps this will be solved the pipeline object?)
+		static void removeCurrentGeometryShader();
+		static void removeTextureAtSlot(uint32 slot);
 		//
 
 		static std::shared_ptr<IndexBuffer> createIndexBuffer(const IndexBufferDescriptor& descriptor);
