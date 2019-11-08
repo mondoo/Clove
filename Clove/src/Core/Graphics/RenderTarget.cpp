@@ -22,7 +22,7 @@ namespace clv::gfx{
 
 			#if CLV_PLATFORM_WINDOWS
 				case API::DirectX11:
-					return std::make_shared<DX11RenderTarget>(colourTexture, depthStencilTexture);
+					return std::make_shared<D3DRenderTarget>(colourTexture, depthStencilTexture);
 			#endif
 
 			default:

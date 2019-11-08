@@ -89,7 +89,7 @@ namespace clv::gfx::d3d::_11{
 	}
 
 	void D3DRenderDevice::setRenderTarget(RenderTarget& renderTarget){
-		DX11RenderTarget& dxRenderTarget = static_cast<DX11RenderTarget&>(renderTarget);
+		D3DRenderTarget& dxRenderTarget = static_cast<D3DRenderTarget&>(renderTarget);
 		currentRenderTarget = dxRenderTarget.getRenderTargetView();
 		currentDepthStencil = dxRenderTarget.getDepthStencilView();
 		setRenderTargetToCurrent();

@@ -185,19 +185,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			Graphics/Direct3D/Resources/D3DBuffer.cpp
 			Graphics/Direct3D/Resources/D3DTexture.hpp
 			Graphics/Direct3D/Resources/D3DTexture.cpp
-			Graphics/Direct3D/D3D.hpp
-			Graphics/Direct3D/D3D.cpp
-			Graphics/Direct3D/D3DException.hpp
-			Graphics/Direct3D/D3DException.cpp
-			Graphics/Direct3D/D3DRenderDevice.hpp
-			Graphics/Direct3D/D3DRenderDevice.cpp
-			Graphics/Direct3D/D3DRenderFactory.hpp
-			Graphics/Direct3D/D3DRenderFactory.cpp
-			Graphics/Direct3D/D3DShader.hpp
-			Graphics/Direct3D/D3DShader.cpp
-			Graphics/Direct3D/D3DSurface.hpp
-			Graphics/Direct3D/D3DSurface.cpp
-			
 			Graphics/Direct3D/Shaders/2D-ps.hlsl
 			Graphics/Direct3D/Shaders/2D-vs.hlsl
 			Graphics/Direct3D/Shaders/Font-ps.hlsl
@@ -208,9 +195,20 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			Graphics/Direct3D/Shaders/RT-vs.hlsl
 			Graphics/Direct3D/Shaders/Unlit-ps.hlsl
 			Graphics/Direct3D/Shaders/Unlit-vs.hlsl
-			
-			Graphics/Direct3D/DX11RenderTarget.hpp
-			Graphics/Direct3D/DX11RenderTarget.cpp
+			Graphics/Direct3D/D3D.hpp
+			Graphics/Direct3D/D3D.cpp
+			Graphics/Direct3D/D3DException.hpp
+			Graphics/Direct3D/D3DException.cpp
+			Graphics/Direct3D/D3DRenderDevice.hpp
+			Graphics/Direct3D/D3DRenderDevice.cpp
+			Graphics/Direct3D/D3DRenderFactory.hpp
+			Graphics/Direct3D/D3DRenderFactory.cpp
+			Graphics/Direct3D/D3DRenderTarget.hpp
+			Graphics/Direct3D/D3DRenderTarget.cpp
+			Graphics/Direct3D/D3DShader.hpp
+			Graphics/Direct3D/D3DShader.cpp
+			Graphics/Direct3D/D3DSurface.hpp
+			Graphics/Direct3D/D3DSurface.cpp
 			Graphics/Direct3D/DXGIInfoManager.hpp
 			Graphics/Direct3D/DXGIInfoManager.cpp
 			
