@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Graphics/GraphicsTypes.hpp"
 #include "Core/Graphics/RenderDevice.hpp"
 #include "Core/Graphics/RenderFactory.hpp"
 
@@ -42,7 +43,7 @@ namespace clv::gfx{
 		static void removeTextureAtSlot(uint32 slot);
 		//
 
-		static std::shared_ptr<IndexBuffer> createIndexBuffer(const IndexBufferDescriptor& descriptor);
+		static std::shared_ptr<IndexBuffer> createIndexBuffer(const IndexBufferDescriptor& descriptor, void* indices);
 		static std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexBufferDescriptor& descriptor);
 
 		static std::shared_ptr<ShaderResource> createShaderResource(const ShaderResourceDescriptor& descriptor);

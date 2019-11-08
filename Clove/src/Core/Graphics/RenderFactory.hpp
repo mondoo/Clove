@@ -18,7 +18,7 @@ namespace clv::gfx{
 	class RenderFactory{
 		//FUNCTIONS
 	public:
-		virtual std::shared_ptr<IndexBuffer> createIndexBuffer(const IndexBufferDescriptor& descriptor) = 0;
+		virtual std::shared_ptr<IndexBuffer> createIndexBuffer(const IndexBufferDescriptor& descriptor, void* indices) = 0;
 		virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexBufferDescriptor& descriptor) = 0;
 
 		virtual std::shared_ptr<ShaderResource> createShaderResource(const ShaderResourceDescriptor& descriptor) = 0;

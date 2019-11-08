@@ -80,8 +80,8 @@ namespace clv::gfx{
 		device->removeTextureAtSlot(slot);
 	}
 
-	std::shared_ptr<IndexBuffer> RenderCommand::createIndexBuffer(const IndexBufferDescriptor& descriptor){
-		return factory->createIndexBuffer(descriptor);
+	std::shared_ptr<IndexBuffer> RenderCommand::createIndexBuffer(const IndexBufferDescriptor& descriptor, void* indices){
+		return factory->createIndexBuffer(descriptor, indices);
 	}
 
 	std::shared_ptr<VertexBuffer> RenderCommand::createVertexBuffer(const VertexBufferDescriptor& descriptor){
@@ -126,8 +126,5 @@ namespace clv::gfx{
 				CLV_LOG_ERROR("Default statement hit. Could not initialise RenderAPI: {0}", CLV_FUNCTION_NAME);
 				break;
 		}
-	}
-
-	void RenderCommand::initialiseRenderDevice(){
 	}
 }

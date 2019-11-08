@@ -22,7 +22,7 @@ namespace clv::gfx::d3d::_11{
 		D3DRenderFactory& operator=(D3DRenderFactory&& other) = delete;
 		~D3DRenderFactory();
 
-		virtual std::shared_ptr<IndexBuffer> createIndexBuffer(const IndexBufferDescriptor& descriptor) override;
+		virtual std::shared_ptr<IndexBuffer> createIndexBuffer(const IndexBufferDescriptor& descriptor, void* indices) override;
 		virtual std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexBufferDescriptor& descriptor) override;
 
 		virtual std::shared_ptr<ShaderResource> createShaderResource(const ShaderResourceDescriptor& descriptor) override;

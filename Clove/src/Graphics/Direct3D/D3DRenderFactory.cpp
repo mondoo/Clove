@@ -9,8 +9,8 @@ namespace clv::gfx::d3d::_11{
 
 	D3DRenderFactory::~D3DRenderFactory() = default;
 
-	std::shared_ptr<IndexBuffer> D3DRenderFactory::createIndexBuffer(const IndexBufferDescriptor& descriptor){
-		//TODO
+	std::shared_ptr<IndexBuffer> D3DRenderFactory::createIndexBuffer(const IndexBufferDescriptor& descriptor, void* indices){
+		return std::make_shared<IndexBuffer>(*this, descriptor, indices);
 	}
 
 	std::shared_ptr<VertexBuffer> D3DRenderFactory::createVertexBuffer(const VertexBufferDescriptor& descriptor){

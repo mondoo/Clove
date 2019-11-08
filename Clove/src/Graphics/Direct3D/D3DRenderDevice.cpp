@@ -1,7 +1,7 @@
 #include "D3DRenderDevice.hpp"
 
 #include "Graphics/Direct3D/D3DException.hpp"
-#include "Graphics/Direct3D/DX11RenderTarget.hpp"
+#include "Graphics/Direct3D/Resources/Buffers/D3DIndexBuffer.hpp"
 
 #include <d3d11.h>
 
@@ -17,7 +17,8 @@ namespace clv::gfx::d3d::_11{
 	D3DRenderDevice::~D3DRenderDevice() = default;
 
 	void D3DRenderDevice::bindIndexBuffer(IndexBuffer& buffer){
-		//TODO:
+		D3DIndexBuffer& d3dBuffer = static_cast<D3DIndexBuffer&>(buffer);
+		d3dContext->IASetIndexBuffer(d3dBuffer.getD3DBuffer().Get(), DXGI_FORMAT_R32_UINT, 0u);
 	}
 
 	void D3DRenderDevice::bindVertexBuffer(VertexBuffer& buffer){
