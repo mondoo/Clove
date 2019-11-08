@@ -43,7 +43,7 @@ namespace clv::gfx{
 		normal,
 	};
 
-	struct ViewPort{
+	struct Viewport{
 		uint32 x = 0;
 		uint32 y = 0;
 		uint32 width = 0;
