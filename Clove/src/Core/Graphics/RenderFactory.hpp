@@ -12,7 +12,6 @@ namespace clv::gfx{
 	class Shader;
 	struct ShaderDescriptor;
 	class Surface;
-	class Viewport;
 }
 
 namespace clv::gfx{
@@ -29,7 +28,5 @@ namespace clv::gfx{
 		virtual std::shared_ptr<Shader> createShader(const ShaderDescriptor& descriptor) = 0;
 
 		virtual std::shared_ptr<Surface> createSurface() = 0;
-
-		virtual std::shared_ptr<Viewport> createViewport() = 0;
 	};
 }
