@@ -94,10 +94,7 @@ set(
 		Core/Graphics/VertexLayout.inl
 		Core/Graphics/VertexLayout.cpp
 		Core/Graphics/Resources/Buffer.hpp
-		Core/Graphics/Resources/ShaderResource.hpp
 		Core/Graphics/Resources/Texture.hpp
-		Core/Graphics/Resources/Buffers/IndexBuffer.hpp
-		Core/Graphics/Resources/Buffers/VertexBuffer.hpp
 		Core/Input/Input.hpp
 		Core/Input/Input.cpp
 		Core/Input/Keyboard.hpp
@@ -184,8 +181,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		GraphicsFiles
 			${GraphicsFiles}
-			Graphics/Direct3D/Resources/Buffers/D3DIndexBuffer.hpp
-			Graphics/Direct3D/Resources/Buffers/D3DIndexBuffer.cpp
+			Graphics/Direct3D/Resources/D3DBuffer.hpp
+			Graphics/Direct3D/Resources/D3DBuffer.cpp
 			Graphics/Direct3D/D3D.hpp
 			Graphics/Direct3D/D3D.cpp
 			Graphics/Direct3D/D3DException.hpp
