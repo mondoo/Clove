@@ -1,11 +1,8 @@
 #include "Renderer.hpp"
 
+#include "Core/Graphics/GraphicsTypes.hpp"
 #include "Core/Graphics/RenderCommand.hpp"
-#include "Core/Graphics/Bindables/VertexBuffer.hpp"
-#include "Core/Graphics/Bindables/IndexBuffer.hpp"
-#include "Core/Graphics/BindableFactory.hpp"
-#include "Core/Graphics/Bindables/Shader.hpp"
-#include "Core/Graphics/Bindables/Texture.hpp"
+#include "Core/Graphics/Resources/Texture.hpp"
 #include "Core/Graphics/RenderTarget.hpp"
 #include "Core/Platform/Application.hpp"
 #include "Core/Platform/Window.hpp"
@@ -13,7 +10,6 @@
 #include "Core/Graphics/Material.hpp"
 #include "Core/Graphics/Sprite.hpp"
 #include "Core/Platform/Window.hpp"
-#include "Core/Graphics/Bindables/Shader.hpp"
 #include "Core/Graphics/ShaderBufferTypes.hpp"
 
 namespace clv::gfx{
@@ -42,7 +38,14 @@ namespace clv::gfx{
 		SceneData()
 			: cubeShadowMaterial(std::make_shared<Material>(ShaderStyle::CubeShadowMap)){
 
-			shadowMapTexture = BindableFactory::createTexture(TBP_Shadow, { TextureStyle::Cubemap, TextureUsage::RenderTarget_Depth, { shadowMapSize, shadowMapSize }, MAX_LIGHTS });
+			TextureDescriptor tdesc = {};
+			tdesc.bindingPoint = TBP_Shadow;
+			tdesc.style = TextureStyle::Cubemap;
+			tdesc.usage = TextureUsage::RenderTarget_Depth;
+			tdesc.dimensions = { shadowMapSize, shadowMapSize };
+			tdesc.arraySize = numLights;
+
+			shadowMapTexture = RenderCommand::createTexture(tdesc);
 			shadowMapRenderTarget = RenderTarget::createRenderTarget(nullptr, shadowMapTexture.get());
 		}
 
@@ -104,23 +107,23 @@ namespace clv::gfx{
 			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
 			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentDepthData, PointShadowData{ currentSceneData->currentShadowDepth.depths[i] }, ShaderType::Pixel);
 
-			RenderCommand::setViewPortSize(shadowMapSize, shadowMapSize);
+			RenderCommand::setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 			RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
 			currentSceneData->forEachMesh(generateShadowMap);
-			RenderCommand::setViewPortSize(plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight());
+			RenderCommand::setViewport({ 0, 0, plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight() });
 		}
 		
 		RenderCommand::removeCurrentGeometryShader();
 
-		RenderCommand::resetRenderTarget(); //Reset render target before binding the shadow map
+		RenderCommand::resetRenderTargetToDefault(); //Reset render target before binding the shadow map
 
-		currentSceneData->shadowMapTexture->bind(); //Bind this in before rendering the real mesh
+		RenderCommand::bindTexture(*currentSceneData->shadowMapTexture); //Bind this in before rendering the real mesh
 
 		//Render any other render targets
 		if(currentSceneData->customRenderTarget){
 			RenderCommand::setRenderTarget(*currentSceneData->customRenderTarget);
 			currentSceneData->forEachMesh(draw);
-			RenderCommand::resetRenderTarget();
+			RenderCommand::resetRenderTargetToDefault();
 		}
 
 		//Render scene
@@ -142,13 +145,13 @@ namespace clv::gfx{
 			RenderCommand::setRenderTarget(*currentSceneData->customRenderTarget);
 			RenderCommand::clear();
 		}
-		RenderCommand::resetRenderTarget();
+		RenderCommand::resetRenderTargetToDefault();
 		RenderCommand::clear();
 	}
 
 	void Renderer::removeRenderTarget(){
 		currentSceneData->customRenderTarget.reset();
-		RenderCommand::resetRenderTarget();
+		RenderCommand::resetRenderTargetToDefault();
 	}
 
 	void Renderer::submitMesh(const std::shared_ptr<Mesh>& mesh){
