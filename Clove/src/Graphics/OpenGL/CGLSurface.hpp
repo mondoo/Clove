@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Core/Graphics/Context.hpp"
+#include "Graphics/OpenGL/GLSurface.hpp"
 
 #include <OpenGL/OpenGL.h>
 
-namespace clv::gfx{
-	class CGLContext : public Context{
+namespace clv::gfx::ogl{
+	class CGLSurface : public GLSurface{
 		//VARIABLES
 	private:
 		CGLContextObj contextObject = nullptr;
@@ -15,14 +15,14 @@ namespace clv::gfx{
 		
 		//FUNCTIONS
 	public:
-		CGLContext() = delete;
-		CGLContext(const CGLContext& other) = delete;
-		CGLContext(CGLContext&& other) noexcept;
-		CGLContext& operator=(const CGLContext& other) = delete;
-		CGLContext& operator=(CGLContext&& other) noexcept;
-		virtual ~CGLContext();
+		CGLSurface() = delete;
+		CGLSurface(const CGLSurface& other) = delete;
+		CGLSurface(CGLSurface&& other) noexcept;
+		CGLSurface& operator=(const CGLSurface& other) = delete;
+		CGLSurface& operator=(CGLSurface&& other) noexcept;
+		virtual ~CGLSurface();
 		
-		CGLContext(void* windowData);
+		CGLSurface(void* windowData);
 		
 		virtual void makeCurrent() override;
 

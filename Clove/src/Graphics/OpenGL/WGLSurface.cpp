@@ -1,20 +1,20 @@
-#include "WGLContext.hpp"
+#include "WGLSurface.hpp"
 
 #include "Platform/Windows/WindowsWindow.hpp"
 #include "Platform/Windows/WindowsException.hpp"
 #include "Core/Graphics/GraphicsTypes.hpp"
 
-namespace clv::gfx{
-	WGLContext::WGLContext(WGLContext&& other) noexcept = default;
+namespace clv::gfx::ogl{
+	WGLSurface::WGLSurface(WGLSurface&& other) noexcept = default;
 
-	WGLContext& WGLContext::operator=(WGLContext&& other) noexcept = default;
+	WGLSurface& WGLSurface::operator=(WGLSurface&& other) noexcept = default;
 
-	WGLContext::~WGLContext(){
+	WGLSurface::~WGLSurface(){
 		ReleaseDC(windowsHandle, windowsDeviceContext);
 		wglDeleteContext(wglContext);
 	}
 
-	WGLContext::WGLContext(void* windowData){
+	WGLSurface::WGLSurface(void* windowData){
 		windowsHandle = reinterpret_cast<plt::WindowsData*>(windowData)->handle;
 
 		windowsDeviceContext = GetDC(windowsHandle);
@@ -69,7 +69,7 @@ namespace clv::gfx{
 		}
 	}
 
-	void WGLContext::makeCurrent(){
+	void WGLSurface::makeCurrent(){
 		wglMakeCurrent(windowsDeviceContext, wglContext);
 
 		if(!wglSwapIntervalEXT || !wglGetSwapIntervalEXT){
@@ -84,7 +84,7 @@ namespace clv::gfx{
 		}
 	}
 
-	void WGLContext::setVSync(bool enabled){
+	void WGLSurface::setVSync(bool enabled){
 		if(wglSwapIntervalEXT){
 			const int32 interval = enabled ? 1 : 0;
 			wglSwapIntervalEXT(interval);
@@ -95,7 +95,7 @@ namespace clv::gfx{
 		}
 	}
 
-	bool WGLContext::isVsync() const{
+	bool WGLSurface::isVsync() const{
 		if(wglGetSwapIntervalEXT){
 			const uint32 interval = wglGetSwapIntervalEXT();
 			return (interval > 0);
@@ -105,11 +105,7 @@ namespace clv::gfx{
 		}
 	}
 
-	API WGLContext::getAPI() const{
-		return API::OpenGL4;
-	}
-
-	void WGLContext::present(){
+	void WGLSurface::present(){
 		SwapBuffers(windowsDeviceContext);
 	}
 }

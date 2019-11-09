@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Core/Graphics/Context.hpp"
+#include "Graphics/OpenGL/GLSurface.hpp"
 
 #include <GL/glx.h>
 
-namespace clv::gfx{
-	class GLXContext : public Context{
+namespace clv::gfx::ogl{
+	class GLXSurface : public GLSurface{
 		//VARIABLES
 	private:
 		Display* display = nullptr;
@@ -13,20 +13,20 @@ namespace clv::gfx{
 
 		XVisualInfo* visual = nullptr;
 
-		::GLXContext context = nullptr;
+		::GLXSurface context = nullptr;
 
 		PFNGLXSWAPINTERVALEXTPROC glxSwapIntervalEXT = nullptr;
 		
 		//FUNCTIONS
 	public:
-		GLXContext() = delete;
-		GLXContext(const GLXContext& other) = delete;
-		GLXContext(GLXContext&& other);
-		GLXContext& operator=(const GLXContext& other) = default;
-		GLXContext& operator=(GLXContext&& other);
-		virtual ~GLXContext();
+		GLXSurface() = delete;
+		GLXSurface(const GLXSurface& other) = delete;
+		GLXSurface(GLXSurface&& other);
+		GLXSurface& operator=(const GLXSurface& other) = default;
+		GLXSurface& operator=(GLXSurface&& other);
+		virtual ~GLXSurface();
 
-		GLXContext(void* windowData);
+		GLXSurface(void* windowData);
 
 		virtual void makeCurrent() override;
 

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Core/Graphics/Context.hpp"
+#include "Graphics/OpenGL/GLSurface.hpp"
 
 #include <glad/glad.h>
 #include <wglext.h>
 
-namespace clv::gfx{
-	class WGLContext : public Context{
+namespace clv::gfx::ogl{
+	class WGLSurface : public GLSurface{
 		//VARIABLES
 	private:
 		HWND windowsHandle = nullptr;
@@ -18,21 +18,19 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		WGLContext() = delete;
-		WGLContext(const WGLContext& other) = delete;
-		WGLContext(WGLContext&& other) noexcept;
-		WGLContext& operator=(const WGLContext& other) = delete;
-		WGLContext& operator=(WGLContext&& other) noexcept;
-		virtual ~WGLContext();
+		WGLSurface() = delete;
+		WGLSurface(const WGLSurface& other) = delete;
+		WGLSurface(WGLSurface&& other) noexcept;
+		WGLSurface& operator=(const WGLSurface& other) = delete;
+		WGLSurface& operator=(WGLSurface&& other) noexcept;
+		virtual ~WGLSurface();
 
-		WGLContext(void* windowData);
+		WGLSurface(void* windowData);
 
 		virtual void makeCurrent() override;
 
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVsync() const override;
-
-		virtual API getAPI() const override;
 
 		virtual void present() override;
 	};

@@ -1,18 +1,18 @@
-#include "GLXContext.hpp"
+#include "GLXSurface.hpp"
 
 #include "Platform/Linux/LinuxWindow.hpp"
 #include "Core/Graphics/GraphicsTypes.hpp"
 
-namespace clv::gfx{
-	GLXContext::GLXContext(GLXContext&& other) = default;
+namespace clv::gfx::ogl{
+	GLXSurface::GLXSurface(GLXSurface&& other) = default;
 
-	GLXContext& GLXContext::operator=(GLXContext&& other) = default;
+	GLXSurface& GLXSurface::operator=(GLXSurface&& other) = default;
 
-	GLXContext::~GLXContext(){
+	GLXSurface::~GLXSurface(){
 		glXDestroyContext(display, context);
 	}
 
-	GLXContext::GLXContext(void* windowData){
+	GLXSurface::GLXSurface(void* windowData){
 		plt::LinuxData* data = reinterpret_cast<plt::LinuxData*>(windowData);
 		display = data->display;
 		window = data->window;
@@ -43,7 +43,7 @@ namespace clv::gfx{
 		*data->visual = visual;
 	}
 
-	void GLXContext::makeCurrent(){
+	void GLXSurface::makeCurrent(){
 		CLV_LOG_TRACE("Making context current");
 		glXMakeCurrent(display, *window, context);
 
@@ -57,7 +57,7 @@ namespace clv::gfx{
 		}
 	}
 
-	void GLXContext::setVSync(bool enabled){
+	void GLXSurface::setVSync(bool enabled){
 		if(glxSwapIntervalEXT){
 			GLXDrawable drawable = glXGetCurrentDrawable();
 	
@@ -70,7 +70,7 @@ namespace clv::gfx{
 		}
 	}
 
-	bool GLXContext::isVsync() const{
+	bool GLXSurface::isVsync() const{
 		if(glxSwapIntervalEXT){
 			GLXDrawable drawable = glXGetCurrentDrawable();
 
@@ -84,11 +84,11 @@ namespace clv::gfx{
 		}
 	}
 
-	API GLXContext::getAPI() const{
+	API GLXSurface::getAPI() const{
 		return API::OpenGL4;
 	}
 
-	void GLXContext::present(){
+	void GLXSurface::present(){
 		glXSwapBuffers(display, *window);
 	}
 }

@@ -1,21 +1,21 @@
 #import "Platform/Mac/CloveMac.h"
-#include "CGLContext.hpp"
+#include "CGLSurface.hpp"
 
 #include "Core/Graphics/GraphicsTypes.hpp"
 
 #include <OpenGL/CGLContext.h>
 
-namespace clv::gfx{
-	CGLContext::CGLContext(CGLContext&& other) noexcept = default;
+namespace clv::gfx::ogl{
+	CGLSurface::CGLSurface(CGLSurface&& other) noexcept = default;
 	
-	CGLContext& CGLContext::operator=(CGLContext&& other) noexcept = default;
+	CGLSurface& CGLSurface::operator=(CGLSurface&& other) noexcept = default;
 	
-	CGLContext::~CGLContext(){
+	CGLSurface::~CGLSurface(){
 		CGLDestroyContext(contextObject);
 		CGLDestroyPixelFormat(pixelFormatObject);
 	}
 	
-	CGLContext::CGLContext(void* windowData){
+	CGLSurface::CGLSurface(void* windowData){
 		CLV_LOG_WARN("Warning! Clove with OpenGL on macOS has been halted. This is due to the fact that macOS only supports up to OpenGL 4.1. Clove currently does not work on macOS");
 		
 		CGLPixelFormatAttribute formatAttribs[] = {
@@ -33,24 +33,24 @@ namespace clv::gfx{
 		}
 	}
 	
-	void CGLContext::makeCurrent(){
+	void CGLSurface::makeCurrent(){
 		CGLSetCurrentContext(contextObject);
 	}
 
-	void CGLContext::setVSync(bool vsync){
+	void CGLSurface::setVSync(bool vsync){
 		vsyncInt = vsync ? 1 : 0;
 		CGLSetParameter(contextObject, kCGLCPSwapInterval, &vsyncInt);
 	}
 	
-	bool CGLContext::isVsync() const{
+	bool CGLSurface::isVsync() const{
 		return vsyncInt == 1;
 	}
 
-	API CGLContext::getAPI() const{
+	API CGLSurface::getAPI() const{
 		return API::OpenGL4;
 	}
 
-	void CGLContext::present(){
+	void CGLSurface::present(){
 		CGLFlushDrawable(contextObject);
 	}
 }

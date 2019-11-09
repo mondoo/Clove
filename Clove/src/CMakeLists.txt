@@ -150,28 +150,30 @@ set(
 		Graphics/OpenGL/GLRenderTarget.hpp
 		Graphics/OpenGL/GLRenderTarget.cpp
 		Graphics/OpenGL/GLShader.hpp
-		Graphics/OpenGL/GLShader.cpp	
+		Graphics/OpenGL/GLShader.cpp
+		Graphics/OpenGL/GLSurface.hpp
+		Graphics/OpenGL/GLSurface.cpp
 )
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
 		GraphicsFiles
 			${GraphicsFiles}	
-			Graphics/OpenGL/WGLContext.hpp
-			Graphics/OpenGL/WGLContext.cpp
+			Graphics/OpenGL/WGLSurface.hpp
+			Graphics/OpenGL/WGLSurface.cpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	set(
 		GraphicsFiles
 			${GraphicsFiles}
-			Graphics/OpenGL/GLXContext.hpp
-			Graphics/OpenGL/GLXContext.cpp
+			Graphics/OpenGL/GLXSurface.hpp
+			Graphics/OpenGL/GLXSurface.cpp
 	)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	set(
 		GraphicsFiles
 			${GraphicsFiles}
-			Graphics/OpenGL/CGLContext.hpp
-			Graphics/OpenGL/CGLContext.mm
+			Graphics/OpenGL/CGLSurface.hpp
+			Graphics/OpenGL/CGLSurface.mm
 	)
 endif()
 
