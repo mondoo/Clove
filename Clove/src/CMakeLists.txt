@@ -136,6 +136,8 @@ set(
 #Files - Graphics | OpenGL
 set(
 	GraphicsFiles
+		Graphics/OpenGL/Resources/GLBuffer.hpp
+		Graphics/OpenGL/Resources/GLBuffer.cpp
 		Graphics/OpenGL/GL.hpp
 		Graphics/OpenGL/GL.cpp
 		Graphics/OpenGL/GLRenderDevice.hpp
@@ -143,16 +145,10 @@ set(
 		Graphics/OpenGL/GLRenderFactory.hpp
 		Graphics/OpenGL/GLRenderFactory.cpp
 
-		Graphics/OpenGL/Bindables/GL4IndexBuffer.hpp
-		Graphics/OpenGL/Bindables/GL4IndexBuffer.cpp
 		Graphics/OpenGL/Bindables/GL4Shader.hpp
 		Graphics/OpenGL/Bindables/GL4Shader.cpp
 		Graphics/OpenGL/Bindables/GL4Texture.hpp
 		Graphics/OpenGL/Bindables/GL4Texture.cpp
-		Graphics/OpenGL/Bindables/GL4UniformBufferObject.hpp
-		Graphics/OpenGL/Bindables/GL4UniformBufferObject.inl
-		Graphics/OpenGL/Bindables/GL4VertexBuffer.hpp
-		Graphics/OpenGL/Bindables/GL4VertexBuffer.cpp
 		Graphics/OpenGL/GL4Exception.hpp
 		Graphics/OpenGL/GL4Exception.cpp
 		Graphics/OpenGL/GL4RenderTarget.hpp
