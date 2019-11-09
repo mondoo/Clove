@@ -136,6 +136,13 @@ set(
 #Files - Graphics | OpenGL
 set(
 	GraphicsFiles
+		Graphics/OpenGL/GL.hpp
+		Graphics/OpenGL/GL.cpp
+		Graphics/OpenGL/GLRenderDevice.hpp
+		Graphics/OpenGL/GLRenderDevice.cpp
+		Graphics/OpenGL/GLRenderFactory.hpp
+		Graphics/OpenGL/GLRenderFactory.cpp
+
 		Graphics/OpenGL/Bindables/GL4IndexBuffer.hpp
 		Graphics/OpenGL/Bindables/GL4IndexBuffer.cpp
 		Graphics/OpenGL/Bindables/GL4Shader.hpp
@@ -148,8 +155,6 @@ set(
 		Graphics/OpenGL/Bindables/GL4VertexBuffer.cpp
 		Graphics/OpenGL/GL4Exception.hpp
 		Graphics/OpenGL/GL4Exception.cpp
-		Graphics/OpenGL/GL4RenderAPI.hpp
-		Graphics/OpenGL/GL4RenderAPI.cpp
 		Graphics/OpenGL/GL4RenderTarget.hpp
 		Graphics/OpenGL/GL4RenderTarget.cpp
 )
@@ -185,16 +190,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			Graphics/Direct3D/Resources/D3DBuffer.cpp
 			Graphics/Direct3D/Resources/D3DTexture.hpp
 			Graphics/Direct3D/Resources/D3DTexture.cpp
-			Graphics/Direct3D/Shaders/2D-ps.hlsl
-			Graphics/Direct3D/Shaders/2D-vs.hlsl
-			Graphics/Direct3D/Shaders/Font-ps.hlsl
-			Graphics/Direct3D/Shaders/Font-vs.hlsl
-			Graphics/Direct3D/Shaders/Lit-ps.hlsl
-			Graphics/Direct3D/Shaders/Lit-vs.hlsl
-			Graphics/Direct3D/Shaders/RT-ps.hlsl
-			Graphics/Direct3D/Shaders/RT-vs.hlsl
-			Graphics/Direct3D/Shaders/Unlit-ps.hlsl
-			Graphics/Direct3D/Shaders/Unlit-vs.hlsl
 			Graphics/Direct3D/D3D.hpp
 			Graphics/Direct3D/D3D.cpp
 			Graphics/Direct3D/D3DException.hpp

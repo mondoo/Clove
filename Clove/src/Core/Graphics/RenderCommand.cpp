@@ -8,7 +8,7 @@
 #include "Core/Graphics/Shader.hpp"
 #include "Core/Graphics/RenderTarget.hpp"
 
-//#include "Graphics/OpenGL-4/GL4RenderAPI.hpp"
+#include "Graphics/OpenGL/GL.hpp"
 #if CLV_PLATFORM_WINDOWS
 #include "Graphics/Direct3D/D3D.hpp"
 #endif
@@ -107,9 +107,13 @@ namespace clv::gfx{
 	void RenderCommand::initialise(gfx::API api){
 		switch(api){
 			case API::OpenGL4:
-				CLV_LOG_TRACE("Creating OpenGL renderer");
-				//renderAPI = std::make_unique<GL4RenderAPI>(context);
-				//break;
+				{
+					CLV_LOG_TRACE("Creating OpenGL renderer");
+					auto pair = ogl::initialiseOGL();
+					device = std::move(pair.first);
+					factory = std::move(pair.second);
+					break;
+				}
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
