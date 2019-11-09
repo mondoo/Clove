@@ -1,29 +1,33 @@
-#include "GL4Shader.hpp"
+#include "GLShader.hpp"
 
-#include "Graphics/OpenGL-4/ShaderStrings.hpp"
+#include "Graphics/OpenGL/ShaderStrings.hpp"
 
 #include <fstream>
 #include <sstream>
 
-namespace clv::gfx{
-	GL4Shader::GL4Shader(GL4Shader&& other) noexcept = default;
+namespace clv::gfx::ogl{
+	GLShader::GLShader(const ShaderDescriptor& descriptor)
+		: programID(glCreateProgram()){
+		initialise(descriptor.style);
+	}
 
-	GL4Shader& GL4Shader::operator=(GL4Shader&& other) noexcept = default;
+	GLShader::GLShader(GLShader&& other) noexcept = default;
 
-	GL4Shader::~GL4Shader(){
+	GLShader& GLShader::operator=(GLShader&& other) noexcept = default;
+
+	GLShader::~GLShader(){
 		glDeleteProgram(programID);
 	}
 
-	GL4Shader::GL4Shader(ShaderStyle style)
-		: programID(glCreateProgram()){
-		initialise(style);
+	uint32 GLShader::getProgramID() const{
+		return programID;
 	}
 
-	void GL4Shader::bind(){
-		glUseProgram(programID);
+	const ShaderDescriptor& GLShader::getDescriptor() const{
+		return descriptor;
 	}
 
-	ShaderReflectionData GL4Shader::getReflectionData(){
+	ShaderReflectionData GLShader::getReflectionData() const{
 		ShaderReflectionData outData;
 
 		GLint attribCount = 0;
@@ -42,11 +46,7 @@ namespace clv::gfx{
 		return outData;
 	}
 
-	uint32 GL4Shader::getProgramID() const{
-		return programID;
-	}
-
-	void GL4Shader::initialise(ShaderStyle style){
+	void GLShader::initialise(ShaderStyle style){
 		uint32 vertexID = 0;
 		uint32 pixelID = 0;
 		uint32 geometryID = 0;
@@ -109,7 +109,7 @@ namespace clv::gfx{
 		}
 	}
 
-	uint32 GL4Shader::compileShader(uint32 type, const std::string& source){
+	uint32 GLShader::compileShader(uint32 type, const std::string& source){
 		uint32 id = glCreateShader(type);
 		const char* src = source.c_str();
 		glShaderSource(id, 1, &src, nullptr);
@@ -130,14 +130,14 @@ namespace clv::gfx{
 		return id;
 	}
 
-	void GL4Shader::attachAndLinkShader(uint32 shaderID){
+	void GLShader::attachAndLinkShader(uint32 shaderID){
 		glAttachShader(programID, shaderID);
 		glLinkProgram(programID);
 		glValidateProgram(programID);
 		glDeleteShader(shaderID);
 	}
 
-	std::string GL4Shader::getStringFromShaderType(GLuint glShaderType){
+	std::string GLShader::getStringFromShaderType(GLuint glShaderType){
 		switch(glShaderType){
 			case GL_VERTEX_SHADER:
 				return "vertex";

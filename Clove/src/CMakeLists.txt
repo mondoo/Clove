@@ -146,9 +146,9 @@ set(
 		Graphics/OpenGL/GLRenderDevice.cpp
 		Graphics/OpenGL/GLRenderFactory.hpp
 		Graphics/OpenGL/GLRenderFactory.cpp
-
-		Graphics/OpenGL/Bindables/GL4Shader.hpp
-		Graphics/OpenGL/Bindables/GL4Shader.cpp
+		Graphics/OpenGL/GLShader.hpp
+		Graphics/OpenGL/GLShader.cpp
+		
 		Graphics/OpenGL/GL4Exception.hpp
 		Graphics/OpenGL/GL4Exception.cpp
 		Graphics/OpenGL/GL4RenderTarget.hpp
