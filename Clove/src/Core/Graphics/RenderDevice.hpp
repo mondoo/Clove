@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Core/Graphics/GraphicsTypes.hpp"
+
 namespace clv::gfx{
-	class IndexBuffer;
-	class VertexBuffer;
+	class Buffer;
 	class ShaderResource;
 	class Texture;
 	class RenderTarget;
@@ -15,16 +16,15 @@ namespace clv::gfx{
 	class RenderDevice{
 		//FUNCTIONS
 	public:
-		virtual void bindIndexBuffer(IndexBuffer& buffer) = 0;
-		virtual void bindVertexBuffer(VertexBuffer& buffer) = 0;
-		
-		virtual void bindShaderResource(ShaderResource& resource) = 0;
+		virtual void bindIndexBuffer(const Buffer& buffer) = 0;
+		virtual void bindVertexBuffer(const Buffer& buffer) = 0;
+		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint) = 0;
+		virtual void bindTexture(const Texture& texture, const uint32 bindingPoint) = 0;
+		virtual void bindShader(const Shader& shader) = 0;
 
-		virtual void bindTexture(Texture& texture) = 0;
+		virtual void updateBufferData(Buffer& buffer, void* data) = 0;
 
-		virtual void bindShader(Shader& shader) = 0;
-
-		virtual void makeSurfaceCurrent(const Surface& surface) = 0;
+		virtual void makeSurfaceCurrent(Surface& surface) = 0;
 
 		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface
 		virtual void setRenderTarget(RenderTarget& renderTarget) = 0;
@@ -44,7 +44,5 @@ namespace clv::gfx{
 		virtual void removeCurrentGeometryShader() = 0;
 		virtual void removeTextureAtSlot(uint32 slot) = 0;
 		//
-
-		/*static API getAPIType();*/ //Hopefully not needed anymore
 	};
 }

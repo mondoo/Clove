@@ -10,8 +10,8 @@ namespace clv::gfx::d3d::_11{
 		//VARIABLES
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> d3dTexture;
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureView; //TODO: Should probably create an object for resource views
-		Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> d3dResourceView; //TODO: Should probably create an object for resource views
+		Microsoft::WRL::ComPtr<ID3D11SamplerState> d3dSampler;
 
 		TextureDescriptor descriptor;
 
@@ -20,7 +20,7 @@ namespace clv::gfx::d3d::_11{
 		//FUNCTIONS
 	public:
 		D3DTexture() = delete;
-		D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& fileToTexture);
+		D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture);
 		D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, void* data, int32 BPP);
 		D3DTexture(const D3DTexture& other) = delete;
 		D3DTexture(D3DTexture&& other) noexcept;
@@ -28,7 +28,9 @@ namespace clv::gfx::d3d::_11{
 		D3DTexture& operator=(D3DTexture&& other) noexcept;
 		virtual ~D3DTexture();
 
-		const Microsoft::WRL::ComPtr<ID3D11Texture2D>& getTexture() const;
+		const Microsoft::WRL::ComPtr<ID3D11Texture2D>& getD3DTexture() const;
+		const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& getD3DShaderResourceView() const;
+		const Microsoft::WRL::ComPtr<ID3D11SamplerState>& getD3DSampler() const;
 
 		virtual const TextureDescriptor& getDescriptor() const override;
 

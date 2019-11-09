@@ -1,5 +1,12 @@
 #include "D3DRenderFactory.hpp"
 
+#include "Graphics/Direct3D/D3DException.hpp"
+#include "Graphics/Direct3D/Resources/D3DBuffer.hpp"
+#include "Graphics/Direct3D/Resources/D3DTexture.hpp"
+#include "Graphics/Direct3D/D3DRenderTarget.hpp"
+#include "Graphics/Direct3D/D3DShader.hpp"
+#include "Graphics/Direct3D/D3DSurface.hpp"
+
 #include <d3d11.h>
 
 namespace clv::gfx::d3d::_11{
@@ -9,28 +16,33 @@ namespace clv::gfx::d3d::_11{
 
 	D3DRenderFactory::~D3DRenderFactory() = default;
 
-	std::shared_ptr<IndexBuffer> D3DRenderFactory::createIndexBuffer(const IndexBufferDescriptor& descriptor, void* indices){
-		return std::make_shared<IndexBuffer>(*this, descriptor, indices);
+	std::shared_ptr<Buffer> D3DRenderFactory::createBuffer(const BufferDescriptor& descriptor, void* data){
+		return std::make_shared<D3DBuffer>(*d3dDevice.Get(), descriptor, data);
 	}
 
-	std::shared_ptr<VertexBuffer> D3DRenderFactory::createVertexBuffer(const VertexBufferDescriptor& descriptor){
-		//TODO
+	std::shared_ptr<Texture> D3DRenderFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
+		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, fileToTexture);
 	}
 
-	std::shared_ptr<ShaderResource> D3DRenderFactory::createShaderResource(const ShaderResourceDescriptor& descriptor){
-		//TODO
+	std::shared_ptr<Texture> D3DRenderFactory::createTexture(const TextureDescriptor& descriptor, void* data, int32 BPP){
+		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, data, BPP);
 	}
 
-	std::shared_ptr<Texture> D3DRenderFactory::createTexture(const TextureDescriptor& descriptor){
-		//TODO
+	std::shared_ptr<RenderTarget> D3DRenderFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
+		return std::make_shared<D3DRenderTarget>(*d3dDevice.Get(), colourTexture, depthStencilTexture);
 	}
 
 	std::shared_ptr<Shader> D3DRenderFactory::createShader(const ShaderDescriptor& descriptor){
-		//TODO
+		return std::make_shared<D3DShader>(*d3dDevice.Get(), descriptor);
 	}
 
 	std::shared_ptr<Surface> D3DRenderFactory::createSurface(){
-		//TODO + listen to device removed delegate
+		auto surface = std::make_unique<D3DSurface>(*d3dDevice.Get());
+		surface->onDeviceRemoved.bind(&D3DRenderFactory::onDeviceRemoved, this);
+		return surface;
 	}
-	
+
+	void D3DRenderFactory::onDeviceRemoved(){
+		throw DX11_DEVICE_REMOVED_EXCPTION(d3dDevice->GetDeviceRemovedReason());
+	}
 }

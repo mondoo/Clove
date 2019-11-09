@@ -1,13 +1,5 @@
 #include "RenderCommand.hpp"
 
-#include "Core/Graphics/RenderDevice.hpp"
-#include "Core/Graphics/Resources/Buffers/IndexBuffer.hpp"
-#include "Core/Graphics/Resources/Buffers/VertexBuffer.hpp"
-#include "Core/Graphics/Resources/ShaderResource.hpp"
-#include "Core/Graphics/Resources/Texture.hpp"
-#include "Core/Graphics/Shader.hpp"
-#include "Core/Graphics/RenderTarget.hpp"
-
 #include "Graphics/OpenGL/GL.hpp"
 #if CLV_PLATFORM_WINDOWS
 #include "Graphics/Direct3D/D3D.hpp"
@@ -15,29 +7,34 @@
 
 namespace clv::gfx{
 	std::unique_ptr<RenderDevice> RenderCommand::device;
+	std::unique_ptr<RenderFactory> RenderCommand::factory;
 
-	void RenderCommand::bindIndexBuffer(IndexBuffer& buffer){
+	void RenderCommand::bindIndexBuffer(const Buffer& buffer){
 		device->bindIndexBuffer(buffer);
 	}
 
-	void RenderCommand::bindVertexBuffer(VertexBuffer& buffer){
+	void RenderCommand::bindVertexBuffer(const Buffer& buffer){
 		device->bindVertexBuffer(buffer);
 	}
 
-	void RenderCommand::bindShaderResource(ShaderResource& resource){
-		device->bindShaderResource(resource);
+	void RenderCommand::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
+		device->bindShaderResourceBuffer(buffer, shaderType, bindingPoint);
 	}
 
-	void RenderCommand::bindTexture(Texture& texture){
-		device->bindTexture(texture);
+	void RenderCommand::bindTexture(const Texture& texture, const uint32 bindingPoint){
+		device->bindTexture(texture, bindingPoint);
 	}
 
-	void RenderCommand::bindShader(Shader& shader){
+	void RenderCommand::bindShader(const Shader& shader){
 		device->bindShader(shader);
 	}
 
-	void RenderCommand::setDefaultRenderTarget(RenderTarget& renderTarget){
-		device->setDefaultRenderTarget(renderTarget);
+	void RenderCommand::updateBufferData(Buffer& buffer, void* data){
+		device->updateBufferData(buffer, data);
+	}
+
+	void RenderCommand::makeSurfaceCurrent(Surface& surface){
+		device->makeSurfaceCurrent(surface);
 	}
 
 	void RenderCommand::setRenderTarget(RenderTarget& renderTarget){
@@ -80,20 +77,20 @@ namespace clv::gfx{
 		device->removeTextureAtSlot(slot);
 	}
 
-	std::shared_ptr<IndexBuffer> RenderCommand::createIndexBuffer(const IndexBufferDescriptor& descriptor, void* indices){
-		return factory->createIndexBuffer(descriptor, indices);
+	std::shared_ptr<Buffer> RenderCommand::createBuffer(const BufferDescriptor& descriptor, void* data){
+		return factory->createBuffer(descriptor, data);
 	}
 
-	std::shared_ptr<VertexBuffer> RenderCommand::createVertexBuffer(const VertexBufferDescriptor& descriptor){
-		return factory->createVertexBuffer(descriptor);
+	std::shared_ptr<Texture> RenderCommand::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
+		return factory->createTexture(descriptor, pathToTexture);
 	}
 
-	std::shared_ptr<ShaderResource> RenderCommand::createShaderResource(const ShaderResourceDescriptor& descriptor){
-		return factory->createShaderResource(descriptor);
+	std::shared_ptr<Texture> RenderCommand::createTexture(const TextureDescriptor& descriptor, void* data, int32 BPP){
+		return factory->createTexture(descriptor, data, BPP);
 	}
 
-	std::shared_ptr<Texture> RenderCommand::createTexture(const TextureDescriptor& descriptor){
-		return factory->createTexture(descriptor);
+	std::shared_ptr<RenderTarget> RenderCommand::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
+		return factory->createRenderTarget(colourTexture, depthStencilTexture);
 	}
 
 	std::shared_ptr<Shader> RenderCommand::createShader(const ShaderDescriptor& descriptor){

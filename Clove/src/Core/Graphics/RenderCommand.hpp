@@ -14,17 +14,17 @@ namespace clv::gfx{
 
 		//FUNCTIONS
 	public:
-		static void bindIndexBuffer(IndexBuffer& buffer);
-		static void bindVertexBuffer(VertexBuffer& buffer);
-		
-		static void bindShaderResource(ShaderResource& resource);
+		static void bindIndexBuffer(const Buffer& buffer);
+		static void bindVertexBuffer(const Buffer& buffer);
+		static void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint);
+		static void bindTexture(const Texture& texture, const uint32 bindingPoint);
+		static void bindShader(const Shader& shader);
 
-		static void bindTexture(Texture& texture);
+		static void updateBufferData(Buffer& buffer, void* data);
 
-		static void bindShader(Shader& shader);
+		static void makeSurfaceCurrent(Surface& surface);
 
 		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface
-		static void setDefaultRenderTarget(RenderTarget& renderTarget);
 		static void setRenderTarget(RenderTarget& renderTarget);
 		static void resetRenderTargetToDefault();
 		//
@@ -38,20 +38,16 @@ namespace clv::gfx{
 		static void setDepthBuffer(bool enabled);
 		static void setBlendState(bool enabled);
 
-		//TEMP: Need an 'unbind' function (perhaps this will be solved the pipeline object?)
+		//TEMP: Need an 'unbind' function or to refactor the bindable system
 		static void removeCurrentGeometryShader();
 		static void removeTextureAtSlot(uint32 slot);
 		//
 
-		static std::shared_ptr<IndexBuffer> createIndexBuffer(const IndexBufferDescriptor& descriptor, void* indices);
-		static std::shared_ptr<VertexBuffer> createVertexBuffer(const VertexBufferDescriptor& descriptor);
-
-		static std::shared_ptr<ShaderResource> createShaderResource(const ShaderResourceDescriptor& descriptor);
-
-		static std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor);
-
+		static std::shared_ptr<Buffer> createBuffer(const BufferDescriptor& descriptor, void* data);
+		static std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture);
+		static std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, void* data, int32 BPP);
+		static std::shared_ptr<RenderTarget> createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
 		static std::shared_ptr<Shader> createShader(const ShaderDescriptor& descriptor);
-
 		static std::shared_ptr<Surface> createSurface();
 
 		static void initialise(gfx::API api);

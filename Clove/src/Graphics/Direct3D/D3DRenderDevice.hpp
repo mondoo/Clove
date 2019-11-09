@@ -42,16 +42,15 @@ namespace clv::gfx::d3d::_11{
 		D3DRenderDevice& operator=(D3DRenderDevice&& other) noexcept = delete;
 		~D3DRenderDevice();
 
-		virtual void bindIndexBuffer(IndexBuffer& buffer) override;
-		virtual void bindVertexBuffer(VertexBuffer& buffer) override;
+		virtual void bindIndexBuffer(const Buffer& buffer) override;
+		virtual void bindVertexBuffer(const Buffer& buffer) override;
+		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint) override;
+		virtual void bindTexture(const Texture& texture, const uint32 bindingPoint) override;
+		virtual void bindShader(const Shader& shader) override;
 
-		virtual void bindShaderResource(ShaderResource& resource) override;
+		virtual void updateBufferData(Buffer& buffer, void* data) override;
 
-		virtual void bindTexture(Texture& texture) override;
-
-		virtual void bindShader(Shader& shader) override;
-
-		virtual void makeSurfaceCurrent(const Surface& surface) override;
+		virtual void makeSurfaceCurrent(Surface& surface) override;
 
 		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface
 		virtual void setRenderTarget(RenderTarget& renderTarget) override;

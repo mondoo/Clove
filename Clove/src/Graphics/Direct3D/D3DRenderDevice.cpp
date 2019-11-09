@@ -1,7 +1,11 @@
 #include "D3DRenderDevice.hpp"
 
 #include "Graphics/Direct3D/D3DException.hpp"
-#include "Graphics/Direct3D/Resources/Buffers/D3DIndexBuffer.hpp"
+#include "Graphics/Direct3D/Resources/D3DBuffer.hpp"
+#include "Graphics/Direct3D/Resources/D3DTexture.hpp"
+#include "Graphics/Direct3D/D3DRenderTarget.hpp"
+#include "Graphics/Direct3D/D3DShader.hpp"
+#include "Graphics/Direct3D/D3DSurface.hpp"
 
 #include <d3d11.h>
 
@@ -16,33 +20,93 @@ namespace clv::gfx::d3d::_11{
 
 	D3DRenderDevice::~D3DRenderDevice() = default;
 
-	void D3DRenderDevice::bindIndexBuffer(IndexBuffer& buffer){
-		D3DIndexBuffer& d3dBuffer = static_cast<D3DIndexBuffer&>(buffer);
+	void D3DRenderDevice::bindIndexBuffer(const Buffer& buffer){
+		const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
 		d3dContext->IASetIndexBuffer(d3dBuffer.getD3DBuffer().Get(), DXGI_FORMAT_R32_UINT, 0u);
 	}
 
-	void D3DRenderDevice::bindVertexBuffer(VertexBuffer& buffer){
-		//TODO:
+	void D3DRenderDevice::bindVertexBuffer(const Buffer& buffer){
+		const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
+		const auto& descriptor = d3dBuffer.getDescriptor();
+		d3dContext->IASetVertexBuffers(0u, 1u, d3dBuffer.getD3DBuffer().GetAddressOf(), &descriptor.elementSize, 0u);
 	}
 
-	void D3DRenderDevice::bindShaderResource(ShaderResource& resource){
-		//TODO:
+	void D3DRenderDevice::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
+		const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
+		switch(shaderType){
+			case ShaderType::Vertex:
+				d3dContext->VSSetConstantBuffers(bindingPoint, 1u, d3dBuffer.getD3DBuffer().GetAddressOf());
+				break;
+
+			case ShaderType::Pixel:
+				d3dContext->PSSetConstantBuffers(bindingPoint, 1u, d3dBuffer.getD3DBuffer().GetAddressOf());
+				break;
+
+			case ShaderType::Geometry:
+				d3dContext->GSSetConstantBuffers(bindingPoint, 1u, d3dBuffer.getD3DBuffer().GetAddressOf());
+				break;
+
+			default:
+				CLV_ASSERT(false, "Unhandled shader type in {0}", CLV_FUNCTION_NAME);
+				break;
+		}
 	}
 
-	void D3DRenderDevice::bindTexture(Texture& texture){
-		//TODO:
+	void D3DRenderDevice::bindTexture(const Texture& texture, const uint32 bindingPoint){
+		const D3DTexture& d3dTexture = static_cast<const D3DTexture&>(texture);
+		d3dContext->PSSetShaderResources(bindingPoint, 1u, d3dTexture.getD3DShaderResourceView().GetAddressOf());
+		d3dContext->PSSetSamplers(bindingPoint, 1u, d3dTexture.getD3DSampler().GetAddressOf());
 	}
 
-	void D3DRenderDevice::bindShader(Shader& shader){
-		//TODO:
+	void D3DRenderDevice::bindShader(const Shader& shader){
+		const D3DShader& d3dShader = static_cast<const D3DShader&>(shader);
+		d3dContext->VSSetShader(d3dShader.getD3DVertexShader().Get(), nullptr, 0u);
+		d3dContext->GSSetShader(d3dShader.getD3DGeometryShader().Get(), nullptr, 0u);
+		d3dContext->PSSetShader(d3dShader.getD3DPixelShader().Get(), nullptr, 0u);
 	}
 
-	void D3DRenderDevice::makeSurfaceCurrent(const Surface& surface){
-		//TODO:
+	void D3DRenderDevice::updateBufferData(Buffer& buffer, void* data){
+		DX11_INFO_PROVIDER;
+		const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
+
+		D3D11_MAPPED_SUBRESOURCE mappedSubResource{};
+		DX11_THROW_INFO(d3dContext->Map(d3dBuffer.getD3DBuffer().Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &mappedSubResource));
+		
+		memcpy(mappedSubResource.pData, &data, d3dBuffer.getDescriptor().bufferSize);
+		
+		d3dContext->Unmap(d3dBuffer.getD3DBuffer().Get(), 0u);
+	}
+
+	void D3DRenderDevice::makeSurfaceCurrent(Surface& surface){
+		const D3DSurface& d3dSurface = static_cast<const D3DSurface&>(surface);
+		const auto& renderTarget = d3dSurface.getTarget();
+		defaultRenderTarget = renderTarget.getRenderTargetView();
+		defaultDepthStencil = renderTarget.getDepthStencilView();
+	}
+
+	void D3DRenderDevice::setRenderTarget(RenderTarget& renderTarget){
+		D3DRenderTarget& dxRenderTarget = static_cast<D3DRenderTarget&>(renderTarget);
+		currentRenderTarget = dxRenderTarget.getRenderTargetView();
+		currentDepthStencil = dxRenderTarget.getDepthStencilView();
+		setRenderTargetToCurrent();
+	}
+
+	void D3DRenderDevice::resetRenderTargetToDefault(){
+		currentRenderTarget = defaultRenderTarget;
+		currentDepthStencil = defaultDepthStencil;
+		setRenderTargetToCurrent();
 	}
 
 	void D3DRenderDevice::setViewport(const Viewport& viewport){
-		//TODO:
+		D3D11_VIEWPORT vp{};
+		vp.TopLeftX = static_cast<FLOAT>(viewport.x);
+		vp.TopLeftY = static_cast<FLOAT>(viewport.y);
+		vp.Width	= static_cast<FLOAT>(viewport.width);
+		vp.Height	= static_cast<FLOAT>(viewport.height);
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+
+		d3dContext->RSSetViewports(1u, &vp);
 	}
 
 	void D3DRenderDevice::clear(){
@@ -63,43 +127,40 @@ namespace clv::gfx::d3d::_11{
 	void D3DRenderDevice::setDepthBuffer(bool enabled){
 		DX11_INFO_PROVIDER;
 
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> dsstate;
-		D3D11_DEPTH_STENCIL_DESC depthDesc = {};
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilState;
 		UINT stencilRef;
 
-		d3dContext->OMGetDepthStencilState(&dsstate, &stencilRef);
-		dsstate->GetDesc(&depthDesc);
+		d3dContext->OMGetDepthStencilState(&depthStencilState, &stencilRef);
+
+		ID3D11Device* d3dDevice;
+		D3D11_DEPTH_STENCIL_DESC depthDesc{};
+
+		depthStencilState->GetDevice(&d3dDevice);
+		depthStencilState->GetDesc(&depthDesc);
+
 		depthDesc.DepthEnable = enabled ? TRUE : FALSE;
-		DX11_THROW_INFO(d3dDevice->CreateDepthStencilState(&depthDesc, &dsstate));
-		d3dContext->OMSetDepthStencilState(dsstate.Get(), stencilRef);
+		DX11_THROW_INFO(d3dDevice->CreateDepthStencilState(&depthDesc, &depthStencilState));
+		d3dContext->OMSetDepthStencilState(depthStencilState.Get(), stencilRef);
 	}
 
 	void D3DRenderDevice::setBlendState(bool enabled){
 		DX11_INFO_PROVIDER;
 
 		Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
-		D3D11_BLEND_DESC blendDesc = { };
 		FLOAT blendFactor[4];
 		UINT sampleMask;
 
 		d3dContext->OMGetBlendState(&blendState, blendFactor, &sampleMask);
+
+		ID3D11Device* d3dDevice;
+		D3D11_BLEND_DESC blendDesc{};
+
+		blendState->GetDevice(&d3dDevice);
 		blendState->GetDesc(&blendDesc);
+
 		blendDesc.RenderTarget[0].BlendEnable = enabled ? TRUE : FALSE;
 		DX11_THROW_INFO(d3dDevice->CreateBlendState(&blendDesc, &blendState));
 		d3dContext->OMSetBlendState(blendState.Get(), blendFactor, sampleMask);
-	}
-
-	void D3DRenderDevice::setRenderTarget(RenderTarget& renderTarget){
-		D3DRenderTarget& dxRenderTarget = static_cast<D3DRenderTarget&>(renderTarget);
-		currentRenderTarget = dxRenderTarget.getRenderTargetView();
-		currentDepthStencil = dxRenderTarget.getDepthStencilView();
-		setRenderTargetToCurrent();
-	}
-
-	void D3DRenderDevice::resetRenderTargetToDefault(){
-		currentRenderTarget = defaultRenderTarget;
-		currentDepthStencil = defaultDepthStencil;
-		setRenderTargetToCurrent();
 	}
 
 	void D3DRenderDevice::removeCurrentGeometryShader(){

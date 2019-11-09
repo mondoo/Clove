@@ -1,5 +1,11 @@
 #include "GLRenderDevice.hpp"
 
+#include "Graphics/OpenGL/Resources/GLBuffer.hpp"
+#include "Graphics/OpenGL/Resources/GLTexture.hpp"
+#include "Graphics/OpenGL/GLRenderTarget.hpp"
+#include "Graphics/OpenGL/GLShader.hpp"
+#include "Graphics/OpenGL/GLSurface.hpp"
+
 #include <glad/glad.h>
 
 namespace clv::gfx::ogl{
@@ -7,32 +13,45 @@ namespace clv::gfx::ogl{
 
 	GLRenderDevice::~GLRenderDevice() = default;
 
-	void GLRenderDevice::bindIndexBuffer(IndexBuffer& buffer){
-		//TODO:
+	void GLRenderDevice::bindIndexBuffer(const Buffer& buffer){
+		const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glbuffer.getBufferID());
 	}
 
-	void GLRenderDevice::bindVertexBuffer(VertexBuffer& buffer){
-		//TODO:
+	void GLRenderDevice::bindVertexBuffer(const Buffer& buffer){
+		const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, glbuffer.getBufferID());
 	}
 
-	void GLRenderDevice::bindShaderResource(ShaderResource& resource){
-		//TODO:
+	void GLRenderDevice::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
+		const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
+		glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, glbuffer.getBufferID());
 	}
 
-	void GLRenderDevice::bindTexture(Texture& texture){
-		//TODO:
+	void GLRenderDevice::bindTexture(const Texture& texture, const uint32 bindingPoint){
+		const GLTexture& glTexture = static_cast<const GLTexture&>(texture);
+		glBindTextureUnit(bindingPoint, glTexture.getTextureID());
 	}
 
-	void GLRenderDevice::bindShader(Shader& shader){
-		//TODO:
+	void GLRenderDevice::bindShader(const Shader& shader){
+		const GLShader& glShader = static_cast<const GLShader&>(shader);
+		glUseProgram(glShader.getProgramID());
 	}
 
-	void GLRenderDevice::makeSurfaceCurrent(const Surface& surface){
-		//TODO:
+	void GLRenderDevice::updateBufferData(Buffer& buffer, void* data){
+		const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, glbuffer.getBufferID());
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, glbuffer.getDescriptor().bufferSize, data);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
+	void GLRenderDevice::makeSurfaceCurrent(Surface& surface){
+		GLSurface& glSurface = static_cast<GLSurface&>(surface);
+		glSurface.makeCurrent();
+	}
+	
 	void GLRenderDevice::setRenderTarget(RenderTarget& renderTarget){
-		GL4RenderTarget& glRenderTarget = static_cast<GL4RenderTarget&>(renderTarget);
+		GLRenderTarget& glRenderTarget = static_cast<GLRenderTarget&>(renderTarget);
 		glBindFramebuffer(GL_FRAMEBUFFER, glRenderTarget.getGLFrameBufferID());
 	}
 
@@ -41,7 +60,7 @@ namespace clv::gfx::ogl{
 	}
 
 	void GLRenderDevice::setViewport(const Viewport& viewport){
-		glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+		glViewport(static_cast<GLint>(viewport.x), static_cast<GLint>(viewport.y), static_cast<GLsizei>(viewport.width), static_cast<GLsizei>(viewport.height));
 	}
 
 	void GLRenderDevice::clear(){

@@ -17,7 +17,7 @@ namespace clv::gfx::ogl{
 		//FUNCTIONS
 	public:
 		GLTexture() = delete;
-		GLTexture(const TextureDescriptor& descriptor, const std::string& fileToTexture);
+		GLTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture);
 		GLTexture(const TextureDescriptor& descriptor, void* data, int32 BPP);
 		GLTexture(const GLTexture& other) = delete;
 		GLTexture(GLTexture&& other) noexcept;

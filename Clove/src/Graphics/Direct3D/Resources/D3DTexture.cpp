@@ -5,13 +5,13 @@
 #include <stb_image.h>
 
 namespace clv::gfx::d3d::_11{
-	D3DTexture::D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& fileToTexture)
+	D3DTexture::D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture)
 		: descriptor(descriptor){
 		stbi_set_flip_vertically_on_load(1);
 
 		int width = 0;
 		int height = 0;
-		unsigned char* localBuffer = stbi_load(fileToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
+		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
 		this->descriptor.dimensions.x = static_cast<uint32>(width);
 		this->descriptor.dimensions.y = static_cast<uint32>(height);
@@ -35,8 +35,16 @@ namespace clv::gfx::d3d::_11{
 
 	D3DTexture::~D3DTexture() = default;
 
-	const Microsoft::WRL::ComPtr<ID3D11Texture2D>& D3DTexture::getTexture() const{
+	const Microsoft::WRL::ComPtr<ID3D11Texture2D>& D3DTexture::getD3DTexture() const{
 		return d3dTexture;
+	}
+
+	const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& D3DTexture::getD3DShaderResourceView() const{
+		return d3dResourceView;
+	}
+
+	const Microsoft::WRL::ComPtr<ID3D11SamplerState>& D3DTexture::getD3DSampler() const{
+		return d3dSampler;
 	}
 
 	const TextureDescriptor& D3DTexture::getDescriptor() const{
@@ -85,8 +93,8 @@ namespace clv::gfx::d3d::_11{
 		samplerDesc.AddressV	= D3D11_TEXTURE_ADDRESS_CLAMP;
 		samplerDesc.AddressW	= D3D11_TEXTURE_ADDRESS_CLAMP;
 
-		DX11_THROW_INFO(d3dDevice.CreateShaderResourceView(d3dTexture.Get(), &viewDescriptor, &textureView));
-		DX11_THROW_INFO(d3dDevice.CreateSamplerState(&samplerDesc, &sampler));
+		DX11_THROW_INFO(d3dDevice.CreateShaderResourceView(d3dTexture.Get(), &viewDescriptor, &d3dResourceView));
+		DX11_THROW_INFO(d3dDevice.CreateSamplerState(&samplerDesc, &d3dSampler));
 	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC D3DTexture::createD3DShaderViewDescriptor() const{
