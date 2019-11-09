@@ -3,7 +3,7 @@
 #include "Graphics/OpenGL/Resources/GLTexture.hpp"
 
 namespace clv::gfx::ogl{
-	GL4RenderTarget::GL4RenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
+	GLRenderTarget::GLRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
 		glGenFramebuffers(1, &frameBufferID);
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
 
@@ -51,16 +51,16 @@ namespace clv::gfx::ogl{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	GL4RenderTarget::GL4RenderTarget(GL4RenderTarget&& other) noexcept = default;
+	GLRenderTarget::GLRenderTarget(GLRenderTarget&& other) noexcept = default;
 
-	GL4RenderTarget& GL4RenderTarget::operator=(GL4RenderTarget&& other) noexcept = default;
+	GLRenderTarget& GLRenderTarget::operator=(GLRenderTarget&& other) noexcept = default;
 
-	GL4RenderTarget::~GL4RenderTarget(){
+	GLRenderTarget::~GLRenderTarget(){
 		glDeleteFramebuffers(1, &frameBufferID);
 		glDeleteRenderbuffers(1, &renderBufferID);
 	}
 
-	const uint32 GL4RenderTarget::getGLFrameBufferID() const{
+	const uint32 GLRenderTarget::getGLFrameBufferID() const{
 		return frameBufferID;
 	}
 }

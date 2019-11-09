@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 
 namespace clv::gfx::ogl{
-	class GL4RenderTarget : public RenderTarget{
+	class GLRenderTarget : public RenderTarget{
 		//VARIABLES
 	private:
 		GLuint frameBufferID = 0;
@@ -13,13 +13,13 @@ namespace clv::gfx::ogl{
 
 		//FUNCTIONS
 	public:
-		GL4RenderTarget() = delete;
-		GL4RenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
-		GL4RenderTarget(const GL4RenderTarget& other) = delete;
-		GL4RenderTarget(GL4RenderTarget&& other) noexcept;
-		GL4RenderTarget& operator=(const GL4RenderTarget& other) = delete;
-		GL4RenderTarget& operator=(GL4RenderTarget&& other) noexcept;
-		virtual ~GL4RenderTarget();
+		GLRenderTarget() = delete;
+		GLRenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
+		GLRenderTarget(const GLRenderTarget& other) = delete;
+		GLRenderTarget(GLRenderTarget&& other) noexcept;
+		GLRenderTarget& operator=(const GLRenderTarget& other) = delete;
+		GLRenderTarget& operator=(GLRenderTarget&& other) noexcept;
+		virtual ~GLRenderTarget();
 
 		const uint32 getGLFrameBufferID() const;
 	};
