@@ -84,7 +84,6 @@ set(
 		Core/Graphics/Renderer2D.cpp
 		Core/Graphics/RenderFactory.hpp
 		Core/Graphics/RenderTarget.hpp
-		Core/Graphics/RenderTarget.cpp
 		Core/Graphics/Shader.hpp
 		Core/Graphics/ShaderBufferTypes.hpp
 		Core/Graphics/Sprite.hpp
