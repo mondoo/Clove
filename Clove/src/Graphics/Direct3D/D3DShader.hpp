@@ -6,7 +6,7 @@
 #include <d3d.h>
 
 namespace clv::gfx::d3d::_11{
-	class DX11Shader : public Shader{
+	class D3DShader : public Shader{
 		//VARIABLES
 	private:
 		std::unordered_map<ShaderType, std::unique_ptr<D3DShaderElement>> d3dShaders;
@@ -17,13 +17,13 @@ namespace clv::gfx::d3d::_11{
 
 		//FUNCTIONS	
 	public:
-		DX11Shader() = delete;
-		DX11Shader(ID3D11Device& d3dDevice, const ShaderDescriptor& descriptor);
-		DX11Shader(const DX11Shader& other) = delete;
-		DX11Shader(DX11Shader&& other) noexcept;
-		DX11Shader& operator=(const DX11Shader& other) = delete;
-		DX11Shader& operator=(DX11Shader&& other) noexcept;
-		virtual ~DX11Shader();
+		D3DShader() = delete;
+		D3DShader(ID3D11Device& d3dDevice, const ShaderDescriptor& descriptor);
+		D3DShader(const D3DShader& other) = delete;
+		D3DShader(D3DShader&& other) noexcept;
+		D3DShader& operator=(const D3DShader& other) = delete;
+		D3DShader& operator=(D3DShader&& other) noexcept;
+		virtual ~D3DShader();
 
 		virtual const ShaderDescriptor& getDescriptor() const override;
 		virtual ShaderReflectionData getReflectionData() const override;

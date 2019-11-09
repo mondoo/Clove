@@ -7,30 +7,30 @@
 #include <d3dcompiler.h>
 
 namespace clv::gfx::d3d::_11{
-	DX11Shader::DX11Shader(ID3D11Device& d3dDevice, const ShaderDescriptor& descriptor)
+	D3DShader::D3DShader(ID3D11Device& d3dDevice, const ShaderDescriptor& descriptor)
 		: descriptor(descriptor){
 		initialise(d3dDevice, descriptor.style);
 	}
 
-	DX11Shader::DX11Shader(DX11Shader&& other) noexcept{
+	D3DShader::D3DShader(D3DShader&& other) noexcept{
 		d3dShaders = std::move(other.d3dShaders);
 		vertexShader = other.vertexShader;
 	}
 
-	DX11Shader& DX11Shader::operator=(DX11Shader&& other) noexcept{
+	D3DShader& D3DShader::operator=(D3DShader&& other) noexcept{
 		d3dShaders = std::move(other.d3dShaders);
 		vertexShader = other.vertexShader;
 
 		return *this;
 	}
 
-	DX11Shader::~DX11Shader() = default;
+	D3DShader::~D3DShader() = default;
 
-	const ShaderDescriptor& DX11Shader::getDescriptor() const{
+	const ShaderDescriptor& D3DShader::getDescriptor() const{
 		return descriptor;
 	}
 
-	ShaderReflectionData DX11Shader::getReflectionData() const{
+	ShaderReflectionData D3DShader::getReflectionData() const{
 		ShaderReflectionData outData;
 
 		Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflector;
@@ -58,11 +58,11 @@ namespace clv::gfx::d3d::_11{
 		return outData;
 	}
 
-	const std::unordered_map<ShaderType, std::unique_ptr<D3DShaderElement>>& DX11Shader::getD3DShaders() const{
+	const std::unordered_map<ShaderType, std::unique_ptr<D3DShaderElement>>& D3DShader::getD3DShaders() const{
 		return d3dShaders;
 	}
 
-	void DX11Shader::initialise(ID3D11Device& d3dDevice, ShaderStyle style){
+	void D3DShader::initialise(ID3D11Device& d3dDevice, ShaderStyle style){
 		switch(style){
 			case ShaderStyle::Lit_3D:
 				{
