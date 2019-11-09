@@ -2,24 +2,25 @@
 
 #include "Core/Graphics/RenderTarget.hpp"
 
-namespace clv::gfx{
+#include <glad/glad.h>
+
+namespace clv::gfx::ogl{
 	class GL4RenderTarget : public RenderTarget{
 		//VARIABLES
 	private:
-		uint32 renderID = 0;
-		uint32 renderBufferID = 0;
+		GLuint frameBufferID = 0;
+		GLuint renderBufferID = 0;
 
 		//FUNCTIONS
 	public:
 		GL4RenderTarget() = delete;
+		GL4RenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
 		GL4RenderTarget(const GL4RenderTarget& other) = delete;
 		GL4RenderTarget(GL4RenderTarget&& other) noexcept;
 		GL4RenderTarget& operator=(const GL4RenderTarget& other) = delete;
 		GL4RenderTarget& operator=(GL4RenderTarget&& other) noexcept;
 		virtual ~GL4RenderTarget();
 
-		GL4RenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
-
-		const uint32 getRenderID() const;
+		const uint32 getGLFrameBufferID() const;
 	};
 }

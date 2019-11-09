@@ -33,7 +33,7 @@ namespace clv::gfx::ogl{
 
 	void GLRenderDevice::setRenderTarget(RenderTarget& renderTarget){
 		GL4RenderTarget& glRenderTarget = static_cast<GL4RenderTarget&>(renderTarget);
-		glBindFramebuffer(GL_FRAMEBUFFER, glRenderTarget.getRenderID());
+		glBindFramebuffer(GL_FRAMEBUFFER, glRenderTarget.getGLFrameBufferID());
 	}
 
 	void GLRenderDevice::resetRenderTargetToDefault(){

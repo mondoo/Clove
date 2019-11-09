@@ -147,12 +147,10 @@ set(
 		Graphics/OpenGL/GLRenderDevice.cpp
 		Graphics/OpenGL/GLRenderFactory.hpp
 		Graphics/OpenGL/GLRenderFactory.cpp
+		Graphics/OpenGL/GLRenderTarget.hpp
+		Graphics/OpenGL/GLRenderTarget.cpp
 		Graphics/OpenGL/GLShader.hpp
-		Graphics/OpenGL/GLShader.cpp
-		
-		
-		Graphics/OpenGL/GL4RenderTarget.hpp
-		Graphics/OpenGL/GL4RenderTarget.cpp
+		Graphics/OpenGL/GLShader.cpp	
 )
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set(
