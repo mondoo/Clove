@@ -30,7 +30,7 @@ namespace clv::gfx::d3d::_11{
 
 		const Microsoft::WRL::ComPtr<ID3D11Texture2D>& getTexture() const;
 
-		virtual const TextureDescriptor& getDescriptor() override;
+		virtual const TextureDescriptor& getDescriptor() const override;
 
 	private:
 		void createTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, void* data);

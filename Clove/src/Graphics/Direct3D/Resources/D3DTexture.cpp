@@ -7,7 +7,7 @@
 namespace clv::gfx::d3d::_11{
 	D3DTexture::D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& fileToTexture)
 		: descriptor(descriptor){
-		stbi_set_flip_vertically_on_load(1); //DirectX expects our texture to start on the bottom left
+		stbi_set_flip_vertically_on_load(1);
 
 		int width = 0;
 		int height = 0;
@@ -39,7 +39,7 @@ namespace clv::gfx::d3d::_11{
 		return d3dTexture;
 	}
 
-	const TextureDescriptor& D3DTexture::getDescriptor(){
+	const TextureDescriptor& D3DTexture::getDescriptor() const{
 		return descriptor;
 	}
 
@@ -79,7 +79,7 @@ namespace clv::gfx::d3d::_11{
 
 		const D3D11_SHADER_RESOURCE_VIEW_DESC viewDescriptor = createD3DShaderViewDescriptor();
 
-		D3D11_SAMPLER_DESC samplerDesc = {};
+		D3D11_SAMPLER_DESC samplerDesc{};
 		samplerDesc.Filter		= D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 		samplerDesc.AddressU	= D3D11_TEXTURE_ADDRESS_CLAMP;
 		samplerDesc.AddressV	= D3D11_TEXTURE_ADDRESS_CLAMP;

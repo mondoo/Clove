@@ -138,6 +138,8 @@ set(
 	GraphicsFiles
 		Graphics/OpenGL/Resources/GLBuffer.hpp
 		Graphics/OpenGL/Resources/GLBuffer.cpp
+		Graphics/OpenGL/Resources/GLTexture.hpp
+		Graphics/OpenGL/Resources/GLTexture.cpp
 		Graphics/OpenGL/GL.hpp
 		Graphics/OpenGL/GL.cpp
 		Graphics/OpenGL/GLRenderDevice.hpp
@@ -147,8 +149,6 @@ set(
 
 		Graphics/OpenGL/Bindables/GL4Shader.hpp
 		Graphics/OpenGL/Bindables/GL4Shader.cpp
-		Graphics/OpenGL/Bindables/GL4Texture.hpp
-		Graphics/OpenGL/Bindables/GL4Texture.cpp
 		Graphics/OpenGL/GL4Exception.hpp
 		Graphics/OpenGL/GL4Exception.cpp
 		Graphics/OpenGL/GL4RenderTarget.hpp

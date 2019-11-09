@@ -1,99 +1,81 @@
-#include "GL4Texture.hpp"
+#include "GLTexture.hpp"
 
 #include <stb_image.h>
 
-namespace clv::gfx{
-	GL4Texture::GL4Texture(GL4Texture&& other) noexcept = default;
-
-	GL4Texture& GL4Texture::operator=(GL4Texture&& other) noexcept = default;
-
-	GL4Texture::~GL4Texture(){
-		glDeleteTextures(1, &rendererID);
-	}
-
-	GL4Texture::GL4Texture(const std::string& filePath, uint32 bindingPoint)
-		: filePath(filePath), bindingPoint(bindingPoint){
+namespace clv::gfx::ogl{
+	GLTexture::GLTexture(const TextureDescriptor& descriptor, const std::string& fileToTexture)
+		: descriptor(descriptor){
 		stbi_set_flip_vertically_on_load(1);
 
 		int width = 0;
 		int height = 0;
-		unsigned char* localBuffer = stbi_load(filePath.c_str(), &width, &height, &BPP, 4); //4 = RGBA
-		descriptor.dimensions.x = width;
-		descriptor.dimensions.y = height;
+		unsigned char* localBuffer = stbi_load(fileToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
+		this->descriptor.dimensions.x = width;
+		this->descriptor.dimensions.y = height;
 
-		createTexture(localBuffer);
-		
+		createTexture(this->descriptor, localBuffer);
+
 		if(localBuffer){
 			stbi_image_free(localBuffer);
 		}
 	}
 
-	GL4Texture::GL4Texture(void* bufferData, uint32 bindingPoint, const gfx::TextureDescriptor& descriptor)
-		: bindingPoint(bindingPoint), descriptor(descriptor){
-		createTexture(bufferData);
+	GLTexture::GLTexture(const TextureDescriptor& descriptor, void* data, int32 BPP)
+		: descriptor(descriptor)
+		, BPP(BPP){
+		createTexture(descriptor, data);
 	}
 
-	GL4Texture::GL4Texture(uint32 bindingPoint, const gfx::TextureDescriptor& descriptor)
-		: bindingPoint(bindingPoint), descriptor(descriptor){
-		createTexture(nullptr);
+	GLTexture::GLTexture(GLTexture&& other) noexcept = default;
+
+	GLTexture& GLTexture::operator=(GLTexture&& other) noexcept = default;
+
+	GLTexture::~GLTexture(){
+		glDeleteTextures(1, &textureID);
 	}
 
-	void GL4Texture::bind(){
-		glBindTextureUnit(bindingPoint, rendererID);
+	const uint32 GLTexture::getTextureID() const{
+		return textureID;
 	}
 
-	uint32 GL4Texture::getWidth() const{
-		return descriptor.dimensions.x;
+	const TextureDescriptor& GLTexture::getDescriptor() const{
+		return descriptor;
 	}
 
-	uint32 GL4Texture::getHeight() const{
-		return descriptor.dimensions.y;
-	}
-
-	TextureBindingPoint GL4Texture::getBindingPoint() const{
-		return static_cast<TextureBindingPoint>(bindingPoint);
-	}
-
-	TextureUsage GL4Texture::getUsageType() const{
-		return descriptor.usage;
-	}
-
-	TextureStyle GL4Texture::getTextureStyle() const{
-		return descriptor.style;
-	}
-
-	const uint32 GL4Texture::getRenderID() const{
-		return rendererID;
-	}
-
-	void GL4Texture::createTexture(void* pixels){
-		glGenTextures(1, &rendererID);
-
+	void GLTexture::createTexture(const TextureDescriptor& descriptor, void* data){
 		const GLenum target = getTarget(descriptor.style, descriptor.arraySize);
 		const TextureUsage usage = descriptor.usage;
+		
+		glGenTextures(1, &textureID);
+		glBindTexture(target, textureID);
+
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 		switch(descriptor.style){
 			case TextureStyle::Default:
-				glBindTexture(target, rendererID);
-				setTextureParameters(target);
-				createDefaultTexture(target, usage, pixels);
-				glBindTexture(target, 0);
+				createDefaultTexture(target, usage, data);
 				break;
 
 			case TextureStyle::Cubemap:
-				glBindTexture(target, rendererID);
-				setTextureParameters(target);
-				createCubemapTexture(usage, pixels);
-				glBindTexture(target, 0);
+				createCubemapTexture(usage, data);
 				break;
 
 			default:
 				CLV_ASSERT(false, "{0}: Unhandled usage type", CLV_FUNCTION_NAME);
 				break;
 		}
+
+		glBindTexture(target, 0);
 	}
 
-	void GL4Texture::createDefaultTexture(const GLenum target, const TextureUsage usage, void* pixels){
+	void GLTexture::createTexture(const TextureDescriptor& descriptor, void* data){
+	}
+
+	void GLTexture::createDefaultTexture(const GLenum target, const TextureUsage usage, void* pixels){
 		GLsizei width = static_cast<GLsizei>(descriptor.dimensions.x);
 		GLsizei height = static_cast<GLsizei>(descriptor.dimensions.y);
 		
@@ -117,7 +99,7 @@ namespace clv::gfx{
 		}
 	}
 
-	void GL4Texture::createCubemapTexture(const TextureUsage usage, void* pixels){
+	void GLTexture::createCubemapTexture(const TextureUsage usage, void* pixels){
 		GLsizei width = static_cast<GLsizei>(descriptor.dimensions.x);
 		GLsizei height = static_cast<GLsizei>(descriptor.dimensions.y);
 
@@ -137,15 +119,7 @@ namespace clv::gfx{
 		}
 	}
 
-	void GL4Texture::setTextureParameters(const GLenum target){
-		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	}
-
-	GLenum GL4Texture::getTarget(const TextureStyle style, const uint8 arraySize) const{
+	GLenum GLTexture::getTarget(const TextureStyle style, const uint8 arraySize) const{
 		switch(style){
 			case TextureStyle::Default:
 				return (arraySize > 1) ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D;
@@ -161,7 +135,7 @@ namespace clv::gfx{
 		return GLenum();
 	}
 
-	GLenum GL4Texture::getInternalFormat(const TextureUsage usage) const{
+	GLenum GLTexture::getInternalFormat(const TextureUsage usage) const{
 		switch(usage){
 			case TextureUsage::Default:
 				return GL_RGBA8;
@@ -180,7 +154,7 @@ namespace clv::gfx{
 		}
 	}
 
-	GLenum GL4Texture::getFormat(const TextureUsage usage){
+	GLenum GLTexture::getFormat(const TextureUsage usage){
 		switch(usage){
 			case TextureUsage::Default:
 				return GL_RGBA;
@@ -199,7 +173,7 @@ namespace clv::gfx{
 		}
 	}
 
-	GLenum GL4Texture::getType(const TextureUsage usage){
+	GLenum GLTexture::getType(const TextureUsage usage){
 		switch(usage){
 			case TextureUsage::Default:
 				return GL_UNSIGNED_BYTE;
