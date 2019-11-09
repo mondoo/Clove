@@ -142,6 +142,8 @@ set(
 		Graphics/OpenGL/Resources/GLTexture.cpp
 		Graphics/OpenGL/GL.hpp
 		Graphics/OpenGL/GL.cpp
+		Graphics/OpenGL/GLException.hpp
+		Graphics/OpenGL/GLException.cpp
 		Graphics/OpenGL/GLRenderDevice.hpp
 		Graphics/OpenGL/GLRenderDevice.cpp
 		Graphics/OpenGL/GLRenderFactory.hpp
@@ -149,8 +151,7 @@ set(
 		Graphics/OpenGL/GLShader.hpp
 		Graphics/OpenGL/GLShader.cpp
 		
-		Graphics/OpenGL/GL4Exception.hpp
-		Graphics/OpenGL/GL4Exception.cpp
+		
 		Graphics/OpenGL/GL4RenderTarget.hpp
 		Graphics/OpenGL/GL4RenderTarget.cpp
 )
