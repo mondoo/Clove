@@ -23,7 +23,7 @@ namespace clv::gfx::d3d::_11{
 		}
 	}
 
-	D3DTexture::D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, void* data, int32 BPP)
+	D3DTexture::D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data, int32 BPP)
 		: descriptor(descriptor)
 		, BPP(BPP){
 		createTexture(d3dDevice, descriptor, data);
@@ -51,7 +51,7 @@ namespace clv::gfx::d3d::_11{
 		return descriptor;
 	}
 
-	void D3DTexture::createTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, void* data){
+	void D3DTexture::createTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data){
 		DX11_INFO_PROVIDER;
 		
 		//If this is being used as a font then the BPP needs to be 1

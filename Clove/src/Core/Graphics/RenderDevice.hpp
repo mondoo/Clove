@@ -4,7 +4,6 @@
 
 namespace clv::gfx{
 	class Buffer;
-	class ShaderResource;
 	class Texture;
 	class PipelineObject;
 	class RenderTarget;

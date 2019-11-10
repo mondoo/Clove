@@ -21,7 +21,7 @@ namespace clv::gfx::d3d::_11{
 	public:
 		D3DTexture() = delete;
 		D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture);
-		D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, void* data, int32 BPP);
+		D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data, int32 BPP);
 		D3DTexture(const D3DTexture& other) = delete;
 		D3DTexture(D3DTexture&& other) noexcept;
 		D3DTexture& operator=(const D3DTexture& other) = delete;
@@ -35,7 +35,7 @@ namespace clv::gfx::d3d::_11{
 		virtual const TextureDescriptor& getDescriptor() const override;
 
 	private:
-		void createTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, void* data);
+		void createTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data);
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC createD3DShaderViewDescriptor() const;
 

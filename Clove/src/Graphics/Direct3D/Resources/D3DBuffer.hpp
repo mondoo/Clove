@@ -16,7 +16,7 @@ namespace clv::gfx::d3d::_11{
 		//FUNCTIONS
 	public:
 		D3DBuffer() = delete;
-		D3DBuffer(ID3D11Device& d3dDevice, const BufferDescriptor& descriptor, void* data);
+		D3DBuffer(ID3D11Device& d3dDevice, const BufferDescriptor& descriptor, const void* data);
 		D3DBuffer(const D3DBuffer& other) = delete;
 		D3DBuffer(D3DBuffer&& other) noexcept;
 		D3DBuffer& operator=(const D3DBuffer& other) = delete;

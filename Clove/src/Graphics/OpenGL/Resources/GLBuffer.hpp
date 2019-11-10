@@ -15,7 +15,7 @@ namespace clv::gfx::ogl{
 		//FUNCTIONS
 	public:
 		GLBuffer() = delete;
-		GLBuffer(const BufferDescriptor& descriptor, void* data);
+		GLBuffer(const BufferDescriptor& descriptor, const void* data);
 		GLBuffer(const GLBuffer& other) = delete;
 		GLBuffer(GLBuffer&& other);
 		GLBuffer& operator=(const GLBuffer& other) = delete;

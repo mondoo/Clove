@@ -44,9 +44,9 @@ namespace clv::gfx{
 		static void removeTextureAtSlot(uint32 slot);
 		//
 
-		static std::shared_ptr<Buffer> createBuffer(const BufferDescriptor& descriptor, void* data);
+		static std::shared_ptr<Buffer> createBuffer(const BufferDescriptor& descriptor, const void* data);
 		static std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture);
-		static std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, void* data, int32 BPP);
+		static std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP);
 		static std::shared_ptr<PipelineObject> createPipelineObject(const std::shared_ptr<Shader>& shader);
 		static std::shared_ptr<RenderTarget> createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
 		static std::shared_ptr<Shader> createShader(const ShaderDescriptor& descriptor);

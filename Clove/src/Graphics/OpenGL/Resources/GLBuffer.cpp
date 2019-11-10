@@ -1,7 +1,7 @@
 #include "GLBuffer.hpp"
 
 namespace clv::gfx::ogl{
-	GLBuffer::GLBuffer(const BufferDescriptor& descriptor, void* data)
+	GLBuffer::GLBuffer(const BufferDescriptor& descriptor, const void* data)
 		: descriptor(descriptor){
 		glGenBuffers(1, &bufferID);
 

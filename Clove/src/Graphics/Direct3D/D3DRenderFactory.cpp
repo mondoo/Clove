@@ -17,7 +17,7 @@ namespace clv::gfx::d3d::_11{
 
 	D3DRenderFactory::~D3DRenderFactory() = default;
 
-	std::shared_ptr<Buffer> D3DRenderFactory::createBuffer(const BufferDescriptor& descriptor, void* data){
+	std::shared_ptr<Buffer> D3DRenderFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){
 		return std::make_shared<D3DBuffer>(*d3dDevice.Get(), descriptor, data);
 	}
 
@@ -25,7 +25,7 @@ namespace clv::gfx::d3d::_11{
 		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, pathToTexture);
 	}
 
-	std::shared_ptr<Texture> D3DRenderFactory::createTexture(const TextureDescriptor& descriptor, void* data, int32 BPP){
+	std::shared_ptr<Texture> D3DRenderFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP){
 		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, data, BPP);
 	}
 

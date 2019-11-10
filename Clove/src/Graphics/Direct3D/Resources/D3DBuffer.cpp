@@ -4,7 +4,7 @@
 #include "Graphics/Direct3D/D3DRenderFactory.hpp"
 
 namespace clv::gfx::d3d::_11{
-	D3DBuffer::D3DBuffer(ID3D11Device& d3dDevice, const BufferDescriptor& descriptor, void* data)
+	D3DBuffer::D3DBuffer(ID3D11Device& d3dDevice, const BufferDescriptor& descriptor, const void* data)
 		: descriptor(descriptor){
 		D3D11_BUFFER_DESC bufferDesc{};
 		bufferDesc.ByteWidth			= static_cast<UINT>(descriptor.bufferSize);

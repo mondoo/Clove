@@ -81,7 +81,7 @@ namespace clv::gfx{
 		device->removeTextureAtSlot(slot);
 	}
 
-	std::shared_ptr<Buffer> RenderCommand::createBuffer(const BufferDescriptor& descriptor, void* data){
+	std::shared_ptr<Buffer> RenderCommand::createBuffer(const BufferDescriptor& descriptor, const void* data){
 		return factory->createBuffer(descriptor, data);
 	}
 
@@ -89,7 +89,7 @@ namespace clv::gfx{
 		return factory->createTexture(descriptor, pathToTexture);
 	}
 
-	std::shared_ptr<Texture> RenderCommand::createTexture(const TextureDescriptor& descriptor, void* data, int32 BPP){
+	std::shared_ptr<Texture> RenderCommand::createTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP){
 		return factory->createTexture(descriptor, data, BPP);
 	}
 

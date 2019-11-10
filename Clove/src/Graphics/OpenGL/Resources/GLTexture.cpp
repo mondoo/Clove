@@ -20,7 +20,7 @@ namespace clv::gfx::ogl{
 		}
 	}
 
-	GLTexture::GLTexture(const TextureDescriptor& descriptor, void* data, int32 BPP)
+	GLTexture::GLTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP)
 		: descriptor(descriptor)
 		, BPP(BPP){
 		createTexture(descriptor, data);
@@ -42,7 +42,7 @@ namespace clv::gfx::ogl{
 		return descriptor;
 	}
 
-	void GLTexture::createTexture(const TextureDescriptor& descriptor, void* data){
+	void GLTexture::createTexture(const TextureDescriptor& descriptor, const void* data){
 		const GLenum target = getTarget(descriptor.style, descriptor.arraySize);
 		const TextureUsage usage = descriptor.usage;
 		
@@ -72,10 +72,7 @@ namespace clv::gfx::ogl{
 		glBindTexture(target, 0);
 	}
 
-	void GLTexture::createTexture(const TextureDescriptor& descriptor, void* data){
-	}
-
-	void GLTexture::createDefaultTexture(const GLenum target, const TextureUsage usage, void* pixels){
+	void GLTexture::createDefaultTexture(const GLenum target, const TextureUsage usage, const void* pixels){
 		GLsizei width = static_cast<GLsizei>(descriptor.dimensions.x);
 		GLsizei height = static_cast<GLsizei>(descriptor.dimensions.y);
 		
@@ -99,7 +96,7 @@ namespace clv::gfx::ogl{
 		}
 	}
 
-	void GLTexture::createCubemapTexture(const TextureUsage usage, void* pixels){
+	void GLTexture::createCubemapTexture(const TextureUsage usage, const void* pixels){
 		GLsizei width = static_cast<GLsizei>(descriptor.dimensions.x);
 		GLsizei height = static_cast<GLsizei>(descriptor.dimensions.y);
 
