@@ -62,6 +62,10 @@ namespace clv::gfx::d3d::_11{
 		return d3dPixelShader;
 	}
 
+	std::pair<const BYTE*, SIZE_T> D3DShader::getVertexByteData() const{
+		return std::make_pair(vertexByteData, vertexByteSize);
+	}
+
 	void D3DShader::initialise(ID3D11Device& d3dDevice, ShaderStyle style){
 		DX11_INFO_PROVIDER;
 

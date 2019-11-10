@@ -2,10 +2,14 @@
 
 #include "Core/Graphics/PipelineObject.hpp"
 
+#include <glad/glad.h>
+
 namespace clv::gfx::ogl{
 	class GLPipelineObject : public PipelineObject{
 		//VARIABLES
 	private:
+		GLuint vertexArrayID = 0;
+
 		std::shared_ptr<Shader> shader;
 		ShaderReflectionData shaderReflectionData;
 
@@ -19,7 +23,13 @@ namespace clv::gfx::ogl{
 		GLPipelineObject& operator=(GLPipelineObject&& other);
 		~GLPipelineObject();
 
+		GLuint getGLVertexArrayID() const;
+
 		virtual const std::shared_ptr<Shader>& getShader() const override;
 		virtual const VertexLayout& getVertexLayout() const override;
+
+	private:
+		GLenum getGLElementType(VertexElementType type);
+		GLboolean isTypeNormalised(VertexElementType type)
 	};
 }

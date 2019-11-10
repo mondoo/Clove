@@ -41,6 +41,8 @@ namespace clv::gfx::d3d::_11{
 		const Microsoft::WRL::ComPtr<ID3D11GeometryShader>& getD3DGeometryShader() const;
 		const Microsoft::WRL::ComPtr<ID3D11PixelShader>& getD3DPixelShader() const;
 
+		std::pair<const BYTE*, SIZE_T> getVertexByteData() const;
+
 	private:
 		void initialise(ID3D11Device& d3dDevice, ShaderStyle style);
 	};

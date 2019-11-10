@@ -30,7 +30,7 @@ namespace clv::gfx::d3d::_11{
 	}
 
 	std::shared_ptr<PipelineObject> D3DRenderFactory::createPipelineObject(const std::shared_ptr<Shader>& shader){
-		return std::make_shared<D3DPipelineObject>(shader);
+		return std::make_shared<D3DPipelineObject>(*d3dDevice.Get(), shader);
 	}
 
 	std::shared_ptr<RenderTarget> D3DRenderFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
