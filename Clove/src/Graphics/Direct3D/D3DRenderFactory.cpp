@@ -3,6 +3,7 @@
 #include "Graphics/Direct3D/D3DException.hpp"
 #include "Graphics/Direct3D/Resources/D3DBuffer.hpp"
 #include "Graphics/Direct3D/Resources/D3DTexture.hpp"
+#include "Graphics/Direct3D/D3DPipelineObject.hpp"
 #include "Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Graphics/Direct3D/D3DShader.hpp"
 #include "Graphics/Direct3D/D3DSurface.hpp"
@@ -21,11 +22,15 @@ namespace clv::gfx::d3d::_11{
 	}
 
 	std::shared_ptr<Texture> D3DRenderFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
-		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, fileToTexture);
+		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, pathToTexture);
 	}
 
 	std::shared_ptr<Texture> D3DRenderFactory::createTexture(const TextureDescriptor& descriptor, void* data, int32 BPP){
 		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, data, BPP);
+	}
+
+	std::shared_ptr<PipelineObject> D3DRenderFactory::createPipelineObject(const std::shared_ptr<Shader>& shader){
+		return std::make_shared<D3DPipelineObject>(shader);
 	}
 
 	std::shared_ptr<RenderTarget> D3DRenderFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){

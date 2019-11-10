@@ -25,6 +25,7 @@ namespace clv::gfx::d3d::_11{
 		virtual std::shared_ptr<Buffer> createBuffer(const BufferDescriptor& descriptor, void* data) override;
 		virtual std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture) override;
 		virtual std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, void* data, int32 BPP) override;
+		virtual std::shared_ptr<PipelineObject> createPipelineObject(const std::shared_ptr<Shader>& shader) override;
 		virtual std::shared_ptr<RenderTarget> createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture) override;
 		virtual std::shared_ptr<Shader> createShader(const ShaderDescriptor& descriptor) override;
 		virtual std::shared_ptr<Surface> createSurface() override;

@@ -89,6 +89,10 @@ namespace clv::gfx{
 		return factory->createTexture(descriptor, data, BPP);
 	}
 
+	std::shared_ptr<PipelineObject> RenderCommand::createPipelineObject(const std::shared_ptr<Shader>& shader){
+		return factory->createPipelineObject(shader);
+	}
+
 	std::shared_ptr<RenderTarget> RenderCommand::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
 		return factory->createRenderTarget(colourTexture, depthStencilTexture);
 	}

@@ -75,6 +75,7 @@ set(
 		Core/Graphics/MaterialInstance.cpp
 		Core/Graphics/Mesh.hpp
 		Core/Graphics/Mesh.cpp
+		Core/Graphics/PipelineObject.hpp
 		Core/Graphics/RenderCommand.hpp
 		Core/Graphics/RenderCommand.cpp
 		Core/Graphics/RenderDevice.hpp
@@ -143,6 +144,8 @@ set(
 		Graphics/OpenGL/GL.cpp
 		Graphics/OpenGL/GLException.hpp
 		Graphics/OpenGL/GLException.cpp
+		Graphics/OpenGL/GLPipelineObject.hpp
+		Graphics/OpenGL/GLPipelineObject.cpp
 		Graphics/OpenGL/GLRenderDevice.hpp
 		Graphics/OpenGL/GLRenderDevice.cpp
 		Graphics/OpenGL/GLRenderFactory.hpp
@@ -190,6 +193,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			Graphics/Direct3D/D3D.cpp
 			Graphics/Direct3D/D3DException.hpp
 			Graphics/Direct3D/D3DException.cpp
+			Graphics/Direct3D/D3DPipelineObject.hpp
+			Graphics/Direct3D/D3DPipelineObject.cpp
 			Graphics/Direct3D/D3DRenderDevice.hpp
 			Graphics/Direct3D/D3DRenderDevice.cpp
 			Graphics/Direct3D/D3DRenderFactory.hpp
