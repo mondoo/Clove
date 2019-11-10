@@ -3,6 +3,7 @@
 #include "Graphics/Direct3D/D3DException.hpp"
 #include "Graphics/Direct3D/Resources/D3DBuffer.hpp"
 #include "Graphics/Direct3D/Resources/D3DTexture.hpp"
+#include "Graphics/Direct3D/D3DPipelineObject.hpp"
 #include "Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Graphics/Direct3D/D3DShader.hpp"
 #include "Graphics/Direct3D/D3DSurface.hpp"
@@ -50,6 +51,12 @@ namespace clv::gfx::d3d::_11{
 				CLV_ASSERT(false, "Unhandled shader type in {0}", CLV_FUNCTION_NAME);
 				break;
 		}
+	}
+
+	void D3DRenderDevice::bindPipelineObject(const PipelineObject& pipelineObject){
+		const D3DPipelineObject& d3dPipelineObject = static_cast<const D3DPipelineObject&>(pipelineObject);
+		d3dContext->IASetInputLayout(d3dPipelineObject.getD3DInputLayout().Get());
+		bindShader(*d3dPipelineObject.getShader());
 	}
 
 	void D3DRenderDevice::bindTexture(const Texture& texture, const uint32 bindingPoint){

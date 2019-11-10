@@ -6,6 +6,7 @@ namespace clv::gfx{
 	class Buffer;
 	class ShaderResource;
 	class Texture;
+	class PipelineObject;
 	class RenderTarget;
 	class Shader;
 	class Surface;
@@ -19,6 +20,7 @@ namespace clv::gfx{
 		virtual void bindIndexBuffer(const Buffer& buffer) = 0;
 		virtual void bindVertexBuffer(const Buffer& buffer) = 0;
 		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint) = 0;
+		virtual void bindPipelineObject(const PipelineObject& pipelineObject) = 0;
 		virtual void bindTexture(const Texture& texture, const uint32 bindingPoint) = 0;
 		virtual void bindShader(const Shader& shader) = 0;
 

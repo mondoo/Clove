@@ -27,17 +27,7 @@ namespace clv::gfx::d3d::_11{
 		auto [vertexByteData, vertexByteSize] = dxShader->getVertexByteData();
 
 		DX11_INFO_PROVIDER;
-		d3dDevice.CreateInputLayout(
-			dxElements.data(),
-			static_cast<UINT>(dxElements.size()),
-			vertexByteData,
-			vertexByteSize,
-			&inputLayout
-		);
-
-
-
-		//DX11RenderAPI::getContext().IASetInputLayout(inputLayout.Get());
+		DX11_THROW_INFO(d3dDevice.CreateInputLayout(dxElements.data(), static_cast<UINT>(dxElements.size()), vertexByteData, vertexByteSize, &inputLayout));
 	}
 
 	D3DPipelineObject::D3DPipelineObject(D3DPipelineObject&& other) = default;

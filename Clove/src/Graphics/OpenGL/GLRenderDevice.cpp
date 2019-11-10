@@ -2,6 +2,7 @@
 
 #include "Graphics/OpenGL/Resources/GLBuffer.hpp"
 #include "Graphics/OpenGL/Resources/GLTexture.hpp"
+#include "Graphics/OpenGL/GLPipelineObject.hpp"
 #include "Graphics/OpenGL/GLRenderTarget.hpp"
 #include "Graphics/OpenGL/GLShader.hpp"
 #include "Graphics/OpenGL/GLSurface.hpp"
@@ -26,6 +27,12 @@ namespace clv::gfx::ogl{
 	void GLRenderDevice::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
 		const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 		glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, glbuffer.getBufferID());
+	}
+
+	void GLRenderDevice::bindPipelineObject(const PipelineObject& pipelineObject){
+		const GLPipelineObject& glPipelineObject = static_cast<const GLPipelineObject&>(pipelineObject);
+		glBindVertexArray(glPipelineObject.getGLVertexArrayID());
+		bindShader(*glPipelineObject.getShader());
 	}
 
 	void GLRenderDevice::bindTexture(const Texture& texture, const uint32 bindingPoint){

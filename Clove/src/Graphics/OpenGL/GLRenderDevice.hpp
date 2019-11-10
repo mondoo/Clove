@@ -16,6 +16,7 @@ namespace clv::gfx::ogl{
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
 		virtual void bindVertexBuffer(const Buffer& buffer) override;
 		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint) override;
+		virtual void bindPipelineObject(const PipelineObject& pipelineObject) override;
 		virtual void bindTexture(const Texture& texture, const uint32 bindingPoint) override;
 		virtual void bindShader(const Shader& shader) override;
 

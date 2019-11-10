@@ -21,6 +21,10 @@ namespace clv::gfx{
 		device->bindShaderResourceBuffer(buffer, shaderType, bindingPoint);
 	}
 
+	void RenderCommand::bindPipelineObject(const PipelineObject& pipelineObject){
+		device->bindPipelineObject(pipelineObject);
+	}
+
 	void RenderCommand::bindTexture(const Texture& texture, const uint32 bindingPoint){
 		device->bindTexture(texture, bindingPoint);
 	}
