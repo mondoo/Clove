@@ -29,7 +29,8 @@ namespace clv::gfx::d3d::_11{
 	void D3DRenderDevice::bindVertexBuffer(const Buffer& buffer){
 		const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
 		const auto& descriptor = d3dBuffer.getDescriptor();
-		d3dContext->IASetVertexBuffers(0u, 1u, d3dBuffer.getD3DBuffer().GetAddressOf(), &descriptor.elementSize, 0u);
+		const UINT offset = 0u;
+		d3dContext->IASetVertexBuffers(0u, 1u, d3dBuffer.getD3DBuffer().GetAddressOf(), &descriptor.elementSize, &offset);
 	}
 
 	void D3DRenderDevice::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
