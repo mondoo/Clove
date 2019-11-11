@@ -40,6 +40,6 @@ namespace clv::plt{
 		virtual void processInput() override;
 
 	private:
-		void initialiseWindow(const WindowProps& props, gfx::API api);
+		void initialiseWindow(const WindowProps& props);
 	};
 }
