@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Core/Graphics/Material.hpp"
-#include "Core/Graphics/Resources/ShaderResource.hpp"
-#include "Core/Graphics/Shader.hpp" //TODO: remove? needed for the reflection data
+//#include "Core/Graphics/Shader.hpp" //TODO: remove? needed for the reflection data
 
 //TODO: Move this into the material file???
 namespace clv::gfx{
@@ -17,7 +16,7 @@ namespace clv::gfx{
 		std::shared_ptr<Material> material;
 		std::shared_ptr<Texture> albedoTexture;
 		std::shared_ptr<Texture> specTexture;
-		std::unordered_map<BufferBindingPoint, std::shared_ptr<ShaderResource>> shaderData;
+		std::unordered_map<BufferBindingPoint, ShaderData> shaderData;
 
 		//FUNCTIONS
 	public:
@@ -31,8 +30,8 @@ namespace clv::gfx{
 
 		void bind();
 
-		const ShaderReflectionData& getReflectionData() const;
-		const std::shared_ptr<Shader>& getShader() const;
+		/*const ShaderReflectionData& getReflectionData() const;
+		const std::shared_ptr<Shader>& getShader() const;*/
 
 		template<typename DataType>
 		void setData(BufferBindingPoint bindingPoint, DataType&& data, gfx::ShaderType shaderType);

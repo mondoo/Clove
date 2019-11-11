@@ -2,14 +2,15 @@ namespace clv::gfx{
 	template<typename DataType>
 	void Material::setData(BufferBindingPoint bindingPoint, DataType&& data, ShaderType shaderType){
 		if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
-			iter->second->setData(std::forward<DataType>(data));
+			RenderCommand::updateBufferData(*iter->second.buffer, &data);
 		} else{
-			ShaderResourceDescriptor srdesc = {};
-			srdesc.bindingPoint = bindingPoint;
-			srdesc.shaderType = shaderType;
+			BufferDescriptor srdesc{};
+			srdesc.elementSize = 0;
 			srdesc.bufferSize = sizeof(data);
-			shaderData[bindingPoint] = RenderCommand::createShaderResource(srdesc);
-			shaderData[bindingPoint]->setData(std::forward<DataType>(data));
+			BufferType bufferType = BufferType::ShaderResourceBuffer;
+			BufferUsage bufferUsage = BufferUsage::Dynamic;
+			auto buffer = RenderCommand::createBuffer(srdesc, &data);
+			shaderData[bindingPoint] = { buffer, shaderType };
 		}
 	}
 }

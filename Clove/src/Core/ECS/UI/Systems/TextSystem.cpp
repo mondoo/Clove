@@ -2,9 +2,9 @@
 
 #include "Core/Graphics/Renderer2D.hpp"
 #include "Core/Graphics/Sprite.hpp"
-#include "Core/Graphics/BindableFactory.hpp"
 #include "Core/Graphics/GraphicsTypes.hpp"
-#include "Core/Graphics/Bindables/Texture.hpp"
+#include "Core/Graphics/Resources/Texture.hpp"
+#include "Core/Graphics/RenderCommand.hpp"
 #include "Core/UI/Font.hpp"
 #include "Core/UI/Text.hpp"
 
@@ -40,7 +40,7 @@ namespace clv::ecs::ui{
 						textureArraySize
 					};
 
-					auto texture = gfx::BindableFactory::createTexture(glyph.buffer, gfx::TBP_Albedo, descriptor);
+					auto texture = gfx::RenderCommand::createTexture(descriptor, glyph.buffer, 1);
 
 					math::Matrix4f model = math::Matrix4f(1.0f);
 					model = math::translate(math::Matrix4f(1.0f), { xpos, ypos, 0.0f });

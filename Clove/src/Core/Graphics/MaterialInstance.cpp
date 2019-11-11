@@ -24,59 +24,53 @@ namespace clv::gfx{
 
 	void MaterialInstance::bind(){
 		if(albedoTexture){
-			RenderCommand::bindTexture(*albedoTexture);
+			RenderCommand::bindTexture(*albedoTexture, TBP_Albedo);
 		} else { 
-			RenderCommand::bindTexture(*material->albedoTexture);
+			RenderCommand::bindTexture(*material->albedoTexture, TBP_Albedo);
 		}
 
 		if(specTexture){
-			RenderCommand::bindTexture(*specTexture);
+			RenderCommand::bindTexture(*specTexture, TBP_Specular);
 		} else if(material->specTexture){
-			RenderCommand::bindTexture(*material->specTexture);
+			RenderCommand::bindTexture(*material->specTexture, TBP_Specular);
 		}
 
-		for(auto& [key, val] : material->shaderData){
-			if(auto iter = shaderData.find(key); iter == shaderData.end()){
-				RenderCommand::bindShaderResource(*val);
+		for(auto& [bindingPoint, data] : material->shaderData){
+			if(auto iter = shaderData.find(bindingPoint); iter == shaderData.end()){ //If we don't have data for that bindingPint
+				RenderCommand::bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
 			}
 		}
 
-		for(auto& [key, val] : shaderData){
-			RenderCommand::bindShaderResource(*val);
+		for(auto& [bindingPoint, data] : shaderData){
+			RenderCommand::bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
 		}
 
-		RenderCommand::bindShader(*material->shader);
+		//RenderCommand::bindShader(*material->shader);
 	}
 
-	const ShaderReflectionData& MaterialInstance::getReflectionData() const{
+	/*const ShaderReflectionData& MaterialInstance::getReflectionData() const{
 		return material->getReflectionData();
 	}
 
 	const std::shared_ptr<Shader>& MaterialInstance::getShader() const{
 		return material->getShader();
-	}
+	}*/
 
 	void MaterialInstance::setAlbedoTexture(const std::string& path){
-		TextureDescriptor tdesc = {};
-		tdesc.bindingPoint = TBP_Albedo;
-		albedoTexture = RenderCommand::createTexture(tdesc);
-		albedoTexture->map(path);
+		TextureDescriptor tdesc{};
+		albedoTexture = RenderCommand::createTexture(tdesc, path);
 	}
 
 	void MaterialInstance::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
-		CLV_ASSERT(texture->getBindingPoint() == gfx::TBP_Albedo, "Incorrect binding point for an albedo texture!");
 		albedoTexture = texture;
 	}
 
 	void MaterialInstance::setSpecularTexture(const std::string& path){
-		TextureDescriptor tdesc = {};
-		tdesc.bindingPoint = TBP_Specular;
-		albedoTexture = RenderCommand::createTexture(tdesc);
-		albedoTexture->map(path);
+		TextureDescriptor tdesc{};
+		albedoTexture = RenderCommand::createTexture(tdesc, path);
 	}
 
 	void MaterialInstance::setSpecularTexture(const std::shared_ptr<Texture>& texture){
-		CLV_ASSERT(texture->getBindingPoint() == gfx::TBP_Specular, "Incorrect binding point for a specular texture!");
 		specTexture = texture;
 	}
 }

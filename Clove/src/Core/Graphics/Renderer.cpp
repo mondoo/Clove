@@ -2,6 +2,7 @@
 
 #include "Core/Graphics/GraphicsTypes.hpp"
 #include "Core/Graphics/RenderCommand.hpp"
+#include "Core/Graphics/PipelineObject.hpp"
 #include "Core/Graphics/Resources/Texture.hpp"
 #include "Core/Graphics/RenderTarget.hpp"
 #include "Core/Platform/Application.hpp"
@@ -33,20 +34,25 @@ namespace clv::gfx{
 
 		std::shared_ptr<RenderTarget> customRenderTarget;
 
+		std::shared_ptr<PipelineObject> defaultPipeline;
+		std::shared_ptr<PipelineObject> shadowPipeline;
+
 		//FUNCTIONS
 	public:
 		SceneData()
-			: cubeShadowMaterial(std::make_shared<Material>(ShaderStyle::CubeShadowMap)){
+			: cubeShadowMaterial(std::make_shared<Material>(/*ShaderStyle::CubeShadowMap*/)){
 
-			TextureDescriptor tdesc = {};
-			tdesc.bindingPoint = TBP_Shadow;
-			tdesc.style = TextureStyle::Cubemap;
-			tdesc.usage = TextureUsage::RenderTarget_Depth;
-			tdesc.dimensions = { shadowMapSize, shadowMapSize };
-			tdesc.arraySize = numLights;
+			TextureDescriptor tdesc{};
+			tdesc.style			= TextureStyle::Cubemap;
+			tdesc.usage			= TextureUsage::RenderTarget_Depth;
+			tdesc.dimensions	= { shadowMapSize, shadowMapSize };
+			tdesc.arraySize		= numLights;
 
-			shadowMapTexture = RenderCommand::createTexture(tdesc);
-			shadowMapRenderTarget = RenderTarget::createRenderTarget(nullptr, shadowMapTexture.get());
+			shadowMapTexture		= RenderCommand::createTexture(tdesc, nullptr, 4);
+			shadowMapRenderTarget	= RenderCommand::createRenderTarget(nullptr, shadowMapTexture.get());
+
+			defaultPipeline = RenderCommand::createPipelineObject(RenderCommand::createShader({ ShaderStyle::Lit_3D }));
+			shadowPipeline	= RenderCommand::createPipelineObject(RenderCommand::createShader({ ShaderStyle::CubeShadowMap }));
 		}
 
 		~SceneData() = default;
@@ -88,13 +94,24 @@ namespace clv::gfx{
 			meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ currentSceneData->currentShadowDepth }, ShaderType::Pixel);
 			meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ currentSceneData->numLights }, ShaderType::Pixel);
 
-			mesh->bind();
+			//mesh->bind(); //TODO: Remove?
+			auto vb = mesh->generateVertexBuffer(currentSceneData->defaultPipeline->getVertexLayout());
+			auto ib = mesh->generateIndexBuffer();
+			meshMaterial.bind();
+			RenderCommand::bindVertexBuffer(*vb);
+			RenderCommand::bindIndexBuffer(*ib);
 
 			RenderCommand::drawIndexed(mesh->getIndexCount());
 		};
 
 		const auto generateShadowMap = [](const std::shared_ptr<Mesh>& mesh){
-			mesh->bind();
+			//mesh->bind(); //TODO: Remove?
+			auto vb = mesh->generateVertexBuffer(currentSceneData->shadowPipeline->getVertexLayout());
+			auto ib = mesh->generateIndexBuffer();
+			mesh->getMaterialInstance().bind();
+			RenderCommand::bindVertexBuffer(*vb);
+			RenderCommand::bindIndexBuffer(*ib);
+
 			currentSceneData->cubeShadowMaterial.bind(); //Bind in the shader / SBOs for generating the cubemap
 			RenderCommand::drawIndexed(mesh->getIndexCount());
 		};
@@ -102,6 +119,7 @@ namespace clv::gfx{
 		RenderCommand::setDepthBuffer(true);
 
 		//Calculate shadow map
+		RenderCommand::bindPipelineObject(*currentSceneData->shadowPipeline);
 		for(uint32 i = 0; i < currentSceneData->numLights; ++i){
 			currentSceneData->cubeShadowMaterial.setData(BBP_ShadowData, PointShadowShaderData{ currentSceneData->shadowTransforms[i] }, ShaderType::Geometry);
 			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
@@ -117,7 +135,9 @@ namespace clv::gfx{
 
 		RenderCommand::resetRenderTargetToDefault(); //Reset render target before binding the shadow map
 
-		RenderCommand::bindTexture(*currentSceneData->shadowMapTexture); //Bind this in before rendering the real mesh
+		RenderCommand::bindPipelineObject(*currentSceneData->defaultPipeline); //Bind in the default pipeline
+
+		RenderCommand::bindTexture(*currentSceneData->shadowMapTexture, TBP_Shadow); //Bind this in before rendering the real mesh
 
 		//Render any other render targets
 		if(currentSceneData->customRenderTarget){

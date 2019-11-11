@@ -9,19 +9,21 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		std::shared_ptr<Texture> texture;
-		math::Matrix4f modelData = {};
+		math::Matrix4f modelData{};
 
 		//FUNCTIONS
 	public:
 		Sprite() = delete;
-		Sprite(const Sprite& other);
-		Sprite& operator=(const Sprite& other);
-		Sprite(Sprite&& other) noexcept;
-		Sprite& operator=(Sprite&& other) noexcept;
-		~Sprite();
-
 		Sprite(const std::string& pathToTexture);
 		Sprite(std::shared_ptr<Texture> texture);
+
+		Sprite(const Sprite& other);
+		Sprite(Sprite&& other) noexcept;
+
+		Sprite& operator=(const Sprite& other);
+		Sprite& operator=(Sprite&& other) noexcept;
+
+		~Sprite();
 
 		const std::shared_ptr<Texture>& getTexture() const;
 

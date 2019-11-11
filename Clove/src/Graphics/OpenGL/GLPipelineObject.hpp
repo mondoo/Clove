@@ -30,6 +30,6 @@ namespace clv::gfx::ogl{
 
 	private:
 		GLenum getGLElementType(VertexElementType type);
-		GLboolean isTypeNormalised(VertexElementType type)
+		GLboolean isTypeNormalised(VertexElementType type);
 	};
 }

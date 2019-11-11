@@ -5,24 +5,23 @@
 #include "Core/Graphics/Material.hpp"
 
 namespace clv::gfx{
-	Sprite::Sprite(const Sprite& other) = default;
-
-	Sprite& Sprite::operator=(const Sprite& other) = default;
-
-	Sprite::Sprite(Sprite&& other) noexcept = default;
-
-	Sprite& Sprite::operator=(Sprite&& other) noexcept = default;
-
-	Sprite::~Sprite() = default;
-
 	Sprite::Sprite(const std::string& pathToTexture){
-		texture = RenderCommand::createTexture({});
-		texture->map(pathToTexture);
+		texture = RenderCommand::createTexture({}, pathToTexture);
 	}
 
 	Sprite::Sprite(std::shared_ptr<Texture> texture)
 		: texture(std::move(texture)){
 	}
+
+	Sprite::Sprite(const Sprite& other) = default;
+
+	Sprite::Sprite(Sprite&& other) noexcept = default;
+
+	Sprite& Sprite::operator=(const Sprite& other) = default;
+
+	Sprite& Sprite::operator=(Sprite&& other) noexcept = default;
+
+	Sprite::~Sprite() = default;
 
 	const std::shared_ptr<Texture> &Sprite::getTexture() const {
 		return texture;
