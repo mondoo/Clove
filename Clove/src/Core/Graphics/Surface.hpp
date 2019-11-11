@@ -13,6 +13,8 @@ namespace clv::gfx{
 	class Surface{
 		//FUNCTIONS
 	public:
+		virtual ~Surface() = default;
+
 		virtual void setVSync(bool vsync) = 0;
 		virtual bool isVsync() const = 0;
 

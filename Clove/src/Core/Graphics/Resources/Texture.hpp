@@ -25,6 +25,8 @@ namespace clv::gfx{
 	class Texture{
 		//FUNCTIONS
 	public:
+		virtual ~Texture() = default;
+
 		virtual const TextureDescriptor& getDescriptor() const = 0;
 	};
 }

@@ -11,7 +11,7 @@ namespace clv::gfx::ogl{
 		GLRenderDevice(GLRenderDevice&& other) noexcept = delete;
 		GLRenderDevice& operator=(const GLRenderDevice& other) = delete;
 		GLRenderDevice& operator=(GLRenderDevice&& other) noexcept = delete;
-		~GLRenderDevice();
+		virtual ~GLRenderDevice();
 
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
 		virtual void bindVertexBuffer(const Buffer& buffer) override;

@@ -11,7 +11,7 @@ namespace clv::gfx::ogl{
 		GLRenderFactory(GLRenderFactory&& other) = delete;
 		GLRenderFactory& operator=(const GLRenderFactory& other) = delete;
 		GLRenderFactory& operator=(GLRenderFactory&& other) = delete;
-		~GLRenderFactory();
+		virtual ~GLRenderFactory();
 
 		virtual std::shared_ptr<Buffer> createBuffer(const BufferDescriptor& descriptor, const void* data) override;
 		virtual std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture) override;

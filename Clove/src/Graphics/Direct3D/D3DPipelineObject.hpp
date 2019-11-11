@@ -25,7 +25,7 @@ namespace clv::gfx::d3d::_11{
 		D3DPipelineObject(D3DPipelineObject&& other);
 		D3DPipelineObject& operator=(const D3DPipelineObject& other) = delete;
 		D3DPipelineObject& operator=(D3DPipelineObject&& other);
-		~D3DPipelineObject();
+		virtual ~D3DPipelineObject();
 
 		const Microsoft::WRL::ComPtr<ID3D11InputLayout>& getD3DInputLayout() const;
 

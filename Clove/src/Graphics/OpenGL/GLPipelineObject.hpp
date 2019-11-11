@@ -21,7 +21,7 @@ namespace clv::gfx::ogl{
 		GLPipelineObject(GLPipelineObject&& other);
 		GLPipelineObject& operator=(const GLPipelineObject& other) = delete;
 		GLPipelineObject& operator=(GLPipelineObject&& other);
-		~GLPipelineObject();
+		virtual ~GLPipelineObject();
 
 		GLuint getGLVertexArrayID() const;
 

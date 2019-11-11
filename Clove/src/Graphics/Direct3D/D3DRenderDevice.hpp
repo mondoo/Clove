@@ -40,7 +40,7 @@ namespace clv::gfx::d3d::_11{
 		D3DRenderDevice(D3DRenderDevice&& other) noexcept = delete;
 		D3DRenderDevice& operator=(const D3DRenderDevice& other) = delete;
 		D3DRenderDevice& operator=(D3DRenderDevice&& other) noexcept = delete;
-		~D3DRenderDevice();
+		virtual ~D3DRenderDevice();
 
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
 		virtual void bindVertexBuffer(const Buffer& buffer) override;

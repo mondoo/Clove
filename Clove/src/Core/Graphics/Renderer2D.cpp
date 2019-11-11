@@ -72,7 +72,6 @@ namespace clv::gfx{
 	}
 
 	void Renderer2D::endScene(){
-		return;
 		RenderCommand::setDepthBuffer(false);
 
 		//Sprites
@@ -81,7 +80,7 @@ namespace clv::gfx{
 				auto& renderMeshMaterial = currentSceneData2D->spriteMesh->getMaterialInstance();
 				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
-//				currentSceneData2D->spriteMesh->bind();
+				currentSceneData2D->spriteMesh->bind();
 
 				RenderCommand::drawIndexed(currentSceneData2D->spriteMesh->getIndexCount());
 			};
@@ -97,7 +96,7 @@ namespace clv::gfx{
 				auto& charMat = currentSceneData2D->characterMesh->getMaterialInstance();
 				charMat.setAlbedoTexture(character->getTexture());
 				charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);
-				//currentSceneData2D->characterMesh->bind();
+				currentSceneData2D->characterMesh->bind();
 
 				RenderCommand::drawIndexed(currentSceneData2D->characterMesh->getIndexCount());
 			};

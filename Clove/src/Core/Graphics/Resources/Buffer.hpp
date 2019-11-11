@@ -24,6 +24,8 @@ namespace clv::gfx{
 	class Buffer{
 		//FUNCTIONS
 	public:
+		virtual ~Buffer() = default;
+
 		virtual const BufferDescriptor& getDescriptor() const = 0;
 	};
 }

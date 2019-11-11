@@ -20,7 +20,7 @@ namespace clv::gfx::ogl{
 		GLBuffer(GLBuffer&& other);
 		GLBuffer& operator=(const GLBuffer& other) = delete;
 		GLBuffer& operator=(GLBuffer&& other);
-		~GLBuffer();
+		virtual ~GLBuffer();
 
 		GLuint getBufferID() const;
 

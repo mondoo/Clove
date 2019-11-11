@@ -2,6 +2,8 @@
 
 namespace clv::gfx{
 	class RenderTarget{
-		//empty for now
+		//FUNCTIONS
+	public:
+		virtual ~RenderTarget() = default;
 	};
 }

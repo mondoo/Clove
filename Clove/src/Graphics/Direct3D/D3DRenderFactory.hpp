@@ -20,7 +20,7 @@ namespace clv::gfx::d3d::_11{
 		D3DRenderFactory(D3DRenderFactory&& other) = delete;
 		D3DRenderFactory& operator=(const D3DRenderFactory& other) = delete;
 		D3DRenderFactory& operator=(D3DRenderFactory&& other) = delete;
-		~D3DRenderFactory();
+		virtual ~D3DRenderFactory();
 
 		virtual std::shared_ptr<Buffer> createBuffer(const BufferDescriptor& descriptor, const void* data) override;
 		virtual std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture) override;

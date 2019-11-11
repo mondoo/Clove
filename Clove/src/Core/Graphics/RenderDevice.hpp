@@ -16,6 +16,8 @@ namespace clv::gfx{
 	class RenderDevice{
 		//FUNCTIONS
 	public:
+		virtual ~RenderDevice() = default;
+
 		virtual void bindIndexBuffer(const Buffer& buffer) = 0;
 		virtual void bindVertexBuffer(const Buffer& buffer) = 0;
 		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint) = 0;

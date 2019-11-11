@@ -17,6 +17,8 @@ namespace clv::gfx{
 	class Shader{
 		//FUNCTIONS
 	public:
+		virtual ~Shader() = default;
+
 		virtual const ShaderDescriptor& getDescriptor() const = 0;
 		virtual ShaderReflectionData getReflectionData() const = 0;
 	};

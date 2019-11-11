@@ -22,7 +22,7 @@ namespace clv::gfx::ogl{
 		GLShader(GLShader&& other) noexcept;
 		GLShader& operator=(const GLShader& other) = delete;
 		GLShader& operator=(GLShader&& other) noexcept;
-		~GLShader();
+		virtual ~GLShader();
 
 		uint32 getProgramID() const;
 
