@@ -12,7 +12,7 @@
 
 namespace clv::gfx::d3d::_11{
 #if CLV_DEBUG
-	DXGIInfoManager DX11RenderAPI::infoManager;
+	DXGIInfoManager D3DRenderDevice::infoManager;
 #endif
 
 	D3DRenderDevice::D3DRenderDevice(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext)

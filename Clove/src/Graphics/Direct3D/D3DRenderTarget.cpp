@@ -2,6 +2,9 @@
 
 #include "Graphics/Direct3D/Resources/D3DTexture.hpp"
 #include "Graphics/Direct3D/D3DException.hpp"
+#if CLV_DEBUG
+#include "Graphics/Direct3D/D3DRenderDevice.hpp"
+#endif
 
 #include <d3d11.h>
 

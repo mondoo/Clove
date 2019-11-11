@@ -2,6 +2,9 @@
 
 #include "Graphics/Direct3D/D3DException.hpp"
 #include "Graphics/Direct3D/ShaderHeaders.hpp"
+#if CLV_DEBUG
+#include "Graphics/Direct3D/D3DRenderDevice.hpp"
+#endif
 
 #include <d3d11.h>
 #include <d3dcompiler.h>

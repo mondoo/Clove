@@ -5,6 +5,9 @@
 #include "Platform/Windows/WindowsWindow.hpp"
 #include "Core/Graphics/GraphicsTypes.hpp"
 #include "Core/Graphics/RenderDevice.hpp"
+#if CLV_DEBUG
+#include "Graphics/Direct3D/D3DRenderDevice.hpp"
+#endif
 
 #include <d3d11.h>
 

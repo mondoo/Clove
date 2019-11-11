@@ -7,6 +7,9 @@
 #include "Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Graphics/Direct3D/D3DShader.hpp"
 #include "Graphics/Direct3D/D3DSurface.hpp"
+#if CLV_DEBUG
+#include "Graphics/Direct3D/D3DRenderDevice.hpp"
+#endif
 
 #include <d3d11.h>
 
@@ -48,6 +51,7 @@ namespace clv::gfx::d3d::_11{
 	}
 
 	void D3DRenderFactory::onDeviceRemoved(){
+		DX11_INFO_PROVIDER;
 		throw DX11_DEVICE_REMOVED_EXCPTION(d3dDevice->GetDeviceRemovedReason());
 	}
 }

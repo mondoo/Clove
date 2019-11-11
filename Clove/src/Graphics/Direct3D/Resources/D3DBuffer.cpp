@@ -2,6 +2,9 @@
 
 #include "Graphics/Direct3D/D3DException.hpp"
 #include "Graphics/Direct3D/D3DRenderFactory.hpp"
+#if CLV_DEBUG
+#include "Graphics/Direct3D/D3DRenderDevice.hpp"
+#endif
 
 namespace clv::gfx::d3d::_11{
 	D3DBuffer::D3DBuffer(ID3D11Device& d3dDevice, const BufferDescriptor& descriptor, const void* data)

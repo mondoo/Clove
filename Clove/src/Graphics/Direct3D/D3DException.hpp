@@ -79,9 +79,9 @@ namespace clv::gfx::d3d::_11{
 	#define DX11_EXCEPT(hr) clv::gfx::d3d::_11::D3DException(__LINE__, __FILE__, (hr), infoManager.getMessages())
 	#define DX11_THROW_INFO(hrcall) infoManager.set(); if(FAILED(hr = (hrcall))) throw DX11_EXCEPT(hr)
 	#define DX11_DEVICE_REMOVED_EXCPTION(hr) clv::gfx::d3d::_11::DeviceRemovedException(__LINE__, __FILE__, (hr), infoManager.getMessages())
-	#define DX11_THROW_INFO_ONLY(call) infoManager.set(); (call); { auto v = infoManager.getMessages(); if(!v.empty()){ throw clv::gfx::InfoException(__LINE__, __FILE__, v); } }
+	#define DX11_THROW_INFO_ONLY(call) infoManager.set(); (call); { auto v = infoManager.getMessages(); if(!v.empty()){ throw clv::gfx::d3d::_11::InfoException(__LINE__, __FILE__, v); } }
 
-	#define DX11_INFO_PROVIDER HRESULT hr; DXGIInfoManager& infoManager = DX11RenderAPI::getInfoManager();
+	#define DX11_INFO_PROVIDER HRESULT hr; DXGIInfoManager& infoManager = D3DRenderDevice::getInfoManager();
 #else
 	#define DX11_EXCEPT(hr) clv::gfx::d3d::_11::D3DException(__LINE__, __FILE__, (hr))
 	#define DX11_THROW_INFO(hrcall) DX11_THROW_NOINFO(hrcall)
