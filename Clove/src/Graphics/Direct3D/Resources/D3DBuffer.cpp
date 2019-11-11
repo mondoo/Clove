@@ -9,11 +9,15 @@
 namespace clv::gfx::d3d::_11{
 	D3DBuffer::D3DBuffer(ID3D11Device& d3dDevice, const BufferDescriptor& descriptor, const void* data)
 		: descriptor(descriptor){
+
+		const BufferUsage bufferUsage = descriptor.bufferUsage;
+		const BufferType bufferType = descriptor.bufferType;
+
 		D3D11_BUFFER_DESC bufferDesc{};
 		bufferDesc.ByteWidth			= static_cast<UINT>(descriptor.bufferSize);
-		bufferDesc.Usage				= getD3DBufferUsage(descriptor.bufferUsage);
-		bufferDesc.BindFlags			= getD3DBufferType(descriptor.bufferType);
-		bufferDesc.CPUAccessFlags		= 0u;
+		bufferDesc.Usage				= getD3DBufferUsage(bufferUsage);
+		bufferDesc.BindFlags			= getD3DBufferType(bufferType);
+		bufferDesc.CPUAccessFlags		= (bufferUsage == BufferUsage::Dynamic) ? D3D11_CPU_ACCESS_WRITE : 0u;
 		bufferDesc.MiscFlags			= 0u;
 		bufferDesc.StructureByteStride	= descriptor.elementSize;
 
