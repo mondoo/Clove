@@ -49,7 +49,7 @@ namespace clv::gfx::d3d::_11{
 		virtual void bindTexture(const Texture& texture, const uint32 bindingPoint) override;
 		virtual void bindShader(const Shader& shader) override;
 
-		virtual void updateBufferData(Buffer& buffer, void* data) override;
+		virtual void updateBufferData(Buffer& buffer, const void* data) override;
 
 		virtual void makeSurfaceCurrent(Surface& surface) override;
 

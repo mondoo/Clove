@@ -23,7 +23,7 @@ namespace clv::gfx{
 		virtual void bindTexture(const Texture& texture, const uint32 bindingPoint) = 0;
 		virtual void bindShader(const Shader& shader) = 0;
 
-		virtual void updateBufferData(Buffer& buffer, void* data) = 0;
+		virtual void updateBufferData(Buffer& buffer, const void* data) = 0;
 
 		virtual void makeSurfaceCurrent(Surface& surface) = 0;
 

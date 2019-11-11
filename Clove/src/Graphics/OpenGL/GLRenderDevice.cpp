@@ -45,7 +45,7 @@ namespace clv::gfx::ogl{
 		glUseProgram(glShader.getProgramID());
 	}
 
-	void GLRenderDevice::updateBufferData(Buffer& buffer, void* data){
+	void GLRenderDevice::updateBufferData(Buffer& buffer, const void* data){
 		const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 		glBindBuffer(GL_UNIFORM_BUFFER, glbuffer.getBufferID());
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, glbuffer.getDescriptor().bufferSize, data);

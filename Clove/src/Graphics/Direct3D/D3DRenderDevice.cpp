@@ -72,7 +72,7 @@ namespace clv::gfx::d3d::_11{
 		d3dContext->PSSetShader(d3dShader.getD3DPixelShader().Get(), nullptr, 0u);
 	}
 
-	void D3DRenderDevice::updateBufferData(Buffer& buffer, void* data){
+	void D3DRenderDevice::updateBufferData(Buffer& buffer, const void* data){
 		DX11_INFO_PROVIDER;
 		const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
 

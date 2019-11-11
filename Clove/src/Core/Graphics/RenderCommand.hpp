@@ -21,7 +21,7 @@ namespace clv::gfx{
 		static void bindTexture(const Texture& texture, const uint32 bindingPoint);
 		static void bindShader(const Shader& shader);
 
-		static void updateBufferData(Buffer& buffer, void* data);
+		static void updateBufferData(Buffer& buffer, const void* data);
 
 		static void makeSurfaceCurrent(Surface& surface);
 
@@ -50,7 +50,7 @@ namespace clv::gfx{
 		static std::shared_ptr<PipelineObject> createPipelineObject(const std::shared_ptr<Shader>& shader);
 		static std::shared_ptr<RenderTarget> createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
 		static std::shared_ptr<Shader> createShader(const ShaderDescriptor& descriptor);
-		static std::shared_ptr<Surface> createSurface();
+		static std::shared_ptr<Surface> createSurface(void* windowData);
 
 		static void initialise(gfx::API api);
 	};

@@ -33,7 +33,7 @@ namespace clv::gfx{
 		device->bindShader(shader);
 	}
 
-	void RenderCommand::updateBufferData(Buffer& buffer, void* data){
+	void RenderCommand::updateBufferData(Buffer& buffer, const void* data){
 		device->updateBufferData(buffer, data);
 	}
 
@@ -105,8 +105,8 @@ namespace clv::gfx{
 		return factory->createShader(descriptor);
 	}
 
-	std::shared_ptr<Surface> RenderCommand::createSurface(){
-		return factory->createSurface();
+	std::shared_ptr<Surface> RenderCommand::createSurface(void* windowData){
+		return factory->createSurface(windowData);
 	}
 
 	void RenderCommand::initialise(gfx::API api){
