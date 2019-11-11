@@ -11,7 +11,7 @@ namespace clv::plt{
 
 	LinuxWindow::~LinuxWindow(){
 		//Reset context first, before the display is closed
-		context.reset();
+		surface.reset();
 
 		XFree(visual);
 		XFreeColormap(display, windowAttribs.colormap);
