@@ -19,13 +19,12 @@ namespace clv::gfx::ogl{
 		//FUNCTIONS
 	public:
 		WGLSurface() = delete;
+		WGLSurface(void* windowData);
 		WGLSurface(const WGLSurface& other) = delete;
 		WGLSurface(WGLSurface&& other) noexcept;
 		WGLSurface& operator=(const WGLSurface& other) = delete;
 		WGLSurface& operator=(WGLSurface&& other) noexcept;
 		virtual ~WGLSurface();
-
-		WGLSurface(void* windowData);
 
 		virtual void makeCurrent() override;
 

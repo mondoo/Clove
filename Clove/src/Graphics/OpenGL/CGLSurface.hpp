@@ -16,20 +16,17 @@ namespace clv::gfx::ogl{
 		//FUNCTIONS
 	public:
 		CGLSurface() = delete;
+		CGLSurface(void* windowData);
 		CGLSurface(const CGLSurface& other) = delete;
 		CGLSurface(CGLSurface&& other) noexcept;
 		CGLSurface& operator=(const CGLSurface& other) = delete;
 		CGLSurface& operator=(CGLSurface&& other) noexcept;
 		virtual ~CGLSurface();
-		
-		CGLSurface(void* windowData);
-		
+
 		virtual void makeCurrent() override;
 
 		virtual void setVSync(bool vsync) override;
 		virtual bool isVsync() const override;
-
-		virtual API getAPI() const override;
 
 		virtual void present() override;
 	};

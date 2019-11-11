@@ -4,14 +4,6 @@
 #include "Core/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx::ogl{
-	GLXSurface::GLXSurface(GLXSurface&& other) = default;
-
-	GLXSurface& GLXSurface::operator=(GLXSurface&& other) = default;
-
-	GLXSurface::~GLXSurface(){
-		glXDestroyContext(display, context);
-	}
-
 	GLXSurface::GLXSurface(void* windowData){
 		plt::LinuxData* data = reinterpret_cast<plt::LinuxData*>(windowData);
 		display = data->display;
@@ -41,6 +33,14 @@ namespace clv::gfx::ogl{
 		CLV_LOG_DEBUG("Succesfully created an OpenGL context");
 
 		*data->visual = visual;
+	}
+
+	GLXSurface::GLXSurface(GLXSurface&& other) = default;
+
+	GLXSurface& GLXSurface::operator=(GLXSurface&& other) = default;
+
+	GLXSurface::~GLXSurface(){
+		glXDestroyContext(display, context);
 	}
 
 	void GLXSurface::makeCurrent(){
@@ -82,10 +82,6 @@ namespace clv::gfx::ogl{
 			CLV_LOG_ERROR("glxSwapIntervalEXT is unitialised. Could not retrieve swap interval. Please make sure this context is current");
 			return false;
 		}
-	}
-
-	API GLXSurface::getAPI() const{
-		return API::OpenGL4;
 	}
 
 	void GLXSurface::present(){

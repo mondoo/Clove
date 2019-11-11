@@ -6,15 +6,6 @@
 #include <OpenGL/CGLContext.h>
 
 namespace clv::gfx::ogl{
-	CGLSurface::CGLSurface(CGLSurface&& other) noexcept = default;
-	
-	CGLSurface& CGLSurface::operator=(CGLSurface&& other) noexcept = default;
-	
-	CGLSurface::~CGLSurface(){
-		CGLDestroyContext(contextObject);
-		CGLDestroyPixelFormat(pixelFormatObject);
-	}
-	
 	CGLSurface::CGLSurface(void* windowData){
 		CLV_LOG_WARN("Warning! Clove with OpenGL on macOS has been halted. This is due to the fact that macOS only supports up to OpenGL 4.1. Clove currently does not work on macOS");
 		
@@ -32,6 +23,15 @@ namespace clv::gfx::ogl{
 			CLV_DEBUG_BREAK; //TODO: Better error handling
 		}
 	}
+
+	CGLSurface::CGLSurface(CGLSurface&& other) noexcept = default;
+	
+	CGLSurface& CGLSurface::operator=(CGLSurface&& other) noexcept = default;
+	
+	CGLSurface::~CGLSurface(){
+		CGLDestroyContext(contextObject);
+		CGLDestroyPixelFormat(pixelFormatObject);
+	}
 	
 	void CGLSurface::makeCurrent(){
 		CGLSetCurrentContext(contextObject);
@@ -44,10 +44,6 @@ namespace clv::gfx::ogl{
 	
 	bool CGLSurface::isVsync() const{
 		return vsyncInt == 1;
-	}
-
-	API CGLSurface::getAPI() const{
-		return API::OpenGL4;
 	}
 
 	void CGLSurface::present(){

@@ -5,15 +5,6 @@
 #include "Core/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx::ogl{
-	WGLSurface::WGLSurface(WGLSurface&& other) noexcept = default;
-
-	WGLSurface& WGLSurface::operator=(WGLSurface&& other) noexcept = default;
-
-	WGLSurface::~WGLSurface(){
-		ReleaseDC(windowsHandle, windowsDeviceContext);
-		wglDeleteContext(wglContext);
-	}
-
 	WGLSurface::WGLSurface(void* windowData){
 		windowsHandle = reinterpret_cast<plt::WindowsData*>(windowData)->handle;
 
@@ -46,7 +37,7 @@ namespace clv::gfx::ogl{
 		if(wglCreateContextAttribsARB){
 			int32 major = 4;
 			int32 minor = 6;
-			
+
 			int32 attributes[] = {
 				WGL_CONTEXT_MAJOR_VERSION_ARB, major,
 				WGL_CONTEXT_MINOR_VERSION_ARB, minor,
@@ -67,6 +58,15 @@ namespace clv::gfx::ogl{
 
 			wglContext = wglCreateContext(windowsDeviceContext);
 		}
+	}
+
+	WGLSurface::WGLSurface(WGLSurface&& other) noexcept = default;
+
+	WGLSurface& WGLSurface::operator=(WGLSurface&& other) noexcept = default;
+
+	WGLSurface::~WGLSurface(){
+		ReleaseDC(windowsHandle, windowsDeviceContext);
+		wglDeleteContext(wglContext);
 	}
 
 	void WGLSurface::makeCurrent(){

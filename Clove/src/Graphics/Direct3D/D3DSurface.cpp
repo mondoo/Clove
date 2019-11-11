@@ -1,6 +1,7 @@
 #include "D3DSurface.hpp"
 
 #include "Graphics/Direct3D/D3DException.hpp"
+#include "Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Platform/Windows/WindowsWindow.hpp"
 #include "Core/Graphics/GraphicsTypes.hpp"
 #include "Core/Graphics/RenderDevice.hpp"

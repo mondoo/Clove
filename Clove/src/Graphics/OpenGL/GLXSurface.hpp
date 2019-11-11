@@ -20,20 +20,17 @@ namespace clv::gfx::ogl{
 		//FUNCTIONS
 	public:
 		GLXSurface() = delete;
+		GLXSurface(void* windowData);
 		GLXSurface(const GLXSurface& other) = delete;
 		GLXSurface(GLXSurface&& other);
 		GLXSurface& operator=(const GLXSurface& other) = default;
 		GLXSurface& operator=(GLXSurface&& other);
 		virtual ~GLXSurface();
 
-		GLXSurface(void* windowData);
-
 		virtual void makeCurrent() override;
 
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVsync() const override;
-
-		virtual API getAPI() const override;
 
 		virtual void present() override;
 	};
