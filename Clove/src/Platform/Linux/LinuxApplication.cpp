@@ -7,7 +7,7 @@ namespace clv::plt{
 		return std::make_unique<LinuxWindow>(props);
 	}
 
-	gfx::API LinuxWindow::getPlatformPreferedAPI(){
+	gfx::API LinuxApplication::getPlatformPreferedAPI(){
 		return gfx::API::OpenGL;
 	}
 }
