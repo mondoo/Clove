@@ -4,7 +4,7 @@
 #include "Graphics/OpenGL/GLRenderFactory.hpp"
 
 namespace clv::gfx::ogl{
-	std::pair<std::unique_ptr<RenderDevice>, std::unique_ptr<RenderFactory>> clv::gfx::ogl::initialiseOGL(){
+	std::pair<std::unique_ptr<RenderDevice>, std::unique_ptr<RenderFactory>> initialiseOGL(){
 		auto glDevce = std::make_unique<GLRenderDevice>();
 		auto glFactory = std::make_unique<GLRenderFactory>();
 
