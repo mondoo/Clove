@@ -37,7 +37,7 @@ namespace clv::gfx{
 			bufferData.emplaceBack(math::Vector2f{ -1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
 			bufferData.emplaceBack(math::Vector2f{  1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
 
-			auto spriteMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::Unlit_2D);
+			auto spriteMaterial = std::make_shared<gfx::Material>(/*gfx::ShaderStyle::Unlit_2D*/);
 			currentSceneData2D->spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
 		}
 
@@ -51,7 +51,7 @@ namespace clv::gfx{
 			bufferData.emplaceBack(math::Vector2f{ 0,  1 }, math::Vector2f{ 0.0f, 0.0f });
 			bufferData.emplaceBack(math::Vector2f{ 1,  1 }, math::Vector2f{ 1.0f, 0.0f });
 
-			auto characterMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::Font);
+			auto characterMaterial = std::make_shared<gfx::Material>(/*gfx::ShaderStyle::Font*/);
 			currentSceneData2D->characterMesh = std::make_shared<gfx::Mesh>(bufferData, indices, characterMaterial->createInstance());
 		}
 
@@ -80,7 +80,7 @@ namespace clv::gfx{
 				auto& renderMeshMaterial = currentSceneData2D->spriteMesh->getMaterialInstance();
 				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
-				currentSceneData2D->spriteMesh->bind();
+//				currentSceneData2D->spriteMesh->bind();
 
 				RenderCommand::drawIndexed(currentSceneData2D->spriteMesh->getIndexCount());
 			};
@@ -96,7 +96,7 @@ namespace clv::gfx{
 				auto& charMat = currentSceneData2D->characterMesh->getMaterialInstance();
 				charMat.setAlbedoTexture(character->getTexture());
 				charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);
-				currentSceneData2D->characterMesh->bind();
+				//currentSceneData2D->characterMesh->bind();
 
 				RenderCommand::drawIndexed(currentSceneData2D->characterMesh->getIndexCount());
 			};
