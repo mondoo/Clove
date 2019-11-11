@@ -13,7 +13,7 @@ namespace clv::gfx::ogl{
 
 		XVisualInfo* visual = nullptr;
 
-		::GLXSurface context = nullptr;
+		::GLXContext context = nullptr;
 
 		PFNGLXSWAPINTERVALEXTPROC glxSwapIntervalEXT = nullptr;
 		
