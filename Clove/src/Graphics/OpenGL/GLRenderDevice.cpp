@@ -55,6 +55,7 @@ namespace clv::gfx::ogl{
 	void GLRenderDevice::makeSurfaceCurrent(Surface& surface){
 		GLSurface& glSurface = static_cast<GLSurface&>(surface);
 		glSurface.makeCurrent();
+		CLV_ASSERT(gladLoadGL(), "Failed to load opengl"); //Not the ideal place but it has to happen after the surface(context) is created and made current
 	}
 	
 	void GLRenderDevice::setRenderTarget(RenderTarget& renderTarget){
