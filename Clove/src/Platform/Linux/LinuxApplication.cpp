@@ -8,6 +8,6 @@ namespace clv::plt{
 	}
 
 	gfx::API LinuxApplication::getPlatformPreferedAPI(){
-		return gfx::API::OpenGL;
+		return gfx::API::OpenGL4;
 	}
 }
