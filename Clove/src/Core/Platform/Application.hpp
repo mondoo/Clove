@@ -58,6 +58,7 @@ namespace clv::plt{
 	private:
 		void onWindowClose();
 
+		virtual gfx::API getPlatformPreferedAPI() = 0;
 		virtual std::unique_ptr<Window> createWindow(const WindowProps& props = WindowProps()) = 0;
 	};
 }

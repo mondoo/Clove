@@ -45,15 +45,19 @@ namespace clv::plt{
 		//TODO: Added a 'start' function to handle not calling a virtual from the ctor
 		//Would like as minimal api as possible when starting the application
 
+		gfx::RenderCommand::initialise(getPlatformPreferedAPI());
+
 		window = createWindow();
 		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
 		window->setVSync(true);
 
-		gfx::RenderCommand::initialiseRenderAPI(window->getContext());
+		//Probably move inside the window or camera?
+		gfx::RenderCommand::setViewport({ 0, 0, window->getWidth(), window->getHeight() });
+
 		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
 		gfx::Renderer::initialise();
-		gfx::Renderer2D::initialise();
+		//gfx::Renderer2D::initialise();
 	}
 
 	void Application::update(){

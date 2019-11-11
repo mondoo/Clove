@@ -6,4 +6,8 @@ namespace clv::plt{
 	std::unique_ptr<Window> WindowsApplication::createWindow(const WindowProps& props){
 		return std::make_unique<WindowsWindow>(props);
 	}
+
+	gfx::API WindowsApplication::getPlatformPreferedAPI(){
+		return gfx::API::DirectX11;
+	}
 }
