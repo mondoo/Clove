@@ -23,7 +23,7 @@ namespace clv::gfx{
 
 		PointLightShaderData currentLightInfo;
 		PointShadowDepthData currentShadowDepth;
-		uint32 numLights;
+		uint32 numLights = 0;
 		std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> shadowTransforms = {}; 
 
 		MaterialInstance cubeShadowMaterial;
@@ -46,7 +46,7 @@ namespace clv::gfx{
 			tdesc.style			= TextureStyle::Cubemap;
 			tdesc.usage			= TextureUsage::RenderTarget_Depth;
 			tdesc.dimensions	= { shadowMapSize, shadowMapSize };
-			tdesc.arraySize		= numLights;
+			tdesc.arraySize		= MAX_LIGHTS;
 
 			shadowMapTexture		= RenderCommand::createTexture(tdesc, nullptr, 4);
 			shadowMapRenderTarget	= RenderCommand::createRenderTarget(nullptr, shadowMapTexture.get());
