@@ -80,7 +80,7 @@ namespace clv::gfx::d3d::_11{
 		D3D11_MAPPED_SUBRESOURCE mappedSubResource{};
 		DX11_THROW_INFO(d3dContext->Map(d3dBuffer.getD3DBuffer().Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &mappedSubResource));
 		
-		memcpy(mappedSubResource.pData, &data, d3dBuffer.getDescriptor().bufferSize);
+		memcpy(mappedSubResource.pData, data, d3dBuffer.getDescriptor().bufferSize);
 		
 		d3dContext->Unmap(d3dBuffer.getD3DBuffer().Get(), 0u);
 	}
