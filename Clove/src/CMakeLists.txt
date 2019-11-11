@@ -4,9 +4,9 @@ project(Clove)
 
 add_library(${PROJECT_NAME} STATIC)
 
-#Files - Clove
+#Files
 set(
-	CloveFiles
+	CoreFiles
 		Clove.hpp
 		Core/Core.hpp
 		Core/IntTypes.hpp
@@ -16,8 +16,16 @@ set(
 		Core/LayerStack.cpp
 		Core/Log.hpp
 		Core/Log.cpp
+)
+
+set(
+	CoreAudioFiles
 		Core/Audio/Sound.hpp
 		Core/Audio/Sound.cpp
+)
+
+set(
+	CoreECSFiles
 		Core/ECS/Component.hpp
 		Core/ECS/Component.cpp
 		Core/ECS/ECSTypes.hpp
@@ -64,8 +72,16 @@ set(
 		Core/ECS/UI/Components/TextComponent.cpp
 		Core/ECS/UI/Systems/TextSystem.hpp
 		Core/ECS/UI/Systems/TextSystem.cpp
+)
+
+set(
+	CoreExceptionFiles
 		Core/Exception/CloveException.hpp
 		Core/Exception/CloveException.cpp
+)
+
+set(
+	CoreGraphicsFiles
 		Core/Graphics/GraphicsTypes.hpp
 		Core/Graphics/Material.hpp
 		Core/Graphics/Material.inl
@@ -95,47 +111,10 @@ set(
 		Core/Graphics/VertexLayout.cpp
 		Core/Graphics/Resources/Buffer.hpp
 		Core/Graphics/Resources/Texture.hpp
-		Core/Input/Input.hpp
-		Core/Input/Input.cpp
-		Core/Input/Keyboard.hpp
-		Core/Input/Keyboard.inl
-		Core/Input/Keyboard.cpp
-		Core/Input/KeyCodes.hpp
-		Core/Input/Mouse.hpp
-		Core/Input/Mouse.cpp
-		Core/Input/MouseButtonCodes.hpp
-		Core/Maths/glmWrappers.hpp
-		Core/Maths/Maths.hpp
-		Core/Maths/Maths.inl
-		Core/Maths/MathsHelpers.hpp
-		Core/Maths/MathsHelpers.inl
-		Core/Maths/MathsTypes.hpp
-		Core/Maths/Matrix.hpp
-		Core/Maths/Quaternion.hpp
-		Core/Maths/Vector.hpp
-		Core/Platform/Application.hpp
-		Core/Platform/Application.cpp
-		Core/Platform/PlatformTypes.hpp
-		Core/Platform/Window.hpp
-		Core/Platform/Window.cpp
-		Core/Profiling/Timer.hpp
-		Core/Profiling/Timer.cpp
-		Core/UI/Font.hpp
-		Core/UI/Font.cpp
-		Core/UI/Text.hpp
-		Core/UI/Text.cpp
-		Core/Utils/Delegate.hpp
-		Core/Utils/Delegate.inl
-		Core/Utils/DeltaTime.hpp
-		Core/Utils/DeltaTime.cpp
-		Core/Utils/HashString.hpp
-		Core/Utils/MeshLoader.hpp
-		Core/Utils/MeshLoader.cpp
 )
 
-#Files - Graphics | OpenGL
 set(
-	GraphicsFiles
+	OpenGLGraphicsFiles
 		Graphics/OpenGL/Resources/GLBuffer.hpp
 		Graphics/OpenGL/Resources/GLBuffer.cpp
 		Graphics/OpenGL/Resources/GLTexture.hpp
@@ -157,61 +136,140 @@ set(
 		Graphics/OpenGL/GLSurface.hpp
 		Graphics/OpenGL/GLSurface.cpp
 )
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set(
-		GraphicsFiles
-			${GraphicsFiles}	
-			Graphics/OpenGL/WGLSurface.hpp
-			Graphics/OpenGL/WGLSurface.cpp
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set(
-		GraphicsFiles
-			${GraphicsFiles}
-			Graphics/OpenGL/GLXSurface.hpp
-			Graphics/OpenGL/GLXSurface.cpp
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-	set(
-		GraphicsFiles
-			${GraphicsFiles}
-			Graphics/OpenGL/CGLSurface.hpp
-			Graphics/OpenGL/CGLSurface.mm
-	)
-endif()
 
-#Files - Graphics | DirectX
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set(
-		GraphicsFiles
-			${GraphicsFiles}
-			Graphics/Direct3D/Resources/D3DBuffer.hpp
-			Graphics/Direct3D/Resources/D3DBuffer.cpp
-			Graphics/Direct3D/Resources/D3DTexture.hpp
-			Graphics/Direct3D/Resources/D3DTexture.cpp
-			Graphics/Direct3D/D3D.hpp
-			Graphics/Direct3D/D3D.cpp
-			Graphics/Direct3D/D3DException.hpp
-			Graphics/Direct3D/D3DException.cpp
-			Graphics/Direct3D/D3DPipelineObject.hpp
-			Graphics/Direct3D/D3DPipelineObject.cpp
-			Graphics/Direct3D/D3DRenderDevice.hpp
-			Graphics/Direct3D/D3DRenderDevice.cpp
-			Graphics/Direct3D/D3DRenderFactory.hpp
-			Graphics/Direct3D/D3DRenderFactory.cpp
-			Graphics/Direct3D/D3DRenderTarget.hpp
-			Graphics/Direct3D/D3DRenderTarget.cpp
-			Graphics/Direct3D/D3DShader.hpp
-			Graphics/Direct3D/D3DShader.cpp
-			Graphics/Direct3D/D3DSurface.hpp
-			Graphics/Direct3D/D3DSurface.cpp
-			Graphics/Direct3D/DXGIInfoManager.hpp
-			Graphics/Direct3D/DXGIInfoManager.cpp
-			
-	)
-endif()
+set(
+	WindowsGLGraphicsFiles
+		Graphics/OpenGL/WGLSurface.hpp
+		Graphics/OpenGL/WGLSurface.cpp
+)
 
-#Files - Graphics | Shaders
+set(
+	LinuxGLGraphicsFiles
+		Graphics/OpenGL/GLXSurface.hpp
+		Graphics/OpenGL/GLXSurface.cpp
+)
+
+set(
+	MacOSGLGraphicsFiles
+		Graphics/OpenGL/CGLSurface.hpp
+		Graphics/OpenGL/CGLSurface.mm
+)
+
+set(
+	Direct3DGraphicsFiles
+		Graphics/Direct3D/Resources/D3DBuffer.hpp
+		Graphics/Direct3D/Resources/D3DBuffer.cpp
+		Graphics/Direct3D/Resources/D3DTexture.hpp
+		Graphics/Direct3D/Resources/D3DTexture.cpp
+		Graphics/Direct3D/D3D.hpp
+		Graphics/Direct3D/D3D.cpp
+		Graphics/Direct3D/D3DException.hpp
+		Graphics/Direct3D/D3DException.cpp
+		Graphics/Direct3D/D3DPipelineObject.hpp
+		Graphics/Direct3D/D3DPipelineObject.cpp
+		Graphics/Direct3D/D3DRenderDevice.hpp
+		Graphics/Direct3D/D3DRenderDevice.cpp
+		Graphics/Direct3D/D3DRenderFactory.hpp
+		Graphics/Direct3D/D3DRenderFactory.cpp
+		Graphics/Direct3D/D3DRenderTarget.hpp
+		Graphics/Direct3D/D3DRenderTarget.cpp
+		Graphics/Direct3D/D3DShader.hpp
+		Graphics/Direct3D/D3DShader.cpp
+		Graphics/Direct3D/D3DSurface.hpp
+		Graphics/Direct3D/D3DSurface.cpp
+		Graphics/Direct3D/DXGIInfoManager.hpp
+		Graphics/Direct3D/DXGIInfoManager.cpp
+)
+
+set(
+	CoreInputFiles
+		Core/Input/Input.hpp
+		Core/Input/Input.cpp
+		Core/Input/Keyboard.hpp
+		Core/Input/Keyboard.inl
+		Core/Input/Keyboard.cpp
+		Core/Input/KeyCodes.hpp
+		Core/Input/Mouse.hpp
+		Core/Input/Mouse.cpp
+		Core/Input/MouseButtonCodes.hpp
+)
+
+set(
+	CoreMathsFiles
+		Core/Maths/glmWrappers.hpp
+		Core/Maths/Maths.hpp
+		Core/Maths/Maths.inl
+		Core/Maths/MathsHelpers.hpp
+		Core/Maths/MathsHelpers.inl
+		Core/Maths/MathsTypes.hpp
+		Core/Maths/Matrix.hpp
+		Core/Maths/Quaternion.hpp
+		Core/Maths/Vector.hpp
+)
+
+set(
+	CorePlatformFiles
+		Core/Platform/Application.hpp
+		Core/Platform/Application.cpp
+		Core/Platform/PlatformTypes.hpp
+		Core/Platform/Window.hpp
+		Core/Platform/Window.cpp
+)
+
+set(
+	WindowsPlatformFiles
+		Platform/Windows/CloveWindows.hpp
+		Platform/Windows/WindowsApplication.hpp
+		Platform/Windows/WindowsApplication.cpp
+		Platform/Windows/WindowsException.hpp
+		Platform/Windows/WindowsException.cpp
+		Platform/Windows/WindowsWindow.hpp
+		Platform/Windows/WindowsWindow.cpp
+)
+
+set(
+	LinuxPlatformFiles
+		Platform/Linux/CloveLinux.hpp
+		Platform/Linux/LinuxApplication.hpp
+		Platform/Linux/LinuxApplication.cpp
+		Platform/Linux/LinuxWindow.hpp
+		Platform/Linux/LinuxWindow.cpp
+)
+
+set(
+	MacOSPlatformFiles
+		Platform/Mac/CloveMac.h
+		Platform/Mac/MacApplication.hpp
+		Platform/Mac/MacApplication.mm
+		Platform/Mac/MacWindow.hpp
+		Platform/Mac/MacWindow.mm
+)
+
+set(
+	CoreProfilingFiles
+		Core/Profiling/Timer.hpp
+		Core/Profiling/Timer.cpp
+)
+
+set(
+	CoreUIFiles
+		Core/UI/Font.hpp
+		Core/UI/Font.cpp
+		Core/UI/Text.hpp
+		Core/UI/Text.cpp
+)
+
+set(
+	CoreUtilityFiles
+		Core/Utils/Delegate.hpp
+		Core/Utils/Delegate.inl
+		Core/Utils/DeltaTime.hpp
+		Core/Utils/DeltaTime.cpp
+		Core/Utils/HashString.hpp
+		Core/Utils/MeshLoader.hpp
+		Core/Utils/MeshLoader.cpp
+)
+
 set(
 	GLSLShaders
 		Graphics/OpenGL/Shaders/2D-ps.glsl
@@ -247,118 +305,106 @@ foreach(shaderFile ${GLSLShaders})
 endforeach()
 
 set(
-	GraphicsFiles
-		${GraphicsFiles}
+	OpenGLGraphicsFiles
+		${OpenGLGraphicsFiles}
 		${GLSLShaders}
 		${GLSLShaderIncludeFile}
 )
 
-if(MSVC)
-	set(
-		pixelShaders
-            Graphics/Direct3D/Shaders/2D-ps.hlsl
-            Graphics/Direct3D/Shaders/CubeShadowMap-ps.hlsl
-			Graphics/Direct3D/Shaders/Font-ps.hlsl
-			Graphics/Direct3D/Shaders/Lit-ps.hlsl
-			Graphics/Direct3D/Shaders/RT-ps.hlsl
-			Graphics/Direct3D/Shaders/Unlit-ps.hlsl
-	)
+set(
+	pixelShaders
+        Graphics/Direct3D/Shaders/2D-ps.hlsl
+        Graphics/Direct3D/Shaders/CubeShadowMap-ps.hlsl
+		Graphics/Direct3D/Shaders/Font-ps.hlsl
+		Graphics/Direct3D/Shaders/Lit-ps.hlsl
+		Graphics/Direct3D/Shaders/RT-ps.hlsl
+		Graphics/Direct3D/Shaders/Unlit-ps.hlsl
+)
+set(
+	vertexShaders
+        Graphics/Direct3D/Shaders/2D-vs.hlsl
+        Graphics/Direct3D/Shaders/CubeShadowMap-vs.hlsl
+		Graphics/Direct3D/Shaders/Font-vs.hlsl
+		Graphics/Direct3D/Shaders/Lit-vs.hlsl
+		Graphics/Direct3D/Shaders/RT-vs.hlsl
+		Graphics/Direct3D/Shaders/Unlit-vs.hlsl
+)
+set(
+    geometryShaders
+	    Graphics/Direct3D/Shaders/CubeShadowMap-gs.hlsl
+)
 
-	set(
-		vertexShaders
-            Graphics/Direct3D/Shaders/2D-vs.hlsl
-            Graphics/Direct3D/Shaders/CubeShadowMap-vs.hlsl
-			Graphics/Direct3D/Shaders/Font-vs.hlsl
-			Graphics/Direct3D/Shaders/Lit-vs.hlsl
-			Graphics/Direct3D/Shaders/RT-vs.hlsl
-			Graphics/Direct3D/Shaders/Unlit-vs.hlsl
-	)
+set(
+	HLSLShaders
+		${pixelShaders}
+		${vertexShaders}
+        ${geometryShaders}
+)
 
-	set(
-        geometryShaders
-		    Graphics/Direct3D/Shaders/CubeShadowMap-gs.hlsl
-    )
-    
-	set(
-		HLSLShaders
-			${pixelShaders}
-			${vertexShaders}
-            ${geometryShaders}
-    )
-    
-    set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_TYPE Geometry)
-	set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
-	set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
+set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_TYPE Geometry)
+set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
+set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
+set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
+set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_MODEL 5.0)
+#get each shader to compile into a header
+set(HLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Direct3D/ShaderHeaders.hpp)
+file(WRITE ${HLSLShaderIncludeFile} "//cmake generated header file\n\n")
+foreach(shaderFile ${HLSLShaders})
+	get_filename_component(fileName ${shaderFile} NAME_WLE)
+	string(REPLACE "-" "_" STRING_NAME ${fileName})
+	set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Direct3D/Shaders/${fileName}.hpp)
+	set_property(SOURCE ${shaderFile} PROPERTY VS_SHADER_FLAGS "/Vn shader_${STRING_NAME} /Fh ${outFilePath}")
+	file(APPEND ${HLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
+endforeach()
 
-	set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
-	set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_MODEL 5.0)
-
-	#get each shader to compile into a header
-	set(HLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Direct3D/ShaderHeaders.hpp)
-	file(WRITE ${HLSLShaderIncludeFile} "//cmake generated header file\n\n")
-	foreach(shaderFile ${HLSLShaders})
-		get_filename_component(fileName ${shaderFile} NAME_WLE)
-
-		string(REPLACE "-" "_" STRING_NAME ${fileName})
-		set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Direct3D/Shaders/${fileName}.hpp)
-
-		set_property(SOURCE ${shaderFile} PROPERTY VS_SHADER_FLAGS "/Vn shader_${STRING_NAME} /Fh ${outFilePath}")
-		file(APPEND ${HLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
-	endforeach()
-
-	set(
-	GraphicsFiles
-		${GraphicsFiles}
+set(
+	Direct3DGraphicsFiles
+		${Direct3DGraphicsFiles}
 		${HLSLShaders}
 		${HLSLShaderIncludeFile}
-	)
-endif()
+)
 
-#Files - Platform
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set(
-		PlatformFiles
-			Platform/Windows/CloveWindows.hpp
-			Platform/Windows/WindowsApplication.hpp
-			Platform/Windows/WindowsApplication.cpp
-			Platform/Windows/WindowsException.hpp
-			Platform/Windows/WindowsException.cpp
-			Platform/Windows/WindowsWindow.hpp
-			Platform/Windows/WindowsWindow.cpp
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set(
-		PlatformFiles
-			Platform/Linux/CloveLinux.hpp
-			Platform/Linux/LinuxApplication.hpp
-			Platform/Linux/LinuxApplication.cpp
-			Platform/Linux/LinuxWindow.hpp
-			Platform/Linux/LinuxWindow.cpp
-	)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-	set(
-		PlatformFiles
-			Platform/Mac/CloveMac.h
-			Platform/Mac/MacApplication.hpp
-			Platform/Mac/MacApplication.mm
-			Platform/Mac/MacWindow.hpp
-			Platform/Mac/MacWindow.mm
-	)
-endif()
+set(
+	AllFiles
+	${CoreFiles}
+		${CoreAudioFiles}
+		${CoreECSFiles}
+		${CoreExceptionFiles}
+		${CoreGraphicsFiles}
+			${OpenGLGraphicsFiles}
+				${WindowsGLGraphicsFiles}
+				${LinuxGLGraphicsFiles}
+				${MacOSGLGraphicsFiles}
+			${Direct3DGraphicsFiles}
+		${CoreInputFiles}
+		${CoreMathsFiles}
+		${CorePlatformFiles}
+			${WindowsPlatformFiles}
+			${LinuxPlatformFiles}
+			${MacOSPlatformFiles}
+		${CoreProfilingFiles}
+		${CoreUIFiles}
+		${CoreUtilityFiles}
+)
 
 #Organise the source tree
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${CloveFiles})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GraphicsFiles})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${PlatformFiles})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${AllFiles})
 
 #Set the target source files
 target_sources(
 	${PROJECT_NAME}
 	PRIVATE
-		${CloveFiles}
-		${GraphicsFiles}
-		${PlatformFiles}
+		${AllFiles}
 )
+
+#Don't compile platform specific files
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	set_source_files_properties(${LinuxGLGraphicsFiles} ${MacOSGLGraphicsFiles} ${LinuxPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set_source_files_properties(${WindowsGLGraphicsFiles} ${MacOSGLGraphicsFiles} ${Direct3DGraphicsFiles} ${WindowsPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	set_source_files_properties(${WindowsGLGraphicsFiles} ${LinuxGLGraphicsFiles} ${Direct3DGraphicsFiles} ${WindowsPlatformFiles} ${LinuxPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+endif()
 
 #Includes
 target_include_directories(
@@ -371,7 +417,6 @@ target_include_directories(
 		../vendor/OBJ-Loader/Source
 	INTERFACE
         ../vendor/glm
-        ../vendor/Glad/include #would like to remove but the SBO forces it
 		#TODO: Get rid of the lbsndfile paths below (see Sound.hpp)
 		../vendor/libsndfile/src
 		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
