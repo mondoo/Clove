@@ -72,6 +72,7 @@ namespace clv::gfx{
 	}
 
 	void Renderer2D::endScene(){
+		return;
 		RenderCommand::setDepthBuffer(false);
 
 		//Sprites
