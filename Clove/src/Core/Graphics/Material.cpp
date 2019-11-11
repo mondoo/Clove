@@ -48,7 +48,7 @@ namespace clv::gfx{
 
 	void Material::setSpecularTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		albedoTexture = RenderCommand::createTexture(tdesc, path);
+		specTexture = RenderCommand::createTexture(tdesc, path);
 	}
 
 	void Material::setSpecularTexture(const std::shared_ptr<Texture>& texture){
