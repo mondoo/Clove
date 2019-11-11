@@ -7,10 +7,11 @@ namespace clv::gfx{
 			RenderCommand::updateBufferData(*iter->second.buffer, &data);
 		} else{
 			BufferDescriptor srdesc{};
-			srdesc.elementSize = 0;
-			srdesc.bufferSize = sizeof(data);
-			BufferType bufferType = BufferType::ShaderResourceBuffer;
-			BufferUsage bufferUsage = BufferUsage::Dynamic;
+			srdesc.elementSize	= 0;
+			srdesc.bufferSize	= sizeof(data);
+			srdesc.bufferType	= BufferType::ShaderResourceBuffer;
+			srdesc.bufferUsage	= BufferUsage::Dynamic;
+
 			auto buffer = RenderCommand::createBuffer(srdesc, &data);
 			shaderData[bindingPoint] = { buffer, shaderType };
 		}
