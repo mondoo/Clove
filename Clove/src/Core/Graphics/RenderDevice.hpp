@@ -9,7 +9,7 @@ namespace clv::gfx{
 	class RenderTarget;
 	class Shader;
 	class Surface;
-	class Viewport;
+	struct Viewport;
 }
 
 namespace clv::gfx{
