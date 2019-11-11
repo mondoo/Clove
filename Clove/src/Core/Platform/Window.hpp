@@ -6,7 +6,7 @@
 
 namespace clv::gfx{
 	enum class API;
-	class Context;
+	class Surface;
 }
 
 namespace clv::plt{
@@ -21,7 +21,7 @@ namespace clv::plt{
 		Keyboard keyboard;
 		Mouse mouse;
 
-		std::unique_ptr<gfx::Context> context;
+		std::shared_ptr<gfx::Surface> surface;
 
 		//FUNCTIONS
 	public:
@@ -46,7 +46,7 @@ namespace clv::plt{
 		Keyboard& getKeyboard();
 		Mouse& getMouse();
 
-		gfx::Context& getContext();
+		gfx::Surface& getSurface();
 
 	protected:
 		virtual void processInput() = 0;

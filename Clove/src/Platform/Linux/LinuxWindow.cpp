@@ -1,9 +1,14 @@
 #include "LinuxWindow.hpp"
 
 #include "Core/Graphics/Renderer.hpp"
-#include "Core/Graphics/Context.hpp"
+#include "Core/Graphics/Surface.hpp"
+#include "Core/Graphics/RenderCommand.hpp"
 
 namespace clv::plt{
+	LinuxWindow::LinuxWindow(const WindowProps& props){
+		initialiseWindow(props);
+	}
+
 	LinuxWindow::~LinuxWindow(){
 		//Reset context first, before the display is closed
 		context.reset();
@@ -12,14 +17,6 @@ namespace clv::plt{
 		XFreeColormap(display, windowAttribs.colormap);
 		XDestroyWindow(display, window);
 		XCloseDisplay(display);
-	}
-
-	LinuxWindow::LinuxWindow(const WindowProps& props){
-		initialiseWindow(props, gfx::API::OpenGL4);
-	}
-
-	LinuxWindow::LinuxWindow(const WindowProps& props, gfx::API api){
-		initialiseWindow(props, api);
 	}
 
 	void* LinuxWindow::getNativeWindow() const{
@@ -87,7 +84,7 @@ namespace clv::plt{
 		}
 	}
 
-	void LinuxWindow::initialiseWindow(const WindowProps& props, gfx::API api){
+	void LinuxWindow::initialiseWindow(const WindowProps& props){
 		windowProperties.title = props.title;
 		windowProperties.width = props.width;
 		windowProperties.height = props.height;
@@ -105,7 +102,7 @@ namespace clv::plt{
 
         //Create the context first to get the visual info
         data = { display, &window, &visual };
-        context = gfx::Context::createContext(&data, api);
+		surface = gfx::RenderCommand::createSurface(&data);
 
 		if(screenID != visual->screen){
 			//TODO: Exception
@@ -128,7 +125,7 @@ namespace clv::plt{
 							   &windowAttribs);
 
         //Now that we have a window, we can make the context current
-        context->makeCurrent();
+		gfx::RenderCommand::makeSurfaceCurrent(*surface);
 
 		//Remap the delete window message so we can gracefully close the application
 		atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
