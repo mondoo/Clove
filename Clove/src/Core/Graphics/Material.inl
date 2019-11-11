@@ -1,3 +1,5 @@
+#include "Core/Graphics/RenderCommand.hpp"
+
 namespace clv::gfx{
 	template<typename DataType>
 	void Material::setData(BufferBindingPoint bindingPoint, DataType&& data, ShaderType shaderType){
