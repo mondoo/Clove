@@ -42,13 +42,13 @@ namespace clv::gfx::ogl{
 		return std::make_shared<GLShader>(descriptor);
 	}
 
-	std::shared_ptr<Surface> GLRenderFactory::createSurface(){
+	std::shared_ptr<Surface> GLRenderFactory::createSurface(void* windowData){
 	#if CLV_PLATFORM_WINDOWS
-		return std::make_shared<WGLSurface>();
+		return std::make_shared<WGLSurface>(windowData);
 	#elif CLV_PLATFORM_LINUX
-		return std::make_shared<GLXSurface>();
+		return std::make_shared<GLXSurface>(windowData);
 	#elif CLV_PLATFORM_MACOS
-		return std::make_shared<CGLSurface>();
+		return std::make_shared<CGLSurface>(windowData);
 	#endif
 	}
 }

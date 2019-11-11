@@ -23,6 +23,6 @@ namespace clv::gfx{
 		virtual std::shared_ptr<PipelineObject> createPipelineObject(const std::shared_ptr<Shader>& shader) = 0;
 		virtual std::shared_ptr<RenderTarget> createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture) = 0;
 		virtual std::shared_ptr<Shader> createShader(const ShaderDescriptor& descriptor) = 0;
-		virtual std::shared_ptr<Surface> createSurface() = 0;
+		virtual std::shared_ptr<Surface> createSurface(void* windowData) = 0;
 	};
 }
