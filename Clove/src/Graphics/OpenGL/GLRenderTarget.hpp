@@ -4,6 +4,10 @@
 
 #include <glad/glad.h>
 
+namespace clv::gfx{
+	class Texture;
+};
+
 namespace clv::gfx::ogl{
 	class GLRenderTarget : public RenderTarget{
 		//VARIABLES

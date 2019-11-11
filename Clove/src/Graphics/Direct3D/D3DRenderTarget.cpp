@@ -14,7 +14,7 @@ namespace clv::gfx::d3d::_11{
 		//Colour view
 		if(colourTexture){
 			D3DTexture* d3dTexture = static_cast<D3DTexture*>(colourTexture);
-			Microsoft::WRL::ComPtr<ID3D11Texture2D> textureSource = d3dTexture->getTexture();
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> textureSource = d3dTexture->getD3DTexture();
 
 			D3D11_TEXTURE2D_DESC textureDesc;
 			textureSource->GetDesc(&textureDesc);
@@ -30,7 +30,7 @@ namespace clv::gfx::d3d::_11{
 		//Depth / Stencil view
 		if(depthStencilTexture){
 			D3DTexture* d3dTexture = static_cast<D3DTexture*>(depthStencilTexture);
-			Microsoft::WRL::ComPtr<ID3D11Texture2D> textureSource = d3dTexture->getTexture();
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> textureSource = d3dTexture->getD3DTexture();
 
 			D3D11_TEXTURE2D_DESC textureDesc{};
 			textureSource->GetDesc(&textureDesc);

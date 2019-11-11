@@ -3,8 +3,6 @@
 #include "Graphics/Direct3D/D3DException.hpp"
 #include "Graphics/Direct3D/D3DShader.hpp"
 
-#include <d3d11.h>
-
 namespace clv::gfx::d3d::_11{
 	D3DPipelineObject::D3DPipelineObject(ID3D11Device& d3dDevice, const std::shared_ptr<Shader>& shader)
 		: shader(shader){

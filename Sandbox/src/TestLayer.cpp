@@ -16,8 +16,6 @@
 #include "Core/Maths/Vector.hpp"
 #include "Core/Input/Input.hpp"
 #include "Core/Utils/DeltaTime.hpp"
-#include "Core/Graphics/BindableFactory.hpp"
-#include "Core/Graphics/Bindables/Texture.hpp"
 #include "Core/Graphics/RenderTarget.hpp"
 #include "Core/Graphics/Mesh.hpp"
 #include "Core/Graphics/Sprite.hpp"

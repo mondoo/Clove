@@ -1,6 +1,6 @@
 #include "DXGIInfoManager.hpp"
 
-#include "Graphics/DirectX-11/DX11Exception.hpp"
+#include "Graphics/Direct3D/D3DException.hpp"
 #include "Platform/Windows/WindowsException.hpp"
 
 #include <dxgidebug.h>

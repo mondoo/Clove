@@ -8,6 +8,10 @@ struct ID3D11Device;
 struct ID3D11RenderTargetView;
 struct ID3D11DepthStencilView;
 
+namespace clv::gfx{
+	class Texture;
+}
+
 namespace clv::gfx::d3d::_11{
 	class D3DRenderTarget : public RenderTarget{
 		//VARIABLES
