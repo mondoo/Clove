@@ -25,7 +25,7 @@ namespace clv::gfx{
 	void MaterialInstance::bind(){
 		if(albedoTexture){
 			RenderCommand::bindTexture(*albedoTexture, TBP_Albedo);
-		} else { 
+		} else if(material->albedoTexture){ //Thought this shouldn't be empty - but maybe it is?
 			RenderCommand::bindTexture(*material->albedoTexture, TBP_Albedo);
 		}
 
