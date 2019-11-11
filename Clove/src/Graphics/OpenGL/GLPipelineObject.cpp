@@ -13,7 +13,7 @@ namespace clv::gfx::ogl{
 		glGenVertexArrays(1, &vertexArrayID);
 		glBindVertexArray(vertexArrayID);
 
-		uint64 offset = 0; //void* expects 64 bits
+		GLuint offset = 0;
 		for(uint32 i = 0; i < layout.count(); ++i){
 			const auto& element = layout.resolve(i);
 			const VertexElementType elementType = element.getType();
@@ -21,7 +21,8 @@ namespace clv::gfx::ogl{
 			GLint attribLoc = glGetAttribLocation(glShader->getProgramID(), element.getSemantic());
 
 			glEnableVertexAttribArray(attribLoc);
-			glVertexAttribPointer(attribLoc, element.getCount(), getGLElementType(elementType), isTypeNormalised(elementType), static_cast<GLsizei>(layout.size()), reinterpret_cast<const void*>(offset));
+			glVertexAttribFormat(attribLoc, element.getCount(), getGLElementType(elementType), isTypeNormalised(elementType), offset);
+			glVertexAttribBinding(attribLoc, 0);
 			offset += VertexElement::sizeOf(element.getType());
 		}
 
