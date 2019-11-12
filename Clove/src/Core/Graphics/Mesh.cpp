@@ -2,59 +2,58 @@
 
 #include "Core/Graphics/RenderCommand.hpp"
 #include "Core/Graphics/Resources/Buffer.hpp"
-#include "Core/Graphics/VertexLayout.hpp"
+#include "Core/Utils/MeshLoader.hpp"
 
 namespace clv::gfx{
 	Mesh::Mesh(std::string filePath, MaterialInstance materialInstance)
-		: materialInstance(std::move(materialInstance)){
-		info = loader::MeshLoader::loadOBJ(filePath);
+		: materialInstance(std::move(materialInstance))
+		, loadedBufferData(VertexLayout{}){//Note initialising it like this is potentially dangerous
+		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
-		//this->materialInstance.bind(); //TODO: Needed?
+		const int32 vertexCount = info.verticies.size();
+		indices = info.indices;
+		indexCount = static_cast<uint32>(indices.size());
 
-		/*const int32 vertexCount = info.verticies.size();*/
-		indexCount = static_cast<uint32>(info.indices.size());
-
-		//TODO: When / how to do this last bit?
-		//Should it be when we prep the mesh for the shader?
-
-		/*gfx::VertexLayout layout = this->materialInstance.getReflectionData().vertexBufferLayout;
-		gfx::VertexBufferData vertexArray{ layout };
-		vertexArray.resize(vertexCount);
+		VertexLayout layout; //Layout is currently all possible data
+		layout.add(gfx::VertexElementType::position3D).add(VertexElementType::texture2D).add(VertexElementType::normal);
+		
+		loadedBufferData = { layout };
+		loadedBufferData.resize(vertexCount);
 
 		for(int32 i = 0; i < vertexCount; ++i){
 			for(int32 j = 0; j < layout.count(); ++j){
 				switch(layout.resolve(j).getType()){
 					case VertexElementType::position3D:
-						vertexArray[i].getAttribute<VertexElementType::position3D>() = math::Vector3f{ info.getData<VertexElementType::position3D>()[i] };
+						loadedBufferData[i].getAttribute<VertexElementType::position3D>() = math::Vector3f{ info.getData<VertexElementType::position3D>()[i] };
 						break;
 
 					case VertexElementType::texture2D:
-						vertexArray[i].getAttribute<VertexElementType::texture2D>() = math::Vector2f{ info.getData<VertexElementType::texture2D>()[i] };
+						loadedBufferData[i].getAttribute<VertexElementType::texture2D>() = math::Vector2f{ info.getData<VertexElementType::texture2D>()[i] };
 						break;
 
 					case VertexElementType::normal:
-						vertexArray[i].getAttribute<VertexElementType::normal>() = math::Vector3f{ info.getData<VertexElementType::normal>()[i] };
+						loadedBufferData[i].getAttribute<VertexElementType::normal>() = math::Vector3f{ info.getData<VertexElementType::normal>()[i] };
 						break;
 					default:
 						break;
 				}
 			}
-		}*/
-
-		//createBuffers(vertexArray, info.indices);
+		}
 	}
 
 	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, MaterialInstance materialInstance)
 		: materialInstance(std::move(materialInstance))
-		, indexCount(static_cast<uint32>(indices.size())){
+		, loadedBufferData(vbData)
+		, indices(indices){
+		indexCount = indices.size();
 		this->materialInstance.bind(); //TODO: Needed?
 	}
 
 	Mesh::Mesh(const Mesh& other) = default;
 
-	Mesh& Mesh::operator=(const Mesh& other) = default;
-
 	Mesh::Mesh(Mesh&& other) noexcept = default;
+
+	Mesh& Mesh::operator=(const Mesh& other) = default;
 
 	Mesh& Mesh::operator=(Mesh&& other) noexcept = default;
 
@@ -75,7 +74,7 @@ namespace clv::gfx{
 	}*/
 
 	std::shared_ptr<Buffer> Mesh::generateVertexBuffer(const VertexLayout& layout){
-		const int32 vertexCount = info.verticies.size();
+		const int32 vertexCount = loadedBufferData.size();
 
 		gfx::VertexBufferData vertexArray{ layout };
 		vertexArray.resize(vertexCount);
@@ -83,16 +82,20 @@ namespace clv::gfx{
 		for(int32 i = 0; i < vertexCount; ++i){
 			for(int32 j = 0; j < layout.count(); ++j){
 				switch(layout.resolve(j).getType()){
+					case VertexElementType::position2D:
+						vertexArray[i].getAttribute<VertexElementType::position2D>() = loadedBufferData[i].getAttribute<VertexElementType::position2D>();
+						break;
+
 					case VertexElementType::position3D:
-						vertexArray[i].getAttribute<VertexElementType::position3D>() = math::Vector3f{ info.getData<VertexElementType::position3D>()[i] };
+						vertexArray[i].getAttribute<VertexElementType::position3D>() = loadedBufferData[i].getAttribute<VertexElementType::position3D>();
 						break;
 
 					case VertexElementType::texture2D:
-						vertexArray[i].getAttribute<VertexElementType::texture2D>() = math::Vector2f{ info.getData<VertexElementType::texture2D>()[i] };
+						vertexArray[i].getAttribute<VertexElementType::texture2D>() = loadedBufferData[i].getAttribute<VertexElementType::texture2D>();
 						break;
 
 					case VertexElementType::normal:
-						vertexArray[i].getAttribute<VertexElementType::normal>() = math::Vector3f{ info.getData<VertexElementType::normal>()[i] };
+						vertexArray[i].getAttribute<VertexElementType::normal>() = loadedBufferData[i].getAttribute<VertexElementType::normal>();
 						break;
 					default:
 						break;
@@ -115,10 +118,10 @@ namespace clv::gfx{
 
 		BufferDescriptor ibdesc{};
 		ibdesc.elementSize	= indexSize;
-		ibdesc.bufferSize	= info.indices.size() * indexSize;
+		ibdesc.bufferSize	= indices.size() * indexSize;
 		ibdesc.bufferType	= BufferType::IndexBuffer;
 		ibdesc.bufferUsage	= BufferUsage::Default;
-		auto buffer = RenderCommand::createBuffer(ibdesc, info.indices.data());
+		auto buffer = RenderCommand::createBuffer(ibdesc, indices.data());
 
 		return buffer;
 	}

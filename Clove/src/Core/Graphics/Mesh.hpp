@@ -2,7 +2,7 @@
 
 #include "Core/Graphics/GraphicsTypes.hpp"
 #include "Core/Graphics/MaterialInstance.hpp"
-#include "Core/Utils/MeshLoader.hpp"
+#include "Core/Graphics/VertexLayout.hpp"
 
 namespace clv::gfx{
 	class Buffer;
@@ -18,19 +18,23 @@ namespace clv::gfx{
 		//std::shared_ptr<Buffer> indexBuffer;
 		MaterialInstance materialInstance;
 
-		loader::MeshInfo info;
+		VertexBufferData loadedBufferData;
+		std::vector<uint32> indices;
 
-		uint32 indexCount = 0;
+		uint32 indexCount = 0; //TODO: This is redundant with the actual array
 
 		//FUNCTIONS
 	public:
 		Mesh() = delete;
 		Mesh(std::string filePath, MaterialInstance materialInstance);
 		Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, MaterialInstance materialInstance);
+		
 		Mesh(const Mesh& other);
-		Mesh& operator=(const Mesh& other);
 		Mesh(Mesh&& other) noexcept;
+
+		Mesh& operator=(const Mesh& other);
 		Mesh& operator=(Mesh&& other) noexcept;
+
 		~Mesh();
 
 		MaterialInstance& getMaterialInstance();
