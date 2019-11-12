@@ -27,7 +27,6 @@ set(
 		Core/ECS/Manager.hpp
 		Core/ECS/Manager.cpp
 		Core/ECS/System.hpp
-		Core/ECS/System.inl
 		Core/ECS/2D/Components/RigidBodyComponent.hpp
 		Core/ECS/2D/Components/RigidBodyComponent.cpp
 		Core/ECS/2D/Components/SpriteComponent.hpp
