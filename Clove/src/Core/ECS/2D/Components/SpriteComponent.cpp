@@ -1,6 +1,6 @@
 #include "SpriteComponent.hpp"
 
-#include "Core/Graphics/Sprite.hpp"
+#include "Core/Graphics/Renderables/Sprite.hpp"
 
 namespace clv::ecs::_2D{
 	SpriteComponent::SpriteComponent() = default;

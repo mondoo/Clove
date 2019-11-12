@@ -2,7 +2,7 @@
 
 #include "Core/Graphics/Renderer.hpp"
 #include "Core/Graphics/ShaderBufferTypes.hpp"
-#include "Core/Graphics/Mesh.hpp"
+#include "Core/Graphics/Renderables/Mesh.hpp"
 #include "Core/Graphics/MaterialInstance.hpp"
 
 namespace clv::ecs::_3D{

@@ -1,7 +1,7 @@
 #include "TextSystem.hpp"
 
 #include "Core/Graphics/Renderer2D.hpp"
-#include "Core/Graphics/Sprite.hpp"
+#include "Core/Graphics/Renderables/Sprite.hpp"
 #include "Core/Graphics/GraphicsTypes.hpp"
 #include "Core/Graphics/Resources/Texture.hpp"
 #include "Core/Graphics/RenderCommand.hpp"

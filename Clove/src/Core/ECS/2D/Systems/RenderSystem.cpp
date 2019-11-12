@@ -1,7 +1,7 @@
 #include "RenderSystem.hpp"
 
 #include "Core/Graphics/Renderer2D.hpp"
-#include "Core/Graphics/Sprite.hpp"
+#include "Core/Graphics/Renderables/Sprite.hpp"
 
 namespace clv::ecs::_2D{
 	RenderSystem::RenderSystem() = default;

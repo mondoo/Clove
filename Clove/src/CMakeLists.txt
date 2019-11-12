@@ -89,8 +89,6 @@ set(
 		Core/Graphics/MaterialInstance.hpp
 		Core/Graphics/MaterialInstance.inl
 		Core/Graphics/MaterialInstance.cpp
-		Core/Graphics/Mesh.hpp
-		Core/Graphics/Mesh.cpp
 		Core/Graphics/PipelineObject.hpp
 		Core/Graphics/RenderCommand.hpp
 		Core/Graphics/RenderCommand.cpp
@@ -103,12 +101,14 @@ set(
 		Core/Graphics/RenderTarget.hpp
 		Core/Graphics/Shader.hpp
 		Core/Graphics/ShaderBufferTypes.hpp
-		Core/Graphics/Sprite.hpp
-		Core/Graphics/Sprite.cpp
 		Core/Graphics/Surface.hpp
 		Core/Graphics/VertexLayout.hpp
 		Core/Graphics/VertexLayout.inl
 		Core/Graphics/VertexLayout.cpp
+		Core/Graphics/Renderables/Mesh.hpp
+		Core/Graphics/Renderables/Mesh.cpp
+		Core/Graphics/Renderables/Sprite.hpp
+		Core/Graphics/Renderables/Sprite.cpp
 		Core/Graphics/Resources/Buffer.hpp
 		Core/Graphics/Resources/Texture.hpp
 )

@@ -7,9 +7,9 @@
 #include "Core/Graphics/RenderTarget.hpp"
 #include "Core/Platform/Application.hpp"
 #include "Core/Platform/Window.hpp"
-#include "Core/Graphics/Mesh.hpp"
+#include "Core/Graphics/Renderables/Mesh.hpp"
 #include "Core/Graphics/Material.hpp"
-#include "Core/Graphics/Sprite.hpp"
+#include "Core/Graphics/Renderables/Sprite.hpp"
 #include "Core/Platform/Window.hpp"
 #include "Core/Graphics/ShaderBufferTypes.hpp"
 

@@ -17,8 +17,8 @@
 #include "Core/Input/Input.hpp"
 #include "Core/Utils/DeltaTime.hpp"
 #include "Core/Graphics/RenderTarget.hpp"
-#include "Core/Graphics/Mesh.hpp"
-#include "Core/Graphics/Sprite.hpp"
+#include "Core/Graphics/Renderables/Mesh.hpp"
+#include "Core/Graphics/Renderables/Sprite.hpp"
 #include "Core/Graphics/Material.hpp"
 
 #include <ostream>
