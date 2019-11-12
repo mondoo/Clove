@@ -3,6 +3,10 @@
 namespace clv::ecs{
 	Entity::Entity() = default;
 
+	Entity::Entity(EntityID entityID)
+			: entityID(entityID){
+	}
+
 	Entity::Entity(const Entity& other) = default;
 
 	Entity::Entity(Entity&& other) noexcept{
@@ -26,10 +30,6 @@ namespace clv::ecs{
 	}
 
 	Entity::~Entity() = default;
-
-	Entity::Entity(EntityID entityID)
-		: entityID(entityID){
-	}
 
 	bool Entity::isValid() const{
 		if(entityID == INVALID_ENTITY_ID){

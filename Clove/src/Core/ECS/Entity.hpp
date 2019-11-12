@@ -18,13 +18,15 @@ namespace clv::ecs{
 		//FUNCTIONS
 	public:
 		Entity();
+		Entity(EntityID entityID);
+
 		Entity(const Entity& other);
 		Entity(Entity&& other) noexcept;
+
 		Entity& operator=(const Entity& other);
 		Entity& operator=(Entity&& other) noexcept;
-		~Entity();
 
-		Entity(EntityID entityID);
+		~Entity();
 
 		bool isValid() const;
 
