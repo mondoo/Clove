@@ -13,7 +13,6 @@ namespace clv::ecs::_2D{
 	RenderSystem::~RenderSystem() = default;
 
 	void RenderSystem::update(utl::DeltaTime deltaTime){
-		return; //TEMP: just to prove out the pipeline system
 		for(auto& componentTuple : components){
 			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
 			SpriteComponent* renderable = std::get<SpriteComponent*>(componentTuple);

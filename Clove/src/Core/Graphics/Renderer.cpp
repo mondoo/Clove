@@ -94,10 +94,11 @@ namespace clv::gfx{
 			meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ currentSceneData->currentShadowDepth }, ShaderType::Pixel);
 			meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ currentSceneData->numLights }, ShaderType::Pixel);
 
-			//mesh->bind(); //TODO: Remove?
+			//Temp
 			auto vb = mesh->generateVertexBuffer(currentSceneData->defaultPipeline->getVertexLayout());
 			auto ib = mesh->generateIndexBuffer();
 			meshMaterial.bind();
+			//~
 			RenderCommand::bindVertexBuffer(*vb);
 			RenderCommand::bindIndexBuffer(*ib);
 
@@ -105,10 +106,11 @@ namespace clv::gfx{
 		};
 
 		const auto generateShadowMap = [](const std::shared_ptr<Mesh>& mesh){
-			//mesh->bind(); //TODO: Remove?
+			//Temp
 			auto vb = mesh->generateVertexBuffer(currentSceneData->shadowPipeline->getVertexLayout());
 			auto ib = mesh->generateIndexBuffer();
 			mesh->getMaterialInstance().bind();
+			//~
 			RenderCommand::bindVertexBuffer(*vb);
 			RenderCommand::bindIndexBuffer(*ib);
 
