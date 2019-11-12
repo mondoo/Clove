@@ -51,13 +51,14 @@ namespace clv::ecs{
 			return;
 		}
 
-		std::for_each(systems.begin(), systems.end(), [ID](const std::unique_ptr<SystemBase>& system){
+		/*std::for_each(systems.begin(), systems.end(), [ID](const std::unique_ptr<SystemBase>& system){
 			system->onEntityDestroyed(ID);
-		});
+		});*/
 		components.erase(ID);
 	}
 
 	Entity Manager::getEntity(EntityID ID){
+		//TODO: Might just be easier to make the copy ctor/assignment operator copy the delegates
 		if(const auto foundEnt = components.find(ID); foundEnt != components.end()){
 			Entity entity{ ID };
 			bindEntity(entity);
@@ -70,10 +71,10 @@ namespace clv::ecs{
 	void Manager::onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component){
 		components[entityID][componentID] = std::move(component);
 
-		auto& components = this->components;
+		/*auto& components = this->components;
 		std::for_each(systems.begin(), systems.end(), [entityID, &components](const std::unique_ptr<SystemBase>& system){
 			system->onEntityComponentAdded(entityID, components[entityID]);
-		});
+		});*/
 	}
 
 	Component* Manager::getComponentForEntity(EntityID entityID, ComponentID componentID){
