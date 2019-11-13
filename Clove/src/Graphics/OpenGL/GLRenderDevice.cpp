@@ -1,5 +1,6 @@
 #include "GLRenderDevice.hpp"
 
+#include "Graphics/OpenGL/GL.hpp"
 #include "Graphics/OpenGL/Resources/GLBuffer.hpp"
 #include "Graphics/OpenGL/Resources/GLTexture.hpp"
 #include "Graphics/OpenGL/GLPipelineObject.hpp"
@@ -55,7 +56,8 @@ namespace clv::gfx::ogl{
 	void GLRenderDevice::makeSurfaceCurrent(Surface& surface){
 		GLSurface& glSurface = static_cast<GLSurface&>(surface);
 		glSurface.makeCurrent();
-		CLV_ASSERT(gladLoadGL(), "Failed to load opengl"); //Not the ideal place but it has to happen after the surface(context) is created and made current
+		//Not the ideal place but it has to happen after the surface(context) is created and made current
+		postContextCreatedInitialise();
 	}
 	
 	void GLRenderDevice::setRenderTarget(RenderTarget& renderTarget){
