@@ -36,49 +36,43 @@ namespace clv::gfx::d3d::_11{
 			&d3dContext
 		));
 
-		//Setting up the default depth stencil
-		D3D11_DEPTH_STENCIL_DESC depthDesc = {};
-		depthDesc.DepthEnable = TRUE;
-		depthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		depthDesc.DepthFunc = D3D11_COMPARISON_LESS;
+		//TODO: The below should be handled by either application or client
+		D3D11_DEPTH_STENCIL_DESC depthDesc{};
+		depthDesc.DepthEnable		= TRUE;
+		depthDesc.DepthWriteMask	= D3D11_DEPTH_WRITE_MASK_ALL;
+		depthDesc.DepthFunc			= D3D11_COMPARISON_LESS;
 
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> dsstate;
 		DX11_THROW_INFO(d3dDevice->CreateDepthStencilState(&depthDesc, &dsstate));
-
 		d3dContext->OMSetDepthStencilState(dsstate.Get(), 1u);
 
-		//Setting up the default blend state
-		D3D11_BLEND_DESC blendDesc = { };
-		blendDesc.AlphaToCoverageEnable = FALSE;
-		blendDesc.IndependentBlendEnable = FALSE;
-		blendDesc.RenderTarget[0].BlendEnable = TRUE;
-		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		D3D11_BLEND_DESC blendDesc{};
+		blendDesc.AlphaToCoverageEnable					= FALSE;
+		blendDesc.IndependentBlendEnable				= FALSE;
+		blendDesc.RenderTarget[0].BlendEnable			= TRUE;
+		blendDesc.RenderTarget[0].SrcBlend				= D3D11_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend				= D3D11_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp				= D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].SrcBlendAlpha			= D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlendAlpha		= D3D11_BLEND_ZERO;
+		blendDesc.RenderTarget[0].BlendOpAlpha			= D3D11_BLEND_OP_ADD;
 		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
 		Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
 		DX11_THROW_INFO(d3dDevice->CreateBlendState(&blendDesc, &blendState));
-
 		d3dContext->OMSetBlendState(blendState.Get(), nullptr, 0xffffffff);
 
-		//Set primitive topology to triangle list (groups of 3 verticies)
-		d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		//Setting up the default resterizer state
-		D3D11_RASTERIZER_DESC rdesc = {};
-		rdesc.FillMode = D3D11_FILL_SOLID;
-		rdesc.CullMode = D3D11_CULL_BACK;
+		D3D11_RASTERIZER_DESC rdesc{};
+		rdesc.FillMode				= D3D11_FILL_SOLID;
+		rdesc.CullMode				= D3D11_CULL_BACK;
 		rdesc.FrontCounterClockwise = TRUE; //We need to set the front face to CCW to be compatable with opengl/glm
-		rdesc.DepthClipEnable = TRUE;
+		rdesc.DepthClipEnable		= TRUE;
 
 		Microsoft::WRL::ComPtr<ID3D11RasterizerState> rstate;
 		DX11_THROW_INFO(d3dDevice->CreateRasterizerState(&rdesc, &rstate));
-
 		d3dContext->RSSetState(rstate.Get());
+
+		d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		CLV_LOG_INFO("Successfully initialised Direct3D");
 
