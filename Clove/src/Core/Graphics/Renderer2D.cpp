@@ -93,7 +93,7 @@ namespace clv::gfx{
 				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
 				//Temp
 				auto vb = currentSceneData2D->spriteMesh->generateVertexBuffer(currentSceneData2D->spritePipelineObject->getVertexLayout());
-				auto ib = currentSceneData2D->spriteMesh->generateIndexBuffer();
+				auto ib = currentSceneData2D->spriteMesh->getIndexBuffer();
 				//~
 				renderMeshMaterial.bind();
 				RenderCommand::bindVertexBuffer(*vb);
@@ -117,7 +117,7 @@ namespace clv::gfx{
 				charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);
 				//Temp
 				auto vb = currentSceneData2D->characterMesh->generateVertexBuffer(currentSceneData2D->charPipelineObject->getVertexLayout());
-				auto ib = currentSceneData2D->characterMesh->generateIndexBuffer();
+				auto ib = currentSceneData2D->characterMesh->getIndexBuffer();
 				//~
 				charMat.bind();
 				RenderCommand::bindVertexBuffer(*vb);

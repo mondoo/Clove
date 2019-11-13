@@ -96,7 +96,7 @@ namespace clv::gfx{
 
 			//Temp
 			auto vb = mesh->generateVertexBuffer(currentSceneData->defaultPipeline->getVertexLayout());
-			auto ib = mesh->generateIndexBuffer();
+			auto ib = mesh->getIndexBuffer();
 			meshMaterial.bind();
 			//~
 			RenderCommand::bindVertexBuffer(*vb);
@@ -108,7 +108,7 @@ namespace clv::gfx{
 		const auto generateShadowMap = [](const std::shared_ptr<Mesh>& mesh){
 			//Temp
 			auto vb = mesh->generateVertexBuffer(currentSceneData->shadowPipeline->getVertexLayout());
-			auto ib = mesh->generateIndexBuffer();
+			auto ib = mesh->getIndexBuffer();
 			mesh->getMaterialInstance().bind();
 			//~
 			RenderCommand::bindVertexBuffer(*vb);

@@ -15,13 +15,11 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		//std::shared_ptr<Buffer> vertexBuffer;
-		//std::shared_ptr<Buffer> indexBuffer;
+		std::shared_ptr<Buffer> indexBuffer;
 		MaterialInstance materialInstance;
 
 		VertexBufferData loadedBufferData;
 		std::vector<uint32> indices;
-
-		uint32 indexCount = 0; //TODO: This is redundant with the actual array
 
 		//FUNCTIONS
 	public:
@@ -45,9 +43,10 @@ namespace clv::gfx{
 
 		//TODO: These might be quite slow - anyway to cache?
 		std::shared_ptr<Buffer> generateVertexBuffer(const VertexLayout& layout);
-		std::shared_ptr<Buffer> generateIndexBuffer();
+		std::shared_ptr<Buffer> getIndexBuffer();
 
 	private:
+		void initialiseIndexBuffer(const std::vector<uint32>& indices);
 		/*void createBuffers(const VertexBufferData& vbData, const std::vector<uint32>& indices);*/
 	};
 }

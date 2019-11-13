@@ -12,7 +12,6 @@ namespace clv::gfx{
 
 		const int32 vertexCount = info.verticies.size();
 		indices = info.indices;
-		indexCount = static_cast<uint32>(indices.size());
 
 		VertexLayout layout; //Layout is currently all possible data
 		layout.add(gfx::VertexElementType::position3D).add(VertexElementType::texture2D).add(VertexElementType::normal);
@@ -39,14 +38,15 @@ namespace clv::gfx{
 				}
 			}
 		}
+
+		initialiseIndexBuffer(indices);
 	}
 
 	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, MaterialInstance materialInstance)
 		: materialInstance(std::move(materialInstance))
 		, loadedBufferData(vbData)
 		, indices(indices){
-		indexCount = indices.size();
-		this->materialInstance.bind(); //TODO: Needed?
+		initialiseIndexBuffer(indices);
 	}
 
 	Mesh::Mesh(const Mesh& other) = default;
@@ -64,7 +64,7 @@ namespace clv::gfx{
 	}
 
 	uint32 Mesh::getIndexCount(){
-		return indexCount;
+		return static_cast<uint32>(indices.size());
 	}
 
 	/*void Mesh::bind(){
@@ -113,7 +113,11 @@ namespace clv::gfx{
 		return buffer;
 	}
 
-	std::shared_ptr<Buffer> Mesh::generateIndexBuffer(){
+	std::shared_ptr<Buffer> Mesh::getIndexBuffer(){
+		return indexBuffer;
+	}
+
+	void Mesh::initialiseIndexBuffer(const std::vector<uint32>& indices){
 		const std::size_t indexSize = sizeof(uint32);
 
 		BufferDescriptor ibdesc{};
@@ -121,9 +125,7 @@ namespace clv::gfx{
 		ibdesc.bufferSize	= indices.size() * indexSize;
 		ibdesc.bufferType	= BufferType::IndexBuffer;
 		ibdesc.bufferUsage	= BufferUsage::Default;
-		auto buffer = RenderCommand::createBuffer(ibdesc, indices.data());
-
-		return buffer;
+		indexBuffer			= RenderCommand::createBuffer(ibdesc, indices.data());
 	}
 
 	//void Mesh::createBuffers(const VertexBufferData& vbData, const std::vector<uint32>& indices){
