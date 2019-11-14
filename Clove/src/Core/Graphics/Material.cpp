@@ -5,7 +5,14 @@
 #include "Core/Graphics/RenderCommand.hpp"
 
 namespace clv::gfx{
-	Material::Material() = default;
+	Material::Material(){
+		uint32 white = 0xffffffff;
+		TextureDescriptor descriptor{};
+		descriptor.dimensions = { 1, 1 };
+		auto blankTexture = RenderCommand::createTexture(descriptor, &white, 4);
+		albedoTexture = blankTexture;
+		specTexture = blankTexture;
+	}
 
 	Material::Material(const Material& other) = default;
 

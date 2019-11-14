@@ -23,7 +23,6 @@ namespace clv::gfx{
 		std::shared_ptr<Texture> specTexture;
 		std::unordered_map<BufferBindingPoint, ShaderData> shaderData;
 
-
 		//FUNCTIONS
 	public:
 		Material();
