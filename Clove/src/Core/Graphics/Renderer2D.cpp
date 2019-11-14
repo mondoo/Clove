@@ -1,8 +1,10 @@
 #include "Renderer2D.hpp"
 
 #include "Core/Graphics/RenderCommand.hpp"
-#include "Core/Graphics/Sprite.hpp"
-#include "Core/Graphics/Mesh.hpp"
+#include "Core/Graphics/Resources/Buffer.hpp"
+#include "Core/Graphics/PipelineObject.hpp"
+#include "Core/Graphics/Renderables/Sprite.hpp"
+#include "Core/Graphics/Renderables/Mesh.hpp"
 #include "Core/Graphics/VertexLayout.hpp"
 #include "Core/Platform/Application.hpp"
 #include "Core/Platform/Window.hpp"
@@ -14,6 +16,9 @@ namespace clv::gfx{
 
 		std::vector<std::shared_ptr<Sprite>> spritesToRender;
 		std::vector<std::shared_ptr<Sprite>> charactersToRender;
+
+		std::shared_ptr<PipelineObject> spritePipelineObject;
+		std::shared_ptr<PipelineObject> charPipelineObject;
 
 		math::Matrix4f projection; //Effectively the 'camera'
 	} *currentSceneData2D;
@@ -27,33 +32,35 @@ namespace clv::gfx{
 			3, 2, 0
 		};
 
+		VertexLayout layout;
+		layout.add(gfx::VertexElementType::position2D).add(VertexElementType::texture2D);
+		
 		//Sprite mesh
 		{
-			VertexLayout layout;
-			layout.add(gfx::VertexElementType::position2D).add(VertexElementType::texture2D);
-			VertexBufferData bufferData(std::move(layout));
+			VertexBufferData bufferData{ layout };
 			bufferData.emplaceBack(math::Vector2f{ -1.0f, -1.0f }, math::Vector2f{ 0.0f, 0.0f });
 			bufferData.emplaceBack(math::Vector2f{  1.0f, -1.0f }, math::Vector2f{ 1.0f, 0.0f });
 			bufferData.emplaceBack(math::Vector2f{ -1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
 			bufferData.emplaceBack(math::Vector2f{  1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
 
-			auto spriteMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::_2D);
+			auto spriteMaterial = std::make_shared<gfx::Material>();
 			currentSceneData2D->spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
 		}
 
 		//Font mesh
 		{
-			VertexLayout layout;
-			layout.add(gfx::VertexElementType::position2D).add(VertexElementType::texture2D);
-			VertexBufferData bufferData(std::move(layout));
+			VertexBufferData bufferData{ layout };
 			bufferData.emplaceBack(math::Vector2f{ 0,  0 }, math::Vector2f{ 0.0f, 1.0f });
 			bufferData.emplaceBack(math::Vector2f{ 1,  0 }, math::Vector2f{ 1.0f, 1.0f });
 			bufferData.emplaceBack(math::Vector2f{ 0,  1 }, math::Vector2f{ 0.0f, 0.0f });
 			bufferData.emplaceBack(math::Vector2f{ 1,  1 }, math::Vector2f{ 1.0f, 0.0f });
 
-			auto characterMaterial = std::make_shared<gfx::Material>(gfx::ShaderStyle::Font);
+			auto characterMaterial = std::make_shared<gfx::Material>();
 			currentSceneData2D->characterMesh = std::make_shared<gfx::Mesh>(bufferData, indices, characterMaterial->createInstance());
 		}
+
+		currentSceneData2D->spritePipelineObject = RenderCommand::createPipelineObject(RenderCommand::createShader({ ShaderStyle::Unlit_2D }));
+		currentSceneData2D->charPipelineObject = RenderCommand::createPipelineObject(RenderCommand::createShader({ ShaderStyle::Font }));
 
 		//Projection
 		const float halfWidth = static_cast<float>(plt::Application::get().getWindow().getWidth()) / 2;
@@ -74,13 +81,24 @@ namespace clv::gfx{
 	void Renderer2D::endScene(){
 		RenderCommand::setDepthBuffer(false);
 
+		RenderCommand::bindPipelineObject(*currentSceneData2D->spritePipelineObject);
+
 		//Sprites
 		{
 			const auto draw = [](const std::shared_ptr<Sprite>& sprite){
 				auto& renderMeshMaterial = currentSceneData2D->spriteMesh->getMaterialInstance();
 				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
-				currentSceneData2D->spriteMesh->bind();
+				renderMeshMaterial.setData(BBP_Colour, sprite->getColour(), ShaderType::Pixel);
+				renderMeshMaterial.bind();
+				
+				const auto vertexLayout = currentSceneData2D->spritePipelineObject->getVertexLayout();
+
+				auto vb = currentSceneData2D->spriteMesh->getVertexBufferForLayout(vertexLayout);
+				auto ib = currentSceneData2D->spriteMesh->getIndexBuffer();
+				
+				RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				RenderCommand::bindIndexBuffer(*ib);
 
 				RenderCommand::drawIndexed(currentSceneData2D->spriteMesh->getIndexCount());
 			};
@@ -90,13 +108,23 @@ namespace clv::gfx{
 			currentSceneData2D->spritesToRender.clear();
 		}
 
+		RenderCommand::bindPipelineObject(*currentSceneData2D->charPipelineObject);
+
 		//Characters
 		{
 			const auto draw = [](const std::shared_ptr<Sprite>& character){
 				auto& charMat = currentSceneData2D->characterMesh->getMaterialInstance();
 				charMat.setAlbedoTexture(character->getTexture());
 				charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);
-				currentSceneData2D->characterMesh->bind();
+				charMat.bind();
+
+				const auto vertexLayout = currentSceneData2D->charPipelineObject->getVertexLayout();
+
+				auto vb = currentSceneData2D->characterMesh->getVertexBufferForLayout(vertexLayout);
+				auto ib = currentSceneData2D->characterMesh->getIndexBuffer();
+
+				RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				RenderCommand::bindIndexBuffer(*ib);
 
 				RenderCommand::drawIndexed(currentSceneData2D->characterMesh->getIndexCount());
 			};

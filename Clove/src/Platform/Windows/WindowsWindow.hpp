@@ -26,14 +26,15 @@ namespace clv::plt{
 		//FUNCTIONS
 	public:
 		WindowsWindow() = delete;
+		WindowsWindow(const WindowProps& props);
+
 		WindowsWindow(const WindowsWindow& other) = delete;
 		WindowsWindow(WindowsWindow&& other) noexcept = delete;
+
 		WindowsWindow& operator=(const WindowsWindow& other) = delete;
 		WindowsWindow& operator=(WindowsWindow&& other) noexcept = delete;
+
 		virtual ~WindowsWindow();
-		
-		WindowsWindow(const WindowProps& props);
-		WindowsWindow(const WindowProps& props, gfx::API api);
 
 		virtual void* getNativeWindow() const override;
 		
@@ -45,6 +46,6 @@ namespace clv::plt{
 		static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 		LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-		void initialiseWindow(const WindowProps& props, gfx::API api);
+		void initialiseWindow(const WindowProps& props);
 	};
 }

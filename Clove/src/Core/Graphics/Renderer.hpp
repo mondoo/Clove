@@ -1,17 +1,13 @@
 #pragma once
 
-#include "Core/Graphics/GraphicsTypes.hpp"
-
-#include "Core/Graphics/Bindables/ShaderBufferObject.hpp"
-#include "Core/Graphics/GraphicsConstants.hpp"
-#include "Core/Graphics/MaterialInstance.hpp"
-
 namespace clv::gfx{
 	class RenderTarget;
 	class Mesh;
 	struct CameraRenderData;
 	struct PointLightData;
+}
 
+namespace clv::gfx{
 	class Renderer{
 		//FUNCTIONS
 	public:
