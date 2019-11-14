@@ -71,18 +71,22 @@ void TestLayer::onAttach(){
 	bigBoy.addComponent<clv::ecs::_3D::MeshComponent>();
 	bigBoy.addComponent<clv::ecs::_3D::TransformComponent>();
 
-	auto cubeMaterial = std::make_shared<clv::gfx::Material>(/*clv::gfx::ShaderStyle::Lit_3D*/);
-	cubeMaterial->setAlbedoTexture("res/Textures/container2.png");
-	cubeMaterial->setSpecularTexture("res/Textures/container2_specular.png");
+	auto cubeMaterial = std::make_shared<clv::gfx::Material>();
+	cubeMaterial->setData(clv::gfx::BBP_Colour, clv::math::Vector4f{ 0.4f, 0.4f, 0.4f, 1.0f }, clv::gfx::ShaderType::Pixel);
 	cubeMaterial->setData(clv::gfx::BBP_MaterialData, clv::gfx::MaterialData{ 32.0f }, clv::gfx::ShaderType::Pixel);
 
 	{
-		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+		auto inst = cubeMaterial->createInstance();
+		inst.setAlbedoTexture("res/Textures/container2.png");
+		inst.setSpecularTexture("res/Textures/container2_specular.png");
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", inst);
 		ent1.getComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 	}
 
 	{
-		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
+		auto inst = cubeMaterial->createInstance();
+		inst.setData(clv::gfx::BBP_Colour, clv::math::Vector4f{ 0.0f, 0.0f, 1.0f, 1.0f }, clv::gfx::ShaderType::Pixel);
+		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", inst);
 		ent2.getComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 	}
 
