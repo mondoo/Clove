@@ -5,9 +5,11 @@
 #include "Core/Graphics/RenderCommand.hpp"
 
 namespace clv::gfx{
-	MaterialInstance::MaterialInstance(const MaterialInstance& other) = default;
+	MaterialInstance::MaterialInstance(std::shared_ptr<Material> material)
+		: material(std::move(material)){
+	}
 
-	MaterialInstance& MaterialInstance::operator=(const MaterialInstance& other) = default;
+	MaterialInstance::MaterialInstance(const MaterialInstance& other) = default;
 
 	MaterialInstance::MaterialInstance(MaterialInstance&& other) noexcept{
 		material = std::move(other.material);
@@ -16,12 +18,12 @@ namespace clv::gfx{
 		shaderData = std::move(other.shaderData);
 	}
 
+	MaterialInstance& MaterialInstance::operator=(const MaterialInstance& other) = default;
+
 	MaterialInstance& MaterialInstance::operator=(MaterialInstance&& other) noexcept = default;
 
-	MaterialInstance::MaterialInstance(std::shared_ptr<Material> material)
-		: material(std::move(material)){
-	}
-
+	MaterialInstance::~MaterialInstance() = default;
+	
 	void MaterialInstance::bind(){
 		if(albedoTexture){
 			RenderCommand::bindTexture(albedoTexture.get(), TBP_Albedo);
@@ -44,17 +46,7 @@ namespace clv::gfx{
 		for(auto& [bindingPoint, data] : shaderData){
 			RenderCommand::bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
 		}
-
-		//RenderCommand::bindShader(*material->shader);
 	}
-
-	/*const ShaderReflectionData& MaterialInstance::getReflectionData() const{
-		return material->getReflectionData();
-	}
-
-	const std::shared_ptr<Shader>& MaterialInstance::getShader() const{
-		return material->getShader();
-	}*/
 
 	void MaterialInstance::setAlbedoTexture(const std::string& path){
 		TextureDescriptor tdesc{};

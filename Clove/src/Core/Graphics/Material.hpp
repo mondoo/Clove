@@ -3,7 +3,6 @@
 #include "Core/Graphics/GraphicsTypes.hpp"
 #include "Core/Graphics/Resources/Texture.hpp"
 #include "Core/Graphics/Resources/Buffer.hpp"
-//#include "Core/Graphics/Shader.hpp" //TODO: remove? needed for the reflection data
 
 namespace clv::gfx{
 	class MaterialInstance;
@@ -20,28 +19,24 @@ namespace clv::gfx{
 
 		//VARIABLES
 	private:
-		//std::shared_ptr<Shader> shader;
 		std::shared_ptr<Texture> albedoTexture;
 		std::shared_ptr<Texture> specTexture;
 		std::unordered_map<BufferBindingPoint, ShaderData> shaderData;
 
-		/*ShaderReflectionData reflectionData;*/
 
 		//FUNCTIONS
 	public:
-		Material() /*= delete*/ = default;
+		Material();
+
 		Material(const Material& other);
-		Material& operator=(const Material& other);
 		Material(Material&& other) noexcept;
+
+		Material& operator=(const Material& other);
 		Material& operator=(Material&& other) noexcept;
+
 		~Material();
 
-		/*Material(ShaderStyle shaderStyle);*/
-
 		MaterialInstance createInstance();
-
-		/*const ShaderReflectionData& getReflectionData() const;
-		const std::shared_ptr<Shader>& getShader() const;*/
 
 		template<typename DataType>
 		void setData(BufferBindingPoint bindingPoint, DataType&& data, ShaderType shaderType);
