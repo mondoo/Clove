@@ -64,6 +64,10 @@ layout(std140, binding = 8) uniform numLightBuffer{
 	unsigned int numLights;
 };
 
+layout(std140, binding = 11) uniform colourDataBuffer{
+	vec4 colour;
+};
+
 layout(location = 0) out vec4 fragmentColour;
 
 //vec3 CalculateDirectionalLighting(DirectionalLight light, vec3 normal, vec3 viewDirection);
@@ -115,7 +119,7 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	
 	//Diffuse
 	float diff				= max(dot(normal, lightDir), 0.0);
-	vec3 diffuse			= light.diffuse * diff * vec3(texture(albedoSampler, vertTexCoord));
+	vec3 diffuse			= light.diffuse * diff * vec3(texture(albedoSampler, vertTexCoord) * colour);
 
 	//Specular
 	vec3 reflectDirection	= reflect(-lightDir, normal);

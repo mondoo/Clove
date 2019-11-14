@@ -50,6 +50,7 @@ namespace clv::gfx{
 		BBP_CurrentLights = 8u,
 		BBP_CurrentFaceIndex = 9u,
 		BBP_CurrentDepthData = 10u,
+		BBP_Colour = 11u
 	};
 
 	enum TextureBindingPoint{

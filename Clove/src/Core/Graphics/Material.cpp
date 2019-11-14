@@ -12,6 +12,8 @@ namespace clv::gfx{
 		auto blankTexture = RenderCommand::createTexture(descriptor, &white, 4);
 		albedoTexture = blankTexture;
 		specTexture = blankTexture;
+
+		setData(BBP_Colour, math::Vector4f(1.0f, 1.0f, 1.0f, 1.0), ShaderType::Pixel);
 	}
 
 	Material::Material(const Material& other) = default;

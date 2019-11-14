@@ -42,6 +42,10 @@ cbuffer lightNumBuffer : register(b8){
 	unsigned int numLights;
 }
 
+cbuffer colourDataBuffer : register(b11){
+	float4 colour;
+}
+
 float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord);
 
 float shadowCalculation(float3 fragPos, unsigned int shadowIndex);
@@ -66,7 +70,7 @@ float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, floa
 
 	//Diffuse
 	float3 diff = max(dot(normal, lightDir), 0.0f);
-	float3 diffuse = light.diffuse * diff * (float3)albedoTexture.Sample(albedoSampler, texCoord);
+	float3 diffuse = light.diffuse * diff * (float3)albedoTexture.Sample(albedoSampler, texCoord) * (float3)colour;
 
 	//Specular
 	float3 reflectDir = reflect(-lightDir, normal);
