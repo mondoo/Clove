@@ -17,8 +17,6 @@ namespace clv::gfx{
 		std::vector<std::shared_ptr<Sprite>> spritesToRender;
 		std::vector<std::shared_ptr<Sprite>> charactersToRender;
 
-		//std::shared_ptr<Buffer> vertexBuffer;
-		//std::shared_ptr<Buffer> indexBuffer;
 		std::shared_ptr<PipelineObject> spritePipelineObject;
 		std::shared_ptr<PipelineObject> charPipelineObject;
 
