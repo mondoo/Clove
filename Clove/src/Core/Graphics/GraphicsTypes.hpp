@@ -15,25 +15,13 @@ namespace clv::gfx{
 		Geometry
 	};
 
-	enum class ShaderStyle{ //TODO: Rename to material style
-		Lit,
-		Unlit,
-		_2D,
+	enum class ShaderStyle{
+		Lit_3D,
+		Unlit_3D,
+		Unlit_2D,
 		RT,
 		Font,
 		CubeShadowMap
-	};
-
-	enum class TextureStyle{
-		Default,
-		Cubemap
-	};
-
-	enum class TextureUsage{
-		Default,
-		RenderTarget_Colour,
-		RenderTarget_Depth,
-		Font
 	};
 
 	enum class VertexElementType{
@@ -43,10 +31,32 @@ namespace clv::gfx{
 		normal,
 	};
 
-	struct TextureDescriptor{
-		TextureStyle style = TextureStyle::Default;
-		TextureUsage usage = TextureUsage::Default;
-		math::Vector<2, uint32, math::qualifier::defaultp> dimensions = { 0, 0 };
-		uint8 arraySize = 1;
+	struct Viewport{
+		uint32 x = 0;
+		uint32 y = 0;
+		uint32 width = 0;
+		uint32 height = 0;
+	};
+
+	enum BufferBindingPoint{ //Will this be needed?
+		BBP_CameraMatrices = 0u,
+		BBP_PointLightData = 1u,
+		BBP_ViewData = 2u,
+		BBP_ModelData = 3u,
+		BBP_MaterialData = 4u,
+		BBP_2DData = 5u,
+		BBP_ShadowData = 6u,
+		BBP_CubeDepthData = 7u,
+		BBP_CurrentLights = 8u,
+		BBP_CurrentFaceIndex = 9u,
+		BBP_CurrentDepthData = 10u,
+		BBP_Colour = 11u
+	};
+
+	enum TextureBindingPoint{
+		TBP_Albedo = 1u,
+		TBP_Specular = 2u,
+		TBP_Shadow = 3u,
+		TBP_None = 4u
 	};
 }

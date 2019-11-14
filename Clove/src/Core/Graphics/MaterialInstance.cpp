@@ -1,12 +1,15 @@
 #include "MaterialInstance.hpp"
 
 #include "Core/Graphics/Material.hpp"
-#include "Core/Graphics/Bindables/Texture.hpp"
+#include "Core/Graphics/Resources/Texture.hpp"
+#include "Core/Graphics/RenderCommand.hpp"
 
 namespace clv::gfx{
-	MaterialInstance::MaterialInstance(const MaterialInstance& other) = default;
+	MaterialInstance::MaterialInstance(std::shared_ptr<Material> material)
+		: material(std::move(material)){
+	}
 
-	MaterialInstance& MaterialInstance::operator=(const MaterialInstance& other) = default;
+	MaterialInstance::MaterialInstance(const MaterialInstance& other) = default;
 
 	MaterialInstance::MaterialInstance(MaterialInstance&& other) noexcept{
 		material = std::move(other.material);
@@ -15,61 +18,51 @@ namespace clv::gfx{
 		shaderData = std::move(other.shaderData);
 	}
 
+	MaterialInstance& MaterialInstance::operator=(const MaterialInstance& other) = default;
+
 	MaterialInstance& MaterialInstance::operator=(MaterialInstance&& other) noexcept = default;
 
-	MaterialInstance::MaterialInstance(std::shared_ptr<Material> material)
-		: material(std::move(material)){
-	}
-
+	MaterialInstance::~MaterialInstance() = default;
+	
 	void MaterialInstance::bind(){
 		if(albedoTexture){
-			albedoTexture->bind();
-		} else if(material->albedoTexture){ //TODO: This shouldn't really be nullptr - but how will solid colour shaders work?
-			material->albedoTexture->bind();
+			RenderCommand::bindTexture(albedoTexture.get(), TBP_Albedo);
+		} else{
+			RenderCommand::bindTexture(material->albedoTexture.get(), TBP_Albedo);
 		}
 
 		if(specTexture){
-			specTexture->bind();
-		} else if(material->specTexture){
-			material->specTexture->bind();
+			RenderCommand::bindTexture(specTexture.get(), TBP_Specular);
+		} else{
+			RenderCommand::bindTexture(material->specTexture.get(), TBP_Specular);
 		}
 
-		for(auto& [key, val] : material->shaderData){
-			if(auto iter = shaderData.find(key); iter == shaderData.end()){
-				val->bind();
+		for(auto& [bindingPoint, data] : material->shaderData){
+			if(auto iter = shaderData.find(bindingPoint); iter == shaderData.end()){ //If we don't have data for that bindingPint
+				RenderCommand::bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
 			}
 		}
 
-		for(auto& [key, val] : shaderData){
-			val->bind();
+		for(auto& [bindingPoint, data] : shaderData){
+			RenderCommand::bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
 		}
-
-		material->shader->bind();
-	}
-
-	const ShaderReflectionData& MaterialInstance::getReflectionData() const{
-		return material->getReflectionData();
-	}
-
-	const std::shared_ptr<Shader>& MaterialInstance::getShader() const{
-		return material->getShader();
 	}
 
 	void MaterialInstance::setAlbedoTexture(const std::string& path){
-		albedoTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Albedo);
+		TextureDescriptor tdesc{};
+		albedoTexture = RenderCommand::createTexture(tdesc, path);
 	}
 
 	void MaterialInstance::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
-		CLV_ASSERT(texture->getBindingPoint() == gfx::TBP_Albedo, "Incorrect binding point for an albedo texture!");
 		albedoTexture = texture;
 	}
 
 	void MaterialInstance::setSpecularTexture(const std::string& path){
-		specTexture = gfx::BindableFactory::createTexture(path, gfx::TBP_Specular);
+		TextureDescriptor tdesc{};
+		specTexture = RenderCommand::createTexture(tdesc, path);
 	}
 
 	void MaterialInstance::setSpecularTexture(const std::shared_ptr<Texture>& texture){
-		CLV_ASSERT(texture->getBindingPoint() == gfx::TBP_Specular, "Incorrect binding point for a specular texture!");
 		specTexture = texture;
 	}
 }

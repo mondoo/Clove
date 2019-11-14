@@ -2,7 +2,6 @@
 
 #include "Core/Platform/Window.hpp"
 #include "Core/Graphics/Renderer.hpp"
-#include "Core/Graphics/BindableFactory.hpp"
 
 namespace clv::ecs::_3D{
 	CameraComponent::CameraComponent(){

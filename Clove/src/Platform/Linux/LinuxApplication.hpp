@@ -7,6 +7,6 @@ namespace clv::plt{
 		//FUNCTIONS
 	private:
 		virtual std::unique_ptr<Window> createWindow(const WindowProps& props = WindowProps()) override;
-		virtual std::unique_ptr<Window> createWindow(const WindowProps& props, gfx::API api) override;
+		virtual gfx::API getPlatformPreferedAPI() override;
 	};
 }

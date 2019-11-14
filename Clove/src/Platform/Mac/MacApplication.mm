@@ -16,7 +16,7 @@ namespace clv::plt{
         return std::make_unique<MacWindow>(props);
     }
 
-    std::unique_ptr<Window> MacApplication::createWindow(const WindowProps& props, gfx::API api){
-        return std::make_unique<MacWindow>(props, api);
-    }
+	gfx::API MacApplication::getPlatformPreferedAPI(){
+		return gfx::API::OpenGL4;	
+	}
 }

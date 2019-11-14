@@ -2,7 +2,9 @@
 
 namespace clv::gfx{
 	class Sprite;
+}
 
+namespace clv::gfx{
 	class Renderer2D{
 		//FUNCTIONS
 	public:

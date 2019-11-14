@@ -1,6 +1,6 @@
 #include "MeshComponent.hpp"
 
-#include "Core/Graphics/Mesh.hpp"
+#include "Core/Graphics/Renderables/Mesh.hpp"
 
 namespace clv::ecs::_3D{
 	MeshComponent::MeshComponent() = default;

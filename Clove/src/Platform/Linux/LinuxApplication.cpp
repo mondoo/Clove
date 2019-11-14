@@ -7,7 +7,7 @@ namespace clv::plt{
 		return std::make_unique<LinuxWindow>(props);
 	}
 
-	std::unique_ptr<Window> LinuxApplication::createWindow(const WindowProps& props, gfx::API api){
-		return std::make_unique<LinuxWindow>(props, api);
+	gfx::API LinuxApplication::getPlatformPreferedAPI(){
+		return gfx::API::OpenGL4;
 	}
 }
