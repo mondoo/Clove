@@ -48,12 +48,10 @@ namespace clv::gfx::d3d::_11{
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 
-		//Get access to the texture subresource (back buffer)
 		Microsoft::WRL::ComPtr<ID3D11Resource> backBuffer;
 		DX11_THROW_INFO(swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer));
 		DX11_THROW_INFO(d3dDevice.CreateRenderTargetView(backBuffer.Get(), nullptr, &renderTargetView));
 
-		//Create depth stencil texture
 		D3D11_TEXTURE2D_DESC depthTexDesc{};
 		depthTexDesc.Width				= data->width;
 		depthTexDesc.Height				= data->height;
@@ -68,28 +66,14 @@ namespace clv::gfx::d3d::_11{
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil;
 		DX11_THROW_INFO(d3dDevice.CreateTexture2D(&depthTexDesc, nullptr, &depthStencil));
 
-		//Create view of depth stencil texture
-		D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
-		dsvDesc.Format = depthTexDesc.Format;
-		dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-		dsvDesc.Texture2D.MipSlice = 0u;
+		D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+		dsvDesc.Format				= depthTexDesc.Format;
+		dsvDesc.ViewDimension		= D3D11_DSV_DIMENSION_TEXTURE2D;
+		dsvDesc.Texture2D.MipSlice	= 0u;
 
 		DX11_THROW_INFO(d3dDevice.CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
 
 		renderTarget = std::make_unique<D3DRenderTarget>(renderTargetView, depthStencilView);
-
-		//Bind depth stencil view to output merger
-		//d3dContext->OMSetRenderTargets(1u, target.GetAddressOf(), dsv.Get());
-
-		//Configure viewport (maps the render space to an area on screen)
-		//D3D11_VIEWPORT vp{};
-		//vp.TopLeftX = 0;
-		//vp.TopLeftY = 0;
-		//vp.Width	= static_cast<FLOAT>(data->width);
-		//vp.Height	= static_cast<FLOAT>(data->height);
-		//vp.MinDepth = 0;
-		//vp.MaxDepth = 1;
-		//d3dContext->RSSetViewports(1u, &vp);
 	}
 
 	D3DSurface::D3DSurface(D3DSurface&& other) noexcept = default;
