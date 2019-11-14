@@ -60,10 +60,18 @@ namespace clv::gfx::d3d::_11{
 		bindShader(*d3dPipelineObject.getShader());
 	}
 
-	void D3DRenderDevice::bindTexture(const Texture& texture, const uint32 bindingPoint){
-		const D3DTexture& d3dTexture = static_cast<const D3DTexture&>(texture);
-		d3dContext->PSSetShaderResources(bindingPoint, 1u, d3dTexture.getD3DShaderResourceView().GetAddressOf());
-		d3dContext->PSSetSamplers(bindingPoint, 1u, d3dTexture.getD3DSampler().GetAddressOf());
+	void D3DRenderDevice::bindTexture(const Texture* texture, const uint32 bindingPoint){
+		const D3DTexture* d3dTexture = static_cast<const D3DTexture*>(texture);
+
+		if(d3dTexture){
+			d3dContext->PSSetShaderResources(bindingPoint, 1u, d3dTexture->getD3DShaderResourceView().GetAddressOf());
+			d3dContext->PSSetSamplers(bindingPoint, 1u, d3dTexture->getD3DSampler().GetAddressOf());
+		} else{
+			ID3D11ShaderResourceView* resourceView[1] = { nullptr };
+			ID3D11SamplerState* samplerState[1] = { nullptr };
+			d3dContext->PSSetShaderResources(bindingPoint, 1u, resourceView);
+			d3dContext->PSSetSamplers(bindingPoint, 1u, samplerState);
+		}
 	}
 
 	void D3DRenderDevice::bindShader(const Shader& shader){
@@ -169,17 +177,6 @@ namespace clv::gfx::d3d::_11{
 		blendDesc.RenderTarget[0].BlendEnable = enabled ? TRUE : FALSE;
 		DX11_THROW_INFO(d3dDevice->CreateBlendState(&blendDesc, &blendState));
 		d3dContext->OMSetBlendState(blendState.Get(), blendFactor, sampleMask);
-	}
-
-	void D3DRenderDevice::removeCurrentGeometryShader(){
-		d3dContext->GSSetShader(nullptr, nullptr, 0u);
-	}
-
-	void D3DRenderDevice::removeTextureAtSlot(uint32 slot){
-		ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
-		ID3D11SamplerState* nullST[1] = { nullptr };
-		d3dContext->PSSetShaderResources(slot, 1u, nullSRV);
-		d3dContext->PSSetSamplers(slot, 1u, nullST);
 	}
 
 #if CLV_DEBUG

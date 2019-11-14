@@ -45,7 +45,7 @@ namespace clv::gfx{
 			bufferData.emplaceBack(math::Vector2f{ -1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
 			bufferData.emplaceBack(math::Vector2f{  1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
 
-			auto spriteMaterial = std::make_shared<gfx::Material>(/*gfx::ShaderStyle::Unlit_2D*/);
+			auto spriteMaterial = std::make_shared<gfx::Material>();
 			currentSceneData2D->spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
 		}
 
@@ -57,7 +57,7 @@ namespace clv::gfx{
 			bufferData.emplaceBack(math::Vector2f{ 0,  1 }, math::Vector2f{ 0.0f, 0.0f });
 			bufferData.emplaceBack(math::Vector2f{ 1,  1 }, math::Vector2f{ 1.0f, 0.0f });
 
-			auto characterMaterial = std::make_shared<gfx::Material>(/*gfx::ShaderStyle::Font*/);
+			auto characterMaterial = std::make_shared<gfx::Material>();
 			currentSceneData2D->characterMesh = std::make_shared<gfx::Mesh>(bufferData, indices, characterMaterial->createInstance());
 		}
 

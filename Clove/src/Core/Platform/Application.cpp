@@ -45,7 +45,7 @@ namespace clv::plt{
 		//TODO: Added a 'start' function to handle not calling a virtual from the ctor
 		//Would like as minimal api as possible when starting the application
 
-		gfx::RenderCommand::initialise(getPlatformPreferedAPI());
+		gfx::RenderCommand::initialise(gfx::API::OpenGL4);
 
 		window = createWindow();
 		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);

@@ -24,15 +24,15 @@ namespace clv::gfx{
 
 	void MaterialInstance::bind(){
 		if(albedoTexture){
-			RenderCommand::bindTexture(*albedoTexture, TBP_Albedo);
+			RenderCommand::bindTexture(albedoTexture.get(), TBP_Albedo);
 		} else if(material->albedoTexture){ //Thought this shouldn't be empty - but maybe it is?
-			RenderCommand::bindTexture(*material->albedoTexture, TBP_Albedo);
+			RenderCommand::bindTexture(material->albedoTexture.get(), TBP_Albedo);
 		}
 
 		if(specTexture){
-			RenderCommand::bindTexture(*specTexture, TBP_Specular);
+			RenderCommand::bindTexture(specTexture.get(), TBP_Specular);
 		} else if(material->specTexture){
-			RenderCommand::bindTexture(*material->specTexture, TBP_Specular);
+			RenderCommand::bindTexture(material->specTexture.get(), TBP_Specular);
 		}
 
 		for(auto& [bindingPoint, data] : material->shaderData){

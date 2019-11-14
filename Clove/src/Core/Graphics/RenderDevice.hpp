@@ -22,7 +22,7 @@ namespace clv::gfx{
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32 stride) = 0;
 		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint) = 0;
 		virtual void bindPipelineObject(const PipelineObject& pipelineObject) = 0;
-		virtual void bindTexture(const Texture& texture, const uint32 bindingPoint) = 0;
+		virtual void bindTexture(const Texture* texture, const uint32 bindingPoint) = 0;
 		virtual void bindShader(const Shader& shader) = 0;
 
 		virtual void updateBufferData(Buffer& buffer, const void* data) = 0;
@@ -42,10 +42,5 @@ namespace clv::gfx{
 		virtual void setClearColour(const math::Vector4f& colour) = 0;
 		virtual void setDepthBuffer(bool enabled) = 0;
 		virtual void setBlendState(bool enabled) = 0;
-
-		//TEMP: Need an 'unbind' function or to refactor the bindable system
-		virtual void removeCurrentGeometryShader() = 0;
-		virtual void removeTextureAtSlot(uint32 slot) = 0;
-		//
 	};
 }

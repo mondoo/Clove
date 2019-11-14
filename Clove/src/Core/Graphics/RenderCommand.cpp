@@ -25,7 +25,7 @@ namespace clv::gfx{
 		device->bindPipelineObject(pipelineObject);
 	}
 
-	void RenderCommand::bindTexture(const Texture& texture, const uint32 bindingPoint){
+	void RenderCommand::bindTexture(const Texture* texture, const uint32 bindingPoint){
 		device->bindTexture(texture, bindingPoint);
 	}
 
@@ -71,14 +71,6 @@ namespace clv::gfx{
 
 	void RenderCommand::setBlendState(bool enabled){
 		device->setBlendState(enabled);
-	}
-
-	void RenderCommand::removeCurrentGeometryShader(){
-		device->removeCurrentGeometryShader();
-	}
-
-	void RenderCommand::removeTextureAtSlot(uint32 slot){
-		device->removeTextureAtSlot(slot);
 	}
 
 	std::shared_ptr<Buffer> RenderCommand::createBuffer(const BufferDescriptor& descriptor, const void* data){

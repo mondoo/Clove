@@ -36,9 +36,13 @@ namespace clv::gfx::ogl{
 		bindShader(*glPipelineObject.getShader());
 	}
 
-	void GLRenderDevice::bindTexture(const Texture& texture, const uint32 bindingPoint){
-		const GLTexture& glTexture = static_cast<const GLTexture&>(texture);
-		glBindTextureUnit(bindingPoint, glTexture.getTextureID());
+	void GLRenderDevice::bindTexture(const Texture* texture, const uint32 bindingPoint){
+		const GLTexture* glTexture = static_cast<const GLTexture*>(texture);
+		if(glTexture){
+			glBindTextureUnit(bindingPoint, glTexture->getTextureID());
+		} else{
+			glBindTextureUnit(bindingPoint, 0);
+		}
 	}
 
 	void GLRenderDevice::bindShader(const Shader& shader){
@@ -99,13 +103,5 @@ namespace clv::gfx::ogl{
 		} else{
 			glDisable(GL_BLEND);
 		}
-	}
-
-	void GLRenderDevice::removeCurrentGeometryShader(){
-		glUseProgram(0);
-	}
-
-	void GLRenderDevice::removeTextureAtSlot(uint32 slot){
-		glBindTextureUnit(slot, 0);
 	}
 }

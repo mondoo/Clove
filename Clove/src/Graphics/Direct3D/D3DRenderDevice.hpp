@@ -46,7 +46,7 @@ namespace clv::gfx::d3d::_11{
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32 stride) override;
 		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint) override;
 		virtual void bindPipelineObject(const PipelineObject& pipelineObject) override;
-		virtual void bindTexture(const Texture& texture, const uint32 bindingPoint) override;
+		virtual void bindTexture(const Texture* texture, const uint32 bindingPoint) override;
 		virtual void bindShader(const Shader& shader) override;
 
 		virtual void updateBufferData(Buffer& buffer, const void* data) override;
@@ -66,11 +66,6 @@ namespace clv::gfx::d3d::_11{
 		virtual void setClearColour(const math::Vector4f& colour) override;
 		virtual void setDepthBuffer(bool enabled) override;
 		virtual void setBlendState(bool enabled) override;
-
-		//TEMP: Need an 'unbind' function or to refactor the bindable system
-		virtual void removeCurrentGeometryShader() override;
-		virtual void removeTextureAtSlot(uint32 slot) override;
-		//
 
 	#if CLV_DEBUG
 		static DXGIInfoManager& getInfoManager();

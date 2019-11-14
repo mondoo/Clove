@@ -18,7 +18,7 @@ namespace clv::gfx{
 		static void bindVertexBuffer(const Buffer& buffer, const uint32 stride);
 		static void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint);
 		static void bindPipelineObject(const PipelineObject& pipelineObject);
-		static void bindTexture(const Texture& texture, const uint32 bindingPoint);
+		static void bindTexture(const Texture* texture, const uint32 bindingPoint);
 		static void bindShader(const Shader& shader);
 
 		static void updateBufferData(Buffer& buffer, const void* data);
@@ -38,11 +38,6 @@ namespace clv::gfx{
 		static void setClearColour(const math::Vector4f& colour);
 		static void setDepthBuffer(bool enabled);
 		static void setBlendState(bool enabled);
-
-		//TEMP: Need an 'unbind' function or to refactor the bindable system
-		static void removeCurrentGeometryShader();
-		static void removeTextureAtSlot(uint32 slot);
-		//
 
 		static std::shared_ptr<Buffer> createBuffer(const BufferDescriptor& descriptor, const void* data);
 		static std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture);

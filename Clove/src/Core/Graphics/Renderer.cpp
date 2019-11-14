@@ -135,14 +135,11 @@ namespace clv::gfx{
 			currentSceneData->forEachMesh(generateShadowMap);
 			RenderCommand::setViewport({ 0, 0, plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight() });
 		}
-		
-		RenderCommand::removeCurrentGeometryShader();
 
 		RenderCommand::resetRenderTargetToDefault(); //Reset render target before binding the shadow map
 
 		RenderCommand::bindPipelineObject(*currentSceneData->defaultPipeline); //Bind in the default pipeline
-
-		RenderCommand::bindTexture(*currentSceneData->shadowMapTexture, TBP_Shadow); //Bind this in before rendering the real mesh
+		RenderCommand::bindTexture(currentSceneData->shadowMapTexture.get(), TBP_Shadow); //Bind this in before rendering the real mesh
 
 		//Render any other render targets
 		if(currentSceneData->customRenderTarget){
@@ -154,7 +151,7 @@ namespace clv::gfx{
 		//Render scene
 		currentSceneData->forEachMesh(draw);
 
-		RenderCommand::removeTextureAtSlot(TBP_Shadow);
+		RenderCommand::bindTexture(nullptr, TBP_Shadow);
 
 		currentSceneData->meshesToRender.clear();
 	}
