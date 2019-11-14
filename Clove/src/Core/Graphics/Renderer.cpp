@@ -40,7 +40,7 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		SceneData()
-			: cubeShadowMaterial(std::make_shared<Material>(/*ShaderStyle::CubeShadowMap*/)){
+			: cubeShadowMaterial(std::make_shared<Material>()){
 
 			TextureDescriptor tdesc{};
 			tdesc.style			= TextureStyle::Cubemap;
@@ -93,28 +93,31 @@ namespace clv::gfx{
 			meshMaterial.setData(BBP_PointLightData, PointLightShaderData{ currentSceneData->currentLightInfo }, ShaderType::Pixel);
 			meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ currentSceneData->currentShadowDepth }, ShaderType::Pixel);
 			meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ currentSceneData->numLights }, ShaderType::Pixel);
-
-			//Temp
-			auto vb = mesh->getVertexBufferForLayout(currentSceneData->defaultPipeline->getVertexLayout());
-			auto ib = mesh->getIndexBuffer();
+			
 			meshMaterial.bind();
-			//~
-			RenderCommand::bindVertexBuffer(*vb, currentSceneData->defaultPipeline->getVertexLayout().size());
+
+			const auto vertexLayout = currentSceneData->defaultPipeline->getVertexLayout();
+
+			auto vb = mesh->getVertexBufferForLayout(vertexLayout);
+			auto ib = mesh->getIndexBuffer();
+
+			RenderCommand::bindVertexBuffer(*vb, vertexLayout.size());
 			RenderCommand::bindIndexBuffer(*ib);
 
 			RenderCommand::drawIndexed(mesh->getIndexCount());
 		};
 
 		const auto generateShadowMap = [](const std::shared_ptr<Mesh>& mesh){
-			//Temp
-			auto vb = mesh->getVertexBufferForLayout(currentSceneData->shadowPipeline->getVertexLayout());
+			const auto vertexLayout = currentSceneData->shadowPipeline->getVertexLayout();
+
+			auto vb = mesh->getVertexBufferForLayout(vertexLayout);
 			auto ib = mesh->getIndexBuffer();
 			mesh->getMaterialInstance().bind();
-			//~
-			RenderCommand::bindVertexBuffer(*vb, currentSceneData->shadowPipeline->getVertexLayout().size());
+
+			RenderCommand::bindVertexBuffer(*vb, vertexLayout.size());
 			RenderCommand::bindIndexBuffer(*ib);
 
-			currentSceneData->cubeShadowMaterial.bind(); //Bind in the shader / SBOs for generating the cubemap
+			currentSceneData->cubeShadowMaterial.bind();
 			RenderCommand::drawIndexed(mesh->getIndexCount());
 		};
 
