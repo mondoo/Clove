@@ -9,11 +9,11 @@ namespace clv::gfx{
 		//VARIABLES
 	private:
 		std::shared_ptr<Texture> texture;
+		math::Vector4f colour{ 1.0f, 1.0f, 1.0f, 1.0f };
 		math::Matrix4f modelData{};
-
 		//FUNCTIONS
 	public:
-		Sprite() = delete;
+		Sprite();
 		Sprite(const std::string& pathToTexture);
 		Sprite(std::shared_ptr<Texture> texture);
 
@@ -26,6 +26,9 @@ namespace clv::gfx{
 		~Sprite();
 
 		const std::shared_ptr<Texture>& getTexture() const;
+
+		void setColour(const math::Vector4f& colour);
+		const math::Vector4f& getColour() const;
 
 		void setModelData(const math::Matrix4f& modelData);
 		const math::Matrix4f& getModelData() const;

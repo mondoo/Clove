@@ -89,6 +89,7 @@ namespace clv::gfx{
 				auto& renderMeshMaterial = currentSceneData2D->spriteMesh->getMaterialInstance();
 				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
+				renderMeshMaterial.setData(BBP_Colour, sprite->getColour(), ShaderType::Pixel);
 				renderMeshMaterial.bind();
 				
 				const auto vertexLayout = currentSceneData2D->spritePipelineObject->getVertexLayout();

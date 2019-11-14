@@ -5,6 +5,13 @@
 #include "Core/Graphics/Material.hpp"
 
 namespace clv::gfx{
+	Sprite::Sprite(){
+		uint32 white = 0xffffffff;
+		TextureDescriptor descriptor{};
+		descriptor.dimensions = { 1, 1 };
+		texture = RenderCommand::createTexture(descriptor, &white, 4);
+	}
+
 	Sprite::Sprite(const std::string& pathToTexture){
 		texture = RenderCommand::createTexture({}, pathToTexture);
 	}
@@ -25,6 +32,14 @@ namespace clv::gfx{
 
 	const std::shared_ptr<Texture> &Sprite::getTexture() const {
 		return texture;
+	}
+
+	void Sprite::setColour(const math::Vector4f& colour){
+		this->colour = colour;
+	}
+
+	const math::Vector4f& Sprite::getColour() const{
+		return colour;
 	}
 
 	void Sprite::setModelData(const math::Matrix4f& modelData){

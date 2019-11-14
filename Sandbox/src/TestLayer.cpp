@@ -121,7 +121,8 @@ void TestLayer::onAttach(){
 	clv::gfx::Renderer::setRenderTarget(renderTarget);*/
 
 	{
-		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
+		auto sprite = std::make_shared<clv::gfx::Sprite>();
+		sprite->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });
 		sprtEnt1.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
 		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
 	}
