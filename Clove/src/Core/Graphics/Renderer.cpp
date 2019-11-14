@@ -95,11 +95,11 @@ namespace clv::gfx{
 			meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ currentSceneData->numLights }, ShaderType::Pixel);
 
 			//Temp
-			auto vb = mesh->generateVertexBuffer(currentSceneData->defaultPipeline->getVertexLayout());
+			auto vb = mesh->getVertexBufferForLayout(currentSceneData->defaultPipeline->getVertexLayout());
 			auto ib = mesh->getIndexBuffer();
 			meshMaterial.bind();
 			//~
-			RenderCommand::bindVertexBuffer(*vb);
+			RenderCommand::bindVertexBuffer(*vb, currentSceneData->defaultPipeline->getVertexLayout().size());
 			RenderCommand::bindIndexBuffer(*ib);
 
 			RenderCommand::drawIndexed(mesh->getIndexCount());
@@ -107,11 +107,11 @@ namespace clv::gfx{
 
 		const auto generateShadowMap = [](const std::shared_ptr<Mesh>& mesh){
 			//Temp
-			auto vb = mesh->generateVertexBuffer(currentSceneData->shadowPipeline->getVertexLayout());
+			auto vb = mesh->getVertexBufferForLayout(currentSceneData->shadowPipeline->getVertexLayout());
 			auto ib = mesh->getIndexBuffer();
 			mesh->getMaterialInstance().bind();
 			//~
-			RenderCommand::bindVertexBuffer(*vb);
+			RenderCommand::bindVertexBuffer(*vb, currentSceneData->shadowPipeline->getVertexLayout().size());
 			RenderCommand::bindIndexBuffer(*ib);
 
 			currentSceneData->cubeShadowMaterial.bind(); //Bind in the shader / SBOs for generating the cubemap

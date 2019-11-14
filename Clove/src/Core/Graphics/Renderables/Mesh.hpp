@@ -14,7 +14,7 @@ namespace clv::gfx{
 	class Mesh{
 		//VARIABLES
 	private:
-		//std::shared_ptr<Buffer> vertexBuffer;
+		std::shared_ptr<Buffer> vertexBuffer;
 		std::shared_ptr<Buffer> indexBuffer;
 		MaterialInstance materialInstance;
 
@@ -39,14 +39,11 @@ namespace clv::gfx{
 
 		uint32 getIndexCount();
 
-		//void bind();
-
-		//TODO: These might be quite slow - anyway to cache?
-		std::shared_ptr<Buffer> generateVertexBuffer(const VertexLayout& layout);
+		std::shared_ptr<Buffer> getVertexBufferForLayout(const VertexLayout& layout);
 		std::shared_ptr<Buffer> getIndexBuffer();
 
 	private:
+		void initialiseVertexBuffer(const VertexBufferData& vertexArray);
 		void initialiseIndexBuffer(const std::vector<uint32>& indices);
-		/*void createBuffers(const VertexBufferData& vbData, const std::vector<uint32>& indices);*/
 	};
 }

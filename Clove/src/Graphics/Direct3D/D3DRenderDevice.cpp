@@ -26,11 +26,11 @@ namespace clv::gfx::d3d::_11{
 		d3dContext->IASetIndexBuffer(d3dBuffer.getD3DBuffer().Get(), DXGI_FORMAT_R32_UINT, 0u);
 	}
 
-	void D3DRenderDevice::bindVertexBuffer(const Buffer& buffer){
+	void D3DRenderDevice::bindVertexBuffer(const Buffer& buffer, const uint32 stride){
 		const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
 		const auto& descriptor = d3dBuffer.getDescriptor();
 		const UINT offset = 0u;
-		d3dContext->IASetVertexBuffers(0u, 1u, d3dBuffer.getD3DBuffer().GetAddressOf(), &descriptor.elementSize, &offset);
+		d3dContext->IASetVertexBuffers(0u, 1u, d3dBuffer.getD3DBuffer().GetAddressOf(), &stride, &offset);
 	}
 
 	void D3DRenderDevice::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){

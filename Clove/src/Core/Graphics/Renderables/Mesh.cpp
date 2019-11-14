@@ -7,13 +7,13 @@
 namespace clv::gfx{
 	Mesh::Mesh(std::string filePath, MaterialInstance materialInstance)
 		: materialInstance(std::move(materialInstance))
-		, loadedBufferData(VertexLayout{}){//Note initialising it like this is potentially dangerous
+		, loadedBufferData(VertexLayout{}){//NOTE: initialising it like this is potentially dangerous
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
 		const int32 vertexCount = info.verticies.size();
 		indices = info.indices;
 
-		VertexLayout layout; //Layout is currently all possible data
+		VertexLayout layout; //Layout should be all possible data a mesh could have (biggest size)
 		layout.add(gfx::VertexElementType::position3D).add(VertexElementType::texture2D).add(VertexElementType::normal);
 		
 		loadedBufferData = { layout };
@@ -38,7 +38,7 @@ namespace clv::gfx{
 				}
 			}
 		}
-
+		initialiseVertexBuffer(loadedBufferData);
 		initialiseIndexBuffer(indices);
 	}
 
@@ -46,6 +46,7 @@ namespace clv::gfx{
 		: materialInstance(std::move(materialInstance))
 		, loadedBufferData(vbData)
 		, indices(indices){
+		initialiseVertexBuffer(vbData);
 		initialiseIndexBuffer(indices);
 	}
 
@@ -67,15 +68,15 @@ namespace clv::gfx{
 		return static_cast<uint32>(indices.size());
 	}
 
-	/*void Mesh::bind(){
-		RenderCommand::bindVertexBuffer(*vertexBuffer);
-		RenderCommand::bindIndexBuffer(*indexBuffer);
-		materialInstance.bind();
-	}*/
+	std::shared_ptr<Buffer> Mesh::getVertexBufferForLayout(const VertexLayout& layout){
+		/*
+		TODO:
+		Currently remapping vertex data each frame.
+		This isn't ideal but it's because we can load different shaders with different layouts into the pipeline
+		It would be worth doing some profiling to see how bad remapping is and then moving forward from there
+		*/
 
-	std::shared_ptr<Buffer> Mesh::generateVertexBuffer(const VertexLayout& layout){
 		const int32 vertexCount = loadedBufferData.size();
-
 		gfx::VertexBufferData vertexArray{ layout };
 		vertexArray.resize(vertexCount);
 
@@ -103,18 +104,21 @@ namespace clv::gfx{
 			}
 		}
 		
-		BufferDescriptor vbdesc{};
-		vbdesc.elementSize	= layout.size();
-		vbdesc.bufferSize	= vertexArray.sizeBytes();
-		vbdesc.bufferType	= BufferType::VertexBuffer;
-		vbdesc.bufferUsage	= BufferUsage::Default;
-		auto buffer = RenderCommand::createBuffer(vbdesc, vertexArray.data());
-
-		return buffer;
+		RenderCommand::updateBufferData(*vertexBuffer, vertexArray.data());
+		return vertexBuffer;
 	}
 
 	std::shared_ptr<Buffer> Mesh::getIndexBuffer(){
 		return indexBuffer;
+	}
+
+	void Mesh::initialiseVertexBuffer(const VertexBufferData& vertexArray){
+		BufferDescriptor vbdesc{};
+		vbdesc.elementSize	= vertexArray.getLayout().size();
+		vbdesc.bufferSize	= vertexArray.sizeBytes();
+		vbdesc.bufferType	= BufferType::VertexBuffer;
+		vbdesc.bufferUsage	= BufferUsage::Dynamic; //Setting it to dynamic here (see TODO in Mesh::getVertexBufferForLayout)
+		vertexBuffer = RenderCommand::createBuffer(vbdesc, vertexArray.data());
 	}
 
 	void Mesh::initialiseIndexBuffer(const std::vector<uint32>& indices){
@@ -125,27 +129,6 @@ namespace clv::gfx{
 		ibdesc.bufferSize	= indices.size() * indexSize;
 		ibdesc.bufferType	= BufferType::IndexBuffer;
 		ibdesc.bufferUsage	= BufferUsage::Default;
-		indexBuffer			= RenderCommand::createBuffer(ibdesc, indices.data());
+		indexBuffer = RenderCommand::createBuffer(ibdesc, indices.data());
 	}
-
-	//void Mesh::createBuffers(const VertexBufferData& vbData, const std::vector<uint32>& indices){
-	//	//TODO: Pipeline object??? or somewhere else
-
-	//	//VB
-	//	BufferDescriptor vbdesc{};
-	//	vbdesc.elementSize	= vbData.getLayout().size();
-	//	vbdesc.bufferSize	= vbData.sizeBytes();
-	//	vbdesc.bufferType	= BufferType::VertexBuffer;
-	//	vbdesc.bufferUsage	= BufferUsage::Default;
-	//	vertexBuffer = RenderCommand::createBuffer(vbdesc, vbData.data());
-
-	//	//IB
-	//	const std::size_t indexSize = sizeof(uint32);
-	//	BufferDescriptor ibdesc{};
-	//	ibdesc.elementSize	= indexSize;
-	//	ibdesc.bufferSize	= indices.size() * indexSize;
-	//	ibdesc.bufferType	= BufferType::IndexBuffer;
-	//	ibdesc.bufferUsage	= BufferUsage::Default;
-	//	indexBuffer = RenderCommand::createBuffer(ibdesc, indices.data());
-	//}
 }

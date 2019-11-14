@@ -15,7 +15,7 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		static void bindIndexBuffer(const Buffer& buffer);
-		static void bindVertexBuffer(const Buffer& buffer);
+		static void bindVertexBuffer(const Buffer& buffer, const uint32 stride);
 		static void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint);
 		static void bindPipelineObject(const PipelineObject& pipelineObject);
 		static void bindTexture(const Texture& texture, const uint32 bindingPoint);

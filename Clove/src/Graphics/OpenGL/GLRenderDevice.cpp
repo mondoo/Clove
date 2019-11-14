@@ -20,9 +20,9 @@ namespace clv::gfx::ogl{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glbuffer.getBufferID());
 	}
 
-	void GLRenderDevice::bindVertexBuffer(const Buffer& buffer){
+	void GLRenderDevice::bindVertexBuffer(const Buffer& buffer, const uint32 stride){
 		const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
-		glBindVertexBuffer(0, glbuffer.getBufferID(), 0, buffer.getDescriptor().elementSize);
+		glBindVertexBuffer(0, glbuffer.getBufferID(), 0, stride);
 	}
 
 	void GLRenderDevice::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){

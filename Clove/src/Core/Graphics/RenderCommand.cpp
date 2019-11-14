@@ -13,8 +13,8 @@ namespace clv::gfx{
 		device->bindIndexBuffer(buffer);
 	}
 
-	void RenderCommand::bindVertexBuffer(const Buffer& buffer){
-		device->bindVertexBuffer(buffer);
+	void RenderCommand::bindVertexBuffer(const Buffer& buffer, const uint32 stride){
+		device->bindVertexBuffer(buffer, stride);
 	}
 
 	void RenderCommand::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){

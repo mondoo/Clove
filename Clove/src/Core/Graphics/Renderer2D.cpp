@@ -92,11 +92,11 @@ namespace clv::gfx{
 				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
 				//Temp
-				auto vb = currentSceneData2D->spriteMesh->generateVertexBuffer(currentSceneData2D->spritePipelineObject->getVertexLayout());
+				auto vb = currentSceneData2D->spriteMesh->getVertexBufferForLayout(currentSceneData2D->spritePipelineObject->getVertexLayout());
 				auto ib = currentSceneData2D->spriteMesh->getIndexBuffer();
 				//~
 				renderMeshMaterial.bind();
-				RenderCommand::bindVertexBuffer(*vb);
+				RenderCommand::bindVertexBuffer(*vb, currentSceneData2D->spritePipelineObject->getVertexLayout().size());
 				RenderCommand::bindIndexBuffer(*ib);
 
 				RenderCommand::drawIndexed(currentSceneData2D->spriteMesh->getIndexCount());
@@ -116,11 +116,11 @@ namespace clv::gfx{
 				charMat.setAlbedoTexture(character->getTexture());
 				charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);
 				//Temp
-				auto vb = currentSceneData2D->characterMesh->generateVertexBuffer(currentSceneData2D->charPipelineObject->getVertexLayout());
+				auto vb = currentSceneData2D->characterMesh->getVertexBufferForLayout(currentSceneData2D->charPipelineObject->getVertexLayout());
 				auto ib = currentSceneData2D->characterMesh->getIndexBuffer();
 				//~
 				charMat.bind();
-				RenderCommand::bindVertexBuffer(*vb);
+				RenderCommand::bindVertexBuffer(*vb, currentSceneData2D->charPipelineObject->getVertexLayout().size());
 				RenderCommand::bindIndexBuffer(*ib);
 
 				RenderCommand::drawIndexed(currentSceneData2D->characterMesh->getIndexCount());
