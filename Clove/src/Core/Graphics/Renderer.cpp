@@ -101,7 +101,7 @@ namespace clv::gfx{
 			auto vb = mesh->getVertexBufferForLayout(vertexLayout);
 			auto ib = mesh->getIndexBuffer();
 
-			RenderCommand::bindVertexBuffer(*vb, vertexLayout.size());
+			RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
 			RenderCommand::bindIndexBuffer(*ib);
 
 			RenderCommand::drawIndexed(mesh->getIndexCount());
@@ -114,7 +114,7 @@ namespace clv::gfx{
 			auto ib = mesh->getIndexBuffer();
 			mesh->getMaterialInstance().bind();
 
-			RenderCommand::bindVertexBuffer(*vb, vertexLayout.size());
+			RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
 			RenderCommand::bindIndexBuffer(*ib);
 
 			currentSceneData->cubeShadowMaterial.bind();

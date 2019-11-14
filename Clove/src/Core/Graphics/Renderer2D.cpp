@@ -96,7 +96,7 @@ namespace clv::gfx{
 				auto vb = currentSceneData2D->spriteMesh->getVertexBufferForLayout(vertexLayout);
 				auto ib = currentSceneData2D->spriteMesh->getIndexBuffer();
 				
-				RenderCommand::bindVertexBuffer(*vb, vertexLayout.size());
+				RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
 				RenderCommand::bindIndexBuffer(*ib);
 
 				RenderCommand::drawIndexed(currentSceneData2D->spriteMesh->getIndexCount());
@@ -122,7 +122,7 @@ namespace clv::gfx{
 				auto vb = currentSceneData2D->characterMesh->getVertexBufferForLayout(vertexLayout);
 				auto ib = currentSceneData2D->characterMesh->getIndexBuffer();
 
-				RenderCommand::bindVertexBuffer(*vb, vertexLayout.size());
+				RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
 				RenderCommand::bindIndexBuffer(*ib);
 
 				RenderCommand::drawIndexed(currentSceneData2D->characterMesh->getIndexCount());

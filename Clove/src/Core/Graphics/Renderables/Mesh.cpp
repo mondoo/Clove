@@ -10,7 +10,7 @@ namespace clv::gfx{
 		, loadedBufferData(VertexLayout{}){//NOTE: initialising it like this is potentially dangerous
 		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
 
-		const int32 vertexCount = info.verticies.size();
+		const std::size_t vertexCount = info.verticies.size();
 		indices = info.indices;
 
 		VertexLayout layout; //Layout should be all possible data a mesh could have (biggest size)
@@ -76,7 +76,7 @@ namespace clv::gfx{
 		It would be worth doing some profiling to see how bad remapping is and then moving forward from there
 		*/
 
-		const int32 vertexCount = loadedBufferData.size();
+		const size_t vertexCount = loadedBufferData.size();
 		gfx::VertexBufferData vertexArray{ layout };
 		vertexArray.resize(vertexCount);
 

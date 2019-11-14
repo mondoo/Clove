@@ -19,7 +19,7 @@ namespace clv::gfx::d3d::_11{
 		bufferDesc.BindFlags			= getD3DBufferType(bufferType);
 		bufferDesc.CPUAccessFlags		= (bufferUsage == BufferUsage::Dynamic) ? D3D11_CPU_ACCESS_WRITE : 0u;
 		bufferDesc.MiscFlags			= 0u;
-		bufferDesc.StructureByteStride	= descriptor.elementSize;
+		bufferDesc.StructureByteStride	= static_cast<UINT>(descriptor.elementSize);
 
 		D3D11_SUBRESOURCE_DATA initData{};
 		initData.pSysMem			= data;

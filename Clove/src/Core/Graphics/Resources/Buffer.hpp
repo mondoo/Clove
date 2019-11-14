@@ -13,8 +13,8 @@ namespace clv::gfx{
 	};
 
 	struct BufferDescriptor{
-		uint32 elementSize = 0;
-		uint32 bufferSize = 0;
+		std::size_t elementSize = 0;
+		std::size_t bufferSize = 0;
 		BufferType bufferType;
 		BufferUsage bufferUsage;
 	};
