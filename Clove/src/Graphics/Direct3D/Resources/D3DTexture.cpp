@@ -7,7 +7,7 @@
 
 #include <stb_image.h>
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	D3DTexture::D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture)
 		: descriptor(descriptor){
 		stbi_set_flip_vertically_on_load(1);

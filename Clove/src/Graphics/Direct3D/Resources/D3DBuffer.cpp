@@ -6,7 +6,7 @@
 #include "Graphics/Direct3D/D3DRenderDevice.hpp"
 #endif
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	D3DBuffer::D3DBuffer(ID3D11Device& d3dDevice, const BufferDescriptor& descriptor, const void* data)
 		: descriptor(descriptor){
 

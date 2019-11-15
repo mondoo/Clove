@@ -9,7 +9,7 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	D3DShader::D3DShader(ID3D11Device& d3dDevice, const ShaderDescriptor& descriptor)
 		: descriptor(descriptor){
 		initialise(d3dDevice, descriptor.style);

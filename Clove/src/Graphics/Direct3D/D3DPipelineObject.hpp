@@ -8,7 +8,7 @@
 struct ID3D11Device;
 struct ID3D11InputLayout;
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	class D3DPipelineObject : public PipelineObject{
 		//VARIABLES
 	private:

@@ -12,7 +12,7 @@ namespace clv::gfx{
 	class Texture;
 }
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	class D3DRenderTarget : public RenderTarget{
 		//VARIABLES
 	private:

@@ -13,7 +13,7 @@
 
 #include <d3d11.h>
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	D3DRenderFactory::D3DRenderFactory(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice)
 		: d3dDevice(d3dDevice){
 	}

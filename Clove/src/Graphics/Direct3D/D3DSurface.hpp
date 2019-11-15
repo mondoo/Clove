@@ -7,11 +7,11 @@
 struct ID3D11Device;
 struct IDXGISwapChain;
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	class D3DRenderTarget;
 }
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	class D3DSurface : public Surface{
 		//VARIABLES
 	public:

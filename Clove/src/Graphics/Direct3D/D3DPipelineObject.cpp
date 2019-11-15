@@ -6,7 +6,7 @@
 #include "Graphics/Direct3D/D3DRenderDevice.hpp"
 #endif
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	D3DPipelineObject::D3DPipelineObject(ID3D11Device& d3dDevice, const std::shared_ptr<Shader>& shader)
 		: shader(shader){
 		const auto dxShader = std::static_pointer_cast<D3DShader>(shader);

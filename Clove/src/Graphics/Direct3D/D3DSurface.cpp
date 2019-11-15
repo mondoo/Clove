@@ -11,7 +11,7 @@
 
 #include <d3d11.h>
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	D3DSurface::D3DSurface(ID3D11Device& d3dDevice, void* windowData){
 		plt::WindowsData* data = reinterpret_cast<plt::WindowsData*>(windowData);
 

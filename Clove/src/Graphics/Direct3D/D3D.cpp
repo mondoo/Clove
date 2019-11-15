@@ -6,7 +6,7 @@
 
 #include <d3d11.h>
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	std::pair<std::unique_ptr<RenderDevice>, std::unique_ptr<RenderFactory>> initialiseD3D(){
 		DX11_INFO_PROVIDER;
 

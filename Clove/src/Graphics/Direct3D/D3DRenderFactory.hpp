@@ -6,7 +6,7 @@
 
 struct ID3D11Device;
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	class D3DRenderFactory : public RenderFactory{
 		//VARIABLES
 	private:

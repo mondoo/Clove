@@ -116,7 +116,7 @@ namespace clv::gfx{
 			case API::DirectX11:
 				{
 					CLV_LOG_TRACE("Creating Direct3D API");
-					auto pair = d3d::_11::initialiseD3D();
+					auto pair = d3d::initialiseD3D();
 					device = std::move(pair.first);
 					factory = std::move(pair.second);
 					break;

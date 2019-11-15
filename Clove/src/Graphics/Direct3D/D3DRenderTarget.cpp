@@ -8,7 +8,7 @@
 
 #include <d3d11.h>
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	D3DRenderTarget::D3DRenderTarget(ID3D11Device& d3dDevice, Texture* colourTexture, Texture* depthStencilTexture){
 		CLV_ASSERT(colourTexture != nullptr || depthStencilTexture != nullptr, "{0}: Render target needs at least one valid texture", CLV_FUNCTION_NAME);
 

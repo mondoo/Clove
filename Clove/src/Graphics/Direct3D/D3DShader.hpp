@@ -10,7 +10,7 @@ struct ID3D11VertexShader;
 struct ID3D11GeometryShader;
 struct ID3D11PixelShader;
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	class D3DShader : public Shader{
 		//VARIABLES
 	private:

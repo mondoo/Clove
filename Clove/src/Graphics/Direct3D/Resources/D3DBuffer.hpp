@@ -5,7 +5,7 @@
 #include <wrl.h>
 #include <d3d11.h>
 
-namespace clv::gfx::d3d::_11{
+namespace clv::gfx::d3d{
 	class D3DBuffer : public Buffer{
 		//VARIABLES
 	private:
