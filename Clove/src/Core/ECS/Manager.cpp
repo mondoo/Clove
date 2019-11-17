@@ -27,6 +27,11 @@ namespace clv::ecs{
 
 			std::make_unique<ui::TextSystem>()
 		};
+
+		//TODO: This should change when we can add systems dynamically
+		std::for_each(systems.begin(), systems.end(), [this](const std::unique_ptr<System>& system){
+			system->manager = this;
+		});
 	}
 
 	Manager::~Manager() = default;
