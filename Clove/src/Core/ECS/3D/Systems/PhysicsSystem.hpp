@@ -2,9 +2,6 @@
 
 #include "Core/ECS/System.hpp"
 
-#include "Core/ECS/3D/Components/RigidBodyComponent.hpp"
-#include "Core/ECS/3D/Components/TransformComponent.hpp"
-
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
 class btBroadphaseInterface;
@@ -12,7 +9,7 @@ class btSequentialImpulseConstraintSolver;
 class btDiscreteDynamicsWorld;
 
 namespace clv::ecs::_3D{
-	class PhysicsSystem : public System<RigidBodyComponent, TransformComponent>{
+	class PhysicsSystem : public System{
 		//VARIABLES
 	private:
 		btDefaultCollisionConfiguration* collisionConfiguration;
@@ -33,8 +30,7 @@ namespace clv::ecs::_3D{
 
 		virtual void update(utl::DeltaTime deltaTime) override;
 
-	private:
-		virtual void handleEntityCreation(const ComponentTuple& componentTuple) override;
-		virtual void handleEntityDestruction(const ComponentTuple& componentTuple) override;
+		virtual void onComponentCreated(ComponentInterface* component) override;
+		virtual void onComponentDestroyed(ComponentInterface* component) override;
 	};
 }

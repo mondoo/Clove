@@ -1,5 +1,8 @@
 #include "LightSystem.hpp"
 
+#include "Core/ECS/Manager.hpp"
+#include "Core/ECS/3D/Components/TransformComponent.hpp"
+#include "Core/ECS/3D/Components/LightComponent.hpp"
 #include "Core/Graphics/Renderer.hpp"
 
 namespace clv::ecs::_3D{
@@ -12,9 +15,10 @@ namespace clv::ecs::_3D{
 	LightSystem::~LightSystem() = default;
 
 	void LightSystem::update(utl::DeltaTime deltaTime){
-		for(auto& componentTuple : components){
-			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
-			LightComponent* light = std::get<LightComponent*>(componentTuple);
+		auto componentTuples = manager->getComponentSets<TransformComponent, LightComponent>();
+		for(auto& tuple : componentTuples){
+			TransformComponent* transform = std::get<TransformComponent*>(tuple);
+			LightComponent* light = std::get<LightComponent*>(tuple);
 
 			const auto& position = transform->getPosition();
 

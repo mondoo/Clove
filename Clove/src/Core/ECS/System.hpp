@@ -3,6 +3,7 @@
 #include "Core/Utils/DeltaTime.hpp"
 
 namespace clv::ecs{
+	class ComponentInterface;
 	class Manager;
 }
 
@@ -19,5 +20,8 @@ namespace clv::ecs{
 		virtual ~System() = default;
 
 		virtual void update(utl::DeltaTime deltaTime) = 0;
+
+		virtual void onComponentCreated(ComponentInterface* component){}
+		virtual void onComponentDestroyed(ComponentInterface* component){}
 	};
 }

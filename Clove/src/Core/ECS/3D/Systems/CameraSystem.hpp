@@ -2,11 +2,8 @@
 
 #include "Core/ECS/System.hpp"
 
-#include "Core/ECS/3D/Components/TransformComponent.hpp"
-#include "Core/ECS/3D/Components/CameraComponent.hpp"
-
 namespace clv::ecs::_3D{
-	class CameraSystem : public System<TransformComponent, CameraComponent>{
+	class CameraSystem : public System{
 		//FUNCTIONS
 	public:
 		CameraSystem();

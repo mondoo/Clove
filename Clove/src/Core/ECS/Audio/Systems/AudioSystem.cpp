@@ -1,5 +1,8 @@
 #include "AudioSystem.hpp"
 
+#include "Core/ECS/Manager.hpp"
+#include "Core/ECS/Audio/Components/AudioComponent.hpp"
+
 #include <portaudio.h>
 
 #define PACall(x) { auto err = x; CLV_ASSERT(err == paNoError, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(err)); }
@@ -20,8 +23,10 @@ namespace clv::ecs::aud{
 	}
 
 	void AudioSystem::update(utl::DeltaTime deltaTime){
-		for(auto& componentTuple : components){
-			AudioComponent* component = std::get<AudioComponent*>(componentTuple);
+		auto componentTuples = manager->getComponentSets<AudioComponent>();
+
+		for(auto& tuple : componentTuples){
+			AudioComponent* component = std::get<AudioComponent*>(tuple);
 			if(component->requestedPlayback){
 				startSound(component, component->requestedPlayback.value());
 				component->requestedPlayback.reset();
@@ -40,6 +45,15 @@ namespace clv::ecs::aud{
 						break;
 				}
 				component->requestedStopMode.reset();
+			}
+		}
+	}
+
+	void AudioSystem::onComponentDestroyed(ComponentInterface* component){
+		if(component->getID() == AudioComponent::id()){
+			auto* audioComponent = static_cast<AudioComponent*>(component);
+			if(audioComponent->isPlaying()){
+				stopSound(audioComponent);
 			}
 		}
 	}
@@ -106,13 +120,6 @@ namespace clv::ecs::aud{
 		return error > 0;
 	}
 
-	void AudioSystem::handleEntityDestruction(const ComponentTuple& componentTuple){
-		AudioComponent* component = std::get<AudioComponent*>(componentTuple);
-		if(component->isPlaying()){
-			stopSound(component);
-		}
-	}
-	
 	int AudioSystem::soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
 		AudioComponent* data = static_cast<AudioComponent*>(userData);
 		int32* out = static_cast<int32*>(outputBuffer);

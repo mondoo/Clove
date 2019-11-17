@@ -1,5 +1,8 @@
 #include "TextSystem.hpp"
 
+#include "Core/ECS/Manager.hpp"
+#include "Core/ECS/2D/Components/TransformComponent.hpp"
+#include "Core/ECS/UI/Components/TextComponent.hpp"
 #include "Core/Graphics/Renderer2D.hpp"
 #include "Core/Graphics/Renderables/Sprite.hpp"
 #include "Core/Graphics/GraphicsTypes.hpp"
@@ -14,9 +17,11 @@ namespace clv::ecs::ui{
 	TextSystem::~TextSystem() = default;
 
 	void TextSystem::update(utl::DeltaTime deltaTime){
-		for(auto& componentTuple : components){
-			_2D::TransformComponent* transform = std::get<_2D::TransformComponent*>(componentTuple);
-			TextComponent* fontComp = std::get<TextComponent*>(componentTuple);
+		auto componentTuples = manager->getComponentSets<_2D::TransformComponent, TextComponent>();
+
+		for(auto& tuple : componentTuples){
+			_2D::TransformComponent* transform = std::get<_2D::TransformComponent*>(tuple);
+			TextComponent* fontComp = std::get<TextComponent*>(tuple);
 
 			const clv::ui::Text& text = fontComp->text;
 			math::Vector2f cursorPos = transform->getPosition();

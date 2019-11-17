@@ -2,6 +2,7 @@
 
 #include "Core/ECS/ECSTypes.hpp"
 #include "Core/ECS/Entity.hpp"
+#include "Core/ECS/System.hpp"
 #include "Core/Utils/DeltaTime.hpp"
 
 namespace clv::ecs{
@@ -102,7 +103,11 @@ namespace clv::ecs{
 		template<typename ComponentType, typename ...ConstructArgs>
 		ComponentType* addComponent(EntityID entityID, ConstructArgs&& ...args){
 			ComponentType* component = componentManager.getComponentContainer<ComponentType>()->addComponent(entityID, args...);
-			//TODO: add pure virtual on component to get the ID, then static cast based off of that
+			
+			std::for_each(systems.begin(), systems.end(), [component](const std::unique_ptr<System>& system){
+				system->onComponentCreated(component);
+			});
+
 			return component;
 		}
 
