@@ -60,6 +60,6 @@ namespace clv::ecs{
 	}
 
 	Entity Manager::getEntity(EntityID ID){
-		return { ++nextID, this };
+		return { ID, this };
 	}
 }
