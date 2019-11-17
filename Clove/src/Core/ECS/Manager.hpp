@@ -10,21 +10,53 @@ namespace clv::ecs{
 	class SystemBase;
 
 	//TODO: Move out
-	class ComponentContainerBase{
+	class ComponentManager{
+	private:
+		class IComponentContainer{
 
-	};
+		};
 
-	template<typename ComponentType>
-	class ComponentContainer{
+		template<typename ComponentType>
+		class ComponentContainer : public IComponentContainer{
+		//private:
+		public:
+
+			std::unordered_map<EntityID, std::unique_ptr<ComponentType>> components;
+
+			ComponentType* getComponent(EntityID entityId){
+				if(auto iter = components.find(entityId); iter != components.end()){
+					return iter->second.get();
+				}else{
+					return nullptr;
+				}
+			}
+
+			template<typename ...ConstructArgs>
+			ComponentType* addComponent(EntityID entityId, ConstructArgs&& ...args){
+				components[entityId] = std::make_unique<ComponentType>(std::forward<ConstructArgs>(args)...);
+				return components[entityId].get();
+			}
+		};
+
 		//VARIABLES
 	public: //private
-		std::vector<ComponentType*> components;
+		//std::vector<ComponentType*> components;
+		std::unordered_map<ComponentID, std::unique_ptr<IComponentContainer>> containers;
 
 		//FUNCTIONS
 	public:
 		//TODO: ctors
 
-		//Create component (future allocator)
+		template<typename ComponentType>
+		ComponentContainer<ComponentType>* getComponentContainer(){
+			const ComponentID componentId = ComponentType::ID;
+			if(auto iter = containers.find(componentId); iter != containers.end()){
+				return iter->second.get();
+			}else{
+				containers[componentId] = std::make_unique<ComponentContainer<ComponentType>>();
+				return containers[componentId].get();
+			}
+		}
 	};
 	//~~~
 
@@ -37,7 +69,9 @@ namespace clv::ecs{
 		 * Try and allocate components contiguously
 		 * */
 
-		std::unordered_map<EntityID, std::unordered_map<ComponentID, Component*>> components;
+		//std::unordered_map<EntityID, std::unordered_map<ComponentID, Component*>> components;
+		ComponentManager componentManager;
+
 		std::array<std::unique_ptr<SystemBase>, 8> systems;
 
 
@@ -61,26 +95,38 @@ namespace clv::ecs{
 		void destroyEntity(EntityID ID);
 		Entity getEntity(EntityID ID);
 
-		template<typename ...Components>
-		std::vector<std::tuple<std::add_pointer_t<Components>...>> getComponentSets(){
-			/* Loop through components, get entityID
-			 * find the other components with said entity ID
-			 * build tuple with components
-			 * end when all components have been found
-			 * */
+		template<typename ...ComponentTypes>
+		std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> getComponentSets(){
+			//std::array<ComponentID> componentIDs = { Components::ID... };
+			std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> componentSets;
+			for(int32 i = 0; i < nextID; ++i){
+				auto set = getComponentsForEntity()<ComponentTypes...>(i);
+				if(set){
+					componentSets.push_back(set.value());
+				}
+			}
+			return componentSets;
+		}
 
-			//Will need to store the components as their type
+		template<typename ...ComponentTypes>
+		std::optional<std::tuple<std::add_pointer_t<ComponentTypes>...>> getComponentsForEntity(EntityID){
 
-			//Loop through entities and smash in the tuples that matter
-			//-This will require entities to be stored in a different way
-			//--Although entites should just be an id
-			//--Might have to go back to the old way of storing them
+		}
 
-			for(auto [entity, comps] : components){
-				//std::get ????
+		template<size_t index, typename ComponentType, typename... ComponentTypes>
+		bool proccessEntityComponent(std::tuple<std::add_pointer_t<ComponentTypes>...>& tupleToFill){
+			if(ComponentType::ID == componentID){
+				//std::get<index>(tupleToFill) = static_cast<ComponentType*>(component);
+				return true;
+			} else{
+				return proccessEntityComponent<index + 1, ComponentArgs...>(componentID, component, tupleToFill);
 			}
 		}
 
+		template<size_t index>
+		bool proccessEntityComponent(ComponentID componentID, Component* component, ComponentTuple& tupleToFill){
+			return false;
+		}
 	private:
 		void onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component);
 		Component* getComponentForEntity(EntityID entityID, ComponentID componentID);
