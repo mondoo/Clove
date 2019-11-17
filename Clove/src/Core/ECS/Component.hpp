@@ -8,6 +8,8 @@ namespace clv::ecs{
 		//FUNCTIONS
 	public:
 		virtual ~ComponentInterface() = default;
+
+		virtual ComponentID getID() const = 0;
 	};
 
 	template<typename DerivedClassType>
@@ -27,6 +29,10 @@ namespace clv::ecs{
 		Component& operator=(Component&& other) noexcept;
 		
 		virtual ~Component();
+
+		static ComponentID id();
+
+		virtual ComponentID getID() const override;
 	};
 }
 

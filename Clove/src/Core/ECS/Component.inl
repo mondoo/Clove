@@ -1,4 +1,3 @@
-#include "Component.hpp"
 namespace clv::ecs{
 	template<typename DerivedClassType>
 	Component<DerivedClassType>::Component(const Component& other) = default;
@@ -14,4 +13,14 @@ namespace clv::ecs{
 
 	template<typename DerivedClassType>
 	Component<DerivedClassType>::~Component() = default;
+
+	template<typename DerivedClassType>
+	ComponentID Component<DerivedClassType>::id(){
+		return typeid(DerivedClassType).hash_code();
+	}
+
+	template<typename DerivedClassType>
+	ComponentID Component<DerivedClassType>::getID() const{
+		return id();
+	}
 }

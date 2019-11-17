@@ -52,7 +52,7 @@ namespace clv::ecs{
 
 		template<typename ComponentType>
 		ComponentContainer<ComponentType>* getComponentContainer(){
-			const ComponentID componentID = typeid(ComponentType).hash_code();
+			const ComponentID componentID = ComponentType::id();
 			if(auto iter = containers.find(componentID); iter != containers.end()){
 				return static_cast<ComponentContainer<ComponentType>*>(iter->second.get());
 			} else{
