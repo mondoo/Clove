@@ -1,11 +1,21 @@
 #pragma once
 
 #include "Core/ECS/ECSTypes.hpp"
+#include "Core/Utils/HashString.hpp"
 
 namespace clv::ecs{
-	class Component{
+	class IComponent{
+		//FUNCTIONS
+	public:
+		virtual ComponentID getID() const = 0;
+	};
+
+	template<typename DerivedClassType>
+	class Component : public IComponent{
 		//VARIABLES
 	public:
+		static constexpr ComponentID ID = HASH_CLASS(DerivedClassType);
+
 		EntityID entityID = INVALID_ENTITY_ID;
 
 		//FUNCTIONS
@@ -19,5 +29,8 @@ namespace clv::ecs{
 		Component& operator=(Component&& other) noexcept;
 		
 		virtual ~Component();
+
+		//TODO: .inl
+		virtual ComponentID getID() const{ return ID; }
 	};
 }
