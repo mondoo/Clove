@@ -27,7 +27,6 @@ set(
 set(
 	CoreECSFiles
 		Core/ECS/Component.hpp
-		Core/ECS/Component.cpp
 		Core/ECS/ECSTypes.hpp
 		Core/ECS/Entity.hpp
 		Core/ECS/Entity.inl
