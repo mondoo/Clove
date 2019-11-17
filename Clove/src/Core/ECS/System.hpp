@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Utils/DeltaTime.hpp"
+
 namespace clv::ecs{
 	class System{
 		//FUNCTIONS
