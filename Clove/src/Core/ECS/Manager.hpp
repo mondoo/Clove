@@ -6,7 +6,6 @@
 
 namespace clv::ecs{
 	class Entity;
-	class Component;
 	class System;
 
 	//TODO: Move out
@@ -99,6 +98,20 @@ namespace clv::ecs{
 		Entity createEntity();
 		void destroyEntity(EntityID ID);
 		Entity getEntity(EntityID ID);
+
+		template<typename ComponentType, typename ...ConstructArgs>
+		ComponentType* addComponent(EntityID entityId, ConstructArgs&& ...args){
+			ComponentType* component = componentManager.getComponentContainer<ComponentType>()->addComponent(args);
+			/*
+			add pure virtual on component to get the ID, then static cast based off of that
+			*/
+			return component;
+		}
+
+		template<typename ComponentType>
+		ComponentType* getComponent(EntityID entityId){
+			return componentManager.getComponentContainer<ComponentType>()->getComponent();
+		}
 
 		//Put inside component manager?
 		enum class FoundState{
