@@ -12,7 +12,9 @@ namespace clv::ecs{
 	class ComponentManager{
 	private:
 		class ComponentContainerInterface{
-
+			//FUNCTIONS
+		public:
+			virtual ~ComponentContainerInterface() = default;
 		};
 
 		template<typename ComponentType>
@@ -37,8 +39,6 @@ namespace clv::ecs{
 					return nullptr;
 				}
 			}
-
-			
 		};
 
 		//VARIABLES
@@ -52,12 +52,12 @@ namespace clv::ecs{
 
 		template<typename ComponentType>
 		ComponentContainer<ComponentType>* getComponentContainer(){
-			const ComponentID componentId = ComponentType::ID;
-			if(auto iter = containers.find(componentId); iter != containers.end()){
+			const ComponentID componentID = typeid(ComponentType).hash_code();
+			if(auto iter = containers.find(componentID); iter != containers.end()){
 				return static_cast<ComponentContainer<ComponentType>*>(iter->second.get());
 			} else{
-				containers[componentId] = std::make_unique<ComponentContainer<ComponentType>>();
-				return static_cast<ComponentContainer<ComponentType>*>(containers[componentId].get());
+				containers[componentID] = std::make_unique<ComponentContainer<ComponentType>>();
+				return static_cast<ComponentContainer<ComponentType>*>(containers[componentID].get());
 			}
 		}
 	};

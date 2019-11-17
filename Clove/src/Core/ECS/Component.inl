@@ -14,9 +14,4 @@ namespace clv::ecs{
 
 	template<typename DerivedClassType>
 	Component<DerivedClassType>::~Component() = default;
-
-	template<typename DerivedClassType>
-	ComponentID Component<DerivedClassType>::getID() const{
-		return ID;
-	}
 }
