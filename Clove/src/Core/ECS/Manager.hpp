@@ -11,23 +11,23 @@ namespace clv::ecs{
 	//TODO: Move out
 	class ComponentManager{
 	private:
-		class IComponentContainer{
+		class ComponentContainerInterface{
 
 		};
 
 		template<typename ComponentType>
-		class ComponentContainer : public IComponentContainer{
+		class ComponentContainer : public ComponentContainerInterface{
 			//private:
 		public:
 
 			std::unordered_map<EntityID, std::unique_ptr<ComponentType>> components;
 
 			template<typename ...ConstructArgs>
-			ComponentType* addComponent(EntityID entityId, ConstructArgs&& ...args){
+			ComponentType* addComponent(EntityID entityID, ConstructArgs&& ...args){
 				auto comp = std::make_unique<ComponentType>(std::forward<ConstructArgs>(args)...);
-				comp->entityID = entityId;
-				components[entityId] = std::move(comp);
-				return components[entityId].get();
+				comp->entityID = entityID; //TODO: make this container a friend of the component now it's typed
+				components[entityID] = std::move(comp);
+				return components[entityID].get();
 			}
 
 			ComponentType* getComponent(EntityID entityId){
@@ -44,7 +44,7 @@ namespace clv::ecs{
 		//VARIABLES
 	public: //private
 		//std::vector<ComponentType*> components;
-		std::unordered_map<ComponentID, std::unique_ptr<IComponentContainer>> containers;
+		std::unordered_map<ComponentID, std::unique_ptr<ComponentContainerInterface>> containers;
 
 		//FUNCTIONS
 	public:
@@ -100,17 +100,15 @@ namespace clv::ecs{
 		Entity getEntity(EntityID ID);
 
 		template<typename ComponentType, typename ...ConstructArgs>
-		ComponentType* addComponent(EntityID entityId, ConstructArgs&& ...args){
-			ComponentType* component = componentManager.getComponentContainer<ComponentType>()->addComponent(args);
-			/*
-			add pure virtual on component to get the ID, then static cast based off of that
-			*/
+		ComponentType* addComponent(EntityID entityID, ConstructArgs&& ...args){
+			ComponentType* component = componentManager.getComponentContainer<ComponentType>()->addComponent(entityID, args...);
+			//TODO: add pure virtual on component to get the ID, then static cast based off of that
 			return component;
 		}
 
 		template<typename ComponentType>
-		ComponentType* getComponent(EntityID entityId){
-			return componentManager.getComponentContainer<ComponentType>()->getComponent();
+		ComponentType* getComponent(EntityID entityID){
+			return componentManager.getComponentContainer<ComponentType>()->getComponent(entityID);
 		}
 
 		//Put inside component manager?

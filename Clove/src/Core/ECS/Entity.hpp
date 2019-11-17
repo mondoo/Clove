@@ -4,7 +4,6 @@
 
 namespace clv::ecs{
 	class Manager;
-	class Component;
 }
 
 namespace clv::ecs{

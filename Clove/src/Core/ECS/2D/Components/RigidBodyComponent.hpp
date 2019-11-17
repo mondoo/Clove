@@ -2,19 +2,15 @@
 
 #include "Core/ECS/Component.hpp"
 
-#include "Core/Utils/HashString.hpp"
-
 class btCollisionShape;
 class btRigidBody;
 
 namespace clv::ecs::_2D{
-	class RigidBodyComponent : public Component{
+	class RigidBodyComponent : public Component<_2D::RigidBodyComponent>{
 		friend class PhysicsSystem;
 
 		//VARIABLES
 	public:
-		static constexpr ComponentID ID = HASH_CLASS(_2D::RigidBodyComponent);
-
 		utl::MultiCastDelegate<void(RigidBodyComponent*)> onBodyCollision;
 
 	private:

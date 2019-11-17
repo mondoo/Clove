@@ -4,7 +4,7 @@ namespace clv::ecs{
 	template<typename ComponentType, typename ...ConstructorArgs>
 	ComponentType* Entity::addComponent(ConstructorArgs&& ...args){
 		if(isValid()){
-			return manager->addComponent(getID(), args...);
+			return manager->addComponent<ComponentType>(getID(), args...);
 		} else{
 			return nullptr;
 		}
@@ -13,7 +13,7 @@ namespace clv::ecs{
 	template<typename ComponentType>
 	ComponentType* Entity::getComponent() const{
 		if(isValid()){
-			return manager->getComponent(getID());
+			return manager->getComponent<ComponentType>(getID());
 		} else{
 			return nullptr;
 		}

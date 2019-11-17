@@ -2,20 +2,15 @@
 
 #include "Core/ECS/Component.hpp"
 
-#include "Core/Utils/HashString.hpp"
-
 namespace clv::gfx{
 	class Sprite;
 }
 
 namespace clv::ecs::_2D{
-	class SpriteComponent : public Component{
+	class SpriteComponent : public Component<SpriteComponent>{
 		friend class RenderSystem;
 
 		//VARIABLES
-	public:
-		static constexpr ComponentID ID = HASH_CLASS(SpriteComponent);
-
 	private:
 		std::shared_ptr<gfx::Sprite> sprite;
 

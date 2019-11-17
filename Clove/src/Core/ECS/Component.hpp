@@ -3,8 +3,6 @@
 #include "Core/ECS/ECSTypes.hpp"
 #include "Core/Utils/HashString.hpp"
 
-//TODO: .inl
-
 namespace clv::ecs{
 	class ComponentInterface{
 		//FUNCTIONS
@@ -20,20 +18,22 @@ namespace clv::ecs{
 	public:
 		static constexpr ComponentID ID = HASH_CLASS(DerivedClassType);
 
-		EntityID entityID = INVALID_ENTITY_ID;
+		EntityID entityID = INVALID_ENTITY_ID; //TODO: Make private
 
 		//FUNCTIONS
 	public:
 		Component() = default;
 
-		Component(const Component& other) = delete;
-		Component(Component&& other) noexcept = default;
+		Component(const Component& other);
+		Component(Component&& other) noexcept;
 
-		Component& operator=(const Component& other) = delete;
-		Component& operator=(Component&& other) noexcept = default;
+		Component& operator=(const Component& other);
+		Component& operator=(Component&& other) noexcept;
 		
-		virtual ~Component() = default;
+		virtual ~Component();
 
-		virtual ComponentID getID() const{ return ID; }
+		virtual ComponentID getID() const;
 	};
 }
+
+#include "Component.inl"
