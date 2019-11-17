@@ -23,6 +23,14 @@ namespace clv::ecs{
 
 			std::unordered_map<EntityID, std::unique_ptr<ComponentType>> components;
 
+			template<typename ...ConstructArgs>
+			ComponentType* addComponent(EntityID entityId, ConstructArgs&& ...args){
+				auto comp = std::make_unique<ComponentType>(std::forward<ConstructArgs>(args)...);
+				comp->entityID = entityId;
+				components[entityId] = std::move(comp);
+				return components[entityId].get();
+			}
+
 			ComponentType* getComponent(EntityID entityId){
 				if(auto iter = components.find(entityId); iter != components.end()){
 					return iter->second.get();
@@ -31,11 +39,7 @@ namespace clv::ecs{
 				}
 			}
 
-			template<typename ...ConstructArgs>
-			ComponentType* addComponent(EntityID entityId, ConstructArgs&& ...args){
-				components[entityId] = std::make_unique<ComponentType>(std::forward<ConstructArgs>(args)...);
-				return components[entityId].get();
-			}
+			
 		};
 
 		//VARIABLES
