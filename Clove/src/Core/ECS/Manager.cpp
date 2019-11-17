@@ -10,7 +10,7 @@
 #include "Core/ECS/UI/Systems/TextSystem.hpp"
 
 namespace clv::ecs{
-	EntityID Manager::nextID = 0;
+	EntityID Manager::nextID = 1;
 
 	Manager::Manager(){
 		//Order is somewhat important
@@ -43,7 +43,7 @@ namespace clv::ecs{
 	}
 
 	Entity Manager::createEntity(){
-		return { ++nextID, this };
+		return { nextID++, this };
 	}
 
 	void Manager::destroyEntity(EntityID ID){
