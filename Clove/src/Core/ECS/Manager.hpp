@@ -51,10 +51,10 @@ namespace clv::ecs{
 		ComponentContainer<ComponentType>* getComponentContainer(){
 			const ComponentID componentId = ComponentType::ID;
 			if(auto iter = containers.find(componentId); iter != containers.end()){
-				return iter->second.get();
+				return static_cast<ComponentContainer<ComponentType>*>(iter->second.get());
 			} else{
 				containers[componentId] = std::make_unique<ComponentContainer<ComponentType>>();
-				return containers[componentId].get();
+				return static_cast<ComponentContainer<ComponentType>*>(containers[componentId].get());
 			}
 		}
 	};
