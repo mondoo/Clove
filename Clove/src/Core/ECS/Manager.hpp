@@ -7,7 +7,7 @@
 namespace clv::ecs{
 	class Entity;
 	class Component;
-	class SystemBase;
+	class System;
 
 	//TODO: Move out
 	class ComponentManager{
@@ -72,7 +72,7 @@ namespace clv::ecs{
 		//std::unordered_map<EntityID, std::unordered_map<ComponentID, Component*>> components;
 		ComponentManager componentManager;
 
-		std::array<std::unique_ptr<SystemBase>, 8> systems;
+		std::array<std::unique_ptr<System>, 8> systems;
 
 
 		static EntityID nextID; //TODO: have a better system for generating and reusing IDs
@@ -95,12 +95,13 @@ namespace clv::ecs{
 		void destroyEntity(EntityID ID);
 		Entity getEntity(EntityID ID);
 
+		//Put inside component manager?
 		template<typename ...ComponentTypes>
 		std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> getComponentSets(){
 			//std::array<ComponentID> componentIDs = { Components::ID... };
 			std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> componentSets;
 			for(int32 i = 0; i < nextID; ++i){
-				auto set = getComponentsForEntity()<ComponentTypes...>(i);
+				auto set = getComponentsForEntity<ComponentTypes...>(i);
 				if(set){
 					componentSets.push_back(set.value());
 				}
@@ -108,25 +109,37 @@ namespace clv::ecs{
 			return componentSets;
 		}
 
+		enum class FoundState{
+			Good,
+			Bad,
+			End
+		};
+
 		template<typename ...ComponentTypes>
-		std::optional<std::tuple<std::add_pointer_t<ComponentTypes>...>> getComponentsForEntity(EntityID){
-
-		}
-
-		template<size_t index, typename ComponentType, typename... ComponentTypes>
-		bool proccessEntityComponent(std::tuple<std::add_pointer_t<ComponentTypes>...>& tupleToFill){
-			if(ComponentType::ID == componentID){
-				//std::get<index>(tupleToFill) = static_cast<ComponentType*>(component);
-				return true;
+		std::optional<std::tuple<std::add_pointer_t<ComponentTypes>...>> getComponentsForEntity(EntityID entityID){
+			std::tuple<std::add_pointer_t<ComponentTypes>...> tuple = std::make_tuple(componentManager.getComponentContainer<ComponentTypes..>()->getComponent(entityID));
+			if(checkForNullptr(tuple) == FoundState::End){
+				return { tuple };
 			} else{
-				return proccessEntityComponent<index + 1, ComponentArgs...>(componentID, component, tupleToFill);
+				return {};
 			}
 		}
-
-		template<size_t index>
-		bool proccessEntityComponent(ComponentID componentID, Component* component, ComponentTuple& tupleToFill){
-			return false;
+		
+		template<std::size_t index = 0, typename ...ComponentTypes, typename std::enable_if_t<index == sizeof...(ComponentTypes), int> = 0>
+		FoundState checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple){
+			return FoundState::End;
 		}
+
+		template<std::size_t index = 0, typename ...ComponentTypes, typename std::enable_if_t<index < sizeof...(ComponentTypes), int> = 0>
+		FoundState checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple){
+			if(std::get<index>(tuple)){
+				return checkForNullptr<index + 1>(tuple);
+			} else{
+				return FoundState::Bad;
+			}
+		}
+		//~~~~
+
 	private:
 		void onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component);
 		Component* getComponentForEntity(EntityID entityID, ComponentID componentID);
