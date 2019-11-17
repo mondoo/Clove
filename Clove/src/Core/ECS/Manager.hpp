@@ -18,7 +18,7 @@ namespace clv::ecs{
 
 		template<typename ComponentType>
 		class ComponentContainer : public IComponentContainer{
-		//private:
+			//private:
 		public:
 
 			std::unordered_map<EntityID, std::unique_ptr<ComponentType>> components;
@@ -26,7 +26,7 @@ namespace clv::ecs{
 			ComponentType* getComponent(EntityID entityId){
 				if(auto iter = components.find(entityId); iter != components.end()){
 					return iter->second.get();
-				}else{
+				} else{
 					return nullptr;
 				}
 			}
@@ -52,7 +52,7 @@ namespace clv::ecs{
 			const ComponentID componentId = ComponentType::ID;
 			if(auto iter = containers.find(componentId); iter != containers.end()){
 				return iter->second.get();
-			}else{
+			} else{
 				containers[componentId] = std::make_unique<ComponentContainer<ComponentType>>();
 				return containers[componentId].get();
 			}
@@ -69,7 +69,8 @@ namespace clv::ecs{
 		 * Try and allocate components contiguously
 		 * */
 
-		//std::unordered_map<EntityID, std::unordered_map<ComponentID, Component*>> components;
+		 //std::unordered_map<EntityID, std::unordered_map<ComponentID, Component*>> components;
+	public://Temp public
 		ComponentManager componentManager;
 
 		std::array<std::unique_ptr<System>, 8> systems;
@@ -124,27 +125,20 @@ namespace clv::ecs{
 				return {};
 			}
 		}
-		
+
 		template<std::size_t index = 0, typename ...ComponentTypes, typename std::enable_if_t<index == sizeof...(ComponentTypes), int> = 0>
 		FoundState checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple){
 			return FoundState::End;
 		}
 
 		template<std::size_t index = 0, typename ...ComponentTypes, typename std::enable_if_t<index < sizeof...(ComponentTypes), int> = 0>
-		FoundState checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple){
-			if(std::get<index>(tuple)){
-				return checkForNullptr<index + 1>(tuple);
-			} else{
-				return FoundState::Bad;
+			FoundState checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...> & tuple){
+				if(std::get<index>(tuple)){
+					return checkForNullptr<index + 1>(tuple);
+				} else{
+					return FoundState::Bad;
+				}
 			}
-		}
-		//~~~~
-
-	private:
-		void onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component);
-		Component* getComponentForEntity(EntityID entityID, ComponentID componentID);
-		bool isEntityValid(EntityID entityID);
-
-		void bindEntity(Entity& entity);
+			//~~~~
 	};
 }

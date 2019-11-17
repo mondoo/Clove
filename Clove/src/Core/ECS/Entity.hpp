@@ -3,22 +3,22 @@
 #include "Core/ECS/ECSTypes.hpp"
 
 namespace clv::ecs{
+	class Manager;
 	class Component;
+}
 
+namespace clv::ecs{
 	class Entity{
 		//VARIABLES
-	public:
-		utl::SingleCastDelegate<void(EntityID, ComponentID, std::unique_ptr<Component>)> onComponentCreated;
-		utl::SingleCastDelegate<Component*(EntityID, ComponentID)> onComponentRequestedDelegate;
-		utl::SingleCastDelegate<bool(EntityID)> isEntityIdValidDelegate;
-
 	private:
+		Manager* manager = nullptr;
+
 		EntityID entityID = INVALID_ENTITY_ID;
 
 		//FUNCTIONS
 	public:
 		Entity();
-		Entity(EntityID entityID);
+		Entity(EntityID entityID, Manager* manager);
 
 		Entity(const Entity& other);
 		Entity(Entity&& other) noexcept;

@@ -32,18 +32,13 @@ namespace clv::ecs{
 	Manager::~Manager() = default;
 
 	void Manager::update(utl::DeltaTime deltaTime){
-		std::for_each(systems.begin(), systems.end(), [deltaTime](const std::unique_ptr<SystemBase>& system){
+		std::for_each(systems.begin(), systems.end(), [deltaTime](const std::unique_ptr<System>& system){
 			system->update(deltaTime);
 		});
 	}
 
 	Entity Manager::createEntity(){
-		EntityID ID = ++nextID;
-
-		Entity entity{ ID };
-		bindEntity(entity);
-
-		return entity;
+		return { ++nextID, this };
 	}
 
 	void Manager::destroyEntity(EntityID ID){
@@ -51,44 +46,15 @@ namespace clv::ecs{
 			return;
 		}
 
+		//TODO: Destroy entity
+
 		/*std::for_each(systems.begin(), systems.end(), [ID](const std::unique_ptr<SystemBase>& system){
 			system->onEntityDestroyed(ID);
 		});*/
-		components.erase(ID);
+		//components.erase(ID);
 	}
 
 	Entity Manager::getEntity(EntityID ID){
-		//TODO: Might just be easier to make the copy ctor/assignment operator copy the delegates
-		if(const auto foundEnt = components.find(ID); foundEnt != components.end()){
-			Entity entity{ ID };
-			bindEntity(entity);
-
-			return entity;
-		}
-		return {};
-	}
-
-	void Manager::onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component){
-		components[entityID][componentID] = std::move(component);
-
-		/*auto& components = this->components;
-		std::for_each(systems.begin(), systems.end(), [entityID, &components](const std::unique_ptr<SystemBase>& system){
-			system->onEntityComponentAdded(entityID, components[entityID]);
-		});*/
-	}
-
-	Component* Manager::getComponentForEntity(EntityID entityID, ComponentID componentID){
-		return components[entityID][componentID].get();
-	}
-
-	bool Manager::isEntityValid(EntityID entityID){
-		const auto it = components.find(entityID);
-		return it != components.end();
-	}
-	
-	void Manager::bindEntity(Entity& entity){
-		entity.onComponentCreated.bind(&Manager::onEntityCreateComponent, this);
-		entity.onComponentRequestedDelegate.bind(&Manager::getComponentForEntity, this);
-		entity.isEntityIdValidDelegate.bind(&Manager::isEntityValid, this);
+		return { ++nextID, this };
 	}
 }
