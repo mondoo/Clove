@@ -22,5 +22,13 @@ namespace clv::ecs{
 			container->removeComponent(entityID);
 		}
 	}
+	
+	void ComponentManager::onContainerAddedComponent(ComponentInterface* component){
+		componentAddedDelegate.broadcast(component);
+	}
+
+	void ComponentManager::onContainerRemovedComponent(ComponentInterface* component){
+		componentRemovedDelegate.broadcast(component);
+	}
 }
 

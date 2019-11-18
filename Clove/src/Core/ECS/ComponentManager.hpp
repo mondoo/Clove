@@ -3,9 +3,18 @@
 #include "Core/ECS/ECSTypes.hpp"
 
 namespace clv::ecs{
+	class ComponentInterface;
+}
+
+namespace clv::ecs{
 	class ComponentManager{
 	private:
 		class ComponentContainerInterface{
+			//VARIABLES
+		public:
+			utl::SingleCastDelegate<void(ComponentInterface*)> componentAddedDelegate;
+			utl::SingleCastDelegate<void(ComponentInterface*)> componentRemovedDelegate;
+
 			//FUNCTIONS
 		public:
 			ComponentContainerInterface();
@@ -46,6 +55,10 @@ namespace clv::ecs{
 		};
 
 		//VARIABLES
+	public:
+		utl::SingleCastDelegate<void(ComponentInterface*)> componentAddedDelegate;
+		utl::SingleCastDelegate<void(ComponentInterface*)> componentRemovedDelegate;
+
 	private:
 		std::unordered_map<ComponentID, std::unique_ptr<ComponentContainerInterface>> containers;
 
@@ -65,6 +78,10 @@ namespace clv::ecs{
 		ComponentContainer<ComponentType>* getComponentContainer();
 
 		void onEntityDestroyed(EntityID entityID);
+
+	private:
+		void onContainerAddedComponent(ComponentInterface* component);
+		void onContainerRemovedComponent(ComponentInterface* component);
 	};
 }
 

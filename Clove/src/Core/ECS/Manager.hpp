@@ -53,6 +53,9 @@ namespace clv::ecs{
 		void addSystem();
 
 	private:
+		void onComponentAdded(ComponentInterface* component);
+		void onComponentRemoved(ComponentInterface* component);
+
 		enum class FoundState{ NullptrFound, EndOfTuple };
 		template<std::size_t index, typename ...ComponentTypes>
 		FoundState checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple, typename std::enable_if_t<(index == sizeof...(ComponentTypes)), int> = 0);

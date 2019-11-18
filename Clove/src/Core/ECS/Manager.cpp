@@ -30,6 +30,9 @@ namespace clv::ecs{
 		std::for_each(systems.begin(), systems.end(), [this](const std::unique_ptr<System>& system){
 			system->manager = this;
 		});
+
+		componentManager.componentAddedDelegate.bind(&Manager::onComponentAdded, this);
+		componentManager.componentRemovedDelegate.bind(&Manager::onComponentRemoved, this);
 	}
 
 	Manager::~Manager() = default;
@@ -57,5 +60,17 @@ namespace clv::ecs{
 			return;
 		}
 		componentManager.onEntityDestroyed(ID);
+	}
+
+	void Manager::onComponentAdded(ComponentInterface* component){
+		std::for_each(systems.begin(), systems.end(), [component](const std::unique_ptr<System>& system){
+			system->onComponentCreated(component);
+		});
+	}
+
+	void Manager::onComponentRemoved(ComponentInterface* component){
+		std::for_each(systems.begin(), systems.end(), [component](const std::unique_ptr<System>& system){
+			system->onComponentDestroyed(component);
+		});
 	}
 }

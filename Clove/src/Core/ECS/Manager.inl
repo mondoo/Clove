@@ -1,13 +1,7 @@
 namespace clv::ecs{
 	template<typename ComponentType, typename ...ConstructArgs>
 	ComponentType* Manager::addComponent(EntityID entityID, ConstructArgs&& ...args){
-		ComponentType* component = componentManager.getComponentContainer<ComponentType>()->addComponent(entityID, args...);
-
-		std::for_each(systems.begin(), systems.end(), [component](const std::unique_ptr<System>& system){
-			system->onComponentCreated(component);
-		});
-
-		return component;
+		return componentManager.getComponentContainer<ComponentType>()->addComponent(entityID, args...);
 	}
 
 	template<typename ComponentType>
