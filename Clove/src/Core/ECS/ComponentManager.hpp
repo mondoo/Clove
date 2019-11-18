@@ -17,6 +17,8 @@ namespace clv::ecs{
 			ComponentContainerInterface& operator=(ComponentContainerInterface&& other);
 
 			virtual ~ComponentContainerInterface();
+
+			virtual void removeComponent(EntityID entityID) = 0;
 		};
 
 		template<typename ComponentType>
@@ -39,8 +41,8 @@ namespace clv::ecs{
 
 			template<typename ...ConstructArgs>
 			ComponentType* addComponent(EntityID entityID, ConstructArgs&& ...args);
-
-			ComponentType* getComponent(EntityID entityId);
+			ComponentType* getComponent(EntityID entityID);
+			virtual void removeComponent(EntityID entityID) override;
 		};
 
 		//VARIABLES
@@ -61,6 +63,8 @@ namespace clv::ecs{
 
 		template<typename ComponentType>
 		ComponentContainer<ComponentType>* getComponentContainer();
+
+		void onEntityDestroyed(EntityID entityID);
 	};
 }
 

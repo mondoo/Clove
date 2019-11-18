@@ -27,12 +27,17 @@ namespace clv::ecs{
 	}
 
 	template<typename ComponentType>
-	ComponentType* ComponentManager::ComponentContainer<ComponentType>::getComponent(EntityID entityId){
-		if(auto iter = components.find(entityId); iter != components.end()){
+	ComponentType* ComponentManager::ComponentContainer<ComponentType>::getComponent(EntityID entityID){
+		if(auto iter = components.find(entityID); iter != components.end()){
 			return iter->second.get();
 		} else{
 			return nullptr;
 		}
+	}
+
+	template<typename ComponentType>
+	void ComponentManager::ComponentContainer<ComponentType>::removeComponent(EntityID entityID){
+		components.erase(entityID);
 	}
 
 	template<typename ComponentType>

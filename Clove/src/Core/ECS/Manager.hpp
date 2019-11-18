@@ -43,6 +43,8 @@ namespace clv::ecs{
 		ComponentType* addComponent(EntityID entityID, ConstructArgs&& ...args);
 		template<typename ComponentType>
 		ComponentType* getComponent(EntityID entityID);
+		template<typename ComponentType>
+		void removeComponent(EntityID entityID);
 
 		template<typename ...ComponentTypes>
 		std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> getComponentSets();

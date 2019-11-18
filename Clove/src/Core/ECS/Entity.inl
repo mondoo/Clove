@@ -18,4 +18,11 @@ namespace clv::ecs{
 			return nullptr;
 		}
 	}
+
+	template<typename ComponentType>
+	void Entity::removeComponent(){
+		if(isValid()){
+			manager->removeComponent<ComponentType>(getID());
+		}
+	}
 }

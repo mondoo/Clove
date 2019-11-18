@@ -56,12 +56,6 @@ namespace clv::ecs{
 		if(ID == INVALID_ENTITY_ID){
 			return;
 		}
-
-		//TODO: Destroy entity
-
-		/*std::for_each(systems.begin(), systems.end(), [ID](const std::unique_ptr<SystemBase>& system){
-			system->onEntityDestroyed(ID);
-		});*/
-		//components.erase(ID);
+		componentManager.onEntityDestroyed(ID);
 	}
 }

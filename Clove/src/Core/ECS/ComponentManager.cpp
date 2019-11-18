@@ -16,5 +16,11 @@ namespace clv::ecs{
 	ComponentManager::ComponentManager() = default;
 
 	ComponentManager::~ComponentManager() = default;
+
+	void ComponentManager::onEntityDestroyed(EntityID entityID){
+		for(auto& [key, container] : containers){
+			container->removeComponent(entityID);
+		}
+	}
 }
 

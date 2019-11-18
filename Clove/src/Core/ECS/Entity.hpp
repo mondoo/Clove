@@ -35,6 +35,8 @@ namespace clv::ecs{
 		ComponentType* addComponent(ConstructorArgs&& ...args);
 		template<typename ComponentType>
 		ComponentType* getComponent() const;
+		template<typename ComponentType>
+		void removeComponent();
 	};
 }
 

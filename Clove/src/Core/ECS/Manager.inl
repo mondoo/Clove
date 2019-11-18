@@ -15,6 +15,11 @@ namespace clv::ecs{
 		return componentManager.getComponentContainer<ComponentType>()->getComponent(entityID);
 	}
 
+	template<typename ComponentType>
+	void Manager::removeComponent(EntityID entityID){
+		componentManager.getComponentContainer<ComponentType>()->removeComponent(entityID);
+	}
+
 	template<typename ...ComponentTypes>
 	std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> Manager::getComponentSets(){
 		std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> componentSets;
