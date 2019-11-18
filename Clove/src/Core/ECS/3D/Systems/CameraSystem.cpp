@@ -1,5 +1,8 @@
 #include "CameraSystem.hpp"
 
+#include "Core/ECS/Manager.hpp"
+#include "Core/ECS/3D/Components/TransformComponent.hpp"
+#include "Core/ECS/3D/Components/CameraComponent.hpp"
 #include "Core/Graphics/Renderer.hpp"
 
 namespace clv::ecs::_3D{
@@ -12,9 +15,10 @@ namespace clv::ecs::_3D{
 	CameraSystem::~CameraSystem() = default;
 	
 	void CameraSystem::update(utl::DeltaTime deltaTime){
-		for(auto& componentTuple : components){
-			TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
-			CameraComponent* camera = std::get<CameraComponent*>(componentTuple);
+		auto componentTuples = manager->getComponentSets<TransformComponent, CameraComponent>();
+		for(auto& tuple : componentTuples){
+			TransformComponent* transform = std::get<TransformComponent*>(tuple);
+			CameraComponent* camera = std::get<CameraComponent*>(tuple);
 
 			const math::Vector3f& position = transform->getPosition();
 

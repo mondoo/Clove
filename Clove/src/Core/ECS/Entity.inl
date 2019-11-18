@@ -1,21 +1,28 @@
+#include "Core/ECS/Manager.hpp"
+
 namespace clv::ecs{
 	template<typename ComponentType, typename ...ConstructorArgs>
 	ComponentType* Entity::addComponent(ConstructorArgs&& ...args){
-		if (entityID != INVALID_ENTITY_ID){
-			auto comp = std::make_unique<ComponentType>(std::forward<ConstructorArgs>(args)...);
-			comp->entityID = entityID;
-			ComponentType* compPtr = comp.get();
-			onComponentCreated.broadcast(entityID, ComponentType::ID, std::move(comp));
-			return compPtr;
+		if(isValid()){
+			return manager->addComponent<ComponentType>(getID(), args...);
+		} else{
+			return nullptr;
 		}
-		return nullptr;
 	}
 	
 	template<typename ComponentType>
 	ComponentType* Entity::getComponent() const{
 		if(isValid()){
-			return static_cast<ComponentType*>(onComponentRequestedDelegate.broadcast(entityID, ComponentType::ID));
+			return manager->getComponent<ComponentType>(getID());
+		} else{
+			return nullptr;
 		}
-		return nullptr;
+	}
+
+	template<typename ComponentType>
+	void Entity::removeComponent(){
+		if(isValid()){
+			manager->removeComponent<ComponentType>(getID());
+		}
 	}
 }

@@ -3,28 +3,29 @@
 #include "Core/ECS/ECSTypes.hpp"
 
 namespace clv::ecs{
-	class Component;
+	class Manager;
+}
 
+namespace clv::ecs{
 	class Entity{
 		//VARIABLES
-	public:
-		utl::SingleCastDelegate<void(EntityID, ComponentID, std::unique_ptr<Component>)> onComponentCreated;
-		utl::SingleCastDelegate<Component*(EntityID, ComponentID)> onComponentRequestedDelegate;
-		utl::SingleCastDelegate<bool(EntityID)> isEntityIdValidDelegate;
-
 	private:
+		Manager* manager = nullptr;
+
 		EntityID entityID = INVALID_ENTITY_ID;
 
 		//FUNCTIONS
 	public:
 		Entity();
+		Entity(EntityID entityID, Manager* manager);
+
 		Entity(const Entity& other);
 		Entity(Entity&& other) noexcept;
+
 		Entity& operator=(const Entity& other);
 		Entity& operator=(Entity&& other) noexcept;
-		~Entity();
 
-		Entity(EntityID entityID);
+		~Entity();
 
 		bool isValid() const;
 
@@ -34,6 +35,8 @@ namespace clv::ecs{
 		ComponentType* addComponent(ConstructorArgs&& ...args);
 		template<typename ComponentType>
 		ComponentType* getComponent() const;
+		template<typename ComponentType>
+		void removeComponent();
 	};
 }
 

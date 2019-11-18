@@ -27,7 +27,10 @@ set(
 set(
 	CoreECSFiles
 		Core/ECS/Component.hpp
-		Core/ECS/Component.cpp
+		Core/ECS/Component.inl
+		Core/ECS/ComponentManager.hpp
+		Core/ECS/ComponentManager.inl
+		Core/ECS/ComponentManager.cpp
 		Core/ECS/ECSTypes.hpp
 		Core/ECS/Entity.hpp
 		Core/ECS/Entity.inl
@@ -35,7 +38,6 @@ set(
 		Core/ECS/Manager.hpp
 		Core/ECS/Manager.cpp
 		Core/ECS/System.hpp
-		Core/ECS/System.inl
 		Core/ECS/2D/Components/RigidBodyComponent.hpp
 		Core/ECS/2D/Components/RigidBodyComponent.cpp
 		Core/ECS/2D/Components/SpriteComponent.hpp

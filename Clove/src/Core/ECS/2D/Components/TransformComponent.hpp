@@ -2,16 +2,11 @@
 
 #include "Core/ECS/Component.hpp"
 
-#include "Core/Utils/HashString.hpp"
-
 namespace clv::ecs::_2D{
-	class TransformComponent : public Component{
+	class TransformComponent : public Component<_2D::TransformComponent>{
 		friend class TransformSystem;
 
 		//VARIABLES
-	public:
-		static constexpr ComponentID ID = HASH_CLASS(_2D::TransformComponent);
-
 	private:
 		math::Vector2f	localPosition	= { 0.0f, 0.0f };
 		float			localRotation	= 0.0f;

@@ -10,84 +10,67 @@
 #include "Core/ECS/UI/Systems/TextSystem.hpp"
 
 namespace clv::ecs{
-	EntityID Manager::nextID = 0;
+	EntityID Manager::nextID = 1;
 
 	Manager::Manager(){
 		//Order is somewhat important
-		systems = {
-			std::make_unique<_2D::PhysicsSystem>(),
-			std::make_unique<_2D::RenderSystem>(),
+		systems.reserve(8);
+		systems.push_back(std::make_unique<_2D::PhysicsSystem>());
+		systems.push_back(std::make_unique<_2D::RenderSystem>());
 
-			std::make_unique<_3D::PhysicsSystem>(),
-			std::make_unique<_3D::RenderSystem>(),
-			std::make_unique<_3D::LightSystem>(),
-			std::make_unique<_3D::CameraSystem>(),
+		systems.push_back(std::make_unique<_3D::PhysicsSystem>());
+		systems.push_back(std::make_unique<_3D::RenderSystem>());
+		systems.push_back(std::make_unique<_3D::LightSystem>());
+		systems.push_back(std::make_unique<_3D::CameraSystem>());
 
-			std::make_unique<aud::AudioSystem>(),
+		systems.push_back(std::make_unique<aud::AudioSystem>());
 
-			std::make_unique<ui::TextSystem>()
-		};
+		systems.push_back(std::make_unique<ui::TextSystem>());
+
+		std::for_each(systems.begin(), systems.end(), [this](const std::unique_ptr<System>& system){
+			system->manager = this;
+		});
+
+		componentManager.componentAddedDelegate.bind(&Manager::onComponentAdded, this);
+		componentManager.componentRemovedDelegate.bind(&Manager::onComponentRemoved, this);
 	}
 
 	Manager::~Manager() = default;
 
 	void Manager::update(utl::DeltaTime deltaTime){
-		std::for_each(systems.begin(), systems.end(), [deltaTime](const std::unique_ptr<SystemBase>& system){
+		std::for_each(systems.begin(), systems.end(), [deltaTime](const std::unique_ptr<System>& system){
 			system->update(deltaTime);
 		});
 	}
 
 	Entity Manager::createEntity(){
-		EntityID ID = ++nextID;
+		return { nextID++, this };
+	}
 
-		Entity entity{ ID };
-		bindEntity(entity);
-
-		return entity;
+	Entity Manager::getEntity(EntityID ID){
+		if(ID == INVALID_ENTITY_ID){
+			return {};
+		} else{
+			return { ID, this };
+		}
 	}
 
 	void Manager::destroyEntity(EntityID ID){
 		if(ID == INVALID_ENTITY_ID){
 			return;
 		}
-
-		std::for_each(systems.begin(), systems.end(), [ID](const std::unique_ptr<SystemBase>& system){
-			system->onEntityDestroyed(ID);
-		});
-		components.erase(ID);
+		componentManager.onEntityDestroyed(ID);
 	}
 
-	Entity Manager::getEntity(EntityID ID){
-		if(const auto foundEnt = components.find(ID); foundEnt != components.end()){
-			Entity entity{ ID };
-			bindEntity(entity);
-
-			return entity;
-		}
-		return {};
-	}
-
-	void Manager::onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component){
-		components[entityID][componentID] = std::move(component);
-
-		auto& components = this->components;
-		std::for_each(systems.begin(), systems.end(), [entityID, &components](const std::unique_ptr<SystemBase>& system){
-			system->onEntityComponentAdded(entityID, components[entityID]);
+	void Manager::onComponentAdded(ComponentInterface* component){
+		std::for_each(systems.begin(), systems.end(), [component](const std::unique_ptr<System>& system){
+			system->onComponentCreated(component);
 		});
 	}
 
-	Component* Manager::getComponentForEntity(EntityID entityID, ComponentID componentID){
-		return components[entityID][componentID].get();
-	}
-
-	bool Manager::isEntityValid(EntityID entityID){
-		const auto it = components.find(entityID);
-		return it != components.end();
-	}
-	
-	void Manager::bindEntity(Entity& entity){
-		entity.onComponentCreated.bind(&Manager::onEntityCreateComponent, this);
-		entity.onComponentRequestedDelegate.bind(&Manager::getComponentForEntity, this);
-		entity.isEntityIdValidDelegate.bind(&Manager::isEntityValid, this);
+	void Manager::onComponentRemoved(ComponentInterface* component){
+		std::for_each(systems.begin(), systems.end(), [component](const std::unique_ptr<System>& system){
+			system->onComponentDestroyed(component);
+		});
 	}
 }

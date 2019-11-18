@@ -1,5 +1,9 @@
 #include "PhysicsSystem.hpp"
 
+#include "Core/ECS/Manager.hpp"
+#include "Core/ECS/3D/Components/TransformComponent.hpp"
+#include "Core/ECS/3D/Components/RigidBodyComponent.hpp"
+
 #include <btBulletDynamicsCommon.h>
 
 namespace clv::ecs::_3D{
@@ -26,6 +30,8 @@ namespace clv::ecs::_3D{
 	}
 
 	void PhysicsSystem::update(utl::DeltaTime deltaTime){
+		using ComponentTuple = std::tuple<TransformComponent*, RigidBodyComponent*>;
+
 		const auto updateRigidBody = [](const ComponentTuple& tuple){
 			RigidBodyComponent* rigidBody = std::get<RigidBodyComponent*>(tuple);
 			TransformComponent* transform = std::get<TransformComponent*>(tuple);
@@ -52,9 +58,11 @@ namespace clv::ecs::_3D{
 			transform->setRotation({ rot.getW(), rot.getX(), rot.getY(), rot.getZ() }); //GLM is pitch yaw roll while Bullet is yaw pitch roll
 		};
 
-		std::for_each(components.begin(), components.end(), updateRigidBody);
+		auto componentTuples = manager->getComponentSets<TransformComponent, RigidBodyComponent>();
+
+		std::for_each(componentTuples.begin(), componentTuples.end(), updateRigidBody);
 		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
-		std::for_each(components.begin(), components.end(), updateTransform);
+		std::for_each(componentTuples.begin(), componentTuples.end(), updateTransform);
 
 		int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
 		for(int i = 0; i < numManifolds; ++i){
@@ -73,13 +81,15 @@ namespace clv::ecs::_3D{
 		}
 	}
 
-	void PhysicsSystem::handleEntityCreation(const ComponentTuple& componentTuple){
-		RigidBodyComponent* rigidBody = std::get<RigidBodyComponent*>(componentTuple);
-		dynamicsWorld->addRigidBody(rigidBody->body.get());
+	void PhysicsSystem::onComponentCreated(ComponentInterface* component){
+		if(component->getID() == RigidBodyComponent::id()){
+			dynamicsWorld->addRigidBody(static_cast<RigidBodyComponent*>(component)->body.get());
+		}
 	}
 
-	void PhysicsSystem::handleEntityDestruction(const ComponentTuple& componentTuple){
-		RigidBodyComponent* rigidBody = std::get<RigidBodyComponent*>(componentTuple);
-		dynamicsWorld->removeCollisionObject(rigidBody->body.get());
+	void PhysicsSystem::onComponentDestroyed(ComponentInterface* component){
+		if(component->getID() == RigidBodyComponent::id()){
+			dynamicsWorld->removeCollisionObject(static_cast<RigidBodyComponent*>(component)->body.get());
+		}
 	}
 }
