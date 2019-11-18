@@ -45,7 +45,11 @@ namespace clv::ecs{
 	}
 
 	Entity Manager::getEntity(EntityID ID){
-		return { ID, this };
+		if(ID == INVALID_ENTITY_ID){
+			return {};
+		} else{
+			return { ID, this };
+		}
 	}
 
 	void Manager::destroyEntity(EntityID ID){
