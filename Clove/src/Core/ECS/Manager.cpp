@@ -14,19 +14,18 @@ namespace clv::ecs{
 
 	Manager::Manager(){
 		//Order is somewhat important
-		systems = {
-			std::make_unique<_2D::PhysicsSystem>(),
-			std::make_unique<_2D::RenderSystem>(),
+		systems.reserve(8);
+		systems.push_back(std::make_unique<_2D::PhysicsSystem>());
+		systems.push_back(std::make_unique<_2D::RenderSystem>());
 
-			std::make_unique<_3D::PhysicsSystem>(),
-			std::make_unique<_3D::RenderSystem>(),
-			std::make_unique<_3D::LightSystem>(),
-			std::make_unique<_3D::CameraSystem>(),
+		systems.push_back(std::make_unique<_3D::PhysicsSystem>());
+		systems.push_back(std::make_unique<_3D::RenderSystem>());
+		systems.push_back(std::make_unique<_3D::LightSystem>());
+		systems.push_back(std::make_unique<_3D::CameraSystem>());
 
-			std::make_unique<aud::AudioSystem>(),
+		systems.push_back(std::make_unique<aud::AudioSystem>());
 
-			std::make_unique<ui::TextSystem>()
-		};
+		systems.push_back(std::make_unique<ui::TextSystem>());
 
 		std::for_each(systems.begin(), systems.end(), [this](const std::unique_ptr<System>& system){
 			system->manager = this;

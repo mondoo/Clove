@@ -17,7 +17,7 @@ namespace clv::ecs{
 	private:
 		ComponentManager componentManager;
 
-		std::array<std::unique_ptr<System>, 8> systems;
+		std::vector<std::unique_ptr<System>> systems;
 
 		static EntityID nextID;
 
@@ -41,12 +41,14 @@ namespace clv::ecs{
 
 		template<typename ComponentType, typename ...ConstructArgs>
 		ComponentType* addComponent(EntityID entityID, ConstructArgs&& ...args);
-
 		template<typename ComponentType>
 		ComponentType* getComponent(EntityID entityID);
 
 		template<typename ...ComponentTypes>
 		std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> getComponentSets();
+
+		template<typename SystemType>
+		void addSystem();
 
 	private:
 		enum class FoundState{ NullptrFound, EndOfTuple };

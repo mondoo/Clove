@@ -1,4 +1,3 @@
-#include "Manager.hpp"
 namespace clv::ecs{
 	template<typename ComponentType, typename ...ConstructArgs>
 	ComponentType* Manager::addComponent(EntityID entityID, ConstructArgs&& ...args){
@@ -26,6 +25,13 @@ namespace clv::ecs{
 			}
 		}
 		return componentSets;
+	}
+
+	template<typename SystemType>
+	void Manager::addSystem(){
+		auto system = std::make_unique<SystemType>();
+		system->manager = this;
+		systems.push_back(std::move(system));
 	}
 
 	template<std::size_t index, typename ...ComponentTypes>
