@@ -28,6 +28,9 @@ set(
 	CoreECSFiles
 		Core/ECS/Component.hpp
 		Core/ECS/Component.inl
+		Core/ECS/ComponentManager.hpp
+		Core/ECS/ComponentManager.inl
+		Core/ECS/ComponentManager.cpp
 		Core/ECS/ECSTypes.hpp
 		Core/ECS/Entity.hpp
 		Core/ECS/Entity.inl

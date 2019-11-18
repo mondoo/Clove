@@ -28,7 +28,6 @@ namespace clv::ecs{
 			std::make_unique<ui::TextSystem>()
 		};
 
-		//TODO: This should change when we can add systems dynamically
 		std::for_each(systems.begin(), systems.end(), [this](const std::unique_ptr<System>& system){
 			system->manager = this;
 		});
@@ -46,6 +45,10 @@ namespace clv::ecs{
 		return { nextID++, this };
 	}
 
+	Entity Manager::getEntity(EntityID ID){
+		return { ID, this };
+	}
+
 	void Manager::destroyEntity(EntityID ID){
 		if(ID == INVALID_ENTITY_ID){
 			return;
@@ -57,9 +60,5 @@ namespace clv::ecs{
 			system->onEntityDestroyed(ID);
 		});*/
 		//components.erase(ID);
-	}
-
-	Entity Manager::getEntity(EntityID ID){
-		return { ID, this };
 	}
 }
