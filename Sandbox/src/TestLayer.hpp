@@ -24,6 +24,7 @@ private:
 	clv::ecs::Entity lght2;
 
 	clv::ecs::Entity cam;
+	clv::ecs::Entity subcam;
 
 	clv::ecs::Entity sound;
 

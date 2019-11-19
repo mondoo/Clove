@@ -4,12 +4,18 @@
 
 #include "Core/Graphics/ShaderBufferTypes.hpp"
 
+namespace clv::gfx{
+	class RenderTarget;
+}
+
 namespace clv::ecs::_3D{
 	enum class ProjectionMode{
 		orthographic,
 		perspective
 	};
+}
 
+namespace clv::ecs::_3D{
 	class CameraComponent : public Component<CameraComponent>{
 		friend class RenderSystem;
 
@@ -26,13 +32,18 @@ namespace clv::ecs::_3D{
 
 		gfx::CameraRenderData cameraRenderData;
 
+		std::shared_ptr<gfx::RenderTarget> renderTarget;
+
 		//FUNCTIONS
 	public:
 		CameraComponent();
+
 		CameraComponent(const CameraComponent& other) = delete;
 		CameraComponent(CameraComponent&& other) noexcept;
+
 		CameraComponent& operator=(const CameraComponent& other) = delete;
 		CameraComponent& operator=(CameraComponent&& other) noexcept;
+
 		~CameraComponent();
 
 		const math::Vector3f& getFront() const;
@@ -42,5 +53,7 @@ namespace clv::ecs::_3D{
 		void updateFront(float pitch, float yaw);
 
 		void setProjectionMode(ProjectionMode mode);
+
+		void setRenderTarget(const std::shared_ptr<gfx::RenderTarget>& renderTarget);
 	};
 }

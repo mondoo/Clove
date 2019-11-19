@@ -18,10 +18,15 @@
 using namespace clv::gfx;
 
 namespace clv::ecs::_3D{
+	struct ComposedCameraData{
+		CameraRenderData bufferData;
+		std::shared_ptr<RenderTarget> target;
+	};
+
 	struct SceneData{
 		//VARIABLES
 	public:
-		CameraRenderData currentCamData;
+		std::vector<ComposedCameraData> cameras;
 
 		std::vector<std::shared_ptr<Mesh>> meshesToRender;
 
@@ -35,8 +40,6 @@ namespace clv::ecs::_3D{
 		//Other
 		std::shared_ptr<RenderTarget> shadowMapRenderTarget;
 		std::shared_ptr<Texture> shadowMapTexture;
-
-		std::shared_ptr<RenderTarget> customRenderTarget;
 
 		std::shared_ptr<PipelineObject> defaultPipeline;
 		std::shared_ptr<PipelineObject> shadowPipeline;
@@ -83,25 +86,29 @@ namespace clv::ecs::_3D{
 	}
 
 	void RenderSystem::preUpdate(){
-		currentSceneData->numLights = 0;
-
 		RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
 		RenderCommand::clear(); //TODO: Might need to just do a clear depth command
-		if(currentSceneData->customRenderTarget){
-			RenderCommand::setRenderTarget(*currentSceneData->customRenderTarget);
-			RenderCommand::clear();
-		}
+		std::for_each(currentSceneData->cameras.begin(), currentSceneData->cameras.end(), [](const ComposedCameraData& cameraData){
+			if(cameraData.target){
+				RenderCommand::setRenderTarget(*cameraData.target);
+				RenderCommand::clear();
+			}
+		});
 		RenderCommand::resetRenderTargetToDefault();
 		RenderCommand::clear();
+
+		currentSceneData->numLights = 0;
+		currentSceneData->cameras.clear();
+		currentSceneData->meshesToRender.clear();
 	}
 
 	void RenderSystem::update(utl::DeltaTime deltaTime){
 		//Set camera
 		{
 			auto componentTuples = manager->getComponentSets<TransformComponent, CameraComponent>();
-			if(componentTuples.size() > 0){ //Just grabbing the top camera for now
-				TransformComponent* transform = std::get<TransformComponent*>(componentTuples[0]);
-				CameraComponent* camera = std::get<CameraComponent*>(componentTuples[0]);
+			for(auto& tuple : componentTuples){
+				TransformComponent* transform = std::get<TransformComponent*>(tuple);
+				CameraComponent* camera = std::get<CameraComponent*>(tuple);
 
 				const math::Vector3f& position = transform->getPosition();
 
@@ -122,7 +129,7 @@ namespace clv::ecs::_3D{
 				camera->cameraRenderData.position = position;
 				camera->cameraRenderData.projection = camera->currentProjection;
 
-				currentSceneData->currentCamData = camera->cameraRenderData;
+				currentSceneData->cameras.push_back({ camera->cameraRenderData, camera->renderTarget });
 			}
 		}
 
@@ -169,32 +176,48 @@ namespace clv::ecs::_3D{
 	}
 
 	void RenderSystem::postUpdate(){
-		const auto draw = [](const std::shared_ptr<Mesh>& mesh){
-			auto& meshMaterial = mesh->getMaterialInstance();
+		const auto renderCamera = [](const ComposedCameraData& cameraData){
+			const auto draw = [camBufferData = cameraData.bufferData](const std::shared_ptr<Mesh>& mesh){
+				auto& meshMaterial = mesh->getMaterialInstance();
 
-			//TODO: I like setting them on the material, but I either need a global material or set it on the base material
-			//Perhaps some sort of 'material codex' where I can pull the base material for a shader type?
+				//TODO: I like setting them on the material, but I either need a global material or set it on the base material
+				//Perhaps some sort of 'material codex' where I can pull the base material for a shader type?
 
-			//Camera
-			meshMaterial.setData(BBP_CameraMatrices, ViewData{ currentSceneData->currentCamData.lookAt, currentSceneData->currentCamData.projection }, ShaderType::Vertex);
-			meshMaterial.setData(BBP_ViewData, ViewPos{ currentSceneData->currentCamData.position }, ShaderType::Pixel);
+				//Camera
+				meshMaterial.setData(BBP_CameraMatrices, ViewData{ camBufferData.lookAt, camBufferData.projection }, ShaderType::Vertex);
+				meshMaterial.setData(BBP_ViewData, ViewPos{ camBufferData.position }, ShaderType::Pixel);
 
-			//Lights
-			meshMaterial.setData(BBP_PointLightData, PointLightShaderData{ currentSceneData->currentLightInfo }, ShaderType::Pixel);
-			meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ currentSceneData->currentShadowDepth }, ShaderType::Pixel);
-			meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ currentSceneData->numLights }, ShaderType::Pixel);
+				//Lights
+				meshMaterial.setData(BBP_PointLightData, PointLightShaderData{ currentSceneData->currentLightInfo }, ShaderType::Pixel);
+				meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ currentSceneData->currentShadowDepth }, ShaderType::Pixel);
+				meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ currentSceneData->numLights }, ShaderType::Pixel);
 
-			meshMaterial.bind();
+				meshMaterial.bind();
 
-			const auto vertexLayout = currentSceneData->defaultPipeline->getVertexLayout();
+				const auto vertexLayout = currentSceneData->defaultPipeline->getVertexLayout();
 
-			auto vb = mesh->getVertexBufferForLayout(vertexLayout);
-			auto ib = mesh->getIndexBuffer();
+				auto vb = mesh->getVertexBufferForLayout(vertexLayout);
+				auto ib = mesh->getIndexBuffer();
 
-			RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
-			RenderCommand::bindIndexBuffer(*ib);
+				RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				RenderCommand::bindIndexBuffer(*ib);
 
-			RenderCommand::drawIndexed(mesh->getIndexCount());
+				RenderCommand::drawIndexed(mesh->getIndexCount());
+			};
+
+			if(cameraData.target){
+				RenderCommand::setRenderTarget(*cameraData.target);
+			} else{
+				RenderCommand::resetRenderTargetToDefault();
+			}
+
+			RenderCommand::bindPipelineObject(*currentSceneData->defaultPipeline); //Bind in the default pipeline
+			RenderCommand::bindTexture(currentSceneData->shadowMapTexture.get(), TBP_Shadow); //Bind this in before rendering the real mesh
+
+			//Render scene
+			currentSceneData->forEachMesh(draw);
+
+			RenderCommand::bindTexture(nullptr, TBP_Shadow);
 		};
 
 		const auto generateShadowMap = [](const std::shared_ptr<Mesh>& mesh){
@@ -226,23 +249,9 @@ namespace clv::ecs::_3D{
 			RenderCommand::setViewport({ 0, 0, plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight() });
 		}
 
-		RenderCommand::resetRenderTargetToDefault(); //Reset render target before binding the shadow map
+		//Render scene for each camera
+		std::for_each(currentSceneData->cameras.begin(), currentSceneData->cameras.end(), renderCamera);
 
-		RenderCommand::bindPipelineObject(*currentSceneData->defaultPipeline); //Bind in the default pipeline
-		RenderCommand::bindTexture(currentSceneData->shadowMapTexture.get(), TBP_Shadow); //Bind this in before rendering the real mesh
-
-		//Render any other render targets
-		if(currentSceneData->customRenderTarget){
-			RenderCommand::setRenderTarget(*currentSceneData->customRenderTarget);
-			currentSceneData->forEachMesh(draw);
-			RenderCommand::resetRenderTargetToDefault();
-		}
-
-		//Render scene
-		currentSceneData->forEachMesh(draw);
-
-		RenderCommand::bindTexture(nullptr, TBP_Shadow);
-
-		currentSceneData->meshesToRender.clear();
+		RenderCommand::resetRenderTargetToDefault();
 	}
 }

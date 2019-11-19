@@ -11,6 +11,7 @@ namespace clv::gfx{
 		std::shared_ptr<Texture> texture;
 		math::Vector4f colour{ 1.0f, 1.0f, 1.0f, 1.0f };
 		math::Matrix4f modelData{};
+
 		//FUNCTIONS
 	public:
 		Sprite();

@@ -43,4 +43,8 @@ namespace clv::ecs::_3D{
 				break;
 		}
 	}
+
+	void CameraComponent::setRenderTarget(const std::shared_ptr<gfx::RenderTarget>& renderTarget){
+		this->renderTarget = renderTarget;
+	}
 }

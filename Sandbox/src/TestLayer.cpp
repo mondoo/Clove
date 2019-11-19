@@ -40,7 +40,9 @@ void TestLayer::onAttach(){
 	ent3.addComponent<clv::ecs::_3D::MeshComponent>();
 	ent3.addComponent<clv::ecs::_3D::TransformComponent>();
 
-	//rtEnt = clv::Application::get().getManager().createEntity<clv::ecs::_2D::SpriteComponent, clv::ecs::_2D::TransformComponent>();
+	rtEnt = clv::plt::Application::get().getManager().createEntity();
+	rtEnt.addComponent<clv::ecs::_2D::SpriteComponent>();
+	rtEnt.addComponent<clv::ecs::_2D::TransformComponent>();
 
 	sprtEnt1 = clv::plt::Application::get().getManager().createEntity();
 	sprtEnt1.addComponent<clv::ecs::_2D::SpriteComponent>();
@@ -112,13 +114,24 @@ void TestLayer::onAttach(){
 
 	//clv::Application::get().getManager().destroyEntity(ent2.getID());
 
-	/*auto rtTexture = clv::gfx::BindableFactory::createTexture(clv::Application::get().getWindow().getWidth(), clv::Application::get().getWindow().getHeight(), clv::gfx::TextureUsage::RenderTarget, clv::gfx::TBP_Albedo);
+	clv::gfx::TextureDescriptor tdesc{};
+	tdesc.usage = clv::gfx::TextureUsage::RenderTarget_Colour;
+	tdesc.dimensions = { clv::plt::Application::get().getWindow().getWidth(), clv::plt::Application::get().getWindow().getHeight() };
+	
+	auto rtTexture = clv::gfx::RenderCommand::createTexture(tdesc, nullptr, 4);
 	auto sprite = std::make_shared<clv::gfx::Sprite>(rtTexture);
+	auto renderTarget = clv::gfx::RenderCommand::createRenderTarget(rtTexture.get(), nullptr);
+	
 	rtEnt.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-	rtEnt.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(clv::Application::get().getWindow().getWidth() / 2, clv::Application::get().getWindow().getHeight() / 2));
+	rtEnt.getComponent<clv::ecs::_2D::TransformComponent>()->setScale({ 16.0f * 10.0f, 9.0f * 10.0f });
+	rtEnt.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition({ 400.0f, 100.0f });
 
-	auto renderTarget = clv::gfx::RenderTarget::createRenderTarget(*rtTexture);
-	clv::gfx::Renderer::setRenderTarget(renderTarget);*/
+	subcam = clv::plt::Application::get().getManager().createEntity();
+	subcam.addComponent<clv::ecs::_3D::CameraComponent>();
+	subcam.addComponent<clv::ecs::_3D::TransformComponent>();
+
+	cam.getComponent<clv::ecs::_3D::TransformComponent>()->addChild(subcam.getComponent<clv::ecs::_3D::TransformComponent>());
+	subcam.getComponent<clv::ecs::_3D::CameraComponent>()->setRenderTarget(renderTarget);
 
 	{
 		auto sprite = std::make_shared<clv::gfx::Sprite>();
