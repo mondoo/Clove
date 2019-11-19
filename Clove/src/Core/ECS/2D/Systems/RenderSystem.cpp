@@ -152,6 +152,7 @@ namespace clv::ecs::_2D{
 
 	void RenderSystem::postUpdate(){
 		RenderCommand::setDepthBuffer(false);
+		RenderCommand::resetRenderTargetToDefault();
 
 		RenderCommand::bindPipelineObject(*currentSceneData->spritePipelineObject);
 

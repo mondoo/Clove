@@ -251,7 +251,5 @@ namespace clv::ecs::_3D{
 
 		//Render scene for each camera
 		std::for_each(currentSceneData->cameras.begin(), currentSceneData->cameras.end(), renderCamera);
-
-		RenderCommand::resetRenderTargetToDefault();
 	}
 }
