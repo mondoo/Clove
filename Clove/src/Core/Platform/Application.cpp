@@ -7,7 +7,6 @@
 #include "Core/Utils/DeltaTime.hpp"
 #include "Core/ECS/Manager.hpp"
 
-#include "Core/Graphics/Renderer2D.hpp"
 #include "Core/Graphics/RenderCommand.hpp"
 
 #if CLV_PLATFORM_WINDOWS
@@ -32,9 +31,7 @@ namespace clv::plt{
 		prevFrameTime = std::chrono::system_clock::now();
 	}
 
-	Application::~Application(){
-		gfx::Renderer2D::shutDown();
-	}
+	Application::~Application() = default;
 
 	void Application::start(){
 		//TODO: Added a 'start' function to handle not calling a virtual from the ctor
@@ -53,8 +50,6 @@ namespace clv::plt{
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
-
-		gfx::Renderer2D::initialise();
 	}
 
 	void Application::update(){
@@ -71,11 +66,7 @@ namespace clv::plt{
 			layer->onUpdate(deltaSeonds.count());
 		}
 
-		gfx::Renderer2D::beginScene();
-
 		ecsManager->update(deltaSeonds.count());
-
-		gfx::Renderer2D::endScene();
 
 		window->endFrame();
 	}

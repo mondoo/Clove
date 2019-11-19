@@ -68,8 +68,6 @@ set(
 		Core/ECS/Audio/Systems/AudioSystem.cpp
 		Core/ECS/UI/Components/TextComponent.hpp
 		Core/ECS/UI/Components/TextComponent.cpp
-		Core/ECS/UI/Systems/TextSystem.hpp
-		Core/ECS/UI/Systems/TextSystem.cpp
 )
 
 set(
@@ -91,8 +89,6 @@ set(
 		Core/Graphics/RenderCommand.hpp
 		Core/Graphics/RenderCommand.cpp
 		Core/Graphics/RenderDevice.hpp
-		Core/Graphics/Renderer2D.hpp
-		Core/Graphics/Renderer2D.cpp
 		Core/Graphics/RenderFactory.hpp
 		Core/Graphics/RenderTarget.hpp
 		Core/Graphics/Shader.hpp

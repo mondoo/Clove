@@ -5,23 +5,20 @@
 #include "Core/ECS/3D/Systems/RenderSystem.hpp"
 #include "Core/ECS/3D/Systems/PhysicsSystem.hpp"
 #include "Core/ECS/Audio/Systems/AudioSystem.hpp"
-#include "Core/ECS/UI/Systems/TextSystem.hpp"
 
 namespace clv::ecs{
 	EntityID Manager::nextID = 1;
 
 	Manager::Manager(){
 		//Order is somewhat important
-		systems.reserve(6);
-		systems.push_back(std::make_unique<_2D::PhysicsSystem>());
-		systems.push_back(std::make_unique<_2D::RenderSystem>());
-
+		systems.reserve(5);
 		systems.push_back(std::make_unique<_3D::PhysicsSystem>());
 		systems.push_back(std::make_unique<_3D::RenderSystem>());
 
-		systems.push_back(std::make_unique<aud::AudioSystem>());
+		systems.push_back(std::make_unique<_2D::PhysicsSystem>());
+		systems.push_back(std::make_unique<_2D::RenderSystem>());
 
-		systems.push_back(std::make_unique<ui::TextSystem>());
+		systems.push_back(std::make_unique<aud::AudioSystem>());
 
 		std::for_each(systems.begin(), systems.end(), [this](const std::unique_ptr<System>& system){
 			system->manager = this;
