@@ -1,8 +1,5 @@
 #include "CameraComponent.hpp"
 
-#include "Core/Platform/Window.hpp"
-#include "Core/Graphics/Renderer.hpp"
-
 namespace clv::ecs::_3D{
 	CameraComponent::CameraComponent(){
 		setProjectionMode(ProjectionMode::perspective);

@@ -11,7 +11,7 @@ namespace clv::ecs::_3D{
 	};
 
 	class CameraComponent : public Component<CameraComponent>{
-		friend class CameraSystem;
+		friend class RenderSystem;
 
 		//VARIABLES
 	private:

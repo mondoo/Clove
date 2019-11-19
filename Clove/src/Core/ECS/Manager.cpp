@@ -4,8 +4,6 @@
 #include "Core/ECS/2D/Systems/PhysicsSystem.hpp"
 #include "Core/ECS/3D/Systems/RenderSystem.hpp"
 #include "Core/ECS/3D/Systems/PhysicsSystem.hpp"
-#include "Core/ECS/3D/Systems/LightSystem.hpp"
-#include "Core/ECS/3D/Systems/CameraSystem.hpp"
 #include "Core/ECS/Audio/Systems/AudioSystem.hpp"
 #include "Core/ECS/UI/Systems/TextSystem.hpp"
 
@@ -14,14 +12,12 @@ namespace clv::ecs{
 
 	Manager::Manager(){
 		//Order is somewhat important
-		systems.reserve(8);
+		systems.reserve(6);
 		systems.push_back(std::make_unique<_2D::PhysicsSystem>());
 		systems.push_back(std::make_unique<_2D::RenderSystem>());
 
 		systems.push_back(std::make_unique<_3D::PhysicsSystem>());
 		systems.push_back(std::make_unique<_3D::RenderSystem>());
-		systems.push_back(std::make_unique<_3D::LightSystem>());
-		systems.push_back(std::make_unique<_3D::CameraSystem>());
 
 		systems.push_back(std::make_unique<aud::AudioSystem>());
 
