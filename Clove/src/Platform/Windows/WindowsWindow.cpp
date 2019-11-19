@@ -1,8 +1,7 @@
 #include "WindowsWindow.hpp"
 
-#include "Core/Graphics/Renderer.hpp"
-#include "Core/Graphics/Surface.hpp"
 #include "Core/Graphics/RenderCommand.hpp"
+#include "Core/Graphics/Surface.hpp"
 
 namespace clv::plt{
 	WindowsWindow::WindowsWindow(const WindowProps& props){

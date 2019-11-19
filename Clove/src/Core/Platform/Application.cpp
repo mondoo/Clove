@@ -7,8 +7,6 @@
 #include "Core/Utils/DeltaTime.hpp"
 #include "Core/ECS/Manager.hpp"
 
-#include "Core/Graphics/Renderer.hpp"
-#include "Core/Graphics/Renderer2D.hpp"
 #include "Core/Graphics/RenderCommand.hpp"
 
 #if CLV_PLATFORM_WINDOWS
@@ -28,18 +26,12 @@ namespace clv::plt{
 
 		Log::init();
 
-		ecsManager = std::make_unique<ecs::Manager>();
-		layerStack = std::make_unique<LayerStack>();
-
 		CLV_LOG_INFO("Successfully initialised Clove");
 
 		prevFrameTime = std::chrono::system_clock::now();
 	}
 
-	Application::~Application(){
-		gfx::Renderer::shutDown();
-		gfx::Renderer2D::shutDown();
-	}
+	Application::~Application() = default;
 
 	void Application::start(){
 		//TODO: Added a 'start' function to handle not calling a virtual from the ctor
@@ -56,8 +48,8 @@ namespace clv::plt{
 
 		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
-		gfx::Renderer::initialise();
-		gfx::Renderer2D::initialise();
+		ecsManager = std::make_unique<ecs::Manager>();
+		layerStack = std::make_unique<LayerStack>();
 	}
 
 	void Application::update(){
@@ -74,15 +66,7 @@ namespace clv::plt{
 			layer->onUpdate(deltaSeonds.count());
 		}
 
-		gfx::Renderer::clearRenderTargets();
-
-		gfx::Renderer::beginScene();
-		gfx::Renderer2D::beginScene();
-
 		ecsManager->update(deltaSeonds.count());
-
-		gfx::Renderer::endScene();
-		gfx::Renderer2D::endScene();
 
 		window->endFrame();
 	}

@@ -58,10 +58,6 @@ set(
 		Core/ECS/3D/Components/RigidBodyComponent.cpp
 		Core/ECS/3D/Components/TransformComponent.hpp
 		Core/ECS/3D/Components/TransformComponent.cpp
-		Core/ECS/3D/Systems/CameraSystem.hpp
-		Core/ECS/3D/Systems/CameraSystem.cpp
-		Core/ECS/3D/Systems/LightSystem.hpp
-		Core/ECS/3D/Systems/LightSystem.cpp
 		Core/ECS/3D/Systems/RenderSystem.hpp
 		Core/ECS/3D/Systems/RenderSystem.cpp
 		Core/ECS/3D/Systems/PhysicsSystem.hpp
@@ -72,8 +68,6 @@ set(
 		Core/ECS/Audio/Systems/AudioSystem.cpp
 		Core/ECS/UI/Components/TextComponent.hpp
 		Core/ECS/UI/Components/TextComponent.cpp
-		Core/ECS/UI/Systems/TextSystem.hpp
-		Core/ECS/UI/Systems/TextSystem.cpp
 )
 
 set(
@@ -95,10 +89,6 @@ set(
 		Core/Graphics/RenderCommand.hpp
 		Core/Graphics/RenderCommand.cpp
 		Core/Graphics/RenderDevice.hpp
-		Core/Graphics/Renderer.hpp
-		Core/Graphics/Renderer.cpp
-		Core/Graphics/Renderer2D.hpp
-		Core/Graphics/Renderer2D.cpp
 		Core/Graphics/RenderFactory.hpp
 		Core/Graphics/RenderTarget.hpp
 		Core/Graphics/Shader.hpp

@@ -24,10 +24,13 @@ namespace clv::gfx::d3d{
 		D3DRenderTarget() = delete;
 		D3DRenderTarget(ID3D11Device& d3dDevice, Texture* colourTexture, Texture* depthStencilTexture);
 		D3DRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView);
+		
 		D3DRenderTarget(const D3DRenderTarget& other) = delete;
 		D3DRenderTarget(D3DRenderTarget&& other) noexcept;
+		
 		D3DRenderTarget& operator=(const D3DRenderTarget& other) = delete;
 		D3DRenderTarget& operator=(D3DRenderTarget&& other) noexcept;
+		
 		virtual ~D3DRenderTarget();
 
 		const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& getRenderTargetView() const;

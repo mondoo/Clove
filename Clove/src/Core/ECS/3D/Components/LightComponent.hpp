@@ -6,7 +6,7 @@
 
 namespace clv::ecs::_3D{
 	class LightComponent : public Component<LightComponent>{
-		friend class LightSystem;
+		friend class RenderSystem;
 
 		//VARIABLES
 	private:

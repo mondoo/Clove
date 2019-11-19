@@ -16,6 +16,8 @@ namespace clv::ecs::_2D{
 
 		virtual ~RenderSystem();
 
+		virtual void preUpdate() override;
 		virtual void update(utl::DeltaTime deltaTime) override;
+		virtual void postUpdate() override;
 	};
 }

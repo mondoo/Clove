@@ -4,9 +4,13 @@
 
 #include "Core/UI/Text.hpp"
 
+namespace clv::ecs::_2D{
+	class RenderSystem;
+}
+
 namespace clv::ecs::ui{
 	class TextComponent : public Component<TextComponent>{
-		friend class TextSystem;
+		friend class _2D::RenderSystem;
 
 		//VARIABLES
 	private:
