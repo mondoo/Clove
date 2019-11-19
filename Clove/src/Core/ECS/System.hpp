@@ -19,7 +19,9 @@ namespace clv::ecs{
 	public:
 		virtual ~System() = default;
 
+		virtual void preUpdate(){}
 		virtual void update(utl::DeltaTime deltaTime) = 0;
+		virtual void postUpdate(){}
 
 		virtual void onComponentCreated(ComponentInterface* component){}
 		virtual void onComponentDestroyed(ComponentInterface* component){}

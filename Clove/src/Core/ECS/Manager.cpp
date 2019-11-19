@@ -38,8 +38,16 @@ namespace clv::ecs{
 	Manager::~Manager() = default;
 
 	void Manager::update(utl::DeltaTime deltaTime){
+		std::for_each(systems.begin(), systems.end(), [](const std::unique_ptr<System>& system){
+			system->preUpdate();
+		});
+
 		std::for_each(systems.begin(), systems.end(), [deltaTime](const std::unique_ptr<System>& system){
 			system->update(deltaTime);
+		});
+
+		std::for_each(systems.begin(), systems.end(), [](const std::unique_ptr<System>& system){
+			system->postUpdate();
 		});
 	}
 
