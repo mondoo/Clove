@@ -238,16 +238,16 @@ namespace clv::ecs::_3D{
 
 		//Calculate shadow map
 		RenderCommand::bindPipelineObject(*currentSceneData->shadowPipeline);
+		RenderCommand::setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 		for(uint32 i = 0; i < currentSceneData->numLights; ++i){
 			currentSceneData->cubeShadowMaterial.setData(BBP_ShadowData, PointShadowShaderData{ currentSceneData->shadowTransforms[i] }, ShaderType::Geometry);
 			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
 			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentDepthData, PointShadowData{ currentSceneData->currentShadowDepth.depths[i] }, ShaderType::Pixel);
 
-			RenderCommand::setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 			RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
 			currentSceneData->forEachMesh(generateShadowMap);
-			RenderCommand::setViewport({ 0, 0, plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight() });
 		}
+		RenderCommand::setViewport({ 0, 0, plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight() });
 
 		//Render scene for each camera
 		std::for_each(currentSceneData->cameras.begin(), currentSceneData->cameras.end(), renderCamera);
