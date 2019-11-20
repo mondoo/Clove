@@ -10,14 +10,11 @@ namespace clv{
 		static std::shared_ptr<spdlog::logger> coreLogger;
 		static std::shared_ptr<spdlog::logger> clientLogger;
 
-		static bool isInitialised;
-
 		//FUNCTIONS
 	public:
 		static std::shared_ptr<spdlog::logger>& getCoreLogger();
 		static std::shared_ptr<spdlog::logger>& getClientLogger();
 
-	private:
 		static void init();
 	};
 }

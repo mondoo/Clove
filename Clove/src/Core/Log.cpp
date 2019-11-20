@@ -4,8 +4,6 @@ namespace clv{
 	std::shared_ptr<spdlog::logger> Log::coreLogger;
 	std::shared_ptr<spdlog::logger> Log::clientLogger;
 
-	bool Log::isInitialised = false;
-
 	void Log::init(){
 		spdlog::set_pattern("%^[%T] %n: %v%$");
 
@@ -24,23 +22,13 @@ namespace clv{
 
 		//TODO: Should implement a way for client applications to control the log level
 		clientLogger->set_level(spdlog::level::trace);
-
-		isInitialised = true;
 	}
 
 	std::shared_ptr<spdlog::logger>& Log::getCoreLogger(){
-		if(!isInitialised){
-			init();
-		}
-
 		return coreLogger;
 	}
 
 	std::shared_ptr<spdlog::logger>& Log::getClientLogger(){
-		if(!isInitialised){
-			init();
-		}
-
 		return clientLogger;
 	}
 }
