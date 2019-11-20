@@ -22,10 +22,10 @@ target_link_libraries(
 			Clove	
 )
 
-add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_BINARY_DIR}/Bulb/Bulb.Engine/$<CONFIG>/Bulb.Engine.dll
-				${CMAKE_BINARY_DIR}/Bulb/Bulb.Desktop.Windows/$<CONFIG>
-                #$<TARGET_FILE_DIR:Clove> <-- this will put the file in that projects executable location!
-)
+#add_custom_command(
+#        TARGET ${PROJECT_NAME} POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy
+#                ${CMAKE_BINARY_DIR}/Bulb/Bulb.Engine/$<CONFIG>/Bulb.Engine.dll
+#				${CMAKE_BINARY_DIR}/Bulb/Bulb.Desktop.Windows/$<CONFIG>
+#                #$<TARGET_FILE_DIR:Clove> <-- this will put the file in that projects executable location!
+#)
