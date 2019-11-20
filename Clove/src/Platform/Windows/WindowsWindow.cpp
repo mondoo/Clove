@@ -128,6 +128,13 @@ namespace clv::plt{
 				mouse.onWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam), pt.x, pt.y);
 				break;
 
+				//Window
+			case WM_SIZE:
+				if(onWindowResize.isBound()){
+					onWindowResize.broadcast(mth::vec2i(pt.x, pt.y));
+				}
+				break;
+
 		}
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
