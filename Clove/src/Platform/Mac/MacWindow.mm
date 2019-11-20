@@ -2,7 +2,8 @@
 #import "MacWindow.hpp"
 
 #import "Core/Graphics/Renderer.hpp"
-#import "Core/Graphics/Context.hpp"
+#import "Core/Graphics/Surface.hpp"
+#import "Core/Graphics/RenderCommand.hpp"
 
 @implementation MacWindowProxy
 - (instancetype)initWithWindowData:(unsigned int)width height:(unsigned int)height name:(NSString*)name{
@@ -28,17 +29,13 @@
 @end
 
 namespace clv::plt{
+    MacWindow::MacWindow(const WindowProps& props){
+		initialiseWindow(props);
+    }
+
 	MacWindow::~MacWindow(){
 		[windowProxy release];
 	}
-
-    MacWindow::MacWindow(const WindowProps& props){
-		initialiseWindow(props, gfx::API::OpenGL4);
-    }
-    
-    MacWindow::MacWindow(const WindowProps& props, gfx::API api){
-		initialiseWindow(props, api);
-    }
 	
 	void* MacWindow::getNativeWindow() const{
 		return [windowProxy window];
@@ -122,7 +119,7 @@ namespace clv::plt{
 		}
 	}
 	
-	void MacWindow::initialiseWindow(const WindowProps& props, gfx::API api){		
+	void MacWindow::initialiseWindow(const WindowProps& props){		
 		windowProperties.width = props.width;
 		windowProperties.height = props.height;
 		windowProperties.title = props.title;
@@ -134,7 +131,7 @@ namespace clv::plt{
 															   name:nameString];
 		windowProxy.cloveWindow = this;
 		
-		context = gfx::Context::createContext(nullptr, api);
-		context->makeCurrent();
+		surface = gfx::RenderCommand::createSurface(nullptr);
+		gfx::RenderCommand::makeSurfaceCurrent(*surface);
 	}
 }

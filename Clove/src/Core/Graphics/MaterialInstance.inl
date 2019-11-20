@@ -1,12 +1,19 @@
+#include "Core/Graphics/RenderCommand.hpp"
+
 namespace clv::gfx{
 	template<typename DataType>
 	void MaterialInstance::setData(BufferBindingPoint bindingPoint, DataType&& data, gfx::ShaderType shaderType){
 		if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
-			if(auto sbo = std::dynamic_pointer_cast<ShaderBufferObject<DataType>>(iter->second)){
-				sbo->update(std::forward<DataType>(data));
-				return;
-			}
+			RenderCommand::updateBufferData(*iter->second.buffer, &data);
+		} else{
+			BufferDescriptor srdesc{};
+			srdesc.elementSize	= 0;
+			srdesc.bufferSize	= sizeof(data);
+			srdesc.bufferType	= BufferType::ShaderResourceBuffer;
+			srdesc.bufferUsage	= BufferUsage::Dynamic;
+
+			auto buffer = RenderCommand::createBuffer(srdesc, &data);
+			shaderData[bindingPoint] = { buffer, shaderType };
 		}
-		shaderData[bindingPoint] = BindableFactory::createShaderBufferObject<DataType>(shaderType, bindingPoint, std::forward<DataType>(data));
 	}
 }

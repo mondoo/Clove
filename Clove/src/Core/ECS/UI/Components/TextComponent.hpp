@@ -4,14 +4,15 @@
 
 #include "Core/UI/Text.hpp"
 
+namespace clv::ecs::_2D{
+	class RenderSystem;
+}
+
 namespace clv::ecs::ui{
-	class TextComponent : public Component{
-		friend class TextSystem;
+	class TextComponent : public Component<TextComponent>{
+		friend class _2D::RenderSystem;
 
 		//VARIABLES
-	public:
-		static constexpr ComponentID ID = 0xdf019850; //VS Generated GUID
-
 	private:
 		clv::ui::Text text;
 

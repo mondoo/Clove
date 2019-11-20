@@ -5,16 +5,16 @@
 
 int main(int argc, char** argv){
 	try{
-		auto* app = new clv::Application();
+		auto app = clv::plt::Application::createApplication();
+
+		app->start();
 
 		app->pushLayer(std::make_shared<TestLayer>());
 		//app->pushLayer(std::make_shared<GameLayer>());
 
-		while(app->getState() == clv::ApplicationState::running){
+		while(app->getState() == clv::plt::ApplicationState::running){
 			app->update();
 		}
-
-		delete app;
 	} catch(const clv::CloveException & e){
 	#if CLV_PLATFORM_WINDOWS
 		MessageBoxA(nullptr, e.what(), e.getType(), MB_OK | MB_ICONEXCLAMATION);

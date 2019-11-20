@@ -8,9 +8,9 @@ namespace clv{
 			std::vector<float> vertexData;
 			std::vector<uint32> indices;
 
-			std::vector<math::Vector3f> verticies;
-			std::vector<math::Vector2f> texCoords;
-			std::vector<math::Vector3f> normals;
+			std::vector<mth::vec3f> verticies;
+			std::vector<mth::vec2f> texCoords;
+			std::vector<mth::vec3f> normals;
 
 			template<gfx::VertexElementType layout>
 			auto& getData(){

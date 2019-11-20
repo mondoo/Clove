@@ -7,22 +7,22 @@ namespace clv::gfx{
 
 	//TODO: make the semantics lower case now thay're used for the shaders
 	template<> struct VertexElementData<VertexElementType::position2D>{
-		using DataType = math::Vector2f;
+		using DataType = mth::vec2f;
 		static constexpr uint32 elementCount = 2u;
 		static constexpr char semantic[] = "Position2D";
 	};
 	template<> struct VertexElementData<VertexElementType::position3D>{
-		using DataType = math::Vector3f;
+		using DataType = mth::vec3f;
 		static constexpr uint32 elementCount = 3u;
 		static constexpr char semantic[] = "Position3D";
 	};
 	template<> struct VertexElementData<VertexElementType::texture2D>{
-		using DataType = math::Vector2f;
+		using DataType = mth::vec2f;
 		static constexpr uint32 elementCount = 2u;
 		static constexpr char semantic[] = "TexCoord";
 	};
 	template<> struct VertexElementData<VertexElementType::normal>{
-		using DataType = math::Vector3f;
+		using DataType = mth::vec3f;
 		static constexpr uint32 elementCount = 3u;
 		static constexpr char semantic[] = "Normal";
 	};

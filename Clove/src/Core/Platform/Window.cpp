@@ -1,7 +1,6 @@
 #include "Window.hpp"
 
-#include "Core/Graphics/Renderer.hpp"
-#include "Core/Graphics/Context.hpp"
+#include "Core/Graphics/Surface.hpp"
 
 namespace clv::plt{
 	Window::Window() = default;
@@ -13,7 +12,7 @@ namespace clv::plt{
 	}
 
 	void Window::endFrame(){
-		context->present();
+		surface->present();
 	}
 
 	uint32 Window::getWidth() const{
@@ -25,11 +24,11 @@ namespace clv::plt{
 	}
 
 	void Window::setVSync(bool enabled){
-		context->setVSync(enabled);
+		surface->setVSync(enabled);
 	}
 
 	bool Window::isVSync() const{
-		return context->isVsync();
+		return surface->isVsync();
 	}
 
 	Keyboard& Window::getKeyboard(){
@@ -40,7 +39,7 @@ namespace clv::plt{
 		return mouse;
 	}
 
-	gfx::Context& Window::getContext(){
-		return *context.get();
+	gfx::Surface& Window::getSurface(){
+		return *surface.get();
 	}
 }

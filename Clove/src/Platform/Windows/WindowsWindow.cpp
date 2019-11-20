@@ -1,20 +1,16 @@
 #include "WindowsWindow.hpp"
 
-#include "Core/Graphics/Renderer.hpp"
-#include "Core/Graphics/Context.hpp"
+#include "Core/Graphics/RenderCommand.hpp"
+#include "Core/Graphics/Surface.hpp"
 
 namespace clv::plt{
 	WindowsWindow::WindowsWindow(const WindowProps& props){
-		initialiseWindow(props, gfx::API::DirectX11);
-	}
-
-	WindowsWindow::WindowsWindow(const WindowProps& props, gfx::API api){
-		initialiseWindow(props, api);
+		initialiseWindow(props);
 	}
 
 	WindowsWindow::~WindowsWindow(){
 		//Reset context first, before the window is destroyed
-		context.reset();
+		surface.reset();
 
 		UnregisterClass(className, instance);
 		DestroyWindow(windowsHandle);
@@ -136,7 +132,7 @@ namespace clv::plt{
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
-	void WindowsWindow::initialiseWindow(const WindowProps& props, gfx::API api){
+	void WindowsWindow::initialiseWindow(const WindowProps& props){
 		windowProperties.title = props.title;
 		windowProperties.width = props.width;
 		windowProperties.height = props.height;
@@ -198,7 +194,7 @@ namespace clv::plt{
 
 		data = { windowsHandle, windowProperties.width, windowProperties.height };
 
-		context = gfx::Context::createContext(&data, api);
-		context->makeCurrent();
+		surface = gfx::RenderCommand::createSurface(&data);
+		gfx::RenderCommand::makeSurfaceCurrent(*surface);
 	}
 }

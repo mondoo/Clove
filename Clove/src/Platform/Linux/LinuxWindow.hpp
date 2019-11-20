@@ -30,14 +30,15 @@ namespace clv::plt{
         //FUNCTIONS
     public:
         LinuxWindow() = delete;
+		LinuxWindow(const WindowProps& props);
+
 		LinuxWindow(const LinuxWindow& other) = delete;
 		LinuxWindow(LinuxWindow&& other) noexcept = delete;
+
 		LinuxWindow& operator=(const LinuxWindow& other) = delete;
 		LinuxWindow& operator=(LinuxWindow&& other) noexcept = delete;
+
 		virtual ~LinuxWindow();
-		
-		LinuxWindow(const WindowProps& props);
-		LinuxWindow(const WindowProps& props, gfx::API api);
 
 		virtual void* getNativeWindow() const override;
 
@@ -45,6 +46,6 @@ namespace clv::plt{
 		virtual void processInput() override;
 
 	private:
-		void initialiseWindow(const WindowProps& props, gfx::API api);
+		void initialiseWindow(const WindowProps& props);
     };
 }

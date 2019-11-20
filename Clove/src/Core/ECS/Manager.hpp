@@ -2,43 +2,67 @@
 
 #include "Core/ECS/ECSTypes.hpp"
 #include "Core/ECS/Entity.hpp"
+#include "Core/ECS/ComponentManager.hpp"
+#include "Core/ECS/System.hpp"
 #include "Core/Utils/DeltaTime.hpp"
 
 namespace clv::ecs{
 	class Entity;
-	class Component;
-	class SystemBase;
+	class System;
+}
 
+namespace clv::ecs{
 	class Manager{
-		friend class Entity;
-
 		//VARIABLES
 	private:
-		std::unordered_map<EntityID, std::unordered_map<ComponentID, std::unique_ptr<Component>>> components;
-		std::vector<std::unique_ptr<SystemBase>> systems;
+		ComponentManager componentManager;
 
-		static EntityID nextID; //TODO: have a better system for generating and reusing IDs
+		std::vector<std::unique_ptr<System>> systems;
+
+		static EntityID nextID;
 
 		//FUNCTIONS
 	public:
 		Manager();
+
 		Manager(const Manager& other) = delete;
 		Manager(Manager&& other) noexcept = delete;
+
 		Manager& operator=(const Manager& other) = delete;
 		Manager& operator=(Manager&& other) noexcept = delete;
+
 		~Manager();
 
 		void update(utl::DeltaTime deltaTime);
 
 		Entity createEntity();
-		void destroyEntity(EntityID ID);
 		Entity getEntity(EntityID ID);
+		void destroyEntity(EntityID ID);
+
+		template<typename ComponentType, typename ...ConstructArgs>
+		ComponentType* addComponent(EntityID entityID, ConstructArgs&& ...args);
+		template<typename ComponentType>
+		ComponentType* getComponent(EntityID entityID);
+		template<typename ComponentType>
+		void removeComponent(EntityID entityID);
+
+		template<typename ...ComponentTypes>
+		std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> getComponentSets();
+
+		template<typename SystemType>
+		void addSystem();
 
 	private:
-		void onEntityCreateComponent(EntityID entityID, ComponentID componentID, std::unique_ptr<Component> component);
-		Component* getComponentForEntity(EntityID entityID, ComponentID componentID);
-		bool isEntityValid(EntityID entityID);
+		void onComponentAdded(ComponentInterface* component);
+		void onComponentRemoved(ComponentInterface* component);
 
-		void bindEntity(Entity& entity);
+		enum class FoundState{ NullptrFound, EndOfTuple };
+		template<std::size_t index, typename ...ComponentTypes>
+		FoundState checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple, typename std::enable_if_t<(index == sizeof...(ComponentTypes)), int> = 0);
+
+		template<std::size_t index, typename ...ComponentTypes>
+		FoundState checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple, typename std::enable_if_t<(index < sizeof...(ComponentTypes)), int> = 0);
 	};
 }
+
+#include "Manager.inl"

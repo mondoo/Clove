@@ -1,60 +1,113 @@
 #include "TransformComponent.hpp"
 
-namespace clv::ecs::d2{
+namespace clv::ecs::_2D{
+	static void removeItemFromVector(TransformComponent* item, std::vector<TransformComponent*>& vector){
+		auto removeIter = std::remove(vector.begin(), vector.end(), item);
+		vector.erase(removeIter, vector.end());
+	}
+
 	TransformComponent::TransformComponent() = default;
 
 	TransformComponent::TransformComponent(TransformComponent&& other) noexcept = default;
 
 	TransformComponent& TransformComponent::operator=(TransformComponent&& other) noexcept = default;
 
-	TransformComponent::~TransformComponent() = default;
+	TransformComponent::~TransformComponent(){
+		if(parent){
+			removeItemFromVector(this, parent->children);
 
-	const math::Vector2f& TransformComponent::getPosition() const{
-		return position;
+		}
+
+		for(auto* child : children){
+			child->parent = nullptr;
+		}
 	}
 
-	const math::Vector2f& TransformComponent::getLocalPosition() const{
+	mth::vec2f TransformComponent::getPosition() const{
+		const mth::mat4f transformMatrix = getWorldTransformMatrix();
+
+		return { transformMatrix[3][0], transformMatrix[3][1] };
+	}
+
+	const mth::vec2f& TransformComponent::getLocalPosition() const{
 		return localPosition;
 	}
 
 	float TransformComponent::getRotation() const{
-		return rotation;
+		mth::mat4f transformMatrix = getWorldTransformMatrix();
+
+		transformMatrix[3][0] = 0.0f;
+		transformMatrix[3][1] = 0.0f;
+
+		const mth::vec3f scaleX = { transformMatrix[0][0], transformMatrix[0][1], transformMatrix[0][2] };
+		const mth::vec3f scaleY = { transformMatrix[1][0], transformMatrix[1][1], transformMatrix[1][2] };
+
+		mth::vec2f scale = { mth::length(scaleX), mth::length(scaleY) };
+
+		transformMatrix[0][0] /= scale.x;
+		transformMatrix[0][1] /= scale.x;
+		transformMatrix[0][2] /= scale.x;
+
+		transformMatrix[1][0] /= scale.y;
+		transformMatrix[1][1] /= scale.y;
+		transformMatrix[1][2] /= scale.y;
+
+		const mth::vec3f euler = mth::eulerFromMatrix(transformMatrix);
+
+		return euler.z;
 	}
 
 	float TransformComponent::getLocalRotation() const{
 		return localRotation;
 	}
 
-	const math::Vector2f& TransformComponent::getScale() const{
-		return scale;
+	mth::vec2f TransformComponent::getScale() const{
+		const mth::mat4f transformMatrix = getWorldTransformMatrix();
+
+		const mth::vec3f scaleX = { transformMatrix[0][0], transformMatrix[0][1], transformMatrix[0][2] };
+		const mth::vec3f scaleY = { transformMatrix[1][0], transformMatrix[1][1], transformMatrix[1][2] };
+
+		return { mth::length(scaleX), mth::length(scaleY) };
 	}
 
-	const math::Vector2f& TransformComponent::getLocalScale() const{
+	const mth::vec2f& TransformComponent::getLocalScale() const{
 		return localScale;
 	}
 
-	void TransformComponent::setPosition(const math::Vector2f& position){
-		desiredPosition = position;
+	void TransformComponent::setPosition(const mth::vec2f& position){
+		if(parent){
+			setLocalPosition(position - parent->getPosition());
+		} else{
+			setLocalPosition(position);
+		}
 	}
 
-	void TransformComponent::setLocalPosition(const math::Vector2f& position){
-		desiredLocalPosition = position;
+	void TransformComponent::setLocalPosition(const mth::vec2f& position){
+		localPosition = position;
 	}
 
 	void TransformComponent::setRotation(float rotation){
-		desiredRotation = rotation;
+		if(parent){
+			setLocalRotation(rotation - parent->getRotation());
+		} else{
+			setLocalRotation(rotation);
+		}
 	}
 
 	void TransformComponent::setLocalRotation(float rotation){
-		desiredLocalRotation = rotation;
+		localRotation = rotation;
 	}
 
-	void TransformComponent::setScale(const math::Vector2f& scale){
-		desiredScale = scale;
+	void TransformComponent::setScale(const mth::vec2f& scale){
+		if(parent){
+			setLocalScale(scale / parent->getScale());
+		} else{
+			setLocalScale(scale);
+		}
 	}
 
-	void TransformComponent::setLocalScale(const math::Vector2f& scale){
-		desiredLocalScale = scale;
+	void TransformComponent::setLocalScale(const mth::vec2f& scale){
+		localScale = scale;
 	}
 
 	TransformComponent* TransformComponent::getParent() const{
@@ -64,15 +117,26 @@ namespace clv::ecs::d2{
 	void TransformComponent::addChild(TransformComponent* child){
 		if(child && child != this){
 			children.push_back(child);
+			if(child->parent){
+				removeItemFromVector(child, child->parent->children);
+			}
 			child->parent = this;
 		}
 	}
 
-	const math::Matrix4f& TransformComponent::getWorldTransformMatrix() const{
-		return worldTransformMatrix;
+	mth::mat4f TransformComponent::getWorldTransformMatrix() const{
+		if(parent){
+			return parent->getWorldTransformMatrix() * getLocalTransformMatrix();
+		} else{
+			return getLocalTransformMatrix();
+		}
 	}
 
-	const math::Matrix4f& TransformComponent::getLocalTransformMatrix() const{
-		return localTransformMatrix;
+	mth::mat4f TransformComponent::getLocalTransformMatrix() const{
+		const mth::mat4f translationMatrix	= mth::translate(mth::mat4f(1.0f), mth::vec3f{ localPosition, 0.0f });
+		const mth::mat4f rotationMatrix		= mth::rotate(mth::mat4f(1.0f), localRotation, { 0.0f, 0.0f, 1.0f });
+		const mth::mat4f scaleMatrix		= mth::scale(mth::mat4f(1.0f), mth::vec3f{ localScale, 0.0f });
+
+		return translationMatrix * rotationMatrix * scaleMatrix;
 	}
 }

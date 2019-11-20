@@ -1,7 +1,28 @@
 #pragma once
 
-#include <optional>
-#include <map>
+namespace clv::utl{
+	struct MultiCastDelegateHandle{
+		//VARIABLES
+	public:
+		const std::optional<int32> ID = {};
+
+		//FUNCTIONS
+	public:
+		MultiCastDelegateHandle() = default;
+		MultiCastDelegateHandle(int32 ID) : ID(ID){}
+
+		operator int() const noexcept{ return ID.value_or(-1); }
+	};
+}
+
+namespace std{
+	template<>
+	struct hash<clv::utl::MultiCastDelegateHandle>{
+		std::size_t operator()(const clv::utl::MultiCastDelegateHandle& handle) const noexcept{
+			return hash<int>()(handle);
+		}
+	};
+}
 
 namespace clv::utl{
 	template<typename FunctionPrototype>
@@ -26,26 +47,11 @@ namespace clv::utl{
 		auto broadcast(Args&& ...args) const;
 	};
 
-	struct MultiCastDelegateHandle{
-		//VARIABLES
-	public:
-		const std::optional<int32> ID = {};
-
-		//FUNCTIONS
-	public:
-		MultiCastDelegateHandle() = default;
-		MultiCastDelegateHandle(int32 ID) : ID(ID){}
-
-		operator int() const{ return ID.value_or(-1); }
-
-		bool operator <(const MultiCastDelegateHandle& rhs) const{ return ID.value_or(-1) < rhs.ID.value_or(-1); }
-	};
-
 	template<typename FunctionPrototype>
 	class MultiCastDelegate{
 		//VARIABLES
 	private:
-		std::map<MultiCastDelegateHandle, std::function<FunctionPrototype>> functionPointers;
+		std::unordered_map<MultiCastDelegateHandle, std::function<FunctionPrototype>> functionPointers;
 
 		int32 nextID = 0;
 

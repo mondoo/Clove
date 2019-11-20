@@ -2,33 +2,15 @@
 
 #include "Core/ECS/Component.hpp"
 
-namespace clv::ecs::d3{
-	class TransformComponent : public Component{
+namespace clv::ecs::_3D{
+	class TransformComponent : public Component<_3D::TransformComponent>{
 		friend class TransformSystem;
 
 		//VARIABLES
-	public:
-		static constexpr ComponentID ID = 0x3ac0b673; //VS Generated GUID
-
 	private:
-		math::Vector3f		position	= { 0.0f, 0.0f, 0.0f };
-		math::Quaternionf	rotation	= math::Quaternionf({ 0.0f, 0.0f, 0.0f });
-		math::Vector3f		scale		= { 1.0f, 1.0f, 1.0f };
-
-		std::optional<math::Vector3f>		desiredPosition;
-		std::optional<math::Quaternionf>	desiredRotation;
-		std::optional<math::Vector3f>		desiredScale;
-
-		math::Vector3f		localPosition	= { 0.0f, 0.0f, 0.0f };
-		math::Quaternionf	localRotation	= math::Quaternionf({ 0.0f, 0.0f, 0.0f });
-		math::Vector3f		localScale		= { 1.0f, 1.0f, 1.0f };
-
-		std::optional<math::Vector3f>		desiredLocalPosition;
-		std::optional<math::Quaternionf>	desiredLocalRotation;
-		std::optional<math::Vector3f>		desiredLocalScale;
-
-		math::Matrix4f worldTransformMatrix = math::Matrix4f(1.0f);
-		math::Matrix4f localTransformMatrix = math::Matrix4f(1.0f);
+		mth::vec3f		localPosition	= { 0.0f, 0.0f, 0.0f };
+		mth::quatf	localRotation	= mth::quatf({ 0.0f, 0.0f, 0.0f });
+		mth::vec3f		localScale		= { 1.0f, 1.0f, 1.0f };
 
 		TransformComponent* parent = nullptr;
 		std::vector<TransformComponent*> children;
@@ -42,28 +24,28 @@ namespace clv::ecs::d3{
 		TransformComponent& operator=(TransformComponent&& other) noexcept;
 		virtual ~TransformComponent();
 
-		const math::Vector3f& getPosition() const;
-		const math::Vector3f& getLocalPosition() const;
+		mth::vec3f getPosition() const;
+		const mth::vec3f& getLocalPosition() const;
 
-		const math::Quaternionf& getRotation() const;
-		const math::Quaternionf& getLocalRotation() const;
+		mth::quatf getRotation() const;
+		const mth::quatf& getLocalRotation() const;
 
-		const math::Vector3f& getScale() const;
-		const math::Vector3f& getLocalScale() const;
+		mth::vec3f getScale() const;
+		const mth::vec3f& getLocalScale() const;
 
-		void setPosition(const math::Vector3f& position);
-		void setLocalPosition(const math::Vector3f& position);
+		void setPosition(const mth::vec3f& position);
+		void setLocalPosition(const mth::vec3f& position);
 		
-		void setRotation(const math::Quaternionf& rotation);
-		void setLocalRotation(const math::Quaternionf& rotation);
+		void setRotation(const mth::quatf& rotation);
+		void setLocalRotation(const mth::quatf& rotation);
 		
-		void setScale(const math::Vector3f& scale);
-		void setLocalScale(const math::Vector3f& scale);
+		void setScale(const mth::vec3f& scale);
+		void setLocalScale(const mth::vec3f& scale);
 
 		TransformComponent* getParent() const;
 		void addChild(TransformComponent* child);
 
-		const math::Matrix4f& getWorldTransformMatrix() const;
-		const math::Matrix4f& getLocalTransformMatrix() const;
+		mth::mat4f getWorldTransformMatrix() const;
+		mth::mat4f getLocalTransformMatrix() const;
 	};
 }

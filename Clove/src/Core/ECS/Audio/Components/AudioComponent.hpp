@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/ECS/Component.hpp"
+
 #include "Core/Audio/Sound.hpp"
 
 //PortAudio type def (see portaudio.h)
@@ -17,13 +18,10 @@ namespace clv::ecs::aud{
 		stop
 	};
 
-	class AudioComponent : public Component{
+	class AudioComponent : public Component<AudioComponent>{
 		friend class AudioSystem;
 
 		//VARIABLES
-	public:
-		static constexpr ComponentID ID = 0x7c10e639; //VS Generated GUID
-
 	private:
 		clv::aud::Sound sound;
 

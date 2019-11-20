@@ -1,6 +1,6 @@
 #pragma once
 
-namespace clv::math{
+namespace clv::mth{
 	template<typename T>
 	const typename T::value_type* valuePtr(const T& v);
 
@@ -14,28 +14,31 @@ namespace clv::math{
 	constexpr T asDegrees(T radians);
 
 	template<typename T>
-	Matrix<4, 4, T, qualifier::defaultp> createOrthographicMatrix(T left, T right, T bottom, T top);
+	mat<4, 4, T, qualifier::defaultp> createOrthographicMatrix(T left, T right, T bottom, T top);
 
 	template<typename T>
-	Matrix<4, 4, T, qualifier::defaultp> createPerspectiveMatrix(T fovy, T aspect, T zNear, T zFar);
+	mat<4, 4, T, qualifier::defaultp> createPerspectiveMatrix(T fovy, T aspect, T zNear, T zFar);
 
 	template<typename T, qualifier Q>
-	Quaternion<T, Q> asQuaternion(T angle, const Vector<3, T, Q>& axis);
+	quat<T, Q> asQuaternion(T angle, const vec<3, T, Q>& axis);
 
 	template<typename T, qualifier Q>
-	Matrix<3, 3, T, Q> quaternionToMatrix3(const Quaternion<T, Q>& quat);
+	mat<3, 3, T, Q> quaternionToMatrix3(const quat<T, Q>& quat);
 
 	template<typename T, qualifier Q>
-	Matrix<4, 4, T, Q> quaternionToMatrix4(const Quaternion<T, Q>& quat);
+	mat<4, 4, T, Q> quaternionToMatrix4(const quat<T, Q>& quat);
 
 	template<typename T, qualifier Q>
-	Quaternion<T, Q> matrixToQuaternion(const Matrix<3, 3, T, Q>& mat);
+	quat<T, Q> matrixToQuaternion(const mat<3, 3, T, Q>& mat);
 
 	template<typename T, qualifier Q>
-	Quaternion<T, Q> matrixToQuaternion(const Matrix<4, 4, T, Q>& mat);
+	quat<T, Q> matrixToQuaternion(const mat<4, 4, T, Q>& mat);
 
 	template<typename T, qualifier Q>
-	Vector<3, T, Q> quaternionToEuler(const Quaternion<T, Q>& quat);
+	vec<3, T, Q> quaternionToEuler(const quat<T, Q>& quat);
+
+	template<typename T, qualifier Q>
+	vec<3, T, Q> eulerFromMatrix(const mat<4, 4, T, Q>& mat);
 }
 
 #include "MathsHelpers.inl"

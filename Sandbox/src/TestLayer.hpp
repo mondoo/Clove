@@ -24,11 +24,18 @@ private:
 	clv::ecs::Entity lght2;
 
 	clv::ecs::Entity cam;
+	clv::ecs::Entity subcam;
 
 	clv::ecs::Entity sound;
 
 	clv::ecs::Entity fontEnt;
 	clv::ecs::Entity fpsEnt;
+
+	clv::ecs::Entity rigidBody1;
+	clv::ecs::Entity rigidBody2;
+
+	clv::ecs::Entity rigidSprite1;
+	clv::ecs::Entity rigidSprite2;
 
 	bool firstMouse = false;
 	float pitch = 0.0f;

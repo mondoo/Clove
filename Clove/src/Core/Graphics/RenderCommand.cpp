@@ -1,66 +1,126 @@
 #include "RenderCommand.hpp"
 
-#include "Graphics/OpenGL-4/GL4RenderAPI.hpp"
+#include "Graphics/OpenGL/GL.hpp"
 #if CLV_PLATFORM_WINDOWS
-#include "Graphics/DirectX-11/DX11RenderAPI.hpp"
+#include "Graphics/Direct3D/D3D.hpp"
 #endif
-#include "Core/Graphics/Context.hpp"
 
 namespace clv::gfx{
-	std::unique_ptr<RenderAPI> RenderCommand::renderAPI;
+	std::unique_ptr<RenderDevice> RenderCommand::device;
+	std::unique_ptr<RenderFactory> RenderCommand::factory;
 
-	void RenderCommand::clear(){
-		renderAPI->clear();
+	void RenderCommand::bindIndexBuffer(const Buffer& buffer){
+		device->bindIndexBuffer(buffer);
 	}
 
-	void RenderCommand::drawIndexed(const uint32 count){
-		renderAPI->drawIndexed(count);
+	void RenderCommand::bindVertexBuffer(const Buffer& buffer, const uint32 stride){
+		device->bindVertexBuffer(buffer, stride);
 	}
 
-	void RenderCommand::setClearColour(const math::Vector4f& colour){
-		renderAPI->setClearColour(colour);
+	void RenderCommand::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
+		device->bindShaderResourceBuffer(buffer, shaderType, bindingPoint);
 	}
 
-	void RenderCommand::setDepthBuffer(bool enabled){
-		renderAPI->setDepthBuffer(enabled);
+	void RenderCommand::bindPipelineObject(const PipelineObject& pipelineObject){
+		device->bindPipelineObject(pipelineObject);
 	}
 
-	void RenderCommand::setBlendState(bool enabled){
-		renderAPI->setBlendState(enabled);
+	void RenderCommand::bindTexture(const Texture* texture, const uint32 bindingPoint){
+		device->bindTexture(texture, bindingPoint);
+	}
+
+	void RenderCommand::bindShader(const Shader& shader){
+		device->bindShader(shader);
+	}
+
+	void RenderCommand::updateBufferData(Buffer& buffer, const void* data){
+		device->updateBufferData(buffer, data);
+	}
+
+	void RenderCommand::makeSurfaceCurrent(Surface& surface){
+		device->makeSurfaceCurrent(surface);
 	}
 
 	void RenderCommand::setRenderTarget(RenderTarget& renderTarget){
-		renderAPI->setRenderTarget(renderTarget);
+		device->setRenderTarget(renderTarget);
 	}
 
-	void RenderCommand::resetRenderTarget(){
-		renderAPI->resetRenderTarget();
+	void RenderCommand::resetRenderTargetToDefault(){
+		device->resetRenderTargetToDefault();
 	}
 
-	void RenderCommand::setViewPortSize(uint32 width, uint32 height){
-		renderAPI->setViewportSize(width, height);
+	void RenderCommand::setViewport(const Viewport& viewport){
+		device->setViewport(viewport);
 	}
 
-	void RenderCommand::removeCurrentGeometryShader(){
-		renderAPI->removeCurrentGeometryShader();
+	void RenderCommand::clear(){
+		device->clear();
 	}
 
-	void RenderCommand::removeTextureAtSlot(uint32 slot){
-		renderAPI->removeTextureAtSlot(slot);
+	void RenderCommand::drawIndexed(const uint32 count){
+		device->drawIndexed(count);
 	}
 
-	void RenderCommand::initialiseRenderAPI(const Context& context){
-		switch(context.getAPI()){
+	void RenderCommand::setClearColour(const mth::vec4f& colour){
+		device->setClearColour(colour);
+	}
+
+	void RenderCommand::setDepthBuffer(bool enabled){
+		device->setDepthBuffer(enabled);
+	}
+
+	void RenderCommand::setBlendState(bool enabled){
+		device->setBlendState(enabled);
+	}
+
+	std::shared_ptr<Buffer> RenderCommand::createBuffer(const BufferDescriptor& descriptor, const void* data){
+		return factory->createBuffer(descriptor, data);
+	}
+
+	std::shared_ptr<Texture> RenderCommand::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
+		return factory->createTexture(descriptor, pathToTexture);
+	}
+
+	std::shared_ptr<Texture> RenderCommand::createTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP){
+		return factory->createTexture(descriptor, data, BPP);
+	}
+
+	std::shared_ptr<PipelineObject> RenderCommand::createPipelineObject(const std::shared_ptr<Shader>& shader){
+		return factory->createPipelineObject(shader);
+	}
+
+	std::shared_ptr<RenderTarget> RenderCommand::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
+		return factory->createRenderTarget(colourTexture, depthStencilTexture);
+	}
+
+	std::shared_ptr<Shader> RenderCommand::createShader(const ShaderDescriptor& descriptor){
+		return factory->createShader(descriptor);
+	}
+
+	std::shared_ptr<Surface> RenderCommand::createSurface(void* windowData){
+		return factory->createSurface(windowData);
+	}
+
+	void RenderCommand::initialise(gfx::API api){
+		switch(api){
 			case API::OpenGL4:
-				CLV_LOG_TRACE("Creating OpenGL renderer");
-				renderAPI = std::make_unique<GL4RenderAPI>(context);
-				break;
+				{
+					CLV_LOG_TRACE("Creating OpenGL renderer");
+					auto pair = ogl::initialiseOGL();
+					device = std::move(pair.first);
+					factory = std::move(pair.second);
+					break;
+				}
 
 			#if CLV_PLATFORM_WINDOWS
 			case API::DirectX11:
-				CLV_LOG_TRACE("Creating DirectX11 renderer");
-				renderAPI = std::make_unique<DX11RenderAPI>(context);
-				break;
+				{
+					CLV_LOG_TRACE("Creating Direct3D API");
+					auto pair = d3d::initialiseD3D();
+					device = std::move(pair.first);
+					factory = std::move(pair.second);
+					break;
+				}
 			#endif
 
 			default:

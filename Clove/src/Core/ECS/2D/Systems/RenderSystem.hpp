@@ -2,20 +2,22 @@
 
 #include "Core/ECS/System.hpp"
 
-#include "Core/ECS/2D/Components/TransformComponent.hpp"
-#include "Core/ECS/2D/Components/RenderableComponent.hpp"
-
-namespace clv::ecs::d2{
-	class RenderSystem : public System<TransformComponent, RenderableComponent>{
+namespace clv::ecs::_2D{
+	class RenderSystem : public System{
 		//FUNCTIONS
 	public:
 		RenderSystem();
+
 		RenderSystem(const RenderSystem& other) = delete;
 		RenderSystem(RenderSystem&& other) noexcept;
+
 		RenderSystem& operator=(const RenderSystem& other) = delete;
 		RenderSystem& operator=(RenderSystem&& other) noexcept;
+
 		virtual ~RenderSystem();
 
+		virtual void preUpdate() override;
 		virtual void update(utl::DeltaTime deltaTime) override;
+		virtual void postUpdate() override;
 	};
 }
