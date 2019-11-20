@@ -7,16 +7,19 @@
 #include <unordered_map>
 #include <functional>
 #include <sstream>
+#include <optional>
 
 //Includes required when not using pch
+#include "Core/IntTypes.hpp"
+#include "Core/Utils/Delegate.hpp"
 #include "Core/Maths/MathsTypes.hpp"
 #include "Core/Maths/Maths.hpp"
 #include "Core/Maths/MathsHelpers.hpp"
-#include "Core/Application.hpp"
-#include "Core/IntTypes.hpp"
+#include "Core/Platform/Application.hpp"
 #include "Core/Platform/Window.hpp"
 #include "Core/Graphics/GraphicsTypes.hpp"
-#include "Core/Graphics/Context.hpp"
+#include "Core/Graphics/Surface.hpp"
+#include "Core/Graphics/RenderCommand.hpp"
 
 using namespace System::Windows;
 //using namespace System::Runtime::RuntimeInteropServices;
@@ -30,7 +33,7 @@ struct WindowsData{
 	clv::uint32 height;
 };
 
-//Create the context with the windows data
+//Temp window for the editor
 class EditorWindow : public clv::plt::Window{
 	//VARIABLES
 private:
@@ -44,8 +47,8 @@ public:
 
 		data = { handle, 800, 400 };//Hard coded values from the xml
 
-		context = clv::gfx::Context::createContext(&data, clv::gfx::API::DirectX11);
-		context->makeCurrent();
+		surface = clv::gfx::RenderCommand::createSurface(&data);
+		clv::gfx::RenderCommand::makeSurfaceCurrent(*surface);
 	}
 
 	virtual void* getNativeWindow() const override{
@@ -58,11 +61,35 @@ protected:
 	}
 };
 
+//Temp application for the editor
+class EditorApplication : public clv::plt::Application{
+	//VARIABLES
+private:
+	IntPtr hWnd;
+
+	//FUNCTIONS
+public:
+	EditorApplication(IntPtr hWnd){ //Temp: Just passing in the handle from the wpf app
+		this->hWnd = hWnd;
+	}
+
+	virtual clv::gfx::API getPlatformPreferedAPI() override{
+		return clv::gfx::API::DirectX11;
+	}
+
+	virtual std::unique_ptr<clv::plt::Window> createWindow(const clv::plt::WindowProps& props){
+		return std::make_unique<EditorWindow>(hWnd);
+	}
+};
+
 void Bulb::Engine::Wrapper::OpenClove(IntPtr hWnd){
-	std::unique_ptr<EditorWindow> window = std::make_unique<EditorWindow>(hWnd);
-	app = new clv::Application(std::move(window));
+	app = new EditorApplication(hWnd);
 	
-	while(app->getState() == clv::ApplicationState::running){
+	app->start();
+
+	//TODO: Push some layers on
+
+	while(app->getState() == clv::plt::ApplicationState::running){
 		app->update();
 	}
 

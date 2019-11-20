@@ -1,13 +1,13 @@
 #pragma once
 
-namespace clv{
+namespace clv::plt{
 	class Application;
 }
 
 namespace Bulb::Engine{
 	public ref class Wrapper {
 	private:
-		clv::Application* app;
+		clv::plt::Application* app;
 	public:
 		void OpenClove(System::IntPtr hWnd);
 
