@@ -141,18 +141,18 @@ namespace clv::plt{
 
 		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", windowProperties.title, windowProperties.width, windowProperties.height);
 
-		WNDCLASSEX wc = { 0 };
-		wc.cbSize = sizeof(wc);
-		wc.style = CS_OWNDC;
-		wc.lpfnWndProc = HandleMsgSetup;
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = 0;
-		wc.hInstance = instance;
-		wc.hIcon = nullptr;
-		wc.hCursor = nullptr;
-		wc.hbrBackground = nullptr;
-		wc.lpszMenuName = nullptr;
-		wc.lpszClassName = className;
+		WNDCLASSEX wc{};
+		wc.cbSize			= sizeof(wc);
+		wc.style			= CS_OWNDC;
+		wc.lpfnWndProc		= HandleMsgSetup;
+		wc.cbClsExtra		= 0;
+		wc.cbWndExtra		= 0;
+		wc.hInstance		= instance;
+		wc.hIcon			= nullptr;
+		wc.hCursor			= nullptr;
+		wc.hbrBackground	= nullptr;
+		wc.lpszMenuName		= nullptr;
+		wc.lpszClassName	= className;
 
 		RegisterClassEx(&wc);
 
@@ -160,14 +160,14 @@ namespace clv::plt{
 
 		const std::string wideTitle(windowProperties.title.begin(), windowProperties.title.end());
 
-		DWORD windowStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
+		DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU;
 
 		//Create a rect so we can adjust the resolution to be the client region not the entire window size
-		RECT wr;
-		wr.left = 100; //What is with these 100s???
-		wr.right = windowProperties.width + wr.left;
-		wr.top = 100;
-		wr.bottom = windowProperties.height + wr.top;
+		RECT wr{};
+		wr.left		= 100; //What is with these 100s???
+		wr.right	= windowProperties.width + wr.left;
+		wr.top		= 100;
+		wr.bottom	= windowProperties.height + wr.top;
 		if(!AdjustWindowRect(&wr, windowStyle, FALSE)){
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
