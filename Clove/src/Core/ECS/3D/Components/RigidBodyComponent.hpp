@@ -30,9 +30,9 @@ namespace clv::ecs::_3D{
 		virtual ~RigidBodyComponent();
 
 		//Note: Only supporting collision cubes for now
-		RigidBodyComponent(float mass, bool isKinematic, const math::Vector3f& cubeSize);
+		RigidBodyComponent(float mass, bool isKinematic, const mth::vec3f& cubeSize);
 
 	private:
-		void initialise(const math::Vector3f& cubeSize);
+		void initialise(const mth::vec3f& cubeSize);
 	};
 }

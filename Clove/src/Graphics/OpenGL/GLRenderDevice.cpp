@@ -85,7 +85,7 @@ namespace clv::gfx::ogl{
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
 	}
 
-	void GLRenderDevice::setClearColour(const math::Vector4f& colour){
+	void GLRenderDevice::setClearColour(const mth::vec4f& colour){
 		glClearColor(colour.r, colour.g, colour.b, colour.a);
 	}
 

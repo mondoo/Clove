@@ -33,7 +33,7 @@ namespace clv::ecs::_3D{
 		PointLightShaderData currentLightInfo;
 		PointShadowDepthData currentShadowDepth;
 		uint32 numLights = 0;
-		std::array<std::array<math::Matrix4f, 6>, MAX_LIGHTS> shadowTransforms = {};
+		std::array<std::array<mth::mat4f, 6>, MAX_LIGHTS> shadowTransforms = {};
 
 		MaterialInstance cubeShadowMaterial;
 
@@ -110,20 +110,20 @@ namespace clv::ecs::_3D{
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
 				CameraComponent* camera = std::get<CameraComponent*>(tuple);
 
-				const math::Vector3f& position = transform->getPosition();
+				const mth::vec3f& position = transform->getPosition();
 
 				//update front
-				math::Vector3f front;
-				front.x = cos(math::asRadians(camera->yaw)) * cos(math::asRadians(camera->pitch));
-				front.y = sin(math::asRadians(camera->pitch));
-				front.z = sin(math::asRadians(camera->yaw)) * cos(math::asRadians(camera->pitch));
-				camera->cameraFront = math::normalise(front);
+				mth::vec3f front;
+				front.x = cos(mth::asRadians(camera->yaw)) * cos(mth::asRadians(camera->pitch));
+				front.y = sin(mth::asRadians(camera->pitch));
+				front.z = sin(mth::asRadians(camera->yaw)) * cos(mth::asRadians(camera->pitch));
+				camera->cameraFront = mth::normalise(front);
 
 				//update look at
-				const math::Matrix4f lookAt = math::lookAt(position, position + camera->cameraFront, camera->cameraUp);
+				const mth::mat4f lookAt = mth::lookAt(position, position + camera->cameraFront, camera->cameraUp);
 
 				//update right
-				camera->cameraRight = math::normalise(math::cross(camera->cameraFront, camera->cameraUp));
+				camera->cameraRight = mth::normalise(mth::cross(camera->cameraFront, camera->cameraUp));
 
 				camera->cameraRenderData.lookAt = lookAt;
 				camera->cameraRenderData.position = position;
@@ -140,8 +140,8 @@ namespace clv::ecs::_3D{
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
 				MeshComponent* renderable = std::get<MeshComponent*>(tuple);
 
-				const math::Matrix4f model = transform->getWorldTransformMatrix();
-				renderable->mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ model, math::transpose(math::inverse(model)) }, ShaderType::Vertex);
+				const mth::mat4f model = transform->getWorldTransformMatrix();
+				renderable->mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ model, mth::transpose(mth::inverse(model)) }, ShaderType::Vertex);
 
 				currentSceneData->meshesToRender.push_back(renderable->mesh);
 			}
@@ -157,12 +157,12 @@ namespace clv::ecs::_3D{
 				const auto& position = transform->getPosition();
 
 				light->lightData.intensity.position = position;
-				light->lightData.shadowTransforms[0] = light->shadowProj * math::lookAt(position, position + math::Vector3f{ 1.0, 0.0, 0.0 }, math::Vector3f{ 0.0,-1.0, 0.0 });
-				light->lightData.shadowTransforms[1] = light->shadowProj * math::lookAt(position, position + math::Vector3f{ -1.0, 0.0, 0.0 }, math::Vector3f{ 0.0,-1.0, 0.0 });
-				light->lightData.shadowTransforms[2] = light->shadowProj * math::lookAt(position, position + math::Vector3f{ 0.0, 1.0, 0.0 }, math::Vector3f{ 0.0, 0.0, 1.0 });
-				light->lightData.shadowTransforms[3] = light->shadowProj * math::lookAt(position, position + math::Vector3f{ 0.0,-1.0, 0.0 }, math::Vector3f{ 0.0, 0.0,-1.0 });
-				light->lightData.shadowTransforms[4] = light->shadowProj * math::lookAt(position, position + math::Vector3f{ 0.0, 0.0, 1.0 }, math::Vector3f{ 0.0,-1.0, 0.0 });
-				light->lightData.shadowTransforms[5] = light->shadowProj * math::lookAt(position, position + math::Vector3f{ 0.0, 0.0,-1.0 }, math::Vector3f{ 0.0,-1.0, 0.0 });
+				light->lightData.shadowTransforms[0] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 1.0, 0.0, 0.0 }, mth::vec3f{ 0.0,-1.0, 0.0 });
+				light->lightData.shadowTransforms[1] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ -1.0, 0.0, 0.0 }, mth::vec3f{ 0.0,-1.0, 0.0 });
+				light->lightData.shadowTransforms[2] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0, 1.0, 0.0 }, mth::vec3f{ 0.0, 0.0, 1.0 });
+				light->lightData.shadowTransforms[3] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0,-1.0, 0.0 }, mth::vec3f{ 0.0, 0.0,-1.0 });
+				light->lightData.shadowTransforms[4] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0, 0.0, 1.0 }, mth::vec3f{ 0.0,-1.0, 0.0 });
+				light->lightData.shadowTransforms[5] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0, 0.0,-1.0 }, mth::vec3f{ 0.0,-1.0, 0.0 });
 
 				const int32 lightIndex = currentSceneData->numLights++;
 				currentSceneData->currentLightInfo.intensities[lightIndex] = light->lightData.intensity;

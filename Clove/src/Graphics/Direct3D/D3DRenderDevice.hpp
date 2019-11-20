@@ -30,7 +30,7 @@ namespace clv::gfx::d3d{
 		static DXGIInfoManager infoManager; //Used by certain DX11 exception macros
 	#endif
 
-		math::Vector4f clearColour = { 0.0f, 0.0f, 0.0f, 0.0f };
+		mth::vec4f clearColour = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 		//FUNCTIONS
 	public:
@@ -63,7 +63,7 @@ namespace clv::gfx::d3d{
 		virtual void clear() override;
 		virtual void drawIndexed(const uint32 count) override;
 
-		virtual void setClearColour(const math::Vector4f& colour) override;
+		virtual void setClearColour(const mth::vec4f& colour) override;
 		virtual void setDepthBuffer(bool enabled) override;
 		virtual void setBlendState(bool enabled) override;
 

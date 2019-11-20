@@ -1,62 +1,62 @@
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace clv::math{
+namespace clv::mth{
 	inline float cos(float value){
 		return glm::cos(value);
 	}
 
 	template<length_t L, typename T, qualifier Q>
-	Vector<L, T, Q> normalise(const Vector<L, T, Q>& v){
+	vec<L, T, Q> normalise(const vec<L, T, Q>& v){
 		return glm::normalize(v);
 	}
 
 	template<typename T, qualifier Q>
-	Vector<3, T, Q> cross(const Vector<3, T, Q>& v1, const Vector<3, T, Q>& v2){
+	vec<3, T, Q> cross(const vec<3, T, Q>& v1, const vec<3, T, Q>& v2){
 		return glm::cross(v1, v2);
 	}
 
 	template<length_t L, typename T, qualifier Q>
-	Vector<L, T, Q> dot(const Vector<L, T, Q>& v1, const Vector<L, T, Q>& v2){
+	vec<L, T, Q> dot(const vec<L, T, Q>& v1, const vec<L, T, Q>& v2){
 		return glm::dot(v1, v2);
 	}
 
 	template<length_t L, typename T, qualifier Q>
-	T distance(const Vector<L, T, Q>& v1, const Vector<L, T, Q>& v2){
+	T distance(const vec<L, T, Q>& v1, const vec<L, T, Q>& v2){
 		return glm::distance(v1, v2);
 	}
 
 	template<length_t L, typename T, qualifier Q>
-	T length(const Vector<L, T, Q>& vec){
+	T length(const vec<L, T, Q>& vec){
 		return glm::length(vec);
 	}
 
 	template<typename T, qualifier Q>
-	Matrix<4, 4, T, Q> lookAt(const Vector<3, T, Q>& eye, const Vector<3, T, Q>& center, const Vector<3, T, Q>& up){
+	mat<4, 4, T, Q> lookAt(const vec<3, T, Q>& eye, const vec<3, T, Q>& center, const vec<3, T, Q>& up){
 		return glm::lookAt(eye, center, up);
 	}
 
 	template<typename T, qualifier Q>
-	Matrix<4, 4, T, Q> translate(const Matrix<4, 4, T, Q>& m, const Vector<3, T, Q>& v){
+	mat<4, 4, T, Q> translate(const mat<4, 4, T, Q>& m, const vec<3, T, Q>& v){
 		return glm::translate(m, v);
 	}
 
 	template<typename T, qualifier Q>
-	Matrix<4, 4, T, Q> rotate(const Matrix<4, 4, T, Q>& m, T angle, const Vector<3, T, Q>& v){
+	mat<4, 4, T, Q> rotate(const mat<4, 4, T, Q>& m, T angle, const vec<3, T, Q>& v){
 		return glm::rotate(m, angle, v);
 	}
 
 	template<typename T, qualifier Q>
-	Matrix<4, 4, T, Q> scale(const Matrix<4, 4, T, Q>& m, const Vector<3, T, Q>& v){
+	mat<4, 4, T, Q> scale(const mat<4, 4, T, Q>& m, const vec<3, T, Q>& v){
 		return glm::scale(m, v);
 	}
 
 	template<length_t C, length_t R, typename T, qualifier Q>
-	Matrix<C, R, T, Q> inverse(const Matrix<C, R, T, Q>& m){
+	mat<C, R, T, Q> inverse(const mat<C, R, T, Q>& m){
 		return glm::inverse(m);
 	}
 
 	template<length_t C, length_t R, typename T, qualifier Q>
-	Matrix<C, R, T, Q> transpose(const Matrix<C, R, T, Q>& m){
+	mat<C, R, T, Q> transpose(const mat<C, R, T, Q>& m){
 		return glm::transpose(m);
 	}
 }

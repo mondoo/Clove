@@ -13,7 +13,7 @@ namespace clv::gfx{
 		albedoTexture = blankTexture;
 		specTexture = blankTexture;
 
-		setData(BBP_Colour, math::Vector4f(1.0f, 1.0f, 1.0f, 1.0), ShaderType::Pixel);
+		setData(BBP_Colour, mth::vec4f(1.0f, 1.0f, 1.0f, 1.0), ShaderType::Pixel);
 	}
 
 	Material::Material(const Material& other) = default;

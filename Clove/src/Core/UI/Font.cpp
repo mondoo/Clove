@@ -61,9 +61,9 @@ namespace clv::ui{
 	Glyph Font::getChar(char ch) const{
 		FT_Load_Char(face.get(), ch, FT_LOAD_RENDER);
 		return {
-			math::Vector2f{ face->glyph->bitmap.width, face->glyph->bitmap.rows },
-			math::Vector2f{ face->glyph->bitmap_left, face->glyph->bitmap_top },
-			math::Vector2f{ face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 },
+			mth::vec2f{ face->glyph->bitmap.width, face->glyph->bitmap.rows },
+			mth::vec2f{ face->glyph->bitmap_left, face->glyph->bitmap_top },
+			mth::vec2f{ face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 },
 			face->glyph->bitmap.buffer
 		};
 	}

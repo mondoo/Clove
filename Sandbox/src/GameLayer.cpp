@@ -47,11 +47,11 @@ void GameLayer::onDetach(){
 
 void GameLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	/*if(clv::input::isKeyPressed(clv::Key::W)){
-		clv::math::Vector3f spherePos = sphereEntity.getComponent<clv::ecs::_3D::TransformComponent>()->getPosition();
+		clv::mth::vec3f spherePos = sphereEntity.getComponent<clv::ecs::_3D::TransformComponent>()->getPosition();
 		spherePos.x += 5 * deltaTime;
 		sphereEntity.getComponent<clv::ecs::_3D::TransformComponent>()->setPosition(spherePos);
 	}else if(clv::input::isKeyPressed(clv::Key::S)){
-		clv::math::Vector3f spherePos = sphereEntity.getComponent<clv::ecs::_3D::TransformComponent>()->getPosition();
+		clv::mth::vec3f spherePos = sphereEntity.getComponent<clv::ecs::_3D::TransformComponent>()->getPosition();
 		spherePos.x -= 5 * deltaTime;
 		sphereEntity.getComponent<clv::ecs::_3D::TransformComponent>()->setPosition(spherePos);
 	}*/

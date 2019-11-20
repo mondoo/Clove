@@ -11,15 +11,15 @@ namespace clv::ecs::_3D{
 
 	CameraComponent::~CameraComponent() = default;
 
-	const math::Vector3f& CameraComponent::getFront() const{
+	const mth::vec3f& CameraComponent::getFront() const{
 		return cameraFront;
 	}
 
-	const math::Vector3f& CameraComponent::getUp() const{
+	const mth::vec3f& CameraComponent::getUp() const{
 		return cameraUp;
 	}
 
-	const math::Vector3f& CameraComponent::getRight() const{
+	const mth::vec3f& CameraComponent::getRight() const{
 		return cameraRight;
 	}
 
@@ -32,11 +32,11 @@ namespace clv::ecs::_3D{
 		switch(mode){
 			case ProjectionMode::orthographic:
 				//TODO: Need to get the window dimensions (ie. left = -(1920 / 2))
-				currentProjection = math::createOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0f);
+				currentProjection = mth::createOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0f);
 				break;
 
 			case ProjectionMode::perspective:
-				currentProjection = math::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 0.5f, 10000.0f);
+				currentProjection = mth::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 0.5f, 10000.0f);
 				break;
 
 			default:

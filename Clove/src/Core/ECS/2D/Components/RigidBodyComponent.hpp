@@ -30,9 +30,9 @@ namespace clv::ecs::_2D{
 		virtual ~RigidBodyComponent();
 
 		//Note: Only supporting collision squares for now
-		RigidBodyComponent(float mass, bool isKinematic, const math::Vector2f& squareSize);
+		RigidBodyComponent(float mass, bool isKinematic, const mth::vec2f& squareSize);
 
 	private:
-		void initialise(const math::Vector2f& cubeSize);
+		void initialise(const mth::vec2f& cubeSize);
 	};
 }

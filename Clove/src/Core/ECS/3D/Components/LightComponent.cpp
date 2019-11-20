@@ -21,27 +21,27 @@ namespace clv::ecs::_3D{
 
 	LightComponent::~LightComponent() = default;
 
-	void LightComponent::setAmbientColour(const math::Vector3f& colour){
+	void LightComponent::setAmbientColour(const mth::vec3f& colour){
 		ambientColour = colour;
 	}
 
-	const math::Vector3f& LightComponent::getAmbientColour() const{
+	const mth::vec3f& LightComponent::getAmbientColour() const{
 		return ambientColour;
 	}
 
-	void LightComponent::setDiffuseColour(const math::Vector3f& colour){
+	void LightComponent::setDiffuseColour(const mth::vec3f& colour){
 		diffuseColour = colour;
 	}
 
-	const math::Vector3f& LightComponent::getDiffuseColour() const{
+	const mth::vec3f& LightComponent::getDiffuseColour() const{
 		return diffuseColour;
 	}
 
-	void LightComponent::setSpecularColour(const math::Vector3f& colour){
+	void LightComponent::setSpecularColour(const mth::vec3f& colour){
 		specularColour = colour;
 	}
 
-	const math::Vector3f& LightComponent::getSpecularColour() const{
+	const mth::vec3f& LightComponent::getSpecularColour() const{
 		return specularColour;
 	}
 

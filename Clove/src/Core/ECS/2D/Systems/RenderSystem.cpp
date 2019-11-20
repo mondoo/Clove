@@ -26,7 +26,7 @@ namespace clv::ecs::_2D{
 		std::shared_ptr<PipelineObject> spritePipelineObject;
 		std::shared_ptr<PipelineObject> charPipelineObject;
 
-		math::Matrix4f projection; //Effectively the 'camera'
+		mth::mat4f projection; //Effectively the 'camera'
 	} *currentSceneData;
 
 	RenderSystem::RenderSystem(){
@@ -44,10 +44,10 @@ namespace clv::ecs::_2D{
 		//Sprite mesh
 		{
 			VertexBufferData bufferData{ layout };
-			bufferData.emplaceBack(math::Vector2f{ -1.0f, -1.0f }, math::Vector2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(math::Vector2f{ 1.0f, -1.0f }, math::Vector2f{ 1.0f, 0.0f });
-			bufferData.emplaceBack(math::Vector2f{ -1.0f,  1.0f }, math::Vector2f{ 0.0f, 1.0f });
-			bufferData.emplaceBack(math::Vector2f{ 1.0f,  1.0f }, math::Vector2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ -1.0f, -1.0f }, mth::vec2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f, -1.0f }, mth::vec2f{ 1.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ -1.0f,  1.0f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f,  1.0f }, mth::vec2f{ 1.0f, 1.0f });
 
 			auto spriteMaterial = std::make_shared<gfx::Material>();
 			currentSceneData->spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
@@ -56,10 +56,10 @@ namespace clv::ecs::_2D{
 		//Font mesh
 		{
 			VertexBufferData bufferData{ layout };
-			bufferData.emplaceBack(math::Vector2f{ 0,  0 }, math::Vector2f{ 0.0f, 1.0f });
-			bufferData.emplaceBack(math::Vector2f{ 1,  0 }, math::Vector2f{ 1.0f, 1.0f });
-			bufferData.emplaceBack(math::Vector2f{ 0,  1 }, math::Vector2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(math::Vector2f{ 1,  1 }, math::Vector2f{ 1.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0,  0 }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1,  0 }, mth::vec2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0,  1 }, mth::vec2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1,  1 }, mth::vec2f{ 1.0f, 0.0f });
 
 			auto characterMaterial = std::make_shared<gfx::Material>();
 			currentSceneData->characterMesh = std::make_shared<gfx::Mesh>(bufferData, indices, characterMaterial->createInstance());
@@ -72,7 +72,7 @@ namespace clv::ecs::_2D{
 		const float halfWidth = static_cast<float>(plt::Application::get().getWindow().getWidth()) / 2;
 		const float halfHeight = static_cast<float>(plt::Application::get().getWindow().getHeight()) / 2;
 
-		currentSceneData->projection = math::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
+		currentSceneData->projection = mth::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 	}
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;
@@ -96,7 +96,7 @@ namespace clv::ecs::_2D{
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
 				SpriteComponent* renderable = std::get<SpriteComponent*>(tuple);
 
-				const math::Matrix4f modelData = transform->getWorldTransformMatrix();
+				const mth::mat4f modelData = transform->getWorldTransformMatrix();
 				renderable->sprite->setModelData(currentSceneData->projection * modelData);
 
 				currentSceneData->spritesToRender.push_back(renderable->sprite);
@@ -111,7 +111,7 @@ namespace clv::ecs::_2D{
 				ui::TextComponent* fontComp = std::get<ui::TextComponent*>(tuple);
 
 				const clv::ui::Text& text = fontComp->text;
-				math::Vector2f cursorPos = transform->getPosition();
+				mth::vec2f cursorPos = transform->getPosition();
 
 				for(size_t i = 0; i < text.getTextLength(); ++i){
 					clv::ui::Glyph glyph = text.getBufferForCharAt(i);
@@ -134,9 +134,9 @@ namespace clv::ecs::_2D{
 
 						auto texture = gfx::RenderCommand::createTexture(descriptor, glyph.buffer, 1);
 
-						math::Matrix4f model = math::Matrix4f(1.0f);
-						model = math::translate(math::Matrix4f(1.0f), { xpos, ypos, 0.0f });
-						model *= math::scale(math::Matrix4f(1.0f), { width, height, 0.0f });
+						mth::mat4f model = mth::mat4f(1.0f);
+						model = mth::translate(mth::mat4f(1.0f), { xpos, ypos, 0.0f });
+						model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
 						auto character = std::make_shared<gfx::Sprite>(texture);
 						character->setModelData(currentSceneData->projection * model);

@@ -39,7 +39,7 @@ namespace clv::gfx::ogl{
 				glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureRenderID, 0);
 			}
 		} else{
-			const math::Vector2f dimensions = colourTexture->getDescriptor().dimensions;
+			const mth::vec2f dimensions = colourTexture->getDescriptor().dimensions;
 			glGenRenderbuffers(1, &renderBufferID);
 			glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, dimensions.x, dimensions.y);

@@ -34,7 +34,7 @@ namespace clv::gfx::ogl{
 		virtual void clear() override;
 		virtual void drawIndexed(const uint32 count) override;
 
-		virtual void setClearColour(const math::Vector4f& colour) override;
+		virtual void setClearColour(const mth::vec4f& colour) override;
 		virtual void setDepthBuffer(bool enabled) override;
 		virtual void setBlendState(bool enabled) override;
 	};

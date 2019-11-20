@@ -10,9 +10,9 @@ namespace clv::ecs::_3D{
 
 		//VARIABLES
 	private:
-		math::Vector3f ambientColour = math::Vector3f(0.01f, 0.01f, 0.01f);
-		math::Vector3f diffuseColour = math::Vector3f(0.75f, 0.75f, 0.75f);
-		math::Vector3f specularColour = math::Vector3f(1.0f, 1.0f, 1.0f);
+		mth::vec3f ambientColour = mth::vec3f(0.01f, 0.01f, 0.01f);
+		mth::vec3f diffuseColour = mth::vec3f(0.75f, 0.75f, 0.75f);
+		mth::vec3f specularColour = mth::vec3f(1.0f, 1.0f, 1.0f);
 
 		//NOTE: treating every light as a point light for now
 		float constant = 1.0f;
@@ -24,7 +24,7 @@ namespace clv::ecs::_3D{
 		float aspect = 1.0f; //shadow width / shadow height
 		float nearDist = 0.5f;
 		float farDist = 25.0f;
-		math::Matrix4f shadowProj = math::createPerspectiveMatrix(math::asRadians(90.0f), aspect, nearDist, farDist);
+		mth::mat4f shadowProj = mth::createPerspectiveMatrix(mth::asRadians(90.0f), aspect, nearDist, farDist);
 
 		//FUNCTIONS
 	public:
@@ -35,14 +35,14 @@ namespace clv::ecs::_3D{
 		LightComponent& operator=(LightComponent&&) noexcept;
 		virtual ~LightComponent();
 
-		void setAmbientColour(const math::Vector3f& colour);
-		const math::Vector3f& getAmbientColour() const;
+		void setAmbientColour(const mth::vec3f& colour);
+		const mth::vec3f& getAmbientColour() const;
 
-		void setDiffuseColour(const math::Vector3f& colour);
-		const math::Vector3f& getDiffuseColour() const;
+		void setDiffuseColour(const mth::vec3f& colour);
+		const mth::vec3f& getDiffuseColour() const;
 
-		void setSpecularColour(const math::Vector3f& colour);
-		const math::Vector3f& getSpecularColour() const;
+		void setSpecularColour(const mth::vec3f& colour);
+		const mth::vec3f& getSpecularColour() const;
 
 		//NOTE: treating every light as a point light for now
 		float getConstant() const;

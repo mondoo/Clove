@@ -34,19 +34,19 @@ namespace clv::gfx{
 		return texture;
 	}
 
-	void Sprite::setColour(const math::Vector4f& colour){
+	void Sprite::setColour(const mth::vec4f& colour){
 		this->colour = colour;
 	}
 
-	const math::Vector4f& Sprite::getColour() const{
+	const mth::vec4f& Sprite::getColour() const{
 		return colour;
 	}
 
-	void Sprite::setModelData(const math::Matrix4f& modelData){
+	void Sprite::setModelData(const mth::mat4f& modelData){
 		this->modelData = modelData;
 	}
 
-	const math::Matrix4f &Sprite::getModelData() const {
+	const mth::mat4f &Sprite::getModelData() const {
 		return modelData;
 	}
 }

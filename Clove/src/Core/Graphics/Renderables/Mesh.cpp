@@ -23,15 +23,15 @@ namespace clv::gfx{
 			for(int32 j = 0; j < layout.count(); ++j){
 				switch(layout.resolve(j).getType()){
 					case VertexElementType::position3D:
-						loadedBufferData[i].getAttribute<VertexElementType::position3D>() = math::Vector3f{ info.getData<VertexElementType::position3D>()[i] };
+						loadedBufferData[i].getAttribute<VertexElementType::position3D>() = mth::vec3f{ info.getData<VertexElementType::position3D>()[i] };
 						break;
 
 					case VertexElementType::texture2D:
-						loadedBufferData[i].getAttribute<VertexElementType::texture2D>() = math::Vector2f{ info.getData<VertexElementType::texture2D>()[i] };
+						loadedBufferData[i].getAttribute<VertexElementType::texture2D>() = mth::vec2f{ info.getData<VertexElementType::texture2D>()[i] };
 						break;
 
 					case VertexElementType::normal:
-						loadedBufferData[i].getAttribute<VertexElementType::normal>() = math::Vector3f{ info.getData<VertexElementType::normal>()[i] };
+						loadedBufferData[i].getAttribute<VertexElementType::normal>() = mth::vec3f{ info.getData<VertexElementType::normal>()[i] };
 						break;
 					default:
 						break;

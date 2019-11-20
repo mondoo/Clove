@@ -127,7 +127,7 @@ namespace clv::gfx::d3d{
 
 	void D3DRenderDevice::clear(){
 		if(currentRenderTarget){
-			d3dContext->ClearRenderTargetView(currentRenderTarget.Get(), math::valuePtr(clearColour));
+			d3dContext->ClearRenderTargetView(currentRenderTarget.Get(), mth::valuePtr(clearColour));
 		}
 		d3dContext->ClearDepthStencilView(currentDepthStencil.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
 	}
@@ -136,7 +136,7 @@ namespace clv::gfx::d3d{
 		DX11_THROW_INFO_ONLY(d3dContext->DrawIndexed(static_cast<UINT>(count), 0u, 0u));
 	}
 
-	void D3DRenderDevice::setClearColour(const math::Vector4f& colour){
+	void D3DRenderDevice::setClearColour(const mth::vec4f& colour){
 		clearColour = colour;
 	}
 

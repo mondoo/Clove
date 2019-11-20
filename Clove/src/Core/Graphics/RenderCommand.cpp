@@ -61,7 +61,7 @@ namespace clv::gfx{
 		device->drawIndexed(count);
 	}
 
-	void RenderCommand::setClearColour(const math::Vector4f& colour){
+	void RenderCommand::setClearColour(const mth::vec4f& colour){
 		device->setClearColour(colour);
 	}
 

@@ -6,9 +6,9 @@ typedef struct FT_FaceRec_* FT_Face;
 
 namespace clv::ui{
 	struct Glyph{
-		math::Vector2f size = {};
-		math::Vector2f bearing = {};
-		math::Vector2f advance = {};
+		mth::vec2f size = {};
+		mth::vec2f bearing = {};
+		mth::vec2f advance = {};
 		uint8* buffer = nullptr;
 	};
 

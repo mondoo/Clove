@@ -31,13 +31,13 @@ namespace clv::ecs::_3D{
 
 	RigidBodyComponent::~RigidBodyComponent() = default;
 
-	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic, const math::Vector3f& cubeSize)
+	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic, const mth::vec3f& cubeSize)
 		: mass(mass)
 		, isKinematic(isKinematic){
 		initialise(cubeSize);
 	}
 
-	void RigidBodyComponent::initialise(const math::Vector3f& cubeSize){
+	void RigidBodyComponent::initialise(const mth::vec3f& cubeSize){
 		collisionShape = std::make_unique<btBoxShape>(btVector3{ cubeSize.x, cubeSize.y, cubeSize.z });
 
 		btVector3 localInertia(0, 0, 0);

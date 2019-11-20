@@ -74,7 +74,7 @@ void TestLayer::onAttach(){
 	bigBoy.addComponent<clv::ecs::_3D::TransformComponent>();
 
 	auto cubeMaterial = std::make_shared<clv::gfx::Material>();
-	cubeMaterial->setData(clv::gfx::BBP_Colour, clv::math::Vector4f{ 0.4f, 0.4f, 0.4f, 1.0f }, clv::gfx::ShaderType::Pixel);
+	cubeMaterial->setData(clv::gfx::BBP_Colour, clv::mth::vec4f{ 0.4f, 0.4f, 0.4f, 1.0f }, clv::gfx::ShaderType::Pixel);
 	cubeMaterial->setData(clv::gfx::BBP_MaterialData, clv::gfx::MaterialData{ 32.0f }, clv::gfx::ShaderType::Pixel);
 
 	{
@@ -87,7 +87,7 @@ void TestLayer::onAttach(){
 
 	{
 		auto inst = cubeMaterial->createInstance();
-		inst.setData(clv::gfx::BBP_Colour, clv::math::Vector4f{ 0.0f, 0.0f, 1.0f, 1.0f }, clv::gfx::ShaderType::Pixel);
+		inst.setData(clv::gfx::BBP_Colour, clv::mth::vec4f{ 0.0f, 0.0f, 1.0f, 1.0f }, clv::gfx::ShaderType::Pixel);
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", inst);
 		ent2.getComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
 	}
@@ -137,14 +137,14 @@ void TestLayer::onAttach(){
 		auto sprite = std::make_shared<clv::gfx::Sprite>();
 		sprite->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });
 		sprtEnt1.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
 	}
 
 	{
 		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
 		sprtEnt2.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		sprtEnt2.getComponent<clv::ecs::_2D::TransformComponent>()->setLocalPosition(clv::math::Vector2f(0.0f, 2.0f));
-		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
+		sprtEnt2.getComponent<clv::ecs::_2D::TransformComponent>()->setLocalPosition(clv::mth::vec2f(0.0f, 2.0f));
+		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
 	}
 
 	sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->addChild(sprtEnt2.getComponent<clv::ecs::_2D::TransformComponent>());
@@ -175,14 +175,14 @@ void TestLayer::onAttach(){
 
 		fontEnt = clv::plt::Application::get().getManager().createEntity();
 		fontEnt.addComponent<clv::ecs::ui::TextComponent>(font);
-		fontEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::math::Vector2f{-550.0, 300.0f});
+		fontEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{-550.0, 300.0f});
 
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("Hello, World!");
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(72);
 
 		fpsEnt = clv::plt::Application::get().getManager().createEntity();
 		fpsEnt.addComponent<clv::ecs::ui::TextComponent>(font);
-		fpsEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::math::Vector2f{-550.0, 100.0f});
+		fpsEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{-550.0, 100.0f});
 
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("not set :(");
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(30);
@@ -193,22 +193,22 @@ void TestLayer::onAttach(){
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 
 		rigidBody1 = clv::plt::Application::get().getManager().createEntity();
-		rigidBody1.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 10.0f, 10.0f });
+		rigidBody1.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::mth::vec3f{ 0.0f, 10.0f, 10.0f });
 		rigidBody1.addComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
-		rigidBody1.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, true, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
+		rigidBody1.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, true, clv::mth::vec3f{ 1.0f, 1.0f, 1.0f });
 
-		rigidBody1.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::math::asQuaternion(13.0f, clv::math::Vector3f{ 0.0f, 0.0f, 0.5f }));
+		rigidBody1.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::mth::asQuaternion(13.0f, clv::mth::vec3f{ 0.0f, 0.0f, 0.5f }));
 	}
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 
 		rigidBody2 = clv::plt::Application::get().getManager().createEntity();
-		rigidBody2.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::math::Vector3f{ 0.0f, 30.0f, 10.0f });
+		rigidBody2.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition(clv::mth::vec3f{ 0.0f, 30.0f, 10.0f });
 		rigidBody2.addComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
-		rigidBody2.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, false, clv::math::Vector3f{ 1.0f, 1.0f, 1.0f });
+		rigidBody2.addComponent<clv::ecs::_3D::RigidBodyComponent>(1.0f, false, clv::mth::vec3f{ 1.0f, 1.0f, 1.0f });
 
-		rigidBody2.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::math::asQuaternion(13.0f, clv::math::Vector3f{ 1.0f, 0.0f, 0.0f }));
+		rigidBody2.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::mth::asQuaternion(13.0f, clv::mth::vec3f{ 1.0f, 0.0f, 0.0f }));
 	}
 
 	{
@@ -216,11 +216,11 @@ void TestLayer::onAttach(){
 
 		rigidSprite1 = clv::plt::Application::get().getManager().createEntity();
 		rigidSprite1.addComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		rigidSprite1.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
-		rigidSprite1.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, true, clv::math::Vector2f{ 20.0f, 20.0f });
+		rigidSprite1.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		rigidSprite1.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, true, clv::mth::vec2f{ 20.0f, 20.0f });
 
-		rigidSprite1.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::math::Vector2f{ -100.0f, 0.0f });
-		rigidSprite1.getComponent<clv::ecs::_2D::TransformComponent>()->setRotation(clv::math::asRadians(45.0f));
+		rigidSprite1.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{ -100.0f, 0.0f });
+		rigidSprite1.getComponent<clv::ecs::_2D::TransformComponent>()->setRotation(clv::mth::asRadians(45.0f));
 	}
 
 	{
@@ -228,10 +228,10 @@ void TestLayer::onAttach(){
 
 		rigidSprite2 = clv::plt::Application::get().getManager().createEntity();
 		rigidSprite2.addComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		rigidSprite2.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::math::Vector2f(20.0f, 20.0f));
-		rigidSprite2.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, false, clv::math::Vector2f{ 20.0f, 20.0f });
+		rigidSprite2.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		rigidSprite2.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, false, clv::mth::vec2f{ 20.0f, 20.0f });
 
-		rigidSprite2.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::math::Vector2f{ -125.0f, 200.0f });
+		rigidSprite2.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{ -125.0f, 200.0f });
 	}
 
 	CLV_LOG_DEBUG("Testlayer has done a thing!");
@@ -249,25 +249,25 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 
 	float s = 6 * deltaTime;
 
-	clv::math::Vector3f cameraPosition = cam.getComponent<clv::ecs::_3D::TransformComponent>()->getPosition();
+	clv::mth::vec3f cameraPosition = cam.getComponent<clv::ecs::_3D::TransformComponent>()->getPosition();
 
 	//cam->updateFront(pitch, yaw); //TODO: proper first person implementation
 
-	const clv::math::Vector3f front = cam.getComponent<clv::ecs::_3D::CameraComponent>()->getFront();
+	const clv::mth::vec3f front = cam.getComponent<clv::ecs::_3D::CameraComponent>()->getFront();
 	if(clv::input::isKeyPressed(clv::Key::W)){
 		cameraPosition += front * camDelta;
 	} else if(clv::input::isKeyPressed(clv::Key::S)){
 		cameraPosition -= front * camDelta;
 	}
 
-	const clv::math::Vector3f up = cam.getComponent<clv::ecs::_3D::CameraComponent>()->getUp();
+	const clv::mth::vec3f up = cam.getComponent<clv::ecs::_3D::CameraComponent>()->getUp();
 	if(clv::input::isKeyPressed(clv::Key::Space)){
 		cameraPosition += up * camDelta;
 	} else if(clv::input::isKeyPressed(clv::Key::C)){
 		cameraPosition -= up * camDelta;
 	}
 
-	const clv::math::Vector3f right = cam.getComponent<clv::ecs::_3D::CameraComponent>()->getRight();
+	const clv::mth::vec3f right = cam.getComponent<clv::ecs::_3D::CameraComponent>()->getRight();
 	if(clv::input::isKeyPressed(clv::Key::A)){
 		cameraPosition -= right * camDelta;
 	} else if(clv::input::isKeyPressed(clv::Key::D)){
@@ -285,16 +285,16 @@ void TestLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 	cam.getComponent<clv::ecs::_3D::TransformComponent>()->setPosition(cameraPosition);
 	cam.getComponent<clv::ecs::_3D::CameraComponent>()->updateFront(0.0f, yaw);
 
-	ent1.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::math::asQuaternion(rotDelta, clv::math::Vector3f{ 0.0f, 1.0f, 0.0f }));
-	ent2.getComponent<clv::ecs::_3D::TransformComponent>()->setLocalRotation(clv::math::asQuaternion(rotDelta, clv::math::Vector3f{ 0.0f, 0.0f, 1.0f }));
-	ent3.getComponent<clv::ecs::_3D::TransformComponent>()->setLocalRotation(clv::math::asQuaternion(rotDelta, clv::math::Vector3f{ 1.0f, 0.0f, 0.0f }));
+	ent1.getComponent<clv::ecs::_3D::TransformComponent>()->setRotation(clv::mth::asQuaternion(rotDelta, clv::mth::vec3f{ 0.0f, 1.0f, 0.0f }));
+	ent2.getComponent<clv::ecs::_3D::TransformComponent>()->setLocalRotation(clv::mth::asQuaternion(rotDelta, clv::mth::vec3f{ 0.0f, 0.0f, 1.0f }));
+	ent3.getComponent<clv::ecs::_3D::TransformComponent>()->setLocalRotation(clv::mth::asQuaternion(rotDelta, clv::mth::vec3f{ 1.0f, 0.0f, 0.0f }));
 
 	ent1.getComponent<clv::ecs::_3D::TransformComponent>()->setPosition({ cos(rotDelta) * radius, 0.0f, 0.0f });
 
 	//lght1.getComponent<clv::ecs::_3D::TransformComponent>()->setPosition({ cos(rotDelta * 1.5f) * radius * 2.0f, 0.0f, sin(rotDelta * 1.5f) * radius * 2.0f });
 	//lght2.getComponent<clv::ecs::_3D::TransformComponent>()->setPosition({ cos(rotDelta) * radius * 2.0f, sin(rotDelta) * radius * 2.0f, 0.0f });
 
-	sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::math::Vector2f(cos(rotDelta) * radius * 5.0f, 0.0f));
+	sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f(cos(rotDelta) * radius * 5.0f, 0.0f));
 	sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setRotation(rotDelta);
 
 	rotDelta += rotSpeed * deltaTime;
