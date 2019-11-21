@@ -51,6 +51,7 @@ namespace clv::gfx::d3d{
 	}
 
 	void D3DRenderFactory::onDeviceRemoved(){
+		DX11_INFO_PROVIDER;
 		throw DX11_DEVICE_REMOVED_EXCPTION(d3dDevice->GetDeviceRemovedReason());
 	}
 }
