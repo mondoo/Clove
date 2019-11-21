@@ -63,7 +63,7 @@ void TestLayer::onAttach(){
 	lght2.addComponent<clv::ecs::_3D::TransformComponent>();
 	
 	cam = clv::plt::Application::get().getManager().createEntity();
-	cam.addComponent<clv::ecs::_3D::CameraComponent>();
+	cam.addComponent<clv::ecs::_3D::CameraComponent>(clv::plt::Application::get().getWindow());
 	cam.addComponent<clv::ecs::_3D::TransformComponent>();
 
 	sound = clv::plt::Application::get().getManager().createEntity();
@@ -127,7 +127,7 @@ void TestLayer::onAttach(){
 	rtEnt.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition({ 400.0f, 100.0f });
 
 	subcam = clv::plt::Application::get().getManager().createEntity();
-	subcam.addComponent<clv::ecs::_3D::CameraComponent>();
+	subcam.addComponent<clv::ecs::_3D::CameraComponent>(clv::plt::Application::get().getWindow());
 	subcam.addComponent<clv::ecs::_3D::TransformComponent>();
 
 	cam.getComponent<clv::ecs::_3D::TransformComponent>()->addChild(subcam.getComponent<clv::ecs::_3D::TransformComponent>());

@@ -14,7 +14,7 @@ namespace clv::plt{
 		//VARIABLES
 	public:
 		utl::SingleCastDelegate<void()> onWindowCloseDelegate;
-		utl::SingleCastDelegate<void(const mth::vec2i&)> onWindowResize;
+		utl::MultiCastDelegate<void(const mth::vec2ui&)> onWindowResize;
 
 	protected:
 		WindowProps windowProperties;

@@ -8,6 +8,10 @@ namespace clv::gfx{
 	class RenderTarget;
 }
 
+namespace clv::plt{
+	class Window;
+}
+
 namespace clv::ecs::_3D{
 	enum class ProjectionMode{
 		orthographic,
@@ -36,7 +40,8 @@ namespace clv::ecs::_3D{
 
 		//FUNCTIONS
 	public:
-		CameraComponent();
+		CameraComponent(const mth::vec2ui& viewportSize);
+		CameraComponent(plt::Window& window);
 
 		CameraComponent(const CameraComponent& other) = delete;
 		CameraComponent(CameraComponent&& other) noexcept;
@@ -52,8 +57,11 @@ namespace clv::ecs::_3D{
 
 		void updateFront(float pitch, float yaw);
 
-		void setProjectionMode(ProjectionMode mode);
+		void setProjectionMode(ProjectionMode mode, const mth::vec2ui& viewportSize);
 
 		void setRenderTarget(const std::shared_ptr<gfx::RenderTarget>& renderTarget);
+
+	private:
+		void onWindowSizeChanged(const mth::vec2ui& viewport);
 	};
 }
