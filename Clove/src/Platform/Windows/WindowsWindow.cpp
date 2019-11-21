@@ -130,8 +130,13 @@ namespace clv::plt{
 
 				//Window
 			case WM_SIZE:
-				if(onWindowResize.isBound()){
-					onWindowResize.broadcast(mth::vec2i(pt.x, pt.y));
+				{
+					const mth::vec2ui size = { pt.x, pt.y };
+					if(surface){ //Can be called before the surface is initialised
+						surface->resizeBuffers(size);
+						gfx::RenderCommand::makeSurfaceCurrent(*surface);
+					}
+					onWindowResize.broadcast(size);
 				}
 				break;
 
