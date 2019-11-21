@@ -10,10 +10,6 @@ struct ID3D11DeviceContext;
 struct ID3D11RenderTargetView;
 struct ID3D11DepthStencilView;
 
-namespace clv::gfx{
-	class Context; //surface
-}
-
 namespace clv::gfx::d3d{
 	class D3DRenderDevice : public RenderDevice{
 		//VARIABLES
@@ -36,10 +32,13 @@ namespace clv::gfx::d3d{
 	public:
 		D3DRenderDevice() = delete;
 		D3DRenderDevice(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext);
+
 		D3DRenderDevice(const D3DRenderDevice& other) = delete;
 		D3DRenderDevice(D3DRenderDevice&& other) noexcept = delete;
+
 		D3DRenderDevice& operator=(const D3DRenderDevice& other) = delete;
 		D3DRenderDevice& operator=(D3DRenderDevice&& other) noexcept = delete;
+
 		virtual ~D3DRenderDevice();
 
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
