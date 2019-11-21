@@ -28,7 +28,7 @@ namespace clv::gfx::d3d{
 		swapChainDesc.SampleDesc.Count						= 1u;
 		swapChainDesc.SampleDesc.Quality					= 0u;
 		swapChainDesc.BufferUsage							= DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapChainDesc.BufferCount							= 1u;
+		swapChainDesc.BufferCount							= bufferCount;
 		swapChainDesc.OutputWindow							= data->handle;
 		swapChainDesc.Windowed								= TRUE;
 		swapChainDesc.SwapEffect							= DXGI_SWAP_EFFECT_DISCARD;
@@ -89,6 +89,11 @@ namespace clv::gfx::d3d{
 
 	bool D3DSurface::isVsync() const{
 		return (swapInterval > 0u);
+	}
+
+	void D3DSurface::resizeBuffers(const mth::vec2ui& size){
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(swapChain->ResizeBuffers(bufferCount, size.x, size.y, DXGI_FORMAT_B8G8R8A8_UNORM, 0));
 	}
 
 	void D3DSurface::present(){

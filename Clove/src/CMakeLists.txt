@@ -126,7 +126,6 @@ set(
 		Graphics/OpenGL/GLShader.hpp
 		Graphics/OpenGL/GLShader.cpp
 		Graphics/OpenGL/GLSurface.hpp
-		Graphics/OpenGL/GLSurface.cpp
 )
 
 set(

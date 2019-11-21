@@ -17,7 +17,9 @@ namespace clv::gfx::d3d{
 	public:
 		utl::SingleCastDelegate<void()> onDeviceRemoved;
 
-	private:	
+	private:
+		uint32 bufferCount = 1u;
+
 		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
 		uint32 swapInterval = 1u;
 
@@ -35,6 +37,8 @@ namespace clv::gfx::d3d{
 
 		virtual void setVSync(bool vsync) override;
 		virtual bool isVsync() const override;
+
+		virtual void resizeBuffers(const mth::vec2ui& size) override;
 
 		virtual void present() override;
 
