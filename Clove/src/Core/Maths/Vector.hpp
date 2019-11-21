@@ -15,6 +15,11 @@ namespace clv::mth{
 	using vec3i = vec<3, int32, qualifier::defaultp>;
 	using vec4i = vec<4, int32, qualifier::defaultp>;
 
+	using vec1ui = vec<1, uint32, qualifier::defaultp>;
+	using vec2ui = vec<2, uint32, qualifier::defaultp>;
+	using vec3ui = vec<3, uint32, qualifier::defaultp>;
+	using vec4ui = vec<4, uint32, qualifier::defaultp>;
+
 	using vec1f = vec<1, float, qualifier::defaultp>;
 	using vec2f = vec<2, float, qualifier::defaultp>;
 	using vec3f = vec<3, float, qualifier::defaultp>;
