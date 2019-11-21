@@ -129,7 +129,9 @@ namespace clv::gfx::d3d{
 		if(currentRenderTarget){
 			d3dContext->ClearRenderTargetView(currentRenderTarget.Get(), mth::valuePtr(clearColour));
 		}
-		d3dContext->ClearDepthStencilView(currentDepthStencil.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
+		if(currentDepthStencil){
+			d3dContext->ClearDepthStencilView(currentDepthStencil.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
+		}
 	}
 
 	void D3DRenderDevice::drawIndexed(const uint32 count){
