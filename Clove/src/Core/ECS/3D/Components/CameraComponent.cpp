@@ -3,13 +3,15 @@
 #include "Core/Platform/Window.hpp"
 
 namespace clv::ecs::_3D{
-	CameraComponent::CameraComponent(const mth::vec2ui& viewportSize){
-		setProjectionMode(ProjectionMode::perspective, viewportSize);
+	CameraComponent::CameraComponent(const gfx::Viewport& viewport)
+		: viewport(viewport){
+		setProjectionMode(ProjectionMode::perspective);
 	}
 
-	CameraComponent::CameraComponent(plt::Window& window){
-		window.onWindowResize.bind(&CameraComponent::onWindowSizeChanged, this);
-		setProjectionMode(ProjectionMode::perspective, { window.getWidth(), window.getHeight() });
+	CameraComponent::CameraComponent(plt::Window& window)
+		: viewport({ 0, 0, window.getWidth(), window.getHeight() }){
+		window.onWindowResize.bind(&CameraComponent::updateViewportSize, this);
+		setProjectionMode(ProjectionMode::perspective);
 	}
 
 	CameraComponent::CameraComponent(CameraComponent&& other) noexcept = default;
@@ -35,11 +37,13 @@ namespace clv::ecs::_3D{
 		this->yaw = yaw;
 	}
 
-	void CameraComponent::setProjectionMode(ProjectionMode mode, const mth::vec2ui& viewportSize){
-		const float width = static_cast<float>(viewportSize.x);
-		const float height = static_cast<float>(viewportSize.y);
+	void CameraComponent::setProjectionMode(ProjectionMode mode){
+		const float width = static_cast<float>(viewport.width);
+		const float height = static_cast<float>(viewport.height);
 
-		switch(mode){
+		currentProjectionMode = mode;
+
+		switch(currentProjectionMode){
 			case ProjectionMode::orthographic:
 				currentProjection = mth::createOrthographicMatrix(-(width / 2), (width / 2), -(height / 2), (height / 2));
 				break;
@@ -57,7 +61,10 @@ namespace clv::ecs::_3D{
 		this->renderTarget = renderTarget;
 	}
 
-	void CameraComponent::onWindowSizeChanged(const mth::vec2ui& viewport){
-		setProjectionMode(ProjectionMode::perspective, viewport);
+	void CameraComponent::updateViewportSize(const mth::vec2ui& viewportSize){
+		viewport.width = viewportSize.x;
+		viewport.height = viewportSize.y;
+
+		setProjectionMode(currentProjectionMode);
 	}
 }

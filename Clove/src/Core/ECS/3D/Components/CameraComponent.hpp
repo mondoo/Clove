@@ -3,6 +3,7 @@
 #include "Core/ECS/Component.hpp"
 
 #include "Core/Graphics/ShaderBufferTypes.hpp"
+#include "Core/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx{
 	class RenderTarget;
@@ -25,6 +26,7 @@ namespace clv::ecs::_3D{
 
 		//VARIABLES
 	private:
+		ProjectionMode currentProjectionMode;
 		mth::mat4f currentProjection = mth::mat4f(1.0f);
 
 		mth::vec3f cameraUp = mth::vec3f(0.0f, 1.0f, 0.0f);
@@ -37,10 +39,11 @@ namespace clv::ecs::_3D{
 		gfx::CameraRenderData cameraRenderData;
 
 		std::shared_ptr<gfx::RenderTarget> renderTarget;
+		gfx::Viewport viewport;
 
 		//FUNCTIONS
 	public:
-		CameraComponent(const mth::vec2ui& viewportSize);
+		CameraComponent(const gfx::Viewport& viewport);
 		CameraComponent(plt::Window& window);
 
 		CameraComponent(const CameraComponent& other) = delete;
@@ -57,11 +60,11 @@ namespace clv::ecs::_3D{
 
 		void updateFront(float pitch, float yaw);
 
-		void setProjectionMode(ProjectionMode mode, const mth::vec2ui& viewportSize);
+		void setProjectionMode(ProjectionMode mode);
 
 		void setRenderTarget(const std::shared_ptr<gfx::RenderTarget>& renderTarget);
 
 	private:
-		void onWindowSizeChanged(const mth::vec2ui& viewport);
+		void updateViewportSize(const mth::vec2ui& viewportSize);
 	};
 }

@@ -19,6 +19,7 @@ using namespace clv::gfx;
 
 namespace clv::ecs::_3D{
 	struct ComposedCameraData{
+		Viewport viewport;
 		CameraRenderData bufferData;
 		std::shared_ptr<RenderTarget> target;
 	};
@@ -129,7 +130,7 @@ namespace clv::ecs::_3D{
 				camera->cameraRenderData.position = position;
 				camera->cameraRenderData.projection = camera->currentProjection;
 
-				currentSceneData->cameras.push_back({ camera->cameraRenderData, camera->renderTarget });
+				currentSceneData->cameras.push_back({ camera->viewport, camera->cameraRenderData, camera->renderTarget });
 			}
 		}
 
@@ -205,6 +206,8 @@ namespace clv::ecs::_3D{
 				RenderCommand::drawIndexed(mesh->getIndexCount());
 			};
 
+			RenderCommand::setViewport(cameraData.viewport);
+
 			if(cameraData.target){
 				RenderCommand::setRenderTarget(cameraData.target.get());
 			} else{
@@ -247,7 +250,6 @@ namespace clv::ecs::_3D{
 			RenderCommand::setRenderTarget(currentSceneData->shadowMapRenderTarget.get());
 			currentSceneData->forEachMesh(generateShadowMap);
 		}
-		RenderCommand::setViewport({ 0, 0, plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight() });
 
 		//Render scene for each camera
 		std::for_each(currentSceneData->cameras.begin(), currentSceneData->cameras.end(), renderCamera);
