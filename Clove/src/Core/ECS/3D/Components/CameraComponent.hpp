@@ -44,7 +44,6 @@ namespace clv::ecs::_3D{
 		//FUNCTIONS
 	public:
 		CameraComponent(const gfx::Viewport& viewport);
-		CameraComponent(plt::Window& window);
 
 		CameraComponent(const CameraComponent& other) = delete;
 		CameraComponent(CameraComponent&& other) noexcept;
@@ -64,7 +63,6 @@ namespace clv::ecs::_3D{
 
 		void setRenderTarget(const std::shared_ptr<gfx::RenderTarget>& renderTarget);
 
-	private:
 		void updateViewportSize(const mth::vec2ui& viewportSize);
 	};
 }

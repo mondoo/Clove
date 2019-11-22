@@ -62,9 +62,12 @@ void TestLayer::onAttach(){
 	lght2.addComponent<clv::ecs::_3D::LightComponent>();
 	lght2.addComponent<clv::ecs::_3D::TransformComponent>();
 	
+	const auto windowVP = clv::gfx::Viewport{ 0, 0, clv::plt::Application::get().getWindow().getWidth(), clv::plt::Application::get().getWindow().getHeight() };
+
 	cam = clv::plt::Application::get().getManager().createEntity();
-	cam.addComponent<clv::ecs::_3D::CameraComponent>(clv::plt::Application::get().getWindow());
+	auto* camptr = cam.addComponent<clv::ecs::_3D::CameraComponent>(windowVP);
 	cam.addComponent<clv::ecs::_3D::TransformComponent>();
+	clv::plt::Application::get().getWindow().onWindowResize.bind(&clv::ecs::_3D::CameraComponent::updateViewportSize, camptr);
 
 	sound = clv::plt::Application::get().getManager().createEntity();
 	sound.addComponent<clv::ecs::aud::AudioComponent>();
@@ -127,8 +130,9 @@ void TestLayer::onAttach(){
 	rtEnt.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition({ 400.0f, 100.0f });
 
 	subcam = clv::plt::Application::get().getManager().createEntity();
-	subcam.addComponent<clv::ecs::_3D::CameraComponent>(clv::plt::Application::get().getWindow());
+	auto* subcamptr = subcam.addComponent<clv::ecs::_3D::CameraComponent>(windowVP);
 	subcam.addComponent<clv::ecs::_3D::TransformComponent>();
+	clv::plt::Application::get().getWindow().onWindowResize.bind(&clv::ecs::_3D::CameraComponent::updateViewportSize, subcamptr);
 
 	cam.getComponent<clv::ecs::_3D::TransformComponent>()->addChild(subcam.getComponent<clv::ecs::_3D::TransformComponent>());
 	subcam.getComponent<clv::ecs::_3D::CameraComponent>()->setRenderTarget(renderTarget);
