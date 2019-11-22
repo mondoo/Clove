@@ -11,16 +11,16 @@ struct ID3D11RenderTargetView;
 struct ID3D11DepthStencilView;
 
 namespace clv::gfx::d3d{
+	class D3DSurface;
+}
+
+namespace clv::gfx::d3d{
 	class D3DRenderDevice : public RenderDevice{
 		//VARIABLES
 	private:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext;
-		
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> defaultRenderTarget;
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> currentRenderTarget;
 
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> defaultDepthStencil;
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> currentDepthStencil;
+		std::shared_ptr<D3DSurface> currentSurface;
 
 	#if CLV_DEBUG
 		static DXGIInfoManager infoManager; //Used by certain DX11 exception macros
@@ -50,10 +50,10 @@ namespace clv::gfx::d3d{
 
 		virtual void updateBufferData(Buffer& buffer, const void* data) override;
 
-		virtual void makeSurfaceCurrent(Surface& surface) override;
+		virtual void makeSurfaceCurrent(const std::shared_ptr<Surface>& surface) override;
 
 		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface
-		virtual void setRenderTarget(RenderTarget& renderTarget) override;
+		virtual void setRenderTarget(const RenderTarget* renderTarget) override;
 		virtual void resetRenderTargetToDefault() override;
 		//
 
@@ -69,8 +69,5 @@ namespace clv::gfx::d3d{
 	#if CLV_DEBUG
 		static DXGIInfoManager& getInfoManager();
 	#endif
-
-	private:
-		void setRenderTargetToCurrent();
 	};
 }

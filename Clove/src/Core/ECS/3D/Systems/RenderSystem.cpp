@@ -86,11 +86,11 @@ namespace clv::ecs::_3D{
 	}
 
 	void RenderSystem::preUpdate(){
-		RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
+		RenderCommand::setRenderTarget(currentSceneData->shadowMapRenderTarget.get());
 		RenderCommand::clear(); //TODO: Might need to just do a clear depth command
 		std::for_each(currentSceneData->cameras.begin(), currentSceneData->cameras.end(), [](const ComposedCameraData& cameraData){
 			if(cameraData.target){
-				RenderCommand::setRenderTarget(*cameraData.target);
+				RenderCommand::setRenderTarget(cameraData.target.get());
 				RenderCommand::clear();
 			}
 		});
@@ -206,7 +206,7 @@ namespace clv::ecs::_3D{
 			};
 
 			if(cameraData.target){
-				RenderCommand::setRenderTarget(*cameraData.target);
+				RenderCommand::setRenderTarget(cameraData.target.get());
 			} else{
 				RenderCommand::resetRenderTargetToDefault();
 			}
@@ -244,7 +244,7 @@ namespace clv::ecs::_3D{
 			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
 			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentDepthData, PointShadowData{ currentSceneData->currentShadowDepth.depths[i] }, ShaderType::Pixel);
 
-			RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
+			RenderCommand::setRenderTarget(currentSceneData->shadowMapRenderTarget.get());
 			currentSceneData->forEachMesh(generateShadowMap);
 		}
 		RenderCommand::setViewport({ 0, 0, plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight() });

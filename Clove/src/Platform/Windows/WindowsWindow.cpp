@@ -134,7 +134,7 @@ namespace clv::plt{
 					const mth::vec2ui size = { pt.x, pt.y };
 					if(surface){ //Can be called before the surface is initialised
 						surface->resizeBuffers(size);
-						gfx::RenderCommand::makeSurfaceCurrent(*surface);
+						gfx::RenderCommand::makeSurfaceCurrent(surface);
 					}
 					onWindowResize.broadcast(size);
 				}
@@ -207,6 +207,6 @@ namespace clv::plt{
 		data = { windowsHandle, windowProperties.width, windowProperties.height };
 
 		surface = gfx::RenderCommand::createSurface(&data);
-		gfx::RenderCommand::makeSurfaceCurrent(*surface);
+		gfx::RenderCommand::makeSurfaceCurrent(surface);
 	}
 }
