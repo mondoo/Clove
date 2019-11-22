@@ -6,11 +6,9 @@
 #include "Graphics/OpenGL/GLRenderTarget.hpp"
 #include "Graphics/OpenGL/GLShader.hpp"
 #if CLV_PLATFORM_WINDOWS
-#include "Graphics/OpenGL/WGLSurface.hpp"
+	#include "Graphics/OpenGL/WGLSurface.hpp"
 #elif CLV_PLATFORM_LINUX
-#include "Graphics/OpenGL/GLXSurface.hpp"
-#elif CLV_PLATFORM_MACOS
-#include "Graphics/OpenGL/CGLSurface.hpp"
+	#include "Graphics/OpenGL/GLXSurface.hpp"
 #endif
 
 namespace clv::gfx::ogl{
@@ -47,8 +45,6 @@ namespace clv::gfx::ogl{
 		return std::make_shared<WGLSurface>(windowData);
 	#elif CLV_PLATFORM_LINUX
 		return std::make_shared<GLXSurface>(windowData);
-	#elif CLV_PLATFORM_MACOS
-		return std::make_shared<CGLSurface>(windowData);
 	#endif
 	}
 }

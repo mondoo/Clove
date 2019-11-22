@@ -17,6 +17,6 @@ namespace clv::plt{
     }
 
 	gfx::API MacApplication::getPlatformPreferedAPI(){
-		return gfx::API::OpenGL4;	
+		return gfx::API::Metal1;	
 	}
 }

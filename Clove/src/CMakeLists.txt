@@ -131,6 +131,11 @@ set(
 )
 
 set(
+	MetalGraphicsFiles
+		#todo
+)
+
+set(
 	WindowsGLGraphicsFiles
 		Graphics/OpenGL/WGLSurface.hpp
 		Graphics/OpenGL/WGLSurface.cpp
@@ -140,12 +145,6 @@ set(
 	LinuxGLGraphicsFiles
 		Graphics/OpenGL/GLXSurface.hpp
 		Graphics/OpenGL/GLXSurface.cpp
-)
-
-set(
-	MacOSGLGraphicsFiles
-		Graphics/OpenGL/CGLSurface.hpp
-		Graphics/OpenGL/CGLSurface.mm
 )
 
 set(
@@ -367,8 +366,8 @@ set(
 			${OpenGLGraphicsFiles}
 				${WindowsGLGraphicsFiles}
 				${LinuxGLGraphicsFiles}
-				${MacOSGLGraphicsFiles}
 			${Direct3DGraphicsFiles}
+			${MetalGraphicsFiles}
 		${CoreInputFiles}
 		${CoreMathsFiles}
 		${CorePlatformFiles}
@@ -392,9 +391,9 @@ target_sources(
 
 #Don't compile platform specific files
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set_source_files_properties(${LinuxGLGraphicsFiles} ${MacOSGLGraphicsFiles} ${LinuxPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+	set_source_files_properties(${LinuxGLGraphicsFiles} ${MetalGraphicsFiles} ${LinuxPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set_source_files_properties(${WindowsGLGraphicsFiles} ${MacOSGLGraphicsFiles} ${Direct3DGraphicsFiles} ${WindowsPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+	set_source_files_properties(${WindowsGLGraphicsFiles} ${Direct3DGraphicsFiles} ${MetalGraphicsFiles} ${WindowsPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	set_source_files_properties(${WindowsGLGraphicsFiles} ${LinuxGLGraphicsFiles} ${Direct3DGraphicsFiles} ${WindowsPlatformFiles} ${LinuxPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 endif()
