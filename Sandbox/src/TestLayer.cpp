@@ -122,8 +122,11 @@ void TestLayer::onAttach(){
 	tdesc.dimensions = { clv::plt::Application::get().getWindow().getWidth(), clv::plt::Application::get().getWindow().getHeight() };
 	
 	auto rtTexture = clv::gfx::RenderCommand::createTexture(tdesc, nullptr, 4);
+	tdesc.usage = clv::gfx::TextureUsage::RenderTarget_Depth;
+	auto depthTexture = clv::gfx::RenderCommand::createTexture(tdesc, nullptr, 4);
+
 	auto sprite = std::make_shared<clv::gfx::Sprite>(rtTexture);
-	auto renderTarget = clv::gfx::RenderCommand::createRenderTarget(rtTexture.get(), nullptr);
+	auto renderTarget = clv::gfx::RenderCommand::createRenderTarget(rtTexture.get(), depthTexture.get());
 	
 	rtEnt.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
 	rtEnt.getComponent<clv::ecs::_2D::TransformComponent>()->setScale({ 16.0f * 10.0f, 9.0f * 10.0f });
