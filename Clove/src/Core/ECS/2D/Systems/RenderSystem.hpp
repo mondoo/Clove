@@ -19,5 +19,8 @@ namespace clv::ecs::_2D{
 		virtual void preUpdate() override;
 		virtual void update(utl::DeltaTime deltaTime) override;
 		virtual void postUpdate() override;
+
+	private:
+		void onWindowSizeChanged(const mth::vec2i& size);
 	};
 }
