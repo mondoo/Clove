@@ -10,6 +10,6 @@ Currently, Garlic supports the following platforms:
 |-------------|-------|
 |Windows|Direct3D 11, OpenGL 4.6|
 |Linux|OpenGL 4.6|
-|MacOS(WIP)|TBD|
+|MacOS(WIP)|Metal 1(WIP)|
 
 [For more info: visit the wiki](https://github.com/AGarlicMonkey/Clove/wiki)
