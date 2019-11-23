@@ -422,7 +422,8 @@ target_include_directories(
 #Libraries
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	find_library(CLV_COCOA_LIB Cocoa)
-	find_library(CLV_MACOS_METAL_LIB MetalKit)
+	find_library(CLV_METAL_LIB Metal)
+	find_library(CLV_METALKIT_LIB MetalKit)
 endif()
 
 target_link_libraries(
@@ -456,7 +457,8 @@ target_link_libraries(
 	#MacOS
 	PRIVATE
 		$<$<PLATFORM_ID:Darwin>:${CLV_COCOA_LIB}>
-		$<$<PLATFORM_ID:Darwin>:${CLV_MACOS_METAL_LIB}>
+		$<$<PLATFORM_ID:Darwin>:${CLV_METAL_LIB}>
+		$<$<PLATFORM_ID:Darwin>:${CLV_METALKIT_LIB}>
 )
 
 #Precompiled header
