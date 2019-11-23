@@ -21,9 +21,24 @@
 	[_window setDelegate:self];
 	[_window makeKeyAndOrderFront:nil];
 	
-	_view = [[[MTKView alloc] initWithFrame:rect] autorelease];
+	_view = [[[MTKView alloc] initWithFrame:rect] autorelease]; //View could be the surface
 	
 	[_window setContentView:_view];
+	
+	//Metal stuff
+	[_view setDevice:MTLCreateSystemDefaultDevice()];
+	id<MTLDevice> device = [_view device];
+	
+	[_view setClearColor:MTLClearColorMake(0.0, 0.4, 0.21, 1.0)];
+	
+	//TODO: Clove will need to support command queues / buffers
+	id<MTLCommandQueue> commandQueue = [device newCommandQueue];
+	id<MTLCommandBuffer> commandBuffer = [commandQueue commandBuffer];
+	id<MTLCommandEncoder> commandEncoder = [commandBuffer renderCommandEncoderWithDescriptor:[_view currentRenderPassDescriptor]];
+	
+	[commandEncoder endEncoding];
+	[commandBuffer presentDrawable:[_view currentDrawable]];
+	[commandBuffer commit];
 	
 	return self;
 }
