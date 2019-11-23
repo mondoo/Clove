@@ -9,10 +9,12 @@ namespace clv::plt{
 	class MacWindow;
 }
 
-@interface MacWindowProxy : NSObject <NSWindowDelegate>
+@interface MacWindowProxy : NSObject <NSWindowDelegate, MTKViewDelegate> //Temp view delegate
 
 @property(readonly) NSWindow* window;
 @property(readonly) MTKView* view;
+
+@property(readonly) id<MTLCommandQueue> commandQueue;
 
 @property clv::plt::MacWindow* cloveWindow;
 

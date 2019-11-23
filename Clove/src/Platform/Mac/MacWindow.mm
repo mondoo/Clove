@@ -26,19 +26,14 @@
 	[_window setContentView:_view];
 	
 	//Metal stuff
+	[_view setDelegate:self];
 	[_view setDevice:MTLCreateSystemDefaultDevice()];
 	id<MTLDevice> device = [_view device];
 	
 	[_view setClearColor:MTLClearColorMake(0.0, 0.4, 0.21, 1.0)];
 	
 	//TODO: Clove will need to support command queues / buffers
-	id<MTLCommandQueue> commandQueue = [device newCommandQueue];
-	id<MTLCommandBuffer> commandBuffer = [commandQueue commandBuffer];
-	id<MTLCommandEncoder> commandEncoder = [commandBuffer renderCommandEncoderWithDescriptor:[_view currentRenderPassDescriptor]];
-	
-	[commandEncoder endEncoding];
-	[commandBuffer presentDrawable:[_view currentDrawable]];
-	[commandBuffer commit];
+	_commandQueue = [device newCommandQueue];
 	
 	return self;
 }
@@ -46,6 +41,23 @@
 - (void)windowWillClose:(NSNotification *)notification{
 	//The application shouldn't shut down when a window closes on MacOS, but this'll do for now
 	_cloveWindow->onWindowCloseDelegate.broadcast();
+}
+
+//MTKViewDelegate functions
+- (void)mtkView:(MTKView *)view drawableSizeWillChange:(CGSize)size{
+	//Empty for now
+}
+
+- (void)drawInMTKView:(MTKView *)view{
+	id<MTLDrawable> drawable = [view currentDrawable];
+	MTLRenderPassDescriptor* descriptor = [view currentRenderPassDescriptor];
+	
+	id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
+	id<MTLCommandEncoder> commandEncoder = [commandBuffer renderCommandEncoderWithDescriptor:descriptor];
+	
+	[commandEncoder endEncoding];
+	[commandBuffer presentDrawable:drawable];
+	[commandBuffer commit];
 }
 @end
 
