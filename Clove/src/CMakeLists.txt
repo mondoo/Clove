@@ -422,7 +422,7 @@ target_include_directories(
 #Libraries
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	find_library(CLV_COCOA_LIB Cocoa)
-	find_library(CLV_MACOS_OPENGL_LIB OpenGL)
+	find_library(CLV_MACOS_METAL_LIB MetalKit)
 endif()
 
 target_link_libraries(
@@ -456,7 +456,7 @@ target_link_libraries(
 	#MacOS
 	PRIVATE
 		$<$<PLATFORM_ID:Darwin>:${CLV_COCOA_LIB}>
-		$<$<PLATFORM_ID:Darwin>:${CLV_MACOS_OPENGL_LIB}>
+		$<$<PLATFORM_ID:Darwin>:${CLV_MACOS_METAL_LIB}>
 )
 
 #Precompiled header

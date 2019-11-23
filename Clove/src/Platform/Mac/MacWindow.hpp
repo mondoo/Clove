@@ -2,6 +2,9 @@
 
 #include "Core/Platform/Window.hpp"
 
+//Temp metal stuff
+#import <MetalKit/MetalKit.h>
+
 namespace clv::plt{
 	class MacWindow;
 }
@@ -9,6 +12,8 @@ namespace clv::plt{
 @interface MacWindowProxy : NSObject <NSWindowDelegate>
 
 @property(readonly) NSWindow* window;
+@property(readonly) MTKView* view;
+
 @property clv::plt::MacWindow* cloveWindow;
 
 - (instancetype)initWithWindowData:(unsigned int)width height : (unsigned int)height name : (NSString*)name;

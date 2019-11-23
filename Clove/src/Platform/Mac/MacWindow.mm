@@ -4,19 +4,26 @@
 #import "Core/Graphics/Surface.hpp"
 #import "Core/Graphics/RenderCommand.hpp"
 
+//Temp metal stuff
+//#import <Metal/Metal.h>
+
 @implementation MacWindowProxy
 - (instancetype)initWithWindowData:(unsigned int)width height:(unsigned int)height name:(NSString*)name{
 	const NSRect rect = NSMakeRect(0, 0, width, height);
 	const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 	
 	_window = [[NSWindow alloc] initWithContentRect:rect
-										 styleMask:styleMask
-										   backing:NSBackingStoreBuffered
-											 defer:NO];
+										  styleMask:styleMask
+											backing:NSBackingStoreBuffered
+											  defer:NO];
 
 	[_window setTitle:name];
 	[_window setDelegate:self];
 	[_window makeKeyAndOrderFront:nil];
+	
+	_view = [[[MTKView alloc] initWithFrame:rect] autorelease];
+	
+	[_window setContentView:_view];
 	
 	return self;
 }
