@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/ECS/ECSTypes.hpp"
-#include "Core/ECS/Entity.hpp"
 #include "Core/ECS/ComponentManager.hpp"
 #include "Core/ECS/System.hpp"
 #include "Core/Utils/DeltaTime.hpp"

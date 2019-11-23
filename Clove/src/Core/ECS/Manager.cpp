@@ -1,5 +1,6 @@
 #include "Manager.hpp"
 
+#include "Core/ECS/Entity.hpp"
 #include "Core/ECS/2D/Systems/RenderSystem.hpp"
 #include "Core/ECS/2D/Systems/PhysicsSystem.hpp"
 #include "Core/ECS/3D/Systems/RenderSystem.hpp"

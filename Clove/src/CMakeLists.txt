@@ -36,6 +36,7 @@ set(
 		Core/ECS/Entity.inl
 		Core/ECS/Entity.cpp
 		Core/ECS/Manager.hpp
+		Core/ECS/Manager.inl
 		Core/ECS/Manager.cpp
 		Core/ECS/System.hpp
 		Core/ECS/2D/Components/RigidBodyComponent.hpp

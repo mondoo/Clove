@@ -1,6 +1,5 @@
 #include "LinuxWindow.hpp"
 
-#include "Core/Graphics/Renderer.hpp"
 #include "Core/Graphics/Surface.hpp"
 #include "Core/Graphics/RenderCommand.hpp"
 
