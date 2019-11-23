@@ -279,8 +279,7 @@ set(
 		Graphics/OpenGL/Shaders/Unlit-vs.glsl
 )
 
-#Parse the glsl shader files into a header 
-set(GLSLParsedShaders)
+#Parse the glsl shader files into a header
 set(GLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/OpenGL/ShaderStrings.hpp)
 file(WRITE ${GLSLShaderIncludeFile} "//cmake generated header file\n\n")
 foreach(shaderFile ${GLSLShaders})
@@ -292,7 +291,6 @@ foreach(shaderFile ${GLSLShaders})
 
 	configure_file(../cmake/glslHeader.in ${outFilePath})
 
-	set(GLSLParsedShaders ${GLSLParsedShaders} ${outFilePath})
 	file(APPEND ${GLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
 endforeach()
 
@@ -338,6 +336,7 @@ set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
 set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
 set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
 set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_MODEL 5.0)
+
 #get each shader to compile into a header
 set(HLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Direct3D/ShaderHeaders.hpp)
 file(WRITE ${HLSLShaderIncludeFile} "//cmake generated header file\n\n")
@@ -354,6 +353,35 @@ set(
 		${Direct3DGraphicsFiles}
 		${HLSLShaders}
 		${HLSLShaderIncludeFile}
+)
+
+set(
+	MSLShaders
+		Graphics/Metal/Shaders/Shader.metal
+)
+
+set_source_files_properties(${MetalShaders} PROPERTIES LANGUAGE METAL)
+
+#Parse each metal shader file into a header
+set(MSLShaderIncudeFile ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Metal/ShaderStrings.hpp)
+file(WRITE ${MSLShaderIncudeFile} "//cmake generated header file\n\n")
+foreach(shaderFile ${MSLShaders})
+	file(READ ${shaderFile} FILE_CONTENTS)
+	get_filename_component(fileName ${shaderFile} NAME_WLE)
+
+	set(STRING_NAME ${fileName})
+	set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Metal/Shaders/${fileName}.hpp)
+
+	configure_file(../cmake/glslHeader.in ${outFilePath})
+
+	file(APPEND ${MSLShaderIncudeFile} "#include \"Shaders/${fileName}.hpp\"\n")
+endforeach()
+
+set(
+	MetalGraphicsFiles
+		${MetalGraphicsFiles}
+		${MSLShaders}
+		${MSLShaderIncudeFile}
 )
 
 set(

@@ -15,6 +15,7 @@ namespace clv::plt{
 @property(readonly) MTKView* view;
 
 @property(readonly) id<MTLCommandQueue> commandQueue;
+@property(readonly) id<MTLDevice> device;
 
 @property clv::plt::MacWindow* cloveWindow;
 

@@ -6,6 +6,7 @@
 
 //Temp metal stuff
 //#import <Metal/Metal.h>
+#import "Graphics/Metal/ShaderStrings.hpp"
 
 @implementation MacWindowProxy
 - (instancetype)initWithWindowData:(unsigned int)width height:(unsigned int)height name:(NSString*)name{
@@ -28,12 +29,12 @@
 	//Metal stuff
 	[_view setDelegate:self];
 	[_view setDevice:MTLCreateSystemDefaultDevice()];
-	id<MTLDevice> device = [_view device];
+	_device = [_view device];
 	
 	[_view setClearColor:MTLClearColorMake(0.0, 0.4, 0.21, 1.0)];
 	
 	//TODO: Clove will need to support command queues / buffers
-	_commandQueue = [device newCommandQueue];
+	_commandQueue = [_device newCommandQueue];
 	
 	return self;
 }
@@ -49,11 +50,42 @@
 }
 
 - (void)drawInMTKView:(MTKView *)view{
+	float vertices[] = {
+		 0,  1,  0,
+		-1, -1,  0,
+		 1, -1,  0
+	};
+	
 	id<MTLDrawable> drawable = [view currentDrawable];
 	MTLRenderPassDescriptor* descriptor = [view currentRenderPassDescriptor];
 	
+	//Create library to make out shaders
+	NSError* error2 = [[NSError alloc] init];
+	NSString* librarySource = [NSString stringWithCString:shader_Shader.c_str() encoding:[NSString defaultCStringEncoding]];
+	id<MTLLibrary> library = [_device newLibraryWithSource:librarySource options:nil error:&error2];
+	id<MTLFunction> vertexFunction = [library newFunctionWithName:@"vertex_shader"];
+	id<MTLFunction> fragmentFunction = [library newFunctionWithName:@"fragment_shader"];
+	
+	//Set up the pipeline object
+	MTLRenderPipelineDescriptor* pipelineDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
+	[pipelineDescriptor setVertexFunction:vertexFunction];
+	[pipelineDescriptor setFragmentFunction:fragmentFunction];
+	pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
+	NSError *error = [[NSError alloc] init];
+	id<MTLRenderPipelineState> pipelineState = [_device newRenderPipelineStateWithDescriptor:pipelineDescriptor error:&error];
+	
+	//Creating vertex buffer
+	id<MTLBuffer> vertexBuffer = [_device newBufferWithBytes:vertices length:sizeof(vertices) options:0];
+	
 	id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
-	id<MTLCommandEncoder> commandEncoder = [commandBuffer renderCommandEncoderWithDescriptor:descriptor];
+	id<MTLRenderCommandEncoder> commandEncoder = [commandBuffer renderCommandEncoderWithDescriptor:descriptor];
+	
+	//Render commands: start
+	[commandEncoder setRenderPipelineState:pipelineState];
+	[commandEncoder setVertexBuffer:vertexBuffer offset:0 atIndex:0];
+	
+	[commandEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:sizeof(vertices)];
+	//Render commands: end
 	
 	[commandEncoder endEncoding];
 	[commandBuffer presentDrawable:drawable];
