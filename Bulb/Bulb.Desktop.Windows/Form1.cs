@@ -30,8 +30,17 @@ namespace WinFormBasic
             wp = new Wrapper();
         }
 
+        protected override void OnFormClosing(System.Windows.Forms.FormClosingEventArgs e) {
+            StopClove();
+            base.OnFormClosing(e);
+        }
+
         private void button1_Click(object sender, EventArgs e) {
             RunClove(RenderArea.Handle, RenderArea.Width, RenderArea.Height);
+        }
+
+        private void button2_Click(object sender, EventArgs e) {
+            StopClove();
         }
 
         private void RunClove(IntPtr hWnd, int width, int height) {
@@ -45,7 +54,7 @@ namespace WinFormBasic
             cloveThread.Start();
         }
 
-        private void button2_Click(object sender, EventArgs e) {
+        private void StopClove() {
             wp.StopClove();
             cloveThread.Join();
         }
