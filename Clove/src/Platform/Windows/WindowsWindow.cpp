@@ -136,6 +136,8 @@ namespace clv::plt{
 						surface->resizeBuffers(size);
 						gfx::RenderCommand::makeSurfaceCurrent(surface);
 					}
+					windowProperties.width = size.x;
+					windowProperties.height = size.y;
 					onWindowResize.broadcast(size);
 				}
 				break;
