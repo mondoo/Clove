@@ -48,7 +48,7 @@ public:
 		data = { handle, 800, 400 };//Hard coded values from the xml
 
 		surface = clv::gfx::RenderCommand::createSurface(&data);
-		clv::gfx::RenderCommand::makeSurfaceCurrent(*surface);
+		clv::gfx::RenderCommand::makeSurfaceCurrent(surface);
 	}
 
 	virtual void* getNativeWindow() const override{
