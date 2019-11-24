@@ -27,10 +27,10 @@ namespace clv::gfx{
 
 		virtual void updateBufferData(Buffer& buffer, const void* data) = 0;
 
-		virtual void makeSurfaceCurrent(Surface& surface) = 0;
+		virtual void makeSurfaceCurrent(const std::shared_ptr<Surface>& surface) = 0;
 
 		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface
-		virtual void setRenderTarget(RenderTarget& renderTarget) = 0;
+		virtual void setRenderTarget(const RenderTarget* renderTarget) = 0;
 		virtual void resetRenderTargetToDefault() = 0;
 		//
 

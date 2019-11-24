@@ -69,6 +69,8 @@ namespace clv::ecs::_2D{
 		currentSceneData->charPipelineObject = RenderCommand::createPipelineObject(RenderCommand::createShader({ ShaderStyle::Font }));
 
 		//Projection
+		plt::Application::get().getWindow().onWindowResize.bind(&RenderSystem::onWindowSizeChanged, this);
+
 		const float halfWidth = static_cast<float>(plt::Application::get().getWindow().getWidth()) / 2;
 		const float halfHeight = static_cast<float>(plt::Application::get().getWindow().getHeight()) / 2;
 
@@ -206,5 +208,12 @@ namespace clv::ecs::_2D{
 
 			currentSceneData->charactersToRender.clear();
 		}
+	}
+
+	void RenderSystem::onWindowSizeChanged(const mth::vec2i& size){
+		const float halfWidth = static_cast<float>(size.x) / 2;
+		const float halfHeight = static_cast<float>(size.y) / 2;
+
+		currentSceneData->projection = mth::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 	}
 }

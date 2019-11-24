@@ -23,7 +23,7 @@ namespace clv::ecs{
 			ComponentContainerInterface(ComponentContainerInterface&& other) noexcept;
 
 			ComponentContainerInterface& operator=(const ComponentContainerInterface& other);
-			ComponentContainerInterface& operator=(ComponentContainerInterface&& other);
+			ComponentContainerInterface& operator=(ComponentContainerInterface&& other) noexcept;
 
 			virtual ~ComponentContainerInterface();
 

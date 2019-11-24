@@ -43,9 +43,6 @@ namespace clv::plt{
 		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
 		window->setVSync(true);
 
-		//Probably move inside the window or camera?
-		gfx::RenderCommand::setViewport({ 0, 0, window->getWidth(), window->getHeight() });
-
 		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
 		ecsManager = std::make_unique<ecs::Manager>();

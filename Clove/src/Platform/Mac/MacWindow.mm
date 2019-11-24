@@ -1,7 +1,6 @@
 #import "Platform/Mac/CloveMac.h"
 #import "MacWindow.hpp"
 
-#import "Core/Graphics/Renderer.hpp"
 #import "Core/Graphics/Surface.hpp"
 #import "Core/Graphics/RenderCommand.hpp"
 
@@ -50,7 +49,7 @@ namespace clv::plt{
 											  inMode:NSDefaultRunLoopMode
 											 dequeue:YES];
 			
-				math::Vector<2, int32, math::qualifier::defaultp> mouseLoc{ static_cast<int32>([NSEvent mouseLocation].x), static_cast<int32>([NSEvent mouseLocation].y) };
+				mth::vec<2, int32, mth::qualifier::defaultp> mouseLoc{ static_cast<int32>([NSEvent mouseLocation].x), static_cast<int32>([NSEvent mouseLocation].y) };
 				switch ([event type]){
 					case NSEventTypeKeyDown:
 						keyboard.onKeyPressed(static_cast<Key>([event keyCode]));

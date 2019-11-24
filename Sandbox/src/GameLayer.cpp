@@ -1,5 +1,6 @@
 #include "GameLayer.hpp"
 
+/*
 #include "Core/ECS/3D/Components/CameraComponent.hpp"
 #include "Core/ECS/3D/Components/MeshComponent.hpp"
 #include "Core/ECS/3D/Components/TransformComponent.hpp"
@@ -8,7 +9,7 @@
 #include "Core/ECS/3D/Components/LightComponent.hpp"
 
 #include "Core/Input/Input.hpp"
-
+*/
 GameLayer::GameLayer()
 	: Layer("Game Layer"){
 }
