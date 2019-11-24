@@ -38,7 +38,7 @@ namespace clv::utl{
 
 	template<typename FunctionPrototype>
 	bool SingleCastDelegate<FunctionPrototype>::isBound() const{
-		return functionPointer;
+		return (functionPointer != false);
 	}
 
 	template<typename FunctionPrototype>

@@ -9,5 +9,7 @@ namespace clv::gfx::ogl{
 		virtual ~GLSurface() = default;
 
 		virtual void makeCurrent() = 0;
+
+		virtual void resizeBuffers(const mth::vec2ui& size) override{};
 	};
 }

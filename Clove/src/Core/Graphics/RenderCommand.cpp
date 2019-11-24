@@ -37,11 +37,11 @@ namespace clv::gfx{
 		device->updateBufferData(buffer, data);
 	}
 
-	void RenderCommand::makeSurfaceCurrent(Surface& surface){
+	void RenderCommand::makeSurfaceCurrent(const std::shared_ptr<Surface>& surface){
 		device->makeSurfaceCurrent(surface);
 	}
 
-	void RenderCommand::setRenderTarget(RenderTarget& renderTarget){
+	void RenderCommand::setRenderTarget(const RenderTarget* renderTarget){
 		device->setRenderTarget(renderTarget);
 	}
 

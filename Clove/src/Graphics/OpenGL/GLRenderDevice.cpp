@@ -57,16 +57,20 @@ namespace clv::gfx::ogl{
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
-	void GLRenderDevice::makeSurfaceCurrent(Surface& surface){
-		GLSurface& glSurface = static_cast<GLSurface&>(surface);
-		glSurface.makeCurrent();
+	void GLRenderDevice::makeSurfaceCurrent(const std::shared_ptr<Surface>& surface){
+		auto glSurface = std::static_pointer_cast<GLSurface>(surface);
+		glSurface->makeCurrent();
 		//Not the ideal place but it has to happen after the surface(context) is created and made current
 		postContextCreatedInitialise();
 	}
 	
-	void GLRenderDevice::setRenderTarget(RenderTarget& renderTarget){
-		GLRenderTarget& glRenderTarget = static_cast<GLRenderTarget&>(renderTarget);
-		glBindFramebuffer(GL_FRAMEBUFFER, glRenderTarget.getGLFrameBufferID());
+	void GLRenderDevice::setRenderTarget(const RenderTarget* renderTarget){
+		if(renderTarget){
+			const GLRenderTarget* glRenderTarget = static_cast<const GLRenderTarget*>(renderTarget);
+			glBindFramebuffer(GL_FRAMEBUFFER, glRenderTarget->getGLFrameBufferID());
+		} else{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
 	}
 
 	void GLRenderDevice::resetRenderTargetToDefault(){

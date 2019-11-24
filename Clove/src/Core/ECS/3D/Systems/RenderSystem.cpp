@@ -19,6 +19,7 @@ using namespace clv::gfx;
 
 namespace clv::ecs::_3D{
 	struct ComposedCameraData{
+		Viewport viewport;
 		CameraRenderData bufferData;
 		std::shared_ptr<RenderTarget> target;
 	};
@@ -86,11 +87,11 @@ namespace clv::ecs::_3D{
 	}
 
 	void RenderSystem::preUpdate(){
-		RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
+		RenderCommand::setRenderTarget(currentSceneData->shadowMapRenderTarget.get());
 		RenderCommand::clear(); //TODO: Might need to just do a clear depth command
 		std::for_each(currentSceneData->cameras.begin(), currentSceneData->cameras.end(), [](const ComposedCameraData& cameraData){
 			if(cameraData.target){
-				RenderCommand::setRenderTarget(*cameraData.target);
+				RenderCommand::setRenderTarget(cameraData.target.get());
 				RenderCommand::clear();
 			}
 		});
@@ -129,7 +130,7 @@ namespace clv::ecs::_3D{
 				camera->cameraRenderData.position = position;
 				camera->cameraRenderData.projection = camera->currentProjection;
 
-				currentSceneData->cameras.push_back({ camera->cameraRenderData, camera->renderTarget });
+				currentSceneData->cameras.push_back({ camera->viewport, camera->cameraRenderData, camera->renderTarget });
 			}
 		}
 
@@ -205,8 +206,10 @@ namespace clv::ecs::_3D{
 				RenderCommand::drawIndexed(mesh->getIndexCount());
 			};
 
+			RenderCommand::setViewport(cameraData.viewport);
+
 			if(cameraData.target){
-				RenderCommand::setRenderTarget(*cameraData.target);
+				RenderCommand::setRenderTarget(cameraData.target.get());
 			} else{
 				RenderCommand::resetRenderTargetToDefault();
 			}
@@ -238,15 +241,14 @@ namespace clv::ecs::_3D{
 
 		//Calculate shadow map
 		RenderCommand::bindPipelineObject(*currentSceneData->shadowPipeline);
+		RenderCommand::setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 		for(uint32 i = 0; i < currentSceneData->numLights; ++i){
 			currentSceneData->cubeShadowMaterial.setData(BBP_ShadowData, PointShadowShaderData{ currentSceneData->shadowTransforms[i] }, ShaderType::Geometry);
 			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
 			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentDepthData, PointShadowData{ currentSceneData->currentShadowDepth.depths[i] }, ShaderType::Pixel);
 
-			RenderCommand::setViewport({ 0, 0, shadowMapSize, shadowMapSize });
-			RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
+			RenderCommand::setRenderTarget(currentSceneData->shadowMapRenderTarget.get());
 			currentSceneData->forEachMesh(generateShadowMap);
-			RenderCommand::setViewport({ 0, 0, plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight() });
 		}
 
 		//Render scene for each camera
