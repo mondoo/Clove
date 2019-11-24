@@ -58,10 +58,10 @@ private:
 
 	//FUNCTIONS
 public:
-	EditorWindow(IntPtr hWnd){
+	EditorWindow(IntPtr hWnd, int width, int height){
 		handle = reinterpret_cast<HWND>(hWnd.ToPointer());
 
-		data = { handle, 800, 400 };//Hard coded values from the xml
+		data = { handle, static_cast<clv::uint32>(width), static_cast<clv::uint32>(height) };
 
 		surface = clv::gfx::RenderCommand::createSurface(&data);
 		clv::gfx::RenderCommand::makeSurfaceCurrent(surface);
@@ -82,11 +82,15 @@ class EditorApplication : public clv::plt::Application{
 	//VARIABLES
 private:
 	IntPtr hWnd;
+	int width = 0;
+	int height = 0;
 
 	//FUNCTIONS
 public:
-	EditorApplication(IntPtr hWnd){ //Temp: Just passing in the handle from the wpf app
+	EditorApplication(IntPtr hWnd, int width, int height){ //Temp: Just passing in the handle from the wpf app
 		this->hWnd = hWnd;
+		this->width = width;
+		this->height = height;
 	}
 
 	virtual clv::gfx::API getPlatformPreferedAPI() override{
@@ -94,7 +98,7 @@ public:
 	}
 
 	virtual std::unique_ptr<clv::plt::Window> createWindow(const clv::plt::WindowProps& props){
-		return std::make_unique<EditorWindow>(hWnd);
+		return std::make_unique<EditorWindow>(hWnd, width, height);
 	}
 };
 
@@ -139,8 +143,8 @@ public:
 	}
 };
 
-void Bulb::Engine::Wrapper::OpenClove(IntPtr hWnd){
-	app = new EditorApplication(hWnd);
+void Bulb::Engine::Wrapper::OpenClove(IntPtr hWnd, int width, int height){
+	app = new EditorApplication(hWnd, width, height);
 	
 	app->start();
 

@@ -9,7 +9,7 @@ namespace Bulb::Engine{
 	private:
 		clv::plt::Application* app;
 	public:
-		void OpenClove(System::IntPtr hWnd);
+		void OpenClove(System::IntPtr hWnd, int width, int height);
 
 		void StopClove();
 	};
