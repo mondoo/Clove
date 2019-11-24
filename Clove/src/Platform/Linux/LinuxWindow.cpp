@@ -85,7 +85,7 @@ namespace clv::plt{
 				case ConfigureNotify:
 					{
 						XConfigureEvent xce = xevent.xconfigure;
-						if(xce.width != getWidth() || xce.height != getHeight()){
+						if(static_cast<uint32>(xce.width) != getWidth() || static_cast<uint32>(xce.height) != getHeight()){
 							const mth::vec2i size{ xce.width, xce.height };
 							if(surface){
 								surface->resizeBuffers(size);
