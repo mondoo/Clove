@@ -13,6 +13,7 @@
 #include "Core/ECS/3D/Components/RigidBodyComponent.hpp"
 #include "Core/ECS/Audio/Components/AudioComponent.hpp"
 #include "Core/ECS/UI/Components/TextComponent.hpp"
+#include "Core/ECS/UI/Components/WidgetComponent.hpp"
 #include "Core/Maths/Vector.hpp"
 #include "Core/Input/Input.hpp"
 #include "Core/Utils/DeltaTime.hpp"
@@ -51,7 +52,11 @@ void TestLayer::onAttach(){
 	sprtEnt2 = clv::plt::Application::get().getManager().createEntity();
 	sprtEnt2.addComponent<clv::ecs::_2D::SpriteComponent>();
 	sprtEnt2.addComponent<clv::ecs::_2D::TransformComponent>();
-	
+
+	wdgEnt = clv::plt::Application::get().getManager().createEntity();
+	wdgEnt.addComponent<clv::ecs::ui::WidgetComponent>();
+	wdgEnt.addComponent<clv::ecs::_2D::TransformComponent>();
+
 	lght1 = clv::plt::Application::get().getManager().createEntity();
 	lght1.addComponent<clv::ecs::_3D::MeshComponent>();
 	lght1.addComponent<clv::ecs::_3D::LightComponent>();
@@ -155,6 +160,13 @@ void TestLayer::onAttach(){
 	}
 
 	sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->addChild(sprtEnt2.getComponent<clv::ecs::_2D::TransformComponent>());
+
+	{
+		auto sprite = std::make_shared<clv::gfx::Sprite>();
+		sprite->setColour({ 1.0f, 1.0f, 0.0f, 1.0f });
+		wdgEnt.getComponent<clv::ecs::ui::WidgetComponent>()->setSprite(sprite);
+		wdgEnt.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+	}
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());

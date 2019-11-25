@@ -69,6 +69,8 @@ set(
 		Core/ECS/Audio/Systems/AudioSystem.cpp
 		Core/ECS/UI/Components/TextComponent.hpp
 		Core/ECS/UI/Components/TextComponent.cpp
+		Core/ECS/UI/Components/WidgetComponent.hpp
+		Core/ECS/UI/Components/WidgetComponent.cpp
 )
 
 set(

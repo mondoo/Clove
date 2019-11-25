@@ -20,6 +20,8 @@ private:
 	clv::ecs::Entity sprtEnt1;
 	clv::ecs::Entity sprtEnt2;
 
+	clv::ecs::Entity wdgEnt;
+
 	clv::ecs::Entity lght1;
 	clv::ecs::Entity lght2;
 

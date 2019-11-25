@@ -4,6 +4,7 @@
 #include "Core/ECS/2D/Components/TransformComponent.hpp"
 #include "Core/ECS/2D/Components/SpriteComponent.hpp"
 #include "Core/ECS/UI/Components/TextComponent.hpp"
+#include "Core/ECS/UI/Components/WidgetComponent.hpp"
 #include "Core/Graphics/GraphicsTypes.hpp"
 #include "Core/Graphics/RenderCommand.hpp"
 #include "Core/Graphics/Renderables/Mesh.hpp"
@@ -97,6 +98,20 @@ namespace clv::ecs::_2D{
 			for(auto& tuple : componentTuples){
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
 				SpriteComponent* renderable = std::get<SpriteComponent*>(tuple);
+
+				const mth::mat4f modelData = transform->getWorldTransformMatrix();
+				renderable->sprite->setModelData(currentSceneData->projection * modelData);
+
+				currentSceneData->spritesToRender.push_back(renderable->sprite);
+			}
+		}
+
+		//Widgets
+		{
+			auto componentTuples = manager->getComponentSets<TransformComponent, ui::WidgetComponent>();
+			for(auto& tuple : componentTuples){
+				TransformComponent* transform = std::get<TransformComponent*>(tuple);
+				ui::WidgetComponent* renderable = std::get<ui::WidgetComponent*>(tuple);
 
 				const mth::mat4f modelData = transform->getWorldTransformMatrix();
 				renderable->sprite->setModelData(currentSceneData->projection * modelData);
