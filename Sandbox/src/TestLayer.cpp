@@ -194,14 +194,14 @@ void TestLayer::onAttach(){
 
 		fontEnt = clv::plt::Application::get().getManager().createEntity();
 		fontEnt.addComponent<clv::ecs::ui::TextComponent>(font);
-		fontEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{-550.0, 300.0f});
+		fontEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{ 0.0f, -80.0f });
 
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("Hello, World!");
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(72);
 
 		fpsEnt = clv::plt::Application::get().getManager().createEntity();
 		fpsEnt.addComponent<clv::ecs::ui::TextComponent>(font);
-		fpsEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{-550.0, 100.0f});
+		fpsEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{ 0.0f, -180.0f });
 
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("not set :(");
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(30);

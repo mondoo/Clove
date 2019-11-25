@@ -28,6 +28,7 @@ namespace clv::ecs::_2D{
 		std::shared_ptr<PipelineObject> charPipelineObject;
 
 		mth::mat4f projection; //Effectively the 'camera'
+		mth::vec2ui screenSize;
 	} *currentSceneData;
 
 	RenderSystem::RenderSystem(){
@@ -72,8 +73,10 @@ namespace clv::ecs::_2D{
 		//Projection
 		plt::Application::get().getWindow().onWindowResize.bind(&RenderSystem::onWindowSizeChanged, this);
 
-		const float halfWidth = static_cast<float>(plt::Application::get().getWindow().getWidth()) / 2;
-		const float halfHeight = static_cast<float>(plt::Application::get().getWindow().getHeight()) / 2;
+		currentSceneData->screenSize = { plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight() };
+
+		const float halfWidth = static_cast<float>(currentSceneData->screenSize.x) / 2;
+		const float halfHeight = static_cast<float>(currentSceneData->screenSize.y) / 2;
 
 		currentSceneData->projection = mth::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 	}
@@ -106,6 +109,8 @@ namespace clv::ecs::_2D{
 			}
 		}
 
+		const mth::vec2f screenHalfSize{ static_cast<float>(currentSceneData->screenSize.x) / 2.0f, static_cast<float>(currentSceneData->screenSize.y) / 2.0f };
+		
 		//Widgets
 		{
 			auto componentTuples = manager->getComponentSets<TransformComponent, ui::WidgetComponent>();
@@ -113,7 +118,11 @@ namespace clv::ecs::_2D{
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
 				ui::WidgetComponent* renderable = std::get<ui::WidgetComponent*>(tuple);
 
-				const mth::mat4f modelData = transform->getWorldTransformMatrix();
+				const mth::vec2f widgetScale = transform->getScale();
+				const mth::vec2f scaledScreenSize = { (screenHalfSize.x / widgetScale.x), (screenHalfSize.y / widgetScale.y) };
+
+				const mth::mat4f modelData = mth::translate(transform->getWorldTransformMatrix(), mth::vec3f{ -scaledScreenSize.x, scaledScreenSize.y, 0.0f});
+				
 				renderable->sprite->setModelData(currentSceneData->projection * modelData);
 
 				currentSceneData->spritesToRender.push_back(renderable->sprite);
@@ -129,6 +138,8 @@ namespace clv::ecs::_2D{
 
 				const clv::ui::Text& text = fontComp->text;
 				mth::vec2f cursorPos = transform->getPosition();
+				cursorPos.x -= screenHalfSize.x;
+				cursorPos.y += screenHalfSize.y;
 
 				for(size_t i = 0; i < text.getTextLength(); ++i){
 					clv::ui::Glyph glyph = text.getBufferForCharAt(i);
@@ -171,9 +182,8 @@ namespace clv::ecs::_2D{
 		RenderCommand::setDepthBuffer(false);
 		RenderCommand::resetRenderTargetToDefault();
 
-		RenderCommand::bindPipelineObject(*currentSceneData->spritePipelineObject);
-
 		//Sprites
+		RenderCommand::bindPipelineObject(*currentSceneData->spritePipelineObject);
 		{
 			const auto draw = [](const std::shared_ptr<Sprite>& sprite){
 				auto& renderMeshMaterial = currentSceneData->spriteMesh->getMaterialInstance();
@@ -198,9 +208,8 @@ namespace clv::ecs::_2D{
 			currentSceneData->spritesToRender.clear();
 		}
 
-		RenderCommand::bindPipelineObject(*currentSceneData->charPipelineObject);
-
 		//Characters
+		RenderCommand::bindPipelineObject(*currentSceneData->charPipelineObject);
 		{
 			const auto draw = [](const std::shared_ptr<Sprite>& character){
 				auto& charMat = currentSceneData->characterMesh->getMaterialInstance();
@@ -225,10 +234,11 @@ namespace clv::ecs::_2D{
 		}
 	}
 
-	void RenderSystem::onWindowSizeChanged(const mth::vec2i& size){
+	void RenderSystem::onWindowSizeChanged(const mth::vec2ui& size){
 		const float halfWidth = static_cast<float>(size.x) / 2;
 		const float halfHeight = static_cast<float>(size.y) / 2;
 
+		currentSceneData->screenSize = size;
 		currentSceneData->projection = mth::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 	}
 }

@@ -21,6 +21,6 @@ namespace clv::ecs::_2D{
 		virtual void postUpdate() override;
 
 	private:
-		void onWindowSizeChanged(const mth::vec2i& size);
+		void onWindowSizeChanged(const mth::vec2ui& size);
 	};
 }
