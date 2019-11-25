@@ -4,13 +4,11 @@
 
 namespace clv::ecs::_3D{
 	class TransformComponent : public Component<_3D::TransformComponent>{
-		friend class TransformSystem;
-
 		//VARIABLES
 	private:
-		mth::vec3f		localPosition	= { 0.0f, 0.0f, 0.0f };
+		mth::vec3f	localPosition	= { 0.0f, 0.0f, 0.0f };
 		mth::quatf	localRotation	= mth::quatf({ 0.0f, 0.0f, 0.0f });
-		mth::vec3f		localScale		= { 1.0f, 1.0f, 1.0f };
+		mth::vec3f	localScale		= { 1.0f, 1.0f, 1.0f };
 
 		TransformComponent* parent = nullptr;
 		std::vector<TransformComponent*> children;
@@ -18,10 +16,13 @@ namespace clv::ecs::_3D{
 		//FUNCTIONS
 	public:
 		TransformComponent();
+
 		TransformComponent(const TransformComponent& other) = delete;
 		TransformComponent(TransformComponent&& other) noexcept;
+
 		TransformComponent& operator=(const TransformComponent& other) = delete;
 		TransformComponent& operator=(TransformComponent&& other) noexcept;
+
 		virtual ~TransformComponent();
 
 		mth::vec3f getPosition() const;

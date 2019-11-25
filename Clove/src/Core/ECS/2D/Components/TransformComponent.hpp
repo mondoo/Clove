@@ -4,12 +4,10 @@
 
 namespace clv::ecs::_2D{
 	class TransformComponent : public Component<_2D::TransformComponent>{
-		friend class TransformSystem;
-
 		//VARIABLES
 	private:
 		mth::vec2f	localPosition	= { 0.0f, 0.0f };
-		float			localRotation	= 0.0f;
+		float		localRotation	= 0.0f;
 		mth::vec2f	localScale		= { 1.0f, 1.0f };
 
 		TransformComponent* parent = nullptr;
@@ -18,10 +16,13 @@ namespace clv::ecs::_2D{
 		//FUNCTIONS	
 	public:
 		TransformComponent();
+
 		TransformComponent(const TransformComponent& other) = delete;
 		TransformComponent(TransformComponent&& other) noexcept;
+
 		TransformComponent& operator=(const TransformComponent& other) = delete;
 		TransformComponent& operator=(TransformComponent&& other) noexcept;
+
 		virtual ~TransformComponent();
 
 		mth::vec2f getPosition() const;
