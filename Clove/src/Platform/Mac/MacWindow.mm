@@ -100,7 +100,7 @@ struct constants{
 	id<MTLBuffer> indexBuffer = [_device newBufferWithBytes:indices length:sizeof(indices) options:0];
 	
 	//Creating constant buffer
-	//id<MTLBuffer> constantBuffer = [_device newBufferWithBytes:&constant length:sizeof(constants) options:0];
+	id<MTLBuffer> constantBuffer = [_device newBufferWithBytes:&constant length:sizeof(constants) options:0];
 	
 	//Command queue / encoder
 	id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
@@ -110,7 +110,7 @@ struct constants{
 	[commandEncoder setRenderPipelineState:pipelineState];
 	
 	[commandEncoder setVertexBuffer:vertexBuffer offset:0 atIndex:0]; //At index can be thought of as the binding point
-	[commandEncoder setVertexBytes:&constant length:sizeof(constants) atIndex:1];
+	[commandEncoder setVertexBuffer:constantBuffer offset:0 atIndex:1];
 	
 	[commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
 							   indexCount:sizeof(indices)/sizeof(UInt32)
