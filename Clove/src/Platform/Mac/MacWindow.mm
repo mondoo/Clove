@@ -8,6 +8,12 @@
 //#import <Metal/Metal.h>
 #import "Graphics/Metal/ShaderStrings.hpp"
 
+//Metal constant buffer struct
+struct constants{
+	float animateBy = 0.5f;
+};
+//---
+
 @implementation MacWindowProxy
 - (instancetype)initWithWindowData:(unsigned int)width height:(unsigned int)height name:(NSString*)name{
 	const NSRect rect = NSMakeRect(0, 0, width, height);
@@ -35,6 +41,7 @@
 	
 	//TODO: Clove will need to support command queues / buffers
 	_commandQueue = [_device newCommandQueue];
+	//---
 	
 	return self;
 }
@@ -50,16 +57,28 @@
 }
 
 - (void)drawInMTKView:(MTKView *)view{
+	static float time = 0.0f;
+	static constants constant;
+	
 	float vertices[] = {
-		 0,  1,  0,
+		-1,  1,  0,
 		-1, -1,  0,
-		 1, -1,  0
+		 1, -1,  0,
+		 1,  1,  0
 	};
+	
+	UInt32 indices[] = {
+		0, 1, 2,
+		2, 3, 0
+	};
+	
+	time += 1.0f / [view preferredFramesPerSecond];
+	constant.animateBy = abs(sin(time) / 2 + 0.5f);
 	
 	id<MTLDrawable> drawable = [view currentDrawable];
 	MTLRenderPassDescriptor* descriptor = [view currentRenderPassDescriptor];
 	
-	//Create library to make out shaders
+	//Create library to make our shaders
 	NSError* error2 = [[NSError alloc] init];
 	NSString* librarySource = [NSString stringWithCString:shader_Shader.c_str() encoding:[NSString defaultCStringEncoding]];
 	id<MTLLibrary> library = [_device newLibraryWithSource:librarySource options:nil error:&error2];
@@ -77,14 +96,27 @@
 	//Creating vertex buffer
 	id<MTLBuffer> vertexBuffer = [_device newBufferWithBytes:vertices length:sizeof(vertices) options:0];
 	
+	//Creating index buffer
+	id<MTLBuffer> indexBuffer = [_device newBufferWithBytes:indices length:sizeof(indices) options:0];
+	
+	//Creating constant buffer
+	//id<MTLBuffer> constantBuffer = [_device newBufferWithBytes:&constant length:sizeof(constants) options:0];
+	
+	//Command queue / encoder
 	id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
 	id<MTLRenderCommandEncoder> commandEncoder = [commandBuffer renderCommandEncoderWithDescriptor:descriptor];
 	
 	//Render commands: start
 	[commandEncoder setRenderPipelineState:pipelineState];
-	[commandEncoder setVertexBuffer:vertexBuffer offset:0 atIndex:0];
 	
-	[commandEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:sizeof(vertices)];
+	[commandEncoder setVertexBuffer:vertexBuffer offset:0 atIndex:0]; //At index can be thought of as the binding point
+	[commandEncoder setVertexBytes:&constant length:sizeof(constants) atIndex:1];
+	
+	[commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
+							   indexCount:sizeof(indices)/sizeof(UInt32)
+								indexType:MTLIndexTypeUInt32
+							  indexBuffer:indexBuffer
+						indexBufferOffset:0];
 	//Render commands: end
 	
 	[commandEncoder endEncoding];
