@@ -3,6 +3,7 @@
 #include "Core/ECS/Manager.hpp"
 #include "Core/ECS/2D/Components/TransformComponent.hpp"
 #include "Core/ECS/2D/Components/SpriteComponent.hpp"
+#include "Core/ECS/UI/Components/TransformComponent.hpp"
 #include "Core/ECS/UI/Components/TextComponent.hpp"
 #include "Core/ECS/UI/Components/WidgetComponent.hpp"
 #include "Core/Graphics/GraphicsTypes.hpp"
@@ -113,9 +114,9 @@ namespace clv::ecs::_2D{
 		
 		//Widgets
 		{
-			auto componentTuples = manager->getComponentSets<TransformComponent, ui::WidgetComponent>();
+			auto componentTuples = manager->getComponentSets<ui::TransformComponent, ui::WidgetComponent>();
 			for(auto& tuple : componentTuples){
-				TransformComponent* transform = std::get<TransformComponent*>(tuple);
+				ui::TransformComponent* transform = std::get<ui::TransformComponent*>(tuple);
 				ui::WidgetComponent* renderable = std::get<ui::WidgetComponent*>(tuple);
 
 				const mth::vec2f widgetScale = transform->getScale();
@@ -131,9 +132,9 @@ namespace clv::ecs::_2D{
 
 		//Characters
 		{
-			auto componentTuples = manager->getComponentSets<TransformComponent, ui::TextComponent>();
+			auto componentTuples = manager->getComponentSets<ui::TransformComponent, ui::TextComponent>();
 			for(auto& tuple : componentTuples){
-				TransformComponent* transform = std::get<TransformComponent*>(tuple);
+				ui::TransformComponent* transform = std::get<ui::TransformComponent*>(tuple);
 				ui::TextComponent* fontComp = std::get<ui::TextComponent*>(tuple);
 
 				const clv::ui::Text& text = fontComp->text;
