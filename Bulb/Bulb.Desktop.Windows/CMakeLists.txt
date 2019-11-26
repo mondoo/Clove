@@ -6,19 +6,19 @@ include(CSharpUtilities)
 
 set(
 	Files
-		#App.config
-		#App.xaml
-		#App.xaml.cs
-		#MainWindow.xaml
-		#MainWindow.xaml.cs
+		App.config
+		App.xaml
+		App.xaml.cs
+		MainWindow.xaml
+		MainWindow.xaml.cs
 
-		Program.cs
+		#Program.cs
 
-		Form1.cs
-		Form1.Designer.cs
-		Form1.resx
+		#Form1.cs
+		#Form1.Designer.cs
+		#Form1.resx
 
-		#Properties/AssemblyInfo.cs
+		Properties/AssemblyInfo.cs
 		Properties/Resources.resx
 		Properties/Resources.Designer.cs
 		Properties/Settings.settings
@@ -32,20 +32,16 @@ add_executable(
 )
 
 #Link designer files, xaml files, and other properties files with their corresponding cs files
-csharp_set_windows_forms_properties(
-    ${Files}
-)
-
-#csharp_set_xaml_cs_properties(
-#    App.xaml
-#    App.xaml.cs
-#
-#    MainWindow.xaml
-#    MainWindow.xaml.cs
+#csharp_set_windows_forms_properties(
+#    ${Files}
 #)
 
+csharp_set_xaml_cs_properties(
+	${Files}
+)
+
 #Set app App.xaml properties file as program entry point (if project is a WPF project)
-#set_property(SOURCE App.xaml PROPERTY VS_XAML_TYPE "ApplicationDefinition")
+set_property(SOURCE App.xaml PROPERTY VS_XAML_TYPE "ApplicationDefinition")
 
 #Set other csproj file flags
 set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
@@ -55,19 +51,19 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION 
 set_property(
 	TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_REFERENCES
 		"Microsoft.CSharp"
-		#"PresentationCore"
-		#"PresentationFramework"
+		"PresentationCore"
+		"PresentationFramework"
 		"System"
 		"System.Core"
 		"System.Data"
 		"System.Drawing"
 		"System.Windows.Forms"
-		#"System.Data.DataSetExtensions"
-		#"System.Net.Http"
-		#"System.Xaml"
-		#"System.Xml"
-		#"System.Xml.Linq"
-		#"WindowsBase"
+		"System.Data.DataSetExtensions"
+		"System.Net.Http"
+		"System.Xaml"
+		"System.Xml"
+		"System.Xml.Linq"
+		"WindowsBase"
 )
 
 #Link to wrapper
