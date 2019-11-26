@@ -150,14 +150,14 @@ void TestLayer::onAttach(){
 		auto sprite = std::make_shared<clv::gfx::Sprite>();
 		sprite->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });
 		sprtEnt1.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
 	}
 
 	{
 		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
 		sprtEnt2.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		sprtEnt2.getComponent<clv::ecs::_2D::TransformComponent>()->setLocalPosition(clv::mth::vec2f(0.0f, 2.0f));
-		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		sprtEnt2.getComponent<clv::ecs::_2D::TransformComponent>()->setLocalPosition(clv::mth::vec2f(0.0f, 1.0f));
+		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
 	}
 
 	sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->addChild(sprtEnt2.getComponent<clv::ecs::_2D::TransformComponent>());
@@ -166,7 +166,8 @@ void TestLayer::onAttach(){
 		auto sprite = std::make_shared<clv::gfx::Sprite>();
 		sprite->setColour({ 1.0f, 1.0f, 0.0f, 1.0f });
 		wdgEnt.getComponent<clv::ecs::ui::WidgetComponent>()->setSprite(sprite);
-		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
+		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setPosition({ 0.0f, 0.0f });
 	}
 
 	{
@@ -238,7 +239,7 @@ void TestLayer::onAttach(){
 
 		rigidSprite1 = clv::plt::Application::get().getManager().createEntity();
 		rigidSprite1.addComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		rigidSprite1.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		rigidSprite1.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
 		rigidSprite1.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, true, clv::mth::vec2f{ 20.0f, 20.0f });
 
 		rigidSprite1.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{ -100.0f, 0.0f });
@@ -250,7 +251,7 @@ void TestLayer::onAttach(){
 
 		rigidSprite2 = clv::plt::Application::get().getManager().createEntity();
 		rigidSprite2.addComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		rigidSprite2.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		rigidSprite2.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
 		rigidSprite2.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, false, clv::mth::vec2f{ 20.0f, 20.0f });
 
 		rigidSprite2.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{ -125.0f, 200.0f });

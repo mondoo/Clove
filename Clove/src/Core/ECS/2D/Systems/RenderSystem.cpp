@@ -50,10 +50,10 @@ namespace clv::ecs::_2D{
 		{
 			//From the center
 			VertexBufferData bufferData{ layout };
-			bufferData.emplaceBack(mth::vec2f{ -1.0f, -1.0f }, mth::vec2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{  1.0f, -1.0f }, mth::vec2f{ 1.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{ -1.0f,  1.0f }, mth::vec2f{ 0.0f, 1.0f });
-			bufferData.emplaceBack(mth::vec2f{  1.0f,  1.0f }, mth::vec2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ -0.5f, -0.5f }, mth::vec2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{  0.5f, -0.5f }, mth::vec2f{ 1.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ -0.5f,  0.5f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{  0.5f,  0.5f }, mth::vec2f{ 1.0f, 1.0f });
 
 			auto spriteMaterial = std::make_shared<gfx::Material>();
 			currentSceneData->spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
@@ -63,10 +63,10 @@ namespace clv::ecs::_2D{
 		{
 			//From top left
 			VertexBufferData bufferData{ layout };
-			bufferData.emplaceBack(mth::vec2f{ 0.0f, -2.0f }, mth::vec2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{ 2.0f, -2.0f }, mth::vec2f{ 1.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f, -1.0f }, mth::vec2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f, -1.0f }, mth::vec2f{ 1.0f, 0.0f });
 			bufferData.emplaceBack(mth::vec2f{ 0.0f,  0.0f }, mth::vec2f{ 0.0f, 1.0f });
-			bufferData.emplaceBack(mth::vec2f{ 2.0f,  0.0f }, mth::vec2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f,  0.0f }, mth::vec2f{ 1.0f, 1.0f });
 
 			auto spriteMaterial = std::make_shared<gfx::Material>();
 			currentSceneData->widgetMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
