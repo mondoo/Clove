@@ -11,6 +11,7 @@ namespace clv::ecs::ui{
 		mth::vec2f	localScale = { 1.0f, 1.0f };
 
 		mth::vec2f alignment = { 0.0f, 0.0f };
+		mth::vec2f anchor = { 0.0f, 0.0f };
 
 		TransformComponent* parent = nullptr;
 		std::vector<TransformComponent*> children;
@@ -36,7 +37,9 @@ namespace clv::ecs::ui{
 		mth::vec2f getScale() const;
 		const mth::vec2f& getLocalScale() const;
 
-		const mth::vec2f getAlignment() const;
+		const mth::vec2f& getAlignment() const;
+
+		const mth::vec2f& getAnchor() const;
 
 		void setPosition(const mth::vec2f& position);
 		void setLocalPosition(const mth::vec2f& position);
@@ -48,6 +51,8 @@ namespace clv::ecs::ui{
 		void setLocalScale(const mth::vec2f& scale);
 
 		void setAlignment(const mth::vec2f& alignment);
+
+		void setAnchor(const mth::vec2f& anchor);
 
 		TransformComponent* getParent() const;
 		void addChild(TransformComponent* child);

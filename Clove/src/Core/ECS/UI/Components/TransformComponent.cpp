@@ -15,7 +15,6 @@ namespace clv::ecs::ui{
 	TransformComponent::~TransformComponent(){
 		if(parent){
 			removeItemFromVector(this, parent->children);
-
 		}
 
 		for(auto* child : children){
@@ -74,8 +73,12 @@ namespace clv::ecs::ui{
 		return localScale;
 	}
 
-	const mth::vec2f TransformComponent::getAlignment() const{
+	const mth::vec2f& TransformComponent::getAlignment() const{
 		return alignment;
+	}
+
+	const mth::vec2f& TransformComponent::getAnchor() const{
+		return anchor;
 	}
 
 	void TransformComponent::setPosition(const mth::vec2f& position){
@@ -116,6 +119,10 @@ namespace clv::ecs::ui{
 
 	void TransformComponent::setAlignment(const mth::vec2f& alignment){
 		this->alignment = alignment;
+	}
+
+	void TransformComponent::setAnchor(const mth::vec2f &anchor){
+		this->anchor = anchor;
 	}
 
 	TransformComponent* TransformComponent::getParent() const{

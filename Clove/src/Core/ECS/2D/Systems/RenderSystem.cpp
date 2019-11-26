@@ -139,7 +139,16 @@ namespace clv::ecs::_2D{
 				const mth::vec2f widgetScale = transform->getScale();
 				const mth::vec2f scaledScreenSize = { (screenHalfSize.x / widgetScale.x), (screenHalfSize.y / widgetScale.y) };
 
-				const mth::mat4f modelData = mth::translate(transform->getWorldTransformMatrix(), mth::vec3f{ -scaledScreenSize.x, scaledScreenSize.y, 0.0f });
+				mth::vec2f offset{};
+
+				if(transform->getParent()){
+
+				} else{
+					offset.x = (transform->getAnchor().x * currentSceneData->screenSize.x) / widgetScale.x;
+					offset.y = (transform->getAnchor().y * currentSceneData->screenSize.y) / widgetScale.y;
+				}
+
+				const mth::mat4f modelData = mth::translate(transform->getWorldTransformMatrix(), mth::vec3f{ -scaledScreenSize.x + offset.x, scaledScreenSize.y - offset.y, 0.0f });
 
 				renderable->sprite->setModelData(currentSceneData->projection * modelData);
 
