@@ -133,7 +133,7 @@ namespace clv::ecs::ui{
 	}
 
 	mth::mat4f TransformComponent::getLocalTransformMatrix() const{
-		const mth::mat4f translationMatrix = mth::translate(mth::mat4f(1.0f), mth::vec3f{ localPosition, 0.0f });
+		const mth::mat4f translationMatrix = mth::translate(mth::mat4f(1.0f), mth::vec3f{ localPosition.x, -localPosition.y, 0.0f });
 		const mth::mat4f rotationMatrix = mth::rotate(mth::mat4f(1.0f), localRotation, { 0.0f, 0.0f, 1.0f });
 		const mth::mat4f scaleMatrix = mth::scale(mth::mat4f(1.0f), mth::vec3f{ localScale, 0.0f });
 

@@ -12,6 +12,7 @@
 #include "Core/ECS/3D/Components/LightComponent.hpp"
 #include "Core/ECS/3D/Components/RigidBodyComponent.hpp"
 #include "Core/ECS/Audio/Components/AudioComponent.hpp"
+#include "Core/ECS/UI/Components/TransformComponent.hpp"
 #include "Core/ECS/UI/Components/TextComponent.hpp"
 #include "Core/ECS/UI/Components/WidgetComponent.hpp"
 #include "Core/Maths/Vector.hpp"
@@ -55,7 +56,7 @@ void TestLayer::onAttach(){
 
 	wdgEnt = clv::plt::Application::get().getManager().createEntity();
 	wdgEnt.addComponent<clv::ecs::ui::WidgetComponent>();
-	wdgEnt.addComponent<clv::ecs::_2D::TransformComponent>();
+	wdgEnt.addComponent<clv::ecs::ui::TransformComponent>();
 
 	lght1 = clv::plt::Application::get().getManager().createEntity();
 	lght1.addComponent<clv::ecs::_3D::MeshComponent>();
@@ -165,7 +166,7 @@ void TestLayer::onAttach(){
 		auto sprite = std::make_shared<clv::gfx::Sprite>();
 		sprite->setColour({ 1.0f, 1.0f, 0.0f, 1.0f });
 		wdgEnt.getComponent<clv::ecs::ui::WidgetComponent>()->setSprite(sprite);
-		wdgEnt.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
 	}
 
 	{
@@ -194,14 +195,16 @@ void TestLayer::onAttach(){
 
 		fontEnt = clv::plt::Application::get().getManager().createEntity();
 		fontEnt.addComponent<clv::ecs::ui::TextComponent>(font);
-		fontEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{ 0.0f, -80.0f });
+		fontEnt.addComponent<clv::ecs::ui::TransformComponent>()->setPosition(clv::mth::vec2f{ 0.0f, 80.0f });
+
+		//TODO: Make it so that +y will make components go down instead of up
 
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("Hello, World!");
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(72);
 
 		fpsEnt = clv::plt::Application::get().getManager().createEntity();
 		fpsEnt.addComponent<clv::ecs::ui::TextComponent>(font);
-		fpsEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{ 0.0f, -180.0f });
+		fpsEnt.addComponent<clv::ecs::ui::TransformComponent>()->setPosition(clv::mth::vec2f{ 0.0f, 180.0f });
 
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("not set :(");
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(30);
