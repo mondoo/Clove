@@ -213,8 +213,6 @@ void TestLayer::onAttach(){
 		fontEnt.addComponent<clv::ecs::ui::TextComponent>(font);
 		fontEnt.addComponent<clv::ecs::ui::TransformComponent>()->setPosition(clv::mth::vec2f{ 0.0f, 80.0f });
 
-		//TODO: Make it so that +y will make components go down instead of up
-
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("Hello, World!");
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(72);
 
