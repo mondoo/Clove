@@ -20,9 +20,11 @@ using namespace clv::gfx;
 namespace clv::ecs::_2D{
 	struct SceneData{
 		std::shared_ptr<gfx::Mesh> spriteMesh;
+		std::shared_ptr<gfx::Mesh> widgetMesh;
 		std::shared_ptr<gfx::Mesh> characterMesh;
 
 		std::vector<std::shared_ptr<Sprite>> spritesToRender;
+		std::vector<std::shared_ptr<Sprite>> widgetsToRender;
 		std::vector<std::shared_ptr<Sprite>> charactersToRender;
 
 		std::shared_ptr<PipelineObject> spritePipelineObject;
@@ -46,23 +48,38 @@ namespace clv::ecs::_2D{
 
 		//Sprite mesh
 		{
+			//From the center
 			VertexBufferData bufferData{ layout };
 			bufferData.emplaceBack(mth::vec2f{ -1.0f, -1.0f }, mth::vec2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{ 1.0f, -1.0f }, mth::vec2f{ 1.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{  1.0f, -1.0f }, mth::vec2f{ 1.0f, 0.0f });
 			bufferData.emplaceBack(mth::vec2f{ -1.0f,  1.0f }, mth::vec2f{ 0.0f, 1.0f });
-			bufferData.emplaceBack(mth::vec2f{ 1.0f,  1.0f }, mth::vec2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{  1.0f,  1.0f }, mth::vec2f{ 1.0f, 1.0f });
 
 			auto spriteMaterial = std::make_shared<gfx::Material>();
 			currentSceneData->spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
 		}
 
+		//Widget mesh
+		{
+			//From top left
+			VertexBufferData bufferData{ layout };
+			bufferData.emplaceBack(mth::vec2f{ 0.0f, -2.0f }, mth::vec2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 2.0f, -2.0f }, mth::vec2f{ 1.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f,  0.0f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 2.0f,  0.0f }, mth::vec2f{ 1.0f, 1.0f });
+
+			auto spriteMaterial = std::make_shared<gfx::Material>();
+			currentSceneData->widgetMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
+		}
+
 		//Font mesh
 		{
+			//From bottom left
 			VertexBufferData bufferData{ layout };
-			bufferData.emplaceBack(mth::vec2f{ 0,  0 }, mth::vec2f{ 0.0f, 1.0f });
-			bufferData.emplaceBack(mth::vec2f{ 1,  0 }, mth::vec2f{ 1.0f, 1.0f });
-			bufferData.emplaceBack(mth::vec2f{ 0,  1 }, mth::vec2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{ 1,  1 }, mth::vec2f{ 1.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f,  0.0f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f,  0.0f }, mth::vec2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f,  1.0f }, mth::vec2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f,  1.0f }, mth::vec2f{ 1.0f, 0.0f });
 
 			auto characterMaterial = std::make_shared<gfx::Material>();
 			currentSceneData->characterMesh = std::make_shared<gfx::Mesh>(bufferData, indices, characterMaterial->createInstance());
@@ -111,7 +128,7 @@ namespace clv::ecs::_2D{
 		}
 
 		const mth::vec2f screenHalfSize{ static_cast<float>(currentSceneData->screenSize.x) / 2.0f, static_cast<float>(currentSceneData->screenSize.y) / 2.0f };
-		
+
 		//Widgets
 		{
 			auto componentTuples = manager->getComponentSets<ui::TransformComponent, ui::WidgetComponent>();
@@ -122,11 +139,11 @@ namespace clv::ecs::_2D{
 				const mth::vec2f widgetScale = transform->getScale();
 				const mth::vec2f scaledScreenSize = { (screenHalfSize.x / widgetScale.x), (screenHalfSize.y / widgetScale.y) };
 
-				const mth::mat4f modelData = mth::translate(transform->getWorldTransformMatrix(), mth::vec3f{ -scaledScreenSize.x, scaledScreenSize.y, 0.0f});
-				
+				const mth::mat4f modelData = mth::translate(transform->getWorldTransformMatrix(), mth::vec3f{ -scaledScreenSize.x, scaledScreenSize.y, 0.0f });
+
 				renderable->sprite->setModelData(currentSceneData->projection * modelData);
 
-				currentSceneData->spritesToRender.push_back(renderable->sprite);
+				currentSceneData->widgetsToRender.push_back(renderable->sprite);
 			}
 		}
 
@@ -183,7 +200,7 @@ namespace clv::ecs::_2D{
 		RenderCommand::setDepthBuffer(false);
 		RenderCommand::resetRenderTargetToDefault();
 
-		//Sprites
+		//Sprites / Widgets
 		RenderCommand::bindPipelineObject(*currentSceneData->spritePipelineObject);
 		{
 			const auto draw = [](const std::shared_ptr<Sprite>& sprite){
@@ -205,8 +222,31 @@ namespace clv::ecs::_2D{
 			};
 
 			std::for_each(currentSceneData->spritesToRender.begin(), currentSceneData->spritesToRender.end(), draw);
-
 			currentSceneData->spritesToRender.clear();
+		}
+
+		//Widgets
+		{
+			const auto draw = [](const std::shared_ptr<Sprite>& sprite){
+				auto& renderMeshMaterial = currentSceneData->widgetMesh->getMaterialInstance();
+				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
+				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
+				renderMeshMaterial.setData(BBP_Colour, sprite->getColour(), ShaderType::Pixel);
+				renderMeshMaterial.bind();
+
+				const auto vertexLayout = currentSceneData->spritePipelineObject->getVertexLayout();
+
+				auto vb = currentSceneData->widgetMesh->getVertexBufferForLayout(vertexLayout);
+				auto ib = currentSceneData->widgetMesh->getIndexBuffer();
+
+				RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				RenderCommand::bindIndexBuffer(*ib);
+
+				RenderCommand::drawIndexed(currentSceneData->widgetMesh->getIndexCount());
+			};
+
+			std::for_each(currentSceneData->widgetsToRender.begin(), currentSceneData->widgetsToRender.end(), draw);
+			currentSceneData->widgetsToRender.clear();
 		}
 
 		//Characters
@@ -230,7 +270,6 @@ namespace clv::ecs::_2D{
 			};
 
 			std::for_each(currentSceneData->charactersToRender.begin(), currentSceneData->charactersToRender.end(), draw);
-
 			currentSceneData->charactersToRender.clear();
 		}
 	}
