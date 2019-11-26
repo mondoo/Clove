@@ -166,10 +166,22 @@ namespace clv::ecs::_2D{
 				ui::TransformComponent* transform = std::get<ui::TransformComponent*>(tuple);
 				ui::TextComponent* fontComp = std::get<ui::TextComponent*>(tuple);
 
+				mth::vec2f offset{};
+				const mth::vec2f anchor = transform->getAnchor();
+
+				if(ui::TransformComponent* parent = transform->getParent()){
+					const mth::vec2f parentScale = parent->getScale();
+					offset.x = anchor.x * parentScale.x;
+					offset.y = anchor.y * parentScale.y;
+				} else{
+					offset.x = anchor.x * currentSceneData->screenSize.x;
+					offset.y = anchor.y * currentSceneData->screenSize.y;
+				}
+
 				const clv::ui::Text& text = fontComp->text;
 				mth::vec2f cursorPos = transform->getPosition();
-				cursorPos.x -= screenHalfSize.x;
-				cursorPos.y += screenHalfSize.y;
+				cursorPos.x -= (screenHalfSize.x - offset.x);
+				cursorPos.y += (screenHalfSize.y + offset.y);
 
 				for(size_t i = 0; i < text.getTextLength(); ++i){
 					clv::ui::Glyph glyph = text.getBufferForCharAt(i);
