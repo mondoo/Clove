@@ -74,6 +74,10 @@ namespace clv::ecs::ui{
 		return localScale;
 	}
 
+	const mth::vec2f TransformComponent::getAlignment() const{
+		return alignment;
+	}
+
 	void TransformComponent::setPosition(const mth::vec2f& position){
 		if(parent){
 			setLocalPosition(position - parent->getPosition());
@@ -110,6 +114,10 @@ namespace clv::ecs::ui{
 		localScale = scale;
 	}
 
+	void TransformComponent::setAlignment(const mth::vec2f& alignment){
+		this->alignment = alignment;
+	}
+
 	TransformComponent* TransformComponent::getParent() const{
 		return parent;
 	}
@@ -133,7 +141,9 @@ namespace clv::ecs::ui{
 	}
 
 	mth::mat4f TransformComponent::getLocalTransformMatrix() const{
-		const mth::mat4f translationMatrix = mth::translate(mth::mat4f(1.0f), mth::vec3f{ localPosition.x, -localPosition.y, 0.0f });
+		const mth::vec2f alignedOffset{ alignment.x * localScale.x, alignment.y * localScale.y };
+
+		const mth::mat4f translationMatrix = mth::translate(mth::mat4f(1.0f), mth::vec3f{ localPosition.x - alignedOffset.x, -localPosition.y + alignedOffset.y, 0.0f });
 		const mth::mat4f rotationMatrix = mth::rotate(mth::mat4f(1.0f), localRotation, { 0.0f, 0.0f, 1.0f });
 		const mth::mat4f scaleMatrix = mth::scale(mth::mat4f(1.0f), mth::vec3f{ localScale, 0.0f });
 

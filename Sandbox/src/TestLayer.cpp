@@ -168,6 +168,8 @@ void TestLayer::onAttach(){
 		wdgEnt.getComponent<clv::ecs::ui::WidgetComponent>()->setSprite(sprite);
 		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
 		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setPosition({ 0.0f, 0.0f });
+
+		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setAlignment({ 0.5f, 0.5f });
 	}
 
 	{
