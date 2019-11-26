@@ -58,6 +58,10 @@ void TestLayer::onAttach(){
 	wdgEnt.addComponent<clv::ecs::ui::WidgetComponent>();
 	wdgEnt.addComponent<clv::ecs::ui::TransformComponent>();
 
+	chlWidg = clv::plt::Application::get().getManager().createEntity();
+	chlWidg.addComponent<clv::ecs::ui::WidgetComponent>();
+	chlWidg.addComponent<clv::ecs::ui::TransformComponent>();
+
 	lght1 = clv::plt::Application::get().getManager().createEntity();
 	lght1.addComponent<clv::ecs::_3D::MeshComponent>();
 	lght1.addComponent<clv::ecs::_3D::LightComponent>();
@@ -168,8 +172,17 @@ void TestLayer::onAttach(){
 		wdgEnt.getComponent<clv::ecs::ui::WidgetComponent>()->setSprite(sprite);
 		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
 		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setPosition({ 0.0f, 0.0f });
+	}
 
-		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setAlignment({ 0.5f, 0.5f });
+	{
+		auto sprite = std::make_shared<clv::gfx::Sprite>();
+		sprite->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });
+		chlWidg.getComponent<clv::ecs::ui::WidgetComponent>()->setSprite(sprite);
+		chlWidg.getComponent<clv::ecs::ui::TransformComponent>()->setScale({ 0.5f, 0.5f });
+		chlWidg.getComponent<clv::ecs::ui::TransformComponent>()->setAlignment({ 1.0f, 0.0f });
+		chlWidg.getComponent<clv::ecs::ui::TransformComponent>()->setAnchor({ 1.0f, 0.0f });
+
+		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->addChild(chlWidg.getComponent<clv::ecs::ui::TransformComponent>());
 	}
 
 	{
