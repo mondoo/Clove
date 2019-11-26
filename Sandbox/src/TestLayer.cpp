@@ -12,7 +12,9 @@
 #include "Core/ECS/3D/Components/LightComponent.hpp"
 #include "Core/ECS/3D/Components/RigidBodyComponent.hpp"
 #include "Core/ECS/Audio/Components/AudioComponent.hpp"
+#include "Core/ECS/UI/Components/TransformComponent.hpp"
 #include "Core/ECS/UI/Components/TextComponent.hpp"
+#include "Core/ECS/UI/Components/WidgetComponent.hpp"
 #include "Core/Maths/Vector.hpp"
 #include "Core/Input/Input.hpp"
 #include "Core/Utils/DeltaTime.hpp"
@@ -51,7 +53,15 @@ void TestLayer::onAttach(){
 	sprtEnt2 = clv::plt::Application::get().getManager().createEntity();
 	sprtEnt2.addComponent<clv::ecs::_2D::SpriteComponent>();
 	sprtEnt2.addComponent<clv::ecs::_2D::TransformComponent>();
-	
+
+	wdgEnt = clv::plt::Application::get().getManager().createEntity();
+	wdgEnt.addComponent<clv::ecs::ui::WidgetComponent>();
+	wdgEnt.addComponent<clv::ecs::ui::TransformComponent>();
+
+	chlWidg = clv::plt::Application::get().getManager().createEntity();
+	chlWidg.addComponent<clv::ecs::ui::WidgetComponent>();
+	chlWidg.addComponent<clv::ecs::ui::TransformComponent>();
+
 	lght1 = clv::plt::Application::get().getManager().createEntity();
 	lght1.addComponent<clv::ecs::_3D::MeshComponent>();
 	lght1.addComponent<clv::ecs::_3D::LightComponent>();
@@ -144,17 +154,36 @@ void TestLayer::onAttach(){
 		auto sprite = std::make_shared<clv::gfx::Sprite>();
 		sprite->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });
 		sprtEnt1.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
 	}
 
 	{
 		auto sprite = std::make_shared<clv::gfx::Sprite>("res/Textures/Zombie-32x32.png");
 		sprtEnt2.getComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		sprtEnt2.getComponent<clv::ecs::_2D::TransformComponent>()->setLocalPosition(clv::mth::vec2f(0.0f, 2.0f));
-		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		sprtEnt2.getComponent<clv::ecs::_2D::TransformComponent>()->setLocalPosition(clv::mth::vec2f(0.0f, 1.0f));
+		sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
 	}
 
 	sprtEnt1.getComponent<clv::ecs::_2D::TransformComponent>()->addChild(sprtEnt2.getComponent<clv::ecs::_2D::TransformComponent>());
+
+	{
+		auto sprite = std::make_shared<clv::gfx::Sprite>();
+		sprite->setColour({ 1.0f, 1.0f, 0.0f, 1.0f });
+		wdgEnt.getComponent<clv::ecs::ui::WidgetComponent>()->setSprite(sprite);
+		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
+		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->setPosition({ 0.0f, 0.0f });
+	}
+
+	{
+		auto sprite = std::make_shared<clv::gfx::Sprite>();
+		sprite->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });
+		chlWidg.getComponent<clv::ecs::ui::WidgetComponent>()->setSprite(sprite);
+		chlWidg.getComponent<clv::ecs::ui::TransformComponent>()->setScale({ 0.5f, 0.5f });
+		chlWidg.getComponent<clv::ecs::ui::TransformComponent>()->setAlignment({ 1.0f, 0.0f });
+		chlWidg.getComponent<clv::ecs::ui::TransformComponent>()->setAnchor({ 1.0f, 0.0f });
+
+		wdgEnt.getComponent<clv::ecs::ui::TransformComponent>()->addChild(chlWidg.getComponent<clv::ecs::ui::TransformComponent>());
+	}
 
 	{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
@@ -182,14 +211,16 @@ void TestLayer::onAttach(){
 
 		fontEnt = clv::plt::Application::get().getManager().createEntity();
 		fontEnt.addComponent<clv::ecs::ui::TextComponent>(font);
-		fontEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{-550.0, 300.0f});
+		fontEnt.addComponent<clv::ecs::ui::TransformComponent>()->setPosition(clv::mth::vec2f{ 0.0f, 80.0f });
+
+		//TODO: Make it so that +y will make components go down instead of up
 
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("Hello, World!");
 		fontEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(72);
 
 		fpsEnt = clv::plt::Application::get().getManager().createEntity();
 		fpsEnt.addComponent<clv::ecs::ui::TextComponent>(font);
-		fpsEnt.addComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{-550.0, 100.0f});
+		fpsEnt.addComponent<clv::ecs::ui::TransformComponent>()->setPosition(clv::mth::vec2f{ 0.0f, 180.0f });
 
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setText("not set :(");
 		fpsEnt.getComponent<clv::ecs::ui::TextComponent>()->setSize(30);
@@ -223,7 +254,7 @@ void TestLayer::onAttach(){
 
 		rigidSprite1 = clv::plt::Application::get().getManager().createEntity();
 		rigidSprite1.addComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		rigidSprite1.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		rigidSprite1.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
 		rigidSprite1.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, true, clv::mth::vec2f{ 20.0f, 20.0f });
 
 		rigidSprite1.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{ -100.0f, 0.0f });
@@ -235,7 +266,7 @@ void TestLayer::onAttach(){
 
 		rigidSprite2 = clv::plt::Application::get().getManager().createEntity();
 		rigidSprite2.addComponent<clv::ecs::_2D::SpriteComponent>()->setSprite(sprite);
-		rigidSprite2.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(20.0f, 20.0f));
+		rigidSprite2.addComponent<clv::ecs::_2D::TransformComponent>()->setScale(clv::mth::vec2f(40.0f, 40.0f));
 		rigidSprite2.addComponent<clv::ecs::_2D::RigidBodyComponent>(1.0f, false, clv::mth::vec2f{ 20.0f, 20.0f });
 
 		rigidSprite2.getComponent<clv::ecs::_2D::TransformComponent>()->setPosition(clv::mth::vec2f{ -125.0f, 200.0f });
