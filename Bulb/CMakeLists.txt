@@ -1,5 +1,5 @@
 #Bulb dependencies
-set(EditorFolder "Bulb")
+set(EditorFolder "Garlic/Bulb")
 
 #-core
 add_subdirectory(Bulb.Core)

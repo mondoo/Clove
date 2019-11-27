@@ -1,4 +1,4 @@
-set(DependencyFolder "Clove/Dependencies")
+set(DependencyFolder "Garlic/Clove/Dependencies")
 
 #Vendor defaults
 set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")

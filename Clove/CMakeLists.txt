@@ -1,4 +1,4 @@
-set(EngineFolder "Clove")
+set(EngineFolder "Garlic/Clove")
 
 #Clove dependencies
 add_subdirectory(vendor)
