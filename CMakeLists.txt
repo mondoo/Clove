@@ -47,14 +47,8 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
 set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #-custom
-option(GAR_BUILD_SANDBOX "Build the Sandbox project used for testing" ON)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #Clove
 add_subdirectory(Clove)
-
-#Sandbox
-if(GAR_BUILD_SANDBOX)
-	add_subdirectory(Sandbox)
-endif()
