@@ -2,7 +2,7 @@
 The Garlic game engine is comprised of the following components:
 
 - **Clove**:  A game engine built with modern C++
-- **Bulb**:   An editor wrapping Clove built in C# [planned]
+- **Bulb**:   An editor wrapping Clove built in C#
 
 Currently, Garlic supports the following platforms:
 
