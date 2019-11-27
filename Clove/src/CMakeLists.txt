@@ -387,8 +387,8 @@ set(
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${AllFiles})
 
 source_group(Core FILES 
-	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/src/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx 
-	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/src/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
+	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx 
+	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
 )
 
 #Set the target source files
