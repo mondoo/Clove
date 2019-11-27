@@ -15,16 +15,28 @@ struct Constants{
 	float animateBy;
 };
 
-vertex float4 vertex_shader(const device packed_float3* vertices [[ buffer(0) ]],
-							constant Constants& constants [[ buffer(1) ]],
-							uint vertexID [[ vertex_id ]]){
-	float4 position = float4(vertices[vertexID], 1);
-	position.x += constants.animateBy;
-	return position;
+struct VertexIn{
+	float4 position [[ attribute(0) ]]; //Attribute = the element in the descriptor array
+	float4 colour [[ attribute(1) ]];
+};
+
+struct VertexOut{
+	float4 position [[ position ]];
+	float4 colour;
+};
+
+vertex VertexOut vertex_shader(const VertexIn vertexIn [[ stage_in ]], constant Constants& constants [[ buffer(1) ]]){
+	VertexOut vertexOut;
+	vertexOut.position = vertexIn.position;
+	vertexOut.colour = vertexIn.colour;
+	
+	vertexOut.position.x += constants.animateBy;
+	
+	return vertexOut;
 }
 
-fragment half4 fragment_shader(){
-	return half4(1, 1, 0, 1);
+fragment half4 fragment_shader(VertexOut vertexIn [[ stage_in ]]){
+	return half4(vertexIn.colour);
 }
 
 )";

@@ -8,9 +8,14 @@
 //#import <Metal/Metal.h>
 #import "Graphics/Metal/ShaderStrings.hpp"
 
-//Metal constant buffer struct
+//Metal structs
 struct constants{
 	float animateBy = 0.5f;
+};
+
+struct Vertex{
+	clv::mth::vec3f position;
+	clv::mth::vec4f colour;
 };
 //---
 
@@ -60,11 +65,11 @@ struct constants{
 	static float time = 0.0f;
 	static constants constant;
 	
-	float vertices[] = {
-		-1,  1,  0,
-		-1, -1,  0,
-		 1, -1,  0,
-		 1,  1,  0
+	Vertex vertices[] = {
+		{{ -1.0f,  1.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f }},
+		{{ -1.0f, -1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }},
+		{{  1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }},
+		{{  1.0f,  1.0f, 0.0f }, { 1.0f, 0.0f, 1.0f, 1.0f }}
 	};
 	
 	UInt32 indices[] = {
@@ -90,6 +95,22 @@ struct constants{
 	[pipelineDescriptor setVertexFunction:vertexFunction];
 	[pipelineDescriptor setFragmentFunction:fragmentFunction];
 	pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
+	
+	//Vertex descriptor
+	MTLVertexDescriptor* vertexDescriptor = [[MTLVertexDescriptor alloc] init];
+	
+	vertexDescriptor.attributes[0].format = MTLVertexFormatFloat3;
+	vertexDescriptor.attributes[0].offset = 0;
+	vertexDescriptor.attributes[0].bufferIndex = 0;
+	
+	vertexDescriptor.attributes[1].format = MTLVertexFormatFloat4;
+	vertexDescriptor.attributes[1].offset = sizeof(clv::mth::vec3f);
+	vertexDescriptor.attributes[1].bufferIndex = 0;
+	
+	vertexDescriptor.layouts[0].stride = sizeof(Vertex);
+	
+	[pipelineDescriptor setVertexDescriptor:vertexDescriptor];
+	
 	NSError *error = [[NSError alloc] init];
 	id<MTLRenderPipelineState> pipelineState = [_device newRenderPipelineStateWithDescriptor:pipelineDescriptor error:&error];
 	
