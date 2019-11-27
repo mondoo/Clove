@@ -415,12 +415,12 @@ target_include_directories(
         ../vendor/glm
 		#TODO: Get rid of the lbsndfile paths below (see Sound.hpp)
 		../vendor/libsndfile/src
-		${CMAKE_BINARY_DIR}/Clove/vendor/libsndfile/src
+		${CMAKE_CURRENT_BINARY_DIR}/../vendor/libsndfile/src
 	PRIVATE
         ../vendor/OBJ-Loader/Source
 		../vendor/freetype2/include
 		../vendor/bullet3/src
-		$<$<PLATFORM_ID:Windows>:${CMAKE_SOURCE_DIR}/Clove/vendor/wglext>
+		$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/../vendor/wglext>
 )
 
 #Libraries
