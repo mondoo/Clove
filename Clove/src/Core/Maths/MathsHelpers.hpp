@@ -14,6 +14,9 @@ namespace clv::mth{
 	constexpr T asDegrees(T radians);
 
 	template<typename T>
+	constexpr T pi = glm::pi<T>();
+
+	template<typename T>
 	mat<4, 4, T, qualifier::defaultp> createOrthographicMatrix(T left, T right, T bottom, T top);
 
 	template<typename T>

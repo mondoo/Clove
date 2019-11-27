@@ -114,10 +114,17 @@ namespace clv::ecs::_3D{
 				const mth::vec3f& position = transform->getPosition();
 
 				//update front
+				const mth::quatf cameraRotation = transform->getRotation();
+				mth::vec3f eulerRot = mth::quaternionToEuler(cameraRotation);
+
+				if(eulerRot.x >= mth::pi<float>){ //This stops it moving the other way
+					eulerRot.y *= -1.0f;
+				}
+
 				mth::vec3f front;
-				front.x = cos(mth::asRadians(camera->yaw)) * cos(mth::asRadians(camera->pitch));
-				front.y = sin(mth::asRadians(camera->pitch));
-				front.z = sin(mth::asRadians(camera->yaw)) * cos(mth::asRadians(camera->pitch));
+				front.x = cos(eulerRot.y) * cos(eulerRot.x);
+				front.y = sin(eulerRot.x);
+				front.z = sin(eulerRot.y) * cos(eulerRot.x);
 				camera->cameraFront = mth::normalise(front);
 
 				//update look at

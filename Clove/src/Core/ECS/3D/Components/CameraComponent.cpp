@@ -26,11 +26,6 @@ namespace clv::ecs::_3D{
 		return cameraRight;
 	}
 
-	void CameraComponent::updateFront(float pitch, float yaw){
-		this->pitch = pitch;
-		this->yaw = yaw;
-	}
-
 	void CameraComponent::setProjectionMode(ProjectionMode mode){
 		const float width = static_cast<float>(viewport.width);
 		const float height = static_cast<float>(viewport.height);
