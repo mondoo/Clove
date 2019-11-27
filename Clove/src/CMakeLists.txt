@@ -386,6 +386,11 @@ set(
 #Organise the source tree
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${AllFiles})
 
+source_group(Core FILES 
+	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/src/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx 
+	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/src/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
+)
+
 #Set the target source files
 target_sources(
 	${PROJECT_NAME}
@@ -401,127 +406,3 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	set_source_files_properties(${WindowsGLGraphicsFiles} ${LinuxGLGraphicsFiles} ${Direct3DGraphicsFiles} ${WindowsPlatformFiles} ${LinuxPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 endif()
-
-#Includes
-target_include_directories(
-	${PROJECT_NAME}
-	#Clove
-	PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-	#Libraries
-	PUBLIC
-		../vendor/OBJ-Loader/Source
-	INTERFACE
-        ../vendor/glm
-		#TODO: Get rid of the lbsndfile paths below (see Sound.hpp)
-		../vendor/libsndfile/src
-		${CMAKE_CURRENT_BINARY_DIR}/../vendor/libsndfile/src
-	PRIVATE
-        ../vendor/OBJ-Loader/Source
-		../vendor/freetype2/include
-		../vendor/bullet3/src
-		$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/../vendor/wglext>
-)
-
-#Libraries
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-	find_library(CLV_COCOA_LIB Cocoa)
-	find_library(CLV_MACOS_OPENGL_LIB OpenGL)
-endif()
-
-target_link_libraries(
-	${PROJECT_NAME}
-    #Cross platform
-    PUBLIC
-        spdlog
-	PRIVATE 
-		stb
-		Glad
-		glm
-		sndfile
-		portaudio_static
-		freetype
-		#Order of these are important
-        BulletDynamics
-        BulletCollision
-        LinearMath
-	#Windows
-	PRIVATE
-		$<$<PLATFORM_ID:Windows>:dxerr>
-		$<$<PLATFORM_ID:Windows>:opengl32>
-		$<$<PLATFORM_ID:Windows>:d3d11>
-		$<$<PLATFORM_ID:Windows>:dxguid>
-		$<$<PLATFORM_ID:Windows>:d3dcompiler>
-	#Linux
-	PRIVATE
-		$<$<PLATFORM_ID:Linux>:GLX>
-		$<$<PLATFORM_ID:Linux>:X11>
-		$<$<PLATFORM_ID:Linux>:dl>
-	#MacOS
-	PRIVATE
-		$<$<PLATFORM_ID:Darwin>:${CLV_COCOA_LIB}>
-		$<$<PLATFORM_ID:Darwin>:${CLV_MACOS_OPENGL_LIB}>
-)
-
-#Precompiled header
-target_precompile_headers(
-	${PROJECT_NAME}
-	#Generic headers
-	PUBLIC
-		<iostream>
-		<memory>
-		<utility>
-		<algorithm>
-		<functional>
-		<sstream>
-		<optional>
-	#Data structures
-	PUBLIC
-        <string>
-        <array>
-		<vector>
-		<map>
-		<unordered_map>
-		<set>
-		<unordered_set>
-	#Clove headers
-	PUBLIC
-		[["Core/Core.hpp"]]
-		[["Core/Log.hpp"]]
-		[["Core/IntTypes.hpp"]]
-		[["Core/Maths/MathsTypes.hpp"]]
-		[["Core/Maths/Maths.hpp"]]
-		[["Core/Maths/MathsHelpers.hpp"]]
-		[["Core/Utils/Delegate.hpp"]]
-	#Platform headers
-	PUBLIC
-		$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>
-		$<$<PLATFORM_ID:Linux>:Platform/Linux/CloveLinux.hpp>
-)
-source_group(Core FILES 
-	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/src/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx 
-	${CMAKE_BINARY_DIR}/${PROJECT_NAME}/src/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
-)
-
-#Preprocessor
-target_compile_definitions(
-	${PROJECT_NAME}
-	#Config
-	PUBLIC
-		CLV_DEBUG=$<CONFIG:Debug>
-		CLV_DEVELOPMENT=$<CONFIG:Development>
-		CLV_PROFILING=$<CONFIG:Profiling>
-		CLV_RELEASE=$<CONFIG:Release>
-	#Platform
-	PUBLIC
-		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
-		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
-		CLV_PLATFORM_MACOS=$<PLATFORM_ID:Darwin>
-	PRIVATE
-		$<$<PLATFORM_ID:Darwin>:GL_SILENCE_DEPRECATION> #Silences the MacOS gl deprecation messages
-	#Engine
-	INTERFACE
-		CLV_ENGINE=0
-	PRIVATE
-		CLV_ENGINE=1
-)
