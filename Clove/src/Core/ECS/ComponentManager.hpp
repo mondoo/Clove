@@ -34,7 +34,8 @@ namespace clv::ecs{
 		class ComponentContainer : public ComponentContainerInterface{
 			//VARIABLES
 		private:
-			std::unordered_map<EntityID, std::unique_ptr<ComponentType>> components;
+			std::unordered_map<EntityID, size_t> entityIDToIndex;
+			std::vector<std::unique_ptr<ComponentType>> components;
 
 			//FUNCTIONS
 		public:

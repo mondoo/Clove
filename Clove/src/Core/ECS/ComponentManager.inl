@@ -25,14 +25,20 @@ namespace clv::ecs{
 		
 		componentAddedDelegate.broadcast(comp.get());
 		
-		components[entityID] = std::move(comp);
-		return components[entityID].get();
+		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()){
+			components[iter->second] = std::move(comp);
+		} else{
+			components.push_back(std::move(comp));
+			entityIDToIndex[entityID] = components.size() - 1;
+		}
+
+		return components[entityIDToIndex[entityID]].get();
 	}
 
 	template<typename ComponentType>
 	ComponentType* ComponentManager::ComponentContainer<ComponentType>::getComponent(EntityID entityID){
-		if(auto iter = components.find(entityID); iter != components.end()){
-			return iter->second.get();
+		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()){
+			return components[iter->second].get();
 		} else{
 			return nullptr;
 		}
@@ -40,9 +46,19 @@ namespace clv::ecs{
 
 	template<typename ComponentType>
 	void ComponentManager::ComponentContainer<ComponentType>::removeComponent(EntityID entityID){
-		if(auto iter = components.find(entityID); iter != components.end()){
-			componentRemovedDelegate.broadcast(iter->second.get());
-			components.erase(entityID);
+		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()){
+			const size_t index = iter->second;
+			auto removedComp = std::move(components[index]);
+
+			components[index] = std::move(components.back());
+			components.pop_back();
+			entityIDToIndex.erase(entityID);
+
+			//Update the index map so it knows about the moved component
+			EntityID movedCompEntityID = components[index]->entityID;
+			entityIDToIndex[movedCompEntityID] = index;
+
+			componentRemovedDelegate.broadcast(removedComp.get());
 		}
 	}
 
