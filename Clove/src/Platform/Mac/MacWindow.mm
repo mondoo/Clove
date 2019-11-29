@@ -131,6 +131,6 @@ namespace clv::plt{
 		windowProxy.cloveWindow = this;
 		
 		surface = gfx::RenderCommand::createSurface(nullptr);
-		gfx::RenderCommand::makeSurfaceCurrent(*surface);
+		gfx::RenderCommand::makeSurfaceCurrent(surface);
 	}
 }
