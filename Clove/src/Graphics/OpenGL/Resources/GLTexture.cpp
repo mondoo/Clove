@@ -1,4 +1,4 @@
-#include "GLTexture.hpp"
+#include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
 
 #include <stb_image.h>
 

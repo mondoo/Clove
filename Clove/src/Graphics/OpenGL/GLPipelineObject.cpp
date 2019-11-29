@@ -1,6 +1,6 @@
-#include "GLPipelineObject.hpp"
+#include "Clove/Graphics/OpenGL/GLPipelineObject.hpp"
 
-#include "Graphics/OpenGL/GLShader.hpp"
+#include "Clove/Graphics/OpenGL/GLShader.hpp"
 
 namespace clv::gfx::ogl{
 	GLPipelineObject::GLPipelineObject(const std::shared_ptr<Shader>& shader)

@@ -1,4 +1,4 @@
-#include "LightComponent.hpp"
+#include "Clove/Core/ECS/3D/Components/LightComponent.hpp"
 
 namespace clv::ecs::_3D{
 	LightComponent::LightComponent(){

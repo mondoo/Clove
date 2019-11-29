@@ -1,7 +1,7 @@
-#import "Platform/Mac/CloveMac.h"
-#include "CGLSurface.hpp"
+#import "Clove/Platform/Mac/CloveMac.h"
+#include "Clove/Graphics/OpenGL/CGLSurface.hpp"
 
-#include "Core/Graphics/GraphicsTypes.hpp"
+#include "Clove/Core/Graphics/GraphicsTypes.hpp"
 
 #include <OpenGL/CGLContext.h>
 

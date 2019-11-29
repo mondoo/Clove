@@ -1,4 +1,4 @@
-#include "TextComponent.hpp"
+#include "Clove/Core/ECS/UI/Components/TextComponent.hpp"
 
 namespace clv::ecs::ui{
 	TextComponent::TextComponent(TextComponent &&other) = default;

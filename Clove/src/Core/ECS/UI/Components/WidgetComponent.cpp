@@ -1,4 +1,4 @@
-#include "WidgetComponent.hpp"
+#include "Clove/Core/ECS/UI/Components/WidgetComponent.hpp"
 
 namespace clv::ecs::ui{
 	WidgetComponent::WidgetComponent() = default;

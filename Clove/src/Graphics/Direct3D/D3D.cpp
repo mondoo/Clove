@@ -1,8 +1,8 @@
-#include "D3D.hpp"
+#include "Clove/Graphics/Direct3D/D3D.hpp"
 
-#include "Graphics/Direct3D/D3DException.hpp"
-#include "Graphics/Direct3D/D3DRenderDevice.hpp"
-#include "Graphics/Direct3D/D3DRenderFactory.hpp"
+#include "Clove/Graphics/Direct3D/D3DException.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderFactory.hpp"
 
 #include <d3d11.h>
 

@@ -1,8 +1,8 @@
-#include "Mesh.hpp"
+#include "Clove/Core/Graphics/Renderables/Mesh.hpp"
 
-#include "Core/Graphics/RenderCommand.hpp"
-#include "Core/Graphics/Resources/Buffer.hpp"
-#include "Core/Utils/MeshLoader.hpp"
+#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/Resources/Buffer.hpp"
+#include "Clove/Core/Utils/MeshLoader.hpp"
 
 namespace clv::gfx{
 	Mesh::Mesh(std::string filePath, MaterialInstance materialInstance)

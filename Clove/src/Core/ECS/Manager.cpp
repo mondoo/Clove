@@ -1,11 +1,11 @@
-#include "Manager.hpp"
+#include "Clove/Core/ECS/Manager.hpp"
 
-#include "Core/ECS/Entity.hpp"
-#include "Core/ECS/2D/Systems/RenderSystem.hpp"
-#include "Core/ECS/2D/Systems/PhysicsSystem.hpp"
-#include "Core/ECS/3D/Systems/RenderSystem.hpp"
-#include "Core/ECS/3D/Systems/PhysicsSystem.hpp"
-#include "Core/ECS/Audio/Systems/AudioSystem.hpp"
+#include "Clove/Core/ECS/Entity.hpp"
+#include "Clove/Core/ECS/2D/Systems/RenderSystem.hpp"
+#include "Clove/Core/ECS/2D/Systems/PhysicsSystem.hpp"
+#include "Clove/Core/ECS/3D/Systems/RenderSystem.hpp"
+#include "Clove/Core/ECS/3D/Systems/PhysicsSystem.hpp"
+#include "Clove/Core/ECS/Audio/Systems/AudioSystem.hpp"
 
 namespace clv::ecs{
 	EntityID Manager::nextID = 1;

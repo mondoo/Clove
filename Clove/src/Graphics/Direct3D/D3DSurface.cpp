@@ -1,13 +1,13 @@
-#include "D3DSurface.hpp"
+#include "Clove/Graphics/Direct3D/D3DSurface.hpp"
 
-#include "Graphics/Direct3D/D3DException.hpp"
-#include "Graphics/Direct3D/D3DRenderTarget.hpp"
-#include "Platform/Windows/WindowsWindow.hpp"
-#include "Core/Graphics/RenderCommand.hpp"
-#include "Core/Graphics/GraphicsTypes.hpp"
-#include "Core/Graphics/RenderDevice.hpp"
+#include "Clove/Graphics/Direct3D/D3DException.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
+#include "Clove/Platform/Windows/WindowsWindow.hpp"
+#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsTypes.hpp"
+#include "Clove/Core/Graphics/RenderDevice.hpp"
 #if CLV_DEBUG
-#include "Graphics/Direct3D/D3DRenderDevice.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
 #endif
 
 #include <d3d11.h>

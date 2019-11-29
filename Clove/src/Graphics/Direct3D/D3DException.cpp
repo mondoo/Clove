@@ -1,4 +1,4 @@
-#include "D3DException.hpp"
+#include "Clove/Graphics/Direct3D/D3DException.hpp"
 
 #include <dxerr.h>
 

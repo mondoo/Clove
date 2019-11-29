@@ -1,7 +1,7 @@
-#include "DXGIInfoManager.hpp"
+#include "Clove/Graphics/Direct3D/DXGIInfoManager.hpp"
 
-#include "Graphics/Direct3D/D3DException.hpp"
-#include "Platform/Windows/WindowsException.hpp"
+#include "Clove/Graphics/Direct3D/D3DException.hpp"
+#include "Clove/Platform/Windows/WindowsException.hpp"
 
 #include <dxgidebug.h>
 

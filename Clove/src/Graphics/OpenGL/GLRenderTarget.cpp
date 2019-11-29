@@ -1,6 +1,6 @@
-#include "GLRenderTarget.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
-#include "Graphics/OpenGL/Resources/GLTexture.hpp"
+#include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
 
 namespace clv::gfx::ogl{
 	GLRenderTarget::GLRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){

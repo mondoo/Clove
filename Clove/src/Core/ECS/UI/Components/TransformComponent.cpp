@@ -1,4 +1,4 @@
-#include "TransformComponent.hpp"
+#include "Clove/Core/ECS/UI/Components/TransformComponent.hpp"
 
 namespace clv::ecs::ui{
 	static void removeItemFromVector(TransformComponent* item, std::vector<TransformComponent*>& vector){

@@ -1,8 +1,8 @@
-#include "WGLSurface.hpp"
+#include "Clove/Graphics/OpenGL/WGLSurface.hpp"
 
-#include "Platform/Windows/WindowsWindow.hpp"
-#include "Platform/Windows/WindowsException.hpp"
-#include "Core/Graphics/GraphicsTypes.hpp"
+#include "Clove/Platform/Windows/WindowsWindow.hpp"
+#include "Clove/Platform/Windows/WindowsException.hpp"
+#include "Clove/Core/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx::ogl{
 	WGLSurface::WGLSurface(void* windowData){

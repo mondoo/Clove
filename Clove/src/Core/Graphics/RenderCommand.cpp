@@ -1,8 +1,8 @@
-#include "RenderCommand.hpp"
+#include "Clove/Core/Graphics/RenderCommand.hpp"
 
-#include "Graphics/OpenGL/GL.hpp"
+#include "Clove/Graphics/OpenGL/GL.hpp"
 #if CLV_PLATFORM_WINDOWS
-#include "Graphics/Direct3D/D3D.hpp"
+	#include "Clove/Graphics/Direct3D/D3D.hpp"
 #endif
 
 namespace clv::gfx{
