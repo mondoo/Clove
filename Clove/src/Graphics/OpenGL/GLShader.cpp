@@ -1,6 +1,6 @@
-#include "GLShader.hpp"
+#include "Clove/Graphics/OpenGL/GLShader.hpp"
 
-#include "Graphics/OpenGL/ShaderStrings.hpp"
+#include "Clove/Graphics/OpenGL/ShaderStrings.hpp"
 
 #include <fstream>
 #include <sstream>

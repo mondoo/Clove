@@ -1,6 +1,6 @@
-#include "CameraComponent.hpp"
+#include "Clove/Core/ECS/3D/Components/CameraComponent.hpp"
 
-#include "Core/Platform/Window.hpp"
+#include "Clove/Core/Platform/Window.hpp"
 
 namespace clv::ecs::_3D{
 	CameraComponent::CameraComponent(const gfx::Viewport& viewport)

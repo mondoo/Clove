@@ -1,6 +1,6 @@
-#include "WindowsApplication.hpp"
+#include "Clove/Platform/Windows/WindowsApplication.hpp"
 
-#include "Platform/Windows/WindowsWindow.hpp"
+#include "Clove/Platform/Windows/WindowsWindow.hpp"
 
 namespace clv::plt{
 	std::unique_ptr<Window> WindowsApplication::createWindow(const WindowProps& props){

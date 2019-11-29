@@ -1,7 +1,7 @@
-#include "GLXSurface.hpp"
+#include "Clove/Graphics/OpenGL/GLXSurface.hpp"
 
-#include "Platform/Linux/LinuxWindow.hpp"
-#include "Core/Graphics/GraphicsTypes.hpp"
+#include "Clove/Platform/Linux/LinuxWindow.hpp"
+#include "Clove/Core/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx::ogl{
 	GLXSurface::GLXSurface(void* windowData){

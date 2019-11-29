@@ -1,20 +1,20 @@
-#include "Application.hpp"
+#include "Clove/Core/Platform/Application.hpp"
 
-#include "Core/Platform/Window.hpp"
-#include "Core/Input/Input.hpp"
-#include "Core/LayerStack.hpp"
-#include "Core/Layer.hpp"
-#include "Core/Utils/DeltaTime.hpp"
-#include "Core/ECS/Manager.hpp"
+#include "Clove/Core/Platform/Window.hpp"
+#include "Clove/Core/Input/Input.hpp"
+#include "Clove/Core/LayerStack.hpp"
+#include "Clove/Core/Layer.hpp"
+#include "Clove/Core/Utils/DeltaTime.hpp"
+#include "Clove/Core/ECS/Manager.hpp"
 
-#include "Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/RenderCommand.hpp"
 
 #if CLV_PLATFORM_WINDOWS
-	#include "Platform/Windows/WindowsApplication.hpp"
+	#include "Clove/Platform/Windows/WindowsApplication.hpp"
 #elif CLV_PLATFORM_LINUX
-	#include "Platform/Linux/LinuxApplication.hpp"
+	#include "Clove/Platform/Linux/LinuxApplication.hpp"
 #elif CLV_PLATFORM_MACOS
-	#include "Platform/Mac/MacApplication.hpp"
+	#include "Clove/Platform/Mac/MacApplication.hpp"
 #endif
 
 namespace clv::plt{

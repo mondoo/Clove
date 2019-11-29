@@ -1,4 +1,4 @@
-#include "RigidBodyComponent.hpp"
+#include "Clove/Core/ECS/3D/Components/RigidBodyComponent.hpp"
 
 #include <btBulletDynamicsCommon.h>
 

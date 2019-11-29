@@ -1,12 +1,12 @@
-#include "D3DRenderDevice.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
 
-#include "Graphics/Direct3D/D3DException.hpp"
-#include "Graphics/Direct3D/Resources/D3DBuffer.hpp"
-#include "Graphics/Direct3D/Resources/D3DTexture.hpp"
-#include "Graphics/Direct3D/D3DPipelineObject.hpp"
-#include "Graphics/Direct3D/D3DRenderTarget.hpp"
-#include "Graphics/Direct3D/D3DShader.hpp"
-#include "Graphics/Direct3D/D3DSurface.hpp"
+#include "Clove/Graphics/Direct3D/D3DException.hpp"
+#include "Clove/Graphics/Direct3D/Resources/D3DBuffer.hpp"
+#include "Clove/Graphics/Direct3D/Resources/D3DTexture.hpp"
+#include "Clove/Graphics/Direct3D/D3DPipelineObject.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
+#include "Clove/Graphics/Direct3D/D3DShader.hpp"
+#include "Clove/Graphics/Direct3D/D3DSurface.hpp"
 
 #include <d3d11.h>
 

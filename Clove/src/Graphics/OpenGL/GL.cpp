@@ -1,8 +1,8 @@
-#include "GL.hpp"
+#include "Clove/Graphics/OpenGL/GL.hpp"
 
-#include "Graphics/OpenGL/GLRenderDevice.hpp"
-#include "Graphics/OpenGL/GLRenderFactory.hpp"
-#include "Graphics/OpenGL/GLException.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderDevice.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderFactory.hpp"
+#include "Clove/Graphics/OpenGL/GLException.hpp"
 
 #include <glad/glad.h>
 

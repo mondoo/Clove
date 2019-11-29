@@ -1,4 +1,4 @@
-#include "GLException.hpp"
+#include "Clove/Graphics/OpenGL/GLException.hpp"
 
 #include <glad/glad.h>
 

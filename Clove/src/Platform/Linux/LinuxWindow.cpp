@@ -1,8 +1,9 @@
-#include <X11/Xlib.h>
-#include "LinuxWindow.hpp"
+#include "Clove/Platform/Linux/LinuxWindow.hpp"
 
-#include "Core/Graphics/Surface.hpp"
-#include "Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/Surface.hpp"
+#include "Clove/Core/Graphics/RenderCommand.hpp"
+
+#include <X11/Xlib.h>
 
 namespace clv::plt{
 	LinuxWindow::LinuxWindow(const WindowProps& props){

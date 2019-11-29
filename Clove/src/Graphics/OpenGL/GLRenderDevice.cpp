@@ -1,12 +1,12 @@
-#include "GLRenderDevice.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderDevice.hpp"
 
-#include "Graphics/OpenGL/GL.hpp"
-#include "Graphics/OpenGL/Resources/GLBuffer.hpp"
-#include "Graphics/OpenGL/Resources/GLTexture.hpp"
-#include "Graphics/OpenGL/GLPipelineObject.hpp"
-#include "Graphics/OpenGL/GLRenderTarget.hpp"
-#include "Graphics/OpenGL/GLShader.hpp"
-#include "Graphics/OpenGL/GLSurface.hpp"
+#include "Clove/Graphics/OpenGL/GL.hpp"
+#include "Clove/Graphics/OpenGL/Resources/GLBuffer.hpp"
+#include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
+#include "Clove/Graphics/OpenGL/GLPipelineObject.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
+#include "Clove/Graphics/OpenGL/GLShader.hpp"
+#include "Clove/Graphics/OpenGL/GLSurface.hpp"
 
 #include <glad/glad.h>
 

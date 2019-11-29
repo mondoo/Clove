@@ -12,7 +12,7 @@ target_include_directories(
 	Clove
 	#Clove
 	PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+		include
 	#Libraries
 	PUBLIC
 		vendor/OBJ-Loader/Source
@@ -91,17 +91,17 @@ target_precompile_headers(
 		<unordered_set>
 	#Clove headers
 	PUBLIC
-		[["Core/Core.hpp"]]
-		[["Core/Log.hpp"]]
-		[["Core/IntTypes.hpp"]]
-		[["Core/Maths/MathsTypes.hpp"]]
-		[["Core/Maths/Maths.hpp"]]
-		[["Core/Maths/MathsHelpers.hpp"]]
-		[["Core/Utils/Delegate.hpp"]]
+		[["Clove/Core/Core.hpp"]]
+		[["Clove/Core/Log.hpp"]]
+		[["Clove/Core/IntTypes.hpp"]]
+		[["Clove/Core/Maths/MathsTypes.hpp"]]
+		[["Clove/Core/Maths/Maths.hpp"]]
+		[["Clove/Core/Maths/MathsHelpers.hpp"]]
+		[["Clove/Core/Utils/Delegate.hpp"]]
 	#Platform headers
 	PUBLIC
-		$<$<PLATFORM_ID:Windows>:Platform/Windows/CloveWindows.hpp>
-		$<$<PLATFORM_ID:Linux>:Platform/Linux/CloveLinux.hpp>
+		$<$<PLATFORM_ID:Windows>:Clove/Platform/Windows/CloveWindows.hpp>
+		$<$<PLATFORM_ID:Linux>:Clove/Platform/Linux/CloveLinux.hpp>
 )
 
 #Preprocessor

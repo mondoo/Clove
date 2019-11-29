@@ -1,4 +1,4 @@
-#include "AudioComponent.hpp"
+#include "Clove/Core/ECS/Audio/Components/AudioComponent.hpp"
 
 #include <portaudio.h>
 

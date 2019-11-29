@@ -1,9 +1,9 @@
-#include "D3DShader.hpp"
+#include "Clove/Graphics/Direct3D/D3DShader.hpp"
 
-#include "Graphics/Direct3D/D3DException.hpp"
-#include "Graphics/Direct3D/ShaderHeaders.hpp"
+#include "Clove/Graphics/Direct3D/D3DException.hpp"
+#include "Clove/Graphics/Direct3D/ShaderHeaders.hpp"
 #if CLV_DEBUG
-#include "Graphics/Direct3D/D3DRenderDevice.hpp"
+	#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
 #endif
 
 #include <d3d11.h>

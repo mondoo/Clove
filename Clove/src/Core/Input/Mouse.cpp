@@ -1,4 +1,4 @@
-#include "Mouse.hpp"
+#include "Clove/Core/Input/Mouse.hpp"
 
 namespace clv{
 	Mouse::Event::Event() = default;

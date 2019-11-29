@@ -1,4 +1,4 @@
-#include "ComponentManager.hpp"
+#include "Clove/Core/ECS/ComponentManager.hpp"
 
 namespace clv::ecs{
 	ComponentManager::ComponentContainerInterface::ComponentContainerInterface() = default;

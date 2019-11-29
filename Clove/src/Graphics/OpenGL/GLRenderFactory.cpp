@@ -1,16 +1,16 @@
-#include "GLRenderFactory.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderFactory.hpp"
 
-#include "Graphics/OpenGL/Resources/GLBuffer.hpp"
-#include "Graphics/OpenGL/Resources/GLTexture.hpp"
-#include "Graphics/OpenGL/GLPipelineObject.hpp"
-#include "Graphics/OpenGL/GLRenderTarget.hpp"
-#include "Graphics/OpenGL/GLShader.hpp"
+#include "Clove/Graphics/OpenGL/Resources/GLBuffer.hpp"
+#include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
+#include "Clove/Graphics/OpenGL/GLPipelineObject.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
+#include "Clove/Graphics/OpenGL/GLShader.hpp"
 #if CLV_PLATFORM_WINDOWS
-#include "Graphics/OpenGL/WGLSurface.hpp"
+	#include "Clove/Graphics/OpenGL/WGLSurface.hpp"
 #elif CLV_PLATFORM_LINUX
-#include "Graphics/OpenGL/GLXSurface.hpp"
+	#include "Clove/Graphics/OpenGL/GLXSurface.hpp"
 #elif CLV_PLATFORM_MACOS
-#include "Graphics/OpenGL/CGLSurface.hpp"
+	#include "Clove/Graphics/OpenGL/CGLSurface.hpp"
 #endif
 
 namespace clv::gfx::ogl{

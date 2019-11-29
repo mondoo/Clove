@@ -1,4 +1,4 @@
-#include "Text.hpp"
+#include "Clove/Core/UI/Text.hpp"
 
 namespace clv::ui{
 	Text::Text(Text &&other) = default;

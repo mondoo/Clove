@@ -1,6 +1,6 @@
-#include "LinuxApplication.hpp"
+#include "Clove/Platform/Linux/LinuxApplication.hpp"
 
-#include "Platform/Linux/LinuxWindow.hpp"
+#include "Clove/Platform/Linux/LinuxWindow.hpp"
 
 namespace clv::plt{
 	std::unique_ptr<Window> LinuxApplication::createWindow(const WindowProps& props){

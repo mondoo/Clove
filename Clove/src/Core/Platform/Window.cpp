@@ -1,6 +1,6 @@
-#include "Window.hpp"
+#include "Clove/Core/Platform/Window.hpp"
 
-#include "Core/Graphics/Surface.hpp"
+#include "Clove/Core/Graphics/Surface.hpp"
 
 namespace clv::plt{
 	Window::Window() = default;

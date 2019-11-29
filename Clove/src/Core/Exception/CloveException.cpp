@@ -1,4 +1,4 @@
-#include "CloveException.hpp"
+#include "Clove/Core/Exception/CloveException.hpp"
 
 namespace clv{
 	CloveException::CloveException(int32 lineNum, const char* file)
