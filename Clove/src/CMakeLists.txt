@@ -385,7 +385,10 @@ set(
 )
 
 #Organise the source tree
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../ FILES ${AllFiles})
+file(GLOB_RECURSE header ${CLV_INCLUDE}/*.h ${CLV_INCLUDE}/*.hpp ${CLV_INCLUDE}/*.inl)
+file(GLOB_RECURSE source *.cpp *.m *.mm *.glsl *.hlsl)
+source_group(TREE ${CLV_INCLUDE} FILES ${header})
+source_group(TREE ${CLV_SOURCE} FILES ${source})
 
 source_group(Core FILES 
 	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx 
