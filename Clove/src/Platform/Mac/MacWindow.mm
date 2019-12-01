@@ -6,7 +6,7 @@
 
 //Temp metal stuff
 //#import <Metal/Metal.h>
-#import "Graphics/Metal/ShaderStrings.hpp"
+#import "Clove/Graphics/Metal/ShaderStrings.hpp"
 
 //Metal structs
 struct constants{

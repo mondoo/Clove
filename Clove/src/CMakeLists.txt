@@ -284,7 +284,7 @@ set(
 )
 
 #Parse the glsl shader files into a header
-set(GLSLShaderIncludeFile ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/OpenGL/ShaderStrings.hpp)
+set(GLSLShaderIncludeFile ${CLV_INCLUDE}/Graphics/OpenGL/ShaderStrings.hpp)
 file(WRITE ${GLSLShaderIncludeFile} "//cmake generated header file\n\n")
 foreach(shaderFile ${GLSLShaders})
 	file(READ ${shaderFile} FILE_CONTENTS)
@@ -367,14 +367,14 @@ set(
 set_source_files_properties(${MetalShaders} PROPERTIES LANGUAGE METAL)
 
 #Parse each metal shader file into a header
-set(MSLShaderIncudeFile ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Metal/ShaderStrings.hpp)
+set(MSLShaderIncudeFile ${CLV_INCLUDE}/Graphics/Metal/ShaderStrings.hpp)
 file(WRITE ${MSLShaderIncudeFile} "//cmake generated header file\n\n")
 foreach(shaderFile ${MSLShaders})
 	file(READ ${shaderFile} FILE_CONTENTS)
 	get_filename_component(fileName ${shaderFile} NAME_WLE)
 
 	set(STRING_NAME ${fileName})
-	set(outFilePath ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Metal/Shaders/${fileName}.hpp)
+	set(outFilePath ${CLV_INCLUDE}/Graphics/Metal/Shaders/${fileName}.hpp)
 
 	configure_file(../cmake/glslHeader.in ${outFilePath})
 
