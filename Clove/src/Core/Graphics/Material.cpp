@@ -1,8 +1,8 @@
-#include "Material.hpp"
+#include "Clove/Core/Graphics/Material.hpp"
 
-#include "Core/Graphics/Resources/Texture.hpp"
-#include "Core/Graphics/MaterialInstance.hpp"
-#include "Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/Resources/Texture.hpp"
+#include "Clove/Core/Graphics/MaterialInstance.hpp"
+#include "Clove/Core/Graphics/RenderCommand.hpp"
 
 namespace clv::gfx{
 	Material::Material(){

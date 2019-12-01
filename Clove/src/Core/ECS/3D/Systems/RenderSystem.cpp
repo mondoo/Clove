@@ -1,24 +1,25 @@
-#include "RenderSystem.hpp"
+#include "Clove/Core/ECS/3D/Systems/RenderSystem.hpp"
 
-#include "Core/ECS/Manager.hpp"
-#include "Core/ECS/3D/Components/TransformComponent.hpp"
-#include "Core/ECS/3D/Components/MeshComponent.hpp"
-#include "Core/ECS/3D/Components/CameraComponent.hpp"
-#include "Core/ECS/3D/Components/LightComponent.hpp"
-#include "Core/Graphics/GraphicsTypes.hpp"
-#include "Core/Graphics/RenderCommand.hpp"
-#include "Core/Graphics/PipelineObject.hpp"
-#include "Core/Graphics/Resources/Texture.hpp"
-#include "Core/Graphics/ShaderBufferTypes.hpp"
-#include "Core/Graphics/Renderables/Mesh.hpp"
-#include "Core/Graphics/MaterialInstance.hpp"
-#include "Core/Platform/Application.hpp"
-#include "Core/Platform/Window.hpp"
+#include "Clove/Core/ECS/Manager.hpp"
+#include "Clove/Core/ECS/3D/Components/TransformComponent.hpp"
+#include "Clove/Core/ECS/3D/Components/MeshComponent.hpp"
+#include "Clove/Core/ECS/3D/Components/CameraComponent.hpp"
+#include "Clove/Core/ECS/3D/Components/LightComponent.hpp"
+#include "Clove/Core/Graphics/GraphicsTypes.hpp"
+#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/PipelineObject.hpp"
+#include "Clove/Core/Graphics/Resources/Texture.hpp"
+#include "Clove/Core/Graphics/ShaderBufferTypes.hpp"
+#include "Clove/Core/Graphics/Renderables/Mesh.hpp"
+#include "Clove/Core/Graphics/MaterialInstance.hpp"
+#include "Clove/Core/Platform/Application.hpp"
+#include "Clove/Core/Platform/Window.hpp"
 
 using namespace clv::gfx;
 
 namespace clv::ecs::_3D{
 	struct ComposedCameraData{
+		Viewport viewport;
 		CameraRenderData bufferData;
 		std::shared_ptr<RenderTarget> target;
 	};
@@ -86,11 +87,11 @@ namespace clv::ecs::_3D{
 	}
 
 	void RenderSystem::preUpdate(){
-		RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
+		RenderCommand::setRenderTarget(currentSceneData->shadowMapRenderTarget.get());
 		RenderCommand::clear(); //TODO: Might need to just do a clear depth command
 		std::for_each(currentSceneData->cameras.begin(), currentSceneData->cameras.end(), [](const ComposedCameraData& cameraData){
 			if(cameraData.target){
-				RenderCommand::setRenderTarget(*cameraData.target);
+				RenderCommand::setRenderTarget(cameraData.target.get());
 				RenderCommand::clear();
 			}
 		});
@@ -113,10 +114,17 @@ namespace clv::ecs::_3D{
 				const mth::vec3f& position = transform->getPosition();
 
 				//update front
+				const mth::quatf cameraRotation = transform->getRotation();
+				mth::vec3f eulerRot = mth::quaternionToEuler(cameraRotation);
+
+				if(eulerRot.x >= mth::pi<float>){ //This stops it moving the other way
+					eulerRot.y *= -1.0f;
+				}
+
 				mth::vec3f front;
-				front.x = cos(mth::asRadians(camera->yaw)) * cos(mth::asRadians(camera->pitch));
-				front.y = sin(mth::asRadians(camera->pitch));
-				front.z = sin(mth::asRadians(camera->yaw)) * cos(mth::asRadians(camera->pitch));
+				front.x = cos(eulerRot.y) * cos(eulerRot.x);
+				front.y = sin(eulerRot.x);
+				front.z = sin(eulerRot.y) * cos(eulerRot.x);
 				camera->cameraFront = mth::normalise(front);
 
 				//update look at
@@ -129,7 +137,7 @@ namespace clv::ecs::_3D{
 				camera->cameraRenderData.position = position;
 				camera->cameraRenderData.projection = camera->currentProjection;
 
-				currentSceneData->cameras.push_back({ camera->cameraRenderData, camera->renderTarget });
+				currentSceneData->cameras.push_back({ camera->viewport, camera->cameraRenderData, camera->renderTarget });
 			}
 		}
 
@@ -205,8 +213,10 @@ namespace clv::ecs::_3D{
 				RenderCommand::drawIndexed(mesh->getIndexCount());
 			};
 
+			RenderCommand::setViewport(cameraData.viewport);
+
 			if(cameraData.target){
-				RenderCommand::setRenderTarget(*cameraData.target);
+				RenderCommand::setRenderTarget(cameraData.target.get());
 			} else{
 				RenderCommand::resetRenderTargetToDefault();
 			}
@@ -238,15 +248,14 @@ namespace clv::ecs::_3D{
 
 		//Calculate shadow map
 		RenderCommand::bindPipelineObject(*currentSceneData->shadowPipeline);
+		RenderCommand::setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 		for(uint32 i = 0; i < currentSceneData->numLights; ++i){
 			currentSceneData->cubeShadowMaterial.setData(BBP_ShadowData, PointShadowShaderData{ currentSceneData->shadowTransforms[i] }, ShaderType::Geometry);
 			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
 			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentDepthData, PointShadowData{ currentSceneData->currentShadowDepth.depths[i] }, ShaderType::Pixel);
 
-			RenderCommand::setViewport({ 0, 0, shadowMapSize, shadowMapSize });
-			RenderCommand::setRenderTarget(*currentSceneData->shadowMapRenderTarget);
+			RenderCommand::setRenderTarget(currentSceneData->shadowMapRenderTarget.get());
 			currentSceneData->forEachMesh(generateShadowMap);
-			RenderCommand::setViewport({ 0, 0, plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight() });
 		}
 
 		//Render scene for each camera

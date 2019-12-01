@@ -1,7 +1,10 @@
-#include "CameraComponent.hpp"
+#include "Clove/Core/ECS/3D/Components/CameraComponent.hpp"
+
+#include "Clove/Core/Platform/Window.hpp"
 
 namespace clv::ecs::_3D{
-	CameraComponent::CameraComponent(){
+	CameraComponent::CameraComponent(const gfx::Viewport& viewport)
+		: viewport(viewport){
 		setProjectionMode(ProjectionMode::perspective);
 	}
 
@@ -23,20 +26,19 @@ namespace clv::ecs::_3D{
 		return cameraRight;
 	}
 
-	void CameraComponent::updateFront(float pitch, float yaw){
-		this->pitch = pitch;
-		this->yaw = yaw;
-	}
-
 	void CameraComponent::setProjectionMode(ProjectionMode mode){
-		switch(mode){
+		const float width = static_cast<float>(viewport.width);
+		const float height = static_cast<float>(viewport.height);
+
+		currentProjectionMode = mode;
+
+		switch(currentProjectionMode){
 			case ProjectionMode::orthographic:
-				//TODO: Need to get the window dimensions (ie. left = -(1920 / 2))
-				currentProjection = mth::createOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0f);
+				currentProjection = mth::createOrthographicMatrix(-(width / 2), (width / 2), -(height / 2), (height / 2));
 				break;
 
 			case ProjectionMode::perspective:
-				currentProjection = mth::createPerspectiveMatrix(45.0f, 16.0f / 9.0f, 0.5f, 10000.0f);
+				currentProjection = mth::createPerspectiveMatrix(45.0f, width / height, 0.5f, 10000.0f);
 				break;
 
 			default:
@@ -46,5 +48,12 @@ namespace clv::ecs::_3D{
 
 	void CameraComponent::setRenderTarget(const std::shared_ptr<gfx::RenderTarget>& renderTarget){
 		this->renderTarget = renderTarget;
+	}
+
+	void CameraComponent::updateViewportSize(const mth::vec2ui& viewportSize){
+		viewport.width = viewportSize.x;
+		viewport.height = viewportSize.y;
+
+		setProjectionMode(currentProjectionMode);
 	}
 }

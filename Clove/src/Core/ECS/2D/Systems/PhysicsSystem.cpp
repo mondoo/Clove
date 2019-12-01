@@ -1,8 +1,8 @@
-#include "PhysicsSystem.hpp"
+#include "Clove/Core/ECS/2D/Systems/PhysicsSystem.hpp"
 
-#include "Core/ECS/Manager.hpp"
-#include "Core/ECS/2D/Components/TransformComponent.hpp"
-#include "Core/ECS/2D/Components/RigidBodyComponent.hpp"
+#include "Clove/Core/ECS/Manager.hpp"
+#include "Clove/Core/ECS/2D/Components/TransformComponent.hpp"
+#include "Clove/Core/ECS/2D/Components/RigidBodyComponent.hpp"
 
 #include <btBulletDynamicsCommon.h>
 

@@ -1,4 +1,4 @@
-#include "GLBuffer.hpp"
+#include "Clove/Graphics/OpenGL/Resources/GLBuffer.hpp"
 
 namespace clv::gfx::ogl{
 	GLBuffer::GLBuffer(const BufferDescriptor& descriptor, const void* data)

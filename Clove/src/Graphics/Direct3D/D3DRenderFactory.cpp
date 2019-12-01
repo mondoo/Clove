@@ -1,14 +1,14 @@
-#include "D3DRenderFactory.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderFactory.hpp"
 
-#include "Graphics/Direct3D/D3DException.hpp"
-#include "Graphics/Direct3D/Resources/D3DBuffer.hpp"
-#include "Graphics/Direct3D/Resources/D3DTexture.hpp"
-#include "Graphics/Direct3D/D3DPipelineObject.hpp"
-#include "Graphics/Direct3D/D3DRenderTarget.hpp"
-#include "Graphics/Direct3D/D3DShader.hpp"
-#include "Graphics/Direct3D/D3DSurface.hpp"
+#include "Clove/Graphics/Direct3D/D3DException.hpp"
+#include "Clove/Graphics/Direct3D/Resources/D3DBuffer.hpp"
+#include "Clove/Graphics/Direct3D/Resources/D3DTexture.hpp"
+#include "Clove/Graphics/Direct3D/D3DPipelineObject.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
+#include "Clove/Graphics/Direct3D/D3DShader.hpp"
+#include "Clove/Graphics/Direct3D/D3DSurface.hpp"
 #if CLV_DEBUG
-#include "Graphics/Direct3D/D3DRenderDevice.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
 #endif
 
 #include <d3d11.h>
@@ -51,6 +51,7 @@ namespace clv::gfx::d3d{
 	}
 
 	void D3DRenderFactory::onDeviceRemoved(){
+		DX11_INFO_PROVIDER;
 		throw DX11_DEVICE_REMOVED_EXCPTION(d3dDevice->GetDeviceRemovedReason());
 	}
 }

@@ -1,4 +1,4 @@
-#include "Entity.hpp"
+#include "Clove/Core/ECS/Entity.hpp"
 
 namespace clv::ecs{
 	Entity::Entity() = default;

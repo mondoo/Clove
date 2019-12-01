@@ -1,4 +1,4 @@
-#include "ComponentManager.hpp"
+#include "Clove/Core/ECS/ComponentManager.hpp"
 
 namespace clv::ecs{
 	ComponentManager::ComponentContainerInterface::ComponentContainerInterface() = default;
@@ -9,7 +9,7 @@ namespace clv::ecs{
 
 	ComponentManager::ComponentContainerInterface& ComponentManager::ComponentContainerInterface::operator=(const ComponentContainerInterface& other) = default;
 
-	ComponentManager::ComponentContainerInterface& ComponentManager::ComponentContainerInterface::operator=(ComponentContainerInterface&& other) = default;
+	ComponentManager::ComponentContainerInterface& ComponentManager::ComponentContainerInterface::operator=(ComponentContainerInterface&& other) noexcept = default;
 
 	ComponentManager::ComponentContainerInterface::~ComponentContainerInterface() = default;
 

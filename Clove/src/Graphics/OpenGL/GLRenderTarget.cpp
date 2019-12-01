@@ -1,6 +1,6 @@
-#include "GLRenderTarget.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
-#include "Graphics/OpenGL/Resources/GLTexture.hpp"
+#include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
 
 namespace clv::gfx::ogl{
 	GLRenderTarget::GLRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
@@ -38,14 +38,6 @@ namespace clv::gfx::ogl{
 			} else if(style == TextureStyle::Cubemap){
 				glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureRenderID, 0);
 			}
-		} else{
-			const mth::vec2f dimensions = colourTexture->getDescriptor().dimensions;
-			glGenRenderbuffers(1, &renderBufferID);
-			glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, dimensions.x, dimensions.y);
-			glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderBufferID);
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);

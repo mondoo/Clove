@@ -1,7 +1,7 @@
-#import "Platform/Mac/CloveMac.h"
-#import "MacApplication.hpp"
+#import "Clove/Platform/Mac/CloveMac.h"
+#import "Clove/Platform/Mac/MacApplication.hpp"
 
-#import "Platform/Mac/MacWindow.hpp"
+#import "Clove/Platform/Mac/MacWindow.hpp"
 
 namespace clv::plt{
 	MacApplication::MacApplication(){

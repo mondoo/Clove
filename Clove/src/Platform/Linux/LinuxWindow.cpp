@@ -1,8 +1,9 @@
-#include "LinuxWindow.hpp"
+#include "Clove/Platform/Linux/LinuxWindow.hpp"
 
-#include "Core/Graphics/Renderer.hpp"
-#include "Core/Graphics/Surface.hpp"
-#include "Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/Surface.hpp"
+#include "Clove/Core/Graphics/RenderCommand.hpp"
+
+#include <X11/Xlib.h>
 
 namespace clv::plt{
 	LinuxWindow::LinuxWindow(const WindowProps& props){
@@ -80,6 +81,23 @@ namespace clv::plt{
 				case ButtonRelease:
 					mouse.onButtonReleased(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
 					break;
+
+				//Window
+				case ConfigureNotify:
+					{
+						XConfigureEvent xce = xevent.xconfigure;
+						if(static_cast<uint32>(xce.width) != getWidth() || static_cast<uint32>(xce.height) != getHeight()){
+							const mth::vec2i size{ xce.width, xce.height };
+							if(surface){
+								surface->resizeBuffers(size);
+								gfx::RenderCommand::makeSurfaceCurrent(surface);
+							}
+							windowProperties.width = size.x;
+							windowProperties.height = size.y;
+							onWindowResize.broadcast(size);
+						}
+					}
+					break;
 			}
 		}
 	}
@@ -125,7 +143,7 @@ namespace clv::plt{
 							   &windowAttribs);
 
         //Now that we have a window, we can make the context current
-		gfx::RenderCommand::makeSurfaceCurrent(*surface);
+		gfx::RenderCommand::makeSurfaceCurrent(surface);
 
 		//Remap the delete window message so we can gracefully close the application
 		atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
@@ -136,7 +154,7 @@ namespace clv::plt{
 		const long keyboardMask = KeyPressMask | KeyReleaseMask | KeymapStateMask;
 		const long mouseMask = PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask;
 
-		XSelectInput(display, window, keyboardMask | mouseMask);
+		XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
 
 		XStoreName(display, window, windowProperties.title.c_str());
 

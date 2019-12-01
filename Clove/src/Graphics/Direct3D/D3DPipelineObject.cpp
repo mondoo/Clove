@@ -1,9 +1,9 @@
-#include "D3DPipelineObject.hpp"
+#include "Clove/Graphics/Direct3D/D3DPipelineObject.hpp"
 
-#include "Graphics/Direct3D/D3DException.hpp"
-#include "Graphics/Direct3D/D3DShader.hpp"
+#include "Clove/Graphics/Direct3D/D3DException.hpp"
+#include "Clove/Graphics/Direct3D/D3DShader.hpp"
 #if CLV_DEBUG
-#include "Graphics/Direct3D/D3DRenderDevice.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
 #endif
 
 namespace clv::gfx::d3d{

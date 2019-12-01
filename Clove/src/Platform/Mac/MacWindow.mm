@@ -1,8 +1,8 @@
-#import "Platform/Mac/CloveMac.h"
-#import "MacWindow.hpp"
+#import "Clove/Platform/Mac/CloveMac.h"
+#import "Clove/Platform/Mac/MacWindow.hpp"
 
-#import "Core/Graphics/Surface.hpp"
-#import "Core/Graphics/RenderCommand.hpp"
+#import "Clove/Core/Graphics/Surface.hpp"
+#import "Clove/Core/Graphics/RenderCommand.hpp"
 
 //Temp metal stuff
 //#import <Metal/Metal.h>
@@ -250,6 +250,6 @@ namespace clv::plt{
 		windowProxy.cloveWindow = this;
 		
 		surface = gfx::RenderCommand::createSurface(nullptr);
-		gfx::RenderCommand::makeSurfaceCurrent(*surface);
+		gfx::RenderCommand::makeSurfaceCurrent(surface);
 	}
 }

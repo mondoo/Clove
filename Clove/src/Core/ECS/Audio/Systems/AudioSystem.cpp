@@ -1,7 +1,7 @@
-#include "AudioSystem.hpp"
+#include "Clove/Core/ECS/Audio/Systems/AudioSystem.hpp"
 
-#include "Core/ECS/Manager.hpp"
-#include "Core/ECS/Audio/Components/AudioComponent.hpp"
+#include "Clove/Core/ECS/Manager.hpp"
+#include "Clove/Core/ECS/Audio/Components/AudioComponent.hpp"
 
 #include <portaudio.h>
 

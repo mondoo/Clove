@@ -1,12 +1,12 @@
-#include "D3DRenderDevice.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
 
-#include "Graphics/Direct3D/D3DException.hpp"
-#include "Graphics/Direct3D/Resources/D3DBuffer.hpp"
-#include "Graphics/Direct3D/Resources/D3DTexture.hpp"
-#include "Graphics/Direct3D/D3DPipelineObject.hpp"
-#include "Graphics/Direct3D/D3DRenderTarget.hpp"
-#include "Graphics/Direct3D/D3DShader.hpp"
-#include "Graphics/Direct3D/D3DSurface.hpp"
+#include "Clove/Graphics/Direct3D/D3DException.hpp"
+#include "Clove/Graphics/Direct3D/Resources/D3DBuffer.hpp"
+#include "Clove/Graphics/Direct3D/Resources/D3DTexture.hpp"
+#include "Clove/Graphics/Direct3D/D3DPipelineObject.hpp"
+#include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
+#include "Clove/Graphics/Direct3D/D3DShader.hpp"
+#include "Clove/Graphics/Direct3D/D3DSurface.hpp"
 
 #include <d3d11.h>
 
@@ -93,24 +93,31 @@ namespace clv::gfx::d3d{
 		d3dContext->Unmap(d3dBuffer.getD3DBuffer().Get(), 0u);
 	}
 
-	void D3DRenderDevice::makeSurfaceCurrent(Surface& surface){
-		const D3DSurface& d3dSurface = static_cast<const D3DSurface&>(surface);
-		const auto& renderTarget = d3dSurface.getTarget();
-		defaultRenderTarget = renderTarget.getRenderTargetView();
-		defaultDepthStencil = renderTarget.getDepthStencilView();
+	void D3DRenderDevice::makeSurfaceCurrent(const std::shared_ptr<Surface>& surface){
+		currentSurface = std::static_pointer_cast<D3DSurface>(surface);
 	}
 
-	void D3DRenderDevice::setRenderTarget(RenderTarget& renderTarget){
-		D3DRenderTarget& dxRenderTarget = static_cast<D3DRenderTarget&>(renderTarget);
-		currentRenderTarget = dxRenderTarget.getRenderTargetView();
-		currentDepthStencil = dxRenderTarget.getDepthStencilView();
-		setRenderTargetToCurrent();
+	void D3DRenderDevice::setRenderTarget(const RenderTarget* renderTarget){
+		if(renderTarget){
+			const D3DRenderTarget* d3dRenderTarget = static_cast<const D3DRenderTarget*>(renderTarget);
+			auto renderTargetView = d3dRenderTarget->getRenderTargetView();
+			auto depthStencilView = d3dRenderTarget->getDepthStencilView();
+			
+			ID3D11RenderTargetView* rtViewArray[] = { renderTargetView.Get() };
+			d3dContext->OMSetRenderTargets(1u, rtViewArray, depthStencilView.Get());
+		} else{
+			ID3D11RenderTargetView* rtViewArray[] = { nullptr };
+			d3dContext->OMSetRenderTargets(1u, rtViewArray, nullptr);
+		}
 	}
 
 	void D3DRenderDevice::resetRenderTargetToDefault(){
-		currentRenderTarget = defaultRenderTarget;
-		currentDepthStencil = defaultDepthStencil;
-		setRenderTargetToCurrent();
+		const D3DRenderTarget& d3dRenderTarget = currentSurface->getTarget();
+		auto renderTargetView = d3dRenderTarget.getRenderTargetView();
+		auto depthStencilView = d3dRenderTarget.getDepthStencilView();
+
+		ID3D11RenderTargetView* rtViewArray[] = { renderTargetView.Get() };
+		d3dContext->OMSetRenderTargets(1u, rtViewArray, depthStencilView.Get());
 	}
 
 	void D3DRenderDevice::setViewport(const Viewport& viewport){
@@ -126,10 +133,13 @@ namespace clv::gfx::d3d{
 	}
 
 	void D3DRenderDevice::clear(){
-		if(currentRenderTarget){
-			d3dContext->ClearRenderTargetView(currentRenderTarget.Get(), mth::valuePtr(clearColour));
-		}
-		d3dContext->ClearDepthStencilView(currentDepthStencil.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
+
+		d3dContext->OMGetRenderTargets(1u, &renderTargetView, &depthStencilView);
+
+		d3dContext->ClearRenderTargetView(renderTargetView.Get(), mth::valuePtr(clearColour));
+		d3dContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
 	}
 
 	void D3DRenderDevice::drawIndexed(const uint32 count){
@@ -184,15 +194,4 @@ namespace clv::gfx::d3d{
 		return infoManager;
 	}
 #endif
-
-	void D3DRenderDevice::setRenderTargetToCurrent(){
-		//TODO: should maybe use a null depth stencil?
-		auto dsv = currentDepthStencil ? currentDepthStencil : defaultDepthStencil;
-		if(currentRenderTarget){
-			d3dContext->OMSetRenderTargets(1u, currentRenderTarget.GetAddressOf(), dsv.Get());
-		} else{
-			ID3D11RenderTargetView* nullRTV[1] = { nullptr };
-			d3dContext->OMSetRenderTargets(1u, nullRTV, dsv.Get());
-		}
-	}
 }

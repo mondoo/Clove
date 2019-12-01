@@ -1,6 +1,6 @@
-#include "LayerStack.hpp"
+#include "Clove/Core/LayerStack.hpp"
 
-#include "Core/Layer.hpp"
+#include "Clove/Core/Layer.hpp"
 
 namespace clv{
 	LayerStack::LayerStack() = default;
