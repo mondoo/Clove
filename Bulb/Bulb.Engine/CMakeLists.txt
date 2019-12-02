@@ -1,29 +1,21 @@
-#Wrapper between the C# editor and C++ engine
+#Editor CMake list
 
-project(Bulb.Engine)
+project(Bulb.Engine LANGUAGES CSharp)
 
-set(
-	Files
-		Wrapper.hpp
-		Wrapper.cpp
-		BulbApplication.hpp
-		BulbApplication.cpp
-		BulbWindow.hpp
-		BulbWindow.cpp
-)
+include(CSharpUtilities)
 
+#Add all c# files
 add_library(
 	${PROJECT_NAME} SHARED
-		${Files}
+	EngineSession.cs
+	#TODO
 )
+
+#Set other csproj file flags
+set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
 
 target_link_libraries(
 	${PROJECT_NAME}
-		PUBLIC
-		PRIVATE
-			Clove	
+		PUBLIC #public until all wrappers have been made
+			Bulb.Engine.Clove
 )
-
-set_target_properties(${PROJECT_NAME} PROPERTIES COMMON_LANGUAGE_RUNTIME "")
-set_target_properties(${PROJECT_NAME} PROPERTIES VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
-set_target_properties(${PROJECT_NAME} PROPERTIES VS_DOTNET_REFERENCES "System")

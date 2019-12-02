@@ -1,10 +1,14 @@
 #pragma once
 
+/*
+Temp wrapper until more objects have been made
+*/
+
 namespace clv::plt{
 	class Application;
 }
 
-namespace Bulb::Engine{
+namespace Bulb::Engine::Clove{
 	public ref class Wrapper {
 	private:
 		clv::plt::Application* app;

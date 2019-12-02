@@ -56,7 +56,7 @@ public:
 	}
 };
 
-void Bulb::Engine::Wrapper::OpenClove(System::IntPtr hWnd, int width, int height){
+void Bulb::Engine::Clove::Wrapper::OpenClove(System::IntPtr hWnd, int width, int height){
 	app = new BulbApplication(hWnd, width, height);
 	
 	app->start();
@@ -71,6 +71,6 @@ void Bulb::Engine::Wrapper::OpenClove(System::IntPtr hWnd, int width, int height
 	app = nullptr;
 }
 
-void Bulb::Engine::Wrapper::StopClove(){
+void Bulb::Engine::Clove::Wrapper::StopClove(){
 	app->stop();
 }

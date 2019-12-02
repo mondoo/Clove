@@ -3,7 +3,7 @@ using System.Windows;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Bulb.Engine;
+using Bulb.Engine.Clove;
 using System.ComponentModel;
 
 namespace Bulb.Desktop.Windows {
@@ -25,18 +25,7 @@ namespace Bulb.Desktop.Windows {
 		static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
 		[DllImport("user32.dll", EntryPoint = "CreateWindowEx", CharSet = CharSet.Unicode)]
-		static extern IntPtr CreateWindowEx(
-			int dwExStyle,
-			string lpszClassName,
-			string lpszWindowName,
-			int style,
-			int x, int y,
-			int width, int height,
-			IntPtr hwndParent,
-			IntPtr hMenu,
-			IntPtr hInst,
-			[MarshalAs(UnmanagedType.AsAny)] object pvParam
-		);
+		static extern IntPtr CreateWindowEx(int dwExStyle, string lpszClassName, string lpszWindowName, int style, int x, int y, int width, int height, IntPtr hwndParent, IntPtr hMenu, IntPtr hInst, [MarshalAs(UnmanagedType.AsAny)] object pvParam);
 
 		public MainWindow() {
 			InitializeComponent();
