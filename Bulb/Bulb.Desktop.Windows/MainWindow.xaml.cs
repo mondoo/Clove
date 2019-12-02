@@ -3,7 +3,7 @@ using System.Windows;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Bulb.Engine.Clove;
+using Bulb.Engine;
 using System.ComponentModel;
 
 namespace Bulb.Desktop.Windows {
@@ -13,9 +13,6 @@ namespace Bulb.Desktop.Windows {
     public partial class MainWindow : Window
     {
 		#region VARIABLES
-
-		private readonly Wrapper wp;
-		private Thread engineThread;
 
 		#endregion
 
@@ -29,8 +26,6 @@ namespace Bulb.Desktop.Windows {
 
 		public MainWindow() {
 			InitializeComponent();
-
-			wp = new Wrapper();
 
 			Loaded += (object sender, RoutedEventArgs e) => StartEngine();
 			Closing += (object sender, CancelEventArgs e) => StopEngine();
@@ -52,13 +47,11 @@ namespace Bulb.Desktop.Windows {
 			   IntPtr.Zero,
 			   0);
 
-			engineThread = new Thread(() => wp.OpenClove(RenderWindow, (int)RenderArea.ActualWidth, (int)RenderArea.ActualHeight));
-			engineThread.Start();
+			EngineSession.begin(RenderWindow, (int)RenderArea.ActualWidth, (int)RenderArea.ActualHeight);
 		}
 
 		private void StopEngine() {
-			wp.StopClove();
-			engineThread.Join();
+			EngineSession.end();
 		}
     }
 }
