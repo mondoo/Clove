@@ -1,5 +1,7 @@
 #include "Clove/Core/Log.hpp"
 
+#if !_M_CEE
+
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace clv{
@@ -34,3 +36,5 @@ namespace clv{
 		return clientLogger;
 	}
 }
+
+#endif

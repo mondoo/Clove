@@ -1,5 +1,7 @@
 #pragma once
 
+#if !_M_CEE //Log is excluded from CLR builds until a better work around is found
+
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 
@@ -35,4 +37,13 @@ namespace clv{
 	#define CLV_LOG_WARN(...)		::clv::Log::getClientLogger()->warn(__VA_ARGS__)
 	#define CLV_LOG_ERROR(...)		::clv::Log::getClientLogger()->error(__VA_ARGS__)
 	#define CLV_LOG_CRITICAL(...)	::clv::Log::getClientLogger()->critical(__VA_ARGS__)
+#endif
+	
+#else
+	#define CLV_LOG_TRACE(...)	
+	#define CLV_LOG_DEBUG(...)	
+	#define CLV_LOG_INFO(...)	
+	#define CLV_LOG_WARN(...)	
+	#define CLV_LOG_ERROR(...)	
+	#define CLV_LOG_CRITICAL(...)
 #endif
