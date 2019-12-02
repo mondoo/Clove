@@ -1,31 +1,5 @@
 #include "Wrapper.hpp"
 
-#include <memory>
-#include <chrono>
-
-#include <Windows.h>
-#include <unordered_map>
-#include <functional>
-#include <sstream>
-#include <optional>
-#include <array>
-
-//Includes required when not using pch
-#include "Clove/Core/Core.hpp"
-#include "Clove/Core/IntTypes.hpp"
-#include "Clove/Core/Utils/Delegate.hpp"
-#include "Clove/Core/Maths/MathsTypes.hpp"
-#include "Clove/Core/Maths/Maths.hpp"
-#include "Clove/Core/Maths/MathsHelpers.hpp"
-#include "Clove/Core/Platform/Application.hpp"
-#include "Clove/Core/Platform/Window.hpp"
-#include "Clove/Core/Graphics/GraphicsTypes.hpp"
-#include "Clove/Core/Graphics/Surface.hpp"
-#include "Clove/Core/Graphics/RenderCommand.hpp"
-
-//Defining this here to fix errors - need a way to get access to logging (or sort out headers)
-#define CLV_LOG_ERROR(...)
-
 //Other includes
 #include "Clove/Core/Layer.hpp"
 #include "Clove/Core/ECS/Manager.hpp"
@@ -37,70 +11,9 @@
 #include "Clove/Core/Graphics/Material.hpp"
 #include "Clove/Core/Graphics/MaterialInstance.hpp"
 
-using namespace System::Windows;
-//using namespace System::Runtime::RuntimeInteropServices;
-using namespace System::Threading;
-using namespace System;
-
-//Copied from WindowsWindow
-struct WindowsData{
-	HWND handle;
-	clv::uint32 width;
-	clv::uint32 height;
-};
-
-//Temp window for the editor
-class EditorWindow : public clv::plt::Window{
-	//VARIABLES
-private:
-	HWND handle;
-	WindowsData data;
-
-	//FUNCTIONS
-public:
-	EditorWindow(IntPtr hWnd, int width, int height){
-		handle = reinterpret_cast<HWND>(hWnd.ToPointer());
-
-		data = { handle, static_cast<clv::uint32>(width), static_cast<clv::uint32>(height) };
-
-		surface = clv::gfx::RenderCommand::createSurface(&data);
-		clv::gfx::RenderCommand::makeSurfaceCurrent(surface);
-	}
-
-	virtual void* getNativeWindow() const override{
-		return handle;
-	}
-
-protected:
-	virtual void processInput() override{
-		//Empty for now
-	}
-};
-
-//Temp application for the editor
-class EditorApplication : public clv::plt::Application{
-	//VARIABLES
-private:
-	IntPtr hWnd;
-	int width = 0;
-	int height = 0;
-
-	//FUNCTIONS
-public:
-	EditorApplication(IntPtr hWnd, int width, int height){ //Temp: Just passing in the handle from the wpf app
-		this->hWnd = hWnd;
-		this->width = width;
-		this->height = height;
-	}
-
-	virtual clv::gfx::API getPlatformPreferedAPI() override{
-		return clv::gfx::API::DirectX11;
-	}
-
-	virtual std::unique_ptr<clv::plt::Window> createWindow(const clv::plt::WindowProps& props){
-		return std::make_unique<EditorWindow>(hWnd, width, height);
-	}
-};
+//Bulb stuff
+#include "BulbApplication.hpp"
+#include "BulbWindow.hpp"
 
 //Temp layer to draw something
 class TestLayer : public clv::Layer{
@@ -143,8 +56,8 @@ public:
 	}
 };
 
-void Bulb::Engine::Wrapper::OpenClove(IntPtr hWnd, int width, int height){
-	app = new EditorApplication(hWnd, width, height);
+void Bulb::Engine::Wrapper::OpenClove(System::IntPtr hWnd, int width, int height){
+	app = new BulbApplication(hWnd, width, height);
 	
 	app->start();
 
