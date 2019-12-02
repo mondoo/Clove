@@ -3,6 +3,8 @@
 #include "Clove/Core/Platform/PlatformTypes.hpp"
 #include "Clove/Core/Graphics/GraphicsTypes.hpp"
 
+#include <chrono>
+
 namespace clv{
 	class LayerStack;
 	class Layer;
