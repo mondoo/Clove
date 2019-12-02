@@ -16,6 +16,6 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION 
 
 target_link_libraries(
 	${PROJECT_NAME}
-		PUBLIC #public until all wrappers have been made
+		PRIVATE
 			Bulb.Engine.Clove
 )
