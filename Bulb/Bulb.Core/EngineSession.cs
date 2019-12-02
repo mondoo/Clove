@@ -1,8 +1,8 @@
 using System;
 using System.Threading;
-using Bulb.Engine.Clove;
+using Clove;
 
-namespace Bulb.Engine {
+namespace Bulb.Core {
 	public class EngineSession {
 		private static Wrapper wp;
 		private static Thread engineThread;

@@ -2,7 +2,7 @@
 
 #include "BulbWindow.hpp"
 
-namespace Bulb::Engine{
+namespace Clove{
 	BulbApplication::BulbApplication(System::IntPtr hWnd, int width, int height)
 		: width(width), height(height){
 		this->hWnd = hWnd;

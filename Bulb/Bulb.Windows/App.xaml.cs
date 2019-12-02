@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Bulb.Desktop.Windows
+namespace Bulb.Core
 {
     /// <summary>
     /// Interaction logic for App.xaml

@@ -8,7 +8,7 @@ namespace clv::plt{
 	class Application;
 }
 
-namespace Bulb::Engine::Clove{
+namespace Clove{
 	public ref class Wrapper {
 	private:
 		clv::plt::Application* app;

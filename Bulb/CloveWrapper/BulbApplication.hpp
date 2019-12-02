@@ -2,7 +2,7 @@
 
 #include <Clove/Core/Platform/Application.hpp>
 
-namespace Bulb::Engine{
+namespace Clove{
 	class BulbApplication : public clv::plt::Application{
 		//VARIABLES
 	private:

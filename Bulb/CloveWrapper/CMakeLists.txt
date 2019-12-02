@@ -1,6 +1,6 @@
 #Wrapper between the C# editor and C++ engine
 
-project(Bulb.Engine.Clove)
+project(CloveWrapper)
 
 set(
 	Files

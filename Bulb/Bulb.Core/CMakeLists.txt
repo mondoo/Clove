@@ -1,6 +1,6 @@
 #Editor CMake list
 
-project(Bulb.Engine LANGUAGES CSharp)
+project(Bulb.Core LANGUAGES CSharp)
 
 include(CSharpUtilities)
 
@@ -17,5 +17,5 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION 
 target_link_libraries(
 	${PROJECT_NAME}
 		PRIVATE
-			Bulb.Engine.Clove
+			CloveWrapper
 )

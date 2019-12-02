@@ -3,10 +3,10 @@ using System.Windows;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Bulb.Engine;
 using System.ComponentModel;
+using Bulb.Core;
 
-namespace Bulb.Desktop.Windows {
+namespace Bulb.Windows {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

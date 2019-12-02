@@ -1,6 +1,6 @@
 #Editor CMake list
 
-project(Bulb.Desktop.Windows LANGUAGES CSharp)
+project(Bulb.Windows LANGUAGES CSharp)
 
 include(CSharpUtilities)
 
@@ -71,7 +71,7 @@ target_link_libraries(
 	${PROJECT_NAME}
 		PUBLIC
 		PRIVATE
-			Bulb.Engine
+			Bulb.Core
 )
 
 

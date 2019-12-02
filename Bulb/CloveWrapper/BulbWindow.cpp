@@ -4,7 +4,7 @@
 #include <Clove/Core/Graphics/Surface.hpp>
 #include <Clove/Platform/Windows/CloveWindows.hpp>
 
-namespace Bulb::Engine{
+namespace Clove{
 	BulbWindow::BulbWindow(System::IntPtr hWnd, int width, int height){
 		handle = reinterpret_cast<HWND>(hWnd.ToPointer());
 

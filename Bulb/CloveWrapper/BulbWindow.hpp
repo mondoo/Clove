@@ -2,7 +2,7 @@
 
 #include <Clove/Core/Platform/Window.hpp>
 
-namespace Bulb::Engine{
+namespace Clove{
 	//Copied from WindowsWindow
 	struct WindowsData{
 		HWND handle;
@@ -11,7 +11,7 @@ namespace Bulb::Engine{
 	};
 }
 
-namespace Bulb::Engine{
+namespace Clove{
 	class BulbWindow : public clv::plt::Window{
 		//VARIABLES
 	private:
