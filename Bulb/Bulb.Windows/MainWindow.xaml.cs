@@ -14,6 +14,8 @@ namespace Bulb.Windows {
     {
 		#region VARIABLES
 
+		EditorSession session;
+
 		#endregion
 
 		#region FUNCTIONS
@@ -27,8 +29,10 @@ namespace Bulb.Windows {
 		public MainWindow() {
 			InitializeComponent();
 
-			Loaded += (object sender, RoutedEventArgs e) => StartEngine();
-			Closing += (object sender, CancelEventArgs e) => StopEngine();
+			Loaded += (sender, e) => StartEngine();
+			Closing += (sender, e) => StopEngine();
+
+			session = new EditorSession();
 		}
 
         #endregion
@@ -40,18 +44,18 @@ namespace Bulb.Windows {
 			   "static",
 			   "",
 			   0x40000000 | 0x10000000, //WS_CHILD | WS_VISIBLE
-			   (int)RenderArea.Margin.Left, (int)RenderArea.Margin.Top,
-			   (int)RenderArea.ActualWidth, (int)RenderArea.ActualHeight,
+			   (int)RenderArea.Margin.Left + 1, (int)RenderArea.Margin.Top + 1,
+			   (int)RenderArea.ActualWidth - 2, (int)RenderArea.ActualHeight - 2,
 			   hWnd,
 			   IntPtr.Zero,
 			   IntPtr.Zero,
 			   0);
 
-			EngineSession.begin(RenderWindow, (int)RenderArea.ActualWidth, (int)RenderArea.ActualHeight);
+			session.Begin(RenderWindow, (int)RenderArea.ActualWidth - 2, (int)RenderArea.ActualHeight - 2);
 		}
 
 		private void StopEngine() {
-			EngineSession.end();
+			session.End();
 		}
     }
 }

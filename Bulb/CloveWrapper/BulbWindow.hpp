@@ -2,7 +2,7 @@
 
 #include <Clove/Core/Platform/Window.hpp>
 
-namespace Clove{
+namespace clv::plt{
 	//Copied from WindowsWindow
 	struct WindowsData{
 		HWND handle;
@@ -11,8 +11,8 @@ namespace Clove{
 	};
 }
 
-namespace Clove{
-	class BulbWindow : public clv::plt::Window{
+namespace clv::plt::blb{
+	class BulbNativeWindow : public clv::plt::Window{
 		//VARIABLES
 	private:
 		HWND handle;
@@ -20,11 +20,24 @@ namespace Clove{
 
 		//FUNCTIONS
 	public:
-		BulbWindow(System::IntPtr hWnd, int width, int height);
+		BulbNativeWindow(System::IntPtr hWnd, int width, int height);
 
 		virtual void* getNativeWindow() const override;
 
 	protected:
 		virtual void processInput() override{ /* Empty for now */ }
+	};
+}
+
+namespace Bulb::CloveWrapper{
+	public ref class BulbWindow{
+		//VARIABLES
+	private:
+		clv::plt::blb::BulbNativeWindow* nativeWin = nullptr;
+
+		//FUNCTIONS
+	public:
+		BulbWindow(System::IntPtr hWnd, int width, int height);
+		~BulbWindow();
 	};
 }

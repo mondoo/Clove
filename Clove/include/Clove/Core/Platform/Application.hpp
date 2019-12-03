@@ -21,7 +21,9 @@ namespace clv::plt{
 		running,
 		stopped
 	};
+}
 
+namespace clv::plt{
 	class Application{
 		//VARIABLES
 	private:

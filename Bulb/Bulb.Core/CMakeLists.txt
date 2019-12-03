@@ -7,7 +7,7 @@ include(CSharpUtilities)
 #Add all c# files
 add_library(
 	${PROJECT_NAME} SHARED
-	EngineSession.cs
+	EditorSession.cs
 	#TODO
 )
 
