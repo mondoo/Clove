@@ -1,11 +1,11 @@
-#include "BulbWindow.hpp"
+#include "Window.hpp"
 
 #include <Clove/Core/Graphics/RenderCommand.hpp>
 #include <Clove/Core/Graphics/Surface.hpp>
 #include <Clove/Platform/Windows/CloveWindows.hpp>
 
 namespace clv::plt::blb{
-	BulbNativeWindow::BulbNativeWindow(System::IntPtr hWnd, int width, int height){
+	NativeWindow::NativeWindow(System::IntPtr hWnd, int width, int height){
 		handle = reinterpret_cast<HWND>(hWnd.ToPointer());
 
 		data = { handle, static_cast<clv::uint32>(width), static_cast<clv::uint32>(height) };
@@ -14,7 +14,7 @@ namespace clv::plt::blb{
 		clv::gfx::RenderCommand::makeSurfaceCurrent(surface);
 	}
 
-	void* BulbNativeWindow::getNativeWindow() const{
+	void* NativeWindow::getNativeWindow() const{
 		return handle;
 	}
 }

@@ -1,9 +1,8 @@
 using System;
 using System.Threading;
-using Bulb.CloveWrapper;
 
 namespace Bulb.Core {
-	public class LayerTest : BulbLayer {
+	public class LayerTest : Clove.Layer {
 		protected override void onAttach() {
 			Console.WriteLine("Attached");
 		}
@@ -18,11 +17,11 @@ namespace Bulb.Core {
 	}
 
 	public class EditorSession {
-		private BulbApplication app;
+		private Clove.Application app;
 		private Thread appThread;
 
 		public void Begin(IntPtr hWnd, int width, int height) {
-			app = new BulbApplication(hWnd, width, height);
+			app = new Clove.Application(hWnd, width, height);
 
 			app.start();
 

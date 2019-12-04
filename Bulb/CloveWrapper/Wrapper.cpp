@@ -12,8 +12,8 @@
 #include "Clove/Core/Graphics/MaterialInstance.hpp"
 
 //Bulb stuff
-#include "BulbApplication.hpp"
-#include "BulbWindow.hpp"
+#include "Application.hpp"
+#include "Window.hpp"
 
 //Temp layer to draw something
 class TestLayer : public clv::Layer{

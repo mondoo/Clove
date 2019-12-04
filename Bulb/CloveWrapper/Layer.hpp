@@ -8,14 +8,12 @@ typedef void(*UpdateFunctionPointer)(float);
 #pragma managed(pop)
 
 namespace clv::blb{
-	class BulbNativeLayer : public Layer{
+	class NativeLayer : public Layer{
 		//VARIABLES
 	public:
 		AttachmentFunctionPointer	onAttachDelegate;
 		UpdateFunctionPointer		onUpdateDelegate;
 		AttachmentFunctionPointer	onDetachDelegate;
-
-		//delegate void test();
 
 		//FUNCTIONS
 	public:
@@ -27,14 +25,14 @@ namespace clv::blb{
 	};
 }
 
-namespace Bulb::CloveWrapper{
-	public ref class BulbLayer abstract{
+namespace Clove{
+	public ref class Layer abstract{
 		delegate void AttachmentDelegate();
 		delegate void UpdateDelegate(float);
 
 		//VARIABLES
 	private:
-		std::shared_ptr<clv::blb::BulbNativeLayer>* nativeLayer = nullptr;
+		std::shared_ptr<clv::blb::NativeLayer>* nativeLayer = nullptr;
 
 		AttachmentDelegate^ onAttachDelegate;
 		UpdateDelegate^		onUpdateDelegate;
@@ -42,10 +40,10 @@ namespace Bulb::CloveWrapper{
 
 		//FUNCTIONS
 	public:
-		BulbLayer();
-		~BulbLayer();
+		Layer();
+		~Layer();
 
-		const std::shared_ptr<clv::blb::BulbNativeLayer>& getNativeLayer();
+		const std::shared_ptr<clv::blb::NativeLayer>& getNativeLayer();
 
 	protected:
 		virtual void onAttach() abstract;

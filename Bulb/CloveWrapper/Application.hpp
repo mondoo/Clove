@@ -1,11 +1,11 @@
 #pragma once
 
-#include "BulbLayer.hpp"
+#include "Layer.hpp"
 
 #include <Clove/Core/Platform/Application.hpp>
 
 namespace clv::plt::blb{
-	class BulbNativeApplication : public clv::plt::Application{
+	class NativeApplication : public clv::plt::Application{
 		//VARIABLES
 	private:
 		System::IntPtr hWnd;
@@ -14,7 +14,7 @@ namespace clv::plt::blb{
 
 		//FUNCTIONS
 	public:
-		BulbNativeApplication(System::IntPtr hWnd, int width, int height);
+		NativeApplication(System::IntPtr hWnd, int width, int height);
 
 		virtual clv::gfx::API getPlatformPreferedAPI() override;
 
@@ -22,21 +22,21 @@ namespace clv::plt::blb{
 	};
 }
 
-namespace Bulb::CloveWrapper{
-	public ref class BulbApplication{
+namespace Clove{
+	public ref class Application{
 		//VARIABLES
 	private:
-		clv::plt::blb::BulbNativeApplication* nativeApp = nullptr;
+		clv::plt::blb::NativeApplication* nativeApp = nullptr;
 
 		//NOTE: Storing the managed layers in here to stop gc
-		System::Collections::Generic::List<BulbLayer^> layers;
+		System::Collections::Generic::List<Layer^> layers;
 
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
 
-		BulbApplication(System::IntPtr hWnd, int width, int height);
-		~BulbApplication();
+		Application(System::IntPtr hWnd, int width, int height);
+		~Application();
 
 		void start();
 		void update();
@@ -44,7 +44,7 @@ namespace Bulb::CloveWrapper{
 
 		bool shouldRun();
 
-		void pushLayer(BulbLayer^ layer);
+		void pushLayer(Layer^ layer);
 		//void pushOverlay(std::shared_ptr<Layer> overlay); //TODO
 	};
 }

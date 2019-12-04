@@ -4,12 +4,12 @@ project(CloveWrapper)
 
 set(
 	Files
-		BulbApplication.hpp
-		BulbApplication.cpp
-		BulbLayer.hpp
-		BulbLayer.cpp
-		BulbWindow.hpp
-		BulbWindow.cpp
+		Application.hpp
+		Application.cpp
+		Layer.hpp
+		Layer.cpp
+		Window.hpp
+		Window.cpp
 
 		Wrapper.hpp
 		Wrapper.cpp

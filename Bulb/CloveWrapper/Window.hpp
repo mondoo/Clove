@@ -12,7 +12,7 @@ namespace clv::plt{
 }
 
 namespace clv::plt::blb{
-	class BulbNativeWindow : public clv::plt::Window{
+	class NativeWindow : public clv::plt::Window{
 		//VARIABLES
 	private:
 		HWND handle;
@@ -22,7 +22,7 @@ namespace clv::plt::blb{
 	public:
 		//TODO: Ctors
 
-		BulbNativeWindow(System::IntPtr hWnd, int width, int height);
+		NativeWindow(System::IntPtr hWnd, int width, int height);
 
 		virtual void* getNativeWindow() const override;
 

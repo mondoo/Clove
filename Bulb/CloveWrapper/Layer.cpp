@@ -1,42 +1,42 @@
-#include "BulbLayer.hpp"
+#include "Layer.hpp"
 
 namespace clv::blb{
-	void BulbNativeLayer::onAttach(){
+	void NativeLayer::onAttach(){
 		onAttachDelegate();
 	}
 
-	void BulbNativeLayer::onUpdate(utl::DeltaTime deltaTime){
+	void NativeLayer::onUpdate(utl::DeltaTime deltaTime){
 		onUpdateDelegate(deltaTime.getDeltaSeconds());
 	}
 
-	void BulbNativeLayer::onDetach(){
+	void NativeLayer::onDetach(){
 		onDetachDelegate();
 	}
 }
 
-namespace Bulb::CloveWrapper{
-	BulbLayer::BulbLayer(){
-		onAttachDelegate = gcnew AttachmentDelegate(this, &BulbLayer::onAttach);
-		onUpdateDelegate = gcnew UpdateDelegate(this, &BulbLayer::onUpdate);
-		onDetachDelegate = gcnew AttachmentDelegate(this, &BulbLayer::onDetach);
+namespace Clove{
+	Layer::Layer(){
+		onAttachDelegate = gcnew AttachmentDelegate(this, &Layer::onAttach);
+		onUpdateDelegate = gcnew UpdateDelegate(this, &Layer::onUpdate);
+		onDetachDelegate = gcnew AttachmentDelegate(this, &Layer::onDetach);
 
 		System::IntPtr attachPointer = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(onAttachDelegate);
 		System::IntPtr updatePointer = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(onUpdateDelegate);
 		System::IntPtr detachPointer = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(onDetachDelegate);
 
-		nativeLayer = new std::shared_ptr<clv::blb::BulbNativeLayer>();
-		*nativeLayer = std::make_shared<clv::blb::BulbNativeLayer>();
+		nativeLayer = new std::shared_ptr<clv::blb::NativeLayer>();
+		*nativeLayer = std::make_shared<clv::blb::NativeLayer>();
 
 		(*nativeLayer)->onAttachDelegate = static_cast<AttachmentFunctionPointer>(attachPointer.ToPointer());
 		(*nativeLayer)->onUpdateDelegate = static_cast<UpdateFunctionPointer>(updatePointer.ToPointer());
 		(*nativeLayer)->onDetachDelegate = static_cast<AttachmentFunctionPointer>(detachPointer.ToPointer());
 	}
 
-	BulbLayer::~BulbLayer(){
+	Layer::~Layer(){
 		delete nativeLayer;
 	}
 	
-	const std::shared_ptr<clv::blb::BulbNativeLayer>& BulbLayer::getNativeLayer(){
+	const std::shared_ptr<clv::blb::NativeLayer>& Layer::getNativeLayer(){
 		return *nativeLayer;
 	}
 }
