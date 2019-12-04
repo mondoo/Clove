@@ -22,7 +22,7 @@ namespace Clove{
 		nativeApp = new clv::plt::blb::NativeApplication(hWnd, width, height);
 	}
 
-	Application::~Application(){
+	Application::!Application(){
 		delete nativeApp;
 	}
 

@@ -41,7 +41,7 @@ namespace Clove{
 		//FUNCTIONS
 	public:
 		Layer();
-		~Layer();
+		!Layer();
 
 		const std::shared_ptr<clv::blb::NativeLayer>& getNativeLayer();
 

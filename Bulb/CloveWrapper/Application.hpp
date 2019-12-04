@@ -36,7 +36,7 @@ namespace Clove{
 		//TODO: Ctors
 
 		Application(System::IntPtr hWnd, int width, int height);
-		~Application();
+		!Application();
 
 		void start();
 		void update();

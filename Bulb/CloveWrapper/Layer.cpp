@@ -32,7 +32,7 @@ namespace Clove{
 		(*nativeLayer)->onDetachDelegate = static_cast<AttachmentFunctionPointer>(detachPointer.ToPointer());
 	}
 
-	Layer::~Layer(){
+	Layer::!Layer(){
 		delete nativeLayer;
 	}
 	
