@@ -4,13 +4,18 @@ project(CloveWrapper)
 
 set(
 	Files
-		Wrapper.hpp
-		Wrapper.cpp
 		BulbApplication.hpp
 		BulbApplication.cpp
+		BulbLayer.hpp
+		BulbLayer.cpp
 		BulbWindow.hpp
 		BulbWindow.cpp
+
+		Wrapper.hpp
+		Wrapper.cpp
 )
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Files})
 
 add_library(
 	${PROJECT_NAME} SHARED

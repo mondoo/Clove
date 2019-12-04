@@ -6,6 +6,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Border x:Name="RenderArea" BorderBrush="Black" BorderThickness="1" Margin="10"/>
+        <Border x:Name="RenderArea" BorderBrush="Black" BorderThickness="1" Margin="10">
+        </Border>
     </Grid>
 </Window>

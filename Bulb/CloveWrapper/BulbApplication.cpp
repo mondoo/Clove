@@ -41,4 +41,10 @@ namespace Bulb::CloveWrapper{
 	bool BulbApplication::shouldRun(){
 		return nativeApp->getState() != clv::plt::ApplicationState::stopped;
 	}
+
+	void BulbApplication::pushLayer(BulbLayer^ layer){
+		nativeApp->pushLayer(layer->getNativeLayer());
+		layers.Add(layer);
+		//NOTE: Potential here for them to become out of sync
+	}
 }

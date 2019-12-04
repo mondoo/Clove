@@ -18,13 +18,3 @@ namespace clv::plt::blb{
 		return handle;
 	}
 }
-
-namespace Bulb::CloveWrapper{
-	BulbWindow::BulbWindow(System::IntPtr hWnd, int width, int height){
-		nativeWin = new clv::plt::blb::BulbNativeWindow(hWnd, width, height);
-	}
-	
-	BulbWindow::~BulbWindow(){
-		delete nativeWin;
-	}
-}

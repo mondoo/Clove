@@ -3,6 +3,20 @@ using System.Threading;
 using Bulb.CloveWrapper;
 
 namespace Bulb.Core {
+	public class LayerTest : BulbLayer {
+		protected override void onAttach() {
+			Console.WriteLine("Attached");
+		}
+
+		protected override void onUpdate(float deltaTime) {
+			//Console.WriteLine("Updated");
+		}
+
+		protected override void onDetach() {
+			Console.WriteLine("Detached");
+		}
+	}
+
 	public class EditorSession {
 		private BulbApplication app;
 		private Thread appThread;
@@ -12,7 +26,7 @@ namespace Bulb.Core {
 
 			app.start();
 
-			//app->pushLayer(std::make_shared<TestLayer>());
+			app.pushLayer(new LayerTest());
 
 			appThread = new Thread(() => Update());
 			appThread.Start();

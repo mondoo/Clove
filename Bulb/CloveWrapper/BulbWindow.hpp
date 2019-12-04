@@ -20,24 +20,13 @@ namespace clv::plt::blb{
 
 		//FUNCTIONS
 	public:
+		//TODO: Ctors
+
 		BulbNativeWindow(System::IntPtr hWnd, int width, int height);
 
 		virtual void* getNativeWindow() const override;
 
 	protected:
 		virtual void processInput() override{ /* Empty for now */ }
-	};
-}
-
-namespace Bulb::CloveWrapper{
-	public ref class BulbWindow{
-		//VARIABLES
-	private:
-		clv::plt::blb::BulbNativeWindow* nativeWin = nullptr;
-
-		//FUNCTIONS
-	public:
-		BulbWindow(System::IntPtr hWnd, int width, int height);
-		~BulbWindow();
 	};
 }
