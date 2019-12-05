@@ -2,22 +2,22 @@
 
 #include <Clove/Core/Layer.hpp>
 
-#pragma managed(push, off)
-typedef void(*AttachmentFunctionPointer)();
-typedef void(*UpdateFunctionPointer)(float);
-#pragma managed(pop)
+#include <vcclr.h>
+
+namespace Clove{
+	ref class Layer;
+}
 
 namespace clv::blb{
 	class NativeLayer : public Layer{
 		//VARIABLES
-	public:
-		AttachmentFunctionPointer	onAttachDelegate;
-		UpdateFunctionPointer		onUpdateDelegate;
-		AttachmentFunctionPointer	onDetachDelegate;
+	private:
+		gcroot<Clove::Layer^> managedLayer;
 
 		//FUNCTIONS
 	public:
-		//TODO: Ctors
+		NativeLayer(Clove::Layer^ layer);
+		~NativeLayer();
 
 		virtual void onAttach() override;
 		virtual void onUpdate(utl::DeltaTime deltaTime) override;
@@ -27,25 +27,8 @@ namespace clv::blb{
 
 namespace Clove{
 	public ref class Layer abstract{
-		delegate void AttachmentDelegate();
-		delegate void UpdateDelegate(float);
-
-		//VARIABLES
-	private:
-		std::shared_ptr<clv::blb::NativeLayer>* nativeLayer = nullptr;
-
-		AttachmentDelegate^ onAttachDelegate;
-		UpdateDelegate^		onUpdateDelegate;
-		AttachmentDelegate^ onDetachDelegate;
-
 		//FUNCTIONS
 	public:
-		Layer();
-		!Layer();
-
-		const std::shared_ptr<clv::blb::NativeLayer>& getNativeLayer();
-
-	protected:
 		virtual void onAttach() abstract;
 		virtual void onUpdate(float deltaTime) abstract;
 		virtual void onDetach() abstract;

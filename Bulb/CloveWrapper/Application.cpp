@@ -1,6 +1,7 @@
 #include "Application.hpp"
 
 #include "Window.hpp"
+#include "Layer.hpp"
 
 namespace clv::plt::blb{
 	NativeApplication::NativeApplication(System::IntPtr hWnd, int width, int height)
@@ -43,8 +44,6 @@ namespace Clove{
 	}
 
 	void Application::pushLayer(Layer^ layer){
-		nativeApp->pushLayer(layer->getNativeLayer());
-		layers.Add(layer);
-		//NOTE: Potential here for them to become out of sync
+		nativeApp->pushLayer(std::make_shared<clv::blb::NativeLayer>(layer));
 	}
 }

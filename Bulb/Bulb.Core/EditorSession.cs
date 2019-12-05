@@ -3,15 +3,15 @@ using System.Threading;
 
 namespace Bulb.Core {
 	public class LayerTest : Clove.Layer {
-		protected override void onAttach() {
+		public override void onAttach() {
 			Console.WriteLine("Attached");
 		}
 
-		protected override void onUpdate(float deltaTime) {
+		public override void onUpdate(float deltaTime) {
 			//Console.WriteLine("Updated");
 		}
 
-		protected override void onDetach() {
+		public override void onDetach() {
 			Console.WriteLine("Detached");
 		}
 	}

@@ -1,8 +1,10 @@
 #pragma once
 
-#include "Layer.hpp"
-
 #include <Clove/Core/Platform/Application.hpp>
+
+namespace Clove{
+	ref class Layer;
+}
 
 namespace clv::plt::blb{
 	class NativeApplication : public clv::plt::Application{
@@ -27,9 +29,6 @@ namespace Clove{
 		//VARIABLES
 	private:
 		clv::plt::blb::NativeApplication* nativeApp = nullptr;
-
-		//NOTE: Storing the managed layers in here to stop gc
-		System::Collections::Generic::List<Layer^> layers;
 
 		//FUNCTIONS
 	public:
