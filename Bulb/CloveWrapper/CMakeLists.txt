@@ -12,9 +12,6 @@ set(
 		Layer.cpp
 		Window.hpp
 		Window.cpp
-
-		Wrapper.hpp
-		Wrapper.cpp
 )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Files})
