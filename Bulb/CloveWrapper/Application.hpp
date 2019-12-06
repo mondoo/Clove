@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Entity.hpp"
+
 #include <Clove/Core/Platform/Application.hpp>
 
 namespace Clove{
@@ -45,5 +47,8 @@ namespace Clove{
 
 		void pushLayer(Layer^ layer);
 		//void pushOverlay(std::shared_ptr<Layer> overlay); //TODO
+
+		//TEMP: Having the application create the entity
+		static Entity^ createEntity();
 	};
 }

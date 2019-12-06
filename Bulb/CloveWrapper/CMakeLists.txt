@@ -6,6 +6,8 @@ set(
 	Files
 		Application.hpp
 		Application.cpp
+		Entity.hpp
+		Entity.cpp
 		Layer.hpp
 		Layer.cpp
 		Window.hpp

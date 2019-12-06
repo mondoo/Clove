@@ -3,8 +3,23 @@ using System.Threading;
 
 namespace Bulb.Core {
 	public class LayerTest : Clove.Layer {
+		private Clove.Entity cubeEntity;
+		private Clove.Entity camEntity;
+
+		private int width;
+		private int height;
+
+		public LayerTest(int vpWidth, int vpHeight) {
+			width = vpWidth;
+			height = vpHeight;
+		}
+
 		public override void onAttach() {
-			Console.WriteLine("Attached");
+			cubeEntity = Clove.Application.createEntity();
+			cubeEntity.makeCubeEnt();
+
+			camEntity = Clove.Application.createEntity();
+			camEntity.makeCamEnt(width, height);
 		}
 
 		public override void onUpdate(float deltaTime) {
@@ -25,7 +40,7 @@ namespace Bulb.Core {
 
 			app.start();
 
-			app.pushLayer(new LayerTest());
+			app.pushLayer(new LayerTest(width, height));
 
 			appThread = new Thread(() => Update());
 			appThread.Start();

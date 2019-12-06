@@ -3,6 +3,8 @@
 #include "Window.hpp"
 #include "Layer.hpp"
 
+#include <Clove/Core/ECS/Manager.hpp>
+
 namespace clv::plt::blb{
 	NativeApplication::NativeApplication(System::IntPtr hWnd, int width, int height)
 		: width(width), height(height){
@@ -45,5 +47,10 @@ namespace Clove{
 
 	void Application::pushLayer(Layer^ layer){
 		nativeApp->pushLayer(std::make_shared<clv::blb::NativeLayer>(layer));
+	}
+	
+	Entity^ Application::createEntity(){
+		auto clvEnt = clv::plt::Application::get().getManager().createEntity();
+		return gcnew Entity(new clv::ecs::blb::NativeEntity(clvEnt.getID(), &clv::plt::Application::get().getManager()));
 	}
 }
