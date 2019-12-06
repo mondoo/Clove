@@ -59,7 +59,7 @@ namespace clv::plt{
 		//TODO:
 		//Will need process the mouse and keyboard events here eventually
 
-		for(auto layer : *layerStack){
+		for(const auto& layer : *layerStack){
 			layer->onUpdate(deltaSeonds.count());
 		}
 
