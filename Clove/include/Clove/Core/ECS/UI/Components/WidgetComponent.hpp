@@ -25,10 +25,10 @@ namespace clv::ecs::ui{
 	public:
 		WidgetComponent();
 
-		WidgetComponent(const WidgetComponent& other) = delete;
+		WidgetComponent(const WidgetComponent& other);
 		WidgetComponent(WidgetComponent&& other) noexcept;
 
-		WidgetComponent& operator=(const WidgetComponent& other) = delete;
+		WidgetComponent& operator=(const WidgetComponent& other);
 		WidgetComponent& operator=(WidgetComponent&& other) noexcept;
 
 		virtual ~WidgetComponent();

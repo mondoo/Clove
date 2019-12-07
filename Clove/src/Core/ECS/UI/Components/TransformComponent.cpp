@@ -8,9 +8,13 @@ namespace clv::ecs::ui{
 
 	TransformComponent::TransformComponent() = default;
 
-	TransformComponent::TransformComponent(TransformComponent && other) noexcept = default;
+	TransformComponent::TransformComponent(const TransformComponent& other) = default;
 
-	TransformComponent& TransformComponent::operator=(TransformComponent && other) noexcept = default;
+	TransformComponent::TransformComponent(TransformComponent&& other) noexcept = default;
+
+	TransformComponent& TransformComponent::operator=(const TransformComponent& other) = default;
+
+	TransformComponent& TransformComponent::operator=(TransformComponent&& other) noexcept = default;
 
 	TransformComponent::~TransformComponent(){
 		if(parent){

@@ -1,15 +1,19 @@
 #include "Clove/Core/UI/Text.hpp"
 
 namespace clv::ui{
+	Text::Text(Font font)
+		: font(std::move(font)){
+	}
+
+	Text::Text(const Text& other) = default;
+
 	Text::Text(Text &&other) = default;
+
+	Text& Text::operator=(const Text& other) = default;
 
 	Text &Text::operator=(Text &&other) = default;
 
 	Text::~Text() = default;
-
-	Text::Text(Font font)
-		: font(std::move(font)){
-	}
 
 	void Text::setText(std::string text){
 		this->text = std::move(text);

@@ -49,6 +49,14 @@ namespace clv::ecs{
 		return { nextID++, this };
 	}
 
+	Entity Manager::cloneEntitiesComponents(EntityID ID){
+		Entity clonedEntity = createEntity();
+
+		componentManager.cloneEntitiesComponents(ID, clonedEntity.getID());
+
+		return clonedEntity;
+	}
+
 	Entity Manager::getEntity(EntityID ID){
 		if(ID == INVALID_ENTITY_ID){
 			return {};

@@ -5,7 +5,11 @@
 namespace clv::ecs::_3D{
 	MeshComponent::MeshComponent() = default;
 
+	MeshComponent::MeshComponent(const MeshComponent& other) = default;
+
 	MeshComponent::MeshComponent(MeshComponent&& other) noexcept = default;
+
+	MeshComponent& MeshComponent::operator=(const MeshComponent& other) = default;
 
 	MeshComponent& MeshComponent::operator=(MeshComponent&& other) noexcept = default;
 

@@ -17,20 +17,24 @@ namespace clv::ecs::_2D{
 		std::unique_ptr<btCollisionShape> collisionShape;
 		std::unique_ptr<btRigidBody> body;
 
+		mth::vec2f squareSize{};
+
 		float mass = 0.0f;
 		bool isKinematic = false;
 
 		//FUNCTIONS
 	public:
 		RigidBodyComponent();
-		RigidBodyComponent(const RigidBodyComponent& other) = delete;
-		RigidBodyComponent(RigidBodyComponent&& other) noexcept;
-		RigidBodyComponent& operator=(const RigidBodyComponent& other) = delete;
-		RigidBodyComponent& operator=(RigidBodyComponent&& other) noexcept;
-		virtual ~RigidBodyComponent();
-
 		//Note: Only supporting collision squares for now
 		RigidBodyComponent(float mass, bool isKinematic, const mth::vec2f& squareSize);
+
+		RigidBodyComponent(const RigidBodyComponent& other);
+		RigidBodyComponent(RigidBodyComponent&& other) noexcept;
+
+		RigidBodyComponent& operator=(const RigidBodyComponent& other);
+		RigidBodyComponent& operator=(RigidBodyComponent&& other) noexcept;
+
+		virtual ~RigidBodyComponent();
 
 	private:
 		void initialise(const mth::vec2f& cubeSize);

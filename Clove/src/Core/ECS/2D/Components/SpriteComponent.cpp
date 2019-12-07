@@ -9,7 +9,11 @@ namespace clv::ecs::_2D{
 		: sprite(sprite){
 	}
 
+	SpriteComponent::SpriteComponent(const SpriteComponent& other) = default;
+
 	SpriteComponent::SpriteComponent(SpriteComponent&& other) noexcept = default;
+
+	SpriteComponent& SpriteComponent::operator=(const SpriteComponent& other) = default;
 
 	SpriteComponent& SpriteComponent::operator=(SpriteComponent&& other) noexcept = default;
 

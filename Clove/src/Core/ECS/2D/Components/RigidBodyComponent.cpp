@@ -8,6 +8,19 @@ namespace clv::ecs::_2D{
 		initialise({ 1.0f, 1.0f });
 	}
 
+	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic, const mth::vec2f& cubeSize)
+		: mass(mass)
+		, isKinematic(isKinematic){
+		initialise(cubeSize);
+	}
+
+	RigidBodyComponent::RigidBodyComponent(const RigidBodyComponent& other){
+		mass = other.mass;
+		isKinematic = other.isKinematic;
+
+		initialise(other.squareSize);
+	}
+
 	RigidBodyComponent::RigidBodyComponent(RigidBodyComponent&& other) noexcept{
 		onBodyCollision = std::move(other.onBodyCollision);
 
@@ -16,6 +29,15 @@ namespace clv::ecs::_2D{
 
 		mass = std::move(other.mass);
 		isKinematic = std::move(other.isKinematic);
+	}
+
+	RigidBodyComponent& RigidBodyComponent::operator=(const RigidBodyComponent& other){
+		mass = other.mass;
+		isKinematic = other.isKinematic;
+
+		initialise(other.squareSize);
+
+		return *this;
 	}
 
 	RigidBodyComponent& RigidBodyComponent::operator=(RigidBodyComponent&& other) noexcept{
@@ -32,13 +54,9 @@ namespace clv::ecs::_2D{
 
 	RigidBodyComponent::~RigidBodyComponent() = default;
 
-	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic, const mth::vec2f& cubeSize)
-		: mass(mass)
-		, isKinematic(isKinematic){
-		initialise(cubeSize);
-	}
-
 	void RigidBodyComponent::initialise(const mth::vec2f& squareSize){
+		this->squareSize = squareSize;
+
 		collisionShape = std::make_unique<btBox2dShape>(btVector3{ squareSize.x, squareSize.y, 0.0f });
 
 		btVector3 localInertia(0, 0, 0);

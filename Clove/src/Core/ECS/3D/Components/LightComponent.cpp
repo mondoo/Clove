@@ -15,7 +15,11 @@ namespace clv::ecs::_3D{
 		};
 	}
 
+	LightComponent::LightComponent(const LightComponent& other) = default;
+
 	LightComponent::LightComponent(LightComponent&& other) noexcept = default;
+
+	LightComponent& LightComponent::operator=(const LightComponent& other) = default;
 
 	LightComponent& LightComponent::operator=(LightComponent&&) noexcept = default;
 

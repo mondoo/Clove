@@ -20,17 +20,21 @@ namespace clv::ecs::_3D{
 		float mass = 0.0f;
 		bool isKinematic = false;
 
+		mth::vec3f cubeSize{};
+
 		//FUNCTIONS
 	public:
 		RigidBodyComponent();
-		RigidBodyComponent(const RigidBodyComponent& other) = delete;
-		RigidBodyComponent(RigidBodyComponent&& other) noexcept;
-		RigidBodyComponent& operator=(const RigidBodyComponent& other) = delete;
-		RigidBodyComponent& operator=(RigidBodyComponent&& other) noexcept;
-		virtual ~RigidBodyComponent();
-
 		//Note: Only supporting collision cubes for now
 		RigidBodyComponent(float mass, bool isKinematic, const mth::vec3f& cubeSize);
+
+		RigidBodyComponent(const RigidBodyComponent& other);
+		RigidBodyComponent(RigidBodyComponent&& other) noexcept;
+
+		RigidBodyComponent& operator=(const RigidBodyComponent& other);
+		RigidBodyComponent& operator=(RigidBodyComponent&& other) noexcept;
+
+		virtual ~RigidBodyComponent();
 
 	private:
 		void initialise(const mth::vec3f& cubeSize);

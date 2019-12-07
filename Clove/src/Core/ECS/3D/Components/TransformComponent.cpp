@@ -8,7 +8,11 @@ namespace clv::ecs::_3D{
 
 	TransformComponent::TransformComponent() = default;
 
+	TransformComponent::TransformComponent(const TransformComponent& other) = default;
+
 	TransformComponent::TransformComponent(TransformComponent&& other) noexcept = default;
+
+	TransformComponent& TransformComponent::operator=(const TransformComponent& other) = default;
 
 	TransformComponent& TransformComponent::operator=(TransformComponent&& other) noexcept = default;
 

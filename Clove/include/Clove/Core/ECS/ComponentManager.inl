@@ -36,6 +36,14 @@ namespace clv::ecs{
 	}
 
 	template<typename ComponentType>
+	void ComponentManager::ComponentContainer<ComponentType>::cloneComponent(EntityID fromID, EntityID toID){
+		if(auto iter = entityIDToIndex.find(fromID); iter != entityIDToIndex.end()){
+			auto* componentPtr = components[iter->second].get();
+			addComponent(toID, *componentPtr);
+		}
+	}
+
+	template<typename ComponentType>
 	ComponentType* ComponentManager::ComponentContainer<ComponentType>::getComponent(EntityID entityID){
 		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()){
 			return components[iter->second].get();

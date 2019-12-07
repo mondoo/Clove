@@ -33,6 +33,16 @@ namespace clv::utl{
 
 		//FUNCTIONS
 	public:
+		SingleCastDelegate();
+
+		SingleCastDelegate(const SingleCastDelegate& other) = delete;
+		SingleCastDelegate(SingleCastDelegate&& other) noexcept;
+
+		SingleCastDelegate& operator=(const SingleCastDelegate& other) = delete;
+		SingleCastDelegate& operator=(SingleCastDelegate&& other) noexcept;
+
+		~SingleCastDelegate();
+
 		template<typename BindFunctionPrototype, typename ObjectType>
 		void bind(BindFunctionPrototype&& function, ObjectType* object);
 		template<typename BindFunctionPrototype>
@@ -57,6 +67,16 @@ namespace clv::utl{
 
 		//FUNCTIONS
 	public:
+		MultiCastDelegate();
+
+		MultiCastDelegate(const MultiCastDelegate& other) = delete;
+		MultiCastDelegate(MultiCastDelegate&& other) noexcept;
+
+		MultiCastDelegate& operator=(const MultiCastDelegate& other) = delete;
+		MultiCastDelegate& operator=(MultiCastDelegate&& other) noexcept;
+
+		~MultiCastDelegate();
+
 		template<typename BindFunctionPrototype, typename ObjectType>
 		MultiCastDelegateHandle bind(BindFunctionPrototype&& function, ObjectType* object);
 		template<typename BindFunctionPrototype>

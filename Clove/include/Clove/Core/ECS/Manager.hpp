@@ -35,6 +35,7 @@ namespace clv::ecs{
 		void update(utl::DeltaTime deltaTime);
 
 		Entity createEntity();
+		Entity cloneEntitiesComponents(EntityID ID);
 		Entity getEntity(EntityID ID);
 		void destroyEntity(EntityID ID);
 

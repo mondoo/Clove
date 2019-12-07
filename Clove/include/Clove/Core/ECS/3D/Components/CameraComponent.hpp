@@ -42,10 +42,10 @@ namespace clv::ecs::_3D{
 	public:
 		CameraComponent(const gfx::Viewport& viewport);
 
-		CameraComponent(const CameraComponent& other) = delete;
+		CameraComponent(const CameraComponent& other);
 		CameraComponent(CameraComponent&& other) noexcept;
 
-		CameraComponent& operator=(const CameraComponent& other) = delete;
+		CameraComponent& operator=(const CameraComponent& other);
 		CameraComponent& operator=(CameraComponent&& other) noexcept;
 
 		~CameraComponent();
