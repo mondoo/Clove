@@ -221,6 +221,7 @@ namespace clv::ecs::_2D{
 	}
 
 	void RenderSystem::postUpdate(){
+		RenderCommand::setViewport({ 0, 0, currentSceneData->screenSize.x, currentSceneData->screenSize.y });
 		RenderCommand::setDepthBuffer(false);
 		RenderCommand::resetRenderTargetToDefault();
 
