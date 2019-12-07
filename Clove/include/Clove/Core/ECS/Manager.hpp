@@ -5,6 +5,8 @@
 #include "Clove/Core/ECS/System.hpp"
 #include "Clove/Core/Utils/DeltaTime.hpp"
 
+#include <queue>
+
 namespace clv::ecs{
 	class Entity;
 	class System;
@@ -19,6 +21,9 @@ namespace clv::ecs{
 		std::vector<std::unique_ptr<System>> systems;
 
 		static EntityID nextID;
+		static std::queue<EntityID> recycledIDs;
+
+		std::vector<EntityID> activeIDs;
 
 		//FUNCTIONS
 	public:

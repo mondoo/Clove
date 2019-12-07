@@ -17,7 +17,7 @@ namespace clv::ecs{
 	template<typename ...ComponentTypes>
 	std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> Manager::getComponentSets(){
 		std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> componentSets;
-		for(EntityID entityID = 0; entityID < nextID; ++entityID){
+		for(EntityID entityID : activeIDs){
 			std::tuple<std::add_pointer_t<ComponentTypes>...> tuple = std::make_tuple(componentManager.getComponentContainer<ComponentTypes>()->getComponent(entityID)...);
 			if(checkForNullptr<0, ComponentTypes...>(tuple) != FoundState::NullptrFound){
 				componentSets.push_back(tuple);

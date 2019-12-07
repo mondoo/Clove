@@ -9,6 +9,7 @@
 
 namespace clv::ecs{
 	EntityID Manager::nextID = 1;
+	std::queue<EntityID> Manager::recycledIDs;
 
 	Manager::Manager(){
 		//Order is somewhat important
@@ -46,7 +47,18 @@ namespace clv::ecs{
 	}
 
 	Entity Manager::createEntity(){
-		return { nextID++, this };
+		EntityID ID = INVALID_ENTITY_ID;
+
+		if(!recycledIDs.empty()){
+			ID = recycledIDs.front();
+			recycledIDs.pop();
+		} else{
+			ID = nextID++;
+		}
+
+		activeIDs.push_back(ID);
+
+		return { ID, this };
 	}
 
 	Entity Manager::cloneEntitiesComponents(EntityID ID){
@@ -70,6 +82,9 @@ namespace clv::ecs{
 			return;
 		}
 		componentManager.onEntityDestroyed(ID);
+
+		recycledIDs.push(ID);
+		activeIDs.erase(std::find(activeIDs.begin(), activeIDs.end(), ID));
 	}
 
 	void Manager::onComponentAdded(ComponentInterface* component){
