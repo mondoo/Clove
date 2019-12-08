@@ -3,10 +3,11 @@
 namespace clv::gfx{
 	enum class API{
 		None,
-	#if CLV_PLATFORM_WINDOWS || CLV_PLATFORM_LINUX
+	#if CLV_PLATFORM_WINDOWS
 		OpenGL4,
-	#elif CLV_PLATFORM_WINDOWS
 		DirectX11,
+	#elif CLV_PLATFORM_LINUX
+		OpenGL4,
 	#elif CLV_PLATFORM_MACOS
 		Metal1,
 	#endif
