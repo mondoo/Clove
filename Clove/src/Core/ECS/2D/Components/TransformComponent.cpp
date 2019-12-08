@@ -8,18 +8,41 @@ namespace clv::ecs::_2D{
 
 	TransformComponent::TransformComponent() = default;
 
-	TransformComponent::TransformComponent(const TransformComponent& other) = default;
+	TransformComponent::TransformComponent(const TransformComponent& other){
+		localPosition = other.localPosition;
+		localRotation = other.localRotation;
+		localScale = other.localScale;
+
+		parent = other.parent;
+		//Not copying children for now, transform component has no knowledge of other components
+
+		if(parent){
+			parent->children.push_back(this);
+		}
+	}
 
 	TransformComponent::TransformComponent(TransformComponent&& other) noexcept = default;
 
-	TransformComponent& TransformComponent::operator=(const TransformComponent& other) = default;
+	TransformComponent& TransformComponent::operator=(const TransformComponent& other){
+		localPosition = other.localPosition;
+		localRotation = other.localRotation;
+		localScale = other.localScale;
+
+		parent = other.parent;
+		//Not copying children for now, transform component has no knowledge of other components
+
+		if(parent){
+			parent->children.push_back(this);
+		}
+
+		return *this;
+	}
 
 	TransformComponent& TransformComponent::operator=(TransformComponent&& other) noexcept = default;
 
 	TransformComponent::~TransformComponent(){
 		if(parent){
 			removeItemFromVector(this, parent->children);
-
 		}
 
 		for(auto* child : children){
