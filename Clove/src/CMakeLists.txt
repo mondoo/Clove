@@ -138,6 +138,8 @@ set(
 	MetalGraphicsFiles
 		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLBuffer.hpp
 		${CLV_SOURCE}/Graphics/Metal/Resources/MTLBuffer.mm
+		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLTexture.hpp
+		${CLV_SOURCE}/Graphics/Metal/Resources/MTLTexture.mm
 )
 
 set(
