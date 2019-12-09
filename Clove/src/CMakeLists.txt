@@ -136,7 +136,8 @@ set(
 
 set(
 	MetalGraphicsFiles
-		#todo
+		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLBuffer.hpp
+		${CLV_SOURCE}/Graphics/Metal/Resources/MTLBuffer.mm
 )
 
 set(
