@@ -4,7 +4,7 @@
 
 #include <vcclr.h>
 
-namespace Clove{
+namespace Bulb::Core{
 	ref class Layer;
 }
 
@@ -12,11 +12,11 @@ namespace clv::blb{
 	class NativeLayer : public Layer{
 		//VARIABLES
 	private:
-		gcroot<Clove::Layer^> managedLayer;
+		gcroot<Bulb::Core::Layer^> managedLayer;
 
 		//FUNCTIONS
 	public:
-		NativeLayer(Clove::Layer^ layer);
+		NativeLayer(Bulb::Core::Layer^ layer);
 		~NativeLayer();
 
 		virtual void onAttach() override;
@@ -25,8 +25,8 @@ namespace clv::blb{
 	};
 }
 
-namespace Clove{
-	public ref class Layer abstract{
+namespace Bulb::Core{
+	public ref class Layer abstract{ //TODO: Make an interface
 		//FUNCTIONS
 	public:
 		virtual void onAttach() abstract;

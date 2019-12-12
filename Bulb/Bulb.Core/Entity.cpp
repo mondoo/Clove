@@ -31,7 +31,7 @@ namespace clv::ecs::blb{
 	}
 }
 
-namespace Clove{
+namespace Bulb::Core{
 	Entity::Entity(clv::ecs::blb::NativeEntity* entity)
 		: nativeEntity(entity){
 	}

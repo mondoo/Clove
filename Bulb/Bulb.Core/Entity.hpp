@@ -14,7 +14,7 @@ namespace clv::ecs::blb{
 	};
 }
 
-namespace Clove{
+namespace Bulb::Core{
 	public ref struct Entity{
 		//VARIABLES
 	private:

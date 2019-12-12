@@ -1,7 +1,7 @@
 #include "Layer.hpp"
 
 namespace clv::blb{
-	NativeLayer::NativeLayer(Clove::Layer^ layer)
+	NativeLayer::NativeLayer(Bulb::Core::Layer^ layer)
 		: managedLayer(layer){
 	}
 

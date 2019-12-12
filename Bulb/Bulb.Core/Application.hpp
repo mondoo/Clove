@@ -4,7 +4,7 @@
 
 #include <Clove/Core/Platform/Application.hpp>
 
-namespace Clove{
+namespace Bulb::Core{
 	ref class Layer;
 }
 
@@ -26,7 +26,7 @@ namespace clv::plt::blb{
 	};
 }
 
-namespace Clove{
+namespace Bulb::Core{
 	public ref class Application{
 		//VARIABLES
 	private:

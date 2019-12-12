@@ -20,7 +20,7 @@ namespace clv::plt::blb{
 	}
 }
 
-namespace Clove{
+namespace Bulb::Core{
 	Application::Application(System::IntPtr hWnd, int width, int height){
 		nativeApp = new clv::plt::blb::NativeApplication(hWnd, width, height);
 	}
