@@ -140,6 +140,8 @@ set(
 		${CLV_SOURCE}/Graphics/Metal/Resources/MTLBuffer.mm
 		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLTexture.hpp
 		${CLV_SOURCE}/Graphics/Metal/Resources/MTLTexture.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLShader.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLShader.mm
 )
 
 set(
@@ -364,7 +366,7 @@ set(
 
 set(
 	MSLShaders
-		Graphics/Metal/Shaders/Shader.metal
+		${CLV_SOURCE}/Graphics/Metal/Shaders/Shader.metal
 )
 
 set_source_files_properties(${MetalShaders} PROPERTIES LANGUAGE METAL)
