@@ -1,52 +1,25 @@
 #include "EditorSession.hpp"
 
-#include "Layer.hpp"
+#include "EditorLayer.hpp"
 
 namespace Bulb::Core{
-	public ref class LayerTest : Layer{
-	private:
-		Entity^ cubeEntity;
-		Entity^ camEntity;
-
-		int width;
-		int height;
-
-	public:
-		LayerTest(int vpWidth, int vpHeight){
-			width = vpWidth;
-			height = vpHeight;
-		}
-
-		void onAttach() override{
-			cubeEntity = Application::createEntity();
-			cubeEntity->makeCubeEnt();
-
-			camEntity = Application::createEntity();
-			camEntity->makeCamEnt(width, height);
-		}
-
-		void onUpdate(float deltaTime) override{
-			//Console.WriteLine("Updated");
-		}
-
-		void onDetach() override{
-			//Console.WriteLine("Detached");
-		}
-	};
+	EditorSession::!EditorSession(){
+		End();
+	}
 
 	void EditorSession::Begin(System::IntPtr hWnd, int width, int height){
-		app = gcnew Application(hWnd, width, height);
+		app = new clv::plt::blb::EditorApplication(hWnd, width, height);
 		
 		app->start();
 		
-		app->pushLayer(gcnew LayerTest(width, height));
+		app->pushLayer(std::make_shared<clv::blb::EditorLayer>());
 		
 		appThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &EditorSession::Update));
 		appThread->Start();
 	}
 
 	void EditorSession::Update(){
-		while(app->shouldRun()){
+		while(app->getState() == clv::plt::ApplicationState::running){
 			app->update();
 		}
 	}
@@ -54,5 +27,7 @@ namespace Bulb::Core{
 	void EditorSession::End(){
 		app->stop();
 		appThread->Join();
+
+		delete app;
 	}
 }

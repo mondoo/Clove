@@ -14,8 +14,8 @@ namespace clv{
 		virtual ~Layer() = default;
 
 		virtual void onAttach(){}
-		virtual void onDetach(){}
 		virtual void onUpdate(utl::DeltaTime deltaTime){}
+		virtual void onDetach(){}
 
 		const std::string& getName() const;
 	};
