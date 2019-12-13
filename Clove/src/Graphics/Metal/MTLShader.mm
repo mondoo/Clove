@@ -6,7 +6,7 @@
 namespace clv::gfx::mtl{
 	MTLShader::MTLShader(id<MTLDevice> mtlDevice, const ShaderDescriptor& descriptor)
 		: descriptor(descriptor){
-		
+		initialise(mtlDevice, descriptor.style);
 	}
 	
 	MTLShader::MTLShader(MTLShader&& other) noexcept = default;
@@ -25,8 +25,7 @@ namespace clv::gfx::mtl{
 	
 	void MTLShader::initialise(id<MTLDevice> mtlDevice, ShaderStyle style){
 		NSError* error2 = [[NSError alloc] init];
-		//NSString* librarySource = [NSString stringWithCString:shader_Shader.c_str() encoding:[NSString defaultCStringEncoding]];
-		//id<MTLLibrary> library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error2];
+		id<MTLLibrary> library;
 		
 		//TODO: Load the library inside each switch statement
 		
@@ -40,7 +39,10 @@ namespace clv::gfx::mtl{
 				break;
 
 			case ShaderStyle::Unlit_2D:
-
+				{
+					NSString* librarySource = [NSString stringWithCString:shader_2D.c_str() encoding:[NSString defaultCStringEncoding]];
+					library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error2];
+				}
 				break;
 
 			case ShaderStyle::RT:
@@ -60,7 +62,7 @@ namespace clv::gfx::mtl{
 				break;
 		}
 		
-		id<MTLFunction> vertexFunction = [library newFunctionWithName:@"vertex_shader"];
-		id<MTLFunction> fragmentFunction = [library newFunctionWithName:@"fragment_shader"];
+		id<MTLFunction> vertexFunction = [library newFunctionWithName:@"vertexShader"];
+		id<MTLFunction> fragmentFunction = [library newFunctionWithName:@"fragmentShader"];
 	}
 }

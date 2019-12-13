@@ -1,3 +1,3 @@
 //cmake generated header file
 
-#include "Shaders/Shader.hpp"
+#include "Shaders/2D.hpp"
