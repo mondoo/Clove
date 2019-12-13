@@ -43,7 +43,9 @@ namespace clv::plt{
 		Application();
 		virtual ~Application();
 
-		void start();
+		void initialise();
+		void initialise(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
+
 		void update();
 		void stop();
 
@@ -63,6 +65,7 @@ namespace clv::plt{
 		void onWindowClose();
 
 		virtual gfx::API getPlatformPreferedAPI() = 0;
-		virtual std::unique_ptr<Window> createWindow(const WindowProps& props = WindowProps()) = 0;
+		virtual std::unique_ptr<Window> createWindow(const WindowProps& props = {}) = 0;
+		virtual std::unique_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size) = 0;
 	};
 }

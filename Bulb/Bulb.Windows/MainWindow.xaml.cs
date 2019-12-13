@@ -23,16 +23,13 @@ namespace Bulb.Windows {
 		[DllImport("user32.dll", SetLastError = true)]
 		static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-		[DllImport("user32.dll", EntryPoint = "CreateWindowEx", CharSet = CharSet.Unicode)]
-		static extern IntPtr CreateWindowEx(int dwExStyle, string lpszClassName, string lpszWindowName, int style, int x, int y, int width, int height, IntPtr hwndParent, IntPtr hMenu, IntPtr hInst, [MarshalAs(UnmanagedType.AsAny)] object pvParam);
-
 		public MainWindow() {
 			InitializeComponent();
 
+			session = new EditorSession();
+
 			Loaded += (sender, e) => StartEngine();
 			Closing += (sender, e) => StopEngine();
-
-			session = new EditorSession();
 		}
 
         #endregion
@@ -40,18 +37,11 @@ namespace Bulb.Windows {
 		private void StartEngine() {
 			IntPtr hWnd = FindWindow(null, this.Title);
 
-			IntPtr RenderWindow = CreateWindowEx(0,
-			   "static",
-			   "",
-			   0x40000000 | 0x10000000, //WS_CHILD | WS_VISIBLE
-			   (int)RenderArea.Margin.Left + 1, (int)RenderArea.Margin.Top + 1,
-			   (int)RenderArea.ActualWidth - 2, (int)RenderArea.ActualHeight - 2,
-			   hWnd,
-			   IntPtr.Zero,
-			   IntPtr.Zero,
-			   0);
-
-			session.Begin(RenderWindow, (int)RenderArea.ActualWidth - 2, (int)RenderArea.ActualHeight - 2);
+			session.Begin(
+				hWnd,
+				(int)RenderArea.Margin.Left + 1, (int)RenderArea.Margin.Top + 1,
+				(int)RenderArea.ActualWidth - 2, (int)RenderArea.ActualHeight - 2
+			);
 		}
 
 		private void StopEngine() {

@@ -27,6 +27,7 @@ namespace clv::plt{
 	public:
 		WindowsWindow() = delete;
 		WindowsWindow(const WindowProps& props);
+		WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
 
 		WindowsWindow(const WindowsWindow& other) = delete;
 		WindowsWindow(WindowsWindow&& other) noexcept = delete;
@@ -45,7 +46,5 @@ namespace clv::plt{
 		static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 		static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 		LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-		void initialiseWindow(const WindowProps& props);
 	};
 }

@@ -1,19 +1,21 @@
 #pragma once
 
-#include "EditorApplication.hpp"
+namespace clv::plt{
+	class Application;
+}
 
 namespace Bulb::Core{
 	public ref class EditorSession{
 		//VARIABLES
 	private:
-		clv::plt::blb::EditorApplication* app;
+		clv::plt::Application* app = nullptr;
 		System::Threading::Thread^ appThread;
 
 		//FUNCTIONS
 	public:
 		!EditorSession();
 
-		void Begin(System::IntPtr hWnd, int width, int height);
+		void Begin(System::IntPtr hWnd, int posX, int posY, int width, int height);
 		void Update();
 		void End();
 	};

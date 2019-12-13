@@ -6,7 +6,8 @@ namespace clv::plt{
 	class WindowsApplication : public Application{
 		//FUNCTIONS
 	private:
-		virtual std::unique_ptr<Window> createWindow(const WindowProps& props = WindowProps()) override;
 		virtual gfx::API getPlatformPreferedAPI() override;
+		virtual std::unique_ptr<Window> createWindow(const WindowProps& props = {}) override;
+		virtual std::unique_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size) override;
 	};
 }

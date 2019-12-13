@@ -1,16 +1,24 @@
 #include "EditorSession.hpp"
 
 #include "EditorLayer.hpp"
+#include "EditorWindowProxy.hpp"
+
+#include <Clove/Core/Platform/Application.hpp>
 
 namespace Bulb::Core{
 	EditorSession::!EditorSession(){
 		End();
 	}
 
-	void EditorSession::Begin(System::IntPtr hWnd, int width, int height){
-		app = new clv::plt::blb::EditorApplication(hWnd, width, height);
+	void EditorSession::Begin(System::IntPtr hWnd, int posX, int posY, int width, int height){
+		//TODO: Support macOS / Linux windows
+
+		auto appUniqePtr = clv::plt::Application::createApplication();
+		app = appUniqePtr.release();
 		
-		app->start();
+		clv::plt::blb::EditorWindowProxy proxy = { hWnd };
+
+		app->initialise(proxy, { posX, posY }, { width, height });
 		
 		app->pushLayer(std::make_shared<clv::blb::EditorLayer>());
 		
@@ -25,9 +33,12 @@ namespace Bulb::Core{
 	}
 
 	void EditorSession::End(){
-		app->stop();
-		appThread->Join();
+		if(app){
+			app->stop();
+			appThread->Join();
 
-		delete app;
+			delete app;
+			app = nullptr;
+		}
 	}
 }

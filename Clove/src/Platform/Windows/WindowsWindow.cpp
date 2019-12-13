@@ -5,14 +5,106 @@
 
 namespace clv::plt{
 	WindowsWindow::WindowsWindow(const WindowProps& props){
-		initialiseWindow(props);
+		windowProperties.title = props.title;
+		windowProperties.width = props.width;
+		windowProperties.height = props.height;
+
+		instance = GetModuleHandle(nullptr);
+
+		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", windowProperties.title, windowProperties.width, windowProperties.height);
+
+		WNDCLASSEX wc{};
+		wc.cbSize			= sizeof(wc);
+		wc.style			= CS_OWNDC;
+		wc.lpfnWndProc		= HandleMsgSetup;
+		wc.cbClsExtra		= 0;
+		wc.cbWndExtra		= 0;
+		wc.hInstance		= instance;
+		wc.hIcon			= nullptr;
+		wc.hCursor			= nullptr;
+		wc.hbrBackground	= nullptr;
+		wc.lpszMenuName		= nullptr;
+		wc.lpszClassName	= className;
+
+		RegisterClassEx(&wc);
+
+		CLV_LOG_TRACE("Windows class registered");
+
+		const std::string wideTitle(windowProperties.title.begin(), windowProperties.title.end());
+
+		const DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU;
+
+		//Create a rect so we can adjust the resolution to be the client region not the entire window size
+		RECT wr{};
+		wr.left = 100; //What is with these 100s???
+		wr.right = windowProperties.width + wr.left;
+		wr.top = 100;
+		wr.bottom = windowProperties.height + wr.top;
+		if(!AdjustWindowRect(&wr, windowStyle, FALSE)){
+			throw CLV_WINDOWS_LAST_EXCEPTION;
+		}
+
+		windowsHandle = CreateWindow(
+			wc.lpszClassName,
+			wideTitle.c_str(),
+			windowStyle,
+			CW_USEDEFAULT, CW_USEDEFAULT,
+			wr.right - wr.left, wr.bottom - wr.top,
+			nullptr,
+			nullptr,
+			instance,
+			this
+		);
+
+		if(!windowsHandle){
+			throw CLV_WINDOWS_LAST_EXCEPTION;
+		}
+
+		CLV_LOG_DEBUG("Window created");
+
+		ShowWindow(windowsHandle, SW_SHOW);
+
+		data = { windowsHandle, windowProperties.width, windowProperties.height };
+
+		surface = gfx::RenderCommand::createSurface(&data);
+		gfx::RenderCommand::makeSurfaceCurrent(surface);
+	}
+
+	WindowsWindow::WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+		windowProperties.width = size.x;
+		windowProperties.height = size.y;
+
+		CLV_LOG_TRACE("Creating child window: ({1}, {2})", windowProperties.width, windowProperties.height);
+
+		const DWORD windowStyle = WS_CHILD | WS_VISIBLE;
+
+		windowsHandle = CreateWindow(
+			"static",
+			"",
+			windowStyle,
+			position.x, position.y,
+			windowProperties.width, windowProperties.height,
+			reinterpret_cast<HWND>(parentWindow.getNativeWindow()),
+			nullptr,
+			nullptr,
+			nullptr
+		);
+
+		CLV_LOG_DEBUG("Window created");
+
+		data = { windowsHandle, windowProperties.width, windowProperties.height };
+
+		surface = gfx::RenderCommand::createSurface(&data);
+		gfx::RenderCommand::makeSurfaceCurrent(surface);
 	}
 
 	WindowsWindow::~WindowsWindow(){
 		//Reset context first, before the window is destroyed
 		surface.reset();
 
-		UnregisterClass(className, instance);
+		if(instance != 0){
+			UnregisterClass(className, instance);
+		}
 		DestroyWindow(windowsHandle);
 	}
 
@@ -144,71 +236,5 @@ namespace clv::plt{
 
 		}
 		return DefWindowProc(hWnd, msg, wParam, lParam);
-	}
-
-	void WindowsWindow::initialiseWindow(const WindowProps& props){
-		windowProperties.title = props.title;
-		windowProperties.width = props.width;
-		windowProperties.height = props.height;
-		
-		instance = GetModuleHandle(nullptr);
-
-		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", windowProperties.title, windowProperties.width, windowProperties.height);
-
-		WNDCLASSEX wc{};
-		wc.cbSize			= sizeof(wc);
-		wc.style			= CS_OWNDC;
-		wc.lpfnWndProc		= HandleMsgSetup;
-		wc.cbClsExtra		= 0;
-		wc.cbWndExtra		= 0;
-		wc.hInstance		= instance;
-		wc.hIcon			= nullptr;
-		wc.hCursor			= nullptr;
-		wc.hbrBackground	= nullptr;
-		wc.lpszMenuName		= nullptr;
-		wc.lpszClassName	= className;
-
-		RegisterClassEx(&wc);
-
-		CLV_LOG_TRACE("Windows class registered");
-
-		const std::string wideTitle(windowProperties.title.begin(), windowProperties.title.end());
-
-		DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU;
-
-		//Create a rect so we can adjust the resolution to be the client region not the entire window size
-		RECT wr{};
-		wr.left		= 100; //What is with these 100s???
-		wr.right	= windowProperties.width + wr.left;
-		wr.top		= 100;
-		wr.bottom	= windowProperties.height + wr.top;
-		if(!AdjustWindowRect(&wr, windowStyle, FALSE)){
-			throw CLV_WINDOWS_LAST_EXCEPTION;
-		}
-
-		windowsHandle = CreateWindow(
-			wc.lpszClassName,
-			wideTitle.c_str(),
-			windowStyle,
-			CW_USEDEFAULT, CW_USEDEFAULT,
-			wr.right - wr.left, wr.bottom - wr.top,
-			nullptr,
-			nullptr,
-			instance,
-			this
-		);
-
-		if(!windowsHandle){
-			throw CLV_WINDOWS_LAST_EXCEPTION;
-		}
-
-		CLV_LOG_DEBUG("Window created");
-
-		ShowWindow(windowsHandle, SW_SHOW);
-
-		data = { windowsHandle, windowProperties.width, windowProperties.height };
-
-		surface = gfx::RenderCommand::createSurface(&data);
-		gfx::RenderCommand::makeSurfaceCurrent(surface);
 	}
 }

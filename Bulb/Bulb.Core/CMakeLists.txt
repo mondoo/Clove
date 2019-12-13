@@ -4,14 +4,12 @@ project(Bulb.Core)
 
 set(
 	Files
-		EditorApplication.hpp
-		EditorApplication.cpp
 		EditorLayer.hpp
 		EditorLayer.cpp
 		EditorSession.hpp
 		EditorSession.cpp
-		EditorWindow.hpp
-		EditorWindow.cpp
+		EditorWindowProxy.hpp
+		EditorWindowProxy.cpp
 )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Files})
