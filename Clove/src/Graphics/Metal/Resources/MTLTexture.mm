@@ -31,7 +31,9 @@ namespace clv::gfx::mtl{
 	
 	MTLTexture& MTLTexture::operator=(MTLTexture&& other) noexcept = default;
 	
-	MTLTexture::~MTLTexture() = default;
+	MTLTexture::~MTLTexture(){
+		[mtlTexture release];
+	}
 	
 	const TextureDescriptor& MTLTexture::getDescriptor() const{
 		return descriptor;
@@ -44,19 +46,21 @@ namespace clv::gfx::mtl{
 		}
 		
 		MTLTextureDescriptor* mtlDescriptor = [[MTLTextureDescriptor alloc] init];
-		mtlDescriptor.textureType = getTextureType(descriptor.style);
-		mtlDescriptor.pixelFormat = getTextureFormat(descriptor.usage);
-		mtlDescriptor.width = descriptor.dimensions.x;
-		mtlDescriptor.height = descriptor.dimensions.y;
-		mtlDescriptor.depth = 1;
-		mtlDescriptor.mipmapLevelCount = 1;
-		mtlDescriptor.arrayLength = descriptor.arraySize;
-		mtlDescriptor.usage = getTextureUsage(descriptor.usage);
+		mtlDescriptor.textureType 		= getTextureType(descriptor.style);
+		mtlDescriptor.pixelFormat 		= getTextureFormat(descriptor.usage);
+		mtlDescriptor.width 			= descriptor.dimensions.x;
+		mtlDescriptor.height 			= descriptor.dimensions.y;
+		mtlDescriptor.depth 			= 1;
+		mtlDescriptor.mipmapLevelCount 	= 1;
+		mtlDescriptor.arrayLength 		= descriptor.arraySize;
+		mtlDescriptor.usage 			= getTextureUsage(descriptor.usage);
 		
 		mtlTexture = [mtlDevice newTextureWithDescriptor:mtlDescriptor];
 		
 		const MTLRegion region = MTLRegionMake2D(0, 0, mtlDescriptor.width, mtlDescriptor.height);
 		[mtlTexture replaceRegion:region mipmapLevel:0 withBytes:data bytesPerRow:(BPP * mtlDescriptor.width)];
+		
+		[mtlDescriptor release];
 	}
 	
 	MTLTextureType MTLTexture::getTextureType(const TextureStyle style) const{
