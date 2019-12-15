@@ -19,10 +19,13 @@ namespace clv::gfx::ogl{
 		GLTexture() = delete;
 		GLTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture);
 		GLTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP);
+
 		GLTexture(const GLTexture& other) = delete;
 		GLTexture(GLTexture&& other) noexcept;
+
 		GLTexture& operator=(const GLTexture& other) = delete;
 		GLTexture& operator=(GLTexture&& other) noexcept;
+
 		virtual ~GLTexture();
 
 		const uint32 getTextureID() const;
@@ -39,5 +42,6 @@ namespace clv::gfx::ogl{
 		GLenum getInternalFormat(const TextureUsage usage) const;
 		GLenum getFormat(const TextureUsage usage);
 		GLenum getType(const TextureUsage usage);
+		GLint getFilter(const TextureFilter filter);
 	};
 }

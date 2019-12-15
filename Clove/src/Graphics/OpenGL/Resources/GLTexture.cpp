@@ -45,12 +45,13 @@ namespace clv::gfx::ogl{
 	void GLTexture::createTexture(const TextureDescriptor& descriptor, const void* data){
 		const GLenum target = getTarget(descriptor.style, descriptor.arraySize);
 		const TextureUsage usage = descriptor.usage;
-		
+		const GLint filter = getFilter(descriptor.filtering);
+
 		glGenTextures(1, &textureID);
 		glBindTexture(target, textureID);
 
-		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, filter);
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
 		glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -186,6 +187,20 @@ namespace clv::gfx::ogl{
 
 			default:
 				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+		}
+	}
+
+	GLint GLTexture::getFilter(const TextureFilter filter){
+		switch(filter){
+			case TextureFilter::Nearest:
+				return GL_NEAREST;
+
+			case TextureFilter::Linear:
+				return GL_LINEAR;
+
+			default:
+				CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+				return GL_NEAREST;
 		}
 	}
 }

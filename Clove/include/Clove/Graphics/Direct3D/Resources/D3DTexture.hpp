@@ -22,10 +22,13 @@ namespace clv::gfx::d3d{
 		D3DTexture() = delete;
 		D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture);
 		D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data, int32 BPP);
+
 		D3DTexture(const D3DTexture& other) = delete;
 		D3DTexture(D3DTexture&& other) noexcept;
+
 		D3DTexture& operator=(const D3DTexture& other) = delete;
 		D3DTexture& operator=(D3DTexture&& other) noexcept;
+
 		virtual ~D3DTexture();
 
 		const Microsoft::WRL::ComPtr<ID3D11Texture2D>& getD3DTexture() const;
@@ -37,7 +40,7 @@ namespace clv::gfx::d3d{
 	private:
 		void createTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data);
 
-		D3D11_SHADER_RESOURCE_VIEW_DESC createD3DShaderViewDescriptor() const;
+		D3D11_SHADER_RESOURCE_VIEW_DESC createD3DShaderViewDescriptor(const TextureDescriptor& descriptor) const;
 
 		UINT getBindFlags(const TextureUsage usage) const;
 		DXGI_FORMAT getFormatForTexture(const TextureUsage usage) const;
@@ -47,5 +50,7 @@ namespace clv::gfx::d3d{
 		D3D_SRV_DIMENSION getViewDimension(const TextureStyle style, const uint8 arraySize) const;
 
 		UINT getMiscFlags(const TextureStyle style) const;
+
+		D3D11_FILTER getFilter(const TextureFilter filter) const;
 	};
 }

@@ -198,6 +198,7 @@ namespace clv::ecs::_2D{
 						const gfx::TextureDescriptor descriptor = {
 							gfx::TextureStyle::Default,
 							gfx::TextureUsage::Font,
+							gfx::TextureFilter::Nearest,
 							{ width, height },
 							textureArraySize
 						};
