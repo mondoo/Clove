@@ -20,6 +20,7 @@ VSOut main(float3 pos : Position3D, float2 tex : TexCoord, float3 norm : Normal)
 	vso.pos = mul(mvp, float4(pos, 1.0f));
 
 	vso.tex = tex;
+	vso.tex.y = 1.0f - vso.tex.y; //In hlsl we slip the tex coords here so render targets behave the same across APIs
 
 	return vso;
 }
