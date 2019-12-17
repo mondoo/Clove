@@ -243,12 +243,6 @@ set(
 )
 
 set(
-	CoreProfilingFiles
-		${CLV_INCLUDE}/Core/Profiling/Timer.hpp
-		${CLV_SOURCE}/Core/Profiling/Timer.cpp
-)
-
-set(
 	CoreUIFiles
 		${CLV_INCLUDE}/Core/UI/Font.hpp
 		${CLV_SOURCE}/Core/UI/Font.cpp
@@ -265,6 +259,8 @@ set(
 		${CLV_INCLUDE}/Core/Utils/HashString.hpp
 		${CLV_INCLUDE}/Core/Utils/MeshLoader.hpp
 		${CLV_SOURCE}/Core/Utils/MeshLoader.cpp
+		${CLV_INCLUDE}/Core/Utils/Timer.hpp
+		${CLV_SOURCE}/Core/Utils/Timer.cpp
 )
 
 set(
@@ -379,7 +375,6 @@ set(
 			${WindowsPlatformFiles}
 			${LinuxPlatformFiles}
 			${MacOSPlatformFiles}
-		${CoreProfilingFiles}
 		${CoreUIFiles}
 		${CoreUtilityFiles}
 )
