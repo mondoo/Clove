@@ -33,6 +33,8 @@ namespace clv::ecs{
 	Manager::~Manager() = default;
 
 	void Manager::update(utl::DeltaTime deltaTime){
+		CLV_PROFILE_FUNCTION();
+
 		std::for_each(systems.begin(), systems.end(), [](const std::unique_ptr<System>& system){
 			system->preUpdate();
 		});

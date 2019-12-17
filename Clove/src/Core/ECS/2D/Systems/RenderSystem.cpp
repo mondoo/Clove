@@ -109,12 +109,18 @@ namespace clv::ecs::_2D{
 	}
 
 	void RenderSystem::preUpdate(){
+		CLV_PROFILE_FUNCTION();
+
 		//Empty for now
 	}
 
 	void RenderSystem::update(utl::DeltaTime deltaTime){
+		CLV_PROFILE_FUNCTION();
+
 		//Srpites
 		{
+			CLV_PROFILE_SCOPE("Preparing sprites");
+
 			auto componentTuples = manager->getComponentSets<TransformComponent, SpriteComponent>();
 			for(auto& tuple : componentTuples){
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
@@ -131,6 +137,8 @@ namespace clv::ecs::_2D{
 
 		//Widgets
 		{
+			CLV_PROFILE_SCOPE("Preparing widgets");
+
 			auto componentTuples = manager->getComponentSets<ui::TransformComponent, ui::WidgetComponent>();
 			for(auto& tuple : componentTuples){
 				ui::TransformComponent* transform = std::get<ui::TransformComponent*>(tuple);
@@ -161,6 +169,8 @@ namespace clv::ecs::_2D{
 
 		//Characters
 		{
+			CLV_PROFILE_SCOPE("Preparing characters");
+
 			auto componentTuples = manager->getComponentSets<ui::TransformComponent, ui::TextComponent>();
 			for(auto& tuple : componentTuples){
 				ui::TransformComponent* transform = std::get<ui::TransformComponent*>(tuple);
@@ -222,6 +232,8 @@ namespace clv::ecs::_2D{
 	}
 
 	void RenderSystem::postUpdate(){
+		CLV_PROFILE_FUNCTION();
+
 		RenderCommand::setViewport({ 0, 0, currentSceneData->screenSize.x, currentSceneData->screenSize.y });
 		RenderCommand::setDepthBuffer(false);
 		RenderCommand::resetRenderTargetToDefault();

@@ -87,6 +87,8 @@ namespace clv::ecs::_3D{
 	}
 
 	void RenderSystem::preUpdate(){
+		CLV_PROFILE_FUNCTION();
+
 		RenderCommand::setRenderTarget(currentSceneData->shadowMapRenderTarget.get());
 		RenderCommand::clear(); //TODO: Might need to just do a clear depth command
 		std::for_each(currentSceneData->cameras.begin(), currentSceneData->cameras.end(), [](const ComposedCameraData& cameraData){
@@ -104,6 +106,8 @@ namespace clv::ecs::_3D{
 	}
 
 	void RenderSystem::update(utl::DeltaTime deltaTime){
+		CLV_PROFILE_FUNCTION();
+
 		//Set camera
 		{
 			auto componentTuples = manager->getComponentSets<TransformComponent, CameraComponent>();
@@ -184,6 +188,8 @@ namespace clv::ecs::_3D{
 	}
 
 	void RenderSystem::postUpdate(){
+		CLV_PROFILE_FUNCTION();
+
 		const auto renderCamera = [](const ComposedCameraData& cameraData){
 			const auto draw = [camBufferData = cameraData.bufferData](const std::shared_ptr<Mesh>& mesh){
 				auto& meshMaterial = mesh->getMaterialInstance();
