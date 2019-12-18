@@ -19,13 +19,15 @@ namespace clv::ecs{
 		public:
 			ComponentContainerInterface();
 
-			ComponentContainerInterface(const ComponentContainerInterface& other);
+			ComponentContainerInterface(const ComponentContainerInterface& other) = delete;
 			ComponentContainerInterface(ComponentContainerInterface&& other) noexcept;
 
-			ComponentContainerInterface& operator=(const ComponentContainerInterface& other);
+			ComponentContainerInterface& operator=(const ComponentContainerInterface& other) = delete;
 			ComponentContainerInterface& operator=(ComponentContainerInterface&& other) noexcept;
 
 			virtual ~ComponentContainerInterface();
+
+			virtual void cloneComponent(EntityID fromID, EntityID toID) = 0;
 
 			virtual void removeComponent(EntityID entityID) = 0;
 		};
@@ -51,6 +53,7 @@ namespace clv::ecs{
 
 			template<typename ...ConstructArgs>
 			ComponentType* addComponent(EntityID entityID, ConstructArgs&& ...args);
+			virtual void cloneComponent(EntityID fromID, EntityID toID) override;
 			ComponentType* getComponent(EntityID entityID);
 			virtual void removeComponent(EntityID entityID) override;
 		};
@@ -77,6 +80,8 @@ namespace clv::ecs{
 
 		template<typename ComponentType>
 		ComponentContainer<ComponentType>* getComponentContainer();
+
+		void cloneEntitiesComponents(EntityID fromID, EntityID toID);
 
 		void onEntityDestroyed(EntityID entityID);
 

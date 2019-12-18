@@ -5,7 +5,11 @@
 namespace clv::ecs::aud{
 	AudioComponent::AudioComponent() = default;
 
+	AudioComponent::AudioComponent(const AudioComponent& other) = default;
+
 	AudioComponent::AudioComponent(AudioComponent&& other) = default;
+
+	AudioComponent& AudioComponent::operator=(const AudioComponent& other) = default;
 
 	AudioComponent& AudioComponent::operator=(AudioComponent&& other) = default;
 

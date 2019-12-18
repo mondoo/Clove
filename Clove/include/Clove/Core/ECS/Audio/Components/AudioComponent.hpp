@@ -37,10 +37,13 @@ namespace clv::ecs::aud{
 		//FUNCTIONS
 	public:
 		AudioComponent();
-		AudioComponent(const AudioComponent& other) = delete;
+
+		AudioComponent(const AudioComponent& other);
 		AudioComponent(AudioComponent&& other);
-		AudioComponent& operator=(const AudioComponent& other) = delete;
+
+		AudioComponent& operator=(const AudioComponent& other);
 		AudioComponent& operator=(AudioComponent&& other);
+
 		virtual ~AudioComponent();
 
 		void setSound(const clv::aud::Sound& sound); //TODO: make val?

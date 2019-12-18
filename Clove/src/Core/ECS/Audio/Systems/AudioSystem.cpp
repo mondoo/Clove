@@ -23,6 +23,8 @@ namespace clv::ecs::aud{
 	}
 
 	void AudioSystem::update(utl::DeltaTime deltaTime){
+		CLV_PROFILE_FUNCTION();
+
 		auto componentTuples = manager->getComponentSets<AudioComponent>();
 
 		for(auto& tuple : componentTuples){

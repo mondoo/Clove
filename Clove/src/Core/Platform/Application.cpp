@@ -21,6 +21,8 @@ namespace clv::plt{
 	Application* Application::instance = nullptr;
 
 	Application::Application(){
+		CLV_PROFILE_BEGIN_SESSION("Application cycle", "Profile-Cycle.json");
+
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
@@ -31,7 +33,9 @@ namespace clv::plt{
 		prevFrameTime = std::chrono::system_clock::now();
 	}
 
-	Application::~Application() = default;
+	Application::~Application(){
+		CLV_PROFILE_END_SESSION();
+	}
 
 	void Application::initialise(){
 		gfx::RenderCommand::initialise(getPlatformPreferedAPI());
@@ -60,6 +64,8 @@ namespace clv::plt{
 	}
 
 	void Application::update(){
+		CLV_PROFILE_FUNCTION();
+
 		auto currFrameTime = std::chrono::system_clock::now();
 		std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
 		prevFrameTime = currFrameTime;
@@ -69,13 +75,16 @@ namespace clv::plt{
 		//TODO:
 		//Will need process the mouse and keyboard events here eventually
 
-		for(auto layer : *layerStack){
+		for(const auto& layer : *layerStack){
 			layer->onUpdate(deltaSeonds.count());
 		}
 
 		ecsManager->update(deltaSeonds.count());
 
-		window->endFrame();
+		{
+			CLV_PROFILE_SCOPE("Window::endFrame");
+			window->endFrame();
+		}
 	}
 
 	void Application::stop(){

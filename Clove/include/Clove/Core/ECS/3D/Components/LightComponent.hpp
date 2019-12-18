@@ -29,10 +29,13 @@ namespace clv::ecs::_3D{
 		//FUNCTIONS
 	public:
 		LightComponent();
-		LightComponent(const LightComponent& other) = delete;
+
+		LightComponent(const LightComponent& other);
 		LightComponent(LightComponent&& other) noexcept;
-		LightComponent& operator=(const LightComponent& other) = delete;
+
+		LightComponent& operator=(const LightComponent& other);
 		LightComponent& operator=(LightComponent&&) noexcept;
+
 		virtual ~LightComponent();
 
 		void setAmbientColour(const mth::vec3f& colour);

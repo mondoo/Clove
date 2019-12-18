@@ -19,13 +19,15 @@ namespace clv::ecs::ui{
 		//FUNCTIONS
 	public:
 		TextComponent() = delete;
-		TextComponent(const TextComponent& other) = delete;
-		TextComponent(TextComponent&& other);
-		TextComponent& operator=(const TextComponent& other) = delete;
-		TextComponent& operator=(TextComponent&& other);
-		~TextComponent();
-
 		TextComponent(clv::ui::Text text);
+
+		TextComponent(const TextComponent& other);
+		TextComponent(TextComponent&& other);
+
+		TextComponent& operator=(const TextComponent& other);
+		TextComponent& operator=(TextComponent&& other);
+
+		virtual ~TextComponent();
 
 		void setText(std::string text);
 		void setSize(uint32 size);

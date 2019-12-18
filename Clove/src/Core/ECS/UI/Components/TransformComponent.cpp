@@ -8,9 +8,37 @@ namespace clv::ecs::ui{
 
 	TransformComponent::TransformComponent() = default;
 
-	TransformComponent::TransformComponent(TransformComponent && other) noexcept = default;
+	TransformComponent::TransformComponent(const TransformComponent& other){
+		localPosition = other.localPosition;
+		localRotation = other.localRotation;
+		localScale = other.localScale;
 
-	TransformComponent& TransformComponent::operator=(TransformComponent && other) noexcept = default;
+		parent = other.parent;
+		//Not copying children for now, transform component has no knowledge of other components
+
+		if(parent){
+			parent->children.push_back(this);
+		}
+	}
+
+	TransformComponent::TransformComponent(TransformComponent&& other) noexcept = default;
+
+	TransformComponent& TransformComponent::operator=(const TransformComponent& other){
+		localPosition = other.localPosition;
+		localRotation = other.localRotation;
+		localScale = other.localScale;
+
+		parent = other.parent;
+		//Not copying children for now, transform component has no knowledge of other components
+
+		if(parent){
+			parent->children.push_back(this);
+		}
+
+		return *this;
+	}
+
+	TransformComponent& TransformComponent::operator=(TransformComponent&& other) noexcept = default;
 
 	TransformComponent::~TransformComponent(){
 		if(parent){

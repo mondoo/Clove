@@ -30,6 +30,8 @@ namespace clv::ecs::_2D{
 	}
 
 	void PhysicsSystem::update(utl::DeltaTime deltaTime){
+		CLV_PROFILE_FUNCTION();
+
 		using ComponentTuple = std::tuple<TransformComponent*, RigidBodyComponent*>;
 
 		const auto updateRigidBody = [](const ComponentTuple& tuple){

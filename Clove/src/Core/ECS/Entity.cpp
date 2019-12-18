@@ -7,11 +7,21 @@ namespace clv::ecs{
 		: entityID(entityID), manager(manager){
 	}
 
-	Entity::Entity(const Entity& other) = default;
+	Entity::Entity(const Entity& other){
+		Entity clonedOther = other.manager->cloneEntitiesComponents(other.getID());
+		manager = clonedOther.manager;
+		entityID = clonedOther.entityID;
+	}
 
 	Entity::Entity(Entity&& other) noexcept = default;
 
-	Entity& Entity::operator=(const Entity& other) = default;
+	Entity& Entity::operator=(const Entity& other){
+		Entity clonedOther = other.manager->cloneEntitiesComponents(other.getID());
+		manager = clonedOther.manager;
+		entityID = clonedOther.entityID;
+
+		return *this;
+	}
 
 	Entity& Entity::operator=(Entity&& other) noexcept = default;
 

@@ -29,10 +29,11 @@
 	#define CLV_DEBUG_BREAK __debugbreak()
 #endif
 
+#define	CLV_FUNCTION_NAME __FUNCTION__
 #if defined(_MSC_VER)
-	#define	CLV_FUNCTION_NAME __FUNCTION__
-#else 
-	#define	CLV_FUNCTION_NAME __func__
+	#define CLV_FUNCTION_NAME_PRETTY __FUNCSIG__
+#else
+	#define CLV_FUNCTION_NAME_PRETTY __PRETTY_FUNCTION__
 #endif
 
 #if CLV_PLATFORM_WINDOWS

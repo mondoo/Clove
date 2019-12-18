@@ -17,10 +17,14 @@ namespace clv::ecs::_2D{
 		//FUNCTIONS
 	public:
 		SpriteComponent();
-		SpriteComponent(const SpriteComponent& other) = delete;
+		SpriteComponent(const std::shared_ptr<gfx::Sprite>& sprite);
+
+		SpriteComponent(const SpriteComponent& other);
 		SpriteComponent(SpriteComponent&& other) noexcept;
-		SpriteComponent& operator=(const SpriteComponent& other) = delete;
+
+		SpriteComponent& operator=(const SpriteComponent& other);
 		SpriteComponent& operator=(SpriteComponent&& other) noexcept;
+
 		virtual ~SpriteComponent();
 
 		void setSprite(const std::shared_ptr<gfx::Sprite>& sprite);
