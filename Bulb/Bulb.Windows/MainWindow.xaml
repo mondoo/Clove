@@ -17,7 +17,13 @@
         <Border Grid.Column="1" Grid.Row="0" x:Name="RenderArea" Margin="5 0 0 0" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Stretch"/>
 
         <Grid Margin="0 0 5 0">
-            <Button x:Name="AddEntityButton" VerticalAlignment="Top" Content="Add Entity" Click="AddEntityButton_Click"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            
+            <Button Grid.Row="0" x:Name="AddEntityButton" Content="Add Entity" Click="AddEntityButton_Click" VerticalAlignment="Top"/>
+            <ListBox Grid.Row="1" Background="#FFB4B4B4" />
         </Grid>
 
     </Grid>
