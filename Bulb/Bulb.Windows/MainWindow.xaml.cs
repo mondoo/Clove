@@ -37,9 +37,11 @@ namespace Bulb.Windows {
 		private void StartEngine() {
 			IntPtr hWnd = FindWindow(null, this.Title);
 
+			Point renderAreaPoint = RenderArea.TransformToAncestor(Application.Current.MainWindow).Transform(new Point(0, 0));
+
 			session.Begin(
 				hWnd,
-				(int)RenderArea.Margin.Left + 1, (int)RenderArea.Margin.Top + 1,
+				(int)renderAreaPoint.X + 2, (int)renderAreaPoint.Y + 1,
 				(int)RenderArea.ActualWidth - 2, (int)RenderArea.ActualHeight - 2
 			);
 		}
@@ -47,5 +49,10 @@ namespace Bulb.Windows {
 		private void StopEngine() {
 			session.End();
 		}
-    }
+
+		//TEMP: Doing code behind for now - my guess would be to make a viewmodel for the layer
+		private void AddEntityButton_Click(object sender, RoutedEventArgs e) {
+			session.AddEntityToLayer();
+		}
+	}
 }

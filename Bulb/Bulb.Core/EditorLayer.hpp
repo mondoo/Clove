@@ -7,12 +7,15 @@ namespace clv::blb{
 	class EditorLayer : public Layer{
 		//VARIABLES
 	private:
-		std::vector<clv::ecs::Entity> entities;
+		ecs::Entity camera;
+		std::vector<ecs::Entity> entities;
 
 		//FUNCTIONS
 	public:
 		virtual void onAttach() override;
 		virtual void onUpdate(utl::DeltaTime deltaTime) override;
 		virtual void onDetach() override;
+
+		void addEntity();
 	};
 }

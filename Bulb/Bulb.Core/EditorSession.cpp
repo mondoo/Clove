@@ -20,7 +20,8 @@ namespace Bulb::Core{
 
 		app->initialise(proxy, { posX, posY }, { width, height });
 		
-		app->pushLayer(std::make_shared<clv::blb::EditorLayer>());
+		layer = new std::shared_ptr(std::make_shared<clv::blb::EditorLayer>());
+		app->pushLayer(*layer);
 		
 		appThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &EditorSession::Update));
 		appThread->Start();
@@ -40,5 +41,14 @@ namespace Bulb::Core{
 			delete app;
 			app = nullptr;
 		}
+
+		if(layer){
+			delete layer;
+			layer = nullptr;
+		}
+	}
+
+	void EditorSession::AddEntityToLayer(){
+		(*layer)->addEntity();
 	}
 }
