@@ -80,13 +80,15 @@ namespace clv::ecs{
 	}
 
 	void Manager::destroyEntity(EntityID ID){
-		if(ID == INVALID_ENTITY_ID){
+		auto foundIDIter = std::find(activeIDs.begin(), activeIDs.end(), ID);
+
+		if(ID == INVALID_ENTITY_ID || foundIDIter == activeIDs.end()){
 			return;
 		}
 		componentManager.onEntityDestroyed(ID);
 
 		recycledIDs.push(ID);
-		activeIDs.erase(std::find(activeIDs.begin(), activeIDs.end(), ID));
+		activeIDs.erase(foundIDIter);
 	}
 
 	void Manager::onComponentAdded(ComponentInterface* component){
