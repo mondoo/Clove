@@ -367,6 +367,7 @@ set(
 set(
 	MSLShaders
 		${CLV_SOURCE}/Graphics/Metal/Shaders/2D.metal
+		${CLV_SOURCE}/Graphics/Metal/Shaders/Font.metal
 )
 
 set_source_files_properties(${MetalShaders} PROPERTIES LANGUAGE METAL)

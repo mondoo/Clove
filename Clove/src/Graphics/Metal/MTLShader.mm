@@ -50,7 +50,10 @@ namespace clv::gfx::mtl{
 				break;
 
 			case ShaderStyle::Font:
-
+				{
+					NSString* librarySource = [NSString stringWithCString:shader_Font.c_str() encoding:[NSString defaultCStringEncoding]];
+					library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error2];
+				}
 				break;
 
 			case ShaderStyle::CubeShadowMap:
