@@ -21,8 +21,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
-            
-            <Button Grid.Row="0" x:Name="AddEntityButton" Content="Add Entity" Click="AddEntityButton_Click" VerticalAlignment="Top"/>
+
+            <Button Grid.Row="0" x:Name="AddEntityButton" Content="Add Entity" Command="{Binding AddEntityCommand}" VerticalAlignment="Top"/>
             <ListBox Grid.Row="1" Background="#FFB4B4B4" />
         </Grid>
 

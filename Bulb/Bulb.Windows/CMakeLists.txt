@@ -23,6 +23,9 @@ set(
 		Properties/Resources.Designer.cs
 		Properties/Settings.settings
 		Properties/Settings.Designer.cs
+
+		UI/EditorWindowViewModel.cs
+        UI/RelayCommand.cs
 )
 
 #Add all c# files
@@ -72,6 +75,7 @@ target_link_libraries(
 		PUBLIC
 		PRIVATE
 			Bulb.Core
+			Bulb.UI
 )
 
 
