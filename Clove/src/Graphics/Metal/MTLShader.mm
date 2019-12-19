@@ -62,7 +62,7 @@ namespace clv::gfx::mtl{
 				break;
 		}
 		
-		id<MTLFunction> vertexFunction = [library newFunctionWithName:@"vertexShader"];
-		id<MTLFunction> fragmentFunction = [library newFunctionWithName:@"fragmentShader"];
+		vertexShader = [library newFunctionWithName:@"vertexShader"];
+		pixelShader = [library newFunctionWithName:@"pixelShader"];
 	}
 }
