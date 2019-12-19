@@ -35,7 +35,10 @@ namespace clv::gfx::mtl{
 				break;
 
 			case ShaderStyle::Unlit_3D:
-
+				{
+					NSString* librarySource = [NSString stringWithCString:shader_Unlit.c_str() encoding:[NSString defaultCStringEncoding]];
+					library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error2];
+				}
 				break;
 
 			case ShaderStyle::Unlit_2D:
