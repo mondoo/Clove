@@ -8,12 +8,12 @@ namespace Bulb.Windows {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class EditorWindow : Window
     {
 		[DllImport("user32.dll", SetLastError = true)]
 		static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-		public MainWindow() {
+		public EditorWindow() {
 			InitializeComponent();
 
 			DataContext = new EditorWindowViewModel();

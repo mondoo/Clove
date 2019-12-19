@@ -9,8 +9,8 @@ set(
 		App.config
 		App.xaml
 		App.xaml.cs
-		MainWindow.xaml
-		MainWindow.xaml.cs
+		EditorWindow.xaml
+		EditorWindow.xaml.cs
 
 		#Program.cs
 
@@ -25,6 +25,7 @@ set(
 		Properties/Settings.Designer.cs
 
 		UI/EditorWindowViewModel.cs
+		UI/EntityItemViewModel.cs
         UI/RelayCommand.cs
 )
 

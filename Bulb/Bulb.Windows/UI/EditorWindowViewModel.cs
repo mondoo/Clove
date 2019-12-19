@@ -1,14 +1,19 @@
 using Bulb.Core;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace Bulb.UI {
 	public class EditorWindowViewModel : ViewModel {
 		public ICommand AddEntityCommand { get; set; }
 
+		//TODO: Put this into a seperate viewmodel?
+		public ObservableCollection<EntityItemViewModel> Entities { get; set; }
+
 		private EditorSession session;
 
 		public EditorWindowViewModel() {
 			AddEntityCommand = new RelayCommand(AddEntity);
+			Entities = new ObservableCollection<EntityItemViewModel>();
 
 			session = new EditorSession();
 		}
@@ -23,6 +28,9 @@ namespace Bulb.UI {
 
 		private void AddEntity() {
 			session.AddEntityToLayer();
+			EntityItemViewModel entityVM = new EntityItemViewModel();
+			entityVM.Name = "An Entity";
+			Entities.Add(entityVM);
 		}
 	}
 }
