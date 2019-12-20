@@ -51,4 +51,29 @@ namespace Bulb::Core{
 	void EditorSession::AddEntityToLayer(){
 		(*layer)->addEntity();
 	}
+
+	void EditorSession::UpdateWindowSize(int sizeX, int sizeY){
+		if(app){
+			/*
+			TODO: Find a much better way to do this
+			This is a stop gap because DX needs to clear the render target to resize it's buffers.
+			This is fine on single thread app but when the application is running on a thread and 
+			then told to resize from another thread there is a change it could try and draw to the 
+			render target during the resize. This is a TEMPORARY solution to that but can still happen
+
+			Need to probably rethink how the thread is handled or add better handling of race conditions
+			*/
+			appThread->Suspend(); 
+			app->getWindow().resizeWindow({ sizeX, sizeY });
+			appThread->Resume();
+		}
+	}
+
+	void EditorSession::UpdateWindowPosition(int x, int y){
+		if(app){
+			appThread->Suspend();
+			app->getWindow().moveWindow({ x, y });
+			appThread->Resume();
+		}
+	}
 }

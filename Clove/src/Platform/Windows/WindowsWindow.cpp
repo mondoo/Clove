@@ -115,7 +115,7 @@ namespace clv::plt{
 	mth::vec2i WindowsWindow::getPosition() const{
 		RECT windowRect;
 		GetWindowRect(windowsHandle, &windowRect);
-		MapWindowPoints(windowsHandle, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
+		MapWindowPoints(HWND_DESKTOP, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
 
 		return { windowRect.left, windowRect.top };
 	}
@@ -123,7 +123,7 @@ namespace clv::plt{
 	mth::vec2i WindowsWindow::getSize() const{
 		RECT windowRect;
 		GetWindowRect(windowsHandle, &windowRect);
-		MapWindowPoints(windowsHandle, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
+		MapWindowPoints(HWND_DESKTOP, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
 
 		return { windowRect.right - windowRect.left, windowRect.bottom - windowRect.top };
 	}

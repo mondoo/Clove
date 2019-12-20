@@ -11,11 +11,13 @@
 
 namespace clv::blb{
 	void EditorLayer::onAttach(){
-		const auto windowVP = clv::gfx::Viewport{ 0, 0, clv::plt::Application::get().getWindow().getWidth(), clv::plt::Application::get().getWindow().getHeight() };
+		const auto windowVP = clv::gfx::Viewport{ 0, 0, clv::plt::Application::get().getWindow().getSize().x, clv::plt::Application::get().getWindow().getSize().y };
 
 		camera = plt::Application::get().getManager().createEntity();
 		camera.addComponent<ecs::_3D::TransformComponent>()->setPosition({ -20.0f, 0.0f, 0.0f });
-		camera.addComponent<ecs::_3D::CameraComponent>(windowVP);
+		auto* camComp = camera.addComponent<ecs::_3D::CameraComponent>(windowVP);
+
+		clv::plt::Application::get().getWindow().onWindowResize.bind(&clv::ecs::_3D::CameraComponent::updateViewportSize, camComp);
 	}
 
 	void EditorLayer::onUpdate(utl::DeltaTime deltaTime){

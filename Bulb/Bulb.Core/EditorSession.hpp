@@ -26,7 +26,9 @@ namespace Bulb::Core{
 		void Update();
 		void End();
 
-		//Temp
+		//Temp - Just to get functionality working
 		void AddEntityToLayer();
+		void UpdateWindowSize(int sizeX, int sizeY);
+		void UpdateWindowPosition(int x, int y);
 	};
 }

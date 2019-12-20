@@ -14,8 +14,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Column="1" Grid.Row="0" x:Name="RenderArea" Margin="5 0 0 0" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Stretch"/>
-
         <Grid Margin="0 0 5 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -25,11 +23,14 @@
             <Button Grid.Row="0" x:Name="AddEntityButton" Content="Add Entity" Command="{Binding AddEntityCommand}" VerticalAlignment="Top"/>
             <ListBox Grid.Row="1" Background="#FFB4B4B4" ItemsSource="{Binding Entities}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate> <!-- This might need to be a Hierachical template to show nested entities -->
+                    <!-- This might need to be a Hierachical template to show nested entities -->
+                    <DataTemplate> 
                         <TextBlock Text="{Binding Name}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
+
+        <Border Grid.Column="1" Grid.Row="0" x:Name="RenderArea" SizeChanged="RenderArea_SizeChanged"  Margin="5 0 0 0" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Stretch"/>
     </Grid>
 </Window>

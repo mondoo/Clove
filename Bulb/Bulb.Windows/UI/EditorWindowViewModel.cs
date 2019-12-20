@@ -1,5 +1,6 @@
 using Bulb.Core;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Bulb.UI {
@@ -24,6 +25,11 @@ namespace Bulb.UI {
 
 		public void StopEngine() {
 			session.End();
+		}
+
+		public void RenderAreaSizeChanged(int x, int y, int width, int height) {
+			session.UpdateWindowPosition(x, y);
+			session.UpdateWindowSize(width, height);
 		}
 
 		private void AddEntity() {

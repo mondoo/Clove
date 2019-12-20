@@ -37,5 +37,14 @@ namespace Bulb.Windows {
 		private void StopEngine() {
 			((EditorWindowViewModel)DataContext).StopEngine();
 		}
+
+		//TODO: Change this to bind straight to the view model
+		private void RenderArea_SizeChanged(object sender, SizeChangedEventArgs e) {
+			Point renderAreaPoint = RenderArea.TransformToAncestor(Application.Current.MainWindow).Transform(new Point(0, 0));
+
+			((EditorWindowViewModel)DataContext).RenderAreaSizeChanged(
+				(int)renderAreaPoint.X + 2, (int)renderAreaPoint.Y + 1,
+				(int)RenderArea.ActualWidth - 2, (int)RenderArea.ActualHeight - 2);
+		}
 	}
 }
