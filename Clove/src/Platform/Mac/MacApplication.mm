@@ -19,9 +19,4 @@ namespace clv::plt{
 	std::unique_ptr<Window> MacApplication::createWindow(const WindowProps& props){
         return std::make_unique<MacWindow>(props);
     }
-
-	std::unique_ptr<Window> MacApplication::createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
-        CLV_ASSERT(false, "TODO: Child windows not yet supported on macOS");
-		return std::make_unique<Window>();
-    }
 }
