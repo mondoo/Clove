@@ -31,7 +31,7 @@ namespace clv::ecs::_2D{
 		std::shared_ptr<PipelineObject> charPipelineObject;
 
 		mth::mat4f projection; //Effectively the 'camera'
-		mth::vec2ui screenSize;
+		mth::vec2i screenSize;
 	} *currentSceneData;
 
 	RenderSystem::RenderSystem(){
@@ -91,7 +91,7 @@ namespace clv::ecs::_2D{
 		//Projection
 		plt::Application::get().getWindow().onWindowResize.bind(&RenderSystem::onWindowSizeChanged, this);
 
-		currentSceneData->screenSize = { plt::Application::get().getWindow().getWidth(), plt::Application::get().getWindow().getHeight() };
+		currentSceneData->screenSize = { plt::Application::get().getWindow().getSize() };
 
 		const float halfWidth = static_cast<float>(currentSceneData->screenSize.x) / 2;
 		const float halfHeight = static_cast<float>(currentSceneData->screenSize.y) / 2;

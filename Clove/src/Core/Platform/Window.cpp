@@ -15,14 +15,6 @@ namespace clv::plt{
 		surface->present();
 	}
 
-	uint32 Window::getWidth() const{
-		return windowProperties.width;
-	}
-
-	uint32 Window::getHeight() const{
-		return windowProperties.height;
-	}
-
 	void Window::setVSync(bool enabled){
 		surface->setVSync(enabled);
 	}

@@ -9,8 +9,8 @@
 namespace clv::plt{
 	struct WindowsData{
 		HWND handle;
-		uint32 width;
-		uint32 height;
+		int32 width;
+		int32 height;
 	};
 
 	class WindowsWindow : public Window{
@@ -38,6 +38,12 @@ namespace clv::plt{
 		virtual ~WindowsWindow();
 
 		virtual void* getNativeWindow() const override;
+
+		virtual mth::vec2i getPosition() const override;
+		virtual mth::vec2i getSize() const override;
+
+		virtual void moveWindow(const mth::vec2i& position) override;
+		virtual void resizeWindow(const mth::vec2i& size) override;
 		
 	protected:
 		virtual void processInput() override;
