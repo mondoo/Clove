@@ -28,7 +28,7 @@ namespace clv::plt{
 
 		const std::string wideTitle(props.title.begin(), props.title.end());
 
-		const DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU;
+		const DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_VISIBLE;
 
 		windowsHandle = CreateWindow(
 			wc.lpszClassName,
@@ -47,8 +47,6 @@ namespace clv::plt{
 		}
 
 		CLV_LOG_DEBUG("Window created");
-
-		ShowWindow(windowsHandle, SW_SHOW);
 
 		data = { windowsHandle, props.width, props.height };
 
@@ -79,7 +77,7 @@ namespace clv::plt{
 		const DWORD windowStyle = WS_CHILD | WS_VISIBLE;
 
 		windowsHandle = CreateWindow(
-			"static",
+			wc.lpszClassName,
 			"",
 			windowStyle,
 			position.x, position.y,
