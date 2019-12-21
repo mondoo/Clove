@@ -16,7 +16,8 @@ namespace clv::ecs::_3D{
 
 		//FUNCTIONS
 	public:
-		MeshComponent();
+		MeshComponent() = delete;
+		MeshComponent(const std::shared_ptr<gfx::Mesh>& mesh);
 
 		MeshComponent(const MeshComponent& other);
 		MeshComponent(MeshComponent&& other) noexcept;
@@ -25,7 +26,5 @@ namespace clv::ecs::_3D{
 		MeshComponent& operator=(MeshComponent&& other) noexcept;
 
 		virtual ~MeshComponent();
-
-		void setMesh(const std::shared_ptr<gfx::Mesh>& mesh);
 	};
 }
