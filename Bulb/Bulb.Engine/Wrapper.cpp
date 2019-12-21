@@ -121,7 +121,7 @@ public:
 
 		cubeEnt = clv::plt::Application::get().getManager().createEntity();
 		cubeEnt.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition({ 10.0f, 0.0f, 0.0f });
-		cubeEnt.addComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
+		cubeEnt.addComponent<clv::ecs::_3D::MeshComponent>(mesh);
 
 
 		camEnt = clv::plt::Application::get().getManager().createEntity();
