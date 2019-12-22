@@ -126,9 +126,9 @@ namespace clv::ecs::_3D{
 				}
 
 				mth::vec3f front;
-				front.x = cos(eulerRot.y) * cos(eulerRot.x);
-				front.y = sin(eulerRot.x);
-				front.z = sin(eulerRot.y) * cos(eulerRot.x);
+				front.x = sin(eulerRot.y) * cos(eulerRot.x);
+				front.y = sin(eulerRot.y) * sin(eulerRot.x);
+				front.z = cos(eulerRot.y);
 				camera->cameraFront = mth::normalise(front);
 
 				//update look at
@@ -137,8 +137,8 @@ namespace clv::ecs::_3D{
 				//update right
 				camera->cameraRight = mth::normalise(mth::cross(camera->cameraFront, camera->cameraUp));
 
-				camera->cameraRenderData.lookAt = lookAt;
-				camera->cameraRenderData.position = position;
+				camera->cameraRenderData.lookAt 	= lookAt;
+				camera->cameraRenderData.position 	= position;
 				camera->cameraRenderData.projection = camera->currentProjection;
 
 				currentSceneData->cameras.push_back({ camera->viewport, camera->cameraRenderData, camera->renderTarget });
