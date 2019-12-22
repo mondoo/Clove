@@ -111,8 +111,6 @@ target_compile_definitions(
 	#Config
 	PUBLIC
 		CLV_DEBUG=$<CONFIG:Debug>
-		CLV_DEVELOPMENT=$<CONFIG:Development>
-		CLV_PROFILING=$<CONFIG:Profiling>
 		CLV_RELEASE=$<CONFIG:Release>
 	#Platform
 	PUBLIC
