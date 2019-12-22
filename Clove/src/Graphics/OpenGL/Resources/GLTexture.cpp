@@ -149,6 +149,7 @@ namespace clv::gfx::ogl{
 
 			default:
 				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+				return GL_RGBA8;
 		}
 	}
 
@@ -168,6 +169,7 @@ namespace clv::gfx::ogl{
 
 			default:
 				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+				return GL_RGBA;
 		}
 	}
 
@@ -187,6 +189,7 @@ namespace clv::gfx::ogl{
 
 			default:
 				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+				return GL_UNSIGNED_BYTE
 		}
 	}
 
