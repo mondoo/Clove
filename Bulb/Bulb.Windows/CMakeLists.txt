@@ -24,8 +24,9 @@ set(
 		Properties/Settings.settings
 		Properties/Settings.Designer.cs
 
+		UI/ComponentViewModel.cs
 		UI/EditorWindowViewModel.cs
-		UI/EntityItemViewModel.cs
+		UI/EntityViewModel.cs
         UI/RelayCommand.cs
 )
 

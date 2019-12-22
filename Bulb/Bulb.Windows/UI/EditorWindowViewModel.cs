@@ -1,20 +1,34 @@
 using Bulb.Core;
+using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 
 namespace Bulb.UI {
 	public class EditorWindowViewModel : ViewModel {
 		public ICommand AddEntityCommand { get; set; }
+		public ICommand AddComponentCommand { get; set; }
 
-		//TODO: Put this into a seperate viewmodel?
-		public ObservableCollection<EntityItemViewModel> Entities { get; set; }
+		public EntityViewModel SelectedEntity {
+			get {
+				return _SelectedEntity;
+			}
+			set {
+				_SelectedEntity = value;
+				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedEntity)));
+			}
+		}
+		public ObservableCollection<EntityViewModel> Entities { get; set; }
 
 		private EditorSession session;
+		private EntityViewModel _SelectedEntity;
 
 		public EditorWindowViewModel() {
 			AddEntityCommand = new RelayCommand(AddEntity);
-			Entities = new ObservableCollection<EntityItemViewModel>();
+			AddComponentCommand = new RelayCommand(AddComponentToSelectedEntity);
+
+			Entities = new ObservableCollection<EntityViewModel>();
 
 			session = new EditorSession();
 		}
@@ -34,9 +48,13 @@ namespace Bulb.UI {
 
 		private void AddEntity() {
 			session.AddEntityToLayer();
-			EntityItemViewModel entityVM = new EntityItemViewModel();
-			entityVM.Name = "An Entity";
-			Entities.Add(entityVM);
+			Entities.Add(new EntityViewModel());
+
+			SelectedEntity = Entities[0];
+		}
+
+		private void AddComponentToSelectedEntity() {
+			Console.WriteLine("Add component clicked");
 		}
 	}
 }
