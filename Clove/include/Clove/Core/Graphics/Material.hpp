@@ -6,7 +6,7 @@
 
 namespace clv::gfx{
 	class MaterialInstance;
-	class Bindable;
+
 	struct ShaderData{
 		std::shared_ptr<Buffer> buffer;
 		ShaderType shaderType;

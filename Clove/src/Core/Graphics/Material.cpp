@@ -3,6 +3,7 @@
 #include "Clove/Core/Graphics/Resources/Texture.hpp"
 #include "Clove/Core/Graphics/MaterialInstance.hpp"
 #include "Clove/Core/Graphics/GraphicsGlobal.hpp"
+#include "Clove/Core/Graphics/ShaderBufferTypes.hpp"
 
 namespace clv::gfx{
 	Material::Material(){
@@ -14,6 +15,7 @@ namespace clv::gfx{
 		specTexture = blankTexture;
 
 		setData(BBP_Colour, mth::vec4f(1.0f, 1.0f, 1.0f, 1.0f), ShaderType::Pixel);
+		setData(BBP_MaterialData, MaterialData{ 32.0f }, ShaderType::Pixel);
 	}
 
 	Material::Material(const Material& other) = default;
