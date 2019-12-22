@@ -84,6 +84,9 @@ set(
 
 set(
 	CoreGraphicsFiles
+		${CLV_INCLUDE}/Core/Graphics/GraphicsConstants.hpp
+		${CLV_INCLUDE}/Core/Graphics/GraphicsGlobal.hpp		
+		${CLV_SOURCE}/Core/Graphics/GraphicsGlobal.cpp
 		${CLV_INCLUDE}/Core/Graphics/GraphicsTypes.hpp
 		${CLV_INCLUDE}/Core/Graphics/Material.hpp
 		${CLV_INCLUDE}/Core/Graphics/Material.inl
@@ -92,8 +95,6 @@ set(
 		${CLV_INCLUDE}/Core/Graphics/MaterialInstance.inl
 		${CLV_SOURCE}/Core/Graphics/MaterialInstance.cpp
 		${CLV_INCLUDE}/Core/Graphics/PipelineObject.hpp
-		${CLV_INCLUDE}/Core/Graphics/RenderCommand.hpp
-		${CLV_SOURCE}/Core/Graphics/RenderCommand.cpp
 		${CLV_INCLUDE}/Core/Graphics/RenderDevice.hpp
 		${CLV_INCLUDE}/Core/Graphics/RenderFactory.hpp
 		${CLV_INCLUDE}/Core/Graphics/RenderTarget.hpp

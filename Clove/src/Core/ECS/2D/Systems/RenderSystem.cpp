@@ -7,7 +7,7 @@
 #include "Clove/Core/ECS/UI/Components/TextComponent.hpp"
 #include "Clove/Core/ECS/UI/Components/WidgetComponent.hpp"
 #include "Clove/Core/Graphics/GraphicsTypes.hpp"
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 #include "Clove/Core/Graphics/Renderables/Mesh.hpp"
 #include "Clove/Core/Graphics/Renderables/Sprite.hpp"
 #include "Clove/Core/Graphics/Shader.hpp"
@@ -85,8 +85,8 @@ namespace clv::ecs::_2D{
 			currentSceneData->characterMesh = std::make_shared<gfx::Mesh>(bufferData, indices, characterMaterial->createInstance());
 		}
 
-		currentSceneData->spritePipelineObject = RenderCommand::createPipelineObject(RenderCommand::createShader({ ShaderStyle::Unlit_2D }));
-		currentSceneData->charPipelineObject = RenderCommand::createPipelineObject(RenderCommand::createShader({ ShaderStyle::Font }));
+		currentSceneData->spritePipelineObject = global::graphicsFactory->createPipelineObject(global::graphicsFactory->createShader({ ShaderStyle::Unlit_2D }));
+		currentSceneData->charPipelineObject = global::graphicsFactory->createPipelineObject(global::graphicsFactory->createShader({ ShaderStyle::Font }));
 
 		//Projection
 		plt::Application::get().getWindow().onWindowResize.bind(&RenderSystem::onWindowSizeChanged, this);
@@ -213,7 +213,7 @@ namespace clv::ecs::_2D{
 							textureArraySize
 						};
 
-						auto texture = gfx::RenderCommand::createTexture(descriptor, glyph.buffer, 1);
+						auto texture = gfx::global::graphicsFactory->createTexture(descriptor, glyph.buffer, 1);
 
 						mth::mat4f model = mth::mat4f(1.0f);
 						model = mth::translate(mth::mat4f(1.0f), { xpos, ypos, 0.0f });
@@ -234,12 +234,12 @@ namespace clv::ecs::_2D{
 	void RenderSystem::postUpdate(){
 		CLV_PROFILE_FUNCTION();
 
-		RenderCommand::setViewport({ 0, 0, currentSceneData->screenSize.x, currentSceneData->screenSize.y });
-		RenderCommand::setDepthBuffer(false);
-		RenderCommand::resetRenderTargetToDefault();
+		global::graphicsDevice->setViewport({ 0, 0, currentSceneData->screenSize.x, currentSceneData->screenSize.y });
+		global::graphicsDevice->setDepthBuffer(false);
+		global::graphicsDevice->resetRenderTargetToDefault();
 
 		//Sprites / Widgets
-		RenderCommand::bindPipelineObject(*currentSceneData->spritePipelineObject);
+		global::graphicsDevice->bindPipelineObject(*currentSceneData->spritePipelineObject);
 		{
 			const auto draw = [](const std::shared_ptr<Sprite>& sprite){
 				auto& renderMeshMaterial = currentSceneData->spriteMesh->getMaterialInstance();
@@ -253,10 +253,10 @@ namespace clv::ecs::_2D{
 				auto vb = currentSceneData->spriteMesh->getVertexBufferForLayout(vertexLayout);
 				auto ib = currentSceneData->spriteMesh->getIndexBuffer();
 
-				RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
-				RenderCommand::bindIndexBuffer(*ib);
+				global::graphicsDevice->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				global::graphicsDevice->bindIndexBuffer(*ib);
 
-				RenderCommand::drawIndexed(currentSceneData->spriteMesh->getIndexCount());
+				global::graphicsDevice->drawIndexed(currentSceneData->spriteMesh->getIndexCount());
 			};
 
 			std::for_each(currentSceneData->spritesToRender.begin(), currentSceneData->spritesToRender.end(), draw);
@@ -277,10 +277,10 @@ namespace clv::ecs::_2D{
 				auto vb = currentSceneData->widgetMesh->getVertexBufferForLayout(vertexLayout);
 				auto ib = currentSceneData->widgetMesh->getIndexBuffer();
 
-				RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
-				RenderCommand::bindIndexBuffer(*ib);
+				global::graphicsDevice->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				global::graphicsDevice->bindIndexBuffer(*ib);
 
-				RenderCommand::drawIndexed(currentSceneData->widgetMesh->getIndexCount());
+				global::graphicsDevice->drawIndexed(currentSceneData->widgetMesh->getIndexCount());
 			};
 
 			std::for_each(currentSceneData->widgetsToRender.begin(), currentSceneData->widgetsToRender.end(), draw);
@@ -288,7 +288,7 @@ namespace clv::ecs::_2D{
 		}
 
 		//Characters
-		RenderCommand::bindPipelineObject(*currentSceneData->charPipelineObject);
+		global::graphicsDevice->bindPipelineObject(*currentSceneData->charPipelineObject);
 		{
 			const auto draw = [](const std::shared_ptr<Sprite>& character){
 				auto& charMat = currentSceneData->characterMesh->getMaterialInstance();
@@ -301,10 +301,10 @@ namespace clv::ecs::_2D{
 				auto vb = currentSceneData->characterMesh->getVertexBufferForLayout(vertexLayout);
 				auto ib = currentSceneData->characterMesh->getIndexBuffer();
 
-				RenderCommand::bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
-				RenderCommand::bindIndexBuffer(*ib);
+				global::graphicsDevice->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				global::graphicsDevice->bindIndexBuffer(*ib);
 
-				RenderCommand::drawIndexed(currentSceneData->characterMesh->getIndexCount());
+				global::graphicsDevice->drawIndexed(currentSceneData->characterMesh->getIndexCount());
 			};
 
 			std::for_each(currentSceneData->charactersToRender.begin(), currentSceneData->charactersToRender.end(), draw);

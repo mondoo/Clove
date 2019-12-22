@@ -1,6 +1,6 @@
 #include "Clove/Core/Graphics/Renderables/Sprite.hpp"
 
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 #include "Clove/Core/Graphics/Resources/Texture.hpp"
 #include "Clove/Core/Graphics/Material.hpp"
 
@@ -9,11 +9,11 @@ namespace clv::gfx{
 		uint32 white = 0xffffffff;
 		TextureDescriptor descriptor{};
 		descriptor.dimensions = { 1, 1 };
-		texture = RenderCommand::createTexture(descriptor, &white, 4);
+		texture = global::graphicsFactory->createTexture(descriptor, &white, 4);
 	}
 
 	Sprite::Sprite(const std::string& pathToTexture){
-		texture = RenderCommand::createTexture({}, pathToTexture);
+		texture = global::graphicsFactory->createTexture({}, pathToTexture);
 	}
 
 	Sprite::Sprite(std::shared_ptr<Texture> texture)
