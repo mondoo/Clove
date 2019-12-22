@@ -122,7 +122,7 @@ namespace clv::ecs::_3D{
 				mth::vec3f eulerRot = mth::quaternionToEuler(cameraRotation);
 
 				if(eulerRot.x >= mth::pi<float>){ //This stops it moving the other way
-					eulerRot.y *= -1.0f;
+					eulerRot.y -= mth::pi<float>;
 				}
 
 				mth::vec3f front;
