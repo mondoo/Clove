@@ -24,8 +24,8 @@
             <ListBox Grid.Row="0" Background="#FFB4B4B4" ItemsSource="{Binding Entities}">
                 <ListBox.ItemTemplate>
                     <!-- This might need to be a Hierachical template to show nested entities -->
-                    <DataTemplate> 
-                        <TextBlock Text="{Binding Name}"/>
+                    <DataTemplate>
+                        <Button Content="{Binding Name}" Command="{Binding OnClickedCommand}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

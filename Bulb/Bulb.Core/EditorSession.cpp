@@ -55,10 +55,7 @@ namespace Bulb::Core{
 
 	Entity^ EditorSession::AddEntityToLayer(){
 		msclr::lock l(appThread);
-		clv::ecs::Entity entity = (*layer)->addEntity();
-
-		//TODO: Return this pointing to an entity
-		return gcnew Entity();
+		return gcnew Entity((*layer)->addEntity().getID());
 	}
 
 	void EditorSession::UpdateWindowSize(int sizeX, int sizeY){

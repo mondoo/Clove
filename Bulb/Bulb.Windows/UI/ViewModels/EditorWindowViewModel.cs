@@ -49,15 +49,21 @@ namespace Bulb.UI {
 		}
 
 		private void AddEntity() {
-			Entity entity = session.AddEntityToLayer();
-			Entities.Add(new EntityViewModel(entity));
+			var entity = session.AddEntityToLayer();
+			var entityViewModel = new EntityViewModel(entity);
+			Entities.Add(entityViewModel);
 
-			//TODO: Move this into a function that will bound to an event on the EntityViewModel
-			SelectedEntity = Entities[0];
+			entityViewModel.clickedEvent += OnEntityClicked;
 		}
 
 		private void AddComponentToSelectedEntity() {
+			//TODO: Need to make the select entity a nullable type and check it here
+			//TODO: Add component logic
 			Console.WriteLine("Add component clicked");
+		}
+
+		private void OnEntityClicked(EntityViewModel entity) {
+			SelectedEntity = entity;
 		}
 	}
 }

@@ -10,12 +10,20 @@ namespace Bulb::Core{
 	private:
 		//clv::ecs::Entity nativeEntity;
 
+		//This will basically just need the ID
+
 	public:
 		//All temp
 		System::String^ name = "Test entity";
 
+	private:
+		clv::ecs::EntityID ID;
+
 		//FUNCTIONS
 	public:
+		Entity(clv::ecs::EntityID ID);
+
 		array<Component^>^ getComponents();
+
 	};
 }
