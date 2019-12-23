@@ -54,13 +54,13 @@ namespace clv::plt{
 	}
 
 	void Application::initialise(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
-		gfx::RenderCommand::initialise(getPlatformPreferedAPI());
+		gfx::global::initialise(getPlatformPreferedAPI());
 
 		window = createChildWindow(parentWindow, position, size);
 		//window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
 		//window->setVSync(true);
 
-		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();

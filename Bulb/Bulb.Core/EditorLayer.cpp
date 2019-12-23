@@ -14,7 +14,7 @@ namespace clv::blb{
 		const auto windowVP = clv::gfx::Viewport{ 0, 0, clv::plt::Application::get().getWindow().getSize().x, clv::plt::Application::get().getWindow().getSize().y };
 
 		camera = plt::Application::get().getManager().createEntity();
-		camera.addComponent<ecs::_3D::TransformComponent>()->setPosition({ -20.0f, 0.0f, 0.0f });
+		camera.addComponent<ecs::_3D::TransformComponent>()->setPosition({ 0.0f, 0.0f, -20.0f });
 		auto* camComp = camera.addComponent<ecs::_3D::CameraComponent>(windowVP);
 
 		clv::plt::Application::get().getWindow().onWindowResize.bind(&clv::ecs::_3D::CameraComponent::updateViewportSize, camComp);
@@ -41,7 +41,7 @@ namespace clv::blb{
 		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
 
 		ecs::Entity entity = clv::plt::Application::get().getManager().createEntity();
-		entity.addComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
+		entity.addComponent<clv::ecs::_3D::MeshComponent>(mesh);
 		entity.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition({ 0.0f, 0.0f, 0.0f });;
 
 		entities.push_back(entity);

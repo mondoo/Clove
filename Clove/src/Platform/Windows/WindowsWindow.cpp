@@ -50,8 +50,8 @@ namespace clv::plt{
 
 		data = { windowsHandle, props.width, props.height };
 
-		surface = gfx::RenderCommand::createSurface(&data);
-		gfx::RenderCommand::makeSurfaceCurrent(surface);
+		surface = gfx::global::graphicsFactory->createSurface(&data);
+		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 	}
 
 	WindowsWindow::WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
@@ -96,8 +96,8 @@ namespace clv::plt{
 
 		data = { windowsHandle, size.x, size.y };
 
-		surface = gfx::RenderCommand::createSurface(&data);
-		gfx::RenderCommand::makeSurfaceCurrent(surface);
+		surface = gfx::global::graphicsFactory->createSurface(&data);
+		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 	}
 
 	WindowsWindow::~WindowsWindow(){
