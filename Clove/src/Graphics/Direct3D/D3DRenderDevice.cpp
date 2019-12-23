@@ -138,8 +138,12 @@ namespace clv::gfx::d3d{
 
 		d3dContext->OMGetRenderTargets(1u, &renderTargetView, &depthStencilView);
 
-		d3dContext->ClearRenderTargetView(renderTargetView.Get(), mth::valuePtr(clearColour));
-		d3dContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
+		if(renderTargetView){
+			d3dContext->ClearRenderTargetView(renderTargetView.Get(), mth::valuePtr(clearColour));
+		}
+		if(depthStencilView){
+			d3dContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
+		}
 	}
 
 	void D3DRenderDevice::drawIndexed(const uint32 count){

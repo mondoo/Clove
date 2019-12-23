@@ -7,7 +7,7 @@
 #include "Clove/Core/Utils/DeltaTime.hpp"
 #include "Clove/Core/ECS/Manager.hpp"
 
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 
 #if CLV_PLATFORM_WINDOWS
 	#include "Clove/Platform/Windows/WindowsApplication.hpp"
@@ -38,13 +38,16 @@ namespace clv::plt{
 	}
 
 	void Application::initialise(){
-		gfx::RenderCommand::initialise(getPlatformPreferedAPI());
+		//TODO: Added a 'start' function to handle not calling a virtual from the ctor
+		//Would like as minimal api as possible when starting the application
+
+		gfx::global::initialise(getPlatformPreferedAPI());
 
 		window = createWindow();
 		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
 		window->setVSync(true);
 
-		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();

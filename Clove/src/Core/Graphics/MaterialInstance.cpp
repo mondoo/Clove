@@ -2,7 +2,7 @@
 
 #include "Clove/Core/Graphics/Material.hpp"
 #include "Clove/Core/Graphics/Resources/Texture.hpp"
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 
 namespace clv::gfx{
 	MaterialInstance::MaterialInstance(std::shared_ptr<Material> material)
@@ -26,31 +26,31 @@ namespace clv::gfx{
 	
 	void MaterialInstance::bind(){
 		if(albedoTexture){
-			RenderCommand::bindTexture(albedoTexture.get(), TBP_Albedo);
+			global::graphicsDevice->bindTexture(albedoTexture.get(), TBP_Albedo);
 		} else{
-			RenderCommand::bindTexture(material->albedoTexture.get(), TBP_Albedo);
+			global::graphicsDevice->bindTexture(material->albedoTexture.get(), TBP_Albedo);
 		}
 
 		if(specTexture){
-			RenderCommand::bindTexture(specTexture.get(), TBP_Specular);
+			global::graphicsDevice->bindTexture(specTexture.get(), TBP_Specular);
 		} else{
-			RenderCommand::bindTexture(material->specTexture.get(), TBP_Specular);
+			global::graphicsDevice->bindTexture(material->specTexture.get(), TBP_Specular);
 		}
 
 		for(auto& [bindingPoint, data] : material->shaderData){
 			if(auto iter = shaderData.find(bindingPoint); iter == shaderData.end()){ //If we don't have data for that bindingPint
-				RenderCommand::bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
+				global::graphicsDevice->bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
 			}
 		}
 
 		for(auto& [bindingPoint, data] : shaderData){
-			RenderCommand::bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
+			global::graphicsDevice->bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
 		}
 	}
 
 	void MaterialInstance::setAlbedoTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		albedoTexture = RenderCommand::createTexture(tdesc, path);
+		albedoTexture = global::graphicsFactory->createTexture(tdesc, path);
 	}
 
 	void MaterialInstance::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
@@ -59,7 +59,7 @@ namespace clv::gfx{
 
 	void MaterialInstance::setSpecularTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		specTexture = RenderCommand::createTexture(tdesc, path);
+		specTexture = global::graphicsFactory->createTexture(tdesc, path);
 	}
 
 	void MaterialInstance::setSpecularTexture(const std::shared_ptr<Texture>& texture){

@@ -1,7 +1,7 @@
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
 
 #include "Clove/Core/Graphics/Surface.hpp"
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 
 #include <X11/Xlib.h>
 
@@ -90,7 +90,7 @@ namespace clv::plt{
 							const mth::vec2i size{ xce.width, xce.height };
 							if(surface){
 								surface->resizeBuffers(size);
-								gfx::RenderCommand::makeSurfaceCurrent(surface);
+								gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 							}
 							windowProperties.width = size.x;
 							windowProperties.height = size.y;
@@ -120,7 +120,7 @@ namespace clv::plt{
 
         //Create the context first to get the visual info
         data = { display, &window, &visual };
-		surface = gfx::RenderCommand::createSurface(&data);
+		surface = gfx::global::graphicsFactory->createSurface(&data);
 
 		if(screenID != visual->screen){
 			//TODO: Exception
@@ -143,7 +143,7 @@ namespace clv::plt{
 							   &windowAttribs);
 
         //Now that we have a window, we can make the context current
-		gfx::RenderCommand::makeSurfaceCurrent(surface);
+		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 
 		//Remap the delete window message so we can gracefully close the application
 		atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);

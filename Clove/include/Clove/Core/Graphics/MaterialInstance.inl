@@ -1,10 +1,10 @@
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 
 namespace clv::gfx{
 	template<typename DataType>
 	void MaterialInstance::setData(BufferBindingPoint bindingPoint, DataType&& data, gfx::ShaderType shaderType){
 		if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
-			RenderCommand::updateBufferData(*iter->second.buffer, &data);
+			global::graphicsDevice->updateBufferData(*iter->second.buffer, &data);
 		} else{
 			BufferDescriptor srdesc{};
 			srdesc.elementSize	= 0;
@@ -12,7 +12,7 @@ namespace clv::gfx{
 			srdesc.bufferType	= BufferType::ShaderResourceBuffer;
 			srdesc.bufferUsage	= BufferUsage::Dynamic;
 
-			auto buffer = RenderCommand::createBuffer(srdesc, &data);
+			auto buffer = global::graphicsFactory->createBuffer(srdesc, &data);
 			shaderData[bindingPoint] = { buffer, shaderType };
 		}
 	}

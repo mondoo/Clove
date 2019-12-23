@@ -3,11 +3,11 @@
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 #include "Clove/Core/Graphics/GraphicsTypes.hpp"
 #include "Clove/Core/Graphics/RenderDevice.hpp"
 #if CLV_DEBUG
-#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
+	#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
 #endif
 
 #include <d3d11.h>
@@ -100,7 +100,7 @@ namespace clv::gfx::d3d{
 		depthStencilView.Reset();
 		renderTarget.reset();
 
-		RenderCommand::setRenderTarget(nullptr);
+		global::graphicsDevice->setRenderTarget(nullptr);
 
 		DX11_INFO_PROVIDER;
 		DX11_THROW_INFO(swapChain->ResizeBuffers(bufferCount, size.x, size.y, DXGI_FORMAT_B8G8R8A8_UNORM, 0));

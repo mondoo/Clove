@@ -1,6 +1,6 @@
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 #include "Clove/Core/Graphics/Surface.hpp"
 
 namespace clv::plt{
@@ -258,7 +258,7 @@ namespace clv::plt{
 					const mth::vec2ui size = { pt.x, pt.y };
 					if(surface){ //Can be called before the surface is initialised
 						surface->resizeBuffers(size);
-						gfx::RenderCommand::makeSurfaceCurrent(surface);
+						gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 					}
 					onWindowResize.broadcast(size);
 				}
