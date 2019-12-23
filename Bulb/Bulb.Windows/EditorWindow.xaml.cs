@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Runtime.InteropServices;
 using Bulb.Core;
+using Bulb.CoreUI;
 using Bulb.UI;
 
 namespace Bulb.Windows {

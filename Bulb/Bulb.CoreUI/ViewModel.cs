@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Bulb.UI {
+namespace Bulb.CoreUI {
 	public class ViewModel : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
 

@@ -1,4 +1,4 @@
-project(Bulb.UI)
+project(Bulb.CoreUI)
 
 set(
     Files

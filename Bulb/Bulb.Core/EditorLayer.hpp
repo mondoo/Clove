@@ -16,6 +16,6 @@ namespace clv::blb{
 		virtual void onUpdate(utl::DeltaTime deltaTime) override;
 		virtual void onDetach() override;
 
-		void addEntity();
+		ecs::Entity addEntity();
 	};
 }

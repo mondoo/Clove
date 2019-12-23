@@ -1,4 +1,5 @@
 using Bulb.Core;
+using Bulb.CoreUI;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -29,7 +30,8 @@ namespace Bulb.UI {
 			AddComponentCommand = new RelayCommand(AddComponentToSelectedEntity);
 
 			Entities = new ObservableCollection<EntityViewModel>();
-
+			
+			//TODO: Have a session model which contains data / bindings to decouple
 			session = new EditorSession();
 		}
 
@@ -47,9 +49,10 @@ namespace Bulb.UI {
 		}
 
 		private void AddEntity() {
-			session.AddEntityToLayer();
-			Entities.Add(new EntityViewModel());
+			Entity entity = session.AddEntityToLayer();
+			Entities.Add(new EntityViewModel(entity));
 
+			//TODO: Move this into a function that will bound to an event on the EntityViewModel
 			SelectedEntity = Entities[0];
 		}
 

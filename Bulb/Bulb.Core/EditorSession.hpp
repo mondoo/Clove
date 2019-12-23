@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Entity.hpp"
+
 namespace clv::plt{
 	class Application;
 }
@@ -27,7 +29,7 @@ namespace Bulb::Core{
 		void End();
 
 		//Temp - Just to get functionality working
-		void AddEntityToLayer();
+		Entity^ AddEntityToLayer();
 		void UpdateWindowSize(int sizeX, int sizeY);
 		void UpdateWindowPosition(int x, int y);
 	};

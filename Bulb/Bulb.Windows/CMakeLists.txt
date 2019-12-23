@@ -24,10 +24,10 @@ set(
 		Properties/Settings.settings
 		Properties/Settings.Designer.cs
 
-		UI/ComponentViewModel.cs
-		UI/EditorWindowViewModel.cs
-		UI/EntityViewModel.cs
-        UI/RelayCommand.cs
+		UI/ViewModels/ComponentViewModel.cs
+		UI/ViewModels/EditorWindowViewModel.cs
+		UI/ViewModels/EntityViewModel.cs
+        UI/ViewModels/RelayCommand.cs
 )
 
 #Add all c# files
@@ -77,7 +77,7 @@ target_link_libraries(
 		PUBLIC
 		PRIVATE
 			Bulb.Core
-			Bulb.UI
+			Bulb.CoreUI
 )
 
 

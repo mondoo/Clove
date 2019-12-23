@@ -34,16 +34,9 @@ namespace clv::blb{
 		}
 	}
 
-	void EditorLayer::addEntity(){
-		auto cubeMaterial = std::make_shared<clv::gfx::Material>();
-		cubeMaterial->setData(clv::gfx::BBP_Colour, clv::mth::vec4f{ 0.4f, 0.4f, 0.4f, 1.0f }, clv::gfx::ShaderType::Pixel);
-		cubeMaterial->setData(clv::gfx::BBP_MaterialData, clv::gfx::MaterialData{ 32.0f }, clv::gfx::ShaderType::Pixel);
-		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", cubeMaterial->createInstance());
-
+	ecs::Entity EditorLayer::addEntity(){
 		ecs::Entity entity = clv::plt::Application::get().getManager().createEntity();
-		entity.addComponent<clv::ecs::_3D::MeshComponent>(mesh);
-		entity.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition({ 0.0f, 0.0f, 0.0f });;
-
 		entities.push_back(entity);
+		return entity;
 	}
 }

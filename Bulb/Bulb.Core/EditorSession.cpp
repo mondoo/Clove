@@ -53,9 +53,12 @@ namespace Bulb::Core{
 		}
 	}
 
-	void EditorSession::AddEntityToLayer(){
+	Entity^ EditorSession::AddEntityToLayer(){
 		msclr::lock l(appThread);
-		(*layer)->addEntity();
+		clv::ecs::Entity entity = (*layer)->addEntity();
+
+		//TODO: Return this pointing to an entity
+		return gcnew Entity();
 	}
 
 	void EditorSession::UpdateWindowSize(int sizeX, int sizeY){
