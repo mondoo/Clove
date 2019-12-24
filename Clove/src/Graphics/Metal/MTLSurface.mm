@@ -3,39 +3,28 @@
 
 #include "Clove/Platform/Mac/MacWindow.hpp"
 
-@implementation MTLSurfaceProxy
-- (instancetype)initWithDevice:(id<MTLDevice>)mtlDevice windowData: (void*)windowData{
-	clv::plt::MacData* data = reinterpret_cast<clv::plt::MacData*>(windowData);
-	
-	const NSRect rect = NSMakeRect(0, 0, data->size.x, data->size.y);
-	_view = [[[MTKView alloc] initWithFrame:rect] autorelease];
-	
-	//[_view setDelegate:self];
-	[_view setDevice:mtlDevice];
-	
-	//[_view setClearColor:MTLClearColorMake(0.0, 0.4, 0.21, 1.0)]; //TODO: Put this in with the thing
-	
-	return self;
-}
-
-@end
-
 namespace clv::gfx::mtl{
 	MTLSurface::MTLSurface(id<MTLDevice> mtlDevice, void* windowData){
-		surfaceProxy = [[MTLSurfaceProxy alloc] initWithDevice:mtlDevice
-													windowData:windowData];
+		clv::plt::MacData* data = reinterpret_cast<clv::plt::MacData*>(windowData);
+		
+		const NSRect rect = NSMakeRect(0, 0, data->size.x, data->size.y);
+		view = [[[MTKView alloc] initWithFrame:rect] autorelease];
+		
+		[view setDevice:mtlDevice];
 	}
 	
 	MTLSurface::~MTLSurface(){
-		[surfaceProxy release];
+		[view release];
 	}
 	
 	void MTLSurface::setVSync(bool vsync){
-		//TODO:
+		CALayer* layer = [view layer];
+		((CAMetalLayer*)layer).displaySyncEnabled = vsync;
 	}
 	
 	bool MTLSurface::isVsync() const{
-		return false;
+		CALayer* layer = [view layer];
+		return ((CAMetalLayer*)layer).displaySyncEnabled;
 	}
 
 	void MTLSurface::resizeBuffers(const mth::vec2ui& size){
@@ -43,10 +32,10 @@ namespace clv::gfx::mtl{
 	}
 
 	void MTLSurface::present(){
-		//TODO:
+		//TODO: Might be quite tricky - the command queue needs the drawable from the view
 	}
 	
 	MTKView* MTLSurface::getView() const{
-		return [surfaceProxy view];
+		return view;
 	}
 }

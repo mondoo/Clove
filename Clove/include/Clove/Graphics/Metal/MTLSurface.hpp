@@ -2,20 +2,11 @@
 
 #include "Clove/Core/Graphics/Surface.hpp"
 
-@interface MTLSurfaceProxy : NSObject /*<MTKViewDelegate>*/ //don't think I'll need this unless we can only draw when the view wants
-
-@property(readonly) MTKView* view;
-
-- (instancetype)initWithDevice:(id<MTLDevice>)mtlDevice windowData: (void*)windowData;
-
-@end
-
 namespace clv::gfx::mtl{
 	class MTLSurface : public Surface{
 		//VARIABLES
 	private:
-		//MTKView* view = nullptr;
-		MTLSurfaceProxy* surfaceProxy = nullptr;
+		MTKView* view = nullptr;
 		
 		//FUNCTIONS
 	public:
