@@ -6,7 +6,7 @@
 #elif CLV_PLATFORM_LINUX
 	#include "Clove/Graphics/OpenGL/GL.hpp"
 #elif CLV_PLATFORM_MACOS
-	//TODO
+	#include "Clove/Graphics/Metal/MTL.hpp"
 #endif
 
 namespace clv::gfx::global{
@@ -17,17 +17,17 @@ namespace clv::gfx::global{
 				{
 					CLV_LOG_TRACE("Creating OpenGL renderer");
 					auto pair = ogl::initialiseOGL();
-					device = std::move(pair.first);
-					factory = std::move(pair.second);
+					graphicsDevice = std::move(pair.first);
+					graphicsFactory = std::move(pair.second);
 				}
 				break;
 
 			case API::DirectX11:
 				{
-					CLV_LOG_TRACE("Creating Direct3D API");
+					CLV_LOG_TRACE("Creating Direct3D renderer");
 					auto pair = d3d::initialiseD3D();
-					device = std::move(pair.first);
-					factory = std::move(pair.second);
+					graphicsDevice = std::move(pair.first);
+					graphicsFactory = std::move(pair.second);
 				}
 				break;
 
@@ -36,15 +36,18 @@ namespace clv::gfx::global{
 				{
 					CLV_LOG_TRACE("Creating OpenGL renderer");
 					auto pair = ogl::initialiseOGL();
-					device = std::move(pair.first);
-					factory = std::move(pair.second);
+					graphicsDevice = std::move(pair.first);
+					graphicsFactory = std::move(pair.second);
 				}
 				break;
 				
 			#elif CLV_PLATFORM_MACOS
 			case API::Metal1:
 				{
-					//TODO
+					CLV_LOG_TRACE("Creating Metal renderer");
+					auto pair = mtl::initialiseMTL();
+					graphicsDevice = std::move(pair.first);
+					graphicsFactory = std::move(pair.second);
 				}
 				break;
 			#endif

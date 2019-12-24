@@ -141,6 +141,12 @@ set(
 		${CLV_SOURCE}/Graphics/Metal/Resources/MTLBuffer.mm
 		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLTexture.hpp
 		${CLV_SOURCE}/Graphics/Metal/Resources/MTLTexture.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTL.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTL.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLRenderDevice.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLRenderDevice.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLRenderFactory.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLRenderFactory.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLShader.hpp
 		${CLV_SOURCE}/Graphics/Metal/MTLShader.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLSurface.hpp
