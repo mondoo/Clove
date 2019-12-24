@@ -1,17 +1,12 @@
 #pragma once
 
-//Utility defines
-#if CLV_DEBUG || CLV_DEVELOPMENT
+#if CLV_DEBUG
 	#define CLV_ENABLE_ASSERTS 1
 #else
 	#define CLV_ENABLE_ASSERTS 0
 #endif
 
-#if CLV_PROFILING
-	#define CLV_ENABLE_PROFILING 1
-#else
-	#define CLV_ENABLE_PROFILING 0
-#endif
+#define CLV_ENABLE_PROFILING 0
 
 #if CLV_ENABLE_ASSERTS
 	#define CLV_ASSERT(x, ...) { if(!(x)){ CLV_LOG_ERROR("Assertion Failed: {0}", __VA_ARGS__); CLV_DEBUG_BREAK; } }
@@ -29,10 +24,11 @@
 	#define CLV_DEBUG_BREAK __debugbreak()
 #endif
 
+#define	CLV_FUNCTION_NAME __FUNCTION__
 #if defined(_MSC_VER)
-	#define	CLV_FUNCTION_NAME __FUNCTION__
-#else 
-	#define	CLV_FUNCTION_NAME __func__
+	#define CLV_FUNCTION_NAME_PRETTY __FUNCSIG__
+#else
+	#define CLV_FUNCTION_NAME_PRETTY __PRETTY_FUNCTION__
 #endif
 
 #if CLV_PLATFORM_WINDOWS

@@ -2,26 +2,28 @@
 
 #include "Clove/Core/Graphics/Resources/Texture.hpp"
 #include "Clove/Core/Graphics/MaterialInstance.hpp"
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
+#include "Clove/Core/Graphics/ShaderBufferTypes.hpp"
 
 namespace clv::gfx{
 	Material::Material(){
 		uint32 white = 0xffffffff;
 		TextureDescriptor descriptor{};
 		descriptor.dimensions = { 1, 1 };
-		auto blankTexture = RenderCommand::createTexture(descriptor, &white, 4);
+		auto blankTexture = global::graphicsFactory->createTexture(descriptor, &white, 4);
 		albedoTexture = blankTexture;
 		specTexture = blankTexture;
 
-		setData(BBP_Colour, mth::vec4f(1.0f, 1.0f, 1.0f, 1.0), ShaderType::Pixel);
+		setData(BBP_Colour, mth::vec4f(1.0f, 1.0f, 1.0f, 1.0f), ShaderType::Pixel);
+		setData(BBP_MaterialData, MaterialData{ 32.0f }, ShaderType::Pixel);
 	}
 
 	Material::Material(const Material& other) = default;
 
 	Material::Material(Material&& other) noexcept{
-		albedoTexture = std::move(other.albedoTexture);
-		specTexture = std::move(other.specTexture);
-		shaderData = std::move(other.shaderData);
+		albedoTexture	= std::move(other.albedoTexture);
+		specTexture		= std::move(other.specTexture);
+		shaderData		= std::move(other.shaderData);
 	}
 
 	Material& Material::operator=(const Material& other) = default;
@@ -36,7 +38,7 @@ namespace clv::gfx{
 
 	void Material::setAlbedoTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		albedoTexture = RenderCommand::createTexture(tdesc, path);
+		albedoTexture = global::graphicsFactory->createTexture(tdesc, path);
 	}
 
 	void Material::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
@@ -45,7 +47,7 @@ namespace clv::gfx{
 
 	void Material::setSpecularTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		specTexture = RenderCommand::createTexture(tdesc, path);
+		specTexture = global::graphicsFactory->createTexture(tdesc, path);
 	}
 
 	void Material::setSpecularTexture(const std::shared_ptr<Texture>& texture){

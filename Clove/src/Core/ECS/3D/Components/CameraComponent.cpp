@@ -8,7 +8,17 @@ namespace clv::ecs::_3D{
 		setProjectionMode(ProjectionMode::perspective);
 	}
 
+	CameraComponent::CameraComponent(plt::Window& window){
+		viewport = { 0, 0, window.getWidth(), window.getHeight() };
+		window.onWindowResize.bind(&CameraComponent::updateViewportSize, this);
+		setProjectionMode(ProjectionMode::perspective);
+	}
+
+	CameraComponent::CameraComponent(const CameraComponent& other) = default;
+
 	CameraComponent::CameraComponent(CameraComponent&& other) noexcept = default;
+
+	CameraComponent& CameraComponent::operator=(const CameraComponent& other) = default;
 
 	CameraComponent& CameraComponent::operator=(CameraComponent&& other) noexcept = default;
 

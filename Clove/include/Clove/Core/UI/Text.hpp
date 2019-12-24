@@ -12,13 +12,15 @@ namespace clv::ui{
 		//FUNCTIONS
 	public:
 		Text() = delete;
-		Text(const Text& other) = delete;
-		Text(Text&& other);
-		Text& operator=(const Text& other) = delete;
-		Text& operator=(Text&& other);
-		~Text();
-
 		Text(Font font);
+
+		Text(const Text& other);
+		Text(Text&& other);
+
+		Text& operator=(const Text& other);
+		Text& operator=(Text&& other);
+
+		~Text();
 
 		void setText(std::string text);
 		void setSize(uint32 size);

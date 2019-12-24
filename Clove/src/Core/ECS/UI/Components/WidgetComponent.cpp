@@ -3,7 +3,11 @@
 namespace clv::ecs::ui{
 	WidgetComponent::WidgetComponent() = default;
 
+	WidgetComponent::WidgetComponent(const WidgetComponent& other) = default;
+
 	WidgetComponent::WidgetComponent(WidgetComponent&& other) noexcept = default;
+
+	WidgetComponent& WidgetComponent::operator=(const WidgetComponent& other) = default;
 
 	WidgetComponent& WidgetComponent::operator=(WidgetComponent&& other) noexcept = default;
 

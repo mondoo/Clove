@@ -7,7 +7,7 @@
 #include "Clove/Core/Utils/DeltaTime.hpp"
 #include "Clove/Core/ECS/Manager.hpp"
 
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 
 #if CLV_PLATFORM_WINDOWS
 	#include "Clove/Platform/Windows/WindowsApplication.hpp"
@@ -21,6 +21,8 @@ namespace clv::plt{
 	Application* Application::instance = nullptr;
 
 	Application::Application(){
+		CLV_PROFILE_BEGIN_SESSION("Application cycle", "Profile-Cycle.json");
+
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
@@ -31,25 +33,29 @@ namespace clv::plt{
 		prevFrameTime = std::chrono::system_clock::now();
 	}
 
-	Application::~Application() = default;
+	Application::~Application(){
+		CLV_PROFILE_END_SESSION();
+	}
 
 	void Application::start(){
 		//TODO: Added a 'start' function to handle not calling a virtual from the ctor
 		//Would like as minimal api as possible when starting the application
 
-		gfx::RenderCommand::initialise(getPlatformPreferedAPI());
+		gfx::global::initialise(getPlatformPreferedAPI());
 
 		window = createWindow();
 		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
 		window->setVSync(true);
 
-		gfx::RenderCommand::setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
 	}
 
 	void Application::update(){
+		CLV_PROFILE_FUNCTION();
+
 		auto currFrameTime = std::chrono::system_clock::now();
 		std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
 		prevFrameTime = currFrameTime;
@@ -59,13 +65,16 @@ namespace clv::plt{
 		//TODO:
 		//Will need process the mouse and keyboard events here eventually
 
-		for(auto layer : *layerStack){
+		for(const auto& layer : *layerStack){
 			layer->onUpdate(deltaSeonds.count());
 		}
 
 		ecsManager->update(deltaSeonds.count());
 
-		window->endFrame();
+		{
+			CLV_PROFILE_SCOPE("Window::endFrame");
+			window->endFrame();
+		}
 	}
 
 	void Application::stop(){

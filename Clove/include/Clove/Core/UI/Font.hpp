@@ -25,13 +25,15 @@ namespace clv::ui{
 		//FUNCTIONS
 	public:
 		Font() = delete;
+		Font(const std::string& filePath);
+
 		Font(const Font& other);
 		Font(Font&& other) noexcept;
+
 		Font& operator=(const Font& other);
 		Font& operator=(Font&& other) noexcept;
-		~Font();
 
-		Font(const std::string& filePath);
+		~Font();
 		
 		void setSize(uint32 size);
 		Glyph getChar(char ch) const;

@@ -84,6 +84,9 @@ set(
 
 set(
 	CoreGraphicsFiles
+		${CLV_INCLUDE}/Core/Graphics/GraphicsConstants.hpp
+		${CLV_INCLUDE}/Core/Graphics/GraphicsGlobal.hpp		
+		${CLV_SOURCE}/Core/Graphics/GraphicsGlobal.cpp
 		${CLV_INCLUDE}/Core/Graphics/GraphicsTypes.hpp
 		${CLV_INCLUDE}/Core/Graphics/Material.hpp
 		${CLV_INCLUDE}/Core/Graphics/Material.inl
@@ -92,8 +95,6 @@ set(
 		${CLV_INCLUDE}/Core/Graphics/MaterialInstance.inl
 		${CLV_SOURCE}/Core/Graphics/MaterialInstance.cpp
 		${CLV_INCLUDE}/Core/Graphics/PipelineObject.hpp
-		${CLV_INCLUDE}/Core/Graphics/RenderCommand.hpp
-		${CLV_SOURCE}/Core/Graphics/RenderCommand.cpp
 		${CLV_INCLUDE}/Core/Graphics/RenderDevice.hpp
 		${CLV_INCLUDE}/Core/Graphics/RenderFactory.hpp
 		${CLV_INCLUDE}/Core/Graphics/RenderTarget.hpp
@@ -247,12 +248,6 @@ set(
 )
 
 set(
-	CoreProfilingFiles
-		${CLV_INCLUDE}/Core/Profiling/Timer.hpp
-		${CLV_SOURCE}/Core/Profiling/Timer.cpp
-)
-
-set(
 	CoreUIFiles
 		${CLV_INCLUDE}/Core/UI/Font.hpp
 		${CLV_SOURCE}/Core/UI/Font.cpp
@@ -269,6 +264,8 @@ set(
 		${CLV_INCLUDE}/Core/Utils/HashString.hpp
 		${CLV_INCLUDE}/Core/Utils/MeshLoader.hpp
 		${CLV_SOURCE}/Core/Utils/MeshLoader.cpp
+		${CLV_INCLUDE}/Core/Utils/Timer.hpp
+		${CLV_SOURCE}/Core/Utils/Timer.cpp
 )
 
 set(
@@ -413,7 +410,6 @@ set(
 			${WindowsPlatformFiles}
 			${LinuxPlatformFiles}
 			${MacOSPlatformFiles}
-		${CoreProfilingFiles}
 		${CoreUIFiles}
 		${CoreUtilityFiles}
 )

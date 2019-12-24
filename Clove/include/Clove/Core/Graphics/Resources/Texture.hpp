@@ -13,9 +13,15 @@ namespace clv::gfx{
 		Font
 	};
 
+	enum class TextureFilter{
+		Nearest,
+		Linear,
+	};
+
 	struct TextureDescriptor{
 		TextureStyle style = TextureStyle::Default;
 		TextureUsage usage = TextureUsage::Default;
+		TextureFilter filtering = TextureFilter::Linear;
 		mth::vec<2, uint32, mth::qualifier::defaultp> dimensions = { 0, 0 };
 		uint8 arraySize = 1;
 	};

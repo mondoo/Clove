@@ -100,6 +100,7 @@ target_precompile_headers(
 		[["Clove/Core/Maths/Maths.hpp"]]
 		[["Clove/Core/Maths/MathsHelpers.hpp"]]
 		[["Clove/Core/Utils/Delegate.hpp"]]
+		[["Clove/Core/Utils/Timer.hpp"]]
 	#Platform headers
 	PUBLIC
 		$<$<PLATFORM_ID:Windows>:Clove/Platform/Windows/CloveWindows.hpp>
@@ -112,8 +113,6 @@ target_compile_definitions(
 	#Config
 	PUBLIC
 		CLV_DEBUG=$<CONFIG:Debug>
-		CLV_DEVELOPMENT=$<CONFIG:Development>
-		CLV_PROFILING=$<CONFIG:Profiling>
 		CLV_RELEASE=$<CONFIG:Release>
 	#Platform
 	PUBLIC

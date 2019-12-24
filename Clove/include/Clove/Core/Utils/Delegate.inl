@@ -32,6 +32,18 @@ namespace clv::utl{
 	}
 
 	template<typename FunctionPrototype>
+	SingleCastDelegate<FunctionPrototype>::SingleCastDelegate() = default;
+
+	template<typename FunctionPrototype>
+	SingleCastDelegate<FunctionPrototype>::SingleCastDelegate(SingleCastDelegate&& other) noexcept = default;
+
+	template<typename FunctionPrototype>
+	SingleCastDelegate<FunctionPrototype>& SingleCastDelegate<FunctionPrototype>::operator=(SingleCastDelegate&& other) noexcept = default;
+
+	template<typename FunctionPrototype>
+	SingleCastDelegate<FunctionPrototype>::~SingleCastDelegate() = default;
+
+	template<typename FunctionPrototype>
 	void SingleCastDelegate<FunctionPrototype>::unbind(){
 		functionPointer = nullptr;
 	}
@@ -71,6 +83,18 @@ namespace clv::utl{
 		functionPointers.emplace(std::make_pair(handle, function));
 		return handle;
 	}
+
+	template<typename FunctionPrototype>
+	MultiCastDelegate<FunctionPrototype>::MultiCastDelegate() = default;
+
+	template<typename FunctionPrototype>
+	MultiCastDelegate<FunctionPrototype>::MultiCastDelegate(MultiCastDelegate&& other) noexcept = default;
+
+	template<typename FunctionPrototype>
+	MultiCastDelegate<FunctionPrototype>& MultiCastDelegate<FunctionPrototype>::operator=(MultiCastDelegate&& other) noexcept = default;
+
+	template<typename FunctionPrototype>
+	MultiCastDelegate<FunctionPrototype>::~MultiCastDelegate() = default;
 
 	template<typename FunctionPrototype>
 	void MultiCastDelegate<FunctionPrototype>::unbind(const MultiCastDelegateHandle& handle){

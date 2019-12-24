@@ -36,6 +36,14 @@ namespace clv::ecs{
 	}
 
 	template<typename ComponentType>
+	void ComponentManager::ComponentContainer<ComponentType>::cloneComponent(EntityID fromID, EntityID toID){
+		if(auto iter = entityIDToIndex.find(fromID); iter != entityIDToIndex.end()){
+			auto* componentPtr = components[iter->second].get();
+			addComponent(toID, *componentPtr);
+		}
+	}
+
+	template<typename ComponentType>
 	ComponentType* ComponentManager::ComponentContainer<ComponentType>::getComponent(EntityID entityID){
 		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()){
 			return components[iter->second].get();
@@ -48,15 +56,21 @@ namespace clv::ecs{
 	void ComponentManager::ComponentContainer<ComponentType>::removeComponent(EntityID entityID){
 		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()){
 			const size_t index = iter->second;
+			const size_t lastIndex = components.size() - 1;
+
 			auto removedComp = std::move(components[index]);
 
-			components[index] = std::move(components.back());
+			if(index < lastIndex){
+				components[index] = std::move(components.back());
+			}
 			components.pop_back();
 			entityIDToIndex.erase(entityID);
 
 			//Update the index map so it knows about the moved component
-			EntityID movedCompEntityID = components[index]->entityID;
-			entityIDToIndex[movedCompEntityID] = index;
+			if(index < lastIndex){
+				EntityID movedCompEntityID = components[index]->entityID;
+				entityIDToIndex[movedCompEntityID] = index;
+			}
 
 			componentRemovedDelegate.broadcast(removedComp.get());
 		}

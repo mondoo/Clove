@@ -10,8 +10,6 @@
 namespace clv::gfx::d3d{
 	D3DTexture::D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture)
 		: descriptor(descriptor){
-		stbi_set_flip_vertically_on_load(1);
-
 		int width = 0;
 		int height = 0;
 		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
@@ -88,10 +86,10 @@ namespace clv::gfx::d3d{
 			DX11_THROW_INFO(d3dDevice.CreateTexture2D(&textureDesc, nullptr, &d3dTexture));
 		}
 
-		const D3D11_SHADER_RESOURCE_VIEW_DESC viewDescriptor = createD3DShaderViewDescriptor();
+		const D3D11_SHADER_RESOURCE_VIEW_DESC viewDescriptor = createD3DShaderViewDescriptor(descriptor);
 
 		D3D11_SAMPLER_DESC samplerDesc{};
-		samplerDesc.Filter		= D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		samplerDesc.Filter		= getFilter(descriptor.filtering);
 		samplerDesc.AddressU	= D3D11_TEXTURE_ADDRESS_CLAMP;
 		samplerDesc.AddressV	= D3D11_TEXTURE_ADDRESS_CLAMP;
 		samplerDesc.AddressW	= D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -100,7 +98,7 @@ namespace clv::gfx::d3d{
 		DX11_THROW_INFO(d3dDevice.CreateSamplerState(&samplerDesc, &d3dSampler));
 	}
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC D3DTexture::createD3DShaderViewDescriptor() const{
+	D3D11_SHADER_RESOURCE_VIEW_DESC D3DTexture::createD3DShaderViewDescriptor(const TextureDescriptor& descriptor) const{
 		D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc = {};
 		viewDesc.Format = getFormatForShaderView(descriptor.usage);
 		viewDesc.ViewDimension = getViewDimension(descriptor.style, descriptor.arraySize);
@@ -198,5 +196,19 @@ namespace clv::gfx::d3d{
 
 	UINT D3DTexture::getMiscFlags(const TextureStyle style) const{
 		return (style == TextureStyle::Cubemap) ? D3D11_RESOURCE_MISC_TEXTURECUBE : 0;
+	}
+
+	D3D11_FILTER D3DTexture::getFilter(const TextureFilter filter) const{
+		switch(filter){
+			case TextureFilter::Nearest:
+				return D3D11_FILTER_MIN_MAG_MIP_POINT;
+
+			case TextureFilter::Linear:
+				return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+			default:
+				CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+				return D3D11_FILTER_MIN_MAG_MIP_POINT;
+		}
 	}
 }

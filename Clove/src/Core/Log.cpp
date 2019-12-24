@@ -14,10 +14,6 @@ namespace clv{
 
 	#if CLV_DEBUG
 		coreLogger->set_level(spdlog::level::trace);
-	#elif CLV_DEVELOPMENT
-		coreLogger->set_level(spdlog::level::debug);
-	#elif CLV_PROFILING
-		coreLogger->set_level(spdlog::level::info);
 	#elif CLV_RELEASE
 		coreLogger->set_level(spdlog::level::err);
 	#endif

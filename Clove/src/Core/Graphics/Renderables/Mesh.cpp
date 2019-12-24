@@ -1,6 +1,6 @@
 #include "Clove/Core/Graphics/Renderables/Mesh.hpp"
 
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 #include "Clove/Core/Graphics/Resources/Buffer.hpp"
 #include "Clove/Core/Utils/MeshLoader.hpp"
 
@@ -104,7 +104,7 @@ namespace clv::gfx{
 			}
 		}
 		
-		RenderCommand::updateBufferData(*vertexBuffer, vertexArray.data());
+		global::graphicsDevice->updateBufferData(*vertexBuffer, vertexArray.data());
 		return vertexBuffer;
 	}
 
@@ -118,7 +118,7 @@ namespace clv::gfx{
 		vbdesc.bufferSize	= vertexArray.sizeBytes();
 		vbdesc.bufferType	= BufferType::VertexBuffer;
 		vbdesc.bufferUsage	= BufferUsage::Dynamic; //Setting it to dynamic here (see TODO in Mesh::getVertexBufferForLayout)
-		vertexBuffer = RenderCommand::createBuffer(vbdesc, vertexArray.data());
+		vertexBuffer = global::graphicsFactory->createBuffer(vbdesc, vertexArray.data());
 	}
 
 	void Mesh::initialiseIndexBuffer(const std::vector<uint32>& indices){
@@ -129,6 +129,6 @@ namespace clv::gfx{
 		ibdesc.bufferSize	= indices.size() * indexSize;
 		ibdesc.bufferType	= BufferType::IndexBuffer;
 		ibdesc.bufferUsage	= BufferUsage::Default;
-		indexBuffer = RenderCommand::createBuffer(ibdesc, indices.data());
+		indexBuffer = global::graphicsFactory->createBuffer(ibdesc, indices.data());
 	}
 }

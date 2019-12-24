@@ -20,10 +20,10 @@ namespace clv::ecs::ui{
 	public:
 		TransformComponent();
 
-		TransformComponent(const TransformComponent& other) = delete;
+		TransformComponent(const TransformComponent& other);
 		TransformComponent(TransformComponent&& other) noexcept;
 
-		TransformComponent& operator=(const TransformComponent& other) = delete;
+		TransformComponent& operator=(const TransformComponent& other);
 		TransformComponent& operator=(TransformComponent&& other) noexcept;
 
 		virtual ~TransformComponent();

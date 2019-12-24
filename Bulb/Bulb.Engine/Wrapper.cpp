@@ -21,7 +21,7 @@
 #include "Clove/Core/Platform/Window.hpp"
 #include "Clove/Core/Graphics/GraphicsTypes.hpp"
 #include "Clove/Core/Graphics/Surface.hpp"
-#include "Clove/Core/Graphics/RenderCommand.hpp"
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 
 //Defining this here to fix errors - need a way to get access to logging (or sort out headers)
 #define CLV_LOG_ERROR(...)
@@ -63,8 +63,8 @@ public:
 
 		data = { handle, static_cast<clv::uint32>(width), static_cast<clv::uint32>(height) };
 
-		surface = clv::gfx::RenderCommand::createSurface(&data);
-		clv::gfx::RenderCommand::makeSurfaceCurrent(surface);
+		surface = clv::gfx::global::graphicsFactory->createSurface(&data);
+		clv::gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 	}
 
 	virtual void* getNativeWindow() const override{
@@ -121,7 +121,7 @@ public:
 
 		cubeEnt = clv::plt::Application::get().getManager().createEntity();
 		cubeEnt.addComponent<clv::ecs::_3D::TransformComponent>()->setPosition({ 10.0f, 0.0f, 0.0f });
-		cubeEnt.addComponent<clv::ecs::_3D::MeshComponent>()->setMesh(mesh);
+		cubeEnt.addComponent<clv::ecs::_3D::MeshComponent>(mesh);
 
 
 		camEnt = clv::plt::Application::get().getManager().createEntity();
