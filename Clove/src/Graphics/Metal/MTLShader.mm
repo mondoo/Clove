@@ -31,7 +31,7 @@ namespace clv::gfx::mtl{
 		
 		switch(style){
 			case ShaderStyle::Lit_3D:
-
+				CLV_DEBUG_BREAK;
 				break;
 
 			case ShaderStyle::Unlit_3D:
@@ -49,7 +49,7 @@ namespace clv::gfx::mtl{
 				break;
 
 			case ShaderStyle::RT:
-				
+				CLV_DEBUG_BREAK;
 				break;
 
 			case ShaderStyle::Font:
@@ -60,7 +60,7 @@ namespace clv::gfx::mtl{
 				break;
 
 			case ShaderStyle::CubeShadowMap:
-				
+				CLV_DEBUG_BREAK;
 				break;
 
 			default:
