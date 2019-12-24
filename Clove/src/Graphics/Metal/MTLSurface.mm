@@ -31,7 +31,7 @@ namespace clv::gfx::mtl{
 	}
 	
 	void MTLSurface::setVSync(bool vsync){
-		
+		//TODO:
 	}
 	
 	bool MTLSurface::isVsync() const{
@@ -39,14 +39,14 @@ namespace clv::gfx::mtl{
 	}
 
 	void MTLSurface::resizeBuffers(const mth::vec2ui& size){
-		
+		//TODO:
 	}
 
 	void MTLSurface::present(){
-		
+		//TODO:
 	}
 	
-	MTKView* MTLSurface::getView(){
-		return surfaceProxy->view;
+	MTKView* MTLSurface::getView() const{
+		return [surfaceProxy view];
 	}
 }
