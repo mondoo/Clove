@@ -18,12 +18,15 @@ namespace Bulb::Core{
 
 	private:
 		clv::ecs::EntityID ID;
+		System::Collections::Generic::List<Component^>^ components;
 
 		//FUNCTIONS
 	public:
 		Entity(clv::ecs::EntityID ID);
 
-		array<Component^>^ getComponents();
+		System::Collections::Generic::List<Component^>^ getComponents();
 
+		void addTransformComponent();
+		void addMeshComponent();
 	};
 }

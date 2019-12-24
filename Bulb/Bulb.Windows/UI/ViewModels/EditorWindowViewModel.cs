@@ -9,7 +9,9 @@ using System.Windows.Input;
 namespace Bulb.UI {
 	public class EditorWindowViewModel : ViewModel {
 		public ICommand AddEntityCommand { get; set; }
-		public ICommand AddComponentCommand { get; set; }
+		public ICommand AddTransformCommand { get; set; }
+		public ICommand AddMeshCommand { get; set; }
+
 
 		public EntityViewModel SelectedEntity {
 			get {
@@ -27,7 +29,8 @@ namespace Bulb.UI {
 
 		public EditorWindowViewModel() {
 			AddEntityCommand = new RelayCommand(AddEntity);
-			AddComponentCommand = new RelayCommand(AddComponentToSelectedEntity);
+			AddTransformCommand = new RelayCommand(AddTransformToSelectedEntity);
+			AddMeshCommand = new RelayCommand(AddMeshToSelectedEntity);
 
 			Entities = new ObservableCollection<EntityViewModel>();
 			
@@ -56,10 +59,14 @@ namespace Bulb.UI {
 			entityViewModel.clickedEvent += OnEntityClicked;
 		}
 
-		private void AddComponentToSelectedEntity() {
-			//TODO: Need to make the select entity a nullable type and check it here
-			//TODO: Add component logic
-			Console.WriteLine("Add component clicked");
+		private void AddTransformToSelectedEntity() {
+			SelectedEntity.AddTransformComponent();
+			//Binding is listening to a value on the entity so we need to tell it the selected entity has changed
+			OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedEntity)));
+		}
+		private void AddMeshToSelectedEntity() {
+			SelectedEntity.AddMeshComponent();
+			OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedEntity)));
 		}
 
 		private void OnEntityClicked(EntityViewModel entity) {

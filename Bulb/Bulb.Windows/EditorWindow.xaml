@@ -39,6 +39,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Text="{Binding SelectedEntity.Name}"/>
@@ -50,7 +51,8 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Button Grid.Row="2" Content="Add Component" Command="{Binding AddComponentCommand}"/>
+            <Button Grid.Row="2" Content="Add Transform" Command="{Binding AddTransformCommand}"/>
+            <Button Grid.Row="3" Content="Add Mesh" Command="{Binding AddMeshCommand}"/>
         </Grid>
     </Grid>
 </Window>
