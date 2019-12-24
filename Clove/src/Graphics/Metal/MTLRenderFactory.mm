@@ -18,15 +18,15 @@ namespace clv::gfx::mtl{
 	}
 	
 	std::shared_ptr<Buffer> MTLRenderFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){
-		return std::make_shared<MTLBuffer>(descriptor, data);
+		return std::make_shared<MTLBuffer>(mtlDevice, descriptor, data);
 	}
 	
 	std::shared_ptr<Texture> MTLRenderFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
-		return std::make_shared<MTLTexture>(descriptor, pathToTexture);
+		return std::make_shared<MTLTexture>(mtlDevice, descriptor, pathToTexture);
 	}
 	
 	std::shared_ptr<Texture> MTLRenderFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP){
-		return std::make_shared<MTLTexture>(descriptor, data, BPP);
+		return std::make_shared<MTLTexture>(mtlDevice, descriptor, data, BPP);
 	}
 	
 	std::shared_ptr<PipelineObject> MTLRenderFactory::createPipelineObject(const std::shared_ptr<Shader>& shader){
@@ -38,10 +38,10 @@ namespace clv::gfx::mtl{
 	}
 	
 	std::shared_ptr<Shader> MTLRenderFactory::createShader(const ShaderDescriptor& descriptor){
-		return std::make_shared<MTLShader>(descriptor);
+		return std::make_shared<MTLShader>(mtlDevice, descriptor);
 	}
 	
 	std::shared_ptr<Surface> MTLRenderFactory::createSurface(void* windowData){
-		return std::make_shared<MTLSurface>(descriptor);
+		return std::make_shared<MTLSurface>(mtlDevice, windowData);
 	}
 }

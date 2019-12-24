@@ -2,6 +2,10 @@
 #include "Clove/Graphics/Metal/MTLRenderDevice.hpp"
 
 namespace clv::gfx::mtl{
+	MTLRenderDevice::MTLRenderDevice() = default;
+	
+	MTLRenderDevice::~MTLRenderDevice() = default;
+	
 	void MTLRenderDevice::bindIndexBuffer(const Buffer& buffer){
 		//TODO:
 	}
@@ -65,6 +69,4 @@ namespace clv::gfx::mtl{
 	void MTLRenderDevice::setBlendState(bool enabled){
 		//TODO:
 	}
-
 }
-

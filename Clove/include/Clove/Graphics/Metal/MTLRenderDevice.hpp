@@ -11,6 +11,9 @@ namespace clv::gfx::mtl{
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
+		MTLRenderDevice();
+		
+		virtual ~MTLRenderDevice();
 
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32 stride) override;

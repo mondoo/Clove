@@ -1,7 +1,7 @@
 #include "Clove/Core/Graphics/Shader.hpp"
 
 namespace clv::gfx::mtl{
-	class MTLShader : Shader{
+	class MTLShader : public Shader{
 		//VARIABLES
 	private:
 		ShaderDescriptor descriptor;
