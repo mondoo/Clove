@@ -143,6 +143,8 @@ set(
 		${CLV_SOURCE}/Graphics/Metal/Resources/MTLTexture.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLShader.hpp
 		${CLV_SOURCE}/Graphics/Metal/MTLShader.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLSurface.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLSurface.mm
 )
 
 set(

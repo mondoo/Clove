@@ -9,7 +9,7 @@ namespace clv::plt{
 	class MacWindow;
 }
 
-@interface MacWindowProxy : NSObject <NSWindowDelegate, MTKViewDelegate> //Temp view delegate
+@interface MacWindowProxy : NSObject <NSWindowDelegate /*, MTKViewDelegate*/> //Temp view delegate
 
 @property(readonly) NSWindow* window;
 @property(readonly) MTKView* view;
@@ -19,9 +19,15 @@ namespace clv::plt{
 
 @property clv::plt::MacWindow* cloveWindow;
 
-- (instancetype)initWithWindowData:(unsigned int)width height : (unsigned int)height name : (NSString*)name;
+- (instancetype)initWithWindowData:(MTKView*)view width: (unsigned int)width height: (unsigned int)height name: (NSString*)name;
 
 @end
+
+namespace clv::plt{
+	struct MacData{
+		mth::vec2ui size{};
+	};
+}
 
 namespace clv::plt{
 	class MacWindow : public Window{

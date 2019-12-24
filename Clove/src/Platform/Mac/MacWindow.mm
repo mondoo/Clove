@@ -1,8 +1,9 @@
-#import "Clove/Platform/Mac/CloveMac.h"
-#import "Clove/Platform/Mac/MacWindow.hpp"
+#include "Clove/Platform/Mac/CloveMac.h"
+#include "Clove/Platform/Mac/MacWindow.hpp"
 
-#import "Clove/Core/Graphics/Surface.hpp"
-#import "Clove/Core/Graphics/RenderCommand.hpp"
+
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Metal/MTLSurface.hpp"
 
 //Temp metal stuff
 //#import <Metal/Metal.h>
@@ -20,7 +21,7 @@ struct Vertex{
 //---
 
 @implementation MacWindowProxy
-- (instancetype)initWithWindowData:(unsigned int)width height:(unsigned int)height name:(NSString*)name{
+- (instancetype)initWithWindowData:(MTKView*)view width: (unsigned int)width height:(unsigned int)height name:(NSString*)name{
 	const NSRect rect = NSMakeRect(0, 0, width, height);
 	const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 	
@@ -33,16 +34,17 @@ struct Vertex{
 	[_window setDelegate:self];
 	[_window makeKeyAndOrderFront:nil];
 	
-	_view = [[[MTKView alloc] initWithFrame:rect] autorelease]; //View could be the surface
+	//Give the created surface to this
 	
-	[_window setContentView:_view];
+	[_window setContentView:view];
 	
 	//Metal stuff
-	[_view setDelegate:self];
-	[_view setDevice:MTLCreateSystemDefaultDevice()];
-	_device = [_view device];
+	//[_view setDelegate:self];
+	//[_view setDevice:MTLCreateSystemDefaultDevice()];
+	//_device = [_view device];
+	//Device is created from MTLCreateSystemDefaultDevice - the view just needs it set
 	
-	[_view setClearColor:MTLClearColorMake(0.0, 0.4, 0.21, 1.0)];
+	//[_view setClearColor:MTLClearColorMake(0.0, 0.4, 0.21, 1.0)];
 	
 	//TODO: Clove will need to support command queues / buffers
 	_commandQueue = [_device newCommandQueue];
@@ -85,7 +87,7 @@ struct Vertex{
 	
 	//Create library to make our shaders
 	NSError* error2 = [[NSError alloc] init];
-	NSString* librarySource = [NSString stringWithCString:shader_Shader.c_str() encoding:[NSString defaultCStringEncoding]];
+	NSString* librarySource = [NSString stringWithCString:shader_Unlit.c_str() encoding:[NSString defaultCStringEncoding]];
 	id<MTLLibrary> library = [_device newLibraryWithSource:librarySource options:nil error:&error2];
 	id<MTLFunction> vertexFunction = [library newFunctionWithName:@"vertex_shader"];
 	id<MTLFunction> fragmentFunction = [library newFunctionWithName:@"fragment_shader"];
@@ -242,14 +244,20 @@ namespace clv::plt{
 		windowProperties.height = props.height;
 		windowProperties.title = props.title;
 		
+		MacData data = { { props.width, props.height } };
+		
+		surface = gfx::global::graphicsFactory->createSurface(&data);
+		//gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
+		
 		NSString* nameString = [NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]];
 		
-		windowProxy = [[MacWindowProxy alloc] initWithWindowData:props.width
-															 height:props.height
-															   name:nameString];
+		windowProxy = [[MacWindowProxy alloc] initWithWindowData:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getView()
+														   width:props.width
+														  height:props.height
+															name:nameString];
 		windowProxy.cloveWindow = this;
 		
-		surface = gfx::RenderCommand::createSurface(nullptr);
-		gfx::RenderCommand::makeSurfaceCurrent(surface);
+		//surface = gfx::RenderCommand::createSurface(nullptr);
+		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 	}
 }
