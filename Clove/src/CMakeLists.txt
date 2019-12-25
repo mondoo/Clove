@@ -338,8 +338,10 @@ set(
 set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_TYPE Geometry)
 set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
 set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
+
 set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
 set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_MODEL 5.0)
+
 #get each shader to compile into a header
 set(HLSLShaderIncludeFile ${CLV_INCLUDE}/Graphics/Direct3D/ShaderHeaders.hpp)
 file(WRITE ${HLSLShaderIncludeFile} "//cmake generated header file\n\n")
