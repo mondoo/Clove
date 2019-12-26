@@ -1,4 +1,3 @@
-#include "Clove/Platform/Mac/CloveMac.h"
 #include "Clove/Graphics/Metal/MTLShader.hpp"
 
 #include "Clove/Graphics/Metal/ShaderStrings.hpp"

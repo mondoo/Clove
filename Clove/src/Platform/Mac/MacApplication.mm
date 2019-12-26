@@ -1,4 +1,3 @@
-#import "Clove/Platform/Mac/CloveMac.h"
 #import "Clove/Platform/Mac/MacApplication.hpp"
 
 #import "Clove/Platform/Mac/MacWindow.hpp"

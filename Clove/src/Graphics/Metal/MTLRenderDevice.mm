@@ -1,4 +1,3 @@
-#include "Clove/Platform/Mac/CloveMac.h"
 #include "Clove/Graphics/Metal/MTLRenderDevice.hpp"
 
 namespace clv::gfx::mtl{

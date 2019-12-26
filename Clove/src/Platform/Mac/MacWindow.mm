@@ -1,4 +1,3 @@
-#include "Clove/Platform/Mac/CloveMac.h"
 #include "Clove/Platform/Mac/MacWindow.hpp"
 
 

@@ -1,4 +1,3 @@
-#include "Clove/Platform/Mac/CloveMac.h"
 #include "Clove/Graphics/Metal/Resources/MTLTexture.hpp"
 
 #include <stb_image.h>

@@ -1,10 +1,9 @@
-#include "Clove/Platform/Mac/CloveMac.h"
 #include "Clove/Graphics/Metal/MTLRenderFactory.hpp"
 
 #include "Clove/Graphics/Metal/Resources/MTLBuffer.hpp"
 #include "Clove/Graphics/Metal/Resources/MTLTexture.hpp"
 //#include "Clove/Graphics/Metal/MTLPipelineObject.hpp"
-//#include "Clove/Graphics/Metal/MTLRenderTarget.hpp"
+#include "Clove/Graphics/Metal/MTLRenderTarget.hpp"
 #include "Clove/Graphics/Metal/MTLShader.hpp"
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 

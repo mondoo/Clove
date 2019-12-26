@@ -105,6 +105,7 @@ target_precompile_headers(
 	PUBLIC
 		$<$<PLATFORM_ID:Windows>:Clove/Platform/Windows/CloveWindows.hpp>
 		$<$<PLATFORM_ID:Linux>:Clove/Platform/Linux/CloveLinux.hpp>
+		$<$<PLATFORM_ID:Darwin>:Clove/Platform/Mac/CloveMac.h>
 )
 
 #Preprocessor
