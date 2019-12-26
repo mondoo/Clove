@@ -147,6 +147,8 @@ set(
 		${CLV_SOURCE}/Graphics/Metal/MTLRenderDevice.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLRenderFactory.hpp
 		${CLV_SOURCE}/Graphics/Metal/MTLRenderFactory.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLRenderTarget.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLRenderTarget.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLShader.hpp
 		${CLV_SOURCE}/Graphics/Metal/MTLShader.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLSurface.hpp

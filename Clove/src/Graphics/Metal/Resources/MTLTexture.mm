@@ -34,6 +34,10 @@ namespace clv::gfx::mtl{
 		[mtlTexture release];
 	}
 	
+	id<MTLTexture> MTLTexture::getMTLTexture() const{
+		return mtlTexture;
+	}
+	
 	const TextureDescriptor& MTLTexture::getDescriptor() const{
 		return descriptor;
 	}

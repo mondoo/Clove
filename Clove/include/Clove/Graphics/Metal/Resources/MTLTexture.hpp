@@ -26,6 +26,8 @@ namespace clv::gfx::mtl {
 		
 		virtual ~MTLTexture();
 		
+		id<MTLTexture> getMTLTexture() const;
+		
 		virtual const TextureDescriptor& getDescriptor() const override;
 		
 	private:

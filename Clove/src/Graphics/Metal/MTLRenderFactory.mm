@@ -33,7 +33,7 @@ namespace clv::gfx::mtl{
 	}
 	
 	std::shared_ptr<RenderTarget> MTLRenderFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
-		//TODO:
+		return std::make_shared<MTLRenderTarget>(mtlDevice, colourTexture, depthStencilTexture);
 	}
 	
 	std::shared_ptr<Shader> MTLRenderFactory::createShader(const ShaderDescriptor& descriptor){
