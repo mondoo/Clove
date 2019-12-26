@@ -1,6 +1,3 @@
-Required packages
-apt install make
-apt install g++
-apt install libx11-dev
-apt install libgl1-mesa-dev
-apt install libasound-dev
+Required packages:
+libx11-dev
+libgl1-mesa-dev
