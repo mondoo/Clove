@@ -27,7 +27,15 @@ namespace clv::gfx::mtl{
 	}
 	
 	ShaderReflectionData MTLShader::getReflectionData() const{
-		//TODO:
+		ShaderReflectionData outData;
+		
+		NSArray<MTLVertexAttribute*>* attributes = vertexShader.vertexAttributes;
+		
+		for(NSInteger i = 0; i < attributes.count; ++i){
+			outData.vertexBufferLayout.add(VertexElement::getTypeFromSemantic([attributes[i].name cStringUsingEncoding:[NSString defaultCStringEncoding]]));
+		}
+		
+		return outData;
 	}
 	
 	void MTLShader::initialise(id<MTLDevice> mtlDevice, ShaderStyle style){
