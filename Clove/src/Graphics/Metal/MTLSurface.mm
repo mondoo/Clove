@@ -12,6 +12,10 @@ namespace clv::gfx::mtl{
 		[view setDevice:mtlDevice];
 	}
 	
+	MTLSurface::MTLSurface(MTLSurface&& other) noexcept = default;
+	
+	MTLSurface& MTLSurface::operator=(MTLSurface&& other) noexcept = default;
+	
 	MTLSurface::~MTLSurface(){
 		[view release];
 	}

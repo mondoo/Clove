@@ -13,7 +13,11 @@ namespace clv::gfx::mtl{
 		MTLRenderFactory() = delete;
 		MTLRenderFactory(id<MTLDevice> mtlDevice);
 						 
-		//TODO: Ctors
+		MTLRenderFactory(const MTLRenderFactory& other) = delete;
+		MTLRenderFactory(MTLRenderFactory&& other) noexcept = delete;
+
+		MTLRenderFactory& operator=(const MTLRenderFactory& other) = delete;
+		MTLRenderFactory& operator=(MTLRenderFactory&& other) noexcept = delete;
 		
 		virtual ~MTLRenderFactory();
 

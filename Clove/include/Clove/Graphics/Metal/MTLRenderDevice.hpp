@@ -10,8 +10,13 @@ namespace clv::gfx::mtl{
 		
 		//FUNCTIONS
 	public:
-		//TODO: Ctors
 		MTLRenderDevice();
+		
+		MTLRenderDevice(const MTLRenderDevice& other) = delete;
+		MTLRenderDevice(MTLRenderDevice&& other) noexcept = delete;
+
+		MTLRenderDevice& operator=(const MTLRenderDevice& other) = delete;
+		MTLRenderDevice& operator=(MTLRenderDevice&& other) noexcept = delete;
 		
 		virtual ~MTLRenderDevice();
 

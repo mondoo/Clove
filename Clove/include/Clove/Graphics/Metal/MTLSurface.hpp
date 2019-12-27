@@ -10,8 +10,15 @@ namespace clv::gfx::mtl{
 		
 		//FUNCTIONS
 	public:
-		//TODO: Ctors
+		MTLSurface() = delete;
 		MTLSurface(id<MTLDevice> mtlDevice, void* windowData);
+		
+		MTLSurface(const MTLSurface& other) = delete;
+		MTLSurface(MTLSurface&& other) noexcept;
+
+		MTLSurface& operator=(const MTLSurface& other) = delete;
+		MTLSurface& operator=(MTLSurface&& other) noexcept;
+		
 		virtual ~MTLSurface();
 		
 		virtual void setVSync(bool vsync) override;
