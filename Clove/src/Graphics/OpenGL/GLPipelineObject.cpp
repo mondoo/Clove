@@ -7,7 +7,7 @@ namespace clv::gfx::ogl{
 		: shader(shader){
 		const auto glShader = std::static_pointer_cast<GLShader>(shader);
 
-		shaderReflectionData = shader->getReflectionData();
+		shaderReflectionData = glShader->getReflectionData();
 		const auto& layout = shaderReflectionData.vertexBufferLayout;
 
 		glGenVertexArrays(1, &vertexArrayID);
@@ -23,7 +23,8 @@ namespace clv::gfx::ogl{
 			glEnableVertexAttribArray(attribLoc);
 			glVertexAttribFormat(attribLoc, element.getCount(), getGLElementType(elementType), isTypeNormalised(elementType), offset);
 			glVertexAttribBinding(attribLoc, 0);
-			offset += VertexElement::sizeOf(element.getType());
+			
+			offset += VertexElement::sizeOf(elementType);
 		}
 
 		glBindVertexArray(0);
