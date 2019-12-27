@@ -22,6 +22,9 @@ namespace clv::gfx::mtl{
 		
 		virtual ~MTLShader();
 		
+		const id<MTLFunction> getMTLVertexShader() const;
+		const id<MTLFunction> getMTLPixelShader() const;
+		
 		virtual const ShaderDescriptor& getDescriptor() const override;
 		virtual ShaderReflectionData getReflectionData() const override;
 		

@@ -143,6 +143,8 @@ set(
 		${CLV_SOURCE}/Graphics/Metal/Resources/MTLTexture.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTL.hpp
 		${CLV_SOURCE}/Graphics/Metal/MTL.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLPipelineObject.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLPipelineObject.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLRenderDevice.hpp
 		${CLV_SOURCE}/Graphics/Metal/MTLRenderDevice.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLRenderFactory.hpp

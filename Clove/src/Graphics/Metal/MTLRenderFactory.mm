@@ -2,7 +2,7 @@
 
 #include "Clove/Graphics/Metal/Resources/MTLBuffer.hpp"
 #include "Clove/Graphics/Metal/Resources/MTLTexture.hpp"
-//#include "Clove/Graphics/Metal/MTLPipelineObject.hpp"
+#include "Clove/Graphics/Metal/MTLPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MTLRenderTarget.hpp"
 #include "Clove/Graphics/Metal/MTLShader.hpp"
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
@@ -29,7 +29,7 @@ namespace clv::gfx::mtl{
 	}
 	
 	std::shared_ptr<PipelineObject> MTLRenderFactory::createPipelineObject(const std::shared_ptr<Shader>& shader){
-		//TODO:
+		return std::make_shared<MTLPipelineObject>(mtlDevice, shader);
 	}
 	
 	std::shared_ptr<RenderTarget> MTLRenderFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){

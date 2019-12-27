@@ -14,6 +14,14 @@ namespace clv::gfx::mtl{
 	
 	MTLShader::~MTLShader() = default;
 	
+	const id<MTLFunction> MTLShader::getMTLVertexShader() const{
+		return vertexShader;
+	}
+	
+	const id<MTLFunction> MTLShader::getMTLPixelShader() const{
+		return pixelShader;
+	}
+	
 	const ShaderDescriptor& MTLShader::getDescriptor() const{
 		return descriptor;
 	}
