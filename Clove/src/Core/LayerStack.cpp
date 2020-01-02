@@ -11,7 +11,7 @@ namespace clv{
 
 	LayerStack::~LayerStack(){
 		CLV_LOG_TRACE("Deconstructing layer stack...");
-		for(auto layer : layers){
+		for(auto& layer : layers){
 			layer->onDetach();
 			CLV_LOG_DEBUG("{0} detached", layer->getName());
 		}

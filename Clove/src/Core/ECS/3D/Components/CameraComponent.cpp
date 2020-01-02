@@ -9,7 +9,7 @@ namespace clv::ecs::_3D{
 	}
 
 	CameraComponent::CameraComponent(plt::Window& window){
-		viewport = { 0, 0, window.getWidth(), window.getHeight() };
+		viewport = { 0, 0, window.getSize().x, window.getSize().y };
 		window.onWindowResize.bind(&CameraComponent::updateViewportSize, this);
 		setProjectionMode(ProjectionMode::perspective);
 	}

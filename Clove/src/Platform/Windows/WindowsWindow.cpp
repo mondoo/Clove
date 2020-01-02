@@ -5,7 +5,99 @@
 
 namespace clv::plt{
 	WindowsWindow::WindowsWindow(const WindowProps& props){
-		initialiseWindow(props);
+        CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", props.title, props.width, props.height);
+
+		instance = GetModuleHandle(nullptr);
+
+		WNDCLASSEX wc{};
+		wc.cbSize			= sizeof(wc);
+		wc.style			= CS_OWNDC;
+		wc.lpfnWndProc		= HandleMsgSetup;
+		wc.cbClsExtra		= 0;
+		wc.cbWndExtra		= 0;
+		wc.hInstance		= instance;
+		wc.hIcon			= nullptr;
+		wc.hCursor			= nullptr;
+		wc.hbrBackground	= nullptr;
+		wc.lpszMenuName		= nullptr;
+		wc.lpszClassName	= className;
+
+		RegisterClassEx(&wc);
+
+		CLV_LOG_TRACE("Windows class registered");
+
+		const std::string wideTitle(props.title.begin(), props.title.end());
+
+		const DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_VISIBLE;
+
+		windowsHandle = CreateWindow(
+			wc.lpszClassName,
+			wideTitle.c_str(),
+			windowStyle,
+			CW_USEDEFAULT, CW_USEDEFAULT,
+			props.width, props.height,
+			nullptr,
+			nullptr,
+			instance,
+			this
+		);
+
+		if(!windowsHandle){
+			throw CLV_WINDOWS_LAST_EXCEPTION;
+		}
+
+		CLV_LOG_DEBUG("Window created");
+
+		data = { windowsHandle, props.width, props.height };
+
+		surface = gfx::global::graphicsFactory->createSurface(&data);
+		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
+	}
+
+	WindowsWindow::WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+		CLV_LOG_TRACE("Creating child window: ({1}, {2})", size.x, size.y);
+
+		WNDCLASSEX wc{};
+		wc.cbSize			= sizeof(wc);
+		wc.style			= CS_OWNDC;
+		wc.lpfnWndProc		= HandleMsgSetup;
+		wc.cbClsExtra		= 0;
+		wc.cbWndExtra		= 0;
+		wc.hInstance		= instance;
+		wc.hIcon			= nullptr;
+		wc.hCursor			= nullptr;
+		wc.hbrBackground	= nullptr;
+		wc.lpszMenuName		= nullptr;
+		wc.lpszClassName	= className;
+
+		RegisterClassEx(&wc);
+
+		CLV_LOG_TRACE("Windows class registered");
+
+		const DWORD windowStyle = WS_CHILD | WS_VISIBLE;
+
+		windowsHandle = CreateWindow(
+			wc.lpszClassName,
+			"",
+			windowStyle,
+			position.x, position.y,
+			size.x, size.y,
+			reinterpret_cast<HWND>(parentWindow.getNativeWindow()),
+			nullptr,
+			instance,
+			this
+		);
+
+		if(!windowsHandle){
+			throw CLV_WINDOWS_LAST_EXCEPTION;
+		}
+
+		CLV_LOG_DEBUG("Window created");
+
+		data = { windowsHandle, size.x, size.y };
+
+		surface = gfx::global::graphicsFactory->createSurface(&data);
+		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 	}
 
 	WindowsWindow::~WindowsWindow(){
@@ -18,6 +110,38 @@ namespace clv::plt{
 
 	void* WindowsWindow::getNativeWindow() const{
 		return windowsHandle;
+	}
+
+	mth::vec2i WindowsWindow::getPosition() const{
+		RECT windowRect;
+		GetWindowRect(windowsHandle, &windowRect);
+		MapWindowPoints(HWND_DESKTOP, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
+
+		return { windowRect.left, windowRect.top };
+	}
+
+	mth::vec2i WindowsWindow::getSize() const{
+		RECT windowRect;
+		GetWindowRect(windowsHandle, &windowRect);
+		MapWindowPoints(HWND_DESKTOP, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
+
+		return { windowRect.right - windowRect.left, windowRect.bottom - windowRect.top };
+	}
+
+	void WindowsWindow::moveWindow(const mth::vec2i& position){
+		const mth::vec2i size = getSize();
+		const BOOL resized = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
+		if(!resized){
+			throw CLV_WINDOWS_LAST_EXCEPTION;
+		}
+	}
+
+	void WindowsWindow::resizeWindow(const mth::vec2i& size){
+		const mth::vec2i position = getPosition();
+		const BOOL resized = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
+		if(!resized){
+			throw CLV_WINDOWS_LAST_EXCEPTION;
+		}
 	}
 	
 	void WindowsWindow::processInput(){
@@ -84,7 +208,7 @@ namespace clv::plt{
 
 				//Mouse
 			case WM_MOUSEMOVE:
-				if(pt.x >= 0 && pt.x < windowProperties.width && pt.y >= 0 && pt.y < windowProperties.height){
+				if(pt.x >= 0 && pt.x < getSize().x && pt.y >= 0 && pt.y < getSize().y){
 					mouse.onMouseMove(pt.x, pt.y);
 					if(!mouse.isInWindow()){
 						mouse.onMouseEnter();
@@ -136,79 +260,11 @@ namespace clv::plt{
 						surface->resizeBuffers(size);
 						gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 					}
-					windowProperties.width = size.x;
-					windowProperties.height = size.y;
 					onWindowResize.broadcast(size);
 				}
 				break;
 
 		}
 		return DefWindowProc(hWnd, msg, wParam, lParam);
-	}
-
-	void WindowsWindow::initialiseWindow(const WindowProps& props){
-		windowProperties.title = props.title;
-		windowProperties.width = props.width;
-		windowProperties.height = props.height;
-		
-		instance = GetModuleHandle(nullptr);
-
-		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", windowProperties.title, windowProperties.width, windowProperties.height);
-
-		WNDCLASSEX wc{};
-		wc.cbSize			= sizeof(wc);
-		wc.style			= CS_OWNDC;
-		wc.lpfnWndProc		= HandleMsgSetup;
-		wc.cbClsExtra		= 0;
-		wc.cbWndExtra		= 0;
-		wc.hInstance		= instance;
-		wc.hIcon			= nullptr;
-		wc.hCursor			= nullptr;
-		wc.hbrBackground	= nullptr;
-		wc.lpszMenuName		= nullptr;
-		wc.lpszClassName	= className;
-
-		RegisterClassEx(&wc);
-
-		CLV_LOG_TRACE("Windows class registered");
-
-		const std::string wideTitle(windowProperties.title.begin(), windowProperties.title.end());
-
-		DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU;
-
-		//Create a rect so we can adjust the resolution to be the client region not the entire window size
-		RECT wr{};
-		wr.left		= 100; //What is with these 100s???
-		wr.right	= windowProperties.width + wr.left;
-		wr.top		= 100;
-		wr.bottom	= windowProperties.height + wr.top;
-		if(!AdjustWindowRect(&wr, windowStyle, FALSE)){
-			throw CLV_WINDOWS_LAST_EXCEPTION;
-		}
-
-		windowsHandle = CreateWindow(
-			wc.lpszClassName,
-			wideTitle.c_str(),
-			windowStyle,
-			CW_USEDEFAULT, CW_USEDEFAULT,
-			wr.right - wr.left, wr.bottom - wr.top,
-			nullptr,
-			nullptr,
-			instance,
-			this
-		);
-
-		if(!windowsHandle){
-			throw CLV_WINDOWS_LAST_EXCEPTION;
-		}
-
-		CLV_LOG_DEBUG("Window created");
-
-		ShowWindow(windowsHandle, SW_SHOW);
-
-		data = { windowsHandle, windowProperties.width, windowProperties.height };
-
-		surface = gfx::global::graphicsFactory->createSurface(&data);
-		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 	}
 }

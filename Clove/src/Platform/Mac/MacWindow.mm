@@ -2,7 +2,7 @@
 #import "Clove/Platform/Mac/MacWindow.hpp"
 
 #import "Clove/Core/Graphics/Surface.hpp"
-#import "Clove/Core/Graphics/RenderCommand.hpp"
+#import "Clove/Core/Graphics/GraphicsGlobal.hpp"
 
 @implementation MacWindowProxy
 - (instancetype)initWithWindowData:(unsigned int)width height:(unsigned int)height name:(NSString*)name{
@@ -21,6 +21,24 @@
 	return self;
 }
 
+- (instancetype)initWithParentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size{
+	const NSRect rect = NSMakeRect(position.x, position.y, size.x, size.y);
+	const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
+	
+	_window = [[NSWindow alloc] initWithContentRect:rect
+										 styleMask:styleMask
+										   backing:NSBackingStoreBuffered
+											 defer:NO];
+
+	[_window setDelegate:self];
+	[_window makeKeyAndOrderFront:nil];
+	
+	NSWindow* nativeParentWindow = reinterpret_cast<NSWindow*>(parentWindow.getNativeWindow());
+	[nativeParentWindow addChildWindow:_window ordered:NSWindowAbove];
+	
+	return self;
+}
+
 - (void)windowWillClose:(NSNotification *)notification{
 	//The application shouldn't shut down when a window closes on MacOS, but this'll do for now
 	_cloveWindow->onWindowCloseDelegate.broadcast();
@@ -29,8 +47,22 @@
 
 namespace clv::plt{
     MacWindow::MacWindow(const WindowProps& props){
-		initialiseWindow(props);
+		NSString* nameString = [NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]];
+		
+		windowProxy = [[MacWindowProxy alloc] initWithWindowData:props.width height:props.height name:nameString];
+		windowProxy.cloveWindow = this;
+		
+		surface = gfx::global::graphicsFactory->createSurface(nullptr);
+		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
     }
+	
+	MacWindow::MacWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+		windowProxy = [[MacWindowProxy alloc] initWithParentWindow:parentWindow position:position size:size];
+		windowProxy.cloveWindow = this;
+		
+		surface = gfx::global::graphicsFactory->createSurface(nullptr);
+		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
+	}
 
 	MacWindow::~MacWindow(){
 		[windowProxy release];
@@ -38,6 +70,26 @@ namespace clv::plt{
 	
 	void* MacWindow::getNativeWindow() const{
 		return [windowProxy window];
+	}
+	
+	mth::vec2i MacWindow::getPosition() const{
+		NSRect frame = [[windowProxy window] frame];
+		return { frame.origin.x, frame.origin.y };
+	}
+	
+	mth::vec2i MacWindow::getSize() const{
+		NSRect frame = [[windowProxy window] frame];
+		return { frame.size.width, frame.size.height };
+	}
+
+	void MacWindow::moveWindow(const mth::vec2i& position){
+		const mth::vec2i size = getSize();
+		[[windowProxy window] setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
+	}
+	
+	void MacWindow::resizeWindow(const mth::vec2i& size){
+		const mth::vec2i position = getPosition();
+		[[windowProxy window] setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}
 	
 	void MacWindow::processInput(){
@@ -116,21 +168,5 @@ namespace clv::plt{
 				[NSApp sendEvent: event];
 			} while (event != nil);
 		}
-	}
-	
-	void MacWindow::initialiseWindow(const WindowProps& props){		
-		windowProperties.width = props.width;
-		windowProperties.height = props.height;
-		windowProperties.title = props.title;
-		
-		NSString* nameString = [NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]];
-		
-		windowProxy = [[MacWindowProxy alloc] initWithWindowData:props.width
-															 height:props.height
-															   name:nameString];
-		windowProxy.cloveWindow = this;
-		
-		surface = gfx::RenderCommand::createSurface(nullptr);
-		gfx::RenderCommand::makeSurfaceCurrent(surface);
 	}
 }

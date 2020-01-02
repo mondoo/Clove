@@ -1,15 +1,35 @@
-#Editor CMake list
+#Wrapper between the C# editor and C++ engine
 
-project(Bulb.Core LANGUAGES CSharp)
+project(Bulb.Core)
 
-include(CSharpUtilities)
-
-#Add all c# files
-add_library(
-	${PROJECT_NAME} SHARED
-	Temp.cs
-	#TODO
+set(
+	Files
+		Component.hpp
+		Component.cpp
+		EditorLayer.hpp
+		EditorLayer.cpp
+		EditorSession.hpp
+		EditorSession.cpp
+		EditorWindowProxy.hpp
+		EditorWindowProxy.cpp
+		Entity.hpp
+		Entity.cpp
 )
 
-#Set other csproj file flags
-set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Files})
+
+add_library(
+	${PROJECT_NAME} SHARED
+		${Files}
+)
+
+target_link_libraries(
+	${PROJECT_NAME}
+		PUBLIC
+		PRIVATE
+			Clove	
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES COMMON_LANGUAGE_RUNTIME "")
+set_target_properties(${PROJECT_NAME} PROPERTIES VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
+set_target_properties(${PROJECT_NAME} PROPERTIES VS_DOTNET_REFERENCES "System")

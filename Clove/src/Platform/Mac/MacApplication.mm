@@ -12,11 +12,15 @@ namespace clv::plt{
 		[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 	}
 	
+	gfx::API MacApplication::getPlatformPreferedAPI(){
+		return gfx::API::OpenGL4;	
+	}
+
 	std::unique_ptr<Window> MacApplication::createWindow(const WindowProps& props){
         return std::make_unique<MacWindow>(props);
     }
-
-	gfx::API MacApplication::getPlatformPreferedAPI(){
-		return gfx::API::OpenGL4;	
+	
+	std::unique_ptr<Window> MacApplication::createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+		return std::make_unique<MacWindow>(parentWindow, position, size);
 	}
 }
