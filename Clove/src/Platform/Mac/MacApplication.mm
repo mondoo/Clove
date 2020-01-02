@@ -19,4 +19,8 @@ namespace clv::plt{
 	std::unique_ptr<Window> MacApplication::createWindow(const WindowProps& props){
         return std::make_unique<MacWindow>(props);
     }
+	
+	std::unique_ptr<Window> MacApplication::createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+		return std::make_unique<MacWindow>(parentWindow, position, size);
+	}
 }
