@@ -10,4 +10,8 @@ namespace clv::plt{
 	std::unique_ptr<Window> LinuxApplication::createWindow(const WindowProps& props){
 		return std::make_unique<LinuxWindow>(props);
 	}
+
+    std::unique_ptr<Window> LinuxApplication::createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+        return std::make_unique<LinuxWindow>(parentWindow, position, size);
+	}
 }

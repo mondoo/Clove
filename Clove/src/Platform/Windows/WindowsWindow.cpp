@@ -5,9 +5,9 @@
 
 namespace clv::plt{
 	WindowsWindow::WindowsWindow(const WindowProps& props){
-		instance = GetModuleHandle(nullptr);
+        CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", props.title, props.width, props.height);
 
-		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", props.title, props.width, props.height);
+		instance = GetModuleHandle(nullptr);
 
 		WNDCLASSEX wc{};
 		wc.cbSize			= sizeof(wc);
