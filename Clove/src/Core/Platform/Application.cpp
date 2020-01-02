@@ -37,7 +37,7 @@ namespace clv::plt{
 		CLV_PROFILE_END_SESSION();
 	}
 
-	void Application::start(){
+	void Application::initialise(){
 		//TODO: Added a 'start' function to handle not calling a virtual from the ctor
 		//Would like as minimal api as possible when starting the application
 
@@ -46,6 +46,19 @@ namespace clv::plt{
 		window = createWindow();
 		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
 		window->setVSync(true);
+
+		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+
+		ecsManager = std::make_unique<ecs::Manager>();
+		layerStack = std::make_unique<LayerStack>();
+	}
+
+	void Application::initialise(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+		gfx::global::initialise(getPlatformPreferedAPI());
+
+		window = createChildWindow(parentWindow, position, size);
+		//window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
+		//window->setVSync(true);
 
 		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 

@@ -1,6 +1,6 @@
 #Editor CMake list
 
-project(Bulb.Desktop.Windows LANGUAGES CSharp)
+project(Bulb.Windows LANGUAGES CSharp)
 
 include(CSharpUtilities)
 
@@ -9,8 +9,8 @@ set(
 		App.config
 		App.xaml
 		App.xaml.cs
-		MainWindow.xaml
-		MainWindow.xaml.cs
+		EditorWindow.xaml
+		EditorWindow.xaml.cs
 
 		#Program.cs
 
@@ -23,6 +23,11 @@ set(
 		Properties/Resources.Designer.cs
 		Properties/Settings.settings
 		Properties/Settings.Designer.cs
+
+		UI/ViewModels/ComponentViewModel.cs
+		UI/ViewModels/EditorWindowViewModel.cs
+		UI/ViewModels/EntityViewModel.cs
+        UI/ViewModels/RelayCommand.cs
 )
 
 #Add all c# files
@@ -71,7 +76,8 @@ target_link_libraries(
 	${PROJECT_NAME}
 		PUBLIC
 		PRIVATE
-			Bulb.Engine
+			Bulb.Core
+			Bulb.CoreUI
 )
 
 

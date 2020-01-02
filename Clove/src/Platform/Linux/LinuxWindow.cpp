@@ -3,11 +3,123 @@
 #include "Clove/Core/Graphics/Surface.hpp"
 #include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 
-#include <X11/Xlib.h>
-
 namespace clv::plt{
 	LinuxWindow::LinuxWindow(const WindowProps& props){
-		initialiseWindow(props);
+        CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", props.title, props.width, props.height);
+
+        display = XOpenDisplay(nullptr); //makes the connection to the client, where to display the window
+
+        if(!display){
+            //TODO: Exception
+            CLV_LOG_ERROR("Could not open display");
+            return;
+        }
+
+        screen = DefaultScreenOfDisplay(display); //Get the screen of the display
+        screenID = DefaultScreen(display);
+
+        //Create the context first to get the visual info
+        data = { display, &window, &visual };
+        surface = gfx::global::graphicsFactory->createSurface(&data);
+
+        if(screenID != visual->screen){
+            //TODO: Exception
+            CLV_LOG_CRITICAL("Screen ID does not match visual->screen");
+            return;
+        }
+
+        windowAttribs = {};
+        windowAttribs.border_pixel      = BlackPixel(display, screenID);
+        windowAttribs.background_pixel  = WhitePixel(display, screenID);
+        windowAttribs.override_redirect = true;
+        windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), visual->visual, AllocNone);
+        windowAttribs.event_mask        = ExposureMask;
+
+        window = XCreateWindow(display, RootWindow(display, screenID),
+                               0, 0, props.width, props.height,
+                               0, visual->depth, InputOutput, visual->visual,
+                               CWBackPixel | CWColormap | CWBorderPixel | CWEventMask,
+                               &windowAttribs);
+
+        //Now that we have a window, we can make the context current
+        gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
+
+        //Remap the delete window message so we can gracefully close the application
+        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
+        XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
+
+        XSync(display, false); //Passing true here flushes the event queue
+
+        const long keyboardMask = KeyPressMask | KeyReleaseMask | KeymapStateMask;
+        const long mouseMask = PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask;
+
+        XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
+
+        XStoreName(display, window, props.title.c_str());
+
+        XClearWindow(display, window);
+        XMapRaised(display, window);
+
+        CLV_LOG_DEBUG("Window created");
+	}
+
+	LinuxWindow::LinuxWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+        CLV_LOG_TRACE("Creating child window: ({1}, {2})", size.x, size.y);
+
+        const ::Window* nativeParentWindow = reinterpret_cast<::Window*>(parentWindow.getNativeWindow());
+
+        display = XOpenDisplay(nullptr); //makes the connection to the client, where to display the window
+
+        if(!display){
+            //TODO: Exception
+            CLV_LOG_ERROR("Could not open display");
+            return;
+        }
+
+        screen = DefaultScreenOfDisplay(display); //Get the screen of the display
+        screenID = DefaultScreen(display);
+
+        //Create the context first to get the visual info
+        data = { display, &window, &visual };
+        surface = gfx::global::graphicsFactory->createSurface(&data);
+
+        if(screenID != visual->screen){
+            //TODO: Exception
+            CLV_LOG_CRITICAL("Screen ID does not match visual->screen");
+            return;
+        }
+
+        windowAttribs = {};
+        windowAttribs.border_pixel      = BlackPixel(display, screenID);
+        windowAttribs.background_pixel  = WhitePixel(display, screenID);
+        windowAttribs.override_redirect = true;
+        windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), visual->visual, AllocNone);
+        windowAttribs.event_mask        = ExposureMask;
+
+        window = XCreateWindow(display, *nativeParentWindow,
+                               position.x, position.y, size.x, size.y,
+                               0, visual->depth, InputOutput, visual->visual,
+                               CWBackPixel | CWColormap | CWBorderPixel | CWEventMask,
+                               &windowAttribs);
+
+        //Now that we have a window, we can make the context current
+        gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
+
+        //Remap the delete window message so we can gracefully close the application
+        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
+        XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
+
+        XSync(display, false); //Passing true here flushes the event queue
+
+        const long keyboardMask = KeyPressMask | KeyReleaseMask | KeymapStateMask;
+        const long mouseMask = PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask;
+
+        XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
+
+        XClearWindow(display, window);
+        XMapRaised(display, window);
+
+        CLV_LOG_DEBUG("Window created");
 	}
 
 	LinuxWindow::~LinuxWindow(){
@@ -21,8 +133,50 @@ namespace clv::plt{
 	}
 
 	void* LinuxWindow::getNativeWindow() const{
-		return display;
+		return const_cast<::Window*>(&window);
 	}
+
+    mth::vec2i LinuxWindow::getPosition() const{
+        ::Window rootWindow;
+        int32 posX;
+        int32 posY;
+        uint32 width;
+        uint32 height;
+        uint32 borderWidth;
+        uint32 depth;
+
+        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0){
+            return { posX, posY };
+        }else{
+            CLV_ASSERT(false, "Could not get window geometry");
+            return { 0, 0 };
+        }
+    }
+
+    mth::vec2i LinuxWindow::getSize() const{
+        ::Window rootWindow;
+        int32 posX;
+        int32 posY;
+        uint32 width;
+        uint32 height;
+        uint32 borderWidth;
+        uint32 depth;
+
+        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0){
+            return { width, height };
+        }else{
+            CLV_ASSERT(false, "Could not get window geometry");
+            return { 0, 0 };
+        }
+    }
+
+    void LinuxWindow::moveWindow(const mth::vec2i &position) {
+        XMoveWindow(display, window, position.x, position.y);
+    }
+
+    void LinuxWindow::resizeWindow(const mth::vec2i &size) {
+        XResizeWindow(display, window, size.x, size.y);
+    }
 
 	void LinuxWindow::processInput(){
 		if(XPending(display) > 0){
@@ -86,81 +240,18 @@ namespace clv::plt{
 				case ConfigureNotify:
 					{
 						XConfigureEvent xce = xevent.xconfigure;
-						if(static_cast<uint32>(xce.width) != getWidth() || static_cast<uint32>(xce.height) != getHeight()){
+						if(static_cast<uint32>(xce.width) != prevConfigureNotifySize.x || static_cast<uint32>(xce.height) != prevConfigureNotifySize.y){
 							const mth::vec2i size{ xce.width, xce.height };
+							prevConfigureNotifySize = size;
 							if(surface){
 								surface->resizeBuffers(size);
 								gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 							}
-							windowProperties.width = size.x;
-							windowProperties.height = size.y;
 							onWindowResize.broadcast(size);
 						}
 					}
 					break;
 			}
 		}
-	}
-
-	void LinuxWindow::initialiseWindow(const WindowProps& props){
-		windowProperties.title = props.title;
-		windowProperties.width = props.width;
-		windowProperties.height = props.height;
-
-		display = XOpenDisplay(nullptr); //makes the connection to the client, where to display the window
-
-		if(!display){
-			//TODO: Exception
-			CLV_LOG_ERROR("Could not open display");
-			return;
-		}
-
-		screen = DefaultScreenOfDisplay(display); //Get the screen of the display
-		screenID = DefaultScreen(display);
-
-        //Create the context first to get the visual info
-        data = { display, &window, &visual };
-		surface = gfx::global::graphicsFactory->createSurface(&data);
-
-		if(screenID != visual->screen){
-			//TODO: Exception
-			CLV_LOG_CRITICAL("Screen ID does not match visual->screen");
-			return;
-		}
-
-		windowAttribs = { 0 };
-		windowAttribs.border_pixel = BlackPixel(display, screenID);
-		windowAttribs.background_pixel = WhitePixel(display, screenID);
-		windowAttribs.override_redirect = true;
-		windowAttribs.colormap = XCreateColormap(display, RootWindow(display, screenID), visual->visual, AllocNone);
-		windowAttribs.event_mask = ExposureMask;
-        
-
-		window = XCreateWindow(display, RootWindow(display, screenID),
-							   0, 0, windowProperties.width, windowProperties.height,
-							   0, visual->depth, InputOutput, visual->visual,
-							   CWBackPixel | CWColormap | CWBorderPixel | CWEventMask,
-							   &windowAttribs);
-
-        //Now that we have a window, we can make the context current
-		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
-
-		//Remap the delete window message so we can gracefully close the application
-		atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
-		XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
-
-		XSync(display, false); //Passing true here flushes the event queue
-
-		const long keyboardMask = KeyPressMask | KeyReleaseMask | KeymapStateMask;
-		const long mouseMask = PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask;
-
-		XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
-
-		XStoreName(display, window, windowProperties.title.c_str());
-
-		XClearWindow(display, window);
-		XMapRaised(display, window);
-
-		CLV_LOG_DEBUG("Window created");
 	}
 }

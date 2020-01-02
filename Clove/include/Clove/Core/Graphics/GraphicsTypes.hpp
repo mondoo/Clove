@@ -36,10 +36,10 @@ namespace clv::gfx{
 	};
 
 	struct Viewport{
-		uint32 x = 0;
-		uint32 y = 0;
-		uint32 width = 0;
-		uint32 height = 0;
+		int32 x = 0;
+		int32 y = 0;
+		int32 width = 0;
+		int32 height = 0;
 	};
 
 	enum BufferBindingPoint{ //Will this be needed?
