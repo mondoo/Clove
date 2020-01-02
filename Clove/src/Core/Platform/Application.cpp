@@ -20,13 +20,19 @@
 namespace clv::plt{
 	Application* Application::instance = nullptr;
 
-	Application::Application(){
+	Application::Application(gfx::API api){
 		CLV_PROFILE_BEGIN_SESSION("Application cycle", "Profile-Cycle.json");
 
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
 		Log::init();
+
+		gfx::global::initialise(api);
+		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+
+		ecsManager = std::make_unique<ecs::Manager>();
+		layerStack = std::make_unique<LayerStack>();
 
 		CLV_LOG_INFO("Successfully initialised Clove");
 
@@ -37,35 +43,6 @@ namespace clv::plt{
 		CLV_PROFILE_END_SESSION();
 	}
 
-	void Application::initialise(){
-		//TODO: Added a 'start' function to handle not calling a virtual from the ctor
-		//Would like as minimal api as possible when starting the application
-
-		gfx::global::initialise(getPlatformPreferedAPI());
-
-		window = createWindow();
-		window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
-		window->setVSync(true);
-
-		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
-
-		ecsManager = std::make_unique<ecs::Manager>();
-		layerStack = std::make_unique<LayerStack>();
-	}
-
-	void Application::initialise(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
-		gfx::global::initialise(getPlatformPreferedAPI());
-
-		window = createChildWindow(parentWindow, position, size);
-		//window->onWindowCloseDelegate.bind(&Application::onWindowClose, this);
-		//window->setVSync(true);
-
-		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
-
-		ecsManager = std::make_unique<ecs::Manager>();
-		layerStack = std::make_unique<LayerStack>();
-	}
-
 	void Application::update(){
 		CLV_PROFILE_FUNCTION();
 
@@ -73,7 +50,7 @@ namespace clv::plt{
 		std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
 		prevFrameTime = currFrameTime;
 
-		window->beginFrame();
+		mainWindow->beginFrame();
 
 		//TODO:
 		//Will need process the mouse and keyboard events here eventually
@@ -86,7 +63,7 @@ namespace clv::plt{
 
 		{
 			CLV_PROFILE_SCOPE("Window::endFrame");
-			window->endFrame();
+			mainWindow->endFrame();
 		}
 	}
 
@@ -110,25 +87,55 @@ namespace clv::plt{
 		return *instance;
 	}
 
-	Window& Application::getWindow(){
-		return *window;
-	}
-
 	ecs::Manager& Application::getManager(){
 		return *ecsManager;
 	}
 
-	std::unique_ptr<Application> Application::createApplication(){
+	Window& Application::getMainWindow() const{
+		return *mainWindow;
+	}
+
+	void Application::setMainWindow(const std::shared_ptr<Window>& window){
+		mainWindow = window;
+	}
+
+	std::shared_ptr<Window> Application::openWindow(WindowType windowType, const WindowProps& props){
+		auto window = createWindow(props);
+
+		if(windowType == WindowType::MainWindow){
+			setMainWindow(window);
+		}
+
+		return window;
+	}
+
+	std::shared_ptr<Window> Application::openChildWindow(WindowType windowType, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+		auto window = createChildWindow(parentWindow, position, size);
+
+		if(windowType == WindowType::MainWindow){
+			setMainWindow(window);
+		}
+
+		return window;
+	}
+
+	std::unique_ptr<Application> Application::createApplication(gfx::API api){
 	#if CLV_PLATFORM_WINDOWS
-		return std::make_unique<WindowsApplication>();
+		return std::make_unique<WindowsApplication>(api);
 	#elif CLV_PLATFORM_LINUX
-		return std::make_unique<LinuxApplication>();
+		return std::make_unique<LinuxApplication>(api);
 	#elif CLV_PLATFORM_MACOS
-		return std::make_unique<MacApplication>();
+		return std::make_unique<MacApplication>(api);
 	#endif
 	}
 
-	void Application::onWindowClose(){
-		stop();
+	gfx::API Application::getPreferedAPI(){
+	#if CLV_PLATFORM_WINDOWS
+		return gfx::API::DirectX11;
+	#elif CLV_PLATFORM_LINUX
+		return gfx::API::OpenGL4;
+	#elif CLV_PLATFORM_MACOS
+		return gfx::API::OpenGL4;
+	#endif
 	}
 }

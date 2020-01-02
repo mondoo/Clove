@@ -7,6 +7,7 @@
 #include "Clove/Core/Log.hpp"
 
 #include "Clove/Core/Platform/Application.hpp"
+#include "Clove/Core/Platform/Window.hpp"
 
 #include "Clove/Core/Layer.hpp"
 

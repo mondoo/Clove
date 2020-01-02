@@ -29,9 +29,6 @@ namespace clv::ecs::_2D{
 
 		std::shared_ptr<PipelineObject> spritePipelineObject;
 		std::shared_ptr<PipelineObject> charPipelineObject;
-
-		mth::mat4f projection; //Effectively the 'camera'
-		mth::vec2i screenSize;
 	} *currentSceneData;
 
 	RenderSystem::RenderSystem(){
@@ -87,16 +84,6 @@ namespace clv::ecs::_2D{
 
 		currentSceneData->spritePipelineObject = global::graphicsFactory->createPipelineObject(global::graphicsFactory->createShader({ ShaderStyle::Unlit_2D }));
 		currentSceneData->charPipelineObject = global::graphicsFactory->createPipelineObject(global::graphicsFactory->createShader({ ShaderStyle::Font }));
-
-		//Projection
-		plt::Application::get().getWindow().onWindowResize.bind(&RenderSystem::onWindowSizeChanged, this);
-
-		currentSceneData->screenSize = { plt::Application::get().getWindow().getSize() };
-
-		const float halfWidth = static_cast<float>(currentSceneData->screenSize.x) / 2;
-		const float halfHeight = static_cast<float>(currentSceneData->screenSize.y) / 2;
-
-		currentSceneData->projection = mth::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 	}
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;
@@ -117,6 +104,10 @@ namespace clv::ecs::_2D{
 	void RenderSystem::update(utl::DeltaTime deltaTime){
 		CLV_PROFILE_FUNCTION();
 
+		const mth::vec2i screenSize = plt::Application::get().getMainWindow().getSize();
+		const mth::vec2f screenHalfSize{ static_cast<float>(screenSize.x) / 2.0f, static_cast<float>(screenSize.y) / 2.0f };
+		const mth::mat4f projection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
+
 		//Srpites
 		{
 			CLV_PROFILE_SCOPE("Preparing sprites");
@@ -127,13 +118,11 @@ namespace clv::ecs::_2D{
 				SpriteComponent* renderable = std::get<SpriteComponent*>(tuple);
 
 				const mth::mat4f modelData = transform->getWorldTransformMatrix();
-				renderable->sprite->setModelData(currentSceneData->projection * modelData);
+				renderable->sprite->setModelData(projection * modelData);
 
 				currentSceneData->spritesToRender.push_back(renderable->sprite);
 			}
 		}
-
-		const mth::vec2f screenHalfSize{ static_cast<float>(currentSceneData->screenSize.x) / 2.0f, static_cast<float>(currentSceneData->screenSize.y) / 2.0f };
 
 		//Widgets
 		{
@@ -155,13 +144,13 @@ namespace clv::ecs::_2D{
 					offset.x = (anchor.x * parentScale.x) / widgetScale.x;
 					offset.y = (anchor.y * parentScale.y) / widgetScale.y;
 				} else{
-					offset.x = (anchor.x * currentSceneData->screenSize.x) / widgetScale.x;
-					offset.y = (anchor.y * currentSceneData->screenSize.y) / widgetScale.y;
+					offset.x = (anchor.x * screenSize.x) / widgetScale.x;
+					offset.y = (anchor.y * screenSize.y) / widgetScale.y;
 				}
 
 				const mth::mat4f modelData = mth::translate(transform->getWorldTransformMatrix(), mth::vec3f{ -scaledScreenSize.x + offset.x, scaledScreenSize.y - offset.y, 0.0f });
 
-				renderable->sprite->setModelData(currentSceneData->projection * modelData);
+				renderable->sprite->setModelData(projection * modelData);
 
 				currentSceneData->widgetsToRender.push_back(renderable->sprite);
 			}
@@ -184,8 +173,8 @@ namespace clv::ecs::_2D{
 					offset.x = anchor.x * parentScale.x;
 					offset.y = anchor.y * parentScale.y;
 				} else{
-					offset.x = anchor.x * currentSceneData->screenSize.x;
-					offset.y = anchor.y * currentSceneData->screenSize.y;
+					offset.x = anchor.x * screenSize.x;
+					offset.y = anchor.y * screenSize.y;
 				}
 
 				const clv::ui::Text& text = fontComp->text;
@@ -220,7 +209,7 @@ namespace clv::ecs::_2D{
 						model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
 						auto character = std::make_shared<gfx::Sprite>(texture);
-						character->setModelData(currentSceneData->projection * model);
+						character->setModelData(projection * model);
 
 						currentSceneData->charactersToRender.push_back(character);
 					}
@@ -234,7 +223,9 @@ namespace clv::ecs::_2D{
 	void RenderSystem::postUpdate(){
 		CLV_PROFILE_FUNCTION();
 
-		global::graphicsDevice->setViewport({ 0, 0, currentSceneData->screenSize.x, currentSceneData->screenSize.y });
+		const mth::vec2i screenSize = plt::Application::get().getMainWindow().getSize();
+
+		global::graphicsDevice->setViewport({ 0, 0, screenSize.x, screenSize.y });
 		global::graphicsDevice->setDepthBuffer(false);
 		global::graphicsDevice->resetRenderTargetToDefault();
 
@@ -310,13 +301,5 @@ namespace clv::ecs::_2D{
 			std::for_each(currentSceneData->charactersToRender.begin(), currentSceneData->charactersToRender.end(), draw);
 			currentSceneData->charactersToRender.clear();
 		}
-	}
-
-	void RenderSystem::onWindowSizeChanged(const mth::vec2ui& size){
-		const float halfWidth = static_cast<float>(size.x) / 2;
-		const float halfHeight = static_cast<float>(size.y) / 2;
-
-		currentSceneData->screenSize = size;
-		currentSceneData->projection = mth::createOrthographicMatrix(-halfWidth, halfWidth, -halfHeight, halfHeight);
 	}
 }
