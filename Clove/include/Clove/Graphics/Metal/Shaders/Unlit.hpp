@@ -15,9 +15,8 @@ struct modelBuffer{
 }
 
 struct VSIn{
-	float3 position [[ attribute(0) ]];
-	float2 texCoord [[ attribute(1) ]];
-	float3 normal [[ attribute(2) ]];
+	float3 Position3D [[ attribute(0) ]];
+	float2 TexCoord [[ attribute(1) ]];
 }
 
 struct VSOut{
@@ -28,8 +27,8 @@ struct VSOut{
 vertex VSOut vertexShader(const VSIn vertexIn, constant viewBuffer& viewBufferData [[ buffer(0) ]], const modelBuffer& modelBufferData [[ buffer(3) ]]){
 	VSOut out;
 	
-	out.position = (projection * view * model) * float4(vertexIn.position, 1.0f);
-	out.texCoord = vertexIn.texCoord;
+	out.position = (projection * view * model) * float4(vertexIn.Position3D, 1.0f);
+	out.texCoord = vertexIn.TexCoord;
 	
 	return out;
 }

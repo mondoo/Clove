@@ -13,8 +13,8 @@ struct colourBuffer{
 }
 
 struct VSIn{
-	float2 position [[ attribute(0) ]];
-	float2 texCoord [[ attribute(1) ]];
+	float2 Position2D [[ attribute(0) ]];
+	float2 TexCoord [[ attribute(1) ]];
 }
 
 struct VSOut{
@@ -25,8 +25,8 @@ struct VSOut{
 vertex VSOut vertexShader(const VSIn vertexIn, constant viewBuffer& viewBuffer [[ buffer(5) ]]){
 	VSOut out;
 	
-	out.position = viewBuffer.modelProjection * float4(vertexIn.position.x, vertexIn.position.y, 0.0f, 1.0f);
-	out.texCoord = vertexIn.texCoord;
+	out.position = viewBuffer.modelProjection * float4(vertexIn.Position2D.x, vertexIn.Position2D.y, 0.0f, 1.0f);
+	out.texCoord = vertexIn.TexCoord;
 	
 	return out;
 }
