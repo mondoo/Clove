@@ -57,7 +57,11 @@ namespace clv::gfx::d3d{
 	void D3DRenderDevice::bindPipelineObject(const PipelineObject& pipelineObject){
 		const D3DPipelineObject& d3dPipelineObject = static_cast<const D3DPipelineObject&>(pipelineObject);
 		d3dContext->IASetInputLayout(d3dPipelineObject.getD3DInputLayout().Get());
-		bindShader(*d3dPipelineObject.getShader());
+
+		auto d3dShader = std::static_pointer_cast<D3DShader>(d3dPipelineObject.getShader());
+		d3dContext->VSSetShader(d3dShader->getD3DVertexShader().Get(), nullptr, 0u);
+		d3dContext->GSSetShader(d3dShader->getD3DGeometryShader().Get(), nullptr, 0u);
+		d3dContext->PSSetShader(d3dShader->getD3DPixelShader().Get(), nullptr, 0u);
 	}
 
 	void D3DRenderDevice::bindTexture(const Texture* texture, const uint32 bindingPoint){
@@ -72,13 +76,6 @@ namespace clv::gfx::d3d{
 			d3dContext->PSSetShaderResources(bindingPoint, 1u, resourceView);
 			d3dContext->PSSetSamplers(bindingPoint, 1u, samplerState);
 		}
-	}
-
-	void D3DRenderDevice::bindShader(const Shader& shader){
-		const D3DShader& d3dShader = static_cast<const D3DShader&>(shader);
-		d3dContext->VSSetShader(d3dShader.getD3DVertexShader().Get(), nullptr, 0u);
-		d3dContext->GSSetShader(d3dShader.getD3DGeometryShader().Get(), nullptr, 0u);
-		d3dContext->PSSetShader(d3dShader.getD3DPixelShader().Get(), nullptr, 0u);
 	}
 
 	void D3DRenderDevice::updateBufferData(Buffer& buffer, const void* data){
