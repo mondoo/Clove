@@ -20,8 +20,8 @@ namespace clv::plt{
 
 @property clv::plt::MacWindow* cloveWindow;
 
-- (instancetype)initWithWindowData:(MTKView*)view width: (unsigned int)width height: (unsigned int)height name: (NSString*)name;
-- (instancetype)initWithParentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size;
+- (instancetype)initWithWindowData:(MTKView*)view width:(unsigned int)width height:(unsigned int)height name: (NSString*)name;
+- (instancetype)initWithParentWindow:(MTKView*)view parentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size;
 
 @end
 
