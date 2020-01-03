@@ -26,57 +26,6 @@ set(
 )
 
 set(
-	CoreECSFiles
-		${CLV_INCLUDE}/Core/ECS/Component.hpp
-		${CLV_INCLUDE}/Core/ECS/Component.inl
-		${CLV_INCLUDE}/Core/ECS/ComponentManager.hpp
-		${CLV_INCLUDE}/Core/ECS/ComponentManager.inl
-		${CLV_SOURCE}/Core/ECS/ComponentManager.cpp
-		${CLV_INCLUDE}/Core/ECS/ECSTypes.hpp
-		${CLV_INCLUDE}/Core/ECS/Entity.hpp
-		${CLV_INCLUDE}/Core/ECS/Entity.inl
-		${CLV_SOURCE}/Core/ECS/Entity.cpp
-		${CLV_INCLUDE}/Core/ECS/Manager.hpp
-		${CLV_INCLUDE}/Core/ECS/Manager.inl
-		${CLV_SOURCE}/Core/ECS/Manager.cpp
-		${CLV_INCLUDE}/Core/ECS/System.hpp
-		${CLV_INCLUDE}/Core/ECS/2D/Components/RigidBodyComponent.hpp
-		${CLV_SOURCE}/Core/ECS/2D/Components/RigidBodyComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/2D/Components/SpriteComponent.hpp
-		${CLV_SOURCE}/Core/ECS/2D/Components/SpriteComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/2D/Components/TransformComponent.hpp
-		${CLV_SOURCE}/Core/ECS/2D/Components/TransformComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/2D/Systems/RenderSystem.hpp
-		${CLV_SOURCE}/Core/ECS/2D/Systems/RenderSystem.cpp
-		${CLV_INCLUDE}/Core/ECS/2D/Systems/PhysicsSystem.hpp
-		${CLV_SOURCE}/Core/ECS/2D/Systems/PhysicsSystem.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Components/CameraComponent.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Components/CameraComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Components/LightComponent.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Components/LightComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Components/MeshComponent.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Components/MeshComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Components/RigidBodyComponent.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Components/RigidBodyComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Components/TransformComponent.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Components/TransformComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Systems/RenderSystem.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Systems/RenderSystem.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Systems/PhysicsSystem.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Systems/PhysicsSystem.cpp
-		${CLV_INCLUDE}/Core/ECS/Audio/Components/AudioComponent.hpp
-		${CLV_SOURCE}/Core/ECS/Audio/Components/AudioComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/Audio/Systems/AudioSystem.hpp
-		${CLV_SOURCE}/Core/ECS/Audio/Systems/AudioSystem.cpp
-		${CLV_INCLUDE}/Core/ECS/UI/Components/TextComponent.hpp
-		${CLV_SOURCE}/Core/ECS/UI/Components/TextComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/UI/Components/TransformComponent.hpp
-		${CLV_SOURCE}/Core/ECS/UI/Components/TransformComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/UI/Components/WidgetComponent.hpp
-		${CLV_SOURCE}/Core/ECS/UI/Components/WidgetComponent.cpp
-)
-
-set(
 	CoreExceptionFiles
 		${CLV_INCLUDE}/Core/Exception/CloveException.hpp
 		${CLV_SOURCE}/Core/Exception/CloveException.cpp
@@ -364,7 +313,6 @@ set(
 	AllFiles
 	${CoreFiles}
 		${CoreAudioFiles}
-		${CoreECSFiles}
 		${CoreExceptionFiles}
 		${CoreGraphicsFiles}
 			${OpenGLGraphicsFiles}

@@ -27,7 +27,7 @@ target_link_libraries(
 	${PROJECT_NAME}
 		PUBLIC
 		PRIVATE
-			Clove	
+			Tunic	
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES COMMON_LANGUAGE_RUNTIME "")
