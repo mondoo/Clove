@@ -10,6 +10,7 @@ namespace clv::gfx::mtl{
 	class MTLRenderDevice : public RenderDevice{
 		//VARIABLES
 	private:
+		id<MTLCommandQueue> commandQueue;
 		id<MTLCommandBuffer> commandBuffer;
 		id<MTLRenderCommandEncoder> commandEncoder;
 		id<MTLDrawable> drawable;
