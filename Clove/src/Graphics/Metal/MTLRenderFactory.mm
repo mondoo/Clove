@@ -8,8 +8,8 @@
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 
 namespace clv::gfx::mtl{
-	MTLRenderFactory::MTLRenderFactory(id<MTLDevice> mtlDevice)
-		: mtlDevice(mtlDevice){
+	MTLRenderFactory::MTLRenderFactory(id<MTLDevice> mtlDevice){
+		this->mtlDevice = [mtlDevice retain];
 	}
 	
 	MTLRenderFactory::~MTLRenderFactory(){
