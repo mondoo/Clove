@@ -15,7 +15,7 @@ namespace clv::gfx::d3d{
 		const auto& layout = shaderReflectionData.vertexBufferLayout;
 
 		std::vector<D3D11_INPUT_ELEMENT_DESC> d3dElements;
-		dxElements.reserve(layout.count());
+		d3dElements.reserve(layout.count());
 
 		for(int32 i = 0; i < layout.count(); ++i){
 			const auto& element = layout.resolve(i);
