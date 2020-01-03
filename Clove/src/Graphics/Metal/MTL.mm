@@ -7,7 +7,7 @@ namespace clv::gfx::mtl{
 	std::pair<std::unique_ptr<RenderDevice>, std::unique_ptr<RenderFactory>> initialiseMTL(){
 		id<MTLDevice> mtlDevice = MTLCreateSystemDefaultDevice();
 		
-		auto device = std::make_unique<MTLRenderDevice>();
+		auto device = std::make_unique<MTLRenderDevice>([mtlDevice newCommandQueue]);
 		auto factory = std::make_unique<MTLRenderFactory>(mtlDevice);
 
 		return std::make_pair(std::move(device), std::move(factory));

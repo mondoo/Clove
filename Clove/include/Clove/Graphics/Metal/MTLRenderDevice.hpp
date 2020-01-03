@@ -3,14 +3,25 @@
 #include "Clove/Core/Graphics/RenderDevice.hpp"
 
 namespace clv::gfx::mtl{
+	class MTLSurface;
+}
+
+namespace clv::gfx::mtl{
 	class MTLRenderDevice : public RenderDevice{
 		//VARIABLES
 	private:
-		//TODO:
+		id<MTLCommandBuffer> commandBuffer;
+		id<MTLRenderCommandEncoder> commandEncoder;
+		id<MTLDrawable> drawable;
+		
+		id<MTLBuffer> indexBuffer;
+		
+		std::shared_ptr<MTLSurface> currentSurface;
 		
 		//FUNCTIONS
 	public:
-		MTLRenderDevice();
+		MTLRenderDevice() = delete;
+		MTLRenderDevice(id<MTLCommandQueue> commandQueue);
 		
 		MTLRenderDevice(const MTLRenderDevice& other) = delete;
 		MTLRenderDevice(MTLRenderDevice&& other) noexcept = delete;

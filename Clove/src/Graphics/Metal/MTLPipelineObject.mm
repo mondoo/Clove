@@ -46,6 +46,10 @@ namespace clv::gfx::mtl{
 		[pipelineState release];
 	}
 	
+	id<MTLRenderPipelineState> MTLPipelineObject::getMTLPipelineState() const{
+		return pipelineState;
+	}
+	
 	const std::shared_ptr<Shader>& MTLPipelineObject::getShader() const{
 		return shader;
 	}

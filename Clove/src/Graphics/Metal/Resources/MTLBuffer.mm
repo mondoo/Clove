@@ -14,6 +14,10 @@ namespace clv::gfx::mtl{
 		[mtlBuffer release];
 	}
 	
+	id<MTLBuffer> MTLBuffer::getMTLBuffer() const{
+		return mtlBuffer;
+	}
+	
 	const BufferDescriptor& MTLBuffer::getDescriptor() const{
 		return descriptor;
 	}

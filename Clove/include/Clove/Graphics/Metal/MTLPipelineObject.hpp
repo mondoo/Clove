@@ -24,6 +24,8 @@ namespace clv::gfx::mtl {
 		
 		virtual ~MTLPipelineObject();
 		
+		id<MTLRenderPipelineState> getMTLPipelineState() const;
+		
 		virtual const std::shared_ptr<Shader>& getShader() const override;
 		virtual const VertexLayout& getVertexLayout() const override;
 		
