@@ -88,7 +88,7 @@ namespace clv::gfx::mtl{
 				return MTLPixelFormatRGBA8Unorm;
 
 			case TextureUsage::RenderTarget_Depth:
-				return MTLPixelFormatR32Float;
+				return MTLPixelFormatDepth32Float;
 
 			case TextureUsage::Font:
 				return MTLPixelFormatR8Unorm;
