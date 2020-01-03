@@ -46,7 +46,6 @@ namespace clv::gfx::d3d{
 		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint) override;
 		virtual void bindPipelineObject(const PipelineObject& pipelineObject) override;
 		virtual void bindTexture(const Texture* texture, const uint32 bindingPoint) override;
-		virtual void bindShader(const Shader& shader) override;
 
 		virtual void updateBufferData(Buffer& buffer, const void* data) override;
 

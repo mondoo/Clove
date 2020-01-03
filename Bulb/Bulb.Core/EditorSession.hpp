@@ -4,6 +4,7 @@
 
 namespace clv::plt{
 	class Application;
+	class Window;
 }
 
 namespace clv::blb{
@@ -15,6 +16,8 @@ namespace Bulb::Core{
 		//VARIABLES
 	private:
 		clv::plt::Application* app = nullptr;
+		std::shared_ptr<clv::plt::Window>* window = nullptr;
+
 		System::Threading::Thread^ appThread;
 
 		//Putting the layer in here for now so the window can control it

@@ -23,7 +23,6 @@ namespace clv::gfx{
 		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint) = 0;
 		virtual void bindPipelineObject(const PipelineObject& pipelineObject) = 0;
 		virtual void bindTexture(const Texture* texture, const uint32 bindingPoint) = 0;
-		virtual void bindShader(const Shader& shader) = 0;
 
 		virtual void updateBufferData(Buffer& buffer, const void* data) = 0;
 

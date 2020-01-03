@@ -6,15 +6,15 @@
 namespace clv{
 	namespace input{
 		bool isKeyPressed(Key key){
-			return plt::Application::get().getWindow().getKeyboard().isKeyPressed(key);
+			return plt::Application::get().getMainWindow().getKeyboard().isKeyPressed(key);
 		}
 
 		bool isMouseButtonPressed(MouseButton button){
-			return plt::Application::get().getWindow().getMouse().isButtonPressed(button);
+			return plt::Application::get().getMainWindow().getMouse().isButtonPressed(button);
 		}
 
 		std::pair<int32, int32> getMousePosition(){
-			return plt::Application::get().getWindow().getMouse().getPosition();
+			return plt::Application::get().getMainWindow().getMouse().getPosition();
 		}
 
 		int32 getMouseX(){

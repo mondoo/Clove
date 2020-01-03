@@ -14,13 +14,16 @@ namespace Bulb::Core{
 	void EditorSession::Begin(System::IntPtr hWnd, int posX, int posY, int width, int height){
 		//TODO: Support macOS / Linux windows
 
-		auto appUniqePtr = clv::plt::Application::createApplication();
-		app = appUniqePtr.release();
+		window = new std::shared_ptr<clv::plt::Window>();
+
+		auto appUniquePtr = clv::plt::Application::createApplication(clv::gfx::API::DirectX11);
+		app = appUniquePtr.release();
 		
 		clv::plt::blb::EditorWindowProxy proxy = { hWnd };
 
-		app->initialise(proxy, { posX, posY }, { width, height });
-		
+		*window = app->openChildWindow(clv::plt::WindowType::MainWindow, proxy, { posX, posY }, { width, height });
+		app->setMainWindow(*window);
+
 		layer = new std::shared_ptr(std::make_shared<clv::blb::EditorLayer>());
 		app->pushLayer(*layer);
 		
@@ -47,6 +50,11 @@ namespace Bulb::Core{
 			app = nullptr;
 		}
 
+		if(window){
+			delete window;
+			window = nullptr;
+		}
+
 		if(layer){
 			delete layer;
 			layer = nullptr;
@@ -61,14 +69,14 @@ namespace Bulb::Core{
 	void EditorSession::UpdateWindowSize(int sizeX, int sizeY){
 		if(app){
 			msclr::lock l(appThread);
-			app->getWindow().resizeWindow({ sizeX, sizeY });
+			app->getMainWindow().resizeWindow({ sizeX, sizeY });
 		}
 	}
 
 	void EditorSession::UpdateWindowPosition(int x, int y){
 		if(app){
 			msclr::lock l(appThread);
-			app->getWindow().moveWindow({ x, y });
+			app->getMainWindow().moveWindow({ x, y });
 		}
 	}
 }

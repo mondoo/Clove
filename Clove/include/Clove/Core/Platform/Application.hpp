@@ -27,7 +27,7 @@ namespace clv::plt{
 	class Application{
 		//VARIABLES
 	private:
-		std::unique_ptr<Window> window;
+		std::shared_ptr<Window> mainWindow;
 		std::unique_ptr<ecs::Manager> ecsManager;
 
 		ApplicationState currentState = ApplicationState::running;
@@ -40,11 +40,10 @@ namespace clv::plt{
 
 		//FUNCTIONS
 	public:
-		Application();
-		virtual ~Application();
+		Application() = delete;
+		Application(gfx::API api);
 
-		void initialise();
-		void initialise(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
+		virtual ~Application();
 
 		void update();
 		void stop();
@@ -56,16 +55,19 @@ namespace clv::plt{
 
 		static Application& get();
 		
-		Window& getWindow();
 		ecs::Manager& getManager();
 
-		static std::unique_ptr<Application> createApplication();
+		Window& getMainWindow() const;
+		void setMainWindow(const std::shared_ptr<Window>& window);
+
+		[[nodiscard]] std::shared_ptr<Window> openWindow(WindowType windowType, const WindowProps& props = {});
+		[[nodiscard]] std::shared_ptr<Window> openChildWindow(WindowType windowType, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
+
+		static std::unique_ptr<Application> createApplication(gfx::API api);
+		static gfx::API getPreferedAPI();
 
 	private:
-		void onWindowClose();
-
-		virtual gfx::API getPlatformPreferedAPI() = 0;
-		virtual std::unique_ptr<Window> createWindow(const WindowProps& props = {}) = 0;
-		virtual std::unique_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size) = 0;
+		virtual std::shared_ptr<Window> createWindow(const WindowProps& props) = 0;
+		virtual std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size) = 0;
 	};
 }

@@ -33,7 +33,9 @@ namespace clv::gfx::ogl{
 	void GLRenderDevice::bindPipelineObject(const PipelineObject& pipelineObject){
 		const GLPipelineObject& glPipelineObject = static_cast<const GLPipelineObject&>(pipelineObject);
 		glBindVertexArray(glPipelineObject.getGLVertexArrayID());
-		bindShader(*glPipelineObject.getShader());
+
+		const auto glShader = std::static_pointer_cast<GLShader>(glPipelineObject.getShader());
+		glUseProgram(glShader->getProgramID());
 	}
 
 	void GLRenderDevice::bindTexture(const Texture* texture, const uint32 bindingPoint){
@@ -43,11 +45,6 @@ namespace clv::gfx::ogl{
 		} else{
 			glBindTextureUnit(bindingPoint, 0);
 		}
-	}
-
-	void GLRenderDevice::bindShader(const Shader& shader){
-		const GLShader& glShader = static_cast<const GLShader&>(shader);
-		glUseProgram(glShader.getProgramID());
 	}
 
 	void GLRenderDevice::updateBufferData(Buffer& buffer, const void* data){
