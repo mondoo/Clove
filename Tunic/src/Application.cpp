@@ -1,23 +1,18 @@
-#include "Clove/Core/Platform/Application.hpp"
+#include "Tunic/Application.hpp"
 
+#include "Clove/Core/Platform/Platform.hpp"
 #include "Clove/Core/Platform/Window.hpp"
 #include "Clove/Core/Input/Input.hpp"
 #include "Clove/Core/LayerStack.hpp"
 #include "Clove/Core/Layer.hpp"
 #include "Clove/Core/Utils/DeltaTime.hpp"
-#include "Clove/Core/ECS/Manager.hpp"
+#include "Tunic/ECS/Core/Manager.hpp"
 
 #include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 
-#if CLV_PLATFORM_WINDOWS
-	#include "Clove/Platform/Windows/WindowsApplication.hpp"
-#elif CLV_PLATFORM_LINUX
-	#include "Clove/Platform/Linux/LinuxApplication.hpp"
-#elif CLV_PLATFORM_MACOS
-	#include "Clove/Platform/Mac/MacApplication.hpp"
-#endif
+using namespace clv;
 
-namespace clv::plt{
+namespace tnc{
 	Application* Application::instance = nullptr;
 
 	Application::Application(gfx::API api){
@@ -25,6 +20,8 @@ namespace clv::plt{
 
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
+
+		platformInstance = clv::plt::Platform::createPlatformInstance();
 
 		Log::init();
 
@@ -91,51 +88,31 @@ namespace clv::plt{
 		return *ecsManager;
 	}
 
-	Window& Application::getMainWindow() const{
+	plt::Window& Application::getMainWindow() const{
 		return *mainWindow;
 	}
 
-	void Application::setMainWindow(const std::shared_ptr<Window>& window){
+	void Application::setMainWindow(const std::shared_ptr<plt::Window>& window){
 		mainWindow = window;
 	}
 
-	std::shared_ptr<Window> Application::openWindow(WindowType windowType, const WindowProps& props){
-		auto window = createWindow(props);
+	std::shared_ptr<plt::Window> Application::openWindow(plt::WindowType windowType, const plt::WindowProps& props){
+		auto window = platformInstance->createWindow(props);
 
-		if(windowType == WindowType::MainWindow){
+		if(windowType == plt::WindowType::MainWindow){
 			setMainWindow(window);
 		}
 
 		return window;
 	}
 
-	std::shared_ptr<Window> Application::openChildWindow(WindowType windowType, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
-		auto window = createChildWindow(parentWindow, position, size);
+	std::shared_ptr<plt::Window> Application::openChildWindow(plt::WindowType windowType, const plt::Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+		auto window = platformInstance->createChildWindow(parentWindow, position, size);
 
-		if(windowType == WindowType::MainWindow){
+		if(windowType == plt::WindowType::MainWindow){
 			setMainWindow(window);
 		}
 
 		return window;
-	}
-
-	std::unique_ptr<Application> Application::createApplication(gfx::API api){
-	#if CLV_PLATFORM_WINDOWS
-		return std::make_unique<WindowsApplication>(api);
-	#elif CLV_PLATFORM_LINUX
-		return std::make_unique<LinuxApplication>(api);
-	#elif CLV_PLATFORM_MACOS
-		return std::make_unique<MacApplication>(api);
-	#endif
-	}
-
-	gfx::API Application::getPreferedAPI(){
-	#if CLV_PLATFORM_WINDOWS
-		return gfx::API::DirectX11;
-	#elif CLV_PLATFORM_LINUX
-		return gfx::API::OpenGL4;
-	#elif CLV_PLATFORM_MACOS
-		return gfx::API::OpenGL4;
-	#endif
 	}
 }

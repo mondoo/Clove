@@ -63,6 +63,9 @@ source_group(TREE ${TNC_SOURCE} FILES ${source})
 
 target_sources(
 	${PROJECT_NAME}
-	PRIVATE
+    PRIVATE
+        ${TNC_SOURCE}/Application.cpp
+        ${TNC_INCLUDE}/Application.hpp
+        
 		${ECSFiles}
 )
