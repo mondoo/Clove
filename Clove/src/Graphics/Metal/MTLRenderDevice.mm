@@ -25,10 +25,6 @@ namespace clv::gfx::mtl{
 		//TODO:
 	}
 	
-	void MTLRenderDevice::bindShader(const Shader& shader){
-		//TODO:
-	}
-	
 	void MTLRenderDevice::updateBufferData(Buffer& buffer, const void* data){
 		//TODO:
 	}
