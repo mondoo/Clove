@@ -156,8 +156,8 @@ set(
 
 set(
 	CorePlatformFiles
-		${CLV_INCLUDE}/Core/Platform/Application.hpp
-		${CLV_SOURCE}/Core/Platform/Application.cpp
+		${CLV_INCLUDE}/Core/Platform/Platform.hpp
+		${CLV_SOURCE}/Core/Platform/Platform.cpp
 		${CLV_INCLUDE}/Core/Platform/PlatformTypes.hpp
 		${CLV_INCLUDE}/Core/Platform/Window.hpp
 		${CLV_SOURCE}/Core/Platform/Window.cpp
@@ -166,8 +166,8 @@ set(
 set(
 	WindowsPlatformFiles
 		${CLV_INCLUDE}/Platform/Windows/CloveWindows.hpp
-		${CLV_INCLUDE}/Platform/Windows/WindowsApplication.hpp
-		${CLV_SOURCE}/Platform/Windows/WindowsApplication.cpp
+		${CLV_INCLUDE}/Platform/Windows/WindowsPlatform.hpp
+		${CLV_SOURCE}/Platform/Windows/WindowsPlatform.cpp
 		${CLV_INCLUDE}/Platform/Windows/WindowsException.hpp
 		${CLV_SOURCE}/Platform/Windows/WindowsException.cpp
 		${CLV_INCLUDE}/Platform/Windows/WindowsWindow.hpp
@@ -177,8 +177,8 @@ set(
 set(
 	LinuxPlatformFiles
 		${CLV_INCLUDE}/Platform/Linux/CloveLinux.hpp
-		${CLV_INCLUDE}/Platform/Linux/LinuxApplication.hpp
-		${CLV_SOURCE}/Platform/Linux/LinuxApplication.cpp
+		${CLV_INCLUDE}/Platform/Linux/LinuxPlatform.hpp
+		${CLV_SOURCE}/Platform/Linux/LinuxPlatform.cpp
 		${CLV_INCLUDE}/Platform/Linux/LinuxWindow.hpp
 		${CLV_SOURCE}/Platform/Linux/LinuxWindow.cpp
 )
@@ -186,8 +186,8 @@ set(
 set(
 	MacOSPlatformFiles
 		${CLV_INCLUDE}/Platform/Mac/CloveMac.h
-		${CLV_INCLUDE}/Platform/Mac/MacApplication.hpp
-		${CLV_SOURCE}/Platform/Mac/MacApplication.mm
+		${CLV_INCLUDE}/Platform/Mac/MacPlatform.hpp
+		${CLV_SOURCE}/Platform/Mac/MacPlatform.mm
 		${CLV_INCLUDE}/Platform/Mac/MacWindow.hpp
 		${CLV_SOURCE}/Platform/Mac/MacWindow.mm
 )
