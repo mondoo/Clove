@@ -135,7 +135,7 @@ namespace clv::plt{
 	#elif CLV_PLATFORM_LINUX
 		return gfx::API::OpenGL4;
 	#elif CLV_PLATFORM_MACOS
-		return gfx::API::OpenGL4;
+		return gfx::API::Metal1;
 	#endif
 	}
 }
