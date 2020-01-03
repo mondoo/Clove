@@ -6,21 +6,6 @@
 #include "Clove/Core/Graphics/GraphicsGlobal.hpp"
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 
-//Temp metal stuff
-//#import <Metal/Metal.h>
-#import "Clove/Graphics/Metal/ShaderStrings.hpp"
-
-//Metal structs
-struct constants{
-	float animateBy = 0.5f;
-};
-
-struct Vertex{
-	clv::mth::vec3f position;
-	clv::mth::vec4f colour;
-};
-//---
-
 @implementation MacWindowProxy
 - (instancetype)initWithWindowData:(MTKView*)view width: (unsigned int)width height:(unsigned int)height name:(NSString*)name{
 	const NSRect rect = NSMakeRect(0, 0, width, height);
@@ -34,22 +19,8 @@ struct Vertex{
 	[_window setTitle:name];
 	[_window setDelegate:self];
 	[_window makeKeyAndOrderFront:nil];
-	
-	//Give the created surface to this
-	
+
 	[_window setContentView:view];
-	
-	//Metal stuff
-	//[_view setDelegate:self];
-	//[_view setDevice:MTLCreateSystemDefaultDevice()];
-	//_device = [_view device];
-	//Device is created from MTLCreateSystemDefaultDevice - the view just needs it set
-	
-	//[_view setClearColor:MTLClearColorMake(0.0, 0.4, 0.21, 1.0)];
-	
-	//TODO: Clove will need to support command queues / buffers
-	_commandQueue = [_device newCommandQueue];
-	//---
 	
 	return self;
 }
@@ -67,11 +38,7 @@ struct Vertex{
 	[_window makeKeyAndOrderFront:nil];
 	
 	[_window setContentView:view];
-	
-	//TODO: Clove will need to support command queues / buffers
-	_commandQueue = [_device newCommandQueue];
-	//---
-	
+
 	NSWindow* nativeParentWindow = reinterpret_cast<NSWindow*>(parentWindow.getNativeWindow());
 	[nativeParentWindow addChildWindow:_window ordered:NSWindowAbove];
 	
@@ -81,95 +48,6 @@ struct Vertex{
 - (void)windowWillClose:(NSNotification *)notification{
 	//The application shouldn't shut down when a window closes on MacOS, but this'll do for now
 	_cloveWindow->onWindowCloseDelegate.broadcast();
-}
-
-//MTKViewDelegate functions
-- (void)mtkView:(MTKView *)view drawableSizeWillChange:(CGSize)size{
-	//Empty for now
-}
-
-- (void)drawInMTKView:(MTKView *)view{
-	static float time = 0.0f;
-	static constants constant;
-	
-	Vertex vertices[] = {
-		{{ -1.0f,  1.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f }},
-		{{ -1.0f, -1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }},
-		{{  1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }},
-		{{  1.0f,  1.0f, 0.0f }, { 1.0f, 0.0f, 1.0f, 1.0f }}
-	};
-	
-	UInt32 indices[] = {
-		0, 1, 2,
-		2, 3, 0
-	};
-	
-	time += 1.0f / [view preferredFramesPerSecond];
-	constant.animateBy = abs(sin(time) / 2 + 0.5f);
-	
-	id<MTLDrawable> drawable = [view currentDrawable];
-	MTLRenderPassDescriptor* descriptor = [view currentRenderPassDescriptor];
-	
-	//Create library to make our shaders
-	NSError* error2 = [[NSError alloc] init];
-	NSString* librarySource = [NSString stringWithCString:shader_Unlit.c_str() encoding:[NSString defaultCStringEncoding]];
-	id<MTLLibrary> library = [_device newLibraryWithSource:librarySource options:nil error:&error2];
-	id<MTLFunction> vertexFunction = [library newFunctionWithName:@"vertex_shader"];
-	id<MTLFunction> fragmentFunction = [library newFunctionWithName:@"fragment_shader"];
-	
-	//Set up the pipeline object
-	MTLRenderPipelineDescriptor* pipelineDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
-	[pipelineDescriptor setVertexFunction:vertexFunction];
-	[pipelineDescriptor setFragmentFunction:fragmentFunction];
-	pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
-	
-	//Vertex descriptor
-	MTLVertexDescriptor* vertexDescriptor = [[MTLVertexDescriptor alloc] init];
-	
-	vertexDescriptor.attributes[0].format = MTLVertexFormatFloat3;
-	vertexDescriptor.attributes[0].offset = 0;
-	vertexDescriptor.attributes[0].bufferIndex = 0;
-	
-	vertexDescriptor.attributes[1].format = MTLVertexFormatFloat4;
-	vertexDescriptor.attributes[1].offset = sizeof(clv::mth::vec3f);
-	vertexDescriptor.attributes[1].bufferIndex = 0;
-	
-	vertexDescriptor.layouts[0].stride = sizeof(Vertex);
-	
-	[pipelineDescriptor setVertexDescriptor:vertexDescriptor];
-	
-	NSError *error = [[NSError alloc] init];
-	id<MTLRenderPipelineState> pipelineState = [_device newRenderPipelineStateWithDescriptor:pipelineDescriptor error:&error];
-	
-	//Creating vertex buffer
-	id<MTLBuffer> vertexBuffer = [_device newBufferWithBytes:vertices length:sizeof(vertices) options:0];
-	
-	//Creating index buffer
-	id<MTLBuffer> indexBuffer = [_device newBufferWithBytes:indices length:sizeof(indices) options:0];
-	
-	//Creating constant buffer
-	id<MTLBuffer> constantBuffer = [_device newBufferWithBytes:&constant length:sizeof(constants) options:0];
-	
-	//Command queue / encoder
-	id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
-	id<MTLRenderCommandEncoder> commandEncoder = [commandBuffer renderCommandEncoderWithDescriptor:descriptor];
-	
-	//Render commands: start
-	[commandEncoder setRenderPipelineState:pipelineState];
-	
-	[commandEncoder setVertexBuffer:vertexBuffer offset:0 atIndex:0]; //At index can be thought of as the binding point
-	[commandEncoder setVertexBuffer:constantBuffer offset:0 atIndex:1];
-	
-	[commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
-							   indexCount:sizeof(indices)/sizeof(UInt32)
-								indexType:MTLIndexTypeUInt32
-							  indexBuffer:indexBuffer
-						indexBufferOffset:0];
-	//Render commands: end
-	
-	[commandEncoder endEncoding];
-	[commandBuffer presentDrawable:drawable];
-	[commandBuffer commit];
 }
 @end
 

@@ -2,22 +2,14 @@
 
 #include "Clove/Core/Platform/Window.hpp"
 
-//Temp metal stuff
-#import <MetalKit/MetalKit.h>
-
 namespace clv::plt{
 	class Window;
 	class MacWindow;
 }
 
-@interface MacWindowProxy : NSObject <NSWindowDelegate /*, MTKViewDelegate*/> //Temp view delegate
+@interface MacWindowProxy : NSObject <NSWindowDelegate>
 
 @property(readonly) NSWindow* window;
-@property(readonly) MTKView* view;
-
-@property(readonly) id<MTLCommandQueue> commandQueue;
-@property(readonly) id<MTLDevice> device;
-
 @property clv::plt::MacWindow* cloveWindow;
 
 - (instancetype)initWithWindowData:(MTKView*)view width:(unsigned int)width height:(unsigned int)height name: (NSString*)name;
