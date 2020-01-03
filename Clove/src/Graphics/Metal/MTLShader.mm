@@ -39,7 +39,7 @@ namespace clv::gfx::mtl{
 	}
 	
 	void MTLShader::initialise(id<MTLDevice> mtlDevice, ShaderStyle style){
-		NSError* error2 = [[NSError alloc] init];
+		NSError* error = [[NSError alloc] init];
 		id<MTLLibrary> library;
 		
 		//TODO: Load the library inside each switch statement
@@ -52,14 +52,14 @@ namespace clv::gfx::mtl{
 			case ShaderStyle::Unlit_3D:
 				{
 					NSString* librarySource = [NSString stringWithCString:shader_Unlit.c_str() encoding:[NSString defaultCStringEncoding]];
-					library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error2];
+					library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error];
 				}
 				break;
 
 			case ShaderStyle::Unlit_2D:
 				{
 					NSString* librarySource = [NSString stringWithCString:shader_2D.c_str() encoding:[NSString defaultCStringEncoding]];
-					library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error2];
+					library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error];
 				}
 				break;
 
@@ -70,7 +70,7 @@ namespace clv::gfx::mtl{
 			case ShaderStyle::Font:
 				{
 					NSString* librarySource = [NSString stringWithCString:shader_Font.c_str() encoding:[NSString defaultCStringEncoding]];
-					library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error2];
+					library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error];
 				}
 				break;
 
@@ -81,6 +81,13 @@ namespace clv::gfx::mtl{
 			default:
 				CLV_ASSERT(false, "Unknown type! {0}", CLV_FUNCTION_NAME);
 				break;
+		}
+		
+		if(error.code != 0){
+			for (NSString* key in [error userInfo]) {
+				NSString* value = [error userInfo][key];
+				CLV_LOG_ERROR("Error in function '{0}': {1}", CLV_FUNCTION_NAME_PRETTY, [value cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+			}
 		}
 		
 		vertexShader = [library newFunctionWithName:@"vertexShader"];
