@@ -61,7 +61,10 @@ namespace clv::gfx::mtl{
 		mtlTexture = [mtlDevice newTextureWithDescriptor:mtlDescriptor];
 		
 		const MTLRegion region = MTLRegionMake2D(0, 0, mtlDescriptor.width, mtlDescriptor.height);
-		[mtlTexture replaceRegion:region mipmapLevel:0 withBytes:data bytesPerRow:(BPP * mtlDescriptor.width)];
+		
+		if(data){
+			[mtlTexture replaceRegion:region mipmapLevel:0 withBytes:data bytesPerRow:(BPP * mtlDescriptor.width)];
+		}
 		
 		[mtlDescriptor release];
 	}
