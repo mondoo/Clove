@@ -9,7 +9,7 @@
 #include <Clove/Core/Graphics/Renderables/Mesh.hpp>
 #include <Clove/Core/Graphics/Material.hpp>
 
-namespace clv::blb{
+namespace blb{
 	void EditorLayer::onAttach(){
 		const auto windowVP = clv::gfx::Viewport{ 0, 0, tnc::Application::get().getMainWindow().getSize().x, tnc::Application::get().getMainWindow().getSize().y };
 
@@ -20,7 +20,7 @@ namespace clv::blb{
 		tnc::Application::get().getMainWindow().onWindowResize.bind(&tnc::ecs::_3D::CameraComponent::updateViewportSize, camComp);
 	}
 
-	void EditorLayer::onUpdate(utl::DeltaTime deltaTime){
+	void EditorLayer::onUpdate(clv::utl::DeltaTime deltaTime){
 		
 	}
 

@@ -3,8 +3,8 @@
 #include <Clove/Core/Layer.hpp>
 #include <Tunic/ECS/Core/Entity.hpp>
 
-namespace clv::blb{
-	class EditorLayer : public Layer{
+namespace blb{
+	class EditorLayer : public clv::Layer{
 		//VARIABLES
 	private:
 		tnc::ecs::Entity camera;
@@ -13,7 +13,7 @@ namespace clv::blb{
 		//FUNCTIONS
 	public:
 		virtual void onAttach() override;
-		virtual void onUpdate(utl::DeltaTime deltaTime) override;
+		virtual void onUpdate(clv::utl::DeltaTime deltaTime) override;
 		virtual void onDetach() override;
 
 		tnc::ecs::Entity addEntity();
