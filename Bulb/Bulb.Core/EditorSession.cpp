@@ -3,7 +3,7 @@
 #include "EditorLayer.hpp"
 #include "EditorWindowProxy.hpp"
 
-#include <Clove/Core/Platform/Application.hpp>
+#include <Tunic/Application.hpp>
 #include <msclr/lock.h>
 
 namespace Bulb::Core{
@@ -16,8 +16,7 @@ namespace Bulb::Core{
 
 		window = new std::shared_ptr<clv::plt::Window>();
 
-		auto appUniquePtr = clv::plt::Application::createApplication(clv::gfx::API::DirectX11);
-		app = appUniquePtr.release();
+		app = new tnc::Application(clv::gfx::API::DirectX11);
 		
 		clv::plt::blb::EditorWindowProxy proxy = { hWnd };
 
@@ -32,7 +31,7 @@ namespace Bulb::Core{
 	}
 
 	void EditorSession::Update(){
-		while(app->getState() == clv::plt::ApplicationState::running){
+		while(app->getState() == tnc::ApplicationState::running){
 			msclr::lock l(appThread);
 			app->update();
 		}

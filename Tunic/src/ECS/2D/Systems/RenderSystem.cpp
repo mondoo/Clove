@@ -1,5 +1,6 @@
 #include "Tunic/ECS/2D/Systems/RenderSystem.hpp"
 
+#include "Tunic/Application.hpp"
 #include "Tunic/ECS/Core/Manager.hpp"
 #include "Tunic/ECS/2D/Components/TransformComponent.hpp"
 #include "Tunic/ECS/2D/Components/SpriteComponent.hpp"
@@ -12,7 +13,6 @@
 #include "Clove/Core/Graphics/Renderables/Sprite.hpp"
 #include "Clove/Core/Graphics/Shader.hpp"
 #include "Clove/Core/Graphics/PipelineObject.hpp"
-#include "Clove/Core/Platform/Application.hpp"
 #include "Clove/Core/Platform/Window.hpp"
 
 using namespace clv;
@@ -105,7 +105,7 @@ namespace tnc::ecs::_2D{
 	void RenderSystem::update(utl::DeltaTime deltaTime){
 		CLV_PROFILE_FUNCTION();
 
-		const mth::vec2i screenSize = plt::Application::get().getMainWindow().getSize();
+		const mth::vec2i screenSize = tnc::Application::get().getMainWindow().getSize();
 		const mth::vec2f screenHalfSize{ static_cast<float>(screenSize.x) / 2.0f, static_cast<float>(screenSize.y) / 2.0f };
 		const mth::mat4f projection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
 
@@ -224,7 +224,7 @@ namespace tnc::ecs::_2D{
 	void RenderSystem::postUpdate(){
 		CLV_PROFILE_FUNCTION();
 
-		const mth::vec2i screenSize = plt::Application::get().getMainWindow().getSize();
+		const mth::vec2i screenSize = tnc::Application::get().getMainWindow().getSize();
 
 		global::graphicsDevice->setViewport({ 0, 0, screenSize.x, screenSize.y });
 		global::graphicsDevice->setDepthBuffer(false);

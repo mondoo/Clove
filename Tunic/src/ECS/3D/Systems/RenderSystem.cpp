@@ -12,7 +12,6 @@
 #include "Clove/Core/Graphics/ShaderBufferTypes.hpp"
 #include "Clove/Core/Graphics/Renderables/Mesh.hpp"
 #include "Clove/Core/Graphics/MaterialInstance.hpp"
-#include "Clove/Core/Platform/Application.hpp"
 #include "Clove/Core/Platform/Window.hpp"
 
 using namespace clv;

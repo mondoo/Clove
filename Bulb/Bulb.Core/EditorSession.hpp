@@ -2,8 +2,11 @@
 
 #include "Entity.hpp"
 
-namespace clv::plt{
+namespace tnc{
 	class Application;
+}
+
+namespace clv::plt{
 	class Window;
 }
 
@@ -15,7 +18,7 @@ namespace Bulb::Core{
 	public ref class EditorSession{
 		//VARIABLES
 	private:
-		clv::plt::Application* app = nullptr;
+		tnc::Application* app = nullptr;
 		std::shared_ptr<clv::plt::Window>* window = nullptr;
 
 		System::Threading::Thread^ appThread;

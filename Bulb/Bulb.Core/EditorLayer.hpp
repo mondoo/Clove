@@ -1,14 +1,14 @@
 #pragma once
 
 #include <Clove/Core/Layer.hpp>
-#include <Clove/Core/ECS/Entity.hpp>
+#include <Tunic/ECS/Core/Entity.hpp>
 
 namespace clv::blb{
 	class EditorLayer : public Layer{
 		//VARIABLES
 	private:
-		ecs::Entity camera;
-		std::vector<ecs::Entity> entities;
+		tnc::ecs::Entity camera;
+		std::vector<tnc::ecs::Entity> entities;
 
 		//FUNCTIONS
 	public:
@@ -16,6 +16,6 @@ namespace clv::blb{
 		virtual void onUpdate(utl::DeltaTime deltaTime) override;
 		virtual void onDetach() override;
 
-		ecs::Entity addEntity();
+		tnc::ecs::Entity addEntity();
 	};
 }
