@@ -57,6 +57,7 @@ namespace clv::gfx::mtl{
 		mtlDescriptor.mipmapLevelCount 	= 1;
 		mtlDescriptor.arrayLength 		= descriptor.arraySize;
 		mtlDescriptor.usage 			= getTextureUsage(descriptor.usage);
+		mtlDescriptor.storageMode		= getTextureStorage(descriptor.usage);
 		
 		mtlTexture = [mtlDevice newTextureWithDescriptor:mtlDescriptor];
 		
@@ -111,6 +112,21 @@ namespace clv::gfx::mtl{
 			default:
 				CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
 				return MTLTextureUsageShaderRead;
+		}
+	}
+	
+	MTLStorageMode MTLTexture::getTextureStorage(const TextureUsage usage) const{
+		switch(usage){
+			case TextureUsage::Default:
+			case TextureUsage::Font:
+			case TextureUsage::RenderTarget_Colour:
+				return MTLStorageModeManaged;
+			case TextureUsage::RenderTarget_Depth:
+				return MTLStorageModePrivate;
+
+			default:
+				CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+				return MTLStorageModeShared;
 		}
 	}
 }

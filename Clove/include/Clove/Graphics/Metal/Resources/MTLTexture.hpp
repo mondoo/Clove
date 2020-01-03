@@ -36,5 +36,6 @@ namespace clv::gfx::mtl {
 		MTLTextureType getTextureType(const TextureStyle stye) const;
 		MTLPixelFormat getTextureFormat(const TextureUsage usage) const;
 		MTLTextureUsage getTextureUsage(const TextureUsage usage) const;
+		MTLStorageMode getTextureStorage(const TextureUsage usage) const;
 	};
 }
