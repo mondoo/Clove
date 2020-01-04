@@ -2,7 +2,7 @@
 
 #include "Clove/Core/Platform/Platform.hpp"
 #include "Clove/Core/Platform/Window.hpp"
-#include "Clove/Core/Input/Input.hpp"
+#include "Tunic/Input.hpp"
 #include "Clove/Core/LayerStack.hpp"
 #include "Clove/Core/Layer.hpp"
 #include "Clove/Core/Utils/DeltaTime.hpp"

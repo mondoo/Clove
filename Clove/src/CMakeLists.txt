@@ -130,8 +130,6 @@ set(
 
 set(
 	CoreInputFiles
-		${CLV_INCLUDE}/Core/Input/Input.hpp
-		${CLV_SOURCE}/Core/Input/Input.cpp
 		${CLV_INCLUDE}/Core/Input/Keyboard.hpp
 		${CLV_INCLUDE}/Core/Input/Keyboard.inl
 		${CLV_SOURCE}/Core/Input/Keyboard.cpp

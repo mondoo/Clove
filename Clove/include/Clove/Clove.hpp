@@ -13,7 +13,6 @@
 #include "Clove/Core/Graphics/Material.hpp"
 #include "Clove/Core/Graphics/MaterialInstance.hpp"
 
-#include "Clove/Core/Input/Input.hpp"
 #include "Clove/Core/Input/KeyCodes.hpp"
 #include "Clove/Core/Input/MouseButtonCodes.hpp"
 

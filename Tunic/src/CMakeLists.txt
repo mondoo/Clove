@@ -67,7 +67,10 @@ target_sources(
 		${TNC_INCLUDE}/Tunic.hpp
 
         ${TNC_SOURCE}/Application.cpp
-        ${TNC_INCLUDE}/Application.hpp
+		${TNC_INCLUDE}/Application.hpp
+		
+		${TNC_INCLUDE}/Input.hpp
+		${TNC_SOURCE}/Input.cpp
         
 		${ECSFiles}
 )
