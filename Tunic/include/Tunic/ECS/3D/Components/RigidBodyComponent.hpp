@@ -20,7 +20,7 @@ namespace tnc::ecs::_3D{
 		float mass = 0.0f;
 		bool isKinematic = false;
 
-		mth::vec3f cubeSize{};
+		clv::mth::vec3f cubeSize{};
 
 		//FUNCTIONS
 	public:

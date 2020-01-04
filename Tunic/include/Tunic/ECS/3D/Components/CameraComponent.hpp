@@ -35,7 +35,7 @@ namespace tnc::ecs::_3D{
 
 		clv::gfx::CameraRenderData cameraRenderData;
 
-		std::shared_ptr<gfx::RenderTarget> renderTarget;
+		std::shared_ptr<clv::gfx::RenderTarget> renderTarget;
 		clv::gfx::Viewport viewport;
 
 		//FUNCTIONS

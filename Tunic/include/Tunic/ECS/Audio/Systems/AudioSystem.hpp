@@ -2,15 +2,17 @@
 
 #include "Tunic/ECS/Core/System.hpp"
 
+#include "Tunic/ECS/Audio/Components/AudioComponent.hpp"
+
 //PortAudio type defas (see portaudio.h)
 typedef void PaStream;
 typedef unsigned long PaStreamCallbackFlags;
 
 struct PaStreamCallbackTimeInfo;
 
-namespace tnc::ecs::aud{
-	class AudioComponent;
-}
+//namespace tnc::ecs::aud{
+//	class AudioComponent;
+//}
 
 namespace tnc::ecs::aud{
 	class AudioSystem : public System{

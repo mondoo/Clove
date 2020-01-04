@@ -7,7 +7,7 @@ namespace tnc::ecs::_3D{
 		//VARIABLES
 	private:
 		clv::mth::vec3f	localPosition	= { 0.0f, 0.0f, 0.0f };
-		clv::mth::quatf	localRotation	= mth::quatf({ 0.0f, 0.0f, 0.0f });
+		clv::mth::quatf	localRotation	= clv::mth::quatf({ 0.0f, 0.0f, 0.0f });
 		clv::mth::vec3f	localScale		= { 1.0f, 1.0f, 1.0f };
 
 		TransformComponent* parent = nullptr;

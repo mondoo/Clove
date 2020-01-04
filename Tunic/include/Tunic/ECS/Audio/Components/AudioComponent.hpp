@@ -26,7 +26,7 @@ namespace tnc::ecs::aud{
 		clv::aud::Sound sound;
 
 		PaStream* stream = nullptr;
-		uint32 playbackPosition = 0;
+		clv::uint32 playbackPosition = 0;
 
 		std::optional<PlaybackMode> requestedPlayback;
 		std::optional<PlaybackMode> currentPlayback;

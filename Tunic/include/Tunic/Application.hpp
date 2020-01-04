@@ -37,7 +37,7 @@ namespace tnc{
 
 		ApplicationState currentState = ApplicationState::running;
 
-		std::unique_ptr<LayerStack> layerStack;
+		std::unique_ptr<clv::LayerStack> layerStack;
 
 		static Application* instance;
 

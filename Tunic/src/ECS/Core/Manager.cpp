@@ -7,6 +7,8 @@
 #include "Tunic/ECS/3D/Systems/PhysicsSystem.hpp"
 #include "Tunic/ECS/Audio/Systems/AudioSystem.hpp"
 
+using namespace clv;
+
 namespace tnc::ecs{
 	EntityID Manager::nextID = 1;
 	std::queue<EntityID> Manager::recycledIDs;

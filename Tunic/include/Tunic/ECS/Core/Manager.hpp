@@ -37,7 +37,7 @@ namespace tnc::ecs{
 
 		~Manager();
 
-		void update(utl::DeltaTime deltaTime);
+		void update(clv::utl::DeltaTime deltaTime);
 
 		Entity createEntity();
 		Entity cloneEntitiesComponents(EntityID ID);

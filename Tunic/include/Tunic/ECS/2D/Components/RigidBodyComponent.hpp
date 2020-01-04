@@ -11,7 +11,7 @@ namespace tnc::ecs::_2D{
 
 		//VARIABLES
 	public:
-		utl::MultiCastDelegate<void(RigidBodyComponent*)> onBodyCollision;
+		clv::utl::MultiCastDelegate<void(RigidBodyComponent*)> onBodyCollision;
 
 	private:
 		std::unique_ptr<btCollisionShape> collisionShape;

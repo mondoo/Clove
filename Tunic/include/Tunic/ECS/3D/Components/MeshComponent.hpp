@@ -12,7 +12,7 @@ namespace tnc::ecs::_3D{
 
 		//VARIABLES
 	private:
-		std::shared_ptr<gfx::Mesh> mesh; 
+		std::shared_ptr<clv::gfx::Mesh> mesh; 
 
 		//FUNCTIONS
 	public:

@@ -2,16 +2,16 @@
 
 #include "Entity.hpp"
 
+namespace blb{
+	class EditorLayer;
+}
+
 namespace tnc{
 	class Application;
 }
 
 namespace clv::plt{
 	class Window;
-}
-
-namespace clv::blb{
-	class EditorLayer;
 }
 
 namespace Bulb::Core{
@@ -24,7 +24,7 @@ namespace Bulb::Core{
 		System::Threading::Thread^ appThread;
 
 		//Putting the layer in here for now so the window can control it
-		std::shared_ptr<clv::blb::EditorLayer>* layer;
+		std::shared_ptr<blb::EditorLayer>* layer;
 
 		//FUNCTIONS
 	public:
