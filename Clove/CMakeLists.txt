@@ -16,6 +16,9 @@ target_include_directories(
 	#Libraries
 	PUBLIC
 		vendor/OBJ-Loader/Source
+
+		#Below is public until wrappers have been made
+		vendor/bullet3/src
 	INTERFACE
         vendor/glm
 		#TODO: Get rid of the lbsndfile paths below (see Sound.hpp)
@@ -24,7 +27,6 @@ target_include_directories(
 	PRIVATE
         vendor/OBJ-Loader/Source
 		vendor/freetype2/include
-		vendor/bullet3/src
 		$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/vendor/wglext>
 )
 
@@ -38,18 +40,21 @@ target_link_libraries(
 	Clove
     #Cross platform
     PUBLIC
-        spdlog
+		spdlog
+		
+		#Below are public until wrappers have been made
+		portaudio_static
+
+		#Order of these are important
+        BulletDynamics
+        BulletCollision
+        LinearMath
 	PRIVATE 
 		stb
 		Glad
 		glm
 		sndfile
-		portaudio_static
 		freetype
-		#Order of these are important
-        BulletDynamics
-        BulletCollision
-        LinearMath
 	#Windows
 	PRIVATE
 		$<$<PLATFORM_ID:Windows>:dxerr>

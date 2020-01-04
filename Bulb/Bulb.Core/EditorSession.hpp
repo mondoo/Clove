@@ -2,26 +2,29 @@
 
 #include "Entity.hpp"
 
-namespace clv::plt{
-	class Application;
-	class Window;
+namespace blb{
+	class EditorLayer;
 }
 
-namespace clv::blb{
-	class EditorLayer;
+namespace tnc{
+	class Application;
+}
+
+namespace clv::plt{
+	class Window;
 }
 
 namespace Bulb::Core{
 	public ref class EditorSession{
 		//VARIABLES
 	private:
-		clv::plt::Application* app = nullptr;
+		tnc::Application* app = nullptr;
 		std::shared_ptr<clv::plt::Window>* window = nullptr;
 
 		System::Threading::Thread^ appThread;
 
 		//Putting the layer in here for now so the window can control it
-		std::shared_ptr<clv::blb::EditorLayer>* layer;
+		std::shared_ptr<blb::EditorLayer>* layer;
 
 		//FUNCTIONS
 	public:

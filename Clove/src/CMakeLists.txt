@@ -26,57 +26,6 @@ set(
 )
 
 set(
-	CoreECSFiles
-		${CLV_INCLUDE}/Core/ECS/Component.hpp
-		${CLV_INCLUDE}/Core/ECS/Component.inl
-		${CLV_INCLUDE}/Core/ECS/ComponentManager.hpp
-		${CLV_INCLUDE}/Core/ECS/ComponentManager.inl
-		${CLV_SOURCE}/Core/ECS/ComponentManager.cpp
-		${CLV_INCLUDE}/Core/ECS/ECSTypes.hpp
-		${CLV_INCLUDE}/Core/ECS/Entity.hpp
-		${CLV_INCLUDE}/Core/ECS/Entity.inl
-		${CLV_SOURCE}/Core/ECS/Entity.cpp
-		${CLV_INCLUDE}/Core/ECS/Manager.hpp
-		${CLV_INCLUDE}/Core/ECS/Manager.inl
-		${CLV_SOURCE}/Core/ECS/Manager.cpp
-		${CLV_INCLUDE}/Core/ECS/System.hpp
-		${CLV_INCLUDE}/Core/ECS/2D/Components/RigidBodyComponent.hpp
-		${CLV_SOURCE}/Core/ECS/2D/Components/RigidBodyComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/2D/Components/SpriteComponent.hpp
-		${CLV_SOURCE}/Core/ECS/2D/Components/SpriteComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/2D/Components/TransformComponent.hpp
-		${CLV_SOURCE}/Core/ECS/2D/Components/TransformComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/2D/Systems/RenderSystem.hpp
-		${CLV_SOURCE}/Core/ECS/2D/Systems/RenderSystem.cpp
-		${CLV_INCLUDE}/Core/ECS/2D/Systems/PhysicsSystem.hpp
-		${CLV_SOURCE}/Core/ECS/2D/Systems/PhysicsSystem.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Components/CameraComponent.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Components/CameraComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Components/LightComponent.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Components/LightComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Components/MeshComponent.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Components/MeshComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Components/RigidBodyComponent.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Components/RigidBodyComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Components/TransformComponent.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Components/TransformComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Systems/RenderSystem.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Systems/RenderSystem.cpp
-		${CLV_INCLUDE}/Core/ECS/3D/Systems/PhysicsSystem.hpp
-		${CLV_SOURCE}/Core/ECS/3D/Systems/PhysicsSystem.cpp
-		${CLV_INCLUDE}/Core/ECS/Audio/Components/AudioComponent.hpp
-		${CLV_SOURCE}/Core/ECS/Audio/Components/AudioComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/Audio/Systems/AudioSystem.hpp
-		${CLV_SOURCE}/Core/ECS/Audio/Systems/AudioSystem.cpp
-		${CLV_INCLUDE}/Core/ECS/UI/Components/TextComponent.hpp
-		${CLV_SOURCE}/Core/ECS/UI/Components/TextComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/UI/Components/TransformComponent.hpp
-		${CLV_SOURCE}/Core/ECS/UI/Components/TransformComponent.cpp
-		${CLV_INCLUDE}/Core/ECS/UI/Components/WidgetComponent.hpp
-		${CLV_SOURCE}/Core/ECS/UI/Components/WidgetComponent.cpp
-)
-
-set(
 	CoreExceptionFiles
 		${CLV_INCLUDE}/Core/Exception/CloveException.hpp
 		${CLV_SOURCE}/Core/Exception/CloveException.cpp
@@ -181,8 +130,6 @@ set(
 
 set(
 	CoreInputFiles
-		${CLV_INCLUDE}/Core/Input/Input.hpp
-		${CLV_SOURCE}/Core/Input/Input.cpp
 		${CLV_INCLUDE}/Core/Input/Keyboard.hpp
 		${CLV_INCLUDE}/Core/Input/Keyboard.inl
 		${CLV_SOURCE}/Core/Input/Keyboard.cpp
@@ -207,8 +154,8 @@ set(
 
 set(
 	CorePlatformFiles
-		${CLV_INCLUDE}/Core/Platform/Application.hpp
-		${CLV_SOURCE}/Core/Platform/Application.cpp
+		${CLV_INCLUDE}/Core/Platform/Platform.hpp
+		${CLV_SOURCE}/Core/Platform/Platform.cpp
 		${CLV_INCLUDE}/Core/Platform/PlatformTypes.hpp
 		${CLV_INCLUDE}/Core/Platform/Window.hpp
 		${CLV_SOURCE}/Core/Platform/Window.cpp
@@ -217,8 +164,8 @@ set(
 set(
 	WindowsPlatformFiles
 		${CLV_INCLUDE}/Platform/Windows/CloveWindows.hpp
-		${CLV_INCLUDE}/Platform/Windows/WindowsApplication.hpp
-		${CLV_SOURCE}/Platform/Windows/WindowsApplication.cpp
+		${CLV_INCLUDE}/Platform/Windows/WindowsPlatform.hpp
+		${CLV_SOURCE}/Platform/Windows/WindowsPlatform.cpp
 		${CLV_INCLUDE}/Platform/Windows/WindowsException.hpp
 		${CLV_SOURCE}/Platform/Windows/WindowsException.cpp
 		${CLV_INCLUDE}/Platform/Windows/WindowsWindow.hpp
@@ -228,8 +175,8 @@ set(
 set(
 	LinuxPlatformFiles
 		${CLV_INCLUDE}/Platform/Linux/CloveLinux.hpp
-		${CLV_INCLUDE}/Platform/Linux/LinuxApplication.hpp
-		${CLV_SOURCE}/Platform/Linux/LinuxApplication.cpp
+		${CLV_INCLUDE}/Platform/Linux/LinuxPlatform.hpp
+		${CLV_SOURCE}/Platform/Linux/LinuxPlatform.cpp
 		${CLV_INCLUDE}/Platform/Linux/LinuxWindow.hpp
 		${CLV_SOURCE}/Platform/Linux/LinuxWindow.cpp
 )
@@ -237,8 +184,8 @@ set(
 set(
 	MacOSPlatformFiles
 		${CLV_INCLUDE}/Platform/Mac/CloveMac.h
-		${CLV_INCLUDE}/Platform/Mac/MacApplication.hpp
-		${CLV_SOURCE}/Platform/Mac/MacApplication.mm
+		${CLV_INCLUDE}/Platform/Mac/MacPlatform.hpp
+		${CLV_SOURCE}/Platform/Mac/MacPlatform.mm
 		${CLV_INCLUDE}/Platform/Mac/MacWindow.hpp
 		${CLV_SOURCE}/Platform/Mac/MacWindow.mm
 )
@@ -364,7 +311,6 @@ set(
 	AllFiles
 	${CoreFiles}
 		${CoreAudioFiles}
-		${CoreECSFiles}
 		${CoreExceptionFiles}
 		${CoreGraphicsFiles}
 			${OpenGLGraphicsFiles}

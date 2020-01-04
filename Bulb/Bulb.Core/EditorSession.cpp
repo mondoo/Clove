@@ -3,7 +3,7 @@
 #include "EditorLayer.hpp"
 #include "EditorWindowProxy.hpp"
 
-#include <Clove/Core/Platform/Application.hpp>
+#include <Tunic/Application.hpp>
 #include <msclr/lock.h>
 
 namespace Bulb::Core{
@@ -16,15 +16,14 @@ namespace Bulb::Core{
 
 		window = new std::shared_ptr<clv::plt::Window>();
 
-		auto appUniquePtr = clv::plt::Application::createApplication(clv::gfx::API::DirectX11);
-		app = appUniquePtr.release();
+		app = new tnc::Application(clv::gfx::API::DirectX11);
 		
-		clv::plt::blb::EditorWindowProxy proxy = { hWnd };
+		blb::plt::EditorWindowProxy proxy = { hWnd };
 
 		*window = app->openChildWindow(clv::plt::WindowType::MainWindow, proxy, { posX, posY }, { width, height });
 		app->setMainWindow(*window);
 
-		layer = new std::shared_ptr(std::make_shared<clv::blb::EditorLayer>());
+		layer = new std::shared_ptr(std::make_shared<blb::EditorLayer>());
 		app->pushLayer(*layer);
 		
 		appThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &EditorSession::Update));
@@ -32,7 +31,7 @@ namespace Bulb::Core{
 	}
 
 	void EditorSession::Update(){
-		while(app->getState() == clv::plt::ApplicationState::running){
+		while(app->getState() == tnc::ApplicationState::running){
 			msclr::lock l(appThread);
 			app->update();
 		}
