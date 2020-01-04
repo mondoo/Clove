@@ -47,6 +47,7 @@ namespace tnc{
 	public:
 		Application() = delete;
 		Application(clv::gfx::API api);
+		Application(clv::gfx::API api, const clv::plt::Window& parentWindow, const clv::mth::vec2i& windowPosition, const clv::mth::vec2i& windowSize);
 
 		virtual ~Application();
 
@@ -64,8 +65,5 @@ namespace tnc{
 
 		clv::plt::Window& getMainWindow() const;
 		void setMainWindow(const std::shared_ptr<clv::plt::Window>& window);
-
-		[[nodiscard]] std::shared_ptr<clv::plt::Window> openWindow(clv::plt::WindowType windowType, const clv::plt::WindowProps& props = {});
-		[[nodiscard]] std::shared_ptr<clv::plt::Window> openChildWindow(clv::plt::WindowType windowType, const clv::plt::Window& parentWindow, const clv::mth::vec2i& position, const clv::mth::vec2i& size);
 	};
 }

@@ -26,6 +26,37 @@ namespace tnc{
 		Log::init();
 
 		gfx::global::initialise(api);
+
+		mainWindow = platformInstance->createWindow({});
+		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
+		mainWindow->setVSync(true);
+
+		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+
+		ecsManager = std::make_unique<ecs::Manager>();
+		layerStack = std::make_unique<LayerStack>();
+
+		CLV_LOG_INFO("Successfully initialised Clove");
+
+		prevFrameTime = std::chrono::system_clock::now();
+	}
+
+	Application::Application(clv::gfx::API api, const clv::plt::Window& parentWindow, const clv::mth::vec2i& windowPosition, const clv::mth::vec2i& windowSize){
+		CLV_PROFILE_BEGIN_SESSION("Application cycle", "Profile-Cycle.json");
+
+		CLV_ASSERT(!instance, "Application already exists!");
+		instance = this;
+
+		platformInstance = clv::plt::Platform::createPlatformInstance();
+
+		Log::init();
+
+		gfx::global::initialise(api);
+
+		mainWindow = platformInstance->createChildWindow(parentWindow, windowPosition, windowSize);
+		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
+		mainWindow->setVSync(true);
+
 		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
 		ecsManager = std::make_unique<ecs::Manager>();
@@ -94,25 +125,5 @@ namespace tnc{
 
 	void Application::setMainWindow(const std::shared_ptr<plt::Window>& window){
 		mainWindow = window;
-	}
-
-	std::shared_ptr<plt::Window> Application::openWindow(plt::WindowType windowType, const plt::WindowProps& props){
-		auto window = platformInstance->createWindow(props);
-
-		if(windowType == plt::WindowType::MainWindow){
-			setMainWindow(window);
-		}
-
-		return window;
-	}
-
-	std::shared_ptr<plt::Window> Application::openChildWindow(plt::WindowType windowType, const plt::Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
-		auto window = platformInstance->createChildWindow(parentWindow, position, size);
-
-		if(windowType == plt::WindowType::MainWindow){
-			setMainWindow(window);
-		}
-
-		return window;
 	}
 }

@@ -16,12 +16,9 @@ namespace Bulb::Core{
 
 		window = new std::shared_ptr<clv::plt::Window>();
 
-		app = new tnc::Application(clv::gfx::API::DirectX11);
-		
 		blb::plt::EditorWindowProxy proxy = { hWnd };
 
-		*window = app->openChildWindow(clv::plt::WindowType::MainWindow, proxy, { posX, posY }, { width, height });
-		app->setMainWindow(*window);
+		app = new tnc::Application(clv::gfx::API::DirectX11, proxy, { posX, posY }, { width, height });
 
 		layer = new std::shared_ptr(std::make_shared<blb::EditorLayer>());
 		app->pushLayer(*layer);
