@@ -39,7 +39,7 @@ namespace clv::gfx::mtl{
 	}
 	
 	void MTLShader::initialise(id<MTLDevice> mtlDevice, ShaderStyle style){
-		NSError* error = [[NSError alloc] init];
+		NSError* error;
 		id<MTLLibrary> library;
 		
 		//TODO: Load the library inside each switch statement

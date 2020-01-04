@@ -31,7 +31,7 @@ namespace clv::gfx::mtl{
 		
 		[pipelineDescriptor setVertexDescriptor:vertexDescriptor];
 		
-		NSError *error = [[NSError alloc] init];
+		NSError *error;
 		pipelineState = [mtlDevice newRenderPipelineStateWithDescriptor:pipelineDescriptor error:&error];
 		
 		[vertexDescriptor release];
