@@ -182,8 +182,11 @@ namespace clv::plt{
 					case NSEventTypeScrollWheel:
 						mouse.onWheelDelta(static_cast<int32>([event scrollingDeltaY]), mouseLoc.x, mouseLoc.y);
 						break;
+						
+					default:
+						[NSApp sendEvent:event];
+						break;
 				}
-				[NSApp sendEvent: event];
 			} while (event != nil);
 		}
 	}
