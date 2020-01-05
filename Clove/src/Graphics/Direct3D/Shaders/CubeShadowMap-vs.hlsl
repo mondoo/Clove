@@ -1,4 +1,4 @@
-cbuffer ModelBuffer : register(b3){
+cbuffer ModelBuffer : register(b4){
 	matrix model;
 	matrix normalMatrix;
 }

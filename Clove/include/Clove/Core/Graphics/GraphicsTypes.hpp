@@ -43,18 +43,18 @@ namespace clv::gfx{
 	};
 
 	enum BufferBindingPoint{ //Will this be needed?
-		BBP_CameraMatrices = 0u,
-		BBP_PointLightData = 1u,
-		BBP_ViewData = 2u,
-		BBP_ModelData = 3u,
-		BBP_MaterialData = 4u,
-		BBP_2DData = 5u,
-		BBP_ShadowData = 6u,
-		BBP_CubeDepthData = 7u,
-		BBP_CurrentLights = 8u,
-		BBP_CurrentFaceIndex = 9u,
-		BBP_CurrentDepthData = 10u,
-		BBP_Colour = 11u
+		BBP_CameraMatrices 		= 1u,
+		BBP_PointLightData 		= 2u,
+		BBP_ViewData 			= 3u,
+		BBP_ModelData 			= 4u,
+		BBP_MaterialData 		= 5u,
+		BBP_2DData 				= 6u,
+		BBP_ShadowData 			= 7u,
+		BBP_CubeDepthData 		= 8u,
+		BBP_CurrentLights 		= 9u,
+		BBP_CurrentFaceIndex 	= 10u,
+		BBP_CurrentDepthData 	= 11u,
+		BBP_Colour 				= 12u
 	};
 
 	enum TextureBindingPoint{

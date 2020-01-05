@@ -2,7 +2,7 @@
 
 layout(location = 0) in vec3 Position3D;
 
-layout(std140, binding = 3) uniform modelBuffer {
+layout(std140, binding = 4) uniform modelBuffer {
 	mat4 model;
 	mat4 normalMatrix;
 };

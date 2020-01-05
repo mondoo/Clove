@@ -15,7 +15,7 @@ struct VSOut{
 	float2 texCoord;
 };
 
-vertex VSOut vertexShader(const VSIn vertexIn [[ stage_in ]], constant viewBuffer& viewBuffer [[ buffer(5) ]]){
+vertex VSOut vertexShader(const VSIn vertexIn [[ stage_in ]], constant viewBuffer& viewBuffer [[ buffer(6) ]]){
 	VSOut out;
 	
 	out.position = viewBuffer.modelProjection * float4(vertexIn.Position2D.x, vertexIn.Position2D.y, 0.0f, 1.0f);

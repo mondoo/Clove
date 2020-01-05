@@ -2,7 +2,7 @@
 
 in vec4 fragPos;
 
-layout(std140, binding = 10) uniform lightPosBuffer {
+layout(std140, binding = 11) uniform lightPosBuffer {
 	vec3 lightPosition;
 	float farPlane;
 };

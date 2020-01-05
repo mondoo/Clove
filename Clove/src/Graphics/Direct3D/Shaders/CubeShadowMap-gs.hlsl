@@ -1,8 +1,8 @@
-cbuffer shadowMatBuffer : register(b6){
+cbuffer shadowMatBuffer : register(b7){
 	matrix shadowMatrices[6];
 }
 
-cbuffer lightNumBuffer : register(b9){
+cbuffer lightNumBuffer : register(b10){
 	unsigned int currentLightIndex;
 }
 

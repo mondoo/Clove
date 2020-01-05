@@ -4,12 +4,12 @@ layout(location = 0) in vec3 Position3D;
 layout(location = 1) in vec2 TexCoord;
 layout(location = 2) in vec3 Normal;
 
-layout(std140, binding = 0) uniform CameraMatrices {
+layout(std140, binding = 1) uniform CameraMatrices {
 	mat4 view;
 	mat4 projection;
 };
 
-layout(std140, binding = 3) uniform modelBuffer {
+layout(std140, binding = 4) uniform modelBuffer {
 	mat4 model;
 	mat4 normalMatrix;
 };

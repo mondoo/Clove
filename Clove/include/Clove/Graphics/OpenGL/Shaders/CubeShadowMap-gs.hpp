@@ -6,11 +6,11 @@ static const std::string shader_CubeShadowMap_gs = R"(
 layout(triangles) in;
 layout(triangle_strip, max_vertices=18) out; //out putting 6 triangles (one for each face)
 
-layout(std140, binding = 6) uniform shadowMatBuffer {
+layout(std140, binding = 7) uniform shadowMatBuffer {
 	mat4 shadowMatrices[6];
 };
 
-layout(std140, binding = 9) uniform lightNumBuffer {
+layout(std140, binding = 10) uniform lightNumBuffer {
 	unsigned int currentLightIndex;
 };
 
@@ -27,4 +27,5 @@ void main(){
 		EndPrimitive();
 	}
 }
+
 )";

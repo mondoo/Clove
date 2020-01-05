@@ -3,7 +3,7 @@
 layout(location = 0) in vec2 Position2D;
 layout(location = 1) in vec2 TexCoord;
 
-layout(std140, binding = 5) uniform modelBuffer {
+layout(std140, binding = 6) uniform modelBuffer {
 	mat4 modelProjection;
 };
 

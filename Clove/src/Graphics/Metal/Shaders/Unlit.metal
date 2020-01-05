@@ -21,7 +21,7 @@ struct VSOut{
 	float2 texCoord;
 };
 
-vertex VSOut vertexShader(const VSIn vertexIn [[ stage_in ]], constant viewBuffer& viewBufferData [[ buffer(0) ]], constant modelBuffer& modelBufferData [[ buffer(3) ]]){
+vertex VSOut vertexShader(const VSIn vertexIn [[ stage_in ]], constant viewBuffer& viewBufferData [[ buffer(1) ]], constant modelBuffer& modelBufferData [[ buffer(4) ]]){
 	VSOut out;
 	
 	out.position = (viewBufferData.projection * viewBufferData.view * modelBufferData.model) * float4(vertexIn.Position3D, 1.0f);

@@ -5,7 +5,7 @@ static const std::string shader_CubeShadowMap_vs = R"(
 
 layout(location = 0) in vec3 Position3D;
 
-layout(std140, binding = 3) uniform modelBuffer {
+layout(std140, binding = 4) uniform modelBuffer {
 	mat4 model;
 	mat4 normalMatrix;
 };
@@ -13,4 +13,5 @@ layout(std140, binding = 3) uniform modelBuffer {
 void main(){
 	gl_Position = model * vec4(Position3D, 1.0);
 }
+
 )";
