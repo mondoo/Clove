@@ -14,20 +14,6 @@ namespace tnc::ecs{
 	std::queue<EntityID> Manager::recycledIDs;
 
 	Manager::Manager(){
-		//Order is somewhat important
-		systems.reserve(5);
-		systems.push_back(std::make_unique<_3D::PhysicsSystem>());
-		systems.push_back(std::make_unique<_3D::RenderSystem>());
-
-		systems.push_back(std::make_unique<_2D::PhysicsSystem>());
-		systems.push_back(std::make_unique<_2D::RenderSystem>());
-
-		systems.push_back(std::make_unique<aud::AudioSystem>());
-
-		std::for_each(systems.begin(), systems.end(), [this](const std::unique_ptr<System>& system){
-			system->manager = this;
-		});
-
 		componentManager.componentAddedDelegate.bind(&Manager::onComponentAdded, this);
 		componentManager.componentRemovedDelegate.bind(&Manager::onComponentRemoved, this);
 	}
