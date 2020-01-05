@@ -5,7 +5,7 @@ namespace clv::gfx{
 		None,
 		OpenGL4,
 	#if CLV_PLATFORM_WINDOWS
-		DirectX11
+		Direct3D11
 	#endif
 	};
 
