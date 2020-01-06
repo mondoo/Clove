@@ -17,7 +17,7 @@
 //
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
-// viewBuffer                        cbuffer      NA          NA            cb5      1 
+// viewBuffer                        cbuffer      NA          NA            cb6      1 
 //
 //
 //
@@ -38,26 +38,26 @@
 //
 vs_5_0
 dcl_globalFlags refactoringAllowed
-dcl_constantbuffer CB5[4], immediateIndexed
+dcl_constantbuffer CB6[4], immediateIndexed
 dcl_input v0.xy
 dcl_input v1.xy
 dcl_output o0.xy
 dcl_output_siv o1.xyzw, position
 dcl_temps 1
 mov o0.xy, v1.xyxx
-mul r0.xyzw, v0.yyyy, cb5[1].xyzw
-mad r0.xyzw, cb5[0].xyzw, v0.xxxx, r0.xyzw
-add o1.xyzw, r0.xyzw, cb5[3].xyzw
+mul r0.xyzw, v0.yyyy, cb6[1].xyzw
+mad r0.xyzw, cb6[0].xyzw, v0.xxxx, r0.xyzw
+add o1.xyzw, r0.xyzw, cb6[3].xyzw
 ret 
 // Approximately 5 instruction slots used
 #endif
 
 const BYTE shader_Font_vs[] =
 {
-     68,  88,  66,  67,  24,  50, 
-    171, 219, 173,  57, 104,  72, 
-    112,   8, 138, 252,  65,  11, 
-      7, 193,   1,   0,   0,   0, 
+     68,  88,  66,  67, 188, 113, 
+    247, 151, 251,  68,  61, 104, 
+     74, 191, 153, 134, 244,  15, 
+    153,  84,   1,   0,   0,   0, 
     116,   3,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
      76,   1,   0,   0, 160,   1, 
@@ -77,7 +77,7 @@ const BYTE shader_Font_vs[] =
      92,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   5,   0,   0,   0, 
+      0,   0,   6,   0,   0,   0, 
       1,   0,   0,   0,   1,   0, 
       0,   0, 118, 105, 101, 119, 
      66, 117, 102, 102, 101, 114, 
@@ -142,7 +142,7 @@ const BYTE shader_Font_vs[] =
       0,   0,  80,   0,   1,   0, 
      54,   0,   0,   0, 106,   8, 
       0,   1,  89,   0,   0,   4, 
-     70, 142,  32,   0,   5,   0, 
+     70, 142,  32,   0,   6,   0, 
       0,   0,   4,   0,   0,   0, 
      95,   0,   0,   3,  50,  16, 
      16,   0,   0,   0,   0,   0, 
@@ -161,11 +161,11 @@ const BYTE shader_Font_vs[] =
     242,   0,  16,   0,   0,   0, 
       0,   0,  86,  21,  16,   0, 
       0,   0,   0,   0,  70, 142, 
-     32,   0,   5,   0,   0,   0, 
+     32,   0,   6,   0,   0,   0, 
       1,   0,   0,   0,  50,   0, 
       0,  10, 242,   0,  16,   0, 
       0,   0,   0,   0,  70, 142, 
-     32,   0,   5,   0,   0,   0, 
+     32,   0,   6,   0,   0,   0, 
       0,   0,   0,   0,   6,  16, 
      16,   0,   0,   0,   0,   0, 
      70,  14,  16,   0,   0,   0, 
@@ -173,7 +173,7 @@ const BYTE shader_Font_vs[] =
     242,  32,  16,   0,   1,   0, 
       0,   0,  70,  14,  16,   0, 
       0,   0,   0,   0,  70, 142, 
-     32,   0,   5,   0,   0,   0, 
+     32,   0,   6,   0,   0,   0, 
       3,   0,   0,   0,  62,   0, 
       0,   1,  83,  84,  65,  84, 
     148,   0,   0,   0,   5,   0, 

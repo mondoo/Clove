@@ -18,7 +18,7 @@
 //
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
-// lightPosBuffer                    cbuffer      NA          NA           cb10      1 
+// lightPosBuffer                    cbuffer      NA          NA           cb11      1 
 //
 //
 //
@@ -37,24 +37,24 @@
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed
-dcl_constantbuffer CB10[1], immediateIndexed
+dcl_constantbuffer CB11[1], immediateIndexed
 dcl_input_ps linear v0.xyz
 dcl_output oDepth
 dcl_temps 1
-add r0.xyz, v0.xyzx, -cb10[0].xyzx
+add r0.xyz, v0.xyzx, -cb11[0].xyzx
 dp3 r0.x, r0.xyzx, r0.xyzx
 sqrt r0.x, r0.x
-div oDepth, r0.x, cb10[0].w
+div oDepth, r0.x, cb11[0].w
 ret 
 // Approximately 5 instruction slots used
 #endif
 
 const BYTE shader_CubeShadowMap_ps[] =
 {
-     68,  88,  66,  67,  82,   2, 
-      7, 227, 248,  87, 115,  75, 
-     82,  10,  94, 235, 163, 107, 
-     36, 195,   1,   0,   0,   0, 
+     68,  88,  66,  67,  18, 206, 
+    149,  87, 120, 153, 184, 213, 
+    138, 177,  35, 135, 210,  25, 
+     20, 190,   1,   0,   0,   0, 
      92,   3,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
     168,   1,   0,   0, 216,   1, 
@@ -74,7 +74,7 @@ const BYTE shader_CubeShadowMap_ps[] =
      92,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,  10,   0,   0,   0, 
+      0,   0,  11,   0,   0,   0, 
       1,   0,   0,   0,   1,   0, 
       0,   0, 108, 105, 103, 104, 
     116,  80, 111, 115,  66, 117, 
@@ -143,7 +143,7 @@ const BYTE shader_CubeShadowMap_ps[] =
       0,   0,  43,   0,   0,   0, 
     106,   8,   0,   1,  89,   0, 
       0,   4,  70, 142,  32,   0, 
-     10,   0,   0,   0,   1,   0, 
+     11,   0,   0,   0,   1,   0, 
       0,   0,  98,  16,   0,   3, 
     114,  16,  16,   0,   0,   0, 
       0,   0, 101,   0,   0,   2, 
@@ -153,7 +153,7 @@ const BYTE shader_CubeShadowMap_ps[] =
      16,   0,   0,   0,   0,   0, 
      70,  18,  16,   0,   0,   0, 
       0,   0,  70, 130,  32, 128, 
-     65,   0,   0,   0,  10,   0, 
+     65,   0,   0,   0,  11,   0, 
       0,   0,   0,   0,   0,   0, 
      16,   0,   0,   7,  18,   0, 
      16,   0,   0,   0,   0,   0, 
@@ -166,7 +166,7 @@ const BYTE shader_CubeShadowMap_ps[] =
      14,   0,   0,   7,   1, 192, 
       0,   0,  10,   0,  16,   0, 
       0,   0,   0,   0,  58, 128, 
-     32,   0,  10,   0,   0,   0, 
+     32,   0,  11,   0,   0,   0, 
       0,   0,   0,   0,  62,   0, 
       0,   1,  83,  84,  65,  84, 
     148,   0,   0,   0,   5,   0, 
