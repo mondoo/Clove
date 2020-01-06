@@ -13,7 +13,6 @@ namespace clv::gfx::mtl{
 		id<MTLCommandQueue> commandQueue;
 		id<MTLCommandBuffer> commandBuffer;
 		id<MTLRenderCommandEncoder> commandEncoder;
-		id<MTLDrawable> drawable;
 		
 		id<MTLBuffer> indexBuffer;
 		

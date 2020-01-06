@@ -16,7 +16,6 @@ namespace clv::gfx::mtl{
 		[commandQueue release];
 		[commandBuffer release];
 		[commandEncoder release];
-		[drawable release];
 	}
 	
 	void MTLRenderDevice::bindIndexBuffer(const Buffer& buffer){
@@ -73,7 +72,6 @@ namespace clv::gfx::mtl{
 		
 		MTLRenderPassDescriptor* descriptor = [view currentRenderPassDescriptor];
 		commandEncoder = [commandBuffer renderCommandEncoderWithDescriptor:descriptor];
-		drawable = [[view currentDrawable] retain];
 	}
 
 	void MTLRenderDevice::setRenderTarget(const RenderTarget* renderTarget){
@@ -111,18 +109,18 @@ namespace clv::gfx::mtl{
 		//TODO: Putting this in clear for now but it needs to go in a commandBuffer class
 		
 		[commandEncoder endEncoding];
-		[commandBuffer presentDrawable:drawable];
+		
+		MTKView* view = currentSurface->getView();
+		
+		[commandBuffer presentDrawable:[view currentDrawable]];
 		[commandBuffer commit];
 		
 		//TODO: Temp - this is done to start a new command session?
 		commandBuffer = [commandQueue commandBuffer];
 		
 		//Start up a new encoding session
-		MTKView* view = currentSurface->getView();
-		
 		MTLRenderPassDescriptor* descriptor = [view currentRenderPassDescriptor];
 		commandEncoder = [commandBuffer renderCommandEncoderWithDescriptor:descriptor];
-		drawable = [[view currentDrawable] retain];
 	}
 	
 	void MTLRenderDevice::drawIndexed(const uint32 count){
