@@ -3,8 +3,17 @@
 #include "EditorLayer.hpp"
 #include "EditorWindowProxy.hpp"
 
-#include <Tunic/Application.hpp>
 #include <msclr/lock.h>
+
+#include <Tunic/Application.hpp>
+#include <Tunic/ECS/Core/Manager.hpp>
+#include <Tunic/ECS/3D/Systems/PhysicsSystem.hpp>
+#include <Tunic/ECS/3D/Systems/RenderSystem.hpp>
+#include <Tunic/ECS/2D/Systems/PhysicsSystem.hpp>
+#include <Tunic/ECS/2D/Systems/RenderSystem.hpp>
+#include <Tunic/ECS/Audio/Systems/AudioSystem.hpp>
+
+using namespace tnc;
 
 namespace Bulb::Core{
 	EditorSession::!EditorSession(){
@@ -19,6 +28,16 @@ namespace Bulb::Core{
 		blb::plt::EditorWindowProxy proxy = { hWnd };
 
 		app = new tnc::Application(clv::gfx::API::Direct3D11, proxy, { posX, posY }, { width, height });
+
+		ecs::Manager& ecsManager = app->getManager();
+
+		ecsManager.addSystem<ecs::_3D::PhysicsSystem>();
+		ecsManager.addSystem<ecs::_3D::RenderSystem>();
+
+		ecsManager.addSystem<ecs::_2D::PhysicsSystem>();
+		ecsManager.addSystem<ecs::_2D::RenderSystem>();
+
+		ecsManager.addSystem<ecs::aud::AudioSystem>();
 
 		layer = new std::shared_ptr(std::make_shared<blb::EditorLayer>());
 		app->pushLayer(*layer);
