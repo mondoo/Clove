@@ -18,7 +18,7 @@ namespace Bulb::Core{
 
 		blb::plt::EditorWindowProxy proxy = { hWnd };
 
-		app = new tnc::Application(clv::gfx::API::DirectX11, proxy, { posX, posY }, { width, height });
+		app = new tnc::Application(clv::gfx::API::Direct3D11, proxy, { posX, posY }, { width, height });
 
 		layer = new std::shared_ptr(std::make_shared<blb::EditorLayer>());
 		app->pushLayer(*layer);
