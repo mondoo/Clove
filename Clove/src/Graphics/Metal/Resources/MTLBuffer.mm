@@ -3,7 +3,8 @@
 namespace clv::gfx::mtl{
 	MTLBuffer::MTLBuffer(id<MTLDevice> mtlDevice, const BufferDescriptor& descriptor, const void* data)
 		: descriptor(descriptor){
-		mtlBuffer = [mtlDevice newBufferWithBytes:data length:descriptor.bufferSize options:0];
+		mtlBuffer = [mtlDevice newBufferWithLength:descriptor.bufferSize options:0];
+		memcpy([mtlBuffer contents], data, descriptor.bufferSize);
 	}
 	
 	MTLBuffer::MTLBuffer(MTLBuffer&& other) noexcept = default;
