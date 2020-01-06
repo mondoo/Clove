@@ -13,6 +13,7 @@ namespace clv::gfx::mtl{
 		[pipelineDescriptor setVertexFunction:mtlShader->getMTLVertexShader()];
 		[pipelineDescriptor setFragmentFunction:mtlShader->getMTLPixelShader()];
 		pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
+		pipelineDescriptor.depthAttachmentPixelFormat = MTLPixelFormatDepth32Float;
 		
 		MTLVertexDescriptor* vertexDescriptor = [[MTLVertexDescriptor alloc] init];
 		

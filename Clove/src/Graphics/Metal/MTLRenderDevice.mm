@@ -138,16 +138,17 @@ namespace clv::gfx::mtl{
 	void MTLRenderDevice::setDepthBuffer(bool enabled){
 		//TODO: Need to get the current descriptor used and modify that (like d3d)
 		
-		/*id<MTLDevice> mtlDevice = commandEncoder.device;
+		id<MTLDevice> mtlDevice = commandEncoder.device;
 		
 		MTLDepthStencilDescriptor* descriptor = [[MTLDepthStencilDescriptor alloc] init];
-		[descriptor setDepthWriteEnabled:enabled];
+		[descriptor setDepthWriteEnabled:(enabled ? YES : NO)];
+		descriptor.depthCompareFunction = MTLCompareFunctionLess;
 		
 		id<MTLDepthStencilState> state = [mtlDevice newDepthStencilStateWithDescriptor:descriptor];
 		
 		[commandEncoder setDepthStencilState:state];
 		
-		[descriptor release];*/
+		[descriptor release];
 	}
 	
 	void MTLRenderDevice::setBlendState(bool enabled){
