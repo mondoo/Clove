@@ -135,6 +135,12 @@ set(
 )
 
 set(
+	CoreMemoryFiles
+		${CLV_INCLUDE}/Memory/PoolAllocator.hpp
+		${CLV_INCLUDE}/Memory/PoolAllocator.inl
+)
+
+set(
 	CoreInputFiles
 		${CLV_INCLUDE}/Core/Input/Keyboard.hpp
 		${CLV_INCLUDE}/Core/Input/Keyboard.inl
@@ -353,6 +359,7 @@ set(
 				${LinuxGLGraphicsFiles}
 			${Direct3DGraphicsFiles}
 			${MetalGraphicsFiles}
+		${CoreMemoryFiles}
 		${CoreInputFiles}
 		${CoreMathsFiles}
 		${CorePlatformFiles}
