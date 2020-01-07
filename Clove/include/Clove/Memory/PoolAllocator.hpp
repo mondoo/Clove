@@ -15,7 +15,7 @@ namespace clv::mem{
 			//VARIABLES
 		public:
 			std::unique_ptr<PoolItem[]> storage;
-			std::unique_ptr<PoolArena> nextArena;
+			std::unique_ptr<PoolArena> next;
 
 			//FUNCTIONS
 		public:
@@ -33,7 +33,7 @@ namespace clv::mem{
 	private:
 		std::size_t arenaSize;
 		std::unique_ptr<PoolArena> arena;
-		PoolItem* freeList = nullptr;
+		PoolItem* nextFree = nullptr;
 
 		//FUNCTIONS
 	public:
@@ -41,7 +41,7 @@ namespace clv::mem{
 		PoolAllocator(std::size_t arenaSize)
 			: arenaSize(arenaSize){
 			arena = std::make_unique<PoolArena>(arenaSize);
-			freeList = arena->storage.get();
+			nextFree = &arena->storage[0];
 		}
 
 		//TODO: others
@@ -50,21 +50,28 @@ namespace clv::mem{
 
 		template<typename ...Args>
 		ItemType* alloc(Args&& ...args){
-			if(!freeList){
-				//TODO: Allocate new arena
+			if(!nextFree){
+				std::unique_ptr<PoolArena> newArena = std::make_unique<PoolArena>(arenaSize);
+				newArena->next = std::move(arena);
+				arena = std::move(newArena);
+				nextFree = &arena->storage[0];
 			}
 
-			PoolItem* currentItem = freeList;
-			freeList = currentItem->next;
+			PoolItem* poolItem = nextFree;
+			nextFree = poolItem->next;
 
-			ItemType* item = reinterpret_cast<ItemType*>(currentItem->item);
+			ItemType* item = reinterpret_cast<ItemType*>(poolItem->item);
 			new (item) ItemType(std::forward<Args>(args)...);
 
 			return item;
 		}
 
 		void free(ItemType* item){
-			//TODO:
+			item->~ItemType();
+
+			PoolItem* poolItem = reinterpret_cast<PoolItem*>(item);
+			poolItem->next = nextFree;
+			nextFree = poolItem;
 		}
 	};
 }
