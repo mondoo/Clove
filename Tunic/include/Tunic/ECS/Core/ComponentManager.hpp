@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Tunic/ECS/Core/ECSTypes.hpp"
+#include "Clove/Memory/PoolAllocator.hpp"
 
 namespace tnc::ecs{
 	class ComponentInterface;
@@ -36,8 +37,10 @@ namespace tnc::ecs{
 		class ComponentContainer : public ComponentContainerInterface{
 			//VARIABLES
 		private:
+			clv::mem::PoolAllocator<ComponentType> componentAllocator;
+
 			std::unordered_map<EntityID, size_t> entityIDToIndex;
-			std::vector<std::unique_ptr<ComponentType>> components;
+			std::vector<ComponentType*> components;
 
 			//FUNCTIONS
 		public:

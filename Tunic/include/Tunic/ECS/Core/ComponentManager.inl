@@ -1,6 +1,8 @@
 namespace tnc::ecs{
 	template<typename ComponentType>
-	ComponentManager::ComponentContainer<ComponentType>::ComponentContainer() = default;
+	ComponentManager::ComponentContainer<ComponentType>::ComponentContainer()
+		: componentAllocator(100){
+	}
 
 	template<typename ComponentType>
 	ComponentManager::ComponentContainer<ComponentType>::ComponentContainer(const ComponentContainer& other) = default;
@@ -20,25 +22,25 @@ namespace tnc::ecs{
 	template<typename ComponentType>
 	template<typename ...ConstructArgs>
 	ComponentType* ComponentManager::ComponentContainer<ComponentType>::addComponent(EntityID entityID, ConstructArgs&& ...args){
-		auto comp = std::make_unique<ComponentType>(std::forward<ConstructArgs>(args)...);
+		ComponentType* comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
 		comp->entityID = entityID; //TODO: make this container a friend of the component now it's typed
 		
-		componentAddedDelegate.broadcast(comp.get());
-		
 		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()){
-			components[iter->second] = std::move(comp);
+			components[iter->second] = comp;
 		} else{
-			components.push_back(std::move(comp));
+			components.push_back(comp);
 			entityIDToIndex[entityID] = components.size() - 1;
 		}
 
-		return components[entityIDToIndex[entityID]].get();
+		componentAddedDelegate.broadcast(comp);
+
+		return comp;
 	}
 
 	template<typename ComponentType>
 	void ComponentManager::ComponentContainer<ComponentType>::cloneComponent(EntityID fromID, EntityID toID){
 		if(auto iter = entityIDToIndex.find(fromID); iter != entityIDToIndex.end()){
-			auto* componentPtr = components[iter->second].get();
+			ComponentType* componentPtr = components[iter->second];
 			addComponent(toID, *componentPtr);
 		}
 	}
@@ -46,7 +48,7 @@ namespace tnc::ecs{
 	template<typename ComponentType>
 	ComponentType* ComponentManager::ComponentContainer<ComponentType>::getComponent(EntityID entityID){
 		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()){
-			return components[iter->second].get();
+			return components[iter->second];
 		} else{
 			return nullptr;
 		}
@@ -58,10 +60,10 @@ namespace tnc::ecs{
 			const size_t index = iter->second;
 			const size_t lastIndex = components.size() - 1;
 
-			auto removedComp = std::move(components[index]);
+			ComponentType* removedComp = components[index];
 
 			if(index < lastIndex){
-				components[index] = std::move(components.back());
+				components[index] = components.back();
 			}
 			components.pop_back();
 			entityIDToIndex.erase(entityID);
@@ -72,7 +74,8 @@ namespace tnc::ecs{
 				entityIDToIndex[movedCompEntityID] = index;
 			}
 
-			componentRemovedDelegate.broadcast(removedComp.get());
+			componentRemovedDelegate.broadcast(removedComp);
+			componentAllocator.free(removedComp);
 		}
 	}
 
