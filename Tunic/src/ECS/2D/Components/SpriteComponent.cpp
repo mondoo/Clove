@@ -1,13 +1,11 @@
 #include "Tunic/ECS/2D/Components/SpriteComponent.hpp"
 
-#include "Clove/Graphics/Core/Renderables/Sprite.hpp"
-
-using namespace clv;
+#include "Tunic/Rendering/Renderables/Sprite.hpp"
 
 namespace tnc::ecs::_2D{
 	SpriteComponent::SpriteComponent() = default;
 
-	SpriteComponent::SpriteComponent(const std::shared_ptr<gfx::Sprite>& sprite)
+	SpriteComponent::SpriteComponent(const std::shared_ptr<rnd::Sprite>& sprite)
 		: sprite(sprite){
 	}
 
@@ -21,7 +19,7 @@ namespace tnc::ecs::_2D{
 
 	SpriteComponent::~SpriteComponent() = default;
 
-	void SpriteComponent::setSprite(const std::shared_ptr<gfx::Sprite>& sprite){
+	void SpriteComponent::setSprite(const std::shared_ptr<rnd::Sprite>& sprite){
 		this->sprite = sprite;
 	}
 }

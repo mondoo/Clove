@@ -2,7 +2,7 @@
 
 #include "Tunic/ECS/Core/Component.hpp"
 
-namespace clv::gfx{
+namespace tnc::rnd{
 	class Sprite;
 }
 
@@ -16,7 +16,7 @@ namespace tnc::ecs::ui{
 
 		//VARIABLES
 	private:
-		std::shared_ptr<clv::gfx::Sprite> sprite;
+		std::shared_ptr<rnd::Sprite> sprite;
 
 		//TODO: Current works exactly like the SpriteComponent 
 		//but will later be used to handle user focus
@@ -33,6 +33,6 @@ namespace tnc::ecs::ui{
 
 		virtual ~WidgetComponent();
 
-		void setSprite(const std::shared_ptr<clv::gfx::Sprite>& sprite);
+		void setSprite(const std::shared_ptr<rnd::Sprite>& sprite);
 	};
 }

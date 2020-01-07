@@ -1,11 +1,9 @@
 #include "Tunic/ECS/3D/Components/MeshComponent.hpp"
 
-#include "Clove/Graphics/Core/Renderables/Mesh.hpp"
-
-using namespace clv;
+#include "Tunic/Rendering/Renderables/Mesh.hpp"
 
 namespace tnc::ecs::_3D{
-	MeshComponent::MeshComponent(const std::shared_ptr<gfx::Mesh>& mesh)
+	MeshComponent::MeshComponent(const std::shared_ptr<rnd::Mesh>& mesh)
 		: mesh(mesh){
 	}
 

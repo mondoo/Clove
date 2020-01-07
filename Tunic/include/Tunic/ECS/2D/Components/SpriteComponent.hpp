@@ -2,7 +2,7 @@
 
 #include "Tunic/ECS/Core/Component.hpp"
 
-namespace clv::gfx{
+namespace tnc::rnd{
 	class Sprite;
 }
 
@@ -12,12 +12,12 @@ namespace tnc::ecs::_2D{
 
 		//VARIABLES
 	private:
-		std::shared_ptr<clv::gfx::Sprite> sprite;
+		std::shared_ptr<rnd::Sprite> sprite;
 
 		//FUNCTIONS
 	public:
 		SpriteComponent();
-		SpriteComponent(const std::shared_ptr<clv::gfx::Sprite>& sprite);
+		SpriteComponent(const std::shared_ptr<rnd::Sprite>& sprite);
 
 		SpriteComponent(const SpriteComponent& other);
 		SpriteComponent(SpriteComponent&& other) noexcept;
@@ -27,7 +27,7 @@ namespace tnc::ecs::_2D{
 
 		virtual ~SpriteComponent();
 
-		void setSprite(const std::shared_ptr<clv::gfx::Sprite>& sprite);
+		void setSprite(const std::shared_ptr<rnd::Sprite>& sprite);
 	};
 }
 

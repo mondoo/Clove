@@ -56,6 +56,20 @@ set(
 		${TNC_SOURCE}/ECS/UI/Components/WidgetComponent.cpp
 )
 
+set(
+	RenderingFiles
+		${TNC_INCLUDE}/Rendering/Material.hpp
+		${TNC_INCLUDE}/Rendering/Material.inl
+		${TNC_SOURCE}/Rendering/Material.cpp
+		${TNC_INCLUDE}/Rendering/MaterialInstance.hpp
+		${TNC_INCLUDE}/Rendering/MaterialInstance.inl
+		${TNC_SOURCE}/Rendering/MaterialInstance.cpp
+		${TNC_INCLUDE}/Rendering/Renderables/Mesh.hpp
+		${TNC_SOURCE}/Rendering/Renderables/Mesh.cpp
+		${TNC_INCLUDE}/Rendering/Renderables/Sprite.hpp
+		${TNC_SOURCE}/Rendering/Renderables/Sprite.cpp
+)
+
 file(GLOB_RECURSE header ${TNC_INCLUDE}/*.h ${TNC_INCLUDE}/*.hpp ${TNC_INCLUDE}/*.inl)
 file(GLOB_RECURSE source *.cpp *.m *.mm *.glsl *.hlsl)
 source_group(TREE ${TNC_INCLUDE} FILES ${header})
@@ -73,4 +87,5 @@ target_sources(
 		${TNC_SOURCE}/Input.cpp
         
 		${ECSFiles}
+		${RenderingFiles}
 )

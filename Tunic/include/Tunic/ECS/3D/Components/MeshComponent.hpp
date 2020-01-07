@@ -2,7 +2,7 @@
 
 #include "Tunic/ECS/Core/Component.hpp"
 
-namespace clv::gfx{
+namespace tnc::rnd{
 	class Mesh;
 }
 
@@ -12,12 +12,12 @@ namespace tnc::ecs::_3D{
 
 		//VARIABLES
 	private:
-		std::shared_ptr<clv::gfx::Mesh> mesh; 
+		std::shared_ptr<rnd::Mesh> mesh; 
 
 		//FUNCTIONS
 	public:
 		MeshComponent() = delete;
-		MeshComponent(const std::shared_ptr<clv::gfx::Mesh>& mesh);
+		MeshComponent(const std::shared_ptr<rnd::Mesh>& mesh);
 
 		MeshComponent(const MeshComponent& other);
 		MeshComponent(MeshComponent&& other) noexcept;

@@ -13,7 +13,7 @@ namespace tnc::ecs::ui{
 
 	WidgetComponent::~WidgetComponent() = default;
 
-	void WidgetComponent::setSprite(const std::shared_ptr<clv::gfx::Sprite>& sprite){
+	void WidgetComponent::setSprite(const std::shared_ptr<rnd::Sprite>& sprite){
 		this->sprite = sprite;
 	}
 }

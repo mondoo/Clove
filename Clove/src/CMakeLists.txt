@@ -37,12 +37,6 @@ set(
 		${CLV_INCLUDE}/Graphics/Core/GraphicsGlobal.hpp		
 		${CLV_SOURCE}/Graphics/Core/GraphicsGlobal.cpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsTypes.hpp
-		${CLV_INCLUDE}/Graphics/Core/Material.hpp
-		${CLV_INCLUDE}/Graphics/Core/Material.inl
-		${CLV_SOURCE}/Graphics/Core/Material.cpp
-		${CLV_INCLUDE}/Graphics/Core/MaterialInstance.hpp
-		${CLV_INCLUDE}/Graphics/Core/MaterialInstance.inl
-		${CLV_SOURCE}/Graphics/Core/MaterialInstance.cpp
 		${CLV_INCLUDE}/Graphics/Core/PipelineObject.hpp
 		${CLV_INCLUDE}/Graphics/Core/RenderDevice.hpp
 		${CLV_INCLUDE}/Graphics/Core/RenderFactory.hpp
@@ -53,10 +47,6 @@ set(
 		${CLV_INCLUDE}/Graphics/Core/VertexLayout.hpp
 		${CLV_INCLUDE}/Graphics/Core/VertexLayout.inl
 		${CLV_SOURCE}/Graphics/Core/VertexLayout.cpp
-		${CLV_INCLUDE}/Graphics/Core/Renderables/Mesh.hpp
-		${CLV_SOURCE}/Graphics/Core/Renderables/Mesh.cpp
-		${CLV_INCLUDE}/Graphics/Core/Renderables/Sprite.hpp
-		${CLV_SOURCE}/Graphics/Core/Renderables/Sprite.cpp
 		${CLV_INCLUDE}/Graphics/Core/Resources/Buffer.hpp
 		${CLV_INCLUDE}/Graphics/Core/Resources/Texture.hpp
 )

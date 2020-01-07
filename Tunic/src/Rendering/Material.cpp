@@ -1,20 +1,22 @@
-#include "Clove/Graphics/Core/Material.hpp"
+#include "Tunic/Rendering/Material.hpp"
 
 #include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Clove/Graphics/Core/MaterialInstance.hpp"
+#include "Tunic/Rendering/MaterialInstance.hpp"
 #include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 #include "Clove/Graphics/Core/ShaderBufferTypes.hpp"
 
-namespace clv::gfx{
+using namespace clv::gfx;
+
+namespace tnc::rnd{
 	Material::Material(){
-		uint32 white = 0xffffffff;
+		clv::uint32 white = 0xffffffff;
 		TextureDescriptor descriptor{};
 		descriptor.dimensions = { 1, 1 };
 		auto blankTexture = global::graphicsFactory->createTexture(descriptor, &white, 4);
 		albedoTexture = blankTexture;
 		specTexture = blankTexture;
 
-		setData(BBP_Colour, mth::vec4f(1.0f, 1.0f, 1.0f, 1.0f), ShaderType::Pixel);
+		setData(BBP_Colour, clv::mth::vec4f(1.0f, 1.0f, 1.0f, 1.0f), ShaderType::Pixel);
 		setData(BBP_MaterialData, MaterialData{ 32.0f }, ShaderType::Pixel);
 	}
 

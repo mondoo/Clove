@@ -1,21 +1,24 @@
 #pragma once
 
-#include "Clove/Graphics/Core/Material.hpp"
+#include "Tunic/Rendering/Material.hpp"
 
 //TODO: Move this into the material file???
 namespace clv::gfx{
-	class Material;
 	class Texture;
 }
 
-namespace clv::gfx{
+namespace tnc::rnd{
+	class Material;
+}
+
+namespace tnc::rnd{
 	class MaterialInstance{
 		//VARIABLES
 	private:
 		std::shared_ptr<Material> material;
-		std::shared_ptr<Texture> albedoTexture;
-		std::shared_ptr<Texture> specTexture;
-		std::unordered_map<BufferBindingPoint, ShaderData> shaderData;
+		std::shared_ptr<clv::gfx::Texture> albedoTexture;
+		std::shared_ptr<clv::gfx::Texture> specTexture;
+		std::unordered_map<clv::gfx::BufferBindingPoint, clv::gfx::ShaderData> shaderData;
 
 		//FUNCTIONS
 	public:
@@ -33,13 +36,13 @@ namespace clv::gfx{
 		void bind();
 
 		template<typename DataType>
-		void setData(BufferBindingPoint bindingPoint, DataType&& data, gfx::ShaderType shaderType);
+		void setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderType shaderType);
 
 		void setAlbedoTexture(const std::string& path);
-		void setAlbedoTexture(const std::shared_ptr<Texture>& texture);
+		void setAlbedoTexture(const std::shared_ptr<clv::gfx::Texture>& texture);
 
 		void setSpecularTexture(const std::string& path);
-		void setSpecularTexture(const std::shared_ptr<Texture>& texture);
+		void setSpecularTexture(const std::shared_ptr<clv::gfx::Texture>& texture);
 	};
 }
 

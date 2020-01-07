@@ -1,10 +1,13 @@
-#include "Clove/Graphics/Core/Renderables/Mesh.hpp"
+#include "Tunic/Rendering/Renderables/Mesh.hpp"
 
 #include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 #include "Clove/Graphics/Core/Resources/Buffer.hpp"
 #include "Clove/Core/Utils/MeshLoader.hpp"
 
-namespace clv::gfx{
+using namespace clv;
+using namespace clv::gfx;
+
+namespace tnc::rnd{
 	Mesh::Mesh(std::string filePath, MaterialInstance materialInstance)
 		: materialInstance(std::move(materialInstance))
 		, loadedBufferData(VertexLayout{}){//NOTE: initialising it like this is potentially dangerous
@@ -14,7 +17,7 @@ namespace clv::gfx{
 		indices = info.indices;
 
 		VertexLayout layout; //Layout should be all possible data a mesh could have (biggest size)
-		layout.add(gfx::VertexElementType::position3D).add(VertexElementType::texture2D).add(VertexElementType::normal);
+		layout.add(VertexElementType::position3D).add(VertexElementType::texture2D).add(VertexElementType::normal);
 		
 		loadedBufferData = { layout };
 		loadedBufferData.resize(vertexCount);

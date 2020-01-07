@@ -9,8 +9,8 @@
 #include "Tunic/ECS/UI/Components/WidgetComponent.hpp"
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
 #include "Clove/Graphics/Core/GraphicsGlobal.hpp"
-#include "Clove/Graphics/Core/Renderables/Mesh.hpp"
-#include "Clove/Graphics/Core/Renderables/Sprite.hpp"
+#include "Tunic/Rendering/Renderables/Mesh.hpp"
+#include "Tunic/Rendering/Renderables/Sprite.hpp"
 #include "Clove/Graphics/Core/Shader.hpp"
 #include "Clove/Graphics/Core/PipelineObject.hpp"
 #include "Clove/Platform/Core/Window.hpp"
@@ -20,13 +20,13 @@ using namespace clv::gfx;
 
 namespace tnc::ecs::_2D{
 	struct SceneData{
-		std::shared_ptr<gfx::Mesh> spriteMesh;
-		std::shared_ptr<gfx::Mesh> widgetMesh;
-		std::shared_ptr<gfx::Mesh> characterMesh;
+		std::shared_ptr<rnd::Mesh> spriteMesh;
+		std::shared_ptr<rnd::Mesh> widgetMesh;
+		std::shared_ptr<rnd::Mesh> characterMesh;
 
-		std::vector<std::shared_ptr<Sprite>> spritesToRender;
-		std::vector<std::shared_ptr<Sprite>> widgetsToRender;
-		std::vector<std::shared_ptr<Sprite>> charactersToRender;
+		std::vector<std::shared_ptr<rnd::Sprite>> spritesToRender;
+		std::vector<std::shared_ptr<rnd::Sprite>> widgetsToRender;
+		std::vector<std::shared_ptr<rnd::Sprite>> charactersToRender;
 
 		std::shared_ptr<PipelineObject> spritePipelineObject;
 		std::shared_ptr<PipelineObject> charPipelineObject;
@@ -53,8 +53,8 @@ namespace tnc::ecs::_2D{
 			bufferData.emplaceBack(mth::vec2f{ -0.5f,  0.5f }, mth::vec2f{ 0.0f, 1.0f });
 			bufferData.emplaceBack(mth::vec2f{  0.5f,  0.5f }, mth::vec2f{ 1.0f, 1.0f });
 
-			auto spriteMaterial = std::make_shared<gfx::Material>();
-			currentSceneData->spriteMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
+			auto spriteMaterial = std::make_shared<rnd::Material>();
+			currentSceneData->spriteMesh = std::make_shared<rnd::Mesh>(bufferData, indices, spriteMaterial->createInstance());
 		}
 
 		//Widget mesh
@@ -66,8 +66,8 @@ namespace tnc::ecs::_2D{
 			bufferData.emplaceBack(mth::vec2f{ 0.0f,  0.0f }, mth::vec2f{ 0.0f, 1.0f });
 			bufferData.emplaceBack(mth::vec2f{ 1.0f,  0.0f }, mth::vec2f{ 1.0f, 1.0f });
 
-			auto spriteMaterial = std::make_shared<gfx::Material>();
-			currentSceneData->widgetMesh = std::make_shared<gfx::Mesh>(bufferData, indices, spriteMaterial->createInstance());
+			auto spriteMaterial = std::make_shared<rnd::Material>();
+			currentSceneData->widgetMesh = std::make_shared<rnd::Mesh>(bufferData, indices, spriteMaterial->createInstance());
 		}
 
 		//Font mesh
@@ -79,8 +79,8 @@ namespace tnc::ecs::_2D{
 			bufferData.emplaceBack(mth::vec2f{ 0.0f,  1.0f }, mth::vec2f{ 0.0f, 0.0f });
 			bufferData.emplaceBack(mth::vec2f{ 1.0f,  1.0f }, mth::vec2f{ 1.0f, 0.0f });
 
-			auto characterMaterial = std::make_shared<gfx::Material>();
-			currentSceneData->characterMesh = std::make_shared<gfx::Mesh>(bufferData, indices, characterMaterial->createInstance());
+			auto characterMaterial = std::make_shared<rnd::Material>();
+			currentSceneData->characterMesh = std::make_shared<rnd::Mesh>(bufferData, indices, characterMaterial->createInstance());
 		}
 
 		currentSceneData->spritePipelineObject = global::graphicsFactory->createPipelineObject(global::graphicsFactory->createShader({ ShaderStyle::Unlit_2D }));
@@ -209,7 +209,7 @@ namespace tnc::ecs::_2D{
 						model = mth::translate(mth::mat4f(1.0f), { xpos, ypos, 0.0f });
 						model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
-						auto character = std::make_shared<gfx::Sprite>(texture);
+						auto character = std::make_shared<rnd::Sprite>(texture);
 						character->setModelData(projection * model);
 
 						currentSceneData->charactersToRender.push_back(character);
@@ -233,7 +233,7 @@ namespace tnc::ecs::_2D{
 		//Sprites / Widgets
 		global::graphicsDevice->bindPipelineObject(*currentSceneData->spritePipelineObject);
 		{
-			const auto draw = [](const std::shared_ptr<Sprite>& sprite){
+			const auto draw = [](const std::shared_ptr<rnd::Sprite>& sprite){
 				auto& renderMeshMaterial = currentSceneData->spriteMesh->getMaterialInstance();
 				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
@@ -257,7 +257,7 @@ namespace tnc::ecs::_2D{
 
 		//Widgets
 		{
-			const auto draw = [](const std::shared_ptr<Sprite>& sprite){
+			const auto draw = [](const std::shared_ptr<rnd::Sprite>& sprite){
 				auto& renderMeshMaterial = currentSceneData->widgetMesh->getMaterialInstance();
 				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
 				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
@@ -282,7 +282,7 @@ namespace tnc::ecs::_2D{
 		//Characters
 		global::graphicsDevice->bindPipelineObject(*currentSceneData->charPipelineObject);
 		{
-			const auto draw = [](const std::shared_ptr<Sprite>& character){
+			const auto draw = [](const std::shared_ptr<rnd::Sprite>& character){
 				auto& charMat = currentSceneData->characterMesh->getMaterialInstance();
 				charMat.setAlbedoTexture(character->getTexture());
 				charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);

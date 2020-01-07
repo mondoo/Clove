@@ -1,10 +1,12 @@
-#include "Clove/Graphics/Core/MaterialInstance.hpp"
+#include "Tunic/Rendering/MaterialInstance.hpp"
 
-#include "Clove/Graphics/Core/Material.hpp"
+#include "Tunic/Rendering/Material.hpp"
 #include "Clove/Graphics/Core/Resources/Texture.hpp"
 #include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 
-namespace clv::gfx{
+using namespace clv::gfx;
+
+namespace tnc::rnd{
 	MaterialInstance::MaterialInstance(std::shared_ptr<Material> material)
 		: material(std::move(material)){
 	}

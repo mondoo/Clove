@@ -1,10 +1,13 @@
-#include "Clove/Graphics/Core/Renderables/Sprite.hpp"
+#include "Tunic/Rendering/Renderables/Sprite.hpp"
 
 #include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 #include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Clove/Graphics/Core/Material.hpp"
+#include "Tunic/Rendering/Material.hpp"
 
-namespace clv::gfx{
+using namespace clv;
+using namespace clv::gfx;
+
+namespace tnc::rnd{
 	Sprite::Sprite(){
 		uint32 white = 0xffffffff;
 		TextureDescriptor descriptor{};

@@ -10,12 +10,13 @@
 #include "Clove/Graphics/Core/PipelineObject.hpp"
 #include "Clove/Graphics/Core/Resources/Texture.hpp"
 #include "Clove/Graphics/Core/ShaderBufferTypes.hpp"
-#include "Clove/Graphics/Core/Renderables/Mesh.hpp"
-#include "Clove/Graphics/Core/MaterialInstance.hpp"
+#include "Tunic/Rendering/Renderables/Mesh.hpp"
+#include "Tunic/Rendering/MaterialInstance.hpp"
 #include "Clove/Platform/Core/Window.hpp"
 
 using namespace clv;
 using namespace clv::gfx;
+using namespace tnc::rnd;
 
 namespace tnc::ecs::_3D{
 	struct ComposedCameraData{

@@ -4,8 +4,8 @@
 #include <Tunic/ECS/Core/Manager.hpp>
 #include <Tunic/ECS/3D/Components/TransformComponent.hpp>
 #include <Tunic/ECS/3D/Components/MeshComponent.hpp>
-#include <Clove/Graphics/Core/Renderables/Mesh.hpp>
-#include <Clove/Graphics/Core/Material.hpp>
+#include <Tunic/Rendering/Renderables/Mesh.hpp>
+#include <Tunic/Rendering/Material.hpp>
 
 namespace Bulb::Core{
 	Entity::Entity(tnc::ecs::EntityID ID){
@@ -25,8 +25,8 @@ namespace Bulb::Core{
 	}
 
 	void Entity::addMeshComponent(){
-		auto material = std::make_shared<clv::gfx::Material>();
-		auto mesh = std::make_shared<clv::gfx::Mesh>("res/Objects/cube.obj", material->createInstance());
+		auto material = std::make_shared<tnc::rnd::Material>();
+		auto mesh = std::make_shared<tnc::rnd::Mesh>("res/Objects/cube.obj", material->createInstance());
 		tnc::Application::get().getManager().addComponent<tnc::ecs::_3D::MeshComponent>(ID, mesh);
 		auto comp = gcnew Component();
 		comp->name = "Mesh Component";
