@@ -3,32 +3,32 @@
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/D3DShader.hpp"
 #if CLV_DEBUG
-#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
+	#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
 #endif
 
 namespace clv::gfx::d3d{
 	D3DPipelineObject::D3DPipelineObject(ID3D11Device& d3dDevice, const std::shared_ptr<Shader>& shader)
 		: shader(shader){
-		const auto dxShader = std::static_pointer_cast<D3DShader>(shader);
+		const auto d3dShader = std::static_pointer_cast<D3DShader>(shader);
 
-		shaderReflectionData = shader->getReflectionData();
+		shaderReflectionData = d3dShader->getReflectionData();
 		const auto& layout = shaderReflectionData.vertexBufferLayout;
 
-		std::vector<D3D11_INPUT_ELEMENT_DESC> dxElements;
-		dxElements.reserve(layout.count());
+		std::vector<D3D11_INPUT_ELEMENT_DESC> d3dElements;
+		d3dElements.reserve(layout.count());
 
 		for(int32 i = 0; i < layout.count(); ++i){
 			const auto& element = layout.resolve(i);
 			const VertexElementType elementType = element.getType();
 			const UINT alignmentOffset = (i > 0) ? D3D11_APPEND_ALIGNED_ELEMENT : 0;
 
-			dxElements.push_back({ element.getSemantic(), 0, getDXGIFormatFromType(elementType), 0, alignmentOffset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+			d3dElements.push_back({ element.getSemantic(), 0, getDXGIFormatFromType(elementType), 0, alignmentOffset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 		}
 
-		auto [vertexByteData, vertexByteSize] = dxShader->getVertexByteData();
+		auto [vertexByteData, vertexByteSize] = d3dShader->getVertexByteData();
 
 		DX11_INFO_PROVIDER;
-		DX11_THROW_INFO(d3dDevice.CreateInputLayout(dxElements.data(), static_cast<UINT>(dxElements.size()), vertexByteData, vertexByteSize, &inputLayout));
+		DX11_THROW_INFO(d3dDevice.CreateInputLayout(d3dElements.data(), static_cast<UINT>(d3dElements.size()), vertexByteData, vertexByteSize, &inputLayout));
 	}
 
 	D3DPipelineObject::D3DPipelineObject(D3DPipelineObject&& other) = default;

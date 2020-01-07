@@ -1,9 +1,9 @@
-cbuffer viewBuffer : register(b0){
+cbuffer viewBuffer : register(b1){
 	matrix view;
 	matrix projection;
 };
 
-cbuffer modelBuffer : register(b3){
+cbuffer modelBuffer : register(b4){
     matrix model;
     matrix normalMatrix;
 }

@@ -75,12 +75,12 @@
 // albedoTexture                     texture  float4          2d             t1      1 
 // specularTexture                   texture  float4          2d             t2      1 
 // shadowDepthMap                    texture  float4   cubearray             t3      1 
-// PointLightBuffer                  cbuffer      NA          NA            cb1      1 
-// ViewBuffer                        cbuffer      NA          NA            cb2      1 
-// MaterialBuffer                    cbuffer      NA          NA            cb4      1 
-// lightPosBuffer                    cbuffer      NA          NA            cb7      1 
-// lightNumBuffer                    cbuffer      NA          NA            cb8      1 
-// colourDataBuffer                  cbuffer      NA          NA           cb11      1 
+// PointLightBuffer                  cbuffer      NA          NA            cb2      1 
+// ViewBuffer                        cbuffer      NA          NA            cb3      1 
+// MaterialBuffer                    cbuffer      NA          NA            cb5      1 
+// lightPosBuffer                    cbuffer      NA          NA            cb8      1 
+// lightNumBuffer                    cbuffer      NA          NA            cb9      1 
+// colourDataBuffer                  cbuffer      NA          NA           cb12      1 
 //
 //
 //
@@ -121,12 +121,12 @@ dcl_immediateConstantBuffer { { 1.000000, 1.000000, 1.000000, 0},
                               { 0, -1.000000, 1.000000, 0},
                               { 0, -1.000000, -1.000000, 0},
                               { 0, 1.000000, -1.000000, 0} }
-dcl_constantbuffer CB1[40], dynamicIndexed
-dcl_constantbuffer CB2[1], immediateIndexed
-dcl_constantbuffer CB4[1], immediateIndexed
-dcl_constantbuffer CB7[10], dynamicIndexed
-dcl_constantbuffer CB8[1], immediateIndexed
-dcl_constantbuffer CB11[1], immediateIndexed
+dcl_constantbuffer CB2[40], dynamicIndexed
+dcl_constantbuffer CB3[1], immediateIndexed
+dcl_constantbuffer CB5[1], immediateIndexed
+dcl_constantbuffer CB8[10], dynamicIndexed
+dcl_constantbuffer CB9[1], immediateIndexed
+dcl_constantbuffer CB12[1], immediateIndexed
 dcl_sampler s1, mode_default
 dcl_sampler s2, mode_default
 dcl_sampler s3, mode_default
@@ -141,54 +141,54 @@ dcl_temps 11
 dp3 r0.x, v2.xyzx, v2.xyzx
 rsq r0.x, r0.x
 mul r0.xyz, r0.xxxx, v2.xyzx
-add r1.xyz, -v1.xyzx, cb2[0].xyzx
+add r1.xyz, -v1.xyzx, cb3[0].xyzx
 dp3 r0.w, r1.xyzx, r1.xyzx
 rsq r1.w, r0.w
 mul r1.xyz, r1.wwww, r1.xyzx
 sample_indexable(texture2d)(float,float,float,float) r2.xyz, v0.xyxx, t1.xyzw, s1
 sample_indexable(texture2d)(float,float,float,float) r3.xyz, v0.xyxx, t2.xyzw, s2
-utof r1.w, cb8[0].x
+utof r1.w, cb9[0].x
 sqrt r0.w, r0.w
 mov r4.xyz, l(0,0,0,0)
 mov r2.w, l(0)
 loop 
-  uge r3.w, r2.w, cb8[0].x
+  uge r3.w, r2.w, cb9[0].x
   breakc_nz r3.w
   ishl r3.w, r2.w, l(2)
-  add r5.xyz, -v1.xyzx, cb1[r3.w + 0].xyzx
+  add r5.xyz, -v1.xyzx, cb2[r3.w + 0].xyzx
   dp3 r4.w, r5.xyzx, r5.xyzx
   rsq r5.w, r4.w
   mul r5.xyz, r5.wwww, r5.xyzx
-  mul r6.xyz, r2.xyzx, cb1[r3.w + 1].xyzx
+  mul r6.xyz, r2.xyzx, cb2[r3.w + 1].xyzx
   dp3 r5.w, r0.xyzx, r5.xyzx
   max r5.w, r5.w, l(0.000000)
-  mul r7.xyz, r5.wwww, cb1[r3.w + 2].xyzx
+  mul r7.xyz, r5.wwww, cb2[r3.w + 2].xyzx
   mul r7.xyz, r2.xyzx, r7.xyzx
-  mul r7.xyz, r7.xyzx, cb11[0].xyzx
+  mul r7.xyz, r7.xyzx, cb12[0].xyzx
   dp3 r5.w, -r5.xyzx, r0.xyzx
   add r5.w, r5.w, r5.w
   mad r5.xyz, r0.xyzx, -r5.wwww, -r5.xyzx
   dp3 r5.x, r1.xyzx, r5.xyzx
   max r5.x, r5.x, l(0.000000)
   log r5.x, r5.x
-  mul r5.x, r5.x, cb4[0].x
+  mul r5.x, r5.x, cb5[0].x
   exp r5.x, r5.x
-  mul r5.xyz, r5.xxxx, cb1[r3.w + 3].xyzx
+  mul r5.xyz, r5.xxxx, cb2[r3.w + 3].xyzx
   mul r5.xyz, r3.xyzx, r5.xyzx
   sqrt r5.w, r4.w
-  mad r5.w, cb1[r3.w + 1].w, r5.w, cb1[r3.w + 0].w
-  mad r3.w, cb1[r3.w + 2].w, r4.w, r5.w
+  mad r5.w, cb2[r3.w + 1].w, r5.w, cb2[r3.w + 0].w
+  mad r3.w, cb2[r3.w + 2].w, r4.w, r5.w
   div r3.w, l(1.000000, 1.000000, 1.000000, 1.000000), r3.w
   mul r5.xyz, r3.wwww, r5.xyzx
   mov r4.w, l(0)
   mov r5.w, l(0)
   loop 
-    uge r6.w, r5.w, cb8[0].x
+    uge r6.w, r5.w, cb9[0].x
     breakc_nz r6.w
-    add r8.xyz, v1.xyzx, -cb7[r5.w + 0].xyzx
+    add r8.xyz, v1.xyzx, -cb8[r5.w + 0].xyzx
     dp3 r6.w, r8.xyzx, r8.xyzx
     sqrt r6.w, r6.w
-    div r7.w, r0.w, cb7[r5.w + 0].w
+    div r7.w, r0.w, cb8[r5.w + 0].w
     add r7.w, r7.w, l(1.000000)
     mul r7.w, r7.w, l(0.040000)
     utof r9.w, r5.w
@@ -200,7 +200,7 @@ loop
       breakc_nz r10.y
       mad r9.xyz, icb[r10.x + 0].xyzx, r7.wwww, r8.xyzx
       sample_indexable(texturecubearray)(float,float,float,float) r9.x, r9.xyzw, t3.xyzw, s3
-      mul r9.x, r9.x, cb7[r5.w + 0].w
+      mul r9.x, r9.x, cb8[r5.w + 0].w
       lt r9.x, r9.x, r6.w
       add r9.y, r8.w, l(1.000000)
       movc r8.w, r9.x, r9.y, r8.w
@@ -225,10 +225,10 @@ ret
 
 const BYTE shader_Lit_ps[] =
 {
-     68,  88,  66,  67,  68,  42, 
-    105,  54, 204,  54, 246, 255, 
-     63, 237,  73, 200,  45,  44, 
-    204, 170,   1,   0,   0,   0, 
+     68,  88,  66,  67, 201,  20, 
+    144, 195, 201,  27,  10, 106, 
+     74,  89, 152,  81, 175, 166, 
+     21,   3,   1,   0,   0,   0, 
     232,  18,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
     168,   6,   0,   0,  28,   7, 
@@ -280,34 +280,34 @@ const BYTE shader_Lit_ps[] =
      26,   2,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   1,   0,   0,   0, 
+      0,   0,   2,   0,   0,   0, 
       1,   0,   0,   0,   1,   0, 
       0,   0,  43,   2,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   0,   0,   2,   0, 
+      0,   0,   0,   0,   3,   0, 
       0,   0,   1,   0,   0,   0, 
       1,   0,   0,   0,  54,   2, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      4,   0,   0,   0,   1,   0, 
+      5,   0,   0,   0,   1,   0, 
       0,   0,   1,   0,   0,   0, 
      69,   2,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   7,   0,   0,   0, 
+      0,   0,   8,   0,   0,   0, 
       1,   0,   0,   0,   1,   0, 
       0,   0,  84,   2,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   0,   0,   8,   0, 
+      0,   0,   0,   0,   9,   0, 
       0,   0,   1,   0,   0,   0, 
       1,   0,   0,   0,  99,   2, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-     11,   0,   0,   0,   1,   0, 
+     12,   0,   0,   0,   1,   0, 
       0,   0,   1,   0,   0,   0, 
      97, 108,  98, 101, 100, 111, 
      83,  97, 109, 112, 108, 101, 
@@ -596,20 +596,20 @@ const BYTE shader_Lit_ps[] =
       0,   0, 128,  63,   0,   0, 
     128, 191,   0,   0,   0,   0, 
      89,   8,   0,   4,  70, 142, 
-     32,   0,   1,   0,   0,   0, 
+     32,   0,   2,   0,   0,   0, 
      40,   0,   0,   0,  89,   0, 
       0,   4,  70, 142,  32,   0, 
-      2,   0,   0,   0,   1,   0, 
+      3,   0,   0,   0,   1,   0, 
       0,   0,  89,   0,   0,   4, 
-     70, 142,  32,   0,   4,   0, 
+     70, 142,  32,   0,   5,   0, 
       0,   0,   1,   0,   0,   0, 
      89,   8,   0,   4,  70, 142, 
-     32,   0,   7,   0,   0,   0, 
+     32,   0,   8,   0,   0,   0, 
      10,   0,   0,   0,  89,   0, 
       0,   4,  70, 142,  32,   0, 
-      8,   0,   0,   0,   1,   0, 
+      9,   0,   0,   0,   1,   0, 
       0,   0,  89,   0,   0,   4, 
-     70, 142,  32,   0,  11,   0, 
+     70, 142,  32,   0,  12,   0, 
       0,   0,   1,   0,   0,   0, 
      90,   0,   0,   3,   0,  96, 
      16,   0,   1,   0,   0,   0, 
@@ -651,7 +651,7 @@ const BYTE shader_Lit_ps[] =
      16,   0,   1,   0,   0,   0, 
      70,  18,  16, 128,  65,   0, 
       0,   0,   1,   0,   0,   0, 
-     70, 130,  32,   0,   2,   0, 
+     70, 130,  32,   0,   3,   0, 
       0,   0,   0,   0,   0,   0, 
      16,   0,   0,   7, 130,   0, 
      16,   0,   0,   0,   0,   0, 
@@ -683,7 +683,7 @@ const BYTE shader_Lit_ps[] =
       0,   0,  86,   0,   0,   6, 
     130,   0,  16,   0,   1,   0, 
       0,   0,  10, 128,  32,   0, 
-      8,   0,   0,   0,   0,   0, 
+      9,   0,   0,   0,   0,   0, 
       0,   0,  75,   0,   0,   5, 
     130,   0,  16,   0,   0,   0, 
       0,   0,  58,   0,  16,   0, 
@@ -701,7 +701,7 @@ const BYTE shader_Lit_ps[] =
      16,   0,   3,   0,   0,   0, 
      58,   0,  16,   0,   2,   0, 
       0,   0,  10, 128,  32,   0, 
-      8,   0,   0,   0,   0,   0, 
+      9,   0,   0,   0,   0,   0, 
       0,   0,   3,   0,   4,   3, 
      58,   0,  16,   0,   3,   0, 
       0,   0,  41,   0,   0,   7, 
@@ -713,7 +713,7 @@ const BYTE shader_Lit_ps[] =
      16,   0,   5,   0,   0,   0, 
      70,  18,  16, 128,  65,   0, 
       0,   0,   1,   0,   0,   0, 
-     70, 130,  32,   4,   1,   0, 
+     70, 130,  32,   4,   2,   0, 
       0,   0,  58,   0,  16,   0, 
       3,   0,   0,   0,  16,   0, 
       0,   7, 130,   0,  16,   0, 
@@ -732,7 +732,7 @@ const BYTE shader_Lit_ps[] =
     114,   0,  16,   0,   6,   0, 
       0,   0,  70,   2,  16,   0, 
       2,   0,   0,   0,  70, 130, 
-     32,   6,   1,   0,   0,   0, 
+     32,   6,   2,   0,   0,   0, 
       1,   0,   0,   0,  58,   0, 
      16,   0,   3,   0,   0,   0, 
      16,   0,   0,   7, 130,   0, 
@@ -748,7 +748,7 @@ const BYTE shader_Lit_ps[] =
     114,   0,  16,   0,   7,   0, 
       0,   0, 246,  15,  16,   0, 
       5,   0,   0,   0,  70, 130, 
-     32,   6,   1,   0,   0,   0, 
+     32,   6,   2,   0,   0,   0, 
       2,   0,   0,   0,  58,   0, 
      16,   0,   3,   0,   0,   0, 
      56,   0,   0,   7, 114,   0, 
@@ -759,7 +759,7 @@ const BYTE shader_Lit_ps[] =
       0,   8, 114,   0,  16,   0, 
       7,   0,   0,   0,  70,   2, 
      16,   0,   7,   0,   0,   0, 
-     70, 130,  32,   0,  11,   0, 
+     70, 130,  32,   0,  12,   0, 
       0,   0,   0,   0,   0,   0, 
      16,   0,   0,   8, 130,   0, 
      16,   0,   5,   0,   0,   0, 
@@ -795,7 +795,7 @@ const BYTE shader_Lit_ps[] =
      16,   0,   5,   0,   0,   0, 
      10,   0,  16,   0,   5,   0, 
       0,   0,  10, 128,  32,   0, 
-      4,   0,   0,   0,   0,   0, 
+      5,   0,   0,   0,   0,   0, 
       0,   0,  25,   0,   0,   5, 
      18,   0,  16,   0,   5,   0, 
       0,   0,  10,   0,  16,   0, 
@@ -803,7 +803,7 @@ const BYTE shader_Lit_ps[] =
       0,  10, 114,   0,  16,   0, 
       5,   0,   0,   0,   6,   0, 
      16,   0,   5,   0,   0,   0, 
-     70, 130,  32,   6,   1,   0, 
+     70, 130,  32,   6,   2,   0, 
       0,   0,   3,   0,   0,   0, 
      58,   0,  16,   0,   3,   0, 
       0,   0,  56,   0,   0,   7, 
@@ -817,16 +817,16 @@ const BYTE shader_Lit_ps[] =
       0,   0,  50,   0,   0,  14, 
     130,   0,  16,   0,   5,   0, 
       0,   0,  58, 128,  32,   6, 
-      1,   0,   0,   0,   1,   0, 
+      2,   0,   0,   0,   1,   0, 
       0,   0,  58,   0,  16,   0, 
       3,   0,   0,   0,  58,   0, 
      16,   0,   5,   0,   0,   0, 
-     58, 128,  32,   4,   1,   0, 
+     58, 128,  32,   4,   2,   0, 
       0,   0,  58,   0,  16,   0, 
       3,   0,   0,   0,  50,   0, 
       0,  12, 130,   0,  16,   0, 
       3,   0,   0,   0,  58, 128, 
-     32,   6,   1,   0,   0,   0, 
+     32,   6,   2,   0,   0,   0, 
       2,   0,   0,   0,  58,   0, 
      16,   0,   3,   0,   0,   0, 
      58,   0,  16,   0,   4,   0, 
@@ -854,7 +854,7 @@ const BYTE shader_Lit_ps[] =
     130,   0,  16,   0,   6,   0, 
       0,   0,  58,   0,  16,   0, 
       5,   0,   0,   0,  10, 128, 
-     32,   0,   8,   0,   0,   0, 
+     32,   0,   9,   0,   0,   0, 
       0,   0,   0,   0,   3,   0, 
       4,   3,  58,   0,  16,   0, 
       6,   0,   0,   0,   0,   0, 
@@ -862,7 +862,7 @@ const BYTE shader_Lit_ps[] =
       8,   0,   0,   0,  70,  18, 
      16,   0,   1,   0,   0,   0, 
      70, 130,  32, 132,  65,   0, 
-      0,   0,   7,   0,   0,   0, 
+      0,   0,   8,   0,   0,   0, 
      58,   0,  16,   0,   5,   0, 
       0,   0,  16,   0,   0,   7, 
     130,   0,  16,   0,   6,   0, 
@@ -876,7 +876,7 @@ const BYTE shader_Lit_ps[] =
     130,   0,  16,   0,   7,   0, 
       0,   0,  58,   0,  16,   0, 
       0,   0,   0,   0,  58, 128, 
-     32,   4,   7,   0,   0,   0, 
+     32,   4,   8,   0,   0,   0, 
      58,   0,  16,   0,   5,   0, 
       0,   0,   0,   0,   0,   7, 
     130,   0,  16,   0,   7,   0, 
@@ -927,7 +927,7 @@ const BYTE shader_Lit_ps[] =
       0,   9,  18,   0,  16,   0, 
       9,   0,   0,   0,  10,   0, 
      16,   0,   9,   0,   0,   0, 
-     58, 128,  32,   4,   7,   0, 
+     58, 128,  32,   4,   8,   0, 
       0,   0,  58,   0,  16,   0, 
       5,   0,   0,   0,  49,   0, 
       0,   7,  18,   0,  16,   0, 

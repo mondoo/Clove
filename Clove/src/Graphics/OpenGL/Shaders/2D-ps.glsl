@@ -6,7 +6,7 @@ layout(binding = 1) uniform sampler2D albedoSampler;
 
 layout(location = 0) out vec4 fragmentColour;
 
-layout(std140, binding = 11) uniform colourDataBuffer{
+layout(std140, binding = 12) uniform colourDataBuffer{
 	vec4 colour;
 };
 

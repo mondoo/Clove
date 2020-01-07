@@ -9,8 +9,6 @@
 	#include "Clove/Graphics/OpenGL/WGLSurface.hpp"
 #elif CLV_PLATFORM_LINUX
 	#include "Clove/Graphics/OpenGL/GLXSurface.hpp"
-#elif CLV_PLATFORM_MACOS
-	#include "Clove/Graphics/OpenGL/CGLSurface.hpp"
 #endif
 
 namespace clv::gfx::ogl{
@@ -47,8 +45,6 @@ namespace clv::gfx::ogl{
 		return std::make_shared<WGLSurface>(windowData);
 	#elif CLV_PLATFORM_LINUX
 		return std::make_shared<GLXSurface>(windowData);
-	#elif CLV_PLATFORM_MACOS
-		return std::make_shared<CGLSurface>(windowData);
 	#endif
 	}
 }

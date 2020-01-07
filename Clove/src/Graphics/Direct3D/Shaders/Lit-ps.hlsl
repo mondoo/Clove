@@ -18,15 +18,15 @@ struct PointLight{
 	float quadratic;
 	float3 specular;
 };
-cbuffer PointLightBuffer : register(b1){
+cbuffer PointLightBuffer : register(b2){
 	PointLight lights[MAX_LIGHTS];
 };
 
-cbuffer ViewBuffer : register(b2){
+cbuffer ViewBuffer : register(b3){
     float3 viewPos;
 }
 
-cbuffer MaterialBuffer : register(b4){
+cbuffer MaterialBuffer : register(b5){
     float shininess;
 }
 
@@ -34,15 +34,15 @@ struct LightPos{
 	float3 lightPosition;
 	float farplane;
 };
-cbuffer lightPosBuffer : register(b7){
+cbuffer lightPosBuffer : register(b8){
 	LightPos lightPositions[MAX_LIGHTS];
 }
 
-cbuffer lightNumBuffer : register(b8){
+cbuffer lightNumBuffer : register(b9){
 	unsigned int numLights;
 }
 
-cbuffer colourDataBuffer : register(b11){
+cbuffer colourDataBuffer : register(b12){
 	float4 colour;
 }
 

@@ -18,4 +18,14 @@ namespace clv::plt{
 		return std::make_unique<plt::MacPlatform>();
 	#endif
 	}
+
+	clv::gfx::API Platform::getPlatformPreferedAPI(){
+	#if CLV_PLATFORM_WINDOWS
+		return clv::gfx::API::Direct3D11;
+	#elif CLV_PLATFORM_LINUX
+		return clv::gfx::API::OpenGL4;
+	#elif CLV_PLATFORM_MACOS
+		return clv::gfx::API::Metal1;
+	#endif
+	}
 }

@@ -1,4 +1,4 @@
-cbuffer lightPosBuffer : register (b10){
+cbuffer lightPosBuffer : register (b11){
 	float3 lightPosition;
 	float farplane;
 }

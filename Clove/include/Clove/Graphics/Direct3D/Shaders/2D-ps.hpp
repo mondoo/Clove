@@ -19,7 +19,7 @@
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // albedoSampler                     sampler      NA          NA             s1      1 
 // albedoTexture                     texture  float4          2d             t1      1 
-// colourBufferData                  cbuffer      NA          NA           cb11      1 
+// colourBufferData                  cbuffer      NA          NA           cb12      1 
 //
 //
 //
@@ -38,24 +38,24 @@
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed
-dcl_constantbuffer CB11[1], immediateIndexed
+dcl_constantbuffer CB12[1], immediateIndexed
 dcl_sampler s1, mode_default
 dcl_resource_texture2d (float,float,float,float) t1
 dcl_input_ps linear v0.xy
 dcl_output o0.xyzw
 dcl_temps 1
 sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v0.xyxx, t1.xyzw, s1
-mul o0.xyzw, r0.xyzw, cb11[0].xyzw
+mul o0.xyzw, r0.xyzw, cb12[0].xyzw
 ret 
 // Approximately 3 instruction slots used
 #endif
 
 const BYTE shader_2D_ps[] =
 {
-     68,  88,  66,  67,  87,  33, 
-    130, 219, 118, 179, 167,  79, 
-    202, 207, 159, 181, 123, 222, 
-    208, 198,   1,   0,   0,   0, 
+     68,  88,  66,  67, 212, 218, 
+    152, 155,  27,  12,   0,  12, 
+    119, 220, 229, 137,  25,  16, 
+    252, 110,   1,   0,   0,   0, 
      88,   3,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
     164,   1,   0,   0, 216,   1, 
@@ -86,7 +86,7 @@ const BYTE shader_2D_ps[] =
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-     11,   0,   0,   0,   1,   0, 
+     12,   0,   0,   0,   1,   0, 
       0,   0,   1,   0,   0,   0, 
      97, 108,  98, 101, 100, 111, 
      83,  97, 109, 112, 108, 101, 
@@ -144,7 +144,7 @@ const BYTE shader_2D_ps[] =
       0,   0,  42,   0,   0,   0, 
     106,   8,   0,   1,  89,   0, 
       0,   4,  70, 142,  32,   0, 
-     11,   0,   0,   0,   1,   0, 
+     12,   0,   0,   0,   1,   0, 
       0,   0,  90,   0,   0,   3, 
       0,  96,  16,   0,   1,   0, 
       0,   0,  88,  24,   0,   4, 
@@ -166,7 +166,7 @@ const BYTE shader_2D_ps[] =
       0,   8, 242,  32,  16,   0, 
       0,   0,   0,   0,  70,  14, 
      16,   0,   0,   0,   0,   0, 
-     70, 142,  32,   0,  11,   0, 
+     70, 142,  32,   0,  12,   0, 
       0,   0,   0,   0,   0,   0, 
      62,   0,   0,   1,  83,  84, 
      65,  84, 148,   0,   0,   0, 

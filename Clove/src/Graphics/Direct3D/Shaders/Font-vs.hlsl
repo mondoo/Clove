@@ -1,4 +1,4 @@
-cbuffer viewBuffer : register(b5){
+cbuffer viewBuffer : register(b6){
 	matrix modelProjection;
 };
 

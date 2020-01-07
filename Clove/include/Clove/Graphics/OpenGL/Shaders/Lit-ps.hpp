@@ -43,15 +43,15 @@ struct SpotLight{
 	float outerCutOff;
 };
 
-layout (std140, binding = 1) uniform PointLightData{
+layout (std140, binding = 2) uniform PointLightData{
 	PointLight lights[MAX_LIGHTS];
 };
 
-layout (std140, binding = 2) uniform ViewData{
+layout (std140, binding = 3) uniform ViewData{
 	vec3 viewPos;
 };
 
-layout(std140, binding = 4) uniform Material{
+layout(std140, binding = 5) uniform Material{
 	float shininess;
 };
 
@@ -59,15 +59,15 @@ struct LightPos{
 	vec3 lightPosition;
 	float farPlane;
 };
-layout(std140, binding = 7) uniform lightPosBuffer {
+layout(std140, binding = 8) uniform lightPosBuffer {
 	LightPos lightPositions[MAX_LIGHTS];
 };
 
-layout(std140, binding = 8) uniform numLightBuffer{
+layout(std140, binding = 9) uniform numLightBuffer{
 	unsigned int numLights;
 };
 
-layout(std140, binding = 11) uniform colourDataBuffer{
+layout(std140, binding = 12) uniform colourDataBuffer{
 	vec4 colour;
 };
 
@@ -206,4 +206,5 @@ float shadowCalculation(vec3 fragPos, unsigned int shadowIndex){
 
 	return shadow;
 }
+
 )";

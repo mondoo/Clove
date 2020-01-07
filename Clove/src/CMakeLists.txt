@@ -85,6 +85,28 @@ set(
 )
 
 set(
+	MetalGraphicsFiles
+		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLBuffer.hpp
+		${CLV_SOURCE}/Graphics/Metal/Resources/MTLBuffer.mm
+		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLTexture.hpp
+		${CLV_SOURCE}/Graphics/Metal/Resources/MTLTexture.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTL.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTL.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLPipelineObject.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLPipelineObject.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLRenderDevice.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLRenderDevice.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLRenderFactory.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLRenderFactory.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLRenderTarget.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLRenderTarget.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLShader.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLShader.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLSurface.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLSurface.mm
+)
+
+set(
 	WindowsGLGraphicsFiles
 		${CLV_INCLUDE}/Graphics/OpenGL/WGLSurface.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/WGLSurface.cpp
@@ -94,12 +116,6 @@ set(
 	LinuxGLGraphicsFiles
 		${CLV_INCLUDE}/Graphics/OpenGL/GLXSurface.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/GLXSurface.cpp
-)
-
-set(
-	MacOSGLGraphicsFiles
-		${CLV_INCLUDE}/Graphics/OpenGL/CGLSurface.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/CGLSurface.mm
 )
 
 set(
@@ -228,8 +244,7 @@ set(
 		${CLV_SOURCE}/Graphics/OpenGL/Shaders/Unlit-vs.glsl
 )
 
-#Parse the glsl shader files into a header 
-set(GLSLParsedShaders)
+#Parse the glsl shader files into a header
 set(GLSLShaderIncludeFile ${CLV_INCLUDE}/Graphics/OpenGL/ShaderStrings.hpp)
 file(WRITE ${GLSLShaderIncludeFile} "//cmake generated header file\n\n")
 foreach(shaderFile ${GLSLShaders})
@@ -241,7 +256,6 @@ foreach(shaderFile ${GLSLShaders})
 
 	configure_file(../cmake/glslHeader.in ${outFilePath})
 
-	set(GLSLParsedShaders ${GLSLParsedShaders} ${outFilePath})
 	file(APPEND ${GLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
 endforeach()
 
@@ -308,6 +322,37 @@ set(
 )
 
 set(
+	MSLShaders
+		${CLV_SOURCE}/Graphics/Metal/Shaders/2D.metal
+		${CLV_SOURCE}/Graphics/Metal/Shaders/Font.metal
+		${CLV_SOURCE}/Graphics/Metal/Shaders/Unlit.metal
+)
+
+set_source_files_properties(${MetalShaders} PROPERTIES LANGUAGE METAL)
+
+#Parse each metal shader file into a header
+set(MSLShaderIncudeFile ${CLV_INCLUDE}/Graphics/Metal/ShaderStrings.hpp)
+file(WRITE ${MSLShaderIncudeFile} "//cmake generated header file\n\n")
+foreach(shaderFile ${MSLShaders})
+	file(READ ${shaderFile} FILE_CONTENTS)
+	get_filename_component(fileName ${shaderFile} NAME_WLE)
+
+	set(STRING_NAME ${fileName})
+	set(outFilePath ${CLV_INCLUDE}/Graphics/Metal/Shaders/${fileName}.hpp)
+
+	configure_file(../cmake/glslHeader.in ${outFilePath})
+
+	file(APPEND ${MSLShaderIncudeFile} "#include \"Shaders/${fileName}.hpp\"\n")
+endforeach()
+
+set(
+	MetalGraphicsFiles
+		${MetalGraphicsFiles}
+		${MSLShaders}
+		${MSLShaderIncudeFile}
+)
+
+set(
 	AllFiles
 	${CoreFiles}
 		${CoreAudioFiles}
@@ -316,8 +361,8 @@ set(
 			${OpenGLGraphicsFiles}
 				${WindowsGLGraphicsFiles}
 				${LinuxGLGraphicsFiles}
-				${MacOSGLGraphicsFiles}
 			${Direct3DGraphicsFiles}
+			${MetalGraphicsFiles}
 		${CoreInputFiles}
 		${CoreMathsFiles}
 		${CorePlatformFiles}
@@ -330,7 +375,7 @@ set(
 
 #Organise the source tree
 file(GLOB_RECURSE header ${CLV_INCLUDE}/*.h ${CLV_INCLUDE}/*.hpp ${CLV_INCLUDE}/*.inl)
-file(GLOB_RECURSE source *.cpp *.m *.mm *.glsl *.hlsl)
+file(GLOB_RECURSE source *.cpp *.m *.mm *.glsl *.hlsl *.metal)
 source_group(TREE ${CLV_INCLUDE} FILES ${header})
 source_group(TREE ${CLV_SOURCE} FILES ${source})
 
@@ -348,9 +393,9 @@ target_sources(
 
 #Don't compile platform specific files
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set_source_files_properties(${LinuxGLGraphicsFiles} ${MacOSGLGraphicsFiles} ${LinuxPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+	set_source_files_properties(${LinuxGLGraphicsFiles} ${MetalGraphicsFiles} ${LinuxPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set_source_files_properties(${WindowsGLGraphicsFiles} ${MacOSGLGraphicsFiles} ${Direct3DGraphicsFiles} ${WindowsPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+	set_source_files_properties(${WindowsGLGraphicsFiles} ${Direct3DGraphicsFiles} ${MetalGraphicsFiles} ${WindowsPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	set_source_files_properties(${WindowsGLGraphicsFiles} ${LinuxGLGraphicsFiles} ${Direct3DGraphicsFiles} ${WindowsPlatformFiles} ${LinuxPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 endif()

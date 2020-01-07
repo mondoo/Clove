@@ -17,7 +17,7 @@
 //
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
-// viewBuffer                        cbuffer      NA          NA            cb5      1 
+// viewBuffer                        cbuffer      NA          NA            cb6      1 
 //
 //
 //
@@ -38,26 +38,26 @@
 //
 vs_5_0
 dcl_globalFlags refactoringAllowed
-dcl_constantbuffer CB5[4], immediateIndexed
+dcl_constantbuffer CB6[4], immediateIndexed
 dcl_input v0.xy
 dcl_input v1.xy
 dcl_output o0.xy
 dcl_output_siv o1.xyzw, position
 dcl_temps 1
 mad o0.xy, v1.xyxx, l(1.000000, -1.000000, 0.000000, 0.000000), l(0.000000, 1.000000, 0.000000, 0.000000)
-mul r0.xyzw, v0.yyyy, cb5[1].xyzw
-mad r0.xyzw, cb5[0].xyzw, v0.xxxx, r0.xyzw
-add o1.xyzw, r0.xyzw, cb5[3].xyzw
+mul r0.xyzw, v0.yyyy, cb6[1].xyzw
+mad r0.xyzw, cb6[0].xyzw, v0.xxxx, r0.xyzw
+add o1.xyzw, r0.xyzw, cb6[3].xyzw
 ret 
 // Approximately 5 instruction slots used
 #endif
 
 const BYTE shader_2D_vs[] =
 {
-     68,  88,  66,  67, 112, 180, 
-     42, 215,  82, 138, 130,  66, 
-     43, 124,  13, 143,  58, 212, 
-     93, 216,   1,   0,   0,   0, 
+     68,  88,  66,  67, 201, 160, 
+     36, 210, 174, 139, 184, 121, 
+    187, 159, 153, 243,  11,  61, 
+      7,  48,   1,   0,   0,   0, 
     156,   3,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
      76,   1,   0,   0, 160,   1, 
@@ -77,7 +77,7 @@ const BYTE shader_2D_vs[] =
      92,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   5,   0,   0,   0, 
+      0,   0,   6,   0,   0,   0, 
       1,   0,   0,   0,   1,   0, 
       0,   0, 118, 105, 101, 119, 
      66, 117, 102, 102, 101, 114, 
@@ -142,7 +142,7 @@ const BYTE shader_2D_vs[] =
       0,   0,  80,   0,   1,   0, 
      64,   0,   0,   0, 106,   8, 
       0,   1,  89,   0,   0,   4, 
-     70, 142,  32,   0,   5,   0, 
+     70, 142,  32,   0,   6,   0, 
       0,   0,   4,   0,   0,   0, 
      95,   0,   0,   3,  50,  16, 
      16,   0,   0,   0,   0,   0, 
@@ -168,11 +168,11 @@ const BYTE shader_2D_vs[] =
      16,   0,   0,   0,   0,   0, 
      86,  21,  16,   0,   0,   0, 
       0,   0,  70, 142,  32,   0, 
-      5,   0,   0,   0,   1,   0, 
+      6,   0,   0,   0,   1,   0, 
       0,   0,  50,   0,   0,  10, 
     242,   0,  16,   0,   0,   0, 
       0,   0,  70, 142,  32,   0, 
-      5,   0,   0,   0,   0,   0, 
+      6,   0,   0,   0,   0,   0, 
       0,   0,   6,  16,  16,   0, 
       0,   0,   0,   0,  70,  14, 
      16,   0,   0,   0,   0,   0, 
@@ -180,7 +180,7 @@ const BYTE shader_2D_vs[] =
      16,   0,   1,   0,   0,   0, 
      70,  14,  16,   0,   0,   0, 
       0,   0,  70, 142,  32,   0, 
-      5,   0,   0,   0,   3,   0, 
+      6,   0,   0,   0,   3,   0, 
       0,   0,  62,   0,   0,   1, 
      83,  84,  65,  84, 148,   0, 
       0,   0,   5,   0,   0,   0, 

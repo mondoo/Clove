@@ -33,7 +33,8 @@ target_include_directories(
 #Libraries
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	find_library(CLV_COCOA_LIB Cocoa)
-	find_library(CLV_MACOS_OPENGL_LIB OpenGL)
+	find_library(CLV_METAL_LIB Metal)
+	find_library(CLV_METALKIT_LIB MetalKit)
 endif()
 
 target_link_libraries(
@@ -70,7 +71,8 @@ target_link_libraries(
 	#MacOS
 	PRIVATE
 		$<$<PLATFORM_ID:Darwin>:${CLV_COCOA_LIB}>
-		$<$<PLATFORM_ID:Darwin>:${CLV_MACOS_OPENGL_LIB}>
+		$<$<PLATFORM_ID:Darwin>:${CLV_METAL_LIB}>
+		$<$<PLATFORM_ID:Darwin>:${CLV_METALKIT_LIB}>
 )
 
 #Precompiled header
@@ -108,6 +110,7 @@ target_precompile_headers(
 	PUBLIC
 		$<$<PLATFORM_ID:Windows>:Clove/Platform/Windows/CloveWindows.hpp>
 		$<$<PLATFORM_ID:Linux>:Clove/Platform/Linux/CloveLinux.hpp>
+		$<$<PLATFORM_ID:Darwin>:Clove/Platform/Mac/CloveMac.h>
 )
 
 #Preprocessor

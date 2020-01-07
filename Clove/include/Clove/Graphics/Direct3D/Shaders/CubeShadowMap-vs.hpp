@@ -18,7 +18,7 @@
 //
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
-// ModelBuffer                       cbuffer      NA          NA            cb3      1 
+// ModelBuffer                       cbuffer      NA          NA            cb4      1 
 //
 //
 //
@@ -37,24 +37,24 @@
 //
 vs_5_0
 dcl_globalFlags refactoringAllowed
-dcl_constantbuffer CB3[4], immediateIndexed
+dcl_constantbuffer CB4[4], immediateIndexed
 dcl_input v0.xyz
 dcl_output_siv o0.xyzw, position
 dcl_temps 1
-mul r0.xyzw, v0.yyyy, cb3[1].xyzw
-mad r0.xyzw, cb3[0].xyzw, v0.xxxx, r0.xyzw
-mad r0.xyzw, cb3[2].xyzw, v0.zzzz, r0.xyzw
-add o0.xyzw, r0.xyzw, cb3[3].xyzw
+mul r0.xyzw, v0.yyyy, cb4[1].xyzw
+mad r0.xyzw, cb4[0].xyzw, v0.xxxx, r0.xyzw
+mad r0.xyzw, cb4[2].xyzw, v0.zzzz, r0.xyzw
+add o0.xyzw, r0.xyzw, cb4[3].xyzw
 ret 
 // Approximately 5 instruction slots used
 #endif
 
 const BYTE shader_CubeShadowMap_vs[] =
 {
-     68,  88,  66,  67,  19, 220, 
-    142, 239, 130,   9, 134,  15, 
-    196, 148,  59,  75, 152,  64, 
-    231, 126,   1,   0,   0,   0, 
+     68,  88,  66,  67, 106, 111, 
+    171,  48,  80, 232,  20, 199, 
+     67, 156,  45, 143, 236,  38, 
+    129,  99,   1,   0,   0,   0, 
      88,   3,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
     120,   1,   0,   0, 172,   1, 
@@ -74,7 +74,7 @@ const BYTE shader_CubeShadowMap_vs[] =
      92,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   3,   0,   0,   0, 
+      0,   0,   4,   0,   0,   0, 
       1,   0,   0,   0,   1,   0, 
       0,   0,  77, 111, 100, 101, 
     108,  66, 117, 102, 102, 101, 
@@ -135,7 +135,7 @@ const BYTE shader_CubeShadowMap_vs[] =
       0,   0,  80,   0,   1,   0, 
      53,   0,   0,   0, 106,   8, 
       0,   1,  89,   0,   0,   4, 
-     70, 142,  32,   0,   3,   0, 
+     70, 142,  32,   0,   4,   0, 
       0,   0,   4,   0,   0,   0, 
      95,   0,   0,   3, 114,  16, 
      16,   0,   0,   0,   0,   0, 
@@ -147,17 +147,17 @@ const BYTE shader_CubeShadowMap_vs[] =
      16,   0,   0,   0,   0,   0, 
      86,  21,  16,   0,   0,   0, 
       0,   0,  70, 142,  32,   0, 
-      3,   0,   0,   0,   1,   0, 
+      4,   0,   0,   0,   1,   0, 
       0,   0,  50,   0,   0,  10, 
     242,   0,  16,   0,   0,   0, 
       0,   0,  70, 142,  32,   0, 
-      3,   0,   0,   0,   0,   0, 
+      4,   0,   0,   0,   0,   0, 
       0,   0,   6,  16,  16,   0, 
       0,   0,   0,   0,  70,  14, 
      16,   0,   0,   0,   0,   0, 
      50,   0,   0,  10, 242,   0, 
      16,   0,   0,   0,   0,   0, 
-     70, 142,  32,   0,   3,   0, 
+     70, 142,  32,   0,   4,   0, 
       0,   0,   2,   0,   0,   0, 
     166,  26,  16,   0,   0,   0, 
       0,   0,  70,  14,  16,   0, 
@@ -165,7 +165,7 @@ const BYTE shader_CubeShadowMap_vs[] =
       0,   8, 242,  32,  16,   0, 
       0,   0,   0,   0,  70,  14, 
      16,   0,   0,   0,   0,   0, 
-     70, 142,  32,   0,   3,   0, 
+     70, 142,  32,   0,   4,   0, 
       0,   0,   3,   0,   0,   0, 
      62,   0,   0,   1,  83,  84, 
      65,  84, 148,   0,   0,   0, 

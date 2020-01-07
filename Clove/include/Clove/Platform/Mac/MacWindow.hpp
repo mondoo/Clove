@@ -12,10 +12,16 @@ namespace clv::plt{
 @property(readonly) NSWindow* window;
 @property clv::plt::MacWindow* cloveWindow;
 
-- (instancetype)initWithWindowData:(unsigned int)width height:(unsigned int)height name:(NSString*)name;
-- (instancetype)initWithParentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size;
+- (instancetype)initWithWindowData:(MTKView*)view width:(unsigned int)width height:(unsigned int)height name: (NSString*)name;
+- (instancetype)initWithParentWindow:(MTKView*)view parentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size;
 
 @end
+
+namespace clv::plt{
+	struct MacData{
+		mth::vec2ui size{};
+	};
+}
 
 namespace clv::plt{
 	class MacWindow : public Window{

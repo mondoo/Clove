@@ -30,7 +30,7 @@ namespace clv::gfx{
 
 		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface
 		virtual void setRenderTarget(const RenderTarget* renderTarget) = 0;
-		virtual void resetRenderTargetToDefault() = 0;
+		virtual void setRenderTargetToDefault() = 0;
 		//
 
 		virtual void setViewport(const Viewport& viewport) = 0;

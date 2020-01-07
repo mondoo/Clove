@@ -1,27 +1,31 @@
-#import "Clove/Platform/Mac/CloveMac.h"
-#import "Clove/Platform/Mac/MacWindow.hpp"
+#include "Clove/Platform/Mac/MacWindow.hpp"
 
 #import "Clove/Core/Graphics/Surface.hpp"
 #import "Clove/Core/Graphics/GraphicsGlobal.hpp"
 
+#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Metal/MTLSurface.hpp"
+
 @implementation MacWindowProxy
-- (instancetype)initWithWindowData:(unsigned int)width height:(unsigned int)height name:(NSString*)name{
+- (instancetype)initWithWindowData:(MTKView*)view width: (unsigned int)width height:(unsigned int)height name:(NSString*)name{
 	const NSRect rect = NSMakeRect(0, 0, width, height);
 	const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 	
 	_window = [[NSWindow alloc] initWithContentRect:rect
-										 styleMask:styleMask
-										   backing:NSBackingStoreBuffered
-											 defer:NO];
+										  styleMask:styleMask
+											backing:NSBackingStoreBuffered
+											  defer:NO];
 
 	[_window setTitle:name];
 	[_window setDelegate:self];
 	[_window makeKeyAndOrderFront:nil];
+
+	[_window setContentView:view];
 	
 	return self;
 }
 
-- (instancetype)initWithParentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size{
+- (instancetype)initWithParentWindow:(MTKView*)view parentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size{
 	const NSRect rect = NSMakeRect(position.x, position.y, size.x, size.y);
 	const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 	
@@ -33,6 +37,8 @@
 	[_window setDelegate:self];
 	[_window makeKeyAndOrderFront:nil];
 	
+	[_window setContentView:view];
+
 	NSWindow* nativeParentWindow = reinterpret_cast<NSWindow*>(parentWindow.getNativeWindow());
 	[nativeParentWindow addChildWindow:_window ordered:NSWindowAbove];
 	
@@ -47,20 +53,32 @@
 
 namespace clv::plt{
     MacWindow::MacWindow(const WindowProps& props){
+		MacData data = { { props.width, props.height } };
+		
+		surface = gfx::global::graphicsFactory->createSurface(&data);
+		
 		NSString* nameString = [NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]];
 		
-		windowProxy = [[MacWindowProxy alloc] initWithWindowData:props.width height:props.height name:nameString];
+		windowProxy = [[MacWindowProxy alloc] initWithWindowData:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getView()
+														   width:props.width
+														  height:props.height
+															name:nameString];
 		windowProxy.cloveWindow = this;
 		
-		surface = gfx::global::graphicsFactory->createSurface(nullptr);
 		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
     }
 	
 	MacWindow::MacWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
-		windowProxy = [[MacWindowProxy alloc] initWithParentWindow:parentWindow position:position size:size];
+		MacData data = { { size.x, size.y } };
+		
+		surface = gfx::global::graphicsFactory->createSurface(&data);
+		
+		windowProxy = [[MacWindowProxy alloc] initWithParentWindow:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getView()
+													  parentWindow:parentWindow
+														  position:position
+															  size:size];
 		windowProxy.cloveWindow = this;
 		
-		surface = gfx::global::graphicsFactory->createSurface(nullptr);
 		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 	}
 
@@ -164,8 +182,11 @@ namespace clv::plt{
 					case NSEventTypeScrollWheel:
 						mouse.onWheelDelta(static_cast<int32>([event scrollingDeltaY]), mouseLoc.x, mouseLoc.y);
 						break;
+						
+					default:
+						[NSApp sendEvent:event];
+						break;
 				}
-				[NSApp sendEvent: event];
 			} while (event != nil);
 		}
 	}
