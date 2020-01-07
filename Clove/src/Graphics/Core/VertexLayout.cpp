@@ -1,4 +1,4 @@
-#include "Clove/Core/Graphics/VertexLayout.hpp"
+#include "Clove/Graphics/Core/VertexLayout.hpp"
 
 namespace clv::gfx{
 	VertexElement::VertexElement(const VertexElement& other) = default;

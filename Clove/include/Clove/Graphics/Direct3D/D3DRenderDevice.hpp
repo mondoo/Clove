@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/RenderDevice.hpp"
+#include "Clove/Graphics/Core/RenderDevice.hpp"
 
 #include "Clove/Graphics/Direct3D/DXGIInfoManager.hpp"
 

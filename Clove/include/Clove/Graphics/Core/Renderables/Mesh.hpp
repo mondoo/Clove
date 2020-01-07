@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Clove/Core/Graphics/GraphicsTypes.hpp"
-#include "Clove/Core/Graphics/MaterialInstance.hpp"
-#include "Clove/Core/Graphics/VertexLayout.hpp"
+#include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/Core/MaterialInstance.hpp"
+#include "Clove/Graphics/Core/VertexLayout.hpp"
 
 namespace clv::gfx{
 	class Buffer;

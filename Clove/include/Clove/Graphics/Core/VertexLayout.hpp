@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/Core/GraphicsTypes.hpp"
 
 namespace clv::gfx{
 	template<VertexElementType> struct VertexElementData;

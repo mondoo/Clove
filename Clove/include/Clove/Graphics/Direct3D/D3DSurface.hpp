@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/Surface.hpp"
+#include "Clove/Graphics/Core/Surface.hpp"
 
 #include <wrl.h>
 

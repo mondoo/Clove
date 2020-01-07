@@ -1,7 +1,7 @@
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 
-#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
-#include "Clove/Core/Graphics/Surface.hpp"
+#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/Surface.hpp"
 
 namespace clv::plt{
 	WindowsWindow::WindowsWindow(const WindowProps& props){

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/Resources/Buffer.hpp"
+#include "Clove/Graphics/Core/Resources/Buffer.hpp"
 
 namespace clv::gfx::mtl{
 	class MTLBuffer : public Buffer{

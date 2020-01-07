@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/GraphicsConstants.hpp"
+#include "Clove/Graphics/Core/GraphicsConstants.hpp"
 
 namespace clv::gfx{
 	struct MaterialData {

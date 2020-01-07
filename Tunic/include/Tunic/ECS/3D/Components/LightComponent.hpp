@@ -2,7 +2,7 @@
 
 #include "Tunic/ECS/Core/Component.hpp"
 
-#include "Clove/Core/Graphics/ShaderBufferTypes.hpp"
+#include "Clove/Graphics/Core/ShaderBufferTypes.hpp"
 
 namespace tnc::ecs::_3D{
 	class LightComponent : public Component<LightComponent>{

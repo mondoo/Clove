@@ -1,8 +1,8 @@
-#include "Clove/Core/Graphics/Renderables/Sprite.hpp"
+#include "Clove/Graphics/Core/Renderables/Sprite.hpp"
 
-#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
-#include "Clove/Core/Graphics/Resources/Texture.hpp"
-#include "Clove/Core/Graphics/Material.hpp"
+#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/Resources/Texture.hpp"
+#include "Clove/Graphics/Core/Material.hpp"
 
 namespace clv::gfx{
 	Sprite::Sprite(){

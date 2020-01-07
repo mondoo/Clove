@@ -1,4 +1,4 @@
-#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 
 #if CLV_PLATFORM_WINDOWS
 	#include "Clove/Graphics/OpenGL/GL.hpp"

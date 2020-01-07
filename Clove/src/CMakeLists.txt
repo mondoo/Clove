@@ -33,32 +33,32 @@ set(
 
 set(
 	CoreGraphicsFiles
-		${CLV_INCLUDE}/Core/Graphics/GraphicsConstants.hpp
-		${CLV_INCLUDE}/Core/Graphics/GraphicsGlobal.hpp		
-		${CLV_SOURCE}/Core/Graphics/GraphicsGlobal.cpp
-		${CLV_INCLUDE}/Core/Graphics/GraphicsTypes.hpp
-		${CLV_INCLUDE}/Core/Graphics/Material.hpp
-		${CLV_INCLUDE}/Core/Graphics/Material.inl
-		${CLV_SOURCE}/Core/Graphics/Material.cpp
-		${CLV_INCLUDE}/Core/Graphics/MaterialInstance.hpp
-		${CLV_INCLUDE}/Core/Graphics/MaterialInstance.inl
-		${CLV_SOURCE}/Core/Graphics/MaterialInstance.cpp
-		${CLV_INCLUDE}/Core/Graphics/PipelineObject.hpp
-		${CLV_INCLUDE}/Core/Graphics/RenderDevice.hpp
-		${CLV_INCLUDE}/Core/Graphics/RenderFactory.hpp
-		${CLV_INCLUDE}/Core/Graphics/RenderTarget.hpp
-		${CLV_INCLUDE}/Core/Graphics/Shader.hpp
-		${CLV_INCLUDE}/Core/Graphics/ShaderBufferTypes.hpp
-		${CLV_INCLUDE}/Core/Graphics/Surface.hpp
-		${CLV_INCLUDE}/Core/Graphics/VertexLayout.hpp
-		${CLV_INCLUDE}/Core/Graphics/VertexLayout.inl
-		${CLV_SOURCE}/Core/Graphics/VertexLayout.cpp
-		${CLV_INCLUDE}/Core/Graphics/Renderables/Mesh.hpp
-		${CLV_SOURCE}/Core/Graphics/Renderables/Mesh.cpp
-		${CLV_INCLUDE}/Core/Graphics/Renderables/Sprite.hpp
-		${CLV_SOURCE}/Core/Graphics/Renderables/Sprite.cpp
-		${CLV_INCLUDE}/Core/Graphics/Resources/Buffer.hpp
-		${CLV_INCLUDE}/Core/Graphics/Resources/Texture.hpp
+		${CLV_INCLUDE}/Graphics/Core/GraphicsConstants.hpp
+		${CLV_INCLUDE}/Graphics/Core/GraphicsGlobal.hpp		
+		${CLV_SOURCE}/Graphics/Core/GraphicsGlobal.cpp
+		${CLV_INCLUDE}/Graphics/Core/GraphicsTypes.hpp
+		${CLV_INCLUDE}/Graphics/Core/Material.hpp
+		${CLV_INCLUDE}/Graphics/Core/Material.inl
+		${CLV_SOURCE}/Graphics/Core/Material.cpp
+		${CLV_INCLUDE}/Graphics/Core/MaterialInstance.hpp
+		${CLV_INCLUDE}/Graphics/Core/MaterialInstance.inl
+		${CLV_SOURCE}/Graphics/Core/MaterialInstance.cpp
+		${CLV_INCLUDE}/Graphics/Core/PipelineObject.hpp
+		${CLV_INCLUDE}/Graphics/Core/RenderDevice.hpp
+		${CLV_INCLUDE}/Graphics/Core/RenderFactory.hpp
+		${CLV_INCLUDE}/Graphics/Core/RenderTarget.hpp
+		${CLV_INCLUDE}/Graphics/Core/Shader.hpp
+		${CLV_INCLUDE}/Graphics/Core/ShaderBufferTypes.hpp
+		${CLV_INCLUDE}/Graphics/Core/Surface.hpp
+		${CLV_INCLUDE}/Graphics/Core/VertexLayout.hpp
+		${CLV_INCLUDE}/Graphics/Core/VertexLayout.inl
+		${CLV_SOURCE}/Graphics/Core/VertexLayout.cpp
+		${CLV_INCLUDE}/Graphics/Core/Renderables/Mesh.hpp
+		${CLV_SOURCE}/Graphics/Core/Renderables/Mesh.cpp
+		${CLV_INCLUDE}/Graphics/Core/Renderables/Sprite.hpp
+		${CLV_SOURCE}/Graphics/Core/Renderables/Sprite.cpp
+		${CLV_INCLUDE}/Graphics/Core/Resources/Buffer.hpp
+		${CLV_INCLUDE}/Graphics/Core/Resources/Texture.hpp
 )
 
 set(

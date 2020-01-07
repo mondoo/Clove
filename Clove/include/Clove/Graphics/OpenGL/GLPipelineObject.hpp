@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/PipelineObject.hpp"
+#include "Clove/Graphics/Core/PipelineObject.hpp"
 
 #include <glad/glad.h>
 

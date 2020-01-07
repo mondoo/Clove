@@ -1,7 +1,7 @@
-#include "Clove/Core/Graphics/Renderables/Mesh.hpp"
+#include "Clove/Graphics/Core/Renderables/Mesh.hpp"
 
-#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
-#include "Clove/Core/Graphics/Resources/Buffer.hpp"
+#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/Resources/Buffer.hpp"
 #include "Clove/Core/Utils/MeshLoader.hpp"
 
 namespace clv::gfx{

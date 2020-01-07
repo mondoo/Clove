@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/RenderFactory.hpp"
+#include "Clove/Graphics/Core/RenderFactory.hpp"
 
 #include <wrl.h>
 

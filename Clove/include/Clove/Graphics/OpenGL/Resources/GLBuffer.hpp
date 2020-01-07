@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/Resources/Buffer.hpp"
+#include "Clove/Graphics/Core/Resources/Buffer.hpp"
 
 #include <glad/glad.h>
 

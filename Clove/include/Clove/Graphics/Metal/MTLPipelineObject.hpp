@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/PipelineObject.hpp"
+#include "Clove/Graphics/Core/PipelineObject.hpp"
 
 namespace clv::gfx::mtl {
 	class MTLPipelineObject : public PipelineObject{

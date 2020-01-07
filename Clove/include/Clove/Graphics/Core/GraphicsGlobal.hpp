@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Clove/Core/Graphics/RenderDevice.hpp"
-#include "Clove/Core/Graphics/RenderFactory.hpp"
+#include "Clove/Graphics/Core/RenderDevice.hpp"
+#include "Clove/Graphics/Core/RenderFactory.hpp"
 
 namespace clv::gfx::global{
 	inline std::unique_ptr<RenderDevice> graphicsDevice;

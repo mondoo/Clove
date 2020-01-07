@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/RenderTarget.hpp"
+#include "Clove/Graphics/Core/RenderTarget.hpp"
 
 namespace clv::gfx{
 	class Texture;

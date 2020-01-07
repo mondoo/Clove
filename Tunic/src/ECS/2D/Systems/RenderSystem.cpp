@@ -7,12 +7,12 @@
 #include "Tunic/ECS/UI/Components/TransformComponent.hpp"
 #include "Tunic/ECS/UI/Components/TextComponent.hpp"
 #include "Tunic/ECS/UI/Components/WidgetComponent.hpp"
-#include "Clove/Core/Graphics/GraphicsTypes.hpp"
-#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
-#include "Clove/Core/Graphics/Renderables/Mesh.hpp"
-#include "Clove/Core/Graphics/Renderables/Sprite.hpp"
-#include "Clove/Core/Graphics/Shader.hpp"
-#include "Clove/Core/Graphics/PipelineObject.hpp"
+#include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/Renderables/Mesh.hpp"
+#include "Clove/Graphics/Core/Renderables/Sprite.hpp"
+#include "Clove/Graphics/Core/Shader.hpp"
+#include "Clove/Graphics/Core/PipelineObject.hpp"
 #include "Clove/Core/Platform/Window.hpp"
 
 using namespace clv;

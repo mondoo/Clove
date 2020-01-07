@@ -1,6 +1,6 @@
 #include "Tunic/ECS/3D/Components/MeshComponent.hpp"
 
-#include "Clove/Core/Graphics/Renderables/Mesh.hpp"
+#include "Clove/Graphics/Core/Renderables/Mesh.hpp"
 
 using namespace clv;
 

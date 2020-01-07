@@ -8,7 +8,7 @@
 #include "Clove/Core/Utils/DeltaTime.hpp"
 #include "Tunic/ECS/Core/Manager.hpp"
 
-#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 
 using namespace clv;
 

@@ -4,8 +4,8 @@
 #include <Tunic/ECS/Core/Manager.hpp>
 #include <Tunic/ECS/3D/Components/TransformComponent.hpp>
 #include <Tunic/ECS/3D/Components/MeshComponent.hpp>
-#include <Clove/Core/Graphics/Renderables/Mesh.hpp>
-#include <Clove/Core/Graphics/Material.hpp>
+#include <Clove/Graphics/Core/Renderables/Mesh.hpp>
+#include <Clove/Graphics/Core/Material.hpp>
 
 namespace Bulb::Core{
 	Entity::Entity(tnc::ecs::EntityID ID){

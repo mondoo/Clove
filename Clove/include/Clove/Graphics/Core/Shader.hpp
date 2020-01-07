@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Clove/Core/Graphics/GraphicsTypes.hpp"
-#include "Clove/Core/Graphics/VertexLayout.hpp"
+#include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/Core/VertexLayout.hpp"
 
 namespace clv::gfx{
 	struct ShaderDescriptor{

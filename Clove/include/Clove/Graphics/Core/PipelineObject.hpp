@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Clove/Core/Graphics/Shader.hpp"
-#include "Clove/Core/Graphics/VertexLayout.hpp"
+#include "Clove/Graphics/Core/Shader.hpp"
+#include "Clove/Graphics/Core/VertexLayout.hpp"
 
 namespace clv::gfx{
 	class PipelineObject{

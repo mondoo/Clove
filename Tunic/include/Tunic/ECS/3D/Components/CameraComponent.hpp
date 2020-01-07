@@ -2,8 +2,8 @@
 
 #include "Tunic/ECS/Core/Component.hpp"
 
-#include "Clove/Core/Graphics/ShaderBufferTypes.hpp"
-#include "Clove/Core/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/Core/ShaderBufferTypes.hpp"
+#include "Clove/Graphics/Core/GraphicsTypes.hpp"
 
 namespace clv::gfx{
 	class RenderTarget;

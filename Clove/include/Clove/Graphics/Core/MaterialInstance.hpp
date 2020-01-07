@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/Material.hpp"
+#include "Clove/Graphics/Core/Material.hpp"
 
 //TODO: Move this into the material file???
 namespace clv::gfx{

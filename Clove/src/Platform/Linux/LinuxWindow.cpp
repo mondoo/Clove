@@ -1,7 +1,7 @@
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
 
-#include "Clove/Core/Graphics/Surface.hpp"
-#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/Surface.hpp"
+#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 
 namespace clv::plt{
 	LinuxWindow::LinuxWindow(const WindowProps& props){

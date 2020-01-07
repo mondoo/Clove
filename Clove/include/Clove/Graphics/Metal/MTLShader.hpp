@@ -1,4 +1,4 @@
-#include "Clove/Core/Graphics/Shader.hpp"
+#include "Clove/Graphics/Core/Shader.hpp"
 
 namespace clv::gfx::mtl{
 	class MTLShader : public Shader{

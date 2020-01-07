@@ -1,6 +1,6 @@
 #include "Tunic/ECS/2D/Components/SpriteComponent.hpp"
 
-#include "Clove/Core/Graphics/Renderables/Sprite.hpp"
+#include "Clove/Graphics/Core/Renderables/Sprite.hpp"
 
 using namespace clv;
 

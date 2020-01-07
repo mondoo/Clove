@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Clove/Core/Graphics/GraphicsTypes.hpp"
-#include "Clove/Core/Graphics/Resources/Texture.hpp"
-#include "Clove/Core/Graphics/Resources/Buffer.hpp"
+#include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/Core/Resources/Texture.hpp"
+#include "Clove/Graphics/Core/Resources/Buffer.hpp"
 
 namespace clv::gfx{
 	class MaterialInstance;

@@ -1,8 +1,8 @@
-#include "Clove/Core/Graphics/MaterialInstance.hpp"
+#include "Clove/Graphics/Core/MaterialInstance.hpp"
 
-#include "Clove/Core/Graphics/Material.hpp"
-#include "Clove/Core/Graphics/Resources/Texture.hpp"
-#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/Material.hpp"
+#include "Clove/Graphics/Core/Resources/Texture.hpp"
+#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 
 namespace clv::gfx{
 	MaterialInstance::MaterialInstance(std::shared_ptr<Material> material)

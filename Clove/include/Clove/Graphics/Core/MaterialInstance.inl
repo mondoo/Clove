@@ -1,4 +1,4 @@
-#include "Clove/Core/Graphics/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 
 namespace clv::gfx{
 	template<typename DataType>

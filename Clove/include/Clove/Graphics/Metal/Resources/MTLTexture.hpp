@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Graphics/Resources/Texture.hpp"
+#include "Clove/Graphics/Core/Resources/Texture.hpp"
 
 namespace clv::gfx::mtl {
 	class MTLTexture : public Texture{
