@@ -84,7 +84,7 @@ namespace clv::gfx::mtl{
 		}*/
 	}
 	
-	void MTLRenderDevice::resetRenderTargetToDefault(){
+	void MTLRenderDevice::setRenderTargetToDefault(){
 		//TODO: Can't do these operations while encoding (has to end first)
 		/*MTKView* view = currentSurface->getView();
 		
