@@ -228,7 +228,7 @@ namespace tnc::ecs::_2D{
 
 		global::graphicsDevice->setViewport({ 0, 0, screenSize.x, screenSize.y });
 		global::graphicsDevice->setDepthBuffer(false);
-		global::graphicsDevice->resetRenderTargetToDefault();
+		global::graphicsDevice->setRenderTargetToDefault();
 
 		//Sprites / Widgets
 		global::graphicsDevice->bindPipelineObject(*currentSceneData->spritePipelineObject);

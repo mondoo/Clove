@@ -70,7 +70,7 @@ namespace clv::gfx::ogl{
 		}
 	}
 
-	void GLRenderDevice::resetRenderTargetToDefault(){
+	void GLRenderDevice::setRenderTargetToDefault(){
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 

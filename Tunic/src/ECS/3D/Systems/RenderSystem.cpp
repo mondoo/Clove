@@ -97,7 +97,7 @@ namespace tnc::ecs::_3D{
 				global::graphicsDevice->clear();
 			}
 		});
-		global::graphicsDevice->resetRenderTargetToDefault();
+		global::graphicsDevice->setRenderTargetToDefault();
 		global::graphicsDevice->clear();
 
 		currentSceneData->numLights = 0;
@@ -224,7 +224,7 @@ namespace tnc::ecs::_3D{
 			if(cameraData.target){
 				global::graphicsDevice->setRenderTarget(cameraData.target.get());
 			} else{
-				global::graphicsDevice->resetRenderTargetToDefault();
+				global::graphicsDevice->setRenderTargetToDefault();
 			}
 
 			global::graphicsDevice->bindPipelineObject(*currentSceneData->defaultPipeline); //Bind in the default pipeline

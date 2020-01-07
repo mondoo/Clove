@@ -25,7 +25,7 @@ namespace clv::gfx::ogl{
 
 		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface
 		virtual void setRenderTarget(const RenderTarget* renderTarget) override;
-		virtual void resetRenderTargetToDefault() override;
+		virtual void setRenderTargetToDefault() override;
 		//
 
 		virtual void setViewport(const Viewport& viewport) override;
