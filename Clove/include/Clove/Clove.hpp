@@ -8,10 +8,15 @@
 
 #include "Clove/Core/Layer.hpp"
 
+#include "Clove/Core/Graphics/GraphicsTypes.hpp"
 #include "Clove/Core/Graphics/Renderables/Mesh.hpp"
 #include "Clove/Core/Graphics/Renderables/Sprite.hpp"
 #include "Clove/Core/Graphics/Material.hpp"
 #include "Clove/Core/Graphics/MaterialInstance.hpp"
+#include "Clove/Core/Graphics/PipelineObject.hpp"
+#include "Clove/Core/Graphics/Shader.hpp"
+#include "Clove/Core/Graphics/ShaderBufferTypes.hpp"
+#include "Clove/Core/Graphics/VertexLayout.hpp"
 
 #include "Clove/Core/Input/KeyCodes.hpp"
 #include "Clove/Core/Input/MouseButtonCodes.hpp"
