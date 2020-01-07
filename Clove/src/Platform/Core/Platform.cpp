@@ -1,4 +1,4 @@
-#include "Clove/Core/Platform/Platform.hpp"
+#include "Clove/Platform/Core/Platform.hpp"
 
 #if CLV_PLATFORM_WINDOWS
 	#include "Clove/Platform/Windows/WindowsPlatform.hpp"

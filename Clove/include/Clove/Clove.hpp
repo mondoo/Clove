@@ -3,8 +3,8 @@
 #include "Clove/Core/Core.hpp"
 #include "Clove/Core/Log.hpp"
 
-#include "Clove/Core/Platform/Platform.hpp"
-#include "Clove/Core/Platform/Window.hpp"
+#include "Clove/Platform/Core/Platform.hpp"
+#include "Clove/Platform/Core/Window.hpp"
 
 #include "Clove/Core/Layer.hpp"
 

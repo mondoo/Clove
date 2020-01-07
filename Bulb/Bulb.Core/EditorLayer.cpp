@@ -1,7 +1,7 @@
 #include "EditorLayer.hpp"
 
 #include <Tunic/Application.hpp>
-#include <Clove/Core/Platform/Window.hpp>
+#include <Clove/Platform/Core/Window.hpp>
 #include <Tunic/ECS/Core/Manager.hpp>
 #include <Tunic/ECS/3D/Components/TransformComponent.hpp>
 #include <Tunic/ECS/3D/Components/CameraComponent.hpp>

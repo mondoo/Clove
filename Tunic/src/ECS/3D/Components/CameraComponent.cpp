@@ -1,6 +1,6 @@
 #include "Tunic/ECS/3D/Components/CameraComponent.hpp"
 
-#include "Clove/Core/Platform/Window.hpp"
+#include "Clove/Platform/Core/Window.hpp"
 
 using namespace clv;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Clove/Core/Maths/Vector.hpp>
-#include "Clove/Core/Platform/Window.hpp"
+#include "Clove/Platform/Core/Window.hpp"
 
 namespace clv::plt{
 	struct LinuxData{

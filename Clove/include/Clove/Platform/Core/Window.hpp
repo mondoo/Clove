@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Platform/PlatformTypes.hpp"
+#include "Clove/Platform/Core/PlatformTypes.hpp"
 #include "Clove/Core/Input/Keyboard.hpp"
 #include "Clove/Core/Input/Mouse.hpp"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Platform/Platform.hpp"
+#include "Clove/Platform/Core/Platform.hpp"
 
 namespace clv::plt{
 	class MacPlatform : public Platform{

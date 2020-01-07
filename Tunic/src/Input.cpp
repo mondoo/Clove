@@ -1,7 +1,7 @@
 #include "Tunic/Input.hpp"
 
 #include "Tunic/Application.hpp"
-#include "Clove/Core/Platform/Window.hpp"
+#include "Clove/Platform/Core/Window.hpp"
 
 using namespace clv;
 

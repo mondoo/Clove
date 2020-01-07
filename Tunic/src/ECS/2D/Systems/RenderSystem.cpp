@@ -13,7 +13,7 @@
 #include "Clove/Graphics/Core/Renderables/Sprite.hpp"
 #include "Clove/Graphics/Core/Shader.hpp"
 #include "Clove/Graphics/Core/PipelineObject.hpp"
-#include "Clove/Core/Platform/Window.hpp"
+#include "Clove/Platform/Core/Window.hpp"
 
 using namespace clv;
 using namespace clv::gfx;

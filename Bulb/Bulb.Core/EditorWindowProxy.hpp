@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Clove/Core/Platform/Window.hpp>
+#include <Clove/Platform/Core/Window.hpp>
 
 namespace blb::plt{
 	class EditorWindowProxy : public clv::plt::Window{

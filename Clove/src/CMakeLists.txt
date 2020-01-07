@@ -170,11 +170,11 @@ set(
 
 set(
 	CorePlatformFiles
-		${CLV_INCLUDE}/Core/Platform/Platform.hpp
-		${CLV_SOURCE}/Core/Platform/Platform.cpp
-		${CLV_INCLUDE}/Core/Platform/PlatformTypes.hpp
-		${CLV_INCLUDE}/Core/Platform/Window.hpp
-		${CLV_SOURCE}/Core/Platform/Window.cpp
+		${CLV_INCLUDE}/Platform/Core/Platform.hpp
+		${CLV_SOURCE}/Platform/Core/Platform.cpp
+		${CLV_INCLUDE}/Platform/Core/PlatformTypes.hpp
+		${CLV_INCLUDE}/Platform/Core/Window.hpp
+		${CLV_SOURCE}/Platform/Core/Window.cpp
 )
 
 set(
