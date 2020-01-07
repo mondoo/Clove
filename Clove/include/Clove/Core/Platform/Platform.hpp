@@ -17,5 +17,6 @@ namespace clv::plt{
 		virtual std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size) = 0;
 	
 		static std::unique_ptr<Platform> createPlatformInstance();
+		static clv::gfx::API getPlatformPreferedAPI();
 	};
 }
