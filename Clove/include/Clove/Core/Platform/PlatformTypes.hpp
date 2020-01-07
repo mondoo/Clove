@@ -12,9 +12,4 @@ namespace clv::plt{
 			, height(inHeight){
 		}
 	};
-
-	enum class WindowType{
-		MainWindow,
-		SubWindow
-	};
 }

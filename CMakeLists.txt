@@ -13,14 +13,20 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
 set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #custom settings
-option(GAR_BUILD_BULB "Build the Bulb editor" ON)
+option(GAR_BUILD_BULB "Build the Bulb editor (requries Tunic)" ON)
+option(GAR_BUILD_TUNIC "Build the Tunic framework" ON)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #Clove
 add_subdirectory(Clove)
 
+#Tunic
+if(GAR_BUILD_TUNIC)
+	add_subdirectory(Tunic)
+endif()
+
 #Builb
-if(MSVC AND GAR_BUILD_BULB) #not currently supported without MSVC
+if(MSVC AND (GAR_BUILD_BULB AND GAR_BUILD_TUNIC)) #not currently supported without MSVC
 	add_subdirectory(Bulb)
 endif()

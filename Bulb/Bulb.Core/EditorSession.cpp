@@ -3,8 +3,17 @@
 #include "EditorLayer.hpp"
 #include "EditorWindowProxy.hpp"
 
-#include <Clove/Core/Platform/Application.hpp>
 #include <msclr/lock.h>
+
+#include <Tunic/Application.hpp>
+#include <Tunic/ECS/Core/Manager.hpp>
+#include <Tunic/ECS/3D/Systems/PhysicsSystem.hpp>
+#include <Tunic/ECS/3D/Systems/RenderSystem.hpp>
+#include <Tunic/ECS/2D/Systems/PhysicsSystem.hpp>
+#include <Tunic/ECS/2D/Systems/RenderSystem.hpp>
+#include <Tunic/ECS/Audio/Systems/AudioSystem.hpp>
+
+using namespace tnc;
 
 namespace Bulb::Core{
 	EditorSession::!EditorSession(){
@@ -16,15 +25,21 @@ namespace Bulb::Core{
 
 		window = new std::shared_ptr<clv::plt::Window>();
 
-		auto appUniquePtr = clv::plt::Application::createApplication(clv::gfx::API::DirectX11);
-		app = appUniquePtr.release();
-		
-		clv::plt::blb::EditorWindowProxy proxy = { hWnd };
+		blb::plt::EditorWindowProxy proxy = { hWnd };
 
-		*window = app->openChildWindow(clv::plt::WindowType::MainWindow, proxy, { posX, posY }, { width, height });
-		app->setMainWindow(*window);
+		app = new tnc::Application(clv::gfx::API::Direct3D11, proxy, { posX, posY }, { width, height });
 
-		layer = new std::shared_ptr(std::make_shared<clv::blb::EditorLayer>());
+		ecs::Manager& ecsManager = app->getManager();
+
+		ecsManager.addSystem<ecs::_3D::PhysicsSystem>();
+		ecsManager.addSystem<ecs::_3D::RenderSystem>();
+
+		ecsManager.addSystem<ecs::_2D::PhysicsSystem>();
+		ecsManager.addSystem<ecs::_2D::RenderSystem>();
+
+		ecsManager.addSystem<ecs::aud::AudioSystem>();
+
+		layer = new std::shared_ptr(std::make_shared<blb::EditorLayer>());
 		app->pushLayer(*layer);
 		
 		appThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &EditorSession::Update));
@@ -32,7 +47,7 @@ namespace Bulb::Core{
 	}
 
 	void EditorSession::Update(){
-		while(app->getState() == clv::plt::ApplicationState::running){
+		while(app->getState() == tnc::ApplicationState::running){
 			msclr::lock l(appThread);
 			app->update();
 		}

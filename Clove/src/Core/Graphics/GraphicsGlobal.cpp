@@ -22,7 +22,7 @@ namespace clv::gfx::global{
 				}
 				break;
 
-			case API::DirectX11:
+			case API::Direct3D11:
 				{
 					CLV_LOG_TRACE("Creating Direct3D renderer");
 					auto pair = d3d::initialiseD3D();

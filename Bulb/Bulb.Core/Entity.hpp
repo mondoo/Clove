@@ -2,7 +2,7 @@
 
 #include "Component.hpp"
 
-#include <Clove/Core/ECS/Entity.hpp>
+#include <Tunic/ECS/Core/Entity.hpp>
 
 namespace Bulb::Core{
 	public ref class Entity{
@@ -17,12 +17,12 @@ namespace Bulb::Core{
 		System::String^ name = "Test entity";
 
 	private:
-		clv::ecs::EntityID ID;
+		tnc::ecs::EntityID ID;
 		System::Collections::Generic::List<Component^>^ components;
 
 		//FUNCTIONS
 	public:
-		Entity(clv::ecs::EntityID ID);
+		Entity(tnc::ecs::EntityID ID);
 
 		System::Collections::Generic::List<Component^>^ getComponents();
 

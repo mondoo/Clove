@@ -2,7 +2,7 @@
 
 #include <Clove/Core/Platform/Window.hpp>
 
-namespace clv::plt::blb{
+namespace blb::plt{
 	class EditorWindowProxy : public clv::plt::Window{
 		//VARIABLES
 	private:
@@ -16,11 +16,11 @@ namespace clv::plt::blb{
 
 		virtual void* getNativeWindow() const override;
 
-		virtual mth::vec2i getPosition() const{ return { 0, 0 }; };
-		virtual mth::vec2i getSize() const{ return { 0, 0 }; };
+		virtual clv::mth::vec2i getPosition() const{ return { 0, 0 }; };
+		virtual clv::mth::vec2i getSize() const{ return { 0, 0 }; };
 
-		virtual void moveWindow(const mth::vec2i& position){};
-		virtual void resizeWindow(const mth::vec2i& size){};
+		virtual void moveWindow(const clv::mth::vec2i& position){};
+		virtual void resizeWindow(const clv::mth::vec2i& size){};
 
 	protected:
 		virtual void processInput() override{}
