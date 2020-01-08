@@ -60,7 +60,7 @@ namespace clv::mth{
 
 	template<typename T, qualifier Q>
 	vec<3, T, Q> quaternionToEuler(const quat<T, Q>& quat){
-		return glm::eulerAngles(quat);
+		return (glm::axis(quat) * glm::angle(quat));
 	}
 
 	template<typename T, qualifier Q>

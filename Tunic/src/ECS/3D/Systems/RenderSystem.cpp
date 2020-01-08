@@ -121,10 +121,6 @@ namespace tnc::ecs::_3D{
 
 				mth::vec3f eulerRot = mth::quaternionToEuler(cameraRotation);
 
-				if(eulerRot.x >= mth::pi<float>){ //This stops it moving the other way
-					eulerRot.y -= mth::pi<float>;
-				}
-
 				mth::vec3f front;
 				front.x = sin(eulerRot.y) * cos(eulerRot.x);
 				front.y = sin(eulerRot.x);
