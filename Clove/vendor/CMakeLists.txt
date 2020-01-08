@@ -27,8 +27,7 @@ set_target_properties(Glad PROPERTIES FOLDER ${DependencyFolder})
 
 #glm
 add_subdirectory(glm)
-set_target_properties(glm_static PROPERTIES FOLDER ${DependencyFolder}/glm)
-set_target_properties(uninstall PROPERTIES FOLDER ${DependencyFolder}/glm)
+set_target_properties(glm_static PROPERTIES FOLDER ${DependencyFolder})
 
 #spdlog
 add_subdirectory(spdlog)
@@ -40,7 +39,8 @@ set_target_properties(stb PROPERTIES FOLDER ${DependencyFolder})
 
 #portaudio
 add_subdirectory(portaudio)
-set_target_properties(portaudio_static PROPERTIES FOLDER ${DependencyFolder})
+set_target_properties(portaudio_static PROPERTIES FOLDER ${DependencyFolder}/portaudio)
+set_target_properties(uninstall PROPERTIES FOLDER ${DependencyFolder}/portaudio)
 
 #libsndfile
 add_subdirectory(libsndfile)
