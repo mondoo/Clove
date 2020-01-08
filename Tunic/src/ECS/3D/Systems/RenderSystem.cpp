@@ -117,9 +117,8 @@ namespace tnc::ecs::_3D{
 				CameraComponent* camera = std::get<CameraComponent*>(tuple);
 
 				const mth::vec3f& position = transform->getPosition();
-
-				//update front
 				const mth::quatf cameraRotation = transform->getRotation();
+
 				mth::vec3f eulerRot = mth::quaternionToEuler(cameraRotation);
 
 				if(eulerRot.x >= mth::pi<float>){ //This stops it moving the other way
@@ -128,15 +127,14 @@ namespace tnc::ecs::_3D{
 
 				mth::vec3f front;
 				front.x = sin(eulerRot.y) * cos(eulerRot.x);
-				front.y = sin(eulerRot.y) * sin(eulerRot.x);
-				front.z = cos(eulerRot.y);
+				front.y = sin(eulerRot.x);
+				front.z = cos(eulerRot.y) * cos(eulerRot.x);
+
 				camera->cameraFront = mth::normalise(front);
+				camera->cameraRight = mth::normalise(mth::cross(camera->cameraFront, mth::vec3f{ 0.0f, 1.0f, 0.0f }));
+				camera->cameraUp	= mth::normalise(mth::cross(camera->cameraRight, camera->cameraFront));
 
-				//update look at
 				const mth::mat4f lookAt = mth::lookAt(position, position + camera->cameraFront, camera->cameraUp);
-
-				//update right
-				camera->cameraRight = mth::normalise(mth::cross(camera->cameraFront, camera->cameraUp));
 
 				camera->cameraRenderData.lookAt 	= lookAt;
 				camera->cameraRenderData.position 	= position;
