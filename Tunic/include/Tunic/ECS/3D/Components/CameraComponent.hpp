@@ -30,8 +30,8 @@ namespace tnc::ecs::_3D{
 		clv::mth::mat4f currentProjection = clv::mth::mat4f(1.0f);
 
 		clv::mth::vec3f cameraUp = clv::mth::vec3f(0.0f, 1.0f, 0.0f);
-		clv::mth::vec3f cameraFront = clv::mth::vec3f(0.0f, 0.0f, -1.0f);
-		clv::mth::vec3f cameraRight = clv::mth::vec3f(-1.0f, 0.0f, 0.0f);
+		clv::mth::vec3f cameraFront = clv::mth::vec3f(0.0f, 0.0f, 1.0f);
+		clv::mth::vec3f cameraRight = clv::mth::vec3f(1.0f, 0.0f, 0.0f);
 
 		clv::gfx::CameraRenderData cameraRenderData;
 
