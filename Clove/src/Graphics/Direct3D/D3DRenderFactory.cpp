@@ -8,14 +8,11 @@
 #include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Clove/Graphics/Direct3D/D3DShader.hpp"
 #include "Clove/Graphics/Direct3D/D3DSurface.hpp"
-#if CLV_DEBUG
-	#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
-#endif
 
 #include <d3d11.h>
 
 namespace clv::gfx::d3d{
-	D3DRenderFactory::D3DRenderFactory(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice, Microsoft::WRL::ComPtr<ID3d11DeviceContext> d3dDeviceContext)
+	D3DRenderFactory::D3DRenderFactory(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dDeviceContext)
 		: d3dDevice(d3dDevice), d3dDeviceContext(d3dDeviceContext){
 	}
 

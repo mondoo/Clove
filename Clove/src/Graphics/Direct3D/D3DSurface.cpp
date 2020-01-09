@@ -3,12 +3,7 @@
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
-#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
-#include "Clove/Graphics/Core/RenderDevice.hpp"
-#if CLV_DEBUG
-	#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
-#endif
 
 #include <d3d11.h>
 

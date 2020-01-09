@@ -5,19 +5,19 @@
 #include <wrl.h>
 
 struct ID3D11Device;
-struct ID3d11DeviceContext;
+struct ID3D11DeviceContext;
 
 namespace clv::gfx::d3d{
 	class D3DRenderFactory : public RenderFactory{
 		//VARIABLES
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice;
-		Microsoft::WRL::ComPtr<ID3d11DeviceContext> d3dDeviceContext;
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dDeviceContext;
 
 		//FUNCTIONS
 	public:
 		D3DRenderFactory() = delete;
-		D3DRenderFactory(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice, Microsoft::WRL::ComPtr<ID3d11DeviceContext> d3dDeviceContext);
+		D3DRenderFactory(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dDeviceContext);
 
 		D3DRenderFactory(const D3DRenderFactory& other) = delete;
 		D3DRenderFactory(D3DRenderFactory&& other) = delete;
