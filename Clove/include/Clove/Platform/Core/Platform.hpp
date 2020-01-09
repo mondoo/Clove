@@ -25,8 +25,8 @@ namespace clv::plt{
 }
 
 namespace clv::plt{
-	inline std::unique_ptr<Platform> createPlatformInstance();
-	inline std::unique_ptr<Platform> createPlatformInstance(clv::gfx::API api);
+	std::unique_ptr<Platform> createPlatformInstance();
+	std::unique_ptr<Platform> createPlatformInstance(clv::gfx::API api);
 
-	inline clv::gfx::API getPlatformPreferedAPI();
+	clv::gfx::API getPlatformPreferedAPI();
 }
