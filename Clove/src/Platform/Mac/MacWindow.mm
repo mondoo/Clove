@@ -1,9 +1,6 @@
 #include "Clove/Platform/Mac/MacWindow.hpp"
 
-#import "Clove/Graphics/Core/Surface.hpp"
-#import "Clove/Graphics/Core/GraphicsGlobal.hpp"
-
-#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/RenderFactory.hpp"
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 
 @implementation MacWindowProxy
@@ -52,34 +49,30 @@
 @end
 
 namespace clv::plt{
-    MacWindow::MacWindow(const WindowProps& props){
+    MacWindow::MacWindow(gfx::RenderFactory& graphicsFactory, const WindowProps& props){
 		MacData data = { { props.width, props.height } };
 		
-		surface = gfx::global::graphicsFactory->createSurface(&data);
+		surface = graphicsFactory.createSurface(&data);
 		
 		NSString* nameString = [NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]];
 		
-		windowProxy = [[MacWindowProxy alloc] initWithWindowData:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getView()
+		windowProxy = [[MacWindowProxy alloc] initWithWindowData:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getMTKView()
 														   width:props.width
 														  height:props.height
 															name:nameString];
 		windowProxy.cloveWindow = this;
-		
-		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
     }
 	
-	MacWindow::MacWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+	MacWindow::MacWindow(gfx::RenderFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
 		MacData data = { { size.x, size.y } };
 		
-		surface = gfx::global::graphicsFactory->createSurface(&data);
+		surface = graphicsFactory.createSurface(&data);
 		
-		windowProxy = [[MacWindowProxy alloc] initWithParentWindow:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getView()
+		windowProxy = [[MacWindowProxy alloc] initWithParentWindow:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getMTKView()
 													  parentWindow:parentWindow
 														  position:position
 															  size:size];
 		windowProxy.cloveWindow = this;
-		
-		gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 	}
 
 	MacWindow::~MacWindow(){

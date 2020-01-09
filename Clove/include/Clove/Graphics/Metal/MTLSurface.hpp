@@ -32,8 +32,11 @@ namespace clv::gfx::mtl{
 
 		virtual void resizeBuffers(const mth::vec2ui& size) override;
 
+		virtual void makeCurrent() override{}
+		
 		virtual void present() override;
 
 		virtual std::shared_ptr<RenderTarget> getRenderTarget() const override;
+		MTKView* getMTKView() const;
 	};
 }

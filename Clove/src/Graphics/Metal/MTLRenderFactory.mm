@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/Metal/Resources/MTLBuffer.hpp"
 #include "Clove/Graphics/Metal/Resources/MTLTexture.hpp"
+#include "Clove/Graphics/Metal/MTLCommandBuffer.hpp"
 #include "Clove/Graphics/Metal/MTLPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MTLRenderTarget.hpp"
 #include "Clove/Graphics/Metal/MTLShader.hpp"
@@ -14,6 +15,14 @@ namespace clv::gfx::mtl{
 	
 	MTLRenderFactory::~MTLRenderFactory(){
 		[mtlDevice release];
+	}
+	
+	std::shared_ptr<CommandBuffer> MTLRenderFactory::createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget){
+		return std::make_shared<MTLCommandBuffer>([mtlDevice newCommandQueue], renderTarget);
+	}
+	
+	std::shared_ptr<CommandBuffer> MTLRenderFactory::createCommandBuffer(Surface& surface){
+		return std::make_shared<MTLCommandBuffer>([mtlDevice newCommandQueue], surface);
 	}
 	
 	std::shared_ptr<Buffer> MTLRenderFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){

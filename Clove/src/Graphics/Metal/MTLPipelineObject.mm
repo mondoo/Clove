@@ -9,10 +9,14 @@ namespace clv::gfx::mtl{
 		shaderReflectionData = mtlShader->getReflectionData();
 		const auto& layout = shaderReflectionData.vertexBufferLayout;
 		
-		MTLRenderPipelineDescriptor* pipelineDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
+		pipelineDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
+		
 		[pipelineDescriptor setVertexFunction:mtlShader->getMTLVertexShader()];
 		[pipelineDescriptor setFragmentFunction:mtlShader->getMTLPixelShader()];
+		
 		pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
+		[pipelineDescriptor.colorAttachments[0] setDestinationRGBBlendFactor:MTLBlendFactorOneMinusSourceAlpha];
+		
 		pipelineDescriptor.depthAttachmentPixelFormat = MTLPixelFormatDepth32Float;
 		
 		MTLVertexDescriptor* vertexDescriptor = [[MTLVertexDescriptor alloc] init];
@@ -31,7 +35,7 @@ namespace clv::gfx::mtl{
 		vertexDescriptor.layouts[0].stride = layout.size();
 		
 		[pipelineDescriptor setVertexDescriptor:vertexDescriptor];
-		
+
 		NSError *error;
 		pipelineState = [mtlDevice newRenderPipelineStateWithDescriptor:pipelineDescriptor error:&error];
 		
@@ -47,8 +51,13 @@ namespace clv::gfx::mtl{
 		[pipelineState release];
 	}
 	
-	id<MTLRenderPipelineState> MTLPipelineObject::getMTLPipelineState() const{
-		return pipelineState;
+	void MTLPipelineObject::setBlendState(bool enabled){
+		[pipelineDescriptor.colorAttachments[0] setBlendingEnabled:(enabled ? YES : NO)];
+	}
+	
+	void MTLPipelineObject::setCullMode(CullFace face, bool frontFaceCounterClockwise){
+		cullFace = face;
+		this->frontFaceCounterClockwise = frontFaceCounterClockwise;
 	}
 	
 	const std::shared_ptr<Shader>& MTLPipelineObject::getShader() const{
@@ -57,6 +66,18 @@ namespace clv::gfx::mtl{
 	
 	const VertexLayout& MTLPipelineObject::getVertexLayout() const{
 		return shaderReflectionData.vertexBufferLayout;
+	}
+	
+	id<MTLRenderPipelineState> MTLPipelineObject::getMTLPipelineState() const{
+		return pipelineState;
+	}
+	
+	CullFace MTLPipelineObject::getCullFace() const{
+		return cullFace;
+	}
+	
+	bool MTLPipelineObject::isFrontFaceCounterClockWise() const{
+		return frontFaceCounterClockwise;
 	}
 	
 	MTLVertexFormat MTLPipelineObject::getMTLFormatFromType(VertexElementType type){

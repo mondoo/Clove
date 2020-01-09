@@ -5,7 +5,6 @@
 #include "Clove/Graphics/Core/RenderFactory.hpp"
 
 namespace clv::plt{
-	MacPlatform::MacPlatform()
 	MacPlatform::MacPlatform(gfx::API api){
 		[NSApplication sharedApplication];
 		[NSApp finishLaunching];
@@ -27,10 +26,10 @@ namespace clv::plt{
 	}
 	
 	std::shared_ptr<Window> MacPlatform::createWindow(const WindowProps& props){
-        return std::make_shared<MacWindow>(props);
+        return std::make_shared<MacWindow>(*graphicsFactory, props);
     }
 	
 	std::shared_ptr<Window> MacPlatform::createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
-		return std::make_shared<MacWindow>(parentWindow, position, size);
+		return std::make_shared<MacWindow>(*graphicsFactory, parentWindow, position, size);
 	}
 }

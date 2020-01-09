@@ -37,12 +37,16 @@ namespace clv::gfx::mtl{
 	void MTLSurface::resizeBuffers(const mth::vec2ui& size){
 		//TODO:
 	}
-
+	
 	void MTLSurface::present(){
-		//TODO: Might be quite tricky - the command queue needs the drawable from the view
+		[[view currentDrawable] present];
 	}
 	
 	std::shared_ptr<RenderTarget> MTLSurface::getRenderTarget() const{
 		return renderTarget;
+	}
+	
+	MTKView* MTLSurface::getMTKView() const{
+		return view;
 	}
 }
