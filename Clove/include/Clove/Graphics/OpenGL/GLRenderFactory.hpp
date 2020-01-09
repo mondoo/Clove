@@ -16,6 +16,9 @@ namespace clv::gfx::ogl{
 
 		virtual ~GLRenderFactory();
 
+		virtual std::shared_ptr<CommandBuffer> createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget) override;
+		virtual std::shared_ptr<CommandBuffer> createCommandBuffer(const std::shared_ptr<Surface>& surface) override;
+
 		virtual std::shared_ptr<Buffer> createBuffer(const BufferDescriptor& descriptor, const void* data) override;
 
 		virtual std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture) override;

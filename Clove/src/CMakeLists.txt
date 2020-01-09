@@ -107,12 +107,12 @@ set(
 		${CLV_SOURCE}/Graphics/OpenGL/Resources/GLTexture.cpp
 		${CLV_INCLUDE}/Graphics/OpenGL/GL.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/GL.cpp
+		${CLV_INCLUDE}/Graphics/OpenGL/GLCommandBuffer.hpp
+		${CLV_SOURCE}/Graphics/OpenGL/GLCommandBuffer.cpp
 		${CLV_INCLUDE}/Graphics/OpenGL/GLException.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/GLException.cpp
 		${CLV_INCLUDE}/Graphics/OpenGL/GLPipelineObject.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/GLPipelineObject.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLRenderDevice.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLRenderDevice.cpp
 		${CLV_INCLUDE}/Graphics/OpenGL/GLRenderFactory.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/GLRenderFactory.cpp
 		${CLV_INCLUDE}/Graphics/OpenGL/GLRenderTarget.hpp

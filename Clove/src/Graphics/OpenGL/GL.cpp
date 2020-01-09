@@ -14,23 +14,27 @@ namespace clv::gfx::ogl{
 		return std::make_pair(std::move(glDevce), std::move(glFactory));
 	}
 
-	void postContextCreatedInitialise(){
-		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+	//Commented out for now - I think the context should load glad
+	//the depth / blend can be handled properly by the context and pipeline repsectively
+	//For now the culling and debugging can be put in the context
 
-		//TODO: The below should be handled by either application or client
-		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
-		CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	//void postContextCreatedInitialise(){
+	//	CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
 
-		glDepthFunc(GL_LESS); //TODO: Expose to function call
+	//	//TODO: The below should be handled by either application or client
+	//	CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
+	//	CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //TODO: Expose to function call
+	//	glDepthFunc(GL_LESS); //TODO: Expose to function call
 
-		glFrontFace(GL_CCW);
-		glCullFace(GL_BACK);
-		glEnable(GL_CULL_FACE);
+	//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //TODO: Expose to function call
 
-		glDebugMessageCallback(errorCallback, nullptr);
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	}
+	//	glFrontFace(GL_CCW);
+	//	glCullFace(GL_BACK);
+	//	glEnable(GL_CULL_FACE);
+
+	//	glDebugMessageCallback(errorCallback, nullptr);
+	//	glEnable(GL_DEBUG_OUTPUT);
+	//	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	//}
 }

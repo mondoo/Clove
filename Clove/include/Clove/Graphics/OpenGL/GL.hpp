@@ -7,5 +7,5 @@ namespace clv::gfx{
 
 namespace clv::gfx::ogl{
 	std::pair<std::unique_ptr<RenderDevice>, std::unique_ptr<RenderFactory>> initialiseOGL();
-	void postContextCreatedInitialise();
+	/*void postContextCreatedInitialise();*/
 }

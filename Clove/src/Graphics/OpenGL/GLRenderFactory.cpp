@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/OpenGL/Resources/GLBuffer.hpp"
 #include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
+#include "Clove/Graphics/OpenGL/GLCommandBuffer.hpp"
 #include "Clove/Graphics/OpenGL/GLPipelineObject.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 #include "Clove/Graphics/OpenGL/GLShader.hpp"
@@ -15,6 +16,14 @@ namespace clv::gfx::ogl{
 	GLRenderFactory::GLRenderFactory() = default;
 
 	GLRenderFactory::~GLRenderFactory() = default;
+
+	std::shared_ptr<CommandBuffer> GLRenderFactory::createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget){
+		return std::make_shared<GLCommandBuffer>(renderTarget);
+	}
+
+	std::shared_ptr<CommandBuffer> GLRenderFactory::createCommandBuffer(const std::shared_ptr<Surface>& surface){
+		return std::make_shared<GLCommandBuffer>(surface);
+	}
 
 	std::shared_ptr<Buffer> GLRenderFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){
 		return std::make_shared<GLBuffer>(descriptor, data);
