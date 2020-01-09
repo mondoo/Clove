@@ -245,7 +245,6 @@ namespace clv::plt{
 							prevConfigureNotifySize = size;
 							if(surface){
 								surface->resizeBuffers(size);
-								gfx::global::graphicsDevice->makeSurfaceCurrent(surface);
 							}
 							onWindowResize.broadcast(size);
 						}
