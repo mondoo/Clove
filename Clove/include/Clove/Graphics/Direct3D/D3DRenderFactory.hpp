@@ -5,17 +5,19 @@
 #include <wrl.h>
 
 struct ID3D11Device;
+struct ID3d11DeviceContext;
 
 namespace clv::gfx::d3d{
 	class D3DRenderFactory : public RenderFactory{
 		//VARIABLES
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice;
+		Microsoft::WRL::ComPtr<ID3d11DeviceContext> d3dDeviceContext;
 
 		//FUNCTIONS
 	public:
 		D3DRenderFactory() = delete;
-		D3DRenderFactory(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice);
+		D3DRenderFactory(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice, Microsoft::WRL::ComPtr<ID3d11DeviceContext> d3dDeviceContext);
 
 		D3DRenderFactory(const D3DRenderFactory& other) = delete;
 		D3DRenderFactory(D3DRenderFactory&& other) = delete;
@@ -24,6 +26,9 @@ namespace clv::gfx::d3d{
 		D3DRenderFactory& operator=(D3DRenderFactory&& other) = delete;
 
 		virtual ~D3DRenderFactory();
+
+		virtual std::shared_ptr<CommandBuffer> createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget) override;
+		virtual std::shared_ptr<CommandBuffer> createCommandBuffer(const std::shared_ptr<Surface>& surface) override;
 
 		virtual std::shared_ptr<Buffer> createBuffer(const BufferDescriptor& descriptor, const void* data) override;
 

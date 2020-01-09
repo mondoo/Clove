@@ -33,12 +33,14 @@ set(
 
 set(
 	CoreGraphicsFiles
+		${CLV_INCLUDE}/Graphics/Core/Resources/Buffer.hpp
+		${CLV_INCLUDE}/Graphics/Core/Resources/Texture.hpp
+		${CLV_INCLUDE}/Graphics/Core/CommandBuffer.hpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsConstants.hpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsGlobal.hpp		
 		${CLV_SOURCE}/Graphics/Core/GraphicsGlobal.cpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsTypes.hpp
 		${CLV_INCLUDE}/Graphics/Core/PipelineObject.hpp
-		${CLV_INCLUDE}/Graphics/Core/RenderDevice.hpp
 		${CLV_INCLUDE}/Graphics/Core/RenderFactory.hpp
 		${CLV_INCLUDE}/Graphics/Core/RenderTarget.hpp
 		${CLV_INCLUDE}/Graphics/Core/Shader.hpp
@@ -46,9 +48,55 @@ set(
 		${CLV_INCLUDE}/Graphics/Core/Surface.hpp
 		${CLV_INCLUDE}/Graphics/Core/VertexLayout.hpp
 		${CLV_INCLUDE}/Graphics/Core/VertexLayout.inl
-		${CLV_SOURCE}/Graphics/Core/VertexLayout.cpp
-		${CLV_INCLUDE}/Graphics/Core/Resources/Buffer.hpp
-		${CLV_INCLUDE}/Graphics/Core/Resources/Texture.hpp
+		${CLV_SOURCE}/Graphics/Core/VertexLayout.cpp	
+)
+
+set(
+	Direct3DGraphicsFiles
+		${CLV_INCLUDE}/Graphics/Direct3D/Resources/D3DBuffer.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/Resources/D3DBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/Resources/D3DTexture.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/Resources/D3DTexture.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/D3D.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/D3D.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/D3DCommandBuffer.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/D3DCommandBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/D3DException.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/D3DException.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/D3DPipelineObject.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/D3DPipelineObject.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/D3DRenderFactory.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/D3DRenderFactory.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/D3DRenderTarget.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/D3DRenderTarget.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/D3DShader.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/D3DShader.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/D3DSurface.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/D3DSurface.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/DXGIInfoManager.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/DXGIInfoManager.cpp
+)
+
+set(
+	MetalGraphicsFiles
+		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLBuffer.hpp
+		${CLV_SOURCE}/Graphics/Metal/Resources/MTLBuffer.mm
+		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLTexture.hpp
+		${CLV_SOURCE}/Graphics/Metal/Resources/MTLTexture.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTL.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTL.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLPipelineObject.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLPipelineObject.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLRenderDevice.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLRenderDevice.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLRenderFactory.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLRenderFactory.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLRenderTarget.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLRenderTarget.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLShader.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLShader.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLSurface.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLSurface.mm
 )
 
 set(
@@ -75,28 +123,6 @@ set(
 )
 
 set(
-	MetalGraphicsFiles
-		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLBuffer.hpp
-		${CLV_SOURCE}/Graphics/Metal/Resources/MTLBuffer.mm
-		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLTexture.hpp
-		${CLV_SOURCE}/Graphics/Metal/Resources/MTLTexture.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTL.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTL.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLPipelineObject.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLPipelineObject.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLRenderDevice.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLRenderDevice.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLRenderFactory.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLRenderFactory.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLRenderTarget.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLRenderTarget.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLShader.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLShader.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLSurface.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLSurface.mm
-)
-
-set(
 	WindowsGLGraphicsFiles
 		${CLV_INCLUDE}/Graphics/OpenGL/WGLSurface.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/WGLSurface.cpp
@@ -106,32 +132,6 @@ set(
 	LinuxGLGraphicsFiles
 		${CLV_INCLUDE}/Graphics/OpenGL/GLXSurface.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/GLXSurface.cpp
-)
-
-set(
-	Direct3DGraphicsFiles
-		${CLV_INCLUDE}/Graphics/Direct3D/Resources/D3DBuffer.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/Resources/D3DBuffer.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/Resources/D3DTexture.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/Resources/D3DTexture.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3D.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3D.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DException.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DException.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DPipelineObject.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DPipelineObject.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DRenderDevice.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DRenderDevice.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DRenderFactory.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DRenderFactory.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DRenderTarget.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DRenderTarget.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DShader.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DShader.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DSurface.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DSurface.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/DXGIInfoManager.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/DXGIInfoManager.cpp
 )
 
 set(

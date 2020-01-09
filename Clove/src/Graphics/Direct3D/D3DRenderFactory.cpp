@@ -1,24 +1,33 @@
 #include "Clove/Graphics/Direct3D/D3DRenderFactory.hpp"
 
-#include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/Resources/D3DBuffer.hpp"
 #include "Clove/Graphics/Direct3D/Resources/D3DTexture.hpp"
+#include "Clove/Graphics/Direct3D/D3DCommandBuffer.hpp"
+#include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/D3DPipelineObject.hpp"
 #include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Clove/Graphics/Direct3D/D3DShader.hpp"
 #include "Clove/Graphics/Direct3D/D3DSurface.hpp"
 #if CLV_DEBUG
-#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
+	#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
 #endif
 
 #include <d3d11.h>
 
 namespace clv::gfx::d3d{
-	D3DRenderFactory::D3DRenderFactory(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice)
-		: d3dDevice(d3dDevice){
+	D3DRenderFactory::D3DRenderFactory(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice, Microsoft::WRL::ComPtr<ID3d11DeviceContext> d3dDeviceContext)
+		: d3dDevice(d3dDevice), d3dDeviceContext(d3dDeviceContext){
 	}
 
 	D3DRenderFactory::~D3DRenderFactory() = default;
+
+	std::shared_ptr<CommandBuffer> D3DRenderFactory::createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget){
+		return std::make_shared<D3DCommandBuffer>(d3dDeviceContext, renderTarget);
+	}
+
+	std::shared_ptr<CommandBuffer> D3DRenderFactory::createCommandBuffer(const std::shared_ptr<Surface>& surface){
+		return std::make_shared<D3DCommandBuffer>(d3dDeviceContext, surface);
+	}
 
 	std::shared_ptr<Buffer> D3DRenderFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){
 		return std::make_shared<D3DBuffer>(*d3dDevice.Get(), descriptor, data);

@@ -13,10 +13,12 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx{
-	class RenderDevice{
+	class CommandBuffer{
 		//FUNCTIONS
 	public:
-		virtual ~RenderDevice() = default;
+		virtual ~CommandBuffer() = default;
+
+		virtual void beginEncoding() = 0;
 
 		virtual void bindIndexBuffer(const Buffer& buffer) = 0;
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32 stride) = 0;
@@ -24,20 +26,15 @@ namespace clv::gfx{
 		virtual void bindPipelineObject(const PipelineObject& pipelineObject) = 0;
 		virtual void bindTexture(const Texture* texture, const uint32 bindingPoint) = 0;
 
-		virtual void makeSurfaceCurrent(const std::shared_ptr<Surface>& surface) = 0;
-
-		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface
-		virtual void setRenderTarget(const RenderTarget* renderTarget) = 0;
-		virtual void setRenderTargetToDefault() = 0;
-		//
-
 		virtual void setViewport(const Viewport& viewport) = 0;
+		virtual void setDepthEnabled(bool enabled) = 0; //TODO: Make it take a descriptor
+		virtual void setClearColour(const mth::vec4f& colour) = 0;
 
-		virtual void clear() = 0;
 		virtual void drawIndexed(const uint32 count) = 0;
 
-		virtual void setClearColour(const mth::vec4f& colour) = 0;
-		virtual void setDepthBuffer(bool enabled) = 0;
-		virtual void setBlendState(bool enabled) = 0;
+		virtual void flushCommands() = 0;
+
+		
+		virtual void setBlendState(bool enabled){}; //TODO: Move to pipeline object and take a descriptor
 	};
 }

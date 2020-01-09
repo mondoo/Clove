@@ -100,6 +100,8 @@ namespace clv::gfx::d3d{
 		depthStencilView.Reset();
 		renderTarget.reset();
 
+		//TODO: Will some how need to let the command buffer know this has happened.
+		//potentially queue it and wait until the command begins again?
 		global::graphicsDevice->setRenderTarget(nullptr);
 
 		DX11_INFO_PROVIDER;
