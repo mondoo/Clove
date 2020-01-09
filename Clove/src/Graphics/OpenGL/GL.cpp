@@ -1,17 +1,13 @@
 #include "Clove/Graphics/OpenGL/GL.hpp"
 
-#include "Clove/Graphics/OpenGL/GLRenderDevice.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderFactory.hpp"
 #include "Clove/Graphics/OpenGL/GLException.hpp"
 
 #include <glad/glad.h>
 
 namespace clv::gfx::ogl{
-	std::pair<std::unique_ptr<RenderDevice>, std::unique_ptr<RenderFactory>> initialiseOGL(){
-		auto glDevce = std::make_unique<GLRenderDevice>();
-		auto glFactory = std::make_unique<GLRenderFactory>();
-
-		return std::make_pair(std::move(glDevce), std::move(glFactory));
+	std::unique_ptr<RenderFactory> initialiseOGL(){
+		return std::make_unique<GLRenderFactory>();
 	}
 
 	//Commented out for now - I think the context should load glad

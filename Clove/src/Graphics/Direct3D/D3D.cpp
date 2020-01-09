@@ -1,13 +1,12 @@
 #include "Clove/Graphics/Direct3D/D3D.hpp"
 
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
-#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
 #include "Clove/Graphics/Direct3D/D3DRenderFactory.hpp"
 
 #include <d3d11.h>
 
 namespace clv::gfx::d3d{
-	std::pair<std::unique_ptr<RenderDevice>, std::unique_ptr<RenderFactory>> initialiseD3D(){
+	std::unique_ptr<RenderFactory> initialiseD3D(){
 		DX11_INFO_PROVIDER;
 
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext;
@@ -76,9 +75,6 @@ namespace clv::gfx::d3d{
 
 		CLV_LOG_INFO("Successfully initialised Direct3D");
 
-		auto device = std::make_unique<D3DRenderDevice>(d3dContext);
-		auto factory = std::make_unique<D3DRenderFactory>(d3dDevice);
-
-		return std::make_pair(std::move(device), std::move(factory));
+		return std::make_unique<D3DRenderFactory>(d3dDevice, d3dContext);
 	}
 }

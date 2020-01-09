@@ -36,9 +36,9 @@ set(
 		${CLV_INCLUDE}/Graphics/Core/Resources/Buffer.hpp
 		${CLV_INCLUDE}/Graphics/Core/Resources/Texture.hpp
 		${CLV_INCLUDE}/Graphics/Core/CommandBuffer.hpp
+		${CLV_INCLUDE}/Graphics/Core/Graphics.hpp		
+		${CLV_SOURCE}/Graphics/Core/Graphics.cpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsConstants.hpp
-		${CLV_INCLUDE}/Graphics/Core/GraphicsGlobal.hpp		
-		${CLV_SOURCE}/Graphics/Core/GraphicsGlobal.cpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsTypes.hpp
 		${CLV_INCLUDE}/Graphics/Core/PipelineObject.hpp
 		${CLV_INCLUDE}/Graphics/Core/RenderFactory.hpp
