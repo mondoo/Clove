@@ -15,6 +15,8 @@ namespace clv::gfx{
 
 		virtual void resizeBuffers(const mth::vec2ui& size) = 0;
 
+		virtual void makeCurrent() = 0;
+
 		virtual void present() = 0;
 
 		virtual const std::shared_ptr<RenderTarget>& getRenderTarget() const = 0;

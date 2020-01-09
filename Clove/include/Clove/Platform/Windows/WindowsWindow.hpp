@@ -6,6 +6,10 @@
 
 #define CLV_WINDOWS_QUIT 25397841 //Note: this number is completely random
 
+namespace clv::gfx{
+	class RenderFactory;
+}
+
 namespace clv::plt{
 	struct WindowsData{
 		HWND handle;
@@ -26,8 +30,8 @@ namespace clv::plt{
 		//FUNCTIONS
 	public:
 		WindowsWindow() = delete;
-		WindowsWindow(const WindowProps& props);
-		WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
+		WindowsWindow(gfx::RenderFactory& graphicsFactory, const WindowProps& props);
+		WindowsWindow(gfx::RenderFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
 
 		WindowsWindow(const WindowsWindow& other) = delete;
 		WindowsWindow(WindowsWindow&& other) noexcept = delete;

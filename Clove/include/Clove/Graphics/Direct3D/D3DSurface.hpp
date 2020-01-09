@@ -50,6 +50,8 @@ namespace clv::gfx::d3d{
 
 		virtual void resizeBuffers(const mth::vec2ui& size) override;
 
+		virtual void makeCurrent() override{};
+
 		virtual void present() override;
 
 		virtual const std::shared_ptr<RenderTarget>& getRenderTarget() const override;

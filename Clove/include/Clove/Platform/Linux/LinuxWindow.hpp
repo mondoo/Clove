@@ -3,6 +3,10 @@
 #include <Clove/Core/Maths/Vector.hpp>
 #include "Clove/Platform/Core/Window.hpp"
 
+namespace clv::gfx{
+	class RenderFactory;
+}
+
 namespace clv::plt{
 	struct LinuxData{
 		Display* display = nullptr;
@@ -33,8 +37,8 @@ namespace clv::plt{
         //FUNCTIONS
     public:
         LinuxWindow() = delete;
-		LinuxWindow(const WindowProps& props);
-		LinuxWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
+		LinuxWindow(gfx::RenderFactory& graphicsFactory, const WindowProps& props);
+		LinuxWindow(gfx::RenderFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
 
 		LinuxWindow(const LinuxWindow& other) = delete;
 		LinuxWindow(LinuxWindow&& other) noexcept = delete;

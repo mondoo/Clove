@@ -35,18 +35,6 @@ namespace clv::gfx::ogl{
 		CLV_LOG_DEBUG("Succesfully created an OpenGL context");
 
 		*data->visual = visual;
-
-		makeCurrent();
-		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
-
-		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
-		CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-		glDebugMessageCallback(errorCallback, nullptr);
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-
-		renderTarget = std::make_shared<GLRenderTarget>();
 	}
 
 	GLXSurface::GLXSurface(GLXSurface&& other) = default;
@@ -58,7 +46,6 @@ namespace clv::gfx::ogl{
 	}
 
 	void GLXSurface::makeCurrent(){
-		CLV_LOG_TRACE("Making context current");
 		glXMakeCurrent(display, *window, context);
 
 		if(!glxSwapIntervalEXT){
@@ -69,6 +56,17 @@ namespace clv::gfx::ogl{
 				CLV_LOG_ERROR("Could not find the GLX_EXT_swap_control. Cannot enable / disable vsync");
 			}
 		}
+
+		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+
+		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
+		CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+		glDebugMessageCallback(errorCallback, nullptr);
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+		renderTarget = std::make_shared<GLRenderTarget>();
 	}
 
 	void GLXSurface::setVSync(bool enabled){
