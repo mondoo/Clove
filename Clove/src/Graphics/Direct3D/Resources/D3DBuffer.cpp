@@ -37,7 +37,7 @@ namespace clv::gfx::d3d{
 		return descriptor;
 	}
 
-	void D3DBuffer::updateData(void* data){
+	void D3DBuffer::updateData(const void* data){
 		DX11_INFO_PROVIDER;
 
 		Microsoft::WRL::ComPtr<ID3D11Device> device = nullptr;

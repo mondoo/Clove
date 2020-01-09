@@ -28,6 +28,6 @@ namespace clv::gfx{
 
 		virtual const BufferDescriptor& getDescriptor() const = 0;
 
-		virtual void updateData(void* data) = 0;
+		virtual void updateData(const void* data) = 0;
 	};
 }

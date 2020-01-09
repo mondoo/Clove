@@ -19,7 +19,7 @@ namespace clv::gfx::mtl{
 		return descriptor;
 	}
 
-	void MTLBuffer::updateData(void* data) const{
+	void MTLBuffer::updateData(const void* data) const{
 		memcpy([mtlBuffer contents], data, descriptor.bufferSize);
 	}
 

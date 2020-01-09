@@ -28,7 +28,7 @@ namespace clv::gfx::d3d{
 
 		virtual const BufferDescriptor& getDescriptor() const override;
 
-		virtual void updateData(void* data) override;
+		virtual void updateData(const void* data) override;
 
 		Microsoft::WRL::ComPtr<ID3D11Buffer> getD3DBuffer() const;
 

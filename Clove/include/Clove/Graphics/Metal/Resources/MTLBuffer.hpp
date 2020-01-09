@@ -25,7 +25,7 @@ namespace clv::gfx::mtl{
 		
 		virtual const BufferDescriptor& getDescriptor() const override;
 
-		virtual void updateData(void* data) override;
+		virtual void updateData(const void* data) override;
 
 		id<MTLBuffer> getMTLBuffer() const;
 	};
