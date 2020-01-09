@@ -21,16 +21,19 @@ namespace clv::gfx::ogl{
 
 		PFNGLXSWAPINTERVALEXTPROC glxSwapIntervalEXT = nullptr;
 
-		std::unique_ptr<GLRenderTarget> renderTarget;
+		std::shared_ptr<GLRenderTarget> renderTarget;
 		
 		//FUNCTIONS
 	public:
 		GLXSurface() = delete;
 		GLXSurface(void* windowData);
+
 		GLXSurface(const GLXSurface& other) = delete;
 		GLXSurface(GLXSurface&& other);
+
 		GLXSurface& operator=(const GLXSurface& other) = default;
 		GLXSurface& operator=(GLXSurface&& other);
+
 		virtual ~GLXSurface();
 
 		virtual void makeCurrent() override;
@@ -40,6 +43,6 @@ namespace clv::gfx::ogl{
 
 		virtual void present() override;
 
-		virtual RenderTarget& getRenderTarget() const override;
+		virtual const std::shared_ptr<RenderTarget>& getRenderTarget() const override;
 	};
 }

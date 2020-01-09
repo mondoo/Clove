@@ -30,7 +30,7 @@ namespace clv::gfx::d3d{
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil;
 
-		std::unique_ptr<D3DRenderTarget> renderTarget;
+		std::shared_ptr<D3DRenderTarget> renderTarget;
 
 		//FUNCTIONS
 	public:
@@ -52,7 +52,7 @@ namespace clv::gfx::d3d{
 
 		virtual void present() override;
 
-		virtual RenderTarget& getRenderTarget() const override;
+		virtual const std::shared_ptr<RenderTarget>& getRenderTarget() const override;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain> getSwapChain() const;
 	};

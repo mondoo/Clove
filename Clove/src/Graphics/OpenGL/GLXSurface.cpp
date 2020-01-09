@@ -35,7 +35,7 @@ namespace clv::gfx::ogl{
 
 		*data->visual = visual;
 
-		renderTarget = std::make_unique<GLRenderTarget>();
+		renderTarget = std::make_shared<GLRenderTarget>();
 	}
 
 	GLXSurface::GLXSurface(GLXSurface&& other) = default;
@@ -91,7 +91,7 @@ namespace clv::gfx::ogl{
 		glXSwapBuffers(display, *window);
 	}
 
-	RenderTarget& GLXSurface::getRenderTarget() const{
-		return *renderTarget;
+	const std::shared_ptr<RenderTarget>& GLXSurface::getRenderTarget() const{
+		return renderTarget;
 	}
 }

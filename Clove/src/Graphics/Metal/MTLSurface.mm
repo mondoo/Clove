@@ -13,7 +13,7 @@ namespace clv::gfx::mtl{
 		
 		[view setDevice:mtlDevice];
 
-		renderTarget = std::make_unique<MTLRenderTarget>([view currentRenderPassDescriptor]);
+		renderTarget = std::make_shared<MTLRenderTarget>([view currentRenderPassDescriptor]);
 	}
 	
 	MTLSurface::MTLSurface(MTLSurface&& other) noexcept = default;
@@ -42,7 +42,7 @@ namespace clv::gfx::mtl{
 		//TODO: Might be quite tricky - the command queue needs the drawable from the view
 	}
 	
-	RenderTarget& MTLSurface::getRenderTarget() const{
-		return *renderTarget;
+	const std::shared_ptr<RenderTarget>& MTLSurface::getRenderTarget() const{
+		return renderTarget;
 	}
 }

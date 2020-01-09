@@ -70,7 +70,7 @@ namespace clv::gfx::d3d{
 
 		DX11_THROW_INFO(d3dDevice.CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
 
-		renderTarget = std::make_unique<D3DRenderTarget>(renderTargetView, depthStencilView);
+		renderTarget = std::make_shared<D3DRenderTarget>(renderTargetView, depthStencilView);
 	}
 
 	D3DSurface::D3DSurface(D3DSurface&& other) noexcept = default;
@@ -118,7 +118,7 @@ namespace clv::gfx::d3d{
 		DX11_THROW_INFO(d3dDevice->CreateTexture2D(&depthTexDesc, nullptr, &depthStencil));
 		DX11_THROW_INFO(d3dDevice->CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
 
-		renderTarget = std::make_unique<D3DRenderTarget>(renderTargetView, depthStencilView);
+		renderTarget = std::make_shared<D3DRenderTarget>(renderTargetView, depthStencilView);
 	}
 
 	void D3DSurface::present(){
@@ -136,8 +136,8 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	RenderTarget& D3DSurface::getRenderTarget() const{
-		return *renderTarget;
+	const std::shared_ptr<RenderTarget>& D3DSurface::getRenderTarget() const{
+		return renderTarget;
 	}
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> D3DSurface::getSwapChain() const{

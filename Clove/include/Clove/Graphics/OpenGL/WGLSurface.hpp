@@ -20,7 +20,7 @@ namespace clv::gfx::ogl{
 		PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
 		PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT = nullptr;
 
-		std::unique_ptr<GLRenderTarget> renderTarget;
+		std::shared_ptr<GLRenderTarget> renderTarget;
 
 		//FUNCTIONS
 	public:
@@ -42,6 +42,6 @@ namespace clv::gfx::ogl{
 
 		virtual void present() override;
 
-		virtual RenderTarget& getRenderTarget() const override;
+		virtual const std::shared_ptr<RenderTarget>& getRenderTarget() const override;
 	};
 }

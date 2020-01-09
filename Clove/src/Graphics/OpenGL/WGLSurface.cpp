@@ -60,7 +60,7 @@ namespace clv::gfx::ogl{
 			wglContext = wglCreateContext(windowsDeviceContext);
 		}
 
-		renderTarget = std::make_unique<GLRenderTarget>();
+		renderTarget = std::make_shared<GLRenderTarget>();
 	}
 
 	WGLSurface::WGLSurface(WGLSurface&& other) noexcept = default;
@@ -112,7 +112,7 @@ namespace clv::gfx::ogl{
 		SwapBuffers(windowsDeviceContext);
 	}
 
-	RenderTarget& WGLSurface::getRenderTarget() const{
-		return *renderTarget;
+	const std::shared_ptr<RenderTarget>& WGLSurface::getRenderTarget() const{
+		return renderTarget;
 	}
 }

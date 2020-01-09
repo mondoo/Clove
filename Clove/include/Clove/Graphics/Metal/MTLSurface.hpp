@@ -12,7 +12,7 @@ namespace clv::gfx::mtl{
 	private:
 		MTKView* view = nullptr;
 		
-		std::unique_ptr<MTLRenderTarget> renderTarget;
+		std::shared_ptr<MTLRenderTarget> renderTarget;
 
 		//FUNCTIONS
 	public:
@@ -34,6 +34,6 @@ namespace clv::gfx::mtl{
 
 		virtual void present() override;
 
-		virtual RenderTarget& getRenderTarget() const override;
+		virtual const std::shared_ptr<RenderTarget>& getRenderTarget() const override;
 	};
 }
