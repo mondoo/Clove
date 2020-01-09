@@ -36,8 +36,8 @@ namespace clv::gfx::ogl{
 
 	GLPipelineObject::~GLPipelineObject() = default;
 
-	GLuint GLPipelineObject::getGLVertexArrayID() const{
-		return vertexArrayID;
+	void GLPipelineObject::setBlendState(bool enabled){
+		blendEnabled = enabled;
 	}
 
 	const std::shared_ptr<Shader>& GLPipelineObject::getShader() const{
@@ -46,6 +46,14 @@ namespace clv::gfx::ogl{
 
 	const VertexLayout& GLPipelineObject::getVertexLayout() const{
 		return shaderReflectionData.vertexBufferLayout;
+	}
+
+	GLuint GLPipelineObject::getGLVertexArrayID() const{
+		return vertexArrayID;
+	}
+
+	bool GLPipelineObject::isBlendEnabled() const{
+		return blendEnabled;
 	}
 
 	GLenum GLPipelineObject::getGLElementType(VertexElementType type){

@@ -36,22 +36,6 @@ namespace clv::gfx::d3d{
 		));
 
 		//TODO: The below should be handled by either application or client
-		D3D11_BLEND_DESC blendDesc{};
-		blendDesc.AlphaToCoverageEnable					= FALSE;
-		blendDesc.IndependentBlendEnable				= FALSE;
-		blendDesc.RenderTarget[0].BlendEnable			= TRUE;
-		blendDesc.RenderTarget[0].SrcBlend				= D3D11_BLEND_SRC_ALPHA;
-		blendDesc.RenderTarget[0].DestBlend				= D3D11_BLEND_INV_SRC_ALPHA;
-		blendDesc.RenderTarget[0].BlendOp				= D3D11_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].SrcBlendAlpha			= D3D11_BLEND_ONE;
-		blendDesc.RenderTarget[0].DestBlendAlpha		= D3D11_BLEND_ZERO;
-		blendDesc.RenderTarget[0].BlendOpAlpha			= D3D11_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
-		Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
-		DX11_THROW_INFO(d3dDevice->CreateBlendState(&blendDesc, &blendState));
-		d3dContext->OMSetBlendState(blendState.Get(), nullptr, 0xffffffff);
-
 		D3D11_RASTERIZER_DESC rdesc{};
 		rdesc.FillMode				= D3D11_FILL_SOLID;
 		rdesc.CullMode				= D3D11_CULL_BACK;

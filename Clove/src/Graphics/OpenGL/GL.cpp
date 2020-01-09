@@ -21,8 +21,6 @@ namespace clv::gfx::ogl{
 	//	CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
 	//	CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-	//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //TODO: Expose to function call
-
 	//	glFrontFace(GL_CCW);
 	//	glCullFace(GL_BACK);
 	//	glEnable(GL_CULL_FACE);

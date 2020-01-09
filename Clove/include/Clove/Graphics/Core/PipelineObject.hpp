@@ -9,6 +9,8 @@ namespace clv::gfx{
 	public:
 		virtual ~PipelineObject() = default;
 
+		virtual void setBlendState(bool enabled) = 0;
+
 		virtual const std::shared_ptr<Shader>& getShader() const = 0;
 		virtual const VertexLayout& getVertexLayout() const = 0;
 	};

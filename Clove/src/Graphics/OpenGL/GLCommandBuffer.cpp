@@ -67,6 +67,13 @@ namespace clv::gfx::ogl{
 
 			const auto glShader = std::static_pointer_cast<GLShader>(glPipelineObject.getShader());
 			glUseProgram(glShader->getProgramID());
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			if(glPipelineObject.isBlendEnabled()){
+				glEnable(GL_BLEND);
+			} else{
+				glDisable(GL_BLEND);
+			}
 		};
 
 		commands.push_back(bindPOCommand);

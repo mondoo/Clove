@@ -96,13 +96,23 @@ namespace clv::gfx::d3d{
 
 	void D3DCommandBuffer::bindPipelineObject(const PipelineObject& pipelineObject){
 		const auto bindPOCommand = [CAPTURE_CONTEXT, &pipelineObject](){
+			DX11_INFO_PROVIDER;
+
 			const D3DPipelineObject& d3dPipelineObject = static_cast<const D3DPipelineObject&>(pipelineObject);
+
+			Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice = nullptr;
+			d3dContext->GetDevice(&d3dDevice);
+
 			d3dContext->IASetInputLayout(d3dPipelineObject.getD3DInputLayout().Get());
 
 			auto d3dShader = std::static_pointer_cast<D3DShader>(d3dPipelineObject.getShader());
 			d3dContext->VSSetShader(d3dShader->getD3DVertexShader().Get(), nullptr, 0u);
 			d3dContext->GSSetShader(d3dShader->getD3DGeometryShader().Get(), nullptr, 0u);
 			d3dContext->PSSetShader(d3dShader->getD3DPixelShader().Get(), nullptr, 0u);
+
+			Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
+			DX11_THROW_INFO(d3dDevice->CreateBlendState(&d3dPipelineObject.getD3DBlendDesc(), &blendState));
+			d3dContext->OMSetBlendState(blendState.Get(), nullptr, 0xffffffff);
 		};
 
 		commands.push_back(bindPOCommand);

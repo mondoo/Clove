@@ -27,14 +27,11 @@ namespace clv::gfx{
 		virtual void bindTexture(const Texture* texture, const uint32 bindingPoint) = 0;
 
 		virtual void setViewport(const Viewport& viewport) = 0;
-		virtual void setDepthEnabled(bool enabled) = 0; //TODO: Make it take a descriptor
+		virtual void setDepthEnabled(bool enabled) = 0;
 		virtual void setClearColour(const mth::vec4f& colour) = 0;
 
 		virtual void drawIndexed(const uint32 count) = 0;
 
 		virtual void flushCommands() = 0;
-
-		
-		virtual void setBlendState(bool enabled){}; //TODO: Move to pipeline object and take a descriptor
 	};
 }
