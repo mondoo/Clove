@@ -144,20 +144,17 @@ namespace clv::gfx::d3d{
 		const auto setDECommand = [CAPTURE_CONTEXT, enabled](){
 			DX11_INFO_PROVIDER;
 
-			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilState;
-			UINT stencilRef;
+			Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice = nullptr;
+			d3dContext->GetDevice(&d3dDevice);
 
-			d3dContext->OMGetDepthStencilState(&depthStencilState, &stencilRef);
-
-			ID3D11Device* d3dDevice;
 			D3D11_DEPTH_STENCIL_DESC depthDesc{};
+			depthDesc.DepthEnable		= enabled ? TRUE : FALSE;
+			depthDesc.DepthWriteMask	= D3D11_DEPTH_WRITE_MASK_ALL;
+			depthDesc.DepthFunc			= D3D11_COMPARISON_LESS;
 
-			depthStencilState->GetDevice(&d3dDevice);
-			depthStencilState->GetDesc(&depthDesc);
-
-			depthDesc.DepthEnable = enabled ? TRUE : FALSE;
-			DX11_THROW_INFO(d3dDevice->CreateDepthStencilState(&depthDesc, &depthStencilState));
-			d3dContext->OMSetDepthStencilState(depthStencilState.Get(), stencilRef);
+			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> dsstate;
+			DX11_THROW_INFO(d3dDevice->CreateDepthStencilState(&depthDesc, &dsstate));
+			d3dContext->OMSetDepthStencilState(dsstate.Get(), 1u);
 		};
 
 		commands.push_back(setDECommand);

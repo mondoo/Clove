@@ -94,6 +94,8 @@ namespace clv::gfx::ogl{
 
 	void GLCommandBuffer::setDepthEnabled(bool enabled){
 		const auto setDECommand = [enabled](){
+			glDepthFunc(GL_LESS);
+
 			if(enabled){
 				glEnable(GL_DEPTH_TEST);
 			} else{

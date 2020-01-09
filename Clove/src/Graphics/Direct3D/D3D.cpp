@@ -36,15 +36,6 @@ namespace clv::gfx::d3d{
 		));
 
 		//TODO: The below should be handled by either application or client
-		D3D11_DEPTH_STENCIL_DESC depthDesc{};
-		depthDesc.DepthEnable		= TRUE;
-		depthDesc.DepthWriteMask	= D3D11_DEPTH_WRITE_MASK_ALL;
-		depthDesc.DepthFunc			= D3D11_COMPARISON_LESS;
-
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> dsstate;
-		DX11_THROW_INFO(d3dDevice->CreateDepthStencilState(&depthDesc, &dsstate));
-		d3dContext->OMSetDepthStencilState(dsstate.Get(), 1u);
-
 		D3D11_BLEND_DESC blendDesc{};
 		blendDesc.AlphaToCoverageEnable					= FALSE;
 		blendDesc.IndependentBlendEnable				= FALSE;
