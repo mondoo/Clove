@@ -34,7 +34,7 @@ namespace clv::gfx{
 
 			default:
 				CLV_LOG_ERROR("Default statement hit. Could not initialise RenderAPI: {0}", CLV_FUNCTION_NAME);
-				break;
+				return std::unique_ptr<RenderFactory>();
 		}
 	}
 }
