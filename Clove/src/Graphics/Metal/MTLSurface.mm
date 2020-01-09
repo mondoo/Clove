@@ -10,6 +10,8 @@ namespace clv::gfx::mtl{
 		const NSRect rect = NSMakeRect(0, 0, data->size.x, data->size.y);
 		view = [[[MTKView alloc] initWithFrame:rect] autorelease];
 		[view setDepthStencilPixelFormat:MTLPixelFormatDepth32Float];
+		view.enableSetNeedsDisplay = NO;
+		view.paused = YES;
 		
 		[view setDevice:mtlDevice];
 
@@ -40,6 +42,7 @@ namespace clv::gfx::mtl{
 	
 	void MTLSurface::present(){
 		[[view currentDrawable] present];
+		[view setNeedsDisplay:YES];
 	}
 	
 	std::shared_ptr<RenderTarget> MTLSurface::getRenderTarget() const{
