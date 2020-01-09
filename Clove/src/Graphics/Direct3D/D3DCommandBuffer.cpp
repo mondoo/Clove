@@ -113,6 +113,12 @@ namespace clv::gfx::d3d{
 			Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
 			DX11_THROW_INFO(d3dDevice->CreateBlendState(&d3dPipelineObject.getD3DBlendDesc(), &blendState));
 			d3dContext->OMSetBlendState(blendState.Get(), nullptr, 0xffffffff);
+
+			Microsoft::WRL::ComPtr<ID3D11RasterizerState> rstate;
+			DX11_THROW_INFO(d3dDevice->CreateRasterizerState(&d3dPipelineObject.getD3DRasterDesc(), &rstate));
+			d3dContext->RSSetState(rstate.Get());
+
+			d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		};
 
 		commands.push_back(bindPOCommand);

@@ -40,6 +40,11 @@ namespace clv::gfx::ogl{
 		blendEnabled = enabled;
 	}
 
+	void GLPipelineObject::setCullMode(CullFace face, bool frontFaceCounterClockwise){
+		cullFace = face;
+		this->frontFaceCounterClockwise = frontFaceCounterClockwise;
+	}
+
 	const std::shared_ptr<Shader>& GLPipelineObject::getShader() const{
 		return shader;
 	}
@@ -54,6 +59,14 @@ namespace clv::gfx::ogl{
 
 	bool GLPipelineObject::isBlendEnabled() const{
 		return blendEnabled;
+	}
+
+	CullFace GLPipelineObject::getCullFace() const{
+		return cullFace;
+	}
+
+	bool GLPipelineObject::isFrontFaceCounterClockwise() const{
+		return frontFaceCounterClockwise;
 	}
 
 	GLenum GLPipelineObject::getGLElementType(VertexElementType type){

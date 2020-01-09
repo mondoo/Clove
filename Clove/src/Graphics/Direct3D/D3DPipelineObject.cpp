@@ -51,6 +51,14 @@ namespace clv::gfx::d3d{
 		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	}
 
+	void D3DPipelineObject::setCullMode(CullFace face, bool frontFaceCounterClockwise){
+		rasteriserDesc = {};
+		rasteriserDesc.FillMode					= D3D11_FILL_SOLID;
+		rasteriserDesc.CullMode					= face == CullFace::Back ? D3D11_CULL_BACK : D3D11_CULL_FRONT;
+		rasteriserDesc.FrontCounterClockwise	= frontFaceCounterClockwise ? TRUE : FALSE;
+		rasteriserDesc.DepthClipEnable			= TRUE;
+	}
+
 	const std::shared_ptr<Shader>& D3DPipelineObject::getShader() const{
 		return shader;
 	}
@@ -65,6 +73,10 @@ namespace clv::gfx::d3d{
 
 	const D3D11_BLEND_DESC& D3DPipelineObject::getD3DBlendDesc() const{
 		return blendDesc;
+	}
+
+	const D3D11_RASTERIZER_DESC& D3DPipelineObject::getD3DRasterDesc() const{
+		return rasteriserDesc;
 	}
 
 	DXGI_FORMAT D3DPipelineObject::getDXGIFormatFromType(VertexElementType type){

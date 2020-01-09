@@ -35,19 +35,6 @@ namespace clv::gfx::d3d{
 			&d3dContext
 		));
 
-		//TODO: The below should be handled by either application or client
-		D3D11_RASTERIZER_DESC rdesc{};
-		rdesc.FillMode				= D3D11_FILL_SOLID;
-		rdesc.CullMode				= D3D11_CULL_BACK;
-		rdesc.FrontCounterClockwise = TRUE; //We need to set the front face to CCW to be compatable with opengl/glm
-		rdesc.DepthClipEnable		= TRUE;
-
-		Microsoft::WRL::ComPtr<ID3D11RasterizerState> rstate;
-		DX11_THROW_INFO(d3dDevice->CreateRasterizerState(&rdesc, &rstate));
-		d3dContext->RSSetState(rstate.Get());
-
-		d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
 		CLV_LOG_INFO("Successfully initialised Direct3D");
 
 		return std::make_unique<D3DRenderFactory>(d3dDevice, d3dContext);

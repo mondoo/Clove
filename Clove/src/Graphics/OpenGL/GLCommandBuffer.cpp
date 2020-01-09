@@ -74,6 +74,10 @@ namespace clv::gfx::ogl{
 			} else{
 				glDisable(GL_BLEND);
 			}
+
+			glFrontFace(glPipelineObject.isFrontFaceCounterClockwise() ? GL_CCW : GL_CW);
+			glCullFace(glPipelineObject.getCullFace() == CullFace::Back ? GL_BACK : GL_FRONT);
+			glEnable(GL_CULL_FACE);
 		};
 
 		commands.push_back(bindPOCommand);

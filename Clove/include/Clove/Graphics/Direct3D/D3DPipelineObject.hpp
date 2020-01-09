@@ -17,6 +17,7 @@ namespace clv::gfx::d3d{
 
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 		D3D11_BLEND_DESC blendDesc;
+		D3D11_RASTERIZER_DESC rasteriserDesc;
 
 		//FUNCTIONS
 	public:
@@ -32,12 +33,14 @@ namespace clv::gfx::d3d{
 		virtual ~D3DPipelineObject();
 
 		virtual void setBlendState(bool enabled) override;
+		virtual void setCullMode(CullFace face, bool frontFaceCounterClockwise) override;
 
 		virtual const std::shared_ptr<Shader>& getShader() const override;
 		virtual const VertexLayout& getVertexLayout() const override;
 
 		const Microsoft::WRL::ComPtr<ID3D11InputLayout>& getD3DInputLayout() const;
 		const D3D11_BLEND_DESC& getD3DBlendDesc() const;
+		const D3D11_RASTERIZER_DESC& getD3DRasterDesc() const;
 
 	private:
 		DXGI_FORMAT getDXGIFormatFromType(VertexElementType type);
