@@ -19,9 +19,14 @@ namespace clv::gfx::d3d{
 		d3dRenderTarget = std::static_pointer_cast<D3DRenderTarget>(renderTarget);
 	}
 
-	D3DCommandBuffer::D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, const Surface& surface)
+	D3DCommandBuffer::D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, Surface& surface)
 		: d3dContext(d3dContext){
-		d3dRenderTarget = std::static_pointer_cast<D3DRenderTarget>(surface.getRenderTarget());
+		D3DSurface& d3dSurface = static_cast<D3DSurface&>(surface);
+
+		d3dSurface.onBufferResizeRequested.bind(&D3DCommandBuffer::onSurfaceBufferResizeReuqested, this);
+		finishBufferResize.bind(&D3DSurface::finishResizingBuffers, &d3dSurface);
+
+		d3dRenderTarget = std::static_pointer_cast<D3DRenderTarget>(d3dSurface.getRenderTarget());
 	}
 
 	D3DCommandBuffer::D3DCommandBuffer(D3DCommandBuffer&& other) noexcept = default;
@@ -31,6 +36,12 @@ namespace clv::gfx::d3d{
 	D3DCommandBuffer::~D3DCommandBuffer() = default;
 
 	void D3DCommandBuffer::beginEncoding(){
+		if(surfaceNeedsToResizeBuffers){
+			d3dRenderTarget.reset();
+			d3dRenderTarget = finishBufferResize.broadcast();
+			surfaceNeedsToResizeBuffers = false;
+		}
+
 		const auto beginCommand = [CAPTURE_CONTEXT, d3dRenderTarget = d3dRenderTarget.get(), clearColour = &clearColour](){
 			auto renderTargetView = d3dRenderTarget->getRenderTargetView();
 			auto depthStencilView = d3dRenderTarget->getDepthStencilView();
@@ -199,5 +210,9 @@ namespace clv::gfx::d3d{
 		}
 
 		commands.clear();
+	}
+
+	void D3DCommandBuffer::onSurfaceBufferResizeReuqested(){
+		surfaceNeedsToResizeBuffers = true;
 	}
 }

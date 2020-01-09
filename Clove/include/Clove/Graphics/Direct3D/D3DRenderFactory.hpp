@@ -28,7 +28,7 @@ namespace clv::gfx::d3d{
 		virtual ~D3DRenderFactory();
 
 		virtual std::shared_ptr<CommandBuffer> createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget) override;
-		virtual std::shared_ptr<CommandBuffer> createCommandBuffer(const Surface& surface) override;
+		virtual std::shared_ptr<CommandBuffer> createCommandBuffer(Surface& surface) override;
 
 		virtual std::shared_ptr<Buffer> createBuffer(const BufferDescriptor& descriptor, const void* data) override;
 

@@ -21,7 +21,7 @@ namespace clv::gfx::ogl{
 		return std::make_shared<GLCommandBuffer>(renderTarget);
 	}
 
-	std::shared_ptr<CommandBuffer> GLRenderFactory::createCommandBuffer(const Surface& surface){
+	std::shared_ptr<CommandBuffer> GLRenderFactory::createCommandBuffer(Surface& surface){
 		return std::make_shared<GLCommandBuffer>(surface);
 	}
 

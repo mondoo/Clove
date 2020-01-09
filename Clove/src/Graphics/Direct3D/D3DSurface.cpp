@@ -84,38 +84,8 @@ namespace clv::gfx::d3d{
 	}
 
 	void D3DSurface::resizeBuffers(const mth::vec2ui& size){
-		D3D11_TEXTURE2D_DESC depthTexDesc{};
-		depthStencil->GetDesc(&depthTexDesc);
-
-		D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-		depthStencilView->GetDesc(&dsvDesc);
-		
-		depthStencil.Reset();
-		renderTargetView.Reset();
-		depthStencilView.Reset();
-		renderTarget.reset();
-
-		//TODO: Will some how need to let the command buffer know this has happened.
-		//potentially queue it and wait until the command begins again?
-		global::graphicsDevice->setRenderTarget(nullptr);
-
-		DX11_INFO_PROVIDER;
-		DX11_THROW_INFO(swapChain->ResizeBuffers(bufferCount, size.x, size.y, DXGI_FORMAT_B8G8R8A8_UNORM, 0));
-
-		Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice;
-		DX11_THROW_INFO(swapChain->GetDevice(__uuidof(ID3D11Device), &d3dDevice));
-
-		Microsoft::WRL::ComPtr<ID3D11Resource> backBuffer;
-		DX11_THROW_INFO(swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer));
-		DX11_THROW_INFO(d3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, &renderTargetView));
-
-		depthTexDesc.Width	= size.x;
-		depthTexDesc.Height = size.y;
-
-		DX11_THROW_INFO(d3dDevice->CreateTexture2D(&depthTexDesc, nullptr, &depthStencil));
-		DX11_THROW_INFO(d3dDevice->CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
-
-		renderTarget = std::make_shared<D3DRenderTarget>(renderTargetView, depthStencilView);
+		desiredBufferSize = size;
+		onBufferResizeRequested.broadcast();
 	}
 
 	void D3DSurface::present(){
@@ -139,5 +109,40 @@ namespace clv::gfx::d3d{
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> D3DSurface::getSwapChain() const{
 		return swapChain;
+	}
+
+	std::shared_ptr<D3DRenderTarget> D3DSurface::finishResizingBuffers(){
+		mth::vec2ui size = desiredBufferSize.value();
+
+		D3D11_TEXTURE2D_DESC depthTexDesc{};
+		depthStencil->GetDesc(&depthTexDesc);
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+		depthStencilView->GetDesc(&dsvDesc);
+
+		depthStencil.Reset();
+		renderTargetView.Reset();
+		depthStencilView.Reset();
+		renderTarget.reset();
+
+		DX11_INFO_PROVIDER;
+		DX11_THROW_INFO(swapChain->ResizeBuffers(bufferCount, size.x, size.y, DXGI_FORMAT_B8G8R8A8_UNORM, 0));
+
+		Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice;
+		DX11_THROW_INFO(swapChain->GetDevice(__uuidof(ID3D11Device), &d3dDevice));
+
+		Microsoft::WRL::ComPtr<ID3D11Resource> backBuffer;
+		DX11_THROW_INFO(swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer));
+		DX11_THROW_INFO(d3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, &renderTargetView));
+
+		depthTexDesc.Width = size.x;
+		depthTexDesc.Height = size.y;
+
+		DX11_THROW_INFO(d3dDevice->CreateTexture2D(&depthTexDesc, nullptr, &depthStencil));
+		DX11_THROW_INFO(d3dDevice->CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
+
+		renderTarget = std::make_shared<D3DRenderTarget>(renderTargetView, depthStencilView);
+
+		return renderTarget;
 	}
 }

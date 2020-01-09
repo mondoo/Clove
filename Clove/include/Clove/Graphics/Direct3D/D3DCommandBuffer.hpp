@@ -22,11 +22,14 @@ namespace clv::gfx::d3d{
 
 		mth::vec4f clearColour = { 0.0f, 0.0f, 0.0f, 1.0f };
 
+		bool surfaceNeedsToResizeBuffers = false;
+		utl::SingleCastDelegate<std::shared_ptr<D3DRenderTarget>()> finishBufferResize;
+
 		//FUNCTIONS
 	public:
 		D3DCommandBuffer() = delete;
 		D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, const std::shared_ptr<RenderTarget>& renderTarget);
-		D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, const Surface& surface);
+		D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, Surface& surface);
 
 		D3DCommandBuffer(const D3DCommandBuffer& other) = delete;
 		D3DCommandBuffer(D3DCommandBuffer&& other) noexcept;
@@ -51,5 +54,8 @@ namespace clv::gfx::d3d{
 		virtual void drawIndexed(const uint32 count) override;
 
 		virtual void flushCommands() override;
+
+	private:
+		void onSurfaceBufferResizeReuqested();
 	};
 }

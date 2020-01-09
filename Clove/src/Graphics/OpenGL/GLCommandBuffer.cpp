@@ -14,7 +14,7 @@ namespace clv::gfx::ogl{
 		glRenderTarget = std::static_pointer_cast<GLRenderTarget>(renderTarget);
 	}
 
-	GLCommandBuffer::GLCommandBuffer(const Surface& surface){
+	GLCommandBuffer::GLCommandBuffer(Surface& surface){
 		glRenderTarget = std::static_pointer_cast<GLRenderTarget>(surface.getRenderTarget());
 	}
 

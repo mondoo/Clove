@@ -19,6 +19,7 @@ namespace clv::gfx::d3d{
 		//VARIABLES
 	public:
 		utl::SingleCastDelegate<void()> onDeviceRemoved;
+		utl::MultiCastDelegate<void()> onBufferResizeRequested;
 
 	private:
 		uint32 bufferCount = 1u;
@@ -31,6 +32,7 @@ namespace clv::gfx::d3d{
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil;
 
 		std::shared_ptr<D3DRenderTarget> renderTarget;
+		std::optional<mth::vec2ui> desiredBufferSize;
 
 		//FUNCTIONS
 	public:
@@ -57,5 +59,7 @@ namespace clv::gfx::d3d{
 		virtual const std::shared_ptr<RenderTarget>& getRenderTarget() const override;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain> getSwapChain() const;
+
+		std::shared_ptr<D3DRenderTarget> finishResizingBuffers();
 	};
 }
