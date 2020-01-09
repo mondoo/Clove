@@ -42,7 +42,7 @@ namespace clv::gfx::d3d{
 		DX11_THROW_INFO(dxgiDevice->GetAdapter(&dxgiAdapter));
 
 		Microsoft::WRL::ComPtr<IDXGIFactory> dxgiFactory = nullptr;
-		dxgiAdapter->GetParent(__uuidof(IDXGIFactory), &dxgiFactory);
+		DX11_THROW_INFO(dxgiAdapter->GetParent(__uuidof(IDXGIFactory), &dxgiFactory));
 
 		DX11_THROW_INFO(dxgiFactory->CreateSwapChain(&d3dDevice, &swapChainDesc, &swapChain));
 
