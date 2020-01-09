@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16.0)
 
+include(CMakeDependentOption)
+
 project(Garlic)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -13,8 +15,8 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
 set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #custom settings
-option(GAR_BUILD_BULB "Build the Bulb editor (requries Tunic)" ON)
 option(GAR_BUILD_TUNIC "Build the Tunic framework" ON)
+CMAKE_DEPENDENT_OPTION(GAR_BUILD_BULB "Build the Bulb editor (requries Tunic)" ON "GAR_BUILD_TUNIC" OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -27,6 +29,6 @@ if(GAR_BUILD_TUNIC)
 endif()
 
 #Builb
-if(MSVC AND (GAR_BUILD_BULB AND GAR_BUILD_TUNIC)) #not currently supported without MSVC
+if(MSVC AND GAR_BUILD_BULB) #not currently supported without MSVC
 	add_subdirectory(Bulb)
 endif()
