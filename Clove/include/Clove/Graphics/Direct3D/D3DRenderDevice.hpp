@@ -47,8 +47,6 @@ namespace clv::gfx::d3d{
 		virtual void bindPipelineObject(const PipelineObject& pipelineObject) override;
 		virtual void bindTexture(const Texture* texture, const uint32 bindingPoint) override;
 
-		virtual void updateBufferData(Buffer& buffer, const void* data) override;
-
 		virtual void makeSurfaceCurrent(const std::shared_ptr<Surface>& surface) override;
 
 		//Temp: adding default/clear here until I figure out the best way to handle changing the rt for the lights and then back to the surface

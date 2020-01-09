@@ -36,8 +36,6 @@ namespace clv::gfx::mtl{
 		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint) override;
 		virtual void bindPipelineObject(const PipelineObject& pipelineObject) override;
 		virtual void bindTexture(const Texture* texture, const uint32 bindingPoint) override;
-		
-		virtual void updateBufferData(Buffer& buffer, const void* data) override;
 
 		virtual void makeSurfaceCurrent(const std::shared_ptr<Surface>& surface) override;
 

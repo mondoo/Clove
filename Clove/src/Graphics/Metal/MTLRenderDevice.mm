@@ -58,11 +58,6 @@ namespace clv::gfx::mtl{
 			[commandEncoder setFragmentTexture:nullptr atIndex:bindingPoint];
 		}
 	}
-	
-	void MTLRenderDevice::updateBufferData(Buffer& buffer, const void* data){
-		MTLBuffer& mtlBuffer = static_cast<MTLBuffer&>(buffer);
-		memcpy([mtlBuffer.getMTLBuffer() contents], data, mtlBuffer.getDescriptor().bufferSize);
-	}
 
 	void MTLRenderDevice::makeSurfaceCurrent(const std::shared_ptr<Surface>& surface){
 		currentSurface = std::static_pointer_cast<MTLSurface>(surface);

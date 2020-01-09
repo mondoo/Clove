@@ -3,7 +3,7 @@
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/D3DRenderFactory.hpp"
 #if CLV_DEBUG
-#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
+	#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
 #endif
 
 namespace clv::gfx::d3d{
@@ -36,12 +36,28 @@ namespace clv::gfx::d3d{
 
 	D3DBuffer::~D3DBuffer() = default;
 
-	Microsoft::WRL::ComPtr<ID3D11Buffer> D3DBuffer::getD3DBuffer() const{
-		return d3dBuffer;
-	}
-
 	const BufferDescriptor& D3DBuffer::getDescriptor() const{
 		return descriptor;
+	}
+
+	void D3DBuffer::updateData(void* data){
+		DX11_INFO_PROVIDER;
+
+		Microsoft::WRL::ComPtr<ID3D11Device> device = nullptr;
+		d3dBuffer->GetDevice(&device);
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> context = nullptr;
+		device->GetImmediateContext(&context);
+
+		D3D11_MAPPED_SUBRESOURCE mappedSubResource{};
+		DX11_THROW_INFO(context->Map(d3dBuffer.Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &mappedSubResource));
+
+		memcpy(mappedSubResource.pData, data, descriptor.bufferSize);
+
+		context->Unmap(d3dBuffer.Get(), 0u);
+	}
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> D3DBuffer::getD3DBuffer() const{
+		return d3dBuffer;
 	}
 
 	UINT D3DBuffer::getD3DBufferType(BufferType cloveType){

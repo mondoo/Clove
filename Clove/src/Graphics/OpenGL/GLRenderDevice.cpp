@@ -47,13 +47,6 @@ namespace clv::gfx::ogl{
 		}
 	}
 
-	void GLRenderDevice::updateBufferData(Buffer& buffer, const void* data){
-		const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
-		glBindBuffer(GL_UNIFORM_BUFFER, glbuffer.getBufferID());
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, glbuffer.getDescriptor().bufferSize, data);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	}
-
 	void GLRenderDevice::makeSurfaceCurrent(const std::shared_ptr<Surface>& surface){
 		auto glSurface = std::static_pointer_cast<GLSurface>(surface);
 		glSurface->makeCurrent();

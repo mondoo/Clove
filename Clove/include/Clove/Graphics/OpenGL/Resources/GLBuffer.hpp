@@ -22,9 +22,11 @@ namespace clv::gfx::ogl{
 		GLBuffer& operator=(GLBuffer&& other);
 		virtual ~GLBuffer();
 
-		GLuint getBufferID() const;
-
 		virtual const BufferDescriptor& getDescriptor() const override;
+
+		virtual void updateData(void* data) override;
+
+		GLuint getBufferID() const;
 
 	private:
 		GLenum getGLBufferType(BufferType cloveType);

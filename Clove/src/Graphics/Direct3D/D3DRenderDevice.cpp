@@ -78,18 +78,6 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	void D3DRenderDevice::updateBufferData(Buffer& buffer, const void* data){
-		DX11_INFO_PROVIDER;
-		const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
-
-		D3D11_MAPPED_SUBRESOURCE mappedSubResource{};
-		DX11_THROW_INFO(d3dContext->Map(d3dBuffer.getD3DBuffer().Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &mappedSubResource));
-		
-		memcpy(mappedSubResource.pData, data, d3dBuffer.getDescriptor().bufferSize);
-		
-		d3dContext->Unmap(d3dBuffer.getD3DBuffer().Get(), 0u);
-	}
-
 	void D3DRenderDevice::makeSurfaceCurrent(const std::shared_ptr<Surface>& surface){
 		currentSurface = std::static_pointer_cast<D3DSurface>(surface);
 	}

@@ -17,15 +17,20 @@ namespace clv::gfx::d3d{
 	public:
 		D3DBuffer() = delete;
 		D3DBuffer(ID3D11Device& d3dDevice, const BufferDescriptor& descriptor, const void* data);
+
 		D3DBuffer(const D3DBuffer& other) = delete;
 		D3DBuffer(D3DBuffer&& other) noexcept;
+
 		D3DBuffer& operator=(const D3DBuffer& other) = delete;
 		D3DBuffer& operator=(D3DBuffer&& other) noexcept;
+
 		virtual ~D3DBuffer();
 
-		Microsoft::WRL::ComPtr<ID3D11Buffer> getD3DBuffer() const;
-
 		virtual const BufferDescriptor& getDescriptor() const override;
+
+		virtual void updateData(void* data) override;
+
+		Microsoft::WRL::ComPtr<ID3D11Buffer> getD3DBuffer() const;
 
 	private:
 		UINT getD3DBufferType(BufferType cloveType);
