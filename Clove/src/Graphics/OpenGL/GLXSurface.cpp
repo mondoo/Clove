@@ -2,6 +2,7 @@
 
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/OpenGL/GLException.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
 namespace clv::gfx::ogl{
@@ -40,6 +41,10 @@ namespace clv::gfx::ogl{
 
 		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
 		CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+		glDebugMessageCallback(errorCallback, nullptr);
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
 		renderTarget = std::make_shared<GLRenderTarget>();
 	}
