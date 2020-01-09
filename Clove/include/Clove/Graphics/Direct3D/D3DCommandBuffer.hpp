@@ -26,7 +26,7 @@ namespace clv::gfx::d3d{
 	public:
 		D3DCommandBuffer() = delete;
 		D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, const std::shared_ptr<RenderTarget>& renderTarget);
-		D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, const std::shared_ptr<Surface>& surface);
+		D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, const Surface& surface);
 
 		D3DCommandBuffer(const D3DCommandBuffer& other) = delete;
 		D3DCommandBuffer(D3DCommandBuffer&& other) noexcept;

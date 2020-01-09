@@ -19,7 +19,7 @@ namespace clv::gfx::ogl{
 	public:
 		GLCommandBuffer() = delete;
 		GLCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget);
-		GLCommandBuffer(const std::shared_ptr<Surface>& surface);
+		GLCommandBuffer(const Surface& surface);
 
 		GLCommandBuffer(const GLCommandBuffer& other) = delete;
 		GLCommandBuffer(GLCommandBuffer&& other) noexcept;

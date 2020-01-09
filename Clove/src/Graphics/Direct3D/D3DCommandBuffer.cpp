@@ -19,9 +19,9 @@ namespace clv::gfx::d3d{
 		d3dRenderTarget = std::static_pointer_cast<D3DRenderTarget>(renderTarget);
 	}
 
-	D3DCommandBuffer::D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, const std::shared_ptr<Surface>& surface)
+	D3DCommandBuffer::D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, const Surface& surface)
 		: d3dContext(d3dContext){
-		d3dRenderTarget = std::static_pointer_cast<D3DRenderTarget>(surface->getRenderTarget());
+		d3dRenderTarget = std::static_pointer_cast<D3DRenderTarget>(surface.getRenderTarget());
 	}
 
 	D3DCommandBuffer::D3DCommandBuffer(D3DCommandBuffer&& other) noexcept = default;

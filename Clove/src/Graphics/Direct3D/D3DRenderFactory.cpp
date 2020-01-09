@@ -25,7 +25,7 @@ namespace clv::gfx::d3d{
 		return std::make_shared<D3DCommandBuffer>(d3dDeviceContext, renderTarget);
 	}
 
-	std::shared_ptr<CommandBuffer> D3DRenderFactory::createCommandBuffer(const std::shared_ptr<Surface>& surface){
+	std::shared_ptr<CommandBuffer> D3DRenderFactory::createCommandBuffer(const Surface& surface){
 		return std::make_shared<D3DCommandBuffer>(d3dDeviceContext, surface);
 	}
 
