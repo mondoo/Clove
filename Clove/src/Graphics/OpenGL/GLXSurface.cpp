@@ -35,6 +35,12 @@ namespace clv::gfx::ogl{
 
 		*data->visual = visual;
 
+		makeCurrent();
+		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+
+		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
+		CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
 		renderTarget = std::make_shared<GLRenderTarget>();
 	}
 
