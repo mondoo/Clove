@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/OpenGL/GLSurface.hpp"
 
+#include <glad/glad.h>
 #include <GL/glx.h>
 
 namespace clv::gfx::ogl{

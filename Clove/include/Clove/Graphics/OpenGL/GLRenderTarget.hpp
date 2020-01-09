@@ -2,8 +2,6 @@
 
 #include "Clove/Graphics/Core/RenderTarget.hpp"
 
-#include <glad/glad.h>
-
 namespace clv::gfx{
 	class Texture;
 };
@@ -12,8 +10,8 @@ namespace clv::gfx::ogl{
 	class GLRenderTarget : public RenderTarget{
 		//VARIABLES
 	private:
-		GLuint frameBufferID = 0;
-		GLuint renderBufferID = 0;
+		uint32 frameBufferID = 0;
+		uint32 renderBufferID = 0;
 
 		//FUNCTIONS
 	public:
