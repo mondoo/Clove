@@ -34,6 +34,6 @@ namespace clv::gfx::mtl{
 
 		virtual void present() override;
 
-		virtual const std::shared_ptr<RenderTarget>& getRenderTarget() const override;
+		virtual std::shared_ptr<RenderTarget> getRenderTarget() const override;
 	};
 }

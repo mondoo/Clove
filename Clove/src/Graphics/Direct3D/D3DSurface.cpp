@@ -103,7 +103,7 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	const std::shared_ptr<RenderTarget>& D3DSurface::getRenderTarget() const{
+	std::shared_ptr<RenderTarget> D3DSurface::getRenderTarget() const{
 		return renderTarget;
 	}
 

@@ -122,7 +122,7 @@ namespace clv::gfx::ogl{
 		SwapBuffers(windowsDeviceContext);
 	}
 
-	const std::shared_ptr<RenderTarget>& WGLSurface::getRenderTarget() const{
+	std::shared_ptr<RenderTarget> WGLSurface::getRenderTarget() const{
 		return renderTarget;
 	}
 }

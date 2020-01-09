@@ -42,7 +42,7 @@ namespace clv::gfx::mtl{
 		//TODO: Might be quite tricky - the command queue needs the drawable from the view
 	}
 	
-	const std::shared_ptr<RenderTarget>& MTLSurface::getRenderTarget() const{
+	std::shared_ptr<RenderTarget> MTLSurface::getRenderTarget() const{
 		return renderTarget;
 	}
 }

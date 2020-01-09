@@ -56,7 +56,7 @@ namespace clv::gfx::d3d{
 
 		virtual void present() override;
 
-		virtual const std::shared_ptr<RenderTarget>& getRenderTarget() const override;
+		virtual std::shared_ptr<RenderTarget> getRenderTarget() const override;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain> getSwapChain() const;
 

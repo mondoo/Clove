@@ -100,7 +100,7 @@ namespace clv::gfx::ogl{
 		glXSwapBuffers(display, *window);
 	}
 
-	const std::shared_ptr<RenderTarget>& GLXSurface::getRenderTarget() const{
+	std::shared_ptr<RenderTarget> GLXSurface::getRenderTarget() const{
 		return renderTarget;
 	}
 }
