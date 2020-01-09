@@ -6,6 +6,10 @@
 #include <wglext.h>
 
 namespace clv::gfx::ogl{
+	class GLRenderTarget;
+}
+
+namespace clv::gfx::ogl{
 	class WGLSurface : public GLSurface{
 		//VARIABLES
 	private:
@@ -16,14 +20,19 @@ namespace clv::gfx::ogl{
 		PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
 		PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT = nullptr;
 
+		std::unique_ptr<GLRenderTarget> renderTarget;
+
 		//FUNCTIONS
 	public:
 		WGLSurface() = delete;
 		WGLSurface(void* windowData);
+
 		WGLSurface(const WGLSurface& other) = delete;
 		WGLSurface(WGLSurface&& other) noexcept;
+
 		WGLSurface& operator=(const WGLSurface& other) = delete;
 		WGLSurface& operator=(WGLSurface&& other) noexcept;
+
 		virtual ~WGLSurface();
 
 		virtual void makeCurrent() override;
@@ -32,5 +41,7 @@ namespace clv::gfx::ogl{
 		virtual bool isVsync() const override;
 
 		virtual void present() override;
+
+		virtual RenderTarget& getRenderTarget() const override;
 	};
 }

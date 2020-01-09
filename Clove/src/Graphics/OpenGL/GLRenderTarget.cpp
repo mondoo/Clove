@@ -3,6 +3,8 @@
 #include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
 
 namespace clv::gfx::ogl{
+	GLRenderTarget::GLRenderTarget() = default;
+
 	GLRenderTarget::GLRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
 		glGenFramebuffers(1, &frameBufferID);
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);

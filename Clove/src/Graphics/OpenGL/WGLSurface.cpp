@@ -3,6 +3,7 @@
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 #include "Clove/Platform/Windows/WindowsException.hpp"
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
 namespace clv::gfx::ogl{
 	WGLSurface::WGLSurface(void* windowData){
@@ -58,6 +59,8 @@ namespace clv::gfx::ogl{
 
 			wglContext = wglCreateContext(windowsDeviceContext);
 		}
+
+		renderTarget = std::make_unique<GLRenderTarget>();
 	}
 
 	WGLSurface::WGLSurface(WGLSurface&& other) noexcept = default;
@@ -107,5 +110,9 @@ namespace clv::gfx::ogl{
 
 	void WGLSurface::present(){
 		SwapBuffers(windowsDeviceContext);
+	}
+
+	RenderTarget& WGLSurface::getRenderTarget() const{
+		return *renderTarget;
 	}
 }

@@ -1,6 +1,7 @@
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 
 #include "Clove/Platform/Mac/MacWindow.hpp"
+#include "Clove/Graphics/Metal/MTLRenderTarget.hpp"
 
 namespace clv::gfx::mtl{
 	MTLSurface::MTLSurface(id<MTLDevice> mtlDevice, void* windowData){
@@ -11,6 +12,8 @@ namespace clv::gfx::mtl{
 		[view setDepthStencilPixelFormat:MTLPixelFormatDepth32Float];
 		
 		[view setDevice:mtlDevice];
+
+		renderTarget = std::make_unique<MTLRenderTarget>([view currentRenderPassDescriptor]);
 	}
 	
 	MTLSurface::MTLSurface(MTLSurface&& other) noexcept = default;
@@ -39,7 +42,7 @@ namespace clv::gfx::mtl{
 		//TODO: Might be quite tricky - the command queue needs the drawable from the view
 	}
 	
-	MTKView* MTLSurface::getView() const{
-		return view;
+	RenderTarget& MTLSurface::getRenderTarget() const{
+		return *renderTarget;
 	}
 }

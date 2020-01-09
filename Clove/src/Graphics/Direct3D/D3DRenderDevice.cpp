@@ -109,7 +109,7 @@ namespace clv::gfx::d3d{
 	}
 
 	void D3DRenderDevice::setRenderTargetToDefault(){
-		const D3DRenderTarget& d3dRenderTarget = currentSurface->getTarget();
+		const D3DRenderTarget& d3dRenderTarget = static_cast<D3DRenderTarget&>(currentSurface->getRenderTarget());
 		auto renderTargetView = d3dRenderTarget.getRenderTargetView();
 		auto depthStencilView = d3dRenderTarget.getDepthStencilView();
 

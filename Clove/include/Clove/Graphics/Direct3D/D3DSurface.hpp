@@ -36,10 +36,13 @@ namespace clv::gfx::d3d{
 	public:
 		D3DSurface() = delete;
 		D3DSurface(ID3D11Device& d3dDevice, void* windowData);
+
 		D3DSurface(const D3DSurface& other) = delete;
 		D3DSurface(D3DSurface&& other) noexcept;
+
 		D3DSurface& operator=(const D3DSurface& other) = delete;
 		D3DSurface& operator=(D3DSurface&& other) noexcept;
+
 		virtual ~D3DSurface();
 
 		virtual void setVSync(bool vsync) override;
@@ -49,7 +52,7 @@ namespace clv::gfx::d3d{
 
 		virtual void present() override;
 
-		D3DRenderTarget& getTarget() const;
+		virtual RenderTarget& getRenderTarget() const override;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain> getSwapChain() const;
 	};

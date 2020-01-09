@@ -136,7 +136,7 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	D3DRenderTarget& D3DSurface::getTarget() const{
+	RenderTarget& D3DSurface::getRenderTarget() const{
 		return *renderTarget;
 	}
 

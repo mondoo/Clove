@@ -2,6 +2,7 @@
 
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
 namespace clv::gfx::ogl{
 	GLXSurface::GLXSurface(void* windowData){
@@ -33,6 +34,8 @@ namespace clv::gfx::ogl{
 		CLV_LOG_DEBUG("Succesfully created an OpenGL context");
 
 		*data->visual = visual;
+
+		renderTarget = std::make_unique<GLRenderTarget>();
 	}
 
 	GLXSurface::GLXSurface(GLXSurface&& other) = default;
@@ -86,5 +89,9 @@ namespace clv::gfx::ogl{
 
 	void GLXSurface::present(){
 		glXSwapBuffers(display, *window);
+	}
+
+	RenderTarget& GLXSurface::getRenderTarget() const{
+		return *renderTarget;
 	}
 }

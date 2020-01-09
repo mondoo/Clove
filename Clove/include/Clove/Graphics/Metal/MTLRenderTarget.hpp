@@ -16,6 +16,7 @@ namespace clv::gfx::mtl{
 	public:
 		MTLRenderTarget() = delete;
 		MTLRenderTarget(id<MTLDevice> mtlDevice, Texture* colourTexture, Texture* depthStencilTexture);
+		MTLRenderTarget(MTLRenderPassDescriptor* descriptor);
 		
 		MTLRenderTarget(const MTLRenderTarget& other) = delete;
 		MTLRenderTarget(MTLRenderTarget&& other) noexcept;

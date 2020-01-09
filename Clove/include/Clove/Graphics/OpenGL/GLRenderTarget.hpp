@@ -17,12 +17,15 @@ namespace clv::gfx::ogl{
 
 		//FUNCTIONS
 	public:
-		GLRenderTarget() = delete;
+		GLRenderTarget();
 		GLRenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
+
 		GLRenderTarget(const GLRenderTarget& other) = delete;
 		GLRenderTarget(GLRenderTarget&& other) noexcept;
+
 		GLRenderTarget& operator=(const GLRenderTarget& other) = delete;
 		GLRenderTarget& operator=(GLRenderTarget&& other) noexcept;
+
 		virtual ~GLRenderTarget();
 
 		const uint32 getGLFrameBufferID() const;

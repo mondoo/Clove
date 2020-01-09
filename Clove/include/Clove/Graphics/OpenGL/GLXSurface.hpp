@@ -5,6 +5,10 @@
 #include <GL/glx.h>
 
 namespace clv::gfx::ogl{
+	class GLRenderTarget;
+}
+
+namespace clv::gfx::ogl{
 	class GLXSurface : public GLSurface{
 		//VARIABLES
 	private:
@@ -16,6 +20,8 @@ namespace clv::gfx::ogl{
 		::GLXContext context = nullptr;
 
 		PFNGLXSWAPINTERVALEXTPROC glxSwapIntervalEXT = nullptr;
+
+		std::unique_ptr<GLRenderTarget> renderTarget;
 		
 		//FUNCTIONS
 	public:
@@ -33,5 +39,7 @@ namespace clv::gfx::ogl{
 		virtual bool isVsync() const override;
 
 		virtual void present() override;
+
+		virtual RenderTarget& getRenderTarget() const override;
 	};
 }

@@ -12,6 +12,10 @@ namespace clv::gfx::mtl{
 		descriptor.depthAttachment.texture = mtldepthStencilTexture->getMTLTexture();
 		//TODO: Not handling stencAttachment
 	}
+
+	MTLRenderTarget::MTLRenderTarget(MTLRenderPassDescriptor* descriptor)
+		: descriptor(descriptor){
+	}
 	
 	MTLRenderTarget::MTLRenderTarget(MTLRenderTarget&& other) noexcept = default;
 	
