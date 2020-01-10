@@ -53,6 +53,8 @@ namespace clv::gfx::mtl{
 	
 	void MTLPipelineObject::setBlendState(bool enabled){
 		[pipelineDescriptor.colorAttachments[0] setBlendingEnabled:(enabled ? YES : NO)];
+		NSError *error;
+		pipelineState = [[pipelineState device] newRenderPipelineStateWithDescriptor:pipelineDescriptor error:&error];
 	}
 	
 	void MTLPipelineObject::setCullMode(CullFace face, bool frontFaceCounterClockwise){
