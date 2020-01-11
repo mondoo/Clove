@@ -17,10 +17,10 @@ namespace Bulb::Core{
 		return components;
 	}
 
-	Component^ Entity::addTransformComponent(){
+	TransformComponent^ Entity::addTransformComponent(){
 		tnc::Application::get().getManager().addComponent<tnc::ecs::_3D::TransformComponent>(ID);
 
-		auto comp = gcnew Component(ComponentType::Transform);
+		auto comp = gcnew TransformComponent();
 		comp->name = "Transform Component";
 		components->Add(comp);
 		return comp;
@@ -31,7 +31,7 @@ namespace Bulb::Core{
 		auto mesh = std::make_shared<tnc::rnd::Mesh>("res/Objects/cube.obj", material->createInstance());
 		tnc::Application::get().getManager().addComponent<tnc::ecs::_3D::MeshComponent>(ID, mesh);
 
-		auto comp = gcnew Component(ComponentType::Mesh);
+		auto comp = gcnew Component();
 		comp->name = "Mesh Component";
 		components->Add(comp);
 		return comp;

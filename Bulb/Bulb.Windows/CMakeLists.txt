@@ -24,7 +24,6 @@ set(
 		Properties/Settings.settings
 		Properties/Settings.Designer.cs
 
-		UI/ComponentTemplateSelector.cs
 		UI/ViewModels/ComponentViewModel.cs
 		UI/ViewModels/EditorWindowViewModel.cs
 		UI/ViewModels/EntityViewModel.cs

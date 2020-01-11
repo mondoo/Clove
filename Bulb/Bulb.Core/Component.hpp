@@ -1,24 +1,21 @@
 #pragma once
 
-namespace Bulb::Core{
-	public enum class ComponentType{
-		Transform,
-		Mesh
-	};
-}
-
+//All temp
 namespace Bulb::Core{
 	public ref class Component{
 		//VARIABLES
-	public:
-		//All temp
+	public: 
 		System::String^ name = "Test Component";
-		ComponentType type;
 
 		//FUNCTIONS
 	public:
-		Component(ComponentType type);
+		
+	};
 
-		ComponentType getType();
+	public ref class TransformComponent : Component{
+	public:
+		float x = 1.1f;
+		float y = 2.2f;
+		float z = 3.3f;
 	};
 }

@@ -26,7 +26,7 @@ namespace Bulb.UI {
 		}
 
 		public void AddTransformComponent() {
-			Components.Add(new ComponentViewModel(entity.addTransformComponent()));
+			Components.Add(new TransformComponentViewModel(entity.addTransformComponent()));
 		}
 
 		public void AddMeshComponent() {

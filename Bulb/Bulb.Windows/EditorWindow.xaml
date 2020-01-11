@@ -7,43 +7,7 @@
         xmlns:blbui="clr-namespace:Bulb.UI"
         mc:Ignorable="d"
         Title="Garlic Engine" Height="720" Width="1280">
-
-    <Window.Resources>
-        <DataTemplate x:Key="Unkown">
-            <StackPanel>
-                <TextBlock Text="{Binding Name}"/>
-            </StackPanel>
-        </DataTemplate>
-
-        <DataTemplate x:Key="TransformComponentTemplate">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Name}"/>
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="x: 99"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="y: 99"/>
-                <TextBlock Grid.Row="1" Grid.Column="2" Text="z: 99"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="MeshComponentTemplate">
-            <StackPanel>
-                <TextBlock Text="{Binding Name}"/>
-            </StackPanel>
-        </DataTemplate>
-
-        <blb:ComponentTemplateSelector x:Key="ComponentTemplateSelector" 
-                                       TransformComponent="{StaticResource TransformComponentTemplate}" 
-                                       MeshComponent="{StaticResource MeshComponentTemplate}"/>
-    </Window.Resources>
-
+    
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -82,8 +46,50 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Text="{Binding SelectedEntity.Name}"/>
-            <ListView Grid.Row="1" Background="#FFB4B4B4" ItemsSource="{Binding SelectedEntity.Components}" 
-                      ItemTemplateSelector="{StaticResource ComponentTemplateSelector}"/>
+            <ListView Grid.Row="1" Background="#FFB4B4B4" ItemsSource="{Binding SelectedEntity.Components}">
+                <ListView.Resources>
+                     <DataTemplate DataType="{x:Type blbui:TransformComponentViewModel}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Name}"/>
+                            
+                            <TextBlock Grid.Row="1" Grid.Column="0">
+                                <TextBlock.Text>
+                                    <Binding StringFormat="X: {0}" Path="X"/>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            
+                            <TextBlock Grid.Row="1" Grid.Column="1">
+                                <TextBlock.Text>
+                                    <Binding StringFormat="Y: {0}" Path="Y"/>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            
+                            <TextBlock Grid.Row="1" Grid.Column="2">
+                                <TextBlock.Text>
+                                    <Binding StringFormat="Z: {0}" Path="Z"/>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </Grid>
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type blbui:ComponentViewModel}">
+                        <StackPanel>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.Resources>
+            </ListView>
             <Button Grid.Row="2" Content="Add Transform" Command="{Binding AddTransformCommand}"/>
             <Button Grid.Row="3" Content="Add Mesh" Command="{Binding AddMeshCommand}"/>
         </Grid>
