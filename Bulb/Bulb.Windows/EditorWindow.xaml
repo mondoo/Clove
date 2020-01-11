@@ -16,20 +16,32 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TransformComponentTemplate">
-            <StackPanel>
-                <TextBlock Text="this is a transform one"/>
-                <TextBlock Text="{Binding Name}"/>
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Name}"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="x: 99"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="y: 99"/>
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="z: 99"/>
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="MeshComponentTemplate">
             <StackPanel>
-                <TextBlock Text="this is a mesh one"/>
                 <TextBlock Text="{Binding Name}"/>
             </StackPanel>
         </DataTemplate>
 
-        <blb:ComponentTemplateSelector x:Key="ComponentTemplateSelector" TransformComponent="{StaticResource TransformComponentTemplate}" MeshComponent="{StaticResource MeshComponentTemplate}"/>
+        <blb:ComponentTemplateSelector x:Key="ComponentTemplateSelector" 
+                                       TransformComponent="{StaticResource TransformComponentTemplate}" 
+                                       MeshComponent="{StaticResource MeshComponentTemplate}"/>
     </Window.Resources>
 
     <Grid Margin="10">
@@ -70,7 +82,8 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Text="{Binding SelectedEntity.Name}"/>
-            <ListView Grid.Row="1" Background="#FFB4B4B4" ItemsSource="{Binding SelectedEntity.Components}" ItemTemplateSelector="{StaticResource ComponentTemplateSelector}"/>
+            <ListView Grid.Row="1" Background="#FFB4B4B4" ItemsSource="{Binding SelectedEntity.Components}" 
+                      ItemTemplateSelector="{StaticResource ComponentTemplateSelector}"/>
             <Button Grid.Row="2" Content="Add Transform" Command="{Binding AddTransformCommand}"/>
             <Button Grid.Row="3" Content="Add Mesh" Command="{Binding AddMeshCommand}"/>
         </Grid>
