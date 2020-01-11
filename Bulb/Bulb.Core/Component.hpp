@@ -1,5 +1,9 @@
 #pragma once
 
+namespace tnc::ecs::_3D{
+	class TransformComponent;
+}
+
 //All temp
 namespace Bulb::Core{
 	public ref class Component{
@@ -13,9 +17,20 @@ namespace Bulb::Core{
 	};
 
 	public ref class TransformComponent : Component{
+		//VARIABLES
+	private:
+		tnc::ecs::_3D::TransformComponent* component;
+
 	public:
-		float x = 1.1f;
-		float y = 2.2f;
-		float z = 3.3f;
+		TransformComponent(tnc::ecs::_3D::TransformComponent* component);
+
+		float getX();
+		void setX(float val);
+
+		float getY();
+		void setY(float val);
+
+		float getZ();
+		void setZ(float val);
 	};
 }

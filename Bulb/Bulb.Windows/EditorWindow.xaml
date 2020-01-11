@@ -12,7 +12,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="4*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1.5*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -62,24 +62,10 @@
                             </Grid.RowDefinitions>
                             
                             <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Name}"/>
-                            
-                            <TextBlock Grid.Row="1" Grid.Column="0">
-                                <TextBlock.Text>
-                                    <Binding StringFormat="X: {0}" Path="X"/>
-                                </TextBlock.Text>
-                            </TextBlock>
-                            
-                            <TextBlock Grid.Row="1" Grid.Column="1">
-                                <TextBlock.Text>
-                                    <Binding StringFormat="Y: {0}" Path="Y"/>
-                                </TextBlock.Text>
-                            </TextBlock>
-                            
-                            <TextBlock Grid.Row="1" Grid.Column="2">
-                                <TextBlock.Text>
-                                    <Binding StringFormat="Z: {0}" Path="Z"/>
-                                </TextBlock.Text>
-                            </TextBlock>
+
+                            <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding X, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Y, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+                            <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Z, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
                         </Grid>
                     </DataTemplate>
 

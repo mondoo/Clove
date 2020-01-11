@@ -18,9 +18,9 @@ namespace Bulb::Core{
 	}
 
 	TransformComponent^ Entity::addTransformComponent(){
-		tnc::Application::get().getManager().addComponent<tnc::ecs::_3D::TransformComponent>(ID);
+		auto* trans = tnc::Application::get().getManager().addComponent<tnc::ecs::_3D::TransformComponent>(ID);
 
-		auto comp = gcnew TransformComponent();
+		auto comp = gcnew TransformComponent(trans);
 		comp->name = "Transform Component";
 		components->Add(comp);
 		return comp;
