@@ -49,10 +49,5 @@ namespace Bulb.Windows {
 				(int)renderAreaPoint.X + 2, (int)renderAreaPoint.Y + 1,
 				(int)RenderArea.ActualWidth - 2, (int)RenderArea.ActualHeight - 2);
 		}
-
-		private void TextBox_ValidateNumber(object sender, TextCompositionEventArgs e) {
-			Regex regex = new Regex("[^0-9.-]+");
-			e.Handled = regex.IsMatch(e.Text);
-		}
 	}
 }
