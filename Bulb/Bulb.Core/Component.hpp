@@ -4,6 +4,31 @@ namespace tnc::ecs::_3D{
 	class TransformComponent;
 }
 
+//TODO: Create an offcial wrapper for vec3
+namespace Bulb::Core{
+	public ref struct vec3{
+		float x = 0.0f;
+		float y = 0.0f;
+		float z = 0.0f;
+
+		vec3() : x(0), y(0), z(0){}
+		vec3(float x, float y, float z) : x(x), y(y), z(z){}
+
+		vec3(const vec3^& other){
+			x = other->x;
+			y = other->y;
+			z = other->z;
+		}
+		vec3^ operator=(const vec3^& other){
+			x = other->x;
+			y = other->y;
+			z = other->z;
+
+			return this;
+		}
+	};
+}
+
 //All temp
 namespace Bulb::Core{
 	public ref class Component{
@@ -24,13 +49,7 @@ namespace Bulb::Core{
 	public:
 		TransformComponent(tnc::ecs::_3D::TransformComponent* component);
 
-		float getX();
-		void setX(float val);
-
-		float getY();
-		void setY(float val);
-
-		float getZ();
-		void setZ(float val);
+		vec3^ getPosition();
+		void setPosition(vec3^ position);
 	};
 }

@@ -7,30 +7,14 @@ namespace Bulb::Core{
 		: component(component){
 	}
 
-	float TransformComponent::getX(){
-		return component->getPosition().x;
+	vec3^ TransformComponent::getPosition(){
+		clv::mth::vec3f pos = component->getPosition();
+		vec3^ retPos = gcnew vec3{ pos.x, pos.y, pos.z };
+		return retPos;
 	}
 
-	void TransformComponent::setX(float val){
-		const auto pos = component->getPosition();
-		component->setPosition({ val, pos.y, pos.z });
-	}
-
-	float TransformComponent::getY(){
-		return component->getPosition().y;
-	}
-
-	void TransformComponent::setY(float val){
-		const auto pos = component->getPosition();
-		component->setPosition({ pos.x, val, pos.z });
-	}
-
-	float TransformComponent::getZ(){
-		return component->getPosition().z;
-	}
-
-	void TransformComponent::setZ(float val){
-		const auto pos = component->getPosition();
-		component->setPosition({ pos.x, pos.y, val });
+	void TransformComponent::setPosition(vec3^ position){
+		clv::mth::vec3f pos = { position->x, position->y, position->z };
+		component->setPosition(pos);
 	}
 }

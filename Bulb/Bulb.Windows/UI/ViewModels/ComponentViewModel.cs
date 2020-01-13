@@ -12,31 +12,37 @@ namespace Bulb.UI {
 	}
 
 	public class TransformComponentViewModel : ComponentViewModel {
-		public float X { 
+		public float posX { 
 			get {
-				return component.getX();
+				return component.getPosition().x;
 			}
 			set {
-				component.setX(value);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(X)));
+				var position = component.getPosition();
+				position.x = value;
+				component.setPosition(position);
+				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(posX)));
 			}
 		}
-		public float Y {
+		public float posY {
 			get {
-				return component.getY();
+				return component.getPosition().y;
 			}
 			set {
-				component.setY(value);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(Y)));
+				var position = component.getPosition();
+				position.y = value;
+				component.setPosition(position);
+				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(posY)));
 			}
 		}
-		public float Z {
+		public float posZ {
 			get {
-				return component.getZ();
+				return component.getPosition().z;
 			}
 			set {
-				component.setZ(value);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(Z)));
+				var position = component.getPosition();
+				position.z = value;
+				component.setPosition(position);
+				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(posZ)));
 			}
 		}
 

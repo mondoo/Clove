@@ -10,6 +10,7 @@
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
@@ -18,33 +19,34 @@
 		</Grid.RowDefinitions>
 
 		<TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Name}"/>
+		<TextBlock Grid.Row="1" Grid.Column="0"  Text="Position:"/>
 
-		<Grid Grid.Row="1" Grid.Column="0">
+		<Grid Grid.Row="1" Grid.Column="1" Margin="3,0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="X: "/>
-			<TextBox Grid.Column="1" Text="{Binding X, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding posX, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
-		<Grid Grid.Row="1" Grid.Column="1">
+		<Grid Grid.Row="1" Grid.Column="2" Margin="3,0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="Y: "/>
-			<TextBox Grid.Column="1" Text="{Binding Y, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding posY, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
-		<Grid Grid.Row="1" Grid.Column="2">
+		<Grid Grid.Row="1" Grid.Column="3" Margin="3,0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="Z: "/>
-			<TextBox Grid.Column="1" Text="{Binding Z, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding posZ, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
 	</Grid>
 </UserControl>
