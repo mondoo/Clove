@@ -1,5 +1,28 @@
 set(DependencyFolder "Garlic/Clove/Dependencies")
 
+function(get_all_targets _result _dir)
+    get_property(_subdirs DIRECTORY "${_dir}" PROPERTY SUBDIRECTORIES)
+    foreach(_subdir IN LISTS _subdirs)
+        get_all_targets(${_result} "${_subdir}")
+    endforeach()
+    get_property(_sub_targets DIRECTORY "${_dir}" PROPERTY BUILDSYSTEM_TARGETS)
+    set(${_result} ${${_result}} ${_sub_targets} PARENT_SCOPE)
+endfunction()
+
+function(add_subdirectory_with_folder _folder_name _folder)
+    add_subdirectory(${_folder} ${ARGN})
+    get_all_targets(_targets "${_folder}")
+	foreach(_target IN LISTS _targets)
+		get_target_property(target_type ${_target} TYPE)
+		if(NOT ${target_type} STREQUAL "INTERFACE_LIBRARY")
+			set_target_properties(
+				${_target}
+				PROPERTIES FOLDER "${_folder_name}"
+			)
+		endif()
+    endforeach()
+endfunction()
+
 #Vendor defaults
 set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
 set(PA_BUILD_SHARED OFF CACHE BOOL "Build shared/dynamic library")
@@ -14,6 +37,7 @@ set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "Set when you want to build Bullet 3 Open
 set(BUILD_UNIT_TESTS OFF CACHE BOOL "Build unit tests")
 set(USE_GLUT OFF CACHE BOOL "Use GLUT")
 set(USE_GRAPHICAL_BENCHMARK OFF CACHE BOOL "Use graphical benchmark")
+set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")
 
 #dxerr
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -51,15 +75,10 @@ add_subdirectory(freetype2)
 set_target_properties(freetype PROPERTIES FOLDER ${DependencyFolder})
 
 #bullet3
-add_subdirectory(bullet3)
-set_target_properties(Bullet2FileLoader PROPERTIES FOLDER ${DependencyFolder}/bullet3)
-set_target_properties(Bullet3Collision PROPERTIES FOLDER ${DependencyFolder}/bullet3)
-set_target_properties(Bullet3Common PROPERTIES FOLDER ${DependencyFolder}/bullet3)
-set_target_properties(Bullet3Dynamics PROPERTIES FOLDER ${DependencyFolder}/bullet3)
-set_target_properties(Bullet3Geometry PROPERTIES FOLDER ${DependencyFolder}/bullet3)
-set_target_properties(Bullet3OpenCL_clew PROPERTIES FOLDER ${DependencyFolder}/bullet3)
-set_target_properties(BulletCollision PROPERTIES FOLDER ${DependencyFolder}/bullet3)
-set_target_properties(BulletDynamics PROPERTIES FOLDER ${DependencyFolder}/bullet3)
-set_target_properties(BulletInverseDynamics PROPERTIES FOLDER ${DependencyFolder}/bullet3)
-set_target_properties(BulletSoftBody PROPERTIES FOLDER ${DependencyFolder}/bullet3)
-set_target_properties(LinearMath PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+add_subdirectory_with_folder(${DependencyFolder}/bullet3 bullet3)
+
+#glslang
+add_subdirectory_with_folder(${DependencyFolder}/glslang glslang)
+
+#SPIRV-Cross
+add_subdirectory_with_folder(${DependencyFolder}/SPIRV-Cross SPIRV-Cross)

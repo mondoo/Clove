@@ -43,6 +43,8 @@ set(
 		${CLV_INCLUDE}/Graphics/Core/RenderTarget.hpp
 		${CLV_INCLUDE}/Graphics/Core/Shader.hpp
 		${CLV_INCLUDE}/Graphics/Core/ShaderBufferTypes.hpp
+		${CLV_INCLUDE}/Graphics/Core/ShaderCompiler.hpp		
+		${CLV_SOURCE}/Graphics/Core/ShaderCompiler.cpp
 		${CLV_INCLUDE}/Graphics/Core/Surface.hpp
 		${CLV_INCLUDE}/Graphics/Core/VertexLayout.hpp
 		${CLV_INCLUDE}/Graphics/Core/VertexLayout.inl

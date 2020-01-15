@@ -21,3 +21,9 @@
 [submodule "Clove/vendor/bullet3"]
 	path = Clove/vendor/bullet3
 	url = https://github.com/bulletphysics/bullet3.git
+[submodule "Clove/vendor/glslang"]
+	path = Clove/vendor/glslang
+	url = https://github.com/KhronosGroup/glslang.git
+[submodule "Clove/vendor/SPIRV-Cross"]
+	path = Clove/vendor/SPIRV-Cross
+	url = https://github.com/KhronosGroup/SPIRV-Cross.git
