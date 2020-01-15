@@ -56,15 +56,18 @@ namespace clv::gfx::ShaderCompiler{
             //if(inputFormat == ShaderFormat::HLSL){
                 shader.setEnvTargetHlslFunctionality1();
                 shader.setHlslIoMapping(true);
+                
            // }
 
             shader.setAutoMapBindings(true);
             shader.setAutoMapLocations(true);
 
-            shader.setEnvInput(glslang::EShSourceHlsl, stage, glslang::EShClientVulkan, 100);
+            shader.setEntryPoint("main");
+            //shader.setInvertY(true); //Might need this later
+            shader.setEnvInput(glslang::EShSourceHlsl, stage, glslang::EShClientVulkan, 500);
             shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_3);
             shader.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
-            shader.parse(&builtInResources, 100, true, messages);
+            shader.parse(&builtInResources, 500, true, messages);
 
             glslang::SpvOptions spvOptions;
             spvOptions.validate = false;
@@ -86,7 +89,6 @@ namespace clv::gfx::ShaderCompiler{
             glslang::FinalizeProcess();
        // }
 
-        //Output Transpliation
 
         if(outputType == ShaderOutputType::GLSL){
             spirv_cross::CompilerGLSL glsl(spirvSource);
@@ -98,7 +100,7 @@ namespace clv::gfx::ShaderCompiler{
             glsl.set_common_options(scoptions);
 
             return glsl.compile();
-        }else if(outputType == ShaderOutputType::MSL){
+        } else if(outputType == ShaderOutputType::MSL){
             spirv_cross::CompilerMSL msl(spirvSource);
 
             return msl.compile();
