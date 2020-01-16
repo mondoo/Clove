@@ -34,18 +34,15 @@ namespace clv::mth{
 	}
 
 	template<typename T, qualifier Q>
-	quat<T, Q> asQuaternion(T angle, const vec<3, T, Q>& axis){
-		return glm::angleAxis(angle, axis);
+	quat<T, Q> eulerToQuaternion(const vec<3, T, Q>& euler){
+		return matrixToQuaternion(glm::yawPitchRoll(euler.y, euler.x, euler.z));
 	}
 
 	template<typename T, qualifier Q>
-	mat<3, 3, T, Q> quaternionToMatrix3(const quat<T, Q>& quat){
-		return glm::toMat3(quat);
-	}
-
-	template<typename T, qualifier Q>
-	mat<4, 4, T, Q> quaternionToMatrix4(const quat<T, Q>& quat){
-		return glm::toMat4(quat);
+	vec<3, T, Q> matrixToEuler(const mat<4, 4, T, Q>& mat){
+		vec<3, T, Q> vec;
+		glm::extractEulerAngleXYZ(mat, vec.x, vec.y, vec.z);
+		return vec;
 	}
 
 	template<typename T, qualifier Q>
@@ -59,14 +56,22 @@ namespace clv::mth{
 	}
 
 	template<typename T, qualifier Q>
+	quat<T, Q> asQuaternion(T angle, const vec<3, T, Q>& axis){
+		return glm::angleAxis(angle, axis);
+	}
+
+	template<typename T, qualifier Q>
 	vec<3, T, Q> quaternionToEuler(const quat<T, Q>& quat){
 		return (glm::axis(quat) * glm::angle(quat));
 	}
 
 	template<typename T, qualifier Q>
-	vec<3, T, Q> eulerFromMatrix(const mat<4, 4, T, Q>& mat){
-		vec<3, T, Q> vec;
-		glm::extractEulerAngleXYZ(mat, vec.x, vec.y, vec.z);
-		return vec;
+	mat<3, 3, T, Q> quaternionToMatrix3(const quat<T, Q>& quat){
+		return glm::toMat3(quat);
+	}
+
+	template<typename T, qualifier Q>
+	mat<4, 4, T, Q> quaternionToMatrix4(const quat<T, Q>& quat){
+		return glm::toMat4(quat);
 	}
 }

@@ -81,7 +81,7 @@ namespace tnc::ecs::ui{
 		transformMatrix[1][1] /= scale.y;
 		transformMatrix[1][2] /= scale.y;
 
-		const mth::vec3f euler = mth::eulerFromMatrix(transformMatrix);
+		const mth::vec3f euler = mth::matrixToEuler(transformMatrix);
 
 		return euler.z;
 	}

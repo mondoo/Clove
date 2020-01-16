@@ -6,7 +6,8 @@ namespace tnc::ecs::_3D{
 
 //TODO: Create an offcial wrapper for vec3
 namespace Bulb::Core{
-	public ref struct vec3{
+	public ref class vec3{
+	public:
 		float x = 0.0f;
 		float y = 0.0f;
 		float z = 0.0f;
@@ -51,5 +52,11 @@ namespace Bulb::Core{
 
 		vec3^ getPosition();
 		void setPosition(vec3^ position);
+
+		vec3^ getRotation();
+		void setRotation(vec3^ rotation);
+
+		vec3^ getScale();
+		void setScale(vec3^ scale);
 	};
 }
