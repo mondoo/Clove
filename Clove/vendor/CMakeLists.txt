@@ -38,6 +38,8 @@ set(BUILD_UNIT_TESTS OFF CACHE BOOL "Build unit tests")
 set(USE_GLUT OFF CACHE BOOL "Use GLUT")
 set(USE_GRAPHICAL_BENCHMARK OFF CACHE BOOL "Use graphical benchmark")
 set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")
+set(SPIRV_CROSS_ENABLE_C_API OFF CACHE BOOL "Enable C API wrapper support in static library.")
+set(SPIRV_CROSS_ENABLE_TESTS OFF CACHE BOOL "Enable SPIR-V Cross tests.")
 
 #dxerr
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
