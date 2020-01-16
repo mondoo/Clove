@@ -2,7 +2,7 @@
 
 //#include "Clove/Graphics/Direct3D/ShaderHeaders.hpp"
 
-#define ENABLE_HLSL
+//#define ENABLE_HLSL
 
 #include "SPIRV/GlslangToSpv.h"
 #include "SPIRV/disassemble.h"
@@ -20,6 +20,8 @@
 #include "spirv_glsl.hpp"
 #include "spirv_hlsl.hpp"
 #include "spirv_msl.hpp"
+
+//#include <cstdlib>
 
 namespace clv::gfx::ShaderCompiler{
 	EShLanguage getEShStage(ShaderType type){
@@ -50,25 +52,25 @@ namespace clv::gfx::ShaderCompiler{
 		TBuiltInResource builtInResources = glslang::DefaultTBuiltInResource;
 		EShMessages messages = static_cast<EShMessages>(
 			EShMsgSpvRules |
-			EShMsgReadHlsl | EShMsgHlslOffsets | EShMsgHlslLegalization |
+			//EShMsgReadHlsl | EShMsgHlslOffsets | EShMsgHlslLegalization |
 			EShMsgKeepUncalled | EShMsgSuppressWarnings);
 
 		//if(inputFormat == ShaderFormat::HLSL){
-		shader.setEnvTargetHlslFunctionality1();
-		shader.setHlslIoMapping(true);
+		//shader.setEnvTargetHlslFunctionality1();
+		//shader.setHlslIoMapping(true);
 
 		// }
 
-		shader.setAutoMapBindings(true);
-		shader.setAutoMapLocations(true);
+		//shader.setAutoMapBindings(true);
+		//shader.setAutoMapLocations(true);
 
 		shader.setEntryPoint("main");
 		//shader.setInvertY(true); //Might need this later (there's also an option on the compiler below)
-		shader.setEnvInput(glslang::EShSourceHlsl, stage, glslang::EShClientVulkan, 460);
-		shader.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
+		shader.setEnvInput(glslang::EShSourceHlsl, stage, glslang::EShClientOpenGL, 100);
+		shader.setEnvClient(glslang::EShClientOpenGL, glslang::EShTargetOpenGL_450);
 		shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_5);
 
-		shader.parse(&builtInResources, 460, true, messages);
+		shader.parse(&builtInResources, 100, true, messages);
 
 		glslang::SpvOptions spvOptions;
 		spvOptions.validate = false;
@@ -95,18 +97,47 @@ namespace clv::gfx::ShaderCompiler{
 			spirv_cross::CompilerGLSL glsl(spirvSource);
 			spirv_cross::CompilerGLSL::Options scoptions;
 
+			spirv_cross::ShaderResources resources = glsl.get_shader_resources();
+
+			
+
 			scoptions.version = 460;
 			scoptions.es = false;
+			//scoptions.vulkan_semantics = true;
 			scoptions.enable_420pack_extension = false;
-			//scoptions.emit_push_constant_as_uniform_buffer = true;
-			//scoptions.
 
 			glsl.set_common_options(scoptions);
 			glsl.build_combined_image_samplers();
 
+			// Get all sampled images in the shader.
+			unsigned binding = 0;
+			for(auto& resource : resources.separate_samplers){
+				unsigned set = glsl.get_decoration(resource.id, spv::DecorationDescriptorSet);
+				/*unsigned*/ binding = glsl.get_decoration(resource.id, spv::DecorationBinding);
+				printf("Image %s at set = %u, binding = %u\n", resource.name.c_str(), set, binding);
+
+				// Modify the decoration to prepare it for GLSL.
+				//glsl.unset_decoration(resource.id, spv::DecorationDescriptorSet);
+
+				// Some arbitrary remapping if we want.
+				//glsl.set_decoration(resource.id, spv::DecorationBinding, binding);
+
+				glsl.set_name(resource.id, resource.name);
+
+				//res = resource.id;
+			}
+
+			// Give the remapped combined samplers new names.
+// Here you can also set up decorations if you want (binding = #N).
+			for(auto& remap : glsl.get_combined_image_samplers()){
+				//This properly sets the binding - TODO: Need a more robust way to do this
+				glsl.set_decoration(remap.combined_id, spv::DecorationBinding, binding);
+			}
+
 			return glsl.compile();
 		} else if(outputType == ShaderOutputType::MSL){
 			spirv_cross::CompilerMSL msl(spirvSource);
+			//spirv_cross::CompilerMSL::Options scoptions;
 
 			return msl.compile();
 		}
