@@ -22,90 +22,95 @@
 #include "spirv_msl.hpp"
 
 namespace clv::gfx::ShaderCompiler{
-    EShLanguage getEShStage(ShaderType type){
-        switch(type){
-            case clv::gfx::ShaderType::Vertex:
-                return EShLanguage::EShLangVertex;
-            case clv::gfx::ShaderType::Pixel:
-                return EShLanguage::EShLangFragment;
-            case clv::gfx::ShaderType::Geometry:
-                return EShLanguage::EShLangGeometry;
-            default:
-                break;
-        }
+	EShLanguage getEShStage(ShaderType type){
+		switch(type){
+			case clv::gfx::ShaderType::Vertex:
+				return EShLanguage::EShLangVertex;
+			case clv::gfx::ShaderType::Pixel:
+				return EShLanguage::EShLangFragment;
+			case clv::gfx::ShaderType::Geometry:
+				return EShLanguage::EShLangGeometry;
+			default:
+				break;
+		}
 	}
 
 	std::string compile(const std::string& source, ShaderType type, ShaderOutputType outputType){
-        std::vector<uint32_t> spirvSource;
+		std::vector<uint32_t> spirvSource;
 
-        //if(inputFormat == ShaderFormat::GLSL || inputFormat == ShaderFormat::HLSL){
-            const char* strs = source.c_str();
+		//if(inputFormat == ShaderFormat::GLSL || inputFormat == ShaderFormat::HLSL){
+		const char* strs = source.c_str();
 
-            glslang::InitializeProcess();
+		glslang::InitializeProcess();
 
-            EShLanguage stage = getEShStage(type);
-            glslang::TShader shader(stage);
-            shader.setStrings(&strs, 1);
+		EShLanguage stage = getEShStage(type);
+		glslang::TShader shader(stage);
+		shader.setStrings(&strs, 1);
 
-            TBuiltInResource builtInResources = glslang::DefaultTBuiltInResource;
-            EShMessages messages = static_cast<EShMessages>(
-                EShMsgSpvRules |
-                EShMsgReadHlsl | EShMsgHlslOffsets | EShMsgHlslLegalization |
-                EShMsgKeepUncalled | EShMsgSuppressWarnings);
+		TBuiltInResource builtInResources = glslang::DefaultTBuiltInResource;
+		EShMessages messages = static_cast<EShMessages>(
+			EShMsgSpvRules |
+			EShMsgReadHlsl | EShMsgHlslOffsets | EShMsgHlslLegalization |
+			EShMsgKeepUncalled | EShMsgSuppressWarnings);
 
-            //if(inputFormat == ShaderFormat::HLSL){
-                shader.setEnvTargetHlslFunctionality1();
-                shader.setHlslIoMapping(true);
-                
-           // }
+		//if(inputFormat == ShaderFormat::HLSL){
+		shader.setEnvTargetHlslFunctionality1();
+		shader.setHlslIoMapping(true);
 
-            shader.setAutoMapBindings(true);
-            shader.setAutoMapLocations(true);
+		// }
 
-            shader.setEntryPoint("main");
-            //shader.setInvertY(true); //Might need this later
-            shader.setEnvInput(glslang::EShSourceHlsl, stage, glslang::EShClientVulkan, 500);
-            shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_3);
-            shader.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
-            shader.parse(&builtInResources, 500, true, messages);
+		shader.setAutoMapBindings(true);
+		shader.setAutoMapLocations(true);
 
-            glslang::SpvOptions spvOptions;
-            spvOptions.validate = false;
-            spvOptions.disableOptimizer = true;
-            spvOptions.optimizeSize = false;
+		shader.setEntryPoint("main");
+		//shader.setInvertY(true); //Might need this later (there's also an option on the compiler below)
+		shader.setEnvInput(glslang::EShSourceHlsl, stage, glslang::EShClientVulkan, 460);
+		shader.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
+		shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_5);
 
-            spv::SpvBuildLogger logger;
+		shader.parse(&builtInResources, 460, true, messages);
 
-            const char* log = shader.getInfoLog();
+		glslang::SpvOptions spvOptions;
+		spvOptions.validate = false;
+		spvOptions.disableOptimizer = true;
+		spvOptions.optimizeSize = false;
 
-            if(strlen(log) > 0){
-                return log;
-            }
+		spv::SpvBuildLogger logger;
 
-            glslang::TIntermediate* inter = shader.getIntermediate();
+		const char* log = shader.getInfoLog();
 
-            glslang::GlslangToSpv(*inter, spirvSource, &logger, &spvOptions);
+		if(strlen(log) > 0){
+			return log;
+		}
 
-            glslang::FinalizeProcess();
-       // }
+		glslang::TIntermediate* inter = shader.getIntermediate();
+
+		glslang::GlslangToSpv(*inter, spirvSource, &logger, &spvOptions);
+
+		glslang::FinalizeProcess();
+		// }
 
 
-        if(outputType == ShaderOutputType::GLSL){
-            spirv_cross::CompilerGLSL glsl(spirvSource);
-            spirv_cross::CompilerGLSL::Options scoptions;
+		if(outputType == ShaderOutputType::GLSL){
+			spirv_cross::CompilerGLSL glsl(spirvSource);
+			spirv_cross::CompilerGLSL::Options scoptions;
 
-            scoptions.version = 460;
-            scoptions.es = false;
+			scoptions.version = 460;
+			scoptions.es = false;
+			scoptions.enable_420pack_extension = false;
+			//scoptions.emit_push_constant_as_uniform_buffer = true;
+			//scoptions.
 
-            glsl.set_common_options(scoptions);
+			glsl.set_common_options(scoptions);
+			glsl.build_combined_image_samplers();
 
-            return glsl.compile();
-        } else if(outputType == ShaderOutputType::MSL){
-            spirv_cross::CompilerMSL msl(spirvSource);
+			return glsl.compile();
+		} else if(outputType == ShaderOutputType::MSL){
+			spirv_cross::CompilerMSL msl(spirvSource);
 
-            return msl.compile();
-        }
+			return msl.compile();
+		}
 
-        return "";
-    }
+		return "";
+	}
 }
