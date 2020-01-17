@@ -8,8 +8,6 @@
 #include "Clove/Core/Utils/DeltaTime.hpp"
 #include "Tunic/ECS/Core/Manager.hpp"
 
-#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
-
 using namespace clv;
 
 namespace tnc{
@@ -18,20 +16,18 @@ namespace tnc{
 	Application::Application(gfx::API api){
 		CLV_PROFILE_BEGIN_SESSION("Application cycle", "Profile-Cycle.json");
 
+		Log::init();
+
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		platformInstance = clv::plt::Platform::createPlatformInstance();
-
-		Log::init();
-
-		gfx::global::initialise(api);
+		platformInstance = clv::plt::createPlatformInstance(api);
 
 		mainWindow = platformInstance->createWindow({});
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
-		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+		//gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
@@ -43,21 +39,19 @@ namespace tnc{
 
 	Application::Application(clv::gfx::API api, const clv::plt::Window& parentWindow, const clv::mth::vec2i& windowPosition, const clv::mth::vec2i& windowSize){
 		CLV_PROFILE_BEGIN_SESSION("Application cycle", "Profile-Cycle.json");
+		
+		Log::init();
 
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		platformInstance = clv::plt::Platform::createPlatformInstance();
-
-		Log::init();
-
-		gfx::global::initialise(api);
+		platformInstance = clv::plt::createPlatformInstance(api);
 
 		mainWindow = platformInstance->createChildWindow(parentWindow, windowPosition, windowSize);
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
-		gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+		//gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
