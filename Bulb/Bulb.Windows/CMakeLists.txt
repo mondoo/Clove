@@ -9,14 +9,11 @@ set(
 		App.config
 		App.xaml
 		App.xaml.cs
+
 		EditorWindow.xaml
 		EditorWindow.xaml.cs
-
-		#Program.cs
-
-		#Form1.cs
-		#Form1.Designer.cs
-		#Form1.resx
+		TransformComponent3D.xaml
+		TransformComponent3D.xaml.cs
 
 		Properties/AssemblyInfo.cs
 		Properties/Resources.resx
@@ -36,19 +33,11 @@ add_executable(
 		${Files}
 )
 
-#Link designer files, xaml files, and other properties files with their corresponding cs files
-#csharp_set_windows_forms_properties(
-#    ${Files}
-#)
-
 csharp_set_xaml_cs_properties(
 	${Files}
 )
 
-#Set app App.xaml properties file as program entry point (if project is a WPF project)
 set_property(SOURCE App.xaml PROPERTY VS_XAML_TYPE "ApplicationDefinition")
-
-#Set other csproj file flags
 set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.6.1")
 #set_property(TARGET ${PROJECT_NAME} PROPERTY WIN64_EXECUTABLE TRUE)
 
@@ -79,7 +68,6 @@ target_link_libraries(
 			Bulb.Core
 			Bulb.CoreUI
 )
-
 
 #TODO: TEMP - copy over the clove resource files
 add_custom_command(

@@ -23,13 +23,10 @@ namespace clv::mth{
 	mat<4, 4, T, qualifier::defaultp> createPerspectiveMatrix(T fovy, T aspect, T zNear, T zFar);
 
 	template<typename T, qualifier Q>
-	quat<T, Q> asQuaternion(T angle, const vec<3, T, Q>& axis);
+	quat<T, Q> eulerToQuaternion(const vec<3, T, Q>& euler);
 
 	template<typename T, qualifier Q>
-	mat<3, 3, T, Q> quaternionToMatrix3(const quat<T, Q>& quat);
-
-	template<typename T, qualifier Q>
-	mat<4, 4, T, Q> quaternionToMatrix4(const quat<T, Q>& quat);
+	vec<3, T, Q> matrixToEuler(const mat<4, 4, T, Q>& mat);
 
 	template<typename T, qualifier Q>
 	quat<T, Q> matrixToQuaternion(const mat<3, 3, T, Q>& mat);
@@ -38,10 +35,16 @@ namespace clv::mth{
 	quat<T, Q> matrixToQuaternion(const mat<4, 4, T, Q>& mat);
 
 	template<typename T, qualifier Q>
+	quat<T, Q> asQuaternion(T angle, const vec<3, T, Q>& axis);
+
+	template<typename T, qualifier Q>
 	vec<3, T, Q> quaternionToEuler(const quat<T, Q>& quat);
 
 	template<typename T, qualifier Q>
-	vec<3, T, Q> eulerFromMatrix(const mat<4, 4, T, Q>& mat);
+	mat<3, 3, T, Q> quaternionToMatrix3(const quat<T, Q>& quat);
+
+	template<typename T, qualifier Q>
+	mat<4, 4, T, Q> quaternionToMatrix4(const quat<T, Q>& quat);
 }
 
 #include "MathsHelpers.inl"
