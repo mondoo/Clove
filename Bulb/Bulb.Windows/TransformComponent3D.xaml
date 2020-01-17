@@ -33,7 +33,7 @@
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="X: "/>
-			<TextBox Grid.Column="1" Text="{Binding posX, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding PosX, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
 		<Grid Grid.Row="1" Grid.Column="2" Margin="3,0">
 			<Grid.ColumnDefinitions>
@@ -42,7 +42,7 @@
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="Y: "/>
-			<TextBox Grid.Column="1" Text="{Binding posY, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding PosY, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
 		<Grid Grid.Row="1" Grid.Column="3" Margin="3,0">
 			<Grid.ColumnDefinitions>
@@ -51,7 +51,7 @@
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="Z: "/>
-			<TextBox Grid.Column="1" Text="{Binding posZ, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding PosZ, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
 		
 		<!-- Rotation -->
@@ -62,7 +62,7 @@
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="X: "/>
-			<TextBox Grid.Column="1" Text="{Binding rotX, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding RotX, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
 		<Grid Grid.Row="2" Grid.Column="2" Margin="3,0">
 			<Grid.ColumnDefinitions>
@@ -71,7 +71,7 @@
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="Y: "/>
-			<TextBox Grid.Column="1" Text="{Binding rotY, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding RotY, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
 		<Grid Grid.Row="2" Grid.Column="3" Margin="3,0">
 			<Grid.ColumnDefinitions>
@@ -80,7 +80,7 @@
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="Z: "/>
-			<TextBox Grid.Column="1" Text="{Binding rotZ, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding RotZ, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
 		
 		<!-- Scale -->
@@ -91,7 +91,7 @@
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="X: "/>
-			<TextBox Grid.Column="1" Text="{Binding scaleX, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding ScaleX, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
 		<Grid Grid.Row="3" Grid.Column="2" Margin="3,0">
 			<Grid.ColumnDefinitions>
@@ -100,7 +100,7 @@
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="Y: "/>
-			<TextBox Grid.Column="1" Text="{Binding scaleY, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding ScaleY, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
 		<Grid Grid.Row="3" Grid.Column="3" Margin="3,0">
 			<Grid.ColumnDefinitions>
@@ -109,7 +109,7 @@
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="Z: "/>
-			<TextBox Grid.Column="1" Text="{Binding scaleZ, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
+			<TextBox Grid.Column="1" Text="{Binding ScaleZ, Mode=TwoWay}" PreviewTextInput="TextBox_ValidateNumber"/>
 		</Grid>
 		
 	</Grid>

@@ -6,8 +6,7 @@ namespace tnc::ecs::_3D{
 
 //TODO: Create an offcial wrapper for vec3
 namespace Bulb::Core{
-	public ref class vec3{
-	public:
+	public ref struct vec3{
 		float x = 0.0f;
 		float y = 0.0f;
 		float z = 0.0f;
@@ -28,10 +27,31 @@ namespace Bulb::Core{
 			return this;
 		}
 	};
+
+	public ref struct Transform{
+		vec3^ position;
+		vec3^ rotation;
+		vec3^ scale;
+
+		Transform(){
+			position	= gcnew vec3();
+			rotation	= gcnew vec3();
+			scale		= gcnew vec3();
+		}
+		Transform(vec3^ position, vec3^ rotation, vec3^ scale){
+			this->position = position;
+			this->rotation = rotation;
+			this->scale = scale;
+		}
+	};
 }
+
 
 //All temp
 namespace Bulb::Core{
+	public delegate void VecDelegate(vec3^);
+	public delegate void TransformDelegate(Transform^);
+
 	public ref class Component{
 		//VARIABLES
 	public: 
@@ -44,6 +64,9 @@ namespace Bulb::Core{
 
 	public ref class TransformComponent : Component{
 		//VARIABLES
+	public:
+		event TransformDelegate^ onTransformChanged;
+
 	private:
 		tnc::ecs::_3D::TransformComponent* component;
 

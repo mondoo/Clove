@@ -12,113 +12,126 @@ namespace Bulb.UI {
 	}
 
 	public class TransformComponentViewModel : ComponentViewModel {
-		public float posX { 
+		public float PosX { 
 			get {
-				return component.getPosition().x;
+				return position.x;
 			}
 			set {
-				var position = component.getPosition();
 				position.x = value;
-				component.setPosition(position);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(posX)));
+				UpdateComponentPosition(position);
 			}
 		}
-		public float posY {
+		public float PosY {
 			get {
-				return component.getPosition().y;
+				return position.y;
 			}
 			set {
-				var position = component.getPosition();
 				position.y = value;
-				component.setPosition(position);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(posY)));
+				UpdateComponentPosition(position);
 			}
 		}
-		public float posZ {
+		public float PosZ {
 			get {
-				return component.getPosition().z;
+				return position.z;
 			}
 			set {
-				var position = component.getPosition();
 				position.z = value;
-				component.setPosition(position);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(posZ)));
+				UpdateComponentPosition(position);
 			}
 		}
 
-		public float rotX {
+		public float RotX {
 			get {
-				return component.getRotation().x;
+				return rotation.x;
 			}
 			set {
-				var rotation = component.getRotation();
 				rotation.x = value;
-				component.setRotation(rotation);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(rotX)));
+				UpdateComponentRotation(rotation);
 			}
 		}
-		public float rotY {
+		public float RotY {
 			get {
-				return component.getRotation().y;
+				return rotation.y;
 			}
 			set {
-				var rotation = component.getRotation();
 				rotation.y = value;
-				component.setRotation(rotation);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(rotY)));
+				UpdateComponentRotation(rotation);
 			}
 		}
-		public float rotZ {
+		public float RotZ {
 			get {
-				return component.getRotation().z;
+				return rotation.z;
 			}
 			set {
-				var rotation = component.getRotation();
 				rotation.z = value;
-				component.setRotation(rotation);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(rotZ)));
+				UpdateComponentRotation(rotation);
 			}
 		}
 
-		public float scaleX {
+		public float ScaleX {
 			get {
-				return component.getScale().x;
+				return scale.x;
 			}
 			set {
-				var scale = component.getScale();
 				scale.x = value;
-				component.setScale(scale);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(scaleX)));
+				UpdateComponentScale(scale);
 			}
 		}
-		public float scaleY {
+		public float ScaleY {
 			get {
-				return component.getScale().y;
+				return scale.y;
 			}
 			set {
-				var scale = component.getScale();
 				scale.y = value;
-				component.setScale(scale);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(scaleY)));
+				UpdateComponentScale(scale);
 			}
 		}
-		public float scaleZ {
+		public float ScaleZ {
 			get {
-				return component.getScale().z;
+				return scale.z;
 			}
 			set {
-				var scale = component.getScale();
 				scale.z = value;
-				component.setScale(scale);
-				OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(scaleZ)));
+				UpdateComponentScale(scale);
 			}
 		}
 
-		private TransformComponent component;
+		private vec3 position;
+		private vec3 rotation;
+		private vec3 scale;
+
+		private event VecDelegate UpdateComponentPosition;
+		private event VecDelegate UpdateComponentRotation;
+		private event VecDelegate UpdateComponentScale;
 
 		public TransformComponentViewModel(TransformComponent component) : base(component){
-			//TODO: Should bind to events on the component and cache values instead of caching the component
-			this.component = component;
+			component.onTransformChanged += new TransformDelegate(OnComponentTransformUpdated);
+
+			position = component.getPosition();
+			rotation = component.getRotation();
+			scale = component.getScale();
+
+			UpdateComponentPosition += new VecDelegate(component.setPosition);
+			UpdateComponentRotation += new VecDelegate(component.setRotation);
+			UpdateComponentScale += new VecDelegate(component.setScale);
+		}
+
+		private void OnComponentTransformUpdated(Transform componentTransform) {
+			position = componentTransform.position;
+			rotation = componentTransform.rotation;
+			scale = componentTransform.scale;
+
+			OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(PosX)));
+			OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(PosY)));
+			OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(PosZ)));
+
+			OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(RotX)));
+			OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(RotY)));
+			OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(RotZ)));
+
+			OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(ScaleX)));
+			OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(ScaleY)));
+			OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(ScaleZ)));
 		}
 	}
 }

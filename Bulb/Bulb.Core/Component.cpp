@@ -14,6 +14,7 @@ namespace Bulb::Core{
 
 	void TransformComponent::setPosition(vec3^ position){
 		component->setPosition({ position->x, position->y, position->z });
+		onTransformChanged(gcnew Transform{ position, getRotation(), getScale() });
 	}
 
 	vec3^ TransformComponent::getRotation(){
@@ -24,6 +25,7 @@ namespace Bulb::Core{
 	void TransformComponent::setRotation(vec3^ rotation){
 		const clv::mth::quatf rot = clv::mth::eulerToQuaternion(clv::mth::vec3f{ clv::mth::asRadians(rotation->x), clv::mth::asRadians(rotation->y), clv::mth::asRadians(rotation->z) });
 		component->setRotation(rot);
+		onTransformChanged(gcnew Transform{ getPosition(), rotation, getScale() });
 	}
 
 	vec3^ TransformComponent::getScale(){
@@ -33,5 +35,6 @@ namespace Bulb::Core{
 
 	void TransformComponent::setScale(vec3^ scale){
 		component->setScale({ scale->x, scale->y, scale->z });
+		onTransformChanged(gcnew Transform{ getPosition(), getRotation(), scale });
 	}
 }
