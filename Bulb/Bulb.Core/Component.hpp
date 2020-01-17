@@ -62,6 +62,7 @@ namespace Bulb::Core{
 		
 	};
 
+	//TODO: Should be TransformComponentModel
 	public ref class TransformComponent : Component{
 		//VARIABLES
 	public:
