@@ -120,4 +120,8 @@ namespace tnc{
 	void Application::setMainWindow(const std::shared_ptr<plt::Window>& window){
 		mainWindow = window;
 	}
+
+	clv::gfx::RenderFactory& Application::getGraphicsFactory(){
+		return platformInstance->getGraphicsFactory();
+	}
 }
