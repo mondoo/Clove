@@ -231,7 +231,6 @@ namespace tnc::ecs::_2D{
 			};
 
 			std::for_each(sceneData.spritesToRender.begin(), sceneData.spritesToRender.end(), draw);
-			sceneData.spritesToRender.clear();
 		}
 
 		//Widgets
@@ -251,7 +250,6 @@ namespace tnc::ecs::_2D{
 			};
 
 			std::for_each(sceneData.widgetsToRender.begin(), sceneData.widgetsToRender.end(), draw);
-			sceneData.widgetsToRender.clear();
 		}
 
 		commandBuffer->bindPipelineObject(*sceneData.charPipelineObject);
@@ -272,9 +270,12 @@ namespace tnc::ecs::_2D{
 			};
 
 			std::for_each(sceneData.charactersToRender.begin(), sceneData.charactersToRender.end(), draw);
-			sceneData.charactersToRender.clear();
 		}
 
 		commandBuffer->flushCommands();
+		
+		sceneData.spritesToRender.clear();
+		sceneData.widgetsToRender.clear();
+		sceneData.charactersToRender.clear();
 	}
 }
