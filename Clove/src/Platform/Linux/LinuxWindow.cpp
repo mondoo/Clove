@@ -1,10 +1,10 @@
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
 
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/Surface.hpp"
 
 namespace clv::plt{
-	LinuxWindow::LinuxWindow(gfx::RenderFactory& graphicsFactory, const WindowProps& props){
+	LinuxWindow::LinuxWindow(gfx::GraphicsFactory& graphicsFactory, const WindowProps& props){
         CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", props.title, props.width, props.height);
 
         display = XOpenDisplay(nullptr); //makes the connection to the client, where to display the window
@@ -63,7 +63,7 @@ namespace clv::plt{
         CLV_LOG_DEBUG("Window created");
 	}
 
-	LinuxWindow::LinuxWindow(gfx::RenderFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+	LinuxWindow::LinuxWindow(gfx::GraphicsFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
         CLV_LOG_TRACE("Creating child window: ({1}, {2})", size.x, size.y);
 
         const ::Window* nativeParentWindow = reinterpret_cast<::Window*>(parentWindow.getNativeWindow());

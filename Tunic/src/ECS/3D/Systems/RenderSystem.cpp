@@ -9,7 +9,7 @@
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 #include "Clove/Graphics/Core/Resources/Texture.hpp"
 #include "Clove/Graphics/Core/CommandBuffer.hpp"
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/PipelineObject.hpp"
 #include "Clove/Platform/Core/Window.hpp"
 

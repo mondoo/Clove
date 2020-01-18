@@ -1,4 +1,4 @@
-#include "Clove/Graphics/OpenGL/GLRenderFactory.hpp"
+#include "Clove/Graphics/OpenGL/GLGraphicsFactory.hpp"
 
 #include "Clove/Graphics/OpenGL/Resources/GLBuffer.hpp"
 #include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
@@ -13,43 +13,43 @@
 #endif
 
 namespace clv::gfx::ogl{
-	GLRenderFactory::GLRenderFactory() = default;
+	GLGraphicsFactory::GLGraphicsFactory() = default;
 
-	GLRenderFactory::~GLRenderFactory() = default;
+	GLGraphicsFactory::~GLGraphicsFactory() = default;
 
-	std::shared_ptr<CommandBuffer> GLRenderFactory::createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget){
+	std::shared_ptr<CommandBuffer> GLGraphicsFactory::createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget){
 		return std::make_shared<GLCommandBuffer>(renderTarget);
 	}
 
-	std::shared_ptr<CommandBuffer> GLRenderFactory::createCommandBuffer(Surface& surface){
+	std::shared_ptr<CommandBuffer> GLGraphicsFactory::createCommandBuffer(Surface& surface){
 		return std::make_shared<GLCommandBuffer>(surface);
 	}
 
-	std::shared_ptr<Buffer> GLRenderFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){
+	std::shared_ptr<Buffer> GLGraphicsFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){
 		return std::make_shared<GLBuffer>(descriptor, data);
 	}
 
-	std::shared_ptr<Texture> GLRenderFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
+	std::shared_ptr<Texture> GLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
 		return std::make_shared<GLTexture>(descriptor, pathToTexture);
 	}
 
-	std::shared_ptr<Texture> GLRenderFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP){
+	std::shared_ptr<Texture> GLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP){
 		return std::make_shared<GLTexture>(descriptor, data, BPP);
 	}
 
-	std::shared_ptr<PipelineObject> GLRenderFactory::createPipelineObject(const std::shared_ptr<Shader>& shader){
+	std::shared_ptr<PipelineObject> GLGraphicsFactory::createPipelineObject(const std::shared_ptr<Shader>& shader){
 		return std::make_shared<GLPipelineObject>(shader);
 	}
 
-	std::shared_ptr<RenderTarget> GLRenderFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
+	std::shared_ptr<RenderTarget> GLGraphicsFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
 		return std::make_shared<GLRenderTarget>(colourTexture, depthStencilTexture);
 	}
 
-	std::shared_ptr<Shader> GLRenderFactory::createShader(const ShaderDescriptor& descriptor){
+	std::shared_ptr<Shader> GLGraphicsFactory::createShader(const ShaderDescriptor& descriptor){
 		return std::make_shared<GLShader>(descriptor);
 	}
 
-	std::shared_ptr<Surface> GLRenderFactory::createSurface(void* windowData){
+	std::shared_ptr<Surface> GLGraphicsFactory::createSurface(void* windowData){
 	#if CLV_PLATFORM_WINDOWS
 		return std::make_shared<WGLSurface>(windowData);
 	#elif CLV_PLATFORM_LINUX

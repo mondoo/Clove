@@ -1,21 +1,26 @@
 #pragma once
 
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 
-namespace clv::gfx::ogl{
-	class GLRenderFactory : public RenderFactory{
+namespace clv::gfx::mtl{
+	class MTLGraphicsFactory : public GraphicsFactory{
+		//VARIABLES
+	private:
+		id<MTLDevice> mtlDevice;
+		
 		//FUNCTIONS
 	public:
-		GLRenderFactory();
+		MTLGraphicsFactory() = delete;
+		MTLGraphicsFactory(id<MTLDevice> mtlDevice);
+						 
+		MTLGraphicsFactory(const MTLGraphicsFactory& other) = delete;
+		MTLGraphicsFactory(MTLGraphicsFactory&& other) noexcept = delete;
 
-		GLRenderFactory(const GLRenderFactory& other) = delete;
-		GLRenderFactory(GLRenderFactory&& other) = delete;
-
-		GLRenderFactory& operator=(const GLRenderFactory& other) = delete;
-		GLRenderFactory& operator=(GLRenderFactory&& other) = delete;
-
-		virtual ~GLRenderFactory();
-
+		MTLGraphicsFactory& operator=(const MTLGraphicsFactory& other) = delete;
+		MTLGraphicsFactory& operator=(MTLGraphicsFactory&& other) noexcept = delete;
+		
+		virtual ~MTLGraphicsFactory();
+		
 		virtual std::shared_ptr<CommandBuffer> createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget) override;
 		virtual std::shared_ptr<CommandBuffer> createCommandBuffer(Surface& surface) override;
 

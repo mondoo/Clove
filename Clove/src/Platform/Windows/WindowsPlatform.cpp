@@ -2,7 +2,7 @@
 
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 #include "Clove/Graphics/Core/Graphics.hpp"
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 
 namespace clv::plt{
 	WindowsPlatform::WindowsPlatform(gfx::API api){
@@ -15,7 +15,7 @@ namespace clv::plt{
 
 	WindowsPlatform::~WindowsPlatform() = default;
 
-	gfx::RenderFactory& WindowsPlatform::getGraphicsFactory(){
+	gfx::GraphicsFactory& WindowsPlatform::getGraphicsFactory(){
 		return *graphicsFactory;
 	}
 

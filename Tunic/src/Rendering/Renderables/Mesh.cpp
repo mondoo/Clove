@@ -2,7 +2,7 @@
 
 #include "Tunic/Application.hpp"
 #include "Clove/Graphics/Core/Resources/Buffer.hpp"
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Core/Utils/MeshLoader.hpp"
 
 using namespace clv;

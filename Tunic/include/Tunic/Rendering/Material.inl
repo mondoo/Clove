@@ -1,5 +1,5 @@
 #include "Tunic/Application.hpp"
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 
 namespace tnc::rnd{
 	template<typename DataType>

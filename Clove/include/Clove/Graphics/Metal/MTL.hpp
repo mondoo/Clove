@@ -1,9 +1,9 @@
 #pragma once
 
 namespace clv::gfx{
-	class RenderFactory;
+	class GraphicsFactory;
 }
 
 namespace clv::gfx::mtl{
-	std::unique_ptr<RenderFactory> initialiseMTL();
+	std::unique_ptr<GraphicsFactory> initialiseMTL();
 }

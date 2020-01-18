@@ -121,7 +121,7 @@ namespace tnc{
 		mainWindow = window;
 	}
 
-	clv::gfx::RenderFactory& Application::getGraphicsFactory(){
+	clv::gfx::GraphicsFactory& Application::getGraphicsFactory(){
 		return platformInstance->getGraphicsFactory();
 	}
 }

@@ -11,7 +11,7 @@
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 #include "Tunic/Rendering/Renderables/Sprite.hpp"
 #include "Clove/Graphics/Core/CommandBuffer.hpp"
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/Shader.hpp"
 #include "Clove/Graphics/Core/PipelineObject.hpp"
 #include "Clove/Platform/Core/Window.hpp"
@@ -68,7 +68,7 @@ namespace tnc::ecs::_2D{
 			sceneData.characterMesh = std::make_shared<rnd::Mesh>(bufferData, indices, characterMaterial->createInstance());
 		}
 
-		RenderFactory& graphicsFactory = Application::get().getGraphicsFactory();
+		GraphicsFactory& graphicsFactory = Application::get().getGraphicsFactory();
 
 		sceneData.spritePipelineObject = graphicsFactory.createPipelineObject(graphicsFactory.createShader({ ShaderStyle::Unlit_2D }));
 		sceneData.charPipelineObject = graphicsFactory.createPipelineObject(graphicsFactory.createShader({ ShaderStyle::Font }));
@@ -149,7 +149,7 @@ namespace tnc::ecs::_2D{
 		{
 			CLV_PROFILE_SCOPE("Preparing characters");
 
-			RenderFactory& graphicsFactory = Application::get().getGraphicsFactory();
+			GraphicsFactory& graphicsFactory = Application::get().getGraphicsFactory();
 
 			auto componentTuples = manager->getComponentSets<ui::TransformComponent, ui::TextComponent>();
 			for(auto& tuple : componentTuples){

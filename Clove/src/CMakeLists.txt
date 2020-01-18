@@ -41,7 +41,7 @@ set(
 		${CLV_INCLUDE}/Graphics/Core/GraphicsConstants.hpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsTypes.hpp
 		${CLV_INCLUDE}/Graphics/Core/PipelineObject.hpp
-		${CLV_INCLUDE}/Graphics/Core/RenderFactory.hpp
+		${CLV_INCLUDE}/Graphics/Core/GraphicsFactory.hpp
 		${CLV_INCLUDE}/Graphics/Core/RenderTarget.hpp
 		${CLV_INCLUDE}/Graphics/Core/Shader.hpp
 		${CLV_INCLUDE}/Graphics/Core/ShaderBufferTypes.hpp
@@ -65,8 +65,8 @@ set(
 		${CLV_SOURCE}/Graphics/Direct3D/D3DException.cpp
 		${CLV_INCLUDE}/Graphics/Direct3D/D3DPipelineObject.hpp
 		${CLV_SOURCE}/Graphics/Direct3D/D3DPipelineObject.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DRenderFactory.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DRenderFactory.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/D3DGraphicsFactory.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/D3DGraphicsFactory.cpp
 		${CLV_INCLUDE}/Graphics/Direct3D/D3DRenderTarget.hpp
 		${CLV_SOURCE}/Graphics/Direct3D/D3DRenderTarget.cpp
 		${CLV_INCLUDE}/Graphics/Direct3D/D3DShader.hpp
@@ -89,8 +89,8 @@ set(
 		${CLV_SOURCE}/Graphics/Metal/MTLCommandBuffer.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLPipelineObject.hpp
 		${CLV_SOURCE}/Graphics/Metal/MTLPipelineObject.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLRenderFactory.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLRenderFactory.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLGraphicsFactory.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLGraphicsFactory.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLRenderTarget.hpp
 		${CLV_SOURCE}/Graphics/Metal/MTLRenderTarget.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLShader.hpp
@@ -113,8 +113,8 @@ set(
 		${CLV_SOURCE}/Graphics/OpenGL/GLException.cpp
 		${CLV_INCLUDE}/Graphics/OpenGL/GLPipelineObject.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/GLPipelineObject.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLRenderFactory.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLRenderFactory.cpp
+		${CLV_INCLUDE}/Graphics/OpenGL/GLGraphicsFactory.hpp
+		${CLV_SOURCE}/Graphics/OpenGL/GLGraphicsFactory.cpp
 		${CLV_INCLUDE}/Graphics/OpenGL/GLRenderTarget.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/GLRenderTarget.cpp
 		${CLV_INCLUDE}/Graphics/OpenGL/GLShader.hpp

@@ -1,6 +1,6 @@
 #include "Clove/Platform/Mac/MacWindow.hpp"
 
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 
 @implementation MacWindowProxy
@@ -49,7 +49,7 @@
 @end
 
 namespace clv::plt{
-    MacWindow::MacWindow(gfx::RenderFactory& graphicsFactory, const WindowProps& props){
+    MacWindow::MacWindow(gfx::GraphicsFactory& graphicsFactory, const WindowProps& props){
 		MacData data = { { props.width, props.height } };
 		
 		surface = graphicsFactory.createSurface(&data);
@@ -63,7 +63,7 @@ namespace clv::plt{
 		windowProxy.cloveWindow = this;
     }
 	
-	MacWindow::MacWindow(gfx::RenderFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+	MacWindow::MacWindow(gfx::GraphicsFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
 		MacData data = { { size.x, size.y } };
 		
 		surface = graphicsFactory.createSurface(&data);

@@ -18,7 +18,7 @@ namespace clv::plt{
 @end
 
 namespace clv::gfx{
-	class RenderFactory;
+	class GraphicsFactory;
 }
 
 namespace clv::plt{
@@ -36,8 +36,8 @@ namespace clv::plt{
 		//FUNCTIONS
 	public:
 		MacWindow() = delete;
-		MacWindow(gfx::RenderFactory& graphicsFactory, const WindowProps& props);
-		MacWindow(gfx::RenderFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
+		MacWindow(gfx::GraphicsFactory& graphicsFactory, const WindowProps& props);
+		MacWindow(gfx::GraphicsFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
 
 		MacWindow(const MacWindow& other) = delete;
 		MacWindow(MacWindow&& other) noexcept = delete;

@@ -2,7 +2,7 @@
 
 #import "Clove/Platform/Mac/MacWindow.hpp"
 #include "Clove/Graphics/Core/Graphics.hpp"
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 
 namespace clv::plt{
 	MacPlatform::MacPlatform(gfx::API api){
@@ -21,7 +21,7 @@ namespace clv::plt{
 
 	MacPlatform::~MacPlatform() = default;
 
-	gfx::RenderFactory& MacPlatform::getGraphicsFactory(){
+	gfx::GraphicsFactory& MacPlatform::getGraphicsFactory(){
 		return *graphicsFactory;
 	}
 	

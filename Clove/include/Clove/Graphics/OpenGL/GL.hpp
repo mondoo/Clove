@@ -1,9 +1,9 @@
 #pragma once
 
 namespace clv::gfx{
-	class RenderFactory;
+	class GraphicsFactory;
 }
 
 namespace clv::gfx::ogl{
-	std::unique_ptr<RenderFactory> initialiseOGL();
+	std::unique_ptr<GraphicsFactory> initialiseOGL();
 }

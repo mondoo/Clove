@@ -20,7 +20,7 @@ namespace clv::plt{
 }
 
 namespace clv::gfx{
-	class RenderFactory;
+	class GraphicsFactory;
 }
 
 namespace tnc{
@@ -70,6 +70,6 @@ namespace tnc{
 		clv::plt::Window& getMainWindow() const;
 		void setMainWindow(const std::shared_ptr<clv::plt::Window>& window);
 
-		clv::gfx::RenderFactory& getGraphicsFactory();
+		clv::gfx::GraphicsFactory& getGraphicsFactory();
 	};
 }

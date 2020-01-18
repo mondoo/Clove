@@ -15,10 +15,10 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx{
-	class RenderFactory{
+	class GraphicsFactory{
 		//FUNCTIONS
 	public:
-		virtual ~RenderFactory() = default;
+		virtual ~GraphicsFactory() = default;
 
 		virtual std::shared_ptr<CommandBuffer> createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget) = 0;
 		virtual std::shared_ptr<CommandBuffer> createCommandBuffer(Surface& surface) = 0;

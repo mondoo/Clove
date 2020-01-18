@@ -1,10 +1,10 @@
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/Surface.hpp"
 
 namespace clv::plt{
-	WindowsWindow::WindowsWindow(gfx::RenderFactory& graphicsFactory, const WindowProps& props){
+	WindowsWindow::WindowsWindow(gfx::GraphicsFactory& graphicsFactory, const WindowProps& props){
         CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", props.title, props.width, props.height);
 
 		instance = GetModuleHandle(nullptr);
@@ -54,7 +54,7 @@ namespace clv::plt{
 		surface->makeCurrent();
 	}
 
-	WindowsWindow::WindowsWindow(gfx::RenderFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+	WindowsWindow::WindowsWindow(gfx::GraphicsFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
 		CLV_LOG_TRACE("Creating child window: ({1}, {2})", size.x, size.y);
 
 		WNDCLASSEX wc{};

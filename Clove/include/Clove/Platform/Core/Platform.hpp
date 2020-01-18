@@ -4,7 +4,7 @@
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
 
 namespace clv::gfx{
-	class RenderFactory;
+	class GraphicsFactory;
 }
 
 namespace clv::plt{
@@ -17,7 +17,7 @@ namespace clv::plt{
 	public:
 		virtual ~Platform() = default;
 
-		virtual gfx::RenderFactory& getGraphicsFactory() = 0;
+		virtual gfx::GraphicsFactory& getGraphicsFactory() = 0;
 
 		virtual std::shared_ptr<Window> createWindow(const WindowProps& props) = 0;
 		virtual std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size) = 0;

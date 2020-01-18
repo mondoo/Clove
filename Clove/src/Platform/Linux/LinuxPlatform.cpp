@@ -2,7 +2,7 @@
 
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
 #include "Clove/Graphics/Core/Graphics.hpp"
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 
 namespace clv::plt{
 	LinuxPlatform::LinuxPlatform(gfx::API api){
@@ -15,7 +15,7 @@ namespace clv::plt{
 
 	LinuxPlatform::~LinuxPlatform() = default;
 
-	gfx::RenderFactory& LinuxPlatform::getGraphicsFactory(){
+	gfx::GraphicsFactory& LinuxPlatform::getGraphicsFactory(){
 		return *graphicsFactory;
 	}
 

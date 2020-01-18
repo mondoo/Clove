@@ -1,10 +1,10 @@
 #include "Clove/Graphics/Metal/MTL.hpp"
 
-#include "Clove/Graphics/Metal/MTLRenderFactory.hpp"
+#include "Clove/Graphics/Metal/MTLGraphicsFactory.hpp"
 
 namespace clv::gfx::mtl{
-	std::unique_ptr<RenderFactory> initialiseMTL(){
+	std::unique_ptr<GraphicsFactory> initialiseMTL(){
 		id<MTLDevice> mtlDevice = MTLCreateSystemDefaultDevice();
-		return std::make_unique<MTLRenderFactory>(mtlDevice);
+		return std::make_unique<MTLGraphicsFactory>(mtlDevice);
 	}
 }

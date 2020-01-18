@@ -2,7 +2,7 @@
 
 #include "Tunic/Application.hpp"
 #include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 
 using namespace clv;
 using namespace clv::gfx;

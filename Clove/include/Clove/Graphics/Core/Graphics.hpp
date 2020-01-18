@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
-#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 
 namespace clv::gfx{
-	class RenderFactory;
+	class GraphicsFactory;
 }
 
 namespace clv::gfx{
-	std::unique_ptr<RenderFactory> initialise(API api);
+	std::unique_ptr<GraphicsFactory> initialise(API api);
 }
