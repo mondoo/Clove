@@ -5,5 +5,7 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		virtual ~RenderTarget() = default;
+
+		virtual void setClearColour(const mth::vec4f& colour) = 0;
 	};
 }

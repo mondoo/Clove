@@ -19,6 +19,7 @@ namespace clv::gfx::d3d{
 		//VARIABLES
 	public:
 		utl::SingleCastDelegate<void()> onDeviceRemoved;
+		utl::MultiCastDelegate<void()> onBufferResizeRequested;
 
 	private:
 		uint32 bufferCount = 1u;
@@ -30,16 +31,20 @@ namespace clv::gfx::d3d{
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil;
 
-		std::unique_ptr<D3DRenderTarget> renderTarget;
+		std::shared_ptr<D3DRenderTarget> renderTarget;
+		std::optional<mth::vec2ui> desiredBufferSize;
 
 		//FUNCTIONS
 	public:
 		D3DSurface() = delete;
 		D3DSurface(ID3D11Device& d3dDevice, void* windowData);
+
 		D3DSurface(const D3DSurface& other) = delete;
 		D3DSurface(D3DSurface&& other) noexcept;
+
 		D3DSurface& operator=(const D3DSurface& other) = delete;
 		D3DSurface& operator=(D3DSurface&& other) noexcept;
+
 		virtual ~D3DSurface();
 
 		virtual void setVSync(bool vsync) override;
@@ -47,10 +52,14 @@ namespace clv::gfx::d3d{
 
 		virtual void resizeBuffers(const mth::vec2ui& size) override;
 
+		virtual void makeCurrent() override{};
+
 		virtual void present() override;
 
-		D3DRenderTarget& getTarget() const;
+		virtual std::shared_ptr<RenderTarget> getRenderTarget() const override;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain> getSwapChain() const;
+
+		std::shared_ptr<D3DRenderTarget> finishResizingBuffers();
 	};
 }

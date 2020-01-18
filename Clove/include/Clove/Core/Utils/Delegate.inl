@@ -88,10 +88,15 @@ namespace clv::utl{
 	MultiCastDelegate<FunctionPrototype>::MultiCastDelegate() = default;
 
 	template<typename FunctionPrototype>
-	MultiCastDelegate<FunctionPrototype>::MultiCastDelegate(MultiCastDelegate&& other) noexcept = default;
+	MultiCastDelegate<FunctionPrototype>::MultiCastDelegate(MultiCastDelegate&& other) noexcept{
+		functionPointers = std::move(other.functionPointers);
+	}
 
 	template<typename FunctionPrototype>
-	MultiCastDelegate<FunctionPrototype>& MultiCastDelegate<FunctionPrototype>::operator=(MultiCastDelegate&& other) noexcept = default;
+	MultiCastDelegate<FunctionPrototype>& MultiCastDelegate<FunctionPrototype>::operator=(MultiCastDelegate&& other) noexcept{
+		functionPointers = std::move(other.functionPointers);
+		return *this;
+	}
 
 	template<typename FunctionPrototype>
 	MultiCastDelegate<FunctionPrototype>::~MultiCastDelegate() = default;

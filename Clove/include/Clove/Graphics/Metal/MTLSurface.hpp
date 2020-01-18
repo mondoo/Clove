@@ -3,11 +3,17 @@
 #include "Clove/Graphics/Core/Surface.hpp"
 
 namespace clv::gfx::mtl{
+	class MTLRenderTarget;
+}
+
+namespace clv::gfx::mtl{
 	class MTLSurface : public Surface{
 		//VARIABLES
 	private:
 		MTKView* view = nullptr;
 		
+		std::shared_ptr<MTLRenderTarget> renderTarget;
+
 		//FUNCTIONS
 	public:
 		MTLSurface() = delete;
@@ -26,8 +32,11 @@ namespace clv::gfx::mtl{
 
 		virtual void resizeBuffers(const mth::vec2ui& size) override;
 
-		virtual void present() override;
+		virtual void makeCurrent() override{}
 		
-		MTKView* getView() const;
+		virtual void present() override{}
+
+		virtual std::shared_ptr<RenderTarget> getRenderTarget() const override;
+		MTKView* getMTKView() const;
 	};
 }

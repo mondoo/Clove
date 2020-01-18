@@ -3,6 +3,8 @@
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 #include "Clove/Platform/Windows/WindowsException.hpp"
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/OpenGL/GLException.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
 namespace clv::gfx::ogl{
 	WGLSurface::WGLSurface(void* windowData){
@@ -82,6 +84,17 @@ namespace clv::gfx::ogl{
 				CLV_LOG_ERROR("Could not find the WGL_EXT_swap_control extension");
 			}
 		}
+
+		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+
+		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
+		CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+		glDebugMessageCallback(errorCallback, nullptr);
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+		renderTarget = std::make_shared<GLRenderTarget>();
 	}
 
 	void WGLSurface::setVSync(bool enabled){
@@ -107,5 +120,9 @@ namespace clv::gfx::ogl{
 
 	void WGLSurface::present(){
 		SwapBuffers(windowsDeviceContext);
+	}
+
+	std::shared_ptr<RenderTarget> WGLSurface::getRenderTarget() const{
+		return renderTarget;
 	}
 }

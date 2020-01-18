@@ -2,8 +2,8 @@
 
 #include "Tunic/Rendering/Material.hpp"
 
-//TODO: Move this into the material file???
 namespace clv::gfx{
+	class CommandBuffer;
 	class Texture;
 }
 
@@ -33,7 +33,7 @@ namespace tnc::rnd{
 
 		~MaterialInstance();
 
-		void bind();
+		void bind(const std::shared_ptr<clv::gfx::CommandBuffer>& commandBuffer);
 
 		template<typename DataType>
 		void setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderType shaderType);

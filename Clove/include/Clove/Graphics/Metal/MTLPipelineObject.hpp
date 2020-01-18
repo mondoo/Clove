@@ -6,10 +6,14 @@ namespace clv::gfx::mtl {
 	class MTLPipelineObject : public PipelineObject{
 		//VARIABLES
 	private:
-		id<MTLRenderPipelineState> pipelineState;
-		
 		std::shared_ptr<Shader> shader;
 		ShaderReflectionData shaderReflectionData;
+		
+		MTLRenderPipelineDescriptor* pipelineDescriptor;
+		id<MTLRenderPipelineState> pipelineState;
+		
+		CullFace cullFace;
+		bool frontFaceCounterClockwise = false;
 		
 		//FUNCTIONS
 	public:
@@ -24,10 +28,16 @@ namespace clv::gfx::mtl {
 		
 		virtual ~MTLPipelineObject();
 		
-		id<MTLRenderPipelineState> getMTLPipelineState() const;
+		virtual void setBlendState(bool enabled) override;
+		virtual void setCullMode(CullFace face, bool frontFaceCounterClockwise) override;
 		
 		virtual const std::shared_ptr<Shader>& getShader() const override;
 		virtual const VertexLayout& getVertexLayout() const override;
+		
+		id<MTLRenderPipelineState> getMTLPipelineState() const;
+		
+		CullFace getCullFace() const;
+		bool isFrontFaceCounterClockWise() const;
 		
 	private:
 		MTLVertexFormat getMTLFormatFromType(VertexElementType type);

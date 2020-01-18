@@ -2,9 +2,6 @@
 
 #include "Clove/Graphics/Direct3D/Resources/D3DTexture.hpp"
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
-#if CLV_DEBUG
-	#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
-#endif
 
 #include <d3d11.h>
 
@@ -66,6 +63,32 @@ namespace clv::gfx::d3d{
 	D3DRenderTarget& D3DRenderTarget::operator=(D3DRenderTarget && other) noexcept = default;
 
 	D3DRenderTarget::~D3DRenderTarget() = default;
+
+	void D3DRenderTarget::lock(){
+		++lockCount;
+	}
+
+	void D3DRenderTarget::unlock(){
+		if(--lockCount == 0){
+			canClear = true;
+		}
+	}
+
+	void D3DRenderTarget::setClearColour(const mth::vec4f& colour){
+		clearColour = colour;
+	}
+
+	void D3DRenderTarget::clear(ID3D11DeviceContext& d3dContext){
+		if(canClear){
+			if(renderTargetView){
+				d3dContext.ClearRenderTargetView(renderTargetView.Get(), mth::valuePtr(clearColour));
+			}
+			if(depthStencilView){
+				d3dContext.ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
+			}
+			canClear = false;
+		}
+	}
 
 	const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& D3DRenderTarget::getRenderTargetView() const{
 		return renderTargetView;

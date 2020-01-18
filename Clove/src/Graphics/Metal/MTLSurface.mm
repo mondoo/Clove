@@ -1,16 +1,20 @@
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 
 #include "Clove/Platform/Mac/MacWindow.hpp"
+#include "Clove/Graphics/Metal/MTLRenderTarget.hpp"
 
 namespace clv::gfx::mtl{
 	MTLSurface::MTLSurface(id<MTLDevice> mtlDevice, void* windowData){
 		clv::plt::MacData* data = reinterpret_cast<clv::plt::MacData*>(windowData);
 		
 		const NSRect rect = NSMakeRect(0, 0, data->size.x, data->size.y);
-		view = [[[MTKView alloc] initWithFrame:rect] autorelease];
+		view = [[MTKView alloc] initWithFrame:rect];
 		[view setDepthStencilPixelFormat:MTLPixelFormatDepth32Float];
+		view.paused = YES;
 		
 		[view setDevice:mtlDevice];
+
+		renderTarget = std::make_shared<MTLRenderTarget>([view currentRenderPassDescriptor]);
 	}
 	
 	MTLSurface::MTLSurface(MTLSurface&& other) noexcept = default;
@@ -34,12 +38,12 @@ namespace clv::gfx::mtl{
 	void MTLSurface::resizeBuffers(const mth::vec2ui& size){
 		//TODO:
 	}
-
-	void MTLSurface::present(){
-		//TODO: Might be quite tricky - the command queue needs the drawable from the view
+	
+	std::shared_ptr<RenderTarget> MTLSurface::getRenderTarget() const{
+		return renderTarget;
 	}
 	
-	MTKView* MTLSurface::getView() const{
+	MTKView* MTLSurface::getMTKView() const{
 		return view;
 	}
 }

@@ -2,6 +2,8 @@
 
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/OpenGL/GLException.hpp"
+#include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
 namespace clv::gfx::ogl{
 	GLXSurface::GLXSurface(void* windowData){
@@ -44,7 +46,6 @@ namespace clv::gfx::ogl{
 	}
 
 	void GLXSurface::makeCurrent(){
-		CLV_LOG_TRACE("Making context current");
 		glXMakeCurrent(display, *window, context);
 
 		if(!glxSwapIntervalEXT){
@@ -55,6 +56,17 @@ namespace clv::gfx::ogl{
 				CLV_LOG_ERROR("Could not find the GLX_EXT_swap_control. Cannot enable / disable vsync");
 			}
 		}
+
+		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+
+		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
+		CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+		glDebugMessageCallback(errorCallback, nullptr);
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+		renderTarget = std::make_shared<GLRenderTarget>();
 	}
 
 	void GLXSurface::setVSync(bool enabled){
@@ -86,5 +98,9 @@ namespace clv::gfx::ogl{
 
 	void GLXSurface::present(){
 		glXSwapBuffers(display, *window);
+	}
+
+	std::shared_ptr<RenderTarget> GLXSurface::getRenderTarget() const{
+		return renderTarget;
 	}
 }

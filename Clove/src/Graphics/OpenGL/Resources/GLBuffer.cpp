@@ -21,12 +21,18 @@ namespace clv::gfx::ogl{
 		glDeleteBuffers(1, &bufferID);
 	}
 
-	GLuint GLBuffer::getBufferID() const{
-		return bufferID;
-	}
-
 	const BufferDescriptor& GLBuffer::getDescriptor() const{
 		return descriptor;
+	}
+
+	void GLBuffer::updateData(const void* data){
+		glBindBuffer(GL_UNIFORM_BUFFER, bufferID);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, descriptor.bufferSize, data);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
+
+	GLuint GLBuffer::getBufferID() const{
+		return bufferID;
 	}
 
 	GLenum GLBuffer::getGLBufferType(BufferType cloveType){

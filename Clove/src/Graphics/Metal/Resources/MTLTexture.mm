@@ -85,8 +85,10 @@ namespace clv::gfx::mtl{
 	MTLPixelFormat MTLTexture::getTextureFormat(const TextureUsage usage) const{
 		switch(usage){
 			case TextureUsage::Default:
-			case TextureUsage::RenderTarget_Colour:
 				return MTLPixelFormatRGBA8Unorm;
+				
+			case TextureUsage::RenderTarget_Colour:
+				return MTLPixelFormatBGRA8Unorm;
 
 			case TextureUsage::RenderTarget_Depth:
 				return MTLPixelFormatDepth32Float;
