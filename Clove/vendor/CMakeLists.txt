@@ -35,7 +35,3 @@ set_target_properties(uninstall PROPERTIES FOLDER ${DependencyFolder}/portaudio)
 #libsndfile
 add_subdirectory(libsndfile)
 set_target_properties(sndfile PROPERTIES FOLDER ${DependencyFolder})
-
-#freetype2
-add_subdirectory(freetype2)
-set_target_properties(freetype PROPERTIES FOLDER ${DependencyFolder})

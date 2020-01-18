@@ -12,6 +12,10 @@ set(BUILD_UNIT_TESTS OFF CACHE BOOL "Build unit tests")
 set(USE_GLUT OFF CACHE BOOL "Use GLUT")
 set(USE_GRAPHICAL_BENCHMARK OFF CACHE BOOL "Use graphical benchmark")
 
+#freetype2
+add_subdirectory(freetype2)
+set_target_properties(freetype PROPERTIES FOLDER ${DependencyFolder})
+
 #bullet3
 add_subdirectory(bullet3)
 set_target_properties(Bullet2FileLoader PROPERTIES FOLDER ${DependencyFolder}/bullet3)

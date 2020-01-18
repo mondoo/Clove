@@ -1,9 +1,11 @@
-#include "Clove/Core/UI/Font.hpp"
+#include "Tunic/Rendering/Renderables/Font.hpp"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-namespace clv::ui{
+using namespace clv;
+
+namespace tnc::rnd{
 	std::weak_ptr<std::remove_pointer_t<FT_Library>> Font::ftLib = {};
 
 	Font::Font(const std::string& filePath)
@@ -41,7 +43,7 @@ namespace clv::ui{
 
 	Font::Font(Font&& other) noexcept = default;
 
-	Font& Font::operator=(const clv::ui::Font& other){
+	Font& Font::operator=(const Font& other){
 		ftLibReference = other.ftLibReference;
 		filePath = other.filePath;
 

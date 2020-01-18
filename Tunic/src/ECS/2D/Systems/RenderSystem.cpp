@@ -168,13 +168,13 @@ namespace tnc::ecs::_2D{
 					offset.y = anchor.y * screenSize.y;
 				}
 
-				const clv::ui::Text& text = fontComp->text;
+				const rnd::Text& text = fontComp->text;
 				mth::vec2f cursorPos = transform->getPosition();
 				cursorPos.x -= (screenHalfSize.x - offset.x);
 				cursorPos.y += (screenHalfSize.y + offset.y);
 
 				for(size_t i = 0; i < text.getTextLength(); ++i){
-					clv::ui::Glyph glyph = text.getBufferForCharAt(i);
+					rnd::Glyph glyph = text.getBufferForCharAt(i);
 
 					//For spaces we just skip and proceed
 					if(glyph.buffer){

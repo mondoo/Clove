@@ -15,9 +15,9 @@
 	path = Clove/vendor/libsndfile
 	url = https://github.com/erikd/libsndfile.git
 	ignore = dirty
-[submodule "Clove/vendor/freetype2"]
-	path = Clove/vendor/freetype2
-	url = https://git.savannah.gnu.org/git/freetype/freetype2.git
 [submodule "Tunic/vendor/bullet3"]
 	path = Tunic/vendor/bullet3
 	url = https://github.com/bulletphysics/bullet3.git
+[submodule "Tunic/vendor/freetype2"]
+	path = Tunic/vendor/freetype2
+	url = https://git.savannah.gnu.org/git/freetype/freetype2.git

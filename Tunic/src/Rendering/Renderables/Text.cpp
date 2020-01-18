@@ -1,6 +1,8 @@
-#include "Clove/Core/UI/Text.hpp"
+#include "Tunic/Rendering/Renderables/Text.hpp"
 
-namespace clv::ui{
+using namespace clv;
+
+namespace tnc::rnd{
 	Text::Text(Font font)
 		: font(std::move(font)){
 	}

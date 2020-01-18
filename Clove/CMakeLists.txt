@@ -23,7 +23,6 @@ target_include_directories(
 		${CMAKE_CURRENT_BINARY_DIR}/vendor/libsndfile/src
 	PRIVATE
         vendor/OBJ-Loader/Source
-		vendor/freetype2/include
 		$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/vendor/wglext>
 )
 
@@ -47,7 +46,6 @@ target_link_libraries(
 		Glad
 		glm
 		sndfile
-		freetype
 	#Windows
 	PRIVATE
 		$<$<PLATFORM_ID:Windows>:dxerr>

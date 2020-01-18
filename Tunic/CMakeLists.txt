@@ -14,6 +14,7 @@ target_include_directories(
 		include
 	#Libraries
 	PRIVATE
+		vendor/freetype2/include
 		vendor/bullet3/src
 )
 
@@ -23,6 +24,7 @@ target_link_libraries(
     PUBLIC
 		Clove
 	PRIVATE
+		freetype
 		#Order of these are important
 		BulletDynamics
 		BulletCollision

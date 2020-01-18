@@ -64,10 +64,14 @@ set(
 		${TNC_INCLUDE}/Rendering/MaterialInstance.hpp
 		${TNC_INCLUDE}/Rendering/MaterialInstance.inl
 		${TNC_SOURCE}/Rendering/MaterialInstance.cpp
+		${TNC_INCLUDE}/Rendering/Renderables/Font.hpp
+		${TNC_SOURCE}/Rendering/Renderables/Font.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Mesh.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Mesh.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Sprite.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Sprite.cpp
+		${TNC_INCLUDE}/Rendering/Renderables/Text.hpp
+		${TNC_SOURCE}/Rendering/Renderables/Text.cpp
 )
 
 file(GLOB_RECURSE header ${TNC_INCLUDE}/*.h ${TNC_INCLUDE}/*.hpp ${TNC_INCLUDE}/*.inl)

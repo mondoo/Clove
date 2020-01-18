@@ -2,7 +2,7 @@
 
 #include "Tunic/ECS/Core/Component.hpp"
 
-#include "Clove/Core/UI/Text.hpp"
+#include "Tunic/Rendering/Renderables/Text.hpp"
 
 namespace tnc::ecs::_2D{
 	class RenderSystem;
@@ -14,12 +14,12 @@ namespace tnc::ecs::ui{
 
 		//VARIABLES
 	private:
-		clv::ui::Text text;
+		rnd::Text text;
 
 		//FUNCTIONS
 	public:
 		TextComponent() = delete;
-		TextComponent(clv::ui::Text text);
+		TextComponent(rnd::Text text);
 
 		TextComponent(const TextComponent& other);
 		TextComponent(TextComponent&& other);

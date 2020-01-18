@@ -1,7 +1,7 @@
 #include "Tunic/ECS/UI/Components/TextComponent.hpp"
 
 namespace tnc::ecs::ui{
-	TextComponent::TextComponent(clv::ui::Text text)
+	TextComponent::TextComponent(rnd::Text text)
 		: text(std::move(text)){
 	}
 

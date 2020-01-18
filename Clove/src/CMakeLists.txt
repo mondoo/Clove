@@ -203,14 +203,6 @@ set(
 )
 
 set(
-	CoreUIFiles
-		${CLV_INCLUDE}/Core/UI/Font.hpp
-		${CLV_SOURCE}/Core/UI/Font.cpp
-		${CLV_INCLUDE}/Core/UI/Text.hpp
-		${CLV_SOURCE}/Core/UI/Text.cpp
-)
-
-set(
 	CoreUtilityFiles
 		${CLV_INCLUDE}/Core/Utils/Delegate.hpp
 		${CLV_INCLUDE}/Core/Utils/Delegate.inl
@@ -365,7 +357,6 @@ set(
 			${WindowsPlatformFiles}
 			${LinuxPlatformFiles}
 			${MacOSPlatformFiles}
-		${CoreUIFiles}
 		${CoreUtilityFiles}
 )
 
