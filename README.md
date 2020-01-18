@@ -1,4 +1,4 @@
-![](https://github.com/AGarlicMonkey/Garlic/workflows/Build-Windows-Release/badge.svg)
+![](https://github.com/AGarlicMonkey/Garlic/workflows/Build-Windows-Release/badge.svg) ![](https://github.com/AGarlicMonkey/Garlic/workflows/Build-MacOS-Release/badge.svg)
 
 # Garlic
 The Garlic game engine is comprised of the following components:
