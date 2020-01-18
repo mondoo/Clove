@@ -82,6 +82,12 @@ namespace tnc::ecs::_2D{
 
 	RenderSystem::~RenderSystem() = default;
 
+	void RenderSystem::preUpdate(){
+		sceneData.spritesToRender.clear();
+		sceneData.widgetsToRender.clear();
+		sceneData.charactersToRender.clear();
+	}
+
 	void RenderSystem::update(utl::DeltaTime deltaTime){
 		CLV_PROFILE_FUNCTION();
 
@@ -273,9 +279,5 @@ namespace tnc::ecs::_2D{
 		}
 
 		commandBuffer->flushCommands();
-		
-		sceneData.spritesToRender.clear();
-		sceneData.widgetsToRender.clear();
-		sceneData.charactersToRender.clear();
 	}
 }
