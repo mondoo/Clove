@@ -1,17 +1,16 @@
 #include "Tunic/ECS/3D/Systems/RenderSystem.hpp"
 
 #include "Tunic/ECS/Core/Manager.hpp"
+#include "Tunic/Application.hpp"
 #include "Tunic/ECS/3D/Components/TransformComponent.hpp"
 #include "Tunic/ECS/3D/Components/MeshComponent.hpp"
 #include "Tunic/ECS/3D/Components/CameraComponent.hpp"
 #include "Tunic/ECS/3D/Components/LightComponent.hpp"
-#include "Clove/Graphics/Core/GraphicsTypes.hpp"
-#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
-#include "Clove/Graphics/Core/PipelineObject.hpp"
-#include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Clove/Graphics/Core/ShaderBufferTypes.hpp"
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
-#include "Tunic/Rendering/MaterialInstance.hpp"
+#include "Clove/Graphics/Core/Resources/Texture.hpp"
+#include "Clove/Graphics/Core/CommandBuffer.hpp"
+#include "Clove/Graphics/Core/RenderFactory.hpp"
+#include "Clove/Graphics/Core/PipelineObject.hpp"
 #include "Clove/Platform/Core/Window.hpp"
 
 using namespace clv;
@@ -19,91 +18,62 @@ using namespace clv::gfx;
 using namespace tnc::rnd;
 
 namespace tnc::ecs::_3D{
-	struct ComposedCameraData{
-		Viewport viewport;
-		CameraRenderData bufferData;
-		std::shared_ptr<RenderTarget> target;
-	};
+	RenderSystem::SceneData::SceneData() = default;
 
-	struct SceneData{
-		//VARIABLES
-	public:
-		std::vector<ComposedCameraData> cameras;
+	RenderSystem::SceneData::~SceneData() = default;
 
-		std::vector<std::shared_ptr<Mesh>> meshesToRender;
+	RenderSystem::RenderSystem()
+		: cubeShadowMaterial(std::make_shared<Material>()){
+		windowCommandBuffer = Application::get().getGraphicsFactory().createCommandBuffer(Application::get().getMainWindow().getSurface());
+	
+		TextureDescriptor tdesc{};
+		tdesc.style			= TextureStyle::Cubemap;
+		tdesc.usage			= TextureUsage::RenderTarget_Depth;
+		tdesc.dimensions	= { shadowMapSize, shadowMapSize };
+		tdesc.arraySize		= MAX_LIGHTS;
 
-		PointLightShaderData currentLightInfo;
-		PointShadowDepthData currentShadowDepth;
-		uint32 numLights = 0;
-		std::array<std::array<mth::mat4f, 6>, MAX_LIGHTS> shadowTransforms = {};
+		shadowMapTexture = Application::get().getGraphicsFactory().createTexture(tdesc, nullptr, 4);
+		auto shadowMapRenderTarget = Application::get().getGraphicsFactory().createRenderTarget(nullptr, shadowMapTexture.get());
+		shadowMapCommandBuffer = Application::get().getGraphicsFactory().createCommandBuffer(shadowMapRenderTarget);
 
-		MaterialInstance cubeShadowMaterial;
-
-		//Other
-		std::shared_ptr<RenderTarget> shadowMapRenderTarget;
-		std::shared_ptr<Texture> shadowMapTexture;
-
-		std::shared_ptr<PipelineObject> defaultPipeline;
-		std::shared_ptr<PipelineObject> shadowPipeline;
-
-		//FUNCTIONS
-	public:
-		SceneData()
-			: cubeShadowMaterial(std::make_shared<Material>()){
-
-			TextureDescriptor tdesc{};
-			tdesc.style			= TextureStyle::Cubemap;
-			tdesc.usage			= TextureUsage::RenderTarget_Depth;
-			tdesc.dimensions	= { shadowMapSize, shadowMapSize };
-			tdesc.arraySize		= MAX_LIGHTS;
-
-			shadowMapTexture		= global::graphicsFactory->createTexture(tdesc, nullptr, 4);
-			shadowMapRenderTarget	= global::graphicsFactory->createRenderTarget(nullptr, shadowMapTexture.get());
-
-			defaultPipeline = global::graphicsFactory->createPipelineObject(global::graphicsFactory->createShader({ ShaderStyle::Lit_3D }));
-			shadowPipeline	= global::graphicsFactory->createPipelineObject(global::graphicsFactory->createShader({ ShaderStyle::CubeShadowMap }));
-		}
-
-		~SceneData() = default;
-
-		template<typename FunctionPointer>
-		void forEachMesh(FunctionPointer&& function){
-			std::for_each(meshesToRender.begin(), meshesToRender.end(), function);
-		}
-	} *currentSceneData = nullptr;
-
-	RenderSystem::RenderSystem(){
-		CLV_LOG_TRACE("Initialising renderer");
-		currentSceneData = new SceneData();
-		global::graphicsDevice->setBlendState(true);
+		defaultPipeline = Application::get().getGraphicsFactory().createPipelineObject(Application::get().getGraphicsFactory().createShader({ ShaderStyle::Lit_3D }));
+		shadowPipeline = Application::get().getGraphicsFactory().createPipelineObject(Application::get().getGraphicsFactory().createShader({ ShaderStyle::CubeShadowMap }));
 	}
 
-	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;
+	RenderSystem::RenderSystem(RenderSystem&& other) noexcept
+		: cubeShadowMaterial(other.cubeShadowMaterial){
+		sceneData = other.sceneData;
 
-	RenderSystem& RenderSystem::operator=(RenderSystem&& other) noexcept = default;
+		windowCommandBuffer = other.windowCommandBuffer;
+		shadowMapCommandBuffer = other.shadowMapCommandBuffer;
+		shadowMapTexture = other.shadowMapTexture;
 
-	RenderSystem::~RenderSystem(){
-		CLV_LOG_TRACE("Shutting down renderer");
-		delete currentSceneData;
+		defaultPipeline = other.defaultPipeline;
+		shadowPipeline = other.shadowPipeline;
 	}
+
+	RenderSystem& RenderSystem::operator=(RenderSystem&& other) noexcept{
+		sceneData = other.sceneData;
+
+		windowCommandBuffer = other.windowCommandBuffer;
+		shadowMapCommandBuffer = other.shadowMapCommandBuffer;
+		shadowMapTexture = other.shadowMapTexture;
+		cubeShadowMaterial = other.cubeShadowMaterial;
+
+		defaultPipeline = other.defaultPipeline;
+		shadowPipeline = other.shadowPipeline;
+
+		return *this;
+	}
+
+	RenderSystem::~RenderSystem() = default;
 
 	void RenderSystem::preUpdate(){
 		CLV_PROFILE_FUNCTION();
 
-		global::graphicsDevice->setRenderTarget(currentSceneData->shadowMapRenderTarget.get());
-		global::graphicsDevice->clear(); //TODO: Might need to just do a clear depth command
-		std::for_each(currentSceneData->cameras.begin(), currentSceneData->cameras.end(), [](const ComposedCameraData& cameraData){
-			if(cameraData.target){
-				global::graphicsDevice->setRenderTarget(cameraData.target.get());
-				global::graphicsDevice->clear();
-			}
-		});
-		global::graphicsDevice->setRenderTargetToDefault();
-		global::graphicsDevice->clear();
-
-		currentSceneData->numLights = 0;
-		currentSceneData->cameras.clear();
-		currentSceneData->meshesToRender.clear();
+		sceneData.numLights = 0;
+		sceneData.cameras.clear();
+		sceneData.meshesToRender.clear();
 	}
 
 	void RenderSystem::update(utl::DeltaTime deltaTime){
@@ -136,7 +106,7 @@ namespace tnc::ecs::_3D{
 				camera->cameraRenderData.position 	= position;
 				camera->cameraRenderData.projection = camera->currentProjection;
 
-				currentSceneData->cameras.push_back({ camera->viewport, camera->cameraRenderData, camera->renderTarget });
+				sceneData.cameras.push_back({ camera->viewport, camera->cameraRenderData, camera->renderTarget });
 			}
 		}
 
@@ -150,7 +120,7 @@ namespace tnc::ecs::_3D{
 				const mth::mat4f model = transform->getWorldTransformMatrix();
 				renderable->mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ model, mth::transpose(mth::inverse(model)) }, ShaderType::Vertex);
 
-				currentSceneData->meshesToRender.push_back(renderable->mesh);
+				sceneData.meshesToRender.push_back(renderable->mesh);
 			}
 		}
 
@@ -171,13 +141,13 @@ namespace tnc::ecs::_3D{
 				light->lightData.shadowTransforms[4] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0, 0.0, 1.0 }, mth::vec3f{ 0.0,-1.0, 0.0 });
 				light->lightData.shadowTransforms[5] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0, 0.0,-1.0 }, mth::vec3f{ 0.0,-1.0, 0.0 });
 
-				const int32 lightIndex = currentSceneData->numLights++;
-				currentSceneData->currentLightInfo.intensities[lightIndex] = light->lightData.intensity;
+				const int32 lightIndex = sceneData.numLights++;
+				sceneData.currentLightInfo.intensities[lightIndex] = light->lightData.intensity;
 
-				currentSceneData->shadowTransforms[lightIndex] = light->lightData.shadowTransforms;
+				sceneData.shadowTransforms[lightIndex] = light->lightData.shadowTransforms;
 
-				currentSceneData->currentShadowDepth.depths[lightIndex].farPlane = light->lightData.farPlane;
-				currentSceneData->currentShadowDepth.depths[lightIndex].lightPos = light->lightData.intensity.position;
+				sceneData.currentShadowDepth.depths[lightIndex].farPlane = light->lightData.farPlane;
+				sceneData.currentShadowDepth.depths[lightIndex].lightPos = light->lightData.intensity.position;
 			}
 		}
 	}
@@ -185,8 +155,17 @@ namespace tnc::ecs::_3D{
 	void RenderSystem::postUpdate(){
 		CLV_PROFILE_FUNCTION();
 
-		const auto renderCamera = [](const ComposedCameraData& cameraData){
-			const auto draw = [camBufferData = cameraData.bufferData](const std::shared_ptr<Mesh>& mesh){
+		windowCommandBuffer->beginEncoding();
+		shadowMapCommandBuffer->beginEncoding();
+
+		const auto renderCamera = [this](const ComposedCameraData& cameraData){
+			//TODO: Need a better system than this
+			auto& commandBuffer = cameraData.target ? Application::get().getGraphicsFactory().createCommandBuffer(cameraData.target) : windowCommandBuffer; 
+			if(cameraData.target){
+				commandBuffer->beginEncoding();
+			}
+
+			const auto draw = [this, camBufferData = cameraData.bufferData, commandBuffer](const std::shared_ptr<Mesh>& mesh){
 				auto& meshMaterial = mesh->getMaterialInstance();
 
 				//TODO: I like setting them on the material, but I either need a global material or set it on the base material
@@ -197,69 +176,70 @@ namespace tnc::ecs::_3D{
 				meshMaterial.setData(BBP_ViewData, ViewPos{ camBufferData.position }, ShaderType::Pixel);
 
 				//Lights
-				meshMaterial.setData(BBP_PointLightData, PointLightShaderData{ currentSceneData->currentLightInfo }, ShaderType::Pixel);
-				meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ currentSceneData->currentShadowDepth }, ShaderType::Pixel);
-				meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ currentSceneData->numLights }, ShaderType::Pixel);
+				meshMaterial.setData(BBP_PointLightData, PointLightShaderData{ sceneData.currentLightInfo }, ShaderType::Pixel);
+				meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ sceneData.currentShadowDepth }, ShaderType::Pixel);
+				meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ sceneData.numLights }, ShaderType::Pixel);
 
-				meshMaterial.bind();
+				meshMaterial.bind(commandBuffer);
 
-				const auto vertexLayout = currentSceneData->defaultPipeline->getVertexLayout();
+				const auto vertexLayout = defaultPipeline->getVertexLayout();
 
 				auto vb = mesh->getVertexBufferForLayout(vertexLayout);
 				auto ib = mesh->getIndexBuffer();
 
-				global::graphicsDevice->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
-				global::graphicsDevice->bindIndexBuffer(*ib);
+				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				commandBuffer->bindIndexBuffer(*ib);
 
-				global::graphicsDevice->drawIndexed(mesh->getIndexCount());
+				commandBuffer->drawIndexed(mesh->getIndexCount());
 			};
 
-			global::graphicsDevice->setViewport(cameraData.viewport);
+			commandBuffer->setViewport(cameraData.viewport);
 
-			if(cameraData.target){
-				global::graphicsDevice->setRenderTarget(cameraData.target.get());
-			} else{
-				global::graphicsDevice->setRenderTargetToDefault();
-			}
-
-			global::graphicsDevice->bindPipelineObject(*currentSceneData->defaultPipeline); //Bind in the default pipeline
-			global::graphicsDevice->bindTexture(currentSceneData->shadowMapTexture.get(), TBP_Shadow); //Bind this in before rendering the real mesh
+			commandBuffer->bindPipelineObject(*defaultPipeline); //Bind in the default pipeline
+			commandBuffer->bindTexture(shadowMapTexture.get(), TBP_Shadow); //Bind this in before rendering the real mesh
 
 			//Render scene
-			currentSceneData->forEachMesh(draw);
+			sceneData.forEachMesh(draw);
 
-			global::graphicsDevice->bindTexture(nullptr, TBP_Shadow);
+			commandBuffer->bindTexture(nullptr, TBP_Shadow);
+
+			if(cameraData.target){
+				commandBuffer->flushCommands();
+			}
 		};
 
-		const auto generateShadowMap = [](const std::shared_ptr<Mesh>& mesh){
-			const auto vertexLayout = currentSceneData->shadowPipeline->getVertexLayout();
+		const auto generateShadowMap = [this](const std::shared_ptr<Mesh>& mesh){
+			const auto vertexLayout = shadowPipeline->getVertexLayout();
 
 			auto vb = mesh->getVertexBufferForLayout(vertexLayout);
 			auto ib = mesh->getIndexBuffer();
-			mesh->getMaterialInstance().bind();
+			mesh->getMaterialInstance().bind(shadowMapCommandBuffer);
 
-			global::graphicsDevice->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
-			global::graphicsDevice->bindIndexBuffer(*ib);
+			shadowMapCommandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+			shadowMapCommandBuffer->bindIndexBuffer(*ib);
 
-			currentSceneData->cubeShadowMaterial.bind();
-			global::graphicsDevice->drawIndexed(mesh->getIndexCount());
+			cubeShadowMaterial.bind(shadowMapCommandBuffer);
+			shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
 		};
 
-		global::graphicsDevice->setDepthBuffer(true);
+		windowCommandBuffer->setDepthEnabled(true);
 
 		//Calculate shadow map
-		global::graphicsDevice->bindPipelineObject(*currentSceneData->shadowPipeline);
-		global::graphicsDevice->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
-		for(uint32 i = 0; i < currentSceneData->numLights; ++i){
-			currentSceneData->cubeShadowMaterial.setData(BBP_ShadowData, PointShadowShaderData{ currentSceneData->shadowTransforms[i] }, ShaderType::Geometry);
-			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
-			currentSceneData->cubeShadowMaterial.setData(BBP_CurrentDepthData, PointShadowData{ currentSceneData->currentShadowDepth.depths[i] }, ShaderType::Pixel);
+		shadowMapCommandBuffer->bindPipelineObject(*shadowPipeline);
+		shadowMapCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
+		for(uint32 i = 0; i < sceneData.numLights; ++i){
+			//TODO: Will probably cause issues with the command buffer
+			cubeShadowMaterial.setData(BBP_ShadowData, PointShadowShaderData{ sceneData.shadowTransforms[i] }, ShaderType::Geometry);
+			cubeShadowMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
+			cubeShadowMaterial.setData(BBP_CurrentDepthData, PointShadowData{ sceneData.currentShadowDepth.depths[i] }, ShaderType::Pixel);
 
-			global::graphicsDevice->setRenderTarget(currentSceneData->shadowMapRenderTarget.get());
-			currentSceneData->forEachMesh(generateShadowMap);
+			sceneData.forEachMesh(generateShadowMap);
 		}
+		shadowMapCommandBuffer->flushCommands();
 
 		//Render scene for each camera
-		std::for_each(currentSceneData->cameras.begin(), currentSceneData->cameras.end(), renderCamera);
+		std::for_each(sceneData.cameras.begin(), sceneData.cameras.end(), renderCamera);
+
+		windowCommandBuffer->flushCommands();
 	}
 }
