@@ -160,6 +160,7 @@ namespace tnc::ecs::_3D{
 			auto& commandBuffer = cameraData.target ? Application::get().getGraphicsFactory().createCommandBuffer(cameraData.target) : windowCommandBuffer; 
 			if(cameraData.target){
 				commandBuffer->beginEncoding();
+				commandBuffer->setDepthEnabled(true);
 			}
 
 			const auto draw = [this, camBufferData = cameraData.bufferData, commandBuffer](const std::shared_ptr<Mesh>& mesh){
