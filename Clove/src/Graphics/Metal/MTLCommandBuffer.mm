@@ -99,10 +99,6 @@ namespace clv::gfx::mtl{
 		
 		[descriptor release];
 	}
-	
-	void MTLCommandBuffer::setClearColour(const mth::vec4f& colour){
-		//TODO
-	}
 
 	void MTLCommandBuffer::drawIndexed(const uint32 count){
 		[commandEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle

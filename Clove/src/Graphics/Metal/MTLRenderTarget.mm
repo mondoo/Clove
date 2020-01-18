@@ -25,6 +25,11 @@ namespace clv::gfx::mtl{
 		[descriptor release];
 	}
 	
+	void MTLRenderTarget::setClearColour(const mth::vec4f& colour){
+		const MTLClearColor clearColour{ colour.r, colour.g, colour.b, colour.a };
+		[descriptor.colorAttachments[0] setClearColor:clearColour];
+	}
+	
 	MTLRenderPassDescriptor* MTLRenderTarget::getRenderPassDescriptor() const{
 		return descriptor;
 	}

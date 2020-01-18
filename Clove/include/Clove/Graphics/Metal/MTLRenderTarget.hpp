@@ -26,6 +26,8 @@ namespace clv::gfx::mtl{
 		
 		virtual ~MTLRenderTarget();
 		
+		virtual void setClearColour(const mth::vec4f& colour);
+		
 		MTLRenderPassDescriptor* getRenderPassDescriptor() const;
 	};
 }
