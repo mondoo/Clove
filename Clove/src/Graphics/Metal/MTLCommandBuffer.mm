@@ -14,7 +14,9 @@ namespace clv::gfx::mtl{
 	
 	MTLCommandBuffer::MTLCommandBuffer(id<MTLCommandQueue> commandQueue, Surface& surface)
 		: commandQueue([commandQueue retain]){
-		mtlRenderTarget = std::static_pointer_cast<MTLRenderTarget>(surface.getRenderTarget());
+		MTLSurface& mtlSurface = static_cast<MTLSurface&>(surface);
+		mtlRenderTarget = std::static_pointer_cast<MTLRenderTarget>(mtlSurface.getRenderTarget());
+		view = [mtlSurface.getMTKView() retain];
 	}
 	
 	MTLCommandBuffer::MTLCommandBuffer(MTLCommandBuffer&& other) noexcept = default;
@@ -25,11 +27,17 @@ namespace clv::gfx::mtl{
 		[commandQueue release];
 		[commandBuffer release];
 		[commandEncoder release];
+		if(view){
+			[view release];
+		}
 	}
 
 	void MTLCommandBuffer::beginEncoding(){
 		commandBuffer = [[commandQueue commandBuffer] retain];
 		commandEncoder = [[commandBuffer renderCommandEncoderWithDescriptor:mtlRenderTarget->getRenderPassDescriptor()] retain];
+		if(view){
+			drawable = [[view currentDrawable] retain];
+		}
 	}
 
 	void MTLCommandBuffer::bindIndexBuffer(const Buffer& buffer){
@@ -110,6 +118,10 @@ namespace clv::gfx::mtl{
 
 	void MTLCommandBuffer::flushCommands(){
 		[commandEncoder endEncoding];
+		if(drawable){
+			[commandBuffer presentDrawable:drawable];
+			[drawable release];
+		}
 		[commandBuffer commit];
 	}
 }

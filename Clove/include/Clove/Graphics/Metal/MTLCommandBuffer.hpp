@@ -10,13 +10,16 @@ namespace clv::gfx::mtl{
 	class MTLCommandBuffer : public CommandBuffer{
 		//VARIABLES
 	private:
-		id<MTLCommandQueue> commandQueue;
-		id<MTLCommandBuffer> commandBuffer;
-		id<MTLRenderCommandEncoder> commandEncoder;
+		id<MTLCommandQueue> commandQueue = nullptr;
+		id<MTLCommandBuffer> commandBuffer = nullptr;
+		id<MTLRenderCommandEncoder> commandEncoder = nullptr;
 		
-		id<MTLBuffer> indexBuffer;
+		id<MTLBuffer> indexBuffer = nullptr;
 		
 		std::shared_ptr<MTLRenderTarget> mtlRenderTarget;
+		
+		MTKView* view = nullptr;
+		id<MTLDrawable> drawable = nullptr;
 		
 		//FUNCTIONS
 	public:
