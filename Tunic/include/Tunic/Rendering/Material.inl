@@ -1,10 +1,11 @@
-#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
+#include "Tunic/Application.hpp"
+#include "Clove/Graphics/Core/RenderFactory.hpp"
 
 namespace tnc::rnd{
 	template<typename DataType>
 	void Material::setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderType shaderType){
 		if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
-			clv::gfx::global::graphicsDevice->updateBufferData(*iter->second.buffer, &data);
+			*iter->second.buffer->updateData(&data);
 		} else{
 			clv::gfx::BufferDescriptor srdesc{};
 			srdesc.elementSize	= 0;
@@ -12,7 +13,7 @@ namespace tnc::rnd{
 			srdesc.bufferType	= clv::gfx::BufferType::ShaderResourceBuffer;
 			srdesc.bufferUsage	= clv::gfx::BufferUsage::Dynamic;
 
-			auto buffer = clv::gfx::global::graphicsFactory->createBuffer(srdesc, &data);
+			auto buffer = Application::get().getGraphicsFactory().createBuffer(srdesc, &data);
 			shaderData[bindingPoint] = { buffer, shaderType };
 		}
 	}

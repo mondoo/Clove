@@ -99,7 +99,7 @@ namespace tnc::ecs::_2D{
 				SpriteComponent* renderable = std::get<SpriteComponent*>(tuple);
 
 				const mth::mat4f modelData = transform->getWorldTransformMatrix();
-				renderable->sprite->setModelData(projection * modelData);
+				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_ModelData, projection * modelData, ShaderType::Vertex);
 
 				sceneData.spritesToRender.push_back(renderable->sprite);
 			}
@@ -131,7 +131,7 @@ namespace tnc::ecs::_2D{
 
 				const mth::mat4f modelData = mth::translate(transform->getWorldTransformMatrix(), mth::vec3f{ -scaledScreenSize.x + offset.x, scaledScreenSize.y - offset.y, 0.0f });
 
-				renderable->sprite->setModelData(projection * modelData);
+				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_ModelData, projection * modelData, ShaderType::Vertex);
 
 				sceneData.widgetsToRender.push_back(renderable->sprite);
 			}
@@ -192,7 +192,7 @@ namespace tnc::ecs::_2D{
 						model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
 						auto character = std::make_shared<rnd::Sprite>(texture);
-						character->setModelData(projection * model);
+						character->getMaterialInstance().setData(BufferBindingPoint::BBP_ModelData, projection * model, ShaderType::Vertex);
 
 						sceneData.charactersToRender.push_back(character);
 					}
@@ -213,15 +213,11 @@ namespace tnc::ecs::_2D{
 		commandBuffer->setViewport({ 0,0, screenSize.x, screenSize.y });
 		commandBuffer->setDepthEnabled(false);
 
-		//Sprites / Widgets
 		commandBuffer->bindPipelineObject(*sceneData.spritePipelineObject);
+		//Sprites
 		{
 			const auto draw = [this](const std::shared_ptr<rnd::Sprite>& sprite){
-				auto& renderMeshMaterial = sceneData.spriteMesh->getMaterialInstance();
-				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
-				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
-				renderMeshMaterial.setData(BBP_Colour, sprite->getColour(), ShaderType::Pixel);
-				renderMeshMaterial.bind();
+				sprite->getMaterialInstance().bind(commandBuffer);
 
 				const auto vertexLayout = sceneData.spritePipelineObject->getVertexLayout();
 
@@ -236,19 +232,33 @@ namespace tnc::ecs::_2D{
 
 			std::for_each(sceneData.spritesToRender.begin(), sceneData.spritesToRender.end(), draw);
 			sceneData.spritesToRender.clear();
+		}
+
+		//Widgets
+		{
+			const auto draw = [this](const std::shared_ptr<rnd::Sprite>& sprite){
+				sprite->getMaterialInstance().bind(commandBuffer);
+
+				const auto vertexLayout = sceneData.spritePipelineObject->getVertexLayout();
+
+				auto vb = sceneData.widgetMesh->getVertexBufferForLayout(vertexLayout);
+				auto ib = sceneData.widgetMesh->getIndexBuffer();
+
+				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				commandBuffer->bindIndexBuffer(*ib);
+
+				commandBuffer->drawIndexed(sceneData.widgetMesh->getIndexCount());
+			};
 
 			std::for_each(sceneData.widgetsToRender.begin(), sceneData.widgetsToRender.end(), draw);
 			sceneData.widgetsToRender.clear();
 		}
 
-		//Characters
 		commandBuffer->bindPipelineObject(*sceneData.charPipelineObject);
+		//Characters
 		{
 			const auto draw = [this](const std::shared_ptr<rnd::Sprite>& character){
-				auto& charMat = sceneData.characterMesh->getMaterialInstance();
-				charMat.setAlbedoTexture(character->getTexture());
-				charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);
-				charMat.bind();
+				character->getMaterialInstance().bind(commandBuffer);
 
 				const auto vertexLayout = sceneData.charPipelineObject->getVertexLayout();
 
