@@ -23,8 +23,8 @@ namespace clv::gfx::d3d{
 		: d3dContext(d3dContext){
 		D3DSurface& d3dSurface = static_cast<D3DSurface&>(surface);
 
-		d3dSurface.onBufferResizeRequested.bind(&D3DCommandBuffer::onSurfaceBufferResizeReuqested, this);
-		finishBufferResize.bind(&D3DSurface::finishResizingBuffers, &d3dSurface);
+		d3dSurface.releaseRenderTargets.bind(&D3DCommandBuffer::releaseSurfaceRenderTarget, this);
+		d3dSurface.retainNewRenderTargets.bind(&D3DCommandBuffer::retainSurfaceRenderTarget, this);
 
 		d3dRenderTarget = std::static_pointer_cast<D3DRenderTarget>(d3dSurface.getRenderTarget());
 	}
@@ -36,12 +36,6 @@ namespace clv::gfx::d3d{
 	D3DCommandBuffer::~D3DCommandBuffer() = default;
 
 	void D3DCommandBuffer::beginEncoding(){
-		if(surfaceNeedsToResizeBuffers){
-			d3dRenderTarget.reset();
-			d3dRenderTarget = finishBufferResize.broadcast();
-			surfaceNeedsToResizeBuffers = false;
-		}
-
 		d3dRenderTarget->lock();
 
 		const auto beginCommand = [CAPTURE_CONTEXT, d3dRenderTarget = d3dRenderTarget.get()](){
@@ -202,7 +196,11 @@ namespace clv::gfx::d3d{
 		d3dRenderTarget->unlock();
 	}
 
-	void D3DCommandBuffer::onSurfaceBufferResizeReuqested(){
-		surfaceNeedsToResizeBuffers = true;
+	void D3DCommandBuffer::releaseSurfaceRenderTarget(){
+		d3dRenderTarget.reset();
+	}
+
+	void D3DCommandBuffer::retainSurfaceRenderTarget(const std::shared_ptr<D3DRenderTarget>& renderTarget){
+		d3dRenderTarget = renderTarget;
 	}
 }

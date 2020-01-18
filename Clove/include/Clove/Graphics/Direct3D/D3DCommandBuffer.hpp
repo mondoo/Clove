@@ -22,9 +22,6 @@ namespace clv::gfx::d3d{
 
 		mth::vec4f clearColour = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-		bool surfaceNeedsToResizeBuffers = false;
-		utl::SingleCastDelegate<std::shared_ptr<D3DRenderTarget>()> finishBufferResize;
-
 		//FUNCTIONS
 	public:
 		D3DCommandBuffer() = delete;
@@ -55,6 +52,7 @@ namespace clv::gfx::d3d{
 		virtual void endEncoding() override;
 
 	private:
-		void onSurfaceBufferResizeReuqested();
+		void releaseSurfaceRenderTarget();
+		void retainSurfaceRenderTarget(const std::shared_ptr<D3DRenderTarget>& renderTarget);
 	};
 }

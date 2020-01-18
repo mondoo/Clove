@@ -84,35 +84,7 @@ namespace clv::gfx::d3d{
 	}
 
 	void D3DSurface::resizeBuffers(const mth::vec2ui& size){
-		desiredBufferSize = size;
-		onBufferResizeRequested.broadcast();
-	}
-
-	void D3DSurface::present(){
-		DX11_INFO_PROVIDER;
-
-	#if CLV_DEBUG
-		infoManager.set();
-	#endif
-		if(FAILED(hr = swapChain->Present(swapInterval, 0u))){
-			if(hr == DXGI_ERROR_DEVICE_REMOVED){
-				onDeviceRemoved.broadcast();
-			} else{
-				DX11_EXCEPT(hr);
-			}
-		}
-	}
-
-	std::shared_ptr<RenderTarget> D3DSurface::getRenderTarget() const{
-		return renderTarget;
-	}
-
-	Microsoft::WRL::ComPtr<IDXGISwapChain> D3DSurface::getSwapChain() const{
-		return swapChain;
-	}
-
-	std::shared_ptr<D3DRenderTarget> D3DSurface::finishResizingBuffers(){
-		mth::vec2ui size = desiredBufferSize.value();
+		releaseRenderTargets.broadcast();
 
 		D3D11_TEXTURE2D_DESC depthTexDesc{};
 		depthStencil->GetDesc(&depthTexDesc);
@@ -143,6 +115,29 @@ namespace clv::gfx::d3d{
 
 		renderTarget = std::make_shared<D3DRenderTarget>(renderTargetView, depthStencilView);
 
+		retainNewRenderTargets.broadcast(renderTarget);
+	}
+
+	void D3DSurface::present(){
+		DX11_INFO_PROVIDER;
+
+	#if CLV_DEBUG
+		infoManager.set();
+	#endif
+		if(FAILED(hr = swapChain->Present(swapInterval, 0u))){
+			if(hr == DXGI_ERROR_DEVICE_REMOVED){
+				onDeviceRemoved.broadcast();
+			} else{
+				DX11_EXCEPT(hr);
+			}
+		}
+	}
+
+	std::shared_ptr<RenderTarget> D3DSurface::getRenderTarget() const{
 		return renderTarget;
+	}
+
+	Microsoft::WRL::ComPtr<IDXGISwapChain> D3DSurface::getSwapChain() const{
+		return swapChain;
 	}
 }
