@@ -22,8 +22,7 @@ namespace tnc::ecs::_3D{
 
 	RenderSystem::SceneData::~SceneData() = default;
 
-	RenderSystem::RenderSystem()
-		: cubeShadowMaterial(std::make_shared<Material>()){
+	RenderSystem::RenderSystem(){
 		windowCommandBuffer = Application::get().getGraphicsFactory().createCommandBuffer(Application::get().getMainWindow().getSurface());
 	
 		TextureDescriptor tdesc{};
@@ -40,8 +39,7 @@ namespace tnc::ecs::_3D{
 		shadowPipeline = Application::get().getGraphicsFactory().createPipelineObject(Application::get().getGraphicsFactory().createShader({ ShaderStyle::CubeShadowMap }));
 	}
 
-	RenderSystem::RenderSystem(RenderSystem&& other) noexcept
-		: cubeShadowMaterial(other.cubeShadowMaterial){
+	RenderSystem::RenderSystem(RenderSystem&& other) noexcept{
 		sceneData = other.sceneData;
 
 		windowCommandBuffer = other.windowCommandBuffer;
@@ -58,7 +56,6 @@ namespace tnc::ecs::_3D{
 		windowCommandBuffer = other.windowCommandBuffer;
 		shadowMapCommandBuffer = other.shadowMapCommandBuffer;
 		shadowMapTexture = other.shadowMapTexture;
-		cubeShadowMaterial = other.cubeShadowMaterial;
 
 		defaultPipeline = other.defaultPipeline;
 		shadowPipeline = other.shadowPipeline;
@@ -207,31 +204,32 @@ namespace tnc::ecs::_3D{
 				commandBuffer->flushCommands();
 			}
 		};
-
-		const auto generateShadowMap = [this](const std::shared_ptr<Mesh>& mesh){
-			const auto vertexLayout = shadowPipeline->getVertexLayout();
-
-			auto vb = mesh->getVertexBufferForLayout(vertexLayout);
-			auto ib = mesh->getIndexBuffer();
-			mesh->getMaterialInstance().bind(shadowMapCommandBuffer);
-
-			shadowMapCommandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
-			shadowMapCommandBuffer->bindIndexBuffer(*ib);
-
-			cubeShadowMaterial.bind(shadowMapCommandBuffer);
-			shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
-		};
-
 		windowCommandBuffer->setDepthEnabled(true);
 
 		//Calculate shadow map
 		shadowMapCommandBuffer->bindPipelineObject(*shadowPipeline);
 		shadowMapCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
+		std::vector<MaterialInstance> capturedMaterials;
 		for(uint32 i = 0; i < sceneData.numLights; ++i){
-			//TODO: Will probably cause issues with the command buffer
-			cubeShadowMaterial.setData(BBP_ShadowData, PointShadowShaderData{ sceneData.shadowTransforms[i] }, ShaderType::Geometry);
-			cubeShadowMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
-			cubeShadowMaterial.setData(BBP_CurrentDepthData, PointShadowData{ sceneData.currentShadowDepth.depths[i] }, ShaderType::Pixel);
+			const auto generateShadowMap = [this, i, &capturedMaterials](const std::shared_ptr<Mesh>& mesh){
+				auto meshMaterial = mesh->getMaterialInstance();
+				meshMaterial.setData(BBP_ShadowData, PointShadowShaderData{ sceneData.shadowTransforms[i] }, ShaderType::Geometry);
+				meshMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
+				meshMaterial.setData(BBP_CurrentDepthData, PointShadowData{ sceneData.currentShadowDepth.depths[i] }, ShaderType::Pixel);
+
+				const auto vertexLayout = shadowPipeline->getVertexLayout();
+
+				auto vb = mesh->getVertexBufferForLayout(vertexLayout);
+				auto ib = mesh->getIndexBuffer();
+				meshMaterial.bind(shadowMapCommandBuffer);
+
+				shadowMapCommandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				shadowMapCommandBuffer->bindIndexBuffer(*ib);
+
+				shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
+
+				capturedMaterials.push_back(meshMaterial);
+			};
 
 			sceneData.forEachMesh(generateShadowMap);
 		}

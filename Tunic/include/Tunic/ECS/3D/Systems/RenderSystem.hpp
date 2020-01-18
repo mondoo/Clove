@@ -60,7 +60,6 @@ namespace tnc::ecs::_3D{
 		std::shared_ptr<clv::gfx::CommandBuffer> windowCommandBuffer;
 		std::shared_ptr<clv::gfx::CommandBuffer> shadowMapCommandBuffer;
 		std::shared_ptr<clv::gfx::Texture> shadowMapTexture;
-		rnd::MaterialInstance cubeShadowMaterial;
 
 		std::shared_ptr<clv::gfx::PipelineObject> defaultPipeline;
 		std::shared_ptr<clv::gfx::PipelineObject> shadowPipeline;
