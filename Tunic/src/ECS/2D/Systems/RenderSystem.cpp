@@ -99,7 +99,7 @@ namespace tnc::ecs::_2D{
 				SpriteComponent* renderable = std::get<SpriteComponent*>(tuple);
 
 				const mth::mat4f modelData = transform->getWorldTransformMatrix();
-				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_ModelData, projection * modelData, ShaderType::Vertex);
+				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * modelData, ShaderType::Vertex);
 
 				sceneData.spritesToRender.push_back(renderable->sprite);
 			}
@@ -131,7 +131,7 @@ namespace tnc::ecs::_2D{
 
 				const mth::mat4f modelData = mth::translate(transform->getWorldTransformMatrix(), mth::vec3f{ -scaledScreenSize.x + offset.x, scaledScreenSize.y - offset.y, 0.0f });
 
-				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_ModelData, projection * modelData, ShaderType::Vertex);
+				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * modelData, ShaderType::Vertex);
 
 				sceneData.widgetsToRender.push_back(renderable->sprite);
 			}
@@ -192,7 +192,7 @@ namespace tnc::ecs::_2D{
 						model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
 						auto character = std::make_shared<rnd::Sprite>(texture);
-						character->getMaterialInstance().setData(BufferBindingPoint::BBP_ModelData, projection * model, ShaderType::Vertex);
+						character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderType::Vertex);
 
 						sceneData.charactersToRender.push_back(character);
 					}
