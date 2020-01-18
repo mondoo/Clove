@@ -5,7 +5,7 @@ namespace tnc::rnd{
 	template<typename DataType>
 	void Material::setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderType shaderType){
 		if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
-			*iter->second.buffer->updateData(&data);
+			iter->second.buffer->updateData(&data);
 		} else{
 			clv::gfx::BufferDescriptor srdesc{};
 			srdesc.elementSize	= 0;
