@@ -25,9 +25,11 @@ namespace clv::gfx::ogl{
 	GLCommandBuffer::~GLCommandBuffer() = default;
 
 	void GLCommandBuffer::beginEncoding(){
+		glRenderTarget->lock();
+
 		const auto beginCommand = [glRenderTarget = glRenderTarget.get()](){
 			glBindFramebuffer(GL_FRAMEBUFFER, glRenderTarget->getGLFrameBufferID());
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glRenderTarget->clear();
 		};
 
 		commands.push_back(beginCommand);
@@ -117,14 +119,6 @@ namespace clv::gfx::ogl{
 		commands.push_back(setDECommand);
 	}
 
-	void GLCommandBuffer::setClearColour(const mth::vec4f& colour){
-		const auto setCCCommand = [&colour](){
-			glClearColor(colour.r, colour.g, colour.b, colour.a);
-		};
-
-		commands.push_back(setCCCommand);
-	}
-
 	void GLCommandBuffer::drawIndexed(const uint32 count){
 		const auto drawCommand = [count](){
 			glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
@@ -139,5 +133,6 @@ namespace clv::gfx::ogl{
 		}
 
 		commands.clear();
+		glRenderTarget->unlock();
 	}
 }

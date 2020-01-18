@@ -5,6 +5,7 @@
 #include <wrl.h>
 
 struct ID3D11Device;
+struct ID3D11DeviceContext;
 struct ID3D11RenderTargetView;
 struct ID3D11DepthStencilView;
 
@@ -16,6 +17,10 @@ namespace clv::gfx::d3d{
 	class D3DRenderTarget : public RenderTarget{
 		//VARIABLES
 	private:
+		uint32 lockCount = 0;
+		mth::vec4f clearColour;
+		bool canClear = true;
+
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 
@@ -32,6 +37,12 @@ namespace clv::gfx::d3d{
 		D3DRenderTarget& operator=(D3DRenderTarget&& other) noexcept;
 		
 		virtual ~D3DRenderTarget();
+
+		void lock();
+		void unlock();
+
+		void setClearColour(const mth::vec4f& colour);
+		void clear(ID3D11DeviceContext& d3dContext);
 
 		const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& getRenderTargetView() const;
 		const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& getDepthStencilView() const;

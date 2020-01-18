@@ -28,7 +28,6 @@ namespace clv::gfx{
 
 		virtual void setViewport(const Viewport& viewport) = 0;
 		virtual void setDepthEnabled(bool enabled) = 0;
-		virtual void setClearColour(const mth::vec4f& colour) = 0;
 
 		virtual void drawIndexed(const uint32 count) = 0;
 

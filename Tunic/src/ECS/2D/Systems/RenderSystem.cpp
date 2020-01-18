@@ -83,6 +83,8 @@ namespace tnc::ecs::_2D{
 	RenderSystem::~RenderSystem() = default;
 
 	void RenderSystem::preUpdate(){
+		commandBuffer->beginEncoding();
+
 		sceneData.spritesToRender.clear();
 		sceneData.widgetsToRender.clear();
 		sceneData.charactersToRender.clear();
@@ -211,8 +213,6 @@ namespace tnc::ecs::_2D{
 
 	void RenderSystem::postUpdate(){
 		CLV_PROFILE_FUNCTION();
-
-		commandBuffer->beginEncoding();
 
 		const mth::vec2i screenSize = Application::get().getMainWindow().getSize();
 		

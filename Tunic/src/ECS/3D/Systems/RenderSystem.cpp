@@ -68,6 +68,9 @@ namespace tnc::ecs::_3D{
 	void RenderSystem::preUpdate(){
 		CLV_PROFILE_FUNCTION();
 
+		windowCommandBuffer->beginEncoding();
+		shadowMapCommandBuffer->beginEncoding();
+
 		sceneData.numLights = 0;
 		sceneData.cameras.clear();
 		sceneData.meshesToRender.clear();
@@ -151,9 +154,6 @@ namespace tnc::ecs::_3D{
 
 	void RenderSystem::postUpdate(){
 		CLV_PROFILE_FUNCTION();
-
-		windowCommandBuffer->beginEncoding();
-		shadowMapCommandBuffer->beginEncoding();
 
 		const auto renderCamera = [this](const ComposedCameraData& cameraData){
 			//TODO: Need a better system than this

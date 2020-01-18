@@ -42,16 +42,13 @@ namespace clv::gfx::d3d{
 			surfaceNeedsToResizeBuffers = false;
 		}
 
-		const auto beginCommand = [CAPTURE_CONTEXT, d3dRenderTarget = d3dRenderTarget.get(), clearColour = &clearColour](){
+		d3dRenderTarget->lock();
+
+		const auto beginCommand = [CAPTURE_CONTEXT, d3dRenderTarget = d3dRenderTarget.get()](){
+			d3dRenderTarget->clear(*d3dContext);
+
 			auto renderTargetView = d3dRenderTarget->getRenderTargetView();
 			auto depthStencilView = d3dRenderTarget->getDepthStencilView();
-
-			if(renderTargetView){
-				d3dContext->ClearRenderTargetView(renderTargetView.Get(), mth::valuePtr(*clearColour));
-			}
-			if(depthStencilView){
-				d3dContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
-			}
 
 			ID3D11RenderTargetView* rtViewArray[] = { renderTargetView.Get() };
 			d3dContext->OMSetRenderTargets(1u, rtViewArray, depthStencilView.Get());
@@ -187,14 +184,6 @@ namespace clv::gfx::d3d{
 		commands.push_back(setDECommand);
 	}
 
-	void D3DCommandBuffer::setClearColour(const mth::vec4f& colour){
-		const auto setCCComand = [&colour, clearColour = &clearColour](){
-			*clearColour = colour;
-		};
-
-		commands.push_back(setCCComand);
-	}
-
 	void D3DCommandBuffer::drawIndexed(const uint32 count){
 		const auto drawCommand = [CAPTURE_CONTEXT, count](){
 			DX11_INFO_PROVIDER;
@@ -210,6 +199,7 @@ namespace clv::gfx::d3d{
 		}
 
 		commands.clear();
+		d3dRenderTarget->unlock();
 	}
 
 	void D3DCommandBuffer::onSurfaceBufferResizeReuqested(){

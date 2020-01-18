@@ -39,7 +39,6 @@ namespace clv::gfx::ogl{
 
 		virtual void setViewport(const Viewport& viewport) override;
 		virtual void setDepthEnabled(bool enabled) override;
-		virtual void setClearColour(const mth::vec4f& colour) override;
 
 		virtual void drawIndexed(const uint32 count) override;
 
