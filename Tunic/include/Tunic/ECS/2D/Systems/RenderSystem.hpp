@@ -4,6 +4,12 @@
 
 namespace clv::gfx{
 	class CommandBuffer;
+	class PipelineObject;
+}
+
+namespace tnc::rnd{
+	class Mesh;
+	class Sprite;
 }
 
 namespace tnc::ecs::_2D{
@@ -19,8 +25,8 @@ namespace tnc::ecs::_2D{
 			std::vector<std::shared_ptr<rnd::Sprite>> widgetsToRender;
 			std::vector<std::shared_ptr<rnd::Sprite>> charactersToRender;
 
-			std::shared_ptr<PipelineObject> spritePipelineObject;
-			std::shared_ptr<PipelineObject> charPipelineObject;
+			std::shared_ptr<clv::gfx::PipelineObject> spritePipelineObject;
+			std::shared_ptr<clv::gfx::PipelineObject> charPipelineObject;
 		};
 
 		//VARIABLES
