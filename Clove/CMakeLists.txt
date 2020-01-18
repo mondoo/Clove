@@ -16,9 +16,6 @@ target_include_directories(
 	#Libraries
 	PUBLIC
 		vendor/OBJ-Loader/Source
-
-		#Below is public until wrappers have been made
-		vendor/bullet3/src
 	INTERFACE
         vendor/glm
 		#TODO: Get rid of the lbsndfile paths below (see Sound.hpp)
@@ -45,11 +42,6 @@ target_link_libraries(
 		
 		#Below are public until wrappers have been made
 		portaudio_static
-
-		#Order of these are important
-        BulletDynamics
-        BulletCollision
-        LinearMath
 	PRIVATE 
 		stb
 		Glad

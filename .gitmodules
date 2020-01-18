@@ -18,6 +18,6 @@
 [submodule "Clove/vendor/freetype2"]
 	path = Clove/vendor/freetype2
 	url = https://git.savannah.gnu.org/git/freetype/freetype2.git
-[submodule "Clove/vendor/bullet3"]
-	path = Clove/vendor/bullet3
+[submodule "Tunic/vendor/bullet3"]
+	path = Tunic/vendor/bullet3
 	url = https://github.com/bulletphysics/bullet3.git

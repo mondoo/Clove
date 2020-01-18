@@ -4,7 +4,7 @@
 #include "Tunic/ECS/2D/Components/TransformComponent.hpp"
 #include "Tunic/ECS/2D/Components/RigidBodyComponent.hpp"
 
-#include <btBulletDynamicsCommon.h> //TODO: Clove wrapper for physics
+#include <btBulletDynamicsCommon.h>
 
 using namespace clv;
 
