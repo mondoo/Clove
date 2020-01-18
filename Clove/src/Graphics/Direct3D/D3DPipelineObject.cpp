@@ -26,6 +26,9 @@ namespace clv::gfx::d3d{
 
 		DX11_INFO_PROVIDER;
 		DX11_THROW_INFO(d3dDevice.CreateInputLayout(d3dElements.data(), static_cast<UINT>(d3dElements.size()), vertexByteData, vertexByteSize, &inputLayout));
+	
+		setBlendState(true);
+		setCullMode(CullFace::Back, true);
 	}
 
 	D3DPipelineObject::D3DPipelineObject(D3DPipelineObject&& other) = default;

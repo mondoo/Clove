@@ -41,6 +41,9 @@ namespace clv::gfx::mtl{
 		
 		[vertexDescriptor release];
 		[error release];
+
+		setBlendState(true);
+		setCullMode(CullFace::Back, true);
 	}
 	
 	MTLPipelineObject::MTLPipelineObject(MTLPipelineObject&& other) noexcept = default;

@@ -28,6 +28,9 @@ namespace clv::gfx::ogl{
 		}
 
 		glBindVertexArray(0);
+
+		setBlendState(true);
+		setCullMode(CullFace::Back, true);
 	}
 
 	GLPipelineObject::GLPipelineObject(GLPipelineObject&& other) = default;
