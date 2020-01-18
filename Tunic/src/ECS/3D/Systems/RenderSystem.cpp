@@ -157,7 +157,7 @@ namespace tnc::ecs::_3D{
 
 		const auto renderCamera = [this](const ComposedCameraData& cameraData){
 			//TODO: Need a better system than this
-			auto& commandBuffer = cameraData.target ? Application::get().getGraphicsFactory().createCommandBuffer(cameraData.target) : windowCommandBuffer; 
+			auto commandBuffer = cameraData.target ? Application::get().getGraphicsFactory().createCommandBuffer(cameraData.target) : windowCommandBuffer; 
 			if(cameraData.target){
 				commandBuffer->beginEncoding();
 				commandBuffer->setDepthEnabled(true);
