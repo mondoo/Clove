@@ -193,7 +193,7 @@ namespace clv::gfx::d3d{
 		commands.push_back(drawCommand);
 	}
 
-	void D3DCommandBuffer::flushCommands(){
+	void D3DCommandBuffer::endEncoding(){
 		for(auto& command : commands){
 			command();
 		}

@@ -31,6 +31,6 @@ namespace clv::gfx{
 
 		virtual void drawIndexed(const uint32 count) = 0;
 
-		virtual void flushCommands() = 0;
+		virtual void endEncoding() = 0;
 	};
 }

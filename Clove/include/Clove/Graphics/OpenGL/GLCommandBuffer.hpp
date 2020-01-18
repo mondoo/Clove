@@ -42,6 +42,6 @@ namespace clv::gfx::ogl{
 
 		virtual void drawIndexed(const uint32 count) override;
 
-		virtual void flushCommands() override;
+		virtual void endEncoding() override;
 	};
 }

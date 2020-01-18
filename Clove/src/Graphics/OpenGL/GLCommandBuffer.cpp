@@ -127,7 +127,7 @@ namespace clv::gfx::ogl{
 		commands.push_back(drawCommand);
 	}
 
-	void GLCommandBuffer::flushCommands(){
+	void GLCommandBuffer::endEncoding(){
 		for(auto& command : commands){
 			command();
 		}

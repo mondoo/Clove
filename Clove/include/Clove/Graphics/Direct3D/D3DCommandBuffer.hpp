@@ -52,7 +52,7 @@ namespace clv::gfx::d3d{
 
 		virtual void drawIndexed(const uint32 count) override;
 
-		virtual void flushCommands() override;
+		virtual void endEncoding() override;
 
 	private:
 		void onSurfaceBufferResizeReuqested();

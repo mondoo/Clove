@@ -48,6 +48,6 @@ namespace clv::gfx::mtl{
 
 		virtual void drawIndexed(const uint32 count) override;
 
-		virtual void flushCommands() override;
+		virtual void endEncoding() override;
 	};
 }

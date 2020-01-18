@@ -202,7 +202,7 @@ namespace tnc::ecs::_3D{
 			commandBuffer->bindTexture(nullptr, TBP_Shadow);
 
 			if(cameraData.target){
-				commandBuffer->flushCommands();
+				commandBuffer->endEncoding();
 			}
 		};
 		windowCommandBuffer->setDepthEnabled(true);
@@ -234,11 +234,11 @@ namespace tnc::ecs::_3D{
 
 			sceneData.forEachMesh(generateShadowMap);
 		}
-		shadowMapCommandBuffer->flushCommands();
+		shadowMapCommandBuffer->endEncoding();
 
 		//Render scene for each camera
 		std::for_each(sceneData.cameras.begin(), sceneData.cameras.end(), renderCamera);
 
-		windowCommandBuffer->flushCommands();
+		windowCommandBuffer->endEncoding();
 	}
 }

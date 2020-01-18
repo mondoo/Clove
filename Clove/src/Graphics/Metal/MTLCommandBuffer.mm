@@ -116,7 +116,7 @@ namespace clv::gfx::mtl{
 							indexBufferOffset:0];
 	}
 
-	void MTLCommandBuffer::flushCommands(){
+	void MTLCommandBuffer::endEncoding(){
 		[commandEncoder endEncoding];
 		if(drawable){
 			[commandBuffer presentDrawable:drawable];

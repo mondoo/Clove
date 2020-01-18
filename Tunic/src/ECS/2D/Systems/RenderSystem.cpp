@@ -278,6 +278,6 @@ namespace tnc::ecs::_2D{
 			std::for_each(sceneData.charactersToRender.begin(), sceneData.charactersToRender.end(), draw);
 		}
 
-		commandBuffer->flushCommands();
+		commandBuffer->endEncoding();
 	}
 }
