@@ -33,7 +33,7 @@ namespace clv::gfx::ogl{
 		void lock();
 		void unlock();
 
-		void setClearColour(const mth::vec4f& colour);
+		virtual void setClearColour(const mth::vec4f& colour) override;
 		void clear();
 
 		const uint32 getGLFrameBufferID() const;
