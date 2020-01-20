@@ -5,7 +5,42 @@
 #include <fstream>
 #include <sstream>
 
+#include "Clove/Graphics/Core/ShaderCompiler.hpp"
+
 namespace clv::gfx::ogl{
+	std::string source_vs = R"(
+cbuffer viewBuffer : register(b6){
+	matrix modelProjection;
+};
+
+struct VSOut{
+	float2 tex : TexCoord;
+	float4 pos : SV_Position;
+};
+
+VSOut main(float2 pos : Position2D, float2 tex : TexCoord){
+	VSOut vso;
+
+	vso.tex = tex;
+	vso.tex.y = 1.0f - vso.tex.y; //In hlsl we slip the tex coords here so render targets behave the same across APIs
+	vso.pos = mul(modelProjection, float4(pos, 0.0f, 1.0f));
+
+	return vso;
+}
+	)";
+
+	std::string source_ps = R"(
+Texture2D albedoTexture : register(t1);
+SamplerState albedoSampler : register(s1);
+
+cbuffer colourBufferData : register(b12){
+	float4 colour;
+};
+
+float4 main(float2 texCoord : TexCoord) : SV_TARGET{
+	return albedoTexture.Sample(albedoSampler, texCoord) * colour;
+}
+	)";
 	GLShader::GLShader(const ShaderDescriptor& descriptor)
 		: programID(glCreateProgram()){
 		initialise(descriptor.style);
@@ -68,8 +103,8 @@ namespace clv::gfx::ogl{
 
 			case ShaderStyle::Unlit_2D:
 				{
-					vertexID = compileShader(GL_VERTEX_SHADER, shader_2D_vs);
-					pixelID = compileShader(GL_FRAGMENT_SHADER, shader_2D_ps);
+					vertexID = compileShader(GL_VERTEX_SHADER, ShaderCompiler::compile(source_vs, ShaderType::Vertex, ShaderOutputType::GLSL));
+					pixelID = compileShader(GL_FRAGMENT_SHADER, ShaderCompiler::compile(source_ps, ShaderType::Pixel, ShaderOutputType::GLSL));
 				}
 				break;
 
