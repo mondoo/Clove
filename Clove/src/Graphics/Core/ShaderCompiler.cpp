@@ -2,7 +2,7 @@
 
 //#include "Clove/Graphics/Direct3D/ShaderHeaders.hpp"
 
-//#define ENABLE_HLSL
+#define ENABLE_HLSL
 
 #include "SPIRV/GlslangToSpv.h"
 #include "SPIRV/disassemble.h"
@@ -52,21 +52,21 @@ namespace clv::gfx::ShaderCompiler{
 		TBuiltInResource builtInResources = glslang::DefaultTBuiltInResource;
 		EShMessages messages = static_cast<EShMessages>(
 			EShMsgSpvRules |
-			//EShMsgReadHlsl | EShMsgHlslOffsets | EShMsgHlslLegalization |
+			EShMsgReadHlsl | EShMsgHlslOffsets | EShMsgHlslLegalization |
 			EShMsgKeepUncalled | EShMsgSuppressWarnings);
 
 		//if(inputFormat == ShaderFormat::HLSL){
-		//shader.setEnvTargetHlslFunctionality1();
-		//shader.setHlslIoMapping(true);
 
 		// }
 
-		//shader.setAutoMapBindings(true);
-		//shader.setAutoMapLocations(true);
+		shader.setEnvTargetHlslFunctionality1();
+		shader.setAutoMapBindings(true);
+		shader.setHlslIoMapping(true);
+		shader.setAutoMapLocations(true);
 
 		shader.setEntryPoint("main");
 		//shader.setInvertY(true); //Might need this later (there's also an option on the compiler below)
-		shader.setEnvInput(glslang::EShSourceHlsl, stage, glslang::EShClientOpenGL, 100);
+		shader.setEnvInput(glslang::EShSourceHlsl, stage, glslang::EShClientOpenGL, 450);
 		shader.setEnvClient(glslang::EShClientOpenGL, glslang::EShTargetOpenGL_450);
 		shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_5);
 
@@ -92,6 +92,8 @@ namespace clv::gfx::ShaderCompiler{
 		glslang::FinalizeProcess();
 		// }
 
+		/*printf("Discovered semantics:");
+		for(int i = 0; i < inter.sem)*/
 
 		if(outputType == ShaderOutputType::GLSL){
 			spirv_cross::CompilerGLSL glsl(spirvSource);
@@ -127,11 +129,24 @@ namespace clv::gfx::ShaderCompiler{
 				//res = resource.id;
 			}
 
+			
+
 			// Give the remapped combined samplers new names.
 // Here you can also set up decorations if you want (binding = #N).
 			for(auto& remap : glsl.get_combined_image_samplers()){
 				//This properly sets the binding - TODO: Need a more robust way to do this
 				glsl.set_decoration(remap.combined_id, spv::DecorationBinding, binding);
+			}
+
+			//Remap names to semantics
+			if(type == ShaderType::Vertex){
+				for(auto& resource : resources.stage_inputs){
+					unsigned location = glsl.get_decoration(resource.id, spv::DecorationLocation);
+					std::string str = glsl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
+					printf("Input %s (%u) at binding = %u\n (%s)", resource.name.c_str(), resource.id, location, str.c_str());
+
+					glsl.set_name(resource.id, str);
+				}
 			}
 
 			return glsl.compile();
