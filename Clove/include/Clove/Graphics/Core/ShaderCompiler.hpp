@@ -3,6 +3,7 @@
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
 
 namespace clv::gfx{
+	//TODO: Rename to shader type
 	enum class ShaderOutputType{
 		GLSL,
 		MSL

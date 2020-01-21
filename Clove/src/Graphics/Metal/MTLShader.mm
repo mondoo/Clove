@@ -1,8 +1,41 @@
 #include "Clove/Graphics/Metal/MTLShader.hpp"
 
 #include "Clove/Graphics/Metal/ShaderStrings.hpp"
+#include "Clove/Graphics/Core/ShaderCompiler.hpp"
 
 namespace clv::gfx::mtl{
+		std::string source_vs = R"(
+	cbuffer viewBuffer : register(b6){
+		matrix modelProjection;
+	};
+
+	struct VSOut{
+		float2 tex : TexCoord;
+		float4 pos : SV_Position;
+	};
+
+	VSOut main(float2 pos : Position2D, float2 tex : TexCoord){
+		VSOut vso;
+
+		vso.tex = tex;
+		vso.tex.y = 1.0f - vso.tex.y; //In hlsl we slip the tex coords here so render targets behave the same across APIs
+		vso.pos = mul(modelProjection, float4(pos, 0.0f, 1.0f));
+
+		return vso;
+	}
+		)";
+		std::string source_ps = R"(
+	Texture2D albedoTexture : register(t1);
+	SamplerState albedoSampler : register(s1);
+
+	cbuffer colourBufferData : register(b12){
+		float4 colour;
+	};
+
+	float4 main(float2 texCoord : TexCoord) : SV_TARGET{
+		return albedoTexture.Sample(albedoSampler, texCoord) * colour;
+	}
+		)";
 	MTLShader::MTLShader(id<MTLDevice> mtlDevice, const ShaderDescriptor& descriptor)
 		: descriptor(descriptor){
 		initialise(mtlDevice, descriptor.style);
@@ -58,8 +91,35 @@ namespace clv::gfx::mtl{
 
 			case ShaderStyle::Unlit_2D:
 				{
-					NSString* librarySource = [NSString stringWithCString:shader_2D.c_str() encoding:[NSString defaultCStringEncoding]];
-					library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error];
+					//NSString* librarySource = [NSString stringWithCString:shader_2D.c_str() encoding:[NSString defaultCStringEncoding]];
+					//library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error];
+					
+					std::string vs_string = ShaderCompiler::compile(source_vs, ShaderType::Vertex, ShaderOutputType::MSL);
+					std::string ps_string = ShaderCompiler::compile(source_ps, ShaderType::Pixel, ShaderOutputType::MSL);
+					
+					NSString* vs = [NSString stringWithCString:vs_string.c_str() encoding:[NSString defaultCStringEncoding]];
+					NSString* ps = [NSString stringWithCString:ps_string.c_str() encoding:[NSString defaultCStringEncoding]];
+					
+					id<MTLLibrary> vs_lib = [mtlDevice newLibraryWithSource:vs options:nil error:&error];
+					if(error.code != 0){
+						for (NSString* key in [error userInfo]) {
+							NSString* value = [error userInfo][key];
+							CLV_LOG_ERROR("Error in function '{0}': {1}", CLV_FUNCTION_NAME_PRETTY, [value cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+						}
+					}
+					
+					id<MTLLibrary> ps_lib = [mtlDevice newLibraryWithSource:ps options:nil error:&error];
+					if(error.code != 0){
+						for (NSString* key in [error userInfo]) {
+							NSString* value = [error userInfo][key];
+							CLV_LOG_ERROR("Error in function '{0}': {1}", CLV_FUNCTION_NAME_PRETTY, [value cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+						}
+					}
+					
+					vertexShader = [vs_lib newFunctionWithName:@"main0"];
+					pixelShader = [ps_lib newFunctionWithName:@"main0"];
+					
+					return;
 				}
 				break;
 
