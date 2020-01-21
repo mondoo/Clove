@@ -77,8 +77,10 @@ namespace clv::gfx::mtl{
 	void MTLCommandBuffer::bindTexture(const Texture* texture, const uint32 bindingPoint){
 		if (const MTLTexture* mtlTexture = static_cast<const MTLTexture*>(texture)){
 			[commandEncoder setFragmentTexture:mtlTexture->getMTLTexture() atIndex:bindingPoint];
+			[commandEncoder setFragmentSamplerState:mtlTexture->getMTLSampler() atIndex:bindingPoint];
 		} else{
 			[commandEncoder setFragmentTexture:nullptr atIndex:bindingPoint];
+			[commandEncoder setFragmentSamplerState:nullptr atIndex:bindingPoint];
 		}
 	}
 	

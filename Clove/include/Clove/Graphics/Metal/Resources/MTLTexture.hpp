@@ -11,6 +11,7 @@ namespace clv::gfx::mtl {
 		int32 BPP = 0;
 		
 		id<MTLTexture> mtlTexture;
+		id<MTLSamplerState> mtlSampler;
 		
 		//FUNCTIONS
 	public:
@@ -27,6 +28,7 @@ namespace clv::gfx::mtl {
 		virtual ~MTLTexture();
 		
 		id<MTLTexture> getMTLTexture() const;
+		id<MTLSamplerState> getMTLSampler() const;
 		
 		virtual const TextureDescriptor& getDescriptor() const override;
 		
@@ -37,5 +39,7 @@ namespace clv::gfx::mtl {
 		MTLPixelFormat getTextureFormat(const TextureUsage usage) const;
 		MTLTextureUsage getTextureUsage(const TextureUsage usage) const;
 		MTLStorageMode getTextureStorage(const TextureUsage usage) const;
+		
+		MTLSamplerMinMagFilter getFilter(const TextureFilter filter) const;
 	};
 }
