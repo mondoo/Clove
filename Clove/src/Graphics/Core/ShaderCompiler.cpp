@@ -118,7 +118,7 @@ namespace clv::gfx::ShaderCompiler{
 			for(auto& resource : resources.separate_samplers){
 				unsigned set = glsl.get_decoration(resource.id, spv::DecorationDescriptorSet);
 				/*unsigned*/ binding = glsl.get_decoration(resource.id, spv::DecorationBinding);
-				printf("Image %s at set = %u, binding = %u\n", resource.name.c_str(), set, binding);
+				printf("Image: %s at set = %u, binding = %u\n", resource.name.c_str(), set, binding);
 
 				// Modify the decoration to prepare it for GLSL.
 				//glsl.unset_decoration(resource.id, spv::DecorationDescriptorSet);
@@ -131,12 +131,10 @@ namespace clv::gfx::ShaderCompiler{
 				//res = resource.id;
 			}
 
-			
-
 			// Give the remapped combined samplers new names.
 // Here you can also set up decorations if you want (binding = #N).
 			for(auto& remap : glsl.get_combined_image_samplers()){
-				//This properly sets the binding - TODO: Need a more robust way to do this
+				//This properly sets the binding - TODO: Need a more robust way to do this (just cache off and then do another loop)
 				glsl.set_decoration(remap.combined_id, spv::DecorationBinding, binding);
 			}
 
@@ -145,7 +143,7 @@ namespace clv::gfx::ShaderCompiler{
 				for(auto& resource : resources.stage_inputs){
 					unsigned location = glsl.get_decoration(resource.id, spv::DecorationLocation);
 					std::string str = glsl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
-					printf("Input %s (%u) at binding = %u\n (%s)", resource.name.c_str(), resource.id, location, str.c_str());
+					printf("Input: %s (%u) at binding = %u (%s)\n", resource.name.c_str(), resource.id, location, str.c_str());
 
 					glsl.set_name(resource.id, str);
 				}
@@ -165,12 +163,71 @@ namespace clv::gfx::ShaderCompiler{
 			
 			spirv_cross::ShaderResources resources = msl.get_shader_resources();
 			
+			//Set up correct buffer bindings
+			for(auto& resource : resources.uniform_buffers){
+				unsigned binding = msl.get_decoration(resource.id, spv::DecorationBinding);
+				//std::string str = msl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
+				printf("Buffer: %s at binding = %u\n", resource.name.c_str(), binding);
+				/*
+				 struct MSLResourceBinding
+				 {
+					 spv::ExecutionModel stage = spv::ExecutionModelMax;
+					 uint32_t desc_set = 0;
+					 uint32_t binding = 0;
+					 uint32_t msl_buffer = 0;
+					 uint32_t msl_texture = 0;
+					 uint32_t msl_sampler = 0;
+				 };
+				 **/
+				
+				//msl.set_decoration(resource.id, spv::DecorationBufferBlock, binding);
+				spirv_cross::MSLResourceBinding resourceBinding;
+				resourceBinding.stage = msl.get_execution_model();
+				resourceBinding.desc_set = msl.get_decoration(resource.id, spv::DecorationDescriptorSet);
+				resourceBinding.binding = binding;
+				//Can cause issue if not all are set
+				resourceBinding.msl_buffer = binding;
+				resourceBinding.msl_texture = binding;
+				resourceBinding.msl_sampler = binding;
+				msl.add_msl_resource_binding(resourceBinding);
+			}
+			
+			//Set up correct texture bindings
+			for(auto& resource : resources.separate_images){
+				unsigned binding = msl.get_decoration(resource.id, spv::DecorationBinding);
+				printf("Texture: %s at binding = %u\n", resource.name.c_str(), binding);
+				
+				spirv_cross::MSLResourceBinding resourceBinding;
+				resourceBinding.stage = msl.get_execution_model();
+				resourceBinding.desc_set = msl.get_decoration(resource.id, spv::DecorationDescriptorSet);
+				resourceBinding.binding = binding;
+				//Can cause issue if not all are set
+				resourceBinding.msl_buffer = binding;
+				resourceBinding.msl_texture = binding;
+				resourceBinding.msl_sampler = binding;
+				msl.add_msl_resource_binding(resourceBinding);
+			}
+			for(auto& resource : resources.separate_samplers){
+				unsigned binding = msl.get_decoration(resource.id, spv::DecorationBinding);
+				printf("Sampler: %s at binding = %u\n", resource.name.c_str(), binding);
+				
+				spirv_cross::MSLResourceBinding resourceBinding;
+				resourceBinding.stage = msl.get_execution_model();
+				resourceBinding.desc_set = msl.get_decoration(resource.id, spv::DecorationDescriptorSet);
+				resourceBinding.binding = binding;
+				//Can cause issue if not all are set
+				resourceBinding.msl_buffer = binding;
+				resourceBinding.msl_texture = binding;
+				resourceBinding.msl_sampler = binding;
+				msl.add_msl_resource_binding(resourceBinding);
+			}
+			
 			//Remap names to semantics
 			if(type == ShaderType::Vertex){
 				for(auto& resource : resources.stage_inputs){
 					unsigned location = msl.get_decoration(resource.id, spv::DecorationLocation);
 					std::string str = msl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
-					printf("Input %s (%u) at binding = %u\n (%s)", resource.name.c_str(), resource.id, location, str.c_str());
+					printf("Input: %s (%u) at binding = %u (%s)\n", resource.name.c_str(), resource.id, location, str.c_str());
 
 					msl.set_name(resource.id, str);
 				}
