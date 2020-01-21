@@ -1,6 +1,5 @@
 #include "Tunic/ECS/2D/Components/RigidBodyComponent.hpp"
 
-//TODO: Clove wrapper for physics
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionShapes/btBox2dShape.h>
 

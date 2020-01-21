@@ -2,7 +2,12 @@
 
 #include "Clove/Graphics/OpenGL/GLSurface.hpp"
 
+#include <glad/glad.h>
 #include <GL/glx.h>
+
+namespace clv::gfx::ogl{
+	class GLRenderTarget;
+}
 
 namespace clv::gfx::ogl{
 	class GLXSurface : public GLSurface{
@@ -16,15 +21,20 @@ namespace clv::gfx::ogl{
 		::GLXContext context = nullptr;
 
 		PFNGLXSWAPINTERVALEXTPROC glxSwapIntervalEXT = nullptr;
+
+		std::shared_ptr<GLRenderTarget> renderTarget;
 		
 		//FUNCTIONS
 	public:
 		GLXSurface() = delete;
 		GLXSurface(void* windowData);
+
 		GLXSurface(const GLXSurface& other) = delete;
 		GLXSurface(GLXSurface&& other);
+
 		GLXSurface& operator=(const GLXSurface& other) = default;
 		GLXSurface& operator=(GLXSurface&& other);
+
 		virtual ~GLXSurface();
 
 		virtual void makeCurrent() override;
@@ -33,5 +43,7 @@ namespace clv::gfx::ogl{
 		virtual bool isVsync() const override;
 
 		virtual void present() override;
+
+		virtual std::shared_ptr<RenderTarget> getRenderTarget() const override;
 	};
 }

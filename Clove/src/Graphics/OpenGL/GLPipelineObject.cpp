@@ -28,6 +28,9 @@ namespace clv::gfx::ogl{
 		}
 
 		glBindVertexArray(0);
+
+		setBlendState(true);
+		setCullMode(CullFace::Back, true);
 	}
 
 	GLPipelineObject::GLPipelineObject(GLPipelineObject&& other) = default;
@@ -36,8 +39,13 @@ namespace clv::gfx::ogl{
 
 	GLPipelineObject::~GLPipelineObject() = default;
 
-	GLuint GLPipelineObject::getGLVertexArrayID() const{
-		return vertexArrayID;
+	void GLPipelineObject::setBlendState(bool enabled){
+		blendEnabled = enabled;
+	}
+
+	void GLPipelineObject::setCullMode(CullFace face, bool frontFaceCounterClockwise){
+		cullFace = face;
+		this->frontFaceCounterClockwise = frontFaceCounterClockwise;
 	}
 
 	const std::shared_ptr<Shader>& GLPipelineObject::getShader() const{
@@ -46,6 +54,22 @@ namespace clv::gfx::ogl{
 
 	const VertexLayout& GLPipelineObject::getVertexLayout() const{
 		return shaderReflectionData.vertexBufferLayout;
+	}
+
+	GLuint GLPipelineObject::getGLVertexArrayID() const{
+		return vertexArrayID;
+	}
+
+	bool GLPipelineObject::isBlendEnabled() const{
+		return blendEnabled;
+	}
+
+	CullFace GLPipelineObject::getCullFace() const{
+		return cullFace;
+	}
+
+	bool GLPipelineObject::isFrontFaceCounterClockwise() const{
+		return frontFaceCounterClockwise;
 	}
 
 	GLenum GLPipelineObject::getGLElementType(VertexElementType type){

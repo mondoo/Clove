@@ -14,10 +14,13 @@ namespace clv::gfx::d3d{
 		//FUNCTIONS
 	public:
 		DXGIInfoManager();
+
 		DXGIInfoManager(const DXGIInfoManager* other) = delete;
 		DXGIInfoManager(DXGIInfoManager&& other) noexcept;
+
 		DXGIInfoManager& operator=(const DXGIInfoManager& other) = delete;
 		DXGIInfoManager& operator=(DXGIInfoManager&& other) noexcept;
+
 		~DXGIInfoManager();
 
 		void set() noexcept;

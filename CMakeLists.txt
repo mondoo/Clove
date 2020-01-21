@@ -17,7 +17,7 @@ set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #custom settings
 option(GAR_BUILD_TUNIC "Build the Tunic framework" ON)
-CMAKE_DEPENDENT_OPTION(GAR_BUILD_BULB "Build the Bulb editor (requries Tunic)" ON "GAR_BUILD_TUNIC" OFF)
+CMAKE_DEPENDENT_OPTION(GAR_BUILD_BULB "Build the Bulb editor (requries Tunic)" OFF "GAR_BUILD_TUNIC" OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 

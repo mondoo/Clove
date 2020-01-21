@@ -26,13 +26,11 @@ namespace Bulb.UI {
 		}
 
 		public void AddTransformComponent() {
-			entity.addTransformComponent();
-			RefreshComponents();
+			Components.Add(new TransformComponentViewModel(entity.addTransformComponent()));
 		}
 
 		public void AddMeshComponent() {
-			entity.addMeshComponent();
-			RefreshComponents();
+			Components.Add(new ComponentViewModel(entity.addMeshComponent()));
 		}
 
 		private void RefreshComponents() {

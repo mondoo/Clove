@@ -1,26 +1,29 @@
 #include "Tunic/Rendering/Renderables/Sprite.hpp"
 
-#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
+#include "Tunic/Application.hpp"
 #include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Tunic/Rendering/Material.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 
 using namespace clv;
 using namespace clv::gfx;
 
 namespace tnc::rnd{
-	Sprite::Sprite(){
-		uint32 white = 0xffffffff;
-		TextureDescriptor descriptor{};
-		descriptor.dimensions = { 1, 1 };
-		texture = global::graphicsFactory->createTexture(descriptor, &white, 4);
+	Sprite::Sprite()
+		: materialInstance(std::make_shared<Material>()){
 	}
 
-	Sprite::Sprite(const std::string& pathToTexture){
-		texture = global::graphicsFactory->createTexture({}, pathToTexture);
+	Sprite::Sprite(const std::string& pathToTexture)
+		: materialInstance(std::make_shared<Material>()){
+		materialInstance.setAlbedoTexture(Application::get().getGraphicsFactory().createTexture({}, pathToTexture));
 	}
 
-	Sprite::Sprite(std::shared_ptr<Texture> texture)
-		: texture(std::move(texture)){
+	Sprite::Sprite(const std::shared_ptr<clv::gfx::Texture>& texture)
+		: materialInstance(std::make_shared<Material>()){
+		materialInstance.setAlbedoTexture(texture);
+	}
+
+	Sprite::Sprite(const std::shared_ptr<Material>& material)
+		: materialInstance(material){
 	}
 
 	Sprite::Sprite(const Sprite& other) = default;
@@ -33,23 +36,7 @@ namespace tnc::rnd{
 
 	Sprite::~Sprite() = default;
 
-	const std::shared_ptr<Texture> &Sprite::getTexture() const {
-		return texture;
-	}
-
-	void Sprite::setColour(const mth::vec4f& colour){
-		this->colour = colour;
-	}
-
-	const mth::vec4f& Sprite::getColour() const{
-		return colour;
-	}
-
-	void Sprite::setModelData(const mth::mat4f& modelData){
-		this->modelData = modelData;
-	}
-
-	const mth::mat4f &Sprite::getModelData() const {
-		return modelData;
+	MaterialInstance& Sprite::getMaterialInstance(){
+		return materialInstance;
 	}
 }

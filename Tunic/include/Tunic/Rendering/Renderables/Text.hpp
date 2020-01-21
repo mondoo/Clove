@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Clove/Core/UI/Font.hpp"
+#include "Tunic/Rendering/Renderables/Font.hpp"
 
-namespace clv::ui{
+namespace tnc::rnd{
 	class Text{
 		//VARIABLES
 	private:
@@ -23,7 +23,7 @@ namespace clv::ui{
 		~Text();
 
 		void setText(std::string text);
-		void setSize(uint32 size);
+		void setSize(clv::uint32 size);
 
 		std::size_t getTextLength() const;
 		Glyph getBufferForCharAt(size_t index) const;

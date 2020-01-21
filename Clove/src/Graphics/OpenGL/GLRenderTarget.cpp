@@ -3,6 +3,8 @@
 #include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
 
 namespace clv::gfx::ogl{
+	GLRenderTarget::GLRenderTarget() = default;
+
 	GLRenderTarget::GLRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
 		glGenFramebuffers(1, &frameBufferID);
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
@@ -50,6 +52,28 @@ namespace clv::gfx::ogl{
 	GLRenderTarget::~GLRenderTarget(){
 		glDeleteFramebuffers(1, &frameBufferID);
 		glDeleteRenderbuffers(1, &renderBufferID);
+	}
+
+	void GLRenderTarget::lock(){
+		++lockCount;
+	}
+
+	void GLRenderTarget::unlock(){
+		if(--lockCount == 0){
+			canClear = true;
+		}
+	}
+
+	void GLRenderTarget::setClearColour(const mth::vec4f& colour){
+		clearColour = colour;
+	}
+
+	void GLRenderTarget::clear(){
+		if(canClear){
+			glClearColor(clearColour.r, clearColour.g, clearColour.b, clearColour.a);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			canClear = false;
+		}
 	}
 
 	const uint32 GLRenderTarget::getGLFrameBufferID() const{

@@ -8,25 +8,38 @@ namespace clv::gfx::ogl{
 	class GLPipelineObject : public PipelineObject{
 		//VARIABLES
 	private:
-		GLuint vertexArrayID = 0;
-
 		std::shared_ptr<Shader> shader;
 		ShaderReflectionData shaderReflectionData;
+
+		bool blendEnabled = false;
+		CullFace cullFace = CullFace::Back;
+		bool frontFaceCounterClockwise = true;
+
+		GLuint vertexArrayID = 0;
 
 		//FUNCTIONS
 	public:
 		GLPipelineObject() = delete;
 		GLPipelineObject(const std::shared_ptr<Shader>& shader);
+
 		GLPipelineObject(const GLPipelineObject& other) = delete;
 		GLPipelineObject(GLPipelineObject&& other);
+
 		GLPipelineObject& operator=(const GLPipelineObject& other) = delete;
 		GLPipelineObject& operator=(GLPipelineObject&& other);
+
 		virtual ~GLPipelineObject();
 
-		GLuint getGLVertexArrayID() const;
+		virtual void setBlendState(bool enabled) override;
+		virtual void setCullMode(CullFace face, bool frontFaceCounterClockwise) override;
 
 		virtual const std::shared_ptr<Shader>& getShader() const override;
 		virtual const VertexLayout& getVertexLayout() const override;
+
+		GLuint getGLVertexArrayID() const;
+		bool isBlendEnabled() const;
+		CullFace getCullFace() const;
+		bool isFrontFaceCounterClockwise() const;
 
 	private:
 		GLenum getGLElementType(VertexElementType type);

@@ -26,7 +26,7 @@ namespace Bulb::Core{
 
 		System::Collections::Generic::List<Component^>^ getComponents();
 
-		void addTransformComponent();
-		void addMeshComponent();
+		TransformComponent^ addTransformComponent();
+		Component^ addMeshComponent();
 	};
 }

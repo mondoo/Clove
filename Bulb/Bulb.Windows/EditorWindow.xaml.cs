@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 using Bulb.Core;
 using Bulb.CoreUI;
 using Bulb.UI;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace Bulb.Windows {
     /// <summary>

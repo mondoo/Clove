@@ -1,6 +1,10 @@
 #pragma once
 
 namespace clv::gfx{
+	class RenderTarget;
+}
+
+namespace clv::gfx{
 	class Surface{
 		//FUNCTIONS
 	public:
@@ -11,6 +15,10 @@ namespace clv::gfx{
 
 		virtual void resizeBuffers(const mth::vec2ui& size) = 0;
 
+		virtual void makeCurrent() = 0;
+
 		virtual void present() = 0;
+
+		virtual std::shared_ptr<RenderTarget> getRenderTarget() const = 0;
 	};
 }

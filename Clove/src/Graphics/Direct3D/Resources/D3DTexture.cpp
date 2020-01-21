@@ -1,9 +1,6 @@
 #include "Clove/Graphics/Direct3D/Resources/D3DTexture.hpp"
 
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
-#if CLV_DEBUG
-	#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
-#endif
 
 #include <stb_image.h>
 

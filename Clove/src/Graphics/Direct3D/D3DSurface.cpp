@@ -3,12 +3,7 @@
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
-#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
-#include "Clove/Graphics/Core/RenderDevice.hpp"
-#if CLV_DEBUG
-	#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
-#endif
 
 #include <d3d11.h>
 
@@ -42,7 +37,7 @@ namespace clv::gfx::d3d{
 		DX11_THROW_INFO(dxgiDevice->GetAdapter(&dxgiAdapter));
 
 		Microsoft::WRL::ComPtr<IDXGIFactory> dxgiFactory = nullptr;
-		dxgiAdapter->GetParent(__uuidof(IDXGIFactory), &dxgiFactory);
+		DX11_THROW_INFO(dxgiAdapter->GetParent(__uuidof(IDXGIFactory), &dxgiFactory));
 
 		DX11_THROW_INFO(dxgiFactory->CreateSwapChain(&d3dDevice, &swapChainDesc, &swapChain));
 
@@ -70,7 +65,7 @@ namespace clv::gfx::d3d{
 
 		DX11_THROW_INFO(d3dDevice.CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
 
-		renderTarget = std::make_unique<D3DRenderTarget>(renderTargetView, depthStencilView);
+		renderTarget = std::make_shared<D3DRenderTarget>(renderTargetView, depthStencilView);
 	}
 
 	D3DSurface::D3DSurface(D3DSurface&& other) noexcept = default;
@@ -89,18 +84,18 @@ namespace clv::gfx::d3d{
 	}
 
 	void D3DSurface::resizeBuffers(const mth::vec2ui& size){
+		releaseRenderTargets.broadcast();
+
 		D3D11_TEXTURE2D_DESC depthTexDesc{};
 		depthStencil->GetDesc(&depthTexDesc);
 
 		D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 		depthStencilView->GetDesc(&dsvDesc);
-		
+
 		depthStencil.Reset();
 		renderTargetView.Reset();
 		depthStencilView.Reset();
 		renderTarget.reset();
-
-		global::graphicsDevice->setRenderTarget(nullptr);
 
 		DX11_INFO_PROVIDER;
 		DX11_THROW_INFO(swapChain->ResizeBuffers(bufferCount, size.x, size.y, DXGI_FORMAT_B8G8R8A8_UNORM, 0));
@@ -112,13 +107,15 @@ namespace clv::gfx::d3d{
 		DX11_THROW_INFO(swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer));
 		DX11_THROW_INFO(d3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, &renderTargetView));
 
-		depthTexDesc.Width	= size.x;
+		depthTexDesc.Width = size.x;
 		depthTexDesc.Height = size.y;
 
 		DX11_THROW_INFO(d3dDevice->CreateTexture2D(&depthTexDesc, nullptr, &depthStencil));
 		DX11_THROW_INFO(d3dDevice->CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
 
-		renderTarget = std::make_unique<D3DRenderTarget>(renderTargetView, depthStencilView);
+		renderTarget = std::make_shared<D3DRenderTarget>(renderTargetView, depthStencilView);
+
+		retainNewRenderTargets.broadcast(renderTarget);
 	}
 
 	void D3DSurface::present(){
@@ -136,8 +133,8 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	D3DRenderTarget& D3DSurface::getTarget() const{
-		return *renderTarget;
+	std::shared_ptr<RenderTarget> D3DSurface::getRenderTarget() const{
+		return renderTarget;
 	}
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> D3DSurface::getSwapChain() const{

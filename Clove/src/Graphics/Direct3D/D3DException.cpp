@@ -63,6 +63,10 @@ namespace clv::gfx::d3d{
 		return "Clove DX11 Exception [DEVICE REMOVED] (GXGI_ERROR_DEVICE_REMOVED)";
 	}
 
+#if CLV_DEBUG
+	DXGIInfoManager InfoException::infoManager;
+#endif
+
 	InfoException::~InfoException() = default;
 
 	InfoException::InfoException(int32 lineNum, const char* file, const std::vector<std::string>& messages)
@@ -94,4 +98,10 @@ namespace clv::gfx::d3d{
 	std::string InfoException::getErrorInfo() const noexcept{
 		return info;
 	}
+
+#if CLV_DEBUG
+	DXGIInfoManager& InfoException::getInfoManager(){
+		return infoManager;
+	}
+#endif
 }

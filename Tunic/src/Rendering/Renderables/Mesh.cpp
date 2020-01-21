@@ -1,7 +1,8 @@
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 
-#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
+#include "Tunic/Application.hpp"
 #include "Clove/Graphics/Core/Resources/Buffer.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Core/Utils/MeshLoader.hpp"
 
 using namespace clv;
@@ -107,7 +108,7 @@ namespace tnc::rnd{
 			}
 		}
 		
-		global::graphicsDevice->updateBufferData(*vertexBuffer, vertexArray.data());
+		vertexBuffer->updateData(vertexArray.data());
 		return vertexBuffer;
 	}
 
@@ -121,7 +122,7 @@ namespace tnc::rnd{
 		vbdesc.bufferSize	= vertexArray.sizeBytes();
 		vbdesc.bufferType	= BufferType::VertexBuffer;
 		vbdesc.bufferUsage	= BufferUsage::Dynamic; //Setting it to dynamic here (see TODO in Mesh::getVertexBufferForLayout)
-		vertexBuffer = global::graphicsFactory->createBuffer(vbdesc, vertexArray.data());
+		vertexBuffer = Application::get().getGraphicsFactory().createBuffer(vbdesc, vertexArray.data());
 	}
 
 	void Mesh::initialiseIndexBuffer(const std::vector<uint32>& indices){
@@ -132,6 +133,6 @@ namespace tnc::rnd{
 		ibdesc.bufferSize	= indices.size() * indexSize;
 		ibdesc.bufferType	= BufferType::IndexBuffer;
 		ibdesc.bufferUsage	= BufferUsage::Default;
-		indexBuffer = global::graphicsFactory->createBuffer(ibdesc, indices.data());
+		indexBuffer = Application::get().getGraphicsFactory().createBuffer(ibdesc, indices.data());
 	}
 }

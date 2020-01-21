@@ -12,6 +12,10 @@ namespace clv::gfx::mtl{
 		descriptor.depthAttachment.texture = mtldepthStencilTexture->getMTLTexture();
 		//TODO: Not handling stencAttachment
 	}
+
+	MTLRenderTarget::MTLRenderTarget(MTLRenderPassDescriptor* descriptor)
+		: descriptor(descriptor){
+	}
 	
 	MTLRenderTarget::MTLRenderTarget(MTLRenderTarget&& other) noexcept = default;
 	
@@ -19,6 +23,11 @@ namespace clv::gfx::mtl{
 	
 	MTLRenderTarget::~MTLRenderTarget(){
 		[descriptor release];
+	}
+	
+	void MTLRenderTarget::setClearColour(const mth::vec4f& colour){
+		const MTLClearColor clearColour{ colour.r, colour.g, colour.b, colour.a };
+		[descriptor.colorAttachments[0] setClearColor:clearColour];
 	}
 	
 	MTLRenderPassDescriptor* MTLRenderTarget::getRenderPassDescriptor() const{

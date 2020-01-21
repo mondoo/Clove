@@ -1,6 +1,5 @@
 #include "Tunic/ECS/3D/Components/RigidBodyComponent.hpp"
 
-//TODO: Clove wrap physics
 #include <btBulletDynamicsCommon.h>
 
 using namespace clv;

@@ -1,11 +1,9 @@
 #pragma once
 
 namespace clv::gfx{
-	class RenderDevice;
-	class RenderFactory;
+	class GraphicsFactory;
 }
 
 namespace clv::gfx::ogl{
-	std::pair<std::unique_ptr<RenderDevice>, std::unique_ptr<RenderFactory>> initialiseOGL();
-	void postContextCreatedInitialise();
+	std::unique_ptr<GraphicsFactory> initialiseOGL();
 }

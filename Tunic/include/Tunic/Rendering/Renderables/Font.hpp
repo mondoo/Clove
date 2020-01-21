@@ -4,14 +4,16 @@
 typedef struct FT_LibraryRec_* FT_Library;
 typedef struct FT_FaceRec_* FT_Face;
 
-namespace clv::ui{
+namespace tnc::rnd{
 	struct Glyph{
-		mth::vec2f size = {};
-		mth::vec2f bearing = {};
-		mth::vec2f advance = {};
-		uint8* buffer = nullptr;
+		clv::mth::vec2f size = {};
+		clv::mth::vec2f bearing = {};
+		clv::mth::vec2f advance = {};
+		clv::uint8* buffer = nullptr;
 	};
+}
 
+namespace tnc::rnd{
 	class Font{
 		//VARIABLES
 	private:
@@ -35,7 +37,7 @@ namespace clv::ui{
 
 		~Font();
 		
-		void setSize(uint32 size);
+		void setSize(clv::uint32 size);
 		Glyph getChar(char ch) const;
 
 	private:

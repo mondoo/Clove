@@ -2,9 +2,6 @@
 
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/D3DShader.hpp"
-#if CLV_DEBUG
-	#include "Clove/Graphics/Direct3D/D3DRenderDevice.hpp"
-#endif
 
 namespace clv::gfx::d3d{
 	D3DPipelineObject::D3DPipelineObject(ID3D11Device& d3dDevice, const std::shared_ptr<Shader>& shader)
@@ -29,6 +26,9 @@ namespace clv::gfx::d3d{
 
 		DX11_INFO_PROVIDER;
 		DX11_THROW_INFO(d3dDevice.CreateInputLayout(d3dElements.data(), static_cast<UINT>(d3dElements.size()), vertexByteData, vertexByteSize, &inputLayout));
+	
+		setBlendState(true);
+		setCullMode(CullFace::Back, true);
 	}
 
 	D3DPipelineObject::D3DPipelineObject(D3DPipelineObject&& other) = default;
@@ -37,8 +37,26 @@ namespace clv::gfx::d3d{
 
 	D3DPipelineObject::~D3DPipelineObject() = default;
 
-	const Microsoft::WRL::ComPtr<ID3D11InputLayout>& D3DPipelineObject::getD3DInputLayout() const{
-		return inputLayout;
+	void D3DPipelineObject::setBlendState(bool enabled){
+		blendDesc = {};
+		blendDesc.AlphaToCoverageEnable					= FALSE;
+		blendDesc.IndependentBlendEnable				= FALSE;
+		blendDesc.RenderTarget[0].BlendEnable			= enabled ? TRUE : FALSE;
+		blendDesc.RenderTarget[0].SrcBlend				= D3D11_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend				= D3D11_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp				= D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].SrcBlendAlpha			= D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlendAlpha		= D3D11_BLEND_ZERO;
+		blendDesc.RenderTarget[0].BlendOpAlpha			= D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	}
+
+	void D3DPipelineObject::setCullMode(CullFace face, bool frontFaceCounterClockwise){
+		rasteriserDesc = {};
+		rasteriserDesc.FillMode					= D3D11_FILL_SOLID;
+		rasteriserDesc.CullMode					= face == CullFace::Back ? D3D11_CULL_BACK : D3D11_CULL_FRONT;
+		rasteriserDesc.FrontCounterClockwise	= frontFaceCounterClockwise ? TRUE : FALSE;
+		rasteriserDesc.DepthClipEnable			= TRUE;
 	}
 
 	const std::shared_ptr<Shader>& D3DPipelineObject::getShader() const{
@@ -47,6 +65,18 @@ namespace clv::gfx::d3d{
 
 	const VertexLayout& D3DPipelineObject::getVertexLayout() const{
 		return shaderReflectionData.vertexBufferLayout;
+	}
+
+	const Microsoft::WRL::ComPtr<ID3D11InputLayout>& D3DPipelineObject::getD3DInputLayout() const{
+		return inputLayout;
+	}
+
+	const D3D11_BLEND_DESC& D3DPipelineObject::getD3DBlendDesc() const{
+		return blendDesc;
+	}
+
+	const D3D11_RASTERIZER_DESC& D3DPipelineObject::getD3DRasterDesc() const{
+		return rasteriserDesc;
 	}
 
 	DXGI_FORMAT D3DPipelineObject::getDXGIFormatFromType(VertexElementType type){

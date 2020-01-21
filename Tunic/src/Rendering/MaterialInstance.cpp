@@ -2,7 +2,7 @@
 
 #include "Tunic/Rendering/Material.hpp"
 #include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/CommandBuffer.hpp"
 
 using namespace clv::gfx;
 
@@ -26,33 +26,33 @@ namespace tnc::rnd{
 
 	MaterialInstance::~MaterialInstance() = default;
 	
-	void MaterialInstance::bind(){
+	void MaterialInstance::bind(const std::shared_ptr<CommandBuffer>& commandBuffer){
 		if(albedoTexture){
-			global::graphicsDevice->bindTexture(albedoTexture.get(), TBP_Albedo);
+			commandBuffer->bindTexture(albedoTexture.get(), TBP_Albedo);
 		} else{
-			global::graphicsDevice->bindTexture(material->albedoTexture.get(), TBP_Albedo);
+			commandBuffer->bindTexture(material->albedoTexture.get(), TBP_Albedo);
 		}
 
 		if(specTexture){
-			global::graphicsDevice->bindTexture(specTexture.get(), TBP_Specular);
+			commandBuffer->bindTexture(specTexture.get(), TBP_Specular);
 		} else{
-			global::graphicsDevice->bindTexture(material->specTexture.get(), TBP_Specular);
+			commandBuffer->bindTexture(material->specTexture.get(), TBP_Specular);
 		}
 
 		for(auto& [bindingPoint, data] : material->shaderData){
 			if(auto iter = shaderData.find(bindingPoint); iter == shaderData.end()){ //If we don't have data for that bindingPint
-				global::graphicsDevice->bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
+				commandBuffer->bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
 			}
 		}
 
 		for(auto& [bindingPoint, data] : shaderData){
-			global::graphicsDevice->bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
+			commandBuffer->bindShaderResourceBuffer(*data.buffer, data.shaderType, bindingPoint);
 		}
 	}
 
 	void MaterialInstance::setAlbedoTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		albedoTexture = global::graphicsFactory->createTexture(tdesc, path);
+		albedoTexture = Application::get().getGraphicsFactory().createTexture(tdesc, path);
 	}
 
 	void MaterialInstance::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
@@ -61,7 +61,7 @@ namespace tnc::rnd{
 
 	void MaterialInstance::setSpecularTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		specTexture = global::graphicsFactory->createTexture(tdesc, path);
+		specTexture = Application::get().getGraphicsFactory().createTexture(tdesc, path);
 	}
 
 	void MaterialInstance::setSpecularTexture(const std::shared_ptr<Texture>& texture){

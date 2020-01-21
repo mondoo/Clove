@@ -9,17 +9,21 @@
 #endif
 
 namespace clv::plt{
-	std::unique_ptr<Platform> Platform::createPlatformInstance(){
+	std::unique_ptr<Platform> createPlatformInstance(){
+		return createPlatformInstance(getPlatformPreferedAPI());
+	}
+
+	std::unique_ptr<Platform> createPlatformInstance(clv::gfx::API api){
 	#if CLV_PLATFORM_WINDOWS
-		return std::make_unique<plt::WindowsPlatform>();
+		return std::make_unique<plt::WindowsPlatform>(api);
 	#elif CLV_PLATFORM_LINUX
-		return std::make_unique<plt::LinuxPlatform>();
+		return std::make_unique<plt::LinuxPlatform>(api);
 	#elif CLV_PLATFORM_MACOS
-		return std::make_unique<plt::MacPlatform>();
+		return std::make_unique<plt::MacPlatform>(api);
 	#endif
 	}
 
-	clv::gfx::API Platform::getPlatformPreferedAPI(){
+	clv::gfx::API getPlatformPreferedAPI(){
 	#if CLV_PLATFORM_WINDOWS
 		return clv::gfx::API::Direct3D11;
 	#elif CLV_PLATFORM_LINUX

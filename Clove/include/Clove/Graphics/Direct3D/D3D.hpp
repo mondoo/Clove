@@ -1,10 +1,9 @@
 #pragma once
 
 namespace clv::gfx{
-	class RenderDevice;
-	class RenderFactory;
+	class GraphicsFactory;
 }
 
 namespace clv::gfx::d3d{
-	std::pair<std::unique_ptr<RenderDevice>, std::unique_ptr<RenderFactory>> initialiseD3D();
+	std::unique_ptr<GraphicsFactory> initialiseD3D();
 }

@@ -27,16 +27,6 @@ endfunction()
 set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
 set(PA_BUILD_SHARED OFF CACHE BOOL "Build shared/dynamic library")
 set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
-set(BUILD_BULLET2_DEMOS OFF CACHE BOOL "Set when you want to build the Bullet 2 demos")
-set(BUILD_CLSOCKET OFF CACHE BOOL "Set when you want to build apps with enet TCP networking support")
-set(BUILD_CPU_DEMOS OFF CACHE BOOL "Set to build original Bullet CPU demos")
-set(BUILD_EGL OFF CACHE BOOL "OpenGL/EGL")
-set(BUILD_ENET OFF CACHE BOOL "Set when you want to build apps with enet UDP networking support")
-set(BUILD_EXTRAS OFF CACHE BOOL "Set when you want to build extras")
-set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "Set when you want to build Bullet 3 OpenGL3+ demos")
-set(BUILD_UNIT_TESTS OFF CACHE BOOL "Build unit tests")
-set(USE_GLUT OFF CACHE BOOL "Use GLUT")
-set(USE_GRAPHICAL_BENCHMARK OFF CACHE BOOL "Use graphical benchmark")
 set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")
 set(SPIRV_CROSS_ENABLE_C_API OFF CACHE BOOL "Enable C API wrapper support in static library.")
 set(SPIRV_CROSS_ENABLE_TESTS OFF CACHE BOOL "Enable SPIR-V Cross tests.")
@@ -71,13 +61,6 @@ set_target_properties(uninstall PROPERTIES FOLDER ${DependencyFolder}/portaudio)
 #libsndfile
 add_subdirectory(libsndfile)
 set_target_properties(sndfile PROPERTIES FOLDER ${DependencyFolder})
-
-#freetype2
-add_subdirectory(freetype2)
-set_target_properties(freetype PROPERTIES FOLDER ${DependencyFolder})
-
-#bullet3
-add_subdirectory_with_folder(${DependencyFolder}/bullet3 bullet3)
 
 #glslang
 add_subdirectory_with_folder(${DependencyFolder}/glslang glslang)

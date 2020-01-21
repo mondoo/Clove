@@ -8,9 +8,10 @@
 #include "Tunic/ECS/UI/Components/TextComponent.hpp"
 #include "Tunic/ECS/UI/Components/WidgetComponent.hpp"
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
-#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 #include "Tunic/Rendering/Renderables/Sprite.hpp"
+#include "Clove/Graphics/Core/CommandBuffer.hpp"
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/Shader.hpp"
 #include "Clove/Graphics/Core/PipelineObject.hpp"
 #include "Clove/Platform/Core/Window.hpp"
@@ -19,30 +20,14 @@ using namespace clv;
 using namespace clv::gfx;
 
 namespace tnc::ecs::_2D{
-	struct SceneData{
-		std::shared_ptr<rnd::Mesh> spriteMesh;
-		std::shared_ptr<rnd::Mesh> widgetMesh;
-		std::shared_ptr<rnd::Mesh> characterMesh;
-
-		std::vector<std::shared_ptr<rnd::Sprite>> spritesToRender;
-		std::vector<std::shared_ptr<rnd::Sprite>> widgetsToRender;
-		std::vector<std::shared_ptr<rnd::Sprite>> charactersToRender;
-
-		std::shared_ptr<PipelineObject> spritePipelineObject;
-		std::shared_ptr<PipelineObject> charPipelineObject;
-	} *currentSceneData;
-
 	RenderSystem::RenderSystem(){
-		CLV_LOG_TRACE("Initialising renderer");
-		currentSceneData = new SceneData();
-
 		const std::vector<uint32> indices = {
 			1, 3, 0,
 			3, 2, 0
 		};
 
 		VertexLayout layout;
-		layout.add(gfx::VertexElementType::position2D).add(VertexElementType::texture2D);
+		layout.add(VertexElementType::position2D).add(VertexElementType::texture2D);
 
 		//Sprite mesh
 		{
@@ -54,7 +39,7 @@ namespace tnc::ecs::_2D{
 			bufferData.emplaceBack(mth::vec2f{  0.5f,  0.5f }, mth::vec2f{ 1.0f, 1.0f });
 
 			auto spriteMaterial = std::make_shared<rnd::Material>();
-			currentSceneData->spriteMesh = std::make_shared<rnd::Mesh>(bufferData, indices, spriteMaterial->createInstance());
+			sceneData.spriteMesh = std::make_shared<rnd::Mesh>(bufferData, indices, spriteMaterial->createInstance());
 		}
 
 		//Widget mesh
@@ -67,7 +52,7 @@ namespace tnc::ecs::_2D{
 			bufferData.emplaceBack(mth::vec2f{ 1.0f,  0.0f }, mth::vec2f{ 1.0f, 1.0f });
 
 			auto spriteMaterial = std::make_shared<rnd::Material>();
-			currentSceneData->widgetMesh = std::make_shared<rnd::Mesh>(bufferData, indices, spriteMaterial->createInstance());
+			sceneData.widgetMesh = std::make_shared<rnd::Mesh>(bufferData, indices, spriteMaterial->createInstance());
 		}
 
 		//Font mesh
@@ -80,26 +65,29 @@ namespace tnc::ecs::_2D{
 			bufferData.emplaceBack(mth::vec2f{ 1.0f,  1.0f }, mth::vec2f{ 1.0f, 0.0f });
 
 			auto characterMaterial = std::make_shared<rnd::Material>();
-			currentSceneData->characterMesh = std::make_shared<rnd::Mesh>(bufferData, indices, characterMaterial->createInstance());
+			sceneData.characterMesh = std::make_shared<rnd::Mesh>(bufferData, indices, characterMaterial->createInstance());
 		}
 
-		currentSceneData->spritePipelineObject = global::graphicsFactory->createPipelineObject(global::graphicsFactory->createShader({ ShaderStyle::Unlit_2D }));
-		currentSceneData->charPipelineObject = global::graphicsFactory->createPipelineObject(global::graphicsFactory->createShader({ ShaderStyle::Font }));
+		GraphicsFactory& graphicsFactory = Application::get().getGraphicsFactory();
+
+		sceneData.spritePipelineObject = graphicsFactory.createPipelineObject(graphicsFactory.createShader({ ShaderStyle::Unlit_2D }));
+		sceneData.charPipelineObject = graphicsFactory.createPipelineObject(graphicsFactory.createShader({ ShaderStyle::Font }));
+		
+		commandBuffer = graphicsFactory.createCommandBuffer(Application::get().getMainWindow().getSurface());
 	}
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;
 
 	RenderSystem& RenderSystem::operator=(RenderSystem&& other) noexcept = default;
 
-	RenderSystem::~RenderSystem(){
-		CLV_LOG_TRACE("Shutting down renderer");
-		delete currentSceneData;
-	}
+	RenderSystem::~RenderSystem() = default;
 
 	void RenderSystem::preUpdate(){
-		CLV_PROFILE_FUNCTION();
+		commandBuffer->beginEncoding();
 
-		//Empty for now
+		sceneData.spritesToRender.clear();
+		sceneData.widgetsToRender.clear();
+		sceneData.charactersToRender.clear();
 	}
 
 	void RenderSystem::update(utl::DeltaTime deltaTime){
@@ -119,9 +107,9 @@ namespace tnc::ecs::_2D{
 				SpriteComponent* renderable = std::get<SpriteComponent*>(tuple);
 
 				const mth::mat4f modelData = transform->getWorldTransformMatrix();
-				renderable->sprite->setModelData(projection * modelData);
+				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * modelData, ShaderType::Vertex);
 
-				currentSceneData->spritesToRender.push_back(renderable->sprite);
+				sceneData.spritesToRender.push_back(renderable->sprite);
 			}
 		}
 
@@ -151,15 +139,17 @@ namespace tnc::ecs::_2D{
 
 				const mth::mat4f modelData = mth::translate(transform->getWorldTransformMatrix(), mth::vec3f{ -scaledScreenSize.x + offset.x, scaledScreenSize.y - offset.y, 0.0f });
 
-				renderable->sprite->setModelData(projection * modelData);
+				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * modelData, ShaderType::Vertex);
 
-				currentSceneData->widgetsToRender.push_back(renderable->sprite);
+				sceneData.widgetsToRender.push_back(renderable->sprite);
 			}
 		}
 
 		//Characters
 		{
 			CLV_PROFILE_SCOPE("Preparing characters");
+
+			GraphicsFactory& graphicsFactory = Application::get().getGraphicsFactory();
 
 			auto componentTuples = manager->getComponentSets<ui::TransformComponent, ui::TextComponent>();
 			for(auto& tuple : componentTuples){
@@ -178,13 +168,13 @@ namespace tnc::ecs::_2D{
 					offset.y = anchor.y * screenSize.y;
 				}
 
-				const clv::ui::Text& text = fontComp->text;
+				const rnd::Text& text = fontComp->text;
 				mth::vec2f cursorPos = transform->getPosition();
 				cursorPos.x -= (screenHalfSize.x - offset.x);
 				cursorPos.y += (screenHalfSize.y + offset.y);
 
 				for(size_t i = 0; i < text.getTextLength(); ++i){
-					clv::ui::Glyph glyph = text.getBufferForCharAt(i);
+					rnd::Glyph glyph = text.getBufferForCharAt(i);
 
 					//For spaces we just skip and proceed
 					if(glyph.buffer){
@@ -195,24 +185,24 @@ namespace tnc::ecs::_2D{
 						const float ypos = cursorPos.y - (height - glyph.bearing.y);
 
 						const uint8 textureArraySize = 1;
-						const gfx::TextureDescriptor descriptor = {
-							gfx::TextureStyle::Default,
-							gfx::TextureUsage::Font,
-							gfx::TextureFilter::Nearest,
+						const TextureDescriptor descriptor = {
+							TextureStyle::Default,
+							TextureUsage::Font,
+							TextureFilter::Nearest,
 							{ width, height },
 							textureArraySize
 						};
 
-						auto texture = gfx::global::graphicsFactory->createTexture(descriptor, glyph.buffer, 1);
+						auto texture = graphicsFactory.createTexture(descriptor, glyph.buffer, 1);
 
 						mth::mat4f model = mth::mat4f(1.0f);
 						model = mth::translate(mth::mat4f(1.0f), { xpos, ypos, 0.0f });
 						model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
 						auto character = std::make_shared<rnd::Sprite>(texture);
-						character->setModelData(projection * model);
+						character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderType::Vertex);
 
-						currentSceneData->charactersToRender.push_back(character);
+						sceneData.charactersToRender.push_back(character);
 					}
 
 					cursorPos.x += glyph.advance.x;
@@ -224,83 +214,70 @@ namespace tnc::ecs::_2D{
 	void RenderSystem::postUpdate(){
 		CLV_PROFILE_FUNCTION();
 
-		const mth::vec2i screenSize = tnc::Application::get().getMainWindow().getSize();
+		const mth::vec2i screenSize = Application::get().getMainWindow().getSize();
+		
+		commandBuffer->setViewport({ 0,0, screenSize.x, screenSize.y });
+		commandBuffer->setDepthEnabled(false);
 
-		global::graphicsDevice->setViewport({ 0, 0, screenSize.x, screenSize.y });
-		global::graphicsDevice->setDepthBuffer(false);
-		global::graphicsDevice->setRenderTargetToDefault();
-
-		//Sprites / Widgets
-		global::graphicsDevice->bindPipelineObject(*currentSceneData->spritePipelineObject);
+		commandBuffer->bindPipelineObject(*sceneData.spritePipelineObject);
+		//Sprites
 		{
-			const auto draw = [](const std::shared_ptr<rnd::Sprite>& sprite){
-				auto& renderMeshMaterial = currentSceneData->spriteMesh->getMaterialInstance();
-				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
-				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
-				renderMeshMaterial.setData(BBP_Colour, sprite->getColour(), ShaderType::Pixel);
-				renderMeshMaterial.bind();
+			const auto draw = [this](const std::shared_ptr<rnd::Sprite>& sprite){
+				sprite->getMaterialInstance().bind(commandBuffer);
 
-				const auto vertexLayout = currentSceneData->spritePipelineObject->getVertexLayout();
+				const auto vertexLayout = sceneData.spritePipelineObject->getVertexLayout();
 
-				auto vb = currentSceneData->spriteMesh->getVertexBufferForLayout(vertexLayout);
-				auto ib = currentSceneData->spriteMesh->getIndexBuffer();
+				auto vb = sceneData.spriteMesh->getVertexBufferForLayout(vertexLayout);
+				auto ib = sceneData.spriteMesh->getIndexBuffer();
 
-				global::graphicsDevice->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
-				global::graphicsDevice->bindIndexBuffer(*ib);
+				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				commandBuffer->bindIndexBuffer(*ib);
 
-				global::graphicsDevice->drawIndexed(currentSceneData->spriteMesh->getIndexCount());
+				commandBuffer->drawIndexed(sceneData.spriteMesh->getIndexCount());
 			};
 
-			std::for_each(currentSceneData->spritesToRender.begin(), currentSceneData->spritesToRender.end(), draw);
-			currentSceneData->spritesToRender.clear();
+			std::for_each(sceneData.spritesToRender.begin(), sceneData.spritesToRender.end(), draw);
 		}
 
 		//Widgets
 		{
-			const auto draw = [](const std::shared_ptr<rnd::Sprite>& sprite){
-				auto& renderMeshMaterial = currentSceneData->widgetMesh->getMaterialInstance();
-				renderMeshMaterial.setAlbedoTexture(sprite->getTexture());
-				renderMeshMaterial.setData(BBP_2DData, sprite->getModelData(), ShaderType::Vertex);
-				renderMeshMaterial.setData(BBP_Colour, sprite->getColour(), ShaderType::Pixel);
-				renderMeshMaterial.bind();
+			const auto draw = [this](const std::shared_ptr<rnd::Sprite>& sprite){
+				sprite->getMaterialInstance().bind(commandBuffer);
 
-				const auto vertexLayout = currentSceneData->spritePipelineObject->getVertexLayout();
+				const auto vertexLayout = sceneData.spritePipelineObject->getVertexLayout();
 
-				auto vb = currentSceneData->widgetMesh->getVertexBufferForLayout(vertexLayout);
-				auto ib = currentSceneData->widgetMesh->getIndexBuffer();
+				auto vb = sceneData.widgetMesh->getVertexBufferForLayout(vertexLayout);
+				auto ib = sceneData.widgetMesh->getIndexBuffer();
 
-				global::graphicsDevice->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
-				global::graphicsDevice->bindIndexBuffer(*ib);
+				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				commandBuffer->bindIndexBuffer(*ib);
 
-				global::graphicsDevice->drawIndexed(currentSceneData->widgetMesh->getIndexCount());
+				commandBuffer->drawIndexed(sceneData.widgetMesh->getIndexCount());
 			};
 
-			std::for_each(currentSceneData->widgetsToRender.begin(), currentSceneData->widgetsToRender.end(), draw);
-			currentSceneData->widgetsToRender.clear();
+			std::for_each(sceneData.widgetsToRender.begin(), sceneData.widgetsToRender.end(), draw);
 		}
 
+		commandBuffer->bindPipelineObject(*sceneData.charPipelineObject);
 		//Characters
-		global::graphicsDevice->bindPipelineObject(*currentSceneData->charPipelineObject);
 		{
-			const auto draw = [](const std::shared_ptr<rnd::Sprite>& character){
-				auto& charMat = currentSceneData->characterMesh->getMaterialInstance();
-				charMat.setAlbedoTexture(character->getTexture());
-				charMat.setData(BBP_2DData, character->getModelData(), ShaderType::Vertex);
-				charMat.bind();
+			const auto draw = [this](const std::shared_ptr<rnd::Sprite>& character){
+				character->getMaterialInstance().bind(commandBuffer);
 
-				const auto vertexLayout = currentSceneData->charPipelineObject->getVertexLayout();
+				const auto vertexLayout = sceneData.charPipelineObject->getVertexLayout();
 
-				auto vb = currentSceneData->characterMesh->getVertexBufferForLayout(vertexLayout);
-				auto ib = currentSceneData->characterMesh->getIndexBuffer();
+				auto vb = sceneData.characterMesh->getVertexBufferForLayout(vertexLayout);
+				auto ib = sceneData.characterMesh->getIndexBuffer();
 
-				global::graphicsDevice->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
-				global::graphicsDevice->bindIndexBuffer(*ib);
+				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				commandBuffer->bindIndexBuffer(*ib);
 
-				global::graphicsDevice->drawIndexed(currentSceneData->characterMesh->getIndexCount());
+				commandBuffer->drawIndexed(sceneData.characterMesh->getIndexCount());
 			};
 
-			std::for_each(currentSceneData->charactersToRender.begin(), currentSceneData->charactersToRender.end(), draw);
-			currentSceneData->charactersToRender.clear();
+			std::for_each(sceneData.charactersToRender.begin(), sceneData.charactersToRender.end(), draw);
 		}
+
+		commandBuffer->endEncoding();
 	}
 }

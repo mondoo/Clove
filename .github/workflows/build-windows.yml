@@ -1,4 +1,4 @@
-name: Build-All-Release
+name: Build-Windows-Release
 
 on: 
   push:
@@ -14,7 +14,6 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        #os: [windows-latest, ubuntu-latest, macOS-latest] <- this is to be used when everything is on version 3.16
 
     steps:
     - uses: actions/checkout@v2

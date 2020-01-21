@@ -19,6 +19,10 @@ namespace clv::plt{
 	class Window;
 }
 
+namespace clv::gfx{
+	class GraphicsFactory;
+}
+
 namespace tnc{
 	enum class ApplicationState{
 		running,
@@ -65,5 +69,7 @@ namespace tnc{
 
 		clv::plt::Window& getMainWindow() const;
 		void setMainWindow(const std::shared_ptr<clv::plt::Window>& window);
+
+		clv::gfx::GraphicsFactory& getGraphicsFactory();
 	};
 }

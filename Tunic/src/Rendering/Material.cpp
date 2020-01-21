@@ -1,8 +1,7 @@
 #include "Tunic/Rendering/Material.hpp"
 
-#include "Clove/Graphics/Core/Resources/Texture.hpp"
 #include "Tunic/Rendering/MaterialInstance.hpp"
-#include "Clove/Graphics/Core/GraphicsGlobal.hpp"
+#include "Clove/Graphics/Core/Resources/Texture.hpp"
 #include "Clove/Graphics/Core/ShaderBufferTypes.hpp"
 
 using namespace clv::gfx;
@@ -12,7 +11,7 @@ namespace tnc::rnd{
 		clv::uint32 white = 0xffffffff;
 		TextureDescriptor descriptor{};
 		descriptor.dimensions = { 1, 1 };
-		auto blankTexture = global::graphicsFactory->createTexture(descriptor, &white, 4);
+		auto blankTexture = Application::get().getGraphicsFactory().createTexture(descriptor, &white, 4);
 		albedoTexture = blankTexture;
 		specTexture = blankTexture;
 
@@ -40,7 +39,7 @@ namespace tnc::rnd{
 
 	void Material::setAlbedoTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		albedoTexture = global::graphicsFactory->createTexture(tdesc, path);
+		albedoTexture = Application::get().getGraphicsFactory().createTexture(tdesc, path);
 	}
 
 	void Material::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
@@ -49,7 +48,7 @@ namespace tnc::rnd{
 
 	void Material::setSpecularTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		specTexture = global::graphicsFactory->createTexture(tdesc, path);
+		specTexture = Application::get().getGraphicsFactory().createTexture(tdesc, path);
 	}
 
 	void Material::setSpecularTexture(const std::shared_ptr<Texture>& texture){
