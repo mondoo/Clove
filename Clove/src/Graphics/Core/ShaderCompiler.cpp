@@ -96,6 +96,8 @@ namespace clv::gfx::ShaderCompiler{
 		for(int i = 0; i < inter.sem)*/
 
 		if(outputType == ShaderOutputType::GLSL){
+			CLV_LOG_DEBUG("GLSL BEGIN");
+			
 			spirv_cross::CompilerGLSL glsl(spirvSource);
 			spirv_cross::CompilerGLSL::Options scoptions;
 
@@ -151,9 +153,29 @@ namespace clv::gfx::ShaderCompiler{
 
 			return glsl.compile();
 		} else if(outputType == ShaderOutputType::MSL){
+			CLV_LOG_DEBUG("MSL BEGIN");
+			
 			spirv_cross::CompilerMSL msl(spirvSource);
-			//spirv_cross::CompilerMSL::Options scoptions;
+			spirv_cross::CompilerMSL::Options scoptions;
+			
+			scoptions.platform = spirv_cross::CompilerMSL::Options::Platform::macOS;
 
+			msl.set_msl_options(scoptions);
+			//msl.build_combined_image_samplers();
+			
+			spirv_cross::ShaderResources resources = msl.get_shader_resources();
+			
+			//Remap names to semantics
+			if(type == ShaderType::Vertex){
+				for(auto& resource : resources.stage_inputs){
+					unsigned location = msl.get_decoration(resource.id, spv::DecorationLocation);
+					std::string str = msl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
+					printf("Input %s (%u) at binding = %u\n (%s)", resource.name.c_str(), resource.id, location, str.c_str());
+
+					msl.set_name(resource.id, str);
+				}
+			}
+			
 			return msl.compile();
 		}
 
