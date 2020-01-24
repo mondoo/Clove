@@ -7,7 +7,7 @@
 namespace clv::gfx{
 	struct ShaderData{
 		std::shared_ptr<Buffer> buffer;
-		ShaderType shaderType;
+		ShaderStage shaderType;
 	};
 }
 
@@ -40,7 +40,7 @@ namespace tnc::rnd{
 		MaterialInstance createInstance();
 
 		template<typename DataType>
-		void setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderType shaderType);
+		void setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderStage shaderType);
 
 		void setAlbedoTexture(const std::string& path);
 		void setAlbedoTexture(const std::shared_ptr<clv::gfx::Texture>& texture);

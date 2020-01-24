@@ -12,5 +12,5 @@ namespace clv::gfx{
 
 namespace clv::gfx::ShaderTranspiler{
 	//TODO: Rename to transpile
-	std::string compile(const std::string& source, ShaderType type, ShaderOutputType outputType);
+	std::string compile(const std::string& source, ShaderStage type, ShaderOutputType outputType);
 }

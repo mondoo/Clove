@@ -50,14 +50,14 @@ namespace clv::gfx::mtl{
 		[commandEncoder setVertexBuffer:mtlBuffer.getMTLBuffer() offset:0 atIndex:0];
 	}
 	
-	void MTLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
+	void MTLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32 bindingPoint){
 		const MTLBuffer& mtlBuffer = static_cast<const MTLBuffer&>(buffer);
 		switch(shaderType){
-			case ShaderType::Vertex:
+			case ShaderStage::Vertex:
 				[commandEncoder setVertexBuffer:mtlBuffer.getMTLBuffer() offset:0 atIndex:bindingPoint];
 				break;
 
-			case ShaderType::Pixel:
+			case ShaderStage::Pixel:
 				[commandEncoder setFragmentBuffer:mtlBuffer.getMTLBuffer() offset:0 atIndex:bindingPoint];
 				break;
 

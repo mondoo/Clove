@@ -71,19 +71,19 @@ namespace clv::gfx::d3d{
 		commands.push_back(bindVBCommand);
 	}
 
-	void D3DCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
+	void D3DCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32 bindingPoint){
 		const auto bindSRBCommand = [CAPTURE_CONTEXT, &buffer, shaderType, bindingPoint](){
 			const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
 			switch(shaderType){
-				case ShaderType::Vertex:
+				case ShaderStage::Vertex:
 					d3dContext->VSSetConstantBuffers(bindingPoint, 1u, d3dBuffer.getD3DBuffer().GetAddressOf());
 					break;
 
-				case ShaderType::Pixel:
+				case ShaderStage::Pixel:
 					d3dContext->PSSetConstantBuffers(bindingPoint, 1u, d3dBuffer.getD3DBuffer().GetAddressOf());
 					break;
 
-				case ShaderType::Geometry:
+				case ShaderStage::Geometry:
 					d3dContext->GSSetConstantBuffers(bindingPoint, 1u, d3dBuffer.getD3DBuffer().GetAddressOf());
 					break;
 

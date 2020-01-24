@@ -36,7 +36,7 @@ namespace tnc::rnd{
 		void bind(const std::shared_ptr<clv::gfx::CommandBuffer>& commandBuffer);
 
 		template<typename DataType>
-		void setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderType shaderType);
+		void setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderStage shaderType);
 
 		void setAlbedoTexture(const std::string& path);
 		void setAlbedoTexture(const std::shared_ptr<clv::gfx::Texture>& texture);

@@ -13,7 +13,7 @@ namespace clv::gfx{
 	#endif
 	};
 
-	enum class ShaderType{
+	enum class ShaderStage{
 		Vertex,
 		Pixel,
 		Geometry

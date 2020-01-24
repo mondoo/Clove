@@ -24,20 +24,20 @@
 //#include <cstdlib>
 
 namespace clv::gfx::ShaderTranspiler{
-	EShLanguage getEShStage(ShaderType type){
+	EShLanguage getEShStage(ShaderStage type){
 		switch(type){
-			case clv::gfx::ShaderType::Vertex:
+			case clv::gfx::ShaderStage::Vertex:
 				return EShLanguage::EShLangVertex;
-			case clv::gfx::ShaderType::Pixel:
+			case clv::gfx::ShaderStage::Pixel:
 				return EShLanguage::EShLangFragment;
-			case clv::gfx::ShaderType::Geometry:
+			case clv::gfx::ShaderStage::Geometry:
 				return EShLanguage::EShLangGeometry;
 			default:
 				break;
 		}
 	}
 
-	std::string compile(const std::string& source, ShaderType type, ShaderOutputType outputType){
+	std::string compile(const std::string& source, ShaderStage type, ShaderOutputType outputType){
 		std::vector<uint32_t> spirvSource;
 
 		//if(inputFormat == ShaderFormat::GLSL || inputFormat == ShaderFormat::HLSL){
@@ -139,7 +139,7 @@ namespace clv::gfx::ShaderTranspiler{
 			}
 
 			//Remap names to semantics
-			if(type == ShaderType::Vertex){
+			if(type == ShaderStage::Vertex){
 				for(auto& resource : resources.stage_inputs){
 					unsigned location = glsl.get_decoration(resource.id, spv::DecorationLocation);
 					std::string str = glsl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
@@ -223,7 +223,7 @@ namespace clv::gfx::ShaderTranspiler{
 			}
 			
 			//Remap names to semantics
-			if(type == ShaderType::Vertex){
+			if(type == ShaderStage::Vertex){
 				for(auto& resource : resources.stage_inputs){
 					unsigned location = msl.get_decoration(resource.id, spv::DecorationLocation);
 					std::string str = msl.get_decoration_string(resource.id, spv::DecorationUserSemantic);

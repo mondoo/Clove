@@ -53,7 +53,7 @@ namespace clv::gfx::ogl{
 		commands.push_back(bindVBCommand);
 	}
 
-	void GLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
+	void GLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32 bindingPoint){
 		const auto bindSRBCommand = [&buffer, shaderType, bindingPoint](){
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 			glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, glbuffer.getBufferID());
