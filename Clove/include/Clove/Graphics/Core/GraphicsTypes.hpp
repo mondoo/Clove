@@ -19,15 +19,6 @@ namespace clv::gfx{
 		Geometry
 	};
 
-	enum class ShaderStyle{
-		Lit_3D,
-		Unlit_3D,
-		Unlit_2D,
-		RT,
-		Font,
-		CubeShadowMap
-	};
-
 	enum class VertexElementType{
 		position2D,
 		position3D,

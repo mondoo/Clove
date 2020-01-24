@@ -5,7 +5,7 @@
 
 namespace clv::gfx{
 	struct ShaderDescriptor{
-		ShaderStyle style;
+		ShaderStage stage;
 	};
 
 	struct ShaderReflectionData{
