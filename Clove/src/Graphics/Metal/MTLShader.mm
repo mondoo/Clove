@@ -94,8 +94,8 @@ namespace clv::gfx::mtl{
 					//NSString* librarySource = [NSString stringWithCString:shader_2D.c_str() encoding:[NSString defaultCStringEncoding]];
 					//library = [mtlDevice newLibraryWithSource:librarySource options:nil error:&error];
 					
-					std::string vs_string = ShaderTranspiler::compile(source_vs, ShaderType::Vertex, ShaderOutputType::MSL);
-					std::string ps_string = ShaderTranspiler::compile(source_ps, ShaderType::Pixel, ShaderOutputType::MSL);
+					std::string vs_string = ShaderTranspiler::compile(source_vs, ShaderType::Vertex, ShaderType::MSL);
+					std::string ps_string = ShaderTranspiler::compile(source_ps, ShaderType::Pixel, ShaderType::MSL);
 					
 					NSString* vs = [NSString stringWithCString:vs_string.c_str() encoding:[NSString defaultCStringEncoding]];
 					NSString* ps = [NSString stringWithCString:ps_string.c_str() encoding:[NSString defaultCStringEncoding]];

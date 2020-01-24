@@ -37,7 +37,7 @@ namespace clv::gfx::ShaderTranspiler{
 		}
 	}
 
-	std::string compile(const std::string& source, ShaderStage type, ShaderOutputType outputType){
+	std::string compile(const std::string& source, ShaderStage type, ShaderType outputType){
 		std::vector<uint32_t> spirvSource;
 
 		//if(inputFormat == ShaderFormat::GLSL || inputFormat == ShaderFormat::HLSL){
@@ -95,7 +95,7 @@ namespace clv::gfx::ShaderTranspiler{
 		/*printf("Discovered semantics:");
 		for(int i = 0; i < inter.sem)*/
 
-		if(outputType == ShaderOutputType::GLSL){
+		if(outputType == ShaderType::GLSL){
 			CLV_LOG_DEBUG("GLSL BEGIN");
 			
 			spirv_cross::CompilerGLSL glsl(spirvSource);
@@ -150,7 +150,7 @@ namespace clv::gfx::ShaderTranspiler{
 			}
 
 			return glsl.compile();
-		} else if(outputType == ShaderOutputType::MSL){
+		} else if(outputType == ShaderType::MSL){
 			CLV_LOG_DEBUG("MSL BEGIN");
 			
 			spirv_cross::CompilerMSL msl(spirvSource);

@@ -4,7 +4,7 @@
 
 namespace clv::gfx{
 	//TODO: Rename to shader type
-	enum class ShaderOutputType{
+	enum class ShaderType{
 		GLSL,
 		MSL
 	};
@@ -12,5 +12,5 @@ namespace clv::gfx{
 
 namespace clv::gfx::ShaderTranspiler{
 	//TODO: Rename to transpile
-	std::string compile(const std::string& source, ShaderStage type, ShaderOutputType outputType);
+	std::string compile(const std::string& source, ShaderStage type, ShaderType outputType);
 }

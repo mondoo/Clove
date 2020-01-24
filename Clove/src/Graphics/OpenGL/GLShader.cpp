@@ -103,8 +103,8 @@ float4 main(float2 texCoord : TexCoord) : SV_TARGET{
 
 			case ShaderStyle::Unlit_2D:
 				{
-					vertexID = compileShader(GL_VERTEX_SHADER, ShaderTranspiler::compile(source_vs, ShaderStage::Vertex, ShaderOutputType::GLSL));
-					pixelID = compileShader(GL_FRAGMENT_SHADER, ShaderTranspiler::compile(source_ps, ShaderStage::Pixel, ShaderOutputType::GLSL));
+					vertexID = compileShader(GL_VERTEX_SHADER, ShaderTranspiler::compile(source_vs, ShaderStage::Vertex, ShaderType::GLSL));
+					pixelID = compileShader(GL_FRAGMENT_SHADER, ShaderTranspiler::compile(source_ps, ShaderStage::Pixel, ShaderType::GLSL));
 				}
 				break;
 
