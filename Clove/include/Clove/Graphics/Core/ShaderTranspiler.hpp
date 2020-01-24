@@ -3,7 +3,6 @@
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
 
 namespace clv::gfx{
-	//TODO: Rename to shader type
 	enum class ShaderType{
 		GLSL,
 		MSL
@@ -11,6 +10,6 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx::ShaderTranspiler{
-	//TODO: Rename to transpile
+	//TODO: Take the file path
 	std::string compile(const std::string& source, ShaderStage type, ShaderType outputType);
 }
