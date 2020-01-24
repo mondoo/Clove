@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "Clove/Graphics/Core/ShaderCompiler.hpp"
+#include "Clove/Graphics/Core/ShaderTranspiler.hpp"
 
 namespace clv::gfx::ogl{
 	std::string source_vs = R"(
@@ -103,8 +103,8 @@ float4 main(float2 texCoord : TexCoord) : SV_TARGET{
 
 			case ShaderStyle::Unlit_2D:
 				{
-					vertexID = compileShader(GL_VERTEX_SHADER, ShaderCompiler::compile(source_vs, ShaderType::Vertex, ShaderOutputType::GLSL));
-					pixelID = compileShader(GL_FRAGMENT_SHADER, ShaderCompiler::compile(source_ps, ShaderType::Pixel, ShaderOutputType::GLSL));
+					vertexID = compileShader(GL_VERTEX_SHADER, ShaderTranspiler::compile(source_vs, ShaderType::Vertex, ShaderOutputType::GLSL));
+					pixelID = compileShader(GL_FRAGMENT_SHADER, ShaderTranspiler::compile(source_ps, ShaderType::Pixel, ShaderOutputType::GLSL));
 				}
 				break;
 

@@ -1,4 +1,4 @@
-#include "Clove/Graphics/Core/ShaderCompiler.hpp"
+#include "Clove/Graphics/Core/ShaderTranspiler.hpp"
 
 //#include "Clove/Graphics/Direct3D/ShaderHeaders.hpp"
 
@@ -23,7 +23,7 @@
 
 //#include <cstdlib>
 
-namespace clv::gfx::ShaderCompiler{
+namespace clv::gfx::ShaderTranspiler{
 	EShLanguage getEShStage(ShaderType type){
 		switch(type){
 			case clv::gfx::ShaderType::Vertex:
