@@ -16,9 +16,9 @@ namespace clv::gfx{
 	public:
 		virtual ~PipelineObject() = default;
 
-		virtual void setVertexShader(const std::shared_ptr<Shader>& vertexShader) = 0;
-		virtual void setGeometryShader(const std::shared_ptr<Shader>& geometryShader) = 0;
-		virtual void setPixelShader(const std::shared_ptr<Shader>& pixelShader) = 0;
+		virtual void setVertexShader(const Shader& vertexShader) = 0;
+		virtual void setGeometryShader(const Shader& geometryShader) = 0;
+		virtual void setPixelShader(const Shader& pixelShader) = 0;
 
 		virtual void setBlendState(bool enabled) = 0;
 		virtual void setCullMode(CullFace face, bool frontFaceCounterClockwise) = 0;

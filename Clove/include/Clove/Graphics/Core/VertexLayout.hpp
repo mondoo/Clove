@@ -67,16 +67,21 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		VertexLayout();
+
 		VertexLayout(const VertexLayout& other);
 		VertexLayout(VertexLayout&& other) noexcept;
+
 		VertexLayout& operator=(const VertexLayout& other);
 		VertexLayout& operator=(VertexLayout&& other) noexcept;
+
 		~VertexLayout();
 
 		VertexLayout& add(VertexElementType type);
 
 		size_t size() const;
 		size_t count() const;
+
+		void clear();
 
 		const VertexElement& resolve(VertexElementType type) const;
 		const VertexElement& resolve(size_t i) const;

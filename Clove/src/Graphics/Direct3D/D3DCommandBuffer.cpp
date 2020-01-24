@@ -107,10 +107,9 @@ namespace clv::gfx::d3d{
 
 			d3dContext->IASetInputLayout(d3dPipelineObject.getD3DInputLayout().Get());
 
-			auto d3dShader = std::static_pointer_cast<D3DShader>(d3dPipelineObject.getShader());
-			d3dContext->VSSetShader(d3dShader->getD3DVertexShader().Get(), nullptr, 0u);
-			d3dContext->GSSetShader(d3dShader->getD3DGeometryShader().Get(), nullptr, 0u);
-			d3dContext->PSSetShader(d3dShader->getD3DPixelShader().Get(), nullptr, 0u);
+			d3dContext->VSSetShader(d3dPipelineObject.getD3DVertexShader().Get(), nullptr, 0u);
+			d3dContext->GSSetShader(d3dPipelineObject.getD3DGeometryShader().Get(), nullptr, 0u);
+			d3dContext->PSSetShader(d3dPipelineObject.getD3DPixelShader().Get(), nullptr, 0u);
 
 			Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
 			DX11_THROW_INFO(d3dDevice->CreateBlendState(&d3dPipelineObject.getD3DBlendDesc(), &blendState));
