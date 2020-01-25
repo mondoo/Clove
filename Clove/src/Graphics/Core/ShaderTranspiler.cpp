@@ -14,8 +14,8 @@
 #include <spirv_msl.hpp>
 
 namespace clv::gfx::ShaderTranspiler{
-	EShLanguage getEShStage(ShaderStage type){
-		switch(type){
+	EShLanguage getEShStage(ShaderStage stage){
+		switch(stage){
 			case clv::gfx::ShaderStage::Vertex:
 				return EShLanguage::EShLangVertex;
 			case clv::gfx::ShaderStage::Pixel:
@@ -27,15 +27,27 @@ namespace clv::gfx::ShaderTranspiler{
 		}
 	}
 
-	std::string compile(const std::string& source, ShaderStage type, ShaderType outputType){
+	std::string transpileFromFile(std::string_view filePath, ShaderStage stage, ShaderType outputType){
+		std::ifstream stream(filePath.data());
+
+		std::string line;
+		std::stringstream ss;
+		while(getline(stream, line)){
+			ss << line << '\n';
+		}
+
+		return transpileFromSource(ss.str(), stage, outputType);
+	}
+
+	std::string transpileFromSource(std::string_view source, ShaderStage stage, ShaderType outputType){
 		std::vector<uint32_t> spirvSource;
 
-		const char* strs = source.c_str();
+		const char* strs = source.data();
 
 		glslang::InitializeProcess();
 
-		EShLanguage stage = getEShStage(type);
-		glslang::TShader shader(stage);
+		EShLanguage eshstage = getEShStage(stage);
+		glslang::TShader shader(eshstage);
 		shader.setStrings(&strs, 1);
 
 		TBuiltInResource builtInResources = glslang::DefaultTBuiltInResource;
@@ -51,7 +63,7 @@ namespace clv::gfx::ShaderTranspiler{
 
 		shader.setEntryPoint("main");
 		//shader.setInvertY(true); //Might need this later (there's also an option on the compiler below)
-		shader.setEnvInput(glslang::EShSourceHlsl, stage, glslang::EShClientOpenGL, 450);
+		shader.setEnvInput(glslang::EShSourceHlsl, eshstage, glslang::EShClientOpenGL, 450);
 		shader.setEnvClient(glslang::EShClientOpenGL, glslang::EShTargetOpenGL_450);
 		shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_5);
 
@@ -99,7 +111,7 @@ namespace clv::gfx::ShaderTranspiler{
 			}
 
 			//Remap names to semantics
-			if(type == ShaderStage::Vertex){
+			if(stage == ShaderStage::Vertex){
 				for(auto& resource : resources.stage_inputs){
 					const uint32 location = glsl.get_decoration(resource.id, spv::DecorationLocation);
 					std::string str = glsl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
@@ -147,7 +159,7 @@ namespace clv::gfx::ShaderTranspiler{
 			}
 			
 			//Remap names to semantics
-			if(type == ShaderStage::Vertex){
+			if(stage == ShaderStage::Vertex){
 				for(auto& resource : resources.stage_inputs){
 					const uint32 location = msl.get_decoration(resource.id, spv::DecorationLocation);
 					std::string str = msl.get_decoration_string(resource.id, spv::DecorationUserSemantic);

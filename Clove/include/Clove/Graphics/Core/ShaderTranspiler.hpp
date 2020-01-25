@@ -10,6 +10,6 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx::ShaderTranspiler{
-	//TODO: Take the file path
-	std::string compile(const std::string& source, ShaderStage type, ShaderType outputType);
+	std::string transpileFromFile(std::string_view filePath, ShaderStage stage, ShaderType outputType);
+	std::string transpileFromSource(std::string_view source, ShaderStage stage, ShaderType outputType);
 }

@@ -66,9 +66,7 @@ namespace clv::gfx::ogl{
 		const auto bindPOCommand = [&pipelineObject](){
 			const GLPipelineObject& glPipelineObject = static_cast<const GLPipelineObject&>(pipelineObject);
 			glBindVertexArray(glPipelineObject.getGLVertexArrayID());
-
-			const auto glShader = std::static_pointer_cast<GLShader>(glPipelineObject.getShader());
-			glUseProgram(glShader->getProgramID());
+			glUseProgram(glPipelineObject.getGLPorgramID());
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			if(glPipelineObject.isBlendEnabled()){
