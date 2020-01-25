@@ -39,7 +39,7 @@ namespace clv::gfx::ShaderTranspiler{
 		return transpileFromSource(ss.str(), stage, outputType);
 	}
 
-	std::string transpileFromSource(std::string_view source, ShaderStage stage, ShaderType outputType){
+	std::string transpileFromSource(std::string_view source, ShaderStage stage, ShaderType outputType){		
 		std::vector<uint32_t> spirvSource;
 
 		const char* strs = source.data();
@@ -79,7 +79,8 @@ namespace clv::gfx::ShaderTranspiler{
 		const char* log = shader.getInfoLog();
 
 		if(strlen(log) > 0){
-			return log;
+			CLV_LOG_ERROR("Error compiling shader: {0}", log);
+			return "";
 		}
 
 		glslang::TIntermediate* inter = shader.getIntermediate();

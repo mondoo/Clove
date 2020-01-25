@@ -39,7 +39,7 @@ cbuffer lightPosBuffer : register(b8){
 }
 
 cbuffer lightNumBuffer : register(b9){
-	unsigned int numLights;
+	int numLights;
 }
 
 cbuffer colourDataBuffer : register(b12){
@@ -48,14 +48,14 @@ cbuffer colourDataBuffer : register(b12){
 
 float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord);
 
-float shadowCalculation(float3 fragPos, unsigned int shadowIndex);
+float shadowCalculation(float3 fragPos, int shadowIndex);
 
 float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNormal : VertNormal) : SV_Target{
     float3 normal       = normalize(vertNormal);
     float3 viewDir      = normalize(viewPos - vertPos);
     
 	float3 lighting = float3(0.0f, 0.0f, 0.0f);
-	for(unsigned int i = 0; i < numLights; ++i){
+	for(int i = 0; i < numLights; ++i){
 		lighting += calculatePointLight(lights[i], normal, vertPos, viewDir, texCoord);
 	}
 
@@ -87,7 +87,7 @@ float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, floa
 
 	//Shadow
 	float shadow = 0.0f;
-	for(unsigned int i = 0; i < numLights; ++i){
+	for(int i = 0; i < numLights; ++i){
 		shadow += 1.0f - shadowCalculation(fragPos, i);
 	}
 	shadow /= numLights;
@@ -95,7 +95,7 @@ float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, floa
 	return (ambient + (shadow * (diffuse + specular)));
 }
 
-float shadowCalculation(float3 fragPos, unsigned int shadowIndex){
+float shadowCalculation(float3 fragPos, int shadowIndex){
 	const float3 shadowSampleOffsetDirections[20] = {
 		float3(1,  1,  1), float3( 1, -1,  1), float3(-1, -1,  1), float3(-1, 1,  1),
 		float3(1,  1, -1), float3( 1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),

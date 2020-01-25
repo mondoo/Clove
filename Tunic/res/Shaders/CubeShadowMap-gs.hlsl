@@ -3,7 +3,7 @@ cbuffer shadowMatBuffer : register(b7){
 }
 
 cbuffer lightNumBuffer : register(b10){
-	unsigned int currentLightIndex;
+	int currentLightIndex;
 }
 
 struct GSOutPut{
