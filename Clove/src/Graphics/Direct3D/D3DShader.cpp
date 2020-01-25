@@ -22,7 +22,7 @@ namespace clv::gfx::d3d{
 		wchar_t* wideCharArray = new wchar_t[stringLength + 1]();
 		stringLength = mbsrtowcs(wideCharArray, &charArray, stringLength + 1, nullptr);
 
-		ID3DBlob* errorBlob = nullptr;
+		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
 		HRESULT hr = D3DCompileFromFile(wideCharArray, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", getShaderProfile(descriptor.stage), flags, 0, &shaderBlob, &errorBlob);
 		if(FAILED(hr)){
 			if(errorBlob){
@@ -31,7 +31,6 @@ namespace clv::gfx::d3d{
 			}
 		}
 
-		errorBlob->Release();
 		delete[] wideCharArray;
 	}
 
