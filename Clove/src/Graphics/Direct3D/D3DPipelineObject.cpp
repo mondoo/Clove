@@ -55,7 +55,6 @@ namespace clv::gfx::d3d{
 			d3dElements.push_back({ element.getSemantic(), 0, getDXGIFormatFromType(elementType), 0, alignmentOffset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 		}
 
-		DX11_INFO_PROVIDER;
 		DX11_THROW_INFO(d3dDevice->CreateInputLayout(d3dElements.data(), static_cast<UINT>(d3dElements.size()), byteCode, byteCodeSize, &inputLayout));
 	}
 
