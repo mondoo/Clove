@@ -6,19 +6,16 @@ namespace clv::gfx::mtl {
 	class MTLPipelineObject : public PipelineObject{
 		//VARIABLES
 	private:
-		std::shared_ptr<Shader> shader;
-		ShaderReflectionData shaderReflectionData;
+		VertexLayout vertexLayout;
 		
 		MTLRenderPipelineDescriptor* pipelineDescriptor;
-		id<MTLRenderPipelineState> pipelineState;
 		
 		CullFace cullFace;
 		bool frontFaceCounterClockwise = false;
 		
 		//FUNCTIONS
 	public:
-		MTLPipelineObject() = delete;
-		MTLPipelineObject(id<MTLDevice> mtlDevice, const std::shared_ptr<Shader>& shader);
+		MTLPipelineObject();
 		
 		MTLPipelineObject(const MTLPipelineObject& other) = delete;
 		MTLPipelineObject(MTLPipelineObject&& other) noexcept;
@@ -28,13 +25,16 @@ namespace clv::gfx::mtl {
 		
 		virtual ~MTLPipelineObject();
 		
+		virtual void setVertexShader(const Shader& vertexShader) override;
+		virtual void setGeometryShader(const Shader& geometryShader) override;
+		virtual void setPixelShader(const Shader& pixelShader) override;
+		
 		virtual void setBlendState(bool enabled) override;
 		virtual void setCullMode(CullFace face, bool frontFaceCounterClockwise) override;
 		
-		virtual const std::shared_ptr<Shader>& getShader() const override;
 		virtual const VertexLayout& getVertexLayout() const override;
 		
-		id<MTLRenderPipelineState> getMTLPipelineState() const;
+		MTLRenderPipelineDescriptor* getMTLPipelineStateDescriptor() const;
 		
 		CullFace getCullFace() const;
 		bool isFrontFaceCounterClockWise() const;

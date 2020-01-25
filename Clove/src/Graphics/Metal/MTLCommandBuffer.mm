@@ -69,7 +69,15 @@ namespace clv::gfx::mtl{
 	
 	void MTLCommandBuffer::bindPipelineObject(const PipelineObject& pipelineObject){
 		const MTLPipelineObject& mtlPipelineObject = static_cast<const MTLPipelineObject&>(pipelineObject);
-		[commandEncoder setRenderPipelineState:mtlPipelineObject.getMTLPipelineState()];
+		NSError* error = nullptr;
+		[commandEncoder setRenderPipelineState:[commandEncoder.device newRenderPipelineStateWithDescriptor:mtlPipelineObject.getMTLPipelineStateDescriptor() error:&error]];
+		if(error.code != 0){
+			for (NSString* key in [error userInfo]) {
+				NSString* value = [error userInfo][key];
+				CLV_LOG_ERROR("Error in function '{0}': {1}", CLV_FUNCTION_NAME_PRETTY, [value cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+			}
+		}
+		
 		[commandEncoder setCullMode:mtlPipelineObject.getCullFace() == CullFace::Back ? MTLCullModeBack : MTLCullModeFront];
 		[commandEncoder setFrontFacingWinding:mtlPipelineObject.isFrontFaceCounterClockWise() ? MTLWindingCounterClockwise : MTLWindingClockwise];
 	}
