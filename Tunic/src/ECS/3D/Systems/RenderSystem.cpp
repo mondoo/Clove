@@ -208,6 +208,7 @@ namespace tnc::ecs::_3D{
 		windowCommandBuffer->setDepthEnabled(true);
 
 		//Calculate shadow map
+		shadowMapCommandBuffer->setDepthEnabled(true);
 		shadowMapCommandBuffer->bindPipelineObject(*shadowPipeline);
 		shadowMapCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 		std::vector<MaterialInstance> capturedMaterials;
