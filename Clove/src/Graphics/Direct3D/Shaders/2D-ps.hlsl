@@ -5,6 +5,6 @@ cbuffer colourBufferData : register(b12){
 	float4 colour;
 };
 
-float4 main(float2 texCoord : TexCoord) : SV_TARGET{
+float4 main(float2 texCoord : TEXCOORD) : SV_TARGET{
 	return albedoTexture.Sample(albedoSampler, texCoord) * colour;
 }
