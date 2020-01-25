@@ -11,6 +11,8 @@ namespace clv::gfx::mtl{
 		descriptor.colorAttachments[0].texture = mtlColourTexture->getMTLTexture();
 		descriptor.depthAttachment.texture = mtldepthStencilTexture->getMTLTexture();
 		//TODO: Not handling stencAttachment
+
+		setClearColour({ 0.0f, 0.0f, 0.0f, 0.0f });
 	}
 
 	MTLRenderTarget::MTLRenderTarget(MTLRenderPassDescriptor* descriptor)
