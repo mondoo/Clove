@@ -35,8 +35,19 @@ namespace tnc::ecs::_3D{
 		auto shadowMapRenderTarget = Application::get().getGraphicsFactory().createRenderTarget(nullptr, shadowMapTexture.get());
 		shadowMapCommandBuffer = Application::get().getGraphicsFactory().createCommandBuffer(shadowMapRenderTarget);
 
-		defaultPipeline = Application::get().getGraphicsFactory().createPipelineObject(Application::get().getGraphicsFactory().createShader({ ShaderStyle::Lit_3D }));
-		shadowPipeline = Application::get().getGraphicsFactory().createPipelineObject(Application::get().getGraphicsFactory().createShader({ ShaderStyle::CubeShadowMap }));
+		auto defaultVS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Vertex }, "res/Shaders/Lit-vs.hlsl");
+		auto defaultPS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Pixel }, "res/Shaders/Lit-ps.hlsl");
+		defaultPipeline = Application::get().getGraphicsFactory().createPipelineObject();
+		defaultPipeline->setVertexShader(*defaultVS);
+		defaultPipeline->setPixelShader(*defaultPS);
+
+		auto shadowVS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Vertex }, "res/Shaders/CubeShadowMap-vs.hlsl");
+		auto shadowGS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Geometry }, "res/Shaders/CubeShadowMap-gs.hlsl");
+		auto shadowPS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Pixel }, "res/Shaders/CubeShadowMap-ps.hlsl");
+		shadowPipeline = Application::get().getGraphicsFactory().createPipelineObject();
+		shadowPipeline->setVertexShader(*shadowVS);
+		shadowPipeline->setGeometryShader(*shadowGS);
+		shadowPipeline->setPixelShader(*shadowPS);
 	}
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept{

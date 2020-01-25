@@ -1,6 +1,5 @@
 #include "Clove/Graphics/Metal/MTLShader.hpp"
 
-#include "Clove/Graphics/Metal/ShaderStrings.hpp"
 #include "Clove/Graphics/Core/ShaderTranspiler.hpp"
 
 namespace clv::gfx::mtl{

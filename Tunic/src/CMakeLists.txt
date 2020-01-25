@@ -1,5 +1,6 @@
 set(TNC_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
 set(TNC_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../include/Tunic)
+set(TNC_RESOURCE ${CMAKE_CURRENT_SOURCE_DIR}/../res)
 
 project(Tunic)
 
@@ -74,10 +75,30 @@ set(
 		${TNC_SOURCE}/Rendering/Renderables/Text.cpp
 )
 
+set(
+	ShaderFiles
+		${TNC_RESOURCE}/Shaders/2D-ps.hlsl
+		${TNC_RESOURCE}/Shaders/2D-vs.hlsl
+		${TNC_RESOURCE}/Shaders/CubeShadowMap-gs.hlsl
+		${TNC_RESOURCE}/Shaders/CubeShadowMap-ps.hlsl
+		${TNC_RESOURCE}/Shaders/CubeShadowMap-vs.hlsl
+		${TNC_RESOURCE}/Shaders/Font-ps.hlsl
+		${TNC_RESOURCE}/Shaders/Font-vs.hlsl
+		${TNC_RESOURCE}/Shaders/Lit-ps.hlsl
+		${TNC_RESOURCE}/Shaders/Lit-vs.hlsl
+		${TNC_RESOURCE}/Shaders/RT-ps.hlsl
+		${TNC_RESOURCE}/Shaders/RT-vs.hlsl
+		${TNC_RESOURCE}/Shaders/Unlit-ps.hlsl
+		${TNC_RESOURCE}/Shaders/Unlit-vs.hlsl
+
+)
+
 file(GLOB_RECURSE header ${TNC_INCLUDE}/*.h ${TNC_INCLUDE}/*.hpp ${TNC_INCLUDE}/*.inl)
 file(GLOB_RECURSE source *.cpp *.m *.mm *.glsl *.hlsl)
+file(GLOB_RECURSE resource ${TNC_RESOURCE}/*.hlsl)
 source_group(TREE ${TNC_INCLUDE} FILES ${header})
 source_group(TREE ${TNC_SOURCE} FILES ${source})
+source_group(TREE ${TNC_RESOURCE} FILES ${resource})
 
 target_sources(
 	${PROJECT_NAME}
@@ -92,4 +113,8 @@ target_sources(
         
 		${ECSFiles}
 		${RenderingFiles}
+		${ShaderFiles}
 )
+
+#Set as header only so VS doesn't try to compile them
+set_source_files_properties(${ShaderFiles} PROPERTIES HEADER_FILE_ONLY TRUE)

@@ -70,8 +70,17 @@ namespace tnc::ecs::_2D{
 
 		GraphicsFactory& graphicsFactory = Application::get().getGraphicsFactory();
 
-		sceneData.spritePipelineObject = graphicsFactory.createPipelineObject(graphicsFactory.createShader({ ShaderStyle::Unlit_2D }));
-		sceneData.charPipelineObject = graphicsFactory.createPipelineObject(graphicsFactory.createShader({ ShaderStyle::Font }));
+		auto spriteVS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Vertex }, "res/Shaders/2D-vs.hlsl");
+		auto spritePS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Pixel }, "res/Shaders/2D-ps.hlsl");
+		sceneData.spritePipelineObject = graphicsFactory.createPipelineObject();
+		sceneData.spritePipelineObject->setVertexShader(*spriteVS);
+		sceneData.spritePipelineObject->setPixelShader(*spritePS);
+
+		auto fontVS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Vertex }, "res/Shaders/Font-vs.hlsl");
+		auto fontPS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Pixel }, "res/Shaders/Font-ps.hlsl");
+		sceneData.charPipelineObject = graphicsFactory.createPipelineObject();
+		sceneData.charPipelineObject->setVertexShader(*fontVS);
+		sceneData.charPipelineObject->setPixelShader(*fontPS);
 		
 		commandBuffer = graphicsFactory.createCommandBuffer(Application::get().getMainWindow().getSurface());
 	}

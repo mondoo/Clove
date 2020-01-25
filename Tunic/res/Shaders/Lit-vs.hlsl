@@ -15,7 +15,7 @@ struct VSOut{
 	float4 pos : SV_Position;
 };
 
-VSOut main(float3 pos : Position3D, float2 tex : TexCoord, float3 norm : Normal){
+VSOut main(float3 pos : POSITION3D, float2 tex : TEXCOORD, float3 norm : NORMAL){
 	VSOut vso;
 
     matrix mvp = mul(projection, mul(view, model));

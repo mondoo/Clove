@@ -3,7 +3,7 @@ struct VSOut{
 	float4 pos : SV_Position;
 };
 
-VSOut main(float2 pos : Position2D, float2 tex : TexCoord){
+VSOut main(float2 pos : POSITION2D, float2 tex : TEXCOORD){
 	VSOut vsout;
 	vsout.tex = tex;
 	vsout.pos = float4(pos, 0.0f, 1.0f);

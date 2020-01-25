@@ -1,6 +1,5 @@
 #include "Clove/Graphics/OpenGL/GLShader.hpp"
 
-#include "Clove/Graphics/OpenGL/ShaderStrings.hpp"
 #include "Clove/Graphics/Core/ShaderTranspiler.hpp"
 
 namespace clv::gfx::ogl{
