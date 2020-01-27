@@ -51,6 +51,8 @@ namespace clv::gfx::d3d{
 
 			DX11_THROW_INFO(d3dDevice.CreateDepthStencilView(textureSource.Get(), &dsvDesc, &depthStencilView));
 		}
+
+		setClearColour({ 0.0f, 0.0f, 0.0f, 0.0f });
 	}
 
 	D3DRenderTarget::D3DRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView)

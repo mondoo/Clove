@@ -43,6 +43,8 @@ namespace clv::gfx::ogl{
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		setClearColour({ 0.0f, 0.0f, 0.0f, 0.0f });
 	}
 
 	GLRenderTarget::GLRenderTarget(GLRenderTarget&& other) noexcept = default;
