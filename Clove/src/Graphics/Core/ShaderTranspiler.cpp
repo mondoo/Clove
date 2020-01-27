@@ -126,6 +126,13 @@ namespace clv::gfx::ShaderTranspiler{
 				}
 			}
 
+			if (stage == ShaderStage::Geometry){
+				const uint32 invocations = glsl.get_execution_mode_argument(spv::ExecutionMode::ExecutionModeInvocations);
+				if (invocations == 196624){ //Unset invocations default to this, unset it
+					glsl.unset_execution_mode(spv::ExecutionMode::ExecutionModeInvocations);
+				}
+			}
+
 			return glsl.compile();
 		} else if(outputType == ShaderType::MSL){
 			spirv_cross::CompilerMSL msl(spirvSource);
