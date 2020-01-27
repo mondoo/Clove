@@ -13,10 +13,6 @@ namespace clv::gfx::ogl{
 			case GL_DEBUG_SEVERITY_LOW:
 				CLV_LOG_WARN(msg);
 				break;
-
-			case GL_DEBUG_SEVERITY_NOTIFICATION:
-				CLV_LOG_TRACE(msg);
-				break;
 		}
 	}
 }
