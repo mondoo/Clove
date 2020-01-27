@@ -71,8 +71,13 @@ namespace clv::gfx::ShaderTranspiler{
 
 		glslang::SpvOptions spvOptions;
 		spvOptions.validate = false;
+	#if CLV_DEBUG
 		spvOptions.disableOptimizer = true;
 		spvOptions.optimizeSize = false;
+	#else
+		spvOptions.disableOptimizer = false;
+		spvOptions.optimizeSize = true;
+	#endif
 
 		spv::SpvBuildLogger logger;
 
