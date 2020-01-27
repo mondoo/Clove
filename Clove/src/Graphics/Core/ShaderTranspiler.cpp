@@ -62,7 +62,6 @@ namespace clv::gfx::ShaderTranspiler{
 		shader.setAutoMapLocations(true);
 
 		shader.setEntryPoint("main");
-		//shader.setInvertY(true); //Might need this later (there's also an option on the compiler below)
 		shader.setEnvInput(glslang::EShSourceHlsl, eshstage, glslang::EShClientOpenGL, 450);
 		shader.setEnvClient(glslang::EShClientOpenGL, glslang::EShTargetOpenGL_450);
 		shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_5);

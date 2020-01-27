@@ -22,8 +22,8 @@ using namespace clv::gfx;
 namespace tnc::ecs::_2D{
 	RenderSystem::RenderSystem(){
 		const std::vector<uint32> indices = {
-			1, 3, 0,
-			3, 2, 0
+			0, 1, 2,
+			0, 2, 3
 		};
 
 		VertexLayout layout;
@@ -33,10 +33,10 @@ namespace tnc::ecs::_2D{
 		{
 			//From the center
 			VertexBufferData bufferData{ layout };
-			bufferData.emplaceBack(mth::vec2f{ -0.5f, -0.5f }, mth::vec2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{  0.5f, -0.5f }, mth::vec2f{ 1.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{ -0.5f,  0.5f }, mth::vec2f{ 0.0f, 1.0f });
-			bufferData.emplaceBack(mth::vec2f{  0.5f,  0.5f }, mth::vec2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ -0.5f,  0.5f }, mth::vec2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ -0.5f, -0.5f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{  0.5f, -0.5f }, mth::vec2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{  0.5f,  0.5f }, mth::vec2f{ 1.0f, 0.0f });
 
 			auto spriteMaterial = std::make_shared<rnd::Material>();
 			sceneData.spriteMesh = std::make_shared<rnd::Mesh>(bufferData, indices, spriteMaterial->createInstance());
@@ -46,9 +46,9 @@ namespace tnc::ecs::_2D{
 		{
 			//From top left
 			VertexBufferData bufferData{ layout };
-			bufferData.emplaceBack(mth::vec2f{ 0.0f, -1.0f }, mth::vec2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{ 1.0f, -1.0f }, mth::vec2f{ 1.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{ 0.0f,  0.0f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f,  0.0f }, mth::vec2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f, -1.0f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f, -1.0f }, mth::vec2f{ 1.0f, 1.0f });
 			bufferData.emplaceBack(mth::vec2f{ 1.0f,  0.0f }, mth::vec2f{ 1.0f, 1.0f });
 
 			auto spriteMaterial = std::make_shared<rnd::Material>();
@@ -61,8 +61,8 @@ namespace tnc::ecs::_2D{
 			VertexBufferData bufferData{ layout };
 			bufferData.emplaceBack(mth::vec2f{ 0.0f,  0.0f }, mth::vec2f{ 0.0f, 1.0f });
 			bufferData.emplaceBack(mth::vec2f{ 1.0f,  0.0f }, mth::vec2f{ 1.0f, 1.0f });
-			bufferData.emplaceBack(mth::vec2f{ 0.0f,  1.0f }, mth::vec2f{ 0.0f, 0.0f });
 			bufferData.emplaceBack(mth::vec2f{ 1.0f,  1.0f }, mth::vec2f{ 1.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f,  1.0f }, mth::vec2f{ 0.0f, 0.0f });
 
 			auto characterMaterial = std::make_shared<rnd::Material>();
 			sceneData.characterMesh = std::make_shared<rnd::Mesh>(bufferData, indices, characterMaterial->createInstance());
