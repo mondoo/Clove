@@ -40,8 +40,8 @@ namespace tnc::ecs::_3D{
 
 		//FUNCTIONS
 	public:
-		CameraComponent(const clv::gfx::Viewport& viewport);
-		CameraComponent(clv::plt::Window& window);
+		CameraComponent(const clv::gfx::Viewport& viewport, const ProjectionMode projection);
+		CameraComponent(clv::plt::Window& window, const ProjectionMode projection);
 
 		CameraComponent(const CameraComponent& other);
 		CameraComponent(CameraComponent&& other) noexcept;
@@ -55,7 +55,7 @@ namespace tnc::ecs::_3D{
 		const clv::mth::vec3f& getUp() const;
 		const clv::mth::vec3f& getRight() const;
 
-		void setProjectionMode(ProjectionMode mode);
+		void setProjectionMode(const ProjectionMode mode);
 
 		void setRenderTarget(const std::shared_ptr<clv::gfx::RenderTarget>& renderTarget);
 

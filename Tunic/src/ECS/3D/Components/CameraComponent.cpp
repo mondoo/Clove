@@ -5,15 +5,15 @@
 using namespace clv;
 
 namespace tnc::ecs::_3D{
-	CameraComponent::CameraComponent(const gfx::Viewport& viewport)
+	CameraComponent::CameraComponent(const gfx::Viewport& viewport, const ProjectionMode projection)
 		: viewport(viewport){
-		setProjectionMode(ProjectionMode::perspective);
+		setProjectionMode(projection);
 	}
 
-	CameraComponent::CameraComponent(plt::Window& window){
+	CameraComponent::CameraComponent(plt::Window& window, const ProjectionMode projection){
 		viewport = { 0, 0, window.getSize().x, window.getSize().y };
 		window.onWindowResize.bind(&CameraComponent::updateViewportSize, this);
-		setProjectionMode(ProjectionMode::perspective);
+		setProjectionMode(projection);
 	}
 
 	CameraComponent::CameraComponent(const CameraComponent& other) = default;
@@ -38,7 +38,7 @@ namespace tnc::ecs::_3D{
 		return cameraRight;
 	}
 
-	void CameraComponent::setProjectionMode(ProjectionMode mode){
+	void CameraComponent::setProjectionMode(const ProjectionMode mode){
 		const float width = static_cast<float>(viewport.width);
 		const float height = static_cast<float>(viewport.height);
 
@@ -46,7 +46,7 @@ namespace tnc::ecs::_3D{
 
 		switch(currentProjectionMode){
 			case ProjectionMode::orthographic:
-				currentProjection = mth::createOrthographicMatrix(-(width / 2), (width / 2), -(height / 2), (height / 2));
+				currentProjection = mth::createOrthographicMatrix(-(width / 2.0f), (width / 2.0f), -(height / 2.0f), (height / 2.0f));
 				break;
 
 			case ProjectionMode::perspective:
