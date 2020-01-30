@@ -22,7 +22,6 @@ VSOut main(float3 pos : POSITION3D, float2 tex : TEXCOORD, float3 norm : NORMAL)
     vso.pos = mul(mvp, float4(pos, 1.0f));
 	
 	vso.tex = tex;
-	vso.tex.y = 1.0f - vso.tex.y; //In hlsl we slip the tex coords here so render targets behave the same across APIs
 
     //Convert frag and normal to world space
     vso.verp = (float3)mul(model, float4(pos, 1.0f));
