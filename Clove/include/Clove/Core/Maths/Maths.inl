@@ -26,8 +26,18 @@ namespace clv::mth{
 	}
 
 	template<length_t L, typename T, qualifier Q>
+	T distanceSquared(const vec<L, T, Q>& v1, const vec<L, T, Q>& v2){
+		return glm::distance2(v1, v2);
+	}
+
+	template<length_t L, typename T, qualifier Q>
 	T length(const vec<L, T, Q>& vec){
 		return glm::length(vec);
+	}
+
+	template<length_t L, typename T, qualifier Q>
+	T lengthSquared(const vec<L, T, Q>& vec){
+		return glm::length2(vec);
 	}
 
 	template<typename T, qualifier Q>
