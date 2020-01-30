@@ -13,7 +13,7 @@ namespace blb{
 
 		camera = tnc::Application::get().getManager().createEntity();
 		camera.addComponent<tnc::ecs::_3D::TransformComponent>()->setPosition({ 0.0f, 0.0f, -20.0f });
-		auto* camComp = camera.addComponent<tnc::ecs::_3D::CameraComponent>(windowVP);
+		auto* camComp = camera.addComponent<tnc::ecs::_3D::CameraComponent>(windowVP, tnc::ecs::_3D::ProjectionMode::perspective);
 
 		tnc::Application::get().getMainWindow().onWindowResize.bind(&tnc::ecs::_3D::CameraComponent::updateViewportSize, camComp);
 	}
