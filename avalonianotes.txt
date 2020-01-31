@@ -1,0 +1,8 @@
+Follow:
+https://github.com/AvaloniaUI/avalonia-dotnet-templates
+
+Build:
+dotnet build Bulb.Desktop.csproj
+
+Run:
+dotnet Bulb.Desktop.dll
