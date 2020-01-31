@@ -71,19 +71,19 @@ namespace clv::gfx::d3d{
 		commands.push_back(bindVBCommand);
 	}
 
-	void D3DCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
+	void D3DCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32 bindingPoint){
 		const auto bindSRBCommand = [CAPTURE_CONTEXT, &buffer, shaderType, bindingPoint](){
 			const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
 			switch(shaderType){
-				case ShaderType::Vertex:
+				case ShaderStage::Vertex:
 					d3dContext->VSSetConstantBuffers(bindingPoint, 1u, d3dBuffer.getD3DBuffer().GetAddressOf());
 					break;
 
-				case ShaderType::Pixel:
+				case ShaderStage::Pixel:
 					d3dContext->PSSetConstantBuffers(bindingPoint, 1u, d3dBuffer.getD3DBuffer().GetAddressOf());
 					break;
 
-				case ShaderType::Geometry:
+				case ShaderStage::Geometry:
 					d3dContext->GSSetConstantBuffers(bindingPoint, 1u, d3dBuffer.getD3DBuffer().GetAddressOf());
 					break;
 
@@ -107,10 +107,9 @@ namespace clv::gfx::d3d{
 
 			d3dContext->IASetInputLayout(d3dPipelineObject.getD3DInputLayout().Get());
 
-			auto d3dShader = std::static_pointer_cast<D3DShader>(d3dPipelineObject.getShader());
-			d3dContext->VSSetShader(d3dShader->getD3DVertexShader().Get(), nullptr, 0u);
-			d3dContext->GSSetShader(d3dShader->getD3DGeometryShader().Get(), nullptr, 0u);
-			d3dContext->PSSetShader(d3dShader->getD3DPixelShader().Get(), nullptr, 0u);
+			d3dContext->VSSetShader(d3dPipelineObject.getD3DVertexShader().Get(), nullptr, 0u);
+			d3dContext->GSSetShader(d3dPipelineObject.getD3DGeometryShader().Get(), nullptr, 0u);
+			d3dContext->PSSetShader(d3dPipelineObject.getD3DPixelShader().Get(), nullptr, 0u);
 
 			Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
 			DX11_THROW_INFO(d3dDevice->CreateBlendState(&d3dPipelineObject.getD3DBlendDesc(), &blendState));

@@ -1,8 +1,8 @@
 #include "Tunic/Rendering/Material.hpp"
 
 #include "Tunic/Rendering/MaterialInstance.hpp"
+#include "Tunic/Rendering/ShaderBufferTypes.hpp"
 #include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Clove/Graphics/Core/ShaderBufferTypes.hpp"
 
 using namespace clv::gfx;
 
@@ -15,8 +15,8 @@ namespace tnc::rnd{
 		albedoTexture = blankTexture;
 		specTexture = blankTexture;
 
-		setData(BBP_Colour, clv::mth::vec4f(1.0f, 1.0f, 1.0f, 1.0f), ShaderType::Pixel);
-		setData(BBP_MaterialData, MaterialData{ 32.0f }, ShaderType::Pixel);
+		setData(BBP_Colour, clv::mth::vec4f(1.0f, 1.0f, 1.0f, 1.0f), ShaderStage::Pixel);
+		setData(BBP_MaterialData, MaterialData{ 32.0f }, ShaderStage::Pixel);
 	}
 
 	Material::Material(const Material& other) = default;

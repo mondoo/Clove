@@ -22,8 +22,8 @@ using namespace clv::gfx;
 namespace tnc::ecs::_2D{
 	RenderSystem::RenderSystem(){
 		const std::vector<uint32> indices = {
-			1, 3, 0,
-			3, 2, 0
+			0, 1, 2,
+			0, 2, 3
 		};
 
 		VertexLayout layout;
@@ -33,10 +33,10 @@ namespace tnc::ecs::_2D{
 		{
 			//From the center
 			VertexBufferData bufferData{ layout };
-			bufferData.emplaceBack(mth::vec2f{ -0.5f, -0.5f }, mth::vec2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{  0.5f, -0.5f }, mth::vec2f{ 1.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{ -0.5f,  0.5f }, mth::vec2f{ 0.0f, 1.0f });
-			bufferData.emplaceBack(mth::vec2f{  0.5f,  0.5f }, mth::vec2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ -0.5f,  0.5f }, mth::vec2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ -0.5f, -0.5f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{  0.5f, -0.5f }, mth::vec2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{  0.5f,  0.5f }, mth::vec2f{ 1.0f, 0.0f });
 
 			auto spriteMaterial = std::make_shared<rnd::Material>();
 			sceneData.spriteMesh = std::make_shared<rnd::Mesh>(bufferData, indices, spriteMaterial->createInstance());
@@ -46,9 +46,9 @@ namespace tnc::ecs::_2D{
 		{
 			//From top left
 			VertexBufferData bufferData{ layout };
-			bufferData.emplaceBack(mth::vec2f{ 0.0f, -1.0f }, mth::vec2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{ 1.0f, -1.0f }, mth::vec2f{ 1.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{ 0.0f,  0.0f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f,  0.0f }, mth::vec2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f, -1.0f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f, -1.0f }, mth::vec2f{ 1.0f, 1.0f });
 			bufferData.emplaceBack(mth::vec2f{ 1.0f,  0.0f }, mth::vec2f{ 1.0f, 1.0f });
 
 			auto spriteMaterial = std::make_shared<rnd::Material>();
@@ -61,8 +61,8 @@ namespace tnc::ecs::_2D{
 			VertexBufferData bufferData{ layout };
 			bufferData.emplaceBack(mth::vec2f{ 0.0f,  0.0f }, mth::vec2f{ 0.0f, 1.0f });
 			bufferData.emplaceBack(mth::vec2f{ 1.0f,  0.0f }, mth::vec2f{ 1.0f, 1.0f });
-			bufferData.emplaceBack(mth::vec2f{ 0.0f,  1.0f }, mth::vec2f{ 0.0f, 0.0f });
 			bufferData.emplaceBack(mth::vec2f{ 1.0f,  1.0f }, mth::vec2f{ 1.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f,  1.0f }, mth::vec2f{ 0.0f, 0.0f });
 
 			auto characterMaterial = std::make_shared<rnd::Material>();
 			sceneData.characterMesh = std::make_shared<rnd::Mesh>(bufferData, indices, characterMaterial->createInstance());
@@ -70,8 +70,17 @@ namespace tnc::ecs::_2D{
 
 		GraphicsFactory& graphicsFactory = Application::get().getGraphicsFactory();
 
-		sceneData.spritePipelineObject = graphicsFactory.createPipelineObject(graphicsFactory.createShader({ ShaderStyle::Unlit_2D }));
-		sceneData.charPipelineObject = graphicsFactory.createPipelineObject(graphicsFactory.createShader({ ShaderStyle::Font }));
+		auto spriteVS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Vertex }, "res/Shaders/2D-vs.hlsl");
+		auto spritePS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Pixel }, "res/Shaders/2D-ps.hlsl");
+		sceneData.spritePipelineObject = graphicsFactory.createPipelineObject();
+		sceneData.spritePipelineObject->setVertexShader(*spriteVS);
+		sceneData.spritePipelineObject->setPixelShader(*spritePS);
+
+		auto fontVS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Vertex }, "res/Shaders/Font-vs.hlsl");
+		auto fontPS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Pixel }, "res/Shaders/Font-ps.hlsl");
+		sceneData.charPipelineObject = graphicsFactory.createPipelineObject();
+		sceneData.charPipelineObject->setVertexShader(*fontVS);
+		sceneData.charPipelineObject->setPixelShader(*fontPS);
 		
 		commandBuffer = graphicsFactory.createCommandBuffer(Application::get().getMainWindow().getSurface());
 	}
@@ -107,7 +116,7 @@ namespace tnc::ecs::_2D{
 				SpriteComponent* renderable = std::get<SpriteComponent*>(tuple);
 
 				const mth::mat4f modelData = transform->getWorldTransformMatrix();
-				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * modelData, ShaderType::Vertex);
+				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * modelData, ShaderStage::Vertex);
 
 				sceneData.spritesToRender.push_back(renderable->sprite);
 			}
@@ -139,7 +148,7 @@ namespace tnc::ecs::_2D{
 
 				const mth::mat4f modelData = mth::translate(transform->getWorldTransformMatrix(), mth::vec3f{ -scaledScreenSize.x + offset.x, scaledScreenSize.y - offset.y, 0.0f });
 
-				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * modelData, ShaderType::Vertex);
+				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * modelData, ShaderStage::Vertex);
 
 				sceneData.widgetsToRender.push_back(renderable->sprite);
 			}
@@ -200,7 +209,7 @@ namespace tnc::ecs::_2D{
 						model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
 						auto character = std::make_shared<rnd::Sprite>(texture);
-						character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderType::Vertex);
+						character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
 
 						sceneData.charactersToRender.push_back(character);
 					}

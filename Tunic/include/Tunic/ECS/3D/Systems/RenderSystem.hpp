@@ -3,9 +3,9 @@
 #include "Tunic/ECS/Core/System.hpp"
 
 #include "Tunic/Rendering/MaterialInstance.hpp"
-#include "Clove/Graphics/Core/GraphicsConstants.hpp"
+#include "Tunic/Rendering/RenderingConstants.hpp"
+#include "Tunic/Rendering/ShaderBufferTypes.hpp"
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
-#include "Clove/Graphics/Core/ShaderBufferTypes.hpp"
 
 namespace clv::gfx{
 	class RenderTarget;
@@ -24,7 +24,7 @@ namespace tnc::ecs::_3D{
 	private:
 		struct ComposedCameraData{
 			clv::gfx::Viewport viewport;
-			clv::gfx::CameraRenderData bufferData;
+			tnc::rnd::CameraRenderData bufferData;
 			std::shared_ptr<clv::gfx::RenderTarget> target;
 		};
 
@@ -35,10 +35,10 @@ namespace tnc::ecs::_3D{
 
 			std::vector<std::shared_ptr<rnd::Mesh>> meshesToRender;
 
-			clv::gfx::PointLightShaderData currentLightInfo;
-			clv::gfx::PointShadowDepthData currentShadowDepth;
+			tnc::rnd::PointLightShaderData currentLightInfo;
+			tnc::rnd::PointShadowDepthData currentShadowDepth;
 			clv::uint32 numLights = 0;
-			std::array<std::array<clv::mth::mat4f, 6>, clv::gfx::MAX_LIGHTS> shadowTransforms = {};
+			std::array<std::array<clv::mth::mat4f, 6>, tnc::rnd::MAX_LIGHTS> shadowTransforms = {};
 
 			//FUNCTIONS
 		public:

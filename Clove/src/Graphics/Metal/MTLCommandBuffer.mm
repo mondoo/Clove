@@ -50,14 +50,14 @@ namespace clv::gfx::mtl{
 		[commandEncoder setVertexBuffer:mtlBuffer.getMTLBuffer() offset:0 atIndex:0];
 	}
 	
-	void MTLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
+	void MTLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32 bindingPoint){
 		const MTLBuffer& mtlBuffer = static_cast<const MTLBuffer&>(buffer);
 		switch(shaderType){
-			case ShaderType::Vertex:
+			case ShaderStage::Vertex:
 				[commandEncoder setVertexBuffer:mtlBuffer.getMTLBuffer() offset:0 atIndex:bindingPoint];
 				break;
 
-			case ShaderType::Pixel:
+			case ShaderStage::Pixel:
 				[commandEncoder setFragmentBuffer:mtlBuffer.getMTLBuffer() offset:0 atIndex:bindingPoint];
 				break;
 
@@ -69,7 +69,15 @@ namespace clv::gfx::mtl{
 	
 	void MTLCommandBuffer::bindPipelineObject(const PipelineObject& pipelineObject){
 		const MTLPipelineObject& mtlPipelineObject = static_cast<const MTLPipelineObject&>(pipelineObject);
-		[commandEncoder setRenderPipelineState:mtlPipelineObject.getMTLPipelineState()];
+		NSError* error = nullptr;
+		[commandEncoder setRenderPipelineState:[commandEncoder.device newRenderPipelineStateWithDescriptor:mtlPipelineObject.getMTLPipelineStateDescriptor() error:&error]];
+		if(error.code != 0){
+			for (NSString* key in [error userInfo]) {
+				NSString* value = [error userInfo][key];
+				CLV_LOG_ERROR("Error in function '{0}': {1}", CLV_FUNCTION_NAME_PRETTY, [value cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+			}
+		}
+		
 		[commandEncoder setCullMode:mtlPipelineObject.getCullFace() == CullFace::Back ? MTLCullModeBack : MTLCullModeFront];
 		[commandEncoder setFrontFacingWinding:mtlPipelineObject.isFrontFaceCounterClockWise() ? MTLWindingCounterClockwise : MTLWindingClockwise];
 	}
@@ -77,8 +85,10 @@ namespace clv::gfx::mtl{
 	void MTLCommandBuffer::bindTexture(const Texture* texture, const uint32 bindingPoint){
 		if (const MTLTexture* mtlTexture = static_cast<const MTLTexture*>(texture)){
 			[commandEncoder setFragmentTexture:mtlTexture->getMTLTexture() atIndex:bindingPoint];
+			[commandEncoder setFragmentSamplerState:mtlTexture->getMTLSampler() atIndex:bindingPoint];
 		} else{
 			[commandEncoder setFragmentTexture:nullptr atIndex:bindingPoint];
+			[commandEncoder setFragmentSamplerState:nullptr atIndex:bindingPoint];
 		}
 	}
 	

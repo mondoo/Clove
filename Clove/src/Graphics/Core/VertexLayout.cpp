@@ -79,6 +79,10 @@ namespace clv::gfx{
 	size_t VertexLayout::count() const{
 		return elements.size();
 	}
+
+	void VertexLayout::clear(){
+		elements.clear();
+	}
 	
 	const VertexElement& VertexLayout::resolve(VertexElementType type) const{
 		for(auto& element : elements){

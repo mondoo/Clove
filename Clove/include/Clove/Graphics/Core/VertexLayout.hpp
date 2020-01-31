@@ -9,22 +9,22 @@ namespace clv::gfx{
 	template<> struct VertexElementData<VertexElementType::position2D>{
 		using DataType = mth::vec2f;
 		static constexpr uint32 elementCount = 2u;
-		static constexpr char semantic[] = "Position2D";
+		static constexpr char semantic[] = "POSITION2D";
 	};
 	template<> struct VertexElementData<VertexElementType::position3D>{
 		using DataType = mth::vec3f;
 		static constexpr uint32 elementCount = 3u;
-		static constexpr char semantic[] = "Position3D";
+		static constexpr char semantic[] = "POSITION3D";
 	};
 	template<> struct VertexElementData<VertexElementType::texture2D>{
 		using DataType = mth::vec2f;
 		static constexpr uint32 elementCount = 2u;
-		static constexpr char semantic[] = "TexCoord";
+		static constexpr char semantic[] = "TEXCOORD";
 	};
 	template<> struct VertexElementData<VertexElementType::normal>{
 		using DataType = mth::vec3f;
 		static constexpr uint32 elementCount = 3u;
-		static constexpr char semantic[] = "Normal";
+		static constexpr char semantic[] = "NORMAL";
 	};
 
 	class VertexElement{
@@ -67,16 +67,21 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		VertexLayout();
+
 		VertexLayout(const VertexLayout& other);
 		VertexLayout(VertexLayout&& other) noexcept;
+
 		VertexLayout& operator=(const VertexLayout& other);
 		VertexLayout& operator=(VertexLayout&& other) noexcept;
+
 		~VertexLayout();
 
 		VertexLayout& add(VertexElementType type);
 
 		size_t size() const;
 		size_t count() const;
+
+		void clear();
 
 		const VertexElement& resolve(VertexElementType type) const;
 		const VertexElement& resolve(size_t i) const;

@@ -3,45 +3,13 @@
 #include "Clove/Graphics/Metal/MTLShader.hpp"
 
 namespace clv::gfx::mtl{
-	MTLPipelineObject::MTLPipelineObject(id<MTLDevice> mtlDevice, const std::shared_ptr<Shader>& shader){
-		const auto mtlShader = std::static_pointer_cast<MTLShader>(shader);
-		
-		shaderReflectionData = mtlShader->getReflectionData();
-		const auto& layout = shaderReflectionData.vertexBufferLayout;
-		
+	MTLPipelineObject::MTLPipelineObject(){
 		pipelineDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
-		
-		[pipelineDescriptor setVertexFunction:mtlShader->getMTLVertexShader()];
-		[pipelineDescriptor setFragmentFunction:mtlShader->getMTLPixelShader()];
-		
 		pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
 		[pipelineDescriptor.colorAttachments[0] setDestinationRGBBlendFactor:MTLBlendFactorOneMinusSourceAlpha];
 		
 		pipelineDescriptor.depthAttachmentPixelFormat = MTLPixelFormatDepth32Float;
 		
-		MTLVertexDescriptor* vertexDescriptor = [[MTLVertexDescriptor alloc] init];
-		
-		NSUInteger offset = 0;
-		for(int32 i = 0; i < layout.count(); ++i){
-			const auto& element = layout.resolve(i);
-			const VertexElementType elementType = element.getType();
-			
-			vertexDescriptor.attributes[i].format = getMTLFormatFromType(elementType);
-			vertexDescriptor.attributes[i].offset = offset;
-			vertexDescriptor.attributes[i].bufferIndex = 0;
-			
-			offset += VertexElement::sizeOf(elementType);
-		}
-		vertexDescriptor.layouts[0].stride = layout.size();
-		
-		[pipelineDescriptor setVertexDescriptor:vertexDescriptor];
-
-		NSError *error;
-		pipelineState = [mtlDevice newRenderPipelineStateWithDescriptor:pipelineDescriptor error:&error];
-		
-		[vertexDescriptor release];
-		[error release];
-
 		setBlendState(true);
 		setCullMode(CullFace::Back, true);
 	}
@@ -50,14 +18,47 @@ namespace clv::gfx::mtl{
 	
 	MTLPipelineObject& MTLPipelineObject::operator=(MTLPipelineObject&& other) noexcept = default;
 	
-	MTLPipelineObject::~MTLPipelineObject(){
-		[pipelineState release];
+	MTLPipelineObject::~MTLPipelineObject() = default;
+	
+	void MTLPipelineObject::setVertexShader(const Shader& vertexShader){
+		const MTLShader& mtlShader = static_cast<const MTLShader&>(vertexShader);
+		id<MTLFunction> shaderFunction = mtlShader.getMTLShader();
+		[pipelineDescriptor setVertexFunction:shaderFunction];
+		
+		vertexLayout.clear();
+		NSArray<MTLVertexAttribute*>* attributes = shaderFunction.vertexAttributes;
+		for(NSInteger i = 0; i < attributes.count; ++i){
+			vertexLayout.add(VertexElement::getTypeFromSemantic([attributes[i].name cStringUsingEncoding:[NSString defaultCStringEncoding]]));
+		}
+		
+		MTLVertexDescriptor* vertexDescriptor = [[MTLVertexDescriptor alloc] init];
+		NSUInteger offset = 0;
+		for(int32 i = 0; i < vertexLayout.count(); ++i){
+			const auto& element = vertexLayout.resolve(i);
+			const VertexElementType elementType = element.getType();
+			
+			vertexDescriptor.attributes[i].format = getMTLFormatFromType(elementType);
+			vertexDescriptor.attributes[i].offset = offset;
+			vertexDescriptor.attributes[i].bufferIndex = 0;
+			
+			offset += VertexElement::sizeOf(elementType);
+		}
+		vertexDescriptor.layouts[0].stride = vertexLayout.size();
+		
+		[pipelineDescriptor setVertexDescriptor:vertexDescriptor];
+	}
+	
+	void MTLPipelineObject::setGeometryShader(const Shader& geometryShader){
+		CLV_ASSERT(false, "Geometry shader not supported on Metal!");
+	}
+	
+	void MTLPipelineObject::setPixelShader(const Shader& pixelShader){
+		const MTLShader& mtlShader = static_cast<const MTLShader&>(pixelShader);
+		[pipelineDescriptor setFragmentFunction:mtlShader.getMTLShader()];
 	}
 	
 	void MTLPipelineObject::setBlendState(bool enabled){
 		[pipelineDescriptor.colorAttachments[0] setBlendingEnabled:(enabled ? YES : NO)];
-		NSError *error;
-		pipelineState = [[pipelineState device] newRenderPipelineStateWithDescriptor:pipelineDescriptor error:&error];
 	}
 	
 	void MTLPipelineObject::setCullMode(CullFace face, bool frontFaceCounterClockwise){
@@ -65,16 +66,12 @@ namespace clv::gfx::mtl{
 		this->frontFaceCounterClockwise = frontFaceCounterClockwise;
 	}
 	
-	const std::shared_ptr<Shader>& MTLPipelineObject::getShader() const{
-		return shader;
-	}
-	
 	const VertexLayout& MTLPipelineObject::getVertexLayout() const{
-		return shaderReflectionData.vertexBufferLayout;
+		return vertexLayout;
 	}
 	
-	id<MTLRenderPipelineState> MTLPipelineObject::getMTLPipelineState() const{
-		return pipelineState;
+	MTLRenderPipelineDescriptor* MTLPipelineObject::getMTLPipelineStateDescriptor() const{
+		return pipelineDescriptor;
 	}
 	
 	CullFace MTLPipelineObject::getCullFace() const{

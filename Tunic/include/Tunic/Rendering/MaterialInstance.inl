@@ -3,7 +3,7 @@
 
 namespace tnc::rnd{
 	template<typename DataType>
-	void MaterialInstance::setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderType shaderType){
+	void MaterialInstance::setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderStage shaderType){
 		if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()){
 			iter->second.buffer->updateData(&data);
 		} else{

@@ -3,32 +3,8 @@
 #include "Clove/Graphics/OpenGL/GLShader.hpp"
 
 namespace clv::gfx::ogl{
-	GLPipelineObject::GLPipelineObject(const std::shared_ptr<Shader>& shader)
-		: shader(shader){
-		const auto glShader = std::static_pointer_cast<GLShader>(shader);
-
-		shaderReflectionData = glShader->getReflectionData();
-		const auto& layout = shaderReflectionData.vertexBufferLayout;
-
-		glGenVertexArrays(1, &vertexArrayID);
-		glBindVertexArray(vertexArrayID);
-
-		GLuint offset = 0;
-		for(uint32 i = 0; i < layout.count(); ++i){
-			const auto& element = layout.resolve(i);
-			const VertexElementType elementType = element.getType();
-
-			GLint attribLoc = glGetAttribLocation(glShader->getProgramID(), element.getSemantic());
-
-			glEnableVertexAttribArray(attribLoc);
-			glVertexAttribFormat(attribLoc, element.getCount(), getGLElementType(elementType), isTypeNormalised(elementType), offset);
-			glVertexAttribBinding(attribLoc, 0);
-			
-			offset += VertexElement::sizeOf(elementType);
-		}
-
-		glBindVertexArray(0);
-
+	GLPipelineObject::GLPipelineObject()
+		: programID(glCreateProgram()){
 		setBlendState(true);
 		setCullMode(CullFace::Back, true);
 	}
@@ -39,6 +15,54 @@ namespace clv::gfx::ogl{
 
 	GLPipelineObject::~GLPipelineObject() = default;
 
+	void GLPipelineObject::setVertexShader(const Shader& vertexShader){
+		const GLShader& glShader = static_cast<const GLShader&>(vertexShader);
+		attachAndLinkShader(glShader.getShaderID());
+
+		vertexLayout.clear();
+		GLint attribCount = 0;
+		glGetProgramiv(programID, GL_ACTIVE_ATTRIBUTES, &attribCount);
+		for(int32 i = 0; i < attribCount; ++i){
+			GLchar name[255];
+			GLsizei length = 0;
+			GLint size = 0;
+			GLenum type = 0;
+
+			glGetActiveAttrib(programID, static_cast<GLuint>(i), sizeof(name), &length, &size, &type, name);
+
+			vertexLayout.add(VertexElement::getTypeFromSemantic(name));
+		}
+
+		glGenVertexArrays(1, &vertexArrayID);
+		glBindVertexArray(vertexArrayID);
+
+		GLuint offset = 0;
+		for(uint32 i = 0; i < vertexLayout.count(); ++i){
+			const auto& element = vertexLayout.resolve(i);
+			const VertexElementType elementType = element.getType();
+
+			GLint attribLoc = glGetAttribLocation(programID, element.getSemantic());
+
+			glEnableVertexAttribArray(attribLoc);
+			glVertexAttribFormat(attribLoc, element.getCount(), getGLElementType(elementType), isTypeNormalised(elementType), offset);
+			glVertexAttribBinding(attribLoc, 0);
+
+			offset += VertexElement::sizeOf(elementType);
+		}
+
+		glBindVertexArray(0);
+	}
+
+	void GLPipelineObject::setGeometryShader(const Shader& geometryShader){
+		const GLShader& glShader = static_cast<const GLShader&>(geometryShader);
+		attachAndLinkShader(glShader.getShaderID());
+	}
+
+	void GLPipelineObject::setPixelShader(const Shader& pixelShader){
+		const GLShader& glShader = static_cast<const GLShader&>(pixelShader);
+		attachAndLinkShader(glShader.getShaderID());
+	}
+
 	void GLPipelineObject::setBlendState(bool enabled){
 		blendEnabled = enabled;
 	}
@@ -48,16 +72,16 @@ namespace clv::gfx::ogl{
 		this->frontFaceCounterClockwise = frontFaceCounterClockwise;
 	}
 
-	const std::shared_ptr<Shader>& GLPipelineObject::getShader() const{
-		return shader;
-	}
-
 	const VertexLayout& GLPipelineObject::getVertexLayout() const{
-		return shaderReflectionData.vertexBufferLayout;
+		return vertexLayout;
 	}
 
 	GLuint GLPipelineObject::getGLVertexArrayID() const{
 		return vertexArrayID;
+	}
+
+	GLuint GLPipelineObject::getGLPorgramID() const{
+		return programID;
 	}
 
 	bool GLPipelineObject::isBlendEnabled() const{
@@ -96,5 +120,11 @@ namespace clv::gfx::ogl{
 				CLV_ASSERT(false, "Invalid element type");
 				return GL_FALSE;
 		}
+	}
+
+	void GLPipelineObject::attachAndLinkShader(GLuint shaderID){
+		glAttachShader(programID, shaderID);
+		glLinkProgram(programID);
+		glValidateProgram(programID);
 	}
 }

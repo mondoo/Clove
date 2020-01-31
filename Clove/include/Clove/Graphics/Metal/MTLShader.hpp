@@ -6,13 +6,12 @@ namespace clv::gfx::mtl{
 	private:
 		ShaderDescriptor descriptor;
 		
-		id<MTLFunction> vertexShader;
-		id<MTLFunction> pixelShader;
+		id<MTLFunction> shader;
 		
 		//FUNCTIONS
 	public:
 		MTLShader() = delete;
-		MTLShader(id<MTLDevice> mtlDevice, const ShaderDescriptor& descriptor);
+		MTLShader(id<MTLDevice> mtlDevice, const ShaderDescriptor& descriptor, std::string_view pathToShader);
 		
 		MTLShader(const MTLShader& other) = delete;
 		MTLShader(MTLShader&& other) noexcept;
@@ -22,13 +21,8 @@ namespace clv::gfx::mtl{
 		
 		virtual ~MTLShader();
 		
-		const id<MTLFunction> getMTLVertexShader() const;
-		const id<MTLFunction> getMTLPixelShader() const;
-		
 		virtual const ShaderDescriptor& getDescriptor() const override;
-		virtual ShaderReflectionData getReflectionData() const override;
 		
-	private:
-		void initialise(id<MTLDevice> mtlDevice, ShaderStyle style);
+		const id<MTLFunction> getMTLShader() const;
 	};
 }

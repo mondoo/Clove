@@ -46,6 +46,13 @@ target_link_libraries(
 		Glad
 		glm
 		sndfile
+		glslang
+		glslang-default-resource-limits
+		SPIRV
+		spirv-cross-core
+		spirv-cross-glsl
+		spirv-cross-hlsl
+		spirv-cross-msl
 	#Windows
 	PRIVATE
 		$<$<PLATFORM_ID:Windows>:dxerr>

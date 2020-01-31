@@ -13,19 +13,10 @@ namespace clv::gfx{
 	#endif
 	};
 
-	enum class ShaderType{
+	enum class ShaderStage{
 		Vertex,
 		Pixel,
 		Geometry
-	};
-
-	enum class ShaderStyle{
-		Lit_3D,
-		Unlit_3D,
-		Unlit_2D,
-		RT,
-		Font,
-		CubeShadowMap
 	};
 
 	enum class VertexElementType{
@@ -42,7 +33,7 @@ namespace clv::gfx{
 		int32 height = 0;
 	};
 
-	enum BufferBindingPoint{ //Will this be needed?
+	enum BufferBindingPoint{
 		BBP_CameraMatrices 		= 1u,
 		BBP_PointLightData 		= 2u,
 		BBP_ViewData 			= 3u,

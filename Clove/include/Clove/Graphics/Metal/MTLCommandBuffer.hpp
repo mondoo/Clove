@@ -39,7 +39,7 @@ namespace clv::gfx::mtl{
 
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32 stride) override;
-		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint) override;
+		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32 bindingPoint) override;
 		virtual void bindPipelineObject(const PipelineObject& pipelineObject) override;
 		virtual void bindTexture(const Texture* texture, const uint32 bindingPoint) override;
 		

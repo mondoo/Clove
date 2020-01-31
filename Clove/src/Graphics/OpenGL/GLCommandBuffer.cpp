@@ -53,7 +53,7 @@ namespace clv::gfx::ogl{
 		commands.push_back(bindVBCommand);
 	}
 
-	void GLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderType shaderType, const uint32 bindingPoint){
+	void GLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32 bindingPoint){
 		const auto bindSRBCommand = [&buffer, shaderType, bindingPoint](){
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 			glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, glbuffer.getBufferID());
@@ -66,9 +66,7 @@ namespace clv::gfx::ogl{
 		const auto bindPOCommand = [&pipelineObject](){
 			const GLPipelineObject& glPipelineObject = static_cast<const GLPipelineObject&>(pipelineObject);
 			glBindVertexArray(glPipelineObject.getGLVertexArrayID());
-
-			const auto glShader = std::static_pointer_cast<GLShader>(glPipelineObject.getShader());
-			glUseProgram(glShader->getProgramID());
+			glUseProgram(glPipelineObject.getGLPorgramID());
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			if(glPipelineObject.isBlendEnabled()){

@@ -5,8 +5,6 @@
 namespace clv::gfx::mtl{
 	MTLTexture::MTLTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture)
 		: descriptor(descriptor){
-		stbi_set_flip_vertically_on_load(1);
-
 		int width = 0;
 		int height = 0;
 		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
@@ -38,6 +36,10 @@ namespace clv::gfx::mtl{
 		return mtlTexture;
 	}
 	
+	id<MTLSamplerState> MTLTexture::getMTLSampler() const{
+		return mtlSampler;
+	}
+	
 	const TextureDescriptor& MTLTexture::getDescriptor() const{
 		return descriptor;
 	}
@@ -48,26 +50,36 @@ namespace clv::gfx::mtl{
 			BPP = 1;
 		}
 		
-		MTLTextureDescriptor* mtlDescriptor = [[MTLTextureDescriptor alloc] init];
-		mtlDescriptor.textureType 		= getTextureType(descriptor.style);
-		mtlDescriptor.pixelFormat 		= getTextureFormat(descriptor.usage);
-		mtlDescriptor.width 			= descriptor.dimensions.x;
-		mtlDescriptor.height 			= descriptor.dimensions.y;
-		mtlDescriptor.depth 			= 1;
-		mtlDescriptor.mipmapLevelCount 	= 1;
-		mtlDescriptor.arrayLength 		= descriptor.arraySize;
-		mtlDescriptor.usage 			= getTextureUsage(descriptor.usage);
-		mtlDescriptor.storageMode		= getTextureStorage(descriptor.usage);
+		MTLTextureDescriptor* textureDesc = [[MTLTextureDescriptor alloc] init];
+		textureDesc.textureType 		= getTextureType(descriptor.style);
+		textureDesc.pixelFormat 		= getTextureFormat(descriptor.usage);
+		textureDesc.width 				= descriptor.dimensions.x;
+		textureDesc.height 				= descriptor.dimensions.y;
+		textureDesc.depth 				= 1;
+		textureDesc.mipmapLevelCount 	= 1;
+		textureDesc.arrayLength 		= descriptor.arraySize;
+		textureDesc.usage 				= getTextureUsage(descriptor.usage);
+		textureDesc.storageMode			= getTextureStorage(descriptor.usage);
 		
-		mtlTexture = [mtlDevice newTextureWithDescriptor:mtlDescriptor];
+		mtlTexture = [mtlDevice newTextureWithDescriptor:textureDesc];
 		
-		const MTLRegion region = MTLRegionMake2D(0, 0, mtlDescriptor.width, mtlDescriptor.height);
+		const MTLRegion region = MTLRegionMake2D(0, 0, textureDesc.width, textureDesc.height);
 		
 		if(data){
-			[mtlTexture replaceRegion:region mipmapLevel:0 withBytes:data bytesPerRow:(BPP * mtlDescriptor.width)];
+			[mtlTexture replaceRegion:region mipmapLevel:0 withBytes:data bytesPerRow:(BPP * textureDesc.width)];
 		}
 		
-		[mtlDescriptor release];
+		MTLSamplerDescriptor* samplerDesc = [[MTLSamplerDescriptor alloc] init];
+		samplerDesc.minFilter 		= getFilter(descriptor.filtering);
+		samplerDesc.magFilter		= getFilter(descriptor.filtering);
+		samplerDesc.rAddressMode	= MTLSamplerAddressModeClampToEdge;
+		samplerDesc.sAddressMode	= MTLSamplerAddressModeClampToEdge;
+		samplerDesc.tAddressMode	= MTLSamplerAddressModeClampToEdge;
+		
+		mtlSampler = [mtlDevice newSamplerStateWithDescriptor:samplerDesc];
+		
+		[textureDesc release];
+		[samplerDesc release];
 	}
 	
 	MTLTextureType MTLTexture::getTextureType(const TextureStyle style) const{
@@ -129,6 +141,20 @@ namespace clv::gfx::mtl{
 			default:
 				CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
 				return MTLStorageModeShared;
+		}
+	}
+	
+	MTLSamplerMinMagFilter MTLTexture::getFilter(const TextureFilter filter) const{
+		switch(filter){
+			case TextureFilter::Nearest:
+				return MTLSamplerMinMagFilterNearest;
+
+			case TextureFilter::Linear:
+				return MTLSamplerMinMagFilterLinear;
+
+			default:
+				CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+				return MTLSamplerMinMagFilterNearest;
 		}
 	}
 }

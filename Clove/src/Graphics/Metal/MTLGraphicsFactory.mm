@@ -37,16 +37,16 @@ namespace clv::gfx::mtl{
 		return std::make_shared<MTLTexture>(mtlDevice, descriptor, data, BPP);
 	}
 	
-	std::shared_ptr<PipelineObject> MTLGraphicsFactory::createPipelineObject(const std::shared_ptr<Shader>& shader){
-		return std::make_shared<MTLPipelineObject>(mtlDevice, shader);
+	std::shared_ptr<PipelineObject> MTLGraphicsFactory::createPipelineObject(){
+		return std::make_shared<MTLPipelineObject>();
 	}
 	
 	std::shared_ptr<RenderTarget> MTLGraphicsFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
 		return std::make_shared<MTLRenderTarget>(mtlDevice, colourTexture, depthStencilTexture);
 	}
 	
-	std::shared_ptr<Shader> MTLGraphicsFactory::createShader(const ShaderDescriptor& descriptor){
-		return std::make_shared<MTLShader>(mtlDevice, descriptor);
+	std::shared_ptr<Shader> MTLGraphicsFactory::createShader(const ShaderDescriptor& descriptor, std::string_view pathToShader){
+		return std::make_shared<MTLShader>(mtlDevice, descriptor, pathToShader);
 	}
 	
 	std::shared_ptr<Surface> MTLGraphicsFactory::createSurface(void* windowData){

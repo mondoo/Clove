@@ -10,32 +10,31 @@ namespace clv::gfx::ogl{
 	class GLShader : public Shader{
 		//VARIABLES
 	private:
-		uint32 programID = 0;
+		uint32 shaderID = 0;
 
 		ShaderDescriptor descriptor;
 
 		//FUNCTIONS
 	public:
 		GLShader() = delete;
-		GLShader(const ShaderDescriptor& descriptor);
+		GLShader(const ShaderDescriptor& descriptor, std::string_view pathToShader);
+
 		GLShader(const GLShader& other) = delete;
 		GLShader(GLShader&& other) noexcept;
+
 		GLShader& operator=(const GLShader& other) = delete;
 		GLShader& operator=(GLShader&& other) noexcept;
+
 		virtual ~GLShader();
 
-		uint32 getProgramID() const;
-
 		virtual const ShaderDescriptor& getDescriptor() const override;
-		virtual ShaderReflectionData getReflectionData() const override;
+
+		uint32 getShaderID() const;
 
 	private:
-		void initialise(ShaderStyle style);
+		void compileShader(GLenum stage, std::string_view source);
 
-		uint32 compileShader(uint32 type, const std::string& source);
-
-		void attachAndLinkShader(uint32 shaderID);
-
-		std::string getStringFromShaderType(GLuint glShaderType);
+		GLenum getGLShaderStage(const ShaderStage stage);
+		std::string getStringFromShaderStage(GLuint glShaderStage);
 	};
 }

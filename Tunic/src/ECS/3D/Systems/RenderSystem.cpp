@@ -35,8 +35,19 @@ namespace tnc::ecs::_3D{
 		auto shadowMapRenderTarget = Application::get().getGraphicsFactory().createRenderTarget(nullptr, shadowMapTexture.get());
 		shadowMapCommandBuffer = Application::get().getGraphicsFactory().createCommandBuffer(shadowMapRenderTarget);
 
-		defaultPipeline = Application::get().getGraphicsFactory().createPipelineObject(Application::get().getGraphicsFactory().createShader({ ShaderStyle::Lit_3D }));
-		shadowPipeline = Application::get().getGraphicsFactory().createPipelineObject(Application::get().getGraphicsFactory().createShader({ ShaderStyle::CubeShadowMap }));
+		auto defaultVS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Vertex }, "res/Shaders/Lit-vs.hlsl");
+		auto defaultPS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Pixel }, "res/Shaders/Lit-ps.hlsl");
+		defaultPipeline = Application::get().getGraphicsFactory().createPipelineObject();
+		defaultPipeline->setVertexShader(*defaultVS);
+		defaultPipeline->setPixelShader(*defaultPS);
+
+		auto shadowVS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Vertex }, "res/Shaders/CubeShadowMap-vs.hlsl");
+		auto shadowGS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Geometry }, "res/Shaders/CubeShadowMap-gs.hlsl");
+		auto shadowPS = Application::get().getGraphicsFactory().createShader({ ShaderStage::Pixel }, "res/Shaders/CubeShadowMap-ps.hlsl");
+		shadowPipeline = Application::get().getGraphicsFactory().createPipelineObject();
+		shadowPipeline->setVertexShader(*shadowVS);
+		shadowPipeline->setGeometryShader(*shadowGS);
+		shadowPipeline->setPixelShader(*shadowPS);
 	}
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept{
@@ -118,7 +129,7 @@ namespace tnc::ecs::_3D{
 				MeshComponent* renderable = std::get<MeshComponent*>(tuple);
 
 				const mth::mat4f model = transform->getWorldTransformMatrix();
-				renderable->mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ model, mth::transpose(mth::inverse(model)) }, ShaderType::Vertex);
+				renderable->mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ model, mth::transpose(mth::inverse(model)) }, ShaderStage::Vertex);
 
 				sceneData.meshesToRender.push_back(renderable->mesh);
 			}
@@ -170,13 +181,13 @@ namespace tnc::ecs::_3D{
 				//Perhaps some sort of 'material codex' where I can pull the base material for a shader type?
 
 				//Camera
-				meshMaterial.setData(BBP_CameraMatrices, ViewData{ camBufferData.lookAt, camBufferData.projection }, ShaderType::Vertex);
-				meshMaterial.setData(BBP_ViewData, ViewPos{ camBufferData.position }, ShaderType::Pixel);
+				meshMaterial.setData(BBP_CameraMatrices, ViewData{ camBufferData.lookAt, camBufferData.projection }, ShaderStage::Vertex);
+				meshMaterial.setData(BBP_ViewData, ViewPos{ camBufferData.position }, ShaderStage::Pixel);
 
 				//Lights
-				meshMaterial.setData(BBP_PointLightData, PointLightShaderData{ sceneData.currentLightInfo }, ShaderType::Pixel);
-				meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ sceneData.currentShadowDepth }, ShaderType::Pixel);
-				meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ sceneData.numLights }, ShaderType::Pixel);
+				meshMaterial.setData(BBP_PointLightData, PointLightShaderData{ sceneData.currentLightInfo }, ShaderStage::Pixel);
+				meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ sceneData.currentShadowDepth }, ShaderStage::Pixel);
+				meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ sceneData.numLights }, ShaderStage::Pixel);
 
 				meshMaterial.bind(commandBuffer);
 
@@ -215,9 +226,9 @@ namespace tnc::ecs::_3D{
 		for(uint32 i = 0; i < sceneData.numLights; ++i){
 			const auto generateShadowMap = [this, i, &capturedMaterials](const std::shared_ptr<Mesh>& mesh){
 				auto meshMaterial = mesh->getMaterialInstance();
-				meshMaterial.setData(BBP_ShadowData, PointShadowShaderData{ sceneData.shadowTransforms[i] }, ShaderType::Geometry);
-				meshMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderType::Geometry);
-				meshMaterial.setData(BBP_CurrentDepthData, PointShadowData{ sceneData.currentShadowDepth.depths[i] }, ShaderType::Pixel);
+				meshMaterial.setData(BBP_ShadowData, PointShadowShaderData{ sceneData.shadowTransforms[i] }, ShaderStage::Geometry);
+				meshMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderStage::Geometry);
+				meshMaterial.setData(BBP_CurrentDepthData, PointShadowData{ sceneData.currentShadowDepth.depths[i] }, ShaderStage::Pixel);
 
 				const auto vertexLayout = shadowPipeline->getVertexLayout();
 

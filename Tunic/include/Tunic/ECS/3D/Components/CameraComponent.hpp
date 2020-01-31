@@ -2,7 +2,7 @@
 
 #include "Tunic/ECS/Core/Component.hpp"
 
-#include "Clove/Graphics/Core/ShaderBufferTypes.hpp"
+#include "Tunic/Rendering//ShaderBufferTypes.hpp"
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
 
 namespace clv::gfx{
@@ -33,7 +33,7 @@ namespace tnc::ecs::_3D{
 		clv::mth::vec3f cameraFront = clv::mth::vec3f(0.0f, 0.0f, 1.0f);
 		clv::mth::vec3f cameraRight = clv::mth::vec3f(1.0f, 0.0f, 0.0f);
 
-		clv::gfx::CameraRenderData cameraRenderData;
+		tnc::rnd::CameraRenderData cameraRenderData;
 
 		std::shared_ptr<clv::gfx::RenderTarget> renderTarget;
 		clv::gfx::Viewport viewport;

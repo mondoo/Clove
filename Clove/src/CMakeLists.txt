@@ -38,13 +38,13 @@ set(
 		${CLV_INCLUDE}/Graphics/Core/CommandBuffer.hpp
 		${CLV_INCLUDE}/Graphics/Core/Graphics.hpp		
 		${CLV_SOURCE}/Graphics/Core/Graphics.cpp
-		${CLV_INCLUDE}/Graphics/Core/GraphicsConstants.hpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsTypes.hpp
 		${CLV_INCLUDE}/Graphics/Core/PipelineObject.hpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsFactory.hpp
 		${CLV_INCLUDE}/Graphics/Core/RenderTarget.hpp
 		${CLV_INCLUDE}/Graphics/Core/Shader.hpp
-		${CLV_INCLUDE}/Graphics/Core/ShaderBufferTypes.hpp
+		${CLV_INCLUDE}/Graphics/Core/ShaderTranspiler.hpp		
+		${CLV_SOURCE}/Graphics/Core/ShaderTranspiler.cpp
 		${CLV_INCLUDE}/Graphics/Core/Surface.hpp
 		${CLV_INCLUDE}/Graphics/Core/VertexLayout.hpp
 		${CLV_INCLUDE}/Graphics/Core/VertexLayout.inl
@@ -212,131 +212,6 @@ set(
 		${CLV_SOURCE}/Core/Utils/MeshLoader.cpp
 		${CLV_INCLUDE}/Core/Utils/Timer.hpp
 		${CLV_SOURCE}/Core/Utils/Timer.cpp
-)
-
-set(
-	GLSLShaders
-		${CLV_SOURCE}/Graphics/OpenGL/Shaders/2D-ps.glsl
-        ${CLV_SOURCE}/Graphics/OpenGL/Shaders/2D-vs.glsl
-        ${CLV_SOURCE}/Graphics/OpenGL/Shaders/CubeShadowMap-gs.glsl
-		${CLV_SOURCE}/Graphics/OpenGL/Shaders/CubeShadowMap-ps.glsl
-		${CLV_SOURCE}/Graphics/OpenGL/Shaders/CubeShadowMap-vs.glsl
-		${CLV_SOURCE}/Graphics/OpenGL/Shaders/Font-ps.glsl
-		${CLV_SOURCE}/Graphics/OpenGL/Shaders/Font-vs.glsl
-		${CLV_SOURCE}/Graphics/OpenGL/Shaders/Lit-ps.glsl
-		${CLV_SOURCE}/Graphics/OpenGL/Shaders/Lit-vs.glsl
-		${CLV_SOURCE}/Graphics/OpenGL/Shaders/RT-ps.glsl
-		${CLV_SOURCE}/Graphics/OpenGL/Shaders/RT-vs.glsl
-		${CLV_SOURCE}/Graphics/OpenGL/Shaders/Unlit-ps.glsl
-		${CLV_SOURCE}/Graphics/OpenGL/Shaders/Unlit-vs.glsl
-)
-
-#Parse the glsl shader files into a header
-set(GLSLShaderIncludeFile ${CLV_INCLUDE}/Graphics/OpenGL/ShaderStrings.hpp)
-file(WRITE ${GLSLShaderIncludeFile} "//cmake generated header file\n\n")
-foreach(shaderFile ${GLSLShaders})
-	file(READ ${shaderFile} FILE_CONTENTS)
-	get_filename_component(fileName ${shaderFile} NAME_WLE)
-
-	string(REPLACE "-" "_" STRING_NAME ${fileName})
-	set(outFilePath ${CLV_INCLUDE}/Graphics/OpenGL/Shaders/${fileName}.hpp)
-
-	configure_file(../cmake/glslHeader.in ${outFilePath})
-
-	file(APPEND ${GLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
-endforeach()
-
-set(
-	OpenGLGraphicsFiles
-		${OpenGLGraphicsFiles}
-		${GLSLShaders}
-		${GLSLShaderIncludeFile}
-)
-
-set(
-	pixelShaders
-        ${CLV_SOURCE}/Graphics/Direct3D/Shaders/2D-ps.hlsl
-        ${CLV_SOURCE}/Graphics/Direct3D/Shaders/CubeShadowMap-ps.hlsl
-		${CLV_SOURCE}/Graphics/Direct3D/Shaders/Font-ps.hlsl
-		${CLV_SOURCE}/Graphics/Direct3D/Shaders/Lit-ps.hlsl
-		${CLV_SOURCE}/Graphics/Direct3D/Shaders/RT-ps.hlsl
-		${CLV_SOURCE}/Graphics/Direct3D/Shaders/Unlit-ps.hlsl
-)
-set(
-	vertexShaders
-        ${CLV_SOURCE}/Graphics/Direct3D/Shaders/2D-vs.hlsl
-        ${CLV_SOURCE}/Graphics/Direct3D/Shaders/CubeShadowMap-vs.hlsl
-		${CLV_SOURCE}/Graphics/Direct3D/Shaders/Font-vs.hlsl
-		${CLV_SOURCE}/Graphics/Direct3D/Shaders/Lit-vs.hlsl
-		${CLV_SOURCE}/Graphics/Direct3D/Shaders/RT-vs.hlsl
-		${CLV_SOURCE}/Graphics/Direct3D/Shaders/Unlit-vs.hlsl
-)
-set(
-    geometryShaders
-		${CLV_SOURCE}/Graphics/Direct3D/Shaders/CubeShadowMap-gs.hlsl
-)
-
-set(
-	HLSLShaders
-		${pixelShaders}
-		${vertexShaders}
-        ${geometryShaders}
-)
-
-set_property(SOURCE ${geometryShaders} PROPERTY VS_SHADER_TYPE Geometry)
-set_property(SOURCE ${vertexShaders} PROPERTY VS_SHADER_TYPE Vertex)
-set_property(SOURCE ${pixelShaders} PROPERTY VS_SHADER_TYPE Pixel)
-
-set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_ENTRYPOINT main)
-set_property(SOURCE ${HLSLShaders} PROPERTY VS_SHADER_MODEL 5.0)
-
-#get each shader to compile into a header
-set(HLSLShaderIncludeFile ${CLV_INCLUDE}/Graphics/Direct3D/ShaderHeaders.hpp)
-file(WRITE ${HLSLShaderIncludeFile} "//cmake generated header file\n\n")
-foreach(shaderFile ${HLSLShaders})
-	get_filename_component(fileName ${shaderFile} NAME_WLE)
-	string(REPLACE "-" "_" STRING_NAME ${fileName})
-	set(outFilePath ${CLV_INCLUDE}/Graphics/Direct3D/Shaders/${fileName}.hpp)
-	set_property(SOURCE ${shaderFile} PROPERTY VS_SHADER_FLAGS "/Vn shader_${STRING_NAME} /Fh ${outFilePath}")
-	file(APPEND ${HLSLShaderIncludeFile} "#include \"Shaders/${fileName}.hpp\"\n")
-endforeach()
-
-set(
-	Direct3DGraphicsFiles
-		${Direct3DGraphicsFiles}
-		${HLSLShaders}
-		${HLSLShaderIncludeFile}
-)
-
-set(
-	MSLShaders
-		${CLV_SOURCE}/Graphics/Metal/Shaders/2D.metal
-		${CLV_SOURCE}/Graphics/Metal/Shaders/Font.metal
-		${CLV_SOURCE}/Graphics/Metal/Shaders/Unlit.metal
-)
-
-set_source_files_properties(${MetalShaders} PROPERTIES LANGUAGE METAL)
-
-#Parse each metal shader file into a header
-set(MSLShaderIncudeFile ${CLV_INCLUDE}/Graphics/Metal/ShaderStrings.hpp)
-file(WRITE ${MSLShaderIncudeFile} "//cmake generated header file\n\n")
-foreach(shaderFile ${MSLShaders})
-	file(READ ${shaderFile} FILE_CONTENTS)
-	get_filename_component(fileName ${shaderFile} NAME_WLE)
-
-	set(STRING_NAME ${fileName})
-	set(outFilePath ${CLV_INCLUDE}/Graphics/Metal/Shaders/${fileName}.hpp)
-
-	configure_file(../cmake/glslHeader.in ${outFilePath})
-
-	file(APPEND ${MSLShaderIncudeFile} "#include \"Shaders/${fileName}.hpp\"\n")
-endforeach()
-
-set(
-	MetalGraphicsFiles
-		${MetalGraphicsFiles}
-		${MSLShaders}
-		${MSLShaderIncudeFile}
 )
 
 set(

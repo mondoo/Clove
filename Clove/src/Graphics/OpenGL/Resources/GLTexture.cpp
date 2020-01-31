@@ -5,8 +5,6 @@
 namespace clv::gfx::ogl{
 	GLTexture::GLTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture)
 		: descriptor(descriptor){
-		stbi_set_flip_vertically_on_load(1);
-
 		int width = 0;
 		int height = 0;
 		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA

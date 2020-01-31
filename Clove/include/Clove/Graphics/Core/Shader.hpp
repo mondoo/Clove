@@ -5,11 +5,7 @@
 
 namespace clv::gfx{
 	struct ShaderDescriptor{
-		ShaderStyle style;
-	};
-
-	struct ShaderReflectionData{
-		VertexLayout vertexBufferLayout;
+		ShaderStage stage;
 	};
 }
 
@@ -20,6 +16,5 @@ namespace clv::gfx{
 		virtual ~Shader() = default;
 
 		virtual const ShaderDescriptor& getDescriptor() const = 0;
-		virtual ShaderReflectionData getReflectionData() const = 0;
 	};
 }

@@ -38,16 +38,16 @@ namespace clv::gfx::d3d{
 		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, data, BPP);
 	}
 
-	std::shared_ptr<PipelineObject> D3DGraphicsFactory::createPipelineObject(const std::shared_ptr<Shader>& shader){
-		return std::make_shared<D3DPipelineObject>(*d3dDevice.Get(), shader);
+	std::shared_ptr<PipelineObject> D3DGraphicsFactory::createPipelineObject(){
+		return std::make_shared<D3DPipelineObject>(d3dDevice);
 	}
 
 	std::shared_ptr<RenderTarget> D3DGraphicsFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
 		return std::make_shared<D3DRenderTarget>(*d3dDevice.Get(), colourTexture, depthStencilTexture);
 	}
 
-	std::shared_ptr<Shader> D3DGraphicsFactory::createShader(const ShaderDescriptor& descriptor){
-		return std::make_shared<D3DShader>(*d3dDevice.Get(), descriptor);
+	std::shared_ptr<Shader> D3DGraphicsFactory::createShader(const ShaderDescriptor& descriptor, std::string_view pathToTexture){
+		return std::make_shared<D3DShader>(*d3dDevice.Get(), descriptor, pathToTexture);
 	}
 
 	std::shared_ptr<Surface> D3DGraphicsFactory::createSurface(void* windowData){
