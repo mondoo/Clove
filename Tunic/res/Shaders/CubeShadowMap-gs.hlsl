@@ -30,6 +30,7 @@ void main(triangle float4 inTriangle[3] : SV_Position, inout TriangleStream<GSOu
 	GSOutPut outPut;
 	for(int face = 0; face < 6; face++){
 		//We flip the Y axis here to account of the coord system DirectX uses for textures
+		//Tried fixing this on the cpu side but got undersirable effects. Needs investigation
 		matrix faceMat = scale(shadowMatrices[face], float3(1.0, -1.0, 1.0)); 
 		outPut.face = face + currentLightIndex;
 		for(int i = 0; i < 3; i++){
