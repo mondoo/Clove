@@ -64,6 +64,8 @@ set(
 		${TNC_SOURCE}/Rendering/Material.cpp
 		${TNC_INCLUDE}/Rendering/MaterialInstance.hpp
 		${TNC_INCLUDE}/Rendering/MaterialInstance.inl
+		${TNC_INCLUDE}/Rendering/RenderingConstants.hpp
+		${TNC_INCLUDE}/Rendering/ShaderBufferTypes.hpp
 		${TNC_SOURCE}/Rendering/MaterialInstance.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Font.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Font.cpp

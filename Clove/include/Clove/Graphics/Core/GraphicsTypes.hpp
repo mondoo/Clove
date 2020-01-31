@@ -33,7 +33,7 @@ namespace clv::gfx{
 		int32 height = 0;
 	};
 
-	enum BufferBindingPoint{ //Will this be needed?
+	enum BufferBindingPoint{
 		BBP_CameraMatrices 		= 1u,
 		BBP_PointLightData 		= 2u,
 		BBP_ViewData 			= 3u,

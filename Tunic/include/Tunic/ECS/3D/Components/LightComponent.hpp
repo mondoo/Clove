@@ -2,7 +2,7 @@
 
 #include "Tunic/ECS/Core/Component.hpp"
 
-#include "Clove/Graphics/Core/ShaderBufferTypes.hpp"
+#include "Tunic/Rendering/ShaderBufferTypes.hpp"
 
 namespace tnc::ecs::_3D{
 	class LightComponent : public Component<LightComponent>{
@@ -19,7 +19,7 @@ namespace tnc::ecs::_3D{
 		float linear = 0.0014f;
 		float quadratic = 0.000007f;
 
-		clv::gfx::PointLightData lightData;
+		tnc::rnd::PointLightData lightData;
 
 		float aspect = 1.0f; //shadow width / shadow height
 		float nearDist = 0.5f;

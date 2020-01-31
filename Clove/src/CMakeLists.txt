@@ -38,13 +38,11 @@ set(
 		${CLV_INCLUDE}/Graphics/Core/CommandBuffer.hpp
 		${CLV_INCLUDE}/Graphics/Core/Graphics.hpp		
 		${CLV_SOURCE}/Graphics/Core/Graphics.cpp
-		${CLV_INCLUDE}/Graphics/Core/GraphicsConstants.hpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsTypes.hpp
 		${CLV_INCLUDE}/Graphics/Core/PipelineObject.hpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsFactory.hpp
 		${CLV_INCLUDE}/Graphics/Core/RenderTarget.hpp
 		${CLV_INCLUDE}/Graphics/Core/Shader.hpp
-		${CLV_INCLUDE}/Graphics/Core/ShaderBufferTypes.hpp
 		${CLV_INCLUDE}/Graphics/Core/ShaderTranspiler.hpp		
 		${CLV_SOURCE}/Graphics/Core/ShaderTranspiler.cpp
 		${CLV_INCLUDE}/Graphics/Core/Surface.hpp

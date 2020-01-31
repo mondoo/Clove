@@ -1,54 +1,54 @@
 #pragma once
 
-#include "Clove/Graphics/Core/GraphicsConstants.hpp"
+#include "Tunic/Rendering/RenderingConstants.hpp"
 
-namespace clv::gfx{
+namespace tnc::rnd{
 	struct MaterialData {
 		alignas(16) float sininess;
 	};
 
 	struct ViewData {
-		mth::mat4f view;
-		mth::mat4f projection;
+		clv::mth::mat4f view;
+		clv::mth::mat4f projection;
 	};
 
 	struct ViewPos {
-		alignas(16) mth::vec3f pos;
+		alignas(16) clv::mth::vec3f pos;
 	};
 
 	struct CameraRenderData {
-		mth::vec3f position;
-		mth::mat4f lookAt;
-		mth::mat4f projection;
+		clv::mth::vec3f position;
+		clv::mth::mat4f lookAt;
+		clv::mth::mat4f projection;
 	};
 
 	struct VertexData {
-		mth::mat4f model;
-		mth::mat4f normalMatrix;
+		clv::mth::mat4f model;
+		clv::mth::mat4f normalMatrix;
 	};
 
 	struct PointLightIntesity {
-		mth::vec3f position = {};
+		clv::mth::vec3f position = {};
 		float constant = 0;
-		mth::vec3f ambient = {};
+		clv::mth::vec3f ambient = {};
 		float linear = 0;
-		mth::vec3f diffuse = {};
+		clv::mth::vec3f diffuse = {};
 		float quadratic = 0;
-		alignas(16) mth::vec3f specular = {};
+		alignas(16) clv::mth::vec3f specular = {};
 	};
 	struct PointLightData {
 		PointLightIntesity intensity = {};
-		std::array<mth::mat4f, 6> shadowTransforms = {};
+		std::array<clv::mth::mat4f, 6> shadowTransforms = {};
 		float farPlane;
 	};
 	struct PointLightShaderData {
 		std::array<PointLightIntesity, MAX_LIGHTS> intensities = {};
 	};
 	struct PointShadowShaderData {
-		std::array<mth::mat4f, 6> shadowTransforms = {};
+		std::array<clv::mth::mat4f, 6> shadowTransforms = {};
 	};
 	struct PointShadowData {
-		mth::vec3f lightPos = {};
+		clv::mth::vec3f lightPos = {};
 		float farPlane = 0;
 	};
 	struct PointShadowDepthData { //It's not depth - this needs a better name (so does the BBP for it)
@@ -56,6 +56,6 @@ namespace clv::gfx{
 	};
 
 	struct LightNumAlignment {
-		alignas(16) uint32 numLights;
+		alignas(16) clv::uint32 numLights;
 	};
 }

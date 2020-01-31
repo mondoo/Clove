@@ -16,7 +16,6 @@
 #include "Clove/Graphics/Core/PipelineObject.hpp"
 #include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/Shader.hpp"
-#include "Clove/Graphics/Core/ShaderBufferTypes.hpp"
 #include "Clove/Graphics/Core/VertexLayout.hpp"
 
 #include "Clove/Core/Input/KeyCodes.hpp"
