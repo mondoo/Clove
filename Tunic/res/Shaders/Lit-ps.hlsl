@@ -113,7 +113,7 @@ float shadowCalculation(float3 fragPos, int shadowIndex){
 	const float bias = 0.15;
 	const int samples = 20;
 	const float viewDistance = length(viewPos - fragPos);
-	const float diskRadius = (1.0f + (viewDistance / farPlane)) / 25.0f; //25 being the max far plane of the light
+	const float diskRadius = (1.0f + (viewDistance / farPlane)) / farPlane;
 
 	for(int i = 0; i < samples; ++i){
 		const float3 sampleLocation = fragToLight + shadowSampleOffsetDirections[i] * diskRadius;

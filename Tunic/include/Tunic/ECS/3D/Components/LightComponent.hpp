@@ -23,7 +23,7 @@ namespace tnc::ecs::_3D{
 
 		float aspect = 1.0f; //shadow width / shadow height
 		float nearDist = 0.5f;
-		float farDist = 25.0f;
+		float farDist = 100.0f;
 		clv::mth::mat4f shadowProj = clv::mth::createPerspectiveMatrix(clv::mth::asRadians(90.0f), aspect, nearDist, farDist);
 
 		//FUNCTIONS
