@@ -1,4 +1,6 @@
 Follow:
+https://dotnet.microsoft.com/download
+(for templates)
 https://github.com/AvaloniaUI/avalonia-dotnet-templates
 
 Build:
