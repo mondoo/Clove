@@ -40,7 +40,7 @@ int main(){
 	//Create the buffers to hold the vertices and indices
 	gfx::BufferDescriptor vbDesc{};
 	vbDesc.elementSize	= sizeof(float) * 5.0f;
-	vbDesc.bufferSize	= vertices.size() * sizeof(float) * 5.0f * 2.0f;
+	vbDesc.bufferSize	= vertices.size() * sizeof(float);
 	vbDesc.bufferType	= gfx::BufferType::VertexBuffer;
 	vbDesc.bufferUsage	= gfx::BufferUsage::Default;
 	auto vertexBuffer	= graphicsFactory.createBuffer(vbDesc, vertices.data());
