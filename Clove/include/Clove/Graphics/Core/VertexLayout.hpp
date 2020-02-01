@@ -5,7 +5,6 @@
 namespace clv::gfx{
 	template<VertexElementType> struct VertexElementData;
 
-	//TODO: make the semantics lower case now thay're used for the shaders
 	template<> struct VertexElementData<VertexElementType::position2D>{
 		using DataType = mth::vec2f;
 		static constexpr uint32_t elementCount = 2u;
