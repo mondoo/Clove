@@ -21,7 +21,7 @@ namespace clv::gfx::ogl{
 		pfd.cAlphaBits = 8;
 		pfd.cDepthBits = 24;
 
-		int32 pf;
+		int32_t pf;
 		pf = ChoosePixelFormat(windowsDeviceContext, &pfd);
 		if(pf == 0){
 			throw CLV_WINDOWS_LAST_EXCEPTION;
@@ -37,10 +37,10 @@ namespace clv::gfx::ogl{
 
 		PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
 		if(wglCreateContextAttribsARB){
-			int32 major = 4;
-			int32 minor = 6;
+			int32_t major = 4;
+			int32_t minor = 6;
 
-			int32 attributes[] = {
+			int32_t attributes[] = {
 				WGL_CONTEXT_MAJOR_VERSION_ARB, major,
 				WGL_CONTEXT_MINOR_VERSION_ARB, minor,
 				WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
@@ -99,7 +99,7 @@ namespace clv::gfx::ogl{
 
 	void WGLSurface::setVSync(bool enabled){
 		if(wglSwapIntervalEXT){
-			const int32 interval = enabled ? 1 : 0;
+			const int32_t interval = enabled ? 1 : 0;
 			wglSwapIntervalEXT(interval);
 
 			CLV_LOG_TRACE("Swap interval for WGL was set to: {0}", interval);
@@ -110,7 +110,7 @@ namespace clv::gfx::ogl{
 
 	bool WGLSurface::isVsync() const{
 		if(wglGetSwapIntervalEXT){
-			const uint32 interval = wglGetSwapIntervalEXT();
+			const uint32_t interval = wglGetSwapIntervalEXT();
 			return (interval > 0);
 		} else{
 			CLV_LOG_ERROR("wglGetSwapIntervalEXT is unitialised. Could not retrieve swap interval. Please make sure this context is current");

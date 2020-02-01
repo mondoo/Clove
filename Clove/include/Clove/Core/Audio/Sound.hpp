@@ -28,8 +28,8 @@ namespace clv::aud{
 		sf_count_t seek(sf_count_t frames, int whence);
 		sf_count_t readf(int* ptr, sf_count_t frames);
 
-		int32 getChannels() const;
-		int32 getSamplerate() const;
-		int32 getFrames() const;
+		int32_t getChannels() const;
+		int32_t getSamplerate() const;
+		int32_t getFrames() const;
 	};
 }

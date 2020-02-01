@@ -10,12 +10,12 @@ namespace clv::gfx::ogl{
 	class GLRenderTarget : public RenderTarget{
 		//VARIABLES
 	private:
-		uint32 lockCount = 0;
+		uint32_t lockCount = 0;
 		mth::vec4f clearColour;
 		bool canClear = true;
 
-		uint32 frameBufferID = 0;
-		uint32 renderBufferID = 0;
+		uint32_t frameBufferID = 0;
+		uint32_t renderBufferID = 0;
 
 		//FUNCTIONS
 	public:
@@ -36,6 +36,6 @@ namespace clv::gfx::ogl{
 		virtual void setClearColour(const mth::vec4f& colour) override;
 		void clear();
 
-		const uint32 getGLFrameBufferID() const;
+		uint32_t getGLFrameBufferID() const;
 	};
 }

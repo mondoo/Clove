@@ -8,7 +8,7 @@ using namespace clv::gfx;
 
 namespace tnc::rnd{
 	Material::Material(){
-		clv::uint32 white = 0xffffffff;
+		uint32_t white = 0xffffffff;
 		TextureDescriptor descriptor{};
 		descriptor.dimensions = { 1, 1 };
 		auto blankTexture = Application::get().getGraphicsFactory().createTexture(descriptor, &white, 4);

@@ -33,7 +33,7 @@ namespace clv::gfx::ogl{
 		return std::make_shared<GLTexture>(descriptor, pathToTexture);
 	}
 
-	std::shared_ptr<Texture> GLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP){
+	std::shared_ptr<Texture> GLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP){
 		return std::make_shared<GLTexture>(descriptor, data, BPP);
 	}
 

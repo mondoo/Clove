@@ -11,8 +11,8 @@ namespace clv::gfx::d3d{
 		int height = 0;
 		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
-		this->descriptor.dimensions.x = static_cast<uint32>(width);
-		this->descriptor.dimensions.y = static_cast<uint32>(height);
+		this->descriptor.dimensions.x = static_cast<uint32_t>(width);
+		this->descriptor.dimensions.y = static_cast<uint32_t>(height);
 
 		createTexture(d3dDevice, this->descriptor, localBuffer);
 
@@ -21,7 +21,7 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	D3DTexture::D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data, int32 BPP)
+	D3DTexture::D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP)
 		: descriptor(descriptor)
 		, BPP(BPP){
 		createTexture(d3dDevice, descriptor, data);
@@ -177,7 +177,7 @@ namespace clv::gfx::d3d{
 		return (style == TextureStyle::Cubemap) ? 6 : 1;
 	}
 
-	D3D_SRV_DIMENSION D3DTexture::getViewDimension(const TextureStyle style, const uint8 arraySize) const{
+	D3D_SRV_DIMENSION D3DTexture::getViewDimension(const TextureStyle style, const uint8_t arraySize) const{
 		switch(style){
 			case TextureStyle::Default:
 				return (arraySize > 1) ? D3D11_SRV_DIMENSION_TEXTURE2DARRAY : D3D11_SRV_DIMENSION_TEXTURE2D;

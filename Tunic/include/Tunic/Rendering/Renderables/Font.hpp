@@ -9,7 +9,7 @@ namespace tnc::rnd{
 		clv::mth::vec2f size = {};
 		clv::mth::vec2f bearing = {};
 		clv::mth::vec2f advance = {};
-		clv::uint8* buffer = nullptr;
+		uint8_t* buffer = nullptr;
 	};
 }
 
@@ -37,7 +37,7 @@ namespace tnc::rnd{
 
 		~Font();
 		
-		void setSize(clv::uint32 size);
+		void setSize(uint32_t size);
 		Glyph getChar(char ch) const;
 
 	private:

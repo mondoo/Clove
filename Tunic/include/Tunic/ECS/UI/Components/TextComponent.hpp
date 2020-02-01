@@ -30,6 +30,6 @@ namespace tnc::ecs::ui{
 		virtual ~TextComponent();
 
 		void setText(std::string text);
-		void setSize(clv::uint32 size);
+		void setSize(uint32_t size);
 	};
 }

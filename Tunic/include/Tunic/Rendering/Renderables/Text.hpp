@@ -23,7 +23,7 @@ namespace tnc::rnd{
 		~Text();
 
 		void setText(std::string text);
-		void setSize(clv::uint32 size);
+		void setSize(uint32_t size);
 
 		std::size_t getTextLength() const;
 		Glyph getBufferForCharAt(size_t index) const;

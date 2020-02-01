@@ -10,7 +10,7 @@ namespace clv::gfx::ogl{
 	class GLShader : public Shader{
 		//VARIABLES
 	private:
-		uint32 shaderID = 0;
+		GLuint shaderID = 0;
 
 		ShaderDescriptor descriptor;
 
@@ -29,7 +29,7 @@ namespace clv::gfx::ogl{
 
 		virtual const ShaderDescriptor& getDescriptor() const override;
 
-		uint32 getShaderID() const;
+		GLuint getShaderID() const;
 
 	private:
 		void compileShader(GLenum stage, std::string_view source);

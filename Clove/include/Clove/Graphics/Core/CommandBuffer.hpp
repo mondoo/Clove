@@ -21,15 +21,15 @@ namespace clv::gfx{
 		virtual void beginEncoding() = 0;
 
 		virtual void bindIndexBuffer(const Buffer& buffer) = 0;
-		virtual void bindVertexBuffer(const Buffer& buffer, const uint32 stride) = 0;
-		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32 bindingPoint) = 0;
+		virtual void bindVertexBuffer(const Buffer& buffer, const uint32_t stride) = 0;
+		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32_t bindingPoint) = 0;
 		virtual void bindPipelineObject(const PipelineObject& pipelineObject) = 0;
-		virtual void bindTexture(const Texture* texture, const uint32 bindingPoint) = 0;
+		virtual void bindTexture(const Texture* texture, const uint32_t bindingPoint) = 0;
 
 		virtual void setViewport(const Viewport& viewport) = 0;
 		virtual void setDepthEnabled(bool enabled) = 0;
 
-		virtual void drawIndexed(const uint32 count) = 0;
+		virtual void drawIndexed(const uint32_t count) = 0;
 
 		virtual void endEncoding() = 0;
 	};

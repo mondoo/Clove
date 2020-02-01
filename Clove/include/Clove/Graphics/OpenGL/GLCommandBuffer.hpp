@@ -32,15 +32,15 @@ namespace clv::gfx::ogl{
 		virtual void beginEncoding() override;
 
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
-		virtual void bindVertexBuffer(const Buffer& buffer, const uint32 stride) override;
-		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32 bindingPoint) override;
+		virtual void bindVertexBuffer(const Buffer& buffer, const uint32_t stride) override;
+		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32_t bindingPoint) override;
 		virtual void bindPipelineObject(const PipelineObject& pipelineObject) override;
-		virtual void bindTexture(const Texture* texture, const uint32 bindingPoint) override;
+		virtual void bindTexture(const Texture* texture, const uint32_t bindingPoint) override;
 
 		virtual void setViewport(const Viewport& viewport) override;
 		virtual void setDepthEnabled(bool enabled) override;
 
-		virtual void drawIndexed(const uint32 count) override;
+		virtual void drawIndexed(const uint32_t count) override;
 
 		virtual void endEncoding() override;
 	};

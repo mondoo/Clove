@@ -13,8 +13,8 @@ namespace clv::gfx{
 namespace clv::plt{
 	struct WindowsData{
 		HWND handle;
-		int32 width;
-		int32 height;
+		int32_t width;
+		int32_t height;
 	};
 
 	class WindowsWindow : public Window{

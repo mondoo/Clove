@@ -21,7 +21,7 @@ namespace tnc::rnd{
 		this->text = std::move(text);
 	}
 
-	void Text::setSize(uint32 size){
+	void Text::setSize(uint32_t size){
 		font.setSize(size);
 	}
 

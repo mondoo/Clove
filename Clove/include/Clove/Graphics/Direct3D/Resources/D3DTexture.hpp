@@ -15,13 +15,13 @@ namespace clv::gfx::d3d{
 
 		TextureDescriptor descriptor;
 
-		int32 BPP = 0;
+		int32_t BPP = 0;
 		
 		//FUNCTIONS
 	public:
 		D3DTexture() = delete;
 		D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture);
-		D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data, int32 BPP);
+		D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP);
 
 		D3DTexture(const D3DTexture& other) = delete;
 		D3DTexture(D3DTexture&& other) noexcept;
@@ -47,7 +47,7 @@ namespace clv::gfx::d3d{
 		DXGI_FORMAT getFormatForShaderView(const TextureUsage usage) const;
 
 		UINT getArrayElements(const TextureStyle style) const;
-		D3D_SRV_DIMENSION getViewDimension(const TextureStyle style, const uint8 arraySize) const;
+		D3D_SRV_DIMENSION getViewDimension(const TextureStyle style, const uint8_t arraySize) const;
 
 		UINT getMiscFlags(const TextureStyle style) const;
 
