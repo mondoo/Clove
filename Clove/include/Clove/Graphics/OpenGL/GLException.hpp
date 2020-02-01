@@ -1,7 +1,7 @@
 #pragma once
 
 namespace clv::gfx::ogl{
-	void CLV_APIENTRY errorCallback(uint32 source, uint32 type, uint32 id,
-					   uint32 severity, int32 length,
+	void CLV_APIENTRY errorCallback(uint32_t source, uint32_t type, uint32_t id,
+					   uint32_t severity, int32_t length,
 					   const char* msg, const void* data);
 }

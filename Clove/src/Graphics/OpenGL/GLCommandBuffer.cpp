@@ -44,7 +44,7 @@ namespace clv::gfx::ogl{
 		commands.push_back(bindIBCommand);
 	}
 
-	void GLCommandBuffer::bindVertexBuffer(const Buffer& buffer, const uint32 stride){
+	void GLCommandBuffer::bindVertexBuffer(const Buffer& buffer, const uint32_t stride){
 		const auto bindVBCommand = [&buffer, stride](){
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 			glBindVertexBuffer(0, glbuffer.getBufferID(), 0, stride);
@@ -53,7 +53,7 @@ namespace clv::gfx::ogl{
 		commands.push_back(bindVBCommand);
 	}
 
-	void GLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32 bindingPoint){
+	void GLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32_t bindingPoint){
 		const auto bindSRBCommand = [&buffer, shaderType, bindingPoint](){
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 			glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, glbuffer.getBufferID());
@@ -83,7 +83,7 @@ namespace clv::gfx::ogl{
 		commands.push_back(bindPOCommand);
 	}
 
-	void GLCommandBuffer::bindTexture(const Texture* texture, const uint32 bindingPoint){
+	void GLCommandBuffer::bindTexture(const Texture* texture, const uint32_t bindingPoint){
 		const auto bindTextureCommand = [texture, bindingPoint](){
 			if(const GLTexture* glTexture = static_cast<const GLTexture*>(texture)){
 				glBindTextureUnit(bindingPoint, glTexture->getTextureID());
@@ -117,7 +117,7 @@ namespace clv::gfx::ogl{
 		commands.push_back(setDECommand);
 	}
 
-	void GLCommandBuffer::drawIndexed(const uint32 count){
+	void GLCommandBuffer::drawIndexed(const uint32_t count){
 		const auto drawCommand = [count](){
 			glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
 		};

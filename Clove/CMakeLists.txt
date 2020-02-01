@@ -97,7 +97,6 @@ target_precompile_headers(
 	PUBLIC
 		[["Clove/Core/Core.hpp"]]
 		[["Clove/Core/Log.hpp"]]
-		[["Clove/Core/IntTypes.hpp"]]
 		[["Clove/Core/Maths/MathsTypes.hpp"]]
 		[["Clove/Core/Maths/Maths.hpp"]]
 		[["Clove/Core/Maths/MathsHelpers.hpp"]]

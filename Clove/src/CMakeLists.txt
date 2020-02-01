@@ -10,7 +10,6 @@ set(
 	CoreFiles
 		${CLV_INCLUDE}/Clove.hpp
 		${CLV_INCLUDE}/Core/Core.hpp
-		${CLV_INCLUDE}/Core/IntTypes.hpp
 		${CLV_INCLUDE}/Core/Layer.hpp
 		${CLV_SOURCE}/Core/Layer.cpp
 		${CLV_INCLUDE}/Core/LayerStack.hpp

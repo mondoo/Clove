@@ -8,17 +8,17 @@ namespace clv::gfx::ogl{
 	class GLTexture : public Texture{
 		//VARIABLES
 	private:
-		uint32 textureID = 0;
+		GLuint textureID = 0;
 		
 		TextureDescriptor descriptor;
 
-		int32 BPP = 0;
+		int32_t BPP = 0;
 
 		//FUNCTIONS
 	public:
 		GLTexture() = delete;
 		GLTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture);
-		GLTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP);
+		GLTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP);
 
 		GLTexture(const GLTexture& other) = delete;
 		GLTexture(GLTexture&& other) noexcept;
@@ -28,7 +28,7 @@ namespace clv::gfx::ogl{
 
 		virtual ~GLTexture();
 
-		const uint32 getTextureID() const;
+		const GLuint getTextureID() const;
 		
 		virtual const TextureDescriptor& getDescriptor() const override;
 
@@ -38,7 +38,7 @@ namespace clv::gfx::ogl{
 		void createDefaultTexture(const GLenum target, const TextureUsage usage, const void* pixels);
 		void createCubemapTexture(const TextureUsage usage, const void* pixels);
 
-		GLenum getTarget(const TextureStyle style, const uint8 arraySize) const;
+		GLenum getTarget(const TextureStyle style, const uint8_t arraySize) const;
 		GLenum getInternalFormat(const TextureUsage usage) const;
 		GLenum getFormat(const TextureUsage usage);
 		GLenum getType(const TextureUsage usage);

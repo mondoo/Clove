@@ -112,7 +112,7 @@ namespace clv::gfx::ShaderTranspiler{
 			spirv_cross::ShaderResources resources = glsl.get_shader_resources();
 
 			//Make sure the combined image/samplers keep the binding id
-			std::map<spirv_cross::ID, uint32> samplerBindings;
+			std::map<spirv_cross::ID, uint32_t> samplerBindings;
 			for(auto& resource : resources.separate_samplers){
 				samplerBindings[resource.id] = glsl.get_decoration(resource.id, spv::DecorationBinding);
 			}
@@ -123,7 +123,7 @@ namespace clv::gfx::ShaderTranspiler{
 			//Remap names to semantics
 			if(stage == ShaderStage::Vertex){
 				for(auto& resource : resources.stage_inputs){
-					const uint32 location = glsl.get_decoration(resource.id, spv::DecorationLocation);
+					const uint32_t location = glsl.get_decoration(resource.id, spv::DecorationLocation);
 					std::string str = glsl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
 
 					glsl.set_name(resource.id, str);
@@ -131,7 +131,7 @@ namespace clv::gfx::ShaderTranspiler{
 			}
 
 			if (stage == ShaderStage::Geometry){
-				const uint32 invocations = glsl.get_execution_mode_argument(spv::ExecutionMode::ExecutionModeInvocations);
+				const uint32_t invocations = glsl.get_execution_mode_argument(spv::ExecutionMode::ExecutionModeInvocations);
 				if (invocations == 196624){ //Unset invocations default to this, unset it
 					glsl.unset_execution_mode(spv::ExecutionMode::ExecutionModeInvocations);
 				}
@@ -147,7 +147,7 @@ namespace clv::gfx::ShaderTranspiler{
 			
 			spirv_cross::ShaderResources resources = msl.get_shader_resources();
 
-			const auto remapMSLBindings = [&msl](const uint32 binding, const spirv_cross::ID resourceID){
+			const auto remapMSLBindings = [&msl](const uint32_t binding, const spirv_cross::ID resourceID){
 				spirv_cross::MSLResourceBinding resourceBinding;
 				resourceBinding.stage = msl.get_execution_model();
 				resourceBinding.desc_set = msl.get_decoration(resourceID, spv::DecorationDescriptorSet);
@@ -161,24 +161,24 @@ namespace clv::gfx::ShaderTranspiler{
 			
 			//Set up correct buffer bindings
 			for(auto& resource : resources.uniform_buffers){
-				const uint32 binding = msl.get_decoration(resource.id, spv::DecorationBinding);
+				const uint32_t binding = msl.get_decoration(resource.id, spv::DecorationBinding);
 				remapMSLBindings(binding, resource.id);
 			}
 			
 			//Set up correct texture bindings
 			for(auto& resource : resources.separate_images){
-				const uint32 binding = msl.get_decoration(resource.id, spv::DecorationBinding);
+				const uint32_t binding = msl.get_decoration(resource.id, spv::DecorationBinding);
 				remapMSLBindings(binding, resource.id);
 			}
 			for(auto& resource : resources.separate_samplers){
-				const uint32 binding = msl.get_decoration(resource.id, spv::DecorationBinding);
+				const uint32_t binding = msl.get_decoration(resource.id, spv::DecorationBinding);
 				remapMSLBindings(binding, resource.id);
 			}
 			
 			//Remap names to semantics
 			if(stage == ShaderStage::Vertex){
 				for(auto& resource : resources.stage_inputs){
-					const uint32 location = msl.get_decoration(resource.id, spv::DecorationLocation);
+					const uint32_t location = msl.get_decoration(resource.id, spv::DecorationLocation);
 					std::string str = msl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
 
 					msl.set_name(resource.id, str);

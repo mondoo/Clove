@@ -15,7 +15,7 @@ namespace clv::gfx{
 		}
 	}
 
-	constexpr uint32 VertexElement::countOf(VertexElementType type){
+	constexpr uint32_t VertexElement::countOf(VertexElementType type){
 		switch(type){
 			case VertexElementType::position2D:
 				return VertexElementData<VertexElementType::position2D>::elementCount;

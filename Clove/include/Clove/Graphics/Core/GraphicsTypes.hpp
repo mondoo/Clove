@@ -27,10 +27,10 @@ namespace clv::gfx{
 	};
 
 	struct Viewport{
-		int32 x = 0;
-		int32 y = 0;
-		int32 width = 0;
-		int32 height = 0;
+		int32_t x = 0;
+		int32_t y = 0;
+		int32_t width = 0;
+		int32_t height = 0;
 	};
 
 	enum BufferBindingPoint{

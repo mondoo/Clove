@@ -1,7 +1,7 @@
 #include "Clove/Core/Exception/CloveException.hpp"
 
 namespace clv{
-	CloveException::CloveException(int32 lineNum, const char* file)
+	CloveException::CloveException(int32_t lineNum, const char* file)
 		: lineNum(lineNum)
 		, file(file){
 	}
@@ -20,7 +20,7 @@ namespace clv{
 		return "Clove Exception";
 	}
 
-	int32 CloveException::getLineNum() const noexcept{
+	int32_t CloveException::getLineNum() const noexcept{
 		return lineNum;
 	}
 

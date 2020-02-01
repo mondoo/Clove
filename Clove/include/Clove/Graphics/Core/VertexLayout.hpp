@@ -8,22 +8,22 @@ namespace clv::gfx{
 	//TODO: make the semantics lower case now thay're used for the shaders
 	template<> struct VertexElementData<VertexElementType::position2D>{
 		using DataType = mth::vec2f;
-		static constexpr uint32 elementCount = 2u;
+		static constexpr uint32_t elementCount = 2u;
 		static constexpr char semantic[] = "POSITION2D";
 	};
 	template<> struct VertexElementData<VertexElementType::position3D>{
 		using DataType = mth::vec3f;
-		static constexpr uint32 elementCount = 3u;
+		static constexpr uint32_t elementCount = 3u;
 		static constexpr char semantic[] = "POSITION3D";
 	};
 	template<> struct VertexElementData<VertexElementType::texture2D>{
 		using DataType = mth::vec2f;
-		static constexpr uint32 elementCount = 2u;
+		static constexpr uint32_t elementCount = 2u;
 		static constexpr char semantic[] = "TEXCOORD";
 	};
 	template<> struct VertexElementData<VertexElementType::normal>{
 		using DataType = mth::vec3f;
-		static constexpr uint32 elementCount = 3u;
+		static constexpr uint32_t elementCount = 3u;
 		static constexpr char semantic[] = "NORMAL";
 	};
 
@@ -48,13 +48,13 @@ namespace clv::gfx{
 		size_t getOffsetAfter() const;
 
 		size_t getSize() const;
-		uint32 getCount() const;
+		uint32_t getCount() const;
 		const char* getSemantic() const;
 
 		VertexElementType getType() const;
 
 		static constexpr size_t sizeOf(VertexElementType type);
-		static constexpr uint32 countOf(VertexElementType type);
+		static constexpr uint32_t countOf(VertexElementType type);
 		static constexpr const char* semanticOf(VertexElementType type);
 		static VertexElementType getTypeFromSemantic(const std::string& semantic);
 	};

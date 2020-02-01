@@ -15,7 +15,7 @@ namespace clv::gfx::ogl{
 		if(colourTexture){
 			GLTexture* glColourTexture = static_cast<GLTexture*>(colourTexture);
 			const TextureUsage usage = glColourTexture->getDescriptor().usage;
-			const uint32 textureRenderID = glColourTexture->getTextureID();
+			const GLuint textureRenderID = glColourTexture->getTextureID();
 
 			CLV_ASSERT(usage == TextureUsage::RenderTarget_Colour, "Incorrect texture type for colour texture");
 
@@ -30,7 +30,7 @@ namespace clv::gfx::ogl{
 			GLTexture* gldepthStencilTexture = static_cast<GLTexture*>(depthStencilTexture);
 			const TextureUsage usage = gldepthStencilTexture->getDescriptor().usage;
 			const TextureStyle style = gldepthStencilTexture->getDescriptor().style;
-			const uint32 textureRenderID = gldepthStencilTexture->getTextureID();
+			const GLuint textureRenderID = gldepthStencilTexture->getTextureID();
 
 			//NOTE: Asserting here but this will need to change when adding stencil buffers
 			CLV_ASSERT(usage == TextureUsage::RenderTarget_Depth, "Incorrect texture type for depth stencil texture");
@@ -78,7 +78,7 @@ namespace clv::gfx::ogl{
 		}
 	}
 
-	const uint32 GLRenderTarget::getGLFrameBufferID() const{
+	uint32_t GLRenderTarget::getGLFrameBufferID() const{
 		return frameBufferID;
 	}
 }

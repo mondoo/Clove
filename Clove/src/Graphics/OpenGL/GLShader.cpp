@@ -19,7 +19,7 @@ namespace clv::gfx::ogl{
 		return descriptor;
 	}
 
-	uint32 GLShader::getShaderID() const{
+	GLuint GLShader::getShaderID() const{
 		return shaderID;
 	}
 
@@ -29,10 +29,10 @@ namespace clv::gfx::ogl{
 		glShaderSource(shaderID, 1, &src, nullptr);
 		glCompileShader(shaderID);
 
-		int32 result;
+		int32_t result;
 		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &result);
 		if(result == GL_FALSE){
-			int32 length;
+			int32_t length;
 			glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &length);
 			char* message = new char[length];
 			glGetShaderInfoLog(shaderID, length, &length, message);

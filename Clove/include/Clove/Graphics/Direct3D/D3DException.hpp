@@ -20,7 +20,7 @@ namespace clv::gfx::d3d{
 		CloveException& operator=(CloveException&& other) noexcept = delete;
 		virtual ~D3DException();
 
-		D3DException(int32 lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages = {});
+		D3DException(int32_t lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages = {});
 
 		virtual const char* what() const noexcept override;
 		virtual const char* getType() const noexcept override;
@@ -69,7 +69,7 @@ namespace clv::gfx::d3d{
 		InfoException& operator=(InfoException&& other) noexcept = delete;
 		~InfoException();
 
-		InfoException(int32 lineNum, const char* file, const std::vector<std::string>& messages);
+		InfoException(int32_t lineNum, const char* file, const std::vector<std::string>& messages);
 
 		virtual const char* what() const noexcept override;
 		virtual const char* getType() const noexcept override;

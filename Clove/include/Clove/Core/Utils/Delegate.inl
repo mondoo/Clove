@@ -7,8 +7,8 @@ namespace clv::utl{
 		return std::integral_constant<size_t, sizeof ...(Args)>{};
 	}
 
-	template<typename BindFunctionPrototype, typename ObjectType, int32 ...indices>
-	auto doBind(BindFunctionPrototype&& function, ObjectType* object, std::integer_sequence<int32, indices...>){
+	template<typename BindFunctionPrototype, typename ObjectType, int32_t ...indices>
+	auto doBind(BindFunctionPrototype&& function, ObjectType* object, std::integer_sequence<int32_t, indices...>){
 		return std::bind(std::forward<BindFunctionPrototype>(function), object, placeholderSequence<indices + 1>::ph...);
 	}
 }
@@ -22,7 +22,7 @@ namespace clv::utl{
 	template<typename BindFunctionPrototype, typename ObjectType>
 	void SingleCastDelegate<FunctionPrototype>::bind(BindFunctionPrototype&& function, ObjectType* object){
 		constexpr size_t argumentCount = decltype(getArgumentCount(function))::value;
-		functionPointer = doBind(std::forward<BindFunctionPrototype>(function), object, std::make_integer_sequence<int32, argumentCount>());
+		functionPointer = doBind(std::forward<BindFunctionPrototype>(function), object, std::make_integer_sequence<int32_t, argumentCount>());
 	}
 
 	template<typename FunctionPrototype>

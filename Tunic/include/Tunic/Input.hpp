@@ -7,7 +7,7 @@ namespace tnc::ipt{
 	bool isKeyPressed(clv::Key key);
 
 	bool isMouseButtonPressed(clv::MouseButton button);
-	std::pair<clv::int32, clv::int32> getMousePosition();
-	clv::int32 getMouseX();
-	clv::int32 getMouseY();
+	std::pair<int32_t, int32_t> getMousePosition();
+	int32_t getMouseX();
+	int32_t getMouseY();
 }

@@ -5,7 +5,7 @@
 namespace clv::gfx::d3d{
 	D3DException::~D3DException() = default;
 
-	D3DException::D3DException(int32 lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages)
+	D3DException::D3DException(int32_t lineNum, const char* file, HRESULT hr, const std::vector<std::string>& messages)
 		: CloveException(lineNum, file)
 		, hr(hr){
 		for(const auto& message : messages){
@@ -69,7 +69,7 @@ namespace clv::gfx::d3d{
 
 	InfoException::~InfoException() = default;
 
-	InfoException::InfoException(int32 lineNum, const char* file, const std::vector<std::string>& messages)
+	InfoException::InfoException(int32_t lineNum, const char* file, const std::vector<std::string>& messages)
 		: CloveException(lineNum, file){
 
 		for(const auto& message : messages){

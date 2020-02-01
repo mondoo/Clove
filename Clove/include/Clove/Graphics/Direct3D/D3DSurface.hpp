@@ -23,10 +23,10 @@ namespace clv::gfx::d3d{
 		utl::MultiCastDelegate<void(const std::shared_ptr<D3DRenderTarget>&)> retainNewRenderTargets;
 
 	private:
-		uint32 bufferCount = 1u;
+		uint32_t bufferCount = 1u;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
-		uint32 swapInterval = 1u;
+		uint32_t swapInterval = 1u;
 
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;

@@ -19,13 +19,13 @@ namespace tnc::rnd{
 		MaterialInstance materialInstance;
 
 		clv::gfx::VertexBufferData loadedBufferData;
-		std::vector<clv::uint32> indices;
+		std::vector<uint32_t> indices;
 
 		//FUNCTIONS
 	public:
 		Mesh() = delete;
 		Mesh(std::string filePath, MaterialInstance materialInstance);
-		Mesh(const clv::gfx::VertexBufferData& vbData, const std::vector<clv::uint32>& indices, MaterialInstance materialInstance);
+		Mesh(const clv::gfx::VertexBufferData& vbData, const std::vector<uint32_t>& indices, MaterialInstance materialInstance);
 		
 		Mesh(const Mesh& other);
 		Mesh(Mesh&& other) noexcept;
@@ -37,13 +37,13 @@ namespace tnc::rnd{
 
 		MaterialInstance& getMaterialInstance();
 
-		clv::uint32 getIndexCount();
+		uint32_t getIndexCount();
 
 		std::shared_ptr<clv::gfx::Buffer> getVertexBufferForLayout(const clv::gfx::VertexLayout& layout);
 		std::shared_ptr<clv::gfx::Buffer> getIndexBuffer();
 
 	private:
 		void initialiseVertexBuffer(const clv::gfx::VertexBufferData& vertexArray);
-		void initialiseIndexBuffer(const std::vector<clv::uint32>& indices);
+		void initialiseIndexBuffer(const std::vector<uint32_t>& indices);
 	};
 }

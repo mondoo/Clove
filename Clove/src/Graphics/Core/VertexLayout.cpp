@@ -28,7 +28,7 @@ namespace clv::gfx{
 		return sizeOf(type);
 	}
 	
-	uint32 VertexElement::getCount() const{
+	uint32_t VertexElement::getCount() const{
 		return countOf(type);
 	}
 

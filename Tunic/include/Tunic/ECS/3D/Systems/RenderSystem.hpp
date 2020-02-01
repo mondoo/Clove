@@ -37,7 +37,7 @@ namespace tnc::ecs::_3D{
 
 			tnc::rnd::PointLightShaderData currentLightInfo;
 			tnc::rnd::PointShadowDepthData currentShadowDepth;
-			clv::uint32 numLights = 0;
+			uint32_t numLights = 0u;
 			std::array<std::array<clv::mth::mat4f, 6>, tnc::rnd::MAX_LIGHTS> shadowTransforms = {};
 
 			//FUNCTIONS
