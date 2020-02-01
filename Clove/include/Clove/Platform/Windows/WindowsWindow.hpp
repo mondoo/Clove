@@ -30,7 +30,7 @@ namespace clv::plt{
 		//FUNCTIONS
 	public:
 		WindowsWindow() = delete;
-		WindowsWindow(gfx::GraphicsFactory& graphicsFactory, const WindowProps& props);
+		WindowsWindow(gfx::GraphicsFactory& graphicsFactory, const WindowDescriptor& props);
 		WindowsWindow(gfx::GraphicsFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
 
 		WindowsWindow(const WindowsWindow& other) = delete;

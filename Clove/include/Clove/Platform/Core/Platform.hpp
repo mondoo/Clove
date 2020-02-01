@@ -19,7 +19,7 @@ namespace clv::plt{
 
 		virtual gfx::GraphicsFactory& getGraphicsFactory() = 0;
 
-		virtual std::shared_ptr<Window> createWindow(const WindowProps& props) = 0;
+		virtual std::shared_ptr<Window> createWindow(const WindowDescriptor& props) = 0;
 		virtual std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size) = 0;
 	};
 }

@@ -49,7 +49,7 @@
 @end
 
 namespace clv::plt{
-    MacWindow::MacWindow(gfx::GraphicsFactory& graphicsFactory, const WindowProps& props){
+    MacWindow::MacWindow(gfx::GraphicsFactory& graphicsFactory, const WindowDescriptor& props){
 		MacData data = { { props.width, props.height } };
 		
 		surface = graphicsFactory.createSurface(&data);

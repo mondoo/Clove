@@ -4,7 +4,7 @@
 #include "Clove/Graphics/Core/Surface.hpp"
 
 namespace clv::plt{
-	LinuxWindow::LinuxWindow(gfx::GraphicsFactory& graphicsFactory, const WindowProps& props){
+	LinuxWindow::LinuxWindow(gfx::GraphicsFactory& graphicsFactory, const WindowDescriptor& props){
         CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", props.title, props.width, props.height);
 
         display = XOpenDisplay(nullptr); //makes the connection to the client, where to display the window

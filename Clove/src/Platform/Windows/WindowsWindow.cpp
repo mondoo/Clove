@@ -4,7 +4,7 @@
 #include "Clove/Graphics/Core/Surface.hpp"
 
 namespace clv::plt{
-	WindowsWindow::WindowsWindow(gfx::GraphicsFactory& graphicsFactory, const WindowProps& props){
+	WindowsWindow::WindowsWindow(gfx::GraphicsFactory& graphicsFactory, const WindowDescriptor& props){
         CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", props.title, props.width, props.height);
 
 		instance = GetModuleHandle(nullptr);

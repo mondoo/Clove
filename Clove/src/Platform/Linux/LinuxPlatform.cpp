@@ -19,7 +19,7 @@ namespace clv::plt{
 		return *graphicsFactory;
 	}
 
-	std::shared_ptr<Window> LinuxPlatform::createWindow(const WindowProps& props){
+	std::shared_ptr<Window> LinuxPlatform::createWindow(const WindowDescriptor& props){
 		return std::make_shared<LinuxWindow>(*graphicsFactory, props);
 	}
 

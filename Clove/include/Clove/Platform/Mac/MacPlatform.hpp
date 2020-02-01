@@ -23,7 +23,7 @@ namespace clv::plt{
 
 		virtual gfx::GraphicsFactory& getGraphicsFactory() override;
 
-		virtual std::shared_ptr<Window> createWindow(const WindowProps& props) override;
+		virtual std::shared_ptr<Window> createWindow(const WindowDescriptor& props) override;
 		virtual std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size) override;
 	};
 }
