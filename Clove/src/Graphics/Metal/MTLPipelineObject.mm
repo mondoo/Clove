@@ -92,6 +92,8 @@ namespace clv::gfx::mtl{
 				return MTLVertexFormatFloat2;
 			case VertexElementType::normal:
 				return MTLVertexFormatFloat3;
+			case VertexElementType::colour3D:
+				return MTLVertexFormatFloat3;
 			default:
 				CLV_ASSERT(false, "Invalid element type");
 				return MTLVertexFormatFloat3;

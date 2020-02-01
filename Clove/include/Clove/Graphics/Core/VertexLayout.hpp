@@ -25,6 +25,11 @@ namespace clv::gfx{
 		static constexpr uint32_t elementCount = 3u;
 		static constexpr char semantic[] = "NORMAL";
 	};
+	template<> struct VertexElementData<VertexElementType::colour3D>{
+		using DataType = mth::vec3f;
+		static constexpr uint32_t elementCount = 3u;
+		static constexpr char semantic[] = "COLOUR3D";
+	};
 
 	class VertexElement{
 		//VARIABLES

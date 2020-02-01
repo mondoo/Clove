@@ -24,6 +24,7 @@ namespace clv::gfx{
 		position3D,
 		texture2D,
 		normal,
+		colour3D
 	};
 
 	struct Viewport{

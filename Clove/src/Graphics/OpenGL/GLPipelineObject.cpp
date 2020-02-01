@@ -102,6 +102,7 @@ namespace clv::gfx::ogl{
 			case VertexElementType::position3D:
 			case VertexElementType::texture2D:
 			case VertexElementType::normal:
+			case VertexElementType::colour3D:
 				return GL_FLOAT;
 			default:
 				CLV_ASSERT(false, "Invalid element type");
@@ -115,6 +116,7 @@ namespace clv::gfx::ogl{
 			case VertexElementType::position3D:
 			case VertexElementType::texture2D:
 			case VertexElementType::normal:
+			case VertexElementType::colour3D:
 				return GL_FALSE;
 			default:
 				CLV_ASSERT(false, "Invalid element type");

@@ -136,6 +136,8 @@ namespace clv::gfx::d3d{
 				return DXGI_FORMAT_R32G32_FLOAT;
 			case VertexElementType::normal:
 				return DXGI_FORMAT_R32G32B32_FLOAT;
+			case VertexElementType::colour3D:
+				return DXGI_FORMAT_R32G32B32_FLOAT;
 			default:
 				CLV_ASSERT(false, "Invalid element type");
 				return DXGI_FORMAT_R32G32B32_FLOAT;
