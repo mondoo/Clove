@@ -18,6 +18,7 @@ set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 #custom settings
 option(GAR_BUILD_TUNIC "Build the Tunic framework" ON)
 CMAKE_DEPENDENT_OPTION(GAR_BUILD_BULB "Build the Bulb editor (requries Tunic)" OFF "GAR_BUILD_TUNIC" OFF)
+option(GAR_BUILD_EXAMPLES OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -32,4 +33,9 @@ endif()
 #Builb
 if(MSVC AND GAR_BUILD_BULB) #not currently supported without MSVC
 	add_subdirectory(Bulb)
+endif()
+
+#Examples
+if(GAR_BUILD_EXAMPLES)
+	add_subdirectory(Examples)
 endif()
