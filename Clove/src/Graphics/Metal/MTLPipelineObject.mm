@@ -33,7 +33,7 @@ namespace clv::gfx::mtl{
 		
 		MTLVertexDescriptor* vertexDescriptor = [[MTLVertexDescriptor alloc] init];
 		NSUInteger offset = 0;
-		for(int32 i = 0; i < vertexLayout.count(); ++i){
+		for(int32_t i = 0; i < vertexLayout.count(); ++i){
 			const auto& element = vertexLayout.resolve(i);
 			const VertexElementType elementType = element.getType();
 			

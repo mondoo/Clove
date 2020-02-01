@@ -8,7 +8,7 @@ namespace clv::gfx::mtl {
 	private:
 		TextureDescriptor descriptor;
 		
-		int32 BPP = 0;
+		int32_t BPP = 0;
 		
 		id<MTLTexture> mtlTexture;
 		id<MTLSamplerState> mtlSampler;
@@ -17,7 +17,7 @@ namespace clv::gfx::mtl {
 	public:
 		MTLTexture() = delete;
 		MTLTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture);
-		MTLTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const void* data, int32 BPP);
+		MTLTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP);
 		
 		MTLTexture(const MTLTexture& other) = delete;
 		MTLTexture(MTLTexture&& other) noexcept;
