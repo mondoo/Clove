@@ -16,6 +16,9 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
+    - name: Update
+      run: sudo run apt-get update
+      
     - name: Install x11
       run: sudo apt-get install libx11-dev
         
