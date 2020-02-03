@@ -1,7 +1,5 @@
 #pragma once
 
-//TODO: inl
-
 namespace clv::mem{
 	template<typename ItemType>
 	class PoolAllocator{
