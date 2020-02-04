@@ -1,5 +1,6 @@
 #include "Clove/Platform/Core/Window.hpp"
 
+#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/Surface.hpp"
 
 namespace clv::plt{
@@ -31,7 +32,11 @@ namespace clv::plt{
 		return mouse;
 	}
 
+	gfx::GraphicsFactory& Window::getGraphicsFactory(){
+		return *graphicsFactory;
+	}
+
 	gfx::Surface& Window::getSurface(){
-		return *surface.get();
+		return *surface;
 	}
 }

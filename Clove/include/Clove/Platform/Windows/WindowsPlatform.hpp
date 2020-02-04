@@ -4,14 +4,9 @@
 
 namespace clv::plt{
 	class WindowsPlatform : public Platform{
-		//VARIABLES
-	private:
-		std::unique_ptr<gfx::GraphicsFactory> graphicsFactory;
-
 		//FUNCTIONS
 	public:
-		WindowsPlatform() = delete;
-		WindowsPlatform(gfx::API api);
+		WindowsPlatform();
 
 		WindowsPlatform(const WindowsPlatform& other) = delete;
 		WindowsPlatform(WindowsPlatform&& other) noexcept;
@@ -21,9 +16,7 @@ namespace clv::plt{
 
 		virtual ~WindowsPlatform();
 
-		virtual gfx::GraphicsFactory& getGraphicsFactory() override;
-
-		virtual std::shared_ptr<Window> createWindow(const WindowProps& props) override;
-		virtual std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size) override;
+		virtual std::shared_ptr<Window> createWindow(const WindowDescriptor& descriptor) override;
+		virtual std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) override;
 	};
 }

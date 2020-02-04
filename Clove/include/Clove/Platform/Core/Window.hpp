@@ -6,6 +6,7 @@
 
 namespace clv::gfx{
 	enum class API;
+	class GraphicsFactory;
 	class Surface;
 }
 
@@ -20,6 +21,7 @@ namespace clv::plt{
 		Keyboard keyboard;
 		Mouse mouse;
 
+		std::unique_ptr<gfx::GraphicsFactory> graphicsFactory;
 		std::shared_ptr<gfx::Surface> surface;
 
 		//FUNCTIONS
@@ -51,6 +53,7 @@ namespace clv::plt{
 		Keyboard& getKeyboard();
 		Mouse& getMouse();
 
+		gfx::GraphicsFactory& getGraphicsFactory();
 		gfx::Surface& getSurface();
 
 	protected:

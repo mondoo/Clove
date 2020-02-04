@@ -37,8 +37,8 @@ namespace clv::plt{
         //FUNCTIONS
     public:
         LinuxWindow() = delete;
-		LinuxWindow(gfx::GraphicsFactory& graphicsFactory, const WindowProps& props);
-		LinuxWindow(gfx::GraphicsFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size);
+		LinuxWindow(const WindowDescriptor& descriptor);
+		LinuxWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api);
 
 		LinuxWindow(const LinuxWindow& other) = delete;
 		LinuxWindow(LinuxWindow&& other) noexcept = delete;

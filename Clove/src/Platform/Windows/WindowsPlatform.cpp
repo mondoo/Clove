@@ -1,13 +1,9 @@
 #include "Clove/Platform/Windows/WindowsPlatform.hpp"
 
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
-#include "Clove/Graphics/Core/Graphics.hpp"
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 
 namespace clv::plt{
-	WindowsPlatform::WindowsPlatform(gfx::API api){
-		graphicsFactory = gfx::initialise(api);
-	}
+	WindowsPlatform::WindowsPlatform() = default;
 
 	WindowsPlatform::WindowsPlatform(WindowsPlatform&& other) noexcept = default;
 
@@ -15,15 +11,11 @@ namespace clv::plt{
 
 	WindowsPlatform::~WindowsPlatform() = default;
 
-	gfx::GraphicsFactory& WindowsPlatform::getGraphicsFactory(){
-		return *graphicsFactory;
+	std::shared_ptr<Window> WindowsPlatform::createWindow(const WindowDescriptor& descriptor){
+		return std::make_shared<WindowsWindow>(descriptor);
 	}
 
-	std::shared_ptr<Window> WindowsPlatform::createWindow(const WindowProps& props){
-		return std::make_shared<WindowsWindow>(*graphicsFactory, props);
-	}
-
-	std::shared_ptr<Window> WindowsPlatform::createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
-		return std::make_shared<WindowsWindow>(*graphicsFactory, parentWindow, position, size);
+	std::shared_ptr<Window> WindowsPlatform::createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api){
+		return std::make_shared<WindowsWindow>(parentWindow, position, size, api);
 	}
 }

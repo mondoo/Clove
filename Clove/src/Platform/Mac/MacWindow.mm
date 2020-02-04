@@ -1,5 +1,6 @@
 #include "Clove/Platform/Mac/MacWindow.hpp"
 
+#include "Clove/Graphics/Core/Graphics.hpp"
 #include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 
@@ -49,24 +50,26 @@
 @end
 
 namespace clv::plt{
-    MacWindow::MacWindow(gfx::GraphicsFactory& graphicsFactory, const WindowProps& props){
-		MacData data = { { props.width, props.height } };
+    MacWindow::MacWindow(const WindowDescriptor& descriptor){
+		MacData data = { { descriptor.width, descriptor.height } };
 		
-		surface = graphicsFactory.createSurface(&data);
+		graphicsFactory = gfx::initialise(descriptor.api);
+		surface = graphicsFactory->createSurface(&data);
 		
-		NSString* nameString = [NSString stringWithCString:props.title.c_str() encoding:[NSString defaultCStringEncoding]];
+		NSString* nameString = [NSString stringWithCString:descriptor.title.c_str() encoding:[NSString defaultCStringEncoding]];
 		
 		windowProxy = [[MacWindowProxy alloc] initWithWindowData:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getMTKView()
-														   width:props.width
-														  height:props.height
+														   width:descriptor.width
+														  height:descriptor.height
 															name:nameString];
 		windowProxy.cloveWindow = this;
     }
 	
-	MacWindow::MacWindow(gfx::GraphicsFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+	MacWindow::MacWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api){
 		MacData data = { { size.x, size.y } };
 		
-		surface = graphicsFactory.createSurface(&data);
+		graphicsFactory = gfx::initialise(api);
+		surface = graphicsFactory->createSurface(&data);
 		
 		windowProxy = [[MacWindowProxy alloc] initWithParentWindow:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getMTKView()
 													  parentWindow:parentWindow
