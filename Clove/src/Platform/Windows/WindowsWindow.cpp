@@ -4,6 +4,8 @@
 #include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/Surface.hpp"
 
+#define CLV_WINDOWS_QUIT 25397841 //Note: this number is completely random
+
 namespace clv::plt{
 	WindowsWindow::WindowsWindow(const WindowDescriptor& descriptor){
         CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
