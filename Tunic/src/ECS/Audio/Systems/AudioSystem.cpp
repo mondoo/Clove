@@ -127,10 +127,10 @@ namespace tnc::ecs::aud{
 
 	int AudioSystem::soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
 		AudioComponent* data = static_cast<AudioComponent*>(userData);
-		int32* out = static_cast<int32*>(outputBuffer);
-		int32* cursor = out;
-		int32 currentFrameCount = frameCount;
-		int32 frameCountToRead = 0;
+		int32_t* out = static_cast<int32_t*>(outputBuffer);
+		int32_t* cursor = out;
+		int32_t currentFrameCount = frameCount;
+		int32_t frameCountToRead = 0;
 
 		while(currentFrameCount > 0){
 			//Seek to the position
@@ -157,10 +157,10 @@ namespace tnc::ecs::aud{
 	
 	int AudioSystem::soundPlayback_Once(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
 		AudioComponent* data = static_cast<AudioComponent*>(userData);
-		int32* out = static_cast<int32*>(outputBuffer);
-		int32* cursor = out;
-		int32 currentFrameCount = frameCount;
-		int32 frameCountToRead = 0;
+		int32_t* out = static_cast<int32_t*>(outputBuffer);
+		int32_t* cursor = out;
+		int32_t currentFrameCount = frameCount;
+		int32_t frameCountToRead = 0;
 
 		while(currentFrameCount > 0){
 			//Seek to the position

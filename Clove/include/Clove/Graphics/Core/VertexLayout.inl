@@ -9,13 +9,15 @@ namespace clv::gfx{
 				return sizeof(VertexElementData<VertexElementType::texture2D>::DataType);
 			case VertexElementType::normal:
 				return sizeof(VertexElementData<VertexElementType::normal>::DataType);
+			case VertexElementType::colour3D:
+				return sizeof(VertexElementData<VertexElementType::colour3D>::DataType);
 			default:
 				CLV_ASSERT(false, "Invalid element type. {0}", CLV_FUNCTION_NAME);
 				return 0u;
 		}
 	}
 
-	constexpr uint32 VertexElement::countOf(VertexElementType type){
+	constexpr uint32_t VertexElement::countOf(VertexElementType type){
 		switch(type){
 			case VertexElementType::position2D:
 				return VertexElementData<VertexElementType::position2D>::elementCount;
@@ -25,6 +27,8 @@ namespace clv::gfx{
 				return VertexElementData<VertexElementType::texture2D>::elementCount;
 			case VertexElementType::normal:
 				return VertexElementData<VertexElementType::normal>::elementCount;
+			case VertexElementType::colour3D:
+				return VertexElementData<VertexElementType::colour3D>::elementCount;
 			default:
 				CLV_ASSERT(false, "Invalid element type. {0}", CLV_FUNCTION_NAME);
 				return 0u;
@@ -41,6 +45,8 @@ namespace clv::gfx{
 				return VertexElementData<VertexElementType::texture2D>::semantic;
 			case VertexElementType::normal:
 				return VertexElementData<VertexElementType::normal>::semantic;
+			case VertexElementType::colour3D:
+				return VertexElementData<VertexElementType::colour3D>::semantic;
 			default:
 				CLV_ASSERT(false, "Invalid element type. {0}", CLV_FUNCTION_NAME);
 				return nullptr;
@@ -88,6 +94,10 @@ namespace clv::gfx{
 
 			case VertexElementType::normal:
 				setAttribute<VertexElementType::normal>(attribute, std::forward<T>(val));
+				break;
+
+			case VertexElementType::colour3D:
+				setAttribute<VertexElementType::colour3D>(attribute, std::forward<T>(val));
 				break;
 
 			default:

@@ -39,6 +39,6 @@ namespace clv{
 #endif
 
 	inline std::ostream& operator <<(std::ostream& os, MouseButton button){
-		return os << static_cast<int32>(button);
+		return os << static_cast<int32_t>(button);
 	}
 }

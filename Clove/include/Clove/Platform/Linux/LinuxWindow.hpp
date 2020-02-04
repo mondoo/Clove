@@ -20,7 +20,7 @@ namespace clv::plt{
 	private:
 		Display* display = nullptr;
 		Screen* screen = nullptr;
-		int32 screenID;
+		int32_t screenID;
         ::Window window;
 
         XEvent xevent;

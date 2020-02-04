@@ -6,7 +6,7 @@ namespace clv{
 	namespace loader{
 		struct MeshInfo{
 			std::vector<float> vertexData;
-			std::vector<uint32> indices;
+			std::vector<uint32_t> indices;
 
 			std::vector<mth::vec3f> verticies;
 			std::vector<mth::vec2f> texCoords;

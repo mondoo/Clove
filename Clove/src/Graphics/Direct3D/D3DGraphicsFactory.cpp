@@ -34,7 +34,7 @@ namespace clv::gfx::d3d{
 		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, pathToTexture);
 	}
 
-	std::shared_ptr<Texture> D3DGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP){
+	std::shared_ptr<Texture> D3DGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP){
 		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, data, BPP);
 	}
 

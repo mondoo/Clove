@@ -33,7 +33,7 @@ namespace clv::gfx::mtl{
 		
 		MTLVertexDescriptor* vertexDescriptor = [[MTLVertexDescriptor alloc] init];
 		NSUInteger offset = 0;
-		for(int32 i = 0; i < vertexLayout.count(); ++i){
+		for(int32_t i = 0; i < vertexLayout.count(); ++i){
 			const auto& element = vertexLayout.resolve(i);
 			const VertexElementType elementType = element.getType();
 			
@@ -91,6 +91,8 @@ namespace clv::gfx::mtl{
 			case VertexElementType::texture2D:
 				return MTLVertexFormatFloat2;
 			case VertexElementType::normal:
+				return MTLVertexFormatFloat3;
+			case VertexElementType::colour3D:
 				return MTLVertexFormatFloat3;
 			default:
 				CLV_ASSERT(false, "Invalid element type");

@@ -18,7 +18,7 @@ namespace clv::gfx::ogl{
 		}
 	}
 
-	GLTexture::GLTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP)
+	GLTexture::GLTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP)
 		: descriptor(descriptor)
 		, BPP(BPP){
 		createTexture(descriptor, data);
@@ -32,7 +32,7 @@ namespace clv::gfx::ogl{
 		glDeleteTextures(1, &textureID);
 	}
 
-	const uint32 GLTexture::getTextureID() const{
+	const GLuint GLTexture::getTextureID() const{
 		return textureID;
 	}
 
@@ -79,10 +79,10 @@ namespace clv::gfx::ogl{
 		const GLenum format = getFormat(usage);
 		const GLenum type = getType(usage);
 
-		const uint8 arraySize = descriptor.arraySize;
+		const uint8_t arraySize = descriptor.arraySize;
 
 		if(arraySize > 1){
-			for(uint8 i = 0; i < arraySize; ++i){
+			for(uint8_t i = 0; i < arraySize; ++i){
 				glTexImage3D(target, 0, internalFormat, width, height, i, 0, format, type, pixels);
 			}
 		} else{
@@ -103,19 +103,19 @@ namespace clv::gfx::ogl{
 		const GLenum format = getFormat(usage);
 		const GLenum type = getType(usage);
 
-		const uint8 arraySize = descriptor.arraySize;
-		const uint8 cubeFaces = 6;
+		const uint8_t arraySize = descriptor.arraySize;
+		const uint8_t cubeFaces = 6;
 
 		if(arraySize > 1){
 			glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, internalFormat, width, height, cubeFaces * arraySize, 0, format, type, nullptr);
 		} else{
-			for(uint8 i = 0; i < cubeFaces; ++i){
+			for(uint8_t i = 0; i < cubeFaces; ++i){
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, height, 0, format, type, pixels);
 			}
 		}
 	}
 
-	GLenum GLTexture::getTarget(const TextureStyle style, const uint8 arraySize) const{
+	GLenum GLTexture::getTarget(const TextureStyle style, const uint8_t arraySize) const{
 		switch(style){
 			case TextureStyle::Default:
 				return (arraySize > 1) ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D;

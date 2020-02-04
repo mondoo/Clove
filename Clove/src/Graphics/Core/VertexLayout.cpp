@@ -28,7 +28,7 @@ namespace clv::gfx{
 		return sizeOf(type);
 	}
 	
-	uint32 VertexElement::getCount() const{
+	uint32_t VertexElement::getCount() const{
 		return countOf(type);
 	}
 
@@ -49,6 +49,8 @@ namespace clv::gfx{
 			return VertexElementType::texture2D;
 		} else if(VertexElementData<VertexElementType::normal>::semantic == semantic){
 			return VertexElementType::normal;
+		} else if (VertexElementData<VertexElementType::colour3D>::semantic == semantic){
+			return VertexElementType::colour3D;
 		}
 
 		CLV_ASSERT(false, "{0} could not find proper element type", CLV_FUNCTION_NAME);

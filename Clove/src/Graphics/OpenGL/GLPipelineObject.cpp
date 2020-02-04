@@ -22,7 +22,7 @@ namespace clv::gfx::ogl{
 		vertexLayout.clear();
 		GLint attribCount = 0;
 		glGetProgramiv(programID, GL_ACTIVE_ATTRIBUTES, &attribCount);
-		for(int32 i = 0; i < attribCount; ++i){
+		for(int32_t i = 0; i < attribCount; ++i){
 			GLchar name[255];
 			GLsizei length = 0;
 			GLint size = 0;
@@ -37,7 +37,7 @@ namespace clv::gfx::ogl{
 		glBindVertexArray(vertexArrayID);
 
 		GLuint offset = 0;
-		for(uint32 i = 0; i < vertexLayout.count(); ++i){
+		for(uint32_t i = 0; i < vertexLayout.count(); ++i){
 			const auto& element = vertexLayout.resolve(i);
 			const VertexElementType elementType = element.getType();
 
@@ -102,6 +102,7 @@ namespace clv::gfx::ogl{
 			case VertexElementType::position3D:
 			case VertexElementType::texture2D:
 			case VertexElementType::normal:
+			case VertexElementType::colour3D:
 				return GL_FLOAT;
 			default:
 				CLV_ASSERT(false, "Invalid element type");
@@ -115,6 +116,7 @@ namespace clv::gfx::ogl{
 			case VertexElementType::position3D:
 			case VertexElementType::texture2D:
 			case VertexElementType::normal:
+			case VertexElementType::colour3D:
 				return GL_FALSE;
 			default:
 				CLV_ASSERT(false, "Invalid element type");

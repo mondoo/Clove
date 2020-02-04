@@ -56,6 +56,6 @@ namespace tnc::rnd{
 	};
 
 	struct LightNumAlignment {
-		alignas(16) clv::uint32 numLights;
+		alignas(16) uint32_t numLights;
 	};
 }

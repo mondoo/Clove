@@ -152,7 +152,7 @@ namespace tnc::ecs::_3D{
 				light->lightData.shadowTransforms[4] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0, 0.0, 1.0 }, mth::vec3f{ 0.0,-1.0, 0.0 });
 				light->lightData.shadowTransforms[5] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0, 0.0,-1.0 }, mth::vec3f{ 0.0,-1.0, 0.0 });
 
-				const int32 lightIndex = sceneData.numLights++;
+				const int32_t lightIndex = sceneData.numLights++;
 				sceneData.currentLightInfo.intensities[lightIndex] = light->lightData.intensity;
 
 				sceneData.shadowTransforms[lightIndex] = light->lightData.shadowTransforms;
@@ -196,7 +196,7 @@ namespace tnc::ecs::_3D{
 				auto vb = mesh->getVertexBufferForLayout(vertexLayout);
 				auto ib = mesh->getIndexBuffer();
 
-				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32_t>(vertexLayout.size()));
 				commandBuffer->bindIndexBuffer(*ib);
 
 				commandBuffer->drawIndexed(mesh->getIndexCount());
@@ -223,7 +223,7 @@ namespace tnc::ecs::_3D{
 		shadowMapCommandBuffer->bindPipelineObject(*shadowPipeline);
 		shadowMapCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 		std::vector<MaterialInstance> capturedMaterials;
-		for(uint32 i = 0; i < sceneData.numLights; ++i){
+		for(uint32_t i = 0; i < sceneData.numLights; ++i){
 			const auto generateShadowMap = [this, i, &capturedMaterials](const std::shared_ptr<Mesh>& mesh){
 				auto meshMaterial = mesh->getMaterialInstance();
 				meshMaterial.setData(BBP_ShadowData, PointShadowShaderData{ sceneData.shadowTransforms[i] }, ShaderStage::Geometry);
@@ -236,7 +236,7 @@ namespace tnc::ecs::_3D{
 				auto ib = mesh->getIndexBuffer();
 				meshMaterial.bind(shadowMapCommandBuffer);
 
-				shadowMapCommandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				shadowMapCommandBuffer->bindVertexBuffer(*vb, static_cast<uint32_t>(vertexLayout.size()));
 				shadowMapCommandBuffer->bindIndexBuffer(*ib);
 
 				shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());

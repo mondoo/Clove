@@ -143,12 +143,12 @@ namespace clv::plt{
 
     mth::vec2i LinuxWindow::getPosition() const{
         ::Window rootWindow;
-        int32 posX;
-        int32 posY;
-        uint32 width;
-        uint32 height;
-        uint32 borderWidth;
-        uint32 depth;
+        int32_t posX;
+        int32_t posY;
+        uint32_t width;
+        uint32_t height;
+        uint32_t borderWidth;
+        uint32_t depth;
 
         if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0){
             return { posX, posY };
@@ -160,12 +160,12 @@ namespace clv::plt{
 
     mth::vec2i LinuxWindow::getSize() const{
         ::Window rootWindow;
-        int32 posX;
-        int32 posY;
-        uint32 width;
-        uint32 height;
-        uint32 borderWidth;
-        uint32 depth;
+        int32_t posX;
+        int32_t posY;
+        uint32_t width;
+        uint32_t height;
+        uint32_t borderWidth;
+        uint32_t depth;
 
         if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0){
             return { width, height };
@@ -245,7 +245,7 @@ namespace clv::plt{
 				case ConfigureNotify:
 					{
 						XConfigureEvent xce = xevent.xconfigure;
-						if(static_cast<uint32>(xce.width) != prevConfigureNotifySize.x || static_cast<uint32>(xce.height) != prevConfigureNotifySize.y){
+						if(static_cast<uint32_t>(xce.width) != prevConfigureNotifySize.x || static_cast<uint32_t>(xce.height) != prevConfigureNotifySize.y){
 							const mth::vec2i size{ xce.width, xce.height };
 							prevConfigureNotifySize = size;
 							if(surface){

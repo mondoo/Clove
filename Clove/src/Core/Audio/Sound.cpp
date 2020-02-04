@@ -29,15 +29,15 @@ namespace clv::aud{
 		return file.readf(ptr, frames);
 	}
 
-	int32 Sound::getChannels() const{
+	int32_t Sound::getChannels() const{
 		return file.channels();
 	}
 
-	int32 Sound::getSamplerate() const{
+	int32_t Sound::getSamplerate() const{
 		return file.samplerate();
 	}
 
-	int32 Sound::getFrames() const{
+	int32_t Sound::getFrames() const{
 		return file.frames();
 	}
 }

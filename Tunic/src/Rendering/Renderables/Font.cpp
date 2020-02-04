@@ -56,7 +56,7 @@ namespace tnc::rnd{
 
 	Font::~Font() = default;
 
-	void Font::setSize(uint32 size){
+	void Font::setSize(uint32_t size){
 		FT_Set_Pixel_Sizes(face.get(), 0, static_cast<FT_UInt>(size));
 	}
 

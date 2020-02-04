@@ -23,8 +23,8 @@ namespace tnc::rnd{
 		loadedBufferData = { layout };
 		loadedBufferData.resize(vertexCount);
 
-		for(int32 i = 0; i < vertexCount; ++i){
-			for(int32 j = 0; j < layout.count(); ++j){
+		for(int32_t i = 0; i < vertexCount; ++i){
+			for(int32_t j = 0; j < layout.count(); ++j){
 				switch(layout.resolve(j).getType()){
 					case VertexElementType::position3D:
 						loadedBufferData[i].getAttribute<VertexElementType::position3D>() = mth::vec3f{ info.getData<VertexElementType::position3D>()[i] };
@@ -46,7 +46,7 @@ namespace tnc::rnd{
 		initialiseIndexBuffer(indices);
 	}
 
-	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32>& indices, MaterialInstance materialInstance)
+	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32_t>& indices, MaterialInstance materialInstance)
 		: materialInstance(std::move(materialInstance))
 		, loadedBufferData(vbData)
 		, indices(indices){
@@ -68,8 +68,8 @@ namespace tnc::rnd{
 		return materialInstance;
 	}
 
-	uint32 Mesh::getIndexCount(){
-		return static_cast<uint32>(indices.size());
+	uint32_t Mesh::getIndexCount(){
+		return static_cast<uint32_t>(indices.size());
 	}
 
 	std::shared_ptr<Buffer> Mesh::getVertexBufferForLayout(const VertexLayout& layout){
@@ -84,8 +84,8 @@ namespace tnc::rnd{
 		gfx::VertexBufferData vertexArray{ layout };
 		vertexArray.resize(vertexCount);
 
-		for(int32 i = 0; i < vertexCount; ++i){
-			for(int32 j = 0; j < layout.count(); ++j){
+		for(int32_t i = 0; i < vertexCount; ++i){
+			for(int32_t j = 0; j < layout.count(); ++j){
 				switch(layout.resolve(j).getType()){
 					case VertexElementType::position2D:
 						vertexArray[i].getAttribute<VertexElementType::position2D>() = loadedBufferData[i].getAttribute<VertexElementType::position2D>();
@@ -125,8 +125,8 @@ namespace tnc::rnd{
 		vertexBuffer = Application::get().getGraphicsFactory().createBuffer(vbdesc, vertexArray.data());
 	}
 
-	void Mesh::initialiseIndexBuffer(const std::vector<uint32>& indices){
-		const std::size_t indexSize = sizeof(uint32);
+	void Mesh::initialiseIndexBuffer(const std::vector<uint32_t>& indices){
+		const std::size_t indexSize = sizeof(uint32_t);
 
 		BufferDescriptor ibdesc{};
 		ibdesc.elementSize	= indexSize;

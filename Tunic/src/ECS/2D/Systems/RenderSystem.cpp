@@ -21,7 +21,7 @@ using namespace clv::gfx;
 
 namespace tnc::ecs::_2D{
 	RenderSystem::RenderSystem(){
-		const std::vector<uint32> indices = {
+		const std::vector<uint32_t> indices = {
 			0, 1, 2,
 			0, 2, 3
 		};
@@ -193,7 +193,7 @@ namespace tnc::ecs::_2D{
 						const float xpos = cursorPos.x + glyph.bearing.x;
 						const float ypos = cursorPos.y - (height - glyph.bearing.y);
 
-						const uint8 textureArraySize = 1;
+						const uint8_t textureArraySize = 1;
 						const TextureDescriptor descriptor = {
 							TextureStyle::Default,
 							TextureUsage::Font,
@@ -239,7 +239,7 @@ namespace tnc::ecs::_2D{
 				auto vb = sceneData.spriteMesh->getVertexBufferForLayout(vertexLayout);
 				auto ib = sceneData.spriteMesh->getIndexBuffer();
 
-				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32_t>(vertexLayout.size()));
 				commandBuffer->bindIndexBuffer(*ib);
 
 				commandBuffer->drawIndexed(sceneData.spriteMesh->getIndexCount());
@@ -258,7 +258,7 @@ namespace tnc::ecs::_2D{
 				auto vb = sceneData.widgetMesh->getVertexBufferForLayout(vertexLayout);
 				auto ib = sceneData.widgetMesh->getIndexBuffer();
 
-				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32_t>(vertexLayout.size()));
 				commandBuffer->bindIndexBuffer(*ib);
 
 				commandBuffer->drawIndexed(sceneData.widgetMesh->getIndexCount());
@@ -278,7 +278,7 @@ namespace tnc::ecs::_2D{
 				auto vb = sceneData.characterMesh->getVertexBufferForLayout(vertexLayout);
 				auto ib = sceneData.characterMesh->getIndexBuffer();
 
-				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32>(vertexLayout.size()));
+				commandBuffer->bindVertexBuffer(*vb, static_cast<uint32_t>(vertexLayout.size()));
 				commandBuffer->bindIndexBuffer(*ib);
 
 				commandBuffer->drawIndexed(sceneData.characterMesh->getIndexCount());

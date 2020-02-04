@@ -17,7 +17,7 @@ namespace clv::gfx::d3d{
 	class D3DRenderTarget : public RenderTarget{
 		//VARIABLES
 	private:
-		uint32 lockCount = 0;
+		uint32_t lockCount = 0u;
 		mth::vec4f clearColour;
 		bool canClear = true;
 

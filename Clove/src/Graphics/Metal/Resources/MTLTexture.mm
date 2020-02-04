@@ -19,7 +19,7 @@ namespace clv::gfx::mtl{
 		}
 	}
 	
-	MTLTexture::MTLTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const void* data, int32 BPP)
+	MTLTexture::MTLTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP)
 		: descriptor(descriptor), BPP(BPP){
 		createTexture(mtlDevice, descriptor, data);
 	}

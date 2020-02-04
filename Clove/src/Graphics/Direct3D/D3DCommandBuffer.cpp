@@ -60,7 +60,7 @@ namespace clv::gfx::d3d{
 		commands.push_back(bindIBCommand);
 	}
 
-	void D3DCommandBuffer::bindVertexBuffer(const Buffer& buffer, const uint32 stride){
+	void D3DCommandBuffer::bindVertexBuffer(const Buffer& buffer, const uint32_t stride){
 		const auto bindVBCommand = [CAPTURE_CONTEXT, &buffer, stride](){
 			const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
 			const auto& descriptor = d3dBuffer.getDescriptor();
@@ -71,7 +71,7 @@ namespace clv::gfx::d3d{
 		commands.push_back(bindVBCommand);
 	}
 
-	void D3DCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32 bindingPoint){
+	void D3DCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32_t bindingPoint){
 		const auto bindSRBCommand = [CAPTURE_CONTEXT, &buffer, shaderType, bindingPoint](){
 			const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
 			switch(shaderType){
@@ -125,7 +125,7 @@ namespace clv::gfx::d3d{
 		commands.push_back(bindPOCommand);
 	}
 
-	void D3DCommandBuffer::bindTexture(const Texture* texture, const uint32 bindingPoint){
+	void D3DCommandBuffer::bindTexture(const Texture* texture, const uint32_t bindingPoint){
 		const auto bindTextureCommand = [CAPTURE_CONTEXT, texture, bindingPoint](){
 			if(const D3DTexture* d3dTexture = static_cast<const D3DTexture*>(texture)){
 				d3dContext->PSSetShaderResources(bindingPoint, 1u, d3dTexture->getD3DShaderResourceView().GetAddressOf());
@@ -177,7 +177,7 @@ namespace clv::gfx::d3d{
 		commands.push_back(setDECommand);
 	}
 
-	void D3DCommandBuffer::drawIndexed(const uint32 count){
+	void D3DCommandBuffer::drawIndexed(const uint32_t count){
 		const auto drawCommand = [CAPTURE_CONTEXT, count](){
 			DX11_INFO_PROVIDER;
 			DX11_THROW_INFO_ONLY(d3dContext->DrawIndexed(static_cast<UINT>(count), 0u, 0u));

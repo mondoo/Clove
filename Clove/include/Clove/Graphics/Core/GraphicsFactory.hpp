@@ -26,7 +26,7 @@ namespace clv::gfx{
 		virtual std::shared_ptr<Buffer> createBuffer(const BufferDescriptor& descriptor, const void* data) = 0;
 
 		virtual std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture) = 0;
-		virtual std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, const void* data, int32 BPP) = 0;
+		virtual std::shared_ptr<Texture> createTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP) = 0;
 
 		virtual std::shared_ptr<PipelineObject> createPipelineObject() = 0;
 
