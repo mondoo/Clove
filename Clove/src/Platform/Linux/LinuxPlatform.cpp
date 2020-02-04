@@ -1,13 +1,9 @@
 #include "Clove/Platform/Linux/LinuxPlatform.hpp"
 
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
-#include "Clove/Graphics/Core/Graphics.hpp"
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
 
 namespace clv::plt{
-	LinuxPlatform::LinuxPlatform(gfx::API api){
-		graphicsFactory = gfx::initialise(api);
-	}
+	LinuxPlatform::LinuxPlatform() = default;
 
 	LinuxPlatform::LinuxPlatform(LinuxPlatform&& other) noexcept = default;
 
@@ -15,15 +11,11 @@ namespace clv::plt{
 
 	LinuxPlatform::~LinuxPlatform() = default;
 
-	gfx::GraphicsFactory& LinuxPlatform::getGraphicsFactory(){
-		return *graphicsFactory;
-	}
-
 	std::shared_ptr<Window> LinuxPlatform::createWindow(const WindowDescriptor& props){
-		return std::make_shared<LinuxWindow>(*graphicsFactory, props);
+		return std::make_shared<LinuxWindow>(props);
 	}
 
-    std::shared_ptr<Window> LinuxPlatform::createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
-        return std::make_shared<LinuxWindow>(*graphicsFactory, parentWindow, position, size);
+    std::shared_ptr<Window> LinuxPlatform::createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api){
+        return std::make_shared<LinuxWindow>(parentWindow, position, size, api);
 	}
 }

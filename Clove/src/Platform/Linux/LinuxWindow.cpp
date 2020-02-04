@@ -1,11 +1,12 @@
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
 
+#include "Clove/Graphics/Core/Graphics.hpp"
 #include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/Surface.hpp"
 
 namespace clv::plt{
-	LinuxWindow::LinuxWindow(gfx::GraphicsFactory& graphicsFactory, const WindowDescriptor& props){
-        CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", props.title, props.width, props.height);
+	LinuxWindow::LinuxWindow(const WindowDescriptor& descriptor){
+        CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
         display = XOpenDisplay(nullptr); //makes the connection to the client, where to display the window
 
@@ -18,9 +19,11 @@ namespace clv::plt{
         screen = DefaultScreenOfDisplay(display); //Get the screen of the display
         screenID = DefaultScreen(display);
 
-        //Create the context first to get the visual info
+		graphicsFactory = gfx::initialise(descriptor.api);
+
+		//Create the context first to get the visual info
         data = { display, &window, &visual };
-        surface = graphicsFactory.createSurface(&data);
+        surface = graphicsFactory->createSurface(&data);
 
         if(screenID != visual->screen){
             //TODO: Exception
@@ -36,7 +39,7 @@ namespace clv::plt{
         windowAttribs.event_mask        = ExposureMask;
 
         window = XCreateWindow(display, RootWindow(display, screenID),
-                               0, 0, props.width, props.height,
+                               0, 0, descriptor.width, descriptor.height,
                                0, visual->depth, InputOutput, visual->visual,
                                CWBackPixel | CWColormap | CWBorderPixel | CWEventMask,
                                &windowAttribs);
@@ -55,7 +58,7 @@ namespace clv::plt{
 
         XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
 
-        XStoreName(display, window, props.title.c_str());
+        XStoreName(display, window, descriptor.title.c_str());
 
         XClearWindow(display, window);
         XMapRaised(display, window);
@@ -63,7 +66,7 @@ namespace clv::plt{
         CLV_LOG_DEBUG("Window created");
 	}
 
-	LinuxWindow::LinuxWindow(gfx::GraphicsFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+	LinuxWindow::LinuxWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api){
         CLV_LOG_TRACE("Creating child window: ({1}, {2})", size.x, size.y);
 
         const ::Window* nativeParentWindow = reinterpret_cast<::Window*>(parentWindow.getNativeWindow());
@@ -79,9 +82,11 @@ namespace clv::plt{
         screen = DefaultScreenOfDisplay(display); //Get the screen of the display
         screenID = DefaultScreen(display);
 
-        //Create the context first to get the visual info
+		graphicsFactory = gfx::initialise(api);
+
+		//Create the context first to get the visual info
         data = { display, &window, &visual };
-        surface = graphicsFactory.createSurface(&data);
+        surface = graphicsFactory->createSurface(&data);
 
         if(screenID != visual->screen){
             //TODO: Exception
