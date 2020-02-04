@@ -1,11 +1,12 @@
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 
+#include "Clove/Graphics/Core/Graphics.hpp"
 #include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/Surface.hpp"
 
 namespace clv::plt{
-	WindowsWindow::WindowsWindow(gfx::GraphicsFactory& graphicsFactory, const WindowDescriptor& props){
-        CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", props.title, props.width, props.height);
+	WindowsWindow::WindowsWindow(const WindowDescriptor& descriptor){
+        CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
 		instance = GetModuleHandle(nullptr);
 
@@ -26,7 +27,7 @@ namespace clv::plt{
 
 		CLV_LOG_TRACE("Windows class registered");
 
-		const std::string wideTitle(props.title.begin(), props.title.end());
+		const std::string wideTitle(descriptor.title.begin(), descriptor.title.end());
 
 		const DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_VISIBLE;
 
@@ -35,7 +36,7 @@ namespace clv::plt{
 			wideTitle.c_str(),
 			windowStyle,
 			CW_USEDEFAULT, CW_USEDEFAULT,
-			props.width, props.height,
+			descriptor.width, descriptor.height,
 			nullptr,
 			nullptr,
 			instance,
@@ -48,13 +49,15 @@ namespace clv::plt{
 
 		CLV_LOG_DEBUG("Window created");
 
-		data = { windowsHandle, props.width, props.height };
+		graphicsFactory = gfx::initialise(descriptor.api);
 
-		surface = graphicsFactory.createSurface(&data);
+		data = { windowsHandle, descriptor.width, descriptor.height };
+
+		surface = graphicsFactory->createSurface(&data);
 		surface->makeCurrent();
 	}
 
-	WindowsWindow::WindowsWindow(gfx::GraphicsFactory& graphicsFactory, const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size){
+	WindowsWindow::WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api){
 		CLV_LOG_TRACE("Creating child window: ({1}, {2})", size.x, size.y);
 
 		WNDCLASSEX wc{};
@@ -94,9 +97,11 @@ namespace clv::plt{
 
 		CLV_LOG_DEBUG("Window created");
 
+		graphicsFactory = gfx::initialise(api);
+
 		data = { windowsHandle, size.x, size.y };
 
-		surface = graphicsFactory.createSurface(&data);
+		surface = graphicsFactory->createSurface(&data);
 		surface->makeCurrent();
 	}
 

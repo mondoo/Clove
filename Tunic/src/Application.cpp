@@ -21,7 +21,7 @@ namespace tnc{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		platformInstance = clv::plt::createPlatformInstance(api);
+		platformInstance = clv::plt::createPlatformInstance();
 
 		mainWindow = platformInstance->createWindow({});
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
@@ -45,9 +45,9 @@ namespace tnc{
 		CLV_ASSERT(!instance, "Application already exists!");
 		instance = this;
 
-		platformInstance = clv::plt::createPlatformInstance(api);
+		platformInstance = clv::plt::createPlatformInstance();
 
-		mainWindow = platformInstance->createChildWindow(parentWindow, windowPosition, windowSize);
+		mainWindow = platformInstance->createChildWindow(parentWindow, windowPosition, windowSize, api);
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
@@ -122,6 +122,6 @@ namespace tnc{
 	}
 
 	clv::gfx::GraphicsFactory& Application::getGraphicsFactory(){
-		return platformInstance->getGraphicsFactory();
+		return mainWindow->getGraphicsFactory();
 	}
 }
