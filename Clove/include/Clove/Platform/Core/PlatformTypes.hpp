@@ -15,8 +15,8 @@ namespace clv::plt{
 
 	struct WindowDescriptor{
 		std::string title;
-		int32 width;
-		int32 height;
+		int32_t width;
+		int32_t height;
 		gfx::API api = getPlatformPreferedAPI();
 	};
 }
