@@ -8,11 +8,12 @@ int main(){
 	Log::init();
 
 	//Create the platform instance to make OS calls
-	auto platform = plt::createPlatformInstance(plt::getPlatformPreferedAPI());
-	auto& graphicsFactory = platform->getGraphicsFactory();
+	auto platform = plt::createPlatformInstance();
 
 	auto mainWindow = platform->createWindow({"Hello Triangle", 1280, 720});
 	mainWindow->setVSync(true);
+
+	auto& graphicsFactory = mainWindow->getGraphicsFactory();
 
 	std::string source_path = SOURCE_DIR;
 
