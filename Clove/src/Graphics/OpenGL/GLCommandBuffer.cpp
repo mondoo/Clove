@@ -10,13 +10,7 @@
 #include <glad/glad.h>
 
 namespace clv::gfx::ogl{
-	GLCommandBuffer::GLCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget){
-		glRenderTarget = std::static_pointer_cast<GLRenderTarget>(renderTarget);
-	}
-
-	GLCommandBuffer::GLCommandBuffer(Surface& surface){
-		glRenderTarget = std::static_pointer_cast<GLRenderTarget>(surface.getRenderTarget());
-	}
+	GLCommandBuffer::GLCommandBuffer() = default;
 
 	GLCommandBuffer::GLCommandBuffer(GLCommandBuffer&& other) noexcept = default;
 
@@ -24,15 +18,22 @@ namespace clv::gfx::ogl{
 
 	GLCommandBuffer::~GLCommandBuffer() = default;
 
-	void GLCommandBuffer::beginEncoding(){
-		glRenderTarget->lock();
+	void GLCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget){
+		glRenderTarget = std::static_pointer_cast<GLRenderTarget>(renderTarget);
 
 		const auto beginCommand = [glRenderTarget = glRenderTarget.get()](){
 			glBindFramebuffer(GL_FRAMEBUFFER, glRenderTarget->getGLFrameBufferID());
-			glRenderTarget->clear();
 		};
 
 		commands.push_back(beginCommand);
+	}
+
+	void GLCommandBuffer::clearTarget(){
+		const auto clearCommand = [glRenderTarget = glRenderTarget.get()](){
+			glRenderTarget->clear();
+		};
+
+		commands.push_back(clearCommand);
 	}
 
 	void GLCommandBuffer::bindIndexBuffer(const Buffer& buffer){
@@ -131,6 +132,6 @@ namespace clv::gfx::ogl{
 		}
 
 		commands.clear();
-		glRenderTarget->unlock();
+		glRenderTarget.reset();
 	}
 }

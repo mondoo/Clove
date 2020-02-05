@@ -56,26 +56,13 @@ namespace clv::gfx::ogl{
 		glDeleteRenderbuffers(1, &renderBufferID);
 	}
 
-	void GLRenderTarget::lock(){
-		++lockCount;
-	}
-
-	void GLRenderTarget::unlock(){
-		if(--lockCount == 0){
-			canClear = true;
-		}
-	}
-
 	void GLRenderTarget::setClearColour(const mth::vec4f& colour){
 		clearColour = colour;
 	}
 
 	void GLRenderTarget::clear(){
-		if(canClear){
-			glClearColor(clearColour.r, clearColour.g, clearColour.b, clearColour.a);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			canClear = false;
-		}
+		glClearColor(clearColour.r, clearColour.g, clearColour.b, clearColour.a);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	uint32_t GLRenderTarget::getGLFrameBufferID() const{
