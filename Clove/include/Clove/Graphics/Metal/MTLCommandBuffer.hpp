@@ -13,20 +13,16 @@ namespace clv::gfx::mtl{
 		id<MTLCommandQueue> commandQueue = nullptr;
 		id<MTLCommandBuffer> commandBuffer = nullptr;
 		id<MTLRenderCommandEncoder> commandEncoder = nullptr;
-		
+
 		id<MTLBuffer> indexBuffer = nullptr;
-		
+
 		std::shared_ptr<MTLRenderTarget> mtlRenderTarget;
-		
-		MTKView* view = nullptr;
-		id<MTLDrawable> drawable = nullptr;
-		
+
 		//FUNCTIONS
 	public:
 		MTLCommandBuffer() = delete;
-		MTLCommandBuffer(id<MTLCommandQueue> commandQueue, const std::shared_ptr<RenderTarget>& renderTarget);
-		MTLCommandBuffer(id<MTLCommandQueue> commandQueue, Surface& surface);
-		
+		MTLCommandBuffer(id<MTLCommandQueue> commandQueue);
+
 		MTLCommandBuffer(const MTLCommandBuffer& other) = delete;
 		MTLCommandBuffer(MTLCommandBuffer&& other) noexcept;
 
@@ -35,7 +31,9 @@ namespace clv::gfx::mtl{
 
 		virtual ~MTLCommandBuffer();
 
-		virtual void beginEncoding() override;
+		virtual void beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget) override;
+
+		virtual void clearTarget() override{}
 
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32 stride) override;

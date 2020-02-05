@@ -38,6 +38,10 @@ namespace clv::gfx::mtl{
 	void MTLSurface::resizeBuffers(const mth::vec2ui& size){
 		//TODO:
 	}
+
+	void MTLSurface::present(){
+		[[view currentDrawable] present];
+	}
 	
 	std::shared_ptr<RenderTarget> MTLSurface::getRenderTarget() const{
 		return renderTarget;
