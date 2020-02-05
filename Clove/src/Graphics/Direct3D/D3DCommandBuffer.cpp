@@ -14,19 +14,8 @@
 #define CAPTURE_CONTEXT d3dContext = d3dContext.Get()
 
 namespace clv::gfx::d3d{
-	D3DCommandBuffer::D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, const std::shared_ptr<RenderTarget>& renderTarget)
+	D3DCommandBuffer::D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext)
 		: d3dContext(d3dContext){
-		d3dRenderTarget = std::static_pointer_cast<D3DRenderTarget>(renderTarget);
-	}
-
-	D3DCommandBuffer::D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, Surface& surface)
-		: d3dContext(d3dContext){
-		D3DSurface& d3dSurface = static_cast<D3DSurface&>(surface);
-
-		d3dSurface.releaseRenderTargets.bind(&D3DCommandBuffer::releaseSurfaceRenderTarget, this);
-		d3dSurface.retainNewRenderTargets.bind(&D3DCommandBuffer::retainSurfaceRenderTarget, this);
-
-		d3dRenderTarget = std::static_pointer_cast<D3DRenderTarget>(d3dSurface.getRenderTarget());
 	}
 
 	D3DCommandBuffer::D3DCommandBuffer(D3DCommandBuffer&& other) noexcept = default;
@@ -35,12 +24,10 @@ namespace clv::gfx::d3d{
 
 	D3DCommandBuffer::~D3DCommandBuffer() = default;
 
-	void D3DCommandBuffer::beginEncoding(){
-		d3dRenderTarget->lock();
+	void D3DCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget){
+		d3dRenderTarget = std::static_pointer_cast<D3DRenderTarget>(renderTarget);
 
 		const auto beginCommand = [CAPTURE_CONTEXT, d3dRenderTarget = d3dRenderTarget.get()](){
-			d3dRenderTarget->clear(*d3dContext);
-
 			auto renderTargetView = d3dRenderTarget->getRenderTargetView();
 			auto depthStencilView = d3dRenderTarget->getDepthStencilView();
 
@@ -49,6 +36,14 @@ namespace clv::gfx::d3d{
 		};
 
 		commands.push_back(beginCommand);
+	}
+
+	void D3DCommandBuffer::clearTarget(){
+		const auto clearCommand = [CAPTURE_CONTEXT, d3dRenderTarget = d3dRenderTarget.get()](){
+			d3dRenderTarget->clear(*d3dContext);
+		};
+
+		commands.push_back(clearCommand);
 	}
 
 	void D3DCommandBuffer::bindIndexBuffer(const Buffer& buffer){
@@ -192,14 +187,6 @@ namespace clv::gfx::d3d{
 		}
 
 		commands.clear();
-		d3dRenderTarget->unlock();
-	}
-
-	void D3DCommandBuffer::releaseSurfaceRenderTarget(){
 		d3dRenderTarget.reset();
-	}
-
-	void D3DCommandBuffer::retainSurfaceRenderTarget(const std::shared_ptr<D3DRenderTarget>& renderTarget){
-		d3dRenderTarget = renderTarget;
 	}
 }

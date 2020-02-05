@@ -20,13 +20,10 @@ namespace clv::gfx::d3d{
 
 		std::vector<std::function<void()>> commands;
 
-		mth::vec4f clearColour = { 0.0f, 0.0f, 0.0f, 1.0f };
-
 		//FUNCTIONS
 	public:
 		D3DCommandBuffer() = delete;
-		D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, const std::shared_ptr<RenderTarget>& renderTarget);
-		D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, Surface& surface);
+		D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext);
 
 		D3DCommandBuffer(const D3DCommandBuffer& other) = delete;
 		D3DCommandBuffer(D3DCommandBuffer&& other) noexcept;
@@ -36,7 +33,9 @@ namespace clv::gfx::d3d{
 
 		virtual ~D3DCommandBuffer();
 
-		virtual void beginEncoding() override;
+		virtual void beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget) override;
+
+		virtual void clearTarget() override;
 
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32_t stride) override;
@@ -50,9 +49,5 @@ namespace clv::gfx::d3d{
 		virtual void drawIndexed(const uint32_t count) override;
 
 		virtual void endEncoding() override;
-
-	private:
-		void releaseSurfaceRenderTarget();
-		void retainSurfaceRenderTarget(const std::shared_ptr<D3DRenderTarget>& renderTarget);
 	};
 }
