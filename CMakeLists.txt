@@ -34,8 +34,3 @@ endif()
 if(MSVC AND GAR_BUILD_BULB) #not currently supported without MSVC
 	add_subdirectory(Bulb)
 endif()
-
-#Examples
-if(GAR_BUILD_EXAMPLES)
-	add_subdirectory(Examples)
-endif()

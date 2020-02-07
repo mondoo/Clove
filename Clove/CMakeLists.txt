@@ -129,3 +129,8 @@ target_compile_definitions(
 	PRIVATE
 		CLV_ENGINE=1
 )
+
+#Examples
+if(GAR_BUILD_EXAMPLES)
+	add_subdirectory(Examples)
+endif()
