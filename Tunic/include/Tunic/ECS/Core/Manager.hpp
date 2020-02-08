@@ -54,8 +54,8 @@ namespace tnc::ecs{
 		template<typename ...ComponentTypes>
 		std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> getComponentSets();
 
-		template<typename SystemType>
-		void addSystem();
+		template<typename SystemType, typename ...ConstructArgs>
+		void addSystem(ConstructArgs&& ...args);
 
 	private:
 		void onComponentAdded(ComponentInterface* component);

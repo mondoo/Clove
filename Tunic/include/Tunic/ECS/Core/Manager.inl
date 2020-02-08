@@ -28,9 +28,9 @@ namespace tnc::ecs{
 		return componentSets;
 	}
 
-	template<typename SystemType>
-	void Manager::addSystem(){
-		auto system = std::make_unique<SystemType>();
+	template<typename SystemType, typename ...ConstructArgs>
+	void Manager::addSystem(ConstructArgs&& ...args){
+		auto system = std::make_unique<SystemType>(std::forward<ConstructArgs>(args)...);
 		system->manager = this;
 		systems.push_back(std::move(system));
 	}
