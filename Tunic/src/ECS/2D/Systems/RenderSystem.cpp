@@ -82,7 +82,7 @@ namespace tnc::ecs::_2D{
 		sceneData.charPipelineObject->setVertexShader(*fontVS);
 		sceneData.charPipelineObject->setPixelShader(*fontPS);
 		
-		commandBuffer = graphicsFactory.createCommandBuffer(Application::get().getMainWindow().getSurface());
+		//commandBuffer = graphicsFactory.createCommandBuffer(Application::get().getMainWindow().getSurface());
 	}
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;
@@ -92,7 +92,7 @@ namespace tnc::ecs::_2D{
 	RenderSystem::~RenderSystem() = default;
 
 	void RenderSystem::preUpdate(){
-		commandBuffer->beginEncoding();
+		//commandBuffer->beginEncoding();
 
 		sceneData.spritesToRender.clear();
 		sceneData.widgetsToRender.clear();

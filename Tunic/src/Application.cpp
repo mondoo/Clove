@@ -7,6 +7,7 @@
 #include "Clove/Core/Layer.hpp"
 #include "Clove/Core/Utils/DeltaTime.hpp"
 #include "Tunic/ECS/Core/Manager.hpp"
+#include "Tunic/Rendering/Renderer.hpp"
 
 using namespace clv;
 
@@ -27,7 +28,7 @@ namespace tnc{
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
-		//gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+		renderer = std::make_unique<rnd::Renderer>(mainWindow->getGraphicsFactory(), mainWindow->getSurface());
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
@@ -51,7 +52,7 @@ namespace tnc{
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
-		//gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+		renderer = std::make_unique<rnd::Renderer>(mainWindow->getGraphicsFactory(), mainWindow->getSurface());
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
@@ -81,7 +82,11 @@ namespace tnc{
 			layer->onUpdate(deltaSeonds.count());
 		}
 
+		renderer->begin();
+
 		ecsManager->update(deltaSeonds.count());
+
+		renderer->end();
 
 		{
 			CLV_PROFILE_SCOPE("Window::endFrame");
@@ -123,5 +128,9 @@ namespace tnc{
 
 	clv::gfx::GraphicsFactory& Application::getGraphicsFactory(){
 		return mainWindow->getGraphicsFactory();
+	}
+
+	rnd::Renderer* Application::getRenderer(){
+		return renderer.get();
 	}
 }
