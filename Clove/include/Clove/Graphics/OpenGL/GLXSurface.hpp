@@ -4,6 +4,7 @@
 
 #include <glad/glad.h>
 #include <GL/glx.h>
+#undef None
 
 namespace clv::gfx::ogl{
 	class GLRenderTarget;

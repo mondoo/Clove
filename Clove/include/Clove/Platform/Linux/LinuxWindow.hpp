@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Clove/Core/Maths/Vector.hpp>
 #include "Clove/Platform/Core/Window.hpp"
+
+#include "Clove/Platform/Linux/CloveLinux.hpp"
 
 namespace clv::gfx{
 	class GraphicsFactory;
