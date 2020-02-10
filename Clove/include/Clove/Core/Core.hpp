@@ -32,7 +32,7 @@
 #endif
 
 #if CLV_PLATFORM_WINDOWS
-	#define CLV_APIENTRY APIENTRY
+	#define CLV_APIENTRY __stdcall
 #else
 	#define CLV_APIENTRY
 #endif

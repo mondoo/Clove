@@ -1,5 +1,9 @@
 #pragma once
 
+#if CLV_PLATFORM_WINDOWS
+	#include "Clove/Platform/Windows/CloveWindows.hpp"
+#endif
+
 namespace clv{
 	enum class MouseButton{
 		None		= -2,

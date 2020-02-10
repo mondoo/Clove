@@ -3,6 +3,7 @@
 #include "Clove/Platform/Core/Window.hpp"
 
 #include "Clove/Platform/Windows/WindowsException.hpp"
+#include "Clove/Platform/Windows/CloveWindows.hpp"
 
 namespace clv::plt{
 	struct WindowsData{

@@ -1,6 +1,8 @@
 #pragma once
 
-#if CLV_PLATFORM_LINUX
+#if CLV_PLATFORM_WINDOWS
+	#include "Clove/Platform/Windows/CloveWindows.hpp"
+#elif CLV_PLATFORM_LINUX
 	#include <X11/keysym.h>
 	#include <X11/keysymdef.h>
 #elif CLV_PLATFORM_MACOS

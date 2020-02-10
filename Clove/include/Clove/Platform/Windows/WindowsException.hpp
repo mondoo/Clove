@@ -2,6 +2,8 @@
 
 #include "Clove/Core/Exception/CloveException.hpp"
 
+#include "Clove/Platform/Windows/CloveWindows.hpp"
+
 namespace clv{
 	class WindowsException : public CloveException{
 		//VARIABLES
