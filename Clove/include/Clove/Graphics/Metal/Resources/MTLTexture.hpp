@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/Core/Resources/Texture.hpp"
 
+#import <MetalKit/MetalKit.h>
+
 namespace clv::gfx::mtl {
 	class MTLTexture : public Texture{
 		//VARIABLES

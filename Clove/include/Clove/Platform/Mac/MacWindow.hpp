@@ -2,6 +2,10 @@
 
 #include "Clove/Platform/Core/Window.hpp"
 
+#include "Clove/Platform/Mac/CloveMac.hpp"
+
+#import <MetalKit/MetalKit.h>
+
 namespace clv::plt{
 	class Window;
 	class MacWindow;

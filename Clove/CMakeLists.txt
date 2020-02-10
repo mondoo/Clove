@@ -102,9 +102,6 @@ target_precompile_headers(
 		[["Clove/Core/Maths/MathsHelpers.hpp"]]
 		[["Clove/Core/Utils/Delegate.hpp"]]
 		[["Clove/Core/Utils/Timer.hpp"]]
-	#Platform headers
-	PUBLIC
-		$<$<PLATFORM_ID:Darwin>:Clove/Platform/Mac/CloveMac.h>
 )
 
 #Preprocessor

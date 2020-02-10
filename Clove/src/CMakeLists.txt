@@ -194,7 +194,7 @@ set(
 
 set(
 	MacOSPlatformFiles
-		${CLV_INCLUDE}/Platform/Mac/CloveMac.h
+		${CLV_INCLUDE}/Platform/Mac/CloveMac.hpp
 		${CLV_INCLUDE}/Platform/Mac/MacPlatform.hpp
 		${CLV_SOURCE}/Platform/Mac/MacPlatform.mm
 		${CLV_INCLUDE}/Platform/Mac/MacWindow.hpp

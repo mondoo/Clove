@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/Core/PipelineObject.hpp"
 
+#import <MetalKit/MetalKit.h>
+
 namespace clv::gfx::mtl {
 	class MTLPipelineObject : public PipelineObject{
 		//VARIABLES

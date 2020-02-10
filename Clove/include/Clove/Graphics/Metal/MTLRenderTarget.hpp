@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/Core/RenderTarget.hpp"
 
+#import <MetalKit/MetalKit.h>
+
 namespace clv::gfx{
 	class Texture;
 }

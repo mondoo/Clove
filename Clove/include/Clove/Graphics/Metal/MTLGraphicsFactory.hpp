@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/Core/GraphicsFactory.hpp"
 
+#import <MetalKit/MetalKit.h>
+
 namespace clv::gfx::mtl{
 	class MTLGraphicsFactory : public GraphicsFactory{
 		//VARIABLES

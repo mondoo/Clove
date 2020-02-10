@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/Core/Surface.hpp"
 
+#import <MetalKit/MetalKit.h>
+
 namespace clv::gfx::mtl{
 	class MTLRenderTarget;
 }

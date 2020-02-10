@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Core/Shader.hpp"
 
+#import <MetalKit/MetalKit.h>
+
 namespace clv::gfx::mtl{
 	class MTLShader : public Shader{
 		//VARIABLES
