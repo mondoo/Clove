@@ -70,13 +70,8 @@ namespace clv::gfx::d3d{
 		clearColour = colour;
 	}
 
-	void D3DRenderTarget::clear(ID3D11DeviceContext& d3dContext){
-		if(renderTargetView){
-			d3dContext.ClearRenderTargetView(renderTargetView.Get(), mth::valuePtr(clearColour));
-		}
-		if(depthStencilView){
-			d3dContext.ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
-		}
+	const mth::vec4f& D3DRenderTarget::getClearColour() const{
+		return clearColour;
 	}
 
 	const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& D3DRenderTarget::getRenderTargetView() const{
