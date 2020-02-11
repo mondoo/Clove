@@ -27,7 +27,5 @@ namespace clv::gfx{
 		virtual ~Buffer() = default;
 
 		virtual const BufferDescriptor& getDescriptor() const = 0;
-
-		virtual void updateData(const void* data) = 0;
 	};
 }
