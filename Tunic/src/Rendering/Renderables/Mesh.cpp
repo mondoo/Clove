@@ -1,9 +1,11 @@
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 
 #include "Tunic/Application.hpp"
+
 #include "Clove/Graphics/Core/Resources/Buffer.hpp"
 #include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Core/Utils/MeshLoader.hpp"
+#include "Clove/Graphics/Core/CommandBuffer.hpp"
 
 using namespace clv;
 using namespace clv::gfx;
@@ -72,7 +74,7 @@ namespace tnc::rnd{
 		return static_cast<uint32_t>(indices.size());
 	}
 
-	std::shared_ptr<Buffer> Mesh::getVertexBufferForLayout(const VertexLayout& layout){
+	void Mesh::bind(CommandBuffer& commandBuffer, const VertexLayout& layout){
 		/*
 		TODO:
 		Currently remapping vertex data each frame.
@@ -84,36 +86,35 @@ namespace tnc::rnd{
 		gfx::VertexBufferData vertexArray{ layout };
 		vertexArray.resize(vertexCount);
 
-		for(int32_t i = 0; i < vertexCount; ++i){
-			for(int32_t j = 0; j < layout.count(); ++j){
-				switch(layout.resolve(j).getType()){
-					case VertexElementType::position2D:
-						vertexArray[i].getAttribute<VertexElementType::position2D>() = loadedBufferData[i].getAttribute<VertexElementType::position2D>();
-						break;
+		for (int32_t i = 0; i < vertexCount; ++i){
+			for (int32_t j = 0; j < layout.count(); ++j){
+				switch (layout.resolve(j).getType()){
+				case VertexElementType::position2D:
+					vertexArray[i].getAttribute<VertexElementType::position2D>() = loadedBufferData[i].getAttribute<VertexElementType::position2D>();
+					break;
 
-					case VertexElementType::position3D:
-						vertexArray[i].getAttribute<VertexElementType::position3D>() = loadedBufferData[i].getAttribute<VertexElementType::position3D>();
-						break;
+				case VertexElementType::position3D:
+					vertexArray[i].getAttribute<VertexElementType::position3D>() = loadedBufferData[i].getAttribute<VertexElementType::position3D>();
+					break;
 
-					case VertexElementType::texture2D:
-						vertexArray[i].getAttribute<VertexElementType::texture2D>() = loadedBufferData[i].getAttribute<VertexElementType::texture2D>();
-						break;
+				case VertexElementType::texture2D:
+					vertexArray[i].getAttribute<VertexElementType::texture2D>() = loadedBufferData[i].getAttribute<VertexElementType::texture2D>();
+					break;
 
-					case VertexElementType::normal:
-						vertexArray[i].getAttribute<VertexElementType::normal>() = loadedBufferData[i].getAttribute<VertexElementType::normal>();
-						break;
-					default:
-						break;
+				case VertexElementType::normal:
+					vertexArray[i].getAttribute<VertexElementType::normal>() = loadedBufferData[i].getAttribute<VertexElementType::normal>();
+					break;
+				default:
+					break;
 				}
 			}
 		}
-		
-		vertexBuffer->updateData(vertexArray.data());
-		return vertexBuffer;
-	}
 
-	std::shared_ptr<Buffer> Mesh::getIndexBuffer(){
-		return indexBuffer;
+		//vertexBuffer->updateData(vertexArray.data());
+		commandBuffer.updateBufferData(*vertexBuffer, vertexArray.data());
+
+		commandBuffer.bindVertexBuffer(*vertexBuffer, layout.size());
+		commandBuffer.bindIndexBuffer(*indexBuffer);
 	}
 
 	void Mesh::initialiseVertexBuffer(const VertexBufferData& vertexArray){

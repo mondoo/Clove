@@ -147,12 +147,7 @@ namespace tnc::rnd{
 				meshMaterial.bind(meshCommandBuffer);
 
 				const VertexLayout& vertexLayout = meshPipelineObject->getVertexLayout();
-
-				auto vb = mesh->getVertexBufferForLayout(vertexLayout);
-				auto ib = mesh->getIndexBuffer();
-
-				meshCommandBuffer->bindVertexBuffer(*vb, static_cast<uint32_t>(vertexLayout.size()));
-				meshCommandBuffer->bindIndexBuffer(*ib);
+				mesh->bind(*meshCommandBuffer, vertexLayout);
 
 				meshCommandBuffer->drawIndexed(mesh->getIndexCount());
 			}
@@ -169,14 +164,10 @@ namespace tnc::rnd{
 				meshMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderStage::Geometry);
 				meshMaterial.setData(BBP_CurrentDepthData, PointShadowData{ scene.currentShadowDepth.depths[i] }, ShaderStage::Pixel);
 
-				const VertexLayout& vertexLayout = shadowPipelineObject->getVertexLayout();
-
-				auto vb = mesh->getVertexBufferForLayout(vertexLayout);
-				auto ib = mesh->getIndexBuffer();
 				meshMaterial.bind(shadowCommandBuffer);
 
-				shadowCommandBuffer->bindVertexBuffer(*vb, static_cast<uint32_t>(vertexLayout.size()));
-				shadowCommandBuffer->bindIndexBuffer(*ib);
+				const VertexLayout& vertexLayout = shadowPipelineObject->getVertexLayout();
+				mesh->bind(*shadowCommandBuffer, vertexLayout);
 
 				shadowCommandBuffer->drawIndexed(mesh->getIndexCount());
 
