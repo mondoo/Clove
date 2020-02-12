@@ -75,13 +75,6 @@ namespace tnc::rnd{
 	}
 
 	void Mesh::bind(CommandBuffer& commandBuffer, const VertexLayout& layout){
-		/*
-		TODO:
-		Currently remapping vertex data each frame.
-		This isn't ideal but it's because we can load different shaders with different layouts into the pipeline
-		It would be worth doing some profiling to see how bad remapping is and then moving forward from there
-		*/
-
 		const size_t vertexCount = loadedBufferData.size();
 		gfx::VertexBufferData vertexArray{ layout };
 		vertexArray.resize(vertexCount);
@@ -110,7 +103,6 @@ namespace tnc::rnd{
 			}
 		}
 
-		//vertexBuffer->updateData(vertexArray.data());
 		commandBuffer.updateBufferData(*vertexBuffer, vertexArray.data());
 
 		commandBuffer.bindVertexBuffer(*vertexBuffer, layout.size());
