@@ -171,5 +171,7 @@ namespace clv::gfx::d3d{
 		DX11_THROW_INFO(deferredContext->FinishCommandList(TRUE, &commandList));
 
 		immediateContext->ExecuteCommandList(commandList.Get(), TRUE);
+
+		d3dRenderTarget.reset();
 	}
 }
