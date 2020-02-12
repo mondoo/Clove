@@ -11,6 +11,7 @@ namespace clv::gfx{
 	class RenderTarget;
 	class PipelineObject;
 	class Texture;
+	class Buffer;
 }
 
 namespace clv::plt{
@@ -60,14 +61,22 @@ namespace tnc::rnd{
 		std::shared_ptr<clv::gfx::PipelineObject> shadowPipelineObject;
 		std::shared_ptr<clv::gfx::PipelineObject> meshPipelineObject;
 
-		std::shared_ptr<clv::gfx::PipelineObject> spritePipelineObject;
-
 		std::shared_ptr<clv::gfx::CommandBuffer> shadowCommandBuffer;
 		std::shared_ptr<clv::gfx::CommandBuffer> meshCommandBuffer;
 
-		std::shared_ptr<clv::gfx::CommandBuffer> spriteCommandBuffer;
-
 		std::shared_ptr<clv::gfx::Texture> shadowMapTexture;
+
+		std::shared_ptr<clv::gfx::Buffer> viewBuffer;
+		std::shared_ptr<clv::gfx::Buffer> viewPosition;
+
+		//TODO: These need to be renamed
+		std::shared_ptr<clv::gfx::Buffer> lightInfoBuffer;
+		std::shared_ptr<clv::gfx::Buffer> lightDepthBuffer;
+		std::shared_ptr<clv::gfx::Buffer> lightNumBuffer;
+
+		std::shared_ptr<clv::gfx::Buffer> shadowInfoBuffer;
+		std::shared_ptr<clv::gfx::Buffer> lightIndexBuffer;
+		std::shared_ptr<clv::gfx::Buffer> shadowLightPosBuffer;
 
 		SceneData scene;
 
@@ -81,8 +90,6 @@ namespace tnc::rnd{
 		void submitMesh(const std::shared_ptr<rnd::Mesh>& mesh);
 		void submitLight(const PointLightData& light);
 		void submitCamera(const ComposedCameraData& camera);
-
-		void submitSprite(const Sprite& sprite);
 
 		void end();
 	};

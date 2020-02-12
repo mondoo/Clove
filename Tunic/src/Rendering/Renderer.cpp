@@ -25,6 +25,15 @@ namespace tnc::rnd{
 
 		GraphicsFactory& factory = window.getGraphicsFactory();
 		
+		//Mesh command buffer
+		meshCommandBuffer = factory.createCommandBuffer();
+
+		auto meshVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/Lit-vs.hlsl");
+		auto meshPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/Lit-ps.hlsl");
+		meshPipelineObject = factory.createPipelineObject();
+		meshPipelineObject->setVertexShader(*meshVS);
+		meshPipelineObject->setPixelShader(*meshPS);
+
 		//Shadow map
 		gfx::TextureDescriptor tdesc{};
 		tdesc.style			= TextureStyle::Cubemap;
@@ -44,26 +53,31 @@ namespace tnc::rnd{
 		shadowPipelineObject->setGeometryShader(*shadowGS);
 		shadowPipelineObject->setPixelShader(*shadowPS);
 
-		//Mesh
-		meshCommandBuffer = factory.createCommandBuffer();
+		//Buffers
+		gfx::BufferDescriptor bufferDesc{};
+		bufferDesc.elementSize	= 0;
+		bufferDesc.bufferType	= clv::gfx::BufferType::ShaderResourceBuffer;
+		bufferDesc.bufferUsage	= clv::gfx::BufferUsage::Dynamic;
 
-		auto meshVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/Lit-vs.hlsl");
-		auto meshPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/Lit-ps.hlsl");
-		meshPipelineObject = factory.createPipelineObject();
-		meshPipelineObject->setVertexShader(*meshVS);
-		meshPipelineObject->setPixelShader(*meshPS);
+		bufferDesc.bufferSize = sizeof(ViewData);
+		viewBuffer = factory.createBuffer(bufferDesc, nullptr);
+		bufferDesc.bufferSize = sizeof(ViewPos);
+		viewPosition = factory.createBuffer(bufferDesc, nullptr);
 
-		//Sprites
-		//spriteCommandBuffer = factory.createCommandBuffer();
+		bufferDesc.bufferSize = sizeof(PointLightShaderData);
+		lightInfoBuffer = factory.createBuffer(bufferDesc, nullptr);
+		bufferDesc.bufferSize = sizeof(PointShadowDepthData);
+		lightDepthBuffer = factory.createBuffer(bufferDesc, nullptr);
+		bufferDesc.bufferSize = sizeof(LightNumAlignment);
+		lightNumBuffer = factory.createBuffer(bufferDesc, nullptr);
 
-		//auto spriteVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/2D-vs.hlsl");
-		//auto spritePS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/2D-ps.hlsl");
-		//spritePipelineObject = factory.createPipelineObject();
-		//spritePipelineObject->setVertexShader(*spriteVS);
-		//spritePipelineObject->setPixelShader(*spritePS);
+		bufferDesc.bufferSize = sizeof(PointShadowShaderData);
+		shadowInfoBuffer = factory.createBuffer(bufferDesc, nullptr);
+		bufferDesc.bufferSize = sizeof(LightNumAlignment);
+		lightIndexBuffer = factory.createBuffer(bufferDesc, nullptr);
+		bufferDesc.bufferSize = sizeof(PointShadowData);
+		shadowLightPosBuffer = factory.createBuffer(bufferDesc, nullptr);
 
-		//Fonts
-		//TODO:
 	}
 
 	void Renderer::begin(){
@@ -71,13 +85,7 @@ namespace tnc::rnd{
 
 		scene.meshes.clear();
 		scene.numLights = 0;
-		scene.cameras.clear();
-		
-		//sceneData.widgetsToRender.clear();
-		//sceneData.charactersToRender.clear();
-
-
-		
+		scene.cameras.clear();	
 	}
 
 	void Renderer::submitMesh(const std::shared_ptr<rnd::Mesh>& mesh){
@@ -99,85 +107,78 @@ namespace tnc::rnd{
 		scene.cameras.push_back(camera);
 	}
 
-	void Renderer::submitSprite(const Sprite& sprite){
-
-	}
-
 	void Renderer::end(){
 		CLV_PROFILE_FUNCTION();
-
-		shadowCommandBuffer->beginEncoding(shadowRenderTarget);
-		//spriteCommandBuffer->beginEncoding(surface->getRenderTarget());
-
-		meshCommandBuffer->clearTarget(); //Sprite is cleared here
-		shadowCommandBuffer->clearTarget();
-
+	
+		//Draw all meshes in the scene
 		meshCommandBuffer->setDepthEnabled(true);
 		meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
 		meshCommandBuffer->bindTexture(shadowMapTexture.get(), TBP_Shadow);
 
-		shadowCommandBuffer->setDepthEnabled(true);
-		shadowCommandBuffer->bindPipelineObject(*shadowPipelineObject);
-		shadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
+		meshCommandBuffer->updateBufferData(*lightInfoBuffer, &scene.currentLightInfo);
+		meshCommandBuffer->bindShaderResourceBuffer(*lightInfoBuffer, ShaderStage::Pixel, BBP_PointLightData);
 
-		//Renderpass per camera
+		meshCommandBuffer->updateBufferData(*lightDepthBuffer, &scene.currentShadowDepth);
+		meshCommandBuffer->bindShaderResourceBuffer(*lightDepthBuffer, ShaderStage::Pixel, BBP_CubeDepthData);
+
+		auto numLights = LightNumAlignment{ scene.numLights };
+		meshCommandBuffer->updateBufferData(*lightNumBuffer, &numLights);
+		meshCommandBuffer->bindShaderResourceBuffer(*lightNumBuffer, ShaderStage::Pixel, BBP_CurrentLights);
+
 		for (auto& camera : scene.cameras){
 			if (camera.target){
 				meshCommandBuffer->beginEncoding(camera.target);
 			} else{
 				meshCommandBuffer->beginEncoding(surface->getRenderTarget());
 			}
+			meshCommandBuffer->clearTarget(); //TODO: This will clear twice if two cameras render for the same target
 
 			meshCommandBuffer->setViewport(camera.viewport);
 
 			const CameraRenderData& camRenderData = camera.bufferData;
 
+			auto viewData = ViewData{ camRenderData.lookAt, camRenderData.projection };
+			meshCommandBuffer->updateBufferData(*viewBuffer, &viewData);
+			meshCommandBuffer->bindShaderResourceBuffer(*viewBuffer, ShaderStage::Vertex, BBP_CameraMatrices);
+
+			auto viewPos = ViewPos{ camRenderData.position };
+			meshCommandBuffer->updateBufferData(*viewPosition, &viewPos);
+			meshCommandBuffer->bindShaderResourceBuffer(*viewPosition, ShaderStage::Pixel, BBP_ViewData);
+
 			for (auto& mesh : scene.meshes){
-				auto& meshMaterial = mesh->getMaterialInstance();
-
-				//Camera
-				meshMaterial.setData(BBP_CameraMatrices, ViewData{ camRenderData.lookAt, camRenderData.projection }, ShaderStage::Vertex);
-				meshMaterial.setData(BBP_ViewData, ViewPos{ camRenderData.position }, ShaderStage::Pixel);
-
-				//Lights
-				meshMaterial.setData(BBP_PointLightData, PointLightShaderData{ scene.currentLightInfo }, ShaderStage::Pixel);
-				meshMaterial.setData(BBP_CubeDepthData, PointShadowDepthData{ scene.currentShadowDepth }, ShaderStage::Pixel);
-				meshMaterial.setData(BBP_CurrentLights, LightNumAlignment{ scene.numLights }, ShaderStage::Pixel);
-
-				meshMaterial.bind(meshCommandBuffer);
-
-				const VertexLayout& vertexLayout = meshPipelineObject->getVertexLayout();
-				mesh->bind(*meshCommandBuffer, vertexLayout);
-
-				meshCommandBuffer->drawIndexed(mesh->getIndexCount());
+				mesh->draw(*meshCommandBuffer, meshPipelineObject->getVertexLayout());
 			}
 		}
 
 		meshCommandBuffer->bindTexture(nullptr, TBP_Shadow);
 
-		//Renderpass per light
-		std::vector<MaterialInstance> capturedMaterials;
+		//Generate the shadow map for each mesh in the scene
+		shadowCommandBuffer->beginEncoding(shadowRenderTarget);
+		shadowCommandBuffer->clearTarget();
+		shadowCommandBuffer->setDepthEnabled(true);
+		shadowCommandBuffer->bindPipelineObject(*shadowPipelineObject);
+		shadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
+
 		for (uint32_t i = 0; i < scene.numLights; ++i){
+			shadowCommandBuffer->updateBufferData(*shadowInfoBuffer, &scene.shadowTransforms[i]);
+			shadowCommandBuffer->bindShaderResourceBuffer(*shadowInfoBuffer, ShaderStage::Geometry, BBP_ShadowData);
+
+			auto lightIndex = LightNumAlignment{ i * 6 };
+			shadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
+			shadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
+
+			shadowCommandBuffer->updateBufferData(*shadowLightPosBuffer, &scene.currentShadowDepth.depths[i]);
+			shadowCommandBuffer->bindShaderResourceBuffer(*shadowLightPosBuffer, ShaderStage::Pixel, BBP_CurrentDepthData);
+
 			for (auto& mesh : scene.meshes){
-				auto meshMaterial = mesh->getMaterialInstance();
-				meshMaterial.setData(BBP_ShadowData, PointShadowShaderData{ scene.shadowTransforms[i] }, ShaderStage::Geometry);
-				meshMaterial.setData(BBP_CurrentFaceIndex, LightNumAlignment{ i * 6 }, ShaderStage::Geometry);
-				meshMaterial.setData(BBP_CurrentDepthData, PointShadowData{ scene.currentShadowDepth.depths[i] }, ShaderStage::Pixel);
-
-				meshMaterial.bind(shadowCommandBuffer);
-
-				const VertexLayout& vertexLayout = shadowPipelineObject->getVertexLayout();
-				mesh->bind(*shadowCommandBuffer, vertexLayout);
+				mesh->draw(*shadowCommandBuffer, shadowPipelineObject->getVertexLayout());
 
 				shadowCommandBuffer->drawIndexed(mesh->getIndexCount());
-
-				capturedMaterials.push_back(meshMaterial);
 			}
 		}
 
-		//End encoding in specific order
+		//End encoding in order items need to be generated
 		shadowCommandBuffer->endEncoding();
 		meshCommandBuffer->endEncoding();
-		//spriteCommandBuffer->endEncoding();
 	}
 }
