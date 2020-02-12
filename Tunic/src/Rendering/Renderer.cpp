@@ -10,6 +10,8 @@
 #include <Clove/Graphics/Core/PipelineObject.hpp>
 #include <Clove/Graphics/Core/Resources/Texture.hpp>
 
+#include <Clove/Platform/Core/Window.hpp>
+
 using namespace clv;
 using namespace clv::gfx;
 
@@ -18,8 +20,10 @@ namespace tnc::rnd{
 
 	Renderer::SceneData::~SceneData() = default;
 
-	Renderer::Renderer(gfx::GraphicsFactory& factory, std::shared_ptr<Surface> surface)
-		: surface(surface){
+	Renderer::Renderer(plt::Window& window)
+		: surface(window.getSurface()){
+
+		GraphicsFactory& factory = window.getGraphicsFactory();
 		
 		//Shadow map
 		gfx::TextureDescriptor tdesc{};

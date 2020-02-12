@@ -13,6 +13,10 @@ namespace clv::gfx{
 	class Texture;
 }
 
+namespace clv::plt{
+	class Window;
+}
+
 namespace tnc::rnd{
 	class Sprite;
 	class Mesh;
@@ -69,7 +73,7 @@ namespace tnc::rnd{
 
 		//FUNCTIONS
 	public:
-		Renderer(clv::gfx::GraphicsFactory& factory, std::shared_ptr<clv::gfx::Surface> surface);
+		Renderer(clv::plt::Window& window);
 		//TODO: ctors
 
 		void begin();
