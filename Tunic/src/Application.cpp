@@ -28,7 +28,7 @@ namespace tnc{
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
-		renderer = std::make_unique<rnd::Renderer>(mainWindow->getGraphicsFactory(), mainWindow->getSurface());
+		renderer = std::make_unique<rnd::Renderer>(*mainWindow);
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
@@ -52,7 +52,7 @@ namespace tnc{
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
-		renderer = std::make_unique<rnd::Renderer>(mainWindow->getGraphicsFactory(), mainWindow->getSurface());
+		renderer = std::make_unique<rnd::Renderer>(*mainWindow);
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
