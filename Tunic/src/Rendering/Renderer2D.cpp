@@ -117,6 +117,8 @@ namespace tnc::rnd{
 	void Renderer2D::end(){
 		CLV_PROFILE_FUNCTION();
 
+		//NOTE: Currently relying on the 3D renderer to clear the target
+
 		const uint32_t vbStride = static_cast<uint32_t>(vbLayout.size());
 
 		commandBuffer->beginEncoding(Application::get().getMainWindow().getSurface()->getRenderTarget());

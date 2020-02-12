@@ -8,6 +8,7 @@
 #include "Clove/Core/Utils/DeltaTime.hpp"
 #include "Tunic/ECS/Core/Manager.hpp"
 #include "Tunic/Rendering/Renderer.hpp"
+#include "Tunic/Rendering/Renderer2D.hpp"
 
 using namespace clv;
 
@@ -29,6 +30,7 @@ namespace tnc{
 		mainWindow->setVSync(true);
 
 		renderer = std::make_unique<rnd::Renderer>(*mainWindow);
+		renderer2D = std::make_unique<rnd::Renderer2D>(*mainWindow);
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
@@ -53,6 +55,7 @@ namespace tnc{
 		mainWindow->setVSync(true);
 
 		renderer = std::make_unique<rnd::Renderer>(*mainWindow);
+		renderer2D = std::make_unique<rnd::Renderer2D>(*mainWindow);
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
@@ -83,10 +86,12 @@ namespace tnc{
 		}
 
 		renderer->begin();
+		renderer2D->begin();
 
 		ecsManager->update(deltaSeonds.count());
 
 		renderer->end();
+		renderer2D->end();
 
 		{
 			CLV_PROFILE_SCOPE("Window::endFrame");
@@ -132,5 +137,9 @@ namespace tnc{
 
 	rnd::Renderer* Application::getRenderer(){
 		return renderer.get();
+	}
+
+	rnd::Renderer2D* Application::getRenderer2D(){
+		return renderer2D.get();
 	}
 }

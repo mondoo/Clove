@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Clove/Graphics/Core/VertexLayout.hpp>
+
 namespace clv::gfx{
 	class Buffer;
 	class CommandBuffer;
@@ -28,7 +30,7 @@ namespace tnc::rnd{
 	private:
 		std::shared_ptr<clv::gfx::Buffer> indexBuffer;
 
-		VertexLayout vbLayout;
+		clv::gfx::VertexLayout vbLayout;
 
 		//TOOD: Do we need 3 vbs?
 		std::shared_ptr<clv::gfx::Buffer> spriteVB;

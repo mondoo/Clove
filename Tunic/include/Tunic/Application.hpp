@@ -32,6 +32,7 @@ namespace tnc{
 
 namespace tnc::rnd{
 	class Renderer;
+	class Renderer2D;
 }
 
 namespace tnc{
@@ -42,6 +43,7 @@ namespace tnc{
 		std::shared_ptr<clv::plt::Window> mainWindow;
 
 		std::unique_ptr<rnd::Renderer> renderer;
+		std::unique_ptr<rnd::Renderer2D> renderer2D;
 
 		std::unique_ptr<ecs::Manager> ecsManager;
 
@@ -79,5 +81,6 @@ namespace tnc{
 		clv::gfx::GraphicsFactory& getGraphicsFactory();
 
 		rnd::Renderer* getRenderer();
+		rnd::Renderer2D* getRenderer2D();
 	};
 }
