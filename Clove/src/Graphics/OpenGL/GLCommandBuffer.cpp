@@ -36,6 +36,14 @@ namespace clv::gfx::ogl{
 		commands.push_back(clearCommand);
 	}
 
+	void GLCommandBuffer::updateBufferData(const Buffer& buffer, const void* data){
+		//TODO:
+		
+		//glBindBuffer(GL_UNIFORM_BUFFER, bufferID);
+		//glBufferSubData(GL_UNIFORM_BUFFER, 0, descriptor.bufferSize, data);
+		//glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
+
 	void GLCommandBuffer::bindIndexBuffer(const Buffer& buffer){
 		const auto bindIBCommand = [&buffer](){
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);

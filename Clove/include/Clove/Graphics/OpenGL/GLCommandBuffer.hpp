@@ -31,6 +31,8 @@ namespace clv::gfx::ogl{
 
 		virtual void clearTarget() override;
 
+		virtual void updateBufferData(const Buffer& buffer, const void* data) override;
+
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32_t stride) override;
 		virtual void bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32_t bindingPoint) override;

@@ -24,8 +24,6 @@ namespace clv::gfx::ogl{
 
 		virtual const BufferDescriptor& getDescriptor() const override;
 
-		virtual void updateData(const void* data) override;
-
 		GLuint getBufferID() const;
 
 	private:
