@@ -69,6 +69,8 @@ set(
 		${TNC_INCLUDE}/Rendering/ShaderBufferTypes.hpp
 		${TNC_INCLUDE}/Rendering/Renderer.hpp
 		${TNC_SOURCE}/Rendering/Renderer.cpp
+		${TNC_INCLUDE}/Rendering/Renderer2D.hpp
+		${TNC_SOURCE}/Rendering/Renderer2D.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Font.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Font.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Mesh.hpp
