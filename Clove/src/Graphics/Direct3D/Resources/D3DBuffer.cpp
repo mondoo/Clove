@@ -18,13 +18,18 @@ namespace clv::gfx::d3d{
 		bufferDesc.MiscFlags			= 0u;
 		bufferDesc.StructureByteStride	= static_cast<UINT>(descriptor.elementSize);
 
-		D3D11_SUBRESOURCE_DATA initData{};
-		initData.pSysMem			= data;
-		initData.SysMemPitch		= 0u;
-		initData.SysMemSlicePitch	= 0u;
+		if (data){
+			D3D11_SUBRESOURCE_DATA initData{};
+			initData.pSysMem			= data;
+			initData.SysMemPitch		= 0u;
+			initData.SysMemSlicePitch	= 0u;
 
-		DX11_INFO_PROVIDER;
-		DX11_THROW_INFO(d3dDevice.CreateBuffer(&bufferDesc, &initData, &d3dBuffer));
+			DX11_INFO_PROVIDER;
+			DX11_THROW_INFO(d3dDevice.CreateBuffer(&bufferDesc, &initData, &d3dBuffer));
+		} else{
+			DX11_INFO_PROVIDER;
+			DX11_THROW_INFO(d3dDevice.CreateBuffer(&bufferDesc, nullptr, &d3dBuffer));
+		}
 	}
 
 	D3DBuffer::D3DBuffer(D3DBuffer&& other) noexcept = default;
