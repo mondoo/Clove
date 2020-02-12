@@ -40,7 +40,7 @@ namespace tnc::rnd{
 
 		uint32_t getIndexCount();
 
-		void bind(clv::gfx::CommandBuffer& commandBuffer, const clv::gfx::VertexLayout& layout);
+		void draw(clv::gfx::CommandBuffer& commandBuffer, const clv::gfx::VertexLayout& layout);
 
 	private:
 		void initialiseVertexBuffer(const clv::gfx::VertexBufferData& vertexArray);

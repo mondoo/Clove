@@ -74,7 +74,7 @@ namespace tnc::rnd{
 		return static_cast<uint32_t>(indices.size());
 	}
 
-	void Mesh::bind(CommandBuffer& commandBuffer, const VertexLayout& layout){
+	void Mesh::draw(CommandBuffer& commandBuffer, const VertexLayout& layout){
 		const size_t vertexCount = loadedBufferData.size();
 		gfx::VertexBufferData vertexArray{ layout };
 		vertexArray.resize(vertexCount);
@@ -107,6 +107,10 @@ namespace tnc::rnd{
 
 		commandBuffer.bindVertexBuffer(*vertexBuffer, layout.size());
 		commandBuffer.bindIndexBuffer(*indexBuffer);
+
+		materialInstance.bind(commandBuffer);
+
+		commandBuffer.drawIndexed(getIndexCount());
 	}
 
 	void Mesh::initialiseVertexBuffer(const VertexBufferData& vertexArray){
