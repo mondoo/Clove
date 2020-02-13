@@ -10,7 +10,7 @@ namespace tnc::ecs::_3D{
 	}
 
 	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic, bool respondToCollision, const mth::vec3f& cubeSize)
-		: mass(mass), isKinematic(isKinematic), respondToCollision(respondToPhysics){
+		: mass(mass), isKinematic(isKinematic), respondToCollision(respondToCollision){
 		initialise(cubeSize);
 	}
 
