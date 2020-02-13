@@ -64,7 +64,7 @@ namespace tnc::ecs::_3D{
 		btTransform startTransform;
 		startTransform.setIdentity();
 
-		if(isKinematic){
+		if(isKinematic && mass > 0.0f){
 			CLV_LOG_WARN("Kinematic body has non 0 mass. Setting to 0");
 			mass = 0.0f;
 		} else{
