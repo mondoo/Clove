@@ -21,12 +21,13 @@ namespace tnc::ecs::_2D{
 
 		float mass = 0.0f;
 		bool isKinematic = false;
+		bool respondToCollision = true;
 
 		//FUNCTIONS
 	public:
 		RigidBodyComponent();
 		//Note: Only supporting collision squares for now
-		RigidBodyComponent(float mass, bool isKinematic, const clv::mth::vec2f& squareSize);
+		RigidBodyComponent(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec2f& squareSize);
 
 		RigidBodyComponent(const RigidBodyComponent& other);
 		RigidBodyComponent(RigidBodyComponent&& other) noexcept;

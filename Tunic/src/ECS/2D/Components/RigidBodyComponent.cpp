@@ -10,9 +10,8 @@ namespace tnc::ecs::_2D{
 		initialise({ 1.0f, 1.0f });
 	}
 
-	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic, const mth::vec2f& cubeSize)
-		: mass(mass)
-		, isKinematic(isKinematic){
+	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic, bool respondToCollision, const mth::vec2f& cubeSize)
+		: mass(mass), isKinematic(isKinematic), respondToCollision(respondToCollision){
 		initialise(cubeSize);
 	}
 
@@ -77,8 +76,14 @@ namespace tnc::ecs::_2D{
 
 		body = std::make_unique<btRigidBody>(rbInfo);
 		body->setUserPointer(this);
-		if(isKinematic){
-			body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT); //Kinematic objects can't move but static can - seems to be the opposite of what I read
+
+		int flags = body->getCollisionFlags();
+		if (isKinematic){
+			flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
 		}
+		if (!respondToCollision){
+			flags |= btCollisionObject::CF_NO_CONTACT_RESPONSE;
+		}
+		body->setCollisionFlags(flags);
 	}
 }

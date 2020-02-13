@@ -19,6 +19,7 @@ namespace tnc::ecs::_3D{
 
 		float mass = 0.0f;
 		bool isKinematic = false;
+		bool respondToCollision = true;
 
 		clv::mth::vec3f cubeSize{};
 
@@ -26,7 +27,7 @@ namespace tnc::ecs::_3D{
 	public:
 		RigidBodyComponent();
 		//Note: Only supporting collision cubes for now
-		RigidBodyComponent(float mass, bool isKinematic, const clv::mth::vec3f& cubeSize);
+		RigidBodyComponent(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize);
 
 		RigidBodyComponent(const RigidBodyComponent& other);
 		RigidBodyComponent(RigidBodyComponent&& other) noexcept;
