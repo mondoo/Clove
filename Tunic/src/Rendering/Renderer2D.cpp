@@ -51,10 +51,10 @@ namespace tnc::rnd{
 		vbLayout.add(VertexElementType::position2D).add(VertexElementType::texture2D);
 
 		BufferDescriptor vbDesc{};
-		ibDesc.elementSize	= vbLayout.size();
-		//ibDesc.bufferSize	= ;
-		ibDesc.bufferType	= BufferType::VertexBuffer;
-		ibDesc.bufferUsage	= BufferUsage::Default;
+		vbDesc.elementSize	= vbLayout.size();
+		//vbDesc.bufferSize	= ;
+		vbDesc.bufferType	= BufferType::VertexBuffer;
+		vbDesc.bufferUsage	= BufferUsage::Default;
 
 		//Sprites
 		{
