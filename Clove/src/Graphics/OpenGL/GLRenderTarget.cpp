@@ -60,9 +60,8 @@ namespace clv::gfx::ogl{
 		clearColour = colour;
 	}
 
-	void GLRenderTarget::clear(){
-		glClearColor(clearColour.r, clearColour.g, clearColour.b, clearColour.a);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	const mth::vec4f& GLRenderTarget::getClearColour() const{
+		return clearColour;
 	}
 
 	uint32_t GLRenderTarget::getGLFrameBufferID() const{

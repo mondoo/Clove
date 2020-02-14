@@ -30,7 +30,10 @@ namespace clv::gfx::ogl{
 
 	void GLCommandBuffer::clearTarget(){
 		const auto clearCommand = [glRenderTarget = glRenderTarget.get()](){
-			glRenderTarget->clear();
+			const auto& clearColour = glRenderTarget->getClearColour();
+
+			glClearColor(clearColour.r, clearColour.g, clearColour.b, clearColour.a);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		};
 
 		commands.push_back(clearCommand);
