@@ -25,7 +25,7 @@ namespace tnc{
 
 		platformInstance = clv::plt::createPlatformInstance();
 
-		mainWindow = platformInstance->createWindow({"Tunic Application", 1280, 720});
+		mainWindow = platformInstance->createWindow({ "Tunic Application", 1280, 720, api });
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
