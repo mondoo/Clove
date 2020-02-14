@@ -42,6 +42,22 @@ namespace clv::gfx::d3d{
 		return descriptor;
 	}
 
+	void D3DBuffer::updateData(const void* data){
+		DX11_INFO_PROVIDER;
+
+		Microsoft::WRL::ComPtr<ID3D11Device> device = nullptr;
+		d3dBuffer->GetDevice(&device);
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> context = nullptr;
+		device->GetImmediateContext(&context);
+
+		D3D11_MAPPED_SUBRESOURCE mappedSubResource{};
+		DX11_THROW_INFO(context->Map(d3dBuffer.Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &mappedSubResource));
+
+		memcpy(mappedSubResource.pData, data, descriptor.bufferSize);
+
+		context->Unmap(d3dBuffer.Get(), 0u);
+	}
+
 	const Microsoft::WRL::ComPtr<ID3D11Buffer>& D3DBuffer::getD3DBuffer() const{
 		return d3dBuffer;
 	}
