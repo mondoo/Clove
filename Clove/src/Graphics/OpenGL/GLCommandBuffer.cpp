@@ -10,13 +10,7 @@
 #include <glad/glad.h>
 
 namespace clv::gfx::ogl{
-	GLCommandBuffer::GLCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget){
-		glRenderTarget = std::static_pointer_cast<GLRenderTarget>(renderTarget);
-	}
-
-	GLCommandBuffer::GLCommandBuffer(Surface& surface){
-		glRenderTarget = std::static_pointer_cast<GLRenderTarget>(surface.getRenderTarget());
-	}
+	GLCommandBuffer::GLCommandBuffer() = default;
 
 	GLCommandBuffer::GLCommandBuffer(GLCommandBuffer&& other) noexcept = default;
 
@@ -24,15 +18,43 @@ namespace clv::gfx::ogl{
 
 	GLCommandBuffer::~GLCommandBuffer() = default;
 
-	void GLCommandBuffer::beginEncoding(){
-		glRenderTarget->lock();
+	void GLCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget){
+		glRenderTarget = std::static_pointer_cast<GLRenderTarget>(renderTarget);
 
 		const auto beginCommand = [glRenderTarget = glRenderTarget.get()](){
 			glBindFramebuffer(GL_FRAMEBUFFER, glRenderTarget->getGLFrameBufferID());
-			glRenderTarget->clear();
 		};
 
 		commands.push_back(beginCommand);
+	}
+
+	void GLCommandBuffer::clearTarget(){
+		const auto clearCommand = [glRenderTarget = glRenderTarget.get()](){
+			const auto& clearColour = glRenderTarget->getClearColour();
+
+			glClearColor(clearColour.r, clearColour.g, clearColour.b, clearColour.a);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		};
+
+		commands.push_back(clearCommand);
+	}
+
+	void GLCommandBuffer::updateBufferData(const Buffer& buffer, const void* data){
+		const size_t bufferSize = buffer.getDescriptor().bufferSize;
+		void* datacopy = new char[bufferSize];
+		memcpy(datacopy, data, buffer.getDescriptor().bufferSize);
+
+		const auto updateBufferCommand = [&buffer, data = datacopy](){
+			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
+
+			glBindBuffer(GL_UNIFORM_BUFFER, glbuffer.getBufferID());
+			glBufferSubData(GL_UNIFORM_BUFFER, 0, glbuffer.getDescriptor().bufferSize, data);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+			delete data;
+		};
+
+		commands.push_back(updateBufferCommand);
 	}
 
 	void GLCommandBuffer::bindIndexBuffer(const Buffer& buffer){
@@ -131,6 +153,6 @@ namespace clv::gfx::ogl{
 		}
 
 		commands.clear();
-		glRenderTarget->unlock();
+		glRenderTarget.reset();
 	}
 }

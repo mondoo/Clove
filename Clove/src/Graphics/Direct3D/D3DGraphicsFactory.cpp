@@ -18,12 +18,8 @@ namespace clv::gfx::d3d{
 
 	D3DGraphicsFactory::~D3DGraphicsFactory() = default;
 
-	std::shared_ptr<CommandBuffer> D3DGraphicsFactory::createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget){
-		return std::make_shared<D3DCommandBuffer>(d3dDeviceContext, renderTarget);
-	}
-
-	std::shared_ptr<CommandBuffer> D3DGraphicsFactory::createCommandBuffer(Surface& surface){
-		return std::make_shared<D3DCommandBuffer>(d3dDeviceContext, surface);
+	std::shared_ptr<CommandBuffer> D3DGraphicsFactory::createCommandBuffer(){
+		return std::make_shared<D3DCommandBuffer>(*d3dDevice.Get());
 	}
 
 	std::shared_ptr<Buffer> D3DGraphicsFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){

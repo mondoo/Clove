@@ -30,7 +30,7 @@ namespace clv::gfx::d3d{
 
 		virtual void updateData(const void* data) override;
 
-		Microsoft::WRL::ComPtr<ID3D11Buffer> getD3DBuffer() const;
+		const Microsoft::WRL::ComPtr<ID3D11Buffer>& getD3DBuffer() const;
 
 	private:
 		UINT getD3DBufferType(BufferType cloveType);

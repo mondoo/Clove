@@ -54,7 +54,7 @@ namespace clv::plt{
 		Mouse& getMouse();
 
 		gfx::GraphicsFactory& getGraphicsFactory();
-		gfx::Surface& getSurface();
+		const std::shared_ptr<gfx::Surface>& getSurface() const;
 
 	protected:
 		virtual void processInput() = 0;

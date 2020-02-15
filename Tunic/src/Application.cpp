@@ -7,6 +7,8 @@
 #include "Clove/Core/Layer.hpp"
 #include "Clove/Core/Utils/DeltaTime.hpp"
 #include "Tunic/ECS/Core/Manager.hpp"
+#include "Tunic/Rendering/Renderer.hpp"
+#include "Tunic/Rendering/Renderer2D.hpp"
 
 using namespace clv;
 
@@ -23,11 +25,12 @@ namespace tnc{
 
 		platformInstance = clv::plt::createPlatformInstance();
 
-		mainWindow = platformInstance->createWindow({"Tunic Application", 1280, 720});
+		mainWindow = platformInstance->createWindow({ "Tunic Application", 1280, 720, api });
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
-		//gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+		renderer = std::make_unique<rnd::Renderer>(*mainWindow);
+		renderer2D = std::make_unique<rnd::Renderer2D>(*mainWindow);
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
@@ -51,7 +54,8 @@ namespace tnc{
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
-		//gfx::global::graphicsDevice->setClearColour({ 1.0f, 0.54f, 0.1f, 1.0f });
+		renderer = std::make_unique<rnd::Renderer>(*mainWindow);
+		renderer2D = std::make_unique<rnd::Renderer2D>(*mainWindow);
 
 		ecsManager = std::make_unique<ecs::Manager>();
 		layerStack = std::make_unique<LayerStack>();
@@ -81,7 +85,13 @@ namespace tnc{
 			layer->onUpdate(deltaSeonds.count());
 		}
 
+		renderer->begin();
+		renderer2D->begin();
+
 		ecsManager->update(deltaSeonds.count());
+
+		renderer->end();
+		renderer2D->end();
 
 		{
 			CLV_PROFILE_SCOPE("Window::endFrame");
@@ -123,5 +133,13 @@ namespace tnc{
 
 	clv::gfx::GraphicsFactory& Application::getGraphicsFactory(){
 		return mainWindow->getGraphicsFactory();
+	}
+
+	rnd::Renderer* Application::getRenderer(){
+		return renderer.get();
+	}
+
+	rnd::Renderer2D* Application::getRenderer2D(){
+		return renderer2D.get();
 	}
 }

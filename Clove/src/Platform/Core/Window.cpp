@@ -36,7 +36,7 @@ namespace clv::plt{
 		return *graphicsFactory;
 	}
 
-	gfx::Surface& Window::getSurface(){
-		return *surface;
+	const std::shared_ptr<gfx::Surface>& Window::getSurface() const{
+		return surface;
 	}
 }

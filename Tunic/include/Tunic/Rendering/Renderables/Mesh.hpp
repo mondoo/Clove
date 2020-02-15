@@ -8,6 +8,7 @@ namespace clv::gfx{
 	class Buffer;
 	class VertexLayout;
 	class VertexBufferData;
+	class CommandBuffer;
 }
 
 namespace tnc::rnd{
@@ -39,8 +40,7 @@ namespace tnc::rnd{
 
 		uint32_t getIndexCount();
 
-		std::shared_ptr<clv::gfx::Buffer> getVertexBufferForLayout(const clv::gfx::VertexLayout& layout);
-		std::shared_ptr<clv::gfx::Buffer> getIndexBuffer();
+		void draw(clv::gfx::CommandBuffer& commandBuffer, const clv::gfx::VertexLayout& layout);
 
 	private:
 		void initialiseVertexBuffer(const clv::gfx::VertexBufferData& vertexArray);

@@ -4,6 +4,7 @@
 
 #include <wrl.h>
 
+struct ID3D11Device;
 struct ID3D11DeviceContext;
 
 namespace clv::gfx::d3d{
@@ -14,19 +15,15 @@ namespace clv::gfx::d3d{
 	class D3DCommandBuffer : public CommandBuffer{
 		//VARIABLES
 	private:
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext;
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> immediateContext;
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> deferredContext;
 
 		std::shared_ptr<D3DRenderTarget> d3dRenderTarget;
-
-		std::vector<std::function<void()>> commands;
-
-		mth::vec4f clearColour = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		//FUNCTIONS
 	public:
 		D3DCommandBuffer() = delete;
-		D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, const std::shared_ptr<RenderTarget>& renderTarget);
-		D3DCommandBuffer(Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dContext, Surface& surface);
+		D3DCommandBuffer(ID3D11Device& d3dDevice);
 
 		D3DCommandBuffer(const D3DCommandBuffer& other) = delete;
 		D3DCommandBuffer(D3DCommandBuffer&& other) noexcept;
@@ -36,7 +33,11 @@ namespace clv::gfx::d3d{
 
 		virtual ~D3DCommandBuffer();
 
-		virtual void beginEncoding() override;
+		virtual void beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget) override;
+
+		virtual void clearTarget() override;
+
+		virtual void updateBufferData(const Buffer& buffer, const void* data) override;
 
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32_t stride) override;
@@ -50,9 +51,5 @@ namespace clv::gfx::d3d{
 		virtual void drawIndexed(const uint32_t count) override;
 
 		virtual void endEncoding() override;
-
-	private:
-		void releaseSurfaceRenderTarget();
-		void retainSurfaceRenderTarget(const std::shared_ptr<D3DRenderTarget>& renderTarget);
 	};
 }

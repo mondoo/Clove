@@ -17,12 +17,8 @@ namespace clv::gfx::mtl{
 		[mtlDevice release];
 	}
 	
-	std::shared_ptr<CommandBuffer> MTLGraphicsFactory::createCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget){
-		return std::make_shared<MTLCommandBuffer>([mtlDevice newCommandQueue], renderTarget);
-	}
-	
-	std::shared_ptr<CommandBuffer> MTLGraphicsFactory::createCommandBuffer(Surface& surface){
-		return std::make_shared<MTLCommandBuffer>([mtlDevice newCommandQueue], surface);
+	std::shared_ptr<CommandBuffer> MTLGraphicsFactory::createCommandBuffer(){
+		return std::make_shared<MTLCommandBuffer>([mtlDevice newCommandQueue]);
 	}
 	
 	std::shared_ptr<Buffer> MTLGraphicsFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){

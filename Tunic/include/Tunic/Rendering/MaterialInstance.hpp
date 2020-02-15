@@ -33,7 +33,7 @@ namespace tnc::rnd{
 
 		~MaterialInstance();
 
-		void bind(const std::shared_ptr<clv::gfx::CommandBuffer>& commandBuffer);
+		void bind(clv::gfx::CommandBuffer& commandBuffer);
 
 		template<typename DataType>
 		void setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderStage shaderType);

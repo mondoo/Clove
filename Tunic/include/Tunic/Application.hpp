@@ -30,12 +30,20 @@ namespace tnc{
 	};
 }
 
+namespace tnc::rnd{
+	class Renderer;
+	class Renderer2D;
+}
+
 namespace tnc{
 	class Application{
 		//VARIABLES
 	private:
 		std::unique_ptr<clv::plt::Platform> platformInstance;
 		std::shared_ptr<clv::plt::Window> mainWindow;
+
+		std::unique_ptr<rnd::Renderer> renderer;
+		std::unique_ptr<rnd::Renderer2D> renderer2D;
 
 		std::unique_ptr<ecs::Manager> ecsManager;
 
@@ -71,5 +79,8 @@ namespace tnc{
 		void setMainWindow(const std::shared_ptr<clv::plt::Window>& window);
 
 		clv::gfx::GraphicsFactory& getGraphicsFactory();
+
+		rnd::Renderer* getRenderer();
+		rnd::Renderer2D* getRenderer2D();
 	};
 }

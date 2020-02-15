@@ -19,8 +19,6 @@ namespace clv::gfx::d3d{
 		//VARIABLES
 	public:
 		utl::SingleCastDelegate<void()> onDeviceRemoved;
-		utl::MultiCastDelegate<void()> releaseRenderTargets;
-		utl::MultiCastDelegate<void(const std::shared_ptr<D3DRenderTarget>&)> retainNewRenderTargets;
 
 	private:
 		uint32_t bufferCount = 1u;

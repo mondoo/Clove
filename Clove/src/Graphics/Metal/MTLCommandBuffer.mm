@@ -7,16 +7,8 @@
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 
 namespace clv::gfx::mtl{
-	MTLCommandBuffer::MTLCommandBuffer(id<MTLCommandQueue> commandQueue, const std::shared_ptr<RenderTarget>& renderTarget)
+	MTLCommandBuffer::MTLCommandBuffer(id<MTLCommandQueue> commandQueue)
 		: commandQueue([commandQueue retain]){
-		mtlRenderTarget = std::static_pointer_cast<MTLRenderTarget>(renderTarget);
-	}
-	
-	MTLCommandBuffer::MTLCommandBuffer(id<MTLCommandQueue> commandQueue, Surface& surface)
-		: commandQueue([commandQueue retain]){
-		MTLSurface& mtlSurface = static_cast<MTLSurface&>(surface);
-		mtlRenderTarget = std::static_pointer_cast<MTLRenderTarget>(mtlSurface.getRenderTarget());
-		view = [mtlSurface.getMTKView() retain];
 	}
 	
 	MTLCommandBuffer::MTLCommandBuffer(MTLCommandBuffer&& other) noexcept = default;
@@ -27,17 +19,17 @@ namespace clv::gfx::mtl{
 		[commandQueue release];
 		[commandBuffer release];
 		[commandEncoder release];
-		if(view){
-			[view release];
-		}
 	}
 
-	void MTLCommandBuffer::beginEncoding(){
+	void MTLCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget){
+		mtlRenderTarget = std::static_pointer_cast<MTLRenderTarget>(renderTarget);
+
 		commandBuffer = [[commandQueue commandBuffer] retain];
 		commandEncoder = [[commandBuffer renderCommandEncoderWithDescriptor:mtlRenderTarget->getRenderPassDescriptor()] retain];
-		if(view){
-			drawable = [[view currentDrawable] retain];
-		}
+	}
+
+	void MTLCommandBuffer::updateBufferData(const Buffer& buffer, const void* data){
+		CLV_ASSERT(false, "NOT YET IMPLEMENTED");
 	}
 
 	void MTLCommandBuffer::bindIndexBuffer(const Buffer& buffer){
@@ -128,10 +120,6 @@ namespace clv::gfx::mtl{
 
 	void MTLCommandBuffer::endEncoding(){
 		[commandEncoder endEncoding];
-		if(drawable){
-			[commandBuffer presentDrawable:drawable];
-			[drawable release];
-		}
 		[commandBuffer commit];
 	}
 }

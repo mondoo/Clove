@@ -84,8 +84,6 @@ namespace clv::gfx::d3d{
 	}
 
 	void D3DSurface::resizeBuffers(const mth::vec2ui& size){
-		releaseRenderTargets.broadcast();
-
 		D3D11_TEXTURE2D_DESC depthTexDesc{};
 		depthStencil->GetDesc(&depthTexDesc);
 
@@ -114,8 +112,6 @@ namespace clv::gfx::d3d{
 		DX11_THROW_INFO(d3dDevice->CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
 
 		renderTarget = std::make_shared<D3DRenderTarget>(renderTargetView, depthStencilView);
-
-		retainNewRenderTargets.broadcast(renderTarget);
 	}
 
 	void D3DSurface::present(){

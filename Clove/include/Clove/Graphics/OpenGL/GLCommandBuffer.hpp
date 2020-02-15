@@ -17,9 +17,7 @@ namespace clv::gfx::ogl{
 
 		//FUNCTIONS
 	public:
-		GLCommandBuffer() = delete;
-		GLCommandBuffer(const std::shared_ptr<RenderTarget>& renderTarget);
-		GLCommandBuffer(Surface& surface);
+		GLCommandBuffer();
 
 		GLCommandBuffer(const GLCommandBuffer& other) = delete;
 		GLCommandBuffer(GLCommandBuffer&& other) noexcept;
@@ -29,7 +27,11 @@ namespace clv::gfx::ogl{
 
 		virtual ~GLCommandBuffer();
 
-		virtual void beginEncoding() override;
+		virtual void beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget) override;
+
+		virtual void clearTarget() override;
+
+		virtual void updateBufferData(const Buffer& buffer, const void* data) override;
 
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32_t stride) override;
