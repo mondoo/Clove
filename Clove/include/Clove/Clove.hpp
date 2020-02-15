@@ -17,6 +17,7 @@
 #include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/Shader.hpp"
 #include "Clove/Graphics/Core/VertexLayout.hpp"
+#include "Clove/Graphics/Core/Surface.hpp"
 
 #include "Clove/Core/Input/KeyCodes.hpp"
 #include "Clove/Core/Input/MouseButtonCodes.hpp"

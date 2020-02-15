@@ -56,7 +56,7 @@ int main(){
 	const mth::vec2f screenSize = mainWindow->getSize();
 
 	//Create a command buffer to encode graphics commands
-	auto commandBuffer = graphicsFactory.createCommandBuffer(mainWindow->getSurface());
+	auto commandBuffer = graphicsFactory.createCommandBuffer();
 
 	bool isWindowOpen = true;
 	mainWindow->onWindowCloseDelegate.bind([&isWindowOpen](){ isWindowOpen = false; });
@@ -66,7 +66,10 @@ int main(){
 		mainWindow->beginFrame();
 
 		//Put all commands inbetween a begin / end econding call
-		commandBuffer->beginEncoding();
+		commandBuffer->beginEncoding(mainWindow->getSurface()->getRenderTarget());
+
+		//Clear the current render target
+		commandBuffer->clearTarget();
 
 		//Bind in the data the pipeline will need
 		commandBuffer->setViewport({ 0, 0, static_cast<int32_t>(screenSize.x), static_cast<int32_t>(screenSize.y) });
