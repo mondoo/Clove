@@ -126,11 +126,7 @@ namespace tnc::rnd{
 		meshCommandBuffer->bindShaderResourceBuffer(*lightNumBuffer, ShaderStage::Pixel, BBP_CurrentLights);
 
 		for (auto& camera : scene.cameras){
-			if (camera.target){
-				meshCommandBuffer->beginEncoding(camera.target);
-			} else{
-				meshCommandBuffer->beginEncoding(surface->getRenderTarget());
-			}
+			meshCommandBuffer->beginEncoding(camera.target);
 			meshCommandBuffer->clearTarget(); //TODO: This will clear twice if two cameras render for the same target
 
 			meshCommandBuffer->setViewport(camera.viewport);

@@ -1,18 +1,20 @@
 #include "Tunic/ECS/3D/Components/CameraComponent.hpp"
 
-#include "Clove/Platform/Core/Window.hpp"
+#include <Clove/Platform/Core/Window.hpp>
+#include <Clove/Graphics/Core/Surface.hpp>
 
 using namespace clv;
 
 namespace tnc::ecs::_3D{
-	CameraComponent::CameraComponent(const gfx::Viewport& viewport, const ProjectionMode projection)
-		: viewport(viewport){
+	CameraComponent::CameraComponent(std::shared_ptr<clv::gfx::RenderTarget> renderTarget, const gfx::Viewport& viewport, const ProjectionMode projection)
+		: renderTarget(std::move(renderTarget)), viewport(viewport){
 		setProjectionMode(projection);
 	}
 
 	CameraComponent::CameraComponent(plt::Window& window, const ProjectionMode projection){
 		viewport = { 0, 0, window.getSize().x, window.getSize().y };
 		window.onWindowResize.bind(&CameraComponent::updateViewportSize, this);
+		renderTarget = window.getSurface()->getRenderTarget();
 		setProjectionMode(projection);
 	}
 
@@ -44,22 +46,18 @@ namespace tnc::ecs::_3D{
 
 		currentProjectionMode = mode;
 
-		switch(currentProjectionMode){
-			case ProjectionMode::orthographic:
-				currentProjection = mth::createOrthographicMatrix(-(width / 2.0f), (width / 2.0f), -(height / 2.0f), (height / 2.0f));
-				break;
+		switch (currentProjectionMode){
+		case ProjectionMode::orthographic:
+			currentProjection = mth::createOrthographicMatrix(-(width / 2.0f), (width / 2.0f), -(height / 2.0f), (height / 2.0f));
+			break;
 
-			case ProjectionMode::perspective:
-				currentProjection = mth::createPerspectiveMatrix(45.0f, width / height, 0.5f, 10000.0f);
-				break;
+		case ProjectionMode::perspective:
+			currentProjection = mth::createPerspectiveMatrix(45.0f, width / height, 0.5f, 10000.0f);
+			break;
 
-			default:
-				break;
+		default:
+			break;
 		}
-	}
-
-	void CameraComponent::setRenderTarget(const std::shared_ptr<gfx::RenderTarget>& renderTarget){
-		this->renderTarget = renderTarget;
 	}
 
 	void CameraComponent::updateViewportSize(const mth::vec2ui& viewportSize){
