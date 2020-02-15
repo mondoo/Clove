@@ -55,7 +55,6 @@ namespace tnc::rnd{
 
 		//VARIABLES
 	private:
-		std::shared_ptr<clv::gfx::Surface> surface;
 		std::shared_ptr<clv::gfx::RenderTarget> shadowRenderTarget;
 
 		std::shared_ptr<clv::gfx::PipelineObject> shadowPipelineObject;

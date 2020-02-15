@@ -20,8 +20,7 @@ namespace tnc::rnd{
 
 	Renderer::SceneData::~SceneData() = default;
 
-	Renderer::Renderer(plt::Window& window)
-		: surface(window.getSurface()){
+	Renderer::Renderer(plt::Window& window){
 
 		GraphicsFactory& factory = window.getGraphicsFactory();
 		
