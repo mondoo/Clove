@@ -1,7 +1,7 @@
 #include "Tunic/ECS/2D/Systems/RenderSystem.hpp"
 
 #include "Tunic/Application.hpp"
-#include "Tunic/ECS/Core/Manager.hpp"
+#include "Tunic/ECS/Core/World.hpp"
 #include "Tunic/ECS/2D/Components/TransformComponent.hpp"
 #include "Tunic/ECS/2D/Components/SpriteComponent.hpp"
 #include "Tunic/ECS/UI/Components/TransformComponent.hpp"

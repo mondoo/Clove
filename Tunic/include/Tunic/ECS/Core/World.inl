@@ -1,21 +1,21 @@
 namespace tnc::ecs{
 	template<typename ComponentType, typename ...ConstructArgs>
-	ComponentType* Manager::addComponent(EntityID entityID, ConstructArgs&& ...args){
+	ComponentType* World::addComponent(EntityID entityID, ConstructArgs&& ...args){
 		return componentManager.getComponentContainer<ComponentType>()->addComponent(entityID, args...);
 	}
 
 	template<typename ComponentType>
-	ComponentType* Manager::getComponent(EntityID entityID){
+	ComponentType* World::getComponent(EntityID entityID){
 		return componentManager.getComponentContainer<ComponentType>()->getComponent(entityID);
 	}
 
 	template<typename ComponentType>
-	void Manager::removeComponent(EntityID entityID){
+	void World::removeComponent(EntityID entityID){
 		componentManager.getComponentContainer<ComponentType>()->removeComponent(entityID);
 	}
 
 	template<typename ...ComponentTypes>
-	std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> Manager::getComponentSets(){
+	std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> World::getComponentSets(){
 		CLV_PROFILE_FUNCTION();
 
 		std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> componentSets;
@@ -29,19 +29,19 @@ namespace tnc::ecs{
 	}
 
 	template<typename SystemType, typename ...ConstructArgs>
-	void Manager::addSystem(ConstructArgs&& ...args){
+	void World::addSystem(ConstructArgs&& ...args){
 		auto system = std::make_unique<SystemType>(std::forward<ConstructArgs>(args)...);
 		system->manager = this;
 		systems.push_back(std::move(system));
 	}
 
 	template<std::size_t index, typename ...ComponentTypes>
-	Manager::FoundState Manager::checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple, typename std::enable_if_t<(index == sizeof...(ComponentTypes)), int>){
+	World::FoundState World::checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple, typename std::enable_if_t<(index == sizeof...(ComponentTypes)), int>){
 		return FoundState::EndOfTuple;
 	}
 
 	template<std::size_t index, typename ...ComponentTypes>
-	Manager::FoundState Manager::checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple, typename std::enable_if_t<(index < sizeof ...(ComponentTypes)), int>){
+	World::FoundState World::checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple, typename std::enable_if_t<(index < sizeof ...(ComponentTypes)), int>){
 		if(std::get<index>(tuple)){
 			return checkForNullptr<index + 1, ComponentTypes...>(tuple);
 		} else{

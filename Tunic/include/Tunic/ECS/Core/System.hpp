@@ -4,16 +4,16 @@
 
 namespace tnc::ecs{
 	class ComponentInterface;
-	class Manager;
+	class World;
 }
 
 namespace tnc::ecs{
 	class System{
-		friend class Manager;
+		friend class World;
 
 		//VARIABLES
 	protected:
-		Manager* manager = nullptr;
+		World* manager = nullptr;
 
 		//FUNCTIONS
 	public:

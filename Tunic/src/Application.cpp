@@ -6,7 +6,7 @@
 #include "Clove/Core/LayerStack.hpp"
 #include "Clove/Core/Layer.hpp"
 #include "Clove/Core/Utils/DeltaTime.hpp"
-#include "Tunic/ECS/Core/Manager.hpp"
+#include "Tunic/ECS/Core/World.hpp"
 #include "Tunic/Rendering/Renderer.hpp"
 #include "Tunic/Rendering/Renderer2D.hpp"
 
@@ -32,7 +32,7 @@ namespace tnc{
 		renderer = std::make_unique<rnd::Renderer>(*mainWindow);
 		renderer2D = std::make_unique<rnd::Renderer2D>(*mainWindow);
 
-		ecsManager = std::make_unique<ecs::Manager>();
+		ecsWorld = std::make_unique<ecs::World>();
 		layerStack = std::make_unique<LayerStack>();
 
 		CLV_LOG_INFO("Successfully initialised Clove");
@@ -57,7 +57,7 @@ namespace tnc{
 		renderer = std::make_unique<rnd::Renderer>(*mainWindow);
 		renderer2D = std::make_unique<rnd::Renderer2D>(*mainWindow);
 
-		ecsManager = std::make_unique<ecs::Manager>();
+		ecsWorld = std::make_unique<ecs::World>();
 		layerStack = std::make_unique<LayerStack>();
 
 		CLV_LOG_INFO("Successfully initialised Clove");
@@ -88,7 +88,7 @@ namespace tnc{
 		renderer->begin();
 		renderer2D->begin();
 
-		ecsManager->update(deltaSeonds.count());
+		ecsWorld->update(deltaSeonds.count());
 
 		renderer->end();
 		renderer2D->end();
@@ -119,8 +119,8 @@ namespace tnc{
 		return *instance;
 	}
 
-	ecs::Manager& Application::getManager(){
-		return *ecsManager;
+	ecs::World& Application::getWorld(){
+		return *ecsWorld;
 	}
 
 	plt::Window& Application::getMainWindow() const{

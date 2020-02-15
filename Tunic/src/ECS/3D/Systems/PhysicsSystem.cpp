@@ -1,6 +1,6 @@
 #include "Tunic/ECS/3D/Systems/PhysicsSystem.hpp"
 
-#include "Tunic/ECS/Core/Manager.hpp"
+#include "Tunic/ECS/Core/World.hpp"
 #include "Tunic/ECS/3D/Components/TransformComponent.hpp"
 #include "Tunic/ECS/3D/Components/RigidBodyComponent.hpp"
 

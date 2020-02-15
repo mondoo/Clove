@@ -6,7 +6,7 @@
 #include <msclr/lock.h>
 
 #include <Tunic/Application.hpp>
-#include <Tunic/ECS/Core/Manager.hpp>
+#include <Tunic/ECS/Core/World.hpp>
 #include <Tunic/ECS/3D/Systems/PhysicsSystem.hpp>
 #include <Tunic/ECS/3D/Systems/RenderSystem.hpp>
 #include <Tunic/ECS/2D/Systems/PhysicsSystem.hpp>
@@ -29,15 +29,15 @@ namespace Bulb::Core{
 
 		app = new tnc::Application(clv::gfx::API::Direct3D11, proxy, { posX, posY }, { width, height });
 
-		ecs::Manager& ecsManager = app->getManager();
+		ecs::World& ecsWorld = app->getWorld();
 
-		ecsManager.addSystem<ecs::_3D::PhysicsSystem>();
-		ecsManager.addSystem<ecs::_3D::RenderSystem>();
+		ecsWorld.addSystem<ecs::_3D::PhysicsSystem>();
+		ecsWorld.addSystem<ecs::_3D::RenderSystem>();
 
-		ecsManager.addSystem<ecs::_2D::PhysicsSystem>();
-		ecsManager.addSystem<ecs::_2D::RenderSystem>();
+		ecsWorld.addSystem<ecs::_2D::PhysicsSystem>();
+		ecsWorld.addSystem<ecs::_2D::RenderSystem>();
 
-		ecsManager.addSystem<ecs::aud::AudioSystem>();
+		ecsWorld.addSystem<ecs::aud::AudioSystem>();
 
 		layer = new std::shared_ptr(std::make_shared<blb::EditorLayer>());
 		app->pushLayer(*layer);

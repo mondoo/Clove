@@ -3,21 +3,21 @@
 #include "Tunic/ECS/Core/ECSTypes.hpp"
 
 namespace tnc::ecs{
-	class Manager;
+	class World;
 }
 
 namespace tnc::ecs{
 	class Entity{
 		//VARIABLES
 	private:
-		Manager* manager = nullptr;
+		World* manager = nullptr;
 
 		EntityID entityID = INVALID_ENTITY_ID;
 
 		//FUNCTIONS
 	public:
 		Entity();
-		Entity(EntityID entityID, Manager* manager);
+		Entity(EntityID entityID, World* manager);
 
 		Entity(const Entity& other);
 		Entity(Entity&& other) noexcept;

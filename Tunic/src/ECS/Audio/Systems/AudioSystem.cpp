@@ -1,6 +1,6 @@
 #include "Tunic/ECS/Audio/Systems/AudioSystem.hpp"
 
-#include "Tunic/ECS/Core/Manager.hpp"
+#include "Tunic/ECS/Core/World.hpp"
 #include "Tunic/ECS/Audio/Components/AudioComponent.hpp"
 
 //TODO: Clove wrapper for audio

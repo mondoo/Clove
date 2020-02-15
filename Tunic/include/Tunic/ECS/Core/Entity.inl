@@ -1,4 +1,4 @@
-#include "Tunic/ECS/Core/Manager.hpp"
+#include "Tunic/ECS/Core/World.hpp"
 
 namespace tnc::ecs{
 	template<typename ComponentType, typename ...ConstructorArgs>

@@ -11,7 +11,7 @@ namespace clv{
 }
 
 namespace tnc::ecs{
-	class Manager;
+	class World;
 }
 
 namespace clv::plt{
@@ -45,7 +45,7 @@ namespace tnc{
 		std::unique_ptr<rnd::Renderer> renderer;
 		std::unique_ptr<rnd::Renderer2D> renderer2D;
 
-		std::unique_ptr<ecs::Manager> ecsManager;
+		std::unique_ptr<ecs::World> ecsWorld;
 
 		ApplicationState currentState = ApplicationState::running;
 
@@ -73,7 +73,7 @@ namespace tnc{
 
 		static Application& get();
 
-		ecs::Manager& getManager();
+		ecs::World& getWorld();
 
 		clv::plt::Window& getMainWindow() const;
 		void setMainWindow(const std::shared_ptr<clv::plt::Window>& window);

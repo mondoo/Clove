@@ -17,9 +17,9 @@ set(
 		${TNC_INCLUDE}/ECS/Core/Entity.hpp
 		${TNC_INCLUDE}/ECS/Core/Entity.inl
 		${TNC_SOURCE}/ECS/Core/Entity.cpp
-		${TNC_INCLUDE}/ECS/Core/Manager.hpp
-		${TNC_INCLUDE}/ECS/Core/Manager.inl
-		${TNC_SOURCE}/ECS/Core/Manager.cpp
+		${TNC_INCLUDE}/ECS/Core/World.hpp
+		${TNC_INCLUDE}/ECS/Core/World.inl
+		${TNC_SOURCE}/ECS/Core/World.cpp
 		${TNC_INCLUDE}/ECS/Core/System.hpp
 		${TNC_INCLUDE}/ECS/2D/Components/RigidBodyComponent.hpp
 		${TNC_SOURCE}/ECS/2D/Components/RigidBodyComponent.cpp

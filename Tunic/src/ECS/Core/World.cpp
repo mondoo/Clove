@@ -1,4 +1,4 @@
-#include "Tunic/ECS/Core/Manager.hpp"
+#include "Tunic/ECS/Core/World.hpp"
 
 #include "Tunic/ECS/Core/Entity.hpp"
 #include "Tunic/ECS/2D/Systems/RenderSystem.hpp"
@@ -10,17 +10,17 @@
 using namespace clv;
 
 namespace tnc::ecs{
-	EntityID Manager::nextID = 1;
-	std::queue<EntityID> Manager::recycledIDs;
+	EntityID World::nextID = 1;
+	std::queue<EntityID> World::recycledIDs;
 
-	Manager::Manager(){
-		componentManager.componentAddedDelegate.bind(&Manager::onComponentAdded, this);
-		componentManager.componentRemovedDelegate.bind(&Manager::onComponentRemoved, this);
+	World::World(){
+		componentManager.componentAddedDelegate.bind(&World::onComponentAdded, this);
+		componentManager.componentRemovedDelegate.bind(&World::onComponentRemoved, this);
 	}
 
-	Manager::~Manager() = default;
+	World::~World() = default;
 
-	void Manager::update(utl::DeltaTime deltaTime){
+	void World::update(utl::DeltaTime deltaTime){
 		CLV_PROFILE_FUNCTION();
 
 		std::for_each(systems.begin(), systems.end(), [](const std::unique_ptr<System>& system){
@@ -36,7 +36,7 @@ namespace tnc::ecs{
 		});
 	}
 
-	Entity Manager::createEntity(){
+	Entity World::createEntity(){
 		EntityID ID = INVALID_ENTITY_ID;
 
 		if(!recycledIDs.empty()){
@@ -51,7 +51,7 @@ namespace tnc::ecs{
 		return { ID, this };
 	}
 
-	Entity Manager::cloneEntitiesComponents(EntityID ID){
+	Entity World::cloneEntitiesComponents(EntityID ID){
 		Entity clonedEntity = createEntity();
 
 		componentManager.cloneEntitiesComponents(ID, clonedEntity.getID());
@@ -59,7 +59,7 @@ namespace tnc::ecs{
 		return clonedEntity;
 	}
 
-	Entity Manager::getEntity(EntityID ID){
+	Entity World::getEntity(EntityID ID){
 		if(ID == INVALID_ENTITY_ID){
 			return {};
 		} else{
@@ -67,7 +67,7 @@ namespace tnc::ecs{
 		}
 	}
 
-	void Manager::destroyEntity(EntityID ID){
+	void World::destroyEntity(EntityID ID){
 		auto foundIDIter = std::find(activeIDs.begin(), activeIDs.end(), ID);
 
 		if(ID == INVALID_ENTITY_ID || foundIDIter == activeIDs.end()){
@@ -79,13 +79,13 @@ namespace tnc::ecs{
 		activeIDs.erase(foundIDIter);
 	}
 
-	void Manager::onComponentAdded(ComponentInterface* component){
+	void World::onComponentAdded(ComponentInterface* component){
 		std::for_each(systems.begin(), systems.end(), [component](const std::unique_ptr<System>& system){
 			system->onComponentCreated(component);
 		});
 	}
 
-	void Manager::onComponentRemoved(ComponentInterface* component){
+	void World::onComponentRemoved(ComponentInterface* component){
 		std::for_each(systems.begin(), systems.end(), [component](const std::unique_ptr<System>& system){
 			system->onComponentDestroyed(component);
 		});

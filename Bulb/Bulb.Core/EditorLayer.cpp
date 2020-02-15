@@ -2,7 +2,7 @@
 
 #include <Tunic/Application.hpp>
 #include <Clove/Platform/Core/Window.hpp>
-#include <Tunic/ECS/Core/Manager.hpp>
+#include <Tunic/ECS/Core/World.hpp>
 #include <Tunic/ECS/3D/Components/TransformComponent.hpp>
 #include <Tunic/ECS/3D/Components/CameraComponent.hpp>
 #include <Tunic/ECS/3D/Components/MeshComponent.hpp>
@@ -11,7 +11,7 @@ namespace blb{
 	void EditorLayer::onAttach(){
 		const auto windowVP = clv::gfx::Viewport{ 0, 0, tnc::Application::get().getMainWindow().getSize().x, tnc::Application::get().getMainWindow().getSize().y };
 
-		camera = tnc::Application::get().getManager().createEntity();
+		camera = tnc::Application::get().getWorld().createEntity();
 		camera.addComponent<tnc::ecs::_3D::TransformComponent>()->setPosition({ 0.0f, 0.0f, -20.0f });
 		auto* camComp = camera.addComponent<tnc::ecs::_3D::CameraComponent>(windowVP, tnc::ecs::_3D::ProjectionMode::perspective);
 
@@ -23,17 +23,17 @@ namespace blb{
 	}
 
 	void EditorLayer::onDetach(){
-		auto& ecsManager = tnc::Application::get().getManager();
+		auto& ecsWorld = tnc::Application::get().getWorld();
 
-		ecsManager.destroyEntity(camera.getID());
+		ecsWorld.destroyEntity(camera.getID());
 
 		for(auto& entity : entities){
-			ecsManager.destroyEntity(entity.getID());
+			ecsWorld.destroyEntity(entity.getID());
 		}
 	}
 
 	tnc::ecs::Entity EditorLayer::addEntity(){
-		tnc::ecs::Entity entity = tnc::Application::get().getManager().createEntity();
+		tnc::ecs::Entity entity = tnc::Application::get().getWorld().createEntity();
 		entities.push_back(entity);
 		return entity;
 	}
