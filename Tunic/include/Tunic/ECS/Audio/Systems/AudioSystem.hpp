@@ -22,13 +22,16 @@ namespace tnc::ecs::aud{
 		//FUNCTIONS
 	public:
 		AudioSystem();
+
 		AudioSystem(const AudioSystem& other) = delete;
 		AudioSystem(AudioSystem&& other) noexcept;
+
 		AudioSystem& operator=(const AudioSystem& other) = delete;
 		AudioSystem& operator=(AudioSystem&& other) noexcept;
+
 		~AudioSystem();
 
-		virtual void update(clv::utl::DeltaTime deltaTime) override;
+		virtual void update(World& world, clv::utl::DeltaTime deltaTime) override;
 
 		virtual void onComponentDestroyed(ComponentInterface* component) override;
 

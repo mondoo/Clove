@@ -25,10 +25,10 @@ namespace tnc::ecs::aud{
 		PACall(Pa_Terminate());
 	}
 
-	void AudioSystem::update(utl::DeltaTime deltaTime){
+	void AudioSystem::update(World& world, utl::DeltaTime deltaTime){
 		CLV_PROFILE_FUNCTION();
 
-		auto componentTuples = manager->getComponentSets<AudioComponent>();
+		auto componentTuples = world.getComponentSets<AudioComponent>();
 
 		for(auto& tuple : componentTuples){
 			AudioComponent* component = std::get<AudioComponent*>(tuple);

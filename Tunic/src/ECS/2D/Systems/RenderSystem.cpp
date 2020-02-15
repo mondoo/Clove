@@ -26,11 +26,11 @@ namespace tnc::ecs::_2D{
 
 	RenderSystem::~RenderSystem() = default;
 
-	void RenderSystem::preUpdate(){
+	void RenderSystem::preUpdate(World& world){
 		//TODO: Clear camera render targets when there are 2D camera components
 	}
 
-	void RenderSystem::update(utl::DeltaTime deltaTime){
+	void RenderSystem::update(World& world, utl::DeltaTime deltaTime){
 		CLV_PROFILE_FUNCTION();
 
 		const mth::vec2i screenSize = tnc::Application::get().getMainWindow().getSize();
@@ -41,7 +41,7 @@ namespace tnc::ecs::_2D{
 		{
 			CLV_PROFILE_SCOPE("Preparing sprites");
 
-			auto componentTuples = manager->getComponentSets<TransformComponent, SpriteComponent>();
+			auto componentTuples = world.getComponentSets<TransformComponent, SpriteComponent>();
 			for(auto& tuple : componentTuples){
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
 				SpriteComponent* renderable = std::get<SpriteComponent*>(tuple);
@@ -57,7 +57,7 @@ namespace tnc::ecs::_2D{
 		{
 			CLV_PROFILE_SCOPE("Preparing widgets");
 
-			auto componentTuples = manager->getComponentSets<ui::TransformComponent, ui::WidgetComponent>();
+			auto componentTuples = world.getComponentSets<ui::TransformComponent, ui::WidgetComponent>();
 			for(auto& tuple : componentTuples){
 				ui::TransformComponent* transform = std::get<ui::TransformComponent*>(tuple);
 				ui::WidgetComponent* renderable = std::get<ui::WidgetComponent*>(tuple);
@@ -91,7 +91,7 @@ namespace tnc::ecs::_2D{
 
 			GraphicsFactory& graphicsFactory = Application::get().getGraphicsFactory();
 
-			auto componentTuples = manager->getComponentSets<ui::TransformComponent, ui::TextComponent>();
+			auto componentTuples = world.getComponentSets<ui::TransformComponent, ui::TextComponent>();
 			for(auto& tuple : componentTuples){
 				ui::TransformComponent* transform = std::get<ui::TransformComponent*>(tuple);
 				ui::TextComponent* fontComp = std::get<ui::TextComponent*>(tuple);

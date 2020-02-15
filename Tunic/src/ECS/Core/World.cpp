@@ -23,16 +23,16 @@ namespace tnc::ecs{
 	void World::update(utl::DeltaTime deltaTime){
 		CLV_PROFILE_FUNCTION();
 
-		std::for_each(systems.begin(), systems.end(), [](const std::unique_ptr<System>& system){
-			system->preUpdate();
+		std::for_each(systems.begin(), systems.end(), [this](const std::unique_ptr<System>& system){
+			system->preUpdate(*this);
 		});
 
-		std::for_each(systems.begin(), systems.end(), [deltaTime](const std::unique_ptr<System>& system){
-			system->update(deltaTime);
+		std::for_each(systems.begin(), systems.end(), [this, deltaTime](const std::unique_ptr<System>& system){
+			system->update(*this, deltaTime);
 		});
 
-		std::for_each(systems.begin(), systems.end(), [](const std::unique_ptr<System>& system){
-			system->postUpdate();
+		std::for_each(systems.begin(), systems.end(), [this](const std::unique_ptr<System>& system){
+			system->postUpdate(*this);
 		});
 	}
 

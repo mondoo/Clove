@@ -11,17 +11,13 @@ namespace tnc::ecs{
 	class System{
 		friend class World;
 
-		//VARIABLES
-	protected:
-		World* manager = nullptr;
-
 		//FUNCTIONS
 	public:
 		virtual ~System() = default;
 
-		virtual void preUpdate(){}
-		virtual void update(clv::utl::DeltaTime deltaTime) = 0;
-		virtual void postUpdate(){}
+		virtual void preUpdate(World& world){}
+		virtual void update(World& world, clv::utl::DeltaTime deltaTime) = 0;
+		virtual void postUpdate(World& world){}
 
 		virtual void onComponentCreated(ComponentInterface* component){}
 		virtual void onComponentDestroyed(ComponentInterface* component){}

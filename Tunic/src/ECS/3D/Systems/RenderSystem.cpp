@@ -30,20 +30,20 @@ namespace tnc::ecs::_3D{
 
 	RenderSystem::~RenderSystem() = default;
 
-	void RenderSystem::preUpdate(){
-		auto componentTuples = manager->getComponentSets<CameraComponent>();
+	void RenderSystem::preUpdate(World& world){
+		auto componentTuples = world.getComponentSets<CameraComponent>();
 		for (auto& tuple : componentTuples){
 			CameraComponent* camera = std::get<CameraComponent*>(tuple);
 			camera->renderTarget->clear();
 		}
 	}
 
-	void RenderSystem::update(utl::DeltaTime deltaTime){
+	void RenderSystem::update(World& world, utl::DeltaTime deltaTime){
 		CLV_PROFILE_FUNCTION();
 
 		//Transform and submit cameras
 		{
-			auto componentTuples = manager->getComponentSets<TransformComponent, CameraComponent>();
+			auto componentTuples = world.getComponentSets<TransformComponent, CameraComponent>();
 			for(auto& tuple : componentTuples){
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
 				CameraComponent* camera = std::get<CameraComponent*>(tuple);
@@ -74,7 +74,7 @@ namespace tnc::ecs::_3D{
 
 		//Submit meshes
 		{
-			auto componentTuples = manager->getComponentSets<TransformComponent, MeshComponent>();
+			auto componentTuples = world.getComponentSets<TransformComponent, MeshComponent>();
 			for(auto& tuple : componentTuples){
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
 				MeshComponent* renderable = std::get<MeshComponent*>(tuple);
@@ -88,7 +88,7 @@ namespace tnc::ecs::_3D{
 
 		//Submit lights
 		{
-			auto componentTuples = manager->getComponentSets<TransformComponent, LightComponent>();
+			auto componentTuples = world.getComponentSets<TransformComponent, LightComponent>();
 			for(auto& tuple : componentTuples){
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
 				LightComponent* light = std::get<LightComponent*>(tuple);

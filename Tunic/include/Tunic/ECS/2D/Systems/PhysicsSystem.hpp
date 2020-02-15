@@ -31,7 +31,7 @@ namespace tnc::ecs::_2D{
 
 		virtual ~PhysicsSystem();
 
-		virtual void update(clv::utl::DeltaTime deltaTime) override;
+		virtual void update(World& world, clv::utl::DeltaTime deltaTime) override;
 
 		virtual void onComponentCreated(ComponentInterface* component) override;
 		virtual void onComponentDestroyed(ComponentInterface* component) override;

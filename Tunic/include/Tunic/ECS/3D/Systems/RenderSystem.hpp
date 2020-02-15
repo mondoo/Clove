@@ -25,7 +25,7 @@ namespace tnc::ecs::_3D{
 
 		virtual ~RenderSystem();
 
-		virtual void preUpdate() override;
-		virtual void update(clv::utl::DeltaTime deltaTime) override;
+		virtual void preUpdate(World& world) override;
+		virtual void update(World& world, clv::utl::DeltaTime deltaTime) override;
 	};
 }
