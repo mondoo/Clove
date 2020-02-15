@@ -5,36 +5,78 @@
 #include "Clove/Graphics/OpenGL/GLException.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
+typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
+
 namespace clv::gfx::ogl{
 	GLXSurface::GLXSurface(void* windowData){
 		plt::LinuxData* data = reinterpret_cast<plt::LinuxData*>(windowData);
 		display = data->display;
 		window = data->window;
 
-		GLint glxAttribs[] = {
-			GLX_RGBA,
+		int visualAttribs[] = {
+			GLX_X_RENDERABLE, True,
+			GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+			GLX_RENDER_TYPE, GLX_RGBA_BIT,
+			GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
+			GLX_RED_SIZE, 8,
+			GLX_GREEN_SIZE, 8,
+			GLX_BLUE_SIZE, 8,
+			GLX_ALPHA_SIZE, 8,
 			GLX_DEPTH_SIZE, 24,
-			GLX_DOUBLEBUFFER,
+			GLX_STENCIL_SIZE, 8,
+			GLX_DOUBLEBUFFER, True,
 			0
 		};
 
-		visual = glXChooseVisual(display, 0, glxAttribs);
-		if(!visual){
-			//TODO: Exception
-			CLV_LOG_CRITICAL("Could not create visual");
-			return;
+		int fbCount;
+		GLXFBConfig* fbc = glXChooseFBConfig(display, DefaultScreen(display), visualAttribs, &fbCount);
+
+		//Choose the best frame buffer config
+		int bestFBC = -1;
+		int bestNumSamp = -1;
+		for (int i = 0; i < fbCount; ++i){
+			if (XVisualInfo *vi = glXGetVisualFromFBConfig(display, fbc[i])){
+				int samp_buf;
+				int samples;
+				glXGetFBConfigAttrib(display, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf);
+				glXGetFBConfigAttrib(display, fbc[i], GLX_SAMPLES, &samples);
+
+				if (bestFBC < 0 || samp_buf && samples > bestNumSamp){
+					bestFBC = i;
+					bestNumSamp = samples;
+				}
+
+				XFree(vi);
+			}
 		}
 
-		context = glXCreateContext(display, visual, nullptr, GL_TRUE);
-		if(!context){
-			//TODO:Exception
-			CLV_LOG_CRITICAL("Could not create context");
-			return;
-		}
+		GLXFBConfig bestFbc = fbc[bestFBC];
 
-		CLV_LOG_DEBUG("Succesfully created an OpenGL context");
+		XFree(fbc);
 
+		visual = glXGetVisualFromFBConfig( display, bestFbc );
 		*data->visual = visual;
+
+		glXCreateContextAttribsARBProc glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB((const GLubyte *) "glXCreateContextAttribsARB");
+		if(glXCreateContextAttribsARB){
+			int32_t major = 4;
+			int32_t minor = 6;
+
+			int32_t attributes[] = {
+				GLX_CONTEXT_MAJOR_VERSION_ARB, major,
+				GLX_CONTEXT_MINOR_VERSION_ARB, minor,
+				GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+				0
+			};
+
+			context = glXCreateContextAttribsARB(display, bestFbc, 0, GL_TRUE, attributes);
+
+			CLV_LOG_DEBUG("Succesfully created an OpenGL {0}.{1} context", major, minor);
+		}else{
+			CLV_LOG_WARN("Could not retrieve glXCreateContextAttribsARBProc. Application might not support OpenGL3.2+ contexts");
+
+			context = glXCreateContext(display, visual, nullptr, GL_TRUE);
+		}
 	}
 
 	GLXSurface::GLXSurface(GLXSurface&& other) = default;
