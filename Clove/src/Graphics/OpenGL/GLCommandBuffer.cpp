@@ -118,7 +118,7 @@ namespace clv::gfx::ogl{
 	}
 
 	void GLCommandBuffer::setViewport(const Viewport& viewport){
-		const auto setVPCommand = [&viewport](){
+		const auto setVPCommand = [viewport](){
 			glViewport(static_cast<GLint>(viewport.x), static_cast<GLint>(viewport.y), static_cast<GLsizei>(viewport.width), static_cast<GLsizei>(viewport.height));
 		};
 
