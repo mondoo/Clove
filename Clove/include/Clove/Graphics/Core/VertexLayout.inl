@@ -35,7 +35,7 @@ namespace clv::gfx{
 		}
 	}
 
-	constexpr const char* VertexElement::semanticOf(VertexElementType type){
+	constexpr std::string_view VertexElement::semanticOf(VertexElementType type){
 		switch(type){
 			case VertexElementType::position2D:
 				return VertexElementData<VertexElementType::position2D>::semantic;

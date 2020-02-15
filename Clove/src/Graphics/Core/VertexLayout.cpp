@@ -32,7 +32,7 @@ namespace clv::gfx{
 		return countOf(type);
 	}
 
-	const char* VertexElement::getSemantic() const{
+	std::string_view VertexElement::getSemantic() const{
 		return semanticOf(type);
 	}
 	

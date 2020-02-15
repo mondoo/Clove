@@ -8,27 +8,27 @@ namespace clv::gfx{
 	template<> struct VertexElementData<VertexElementType::position2D>{
 		using DataType = mth::vec2f;
 		static constexpr uint32_t elementCount = 2u;
-		static constexpr char semantic[] = "POSITION2D";
+		static constexpr std::string_view semantic = "POSITION2D";
 	};
 	template<> struct VertexElementData<VertexElementType::position3D>{
 		using DataType = mth::vec3f;
 		static constexpr uint32_t elementCount = 3u;
-		static constexpr char semantic[] = "POSITION3D";
+		static constexpr std::string_view semantic = "POSITION3D";
 	};
 	template<> struct VertexElementData<VertexElementType::texture2D>{
 		using DataType = mth::vec2f;
 		static constexpr uint32_t elementCount = 2u;
-		static constexpr char semantic[] = "TEXCOORD";
+		static constexpr std::string_view semantic = "TEXCOORD";
 	};
 	template<> struct VertexElementData<VertexElementType::normal>{
 		using DataType = mth::vec3f;
 		static constexpr uint32_t elementCount = 3u;
-		static constexpr char semantic[] = "NORMAL";
+		static constexpr std::string_view semantic = "NORMAL";
 	};
 	template<> struct VertexElementData<VertexElementType::colour3D>{
 		using DataType = mth::vec3f;
 		static constexpr uint32_t elementCount = 3u;
-		static constexpr char semantic[] = "COLOUR3D";
+		static constexpr std::string_view semantic = "COLOUR3D";
 	};
 
 	class VertexElement{
@@ -40,10 +40,13 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		VertexElement() = delete;
+
 		VertexElement(const VertexElement& other);
 		VertexElement(VertexElement&& other) noexcept;
+
 		VertexElement& operator=(const VertexElement& other);
 		VertexElement& operator=(VertexElement&& other) noexcept;
+
 		~VertexElement();
 
 		VertexElement(VertexElementType type, size_t offset);
@@ -53,13 +56,13 @@ namespace clv::gfx{
 
 		size_t getSize() const;
 		uint32_t getCount() const;
-		const char* getSemantic() const;
+		std::string_view getSemantic() const;
 
 		VertexElementType getType() const;
 
 		static constexpr size_t sizeOf(VertexElementType type);
 		static constexpr uint32_t countOf(VertexElementType type);
-		static constexpr const char* semanticOf(VertexElementType type);
+		static constexpr std::string_view semanticOf(VertexElementType type);
 		static VertexElementType getTypeFromSemantic(const std::string& semantic);
 	};
 
@@ -102,10 +105,13 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		Vertex() = delete;
+
 		Vertex(const Vertex& other) = delete;
 		Vertex(Vertex&& other) noexcept = delete;
+
 		Vertex& operator=(const Vertex& other) = delete;
 		Vertex& operator=(Vertex&& other) noexcept = delete;
+
 		~Vertex();
 
 		template<VertexElementType type>
@@ -133,10 +139,13 @@ namespace clv::gfx{
 		//FUNCTIONS
 	public:
 		VertexBufferData() = delete;
+
 		VertexBufferData(const VertexBufferData& other);
 		VertexBufferData(VertexBufferData&& other) noexcept;
+
 		VertexBufferData& operator=(const VertexBufferData& other);
 		VertexBufferData& operator=(VertexBufferData&& other) noexcept;
+
 		~VertexBufferData();
 
 		VertexBufferData(VertexLayout layout);

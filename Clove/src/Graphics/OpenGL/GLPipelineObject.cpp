@@ -41,7 +41,7 @@ namespace clv::gfx::ogl{
 			const auto& element = vertexLayout.resolve(i);
 			const VertexElementType elementType = element.getType();
 
-			GLint attribLoc = glGetAttribLocation(programID, element.getSemantic());
+			GLint attribLoc = glGetAttribLocation(programID, element.getSemantic().data());
 
 			glEnableVertexAttribArray(attribLoc);
 			glVertexAttribFormat(attribLoc, element.getCount(), getGLElementType(elementType), isTypeNormalised(elementType), offset);

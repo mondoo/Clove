@@ -52,7 +52,7 @@ namespace clv::gfx::d3d{
 			const VertexElementType elementType = element.getType();
 			const UINT alignmentOffset = (i > 0) ? D3D11_APPEND_ALIGNED_ELEMENT : 0;
 
-			d3dElements.push_back({ element.getSemantic(), 0, getDXGIFormatFromType(elementType), 0, alignmentOffset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+			d3dElements.push_back({ element.getSemantic().data(), 0, getDXGIFormatFromType(elementType), 0, alignmentOffset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 		}
 
 		DX11_THROW_INFO(d3dDevice->CreateInputLayout(d3dElements.data(), static_cast<UINT>(d3dElements.size()), byteCode, byteCodeSize, &inputLayout));
