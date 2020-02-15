@@ -36,6 +36,8 @@ namespace clv::gfx::d3d{
 		
 		virtual ~D3DRenderTarget();
 
+		virtual void clear() override;
+
 		virtual void setClearColour(const mth::vec4f& colour) override;
 		const mth::vec4f& getClearColour() const;
 

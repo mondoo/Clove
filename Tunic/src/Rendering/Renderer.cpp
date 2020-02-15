@@ -127,7 +127,6 @@ namespace tnc::rnd{
 
 		for (auto& camera : scene.cameras){
 			meshCommandBuffer->beginEncoding(camera.target);
-			meshCommandBuffer->clearTarget(); //TODO: This will clear twice if two cameras render for the same target
 
 			meshCommandBuffer->setViewport(camera.viewport);
 

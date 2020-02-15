@@ -66,6 +66,28 @@ namespace clv::gfx::d3d{
 
 	D3DRenderTarget::~D3DRenderTarget() = default;
 
+	void D3DRenderTarget::clear(){
+		Microsoft::WRL::ComPtr<ID3D11Device> device = nullptr;
+		if (renderTargetView){
+			renderTargetView->GetDevice(&device);
+		} else if (depthStencilView){
+			depthStencilView->GetDevice(&device);
+		} else{
+			CLV_LOG_ERROR("{0}: could not retrieve device", CLV_FUNCTION_NAME_PRETTY);
+			return;
+		}
+
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> context = nullptr;
+		device->GetImmediateContext(&context);
+
+		if (renderTargetView){
+			context->ClearRenderTargetView(renderTargetView.Get(), mth::valuePtr(clearColour));
+		}
+		if (depthStencilView){
+			context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
+		}
+	}
+
 	void D3DRenderTarget::setClearColour(const mth::vec4f& colour){
 		clearColour = colour;
 	}

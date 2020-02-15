@@ -25,6 +25,8 @@ namespace clv::gfx::mtl{
 		MTLRenderTarget& operator=(MTLRenderTarget&& other) noexcept;
 		
 		virtual ~MTLRenderTarget();
+
+		virtual void clear() override{}
 		
 		virtual void setClearColour(const mth::vec4f& colour);
 		

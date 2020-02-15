@@ -28,6 +28,8 @@ namespace clv::gfx::ogl{
 
 		virtual ~GLRenderTarget();
 
+		virtual void clear() override;
+
 		virtual void setClearColour(const mth::vec4f& colour) override;
 		const mth::vec4f& getClearColour() const;
 

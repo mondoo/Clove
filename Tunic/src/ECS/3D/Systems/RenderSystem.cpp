@@ -13,6 +13,7 @@
 #include <Clove/Graphics/Core/GraphicsFactory.hpp>
 #include <Clove/Graphics/Core/PipelineObject.hpp>
 #include <Clove/Platform/Core/Window.hpp>
+#include <Clove/Graphics/Core/RenderTarget.hpp>
 
 using namespace clv;
 using namespace clv::gfx;
@@ -28,6 +29,14 @@ namespace tnc::ecs::_3D{
 	RenderSystem& RenderSystem::operator=(RenderSystem&& other) noexcept = default;
 
 	RenderSystem::~RenderSystem() = default;
+
+	void RenderSystem::preUpdate(){
+		auto componentTuples = manager->getComponentSets<CameraComponent>();
+		for (auto& tuple : componentTuples){
+			CameraComponent* camera = std::get<CameraComponent*>(tuple);
+			camera->renderTarget->clear();
+		}
+	}
 
 	void RenderSystem::update(utl::DeltaTime deltaTime){
 		CLV_PROFILE_FUNCTION();

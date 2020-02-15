@@ -26,6 +26,10 @@ namespace tnc::ecs::_2D{
 
 	RenderSystem::~RenderSystem() = default;
 
+	void RenderSystem::preUpdate(){
+		//TODO: Clear camera render targets when there are 2D camera components
+	}
+
 	void RenderSystem::update(utl::DeltaTime deltaTime){
 		CLV_PROFILE_FUNCTION();
 
