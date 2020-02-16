@@ -23,8 +23,8 @@ namespace tnc::rnd{
 		commandBuffer = factory.createCommandBuffer();
 
 		//Default
-		auto defaultVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/2D-vs.hlsl");
-		auto defaultPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/2D-ps.hlsl");
+		auto defaultVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/Default2D-vs.hlsl");
+		auto defaultPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/Default2D-ps.hlsl");
 		defaultPipelineObject = factory.createPipelineObject();
 		defaultPipelineObject->setVertexShader(*defaultVS);
 		defaultPipelineObject->setPixelShader(*defaultPS);

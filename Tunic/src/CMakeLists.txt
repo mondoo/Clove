@@ -83,20 +83,16 @@ set(
 
 set(
 	ShaderFiles
-		${TNC_RESOURCE}/Shaders/2D-ps.hlsl
-		${TNC_RESOURCE}/Shaders/2D-vs.hlsl
-		${TNC_RESOURCE}/Shaders/CubeShadowMap-gs.hlsl
-		${TNC_RESOURCE}/Shaders/CubeShadowMap-ps.hlsl
-		${TNC_RESOURCE}/Shaders/CubeShadowMap-vs.hlsl
+		${TNC_RESOURCE}/Shaders/Default2D-ps.hlsl
+		${TNC_RESOURCE}/Shaders/Default2D-vs.hlsl
+		${TNC_RESOURCE}/Shaders/Default3D-ps.hlsl
+		${TNC_RESOURCE}/Shaders/Default3D-vs.hlsl
 		${TNC_RESOURCE}/Shaders/Font-ps.hlsl
 		${TNC_RESOURCE}/Shaders/Font-vs.hlsl
-		${TNC_RESOURCE}/Shaders/Lit-ps.hlsl
-		${TNC_RESOURCE}/Shaders/Lit-vs.hlsl
-		${TNC_RESOURCE}/Shaders/RT-ps.hlsl
-		${TNC_RESOURCE}/Shaders/RT-vs.hlsl
-		${TNC_RESOURCE}/Shaders/Unlit-ps.hlsl
-		${TNC_RESOURCE}/Shaders/Unlit-vs.hlsl
-
+		${TNC_RESOURCE}/Shaders/GenShadowMap-gs.hlsl
+		${TNC_RESOURCE}/Shaders/GenShadowMap-ps.hlsl
+		${TNC_RESOURCE}/Shaders/GenShadowMap-vs.hlsl
+		
 )
 
 file(GLOB_RECURSE header ${TNC_INCLUDE}/*.h ${TNC_INCLUDE}/*.hpp ${TNC_INCLUDE}/*.inl)

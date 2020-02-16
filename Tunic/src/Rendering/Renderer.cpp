@@ -27,8 +27,8 @@ namespace tnc::rnd{
 		//Mesh command buffer
 		meshCommandBuffer = factory.createCommandBuffer();
 
-		auto meshVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/Lit-vs.hlsl");
-		auto meshPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/Lit-ps.hlsl");
+		auto meshVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/Default3D-vs.hlsl");
+		auto meshPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/Default3D-ps.hlsl");
 		meshPipelineObject = factory.createPipelineObject();
 		meshPipelineObject->setVertexShader(*meshVS);
 		meshPipelineObject->setPixelShader(*meshPS);
@@ -44,9 +44,9 @@ namespace tnc::rnd{
 		shadowRenderTarget	= factory.createRenderTarget(nullptr, shadowMapTexture.get());
 		shadowCommandBuffer = factory.createCommandBuffer();
 
-		auto shadowVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/CubeShadowMap-vs.hlsl");
-		auto shadowGS = factory.createShader({ ShaderStage::Geometry }, "res/Shaders/CubeShadowMap-gs.hlsl");
-		auto shadowPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/CubeShadowMap-ps.hlsl");
+		auto shadowVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/GenShadowMap-vs.hlsl");
+		auto shadowGS = factory.createShader({ ShaderStage::Geometry }, "res/Shaders/GenShadowMap-gs.hlsl");
+		auto shadowPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/GenShadowMap-ps.hlsl");
 		shadowPipelineObject = factory.createPipelineObject();
 		shadowPipelineObject->setVertexShader(*shadowVS);
 		shadowPipelineObject->setGeometryShader(*shadowGS);
