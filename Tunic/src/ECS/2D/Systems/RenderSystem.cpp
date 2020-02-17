@@ -35,7 +35,16 @@ namespace tnc::ecs::_2D{
 
 		const mth::vec2i screenSize = tnc::Application::get().getMainWindow().getSize();
 		const mth::vec2f screenHalfSize{ static_cast<float>(screenSize.x) / 2.0f, static_cast<float>(screenSize.y) / 2.0f };
-		const mth::mat4f projection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
+
+		const float scaleFactor = 40.0f; //How big we want our 2D elements to be
+
+		//We want our sprites to be relative, so we create as projection from the aspect and scale that
+		const mth::vec2f aspect = { screenSize.x / (scaleFactor * 2.0f), screenSize.y / (scaleFactor * 2.0f) };
+		const mth::mat4f spriteProjection = mth::createOrthographicMatrix(-aspect.x, aspect.x, -aspect.y, aspect.y);
+
+		//We want our UI to translate pixel perfect, so we create a projection that's the size of the screen and then scale the model
+		const mth::mat4f uiProjection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
+		const mth::mat4f uiScale = mth::scale(mth::mat4f{ 1.0f }, mth::vec3f{ scaleFactor });
 
 		//Srpites
 		{
@@ -47,7 +56,7 @@ namespace tnc::ecs::_2D{
 				SpriteComponent* renderable = std::get<SpriteComponent*>(tuple);
 
 				const mth::mat4f modelData = transform->getWorldTransformMatrix();
-				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * modelData, ShaderStage::Vertex);
+				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, spriteProjection * modelData, ShaderStage::Vertex);
 
 				renderer->sumbitSprite(renderable->sprite);
 			}
@@ -70,16 +79,16 @@ namespace tnc::ecs::_2D{
 
 				if(ui::TransformComponent* parent = transform->getParent()){
 					const mth::vec2f parentScale = parent->getScale();
-					offset.x = (anchor.x * parentScale.x) / widgetScale.x;
-					offset.y = (anchor.y * parentScale.y) / widgetScale.y;
+					offset.x = anchor.x * parentScale.x * scaleFactor;
+					offset.y = anchor.y * parentScale.x * scaleFactor;
 				} else{
-					offset.x = (anchor.x * screenSize.x) / widgetScale.x;
-					offset.y = (anchor.y * screenSize.y) / widgetScale.y;
+					offset.x = anchor.x * screenSize.x;
+					offset.y = anchor.y * screenSize.y;
 				}
 
 				const mth::mat4f modelData = mth::translate(transform->getWorldTransformMatrix(), mth::vec3f{ -scaledScreenSize.x + offset.x, scaledScreenSize.y - offset.y, 0.0f });
 
-				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * modelData, ShaderStage::Vertex);
+				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, uiProjection * modelData * uiScale, ShaderStage::Vertex);
 
 				renderer->submitWidget(renderable->sprite);
 			}
@@ -140,7 +149,7 @@ namespace tnc::ecs::_2D{
 						model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
 						auto character = std::make_shared<rnd::Sprite>(texture);
-						character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
+						character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, uiProjection * model, ShaderStage::Vertex);
 
 						renderer->submitText(character);
 					}
