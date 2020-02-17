@@ -1,8 +1,8 @@
-#include "Clove/Core/LayerStack.hpp"
+#include "Tunic/LayerStack.hpp"
 
-#include "Clove/Core/Layer.hpp"
+#include "Tunic/Layer.hpp"
 
-namespace clv{
+namespace tnc{
 	LayerStack::LayerStack() = default;
 
 	LayerStack::LayerStack(const LayerStack& other) = default;

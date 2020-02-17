@@ -112,6 +112,11 @@ target_sources(
 		
 		${TNC_INCLUDE}/Input.hpp
 		${TNC_SOURCE}/Input.cpp
+
+		${TNC_INCLUDE}/Layer.hpp
+		${TNC_SOURCE}/Layer.cpp
+		${TNC_INCLUDE}/LayerStack.hpp
+		${TNC_SOURCE}/LayerStack.cpp
         
 		${ECSFiles}
 		${RenderingFiles}

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace clv{
+namespace tnc{
 	class Layer;
 
 	class LayerStack{

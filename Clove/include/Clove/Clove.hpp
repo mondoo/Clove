@@ -6,8 +6,6 @@
 #include "Clove/Platform/Core/Platform.hpp"
 #include "Clove/Platform/Core/Window.hpp"
 
-#include "Clove/Core/Layer.hpp"
-
 #include "Clove/Graphics/Core/Resources/Buffer.hpp"
 #include "Clove/Graphics/Core/Resources/Texture.hpp"
 #include "Clove/Graphics/Core/CommandBuffer.hpp"

@@ -1,14 +1,15 @@
 #include "Tunic/Application.hpp"
 
-#include "Clove/Platform/Core/Platform.hpp"
-#include "Clove/Platform/Core/Window.hpp"
 #include "Tunic/Input.hpp"
-#include "Clove/Core/LayerStack.hpp"
-#include "Clove/Core/Layer.hpp"
+#include "Tunic/LayerStack.hpp"
+#include "Tunic/Layer.hpp"
 #include "Clove/Core/Utils/DeltaTime.hpp"
 #include "Tunic/ECS/Core/World.hpp"
 #include "Tunic/Rendering/Renderer.hpp"
 #include "Tunic/Rendering/Renderer2D.hpp"
+
+#include <Clove/Platform/Core/Window.hpp>
+#include <Clove/Platform/Core/Platform.hpp>
 
 using namespace clv;
 

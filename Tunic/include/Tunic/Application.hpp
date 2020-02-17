@@ -5,7 +5,7 @@
 
 #include <chrono>
 
-namespace clv{
+namespace tnc{
 	class LayerStack;
 	class Layer;
 }
@@ -49,7 +49,7 @@ namespace tnc{
 
 		ApplicationState currentState = ApplicationState::running;
 
-		std::unique_ptr<clv::LayerStack> layerStack;
+		std::unique_ptr<LayerStack> layerStack;
 
 		static Application* instance;
 
@@ -68,8 +68,8 @@ namespace tnc{
 
 		ApplicationState getState() const;
 
-		void pushLayer(std::shared_ptr<clv::Layer> layer);
-		void pushOverlay(std::shared_ptr<clv::Layer> overlay);
+		void pushLayer(std::shared_ptr<Layer> layer);
+		void pushOverlay(std::shared_ptr<Layer> overlay);
 
 		static Application& get();
 

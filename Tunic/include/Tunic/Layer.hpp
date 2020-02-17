@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Clove/Core/Utils/DeltaTime.hpp"
+#include <Clove/Core/Utils/DeltaTime.hpp>
 
-namespace clv{
+namespace tnc{
 	class Layer{
 		//VARIABLES
 	protected:
@@ -14,7 +14,7 @@ namespace clv{
 		virtual ~Layer() = default;
 
 		virtual void onAttach(){}
-		virtual void onUpdate(utl::DeltaTime deltaTime){}
+		virtual void onUpdate(clv::utl::DeltaTime deltaTime){}
 		virtual void onDetach(){}
 
 		const std::string& getName() const;

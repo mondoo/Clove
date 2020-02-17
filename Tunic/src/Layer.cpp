@@ -1,6 +1,6 @@
-#include "Clove/Core/Layer.hpp"
+#include "Tunic/Layer.hpp"
 
-namespace clv{
+namespace tnc{
 	Layer::Layer(const std::string& name)
 		: debugName(name){
 	}

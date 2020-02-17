@@ -9,4 +9,6 @@
 
 #include "Tunic/Input.hpp"
 
+#include "Tunic/Layer.hpp"
+
 #include <Clove/Clove.hpp>
