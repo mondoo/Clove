@@ -59,6 +59,8 @@ set(
 
 set(
 	PhysicsFiles
+		${TNC_INCLUDE}/Physics/RigidBody.hpp
+		${TNC_SOURCE}/Physics/RigidBody.cpp
 		${TNC_INCLUDE}/Physics/World.hpp
 		${TNC_SOURCE}/Physics/World.cpp
 )
