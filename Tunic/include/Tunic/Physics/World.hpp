@@ -9,6 +9,10 @@ class btSequentialImpulseConstraintSolver;
 class btDiscreteDynamicsWorld;
 
 namespace tnc::phy{
+	class RigidBody;
+}
+
+namespace tnc::phy{
 	class World{
 		//VARIABLES
 	private:
@@ -32,5 +36,8 @@ namespace tnc::phy{
 		~World();
 
 		void stepSimulation(clv::utl::DeltaTime deltaTime);
+
+		void addRigidBody(RigidBody* rigidBody);
+		void removeRigidBody(RigidBody* rigidBody);
 	};
 }

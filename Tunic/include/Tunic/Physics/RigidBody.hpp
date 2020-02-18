@@ -5,6 +5,8 @@ class btRigidBody;
 
 namespace tnc::phy{
 	class RigidBody{
+		friend class World;
+
 		//VARIABLES
 	public:
 		//TODO: Should this be here or on the component?

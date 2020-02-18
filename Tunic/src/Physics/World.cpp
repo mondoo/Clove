@@ -1,5 +1,7 @@
 #include "Tunic/Physics/World.hpp"
 
+#include "Tunic/Physics/RigidBody.hpp"
+
 #include <btBulletDynamicsCommon.h>
 
 namespace tnc::phy{
@@ -27,5 +29,13 @@ namespace tnc::phy{
 
 	void World::stepSimulation(clv::utl::DeltaTime deltaTime){
 		//...
+	}
+
+	void World::addRigidBody(RigidBody* rigidBody){
+		dynamicsWorld->addRigidBody(rigidBody->body.get());
+	}
+
+	void World::removeRigidBody(RigidBody* rigidBody){
+		dynamicsWorld->removeCollisionObject(rigidBody->body.get());
 	}
 }
