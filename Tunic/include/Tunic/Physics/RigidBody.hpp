@@ -15,11 +15,11 @@ namespace tnc::phy{
 		std::unique_ptr<btCollisionShape> collisionShape;
 		std::unique_ptr<btRigidBody> body;
 
-		clv::mth::vec3f cubeSize{};
-
 		float mass = 0.0f;
 		bool isKinematic = false;
 		bool respondToCollision = true;
+
+		clv::mth::vec3f cubeSize{};
 
 		//FUNCTIONS
 	public:
@@ -27,12 +27,15 @@ namespace tnc::phy{
 		//Only supporting box shapes
 		RigidBody(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize);
 
-		RigidBody(const RigidBody& other) = delete;
+		RigidBody(const RigidBody& other);
 		RigidBody(RigidBody&& other) noexcept;
 
-		RigidBody& operator=(const RigidBody& other) = delete;
+		RigidBody& operator=(const RigidBody& other);
 		RigidBody& operator=(RigidBody&& other) noexcept;
 
 		~RigidBody();
+
+	private:
+		void initialise(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize);
 	};
 }

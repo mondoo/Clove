@@ -5,7 +5,38 @@
 namespace tnc::phy{
 	RigidBody::RigidBody(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize)
 		: mass(mass), isKinematic(isKinematic), respondToCollision(respondToCollision), cubeSize(cubeSize){
+		initialise(mass, isKinematic, respondToCollision, cubeSize);
+	}
 
+	RigidBody::RigidBody(const RigidBody& other){
+		mass = other.mass;
+		isKinematic = other.isKinematic;
+		respondToCollision = other.respondToCollision;
+
+		cubeSize = other.cubeSize;
+
+		initialise(mass, isKinematic, respondToCollision, cubeSize);
+	}
+
+	RigidBody::RigidBody(RigidBody&& other) noexcept = default;
+
+	RigidBody& RigidBody::operator=(const RigidBody& other){
+		mass = other.mass;
+		isKinematic = other.isKinematic;
+		respondToCollision = other.respondToCollision;
+
+		cubeSize = other.cubeSize;
+
+		initialise(mass, isKinematic, respondToCollision, cubeSize);
+
+		return *this;
+	}
+
+	RigidBody& RigidBody::operator=(RigidBody&& other) noexcept = default;
+
+	RigidBody::~RigidBody() = default;
+
+	void RigidBody::initialise(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize){
 		collisionShape = std::make_unique<btBoxShape>(btVector3{ cubeSize.x, cubeSize.y, cubeSize.z });
 
 		btVector3 localInertia(0, 0, 0);
@@ -34,10 +65,4 @@ namespace tnc::phy{
 		}
 		body->setCollisionFlags(flags);
 	}
-
-	RigidBody::RigidBody(RigidBody&& other) noexcept = default;
-
-	RigidBody& RigidBody::operator=(RigidBody&& other) noexcept = default;
-
-	RigidBody::~RigidBody() = default;
 }
