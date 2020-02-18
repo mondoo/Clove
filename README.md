@@ -5,7 +5,7 @@ The Garlic game engine is comprised of the following components:
 
 |Component|Language|Description|
 |-|-|-|
-|Clove|C++|Implements core systems (Graphics, Platform, Audio etc.)|
+|Clove|C++|The abstraction layer (Graphics, Platform, Audio etc.)|
 |Tunic|C++|Built around Clove, implements higher level systems used in games (AI, ECS, Physics, etc.)|
 |Bulb|C#|A visual editor built around Tunic|
 
