@@ -68,7 +68,7 @@ namespace tnc::ecs::_3D{
 		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 		std::for_each(componentTuples.begin(), componentTuples.end(), updateTransform);
 
-		int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
+		/*int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
 		for(int i = 0; i < numManifolds; ++i){
 			btPersistentManifold* manifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
 			int numContacts = manifold->getNumContacts();
@@ -82,7 +82,7 @@ namespace tnc::ecs::_3D{
 				bodyA->onBodyCollision.broadcast(bodyB);
 				bodyB->onBodyCollision.broadcast(bodyA);
 			}
-		}
+		}*/
 	}
 
 	void PhysicsSystem::onComponentCreated(ComponentInterface* component){

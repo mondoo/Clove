@@ -29,6 +29,23 @@ namespace tnc::phy{
 
 	void World::stepSimulation(clv::utl::DeltaTime deltaTime){
 		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
+
+		//TODO: Just use dispatcher-> ?
+		int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
+		for (int i = 0; i < numManifolds; ++i){
+			btPersistentManifold* manifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+			int numContacts = manifold->getNumContacts();
+			if (numContacts > 0){
+				const btCollisionObject* obA = manifold->getBody0();
+				const btCollisionObject* obB = manifold->getBody1();
+
+				RigidBody* bodyA = static_cast<RigidBody*>(obA->getUserPointer());
+				RigidBody* bodyB = static_cast<RigidBody*>(obB->getUserPointer());
+
+				bodyA->onBodyCollision.broadcast(bodyB);
+				bodyB->onBodyCollision.broadcast(bodyA);
+			}
+		}
 	}
 
 	void World::addRigidBody(RigidBody* rigidBody){

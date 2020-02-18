@@ -9,8 +9,7 @@ namespace tnc::phy{
 
 		//VARIABLES
 	public:
-		//TODO: Should this be here or on the component?
-		//clv::utl::MultiCastDelegate<void(RigidBody*)> onBodyCollision;
+		clv::utl::MultiCastDelegate<void(RigidBody*)> onBodyCollision;
 
 	private:
 		std::unique_ptr<btCollisionShape> collisionShape;
