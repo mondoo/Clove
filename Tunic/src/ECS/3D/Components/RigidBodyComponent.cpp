@@ -1,88 +1,35 @@
 #include "Tunic/ECS/3D/Components/RigidBodyComponent.hpp"
 
-#include <btBulletDynamicsCommon.h>
+#include "Tunic/Physics/RigidBody.hpp"
 
 using namespace clv;
 
 namespace tnc::ecs::_3D{
 	RigidBodyComponent::RigidBodyComponent(){
-		initialise({ 1.0f, 1.0f, 1.0f });
+		rigidBody = std::make_unique<phy::RigidBody>(0.0f, false, true, mth::vec3f{ 1.0f, 1.0f, 1.0f });
 	}
 
-	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic, bool respondToCollision, const mth::vec3f& cubeSize)
-		: mass(mass), isKinematic(isKinematic), respondToCollision(respondToCollision){
-		initialise(cubeSize);
+	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic, bool respondToCollision, const mth::vec3f& cubeSize){
+		rigidBody = std::make_unique<phy::RigidBody>(mass, isKinematic, respondToCollision, cubeSize);
+	}
+
+	RigidBodyComponent::RigidBodyComponent(std::unique_ptr<phy::RigidBody> rigidBody)
+		: rigidBody(std::move(rigidBody)){
 	}
 
 	RigidBodyComponent::RigidBodyComponent(const RigidBodyComponent& other){
-		mass = other.mass;
-		isKinematic = other.isKinematic;
-
-		initialise(other.cubeSize);
+		rigidBody = std::make_unique<phy::RigidBody>(other.rigidBody.get());
 	}
 
-	RigidBodyComponent::RigidBodyComponent(RigidBodyComponent&& other) noexcept{
-		onBodyCollision = std::move(other.onBodyCollision);
-		
-		collisionShape = std::move(other.collisionShape);
-		body = std::move(other.body);
-
-		mass = std::move(other.mass);
-		isKinematic = std::move(other.isKinematic);
-	}
+	RigidBodyComponent::RigidBodyComponent(RigidBodyComponent&& other) noexcept = default;
 
 	RigidBodyComponent& RigidBodyComponent::operator=(const RigidBodyComponent& other){
-		mass = other.mass;
-		isKinematic = other.isKinematic;
-
-		initialise(other.cubeSize);
+		rigidBody = std::make_unique<phy::RigidBody>(other.rigidBody.get());
 
 		return *this;
 	}
 
-	RigidBodyComponent& RigidBodyComponent::operator=(RigidBodyComponent&& other) noexcept{
-		onBodyCollision = std::move(other.onBodyCollision);
-
-		collisionShape = std::move(other.collisionShape);
-		body = std::move(other.body);
-
-		mass = std::move(other.mass);
-		isKinematic = std::move(other.isKinematic);
-
-		return *this;
-	}
+	RigidBodyComponent& RigidBodyComponent::operator=(RigidBodyComponent&& other) noexcept = default;
 
 	RigidBodyComponent::~RigidBodyComponent() = default;
-
-	void RigidBodyComponent::initialise(const mth::vec3f& cubeSize){
-		this->cubeSize = cubeSize;
-
-		collisionShape = std::make_unique<btBoxShape>(btVector3{ cubeSize.x, cubeSize.y, cubeSize.z });
-
-		btVector3 localInertia(0, 0, 0);
-		btTransform startTransform;
-		startTransform.setIdentity();
-
-		if(isKinematic && mass > 0.0f){
-			CLV_LOG_WARN("Kinematic body has non 0 mass. Setting to 0");
-			mass = 0.0f;
-		} else{
-			collisionShape->calculateLocalInertia(mass, localInertia);
-		}
-
-		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, collisionShape.get(), localInertia);
-
-		body = std::make_unique<btRigidBody>(rbInfo);
-		body->setUserPointer(this);
-
-		int flags = body->getCollisionFlags();
-		if(isKinematic){
-			flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
-		}
-		if (!respondToCollision){
-			flags |= btCollisionObject::CF_NO_CONTACT_RESPONSE;
-		}
-		body->setCollisionFlags(flags);
-	}
 }
