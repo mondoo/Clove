@@ -28,7 +28,7 @@ namespace tnc::phy{
 	}
 
 	void World::stepSimulation(clv::utl::DeltaTime deltaTime){
-		//...
+		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 	}
 
 	void World::addRigidBody(RigidBody* rigidBody){
