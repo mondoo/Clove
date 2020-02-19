@@ -16,8 +16,12 @@ using namespace clv;
 using namespace clv::gfx;
 
 namespace tnc::ecs::_2D{
-	RenderSystem::RenderSystem(rnd::Renderer2D* renderer)
-		: renderer(renderer){
+	RenderSystem::RenderSystem(std::unique_ptr<rnd::Renderer2D> renderer)
+		: renderer(std::move(renderer)){
+	}
+
+	RenderSystem::RenderSystem(plt::Window& window){
+		renderer = std::make_unique<rnd::Renderer2D>(window);
 	}
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;
@@ -28,6 +32,9 @@ namespace tnc::ecs::_2D{
 
 	void RenderSystem::preUpdate(World& world){
 		//TODO: Clear camera render targets when there are 2D camera components
+
+
+		renderer->begin();
 	}
 
 	void RenderSystem::update(World& world, utl::DeltaTime deltaTime){
@@ -158,5 +165,9 @@ namespace tnc::ecs::_2D{
 				}
 			}
 		}
+	}
+
+	void RenderSystem::postUpdate(World& world){
+		renderer->end();
 	}
 }
