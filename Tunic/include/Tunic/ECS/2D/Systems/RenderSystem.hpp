@@ -14,7 +14,7 @@ namespace tnc::ecs::_2D{
 	class RenderSystem : public System{
 		//VARIABLES
 	private:
-		std::unique_ptr<rnd::Renderer2D> renderer = nullptr;
+		std::unique_ptr<rnd::Renderer2D> renderer;
 
 		//FUNCTIONS
 	public:
