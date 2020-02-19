@@ -2,8 +2,6 @@
 
 #include "Tunic/Application.hpp"
 #include "Tunic/ECS/Core/World.hpp"
-#include "Tunic/ECS/2D/Components/TransformComponent.hpp"
-#include "Tunic/ECS/2D/Components/SpriteComponent.hpp"
 #include "Tunic/ECS/UI/Components/TransformComponent.hpp"
 #include "Tunic/ECS/UI/Components/TextComponent.hpp"
 #include "Tunic/ECS/UI/Components/WidgetComponent.hpp"
@@ -45,29 +43,9 @@ namespace tnc::ecs::_2D{
 
 		const float scaleFactor = 40.0f; //How big we want our 2D elements to be
 
-		//We want our sprites to be relative, so we create as projection from the aspect and scale that
-		const mth::vec2f aspect = { screenSize.x / (scaleFactor * 2.0f), screenSize.y / (scaleFactor * 2.0f) };
-		const mth::mat4f spriteProjection = mth::createOrthographicMatrix(-aspect.x, aspect.x, -aspect.y, aspect.y);
-
 		//We want our UI to translate pixel perfect, so we create a projection that's the size of the screen and then scale the model
 		const mth::mat4f uiProjection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
 		const mth::mat4f uiScale = mth::scale(mth::mat4f{ 1.0f }, mth::vec3f{ scaleFactor });
-
-		//Srpites
-		{
-			CLV_PROFILE_SCOPE("Preparing sprites");
-
-			auto componentTuples = world.getComponentSets<TransformComponent, SpriteComponent>();
-			for(auto& tuple : componentTuples){
-				TransformComponent* transform = std::get<TransformComponent*>(tuple);
-				SpriteComponent* renderable = std::get<SpriteComponent*>(tuple);
-
-				const mth::mat4f modelData = transform->getWorldTransformMatrix();
-				renderable->sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, spriteProjection * modelData, ShaderStage::Vertex);
-
-				renderer->sumbitSprite(renderable->sprite);
-			}
-		}
 
 		//Widgets
 		{

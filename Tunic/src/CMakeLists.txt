@@ -21,16 +21,8 @@ set(
 		${TNC_INCLUDE}/ECS/Core/World.inl
 		${TNC_SOURCE}/ECS/Core/World.cpp
 		${TNC_INCLUDE}/ECS/Core/System.hpp
-		${TNC_INCLUDE}/ECS/2D/Components/RigidBodyComponent.hpp
-		${TNC_SOURCE}/ECS/2D/Components/RigidBodyComponent.cpp
-		${TNC_INCLUDE}/ECS/2D/Components/SpriteComponent.hpp
-		${TNC_SOURCE}/ECS/2D/Components/SpriteComponent.cpp
-		${TNC_INCLUDE}/ECS/2D/Components/TransformComponent.hpp
-		${TNC_SOURCE}/ECS/2D/Components/TransformComponent.cpp
 		${TNC_INCLUDE}/ECS/2D/Systems/RenderSystem.hpp
 		${TNC_SOURCE}/ECS/2D/Systems/RenderSystem.cpp
-		${TNC_INCLUDE}/ECS/2D/Systems/PhysicsSystem.hpp
-		${TNC_SOURCE}/ECS/2D/Systems/PhysicsSystem.cpp
 		${TNC_INCLUDE}/ECS/3D/Components/CameraComponent.hpp
 		${TNC_SOURCE}/ECS/3D/Components/CameraComponent.cpp
 		${TNC_INCLUDE}/ECS/3D/Components/LightComponent.hpp
