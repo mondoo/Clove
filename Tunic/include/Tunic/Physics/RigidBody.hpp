@@ -8,9 +8,6 @@ namespace tnc::phy{
 		friend class World;
 
 		//VARIABLES
-	public:
-		clv::utl::MultiCastDelegate<void(RigidBody*)> onBodyCollision;
-
 	private:
 		std::unique_ptr<btCollisionShape> collisionShape;
 		std::unique_ptr<btRigidBody> body;
@@ -20,6 +17,8 @@ namespace tnc::phy{
 		bool respondToCollision = true;
 
 		clv::mth::vec3f cubeSize{};
+
+		void* userPointer = nullptr;
 
 		//FUNCTIONS
 	public:
@@ -40,6 +39,9 @@ namespace tnc::phy{
 
 		clv::mth::vec3f getPhysicsPosition() const;
 		clv::mth::quatf getPhysicsRotation() const;
+
+		void setUserPointer(void* pointer);
+		void* getUserPointer() const;
 
 	private:
 		void initialise(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize);

@@ -15,6 +15,8 @@ namespace tnc::phy{
 
 		cubeSize = other.cubeSize;
 
+		userPointer = other.userPointer;
+
 		initialise(mass, isKinematic, respondToCollision, cubeSize);
 	}
 
@@ -26,6 +28,8 @@ namespace tnc::phy{
 		respondToCollision = other.respondToCollision;
 
 		cubeSize = other.cubeSize;
+
+		userPointer = other.userPointer;
 
 		initialise(mass, isKinematic, respondToCollision, cubeSize);
 
@@ -58,6 +62,14 @@ namespace tnc::phy{
 		btTransform btTrans = body->getWorldTransform();
 		const auto rot = btTrans.getRotation();
 		return { rot.getW(), rot.getX(), rot.getY(), rot.getZ() }; //GLM is pitch yaw roll while Bullet is yaw pitch roll
+	}
+
+	void RigidBody::setUserPointer(void* pointer){
+		userPointer = pointer;
+	}
+
+	void* RigidBody::getUserPointer() const{
+		return userPointer;
 	}
 
 	void RigidBody::initialise(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize){
