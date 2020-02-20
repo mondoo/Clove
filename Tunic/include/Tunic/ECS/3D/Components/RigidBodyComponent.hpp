@@ -30,5 +30,8 @@ namespace tnc::ecs::_3D{
 		RigidBodyComponent& operator=(RigidBodyComponent&& other) noexcept;
 
 		virtual ~RigidBodyComponent();
+
+	private:
+		void initialiseRigidBody(phy::RigidBody* body);
 	};
 }
