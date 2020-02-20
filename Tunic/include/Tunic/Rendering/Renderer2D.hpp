@@ -32,8 +32,7 @@ namespace tnc::rnd{
 
 		clv::gfx::VertexLayout vbLayout;
 
-		//TOOD: Do we need 3 vbs?
-		std::shared_ptr<clv::gfx::Buffer> spriteVB;
+		//TOOD: Do we need 2 vbs?
 		std::shared_ptr<clv::gfx::Buffer> widgetVB;
 		std::shared_ptr<clv::gfx::Buffer> textVB;
 
@@ -51,7 +50,6 @@ namespace tnc::rnd{
 
 		void begin();
 
-		void sumbitSprite(const std::shared_ptr<Sprite>& sprite);
 		void submitWidget(const std::shared_ptr<Sprite>& widget);
 		void submitText(const std::shared_ptr<Sprite>& text);
 
