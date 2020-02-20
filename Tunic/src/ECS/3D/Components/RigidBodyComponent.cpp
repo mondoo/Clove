@@ -18,13 +18,13 @@ namespace tnc::ecs::_3D{
 	}
 
 	RigidBodyComponent::RigidBodyComponent(const RigidBodyComponent& other){
-		rigidBody = std::make_unique<phy::RigidBody>(other.rigidBody.get());
+		rigidBody = std::make_unique<phy::RigidBody>(*other.rigidBody.get());
 	}
 
 	RigidBodyComponent::RigidBodyComponent(RigidBodyComponent&& other) noexcept = default;
 
 	RigidBodyComponent& RigidBodyComponent::operator=(const RigidBodyComponent& other){
-		rigidBody = std::make_unique<phy::RigidBody>(other.rigidBody.get());
+		rigidBody = std::make_unique<phy::RigidBody>(*other.rigidBody.get());
 
 		return *this;
 	}
