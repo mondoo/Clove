@@ -1,11 +1,7 @@
 #include "Tunic/ECS/Core/World.hpp"
 
 #include "Tunic/ECS/Core/Entity.hpp"
-#include "Tunic/ECS/2D/Systems/RenderSystem.hpp"
-#include "Tunic/ECS/2D/Systems/PhysicsSystem.hpp"
-#include "Tunic/ECS/3D/Systems/RenderSystem.hpp"
-#include "Tunic/ECS/3D/Systems/PhysicsSystem.hpp"
-#include "Tunic/ECS/Audio/Systems/AudioSystem.hpp"
+#include "Tunic/ECS/Core/System.hpp"
 
 using namespace clv;
 

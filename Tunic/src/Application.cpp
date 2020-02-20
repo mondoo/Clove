@@ -30,9 +30,6 @@ namespace tnc{
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
-		renderer = std::make_unique<rnd::Renderer>(*mainWindow);
-		renderer2D = std::make_unique<rnd::Renderer2D>(*mainWindow);
-
 		ecsWorld = std::make_unique<ecs::World>();
 		layerStack = std::make_unique<LayerStack>();
 
@@ -54,9 +51,6 @@ namespace tnc{
 		mainWindow = platformInstance->createChildWindow(parentWindow, windowPosition, windowSize, api);
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
-
-		renderer = std::make_unique<rnd::Renderer>(*mainWindow);
-		renderer2D = std::make_unique<rnd::Renderer2D>(*mainWindow);
 
 		ecsWorld = std::make_unique<ecs::World>();
 		layerStack = std::make_unique<LayerStack>();
@@ -86,13 +80,7 @@ namespace tnc{
 			layer->onUpdate(deltaSeonds.count());
 		}
 
-		renderer->begin();
-		renderer2D->begin();
-
 		ecsWorld->update(deltaSeonds.count());
-
-		renderer->end();
-		renderer2D->end();
 
 		{
 			CLV_PROFILE_SCOPE("Window::endFrame");
@@ -134,13 +122,5 @@ namespace tnc{
 
 	clv::gfx::GraphicsFactory& Application::getGraphicsFactory(){
 		return mainWindow->getGraphicsFactory();
-	}
-
-	rnd::Renderer* Application::getRenderer(){
-		return renderer.get();
-	}
-
-	rnd::Renderer2D* Application::getRenderer2D(){
-		return renderer2D.get();
 	}
 }

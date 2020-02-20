@@ -20,8 +20,12 @@ using namespace clv::gfx;
 using namespace tnc::rnd;
 
 namespace tnc::ecs::_3D{
-	RenderSystem::RenderSystem(rnd::Renderer* renderer)
-		: renderer(renderer){
+	RenderSystem::RenderSystem(std::unique_ptr<Renderer> renderer)
+		: renderer(std::move(renderer)){
+	}
+
+	RenderSystem::RenderSystem(plt::Window& window){
+		renderer = std::make_unique<Renderer>(window);
 	}
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;
@@ -36,6 +40,8 @@ namespace tnc::ecs::_3D{
 			CameraComponent* camera = std::get<CameraComponent*>(tuple);
 			camera->renderTarget->clear();
 		}
+
+		renderer->begin();
 	}
 
 	void RenderSystem::update(World& world, utl::DeltaTime deltaTime){
@@ -106,5 +112,9 @@ namespace tnc::ecs::_3D{
 				renderer->submitLight({ light->lightData.intensity, light->lightData.shadowTransforms, light->lightData.farPlane });
 			}
 		}
+	}
+
+	void RenderSystem::postUpdate(World& world){
+		renderer->end();
 	}
 }
