@@ -30,6 +30,7 @@ namespace tnc::phy{
 	void World::stepSimulation(clv::utl::DeltaTime deltaTime){
 		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 
+		collisionManifolds.clear();
 		//TODO: Just use dispatcher-> ?
 		int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
 		for (int i = 0; i < numManifolds; ++i){
@@ -42,10 +43,13 @@ namespace tnc::phy{
 				RigidBody* bodyA = static_cast<RigidBody*>(obA->getUserPointer());
 				RigidBody* bodyB = static_cast<RigidBody*>(obB->getUserPointer());
 
-				bodyA->onBodyCollision.broadcast(bodyB);
-				bodyB->onBodyCollision.broadcast(bodyA);
+				collisionManifolds.emplace_back(CollisionManifold{ bodyA, bodyB });
 			}
 		}
+	}
+
+	const std::vector<CollisionManifold>& World::getCollisionManifolds() const{
+		return collisionManifolds;
 	}
 
 	void World::addRigidBody(RigidBody* rigidBody){

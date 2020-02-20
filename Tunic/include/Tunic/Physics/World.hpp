@@ -10,6 +10,11 @@ class btDiscreteDynamicsWorld;
 
 namespace tnc::phy{
 	class RigidBody;
+
+	struct CollisionManifold{
+		RigidBody* bodyA = nullptr;
+		RigidBody* bodyB = nullptr;
+	};
 }
 
 namespace tnc::phy{
@@ -22,6 +27,8 @@ namespace tnc::phy{
 		btSequentialImpulseConstraintSolver* solver = nullptr;
 
 		btDiscreteDynamicsWorld* dynamicsWorld = nullptr;
+
+		std::vector<CollisionManifold> collisionManifolds;
 
 		//FUNCTIONS
 	public:
@@ -36,6 +43,8 @@ namespace tnc::phy{
 		~World();
 
 		void stepSimulation(clv::utl::DeltaTime deltaTime);
+
+		const std::vector<CollisionManifold>& getCollisionManifolds() const;
 
 		void addRigidBody(RigidBody* rigidBody);
 		void removeRigidBody(RigidBody* rigidBody);
