@@ -2,8 +2,9 @@
 
 #include "Tunic/ECS/Core/Component.hpp"
 
-class btCollisionShape;
-class btRigidBody;
+namespace tnc::phy{
+	class RigidBody;
+}
 
 namespace tnc::ecs::_3D{
 	class RigidBodyComponent : public Component<_3D::RigidBodyComponent>{
@@ -14,20 +15,13 @@ namespace tnc::ecs::_3D{
 		clv::utl::MultiCastDelegate<void(RigidBodyComponent*)> onBodyCollision;
 
 	private:
-		std::unique_ptr<btCollisionShape> collisionShape;
-		std::unique_ptr<btRigidBody> body;
-
-		float mass = 0.0f;
-		bool isKinematic = false;
-		bool respondToCollision = true;
-
-		clv::mth::vec3f cubeSize{};
+		std::unique_ptr<phy::RigidBody> rigidBody;
 
 		//FUNCTIONS
 	public:
 		RigidBodyComponent();
-		//Note: Only supporting collision cubes for now
 		RigidBodyComponent(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize);
+		RigidBodyComponent(std::unique_ptr<phy::RigidBody> rigidBody);
 
 		RigidBodyComponent(const RigidBodyComponent& other);
 		RigidBodyComponent(RigidBodyComponent&& other) noexcept;
@@ -38,6 +32,6 @@ namespace tnc::ecs::_3D{
 		virtual ~RigidBodyComponent();
 
 	private:
-		void initialise(const clv::mth::vec3f& cubeSize);
+		void initialiseRigidBody(phy::RigidBody* body);
 	};
 }

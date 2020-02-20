@@ -50,6 +50,14 @@ set(
 )
 
 set(
+	PhysicsFiles
+		${TNC_INCLUDE}/Physics/RigidBody.hpp
+		${TNC_SOURCE}/Physics/RigidBody.cpp
+		${TNC_INCLUDE}/Physics/World.hpp
+		${TNC_SOURCE}/Physics/World.cpp
+)
+
+set(
 	RenderingFiles
 		${TNC_INCLUDE}/Rendering/Material.hpp
 		${TNC_INCLUDE}/Rendering/Material.inl
@@ -111,6 +119,7 @@ target_sources(
 		${TNC_SOURCE}/LayerStack.cpp
         
 		${ECSFiles}
+		${PhysicsFiles}
 		${RenderingFiles}
 		${ShaderFiles}
 )
