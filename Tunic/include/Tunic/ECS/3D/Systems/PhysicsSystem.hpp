@@ -2,22 +2,15 @@
 
 #include "Tunic/ECS/Core/System.hpp"
 
-class btDefaultCollisionConfiguration;
-class btCollisionDispatcher;
-class btBroadphaseInterface;
-class btSequentialImpulseConstraintSolver;
-class btDiscreteDynamicsWorld;
+namespace tnc::phy{
+	class World;
+}
 
 namespace tnc::ecs::_3D{
 	class PhysicsSystem : public System{
 		//VARIABLES
 	private:
-		btDefaultCollisionConfiguration* collisionConfiguration;
-		btCollisionDispatcher* dispatcher;
-		btBroadphaseInterface* overlappingPairCache;
-		btSequentialImpulseConstraintSolver* solver;
-
-		btDiscreteDynamicsWorld* dynamicsWorld;
+		std::unique_ptr<phy::World> physicsWorld;
 
 		//FUNCTIONS
 	public:

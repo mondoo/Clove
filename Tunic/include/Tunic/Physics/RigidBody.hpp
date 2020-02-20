@@ -35,6 +35,12 @@ namespace tnc::phy{
 
 		~RigidBody();
 
+		void setWorldPosition(const clv::mth::vec3f& position);
+		void setWorldRotation(const clv::mth::quatf& rotation);
+
+		clv::mth::vec3f getPhysicsPosition() const;
+		clv::mth::quatf getPhysicsRotation() const;
+
 	private:
 		void initialise(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize);
 	};

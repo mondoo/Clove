@@ -36,6 +36,30 @@ namespace tnc::phy{
 
 	RigidBody::~RigidBody() = default;
 
+	void RigidBody::setWorldPosition(const clv::mth::vec3f& position){
+		btTransform btTrans = body->getWorldTransform();
+		btTrans.setOrigin({ position.x, position.y, position.z });
+		body->setWorldTransform(btTrans);
+	}
+
+	void RigidBody::setWorldRotation(const clv::mth::quatf& rotation){
+		btTransform btTrans = body->getWorldTransform();
+		btTrans.setRotation({ rotation.x, rotation.y, rotation.z, rotation.w }); //GLM is pitch yaw roll while Bullet is yaw pitch roll
+		body->setWorldTransform(btTrans);
+	}
+
+	clv::mth::vec3f RigidBody::getPhysicsPosition() const{
+		btTransform btTrans = body->getWorldTransform();
+		const auto pos = btTrans.getOrigin();
+		return { pos.getX(), pos.getY(), pos.getZ() };
+	}
+
+	clv::mth::quatf RigidBody::getPhysicsRotation() const{
+		btTransform btTrans = body->getWorldTransform();
+		const auto rot = btTrans.getRotation();
+		return { rot.getW(), rot.getX(), rot.getY(), rot.getZ() }; //GLM is pitch yaw roll while Bullet is yaw pitch roll
+	}
+
 	void RigidBody::initialise(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize){
 		collisionShape = std::make_unique<btBoxShape>(btVector3{ cubeSize.x, cubeSize.y, cubeSize.z });
 
