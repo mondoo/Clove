@@ -56,19 +56,6 @@ namespace tnc::rnd{
 		vbDesc.bufferType	= BufferType::VertexBuffer;
 		vbDesc.bufferUsage	= BufferUsage::Default;
 
-		//Sprites
-		{
-			//From the center
-			VertexBufferData bufferData{ vbLayout };
-			bufferData.emplaceBack(mth::vec2f{ -0.5f,  0.5f }, mth::vec2f{ 0.0f, 0.0f });
-			bufferData.emplaceBack(mth::vec2f{ -0.5f, -0.5f }, mth::vec2f{ 0.0f, 1.0f });
-			bufferData.emplaceBack(mth::vec2f{ 0.5f, -0.5f }, mth::vec2f{ 1.0f, 1.0f });
-			bufferData.emplaceBack(mth::vec2f{ 0.5f,  0.5f }, mth::vec2f{ 1.0f, 0.0f });
-
-			vbDesc.bufferSize = bufferData.sizeBytes();
-			spriteVB = factory.createBuffer(vbDesc, bufferData.data());
-		}
-
 		//Widgets
 		{
 			//From top left
@@ -102,10 +89,6 @@ namespace tnc::rnd{
 		scene.widgetsToRender.clear();
 	}
 
-	void Renderer2D::sumbitSprite(const std::shared_ptr<Sprite>& sprite){
-		scene.spritesToRender.push_back(sprite);
-	}
-
 	void Renderer2D::submitWidget(const std::shared_ptr<Sprite>& widget){
 		scene.widgetsToRender.push_back(widget);
 	}
@@ -128,17 +111,6 @@ namespace tnc::rnd{
 		commandBuffer->setDepthEnabled(false);
 
 		commandBuffer->bindPipelineObject(*defaultPipelineObject);
-		
-		//Sprites
-		for(auto& sprite : scene.spritesToRender)
-		{
-			sprite->getMaterialInstance().bind(*commandBuffer);
-
-			commandBuffer->bindVertexBuffer(*spriteVB, vbStride);
-			commandBuffer->bindIndexBuffer(*indexBuffer);
-
-			commandBuffer->drawIndexed(6u); //TODO: Remove hard coded value
-		}
 
 		//Widgets
 		for (auto& sprite : scene.widgetsToRender)
