@@ -45,6 +45,14 @@ namespace tnc::ecs::_3D{
 		std::for_each(componentTuples.begin(), componentTuples.end(), updateRigidBody);
 		physicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 		std::for_each(componentTuples.begin(), componentTuples.end(), updateTransform);
+
+		for (const auto& manifold : physicsWorld->getCollisionManifolds()){
+			auto* compA = static_cast<RigidBodyComponent*>(manifold.bodyA->getUserPointer());
+			auto* compB = static_cast<RigidBodyComponent*>(manifold.bodyB->getUserPointer());
+
+			compA->onBodyCollision.broadcast(compB);
+			compB->onBodyCollision.broadcast(compB);
+		}
 	}
 
 	void PhysicsSystem::onComponentCreated(ComponentInterface* component){
