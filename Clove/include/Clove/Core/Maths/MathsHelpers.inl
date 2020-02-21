@@ -74,4 +74,21 @@ namespace clv::mth{
 	mat<4, 4, T, Q> quaternionToMatrix4(const quat<T, Q>& quat){
 		return glm::toMat4(quat);
 	}
+
+	template<typename T, qualifier Q>
+	vec<3, T, Q> screenToWorld(const vec<2, T, Q>& screenPos, T screenDepth, const vec<2, T, Q>& screenSize, const mat<4, 4, T, Q>& viewMatrix, const mat<4, 4, T, Q>& projectionMatrix){
+		vec<4, T, Q> NDC{
+			((screenPos.x / screenSize.x) - 0.5f) * 2.0f,
+			((screenPos.y / screenSize.y) - 0.5f) * 2.0f,
+			screenDepth,
+			1.0f
+		};
+
+		mat<4, 4, T, Q> inverseProjView = inverse(projectionMatrix * viewMatrix);
+
+		vec<4, T, Q> world = inverseProjView * NDC;
+		world /= world.w;
+
+		return vec<3, T, Q>{ world.x, world.y, world.z };
+	}
 }

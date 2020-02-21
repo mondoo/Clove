@@ -45,6 +45,9 @@ namespace clv::mth{
 
 	template<typename T, qualifier Q>
 	mat<4, 4, T, Q> quaternionToMatrix4(const quat<T, Q>& quat);
+
+	template<typename T, qualifier Q>
+	vec<3, T, Q> screenToWorld(const vec<2, T, Q>& screenPos, T screenDepth, const vec<2, T, Q>& screenSize, const mat<4, 4, T, Q>& viewMatrix, const mat<4, 4, T, Q>& projectionMatrix);
 }
 
 #include "MathsHelpers.inl"
