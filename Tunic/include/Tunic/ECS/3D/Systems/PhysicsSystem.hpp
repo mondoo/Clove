@@ -15,6 +15,7 @@ namespace tnc::ecs::_3D{
 		//FUNCTIONS
 	public:
 		PhysicsSystem();
+		PhysicsSystem(std::unique_ptr<phy::World> physicsWorld);
 
 		PhysicsSystem(const PhysicsSystem& other) = delete;
 		PhysicsSystem(PhysicsSystem&& other) noexcept;

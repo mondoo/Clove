@@ -13,6 +13,10 @@ namespace tnc::ecs::_3D{
 		physicsWorld = std::make_unique<phy::World>();
 	}
 
+	PhysicsSystem::PhysicsSystem(std::unique_ptr<phy::World> physicsWorld)
+		: physicsWorld(std::move(physicsWorld)){
+	}
+
 	PhysicsSystem::PhysicsSystem(PhysicsSystem&& other) noexcept = default;
 
 	PhysicsSystem& PhysicsSystem::operator=(PhysicsSystem&& other) noexcept = default;
