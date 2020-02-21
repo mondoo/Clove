@@ -79,7 +79,7 @@ namespace clv::mth{
 	vec<3, T, Q> screenToWorld(const vec<2, T, Q>& screenPos, T screenDepth, const vec<2, T, Q>& screenSize, const mat<4, 4, T, Q>& viewMatrix, const mat<4, 4, T, Q>& projectionMatrix){
 		vec<4, T, Q> NDC{
 			((screenPos.x / screenSize.x) - 0.5f) * 2.0f,
-			((screenPos.y / screenSize.y) - 0.5f) * 2.0f,
+			-((screenPos.y / screenSize.y) - 0.5f) * 2.0f,
 			screenDepth,
 			1.0f
 		};
