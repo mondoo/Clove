@@ -27,11 +27,12 @@ namespace tnc::ecs::_3D{
 		//VARIABLES
 	private:
 		ProjectionMode currentProjectionMode;
-		clv::mth::mat4f currentProjection = clv::mth::mat4f(1.0f);
+		clv::mth::mat4f currentProjection = clv::mth::mat4f{ 1.0f };
+		clv::mth::mat4f currentView = clv::mth::mat4f{ 1.0f };
 
-		clv::mth::vec3f cameraUp = clv::mth::vec3f(0.0f, 1.0f, 0.0f);
-		clv::mth::vec3f cameraFront = clv::mth::vec3f(0.0f, 0.0f, 1.0f);
-		clv::mth::vec3f cameraRight = clv::mth::vec3f(1.0f, 0.0f, 0.0f);
+		clv::mth::vec3f cameraUp = { 0.0f, 1.0f, 0.0f };
+		clv::mth::vec3f cameraFront = { 0.0f, 0.0f, 1.0f };
+		clv::mth::vec3f cameraRight = { 1.0f, 0.0f, 0.0f };
 
 		tnc::rnd::CameraRenderData cameraRenderData;
 
@@ -51,9 +52,14 @@ namespace tnc::ecs::_3D{
 
 		~CameraComponent();
 
+		const clv::mth::mat4f& getProjection() const;
+		const clv::mth::mat4f& getView() const;
+
 		const clv::mth::vec3f& getFront() const;
 		const clv::mth::vec3f& getUp() const;
 		const clv::mth::vec3f& getRight() const;
+
+		const clv::gfx::Viewport& getViewport() const;
 
 		void setProjectionMode(const ProjectionMode mode);
 

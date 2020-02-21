@@ -2,6 +2,7 @@
 
 #include <Clove/Platform/Core/Window.hpp>
 #include <Clove/Graphics/Core/Surface.hpp>
+#include "..\..\..\..\include\Tunic\ECS\3D\Components\CameraComponent.hpp"
 
 using namespace clv;
 
@@ -28,6 +29,14 @@ namespace tnc::ecs::_3D{
 
 	CameraComponent::~CameraComponent() = default;
 
+	const clv::mth::mat4f& CameraComponent::getProjection() const{
+		return currentProjection;
+	}
+
+	const clv::mth::mat4f& CameraComponent::getView() const{
+		return currentView;
+	}
+
 	const mth::vec3f& CameraComponent::getFront() const{
 		return cameraFront;
 	}
@@ -38,6 +47,10 @@ namespace tnc::ecs::_3D{
 
 	const mth::vec3f& CameraComponent::getRight() const{
 		return cameraRight;
+	}
+
+	const clv::gfx::Viewport& CameraComponent::getViewport() const{
+		return viewport;
 	}
 
 	void CameraComponent::setProjectionMode(const ProjectionMode mode){
