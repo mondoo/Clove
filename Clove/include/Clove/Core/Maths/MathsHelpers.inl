@@ -84,7 +84,7 @@ namespace clv::mth{
 			1.0f
 		};
 
-		mat<4, 4, T, Q> inverseProjView = inverse(projectionMatrix * viewMatrix);
+		mat<4, 4, T, Q> inverseProjView = mth::inverse(projectionMatrix * viewMatrix);
 
 		vec<4, T, Q> world = inverseProjView * NDC;
 		world /= world.w;
