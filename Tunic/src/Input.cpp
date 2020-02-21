@@ -14,17 +14,16 @@ namespace tnc::ipt{
 		return tnc::Application::get().getMainWindow().getMouse().isButtonPressed(button);
 	}
 
-	std::pair<int32_t, int32_t> getMousePosition(){
-		return tnc::Application::get().getMainWindow().getMouse().getPosition();
+	mth::vec2i getMousePosition(){
+		auto [x, y] = tnc::Application::get().getMainWindow().getMouse().getPosition();
+		return { x, y };
 	}
 
 	int32_t getMouseX(){
-		auto [x, y] = getMousePosition();
-		return x;
+		return getMousePosition().x;
 	}
 
 	int32_t getMouseY(){
-		auto [x, y] = getMousePosition();
-		return y;
+		return getMousePosition().y;
 	}
 }
