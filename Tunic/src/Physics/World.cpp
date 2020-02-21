@@ -52,6 +52,16 @@ namespace tnc::phy{
 		return collisionManifolds;
 	}
 
+	RigidBody* World::rayCast(const clv::mth::vec3f& begin, const clv::mth::vec3f& end){
+		btVector3 btBegin{ begin.x, begin.y, begin.z };
+		btVector3 btEnd{ end.x, end.y, end.z };
+
+		btCollisionWorld::ClosestRayResultCallback callBack{ btBegin, btEnd };
+		dynamicsWorld->rayTest(btBegin, btEnd, callBack);
+
+		return static_cast<RigidBody*>(callBack.m_collisionObject->getUserPointer());
+	}
+
 	void World::addRigidBody(RigidBody* rigidBody){
 		dynamicsWorld->addRigidBody(rigidBody->body.get());
 	}
