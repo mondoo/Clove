@@ -59,7 +59,11 @@ namespace tnc::phy{
 		btCollisionWorld::ClosestRayResultCallback callBack{ btBegin, btEnd };
 		dynamicsWorld->rayTest(btBegin, btEnd, callBack);
 
-		return static_cast<RigidBody*>(callBack.m_collisionObject->getUserPointer());
+		if (callBack.m_collisionObject != nullptr){
+			return static_cast<RigidBody*>(callBack.m_collisionObject->getUserPointer());
+		} else{
+			return nullptr;
+		}
 	}
 
 	void World::addRigidBody(RigidBody* rigidBody){
