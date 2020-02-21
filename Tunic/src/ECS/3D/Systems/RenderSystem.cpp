@@ -69,6 +69,7 @@ namespace tnc::ecs::_3D{
 				camera->cameraUp	= mth::normalise(mth::cross(camera->cameraRight, camera->cameraFront));
 
 				const mth::mat4f lookAt = mth::lookAt(position, position + camera->cameraFront, camera->cameraUp);
+				camera->currentView = lookAt;
 
 				camera->cameraRenderData.lookAt 	= lookAt;
 				camera->cameraRenderData.position 	= position;

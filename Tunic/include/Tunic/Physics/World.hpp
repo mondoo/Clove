@@ -46,6 +46,8 @@ namespace tnc::phy{
 
 		const std::vector<CollisionManifold>& getCollisionManifolds() const;
 
+		RigidBody* rayCast(const clv::mth::vec3f& begin, const clv::mth::vec3f& end);
+
 		void addRigidBody(RigidBody* rigidBody);
 		void removeRigidBody(RigidBody* rigidBody);
 	};
