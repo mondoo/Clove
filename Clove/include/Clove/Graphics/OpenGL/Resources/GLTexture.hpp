@@ -37,11 +37,5 @@ namespace clv::gfx::ogl{
 
 		void createDefaultTexture(const GLenum target, const TextureUsage usage, const void* pixels);
 		void createCubemapTexture(const TextureUsage usage, const void* pixels);
-
-		GLenum getTarget(const TextureStyle style, const uint8_t arraySize) const;
-		GLenum getInternalFormat(const TextureUsage usage) const;
-		GLenum getFormat(const TextureUsage usage);
-		GLenum getType(const TextureUsage usage);
-		GLint getFilter(const TextureFilter filter);
 	};
 }
