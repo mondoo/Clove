@@ -5,6 +5,42 @@
 #include <stb_image.h>
 
 namespace clv::gfx::d3d{
+	static DXGI_FORMAT getFormatForTexture(const TextureUsage usage){
+		switch (usage){
+		case TextureUsage::Default:
+		case TextureUsage::RenderTarget_Colour:
+			return DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		case TextureUsage::RenderTarget_Depth:
+			return DXGI_FORMAT_R32_TYPELESS;
+
+		case TextureUsage::Font:
+			return DXGI_FORMAT_R8_UNORM;
+
+		default:
+			CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+			return DXGI_FORMAT_R8G8B8A8_UNORM;
+		}
+	}
+
+	static DXGI_FORMAT getFormatForShaderView(const TextureUsage usage){
+		return (usage == TextureUsage::RenderTarget_Depth) ? DXGI_FORMAT_R32_FLOAT : getFormatForTexture(usage);
+	}
+
+	static D3D_SRV_DIMENSION getViewDimension(const TextureStyle style, const uint8_t arraySize){
+		switch (style){
+		case TextureStyle::Default:
+			return (arraySize > 1) ? D3D11_SRV_DIMENSION_TEXTURE2DARRAY : D3D11_SRV_DIMENSION_TEXTURE2D;
+
+		case TextureStyle::Cubemap:
+			return (arraySize > 1) ? D3D11_SRV_DIMENSION_TEXTURECUBEARRAY : D3D11_SRV_DIMENSION_TEXTURECUBE;
+
+		default:
+			CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+			return D3D11_SRV_DIMENSION_TEXTURE2D;
+		}
+	}
+
 	static D3D11_SHADER_RESOURCE_VIEW_DESC createD3DShaderViewDescriptor(const TextureDescriptor& descriptor){
 		D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc = {};
 		viewDesc.Format = getFormatForShaderView(descriptor.usage);
@@ -61,44 +97,8 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	static DXGI_FORMAT getFormatForTexture(const TextureUsage usage){
-		switch (usage){
-		case TextureUsage::Default:
-		case TextureUsage::RenderTarget_Colour:
-			return DXGI_FORMAT_R8G8B8A8_UNORM;
-
-		case TextureUsage::RenderTarget_Depth:
-			return DXGI_FORMAT_R32_TYPELESS;
-
-		case TextureUsage::Font:
-			return DXGI_FORMAT_R8_UNORM;
-
-		default:
-			CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
-			return DXGI_FORMAT_R8G8B8A8_UNORM;
-		}
-	}
-
-	static DXGI_FORMAT getFormatForShaderView(const TextureUsage usage){
-		return (usage == TextureUsage::RenderTarget_Depth) ? DXGI_FORMAT_R32_FLOAT : getFormatForTexture(usage);
-	}
-
 	static UINT getArrayElements(const TextureStyle style){
 		return (style == TextureStyle::Cubemap) ? 6 : 1;
-	}
-
-	static D3D_SRV_DIMENSION getViewDimension(const TextureStyle style, const uint8_t arraySize){
-		switch (style){
-		case TextureStyle::Default:
-			return (arraySize > 1) ? D3D11_SRV_DIMENSION_TEXTURE2DARRAY : D3D11_SRV_DIMENSION_TEXTURE2D;
-
-		case TextureStyle::Cubemap:
-			return (arraySize > 1) ? D3D11_SRV_DIMENSION_TEXTURECUBEARRAY : D3D11_SRV_DIMENSION_TEXTURECUBE;
-
-		default:
-			CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
-			return D3D11_SRV_DIMENSION_TEXTURE2D;
-		}
 	}
 
 	static UINT getMiscFlags(const TextureStyle style){
