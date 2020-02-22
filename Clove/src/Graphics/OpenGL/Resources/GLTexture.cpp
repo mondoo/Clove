@@ -122,7 +122,7 @@ namespace clv::gfx::ogl{
 		glDeleteTextures(1, &textureID);
 	}
 
-	const GLuint GLTexture::getTextureID() const{
+	GLuint GLTexture::getTextureID() const{
 		return textureID;
 	}
 

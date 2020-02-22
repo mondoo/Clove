@@ -28,7 +28,7 @@ namespace clv::gfx::ogl{
 
 		virtual ~GLTexture();
 
-		const GLuint getTextureID() const;
+		GLuint getTextureID() const;
 		
 		virtual const TextureDescriptor& getDescriptor() const override;
 
