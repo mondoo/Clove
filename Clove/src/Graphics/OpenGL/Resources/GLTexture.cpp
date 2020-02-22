@@ -3,7 +3,7 @@
 #include <stb_image.h>
 
 namespace clv::gfx::ogl{
-	static GLenum getTarget(const TextureStyle style, const uint8_t arraySize) const{
+	static GLenum getTarget(const TextureStyle style, const uint8_t arraySize){
 		switch (style){
 		case TextureStyle::Default:
 			return (arraySize > 1) ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D;
@@ -19,7 +19,7 @@ namespace clv::gfx::ogl{
 		return GLenum();
 	}
 
-	static GLenum getInternalFormat(const TextureUsage usage) const{
+	static GLenum getInternalFormat(const TextureUsage usage){
 		switch (usage){
 		case TextureUsage::Default:
 			return GL_RGBA8;
