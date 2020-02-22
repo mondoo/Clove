@@ -40,10 +40,10 @@ namespace clv::gfx::d3d{
 		auto renderTargetView = d3dRenderTarget->getRenderTargetView();
 		auto depthStencilView = d3dRenderTarget->getDepthStencilView();
 
-		if (renderTargetView){
+		if (renderTargetView != nullptr){
 			deferredContext->ClearRenderTargetView(renderTargetView.Get(), mth::valuePtr(d3dRenderTarget->getClearColour()));
 		}
-		if (depthStencilView){
+		if (depthStencilView != nullptr){
 			deferredContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
 		}
 	}

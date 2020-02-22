@@ -45,7 +45,7 @@ namespace clv::plt{
 			this
 		);
 
-		if(!windowsHandle){
+		if(windowsHandle == nullptr){
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
 
@@ -93,7 +93,7 @@ namespace clv::plt{
 			this
 		);
 
-		if(!windowsHandle){
+		if(windowsHandle == nullptr){
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
 

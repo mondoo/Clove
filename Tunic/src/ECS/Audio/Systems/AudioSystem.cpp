@@ -12,7 +12,7 @@ using namespace clv;
 
 namespace tnc::ecs::aud{
 	static bool isStreamActive(PaStream* stream){
-		if (!stream){
+		if (stream == nullptr){
 			return false;
 		}
 

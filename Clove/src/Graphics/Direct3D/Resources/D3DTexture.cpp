@@ -130,7 +130,7 @@ namespace clv::gfx::d3d{
 
 		createTexture(d3dDevice, this->descriptor, localBuffer);
 
-		if(localBuffer){
+		if(localBuffer != nullptr){
 			stbi_image_free(localBuffer);
 		}
 	}
@@ -184,7 +184,7 @@ namespace clv::gfx::d3d{
 		textureDesc.CPUAccessFlags		= 0u;
 		textureDesc.MiscFlags			= getMiscFlags(descriptor.style);
 
-		if(data){
+		if(data != nullptr){
 			CLV_ASSERT(descriptor.arraySize == 1, "DX Textures with array size greater than 1 not supported");
 
 			D3D11_SUBRESOURCE_DATA initialData{};

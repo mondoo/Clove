@@ -18,7 +18,7 @@ namespace tnc::ecs::_3D{
 		parent = other.parent;
 		//Not copying children for now, transform component has no knowledge of other components
 
-		if(parent){
+		if(parent != nullptr){
 			parent->children.push_back(this);
 		}
 	}
@@ -33,7 +33,7 @@ namespace tnc::ecs::_3D{
 		parent = other.parent;
 		//Not copying children for now, transform component has no knowledge of other components
 
-		if(parent){
+		if(parent != nullptr){
 			parent->children.push_back(this);
 		}
 
@@ -43,7 +43,7 @@ namespace tnc::ecs::_3D{
 	TransformComponent& TransformComponent::operator=(TransformComponent&& other) noexcept = default;
 
 	TransformComponent::~TransformComponent(){
-		if(parent){
+		if(parent != nullptr){
 			removeItemFromVector(this, parent->children);
 		}
 
@@ -109,7 +109,7 @@ namespace tnc::ecs::_3D{
 	}
 	
 	void TransformComponent::setPosition(const mth::vec3f& position){
-		if(parent){
+		if(parent != nullptr){
 			setLocalPosition(position - parent->getPosition());
 		} else{
 			setLocalPosition(position);
@@ -121,7 +121,7 @@ namespace tnc::ecs::_3D{
 	}
 
 	void TransformComponent::setRotation(const mth::quatf& rotation){
-		if(parent){
+		if(parent != nullptr){
 			const mth::mat4f rotMat			= mth::quaternionToMatrix4(rotation);
 			const mth::mat4f parentRotMat	= mth::quaternionToMatrix4(parent->getRotation());
 			const mth::mat4f adjustedRot	= parentRotMat / rotMat;
@@ -137,7 +137,7 @@ namespace tnc::ecs::_3D{
 	}
 
 	void TransformComponent::setScale(const mth::vec3f& scale){
-		if(parent){
+		if(parent != nullptr){
 			setLocalScale(scale / parent->getScale());
 		} else{
 			setLocalScale(scale);
@@ -153,9 +153,9 @@ namespace tnc::ecs::_3D{
 	}
 
 	void TransformComponent::addChild(TransformComponent* child){
-		if(child && child != this){
+		if(child != nullptr && child != this){
 			children.push_back(child);
-			if(child->parent){
+			if(child->parent != nullptr){
 				removeItemFromVector(child, child->parent->children);
 			}
 			child->parent = this;
@@ -163,7 +163,7 @@ namespace tnc::ecs::_3D{
 	}
 	
 	mth::mat4f TransformComponent::getWorldTransformMatrix() const{
-		if(parent){
+		if(parent != nullptr){
 			return parent->getWorldTransformMatrix() * getLocalTransformMatrix();
 		} else{
 			return getLocalTransformMatrix();

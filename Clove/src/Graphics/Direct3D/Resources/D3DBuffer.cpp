@@ -44,7 +44,7 @@ namespace clv::gfx::d3d{
 		bufferDesc.MiscFlags			= 0u;
 		bufferDesc.StructureByteStride	= static_cast<UINT>(descriptor.elementSize);
 
-		if (data){
+		if (data != nullptr){
 			D3D11_SUBRESOURCE_DATA initData{};
 			initData.pSysMem			= data;
 			initData.SysMemPitch		= 0u;

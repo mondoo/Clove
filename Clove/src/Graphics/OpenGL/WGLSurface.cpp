@@ -36,7 +36,7 @@ namespace clv::gfx::ogl{
 		wglMakeCurrent(windowsDeviceContext, tempOpenGLContext);
 
 		PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
-		if(wglCreateContextAttribsARB){
+		if(wglCreateContextAttribsARB != nullptr){
 			int32_t major = 4;
 			int32_t minor = 6;
 

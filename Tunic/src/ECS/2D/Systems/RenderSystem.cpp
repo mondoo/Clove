@@ -111,7 +111,7 @@ namespace tnc::ecs::_2D{
 					rnd::Glyph glyph = text.getBufferForCharAt(i);
 
 					//For spaces we just skip and proceed
-					if(glyph.buffer){
+					if(glyph.buffer != nullptr){
 						const float width = glyph.size.x;
 						const float height = glyph.size.y;
 

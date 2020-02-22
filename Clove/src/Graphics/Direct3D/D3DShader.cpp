@@ -38,7 +38,7 @@ namespace clv::gfx::d3d{
 		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
 		HRESULT hr = D3DCompileFromFile(wideCharArray, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", getShaderProfile(descriptor.stage), flags, 0, &shaderBlob, &errorBlob);
 		if(FAILED(hr)){
-			if(errorBlob){
+			if(errorBlob != nullptr){
 				//TODO: Update to a clove log
 				OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 			}
