@@ -56,8 +56,7 @@ namespace clv::gfx::d3d{
 	}
 
 	D3DRenderTarget::D3DRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView)
-		: renderTargetView(renderTargetView)
-		, depthStencilView(depthStencilView){
+		: renderTargetView(std::move(renderTargetView)), depthStencilView(std::move(depthStencilView)){
 	}
 
 	D3DRenderTarget::D3DRenderTarget(D3DRenderTarget&& other) noexcept = default;

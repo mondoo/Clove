@@ -18,9 +18,9 @@ namespace tnc{
 	}
 
 	void LayerStack::pushLayer(std::shared_ptr<Layer> layer){
-		layers.emplace(layers.begin() + layerInsertIndex, layer);
-		CLV_LOG_DEBUG("Attached layer: {0}", layer->getName());
 		layer->onAttach();
+		CLV_LOG_DEBUG("Attached layer: {0}", layer->getName());
+		layers.emplace(layers.begin() + layerInsertIndex, std::move(layer));
 	}
 
 	void LayerStack::popLayer(std::shared_ptr<Layer> layer){

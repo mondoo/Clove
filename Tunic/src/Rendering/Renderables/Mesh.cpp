@@ -11,10 +11,10 @@ using namespace clv;
 using namespace clv::gfx;
 
 namespace tnc::rnd{
-	Mesh::Mesh(std::string filePath, MaterialInstance materialInstance)
+	Mesh::Mesh(std::string_view filePath, MaterialInstance materialInstance)
 		: materialInstance(std::move(materialInstance))
 		, loadedBufferData(VertexLayout{}){//NOTE: initialising it like this is potentially dangerous
-		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath);
+		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath.data());
 
 		const std::size_t vertexCount = info.verticies.size();
 		indices = info.indices;

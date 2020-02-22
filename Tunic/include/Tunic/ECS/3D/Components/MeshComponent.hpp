@@ -17,7 +17,7 @@ namespace tnc::ecs::_3D{
 		//FUNCTIONS
 	public:
 		MeshComponent() = delete;
-		MeshComponent(const std::shared_ptr<rnd::Mesh>& mesh);
+		MeshComponent(std::shared_ptr<rnd::Mesh> mesh);
 
 		MeshComponent(const MeshComponent& other);
 		MeshComponent(MeshComponent&& other) noexcept;

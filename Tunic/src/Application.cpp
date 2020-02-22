@@ -97,11 +97,11 @@ namespace tnc{
 	}
 
 	void Application::pushLayer(std::shared_ptr<Layer> layer){
-		layerStack->pushLayer(layer);
+		layerStack->pushLayer(std::move(layer));
 	}
 
 	void Application::pushOverlay(std::shared_ptr<Layer> overlay){
-		layerStack->pushOverlay(overlay);
+		layerStack->pushOverlay(std::move(overlay));
 	}
 
 	Application& Application::get(){

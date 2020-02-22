@@ -26,7 +26,7 @@ namespace clv::gfx::d3d{
 		//FUNCTIONS
 	public:
 		D3DPipelineObject() = delete;
-		D3DPipelineObject(const Microsoft::WRL::ComPtr<ID3D11Device>& d3dDevice);
+		D3DPipelineObject(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice);
 
 		D3DPipelineObject(const D3DPipelineObject& other) = delete;
 		D3DPipelineObject(D3DPipelineObject&& other);

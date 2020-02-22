@@ -24,8 +24,8 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	D3DPipelineObject::D3DPipelineObject(const Microsoft::WRL::ComPtr<ID3D11Device>& d3dDevice)
-		: d3dDevice(d3dDevice){
+	D3DPipelineObject::D3DPipelineObject(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice)
+		: d3dDevice(std::move(d3dDevice)){
 		setBlendState(true);
 		setCullMode(CullFace::Back, true);
 	}

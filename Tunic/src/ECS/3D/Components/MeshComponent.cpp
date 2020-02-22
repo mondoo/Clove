@@ -3,8 +3,8 @@
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 
 namespace tnc::ecs::_3D{
-	MeshComponent::MeshComponent(const std::shared_ptr<rnd::Mesh>& mesh)
-		: mesh(mesh){
+	MeshComponent::MeshComponent(std::shared_ptr<rnd::Mesh> mesh)
+		: mesh(std::move(mesh)){
 	}
 
 	MeshComponent::MeshComponent(const MeshComponent& other) = default;

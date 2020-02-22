@@ -13,7 +13,7 @@
 
 namespace clv::gfx::d3d{
 	D3DGraphicsFactory::D3DGraphicsFactory(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3dDeviceContext)
-		: d3dDevice(d3dDevice), d3dDeviceContext(d3dDeviceContext){
+		: d3dDevice(std::move(d3dDevice)), d3dDeviceContext(std::move(d3dDeviceContext)){
 	}
 
 	D3DGraphicsFactory::~D3DGraphicsFactory() = default;
