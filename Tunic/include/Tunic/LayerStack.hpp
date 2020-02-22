@@ -19,10 +19,10 @@ namespace tnc{
 		~LayerStack();
 
 		void pushLayer(std::shared_ptr<Layer> layer);
-		void popLayer(std::shared_ptr<Layer> layer);
+		void popLayer(const std::shared_ptr<Layer>& layer);
 
 		void pushOverlay(std::shared_ptr<Layer> overlay);
-		void popOverlay(std::shared_ptr<Layer> overlay);
+		void popOverlay(const std::shared_ptr<Layer>& overlay);
 
 		std::vector<std::shared_ptr<Layer>>::iterator begin();
 		std::vector<std::shared_ptr<Layer>>::iterator end();

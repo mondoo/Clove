@@ -23,7 +23,7 @@ namespace tnc{
 		layers.emplace(layers.begin() + layerInsertIndex, std::move(layer));
 	}
 
-	void LayerStack::popLayer(std::shared_ptr<Layer> layer){
+	void LayerStack::popLayer(const std::shared_ptr<Layer>& layer){
 		auto it = std::find(layers.begin(), layers.end(), layer);
 		if(it != layers.end()){
 			layers.erase(it);
@@ -39,7 +39,7 @@ namespace tnc{
 		layers.emplace_back(std::move(overlay));
 	}
 
-	void LayerStack::popOverlay(std::shared_ptr<Layer> overlay){
+	void LayerStack::popOverlay(const std::shared_ptr<Layer>& overlay){
 		auto it = std::find(layers.begin(), layers.end(), overlay);
 		if(it != layers.end()){
 			layers.erase(it);
