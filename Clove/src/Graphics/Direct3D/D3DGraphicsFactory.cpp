@@ -42,8 +42,8 @@ namespace clv::gfx::d3d{
 		return std::make_shared<D3DRenderTarget>(*d3dDevice.Get(), colourTexture, depthStencilTexture);
 	}
 
-	std::shared_ptr<Shader> D3DGraphicsFactory::createShader(const ShaderDescriptor& descriptor, std::string_view pathToTexture){
-		return std::make_shared<D3DShader>(*d3dDevice.Get(), descriptor, pathToTexture);
+	std::shared_ptr<Shader> D3DGraphicsFactory::createShader(const ShaderDescriptor& descriptor, std::string_view pathToShader){
+		return std::make_shared<D3DShader>(*d3dDevice.Get(), descriptor, pathToShader);
 	}
 
 	std::shared_ptr<Surface> D3DGraphicsFactory::createSurface(void* windowData){

@@ -10,7 +10,7 @@ namespace clv::gfx{
 	public:
 		virtual ~Surface() = default;
 
-		virtual void setVSync(bool vsync) = 0;
+		virtual void setVSync(bool enabled) = 0;
 		virtual bool isVsync() const = 0;
 
 		virtual void resizeBuffers(const mth::vec2ui& size) = 0;

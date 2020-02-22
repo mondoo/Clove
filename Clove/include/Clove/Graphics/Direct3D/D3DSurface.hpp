@@ -46,7 +46,7 @@ namespace clv::gfx::d3d{
 
 		virtual ~D3DSurface();
 
-		virtual void setVSync(bool vsync) override;
+		virtual void setVSync(bool enabled) override;
 		virtual bool isVsync() const override;
 
 		virtual void resizeBuffers(const mth::vec2ui& size) override;
