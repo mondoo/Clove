@@ -28,8 +28,5 @@ namespace clv::gfx::d3d{
 		virtual const ShaderDescriptor& getDescriptor() const override;
 
 		const Microsoft::WRL::ComPtr<ID3DBlob>& getShaderBlob() const;
-
-	private:
-		LPCSTR getShaderProfile(const ShaderStage stage);
 	};
 }

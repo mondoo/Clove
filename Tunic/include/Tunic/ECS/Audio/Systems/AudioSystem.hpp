@@ -40,8 +40,6 @@ namespace tnc::ecs::aud{
 		void pauseSound(AudioComponent* component);
 		void stopSound(AudioComponent* component);
 
-		bool isStreamActive(PaStream* stream);
-
 		static int soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);
 		static int soundPlayback_Once(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);
 	};

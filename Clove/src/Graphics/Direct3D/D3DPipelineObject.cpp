@@ -6,6 +6,24 @@
 #include <d3dcompiler.h>
 
 namespace clv::gfx::d3d{
+	static DXGI_FORMAT getDXGIFormatFromType(VertexElementType type){
+		switch (type){
+		case VertexElementType::position2D:
+			return DXGI_FORMAT_R32G32_FLOAT;
+		case VertexElementType::position3D:
+			return DXGI_FORMAT_R32G32B32_FLOAT;
+		case VertexElementType::texture2D:
+			return DXGI_FORMAT_R32G32_FLOAT;
+		case VertexElementType::normal:
+			return DXGI_FORMAT_R32G32B32_FLOAT;
+		case VertexElementType::colour3D:
+			return DXGI_FORMAT_R32G32B32_FLOAT;
+		default:
+			CLV_ASSERT(false, "Invalid element type");
+			return DXGI_FORMAT_R32G32B32_FLOAT;
+		}
+	}
+
 	D3DPipelineObject::D3DPipelineObject(const Microsoft::WRL::ComPtr<ID3D11Device>& d3dDevice)
 		: d3dDevice(d3dDevice){
 		setBlendState(true);
@@ -124,23 +142,5 @@ namespace clv::gfx::d3d{
 
 	const D3D11_RASTERIZER_DESC& D3DPipelineObject::getD3DRasterDesc() const{
 		return rasteriserDesc;
-	}
-
-	DXGI_FORMAT D3DPipelineObject::getDXGIFormatFromType(VertexElementType type){
-		switch(type){
-			case VertexElementType::position2D:
-				return DXGI_FORMAT_R32G32_FLOAT;
-			case VertexElementType::position3D:
-				return DXGI_FORMAT_R32G32B32_FLOAT;
-			case VertexElementType::texture2D:
-				return DXGI_FORMAT_R32G32_FLOAT;
-			case VertexElementType::normal:
-				return DXGI_FORMAT_R32G32B32_FLOAT;
-			case VertexElementType::colour3D:
-				return DXGI_FORMAT_R32G32B32_FLOAT;
-			default:
-				CLV_ASSERT(false, "Invalid element type");
-				return DXGI_FORMAT_R32G32B32_FLOAT;
-		}
 	}
 }

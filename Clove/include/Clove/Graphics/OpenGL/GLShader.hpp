@@ -33,8 +33,5 @@ namespace clv::gfx::ogl{
 
 	private:
 		void compileShader(GLenum stage, std::string_view source);
-
-		GLenum getGLShaderStage(const ShaderStage stage);
-		std::string getStringFromShaderStage(GLuint glShaderStage);
 	};
 }

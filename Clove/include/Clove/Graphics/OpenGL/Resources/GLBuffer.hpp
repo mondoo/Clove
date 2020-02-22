@@ -27,9 +27,5 @@ namespace clv::gfx::ogl{
 		virtual void updateData(const void* data) override;
 
 		GLuint getBufferID() const;
-
-	private:
-		GLenum getGLBufferType(BufferType cloveType);
-		GLenum getGLBufferUsage(BufferUsage cloveUsage);
 	};
 }

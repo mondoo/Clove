@@ -39,18 +39,5 @@ namespace clv::gfx::d3d{
 
 	private:
 		void createTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data);
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC createD3DShaderViewDescriptor(const TextureDescriptor& descriptor) const;
-
-		UINT getBindFlags(const TextureUsage usage) const;
-		DXGI_FORMAT getFormatForTexture(const TextureUsage usage) const;
-		DXGI_FORMAT getFormatForShaderView(const TextureUsage usage) const;
-
-		UINT getArrayElements(const TextureStyle style) const;
-		D3D_SRV_DIMENSION getViewDimension(const TextureStyle style, const uint8_t arraySize) const;
-
-		UINT getMiscFlags(const TextureStyle style) const;
-
-		D3D11_FILTER getFilter(const TextureFilter filter) const;
 	};
 }

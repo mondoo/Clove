@@ -11,6 +11,16 @@
 using namespace clv;
 
 namespace tnc::ecs::aud{
+	static bool isStreamActive(PaStream* stream){
+		if (!stream){
+			return false;
+		}
+
+		PaError error = Pa_IsStreamActive(stream);
+		CLV_ASSERT(error >= 0, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(error));
+		return error > 0;
+	}
+
 	AudioSystem::AudioSystem(){
 		CLV_LOG_TRACE("Portaudio intialised");
 		PACall(Pa_Initialize());
@@ -113,16 +123,6 @@ namespace tnc::ecs::aud{
 			component->playing = false;
 			component->currentPlayback.reset();
 		}
-	}
-
-	bool AudioSystem::isStreamActive(PaStream* stream){
-		if(!stream){
-			return false;
-		}
-
-		PaError error = Pa_IsStreamActive(stream);
-		CLV_ASSERT(error >= 0, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(error));
-		return error > 0;
 	}
 
 	int AudioSystem::soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){

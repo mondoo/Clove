@@ -46,9 +46,6 @@ namespace clv::gfx::ogl{
 		bool isFrontFaceCounterClockwise() const;
 
 	private:
-		GLenum getGLElementType(VertexElementType type);
-		GLboolean isTypeNormalised(VertexElementType type);
-
 		void attachAndLinkShader(GLuint shaderID);
 	};
 }

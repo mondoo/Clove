@@ -3,6 +3,96 @@
 #include <stb_image.h>
 
 namespace clv::gfx::ogl{
+	static GLenum getTarget(const TextureStyle style, const uint8_t arraySize) const{
+		switch (style){
+		case TextureStyle::Default:
+			return (arraySize > 1) ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D;
+
+		case TextureStyle::Cubemap:
+			return (arraySize > 1) ? GL_TEXTURE_CUBE_MAP_ARRAY : GL_TEXTURE_CUBE_MAP;
+
+		default:
+			CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+			break;
+		}
+
+		return GLenum();
+	}
+
+	static GLenum getInternalFormat(const TextureUsage usage) const{
+		switch (usage){
+		case TextureUsage::Default:
+			return GL_RGBA8;
+
+		case TextureUsage::RenderTarget_Colour:
+			return GL_RGB;
+
+		case TextureUsage::RenderTarget_Depth:
+			return GL_DEPTH_COMPONENT;
+
+		case TextureUsage::Font:
+			return GL_RED;
+
+		default:
+			CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+			return GL_RGBA8;
+		}
+	}
+
+	static GLenum getFormat(const TextureUsage usage){
+		switch (usage){
+		case TextureUsage::Default:
+			return GL_RGBA;
+
+		case TextureUsage::RenderTarget_Colour:
+			return GL_RGB;
+
+		case TextureUsage::RenderTarget_Depth:
+			return GL_DEPTH_COMPONENT;
+
+		case TextureUsage::Font:
+			return GL_RED;
+
+		default:
+			CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+			return GL_RGBA;
+		}
+	}
+
+	static GLenum getType(const TextureUsage usage){
+		switch (usage){
+		case TextureUsage::Default:
+			return GL_UNSIGNED_BYTE;
+
+		case TextureUsage::RenderTarget_Colour:
+			return GL_UNSIGNED_BYTE;
+
+		case TextureUsage::RenderTarget_Depth:
+			return GL_FLOAT;
+
+		case TextureUsage::Font:
+			return GL_UNSIGNED_BYTE;
+
+		default:
+			CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+			return GL_UNSIGNED_BYTE;
+		}
+	}
+
+	static GLint getFilter(const TextureFilter filter){
+		switch (filter){
+		case TextureFilter::Nearest:
+			return GL_NEAREST;
+
+		case TextureFilter::Linear:
+			return GL_LINEAR;
+
+		default:
+			CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+			return GL_NEAREST;
+		}
+	}
+
 	GLTexture::GLTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture)
 		: descriptor(descriptor){
 		int width = 0;
@@ -112,96 +202,6 @@ namespace clv::gfx::ogl{
 			for(uint8_t i = 0; i < cubeFaces; ++i){
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, height, 0, format, type, pixels);
 			}
-		}
-	}
-
-	GLenum GLTexture::getTarget(const TextureStyle style, const uint8_t arraySize) const{
-		switch(style){
-			case TextureStyle::Default:
-				return (arraySize > 1) ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D;
-
-			case TextureStyle::Cubemap:
-				return (arraySize > 1) ? GL_TEXTURE_CUBE_MAP_ARRAY : GL_TEXTURE_CUBE_MAP;
-			
-			default:
-				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
-				break;
-		}
-		
-		return GLenum();
-	}
-
-	GLenum GLTexture::getInternalFormat(const TextureUsage usage) const{
-		switch(usage){
-			case TextureUsage::Default:
-				return GL_RGBA8;
-
-			case TextureUsage::RenderTarget_Colour:
-				return GL_RGB;
-
-			case TextureUsage::RenderTarget_Depth:
-				return GL_DEPTH_COMPONENT;
-
-			case TextureUsage::Font:
-				return GL_RED;
-
-			default:
-				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
-				return GL_RGBA8;
-		}
-	}
-
-	GLenum GLTexture::getFormat(const TextureUsage usage){
-		switch(usage){
-			case TextureUsage::Default:
-				return GL_RGBA;
-
-			case TextureUsage::RenderTarget_Colour:
-				return GL_RGB;
-
-			case TextureUsage::RenderTarget_Depth:
-				return GL_DEPTH_COMPONENT;
-
-			case TextureUsage::Font:
-				return GL_RED;
-
-			default:
-				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
-				return GL_RGBA;
-		}
-	}
-
-	GLenum GLTexture::getType(const TextureUsage usage){
-		switch(usage){
-			case TextureUsage::Default:
-				return GL_UNSIGNED_BYTE;
-
-			case TextureUsage::RenderTarget_Colour:
-				return GL_UNSIGNED_BYTE;
-
-			case TextureUsage::RenderTarget_Depth:
-				return GL_FLOAT;
-
-			case TextureUsage::Font:
-				return GL_UNSIGNED_BYTE;
-
-			default:
-				CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
-				return GL_UNSIGNED_BYTE;
-		}
-	}
-
-	GLint GLTexture::getFilter(const TextureFilter filter){
-		switch(filter){
-			case TextureFilter::Nearest:
-				return GL_NEAREST;
-
-			case TextureFilter::Linear:
-				return GL_LINEAR;
-
-			default:
-				CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
-				return GL_NEAREST;
 		}
 	}
 }

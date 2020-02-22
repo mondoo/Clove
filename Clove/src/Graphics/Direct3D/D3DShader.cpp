@@ -5,6 +5,20 @@
 #include <d3dcompiler.h>
 
 namespace clv::gfx::d3d{
+	static LPCSTR getShaderProfile(const ShaderStage stage){
+		switch (stage){
+		case ShaderStage::Vertex:
+			return "vs_5_0";
+		case ShaderStage::Geometry:
+			return "gs_5_0";
+		case ShaderStage::Pixel:
+			return "ps_5_0";
+		default:
+			CLV_ASSERT(false, "Unhandled shader stage in {0}", CLV_FUNCTION_NAME);
+			return "";
+		}
+	}
+
 	D3DShader::D3DShader(ID3D11Device& d3dDevice, const ShaderDescriptor& descriptor, std::string_view pathToShader)
 		: descriptor(descriptor){
 		UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
@@ -45,19 +59,5 @@ namespace clv::gfx::d3d{
 
 	const Microsoft::WRL::ComPtr<ID3DBlob>& D3DShader::getShaderBlob() const{
 		return shaderBlob;
-	}
-
-	LPCSTR D3DShader::getShaderProfile(const ShaderStage stage){
-		switch(stage){
-			case ShaderStage::Vertex:
-				return "vs_5_0";
-			case ShaderStage::Geometry:
-				return "gs_5_0";
-			case ShaderStage::Pixel:
-				return "ps_5_0";
-			default:
-				CLV_ASSERT(false, "Unhandled shader stage in {0}", CLV_FUNCTION_NAME);
-				return "";
-		}
 	}
 }

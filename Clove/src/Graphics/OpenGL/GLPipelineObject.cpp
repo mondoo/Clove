@@ -3,6 +3,34 @@
 #include "Clove/Graphics/OpenGL/GLShader.hpp"
 
 namespace clv::gfx::ogl{
+	static GLenum getGLElementType(VertexElementType type){
+		switch (type){
+		case VertexElementType::position2D:
+		case VertexElementType::position3D:
+		case VertexElementType::texture2D:
+		case VertexElementType::normal:
+		case VertexElementType::colour3D:
+			return GL_FLOAT;
+		default:
+			CLV_ASSERT(false, "Invalid element type");
+			return GL_FLOAT;
+		}
+	}
+
+	static GLboolean isTypeNormalised(VertexElementType type){
+		switch (type){
+		case VertexElementType::position2D:
+		case VertexElementType::position3D:
+		case VertexElementType::texture2D:
+		case VertexElementType::normal:
+		case VertexElementType::colour3D:
+			return GL_FALSE;
+		default:
+			CLV_ASSERT(false, "Invalid element type");
+			return GL_FALSE;
+		}
+	}
+
 	GLPipelineObject::GLPipelineObject()
 		: programID(glCreateProgram()){
 		setBlendState(true);
@@ -94,34 +122,6 @@ namespace clv::gfx::ogl{
 
 	bool GLPipelineObject::isFrontFaceCounterClockwise() const{
 		return frontFaceCounterClockwise;
-	}
-
-	GLenum GLPipelineObject::getGLElementType(VertexElementType type){
-		switch(type){
-			case VertexElementType::position2D:
-			case VertexElementType::position3D:
-			case VertexElementType::texture2D:
-			case VertexElementType::normal:
-			case VertexElementType::colour3D:
-				return GL_FLOAT;
-			default:
-				CLV_ASSERT(false, "Invalid element type");
-				return GL_FLOAT;
-		}
-	}
-
-	GLboolean GLPipelineObject::isTypeNormalised(VertexElementType type){
-		switch(type){
-			case VertexElementType::position2D:
-			case VertexElementType::position3D:
-			case VertexElementType::texture2D:
-			case VertexElementType::normal:
-			case VertexElementType::colour3D:
-				return GL_FALSE;
-			default:
-				CLV_ASSERT(false, "Invalid element type");
-				return GL_FALSE;
-		}
 	}
 
 	void GLPipelineObject::attachAndLinkShader(GLuint shaderID){

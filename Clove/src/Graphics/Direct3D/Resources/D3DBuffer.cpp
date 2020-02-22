@@ -4,6 +4,32 @@
 #include "Clove/Graphics/Direct3D/D3DGraphicsFactory.hpp"
 
 namespace clv::gfx::d3d{
+	static UINT getD3DBufferType(BufferType cloveType){
+		switch (cloveType){
+		case BufferType::IndexBuffer:
+			return D3D11_BIND_INDEX_BUFFER;
+		case BufferType::VertexBuffer:
+			return D3D11_BIND_VERTEX_BUFFER;
+		case BufferType::ShaderResourceBuffer:
+			return D3D11_BIND_CONSTANT_BUFFER;
+		default:
+			CLV_ASSERT(false, "Unknown buffer type in {0}", CLV_FUNCTION_NAME);
+			return 0u;
+		}
+	}
+
+	static D3D11_USAGE getD3DBufferUsage(BufferUsage cloveUsage){
+		switch (cloveUsage){
+		case BufferUsage::Default:
+			return D3D11_USAGE_DEFAULT;
+		case BufferUsage::Dynamic:
+			return D3D11_USAGE_DYNAMIC;
+		default:
+			CLV_ASSERT(false, "Unknown buffer usage in {0}", CLV_FUNCTION_NAME);
+			return D3D11_USAGE_DEFAULT;
+		}
+	}
+
 	D3DBuffer::D3DBuffer(ID3D11Device& d3dDevice, const BufferDescriptor& descriptor, const void* data)
 		: descriptor(descriptor){
 
@@ -60,31 +86,5 @@ namespace clv::gfx::d3d{
 
 	const Microsoft::WRL::ComPtr<ID3D11Buffer>& D3DBuffer::getD3DBuffer() const{
 		return d3dBuffer;
-	}
-
-	UINT D3DBuffer::getD3DBufferType(BufferType cloveType){
-		switch(cloveType){
-			case BufferType::IndexBuffer:
-				return D3D11_BIND_INDEX_BUFFER;
-			case BufferType::VertexBuffer:
-				return D3D11_BIND_VERTEX_BUFFER;
-			case BufferType::ShaderResourceBuffer:
-				return D3D11_BIND_CONSTANT_BUFFER;
-			default:
-				CLV_ASSERT(false, "Unknown buffer type in {0}", CLV_FUNCTION_NAME);
-				return 0u;
-		}
-	}
-
-	D3D11_USAGE D3DBuffer::getD3DBufferUsage(BufferUsage cloveUsage){
-		switch(cloveUsage){
-			case BufferUsage::Default:
-				return D3D11_USAGE_DEFAULT;
-			case BufferUsage::Dynamic:
-				return D3D11_USAGE_DYNAMIC;
-			default:
-				CLV_ASSERT(false, "Unknown buffer usage in {0}", CLV_FUNCTION_NAME);
-				return D3D11_USAGE_DEFAULT;
-		}
 	}
 }

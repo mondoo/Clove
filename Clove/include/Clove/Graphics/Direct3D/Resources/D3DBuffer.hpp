@@ -31,9 +31,5 @@ namespace clv::gfx::d3d{
 		virtual void updateData(const void* data) override;
 
 		const Microsoft::WRL::ComPtr<ID3D11Buffer>& getD3DBuffer() const;
-
-	private:
-		UINT getD3DBufferType(BufferType cloveType);
-		D3D11_USAGE getD3DBufferUsage(BufferUsage cloveUsage);
 	};
 }

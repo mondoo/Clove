@@ -3,6 +3,34 @@
 #include "Clove/Graphics/Core/ShaderTranspiler.hpp"
 
 namespace clv::gfx::ogl{
+	static GLenum getGLShaderStage(const ShaderStage stage){
+		switch (stage){
+		case ShaderStage::Vertex:
+			return GL_VERTEX_SHADER;
+		case ShaderStage::Geometry:
+			return GL_GEOMETRY_SHADER;
+		case ShaderStage::Pixel:
+			return GL_FRAGMENT_SHADER;
+		default:
+			CLV_ASSERT(false, "Uknown stage in {0}", CLV_FUNCTION_NAME);
+			return GL_VERTEX_SHADER;
+		}
+	}
+
+	static std::string getStringFromShaderStage(GLuint glShaderStage){
+		switch (glShaderStage){
+		case GL_VERTEX_SHADER:
+			return "vertex";
+		case GL_FRAGMENT_SHADER:
+			return "pixel";
+		case GL_GEOMETRY_SHADER:
+			return "geometry";
+		default:
+			CLV_ASSERT(false, "Uknown stage in {0}", CLV_FUNCTION_NAME);
+			return "unkown";
+		}
+	}
+
 	GLShader::GLShader(const ShaderDescriptor& descriptor, std::string_view pathToShader){
 		compileShader(getGLShaderStage(descriptor.stage), ShaderTranspiler::transpileFromFile(pathToShader, descriptor.stage, ShaderType::GLSL));
 	}
@@ -38,34 +66,6 @@ namespace clv::gfx::ogl{
 			glGetShaderInfoLog(shaderID, length, &length, message);
 			CLV_LOG_ERROR("Failed to compile {0} shader! {1}", getStringFromShaderStage(stage), message);
 			delete[] message;
-		}
-	}
-
-	GLenum GLShader::getGLShaderStage(const ShaderStage stage){
-		switch(stage){
-			case ShaderStage::Vertex:
-				return GL_VERTEX_SHADER;
-			case ShaderStage::Geometry:
-				return GL_GEOMETRY_SHADER;
-			case ShaderStage::Pixel:
-				return GL_FRAGMENT_SHADER;
-			default:
-				CLV_ASSERT(false, "Uknown stage in {0}", CLV_FUNCTION_NAME);
-				return GL_VERTEX_SHADER;
-		}
-	}
-
-	std::string GLShader::getStringFromShaderStage(GLuint glShaderStage){
-		switch(glShaderStage){
-			case GL_VERTEX_SHADER:
-				return "vertex";
-			case GL_FRAGMENT_SHADER:
-				return "pixel";
-			case GL_GEOMETRY_SHADER:
-				return "geometry";
-			default:
-				CLV_ASSERT(false, "Uknown stage in {0}", CLV_FUNCTION_NAME);
-				return "unkown";
 		}
 	}
 }

@@ -52,8 +52,5 @@ namespace clv::gfx::d3d{
 		const Microsoft::WRL::ComPtr<ID3D11InputLayout>& getD3DInputLayout() const;
 		const D3D11_BLEND_DESC& getD3DBlendDesc() const;
 		const D3D11_RASTERIZER_DESC& getD3DRasterDesc() const;
-
-	private:
-		DXGI_FORMAT getDXGIFormatFromType(VertexElementType type);
 	};
 }
