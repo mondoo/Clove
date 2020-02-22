@@ -21,22 +21,18 @@ namespace clv::gfx::ogl{
 	void GLCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget){
 		glRenderTarget = std::static_pointer_cast<GLRenderTarget>(renderTarget);
 
-		const auto beginCommand = [glRenderTarget = glRenderTarget.get()](){
+		commands.emplace_back([glRenderTarget = glRenderTarget.get()](){
 			glBindFramebuffer(GL_FRAMEBUFFER, glRenderTarget->getGLFrameBufferID());
-		};
-
-		commands.push_back(beginCommand);
+		});
 	}
 
 	void GLCommandBuffer::clearTarget(){
-		const auto clearCommand = [glRenderTarget = glRenderTarget.get()](){
+		commands.emplace_back([glRenderTarget = glRenderTarget.get()](){
 			const auto& clearColour = glRenderTarget->getClearColour();
 
 			glClearColor(clearColour.r, clearColour.g, clearColour.b, clearColour.a);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		};
-
-		commands.push_back(clearCommand);
+		});
 	}
 
 	void GLCommandBuffer::updateBufferData(const Buffer& buffer, const void* data){
@@ -44,7 +40,7 @@ namespace clv::gfx::ogl{
 		void* datacopy = new char[bufferSize];
 		memcpy(datacopy, data, buffer.getDescriptor().bufferSize);
 
-		const auto updateBufferCommand = [&buffer, data = datacopy](){
+		commands.emplace_back([&buffer, data = datacopy](){
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 
 			glBindBuffer(GL_UNIFORM_BUFFER, glbuffer.getBufferID());
@@ -52,46 +48,38 @@ namespace clv::gfx::ogl{
 			glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 			delete data;
-		};
-
-		commands.push_back(updateBufferCommand);
+		});
 	}
 
 	void GLCommandBuffer::bindIndexBuffer(const Buffer& buffer){
-		const auto bindIBCommand = [&buffer](){
+		commands.emplace_back([&buffer](){
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glbuffer.getBufferID());
-		};
-
-		commands.push_back(bindIBCommand);
+		});
 	}
 
 	void GLCommandBuffer::bindVertexBuffer(const Buffer& buffer, const uint32_t stride){
-		const auto bindVBCommand = [&buffer, stride](){
+		commands.emplace_back([&buffer, stride](){
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 			glBindVertexBuffer(0, glbuffer.getBufferID(), 0, stride);
-		};
-
-		commands.push_back(bindVBCommand);
+		});
 	}
 
 	void GLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32_t bindingPoint){
-		const auto bindSRBCommand = [&buffer, shaderType, bindingPoint](){
+		commands.emplace_back([&buffer, shaderType, bindingPoint](){
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 			glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, glbuffer.getBufferID());
-		};
-
-		commands.push_back(bindSRBCommand);
+		});
 	}
 
 	void GLCommandBuffer::bindPipelineObject(const PipelineObject& pipelineObject){
-		const auto bindPOCommand = [&pipelineObject](){
+		commands.emplace_back([&pipelineObject](){
 			const GLPipelineObject& glPipelineObject = static_cast<const GLPipelineObject&>(pipelineObject);
 			glBindVertexArray(glPipelineObject.getGLVertexArrayID());
 			glUseProgram(glPipelineObject.getGLPorgramID());
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			if(glPipelineObject.isBlendEnabled()){
+			if (glPipelineObject.isBlendEnabled()){
 				glEnable(GL_BLEND);
 			} else{
 				glDisable(GL_BLEND);
@@ -100,51 +88,41 @@ namespace clv::gfx::ogl{
 			glFrontFace(glPipelineObject.isFrontFaceCounterClockwise() ? GL_CCW : GL_CW);
 			glCullFace(glPipelineObject.getCullFace() == CullFace::Back ? GL_BACK : GL_FRONT);
 			glEnable(GL_CULL_FACE);
-		};
-
-		commands.push_back(bindPOCommand);
+		});
 	}
 
 	void GLCommandBuffer::bindTexture(const Texture* texture, const uint32_t bindingPoint){
-		const auto bindTextureCommand = [texture, bindingPoint](){
-			if(const GLTexture* glTexture = static_cast<const GLTexture*>(texture)){
+		commands.emplace_back([texture, bindingPoint](){
+			if (const GLTexture* glTexture = static_cast<const GLTexture*>(texture)){
 				glBindTextureUnit(bindingPoint, glTexture->getTextureID());
 			} else{
 				glBindTextureUnit(bindingPoint, 0);
 			}
-		};
-
-		commands.push_back(bindTextureCommand);
+		});
 	}
 
 	void GLCommandBuffer::setViewport(const Viewport& viewport){
-		const auto setVPCommand = [viewport](){
+		commands.emplace_back([viewport](){
 			glViewport(static_cast<GLint>(viewport.x), static_cast<GLint>(viewport.y), static_cast<GLsizei>(viewport.width), static_cast<GLsizei>(viewport.height));
-		};
-
-		commands.push_back(setVPCommand);
+		});
 	}
 
 	void GLCommandBuffer::setDepthEnabled(bool enabled){
-		const auto setDECommand = [enabled](){
+		commands.emplace_back([enabled](){
 			glDepthFunc(GL_LESS);
 
-			if(enabled){
+			if (enabled){
 				glEnable(GL_DEPTH_TEST);
 			} else{
 				glDisable(GL_DEPTH_TEST);
 			}
-		};
-
-		commands.push_back(setDECommand);
+		});
 	}
 
 	void GLCommandBuffer::drawIndexed(const uint32_t count){
-		const auto drawCommand = [count](){
+		commands.emplace_back([count](){
 			glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
-		};
-
-		commands.push_back(drawCommand);
+		});
 	}
 
 	void GLCommandBuffer::endEncoding(){
