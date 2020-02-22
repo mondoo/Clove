@@ -37,9 +37,9 @@ namespace clv::gfx::ogl{
 		setCullMode(CullFace::Back, true);
 	}
 
-	GLPipelineObject::GLPipelineObject(GLPipelineObject&& other) = default;
+	GLPipelineObject::GLPipelineObject(GLPipelineObject&& other) noexcept = default;
 
-	GLPipelineObject& GLPipelineObject::operator=(GLPipelineObject&& other) = default;
+	GLPipelineObject& GLPipelineObject::operator=(GLPipelineObject&& other) noexcept = default;
 
 	GLPipelineObject::~GLPipelineObject() = default;
 

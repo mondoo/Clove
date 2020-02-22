@@ -16,10 +16,13 @@ namespace clv::gfx::ogl{
 	public:
 		GLBuffer() = delete;
 		GLBuffer(const BufferDescriptor& descriptor, const void* data);
+
 		GLBuffer(const GLBuffer& other) = delete;
-		GLBuffer(GLBuffer&& other);
-		GLBuffer& operator=(const GLBuffer& other) = delete;
-		GLBuffer& operator=(GLBuffer&& other);
+		GLBuffer(GLBuffer&& other) noexcept;
+
+		GLBuffer& operator=(const GLBuffer& other) noexcept = delete;
+		GLBuffer& operator=(GLBuffer&& other) noexcept;
+
 		virtual ~GLBuffer();
 
 		virtual const BufferDescriptor& getDescriptor() const override;

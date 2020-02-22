@@ -39,9 +39,9 @@ namespace clv::gfx::ogl{
 		glBindBuffer(bufferType, 0);
 	}
 
-	GLBuffer::GLBuffer(GLBuffer&& other) = default;
+	GLBuffer::GLBuffer(GLBuffer&& other) noexcept = default;
 
-	GLBuffer& GLBuffer::operator=(GLBuffer&& other) = default;
+	GLBuffer& GLBuffer::operator=(GLBuffer&& other) noexcept = default;
 
 	GLBuffer::~GLBuffer(){
 		glDeleteBuffers(1, &bufferID);

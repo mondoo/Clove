@@ -29,10 +29,10 @@ namespace clv::gfx::d3d{
 		D3DPipelineObject(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice);
 
 		D3DPipelineObject(const D3DPipelineObject& other) = delete;
-		D3DPipelineObject(D3DPipelineObject&& other);
+		D3DPipelineObject(D3DPipelineObject&& other) noexcept;
 
 		D3DPipelineObject& operator=(const D3DPipelineObject& other) = delete;
-		D3DPipelineObject& operator=(D3DPipelineObject&& other);
+		D3DPipelineObject& operator=(D3DPipelineObject&& other) noexcept;
 
 		virtual ~D3DPipelineObject();
 

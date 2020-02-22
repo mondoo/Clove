@@ -30,9 +30,9 @@ namespace clv::gfx::d3d{
 		setCullMode(CullFace::Back, true);
 	}
 
-	D3DPipelineObject::D3DPipelineObject(D3DPipelineObject&& other) = default;
+	D3DPipelineObject::D3DPipelineObject(D3DPipelineObject&& other) noexcept = default;
 
-	D3DPipelineObject& D3DPipelineObject::operator=(D3DPipelineObject&& other) = default;
+	D3DPipelineObject& D3DPipelineObject::operator=(D3DPipelineObject&& other) noexcept = default;
 
 	D3DPipelineObject::~D3DPipelineObject() = default;
 

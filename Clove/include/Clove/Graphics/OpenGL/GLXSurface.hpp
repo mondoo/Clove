@@ -31,10 +31,10 @@ namespace clv::gfx::ogl{
 		GLXSurface(void* windowData);
 
 		GLXSurface(const GLXSurface& other) = delete;
-		GLXSurface(GLXSurface&& other);
+		GLXSurface(GLXSurface&& other) noexcept;
 
-		GLXSurface& operator=(const GLXSurface& other) = default;
-		GLXSurface& operator=(GLXSurface&& other);
+		GLXSurface& operator=(const GLXSurface& other) = delete;
+		GLXSurface& operator=(GLXSurface&& other) noexcept;
 
 		virtual ~GLXSurface();
 

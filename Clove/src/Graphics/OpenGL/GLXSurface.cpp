@@ -79,9 +79,9 @@ namespace clv::gfx::ogl{
 		}
 	}
 
-	GLXSurface::GLXSurface(GLXSurface&& other) = default;
+	GLXSurface::GLXSurface(GLXSurface&& other) noexcept = default;
 
-	GLXSurface& GLXSurface::operator=(GLXSurface&& other) = default;
+	GLXSurface& GLXSurface::operator=(GLXSurface&& other) noexcept = default;
 
 	GLXSurface::~GLXSurface(){
 		glXDestroyContext(display, context);

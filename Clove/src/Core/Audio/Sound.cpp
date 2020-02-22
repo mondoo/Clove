@@ -5,10 +5,10 @@ namespace clv::aud{
 
 	Sound::Sound(const Sound& other) = default;
 
-	Sound& Sound::operator=(const Sound& other) = default;
-	
 	Sound::Sound(Sound&& other) = default;
 
+	Sound& Sound::operator=(const Sound& other) = default;
+	
 	Sound& Sound::operator=(Sound&& other) = default;
 
 	Sound::~Sound() = default;

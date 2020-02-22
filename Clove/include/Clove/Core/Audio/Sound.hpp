@@ -14,10 +14,13 @@ namespace clv::aud{
 		//FUNCTIONS
 	public:
 		Sound();
+
 		Sound(const Sound& other);
-		Sound& operator=(const Sound& other);
 		Sound(Sound&& other);
+
+		Sound& operator=(const Sound& other);
 		Sound& operator=(Sound&& other);
+
 		~Sound();
 
 		Sound(const std::string& filePath);

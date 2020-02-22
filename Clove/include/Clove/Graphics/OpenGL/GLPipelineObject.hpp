@@ -22,10 +22,10 @@ namespace clv::gfx::ogl{
 		GLPipelineObject();
 
 		GLPipelineObject(const GLPipelineObject& other) = delete;
-		GLPipelineObject(GLPipelineObject&& other);
+		GLPipelineObject(GLPipelineObject&& other) noexcept;
 
 		GLPipelineObject& operator=(const GLPipelineObject& other) = delete;
-		GLPipelineObject& operator=(GLPipelineObject&& other);
+		GLPipelineObject& operator=(GLPipelineObject&& other) noexcept;
 
 		virtual ~GLPipelineObject();
 
