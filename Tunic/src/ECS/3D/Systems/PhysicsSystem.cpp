@@ -55,7 +55,7 @@ namespace tnc::ecs::_3D{
 			auto* compB = static_cast<RigidBodyComponent*>(manifold.bodyB->getUserPointer());
 
 			compA->onBodyCollision.broadcast(compB);
-			compB->onBodyCollision.broadcast(compB);
+			compB->onBodyCollision.broadcast(compA);
 		}
 	}
 
