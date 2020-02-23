@@ -4,3 +4,4 @@
 !Bulb.Desktop.csproj
 compile_commands.json
 .clangd/
+.DS_Store
