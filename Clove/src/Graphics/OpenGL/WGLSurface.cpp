@@ -12,14 +12,15 @@ namespace clv::gfx::ogl{
 
 		windowsDeviceContext = GetDC(windowsHandle);
 
-		PIXELFORMATDESCRIPTOR pfd = { 0 };
-		pfd.nSize = sizeof(pfd);
-		pfd.nVersion = 1;
-		pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-		pfd.iPixelType = PFD_TYPE_RGBA;
-		pfd.cColorBits = 32;
-		pfd.cAlphaBits = 8;
-		pfd.cDepthBits = 24;
+		PIXELFORMATDESCRIPTOR pfd{};
+		pfd.nSize			= sizeof(PIXELFORMATDESCRIPTOR);
+		pfd.nVersion		= 1;
+		pfd.dwFlags			= PFD_DOUBLEBUFFER;
+		pfd.iPixelType		= PFD_TYPE_RGBA;
+		pfd.cColorBits		= 32;
+		pfd.cAlphaBits		= 8;
+		pfd.cDepthBits		= 24;
+		pfd.cStencilBits	= 8;
 
 		int32_t pf;
 		pf = ChoosePixelFormat(windowsDeviceContext, &pfd);

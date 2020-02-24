@@ -33,12 +33,21 @@ namespace clv::plt{
 
 		const DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_VISIBLE;
 
+		RECT wr{};
+		wr.left	  = 0;
+		wr.right  = descriptor.width;
+		wr.top	  = 0;
+		wr.bottom = descriptor.height;
+		if(!AdjustWindowRect(&wr, windowStyle, FALSE)) {
+		  throw CLV_WINDOWS_LAST_EXCEPTION;
+		}
+
 		windowsHandle = CreateWindow(
 			wc.lpszClassName,
 			wideTitle.c_str(),
 			windowStyle,
 			CW_USEDEFAULT, CW_USEDEFAULT,
-			descriptor.width, descriptor.height,
+			wr.right - wr.left, wr.bottom - wr.top,
 			nullptr,
 			nullptr,
 			instance,
@@ -129,16 +138,15 @@ namespace clv::plt{
 
 	mth::vec2i WindowsWindow::getSize() const{
 		RECT windowRect;
-		GetWindowRect(windowsHandle, &windowRect);
-		MapWindowPoints(HWND_DESKTOP, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
+		GetClientRect(windowsHandle, &windowRect);
 
 		return { windowRect.right - windowRect.left, windowRect.bottom - windowRect.top };
 	}
 
 	void WindowsWindow::moveWindow(const mth::vec2i& position){
 		const mth::vec2i size = getSize();
-		const BOOL resized = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
-		if(!resized){
+		const BOOL moved = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
+		if(!moved) {
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
 	}
