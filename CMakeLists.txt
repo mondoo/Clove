@@ -19,6 +19,7 @@ set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 option(GAR_BUILD_TUNIC "Build the Tunic framework" ON)
 CMAKE_DEPENDENT_OPTION(GAR_BUILD_BULB "Build the Bulb editor (requries Tunic)" OFF "GAR_BUILD_TUNIC" OFF)
 option(GAR_BUILD_EXAMPLES OFF)
+option(GAR_ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -33,4 +34,13 @@ endif()
 #Builb
 if(MSVC AND GAR_BUILD_BULB) #not currently supported without MSVC
 	add_subdirectory(Bulb)
+endif()
+
+if(ENABLE_CLANG_TIDY)
+	find_program(CLANGTIDY clang-tidy)
+	if(CLANGTIDY)
+		set(CMAKE_CXX_CLANG_TIDY ${CLANGTIDY})
+	else()
+    	message(SEND_ERROR "clang-tidy requested but executable not found")
+	endif()
 endif()
