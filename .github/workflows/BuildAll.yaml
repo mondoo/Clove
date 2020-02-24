@@ -1,0 +1,67 @@
+name: build
+
+on: 
+  push:
+    branches: 
+      - master
+  pull_request:
+    branches: 
+      - master
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              name: "Windows",
+              os: windows-latest,
+              gen: 
+            }
+          - {
+              name: "MacOs",
+              os: macos-latest,
+              gen: -G Xcode
+            }
+          - {
+              name: "Linux",
+              os: ubuntu-latest,
+              gen:
+            }
+
+    steps:
+    - name: Update
+      if: contains(matrix.config.name, 'Linux')
+      run: sudo apt-get update
+      
+    - name: Install x11-dev
+      if: contains(matrix.config.name, 'Linux')
+      run: sudo apt-get install libx11-dev
+        
+    - name: Install mesa-dev
+      if: contains(matrix.config.name, 'Linux')
+      run: sudo apt-get install libgl1-mesa-dev
+      
+    - uses: actions/checkout@v2
+    
+    - name: Checkout submodules
+      run: git submodule update --init --recursive
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake ${{ matrix.config.gen }} $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+
+    - name: Build
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake --build . --config $BUILD_TYPE
