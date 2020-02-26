@@ -27,3 +27,6 @@
 [submodule "Tunic/vendor/bullet3"]
 	path = Tunic/vendor/bullet3
 	url = https://github.com/bulletphysics/bullet3.git
+[submodule "Tunic/vendor/assimp"]
+	path = Tunic/vendor/assimp
+	url = https://github.com/assimp/assimp.git
