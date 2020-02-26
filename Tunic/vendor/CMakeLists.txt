@@ -11,6 +11,10 @@ set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "Set when you want to build Bullet 3 Open
 set(BUILD_UNIT_TESTS OFF CACHE BOOL "Build unit tests")
 set(USE_GLUT OFF CACHE BOOL "Use GLUT")
 set(USE_GRAPHICAL_BENCHMARK OFF CACHE BOOL "Use graphical benchmark")
+set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE BOOL "Default value of all ASSIMP_BUILD_XXX_EXPORTER values")
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "If the test suit for assimp is built in addition to the library")
+set(ASSIMP_INSTALL OFF CACHE BOOL "Disable this if you want to use assimp as a submodule")
+set(ASSIMP_INSTALL_PDB OFF CACHE BOOL "Install MSVC debug files")
 
 #freetype2
 add_subdirectory(freetype2)
@@ -29,3 +33,12 @@ set_target_properties(BulletDynamics PROPERTIES FOLDER ${DependencyFolder}/bulle
 set_target_properties(BulletInverseDynamics PROPERTIES FOLDER ${DependencyFolder}/bullet3)
 set_target_properties(BulletSoftBody PROPERTIES FOLDER ${DependencyFolder}/bullet3)
 set_target_properties(LinearMath PROPERTIES FOLDER ${DependencyFolder}/bullet3)
+
+#assimp
+add_subdirectory(assimp)
+set_target_properties(assimp PROPERTIES FOLDER ${DependencyFolder}/assimp)
+set_target_properties(assimp_cmd PROPERTIES FOLDER ${DependencyFolder}/assimp)
+set_target_properties(IrrXML PROPERTIES FOLDER ${DependencyFolder}/assimp)
+set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER ${DependencyFolder}/assimp)
+set_target_properties(zlib PROPERTIES FOLDER ${DependencyFolder}/assimp)
+set_target_properties(zlibstatic PROPERTIES FOLDER ${DependencyFolder}/assimp)
