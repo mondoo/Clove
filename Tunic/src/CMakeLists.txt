@@ -117,6 +117,9 @@ target_sources(
 		${TNC_SOURCE}/Layer.cpp
 		${TNC_INCLUDE}/LayerStack.hpp
 		${TNC_SOURCE}/LayerStack.cpp
+
+		${TNC_INCLUDE}/ModelLoader.hpp
+		${TNC_SOURCE}/ModelLoader.cpp
         
 		${ECSFiles}
 		${PhysicsFiles}
