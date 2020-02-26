@@ -2,7 +2,16 @@
 
 #include "Clove/Graphics/Core/Surface.hpp"
 
-#import <MetalKit/MetalKit.h>
+#include <QuartzCore/CAMetalLayer.h>
+#include <Metal/Metal.h>
+#include <AppKit/AppKit.h> //AppKit for macOS
+
+@interface MTLView : NSView //<CALayerDelegate>
+
+@property (nonatomic, nonnull, readonly) CAMetalLayer* metalLayer;
+
+- (id<CAMetalDrawable>)getNextDrawable;
+@end
 
 namespace clv::gfx::mtl{
 	class MTLRenderTarget;
@@ -12,7 +21,7 @@ namespace clv::gfx::mtl{
 	class MTLSurface : public Surface{
 		//VARIABLES
 	private:
-		MTKView* view = nullptr;
+		MTLView* view = nullptr;
 		
 		std::shared_ptr<MTLRenderTarget> renderTarget;
 
@@ -39,6 +48,6 @@ namespace clv::gfx::mtl{
 		virtual void present() override;
 
 		virtual std::shared_ptr<RenderTarget> getRenderTarget() const override;
-		MTKView* getMTKView() const;
+		MTLView* getMTKView() const;
 	};
 }

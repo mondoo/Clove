@@ -3,14 +3,43 @@
 #include "Clove/Platform/Mac/MacWindow.hpp"
 #include "Clove/Graphics/Metal/MTLRenderTarget.hpp"
 
+@implementation MTLView
+
+- (instancetype) initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if(self) {
+        _metalLayer = (CAMetalLayer*) self.layer;
+		//self.layer.delegate = self;
+		return self;
+    }
+    return self;
+}
+
+- (instancetype) initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if(self) {
+        _metalLayer = (CAMetalLayer*) self.layer;
+		//self.layer.delegate = self;
+		return self;
+    }
+    return self;
+}
+
+- (id<CAMetalDrawable>) getNextDrawable{
+	return [_metalLayer nextDrawable];
+}
+
+@end
+
 namespace clv::gfx::mtl{
 	MTLSurface::MTLSurface(id<MTLDevice> mtlDevice, void* windowData){
 		clv::plt::MacData* data = reinterpret_cast<clv::plt::MacData*>(windowData);
 		
 		const NSRect rect = NSMakeRect(0, 0, data->size.x, data->size.y);
-		view = [[MTKView alloc] initWithFrame:rect];
+		view = [[MTLView alloc] initWithFrame:rect];
 		[view setDepthStencilPixelFormat:MTLPixelFormatDepth32Float];
-		view.paused = YES;
+		//view.paused = YES;
+		//view.enableSetNeedsDisplay = NO;
 		
 		[view setDevice:mtlDevice];
 
@@ -40,14 +69,16 @@ namespace clv::gfx::mtl{
 	}
 
 	void MTLSurface::present(){
+		
 		[[view currentDrawable] present];
+		[view draw];
 	}
 	
 	std::shared_ptr<RenderTarget> MTLSurface::getRenderTarget() const{
 		return renderTarget;
 	}
 	
-	MTKView* MTLSurface::getMTKView() const{
+	MTLView* MTLSurface::getMTKView() const{
 		return view;
 	}
 }
