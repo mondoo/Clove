@@ -31,6 +31,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 	find_library(CLV_COCOA_LIB Cocoa)
 	find_library(CLV_METAL_LIB Metal)
 	find_library(CLV_APPKIT_LIB AppKit)
+	find_library(CLV_QUARTZ_LIB QuartzCore)
 endif()
 
 target_link_libraries(
@@ -70,6 +71,7 @@ target_link_libraries(
 		$<$<PLATFORM_ID:Darwin>:${CLV_COCOA_LIB}>
 		$<$<PLATFORM_ID:Darwin>:${CLV_METAL_LIB}>
 		$<$<PLATFORM_ID:Darwin>:${CLV_APPKIT_LIB}>
+		$<$<PLATFORM_ID:Darwin>:${CLV_QUARTZ_LIB}>
 )
 
 #Precompiled header
