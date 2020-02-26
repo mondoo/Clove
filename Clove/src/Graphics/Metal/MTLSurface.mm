@@ -37,7 +37,7 @@ namespace clv::gfx::mtl{
 		view = [[MTLView alloc] initWithFrame:rect];
 		//[view setDepthStencilPixelFormat:MTLPixelFormatDepth32Float];
 		
-		[view setDevice:mtlDevice];
+		//[view setDevice:mtlDevice];
 		
 		MTLRenderPassDescriptor* descriptor = [MTLRenderPassDescriptor new];
         descriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
