@@ -4,7 +4,9 @@
 
 #include "Clove/Platform/Mac/CloveMac.hpp"
 
-#import <MetalKit/MetalKit.h>
+#include <MetalKit/MetalKit.h>
+
+@class MTLView;
 
 namespace clv::plt{
 	class Window;
@@ -16,8 +18,8 @@ namespace clv::plt{
 @property(readonly) NSWindow* window;
 @property clv::plt::MacWindow* cloveWindow;
 
-- (instancetype)initWithWindowData:(MTKView*)view width:(unsigned int)width height:(unsigned int)height name: (NSString*)name;
-- (instancetype)initWithParentWindow:(MTKView*)view parentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size;
+- (instancetype)initWithWindowData:(MTLView*)view width:(unsigned int)width height:(unsigned int)height name: (NSString*)name;
+- (instancetype)initWithParentWindow:(MTLView*)view parentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size;
 
 @end
 

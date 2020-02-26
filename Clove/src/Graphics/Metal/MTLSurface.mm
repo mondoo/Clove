@@ -78,7 +78,7 @@ namespace clv::gfx::mtl{
 		return renderTarget;
 	}
 	
-	MTLView* MTLSurface::getMTKView() const{
+	MTLView* MTLSurface::getMTLView() const{
 		return view;
 	}
 }

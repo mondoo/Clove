@@ -49,6 +49,6 @@ namespace clv::gfx::mtl{
 		virtual void present() override;
 
 		virtual std::shared_ptr<RenderTarget> getRenderTarget() const override;
-		MTLView* getMTKView() const;
+		MTLView* getMTLView() const;
 	};
 }
