@@ -9,7 +9,6 @@
     self = [super initWithFrame:frame];
     if(self) {
         _metalLayer = (CAMetalLayer*) self.layer;
-		//self.layer.delegate = self;
 		return self;
     }
     return self;
@@ -19,7 +18,6 @@
     self = [super initWithCoder:aDecoder];
     if(self) {
         _metalLayer = (CAMetalLayer*) self.layer;
-		//self.layer.delegate = self;
 		return self;
     }
     return self;
@@ -37,13 +35,16 @@ namespace clv::gfx::mtl{
 		
 		const NSRect rect = NSMakeRect(0, 0, data->size.x, data->size.y);
 		view = [[MTLView alloc] initWithFrame:rect];
-		[view setDepthStencilPixelFormat:MTLPixelFormatDepth32Float];
-		//view.paused = YES;
-		//view.enableSetNeedsDisplay = NO;
+		//[view setDepthStencilPixelFormat:MTLPixelFormatDepth32Float];
 		
 		[view setDevice:mtlDevice];
+		
+		MTLRenderPassDescriptor* descriptor = [MTLRenderPassDescriptor new];
+        descriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
+        descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
+        descriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 1, 1);
 
-		renderTarget = std::make_shared<MTLRenderTarget>([view currentRenderPassDescriptor]);
+		renderTarget = std::make_shared<MTLRenderTarget>(descriptor);
 	}
 	
 	MTLSurface::MTLSurface(MTLSurface&& other) noexcept = default;
@@ -55,13 +56,11 @@ namespace clv::gfx::mtl{
 	}
 	
 	void MTLSurface::setVSync(bool vsync){
-		CALayer* layer = [view layer];
-		((CAMetalLayer*)layer).displaySyncEnabled = vsync;
+		[view metalLayer].displaySyncEnabled = vsync;
 	}
 	
 	bool MTLSurface::isVsync() const{
-		CALayer* layer = [view layer];
-		return ((CAMetalLayer*)layer).displaySyncEnabled;
+		return [view metalLayer].displaySyncEnabled;
 	}
 
 	void MTLSurface::resizeBuffers(const mth::vec2ui& size){
@@ -69,9 +68,10 @@ namespace clv::gfx::mtl{
 	}
 
 	void MTLSurface::present(){
+		[currentDrawable present];
+		currentDrawable = [[view metalLayer] nextDrawable];
 		
-		[[view currentDrawable] present];
-		[view draw];
+		renderTarget->updateColourTexture(currentDrawable.texture);
 	}
 	
 	std::shared_ptr<RenderTarget> MTLSurface::getRenderTarget() const{

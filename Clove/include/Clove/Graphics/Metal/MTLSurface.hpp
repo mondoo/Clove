@@ -6,7 +6,7 @@
 #include <Metal/Metal.h>
 #include <AppKit/AppKit.h> //AppKit for macOS
 
-@interface MTLView : NSView //<CALayerDelegate>
+@interface MTLView : NSView
 
 @property (nonatomic, nonnull, readonly) CAMetalLayer* metalLayer;
 
@@ -22,6 +22,7 @@ namespace clv::gfx::mtl{
 		//VARIABLES
 	private:
 		MTLView* view = nullptr;
+		id<CAMetalDrawable> currentDrawable;
 		
 		std::shared_ptr<MTLRenderTarget> renderTarget;
 
