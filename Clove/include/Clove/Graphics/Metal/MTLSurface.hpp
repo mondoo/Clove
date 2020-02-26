@@ -10,7 +10,6 @@
 
 @property (nonatomic, nonnull, readonly) CAMetalLayer* metalLayer;
 
-- (id<CAMetalDrawable>)getNextDrawable;
 @end
 
 namespace clv::gfx::mtl{

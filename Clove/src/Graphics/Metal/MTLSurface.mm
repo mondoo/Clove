@@ -3,12 +3,15 @@
 #include "Clove/Platform/Mac/MacWindow.hpp"
 #include "Clove/Graphics/Metal/MTLRenderTarget.hpp"
 
+#include <MetalKit/MetalKit.h>
+
 @implementation MTLView
 
 - (instancetype) initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if(self) {
-        _metalLayer = (CAMetalLayer*) self.layer;
+		self.wantsLayer = YES;
+        _metalLayer = [CAMetalLayer layer];
 		return self;
     }
     return self;
@@ -17,14 +20,11 @@
 - (instancetype) initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if(self) {
-        _metalLayer = (CAMetalLayer*) self.layer;
+		self.wantsLayer = YES;
+        _metalLayer = [CAMetalLayer layer];
 		return self;
     }
     return self;
-}
-
-- (id<CAMetalDrawable>) getNextDrawable{
-	return [_metalLayer nextDrawable];
 }
 
 @end
@@ -39,10 +39,13 @@ namespace clv::gfx::mtl{
 		
 		//[view setDevice:mtlDevice];
 		
+		currentDrawable = [[view metalLayer] nextDrawable];
+		
 		MTLRenderPassDescriptor* descriptor = [MTLRenderPassDescriptor new];
         descriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
         descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
         descriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 1, 1);
+		descriptor.colorAttachments[0].texture = currentDrawable.texture;
 
 		renderTarget = std::make_shared<MTLRenderTarget>(descriptor);
 	}
