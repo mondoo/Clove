@@ -30,7 +30,7 @@ namespace clv::gfx::mtl{
 
 		virtual void clear() override{}
 		
-		virtual void setClearColour(const mth::vec4f& colour);
+		virtual void setClearColour(const mth::vec4f& colour) override;
 		
 		MTLRenderPassDescriptor* getRenderPassDescriptor() const;
 	};
