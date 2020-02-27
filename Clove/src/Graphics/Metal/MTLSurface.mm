@@ -41,8 +41,24 @@ namespace clv::gfx::mtl{
         descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
         descriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 1, 1);
 		descriptor.colorAttachments[0].texture = currentDrawable.texture;
+		
+		MTLTextureDescriptor* textureDesc = [[MTLTextureDescriptor alloc] init];
+		textureDesc.textureType 		= MTLTextureType2D;
+		textureDesc.pixelFormat 		= MTLPixelFormatDepth32Float;
+		textureDesc.width 				= data->size.x;
+		textureDesc.height 				= data->size.y;
+		textureDesc.depth 				= 1;
+		textureDesc.mipmapLevelCount 	= 1;
+		textureDesc.arrayLength 		= 1;
+		textureDesc.usage 				= MTLTextureUsageRenderTarget;
+		textureDesc.storageMode			= MTLStorageModePrivate;
+		depthTexture = [mtlDevice newTextureWithDescriptor:textureDesc];
+		
+		descriptor.depthAttachment.texture = depthTexture;
 
 		renderTarget = std::make_shared<MTLRenderTarget>(descriptor);
+		
+		[textureDesc release];
 	}
 	
 	MTLSurface::MTLSurface(MTLSurface&& other) noexcept = default;
@@ -51,6 +67,7 @@ namespace clv::gfx::mtl{
 	
 	MTLSurface::~MTLSurface(){
 		[view release];
+		[depthTexture release];
 	}
 	
 	void MTLSurface::setVSync(bool vsync){
@@ -67,8 +84,8 @@ namespace clv::gfx::mtl{
 
 	void MTLSurface::present(){
 		[currentDrawable present];
-		currentDrawable = [[view metalLayer] nextDrawable];
 		
+		currentDrawable = [[view metalLayer] nextDrawable];
 		renderTarget->updateColourTexture(currentDrawable.texture);
 	}
 	

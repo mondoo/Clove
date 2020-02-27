@@ -25,6 +25,8 @@ namespace clv::gfx::mtl{
 		MTLView* view = nullptr;
 		id<CAMetalDrawable> currentDrawable;
 		
+		id<MTLTexture> depthTexture;
+		
 		std::shared_ptr<MTLRenderTarget> renderTarget;
 
 		//FUNCTIONS
