@@ -2,38 +2,40 @@
 
 using namespace clv;
 
-namespace tnc::rnd{
+namespace tnc::rnd {
 	Text::Text(Font font)
-		: font(std::move(font)){
+		: font(std::move(font)) {
 	}
 
 	Text::Text(const Text& other) = default;
 
-	Text::Text(Text &&other) = default;
+	Text::Text(Text&& other) = default;
 
 	Text& Text::operator=(const Text& other) = default;
 
-	Text &Text::operator=(Text &&other) = default;
+	Text& Text::operator=(Text&& other) = default;
 
 	Text::~Text() = default;
 
-	void Text::setText(std::string text){
+	void Text::setText(std::string text) {
 		this->text = std::move(text);
-		buildGlyphs();
+		isBufferDity = true;
 	}
 
-	void Text::setSize(uint32_t size){
+	void Text::setSize(uint32_t size) {
 		font.setSize(size);
-		buildGlyphs(); //TODO: Maybe just have these functions clear it and we build glyphs if we're stale inside getBufferForCharAt
+		isBufferDity = true;
 	}
 
-	std::size_t Text::getTextLength() const{
+	std::size_t Text::getTextLength() const {
 		return text.length();
 	}
 
-	const Glyph& Text::getBufferForCharAt(size_t index) const{
+	const Glyph& Text::getBufferForCharAt(size_t index) {
+		if(isBufferDity) {
+			buildGlyphs();
+		}
 		return characters[index];
-		/*return font.getChar(text[index]);*/
 	}
 
 	void Text::buildGlyphs() {
@@ -41,5 +43,6 @@ namespace tnc::rnd{
 		for(size_t i = 0; i < text.length(); ++i) {
 			characters.emplace_back(font.getChar(text[i]));
 		}
+		isBufferDity = false;
 	}
 }

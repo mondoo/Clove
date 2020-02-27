@@ -102,13 +102,12 @@ namespace tnc::ecs::_2D{
 					offset.y = anchor.y * screenSize.y;
 				}
 
-				const rnd::Text& text = fontComp->text;
 				mth::vec2f cursorPos = transform->getPosition();
 				cursorPos.x -= (screenHalfSize.x - offset.x);
 				cursorPos.y += (screenHalfSize.y + offset.y);
 
-				for(size_t i = 0; i < text.getTextLength(); ++i){
-					const rnd::Glyph& glyph = text.getBufferForCharAt(i);
+				for(size_t i = 0; i < fontComp->text.getTextLength(); ++i) {
+					const rnd::Glyph& glyph = fontComp->text.getBufferForCharAt(i);
 
 					//For spaces we just skip and proceed
 					if(glyph.character != nullptr){

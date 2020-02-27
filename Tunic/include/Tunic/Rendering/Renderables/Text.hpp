@@ -9,6 +9,7 @@ namespace tnc::rnd {
 		Font font;
 		std::string text;
 
+		bool isBufferDity = false;
 		std::vector<Glyph> characters;
 
 		//FUNCTIONS
@@ -28,7 +29,7 @@ namespace tnc::rnd {
 		void setSize(uint32_t size);
 
 		std::size_t getTextLength() const;
-		const Glyph& getBufferForCharAt(size_t index) const;
+		const Glyph& getBufferForCharAt(size_t index);
 
 	private:
 		void buildGlyphs();
