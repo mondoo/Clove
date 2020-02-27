@@ -68,12 +68,14 @@ namespace tnc::rnd{
 	Glyph Font::getChar(char ch) const{
 		FT_Load_Char(face.get(), ch, FT_LOAD_RENDER);
 
+		Glyph glyph{
+			mth::vec2f{ face->glyph->bitmap.width, face->glyph->bitmap.rows },
+			mth::vec2f{ face->glyph->bitmap_left, face->glyph->bitmap_top },
+			mth::vec2f{ face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 }
+		};
+
 		if(face->glyph->bitmap.buffer == nullptr) {
-			return {
-				mth::vec2f{ face->glyph->bitmap.width, face->glyph->bitmap.rows },
-				mth::vec2f{ face->glyph->bitmap_left, face->glyph->bitmap_top },
-				mth::vec2f{ face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 }
-			};
+			return glyph;
 		}
 
 		const uint8_t textureArraySize = 1;
@@ -87,12 +89,8 @@ namespace tnc::rnd{
 
 		auto texture = Application::get().getGraphicsFactory().createTexture(descriptor, face->glyph->bitmap.buffer, 1);
 
-		return {
-			mth::vec2f{ face->glyph->bitmap.width, face->glyph->bitmap.rows },
-			mth::vec2f{ face->glyph->bitmap_left, face->glyph->bitmap_top },
-			mth::vec2f{ face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 },
-			std::move(texture)
-		};
+		glyph.character = std::move(texture);
+		return glyph;
 	}
 
 	std::unique_ptr<std::remove_pointer_t<FT_Face>, void(*)(FT_Face)> Font::createFace(const std::string& filePath) {
