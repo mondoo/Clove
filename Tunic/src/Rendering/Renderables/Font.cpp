@@ -69,7 +69,11 @@ namespace tnc::rnd{
 		FT_Load_Char(face.get(), ch, FT_LOAD_RENDER);
 
 		if(face->glyph->bitmap.buffer == nullptr) {
-			return {};
+			return {
+				mth::vec2f{ face->glyph->bitmap.width, face->glyph->bitmap.rows },
+				mth::vec2f{ face->glyph->bitmap_left, face->glyph->bitmap_top },
+				mth::vec2f{ face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 }
+			};
 		}
 
 		const uint8_t textureArraySize = 1;
