@@ -12,19 +12,16 @@
     if(self) {
 		self.wantsLayer = YES;
         _metalLayer = [CAMetalLayer layer];
+		[_metalLayer setFrame:frame];
 		return self;
     }
     return self;
 }
 
-- (instancetype) initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
-    if(self) {
-		self.wantsLayer = YES;
-        _metalLayer = [CAMetalLayer layer];
-		return self;
-    }
-    return self;
+- (void) setDevice:(id<MTLDevice>)device{
+	[_metalLayer setDevice:device];
+	[_metalLayer setPixelFormat:MTLPixelFormatBGRA8Unorm];
+	[_metalLayer setFramebufferOnly:YES];
 }
 
 @end
@@ -35,9 +32,7 @@ namespace clv::gfx::mtl{
 		
 		const NSRect rect = NSMakeRect(0, 0, data->size.x, data->size.y);
 		view = [[MTLView alloc] initWithFrame:rect];
-		//[view setDepthStencilPixelFormat:MTLPixelFormatDepth32Float];
-		
-		//[view setDevice:mtlDevice];
+		[view setDevice:mtlDevice];
 		
 		currentDrawable = [[view metalLayer] nextDrawable];
 		

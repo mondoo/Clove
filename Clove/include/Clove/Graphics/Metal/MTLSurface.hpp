@@ -10,6 +10,8 @@
 
 @property (nonatomic, nonnull, readonly) CAMetalLayer* metalLayer;
 
+- (void) setDevice:(id<MTLDevice>)device;
+
 @end
 
 namespace clv::gfx::mtl{
