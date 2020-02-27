@@ -68,6 +68,10 @@ namespace tnc::rnd{
 	Glyph Font::getChar(char ch) const{
 		FT_Load_Char(face.get(), ch, FT_LOAD_RENDER);
 
+		if(face->glyph->bitmap.buffer == nullptr) {
+			return {};
+		}
+
 		const uint8_t textureArraySize = 1;
 		const TextureDescriptor descriptor{
 			TextureStyle::Default,

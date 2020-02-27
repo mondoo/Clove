@@ -19,17 +19,27 @@ namespace tnc::rnd{
 
 	void Text::setText(std::string text){
 		this->text = std::move(text);
+		buildGlyphs();
 	}
 
 	void Text::setSize(uint32_t size){
 		font.setSize(size);
+		buildGlyphs(); //TODO: Maybe just have these functions clear it and we build glyphs if we're stale inside getBufferForCharAt
 	}
 
 	std::size_t Text::getTextLength() const{
 		return text.length();
 	}
 
-	Glyph Text::getBufferForCharAt(size_t index) const{
-		return font.getChar(text[index]);
+	const Glyph& Text::getBufferForCharAt(size_t index) const{
+		return characters[index];
+		/*return font.getChar(text[index]);*/
+	}
+
+	void Text::buildGlyphs() {
+		characters.clear();
+		for(size_t i = 0; i < text.length(); ++i) {
+			characters.emplace_back(font.getChar(text[i]));
+		}
 	}
 }

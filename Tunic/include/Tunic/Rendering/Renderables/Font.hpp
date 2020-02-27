@@ -10,9 +10,9 @@ namespace clv::gfx{
 
 namespace tnc::rnd{
 	struct Glyph{
-		clv::mth::vec2f size = {};
-		clv::mth::vec2f bearing = {};
-		clv::mth::vec2f advance = {};
+		clv::mth::vec2f size{};
+		clv::mth::vec2f bearing{};
+		clv::mth::vec2f advance{};
 		std::shared_ptr<clv::gfx::Texture> character;
 	};
 }
