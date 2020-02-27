@@ -74,7 +74,9 @@ namespace tnc::rnd{
 			mth::vec2f{ face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 }
 		};
 
-		if(face->glyph->bitmap.buffer == nullptr) {
+		unsigned char* faceBuffer = face->glyph->bitmap.buffer;
+
+		if(faceBuffer == nullptr) {
 			return glyph;
 		}
 
@@ -83,11 +85,11 @@ namespace tnc::rnd{
 			TextureStyle::Default,
 			TextureUsage::Font,
 			TextureFilter::Nearest,
-			{ face->glyph->bitmap.width, face->glyph->bitmap.rows },
+			glyph.size,
 			textureArraySize
 		};
 
-		auto texture = Application::get().getGraphicsFactory().createTexture(descriptor, face->glyph->bitmap.buffer, 1);
+		auto texture = Application::get().getGraphicsFactory().createTexture(descriptor, faceBuffer, 1);
 
 		glyph.character = std::move(texture);
 		return glyph;
