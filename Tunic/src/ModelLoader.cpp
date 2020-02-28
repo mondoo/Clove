@@ -31,9 +31,9 @@ namespace tnc::ModelLoader {
 		if(mesh->HasNormals()) {
 			layout.add(gfx::VertexElementType::normal);
 		}
-		if(mesh->HasTextureCoords(0)) {
+		//if(mesh->HasTextureCoords(0)) {
 			layout.add(gfx::VertexElementType::texture2D);
-		}
+		//}
 		//Skipping colours for now
 		/*if(mesh->HasVertexColors(0)) {
 			layout.add(gfx::VertexElementType::colour3D);
@@ -65,6 +65,11 @@ namespace tnc::ModelLoader {
 				vertexBufferData[i].getAttribute<gfx::VertexElementType::texture2D>() = {
 					mesh->mTextureCoords[0][i].x,
 					mesh->mTextureCoords[0][i].y
+				};
+			} else {
+				vertexBufferData[i].getAttribute<gfx::VertexElementType::texture2D>() = {
+					0.0f,
+					0.0f
 				};
 			}
 		}
