@@ -48,19 +48,20 @@ namespace tnc::ModelLoader {
 		return std::make_shared<rnd::Mesh>(vertexBufferData, indices, material->createInstance());
 	}
 	
-	//TODO: Needs to take in a Model to add to
-	static void processNode(aiNode* node, const aiScene* scene) {
+	static void processNode(aiNode* node, const aiScene* scene, Model& model) {
 		for(size_t i = 0; i < node->mNumMeshes; ++i) {
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			//TODO: Push mesh back
+			model.meshs.emplace_back(processMesh(mesh, scene));
 		}
 
 		for(size_t i = 0; i < node->mNumChildren; ++i) {
-			processNode(node->mChildren[i], scene);
+			processNode(node->mChildren[i], scene, model);
 		}
 	}
 
 	Model loadModel(std::string_view filePath) {
+		Model model;
+
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(filePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs);
 		if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
@@ -68,9 +69,8 @@ namespace tnc::ModelLoader {
 			return {};
 		}
 
-		processNode(scene->mRootNode, scene);
+		processNode(scene->mRootNode, scene, model);
 
-		//TEMP: returning nothing
-		return {};
+		return model;
 	}
 }
