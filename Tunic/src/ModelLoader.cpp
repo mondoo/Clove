@@ -11,18 +11,6 @@
 using namespace clv;
 
 namespace tnc::ModelLoader {
-	//TEMP: Returning a vector of strings for now
-	static std::vector<std::string> loadMaterialTextures(aiMaterial* material, aiTextureType type) {
-		std::vector<std::string> paths;
-		for(size_t i = 0; i < material->GetTextureCount(type); ++i) {
-			aiString str;
-			material->GetTexture(type, i, &str);
-			paths.emplace_back(str.C_Str());
-		}
-
-		return paths;
-	}
-
 	static std::shared_ptr<rnd::Mesh> processMesh(aiMesh* mesh, const aiScene* scene) {
 		gfx::VertexLayout layout;
 		if(mesh->HasPositions()) {
@@ -79,12 +67,6 @@ namespace tnc::ModelLoader {
 			for(size_t j = 0; j < face.mNumIndices; ++j) {
 				indices.emplace_back(face.mIndices[j]);
 			}
-		}
-
-		if(mesh->mMaterialIndex >= 0) {
-			std::vector<std::string> diffuseTextures = loadMaterialTextures(scene->mMaterials[mesh->mMaterialIndex], aiTextureType_DIFFUSE);
-			std::vector<std::string> specularTextures = loadMaterialTextures(scene->mMaterials[mesh->mMaterialIndex], aiTextureType_SPECULAR);
-			//TODO: Process textures
 		}
 
 		return std::make_shared<rnd::Mesh>(vertexBufferData, indices, material->createInstance());
