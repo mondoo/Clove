@@ -26,7 +26,7 @@ namespace tnc::ModelLoader {
 			{} //TODO: Proper layout
 		};
 		std::vector<uint32_t> indices;
-		std::shared_ptr<rnd::Material> material;
+		std::shared_ptr<rnd::Material> material = std::make_shared<rnd::Material>();
 
 		for(size_t i = 0; i < mesh->mNumVertices; ++i) {
 			//TODO: Vertices
