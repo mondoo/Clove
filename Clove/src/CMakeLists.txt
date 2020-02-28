@@ -203,8 +203,6 @@ set(
 		${CLV_INCLUDE}/Core/Utils/Delegate.inl
 		${CLV_INCLUDE}/Core/Utils/DeltaTime.hpp
 		${CLV_SOURCE}/Core/Utils/DeltaTime.cpp
-		${CLV_INCLUDE}/Core/Utils/MeshLoader.hpp
-		${CLV_SOURCE}/Core/Utils/MeshLoader.cpp
 		${CLV_INCLUDE}/Core/Utils/Timer.hpp
 		${CLV_SOURCE}/Core/Utils/Timer.cpp
 )
