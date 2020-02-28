@@ -8,6 +8,8 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+using namespace clv;
+
 namespace tnc::ModelLoader {
 	//TEMP: Returning a vector of strings for now
 	static std::vector<std::string> loadMaterialTextures(aiMaterial* material, aiTextureType type) {
@@ -22,14 +24,49 @@ namespace tnc::ModelLoader {
 	}
 
 	static std::shared_ptr<rnd::Mesh> processMesh(aiMesh* mesh, const aiScene* scene) {
-		clv::gfx::VertexBufferData vertexBufferData{
-			{} //TODO: Proper layout
-		};
+		gfx::VertexLayout layout;
+		if(mesh->HasPositions()) {
+			layout.add(gfx::VertexElementType::position3D);
+		}
+		if(mesh->HasNormals()) {
+			layout.add(gfx::VertexElementType::normal);
+		}
+		if(mesh->HasTextureCoords(0)) {
+			layout.add(gfx::VertexElementType::texture2D);
+		}
+		//Skipping colours for now
+		/*if(mesh->HasVertexColors(0)) {
+			layout.add(gfx::VertexElementType::colour3D);
+		}*/
+
+		gfx::VertexBufferData vertexBufferData{ layout };
 		std::vector<uint32_t> indices;
 		std::shared_ptr<rnd::Material> material = std::make_shared<rnd::Material>();
 
-		for(size_t i = 0; i < mesh->mNumVertices; ++i) {
-			//TODO: Vertices
+		const size_t vertexCount = mesh->mNumVertices;
+		vertexBufferData.resize(vertexCount);
+
+		for(size_t i = 0; i < vertexCount; ++i) {
+			if(mesh->HasPositions()) {
+				vertexBufferData[i].getAttribute<gfx::VertexElementType::position3D>() = {
+					mesh->mVertices[i].x,
+					mesh->mVertices[i].y,
+					mesh->mVertices[i].z
+				};
+			}
+			if(mesh->HasNormals()) {
+				vertexBufferData[i].getAttribute<gfx::VertexElementType::normal>() = {
+					mesh->mNormals[i].x,
+					mesh->mNormals[i].y,
+					mesh->mNormals[i].z
+				};
+			}
+			if(mesh->HasTextureCoords(0)) {
+				vertexBufferData[i].getAttribute<gfx::VertexElementType::texture2D>() = {
+					mesh->mTextureCoords[0][i].x,
+					mesh->mTextureCoords[0][i].y
+				};
+			}
 		}
 
 		for(size_t i = 0; i < mesh->mNumFaces; ++i) {
