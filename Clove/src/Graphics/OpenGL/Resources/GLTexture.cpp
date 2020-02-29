@@ -171,17 +171,17 @@ namespace clv::gfx::ogl{
 
 		const uint8_t arraySize = descriptor.arraySize;
 
+		if(usage == TextureUsage::Font) {
+			BPP = 1;
+			glPixelStorei(GL_UNPACK_ALIGNMENT, BPP); //We have 1 BPP so make sure OpenGL is aware of this
+		}
+
 		if(arraySize > 1){
 			for(uint8_t i = 0; i < arraySize; ++i){
 				glTexImage3D(target, 0, internalFormat, width, height, i, 0, format, type, pixels);
 			}
 		} else{
 			glTexImage2D(target, 0, internalFormat, width, height, 0, format, type, pixels);
-		}
-
-		if(usage == TextureUsage::Font){
-			BPP = 1;
-			glPixelStorei(GL_UNPACK_ALIGNMENT, BPP); //We have 1 BPP so make sure OpenGL is aware of this
 		}
 	}
 
