@@ -28,8 +28,10 @@ namespace clv::gfx::mtl{
 		commandEncoder = [[commandBuffer renderCommandEncoderWithDescriptor:mtlRenderTarget->getRenderPassDescriptor()] retain];
 	}
 
-	void MTLCommandBuffer::updateBufferData(const Buffer& buffer, const void* data){
-		CLV_ASSERT(false, "NOT YET IMPLEMENTED");
+	void MTLCommandBuffer::updateBufferData(Buffer& buffer, const void* data){
+		MTLBuffer& mtlBuffer = static_cast<MTLBuffer&>(buffer);
+		
+		//mtlBuffer.updateData(data);
 	}
 
 	void MTLCommandBuffer::bindIndexBuffer(const Buffer& buffer){

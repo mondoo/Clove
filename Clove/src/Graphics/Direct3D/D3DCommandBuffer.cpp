@@ -48,10 +48,10 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	void D3DCommandBuffer::updateBufferData(const Buffer& buffer, const void* data){
+	void D3DCommandBuffer::updateBufferData(Buffer& buffer, const void* data){
 		DX11_INFO_PROVIDER;
 
-		const D3DBuffer& d3dBuffer = static_cast<const D3DBuffer&>(buffer);
+		D3DBuffer& d3dBuffer = static_cast<D3DBuffer&>(buffer);
 
 		D3D11_MAPPED_SUBRESOURCE mappedSubResource{};
 		DX11_THROW_INFO(deferredContext->Map(d3dBuffer.getD3DBuffer().Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &mappedSubResource));
