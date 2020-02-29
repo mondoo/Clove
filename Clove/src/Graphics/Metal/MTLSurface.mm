@@ -10,9 +10,12 @@
 - (instancetype) initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if(self) {
-		self.wantsLayer = YES;
         _metalLayer = [CAMetalLayer layer];
 		[_metalLayer setFrame:frame];
+		
+		self.wantsLayer = YES;
+		[self setLayer:_metalLayer];
+		
 		return self;
     }
     return self;
