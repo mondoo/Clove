@@ -2,12 +2,15 @@
 
 #include "Tunic/Rendering/Renderables/Font.hpp"
 
-namespace tnc::rnd{
-	class Text{
+namespace tnc::rnd {
+	class Text {
 		//VARIABLES
 	private:
 		Font font;
 		std::string text;
+
+		bool isBufferDity = false;
+		std::vector<Glyph> characters;
 
 		//FUNCTIONS
 	public:
@@ -26,6 +29,9 @@ namespace tnc::rnd{
 		void setSize(uint32_t size);
 
 		std::size_t getTextLength() const;
-		Glyph getBufferForCharAt(size_t index) const;
+		const Glyph& getBufferForCharAt(size_t index);
+
+	private:
+		void buildGlyphs();
 	};
 }

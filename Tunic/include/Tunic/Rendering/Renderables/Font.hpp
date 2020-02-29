@@ -4,12 +4,16 @@
 typedef struct FT_LibraryRec_* FT_Library;
 typedef struct FT_FaceRec_* FT_Face;
 
+namespace clv::gfx{
+	class Texture;
+}
+
 namespace tnc::rnd{
 	struct Glyph{
-		clv::mth::vec2f size = {};
-		clv::mth::vec2f bearing = {};
-		clv::mth::vec2f advance = {};
-		uint8_t* buffer = nullptr;
+		clv::mth::vec2f size{};
+		clv::mth::vec2f bearing{};
+		clv::mth::vec2f advance{};
+		std::shared_ptr<clv::gfx::Texture> character;
 	};
 }
 

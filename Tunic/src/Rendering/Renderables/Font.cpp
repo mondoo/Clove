@@ -1,16 +1,21 @@
 #include "Tunic/Rendering/Renderables/Font.hpp"
 
+#include "Tunic/Application.hpp"
+
+#include <Clove/Graphics/Core/GraphicsFactory.hpp>
+#include <Clove/Graphics/Core/Resources/Texture.hpp>
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 using namespace clv;
+using namespace clv::gfx;
 
 namespace tnc::rnd{
 	std::weak_ptr<std::remove_pointer_t<FT_Library>> Font::ftLib = {};
 
 	Font::Font(const std::string& filePath)
-		: face(nullptr, nullptr)
-		, filePath(filePath){
+		: face(nullptr, nullptr), filePath(filePath){
 
 		if(ftLib.use_count() == 0){
 			FT_Library library;
@@ -62,12 +67,32 @@ namespace tnc::rnd{
 
 	Glyph Font::getChar(char ch) const{
 		FT_Load_Char(face.get(), ch, FT_LOAD_RENDER);
-		return {
+
+		Glyph glyph{
 			mth::vec2f{ face->glyph->bitmap.width, face->glyph->bitmap.rows },
 			mth::vec2f{ face->glyph->bitmap_left, face->glyph->bitmap_top },
-			mth::vec2f{ face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 },
-			face->glyph->bitmap.buffer
+			mth::vec2f{ face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 }
 		};
+
+		unsigned char* faceBuffer = face->glyph->bitmap.buffer;
+
+		if(faceBuffer == nullptr) {
+			return glyph;
+		}
+
+		const uint8_t textureArraySize = 1;
+		const TextureDescriptor descriptor{
+			TextureStyle::Default,
+			TextureUsage::Font,
+			TextureFilter::Nearest,
+			glyph.size,
+			textureArraySize
+		};
+
+		auto texture = Application::get().getGraphicsFactory().createTexture(descriptor, faceBuffer, 1);
+
+		glyph.character = std::move(texture);
+		return glyph;
 	}
 
 	std::unique_ptr<std::remove_pointer_t<FT_Face>, void(*)(FT_Face)> Font::createFace(const std::string& filePath) {

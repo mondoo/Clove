@@ -102,38 +102,26 @@ namespace tnc::ecs::_2D{
 					offset.y = anchor.y * screenSize.y;
 				}
 
-				const rnd::Text& text = fontComp->text;
 				mth::vec2f cursorPos = transform->getPosition();
 				cursorPos.x -= (screenHalfSize.x - offset.x);
 				cursorPos.y += (screenHalfSize.y + offset.y);
 
-				for(size_t i = 0; i < text.getTextLength(); ++i){
-					rnd::Glyph glyph = text.getBufferForCharAt(i);
+				for(size_t i = 0; i < fontComp->text.getTextLength(); ++i) {
+					const rnd::Glyph& glyph = fontComp->text.getBufferForCharAt(i);
 
 					//For spaces we just skip and proceed
-					if(glyph.buffer != nullptr){
+					if(glyph.character != nullptr){
 						const float width = glyph.size.x;
 						const float height = glyph.size.y;
 
 						const float xpos = cursorPos.x + glyph.bearing.x;
 						const float ypos = cursorPos.y - (height - glyph.bearing.y);
 
-						const uint8_t textureArraySize = 1;
-						const TextureDescriptor descriptor = {
-							TextureStyle::Default,
-							TextureUsage::Font,
-							TextureFilter::Nearest,
-							{ width, height },
-							textureArraySize
-						};
-
-						auto texture = graphicsFactory.createTexture(descriptor, glyph.buffer, 1);
-
 						mth::mat4f model = mth::mat4f(1.0f);
 						model = mth::translate(mth::mat4f(1.0f), { xpos, ypos, 0.0f });
 						model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
-						auto character = std::make_shared<rnd::Sprite>(texture);
+						auto character = std::make_shared<rnd::Sprite>(glyph.character);
 						character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, uiProjection * model, ShaderStage::Vertex);
 
 						renderer->submitText(character);
