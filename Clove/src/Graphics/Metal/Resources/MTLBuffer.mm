@@ -4,9 +4,7 @@ namespace clv::gfx::mtl{
 	MTLBuffer::MTLBuffer(id<MTLDevice> mtlDevice, const BufferDescriptor& descriptor, const void* data)
 		: descriptor(descriptor){
 		mtlBuffer = [mtlDevice newBufferWithLength:descriptor.bufferSize options:0];
-		if(data != nullptr){
-			updateData(data);
-		}
+		updateData(data);
 	}
 	
 	MTLBuffer::MTLBuffer(MTLBuffer&& other) noexcept = default;
@@ -22,8 +20,9 @@ namespace clv::gfx::mtl{
 	}
 
 	void MTLBuffer::updateData(const void* data){
-		memcpy([mtlBuffer contents], data, descriptor.bufferSize);
-		[mtlBuffer didModifyRange:{0, descriptor.bufferSize}];
+		if(data != nullptr){
+			memcpy([mtlBuffer contents], data, descriptor.bufferSize);
+		}
 	}
 
 	id<MTLBuffer> MTLBuffer::getMTLBuffer() const{
