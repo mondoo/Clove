@@ -9,6 +9,7 @@
 namespace clv::gfx::mtl{
 	MTLCommandBuffer::MTLCommandBuffer(id<MTLCommandQueue> commandQueue)
 		: commandQueue([commandQueue retain]){
+		commandBuffer = [[commandQueue commandBuffer] retain];
 	}
 	
 	MTLCommandBuffer::MTLCommandBuffer(MTLCommandBuffer&& other) noexcept = default;
@@ -22,9 +23,12 @@ namespace clv::gfx::mtl{
 	}
 
 	void MTLCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget){
+		if(mtlRenderTarget != nullptr){
+			[commandEncoder endEncoding];
+		}
+		
 		mtlRenderTarget = std::static_pointer_cast<MTLRenderTarget>(renderTarget);
 
-		commandBuffer = [[commandQueue commandBuffer] retain];
 		commandEncoder = [[commandBuffer renderCommandEncoderWithDescriptor:mtlRenderTarget->getRenderPassDescriptor()] retain];
 	}
 
