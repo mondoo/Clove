@@ -2,7 +2,7 @@
 
 #include "Tunic/ECS/Core/World.hpp"
 #include "Tunic/ECS/3D/Components/TransformComponent.hpp"
-#include "Tunic/ECS/3D/Components/MeshComponent.hpp"
+#include "Tunic/ECS/3D/Components/ModelComponent.hpp"
 #include "Tunic/ECS/3D/Components/CameraComponent.hpp"
 #include "Tunic/ECS/3D/Components/LightComponent.hpp"
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
@@ -81,15 +81,17 @@ namespace tnc::ecs::_3D{
 
 		//Submit meshes
 		{
-			auto componentTuples = world.getComponentSets<TransformComponent, MeshComponent>();
+			auto componentTuples = world.getComponentSets<TransformComponent, ModelComponent>();
 			for(auto& tuple : componentTuples){
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
-				MeshComponent* renderable = std::get<MeshComponent*>(tuple);
+				ModelComponent* renderable = std::get<ModelComponent*>(tuple);
 
-				const mth::mat4f model = transform->getWorldTransformMatrix();
-				renderable->mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ model, mth::transpose(mth::inverse(model)) }, ShaderStage::Vertex);
-
-				renderer->submitMesh(renderable->mesh);
+				const mth::mat4f modelTransform = transform->getWorldTransformMatrix();
+				
+				for(auto& mesh : renderable->model.getMeshes()) {
+					mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
+					renderer->submitMesh(mesh);
+				}
 			}
 		}
 

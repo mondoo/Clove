@@ -16,4 +16,8 @@ namespace tnc::rnd{
 	Model& Model::operator=(Model&& other) = default;
 
 	Model::~Model() = default;
+	
+	const std::vector<std::shared_ptr<Mesh>>& Model::getMeshes() const {
+		return meshes;
+	}
 }

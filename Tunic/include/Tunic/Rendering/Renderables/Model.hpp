@@ -22,5 +22,7 @@ namespace tnc::rnd {
 		Model& operator=(Model&& other);
 
 		~Model();
+
+		const std::vector<std::shared_ptr<Mesh>>& getMeshes() const;
 	};
 }
