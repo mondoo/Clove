@@ -75,6 +75,8 @@ set(
 		${TNC_SOURCE}/Rendering/Renderables/Font.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Mesh.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Mesh.cpp
+		${TNC_INCLUDE}/Rendering/Renderables/Model.hpp
+		${TNC_SOURCE}/Rendering/Renderables/Model.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Sprite.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Sprite.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Text.hpp

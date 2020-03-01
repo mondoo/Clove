@@ -72,29 +72,29 @@ namespace tnc::ModelLoader {
 		return std::make_shared<rnd::Mesh>(vertexBufferData, indices, material->createInstance());
 	}
 	
-	static void processNode(aiNode* node, const aiScene* scene, Model& model) {
+	static void processNode(aiNode* node, const aiScene* scene, std::vector<std::shared_ptr<rnd::Mesh>>& meshes) {
 		for(size_t i = 0; i < node->mNumMeshes; ++i) {
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			model.meshs.emplace_back(processMesh(mesh, scene));
+			meshes.emplace_back(processMesh(mesh, scene));
 		}
 
 		for(size_t i = 0; i < node->mNumChildren; ++i) {
-			processNode(node->mChildren[i], scene, model);
+			processNode(node->mChildren[i], scene, meshes);
 		}
 	}
 
-	Model loadModel(std::string_view filePath) {
-		Model model;
+	rnd::Model loadModel(std::string_view filePath) {
+		std::vector<std::shared_ptr<rnd::Mesh>> meshes;
 
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(filePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs);
 		if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
 			CLV_LOG_ERROR("Assimp Error: {0}", importer.GetErrorString());
-			return {};
+			return { meshes };
 		}
 
-		processNode(scene->mRootNode, scene, model);
+		processNode(scene->mRootNode, scene, meshes);
 
-		return model;
+		return { meshes };
 	}
 }
