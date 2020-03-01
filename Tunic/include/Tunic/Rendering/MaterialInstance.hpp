@@ -39,10 +39,10 @@ namespace tnc::rnd{
 		void setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderStage shaderType);
 
 		void setAlbedoTexture(const std::string& path);
-		void setAlbedoTexture(const std::shared_ptr<clv::gfx::Texture>& texture);
+		void setAlbedoTexture(std::shared_ptr<clv::gfx::Texture> texture);
 
 		void setSpecularTexture(const std::string& path);
-		void setSpecularTexture(const std::shared_ptr<clv::gfx::Texture>& texture);
+		void setSpecularTexture(std::shared_ptr<clv::gfx::Texture> texture);
 	};
 }
 

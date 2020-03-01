@@ -4,50 +4,12 @@
 
 #include "Clove/Graphics/Core/Resources/Buffer.hpp"
 #include "Clove/Graphics/Core/GraphicsFactory.hpp"
-#include "Clove/Core/Utils/MeshLoader.hpp"
 #include "Clove/Graphics/Core/CommandBuffer.hpp"
 
 using namespace clv;
 using namespace clv::gfx;
 
 namespace tnc::rnd{
-	Mesh::Mesh(std::string_view filePath, MaterialInstance materialInstance)
-		: materialInstance(std::move(materialInstance))
-		, loadedBufferData(VertexLayout{}){//NOTE: initialising it like this is potentially dangerous
-		loader::MeshInfo info = loader::MeshLoader::loadOBJ(filePath.data());
-
-		const std::size_t vertexCount = info.verticies.size();
-		indices = info.indices;
-
-		VertexLayout layout; //Layout should be all possible data a mesh could have (biggest size)
-		layout.add(VertexElementType::position3D).add(VertexElementType::texture2D).add(VertexElementType::normal);
-		
-		loadedBufferData = { layout };
-		loadedBufferData.resize(vertexCount);
-
-		for(int32_t i = 0; i < vertexCount; ++i){
-			for(int32_t j = 0; j < layout.count(); ++j){
-				switch(layout.resolve(j).getType()){
-					case VertexElementType::position3D:
-						loadedBufferData[i].getAttribute<VertexElementType::position3D>() = mth::vec3f{ info.getData<VertexElementType::position3D>()[i] };
-						break;
-
-					case VertexElementType::texture2D:
-						loadedBufferData[i].getAttribute<VertexElementType::texture2D>() = mth::vec2f{ info.getData<VertexElementType::texture2D>()[i] };
-						break;
-
-					case VertexElementType::normal:
-						loadedBufferData[i].getAttribute<VertexElementType::normal>() = mth::vec3f{ info.getData<VertexElementType::normal>()[i] };
-						break;
-					default:
-						break;
-				}
-			}
-		}
-		initialiseVertexBuffer(loadedBufferData);
-		initialiseIndexBuffer(indices);
-	}
-
 	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32_t>& indices, MaterialInstance materialInstance)
 		: materialInstance(std::move(materialInstance))
 		, loadedBufferData(vbData)

@@ -55,8 +55,8 @@ namespace tnc::rnd{
 		albedoTexture = Application::get().getGraphicsFactory().createTexture(tdesc, path);
 	}
 
-	void MaterialInstance::setAlbedoTexture(const std::shared_ptr<Texture>& texture){
-		albedoTexture = texture;
+	void MaterialInstance::setAlbedoTexture(std::shared_ptr<Texture> texture){
+		albedoTexture = std::move(texture);
 	}
 
 	void MaterialInstance::setSpecularTexture(const std::string& path){
@@ -64,7 +64,7 @@ namespace tnc::rnd{
 		specTexture = Application::get().getGraphicsFactory().createTexture(tdesc, path);
 	}
 
-	void MaterialInstance::setSpecularTexture(const std::shared_ptr<Texture>& texture){
-		specTexture = texture;
+	void MaterialInstance::setSpecularTexture(std::shared_ptr<Texture> texture){
+		specTexture = std::move(texture);
 	}
 }

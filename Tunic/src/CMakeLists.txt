@@ -27,8 +27,8 @@ set(
 		${TNC_SOURCE}/ECS/3D/Components/CameraComponent.cpp
 		${TNC_INCLUDE}/ECS/3D/Components/LightComponent.hpp
 		${TNC_SOURCE}/ECS/3D/Components/LightComponent.cpp
-		${TNC_INCLUDE}/ECS/3D/Components/MeshComponent.hpp
-		${TNC_SOURCE}/ECS/3D/Components/MeshComponent.cpp
+		${TNC_INCLUDE}/ECS/3D/Components/ModelComponent.hpp
+		${TNC_SOURCE}/ECS/3D/Components/ModelComponent.cpp
 		${TNC_INCLUDE}/ECS/3D/Components/RigidBodyComponent.hpp
 		${TNC_SOURCE}/ECS/3D/Components/RigidBodyComponent.cpp
 		${TNC_INCLUDE}/ECS/3D/Components/TransformComponent.hpp
@@ -75,6 +75,8 @@ set(
 		${TNC_SOURCE}/Rendering/Renderables/Font.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Mesh.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Mesh.cpp
+		${TNC_INCLUDE}/Rendering/Renderables/Model.hpp
+		${TNC_SOURCE}/Rendering/Renderables/Model.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Sprite.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Sprite.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Text.hpp
@@ -117,6 +119,9 @@ target_sources(
 		${TNC_SOURCE}/Layer.cpp
 		${TNC_INCLUDE}/LayerStack.hpp
 		${TNC_SOURCE}/LayerStack.cpp
+
+		${TNC_INCLUDE}/ModelLoader.hpp
+		${TNC_SOURCE}/ModelLoader.cpp
         
 		${ECSFiles}
 		${PhysicsFiles}

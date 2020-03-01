@@ -25,7 +25,6 @@ namespace tnc::rnd{
 		//FUNCTIONS
 	public:
 		Mesh() = delete;
-		Mesh(std::string_view filePath, MaterialInstance materialInstance);
 		Mesh(const clv::gfx::VertexBufferData& vbData, const std::vector<uint32_t>& indices, MaterialInstance materialInstance);
 		
 		Mesh(const Mesh& other);
