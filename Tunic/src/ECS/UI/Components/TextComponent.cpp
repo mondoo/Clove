@@ -19,7 +19,7 @@ namespace tnc::ecs::ui{
 		this->text.setText(std::move(text));
 	}
 
-	void TextComponent::setSize(uint32_t size){
-		text.setSize(size);
+	void TextComponent::setFontSize(uint32_t size){
+		text.setFontSize(size);
 	}
 }

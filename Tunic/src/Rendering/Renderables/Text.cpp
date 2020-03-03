@@ -22,8 +22,8 @@ namespace tnc::rnd {
 		isBufferDity = true;
 	}
 
-	void Text::setSize(uint32_t size) {
-		font.setSize(size);
+	void Text::setFontSize(uint32_t size) {
+		font.setFontSize(size);
 		isBufferDity = true;
 	}
 

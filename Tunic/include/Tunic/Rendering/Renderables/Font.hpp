@@ -41,7 +41,7 @@ namespace tnc::rnd{
 
 		~Font();
 		
-		void setSize(uint32_t size);
+		void setFontSize(uint32_t size);
 		Glyph getChar(char ch) const;
 
 	private:
