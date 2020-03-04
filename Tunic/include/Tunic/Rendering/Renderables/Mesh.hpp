@@ -15,7 +15,7 @@ namespace tnc::rnd{
 	class Mesh{
 		//VARIABLES
 	private:
-		std::shared_ptr<clv::gfx::Buffer> vertexBuffer;
+		std::unordered_map<clv::gfx::VertexLayout, std::shared_ptr<clv::gfx::Buffer>, clv::gfx::VertexLayoutHasher> vertexBufferMap;
 		std::shared_ptr<clv::gfx::Buffer> indexBuffer;
 		MaterialInstance materialInstance;
 
@@ -40,9 +40,5 @@ namespace tnc::rnd{
 		uint32_t getIndexCount();
 
 		void draw(clv::gfx::CommandBuffer& commandBuffer, const clv::gfx::VertexLayout& layout);
-
-	private:
-		void initialiseVertexBuffer(const clv::gfx::VertexBufferData& vertexArray);
-		void initialiseIndexBuffer(const std::vector<uint32_t>& indices);
 	};
 }
