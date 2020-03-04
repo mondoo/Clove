@@ -57,6 +57,10 @@ namespace clv::gfx{
 		return VertexElementType::position2D;
 	}
 
+	bool VertexElement::operator==(const VertexElement& other) const{
+		return type == other.type;
+	}
+
 	VertexLayout::VertexLayout() = default;
 
 	VertexLayout::VertexLayout(const VertexLayout& other) = default;
@@ -84,6 +88,10 @@ namespace clv::gfx{
 
 	void VertexLayout::clear(){
 		elements.clear();
+	}
+
+	bool VertexLayout::operator==(const VertexLayout& other) const{
+		return elements == other.elements;
 	}
 	
 	const VertexElement& VertexLayout::resolve(VertexElementType type) const{
