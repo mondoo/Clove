@@ -2,36 +2,42 @@
 
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
 
-namespace clv::gfx{
-	template<VertexElementType> struct VertexElementData;
+namespace clv::gfx {
+	template<VertexElementType>
+	struct VertexElementData;
 
-	template<> struct VertexElementData<VertexElementType::position2D>{
+	template<>
+	struct VertexElementData<VertexElementType::position2D> {
 		using DataType = mth::vec2f;
 		static constexpr uint32_t elementCount = 2u;
 		static constexpr std::string_view semantic = "POSITION2D";
 	};
-	template<> struct VertexElementData<VertexElementType::position3D>{
+	template<>
+	struct VertexElementData<VertexElementType::position3D> {
 		using DataType = mth::vec3f;
 		static constexpr uint32_t elementCount = 3u;
 		static constexpr std::string_view semantic = "POSITION3D";
 	};
-	template<> struct VertexElementData<VertexElementType::texture2D>{
+	template<>
+	struct VertexElementData<VertexElementType::texture2D> {
 		using DataType = mth::vec2f;
 		static constexpr uint32_t elementCount = 2u;
 		static constexpr std::string_view semantic = "TEXCOORD";
 	};
-	template<> struct VertexElementData<VertexElementType::normal>{
+	template<>
+	struct VertexElementData<VertexElementType::normal> {
 		using DataType = mth::vec3f;
 		static constexpr uint32_t elementCount = 3u;
 		static constexpr std::string_view semantic = "NORMAL";
 	};
-	template<> struct VertexElementData<VertexElementType::colour3D>{
+	template<>
+	struct VertexElementData<VertexElementType::colour3D> {
 		using DataType = mth::vec3f;
 		static constexpr uint32_t elementCount = 3u;
 		static constexpr std::string_view semantic = "COLOUR3D";
 	};
 
-	class VertexElement{
+	class VertexElement {
 		//VARIABLES
 	private:
 		VertexElementType type;
@@ -64,9 +70,11 @@ namespace clv::gfx{
 		static constexpr uint32_t countOf(VertexElementType type);
 		static constexpr std::string_view semanticOf(VertexElementType type);
 		static VertexElementType getTypeFromSemantic(const std::string& semantic);
+
+		bool operator==(const VertexElement& other) const;
 	};
 
-	class VertexLayout{
+	class VertexLayout {
 		//VARIABLES
 	private:
 		std::vector<VertexElement> elements;
@@ -92,9 +100,24 @@ namespace clv::gfx{
 
 		const VertexElement& resolve(VertexElementType type) const;
 		const VertexElement& resolve(size_t i) const;
+
+		bool operator==(const VertexLayout& other) const;
 	};
 
-	class Vertex{
+	struct VertexLayoutHasher {
+		size_t operator()(const VertexLayout& layout) const {
+			size_t seed = layout.count();
+			for(size_t i = 0; i < layout.count(); ++i) {
+				const VertexElement& element = layout.resolve(i);
+				uint32_t typeAsInt = static_cast<uint32_t>(element.getType());
+
+				seed ^= typeAsInt + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+			}
+			return seed;
+		};
+	};
+
+	class Vertex {
 		friend class VertexBufferData;
 
 		//VARIABLES
@@ -123,14 +146,14 @@ namespace clv::gfx{
 		template<VertexElementType DestType, typename SourceDataType>
 		void setAttribute(char* attribute, SourceDataType&& value);
 
-		template<typename First, typename ...Rest>
-		void setAttributeByIndex(size_t i, First&& first, Rest&& ... rest);
+		template<typename First, typename... Rest>
+		void setAttributeByIndex(size_t i, First&& first, Rest&&... rest);
 
 		template<typename T>
 		void setAttributeByIndex(size_t i, T&& val);
 	};
 
-	class VertexBufferData{
+	class VertexBufferData {
 		//VARIABLES
 	private:
 		std::vector<char> buffer;
@@ -152,7 +175,7 @@ namespace clv::gfx{
 
 		void resize(size_t size);
 
-		template<typename ...Args>
+		template<typename... Args>
 		void emplaceBack(Args&&... args);
 
 		Vertex front();
