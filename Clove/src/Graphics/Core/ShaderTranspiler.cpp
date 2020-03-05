@@ -14,7 +14,7 @@
 #include <spirv_msl.hpp>
 
 namespace clv::gfx::ShaderTranspiler{
-	EShLanguage getEShStage(ShaderStage stage){
+	static EShLanguage getEShStage(ShaderStage stage){
 		switch(stage){
 			case clv::gfx::ShaderStage::Vertex:
 				return EShLanguage::EShLangVertex;
@@ -42,13 +42,24 @@ namespace clv::gfx::ShaderTranspiler{
 	std::string transpileFromSource(std::string_view source, ShaderStage stage, ShaderType outputType){		
 		std::vector<uint32_t> spirvSource;
 
-		const char* strs = source.data();
-
 		glslang::InitializeProcess();
 
 		EShLanguage eshstage = getEShStage(stage);
 		glslang::TShader shader(eshstage);
-		shader.setStrings(&strs, 1);
+
+		if(outputType == ShaderType::GLSL && stage == ShaderStage::Vertex) {
+			const char* defines = "#define FLIP_TEXTURE_Y\n\n";
+			const char* shaderSource = source.data();
+			
+			char* combinedSource = (char*)malloc(strlen(defines) + strlen(shaderSource) + 1); //+1 for the null terminator
+			strcpy(combinedSource, defines);
+			strcat(combinedSource, shaderSource);
+
+			shader.setStrings(&combinedSource, 1);
+		} else {
+			const char* shaderSource = source.data();
+			shader.setStrings(&shaderSource, 1);
+		}
 
 		TBuiltInResource builtInResources = glslang::DefaultTBuiltInResource;
 		EShMessages messages = static_cast<EShMessages>(
@@ -113,16 +124,16 @@ namespace clv::gfx::ShaderTranspiler{
 
 			//Make sure the combined image/samplers keep the binding id
 			std::map<spirv_cross::ID, uint32_t> samplerBindings;
-			for(auto& resource : resources.separate_samplers){
+			for(auto& resource : resources.separate_samplers) {
 				samplerBindings[resource.id] = glsl.get_decoration(resource.id, spv::DecorationBinding);
 			}
-			for(auto& remap : glsl.get_combined_image_samplers()){
+			for(auto& remap : glsl.get_combined_image_samplers()) {
 				glsl.set_decoration(remap.combined_id, spv::DecorationBinding, samplerBindings[remap.sampler_id]);
 			}
 
 			//Remap names to semantics
-			if(stage == ShaderStage::Vertex){
-				for(auto& resource : resources.stage_inputs){
+			if(stage == ShaderStage::Vertex) {
+				for(auto& resource : resources.stage_inputs) {
 					const uint32_t location = glsl.get_decoration(resource.id, spv::DecorationLocation);
 					std::string str = glsl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
 
@@ -130,9 +141,9 @@ namespace clv::gfx::ShaderTranspiler{
 				}
 			}
 
-			if (stage == ShaderStage::Geometry){
+			if(stage == ShaderStage::Geometry) {
 				const uint32_t invocations = glsl.get_execution_mode_argument(spv::ExecutionMode::ExecutionModeInvocations);
-				if (invocations == 196624){ //Unset invocations default to this, unset it
+				if(invocations == 196624) { //Unset invocations default to this, unset it
 					glsl.unset_execution_mode(spv::ExecutionMode::ExecutionModeInvocations);
 				}
 			}
@@ -141,13 +152,13 @@ namespace clv::gfx::ShaderTranspiler{
 		} else if(outputType == ShaderType::MSL){
 			spirv_cross::CompilerMSL msl(spirvSource);
 			spirv_cross::CompilerMSL::Options scoptions;
-			
+
 			scoptions.platform = spirv_cross::CompilerMSL::Options::Platform::macOS;
 			msl.set_msl_options(scoptions);
-			
+
 			spirv_cross::ShaderResources resources = msl.get_shader_resources();
 
-			const auto remapMSLBindings = [&msl](const uint32_t binding, const spirv_cross::ID resourceID){
+			const auto remapMSLBindings = [&msl](const uint32_t binding, const spirv_cross::ID resourceID) {
 				spirv_cross::MSLResourceBinding resourceBinding;
 				resourceBinding.stage = msl.get_execution_model();
 				resourceBinding.desc_set = msl.get_decoration(resourceID, spv::DecorationDescriptorSet);
@@ -158,33 +169,33 @@ namespace clv::gfx::ShaderTranspiler{
 				resourceBinding.msl_sampler = binding;
 				msl.add_msl_resource_binding(resourceBinding);
 			};
-			
+
 			//Set up correct buffer bindings
-			for(auto& resource : resources.uniform_buffers){
+			for(auto& resource : resources.uniform_buffers) {
 				const uint32_t binding = msl.get_decoration(resource.id, spv::DecorationBinding);
 				remapMSLBindings(binding, resource.id);
 			}
-			
+
 			//Set up correct texture bindings
-			for(auto& resource : resources.separate_images){
+			for(auto& resource : resources.separate_images) {
 				const uint32_t binding = msl.get_decoration(resource.id, spv::DecorationBinding);
 				remapMSLBindings(binding, resource.id);
 			}
-			for(auto& resource : resources.separate_samplers){
+			for(auto& resource : resources.separate_samplers) {
 				const uint32_t binding = msl.get_decoration(resource.id, spv::DecorationBinding);
 				remapMSLBindings(binding, resource.id);
 			}
-			
+
 			//Remap names to semantics
-			if(stage == ShaderStage::Vertex){
-				for(auto& resource : resources.stage_inputs){
+			if(stage == ShaderStage::Vertex) {
+				for(auto& resource : resources.stage_inputs) {
 					const uint32_t location = msl.get_decoration(resource.id, spv::DecorationLocation);
 					std::string str = msl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
 
 					msl.set_name(resource.id, str);
 				}
 			}
-			
+
 			return msl.compile();
 		}
 

@@ -11,6 +11,9 @@ VSOut main(float2 pos : POSITION2D, float2 tex : TEXCOORD){
 	VSOut vso;
 
 	vso.tex = tex;
+	#ifdef FLIP_TEXTURE_Y
+		vso.tex.y = 1.0f - vso.tex.y;
+	#endif
 	vso.pos = mul(modelProjection, float4(pos, 0.0f, 1.0f));
 
 	return vso;
