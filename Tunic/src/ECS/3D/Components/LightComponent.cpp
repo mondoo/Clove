@@ -5,13 +5,14 @@ using namespace clv;
 namespace tnc::ecs::_3D{
 	LightComponent::LightComponent(){
 		lightData = {
-			{ { 0.0f, 0.0f, 0.0f },
-			constant,
-			getAmbientColour(),
-			linear,
-			getDiffuseColour(),
-			quadratic,
-			getSpecularColour(), },
+			{	{ 0.0f, 0.0f, 0.0f },
+				1.0f, //Constant
+				mth::vec3f(0.01f, 0.01f, 0.01f), //Ambient colour
+				0.0014f, //Linear
+				clv::mth::vec3f(0.75f, 0.75f, 0.75f), //Diffuse colour
+				0.000007f, //Quadratic
+				clv::mth::vec3f(1.0f, 1.0f, 1.0f), //Specular colour
+			},
 			{},
 			farDist
 		};
@@ -28,46 +29,46 @@ namespace tnc::ecs::_3D{
 	LightComponent::~LightComponent() = default;
 
 	void LightComponent::setAmbientColour(const mth::vec3f& colour){
-		ambientColour = colour;
+		lightData.intensity.ambient = colour;
 	}
 
 	const mth::vec3f& LightComponent::getAmbientColour() const{
-		return ambientColour;
+		return lightData.intensity.ambient;
 	}
 
 	void LightComponent::setDiffuseColour(const mth::vec3f& colour){
-		diffuseColour = colour;
+		lightData.intensity.diffuse = colour;
 	}
 
 	const mth::vec3f& LightComponent::getDiffuseColour() const{
-		return diffuseColour;
+		return lightData.intensity.diffuse;
 	}
 
 	void LightComponent::setSpecularColour(const mth::vec3f& colour){
-		specularColour = colour;
+		lightData.intensity.specular = colour;
 	}
 
 	const mth::vec3f& LightComponent::getSpecularColour() const{
-		return specularColour;
+		return lightData.intensity.specular;
 	}
 
 	float LightComponent::getConstant() const{
-		return constant;
+		return lightData.intensity.constant;
 	}
 
 	void LightComponent::setLinear(float linear){
-		this->linear = linear;
+		lightData.intensity.linear = linear;
 	}
 
 	float LightComponent::getLinear() const{
-		return linear;
+		return lightData.intensity.linear;
 	}
 
 	void LightComponent::setQuadratic(float quadratic){
-		this->quadratic = quadratic;
+		lightData.intensity.quadratic = quadratic;
 	}
 
 	float LightComponent::getQuadratic() const{
-		return quadratic;
+		return lightData.intensity.quadratic;
 	}
 }

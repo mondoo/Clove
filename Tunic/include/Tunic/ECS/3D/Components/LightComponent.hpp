@@ -10,15 +10,6 @@ namespace tnc::ecs::_3D{
 
 		//VARIABLES
 	private:
-		clv::mth::vec3f ambientColour	= clv::mth::vec3f(0.01f, 0.01f, 0.01f);
-		clv::mth::vec3f diffuseColour	= clv::mth::vec3f(0.75f, 0.75f, 0.75f);
-		clv::mth::vec3f specularColour	= clv::mth::vec3f(1.0f, 1.0f, 1.0f);
-
-		//NOTE: treating every light as a point light for now
-		float constant = 1.0f;
-		float linear = 0.0014f;
-		float quadratic = 0.000007f;
-
 		tnc::rnd::PointLightData lightData;
 
 		float aspect = 1.0f; //shadow width / shadow height
