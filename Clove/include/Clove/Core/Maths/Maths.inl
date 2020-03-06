@@ -2,10 +2,6 @@
 #include <glm/gtx/norm.hpp>
 
 namespace clv::mth{
-	inline float cos(float value){
-		return glm::cos(value);
-	}
-
 	template<length_t L, typename T, qualifier Q>
 	vec<L, T, Q> normalise(const vec<L, T, Q>& v){
 		return glm::normalize(v);

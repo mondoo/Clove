@@ -3,8 +3,6 @@
 #include "Clove/Core/Maths/glmWrappers.hpp"
 
 namespace clv::mth{
-	inline float cos(float value);
-
 	template<length_t L, typename T, qualifier Q>
 	vec<L, T, Q> normalise(const vec<L, T, Q>& v);
 
