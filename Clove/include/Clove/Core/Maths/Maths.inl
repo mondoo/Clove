@@ -53,6 +53,16 @@ namespace clv::mth{
 	}
 
 	template<typename T, qualifier Q>
+	quat<T, Q> rotate(T angle, const vec<3, T, Q>& v) {
+		return {
+			cos(angle / 2.0f),
+			sin((angle * v.x) / 2.0f),
+			sin((angle * v.y) / 2.0f),
+			sin((angle * v.z) / 2.0f)
+		};
+	}
+
+	template<typename T, qualifier Q>
 	mat<4, 4, T, Q> scale(const mat<4, 4, T, Q>& m, const vec<3, T, Q>& v){
 		return glm::scale(m, v);
 	}

@@ -34,6 +34,9 @@ namespace clv::mth{
 	mat<4, 4, T, Q> rotate(const mat<4, 4, T, Q>& m, T angle, const vec<3, T, Q>& v);
 
 	template<typename T, qualifier Q>
+	quat<T, Q> rotate(T angle, const vec<3, T, Q>& v);
+
+	template<typename T, qualifier Q>
 	mat<4, 4, T, Q> scale(const mat<4, 4, T, Q>& m, const vec<3, T, Q>& v);
 
 	template<length_t C, length_t R, typename T, qualifier Q>
