@@ -60,21 +60,26 @@ namespace tnc::rnd{
 
 		bufferDesc.bufferSize = sizeof(ViewData);
 		viewBuffer = factory.createBuffer(bufferDesc, nullptr);
+
 		bufferDesc.bufferSize = sizeof(ViewPos);
 		viewPosition = factory.createBuffer(bufferDesc, nullptr);
 
-		bufferDesc.bufferSize = sizeof(PointLightShaderData);
-		lightInfoBuffer = factory.createBuffer(bufferDesc, nullptr);
-		bufferDesc.bufferSize = sizeof(PointShadowDepthData);
+		bufferDesc.bufferSize = sizeof(PointLightIntensityArray);
+		lightArrayBuffer = factory.createBuffer(bufferDesc, nullptr);
+
+		bufferDesc.bufferSize = sizeof(PointLightPositionArray);
 		lightDepthBuffer = factory.createBuffer(bufferDesc, nullptr);
-		bufferDesc.bufferSize = sizeof(LightNumAlignment);
+
+		bufferDesc.bufferSize = sizeof(NumberAlignment);
 		lightNumBuffer = factory.createBuffer(bufferDesc, nullptr);
 
-		bufferDesc.bufferSize = sizeof(PointShadowShaderData);
+		bufferDesc.bufferSize = sizeof(PointShadowTransform);
 		shadowInfoBuffer = factory.createBuffer(bufferDesc, nullptr);
-		bufferDesc.bufferSize = sizeof(LightNumAlignment);
+
+		bufferDesc.bufferSize = sizeof(NumberAlignment);
 		lightIndexBuffer = factory.createBuffer(bufferDesc, nullptr);
-		bufferDesc.bufferSize = sizeof(PointShadowData);
+
+		bufferDesc.bufferSize = sizeof(PointLightPositionData);
 		shadowLightPosBuffer = factory.createBuffer(bufferDesc, nullptr);
 
 	}
@@ -94,12 +99,12 @@ namespace tnc::rnd{
 	void Renderer::submitLight(const PointLightData& light){
 		const int32_t lightIndex = scene.numLights++;
 
-		scene.currentLightInfo.intensities[lightIndex] = light.intensity;
+		scene.lightIntensityArray.intensities[lightIndex] = light.intensity;
 
-		scene.shadowTransforms[lightIndex] = light.shadowTransforms;
+		scene.shadowTransformArray[lightIndex] = light.shadowTransforms;
 
-		scene.currentShadowDepth.depths[lightIndex].farPlane = light.farPlane;
-		scene.currentShadowDepth.depths[lightIndex].lightPos = light.intensity.position;
+		scene.lightPoisitionArray.positions[lightIndex].farPlane = light.farPlane;
+		scene.lightPoisitionArray.positions[lightIndex].lightPos = light.intensity.position;
 	}
 
 	void Renderer::submitCamera(const ComposedCameraData& camera){
@@ -114,13 +119,13 @@ namespace tnc::rnd{
 		meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
 		meshCommandBuffer->bindTexture(shadowMapTexture.get(), TBP_Shadow);
 
-		meshCommandBuffer->updateBufferData(*lightInfoBuffer, &scene.currentLightInfo);
-		meshCommandBuffer->bindShaderResourceBuffer(*lightInfoBuffer, ShaderStage::Pixel, BBP_PointLightData);
+		meshCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightIntensityArray);
+		meshCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_PointLightData);
 
-		meshCommandBuffer->updateBufferData(*lightDepthBuffer, &scene.currentShadowDepth);
+		meshCommandBuffer->updateBufferData(*lightDepthBuffer, &scene.lightPoisitionArray);
 		meshCommandBuffer->bindShaderResourceBuffer(*lightDepthBuffer, ShaderStage::Pixel, BBP_CubeDepthData);
 
-		auto numLights = LightNumAlignment{ scene.numLights };
+		auto numLights = NumberAlignment{ scene.numLights };
 		meshCommandBuffer->updateBufferData(*lightNumBuffer, &numLights);
 		meshCommandBuffer->bindShaderResourceBuffer(*lightNumBuffer, ShaderStage::Pixel, BBP_CurrentLights);
 
@@ -154,14 +159,14 @@ namespace tnc::rnd{
 		shadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
 		for (uint32_t i = 0; i < scene.numLights; ++i){
-			shadowCommandBuffer->updateBufferData(*shadowInfoBuffer, &scene.shadowTransforms[i]);
+			shadowCommandBuffer->updateBufferData(*shadowInfoBuffer, &scene.shadowTransformArray[i]);
 			shadowCommandBuffer->bindShaderResourceBuffer(*shadowInfoBuffer, ShaderStage::Geometry, BBP_ShadowData);
 
-			auto lightIndex = LightNumAlignment{ i * 6 };
+			auto lightIndex = NumberAlignment{ i * 6 };
 			shadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
 			shadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
 
-			shadowCommandBuffer->updateBufferData(*shadowLightPosBuffer, &scene.currentShadowDepth.depths[i]);
+			shadowCommandBuffer->updateBufferData(*shadowLightPosBuffer, &scene.lightPoisitionArray.positions[i]);
 			shadowCommandBuffer->bindShaderResourceBuffer(*shadowLightPosBuffer, ShaderStage::Pixel, BBP_CurrentDepthData);
 
 			for (auto& mesh : scene.meshes){

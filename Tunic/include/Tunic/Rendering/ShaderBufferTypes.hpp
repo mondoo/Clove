@@ -27,6 +27,7 @@ namespace tnc::rnd{
 		clv::mth::mat4f normalMatrix;
 	};
 
+	//Lighting data needed for lighting
 	struct PointLightIntesity {
 		clv::mth::vec3f position = {};
 		float constant = 0;
@@ -36,26 +37,30 @@ namespace tnc::rnd{
 		float quadratic = 0;
 		alignas(16) clv::mth::vec3f specular = {};
 	};
+	struct PointLightIntensityArray {
+		std::array<PointLightIntesity, MAX_LIGHTS> intensities = {};
+	};
+
+	//Lighting data needed for shadows
+	struct PointShadowTransform {
+		std::array<clv::mth::mat4f, 6> shadowTransforms = {};
+	};
+	struct PointLightPositionData {
+		clv::mth::vec3f lightPos = {};
+		float farPlane = 0;
+	};
+	struct PointLightPositionArray {
+		std::array<PointLightPositionData, MAX_LIGHTS> positions = {};
+	};
+
+	//Lighting data passed to renderer
 	struct PointLightData {
 		PointLightIntesity intensity = {};
 		std::array<clv::mth::mat4f, 6> shadowTransforms = {};
 		float farPlane;
 	};
-	struct PointLightShaderData {
-		std::array<PointLightIntesity, MAX_LIGHTS> intensities = {};
-	};
-	struct PointShadowShaderData {
-		std::array<clv::mth::mat4f, 6> shadowTransforms = {};
-	};
-	struct PointShadowData {
-		clv::mth::vec3f lightPos = {};
-		float farPlane = 0;
-	};
-	struct PointShadowDepthData { //It's not depth - this needs a better name (so does the BBP for it)
-		std::array<PointShadowData, MAX_LIGHTS> depths = {};
-	};
-
-	struct LightNumAlignment {
+	
+	struct NumberAlignment {
 		alignas(16) uint32_t numLights;
 	};
 }

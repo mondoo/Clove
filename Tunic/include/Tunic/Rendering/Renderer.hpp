@@ -41,10 +41,10 @@ namespace tnc::rnd{
 
 			std::vector<std::shared_ptr<rnd::Mesh>> meshes;
 
-			PointLightShaderData currentLightInfo;
-			PointShadowDepthData currentShadowDepth;
 			uint32_t numLights = 0u;
-			std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> shadowTransforms = {};
+			PointLightIntensityArray lightIntensityArray;
+			PointLightPositionArray lightPoisitionArray;
+			std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> shadowTransformArray = {};
 
 			//FUNCTIONS
 		public:
@@ -69,7 +69,7 @@ namespace tnc::rnd{
 		std::shared_ptr<clv::gfx::Buffer> viewPosition;
 
 		//TODO: These need to be renamed
-		std::shared_ptr<clv::gfx::Buffer> lightInfoBuffer;
+		std::shared_ptr<clv::gfx::Buffer> lightArrayBuffer;
 		std::shared_ptr<clv::gfx::Buffer> lightDepthBuffer;
 		std::shared_ptr<clv::gfx::Buffer> lightNumBuffer;
 
