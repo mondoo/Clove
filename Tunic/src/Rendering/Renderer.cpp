@@ -99,12 +99,12 @@ namespace tnc::rnd{
 	void Renderer::submitLight(const PointLightData& light){
 		const int32_t lightIndex = scene.numLights++;
 
-		scene.lightIntensityArray.intensities[lightIndex] = light.intensity;
+		scene.lightIntensityArray[lightIndex] = light.intensity;
 
 		scene.shadowTransformArray[lightIndex] = light.shadowTransforms;
 
-		scene.lightPoisitionArray.positions[lightIndex].farPlane = light.farPlane;
-		scene.lightPoisitionArray.positions[lightIndex].lightPos = light.intensity.position;
+		scene.lightPoisitionArray[lightIndex].farPlane = light.farPlane;
+		scene.lightPoisitionArray[lightIndex].lightPos = light.intensity.position;
 	}
 
 	void Renderer::submitCamera(const ComposedCameraData& camera){
@@ -166,7 +166,7 @@ namespace tnc::rnd{
 			shadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
 			shadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
 
-			shadowCommandBuffer->updateBufferData(*shadowLightPosBuffer, &scene.lightPoisitionArray.positions[i]);
+			shadowCommandBuffer->updateBufferData(*shadowLightPosBuffer, &scene.lightPoisitionArray[i]);
 			shadowCommandBuffer->bindShaderResourceBuffer(*shadowLightPosBuffer, ShaderStage::Pixel, BBP_CurrentDepthData);
 
 			for (auto& mesh : scene.meshes){

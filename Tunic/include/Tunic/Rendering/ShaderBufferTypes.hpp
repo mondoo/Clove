@@ -39,6 +39,10 @@ namespace tnc::rnd{
 	};
 	struct PointLightIntensityArray {
 		std::array<PointLightIntesity, MAX_LIGHTS> intensities = {};
+
+		PointLightIntesity& operator[](size_t index) {
+			return intensities[index];
+		}
 	};
 
 	//Lighting data needed for shadows
@@ -51,6 +55,10 @@ namespace tnc::rnd{
 	};
 	struct PointLightPositionArray {
 		std::array<PointLightPositionData, MAX_LIGHTS> positions = {};
+
+		PointLightPositionData& operator[](size_t index){
+			return positions[index];
+		}
 	};
 
 	//Lighting data passed to renderer
