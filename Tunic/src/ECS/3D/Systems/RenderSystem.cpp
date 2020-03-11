@@ -4,7 +4,7 @@
 #include "Tunic/ECS/3D/Components/TransformComponent.hpp"
 #include "Tunic/ECS/3D/Components/ModelComponent.hpp"
 #include "Tunic/ECS/3D/Components/CameraComponent.hpp"
-#include "Tunic/ECS/3D/Components/LightComponent.hpp"
+#include "Tunic/ECS/3D/Components/PointLightComponent.hpp"
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 #include "Tunic/Rendering/Renderer.hpp"
 
@@ -97,10 +97,10 @@ namespace tnc::ecs::_3D{
 
 		//Submit lights
 		{
-			auto componentTuples = world.getComponentSets<TransformComponent, LightComponent>();
+			auto componentTuples = world.getComponentSets<TransformComponent, PointLightComponent>();
 			for(auto& tuple : componentTuples){
 				TransformComponent* transform = std::get<TransformComponent*>(tuple);
-				LightComponent* light = std::get<LightComponent*>(tuple);
+				PointLightComponent* light = std::get<PointLightComponent*>(tuple);
 
 				const auto& position = transform->getPosition();
 

@@ -5,7 +5,7 @@
 #include "Tunic/Rendering/ShaderBufferTypes.hpp"
 
 namespace tnc::ecs::_3D{
-	class LightComponent : public Component<LightComponent>{
+	class PointLightComponent : public Component<PointLightComponent>{
 		friend class RenderSystem;
 
 		//VARIABLES
@@ -19,15 +19,15 @@ namespace tnc::ecs::_3D{
 
 		//FUNCTIONS
 	public:
-		LightComponent();
+		PointLightComponent();
 
-		LightComponent(const LightComponent& other);
-		LightComponent(LightComponent&& other) noexcept;
+		PointLightComponent(const PointLightComponent& other);
+		PointLightComponent(PointLightComponent&& other) noexcept;
 
-		LightComponent& operator=(const LightComponent& other);
-		LightComponent& operator=(LightComponent&&) noexcept;
+		PointLightComponent& operator=(const PointLightComponent& other);
+		PointLightComponent& operator=(PointLightComponent&&) noexcept;
 
-		virtual ~LightComponent();
+		virtual ~PointLightComponent();
 
 		void setAmbientColour(const clv::mth::vec3f& colour);
 		const clv::mth::vec3f& getAmbientColour() const;
