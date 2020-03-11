@@ -43,7 +43,6 @@ namespace tnc::rnd{
 
 			uint32_t numLights = 0u;
 			PointLightIntensityArray lightIntensityArray;
-			PointLightPositionArray lightPoisitionArray;
 			std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> shadowTransformArray = {};
 
 			//FUNCTIONS

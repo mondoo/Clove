@@ -17,6 +17,7 @@ struct PointLight{
 	float3 diffuse;
 	float quadratic;
 	float3 specular;
+	float farplane;
 };
 cbuffer PointLightBuffer : register(b2){
 	PointLight lights[MAX_LIGHTS];
@@ -28,14 +29,6 @@ cbuffer ViewBuffer : register(b3){
 
 cbuffer MaterialBuffer : register(b5){
     float shininess;
-}
-
-struct LightPos{
-	float3 lightPosition;
-	float farplane;
-};
-cbuffer lightPosBuffer : register(b8){
-	LightPos lightPositions[MAX_LIGHTS];
 }
 
 cbuffer lightNumBuffer : register(b9){
@@ -104,9 +97,9 @@ float shadowCalculation(float3 fragPos, int shadowIndex){
 		float3(0,  1,  1), float3( 0, -1,  1), float3( 0, -1, -1), float3( 0, 1, -1)
 	};
 
-	const float farPlane = lightPositions[shadowIndex].farplane;
+	const float farPlane = lights[shadowIndex].farplane;
 
-	float3 fragToLight = fragPos - lightPositions[shadowIndex].lightPosition;
+	float3 fragToLight = fragPos - lights[shadowIndex].position;
 	float currentDepth = length(fragToLight);
 
 	float shadow = 0.0;

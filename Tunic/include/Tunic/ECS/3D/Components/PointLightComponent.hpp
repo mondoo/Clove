@@ -12,9 +12,9 @@ namespace tnc::ecs::_3D{
 	private:
 		tnc::rnd::PointLightData lightData;
 
-		float aspect = 1.0f; //shadow width / shadow height
-		float nearDist = 0.5f;
-		float farDist = 100.0f;
+		static constexpr float aspect = 1.0f; //shadow width / shadow height
+		static constexpr float nearDist = 0.5f;
+		static constexpr float farDist = 100.0f;
 		clv::mth::mat4f shadowProj = clv::mth::createPerspectiveMatrix(clv::mth::asRadians(90.0f), aspect, nearDist, farDist);
 
 		//FUNCTIONS

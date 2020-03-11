@@ -12,9 +12,9 @@ namespace tnc::ecs::_3D{
 				clv::mth::vec3f(0.75f, 0.75f, 0.75f), //Diffuse colour
 				0.000007f, //Quadratic
 				clv::mth::vec3f(1.0f, 1.0f, 1.0f), //Specular colour
+				farDist
 			},
 			{},
-			farDist
 		};
 	}
 
