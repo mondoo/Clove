@@ -35,7 +35,16 @@ namespace clv::gfx::mtl{
 	void MTLCommandBuffer::updateBufferData(Buffer& buffer, const void* data){
 		MTLBuffer& mtlBuffer = static_cast<MTLBuffer&>(buffer);
 		
-		//mtlBuffer.updateData(data);
+		mtlBuffer.updateData(data);
+		
+		//TODO: Ideally we wouldn't end the commandBuffer here but apprently there is no other way
+		if(mtlRenderTarget != nullptr){
+			[commandEncoder endEncoding];
+			[commandBuffer commit];
+		
+			commandBuffer = [[commandQueue commandBuffer] retain];
+			commandEncoder = [[commandBuffer renderCommandEncoderWithDescriptor:mtlRenderTarget->getRenderPassDescriptor()] retain];
+		}
 	}
 
 	void MTLCommandBuffer::bindIndexBuffer(const Buffer& buffer){
