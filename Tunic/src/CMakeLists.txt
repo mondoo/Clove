@@ -25,10 +25,12 @@ set(
 		${TNC_SOURCE}/ECS/2D/Systems/RenderSystem.cpp
 		${TNC_INCLUDE}/ECS/3D/Components/CameraComponent.hpp
 		${TNC_SOURCE}/ECS/3D/Components/CameraComponent.cpp
-		${TNC_INCLUDE}/ECS/3D/Components/PointLightComponent.hpp
-		${TNC_SOURCE}/ECS/3D/Components/PointLightComponent.cpp
+		${TNC_INCLUDE}/ECS/3D/Components/DirectionalLightComponent.hpp
+		${TNC_SOURCE}/ECS/3D/Components/DirectionalLightComponent.cpp
 		${TNC_INCLUDE}/ECS/3D/Components/ModelComponent.hpp
 		${TNC_SOURCE}/ECS/3D/Components/ModelComponent.cpp
+		${TNC_INCLUDE}/ECS/3D/Components/PointLightComponent.hpp
+		${TNC_SOURCE}/ECS/3D/Components/PointLightComponent.cpp
 		${TNC_INCLUDE}/ECS/3D/Components/RigidBodyComponent.hpp
 		${TNC_SOURCE}/ECS/3D/Components/RigidBodyComponent.cpp
 		${TNC_INCLUDE}/ECS/3D/Components/TransformComponent.hpp
