@@ -27,18 +27,18 @@ namespace tnc::rnd{
 		clv::mth::mat4f normalMatrix;
 	};
 
-	//Lighting data needed for lighting
+	//Lighting data needed for point lighting
 	struct PointLightIntesity {
-		clv::mth::vec3f position = {};
+		clv::mth::vec3f position{};
 		float constant = 0;
-		clv::mth::vec3f ambient = {};
+		clv::mth::vec3f ambient{};
 		float linear = 0;
-		clv::mth::vec3f diffuse = {};
+		clv::mth::vec3f diffuse{};
 		float quadratic = 0;
-		alignas(16) clv::mth::vec3f specular = {};
+		alignas(16) clv::mth::vec3f specular{};
 	};
 	struct PointLightIntensityArray {
-		std::array<PointLightIntesity, MAX_LIGHTS> intensities = {};
+		std::array<PointLightIntesity, MAX_LIGHTS> intensities{};
 
 		PointLightIntesity& operator[](size_t index) {
 			return intensities[index];
@@ -46,15 +46,16 @@ namespace tnc::rnd{
 	};
 
 	//Lighting data needed for shadows
+	//Lighting data needed for point shadows
 	struct PointShadowTransform {
-		std::array<clv::mth::mat4f, 6> shadowTransforms = {};
+		std::array<clv::mth::mat4f, 6> shadowTransforms{};
 	};
 	struct PointLightPositionData {
-		clv::mth::vec3f lightPos = {};
+		clv::mth::vec3f lightPos{};
 		float farPlane = 0;
 	};
 	struct PointLightPositionArray {
-		std::array<PointLightPositionData, MAX_LIGHTS> positions = {};
+		std::array<PointLightPositionData, MAX_LIGHTS> positions{};
 
 		PointLightPositionData& operator[](size_t index){
 			return positions[index];
@@ -63,8 +64,8 @@ namespace tnc::rnd{
 
 	//Lighting data passed to renderer
 	struct PointLightData {
-		PointLightIntesity intensity = {};
-		std::array<clv::mth::mat4f, 6> shadowTransforms = {};
+		PointLightIntesity intensity{};
+		std::array<clv::mth::mat4f, 6> shadowTransforms{};
 		float farPlane;
 	};
 	
