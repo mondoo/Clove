@@ -45,7 +45,17 @@ namespace tnc::rnd{
 		}
 	};
 
-	//Lighting data needed for shadows
+	//Lighting data needed for directional lighting
+	struct DirLightIntensity {
+		clv::mth::vec3f direction{};
+		float constant = 0;
+		clv::mth::vec3f ambient{};
+		float linear = 0;
+		clv::mth::vec3f diffuse{};
+		float quadratic = 0;
+		alignas(16) clv::mth::vec3f specular{};
+	};
+
 	//Lighting data needed for point shadows
 	struct PointShadowTransform {
 		std::array<clv::mth::mat4f, 6> shadowTransforms{};
@@ -67,6 +77,12 @@ namespace tnc::rnd{
 		PointLightIntesity intensity{};
 		std::array<clv::mth::mat4f, 6> shadowTransforms{};
 		float farPlane;
+	};
+
+	struct DirLightData {
+		PointLightIntesity intensity{};
+		//std::array<clv::mth::mat4f, 6> shadowTransforms{};
+		//float farPlane;
 	};
 	
 	struct NumberAlignment {
