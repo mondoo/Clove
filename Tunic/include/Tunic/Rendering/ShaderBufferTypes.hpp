@@ -69,7 +69,7 @@ namespace tnc::rnd{
 	};
 
 	struct DirLightData {
-		PointLightIntesity intensity{};
+		DirLightIntensity intensity{};
 		//std::array<clv::mth::mat4f, 6> shadowTransforms{};
 		//float farPlane;
 	};
