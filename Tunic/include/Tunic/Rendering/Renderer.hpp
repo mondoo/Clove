@@ -86,6 +86,7 @@ namespace tnc::rnd{
 		void begin();
 
 		void submitMesh(const std::shared_ptr<rnd::Mesh>& mesh);
+		void submitLight(const DirLightData& light);
 		void submitLight(const PointLightData& light);
 		void submitCamera(const ComposedCameraData& camera);
 

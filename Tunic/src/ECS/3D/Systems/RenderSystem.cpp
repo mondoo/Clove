@@ -84,6 +84,11 @@ namespace tnc::ecs::_3D {
 			}
 		}
 
+		//Submit directional lights
+		for(auto [light] : world.getComponentSets<DirectionalLightComponent>()) {
+			renderer->submitLight(light->lightData);
+		}
+
 		//Submit point lights
 		for(auto [transform, light] : world.getComponentSets<TransformComponent, PointLightComponent>()) {
 			const auto& position = transform->getPosition();

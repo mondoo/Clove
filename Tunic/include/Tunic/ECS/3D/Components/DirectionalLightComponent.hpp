@@ -6,6 +6,8 @@
 
 namespace tnc::ecs::_3D {
 	class DirectionalLightComponent : public Component<DirectionalLightComponent> {
+		friend class RenderSystem;
+
 		//VARIABLES
 	private:
 		rnd::DirLightData lightData;
