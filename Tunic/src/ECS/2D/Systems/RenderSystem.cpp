@@ -2,8 +2,8 @@
 
 #include "Tunic/Application.hpp"
 #include "Tunic/ECS/Core/World.hpp"
-#include "Tunic/ECS/UI/Components/TransformComponent.hpp"
 #include "Tunic/ECS/UI/Components/TextComponent.hpp"
+#include "Tunic/ECS/UI/Components/TransformComponent.hpp"
 #include "Tunic/ECS/UI/Components/WidgetComponent.hpp"
 #include "Tunic/Rendering/Renderables/Sprite.hpp"
 #include "Tunic/Rendering/Renderer2D.hpp"
@@ -13,12 +13,12 @@
 using namespace clv;
 using namespace clv::gfx;
 
-namespace tnc::ecs::_2D{
+namespace tnc::ecs::_2D {
 	RenderSystem::RenderSystem(std::unique_ptr<rnd::Renderer2D> renderer)
-		: renderer(std::move(renderer)){
+		: renderer(std::move(renderer)) {
 	}
 
-	RenderSystem::RenderSystem(plt::Window& window){
+	RenderSystem::RenderSystem(plt::Window& window) {
 		renderer = std::make_unique<rnd::Renderer2D>(window);
 	}
 
@@ -28,14 +28,13 @@ namespace tnc::ecs::_2D{
 
 	RenderSystem::~RenderSystem() = default;
 
-	void RenderSystem::preUpdate(World& world){
+	void RenderSystem::preUpdate(World& world) {
 		//TODO: Clear camera render targets when there are 2D camera components
-
 
 		renderer->begin();
 	}
 
-	void RenderSystem::update(World& world, utl::DeltaTime deltaTime){
+	void RenderSystem::update(World& world, utl::DeltaTime deltaTime) {
 		CLV_PROFILE_FUNCTION();
 
 		const mth::vec2i screenSize = tnc::Application::get().getMainWindow().getSize();
@@ -51,22 +50,18 @@ namespace tnc::ecs::_2D{
 		{
 			CLV_PROFILE_SCOPE("Preparing widgets");
 
-			auto componentTuples = world.getComponentSets<ui::TransformComponent, ui::WidgetComponent>();
-			for(auto& tuple : componentTuples){
-				ui::TransformComponent* transform = std::get<ui::TransformComponent*>(tuple);
-				ui::WidgetComponent* renderable = std::get<ui::WidgetComponent*>(tuple);
-
+			for(auto [transform, renderable] : world.getComponentSets<ui::TransformComponent, ui::WidgetComponent>()) {
 				const mth::vec2f widgetScale = transform->getScale();
 				const mth::vec2f scaledScreenSize = { (screenHalfSize.x / widgetScale.x), (screenHalfSize.y / widgetScale.y) };
 
 				mth::vec2f offset{};
 				const mth::vec2f anchor = transform->getAnchor();
 
-				if(ui::TransformComponent* parent = transform->getParent()){
+				if(ui::TransformComponent* parent = transform->getParent()) {
 					const mth::vec2f parentScale = parent->getScale();
 					offset.x = anchor.x * parentScale.x * scaleFactor;
 					offset.y = anchor.y * parentScale.x * scaleFactor;
-				} else{
+				} else {
 					offset.x = anchor.x * screenSize.x;
 					offset.y = anchor.y * screenSize.y;
 				}
@@ -85,19 +80,15 @@ namespace tnc::ecs::_2D{
 
 			GraphicsFactory& graphicsFactory = Application::get().getGraphicsFactory();
 
-			auto componentTuples = world.getComponentSets<ui::TransformComponent, ui::TextComponent>();
-			for(auto& tuple : componentTuples){
-				ui::TransformComponent* transform = std::get<ui::TransformComponent*>(tuple);
-				ui::TextComponent* fontComp = std::get<ui::TextComponent*>(tuple);
-
+			for(auto [transform, fontComp] : world.getComponentSets<ui::TransformComponent, ui::TextComponent>()) {
 				mth::vec2f offset{};
 				const mth::vec2f anchor = transform->getAnchor();
 
-				if(ui::TransformComponent* parent = transform->getParent()){
+				if(ui::TransformComponent* parent = transform->getParent()) {
 					const mth::vec2f parentScale = parent->getScale();
 					offset.x = anchor.x * parentScale.x;
 					offset.y = anchor.y * parentScale.y;
-				} else{
+				} else {
 					offset.x = anchor.x * screenSize.x;
 					offset.y = anchor.y * screenSize.y;
 				}
@@ -110,7 +101,7 @@ namespace tnc::ecs::_2D{
 					const rnd::Glyph& glyph = fontComp->text.getBufferForCharAt(i);
 
 					//For spaces we just skip and proceed
-					if(glyph.character != nullptr){
+					if(glyph.character != nullptr) {
 						const float width = glyph.size.x;
 						const float height = glyph.size.y;
 
@@ -133,7 +124,7 @@ namespace tnc::ecs::_2D{
 		}
 	}
 
-	void RenderSystem::postUpdate(World& world){
+	void RenderSystem::postUpdate(World& world) {
 		renderer->end();
 	}
 }
