@@ -79,9 +79,9 @@ namespace clv::utl{
 		~MultiCastDelegate();
 
 		template<typename BindFunctionPrototype, typename ObjectType>
-		MultiCastDelegateHandle bind(BindFunctionPrototype&& function, ObjectType* object);
+		[[nodiscard]] MultiCastDelegateHandle bind(BindFunctionPrototype&& function, ObjectType* object);
 		template<typename BindFunctionPrototype>
-		MultiCastDelegateHandle bind(BindFunctionPrototype&& function);
+		[[nodiscard]] MultiCastDelegateHandle bind(BindFunctionPrototype&& function);
 
 		void unbind(const MultiCastDelegateHandle& handle);
 		void unbindAll();
