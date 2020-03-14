@@ -23,7 +23,8 @@ namespace clv::gfx::ShaderTranspiler{
 			case clv::gfx::ShaderStage::Geometry:
 				return EShLanguage::EShLangGeometry;
 			default:
-				break;
+				CLV_LOG_ERROR("Unsupported shader stage {0}", CLV_FUNCTION_NAME);
+				return EShLanguage::EShLangVertex;
 		}
 	}
 
