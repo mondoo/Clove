@@ -4,14 +4,15 @@ namespace clv::utl{
 	struct MultiCastDelegateHandle{
 		//VARIABLES
 	public:
-		const std::optional<int32_t> ID = {};
+		using IdType = int32_t;
+		const std::optional<IdType> id = {};
 
 		//FUNCTIONS
 	public:
 		MultiCastDelegateHandle() = default;
-		MultiCastDelegateHandle(int32_t ID) : ID(ID){}
+		MultiCastDelegateHandle(IdType id) : id(id) {}
 
-		operator int() const noexcept{ return ID.value_or(-1); }
+		operator IdType() const noexcept { return id.value_or(-1); }
 	};
 }
 
@@ -19,7 +20,7 @@ namespace std{
 	template<>
 	struct hash<clv::utl::MultiCastDelegateHandle>{
 		std::size_t operator()(const clv::utl::MultiCastDelegateHandle& handle) const noexcept{
-			return hash<int>()(handle);
+			return hash<clv::utl::MultiCastDelegateHandle::IdType>()(handle);
 		}
 	};
 }
@@ -63,7 +64,7 @@ namespace clv::utl{
 	private:
 		std::unordered_map<MultiCastDelegateHandle, std::function<FunctionPrototype>> functionPointers;
 
-		int32_t nextID = 0;
+		MultiCastDelegateHandle::IdType nextID = 0;
 
 		//FUNCTIONS
 	public:
