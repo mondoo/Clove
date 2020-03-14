@@ -1,29 +1,28 @@
 #include "Tunic/Rendering/Renderer.hpp"
 
-#include "Tunic/Rendering/RenderingConstants.hpp"
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
+#include "Tunic/Rendering/RenderingConstants.hpp"
 
-#include <Clove/Graphics/Core/GraphicsFactory.hpp>
 #include <Clove/Graphics/Core/CommandBuffer.hpp>
-#include <Clove/Graphics/Core/Surface.hpp>
-#include <Clove/Graphics/Core/RenderTarget.hpp>
+#include <Clove/Graphics/Core/GraphicsFactory.hpp>
 #include <Clove/Graphics/Core/PipelineObject.hpp>
+#include <Clove/Graphics/Core/RenderTarget.hpp>
 #include <Clove/Graphics/Core/Resources/Texture.hpp>
-
+#include <Clove/Graphics/Core/Surface.hpp>
 #include <Clove/Platform/Core/Window.hpp>
 
 using namespace clv;
 using namespace clv::gfx;
 
-namespace tnc::rnd{
+namespace tnc::rnd {
 	Renderer::SceneData::SceneData() = default;
 
 	Renderer::SceneData::~SceneData() = default;
 
-	Renderer::Renderer(plt::Window& window){
+	Renderer::Renderer(plt::Window& window) {
 
 		GraphicsFactory& factory = window.getGraphicsFactory();
-		
+
 		//Mesh command buffer
 		meshCommandBuffer = factory.createCommandBuffer();
 
@@ -66,7 +65,7 @@ namespace tnc::rnd{
 
 		bufferDesc.bufferSize = sizeof(LightDataArray);
 		lightArrayBuffer = factory.createBuffer(bufferDesc, nullptr);
-		
+
 		bufferDesc.bufferSize = sizeof(LightCount);
 		lightNumBuffer = factory.createBuffer(bufferDesc, nullptr);
 
@@ -77,37 +76,39 @@ namespace tnc::rnd{
 		lightIndexBuffer = factory.createBuffer(bufferDesc, nullptr);
 	}
 
-	void Renderer::begin(){
+	void Renderer::begin() {
 		CLV_PROFILE_FUNCTION();
 
 		scene.meshes.clear();
 		scene.numDirectionalLights = 0;
 		scene.numPointLights = 0;
-		scene.cameras.clear();	
+		scene.cameras.clear();
 	}
 
-	void Renderer::submitMesh(const std::shared_ptr<rnd::Mesh>& mesh){
+	void Renderer::submitMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
 		scene.meshes.push_back(mesh);
 	}
 
 	void Renderer::submitLight(const DirectionalLight& light) {
-		//TODO:
+		const uint32_t lightIndex = scene.numDirectionalLights++;
+
+		scene.lightDataArray.directionalLights[lightIndex] = light.data;
 	}
 
-	void Renderer::submitLight(const PointLight& light){
+	void Renderer::submitLight(const PointLight& light) {
 		const uint32_t lightIndex = scene.numPointLights++;
 
 		scene.lightDataArray.pointLights[lightIndex] = light.data;
 		scene.shadowTransformArray[lightIndex] = light.shadowTransforms;
 	}
 
-	void Renderer::submitCamera(const ComposedCameraData& camera){
+	void Renderer::submitCamera(const ComposedCameraData& camera) {
 		scene.cameras.push_back(camera);
 	}
 
-	void Renderer::end(){
+	void Renderer::end() {
 		CLV_PROFILE_FUNCTION();
-	
+
 		//Draw all meshes in the scene
 		meshCommandBuffer->setDepthEnabled(true);
 		meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
@@ -123,7 +124,7 @@ namespace tnc::rnd{
 		meshCommandBuffer->updateBufferData(*lightNumBuffer, &numLights);
 		meshCommandBuffer->bindShaderResourceBuffer(*lightNumBuffer, ShaderStage::Pixel, BBP_CurrentLights);
 
-		for (auto& camera : scene.cameras){
+		for(auto& camera : scene.cameras) {
 			meshCommandBuffer->beginEncoding(camera.target);
 
 			meshCommandBuffer->setViewport(camera.viewport);
@@ -138,7 +139,7 @@ namespace tnc::rnd{
 			meshCommandBuffer->updateBufferData(*viewPosition, &viewPos);
 			meshCommandBuffer->bindShaderResourceBuffer(*viewPosition, ShaderStage::Pixel, BBP_ViewData);
 
-			for (auto& mesh : scene.meshes){
+			for(auto& mesh : scene.meshes) {
 				mesh->draw(*meshCommandBuffer, meshPipelineObject->getVertexLayout());
 			}
 		}
@@ -152,7 +153,7 @@ namespace tnc::rnd{
 		shadowCommandBuffer->bindPipelineObject(*shadowPipelineObject);
 		shadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
-		for (int32_t i = 0; i < scene.numPointLights; ++i){
+		for(int32_t i = 0; i < scene.numPointLights; ++i) {
 			shadowCommandBuffer->updateBufferData(*shadowInfoBuffer, &scene.shadowTransformArray[i]);
 			shadowCommandBuffer->bindShaderResourceBuffer(*shadowInfoBuffer, ShaderStage::Geometry, BBP_ShadowData);
 
@@ -161,7 +162,7 @@ namespace tnc::rnd{
 			shadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
 			shadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Pixel, BBP_CurrentFaceIndex);
 
-			for (auto& mesh : scene.meshes){
+			for(auto& mesh : scene.meshes) {
 				mesh->draw(*shadowCommandBuffer, shadowPipelineObject->getVertexLayout());
 
 				shadowCommandBuffer->drawIndexed(mesh->getIndexCount());
