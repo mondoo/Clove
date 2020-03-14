@@ -5,9 +5,9 @@ namespace clv::utl{
 		//VARIABLES
 	public:
 		using IdType = int32_t;
-		const std::optional<IdType> id = {};
 
 	private:
+		const std::optional<IdType> id = {};
 		static constexpr IdType INVALID_ID = -1;
 
 		//FUNCTIONS
