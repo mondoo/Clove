@@ -10,7 +10,7 @@ namespace tnc::ecs::_3D{
 
 		//VARIABLES
 	private:
-		tnc::rnd::PointLightData lightData;
+		tnc::rnd::PointLight lightData;
 
 		static constexpr float aspect = 1.0f; //shadow width / shadow height
 		static constexpr float nearDist = 0.5f;

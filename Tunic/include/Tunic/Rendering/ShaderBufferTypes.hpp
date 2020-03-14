@@ -28,7 +28,7 @@ namespace tnc::rnd{
 	};
 
 	//Lighting data needed for point lighting
-	struct PointLightIntesity {
+	struct PointLightData {
 		clv::mth::vec3f position{};
 		float constant = 0;
 		clv::mth::vec3f ambient{};
@@ -38,23 +38,21 @@ namespace tnc::rnd{
 		clv::mth::vec3f specular{};
 		float farPlane = 0;
 	};
-	struct PointLightIntensityArray {
-		std::array<PointLightIntesity, MAX_LIGHTS> intensities{};
+	struct PointLightIntensityData {
+		std::array<PointLightData, MAX_LIGHTS> intensities{};
 
-		PointLightIntesity& operator[](size_t index) {
+		PointLightData& operator[](size_t index) {
 			return intensities[index];
 		}
 	};
 
 	//Lighting data needed for directional lighting
-	struct DirLightIntensity {
+	struct DirectionalLightData {
 		clv::mth::vec3f direction{};
-		float constant = 0;
+
 		clv::mth::vec3f ambient{};
-		float linear = 0;
 		clv::mth::vec3f diffuse{};
-		float quadratic = 0;
-		alignas(16) clv::mth::vec3f specular{};
+		clv::mth::vec3f specular{};
 	};
 
 	//Lighting data needed for point shadows
@@ -63,13 +61,13 @@ namespace tnc::rnd{
 	};
 
 	//Lighting data passed to renderer
-	struct PointLightData {
-		PointLightIntesity intensity{};
+	struct PointLight {
+		PointLightData data{};
 		std::array<clv::mth::mat4f, 6> shadowTransforms{};
 	};
 
-	struct DirLightData {
-		DirLightIntensity intensity{};
+	struct DirectionalLight {
+		DirectionalLightData data{};
 		//std::array<clv::mth::mat4f, 6> shadowTransforms{};
 		//float farPlane;
 	};

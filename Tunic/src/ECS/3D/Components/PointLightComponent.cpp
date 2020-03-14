@@ -29,46 +29,46 @@ namespace tnc::ecs::_3D{
 	PointLightComponent::~PointLightComponent() = default;
 
 	void PointLightComponent::setAmbientColour(const mth::vec3f& colour){
-		lightData.intensity.ambient = colour;
+		lightData.data.ambient = colour;
 	}
 
 	const mth::vec3f& PointLightComponent::getAmbientColour() const{
-		return lightData.intensity.ambient;
+		return lightData.data.ambient;
 	}
 
 	void PointLightComponent::setDiffuseColour(const mth::vec3f& colour){
-		lightData.intensity.diffuse = colour;
+		lightData.data.diffuse = colour;
 	}
 
 	const mth::vec3f& PointLightComponent::getDiffuseColour() const{
-		return lightData.intensity.diffuse;
+		return lightData.data.diffuse;
 	}
 
 	void PointLightComponent::setSpecularColour(const mth::vec3f& colour){
-		lightData.intensity.specular = colour;
+		lightData.data.specular = colour;
 	}
 
 	const mth::vec3f& PointLightComponent::getSpecularColour() const{
-		return lightData.intensity.specular;
+		return lightData.data.specular;
 	}
 
 	float PointLightComponent::getConstant() const{
-		return lightData.intensity.constant;
+		return lightData.data.constant;
 	}
 
 	void PointLightComponent::setLinear(float linear){
-		lightData.intensity.linear = linear;
+		lightData.data.linear = linear;
 	}
 
 	float PointLightComponent::getLinear() const{
-		return lightData.intensity.linear;
+		return lightData.data.linear;
 	}
 
 	void PointLightComponent::setQuadratic(float quadratic){
-		lightData.intensity.quadratic = quadratic;
+		lightData.data.quadratic = quadratic;
 	}
 
 	float PointLightComponent::getQuadratic() const{
-		return lightData.intensity.quadratic;
+		return lightData.data.quadratic;
 	}
 }

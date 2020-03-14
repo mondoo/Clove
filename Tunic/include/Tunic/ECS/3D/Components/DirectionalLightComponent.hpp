@@ -10,7 +10,7 @@ namespace tnc::ecs::_3D {
 
 		//VARIABLES
 	private:
-		rnd::DirLightData lightData;
+		rnd::DirectionalLight lightData;
 
 		//FUNCTIONS
 	public:

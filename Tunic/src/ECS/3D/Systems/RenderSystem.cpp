@@ -91,9 +91,9 @@ namespace tnc::ecs::_3D {
 
 		//Submit point lights
 		for(auto [transform, light] : world.getComponentSets<TransformComponent, PointLightComponent>()) {
-			const auto& position = transform->getPosition();
+			const mth::vec3f& position = transform->getPosition();
 
-			light->lightData.intensity.position = position;
+			light->lightData.data.position = position;
 			light->lightData.shadowTransforms[0] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 1.0, 0.0, 0.0 }, mth::vec3f{ 0.0, -1.0, 0.0 });
 			light->lightData.shadowTransforms[1] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ -1.0, 0.0, 0.0 }, mth::vec3f{ 0.0, -1.0, 0.0 });
 			light->lightData.shadowTransforms[2] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0, 1.0, 0.0 }, mth::vec3f{ 0.0, 0.0, 1.0 });
@@ -101,7 +101,7 @@ namespace tnc::ecs::_3D {
 			light->lightData.shadowTransforms[4] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0, 0.0, 1.0 }, mth::vec3f{ 0.0, -1.0, 0.0 });
 			light->lightData.shadowTransforms[5] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0, 0.0, -1.0 }, mth::vec3f{ 0.0, -1.0, 0.0 });
 
-			renderer->submitLight({ light->lightData.intensity, light->lightData.shadowTransforms });
+			renderer->submitLight({ light->lightData.data, light->lightData.shadowTransforms });
 		}
 	}
 

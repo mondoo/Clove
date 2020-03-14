@@ -42,7 +42,7 @@ namespace tnc::rnd{
 			std::vector<std::shared_ptr<rnd::Mesh>> meshes;
 
 			uint32_t numLights = 0u;
-			PointLightIntensityArray lightIntensityArray;
+			PointLightIntensityData lightDataArray;
 			std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> shadowTransformArray = {};
 
 			//FUNCTIONS
@@ -86,8 +86,8 @@ namespace tnc::rnd{
 		void begin();
 
 		void submitMesh(const std::shared_ptr<rnd::Mesh>& mesh);
-		void submitLight(const DirLightData& light);
-		void submitLight(const PointLightData& light);
+		void submitLight(const DirectionalLight& light);
+		void submitLight(const PointLight& light);
 		void submitCamera(const ComposedCameraData& camera);
 
 		void end();

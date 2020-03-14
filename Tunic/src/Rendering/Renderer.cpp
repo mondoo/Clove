@@ -64,7 +64,7 @@ namespace tnc::rnd{
 		bufferDesc.bufferSize = sizeof(ViewPos);
 		viewPosition = factory.createBuffer(bufferDesc, nullptr);
 
-		bufferDesc.bufferSize = sizeof(PointLightIntensityArray);
+		bufferDesc.bufferSize = sizeof(PointLightIntensityData);
 		lightArrayBuffer = factory.createBuffer(bufferDesc, nullptr);
 
 		bufferDesc.bufferSize = sizeof(NumberAlignment);
@@ -92,9 +92,11 @@ namespace tnc::rnd{
 	void Renderer::submitLight(const DirectionalLight& light) {
 		//TODO:
 	}
+
+	void Renderer::submitLight(const PointLight& light){
 		const int32_t lightIndex = scene.numLights++;
 
-		scene.lightIntensityArray[lightIndex] = light.intensity;
+		scene.lightDataArray[lightIndex] = light.data;
 		scene.shadowTransformArray[lightIndex] = light.shadowTransforms;
 	}
 
@@ -110,10 +112,10 @@ namespace tnc::rnd{
 		meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
 		meshCommandBuffer->bindTexture(shadowMapTexture.get(), TBP_Shadow);
 
-		meshCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightIntensityArray);
+		meshCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
 		meshCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_PointLightData);
 		//TODO: Remove duplocated updateBufferData
-		shadowCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightIntensityArray);
+		shadowCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
 		shadowCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_PointLightData);
 
 		auto numLights = NumberAlignment{ scene.numLights };
