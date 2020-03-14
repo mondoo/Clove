@@ -64,10 +64,10 @@ namespace tnc::rnd{
 		bufferDesc.bufferSize = sizeof(ViewPos);
 		viewPosition = factory.createBuffer(bufferDesc, nullptr);
 
-		bufferDesc.bufferSize = sizeof(PointLightIntensityData);
+		bufferDesc.bufferSize = sizeof(LightDataArray);
 		lightArrayBuffer = factory.createBuffer(bufferDesc, nullptr);
-
-		bufferDesc.bufferSize = sizeof(NumberAlignment);
+		
+		bufferDesc.bufferSize = sizeof(LightCount);
 		lightNumBuffer = factory.createBuffer(bufferDesc, nullptr);
 
 		bufferDesc.bufferSize = sizeof(PointShadowTransform);
@@ -81,7 +81,8 @@ namespace tnc::rnd{
 		CLV_PROFILE_FUNCTION();
 
 		scene.meshes.clear();
-		scene.numLights = 0;
+		scene.numDirectionalLights = 0;
+		scene.numPointLights = 0;
 		scene.cameras.clear();	
 	}
 
@@ -94,9 +95,9 @@ namespace tnc::rnd{
 	}
 
 	void Renderer::submitLight(const PointLight& light){
-		const int32_t lightIndex = scene.numLights++;
+		const uint32_t lightIndex = scene.numPointLights++;
 
-		scene.lightDataArray[lightIndex] = light.data;
+		scene.lightDataArray.pointLights[lightIndex] = light.data;
 		scene.shadowTransformArray[lightIndex] = light.shadowTransforms;
 	}
 
@@ -118,7 +119,7 @@ namespace tnc::rnd{
 		shadowCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
 		shadowCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_PointLightData);
 
-		auto numLights = NumberAlignment{ scene.numLights };
+		auto numLights = LightCount{ scene.numDirectionalLights, scene.numPointLights };
 		meshCommandBuffer->updateBufferData(*lightNumBuffer, &numLights);
 		meshCommandBuffer->bindShaderResourceBuffer(*lightNumBuffer, ShaderStage::Pixel, BBP_CurrentLights);
 
@@ -151,7 +152,7 @@ namespace tnc::rnd{
 		shadowCommandBuffer->bindPipelineObject(*shadowPipelineObject);
 		shadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
-		for (uint32_t i = 0; i < scene.numLights; ++i){
+		for (int32_t i = 0; i < scene.numPointLights; ++i){
 			shadowCommandBuffer->updateBufferData(*shadowInfoBuffer, &scene.shadowTransformArray[i]);
 			shadowCommandBuffer->bindShaderResourceBuffer(*shadowInfoBuffer, ShaderStage::Geometry, BBP_ShadowData);
 

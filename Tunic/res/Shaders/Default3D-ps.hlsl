@@ -9,18 +9,28 @@ SamplerState specularSampler : register(s2);
 TextureCubeArray shadowDepthMap : register(t3);
 SamplerState shadowDepthSampler : register(s3); //TODO: We should really reuse the samplers for these
 
-struct PointLight{
+struct DirectionalLightData{
+	float3 direction;
+
+	float3 ambient;
+	float3 diffuse;
+	float3 specular;
+};
+struct PointLightData{
 	float3 position;
+	
 	float constant;
 	float3 ambient;
 	float linearV;
 	float3 diffuse;
 	float quadratic;
 	float3 specular;
+	
 	float farplane;
 };
-cbuffer PointLightBuffer : register(b2){
-	PointLight lights[MAX_LIGHTS];
+cbuffer LightBuffer : register(b2){
+	DirectionalLightData directionalLights[MAX_LIGHTS];
+	PointLightData pointLights[MAX_LIGHTS];
 };
 
 cbuffer ViewBuffer : register(b3){
@@ -31,15 +41,16 @@ cbuffer MaterialBuffer : register(b5){
     float shininess;
 }
 
-cbuffer lightNumBuffer : register(b9){
-	int numLights;
+cbuffer LightCount : register(b9){
+	unsigned int numDirectional;
+	unsigned int numPoint;
 }
 
 cbuffer colourDataBuffer : register(b12){
 	float4 colour;
 }
 
-float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord);
+float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord);
 
 float shadowCalculation(float3 fragPos, int shadowIndex);
 
@@ -48,14 +59,14 @@ float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNor
     float3 viewDir      = normalize(viewPos - vertPos);
     
 	float3 lighting = float3(0.0f, 0.0f, 0.0f);
-	for(int i = 0; i < numLights; ++i){
-		lighting += calculatePointLight(lights[i], normal, vertPos, viewDir, texCoord);
+	for(int i = 0; i < numPoint; ++i){
+		lighting += calculatePointLight(pointLights[i], normal, vertPos, viewDir, texCoord);
 	}
 
     return float4(lighting, 1.0f);
 }
 
-float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord){
+float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord){
 	float3 lightDir = normalize(light.position - fragPos);
 
 	//Ambient
@@ -80,10 +91,10 @@ float3 calculatePointLight(PointLight light, float3 normal, float3 fragPos, floa
 
 	//Shadow
 	float shadow = 0.0f;
-	for(int i = 0; i < numLights; ++i){
+	for(int i = 0; i < numPoint; ++i){
 		shadow += 1.0f - shadowCalculation(fragPos, i);
 	}
-	shadow /= numLights;
+	shadow /= numPoint;
 
 	return (ambient + (shadow * (diffuse + specular)));
 }
@@ -97,9 +108,9 @@ float shadowCalculation(float3 fragPos, int shadowIndex){
 		float3(0,  1,  1), float3( 0, -1,  1), float3( 0, -1, -1), float3( 0, 1, -1)
 	};
 
-	const float farPlane = lights[shadowIndex].farplane;
+	const float farPlane = pointLights[shadowIndex].farplane;
 
-	float3 fragToLight = fragPos - lights[shadowIndex].position;
+	float3 fragToLight = fragPos - pointLights[shadowIndex].position;
 	float currentDepth = length(fragToLight);
 
 	float shadow = 0.0;

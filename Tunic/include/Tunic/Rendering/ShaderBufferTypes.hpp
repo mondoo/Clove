@@ -3,8 +3,8 @@
 #include "Tunic/Rendering/RenderingConstants.hpp"
 
 namespace tnc::rnd{
-	struct MaterialData {
-		alignas(16) float sininess;
+	struct alignas(16) MaterialData {
+		float sininess;
 	};
 
 	struct ViewData {
@@ -12,8 +12,8 @@ namespace tnc::rnd{
 		clv::mth::mat4f projection;
 	};
 
-	struct ViewPos {
-		alignas(16) clv::mth::vec3f pos;
+	struct alignas(16) ViewPos {
+		clv::mth::vec3f pos;
 	};
 
 	struct CameraRenderData {
@@ -27,32 +27,34 @@ namespace tnc::rnd{
 		clv::mth::mat4f normalMatrix;
 	};
 
-	//Lighting data needed for point lighting
+	//Lighting data passed to GPU
+	struct DirectionalLightData {
+		clv::mth::vec3f direction{};
+
+		clv::mth::vec3f ambient{};
+		clv::mth::vec3f diffuse{};
+		alignas(16) clv::mth::vec3f specular{};
+	};
 	struct PointLightData {
 		clv::mth::vec3f position{};
+
 		float constant = 0;
 		clv::mth::vec3f ambient{};
 		float linear = 0;
 		clv::mth::vec3f diffuse{};
 		float quadratic = 0;
 		clv::mth::vec3f specular{};
+
 		float farPlane = 0;
 	};
-	struct PointLightIntensityData {
-		std::array<PointLightData, MAX_LIGHTS> intensities{};
-
-		PointLightData& operator[](size_t index) {
-			return intensities[index];
-		}
+	struct LightDataArray {
+		std::array<DirectionalLightData, MAX_LIGHTS> directionalLights{};
+		std::array<PointLightData, MAX_LIGHTS> pointLights{};
 	};
 
-	//Lighting data needed for directional lighting
-	struct DirectionalLightData {
-		clv::mth::vec3f direction{};
-
-		clv::mth::vec3f ambient{};
-		clv::mth::vec3f diffuse{};
-		clv::mth::vec3f specular{};
+	struct alignas(16) LightCount {
+		uint32_t numDirectional;
+		uint32_t numPoint;
 	};
 
 	//Lighting data needed for point shadows
@@ -61,18 +63,17 @@ namespace tnc::rnd{
 	};
 
 	//Lighting data passed to renderer
-	struct PointLight {
-		PointLightData data{};
-		std::array<clv::mth::mat4f, 6> shadowTransforms{};
-	};
-
 	struct DirectionalLight {
 		DirectionalLightData data{};
 		//std::array<clv::mth::mat4f, 6> shadowTransforms{};
 		//float farPlane;
 	};
-	
-	struct NumberAlignment {
-		alignas(16) uint32_t numLights;
+	struct PointLight {
+		PointLightData data{};
+		std::array<clv::mth::mat4f, 6> shadowTransforms{};
+	};
+
+	struct alignas(16) NumberAlignment {
+		int32_t num;
 	};
 }

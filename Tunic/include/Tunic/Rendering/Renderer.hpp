@@ -41,8 +41,11 @@ namespace tnc::rnd{
 
 			std::vector<std::shared_ptr<rnd::Mesh>> meshes;
 
-			uint32_t numLights = 0u;
-			PointLightIntensityData lightDataArray;
+			uint32_t numDirectionalLights = 0u;
+			uint32_t numPointLights = 0u;
+
+			LightDataArray lightDataArray;
+			
 			std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> shadowTransformArray = {};
 
 			//FUNCTIONS
