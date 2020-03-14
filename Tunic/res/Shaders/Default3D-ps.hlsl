@@ -50,6 +50,7 @@ cbuffer colourDataBuffer : register(b12){
 	float4 colour;
 }
 
+float3 calculateDirectionalLight(DirectionalLightData light, float3 normal, float3 viewDirection, float2 texCoord);
 float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord);
 
 float shadowCalculation(float3 fragPos, int shadowIndex);
@@ -59,11 +60,35 @@ float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNor
     float3 viewDir      = normalize(viewPos - vertPos);
     
 	float3 lighting = float3(0.0f, 0.0f, 0.0f);
+	
+	//Directional
+	for(int i = 0; i < numDirectional; ++i){
+		lighting += calculateDirectionalLight(directionalLights[i], normal, viewDir, texCoord);	
+	}
+	//Point
 	for(int i = 0; i < numPoint; ++i){
 		lighting += calculatePointLight(pointLights[i], normal, vertPos, viewDir, texCoord);
 	}
 
     return float4(lighting, 1.0f);
+}
+
+float3 calculateDirectionalLight(DirectionalLightData light, float3 normal, float3 viewDirection, float2 texCoord){
+	float3 lightDir = normalize(-light.direction);
+	
+	//Ambient
+	float3 ambient = light.ambient * (float3)albedoTexture.Sample(albedoSampler, texCoord);
+
+	//Diffuse
+	float3 diff = max(dot(normal, lightDir), 0.0f);
+	float3 diffuse = light.diffuse * diff * (float3)albedoTexture.Sample(albedoSampler, texCoord) * (float3)colour;
+
+	//Specular
+	float3 reflectDir = reflect(-lightDir, normal);
+	float spec = pow(max(dot(viewDirection, reflectDir), 0.0f), shininess);
+	float3 specular = light.specular * spec * (float3)specularTexture.Sample(specularSampler, texCoord);
+	
+	return (ambient + diffuse + specular);
 }
 
 float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord){
