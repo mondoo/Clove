@@ -7,12 +7,15 @@ namespace clv::utl{
 		using IdType = int32_t;
 		const std::optional<IdType> id = {};
 
+	private:
+		static constexpr IdType INVALID_ID = -1;
+
 		//FUNCTIONS
 	public:
 		MultiCastDelegateHandle() = default;
 		MultiCastDelegateHandle(IdType id) : id(id) {}
 
-		operator IdType() const noexcept { return id.value_or(-1); }
+		operator IdType() const noexcept { return id.value_or(INVALID_ID); }
 	};
 }
 
