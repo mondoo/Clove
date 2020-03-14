@@ -29,10 +29,10 @@ namespace tnc::rnd{
 
 	//Lighting data passed to GPU
 	struct DirectionalLightData {
-		clv::mth::vec3f direction{};
+		alignas(16) clv::mth::vec3f direction{};
 
-		clv::mth::vec3f ambient{};
-		clv::mth::vec3f diffuse{};
+		alignas(16) clv::mth::vec3f ambient{};
+		alignas(16) clv::mth::vec3f diffuse{};
 		alignas(16) clv::mth::vec3f specular{};
 	};
 	struct PointLightData {
