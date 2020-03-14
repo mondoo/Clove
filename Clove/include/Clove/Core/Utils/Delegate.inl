@@ -70,7 +70,7 @@ namespace clv::utl{
 		constexpr size_t argumentCount = decltype(getArgumentCount(function))::value;
 		auto functionPointer = doBind(std::forward<BindFunctionPrototype>(function), object, std::make_integer_sequence<int, argumentCount>());
 		
-		auto handle = MultiCastDelegateHandle{ nextID++ };
+		auto handle = MultiCastDelegateHandle{ nextId++ };
 		functionPointers.emplace(std::make_pair(handle, functionPointer));
 
 		return handle;
@@ -79,7 +79,7 @@ namespace clv::utl{
 	template<typename FunctionPrototype>
 	template<typename BindFunctionPrototype>
 	MultiCastDelegateHandle MultiCastDelegate<FunctionPrototype>::bind(BindFunctionPrototype&& function){
-		auto handle = MultiCastDelegateHandle{ nextID++ };
+		auto handle = MultiCastDelegateHandle{ nextId++ };
 		functionPointers.emplace(std::make_pair(handle, function));
 		return handle;
 	}

@@ -64,7 +64,7 @@ namespace clv::utl{
 	private:
 		std::unordered_map<MultiCastDelegateHandle, std::function<FunctionPrototype>> functionPointers;
 
-		MultiCastDelegateHandle::IdType nextID = 0;
+		inline static MultiCastDelegateHandle::IdType nextId = 0;
 
 		//FUNCTIONS
 	public:
