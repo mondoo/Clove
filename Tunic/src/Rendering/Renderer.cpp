@@ -89,7 +89,9 @@ namespace tnc::rnd{
 		scene.meshes.push_back(mesh);
 	}
 
-	void Renderer::submitLight(const PointLightData& light){
+	void Renderer::submitLight(const DirectionalLight& light) {
+		//TODO:
+	}
 		const int32_t lightIndex = scene.numLights++;
 
 		scene.lightIntensityArray[lightIndex] = light.intensity;
