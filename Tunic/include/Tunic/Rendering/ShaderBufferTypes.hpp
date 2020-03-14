@@ -53,8 +53,8 @@ namespace tnc::rnd{
 	};
 
 	struct alignas(16) LightCount {
-		uint32_t numDirectional;
-		uint32_t numPoint;
+		int32_t numDirectional;
+		int32_t numPoint;
 	};
 
 	//Lighting data needed for point shadows

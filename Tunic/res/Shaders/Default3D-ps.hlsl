@@ -42,8 +42,8 @@ cbuffer MaterialBuffer : register(b5){
 }
 
 cbuffer LightCount : register(b9){
-	unsigned int numDirectional;
-	unsigned int numPoint;
+	int numDirectional;
+	int numPoint;
 }
 
 cbuffer colourDataBuffer : register(b12){

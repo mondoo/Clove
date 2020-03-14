@@ -41,8 +41,8 @@ namespace tnc::rnd{
 
 			std::vector<std::shared_ptr<rnd::Mesh>> meshes;
 
-			uint32_t numDirectionalLights = 0u;
-			uint32_t numPointLights = 0u;
+			int32_t numDirectionalLights = 0u;
+			int32_t numPointLights = 0u;
 
 			LightDataArray lightDataArray;
 			
