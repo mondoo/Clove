@@ -23,5 +23,7 @@ namespace tnc::ecs::_3D {
 		DirectionalLightComponent& operator=(DirectionalLightComponent&&) noexcept;
 
 		virtual ~DirectionalLightComponent();
+
+		void setDirection(const clv::mth::vec3f& direction);
 	};
 }

@@ -23,4 +23,8 @@ namespace tnc::ecs::_3D {
 	DirectionalLightComponent& DirectionalLightComponent::operator=(DirectionalLightComponent&&) noexcept = default;
 
 	DirectionalLightComponent::~DirectionalLightComponent() = default;
+	
+	void DirectionalLightComponent::setDirection(const clv::mth::vec3f& direction) {
+		lightData.data.direction = direction;
+	}
 }
