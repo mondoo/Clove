@@ -37,7 +37,7 @@ namespace clv::gfx::mtl{
 
 		virtual void clearTarget() override{}
 
-		virtual void updateBufferData(const Buffer& buffer, const void* data) override;
+		virtual void updateBufferData(Buffer& buffer, const void* data) override;
 
 		virtual void bindIndexBuffer(const Buffer& buffer) override;
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32 stride) override;

@@ -5,7 +5,7 @@
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 
 @implementation MacWindowProxy
-- (instancetype)initWithWindowData:(MTKView*)view width: (unsigned int)width height:(unsigned int)height name:(NSString*)name{
+- (instancetype)initWithWindowData:(MTLView*)view width: (unsigned int)width height:(unsigned int)height name:(NSString*)name{
 	const NSRect rect = NSMakeRect(0, 0, width, height);
 	const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 	
@@ -23,7 +23,7 @@
 	return self;
 }
 
-- (instancetype)initWithParentWindow:(MTKView*)view parentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size{
+- (instancetype)initWithParentWindow:(MTLView*)view parentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size{
 	const NSRect rect = NSMakeRect(position.x, position.y, size.x, size.y);
 	const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 	
@@ -58,7 +58,7 @@ namespace clv::plt{
 		
 		NSString* nameString = [NSString stringWithCString:descriptor.title.c_str() encoding:[NSString defaultCStringEncoding]];
 		
-		windowProxy = [[MacWindowProxy alloc] initWithWindowData:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getMTKView()
+		windowProxy = [[MacWindowProxy alloc] initWithWindowData:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getMTLView()
 														   width:descriptor.width
 														  height:descriptor.height
 															name:nameString];
@@ -71,7 +71,7 @@ namespace clv::plt{
 		graphicsFactory = gfx::initialise(api);
 		surface = graphicsFactory->createSurface(&data);
 		
-		windowProxy = [[MacWindowProxy alloc] initWithParentWindow:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getMTKView()
+		windowProxy = [[MacWindowProxy alloc] initWithParentWindow:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getMTLView()
 													  parentWindow:parentWindow
 														  position:position
 															  size:size];

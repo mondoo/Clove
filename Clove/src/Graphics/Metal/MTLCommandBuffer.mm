@@ -9,6 +9,7 @@
 namespace clv::gfx::mtl{
 	MTLCommandBuffer::MTLCommandBuffer(id<MTLCommandQueue> commandQueue)
 		: commandQueue([commandQueue retain]){
+		commandBuffer = [[commandQueue commandBuffer] retain];
 	}
 	
 	MTLCommandBuffer::MTLCommandBuffer(MTLCommandBuffer&& other) noexcept = default;
@@ -22,14 +23,28 @@ namespace clv::gfx::mtl{
 	}
 
 	void MTLCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget){
+		if(mtlRenderTarget != nullptr){
+			[commandEncoder endEncoding];
+		}
+		
 		mtlRenderTarget = std::static_pointer_cast<MTLRenderTarget>(renderTarget);
 
-		commandBuffer = [[commandQueue commandBuffer] retain];
 		commandEncoder = [[commandBuffer renderCommandEncoderWithDescriptor:mtlRenderTarget->getRenderPassDescriptor()] retain];
 	}
 
-	void MTLCommandBuffer::updateBufferData(const Buffer& buffer, const void* data){
-		CLV_ASSERT(false, "NOT YET IMPLEMENTED");
+	void MTLCommandBuffer::updateBufferData(Buffer& buffer, const void* data){
+		MTLBuffer& mtlBuffer = static_cast<MTLBuffer&>(buffer);
+		
+		mtlBuffer.updateData(data);
+		
+		//TODO: Ideally we wouldn't end the commandBuffer here but apprently there is no other way
+		if(mtlRenderTarget != nullptr){
+			[commandEncoder endEncoding];
+			[commandBuffer commit];
+		
+			commandBuffer = [[commandQueue commandBuffer] retain];
+			commandEncoder = [[commandBuffer renderCommandEncoderWithDescriptor:mtlRenderTarget->getRenderPassDescriptor()] retain];
+		}
 	}
 
 	void MTLCommandBuffer::bindIndexBuffer(const Buffer& buffer){
@@ -61,15 +76,18 @@ namespace clv::gfx::mtl{
 	
 	void MTLCommandBuffer::bindPipelineObject(const PipelineObject& pipelineObject){
 		const MTLPipelineObject& mtlPipelineObject = static_cast<const MTLPipelineObject&>(pipelineObject);
+		
 		NSError* error = nullptr;
-		[commandEncoder setRenderPipelineState:[commandEncoder.device newRenderPipelineStateWithDescriptor:mtlPipelineObject.getMTLPipelineStateDescriptor() error:&error]];
+		id<MTLRenderPipelineState> pipelineState = [commandEncoder.device newRenderPipelineStateWithDescriptor:mtlPipelineObject.getMTLPipelineStateDescriptor() error:&error];
 		if(error.code != 0){
 			for (NSString* key in [error userInfo]) {
 				NSString* value = [error userInfo][key];
 				CLV_LOG_ERROR("Error in function '{0}': {1}", CLV_FUNCTION_NAME_PRETTY, [value cStringUsingEncoding:[NSString defaultCStringEncoding]]);
 			}
+			return;
 		}
 		
+		[commandEncoder setRenderPipelineState:pipelineState];
 		[commandEncoder setCullMode:mtlPipelineObject.getCullFace() == CullFace::Back ? MTLCullModeBack : MTLCullModeFront];
 		[commandEncoder setFrontFacingWinding:mtlPipelineObject.isFrontFaceCounterClockWise() ? MTLWindingCounterClockwise : MTLWindingClockwise];
 	}
