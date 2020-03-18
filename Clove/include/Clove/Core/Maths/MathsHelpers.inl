@@ -29,6 +29,11 @@ namespace clv::mth{
 	}
 
 	template<typename T>
+	mat<4, 4, T, qualifier::defaultp> createOrthographicMatrix(T left, T right, T bottom, T top, T near, T far) {
+		return glm::ortho(left, right, bottom, top, near, far);
+	}
+
+	template<typename T>
 	mat<4, 4, T, qualifier::defaultp> createPerspectiveMatrix(T fovy, T aspect, T zNear, T zFar){
 		return glm::perspective(fovy, aspect, zNear, zFar);
 	}

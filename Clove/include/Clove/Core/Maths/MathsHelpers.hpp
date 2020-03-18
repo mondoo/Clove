@@ -20,6 +20,9 @@ namespace clv::mth{
 	mat<4, 4, T, qualifier::defaultp> createOrthographicMatrix(T left, T right, T bottom, T top);
 
 	template<typename T>
+	mat<4, 4, T, qualifier::defaultp> createOrthographicMatrix(T left, T right, T bottom, T top, T near, T far);
+
+	template<typename T>
 	mat<4, 4, T, qualifier::defaultp> createPerspectiveMatrix(T fovy, T aspect, T zNear, T zFar);
 
 	template<typename T, qualifier Q>
