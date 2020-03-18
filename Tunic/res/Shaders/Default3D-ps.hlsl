@@ -42,8 +42,8 @@ cbuffer MaterialBuffer : register(b5){
 }
 
 cbuffer LightCount : register(b9){
-	int numDirectional;
-	int numPoint;
+	int numDirectionalLight;
+	int numPointLight;
 }
 
 cbuffer colourDataBuffer : register(b12){
@@ -53,7 +53,7 @@ cbuffer colourDataBuffer : register(b12){
 float3 calculateDirectionalLight(DirectionalLightData light, float3 normal, float3 viewDirection, float2 texCoord);
 float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord);
 
-float shadowCalculation(float3 fragPos, int shadowIndex);
+float calculatePointLightShadow(float3 fragPos, int lightIndex);
 
 float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNormal : VertNormal) : SV_Target{
     float3 normal       = normalize(vertNormal);
@@ -62,11 +62,11 @@ float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNor
 	float3 lighting = float3(0.0f, 0.0f, 0.0f);
 	
 	//Directional
-	for(int i = 0; i < numDirectional; ++i){
+	for(int i = 0; i < numDirectionalLight; ++i){
 		lighting += calculateDirectionalLight(directionalLights[i], normal, viewDir, texCoord);	
 	}
 	//Point
-	for(int i = 0; i < numPoint; ++i){
+	for(int i = 0; i < numPointLight; ++i){
 		lighting += calculatePointLight(pointLights[i], normal, vertPos, viewDir, texCoord);
 	}
 
@@ -116,15 +116,15 @@ float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, 
 
 	//Shadow
 	float shadow = 0.0f;
-	for(int i = 0; i < numPoint; ++i){
-		shadow += 1.0f - shadowCalculation(fragPos, i);
+	for(int i = 0; i < numPointLight; ++i){
+		shadow += 1.0f - calculatePointLightShadow(fragPos, i);
 	}
-	shadow /= numPoint;
+	shadow /= numPointLight;
 
 	return (ambient + (shadow * (diffuse + specular)));
 }
 
-float shadowCalculation(float3 fragPos, int shadowIndex){
+float calculatePointLightShadow(float3 fragPos, int lightIndex){
 	const float3 shadowSampleOffsetDirections[20] = {
 		float3(1,  1,  1), float3( 1, -1,  1), float3(-1, -1,  1), float3(-1, 1,  1),
 		float3(1,  1, -1), float3( 1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
@@ -133,9 +133,9 @@ float shadowCalculation(float3 fragPos, int shadowIndex){
 		float3(0,  1,  1), float3( 0, -1,  1), float3( 0, -1, -1), float3( 0, 1, -1)
 	};
 
-	const float farPlane = pointLights[shadowIndex].farplane;
+	const float farPlane = pointLights[lightIndex].farplane;
 
-	float3 fragToLight = fragPos - pointLights[shadowIndex].position;
+	float3 fragToLight = fragPos - pointLights[lightIndex].position;
 	float currentDepth = length(fragToLight);
 
 	float shadow = 0.0;
@@ -146,7 +146,7 @@ float shadowCalculation(float3 fragPos, int shadowIndex){
 
 	for(int i = 0; i < samples; ++i){
 		const float3 sampleLocation = fragToLight + shadowSampleOffsetDirections[i] * diskRadius;
-		float closestDepth = shadowDepthMap.Sample(shadowDepthSampler, float4(sampleLocation, shadowIndex)).r;
+		float closestDepth = shadowDepthMap.Sample(shadowDepthSampler, float4(sampleLocation, lightIndex)).r;
 		closestDepth *= farPlane;
 		if((currentDepth - bias) > closestDepth){
 			shadow += 1.0;
