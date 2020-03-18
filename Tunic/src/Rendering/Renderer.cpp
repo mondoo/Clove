@@ -43,9 +43,9 @@ namespace tnc::rnd {
 		pointShadowRenderTarget	= factory.createRenderTarget(nullptr, pointShadowMapTexture.get());
 		pointShadowCommandBuffer = factory.createCommandBuffer();
 
-		auto shadowVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/GenShadowMap-vs.hlsl");
-		auto shadowGS = factory.createShader({ ShaderStage::Geometry }, "res/Shaders/GenShadowMap-gs.hlsl");
-		auto shadowPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/GenShadowMap-ps.hlsl");
+		auto shadowVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/GenCubeShadowMap-vs.hlsl");
+		auto shadowGS = factory.createShader({ ShaderStage::Geometry }, "res/Shaders/GenCubeShadowMap-gs.hlsl");
+		auto shadowPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/GenCubeShadowMap-ps.hlsl");
 		pointShadowPipelineObject = factory.createPipelineObject();
 		pointShadowPipelineObject->setVertexShader(*shadowVS);
 		pointShadowPipelineObject->setGeometryShader(*shadowGS);
