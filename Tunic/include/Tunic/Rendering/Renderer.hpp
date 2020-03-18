@@ -4,7 +4,7 @@
 
 #include <Clove/Graphics/Core/GraphicsTypes.hpp>
 
-namespace clv::gfx{
+namespace clv::gfx {
 	class GraphicsFactory;
 	class CommandBuffer;
 	class Surface;
@@ -14,27 +14,27 @@ namespace clv::gfx{
 	class Buffer;
 }
 
-namespace clv::plt{
+namespace clv::plt {
 	class Window;
 }
 
-namespace tnc::rnd{
+namespace tnc::rnd {
 	class Sprite;
 	class Mesh;
 }
 
-namespace tnc::rnd{
-	class Renderer{
+namespace tnc::rnd {
+	class Renderer {
 		//TYPES
 	public:
-		struct ComposedCameraData{
+		struct ComposedCameraData {
 			clv::gfx::Viewport viewport;
 			CameraRenderData bufferData;
 			std::shared_ptr<clv::gfx::RenderTarget> target;
 		};
 
 	private:
-		struct SceneData{
+		struct SceneData {
 			//VARIABLES
 		public:
 			std::vector<ComposedCameraData> cameras;
@@ -45,8 +45,9 @@ namespace tnc::rnd{
 			int32_t numPointLights = 0u;
 
 			LightDataArray lightDataArray;
-			
-			std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> shadowTransformArray = {};
+
+			std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> pointShadowTransformArray{};
+			std::array<clv::mth::mat4f, MAX_LIGHTS> directionalShadowTransformArray{};
 
 			//FUNCTIONS
 		public:

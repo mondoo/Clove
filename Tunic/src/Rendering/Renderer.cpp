@@ -93,13 +93,14 @@ namespace tnc::rnd {
 		const uint32_t lightIndex = scene.numDirectionalLights++;
 
 		scene.lightDataArray.directionalLights[lightIndex] = light.data;
+		scene.directionalShadowTransformArray[lightIndex] = light.shadowTransform;
 	}
 
 	void Renderer::submitLight(const PointLight& light) {
 		const uint32_t lightIndex = scene.numPointLights++;
 
 		scene.lightDataArray.pointLights[lightIndex] = light.data;
-		scene.shadowTransformArray[lightIndex] = light.shadowTransforms;
+		scene.pointShadowTransformArray[lightIndex] = light.shadowTransforms;
 	}
 
 	void Renderer::submitCamera(const ComposedCameraData& camera) {
@@ -154,7 +155,7 @@ namespace tnc::rnd {
 		pointShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
 		for(int32_t i = 0; i < scene.numPointLights; ++i) {
-			pointShadowCommandBuffer->updateBufferData(*shadowInfoBuffer, &scene.shadowTransformArray[i]);
+			pointShadowCommandBuffer->updateBufferData(*shadowInfoBuffer, &scene.pointShadowTransformArray[i]);
 			pointShadowCommandBuffer->bindShaderResourceBuffer(*shadowInfoBuffer, ShaderStage::Geometry, BBP_ShadowData);
 
 			auto lightIndex = NumberAlignment{ i * 6 };
