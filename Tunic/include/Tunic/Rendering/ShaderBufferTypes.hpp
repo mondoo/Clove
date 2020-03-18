@@ -65,7 +65,7 @@ namespace tnc::rnd{
 	//Lighting data passed to renderer
 	struct DirectionalLight {
 		DirectionalLightData data{};
-		//std::array<clv::mth::mat4f, 6> shadowTransforms{};
+		clv::mth::mat4f shadowTransform{};
 		//float farPlane;
 	};
 	struct PointLight {
