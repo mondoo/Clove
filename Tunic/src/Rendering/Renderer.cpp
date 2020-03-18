@@ -32,24 +32,41 @@ namespace tnc::rnd {
 		meshPipelineObject->setVertexShader(*meshVS);
 		meshPipelineObject->setPixelShader(*meshPS);
 
-		//Shadow map
-		gfx::TextureDescriptor tdesc{};
-		tdesc.style			= TextureStyle::Cubemap;
-		tdesc.usage			= TextureUsage::RenderTarget_Depth;
-		tdesc.dimensions	= { shadowMapSize, shadowMapSize };
-		tdesc.arraySize		= MAX_LIGHTS;
+		//Directional shadow map
+		gfx::TextureDescriptor dsDesc{};
+		dsDesc.style		= TextureStyle::Default;
+		dsDesc.usage		= TextureUsage::RenderTarget_Depth;
+		dsDesc.dimensions	= { shadowMapSize, shadowMapSize };
+		dsDesc.arraySize	= MAX_LIGHTS;
 
-		pointShadowMapTexture	= factory.createTexture(tdesc, nullptr, 4);
-		pointShadowRenderTarget	= factory.createRenderTarget(nullptr, pointShadowMapTexture.get());
-		pointShadowCommandBuffer = factory.createCommandBuffer();
+		directionalShadowMapTexture		= factory.createTexture(dsDesc, nullptr, 4);
+		directionalShadowRenderTarget	= factory.createRenderTarget(nullptr, directionalShadowMapTexture.get());
+		directionalShadowCommandBuffer	= factory.createCommandBuffer();
 
-		auto shadowVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/GenCubeShadowMap-vs.hlsl");
-		auto shadowGS = factory.createShader({ ShaderStage::Geometry }, "res/Shaders/GenCubeShadowMap-gs.hlsl");
-		auto shadowPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/GenCubeShadowMap-ps.hlsl");
+		auto dirShadowVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/GenShadowMap-vs.hlsl");
+		auto dirShadowPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/GenShadowMap-ps.hlsl");
+		directionalShadowPipelineObject = factory.createPipelineObject();
+		directionalShadowPipelineObject->setVertexShader(*dirShadowVS);
+		directionalShadowPipelineObject->setPixelShader(*dirShadowPS);
+
+		//Point shadow map
+		gfx::TextureDescriptor psDesc{};
+		psDesc.style		= TextureStyle::Cubemap;
+		psDesc.usage		= TextureUsage::RenderTarget_Depth;
+		psDesc.dimensions	= { shadowMapSize, shadowMapSize };
+		psDesc.arraySize	= MAX_LIGHTS;
+
+		pointShadowMapTexture		= factory.createTexture(psDesc, nullptr, 4);
+		pointShadowRenderTarget		= factory.createRenderTarget(nullptr, pointShadowMapTexture.get());
+		pointShadowCommandBuffer	= factory.createCommandBuffer();
+
+		auto pointShadowVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/GenCubeShadowMap-vs.hlsl");
+		auto pointShadowGS = factory.createShader({ ShaderStage::Geometry }, "res/Shaders/GenCubeShadowMap-gs.hlsl");
+		auto pointShadowPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/GenCubeShadowMap-ps.hlsl");
 		pointShadowPipelineObject = factory.createPipelineObject();
-		pointShadowPipelineObject->setVertexShader(*shadowVS);
-		pointShadowPipelineObject->setGeometryShader(*shadowGS);
-		pointShadowPipelineObject->setPixelShader(*shadowPS);
+		pointShadowPipelineObject->setVertexShader(*pointShadowVS);
+		pointShadowPipelineObject->setGeometryShader(*pointShadowGS);
+		pointShadowPipelineObject->setPixelShader(*pointShadowPS);
 
 		//Buffers
 		gfx::BufferDescriptor bufferDesc{};
