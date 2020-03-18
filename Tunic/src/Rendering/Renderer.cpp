@@ -39,17 +39,17 @@ namespace tnc::rnd {
 		tdesc.dimensions	= { shadowMapSize, shadowMapSize };
 		tdesc.arraySize		= MAX_LIGHTS;
 
-		shadowMapTexture	= factory.createTexture(tdesc, nullptr, 4);
-		shadowRenderTarget	= factory.createRenderTarget(nullptr, shadowMapTexture.get());
-		shadowCommandBuffer = factory.createCommandBuffer();
+		pointShadowMapTexture	= factory.createTexture(tdesc, nullptr, 4);
+		pointShadowRenderTarget	= factory.createRenderTarget(nullptr, pointShadowMapTexture.get());
+		pointShadowCommandBuffer = factory.createCommandBuffer();
 
 		auto shadowVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/GenShadowMap-vs.hlsl");
 		auto shadowGS = factory.createShader({ ShaderStage::Geometry }, "res/Shaders/GenShadowMap-gs.hlsl");
 		auto shadowPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/GenShadowMap-ps.hlsl");
-		shadowPipelineObject = factory.createPipelineObject();
-		shadowPipelineObject->setVertexShader(*shadowVS);
-		shadowPipelineObject->setGeometryShader(*shadowGS);
-		shadowPipelineObject->setPixelShader(*shadowPS);
+		pointShadowPipelineObject = factory.createPipelineObject();
+		pointShadowPipelineObject->setVertexShader(*shadowVS);
+		pointShadowPipelineObject->setGeometryShader(*shadowGS);
+		pointShadowPipelineObject->setPixelShader(*shadowPS);
 
 		//Buffers
 		gfx::BufferDescriptor bufferDesc{};
@@ -112,13 +112,13 @@ namespace tnc::rnd {
 		//Draw all meshes in the scene
 		meshCommandBuffer->setDepthEnabled(true);
 		meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
-		meshCommandBuffer->bindTexture(shadowMapTexture.get(), TBP_Shadow);
+		meshCommandBuffer->bindTexture(pointShadowMapTexture.get(), TBP_Shadow);
 
 		meshCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
 		meshCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_PointLightData);
 		//TODO: Remove duplocated updateBufferData
-		shadowCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
-		shadowCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_PointLightData);
+		pointShadowCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
+		pointShadowCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_PointLightData);
 
 		auto numLights = LightCount{ scene.numDirectionalLights, scene.numPointLights };
 		meshCommandBuffer->updateBufferData(*lightNumBuffer, &numLights);
@@ -147,30 +147,30 @@ namespace tnc::rnd {
 		meshCommandBuffer->bindTexture(nullptr, TBP_Shadow);
 
 		//Generate the shadow map for each mesh in the scene
-		shadowCommandBuffer->beginEncoding(shadowRenderTarget);
-		shadowCommandBuffer->clearTarget();
-		shadowCommandBuffer->setDepthEnabled(true);
-		shadowCommandBuffer->bindPipelineObject(*shadowPipelineObject);
-		shadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
+		pointShadowCommandBuffer->beginEncoding(pointShadowRenderTarget);
+		pointShadowCommandBuffer->clearTarget();
+		pointShadowCommandBuffer->setDepthEnabled(true);
+		pointShadowCommandBuffer->bindPipelineObject(*pointShadowPipelineObject);
+		pointShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
 		for(int32_t i = 0; i < scene.numPointLights; ++i) {
-			shadowCommandBuffer->updateBufferData(*shadowInfoBuffer, &scene.shadowTransformArray[i]);
-			shadowCommandBuffer->bindShaderResourceBuffer(*shadowInfoBuffer, ShaderStage::Geometry, BBP_ShadowData);
+			pointShadowCommandBuffer->updateBufferData(*shadowInfoBuffer, &scene.shadowTransformArray[i]);
+			pointShadowCommandBuffer->bindShaderResourceBuffer(*shadowInfoBuffer, ShaderStage::Geometry, BBP_ShadowData);
 
 			auto lightIndex = NumberAlignment{ i * 6 };
-			shadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
-			shadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
-			shadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Pixel, BBP_CurrentFaceIndex);
+			pointShadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
+			pointShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
+			pointShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Pixel, BBP_CurrentFaceIndex);
 
 			for(auto& mesh : scene.meshes) {
-				mesh->draw(*shadowCommandBuffer, shadowPipelineObject->getVertexLayout());
+				mesh->draw(*pointShadowCommandBuffer, pointShadowPipelineObject->getVertexLayout());
 
-				shadowCommandBuffer->drawIndexed(mesh->getIndexCount());
+				pointShadowCommandBuffer->drawIndexed(mesh->getIndexCount());
 			}
 		}
 
 		//End encoding in order items need to be generated
-		shadowCommandBuffer->endEncoding();
+		pointShadowCommandBuffer->endEncoding();
 		meshCommandBuffer->endEncoding();
 	}
 }
