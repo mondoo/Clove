@@ -71,7 +71,6 @@ namespace tnc::rnd {
 		std::shared_ptr<clv::gfx::Buffer> viewBuffer;
 		std::shared_ptr<clv::gfx::Buffer> viewPosition;
 
-		//TODO: These need to be renamed
 		std::shared_ptr<clv::gfx::Buffer> lightArrayBuffer;
 		std::shared_ptr<clv::gfx::Buffer> lightDepthBuffer;
 		std::shared_ptr<clv::gfx::Buffer> lightNumBuffer;
