@@ -58,14 +58,18 @@ namespace tnc::rnd {
 
 		//VARIABLES
 	private:
+		std::shared_ptr<clv::gfx::RenderTarget> directionalShadowRenderTarget;
 		std::shared_ptr<clv::gfx::RenderTarget> pointShadowRenderTarget;
 
+		std::shared_ptr<clv::gfx::PipelineObject> directionalShadowPipelineObject;
 		std::shared_ptr<clv::gfx::PipelineObject> pointShadowPipelineObject;
 		std::shared_ptr<clv::gfx::PipelineObject> meshPipelineObject;
 
+		std::shared_ptr<clv::gfx::CommandBuffer> directionalShadowCommandBuffer;
 		std::shared_ptr<clv::gfx::CommandBuffer> pointShadowCommandBuffer;
 		std::shared_ptr<clv::gfx::CommandBuffer> meshCommandBuffer;
 
+		std::shared_ptr<clv::gfx::Texture> directionalShadowMapTexture;
 		std::shared_ptr<clv::gfx::Texture> pointShadowMapTexture;
 
 		std::shared_ptr<clv::gfx::Buffer> viewBuffer;
