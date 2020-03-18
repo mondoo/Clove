@@ -93,9 +93,9 @@ set(
 		${TNC_RESOURCE}/Shaders/Default3D-vs.hlsl
 		${TNC_RESOURCE}/Shaders/Font-ps.hlsl
 		${TNC_RESOURCE}/Shaders/Font-vs.hlsl
-		${TNC_RESOURCE}/Shaders/GenShadowMap-gs.hlsl
-		${TNC_RESOURCE}/Shaders/GenShadowMap-ps.hlsl
-		${TNC_RESOURCE}/Shaders/GenShadowMap-vs.hlsl
+		${TNC_RESOURCE}/Shaders/GenCubeShadowMap-gs.hlsl
+		${TNC_RESOURCE}/Shaders/GenCubeShadowMap-ps.hlsl
+		${TNC_RESOURCE}/Shaders/GenCubeShadowMap-vs.hlsl
 		
 )
 
