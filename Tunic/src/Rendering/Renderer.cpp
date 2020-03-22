@@ -130,7 +130,7 @@ namespace tnc::rnd {
 		//Draw all meshes in the scene
 		meshCommandBuffer->setDepthEnabled(true);
 		meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
-		meshCommandBuffer->bindTexture(pointShadowMapTexture.get(), TBP_Shadow);
+		meshCommandBuffer->bindTexture(pointShadowMapTexture.get(), TBP_PointShadow);
 
 		meshCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
 		meshCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_PointLightData);
@@ -162,7 +162,7 @@ namespace tnc::rnd {
 			}
 		}
 
-		meshCommandBuffer->bindTexture(nullptr, TBP_Shadow);
+		meshCommandBuffer->bindTexture(nullptr, TBP_PointShadow);
 
 		//Generate the shadow map for each mesh in the scene
 		pointShadowCommandBuffer->beginEncoding(pointShadowRenderTarget);
