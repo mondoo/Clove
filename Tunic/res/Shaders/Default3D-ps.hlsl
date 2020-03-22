@@ -6,8 +6,11 @@ SamplerState albedoSampler : register(s1);
 Texture2D specularTexture : register(t2);
 SamplerState specularSampler : register(s2);
 
-TextureCubeArray shadowDepthMap : register(t4);
-SamplerState shadowDepthSampler : register(s4); //TODO: We should really reuse the samplers for these
+Texture2DArray directionaShadowDepthMap : register(t3);
+SamplerState directionalShadowDepthSampler : register(s3);
+
+TextureCubeArray pointShadowDepthMap : register(t4);
+SamplerState pointShadowDepthSampler : register(s4);
 
 struct DirectionalLightData{
 	float3 direction;
@@ -148,7 +151,7 @@ float calculatePointLightShadow(float3 fragPos, int lightIndex){
 
 	for(int i = 0; i < samples; ++i){
 		const float3 sampleLocation = fragToLight + shadowSampleOffsetDirections[i] * diskRadius;
-		float closestDepth = shadowDepthMap.Sample(shadowDepthSampler, float4(sampleLocation, lightIndex)).r;
+		float closestDepth = pointShadowDepthMap.Sample(pointShadowDepthSampler, float4(sampleLocation, lightIndex)).r;
 		closestDepth *= farPlane;
 		if((currentDepth - bias) > closestDepth){
 			shadow += 1.0;
