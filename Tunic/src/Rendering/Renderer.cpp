@@ -91,6 +91,9 @@ namespace tnc::rnd {
 		bufferDesc.bufferSize = sizeof(DirectionalShadowTransform);
 		directionalShadowTransformBuffer = factory.createBuffer(bufferDesc, nullptr);
 
+		bufferDesc.bufferSize = sizeof(DirectionalShadowTransformArray);
+		directionalShadowTransformArrayBuffer = factory.createBuffer(bufferDesc, nullptr);
+
 		bufferDesc.bufferSize = sizeof(PointShadowTransform);
 		pointShadowTransformBuffer = factory.createBuffer(bufferDesc, nullptr);
 
@@ -146,7 +149,11 @@ namespace tnc::rnd {
 
 		auto numLights = LightCount{ scene.numDirectionalLights, scene.numPointLights };
 		meshCommandBuffer->updateBufferData(*lightNumBuffer, &numLights);
+		meshCommandBuffer->bindShaderResourceBuffer(*lightNumBuffer, ShaderStage::Vertex, BBP_CurrentLights);
 		meshCommandBuffer->bindShaderResourceBuffer(*lightNumBuffer, ShaderStage::Pixel, BBP_CurrentLights);
+
+		meshCommandBuffer->updateBufferData(*directionalShadowTransformArrayBuffer, &scene.directionalShadowTransformArray);
+		meshCommandBuffer->bindShaderResourceBuffer(*directionalShadowTransformArrayBuffer, ShaderStage::Vertex, BBP_AllDirectionalTransform);
 
 		for(auto& camera : scene.cameras) {
 			meshCommandBuffer->beginEncoding(camera.target);

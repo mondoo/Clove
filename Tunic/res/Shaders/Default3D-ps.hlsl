@@ -58,7 +58,7 @@ float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, 
 
 float calculatePointLightShadow(float3 fragPos, int lightIndex);
 
-float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNormal : VertNormal) : SV_Target{
+float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNormal : VertNormal, float4 vertPosLightSpace[MAX_LIGHTS] : VPLS) : SV_Target{
     float3 normal       = normalize(vertNormal);
     float3 viewDir      = normalize(viewPos - vertPos);
     

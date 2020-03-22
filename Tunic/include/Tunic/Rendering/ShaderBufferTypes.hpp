@@ -61,6 +61,12 @@ namespace tnc::rnd{
 	struct DirectionalShadowTransform {
 		clv::mth::mat4f shadowTransform;
 	};
+	struct DirectionalShadowTransformArray {
+		std::array<clv::mth::mat4f, MAX_LIGHTS> transforms;
+		clv::mth::mat4f& operator[](const size_t index){
+			return transforms[index];
+		}
+	};
 	struct PointShadowTransform {
 		std::array<clv::mth::mat4f, 6> shadowTransforms{};
 	};

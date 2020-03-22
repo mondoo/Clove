@@ -46,7 +46,8 @@ namespace clv::gfx{
 		BBP_CurrentLights 				= 9u,
 		BBP_CurrentFaceIndex 			= 10u,
 		BBP_DirectionalShadowTransform	= 11u,
-		BBP_Colour 						= 12u
+		BBP_Colour 						= 12u,
+		BBP_AllDirectionalTransform		= 13u,
 	};
 
 	enum TextureBindingPoint{

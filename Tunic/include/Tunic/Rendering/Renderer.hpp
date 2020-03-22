@@ -47,7 +47,7 @@ namespace tnc::rnd {
 			LightDataArray lightDataArray;
 
 			std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> pointShadowTransformArray{};
-			std::array<clv::mth::mat4f, MAX_LIGHTS> directionalShadowTransformArray{};
+			DirectionalShadowTransformArray directionalShadowTransformArray{};
 
 			//FUNCTIONS
 		public:
@@ -80,6 +80,7 @@ namespace tnc::rnd {
 		std::shared_ptr<clv::gfx::Buffer> lightNumBuffer;
 
 		std::shared_ptr<clv::gfx::Buffer> directionalShadowTransformBuffer;
+		std::shared_ptr<clv::gfx::Buffer> directionalShadowTransformArrayBuffer;
 		std::shared_ptr<clv::gfx::Buffer> pointShadowTransformBuffer;
 		std::shared_ptr<clv::gfx::Buffer> lightIndexBuffer;
 		std::shared_ptr<clv::gfx::Buffer> shadowLightPosBuffer;
