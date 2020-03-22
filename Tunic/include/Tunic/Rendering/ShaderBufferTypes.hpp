@@ -57,6 +57,11 @@ namespace tnc::rnd{
 		int32_t numPoint;
 	};
 
+	//Lighting data needed for directional shadows
+	struct DirectionalShadowTransform {
+		clv::mth::mat4f shadowTransform;
+	};
+
 	//Lighting data needed for point shadows
 	struct PointShadowTransform {
 		std::array<clv::mth::mat4f, 6> shadowTransforms{};

@@ -79,6 +79,7 @@ namespace tnc::rnd {
 		std::shared_ptr<clv::gfx::Buffer> lightDepthBuffer;
 		std::shared_ptr<clv::gfx::Buffer> lightNumBuffer;
 
+		std::shared_ptr<clv::gfx::Buffer> directionalShadowTransformBuffer;
 		std::shared_ptr<clv::gfx::Buffer> pointShadowTransformBuffer;
 		std::shared_ptr<clv::gfx::Buffer> lightIndexBuffer;
 		std::shared_ptr<clv::gfx::Buffer> shadowLightPosBuffer;

@@ -3,6 +3,10 @@ cbuffer ModelBuffer : register(b4){
 	matrix normalMatrix;
 }
 
+cbuffer ShadowTransform : register(b11){
+	matrix lightSpaceMatrix;
+}
+
 float4 main(float3 pos : POSITION3D) : SV_Position{
-	return mul(model, float4(pos, 1.0));
+	return mul(lightSpaceMatrix, mul(model, float4(pos, 1.0)));
 }

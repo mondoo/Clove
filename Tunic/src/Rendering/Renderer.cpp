@@ -176,6 +176,9 @@ namespace tnc::rnd {
 		directionalShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
 		for(int32_t i = 0; i < scene.numDirectionalLights; ++i) {
+			directionalShadowCommandBuffer->updateBufferData(*directionalShadowTransformBuffer, &scene.directionalShadowTransformArray[i]);
+			directionalShadowCommandBuffer->bindShaderResourceBuffer(*directionalShadowTransformBuffer, ShaderStage::Vertex, BBP_DirectionalShadowTransform);
+
 			auto lightIndex = NumberAlignment{ i };
 			directionalShadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
 			directionalShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
@@ -196,7 +199,7 @@ namespace tnc::rnd {
 
 		for(int32_t i = 0; i < scene.numPointLights; ++i) {
 			pointShadowCommandBuffer->updateBufferData(*pointShadowTransformBuffer, &scene.pointShadowTransformArray[i]);
-			pointShadowCommandBuffer->bindShaderResourceBuffer(*pointShadowTransformBuffer, ShaderStage::Geometry, BBP_ShadowData);
+			pointShadowCommandBuffer->bindShaderResourceBuffer(*pointShadowTransformBuffer, ShaderStage::Geometry, BBP_PointShadowTransform);
 
 			auto lightIndex = NumberAlignment{ i * 6 };
 			pointShadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
