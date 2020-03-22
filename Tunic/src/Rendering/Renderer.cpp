@@ -44,9 +44,11 @@ namespace tnc::rnd {
 		directionalShadowCommandBuffer	= factory.createCommandBuffer();
 
 		auto dirShadowVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/GenShadowMap-vs.hlsl");
+		auto dirShadowGS = factory.createShader({ ShaderStage::Geometry }, "res/Shaders/GenShadowMap-gs.hlsl");
 		auto dirShadowPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/GenShadowMap-ps.hlsl");
 		directionalShadowPipelineObject = factory.createPipelineObject();
 		directionalShadowPipelineObject->setVertexShader(*dirShadowVS);
+		directionalShadowPipelineObject->setGeometryShader(*dirShadowGS);
 		directionalShadowPipelineObject->setPixelShader(*dirShadowPS);
 
 		//Point shadow map

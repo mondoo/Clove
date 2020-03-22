@@ -96,6 +96,7 @@ set(
 		${TNC_RESOURCE}/Shaders/GenCubeShadowMap-gs.hlsl
 		${TNC_RESOURCE}/Shaders/GenCubeShadowMap-ps.hlsl
 		${TNC_RESOURCE}/Shaders/GenCubeShadowMap-vs.hlsl
+		${TNC_RESOURCE}/Shaders/GenShadowMap-gs.hlsl
 		${TNC_RESOURCE}/Shaders/GenShadowMap-ps.hlsl
 		${TNC_RESOURCE}/Shaders/GenShadowMap-vs.hlsl
 		
