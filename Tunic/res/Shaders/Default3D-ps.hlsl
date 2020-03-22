@@ -6,8 +6,8 @@ SamplerState albedoSampler : register(s1);
 Texture2D specularTexture : register(t2);
 SamplerState specularSampler : register(s2);
 
-TextureCubeArray shadowDepthMap : register(t3);
-SamplerState shadowDepthSampler : register(s3); //TODO: We should really reuse the samplers for these
+TextureCubeArray shadowDepthMap : register(t4);
+SamplerState shadowDepthSampler : register(s4); //TODO: We should really reuse the samplers for these
 
 struct DirectionalLightData{
 	float3 direction;

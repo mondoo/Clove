@@ -49,9 +49,10 @@ namespace clv::gfx{
 	};
 
 	enum TextureBindingPoint{
-		TBP_Albedo		= 1u,
-		TBP_Specular	= 2u,
-		TBP_PointShadow	= 3u,
-		TBP_None		= 4u
+		TBP_Albedo				= 1u,
+		TBP_Specular			= 2u,
+		TBP_DirectionalShadow	= 3u,
+		TBP_PointShadow			= 4u,
+		TBP_None				= 5u
 	};
 }
