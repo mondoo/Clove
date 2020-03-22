@@ -88,6 +88,9 @@ namespace tnc::rnd {
 		bufferDesc.bufferSize = sizeof(LightCount);
 		lightNumBuffer = factory.createBuffer(bufferDesc, nullptr);
 
+		bufferDesc.bufferSize = sizeof(DirectionalShadowTransform);
+		directionalShadowTransformBuffer = factory.createBuffer(bufferDesc, nullptr);
+
 		bufferDesc.bufferSize = sizeof(PointShadowTransform);
 		pointShadowTransformBuffer = factory.createBuffer(bufferDesc, nullptr);
 
