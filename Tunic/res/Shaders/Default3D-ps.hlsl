@@ -15,6 +15,8 @@ struct DirectionalLightData{
 	float3 ambient;
 	float3 diffuse;
 	float3 specular;
+	
+	float farplane;
 };
 struct PointLightData{
 	float3 position;
