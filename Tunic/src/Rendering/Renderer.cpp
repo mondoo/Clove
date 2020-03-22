@@ -87,7 +87,7 @@ namespace tnc::rnd {
 		lightNumBuffer = factory.createBuffer(bufferDesc, nullptr);
 
 		bufferDesc.bufferSize = sizeof(PointShadowTransform);
-		shadowInfoBuffer = factory.createBuffer(bufferDesc, nullptr);
+		pointShadowTransformBuffer = factory.createBuffer(bufferDesc, nullptr);
 
 		bufferDesc.bufferSize = sizeof(NumberAlignment);
 		lightIndexBuffer = factory.createBuffer(bufferDesc, nullptr);
@@ -172,8 +172,8 @@ namespace tnc::rnd {
 		pointShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
 		for(int32_t i = 0; i < scene.numPointLights; ++i) {
-			pointShadowCommandBuffer->updateBufferData(*shadowInfoBuffer, &scene.pointShadowTransformArray[i]);
-			pointShadowCommandBuffer->bindShaderResourceBuffer(*shadowInfoBuffer, ShaderStage::Geometry, BBP_ShadowData);
+			pointShadowCommandBuffer->updateBufferData(*pointShadowTransformBuffer, &scene.pointShadowTransformArray[i]);
+			pointShadowCommandBuffer->bindShaderResourceBuffer(*pointShadowTransformBuffer, ShaderStage::Geometry, BBP_ShadowData);
 
 			auto lightIndex = NumberAlignment{ i * 6 };
 			pointShadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
