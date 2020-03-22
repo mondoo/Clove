@@ -33,9 +33,7 @@ namespace tnc::rnd{
 
 		alignas(16) clv::mth::vec3f ambient{};
 		alignas(16) clv::mth::vec3f diffuse{};
-		clv::mth::vec3f specular{};
-
-		float farPlane = 0;
+		alignas(16) clv::mth::vec3f specular{};
 	};
 	struct PointLightData {
 		clv::mth::vec3f position{};
