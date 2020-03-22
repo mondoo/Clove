@@ -132,6 +132,7 @@ namespace tnc::rnd {
 		//Draw all meshes in the scene
 		meshCommandBuffer->setDepthEnabled(true);
 		meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
+		meshCommandBuffer->bindTexture(directionalShadowMapTexture.get(), TBP_DirectionalShadow);
 		meshCommandBuffer->bindTexture(pointShadowMapTexture.get(), TBP_PointShadow);
 
 		meshCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
@@ -164,9 +165,29 @@ namespace tnc::rnd {
 			}
 		}
 
+		meshCommandBuffer->bindTexture(nullptr, TBP_DirectionalShadow);
 		meshCommandBuffer->bindTexture(nullptr, TBP_PointShadow);
 
-		//Generate the shadow map for each mesh in the scene
+		//Generate the directional shadow map for each mesh in the scene
+		directionalShadowCommandBuffer->beginEncoding(directionalShadowRenderTarget);
+		directionalShadowCommandBuffer->clearTarget();
+		directionalShadowCommandBuffer->setDepthEnabled(true);
+		directionalShadowCommandBuffer->bindPipelineObject(*directionalShadowPipelineObject);
+		directionalShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
+
+		for(int32_t i = 0; i < scene.numDirectionalLights; ++i) {
+			auto lightIndex = NumberAlignment{ i };
+			directionalShadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
+			directionalShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
+
+			for(auto& mesh : scene.meshes) {
+				mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
+
+				directionalShadowCommandBuffer->drawIndexed(mesh->getIndexCount());
+			}
+		}
+
+		//Generate the point shadow map for each mesh in the scene
 		pointShadowCommandBuffer->beginEncoding(pointShadowRenderTarget);
 		pointShadowCommandBuffer->clearTarget();
 		pointShadowCommandBuffer->setDepthEnabled(true);
@@ -190,6 +211,7 @@ namespace tnc::rnd {
 		}
 
 		//End encoding in order items need to be generated
+		directionalShadowCommandBuffer->endEncoding();
 		pointShadowCommandBuffer->endEncoding();
 		meshCommandBuffer->endEncoding();
 	}
