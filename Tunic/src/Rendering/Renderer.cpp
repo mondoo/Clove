@@ -195,8 +195,6 @@ namespace tnc::rnd {
 
 			for(auto& mesh : scene.meshes) {
 				mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
-
-				directionalShadowCommandBuffer->drawIndexed(mesh->getIndexCount());
 			}
 		}
 
@@ -218,8 +216,6 @@ namespace tnc::rnd {
 
 			for(auto& mesh : scene.meshes) {
 				mesh->draw(*pointShadowCommandBuffer, pointShadowPipelineObject->getVertexLayout());
-
-				pointShadowCommandBuffer->drawIndexed(mesh->getIndexCount());
 			}
 		}
 
