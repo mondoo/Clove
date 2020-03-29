@@ -30,5 +30,6 @@ namespace tnc::ecs::_3D {
 		virtual ~DirectionalLightComponent();
 
 		void setDirection(const clv::mth::vec3f& direction);
+		const clv::mth::vec3f& getDirection() const;
 	};
 }
