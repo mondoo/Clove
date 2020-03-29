@@ -97,7 +97,7 @@ float3 calculateDirectionalLight(DirectionalLightData light, float3 normal, floa
 	for(int i = 0; i < numDirectionalLight; ++i){
 		shadow += 1.0f - calculateDirectionalLightShadow(i, vertPosLightSpace[i]);
 	}
-	shadow /= numPointLight;
+	shadow /= numDirectionalLight;
 	
 	return (ambient + (shadow * (diffuse + specular)));
 }
