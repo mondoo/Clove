@@ -5,6 +5,7 @@
 #include "Clove/Graphics/Core/Resources/Buffer.hpp"
 #include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/CommandBuffer.hpp"
+#include "..\..\..\include\Tunic\Rendering\Renderables\Mesh.hpp"
 
 using namespace clv;
 using namespace clv::gfx;
@@ -100,7 +101,11 @@ namespace tnc::rnd{
 
 	Mesh::~Mesh() = default;
 
-	MaterialInstance& Mesh::getMaterialInstance(){
+	void Mesh::setMaterialInstance(MaterialInstance materialInstance) {
+		this->materialInstance = materialInstance;
+	}
+
+	MaterialInstance& Mesh::getMaterialInstance() {
 		return materialInstance;
 	}
 
