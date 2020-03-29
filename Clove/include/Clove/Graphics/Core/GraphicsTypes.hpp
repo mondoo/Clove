@@ -36,7 +36,7 @@ namespace clv::gfx{
 
 	enum BufferBindingPoint{
 		BBP_CameraMatrices 				= 1u,
-		BBP_PointLightData 				= 2u,
+		BBP_LightData 					= 2u,
 		BBP_ViewData 					= 3u,
 		BBP_ModelData 					= 4u,
 		BBP_MaterialData 				= 5u,

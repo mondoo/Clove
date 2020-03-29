@@ -142,10 +142,10 @@ namespace tnc::rnd {
 		meshCommandBuffer->bindTexture(pointShadowMapTexture.get(), TBP_PointShadow);
 
 		meshCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
-		meshCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_PointLightData);
+		meshCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_LightData);
 		//TODO: Remove duplocated updateBufferData
 		pointShadowCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
-		pointShadowCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_PointLightData);
+		pointShadowCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_LightData);
 
 		auto numLights = LightCount{ scene.numDirectionalLights, scene.numPointLights };
 		meshCommandBuffer->updateBufferData(*lightNumBuffer, &numLights);
