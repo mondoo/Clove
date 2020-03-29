@@ -86,7 +86,7 @@ namespace tnc::ecs::_3D {
 
 		//Submit directional lights
 		for(auto [light] : world.getComponentSets<DirectionalLightComponent>()) {
-			light->lightData.shadowTransform = light->shadowProj * mth::lookAt(-light->lightData.data.direction, mth::vec3f{ 0.0f, 0.0f, 0.0f }, mth::vec3f{ 0.0f, 1.0f, 0.0f });
+			light->lightData.shadowTransform = light->shadowProj * mth::lookAt(-mth::normalise(light->lightData.data.direction) * light->farDist, mth::vec3f{ 0.0f, 0.0f, 0.0f }, mth::vec3f{ 0.0f, 1.0f, 0.0f });
 			
 			renderer->submitLight(light->lightData);
 		}
