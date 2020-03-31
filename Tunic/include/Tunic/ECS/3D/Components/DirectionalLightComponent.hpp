@@ -14,7 +14,7 @@ namespace tnc::ecs::_3D {
 
 		static constexpr float size = 10.0f;
 		static constexpr float nearDist = 0.5f;
-		static constexpr float farDist = 100.0f;
+		static constexpr float farDist = 1000.0f;
 		clv::mth::mat4f shadowProj = clv::mth::createOrthographicMatrix(-size, size, -size, size, nearDist, farDist);
 
 		//FUNCTIONS
