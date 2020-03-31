@@ -125,6 +125,9 @@ target_compile_definitions(
 		CLV_ENGINE=0
 	PRIVATE
 		CLV_ENGINE=1
+	#Libraries
+	PUBLIC
+		GLM_FORCE_DEPTH_ZERO_TO_ONE
 )
 
 #Examples
