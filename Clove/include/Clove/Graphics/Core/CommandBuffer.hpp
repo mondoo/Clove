@@ -22,7 +22,7 @@ namespace clv::gfx{
 
 		virtual void clearTarget() = 0;
 
-		virtual void updateBufferData(const Buffer& buffer, const void* data) = 0;
+		virtual void updateBufferData(Buffer& buffer, const void* data) = 0;
 
 		virtual void bindIndexBuffer(const Buffer& buffer) = 0;
 		virtual void bindVertexBuffer(const Buffer& buffer, const uint32_t stride) = 0;

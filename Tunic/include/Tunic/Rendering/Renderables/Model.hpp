@@ -24,5 +24,7 @@ namespace tnc::rnd {
 		~Model();
 
 		const std::vector<std::shared_ptr<Mesh>>& getMeshes() const;
+
+		std::shared_ptr<Mesh>& operator[](size_t index);
 	};
 }

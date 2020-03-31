@@ -35,13 +35,13 @@ namespace clv::gfx::ogl{
 		});
 	}
 
-	void GLCommandBuffer::updateBufferData(const Buffer& buffer, const void* data){
+	void GLCommandBuffer::updateBufferData(Buffer& buffer, const void* data){
 		const size_t bufferSize = buffer.getDescriptor().bufferSize;
 		void* datacopy = new char[bufferSize];
 		memcpy(datacopy, data, buffer.getDescriptor().bufferSize);
 
 		commands.emplace_back([&buffer, data = datacopy](){
-			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
+			GLBuffer& glbuffer = static_cast<GLBuffer&>(buffer);
 
 			glBindBuffer(GL_UNIFORM_BUFFER, glbuffer.getBufferID());
 			glBufferSubData(GL_UNIFORM_BUFFER, 0, glbuffer.getDescriptor().bufferSize, data);

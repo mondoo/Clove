@@ -4,14 +4,18 @@ namespace clv::utl{
 	struct MultiCastDelegateHandle{
 		//VARIABLES
 	public:
-		const std::optional<int32_t> ID = {};
+		using IdType = int32_t;
+
+	private:
+		const std::optional<IdType> id = {};
+		static constexpr IdType INVALID_ID = -1;
 
 		//FUNCTIONS
 	public:
 		MultiCastDelegateHandle() = default;
-		MultiCastDelegateHandle(int32_t ID) : ID(ID){}
+		MultiCastDelegateHandle(IdType id) : id(id) {}
 
-		operator int() const noexcept{ return ID.value_or(-1); }
+		operator IdType() const noexcept { return id.value_or(INVALID_ID); }
 	};
 }
 
@@ -19,7 +23,7 @@ namespace std{
 	template<>
 	struct hash<clv::utl::MultiCastDelegateHandle>{
 		std::size_t operator()(const clv::utl::MultiCastDelegateHandle& handle) const noexcept{
-			return hash<int>()(handle);
+			return hash<clv::utl::MultiCastDelegateHandle::IdType>()(handle);
 		}
 	};
 }
@@ -63,7 +67,7 @@ namespace clv::utl{
 	private:
 		std::unordered_map<MultiCastDelegateHandle, std::function<FunctionPrototype>> functionPointers;
 
-		int32_t nextID = 0;
+		inline static MultiCastDelegateHandle::IdType nextId = 0;
 
 		//FUNCTIONS
 	public:
@@ -78,9 +82,9 @@ namespace clv::utl{
 		~MultiCastDelegate();
 
 		template<typename BindFunctionPrototype, typename ObjectType>
-		MultiCastDelegateHandle bind(BindFunctionPrototype&& function, ObjectType* object);
+		[[nodiscard]] MultiCastDelegateHandle bind(BindFunctionPrototype&& function, ObjectType* object);
 		template<typename BindFunctionPrototype>
-		MultiCastDelegateHandle bind(BindFunctionPrototype&& function);
+		[[nodiscard]] MultiCastDelegateHandle bind(BindFunctionPrototype&& function);
 
 		void unbind(const MultiCastDelegateHandle& handle);
 		void unbindAll();

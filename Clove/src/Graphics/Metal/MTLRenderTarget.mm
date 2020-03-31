@@ -17,6 +17,7 @@ namespace clv::gfx::mtl{
 
 	MTLRenderTarget::MTLRenderTarget(MTLRenderPassDescriptor* descriptor)
 		: descriptor(descriptor){
+		setClearColour({ 0.0f, 0.0f, 0.0f, 0.0f });
 	}
 	
 	MTLRenderTarget::MTLRenderTarget(MTLRenderTarget&& other) noexcept = default;
@@ -34,5 +35,9 @@ namespace clv::gfx::mtl{
 	
 	MTLRenderPassDescriptor* MTLRenderTarget::getRenderPassDescriptor() const{
 		return descriptor;
+	}
+	
+	void MTLRenderTarget::updateColourTexture(id<MTLTexture> mtlTexture){
+		descriptor.colorAttachments[0].texture = mtlTexture;
 	}
 }

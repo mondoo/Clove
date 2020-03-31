@@ -100,7 +100,11 @@ namespace tnc::rnd{
 
 	Mesh::~Mesh() = default;
 
-	MaterialInstance& Mesh::getMaterialInstance(){
+	void Mesh::setMaterialInstance(MaterialInstance materialInstance) {
+		this->materialInstance = materialInstance;
+	}
+
+	MaterialInstance& Mesh::getMaterialInstance() {
 		return materialInstance;
 	}
 
