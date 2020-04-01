@@ -142,7 +142,8 @@ float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace){
 	float closestDepth = directionaShadowDepthMap.Sample(directionalShadowDepthSampler, float3(projectionCoords.xy, lightIndex)).r;
 	float currentDepth = projectionCoords.z;
 
-	float shadow = currentDepth > closestDepth ? 1.0f : 0.0f;
+	const float bias = 0.005;
+	float shadow = currentDepth - bias > closestDepth ? 1.0f : 0.0f;
 	
 	return shadow;
 }
