@@ -29,9 +29,13 @@ float4x4 scale(float4x4 m, float3 v){
 void main(triangle float4 inTriangle[3] : SV_Position, inout TriangleStream<GSOutPut> outTriangles){
 	GSOutPut outPut;
 	for(int face = 0; face < 6; face++){
+	#ifdef GLSL
+		matrix faceMat = shadowMatrices[face]; 
+	#else
 		//We flip the Y axis here to account of the coord system DirectX uses for textures
 		//Tried fixing this on the cpu side but got undersirable effects. Needs investigation
 		matrix faceMat = scale(shadowMatrices[face], float3(1.0, -1.0, 1.0)); 
+	#endif
 		outPut.face = face + currentLightIndex;
 		for(int i = 0; i < 3; i++){
 			outPut.vertPos = inTriangle[i];

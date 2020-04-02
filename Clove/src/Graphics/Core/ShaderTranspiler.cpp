@@ -165,11 +165,6 @@ namespace clv::gfx::ShaderTranspiler{
 		shader.setHlslIoMapping(true);
 		shader.setAutoMapLocations(true);
 
-		//This makes sure that OpenGL generates the shadow map the correct way up
-		if (outputType == ShaderType::GLSL && stage == ShaderStage::Geometry){
-			shader.setInvertY(true);
-		}
-
 		shader.setEntryPoint("main");
 		shader.setEnvInput(glslang::EShSourceHlsl, eshstage, glslang::EShClientOpenGL, 450);
 		shader.setEnvClient(glslang::EShClientOpenGL, glslang::EShTargetOpenGL_450);
