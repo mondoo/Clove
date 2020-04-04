@@ -137,7 +137,12 @@ float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, 
 
 float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace){
 	float3 projectionCoords = vertPosLightSpace.xyz / vertPosLightSpace.w;
+#ifndef GLSL
+	projectionCoords.x = projectionCoords.x * 0.5f + 0.5f;
+	projectionCoords.y = 1.0f - (projectionCoords.y * 0.5f + 0.5f);
+#else
 	projectionCoords = projectionCoords * 0.5f + 0.5f;
+#endif
 	
 	float closestDepth = directionaShadowDepthMap.Sample(directionalShadowDepthSampler, float3(projectionCoords.xy, lightIndex)).r;
 	float currentDepth = projectionCoords.z;
