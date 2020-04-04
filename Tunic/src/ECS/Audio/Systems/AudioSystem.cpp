@@ -1,18 +1,22 @@
 #include "Tunic/ECS/Audio/Systems/AudioSystem.hpp"
 
-#include "Tunic/ECS/Core/World.hpp"
 #include "Tunic/ECS/Audio/Components/AudioComponent.hpp"
+#include "Tunic/ECS/Core/World.hpp"
 
 //TODO: Clove wrapper for audio
 #include <portaudio.h>
 
-#define PACall(x) { auto err = x; CLV_ASSERT(err == paNoError, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(err)); }
+#define PACall(x)                                                                        \
+	{                                                                                      \
+		auto err = x;                                                                        \
+		CLV_ASSERT(err == paNoError, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(err)); \
+	}
 
 using namespace clv;
 
-namespace tnc::ecs::aud{
-	static bool isStreamActive(PaStream* stream){
-		if (stream == nullptr){
+namespace tnc::ecs::aud {
+	static bool isStreamActive(PaStream* stream) {
+		if(stream == nullptr) {
 			return false;
 		}
 
@@ -21,7 +25,7 @@ namespace tnc::ecs::aud{
 		return error > 0;
 	}
 
-	AudioSystem::AudioSystem(){
+	AudioSystem::AudioSystem() {
 		CLV_LOG_TRACE("Portaudio intialised");
 		PACall(Pa_Initialize());
 	}
@@ -30,23 +34,20 @@ namespace tnc::ecs::aud{
 
 	AudioSystem& AudioSystem::operator=(AudioSystem&& other) noexcept = default;
 
-	AudioSystem::~AudioSystem(){
+	AudioSystem::~AudioSystem() {
 		CLV_LOG_TRACE("Portaudio shutdown");
 		PACall(Pa_Terminate());
 	}
 
-	void AudioSystem::update(World& world, utl::DeltaTime deltaTime){
+	void AudioSystem::update(World& world, utl::DeltaTime deltaTime) {
 		CLV_PROFILE_FUNCTION();
 
-		auto componentTuples = world.getComponentSets<AudioComponent>();
-
-		for(auto& tuple : componentTuples){
-			AudioComponent* component = std::get<AudioComponent*>(tuple);
-			if(component->requestedPlayback){
+		for(auto [component] : world.getComponentSets<AudioComponent>()) {
+			if(component->requestedPlayback) {
 				startSound(component, component->requestedPlayback.value());
 				component->requestedPlayback.reset();
-			} else if(component->requestedStopMode){
-				switch(component->requestedStopMode.value()){
+			} else if(component->requestedStopMode) {
+				switch(component->requestedStopMode.value()) {
 					case StopMode::pause:
 						pauseSound(component);
 						break;
@@ -64,23 +65,23 @@ namespace tnc::ecs::aud{
 		}
 	}
 
-	void AudioSystem::onComponentDestroyed(ComponentInterface* component){
-		if(component->getID() == AudioComponent::id()){
+	void AudioSystem::onComponentDestroyed(ComponentInterface* component) {
+		if(component->getID() == AudioComponent::id()) {
 			auto* audioComponent = static_cast<AudioComponent*>(component);
-			if(audioComponent->isPlaying()){
+			if(audioComponent->isPlaying()) {
 				stopSound(audioComponent);
 			}
 		}
 	}
 
-	void AudioSystem::startSound(AudioComponent* component, PlaybackMode playback){
-		if(component->currentPlayback.has_value() && component->currentPlayback != playback){
+	void AudioSystem::startSound(AudioComponent* component, PlaybackMode playback) {
+		if(component->currentPlayback.has_value() && component->currentPlayback != playback) {
 			stopSound(component);
-		} else if(isStreamActive(component->stream)){
+		} else if(isStreamActive(component->stream)) {
 			return;
 		}
-		
-		if(!component->stream){
+
+		if(!component->stream) {
 			component->playbackPosition = 0;
 
 			PaStreamParameters outputParameters;
@@ -90,7 +91,7 @@ namespace tnc::ecs::aud{
 			outputParameters.suggestedLatency = 0.2f;
 			outputParameters.hostApiSpecificStreamInfo = nullptr;
 
-			switch(playback){
+			switch(playback) {
 				case PlaybackMode::once:
 					PACall(Pa_OpenStream(&component->stream, 0, &outputParameters, component->sound.getSamplerate(), paFramesPerBufferUnspecified, paNoFlag, &AudioSystem::soundPlayback_Once, component));
 					break;
@@ -109,15 +110,15 @@ namespace tnc::ecs::aud{
 		component->playing = true;
 	}
 
-	void AudioSystem::pauseSound(AudioComponent* component){
-		if(isStreamActive(component->stream)){
+	void AudioSystem::pauseSound(AudioComponent* component) {
+		if(isStreamActive(component->stream)) {
 			PACall(Pa_StopStream(component->stream));
 			component->playing = false;
 		}
 	}
 
-	void AudioSystem::stopSound(AudioComponent* component){
-		if(isStreamActive(component->stream)){
+	void AudioSystem::stopSound(AudioComponent* component) {
+		if(isStreamActive(component->stream)) {
 			PACall(Pa_CloseStream(component->stream));
 			component->stream = nullptr;
 			component->playing = false;
@@ -125,22 +126,22 @@ namespace tnc::ecs::aud{
 		}
 	}
 
-	int AudioSystem::soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
+	int AudioSystem::soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData) {
 		AudioComponent* data = static_cast<AudioComponent*>(userData);
 		int32_t* out = static_cast<int32_t*>(outputBuffer);
 		int32_t* cursor = out;
 		int32_t currentFrameCount = frameCount;
 		int32_t frameCountToRead = 0;
 
-		while(currentFrameCount > 0){
+		while(currentFrameCount > 0) {
 			//Seek to the position
 			data->sound.seek(data->playbackPosition, SEEK_SET);
 
 			//Get the amount of frames to read
-			if(currentFrameCount > (data->sound.getFrames() - data->playbackPosition)){
+			if(currentFrameCount > (data->sound.getFrames() - data->playbackPosition)) {
 				frameCountToRead = data->sound.getFrames() - data->playbackPosition;
 				data->playbackPosition = 0;
-			} else{
+			} else {
 				frameCountToRead = currentFrameCount;
 				data->playbackPosition += frameCountToRead;
 			}
@@ -154,22 +155,22 @@ namespace tnc::ecs::aud{
 
 		return paContinue;
 	}
-	
-	int AudioSystem::soundPlayback_Once(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData){
+
+	int AudioSystem::soundPlayback_Once(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData) {
 		AudioComponent* data = static_cast<AudioComponent*>(userData);
 		int32_t* out = static_cast<int32_t*>(outputBuffer);
 		int32_t* cursor = out;
 		int32_t currentFrameCount = frameCount;
 		int32_t frameCountToRead = 0;
 
-		while(currentFrameCount > 0){
+		while(currentFrameCount > 0) {
 			//Seek to the position
 			data->sound.seek(data->playbackPosition, SEEK_SET);
 
 			//Get the amount of frames to read
-			if(currentFrameCount > (data->sound.getFrames() - data->playbackPosition)){
+			if(currentFrameCount > (data->sound.getFrames() - data->playbackPosition)) {
 				return paComplete;
-			} else{
+			} else {
 				frameCountToRead = currentFrameCount;
 				data->playbackPosition += frameCountToRead;
 			}

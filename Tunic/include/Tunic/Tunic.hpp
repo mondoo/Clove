@@ -4,7 +4,7 @@
 #include "Tunic/ECS/Core/Entity.hpp"
 #include "Tunic/ECS/2D/Systems/RenderSystem.hpp"
 #include "Tunic/ECS/3D/Components/CameraComponent.hpp"
-#include "Tunic/ECS/3D/Components/LightComponent.hpp"
+#include "Tunic/ECS/3D/Components/PointLightComponent.hpp"
 #include "Tunic/ECS/3D/Components/ModelComponent.hpp"
 #include "Tunic/ECS/3D/Components/RigidBodyComponent.hpp"
 #include "Tunic/ECS/3D/Components/TransformComponent.hpp"

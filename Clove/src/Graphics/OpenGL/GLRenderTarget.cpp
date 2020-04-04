@@ -30,15 +30,16 @@ namespace clv::gfx::ogl{
 			GLTexture* gldepthStencilTexture = static_cast<GLTexture*>(depthStencilTexture);
 			const TextureUsage usage = gldepthStencilTexture->getDescriptor().usage;
 			const TextureStyle style = gldepthStencilTexture->getDescriptor().style;
+			const uint8_t arraySize = gldepthStencilTexture->getDescriptor().arraySize; 
 			const GLuint textureRenderID = gldepthStencilTexture->getTextureID();
 
 			//NOTE: Asserting here but this will need to change when adding stencil buffers
 			CLV_ASSERT(usage == TextureUsage::RenderTarget_Depth, "Incorrect texture type for depth stencil texture");
 
-			if(style == TextureStyle::Default){
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureRenderID, 0);
-			} else if(style == TextureStyle::Cubemap){
+			if(style == TextureStyle::Cubemap || arraySize > 1) {
 				glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureRenderID, 0);
+			} else {
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureRenderID, 0);
 			}
 		}
 

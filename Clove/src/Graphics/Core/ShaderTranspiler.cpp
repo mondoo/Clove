@@ -140,8 +140,8 @@ namespace clv::gfx::ShaderTranspiler{
 		EShLanguage eshstage = getEShStage(stage);
 		glslang::TShader shader(eshstage);
 
-		if(outputType == ShaderType::GLSL && stage == ShaderStage::Vertex) {
-			const char* defines = "#define FLIP_TEXTURE_Y\n\n";
+		if(outputType == ShaderType::GLSL) {
+			const char* defines = "#define GLSL\n\n";
 			const char* shaderSource = source.data();
 			
 			char* combinedSource = (char*)malloc(strlen(defines) + strlen(shaderSource) + 1); //+1 for the null terminator
@@ -164,11 +164,6 @@ namespace clv::gfx::ShaderTranspiler{
 		shader.setAutoMapBindings(true);
 		shader.setHlslIoMapping(true);
 		shader.setAutoMapLocations(true);
-
-		//This makes sure that OpenGL generates the shadow map the correct way up
-		if (outputType == ShaderType::GLSL && stage == ShaderStage::Geometry){
-			shader.setInvertY(true);
-		}
 
 		shader.setEntryPoint("main");
 		shader.setEnvInput(glslang::EShSourceHlsl, eshstage, glslang::EShClientOpenGL, 450);

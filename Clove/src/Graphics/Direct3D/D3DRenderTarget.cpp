@@ -36,16 +36,16 @@ namespace clv::gfx::d3d{
 			textureSource->GetDesc(&textureDesc);
 
 			const TextureStyle textureStyle = d3dTexture->getDescriptor().style;
-			const D3D11_DSV_DIMENSION dimension = textureStyle == TextureStyle::Cubemap ? D3D11_DSV_DIMENSION_TEXTURE2DARRAY : D3D11_DSV_DIMENSION_TEXTURE2D;
 
 			D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 			dsvDesc.Format								= DXGI_FORMAT_D32_FLOAT; //NOTE: not supporting stencil at the moment
-			dsvDesc.ViewDimension						= dimension;
-			if(textureStyle == TextureStyle::Cubemap){
+			if(textureStyle == TextureStyle::Cubemap || textureDesc.ArraySize > 1) {
+				dsvDesc.ViewDimension					= D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
 				dsvDesc.Texture2DArray.ArraySize		= textureDesc.ArraySize;
 				dsvDesc.Texture2DArray.FirstArraySlice	= 0u;
 				dsvDesc.Texture2DArray.MipSlice			= 0u;
 			} else{
+				dsvDesc.ViewDimension					= D3D11_DSV_DIMENSION_TEXTURE2D;
 				dsvDesc.Texture2D.MipSlice				= 0u;
 			}
 
