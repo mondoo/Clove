@@ -41,6 +41,9 @@ namespace clv::gfx::d3d{
 		virtual void setClearColour(const mth::vec4f& colour) override;
 		const mth::vec4f& getClearColour() const;
 
+		void clearTextureViews();
+		void updateTextureViews(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView);
+
 		const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& getRenderTargetView() const;
 		const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& getDepthStencilView() const;
 	};

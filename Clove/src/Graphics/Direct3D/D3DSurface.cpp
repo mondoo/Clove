@@ -93,7 +93,7 @@ namespace clv::gfx::d3d{
 		depthStencil.Reset();
 		renderTargetView.Reset();
 		depthStencilView.Reset();
-		renderTarget.reset();
+		renderTarget->clearTextureViews();
 
 		DX11_INFO_PROVIDER;
 		DX11_THROW_INFO(swapChain->ResizeBuffers(bufferCount, size.x, size.y, DXGI_FORMAT_B8G8R8A8_UNORM, 0));
@@ -111,7 +111,7 @@ namespace clv::gfx::d3d{
 		DX11_THROW_INFO(d3dDevice->CreateTexture2D(&depthTexDesc, nullptr, &depthStencil));
 		DX11_THROW_INFO(d3dDevice->CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
 
-		renderTarget = std::make_shared<D3DRenderTarget>(renderTargetView, depthStencilView);
+		renderTarget->updateTextureViews(renderTargetView, depthStencilView);
 	}
 
 	void D3DSurface::present(){

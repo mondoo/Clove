@@ -95,6 +95,16 @@ namespace clv::gfx::d3d{
 		return clearColour;
 	}
 
+	void D3DRenderTarget::clearTextureViews() {
+		renderTargetView.Reset();
+		depthStencilView.Reset();
+	}
+
+	void D3DRenderTarget::updateTextureViews(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView) {
+		this->renderTargetView = std::move(renderTargetView);
+		this->depthStencilView = std::move(depthStencilView);
+	}
+
 	const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& D3DRenderTarget::getRenderTargetView() const{
 		return renderTargetView;
 	}
