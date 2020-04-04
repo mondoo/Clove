@@ -70,8 +70,8 @@ float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNor
 		lighting += calculateDirectionalLight(directionalLights[i], normal, viewDir, texCoord, vertPosLightSpace);	
 	}
 	//Point
-	for(int i = 0; i < numPointLight; ++i){
-		lighting += calculatePointLight(pointLights[i], normal, vertPos, viewDir, texCoord);
+	for(int j = 0; j < numPointLight; ++j){
+		lighting += calculatePointLight(pointLights[j], normal, vertPos, viewDir, texCoord);
 	}
 
     return float4(lighting, 1.0f);
