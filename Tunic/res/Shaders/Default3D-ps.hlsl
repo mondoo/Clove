@@ -53,8 +53,8 @@ cbuffer colourDataBuffer : register(b12){
 	float4 colour;
 }
 
-float3 calculateDirectionalLight(DirectionalLightData light, float3 normal, float3 viewDirection, float2 texCoord, float4 vertPosLightSpace[MAX_LIGHTS]);
-float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord);
+float3 calculateDirectionalLight(DirectionalLightData light, float3 normal, float3 viewDirection, float2 texCoord, float shadow);
+float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord, float shadow);
 
 float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace);
 float calculatePointLightShadow(float3 fragPos, int lightIndex);
@@ -63,21 +63,29 @@ float4 main(float2 texCoord : TexCoord, float3 vertPos : VertPos, float3 vertNor
     float3 normal       = normalize(vertNormal);
     float3 viewDir      = normalize(viewPos - vertPos);
     
-	float3 lighting = float3(0.0f, 0.0f, 0.0f);
-	
-	//Directional
-	for(int i = 0; i < numDirectionalLight; ++i){
-		lighting += calculateDirectionalLight(directionalLights[i], normal, viewDir, texCoord, vertPosLightSpace);	
+	//Shadows
+	float shadow = 0.0f;
+	for(int a = 0; a < numDirectionalLight; ++a){
+		shadow += 1.0f - calculateDirectionalLightShadow(a, vertPosLightSpace[a]);
 	}
-	//Point
-	for(int j = 0; j < numPointLight; ++j){
-		lighting += calculatePointLight(pointLights[j], normal, vertPos, viewDir, texCoord);
+	for(int b = 0; b < numPointLight; ++b){
+		shadow += 1.0f - calculatePointLightShadow(vertPos, b);
+	}
+	shadow /= (numDirectionalLight + numPointLight);
+	
+	//Lighting
+	float3 lighting = float3(0.0f, 0.0f, 0.0f);
+	for(int c = 0; c < numDirectionalLight; ++c){
+		lighting += calculateDirectionalLight(directionalLights[c], normal, viewDir, texCoord, shadow);	
+	}
+	for(int d = 0; d < numPointLight; ++d){
+		lighting += calculatePointLight(pointLights[d], normal, vertPos, viewDir, texCoord, shadow);
 	}
 
     return float4(lighting, 1.0f);
 }
 
-float3 calculateDirectionalLight(DirectionalLightData light, float3 normal, float3 viewDirection, float2 texCoord, float4 vertPosLightSpace[MAX_LIGHTS]){
+float3 calculateDirectionalLight(DirectionalLightData light, float3 normal, float3 viewDirection, float2 texCoord, float shadow){
 	float3 lightDir = normalize(-light.direction);
 	
 	//Ambient
@@ -92,17 +100,10 @@ float3 calculateDirectionalLight(DirectionalLightData light, float3 normal, floa
 	float spec = pow(max(dot(viewDirection, reflectDir), 0.0f), shininess);
 	float3 specular = light.specular * spec * (float3)specularTexture.Sample(specularSampler, texCoord);
 	
-	//Shadow
-	float shadow = 0.0f;
-	for(int i = 0; i < numDirectionalLight; ++i){
-		shadow += 1.0f - calculateDirectionalLightShadow(i, vertPosLightSpace[i]);
-	}
-	shadow /= numDirectionalLight;
-	
 	return (ambient + (shadow * (diffuse + specular)));
 }
 
-float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord){
+float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord, float shadow){
 	float3 lightDir = normalize(light.position - fragPos);
 
 	//Ambient
@@ -124,13 +125,6 @@ float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, 
 	ambient		*= attenuation;
 	diffuse		*= attenuation;
 	specular	*= attenuation;
-
-	//Shadow
-	float shadow = 0.0f;
-	for(int i = 0; i < numPointLight; ++i){
-		shadow += 1.0f - calculatePointLightShadow(fragPos, i);
-	}
-	shadow /= numPointLight;
 
 	return (ambient + (shadow * (diffuse + specular)));
 }
