@@ -62,6 +62,7 @@ namespace tnc::ecs::_3D{
 		const clv::gfx::Viewport& getViewport() const;
 
 		void setProjectionMode(const ProjectionMode mode);
+		ProjectionMode getProjectionMode() const;
 
 		void updateViewportSize(const clv::mth::vec2ui& viewportSize);
 	};

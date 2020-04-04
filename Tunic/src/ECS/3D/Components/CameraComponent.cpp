@@ -72,7 +72,10 @@ namespace tnc::ecs::_3D{
 		}
 	}
 
-	void CameraComponent::updateViewportSize(const mth::vec2ui& viewportSize){
+	ProjectionMode CameraComponent::getProjectionMode() const {
+		return currentProjectionMode;
+	}
+
 		viewport.width = viewportSize.x;
 		viewport.height = viewportSize.y;
 
