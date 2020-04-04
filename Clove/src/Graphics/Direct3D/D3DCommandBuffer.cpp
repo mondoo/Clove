@@ -167,6 +167,9 @@ namespace clv::gfx::d3d{
 	void D3DCommandBuffer::endEncoding(){
 		DX11_INFO_PROVIDER;
 
+		ID3D11RenderTargetView* rtViewArray[] = { nullptr };
+		deferredContext->OMSetRenderTargets(1u, rtViewArray, nullptr);
+
 		Microsoft::WRL::ComPtr<ID3D11CommandList> commandList = nullptr;
 		DX11_THROW_INFO(deferredContext->FinishCommandList(TRUE, &commandList));
 
