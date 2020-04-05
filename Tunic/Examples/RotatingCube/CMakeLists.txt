@@ -19,12 +19,12 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE SOURCE_DIR="${CMAKE_CURRENT_S
 add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/Garlic/Tunic/res
+                ${CMAKE_CURRENT_SOURCE_DIR}/../../res
                 ${CMAKE_CURRENT_BINARY_DIR}/res
 )
 add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/Garlic/Tunic/res
+                ${CMAKE_CURRENT_SOURCE_DIR}/../../res
                 ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/res
 )

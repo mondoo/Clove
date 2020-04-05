@@ -43,6 +43,7 @@ namespace tnc::ecs{
 		Entity cloneEntitiesComponents(EntityID ID);
 		Entity getEntity(EntityID ID);
 		void destroyEntity(EntityID ID);
+		void destroyAllEntites();
 
 		template<typename ComponentType, typename ...ConstructArgs>
 		ComponentType* addComponent(EntityID entityID, ConstructArgs&& ...args);
