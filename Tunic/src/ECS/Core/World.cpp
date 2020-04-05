@@ -75,6 +75,12 @@ namespace tnc::ecs{
 		activeIDs.erase(foundIDIter);
 	}
 
+	void World::destroyAllEntites() {
+		for(EntityID id : activeIDs) {
+			destroyEntity(id);
+		}
+	}
+
 	void World::onComponentAdded(ComponentInterface* component){
 		std::for_each(systems.begin(), systems.end(), [component](const std::unique_ptr<System>& system){
 			system->onComponentCreated(component);
