@@ -43,12 +43,6 @@ set(
 		${TNC_SOURCE}/ECS/Audio/Components/AudioComponent.cpp
 		${TNC_INCLUDE}/ECS/Audio/Systems/AudioSystem.hpp
 		${TNC_SOURCE}/ECS/Audio/Systems/AudioSystem.cpp
-		${TNC_INCLUDE}/ECS/UI/Components/TextComponent.hpp
-		${TNC_SOURCE}/ECS/UI/Components/TextComponent.cpp
-		${TNC_INCLUDE}/ECS/UI/Components/TransformComponent.hpp
-		${TNC_SOURCE}/ECS/UI/Components/TransformComponent.cpp
-		${TNC_INCLUDE}/ECS/UI/Components/WidgetComponent.hpp
-		${TNC_SOURCE}/ECS/UI/Components/WidgetComponent.cpp
 )
 
 set(
