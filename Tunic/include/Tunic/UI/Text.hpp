@@ -31,7 +31,7 @@ namespace tnc::ui {
 		void setFontSize(uint32_t size);
 
 		std::size_t getTextLength() const;
-		const Glyph& getBufferForCharAt(size_t index);
+		const rnd::Glyph& getBufferForCharAt(size_t index);
 
 	private:
 		void buildGlyphs();
