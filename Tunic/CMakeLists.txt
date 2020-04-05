@@ -7,6 +7,7 @@ add_subdirectory(vendor)
 add_subdirectory(src)
 set_target_properties(Tunic PROPERTIES FOLDER ${FrameworkFolder})
 
+#Includes
 target_include_directories(
 	Tunic
 	#Tunic
@@ -18,6 +19,7 @@ target_include_directories(
 		vendor/bullet3/src
 )
 
+#Libraries
 target_link_libraries(
 	Tunic
     #Cross platform
@@ -31,3 +33,8 @@ target_link_libraries(
 		LinearMath
 		assimp
 )
+
+#Examples
+if(GAR_BUILD_EXAMPLES)
+	add_subdirectory(Examples)
+endif()
