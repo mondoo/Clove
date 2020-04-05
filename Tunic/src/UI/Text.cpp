@@ -19,12 +19,12 @@ namespace tnc::ui {
 
 	void Text::setText(std::string text) {
 		this->text = std::move(text);
-		isBufferDity = true;
+		isBufferDirty = true;
 	}
 
 	void Text::setFontSize(uint32_t size) {
 		font.setFontSize(size);
-		isBufferDity = true;
+		isBufferDirty = true;
 	}
 
 	std::size_t Text::getTextLength() const {
@@ -32,7 +32,7 @@ namespace tnc::ui {
 	}
 
 	const rnd::Glyph& Text::getBufferForCharAt(size_t index) {
-		if(isBufferDity) {
+		if(isBufferDirty) {
 			buildGlyphs();
 		}
 		return characters[index];
@@ -43,6 +43,6 @@ namespace tnc::ui {
 		for(size_t i = 0; i < text.length(); ++i) {
 			characters.emplace_back(font.getChar(text[i]));
 		}
-		isBufferDity = false;
+		isBufferDirty = false;
 	}
 }

@@ -11,7 +11,7 @@ namespace tnc::ui {
 		rnd::Font font;
 		std::string text;
 
-		bool isBufferDity = false;
+		bool isBufferDirty = false;
 		std::vector<rnd::Glyph> characters;
 
 		//FUNCTIONS
