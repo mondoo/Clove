@@ -10,10 +10,6 @@ namespace tnc{
 	class Layer;
 }
 
-namespace tnc::ecs{
-	class World;
-}
-
 namespace clv::plt{
 	class Platform;
 	class Window;
@@ -42,8 +38,6 @@ namespace tnc{
 		std::unique_ptr<clv::plt::Platform> platformInstance;
 		std::shared_ptr<clv::plt::Window> mainWindow;
 
-		std::unique_ptr<ecs::World> ecsWorld;
-
 		ApplicationState currentState = ApplicationState::running;
 
 		std::unique_ptr<LayerStack> layerStack;
@@ -69,8 +63,6 @@ namespace tnc{
 		void pushOverlay(std::shared_ptr<Layer> overlay);
 
 		static Application& get();
-
-		ecs::World& getWorld();
 
 		clv::plt::Window& getMainWindow() const;
 		void setMainWindow(const std::shared_ptr<clv::plt::Window>& window);

@@ -30,7 +30,6 @@ namespace tnc{
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
-		ecsWorld = std::make_unique<ecs::World>();
 		layerStack = std::make_unique<LayerStack>();
 
 		CLV_LOG_INFO("Successfully initialised Clove");
@@ -52,7 +51,6 @@ namespace tnc{
 		mainWindow->onWindowCloseDelegate.bind(&tnc::Application::stop, this);
 		mainWindow->setVSync(true);
 
-		ecsWorld = std::make_unique<ecs::World>();
 		layerStack = std::make_unique<LayerStack>();
 
 		CLV_LOG_INFO("Successfully initialised Clove");
@@ -80,8 +78,6 @@ namespace tnc{
 			layer->onUpdate(deltaSeonds.count());
 		}
 
-		ecsWorld->update(deltaSeonds.count());
-
 		{
 			CLV_PROFILE_SCOPE("Window::endFrame");
 			mainWindow->endFrame();
@@ -106,10 +102,6 @@ namespace tnc{
 
 	Application& Application::get(){
 		return *instance;
-	}
-
-	ecs::World& Application::getWorld(){
-		return *ecsWorld;
 	}
 
 	plt::Window& Application::getMainWindow() const{
