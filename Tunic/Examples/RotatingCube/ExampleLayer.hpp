@@ -2,17 +2,24 @@
 
 #include <Tunic/Layer.hpp>
 
-#include<Tunic/ECS/Core/Entity.hpp>
+#include <Tunic/ECS/Core/World.hpp>
+#include <Tunic/ECS/Core/Entity.hpp>
 
 class ExampleLayer : public tnc::Layer {
 	//VARIABLES
 private:
+	//The ECS world that this layer has
+	tnc::ecs::World world;
+
+	//The entities we want in our world
 	tnc::ecs::Entity cubeEntity;
 	tnc::ecs::Entity lightEntity;
 	tnc::ecs::Entity cameraEntity;
 
 	//FUNCTIONS
 public:
+	ExampleLayer();
+
 	//Called when the layer is attached
 	virtual void onAttach() override;
 

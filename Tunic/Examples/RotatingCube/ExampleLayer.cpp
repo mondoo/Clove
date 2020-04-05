@@ -2,8 +2,12 @@
 
 #include <Tunic/Tunic.hpp>
 
+ExampleLayer::ExampleLayer() {
+	//Add on any systems we want to use
+	world.addSystem<tnc::ecs::_3D::RenderSystem>(tnc::Application::get().getMainWindow());
+}
+
 void ExampleLayer::onAttach() {
-	tnc::ecs::World& world = tnc::Application::get().getWorld();
 	clv::plt::Window& window = tnc::Application::get().getMainWindow();
 
 	//Load in our mesh
@@ -37,13 +41,12 @@ void ExampleLayer::onUpdate(clv::utl::DeltaTime deltaTime) {
 	//Rotate the cube around the Y axis 
 	rotation += rotationSpeed * deltaTime;
 	cubeTransform->setRotation(clv::mth::eulerToQuaternion(clv::mth::vec3f{ 0.0f, rotation, 0.0f }));
+
+	//Update the ECS world
+	world.update(deltaTime);
 }
 
 void ExampleLayer::onDetach() {
-	tnc::ecs::World& world = tnc::Application::get().getWorld();
-
-	//Destroy any entities we created
-	world.destroyEntity(cubeEntity.getID());
-	world.destroyEntity(lightEntity.getID());
-	world.destroyEntity(cameraEntity.getID());
+	//Make sure to clear any entities when this layer detaches as that might not be when the layer is destroyed
+	world.destroyAllEntites();
 }
