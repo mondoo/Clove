@@ -1,21 +1,23 @@
 #pragma once
 
+#include "Tunic/UI/Widget.hpp"
+
 #include "Tunic/Rendering/Renderables/Font.hpp"
 
-namespace tnc::rnd {
-	class Text {
+namespace tnc::ui {
+	class Text : public Widget{
 		//VARIABLES
 	private:
-		Font font;
+		rnd::Font font;
 		std::string text;
 
 		bool isBufferDity = false;
-		std::vector<Glyph> characters;
+		std::vector<rnd::Glyph> characters;
 
 		//FUNCTIONS
 	public:
 		Text() = delete;
-		Text(Font font);
+		Text(rnd::Font font);
 
 		Text(const Text& other);
 		Text(Text&& other);

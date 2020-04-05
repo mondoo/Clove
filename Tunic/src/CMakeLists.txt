@@ -75,12 +75,13 @@ set(
 		${TNC_SOURCE}/Rendering/Renderables/Model.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Sprite.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Sprite.cpp
-		${TNC_INCLUDE}/Rendering/Renderables/Text.hpp
-		${TNC_SOURCE}/Rendering/Renderables/Text.cpp
+		
 )
 
 set(
 	UIFiles
+		${TNC_INCLUDE}/UI/Text.hpp
+		${TNC_SOURCE}/UI/Text.cpp
 		${TNC_INCLUDE}/UI/Widget.hpp
 		${TNC_SOURCE}/UI/Widget.cpp
 )

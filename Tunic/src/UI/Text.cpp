@@ -1,9 +1,9 @@
-#include "Tunic/Rendering/Renderables/Text.hpp"
+#include "Tunic/UI/Text.hpp"
 
 using namespace clv;
 
-namespace tnc::rnd {
-	Text::Text(Font font)
+namespace tnc::ui {
+	Text::Text(rnd::Font font)
 		: font(std::move(font)) {
 	}
 
@@ -31,7 +31,7 @@ namespace tnc::rnd {
 		return text.length();
 	}
 
-	const Glyph& Text::getBufferForCharAt(size_t index) {
+	const rnd::Glyph& Text::getBufferForCharAt(size_t index) {
 		if(isBufferDity) {
 			buildGlyphs();
 		}
