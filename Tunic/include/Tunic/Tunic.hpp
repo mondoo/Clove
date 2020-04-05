@@ -27,4 +27,6 @@
 
 #include "Tunic/Layer.hpp"
 
+#include "Tunic/ModelLoader.hpp"
+
 #include <Clove/Clove.hpp>
