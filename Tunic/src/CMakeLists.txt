@@ -86,6 +86,12 @@ set(
 )
 
 set(
+	UIFiles
+		${TNC_INCLUDE}/UI/Widget.hpp
+		${TNC_SOURCE}/UI/Widget.cpp
+)
+
+set(
 	ShaderFiles
 		${TNC_RESOURCE}/Shaders/Default2D-ps.hlsl
 		${TNC_RESOURCE}/Shaders/Default2D-vs.hlsl
@@ -131,6 +137,7 @@ target_sources(
 		${ECSFiles}
 		${PhysicsFiles}
 		${RenderingFiles}
+		${UIFiles}
 		${ShaderFiles}
 )
 
