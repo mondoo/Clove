@@ -17,6 +17,7 @@
 #include "Tunic/ECS/UI/Components/TransformComponent.hpp"
 
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
+#include "Tunic/Rendering/Renderables/Model.hpp"
 #include "Tunic/Rendering/Renderables/Sprite.hpp"
 #include "Tunic/Rendering/Material.hpp"
 #include "Tunic/Rendering/MaterialInstance.hpp"
