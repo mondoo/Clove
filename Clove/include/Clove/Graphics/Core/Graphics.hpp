@@ -8,5 +8,5 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx{
-	std::unique_ptr<GraphicsFactory> initialise(API api);
+	std::shared_ptr<GraphicsFactory> initialise(API api);
 }

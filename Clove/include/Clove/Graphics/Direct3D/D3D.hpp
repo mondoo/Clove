@@ -5,5 +5,5 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx::d3d{
-	std::unique_ptr<GraphicsFactory> initialiseD3D();
+	std::shared_ptr<GraphicsFactory> initialiseD3D();
 }

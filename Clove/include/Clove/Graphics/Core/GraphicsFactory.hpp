@@ -15,7 +15,7 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx{
-	class GraphicsFactory{
+	class GraphicsFactory : public std::enable_shared_from_this<GraphicsFactory> {
 		//FUNCTIONS
 	public:
 		virtual ~GraphicsFactory() = default;

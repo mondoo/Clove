@@ -114,6 +114,7 @@ namespace tnc::rnd{
 
 	void Mesh::draw(CommandBuffer& commandBuffer, const VertexLayout& layout){
 		if(vertexBufferMap.find(layout) == vertexBufferMap.end()) {
+			//TODO: Retrieve the factory from command buffer and use that to make the buffer
 			vertexBufferMap[layout] = createVertexBuffer(transferVertexBufferData(loadedBufferData, layout));
 		}
 		

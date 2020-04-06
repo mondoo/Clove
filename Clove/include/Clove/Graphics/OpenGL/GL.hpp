@@ -5,5 +5,5 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx::ogl{
-	std::unique_ptr<GraphicsFactory> initialiseOGL();
+	std::shared_ptr<GraphicsFactory> initialiseOGL();
 }

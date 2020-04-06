@@ -21,7 +21,7 @@ namespace clv::plt{
 		Keyboard keyboard;
 		Mouse mouse;
 
-		std::unique_ptr<gfx::GraphicsFactory> graphicsFactory;
+		std::shared_ptr<gfx::GraphicsFactory> graphicsFactory;
 		std::shared_ptr<gfx::Surface> surface;
 
 		//FUNCTIONS

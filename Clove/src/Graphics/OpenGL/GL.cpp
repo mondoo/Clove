@@ -6,7 +6,7 @@
 #include <glad/glad.h>
 
 namespace clv::gfx::ogl{
-	std::unique_ptr<GraphicsFactory> initialiseOGL(){
-		return std::make_unique<GLGraphicsFactory>();
+	std::shared_ptr<GraphicsFactory> initialiseOGL() {
+		return std::make_shared<GLGraphicsFactory>();
 	}
 }
