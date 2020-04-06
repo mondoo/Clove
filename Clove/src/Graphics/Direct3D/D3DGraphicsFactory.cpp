@@ -23,7 +23,7 @@ namespace clv::gfx::d3d{
 	}
 
 	std::shared_ptr<Buffer> D3DGraphicsFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){
-		return std::make_shared<D3DBuffer>(*d3dDevice.Get(), descriptor, data);
+		return std::make_shared<D3DBuffer>(shared_from_this(), *d3dDevice.Get(), descriptor, data);
 	}
 
 	std::shared_ptr<Texture> D3DGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){

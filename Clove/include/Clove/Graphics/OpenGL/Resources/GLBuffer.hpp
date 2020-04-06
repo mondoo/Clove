@@ -8,6 +8,8 @@ namespace clv::gfx::ogl{
 	class GLBuffer : public Buffer{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		BufferDescriptor descriptor;
 
 		GLuint bufferID = 0;
@@ -15,7 +17,7 @@ namespace clv::gfx::ogl{
 		//FUNCTIONS
 	public:
 		GLBuffer() = delete;
-		GLBuffer(const BufferDescriptor& descriptor, const void* data);
+		GLBuffer(std::shared_ptr<GraphicsFactory> factory, const BufferDescriptor& descriptor, const void* data);
 
 		GLBuffer(const GLBuffer& other) = delete;
 		GLBuffer(GLBuffer&& other) noexcept;
@@ -24,6 +26,8 @@ namespace clv::gfx::ogl{
 		GLBuffer& operator=(GLBuffer&& other) noexcept;
 
 		virtual ~GLBuffer();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual const BufferDescriptor& getDescriptor() const override;
 

@@ -8,6 +8,8 @@ namespace clv::gfx::mtl{
 	class MTLBuffer : public Buffer{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		BufferDescriptor descriptor;
 		
 		id<MTLBuffer> mtlBuffer;
@@ -15,7 +17,7 @@ namespace clv::gfx::mtl{
 		//FUNCTIONS
 	public:
 		MTLBuffer() = delete;
-		MTLBuffer(id<MTLDevice> mtlDevice, const BufferDescriptor& descriptor, const void* data);
+		MTLBuffer(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, const BufferDescriptor& descriptor, const void* data);
 		
 		MTLBuffer(const MTLBuffer& other) = delete;
 		MTLBuffer(MTLBuffer&& other) noexcept;
@@ -25,6 +27,8 @@ namespace clv::gfx::mtl{
 		
 		virtual ~MTLBuffer();
 		
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+
 		virtual const BufferDescriptor& getDescriptor() const override;
 
 		virtual void updateData(const void* data) override;

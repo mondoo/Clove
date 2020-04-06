@@ -10,6 +10,6 @@ namespace clv::gfx {
 	public:
 		virtual ~FactoryChild() = default;
 
-		virtual std::shared_ptr<GraphicsFactory> getFactory() const = 0;
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const = 0;
 	};
 }

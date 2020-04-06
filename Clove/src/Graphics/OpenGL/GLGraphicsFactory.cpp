@@ -22,7 +22,7 @@ namespace clv::gfx::ogl{
 	}
 
 	std::shared_ptr<Buffer> GLGraphicsFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){
-		return std::make_shared<GLBuffer>(descriptor, data);
+		return std::make_shared<GLBuffer>(shared_from_this(), descriptor, data);
 	}
 
 	std::shared_ptr<Texture> GLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){

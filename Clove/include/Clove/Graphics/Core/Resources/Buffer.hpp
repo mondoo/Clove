@@ -1,18 +1,20 @@
 #pragma once
 
-namespace clv::gfx{
-	enum class BufferType{
+#include "Clove/Graphics/Core/FactoryChild.hpp"
+
+namespace clv::gfx {
+	enum class BufferType {
 		IndexBuffer,
 		VertexBuffer,
 		ShaderResourceBuffer
 	};
 
-	enum class BufferUsage{
+	enum class BufferUsage {
 		Default,
 		Dynamic
 	};
 
-	struct BufferDescriptor{
+	struct BufferDescriptor {
 		std::size_t elementSize = 0;
 		std::size_t bufferSize = 0;
 		BufferType bufferType;
@@ -20,8 +22,8 @@ namespace clv::gfx{
 	};
 }
 
-namespace clv::gfx{
-	class Buffer{
+namespace clv::gfx {
+	class Buffer : public FactoryChild {
 		//FUNCTIONS
 	public:
 		virtual ~Buffer() = default;

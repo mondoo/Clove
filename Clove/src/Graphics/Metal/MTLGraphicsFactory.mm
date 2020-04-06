@@ -22,7 +22,7 @@ namespace clv::gfx::mtl{
 	}
 	
 	std::shared_ptr<Buffer> MTLGraphicsFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){
-		return std::make_shared<MTLBuffer>(mtlDevice, descriptor, data);
+		return std::make_shared<MTLBuffer>(shared_from_this(), mtlDevice, descriptor, data);
 	}
 	
 	std::shared_ptr<Texture> MTLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
