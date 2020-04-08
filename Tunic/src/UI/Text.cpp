@@ -17,6 +17,10 @@ namespace tnc::ui {
 
 	Text::~Text() = default;
 
+	void Text::draw(rnd::Renderer2D& renderer) {
+		//TODO
+	}
+
 	void Text::setText(std::string text) {
 		this->text = std::move(text);
 		isBufferDirty = true;

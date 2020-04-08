@@ -27,6 +27,8 @@ namespace tnc::ui {
 
 		~Text();
 
+		virtual void draw(rnd::Renderer2D& renderer) override;
+
 		void setText(std::string text);
 		void setFontSize(uint32_t size);
 
