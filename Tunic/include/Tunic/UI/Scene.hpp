@@ -1,5 +1,9 @@
 #pragma once
 
+namespace tnc::rnd {
+	class Renderer2D;
+}
+
 namespace tnc::ui {
 	class Widget;
 }
@@ -13,5 +17,7 @@ namespace tnc::ui {
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
+
+		void draw(rnd::Renderer2D& renderer);
 	};
 }
