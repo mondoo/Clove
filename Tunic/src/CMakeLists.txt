@@ -80,6 +80,8 @@ set(
 	UIFiles
 		${TNC_INCLUDE}/UI/Image.hpp
 		${TNC_SOURCE}/UI/Image.cpp
+		${TNC_INCLUDE}/UI/Scene.hpp
+		${TNC_SOURCE}/UI/Scene.cpp
 		${TNC_INCLUDE}/UI/Text.hpp
 		${TNC_SOURCE}/UI/Text.cpp
 		${TNC_INCLUDE}/UI/Widget.hpp
