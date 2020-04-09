@@ -34,7 +34,7 @@ namespace clv::gfx::ogl{
 	}
 
 	std::shared_ptr<PipelineObject> GLGraphicsFactory::createPipelineObject(){
-		return std::make_shared<GLPipelineObject>();
+		return std::make_shared<GLPipelineObject>(shared_from_this());
 	}
 
 	std::shared_ptr<RenderTarget> GLGraphicsFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){

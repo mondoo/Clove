@@ -34,7 +34,7 @@ namespace clv::gfx::mtl{
 	}
 	
 	std::shared_ptr<PipelineObject> MTLGraphicsFactory::createPipelineObject(){
-		return std::make_shared<MTLPipelineObject>();
+		return std::make_shared<MTLPipelineObject>(shared_from_this());
 	}
 	
 	std::shared_ptr<RenderTarget> MTLGraphicsFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){

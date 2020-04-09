@@ -1,17 +1,19 @@
 #pragma once
 
+#include "Clove/Graphics/Core/FactoryChild.hpp"
+
 #include "Clove/Graphics/Core/Shader.hpp"
 #include "Clove/Graphics/Core/VertexLayout.hpp"
 
-namespace clv::gfx{
-	enum class CullFace{
+namespace clv::gfx {
+	enum class CullFace {
 		Front,
 		Back
 	};
 }
 
-namespace clv::gfx{
-	class PipelineObject{
+namespace clv::gfx {
+	class PipelineObject : public FactoryChild {
 		//FUNCTIONS
 	public:
 		virtual ~PipelineObject() = default;

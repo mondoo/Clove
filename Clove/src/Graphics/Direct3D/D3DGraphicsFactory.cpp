@@ -35,7 +35,7 @@ namespace clv::gfx::d3d{
 	}
 
 	std::shared_ptr<PipelineObject> D3DGraphicsFactory::createPipelineObject(){
-		return std::make_shared<D3DPipelineObject>(d3dDevice);
+		return std::make_shared<D3DPipelineObject>(shared_from_this(), d3dDevice);
 	}
 
 	std::shared_ptr<RenderTarget> D3DGraphicsFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
