@@ -8,7 +8,8 @@
 typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
 
 namespace clv::gfx::ogl{
-	GLXSurface::GLXSurface(void* windowData){
+	GLXSurface::GLXSurface(std::shared_ptr<GraphicsFactory> factory, void* windowData) 
+		: factory(std::move(factory)) {
 		plt::LinuxData* data = reinterpret_cast<plt::LinuxData*>(windowData);
 		display = data->display;
 		window = data->window;
@@ -87,6 +88,10 @@ namespace clv::gfx::ogl{
 		glXDestroyContext(display, context);
 	}
 
+	const std::shared_ptr<GraphicsFactory>& GLXSurface::getFactory() const {
+		return factory;
+	}
+
 	void GLXSurface::makeCurrent(){
 		glXMakeCurrent(display, *window, context);
 
@@ -108,7 +113,7 @@ namespace clv::gfx::ogl{
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
-		renderTarget = std::make_shared<GLRenderTarget>();
+		renderTarget = std::make_shared<GLRenderTarget>(factory);
 	}
 
 	void GLXSurface::setVSync(bool enabled){

@@ -46,6 +46,6 @@ namespace clv::gfx::mtl{
 	}
 	
 	std::shared_ptr<Surface> MTLGraphicsFactory::createSurface(void* windowData){
-		return std::make_shared<MTLSurface>(mtlDevice, windowData);
+		return std::make_shared<MTLSurface>(shared_from_this(), mtlDevice, windowData);
 	}
 }

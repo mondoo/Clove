@@ -47,7 +47,7 @@ namespace clv::gfx::d3d{
 	}
 
 	std::shared_ptr<Surface> D3DGraphicsFactory::createSurface(void* windowData){
-		auto surface = std::make_unique<D3DSurface>(*d3dDevice.Get(), windowData);
+		auto surface = std::make_shared<D3DSurface>(shared_from_this(), *d3dDevice.Get(), windowData);
 		surface->onDeviceRemoved.bind(&D3DGraphicsFactory::onDeviceRemoved, this);
 		return surface;
 	}

@@ -13,6 +13,8 @@ namespace clv::gfx::ogl{
 	class WGLSurface : public GLSurface{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		HWND windowsHandle = nullptr;
 		HDC windowsDeviceContext = nullptr;
 		HGLRC wglContext = nullptr;
@@ -25,7 +27,7 @@ namespace clv::gfx::ogl{
 		//FUNCTIONS
 	public:
 		WGLSurface() = delete;
-		WGLSurface(void* windowData);
+		WGLSurface(std::shared_ptr<GraphicsFactory> factory, void* windowData);
 
 		WGLSurface(const WGLSurface& other) = delete;
 		WGLSurface(WGLSurface&& other) noexcept;
@@ -34,6 +36,8 @@ namespace clv::gfx::ogl{
 		WGLSurface& operator=(WGLSurface&& other) noexcept;
 
 		virtual ~WGLSurface();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual void makeCurrent() override;
 

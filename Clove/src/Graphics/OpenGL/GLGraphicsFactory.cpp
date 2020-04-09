@@ -47,9 +47,9 @@ namespace clv::gfx::ogl{
 
 	std::shared_ptr<Surface> GLGraphicsFactory::createSurface(void* windowData){
 	#if CLV_PLATFORM_WINDOWS
-		return std::make_shared<WGLSurface>(windowData);
+		return std::make_shared<WGLSurface>(shared_from_this(), windowData);
 	#elif CLV_PLATFORM_LINUX
-		return std::make_shared<GLXSurface>(windowData);
+		return std::make_shared<GLXSurface>(shared_from_this(), windowData);
 	#endif
 	}
 }
