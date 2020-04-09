@@ -11,13 +11,15 @@ namespace clv::gfx::ogl{
 	class GLCommandBuffer : public CommandBuffer{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		std::vector<std::function<void()>> commands;
 
 		std::shared_ptr<GLRenderTarget> glRenderTarget;
 
 		//FUNCTIONS
 	public:
-		GLCommandBuffer();
+		GLCommandBuffer(std::shared_ptr<GraphicsFactory> factory);
 
 		GLCommandBuffer(const GLCommandBuffer& other) = delete;
 		GLCommandBuffer(GLCommandBuffer&& other) noexcept;
@@ -26,6 +28,8 @@ namespace clv::gfx::ogl{
 		GLCommandBuffer& operator=(GLCommandBuffer&& other) noexcept;
 
 		virtual ~GLCommandBuffer();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual void beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget) override;
 

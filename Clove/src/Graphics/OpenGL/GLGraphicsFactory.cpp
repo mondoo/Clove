@@ -18,7 +18,7 @@ namespace clv::gfx::ogl{
 	GLGraphicsFactory::~GLGraphicsFactory() = default;
 
 	std::shared_ptr<CommandBuffer> GLGraphicsFactory::createCommandBuffer(){
-		return std::make_shared<GLCommandBuffer>();
+		return std::make_shared<GLCommandBuffer>(shared_from_this());
 	}
 
 	std::shared_ptr<Buffer> GLGraphicsFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){

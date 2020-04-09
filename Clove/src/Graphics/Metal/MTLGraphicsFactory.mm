@@ -18,7 +18,7 @@ namespace clv::gfx::mtl{
 	}
 	
 	std::shared_ptr<CommandBuffer> MTLGraphicsFactory::createCommandBuffer(){
-		return std::make_shared<MTLCommandBuffer>([mtlDevice newCommandQueue]);
+		return std::make_shared<MTLCommandBuffer>(shared_from_this(), [mtlDevice newCommandQueue]);
 	}
 	
 	std::shared_ptr<Buffer> MTLGraphicsFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){

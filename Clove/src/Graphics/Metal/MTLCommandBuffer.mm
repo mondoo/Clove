@@ -7,8 +7,9 @@
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 
 namespace clv::gfx::mtl{
-	MTLCommandBuffer::MTLCommandBuffer(id<MTLCommandQueue> commandQueue)
-		: commandQueue([commandQueue retain]){
+	MTLCommandBuffer::MTLCommandBuffer(std::shared_ptr<GraphicsFactory> factory, id<MTLCommandQueue> commandQueue)
+		: factory(std::move(factory))
+		, commandQueue([commandQueue retain]){
 		commandBuffer = [[commandQueue commandBuffer] retain];
 	}
 	
@@ -20,6 +21,10 @@ namespace clv::gfx::mtl{
 		[commandQueue release];
 		[commandBuffer release];
 		[commandEncoder release];
+	}
+
+	const std::shared_ptr<GraphicsFactory>& MTLCommandBuffer::getFactory() const{
+		return factory;
 	}
 
 	void MTLCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget){

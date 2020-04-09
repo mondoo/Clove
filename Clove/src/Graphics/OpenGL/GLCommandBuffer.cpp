@@ -10,13 +10,19 @@
 #include <glad/glad.h>
 
 namespace clv::gfx::ogl{
-	GLCommandBuffer::GLCommandBuffer() = default;
+	GLCommandBuffer::GLCommandBuffer(std::shared_ptr<GraphicsFactory> factory)
+		: factory(std::move(factory)) {
+	}
 
 	GLCommandBuffer::GLCommandBuffer(GLCommandBuffer&& other) noexcept = default;
 
 	GLCommandBuffer& GLCommandBuffer::operator=(GLCommandBuffer&& other) noexcept = default;
 
 	GLCommandBuffer::~GLCommandBuffer() = default;
+
+	const std::shared_ptr<GraphicsFactory>& GLCommandBuffer::getFactory() const {
+		return factory;
+	}
 
 	void GLCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget){
 		glRenderTarget = std::static_pointer_cast<GLRenderTarget>(renderTarget);

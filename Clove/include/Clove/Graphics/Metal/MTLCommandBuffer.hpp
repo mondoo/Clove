@@ -12,6 +12,8 @@ namespace clv::gfx::mtl{
 	class MTLCommandBuffer : public CommandBuffer{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		id<MTLCommandQueue> commandQueue = nullptr;
 		id<MTLCommandBuffer> commandBuffer = nullptr;
 		id<MTLRenderCommandEncoder> commandEncoder = nullptr;
@@ -23,7 +25,7 @@ namespace clv::gfx::mtl{
 		//FUNCTIONS
 	public:
 		MTLCommandBuffer() = delete;
-		MTLCommandBuffer(id<MTLCommandQueue> commandQueue);
+		MTLCommandBuffer(std::shared_ptr<GraphicsFactory> factory, id<MTLCommandQueue> commandQueue);
 
 		MTLCommandBuffer(const MTLCommandBuffer& other) = delete;
 		MTLCommandBuffer(MTLCommandBuffer&& other) noexcept;
@@ -32,6 +34,8 @@ namespace clv::gfx::mtl{
 		MTLCommandBuffer& operator=(MTLCommandBuffer&& other) noexcept;
 
 		virtual ~MTLCommandBuffer();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual void beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget) override;
 
