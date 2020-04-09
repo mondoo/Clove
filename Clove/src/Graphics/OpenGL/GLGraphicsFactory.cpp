@@ -42,7 +42,7 @@ namespace clv::gfx::ogl{
 	}
 
 	std::shared_ptr<Shader> GLGraphicsFactory::createShader(const ShaderDescriptor& descriptor, std::string_view pathToShader){
-		return std::make_shared<GLShader>(descriptor, pathToShader);
+		return std::make_shared<GLShader>(shared_from_this(), descriptor, pathToShader);
 	}
 
 	std::shared_ptr<Surface> GLGraphicsFactory::createSurface(void* windowData){

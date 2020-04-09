@@ -19,8 +19,9 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	D3DShader::D3DShader(ID3D11Device& d3dDevice, const ShaderDescriptor& descriptor, std::string_view pathToShader)
-		: descriptor(descriptor){
+	D3DShader::D3DShader(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, const ShaderDescriptor& descriptor, std::string_view pathToShader)
+		: factory(std::move(factory))
+		, descriptor(descriptor){
 		UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
 	#if CLV_DEBUG
 		flags |= D3DCOMPILE_DEBUG;
@@ -52,6 +53,10 @@ namespace clv::gfx::d3d{
 	D3DShader& D3DShader::operator=(D3DShader&& other) noexcept = default;
 
 	D3DShader::~D3DShader() = default;
+
+	const std::shared_ptr<GraphicsFactory>& D3DShader::getFactory() const {
+		return factory;
+	}
 
 	const ShaderDescriptor& D3DShader::getDescriptor() const{
 		return descriptor;

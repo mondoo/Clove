@@ -42,7 +42,7 @@ namespace clv::gfx::mtl{
 	}
 	
 	std::shared_ptr<Shader> MTLGraphicsFactory::createShader(const ShaderDescriptor& descriptor, std::string_view pathToShader){
-		return std::make_shared<MTLShader>(mtlDevice, descriptor, pathToShader);
+		return std::make_shared<MTLShader>(shared_from_this(), mtlDevice, descriptor, pathToShader);
 	}
 	
 	std::shared_ptr<Surface> MTLGraphicsFactory::createSurface(void* windowData){
