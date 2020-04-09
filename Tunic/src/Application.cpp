@@ -111,8 +111,4 @@ namespace tnc{
 	void Application::setMainWindow(const std::shared_ptr<plt::Window>& window){
 		mainWindow = window;
 	}
-
-	clv::gfx::GraphicsFactory& Application::getGraphicsFactory(){
-		return mainWindow->getGraphicsFactory();
-	}
 }

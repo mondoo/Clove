@@ -66,7 +66,5 @@ namespace tnc{
 
 		clv::plt::Window& getMainWindow() const;
 		void setMainWindow(const std::shared_ptr<clv::plt::Window>& window);
-
-		clv::gfx::GraphicsFactory& getGraphicsFactory();
 	};
 }
