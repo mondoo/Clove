@@ -20,6 +20,7 @@ BinPackParameters: 'false'
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Attach
 BreakBeforeTernaryOperators: 'false'
+BreakConstructorInitializers: BeforeComma
 ColumnLimit: '0'
 ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
 ConstructorInitializerIndentWidth: '2'
