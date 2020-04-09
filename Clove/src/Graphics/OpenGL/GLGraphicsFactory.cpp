@@ -26,11 +26,11 @@ namespace clv::gfx::ogl{
 	}
 
 	std::shared_ptr<Texture> GLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
-		return std::make_shared<GLTexture>(descriptor, pathToTexture);
+		return std::make_shared<GLTexture>(shared_from_this(), descriptor, pathToTexture);
 	}
 
 	std::shared_ptr<Texture> GLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP){
-		return std::make_shared<GLTexture>(descriptor, data, BPP);
+		return std::make_shared<GLTexture>(shared_from_this(), descriptor, data, BPP);
 	}
 
 	std::shared_ptr<PipelineObject> GLGraphicsFactory::createPipelineObject(){

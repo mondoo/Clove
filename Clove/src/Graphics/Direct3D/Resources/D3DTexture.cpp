@@ -119,8 +119,9 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	D3DTexture::D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture)
-		: descriptor(descriptor){
+	D3DTexture::D3DTexture(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture)
+		: factory(std::move(factory))
+		, descriptor(descriptor){
 		int width = 0;
 		int height = 0;
 		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
@@ -135,8 +136,9 @@ namespace clv::gfx::d3d{
 		}
 	}
 
-	D3DTexture::D3DTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP)
-		: descriptor(descriptor)
+	D3DTexture::D3DTexture(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP)
+		: factory(std::move(factory))
+		, descriptor(descriptor)
 		, BPP(BPP){
 		createTexture(d3dDevice, descriptor, data);
 	}
@@ -146,6 +148,14 @@ namespace clv::gfx::d3d{
 	D3DTexture& D3DTexture::operator=(D3DTexture&& other) noexcept = default;
 
 	D3DTexture::~D3DTexture() = default;
+
+	const std::shared_ptr<GraphicsFactory>& D3DTexture::getFactory() const {
+		return factory;
+	}
+
+	const TextureDescriptor& D3DTexture::getDescriptor() const{
+		return descriptor;
+	}
 
 	const Microsoft::WRL::ComPtr<ID3D11Texture2D>& D3DTexture::getD3DTexture() const{
 		return d3dTexture;
@@ -157,10 +167,6 @@ namespace clv::gfx::d3d{
 
 	const Microsoft::WRL::ComPtr<ID3D11SamplerState>& D3DTexture::getD3DSampler() const{
 		return d3dSampler;
-	}
-
-	const TextureDescriptor& D3DTexture::getDescriptor() const{
-		return descriptor;
 	}
 
 	void D3DTexture::createTexture(ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data){

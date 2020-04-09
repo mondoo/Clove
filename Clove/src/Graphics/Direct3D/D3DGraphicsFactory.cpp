@@ -27,11 +27,11 @@ namespace clv::gfx::d3d{
 	}
 
 	std::shared_ptr<Texture> D3DGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
-		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, pathToTexture);
+		return std::make_shared<D3DTexture>(shared_from_this(), *d3dDevice.Get(), descriptor, pathToTexture);
 	}
 
 	std::shared_ptr<Texture> D3DGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP){
-		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, data, BPP);
+		return std::make_shared<D3DTexture>(shared_from_this(), *d3dDevice.Get(), descriptor, data, BPP);
 	}
 
 	std::shared_ptr<PipelineObject> D3DGraphicsFactory::createPipelineObject(){

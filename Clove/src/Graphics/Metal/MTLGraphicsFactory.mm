@@ -26,11 +26,11 @@ namespace clv::gfx::mtl{
 	}
 	
 	std::shared_ptr<Texture> MTLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
-		return std::make_shared<MTLTexture>(mtlDevice, descriptor, pathToTexture);
+		return std::make_shared<MTLTexture>(shared_from_this(), mtlDevice, descriptor, pathToTexture);
 	}
 	
 	std::shared_ptr<Texture> MTLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP){
-		return std::make_shared<MTLTexture>(mtlDevice, descriptor, data, BPP);
+		return std::make_shared<MTLTexture>(shared_from_this(), mtlDevice, descriptor, data, BPP);
 	}
 	
 	std::shared_ptr<PipelineObject> MTLGraphicsFactory::createPipelineObject(){

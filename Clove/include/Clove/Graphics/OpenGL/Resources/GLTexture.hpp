@@ -8,17 +8,19 @@ namespace clv::gfx::ogl{
 	class GLTexture : public Texture{
 		//VARIABLES
 	private:
-		GLuint textureID = 0;
-		
+		std::shared_ptr<GraphicsFactory> factory;
+
 		TextureDescriptor descriptor;
+		
+		GLuint textureID = 0;
 
 		int32_t BPP = 0;
 
 		//FUNCTIONS
 	public:
 		GLTexture() = delete;
-		GLTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture);
-		GLTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP);
+		GLTexture(std::shared_ptr<GraphicsFactory> factory, const TextureDescriptor& descriptor, const std::string& pathToTexture);
+		GLTexture(std::shared_ptr<GraphicsFactory> factory, const TextureDescriptor& descriptor, const void* data, int32_t BPP);
 
 		GLTexture(const GLTexture& other) = delete;
 		GLTexture(GLTexture&& other) noexcept;
@@ -28,9 +30,11 @@ namespace clv::gfx::ogl{
 
 		virtual ~GLTexture();
 
-		GLuint getTextureID() const;
-		
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+
 		virtual const TextureDescriptor& getDescriptor() const override;
+
+		GLuint getTextureID() const;
 
 	private:
 		void createTexture(const TextureDescriptor& descriptor, const void* data);
