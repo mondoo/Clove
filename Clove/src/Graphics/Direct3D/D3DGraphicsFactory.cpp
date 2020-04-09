@@ -39,7 +39,7 @@ namespace clv::gfx::d3d{
 	}
 
 	std::shared_ptr<RenderTarget> D3DGraphicsFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
-		return std::make_shared<D3DRenderTarget>(*d3dDevice.Get(), colourTexture, depthStencilTexture);
+		return std::make_shared<D3DRenderTarget>(shared_from_this(), *d3dDevice.Get(), colourTexture, depthStencilTexture);
 	}
 
 	std::shared_ptr<Shader> D3DGraphicsFactory::createShader(const ShaderDescriptor& descriptor, std::string_view pathToShader){

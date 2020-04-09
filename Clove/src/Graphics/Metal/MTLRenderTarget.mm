@@ -3,7 +3,8 @@
 #include "Clove/Graphics/Metal/Resources/MTLTexture.hpp"
 
 namespace clv::gfx::mtl{
-	MTLRenderTarget::MTLRenderTarget(id<MTLDevice> mtlDevice, Texture* colourTexture, Texture* depthStencilTexture){
+	MTLRenderTarget::MTLRenderTarget(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, Texture* colourTexture, Texture* depthStencilTexture)
+		: factory(std::move(factory)) {
 		MTLTexture* mtlColourTexture = static_cast<MTLTexture*>(colourTexture);
 		MTLTexture* mtldepthStencilTexture = static_cast<MTLTexture*>(depthStencilTexture);
 		
@@ -16,7 +17,8 @@ namespace clv::gfx::mtl{
 	}
 
 	MTLRenderTarget::MTLRenderTarget(MTLRenderPassDescriptor* descriptor)
-		: descriptor(descriptor){
+		: factory(std::move(factory))
+		, descriptor(descriptor){
 		setClearColour({ 0.0f, 0.0f, 0.0f, 0.0f });
 	}
 	
@@ -26,6 +28,10 @@ namespace clv::gfx::mtl{
 	
 	MTLRenderTarget::~MTLRenderTarget(){
 		[descriptor release];
+	}
+
+	const std::shared_ptr<GraphicsFactory>& MTLRenderTarget::getFactory() const{
+		return factory;
 	}
 	
 	void MTLRenderTarget::setClearColour(const mth::vec4f& colour){

@@ -10,6 +10,8 @@ namespace clv::gfx::ogl{
 	class GLRenderTarget : public RenderTarget{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
 
 		uint32_t frameBufferID = 0;
@@ -17,8 +19,8 @@ namespace clv::gfx::ogl{
 
 		//FUNCTIONS
 	public:
-		GLRenderTarget();
-		GLRenderTarget(Texture* colourTexture, Texture* depthStencilTexture);
+		GLRenderTarget(std::shared_ptr<GraphicsFactory> factory);
+		GLRenderTarget(std::shared_ptr<GraphicsFactory> factory, Texture* colourTexture, Texture* depthStencilTexture);
 
 		GLRenderTarget(const GLRenderTarget& other) = delete;
 		GLRenderTarget(GLRenderTarget&& other) noexcept;
@@ -27,6 +29,8 @@ namespace clv::gfx::ogl{
 		GLRenderTarget& operator=(GLRenderTarget&& other) noexcept;
 
 		virtual ~GLRenderTarget();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual void clear() override;
 

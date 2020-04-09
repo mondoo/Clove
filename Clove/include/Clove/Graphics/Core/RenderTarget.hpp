@@ -1,7 +1,9 @@
 #pragma once
 
-namespace clv::gfx{
-	class RenderTarget{
+#include "Clove/Graphics/Core/FactoryChild.hpp"
+
+namespace clv::gfx {
+	class RenderTarget : public FactoryChild {
 		//FUNCTIONS
 	public:
 		virtual ~RenderTarget() = default;
