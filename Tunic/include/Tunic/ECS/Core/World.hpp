@@ -46,14 +46,14 @@ namespace tnc::ecs{
 		void destroyAllEntites();
 
 		template<typename ComponentType, typename ...ConstructArgs>
-		ComponentType* addComponent(EntityID entityID, ConstructArgs&& ...args);
+		ComponentPtr<ComponentType> addComponent(EntityID entityID, ConstructArgs&&... args);
 		template<typename ComponentType>
-		ComponentType* getComponent(EntityID entityID);
+		ComponentPtr<ComponentType> getComponent(EntityID entityID);
 		template<typename ComponentType>
 		void removeComponent(EntityID entityID);
 
 		template<typename ...ComponentTypes>
-		std::vector<std::tuple<std::add_pointer_t<ComponentTypes>...>> getComponentSets();
+		std::vector<std::tuple<ComponentPtr<ComponentTypes>...>> getComponentSets();
 
 		template<typename SystemType, typename ...ConstructArgs>
 		void addSystem(ConstructArgs&& ...args);
@@ -64,10 +64,10 @@ namespace tnc::ecs{
 
 		enum class FoundState{ NullptrFound, EndOfTuple };
 		template<std::size_t index, typename ...ComponentTypes>
-		FoundState checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple, typename std::enable_if_t<(index == sizeof...(ComponentTypes)), int> = 0);
+		FoundState checkForNullptr(const std::tuple<ComponentPtr<ComponentTypes>...>& tuple, typename std::enable_if_t<(index == sizeof...(ComponentTypes)), int> = 0);
 
 		template<std::size_t index, typename ...ComponentTypes>
-		FoundState checkForNullptr(const std::tuple<std::add_pointer_t<ComponentTypes>...>& tuple, typename std::enable_if_t<(index < sizeof...(ComponentTypes)), int> = 0);
+		FoundState checkForNullptr(const std::tuple<ComponentPtr<ComponentTypes>...>& tuple, typename std::enable_if_t<(index < sizeof...(ComponentTypes)), int> = 0);
 	};
 }
 
