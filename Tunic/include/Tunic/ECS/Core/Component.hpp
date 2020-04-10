@@ -3,7 +3,6 @@
 #include "Tunic/ECS/Core/ECSTypes.hpp"
 
 namespace tnc::ecs {
-	template<typename ComponentType> class ComponentContainer;
 	template<typename DerivedClassType> class Component;
 }
 
@@ -11,7 +10,6 @@ namespace tnc::ecs {
 	template<typename ComponentType>
 	class ComponentPtr {
 		friend class Component<ComponentType>;
-		friend class ComponentContainer<ComponentType>;
 
 		//VARIABLES
 	private:
@@ -20,6 +18,7 @@ namespace tnc::ecs {
 		//FUNCTIONS
 	public:
 		ComponentPtr();
+		ComponentPtr(ComponentType* component);
 
 		ComponentPtr(const ComponentPtr& other);
 		ComponentPtr(ComponentPtr&& other) noexcept;
@@ -41,8 +40,6 @@ namespace tnc::ecs {
 		operator bool() const;
 
 	private:
-		ComponentPtr(ComponentType* component);
-
 		void attach(ComponentType* component);
 	};
 

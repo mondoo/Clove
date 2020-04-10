@@ -3,6 +3,11 @@ namespace tnc::ecs {
 	ComponentPtr<ComponentType>::ComponentPtr() = default;
 
 	template<typename ComponentType>
+	ComponentPtr<ComponentType>::ComponentPtr(ComponentType* component) {
+		attach(component);
+	}
+
+	template<typename ComponentType>
 	ComponentPtr<ComponentType>::ComponentPtr(const ComponentPtr& other) {
 		reset();
 		attach(other.component);
@@ -66,11 +71,6 @@ namespace tnc::ecs {
 	template<typename ComponentType>
 	ComponentPtr<ComponentType>::operator bool() const {
 		return isValid();
-	}
-
-	template<typename ComponentType>
-	ComponentPtr<ComponentType>::ComponentPtr(ComponentType* component) {
-		attach(component);
 	}
 
 	template<typename ComponentType>
