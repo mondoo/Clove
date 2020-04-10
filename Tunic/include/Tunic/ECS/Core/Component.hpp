@@ -81,3 +81,43 @@ namespace tnc::ecs {
 }
 
 #include "Component.inl"
+
+//ComponentType == ComponentType
+template<typename ComponentType>
+inline bool operator==(const tnc::ecs::ComponentPtr<ComponentType>& lptr, const tnc::ecs::ComponentPtr<ComponentType>& rptr) {
+	return lptr.get() == rptr.get();
+}
+template<typename ComponentType>
+inline bool operator==(const tnc::ecs::ComponentPtr<ComponentType>& ptr, const ComponentType* object) {
+	return ptr.get() == object;
+}
+template<typename ComponentType>
+inline bool operator==(const tnc::ecs::ComponentPtr<ComponentType>& ptr, const ComponentType& object) {
+	return ptr.get() == *object;
+}
+
+//ComponentType != ComponentType
+template<typename ComponentType>
+inline bool operator!=(const tnc::ecs::ComponentPtr<ComponentType>& lptr, const tnc::ecs::ComponentPtr<ComponentType>& rptr) {
+	return !(lptr == rptr);
+}
+template<typename ComponentType>
+inline bool operator!=(const tnc::ecs::ComponentPtr<ComponentType>& ptr, const ComponentType* object) {
+	return !(ptr == object);
+}
+template<typename ComponentType>
+inline bool operator!=(const tnc::ecs::ComponentPtr<ComponentType>& ptr, const ComponentType& object) {
+	return !(ptr == object);
+}
+
+//ComponentType == nullptr_t
+template<typename ComponentType>
+inline bool operator==(const tnc::ecs::ComponentPtr<ComponentType>& ptr, std::nullptr_t object) {
+	return ptr.get() == object;
+}
+
+//ComponentType != nullptr_t
+template<typename ComponentType>
+inline bool operator!=(const tnc::ecs::ComponentPtr<ComponentType>& ptr, std::nullptr_t object) {
+	return !(ptr == object);
+}
