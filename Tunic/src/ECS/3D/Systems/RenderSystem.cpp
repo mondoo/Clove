@@ -36,9 +36,7 @@ namespace tnc::ecs::_3D {
 	RenderSystem::~RenderSystem() = default;
 
 	void RenderSystem::preUpdate(World& world) {
-		auto componentTuples = world.getComponentSets<CameraComponent>();
-		for(auto& tuple : componentTuples) {
-			CameraComponent* camera = std::get<CameraComponent*>(tuple);
+		for(auto [camera] : world.getComponentSets<CameraComponent>()) {
 			camera->renderTarget->clear();
 		}
 

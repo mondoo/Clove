@@ -44,16 +44,16 @@ namespace tnc::ecs::aud {
 
 		for(auto [component] : world.getComponentSets<AudioComponent>()) {
 			if(component->requestedPlayback) {
-				startSound(component, component->requestedPlayback.value());
+				startSound(component.get(), component->requestedPlayback.value());
 				component->requestedPlayback.reset();
 			} else if(component->requestedStopMode) {
 				switch(component->requestedStopMode.value()) {
 					case StopMode::pause:
-						pauseSound(component);
+						pauseSound(component.get());
 						break;
 
 					case StopMode::stop:
-						stopSound(component);
+						stopSound(component.get());
 						break;
 
 					default:
