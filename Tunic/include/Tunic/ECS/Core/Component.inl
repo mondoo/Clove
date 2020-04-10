@@ -75,8 +75,10 @@ namespace tnc::ecs {
 
 	template<typename ComponentType>
 	void ComponentPtr<ComponentType>::attach(ComponentType* component) {
-		component->pointers.push_back(this);
-		this->component = component;
+		if(component != nullptr) {
+			component->pointers.push_back(this);
+			this->component = component;
+		}
 	}
 
 	template<typename DerivedClassType>
