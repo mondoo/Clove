@@ -2,8 +2,51 @@
 
 #include "Tunic/ECS/Core/ECSTypes.hpp"
 
-namespace tnc::ecs{
-	class ComponentInterface{
+namespace tnc::ecs {
+	template<typename ComponentType> class ComponentContainer;
+	template<typename DerivedClassType> class Component;
+}
+
+namespace tnc::ecs {
+	template<typename ComponentType>
+	class ComponentPtr {
+		friend class Component<ComponentType>;
+		friend class ComponentContainer<ComponentType>;
+
+		//VARIABLES
+	private:
+		ComponentType* component = nullptr;
+
+		//FUNCTIONS
+	public:
+		ComponentPtr();
+
+		ComponentPtr(const ComponentPtr& other);
+		ComponentPtr(ComponentPtr&& other) noexcept;
+
+		ComponentPtr& operator=(const ComponentPtr& other);
+		ComponentPtr& operator=(ComponentPtr&& other) noexcept;
+
+		~ComponentPtr();
+
+		bool isValid();
+
+		void reset();
+
+		ComponentType* get() const;
+
+		ComponentType* operator->() const;
+		ComponentType& operator*() const;
+
+		operator bool() const;
+
+	private:
+		ComponentPtr(ComponentType* component);
+
+		void attach(ComponentType* component);
+	};
+
+	class ComponentInterface {
 		//FUNCTIONS
 	public:
 		virtual ~ComponentInterface() = default;
@@ -12,21 +55,26 @@ namespace tnc::ecs{
 	};
 
 	template<typename DerivedClassType>
-	class Component : public ComponentInterface{
+	class Component : public ComponentInterface {
+		friend class ComponentPtr<DerivedClassType>;
+
 		//VARIABLES
 	public:
 		EntityID entityID = INVALID_ENTITY_ID; //TODO: Make private
 
+	private:
+		std::list<ComponentPtr<DerivedClassType>*> pointers;
+
 		//FUNCTIONS
 	public:
-		Component() = default;
+		Component();
 
 		Component(const Component& other);
 		Component(Component&& other) noexcept;
 
 		Component& operator=(const Component& other);
 		Component& operator=(Component&& other) noexcept;
-		
+
 		virtual ~Component();
 
 		static ComponentID id();
