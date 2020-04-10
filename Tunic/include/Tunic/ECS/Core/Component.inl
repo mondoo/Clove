@@ -41,7 +41,7 @@ namespace tnc::ecs {
 	}
 
 	template<typename ComponentType>
-	bool ComponentPtr<ComponentType>::isValid() {
+	bool ComponentPtr<ComponentType>::isValid() const {
 		return component != nullptr;
 	}
 

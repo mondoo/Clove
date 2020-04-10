@@ -28,7 +28,7 @@ namespace tnc::ecs {
 
 		~ComponentPtr();
 
-		bool isValid();
+		bool isValid() const;
 
 		void reset();
 
