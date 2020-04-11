@@ -3,46 +3,10 @@
 #include "Tunic/ECS/Core/ECSTypes.hpp"
 
 namespace tnc::ecs {
-	template<typename DerivedClassType> class Component;
+	template<typename ComponentType> class ComponentPtr;
 }
 
 namespace tnc::ecs {
-	template<typename ComponentType>
-	class ComponentPtr {
-		friend class Component<ComponentType>;
-
-		//VARIABLES
-	private:
-		ComponentType* component = nullptr;
-
-		//FUNCTIONS
-	public:
-		ComponentPtr();
-		ComponentPtr(ComponentType* component);
-
-		ComponentPtr(const ComponentPtr& other);
-		ComponentPtr(ComponentPtr&& other) noexcept;
-
-		ComponentPtr& operator=(const ComponentPtr& other);
-		ComponentPtr& operator=(ComponentPtr&& other) noexcept;
-
-		~ComponentPtr();
-
-		bool isValid() const;
-
-		void reset();
-
-		ComponentType* get() const;
-
-		ComponentType* operator->() const;
-		ComponentType& operator*() const;
-
-		operator bool() const;
-
-	private:
-		void attach(ComponentType* component);
-	};
-
 	class ComponentInterface {
 		//FUNCTIONS
 	public:
@@ -77,6 +41,42 @@ namespace tnc::ecs {
 		static ComponentID id();
 
 		virtual ComponentID getID() const override;
+	};
+
+	template<typename ComponentType>
+	class ComponentPtr {
+		friend class Component<ComponentType>;
+
+		//VARIABLES
+	private:
+		ComponentType* component = nullptr;
+
+		//FUNCTIONS
+	public:
+		ComponentPtr();
+		ComponentPtr(ComponentType* component);
+
+		ComponentPtr(const ComponentPtr& other);
+		ComponentPtr(ComponentPtr&& other) noexcept;
+
+		ComponentPtr& operator=(const ComponentPtr& other);
+		ComponentPtr& operator=(ComponentPtr&& other) noexcept;
+
+		~ComponentPtr();
+
+		bool isValid() const;
+
+		void reset();
+
+		ComponentType* get() const;
+
+		ComponentType* operator->() const;
+		ComponentType& operator*() const;
+
+		operator bool() const;
+
+	private:
+		void attach(ComponentType* component);
 	};
 }
 

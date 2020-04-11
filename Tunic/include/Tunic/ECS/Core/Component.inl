@@ -1,4 +1,44 @@
 namespace tnc::ecs {
+	template<typename DerivedClassType>
+	Component<DerivedClassType>::Component() = default;
+
+	template<typename DerivedClassType>
+	Component<DerivedClassType>::Component(const Component& other) = default;
+
+	template<typename DerivedClassType>
+	Component<DerivedClassType>::Component(Component&& other) noexcept {
+		entityID = std::move(other.entityID);
+		pointers = std::move(other.pointers);
+	}
+
+	template<typename DerivedClassType>
+	Component<DerivedClassType>& Component<DerivedClassType>::operator=(const Component& other) = default;
+
+	template<typename DerivedClassType>
+	Component<DerivedClassType>& Component<DerivedClassType>::operator=(Component&& other) noexcept {
+		entityID = std::move(other.entityID);
+		pointers = std::move(other.pointers);
+
+		return *this;
+	}
+
+	template<typename DerivedClassType>
+	Component<DerivedClassType>::~Component() {
+		for(auto* pointer : pointers) {
+			pointer->component = nullptr;
+		}
+	}
+
+	template<typename DerivedClassType>
+	ComponentID Component<DerivedClassType>::id() {
+		return typeid(DerivedClassType).hash_code();
+	}
+
+	template<typename DerivedClassType>
+	ComponentID Component<DerivedClassType>::getID() const {
+		return id();
+	}
+
 	template<typename ComponentType>
 	ComponentPtr<ComponentType>::ComponentPtr() = default;
 
@@ -79,45 +119,5 @@ namespace tnc::ecs {
 			component->pointers.push_back(this);
 			this->component = component;
 		}
-	}
-
-	template<typename DerivedClassType>
-	Component<DerivedClassType>::Component() = default;
-
-	template<typename DerivedClassType>
-	Component<DerivedClassType>::Component(const Component& other) = default;
-
-	template<typename DerivedClassType>
-	Component<DerivedClassType>::Component(Component&& other) noexcept {
-		entityID = std::move(other.entityID);
-		pointers = std::move(other.pointers);
-	}
-
-	template<typename DerivedClassType>
-	Component<DerivedClassType>& Component<DerivedClassType>::operator=(const Component& other) = default;
-
-	template<typename DerivedClassType>
-	Component<DerivedClassType>& Component<DerivedClassType>::operator=(Component&& other) noexcept {
-		entityID = std::move(other.entityID);
-		pointers = std::move(other.pointers);
-
-		return *this;
-	}
-
-	template<typename DerivedClassType>
-	Component<DerivedClassType>::~Component() {
-		for(auto* pointer : pointers) {
-			pointer->component = nullptr;
-		}
-	}
-
-	template<typename DerivedClassType>
-	ComponentID Component<DerivedClassType>::id() {
-		return typeid(DerivedClassType).hash_code();
-	}
-
-	template<typename DerivedClassType>
-	ComponentID Component<DerivedClassType>::getID() const {
-		return id();
 	}
 }
