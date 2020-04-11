@@ -2,6 +2,8 @@
 
 #include "Tunic/ECS/Core/ECSTypes.hpp"
 
+#include <list>
+
 namespace tnc::ecs {
 	template<typename ComponentType>
 	class ComponentPtr;
