@@ -25,6 +25,7 @@ namespace tnc::ecs {
 	template<typename DerivedClassType>
 	Component<DerivedClassType>::~Component() {
 		for(auto* pointer : pointers) {
+			pointer->base = nullptr;
 			pointer->component = nullptr;
 		}
 	}
@@ -39,39 +40,48 @@ namespace tnc::ecs {
 		return id();
 	}
 
+	template<typename DerivedClassType>
+	void Component<DerivedClassType>::attachPointer(ComponentPtr<DerivedClassType>* ptr) {
+		pointers.push_back(ptr);
+	}
+
+	template<typename DerivedClassType>
+	void Component<DerivedClassType>::detachPointer(ComponentPtr<DerivedClassType>* ptr) {
+		pointers.erase(std::find(pointers.begin(), pointers.end(), ptr));
+	}
+
 	template<typename ComponentType>
 	ComponentPtr<ComponentType>::ComponentPtr() = default;
 
 	template<typename ComponentType>
 	ComponentPtr<ComponentType>::ComponentPtr(ComponentType* component) {
-		attach(component);
+		base = component;
+		this->component = component;
+
+		if(base != nullptr) {
+			base->attachPointer(this);
+		}
 	}
 
 	template<typename ComponentType>
 	ComponentPtr<ComponentType>::ComponentPtr(const ComponentPtr& other) {
-		reset();
-		attach(other.component);
+		copy(std::move(other));
 	}
 
 	template<typename ComponentType>
 	ComponentPtr<ComponentType>::ComponentPtr(ComponentPtr&& other) noexcept {
-		reset();
-		attach(other.component);
+		move(std::move(other));
 	}
 
 	template<typename ComponentType>
 	ComponentPtr<ComponentType>& ComponentPtr<ComponentType>::operator=(const ComponentPtr& other) {
-		reset();
-		attach(other.component);
-
+		copy(std::move(other));
 		return *this;
 	}
 
 	template<typename ComponentType>
 	ComponentPtr<ComponentType>& ComponentPtr<ComponentType>::operator=(ComponentPtr&& other) noexcept {
-		reset();
-		attach(other.component);
-
+		move(std::move(other));
 		return *this;
 	}
 
@@ -88,7 +98,8 @@ namespace tnc::ecs {
 	template<typename ComponentType>
 	void ComponentPtr<ComponentType>::reset() {
 		if(isValid()) {
-			component->pointers.erase(std::find(component->pointers.begin(), component->pointers.end(), this));
+			base->detachPointer(this);
+			base = nullptr;
 			component = nullptr;
 		}
 	}
@@ -114,10 +125,26 @@ namespace tnc::ecs {
 	}
 
 	template<typename ComponentType>
-	void ComponentPtr<ComponentType>::attach(ComponentType* component) {
-		if(component != nullptr) {
-			component->pointers.push_back(this);
-			this->component = component;
+	void ComponentPtr<ComponentType>::copy(const ComponentPtr& other) {
+		reset();
+
+		base = other.base;
+		component = other.component;
+
+		if(base != nullptr) {
+			base->attachPointer(this);
+		}
+	}
+
+	template<typename ComponentType>
+	void ComponentPtr<ComponentType>::move(ComponentPtr&& other) {
+		reset();
+
+		base = other.base;
+		component = other.component;
+
+		if(base != nullptr) {
+			base->attachPointer(this);
 		}
 	}
 }

@@ -3,7 +3,8 @@
 #include "Tunic/ECS/Core/ECSTypes.hpp"
 
 namespace tnc::ecs {
-	template<typename ComponentType> class ComponentPtr;
+	template<typename ComponentType>
+	class ComponentPtr;
 }
 
 namespace tnc::ecs {
@@ -41,6 +42,10 @@ namespace tnc::ecs {
 		static ComponentID id();
 
 		virtual ComponentID getID() const override;
+
+	private:
+		void attachPointer(ComponentPtr<DerivedClassType>* ptr);
+		void detachPointer(ComponentPtr<DerivedClassType>* ptr);
 	};
 
 	template<typename ComponentType>
@@ -49,6 +54,8 @@ namespace tnc::ecs {
 
 		//VARIABLES
 	private:
+		//Having this base pointer allows us to use incomplete ComponentTypes
+		Component<ComponentType>* base = nullptr;
 		ComponentType* component = nullptr;
 
 		//FUNCTIONS
@@ -76,7 +83,8 @@ namespace tnc::ecs {
 		operator bool() const;
 
 	private:
-		void attach(ComponentType* component);
+		void copy(const ComponentPtr& other);
+		void move(ComponentPtr&& other);
 	};
 }
 
