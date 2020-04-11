@@ -36,7 +36,7 @@ void ExampleLayer::onUpdate(clv::utl::DeltaTime deltaTime) {
 	static float rotation = 0.0f;
 
 	//Retrieve the transform component from the cube entity
-	auto* cubeTransform = cubeEntity.getComponent<tnc::ecs::_3D::TransformComponent>();
+	tnc::ecs::ComponentPtr<tnc::ecs::_3D::TransformComponent> cubeTransform = cubeEntity.getComponent<tnc::ecs::_3D::TransformComponent>();
 
 	//Rotate the cube around the Y axis 
 	rotation += rotationSpeed * deltaTime;

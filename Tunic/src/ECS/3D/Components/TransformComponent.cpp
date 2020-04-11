@@ -3,7 +3,7 @@
 using namespace clv;
 
 namespace tnc::ecs::_3D{
-	static void removeItemFromVector(TransformComponent* item, std::vector<TransformComponent*>& vector){
+	static void removeItemFromVector(const ComponentPtr<TransformComponent>& item, std::vector<ComponentPtr<TransformComponent>>& vector) {
 		auto removeIter = std::remove(vector.begin(), vector.end(), item);
 		vector.erase(removeIter, vector.end());
 	}
@@ -47,8 +47,8 @@ namespace tnc::ecs::_3D{
 			removeItemFromVector(this, parent->children);
 		}
 
-		for(auto* child : children){
-			child->parent = nullptr;
+		for(auto child : children){
+			child->parent.reset();
 		}
 	}
 
@@ -121,11 +121,11 @@ namespace tnc::ecs::_3D{
 		}
 	}
 
-	TransformComponent* TransformComponent::getParent() const{
+	ComponentPtr<TransformComponent> TransformComponent::getParent() const {
 		return parent;
 	}
 
-	void TransformComponent::addChild(TransformComponent* child){
+	void TransformComponent::addChild(ComponentPtr<TransformComponent> child) {
 		if(child != nullptr && child != this){
 			children.push_back(child);
 			if(child->parent != nullptr){

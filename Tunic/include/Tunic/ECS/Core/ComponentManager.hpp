@@ -2,10 +2,7 @@
 
 #include "Tunic/ECS/Core/ECSTypes.hpp"
 #include "Clove/Memory/PoolAllocator.hpp"
-
-namespace tnc::ecs{
-	class ComponentInterface;
-}
+#include "Tunic/ECS/Core/Component.hpp"
 
 namespace tnc::ecs{
 	class ComponentManager{
@@ -55,9 +52,9 @@ namespace tnc::ecs{
 			~ComponentContainer();
 
 			template<typename ...ConstructArgs>
-			ComponentType* addComponent(EntityID entityID, ConstructArgs&& ...args);
+			ComponentPtr<ComponentType> addComponent(EntityID entityID, ConstructArgs&& ...args);
 			virtual void cloneComponent(EntityID fromID, EntityID toID) override;
-			ComponentType* getComponent(EntityID entityID);
+			ComponentPtr<ComponentType> getComponent(EntityID entityID);
 			virtual void removeComponent(EntityID entityID) override;
 		};
 
