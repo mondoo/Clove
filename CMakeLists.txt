@@ -15,11 +15,16 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
 set(BUILD_STATIC_LIBS ON CACHE BOOL "Build static library")
 set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
-#custom settings
+#Garlic settings
 option(GAR_BUILD_TUNIC "Build the Tunic framework" ON)
 CMAKE_DEPENDENT_OPTION(GAR_BUILD_BULB "Build the Bulb editor (requries Tunic)" OFF "GAR_BUILD_TUNIC" OFF)
 option(GAR_BUILD_EXAMPLES OFF)
 option(GAR_ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
+
+#Clove settings
+option(GAR_CLV_ENABLE_PROFILING "Enables the Clove profiler which will print function timings to a file" OFF)
+option(GAR_CLV_ENABLE_MEMORY_DEBUGGING "Enables certain memory debugging tools such as extra logs" OFF)
+CMAKE_DEPENDENT_OPTION(GAR_TRACK_MEMORY_ALLOCATIONS "Enables custom new / delete operators to track allocations" OFF "GAR_CLV_ENABLE_MEMORY_DEBUGGING" OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 

@@ -131,6 +131,7 @@ set(
 
 set(
 	CoreMemoryFiles
+		${CLV_SOURCE}/Memory/AllocationTracker.cpp
 		${CLV_INCLUDE}/Memory/PoolAllocator.hpp
 		${CLV_INCLUDE}/Memory/PoolAllocator.inl
 )

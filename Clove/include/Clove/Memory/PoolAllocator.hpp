@@ -16,9 +16,15 @@ namespace clv::mem{
 			std::unique_ptr<PoolItem[]> storage;
 			std::unique_ptr<PoolArena> next;
 
+		private:
+		#if CLV_ENABLE_MEMORY_DEBUGGING
+			std::size_t size;
+		#endif
+
 			//FUNCTIONS
 		public:
 			PoolArena(std::size_t size);
+			~PoolArena();
 		};
 
 		//VARIABLES
