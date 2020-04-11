@@ -38,6 +38,8 @@ namespace tnc::ecs{
 		ComponentPtr<ComponentType> getComponent() const;
 		template<typename ComponentType>
 		void removeComponent();
+
+		operator EntityID() const;
 	};
 }
 
