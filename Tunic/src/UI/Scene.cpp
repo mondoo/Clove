@@ -11,6 +11,7 @@ namespace tnc::ui {
 
 		//Ported from 2D::RenderSystem
 		//Screen size
+		/*
 		const mth::vec2i screenSize = tnc::Application::get().getMainWindow().getSize(); //TODO: Could this be gotten from the renderer?
 		const mth::vec2f screenHalfSize{ static_cast<float>(screenSize.x) / 2.0f, static_cast<float>(screenSize.y) / 2.0f };
 
@@ -23,5 +24,6 @@ namespace tnc::ui {
 		for(auto& widget : elements) {
 			widget->draw(renderer);
 		}
+		*/
 	}
 }
