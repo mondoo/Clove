@@ -133,26 +133,19 @@ namespace clv::gfx::ShaderTranspiler{
 	}
 
 	std::string transpileFromSource(std::string_view source, ShaderStage stage, ShaderType outputType){		
-		std::vector<uint32_t> spirvSource;
+		std::string shaderSource;
+		if(outputType == ShaderType::GLSL) {
+			shaderSource = "#define GLSL\n\n";
+		}
+		shaderSource.append(source);
 
 		glslang::InitializeProcess();
 
-		EShLanguage eshstage = getEShStage(stage);
+		const EShLanguage eshstage = getEShStage(stage);
 		glslang::TShader shader(eshstage);
 
-		if(outputType == ShaderType::GLSL) {
-			const char* defines = "#define GLSL\n\n";
-			const char* shaderSource = source.data();
-			
-			char* combinedSource = (char*)malloc(strlen(defines) + strlen(shaderSource) + 1); //+1 for the null terminator
-			strcpy(combinedSource, defines);
-			strcat(combinedSource, shaderSource);
-
-			shader.setStrings(&combinedSource, 1);
-		} else {
-			const char* shaderSource = source.data();
-			shader.setStrings(&shaderSource, 1);
-		}
+		const char* rawSource = shaderSource.data();
+		shader.setStrings(&rawSource, 1);
 
 		TBuiltInResource builtInResources = glslang::DefaultTBuiltInResource;
 		EShMessages messages = static_cast<EShMessages>(
@@ -172,18 +165,6 @@ namespace clv::gfx::ShaderTranspiler{
 
 		shader.parse(&builtInResources, 100, true, messages);
 
-		glslang::SpvOptions spvOptions;
-		spvOptions.validate = false;
-	#if CLV_DEBUG
-		spvOptions.disableOptimizer = true;
-		spvOptions.optimizeSize = false;
-	#else
-		spvOptions.disableOptimizer = false;
-		spvOptions.optimizeSize = true;
-	#endif
-
-		spv::SpvBuildLogger logger;
-
 		const char* log = shader.getInfoLog();
 
 		if(strlen(log) > 0){
@@ -191,8 +172,19 @@ namespace clv::gfx::ShaderTranspiler{
 			return "";
 		}
 
-		glslang::TIntermediate* inter = shader.getIntermediate();
+		glslang::SpvOptions spvOptions{};
+		spvOptions.validate				= false;
+	#if CLV_DEBUG
+		spvOptions.generateDebugInfo	= true;
+		spvOptions.disableOptimizer		= true;
+	#else
+		spvOptions.generateDebugInfo	= false;
+		spvOptions.disableOptimizer		= false;
+	#endif
 
+		std::vector<uint32_t> spirvSource;
+		spv::SpvBuildLogger logger;
+		glslang::TIntermediate* inter = shader.getIntermediate();
 		glslang::GlslangToSpv(*inter, spirvSource, &logger, &spvOptions);
 
 		glslang::FinalizeProcess();
