@@ -2,7 +2,6 @@
 
 #include "Tunic/ECS/Core/World.hpp"
 #include "Tunic/ECS/Core/Entity.hpp"
-#include "Tunic/ECS/2D/Systems/RenderSystem.hpp"
 #include "Tunic/ECS/3D/Components/CameraComponent.hpp"
 #include "Tunic/ECS/3D/Components/DirectionalLightComponent.hpp"
 #include "Tunic/ECS/3D/Components/PointLightComponent.hpp"
@@ -13,9 +12,6 @@
 #include "Tunic/ECS/3D/Systems/PhysicsSystem.hpp"
 #include "Tunic/ECS/Audio/Components/AudioComponent.hpp"
 #include "Tunic/ECS/Audio/Systems/AudioSystem.hpp"
-#include "Tunic/ECS/UI/Components/TextComponent.hpp"
-#include "Tunic/ECS/UI/Components/WidgetComponent.hpp"
-#include "Tunic/ECS/UI/Components/TransformComponent.hpp"
 
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 #include "Tunic/Rendering/Renderables/Model.hpp"
