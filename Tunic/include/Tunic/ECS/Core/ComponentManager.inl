@@ -21,7 +21,7 @@ namespace tnc::ecs{
 
 	template<typename ComponentType>
 	template<typename ...ConstructArgs>
-	ComponentType* ComponentManager::ComponentContainer<ComponentType>::addComponent(EntityID entityID, ConstructArgs&& ...args){
+	ComponentPtr<ComponentType> ComponentManager::ComponentContainer<ComponentType>::addComponent(EntityID entityID, ConstructArgs&&... args) {
 		ComponentType* comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
 		comp->entityID = entityID; //TODO: make this container a friend of the component now it's typed
 		
@@ -34,7 +34,7 @@ namespace tnc::ecs{
 
 		componentAddedDelegate.broadcast(comp);
 
-		return comp;
+		return { comp };
 	}
 
 	template<typename ComponentType>
@@ -46,11 +46,11 @@ namespace tnc::ecs{
 	}
 
 	template<typename ComponentType>
-	ComponentType* ComponentManager::ComponentContainer<ComponentType>::getComponent(EntityID entityID){
+	ComponentPtr<ComponentType> ComponentManager::ComponentContainer<ComponentType>::getComponent(EntityID entityID) {
 		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()){
-			return components[iter->second];
+			return { components[iter->second] };
 		} else{
-			return nullptr;
+			return {};
 		}
 	}
 

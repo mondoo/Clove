@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Tunic/ECS/Core/ECSTypes.hpp"
+#include "Tunic/ECS/Core/Component.hpp"
 
 namespace tnc::ecs{
 	class World;
@@ -32,11 +33,13 @@ namespace tnc::ecs{
 		EntityID getID() const;
 
 		template<typename ComponentType, typename ...ConstructorArgs>
-		ComponentType* addComponent(ConstructorArgs&& ...args);
+		ComponentPtr<ComponentType> addComponent(ConstructorArgs&& ...args);
 		template<typename ComponentType>
-		ComponentType* getComponent() const;
+		ComponentPtr<ComponentType> getComponent() const;
 		template<typename ComponentType>
 		void removeComponent();
+
+		operator EntityID() const;
 	};
 }
 

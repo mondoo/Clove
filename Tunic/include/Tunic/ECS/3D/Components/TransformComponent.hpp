@@ -17,8 +17,8 @@ namespace tnc::ecs::_3D {
 		clv::mth::quatf localRotation = clv::mth::quatf({ 0.0f, 0.0f, 0.0f });
 		clv::mth::vec3f localScale = { 1.0f, 1.0f, 1.0f };
 
-		TransformComponent* parent = nullptr;
-		std::vector<TransformComponent*> children;
+		ComponentPtr<TransformComponent> parent;
+		std::vector<ComponentPtr<TransformComponent>> children;
 
 		//FUNCTIONS
 	public:
@@ -40,8 +40,8 @@ namespace tnc::ecs::_3D {
 		void setRotation(const clv::mth::quatf& rotation, TransformSpace space = TransformSpace::Local);
 		void setScale(const clv::mth::vec3f& scale, TransformSpace space = TransformSpace::Local);
 
-		TransformComponent* getParent() const;
-		void addChild(TransformComponent* child);
+		ComponentPtr<TransformComponent> getParent() const;
+		void addChild(ComponentPtr<TransformComponent> child);
 
 		clv::mth::mat4f getWorldTransformMatrix() const;
 		clv::mth::mat4f getLocalTransformMatrix() const;

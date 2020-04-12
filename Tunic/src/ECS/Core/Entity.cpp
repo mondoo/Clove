@@ -34,4 +34,8 @@ namespace tnc::ecs{
 	EntityID Entity::getID() const{
 		return entityID;
 	}
+
+	Entity::operator EntityID() const {
+		return entityID;
+	}
 }

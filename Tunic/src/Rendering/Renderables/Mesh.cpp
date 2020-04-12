@@ -69,7 +69,7 @@ namespace tnc::rnd{
 	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32_t>& indices, MaterialInstance materialInstance)
 		: materialInstance(std::move(materialInstance))
 		, loadedBufferData(vbData)
-		, indices(indices){
+		, indices(indices) {
 		vertexBufferMap[vbData.getLayout()] = createVertexBuffer(vbData);
 		indexBuffer = createIndexBuffer(indices);
 	}
@@ -78,22 +78,20 @@ namespace tnc::rnd{
 
 	Mesh::Mesh(Mesh&& other) noexcept
 		: materialInstance(std::move(other.materialInstance))
-		, loadedBufferData(std::move(other.loadedBufferData)){
-		vertexBufferMap = std::move(other.vertexBufferMap);
-		indexBuffer = std::move(other.indexBuffer);
-		loadedBufferData = std::move(loadedBufferData);
-		indices = std::move(indices);
+		, loadedBufferData(std::move(other.loadedBufferData)) {
+		vertexBufferMap	= std::move(other.vertexBufferMap);
+		indexBuffer		= std::move(other.indexBuffer);
+		indices			= std::move(other.indices);
 	}
 
 	Mesh& Mesh::operator=(const Mesh& other) = default;
 
 	Mesh& Mesh::operator=(Mesh&& other) noexcept {
-		materialInstance = std::move(other.materialInstance);
-		loadedBufferData = std::move(other.loadedBufferData);
-		vertexBufferMap = std::move(other.vertexBufferMap);
-		indexBuffer = std::move(other.indexBuffer);
-		loadedBufferData = std::move(loadedBufferData);
-		indices = std::move(indices);
+		materialInstance	= std::move(other.materialInstance);
+		loadedBufferData	= std::move(other.loadedBufferData);
+		vertexBufferMap		= std::move(other.vertexBufferMap);
+		indexBuffer			= std::move(other.indexBuffer);
+		indices				= std::move(other.indices);
 
 		return *this;
 	}

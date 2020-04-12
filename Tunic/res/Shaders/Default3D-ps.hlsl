@@ -141,7 +141,7 @@ float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace){
 	float closestDepth = directionaShadowDepthMap.Sample(directionalShadowDepthSampler, float3(projectionCoords.xy, lightIndex)).r;
 	float currentDepth = projectionCoords.z;
 
-	const float bias = 0.005;
+	const float bias = 0.001f;
 	float shadow = currentDepth - bias > closestDepth ? 1.0f : 0.0f;
 	
 	return shadow;
@@ -162,7 +162,7 @@ float calculatePointLightShadow(float3 fragPos, int lightIndex){
 	float currentDepth = length(fragToLight);
 
 	float shadow = 0.0;
-	const float bias = 0.15;
+	const float bias = 0.001f;
 	const int samples = 20;
 	const float viewDistance = length(viewPos - fragPos);
 	const float diskRadius = (1.0f + (viewDistance / farPlane)) / farPlane;
