@@ -48,7 +48,10 @@ namespace tnc::ui {
 
 		const mth::mat4f uiScale = mth::scale(mth::mat4f{ 1.0f }, mth::vec3f{ 40.0f });
 
-		const mth::mat4f translation	= mth::translate(mth::mat4f{ 1 }, { position, 0.0f });
+		//Move the position to origin at the top left
+		const mth::vec2f pos = { position.x - screenHalfSize.x, -position.y + screenHalfSize.y };
+
+		const mth::mat4f translation = mth::translate(mth::mat4f{ 1 }, { pos, 0.0f });
 		const mth::mat4f rotation		= mth::rotate(mth::mat4f{ 1 }, this->rotation, { 0.0f, 0.0f, 1.0f });
 		const mth::mat4f scale			= mth::scale(mth::mat4f{ 1 }, { this->scale, 0.0f });
 
