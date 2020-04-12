@@ -14,6 +14,7 @@ namespace tnc::ui{
 
 		//FUNCTIONS
 	public:
+		Image();
 		//TODO: Ctors
 
 		virtual void draw(rnd::Renderer2D& renderer) override;
