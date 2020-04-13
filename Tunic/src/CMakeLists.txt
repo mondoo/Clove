@@ -10,6 +10,8 @@ set(
 	AIFiles
 		${TNC_INCLUDE}/AI/BehaviourTree.hpp
 		${TNC_SOURCE}/AI/BehaviourTree.cpp
+		${TNC_INCLUDE}/AI/Composite.hpp
+		${TNC_SOURCE}/AI/Composite.cpp
 		${TNC_INCLUDE}/AI/Task.hpp
 )
 
