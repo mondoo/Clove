@@ -9,7 +9,8 @@ namespace tnc::rnd {
 namespace tnc::ui{
 	class Image : public Widget {
 		//VARIABLES
-	private:
+	//private:
+	public:
 		std::shared_ptr<rnd::Sprite> sprite;
 
 		//FUNCTIONS
@@ -17,6 +18,6 @@ namespace tnc::ui{
 		Image();
 		//TODO: Ctors
 
-		virtual void draw(rnd::Renderer2D& renderer) override;
+		virtual void draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) override;
 	};
 }

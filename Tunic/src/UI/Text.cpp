@@ -27,7 +27,7 @@ namespace tnc::ui {
 
 	Text::~Text() = default;
 
-	void Text::draw(rnd::Renderer2D& renderer) {
+	void Text::draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) {
 		GraphicsFactory& graphicsFactory = Application::get().getGraphicsFactory();
 
 		/*mth::vec2f offset{};

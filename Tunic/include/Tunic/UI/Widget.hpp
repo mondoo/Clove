@@ -7,7 +7,8 @@ namespace tnc::rnd {
 namespace tnc::ui {
 	class Widget{
 		//VARIABLES
-	protected:
+	//protected:
+	public:
 		//TODO: Does this all need to be in the base class?
 		clv::mth::vec2f position{ 0.0f, 0.0f };
 		float rotation{ 0.0f };
@@ -20,6 +21,6 @@ namespace tnc::ui {
 	public:
 		//TODO: Ctors
 
-		virtual void draw(rnd::Renderer2D& renderer) = 0;
+		virtual void draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) = 0;
 	};
 }
