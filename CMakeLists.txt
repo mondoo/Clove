@@ -39,12 +39,12 @@ if(GAR_BUILD_TUNIC)
 endif()
 
 #Builb
-if(GAR_BUILD_BULB) #not currently supported without MSVC
+if(GAR_BUILD_BULB)
 	add_subdirectory(Bulb)
 endif()
 
 #Garlic
-if(GAR_BUILD_GARLIC AND MSVC)
+if(GAR_BUILD_GARLIC AND MSVC)  #not currently supported without MSVC
 	add_subdirectory(Garlic)
 endif()
 
