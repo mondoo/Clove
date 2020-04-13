@@ -1,21 +1,23 @@
 #pragma once
 
+#include "Tunic/UI/Widget.hpp"
+
 #include "Tunic/Rendering/Renderables/Font.hpp"
 
-namespace tnc::rnd {
-	class Text {
+namespace tnc::ui {
+	class Text : public Widget{
 		//VARIABLES
 	private:
-		Font font;
+		rnd::Font font;
 		std::string text;
 
-		bool isBufferDity = false;
-		std::vector<Glyph> characters;
+		bool isBufferDirty = false;
+		std::vector<rnd::Glyph> characters;
 
 		//FUNCTIONS
 	public:
 		Text() = delete;
-		Text(Font font);
+		Text(rnd::Font font);
 
 		Text(const Text& other);
 		Text(Text&& other);
@@ -25,11 +27,13 @@ namespace tnc::rnd {
 
 		~Text();
 
+		virtual void draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) override;
+
 		void setText(std::string text);
 		void setFontSize(uint32_t size);
 
 		std::size_t getTextLength() const;
-		const Glyph& getBufferForCharAt(size_t index);
+		const rnd::Glyph& getBufferForCharAt(size_t index);
 
 	private:
 		void buildGlyphs();

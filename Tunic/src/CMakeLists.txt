@@ -21,8 +21,6 @@ set(
 		${TNC_INCLUDE}/ECS/Core/World.inl
 		${TNC_SOURCE}/ECS/Core/World.cpp
 		${TNC_INCLUDE}/ECS/Core/System.hpp
-		${TNC_INCLUDE}/ECS/2D/Systems/RenderSystem.hpp
-		${TNC_SOURCE}/ECS/2D/Systems/RenderSystem.cpp
 		${TNC_INCLUDE}/ECS/3D/Components/CameraComponent.hpp
 		${TNC_SOURCE}/ECS/3D/Components/CameraComponent.cpp
 		${TNC_INCLUDE}/ECS/3D/Components/DirectionalLightComponent.hpp
@@ -43,12 +41,6 @@ set(
 		${TNC_SOURCE}/ECS/Audio/Components/AudioComponent.cpp
 		${TNC_INCLUDE}/ECS/Audio/Systems/AudioSystem.hpp
 		${TNC_SOURCE}/ECS/Audio/Systems/AudioSystem.cpp
-		${TNC_INCLUDE}/ECS/UI/Components/TextComponent.hpp
-		${TNC_SOURCE}/ECS/UI/Components/TextComponent.cpp
-		${TNC_INCLUDE}/ECS/UI/Components/TransformComponent.hpp
-		${TNC_SOURCE}/ECS/UI/Components/TransformComponent.cpp
-		${TNC_INCLUDE}/ECS/UI/Components/WidgetComponent.hpp
-		${TNC_SOURCE}/ECS/UI/Components/WidgetComponent.cpp
 )
 
 set(
@@ -81,8 +73,17 @@ set(
 		${TNC_SOURCE}/Rendering/Renderables/Model.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Sprite.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Sprite.cpp
-		${TNC_INCLUDE}/Rendering/Renderables/Text.hpp
-		${TNC_SOURCE}/Rendering/Renderables/Text.cpp
+		
+)
+
+set(
+	UIFiles
+		${TNC_INCLUDE}/UI/Image.hpp
+		${TNC_SOURCE}/UI/Image.cpp
+		${TNC_INCLUDE}/UI/Text.hpp
+		${TNC_SOURCE}/UI/Text.cpp
+		${TNC_INCLUDE}/UI/Widget.hpp
+		${TNC_SOURCE}/UI/Widget.cpp
 )
 
 set(
@@ -131,6 +132,7 @@ target_sources(
 		${ECSFiles}
 		${PhysicsFiles}
 		${RenderingFiles}
+		${UIFiles}
 		${ShaderFiles}
 )
 
