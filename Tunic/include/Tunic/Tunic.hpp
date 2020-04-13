@@ -18,6 +18,8 @@
 #include "Tunic/Rendering/Renderables/Sprite.hpp"
 #include "Tunic/Rendering/Material.hpp"
 #include "Tunic/Rendering/MaterialInstance.hpp"
+#include "Tunic/Rendering/Renderer.hpp"
+#include "Tunic/Rendering/Renderer2D.hpp"
 
 #include "Tunic/Application.hpp"
 
