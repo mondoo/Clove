@@ -17,7 +17,8 @@ set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #Garlic settings
 option(GAR_BUILD_TUNIC "Build the Tunic framework" ON)
-CMAKE_DEPENDENT_OPTION(GAR_BUILD_BULB "Build the Bulb editor (requries Tunic)" OFF "GAR_BUILD_TUNIC" OFF)
+CMAKE_DEPENDENT_OPTION(GAR_BUILD_BULB "Build the Bulb application (requries Tunic)" OFF "GAR_BUILD_TUNIC" OFF)
+CMAKE_DEPENDENT_OPTION(GAR_BUILD_GARLIC "Build the Garlic editor (requries Bulb)" OFF "GAR_BUILD_BULB" OFF)
 option(GAR_BUILD_EXAMPLES OFF)
 option(GAR_ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
 
@@ -38,8 +39,13 @@ if(GAR_BUILD_TUNIC)
 endif()
 
 #Builb
-if(MSVC AND GAR_BUILD_BULB) #not currently supported without MSVC
+if(GAR_BUILD_BULB) #not currently supported without MSVC
 	add_subdirectory(Bulb)
+endif()
+
+#Garlic
+if(GAR_BUILD_GARLIC AND MSVC)
+	add_subdirectory(Garlic)
 endif()
 
 if(ENABLE_CLANG_TIDY)
