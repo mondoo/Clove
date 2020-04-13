@@ -29,22 +29,11 @@ namespace tnc::ui {
 
 	void Text::draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) {
 		GraphicsFactory& graphicsFactory = Application::get().getGraphicsFactory();
+		const mth::vec2f screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
 
-		/*mth::vec2f offset{};
-		const mth::vec2f anchor = transform->getAnchor();
+		mth::vec2f cursorPos = { position.x - screenHalfSize.x, -position.y + screenHalfSize.y };
 
-		if(ui::TransformComponent* parent = transform->getParent()) {
-			const mth::vec2f parentScale = parent->getScale();
-			offset.x = anchor.x * parentScale.x;
-			offset.y = anchor.y * parentScale.y;
-		} else {
-			offset.x = anchor.x * screenSize.x;
-			offset.y = anchor.y * screenSize.y;
-		}*/
-
-		mth::vec2f cursorPos = position;
-		/*cursorPos.x -= (screenHalfSize.x - offset.x);
-		cursorPos.y += (screenHalfSize.y + offset.y);*/
+		const mth::mat4f projection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
 
 		for(size_t i = 0; i < getTextLength(); ++i) {
 			const rnd::Glyph& glyph = getBufferForCharAt(i);
@@ -62,7 +51,7 @@ namespace tnc::ui {
 				model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
 				auto character = std::make_shared<rnd::Sprite>(glyph.character);
-				//character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, uiProjection * model, ShaderStage::Vertex);
+				character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
 
 				renderer.submitText(character);
 			}
