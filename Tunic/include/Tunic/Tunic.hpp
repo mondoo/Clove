@@ -21,6 +21,9 @@
 #include "Tunic/Rendering/Renderer.hpp"
 #include "Tunic/Rendering/Renderer2D.hpp"
 
+#include "Tunic/UI/Image.hpp"
+#include "Tunic/UI/Text.hpp"
+
 #include "Tunic/Application.hpp"
 
 #include "Tunic/Input.hpp"
