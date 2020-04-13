@@ -11,7 +11,6 @@ set(
 		${TNC_INCLUDE}/AI/BehaviourTree.hpp
 		${TNC_SOURCE}/AI/BehaviourTree.cpp
 		${TNC_INCLUDE}/AI/Task.hpp
-		${TNC_SOURCE}/AI/Task.cpp
 )
 
 set(
