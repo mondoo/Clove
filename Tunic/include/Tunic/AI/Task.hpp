@@ -1,19 +1,19 @@
 #pragma once
 
-namespace tnc::ai{
-	enum class TaskStatus{
-		running,
-		success,
-		failure
-	};
-}
-
 namespace tnc::ai {
 	class Task {
+		//TYPES
+	public:
+		enum class Status {
+			running,
+			success,
+			failure
+		};
+
 		//FUNCTIONS
 	public:
 		virtual ~Task() = default;
 
-		virtual TaskStatus activate() = 0;
+		virtual Status activate() = 0;
 	};
 }
