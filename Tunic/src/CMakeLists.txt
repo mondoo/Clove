@@ -8,47 +8,39 @@ add_library(${PROJECT_NAME} STATIC)
 
 set(
 	ECSFiles
-		${TNC_INCLUDE}/ECS/Core/Component.hpp
-		${TNC_INCLUDE}/ECS/Core/Component.inl
-		${TNC_INCLUDE}/ECS/Core/ComponentManager.hpp
-		${TNC_INCLUDE}/ECS/Core/ComponentManager.inl
-		${TNC_SOURCE}/ECS/Core/ComponentManager.cpp
-		${TNC_INCLUDE}/ECS/Core/ECSTypes.hpp
-		${TNC_INCLUDE}/ECS/Core/Entity.hpp
-		${TNC_INCLUDE}/ECS/Core/Entity.inl
-		${TNC_SOURCE}/ECS/Core/Entity.cpp
-		${TNC_INCLUDE}/ECS/Core/World.hpp
-		${TNC_INCLUDE}/ECS/Core/World.inl
-		${TNC_SOURCE}/ECS/Core/World.cpp
-		${TNC_INCLUDE}/ECS/Core/System.hpp
-		${TNC_INCLUDE}/ECS/2D/Systems/RenderSystem.hpp
-		${TNC_SOURCE}/ECS/2D/Systems/RenderSystem.cpp
-		${TNC_INCLUDE}/ECS/3D/Components/CameraComponent.hpp
-		${TNC_SOURCE}/ECS/3D/Components/CameraComponent.cpp
-		${TNC_INCLUDE}/ECS/3D/Components/DirectionalLightComponent.hpp
-		${TNC_SOURCE}/ECS/3D/Components/DirectionalLightComponent.cpp
-		${TNC_INCLUDE}/ECS/3D/Components/ModelComponent.hpp
-		${TNC_SOURCE}/ECS/3D/Components/ModelComponent.cpp
-		${TNC_INCLUDE}/ECS/3D/Components/PointLightComponent.hpp
-		${TNC_SOURCE}/ECS/3D/Components/PointLightComponent.cpp
-		${TNC_INCLUDE}/ECS/3D/Components/RigidBodyComponent.hpp
-		${TNC_SOURCE}/ECS/3D/Components/RigidBodyComponent.cpp
-		${TNC_INCLUDE}/ECS/3D/Components/TransformComponent.hpp
-		${TNC_SOURCE}/ECS/3D/Components/TransformComponent.cpp
-		${TNC_INCLUDE}/ECS/3D/Systems/RenderSystem.hpp
-		${TNC_SOURCE}/ECS/3D/Systems/RenderSystem.cpp
-		${TNC_INCLUDE}/ECS/3D/Systems/PhysicsSystem.hpp
-		${TNC_SOURCE}/ECS/3D/Systems/PhysicsSystem.cpp
-		${TNC_INCLUDE}/ECS/Audio/Components/AudioComponent.hpp
-		${TNC_SOURCE}/ECS/Audio/Components/AudioComponent.cpp
-		${TNC_INCLUDE}/ECS/Audio/Systems/AudioSystem.hpp
-		${TNC_SOURCE}/ECS/Audio/Systems/AudioSystem.cpp
-		${TNC_INCLUDE}/ECS/UI/Components/TextComponent.hpp
-		${TNC_SOURCE}/ECS/UI/Components/TextComponent.cpp
-		${TNC_INCLUDE}/ECS/UI/Components/TransformComponent.hpp
-		${TNC_SOURCE}/ECS/UI/Components/TransformComponent.cpp
-		${TNC_INCLUDE}/ECS/UI/Components/WidgetComponent.hpp
-		${TNC_SOURCE}/ECS/UI/Components/WidgetComponent.cpp
+		${TNC_INCLUDE}/ECS/Component.hpp
+		${TNC_INCLUDE}/ECS/Component.inl
+		${TNC_INCLUDE}/ECS/ComponentManager.hpp
+		${TNC_INCLUDE}/ECS/ComponentManager.inl
+		${TNC_SOURCE}/ECS/ComponentManager.cpp
+		${TNC_INCLUDE}/ECS/ECSTypes.hpp
+		${TNC_INCLUDE}/ECS/Entity.hpp
+		${TNC_INCLUDE}/ECS/Entity.inl
+		${TNC_SOURCE}/ECS/Entity.cpp
+		${TNC_INCLUDE}/ECS/World.hpp
+		${TNC_INCLUDE}/ECS/World.inl
+		${TNC_SOURCE}/ECS/World.cpp
+		${TNC_INCLUDE}/ECS/System.hpp
+		${TNC_INCLUDE}/ECS/Components/CameraComponent.hpp
+		${TNC_SOURCE}/ECS/Components/CameraComponent.cpp
+		${TNC_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
+		${TNC_SOURCE}/ECS/Components/DirectionalLightComponent.cpp
+		${TNC_INCLUDE}/ECS/Components/ModelComponent.hpp
+		${TNC_SOURCE}/ECS/Components/ModelComponent.cpp
+		${TNC_INCLUDE}/ECS/Components/PointLightComponent.hpp
+		${TNC_SOURCE}/ECS/Components/PointLightComponent.cpp
+		${TNC_INCLUDE}/ECS/Components/RigidBodyComponent.hpp
+		${TNC_SOURCE}/ECS/Components/RigidBodyComponent.cpp
+		${TNC_INCLUDE}/ECS/Components/TransformComponent.hpp
+		${TNC_SOURCE}/ECS/Components/TransformComponent.cpp
+		${TNC_INCLUDE}/ECS/Systems/RenderSystem.hpp
+		${TNC_SOURCE}/ECS/Systems/RenderSystem.cpp
+		${TNC_INCLUDE}/ECS/Systems/PhysicsSystem.hpp
+		${TNC_SOURCE}/ECS/Systems/PhysicsSystem.cpp
+		${TNC_INCLUDE}/ECS/Components/AudioComponent.hpp
+		${TNC_SOURCE}/ECS/Components/AudioComponent.cpp
+		${TNC_INCLUDE}/ECS/Systems/AudioSystem.hpp
+		${TNC_SOURCE}/ECS/Systems/AudioSystem.cpp
 )
 
 set(
@@ -81,8 +73,17 @@ set(
 		${TNC_SOURCE}/Rendering/Renderables/Model.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Sprite.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Sprite.cpp
-		${TNC_INCLUDE}/Rendering/Renderables/Text.hpp
-		${TNC_SOURCE}/Rendering/Renderables/Text.cpp
+		
+)
+
+set(
+	UIFiles
+		${TNC_INCLUDE}/UI/Image.hpp
+		${TNC_SOURCE}/UI/Image.cpp
+		${TNC_INCLUDE}/UI/Text.hpp
+		${TNC_SOURCE}/UI/Text.cpp
+		${TNC_INCLUDE}/UI/Widget.hpp
+		${TNC_SOURCE}/UI/Widget.cpp
 )
 
 set(
@@ -131,6 +132,7 @@ target_sources(
 		${ECSFiles}
 		${PhysicsFiles}
 		${RenderingFiles}
+		${UIFiles}
 		${ShaderFiles}
 )
 

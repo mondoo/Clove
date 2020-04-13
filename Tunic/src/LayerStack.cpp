@@ -21,6 +21,7 @@ namespace tnc{
 		layer->onAttach();
 		CLV_LOG_DEBUG("Attached layer: {0}", layer->getName());
 		layers.emplace(layers.begin() + layerInsertIndex, std::move(layer));
+		++layerInsertIndex;
 	}
 
 	void LayerStack::popLayer(const std::shared_ptr<Layer>& layer){

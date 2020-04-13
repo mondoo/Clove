@@ -2,8 +2,8 @@
 
 #include <Tunic/Layer.hpp>
 
-#include <Tunic/ECS/Core/World.hpp>
-#include <Tunic/ECS/Core/Entity.hpp>
+#include <Tunic/ECS/World.hpp>
+#include <Tunic/ECS/Entity.hpp>
 
 class ExampleLayer : public tnc::Layer {
 	//VARIABLES
