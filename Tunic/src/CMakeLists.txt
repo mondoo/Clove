@@ -7,6 +7,14 @@ project(Tunic)
 add_library(${PROJECT_NAME} STATIC)
 
 set(
+	AIFiles
+		${TNC_INCLUDE}/AI/BehaviourTree.hpp
+		${TNC_SOURCE}/AI/BehaviourTree.cpp
+		${TNC_INCLUDE}/AI/Task.hpp
+		${TNC_SOURCE}/AI/Task.cpp
+)
+
+set(
 	ECSFiles
 		${TNC_INCLUDE}/ECS/Component.hpp
 		${TNC_INCLUDE}/ECS/Component.inl
@@ -129,6 +137,7 @@ target_sources(
 		${TNC_INCLUDE}/ModelLoader.hpp
 		${TNC_SOURCE}/ModelLoader.cpp
         
+		${AIFiles}
 		${ECSFiles}
 		${PhysicsFiles}
 		${RenderingFiles}
