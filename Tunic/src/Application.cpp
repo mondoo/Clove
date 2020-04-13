@@ -4,7 +4,6 @@
 #include "Tunic/LayerStack.hpp"
 #include "Tunic/Layer.hpp"
 #include "Clove/Core/Utils/DeltaTime.hpp"
-#include "Tunic/ECS/Core/World.hpp"
 #include "Tunic/Rendering/Renderer.hpp"
 #include "Tunic/Rendering/Renderer2D.hpp"
 
