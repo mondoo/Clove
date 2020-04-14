@@ -23,7 +23,6 @@ int main(int argc, char** argv) {
 	snprintf(fileName, sizeof(fileName), "%s.h", name);
 
 	FILE* out = openOrExit(fileName, "w");
-	fprintf(out, "#include <stblib.h>\n\n");
 	fprintf(out, "const char %s[] = {\n", name);
 
 	unsigned char buf[256];
