@@ -103,6 +103,18 @@ set(
 		
 )
 
+#Convert resources into c strings
+add_custom_command(
+	OUTPUT testFile.c
+	COMMAND ResourceEmbedder testFile ${TNC_RESOURCE}/Shaders/Default2D-ps.hlsl
+	DEPENDS ${TNC_RESOURCE}/Shaders/Default2D-ps.hlsl
+)
+
+set(
+	ResourceBinaries
+		testFile.c
+)
+
 file(GLOB_RECURSE header ${TNC_INCLUDE}/*.h ${TNC_INCLUDE}/*.hpp ${TNC_INCLUDE}/*.inl)
 file(GLOB_RECURSE source *.cpp *.m *.mm *.glsl *.hlsl)
 file(GLOB_RECURSE resource ${TNC_RESOURCE}/*.hlsl)
@@ -134,7 +146,11 @@ target_sources(
 		${RenderingFiles}
 		${UIFiles}
 		${ShaderFiles}
+		${ResourceBinaries}
 )
 
 #Set as header only so VS doesn't try to compile them
 set_source_files_properties(${ShaderFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+
+
+#set_property(TARGET Tunic APPEND PROPERTY OBJECT_DEPENDS testFile.c)
