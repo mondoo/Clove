@@ -32,8 +32,13 @@ int main(int argc, char** argv) {
 	do {
 		nread = fread(buf, 1, sizeof(buf), resource);
 		for(size_t i = 0; i < nread; ++i) {
-			fprintf(out, "0x%02x", buf[i]);
-			if(++lineCount == 10) {
+			if(lineCount == 0) {
+				fprintf(out, "\t");
+			}
+
+			fprintf(out, "0x%02X, ", buf[i]);
+			
+			if(++lineCount == 8) {
 				fprintf(out, "\n");
 				lineCount = 0;
 			}
@@ -44,7 +49,7 @@ int main(int argc, char** argv) {
 		fprintf(out, "\n");
 	}
 	fprintf(out, "};\n\n");
-	fprintf(out, "const size_t %sLength = sizeof(%s);\n\n", name, name);
+	fprintf(out, "const size_t %sLength = sizeof(%s);\n", name, name);
 
 	fclose(resource);
 	fclose(out);
