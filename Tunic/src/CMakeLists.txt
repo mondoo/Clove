@@ -73,7 +73,6 @@ set(
 		${TNC_SOURCE}/Rendering/Renderables/Model.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Sprite.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Sprite.cpp
-		
 )
 
 set(
@@ -99,20 +98,19 @@ set(
 		${TNC_RESOURCE}/Shaders/GenCubeShadowMap-vs.hlsl
 		${TNC_RESOURCE}/Shaders/GenShadowMap-gs.hlsl
 		${TNC_RESOURCE}/Shaders/GenShadowMap-ps.hlsl
-		${TNC_RESOURCE}/Shaders/GenShadowMap-vs.hlsl
-		
+		${TNC_RESOURCE}/Shaders/GenShadowMap-vs.hlsl	
 )
 
 #Convert resources into c strings
 add_custom_command(
-	OUTPUT testFile.c
-	COMMAND ResourceEmbedder testFile ${TNC_RESOURCE}/Shaders/Default2D-ps.hlsl
+	OUTPUT testFile.h
+	COMMAND ResourceEmbedder testFile ${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf
 	DEPENDS ${TNC_RESOURCE}/Shaders/Default2D-ps.hlsl
 )
 
 set(
 	ResourceBinaries
-		testFile.c
+		testFile.h
 )
 
 file(GLOB_RECURSE header ${TNC_INCLUDE}/*.h ${TNC_INCLUDE}/*.hpp ${TNC_INCLUDE}/*.inl)
@@ -146,11 +144,9 @@ target_sources(
 		${RenderingFiles}
 		${UIFiles}
 		${ShaderFiles}
+
 		${ResourceBinaries}
 )
 
 #Set as header only so VS doesn't try to compile them
 set_source_files_properties(${ShaderFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
-
-
-#set_property(TARGET Tunic APPEND PROPERTY OBJECT_DEPENDS testFile.c)

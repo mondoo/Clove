@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
 	FILE* resource = openOrExit(argv[2], "rb");
 
 	char fileName[256];
-	snprintf(fileName, sizeof(fileName), "%s.c", name);
+	snprintf(fileName, sizeof(fileName), "%s.h", name);
 
 	FILE* out = openOrExit(fileName, "w");
 	fprintf(out, "#include <stblib.h>\n\n");
