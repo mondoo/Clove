@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 	}
 
 	const char* name = argv[1];
-	FILE* resource = openOrExit(argv[2], "r");
+	FILE* resource = openOrExit(argv[2], "rb");
 
 	char fileName[256];
 	snprintf(fileName, sizeof(fileName), "%s.c", name);
