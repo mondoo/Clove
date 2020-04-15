@@ -1,7 +1,5 @@
 #include "Tunic/Rendering/Renderables/Font.hpp"
 
-#include "Tunic/Application.hpp"
-
 #include <Clove/Graphics/Core/GraphicsFactory.hpp>
 #include <Clove/Graphics/Core/Resources/Texture.hpp>
 
@@ -11,27 +9,29 @@
 using namespace clv;
 using namespace clv::gfx;
 
-namespace tnc::rnd{
+namespace tnc::rnd {
 	std::weak_ptr<std::remove_pointer_t<FT_Library>> Font::ftLib = {};
 
-	Font::Font(const std::string& filePath)
-		: face(nullptr, nullptr), filePath(filePath){
+	Font::Font(const std::string& filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
+		: graphicsFactory(std::move(graphicsFactory))
+		, face(nullptr, nullptr)
+		, filePath(filePath) {
 
-		if(ftLib.use_count() == 0){
+		if(ftLib.use_count() == 0) {
 			FT_Library library;
-			if(FT_Init_FreeType(&library) != FT_Err_Ok){
+			if(FT_Init_FreeType(&library) != FT_Err_Ok) {
 				CLV_ASSERT(false, "Could not load freetype");
-			} else{
+			} else {
 				CLV_LOG_TRACE("Constructed FreeType library");
 			}
 
-			const auto libraryDeleter = [](FT_Library lib){
+			const auto libraryDeleter = [](FT_Library lib) {
 				CLV_LOG_TRACE("FreeType library has been deleted");
 				FT_Done_FreeType(lib);
 			};
 			ftLibReference = std::shared_ptr<std::remove_pointer_t<FT_Library>>(library, libraryDeleter);
 			ftLib = ftLibReference;
-		} else{
+		} else {
 			ftLibReference = ftLib.lock();
 		}
 
@@ -39,7 +39,7 @@ namespace tnc::rnd{
 	}
 
 	Font::Font(const Font& other)
-		: face(nullptr, nullptr){
+		: face(nullptr, nullptr) {
 		ftLibReference = other.ftLibReference;
 		filePath = other.filePath;
 
@@ -48,7 +48,7 @@ namespace tnc::rnd{
 
 	Font::Font(Font&& other) noexcept = default;
 
-	Font& Font::operator=(const Font& other){
+	Font& Font::operator=(const Font& other) {
 		ftLibReference = other.ftLibReference;
 		filePath = other.filePath;
 
@@ -61,11 +61,11 @@ namespace tnc::rnd{
 
 	Font::~Font() = default;
 
-	void Font::setFontSize(uint32_t size){
+	void Font::setFontSize(uint32_t size) {
 		FT_Set_Pixel_Sizes(face.get(), 0, static_cast<FT_UInt>(size));
 	}
 
-	Glyph Font::getChar(char ch) const{
+	Glyph Font::getChar(char ch) const {
 		FT_Load_Char(face.get(), ch, FT_LOAD_RENDER);
 
 		Glyph glyph{
@@ -89,24 +89,24 @@ namespace tnc::rnd{
 			textureArraySize
 		};
 
-		auto texture = Application::get().getGraphicsFactory().createTexture(descriptor, faceBuffer, 1);
+		auto texture = graphicsFactory->createTexture(descriptor, faceBuffer, 1);
 
 		glyph.character = std::move(texture);
 		return glyph;
 	}
 
-	std::unique_ptr<std::remove_pointer_t<FT_Face>, void(*)(FT_Face)> Font::createFace(const std::string& filePath) {
+	std::unique_ptr<std::remove_pointer_t<FT_Face>, void (*)(FT_Face)> Font::createFace(const std::string& filePath) {
 		FT_Face face;
-		if(FT_New_Face(ftLibReference.get(), filePath.c_str(), 0, &face) != FT_Err_Ok){
+		if(FT_New_Face(ftLibReference.get(), filePath.c_str(), 0, &face) != FT_Err_Ok) {
 			CLV_ASSERT(false, "Could not load font");
-		} else{
+		} else {
 			CLV_LOG_TRACE("Constructed FreeType font {0}", face->family_name);
 		}
 
-		const auto fontFaceDeleter = [](FT_Face face){
+		const auto fontFaceDeleter = [](FT_Face face) {
 			CLV_LOG_TRACE("FreeType font face {0} has been deleted", face->family_name);
 			FT_Done_Face(face);
 		};
-		return std::unique_ptr<std::remove_pointer_t<FT_Face>, void(*)(FT_Face)>(face, fontFaceDeleter);
+		return std::unique_ptr<std::remove_pointer_t<FT_Face>, void (*)(FT_Face)>(face, fontFaceDeleter);
 	}
 }
