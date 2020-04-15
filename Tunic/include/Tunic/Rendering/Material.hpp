@@ -5,14 +5,16 @@
 #include "Clove/Graphics/Core/Resources/Buffer.hpp"
 
 namespace clv::gfx{
-	struct ShaderData{
-		std::shared_ptr<Buffer> buffer;
-		ShaderStage shaderType;
-	};
+	class GraphicsFactory;
 }
 
 namespace tnc::rnd{
 	class MaterialInstance;
+
+	struct ShaderData {
+		std::shared_ptr<clv::gfx::Buffer> buffer;
+		clv::gfx::ShaderStage shaderType;
+	};
 }
 
 namespace tnc::rnd{
@@ -23,7 +25,7 @@ namespace tnc::rnd{
 	private:
 		std::shared_ptr<clv::gfx::Texture> albedoTexture;
 		std::shared_ptr<clv::gfx::Texture> specTexture;
-		std::unordered_map<clv::gfx::BufferBindingPoint, clv::gfx::ShaderData> shaderData;
+		std::unordered_map<clv::gfx::BufferBindingPoint, ShaderData> shaderData;
 
 		//FUNCTIONS
 	public:
