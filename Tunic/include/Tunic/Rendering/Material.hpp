@@ -23,13 +23,15 @@ namespace tnc::rnd{
 
 		//VARIABLES
 	private:
+		std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
+
 		std::shared_ptr<clv::gfx::Texture> albedoTexture;
 		std::shared_ptr<clv::gfx::Texture> specTexture;
 		std::unordered_map<clv::gfx::BufferBindingPoint, ShaderData> shaderData;
 
 		//FUNCTIONS
 	public:
-		Material();
+		Material(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 
 		Material(const Material& other);
 		Material(Material&& other) noexcept;

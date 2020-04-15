@@ -7,11 +7,12 @@
 using namespace clv::gfx;
 
 namespace tnc::rnd{
-	Material::Material(){
+	Material::Material(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory) 
+		: graphicsFactory(std::move(graphicsFactory)) {
 		uint32_t white = 0xffffffff;
 		TextureDescriptor descriptor{};
 		descriptor.dimensions = { 1, 1 };
-		auto blankTexture = Application::get().getGraphicsFactory().createTexture(descriptor, &white, 4);
+		auto blankTexture = graphicsFactory->createTexture(descriptor, &white, 4);
 		albedoTexture = blankTexture;
 		specTexture = blankTexture;
 
@@ -39,7 +40,7 @@ namespace tnc::rnd{
 
 	void Material::setAlbedoTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		albedoTexture = Application::get().getGraphicsFactory().createTexture(tdesc, path);
+		albedoTexture = graphicsFactory->createTexture(tdesc, path);
 	}
 
 	void Material::setAlbedoTexture(std::shared_ptr<Texture> texture){
@@ -48,7 +49,7 @@ namespace tnc::rnd{
 
 	void Material::setSpecularTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		specTexture = Application::get().getGraphicsFactory().createTexture(tdesc, path);
+		specTexture = graphicsFactory->createTexture(tdesc, path);
 	}
 
 	void Material::setSpecularTexture(std::shared_ptr<Texture> texture){
