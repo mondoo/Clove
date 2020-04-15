@@ -11,7 +11,7 @@ void ExampleLayer::onAttach() {
 	clv::plt::Window& window = tnc::Application::get().getMainWindow();
 
 	//Load in our mesh
-	tnc::rnd::Model cube = tnc::ModelLoader::loadModel(SOURCE_DIR "/cube.obj");
+	tnc::rnd::Model cube = tnc::ModelLoader::loadModel(SOURCE_DIR "/cube.obj", window.getGraphicsFactory());
 
 	//Create the entity that will act as our cube
 	cubeEntity = world.createEntity();
