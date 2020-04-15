@@ -40,8 +40,9 @@ namespace tnc::rnd {
 
 	Font::Font(const Font& other)
 		: face(nullptr, nullptr) {
-		ftLibReference = other.ftLibReference;
-		filePath = other.filePath;
+		graphicsFactory = other.graphicsFactory;
+		ftLibReference	= other.ftLibReference;
+		filePath		= other.filePath;
 
 		face = createFace(filePath);
 	}
@@ -49,8 +50,9 @@ namespace tnc::rnd {
 	Font::Font(Font&& other) noexcept = default;
 
 	Font& Font::operator=(const Font& other) {
-		ftLibReference = other.ftLibReference;
-		filePath = other.filePath;
+		graphicsFactory = other.graphicsFactory;
+		ftLibReference	= other.ftLibReference;
+		filePath		= other.filePath;
 
 		face = createFace(filePath);
 
