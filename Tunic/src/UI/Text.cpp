@@ -13,8 +13,9 @@ using namespace clv;
 using namespace clv::gfx;
 
 namespace tnc::ui {
-	Text::Text(rnd::Font font)
-		: font(std::move(font)) {
+	Text::Text(rnd::Font font, std::shared_ptr<GraphicsFactory> graphicsFactory)
+		: graphicsFactory(std::move(graphicsFactory))
+		, font(std::move(font)) {
 	}
 
 	Text::Text(const Text& other) = default;
@@ -28,7 +29,6 @@ namespace tnc::ui {
 	Text::~Text() = default;
 
 	void Text::draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) {
-		GraphicsFactory& graphicsFactory = Application::get().getGraphicsFactory();
 		const mth::vec2f screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
 
 		mth::vec2f cursorPos = { position.x - screenHalfSize.x, -position.y + screenHalfSize.y };
@@ -50,7 +50,7 @@ namespace tnc::ui {
 				model = mth::translate(mth::mat4f(1.0f), { xpos, ypos, 0.0f });
 				model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
-				auto character = std::make_shared<rnd::Sprite>(glyph.character);
+				auto character = std::make_shared<rnd::Sprite>(glyph.character, graphicsFactory);
 				character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
 
 				renderer.submitText(character);

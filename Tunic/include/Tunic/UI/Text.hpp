@@ -4,10 +4,16 @@
 
 #include "Tunic/Rendering/Renderables/Font.hpp"
 
+namespace clv::gfx {
+	class GrpahicsFactory;
+}
+
 namespace tnc::ui {
 	class Text : public Widget{
 		//VARIABLES
 	private:
+		std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
+
 		rnd::Font font;
 		std::string text;
 
@@ -17,7 +23,7 @@ namespace tnc::ui {
 		//FUNCTIONS
 	public:
 		Text() = delete;
-		Text(rnd::Font font);
+		Text(rnd::Font font, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 
 		Text(const Text& other);
 		Text(Text&& other);

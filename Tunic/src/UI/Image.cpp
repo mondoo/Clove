@@ -7,8 +7,8 @@ using namespace clv;
 using namespace clv::gfx;
 
 namespace tnc::ui {
-	Image::Image() {
-		sprite = std::make_shared<rnd::Sprite>();
+	Image::Image(std::shared_ptr<GraphicsFactory> graphicsFactory) {
+		sprite = std::make_shared<rnd::Sprite>(std::move(graphicsFactory));
 	}
 	
 	void Image::draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) {
