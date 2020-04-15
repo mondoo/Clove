@@ -18,7 +18,7 @@ using namespace clv::gfx;
 
 namespace tnc::rnd{
 	Renderer2D::Renderer2D(clv::plt::Window& window){
-		GraphicsFactory& factory = window.getGraphicsFactory();
+		GraphicsFactory& factory = *window.getGraphicsFactory();
 
 		commandBuffer = factory.createCommandBuffer();
 

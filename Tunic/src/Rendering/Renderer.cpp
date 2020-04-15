@@ -21,7 +21,7 @@ namespace tnc::rnd {
 
 	Renderer::Renderer(plt::Window& window) {
 
-		GraphicsFactory& factory = window.getGraphicsFactory();
+		GraphicsFactory& factory = *window.getGraphicsFactory();
 
 		//Mesh command buffer
 		meshCommandBuffer = factory.createCommandBuffer();

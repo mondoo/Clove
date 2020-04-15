@@ -53,7 +53,7 @@ namespace clv::plt{
 		Keyboard& getKeyboard();
 		Mouse& getMouse();
 
-		gfx::GraphicsFactory& getGraphicsFactory();
+		const std::shared_ptr<gfx::GraphicsFactory>& getGraphicsFactory();
 		const std::shared_ptr<gfx::Surface>& getSurface() const;
 
 	protected:
