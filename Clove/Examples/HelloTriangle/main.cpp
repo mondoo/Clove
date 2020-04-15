@@ -13,16 +13,16 @@ int main(){
 	auto mainWindow = platform->createWindow({"Hello Triangle", 1280, 720});
 	mainWindow->setVSync(true);
 
-	auto& graphicsFactory = mainWindow->getGraphicsFactory();
+	auto graphicsFactory = mainWindow->getGraphicsFactory();
 
 	std::string source_path = SOURCE_DIR;
 
 	//Set up the shaders for the pipeline
-	auto vertexShader = graphicsFactory.createShader({ gfx::ShaderStage::Vertex }, source_path + "/VertShader.hlsl");
-	auto pixelShader = graphicsFactory.createShader({ gfx::ShaderStage::Pixel }, source_path + "/PixelShader.hlsl");
+	auto vertexShader = graphicsFactory->createShader({ gfx::ShaderStage::Vertex }, source_path + "/VertShader.hlsl");
+	auto pixelShader = graphicsFactory->createShader({ gfx::ShaderStage::Pixel }, source_path + "/PixelShader.hlsl");
 
 	//Configure the pipeline state
-	auto pipeline = graphicsFactory.createPipelineObject();
+	auto pipeline = graphicsFactory->createPipelineObject();
 	pipeline->setVertexShader(*vertexShader);
 	pipeline->setPixelShader(*pixelShader);
 	pipeline->setBlendState(true);
@@ -44,19 +44,19 @@ int main(){
 	vbDesc.bufferSize	= vertices.size() * sizeof(float);
 	vbDesc.bufferType	= gfx::BufferType::VertexBuffer;
 	vbDesc.bufferUsage	= gfx::BufferUsage::Default;
-	auto vertexBuffer	= graphicsFactory.createBuffer(vbDesc, vertices.data());
+	auto vertexBuffer = graphicsFactory->createBuffer(vbDesc, vertices.data());
 
 	gfx::BufferDescriptor ibDesc{};
 	ibDesc.elementSize	= sizeof(uint32_t);
 	ibDesc.bufferSize	= indices.size() * sizeof(uint32_t);
 	ibDesc.bufferType	= gfx::BufferType::IndexBuffer;
 	ibDesc.bufferUsage	= gfx::BufferUsage::Default;
-	auto indexBuffer	= graphicsFactory.createBuffer(ibDesc, indices.data());
+	auto indexBuffer = graphicsFactory->createBuffer(ibDesc, indices.data());
 
 	const mth::vec2f screenSize = mainWindow->getSize();
 
 	//Create a command buffer to encode graphics commands
-	auto commandBuffer = graphicsFactory.createCommandBuffer();
+	auto commandBuffer = graphicsFactory->createCommandBuffer();
 
 	bool isWindowOpen = true;
 	mainWindow->onWindowCloseDelegate.bind([&isWindowOpen](){ isWindowOpen = false; });
