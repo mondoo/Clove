@@ -12,7 +12,7 @@ namespace tnc::rnd{
 		uint32_t white = 0xffffffff;
 		TextureDescriptor descriptor{};
 		descriptor.dimensions = { 1, 1 };
-		auto blankTexture = graphicsFactory->createTexture(descriptor, &white, 4);
+		auto blankTexture = this->graphicsFactory->createTexture(descriptor, &white, 4);
 		albedoTexture = blankTexture;
 		specTexture = blankTexture;
 
