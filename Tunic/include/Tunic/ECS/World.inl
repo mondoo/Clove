@@ -30,8 +30,7 @@ namespace tnc::ecs{
 
 	template<typename SystemType, typename ...ConstructArgs>
 	void World::addSystem(ConstructArgs&& ...args){
-		auto system = std::make_unique<SystemType>(std::forward<ConstructArgs>(args)...);
-		systems.push_back(std::move(system));
+		systems.push_back(std::make_unique<SystemType>(std::forward<ConstructArgs>(args)...));
 	}
 
 	template<std::size_t index, typename ...ComponentTypes>
