@@ -16,14 +16,10 @@ target_include_directories(
 		include
 
 	#Libraries
-	PUBLIC
-		vendor/OBJ-Loader/Source
-
 	INTERFACE
         vendor/glm
 
 	PRIVATE
-        vendor/OBJ-Loader/Source
 		$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/vendor/wglext>
 )
 
