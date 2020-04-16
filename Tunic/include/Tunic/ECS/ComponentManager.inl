@@ -38,10 +38,14 @@ namespace tnc::ecs{
 	}
 
 	template<typename ComponentType>
-	void ComponentManager::ComponentContainer<ComponentType>::cloneComponent(EntityID fromID, EntityID toID){
-		if(auto iter = entityIDToIndex.find(fromID); iter != entityIDToIndex.end()){
-			ComponentType* componentPtr = components[iter->second];
-			addComponent(toID, *componentPtr);
+	void ComponentManager::ComponentContainer<ComponentType>::cloneComponent(EntityID fromID, EntityID toID) {
+		if constexpr(std::is_copy_constructible_v<ComponentType>) {
+			if(auto iter = entityIDToIndex.find(fromID); iter != entityIDToIndex.end()) {
+				ComponentType* componentPtr = components[iter->second];
+				addComponent(toID, *componentPtr);
+			}
+		} else {
+			CLV_LOG_ERROR("Component that is not copyable was attempted to be copied. Entity will be incomplete");
 		}
 	}
 
