@@ -132,9 +132,6 @@ target_compile_definitions(
 		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
 		CLV_PLATFORM_MACOS=$<PLATFORM_ID:Darwin>
 
-	PRIVATE
-		$<$<PLATFORM_ID:Darwin>:GL_SILENCE_DEPRECATION> #Silences the MacOS gl deprecation messages
-
 	#Engine
 	INTERFACE
 		CLV_ENGINE=0
