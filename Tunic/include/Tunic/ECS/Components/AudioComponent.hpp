@@ -2,7 +2,7 @@
 
 #include "Tunic/ECS/Component.hpp"
 
-#include "Clove/Core/Audio/Sound.hpp"
+#include "Tunic/Audio/Sound.hpp"
 
 //PortAudio type def (see portaudio.h)
 typedef void PaStream;
@@ -23,7 +23,7 @@ namespace tnc::ecs {
 
 		//VARIABLES
 	private:
-		clv::aud::Sound sound;
+		aud::Sound sound;
 
 		PaStream* stream = nullptr;
 		uint32_t playbackPosition = 0u;
@@ -46,7 +46,7 @@ namespace tnc::ecs {
 
 		virtual ~AudioComponent();
 
-		void setSound(const clv::aud::Sound& sound); //TODO: make val?
+		void setSound(const aud::Sound& sound); //TODO: make val?
 
 		void play(PlaybackMode playback = PlaybackMode::once);
 		void pause();

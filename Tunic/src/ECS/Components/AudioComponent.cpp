@@ -13,7 +13,7 @@ namespace tnc::ecs {
 
 	AudioComponent::~AudioComponent() = default;
 
-	void AudioComponent::setSound(const clv::aud::Sound& sound) {
+	void AudioComponent::setSound(const aud::Sound& sound) {
 		this->sound = sound;
 	}
 

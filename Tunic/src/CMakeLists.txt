@@ -7,6 +7,12 @@ project(Tunic)
 add_library(${PROJECT_NAME} STATIC)
 
 set(
+	AudioFiles
+		${TNC_INCLUDE}/Audio/Sound.hpp
+		${TNC_SOURCE}/Audio/Sound.cpp
+)
+
+set(
 	ECSFiles
 		${TNC_INCLUDE}/ECS/Component.hpp
 		${TNC_INCLUDE}/ECS/Component.inl
@@ -129,6 +135,7 @@ target_sources(
 		${TNC_INCLUDE}/ModelLoader.hpp
 		${TNC_SOURCE}/ModelLoader.cpp
         
+		${AudioFiles}
 		${ECSFiles}
 		${PhysicsFiles}
 		${RenderingFiles}

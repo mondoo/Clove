@@ -2,8 +2,8 @@
 
 #include <sndfile.hh> //TODO: move to cpp???
 
-namespace clv::aud{
-	class Sound{
+namespace tnc::aud {
+	class Sound {
 		friend class SoundPlayer;
 
 		//VARIABLES

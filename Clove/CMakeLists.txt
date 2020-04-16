@@ -21,9 +21,6 @@ target_include_directories(
 
 	INTERFACE
         vendor/glm
-		#TODO: Get rid of the lbsndfile paths below (see Sound.hpp)
-		vendor/libsndfile/src
-		${CMAKE_CURRENT_BINARY_DIR}/vendor/libsndfile/src
 
 	PRIVATE
         vendor/OBJ-Loader/Source
@@ -40,6 +37,7 @@ endif()
 
 target_link_libraries(
 	Clove
+
     #Cross platform
     PUBLIC
 		spdlog
@@ -52,7 +50,6 @@ target_link_libraries(
 		stb
 		$<$<NOT:$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>>:Glad>
 		glm
-		sndfile
 		glslang
 		glslang-default-resource-limits
 		SPIRV
@@ -86,6 +83,7 @@ target_link_libraries(
 #Precompiled header
 target_precompile_headers(
 	Clove
+
 	#Generic headers
 	PUBLIC
 		<iostream>
@@ -120,6 +118,7 @@ target_precompile_headers(
 #Preprocessor
 target_compile_definitions(
 	Clove
+
 	#General
 	PUBLIC
 		CLV_ENABLE_PROFILING=$<BOOL:${GAR_CLV_ENABLE_PROFILING}>
