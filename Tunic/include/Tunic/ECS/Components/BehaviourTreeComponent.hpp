@@ -19,7 +19,7 @@ namespace tnc::ecs {
 		BehaviourTreeComponent();
 		BehaviourTreeComponent(std::unique_ptr<ai::BehaviourTree> behaviourTree);
 
-		BehaviourTreeComponent(const BehaviourTreeComponent& other) = delete;
+		BehaviourTreeComponent(const BehaviourTreeComponent& other) = delete; //TODO: Implement copy ctors
 		BehaviourTreeComponent(BehaviourTreeComponent&& other) noexcept;
 
 		BehaviourTreeComponent& operator=(const BehaviourTreeComponent& other) = delete;

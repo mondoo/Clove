@@ -1,5 +1,7 @@
 #include "Tunic/ECS/Components/BehaviourTreeComponent.hpp"
 
+#include "Tunic/AI/BehaviourTree.hpp"
+
 namespace tnc::ecs {
 	BehaviourTreeComponent::BehaviourTreeComponent() = default;
 
