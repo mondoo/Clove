@@ -108,6 +108,7 @@ target_precompile_headers(
 		[["Clove/Core/Maths/Maths.hpp"]]
 		[["Clove/Core/Maths/MathsHelpers.hpp"]]
 		[["Clove/Core/Utils/Delegate.hpp"]]
+		[["Clove/Core/Utils/DeltaTime.hpp"]]
 		[["Clove/Core/Utils/Timer.hpp"]]
 )
 
