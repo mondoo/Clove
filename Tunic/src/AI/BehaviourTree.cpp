@@ -14,6 +14,8 @@ namespace tnc::ai {
 	}
 
 	void BehaviourTree::run() {
-		rootTask->activate();
+		if(rootTask != nullptr) {
+			rootTask->activate();
+		}
 	}
 }
