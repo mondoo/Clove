@@ -14,6 +14,8 @@ set(
 		${TNC_SOURCE}/AI/Composite.cpp
 		${TNC_INCLUDE}/AI/Decorator.hpp
 		${TNC_SOURCE}/AI/Decorator.cpp
+		${TNC_INCLUDE}/AI/Sequence.hpp
+		${TNC_SOURCE}/AI/Sequence.cpp
 		${TNC_INCLUDE}/AI/Task.hpp
 )
 
