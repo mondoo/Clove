@@ -3,7 +3,7 @@
 namespace tnc::ecs{
 	Entity::Entity() = default;
 
-	Entity::Entity(EntityID entityID, World* manager)
+	Entity::Entity(EntityID entityID, World* world)
 		: entityID(entityID)
 		, world(world) {
 	}

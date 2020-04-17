@@ -4,7 +4,7 @@ namespace tnc::ecs{
 	template<typename ComponentType, typename ...ConstructorArgs>
 	ComponentPtr<ComponentType> Entity::addComponent(ConstructorArgs&&... args) {
 		if(isValid()){
-			return manager->addComponent<ComponentType>(getID(), args...);
+			return world->addComponent<ComponentType>(getID(), args...);
 		} else{
 			return {};
 		}
@@ -13,7 +13,7 @@ namespace tnc::ecs{
 	template<typename ComponentType>
 	ComponentPtr<ComponentType> Entity::getComponent() const {
 		if(isValid()){
-			return manager->getComponent<ComponentType>(getID());
+			return world->getComponent<ComponentType>(getID());
 		} else{
 			return {};
 		}
@@ -22,7 +22,7 @@ namespace tnc::ecs{
 	template<typename ComponentType>
 	void Entity::removeComponent(){
 		if(isValid()){
-			manager->removeComponent<ComponentType>(getID());
+			world->removeComponent<ComponentType>(getID());
 		}
 	}
 }
