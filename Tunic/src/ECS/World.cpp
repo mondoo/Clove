@@ -82,14 +82,14 @@ namespace tnc::ecs {
 	}
 
 	void World::onComponentAdded(ComponentInterface* component) {
-		std::for_each(systems.begin(), systems.end(), [component](const std::unique_ptr<System>& system) {
+		for(const auto& system : systems) {
 			system->onComponentCreated(component);
-		});
+		}
 	}
 
 	void World::onComponentRemoved(ComponentInterface* component) {
-		std::for_each(systems.begin(), systems.end(), [component](const std::unique_ptr<System>& system) {
+		for(const auto& system : systems) {
 			system->onComponentDestroyed(component);
-		});
+		}
 	}
 }

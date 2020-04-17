@@ -63,8 +63,7 @@ namespace tnc::ecs {
 		void onComponentAdded(ComponentInterface* component);
 		void onComponentRemoved(ComponentInterface* component);
 
-		enum class FoundState { NullptrFound,
-			EndOfTuple };
+		enum class FoundState { NullptrFound, EndOfTuple };
 		template<std::size_t index, typename... ComponentTypes>
 		FoundState checkForNullptr(const std::tuple<ComponentPtr<ComponentTypes>...>& tuple, typename std::enable_if_t<(index == sizeof...(ComponentTypes)), int> = 0);
 
