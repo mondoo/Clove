@@ -1,6 +1,6 @@
 #Editor CMake list
 
-project(Garlic LANGUAGES CSharp)
+project(Stem LANGUAGES CSharp)
 include(CSharpUtilities)
 
 set(
@@ -26,7 +26,7 @@ add_executable(
 	${PROJECT_NAME}
 		${Files}
 )
-set_target_properties(Garlic PROPERTIES FOLDER "Garlic")
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Garlic/Stem")
 
 csharp_set_xaml_cs_properties(
 	${Files}
