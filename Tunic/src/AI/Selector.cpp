@@ -9,9 +9,9 @@ namespace tnc::ai {
 
 	Selector::~Selector() = default;
 
-	Task::Status Selector::activate() {
+	Task::Status Selector::activate(clv::utl::DeltaTime deltaTime) {
 		for(const auto& child : children) {
-			const Status status = child->activate();
+			const Status status = child->activate(deltaTime);
 			if(status != Status::failure) {
 				return status;
 			}

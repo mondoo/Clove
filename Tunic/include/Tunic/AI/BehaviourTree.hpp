@@ -22,6 +22,6 @@ namespace tnc::ai {
 
 		void setRootTask(std::unique_ptr<Task> task);
 
-		void run();
+		void run(clv::utl::DeltaTime deltaTime);
 	};
 }

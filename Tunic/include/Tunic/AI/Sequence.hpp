@@ -16,6 +16,6 @@ namespace tnc::ai {
 
 		~Sequence();
 
-		virtual Status activate() override;
+		virtual Status activate(clv::utl::DeltaTime deltaTime) override;
 	};
 }

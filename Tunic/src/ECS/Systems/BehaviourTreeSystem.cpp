@@ -16,7 +16,7 @@ namespace tnc::ecs {
 	void BehaviourTreeSystem::update(World& world, clv::utl::DeltaTime deltaTime) {
 		for(auto [btComp] : world.getComponentSets<BehaviourTreeComponent>()) {
 			if(ai::BehaviourTree* bt = btComp->behaviourTree.get()) {
-				bt->run();
+				bt->run(deltaTime);
 			}
 		}
 	}

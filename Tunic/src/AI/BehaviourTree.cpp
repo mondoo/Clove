@@ -13,9 +13,9 @@ namespace tnc::ai {
 		rootTask = std::move(task);
 	}
 
-	void BehaviourTree::run() {
+	void BehaviourTree::run(clv::utl::DeltaTime deltaTime) {
 		if(rootTask != nullptr) {
-			rootTask->activate();
+			rootTask->activate(deltaTime);
 		}
 	}
 }

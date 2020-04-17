@@ -9,9 +9,9 @@ namespace tnc::ai {
 
 	Sequence::~Sequence() = default;
 
-	Task::Status Sequence::activate() {
+	Task::Status Sequence::activate(clv::utl::DeltaTime deltaTime) {
 		for(const auto& child : children) {
-			const Status status = child->activate();
+			const Status status = child->activate(deltaTime);
 			if(status != Status::success) {
 				return status;
 			}

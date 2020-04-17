@@ -14,6 +14,6 @@ namespace tnc::ai {
 	public:
 		virtual ~Task() = default;
 
-		virtual Status activate() = 0;
+		virtual Status activate(clv::utl::DeltaTime deltaTime) = 0;
 	};
 }
