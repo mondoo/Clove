@@ -70,8 +70,9 @@ namespace tnc::ecs{
 
 	void World::destroyAllEntites() {
 		for(EntityID id : activeIDs) {
-			destroyEntity(id);
+			componentManager.onEntityDestroyed(id);
 		}
+		activeIDs.clear();
 	}
 
 	void World::onComponentAdded(ComponentInterface* component){
