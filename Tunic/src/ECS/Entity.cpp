@@ -4,20 +4,21 @@ namespace tnc::ecs{
 	Entity::Entity() = default;
 
 	Entity::Entity(EntityID entityID, World* manager)
-		: entityID(entityID), manager(manager){
+		: entityID(entityID)
+		, world(world) {
 	}
 
 	Entity::Entity(const Entity& other){
-		Entity clonedOther = other.manager->cloneEntitiesComponents(other.getID());
-		manager = clonedOther.manager;
+		Entity clonedOther = other.world->cloneEntitiesComponents(other.getID());
+		world = clonedOther.world;
 		entityID = clonedOther.entityID;
 	}
 
 	Entity::Entity(Entity&& other) noexcept = default;
 
 	Entity& Entity::operator=(const Entity& other){
-		Entity clonedOther = other.manager->cloneEntitiesComponents(other.getID());
-		manager = clonedOther.manager;
+		Entity clonedOther = other.world->cloneEntitiesComponents(other.getID());
+		world = clonedOther.world;
 		entityID = clonedOther.entityID;
 
 		return *this;
@@ -28,7 +29,7 @@ namespace tnc::ecs{
 	Entity::~Entity() = default;
 
 	bool Entity::isValid() const{
-		return entityID != INVALID_ENTITY_ID;
+		return world != nullptr && world->isEntityValid(entityID);
 	}
 
 	EntityID Entity::getID() const{
