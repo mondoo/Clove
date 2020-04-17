@@ -1,7 +1,7 @@
 namespace tnc::ecs{
 	template<typename ComponentType, typename ...ConstructArgs>
 	ComponentPtr<ComponentType> World::addComponent(EntityID entityID, ConstructArgs&&... args) {
-		return componentManager.getComponentContainer<ComponentType>()->addComponent(entityID, args...);
+		return componentManager.getComponentContainer<ComponentType>()->addComponent(entityID, std::forward<ConstructArgs>(args)...);
 	}
 
 	template<typename ComponentType>

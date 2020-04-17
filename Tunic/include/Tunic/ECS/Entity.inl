@@ -4,7 +4,7 @@ namespace tnc::ecs{
 	template<typename ComponentType, typename ...ConstructorArgs>
 	ComponentPtr<ComponentType> Entity::addComponent(ConstructorArgs&&... args) {
 		if(isValid()){
-			return world->addComponent<ComponentType>(getID(), args...);
+			return world->addComponent<ComponentType>(getID(), std::forward<ConstructorArgs>(args)...);
 		} else{
 			return {};
 		}
