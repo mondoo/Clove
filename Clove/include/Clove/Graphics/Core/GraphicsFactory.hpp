@@ -18,7 +18,13 @@ namespace clv::gfx{
 	class GraphicsFactory : public std::enable_shared_from_this<GraphicsFactory> {
 		//FUNCTIONS
 	public:
+	#if CLV_DEBUG
+		virtual ~GraphicsFactory() {
+			CLV_LOG_TRACE("GraphicsFactory has been destroyed");
+		}
+	#else
 		virtual ~GraphicsFactory() = default;
+	#endif
 
 		virtual std::shared_ptr<CommandBuffer> createCommandBuffer() = 0;
 
