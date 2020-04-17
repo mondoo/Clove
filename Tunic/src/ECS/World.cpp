@@ -7,7 +7,6 @@ using namespace clv;
 
 namespace tnc::ecs{
 	EntityID World::nextID = 1;
-	std::queue<EntityID> World::recycledIDs;
 
 	World::World(){
 		componentManager.componentAddedDelegate.bind(&World::onComponentAdded, this);
@@ -35,12 +34,7 @@ namespace tnc::ecs{
 	Entity World::createEntity(){
 		EntityID ID = INVALID_ENTITY_ID;
 
-		if(!recycledIDs.empty()){
-			ID = recycledIDs.front();
-			recycledIDs.pop();
-		} else{
-			ID = nextID++;
-		}
+		ID = nextID++;
 
 		activeIDs.push_back(ID);
 
@@ -71,7 +65,6 @@ namespace tnc::ecs{
 		}
 		componentManager.onEntityDestroyed(ID);
 
-		recycledIDs.push(ID);
 		activeIDs.erase(foundIDIter);
 	}
 

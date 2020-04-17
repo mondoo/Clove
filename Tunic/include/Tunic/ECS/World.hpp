@@ -21,7 +21,6 @@ namespace tnc::ecs{
 		std::vector<std::unique_ptr<System>> systems;
 
 		static EntityID nextID;
-		static std::queue<EntityID> recycledIDs;
 
 		std::vector<EntityID> activeIDs;
 
