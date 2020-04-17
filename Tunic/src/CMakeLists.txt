@@ -18,6 +18,12 @@ set(
 )
 
 set(
+	AudioFiles
+		${TNC_INCLUDE}/Audio/Sound.hpp
+		${TNC_SOURCE}/Audio/Sound.cpp
+)
+
+set(
 	ECSFiles
 		${TNC_INCLUDE}/ECS/Component.hpp
 		${TNC_INCLUDE}/ECS/Component.inl
@@ -145,6 +151,7 @@ target_sources(
 		${TNC_SOURCE}/ModelLoader.cpp
         
 		${AIFiles}
+		${AudioFiles}
 		${ECSFiles}
 		${PhysicsFiles}
 		${RenderingFiles}

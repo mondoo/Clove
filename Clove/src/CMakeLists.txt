@@ -15,12 +15,6 @@ set(
 )
 
 set(
-	CoreAudioFiles
-		${CLV_INCLUDE}/Core/Audio/Sound.hpp
-		${CLV_SOURCE}/Core/Audio/Sound.cpp
-)
-
-set(
 	CoreExceptionFiles
 		${CLV_INCLUDE}/Core/Exception/CloveException.hpp
 		${CLV_SOURCE}/Core/Exception/CloveException.cpp
@@ -211,7 +205,6 @@ set(
 set(
 	AllFiles
 	${CoreFiles}
-		${CoreAudioFiles}
 		${CoreExceptionFiles}
 		${CoreGraphicsFiles}
 			${OpenGLGraphicsFiles}
