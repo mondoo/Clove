@@ -37,8 +37,9 @@ namespace clv::gfx::ogl{
 
 	void GLCommandBuffer::updateBufferData(Buffer& buffer, const void* data){
 		const size_t bufferSize = buffer.getDescriptor().bufferSize;
-		void* datacopy = new char[bufferSize];
-		memcpy(datacopy, data, buffer.getDescriptor().bufferSize);
+		
+		void* datacopy = malloc(bufferSize);
+		memcpy(datacopy, data, bufferSize);
 
 		commands.emplace_back([&buffer, data = datacopy](){
 			GLBuffer& glbuffer = static_cast<GLBuffer&>(buffer);
@@ -47,7 +48,7 @@ namespace clv::gfx::ogl{
 			glBufferSubData(GL_UNIFORM_BUFFER, 0, glbuffer.getDescriptor().bufferSize, data);
 			glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-			delete data;
+			free(data);
 		});
 	}
 
