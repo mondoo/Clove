@@ -32,6 +32,8 @@ namespace tnc::ecs{
 
 		EntityID getID() const;
 
+		Entity clone();
+
 		template<typename ComponentType, typename ...ConstructorArgs>
 		ComponentPtr<ComponentType> addComponent(ConstructorArgs&& ...args);
 		template<typename ComponentType>
