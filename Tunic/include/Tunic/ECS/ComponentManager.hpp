@@ -7,31 +7,21 @@
 
 namespace tnc::ecs {
 	class ComponentContainerInterface {
-		//VARIABLES
-	public:
-		clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentAddedDelegate;
-		clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentRemovedDelegate;
-
 		//FUNCTIONS
 	public:
-		ComponentContainerInterface();
-
-		ComponentContainerInterface(const ComponentContainerInterface& other) = delete;
-		ComponentContainerInterface(ComponentContainerInterface&& other) noexcept;
-
-		ComponentContainerInterface& operator=(const ComponentContainerInterface& other) = delete;
-		ComponentContainerInterface& operator=(ComponentContainerInterface&& other) noexcept;
-
 		virtual ~ComponentContainerInterface();
 
 		virtual void cloneComponent(EntityID fromID, EntityID toID) = 0;
-
 		virtual void removeComponent(EntityID entityID) = 0;
 	};
 
 	template<typename ComponentType>
 	class ComponentContainer : public ComponentContainerInterface {
 		//VARIABLES
+	public:
+		clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentAddedDelegate;
+		clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentRemovedDelegate;
+
 	private:
 		clv::mem::PoolAllocator<ComponentType> componentAllocator;
 
@@ -50,11 +40,12 @@ namespace tnc::ecs {
 
 		~ComponentContainer();
 
+		virtual void cloneComponent(EntityID fromID, EntityID toID) override;
+		virtual void removeComponent(EntityID entityID) override;
+
 		template<typename... ConstructArgs>
 		ComponentPtr<ComponentType> addComponent(EntityID entityID, ConstructArgs&&... args);
-		virtual void cloneComponent(EntityID fromID, EntityID toID) override;
 		ComponentPtr<ComponentType> getComponent(EntityID entityID);
-		virtual void removeComponent(EntityID entityID) override;
 	};
 
 	class ComponentManager {

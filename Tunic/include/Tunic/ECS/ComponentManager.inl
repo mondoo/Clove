@@ -20,24 +20,6 @@ namespace tnc::ecs {
 	ComponentContainer<ComponentType>::~ComponentContainer() = default;
 
 	template<typename ComponentType>
-	template<typename... ConstructArgs>
-	ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityID, ConstructArgs&&... args) {
-		ComponentType* comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
-		comp->entityID = entityID;
-
-		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()) {
-			components[iter->second] = comp;
-		} else {
-			components.push_back(comp);
-			entityIDToIndex[entityID] = components.size() - 1;
-		}
-
-		componentAddedDelegate.broadcast(comp);
-
-		return { comp };
-	}
-
-	template<typename ComponentType>
 	void ComponentContainer<ComponentType>::cloneComponent(EntityID fromID, EntityID toID) {
 		if constexpr(std::is_copy_constructible_v<ComponentType>) {
 			if(auto iter = entityIDToIndex.find(fromID); iter != entityIDToIndex.end()) {
@@ -46,15 +28,6 @@ namespace tnc::ecs {
 			}
 		} else {
 			CLV_LOG_ERROR("Component that is not copyable was attempted to be copied. Entity will be incomplete");
-		}
-	}
-
-	template<typename ComponentType>
-	ComponentPtr<ComponentType> ComponentContainer<ComponentType>::getComponent(EntityID entityID) {
-		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()) {
-			return { components[iter->second] };
-		} else {
-			return {};
 		}
 	}
 
@@ -80,6 +53,33 @@ namespace tnc::ecs {
 
 			componentRemovedDelegate.broadcast(removedComp);
 			componentAllocator.free(removedComp);
+		}
+	}
+
+	template<typename ComponentType>
+	template<typename... ConstructArgs>
+	ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityID, ConstructArgs&&... args) {
+		ComponentType* comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
+		comp->entityID = entityID;
+
+		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()) {
+			components[iter->second] = comp;
+		} else {
+			components.push_back(comp);
+			entityIDToIndex[entityID] = components.size() - 1;
+		}
+
+		componentAddedDelegate.broadcast(comp);
+
+		return { comp };
+	}
+
+	template<typename ComponentType>
+	ComponentPtr<ComponentType> ComponentContainer<ComponentType>::getComponent(EntityID entityID) {
+		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()) {
+			return { components[iter->second] };
+		} else {
+			return {};
 		}
 	}
 

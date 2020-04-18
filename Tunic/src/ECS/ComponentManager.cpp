@@ -1,12 +1,6 @@
 #include "Tunic/ECS/ComponentManager.hpp"
 
 namespace tnc::ecs {
-	ComponentContainerInterface::ComponentContainerInterface() = default;
-
-	ComponentContainerInterface::ComponentContainerInterface(ComponentContainerInterface&& other) noexcept = default;
-
-	ComponentContainerInterface& ComponentContainerInterface::operator=(ComponentContainerInterface&& other) noexcept = default;
-
 	ComponentContainerInterface::~ComponentContainerInterface() = default;
 
 	ComponentManager::ComponentManager() = default;
