@@ -1,17 +1,17 @@
 namespace tnc::ecs{
 	template<typename ComponentType, typename ...ConstructArgs>
 	ComponentPtr<ComponentType> World::addComponent(EntityID entityID, ConstructArgs&&... args) {
-		return componentManager.getComponentContainer<ComponentType>()->addComponent(entityID, std::forward<ConstructArgs>(args)...);
+		return componentManager.getComponentContainer<ComponentType>().addComponent(entityID, std::forward<ConstructArgs>(args)...);
 	}
 
 	template<typename ComponentType>
 	ComponentPtr<ComponentType> World::getComponent(EntityID entityID) {
-		return componentManager.getComponentContainer<ComponentType>()->getComponent(entityID);
+		return componentManager.getComponentContainer<ComponentType>().getComponent(entityID);
 	}
 
 	template<typename ComponentType>
 	void World::removeComponent(EntityID entityID){
-		componentManager.getComponentContainer<ComponentType>()->removeComponent(entityID);
+		componentManager.getComponentContainer<ComponentType>().removeComponent(entityID);
 	}
 
 	template<typename ...ComponentTypes>
@@ -20,7 +20,7 @@ namespace tnc::ecs{
 
 		std::vector<std::tuple<ComponentPtr<ComponentTypes>...>> componentSets;
 		for(EntityID entityID : activeIDs){
-			std::tuple<ComponentPtr<ComponentTypes>...> tuple = std::make_tuple(componentManager.getComponentContainer<ComponentTypes>()->getComponent(entityID)...);
+			std::tuple<ComponentPtr<ComponentTypes>...> tuple = std::make_tuple(getComponent<ComponentTypes>(entityID)...);
 			if(checkForNullptr<0, ComponentTypes...>(tuple) != FoundState::NullptrFound){
 				componentSets.push_back(tuple);
 			}

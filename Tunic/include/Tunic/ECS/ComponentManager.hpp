@@ -79,7 +79,7 @@ namespace tnc::ecs {
 		~ComponentManager();
 
 		template<typename ComponentType>
-		ComponentContainer<ComponentType>* getComponentContainer();
+		ComponentContainer<ComponentType>& getComponentContainer();
 
 		void cloneEntitiesComponents(EntityID fromID, EntityID toID);
 

@@ -84,17 +84,17 @@ namespace tnc::ecs {
 	}
 
 	template<typename ComponentType>
-	ComponentContainer<ComponentType>* ComponentManager::getComponentContainer() {
+	ComponentContainer<ComponentType>& ComponentManager::getComponentContainer() {
 		const ComponentID componentID = ComponentType::id();
 		if(auto iter = containers.find(componentID); iter != containers.end()) {
-			return static_cast<ComponentContainer<ComponentType>*>(iter->second.get());
+			return static_cast<ComponentContainer<ComponentType>&>(*iter->second.get());
 		} else {
 			auto container = std::make_unique<ComponentContainer<ComponentType>>();
 			container->componentAddedDelegate.bind(&ComponentManager::onContainerAddedComponent, this);
 			container->componentRemovedDelegate.bind(&ComponentManager::onContainerRemovedComponent, this);
 
 			containers[componentID] = std::move(container);
-			return static_cast<ComponentContainer<ComponentType>*>(containers[componentID].get());
+			return static_cast<ComponentContainer<ComponentType>&>(*containers[componentID].get());
 		}
 	}
 }
