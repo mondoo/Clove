@@ -136,6 +136,10 @@ namespace tnc::ecs{
 			child->parent = this;
 		}
 	}
+
+	const std::vector<ComponentPtr<TransformComponent>>& TransformComponent::getChildren() const {
+		return children;
+	}
 	
 	mth::mat4f TransformComponent::getWorldTransformMatrix() const{
 		if(parent != nullptr){

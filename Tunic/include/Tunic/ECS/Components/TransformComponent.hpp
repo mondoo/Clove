@@ -41,7 +41,9 @@ namespace tnc::ecs {
 		void setScale(const clv::mth::vec3f& scale, TransformSpace space = TransformSpace::Local);
 
 		ComponentPtr<TransformComponent> getParent() const;
+
 		void addChild(ComponentPtr<TransformComponent> child);
+		const std::vector<ComponentPtr<TransformComponent>>& getChildren() const;
 
 		clv::mth::mat4f getWorldTransformMatrix() const;
 		clv::mth::mat4f getLocalTransformMatrix() const;
