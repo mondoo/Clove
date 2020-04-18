@@ -1,15 +1,15 @@
 #include "Clove/Graphics/OpenGL/GLCommandBuffer.hpp"
 
-#include "Clove/Graphics/OpenGL/Resources/GLBuffer.hpp"
-#include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
 #include "Clove/Graphics/OpenGL/GLPipelineObject.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 #include "Clove/Graphics/OpenGL/GLShader.hpp"
 #include "Clove/Graphics/OpenGL/GLSurface.hpp"
+#include "Clove/Graphics/OpenGL/Resources/GLBuffer.hpp"
+#include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
 
 #include <glad/glad.h>
 
-namespace clv::gfx::ogl{
+namespace clv::gfx::ogl {
 	GLCommandBuffer::GLCommandBuffer() = default;
 
 	GLCommandBuffer::GLCommandBuffer(GLCommandBuffer&& other) noexcept = default;
@@ -18,16 +18,16 @@ namespace clv::gfx::ogl{
 
 	GLCommandBuffer::~GLCommandBuffer() = default;
 
-	void GLCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget){
+	void GLCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget) {
 		glRenderTarget = std::static_pointer_cast<GLRenderTarget>(renderTarget);
 
-		commands.emplace_back([glRenderTarget = glRenderTarget.get()](){
+		commands.emplace_back([glRenderTarget = glRenderTarget.get()]() {
 			glBindFramebuffer(GL_FRAMEBUFFER, glRenderTarget->getGLFrameBufferID());
 		});
 	}
 
-	void GLCommandBuffer::clearTarget(){
-		commands.emplace_back([glRenderTarget = glRenderTarget.get()](){
+	void GLCommandBuffer::clearTarget() {
+		commands.emplace_back([glRenderTarget = glRenderTarget.get()]() {
 			const auto& clearColour = glRenderTarget->getClearColour();
 
 			glClearColor(clearColour.r, clearColour.g, clearColour.b, clearColour.a);
@@ -35,13 +35,13 @@ namespace clv::gfx::ogl{
 		});
 	}
 
-	void GLCommandBuffer::updateBufferData(Buffer& buffer, const void* data){
+	void GLCommandBuffer::updateBufferData(Buffer& buffer, const void* data) {
 		const size_t bufferSize = buffer.getDescriptor().bufferSize;
-		
+
 		void* datacopy = malloc(bufferSize);
 		memcpy(datacopy, data, bufferSize);
 
-		commands.emplace_back([&buffer, data = datacopy](){
+		commands.emplace_back([&buffer, data = datacopy]() {
 			GLBuffer& glbuffer = static_cast<GLBuffer&>(buffer);
 
 			glBindBuffer(GL_UNIFORM_BUFFER, glbuffer.getBufferID());
@@ -52,37 +52,37 @@ namespace clv::gfx::ogl{
 		});
 	}
 
-	void GLCommandBuffer::bindIndexBuffer(const Buffer& buffer){
-		commands.emplace_back([&buffer](){
+	void GLCommandBuffer::bindIndexBuffer(const Buffer& buffer) {
+		commands.emplace_back([&buffer]() {
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glbuffer.getBufferID());
 		});
 	}
 
-	void GLCommandBuffer::bindVertexBuffer(const Buffer& buffer, const uint32_t stride){
-		commands.emplace_back([&buffer, stride](){
+	void GLCommandBuffer::bindVertexBuffer(const Buffer& buffer, const uint32_t stride) {
+		commands.emplace_back([&buffer, stride]() {
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 			glBindVertexBuffer(0, glbuffer.getBufferID(), 0, stride);
 		});
 	}
 
-	void GLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32_t bindingPoint){
-		commands.emplace_back([&buffer, shaderType, bindingPoint](){
+	void GLCommandBuffer::bindShaderResourceBuffer(const Buffer& buffer, const ShaderStage shaderType, const uint32_t bindingPoint) {
+		commands.emplace_back([&buffer, shaderType, bindingPoint]() {
 			const GLBuffer& glbuffer = static_cast<const GLBuffer&>(buffer);
 			glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, glbuffer.getBufferID());
 		});
 	}
 
-	void GLCommandBuffer::bindPipelineObject(const PipelineObject& pipelineObject){
-		commands.emplace_back([&pipelineObject](){
+	void GLCommandBuffer::bindPipelineObject(const PipelineObject& pipelineObject) {
+		commands.emplace_back([&pipelineObject]() {
 			const GLPipelineObject& glPipelineObject = static_cast<const GLPipelineObject&>(pipelineObject);
 			glBindVertexArray(glPipelineObject.getGLVertexArrayID());
 			glUseProgram(glPipelineObject.getGLPorgramID());
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			if (glPipelineObject.isBlendEnabled()){
+			if(glPipelineObject.isBlendEnabled()) {
 				glEnable(GL_BLEND);
-			} else{
+			} else {
 				glDisable(GL_BLEND);
 			}
 
@@ -92,42 +92,42 @@ namespace clv::gfx::ogl{
 		});
 	}
 
-	void GLCommandBuffer::bindTexture(const Texture* texture, const uint32_t bindingPoint){
-		commands.emplace_back([texture, bindingPoint](){
-			if (const GLTexture* glTexture = static_cast<const GLTexture*>(texture)){
+	void GLCommandBuffer::bindTexture(const Texture* texture, const uint32_t bindingPoint) {
+		commands.emplace_back([texture, bindingPoint]() {
+			if(const GLTexture* glTexture = static_cast<const GLTexture*>(texture)) {
 				glBindTextureUnit(bindingPoint, glTexture->getTextureID());
-			} else{
+			} else {
 				glBindTextureUnit(bindingPoint, 0);
 			}
 		});
 	}
 
-	void GLCommandBuffer::setViewport(const Viewport& viewport){
-		commands.emplace_back([viewport](){
+	void GLCommandBuffer::setViewport(const Viewport& viewport) {
+		commands.emplace_back([viewport]() {
 			glViewport(static_cast<GLint>(viewport.x), static_cast<GLint>(viewport.y), static_cast<GLsizei>(viewport.width), static_cast<GLsizei>(viewport.height));
 		});
 	}
 
-	void GLCommandBuffer::setDepthEnabled(bool enabled){
-		commands.emplace_back([enabled](){
+	void GLCommandBuffer::setDepthEnabled(bool enabled) {
+		commands.emplace_back([enabled]() {
 			glDepthFunc(GL_LESS);
 
-			if (enabled){
+			if(enabled) {
 				glEnable(GL_DEPTH_TEST);
-			} else{
+			} else {
 				glDisable(GL_DEPTH_TEST);
 			}
 		});
 	}
 
-	void GLCommandBuffer::drawIndexed(const uint32_t count){
-		commands.emplace_back([count](){
+	void GLCommandBuffer::drawIndexed(const uint32_t count) {
+		commands.emplace_back([count]() {
 			glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
 		});
 	}
 
-	void GLCommandBuffer::endEncoding(){
-		for(auto& command : commands){
+	void GLCommandBuffer::endEncoding() {
+		for(auto& command : commands) {
 			command();
 		}
 

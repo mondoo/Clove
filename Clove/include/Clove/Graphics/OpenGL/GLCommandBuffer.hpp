@@ -2,13 +2,13 @@
 
 #include "Clove/Graphics/Core/CommandBuffer.hpp"
 
-namespace clv::gfx::ogl{
+namespace clv::gfx::ogl {
 	class GLRenderTarget;
 	class GLSurface;
 }
 
-namespace clv::gfx::ogl{
-	class GLCommandBuffer : public CommandBuffer{
+namespace clv::gfx::ogl {
+	class GLCommandBuffer : public CommandBuffer {
 		//VARIABLES
 	private:
 		std::vector<std::function<void()>> commands;
