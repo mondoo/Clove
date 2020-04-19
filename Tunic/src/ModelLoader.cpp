@@ -1,11 +1,10 @@
 #include "Tunic/ModelLoader.hpp"
 
-#include "Tunic/Application.hpp"
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 
-#include <Clove/Graphics/Core/Resources/Texture.hpp>
-#include <Clove/Graphics/Core/VertexLayout.hpp>
-#include <Clove/Platform/Core/Window.hpp>
+#include <Clove/Graphics/Texture.hpp>
+#include <Clove/Graphics/VertexLayout.hpp>
+#include <Clove/Platform/Window.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -13,7 +12,7 @@
 using namespace clv;
 
 namespace tnc::ModelLoader {
-	static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type) {
+	static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
 		std::shared_ptr<gfx::Texture> texture;
 
 		//TODO: Support multiple textures of the same type
@@ -21,16 +20,14 @@ namespace tnc::ModelLoader {
 			aiString path;
 			material->GetTexture(type, 0, &path);
 
-			gfx::GraphicsFactory& factory = Application::get().getGraphicsFactory();
 			gfx::TextureDescriptor descriptor{};
-
-			texture = factory.createTexture(descriptor, path.C_Str());
+			texture = graphicsFactory->createTexture(descriptor, path.C_Str());
 		}
 
 		return texture;
 	}
 
-	static std::shared_ptr<rnd::Mesh> processMesh(aiMesh* mesh, const aiScene* scene) {
+	static std::shared_ptr<rnd::Mesh> processMesh(aiMesh* mesh, const aiScene* scene, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
 		gfx::VertexLayout layout;
 		if(mesh->HasPositions()) {
 			layout.add(gfx::VertexElementType::position3D);
@@ -48,7 +45,7 @@ namespace tnc::ModelLoader {
 
 		gfx::VertexBufferData vertexBufferData{ layout };
 		std::vector<uint32_t> indices;
-		std::shared_ptr<rnd::Material> meshMaterial = std::make_shared<rnd::Material>();
+		std::shared_ptr<rnd::Material> meshMaterial = std::make_shared<rnd::Material>(graphicsFactory);
 
 		const size_t vertexCount = mesh->mNumVertices;
 		vertexBufferData.resize(vertexCount);
@@ -91,8 +88,8 @@ namespace tnc::ModelLoader {
 		if(mesh->mMaterialIndex >= 0) {
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-			auto diffuseTexture = loadMaterialTexture(material, aiTextureType_DIFFUSE);
-			auto specularTexture = loadMaterialTexture(material, aiTextureType_SPECULAR);
+			auto diffuseTexture = loadMaterialTexture(material, aiTextureType_DIFFUSE, graphicsFactory);
+			auto specularTexture = loadMaterialTexture(material, aiTextureType_SPECULAR, graphicsFactory);
 
 			if(diffuseTexture) {
 				meshMaterial->setAlbedoTexture(std::move(diffuseTexture));
@@ -105,28 +102,28 @@ namespace tnc::ModelLoader {
 		return std::make_shared<rnd::Mesh>(vertexBufferData, indices, meshMaterial->createInstance());
 	}
 
-	static void processNode(aiNode* node, const aiScene* scene, std::vector<std::shared_ptr<rnd::Mesh>>& meshes) {
+	static void processNode(aiNode* node, const aiScene* scene, std::vector<std::shared_ptr<rnd::Mesh>>& meshes, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
 		for(size_t i = 0; i < node->mNumMeshes; ++i) {
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			meshes.emplace_back(processMesh(mesh, scene));
+			meshes.emplace_back(processMesh(mesh, scene, graphicsFactory));
 		}
 
 		for(size_t i = 0; i < node->mNumChildren; ++i) {
-			processNode(node->mChildren[i], scene, meshes);
+			processNode(node->mChildren[i], scene, meshes, graphicsFactory);
 		}
 	}
 
-	rnd::Model loadModel(std::string_view filePath) {
+	rnd::Model loadModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
 		std::vector<std::shared_ptr<rnd::Mesh>> meshes;
 
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(filePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs);
 		if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
 			CLV_LOG_ERROR("Assimp Error: {0}", importer.GetErrorString());
 			return { meshes };
 		}
 
-		processNode(scene->mRootNode, scene, meshes);
+		processNode(scene->mRootNode, scene, meshes, graphicsFactory);
 
 		return { meshes };
 	}

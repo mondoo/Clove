@@ -2,7 +2,7 @@
 
 #include "Tunic/Rendering/ShaderBufferTypes.hpp"
 
-#include <Clove/Graphics/Core/GraphicsTypes.hpp>
+#include <Clove/Graphics/GraphicsTypes.hpp>
 
 namespace clv::gfx {
 	class GraphicsFactory;

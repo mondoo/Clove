@@ -1,14 +1,15 @@
 #include "Clove/Graphics/OpenGL/GLXSurface.hpp"
 
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
-#include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/OpenGL/GLException.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
-typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
+using glXCreateContextAttribsARBProc = GLXContext (*)(Display *, GLXFBConfig, GLXContext, int, const int *);
 
 namespace clv::gfx::ogl{
-	GLXSurface::GLXSurface(void* windowData){
+	GLXSurface::GLXSurface(std::shared_ptr<GraphicsFactory> factory, void* windowData) 
+		: factory(std::move(factory)) {
 		plt::LinuxData* data = reinterpret_cast<plt::LinuxData*>(windowData);
 		display = data->display;
 		window = data->window;
@@ -36,12 +37,12 @@ namespace clv::gfx::ogl{
 		int bestNumSamp = -1;
 		for (int i = 0; i < fbCount; ++i){
 			if (XVisualInfo *vi = glXGetVisualFromFBConfig(display, fbc[i])){
-				int samp_buf;
-				int samples;
+				int samp_buf = 0;
+				int samples = 0;
 				glXGetFBConfigAttrib(display, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf);
 				glXGetFBConfigAttrib(display, fbc[i], GLX_SAMPLES, &samples);
 
-				if (bestFBC < 0 || samp_buf && samples > bestNumSamp){
+				if (bestFBC < 0 || ((samp_buf != 0) && samples > bestNumSamp)){
 					bestFBC = i;
 					bestNumSamp = samples;
 				}
@@ -58,9 +59,9 @@ namespace clv::gfx::ogl{
 		*data->visual = visual;
 
 		glXCreateContextAttribsARBProc glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB((const GLubyte *) "glXCreateContextAttribsARB");
-		if(glXCreateContextAttribsARB){
-			int32_t major = 4;
-			int32_t minor = 6;
+		if(glXCreateContextAttribsARB != nullptr){
+			const int32_t major = 4;
+			const int32_t minor = 6;
 
 			int32_t attributes[] = {
 				GLX_CONTEXT_MAJOR_VERSION_ARB, major,
@@ -87,10 +88,14 @@ namespace clv::gfx::ogl{
 		glXDestroyContext(display, context);
 	}
 
+	const std::shared_ptr<GraphicsFactory>& GLXSurface::getFactory() const {
+		return factory;
+	}
+
 	void GLXSurface::makeCurrent(){
 		glXMakeCurrent(display, *window, context);
 
-		if(!glxSwapIntervalEXT){
+		if(glxSwapIntervalEXT == nullptr){
 			const char* extensions = (char*)glXQueryExtensionsString(display, visual->screen);
 			if(strstr(extensions, "GLX_EXT_swap_control") != 0){
 				glxSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC)glXGetProcAddress((GLubyte*)"glxSwapIntervalEXT");
@@ -108,11 +113,11 @@ namespace clv::gfx::ogl{
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
-		renderTarget = std::make_shared<GLRenderTarget>();
+		renderTarget = std::make_shared<GLRenderTarget>(factory);
 	}
 
 	void GLXSurface::setVSync(bool enabled){
-		if(glxSwapIntervalEXT){
+		if(glxSwapIntervalEXT != nullptr){
 			GLXDrawable drawable = glXGetCurrentDrawable();
 	
 			const int32_t interval = enabled ? 1 : 0;
@@ -125,7 +130,7 @@ namespace clv::gfx::ogl{
 	}
 
 	bool GLXSurface::isVsync() const{
-		if(glxSwapIntervalEXT){
+		if(glxSwapIntervalEXT != nullptr){
 			GLXDrawable drawable = glXGetCurrentDrawable();
 
 			uint32_t interval = 0;

@@ -7,6 +7,27 @@ project(Tunic)
 add_library(${PROJECT_NAME} STATIC)
 
 set(
+	AIFiles
+		${TNC_INCLUDE}/AI/BehaviourTree.hpp
+		${TNC_SOURCE}/AI/BehaviourTree.cpp
+		${TNC_INCLUDE}/AI/Composite.hpp
+		${TNC_SOURCE}/AI/Composite.cpp
+		${TNC_INCLUDE}/AI/Decorator.hpp
+		${TNC_SOURCE}/AI/Decorator.cpp
+		${TNC_INCLUDE}/AI/Selector.hpp
+		${TNC_SOURCE}/AI/Selector.cpp
+		${TNC_INCLUDE}/AI/Sequence.hpp
+		${TNC_SOURCE}/AI/Sequence.cpp
+		${TNC_INCLUDE}/AI/Task.hpp
+)
+
+set(
+	AudioFiles
+		${TNC_INCLUDE}/Audio/Sound.hpp
+		${TNC_SOURCE}/Audio/Sound.cpp
+)
+
+set(
 	ECSFiles
 		${TNC_INCLUDE}/ECS/Component.hpp
 		${TNC_INCLUDE}/ECS/Component.inl
@@ -21,6 +42,10 @@ set(
 		${TNC_INCLUDE}/ECS/World.inl
 		${TNC_SOURCE}/ECS/World.cpp
 		${TNC_INCLUDE}/ECS/System.hpp
+		${TNC_INCLUDE}/ECS/Components/AudioComponent.hpp
+		${TNC_SOURCE}/ECS/Components/AudioComponent.cpp
+		${TNC_INCLUDE}/ECS/Components/BehaviourTreeComponent.hpp
+		${TNC_SOURCE}/ECS/Components/BehaviourTreeComponent.cpp
 		${TNC_INCLUDE}/ECS/Components/CameraComponent.hpp
 		${TNC_SOURCE}/ECS/Components/CameraComponent.cpp
 		${TNC_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
@@ -33,14 +58,14 @@ set(
 		${TNC_SOURCE}/ECS/Components/RigidBodyComponent.cpp
 		${TNC_INCLUDE}/ECS/Components/TransformComponent.hpp
 		${TNC_SOURCE}/ECS/Components/TransformComponent.cpp
+		${TNC_INCLUDE}/ECS/Systems/AudioSystem.hpp
+		${TNC_SOURCE}/ECS/Systems/AudioSystem.cpp
+		${TNC_INCLUDE}/ECS/Systems/BehaviourTreeSystem.hpp
+		${TNC_SOURCE}/ECS/Systems/BehaviourTreeSystem.cpp
 		${TNC_INCLUDE}/ECS/Systems/RenderSystem.hpp
 		${TNC_SOURCE}/ECS/Systems/RenderSystem.cpp
 		${TNC_INCLUDE}/ECS/Systems/PhysicsSystem.hpp
 		${TNC_SOURCE}/ECS/Systems/PhysicsSystem.cpp
-		${TNC_INCLUDE}/ECS/Components/AudioComponent.hpp
-		${TNC_SOURCE}/ECS/Components/AudioComponent.cpp
-		${TNC_INCLUDE}/ECS/Systems/AudioSystem.hpp
-		${TNC_SOURCE}/ECS/Systems/AudioSystem.cpp
 )
 
 set(
@@ -125,12 +150,6 @@ target_sources(
 	PRIVATE
 		${TNC_INCLUDE}/Tunic.hpp
 
-        ${TNC_SOURCE}/Application.cpp
-		${TNC_INCLUDE}/Application.hpp
-		
-		${TNC_INCLUDE}/Input.hpp
-		${TNC_SOURCE}/Input.cpp
-
 		${TNC_INCLUDE}/Layer.hpp
 		${TNC_SOURCE}/Layer.cpp
 		${TNC_INCLUDE}/LayerStack.hpp
@@ -139,6 +158,8 @@ target_sources(
 		${TNC_INCLUDE}/ModelLoader.hpp
 		${TNC_SOURCE}/ModelLoader.cpp
         
+		${AIFiles}
+		${AudioFiles}
 		${ECSFiles}
 		${PhysicsFiles}
 		${RenderingFiles}

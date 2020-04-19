@@ -2,11 +2,15 @@
 
 #include "Tunic/UI/Widget.hpp"
 
+namespace clv::gfx {
+	class GraphicsFactory;
+}
+
 namespace tnc::rnd {
 	class Sprite;
 }
 
-namespace tnc::ui{
+namespace tnc::ui {
 	class Image : public Widget {
 		//VARIABLES
 	//private:
@@ -15,7 +19,7 @@ namespace tnc::ui{
 
 		//FUNCTIONS
 	public:
-		Image();
+		Image(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 		//TODO: Ctors
 
 		virtual void draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) override;

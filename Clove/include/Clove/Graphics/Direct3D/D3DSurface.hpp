@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/Surface.hpp"
+#include "Clove/Graphics/Surface.hpp"
 
 #include <wrl.h>
 
@@ -21,6 +21,8 @@ namespace clv::gfx::d3d{
 		utl::SingleCastDelegate<void()> onDeviceRemoved;
 
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		uint32_t bufferCount = 1u;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
@@ -36,7 +38,7 @@ namespace clv::gfx::d3d{
 		//FUNCTIONS
 	public:
 		D3DSurface() = delete;
-		D3DSurface(ID3D11Device& d3dDevice, void* windowData);
+		D3DSurface(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, void* windowData);
 
 		D3DSurface(const D3DSurface& other) = delete;
 		D3DSurface(D3DSurface&& other) noexcept;
@@ -45,6 +47,8 @@ namespace clv::gfx::d3d{
 		D3DSurface& operator=(D3DSurface&& other) noexcept;
 
 		virtual ~D3DSurface();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual void setVSync(bool enabled) override;
 		virtual bool isVsync() const override;

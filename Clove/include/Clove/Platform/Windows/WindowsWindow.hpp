@@ -1,20 +1,22 @@
 #pragma once
 
-#include "Clove/Platform/Core/Window.hpp"
+#include "Clove/Platform/Window.hpp"
 
-#include "Clove/Platform/Windows/WindowsException.hpp"
 #include "Clove/Platform/Windows/CloveWindows.hpp"
+#include "Clove/Platform/Windows/WindowsException.hpp"
 
-namespace clv::plt{
-	struct WindowsData{
+namespace clv::plt {
+	struct WindowsData {
 		HWND handle;
 		int32_t width;
 		int32_t height;
 	};
 
-	class WindowsWindow : public Window{
+	class WindowsWindow : public Window {
 		//VARIABLES
 	private:
+		bool open = false;
+
 		static constexpr LPCSTR className = "Clove";
 
 		HINSTANCE instance;
@@ -43,7 +45,9 @@ namespace clv::plt{
 
 		virtual void moveWindow(const mth::vec2i& position) override;
 		virtual void resizeWindow(const mth::vec2i& size) override;
-		
+
+		virtual bool isOpen() const override;
+
 	protected:
 		virtual void processInput() override;
 

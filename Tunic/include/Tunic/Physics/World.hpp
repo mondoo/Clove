@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Clove/Core/Utils/DeltaTime.hpp>
-
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
 class btBroadphaseInterface;

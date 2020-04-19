@@ -1,29 +1,28 @@
 #include "Tunic/Rendering/Renderables/Sprite.hpp"
 
-#include "Tunic/Application.hpp"
-#include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
+#include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Clove/Graphics/Texture.hpp>
 
 using namespace clv;
 using namespace clv::gfx;
 
-namespace tnc::rnd{
-	Sprite::Sprite()
-		: materialInstance(std::make_shared<Material>()){
+namespace tnc::rnd {
+	Sprite::Sprite(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
+		: materialInstance(std::make_shared<Material>(std::move(graphicsFactory))) {
 	}
 
-	Sprite::Sprite(const std::string& pathToTexture)
-		: materialInstance(std::make_shared<Material>()){
-		materialInstance.setAlbedoTexture(Application::get().getGraphicsFactory().createTexture({}, pathToTexture));
+	Sprite::Sprite(const std::string& pathToTexture, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
+		: materialInstance(std::make_shared<Material>(graphicsFactory)) {
+		materialInstance.setAlbedoTexture(graphicsFactory->createTexture({}, pathToTexture));
 	}
 
-	Sprite::Sprite(const std::shared_ptr<clv::gfx::Texture>& texture)
-		: materialInstance(std::make_shared<Material>()){
+	Sprite::Sprite(const std::shared_ptr<clv::gfx::Texture>& texture, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
+		: materialInstance(std::make_shared<Material>(std::move(graphicsFactory))) {
 		materialInstance.setAlbedoTexture(texture);
 	}
 
 	Sprite::Sprite(const std::shared_ptr<Material>& material)
-		: materialInstance(material){
+		: materialInstance(material) {
 	}
 
 	Sprite::Sprite(const Sprite& other) = default;
@@ -36,7 +35,7 @@ namespace tnc::rnd{
 
 	Sprite::~Sprite() = default;
 
-	MaterialInstance& Sprite::getMaterialInstance(){
+	MaterialInstance& Sprite::getMaterialInstance() {
 		return materialInstance;
 	}
 }

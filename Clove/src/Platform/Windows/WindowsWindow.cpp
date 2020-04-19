@@ -1,14 +1,14 @@
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 
-#include "Clove/Graphics/Core/Graphics.hpp"
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
-#include "Clove/Graphics/Core/Surface.hpp"
+#include "Clove/Graphics/Graphics.hpp"
+#include "Clove/Graphics/GraphicsFactory.hpp"
+#include "Clove/Graphics/Surface.hpp"
 
 #define CLV_WINDOWS_QUIT 25397841 //Note: this number is completely random
 
-namespace clv::plt{
-	WindowsWindow::WindowsWindow(const WindowDescriptor& descriptor){
-        CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
+namespace clv::plt {
+	WindowsWindow::WindowsWindow(const WindowDescriptor& descriptor) {
+		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
 		instance = GetModuleHandle(nullptr);
 
@@ -34,29 +34,32 @@ namespace clv::plt{
 		const DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_VISIBLE;
 
 		RECT wr{};
-		wr.left	  = 0;
-		wr.right  = descriptor.width;
-		wr.top	  = 0;
-		wr.bottom = descriptor.height;
+		wr.left		= 0;
+		wr.right	= descriptor.width;
+		wr.top		= 0;
+		wr.bottom	= descriptor.height;
 		if(!AdjustWindowRect(&wr, windowStyle, FALSE)) {
-		  throw CLV_WINDOWS_LAST_EXCEPTION;
+			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
 
 		windowsHandle = CreateWindow(
 			wc.lpszClassName,
 			wideTitle.c_str(),
 			windowStyle,
-			CW_USEDEFAULT, CW_USEDEFAULT,
-			wr.right - wr.left, wr.bottom - wr.top,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			wr.right - wr.left,
+			wr.bottom - wr.top,
 			nullptr,
 			nullptr,
 			instance,
-			this
-		);
+			this);
 
-		if(windowsHandle == nullptr){
+		if(windowsHandle == nullptr) {
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
+
+		open = true;
 
 		CLV_LOG_DEBUG("Window created");
 
@@ -68,7 +71,7 @@ namespace clv::plt{
 		surface->makeCurrent();
 	}
 
-	WindowsWindow::WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api){
+	WindowsWindow::WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) {
 		CLV_LOG_TRACE("Creating child window: ({1}, {2})", size.x, size.y);
 
 		WNDCLASSEX wc{};
@@ -94,17 +97,20 @@ namespace clv::plt{
 			wc.lpszClassName,
 			"",
 			windowStyle,
-			position.x, position.y,
-			size.x, size.y,
+			position.x,
+			position.y,
+			size.x,
+			size.y,
 			reinterpret_cast<HWND>(parentWindow.getNativeWindow()),
 			nullptr,
 			instance,
-			this
-		);
+			this);
 
-		if(windowsHandle == nullptr){
+		if(windowsHandle == nullptr) {
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
+
+		open = true;
 
 		CLV_LOG_DEBUG("Window created");
 
@@ -116,7 +122,7 @@ namespace clv::plt{
 		surface->makeCurrent();
 	}
 
-	WindowsWindow::~WindowsWindow(){
+	WindowsWindow::~WindowsWindow() {
 		//Reset context first, before the window is destroyed
 		surface.reset();
 
@@ -124,11 +130,11 @@ namespace clv::plt{
 		DestroyWindow(windowsHandle);
 	}
 
-	void* WindowsWindow::getNativeWindow() const{
+	void* WindowsWindow::getNativeWindow() const {
 		return windowsHandle;
 	}
 
-	mth::vec2i WindowsWindow::getPosition() const{
+	mth::vec2i WindowsWindow::getPosition() const {
 		RECT windowRect;
 		GetWindowRect(windowsHandle, &windowRect);
 		MapWindowPoints(HWND_DESKTOP, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
@@ -136,14 +142,14 @@ namespace clv::plt{
 		return { windowRect.left, windowRect.top };
 	}
 
-	mth::vec2i WindowsWindow::getSize() const{
+	mth::vec2i WindowsWindow::getSize() const {
 		RECT windowRect;
 		GetClientRect(windowsHandle, &windowRect);
 
 		return { windowRect.right - windowRect.left, windowRect.bottom - windowRect.top };
 	}
 
-	void WindowsWindow::moveWindow(const mth::vec2i& position){
+	void WindowsWindow::moveWindow(const mth::vec2i& position) {
 		const mth::vec2i size = getSize();
 		const BOOL moved = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
 		if(!moved) {
@@ -151,19 +157,26 @@ namespace clv::plt{
 		}
 	}
 
-	void WindowsWindow::resizeWindow(const mth::vec2i& size){
+	void WindowsWindow::resizeWindow(const mth::vec2i& size) {
 		const mth::vec2i position = getPosition();
 		const BOOL resized = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
-		if(!resized){
+		if(!resized) {
 			throw CLV_WINDOWS_LAST_EXCEPTION;
 		}
 	}
-	
-	void WindowsWindow::processInput(){
+
+	bool WindowsWindow::isOpen() const {
+		return open;
+	}
+
+	void WindowsWindow::processInput() {
 		MSG msg;
-		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
-			if(msg.wParam == CLV_WINDOWS_QUIT){
-				onWindowCloseDelegate.broadcast();
+		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+			if(msg.wParam == CLV_WINDOWS_QUIT) {
+				if(onWindowCloseDelegate.isBound()) {
+					onWindowCloseDelegate.broadcast();
+				}
+				open = false;
 			}
 
 			TranslateMessage(&msg);
@@ -171,8 +184,8 @@ namespace clv::plt{
 		}
 	}
 
-	LRESULT CALLBACK WindowsWindow::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
-		if(msg == WM_NCCREATE){
+	LRESULT CALLBACK WindowsWindow::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+		if(msg == WM_NCCREATE) {
 			//Extract the ptr to our window class
 			const CREATESTRUCTW* const create = reinterpret_cast<CREATESTRUCTW*>(lParam);
 			WindowsWindow* const window = static_cast<WindowsWindow*>(create->lpCreateParams);
@@ -186,16 +199,16 @@ namespace clv::plt{
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
-	LRESULT CALLBACK WindowsWindow::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
+	LRESULT CALLBACK WindowsWindow::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		//Forward message to our windows instance
 		WindowsWindow* const window = reinterpret_cast<WindowsWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 		return window->HandleMsg(hWnd, msg, wParam, lParam);
 	}
 
-	LRESULT WindowsWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
+	LRESULT WindowsWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		const POINTS pt = MAKEPOINTS(lParam);
 
-		switch(msg){
+		switch(msg) {
 			case WM_CLOSE:
 				PostQuitMessage(CLV_WINDOWS_QUIT);
 				return 0;
@@ -207,7 +220,7 @@ namespace clv::plt{
 				//Keyboard
 			case WM_KEYDOWN:
 			case WM_SYSKEYDOWN:
-				if(!(lParam & BIT(30)) || keyboard.isAutoRepeatEnabled()){
+				if(!(lParam & BIT(30)) || keyboard.isAutoRepeatEnabled()) {
 					keyboard.onKeyPressed(static_cast<Key>(wParam));
 				}
 				break;
@@ -223,16 +236,16 @@ namespace clv::plt{
 
 				//Mouse
 			case WM_MOUSEMOVE:
-				if(pt.x >= 0 && pt.x < getSize().x && pt.y >= 0 && pt.y < getSize().y){
+				if(pt.x >= 0 && pt.x < getSize().x && pt.y >= 0 && pt.y < getSize().y) {
 					mouse.onMouseMove(pt.x, pt.y);
-					if(!mouse.isInWindow()){
+					if(!mouse.isInWindow()) {
 						mouse.onMouseEnter();
 						SetCapture(hWnd);
 					}
-				} else{
-					if(mouse.isButtonPressed(MouseButton::Left) || mouse.isButtonPressed(MouseButton::Right)){
+				} else {
+					if(mouse.isButtonPressed(MouseButton::Left) || mouse.isButtonPressed(MouseButton::Right)) {
 						mouse.onMouseMove(pt.x, pt.y);
-					} else{
+					} else {
 						mouse.onMouseLeave();
 						ReleaseCapture();
 					}
@@ -268,16 +281,13 @@ namespace clv::plt{
 				break;
 
 				//Window
-			case WM_SIZE:
-				{
-					const mth::vec2ui size = { pt.x, pt.y };
-					if(surface){ //Can be called before the surface is initialised
-						surface->resizeBuffers(size);
-					}
-					onWindowResize.broadcast(size);
+			case WM_SIZE: {
+				const mth::vec2ui size = { pt.x, pt.y };
+				if(surface) { //Can be called before the surface is initialised
+					surface->resizeBuffers(size);
 				}
-				break;
-
+				onWindowResize.broadcast(size);
+			} break;
 		}
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}

@@ -2,7 +2,7 @@
 
 #include "Tunic/ECS/Component.hpp"
 
-#include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Tunic/Rendering/ShaderBufferTypes.hpp"
 
 namespace clv::gfx {

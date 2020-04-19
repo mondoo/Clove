@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/Shader.hpp"
+#include "Clove/Graphics/Shader.hpp"
 
 #include <glad/glad.h>
 
@@ -10,6 +10,8 @@ namespace clv::gfx::ogl{
 	class GLShader : public Shader{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		GLuint shaderID = 0;
 
 		ShaderDescriptor descriptor;
@@ -17,7 +19,7 @@ namespace clv::gfx::ogl{
 		//FUNCTIONS
 	public:
 		GLShader() = delete;
-		GLShader(const ShaderDescriptor& descriptor, std::string_view pathToShader);
+		GLShader(std::shared_ptr<GraphicsFactory> factory, ShaderDescriptor descriptor, std::string_view pathToShader);
 
 		GLShader(const GLShader& other) = delete;
 		GLShader(GLShader&& other) noexcept;
@@ -26,6 +28,8 @@ namespace clv::gfx::ogl{
 		GLShader& operator=(GLShader&& other) noexcept;
 
 		virtual ~GLShader();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual const ShaderDescriptor& getDescriptor() const override;
 

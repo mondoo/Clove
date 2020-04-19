@@ -3,12 +3,13 @@
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
-#include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
 
 #include <d3d11.h>
 
 namespace clv::gfx::d3d{
-	D3DSurface::D3DSurface(ID3D11Device& d3dDevice, void* windowData){
+	D3DSurface::D3DSurface(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, void* windowData) 
+		: factory(std::move(factory)) {
 		plt::WindowsData* data = reinterpret_cast<plt::WindowsData*>(windowData);
 
 		DX11_INFO_PROVIDER;
@@ -65,7 +66,7 @@ namespace clv::gfx::d3d{
 
 		DX11_THROW_INFO(d3dDevice.CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
 
-		renderTarget = std::make_shared<D3DRenderTarget>(renderTargetView, depthStencilView);
+		renderTarget = std::make_shared<D3DRenderTarget>(this->factory, renderTargetView, depthStencilView);
 	}
 
 	D3DSurface::D3DSurface(D3DSurface&& other) noexcept = default;
@@ -73,6 +74,10 @@ namespace clv::gfx::d3d{
 	D3DSurface& D3DSurface::operator=(D3DSurface&& other) noexcept = default;
 
 	D3DSurface::~D3DSurface() = default;
+
+	const std::shared_ptr<GraphicsFactory>& D3DSurface::getFactory() const {
+		return factory;
+	}
 
 	void D3DSurface::setVSync(bool enabled){
 		swapInterval = enabled ? 1u : 0u;

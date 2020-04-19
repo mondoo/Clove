@@ -1,8 +1,8 @@
 #include "Tunic/Rendering/MaterialInstance.hpp"
 
 #include "Tunic/Rendering/Material.hpp"
-#include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Clove/Graphics/Core/CommandBuffer.hpp"
+#include "Clove/Graphics/Texture.hpp"
+#include "Clove/Graphics/CommandBuffer.hpp"
 
 using namespace clv::gfx;
 
@@ -14,10 +14,10 @@ namespace tnc::rnd{
 	MaterialInstance::MaterialInstance(const MaterialInstance& other) = default;
 
 	MaterialInstance::MaterialInstance(MaterialInstance&& other) noexcept{
-		material = std::move(other.material);
-		albedoTexture = std::move(other.albedoTexture);
-		specTexture = std::move(other.specTexture);
-		shaderData = std::move(other.shaderData);
+		material		= std::move(other.material);
+		albedoTexture	= std::move(other.albedoTexture);
+		specTexture		= std::move(other.specTexture);
+		shaderData		= std::move(other.shaderData);
 	}
 
 	MaterialInstance& MaterialInstance::operator=(const MaterialInstance& other) = default;
@@ -52,7 +52,7 @@ namespace tnc::rnd{
 
 	void MaterialInstance::setAlbedoTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		albedoTexture = Application::get().getGraphicsFactory().createTexture(tdesc, path);
+		albedoTexture = material->graphicsFactory->createTexture(tdesc, path);
 	}
 
 	void MaterialInstance::setAlbedoTexture(std::shared_ptr<Texture> texture){
@@ -61,7 +61,7 @@ namespace tnc::rnd{
 
 	void MaterialInstance::setSpecularTexture(const std::string& path){
 		TextureDescriptor tdesc{};
-		specTexture = Application::get().getGraphicsFactory().createTexture(tdesc, path);
+		specTexture = material->graphicsFactory->createTexture(tdesc, path);
 	}
 
 	void MaterialInstance::setSpecularTexture(std::shared_ptr<Texture> texture){

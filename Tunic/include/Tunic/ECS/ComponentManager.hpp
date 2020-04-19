@@ -1,63 +1,54 @@
 #pragma once
 
-#include "Tunic/ECS/ECSTypes.hpp"
-#include "Clove/Memory/PoolAllocator.hpp"
 #include "Tunic/ECS/Component.hpp"
+#include "Tunic/ECS/ECSTypes.hpp"
 
-namespace tnc::ecs{
-	class ComponentManager{
+#include <Clove/Memory/PoolAllocator.hpp>
+
+namespace tnc::ecs {
+	class ComponentContainerInterface {
+		//FUNCTIONS
+	public:
+		virtual ~ComponentContainerInterface();
+
+		virtual void cloneComponent(EntityID fromID, EntityID toID) = 0;
+		virtual void removeComponent(EntityID entityID) = 0;
+	};
+
+	template<typename ComponentType>
+	class ComponentContainer : public ComponentContainerInterface {
+		//VARIABLES
+	public:
+		clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentAddedDelegate;
+		clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentRemovedDelegate;
+
 	private:
-		class ComponentContainerInterface{
-			//VARIABLES
-		public:
-			clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentAddedDelegate;
-			clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentRemovedDelegate;
+		clv::mem::PoolAllocator<ComponentType> componentAllocator;
 
-			//FUNCTIONS
-		public:
-			ComponentContainerInterface();
+		std::unordered_map<EntityID, size_t> entityIDToIndex;
+		std::vector<ComponentType*> components;
 
-			ComponentContainerInterface(const ComponentContainerInterface& other) = delete;
-			ComponentContainerInterface(ComponentContainerInterface&& other) noexcept;
+		//FUNCTIONS
+	public:
+		ComponentContainer();
 
-			ComponentContainerInterface& operator=(const ComponentContainerInterface& other) = delete;
-			ComponentContainerInterface& operator=(ComponentContainerInterface&& other) noexcept;
+		ComponentContainer(const ComponentContainer& other);
+		ComponentContainer(ComponentContainer&& other) noexcept;
 
-			virtual ~ComponentContainerInterface();
+		ComponentContainer& operator=(const ComponentContainer& other);
+		ComponentContainer& operator=(ComponentContainer&& other) noexcept;
 
-			virtual void cloneComponent(EntityID fromID, EntityID toID) = 0;
+		~ComponentContainer();
 
-			virtual void removeComponent(EntityID entityID) = 0;
-		};
+		virtual void cloneComponent(EntityID fromID, EntityID toID) override;
+		virtual void removeComponent(EntityID entityID) override;
 
-		template<typename ComponentType>
-		class ComponentContainer : public ComponentContainerInterface{
-			//VARIABLES
-		private:
-			clv::mem::PoolAllocator<ComponentType> componentAllocator;
+		template<typename... ConstructArgs>
+		ComponentPtr<ComponentType> addComponent(EntityID entityID, ConstructArgs&&... args);
+		ComponentPtr<ComponentType> getComponent(EntityID entityID);
+	};
 
-			std::unordered_map<EntityID, size_t> entityIDToIndex;
-			std::vector<ComponentType*> components;
-
-			//FUNCTIONS
-		public:
-			ComponentContainer();
-
-			ComponentContainer(const ComponentContainer& other);
-			ComponentContainer(ComponentContainer&& other) noexcept;
-
-			ComponentContainer& operator=(const ComponentContainer& other);
-			ComponentContainer& operator=(ComponentContainer&& other) noexcept;
-
-			~ComponentContainer();
-
-			template<typename ...ConstructArgs>
-			ComponentPtr<ComponentType> addComponent(EntityID entityID, ConstructArgs&& ...args);
-			virtual void cloneComponent(EntityID fromID, EntityID toID) override;
-			ComponentPtr<ComponentType> getComponent(EntityID entityID);
-			virtual void removeComponent(EntityID entityID) override;
-		};
-
+	class ComponentManager {
 		//VARIABLES
 	public:
 		clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentAddedDelegate;
@@ -79,7 +70,7 @@ namespace tnc::ecs{
 		~ComponentManager();
 
 		template<typename ComponentType>
-		ComponentContainer<ComponentType>* getComponentContainer();
+		ComponentContainer<ComponentType>& getComponentContainer();
 
 		void cloneEntitiesComponents(EntityID fromID, EntityID toID);
 

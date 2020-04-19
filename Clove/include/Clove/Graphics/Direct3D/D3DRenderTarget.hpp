@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/RenderTarget.hpp"
+#include "Clove/Graphics/RenderTarget.hpp"
 
 #include <wrl.h>
 
@@ -17,6 +17,8 @@ namespace clv::gfx::d3d{
 	class D3DRenderTarget : public RenderTarget{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
 
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
@@ -25,8 +27,8 @@ namespace clv::gfx::d3d{
 		//FUNCTIONS
 	public:
 		D3DRenderTarget() = delete;
-		D3DRenderTarget(ID3D11Device& d3dDevice, Texture* colourTexture, Texture* depthStencilTexture);
-		D3DRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView);
+		D3DRenderTarget(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, Texture* colourTexture, Texture* depthStencilTexture);
+		D3DRenderTarget(std::shared_ptr<GraphicsFactory> factory, Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView);
 		
 		D3DRenderTarget(const D3DRenderTarget& other) = delete;
 		D3DRenderTarget(D3DRenderTarget&& other) noexcept;
@@ -35,6 +37,8 @@ namespace clv::gfx::d3d{
 		D3DRenderTarget& operator=(D3DRenderTarget&& other) noexcept;
 		
 		virtual ~D3DRenderTarget();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual void clear() override;
 

@@ -36,8 +36,13 @@ namespace tnc::ecs {
 	}
 
 	template<typename DerivedClassType>
-	ComponentID Component<DerivedClassType>::getID() const {
+	ComponentID Component<DerivedClassType>::getComponentID() const {
 		return id();
+	}
+
+	template<typename DerivedClassType>
+	EntityID Component<DerivedClassType>::getEntityID() const {
+		return entityID;
 	}
 
 	template<typename DerivedClassType>

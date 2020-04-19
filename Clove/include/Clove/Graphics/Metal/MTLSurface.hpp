@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/Surface.hpp"
+#include "Clove/Graphics/Surface.hpp"
 
 #include <QuartzCore/CAMetalLayer.h>
 #include <Metal/Metal.h>
@@ -22,6 +22,8 @@ namespace clv::gfx::mtl{
 	class MTLSurface : public Surface{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		MTLView* view = nullptr;
 		id<CAMetalDrawable> currentDrawable;
 		
@@ -32,7 +34,7 @@ namespace clv::gfx::mtl{
 		//FUNCTIONS
 	public:
 		MTLSurface() = delete;
-		MTLSurface(id<MTLDevice> mtlDevice, void* windowData);
+		MTLSurface(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, void* windowData);
 		
 		MTLSurface(const MTLSurface& other) = delete;
 		MTLSurface(MTLSurface&& other) noexcept;
@@ -41,6 +43,8 @@ namespace clv::gfx::mtl{
 		MTLSurface& operator=(MTLSurface&& other) noexcept;
 		
 		virtual ~MTLSurface();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 		
 		virtual void setVSync(bool vsync) override;
 		virtual bool isVsync() const override;

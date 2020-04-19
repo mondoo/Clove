@@ -53,15 +53,6 @@ set_target_properties(spdlog PROPERTIES FOLDER ${DependencyFolder})
 add_subdirectory(stb)
 set_target_properties(stb PROPERTIES FOLDER ${DependencyFolder})
 
-#portaudio
-add_subdirectory(portaudio)
-set_target_properties(portaudio_static PROPERTIES FOLDER ${DependencyFolder}/portaudio)
-set_target_properties(uninstall PROPERTIES FOLDER ${DependencyFolder}/portaudio)
-
-#libsndfile
-add_subdirectory(libsndfile)
-set_target_properties(sndfile PROPERTIES FOLDER ${DependencyFolder})
-
 #glslang
 add_subdirectory_with_folder(${DependencyFolder}/glslang glslang)
 

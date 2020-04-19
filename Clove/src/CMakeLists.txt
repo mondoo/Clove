@@ -7,51 +7,38 @@ add_library(${PROJECT_NAME} STATIC)
 
 #Files
 set(
-	CoreFiles
-		${CLV_INCLUDE}/Clove.hpp
-		${CLV_INCLUDE}/Core/Core.hpp
-		${CLV_INCLUDE}/Core/Log.hpp
-		${CLV_SOURCE}/Core/Log.cpp
+	ExceptionFiles
+		${CLV_INCLUDE}/Exception/CloveException.hpp
+		${CLV_SOURCE}/Exception/CloveException.cpp
 )
 
 set(
-	CoreAudioFiles
-		${CLV_INCLUDE}/Core/Audio/Sound.hpp
-		${CLV_SOURCE}/Core/Audio/Sound.cpp
-)
-
-set(
-	CoreExceptionFiles
-		${CLV_INCLUDE}/Core/Exception/CloveException.hpp
-		${CLV_SOURCE}/Core/Exception/CloveException.cpp
-)
-
-set(
-	CoreGraphicsFiles
-		${CLV_INCLUDE}/Graphics/Core/Resources/Buffer.hpp
-		${CLV_INCLUDE}/Graphics/Core/Resources/Texture.hpp
-		${CLV_INCLUDE}/Graphics/Core/CommandBuffer.hpp
-		${CLV_INCLUDE}/Graphics/Core/Graphics.hpp		
-		${CLV_SOURCE}/Graphics/Core/Graphics.cpp
-		${CLV_INCLUDE}/Graphics/Core/GraphicsTypes.hpp
-		${CLV_INCLUDE}/Graphics/Core/PipelineObject.hpp
-		${CLV_INCLUDE}/Graphics/Core/GraphicsFactory.hpp
-		${CLV_INCLUDE}/Graphics/Core/RenderTarget.hpp
-		${CLV_INCLUDE}/Graphics/Core/Shader.hpp
-		${CLV_INCLUDE}/Graphics/Core/ShaderTranspiler.hpp		
-		${CLV_SOURCE}/Graphics/Core/ShaderTranspiler.cpp
-		${CLV_INCLUDE}/Graphics/Core/Surface.hpp
-		${CLV_INCLUDE}/Graphics/Core/VertexLayout.hpp
-		${CLV_INCLUDE}/Graphics/Core/VertexLayout.inl
-		${CLV_SOURCE}/Graphics/Core/VertexLayout.cpp	
+	GraphicsFiles
+		${CLV_INCLUDE}/Graphics/Buffer.hpp
+		${CLV_INCLUDE}/Graphics/Texture.hpp
+		${CLV_INCLUDE}/Graphics/CommandBuffer.hpp
+		${CLV_INCLUDE}/Graphics/FactoryChild.hpp
+		${CLV_INCLUDE}/Graphics/Graphics.hpp		
+		${CLV_SOURCE}/Graphics/Graphics.cpp
+		${CLV_INCLUDE}/Graphics/GraphicsTypes.hpp
+		${CLV_INCLUDE}/Graphics/PipelineObject.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsFactory.hpp
+		${CLV_INCLUDE}/Graphics/RenderTarget.hpp
+		${CLV_INCLUDE}/Graphics/Shader.hpp
+		${CLV_INCLUDE}/Graphics/ShaderTranspiler.hpp		
+		${CLV_SOURCE}/Graphics/ShaderTranspiler.cpp
+		${CLV_INCLUDE}/Graphics/Surface.hpp
+		${CLV_INCLUDE}/Graphics/VertexLayout.hpp
+		${CLV_INCLUDE}/Graphics/VertexLayout.inl
+		${CLV_SOURCE}/Graphics/VertexLayout.cpp	
 )
 
 set(
 	Direct3DGraphicsFiles
-		${CLV_INCLUDE}/Graphics/Direct3D/Resources/D3DBuffer.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/Resources/D3DBuffer.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/Resources/D3DTexture.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/Resources/D3DTexture.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/D3DBuffer.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/D3DBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Direct3D/D3DTexture.hpp
+		${CLV_SOURCE}/Graphics/Direct3D/D3DTexture.cpp
 		${CLV_INCLUDE}/Graphics/Direct3D/D3D.hpp
 		${CLV_SOURCE}/Graphics/Direct3D/D3D.cpp
 		${CLV_INCLUDE}/Graphics/Direct3D/D3DCommandBuffer.hpp
@@ -74,10 +61,10 @@ set(
 
 set(
 	MetalGraphicsFiles
-		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLBuffer.hpp
-		${CLV_SOURCE}/Graphics/Metal/Resources/MTLBuffer.mm
-		${CLV_INCLUDE}/Graphics/Metal/Resources/MTLTexture.hpp
-		${CLV_SOURCE}/Graphics/Metal/Resources/MTLTexture.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLBuffer.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLBuffer.mm
+		${CLV_INCLUDE}/Graphics/Metal/MTLTexture.hpp
+		${CLV_SOURCE}/Graphics/Metal/MTLTexture.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTL.hpp
 		${CLV_SOURCE}/Graphics/Metal/MTL.mm
 		${CLV_INCLUDE}/Graphics/Metal/MTLCommandBuffer.hpp
@@ -96,10 +83,10 @@ set(
 
 set(
 	OpenGLGraphicsFiles
-		${CLV_INCLUDE}/Graphics/OpenGL/Resources/GLBuffer.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/Resources/GLBuffer.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/Resources/GLTexture.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/Resources/GLTexture.cpp
+		${CLV_INCLUDE}/Graphics/OpenGL/GLBuffer.hpp
+		${CLV_SOURCE}/Graphics/OpenGL/GLBuffer.cpp
+		${CLV_INCLUDE}/Graphics/OpenGL/GLTexture.hpp
+		${CLV_SOURCE}/Graphics/OpenGL/GLTexture.cpp
 		${CLV_INCLUDE}/Graphics/OpenGL/GL.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/GL.cpp
 		${CLV_INCLUDE}/Graphics/OpenGL/GLCommandBuffer.hpp
@@ -130,43 +117,43 @@ set(
 )
 
 set(
-	CoreMemoryFiles
+	MemoryFiles
 		${CLV_SOURCE}/Memory/AllocationTracker.cpp
 		${CLV_INCLUDE}/Memory/PoolAllocator.hpp
 		${CLV_INCLUDE}/Memory/PoolAllocator.inl
 )
 
 set(
-	CoreInputFiles
-		${CLV_INCLUDE}/Core/Input/Keyboard.hpp
-		${CLV_INCLUDE}/Core/Input/Keyboard.inl
-		${CLV_SOURCE}/Core/Input/Keyboard.cpp
-		${CLV_INCLUDE}/Core/Input/KeyCodes.hpp
-		${CLV_INCLUDE}/Core/Input/Mouse.hpp
-		${CLV_SOURCE}/Core/Input/Mouse.cpp
-		${CLV_INCLUDE}/Core/Input/MouseButtonCodes.hpp
+	InputFiles
+		${CLV_INCLUDE}/Input/Keyboard.hpp
+		${CLV_INCLUDE}/Input/Keyboard.inl
+		${CLV_SOURCE}/Input/Keyboard.cpp
+		${CLV_INCLUDE}/Input/KeyCodes.hpp
+		${CLV_INCLUDE}/Input/Mouse.hpp
+		${CLV_SOURCE}/Input/Mouse.cpp
+		${CLV_INCLUDE}/Input/MouseButtonCodes.hpp
 )
 
 set(
-	CoreMathsFiles
-		${CLV_INCLUDE}/Core/Maths/glmWrappers.hpp
-		${CLV_INCLUDE}/Core/Maths/Maths.hpp
-		${CLV_INCLUDE}/Core/Maths/Maths.inl
-		${CLV_INCLUDE}/Core/Maths/MathsHelpers.hpp
-		${CLV_INCLUDE}/Core/Maths/MathsHelpers.inl
-		${CLV_INCLUDE}/Core/Maths/MathsTypes.hpp
-		${CLV_INCLUDE}/Core/Maths/Matrix.hpp
-		${CLV_INCLUDE}/Core/Maths/Quaternion.hpp
-		${CLV_INCLUDE}/Core/Maths/Vector.hpp
+	MathsFiles
+		${CLV_INCLUDE}/Maths/glmWrappers.hpp
+		${CLV_INCLUDE}/Maths/Maths.hpp
+		${CLV_INCLUDE}/Maths/Maths.inl
+		${CLV_INCLUDE}/Maths/MathsHelpers.hpp
+		${CLV_INCLUDE}/Maths/MathsHelpers.inl
+		${CLV_INCLUDE}/Maths/MathsTypes.hpp
+		${CLV_INCLUDE}/Maths/Matrix.hpp
+		${CLV_INCLUDE}/Maths/Quaternion.hpp
+		${CLV_INCLUDE}/Maths/Vector.hpp
 )
 
 set(
-	CorePlatformFiles
-		${CLV_INCLUDE}/Platform/Core/Platform.hpp
-		${CLV_SOURCE}/Platform/Core/Platform.cpp
-		${CLV_INCLUDE}/Platform/Core/PlatformTypes.hpp
-		${CLV_INCLUDE}/Platform/Core/Window.hpp
-		${CLV_SOURCE}/Platform/Core/Window.cpp
+	PlatformFiles
+		${CLV_INCLUDE}/Platform/Platform.hpp
+		${CLV_SOURCE}/Platform/Platform.cpp
+		${CLV_INCLUDE}/Platform/PlatformTypes.hpp
+		${CLV_INCLUDE}/Platform/Window.hpp
+		${CLV_SOURCE}/Platform/Window.cpp
 )
 
 set(
@@ -199,34 +186,37 @@ set(
 )
 
 set(
-	CoreUtilityFiles
-		${CLV_INCLUDE}/Core/Utils/Delegate.hpp
-		${CLV_INCLUDE}/Core/Utils/Delegate.inl
-		${CLV_INCLUDE}/Core/Utils/DeltaTime.hpp
-		${CLV_SOURCE}/Core/Utils/DeltaTime.cpp
-		${CLV_INCLUDE}/Core/Utils/Timer.hpp
-		${CLV_SOURCE}/Core/Utils/Timer.cpp
+	UtilityFiles
+		${CLV_INCLUDE}/Utils/Delegate.hpp
+		${CLV_INCLUDE}/Utils/Delegate.inl
+		${CLV_INCLUDE}/Utils/DeltaTime.hpp
+		${CLV_SOURCE}/Utils/DeltaTime.cpp
+		${CLV_INCLUDE}/Utils/Timer.hpp
+		${CLV_SOURCE}/Utils/Timer.cpp
 )
 
 set(
 	AllFiles
-	${CoreFiles}
-		${CoreAudioFiles}
-		${CoreExceptionFiles}
-		${CoreGraphicsFiles}
+	${CLV_INCLUDE}/Clove.hpp
+	${CLV_INCLUDE}/Core.hpp
+	${CLV_INCLUDE}/Log.hpp
+	${CLV_SOURCE}/Log.cpp
+
+		${ExceptionFiles}
+		${GraphicsFiles}
 			${OpenGLGraphicsFiles}
 				${WindowsGLGraphicsFiles}
 				${LinuxGLGraphicsFiles}
 			${Direct3DGraphicsFiles}
 			${MetalGraphicsFiles}
-		${CoreMemoryFiles}
-		${CoreInputFiles}
-		${CoreMathsFiles}
-		${CorePlatformFiles}
+		${MemoryFiles}
+		${InputFiles}
+		${MathsFiles}
+		${PlatformFiles}
 			${WindowsPlatformFiles}
 			${LinuxPlatformFiles}
 			${MacOSPlatformFiles}
-		${CoreUtilityFiles}
+		${UtilityFiles}
 )
 
 #Organise the source tree
@@ -235,7 +225,7 @@ file(GLOB_RECURSE source *.cpp *.m *.mm *.glsl *.hlsl *.metal)
 source_group(TREE ${CLV_INCLUDE} FILES ${header})
 source_group(TREE ${CLV_SOURCE} FILES ${source})
 
-source_group(Core FILES 
+source_group(PCH FILES 
 	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx 
 	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
 )

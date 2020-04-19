@@ -54,13 +54,13 @@ namespace tnc::ecs {
 	}
 
 	void PhysicsSystem::onComponentCreated(ComponentInterface* component) {
-		if(component->getID() == RigidBodyComponent::id()) {
+		if(component->getComponentID() == RigidBodyComponent::id()) {
 			physicsWorld->addRigidBody(static_cast<RigidBodyComponent*>(component)->rigidBody.get());
 		}
 	}
 
 	void PhysicsSystem::onComponentDestroyed(ComponentInterface* component) {
-		if(component->getID() == RigidBodyComponent::id()) {
+		if(component->getComponentID() == RigidBodyComponent::id()) {
 			physicsWorld->removeRigidBody(static_cast<RigidBodyComponent*>(component)->rigidBody.get());
 		}
 	}

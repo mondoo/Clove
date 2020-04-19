@@ -18,7 +18,7 @@ namespace tnc::rnd{
 		std::shared_ptr<Material> material;
 		std::shared_ptr<clv::gfx::Texture> albedoTexture;
 		std::shared_ptr<clv::gfx::Texture> specTexture;
-		std::unordered_map<clv::gfx::BufferBindingPoint, clv::gfx::ShaderData> shaderData;
+		std::unordered_map<clv::gfx::BufferBindingPoint, ShaderData> shaderData;
 
 		//FUNCTIONS
 	public:

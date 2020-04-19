@@ -7,6 +7,9 @@
 namespace tnc::ecs {
 	template<typename ComponentType>
 	class ComponentPtr;
+
+	template<typename ComponentType>
+	class ComponentContainer;
 }
 
 namespace tnc::ecs {
@@ -15,18 +18,18 @@ namespace tnc::ecs {
 	public:
 		virtual ~ComponentInterface() = default;
 
-		virtual ComponentID getID() const = 0;
+		virtual ComponentID getComponentID() const = 0;
 	};
 
 	template<typename DerivedClassType>
 	class Component : public ComponentInterface {
 		friend class ComponentPtr<DerivedClassType>;
+		friend class ComponentContainer<DerivedClassType>;
 
 		//VARIABLES
-	public:
-		EntityID entityID = INVALID_ENTITY_ID; //TODO: Make private
-
 	private:
+		EntityID entityID = INVALID_ENTITY_ID;
+
 		std::list<ComponentPtr<DerivedClassType>*> pointers;
 
 		//FUNCTIONS
@@ -42,8 +45,9 @@ namespace tnc::ecs {
 		virtual ~Component();
 
 		static ComponentID id();
+		virtual ComponentID getComponentID() const override;
 
-		virtual ComponentID getID() const override;
+		EntityID getEntityID() const;
 
 	private:
 		void attachPointer(ComponentPtr<DerivedClassType>* ptr);

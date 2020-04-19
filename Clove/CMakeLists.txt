@@ -16,17 +16,10 @@ target_include_directories(
 		include
 
 	#Libraries
-	PUBLIC
-		vendor/OBJ-Loader/Source
-
 	INTERFACE
         vendor/glm
-		#TODO: Get rid of the lbsndfile paths below (see Sound.hpp)
-		vendor/libsndfile/src
-		${CMAKE_CURRENT_BINARY_DIR}/vendor/libsndfile/src
 
 	PRIVATE
-        vendor/OBJ-Loader/Source
 		$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/vendor/wglext>
 )
 
@@ -40,6 +33,7 @@ endif()
 
 target_link_libraries(
 	Clove
+
     #Cross platform
     PUBLIC
 		spdlog
@@ -52,7 +46,6 @@ target_link_libraries(
 		stb
 		$<$<NOT:$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>>:Glad>
 		glm
-		sndfile
 		glslang
 		glslang-default-resource-limits
 		SPIRV
@@ -86,6 +79,7 @@ target_link_libraries(
 #Precompiled header
 target_precompile_headers(
 	Clove
+
 	#Generic headers
 	PUBLIC
 		<iostream>
@@ -108,23 +102,26 @@ target_precompile_headers(
 
 	#Clove headers
 	PUBLIC
-		[["Clove/Core/Core.hpp"]]
-		[["Clove/Core/Log.hpp"]]
-		[["Clove/Core/Maths/MathsTypes.hpp"]]
-		[["Clove/Core/Maths/Maths.hpp"]]
-		[["Clove/Core/Maths/MathsHelpers.hpp"]]
-		[["Clove/Core/Utils/Delegate.hpp"]]
-		[["Clove/Core/Utils/Timer.hpp"]]
+		[["Clove/Core.hpp"]]
+		[["Clove/Log.hpp"]]
+		[["Clove/Maths/MathsTypes.hpp"]]
+		[["Clove/Maths/Maths.hpp"]]
+		[["Clove/Maths/MathsHelpers.hpp"]]
+		[["Clove/Utils/Delegate.hpp"]]
+		[["Clove/Utils/DeltaTime.hpp"]]
+		[["Clove/Utils/Timer.hpp"]]
 )
 
 #Preprocessor
 target_compile_definitions(
 	Clove
+
 	#General
 	PUBLIC
 		CLV_ENABLE_PROFILING=$<BOOL:${GAR_CLV_ENABLE_PROFILING}>
 		CLV_ENABLE_MEMORY_DEBUGGING=$<BOOL:${GAR_CLV_ENABLE_MEMORY_DEBUGGING}>
 		CLV_TRACK_MEMORY_ALLOCATIONS=$<BOOL:${GAR_TRACK_MEMORY_ALLOCATIONS}>
+		CLV_IMGUI_COMPATIBLE=$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>
 
 	#Config
 	PUBLIC
@@ -137,12 +134,10 @@ target_compile_definitions(
 		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
 		CLV_PLATFORM_MACOS=$<PLATFORM_ID:Darwin>
 
-	PRIVATE
-		$<$<PLATFORM_ID:Darwin>:GL_SILENCE_DEPRECATION> #Silences the MacOS gl deprecation messages
-
 	#Engine
 	INTERFACE
 		CLV_ENGINE=0
+
 	PRIVATE
 		CLV_ENGINE=1
 

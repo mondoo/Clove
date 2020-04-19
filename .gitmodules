@@ -4,17 +4,6 @@
 [submodule "Clove/vendor/glm"]
 	path = Clove/vendor/glm
 	url = https://github.com/g-truc/glm.git
-[submodule "Clove/vendor/OBJ-Loader"]
-	path = Clove/vendor/OBJ-Loader
-	url = https://github.com/Bly7/OBJ-Loader.git
-[submodule "Clove/vendor/portaudio"]
-	path = Clove/vendor/portaudio
-	url = https://git.assembla.com/portaudio.git
-	ignore = dirty
-[submodule "Clove/vendor/libsndfile"]
-	path = Clove/vendor/libsndfile
-	url = https://github.com/erikd/libsndfile.git
-	ignore = dirty
 [submodule "Clove/vendor/glslang"]
 	path = Clove/vendor/glslang
 	url = https://github.com/KhronosGroup/glslang.git
@@ -30,3 +19,9 @@
 [submodule "Tunic/vendor/assimp"]
 	path = Tunic/vendor/assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "Tunic/vendor/portaudio"]
+	path = Tunic/vendor/portaudio
+	url = https://git.assembla.com/portaudio.git
+[submodule "Tunic/vendor/libsndfile"]
+	path = Tunic/vendor/libsndfile
+	url = https://github.com/erikd/libsndfile.git

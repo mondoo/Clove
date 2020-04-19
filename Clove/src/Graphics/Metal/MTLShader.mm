@@ -1,10 +1,11 @@
 #include "Clove/Graphics/Metal/MTLShader.hpp"
 
-#include "Clove/Graphics/Core/ShaderTranspiler.hpp"
+#include "Clove/Graphics/ShaderTranspiler.hpp"
 
 namespace clv::gfx::mtl{
-	MTLShader::MTLShader(id<MTLDevice> mtlDevice, const ShaderDescriptor& descriptor, std::string_view pathToShader)
-		: descriptor(descriptor){
+	MTLShader::MTLShader(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, const ShaderDescriptor& descriptor, std::string_view pathToShader)
+		: factory(std::move(factory))
+		, descriptor(descriptor){
 		std::string mslSource = ShaderTranspiler::transpileFromFile(pathToShader, descriptor.stage, ShaderType::MSL);
 		NSString* nsMslSource = [NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]];
 
@@ -28,6 +29,10 @@ namespace clv::gfx::mtl{
 	MTLShader& MTLShader::operator=(MTLShader&& other) noexcept = default;
 	
 	MTLShader::~MTLShader() = default;
+
+	const std::shared_ptr<GraphicsFactory>& MTLShader::getFactory() const{
+		return factory;
+	}
 	
 	const ShaderDescriptor& MTLShader::getDescriptor() const{
 		return descriptor;

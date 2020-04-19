@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
+#include "Clove/Graphics/GraphicsFactory.hpp"
 
 #include <wrl.h>
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 
-namespace clv::gfx::d3d{
-	class D3DGraphicsFactory : public GraphicsFactory{
+namespace clv::gfx::d3d {
+	class D3DGraphicsFactory : public GraphicsFactory {
 		//VARIABLES
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice;
@@ -41,6 +41,11 @@ namespace clv::gfx::d3d{
 		virtual std::shared_ptr<Shader> createShader(const ShaderDescriptor& descriptor, std::string_view pathToShader) override;
 
 		virtual std::shared_ptr<Surface> createSurface(void* windowData) override;
+
+	#if CLV_IMGUI_COMPATIBLE
+		const Microsoft::WRL::ComPtr<ID3D11Device>& getDevice() const;
+		const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& getContext() const;
+	#endif
 
 	private:
 		void onDeviceRemoved();

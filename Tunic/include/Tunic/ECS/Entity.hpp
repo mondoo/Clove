@@ -11,14 +11,14 @@ namespace tnc::ecs{
 	class Entity{
 		//VARIABLES
 	private:
-		World* manager = nullptr;
+		World* world = nullptr;
 
 		EntityID entityID = INVALID_ENTITY_ID;
 
 		//FUNCTIONS
 	public:
 		Entity();
-		Entity(EntityID entityID, World* manager);
+		Entity(EntityID entityID, World* world);
 
 		Entity(const Entity& other);
 		Entity(Entity&& other) noexcept;
@@ -31,6 +31,8 @@ namespace tnc::ecs{
 		bool isValid() const;
 
 		EntityID getID() const;
+
+		Entity clone();
 
 		template<typename ComponentType, typename ...ConstructorArgs>
 		ComponentPtr<ComponentType> addComponent(ConstructorArgs&& ...args);

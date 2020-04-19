@@ -1,18 +1,19 @@
 #include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
 
-#include "Clove/Graphics/Direct3D/Resources/D3DTexture.hpp"
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
+#include "Clove/Graphics/Direct3D/D3DTexture.hpp"
 
 #include <d3d11.h>
 
-namespace clv::gfx::d3d{
-	D3DRenderTarget::D3DRenderTarget(ID3D11Device& d3dDevice, Texture* colourTexture, Texture* depthStencilTexture){
+namespace clv::gfx::d3d {
+	D3DRenderTarget::D3DRenderTarget(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, Texture* colourTexture, Texture* depthStencilTexture)
+		: factory(std::move(factory)) {
 		CLV_ASSERT(colourTexture != nullptr || depthStencilTexture != nullptr, "{0}: Render target needs at least one valid texture", CLV_FUNCTION_NAME);
 
 		DX11_INFO_PROVIDER;
 
 		//Colour view
-		if(colourTexture != nullptr){
+		if(colourTexture != nullptr) {
 			D3DTexture* d3dTexture = static_cast<D3DTexture*>(colourTexture);
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> textureSource = d3dTexture->getD3DTexture();
 
@@ -28,7 +29,7 @@ namespace clv::gfx::d3d{
 		}
 
 		//Depth / Stencil view
-		if(depthStencilTexture != nullptr){
+		if(depthStencilTexture != nullptr) {
 			D3DTexture* d3dTexture = static_cast<D3DTexture*>(depthStencilTexture);
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> textureSource = d3dTexture->getD3DTexture();
 
@@ -38,15 +39,15 @@ namespace clv::gfx::d3d{
 			const TextureStyle textureStyle = d3dTexture->getDescriptor().style;
 
 			D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-			dsvDesc.Format								= DXGI_FORMAT_D32_FLOAT; //NOTE: not supporting stencil at the moment
+			dsvDesc.Format = DXGI_FORMAT_D32_FLOAT; //NOTE: not supporting stencil at the moment
 			if(textureStyle == TextureStyle::Cubemap || textureDesc.ArraySize > 1) {
 				dsvDesc.ViewDimension					= D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
 				dsvDesc.Texture2DArray.ArraySize		= textureDesc.ArraySize;
 				dsvDesc.Texture2DArray.FirstArraySlice	= 0u;
 				dsvDesc.Texture2DArray.MipSlice			= 0u;
-			} else{
-				dsvDesc.ViewDimension					= D3D11_DSV_DIMENSION_TEXTURE2D;
-				dsvDesc.Texture2D.MipSlice				= 0u;
+			} else {
+				dsvDesc.ViewDimension		= D3D11_DSV_DIMENSION_TEXTURE2D;
+				dsvDesc.Texture2D.MipSlice	= 0u;
 			}
 
 			DX11_THROW_INFO(d3dDevice.CreateDepthStencilView(textureSource.Get(), &dsvDesc, &depthStencilView));
@@ -55,23 +56,29 @@ namespace clv::gfx::d3d{
 		setClearColour({ 0.0f, 0.0f, 0.0f, 0.0f });
 	}
 
-	D3DRenderTarget::D3DRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView)
-		: renderTargetView(std::move(renderTargetView)), depthStencilView(std::move(depthStencilView)){
+	D3DRenderTarget::D3DRenderTarget(std::shared_ptr<GraphicsFactory> factory, Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView)
+		: factory(std::move(factory))
+		, renderTargetView(std::move(renderTargetView))
+		, depthStencilView(std::move(depthStencilView)) {
 	}
 
 	D3DRenderTarget::D3DRenderTarget(D3DRenderTarget&& other) noexcept = default;
 
-	D3DRenderTarget& D3DRenderTarget::operator=(D3DRenderTarget && other) noexcept = default;
+	D3DRenderTarget& D3DRenderTarget::operator=(D3DRenderTarget&& other) noexcept = default;
 
 	D3DRenderTarget::~D3DRenderTarget() = default;
 
-	void D3DRenderTarget::clear(){
+	const std::shared_ptr<GraphicsFactory>& D3DRenderTarget::getFactory() const {
+		return factory;
+	}
+
+	void D3DRenderTarget::clear() {
 		Microsoft::WRL::ComPtr<ID3D11Device> device = nullptr;
-		if (renderTargetView){
+		if(renderTargetView) {
 			renderTargetView->GetDevice(&device);
-		} else if (depthStencilView){
+		} else if(depthStencilView) {
 			depthStencilView->GetDevice(&device);
-		} else{
+		} else {
 			CLV_LOG_ERROR("{0}: could not retrieve device", CLV_FUNCTION_NAME_PRETTY);
 			return;
 		}
@@ -79,19 +86,19 @@ namespace clv::gfx::d3d{
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> context = nullptr;
 		device->GetImmediateContext(&context);
 
-		if (renderTargetView){
+		if(renderTargetView) {
 			context->ClearRenderTargetView(renderTargetView.Get(), mth::valuePtr(clearColour));
 		}
-		if (depthStencilView){
+		if(depthStencilView) {
 			context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0xff);
 		}
 	}
 
-	void D3DRenderTarget::setClearColour(const mth::vec4f& colour){
+	void D3DRenderTarget::setClearColour(const mth::vec4f& colour) {
 		clearColour = colour;
 	}
 
-	const mth::vec4f& D3DRenderTarget::getClearColour() const{
+	const mth::vec4f& D3DRenderTarget::getClearColour() const {
 		return clearColour;
 	}
 
@@ -105,11 +112,11 @@ namespace clv::gfx::d3d{
 		this->depthStencilView = std::move(depthStencilView);
 	}
 
-	const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& D3DRenderTarget::getRenderTargetView() const{
+	const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& D3DRenderTarget::getRenderTargetView() const {
 		return renderTargetView;
 	}
 
-	const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& D3DRenderTarget::getDepthStencilView() const{
+	const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& D3DRenderTarget::getDepthStencilView() const {
 		return depthStencilView;
 	}
 }

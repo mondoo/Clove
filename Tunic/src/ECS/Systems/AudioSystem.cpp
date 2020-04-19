@@ -66,7 +66,7 @@ namespace tnc::ecs {
 	}
 
 	void AudioSystem::onComponentDestroyed(ComponentInterface* component) {
-		if(component->getID() == AudioComponent::id()) {
+		if(component->getComponentID() == AudioComponent::id()) {
 			auto* audioComponent = static_cast<AudioComponent*>(component);
 			if(audioComponent->isPlaying()) {
 				stopSound(audioComponent);

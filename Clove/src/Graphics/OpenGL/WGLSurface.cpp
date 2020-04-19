@@ -2,12 +2,13 @@
 
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 #include "Clove/Platform/Windows/WindowsException.hpp"
-#include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/OpenGL/GLException.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
 namespace clv::gfx::ogl{
-	WGLSurface::WGLSurface(void* windowData){
+	WGLSurface::WGLSurface(std::shared_ptr<GraphicsFactory>  factory, void* windowData) 
+		: factory(std::move(factory)) {
 		windowsHandle = reinterpret_cast<plt::WindowsData*>(windowData)->handle;
 
 		windowsDeviceContext = GetDC(windowsHandle);
@@ -72,6 +73,10 @@ namespace clv::gfx::ogl{
 		wglDeleteContext(wglContext);
 	}
 
+	const std::shared_ptr<GraphicsFactory>& WGLSurface::getFactory() const {
+		return factory;
+	}
+
 	void WGLSurface::makeCurrent(){
 		wglMakeCurrent(windowsDeviceContext, wglContext);
 
@@ -95,7 +100,7 @@ namespace clv::gfx::ogl{
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
-		renderTarget = std::make_shared<GLRenderTarget>();
+		renderTarget = std::make_shared<GLRenderTarget>(factory);
 	}
 
 	void WGLSurface::setVSync(bool enabled){

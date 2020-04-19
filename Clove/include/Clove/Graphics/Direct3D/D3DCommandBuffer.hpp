@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/CommandBuffer.hpp"
+#include "Clove/Graphics/CommandBuffer.hpp"
 
 #include <wrl.h>
 
@@ -15,6 +15,8 @@ namespace clv::gfx::d3d{
 	class D3DCommandBuffer : public CommandBuffer{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> immediateContext;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> deferredContext;
 
@@ -23,7 +25,7 @@ namespace clv::gfx::d3d{
 		//FUNCTIONS
 	public:
 		D3DCommandBuffer() = delete;
-		D3DCommandBuffer(ID3D11Device& d3dDevice);
+		D3DCommandBuffer(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice);
 
 		D3DCommandBuffer(const D3DCommandBuffer& other) = delete;
 		D3DCommandBuffer(D3DCommandBuffer&& other) noexcept;
@@ -32,6 +34,8 @@ namespace clv::gfx::d3d{
 		D3DCommandBuffer& operator=(D3DCommandBuffer&& other) noexcept;
 
 		virtual ~D3DCommandBuffer();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual void beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget) override;
 

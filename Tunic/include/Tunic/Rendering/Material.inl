@@ -1,5 +1,4 @@
-#include "Tunic/Application.hpp"
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
+#include "Clove/Graphics/GraphicsFactory.hpp"
 
 namespace tnc::rnd{
 	template<typename DataType>
@@ -13,7 +12,7 @@ namespace tnc::rnd{
 			srdesc.bufferType	= clv::gfx::BufferType::ShaderResourceBuffer;
 			srdesc.bufferUsage	= clv::gfx::BufferUsage::Dynamic;
 
-			auto buffer = Application::get().getGraphicsFactory().createBuffer(srdesc, &data);
+			auto buffer = graphicsFactory->createBuffer(srdesc, &data);
 			shaderData[bindingPoint] = { buffer, shaderType };
 		}
 	}

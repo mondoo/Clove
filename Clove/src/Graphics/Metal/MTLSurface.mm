@@ -30,7 +30,8 @@
 @end
 
 namespace clv::gfx::mtl{
-	MTLSurface::MTLSurface(id<MTLDevice> mtlDevice, void* windowData){
+	MTLSurface::MTLSurface(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, void* windowData)
+		: factory(std::move(factory)) {
 		clv::plt::MacData* data = reinterpret_cast<clv::plt::MacData*>(windowData);
 		
 		const NSRect rect = NSMakeRect(0, 0, data->size.x, data->size.y);
@@ -59,7 +60,7 @@ namespace clv::gfx::mtl{
 		
 		descriptor.depthAttachment.texture = depthTexture;
 
-		renderTarget = std::make_shared<MTLRenderTarget>(descriptor);
+		renderTarget = std::make_shared<MTLRenderTarget>(this->factory, descriptor);
 		
 		[textureDesc release];
 	}
@@ -71,6 +72,10 @@ namespace clv::gfx::mtl{
 	MTLSurface::~MTLSurface(){
 		[view release];
 		[depthTexture release];
+	}
+
+	const std::shared_ptr<GraphicsFactory>& MTLSurface::getFactory() const{
+		return factory;
 	}
 	
 	void MTLSurface::setVSync(bool vsync){

@@ -1,18 +1,20 @@
 #pragma once
 
-#include "Clove/Graphics/Core/GraphicsTypes.hpp"
-#include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Clove/Graphics/Core/Resources/Buffer.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/Texture.hpp"
+#include "Clove/Graphics/Buffer.hpp"
 
 namespace clv::gfx{
-	struct ShaderData{
-		std::shared_ptr<Buffer> buffer;
-		ShaderStage shaderType;
-	};
+	class GraphicsFactory;
 }
 
 namespace tnc::rnd{
 	class MaterialInstance;
+
+	struct ShaderData {
+		std::shared_ptr<clv::gfx::Buffer> buffer;
+		clv::gfx::ShaderStage shaderType;
+	};
 }
 
 namespace tnc::rnd{
@@ -21,13 +23,15 @@ namespace tnc::rnd{
 
 		//VARIABLES
 	private:
+		std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
+
 		std::shared_ptr<clv::gfx::Texture> albedoTexture;
 		std::shared_ptr<clv::gfx::Texture> specTexture;
-		std::unordered_map<clv::gfx::BufferBindingPoint, clv::gfx::ShaderData> shaderData;
+		std::unordered_map<clv::gfx::BufferBindingPoint, ShaderData> shaderData;
 
 		//FUNCTIONS
 	public:
-		Material();
+		Material(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 
 		Material(const Material& other);
 		Material(Material&& other) noexcept;
