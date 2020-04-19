@@ -1,24 +1,26 @@
 #pragma once
 
-namespace clv::gfx{
-	enum class TextureStyle{
+#include "Clove/Graphics/Core/FactoryChild.hpp"
+
+namespace clv::gfx {
+	enum class TextureStyle {
 		Default,
 		Cubemap
 	};
 
-	enum class TextureUsage{
+	enum class TextureUsage {
 		Default,
 		RenderTarget_Colour,
 		RenderTarget_Depth,
 		Font
 	};
 
-	enum class TextureFilter{
+	enum class TextureFilter {
 		Nearest,
 		Linear,
 	};
 
-	struct TextureDescriptor{
+	struct TextureDescriptor {
 		TextureStyle style = TextureStyle::Default;
 		TextureUsage usage = TextureUsage::Default;
 		TextureFilter filtering = TextureFilter::Linear;
@@ -27,8 +29,8 @@ namespace clv::gfx{
 	};
 }
 
-namespace clv::gfx{
-	class Texture{
+namespace clv::gfx {
+	class Texture : public FactoryChild {
 		//FUNCTIONS
 	public:
 		virtual ~Texture() = default;

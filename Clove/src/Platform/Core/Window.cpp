@@ -32,8 +32,8 @@ namespace clv::plt{
 		return mouse;
 	}
 
-	gfx::GraphicsFactory& Window::getGraphicsFactory(){
-		return *graphicsFactory;
+	const std::shared_ptr<gfx::GraphicsFactory>& Window::getGraphicsFactory() {
+		return graphicsFactory;
 	}
 
 	const std::shared_ptr<gfx::Surface>& Window::getSurface() const{

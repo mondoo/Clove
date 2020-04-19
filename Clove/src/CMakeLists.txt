@@ -25,6 +25,7 @@ set(
 		${CLV_INCLUDE}/Graphics/Core/Resources/Buffer.hpp
 		${CLV_INCLUDE}/Graphics/Core/Resources/Texture.hpp
 		${CLV_INCLUDE}/Graphics/Core/CommandBuffer.hpp
+		${CLV_INCLUDE}/Graphics/Core/FactoryChild.hpp
 		${CLV_INCLUDE}/Graphics/Core/Graphics.hpp		
 		${CLV_SOURCE}/Graphics/Core/Graphics.cpp
 		${CLV_INCLUDE}/Graphics/Core/GraphicsTypes.hpp

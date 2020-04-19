@@ -27,8 +27,9 @@ namespace clv::gfx::ogl{
 		}
 	}
 
-	GLBuffer::GLBuffer(const BufferDescriptor& descriptor, const void* data)
-		: descriptor(descriptor){
+	GLBuffer::GLBuffer(std::shared_ptr<GraphicsFactory> factory, const BufferDescriptor& descriptor, const void* data)
+		: factory(std::move(factory))
+		, descriptor(descriptor){
 		glGenBuffers(1, &bufferID);
 
 		const GLenum bufferType = getGLBufferType(descriptor.bufferType);
@@ -45,6 +46,10 @@ namespace clv::gfx::ogl{
 
 	GLBuffer::~GLBuffer(){
 		glDeleteBuffers(1, &bufferID);
+	}
+
+	const std::shared_ptr<GraphicsFactory>& GLBuffer::getFactory() const {
+		return factory;
 	}
 
 	const BufferDescriptor& GLBuffer::getDescriptor() const{

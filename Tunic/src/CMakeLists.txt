@@ -140,12 +140,6 @@ target_sources(
 	PRIVATE
 		${TNC_INCLUDE}/Tunic.hpp
 
-        ${TNC_SOURCE}/Application.cpp
-		${TNC_INCLUDE}/Application.hpp
-		
-		${TNC_INCLUDE}/Input.hpp
-		${TNC_SOURCE}/Input.cpp
-
 		${TNC_INCLUDE}/Layer.hpp
 		${TNC_SOURCE}/Layer.cpp
 		${TNC_INCLUDE}/LayerStack.hpp

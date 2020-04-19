@@ -3,8 +3,9 @@
 #include <stb_image.h>
 
 namespace clv::gfx::mtl{
-	MTLTexture::MTLTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture)
-		: descriptor(descriptor){
+	MTLTexture::MTLTexture(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture)
+		: factory(std::move(factory))
+		, descriptor(descriptor){
 		int width = 0;
 		int height = 0;
 		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
@@ -20,7 +21,8 @@ namespace clv::gfx::mtl{
 	}
 	
 	MTLTexture::MTLTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP)
-		: descriptor(descriptor), BPP(BPP){
+		: factory(std::move(factory))
+		, descriptor(descriptor), BPP(BPP){
 		createTexture(mtlDevice, descriptor, data);
 	}
 	
@@ -32,16 +34,20 @@ namespace clv::gfx::mtl{
 		[mtlTexture release];
 	}
 	
+	const std::shared_ptr<GraphicsFactory>& MTLTexture::getFactory() const{
+		return factory;
+	}
+
+	const TextureDescriptor& MTLTexture::getDescriptor() const{
+		return descriptor;
+	}
+
 	id<MTLTexture> MTLTexture::getMTLTexture() const{
 		return mtlTexture;
 	}
 	
 	id<MTLSamplerState> MTLTexture::getMTLSampler() const{
 		return mtlSampler;
-	}
-	
-	const TextureDescriptor& MTLTexture::getDescriptor() const{
-		return descriptor;
 	}
 	
 	void MTLTexture::createTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const void* data){

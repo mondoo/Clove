@@ -21,7 +21,7 @@ namespace clv::plt{
 		Keyboard keyboard;
 		Mouse mouse;
 
-		std::unique_ptr<gfx::GraphicsFactory> graphicsFactory;
+		std::shared_ptr<gfx::GraphicsFactory> graphicsFactory;
 		std::shared_ptr<gfx::Surface> surface;
 
 		//FUNCTIONS
@@ -50,10 +50,12 @@ namespace clv::plt{
 		virtual void moveWindow(const mth::vec2i& position) = 0;
 		virtual void resizeWindow(const mth::vec2i& size) = 0;
 
+		virtual bool isOpen() const = 0;
+
 		Keyboard& getKeyboard();
 		Mouse& getMouse();
 
-		gfx::GraphicsFactory& getGraphicsFactory();
+		const std::shared_ptr<gfx::GraphicsFactory>& getGraphicsFactory();
 		const std::shared_ptr<gfx::Surface>& getSurface() const;
 
 	protected:

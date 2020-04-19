@@ -5,8 +5,8 @@
 #import <MetalKit/MetalKit.h>
 
 namespace clv::gfx::mtl{
-	std::unique_ptr<GraphicsFactory> initialiseMTL(){
+	std::shared_ptr<GraphicsFactory> initialiseMTL(){
 		id<MTLDevice> mtlDevice = MTLCreateSystemDefaultDevice();
-		return std::make_unique<MTLGraphicsFactory>(mtlDevice);
+		return std::make_shared<MTLGraphicsFactory>(mtlDevice);
 	}
 }

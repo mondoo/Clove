@@ -5,6 +5,7 @@ typedef struct FT_LibraryRec_* FT_Library;
 typedef struct FT_FaceRec_* FT_Face;
 
 namespace clv::gfx{
+	class GraphicsFactory;
 	class Texture;
 }
 
@@ -21,6 +22,8 @@ namespace tnc::rnd{
 	class Font{
 		//VARIABLES
 	private:
+		std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
+
 		static std::weak_ptr<std::remove_pointer_t<FT_Library>> ftLib;
 		
 		std::shared_ptr<std::remove_pointer_t<FT_Library>> ftLibReference;
@@ -31,7 +34,7 @@ namespace tnc::rnd{
 		//FUNCTIONS
 	public:
 		Font() = delete;
-		Font(const std::string& filePath);
+		Font(const std::string& filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 
 		Font(const Font& other);
 		Font(Font&& other) noexcept;

@@ -12,6 +12,8 @@ namespace clv::gfx::d3d{
 	class D3DPipelineObject : public PipelineObject{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		VertexLayout vertexLayout;
 
 		Microsoft::WRL::ComPtr<ID3D11VertexShader> d3dVertexShader;
@@ -26,7 +28,7 @@ namespace clv::gfx::d3d{
 		//FUNCTIONS
 	public:
 		D3DPipelineObject() = delete;
-		D3DPipelineObject(Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice);
+		D3DPipelineObject(std::shared_ptr<GraphicsFactory> factory, Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice);
 
 		D3DPipelineObject(const D3DPipelineObject& other) = delete;
 		D3DPipelineObject(D3DPipelineObject&& other) noexcept;
@@ -35,6 +37,8 @@ namespace clv::gfx::d3d{
 		D3DPipelineObject& operator=(D3DPipelineObject&& other) noexcept;
 
 		virtual ~D3DPipelineObject();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual void setVertexShader(const Shader& vertexShader) override;
 		virtual void setGeometryShader(const Shader& geometryShader) override;

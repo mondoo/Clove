@@ -24,11 +24,8 @@
 #include "Tunic/UI/Image.hpp"
 #include "Tunic/UI/Text.hpp"
 
-#include "Tunic/Application.hpp"
-
-#include "Tunic/Input.hpp"
-
 #include "Tunic/Layer.hpp"
+#include "Tunic/LayerStack.hpp"
 
 #include "Tunic/ModelLoader.hpp"
 

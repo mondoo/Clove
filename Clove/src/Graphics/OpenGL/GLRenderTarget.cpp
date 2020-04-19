@@ -3,9 +3,12 @@
 #include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
 
 namespace clv::gfx::ogl{
-	GLRenderTarget::GLRenderTarget() = default;
+	GLRenderTarget::GLRenderTarget(std::shared_ptr<GraphicsFactory> factory)
+		: factory(std::move(factory)){
+	}
 
-	GLRenderTarget::GLRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
+	GLRenderTarget::GLRenderTarget(std::shared_ptr<GraphicsFactory> factory, Texture* colourTexture, Texture* depthStencilTexture) 
+		: factory(std::move(factory)) {
 		glGenFramebuffers(1, &frameBufferID);
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
 
@@ -55,6 +58,10 @@ namespace clv::gfx::ogl{
 	GLRenderTarget::~GLRenderTarget(){
 		glDeleteFramebuffers(1, &frameBufferID);
 		glDeleteRenderbuffers(1, &renderBufferID);
+	}
+
+	const std::shared_ptr<GraphicsFactory>& GLRenderTarget::getFactory() const {
+		return factory;
 	}
 
 	void GLRenderTarget::clear(){

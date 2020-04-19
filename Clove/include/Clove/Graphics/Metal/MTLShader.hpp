@@ -6,6 +6,8 @@ namespace clv::gfx::mtl{
 	class MTLShader : public Shader{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		ShaderDescriptor descriptor;
 		
 		id<MTLFunction> shader;
@@ -13,7 +15,7 @@ namespace clv::gfx::mtl{
 		//FUNCTIONS
 	public:
 		MTLShader() = delete;
-		MTLShader(id<MTLDevice> mtlDevice, const ShaderDescriptor& descriptor, std::string_view pathToShader);
+		MTLShader(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, const ShaderDescriptor& descriptor, std::string_view pathToShader);
 		
 		MTLShader(const MTLShader& other) = delete;
 		MTLShader(MTLShader&& other) noexcept;
@@ -22,6 +24,8 @@ namespace clv::gfx::mtl{
 		MTLShader& operator=(MTLShader&& other) noexcept;
 		
 		virtual ~MTLShader();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 		
 		virtual const ShaderDescriptor& getDescriptor() const override;
 		

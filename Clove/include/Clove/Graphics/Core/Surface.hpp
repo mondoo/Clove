@@ -1,11 +1,13 @@
 #pragma once
 
-namespace clv::gfx{
+#include "Clove/Graphics/Core/FactoryChild.hpp"
+
+namespace clv::gfx {
 	class RenderTarget;
 }
 
-namespace clv::gfx{
-	class Surface{
+namespace clv::gfx {
+	class Surface : public FactoryChild {
 		//FUNCTIONS
 	public:
 		virtual ~Surface() = default;

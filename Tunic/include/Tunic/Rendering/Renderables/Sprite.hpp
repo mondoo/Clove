@@ -2,21 +2,22 @@
 
 #include "Tunic/Rendering/MaterialInstance.hpp"
 
-namespace clv::gfx{
+namespace clv::gfx {
+	class GraphicsFactory;
 	class Texture;
 }
 
-namespace tnc::rnd{
-	class Sprite{
+namespace tnc::rnd {
+	class Sprite {
 		//VARIABLES
 	private:
 		MaterialInstance materialInstance;
 
 		//FUNCTIONS
 	public:
-		Sprite();
-		Sprite(const std::string& pathToTexture);
-		Sprite(const std::shared_ptr<clv::gfx::Texture>& texture);
+		Sprite(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
+		Sprite(const std::string& pathToTexture, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
+		Sprite(const std::shared_ptr<clv::gfx::Texture>& texture, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 		Sprite(const std::shared_ptr<Material>& material);
 
 		Sprite(const Sprite& other);

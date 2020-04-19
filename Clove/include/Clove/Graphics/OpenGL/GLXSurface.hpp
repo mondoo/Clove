@@ -14,6 +14,8 @@ namespace clv::gfx::ogl{
 	class GLXSurface : public GLSurface{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		Display* display = nullptr;
 		::Window* window;
 
@@ -28,7 +30,7 @@ namespace clv::gfx::ogl{
 		//FUNCTIONS
 	public:
 		GLXSurface() = delete;
-		GLXSurface(void* windowData);
+		GLXSurface(std::shared_ptr<GraphicsFactory> factory, void* windowData);
 
 		GLXSurface(const GLXSurface& other) = delete;
 		GLXSurface(GLXSurface&& other) noexcept;
@@ -37,6 +39,8 @@ namespace clv::gfx::ogl{
 		GLXSurface& operator=(GLXSurface&& other) noexcept;
 
 		virtual ~GLXSurface();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual void makeCurrent() override;
 

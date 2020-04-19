@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Clove/Graphics/Core/FactoryChild.hpp"
+
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
 
-namespace clv::gfx{
+namespace clv::gfx {
 	class RenderTarget;
 	class Buffer;
 	class Texture;
@@ -12,8 +14,8 @@ namespace clv::gfx{
 	struct Viewport;
 }
 
-namespace clv::gfx{
-	class CommandBuffer{
+namespace clv::gfx {
+	class CommandBuffer : public FactoryChild {
 		//FUNCTIONS
 	public:
 		virtual ~CommandBuffer() = default;

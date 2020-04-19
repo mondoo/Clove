@@ -8,6 +8,8 @@ namespace clv::gfx::mtl {
 	class MTLTexture : public Texture{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		TextureDescriptor descriptor;
 		
 		int32_t BPP = 0;
@@ -18,8 +20,8 @@ namespace clv::gfx::mtl {
 		//FUNCTIONS
 	public:
 		MTLTexture() = delete;
-		MTLTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture);
-		MTLTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP);
+		MTLTexture(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture);
+		MTLTexture(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP);
 		
 		MTLTexture(const MTLTexture& other) = delete;
 		MTLTexture(MTLTexture&& other) noexcept;
@@ -29,10 +31,12 @@ namespace clv::gfx::mtl {
 		
 		virtual ~MTLTexture();
 		
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+
+		virtual const TextureDescriptor& getDescriptor() const override;
+
 		id<MTLTexture> getMTLTexture() const;
 		id<MTLSamplerState> getMTLSampler() const;
-		
-		virtual const TextureDescriptor& getDescriptor() const override;
 		
 	private:
 		void createTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const void* data);

@@ -10,7 +10,7 @@
 #endif
 
 namespace clv::gfx{
-	std::unique_ptr<GraphicsFactory> initialise(API api){
+	std::shared_ptr<GraphicsFactory> initialise(API api) {
 		switch(api){
 			#if CLV_PLATFORM_WINDOWS
 			case API::OpenGL4:
@@ -34,7 +34,7 @@ namespace clv::gfx{
 
 			default:
 				CLV_LOG_ERROR("Default statement hit. Could not initialise RenderAPI: {0}", CLV_FUNCTION_NAME);
-				return std::unique_ptr<GraphicsFactory>();
+				return std::shared_ptr<GraphicsFactory>();
 		}
 	}
 }

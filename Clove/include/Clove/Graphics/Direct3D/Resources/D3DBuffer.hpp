@@ -9,6 +9,8 @@ namespace clv::gfx::d3d{
 	class D3DBuffer : public Buffer{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		BufferDescriptor descriptor;
 
 		Microsoft::WRL::ComPtr<ID3D11Buffer> d3dBuffer;
@@ -16,7 +18,7 @@ namespace clv::gfx::d3d{
 		//FUNCTIONS
 	public:
 		D3DBuffer() = delete;
-		D3DBuffer(ID3D11Device& d3dDevice, const BufferDescriptor& descriptor, const void* data);
+		D3DBuffer(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, const BufferDescriptor& descriptor, const void* data);
 
 		D3DBuffer(const D3DBuffer& other) = delete;
 		D3DBuffer(D3DBuffer&& other) noexcept;
@@ -25,6 +27,8 @@ namespace clv::gfx::d3d{
 		D3DBuffer& operator=(D3DBuffer&& other) noexcept;
 
 		virtual ~D3DBuffer();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual const BufferDescriptor& getDescriptor() const override;
 

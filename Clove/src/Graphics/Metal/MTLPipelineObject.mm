@@ -3,7 +3,8 @@
 #include "Clove/Graphics/Metal/MTLShader.hpp"
 
 namespace clv::gfx::mtl{
-	MTLPipelineObject::MTLPipelineObject(){
+	MTLPipelineObject::MTLPipelineObject(std::shared_ptr<GraphicsFactory> factory)
+		: factory(std::move(factory)) {
 		pipelineDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
 		pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
 		[pipelineDescriptor.colorAttachments[0] setDestinationRGBBlendFactor:MTLBlendFactorOneMinusSourceAlpha];
@@ -20,6 +21,10 @@ namespace clv::gfx::mtl{
 	
 	MTLPipelineObject::~MTLPipelineObject() = default;
 	
+	const std::shared_ptr<GraphicsFactory>& getFactory() const {
+		return factory;
+	}
+
 	void MTLPipelineObject::setVertexShader(const Shader& vertexShader){
 		const MTLShader& mtlShader = static_cast<const MTLShader&>(vertexShader);
 		id<MTLFunction> shaderFunction = mtlShader.getMTLShader();

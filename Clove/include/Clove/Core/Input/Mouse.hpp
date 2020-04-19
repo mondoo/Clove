@@ -26,10 +26,10 @@ namespace clv{
 		friend class plt::MacWindow;
 	#endif
 
-		//DEFINITIONS
+		//TYPES
 	public:
 		struct Event{
-			//DEFINITIONS
+			//TYPES
 		public:
 			enum class Type{
 				Move,
@@ -88,7 +88,7 @@ namespace clv{
 		bool isButtonPressed(MouseButton button) const;
 		std::optional<Event> getEvent();
 		
-		std::pair<int32_t, int32_t> getPosition() const;
+		clv::mth::vec2i getPosition() const;
 
 		bool isInWindow() const;
 		

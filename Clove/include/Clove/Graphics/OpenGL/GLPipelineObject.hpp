@@ -8,6 +8,8 @@ namespace clv::gfx::ogl{
 	class GLPipelineObject : public PipelineObject{
 		//VARIABLES
 	private:
+		std::shared_ptr<GraphicsFactory> factory;
+
 		VertexLayout vertexLayout;
 
 		bool blendEnabled = false;
@@ -19,7 +21,7 @@ namespace clv::gfx::ogl{
 
 		//FUNCTIONS
 	public:
-		GLPipelineObject();
+		GLPipelineObject(std::shared_ptr<GraphicsFactory> factory);
 
 		GLPipelineObject(const GLPipelineObject& other) = delete;
 		GLPipelineObject(GLPipelineObject&& other) noexcept;
@@ -28,6 +30,8 @@ namespace clv::gfx::ogl{
 		GLPipelineObject& operator=(GLPipelineObject&& other) noexcept;
 
 		virtual ~GLPipelineObject();
+
+		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
 		virtual void setVertexShader(const Shader& vertexShader) override;
 		virtual void setGeometryShader(const Shader& geometryShader) override;

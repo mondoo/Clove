@@ -45,7 +45,7 @@
 
 - (void)windowWillClose:(NSNotification *)notification{
 	//The application shouldn't shut down when a window closes on MacOS, but this'll do for now
-	_cloveWindow->onWindowCloseDelegate.broadcast();
+	_cloveWindow->close();
 }
 @end
 
@@ -63,6 +63,8 @@ namespace clv::plt{
 														  height:descriptor.height
 															name:nameString];
 		windowProxy.cloveWindow = this;
+
+		open = true;
     }
 	
 	MacWindow::MacWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api){
@@ -76,6 +78,8 @@ namespace clv::plt{
 														  position:position
 															  size:size];
 		windowProxy.cloveWindow = this;
+
+		open = true;
 	}
 
 	MacWindow::~MacWindow(){
@@ -106,6 +110,17 @@ namespace clv::plt{
 		[[windowProxy window] setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}
 	
+	bool MacWindow::isOpen() const {
+		return open;
+	}
+
+	void MacWindow::close() {
+		if(onWindowCloseDelegate.isBound()) {
+			onWindowCloseDelegate.broadcast();
+		}
+		open = false;
+	}
+
 	void MacWindow::processInput(){
 		@autoreleasepool {
 			NSEvent* event;

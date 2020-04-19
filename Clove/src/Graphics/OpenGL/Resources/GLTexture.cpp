@@ -93,8 +93,9 @@ namespace clv::gfx::ogl{
 		}
 	}
 
-	GLTexture::GLTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture)
-		: descriptor(descriptor){
+	GLTexture::GLTexture(std::shared_ptr<GraphicsFactory> factory, const TextureDescriptor& descriptor, const std::string& pathToTexture)
+		: factory(std::move(factory))
+		, descriptor(descriptor){
 		int width = 0;
 		int height = 0;
 		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
@@ -108,8 +109,9 @@ namespace clv::gfx::ogl{
 		}
 	}
 
-	GLTexture::GLTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP)
-		: descriptor(descriptor)
+	GLTexture::GLTexture(std::shared_ptr<GraphicsFactory> factory, const TextureDescriptor& descriptor, const void* data, int32_t BPP)
+		: factory(std::move(factory))
+		, descriptor(descriptor)
 		, BPP(BPP){
 		createTexture(descriptor, data);
 	}
@@ -122,12 +124,16 @@ namespace clv::gfx::ogl{
 		glDeleteTextures(1, &textureID);
 	}
 
-	GLuint GLTexture::getTextureID() const{
-		return textureID;
+	const std::shared_ptr<GraphicsFactory>& GLTexture::getFactory() const {
+		return factory;
 	}
 
 	const TextureDescriptor& GLTexture::getDescriptor() const{
 		return descriptor;
+	}
+
+	GLuint GLTexture::getTextureID() const{
+		return textureID;
 	}
 
 	void GLTexture::createTexture(const TextureDescriptor& descriptor, const void* data){

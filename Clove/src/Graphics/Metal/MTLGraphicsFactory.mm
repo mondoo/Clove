@@ -18,34 +18,34 @@ namespace clv::gfx::mtl{
 	}
 	
 	std::shared_ptr<CommandBuffer> MTLGraphicsFactory::createCommandBuffer(){
-		return std::make_shared<MTLCommandBuffer>([mtlDevice newCommandQueue]);
+		return std::make_shared<MTLCommandBuffer>(shared_from_this(), [mtlDevice newCommandQueue]);
 	}
 	
 	std::shared_ptr<Buffer> MTLGraphicsFactory::createBuffer(const BufferDescriptor& descriptor, const void* data){
-		return std::make_shared<MTLBuffer>(mtlDevice, descriptor, data);
+		return std::make_shared<MTLBuffer>(shared_from_this(), mtlDevice, descriptor, data);
 	}
 	
 	std::shared_ptr<Texture> MTLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture){
-		return std::make_shared<MTLTexture>(mtlDevice, descriptor, pathToTexture);
+		return std::make_shared<MTLTexture>(shared_from_this(), mtlDevice, descriptor, pathToTexture);
 	}
 	
 	std::shared_ptr<Texture> MTLGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP){
-		return std::make_shared<MTLTexture>(mtlDevice, descriptor, data, BPP);
+		return std::make_shared<MTLTexture>(shared_from_this(), mtlDevice, descriptor, data, BPP);
 	}
 	
 	std::shared_ptr<PipelineObject> MTLGraphicsFactory::createPipelineObject(){
-		return std::make_shared<MTLPipelineObject>();
+		return std::make_shared<MTLPipelineObject>(shared_from_this());
 	}
 	
 	std::shared_ptr<RenderTarget> MTLGraphicsFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture){
-		return std::make_shared<MTLRenderTarget>(mtlDevice, colourTexture, depthStencilTexture);
+		return std::make_shared<MTLRenderTarget>(shared_from_this(), mtlDevice, colourTexture, depthStencilTexture);
 	}
 	
 	std::shared_ptr<Shader> MTLGraphicsFactory::createShader(const ShaderDescriptor& descriptor, std::string_view pathToShader){
-		return std::make_shared<MTLShader>(mtlDevice, descriptor, pathToShader);
+		return std::make_shared<MTLShader>(shared_from_this(), mtlDevice, descriptor, pathToShader);
 	}
 	
 	std::shared_ptr<Surface> MTLGraphicsFactory::createSurface(void* windowData){
-		return std::make_shared<MTLSurface>(mtlDevice, windowData);
+		return std::make_shared<MTLSurface>(shared_from_this(), mtlDevice, windowData);
 	}
 }

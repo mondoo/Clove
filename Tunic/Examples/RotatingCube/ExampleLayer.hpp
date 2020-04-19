@@ -5,9 +5,16 @@
 #include <Tunic/ECS/World.hpp>
 #include <Tunic/ECS/Entity.hpp>
 
+namespace clv::plt {
+	class Window;
+}
+
 class ExampleLayer : public tnc::Layer {
 	//VARIABLES
 private:
+	//The window we want to render to
+	std::shared_ptr<clv::plt::Window> window;
+
 	//The ECS world that this layer has
 	tnc::ecs::World world;
 
@@ -18,7 +25,7 @@ private:
 
 	//FUNCTIONS
 public:
-	ExampleLayer();
+	ExampleLayer(std::shared_ptr<clv::plt::Window> window);
 
 	//Called when the layer is attached
 	virtual void onAttach() override;

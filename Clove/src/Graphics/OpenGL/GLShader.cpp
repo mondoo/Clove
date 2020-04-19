@@ -31,7 +31,9 @@ namespace clv::gfx::ogl{
 		}
 	}
 
-	GLShader::GLShader(const ShaderDescriptor& descriptor, std::string_view pathToShader){
+	GLShader::GLShader(std::shared_ptr<GraphicsFactory> factory, ShaderDescriptor descriptor, std::string_view pathToShader) 
+		: factory(std::move(factory))
+		, descriptor(std::move(descriptor)) {
 		compileShader(getGLShaderStage(descriptor.stage), ShaderTranspiler::transpileFromFile(pathToShader, descriptor.stage, ShaderType::GLSL));
 	}
 
@@ -41,6 +43,10 @@ namespace clv::gfx::ogl{
 
 	GLShader::~GLShader(){
 		glDeleteShader(shaderID);
+	}
+
+	const std::shared_ptr<GraphicsFactory>& GLShader::getFactory() const {
+		return factory;
 	}
 
 	const ShaderDescriptor& GLShader::getDescriptor() const{

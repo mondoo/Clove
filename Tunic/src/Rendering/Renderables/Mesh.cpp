@@ -1,7 +1,5 @@
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 
-#include "Tunic/Application.hpp"
-
 #include "Clove/Graphics/Core/Resources/Buffer.hpp"
 #include "Clove/Graphics/Core/GraphicsFactory.hpp"
 #include "Clove/Graphics/Core/CommandBuffer.hpp"
@@ -42,18 +40,18 @@ namespace tnc::rnd{
 		return vertexArray;
 	}
 
-	static std::shared_ptr<clv::gfx::Buffer> createVertexBuffer(const VertexBufferData& vertexArray) {
+	static std::shared_ptr<clv::gfx::Buffer> createVertexBuffer(const VertexBufferData& vertexArray, GraphicsFactory& graphicsFactory) {
 		BufferDescriptor vbdesc{};
 		vbdesc.elementSize	= vertexArray.getLayout().size();
 		vbdesc.bufferSize	= vertexArray.sizeBytes();
 		vbdesc.bufferType	= BufferType::VertexBuffer;
 		vbdesc.bufferUsage	= BufferUsage::Default;
-		auto vertexBuffer	= Application::get().getGraphicsFactory().createBuffer(vbdesc, vertexArray.data());
+		auto vertexBuffer	= graphicsFactory.createBuffer(vbdesc, vertexArray.data());
 
 		return vertexBuffer;
 	}
 
-	static std::shared_ptr<clv::gfx::Buffer> createIndexBuffer(const std::vector<uint32_t>& indices) {
+	static std::shared_ptr<clv::gfx::Buffer> createIndexBuffer(const std::vector<uint32_t>& indices, GraphicsFactory& graphicsFactory) {
 		const std::size_t indexSize = sizeof(uint32_t);
 
 		BufferDescriptor ibdesc{};
@@ -61,7 +59,7 @@ namespace tnc::rnd{
 		ibdesc.bufferSize	= indices.size() * indexSize;
 		ibdesc.bufferType	= BufferType::IndexBuffer;
 		ibdesc.bufferUsage	= BufferUsage::Default;
-		auto indexBuffer	= Application::get().getGraphicsFactory().createBuffer(ibdesc, indices.data());
+		auto indexBuffer	= graphicsFactory.createBuffer(ibdesc, indices.data());
 
 		return indexBuffer;
 	}
@@ -70,8 +68,6 @@ namespace tnc::rnd{
 		: materialInstance(std::move(materialInstance))
 		, loadedBufferData(vbData)
 		, indices(indices) {
-		vertexBufferMap[vbData.getLayout()] = createVertexBuffer(vbData);
-		indexBuffer = createIndexBuffer(indices);
 	}
 
 	Mesh::Mesh(const Mesh& other) = default;
@@ -111,8 +107,12 @@ namespace tnc::rnd{
 	}
 
 	void Mesh::draw(CommandBuffer& commandBuffer, const VertexLayout& layout){
+		if(indexBuffer == nullptr) {
+			indexBuffer = createIndexBuffer(indices, *commandBuffer.getFactory());
+		}
+
 		if(vertexBufferMap.find(layout) == vertexBufferMap.end()) {
-			vertexBufferMap[layout] = createVertexBuffer(transferVertexBufferData(loadedBufferData, layout));
+			vertexBufferMap[layout] = createVertexBuffer(transferVertexBufferData(loadedBufferData, layout), *commandBuffer.getFactory());
 		}
 		
 		commandBuffer.bindVertexBuffer(*vertexBufferMap[layout], layout.size());

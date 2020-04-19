@@ -20,35 +20,35 @@ namespace clv::gfx::d3d {
 	D3DGraphicsFactory::~D3DGraphicsFactory() = default;
 
 	std::shared_ptr<CommandBuffer> D3DGraphicsFactory::createCommandBuffer() {
-		return std::make_shared<D3DCommandBuffer>(*d3dDevice.Get());
+		return std::make_shared<D3DCommandBuffer>(shared_from_this(), *d3dDevice.Get());
 	}
 
 	std::shared_ptr<Buffer> D3DGraphicsFactory::createBuffer(const BufferDescriptor& descriptor, const void* data) {
-		return std::make_shared<D3DBuffer>(*d3dDevice.Get(), descriptor, data);
+		return std::make_shared<D3DBuffer>(shared_from_this(), *d3dDevice.Get(), descriptor, data);
 	}
 
 	std::shared_ptr<Texture> D3DGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const std::string& pathToTexture) {
-		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, pathToTexture);
+		return std::make_shared<D3DTexture>(shared_from_this(), *d3dDevice.Get(), descriptor, pathToTexture);
 	}
 
 	std::shared_ptr<Texture> D3DGraphicsFactory::createTexture(const TextureDescriptor& descriptor, const void* data, int32_t BPP) {
-		return std::make_shared<D3DTexture>(*d3dDevice.Get(), descriptor, data, BPP);
+		return std::make_shared<D3DTexture>(shared_from_this(), *d3dDevice.Get(), descriptor, data, BPP);
 	}
 
 	std::shared_ptr<PipelineObject> D3DGraphicsFactory::createPipelineObject() {
-		return std::make_shared<D3DPipelineObject>(d3dDevice);
+		return std::make_shared<D3DPipelineObject>(shared_from_this(), d3dDevice);
 	}
 
 	std::shared_ptr<RenderTarget> D3DGraphicsFactory::createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture) {
-		return std::make_shared<D3DRenderTarget>(*d3dDevice.Get(), colourTexture, depthStencilTexture);
+		return std::make_shared<D3DRenderTarget>(shared_from_this(), *d3dDevice.Get(), colourTexture, depthStencilTexture);
 	}
 
 	std::shared_ptr<Shader> D3DGraphicsFactory::createShader(const ShaderDescriptor& descriptor, std::string_view pathToShader) {
-		return std::make_shared<D3DShader>(*d3dDevice.Get(), descriptor, pathToShader);
+		return std::make_shared<D3DShader>(shared_from_this(), *d3dDevice.Get(), descriptor, pathToShader);
 	}
 
 	std::shared_ptr<Surface> D3DGraphicsFactory::createSurface(void* windowData) {
-		auto surface = std::make_unique<D3DSurface>(*d3dDevice.Get(), windowData);
+		auto surface = std::make_shared<D3DSurface>(shared_from_this(), *d3dDevice.Get(), windowData);
 		surface->onDeviceRemoved.bind(&D3DGraphicsFactory::onDeviceRemoved, this);
 		return surface;
 	}

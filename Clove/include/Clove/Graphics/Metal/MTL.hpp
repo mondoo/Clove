@@ -5,5 +5,5 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx::mtl{
-	std::unique_ptr<GraphicsFactory> initialiseMTL();
+	std::shared_ptr<GraphicsFactory> initialiseMTL();
 }

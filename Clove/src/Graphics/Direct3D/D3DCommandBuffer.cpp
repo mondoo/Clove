@@ -14,7 +14,8 @@
 #define CAPTURE_CONTEXT d3dContext = d3dContext.Get()
 
 namespace clv::gfx::d3d{
-	D3DCommandBuffer::D3DCommandBuffer(ID3D11Device& d3dDevice){
+	D3DCommandBuffer::D3DCommandBuffer(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice) 
+		: factory(std::move(factory)) {
 		DX11_INFO_PROVIDER;
 		d3dDevice.GetImmediateContext(&immediateContext);
 		DX11_THROW_INFO(d3dDevice.CreateDeferredContext(0u, &deferredContext));
@@ -25,6 +26,10 @@ namespace clv::gfx::d3d{
 	D3DCommandBuffer& D3DCommandBuffer::operator=(D3DCommandBuffer&& other) noexcept = default;
 
 	D3DCommandBuffer::~D3DCommandBuffer() = default;
+
+	const std::shared_ptr<GraphicsFactory>& D3DCommandBuffer::getFactory() const {
+		return factory;
+	}
 
 	void D3DCommandBuffer::beginEncoding(const std::shared_ptr<RenderTarget>& renderTarget){
 		d3dRenderTarget = std::static_pointer_cast<D3DRenderTarget>(renderTarget);

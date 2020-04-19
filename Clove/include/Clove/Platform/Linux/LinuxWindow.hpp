@@ -4,27 +4,29 @@
 
 #include "Clove/Platform/Linux/CloveLinux.hpp"
 
-namespace clv::gfx{
+namespace clv::gfx {
 	class GraphicsFactory;
 }
 
-namespace clv::plt{
-	struct LinuxData{
+namespace clv::plt {
+	struct LinuxData {
 		Display* display = nullptr;
 		::Window* window;
 
 		XVisualInfo** visual = nullptr;
 	};
 
-    class LinuxWindow : public Window{
-        //VARIABLES
+	class LinuxWindow : public Window {
+		//VARIABLES
 	private:
+		bool open = false;
+
 		Display* display = nullptr;
 		Screen* screen = nullptr;
 		int32_t screenID;
-        ::Window window;
+		::Window window;
 
-        XEvent xevent;
+		XEvent xevent;
 
 		XVisualInfo* visual = nullptr; //TODO: unique_ptr with custom deleter
 		XSetWindowAttributes windowAttribs;
@@ -35,9 +37,9 @@ namespace clv::plt{
 
 		LinuxData data;
 
-        //FUNCTIONS
-    public:
-        LinuxWindow() = delete;
+		//FUNCTIONS
+	public:
+		LinuxWindow() = delete;
 		LinuxWindow(const WindowDescriptor& descriptor);
 		LinuxWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api);
 
@@ -51,13 +53,15 @@ namespace clv::plt{
 
 		virtual void* getNativeWindow() const override;
 
-        virtual mth::vec2i getPosition() const override;
-        virtual mth::vec2i getSize() const override;
+		virtual mth::vec2i getPosition() const override;
+		virtual mth::vec2i getSize() const override;
 
-        virtual void moveWindow(const mth::vec2i& position) override;
-        virtual void resizeWindow(const mth::vec2i& size) override;
+		virtual void moveWindow(const mth::vec2i& position) override;
+		virtual void resizeWindow(const mth::vec2i& size) override;
+
+		virtual bool isOpen() const override;
 
 	protected:
 		virtual void processInput() override;
-    };
+	};
 }
