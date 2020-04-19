@@ -2,25 +2,26 @@
 
 #include <Clove/Graphics/Core/VertexLayout.hpp>
 
-namespace clv::gfx{
+namespace clv::gfx {
 	class Buffer;
 	class CommandBuffer;
 	class PipelineObject;
+	class RenderTarget;
 }
 
-namespace clv::plt{
+namespace clv::plt {
 	class Window;
 }
 
-namespace tnc::rnd{
+namespace tnc::rnd {
 	class Sprite;
 }
 
-namespace tnc::rnd{
-	class Renderer2D{
+namespace tnc::rnd {
+	class Renderer2D {
 		//TYPES
 	private:
-		struct SceneData{
+		struct SceneData {
 			std::vector<std::shared_ptr<Sprite>> spritesToRender;
 			std::vector<std::shared_ptr<Sprite>> widgetsToRender;
 			std::vector<std::shared_ptr<Sprite>> textToRender;
@@ -28,6 +29,9 @@ namespace tnc::rnd{
 
 		//VARIABLES
 	private:
+		std::shared_ptr<clv::gfx::RenderTarget> renderTarget;
+		clv::mth::vec2i screenSize;
+
 		std::shared_ptr<clv::gfx::Buffer> indexBuffer;
 
 		clv::gfx::VertexLayout vbLayout;
@@ -40,13 +44,21 @@ namespace tnc::rnd{
 		std::shared_ptr<clv::gfx::PipelineObject> textPipelineObject;
 
 		std::shared_ptr<clv::gfx::CommandBuffer> commandBuffer;
-		
+
 		SceneData scene;
 
 		//FUNCTIONS
 	public:
+		Renderer2D() = delete;
 		Renderer2D(clv::plt::Window& window);
-		//TODO: Other ctors
+		
+		Renderer2D(const Renderer2D& other) = delete;
+		Renderer2D(Renderer2D&& other) noexcept;
+
+		Renderer2D& operator=(const Renderer2D& other) = delete;
+		Renderer2D& operator=(Renderer2D&& other) noexcept;
+
+		~Renderer2D();
 
 		void begin();
 
