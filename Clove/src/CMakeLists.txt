@@ -221,7 +221,7 @@ set(
 
 #Organise the source tree
 file(GLOB_RECURSE header ${CLV_INCLUDE}/*.h ${CLV_INCLUDE}/*.hpp ${CLV_INCLUDE}/*.inl)
-file(GLOB_RECURSE source *.cpp *.m *.mm *.glsl *.hlsl *.metal)
+file(GLOB_RECURSE source *.cpp *.m *.mm)
 source_group(TREE ${CLV_INCLUDE} FILES ${header})
 source_group(TREE ${CLV_SOURCE} FILES ${source})
 
