@@ -128,14 +128,14 @@ set(
 
 #Convert resources into c strings
 add_custom_command(
-	OUTPUT testFile.c
-	COMMAND ResourceEmbedder testFile ${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf
-	DEPENDS ${TNC_RESOURCE}/Shaders/Default2D-ps.hlsl
+	OUTPUT Roboto.c
+	COMMAND ResourceEmbedder roboto ${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf
+	DEPENDS ${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf
 )
 
 set(
 	ResourceBinaries
-		testFile.c
+		Roboto.c
 )
 
 #Organise the source tree
@@ -150,6 +150,10 @@ source_group(PCH FILES
 	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx
 	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
 )
+
+#source_group(Resources FILES
+#	${ResourceBinaries}
+#)
 
 target_sources(
 	${PROJECT_NAME}
