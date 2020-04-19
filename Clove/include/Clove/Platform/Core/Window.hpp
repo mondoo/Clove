@@ -50,6 +50,8 @@ namespace clv::plt{
 		virtual void moveWindow(const mth::vec2i& position) = 0;
 		virtual void resizeWindow(const mth::vec2i& size) = 0;
 
+		virtual bool isOpen() const = 0;
+
 		Keyboard& getKeyboard();
 		Mouse& getMouse();
 

@@ -37,6 +37,8 @@ namespace clv::plt{
 	class MacWindow : public Window{
 		//VARIABLES
 	private:
+		bool open = false;
+
 		MacWindowProxy* windowProxy;
 
 		//FUNCTIONS
@@ -60,6 +62,10 @@ namespace clv::plt{
 
 		virtual void moveWindow(const mth::vec2i& position) override;
 		virtual void resizeWindow(const mth::vec2i& size) override;
+
+		virtual bool isOpen() const override;
+
+		void close();
 
 	protected:
 		virtual void processInput() override;

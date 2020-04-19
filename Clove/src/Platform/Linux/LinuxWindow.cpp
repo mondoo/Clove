@@ -63,6 +63,8 @@ namespace clv::plt{
         XClearWindow(display, window);
         XMapRaised(display, window);
 
+        open = true;
+
         CLV_LOG_DEBUG("Window created");
 	}
 
@@ -124,6 +126,8 @@ namespace clv::plt{
         XClearWindow(display, window);
         XMapRaised(display, window);
 
+        open = true;
+
         CLV_LOG_DEBUG("Window created");
 	}
 
@@ -183,6 +187,10 @@ namespace clv::plt{
         XResizeWindow(display, window, size.x, size.y);
     }
 
+    bool LinuxWindow::isOpen() const {
+		return open;
+	}
+
 	void LinuxWindow::processInput(){
 		if(XPending(display) > 0){
 			KeySym xkeysym = 0;
@@ -192,10 +200,12 @@ namespace clv::plt{
 				case ClientMessage:
 					if(xevent.xclient.data.l[0] == atomWmDeleteWindow){
 						onWindowCloseDelegate.broadcast();
+						open = false;
 					}
 					break;
 				case DestroyNotify:
 					onWindowCloseDelegate.broadcast();
+					open = false;
 					break;
 
 				case FocusOut:
