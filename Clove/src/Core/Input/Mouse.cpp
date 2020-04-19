@@ -48,7 +48,7 @@ namespace clv{
 		}
 	}
 
-	std::pair<int, int> Mouse::getPosition() const{
+	clv::mth::vec2i Mouse::getPosition() const {
 		return { x, y };
 	}
 
