@@ -6,7 +6,6 @@
 //Temp?
 #include "Clove/Graphics/Core/GraphicsTypes.hpp"
 #include "Clove/Platform/Core/Window.hpp"
-#include "Tunic/Application.hpp"
 //#include "Tunic/Rendering/Renderables/Sprite.hpp"
 
 using namespace clv;
