@@ -25,6 +25,7 @@
 #include "Tunic/UI/Text.hpp"
 
 #include "Tunic/Layer.hpp"
+#include "Tunic/LayerStack.hpp"
 
 #include "Tunic/ModelLoader.hpp"
 
