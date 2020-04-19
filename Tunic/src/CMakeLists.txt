@@ -114,9 +114,6 @@ target_sources(
 	${PROJECT_NAME}
 	PRIVATE
 		${TNC_INCLUDE}/Tunic.hpp
-		
-		${TNC_INCLUDE}/Input.hpp
-		${TNC_SOURCE}/Input.cpp
 
 		${TNC_INCLUDE}/Layer.hpp
 		${TNC_SOURCE}/Layer.cpp
