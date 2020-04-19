@@ -2,16 +2,15 @@
 
 #include <Tunic/Tunic.hpp>
 
-ExampleLayer::ExampleLayer() {
+ExampleLayer::ExampleLayer(std::shared_ptr<clv::plt::Window> window) 
+	: window(std::move(window)) {
 	//Add on any systems we want to use
-	world.addSystem<tnc::ecs::RenderSystem>(tnc::Application::get().getMainWindow());
+	world.addSystem<tnc::ecs::RenderSystem>(*this->window);
 }
 
 void ExampleLayer::onAttach() {
-	clv::plt::Window& window = tnc::Application::get().getMainWindow();
-
 	//Load in our mesh
-	tnc::rnd::Model cube = tnc::ModelLoader::loadModel(SOURCE_DIR "/cube.obj", window.getGraphicsFactory());
+	tnc::rnd::Model cube = tnc::ModelLoader::loadModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
 
 	//Create the entity that will act as our cube
 	cubeEntity = world.createEntity();
@@ -28,7 +27,7 @@ void ExampleLayer::onAttach() {
 	cameraEntity = world.createEntity();
 	cameraEntity.addComponent<tnc::ecs::TransformComponent>()->setPosition({ 0.0f, 0.0f, -5.0f });
 	//The CameraComponent requires a window or a render target to render to
-	cameraEntity.addComponent<tnc::ecs::CameraComponent>(window, tnc::ecs::ProjectionMode::perspective);
+	cameraEntity.addComponent<tnc::ecs::CameraComponent>(*window, tnc::ecs::ProjectionMode::perspective);
 }
 
 void ExampleLayer::onUpdate(clv::utl::DeltaTime deltaTime) {

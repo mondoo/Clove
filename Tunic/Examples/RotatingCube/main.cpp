@@ -1,17 +1,42 @@
-#include <Tunic/Tunic.hpp>
-
 #include "ExampleLayer.hpp"
 
+#include <Tunic/Tunic.hpp>
+
 int main() {
-	//Start by initialising the Tunic Application. This wraps a lot of Clove set up
-	tnc::Application app = tnc::Application(clv::plt::getPlatformPreferedAPI());
+	//Initialise the logger
+	clv::Log::init();
 
-	//Push any layers onto the application that we want to start with
-	app.pushLayer(std::make_shared<ExampleLayer>());
+	//Create the platform instance we'll use to make OS calls
+	std::unique_ptr<clv::plt::Platform> platformInstance = clv::plt::createPlatformInstance();
 
-	//Then run the main loop for our application
-	while(app.getState() == tnc::ApplicationState::running) {
-		app.update();
+	//Create the window which we will render to
+	std::shared_ptr<clv::plt::Window> window = platformInstance->createWindow({ "Rotating Cube", 1280, 720, clv::plt::getPlatformPreferedAPI() });
+	window->setVSync(true);
+
+	//Push on our example layer to the stack
+	auto layerStack = std::make_unique<tnc::LayerStack>();
+	layerStack->pushLayer(std::make_shared<ExampleLayer>(window));
+
+	//Cache of the 'previous frame time' that'll be used to calculate the delta time
+	auto prevFrameTime = std::chrono::system_clock::now();
+
+	//Run our program while the window is open
+	while(window->isOpen()) {
+		//Calculate the delta time
+		auto currFrameTime = std::chrono::system_clock::now();
+		std::chrono::duration<float> deltaSeconds = currFrameTime - prevFrameTime;
+		prevFrameTime = currFrameTime;
+
+		//Tell our window we're beginning a frame so it can handle any input events
+		window->beginFrame();
+
+		//Update all of our layers
+		for(auto&& layer : *layerStack) {
+			layer->onUpdate(deltaSeconds.count());
+		}
+
+		//Tell our window we've finished frame so it can present it's back buffer
+		window->endFrame();
 	}
 
 	return 0;
