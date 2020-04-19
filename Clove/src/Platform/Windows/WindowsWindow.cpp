@@ -173,7 +173,9 @@ namespace clv::plt {
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			if(msg.wParam == CLV_WINDOWS_QUIT) {
-				onWindowCloseDelegate.broadcast();
+				if(onWindowCloseDelegate.isBound()) {
+					onWindowCloseDelegate.broadcast();
+				}
 				open = false;
 			}
 

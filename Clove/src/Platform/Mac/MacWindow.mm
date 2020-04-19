@@ -115,7 +115,9 @@ namespace clv::plt{
 	}
 
 	void MacWindow::close() {
-		onWindowCloseDelegate.broadcast();
+		if(onWindowCloseDelegate.isBound()) {
+			onWindowCloseDelegate.broadcast();
+		}
 		open = false;
 	}
 

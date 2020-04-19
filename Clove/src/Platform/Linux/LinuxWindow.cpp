@@ -199,12 +199,16 @@ namespace clv::plt{
 			switch(xevent.type){
 				case ClientMessage:
 					if(xevent.xclient.data.l[0] == atomWmDeleteWindow){
-						onWindowCloseDelegate.broadcast();
+						if(onWindowCloseDelegate.isBound()) {
+							onWindowCloseDelegate.broadcast();
+						}
 						open = false;
 					}
 					break;
 				case DestroyNotify:
-					onWindowCloseDelegate.broadcast();
+					if(onWindowCloseDelegate.isBound()) {
+						onWindowCloseDelegate.broadcast();
+					}
 					open = false;
 					break;
 
