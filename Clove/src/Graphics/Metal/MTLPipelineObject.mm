@@ -21,7 +21,7 @@ namespace clv::gfx::mtl{
 	
 	MTLPipelineObject::~MTLPipelineObject() = default;
 	
-	const std::shared_ptr<GraphicsFactory>& getFactory() const {
+	const std::shared_ptr<GraphicsFactory>& MTLPipelineObject::getFactory() const {
 		return factory;
 	}
 

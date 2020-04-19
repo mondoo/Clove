@@ -20,7 +20,7 @@ namespace clv::gfx::mtl{
 		}
 	}
 	
-	MTLTexture::MTLTexture(id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP)
+	MTLTexture::MTLTexture(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP)
 		: factory(std::move(factory))
 		, descriptor(descriptor), BPP(BPP){
 		createTexture(mtlDevice, descriptor, data);

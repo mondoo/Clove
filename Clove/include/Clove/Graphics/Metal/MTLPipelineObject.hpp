@@ -30,7 +30,7 @@ namespace clv::gfx::mtl {
 		virtual ~MTLPipelineObject();
 		
 		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
-
+		
 		virtual void setVertexShader(const Shader& vertexShader) override;
 		virtual void setGeometryShader(const Shader& geometryShader) override;
 		virtual void setPixelShader(const Shader& pixelShader) override;

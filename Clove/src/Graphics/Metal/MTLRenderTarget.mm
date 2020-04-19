@@ -16,7 +16,7 @@ namespace clv::gfx::mtl{
 		setClearColour({ 0.0f, 0.0f, 0.0f, 0.0f });
 	}
 
-	MTLRenderTarget::MTLRenderTarget(MTLRenderPassDescriptor* descriptor)
+	MTLRenderTarget::MTLRenderTarget(std::shared_ptr<GraphicsFactory> factory, MTLRenderPassDescriptor* descriptor)
 		: factory(std::move(factory))
 		, descriptor(descriptor){
 		setClearColour({ 0.0f, 0.0f, 0.0f, 0.0f });
