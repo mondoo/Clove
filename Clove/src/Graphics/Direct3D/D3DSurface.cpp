@@ -66,7 +66,7 @@ namespace clv::gfx::d3d{
 
 		DX11_THROW_INFO(d3dDevice.CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
 
-		renderTarget = std::make_shared<D3DRenderTarget>(factory, renderTargetView, depthStencilView);
+		renderTarget = std::make_shared<D3DRenderTarget>(this->factory, renderTargetView, depthStencilView);
 	}
 
 	D3DSurface::D3DSurface(D3DSurface&& other) noexcept = default;
