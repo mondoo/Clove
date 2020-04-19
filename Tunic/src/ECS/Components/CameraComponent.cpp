@@ -1,7 +1,7 @@
 #include "Tunic/ECS/Components/CameraComponent.hpp"
 
-#include <Clove/Graphics/Core/Surface.hpp>
-#include <Clove/Platform/Core/Window.hpp>
+#include <Clove/Graphics/Surface.hpp>
+#include <Clove/Platform/Window.hpp>
 
 using namespace clv;
 

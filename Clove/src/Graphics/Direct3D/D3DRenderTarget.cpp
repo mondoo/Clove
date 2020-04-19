@@ -1,7 +1,7 @@
 #include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
 
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
-#include "Clove/Graphics/Direct3D/Resources/D3DTexture.hpp"
+#include "Clove/Graphics/Direct3D/D3DTexture.hpp"
 
 #include <d3d11.h>
 

@@ -1,7 +1,7 @@
 #include "Clove/Graphics/Metal/MTLGraphicsFactory.hpp"
 
-#include "Clove/Graphics/Metal/Resources/MTLBuffer.hpp"
-#include "Clove/Graphics/Metal/Resources/MTLTexture.hpp"
+#include "Clove/Graphics/Metal/MTLBuffer.hpp"
+#include "Clove/Graphics/Metal/MTLTexture.hpp"
 #include "Clove/Graphics/Metal/MTLCommandBuffer.hpp"
 #include "Clove/Graphics/Metal/MTLPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MTLRenderTarget.hpp"

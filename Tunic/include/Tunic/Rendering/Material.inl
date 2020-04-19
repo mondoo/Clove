@@ -1,4 +1,4 @@
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
+#include "Clove/Graphics/GraphicsFactory.hpp"
 
 namespace tnc::rnd{
 	template<typename DataType>

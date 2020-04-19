@@ -2,7 +2,7 @@
 
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 #include "Clove/Platform/Windows/WindowsException.hpp"
-#include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/OpenGL/GLException.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/Surface.hpp"
+#include "Clove/Graphics/Surface.hpp"
 
 #include <QuartzCore/CAMetalLayer.h>
 #include <Metal/Metal.h>

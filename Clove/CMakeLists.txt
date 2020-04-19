@@ -102,14 +102,14 @@ target_precompile_headers(
 
 	#Clove headers
 	PUBLIC
-		[["Clove/Core/Core.hpp"]]
-		[["Clove/Core/Log.hpp"]]
-		[["Clove/Core/Maths/MathsTypes.hpp"]]
-		[["Clove/Core/Maths/Maths.hpp"]]
-		[["Clove/Core/Maths/MathsHelpers.hpp"]]
-		[["Clove/Core/Utils/Delegate.hpp"]]
-		[["Clove/Core/Utils/DeltaTime.hpp"]]
-		[["Clove/Core/Utils/Timer.hpp"]]
+		[["Clove/Core.hpp"]]
+		[["Clove/Log.hpp"]]
+		[["Clove/Maths/MathsTypes.hpp"]]
+		[["Clove/Maths/Maths.hpp"]]
+		[["Clove/Maths/MathsHelpers.hpp"]]
+		[["Clove/Utils/Delegate.hpp"]]
+		[["Clove/Utils/DeltaTime.hpp"]]
+		[["Clove/Utils/Timer.hpp"]]
 )
 
 #Preprocessor

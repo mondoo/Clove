@@ -1,7 +1,7 @@
 #include "Tunic/Rendering/Renderables/Font.hpp"
 
-#include <Clove/Graphics/Core/GraphicsFactory.hpp>
-#include <Clove/Graphics/Core/Resources/Texture.hpp>
+#include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Clove/Graphics/Texture.hpp>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

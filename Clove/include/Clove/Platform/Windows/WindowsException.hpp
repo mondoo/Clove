@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Exception/CloveException.hpp"
+#include "Clove/Exception/CloveException.hpp"
 
 #include "Clove/Platform/Windows/CloveWindows.hpp"
 

@@ -1,4 +1,4 @@
-#include "Clove/Graphics/Core/Shader.hpp"
+#include "Clove/Graphics/Shader.hpp"
 
 #import <MetalKit/MetalKit.h>
 

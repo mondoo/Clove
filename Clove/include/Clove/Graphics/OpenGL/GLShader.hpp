@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/Shader.hpp"
+#include "Clove/Graphics/Shader.hpp"
 
 #include <glad/glad.h>
 

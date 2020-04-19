@@ -1,6 +1,6 @@
 #include "Clove/Graphics/OpenGL/GLShader.hpp"
 
-#include "Clove/Graphics/Core/ShaderTranspiler.hpp"
+#include "Clove/Graphics/ShaderTranspiler.hpp"
 
 namespace clv::gfx::ogl{
 	static GLenum getGLShaderStage(const ShaderStage stage){

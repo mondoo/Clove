@@ -1,7 +1,7 @@
 #include "Clove/Platform/Mac/MacWindow.hpp"
 
-#include "Clove/Graphics/Core/Graphics.hpp"
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
+#include "Clove/Graphics/Graphics.hpp"
+#include "Clove/Graphics/GraphicsFactory.hpp"
 #include "Clove/Graphics/Metal/MTLSurface.hpp"
 
 @implementation MacWindowProxy

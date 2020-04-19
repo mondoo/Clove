@@ -1,8 +1,8 @@
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 
-#include "Clove/Graphics/Core/Resources/Buffer.hpp"
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
-#include "Clove/Graphics/Core/CommandBuffer.hpp"
+#include "Clove/Graphics/Buffer.hpp"
+#include "Clove/Graphics/GraphicsFactory.hpp"
+#include "Clove/Graphics/CommandBuffer.hpp"
 
 using namespace clv;
 using namespace clv::gfx;

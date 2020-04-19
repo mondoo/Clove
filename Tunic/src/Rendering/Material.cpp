@@ -2,7 +2,7 @@
 
 #include "Tunic/Rendering/MaterialInstance.hpp"
 #include "Tunic/Rendering/ShaderBufferTypes.hpp"
-#include "Clove/Graphics/Core/Resources/Texture.hpp"
+#include "Clove/Graphics/Texture.hpp"
 
 using namespace clv::gfx;
 

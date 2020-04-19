@@ -1,6 +1,6 @@
 #include "Clove/Graphics/Metal/MTLRenderTarget.hpp"
 
-#include "Clove/Graphics/Metal/Resources/MTLTexture.hpp"
+#include "Clove/Graphics/Metal/MTLTexture.hpp"
 
 namespace clv::gfx::mtl{
 	MTLRenderTarget::MTLRenderTarget(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, Texture* colourTexture, Texture* depthStencilTexture)

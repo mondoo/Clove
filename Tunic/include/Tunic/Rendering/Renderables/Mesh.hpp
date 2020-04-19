@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Clove/Graphics/Core/GraphicsTypes.hpp"
-#include "Clove/Graphics/Core/VertexLayout.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/VertexLayout.hpp"
 #include "Tunic/Rendering/MaterialInstance.hpp"
 
 namespace clv::gfx {

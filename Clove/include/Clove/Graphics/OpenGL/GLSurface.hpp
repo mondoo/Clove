@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/Surface.hpp"
+#include "Clove/Graphics/Surface.hpp"
 
 namespace clv::gfx::ogl{
 	class GLSurface : public Surface{

@@ -4,8 +4,8 @@
 #include "Tunic/Rendering/Renderer2D.hpp"
 
 //Temp?
-#include "Clove/Graphics/Core/GraphicsTypes.hpp"
-#include "Clove/Platform/Core/Window.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Platform/Window.hpp"
 //#include "Tunic/Rendering/Renderables/Sprite.hpp"
 
 using namespace clv;

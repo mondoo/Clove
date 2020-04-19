@@ -1,7 +1,7 @@
 #include "Tunic/Rendering/Renderables/Sprite.hpp"
 
-#include <Clove/Graphics/Core/GraphicsFactory.hpp>
-#include <Clove/Graphics/Core/Resources/Texture.hpp>
+#include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Clove/Graphics/Texture.hpp>
 
 using namespace clv;
 using namespace clv::gfx;

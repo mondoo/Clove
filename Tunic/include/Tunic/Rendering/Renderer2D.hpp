@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Clove/Graphics/Core/VertexLayout.hpp>
+#include <Clove/Graphics/VertexLayout.hpp>
 
 namespace clv::gfx {
 	class Buffer;

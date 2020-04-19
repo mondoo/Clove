@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Core/Utils/DeltaTime.hpp"
+#include "Clove/Utils/DeltaTime.hpp"
 
 namespace tnc::ecs{
 	class ComponentInterface;

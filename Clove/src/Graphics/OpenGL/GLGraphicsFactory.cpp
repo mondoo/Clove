@@ -1,7 +1,7 @@
 #include "Clove/Graphics/OpenGL/GLGraphicsFactory.hpp"
 
-#include "Clove/Graphics/OpenGL/Resources/GLBuffer.hpp"
-#include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
+#include "Clove/Graphics/OpenGL/GLBuffer.hpp"
+#include "Clove/Graphics/OpenGL/GLTexture.hpp"
 #include "Clove/Graphics/OpenGL/GLCommandBuffer.hpp"
 #include "Clove/Graphics/OpenGL/GLPipelineObject.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"

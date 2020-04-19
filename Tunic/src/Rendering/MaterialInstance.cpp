@@ -1,8 +1,8 @@
 #include "Tunic/Rendering/MaterialInstance.hpp"
 
 #include "Tunic/Rendering/Material.hpp"
-#include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Clove/Graphics/Core/CommandBuffer.hpp"
+#include "Clove/Graphics/Texture.hpp"
+#include "Clove/Graphics/CommandBuffer.hpp"
 
 using namespace clv::gfx;
 

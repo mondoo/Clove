@@ -1,8 +1,8 @@
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 
-#include "Clove/Graphics/Core/Graphics.hpp"
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
-#include "Clove/Graphics/Core/Surface.hpp"
+#include "Clove/Graphics/Graphics.hpp"
+#include "Clove/Graphics/GraphicsFactory.hpp"
+#include "Clove/Graphics/Surface.hpp"
 
 #define CLV_WINDOWS_QUIT 25397841 //Note: this number is completely random
 

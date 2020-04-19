@@ -9,12 +9,12 @@
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 #include "Tunic/Rendering/Renderer.hpp"
 
-#include <Clove/Graphics/Core/CommandBuffer.hpp>
-#include <Clove/Graphics/Core/GraphicsFactory.hpp>
-#include <Clove/Graphics/Core/PipelineObject.hpp>
-#include <Clove/Graphics/Core/RenderTarget.hpp>
-#include <Clove/Graphics/Core/Resources/Texture.hpp>
-#include <Clove/Platform/Core/Window.hpp>
+#include <Clove/Graphics/CommandBuffer.hpp>
+#include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Clove/Graphics/PipelineObject.hpp>
+#include <Clove/Graphics/RenderTarget.hpp>
+#include <Clove/Graphics/Texture.hpp>
+#include <Clove/Platform/Window.hpp>
 
 using namespace clv;
 using namespace clv::gfx;

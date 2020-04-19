@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Platform/Core/Window.hpp"
+#include "Clove/Platform/Window.hpp"
 
 #include "Clove/Platform/Linux/CloveLinux.hpp"
 

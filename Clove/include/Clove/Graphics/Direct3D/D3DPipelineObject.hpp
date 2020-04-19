@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/PipelineObject.hpp"
+#include "Clove/Graphics/PipelineObject.hpp"
 
 #include <d3d11.h>
 #include <wrl.h>

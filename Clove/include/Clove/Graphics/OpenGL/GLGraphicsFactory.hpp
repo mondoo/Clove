@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
+#include "Clove/Graphics/GraphicsFactory.hpp"
 
 namespace clv::gfx::ogl{
 	class GLGraphicsFactory : public GraphicsFactory{

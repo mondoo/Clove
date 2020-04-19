@@ -1,8 +1,8 @@
 #include "Clove/Graphics/Direct3D/D3DCommandBuffer.hpp"
 
-#include "Clove/Graphics/Core/Surface.hpp"
-#include "Clove/Graphics/Direct3D/Resources/D3DBuffer.hpp"
-#include "Clove/Graphics/Direct3D/Resources/D3DTexture.hpp"
+#include "Clove/Graphics/Surface.hpp"
+#include "Clove/Graphics/Direct3D/D3DBuffer.hpp"
+#include "Clove/Graphics/Direct3D/D3DTexture.hpp"
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/D3DPipelineObject.hpp"
 #include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Clove/Graphics/Core/GraphicsTypes.hpp"
-#include "Clove/Graphics/Core/Resources/Texture.hpp"
-#include "Clove/Graphics/Core/Resources/Buffer.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/Texture.hpp"
+#include "Clove/Graphics/Buffer.hpp"
 
 namespace clv::gfx{
 	class GraphicsFactory;

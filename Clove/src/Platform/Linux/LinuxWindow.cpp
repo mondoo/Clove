@@ -1,8 +1,8 @@
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
 
-#include "Clove/Graphics/Core/Graphics.hpp"
-#include "Clove/Graphics/Core/GraphicsFactory.hpp"
-#include "Clove/Graphics/Core/Surface.hpp"
+#include "Clove/Graphics/Graphics.hpp"
+#include "Clove/Graphics/GraphicsFactory.hpp"
+#include "Clove/Graphics/Surface.hpp"
 
 namespace clv::plt{
 	LinuxWindow::LinuxWindow(const WindowDescriptor& descriptor){

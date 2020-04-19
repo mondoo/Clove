@@ -1,7 +1,7 @@
 #include "Clove/Graphics/OpenGL/GLXSurface.hpp"
 
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
-#include "Clove/Graphics/Core/GraphicsTypes.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/OpenGL/GLException.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 

@@ -1,6 +1,6 @@
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
-#include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
+#include "Clove/Graphics/OpenGL/GLTexture.hpp"
 
 namespace clv::gfx::ogl{
 	GLRenderTarget::GLRenderTarget(std::shared_ptr<GraphicsFactory> factory)

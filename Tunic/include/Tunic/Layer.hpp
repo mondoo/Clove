@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Clove/Core/Utils/DeltaTime.hpp>
-
 namespace tnc{
 	class Layer{
 		//VARIABLES

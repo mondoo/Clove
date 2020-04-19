@@ -4,8 +4,6 @@
 #include "Tunic/ECS/ECSTypes.hpp"
 #include "Tunic/ECS/System.hpp"
 
-#include <Clove/Core/Utils/DeltaTime.hpp>
-
 namespace tnc::ecs {
 	class Entity;
 	class System;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/CommandBuffer.hpp"
+#include "Clove/Graphics/CommandBuffer.hpp"
 
 #include <wrl.h>
 

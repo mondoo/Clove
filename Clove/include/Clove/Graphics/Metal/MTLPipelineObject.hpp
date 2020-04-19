@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/PipelineObject.hpp"
+#include "Clove/Graphics/PipelineObject.hpp"
 
 #import <MetalKit/MetalKit.h>
 

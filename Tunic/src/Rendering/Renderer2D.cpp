@@ -2,13 +2,13 @@
 
 #include "Tunic/Rendering/Renderables/Sprite.hpp"
 
-#include <Clove/Graphics/Core/CommandBuffer.hpp>
-#include <Clove/Graphics/Core/GraphicsFactory.hpp>
-#include <Clove/Graphics/Core/PipelineObject.hpp>
-#include <Clove/Graphics/Core/Resources/Buffer.hpp>
-#include <Clove/Graphics/Core/Surface.hpp>
-#include <Clove/Graphics/Core/VertexLayout.hpp>
-#include <Clove/Platform/Core/Window.hpp>
+#include <Clove/Graphics/CommandBuffer.hpp>
+#include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Clove/Graphics/PipelineObject.hpp>
+#include <Clove/Graphics/Buffer.hpp>
+#include <Clove/Graphics/Surface.hpp>
+#include <Clove/Graphics/VertexLayout.hpp>
+#include <Clove/Platform/Window.hpp>
 
 using namespace clv;
 using namespace clv::gfx;

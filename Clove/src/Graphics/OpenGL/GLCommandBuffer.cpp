@@ -4,8 +4,8 @@
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 #include "Clove/Graphics/OpenGL/GLShader.hpp"
 #include "Clove/Graphics/OpenGL/GLSurface.hpp"
-#include "Clove/Graphics/OpenGL/Resources/GLBuffer.hpp"
-#include "Clove/Graphics/OpenGL/Resources/GLTexture.hpp"
+#include "Clove/Graphics/OpenGL/GLBuffer.hpp"
+#include "Clove/Graphics/OpenGL/GLTexture.hpp"
 
 #include <glad/glad.h>
 

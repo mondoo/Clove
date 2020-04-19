@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Core/RenderTarget.hpp"
+#include "Clove/Graphics/RenderTarget.hpp"
 
 #import <MetalKit/MetalKit.h>
 

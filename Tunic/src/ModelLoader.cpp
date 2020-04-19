@@ -2,9 +2,9 @@
 
 #include "Tunic/Rendering/Renderables/Mesh.hpp"
 
-#include <Clove/Graphics/Core/Resources/Texture.hpp>
-#include <Clove/Graphics/Core/VertexLayout.hpp>
-#include <Clove/Platform/Core/Window.hpp>
+#include <Clove/Graphics/Texture.hpp>
+#include <Clove/Graphics/VertexLayout.hpp>
+#include <Clove/Platform/Window.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
