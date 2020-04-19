@@ -139,7 +139,7 @@ set(
 )
 
 file(GLOB_RECURSE header ${TNC_INCLUDE}/*.h ${TNC_INCLUDE}/*.hpp ${TNC_INCLUDE}/*.inl)
-file(GLOB_RECURSE source *.cpp *.m *.mm *.glsl *.hlsl)
+file(GLOB_RECURSE source *.cpp *.m *.mm)
 file(GLOB_RECURSE resource ${TNC_RESOURCE}/*.hlsl)
 source_group(TREE ${TNC_INCLUDE} FILES ${header})
 source_group(TREE ${TNC_SOURCE} FILES ${source})
