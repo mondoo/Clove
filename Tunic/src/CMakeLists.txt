@@ -128,14 +128,14 @@ set(
 
 #Convert resources into c strings
 add_custom_command(
-	OUTPUT Roboto.c
-	COMMAND ResourceEmbedder roboto ${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf
+	OUTPUT roboto.c
+	COMMAND ResourceEmbedder roboto ${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf rb
 	DEPENDS ${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf
 )
 
 set(
 	ResourceBinaries
-		Roboto.c
+		roboto.c
 )
 
 #Organise the source tree
