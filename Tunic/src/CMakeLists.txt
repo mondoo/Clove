@@ -133,9 +133,17 @@ add_custom_command(
 	DEPENDS ${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf
 )
 
+add_custom_command(
+	OUTPUT default3D_ps.c
+	COMMAND ResourceEmbedder default3D_ps ${TNC_RESOURCE}/Shaders/Default3D-ps.hlsl r
+	DEPENDS ${TNC_RESOURCE}/Shaders/Default3D-ps.hlsl
+)
+
+
 set(
 	ResourceBinaries
 		roboto.c
+		default3D_ps.c
 )
 
 #Organise the source tree

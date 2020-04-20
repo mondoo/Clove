@@ -14,6 +14,9 @@
 using namespace clv;
 using namespace clv::gfx;
 
+extern "C" const char default3D_ps[];
+extern "C" const size_t default3D_psLength;
+
 namespace tnc::rnd {
 	Renderer::SceneData::SceneData() = default;
 
@@ -27,7 +30,7 @@ namespace tnc::rnd {
 		meshCommandBuffer = factory.createCommandBuffer();
 
 		auto meshVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/Default3D-vs.hlsl");
-		auto meshPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/Default3D-ps.hlsl");
+		auto meshPS = factory.createShader({ ShaderStage::Pixel }, default3D_ps, default3D_psLength);
 		meshPipelineObject = factory.createPipelineObject();
 		meshPipelineObject->setVertexShader(*meshVS);
 		meshPipelineObject->setPixelShader(*meshPS);
