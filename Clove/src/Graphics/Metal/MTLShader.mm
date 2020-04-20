@@ -24,7 +24,7 @@ namespace clv::gfx::mtl{
 		[error release];
 	}
 
-	MTLShader::MTLShader(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, ShaderDescriptor descriptor, const char* bytes, const size::size_t size)
+	MTLShader::MTLShader(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, ShaderDescriptor descriptor, const char* bytes, const std::size_t size)
 		: factory(std::move(factory))
 		, descriptor(std::move(descriptor)){
 		std::string mslSource = ShaderTranspiler::transpileFromBytes(bytes, size, this->descriptor.stage, ShaderType::MSL);
