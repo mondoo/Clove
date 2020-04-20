@@ -34,7 +34,13 @@ namespace clv::gfx::ogl{
 	GLShader::GLShader(std::shared_ptr<GraphicsFactory> factory, ShaderDescriptor descriptor, std::string_view pathToShader) 
 		: factory(std::move(factory))
 		, descriptor(std::move(descriptor)) {
-		compileShader(getGLShaderStage(descriptor.stage), ShaderTranspiler::transpileFromFile(pathToShader, descriptor.stage, ShaderType::GLSL));
+		compileShader(getGLShaderStage(this->descriptor.stage), ShaderTranspiler::transpileFromFile(pathToShader, this->descriptor.stage, ShaderType::GLSL));
+	}
+
+	GLShader::GLShader(std::shared_ptr<GraphicsFactory> factory, ShaderDescriptor descriptor, const char* bytes, const std::size_t size) 
+		: factory(std::move(factory))
+		, descriptor(std::move(descriptor)) {
+		compileShader(getGLShaderStage(this->descriptor.stage), ShaderTranspiler::transpileFromBytes(bytes, size, this->descriptor.stage, ShaderType::GLSL));
 	}
 
 	GLShader::GLShader(GLShader&& other) noexcept = default;
