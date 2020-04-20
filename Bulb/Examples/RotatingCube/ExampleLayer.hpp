@@ -1,27 +1,27 @@
 #pragma once
 
-#include <Tunic/Layer.hpp>
+#include <Bulb/Layer.hpp>
 
-#include <Tunic/ECS/World.hpp>
-#include <Tunic/ECS/Entity.hpp>
+#include <Bulb/ECS/World.hpp>
+#include <Bulb/ECS/Entity.hpp>
 
 namespace clv::plt {
 	class Window;
 }
 
-class ExampleLayer : public tnc::Layer {
+class ExampleLayer : public blb::Layer {
 	//VARIABLES
 private:
 	//The window we want to render to
 	std::shared_ptr<clv::plt::Window> window;
 
 	//The ECS world that this layer has
-	tnc::ecs::World world;
+	blb::ecs::World world;
 
 	//The entities we want in our world
-	tnc::ecs::Entity cubeEntity;
-	tnc::ecs::Entity lightEntity;
-	tnc::ecs::Entity cameraEntity;
+	blb::ecs::Entity cubeEntity;
+	blb::ecs::Entity lightEntity;
+	blb::ecs::Entity cameraEntity;
 
 	//FUNCTIONS
 public:

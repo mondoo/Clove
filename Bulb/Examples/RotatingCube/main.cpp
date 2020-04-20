@@ -1,6 +1,6 @@
 #include "ExampleLayer.hpp"
 
-#include <Tunic/Tunic.hpp>
+#include <Bulb/Bulb.hpp>
 
 int main() {
 	//Initialise the logger
@@ -14,7 +14,7 @@ int main() {
 	window->setVSync(true);
 
 	//Push on our example layer to the stack
-	auto layerStack = std::make_unique<tnc::LayerStack>();
+	auto layerStack = std::make_unique<blb::LayerStack>();
 	layerStack->pushLayer(std::make_shared<ExampleLayer>(window));
 
 	//Cache of the 'previous frame time' that'll be used to calculate the delta time

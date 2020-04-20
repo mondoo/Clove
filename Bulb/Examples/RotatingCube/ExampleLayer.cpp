@@ -1,33 +1,33 @@
 #include "ExampleLayer.hpp"
 
-#include <Tunic/Tunic.hpp>
+#include <Bulb/Bulb.hpp>
 
 ExampleLayer::ExampleLayer(std::shared_ptr<clv::plt::Window> window) 
 	: window(std::move(window)) {
 	//Add on any systems we want to use
-	world.addSystem<tnc::ecs::RenderSystem>(*this->window);
+	world.addSystem<blb::ecs::RenderSystem>(*this->window);
 }
 
 void ExampleLayer::onAttach() {
 	//Load in our mesh
-	tnc::rnd::Model cube = tnc::ModelLoader::loadModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
+	blb::rnd::Model cube = blb::ModelLoader::loadModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
 
 	//Create the entity that will act as our cube
 	cubeEntity = world.createEntity();
 	//Add components that will define our entity and interact with certain systems
-	cubeEntity.addComponent<tnc::ecs::TransformComponent>();
-	cubeEntity.addComponent<tnc::ecs::ModelComponent>(cube);
+	cubeEntity.addComponent<blb::ecs::TransformComponent>();
+	cubeEntity.addComponent<blb::ecs::ModelComponent>(cube);
 
 	//Add our light entity
 	lightEntity = world.createEntity();
 	//The direction is where the light is pointing. In our case down to the left and back
-	lightEntity.addComponent<tnc::ecs::DirectionalLightComponent>()->setDirection({ 1.0f, -1.0f, 1.0f });
+	lightEntity.addComponent<blb::ecs::DirectionalLightComponent>()->setDirection({ 1.0f, -1.0f, 1.0f });
 
 	//Add our camera entity
 	cameraEntity = world.createEntity();
-	cameraEntity.addComponent<tnc::ecs::TransformComponent>()->setPosition({ 0.0f, 0.0f, -5.0f });
+	cameraEntity.addComponent<blb::ecs::TransformComponent>()->setPosition({ 0.0f, 0.0f, -5.0f });
 	//The CameraComponent requires a window or a render target to render to
-	cameraEntity.addComponent<tnc::ecs::CameraComponent>(*window, tnc::ecs::ProjectionMode::perspective);
+	cameraEntity.addComponent<blb::ecs::CameraComponent>(*window, blb::ecs::ProjectionMode::perspective);
 }
 
 void ExampleLayer::onUpdate(clv::utl::DeltaTime deltaTime) {
@@ -35,7 +35,7 @@ void ExampleLayer::onUpdate(clv::utl::DeltaTime deltaTime) {
 	static float rotation = 0.0f;
 
 	//Retrieve the transform component from the cube entity
-	tnc::ecs::ComponentPtr<tnc::ecs::TransformComponent> cubeTransform = cubeEntity.getComponent<tnc::ecs::TransformComponent>();
+	blb::ecs::ComponentPtr<blb::ecs::TransformComponent> cubeTransform = cubeEntity.getComponent<blb::ecs::TransformComponent>();
 
 	//Rotate the cube around the Y axis 
 	rotation += rotationSpeed * deltaTime;
