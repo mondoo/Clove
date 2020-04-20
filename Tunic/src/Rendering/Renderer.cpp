@@ -14,8 +14,24 @@
 using namespace clv;
 using namespace clv::gfx;
 
-extern "C" const char default3D_ps[];
-extern "C" const size_t default3D_psLength;
+extern "C" const char default3d_vs[];
+extern "C" const size_t default3d_vsLength;
+extern "C" const char default3d_ps[];
+extern "C" const size_t default3d_psLength;
+
+extern "C" const char genshadowmap_vs[];
+extern "C" const size_t genshadowmap_vsLength;
+extern "C" const char genshadowmap_gs[];
+extern "C" const size_t genshadowmap_gsLength;
+extern "C" const char genshadowmap_ps[];
+extern "C" const size_t genshadowmap_psLength;
+
+extern "C" const char gencubeshadowmap_vs[];
+extern "C" const size_t gencubeshadowmap_vsLength;
+extern "C" const char gencubeshadowmap_gs[];
+extern "C" const size_t gencubeshadowmap_gsLength;
+extern "C" const char gencubeshadowmap_ps[];
+extern "C" const size_t gencubeshadowmap_psLength;
 
 namespace tnc::rnd {
 	Renderer::SceneData::SceneData() = default;
@@ -29,8 +45,8 @@ namespace tnc::rnd {
 		//Mesh command buffer
 		meshCommandBuffer = factory.createCommandBuffer();
 
-		auto meshVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/Default3D-vs.hlsl");
-		auto meshPS = factory.createShader({ ShaderStage::Pixel }, default3D_ps, default3D_psLength);
+		auto meshVS = factory.createShader({ ShaderStage::Vertex }, default3d_vs, default3d_vsLength);
+		auto meshPS = factory.createShader({ ShaderStage::Pixel }, default3d_ps, default3d_psLength);
 		meshPipelineObject = factory.createPipelineObject();
 		meshPipelineObject->setVertexShader(*meshVS);
 		meshPipelineObject->setPixelShader(*meshPS);
@@ -46,9 +62,9 @@ namespace tnc::rnd {
 		directionalShadowRenderTarget	= factory.createRenderTarget(nullptr, directionalShadowMapTexture.get());
 		directionalShadowCommandBuffer	= factory.createCommandBuffer();
 
-		auto dirShadowVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/GenShadowMap-vs.hlsl");
-		auto dirShadowGS = factory.createShader({ ShaderStage::Geometry }, "res/Shaders/GenShadowMap-gs.hlsl");
-		auto dirShadowPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/GenShadowMap-ps.hlsl");
+		auto dirShadowVS = factory.createShader({ ShaderStage::Vertex }, genshadowmap_vs, genshadowmap_vsLength);
+		auto dirShadowGS = factory.createShader({ ShaderStage::Geometry }, genshadowmap_gs, genshadowmap_gsLength);
+		auto dirShadowPS = factory.createShader({ ShaderStage::Pixel }, genshadowmap_ps, genshadowmap_psLength);
 		directionalShadowPipelineObject = factory.createPipelineObject();
 		directionalShadowPipelineObject->setVertexShader(*dirShadowVS);
 		directionalShadowPipelineObject->setGeometryShader(*dirShadowGS);
@@ -65,9 +81,9 @@ namespace tnc::rnd {
 		pointShadowRenderTarget		= factory.createRenderTarget(nullptr, pointShadowMapTexture.get());
 		pointShadowCommandBuffer	= factory.createCommandBuffer();
 
-		auto pointShadowVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/GenCubeShadowMap-vs.hlsl");
-		auto pointShadowGS = factory.createShader({ ShaderStage::Geometry }, "res/Shaders/GenCubeShadowMap-gs.hlsl");
-		auto pointShadowPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/GenCubeShadowMap-ps.hlsl");
+		auto pointShadowVS = factory.createShader({ ShaderStage::Vertex }, gencubeshadowmap_vs, gencubeshadowmap_vsLength);
+		auto pointShadowGS = factory.createShader({ ShaderStage::Geometry }, gencubeshadowmap_gs, gencubeshadowmap_gsLength);
+		auto pointShadowPS = factory.createShader({ ShaderStage::Pixel }, gencubeshadowmap_ps, gencubeshadowmap_psLength);
 		pointShadowPipelineObject = factory.createPipelineObject();
 		pointShadowPipelineObject->setVertexShader(*pointShadowVS);
 		pointShadowPipelineObject->setGeometryShader(*pointShadowGS);

@@ -13,6 +13,16 @@
 using namespace clv;
 using namespace clv::gfx;
 
+extern "C" const char default2d_vs[];
+extern "C" const size_t default2d_vsLength;
+extern "C" const char default2d_ps[];
+extern "C" const size_t default2d_psLength;
+
+extern "C" const char font_vs[];
+extern "C" const size_t font_vsLength;
+extern "C" const char font_ps[];
+extern "C" const size_t font_psLength;
+
 namespace tnc::rnd {
 	Renderer2D::Renderer2D(clv::plt::Window& window) 
 		: renderTarget(window.getSurface()->getRenderTarget())
@@ -22,15 +32,15 @@ namespace tnc::rnd {
 		commandBuffer = factory.createCommandBuffer();
 
 		//Default
-		auto defaultVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/Default2D-vs.hlsl");
-		auto defaultPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/Default2D-ps.hlsl");
+		auto defaultVS = factory.createShader({ ShaderStage::Vertex }, default2d_vs, default2d_vsLength);
+		auto defaultPS = factory.createShader({ ShaderStage::Pixel }, default2d_ps, default2d_psLength);
 		defaultPipelineObject = factory.createPipelineObject();
 		defaultPipelineObject->setVertexShader(*defaultVS);
 		defaultPipelineObject->setPixelShader(*defaultPS);
 
 		//Text
-		auto textVS = factory.createShader({ ShaderStage::Vertex }, "res/Shaders/Font-vs.hlsl");
-		auto textPS = factory.createShader({ ShaderStage::Pixel }, "res/Shaders/Font-ps.hlsl");
+		auto textVS = factory.createShader({ ShaderStage::Vertex }, font_vs, font_vsLength);
+		auto textPS = factory.createShader({ ShaderStage::Pixel }, font_ps, font_psLength);
 		textPipelineObject = factory.createPipelineObject();
 		textPipelineObject->setVertexShader(*textVS);
 		textPipelineObject->setPixelShader(*textPS);
