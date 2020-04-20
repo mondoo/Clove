@@ -40,7 +40,6 @@ set_target_properties(LinearMath PROPERTIES FOLDER ${DependencyFolder}/bullet3)
 #assimp
 set(ASSIMP_BUILD_FBX_IMPORTER ON CACHE BOOL "")
 set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "")
-set(ASSIMP_BUILD_OBJ_EXPORTER ON CACHE BOOL "") #Currently there is a bug in assimp where it won't build if all exporters are disabled
 add_subdirectory(assimp)
 set_target_properties(assimp PROPERTIES FOLDER ${DependencyFolder}/assimp)
 set_target_properties(IrrXML PROPERTIES FOLDER ${DependencyFolder}/assimp)
