@@ -76,40 +76,40 @@ target_link_libraries(
 		$<$<PLATFORM_ID:Darwin>:${CLV_QUARTZ_LIB}>
 )
 
-#Precompiled header
+#Precompiled header ($<ANGLE-R> makes sure #include ">" doesn't happen)
 target_precompile_headers(
 	Clove
 
 	#Generic headers
 	PUBLIC
-		<iostream>
-		<memory>
-		<utility>
-		<algorithm>
-		<functional>
-		<sstream>
-		<optional>
+		$<$<COMPILE_LANGUAGE:CXX>:<iostream$<ANGLE-R>>
+		$<$<COMPILE_LANGUAGE:CXX>:<memory$<ANGLE-R>>
+		$<$<COMPILE_LANGUAGE:CXX>:<utility$<ANGLE-R>>
+		$<$<COMPILE_LANGUAGE:CXX>:<algorithm$<ANGLE-R>>
+		$<$<COMPILE_LANGUAGE:CXX>:<functional$<ANGLE-R>>
+		$<$<COMPILE_LANGUAGE:CXX>:<sstream$<ANGLE-R>>
+		$<$<COMPILE_LANGUAGE:CXX>:<optional$<ANGLE-R>>
 
 	#Data structures
 	PUBLIC
-        <string>
-        <array>
-		<vector>
-		<map>
-		<unordered_map>
-		<set>
-		<unordered_set>
+        $<$<COMPILE_LANGUAGE:CXX>:<string$<ANGLE-R>>
+        $<$<COMPILE_LANGUAGE:CXX>:<array$<ANGLE-R>>
+		$<$<COMPILE_LANGUAGE:CXX>:<vector$<ANGLE-R>>
+		$<$<COMPILE_LANGUAGE:CXX>:<map$<ANGLE-R>>
+		$<$<COMPILE_LANGUAGE:CXX>:<unordered_map$<ANGLE-R>>
+		$<$<COMPILE_LANGUAGE:CXX>:<set$<ANGLE-R>>
+		$<$<COMPILE_LANGUAGE:CXX>:<unordered_set$<ANGLE-R>>
 
 	#Clove headers
 	PUBLIC
-		[["Clove/Core.hpp"]]
-		[["Clove/Log.hpp"]]
-		[["Clove/Maths/MathsTypes.hpp"]]
-		[["Clove/Maths/Maths.hpp"]]
-		[["Clove/Maths/MathsHelpers.hpp"]]
-		[["Clove/Utils/Delegate.hpp"]]
-		[["Clove/Utils/DeltaTime.hpp"]]
-		[["Clove/Utils/Timer.hpp"]]
+		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Core.hpp">
+		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Log.hpp">
+		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsTypes.hpp">
+		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/Maths.hpp">
+		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsHelpers.hpp">
+		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/Delegate.hpp">
+		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/DeltaTime.hpp">
+		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/Timer.hpp">
 )
 
 #Preprocessor

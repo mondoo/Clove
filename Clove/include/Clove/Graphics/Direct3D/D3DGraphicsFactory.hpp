@@ -38,7 +38,8 @@ namespace clv::gfx::d3d {
 
 		virtual std::shared_ptr<RenderTarget> createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture) override;
 
-		virtual std::shared_ptr<Shader> createShader(const ShaderDescriptor& descriptor, std::string_view pathToShader) override;
+		virtual std::shared_ptr<Shader> createShader(ShaderDescriptor descriptor, std::string_view pathToShader) override;
+		virtual std::shared_ptr<Shader> createShader(ShaderDescriptor descriptor, const char* bytes, const std::size_t size) override;
 
 		virtual std::shared_ptr<Surface> createSurface(void* windowData) override;
 

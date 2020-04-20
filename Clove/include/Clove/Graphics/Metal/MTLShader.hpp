@@ -15,7 +15,8 @@ namespace clv::gfx::mtl{
 		//FUNCTIONS
 	public:
 		MTLShader() = delete;
-		MTLShader(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, const ShaderDescriptor& descriptor, std::string_view pathToShader);
+		MTLShader(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, ShaderDescriptor descriptor, std::string_view pathToShader);
+		MTLShader(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, ShaderDescriptor descriptor, const char* bytes, const size::size_t size);
 		
 		MTLShader(const MTLShader& other) = delete;
 		MTLShader(MTLShader&& other) noexcept;

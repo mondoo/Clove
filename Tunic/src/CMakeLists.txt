@@ -98,7 +98,6 @@ set(
 		${TNC_SOURCE}/Rendering/Renderables/Model.cpp
 		${TNC_INCLUDE}/Rendering/Renderables/Sprite.hpp
 		${TNC_SOURCE}/Rendering/Renderables/Sprite.cpp
-		
 )
 
 set(
@@ -124,16 +123,48 @@ set(
 		${TNC_RESOURCE}/Shaders/GenCubeShadowMap-vs.hlsl
 		${TNC_RESOURCE}/Shaders/GenShadowMap-gs.hlsl
 		${TNC_RESOURCE}/Shaders/GenShadowMap-ps.hlsl
-		${TNC_RESOURCE}/Shaders/GenShadowMap-vs.hlsl
-		
+		${TNC_RESOURCE}/Shaders/GenShadowMap-vs.hlsl	
 )
 
+#Convert resources into c strings
+set(ResourceBinaries)
+
+function(embeddResource resources readType)
+	set(files)
+
+	foreach(res IN ITEMS ${resources})
+		get_filename_component(fileName ${res} NAME_WLE)
+
+		string(REPLACE "-" "_" fileName ${fileName})
+		string(TOLOWER ${fileName} fileName)
+
+		add_custom_command(
+			OUTPUT ${fileName}.c
+			COMMAND ResourceEmbedder ${fileName} ${res} ${readType}
+			DEPENDS ${res}
+		)
+
+		set(files ${files} "${fileName}.c")
+	endforeach()
+
+	set(ResourceBinaries ${ResourceBinaries} ${files} PARENT_SCOPE)
+endfunction()
+
+embeddResource("${ShaderFiles}" "r")
+embeddResource("${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf" "rb")
+
+#Organise the source tree
 file(GLOB_RECURSE header ${TNC_INCLUDE}/*.h ${TNC_INCLUDE}/*.hpp ${TNC_INCLUDE}/*.inl)
-file(GLOB_RECURSE source *.cpp *.m *.mm *.glsl *.hlsl)
+file(GLOB_RECURSE source *.cpp *.m *.mm)
 file(GLOB_RECURSE resource ${TNC_RESOURCE}/*.hlsl)
 source_group(TREE ${TNC_INCLUDE} FILES ${header})
 source_group(TREE ${TNC_SOURCE} FILES ${source})
 source_group(TREE ${TNC_RESOURCE} FILES ${resource})
+
+source_group(PCH FILES 
+	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx
+	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
+)
 
 target_sources(
 	${PROJECT_NAME}
@@ -155,6 +186,8 @@ target_sources(
 		${RenderingFiles}
 		${UIFiles}
 		${ShaderFiles}
+
+		${ResourceBinaries}
 )
 
 #Set as header only so VS doesn't try to compile them

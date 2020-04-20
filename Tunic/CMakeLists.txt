@@ -3,6 +3,9 @@ set(FrameworkFolder "Garlic/Tunic")
 #Dependencies
 add_subdirectory(vendor)
 
+#Tools
+add_subdirectory(Tools)
+
 #Tunic
 add_subdirectory(src)
 set_target_properties(Tunic PROPERTIES FOLDER ${FrameworkFolder})

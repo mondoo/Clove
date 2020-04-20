@@ -41,8 +41,12 @@ namespace clv::gfx::ogl{
 		return std::make_shared<GLRenderTarget>(shared_from_this(), colourTexture, depthStencilTexture);
 	}
 
-	std::shared_ptr<Shader> GLGraphicsFactory::createShader(const ShaderDescriptor& descriptor, std::string_view pathToShader){
+	std::shared_ptr<Shader> GLGraphicsFactory::createShader(ShaderDescriptor descriptor, std::string_view pathToShader) {
 		return std::make_shared<GLShader>(shared_from_this(), descriptor, pathToShader);
+	}
+
+	std::shared_ptr<Shader> GLGraphicsFactory::createShader(ShaderDescriptor descriptor, const char* bytes, const std::size_t size) {
+		return std::make_shared<GLShader>(shared_from_this(), descriptor, bytes, size);
 	}
 
 	std::shared_ptr<Surface> GLGraphicsFactory::createSurface(void* windowData){

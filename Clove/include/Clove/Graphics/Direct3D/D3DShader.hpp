@@ -18,7 +18,8 @@ namespace clv::gfx::d3d{
 		//FUNCTIONS	
 	public:
 		D3DShader() = delete;
-		D3DShader(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, const ShaderDescriptor& descriptor, std::string_view pathToShader);
+		D3DShader(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, ShaderDescriptor descriptor, std::string_view pathToShader);
+		D3DShader(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, ShaderDescriptor descriptor, const char* bytes, const std::size_t size);
 
 		D3DShader(const D3DShader& other) = delete;
 		D3DShader(D3DShader&& other) noexcept;

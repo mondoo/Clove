@@ -20,6 +20,7 @@ namespace clv::gfx::ogl{
 	public:
 		GLShader() = delete;
 		GLShader(std::shared_ptr<GraphicsFactory> factory, ShaderDescriptor descriptor, std::string_view pathToShader);
+		GLShader(std::shared_ptr<GraphicsFactory> factory, ShaderDescriptor descriptor, const char* bytes, const std::size_t size);
 
 		GLShader(const GLShader& other) = delete;
 		GLShader(GLShader&& other) noexcept;

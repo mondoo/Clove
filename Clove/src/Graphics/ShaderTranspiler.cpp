@@ -132,6 +132,10 @@ namespace clv::gfx::ShaderTranspiler{
 		return transpileFromSource(ss.str(), stage, outputType);
 	}
 
+	std::string transpileFromBytes(const char* bytes, const std::size_t size, ShaderStage stage, ShaderType outputType) {
+		return transpileFromSource({ bytes, size }, stage, outputType);
+	}
+
 	std::string transpileFromSource(std::string_view source, ShaderStage stage, ShaderType outputType){		
 		std::string shaderSource;
 		if(outputType == ShaderType::GLSL) {
