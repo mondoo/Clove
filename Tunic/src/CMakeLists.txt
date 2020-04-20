@@ -127,24 +127,31 @@ set(
 )
 
 #Convert resources into c strings
-add_custom_command(
-	OUTPUT roboto.c
-	COMMAND ResourceEmbedder roboto ${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf rb
-	DEPENDS ${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf
-)
+set(ResourceBinaries)
 
-add_custom_command(
-	OUTPUT default3D_ps.c
-	COMMAND ResourceEmbedder default3D_ps ${TNC_RESOURCE}/Shaders/Default3D-ps.hlsl r
-	DEPENDS ${TNC_RESOURCE}/Shaders/Default3D-ps.hlsl
-)
+function(embeddResource resources readType)
+	set(files)
 
+	foreach(res IN ITEMS ${resources})
+		get_filename_component(fileName ${res} NAME_WLE)
 
-set(
-	ResourceBinaries
-		roboto.c
-		default3D_ps.c
-)
+		string(REPLACE "-" "_" fileName ${fileName})
+		string(TOLOWER ${fileName} fileName)
+
+		add_custom_command(
+			OUTPUT ${fileName}.c
+			COMMAND ResourceEmbedder ${fileName} ${res} ${readType}
+			DEPENDS ${res}
+		)
+
+		set(files ${files} "${fileName}.c")
+	endforeach()
+
+	set(ResourceBinaries ${ResourceBinaries} ${files} PARENT_SCOPE)
+endfunction()
+
+embeddResource("${ShaderFiles}" "r")
+embeddResource("${TNC_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf" "rb")
 
 #Organise the source tree
 file(GLOB_RECURSE header ${TNC_INCLUDE}/*.h ${TNC_INCLUDE}/*.hpp ${TNC_INCLUDE}/*.inl)
@@ -158,10 +165,6 @@ source_group(PCH FILES
 	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx
 	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
 )
-
-#source_group(Resources FILES
-#	${ResourceBinaries}
-#)
 
 target_sources(
 	${PROJECT_NAME}
