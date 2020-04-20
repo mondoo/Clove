@@ -8,8 +8,8 @@
 using namespace clv;
 using namespace clv::gfx;
 
-extern "C" const unsigned char roboto[];
-extern "C" const size_t robotoLength;
+extern "C" const unsigned char roboto_black[];
+extern "C" const size_t roboto_blackLength;
 
 namespace tnc::rnd {
 	static Font::FacePtr makeUniqueFace(FT_Face face) {
@@ -47,7 +47,7 @@ namespace tnc::rnd {
 			ftLibReference = ftLib.lock();
 		}
 
-		face = createFace(roboto, robotoLength);
+		face = createFace(roboto_black, roboto_blackLength);
 	}
 
 	Font::Font(const std::string& filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
