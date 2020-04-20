@@ -53,7 +53,7 @@ namespace clv::gfx::d3d {
 		delete[] wideCharArray;
 	}
 
-	D3DShader::D3DShader(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, ShaderDescriptor descriptor, const unsigned char* bytes, const std::size_t size)
+	D3DShader::D3DShader(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, ShaderDescriptor descriptor, const char* bytes, const std::size_t size)
 		: factory(std::move(factory))
 		, descriptor(std::move(descriptor)) {
 		const D3D_SHADER_MACRO defines[] = {

@@ -38,7 +38,7 @@ namespace clv::gfx{
 		virtual std::shared_ptr<RenderTarget> createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture) = 0;
 
 		virtual std::shared_ptr<Shader> createShader(ShaderDescriptor descriptor, std::string_view pathToShader) = 0;
-		virtual std::shared_ptr<Shader> createShader(ShaderDescriptor descriptor, const unsigned char* bytes, const std::size_t size) = 0;
+		virtual std::shared_ptr<Shader> createShader(ShaderDescriptor descriptor, const char* bytes, const std::size_t size) = 0;
 
 		virtual std::shared_ptr<Surface> createSurface(void* windowData) = 0;
 	};

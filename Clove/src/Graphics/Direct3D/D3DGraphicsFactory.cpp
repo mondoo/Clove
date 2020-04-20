@@ -47,7 +47,7 @@ namespace clv::gfx::d3d {
 		return std::make_shared<D3DShader>(shared_from_this(), *d3dDevice.Get(), std::move(descriptor), pathToShader);
 	}
 
-	std::shared_ptr<Shader> D3DGraphicsFactory::createShader(ShaderDescriptor descriptor, const unsigned char* bytes, const std::size_t size) {
+	std::shared_ptr<Shader> D3DGraphicsFactory::createShader(ShaderDescriptor descriptor, const char* bytes, const std::size_t size) {
 		return std::make_shared<D3DShader>(shared_from_this(), *d3dDevice.Get(), std::move(descriptor), bytes, size);
 	}
 
