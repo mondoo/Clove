@@ -5,11 +5,19 @@ namespace blb::ecs {
 
 	InputComponent::InputComponent(const InputComponent& other) = default;
 
-	InputComponent::InputComponent(InputComponent&& other) noexcept = default;
+	InputComponent::InputComponent(InputComponent&& other) noexcept {
+		keyBindings			= std::move(other.keyBindings);
+		mouseButtonBindings = std::move(other.mouseButtonBindings);
+	}
 
 	InputComponent& InputComponent::operator=(const InputComponent& other) = default;
 
-	InputComponent& InputComponent::operator=(InputComponent&& other) noexcept = default;
+	InputComponent& InputComponent::operator=(InputComponent&& other) noexcept{
+		keyBindings			= std::move(other.keyBindings);
+		mouseButtonBindings = std::move(other.mouseButtonBindings);
+
+		return *this;
+	}
 
 	InputComponent::~InputComponent() = default;
 }
