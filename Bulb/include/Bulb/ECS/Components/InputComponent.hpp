@@ -2,12 +2,13 @@
 
 #include "Bulb/ECS/Component.hpp"
 
-#include <Clove/Input/KeyCodes.hpp>
-#include <Clove/Input/MouseButtonCodes.hpp>
+#include <Clove/Input/Keyboard.hpp>
+#include <Clove/Input/Mouse.hpp>
 
 namespace blb::ecs {
 	enum class InputResponse {
-
+		ignored,
+		handled
 	};
 }
 
@@ -18,8 +19,8 @@ namespace blb::ecs {
 		//VARIABLES
 	//private:
 	public: //Temp
-		std::unordered_map<clv::Key, std::vector<std::function<InputResponse()>>> keyBindings;
-		std::unordered_map<clv::MouseButton, std::vector<std::function<InputResponse()>>> mouseButtonBindings;
+		std::unordered_map<clv::Key, std::vector<std::function<InputResponse(const clv::Keyboard::Event&)>>> keyBindings;
+		std::unordered_map<clv::MouseButton, std::vector<std::function<InputResponse(const clv::Mouse::Event&)>>> mouseButtonBindings;
 
 		//FUNCTIONS
 	public:
