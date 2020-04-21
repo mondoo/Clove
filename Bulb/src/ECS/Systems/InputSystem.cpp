@@ -42,5 +42,19 @@ namespace blb::ecs {
 		}
 
 		//Mouse
+		while(std::optional<Mouse::Event> mouseEvent = window->getMouse().getEvent()) {
+			for(auto&& [inputComp] : inputSets) {
+				bool handled = false;
+				for(auto func : inputComp->mouseButtonBindings[mouseEvent.value().getButton()]) {
+					if(func(mouseEvent.value()) == InputResponse::handled) {
+						handled = true;
+						break;
+					}
+				}
+				if(handled) {
+					break;
+				}
+			}
+		}
 	}
 }
