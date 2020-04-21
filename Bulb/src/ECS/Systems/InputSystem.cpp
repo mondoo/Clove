@@ -28,14 +28,14 @@ namespace blb::ecs {
 		//Keyboard
 		while(std::optional<Keyboard::Event> keyEvent = window->getKeyboard().getKeyEvent()) {
 			for(auto&& [inputComp] : inputSets) {
-				bool handled = false;
+				bool consumed = false;
 				for(auto func : inputComp->keyBindings[keyEvent.value().getKey()]) {
-					if(func(keyEvent.value()) == InputResponse::handled) {
-						handled = true;
+					if(func(keyEvent.value()) == InputResponse::consumed) {
+						consumed = true;
 						break;
 					}
 				}
-				if(handled) {
+				if(consumed) {
 					break;
 				}
 			}
@@ -44,14 +44,14 @@ namespace blb::ecs {
 		//Mouse
 		while(std::optional<Mouse::Event> mouseEvent = window->getMouse().getEvent()) {
 			for(auto&& [inputComp] : inputSets) {
-				bool handled = false;
+				bool consumed = false;
 				for(auto func : inputComp->mouseButtonBindings[mouseEvent.value().getButton()]) {
-					if(func(mouseEvent.value()) == InputResponse::handled) {
-						handled = true;
+					if(func(mouseEvent.value()) == InputResponse::consumed) {
+						consumed = true;
 						break;
 					}
 				}
-				if(handled) {
+				if(consumed) {
 					break;
 				}
 			}

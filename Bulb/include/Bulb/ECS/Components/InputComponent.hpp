@@ -8,7 +8,7 @@
 namespace blb::ecs {
 	enum class InputResponse {
 		ignored,
-		handled
+		consumed
 	};
 }
 
