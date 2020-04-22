@@ -45,7 +45,7 @@ namespace blb::ecs {
 		virtual ~Component();
 
 		static ComponentID id();
-		virtual ComponentID getComponentID() const override;
+		ComponentID getComponentID() const final;
 
 		EntityID getEntityID() const;
 

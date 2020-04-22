@@ -40,8 +40,8 @@ namespace blb::ecs {
 
 		~ComponentContainer();
 
-		virtual void cloneComponent(EntityID fromID, EntityID toID) override;
-		virtual void removeComponent(EntityID entityID) override;
+		void cloneComponent(EntityID fromID, EntityID toID) final;
+		void removeComponent(EntityID entityID) final;
 
 		template<typename... ConstructArgs>
 		ComponentPtr<ComponentType> addComponent(EntityID entityID, ConstructArgs&&... args);
