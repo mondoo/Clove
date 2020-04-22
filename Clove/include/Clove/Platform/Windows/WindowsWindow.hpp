@@ -36,20 +36,20 @@ namespace clv::plt {
 		WindowsWindow& operator=(const WindowsWindow& other) = delete;
 		WindowsWindow& operator=(WindowsWindow&& other) noexcept = delete;
 
-		virtual ~WindowsWindow();
+		~WindowsWindow();
 
-		virtual void* getNativeWindow() const override;
+		void* getNativeWindow() const override;
 
-		virtual mth::vec2i getPosition() const override;
-		virtual mth::vec2i getSize() const override;
+		mth::vec2i getPosition() const override;
+		mth::vec2i getSize() const override;
 
-		virtual void moveWindow(const mth::vec2i& position) override;
-		virtual void resizeWindow(const mth::vec2i& size) override;
+		void moveWindow(const mth::vec2i& position) override;
+		void resizeWindow(const mth::vec2i& size) override;
 
-		virtual bool isOpen() const override;
+		bool isOpen() const override;
 
 	protected:
-		virtual void processInput() override;
+		void processInput() override;
 
 	private:
 		static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

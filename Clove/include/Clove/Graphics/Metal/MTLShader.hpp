@@ -24,11 +24,11 @@ namespace clv::gfx::mtl{
 		MTLShader& operator=(const MTLShader& other) = delete;
 		MTLShader& operator=(MTLShader&& other) noexcept;
 		
-		virtual ~MTLShader();
+		~MTLShader();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 		
-		virtual const ShaderDescriptor& getDescriptor() const override;
+		const ShaderDescriptor& getDescriptor() const override;
 		
 		const id<MTLFunction> getMTLShader() const;
 	};

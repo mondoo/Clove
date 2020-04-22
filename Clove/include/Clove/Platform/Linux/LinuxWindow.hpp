@@ -49,19 +49,19 @@ namespace clv::plt {
 		LinuxWindow& operator=(const LinuxWindow& other) = delete;
 		LinuxWindow& operator=(LinuxWindow&& other) noexcept = delete;
 
-		virtual ~LinuxWindow();
+		~LinuxWindow();
 
-		virtual void* getNativeWindow() const override;
+		void* getNativeWindow() const override;
 
-		virtual mth::vec2i getPosition() const override;
-		virtual mth::vec2i getSize() const override;
+		mth::vec2i getPosition() const override;
+		mth::vec2i getSize() const override;
 
-		virtual void moveWindow(const mth::vec2i& position) override;
-		virtual void resizeWindow(const mth::vec2i& size) override;
+		void moveWindow(const mth::vec2i& position) override;
+		void resizeWindow(const mth::vec2i& size) override;
 
-		virtual bool isOpen() const override;
+		bool isOpen() const override;
 
 	protected:
-		virtual void processInput() override;
+		void processInput() override;
 	};
 }

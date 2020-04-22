@@ -44,7 +44,7 @@ namespace blb::ecs {
 		AudioComponent& operator=(const AudioComponent& other);
 		AudioComponent& operator=(AudioComponent&& other);
 
-		virtual ~AudioComponent();
+		~AudioComponent();
 
 		void setSound(const aud::Sound& sound); //TODO: make val?
 

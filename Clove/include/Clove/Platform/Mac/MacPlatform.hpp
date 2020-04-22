@@ -14,9 +14,9 @@ namespace clv::plt{
 		MacPlatform& operator=(const MacPlatform& other) = delete;
 		MacPlatform& operator=(MacPlatform&& other) noexcept;
 
-		virtual ~MacPlatform();
+		~MacPlatform();
 
-		virtual std::shared_ptr<Window> createWindow(const WindowDescriptor& props) override;
-		virtual std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) override;
+		std::shared_ptr<Window> createWindow(const WindowDescriptor& props) override;
+		std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) override;
 	};
 }

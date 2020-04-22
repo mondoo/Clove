@@ -36,18 +36,18 @@ namespace clv::gfx::d3d{
 		D3DPipelineObject& operator=(const D3DPipelineObject& other) = delete;
 		D3DPipelineObject& operator=(D3DPipelineObject&& other) noexcept;
 
-		virtual ~D3DPipelineObject();
+		~D3DPipelineObject();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual void setVertexShader(const Shader& vertexShader) override;
-		virtual void setGeometryShader(const Shader& geometryShader) override;
-		virtual void setPixelShader(const Shader& pixelShader) override;
+		void setVertexShader(const Shader& vertexShader) override;
+		void setGeometryShader(const Shader& geometryShader) override;
+		void setPixelShader(const Shader& pixelShader) override;
 
-		virtual void setBlendState(bool enabled) override;
-		virtual void setCullMode(CullFace face, bool frontFaceCounterClockwise) override;
+		void setBlendState(bool enabled) override;
+		void setCullMode(CullFace face, bool frontFaceCounterClockwise) override;
 
-		virtual const VertexLayout& getVertexLayout() const override;
+		const VertexLayout& getVertexLayout() const override;
 
 		const Microsoft::WRL::ComPtr<ID3D11VertexShader>& getD3DVertexShader() const;
 		const Microsoft::WRL::ComPtr<ID3D11GeometryShader>& getD3DGeometryShader() const;

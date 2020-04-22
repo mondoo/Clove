@@ -23,6 +23,6 @@ namespace blb::ecs {
 		ModelComponent& operator=(const ModelComponent& other);
 		ModelComponent& operator=(ModelComponent&& other) noexcept;
 
-		virtual ~ModelComponent();
+		~ModelComponent();
 	};
 }

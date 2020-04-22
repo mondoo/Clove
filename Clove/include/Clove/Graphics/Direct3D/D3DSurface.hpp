@@ -46,20 +46,20 @@ namespace clv::gfx::d3d{
 		D3DSurface& operator=(const D3DSurface& other) = delete;
 		D3DSurface& operator=(D3DSurface&& other) noexcept;
 
-		virtual ~D3DSurface();
+		~D3DSurface();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual void setVSync(bool enabled) override;
-		virtual bool isVsync() const override;
+		void setVSync(bool enabled) override;
+		bool isVsync() const override;
 
-		virtual void resizeBuffers(const mth::vec2ui& size) override;
+		void resizeBuffers(const mth::vec2ui& size) override;
 
-		virtual void makeCurrent() override{};
+		void makeCurrent() override{};
 
-		virtual void present() override;
+		void present() override;
 
-		virtual std::shared_ptr<RenderTarget> getRenderTarget() const override;
+		std::shared_ptr<RenderTarget> getRenderTarget() const override;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain> getSwapChain() const;
 	};

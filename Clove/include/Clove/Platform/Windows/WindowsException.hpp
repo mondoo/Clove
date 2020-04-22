@@ -18,10 +18,10 @@ namespace clv{
 
 		WindowsException(int32_t lineNum, const char* file, HRESULT hr);
 
-		virtual ~WindowsException();
+		~WindowsException();
 
-		virtual const char* what() const noexcept override;
-		virtual const char* getType() const noexcept override;
+		const char* what() const noexcept override;
+		const char* getType() const noexcept override;
 
 		HRESULT getErrorCode() const noexcept;
 		std::string getErrorString() const noexcept;

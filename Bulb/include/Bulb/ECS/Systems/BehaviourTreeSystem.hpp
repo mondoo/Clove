@@ -16,6 +16,6 @@ namespace blb::ecs {
 
 		~BehaviourTreeSystem();
 
-		virtual void update(World& world, clv::utl::DeltaTime deltaTime) override;
+		void update(World& world, clv::utl::DeltaTime deltaTime) override;
 	};
 }

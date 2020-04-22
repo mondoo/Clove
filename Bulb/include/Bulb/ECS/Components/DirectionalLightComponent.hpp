@@ -27,7 +27,7 @@ namespace blb::ecs {
 		DirectionalLightComponent& operator=(const DirectionalLightComponent& other);
 		DirectionalLightComponent& operator=(DirectionalLightComponent&&) noexcept;
 
-		virtual ~DirectionalLightComponent();
+		~DirectionalLightComponent();
 
 		void setDirection(const clv::mth::vec3f& direction);
 		const clv::mth::vec3f& getDirection() const;

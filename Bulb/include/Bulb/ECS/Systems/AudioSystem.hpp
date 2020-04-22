@@ -30,9 +30,9 @@ namespace blb::ecs {
 
 		~AudioSystem();
 
-		virtual void update(World& world, clv::utl::DeltaTime deltaTime) override;
+		void update(World& world, clv::utl::DeltaTime deltaTime) override;
 
-		virtual void onComponentDestroyed(ComponentInterface* component) override;
+		void onComponentDestroyed(ComponentInterface* component) override;
 
 	private:
 		void startSound(AudioComponent* component, PlaybackMode playback);

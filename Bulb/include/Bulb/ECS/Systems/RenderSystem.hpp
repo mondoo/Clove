@@ -28,10 +28,10 @@ namespace blb::ecs {
 		RenderSystem& operator=(const RenderSystem& other) = delete;
 		RenderSystem& operator=(RenderSystem&& other) noexcept;
 
-		virtual ~RenderSystem();
+		~RenderSystem();
 
-		virtual void preUpdate(World& world) override;
-		virtual void update(World& world, clv::utl::DeltaTime deltaTime) override;
-		virtual void postUpdate(World& world) override;
+		void preUpdate(World& world) override;
+		void update(World& world, clv::utl::DeltaTime deltaTime) override;
+		void postUpdate(World& world) override;
 	};
 }

@@ -29,18 +29,18 @@ namespace clv::gfx::ogl{
 		GLPipelineObject& operator=(const GLPipelineObject& other) = delete;
 		GLPipelineObject& operator=(GLPipelineObject&& other) noexcept;
 
-		virtual ~GLPipelineObject();
+		~GLPipelineObject();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual void setVertexShader(const Shader& vertexShader) override;
-		virtual void setGeometryShader(const Shader& geometryShader) override;
-		virtual void setPixelShader(const Shader& pixelShader) override;
+		void setVertexShader(const Shader& vertexShader) override;
+		void setGeometryShader(const Shader& geometryShader) override;
+		void setPixelShader(const Shader& pixelShader) override;
 
-		virtual void setBlendState(bool enabled) override;
-		virtual void setCullMode(CullFace face, bool frontFaceCounterClockwise) override;
+		void setBlendState(bool enabled) override;
+		void setCullMode(CullFace face, bool frontFaceCounterClockwise) override;
 
-		virtual const VertexLayout& getVertexLayout() const override;
+		const VertexLayout& getVertexLayout() const override;
 
 		GLuint getGLVertexArrayID() const;
 		GLuint getGLPorgramID() const;

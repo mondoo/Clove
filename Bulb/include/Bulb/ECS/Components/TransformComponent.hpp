@@ -30,7 +30,7 @@ namespace blb::ecs {
 		TransformComponent& operator=(const TransformComponent& other);
 		TransformComponent& operator=(TransformComponent&& other) noexcept;
 
-		virtual ~TransformComponent();
+		~TransformComponent();
 
 		clv::mth::vec3f getPosition(TransformSpace space = TransformSpace::Local) const;
 		clv::mth::quatf getRotation(TransformSpace space = TransformSpace::Local) const;

@@ -27,7 +27,7 @@ namespace blb::ecs {
 		PointLightComponent& operator=(const PointLightComponent& other);
 		PointLightComponent& operator=(PointLightComponent&&) noexcept;
 
-		virtual ~PointLightComponent();
+		~PointLightComponent();
 
 		void setAmbientColour(const clv::mth::vec3f& colour);
 		const clv::mth::vec3f& getAmbientColour() const;

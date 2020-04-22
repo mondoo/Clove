@@ -28,11 +28,11 @@ namespace clv::gfx::ogl{
 		GLShader& operator=(const GLShader& other) = delete;
 		GLShader& operator=(GLShader&& other) noexcept;
 
-		virtual ~GLShader();
+		~GLShader();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual const ShaderDescriptor& getDescriptor() const override;
+		const ShaderDescriptor& getDescriptor() const override;
 
 		GLuint getShaderID() const;
 

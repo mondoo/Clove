@@ -26,13 +26,13 @@ namespace clv::gfx::d3d{
 		D3DBuffer& operator=(const D3DBuffer& other) = delete;
 		D3DBuffer& operator=(D3DBuffer&& other) noexcept;
 
-		virtual ~D3DBuffer();
+		~D3DBuffer();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual const BufferDescriptor& getDescriptor() const override;
+		const BufferDescriptor& getDescriptor() const override;
 
-		virtual void updateData(const void* data) override;
+		void updateData(const void* data) override;
 
 		const Microsoft::WRL::ComPtr<ID3D11Buffer>& getD3DBuffer() const;
 	};

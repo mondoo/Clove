@@ -27,11 +27,11 @@ namespace clv::gfx::d3d{
 		D3DShader& operator=(const D3DShader& other) = delete;
 		D3DShader& operator=(D3DShader&& other) noexcept;
 
-		virtual ~D3DShader();
+		~D3DShader();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual const ShaderDescriptor& getDescriptor() const override;
+		const ShaderDescriptor& getDescriptor() const override;
 
 		const Microsoft::WRL::ComPtr<ID3DBlob>& getShaderBlob() const;
 	};

@@ -25,13 +25,13 @@ namespace clv::gfx::ogl{
 		GLBuffer& operator=(const GLBuffer& other) noexcept = delete;
 		GLBuffer& operator=(GLBuffer&& other) noexcept;
 
-		virtual ~GLBuffer();
+		~GLBuffer();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual const BufferDescriptor& getDescriptor() const override;
+		const BufferDescriptor& getDescriptor() const override;
 
-		virtual void updateData(const void* data) override;
+		void updateData(const void* data) override;
 
 		GLuint getBufferID() const;
 	};

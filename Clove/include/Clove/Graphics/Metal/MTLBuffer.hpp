@@ -25,13 +25,13 @@ namespace clv::gfx::mtl{
 		MTLBuffer& operator=(const MTLBuffer& other) = delete;
 		MTLBuffer& operator=(MTLBuffer&& other) noexcept;
 		
-		virtual ~MTLBuffer();
+		~MTLBuffer();
 		
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual const BufferDescriptor& getDescriptor() const override;
+		const BufferDescriptor& getDescriptor() const override;
 
-		virtual void updateData(const void* data) override;
+		void updateData(const void* data) override;
 
 		id<MTLBuffer> getMTLBuffer() const;
 	};

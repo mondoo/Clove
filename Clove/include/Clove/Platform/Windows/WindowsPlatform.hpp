@@ -14,9 +14,9 @@ namespace clv::plt{
 		WindowsPlatform& operator=(const WindowsPlatform& other) = delete;
 		WindowsPlatform& operator=(WindowsPlatform&& other) noexcept;
 
-		virtual ~WindowsPlatform();
+		~WindowsPlatform();
 
-		virtual std::shared_ptr<Window> createWindow(const WindowDescriptor& descriptor) override;
-		virtual std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) override;
+		std::shared_ptr<Window> createWindow(const WindowDescriptor& descriptor) override;
+		std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) override;
 	};
 }
