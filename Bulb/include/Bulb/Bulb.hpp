@@ -18,8 +18,8 @@
 #include "Bulb/Rendering/Renderables/Sprite.hpp"
 #include "Bulb/Rendering/Material.hpp"
 #include "Bulb/Rendering/MaterialInstance.hpp"
-#include "Bulb/Rendering/Renderer.hpp"
 #include "Bulb/Rendering/Renderer2D.hpp"
+#include "Bulb/Rendering/Renderer3D.hpp"
 
 #include "Bulb/UI/Image.hpp"
 #include "Bulb/UI/Text.hpp"

@@ -7,7 +7,7 @@
 #include "Bulb/ECS/Components/TransformComponent.hpp"
 #include "Bulb/ECS/World.hpp"
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
-#include "Bulb/Rendering/Renderer.hpp"
+#include "Bulb/Rendering/Renderer3D.hpp"
 
 #include <Clove/Graphics/CommandBuffer.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
@@ -21,12 +21,12 @@ using namespace clv::gfx;
 using namespace blb::rnd;
 
 namespace blb::ecs {
-	RenderSystem::RenderSystem(std::unique_ptr<Renderer> renderer)
+	RenderSystem::RenderSystem(std::unique_ptr<Renderer3D> renderer)
 		: renderer(std::move(renderer)) {
 	}
 
 	RenderSystem::RenderSystem(plt::Window& window) {
-		renderer = std::make_unique<Renderer>(window);
+		renderer = std::make_unique<Renderer3D>(window);
 	}
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;

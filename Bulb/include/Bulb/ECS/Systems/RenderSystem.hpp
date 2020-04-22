@@ -7,19 +7,19 @@ namespace clv::plt {
 }
 
 namespace blb::rnd {
-	class Renderer;
+	class Renderer3D;
 }
 
 namespace blb::ecs {
 	class RenderSystem : public System {
 		//VARIABLES
 	private:
-		std::unique_ptr<rnd::Renderer> renderer;
+		std::unique_ptr<rnd::Renderer3D> renderer;
 
 		//FUNCTIONS
 	public:
 		RenderSystem() = delete;
-		RenderSystem(std::unique_ptr<rnd::Renderer> renderer);
+		RenderSystem(std::unique_ptr<rnd::Renderer3D> renderer);
 		RenderSystem(clv::plt::Window& window);
 
 		RenderSystem(const RenderSystem& other) = delete;

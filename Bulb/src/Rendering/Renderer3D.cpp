@@ -1,4 +1,4 @@
-#include "Bulb/Rendering/Renderer.hpp"
+#include "Bulb/Rendering/Renderer3D.hpp"
 
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 #include "Bulb/Rendering/RenderingConstants.hpp"
@@ -34,11 +34,11 @@ extern "C" const char	gencubeshadowmap_ps[];
 extern "C" const size_t gencubeshadowmap_psLength;
 
 namespace blb::rnd {
-	Renderer::SceneData::SceneData() = default;
+	Renderer3D::SceneData::SceneData() = default;
 
-	Renderer::SceneData::~SceneData() = default;
+	Renderer3D::SceneData::~SceneData() = default;
 
-	Renderer::Renderer(plt::Window& window) {
+	Renderer3D::Renderer3D(plt::Window& window) {
 
 		GraphicsFactory& factory = *window.getGraphicsFactory();
 
@@ -120,7 +120,7 @@ namespace blb::rnd {
 		lightIndexBuffer = factory.createBuffer(bufferDesc, nullptr);
 	}
 
-	void Renderer::begin() {
+	void Renderer3D::begin() {
 		CLV_PROFILE_FUNCTION();
 
 		scene.meshes.clear();
@@ -129,29 +129,29 @@ namespace blb::rnd {
 		scene.cameras.clear();
 	}
 
-	void Renderer::submitMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
+	void Renderer3D::submitMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
 		scene.meshes.push_back(mesh);
 	}
 
-	void Renderer::submitLight(const DirectionalLight& light) {
+	void Renderer3D::submitLight(const DirectionalLight& light) {
 		const uint32_t lightIndex = scene.numDirectionalLights++;
 
 		scene.lightDataArray.directionalLights[lightIndex] = light.data;
 		scene.directionalShadowTransformArray[lightIndex] = light.shadowTransform;
 	}
 
-	void Renderer::submitLight(const PointLight& light) {
+	void Renderer3D::submitLight(const PointLight& light) {
 		const uint32_t lightIndex = scene.numPointLights++;
 
 		scene.lightDataArray.pointLights[lightIndex] = light.data;
 		scene.pointShadowTransformArray[lightIndex] = light.shadowTransforms;
 	}
 
-	void Renderer::submitCamera(const ComposedCameraData& camera) {
+	void Renderer3D::submitCamera(const ComposedCameraData& camera) {
 		scene.cameras.push_back(camera);
 	}
 
-	void Renderer::end() {
+	void Renderer3D::end() {
 		CLV_PROFILE_FUNCTION();
 
 		//Draw all meshes in the scene

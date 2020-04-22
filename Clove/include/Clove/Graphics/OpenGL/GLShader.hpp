@@ -4,10 +4,8 @@
 
 #include <glad/glad.h>
 
-namespace clv::gfx::ogl{
-	class Renderer;
-
-	class GLShader : public Shader{
+namespace clv::gfx::ogl {
+	class GLShader : public Shader {
 		//VARIABLES
 	private:
 		std::shared_ptr<GraphicsFactory> factory;
