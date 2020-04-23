@@ -24,7 +24,7 @@ namespace blb::rnd {
 }
 
 namespace blb::rnd {
-	class Renderer {
+	class Renderer3D {
 		//TYPES
 	public:
 		struct ComposedCameraData {
@@ -89,7 +89,7 @@ namespace blb::rnd {
 
 		//FUNCTIONS
 	public:
-		Renderer(clv::plt::Window& window);
+		Renderer3D(clv::plt::Window& window);
 		//TODO: ctors
 
 		void begin();

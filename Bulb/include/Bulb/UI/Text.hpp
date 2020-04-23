@@ -33,7 +33,7 @@ namespace blb::ui {
 
 		~Text();
 
-		virtual void draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) override;
+		void draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) override;
 
 		void setText(std::string text);
 		void setFontSize(uint32_t size);

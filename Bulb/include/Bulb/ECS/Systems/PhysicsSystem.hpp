@@ -23,11 +23,11 @@ namespace blb::ecs {
 		PhysicsSystem& operator=(const PhysicsSystem& other) = delete;
 		PhysicsSystem& operator=(PhysicsSystem&& other) noexcept;
 
-		virtual ~PhysicsSystem();
+		~PhysicsSystem();
 
-		virtual void update(World& world, clv::utl::DeltaTime deltaTime) override;
+		void update(World& world, clv::utl::DeltaTime deltaTime) override;
 
-		virtual void onComponentCreated(ComponentInterface* component) override;
-		virtual void onComponentDestroyed(ComponentInterface* component) override;
+		void onComponentCreated(ComponentInterface* component) override;
+		void onComponentDestroyed(ComponentInterface* component) override;
 	};
 }

@@ -42,18 +42,18 @@ namespace clv::gfx::mtl{
 		MTLSurface& operator=(const MTLSurface& other) = delete;
 		MTLSurface& operator=(MTLSurface&& other) noexcept;
 		
-		virtual ~MTLSurface();
+		~MTLSurface();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 		
-		virtual void setVSync(bool vsync) override;
-		virtual bool isVsync() const override;
+		void setVSync(bool vsync) override;
+		bool isVsync() const override;
 
-		virtual void resizeBuffers(const mth::vec2ui& size) override;
+		void resizeBuffers(const mth::vec2ui& size) override;
 
-		virtual void makeCurrent() override{}
+		void makeCurrent() override{}
 		
-		virtual void present() override;
+		void present() override;
 
 		virtual std::shared_ptr<RenderTarget> getRenderTarget() const override;
 		MTLView* getMTLView() const;

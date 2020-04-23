@@ -29,7 +29,7 @@ namespace blb::ecs {
 		RigidBodyComponent& operator=(const RigidBodyComponent& other);
 		RigidBodyComponent& operator=(RigidBodyComponent&& other) noexcept;
 
-		virtual ~RigidBodyComponent();
+		~RigidBodyComponent();
 
 	private:
 		void initialiseRigidBody(phy::RigidBody* body);

@@ -22,7 +22,7 @@ namespace blb::ecs{
 		for(EntityID entityID : activeIDs){
 			std::tuple<ComponentPtr<ComponentTypes>...> tuple = std::make_tuple(getComponent<ComponentTypes>(entityID)...);
 			if(checkForNullptr<0, ComponentTypes...>(tuple) != FoundState::NullptrFound){
-				componentSets.push_back(tuple);
+				componentSets.push_back(std::move(tuple));
 			}
 		}
 		return componentSets;

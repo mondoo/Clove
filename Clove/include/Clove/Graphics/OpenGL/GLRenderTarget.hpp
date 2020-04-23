@@ -28,13 +28,13 @@ namespace clv::gfx::ogl{
 		GLRenderTarget& operator=(const GLRenderTarget& other) = delete;
 		GLRenderTarget& operator=(GLRenderTarget&& other) noexcept;
 
-		virtual ~GLRenderTarget();
+		~GLRenderTarget();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual void clear() override;
+		void clear() override;
 
-		virtual void setClearColour(const mth::vec4f& colour) override;
+		void setClearColour(const mth::vec4f& colour) override;
 		const mth::vec4f& getClearColour() const;
 
 		uint32_t getGLFrameBufferID() const;

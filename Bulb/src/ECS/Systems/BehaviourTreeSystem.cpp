@@ -14,7 +14,7 @@ namespace blb::ecs {
 	BehaviourTreeSystem::~BehaviourTreeSystem() = default;
 
 	void BehaviourTreeSystem::update(World& world, clv::utl::DeltaTime deltaTime) {
-		for(auto [btComp] : world.getComponentSets<BehaviourTreeComponent>()) {
+		for(auto&& [btComp] : world.getComponentSets<BehaviourTreeComponent>()) {
 			if(ai::BehaviourTree* bt = btComp->behaviourTree.get()) {
 				bt->run(deltaTime);
 			}

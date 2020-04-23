@@ -29,11 +29,11 @@ namespace clv::gfx::mtl {
 		MTLTexture& operator=(const MTLTexture& other) = delete;
 		MTLTexture& operator=(MTLTexture&& other) noexcept;
 		
-		virtual ~MTLTexture();
+		~MTLTexture();
 		
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual const TextureDescriptor& getDescriptor() const override;
+		const TextureDescriptor& getDescriptor() const override;
 
 		id<MTLTexture> getMTLTexture() const;
 		id<MTLSamplerState> getMTLSampler() const;

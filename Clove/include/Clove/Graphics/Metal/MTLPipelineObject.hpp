@@ -27,16 +27,16 @@ namespace clv::gfx::mtl {
 		MTLPipelineObject& operator=(const MTLPipelineObject& other) = delete;
 		MTLPipelineObject& operator=(MTLPipelineObject&& other) noexcept;
 		
-		virtual ~MTLPipelineObject();
+		~MTLPipelineObject();
 		
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 		
-		virtual void setVertexShader(const Shader& vertexShader) override;
-		virtual void setGeometryShader(const Shader& geometryShader) override;
-		virtual void setPixelShader(const Shader& pixelShader) override;
+		void setVertexShader(const Shader& vertexShader) override;
+		void setGeometryShader(const Shader& geometryShader) override;
+		void setPixelShader(const Shader& pixelShader) override;
 		
-		virtual void setBlendState(bool enabled) override;
-		virtual void setCullMode(CullFace face, bool frontFaceCounterClockwise) override;
+		void setBlendState(bool enabled) override;
+		void setCullMode(CullFace face, bool frontFaceCounterClockwise) override;
 		
 		virtual const VertexLayout& getVertexLayout() const override;
 		

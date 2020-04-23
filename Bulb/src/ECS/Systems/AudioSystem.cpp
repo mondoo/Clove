@@ -42,7 +42,7 @@ namespace blb::ecs {
 	void AudioSystem::update(World& world, utl::DeltaTime deltaTime) {
 		CLV_PROFILE_FUNCTION();
 
-		for(auto [component] : world.getComponentSets<AudioComponent>()) {
+		for(auto&& [component] : world.getComponentSets<AudioComponent>()) {
 			if(component->requestedPlayback) {
 				startSound(component.get(), component->requestedPlayback.value());
 				component->requestedPlayback.reset();

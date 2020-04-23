@@ -5,7 +5,7 @@ using namespace clv;
 namespace blb::ecs{
 	static void removeItemFromVector(const ComponentPtr<TransformComponent>& item, std::vector<ComponentPtr<TransformComponent>>& vector) {
 		auto removeIter = std::remove(vector.begin(), vector.end(), item);
-		vector.erase(removeIter, vector.end());
+		vector.erase(removeIter);
 	}
 
 	TransformComponent::TransformComponent() = default;
@@ -49,7 +49,7 @@ namespace blb::ecs{
 			removeItemFromVector(this, parent->children);
 		}
 
-		for(auto child : children){
+		for(auto&& child : children){
 			child->parent.reset();
 		}
 	}
@@ -120,6 +120,20 @@ namespace blb::ecs{
 			case TransformSpace::World:
 				setWorldScale(scale);
 				break;
+		}
+	}
+
+	clv::mth::mat4f TransformComponent::getTransformationMatrix(TransformSpace space) {
+		switch(space) {
+			case TransformSpace::Local:
+				return getLocalTransformMatrix();
+				break;
+			case TransformSpace::World:
+				return getWorldTransformMatrix();
+				break;
+			default:
+				CLV_ASSERT(false, "Default statement hit in {0}", CLV_FUNCTION_NAME_PRETTY);
+				return {};
 		}
 	}
 

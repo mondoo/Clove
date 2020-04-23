@@ -28,13 +28,13 @@ namespace clv::gfx::mtl {
 		MTLRenderTarget& operator=(const MTLRenderTarget& other) = delete;
 		MTLRenderTarget& operator=(MTLRenderTarget&& other) noexcept;
 
-		virtual ~MTLRenderTarget();
+		~MTLRenderTarget();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual void clear() override {}
+		void clear() override {}
 
-		virtual void setClearColour(const mth::vec4f& colour) override;
+		void setClearColour(const mth::vec4f& colour) override;
 
 		MTLRenderPassDescriptor* getRenderPassDescriptor() const;
 

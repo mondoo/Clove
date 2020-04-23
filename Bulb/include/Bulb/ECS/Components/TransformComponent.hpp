@@ -30,7 +30,7 @@ namespace blb::ecs {
 		TransformComponent& operator=(const TransformComponent& other);
 		TransformComponent& operator=(TransformComponent&& other) noexcept;
 
-		virtual ~TransformComponent();
+		~TransformComponent();
 
 		clv::mth::vec3f getPosition(TransformSpace space = TransformSpace::Local) const;
 		clv::mth::quatf getRotation(TransformSpace space = TransformSpace::Local) const;
@@ -40,15 +40,17 @@ namespace blb::ecs {
 		void setRotation(const clv::mth::quatf& rotation, TransformSpace space = TransformSpace::Local);
 		void setScale(const clv::mth::vec3f& scale, TransformSpace space = TransformSpace::Local);
 
+		clv::mth::mat4f getTransformationMatrix(TransformSpace space);
+
 		ComponentPtr<TransformComponent> getParent() const;
 
 		void addChild(ComponentPtr<TransformComponent> child);
 		const std::vector<ComponentPtr<TransformComponent>>& getChildren() const;
 
+	private:
 		clv::mth::mat4f getWorldTransformMatrix() const;
 		clv::mth::mat4f getLocalTransformMatrix() const;
 
-	private:
 		clv::mth::vec3f getWorldPosition() const;
 		const clv::mth::vec3f& getLocalPosition() const;
 

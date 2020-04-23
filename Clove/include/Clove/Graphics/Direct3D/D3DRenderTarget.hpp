@@ -36,13 +36,13 @@ namespace clv::gfx::d3d{
 		D3DRenderTarget& operator=(const D3DRenderTarget& other) = delete;
 		D3DRenderTarget& operator=(D3DRenderTarget&& other) noexcept;
 		
-		virtual ~D3DRenderTarget();
+		~D3DRenderTarget();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual void clear() override;
+		void clear() override;
 
-		virtual void setClearColour(const mth::vec4f& colour) override;
+		void setClearColour(const mth::vec4f& colour) override;
 		const mth::vec4f& getClearColour() const;
 
 		void clearTextureViews();

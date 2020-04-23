@@ -29,7 +29,7 @@ namespace blb::ecs {
 		const auto componentTuples = world.getComponentSets<TransformComponent, RigidBodyComponent>();
 
 		//Update rigid bodies
-		for(auto [transform, rigidBody] : componentTuples) {
+		for(auto&& [transform, rigidBody] : componentTuples) {
 			rigidBody->rigidBody->setWorldPosition(transform->getPosition());
 			rigidBody->rigidBody->setWorldRotation(transform->getRotation());
 		}
@@ -38,7 +38,7 @@ namespace blb::ecs {
 		physicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 
 		//Update transforms
-		for(auto [transform, rigidBody] : componentTuples) {
+		for(auto&& [transform, rigidBody] : componentTuples) {
 			transform->setPosition(rigidBody->rigidBody->getPhysicsPosition());
 			transform->setRotation(rigidBody->rigidBody->getPhysicsRotation());
 		}

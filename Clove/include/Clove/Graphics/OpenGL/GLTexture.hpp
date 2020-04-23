@@ -28,11 +28,11 @@ namespace clv::gfx::ogl{
 		GLTexture& operator=(const GLTexture& other) = delete;
 		GLTexture& operator=(GLTexture&& other) noexcept;
 
-		virtual ~GLTexture();
+		~GLTexture();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual const TextureDescriptor& getDescriptor() const override;
+		const TextureDescriptor& getDescriptor() const override;
 
 		GLuint getTextureID() const;
 

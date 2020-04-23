@@ -53,17 +53,17 @@ namespace clv::plt{
 		MacWindow& operator=(const MacWindow& other) = delete;
 		MacWindow& operator=(MacWindow&& other) noexcept = delete;
 
-		virtual ~MacWindow();
+		~MacWindow();
 
-		virtual void* getNativeWindow() const override;
+		void* getNativeWindow() const override;
 		
-		virtual mth::vec2i getPosition() const override;
-		virtual mth::vec2i getSize() const override;
+		mth::vec2i getPosition() const override;
+		mth::vec2i getSize() const override;
 
-		virtual void moveWindow(const mth::vec2i& position) override;
-		virtual void resizeWindow(const mth::vec2i& size) override;
+		void moveWindow(const mth::vec2i& position) override;
+		void resizeWindow(const mth::vec2i& size) override;
 
-		virtual bool isOpen() const override;
+		bool isOpen() const override;
 
 		void close();
 

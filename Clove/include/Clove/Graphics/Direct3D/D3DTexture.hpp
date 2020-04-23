@@ -31,11 +31,11 @@ namespace clv::gfx::d3d{
 		D3DTexture& operator=(const D3DTexture& other) = delete;
 		D3DTexture& operator=(D3DTexture&& other) noexcept;
 
-		virtual ~D3DTexture();
+		~D3DTexture();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual const TextureDescriptor& getDescriptor() const override;
+		const TextureDescriptor& getDescriptor() const override;
 
 		const Microsoft::WRL::ComPtr<ID3D11Texture2D>& getD3DTexture() const;
 		const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& getD3DShaderResourceView() const;

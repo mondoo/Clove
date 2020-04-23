@@ -38,17 +38,17 @@ namespace clv::gfx::ogl{
 		GLXSurface& operator=(const GLXSurface& other) = delete;
 		GLXSurface& operator=(GLXSurface&& other) noexcept;
 
-		virtual ~GLXSurface();
+		~GLXSurface();
 
-		virtual const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		virtual void makeCurrent() override;
+		void makeCurrent() override;
 
-		virtual void setVSync(bool enabled) override;
-		virtual bool isVsync() const override;
+		void setVSync(bool enabled) override;
+		bool isVsync() const override;
 
-		virtual void present() override;
+		void present() override;
 
-		virtual std::shared_ptr<RenderTarget> getRenderTarget() const override;
+		std::shared_ptr<RenderTarget> getRenderTarget() const override;
 	};
 }
