@@ -49,7 +49,7 @@ namespace blb::ecs{
 			removeItemFromVector(this, parent->children);
 		}
 
-		for(auto child : children){
+		for(auto&& child : children){
 			child->parent.reset();
 		}
 	}
