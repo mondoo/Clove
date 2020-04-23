@@ -95,7 +95,7 @@ namespace blb::rnd{
 	Mesh::~Mesh() = default;
 
 	void Mesh::setMaterialInstance(MaterialInstance materialInstance) {
-		this->materialInstance = materialInstance;
+		this->materialInstance = std::move(materialInstance);
 	}
 
 	MaterialInstance& Mesh::getMaterialInstance() {
