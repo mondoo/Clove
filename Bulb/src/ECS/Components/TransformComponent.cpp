@@ -5,7 +5,7 @@ using namespace clv;
 namespace blb::ecs{
 	static void removeItemFromVector(const ComponentPtr<TransformComponent>& item, std::vector<ComponentPtr<TransformComponent>>& vector) {
 		auto removeIter = std::remove(vector.begin(), vector.end(), item);
-		vector.erase(removeIter, vector.end());
+		vector.erase(removeIter);
 	}
 
 	TransformComponent::TransformComponent() = default;
