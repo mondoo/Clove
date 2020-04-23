@@ -22,6 +22,9 @@
 #include "Bulb/ECS/Systems/RenderSystem.hpp"
 #include "Bulb/ECS/World.hpp"
 
+#include "Bulb/Physics/RigidBody.hpp"
+#include "Bulb/Physics/World.hpp"
+
 #include "Bulb/Layer.hpp"
 #include "Bulb/LayerStack.hpp"
 
