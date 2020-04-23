@@ -123,6 +123,20 @@ namespace blb::ecs{
 		}
 	}
 
+	clv::mth::mat4f TransformComponent::getTransformationMatrix(TransformSpace space) {
+		switch(space) {
+			case TransformSpace::Local:
+				return getLocalTransformMatrix();
+				break;
+			case TransformSpace::World:
+				return getWorldTransformMatrix();
+				break;
+			default:
+				CLV_ASSERT(false, "Default statement hit in {0}", CLV_FUNCTION_NAME_PRETTY);
+				return {};
+		}
+	}
+
 	ComponentPtr<TransformComponent> TransformComponent::getParent() const {
 		return parent;
 	}

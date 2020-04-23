@@ -74,7 +74,7 @@ namespace blb::ecs {
 
 		//Submit meshes
 		for(auto&& [transform, renderable] : world.getComponentSets<TransformComponent, ModelComponent>()) {
-			const mth::mat4f modelTransform = transform->getWorldTransformMatrix();
+			const mth::mat4f modelTransform = transform->getTransformationMatrix(TransformSpace::World);
 
 			for(auto& mesh : renderable->model.getMeshes()) {
 				mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
