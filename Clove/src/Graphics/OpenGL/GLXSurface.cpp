@@ -78,31 +78,6 @@ namespace clv::gfx::ogl{
 
 			context = glXCreateContext(display, visual, nullptr, GL_TRUE);
 		}
-
-		//Check if we need to initialise opengl
-		if(glGetString == nullptr) {
-			glXMakeCurrent(display, *window, context);
-
-			CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
-
-			CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
-			CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-			glDebugMessageCallback(errorCallback, nullptr);
-			glEnable(GL_DEBUG_OUTPUT);
-			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-
-			const char* extensions = (char*)glXQueryExtensionsString(display, visual->screen);
-			if(strstr(extensions, "GLX_EXT_swap_control") != 0) {
-				glxSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC)glXGetProcAddress((GLubyte*)"glxSwapIntervalEXT");
-			} else {
-				CLV_LOG_ERROR("Could not find the GLX_EXT_swap_control. Cannot enable / disable vsync");
-			}
-
-			renderTarget = std::make_shared<GLRenderTarget>(factory);
-
-			glXMakeCurrent(display, *window, nullptr);
-		}
 	}
 
 	GLXSurface::GLXSurface(GLXSurface&& other) noexcept = default;
@@ -119,6 +94,26 @@ namespace clv::gfx::ogl{
 
 	void GLXSurface::makeCurrent(){
 		glXMakeCurrent(display, *window, context);
+
+		if(glxSwapIntervalEXT == nullptr){
+			const char* extensions = (char*)glXQueryExtensionsString(display, visual->screen);
+			if(strstr(extensions, "GLX_EXT_swap_control") != 0){
+				glxSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC)glXGetProcAddress((GLubyte*)"glxSwapIntervalEXT");
+			} else{
+				CLV_LOG_ERROR("Could not find the GLX_EXT_swap_control. Cannot enable / disable vsync");
+			}
+		}
+
+		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+
+		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
+		CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+		glDebugMessageCallback(errorCallback, nullptr);
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+		renderTarget = std::make_shared<GLRenderTarget>(factory);
 	}
 
 	void GLXSurface::setVSync(bool enabled){

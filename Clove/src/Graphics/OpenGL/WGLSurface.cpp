@@ -62,33 +62,6 @@ namespace clv::gfx::ogl{
 
 			wglContext = wglCreateContext(windowsDeviceContext);
 		}
-
-		//Check if we need to initialise opengl
-		if(glGetString == nullptr) {
-			wglMakeCurrent(windowsDeviceContext, wglContext);
-
-			CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
-
-			CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
-			CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-			glDebugMessageCallback(errorCallback, nullptr);
-			glEnable(GL_DEBUG_OUTPUT);
-			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-
-			PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = (PFNWGLGETEXTENSIONSSTRINGARBPROC)wglGetProcAddress("wglGetExtensionsStringARB");
-			const char* extensions = wglGetExtensionsStringARB(windowsDeviceContext);
-			if(strstr(extensions, "WGL_EXT_swap_control") != 0) {
-				wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
-				wglGetSwapIntervalEXT = (PFNWGLGETSWAPINTERVALEXTPROC)wglGetProcAddress("wglGetSwapIntervalEXT");
-			} else {
-				CLV_LOG_ERROR("Could not find the WGL_EXT_swap_control extension");
-			}
-
-			renderTarget = std::make_shared<GLRenderTarget>(factory);
-
-			wglMakeCurrent(windowsDeviceContext, nullptr);
-		}
 	}
 
 	WGLSurface::WGLSurface(WGLSurface&& other) noexcept = default;
@@ -106,6 +79,28 @@ namespace clv::gfx::ogl{
 
 	void WGLSurface::makeCurrent(){
 		wglMakeCurrent(windowsDeviceContext, wglContext);
+
+		if(!wglSwapIntervalEXT || !wglGetSwapIntervalEXT){
+			PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = (PFNWGLGETEXTENSIONSSTRINGARBPROC)wglGetProcAddress("wglGetExtensionsStringARB");
+			const char* extensions = wglGetExtensionsStringARB(windowsDeviceContext);
+			if(strstr(extensions, "WGL_EXT_swap_control") != 0){
+				wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
+				wglGetSwapIntervalEXT = (PFNWGLGETSWAPINTERVALEXTPROC)wglGetProcAddress("wglGetSwapIntervalEXT");
+			} else{
+				CLV_LOG_ERROR("Could not find the WGL_EXT_swap_control extension");
+			}
+		}
+
+		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+
+		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
+		CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+		glDebugMessageCallback(errorCallback, nullptr);
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+		renderTarget = std::make_shared<GLRenderTarget>(factory);
 	}
 
 	void WGLSurface::setVSync(bool enabled){
