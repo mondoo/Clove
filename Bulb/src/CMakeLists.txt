@@ -51,6 +51,7 @@ set(
 		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
 		${BLB_SOURCE}/ECS/Components/DirectionalLightComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/InputComponent.hpp
+		${BLB_INCLUDE}/ECS/Components/InputComponent.inl
 		${BLB_SOURCE}/ECS/Components/InputComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/ModelComponent.hpp
 		${BLB_SOURCE}/ECS/Components/ModelComponent.cpp
