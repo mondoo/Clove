@@ -226,9 +226,25 @@ namespace clv::plt{
 					keyboard.onKeyPressed(static_cast<Key>(xkeysym));
 					break;
 
-				case KeyRelease:
-					xkeysym = XLookupKeysym(&xevent.xkey, 0);
-					keyboard.onKeyReleased(static_cast<Key>(xkeysym));
+				case KeyRelease: {
+					bool isRepeat = false;
+
+					if (XEventsQueued(display, QueuedAlready)) {
+						XEvent nextEvent;
+						XPeekEvent(display, &nextEvent);
+
+						isRepeat = nextEvent.type == KeyPress && nextEvent.xkey.keycode == xevent.xkey.keycode;
+						if (isRepeat) {
+							//Consume the next KeyPress event (as that is auto repeat)
+							XNextEvent(display, &xevent);
+						}
+					}
+
+					if(!isRepeat || keyboard.isAutoRepeatEnabled()) {
+						xkeysym = XLookupKeysym(&xevent.xkey, 0);
+						keyboard.onKeyReleased(static_cast<Key>(xkeysym));
+					}
+				}
 					break;
 
 					//TODO: Char (I don't think Xlib has a 'typed' event)
