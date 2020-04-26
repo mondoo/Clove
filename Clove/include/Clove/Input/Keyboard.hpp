@@ -26,10 +26,10 @@ namespace clv{
 		friend class plt::MacWindow;
 	#endif
 		
-		//DEFINITIONS
+		//TYPES
 	public:
 		struct Event{
-			//DEFINITIONS
+			//TYPES
 		public:
 			enum class Type{
 				Pressed,
