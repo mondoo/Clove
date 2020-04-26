@@ -11,12 +11,12 @@ namespace blb {
 	class Layer;
 }
 
-extern std::shared_ptr<blb::Layer> createApplicationLayer();
-
 namespace stm {
 	class Application {
 		//VARIABLES
-	private:
+	//Temp
+	//private:
+	public:
 		std::unique_ptr<clv::plt::Platform> platformInstance;
 		std::shared_ptr<clv::plt::Window> window;
 
@@ -28,6 +28,9 @@ namespace stm {
 	public:
 		Application();
 
+		void start();
 		void run();
 	};
 }
+
+extern std::shared_ptr<blb::Layer> createApplicationLayer(const stm::Application& app);
