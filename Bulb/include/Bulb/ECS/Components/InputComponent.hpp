@@ -55,18 +55,9 @@ namespace blb::ecs {
 
 		~InputComponent();
 
-		template<typename FunctionType, typename ObjectType>
-		[nodiscard] BindingId bind(KeyButtonState key, FunctionType&& function, ObjectType* object);
-		template<typename FunctionType, typename ObjectType>
-		[nodiscard] BindingId bind(MouseButtonState button, FunctionType&& function, ObjectType* object);
-		
-		template<typename FunctionType>
-		[nodiscard] BindingId bind(KeyButtonState key, FunctionType&& function);
-		template<typename FunctionType>
-		[nodiscard] BindingId bind(MouseButtonState button, FunctionType&& function);
+		[[nodiscard]] BindingId bind(KeyButtonState key, KeyBindingFunction function);
+		[[nodiscard]] BindingId bind(MouseButtonState button, MouseBindingFunction function);
 
 		void unbind(BindingId id);
 	};
 }
-
-#include "InputComponent.inl"

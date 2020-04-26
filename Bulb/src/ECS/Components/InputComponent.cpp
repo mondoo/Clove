@@ -23,6 +23,32 @@ namespace blb::ecs {
 
 	InputComponent::~InputComponent() = default;
 
+	InputComponent::BindingId InputComponent::bind(KeyButtonState key, KeyBindingFunction function) {
+		const BindingId id = nextId++;
+
+		std::vector<KeyBindingFunction>& keyFunctions = keyBindings[key];
+
+		keyFunctions.emplace_back(std::move(function));
+		const size_t index = keyFunctions.size() - 1;
+
+		keyIdToIndexMap[key][id] = index;
+
+		return id;
+	}
+
+	InputComponent::BindingId InputComponent::bind(MouseButtonState button, MouseBindingFunction function) {
+		const BindingId id = nextId++;
+
+		std::vector<MouseBindingFunction>& mouseFunctions = mouseButtonBindings[button];
+
+		mouseFunctions.emplace_back(std::move(function));
+		const size_t index = mouseFunctions.size() - 1;
+
+		buttonIdToIndexMap[button][id] = index;
+
+		return id;
+	}
+
 	void InputComponent::unbind(BindingId id) {
 		//Loop through key bindings
 		for(auto&& idToIndexMap : keyIdToIndexMap) {
