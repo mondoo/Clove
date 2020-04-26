@@ -16,16 +16,18 @@ namespace stm {
 	}
 
 	void Application::run() {
-		auto currFrameTime = std::chrono::system_clock::now();
-		std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
-		prevFrameTime = currFrameTime;
+		while(window->isOpen()){
+			auto currFrameTime = std::chrono::system_clock::now();
+			std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
+			prevFrameTime = currFrameTime;
 
-		window->beginFrame();
+			window->beginFrame();
 
-		for(const auto& layer : layerStack) {
-			layer->onUpdate(deltaSeonds.count());
+			for(const auto& layer : layerStack) {
+				layer->onUpdate(deltaSeonds.count());
+			}
+
+			window->endFrame();
 		}
-
-		window->endFrame();
 	}
 }
