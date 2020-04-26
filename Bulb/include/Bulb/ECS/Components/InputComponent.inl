@@ -6,7 +6,7 @@ namespace blb::ecs {
 		keyBindings[key].emplace_back(std::bind(function, object, std::placeholders::_1));
 		const size_t index = keyBindings[key].size() - 1;
 
-		keyIdToIndexMap[id] = index;
+		keyIdToIndexMap[key][id] = index;
 
 		return id;
 	}
@@ -18,7 +18,7 @@ namespace blb::ecs {
 		mouseButtonBindings[button].emplace_back(std::bind(function, object, std::placeholders::_1));
 		const size_t index = mouseButtonBindings[button].size() - 1;
 
-		buttonIdToIndexMap[id] = index;
+		buttonIdToIndexMap[button][id] = index;
 
 		return id;
 	}
