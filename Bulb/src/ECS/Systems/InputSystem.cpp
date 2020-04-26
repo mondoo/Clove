@@ -33,7 +33,7 @@ namespace blb::ecs {
 			for(auto&& [inputComp] : inputSets) {
 				bool consumed = false;
 				for(auto func : inputComp->keyBindings[key]) {
-					if(func(event) == InputResponse::consumed) {
+					if(func(event) == InputResponse::Consumed) {
 						consumed = true;
 						break;
 					}
@@ -52,7 +52,7 @@ namespace blb::ecs {
 			for(auto&& [inputComp] : inputSets) {
 				bool consumed = false;
 				for(auto func : inputComp->mouseButtonBindings[button]) {
-					if(func(event) == InputResponse::consumed) {
+					if(func(event) == InputResponse::Consumed) {
 						consumed = true;
 						break;
 					}
