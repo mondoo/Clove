@@ -27,13 +27,17 @@ namespace blb::ecs {
 		
 		//Keyboard
 		while(std::optional<Keyboard::Event> keyEvent = window->getKeyboard().getKeyEvent()) {
-			const Keyboard::Event& event	= keyEvent.value();
-			const Key key					= event.getKey();
+			const Keyboard::Event& event		= keyEvent.value();
+			
+			const Key key						= event.getKey();
+			const Keyboard::Event::Type	type	= event.getType();
+
+			auto keyState = std::make_pair(key, type);
 			
 			for(auto&& [inputComp] : inputSets) {
 				bool consumed = false;
-				for(auto func : inputComp->keyBindings[key]) {
-					if(func(event) == InputResponse::Consumed) {
+				for(auto func : inputComp->keyBindings[keyState]) {
+					if(func() == InputResponse::Consumed) {
 						consumed = true;
 						break;
 					}
@@ -46,13 +50,17 @@ namespace blb::ecs {
 
 		//Mouse
 		while(std::optional<Mouse::Event> mouseEvent = window->getMouse().getEvent()) {
-			const Mouse::Event& event	= mouseEvent.value();
-			const MouseButton button	= event.getButton();
+			const Mouse::Event& event		= mouseEvent.value();
+			
+			const MouseButton button		= event.getButton();
+			const Mouse::Event::Type type	= event.getType();
+
+			auto buttonState = std::make_pair(button, type);
 
 			for(auto&& [inputComp] : inputSets) {
 				bool consumed = false;
-				for(auto func : inputComp->mouseButtonBindings[button]) {
-					if(func(event) == InputResponse::Consumed) {
+				for(auto func : inputComp->mouseButtonBindings[buttonState]) {
+					if(func() == InputResponse::Consumed) {
 						consumed = true;
 						break;
 					}

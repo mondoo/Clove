@@ -10,6 +10,13 @@ namespace blb::ecs {
 		Ignored,
 		Consumed
 	};
+
+	struct hashPair {
+		template<typename T1, typename T2>
+		size_t operator()(const std::pair<T1, T2>& pair) const {
+			return std::hash<T1>{}(pair.first) ^ std::hash<T2>{}(pair.second);
+		}
+	};
 }
 
 namespace blb::ecs {
@@ -19,18 +26,22 @@ namespace blb::ecs {
 		//TYPES
 	public:
 		using BindingId = uint64_t;
-		using KeyBindingFunction	= std::function<InputResponse(const clv::Keyboard::Event&)>;
-		using MouseBindingFunction	= std::function<InputResponse(const clv::Mouse::Event&)>;
+
+		using KeyButtonState		= std::pair<clv::Key, clv::Keyboard::Event::Type>;
+		using KeyBindingFunction	= std::function<InputResponse()>;
+
+		using MouseButtonState		= std::pair<clv::MouseButton, clv::Mouse::Event::Type>;
+		using MouseBindingFunction	= std::function<InputResponse()>;
 
 		//VARIABLES
 	private:
 		static BindingId nextId;
 
-		std::unordered_map<clv::Key, std::unordered_map<BindingId, size_t>> keyIdToIndexMap;
-		std::unordered_map<clv::Key, std::vector<KeyBindingFunction>> keyBindings;
+		//std::unordered_map<KeyButtonState, std::unordered_map<BindingId, size_t>> keyIdToIndexMap;
+		std::unordered_map<KeyButtonState, std::vector<KeyBindingFunction>, hashPair> keyBindings;
 
-		std::unordered_map<clv::MouseButton, std::unordered_map<BindingId, size_t>> buttonIdToIndexMap;
-		std::unordered_map<clv::MouseButton, std::vector<MouseBindingFunction>> mouseButtonBindings;
+		//std::unordered_map<MouseButtonState, std::unordered_map<BindingId, size_t>> buttonIdToIndexMap;
+		std::unordered_map<MouseButtonState, std::vector<MouseBindingFunction>, hashPair> mouseButtonBindings;
 
 		//FUNCTIONS
 	public:
@@ -45,17 +56,16 @@ namespace blb::ecs {
 		~InputComponent();
 
 		template<typename FunctionType, typename ObjectType>
-		[nodiscard] BindingId bind(clv::Key key, FunctionType&& function, ObjectType* object);
+		[nodiscard] BindingId bind(KeyButtonState key, FunctionType&& function, ObjectType* object);
 		template<typename FunctionType, typename ObjectType>
-		[nodiscard] BindingId bind(clv::MouseButton button, FunctionType&& function, ObjectType* object);
+		[nodiscard] BindingId bind(MouseButtonState button, FunctionType&& function, ObjectType* object);
 		
 		template<typename FunctionType>
-		[nodiscard] BindingId bind(clv::Key key, FunctionType&& function);
+		[nodiscard] BindingId bind(KeyButtonState key, FunctionType&& function);
 		template<typename FunctionType>
-		[nodiscard] BindingId bind(clv::MouseButton button, FunctionType&& function);
+		[nodiscard] BindingId bind(MouseButtonState button, FunctionType&& function);
 
-		void unbind(clv::Key key, BindingId id);
-		void unbind(clv::MouseButton button, BindingId id);
+		void unbind(BindingId id);
 	};
 }
 
