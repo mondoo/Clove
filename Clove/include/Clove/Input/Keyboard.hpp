@@ -26,10 +26,10 @@ namespace clv{
 		friend class plt::MacWindow;
 	#endif
 		
-		//DEFINITIONS
+		//TYPES
 	public:
 		struct Event{
-			//DEFINITIONS
+			//TYPES
 		public:
 			enum class Type{
 				Pressed,
@@ -39,8 +39,8 @@ namespace clv{
 
 			//VARIABLES
 		private:
-			Type type = Type::Invalid;
-			Key key = Key::None;
+			Type type	= Type::Invalid;
+			Key key		= Key::None;
 
 			//FUNCTIONS
 		public:
@@ -51,6 +51,7 @@ namespace clv{
 			bool isReleased() const;
 			bool isValid() const;
 
+			Type getType() const;
 			Key getKey() const;
 		};
 

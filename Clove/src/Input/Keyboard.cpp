@@ -20,6 +20,10 @@ namespace clv{
 		return type != Type::Invalid && key > Key::Undefined;
 	}
 
+	Keyboard::Event::Type Keyboard::Event::getType() const {
+		return type;
+	}
+
 	Key Keyboard::Event::getKey() const{
 		return key;
 	}

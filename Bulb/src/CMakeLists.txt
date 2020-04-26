@@ -50,6 +50,8 @@ set(
 		${BLB_SOURCE}/ECS/Components/CameraComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
 		${BLB_SOURCE}/ECS/Components/DirectionalLightComponent.cpp
+		${BLB_INCLUDE}/ECS/Components/InputComponent.hpp
+		${BLB_SOURCE}/ECS/Components/InputComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/ModelComponent.hpp
 		${BLB_SOURCE}/ECS/Components/ModelComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/PointLightComponent.hpp
@@ -62,6 +64,8 @@ set(
 		${BLB_SOURCE}/ECS/Systems/AudioSystem.cpp
 		${BLB_INCLUDE}/ECS/Systems/BehaviourTreeSystem.hpp
 		${BLB_SOURCE}/ECS/Systems/BehaviourTreeSystem.cpp
+		${BLB_INCLUDE}/ECS/Systems/InputSystem.hpp
+		${BLB_SOURCE}/ECS/Systems/InputSystem.cpp
 		${BLB_INCLUDE}/ECS/Systems/RenderSystem.hpp
 		${BLB_SOURCE}/ECS/Systems/RenderSystem.cpp
 		${BLB_INCLUDE}/ECS/Systems/PhysicsSystem.hpp
