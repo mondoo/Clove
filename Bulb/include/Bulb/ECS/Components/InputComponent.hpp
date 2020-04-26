@@ -37,10 +37,10 @@ namespace blb::ecs {
 	private:
 		static BindingId nextId;
 
-		//std::unordered_map<KeyButtonState, std::unordered_map<BindingId, size_t>> keyIdToIndexMap;
+		std::unordered_map<KeyButtonState, std::unordered_map<BindingId, size_t>, hashPair> keyIdToIndexMap;
 		std::unordered_map<KeyButtonState, std::vector<KeyBindingFunction>, hashPair> keyBindings;
 
-		//std::unordered_map<MouseButtonState, std::unordered_map<BindingId, size_t>> buttonIdToIndexMap;
+		std::unordered_map<MouseButtonState, std::unordered_map<BindingId, size_t>, hashPair> buttonIdToIndexMap;
 		std::unordered_map<MouseButtonState, std::vector<MouseBindingFunction>, hashPair> mouseButtonBindings;
 
 		//FUNCTIONS

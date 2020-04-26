@@ -8,7 +8,7 @@ namespace blb::ecs {
 		keyFunctions.emplace_back(std::bind(std::forward<FunctionType>(function), object));
 		const size_t index = keyFunctions.size() - 1;
 
-		//keyIdToIndexMap[key][id] = index;
+		keyIdToIndexMap[key][id] = index;
 
 		return id;
 	}
@@ -22,7 +22,7 @@ namespace blb::ecs {
 		mouseFunctions.emplace_back(std::bind(std::forward<FunctionType>(function), object));
 		const size_t index = mouseFunctions.size() - 1;
 
-		//buttonIdToIndexMap[button][id] = index;
+		buttonIdToIndexMap[button][id] = index;
 
 		return id;
 	}
@@ -36,7 +36,7 @@ namespace blb::ecs {
 		keyFunctions.emplace_back(function);
 		const size_t index = keyFunctions.size() - 1;
 
-		//keyIdToIndexMap[key][id] = index;
+		keyIdToIndexMap[key][id] = index;
 
 		return id;
 	}
@@ -50,7 +50,7 @@ namespace blb::ecs {
 		mouseFunctions.emplace_back(function);
 		const size_t index = mouseFunctions.size() - 1;
 
-		//buttonIdToIndexMap[button][id] = index;
+		buttonIdToIndexMap[button][id] = index;
 
 		return id;
 	}
