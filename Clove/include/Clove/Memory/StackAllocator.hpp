@@ -9,6 +9,7 @@ namespace clv::mem {
 		//VARIABLES
 	private:
 		std::unique_ptr<char[]> stack;
+		size_t stackSize = 0;
 		char* top = nullptr;
 
 		//FUNCTIONS
