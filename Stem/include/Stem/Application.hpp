@@ -20,10 +20,8 @@ namespace stm {
 
 namespace stm {
 	class Application {
-	//VARIABLES
-	//Temp
-	//private:
-	public:
+		//VARIABLES
+	private:
 		std::unique_ptr<clv::plt::Platform> platformInstance;
 		std::shared_ptr<clv::plt::Window> window;
 
@@ -37,6 +35,8 @@ namespace stm {
 
 		void start();
 		void run();
+
+		const std::shared_ptr<clv::plt::Window>& getWindow() const;
 	};
 }
 

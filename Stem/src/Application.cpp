@@ -30,4 +30,8 @@ namespace stm {
 			window->endFrame();
 		}
 	}
+	
+	const std::shared_ptr<clv::plt::Window>& Application::getWindow() const {
+		return window;
+	}
 }
