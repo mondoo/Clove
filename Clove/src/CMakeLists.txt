@@ -121,6 +121,8 @@ set(
 		${CLV_SOURCE}/Memory/AllocationTracker.cpp
 		${CLV_INCLUDE}/Memory/PoolAllocator.hpp
 		${CLV_INCLUDE}/Memory/PoolAllocator.inl
+		${CLV_INCLUDE}/Memory/StackAllocator.hpp
+		${CLV_SOURCE}/Memory/StackAllocator.cpp
 )
 
 set(
