@@ -10,34 +10,19 @@ namespace clv::mem {
 			alignas(alignof(ItemType)) char item[sizeof(ItemType)];
 		};
 
-		struct PoolArena {
-			//VARIABLES
-		public:
-			std::unique_ptr<PoolItem[]> storage;
-			std::unique_ptr<PoolArena> next;
-
-		private:
-	#if CLV_ENABLE_MEMORY_DEBUGGING
-			size_t size;
-	#endif
-
-			//FUNCTIONS
-		public:
-			PoolArena(size_t size);
-			~PoolArena();
-		};
-
 		//VARIABLES
 	private:
-		size_t arenaSize;
-		std::unique_ptr<PoolArena> arena;
-
+		char* pool;
+		size_t numElements;
 		PoolItem* nextFree = nullptr;
+
+		bool freeMemory = true;
 
 		//FUNCTIONS
 	public:
 		PoolAllocator() = delete;
-		PoolAllocator(size_t elementsPerArena);
+		PoolAllocator(size_t numElements);
+		PoolAllocator(char* start, size_t numElements);
 
 		PoolAllocator(const PoolAllocator& other) = delete;
 		PoolAllocator(PoolAllocator&& other) noexcept;
@@ -45,7 +30,7 @@ namespace clv::mem {
 		PoolAllocator& operator=(const PoolAllocator& other) = delete;
 		PoolAllocator& operator=(PoolAllocator&& other) noexcept;
 
-		~PoolAllocator() = default;
+		~PoolAllocator();
 
 		template<typename... Args>
 		ItemType* alloc(Args&&... args);
