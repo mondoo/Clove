@@ -1,8 +1,20 @@
 set(ApplicationFolder "Garlic/Stem")
 
-project(Stem)
+#Stem
+add_subdirectory(src)
 
-add_library(${PROJECT_NAME} STATIC main.cpp)
 set_target_properties(Stem PROPERTIES FOLDER ${ApplicationFolder})
 
-target_link_libraries(Stem PUBLIC Bulb)
+#Includes
+target_include_directories(
+	Stem
+	PUBLIC
+		include
+)
+
+#Libraries
+target_link_libraries(
+	Stem 
+	PUBLIC 
+		Bulb
+)
