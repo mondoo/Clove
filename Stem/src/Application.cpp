@@ -7,7 +7,7 @@ namespace stm {
 
 	void Application::start(){
 		platformInstance = clv::plt::createPlatformInstance();
-		window = platformInstance->createWindow({ "NO_NAME", 1280, 720 });
+		window = platformInstance->createWindow(getApplicationDescriptor().windowDescriptor);
 		window->setVSync(true);
 
 		layerStack.pushLayer(createApplicationLayer(*this));

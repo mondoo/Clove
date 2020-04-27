@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Clove/Platform/PlatformTypes.hpp>
 #include <Bulb/LayerStack.hpp>
 
 namespace clv::plt {
@@ -12,8 +13,14 @@ namespace blb {
 }
 
 namespace stm {
+	struct ApplicationDescriptor{
+		clv::plt::WindowDescriptor windowDescriptor;
+	};
+}
+
+namespace stm {
 	class Application {
-		//VARIABLES
+	//VARIABLES
 	//Temp
 	//private:
 	public:
@@ -33,4 +40,6 @@ namespace stm {
 	};
 }
 
+//To be defined by the client
+extern stm::ApplicationDescriptor getApplicationDescriptor();
 extern std::shared_ptr<blb::Layer> createApplicationLayer(const stm::Application& app);
