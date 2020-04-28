@@ -18,6 +18,15 @@ namespace blb::ecs {
 	void World::update(utl::DeltaTime deltaTime) {
 		CLV_PROFILE_FUNCTION();
 
+		if(pendingDestroyIDs.size() > 0) {
+			std::set<EntityID> idSet{ pendingDestroyIDs.begin(), pendingDestroyIDs.end() };
+			for(int i = activeIDs.size() - 1; i >= 0; --i) {
+				if(idSet.find(activeIDs[i]) != idSet.end()) {
+					activeIDs.erase(activeIDs.begin() + i);
+				}
+			}
+		}
+
 		for(const auto& system : systems) {
 			system->preUpdate(*this);
 		}
@@ -69,9 +78,8 @@ namespace blb::ecs {
 		if(ID == INVALID_ENTITY_ID || foundIDIter == activeIDs.end()) {
 			return;
 		}
-		componentManager.onEntityDestroyed(ID);
 
-		activeIDs.erase(foundIDIter);
+		pendingDestroyIDs.push_back(ID);
 	}
 
 	void World::destroyAllEntites() {
