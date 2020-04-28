@@ -3,6 +3,10 @@
 namespace blb::aud {
 	Sound::Sound() = default;
 
+	Sound::Sound(std::string_view filePath)
+		: file(filePath.data()) {
+	}
+
 	Sound::Sound(const Sound& other) = default;
 
 	Sound::Sound(Sound&& other) = default;
@@ -12,10 +16,6 @@ namespace blb::aud {
 	Sound& Sound::operator=(Sound&& other) = default;
 
 	Sound::~Sound() = default;
-
-	Sound::Sound(const std::string& filePath)
-		: file(filePath.c_str()) {
-	}
 
 	bool Sound::isValid() const {
 		return file.refCount() > 0;

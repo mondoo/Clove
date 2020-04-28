@@ -14,6 +14,7 @@ namespace blb::aud {
 		//FUNCTIONS
 	public:
 		Sound();
+		Sound(std::string_view filePath);
 
 		Sound(const Sound& other);
 		Sound(Sound&& other);
@@ -22,8 +23,6 @@ namespace blb::aud {
 		Sound& operator=(Sound&& other);
 
 		~Sound();
-
-		Sound(const std::string& filePath);
 
 		bool isValid() const;
 
