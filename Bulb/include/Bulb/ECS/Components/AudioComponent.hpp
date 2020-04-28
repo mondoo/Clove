@@ -46,7 +46,7 @@ namespace blb::ecs {
 
 		~AudioComponent();
 
-		void setSound(const aud::Sound& sound); //TODO: make val?
+		void setSound(aud::Sound sound);
 
 		void play(PlaybackMode playback = PlaybackMode::once);
 		void pause();

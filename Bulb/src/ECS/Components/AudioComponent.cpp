@@ -13,8 +13,8 @@ namespace blb::ecs {
 
 	AudioComponent::~AudioComponent() = default;
 
-	void AudioComponent::setSound(const aud::Sound& sound) {
-		this->sound = sound;
+	void AudioComponent::setSound(aud::Sound sound) {
+		this->sound = std::move(sound);
 	}
 
 	void AudioComponent::play(PlaybackMode playback) {
