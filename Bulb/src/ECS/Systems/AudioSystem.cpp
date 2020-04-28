@@ -6,10 +6,10 @@
 //TODO: Clove wrapper for audio
 #include <portaudio.h>
 
-#define PACall(x)																				\
-	{																							\
-		auto err = x;																			\
-		CLV_ASSERT(err == paNoError, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(err));	\
+#define PACall(x)                                                                        \
+	{                                                                                      \
+		auto err = x;                                                                        \
+		CLV_ASSERT(err == paNoError, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(err)); \
 	}
 
 using namespace clv;
@@ -75,36 +75,32 @@ namespace blb::ecs {
 	}
 
 	void AudioSystem::startSound(AudioComponent* component, PlaybackMode playback) {
-		if(component->currentPlayback.has_value() && component->currentPlayback != playback) {
+		if(isStreamActive(component->stream)) {
 			stopSound(component);
-		} else if(isStreamActive(component->stream)) {
-			return;
 		}
 
-		if(!component->stream) {
-			component->playbackPosition = 0;
+		component->playbackPosition = 0;
 
-			PaStreamParameters outputParameters;
-			outputParameters.device = Pa_GetDefaultOutputDevice();
-			outputParameters.sampleFormat = paInt32;
-			outputParameters.channelCount = component->sound.getChannels();
-			outputParameters.suggestedLatency = 0.2f;
-			outputParameters.hostApiSpecificStreamInfo = nullptr;
+		PaStreamParameters outputParameters;
+		outputParameters.device = Pa_GetDefaultOutputDevice();
+		outputParameters.sampleFormat = paInt32;
+		outputParameters.channelCount = component->sound.getChannels();
+		outputParameters.suggestedLatency = 0.2f;
+		outputParameters.hostApiSpecificStreamInfo = nullptr;
 
-			switch(playback) {
-				case PlaybackMode::once:
-					PACall(Pa_OpenStream(&component->stream, 0, &outputParameters, component->sound.getSamplerate(), paFramesPerBufferUnspecified, paNoFlag, &AudioSystem::soundPlayback_Once, component));
-					break;
-				case PlaybackMode::repeat:
-					PACall(Pa_OpenStream(&component->stream, 0, &outputParameters, component->sound.getSamplerate(), paFramesPerBufferUnspecified, paNoFlag, &AudioSystem::soundPlayback_Loop, component));
-					break;
-				default:
-					CLV_ASSERT(false, "{0} : Invalid playback mode!", CLV_FUNCTION_NAME);
-					break;
-			}
-
-			component->currentPlayback = playback;
+		switch(playback) {
+			case PlaybackMode::once:
+				PACall(Pa_OpenStream(&component->stream, 0, &outputParameters, component->sound.getSamplerate(), paFramesPerBufferUnspecified, paNoFlag, &AudioSystem::soundPlayback_Once, component));
+				break;
+			case PlaybackMode::repeat:
+				PACall(Pa_OpenStream(&component->stream, 0, &outputParameters, component->sound.getSamplerate(), paFramesPerBufferUnspecified, paNoFlag, &AudioSystem::soundPlayback_Loop, component));
+				break;
+			default:
+				CLV_ASSERT(false, "{0} : Invalid playback mode!", CLV_FUNCTION_NAME);
+				break;
 		}
+
+		component->currentPlayback = playback;
 
 		PACall(Pa_StartStream(component->stream));
 		component->playing = true;
