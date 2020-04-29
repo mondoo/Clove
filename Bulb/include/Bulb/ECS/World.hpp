@@ -19,7 +19,7 @@ namespace blb::ecs {
 
 		static EntityID nextID;
 		std::vector<EntityID> activeIDs;
-		std::vector<EntityID> pendingDestroyIDs;
+		std::set<EntityID> pendingDestroyIDs;
 
 		//FUNCTIONS
 	public:

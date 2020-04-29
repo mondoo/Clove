@@ -19,9 +19,8 @@ namespace blb::ecs {
 		CLV_PROFILE_FUNCTION();
 
 		if(pendingDestroyIDs.size() > 0) {
-			std::set<EntityID> idSet{ pendingDestroyIDs.begin(), pendingDestroyIDs.end() };
-			auto removeIter = std::remove_if(activeIDs.begin(), activeIDs.end(), [idSet](EntityID id) {
-				return idSet.find(id) != idSet.end();
+			auto removeIter = std::remove_if(activeIDs.begin(), activeIDs.end(), [this](EntityID id) {
+				return pendingDestroyIDs.find(id) != pendingDestroyIDs.end();
 			});
 
 			if(removeIter != activeIDs.end()) {
@@ -31,6 +30,8 @@ namespace blb::ecs {
 
 				activeIDs.erase(removeIter, activeIDs.end());
 			}
+
+			pendingDestroyIDs.clear();
 		}
 
 		for(const auto& system : systems) {
@@ -85,7 +86,7 @@ namespace blb::ecs {
 			return;
 		}
 
-		pendingDestroyIDs.push_back(ID);
+		pendingDestroyIDs.emplace(ID);
 	}
 
 	void World::destroyAllEntites() {
