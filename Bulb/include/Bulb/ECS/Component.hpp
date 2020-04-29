@@ -107,7 +107,7 @@ inline bool operator==(const blb::ecs::ComponentPtr<ComponentType>& ptr, const C
 }
 template<typename ComponentType>
 inline bool operator==(const blb::ecs::ComponentPtr<ComponentType>& ptr, const ComponentType& object) {
-	return ptr.get() == *object;
+	return *(ptr.get()) == object;
 }
 
 //ComponentType != ComponentType
