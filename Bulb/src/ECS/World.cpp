@@ -20,11 +20,16 @@ namespace blb::ecs {
 
 		if(pendingDestroyIDs.size() > 0) {
 			std::set<EntityID> idSet{ pendingDestroyIDs.begin(), pendingDestroyIDs.end() };
-			for(int i = activeIDs.size() - 1; i >= 0; --i) {
-				if(idSet.find(activeIDs[i]) != idSet.end()) {
-					componentManager.onEntityDestroyed(activeIDs[i]);
-					activeIDs.erase(activeIDs.begin() + i);
-				}
+			auto removeIter = std::remove_if(activeIDs.begin(), activeIDs.end(), [idSet](EntityID id) {
+				return idSet.find(id) != idSet.end();
+			});
+
+			if(removeIter != activeIDs.end()) {
+				std::for_each(removeIter, activeIDs.end(), [this](EntityID id) {
+					componentManager.onEntityDestroyed(id);
+				});
+
+				activeIDs.erase(removeIter, activeIDs.end());
 			}
 		}
 
