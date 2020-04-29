@@ -22,6 +22,7 @@ namespace blb::ecs {
 			std::set<EntityID> idSet{ pendingDestroyIDs.begin(), pendingDestroyIDs.end() };
 			for(int i = activeIDs.size() - 1; i >= 0; --i) {
 				if(idSet.find(activeIDs[i]) != idSet.end()) {
+					componentManager.onEntityDestroyed(activeIDs[i]);
 					activeIDs.erase(activeIDs.begin() + i);
 				}
 			}
