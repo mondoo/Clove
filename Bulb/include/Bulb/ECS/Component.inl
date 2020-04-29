@@ -70,7 +70,7 @@ namespace blb::ecs {
 
 	template<typename ComponentType>
 	ComponentPtr<ComponentType>::ComponentPtr(const ComponentPtr& other) {
-		copy(std::move(other));
+		copy(other);
 	}
 
 	template<typename ComponentType>
@@ -80,7 +80,7 @@ namespace blb::ecs {
 
 	template<typename ComponentType>
 	ComponentPtr<ComponentType>& ComponentPtr<ComponentType>::operator=(const ComponentPtr& other) {
-		copy(std::move(other));
+		copy(other);
 		return *this;
 	}
 
