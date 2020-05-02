@@ -348,7 +348,7 @@ private:
 		if(enableValidationLayers) {
 			//We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
 			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-			createInfo.ppEnabledExtensionNames = validationLayers.data();
+			createInfo.ppEnabledLayerNames = validationLayers.data();
 		} else {
 			createInfo.enabledLayerCount = 0;
 		}
