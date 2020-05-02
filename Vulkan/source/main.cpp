@@ -10,6 +10,16 @@
 constexpr uint32_t WIDTH = 800;
 constexpr uint32_t HEIGHT = 600;
 
+const std::vector<const char*> validationLayers = {
+	"VK_LAYER_KHRONOS_validation"
+};
+
+#ifdef NDEBUG
+constexpr bool enableValidationLayers = false;
+#else
+constexpr bool enableValidationLayers = true;
+#endif
+
 class HelloTriangleApplication {
 	//VARIABLES
 private:
@@ -57,6 +67,10 @@ private:
 
 	//Vulkan
 	void createInstance() {
+		if(enableValidationLayers && !checkValidationLayerSupport()) {
+			throw std::runtime_error("validation layers are requested but are not avilable");
+		}
+
 		VkApplicationInfo appInfo{};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 		appInfo.pApplicationName = "Hello Triangle";
@@ -77,7 +91,12 @@ private:
 		createInfo.enabledExtensionCount = glfwExtensionCount;
 		createInfo.ppEnabledExtensionNames = glfwExtensions;
 
-		createInfo.enabledLayerCount = 0;
+		if(enableValidationLayers) {
+			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledLayerNames = validationLayers.data();
+		} else {
+			createInfo.enabledLayerCount = 0;
+		}
 
 		uint32_t extensionCount = 0;
 		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
@@ -94,7 +113,7 @@ private:
 		for(int i = 0; i < glfwExtensionCount; ++i) {
 			bool found = false;
 			for(const auto& extension : extensions) {
-				if(std::strcmp(glfwExtensions[i], extension.extensionName) != 0) {
+				if(std::strcmp(glfwExtensions[i], extension.extensionName) == 0) {
 					found = true;
 					break;
 				}
@@ -108,6 +127,31 @@ private:
 		if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
 			throw std::runtime_error("Failed to create instance!");
 		}
+	}
+
+	bool checkValidationLayerSupport() {
+		uint32_t layerCount;
+		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+		std::vector<VkLayerProperties> avilableLayers(layerCount);
+		vkEnumerateInstanceLayerProperties(&layerCount, avilableLayers.data());
+
+		for(const char* layerName : validationLayers) {
+			bool layerFound = false;
+
+			for(const auto& layerProperties : avilableLayers) {
+				if(std::strcmp(layerName, layerProperties.layerName) == 0) {
+					layerFound = true;
+					break;
+				}
+			}
+
+			if(!layerFound) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 };
 
