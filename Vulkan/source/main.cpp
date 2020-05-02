@@ -56,6 +56,7 @@ private:
 	VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE; //GPU
 	VkDevice device;
+	VkQueue graphicsQueue;
 
 	//FUNCTIONS
 public:
@@ -327,6 +328,8 @@ private:
 		if(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create logical device!");
 		}
+
+		vkGetDeviceQueue(device, *indices.graphicsFamily, 0, &graphicsQueue);
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
