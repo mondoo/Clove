@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include <optional>
 #include <vulkan/vulkan.h>
 
 #define GLFW_INCLUDE_VULKAN
@@ -36,6 +37,14 @@ void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 		func(instance, debugMessenger, pAllocator);
 	}
 }
+
+struct QueueFamilyIndices{
+	std::optional<uint32_t> graphicsFamily;
+
+	bool isComplete() const{
+		return graphicsFamily.has_value();
+	}
+};
 
 class HelloTriangleApplication {
 	//VARIABLES
@@ -250,8 +259,36 @@ private:
 		return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && deviceFeatures.geometryShader;
 #endif
 		//Or we could give a score to each physicalDevice and then return the highest score
-		//For now, any GPU will do
-		return true;
+		
+		QueueFamilyIndices indices = findQueueFamilies(device);
+
+		return indices.isComplete();
+	}
+
+	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device){
+		QueueFamilyIndices indices;
+
+		uint32_t queueFamilyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+		int i = 0;
+		for(const auto& queueFamily : queueFamilies) {
+			//Make sure we have the queue family that'll let us render graphics
+			if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+				indices.graphicsFamily = i;
+			}
+
+			if(indices.isComplete()) {
+				break;
+			}
+
+			++i;
+		}
+
+		return indices;
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
