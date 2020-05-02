@@ -40,9 +40,10 @@ void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 
 struct QueueFamilyIndices {
 	std::optional<uint32_t> graphicsFamily;
+	std::optional<uint32_t> presentFamily;
 
 	bool isComplete() const {
-		return graphicsFamily.has_value();
+		return graphicsFamily && presentFamily;
 	}
 };
 
@@ -292,6 +293,14 @@ private:
 			//Make sure we have the queue family that'll let us render graphics
 			if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 				indices.graphicsFamily = i;
+			}
+
+			//Make sure we have a queue family that'll let us present to a window (might not be the same family that supports graphics)
+			//We could enforce this by only choosing devices that have presentation support in it's graphics family
+			VkBool32 presentSupport = VK_FALSE;
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+			if(presentSupport == VK_TRUE) {
+				indices.presentFamily = i;
 			}
 
 			if(indices.isComplete()) {
