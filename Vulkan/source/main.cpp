@@ -1,8 +1,8 @@
 #include <cstdlib>
 #include <iostream>
+#include <optional>
 #include <stdexcept>
 #include <vector>
-#include <optional>
 #include <vulkan/vulkan.h>
 
 #define GLFW_INCLUDE_VULKAN
@@ -31,17 +31,17 @@ VkResult createDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMes
 	}
 }
 
-void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator){
+void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
 	auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
 	if(func != nullptr) {
 		func(instance, debugMessenger, pAllocator);
 	}
 }
 
-struct QueueFamilyIndices{
+struct QueueFamilyIndices {
 	std::optional<uint32_t> graphicsFamily;
 
-	bool isComplete() const{
+	bool isComplete() const {
 		return graphicsFamily.has_value();
 	}
 };
@@ -54,7 +54,8 @@ private:
 	//Vulkan
 	VkInstance instance = VK_NULL_HANDLE;
 	VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
-	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE; //GPU
+	VkDevice device;
 
 	//FUNCTIONS
 public:
@@ -79,6 +80,7 @@ private:
 		createInstance();
 		setupDebugMessenger();
 		pickPhysicalDevice();
+		createLogicalDevice();
 	}
 
 	void mainLoop() {
@@ -88,6 +90,7 @@ private:
 	}
 
 	void cleanup() {
+		vkDestroyDevice(device, nullptr);
 		if(enableValidationLayers) {
 			destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 		}
@@ -105,26 +108,26 @@ private:
 		}
 
 		VkApplicationInfo appInfo{};
-		appInfo.sType				= VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName	= "Hello Triangle";
-		appInfo.applicationVersion	= VK_MAKE_VERSION(1, 0, 0);
-		appInfo.pEngineName			= "No Engine";
-		appInfo.engineVersion		= VK_MAKE_VERSION(1, 0, 0);
-		appInfo.apiVersion			= VK_API_VERSION_1_2;
+		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		appInfo.pApplicationName = "Hello Triangle";
+		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+		appInfo.pEngineName = "No Engine";
+		appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+		appInfo.apiVersion = VK_API_VERSION_1_2;
 
 		VkInstanceCreateInfo createInfo{};
-		createInfo.sType			= VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		createInfo.pApplicationInfo = &appInfo;
 
 		auto requiredExtensions = getRequiredExtensions();
 
-		createInfo.enabledExtensionCount	= static_cast<uint32_t>(requiredExtensions.size());
-		createInfo.ppEnabledExtensionNames	= requiredExtensions.data();
+		createInfo.enabledExtensionCount = static_cast<uint32_t>(requiredExtensions.size());
+		createInfo.ppEnabledExtensionNames = requiredExtensions.data();
 
 		VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
 		if(enableValidationLayers) {
-			createInfo.enabledLayerCount	= static_cast<uint32_t>(validationLayers.size());
-			createInfo.ppEnabledLayerNames	= validationLayers.data();
+			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledLayerNames = validationLayers.data();
 
 			//Setting the pNext allows us to debug the creation and destruction of the instance (as normaly we need an instance pointer to enable debugging)
 			populateDebugMessageCreateInfo(debugCreateInfo);
@@ -197,13 +200,13 @@ private:
 		return extensions;
 	}
 
-	void populateDebugMessageCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo){
+	void populateDebugMessageCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
 		createInfo = {};
-		createInfo.sType			= VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-		createInfo.messageSeverity	= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT	| VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT	| VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-		createInfo.messageType		= VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT		| VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT	| VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-		createInfo.pfnUserCallback	= debugCallback;
-		createInfo.pUserData		= nullptr;
+		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+		createInfo.pfnUserCallback = debugCallback;
+		createInfo.pUserData = nullptr;
 	}
 
 	//This sets up the debug messenger for our instance
@@ -221,7 +224,7 @@ private:
 	}
 
 	//Physical devices are GPUs
-	void pickPhysicalDevice(){
+	void pickPhysicalDevice() {
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 
@@ -244,7 +247,7 @@ private:
 		}
 	}
 
-	bool isDeviceSuitable(VkPhysicalDevice device){
+	bool isDeviceSuitable(VkPhysicalDevice device) {
 		//Basic properties (name, type, supported vk version)
 		VkPhysicalDeviceProperties devicePoperties;
 		vkGetPhysicalDeviceProperties(device, &devicePoperties);
@@ -259,13 +262,13 @@ private:
 		return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && deviceFeatures.geometryShader;
 #endif
 		//Or we could give a score to each physicalDevice and then return the highest score
-		
+
 		QueueFamilyIndices indices = findQueueFamilies(device);
 
 		return indices.isComplete();
 	}
 
-	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device){
+	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
 		QueueFamilyIndices indices;
 
 		uint32_t queueFamilyCount = 0;
@@ -289,6 +292,41 @@ private:
 		}
 
 		return indices;
+	}
+
+	void createLogicalDevice() {
+		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+
+		VkDeviceQueueCreateInfo queueCreateinfo{};
+		queueCreateinfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateinfo.queueFamilyIndex = *indices.graphicsFamily;
+		queueCreateinfo.queueCount = 1;
+
+		float queuePriority = 1.0f;
+		queueCreateinfo.pQueuePriorities = &queuePriority;
+
+		VkPhysicalDeviceFeatures deviceFeatures{};
+
+		VkDeviceCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		createInfo.pQueueCreateInfos = &queueCreateinfo;
+		createInfo.queueCreateInfoCount = 1;
+		createInfo.pEnabledFeatures = &deviceFeatures;
+
+		//We don't need device specific extensions for now (an example of one is the VK_KHR_swapchain)
+		createInfo.enabledExtensionCount = 0;
+
+		if(enableValidationLayers) {
+			//We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
+			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledExtensionNames = validationLayers.data();
+		} else {
+			createInfo.enabledLayerCount = 0;
+		}
+
+		if(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create logical device!");
+		}
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
