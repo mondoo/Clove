@@ -25,3 +25,6 @@
 [submodule "Bulb/vendor/libsndfile"]
 	path = Bulb/vendor/libsndfile
 	url = https://github.com/erikd/libsndfile.git
+[submodule "Vulkan/vendor/glfw"]
+	path = Vulkan/vendor/glfw
+	url = https://github.com/glfw/glfw.git
