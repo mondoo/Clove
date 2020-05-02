@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 #include <vulkan/vulkan.h>
 
 #define GLFW_INCLUDE_VULKAN
@@ -47,6 +48,8 @@ private:
 	}
 
 	void cleanup() {
+		vkDestroyInstance(instance, nullptr);
+
 		glfwDestroyWindow(window);
 
 		glfwTerminate();
@@ -75,6 +78,32 @@ private:
 		createInfo.ppEnabledExtensionNames = glfwExtensions;
 
 		createInfo.enabledLayerCount = 0;
+
+		uint32_t extensionCount = 0;
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+
+		std::vector<VkExtensionProperties> extensions(extensionCount);
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+
+		std::cout << "avilable extensions:\n";
+		for(const auto& extension : extensions) {
+			std::cout << '\t' << extension.extensionName << '\n';
+		}
+
+		//Check if we have the required extensions
+		for(int i = 0; i < glfwExtensionCount; ++i) {
+			bool found = false;
+			for(const auto& extension : extensions) {
+				if(std::strcmp(glfwExtensions[i], extension.extensionName) != 0) {
+					found = true;
+					break;
+				}
+			}
+
+			if(!found) {
+				throw std::runtime_error("Do not have the requried extensions");
+			}
+		}
 
 		if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
 			throw std::runtime_error("Failed to create instance!");
