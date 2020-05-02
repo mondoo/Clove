@@ -3,6 +3,7 @@
 #include <optional>
 #include <stdexcept>
 #include <vector>
+#include <set>
 #include <vulkan/vulkan.h>
 
 #define GLFW_INCLUDE_VULKAN
@@ -58,6 +59,7 @@ private:
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE; //GPU
 	VkDevice device;
 	VkQueue graphicsQueue;
+	VkQueue presentQueue;
 	VkSurfaceKHR surface;
 
 	//FUNCTIONS
@@ -316,20 +318,28 @@ private:
 	void createLogicalDevice() {
 		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
-		VkDeviceQueueCreateInfo queueCreateinfo{};
-		queueCreateinfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateinfo.queueFamilyIndex = *indices.graphicsFamily;
-		queueCreateinfo.queueCount = 1;
+		//Create our queue families
+		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+		std::set<uint32_t> uniqueQueueFamilies{ *indices.graphicsFamily, *indices.presentFamily };
 
 		float queuePriority = 1.0f;
-		queueCreateinfo.pQueuePriorities = &queuePriority;
+		for(uint32_t queueFamily : uniqueQueueFamilies) {
+			VkDeviceQueueCreateInfo queueCreateinfo{};
+			queueCreateinfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueCreateinfo.queueFamilyIndex = queueFamily;
+			queueCreateinfo.queueCount = 1;
+			queueCreateinfo.pQueuePriorities = &queuePriority;
 
+			queueCreateInfos.push_back(queueCreateinfo);
+		}
+
+		//Sepcify our device features
 		VkPhysicalDeviceFeatures deviceFeatures{};
 
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		createInfo.pQueueCreateInfos = &queueCreateinfo;
-		createInfo.queueCreateInfoCount = 1;
+		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+		createInfo.pQueueCreateInfos = queueCreateInfos.data();
 		createInfo.pEnabledFeatures = &deviceFeatures;
 
 		//We don't need device specific extensions for now (an example of one is the VK_KHR_swapchain)
@@ -348,6 +358,7 @@ private:
 		}
 
 		vkGetDeviceQueue(device, *indices.graphicsFamily, 0, &graphicsQueue);
+		vkGetDeviceQueue(device, *indices.presentFamily, 0, &presentQueue);
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
