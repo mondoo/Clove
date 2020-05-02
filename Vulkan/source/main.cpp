@@ -20,13 +20,31 @@ constexpr bool enableValidationLayers = false;
 constexpr bool enableValidationLayers = true;
 #endif
 
+//Function wrappers that load function pointers to extensions and then call them
+VkResult createDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
+	auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+	if(func != nullptr) {
+		return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
+	} else {
+		return VK_ERROR_EXTENSION_NOT_PRESENT;
+	}
+}
+
+void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator){
+	auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+	if(func != nullptr) {
+		func(instance, debugMessenger, pAllocator);
+	}
+}
+
 class HelloTriangleApplication {
 	//VARIABLES
 private:
 	GLFWwindow* window = nullptr;
 
 	//Vulkan
-	VkInstance instance;
+	VkInstance instance = nullptr;
+	VkDebugUtilsMessengerEXT debugMessenger = nullptr;
 
 	//FUNCTIONS
 public:
@@ -49,6 +67,7 @@ private:
 
 	void initVulkan() {
 		createInstance();
+		setupDebugMessenger();
 	}
 
 	void mainLoop() {
@@ -58,6 +77,9 @@ private:
 	}
 
 	void cleanup() {
+		if(enableValidationLayers) {
+			destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+		}
 		vkDestroyInstance(instance, nullptr);
 
 		glfwDestroyWindow(window);
@@ -72,30 +94,34 @@ private:
 		}
 
 		VkApplicationInfo appInfo{};
-		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName = "Hello Triangle";
-		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.pEngineName = "No Engine";
-		appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.apiVersion = VK_API_VERSION_1_2;
+		appInfo.sType				= VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		appInfo.pApplicationName	= "Hello Triangle";
+		appInfo.applicationVersion	= VK_MAKE_VERSION(1, 0, 0);
+		appInfo.pEngineName			= "No Engine";
+		appInfo.engineVersion		= VK_MAKE_VERSION(1, 0, 0);
+		appInfo.apiVersion			= VK_API_VERSION_1_2;
 
 		VkInstanceCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		createInfo.sType			= VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		createInfo.pApplicationInfo = &appInfo;
 
-		uint32_t glfwExtensionCount = 0;
-		const char** glfwExtensions;
+		auto requiredExtensions = getRequiredExtensions();
 
-		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+		createInfo.enabledExtensionCount	= static_cast<uint32_t>(requiredExtensions.size());
+		createInfo.ppEnabledExtensionNames	= requiredExtensions.data();
 
-		createInfo.enabledExtensionCount = glfwExtensionCount;
-		createInfo.ppEnabledExtensionNames = glfwExtensions;
-
+		VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
 		if(enableValidationLayers) {
-			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-			createInfo.ppEnabledLayerNames = validationLayers.data();
+			createInfo.enabledLayerCount	= static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledLayerNames	= validationLayers.data();
+
+			//Setting the pNext allows us to debug the creation and destruction of the instance (as normaly we need an instance pointer to enable debugging)
+			populateDebugMessageCreateInfo(debugCreateInfo);
+			createInfo.pNext = &debugCreateInfo;
 		} else {
 			createInfo.enabledLayerCount = 0;
+
+			createInfo.pNext = nullptr;
 		}
 
 		uint32_t extensionCount = 0;
@@ -104,25 +130,17 @@ private:
 		std::vector<VkExtensionProperties> extensions(extensionCount);
 		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
+		std::cout << "required extensions:\n";
+		for(const auto& extension : requiredExtensions) {
+			std::cout << '\t' << extension << '\n';
+		}
+
 		std::cout << "avilable extensions:\n";
 		for(const auto& extension : extensions) {
 			std::cout << '\t' << extension.extensionName << '\n';
 		}
 
-		//Check if we have the required extensions
-		for(int i = 0; i < glfwExtensionCount; ++i) {
-			bool found = false;
-			for(const auto& extension : extensions) {
-				if(std::strcmp(glfwExtensions[i], extension.extensionName) == 0) {
-					found = true;
-					break;
-				}
-			}
-
-			if(!found) {
-				throw std::runtime_error("Do not have the requried extensions");
-			}
-		}
+		//TODO: Can enumerate extensions here to make sure we have them before creating instance
 
 		if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
 			throw std::runtime_error("Failed to create instance!");
@@ -152,6 +170,54 @@ private:
 		}
 
 		return true;
+	}
+
+	std::vector<const char*> getRequiredExtensions() {
+		uint32_t glfwExtensionsCount = 0;
+		const char** glfwExtensions;
+		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionsCount);
+
+		std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionsCount);
+
+		if(enableValidationLayers) {
+			extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+		}
+
+		return extensions;
+	}
+
+	void populateDebugMessageCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo){
+		createInfo = {};
+		createInfo.sType			= VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		createInfo.messageSeverity	= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT	| VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT	| VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		createInfo.messageType		= VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT		| VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT	| VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+		createInfo.pfnUserCallback	= debugCallback;
+		createInfo.pUserData		= nullptr;
+	}
+
+	//This sets up the debug messenger for our instance
+	void setupDebugMessenger() {
+		if(!enableValidationLayers) {
+			return;
+		}
+
+		VkDebugUtilsMessengerCreateInfoEXT createInfo{};
+		populateDebugMessageCreateInfo(createInfo);
+
+		if(createDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
+			throw std::runtime_error("failed to set up debug messenger!");
+		}
+	}
+
+	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+		VkDebugUtilsMessageTypeFlagsEXT messagType,
+		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+		void* pUserData) {
+
+		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+
+		return VK_FALSE;
 	}
 };
 
