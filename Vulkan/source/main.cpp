@@ -1,9 +1,9 @@
 #include <cstdlib>
 #include <iostream>
 #include <optional>
+#include <set>
 #include <stdexcept>
 #include <vector>
-#include <set>
 #include <vulkan/vulkan.h>
 
 #define GLFW_INCLUDE_VULKAN
@@ -14,6 +14,10 @@ constexpr uint32_t HEIGHT = 600;
 
 const std::vector<const char*> validationLayers = {
 	"VK_LAYER_KHRONOS_validation"
+};
+
+const std::vector<const char*> deviceExtensions = {
+	VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
 #ifdef NDEBUG
@@ -46,6 +50,12 @@ struct QueueFamilyIndices {
 	bool isComplete() const {
 		return graphicsFamily && presentFamily;
 	}
+};
+
+struct SwapChainSupportDetails {
+	VkSurfaceCapabilitiesKHR capabilities;
+	std::vector<VkSurfaceFormatKHR> formats;
+	std::vector<VkPresentModeKHR> presentModes;
 };
 
 class HelloTriangleApplication {
@@ -151,12 +161,12 @@ private:
 		std::vector<VkExtensionProperties> extensions(extensionCount);
 		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-		std::cout << "required extensions:\n";
+		std::cout << "required instance extensions:\n";
 		for(const auto& extension : requiredExtensions) {
 			std::cout << '\t' << extension << '\n';
 		}
 
-		std::cout << "avilable extensions:\n";
+		std::cout << "avilable instance extensions:\n";
 		for(const auto& extension : extensions) {
 			std::cout << '\t' << extension.extensionName << '\n';
 		}
@@ -172,13 +182,13 @@ private:
 		uint32_t layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
-		std::vector<VkLayerProperties> avilableLayers(layerCount);
-		vkEnumerateInstanceLayerProperties(&layerCount, avilableLayers.data());
+		std::vector<VkLayerProperties> availableLayers(layerCount);
+		vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
 		for(const char* layerName : validationLayers) {
 			bool layerFound = false;
 
-			for(const auto& layerProperties : avilableLayers) {
+			for(const auto& layerProperties : availableLayers) {
 				if(std::strcmp(layerName, layerProperties.layerName) == 0) {
 					layerFound = true;
 					break;
@@ -230,7 +240,7 @@ private:
 		}
 	}
 
-	void createSurface(){
+	void createSurface() {
 		if(glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create window surface!");
 		}
@@ -277,8 +287,16 @@ private:
 		//Or we could give a score to each physicalDevice and then return the highest score
 
 		QueueFamilyIndices indices = findQueueFamilies(device);
+		const bool extentionsAreSupported = checkDeviceExtensionsSupport(device);
 
-		return indices.isComplete();
+		bool swapChainIsAdequate = false;
+		if(extentionsAreSupported) {
+			SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
+			//We'll consider the swap chain adequate if we have once supported image format and presentation mode
+			swapChainIsAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+		}
+
+		return indices.isComplete() && extentionsAreSupported && swapChainIsAdequate;
 	}
 
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
@@ -315,6 +333,58 @@ private:
 		return indices;
 	}
 
+	bool checkDeviceExtensionsSupport(VkPhysicalDevice device) {
+		uint32_t extensionCount;
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+
+		std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+		for(const char* extensionName : deviceExtensions) {
+			bool found = false;
+
+			for(const auto& extensionProperties : availableExtensions) {
+				if(std::strcmp(extensionName, extensionProperties.extensionName) == 0) {
+					found = true;
+					break;
+				}
+			}
+
+			if(!found) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device) {
+		SwapChainSupportDetails details;
+
+		//Surface capabilities
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
+
+		//Surface formats
+		uint32_t formatCount;
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
+
+		if(formatCount > 0) {
+			details.formats.resize(formatCount);
+			vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
+		}
+
+		//Surface presentation modes
+		uint32_t presentModeCount;
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
+
+		if(presentModeCount > 0) {
+			details.presentModes.resize(presentModeCount);
+			vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
+		}
+
+		return details;
+	}
+
 	void createLogicalDevice() {
 		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
@@ -338,12 +408,14 @@ private:
 
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+
 		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
 		createInfo.pQueueCreateInfos = queueCreateInfos.data();
+
 		createInfo.pEnabledFeatures = &deviceFeatures;
 
-		//We don't need device specific extensions for now (an example of one is the VK_KHR_swapchain)
-		createInfo.enabledExtensionCount = 0;
+		createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
 		if(enableValidationLayers) {
 			//We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
