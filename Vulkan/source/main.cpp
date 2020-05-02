@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 #include <optional>
@@ -5,6 +6,7 @@
 #include <stdexcept>
 #include <vector>
 #include <vulkan/vulkan.h>
+#include <algorithm>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -431,6 +433,40 @@ private:
 
 		vkGetDeviceQueue(device, *indices.graphicsFamily, 0, &graphicsQueue);
 		vkGetDeviceQueue(device, *indices.presentFamily, 0, &presentQueue);
+	}
+
+	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {
+		for(const auto& availableFormat : availableFormats) {
+			if(availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+				return availableFormat;
+			}
+		}
+
+		//Fall back to the first one if we can't find a surface format we want
+		return availableFormats[0];
+	}
+
+	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) {
+		for(const auto& availablePresentMode : availablePresentModes) {
+			if(availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+				return availablePresentMode;
+			}
+		}
+
+		return VK_PRESENT_MODE_FIFO_KHR;
+	}
+
+	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
+		if(capabilities.currentExtent.width != UINT32_MAX) {
+			return capabilities.currentExtent;
+		} else {
+			VkExtent2D actualExtent{ WIDTH, HEIGHT };
+
+			actualExtent.width	= std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
+			actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
+
+			return actualExtent;
+		}
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
