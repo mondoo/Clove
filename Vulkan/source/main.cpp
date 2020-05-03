@@ -1,12 +1,13 @@
+#include <algorithm>
 #include <cstdint>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <optional>
 #include <set>
 #include <stdexcept>
 #include <vector>
 #include <vulkan/vulkan.h>
-#include <algorithm>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -45,6 +46,25 @@ void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 	}
 }
 
+std::vector<char> readFile(const std::string& filename) {
+	//Start at the end so we can get the file size
+	std::ifstream file(filename, std::ios::ate | std::ios::binary);
+
+	if(!file.is_open()) {
+		throw std::runtime_error("Failed to open file!");
+	}
+
+	const size_t fileSize = file.tellg();
+	std::vector<char> buffer(fileSize);
+
+	file.seekg(0);
+	file.read(buffer.data(), fileSize);
+
+	file.close();
+
+	return buffer;
+}
+
 struct QueueFamilyIndices {
 	std::optional<uint32_t> graphicsFamily;
 	std::optional<uint32_t> presentFamily;
@@ -67,16 +87,16 @@ private:
 
 	//Vulkan
 	VkInstance instance = VK_NULL_HANDLE;
-	
+
 	VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
-	
+
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE; //GPU
 	VkDevice device;
 	VkQueue graphicsQueue;
 	VkQueue presentQueue;
-	
+
 	VkSurfaceKHR surface;
-	
+
 	VkSwapchainKHR swapChain;
 	std::vector<VkImage> swapChainImages;
 	VkFormat swapChainImageFormat;
@@ -453,7 +473,7 @@ private:
 		vkGetDeviceQueue(device, *indices.presentFamily, 0, &presentQueue);
 	}
 
-	void createSwapChain(){
+	void createSwapChain() {
 		SwapChainSupportDetails swapChainSuport = querySwapChainSupport(physicalDevice);
 
 		VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSuport.formats);
@@ -534,14 +554,14 @@ private:
 		} else {
 			VkExtent2D actualExtent{ WIDTH, HEIGHT };
 
-			actualExtent.width	= std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
+			actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
 			actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
 
 			return actualExtent;
 		}
 	}
 
-	void createImageViews(){
+	void createImageViews() {
 		swapChainImageViews.resize(swapChainImages.size());
 
 		for(size_t i = 0; i < swapChainImages.size(); ++i) {
@@ -566,8 +586,46 @@ private:
 		}
 	}
 
-	void createGraphicsPipeline(){
+	void createGraphicsPipeline() {
+		auto vertShaderCode = readFile("vert.spirv");
+		auto fragShaderCode = readFile("frag.spirv");
 
+		VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
+		VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
+
+		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+		vertShaderStageInfo.module = vertShaderModule;
+		vertShaderStageInfo.pName = "main";
+
+		VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+		fragShaderStageInfo.module = fragShaderModule;
+		fragShaderStageInfo.pName = "main";
+
+		VkPipelineShaderStageCreateInfo shaderStages[] = {
+			vertShaderStageInfo,
+			fragShaderStageInfo
+		};
+
+		vkDestroyShaderModule(device, fragShaderModule, nullptr);
+		vkDestroyShaderModule(device, vertShaderModule, nullptr);
+	}
+
+	VkShaderModule createShaderModule(const std::vector<char>& code) {
+		VkShaderModuleCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.codeSize = code.size();
+		createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+		VkShaderModule shaderModule;
+		if(vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create shader module!");
+		}
+
+		return shaderModule;
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
