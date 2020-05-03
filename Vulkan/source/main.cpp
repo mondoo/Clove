@@ -197,6 +197,8 @@ private:
 		presentInfo.pResults = nullptr; //Will fill an array of VkResult that can be used to check command buffer results
 
 		vkQueuePresentKHR(presentQueue, &presentInfo);
+
+		vkQueueWaitIdle(presentQueue);
 	}
 
 	void cleanup() {
