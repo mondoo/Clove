@@ -104,6 +104,7 @@ private:
 
 	std::vector<VkImageView> swapChainImageViews;
 
+	VkRenderPass renderPass;
 	VkPipelineLayout pipelineLayout;
 
 	//FUNCTIONS
@@ -133,6 +134,7 @@ private:
 		createLogicalDevice();
 		createSwapChain();
 		createImageViews();
+		createRenderPass();
 		createGraphicsPipeline();
 	}
 
@@ -148,6 +150,7 @@ private:
 		}
 		vkDestroySwapchainKHR(device, swapChain, nullptr);
 		vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+		vkDestroyRenderPass(device, renderPass, nullptr);
 		vkDestroyDevice(device, nullptr);
 
 		if(enableValidationLayers) {
@@ -586,6 +589,38 @@ private:
 			if(vkCreateImageView(device, &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
 				throw std::runtime_error("failed to create image views!");
 			}
+		}
+	}
+
+	void createRenderPass() {
+		VkAttachmentDescription colourAttachment{};
+		colourAttachment.format = swapChainImageFormat;
+		colourAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		colourAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		colourAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		colourAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		colourAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		colourAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		colourAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+		VkAttachmentReference colourAttachmentRef{};
+		colourAttachmentRef.attachment = 0;
+		colourAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		VkSubpassDescription subpass{};
+		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		subpass.colorAttachmentCount = 1;
+		subpass.pColorAttachments = &colourAttachmentRef; //The index of this array is directly referenced by the pixelshader! (i.e. layout(location = 0) out vec4 colour)
+
+		VkRenderPassCreateInfo renderPassInfo{};
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		renderPassInfo.attachmentCount = 1;
+		renderPassInfo.pAttachments = &colourAttachment;
+		renderPassInfo.subpassCount = 1;
+		renderPassInfo.pSubpasses = &subpass;
+
+		if(vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create render pass!");
 		}
 	}
 
