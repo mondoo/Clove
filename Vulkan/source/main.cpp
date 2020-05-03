@@ -108,6 +108,8 @@ private:
 	VkPipelineLayout pipelineLayout;
 	VkPipeline graphicsPipeline;
 
+	std::vector<VkFramebuffer> swapChainFramebuffers;
+
 	//FUNCTIONS
 public:
 	void run() {
@@ -137,6 +139,7 @@ private:
 		createImageViews();
 		createRenderPass();
 		createGraphicsPipeline();
+		createFrameBuffers();
 	}
 
 	void mainLoop() {
@@ -146,6 +149,9 @@ private:
 	}
 
 	void cleanup() {
+		for(auto framebuffer : swapChainFramebuffers) {
+			vkDestroyFramebuffer(device, framebuffer, nullptr);
+		}
 		for(auto imageView : swapChainImageViews) {
 			vkDestroyImageView(device, imageView, nullptr);
 		}
@@ -775,6 +781,29 @@ private:
 		}
 
 		return shaderModule;
+	}
+
+	void createFrameBuffers() {
+		swapChainFramebuffers.resize(swapChainImageViews.size());
+
+		for(size_t i = 0; i < swapChainImageViews.size(); ++i) {
+			VkImageView attachments[] = {
+				swapChainImageViews[i]
+			};
+
+			VkFramebufferCreateInfo frameBufferInfo{};
+			frameBufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+			frameBufferInfo.renderPass = renderPass;
+			frameBufferInfo.attachmentCount = 1;
+			frameBufferInfo.pAttachments = attachments;
+			frameBufferInfo.width = swapChainExtent.width;
+			frameBufferInfo.height = swapChainExtent.height;
+			frameBufferInfo.layers = 1;
+
+			if(vkCreateFramebuffer(device, &frameBufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS) {
+				throw std::runtime_error("failed to create framebuffer!");
+			}
+		}
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
