@@ -156,6 +156,9 @@ private:
 			glfwPollEvents();
 			drawFrame();
 		}
+
+		//Wait for the device to be in an idle state before exiting the loop
+		vkDeviceWaitIdle(device);
 	}
 
 	void drawFrame() {
