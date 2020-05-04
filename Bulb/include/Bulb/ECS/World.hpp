@@ -41,6 +41,7 @@ namespace blb::ecs {
 		bool isEntityValid(EntityID ID);
 
 		Entity getEntity(EntityID ID);
+		std::vector<Entity> getActiveEntities();
 
 		void destroyEntity(EntityID ID);
 		void destroyAllEntites();

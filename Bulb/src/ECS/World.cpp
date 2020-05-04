@@ -79,6 +79,15 @@ namespace blb::ecs {
 		}
 	}
 
+	std::vector<Entity> World::getActiveEntities() {
+		std::vector<Entity> entities;
+		entities.reserve(activeIDs.size());
+		for(EntityID id : activeIDs) {
+			entities.emplace_back(id, this);
+		}
+		return entities;
+	}
+
 	void World::destroyEntity(EntityID ID) {
 		auto foundIDIter = std::find(activeIDs.begin(), activeIDs.end(), ID);
 
