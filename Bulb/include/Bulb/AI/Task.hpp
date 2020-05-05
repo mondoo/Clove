@@ -5,9 +5,9 @@ namespace blb::ai {
 		//TYPES
 	public:
 		enum class Status {
-			running,
-			success,
-			failure
+			Running,
+			Success,
+			Failure
 		};
 
 		//FUNCTIONS

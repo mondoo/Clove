@@ -12,10 +12,10 @@ namespace blb::ai {
 	Task::Status Selector::activate(clv::utl::DeltaTime deltaTime) {
 		for(const auto& child : children) {
 			const Status status = child->activate(deltaTime);
-			if(status != Status::failure) {
+			if(status != Status::Failure) {
 				return status;
 			}
 		}
-		return Status::failure;
+		return Status::Failure;
 	}
 }
