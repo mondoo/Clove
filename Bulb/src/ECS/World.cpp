@@ -19,17 +19,14 @@ namespace blb::ecs {
 		CLV_PROFILE_FUNCTION();
 
 		if(pendingDestroyIDs.size() > 0) {
-			auto removeIter = std::remove_if(activeIDs.begin(), activeIDs.end(), [this](EntityID id) {
+			for(EntityID id : pendingDestroyIDs) {
+				componentManager.onEntityDestroyed(id);
+			}
+
+			const auto removeIter = std::remove_if(activeIDs.begin(), activeIDs.end(), [this](EntityID id) {
 				return pendingDestroyIDs.find(id) != pendingDestroyIDs.end();
 			});
-
-			if(removeIter != activeIDs.end()) {
-				std::for_each(removeIter, activeIDs.end(), [this](EntityID id) {
-					componentManager.onEntityDestroyed(id);
-				});
-
-				activeIDs.erase(removeIter, activeIDs.end());
-			}
+			activeIDs.erase(removeIter, activeIDs.end());
 
 			pendingDestroyIDs.clear();
 		}
