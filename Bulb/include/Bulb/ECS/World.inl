@@ -1,11 +1,11 @@
 namespace blb::ecs{
 	template<typename ComponentType, typename ...ConstructArgs>
-	ComponentPtr<ComponentType> World::addComponent(EntityID entityID, ConstructArgs&&... args) {
+	ComponentPtr<ComponentType> World::addComponent(EntityID entityID, ConstructArgs&&... args){
 		return componentManager.getComponentContainer<ComponentType>().addComponent(entityID, std::forward<ConstructArgs>(args)...);
 	}
 
 	template<typename ComponentType>
-	ComponentPtr<ComponentType> World::getComponent(EntityID entityID) {
+	ComponentPtr<ComponentType> World::getComponent(EntityID entityID){
 		return componentManager.getComponentContainer<ComponentType>().getComponent(entityID);
 	}
 
@@ -19,9 +19,9 @@ namespace blb::ecs{
 		CLV_PROFILE_FUNCTION();
 
 		std::vector<std::tuple<ComponentPtr<ComponentTypes>...>> componentSets;
-		for(EntityID entityID : activeIDs){
+		for (EntityID entityID : activeIDs){
 			std::tuple<ComponentPtr<ComponentTypes>...> tuple = std::make_tuple(getComponent<ComponentTypes>(entityID)...);
-			if(checkForNullptr<0, ComponentTypes...>(tuple) != FoundState::NullptrFound){
+			if (checkForNullptr<0, ComponentTypes...>(tuple) != FoundState::NullptrFound){
 				componentSets.push_back(std::move(tuple));
 			}
 		}
@@ -34,16 +34,15 @@ namespace blb::ecs{
 	}
 
 	template<std::size_t index, typename ...ComponentTypes>
-	World::FoundState World::checkForNullptr(const std::tuple<ComponentPtr<ComponentTypes>...>& tuple, typename std::enable_if_t<(index == sizeof...(ComponentTypes)), int>) {
-		return FoundState::EndOfTuple;
-	}
-
-	template<std::size_t index, typename ...ComponentTypes>
-	World::FoundState World::checkForNullptr(const std::tuple<ComponentPtr<ComponentTypes>...>& tuple, typename std::enable_if_t<(index < sizeof...(ComponentTypes)), int>) {
-		if(std::get<index>(tuple)){
-			return checkForNullptr<index + 1, ComponentTypes...>(tuple);
-		} else{
-			return FoundState::NullptrFound;
+	World::FoundState World::checkForNullptr(const std::tuple<ComponentPtr<ComponentTypes>...>& tuple){
+		if constexpr(index < sizeof...(ComponentTypes)) {
+			if(std::get<index>(tuple)) {
+				return checkForNullptr<index + 1, ComponentTypes...>(tuple);
+			} else {
+				return FoundState::NullptrFound;
+			}
+		} else {
+			return FoundState::EndOfTuple;
 		}
 	}
 }
