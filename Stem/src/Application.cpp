@@ -23,9 +23,21 @@ namespace stm {
 
 			window->beginFrame();
 
+			clv::InputEvent event{
+				window->getKeyboard().getKeyEvent(),
+				window->getMouse().getEvent()
+			};
+
+			//Respond to input
+			for(const auto& layer : layerStack) {
+				layer->onInputEvent(event);
+			}
+
+			//Do frame logic
 			for(const auto& layer : layerStack) {
 				layer->onUpdate(deltaSeonds.count());
 			}
+
 
 			window->endFrame();
 		}
