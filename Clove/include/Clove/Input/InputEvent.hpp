@@ -3,9 +3,11 @@
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
 
+#include <optional>
+
 namespace clv {
 	struct InputEvent{
-		Keyboard::Event keyboardEvent;
-		Mouse::Event mouseEvent;
+		std::optional<Keyboard::Event> keyboardEvent;
+		std::optional<Mouse::Event> mouseEvent;
 	};
 }
