@@ -1,7 +1,11 @@
 #pragma once
 
-namespace blb{
-	class Layer{
+namespace clv{
+	struct InputEvent;
+}
+
+namespace blb {
+	class Layer {
 		//VARIABLES
 	protected:
 		std::string debugName;
@@ -11,9 +15,12 @@ namespace blb{
 		Layer(std::string name = "Layer");
 		virtual ~Layer() = default;
 
-		virtual void onAttach(){}
-		virtual void onUpdate(clv::utl::DeltaTime deltaTime){}
-		virtual void onDetach(){}
+		virtual void onAttach() {}
+
+		virtual void onInputEvent(clv::InputEvent& event) {}
+		virtual void onUpdate(clv::utl::DeltaTime deltaTime) {}
+
+		virtual void onDetach() {}
 
 		const std::string& getName() const;
 	};
