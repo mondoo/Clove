@@ -8,9 +8,12 @@
 #include <stdexcept>
 #include <vector>
 #include <vulkan/vulkan.h>
+#include <array>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
 
 constexpr uint32_t WIDTH = 800;
 constexpr uint32_t HEIGHT = 600;
@@ -90,6 +93,38 @@ struct SwapChainSupportDetails {
 	std::vector<VkPresentModeKHR> presentModes;
 };
 
+struct Vertex{
+	glm::vec2 pos;
+	glm::vec3 colour;
+
+	//Describes the whole binding (i.e. the entire vertex structure)
+	static VkVertexInputBindingDescription getBindingDescription(){
+		VkVertexInputBindingDescription bindingDescription{};
+		bindingDescription.binding = 0;
+		bindingDescription.stride = sizeof(Vertex);
+		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; //VK_VERTEX_INPUT_RATE_INSTANCE is for instanced rendering
+
+		return bindingDescription;
+	}
+
+	//Describes each attribute of a binding (i.e. the position and colour of a vertex)
+	static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions(){
+		std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+
+		attributeDescriptions[0].binding = 0; //Which binding out attribute comes from
+		attributeDescriptions[0].location = 0; //Matches the location index for this attribute we specified in the shader
+		attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[0].offset = offsetof(Vertex, pos);
+
+		attributeDescriptions[1].binding = 0;
+		attributeDescriptions[1].location = 1;
+		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+		attributeDescriptions[1].offset = offsetof(Vertex, colour);
+
+		return attributeDescriptions;
+	}
+};
+
 class HelloTriangleApplication {
 	//VARIABLES
 private:
@@ -131,6 +166,12 @@ private:
 	size_t currentFrame = 0;
 
 	bool framebufferResized = false;
+
+	const std::vector<Vertex> vertices = {
+		{ { 0.0f, -0.5f },	{ 1.0f, 0.0f, 0.0f } },
+		{ { 0.5f, 0.5f },	{ 0.0f, 1.0f, 0.0f } },
+		{ { -0.5f, 0.5f },	{ 0.0f, 0.0f, 1.0f } }
+	};
 
 	//FUNCTIONS
 public:
@@ -768,12 +809,15 @@ private:
 		};
 
 		//Fixed function
+		auto bindingDescription = Vertex::getBindingDescription();
+		auto attributeDescriptions = Vertex::getAttributeDescriptions();
+
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexInputInfo.vertexBindingDescriptionCount = 0;
-		vertexInputInfo.pVertexBindingDescriptions = nullptr;
-		vertexInputInfo.vertexAttributeDescriptionCount = 0;
-		vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+		vertexInputInfo.vertexBindingDescriptionCount = 1;
+		vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+		vertexInputInfo.vertexAttributeDescriptionCount = std::size(attributeDescriptions);
+		vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
 		VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
 		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
