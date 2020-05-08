@@ -1006,6 +1006,15 @@ private:
 	}
 
 	void recreateSwapChain(){
+		//When the window is minimized these will be 0, so we wait until they aren't
+		int width = 0;
+		int height = 0;
+		glfwGetFramebufferSize(window, &width, &height);
+		while(width == 0 || height == 0) {
+			glfwGetFramebufferSize(window, &width, &height);
+			glfwWaitEvents();
+		}
+
 		vkDeviceWaitIdle(device);
 
 		cleanupSwapChain();
