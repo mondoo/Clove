@@ -989,40 +989,45 @@ private:
 	}
 
 	void createVertexBuffer(){
+		VkDeviceSize bufferSize = sizeof(Vertex) * std::size(vertices);
+		createBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBuffer, vertexBufferMemory);
+
+		void* data = nullptr;
+		vkMapMemory(device, vertexBufferMemory, 0, bufferSize, 0, &data); //Can use VK_WHOLE_SIZE to map all of the memory into CPU accessible memory
+		memcpy(data, vertices.data(), bufferSize);
+		vkUnmapMemory(device, vertexBufferMemory);
+	}
+
+	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory){
 		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 		uint32_t sharedQueueFamilies[] = { *indices.graphicsFamily, *indices.transferFamily };
 
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		bufferInfo.size = sizeof(Vertex) * vertices.size();
-		bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+		bufferInfo.size = size;
+		bufferInfo.usage = usage;
 		bufferInfo.sharingMode = VK_SHARING_MODE_CONCURRENT; //Will be shared between graphics and transfer queues
 		bufferInfo.queueFamilyIndexCount = std::size(sharedQueueFamilies);
 		bufferInfo.pQueueFamilyIndices = sharedQueueFamilies;
 
-		if(vkCreateBuffer(device, &bufferInfo, nullptr, &vertexBuffer) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create vertex buffer!");
+		if(vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create buffer!");
 		}
 
 		VkMemoryRequirements memRequirements;
-		vkGetBufferMemoryRequirements(device, vertexBuffer, &memRequirements);
+		vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
 
 		VkMemoryAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocInfo.allocationSize = memRequirements.size;
-		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT); //Flags make sure the CPU can write to this memory
-		
-		if(vkAllocateMemory(device, &allocInfo, nullptr, &vertexBufferMemory) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate vertex buffer memory");
+		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
+
+		if(vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
+			throw std::runtime_error("failed to allocate buffer memory!");
 		}
 
-		//Bind our vertex buffer to a region of memory (in this case the chunk of memory specifically designed for the vb)
-		vkBindBufferMemory(device, vertexBuffer, vertexBufferMemory, 0);
-
-		void* data = nullptr;
-		vkMapMemory(device, vertexBufferMemory, 0, bufferInfo.size, 0, &data); //Can use VK_WHOLE_SIZE to map all of the memory into CPU accessible memory
-		memcpy(data, vertices.data(), bufferInfo.size);
-		vkUnmapMemory(device, vertexBufferMemory);
+		//Bind our buffer to a region of memory (in this case the chunk of memory specifically allocated for the buffer)
+		vkBindBufferMemory(device, buffer, bufferMemory, 0);
 	}
 
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties){
