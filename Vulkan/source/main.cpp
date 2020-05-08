@@ -81,9 +81,10 @@ std::vector<char> readFile(const std::string& filename) {
 struct QueueFamilyIndices {
 	std::optional<uint32_t> graphicsFamily;
 	std::optional<uint32_t> presentFamily;
+	std::optional<uint32_t> transferFamily;
 
 	bool isComplete() const {
-		return graphicsFamily && presentFamily;
+		return graphicsFamily && presentFamily && transferFamily;
 	}
 };
 
@@ -155,8 +156,10 @@ private:
 
 	std::vector<VkFramebuffer> swapChainFramebuffers;
 
-	VkCommandPool commandPool;
-	std::vector<VkCommandBuffer> commandBuffers;
+	VkCommandPool graphicsCommandPool;
+	std::vector<VkCommandBuffer> graphicsCommandBuffers;
+	VkCommandPool transferCommandPool;
+	std::vector<VkCommandBuffer> transferCommandBuffers;
 
 	//Sempahores offer GPU-GPU synchronisation, Fences offer CPU-GPU synchronisation
 	std::vector<VkSemaphore> imageAvailableSemaphores;
@@ -209,7 +212,7 @@ private:
 		createRenderPass();
 		createGraphicsPipeline();
 		createFrameBuffers();
-		createCommandPool();
+		createCommandPools();
 		createVertexBuffer();
 		createCommandBuffers();
 		createSyncObjects();
@@ -254,7 +257,7 @@ private:
 		submitInfo.pWaitSemaphores = waitSemaphores;
 		submitInfo.pWaitDstStageMask = waitStages;
 		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
+		submitInfo.pCommandBuffers = &graphicsCommandBuffers[imageIndex];
 
 		VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] }; //What semaphores to signal when the command buffer(s) have finished
 		submitInfo.signalSemaphoreCount = 1;
@@ -301,7 +304,8 @@ private:
 			vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
 			vkDestroyFence(device, inFlightFences[i], nullptr);
 		}
-		vkDestroyCommandPool(device, commandPool, nullptr);
+		vkDestroyCommandPool(device, graphicsCommandPool, nullptr);
+		vkDestroyCommandPool(device, transferCommandPool, nullptr);
 		vkDestroyDevice(device, nullptr);
 
 		if(enableValidationLayers) {
@@ -520,6 +524,11 @@ private:
 				indices.presentFamily = i;
 			}
 
+			//Find a transfer queue family that is specifically doesn't support graphics
+			if(queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT && !(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
+				indices.transferFamily = i;
+			}
+
 			if(indices.isComplete()) {
 				break;
 			}
@@ -587,7 +596,7 @@ private:
 
 		//Create our queue families
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-		std::set<uint32_t> uniqueQueueFamilies{ *indices.graphicsFamily, *indices.presentFamily };
+		std::set<uint32_t> uniqueQueueFamilies{ *indices.graphicsFamily, *indices.presentFamily, *indices.transferFamily };
 
 		float queuePriority = 1.0f;
 		for(uint32_t queueFamily : uniqueQueueFamilies) {
@@ -605,12 +614,9 @@ private:
 
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-
 		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
 		createInfo.pQueueCreateInfos = queueCreateInfos.data();
-
 		createInfo.pEnabledFeatures = &deviceFeatures;
-
 		createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
@@ -960,25 +966,39 @@ private:
 		}
 	}
 
-	void createCommandPool() {
+	void createCommandPools() {
 		QueueFamilyIndices queueFamiltIndices = findQueueFamilies(physicalDevice);
 
-		VkCommandPoolCreateInfo poolInfo{};
-		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		poolInfo.queueFamilyIndex = *queueFamiltIndices.graphicsFamily;
-		poolInfo.flags = 0; //We're going to record our command buffers once and then reuse them, so we don't need this flag
+		VkCommandPoolCreateInfo graphicsPoolInfo{};
+		graphicsPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		graphicsPoolInfo.queueFamilyIndex = *queueFamiltIndices.graphicsFamily;
+		graphicsPoolInfo.flags = 0; //We're going to record our command buffers once and then reuse them, so we don't need this flag
 
-		if(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create command pool!");
+		if(vkCreateCommandPool(device, &graphicsPoolInfo, nullptr, &graphicsCommandPool) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create graphics command pool!");
+		}
+
+		VkCommandPoolCreateInfo transferPoolInfo{};
+		transferPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		transferPoolInfo.queueFamilyIndex = *queueFamiltIndices.transferFamily;
+		transferPoolInfo.flags = 0;
+
+		if(vkCreateCommandPool(device, &transferPoolInfo, nullptr, &transferCommandPool) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create transfer command pool!");
 		}
 	}
 
 	void createVertexBuffer(){
+		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+		uint32_t sharedQueueFamilies[] = { *indices.graphicsFamily, *indices.transferFamily };
+
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		bufferInfo.size = sizeof(Vertex) * vertices.size();
 		bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE; //If this can be shared between queue families or not
+		bufferInfo.sharingMode = VK_SHARING_MODE_CONCURRENT; //Will be shared between graphics and transfer queues
+		bufferInfo.queueFamilyIndexCount = std::size(sharedQueueFamilies);
+		bufferInfo.pQueueFamilyIndices = sharedQueueFamilies;
 
 		if(vkCreateBuffer(device, &bufferInfo, nullptr, &vertexBuffer) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create vertex buffer!");
@@ -1019,16 +1039,27 @@ private:
 	}
 
 	void createCommandBuffers() {
-		commandBuffers.resize(swapChainFramebuffers.size());
+		graphicsCommandBuffers.resize(swapChainFramebuffers.size());
+		transferCommandBuffers.resize(swapChainFramebuffers.size()); //Do we need this many transfer command buffers?
 
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.commandPool = commandPool;
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
+		VkCommandBufferAllocateInfo graphicsPoolInfo{};
+		graphicsPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		graphicsPoolInfo.commandPool = graphicsCommandPool;
+		graphicsPoolInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		graphicsPoolInfo.commandBufferCount = static_cast<uint32_t>(graphicsCommandBuffers.size());
 
-		if(vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate command buffers!");
+		if(vkAllocateCommandBuffers(device, &graphicsPoolInfo, graphicsCommandBuffers.data()) != VK_SUCCESS) {
+			throw std::runtime_error("failed to allocate graphics command buffers!");
+		}
+
+		VkCommandBufferAllocateInfo transferPoolInfo{};
+		transferPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		transferPoolInfo.commandPool = transferCommandPool;
+		transferPoolInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		transferPoolInfo.commandBufferCount = std::size(transferCommandBuffers);
+
+		if(vkAllocateCommandBuffers(device, &transferPoolInfo, transferCommandBuffers.data()) != VK_SUCCESS) {
+			throw std::runtime_error("failed to allocate transfer command buffers!");
 		}
 
 		//Viewport / scissor info for the dynamic states
@@ -1049,13 +1080,13 @@ private:
 		VkDeviceSize offsets[] = { 0 };
 
 		//Record commands
-		for(size_t i = 0; i < commandBuffers.size(); ++i) {
+		for(size_t i = 0; i < graphicsCommandBuffers.size(); ++i) {
 			VkCommandBufferBeginInfo beginInfo{};
 			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 			beginInfo.flags = 0;
 			beginInfo.pInheritanceInfo = 0;
 
-			if(vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS) {
+			if(vkBeginCommandBuffer(graphicsCommandBuffers[i], &beginInfo) != VK_SUCCESS) {
 				throw std::runtime_error("failed to begin recording command buffer!");
 			}
 
@@ -1070,20 +1101,20 @@ private:
 			renderPassInfo.clearValueCount = 1;
 			renderPassInfo.pClearValues = &clearColour;
 
-			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+			vkCmdBeginRenderPass(graphicsCommandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+			vkCmdBindPipeline(graphicsCommandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-			vkCmdSetViewport(commandBuffers[i], 0, 1, &viewport);
-			vkCmdSetScissor(commandBuffers[i], 0, 1, &scissor);
+			vkCmdSetViewport(graphicsCommandBuffers[i], 0, 1, &viewport);
+			vkCmdSetScissor(graphicsCommandBuffers[i], 0, 1, &scissor);
 
-			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets); //Bind our vertex buffer to our vertex binding (the first 0 is the index of our binding)
+			vkCmdBindVertexBuffers(graphicsCommandBuffers[i], 0, 1, vertexBuffers, offsets); //Bind our vertex buffer to our vertex binding (the first 0 is the index of our binding)
 
-			vkCmdDraw(commandBuffers[i], std::size(vertices), 1, 0, 0);
+			vkCmdDraw(graphicsCommandBuffers[i], std::size(vertices), 1, 0, 0);
 
-			vkCmdEndRenderPass(commandBuffers[i]);
+			vkCmdEndRenderPass(graphicsCommandBuffers[i]);
 
-			if(vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {
+			if(vkEndCommandBuffer(graphicsCommandBuffers[i]) != VK_SUCCESS) {
 				throw std::runtime_error("failed to record command buffer!");
 			}
 		}
@@ -1116,7 +1147,7 @@ private:
 			vkDestroyFramebuffer(device, framebuffer, nullptr);
 		}
 
-		vkFreeCommandBuffers(device, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+		vkFreeCommandBuffers(device, graphicsCommandPool, static_cast<uint32_t>(graphicsCommandBuffers.size()), graphicsCommandBuffers.data());
 
 		vkDestroyRenderPass(device, renderPass, nullptr);
 		for(auto imageView : swapChainImageViews) {
