@@ -158,9 +158,8 @@ private:
 	std::vector<VkFramebuffer> swapChainFramebuffers;
 
 	VkCommandPool graphicsCommandPool;
-	std::vector<VkCommandBuffer> graphicsCommandBuffers;
 	VkCommandPool transferCommandPool;
-	std::vector<VkCommandBuffer> transferCommandBuffers;
+	std::vector<VkCommandBuffer> graphicsCommandBuffers;
 
 	//Sempahores offer GPU-GPU synchronisation, Fences offer CPU-GPU synchronisation
 	std::vector<VkSemaphore> imageAvailableSemaphores;
@@ -971,6 +970,7 @@ private:
 	void createCommandPools() {
 		QueueFamilyIndices queueFamiltIndices = findQueueFamilies(physicalDevice);
 
+		//Graphics
 		VkCommandPoolCreateInfo graphicsPoolInfo{};
 		graphicsPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		graphicsPoolInfo.queueFamilyIndex = *queueFamiltIndices.graphicsFamily;
@@ -980,10 +980,11 @@ private:
 			throw std::runtime_error("failed to create graphics command pool!");
 		}
 
+		//Transfer
 		VkCommandPoolCreateInfo transferPoolInfo{};
 		transferPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		transferPoolInfo.queueFamilyIndex = *queueFamiltIndices.transferFamily;
-		transferPoolInfo.flags = 0;
+		transferPoolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT; //Tells Vulkan these command buffers will bve short lived, may increase performance
 
 		if(vkCreateCommandPool(device, &transferPoolInfo, nullptr, &transferCommandPool) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create transfer command pool!");
@@ -992,12 +993,24 @@ private:
 
 	void createVertexBuffer(){
 		VkDeviceSize bufferSize = sizeof(Vertex) * std::size(vertices);
-		createBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBuffer, vertexBufferMemory);
+
+		//Create a staging buffer first so we can transfer from CPU writable memory to GPU optimised memory
+		//We do this because the CPU can't write to the GPU optimised memory so now when the GPU loads the vertex buffer, it'll be much faster
+		VkBuffer stagingBuffer;
+		VkDeviceMemory stagingBufferMemory;
+		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
 		void* data = nullptr;
-		vkMapMemory(device, vertexBufferMemory, 0, bufferSize, 0, &data); //Can use VK_WHOLE_SIZE to map all of the memory into CPU accessible memory
+		vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data); //Can use VK_WHOLE_SIZE to map all of the memory into CPU accessible memory
 		memcpy(data, vertices.data(), bufferSize);
-		vkUnmapMemory(device, vertexBufferMemory);
+		vkUnmapMemory(device, stagingBufferMemory);
+
+		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
+
+		copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+
+		vkDestroyBuffer(device, stagingBuffer, nullptr);
+		vkFreeMemory(device, stagingBufferMemory, nullptr);
 	}
 
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory){
@@ -1032,6 +1045,43 @@ private:
 		vkBindBufferMemory(device, buffer, bufferMemory, 0);
 	}
 
+	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size){
+		//Allocate a buffer from our transfer pool
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandPool = transferCommandPool;
+		allocInfo.commandBufferCount = 1;
+
+		VkCommandBuffer commandBuffer;
+		vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+
+		VkCommandBufferBeginInfo beginInfo{};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; //Let the driver know we plan to use this command buffer once
+
+		vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+		VkBufferCopy copyRegion{};
+		copyRegion.srcOffset = 0;
+		copyRegion.dstOffset = 0;
+		copyRegion.size = size;
+		vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+
+		vkEndCommandBuffer(commandBuffer);
+
+		VkSubmitInfo submitInfo{};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffer;
+
+		vkQueueSubmit(transferQueue, 1, &submitInfo, nullptr);
+		//Wait until the transfer queue is processed. We could uses fences here to submit multiple transfers at the same time
+		vkQueueWaitIdle(transferQueue);
+
+		vkFreeCommandBuffers(device, transferCommandPool, 1, &commandBuffer);
+	}
+
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties){
 		VkPhysicalDeviceMemoryProperties memProperties;
 		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
@@ -1047,7 +1097,6 @@ private:
 
 	void createCommandBuffers() {
 		graphicsCommandBuffers.resize(swapChainFramebuffers.size());
-		transferCommandBuffers.resize(swapChainFramebuffers.size()); //Do we need this many transfer command buffers?
 
 		VkCommandBufferAllocateInfo graphicsPoolInfo{};
 		graphicsPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -1057,16 +1106,6 @@ private:
 
 		if(vkAllocateCommandBuffers(device, &graphicsPoolInfo, graphicsCommandBuffers.data()) != VK_SUCCESS) {
 			throw std::runtime_error("failed to allocate graphics command buffers!");
-		}
-
-		VkCommandBufferAllocateInfo transferPoolInfo{};
-		transferPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		transferPoolInfo.commandPool = transferCommandPool;
-		transferPoolInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		transferPoolInfo.commandBufferCount = std::size(transferCommandBuffers);
-
-		if(vkAllocateCommandBuffers(device, &transferPoolInfo, transferCommandBuffers.data()) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate transfer command buffers!");
 		}
 
 		//Viewport / scissor info for the dynamic states
