@@ -139,6 +139,7 @@ private:
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE; //GPU
 	VkDevice device;
 	VkQueue graphicsQueue;
+	VkQueue transferQueue;
 	VkQueue presentQueue;
 
 	VkSurfaceKHR surface;
@@ -633,6 +634,7 @@ private:
 		}
 
 		vkGetDeviceQueue(device, *indices.graphicsFamily, 0, &graphicsQueue);
+		vkGetDeviceQueue(device, *indices.transferFamily, 0, &transferQueue);
 		vkGetDeviceQueue(device, *indices.presentFamily, 0, &presentQueue);
 	}
 
