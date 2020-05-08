@@ -171,12 +171,22 @@ private:
 	bool framebufferResized = false;
 
 	const std::vector<Vertex> vertices = {
-		{ { 0.0f, -0.5f },	{ 1.0f, 1.0f, 1.0f } },
-		{ { 0.5f, 0.5f },	{ 0.0f, 1.0f, 0.0f } },
-		{ { -0.5f, 0.5f },	{ 0.0f, 0.0f, 1.0f } }
+		{ { -0.5f, -0.5f },	{ 1.0f, 0.0f, 0.0f } },
+		{ {  0.5f, -0.5f },	{ 0.0f, 1.0f, 0.0f } },
+		{ {  0.5f,  0.5f },	{ 0.0f, 0.0f, 1.0f } },
+		{ { -0.5f,  0.5f },	{ 1.0f, 1.0f, 1.0f } }
 	};
+
+	const std::vector<uint16_t> indices = {
+		0, 1, 2, 
+		2, 3, 0
+	};
+
+	//As future optimisation we could allocate a vb and ib inside the same vkBuffer, which would make it more cache friendly
 	VkBuffer vertexBuffer;
 	VkDeviceMemory vertexBufferMemory;
+	VkBuffer indexBuffer;
+	VkDeviceMemory indexBufferMemory;
 
 	//FUNCTIONS
 public:
@@ -214,6 +224,7 @@ private:
 		createFrameBuffers();
 		createCommandPools();
 		createVertexBuffer();
+		createIndexBuffer();
 		createCommandBuffers();
 		createSyncObjects();
 	}
@@ -296,6 +307,9 @@ private:
 
 		vkDestroyBuffer(device, vertexBuffer, nullptr);
 		vkFreeMemory(device, vertexBufferMemory, nullptr);
+
+		vkDestroyBuffer(device, indexBuffer, nullptr);
+		vkFreeMemory(device, indexBufferMemory, nullptr);
 
 		vkDestroyPipeline(device, graphicsPipeline, nullptr);
 		vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
@@ -1013,6 +1027,26 @@ private:
 		vkFreeMemory(device, stagingBufferMemory, nullptr);
 	}
 
+	void createIndexBuffer(){
+		VkDeviceSize bufferSize = sizeof(uint16_t) * std::size(indices);
+
+		VkBuffer stagingBuffer;
+		VkDeviceMemory stagingBufferMemory;
+		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+		void* data = nullptr;
+		vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+		memcpy(data, indices.data(), bufferSize);
+		vkUnmapMemory(device, stagingBufferMemory);
+
+		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
+
+		copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+
+		vkDestroyBuffer(device, stagingBuffer, nullptr);
+		vkFreeMemory(device, stagingBufferMemory, nullptr);
+	}
+
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory){
 		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 		uint32_t sharedQueueFamilies[] = { *indices.graphicsFamily, *indices.transferFamily };
@@ -1155,8 +1189,9 @@ private:
 			vkCmdSetScissor(graphicsCommandBuffers[i], 0, 1, &scissor);
 
 			vkCmdBindVertexBuffers(graphicsCommandBuffers[i], 0, 1, vertexBuffers, offsets); //Bind our vertex buffer to our vertex binding (the first 0 is the index of our binding)
+			vkCmdBindIndexBuffer(graphicsCommandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
-			vkCmdDraw(graphicsCommandBuffers[i], std::size(vertices), 1, 0, 0);
+			vkCmdDrawIndexed(graphicsCommandBuffers[i], std::size(indices), 1, 0, 0, 0);
 
 			vkCmdEndRenderPass(graphicsCommandBuffers[i]);
 
