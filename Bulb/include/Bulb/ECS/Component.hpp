@@ -60,8 +60,6 @@ namespace blb::ecs {
 
 		//VARIABLES
 	private:
-		//Having this base pointer allows us to use incomplete ComponentTypes
-		Component<ComponentType>* base = nullptr;
 		ComponentType* component = nullptr;
 
 		//FUNCTIONS
