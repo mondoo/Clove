@@ -1,14 +1,9 @@
 #pragma once
 
+#include "Bulb/InputResponse.hpp"
+
 namespace clv{
 	struct InputEvent;
-}
-
-namespace blb {
-	enum class InputResponse {
-		Ignored,
-		Consumed
-	};
 }
 
 namespace blb {
