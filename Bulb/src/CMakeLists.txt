@@ -102,6 +102,8 @@ set(
 
 set(
 	UIFiles
+		${BLB_INCLUDE}/UI/UIFrame.hpp
+		${BLB_SOURCE}/UI/UIFrame.cpp
 		${BLB_INCLUDE}/UI/Image.hpp
 		${BLB_SOURCE}/UI/Image.cpp
 		${BLB_INCLUDE}/UI/Text.hpp
