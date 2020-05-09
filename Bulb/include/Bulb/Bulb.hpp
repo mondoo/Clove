@@ -15,13 +15,11 @@
 #include "Bulb/ECS/Components/PointLightComponent.hpp"
 #include "Bulb/ECS/Components/RigidBodyComponent.hpp"
 #include "Bulb/ECS/Components/TransformComponent.hpp"
-#include "Bulb/ECS/Components/InputComponent.hpp"
 #include "Bulb/ECS/Entity.hpp"
 #include "Bulb/ECS/Systems/AudioSystem.hpp"
 #include "Bulb/ECS/Systems/BehaviourTreeSystem.hpp"
 #include "Bulb/ECS/Systems/PhysicsSystem.hpp"
 #include "Bulb/ECS/Systems/RenderSystem.hpp"
-#include "Bulb/ECS/Systems/InputSystem.hpp"
 #include "Bulb/ECS/World.hpp"
 
 #include "Bulb/Physics/RigidBody.hpp"

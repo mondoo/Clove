@@ -23,6 +23,25 @@ namespace stm {
 
 			window->beginFrame();
 
+			//Respond to input
+			while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
+				const clv::InputEvent event{ keyEvent, {} };
+				for(const auto& layer : layerStack) {
+					if(layer->onInputEvent(event) == blb::InputResponse::Consumed) {
+						break;
+					}
+				}
+			}
+			while(auto mouseEvent = window->getMouse().getEvent()) {
+				const clv::InputEvent event{ {}, mouseEvent };
+				for(const auto& layer : layerStack) {
+					if(layer->onInputEvent(event) == blb::InputResponse::Consumed) {
+						break;
+					}
+				}
+			}
+
+			//Do frame logic
 			for(const auto& layer : layerStack) {
 				layer->onUpdate(deltaSeonds.count());
 			}
