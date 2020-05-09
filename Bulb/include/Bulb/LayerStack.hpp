@@ -27,6 +27,9 @@ namespace blb{
 		std::vector<std::shared_ptr<Layer>>::iterator begin();
 		std::vector<std::shared_ptr<Layer>>::iterator end();
 
+		std::vector<std::shared_ptr<Layer>>::reverse_iterator rbegin();
+		std::vector<std::shared_ptr<Layer>>::reverse_iterator rend();
+
 		LayerStack& operator=(const LayerStack& other);
 		LayerStack& operator=(LayerStack&& other) noexcept;
 	};
