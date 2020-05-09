@@ -5,6 +5,13 @@ namespace clv{
 }
 
 namespace blb {
+	enum class InputResponse {
+		Ignored,
+		Consumed
+	};
+}
+
+namespace blb {
 	class Layer {
 		//VARIABLES
 	protected:
@@ -17,8 +24,8 @@ namespace blb {
 
 		virtual void onAttach() {}
 
-		virtual void onInputEvent(clv::InputEvent& event) {}
-		virtual void onUpdate(clv::utl::DeltaTime deltaTime) {}
+		virtual InputResponse onInputEvent(const clv::InputEvent& event) { return InputResponse::Ignored; }
+		virtual void onUpdate(const clv::utl::DeltaTime deltaTime) {}
 
 		virtual void onDetach() {}
 
