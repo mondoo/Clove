@@ -106,6 +106,7 @@ set(
 		${BLB_SOURCE}/UI/Image.cpp
 		${BLB_INCLUDE}/UI/Text.hpp
 		${BLB_SOURCE}/UI/Text.cpp
+		${BLB_INCLUDE}/UI/UIElement.hpp
 		${BLB_INCLUDE}/UI/Widget.hpp
 		${BLB_SOURCE}/UI/Widget.cpp
 )
