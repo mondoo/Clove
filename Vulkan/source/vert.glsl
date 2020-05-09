@@ -1,6 +1,7 @@
 #version 450
 
-layout(binding = 0) uniform UniformBufferObject{
+//We can also define which descriptor set we sample from
+layout(set = 0, binding = 0) uniform UniformBufferObject{
 	mat4 model;
 	mat4 view;
 	mat4 proj;

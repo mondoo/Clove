@@ -14,6 +14,7 @@
 #include <GLFW/glfw3.h>
 
 #define GLM_FORCE_RADIANS //TODO: This should also be done in Clove CMakeLists
+#define GLM_FORCE_LEFT_HANDED
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -180,6 +181,9 @@ private:
 	std::vector<VkFence> imagesInFlight;
 	size_t currentFrame = 0;
 
+	VkDescriptorPool descriptorPool;
+	std::vector<VkDescriptorSet> descriptorSets;
+
 	bool framebufferResized = false;
 
 	const std::vector<Vertex> vertices = {
@@ -242,6 +246,8 @@ private:
 		createVertexBuffer();
 		createIndexBuffer();
 		createUniformBuffers();
+		createDescriptorPool();
+		createDescriptorSets();
 		createCommandBuffers();
 		createSyncObjects();
 	}
@@ -1098,6 +1104,62 @@ private:
 		}
 	}
 
+	void createDescriptorPool(){
+		VkDescriptorPoolSize poolSize{};
+		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		poolSize.descriptorCount = std::size(swapChainImages);
+
+		VkDescriptorPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.poolSizeCount = 1;
+		poolInfo.pPoolSizes = &poolSize;
+		poolInfo.maxSets = std::size(swapChainImages);
+		poolInfo.flags = 0;
+
+		if(vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create descriptor pool!");
+		}
+	}
+
+	void createDescriptorSets(){
+		//Layout per descriptor set. As we are only making multiple to handle in flight frames we just re use the layout
+		std::vector<VkDescriptorSetLayout> layouts(std::size(swapChainImages), descriptorSetLayout);
+
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = descriptorPool;
+		allocInfo.descriptorSetCount = std::size(swapChainImages);
+		allocInfo.pSetLayouts = layouts.data();
+
+		descriptorSets.resize(std::size(swapChainImages));
+
+		if(vkAllocateDescriptorSets(device, &allocInfo, descriptorSets.data()) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create descriptor sets!");
+		}
+
+		for(size_t i = 0; i < std::size(swapChainImages); ++i) {
+			//If a descriptor set refers to a buffer we use VkDescriptorBufferInfo
+			VkDescriptorBufferInfo bufferInfo{};
+			bufferInfo.buffer = uniformBuffers[i];
+			bufferInfo.offset = 0;
+			bufferInfo.range = sizeof(UniformBufferObject);
+
+			//Write the ubo to our descriptor set, I'm assuming if I want a different ubo (let's say the model changes) then I put another bufferInfo here
+			VkWriteDescriptorSet descriptorWrite{};
+			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrite.dstSet = descriptorSets[i];
+			descriptorWrite.dstBinding = 0; //Again this is also the slot in the shader
+			descriptorWrite.dstArrayElement = 0;
+			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			descriptorWrite.descriptorCount = 1;
+			descriptorWrite.pBufferInfo = &bufferInfo;
+			descriptorWrite.pImageInfo = nullptr;
+			descriptorWrite.pTexelBufferView = nullptr;
+
+			vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
+		}
+	}
+
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory){
 		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 		uint32_t sharedQueueFamilies[] = { *indices.graphicsFamily, *indices.transferFamily };
@@ -1242,6 +1304,8 @@ private:
 			vkCmdBindVertexBuffers(graphicsCommandBuffers[i], 0, 1, vertexBuffers, offsets); //Bind our vertex buffer to our vertex binding (the first 0 is the index of our binding)
 			vkCmdBindIndexBuffer(graphicsCommandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
+			vkCmdBindDescriptorSets(graphicsCommandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
+
 			vkCmdDrawIndexed(graphicsCommandBuffers[i], std::size(indices), 1, 0, 0, 0);
 
 			vkCmdEndRenderPass(graphicsCommandBuffers[i]);
@@ -1291,6 +1355,8 @@ private:
 			vkDestroyBuffer(device, uniformBuffers[i], nullptr);
 			vkFreeMemory(device, uniformBuffersMemory[i], nullptr);
 		}
+
+		vkDestroyDescriptorPool(device, descriptorPool, nullptr);
 	}
 
 	void recreateSwapChain(){
@@ -1312,6 +1378,8 @@ private:
 		createRenderPass();
 		createFrameBuffers();
 		createUniformBuffers();
+		createDescriptorPool();
+		createDescriptorSets();
 		createCommandBuffers();
 	}
 
@@ -1323,16 +1391,13 @@ private:
 
 		UniformBufferObject ubo{};
 		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.view = glm::lookAt(glm::vec3(0.0f, 2.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ubo.proj = glm::perspective(glm::radians(45.0f), (float)swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
-
-		//Needed? (Y coordinate of the clip coords are inverted)
-		//ubo.proj[1][1] *= -1;
 
 		void* data;
 		vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(UniformBufferObject), 0, &data);
 		memcpy(data, &ubo, sizeof(UniformBufferObject));
-		vkUnmapMemory(device, uniformBuffersMemory[currentFrame]);
+		vkUnmapMemory(device, uniformBuffersMemory[currentImage]);
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
