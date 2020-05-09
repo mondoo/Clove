@@ -14,13 +14,12 @@ namespace blb::ecs {
 	class RenderSystem : public System {
 		//VARIABLES
 	private:
-		std::unique_ptr<rnd::Renderer3D> renderer;
+		std::shared_ptr<rnd::Renderer3D> renderer;
 
 		//FUNCTIONS
 	public:
 		RenderSystem() = delete;
-		RenderSystem(std::unique_ptr<rnd::Renderer3D> renderer);
-		RenderSystem(clv::plt::Window& window);
+		RenderSystem(std::shared_ptr<rnd::Renderer3D> renderer);
 
 		RenderSystem(const RenderSystem& other) = delete;
 		RenderSystem(RenderSystem&& other) noexcept;
@@ -30,8 +29,6 @@ namespace blb::ecs {
 
 		~RenderSystem();
 
-		void preUpdate(World& world) override;
 		void update(World& world, clv::utl::DeltaTime deltaTime) override;
-		void postUpdate(World& world) override;
 	};
 }

@@ -3,6 +3,7 @@
 #include "Bulb/Rendering/ShaderBufferTypes.hpp"
 
 #include <Clove/Graphics/GraphicsTypes.hpp>
+#include <Clove/Graphics/VertexLayout.hpp>
 
 namespace clv::gfx {
 	class GraphicsFactory;
@@ -49,6 +50,9 @@ namespace blb::rnd {
 			std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> pointShadowTransformArray{};
 			DirectionalShadowTransformArray directionalShadowTransformArray{};
 
+			std::vector<std::shared_ptr<Sprite>> widgetsToRender;
+			std::vector<std::shared_ptr<Sprite>> textToRender;
+
 			//FUNCTIONS
 		public:
 			SceneData();
@@ -64,16 +68,23 @@ namespace blb::rnd {
 		std::shared_ptr<clv::gfx::PipelineObject> directionalShadowPipelineObject;
 		std::shared_ptr<clv::gfx::PipelineObject> pointShadowPipelineObject;
 		std::shared_ptr<clv::gfx::PipelineObject> meshPipelineObject;
+		std::shared_ptr<clv::gfx::PipelineObject> widgetPipelineObject;
+		std::shared_ptr<clv::gfx::PipelineObject> textPipelineObject;
 
 		std::shared_ptr<clv::gfx::CommandBuffer> directionalShadowCommandBuffer;
 		std::shared_ptr<clv::gfx::CommandBuffer> pointShadowCommandBuffer;
 		std::shared_ptr<clv::gfx::CommandBuffer> meshCommandBuffer;
+		std::shared_ptr<clv::gfx::CommandBuffer> uiCommandBuffer;
 
 		std::shared_ptr<clv::gfx::Texture> directionalShadowMapTexture;
 		std::shared_ptr<clv::gfx::Texture> pointShadowMapTexture;
 
 		std::shared_ptr<clv::gfx::Buffer> viewBuffer;
 		std::shared_ptr<clv::gfx::Buffer> viewPosition;
+
+		std::shared_ptr<clv::gfx::Buffer> widgetVB;
+		std::shared_ptr<clv::gfx::Buffer> textVB;
+		std::shared_ptr<clv::gfx::Buffer> uiIndexBuffer;
 
 		std::shared_ptr<clv::gfx::Buffer> lightArrayBuffer;
 		std::shared_ptr<clv::gfx::Buffer> lightDepthBuffer;
@@ -84,6 +95,8 @@ namespace blb::rnd {
 		std::shared_ptr<clv::gfx::Buffer> pointShadowTransformBuffer;
 		std::shared_ptr<clv::gfx::Buffer> lightIndexBuffer;
 		std::shared_ptr<clv::gfx::Buffer> shadowLightPosBuffer;
+
+		clv::gfx::VertexLayout uiVbLayout;
 
 		SceneData scene;
 
@@ -98,6 +111,9 @@ namespace blb::rnd {
 		void submitLight(const DirectionalLight& light);
 		void submitLight(const PointLight& light);
 		void submitCamera(const ComposedCameraData& camera);
+
+		void submitWidget(const std::shared_ptr<Sprite>& widget);
+		void submitText(const std::shared_ptr<Sprite>& text);
 
 		void end();
 	};

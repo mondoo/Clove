@@ -1,7 +1,7 @@
 #include "Bulb/UI/Image.hpp"
 
 #include "Bulb/Rendering/Renderables/Sprite.hpp"
-#include "Bulb/Rendering/Renderer2D.hpp"
+#include "Bulb/Rendering/Renderer3D.hpp"
 
 using namespace clv;
 using namespace clv::gfx;
@@ -11,7 +11,7 @@ namespace blb::ui {
 		sprite = std::make_shared<rnd::Sprite>(std::move(graphicsFactory));
 	}
 	
-	void Image::draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) {
+	void Image::draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) {
 		const mth::vec2f screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
 
 		const mth::mat4f uiScale = mth::scale(mth::mat4f{ 1.0f }, mth::vec3f{ 40.0f });

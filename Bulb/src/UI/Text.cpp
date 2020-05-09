@@ -1,7 +1,7 @@
 #include "Bulb/UI/Text.hpp"
 
 #include "Bulb/Rendering/Renderables/Sprite.hpp"
-#include "Bulb/Rendering/Renderer2D.hpp"
+#include "Bulb/Rendering/Renderer3D.hpp"
 
 //Temp?
 #include "Clove/Graphics/GraphicsTypes.hpp"
@@ -27,7 +27,7 @@ namespace blb::ui {
 
 	Text::~Text() = default;
 
-	void Text::draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) {
+	void Text::draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) {
 		const mth::vec2f screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
 
 		mth::vec2f cursorPos = { position.x - screenHalfSize.x, -position.y + screenHalfSize.y };

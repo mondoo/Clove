@@ -35,7 +35,6 @@
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 #include "Bulb/Rendering/Renderables/Model.hpp"
 #include "Bulb/Rendering/Renderables/Sprite.hpp"
-#include "Bulb/Rendering/Renderer2D.hpp"
 #include "Bulb/Rendering/Renderer3D.hpp"
 
 #include "Bulb/UI/Image.hpp"
