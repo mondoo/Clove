@@ -1,7 +1,7 @@
 #include "Bulb/UI/Widget.hpp"
 
 namespace blb::ui {
-	void Widget::setPosition(clv::mth::vec2f position) {
+	/*void Widget::setPosition(clv::mth::vec2f position) {
 		this->position = std::move(position);
 	}
 
@@ -23,5 +23,5 @@ namespace blb::ui {
 
 	const clv::mth::vec2f& Widget::getScale() const {
 		return scale;
-	}
+	}*/
 }

@@ -27,6 +27,30 @@ namespace blb::ui {
 
 	Text::~Text() = default;
 
+	void Text::setPosition(clv::mth::vec2f position) {
+		this->position = std::move(position);
+	}
+
+	void Text::setRotation(float rotation) {
+		this->rotation = rotation;
+	}
+
+	void Text::setScale(clv::mth::vec2f scale) {
+		this->scale = std::move(scale);
+	}
+
+	const clv::mth::vec2f& Text::getPosition() const {
+		return position;
+	}
+
+	float Text::getRotation() const {
+		return rotation;
+	}
+
+	const clv::mth::vec2f& Text::getScale() const {
+		return scale;
+	}
+
 	void Text::draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) {
 		const mth::vec2f screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
 
