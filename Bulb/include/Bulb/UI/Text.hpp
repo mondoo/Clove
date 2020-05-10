@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Bulb/UI/Widget.hpp"
+#include "Bulb/UI/DrawableElement.hpp"
 
 #include "Bulb/Rendering/Renderables/Font.hpp"
 
@@ -9,7 +9,7 @@ namespace clv::gfx {
 }
 
 namespace blb::ui {
-	class Text : public Widget{
+	class Text : public DrawableElement {
 		//VARIABLES
 	private:
 		std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
@@ -19,6 +19,10 @@ namespace blb::ui {
 
 		bool isBufferDirty = false;
 		std::vector<rnd::Glyph> characters;
+
+		clv::mth::vec2f position{ 0.0f, 0.0f };
+		float rotation{ 0.0f };
+		clv::mth::vec2f scale{ 1.0f, 1.0f };
 
 		//FUNCTIONS
 	public:
@@ -32,6 +36,15 @@ namespace blb::ui {
 		Text& operator=(Text&& other);
 
 		~Text();
+
+		//TODO: Interface for these?
+		void setPosition(clv::mth::vec2f position);
+		void setRotation(float rotation);
+		void setScale(clv::mth::vec2f scale);
+
+		const clv::mth::vec2f& getPosition() const;
+		float getRotation() const;
+		const clv::mth::vec2f& getScale() const;
 
 		void draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) override;
 

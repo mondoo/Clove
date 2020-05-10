@@ -20,13 +20,13 @@ namespace blb::ui {
 	public:
 		//TODO: Ctors
 
-		void setPosition(clv::mth::vec2f position);
+		/*void setPosition(clv::mth::vec2f position);
 		void setRotation(float rotation);
 		void setScale(clv::mth::vec2f scale);
 
 		const clv::mth::vec2f& getPosition() const;
 		float getRotation() const;
-		const clv::mth::vec2f& getScale() const;
+		const clv::mth::vec2f& getScale() const;*/
 
 		virtual void draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) = 0;
 	};

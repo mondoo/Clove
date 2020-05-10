@@ -10,6 +10,30 @@ namespace blb::ui {
 	Image::Image(std::shared_ptr<GraphicsFactory> graphicsFactory) {
 		sprite = std::make_shared<rnd::Sprite>(std::move(graphicsFactory));
 	}
+
+	void Image::setPosition(clv::mth::vec2f position) {
+		this->position = std::move(position);
+	}
+
+	void Image::setRotation(float rotation) {
+		this->rotation = rotation;
+	}
+
+	void Image::setScale(clv::mth::vec2f scale) {
+		this->scale = std::move(scale);
+	}
+
+	const clv::mth::vec2f& Image::getPosition() const {
+		return position;
+	}
+
+	float Image::getRotation() const {
+		return rotation;
+	}
+
+	const clv::mth::vec2f& Image::getScale() const {
+		return scale;
+	}
 	
 	void Image::draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) {
 		const mth::vec2f screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };

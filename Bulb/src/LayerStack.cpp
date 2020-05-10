@@ -46,12 +46,20 @@ namespace blb{
 		}
 	}
 
-	std::vector<std::shared_ptr<Layer>>::iterator LayerStack::begin(){
+	std::vector<std::shared_ptr<Layer>>::iterator LayerStack::begin() {
 		return layers.begin();
 	}
 
-	std::vector<std::shared_ptr<Layer>>::iterator LayerStack::end(){
+	std::vector<std::shared_ptr<Layer>>::iterator LayerStack::end() {
 		return layers.end();
+	}
+
+	std::vector<std::shared_ptr<Layer>>::reverse_iterator LayerStack::rbegin() {
+		return layers.rbegin();
+	}
+
+	std::vector<std::shared_ptr<Layer>>::reverse_iterator LayerStack::rend() {
+		return layers.rend();
 	}
 
 	LayerStack& LayerStack::operator=(const LayerStack& other) = default;

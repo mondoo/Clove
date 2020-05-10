@@ -100,10 +100,14 @@ set(
 
 set(
 	UIFiles
+		${BLB_INCLUDE}/UI/DrawableElement.hpp
 		${BLB_INCLUDE}/UI/Image.hpp
 		${BLB_SOURCE}/UI/Image.cpp
+		${BLB_INCLUDE}/UI/InputElement.hpp
 		${BLB_INCLUDE}/UI/Text.hpp
 		${BLB_SOURCE}/UI/Text.cpp
+		${BLB_INCLUDE}/UI/UIFrame.hpp
+		${BLB_SOURCE}/UI/UIFrame.cpp
 		${BLB_INCLUDE}/UI/Widget.hpp
 		${BLB_SOURCE}/UI/Widget.cpp
 )
@@ -168,6 +172,8 @@ target_sources(
 	${PROJECT_NAME}
 	PRIVATE
 		${BLB_INCLUDE}/Bulb.hpp
+
+		${BLB_INCLUDE}/InputResponse.hpp
 
 		${BLB_INCLUDE}/Layer.hpp
 		${BLB_SOURCE}/Layer.cpp
