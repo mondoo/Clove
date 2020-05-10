@@ -6,7 +6,7 @@
 #include <Clove/Input/Mouse.hpp>
 
 namespace blb::rnd {
-	class Renderer2D;
+	class Renderer3D;
 }
 
 namespace blb::ui {
@@ -18,6 +18,6 @@ namespace blb::ui {
 		virtual InputResponse onKeyEvent(const clv::Keyboard::Event& event) = 0;
 		virtual InputResponse onMouseEvent(const clv::Mouse::Event& event) = 0;
 
-		virtual void draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) = 0;
+		virtual void draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) = 0;
 	};
 }
