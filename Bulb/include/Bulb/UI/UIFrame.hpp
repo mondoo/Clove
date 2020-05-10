@@ -34,10 +34,10 @@ namespace blb::ui {
 
 		template<typename Element>
 		void addElement(std::shared_ptr<Element> element) { //Is shared_ptr going to cause issues here?
-			if constexpr(std::is_same_v<Element, DrawableElement>) {
+			if constexpr(std::is_base_of_v<DrawableElement, Element>) {
 				drawables.push_back(element);
 			}
-			if constexpr(std::is_same_v<Element, InputElement>) {
+			if constexpr(std::is_base_of_v<InputElement, Element>) {
 				inputElements.push_back(element);
 			}
 		}
