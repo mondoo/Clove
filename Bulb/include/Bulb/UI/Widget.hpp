@@ -1,7 +1,7 @@
 #pragma once
 
 namespace blb::rnd {
-	class Renderer2D;
+	class Renderer3D;
 }
 
 namespace blb::ui {
@@ -28,6 +28,6 @@ namespace blb::ui {
 		float getRotation() const;
 		const clv::mth::vec2f& getScale() const;
 
-		virtual void draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) = 0;
+		virtual void draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) = 0;
 	};
 }

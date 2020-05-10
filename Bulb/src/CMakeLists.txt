@@ -86,8 +86,6 @@ set(
 		${BLB_SOURCE}/Rendering/MaterialInstance.cpp
 		${BLB_INCLUDE}/Rendering/RenderingConstants.hpp
 		${BLB_INCLUDE}/Rendering/ShaderBufferTypes.hpp
-		${BLB_INCLUDE}/Rendering/Renderer2D.hpp
-		${BLB_SOURCE}/Rendering/Renderer2D.cpp
 		${BLB_INCLUDE}/Rendering/Renderer3D.hpp
 		${BLB_SOURCE}/Rendering/Renderer3D.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Font.hpp

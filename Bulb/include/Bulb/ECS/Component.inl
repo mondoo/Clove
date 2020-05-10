@@ -25,7 +25,6 @@ namespace blb::ecs {
 	template<typename DerivedClassType>
 	Component<DerivedClassType>::~Component() {
 		for(auto* pointer : pointers) {
-			pointer->base = nullptr;
 			pointer->component = nullptr;
 		}
 	}
@@ -59,12 +58,10 @@ namespace blb::ecs {
 	ComponentPtr<ComponentType>::ComponentPtr() = default;
 
 	template<typename ComponentType>
-	ComponentPtr<ComponentType>::ComponentPtr(ComponentType* component) {
-		base = component;
-		this->component = component;
-
-		if(base != nullptr) {
-			base->attachPointer(this);
+	ComponentPtr<ComponentType>::ComponentPtr(ComponentType* component) 
+		: component(component) {
+		if(component != nullptr) {
+			component->attachPointer(this);
 		}
 	}
 
@@ -103,8 +100,7 @@ namespace blb::ecs {
 	template<typename ComponentType>
 	void ComponentPtr<ComponentType>::reset() {
 		if(isValid()) {
-			base->detachPointer(this);
-			base = nullptr;
+			component->detachPointer(this);
 			component = nullptr;
 		}
 	}
@@ -133,11 +129,10 @@ namespace blb::ecs {
 	void ComponentPtr<ComponentType>::copy(const ComponentPtr& other) {
 		reset();
 
-		base = other.base;
 		component = other.component;
 
-		if(base != nullptr) {
-			base->attachPointer(this);
+		if(component != nullptr) {
+			component->attachPointer(this);
 		}
 	}
 
@@ -145,11 +140,10 @@ namespace blb::ecs {
 	void ComponentPtr<ComponentType>::move(ComponentPtr&& other) {
 		reset();
 
-		base = other.base;
 		component = other.component;
 
-		if(base != nullptr) {
-			base->attachPointer(this);
+		if(component != nullptr) {
+			component->attachPointer(this);
 		}
 	}
 }

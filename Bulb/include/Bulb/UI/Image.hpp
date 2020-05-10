@@ -22,6 +22,6 @@ namespace blb::ui {
 		Image(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 		//TODO: Ctors
 
-		void draw(rnd::Renderer2D& renderer, const clv::mth::vec2f& drawSpace) override;
+		void draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) override;
 	};
 }

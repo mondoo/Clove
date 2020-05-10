@@ -21,12 +21,8 @@ using namespace clv::gfx;
 using namespace blb::rnd;
 
 namespace blb::ecs {
-	RenderSystem::RenderSystem(std::unique_ptr<Renderer3D> renderer)
+	RenderSystem::RenderSystem(std::shared_ptr<Renderer3D> renderer)
 		: renderer(std::move(renderer)) {
-	}
-
-	RenderSystem::RenderSystem(plt::Window& window) {
-		renderer = std::make_unique<Renderer3D>(window);
 	}
 
 	RenderSystem::RenderSystem(RenderSystem&& other) noexcept = default;
@@ -34,14 +30,6 @@ namespace blb::ecs {
 	RenderSystem& RenderSystem::operator=(RenderSystem&& other) noexcept = default;
 
 	RenderSystem::~RenderSystem() = default;
-
-	void RenderSystem::preUpdate(World& world) {
-		for(auto [camera] : world.getComponentSets<CameraComponent>()) {
-			camera->renderTarget->clear();
-		}
-
-		renderer->begin();
-	}
 
 	void RenderSystem::update(World& world, utl::DeltaTime deltaTime) {
 		CLV_PROFILE_FUNCTION();
@@ -103,9 +91,5 @@ namespace blb::ecs {
 
 			renderer->submitLight(light->lightData);
 		}
-	}
-
-	void RenderSystem::postUpdate(World& world) {
-		renderer->end();
 	}
 }

@@ -1,6 +1,7 @@
 #include "Bulb/Rendering/Renderer3D.hpp"
 
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
+#include "Bulb/Rendering/Renderables/Sprite.hpp"
 #include "Bulb/Rendering/RenderingConstants.hpp"
 
 #include <Clove/Graphics/CommandBuffer.hpp>
@@ -18,6 +19,16 @@ extern "C" const char	default3d_vs[];
 extern "C" const size_t default3d_vsLength;
 extern "C" const char	default3d_ps[];
 extern "C" const size_t default3d_psLength;
+
+extern "C" const char	default2d_vs[];
+extern "C" const size_t default2d_vsLength;
+extern "C" const char	default2d_ps[];
+extern "C" const size_t default2d_psLength;
+
+extern "C" const char	font_vs[];
+extern "C" const size_t font_vsLength;
+extern "C" const char	font_ps[];
+extern "C" const size_t font_psLength;
 
 extern "C" const char	genshadowmap_vs[];
 extern "C" const size_t genshadowmap_vsLength;
@@ -39,10 +50,9 @@ namespace blb::rnd {
 	Renderer3D::SceneData::~SceneData() = default;
 
 	Renderer3D::Renderer3D(plt::Window& window) {
-
 		GraphicsFactory& factory = *window.getGraphicsFactory();
 
-		//Mesh command buffer
+		//Mesh
 		meshCommandBuffer = factory.createCommandBuffer();
 
 		auto meshVS = factory.createShader({ ShaderStage::Vertex }, default3d_vs, default3d_vsLength);
@@ -50,6 +60,64 @@ namespace blb::rnd {
 		meshPipelineObject = factory.createPipelineObject();
 		meshPipelineObject->setVertexShader(*meshVS);
 		meshPipelineObject->setPixelShader(*meshPS);
+
+		//UI
+		uiCommandBuffer = factory.createCommandBuffer();
+
+		auto widgetVS = factory.createShader({ ShaderStage::Vertex }, default2d_vs, default2d_vsLength);
+		auto widgetPS = factory.createShader({ ShaderStage::Pixel }, default2d_ps, default2d_psLength);
+		widgetPipelineObject = factory.createPipelineObject();
+		widgetPipelineObject->setVertexShader(*widgetVS);
+		widgetPipelineObject->setPixelShader(*widgetPS);
+
+		auto textVS = factory.createShader({ ShaderStage::Vertex }, font_vs, font_vsLength);
+		auto textPS = factory.createShader({ ShaderStage::Pixel }, font_ps, font_psLength);
+		textPipelineObject = factory.createPipelineObject();
+		textPipelineObject->setVertexShader(*textVS);
+		textPipelineObject->setPixelShader(*textPS);
+
+		const std::vector<uint32_t> indices{
+			0, 1, 2,
+			0, 2, 3
+		};
+		BufferDescriptor ibDesc{};
+		ibDesc.elementSize = sizeof(uint32_t);
+		ibDesc.bufferSize = indices.size() * sizeof(uint32_t);
+		ibDesc.bufferType = BufferType::IndexBuffer;
+		ibDesc.bufferUsage = BufferUsage::Default;
+		uiIndexBuffer = factory.createBuffer(ibDesc, indices.data());
+
+		uiVbLayout.add(VertexElementType::position2D).add(VertexElementType::texture2D);
+
+		BufferDescriptor vbDesc{};
+		vbDesc.elementSize = uiVbLayout.size();
+		//vbDesc.bufferSize	= ;
+		vbDesc.bufferType = BufferType::VertexBuffer;
+		vbDesc.bufferUsage = BufferUsage::Default;
+
+		{ //Widgets
+			//From top left
+			VertexBufferData bufferData{ uiVbLayout };
+			bufferData.emplaceBack(mth::vec2f{ 0.0f, 0.0f }, mth::vec2f{ 0.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f, -1.0f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f, -1.0f }, mth::vec2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f, 0.0f }, mth::vec2f{ 1.0f, 0.0f });
+
+			vbDesc.bufferSize = bufferData.sizeBytes();
+			widgetVB = factory.createBuffer(vbDesc, bufferData.data());
+		}
+
+		{ //Text
+			//From bottom left
+			VertexBufferData bufferData{ uiVbLayout };
+			bufferData.emplaceBack(mth::vec2f{ 0.0f, 0.0f }, mth::vec2f{ 0.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f, 0.0f }, mth::vec2f{ 1.0f, 1.0f });
+			bufferData.emplaceBack(mth::vec2f{ 1.0f, 1.0f }, mth::vec2f{ 1.0f, 0.0f });
+			bufferData.emplaceBack(mth::vec2f{ 0.0f, 1.0f }, mth::vec2f{ 0.0f, 0.0f });
+
+			vbDesc.bufferSize = bufferData.sizeBytes();
+			textVB = factory.createBuffer(vbDesc, bufferData.data());
+		}
 
 		//Directional shadow map
 		gfx::TextureDescriptor dsDesc{};
@@ -123,10 +191,18 @@ namespace blb::rnd {
 	void Renderer3D::begin() {
 		CLV_PROFILE_FUNCTION();
 
+		//Clear all render targets
+		for(auto& camera : scene.cameras) {
+			camera.target->clear();
+		}
+
 		scene.meshes.clear();
 		scene.numDirectionalLights = 0;
 		scene.numPointLights = 0;
 		scene.cameras.clear();
+
+		scene.textToRender.clear();
+		scene.widgetsToRender.clear();
 	}
 
 	void Renderer3D::submitMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
@@ -151,6 +227,14 @@ namespace blb::rnd {
 		scene.cameras.push_back(camera);
 	}
 
+	void Renderer3D::submitWidget(const std::shared_ptr<Sprite>& widget) {
+		scene.widgetsToRender.push_back(widget);
+	}
+
+	void Renderer3D::submitText(const std::shared_ptr<Sprite>& text) {
+		scene.textToRender.push_back(text);
+	}
+
 	void Renderer3D::end() {
 		CLV_PROFILE_FUNCTION();
 
@@ -162,7 +246,7 @@ namespace blb::rnd {
 
 		meshCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
 		meshCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_LightData);
-		//TODO: Remove duplocated updateBufferData
+		//TODO: Remove duplicated updateBufferData
 		pointShadowCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
 		pointShadowCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_LightData);
 
@@ -238,9 +322,46 @@ namespace blb::rnd {
 			}
 		}
 
+		//Render each UI element
+		const uint32_t vbStride = static_cast<uint32_t>(uiVbLayout.size());
+
+		//TODO: We don't want the UI on every render target
+		for(auto& camera : scene.cameras) {
+			uiCommandBuffer->beginEncoding(camera.target);
+
+			uiCommandBuffer->setViewport(camera.viewport);
+			uiCommandBuffer->setDepthEnabled(false);
+
+			uiCommandBuffer->bindPipelineObject(*widgetPipelineObject);
+
+			//Widgets
+			for(auto& sprite : scene.widgetsToRender) {
+				sprite->getMaterialInstance().bind(*uiCommandBuffer);
+
+				uiCommandBuffer->bindVertexBuffer(*widgetVB, vbStride);
+				uiCommandBuffer->bindIndexBuffer(*uiIndexBuffer);
+
+				uiCommandBuffer->drawIndexed(6u); //TODO: Remove hard coded value
+			}
+
+			uiCommandBuffer->bindPipelineObject(*textPipelineObject);
+
+			//Text
+			for(auto& text : scene.textToRender) {
+				text->getMaterialInstance().bind(*uiCommandBuffer);
+
+				uiCommandBuffer->bindVertexBuffer(*textVB, vbStride);
+				uiCommandBuffer->bindIndexBuffer(*uiIndexBuffer);
+
+				uiCommandBuffer->drawIndexed(6u); //TODO: Remove hard coded value
+			}
+		}
+		
+
 		//End encoding in order items need to be generated
 		directionalShadowCommandBuffer->endEncoding();
 		pointShadowCommandBuffer->endEncoding();
 		meshCommandBuffer->endEncoding();
+		uiCommandBuffer->endEncoding();
 	}
 }
