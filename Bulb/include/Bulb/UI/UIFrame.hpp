@@ -33,7 +33,7 @@ namespace blb::ui {
 		void drawChildren(rnd::Renderer3D& renderer);
 
 		template<typename Element>
-		void addElement(std::shared_ptr<Element> element) { //Is shared_ptr going to cause issues here?
+		void addElement(std::shared_ptr<Element> element) {
 			if constexpr(std::is_base_of_v<DrawableElement, Element>) {
 				drawables.push_back(element);
 			}
