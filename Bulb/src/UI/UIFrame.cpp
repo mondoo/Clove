@@ -1,6 +1,7 @@
 #include "Bulb/UI/UIFrame.hpp"
 
-#include "Bulb/UI/UIElement.hpp"
+#include "Bulb/UI/DrawableElement.hpp"
+#include "Bulb/UI/InputElement.hpp"
 
 namespace blb::ui {
 	UIFrame::UIFrame(clv::mth::vec2i size) 
@@ -8,7 +9,7 @@ namespace blb::ui {
 	}
 
 	InputResponse UIFrame::propogateInput(const clv::InputEvent& event) {
-		for(auto& element : elements) {
+		for(auto& element : inputElements) {
 			//Key
 			if(event.keyboardEvent) {
 				if(element->onKeyEvent(*event.keyboardEvent) == InputResponse::Consumed) {
@@ -28,7 +29,7 @@ namespace blb::ui {
 	}
 
 	void UIFrame::drawChildren(rnd::Renderer3D& renderer) {
-		for(auto& element : elements) {
+		for(auto& element : drawables) {
 			element->draw(renderer, size);
 		}
 	}
