@@ -8,7 +8,7 @@ namespace blb::ui {
 		: size(std::move(size)){
 	}
 
-	InputResponse UIFrame::propogateInput(const clv::InputEvent& event) {
+	InputResponse UIFrame::propagateInput(const clv::InputEvent& event) {
 		for(auto& element : inputElements) {
 			//Key - TODO: Needs to check if the elemet has focus
 			/*if(event.keyboardEvent) {
