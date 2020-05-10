@@ -10,17 +10,23 @@ namespace blb::ui {
 
 	InputResponse UIFrame::propogateInput(const clv::InputEvent& event) {
 		for(auto& element : inputElements) {
-			//Key
-			if(event.keyboardEvent) {
+			//Key - TODO: Needs to check if the elemet has focus
+			/*if(event.keyboardEvent) {
 				if(element->onKeyEvent(*event.keyboardEvent) == InputResponse::Consumed) {
 					return InputResponse::Consumed;
 				}
-			}
+			}*/
 
 			//Mouse
 			if(event.mouseEvent) {
-				if(element->onMouseEvent(*event.mouseEvent) == InputResponse::Consumed) {
-					return InputResponse::Consumed;
+				const ElementBounds bounds = element->getBounds();
+				const auto [mx, my] = event.mouseEvent->getPos();
+
+				if(mx >= bounds.start.x && mx <= bounds.end.x && 
+					my >= bounds.start.y && my <= bounds.end.y) {
+					if(element->onMouseEvent(*event.mouseEvent) == InputResponse::Consumed) {
+						return InputResponse::Consumed;
+					}
 				}
 			}
 		}
