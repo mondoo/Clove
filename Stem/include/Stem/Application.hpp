@@ -32,6 +32,7 @@ namespace stm {
 		//FUNCTIONS
 	public:
 		Application();
+		~Application();
 
 		void start();
 		void run();

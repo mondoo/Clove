@@ -5,6 +5,8 @@
 namespace stm {
 	Application::Application() = default;
 
+	Application::~Application() = default;
+
 	void Application::start(){
 		platformInstance = clv::plt::createPlatformInstance();
 		window = platformInstance->createWindow(getApplicationDescriptor().windowDescriptor);
