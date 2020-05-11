@@ -52,6 +52,11 @@ namespace blb::phy{
 		body->setWorldTransform(btTrans);
 	}
 
+	void RigidBody::setLinearVelocity(const clv::mth::vec3f& velocity) {
+		const btVector3 btvel{ velocity.x, velocity.y, velocity.z };
+		body->setLinearVelocity(btvel);
+	}
+
 	clv::mth::vec3f RigidBody::getPhysicsPosition() const{
 		btTransform btTrans = body->getWorldTransform();
 		const auto pos = btTrans.getOrigin();

@@ -37,6 +37,8 @@ namespace blb::phy{
 		void setWorldPosition(const clv::mth::vec3f& position);
 		void setWorldRotation(const clv::mth::quatf& rotation);
 
+		void setLinearVelocity(const clv::mth::vec3f& velocity);
+
 		clv::mth::vec3f getPhysicsPosition() const;
 		clv::mth::quatf getPhysicsRotation() const;
 
