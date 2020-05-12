@@ -60,6 +60,11 @@ namespace blb::ecs {
 	template<typename... ConstructArgs>
 	ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityID, ConstructArgs&&... args) {
 		ComponentType* comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
+		if(comp == nullptr) {
+			CLV_LOG_ERROR("{0}: Could not create component", CLV_FUNCTION_NAME_PRETTY);
+			return { comp };
+		}
+
 		comp->entityID = entityID;
 
 		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()) {
