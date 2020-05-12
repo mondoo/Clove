@@ -33,6 +33,7 @@ namespace blb::ecs{
 		EntityID getID() const;
 
 		Entity clone();
+		void destroy();
 
 		template<typename ComponentType, typename ...ConstructorArgs>
 		ComponentPtr<ComponentType> addComponent(ConstructorArgs&& ...args);

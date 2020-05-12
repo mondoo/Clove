@@ -34,6 +34,12 @@ namespace blb::ecs{
 		}
 	}
 
+	void Entity::destroy(){
+		if(isValid()) {
+			world->destroyEntity(entityID);
+		}
+	}
+
 	Entity::operator EntityID() const {
 		return entityID;
 	}
