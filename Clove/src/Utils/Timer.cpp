@@ -70,10 +70,10 @@ namespace clv::utl{
 	ScopedTimerClock::~ScopedTimerClock(){
 		auto endTime = std::chrono::high_resolution_clock::now();
 
-		int64 start = std::chrono::time_point_cast<std::chrono::microseconds>(startTime).time_since_epoch().count();
-		int64 end = std::chrono::time_point_cast<std::chrono::microseconds>(endTime).time_since_epoch().count();
+		int64_t start = std::chrono::time_point_cast<std::chrono::microseconds>(startTime).time_since_epoch().count();
+		int64_t end = std::chrono::time_point_cast<std::chrono::microseconds>(endTime).time_since_epoch().count();
 
-		uint32 threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
+		uint32_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
 
 		Timer::get().writeProfile({ name, start, end, threadID });
 	}

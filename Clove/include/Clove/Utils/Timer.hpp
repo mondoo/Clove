@@ -8,10 +8,10 @@ namespace clv::utl{
 	struct ProfileResult{
 		std::string name;
 
-		int64 start = 0;
-		int64 end = 0;
+		int64_t start = 0;
+		int64_t end = 0;
 
-		uint32 threadID;
+		uint32_t threadID;
 	};
 
 	struct TimerSession{
@@ -25,7 +25,7 @@ namespace clv::utl{
 	private:
 		TimerSession* currentSession = nullptr;
 		std::ofstream outputStream;
-		uint32 profileCount = 0;
+		uint32_t profileCount = 0;
 
 		//FUNCTIONS
 	public:
