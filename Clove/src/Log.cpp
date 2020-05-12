@@ -10,12 +10,16 @@ namespace clv{
 	std::shared_ptr<spdlog::logger> Log::clientLogger;
 
 	void Log::init(){
-		const std::string_view consolePattern = "%^[%T] %n: %v%$";
-		const std::string_view filePattern = "[%D %T][%l] %n: %v";
+		const std::string consolePattern = "%^[%T] %n: %v%$";
+		const std::string filePattern = "[%D %T][%l] %n: %v";
 
 		auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 		consoleSink->set_pattern(consolePattern.data());
+	#if CLV_DEBUG
+		consoleSink->set_level(spdlog::level::trace);
+	#else
 		consoleSink->set_level(spdlog::level::info);
+	#endif
 
 		std::vector<spdlog::sink_ptr> coreSinks;
 		coreSinks.emplace_back(consoleSink);
