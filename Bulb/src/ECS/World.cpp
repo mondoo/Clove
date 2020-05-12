@@ -19,6 +19,8 @@ namespace blb::ecs {
 		CLV_PROFILE_FUNCTION();
 
 		if(pendingDestroyIDs.size() > 0) {
+			CLV_PROFILE_SCOPE("Destroying pendining entities");
+
 			for(EntityID id : pendingDestroyIDs) {
 				componentManager.onEntityDestroyed(id);
 			}

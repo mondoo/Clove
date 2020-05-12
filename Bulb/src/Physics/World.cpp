@@ -28,6 +28,8 @@ namespace blb::phy{
 	}
 
 	void World::stepSimulation(clv::utl::DeltaTime deltaTime){
+		CLV_PROFILE_FUNCTION();
+
 		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds(), 0);
 
 		collisionManifolds.clear();
