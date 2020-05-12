@@ -7,11 +7,23 @@ namespace blb::rnd{
 		: meshes(std::move(meshes)){
 	}
 
-	Model::Model(const Model& other) = default;
+	Model::Model(const Model& other){
+		meshes.clear();
+		for(const std::shared_ptr<Mesh>& mesh : other.meshes) {
+			meshes.emplace_back(std::make_shared<Mesh>(*mesh));
+		}
+	}
 
 	Model::Model(Model&& other) = default;
 
-	Model& Model::operator=(const Model& other) = default;
+	Model& Model::operator=(const Model& other){
+		meshes.clear();
+		for(const std::shared_ptr<Mesh>& mesh : other.meshes) {
+			meshes.emplace_back(std::make_shared<Mesh>(*mesh));
+		}
+
+		return *this;
+	}
 
 	Model& Model::operator=(Model&& other) = default;
 
