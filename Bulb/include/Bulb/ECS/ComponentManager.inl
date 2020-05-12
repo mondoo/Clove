@@ -1,7 +1,7 @@
 namespace blb::ecs {
 	template<typename ComponentType>
 	ComponentContainer<ComponentType>::ComponentContainer()
-		: componentAllocator(100) {
+		: componentAllocator(1000) {
 	}
 
 	template<typename ComponentType>
