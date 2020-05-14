@@ -39,6 +39,8 @@ namespace blb::ecs {
 		std::shared_ptr<clv::gfx::RenderTarget> renderTarget;
 		clv::gfx::Viewport viewport;
 
+		float zoomLevel = 1.0f;
+
 		//FUNCTIONS
 	public:
 		CameraComponent(std::shared_ptr<clv::gfx::RenderTarget> renderTarget, const clv::gfx::Viewport& viewport, const ProjectionMode projection);
@@ -63,6 +65,8 @@ namespace blb::ecs {
 
 		void setProjectionMode(const ProjectionMode mode);
 		ProjectionMode getProjectionMode() const;
+
+		void setZoomLevel(float zoom);
 
 		void updateViewportSize(const clv::mth::vec2ui& viewportSize);
 	};

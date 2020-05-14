@@ -54,10 +54,12 @@ namespace blb::ecs {
 	}
 
 	void CameraComponent::setProjectionMode(const ProjectionMode mode) {
+		constexpr float orthographicSize = 15.0f;
+		const float othoZoom = orthographicSize * zoomLevel;
+
 		const float width = static_cast<float>(viewport.width);
 		const float height = static_cast<float>(viewport.height);
 		const float aspect = width / height;
-		const float size = 15.0f;
 
 		const float nearPlane = 0.5f;
 		const float farPlane = 10000.0f;
@@ -66,11 +68,11 @@ namespace blb::ecs {
 
 		switch(currentProjectionMode) {
 			case ProjectionMode::orthographic:
-				currentProjection = mth::createOrthographicMatrix(-size * aspect, size * aspect, -size, size, nearPlane, farPlane);
+				currentProjection = mth::createOrthographicMatrix(-othoZoom * aspect, othoZoom * aspect, -othoZoom, othoZoom, nearPlane, farPlane);
 				break;
 
 			case ProjectionMode::perspective:
-				currentProjection = mth::createPerspectiveMatrix(45.0f, aspect, nearPlane, farPlane);
+				currentProjection = mth::createPerspectiveMatrix(45.0f * zoomLevel, aspect, nearPlane, farPlane);
 				break;
 
 			default:
@@ -80,6 +82,12 @@ namespace blb::ecs {
 
 	ProjectionMode CameraComponent::getProjectionMode() const {
 		return currentProjectionMode;
+	}
+
+	void CameraComponent::setZoomLevel(float zoom){
+		zoomLevel = zoom;
+
+		setProjectionMode(currentProjectionMode);
 	}
 
 	void CameraComponent::updateViewportSize(const mth::vec2ui& viewportSize) {
