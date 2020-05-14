@@ -21,4 +21,8 @@ namespace blb::ecs {
 	}
 
 	ModelComponent::~ModelComponent() = default;
+
+	rnd::Model& ModelComponent::getModel(){
+		return model;
+	}
 }

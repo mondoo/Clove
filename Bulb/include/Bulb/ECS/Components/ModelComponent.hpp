@@ -24,5 +24,7 @@ namespace blb::ecs {
 		ModelComponent& operator=(ModelComponent&& other) noexcept;
 
 		~ModelComponent();
+
+		rnd::Model& getModel();
 	};
 }
