@@ -2,13 +2,16 @@
 
 #include <btBulletDynamicsCommon.h>
 
-namespace blb::phy{
-	RigidBody::RigidBody(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize)
-		: mass(mass), isKinematic(isKinematic), respondToCollision(respondToCollision), cubeSize(cubeSize){
+namespace blb::phy {
+	RigidBody::RigidBody(const RigidBodyInitInfo& initInfo, const clv::mth::vec3f& cubeSize)
+		: mass(initInfo.mass)
+		, isKinematic(initInfo.isKinematic)
+		, respondToCollision(initInfo.respondToCollision)
+		, cubeSize(cubeSize) {
 		initialise(mass, isKinematic, respondToCollision, cubeSize);
 	}
 
-	RigidBody::RigidBody(const RigidBody& other){
+	RigidBody::RigidBody(const RigidBody& other) {
 		mass = other.mass;
 		isKinematic = other.isKinematic;
 		respondToCollision = other.respondToCollision;
@@ -22,7 +25,7 @@ namespace blb::phy{
 
 	RigidBody::RigidBody(RigidBody&& other) noexcept = default;
 
-	RigidBody& RigidBody::operator=(const RigidBody& other){
+	RigidBody& RigidBody::operator=(const RigidBody& other) {
 		mass = other.mass;
 		isKinematic = other.isKinematic;
 		respondToCollision = other.respondToCollision;
@@ -40,13 +43,13 @@ namespace blb::phy{
 
 	RigidBody::~RigidBody() = default;
 
-	void RigidBody::setWorldPosition(const clv::mth::vec3f& position){
+	void RigidBody::setWorldPosition(const clv::mth::vec3f& position) {
 		btTransform btTrans = body->getWorldTransform();
 		btTrans.setOrigin({ position.x, position.y, position.z });
 		body->setWorldTransform(btTrans);
 	}
 
-	void RigidBody::setWorldRotation(const clv::mth::quatf& rotation){
+	void RigidBody::setWorldRotation(const clv::mth::quatf& rotation) {
 		btTransform btTrans = body->getWorldTransform();
 		btTrans.setRotation({ rotation.x, rotation.y, rotation.z, rotation.w }); //GLM is pitch yaw roll while Bullet is yaw pitch roll
 		body->setWorldTransform(btTrans);
@@ -57,37 +60,37 @@ namespace blb::phy{
 		body->setLinearVelocity(btvel);
 	}
 
-	clv::mth::vec3f RigidBody::getPhysicsPosition() const{
+	clv::mth::vec3f RigidBody::getPhysicsPosition() const {
 		btTransform btTrans = body->getWorldTransform();
 		const auto pos = btTrans.getOrigin();
 		return { pos.getX(), pos.getY(), pos.getZ() };
 	}
 
-	clv::mth::quatf RigidBody::getPhysicsRotation() const{
+	clv::mth::quatf RigidBody::getPhysicsRotation() const {
 		btTransform btTrans = body->getWorldTransform();
 		const auto rot = btTrans.getRotation();
 		return { rot.getW(), rot.getX(), rot.getY(), rot.getZ() }; //GLM is pitch yaw roll while Bullet is yaw pitch roll
 	}
 
-	void RigidBody::setUserPointer(void* pointer){
+	void RigidBody::setUserPointer(void* pointer) {
 		userPointer = pointer;
 	}
 
-	void* RigidBody::getUserPointer() const{
+	void* RigidBody::getUserPointer() const {
 		return userPointer;
 	}
 
-	void RigidBody::initialise(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize){
+	void RigidBody::initialise(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize) {
 		collisionShape = std::make_unique<btBoxShape>(btVector3{ cubeSize.x, cubeSize.y, cubeSize.z });
 
 		btVector3 localInertia(0, 0, 0);
 		btTransform startTransform;
 		startTransform.setIdentity();
 
-		if (isKinematic && mass > 0.0f){
+		if(isKinematic && mass > 0.0f) {
 			CLV_LOG_WARN("Kinematic body has non 0 mass. Setting to 0");
 			mass = 0.0f;
-		} else{
+		} else {
 			collisionShape->calculateLocalInertia(mass, localInertia);
 		}
 
@@ -98,10 +101,10 @@ namespace blb::phy{
 		body->setUserPointer(this);
 
 		int flags = body->getCollisionFlags();
-		if (isKinematic){
+		if(isKinematic) {
 			flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
 		}
-		if (!respondToCollision){
+		if(!respondToCollision) {
 			flags |= btCollisionObject::CF_NO_CONTACT_RESPONSE;
 		}
 		body->setCollisionFlags(flags);

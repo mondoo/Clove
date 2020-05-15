@@ -6,12 +6,12 @@ using namespace clv;
 
 namespace blb::ecs {
 	RigidBodyComponent::RigidBodyComponent() {
-		rigidBody = std::make_unique<phy::RigidBody>(0.0f, false, true, mth::vec3f{ 1.0f, 1.0f, 1.0f });
+		rigidBody = std::make_unique<phy::RigidBody>(phy::RigidBodyInitInfo{}, mth::vec3f{ 1.0f, 1.0f, 1.0f });
 		initialiseRigidBody(rigidBody.get());
 	}
 
-	RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic, bool respondToCollision, const mth::vec3f& cubeSize) {
-		rigidBody = std::make_unique<phy::RigidBody>(mass, isKinematic, respondToCollision, cubeSize);
+	RigidBodyComponent::RigidBodyComponent(const phy::RigidBodyInitInfo& initInfo, const mth::vec3f& cubeSize) {
+		rigidBody = std::make_unique<phy::RigidBody>(initInfo, cubeSize);
 		initialiseRigidBody(rigidBody.get());
 	}
 

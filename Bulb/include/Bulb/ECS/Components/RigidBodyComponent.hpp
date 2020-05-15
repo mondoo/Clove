@@ -2,9 +2,7 @@
 
 #include "Bulb/ECS/Component.hpp"
 
-namespace blb::phy {
-	class RigidBody;
-}
+#include "Bulb/Physics/RigidBody.hpp"
 
 namespace blb::ecs {
 	class RigidBodyComponent : public Component<RigidBodyComponent> {
@@ -20,7 +18,7 @@ namespace blb::ecs {
 		//FUNCTIONS
 	public:
 		RigidBodyComponent();
-		RigidBodyComponent(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize);
+		RigidBodyComponent(const phy::RigidBodyInitInfo& initInfo, const clv::mth::vec3f& cubeSize);
 		RigidBodyComponent(std::unique_ptr<phy::RigidBody> rigidBody);
 
 		RigidBodyComponent(const RigidBodyComponent& other);

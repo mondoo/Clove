@@ -3,8 +3,16 @@
 class btCollisionShape;
 class btRigidBody;
 
-namespace blb::phy{
-	class RigidBody{
+namespace blb::phy {
+	struct RigidBodyInitInfo {
+		float mass = 1.0f;
+		float isKinematic = false;
+		float respondToCollision = true;
+	};
+}
+
+namespace blb::phy {
+	class RigidBody {
 		friend class World;
 
 		//VARIABLES
@@ -24,7 +32,7 @@ namespace blb::phy{
 	public:
 		RigidBody() = delete;
 		//Only supporting box shapes
-		RigidBody(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize);
+		RigidBody(const RigidBodyInitInfo& initInfo, const clv::mth::vec3f& cubeSize);
 
 		RigidBody(const RigidBody& other);
 		RigidBody(RigidBody&& other) noexcept;
