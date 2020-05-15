@@ -11,9 +11,9 @@ namespace clv::utl {
 	template<typename EventType>
 	class EventContainer : public EventContainerInterface{
 	public:
-		using FunctionType = std::function<void()>;
+		using FunctionType = std::function<void(EventType&)>;
 
-		std::vector<std::function<void()>> listeners; //TODO: have the listeners take the event that's been called (will contain the data)
+		std::vector<FunctionType> listeners; //TODO: have the listeners take the event that's been called (will contain the data)
 	};
 
 	class EventManager{
@@ -49,9 +49,9 @@ namespace clv::utl {
 		}
 
 		template<typename EventType>
-		void broadCastEvent(/* params */) {
+		void broadCastEvent(EventType& event) {
 			for(auto&& func : manager.getEventContainer<EventType>().listeners) {
-				func();
+				func(event);
 			}
 		}
 	};
