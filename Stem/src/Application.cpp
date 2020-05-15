@@ -27,7 +27,7 @@ namespace stm {
 
 			//Respond to input
 			while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
-				const clv::InputEvent event{ keyEvent, {} };
+				const clv::InputEvent event{ *keyEvent, clv::InputEventType::Keyboard };
 				for(const auto& layer : layerStack) {
 					if(layer->onInputEvent(event) == blb::InputResponse::Consumed) {
 						break;
@@ -35,7 +35,7 @@ namespace stm {
 				}
 			}
 			while(auto mouseEvent = window->getMouse().getEvent()) {
-				const clv::InputEvent event{ {}, mouseEvent };
+				const clv::InputEvent event{ *mouseEvent, clv::InputEventType::Mouse };
 				for(const auto& layer : layerStack) {
 					if(layer->onInputEvent(event) == blb::InputResponse::Consumed) {
 						break;

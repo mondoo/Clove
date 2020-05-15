@@ -19,7 +19,7 @@ namespace blb {
 
 		virtual void onAttach() {}
 
-		virtual InputResponse onInputEvent(const clv::InputEvent& event) { return InputResponse::Ignored; }
+		virtual InputResponse onInputEvent(const clv::InputEvent& inputEvent) { return InputResponse::Ignored; }
 		virtual void onUpdate(const clv::utl::DeltaTime deltaTime) {}
 
 		virtual void onDetach() {}

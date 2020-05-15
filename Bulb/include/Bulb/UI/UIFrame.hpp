@@ -28,7 +28,7 @@ namespace blb::ui {
 		UIFrame() = delete;
 		UIFrame(clv::mth::vec2i size);
 
-		InputResponse propagateInput(const clv::InputEvent& event);
+		InputResponse propagateInput(const clv::InputEvent& inputEvent);
 
 		void drawChildren(rnd::Renderer3D& renderer);
 

@@ -3,15 +3,16 @@
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
 
-#include <optional>
+#include <variant>
 
 namespace clv {
-	struct InputEvent{
-		std::optional<Keyboard::Event> keyboardEvent;
-		std::optional<Mouse::Event> mouseEvent;
+	enum class InputEventType{
+		Keyboard,
+		Mouse
+	};
 
-		bool isValid() const{
-			return keyboardEvent.has_value() && mouseEvent.has_value();
-		}
+	struct InputEvent{
+		std::variant<Keyboard::Event, Mouse::Event> event;
+		InputEventType eventType;
 	};
 }
