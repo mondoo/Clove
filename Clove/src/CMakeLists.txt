@@ -194,6 +194,8 @@ set(
 		${CLV_INCLUDE}/Utils/Delegate.inl
 		${CLV_INCLUDE}/Utils/DeltaTime.hpp
 		${CLV_SOURCE}/Utils/DeltaTime.cpp
+		${CLV_INCLUDE}/Utils/EventDispatcher.hpp
+		${CLV_SOURCE}/Utils/EventDispatcher.cpp
 		${CLV_INCLUDE}/Utils/Timer.hpp
 		${CLV_SOURCE}/Utils/Timer.cpp
 )

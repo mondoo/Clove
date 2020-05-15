@@ -25,3 +25,5 @@
 
 #include "Clove/Platform/Platform.hpp"
 #include "Clove/Platform/Window.hpp"
+
+#include "Clove/Utils/EventDispatcher.hpp"
