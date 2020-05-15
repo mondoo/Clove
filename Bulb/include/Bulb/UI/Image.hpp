@@ -13,15 +13,12 @@ namespace blb::rnd {
 namespace blb::ui {
 	class Image : public DrawableElement {
 		//VARIABLES
-	//private:
-	public:
+	private:
 		std::shared_ptr<rnd::Sprite> sprite;
 
 		clv::mth::vec2f position{ 0.0f, 0.0f };
 		float rotation{ 0.0f };
 		clv::mth::vec2f size{ 1.0f, 1.0f };
-
-		bool beBlue = false;
 
 		//FUNCTIONS
 	public:
