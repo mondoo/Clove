@@ -110,6 +110,7 @@ struct UniformBufferObject{
 struct Vertex{
 	glm::vec2 pos;
 	glm::vec3 colour;
+	glm::vec2 texCoord;
 
 	//Describes the whole binding (i.e. the entire vertex structure)
 	static VkVertexInputBindingDescription getBindingDescription(){
@@ -122,8 +123,8 @@ struct Vertex{
 	}
 
 	//Describes each attribute of a binding (i.e. the position and colour of a vertex)
-	static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions(){
-		std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+	static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions(){
+		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
 		attributeDescriptions[0].binding = 0; //Which binding out attribute comes from
 		attributeDescriptions[0].location = 0; //Matches the location index for this attribute we specified in the shader
@@ -134,6 +135,11 @@ struct Vertex{
 		attributeDescriptions[1].location = 1;
 		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
 		attributeDescriptions[1].offset = offsetof(Vertex, colour);
+
+		attributeDescriptions[2].binding = 0;
+		attributeDescriptions[2].location = 2;
+		attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
 
 		return attributeDescriptions;
 	}
@@ -189,10 +195,10 @@ private:
 	bool framebufferResized = false;
 
 	const std::vector<Vertex> vertices = {
-		{ { -0.5f, -0.5f },	{ 1.0f, 0.0f, 0.0f } },
-		{ {  0.5f, -0.5f },	{ 0.0f, 1.0f, 0.0f } },
-		{ {  0.5f,  0.5f },	{ 0.0f, 0.0f, 1.0f } },
-		{ { -0.5f,  0.5f },	{ 1.0f, 1.0f, 1.0f } }
+		{ { -0.5f, -0.5f },	{ 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f} }, //Top left
+		{ {  0.5f, -0.5f },	{ 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f} }, //Top right
+		{ {  0.5f,  0.5f },	{ 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f} }, //Bottom right
+		{ { -0.5f,  0.5f },	{ 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f} }  //Bottom left
 	};
 
 	const std::vector<uint16_t> indices = {
