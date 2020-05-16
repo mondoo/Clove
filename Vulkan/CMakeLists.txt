@@ -31,7 +31,6 @@ set_target_properties(glfw PROPERTIES FOLDER ${ApplicationFolder})
 #For Vulkan
 find_package(Vulkan REQUIRED)
 
-
 #Includes
 target_include_directories(
 	${PROJECT_NAME}
@@ -55,4 +54,5 @@ target_link_libraries(
 target_compile_definitions(
 	${PROJECT_NAME}
 	PRIVATE
+		RES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/resource"
 )
