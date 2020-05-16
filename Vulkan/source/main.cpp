@@ -1375,13 +1375,12 @@ private:
 		vkUnmapMemory(device, uniformBuffersMemory[currentImage]);
 	}
 
-	//Currently assuming these single time commands want transfer buffers
-	VkCommandBuffer beginSingleTimeCommands(){
+	VkCommandBuffer beginSingleTimeCommands(bool useGraphicsPool = false){
 		//Allocate a buffer from our transfer pool
 		VkCommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandPool = transferCommandPool;
+		allocInfo.commandPool = useGraphicsPool ? graphicsCommandPool : transferCommandPool;
 		allocInfo.commandBufferCount = 1;
 
 		VkCommandBuffer commandBuffer;
@@ -1396,8 +1395,7 @@ private:
 		return commandBuffer;
 	}
 
-	//Currently assuming these single time commands want transfer buffers
-	void endSingleTimeCommands(VkCommandBuffer commandBuffer){
+	void endSingleTimeCommands(VkCommandBuffer commandBuffer, bool useGraphicsPool = false) {
 		vkEndCommandBuffer(commandBuffer);
 
 		VkSubmitInfo submitInfo{};
@@ -1405,11 +1403,11 @@ private:
 		submitInfo.commandBufferCount = 1;
 		submitInfo.pCommandBuffers = &commandBuffer;
 
-		vkQueueSubmit(transferQueue, 1, &submitInfo, nullptr);
+		vkQueueSubmit(useGraphicsPool ? graphicsQueue : transferQueue, 1, &submitInfo, nullptr);
 		//Wait until the transfer queue is processed. We could uses fences here to submit multiple transfers at the same time
-		vkQueueWaitIdle(transferQueue);
+		vkQueueWaitIdle(useGraphicsPool ? graphicsQueue : transferQueue);
 
-		vkFreeCommandBuffers(device, transferCommandPool, 1, &commandBuffer);
+		vkFreeCommandBuffers(device, useGraphicsPool ? graphicsCommandPool : transferCommandPool, 1, &commandBuffer);
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
