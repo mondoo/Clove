@@ -1193,21 +1193,7 @@ private:
 	}
 
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size){
-		//Allocate a buffer from our transfer pool
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandPool = transferCommandPool;
-		allocInfo.commandBufferCount = 1;
-
-		VkCommandBuffer commandBuffer;
-		vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
-
-		VkCommandBufferBeginInfo beginInfo{};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; //Let the driver know we plan to use this command buffer once
-
-		vkBeginCommandBuffer(commandBuffer, &beginInfo);
+		VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
 		VkBufferCopy copyRegion{};
 		copyRegion.srcOffset = 0;
@@ -1215,18 +1201,7 @@ private:
 		copyRegion.size = size;
 		vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
 
-		vkEndCommandBuffer(commandBuffer);
-
-		VkSubmitInfo submitInfo{};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffer;
-
-		vkQueueSubmit(transferQueue, 1, &submitInfo, nullptr);
-		//Wait until the transfer queue is processed. We could uses fences here to submit multiple transfers at the same time
-		vkQueueWaitIdle(transferQueue);
-
-		vkFreeCommandBuffers(device, transferCommandPool, 1, &commandBuffer);
+		endSingleTimeCommands(commandBuffer);
 	}
 
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties){
@@ -1398,6 +1373,43 @@ private:
 		vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(UniformBufferObject), 0, &data);
 		memcpy(data, &ubo, sizeof(UniformBufferObject));
 		vkUnmapMemory(device, uniformBuffersMemory[currentImage]);
+	}
+
+	//Currently assuming these single time commands want transfer buffers
+	VkCommandBuffer beginSingleTimeCommands(){
+		//Allocate a buffer from our transfer pool
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandPool = transferCommandPool;
+		allocInfo.commandBufferCount = 1;
+
+		VkCommandBuffer commandBuffer;
+		vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+
+		VkCommandBufferBeginInfo beginInfo{};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; //Let the driver know we plan to use this command buffer once
+
+		vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+		return commandBuffer;
+	}
+
+	//Currently assuming these single time commands want transfer buffers
+	void endSingleTimeCommands(VkCommandBuffer commandBuffer){
+		vkEndCommandBuffer(commandBuffer);
+
+		VkSubmitInfo submitInfo{};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffer;
+
+		vkQueueSubmit(transferQueue, 1, &submitInfo, nullptr);
+		//Wait until the transfer queue is processed. We could uses fences here to submit multiple transfers at the same time
+		vkQueueWaitIdle(transferQueue);
+
+		vkFreeCommandBuffers(device, transferCommandPool, 1, &commandBuffer);
 	}
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
