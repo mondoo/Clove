@@ -47,6 +47,7 @@ target_link_libraries(
 	PRIVATE 
 		glfw
 		glm_static
+		stb
 		Vulkan::Vulkan
 )
 
