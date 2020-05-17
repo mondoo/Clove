@@ -2,6 +2,8 @@
 
 #include "Clove/Event/EventTypes.hpp"
 
+#include <list>
+
 namespace clv {
 	class EventHandle;
 }
