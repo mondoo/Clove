@@ -8,15 +8,14 @@ namespace clv::utl {
 	using ListenerFunction = std::function<void(EventType&)>;
 
 	struct EventHandle{
+		//friend class EventManager::EventContainerBase;
+
 	private:
 		ListenerId id = invalidListenerId;
 		std::function<void(ListenerId)> clearEvent;
 
 	public:
-		EventHandle(ListenerId id, std::function<void(ListenerId)> clearFunc)
-			: id(id)
-			, clearEvent(std::move(clearFunc)) {
-		}
+		EventHandle(ListenerId id, std::function<void(ListenerId)> clearFunc, class EventContainerBase* container);
 
 		EventHandle(const EventHandle& other) = delete;
 		
@@ -30,13 +29,9 @@ namespace clv::utl {
 			if(isValid()) {
 				clearEvent(id);
 
-				clearEvent = nullptr;
-				id = invalidListenerId;
+				clear();
 			}
 		}
-
-		//TODO: invalidate handle when the event itself goes out of scope
-
 		bool isValid() const{
 			return clearEvent != nullptr && id != invalidListenerId;
 		}
@@ -44,25 +39,45 @@ namespace clv::utl {
 		operator ListenerId() const{
 			return id;
 		}
+
+	//private:
+		void clear(){
+			clearEvent = nullptr;
+			id = invalidListenerId;
+		}
+	};
+
+	//Temp? Would like it inside the manager
+	class EventContainerBase {
+		friend class EventHandle;
+
+		//VARIABLES
+	protected:
+		inline static ListenerId nextId = 1;
+
+		std::vector<EventHandle*> handles;
+		//std::unordered_map<ListenerId, std::function<void()>> handleClearFuncs;
+
+		//FUNCTI0NS
+	public:
+		virtual ~EventContainerBase() {
+			/*for(auto&& handlePair : handleClearFuncs) {
+					handlePair.second();
+				}*/
+
+			for(auto* handle : handles) {
+				handle->clear();
+			}
+		}
 	};
 
 	class EventManager {
 		//TYPES
 	private:
-		class EventContainerInterface {
-			//VARIABLES
-		protected:
-			inline static ListenerId nextId = 1;
-
-			//FUNCTI0NS
-		public:
-			virtual ~EventContainerInterface() = default;
-
-			virtual void removeListener(ListenerId id) = 0;
-		};
+		
 
 		template<typename EventType>
-		class EventContainer : public EventContainerInterface {
+		class EventContainer : public EventContainerBase {
 			//TYPES
 		private:
 			using ContainerFunctionType = ListenerFunction<EventType>;
@@ -74,16 +89,17 @@ namespace clv::utl {
 
 			//FUNCTIONS
 		public:
-			
+			//TODO: Ctors
+
 			EventHandle addListener(ContainerFunctionType function) {
 				listeners.push_back(function);
 
 				ListenerId id = nextId++;
 				listenerIdToIndexMap[id] = listeners.size() - 1;
 
-				return { id, std::bind(&EventContainer<EventType>::removeListener, this, std::placeholders::_1) };
+				return { id, std::bind(&EventContainer<EventType>::removeListener, this, std::placeholders::_1), this };
 			}
-			void removeListener(ListenerId id) final {
+			void removeListener(ListenerId id) {
 				if(auto iter = listenerIdToIndexMap.find(id); iter != listenerIdToIndexMap.end()) {
 					const size_t index = iter->second;
 					const size_t lastIndex = listeners.size() - 1;
@@ -125,7 +141,7 @@ namespace clv::utl {
 
 		//VARIABLES
 	private:
-		std::unordered_map<size_t, std::unique_ptr<EventContainerInterface>> containers;
+		std::unordered_map<size_t, std::unique_ptr<EventContainerBase>> containers;
 
 		//FUNCTIONS
 	public:
