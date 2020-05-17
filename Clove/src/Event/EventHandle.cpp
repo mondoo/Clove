@@ -11,9 +11,21 @@ namespace clv{
 		container->handles.push_back(this);
 	}
 
-	EventHandle::EventHandle(EventHandle&& other) noexcept = default;
+	EventHandle::EventHandle(EventHandle&& other) noexcept{
+		reset();
+
+		id = other.id;
+		clearEvent = std::move(other.clearEvent);
+	}
 	
-	EventHandle& EventHandle::operator=(EventHandle&& other) noexcept = default;
+	EventHandle& EventHandle::operator=(EventHandle&& other) noexcept{
+		reset();
+
+		id = other.id;
+		clearEvent = std::move(other.clearEvent);
+
+		return *this;
+	}
 	
 	EventHandle::~EventHandle() {
 		reset();
