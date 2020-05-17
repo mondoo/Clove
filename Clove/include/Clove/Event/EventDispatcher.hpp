@@ -22,7 +22,7 @@ namespace clv {
 		~EventDispatcher();
 
 		template<typename EventType>
-		EventHandle bindToEvent(ListenerFunction<EventType>&& function);
+		[[nodiscard]] EventHandle bindToEvent(ListenerFunction<EventType>&& function);
 		template<typename EventType>
 		void unbindFromEvent(ListenerId id);
 

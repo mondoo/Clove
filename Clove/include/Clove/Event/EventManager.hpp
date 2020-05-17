@@ -31,7 +31,7 @@ namespace clv {
 
 			~EventContainer();
 
-			EventHandle addListener(ContainerFunctionType function);
+			[[nodiscard]] EventHandle addListener(ContainerFunctionType function);
 			void removeListener(ListenerId id);
 
 			typename std::vector<ContainerFunctionType>::iterator begin();
