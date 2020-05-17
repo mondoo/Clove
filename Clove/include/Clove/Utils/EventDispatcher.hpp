@@ -2,9 +2,49 @@
 
 namespace clv::utl {
 	using ListenerId = size_t;
+	static constexpr ListenerId invalidListenerId = 0;
 
 	template<typename EventType>
 	using ListenerFunction = std::function<void(EventType&)>;
+
+	struct EventHandle{
+	private:
+		ListenerId id = invalidListenerId;
+		std::function<void(ListenerId)> clearEvent;
+
+	public:
+		EventHandle(ListenerId id, std::function<void(ListenerId)> clearFunc)
+			: id(id)
+			, clearEvent(std::move(clearFunc)) {
+		}
+
+		EventHandle(const EventHandle& other) = delete;
+		
+		EventHandle& operator=(const EventHandle& other) = delete;
+		
+		~EventHandle(){
+			reset();
+		}
+
+		void reset(){
+			if(isValid()) {
+				clearEvent(id);
+
+				clearEvent = nullptr;
+				id = invalidListenerId;
+			}
+		}
+
+		//TODO: invalidate handle when the event itself goes out of scope
+
+		bool isValid() const{
+			return clearEvent != nullptr && id != invalidListenerId;
+		}
+
+		operator ListenerId() const{
+			return id;
+		}
+	};
 
 	class EventManager {
 		//TYPES
@@ -12,7 +52,7 @@ namespace clv::utl {
 		class EventContainerInterface {
 			//VARIABLES
 		protected:
-			inline static ListenerId nextId = 0;
+			inline static ListenerId nextId = 1;
 
 			//FUNCTI0NS
 		public:
@@ -34,14 +74,14 @@ namespace clv::utl {
 
 			//FUNCTIONS
 		public:
-			//TODO: rather than an ID should it return a struct that automatically unbinds when out of scope?
-			ListenerId addListener(ContainerFunctionType function) {
+			
+			EventHandle addListener(ContainerFunctionType function) {
 				listeners.push_back(function);
 
 				ListenerId id = nextId++;
 				listenerIdToIndexMap[id] = listeners.size() - 1;
 
-				return id;
+				return { id, std::bind(&EventContainer<EventType>::removeListener, this, std::placeholders::_1) };
 			}
 			void removeListener(ListenerId id) final {
 				if(auto iter = listenerIdToIndexMap.find(id); iter != listenerIdToIndexMap.end()) {
@@ -113,7 +153,7 @@ namespace clv::utl {
 		//TODO: Ctors
 
 		template<typename EventType>
-		ListenerId bindToEvent(ListenerFunction<EventType>&& function) {
+		EventHandle bindToEvent(ListenerFunction<EventType>&& function) {
 			return manager.getEventContainer<EventType>().addListener(std::forward<ListenerFunction<EventType>>(function));
 		}
 
