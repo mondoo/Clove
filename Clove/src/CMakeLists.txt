@@ -7,6 +7,21 @@ add_library(${PROJECT_NAME} STATIC)
 
 #Files
 set(
+	EventFiles
+		${CLV_INCLUDE}/Event/EventContainerBase.hpp
+		${CLV_SOURCE}/Event/EventContainerBase.cpp
+		${CLV_INCLUDE}/Event/EventDispatcher.hpp
+		${CLV_INCLUDE}/Event/EventDispatcher.inl
+		${CLV_SOURCE}/Event/EventDispatcher.cpp
+		${CLV_INCLUDE}/Event/EventHandle.hpp
+		${CLV_SOURCE}/Event/EventHandle.cpp
+		${CLV_INCLUDE}/Event/EventManager.hpp
+		${CLV_INCLUDE}/Event/EventManager.inl
+		${CLV_SOURCE}/Event/EventManager.cpp
+		${CLV_INCLUDE}/Event/EventTypes.hpp
+)
+
+set(
 	ExceptionFiles
 		${CLV_INCLUDE}/Exception/CloveException.hpp
 		${CLV_SOURCE}/Exception/CloveException.cpp
@@ -205,6 +220,7 @@ set(
 	${CLV_INCLUDE}/Log.hpp
 	${CLV_SOURCE}/Log.cpp
 
+		${EventFiles}
 		${ExceptionFiles}
 		${GraphicsFiles}
 			${OpenGLGraphicsFiles}
