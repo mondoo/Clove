@@ -14,10 +14,10 @@ namespace clv {
 		EventDispatcher();
 
 		EventDispatcher(const EventDispatcher& other) = delete;
-		EventDispatcher(EventDispatcher&& other) noexcept = delete;
+		EventDispatcher(EventDispatcher&& other) noexcept;
 
 		EventDispatcher& operator=(const EventDispatcher& other) = delete;
-		EventDispatcher& operator=(EventDispatcher&& other) noexcept = delete;
+		EventDispatcher& operator=(EventDispatcher&& other) noexcept;
 
 		~EventDispatcher();
 
