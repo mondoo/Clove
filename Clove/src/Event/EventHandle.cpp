@@ -5,24 +5,30 @@
 namespace clv{
 	EventHandle::EventHandle() = default;
 
-	EventHandle::EventHandle(ListenerId id, std::function<void(ListenerId)> clearFunc, EventContainerBase* container)
+	EventHandle::EventHandle(ListenerId id, EventContainerBase* container)
 		: id(id)
-		, clearEvent(std::move(clearFunc)) {
-		container->handles.push_back(this);
+		, container(container) {
+		this->container->handles.push_back(this);
 	}
 
 	EventHandle::EventHandle(EventHandle&& other) noexcept{
 		reset();
 
 		id = other.id;
-		clearEvent = std::move(other.clearEvent);
+		container = other.container;
+		container->handles.push_back(this);
+
+		other.clear();
 	}
 	
 	EventHandle& EventHandle::operator=(EventHandle&& other) noexcept{
 		reset();
 
 		id = other.id;
-		clearEvent = std::move(other.clearEvent);
+		container = other.container;
+		container->handles.push_back(this);
+
+		other.clear();
 
 		return *this;
 	}
@@ -33,22 +39,26 @@ namespace clv{
 
 	void EventHandle::reset() {
 		if(isValid()) {
-			clearEvent(id);
-
+			container->removeListener(id);
+			container->handles.erase(std::find(container->handles.begin(), container->handles.end(), this));
 			clear();
 		}
 	}
 
-	bool EventHandle::isValid() const {
-		return clearEvent != nullptr && id != invalidListenerId;
-	}
-
-	EventHandle::operator ListenerId() const {
+	ListenerId EventHandle::getId() const {
 		return id;
 	}
 
+	bool EventHandle::isValid() const {
+		return container != nullptr && id != invalidListenerId;
+	}
+
+	EventHandle::operator ListenerId() const {
+		return getId();
+	}
+
 	void EventHandle::clear() {
-		clearEvent = nullptr;
+		container = nullptr;
 		id = invalidListenerId;
 	}
 }

@@ -13,12 +13,12 @@ namespace clv {
 		//VARIABLES
 	private:
 		ListenerId id = invalidListenerId;
-		std::function<void(ListenerId)> clearEvent;
+		EventContainerBase* container = nullptr;
 
 		//FUNCTIONS
 	public:
 		EventHandle();
-		EventHandle(ListenerId id, std::function<void(ListenerId)> clearFunc, EventContainerBase* container);
+		EventHandle(ListenerId id, EventContainerBase* container);
 
 		EventHandle(const EventHandle& other) = delete;
 		EventHandle(EventHandle&& other) noexcept;
@@ -29,6 +29,8 @@ namespace clv {
 		~EventHandle();
 
 		void reset();
+
+		ListenerId getId() const;
 
 		bool isValid() const;
 

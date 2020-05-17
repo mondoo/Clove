@@ -18,7 +18,7 @@ namespace clv {
 		ListenerId id = nextId++;
 		listenerIdToIndexMap[id] = listeners.size() - 1;
 
-		return { id, std::bind(&EventContainer<EventType>::removeListener, this, std::placeholders::_1), this };
+		return { id, this };
 	}
 
 	template<typename EventType>

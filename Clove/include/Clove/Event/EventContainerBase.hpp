@@ -14,10 +14,12 @@ namespace clv {
 	protected:
 		inline static ListenerId nextId = 1;
 
-		std::vector<EventHandle*> handles;
+		std::list<EventHandle*> handles;
 
 		//FUNCTI0NS
 	public:
 		virtual ~EventContainerBase();
+
+		virtual void removeListener(ListenerId id) = 0;
 	};
 }
