@@ -17,7 +17,7 @@ namespace clv {
 
 		//FUNCTIONS
 	public:
-		EventHandle() = delete;
+		EventHandle();
 		EventHandle(ListenerId id, std::function<void(ListenerId)> clearFunc, EventContainerBase* container);
 
 		EventHandle(const EventHandle& other) = delete;

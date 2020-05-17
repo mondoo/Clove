@@ -3,6 +3,8 @@
 #include "Clove/Event/EventContainerBase.hpp"
 
 namespace clv{
+	EventHandle::EventHandle() = default;
+
 	EventHandle::EventHandle(ListenerId id, std::function<void(ListenerId)> clearFunc, EventContainerBase* container)
 		: id(id)
 		, clearEvent(std::move(clearFunc)) {
