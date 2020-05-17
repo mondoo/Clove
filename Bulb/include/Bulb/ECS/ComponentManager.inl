@@ -1,17 +1,15 @@
+#include "Bulb/ECS/ECSEvents.hpp"
+#include <Clove/Event/EventDispatcher.hpp>
+
 namespace blb::ecs {
 	template<typename ComponentType>
-	ComponentContainer<ComponentType>::ComponentContainer()
-		: componentAllocator(1000) {
+	ComponentContainer<ComponentType>::ComponentContainer(clv::EventDispatcher* dispatcher)
+		: ecsEventDispatcher(dispatcher)
+		, componentAllocator(1000) {
 	}
 
 	template<typename ComponentType>
-	ComponentContainer<ComponentType>::ComponentContainer(const ComponentContainer& other) = default;
-
-	template<typename ComponentType>
 	ComponentContainer<ComponentType>::ComponentContainer(ComponentContainer&& other) noexcept = default;
-
-	template<typename ComponentType>
-	ComponentContainer<ComponentType>& ComponentContainer<ComponentType>::operator=(const ComponentContainer& other) = default;
 
 	template<typename ComponentType>
 	ComponentContainer<ComponentType>& ComponentContainer<ComponentType>::operator=(ComponentContainer&& other) noexcept = default;
@@ -51,7 +49,9 @@ namespace blb::ecs {
 				entityIDToIndex[movedCompEntityID] = index;
 			}
 
-			componentRemovedDelegate.broadcast(removedComp);
+			ComponentRemovedEvent<ComponentType> event{ removedComp };
+			ecsEventDispatcher->broadCastEvent<ComponentRemovedEvent<ComponentType>>(event);
+
 			componentAllocator.free(removedComp);
 		}
 	}
@@ -74,7 +74,8 @@ namespace blb::ecs {
 			entityIDToIndex[entityID] = components.size() - 1;
 		}
 
-		componentAddedDelegate.broadcast(comp);
+		ComponentAddedEvent<ComponentType> event{ comp };
+		ecsEventDispatcher->broadCastEvent<ComponentAddedEvent<ComponentType>>(event);
 
 		return { comp };
 	}
@@ -94,9 +95,7 @@ namespace blb::ecs {
 		if(auto iter = containers.find(componentID); iter != containers.end()) {
 			return static_cast<ComponentContainer<ComponentType>&>(*iter->second.get());
 		} else {
-			auto container = std::make_unique<ComponentContainer<ComponentType>>();
-			container->componentAddedDelegate.bind(&ComponentManager::onContainerAddedComponent, this);
-			container->componentRemovedDelegate.bind(&ComponentManager::onContainerRemovedComponent, this);
+			auto container = std::make_unique<ComponentContainer<ComponentType>>(ecsEventDispatcher);
 
 			containers[componentID] = std::move(container);
 			return static_cast<ComponentContainer<ComponentType>&>(*containers[componentID].get());

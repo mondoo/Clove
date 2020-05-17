@@ -34,6 +34,7 @@ set(
 		${BLB_INCLUDE}/ECS/ComponentManager.hpp
 		${BLB_INCLUDE}/ECS/ComponentManager.inl
 		${BLB_SOURCE}/ECS/ComponentManager.cpp
+		${BLB_INCLUDE}/ECS/ECSEvents.hpp
 		${BLB_INCLUDE}/ECS/ECSTypes.hpp
 		${BLB_INCLUDE}/ECS/Entity.hpp
 		${BLB_INCLUDE}/ECS/Entity.inl

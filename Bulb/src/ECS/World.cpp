@@ -8,9 +8,8 @@ using namespace clv;
 namespace blb::ecs {
 	EntityID World::nextID = 1;
 
-	World::World() {
-		componentManager.componentAddedDelegate.bind(&World::onComponentAdded, this);
-		componentManager.componentRemovedDelegate.bind(&World::onComponentRemoved, this);
+	World::World()
+		: componentManager(&ecsEventdispatcher){
 	}
 
 	World::~World() = default;
@@ -102,17 +101,5 @@ namespace blb::ecs {
 			componentManager.onEntityDestroyed(id);
 		}
 		activeIDs.clear();
-	}
-
-	void World::onComponentAdded(ComponentInterface* component) {
-		for(const auto& system : systems) {
-			system->onComponentCreated(component);
-		}
-	}
-
-	void World::onComponentRemoved(ComponentInterface* component) {
-		for(const auto& system : systems) {
-			system->onComponentDestroyed(component);
-		}
 	}
 }

@@ -39,6 +39,10 @@ namespace blb::ecs {
 		PACall(Pa_Terminate());
 	}
 
+	void AudioSystem::registerToEvents(clv::EventDispatcher& dispatcher) {
+		componentRemovedHandle = dispatcher.bindToEvent<ComponentRemovedEvent<AudioComponent>>(std::bind(&AudioSystem::onComponentRemoved, this, std::placeholders::_1));
+	}
+
 	void AudioSystem::update(World& world, utl::DeltaTime deltaTime) {
 		CLV_PROFILE_FUNCTION();
 
@@ -65,12 +69,9 @@ namespace blb::ecs {
 		}
 	}
 
-	void AudioSystem::onComponentDestroyed(ComponentInterface* component) {
-		if(component->getComponentID() == AudioComponent::id()) {
-			auto* audioComponent = static_cast<AudioComponent*>(component);
-			if(audioComponent->isPlaying()) {
-				stopSound(audioComponent);
-			}
+	void AudioSystem::onComponentRemoved(ComponentRemovedEvent<AudioComponent>& event) {
+		if(event.component->isPlaying()) {
+			stopSound(event.component);
 		}
 	}
 

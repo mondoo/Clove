@@ -6,6 +6,8 @@
 #include "Bulb/Physics/RigidBody.hpp"
 #include "Bulb/Physics/World.hpp"
 
+#include <Clove/Event/EventDispatcher.hpp>
+
 using namespace clv;
 
 namespace blb::ecs {
@@ -22,6 +24,11 @@ namespace blb::ecs {
 	PhysicsSystem& PhysicsSystem::operator=(PhysicsSystem&& other) noexcept = default;
 
 	PhysicsSystem::~PhysicsSystem() = default;
+
+	void PhysicsSystem::registerToEvents(EventDispatcher& dispatcher) {
+		componentAddedHandle = dispatcher.bindToEvent<ComponentAddedEvent<RigidBodyComponent>>(std::bind(&PhysicsSystem::onComponentAdded, this, std::placeholders::_1));
+		componentRemovedHandle = dispatcher.bindToEvent<ComponentRemovedEvent<RigidBodyComponent>>(std::bind(&PhysicsSystem::onComponentRemoved, this, std::placeholders::_1));
+	}
 
 	void PhysicsSystem::update(World& world, utl::DeltaTime deltaTime) {
 		CLV_PROFILE_FUNCTION();
@@ -53,15 +60,11 @@ namespace blb::ecs {
 		}
 	}
 
-	void PhysicsSystem::onComponentCreated(ComponentInterface* component) {
-		if(component->getComponentID() == RigidBodyComponent::id()) {
-			physicsWorld->addRigidBody(static_cast<RigidBodyComponent*>(component)->rigidBody.get());
-		}
+	void PhysicsSystem::onComponentAdded(ComponentAddedEvent<RigidBodyComponent>& event) {
+		physicsWorld->addRigidBody(event.component->rigidBody.get());
 	}
 
-	void PhysicsSystem::onComponentDestroyed(ComponentInterface* component) {
-		if(component->getComponentID() == RigidBodyComponent::id()) {
-			physicsWorld->removeRigidBody(static_cast<RigidBodyComponent*>(component)->rigidBody.get());
-		}
+	void PhysicsSystem::onComponentRemoved(ComponentRemovedEvent<RigidBodyComponent>& event) {
+		physicsWorld->removeRigidBody(event.component->rigidBody.get());
 	}
 }

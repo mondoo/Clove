@@ -3,6 +3,9 @@
 #include "Bulb/ECS/System.hpp"
 
 #include "Bulb/ECS/Components/AudioComponent.hpp"
+#include "Bulb/ECS/ECSEvents.hpp"
+
+#include <Clove/Event/EventHandle.hpp>
 
 //PortAudio type defas (see portaudio.h)
 typedef void PaStream;
@@ -18,6 +21,8 @@ namespace blb::ecs {
 	class AudioSystem : public System {
 		//VARIABLES
 	private:
+		clv::EventHandle componentRemovedHandle;
+
 		//FUNCTIONS
 	public:
 		AudioSystem();
@@ -30,11 +35,13 @@ namespace blb::ecs {
 
 		~AudioSystem();
 
+		void registerToEvents(clv::EventDispatcher& dispatcher) override;
+
 		void update(World& world, clv::utl::DeltaTime deltaTime) override;
 
-		void onComponentDestroyed(ComponentInterface* component) override;
-
 	private:
+		void onComponentRemoved(ComponentRemovedEvent<AudioComponent>& event);
+
 		void startSound(AudioComponent* component, PlaybackMode playback);
 		void pauseSound(AudioComponent* component);
 		void stopSound(AudioComponent* component);

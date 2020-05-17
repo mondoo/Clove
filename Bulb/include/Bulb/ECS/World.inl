@@ -30,7 +30,9 @@ namespace blb::ecs{
 
 	template<typename SystemType, typename ...ConstructArgs>
 	void World::addSystem(ConstructArgs&& ...args){
-		systems.push_back(std::make_unique<SystemType>(std::forward<ConstructArgs>(args)...));
+		auto system = std::make_unique<SystemType>(std::forward<ConstructArgs>(args)...);
+		system->registerToEvents(ecsEventdispatcher);
+		systems.push_back(std::move(system));
 	}
 
 	template<std::size_t index, typename ...ComponentTypes>

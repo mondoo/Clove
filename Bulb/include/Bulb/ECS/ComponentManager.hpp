@@ -3,7 +3,12 @@
 #include "Bulb/ECS/Component.hpp"
 #include "Bulb/ECS/ECSTypes.hpp"
 
+#include <Clove/Event/EventHandle.hpp>
 #include <Clove/Memory/PoolAllocator.hpp>
+
+namespace clv {
+	class EventDispatcher;
+}
 
 namespace blb::ecs {
 	class ComponentContainerInterface {
@@ -18,24 +23,23 @@ namespace blb::ecs {
 	template<typename ComponentType>
 	class ComponentContainer : public ComponentContainerInterface {
 		//VARIABLES
-	public:
-		clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentAddedDelegate;
-		clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentRemovedDelegate;
-
 	private:
 		clv::mem::PoolAllocator<ComponentType> componentAllocator;
 
 		std::unordered_map<EntityID, size_t> entityIDToIndex;
 		std::vector<ComponentType*> components;
 
+		clv::EventDispatcher* ecsEventDispatcher;
+
 		//FUNCTIONS
 	public:
-		ComponentContainer();
+		ComponentContainer() = delete;
+		ComponentContainer(clv::EventDispatcher* dispatcher);
 
-		ComponentContainer(const ComponentContainer& other);
+		ComponentContainer(const ComponentContainer& other) = delete;
 		ComponentContainer(ComponentContainer&& other) noexcept;
 
-		ComponentContainer& operator=(const ComponentContainer& other);
+		ComponentContainer& operator=(const ComponentContainer& other) = delete;
 		ComponentContainer& operator=(ComponentContainer&& other) noexcept;
 
 		~ComponentContainer();
@@ -50,16 +54,15 @@ namespace blb::ecs {
 
 	class ComponentManager {
 		//VARIABLES
-	public:
-		clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentAddedDelegate;
-		clv::utl::SingleCastDelegate<void(ComponentInterface*)> componentRemovedDelegate;
-
 	private:
 		std::unordered_map<ComponentID, std::unique_ptr<ComponentContainerInterface>> containers;
 
+		clv::EventDispatcher* ecsEventDispatcher;
+
 		//FUNCTIONS
 	public:
-		ComponentManager();
+		ComponentManager() = delete;
+		ComponentManager(clv::EventDispatcher* dispatcher);
 
 		ComponentManager(const ComponentManager& other) = delete;
 		ComponentManager(ComponentManager&& other) noexcept = delete;
@@ -75,10 +78,6 @@ namespace blb::ecs {
 		void cloneEntitiesComponents(EntityID fromID, EntityID toID);
 
 		void onEntityDestroyed(EntityID entityID);
-
-	private:
-		void onContainerAddedComponent(ComponentInterface* component);
-		void onContainerRemovedComponent(ComponentInterface* component);
 	};
 }
 

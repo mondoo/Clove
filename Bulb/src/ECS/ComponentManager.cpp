@@ -3,7 +3,9 @@
 namespace blb::ecs {
 	ComponentContainerInterface::~ComponentContainerInterface() = default;
 
-	ComponentManager::ComponentManager() = default;
+	ComponentManager::ComponentManager(clv::EventDispatcher* dispatcher) 
+		: ecsEventDispatcher(dispatcher){
+	}
 
 	ComponentManager::~ComponentManager() = default;
 
@@ -17,13 +19,5 @@ namespace blb::ecs {
 		for(auto& [key, container] : containers) {
 			container->removeComponent(entityID);
 		}
-	}
-
-	void ComponentManager::onContainerAddedComponent(ComponentInterface* component) {
-		componentAddedDelegate.broadcast(component);
-	}
-
-	void ComponentManager::onContainerRemovedComponent(ComponentInterface* component) {
-		componentRemovedDelegate.broadcast(component);
 	}
 }
