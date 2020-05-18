@@ -58,6 +58,7 @@ namespace blb::phy {
 	void RigidBody::setLinearVelocity(const clv::mth::vec3f& velocity) {
 		const btVector3 btvel{ velocity.x, velocity.y, velocity.z };
 		body->setLinearVelocity(btvel);
+		body->activate();
 	}
 
 	clv::mth::vec3f RigidBody::getPhysicsPosition() const {
