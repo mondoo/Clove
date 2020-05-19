@@ -5,5 +5,5 @@ namespace clv {
 	static constexpr ListenerId invalidListenerId = 0;
 
 	template<typename EventType>
-	using ListenerFunction = std::function<void(EventType&)>;
+	using ListenerFunction = std::function<void(const EventType&)>;
 }

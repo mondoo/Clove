@@ -40,7 +40,7 @@ namespace blb::ecs {
 		void update(World& world, clv::utl::DeltaTime deltaTime) override;
 
 	private:
-		void onComponentRemoved(ComponentRemovedEvent<AudioComponent>& event);
+		void onComponentRemoved(const ComponentRemovedEvent<AudioComponent>& event);
 
 		void startSound(AudioComponent* component, PlaybackMode playback);
 		void pauseSound(AudioComponent* component);

@@ -10,7 +10,7 @@ namespace clv {
 	}
 
 	template<typename EventType>
-	void EventDispatcher::broadCastEvent(EventType& event) {
+	void EventDispatcher::broadCastEvent(const EventType& event) {
 		for(auto&& func : manager.getEventContainer<EventType>()) {
 			func(event);
 		}

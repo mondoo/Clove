@@ -40,7 +40,7 @@ namespace blb::ecs {
 		void update(World& world, clv::utl::DeltaTime deltaTime) override;
 
 	private:
-		void onComponentAdded(ComponentAddedEvent<RigidBodyComponent>& event);
-		void onComponentRemoved(ComponentRemovedEvent<RigidBodyComponent>& event);
+		void onComponentAdded(const ComponentAddedEvent<RigidBodyComponent>& event);
+		void onComponentRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event);
 	};
 }

@@ -60,11 +60,11 @@ namespace blb::ecs {
 		}
 	}
 
-	void PhysicsSystem::onComponentAdded(ComponentAddedEvent<RigidBodyComponent>& event) {
+	void PhysicsSystem::onComponentAdded(const ComponentAddedEvent<RigidBodyComponent>& event) {
 		physicsWorld->addRigidBody(event.component->rigidBody.get());
 	}
 
-	void PhysicsSystem::onComponentRemoved(ComponentRemovedEvent<RigidBodyComponent>& event) {
+	void PhysicsSystem::onComponentRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event) {
 		physicsWorld->removeRigidBody(event.component->rigidBody.get());
 	}
 }

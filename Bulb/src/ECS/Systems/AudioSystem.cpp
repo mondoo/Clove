@@ -69,7 +69,7 @@ namespace blb::ecs {
 		}
 	}
 
-	void AudioSystem::onComponentRemoved(ComponentRemovedEvent<AudioComponent>& event) {
+	void AudioSystem::onComponentRemoved(const ComponentRemovedEvent<AudioComponent>& event) {
 		if(event.component->isPlaying()) {
 			stopSound(event.component);
 		}

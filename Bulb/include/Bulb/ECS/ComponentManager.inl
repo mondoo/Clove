@@ -49,8 +49,7 @@ namespace blb::ecs {
 				entityIDToIndex[movedCompEntityID] = index;
 			}
 
-			ComponentRemovedEvent<ComponentType> event{ removedComp };
-			ecsEventDispatcher->broadCastEvent<ComponentRemovedEvent<ComponentType>>(event);
+			ecsEventDispatcher->broadCastEvent(ComponentRemovedEvent<ComponentType>{ removedComp });
 
 			componentAllocator.free(removedComp);
 		}

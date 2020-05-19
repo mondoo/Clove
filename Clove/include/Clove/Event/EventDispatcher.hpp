@@ -27,7 +27,7 @@ namespace clv {
 		void unbindFromEvent(ListenerId id);
 
 		template<typename EventType>
-		void broadCastEvent(EventType& event);
+		void broadCastEvent(const EventType& event);
 	};
 }
 
