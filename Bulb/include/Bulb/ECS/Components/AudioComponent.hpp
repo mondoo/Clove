@@ -39,10 +39,10 @@ namespace blb::ecs {
 		AudioComponent();
 
 		AudioComponent(const AudioComponent& other);
-		AudioComponent(AudioComponent&& other);
+		AudioComponent(AudioComponent&& other) noexcept;
 
 		AudioComponent& operator=(const AudioComponent& other);
-		AudioComponent& operator=(AudioComponent&& other);
+		AudioComponent& operator=(AudioComponent&& other) noexcept;
 
 		~AudioComponent();
 
