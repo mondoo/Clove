@@ -18,6 +18,7 @@ namespace clv{
 		container = other.container;
 		container->handles.push_back(this);
 
+		container->handles.erase(std::find(container->handles.begin(), container->handles.end(), &other));
 		other.clear();
 	}
 	
@@ -28,6 +29,7 @@ namespace clv{
 		container = other.container;
 		container->handles.push_back(this);
 
+		container->handles.erase(std::find(container->handles.begin(), container->handles.end(), &other));
 		other.clear();
 
 		return *this;
