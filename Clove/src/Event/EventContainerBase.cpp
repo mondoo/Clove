@@ -3,6 +3,26 @@
 #include "Clove/Event/EventHandle.hpp"
 
 namespace clv {
+	EventContainerBase::EventContainerBase() = default;
+
+	EventContainerBase::EventContainerBase(EventContainerBase &&other) noexcept {
+		handles = std::move(other.handles);
+
+		for(auto* handle : handles) {
+			handle->container = this;
+		}
+	}
+
+	EventContainerBase &EventContainerBase::operator=(EventContainerBase &&other) noexcept {
+		handles = std::move(other.handles);
+
+		for(auto* handle : handles) {
+			handle->container = this;
+		}
+
+		return *this;
+	}
+
 	EventContainerBase::~EventContainerBase() {
 		for(auto* handle : handles) {
 			handle->clear();

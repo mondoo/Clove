@@ -20,6 +20,14 @@ namespace clv {
 
 		//FUNCTI0NS
 	public:
+		EventContainerBase();
+
+		EventContainerBase(const EventContainerBase& other) = delete;
+		EventContainerBase(EventContainerBase&& other) noexcept;
+
+		EventContainerBase& operator=(const EventContainerBase& other) = delete;
+		EventContainerBase& operator=(EventContainerBase&& other) noexcept;
+
 		virtual ~EventContainerBase();
 
 		virtual void removeListener(ListenerId id) = 0;
