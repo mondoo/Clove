@@ -65,11 +65,36 @@ namespace blb {
 	class StateMachine {
 		//VARIABLES
 	private:
+		State* currentState = nullptr; //TODO: have a way to set the initial state
+
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
 
 		void update() {
+			Transition* triggeredTransition = nullptr;
+
+			for(auto* transition : currentState->getTransitions()) {
+				if(transition->isTriggered()) {
+					triggeredTransition = transition;
+					break;
+				}
+			}
+
+			std::vector<Action*> actions;
+			if(triggeredTransition != nullptr) {
+				State* targetState = triggeredTransition->getState();
+				
+				actions.insert(actions.end(), currentState->getExitActions().begin(), currentState->getExitActions().end());
+				actions.insert(actions.end(), triggeredTransition->getActions().begin(), triggeredTransition->getActions().end());
+				actions.insert(actions.end(), targetState->getEntryActions().begin(), targetState->getEntryActions().end());
+
+				currentState = targetState;
+			} else {
+				actions = currentState->getActions();
+			}
+
+			//TODO: Either execute or return actions
 		}
 	};
 }
