@@ -17,7 +17,7 @@ namespace blb::ecs {
 	class PhysicsSystem : public System {
 		//VARIABLES
 	private:
-		std::unique_ptr<phy::World> physicsWorld;
+		std::shared_ptr<phy::World> physicsWorld;
 
 		clv::EventHandle componentAddedHandle;
 		clv::EventHandle componentRemovedHandle;
@@ -25,7 +25,7 @@ namespace blb::ecs {
 		//FUNCTIONS
 	public:
 		PhysicsSystem();
-		PhysicsSystem(std::unique_ptr<phy::World> physicsWorld);
+		PhysicsSystem(std::shared_ptr<phy::World> physicsWorld);
 
 		PhysicsSystem(const PhysicsSystem& other) = delete;
 		PhysicsSystem(PhysicsSystem&& other) noexcept;

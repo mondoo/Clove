@@ -15,7 +15,7 @@ namespace blb::ecs {
 		physicsWorld = std::make_unique<phy::World>();
 	}
 
-	PhysicsSystem::PhysicsSystem(std::unique_ptr<phy::World> physicsWorld)
+	PhysicsSystem::PhysicsSystem(std::shared_ptr<phy::World> physicsWorld)
 		: physicsWorld(std::move(physicsWorld)) {
 	}
 
