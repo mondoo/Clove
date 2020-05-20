@@ -100,6 +100,12 @@ set(
 )
 
 set(
+	StateMachineFiles
+		${BLB_INCLUDE}/StateMachine/StateMachine.hpp
+		${BLB_SOURCE}/StateMachine/StateMachine.cpp
+)
+
+set(
 	UIFiles
 		${BLB_INCLUDE}/UI/DrawableElement.hpp
 		${BLB_INCLUDE}/UI/Image.hpp
@@ -187,6 +193,7 @@ target_sources(
 		${ECSFiles}
 		${PhysicsFiles}
 		${RenderingFiles}
+		${StateMachineFiles}
 		${UIFiles}
 		${ShaderFiles}
 
