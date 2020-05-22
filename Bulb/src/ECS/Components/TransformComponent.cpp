@@ -123,7 +123,7 @@ namespace blb::ecs{
 		}
 	}
 
-	mth::vec3f TransformComponent::getFront() const {
+	mth::vec3f TransformComponent::getForward() const {
 		mth::vec3f eulerRot = mth::quaternionToEuler(getRotation());
 
 		mth::vec3f front;
@@ -136,11 +136,11 @@ namespace blb::ecs{
 
 	mth::vec3f TransformComponent::getRight() const {
 		const mth::vec3f worldUp = { 0.0f, 1.0f, 0.0f };
-		return mth::normalise(mth::cross(getFront(), worldUp));
+		return mth::normalise(mth::cross(getForward(), worldUp));
 	}
 
 	mth::vec3f TransformComponent::getUp() const {
-		return mth::normalise(mth::cross(getRight(), getFront()));
+		return mth::normalise(mth::cross(getRight(), getForward()));
 	}
 
 	mth::mat4f TransformComponent::getTransformationMatrix(TransformSpace space) {

@@ -38,7 +38,7 @@ namespace blb::ecs {
 		for(auto&& [transform, camera] : world.getComponentSets<TransformComponent, CameraComponent>()) {
 			const mth::vec3f& position = transform->getPosition();
 
-			const mth::vec3f camFront	= transform->getFront();
+			const mth::vec3f camFront	= transform->getForward();
 			const mth::vec3f camUp		= transform->getUp();
 
 			const mth::mat4f lookAt = mth::lookAt(position, position + camFront, camUp);

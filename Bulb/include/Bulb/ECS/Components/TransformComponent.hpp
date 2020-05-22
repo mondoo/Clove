@@ -40,7 +40,7 @@ namespace blb::ecs {
 		void setRotation(const clv::mth::quatf& rotation, TransformSpace space = TransformSpace::Local);
 		void setScale(const clv::mth::vec3f& scale, TransformSpace space = TransformSpace::Local);
 
-		clv::mth::vec3f getFront() const;
+		clv::mth::vec3f getForward() const;
 		clv::mth::vec3f getRight() const;
 		clv::mth::vec3f getUp() const;
 
