@@ -37,20 +37,11 @@ namespace blb::ecs {
 		//Transform and submit cameras
 		for(auto&& [transform, camera] : world.getComponentSets<TransformComponent, CameraComponent>()) {
 			const mth::vec3f& position = transform->getPosition();
-			const mth::quatf cameraRotation = transform->getRotation();
 
-			mth::vec3f eulerRot = mth::quaternionToEuler(cameraRotation);
+			const mth::vec3f camFront	= transform->getFront();
+			const mth::vec3f camUp		= transform->getUp();
 
-			mth::vec3f front;
-			front.x = sin(eulerRot.y) * cos(eulerRot.x);
-			front.y = sin(eulerRot.x);
-			front.z = cos(eulerRot.y) * cos(eulerRot.x);
-
-			camera->cameraFront = mth::normalise(front);
-			camera->cameraRight = mth::normalise(mth::cross(camera->cameraFront, mth::vec3f{ 0.0f, 1.0f, 0.0f }));
-			camera->cameraUp = mth::normalise(mth::cross(camera->cameraRight, camera->cameraFront));
-
-			const mth::mat4f lookAt = mth::lookAt(position, position + camera->cameraFront, camera->cameraUp);
+			const mth::mat4f lookAt = mth::lookAt(position, position + camFront, camUp);
 			camera->currentView = lookAt;
 
 			camera->cameraRenderData.lookAt = lookAt;

@@ -30,10 +30,6 @@ namespace blb::ecs {
 		clv::mth::mat4f currentProjection = clv::mth::mat4f{ 1.0f };
 		clv::mth::mat4f currentView = clv::mth::mat4f{ 1.0f };
 
-		clv::mth::vec3f cameraUp = { 0.0f, 1.0f, 0.0f };
-		clv::mth::vec3f cameraFront = { 0.0f, 0.0f, 1.0f };
-		clv::mth::vec3f cameraRight = { 1.0f, 0.0f, 0.0f };
-
 		blb::rnd::CameraRenderData cameraRenderData;
 
 		std::shared_ptr<clv::gfx::RenderTarget> renderTarget;
@@ -56,10 +52,6 @@ namespace blb::ecs {
 
 		const clv::mth::mat4f& getProjection() const;
 		const clv::mth::mat4f& getView() const;
-
-		const clv::mth::vec3f& getFront() const;
-		const clv::mth::vec3f& getUp() const;
-		const clv::mth::vec3f& getRight() const;
 
 		const clv::gfx::Viewport& getViewport() const;
 
