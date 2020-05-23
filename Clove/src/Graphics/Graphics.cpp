@@ -25,7 +25,7 @@ namespace clv::gfx{
 
 			case API::Vulkan:
 				CLV_LOG_TRACE("Creating Vulkan renderer backend");
-				return d3d::initialiseD3D();
+				return nullptr;
 
 			#elif CLV_PLATFORM_LINUX
 			case API::OpenGL4:
@@ -34,7 +34,7 @@ namespace clv::gfx{
 
 			case API::Vulkan:
 				CLV_LOG_TRACE("Creating Vulkan renderer backend");
-				return d3d::initialiseD3D();
+				return nullptr;
 				
 			#elif CLV_PLATFORM_MACOS
 			case API::Metal1:
