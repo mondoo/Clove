@@ -120,6 +120,12 @@ set(
 )
 
 set(
+	VulkanGraphicsFiles
+		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsFactory.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsFactory.cpp
+)
+
+set(
 	WindowsGLGraphicsFiles
 		${CLV_INCLUDE}/Graphics/OpenGL/WGLSurface.hpp
 		${CLV_SOURCE}/Graphics/OpenGL/WGLSurface.cpp
@@ -228,6 +234,7 @@ set(
 				${LinuxGLGraphicsFiles}
 			${Direct3DGraphicsFiles}
 			${MetalGraphicsFiles}
+			${VulkanGraphicsFiles}
 		${MemoryFiles}
 		${InputFiles}
 		${MathsFiles}
