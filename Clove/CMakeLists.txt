@@ -144,11 +144,8 @@ target_compile_definitions(
 
 	PRIVATE
 		CLV_ENGINE=1
-)
 
-#Preprocessor glm
-target_compile_definitions(
-	glm_static
+	#Libraries
 	PUBLIC
 		GLM_FORCE_RADIANS
 		GLM_FORCE_LEFT_HANDED
