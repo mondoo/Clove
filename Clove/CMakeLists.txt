@@ -7,6 +7,8 @@ add_subdirectory(vendor)
 add_subdirectory(src)
 set_target_properties(Clove PROPERTIES FOLDER ${EngineFolder})
 
+find_package(Vulkan REQUIRED)
+
 #Includes
 target_include_directories(
 	Clove
@@ -61,12 +63,14 @@ target_link_libraries(
 		$<$<PLATFORM_ID:Windows>:d3d11>
 		$<$<PLATFORM_ID:Windows>:dxguid>
 		$<$<PLATFORM_ID:Windows>:d3dcompiler>
+		$<$<PLATFORM_ID:Windows>:Vulkan::Vulkan>
 
 	#Linux
 	PRIVATE
 		$<$<PLATFORM_ID:Linux>:GLX>
 		$<$<PLATFORM_ID:Linux>:X11>
 		$<$<PLATFORM_ID:Linux>:dl>
+		$<$<PLATFORM_ID:Linux>:Vulkan::Vulkan>
 
 	#MacOS
 	PRIVATE
