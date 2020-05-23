@@ -116,7 +116,7 @@ target_precompile_headers(
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/Timer.hpp">
 )
 
-#Preprocessor
+#Preprocessor Clove
 target_compile_definitions(
 	Clove
 
@@ -144,9 +144,14 @@ target_compile_definitions(
 
 	PRIVATE
 		CLV_ENGINE=1
+)
 
-	#Libraries
+#Preprocessor glm
+target_compile_definitions(
+	glm_static
 	PUBLIC
+		GLM_FORCE_RADIANS
+		GLM_FORCE_LEFT_HANDED
 		GLM_FORCE_DEPTH_ZERO_TO_ONE
 )
 
