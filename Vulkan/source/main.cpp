@@ -1636,6 +1636,10 @@ private:
 		}
 
 		vkDestroyDescriptorPool(device, descriptorPool, nullptr);
+
+		vkDestroyImageView(device, depthImageView, nullptr);
+		vkDestroyImage(device, depthImage, nullptr);
+		vkFreeMemory(device, depthImageMemory, nullptr);
 	}
 
 	void recreateSwapChain(){
@@ -1655,6 +1659,7 @@ private:
 		createSwapChain();
 		createImageViews();
 		createRenderPass();
+		createDepthResources();
 		createFrameBuffers();
 		createUniformBuffers();
 		createDescriptorPool();
