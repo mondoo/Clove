@@ -195,15 +195,23 @@ private:
 	bool framebufferResized = false;
 
 	const std::vector<Vertex> vertices = {
-		{ { -0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f} }, //Top left
-		{ {  0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f} }, //Top right
-		{ {  0.5f,  0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f} }, //Bottom right
-		{ { -0.5f,  0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f} }  //Bottom left
+		{ { -0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } }, //Top left
+		{ {  0.5f, -0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },	 //Top right
+		{ {  0.5f,  0.5f, -0.5f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } },	 //Bottom right
+		{ { -0.5f,  0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },	 //Bottom left
+
+		{ { -0.5f, -0.5f,  0.0f }, {  1.0f,  0.0f,  0.0f }, {  0.0f,  0.0f } }, //Top left
+		{ {  0.5f, -0.5f,  0.0f }, {  0.0f,  1.0f,  0.0f }, {  1.0f,  0.0f } },	//Top right
+		{ {  0.5f,  0.5f,  0.0f }, {  0.0f,  0.0f,  1.0f }, {  1.0f,  1.0f } },	//Bottom right
+		{ { -0.5f,  0.5f,  0.0f }, {  1.0f,  1.0f,  1.0f }, {  0.0f,  1.0f } },	//Bottom left
 	};
 
 	const std::vector<uint16_t> indices = {
 		0, 1, 2, 
-		2, 3, 0
+		2, 3, 0,
+
+		4, 5, 6,
+		6, 7, 4
 	};
 
 	//As future optimisation we could allocate a vb and ib inside the same vkBuffer, which would make it more cache friendly
