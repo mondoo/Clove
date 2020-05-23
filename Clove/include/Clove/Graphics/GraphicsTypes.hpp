@@ -5,9 +5,11 @@ namespace clv::gfx{
 		None,
 	#if CLV_PLATFORM_WINDOWS
 		OpenGL4,
-		Direct3D11
+		Direct3D11,
+		Vulkan,
 	#elif CLV_PLATFORM_LINUX
 		OpenGL4,
+		Vulkan,
 	#elif CLV_PLATFORM_MACOS
 		Metal1,
 	#endif
