@@ -108,7 +108,7 @@ struct UniformBufferObject{
 };
 
 struct Vertex{
-	glm::vec2 pos;
+	glm::vec3 pos;
 	glm::vec3 colour;
 	glm::vec2 texCoord;
 
@@ -128,7 +128,7 @@ struct Vertex{
 
 		attributeDescriptions[0].binding = 0; //Which binding out attribute comes from
 		attributeDescriptions[0].location = 0; //Matches the location index for this attribute we specified in the shader
-		attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
 		attributeDescriptions[0].offset = offsetof(Vertex, pos);
 
 		attributeDescriptions[1].binding = 0;
@@ -195,10 +195,10 @@ private:
 	bool framebufferResized = false;
 
 	const std::vector<Vertex> vertices = {
-		{ { -0.5f, -0.5f },	{ 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f} }, //Top left
-		{ {  0.5f, -0.5f },	{ 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f} }, //Top right
-		{ {  0.5f,  0.5f },	{ 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f} }, //Bottom right
-		{ { -0.5f,  0.5f },	{ 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f} }  //Bottom left
+		{ { -0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f} }, //Top left
+		{ {  0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f} }, //Top right
+		{ {  0.5f,  0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f} }, //Bottom right
+		{ { -0.5f,  0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f} }  //Bottom left
 	};
 
 	const std::vector<uint16_t> indices = {
