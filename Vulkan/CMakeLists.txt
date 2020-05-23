@@ -44,10 +44,11 @@ target_include_directories(
 target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE 
-		glfw
-		glm_static
-		stb
+		Clove
+
 		Vulkan::Vulkan
+		glfw
+		stb
 )
 
 #Definitions
@@ -56,10 +57,10 @@ target_compile_definitions(
 	PRIVATE
 		RES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/resource"
 )
-target_compile_definitions(
-	glm_static
-	PUBLIC
-		GLM_FORCE_RADIANS
-		GLM_FORCE_LEFT_HANDED
-		GLM_FORCE_DEPTH_ZERO_TO_ONE
-)
+#target_compile_definitions(
+#	glm_static
+#	PUBLIC
+#		GLM_FORCE_RADIANS
+#		GLM_FORCE_LEFT_HANDED
+#		GLM_FORCE_DEPTH_ZERO_TO_ONE
+#)

@@ -13,12 +13,15 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/glm.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
 
 #include <stb_image.h>
 
 #include <chrono>
+
+
+#include <Clove/Graphics/Vulkan/VK.hpp>
 
 constexpr uint32_t WIDTH = 800;
 constexpr uint32_t HEIGHT = 600;
@@ -254,8 +257,13 @@ private:
 	}
 
 	void initVulkan() {
-		createInstance();
-		setupDebugMessenger();
+		/*createInstance();
+		setupDebugMessenger();*/
+
+		auto pair = clv::gfx::vk::initialiseVK();
+		instance = pair.first;
+		debugMessenger = pair.second;
+
 		createSurface();
 		pickPhysicalDevice();
 		createLogicalDevice();
