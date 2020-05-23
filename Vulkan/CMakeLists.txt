@@ -56,3 +56,10 @@ target_compile_definitions(
 	PRIVATE
 		RES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/resource"
 )
+target_compile_definitions(
+	glm_static
+	PUBLIC
+		GLM_FORCE_RADIANS
+		GLM_FORCE_LEFT_HANDED
+		GLM_FORCE_DEPTH_ZERO_TO_ONE
+)
