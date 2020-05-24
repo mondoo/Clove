@@ -58,6 +58,7 @@ cbuffer colourDataBuffer : register(b12){
 }
 
 //Globals
+//TODO: This is still being used for point shadows. Will need a new alg for this (current one is for 2d textures)
 #define SAMPLES 20
 static const int shadowSamples = SAMPLES;
 static const float3 shadowSampleOffsetDirections[SAMPLES] = {
@@ -156,12 +157,25 @@ float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace){
 	projectionCoords = projectionCoords * 0.5f + 0.5f;
 #endif
 	
-	//PCSS - sample 
+	//PCSS - TODO
 	
-	float closestDepth = directionaShadowDepthMap.Sample(directionalShadowDepthSampler, float3(projectionCoords.xy, lightIndex)).r;
+	//Just doing a basic one to get the algo set up
+	float samples = 9.0f;
+	
 	float currentDepth = projectionCoords.z;
-
-	float shadow = currentDepth - shadowOffsetBias > closestDepth ? 1.0f : 0.0f;
+	
+	float shadow = 0.0f;
+	float width, height, elements;
+	directionaShadowDepthMap.GetDimensions(width, height, elements);
+	float2 texelSize = 1.0f / float2(width, height);
+	for(int x = -1; x <= 1; ++x){
+		for(int y = -1; y <= 1; ++y){
+			float closestDepth = directionaShadowDepthMap.Sample(directionalShadowDepthSampler, float3(projectionCoords.xy + float2(x, y) * texelSize, lightIndex)).r;
+			shadow += currentDepth - shadowOffsetBias > closestDepth ? 1.0f : 0.0f;
+		}	
+	}
+	
+	shadow /= samples;
 	
 	return shadow;
 }
@@ -174,7 +188,7 @@ float calculatePointLightShadow(float3 fragPos, int lightIndex){
 
 	float shadow = 0.0;
 	const float viewDistance = length(viewPos - fragPos);
-	const float diskRadius = (1.0f + (viewDistance / farPlane)) / farPlane;
+	const float diskRadius = (1.0f + (viewDistance / farPlane)) / farPlane; //Make the radius smaller the closer we are to the fragPos
 
 	for(int i = 0; i < shadowSamples; ++i){
 		const float3 sampleLocation = fragToLight + shadowSampleOffsetDirections[i] * diskRadius;
