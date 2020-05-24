@@ -124,7 +124,8 @@ set(
 		${BLB_RESOURCE}/Shaders/GenCubeShadowMap-vs.hlsl
 		${BLB_RESOURCE}/Shaders/GenShadowMap-gs.hlsl
 		${BLB_RESOURCE}/Shaders/GenShadowMap-ps.hlsl
-		${BLB_RESOURCE}/Shaders/GenShadowMap-vs.hlsl	
+		${BLB_RESOURCE}/Shaders/GenShadowMap-vs.hlsl
+		${BLB_RESOURCE}/Shaders/PCSS.hlsl
 )
 
 #Convert resources into c strings

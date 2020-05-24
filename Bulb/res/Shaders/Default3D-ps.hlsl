@@ -1,3 +1,6 @@
+//TODO: Need the full path here because we convert it to a blob and so the relative path is from there
+#include "F:/RingsOfPower/Engine/Garlic/Bulb/res/Shaders/PCSS.hlsl"
+
 #define MAX_LIGHTS 10
 
 Texture2D albedoTexture : register(t1);
@@ -152,6 +155,8 @@ float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace){
 #else
 	projectionCoords = projectionCoords * 0.5f + 0.5f;
 #endif
+	
+	//PCSS - sample 
 	
 	float closestDepth = directionaShadowDepthMap.Sample(directionalShadowDepthSampler, float3(projectionCoords.xy, lightIndex)).r;
 	float currentDepth = projectionCoords.z;
