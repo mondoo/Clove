@@ -84,8 +84,10 @@ def main():
     points = generate_poisson(size, size, min_dist, new_points)
 
     file = open("points.txt", "w")
+    file.write("static const float2 poissonDisk[" + str(len(points)) + "] = {\n")
     for point in points:
-        file.write(str(point.x) + ", " + str(point.y) + "\n")
+        file.write("\tfloat2(" + str(point.x) + ", " + str(point.y) + "),\n")
+    file.write("};")
 
 if __name__ == "__main__":
     main()
