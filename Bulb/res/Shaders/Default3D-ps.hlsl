@@ -12,6 +12,7 @@ SamplerState directionalShadowDepthSampler : register(s3);
 TextureCubeArray pointShadowDepthMap : register(t4);
 SamplerState pointShadowDepthSampler : register(s4);
 
+//Constant buffers
 struct DirectionalLightData{
 	float3 direction;
 
@@ -53,6 +54,20 @@ cbuffer colourDataBuffer : register(b12){
 	float4 colour;
 }
 
+//Globals
+#define SAMPLES 20
+static const int shadowSamples = SAMPLES;
+static const float3 shadowSampleOffsetDirections[SAMPLES] = {
+	float3(1,  1,  1), float3( 1, -1,  1), float3(-1, -1,  1), float3(-1, 1,  1),
+	float3(1,  1, -1), float3( 1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
+	float3(1,  1,  0), float3( 1, -1,  0), float3(-1, -1,  0), float3(-1, 1,  0),
+	float3(1,  0,  1), float3(-1,  0,  1), float3( 1,  0, -1), float3(-1, 0, -1),
+	float3(0,  1,  1), float3( 0, -1,  1), float3( 0, -1, -1), float3( 0, 1, -1)
+};
+
+static const float shadowOffsetBias = 0.001f;
+
+//Declarations
 float3 calculateDirectionalLight(DirectionalLightData light, float3 normal, float3 viewDirection, float2 texCoord, float shadow);
 float3 calculatePointLight(PointLightData light, float3 normal, float3 fragPos, float3 viewDirection, float2 texCoord, float shadow);
 
@@ -141,41 +156,30 @@ float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace){
 	float closestDepth = directionaShadowDepthMap.Sample(directionalShadowDepthSampler, float3(projectionCoords.xy, lightIndex)).r;
 	float currentDepth = projectionCoords.z;
 
-	const float bias = 0.001f;
-	float shadow = currentDepth - bias > closestDepth ? 1.0f : 0.0f;
+	float shadow = currentDepth - shadowOffsetBias > closestDepth ? 1.0f : 0.0f;
 	
 	return shadow;
 }
 
 float calculatePointLightShadow(float3 fragPos, int lightIndex){
-	const float3 shadowSampleOffsetDirections[20] = {
-		float3(1,  1,  1), float3( 1, -1,  1), float3(-1, -1,  1), float3(-1, 1,  1),
-		float3(1,  1, -1), float3( 1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
-		float3(1,  1,  0), float3( 1, -1,  0), float3(-1, -1,  0), float3(-1, 1,  0),
-		float3(1,  0,  1), float3(-1,  0,  1), float3( 1,  0, -1), float3(-1, 0, -1),
-		float3(0,  1,  1), float3( 0, -1,  1), float3( 0, -1, -1), float3( 0, 1, -1)
-	};
-
 	const float farPlane = pointLights[lightIndex].farplane;
 
 	float3 fragToLight = fragPos - pointLights[lightIndex].position;
 	float currentDepth = length(fragToLight);
 
 	float shadow = 0.0;
-	const float bias = 0.001f;
-	const int samples = 20;
 	const float viewDistance = length(viewPos - fragPos);
 	const float diskRadius = (1.0f + (viewDistance / farPlane)) / farPlane;
 
-	for(int i = 0; i < samples; ++i){
+	for(int i = 0; i < shadowSamples; ++i){
 		const float3 sampleLocation = fragToLight + shadowSampleOffsetDirections[i] * diskRadius;
 		float closestDepth = pointShadowDepthMap.Sample(pointShadowDepthSampler, float4(sampleLocation, lightIndex)).r;
 		closestDepth *= farPlane;
-		if((currentDepth - bias) > closestDepth){
+		if((currentDepth - shadowOffsetBias) > closestDepth){
 			shadow += 1.0;
 		}
 	}
-	shadow /= samples;
+	shadow /= shadowSamples;
 
 	return shadow;
 }
