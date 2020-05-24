@@ -3,6 +3,8 @@
 from math import cos, sin, floor, sqrt, pi, ceil
 from random import random
 
+import sys
+
 class Point:
     def __init__(self, x = 0, y = 0):
         self.x = x
@@ -72,10 +74,18 @@ def generate_poisson(width, height, min_dist, new_points_count):
     return [point for point in grid if point is not None]
 
 def main():
-    points = generate_poisson(5, 5, 2.0, 0)
+    if len(sys.argv) < 4:
+        print("Not enough arguments provided! please provide: size, min_dist, new_points_count")
+        return
 
+    size = int(sys.argv[1])
+    min_dist = float(sys.argv[2])
+    new_points = int(sys.argv[3])
+    points = generate_poisson(size, size, min_dist, new_points)
+
+    file = open("points.txt", "w")
     for point in points:
-        print("X: " + str(point.x) + " Y: " + str(point.y))
+        file.write(str(point.x) + ", " + str(point.y) + "\n")
 
 if __name__ == "__main__":
     main()
