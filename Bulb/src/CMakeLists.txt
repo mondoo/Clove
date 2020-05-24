@@ -28,6 +28,14 @@ set(
 )
 
 set(
+	ControllerFiles
+		${BLB_INCLUDE}/Controller/Controller.hpp
+		${BLB_INCLUDE}/Controller/AIController.hpp
+		${BLB_SOURCE}/Controller/AIController.cpp
+		${BLB_INCLUDE}/Controller/PlayerController.hpp
+)
+
+set(
 	ECSFiles
 		${BLB_INCLUDE}/ECS/Component.hpp
 		${BLB_INCLUDE}/ECS/Component.inl
@@ -194,6 +202,7 @@ target_sources(
         
 		${AIFiles}
 		${AudioFiles}
+		${ControllerFiles}
 		${ECSFiles}
 		${PhysicsFiles}
 		${RenderingFiles}
