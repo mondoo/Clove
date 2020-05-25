@@ -35,7 +35,7 @@ float2 getAverageBlockerDistance(Texture2DArray tex, SamplerState state, float3 
     const float currentDepth = projectionCoords.z;
     
     for(int i = 0; i < sampleSize; ++i){ //TODO: Make poisson disk
-        const float2 sampleLocation = projectionCoords.xy + sampleArea[sampleSize] * searchSize;
+        const float2 sampleLocation = projectionCoords.xy + sampleArea[i] * searchSize;
         
         const float depth = tex.Sample(state, float3(sampleLocation, lightIndex)).r;
         if(depth < currentDepth){
