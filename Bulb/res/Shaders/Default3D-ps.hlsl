@@ -57,18 +57,6 @@ cbuffer colourDataBuffer : register(b12){
 	float4 colour;
 }
 
-//Globals
-//TODO: This is still being used for point shadows. Will need a new alg for this (current one is for 2d textures)
-#define SAMPLES 20
-static const int shadowSamples = SAMPLES;
-static const float3 shadowSampleOffsetDirections[SAMPLES] = {
-	float3(1,  1,  1), float3( 1, -1,  1), float3(-1, -1,  1), float3(-1, 1,  1),
-	float3(1,  1, -1), float3( 1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
-	float3(1,  1,  0), float3( 1, -1,  0), float3(-1, -1,  0), float3(-1, 1,  0),
-	float3(1,  0,  1), float3(-1,  0,  1), float3( 1,  0, -1), float3(-1, 0, -1),
-	float3(0,  1,  1), float3( 0, -1,  1), float3( 0, -1, -1), float3( 0, 1, -1)
-};
-
 static const float shadowOffsetBias = 0.001f;
 
 //Declarations
@@ -157,22 +145,7 @@ float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace){
 	projectionCoords = projectionCoords * 0.5f + 0.5f;
 #endif
 	
-	//PCSS - TODO
-	
-	float currentDepth = projectionCoords.z;
-	
-	float width, height, elements;
-	directionaShadowDepthMap.GetDimensions(width, height, elements);
-	float2 texelSize = 1.0f / float2(width, height);
-	
-	float shadow = 0.0f;
-	for(int i = 0; i < poissonDiskSamples; ++i){
-		float closestDepth = directionaShadowDepthMap.Sample(directionalShadowDepthSampler, float3(projectionCoords.xy + poissonDisk[i] * texelSize, lightIndex)).r;
-		shadow += currentDepth - shadowOffsetBias > closestDepth ? 1.0f : 0.0f;
-	}	
-	shadow /= poissonDiskSamples;
-	
-	return shadow;
+	return GenerateShadow_PCF(directionaShadowDepthMap, directionalShadowDepthSampler, projectionCoords, lightIndex, shadowOffsetBias);
 }
 
 float calculatePointLightShadow(float3 fragPos, int lightIndex){
@@ -181,21 +154,28 @@ float calculatePointLightShadow(float3 fragPos, int lightIndex){
 	float3 fragToLight = fragPos - pointLights[lightIndex].position;
 	float currentDepth = length(fragToLight);
 
-	//TODO: Update this to use poisson disk PCSS (will need a 3D disk (or sphere))
+	//const float viewDistance = length(viewPos - fragPos);
+	//const float diskRadius = 1.0f;//(1.0f + (viewDistance / farPlane)) / farPlane; //Make the radius smaller the closer we are to the fragPos
+
+	float width, height, elements;
+	pointShadowDepthMap.GetDimensions(width, height, elements);
+	const float2 texelSize = 1.0f / float2(width, height);// * currentDepth;
+	
+	
+	//TODO: Look at texture.Gather for bilinear filtering
+	//pointShadowDepthMap.
+	//pointShadowDepthMap.sa
 	
 	float shadow = 0.0;
-	const float viewDistance = length(viewPos - fragPos);
-	const float diskRadius = (1.0f + (viewDistance / farPlane)) / farPlane; //Make the radius smaller the closer we are to the fragPos
-
-	for(int i = 0; i < shadowSamples; ++i){
-		const float3 sampleLocation = fragToLight + shadowSampleOffsetDirections[i] * diskRadius;
+	for(uint i = 0; i < poissonDiskSamples; ++i){
+		const float3 sampleLocation = fragToLight + float3(poissonDisk[i] * texelSize, 0.0f);
 		float closestDepth = pointShadowDepthMap.Sample(pointShadowDepthSampler, float4(sampleLocation, lightIndex)).r;
 		closestDepth *= farPlane;
 		if((currentDepth - shadowOffsetBias) > closestDepth){
 			shadow += 1.0;
 		}
 	}
-	shadow /= shadowSamples;
+	shadow /= poissonDiskSamples;
 
 	return shadow;
 }
