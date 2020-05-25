@@ -18,10 +18,36 @@ static const float2 poissonDisk[poissonDiskSamples] = {
     float2( 0.06466427815165597f, 0.44154714994828026f ),
 };
 
-float GenerateShadow_PCF(Texture2DArray tex, SamplerState state, float3 projectionCoords, float lightIndex, float shadowOffsetBias){
-float GenerateShadow_PCF(Texture2DArray tex, SamplerState state, float3 projectionCoords, float lightIndex, float shadowOffsetBias, float2 texelSize){
-    float currentDepth = projectionCoords.z;
-	
+float2 getAverageBlockerDistance(Texture2DArray tex, SamplerState state, float3 projectionCoords, float lightIndex, float2 searchSize){
+    //Just going to do a simple search area for now
+    const uint sampleSize = 5;
+    const float2 sampleArea[sampleSize] = {
+        float2( 0.0f,  0.0f),
+        float2( 1.0f, -1.0f),
+        float2( 1.0f,  1.0f),
+        float2(-1.0f, -1.0f),
+        float2(-1.0f,  1.0f),
+    };
+    
+    int blockers = 0;
+    float avgerageBlockerDist = 0.0f;
+    
+    const float currentDepth = projectionCoords.z;
+    
+    for(int i = 0; i < sampleSize; ++i){ //TODO: Make poisson disk
+        const float2 sampleLocation = projectionCoords.xy + sampleArea[sampleSize] * searchSize;
+        
+        const float depth = tex.Sample(state, float3(sampleLocation, lightIndex)).r;
+        if(depth < currentDepth){
+            blockers++;
+            avgerageBlockerDist += depth;
+        }
+    }
+    
+    avgerageBlockerDist /= blockers;
+    
+    return float2(avgerageBlockerDist, float(blockers));
+}
 	float shadow = 0.0f;
 	for(uint i = 0; i < poissonDiskSamples; ++i){
 		const float2 sampleLocation = projectionCoords.xy + poissonDisk[i] * texelSize;
