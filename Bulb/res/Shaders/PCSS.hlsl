@@ -48,6 +48,25 @@ float2 getAverageBlockerDistance(Texture2DArray tex, SamplerState state, float3 
     
     return float2(avgerageBlockerDist, float(blockers));
 }
+
+float estimatePenumbraSize(float lightSize, float recieverDepth, float averageBlockerDepth){
+    return lightSize * (recieverDepth - averageBlockerDepth) / averageBlockerDepth;    
+}
+
+float GenerateShadow_PCF(Texture2DArray tex, SamplerState state, float3 projectionCoords, float lightIndex, float shadowOffsetBias, float2 texelSize){
+    float currentDepth = projectionCoords.z;
+	
+	float shadow = 0.0f;
+	for(uint i = 0; i < poissonDiskSamples; ++i){
+		const float2 sampleLocation = projectionCoords.xy + poissonDisk[i] * texelSize;
+		float closestDepth = tex.Sample(state, float3(sampleLocation, lightIndex)).r; //TODO: Try tex.Gather to use bilinear filtering
+		shadow += currentDepth - shadowOffsetBias > closestDepth ? 1.0f : 0.0f;
+	}	
+	shadow /= poissonDiskSamples;
+    
+    return shadow;
+}
+    
 	float shadow = 0.0f;
 	for(uint i = 0; i < poissonDiskSamples; ++i){
 		const float2 sampleLocation = projectionCoords.xy + poissonDisk[i] * texelSize;
