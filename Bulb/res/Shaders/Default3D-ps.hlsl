@@ -149,7 +149,7 @@ float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace){
 	directionaShadowDepthMap.GetDimensions(width, height, elements);
 	const float2 texelSize = 1.0f / float2(width, height);
 	
-	return GenerateShadow_PCF(directionaShadowDepthMap, directionalShadowDepthSampler, projectionCoords, lightIndex, shadowOffsetBias, texelSize);
+	return GenerateShadow_PCSS(directionaShadowDepthMap, directionalShadowDepthSampler, projectionCoords, lightIndex, shadowOffsetBias, texelSize);
 }
 
 float calculatePointLightShadow(float3 fragPos, int lightIndex){

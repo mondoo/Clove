@@ -34,7 +34,7 @@ float2 getAverageBlockerDistance(Texture2DArray tex, SamplerState state, float3 
     
     const float currentDepth = projectionCoords.z;
     
-    for(int i = 0; i < sampleSize; ++i){ //TODO: Make poisson disk
+    for(int i = 0; i < sampleSize; ++i){
         const float2 sampleLocation = projectionCoords.xy + sampleArea[i] * searchSize;
         
         const float depth = tex.Sample(state, float3(sampleLocation, lightIndex)).r;
@@ -67,13 +67,16 @@ float GenerateShadow_PCF(Texture2DArray tex, SamplerState state, float3 projecti
     return shadow;
 }
     
-	float shadow = 0.0f;
-	for(uint i = 0; i < poissonDiskSamples; ++i){
-		const float2 sampleLocation = projectionCoords.xy + poissonDisk[i] * texelSize;
-		float closestDepth = tex.Sample(state, float3(sampleLocation, lightIndex)).r; //TODO: Try tex.Gather to use bilinear filtering
-		shadow += currentDepth - shadowOffsetBias > closestDepth ? 1.0f : 0.0f;
-	}	
-	shadow /= poissonDiskSamples;
+float GenerateShadow_PCSS(Texture2DArray tex, SamplerState state, float3 projectionCoords, float lightIndex, float shadowOffsetBias, float2 texelSize){   
+    float averageBlockerDistance = getAverageBlockerDistance(tex, state, projectionCoords, lightIndex, texelSize);
     
-    return shadow;
+    if(averageBlockerDistance == 0.0f){
+        return 0.0f;
+    }else{
+        const float lightSize = 1.0f; //NOTE: Currently we only have a point and directional lights (an no area lights) so our light size is 1
+        const float penumbraSize = estimatePenumbraSize(lightSize, projectionCoords.z, averageBlockerDistance.x);
+        const float shadow = GenerateShadow_PCF(tex, state, projectionCoords, lightIndex, shadowOffsetBias, penumbraSize);
+        
+        return shadow;
+    }
 }
