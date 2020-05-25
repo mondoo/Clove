@@ -159,23 +159,18 @@ float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace){
 	
 	//PCSS - TODO
 	
-	//Just doing a basic one to get the algo set up
-	float samples = 9.0f;
-	
 	float currentDepth = projectionCoords.z;
 	
-	float shadow = 0.0f;
 	float width, height, elements;
 	directionaShadowDepthMap.GetDimensions(width, height, elements);
 	float2 texelSize = 1.0f / float2(width, height);
-	for(int x = -1; x <= 1; ++x){
-		for(int y = -1; y <= 1; ++y){
-			float closestDepth = directionaShadowDepthMap.Sample(directionalShadowDepthSampler, float3(projectionCoords.xy + float2(x, y) * texelSize, lightIndex)).r;
-			shadow += currentDepth - shadowOffsetBias > closestDepth ? 1.0f : 0.0f;
-		}	
-	}
 	
-	shadow /= samples;
+	float shadow = 0.0f;
+	for(int i = 0; i < poissonDiskSamples; ++i){
+		float closestDepth = directionaShadowDepthMap.Sample(directionalShadowDepthSampler, float3(projectionCoords.xy + poissonDisk[i] * texelSize, lightIndex)).r;
+		shadow += currentDepth - shadowOffsetBias > closestDepth ? 1.0f : 0.0f;
+	}	
+	shadow /= poissonDiskSamples;
 	
 	return shadow;
 }
@@ -186,6 +181,8 @@ float calculatePointLightShadow(float3 fragPos, int lightIndex){
 	float3 fragToLight = fragPos - pointLights[lightIndex].position;
 	float currentDepth = length(fragToLight);
 
+	//TODO: Update this to use poisson disk PCSS (will need a 3D disk (or sphere))
+	
 	float shadow = 0.0;
 	const float viewDistance = length(viewPos - fragPos);
 	const float diskRadius = (1.0f + (viewDistance / farPlane)) / farPlane; //Make the radius smaller the closer we are to the fragPos
