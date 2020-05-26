@@ -112,7 +112,7 @@ namespace blb::ecs{
 		}
 	}
 
-	void TransformComponent::setScale(const clv::mth::vec3f& scale, TransformSpace space) {
+	void TransformComponent::setScale(const mth::vec3f& scale, TransformSpace space) {
 		switch(space) {
 			case TransformSpace::Local:
 				setLocalScale(scale);
@@ -123,7 +123,27 @@ namespace blb::ecs{
 		}
 	}
 
-	clv::mth::mat4f TransformComponent::getTransformationMatrix(TransformSpace space) {
+	mth::vec3f TransformComponent::getForward() const {
+		mth::vec3f eulerRot = mth::quaternionToEuler(getRotation());
+
+		mth::vec3f front;
+		front.x = sin(eulerRot.y) * cos(eulerRot.x);
+		front.y = sin(eulerRot.x);
+		front.z = cos(eulerRot.y) * cos(eulerRot.x);
+
+		return mth::normalise(front);
+	}
+
+	mth::vec3f TransformComponent::getRight() const {
+		const mth::vec3f worldUp = { 0.0f, 1.0f, 0.0f };
+		return mth::normalise(mth::cross(getForward(), worldUp));
+	}
+
+	mth::vec3f TransformComponent::getUp() const {
+		return mth::normalise(mth::cross(getRight(), getForward()));
+	}
+
+	mth::mat4f TransformComponent::getTransformationMatrix(TransformSpace space) {
 		switch(space) {
 			case TransformSpace::Local:
 				return getLocalTransformMatrix();

@@ -37,18 +37,6 @@ namespace blb::ecs {
 		return currentView;
 	}
 
-	const mth::vec3f& CameraComponent::getFront() const {
-		return cameraFront;
-	}
-
-	const mth::vec3f& CameraComponent::getUp() const {
-		return cameraUp;
-	}
-
-	const mth::vec3f& CameraComponent::getRight() const {
-		return cameraRight;
-	}
-
 	const clv::gfx::Viewport& CameraComponent::getViewport() const {
 		return viewport;
 	}
