@@ -16,7 +16,7 @@ namespace blb {
 	class Condition { //TODO: Have the condition as a template? this way lambdas can be used?
 		//FUNCTIONS
 	public:
-		virtual ~Condition() = 0;
+		virtual ~Condition() = default;
 
 		virtual bool test() /*const*/ = 0;
 	};
