@@ -13,11 +13,6 @@ namespace blb {
 	class Transition;
 	class State;
 
-	class Action { //TODO: Have the action class as a template?
-		//FUNCTIONS
-	public:
-	};
-
 	class Condition { //TODO: Have the condition as a template? this way lambdas can be used?
 		//FUNCTIONS
 	public:
@@ -26,6 +21,7 @@ namespace blb {
 		virtual bool test() const = 0;
 	};
 
+	template<typename Action>
 	class State {
 		//VARIABLES
 	private:
@@ -55,6 +51,7 @@ namespace blb {
 		}
 	};
 
+	template<typename Action>
 	class Transition {
 		//VARIABLES
 	private:
@@ -80,6 +77,7 @@ namespace blb {
 		}
 	};
 
+	template<typename Action>
 	class StateMachine {
 		//VARIABLES
 	private:
