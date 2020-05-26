@@ -13,14 +13,6 @@ namespace blb {
 	template<typename Action>
 	class Transition;
 
-	class Condition { //TODO: Have the condition as a template? this way lambdas can be used?
-		//FUNCTIONS
-	public:
-		virtual ~Condition() = default;
-
-		virtual bool test() /*const*/ = 0;
-	};
-
 	template<typename Action>
 	class State {
 		//TYPES
@@ -75,7 +67,7 @@ namespace blb {
 		//VARIABLES
 	private:
 		//TODO: custom deleter for unique ptrs so allocators can be used
-		std::unique_ptr<Condition> condition;
+		std::function<bool()> condition;
 		State<Action>* state;
 		std::vector<std::unique_ptr<Action>> actions;
 
@@ -89,14 +81,14 @@ namespace blb {
 		}
 
 		//NOTE: Having an init function because we have a construction dependency cycle with the ctors
-		void init(std::unique_ptr<Condition> condition, State<Action>* state, std::vector<std::unique_ptr<Action>> actions){
+		void init(std::function<bool()> condition, State<Action>* state, std::vector<std::unique_ptr<Action>> actions) {
 			this->condition	= std::move(condition);
 			this->state		= state;
 			this->actions	= std::move(actions);
 		}
 
 		bool isTriggered() const {
-			return condition->test();
+			return condition();
 		}
 
 		State<Action>* getState() const {
