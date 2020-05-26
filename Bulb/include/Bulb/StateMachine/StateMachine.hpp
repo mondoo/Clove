@@ -2,16 +2,13 @@
 
 namespace blb {
 	template<typename T>
-	std::vector<T*> toRawVector(const std::vector<std::unique_ptr<T>>& vec){
+	std::vector<T*> toRawVector(const std::vector<std::unique_ptr<T>>& vec) {
 		std::vector<T*> out;
 		for(auto& elem : vec) {
 			out.push_back(elem.get());
 		}
 		return out;
 	}
-
-	class Transition;
-	class State;
 
 	class Condition { //TODO: Have the condition as a template? this way lambdas can be used?
 		//FUNCTIONS
@@ -87,6 +84,10 @@ namespace blb {
 	public:
 		//TODO: Ctors
 
+		StateMachine(State* initialSate)
+			: currentState(initialState) {
+		}
+
 		std::vector<Action*> update() {
 			Transition* triggeredTransition = nullptr;
 
@@ -100,7 +101,7 @@ namespace blb {
 			std::vector<Action*> actions;
 			if(triggeredTransition != nullptr) {
 				State* targetState = triggeredTransition->getState();
-				
+
 				actions.insert(actions.end(), currentState->getExitActions().begin(), currentState->getExitActions().end());
 				actions.insert(actions.end(), triggeredTransition->getActions().begin(), triggeredTransition->getActions().end());
 				actions.insert(actions.end(), targetState->getEntryActions().begin(), targetState->getEntryActions().end());
