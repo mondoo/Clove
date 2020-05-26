@@ -71,7 +71,7 @@ namespace blb {
 	public:
 		//TODO: Ctors
 
-		void update() {
+		std::vector<Action*> update() {
 			Transition* triggeredTransition = nullptr;
 
 			for(auto* transition : currentState->getTransitions()) {
@@ -94,7 +94,7 @@ namespace blb {
 				actions = currentState->getActions();
 			}
 
-			//TODO: Either execute or return actions
+			return actions;
 		}
 	};
 }
