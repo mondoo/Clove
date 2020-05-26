@@ -43,7 +43,7 @@ namespace blb {
 			return toRawVector(exitActions);
 		}
 
-		std::vector<Transition*> getTransitions() {
+		std::vector<Transition<Action>*> getTransitions() {
 			return toRawVector(transitions);
 		}
 	};
@@ -54,7 +54,7 @@ namespace blb {
 	private:
 		//TODO: custom deleter for unique ptrs so allocators can be used
 		std::unique_ptr<Condition> condition;
-		std::unique_ptr<State> state;
+		std::unique_ptr<State<Action>> state;
 		std::vector<std::unique_ptr<Action>> actions;
 
 		//FUNCTIONS
@@ -65,7 +65,7 @@ namespace blb {
 			condition->test();
 		}
 
-		State* getState() const {
+		State<Action>* getState() const {
 			return state.get();
 		}
 
@@ -78,7 +78,7 @@ namespace blb {
 	class StateMachine {
 		//VARIABLES
 	private:
-		State* currentState = nullptr; //TODO: have a way to set the initial state
+		State<Action>* currentState = nullptr; //TODO: have a way to set the initial state
 
 		//FUNCTIONS
 	public:
@@ -89,7 +89,7 @@ namespace blb {
 		}
 
 		std::vector<Action*> update() {
-			Transition* triggeredTransition = nullptr;
+			Transition<Action>* triggeredTransition = nullptr;
 
 			for(auto* transition : currentState->getTransitions()) {
 				if(transition->isTriggered()) {
@@ -100,7 +100,7 @@ namespace blb {
 
 			std::vector<Action*> actions;
 			if(triggeredTransition != nullptr) {
-				State* targetState = triggeredTransition->getState();
+				State<Action>* targetState = triggeredTransition->getState();
 
 				actions.insert(actions.end(), currentState->getExitActions().begin(), currentState->getExitActions().end());
 				actions.insert(actions.end(), triggeredTransition->getActions().begin(), triggeredTransition->getActions().end());
