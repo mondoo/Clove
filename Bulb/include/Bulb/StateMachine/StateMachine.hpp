@@ -96,7 +96,7 @@ namespace blb {
 		}
 
 		bool isTriggered() const {
-			condition->test();
+			return condition->test();
 		}
 
 		State<Action>* getState() const {
