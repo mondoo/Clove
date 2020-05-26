@@ -14,37 +14,39 @@ namespace blb {
 	class Transition;
 
 	template<typename Action>
-	class State {
-		//TYPES
-	public:
-		using Actions		= std::vector<std::unique_ptr<Action>>;
-		using Transitions	= std::vector<std::unique_ptr<Transition<Action>>>;
+	struct StateInitialiser {
+		std::vector<std::unique_ptr<Action>> entryActions;
+		std::vector<std::unique_ptr<Action>> actions;
+		std::vector<std::unique_ptr<Action>> exitActions;
 
+		std::vector<std::unique_ptr<Transition<Action>>> transitions;
+	};
+
+	template<typename Action>
+	class State {
 		//VARIABLES
 	private:
 		//TODO: custom deleter for unique ptrs so allocators can be used
-		Actions entryActions;
-		Actions actions;
-		Actions exitActions;
+		std::vector<std::unique_ptr<Action>> entryActions;
+		std::vector<std::unique_ptr<Action>> actions;
+		std::vector<std::unique_ptr<Action>> exitActions;
 
-		Transitions transitions;
+		std::vector<std::unique_ptr<Transition<Action>>> transitions;
 
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
 
-		State() = default;
+		State(StateInitialiser<Action>&& initialiser){
+			entryActions	= std::move(initialiser.entryActions);
+			actions			= std::move(initialiser.actions);
+			exitActions		= std::move(initialiser.exitActions);
+
+			transitions		= std::move(initialiser.transitions);
+		}
 
 		~State() {
 			CLV_LOG_DEBUG("State dtor called");
-		}
-
-		//NOTE: Having an init function because we have a construction dependency cycle with the ctors
-		void init(Actions entryActions, Actions actions, Actions exitActions, Transitions transitions){
-			this->entryActions = std::move(entryActions);
-			this->actions = std::move(actions);
-			this->exitActions = std::move(exitActions);
-			this->transitions = std::move(transitions);
 		}
 
 		std::vector<Action*> getEntryActions() {
@@ -76,15 +78,19 @@ namespace blb {
 		//TODO: Ctors
 		Transition() = default;
 
-		~Transition(){
+		~Transition() {
 			CLV_LOG_DEBUG("Transition dtor called");
 		}
 
 		//NOTE: Having an init function because we have a construction dependency cycle with the ctors
+		void init(std::function<bool()> condition, State<Action>* state) {
+			this->condition = std::move(condition);
+			this->state = state;
+		}
 		void init(std::function<bool()> condition, State<Action>* state, std::vector<std::unique_ptr<Action>> actions) {
-			this->condition	= std::move(condition);
-			this->state		= state;
-			this->actions	= std::move(actions);
+			this->condition = std::move(condition);
+			this->state = state;
+			this->actions = std::move(actions);
 		}
 
 		bool isTriggered() const {
