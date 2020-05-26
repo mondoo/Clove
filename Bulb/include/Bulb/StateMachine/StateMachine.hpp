@@ -10,12 +10,15 @@ namespace blb {
 		return out;
 	}
 
+	template<typename Action>
+	class Transition;
+
 	class Condition { //TODO: Have the condition as a template? this way lambdas can be used?
 		//FUNCTIONS
 	public:
 		virtual ~Condition() = 0;
 
-		virtual bool test() const = 0;
+		virtual bool test() /*const*/ = 0;
 	};
 
 	template<typename Action>
@@ -38,18 +41,18 @@ namespace blb {
 	public:
 		//TODO: Ctors
 
-		State(Actions entryActions, Actions actions, Actions exitActions, Transitions transitions) = default;
+		State() = default;
 
 		~State() {
 			CLV_LOG_DEBUG("State dtor called");
 		}
 
 		//NOTE: Having an init function because we have a construction dependency cycle with the ctors
-		init(Actions entryActions, Actions actions, Actions exitActions, Transitions transitions){
-			this->entryActions	= std::move(entryActions);
-			this->actions		= std::move(actions);
-			this->exitActions	= std::move(exitActions);
-			this->transitions	= std::move(transitions);
+		void init(Actions entryActions, Actions actions, Actions exitActions, Transitions transitions){
+			this->entryActions = std::move(entryActions);
+			this->actions = std::move(actions);
+			this->exitActions = std::move(exitActions);
+			this->transitions = std::move(transitions);
 		}
 
 		std::vector<Action*> getEntryActions() {
@@ -86,7 +89,7 @@ namespace blb {
 		}
 
 		//NOTE: Having an init function because we have a construction dependency cycle with the ctors
-		init(std::unique_ptr<Condition> condition, std::unique_ptr<State<Action>> state, std::vector<std::unique_ptr<Action>> actions){
+		void init(std::unique_ptr<Condition> condition, std::unique_ptr<State<Action>> state, std::vector<std::unique_ptr<Action>> actions){
 			this->condition	= std::move(condition);
 			this->state		= std::move(state);
 			this->actions	= std::move(actions);
@@ -115,7 +118,7 @@ namespace blb {
 	public:
 		//TODO: Ctors
 
-		StateMachine(State* initialSate)
+		StateMachine(State<Action>* initialState)
 			: currentState(initialState) {
 		}
 
