@@ -76,7 +76,7 @@ namespace blb {
 	private:
 		//TODO: custom deleter for unique ptrs so allocators can be used
 		std::unique_ptr<Condition> condition;
-		std::unique_ptr<State<Action>> state;
+		State<Action>* state;
 		std::vector<std::unique_ptr<Action>> actions;
 
 		//FUNCTIONS
@@ -89,9 +89,9 @@ namespace blb {
 		}
 
 		//NOTE: Having an init function because we have a construction dependency cycle with the ctors
-		void init(std::unique_ptr<Condition> condition, std::unique_ptr<State<Action>> state, std::vector<std::unique_ptr<Action>> actions){
+		void init(std::unique_ptr<Condition> condition, State<Action>* state, std::vector<std::unique_ptr<Action>> actions){
 			this->condition	= std::move(condition);
-			this->state		= std::move(state);
+			this->state		= state;
 			this->actions	= std::move(actions);
 		}
 
@@ -100,7 +100,7 @@ namespace blb {
 		}
 
 		State<Action>* getState() const {
-			return state.get();
+			return state;
 		}
 
 		std::vector<Action*> getActions() const {
@@ -136,9 +136,13 @@ namespace blb {
 			if(triggeredTransition != nullptr) {
 				State<Action>* targetState = triggeredTransition->getState();
 
-				actions.insert(actions.end(), currentState->getExitActions().begin(), currentState->getExitActions().end());
-				actions.insert(actions.end(), triggeredTransition->getActions().begin(), triggeredTransition->getActions().end());
-				actions.insert(actions.end(), targetState->getEntryActions().begin(), targetState->getEntryActions().end());
+				auto stateExitActions = currentState->getExitActions();
+				auto transitionActions = triggeredTransition->getActions();
+				auto targetStateEnterActions = targetState->getEntryActions();
+
+				actions.insert(actions.end(), stateExitActions.begin(), stateExitActions.end());
+				actions.insert(actions.end(), transitionActions.begin(), transitionActions.end());
+				actions.insert(actions.end(), targetStateEnterActions.begin(), targetStateEnterActions.end());
 
 				currentState = targetState;
 			} else {
