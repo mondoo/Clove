@@ -101,8 +101,12 @@ set(
 
 set(
 	StateMachineFiles
+		${BLB_INCLUDE}/StateMachine/State.hpp
+		${BLB_INCLUDE}/StateMachine/State.inl
 		${BLB_INCLUDE}/StateMachine/StateMachine.hpp
-		${BLB_SOURCE}/StateMachine/StateMachine.cpp
+		${BLB_INCLUDE}/StateMachine/StateMachine.inl
+		${BLB_INCLUDE}/StateMachine/Transition.hpp
+		${BLB_INCLUDE}/StateMachine/Transition.inl
 )
 
 set(
