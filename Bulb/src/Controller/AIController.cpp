@@ -1,6 +1,14 @@
 #include "Bulb/Controller/AIController.hpp"
 
-namespace blb{
+namespace blb {
+	AIController::AIController(std::unique_ptr<Brain> brain)
+		: brain(std::move(brain)) {
+	}
+
 	void AIController::possess(ecs::Entity entity) {
+	}
+
+	void AIController::update(const clv::utl::DeltaTime deltaTime) {
+		brain->update(deltaTime);
 	}
 }
