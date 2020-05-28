@@ -56,8 +56,6 @@ set(
 		${BLB_INCLUDE}/ECS/System.hpp
 		${BLB_INCLUDE}/ECS/Components/AudioComponent.hpp
 		${BLB_SOURCE}/ECS/Components/AudioComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/BehaviourTreeComponent.hpp
-		${BLB_SOURCE}/ECS/Components/BehaviourTreeComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/CameraComponent.hpp
 		${BLB_SOURCE}/ECS/Components/CameraComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
@@ -72,8 +70,6 @@ set(
 		${BLB_SOURCE}/ECS/Components/TransformComponent.cpp
 		${BLB_INCLUDE}/ECS/Systems/AudioSystem.hpp
 		${BLB_SOURCE}/ECS/Systems/AudioSystem.cpp
-		${BLB_INCLUDE}/ECS/Systems/BehaviourTreeSystem.hpp
-		${BLB_SOURCE}/ECS/Systems/BehaviourTreeSystem.cpp
 		${BLB_INCLUDE}/ECS/Systems/RenderSystem.hpp
 		${BLB_SOURCE}/ECS/Systems/RenderSystem.cpp
 		${BLB_INCLUDE}/ECS/Systems/PhysicsSystem.hpp
