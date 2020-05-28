@@ -10,6 +10,6 @@ namespace blb {
 
 		//FUNCTIONS
 	public:
-		void controll(blb::ecs::Entity entity) override;
+		void possess(blb::ecs::Entity entity) override;
 	};
 }

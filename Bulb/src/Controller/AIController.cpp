@@ -1,6 +1,6 @@
-#include "..\..\include\Bulb\Controller\AIController.hpp"
+#include "Bulb/Controller/AIController.hpp"
 
 namespace blb{
-	void AIController::controll(ecs::Entity entity) {
+	void AIController::possess(ecs::Entity entity) {
 	}
 }

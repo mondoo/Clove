@@ -8,6 +8,6 @@ namespace blb {
 	public:
 		virtual ~Controller() = default;
 
-		virtual void controll(blb::ecs::Entity entity) = 0;
+		virtual void possess(blb::ecs::Entity entity) = 0;
 	};
 }
