@@ -7,7 +7,7 @@
 #include <Clove/Input/InputEvent.hpp>
 
 namespace blb {
-	class PlayerController : Controller {
+	class PlayerController : public Controller {
 		//FUNCTIONS
 	public:
 		virtual ~PlayerController() = default;

@@ -3,7 +3,7 @@
 #include "Bulb/Controller/Controller.hpp"
 
 namespace blb {
-	class AIController : Controller {
+	class AIController : public Controller {
 		//VARIABLES
 	private:
 		//TODO: Takes in a behaviour tree and executes that on the entity
