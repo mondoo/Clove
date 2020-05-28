@@ -51,11 +51,13 @@ namespace blb::ecs {
 		void destroyAllEntites();
 
 		template<typename ComponentType, typename... ConstructArgs>
-		ComponentPtr<ComponentType> addComponent(EntityID entityID, ConstructArgs&&... args);
+		ComponentPtr<ComponentType> addComponent(EntityID entityId, ConstructArgs&&... args);
 		template<typename ComponentType>
-		ComponentPtr<ComponentType> getComponent(EntityID entityID);
+		ComponentPtr<ComponentType> getComponent(EntityID entityId);
 		template<typename ComponentType>
-		void removeComponent(EntityID entityID);
+		bool hasComponent(EntityID entityId);
+		template<typename ComponentType>
+		void removeComponent(EntityID entityId);
 
 		template<typename... ComponentTypes>
 		std::vector<std::tuple<ComponentPtr<ComponentTypes>...>> getComponentSets();

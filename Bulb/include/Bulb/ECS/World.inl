@@ -1,17 +1,22 @@
 namespace blb::ecs{
 	template<typename ComponentType, typename ...ConstructArgs>
-	ComponentPtr<ComponentType> World::addComponent(EntityID entityID, ConstructArgs&&... args){
-		return componentManager.getComponentContainer<ComponentType>().addComponent(entityID, std::forward<ConstructArgs>(args)...);
+	ComponentPtr<ComponentType> World::addComponent(EntityID entityId, ConstructArgs&&... args) {
+		return componentManager.getComponentContainer<ComponentType>().addComponent(entityId, std::forward<ConstructArgs>(args)...);
 	}
 
 	template<typename ComponentType>
-	ComponentPtr<ComponentType> World::getComponent(EntityID entityID){
-		return componentManager.getComponentContainer<ComponentType>().getComponent(entityID);
+	ComponentPtr<ComponentType> World::getComponent(EntityID entityId) {
+		return componentManager.getComponentContainer<ComponentType>().getComponent(entityId);
 	}
 
 	template<typename ComponentType>
-	void World::removeComponent(EntityID entityID){
-		componentManager.getComponentContainer<ComponentType>().removeComponent(entityID);
+	bool World::hasComponent(EntityID entityId) {
+		return componentManager.getComponentContainer<ComponentType>().hasComponent(entityId);
+	}
+
+	template<typename ComponentType>
+	void World::removeComponent(EntityID entityId) {
+		componentManager.getComponentContainer<ComponentType>().removeComponent(entityId);
 	}
 
 	template<typename ...ComponentTypes>

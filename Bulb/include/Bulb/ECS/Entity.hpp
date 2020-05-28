@@ -40,6 +40,8 @@ namespace blb::ecs{
 		template<typename ComponentType>
 		ComponentPtr<ComponentType> getComponent() const;
 		template<typename ComponentType>
+		bool hasComponent() const;
+		template<typename ComponentType>
 		void removeComponent();
 
 		operator EntityID() const;

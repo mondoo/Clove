@@ -1,4 +1,5 @@
 #include "Bulb/ECS/ECSEvents.hpp"
+
 #include <Clove/Event/EventDispatcher.hpp>
 
 namespace blb::ecs {
@@ -18,11 +19,20 @@ namespace blb::ecs {
 	ComponentContainer<ComponentType>::~ComponentContainer() = default;
 
 	template<typename ComponentType>
-	void ComponentContainer<ComponentType>::cloneComponent(EntityID fromID, EntityID toID) {
+	bool ComponentContainer<ComponentType>::hasComponent(EntityID entityId) const {
+		if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
+			return components[iter->second] != nullptr;
+		} else {
+			return false;
+		}
+	}
+
+	template<typename ComponentType>
+	void ComponentContainer<ComponentType>::cloneComponent(EntityID fromId, EntityID toId) {
 		if constexpr(std::is_copy_constructible_v<ComponentType>) {
-			if(auto iter = entityIDToIndex.find(fromID); iter != entityIDToIndex.end()) {
+			if(auto iter = entityIDToIndex.find(fromId); iter != entityIDToIndex.end()) {
 				ComponentType* componentPtr = components[iter->second];
-				addComponent(toID, *componentPtr);
+				addComponent(toId, *componentPtr);
 			}
 		} else {
 			CLV_LOG_ERROR("Component that is not copyable was attempted to be copied. Entity will be incomplete");
@@ -30,8 +40,8 @@ namespace blb::ecs {
 	}
 
 	template<typename ComponentType>
-	void ComponentContainer<ComponentType>::removeComponent(EntityID entityID) {
-		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()) {
+	void ComponentContainer<ComponentType>::removeComponent(EntityID entityId) {
+		if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
 			const size_t index = iter->second;
 			const size_t lastIndex = components.size() - 1;
 
@@ -41,7 +51,7 @@ namespace blb::ecs {
 				components[index] = components.back();
 			}
 			components.pop_back();
-			entityIDToIndex.erase(entityID);
+			entityIDToIndex.erase(entityId);
 
 			//Update the index map so it knows about the moved component
 			if(index < lastIndex) {
@@ -57,20 +67,20 @@ namespace blb::ecs {
 
 	template<typename ComponentType>
 	template<typename... ConstructArgs>
-	ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityID, ConstructArgs&&... args) {
+	ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityId, ConstructArgs&&... args) {
 		ComponentType* comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
 		if(comp == nullptr) {
 			CLV_LOG_ERROR("{0}: Could not create component", CLV_FUNCTION_NAME_PRETTY);
 			return { comp };
 		}
 
-		comp->entityID = entityID;
+		comp->entityID = entityId;
 
-		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()) {
+		if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
 			components[iter->second] = comp;
 		} else {
 			components.push_back(comp);
-			entityIDToIndex[entityID] = components.size() - 1;
+			entityIDToIndex[entityId] = components.size() - 1;
 		}
 
 		ComponentAddedEvent<ComponentType> event{ comp };
@@ -80,8 +90,8 @@ namespace blb::ecs {
 	}
 
 	template<typename ComponentType>
-	ComponentPtr<ComponentType> ComponentContainer<ComponentType>::getComponent(EntityID entityID) {
-		if(auto iter = entityIDToIndex.find(entityID); iter != entityIDToIndex.end()) {
+	ComponentPtr<ComponentType> ComponentContainer<ComponentType>::getComponent(EntityID entityId) {
+		if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
 			return { components[iter->second] };
 		} else {
 			return {};
