@@ -2,12 +2,13 @@
 
 namespace blb::ai {
 	using BlackBoardKey = size_t;
+	static constexpr BlackBoardKey INVALID_KEY = 0;
 
 	struct BlackBoardDataHeader {
-		char* prevItem = nullptr;
+		char* prevItem = nullptr; //TODO: Needed?
 		char* nextItem = nullptr;
 
-		BlackBoardKey key = 0;
+		BlackBoardKey key = INVALID_KEY;
 		size_t itemSize = 0;
 	};
 
@@ -26,16 +27,18 @@ namespace blb::ai {
 		//TODO: Ctors
 		BlackBoard() {
 			dataSize = 1024 * 1024; //Lets just give ourselves a meg at the moment
-			data = reinterpret_cast<char*>(malloc(dataSize)); 
+			data = reinterpret_cast<char*>(malloc(dataSize));
 			pointer = data;
 		}
 
-		~BlackBoard(){
+		~BlackBoard() {
 			free(data);
 		}
 
 		template<typename DataType>
 		BlackBoardKey addItem(DataType item) {
+			//TODO: Search the current array to see if there are any free spots of the correct size
+
 			const size_t headerSize = sizeof(BlackBoardDataHeader);
 			const size_t itemSize = sizeof(DataType);
 			const size_t totalSize = headerSize + itemSize;
@@ -61,20 +64,43 @@ namespace blb::ai {
 		}
 
 		template<typename DataType>
-		DataType& getItem(BlackBoardKey key) {
+		DataType* getItem(BlackBoardKey key) {
+			//TODO: Return nullptr if key is invalid;
+
+			if(pointer == data) {
+				return nullptr;
+			}
+
 			char* iter = data;
-			while(iter < pointer) {
+			while(iter != nullptr) {
 				auto* header = reinterpret_cast<BlackBoardDataHeader*>(iter);
 				if(header->key == key) {
-					auto* item = reinterpret_cast<DataType*>(iter + sizeof(BlackBoardDataHeader));
-					return *item;
+					return reinterpret_cast<DataType*>(iter + sizeof(BlackBoardDataHeader));
 				} else {
 					iter = header->nextItem;
 				}
 			}
+
+			return nullptr;
 		}
 
 		void removeItem(BlackBoardKey key) {
+			//TODO: Return nullptr if key is invalid;
+
+			if(pointer == data) {
+				return;
+			}
+
+			char* iter = data;
+			while(iter != nullptr) {
+				auto* header = reinterpret_cast<BlackBoardDataHeader*>(iter);
+				if(header->key == key) {
+					header->key = INVALID_KEY;
+					break;
+				} else {
+					iter = header->nextItem;
+				}
+			}
 		}
 
 	private:
