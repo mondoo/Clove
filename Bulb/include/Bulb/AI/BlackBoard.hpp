@@ -30,6 +30,10 @@ namespace blb::ai {
 			pointer = data;
 		}
 
+		~BlackBoard(){
+			free(data);
+		}
+
 		template<typename DataType>
 		BlackBoardKey addItem(DataType item) {
 			const size_t headerSize = sizeof(BlackBoardDataHeader);
