@@ -6,6 +6,7 @@ namespace blb {
 	}
 
 	void AIController::possess(ecs::Entity entity) {
+		//TODO: Need some kind of blackboard system so the controller can update the entitiy field on it
 	}
 
 	void AIController::update(const clv::utl::DeltaTime deltaTime) {
