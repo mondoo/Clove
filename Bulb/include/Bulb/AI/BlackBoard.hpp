@@ -15,9 +15,9 @@ namespace blb::ai {
 		//VARIABLES
 	private:
 		//Idea is that we store data in here with a header value so we know the memory layout
-		void* data = nullptr;
+		char* data = nullptr;
 		size_t dataSize = 0;
-		void* pointer = nullptr; //Points to current free space
+		char* pointer = nullptr; //Points to current free space
 
 		size_t nextKey = 1;
 
@@ -26,7 +26,7 @@ namespace blb::ai {
 		//TODO: Ctors
 		BlackBoard() {
 			dataSize = 1024 * 1024; //Lets just give ourselves a meg at the moment
-			data = malloc(dataSize); 
+			data = reinterpret_cast<char*>(malloc(dataSize)); 
 			pointer = data;
 		}
 
