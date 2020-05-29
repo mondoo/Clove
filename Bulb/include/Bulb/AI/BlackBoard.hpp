@@ -4,11 +4,11 @@ namespace blb::ai {
 	using BlackBoardKey = size_t;
 
 	struct BlackBoardDataHeader {
-		void* prevItem = nullptr;
-		void* nextItem = nullptr;
+		char* prevItem = nullptr;
+		char* nextItem = nullptr;
 
-		size_t key = 0;
-		size_t size = 0;
+		BlackBoardKey key = 0;
+		size_t itemSize = 0;
 	};
 
 	class BlackBoard {
@@ -43,7 +43,7 @@ namespace blb::ai {
 				//TODO: Update nextItem of previous
 			}
 			header.key = nextKey++;
-			header.size = itemSize;
+			header.itemSize = itemSize;
 
 			//TODO: Doing memcpy for simplicity, try placement new
 			memcpy(pointer, &header, headerSize);
@@ -56,6 +56,16 @@ namespace blb::ai {
 
 		template<typename DataType>
 		DataType& getItem(BlackBoardKey key) {
+			char* iter = data;
+			while(iter < pointer) {
+				auto* header = reinterpret_cast<BlackBoardDataHeader*>(iter);
+				if(header->key == key) {
+					auto* item = reinterpret_cast<DataType*>(iter + sizeof(BlackBoardDataHeader));
+					return *item;
+				} else {
+					iter = header->nextItem;
+				}
+			}
 		}
 
 		void removeItem(BlackBoardKey key) {
