@@ -39,7 +39,9 @@ namespace blb::ai {
 			const size_t headerSize = sizeof(BlackBoardDataHeader);
 			const size_t itemSize = sizeof(DataType);
 			const size_t totalSize = headerSize + itemSize;
-			CLV_ASSERT(pointer + totalSize > data + dataSize, "Not enough space!"); //TODO: Remove assertion?
+
+			//TODO: resize and copy elements to new area if not enough space
+			CLV_ASSERT(pointer + totalSize <= data + dataSize, "Not enough space!");
 
 			BlackBoardDataHeader header{};
 			if(pointer != data) {
