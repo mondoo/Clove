@@ -3,16 +3,19 @@
 #include <Clove/Memory/ListAllocator.hpp>
 
 namespace blb::ai {
-	using BlackBoardKey = size_t;
-	static constexpr BlackBoardKey INVALID_KEY = 0;
-
 	class BlackBoard {
+		//TYPES
+	public:
+		using Key = size_t;
+		
 		//VARIABLES
 	private:
-		clv::mem::ListAllocator memoryBlock;
-		BlackBoardKey nextKey = 1;
+		static inline constexpr Key INVALID_KEY = 0;
 
-		std::map<BlackBoardKey, void*> dataMap;
+		clv::mem::ListAllocator memoryBlock;
+		Key nextKey = 1;
+
+		std::map<Key, void*> dataMap;
 
 		//FUNCTIONS
 	public:
@@ -24,7 +27,7 @@ namespace blb::ai {
 		~BlackBoard() = default;
 
 		template<typename DataType>
-		BlackBoardKey addItem(DataType item) {
+		Key addItem(DataType item) {
 			void* block = memoryBlock.alloc(sizeof(item));
 			if(block == nullptr) {
 				//TODO: Error
@@ -32,14 +35,14 @@ namespace blb::ai {
 
 			*reinterpret_cast<DataType*>(block) = item;
 
-			const BlackBoardKey key = nextKey++;
+			const Key key = nextKey++;
 			dataMap[key] = block;
 
 			return key;
 		}
 
 		template<typename DataType>
-		DataType* getItem(BlackBoardKey key) {
+		DataType* getItem(Key key) {
 			if(dataMap.find(key) == dataMap.end()) {
 				return nullptr;
 			}
@@ -47,7 +50,7 @@ namespace blb::ai {
 			return reinterpret_cast<DataType*>(dataMap[key]);
 		}
 
-		void removeItem(BlackBoardKey key) {
+		void removeItem(Key key) {
 			if(dataMap.find(key) == dataMap.end()) {
 				return;
 			}
