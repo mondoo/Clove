@@ -1,106 +1,59 @@
 #pragma once
 
+#include <Clove/Memory/ListAllocator.hpp>
+
 namespace blb::ai {
 	using BlackBoardKey = size_t;
 	static constexpr BlackBoardKey INVALID_KEY = 0;
 
-	struct BlackBoardDataHeader {
-		char* prevItem = nullptr; //TODO: Needed?
-		char* nextItem = nullptr;
-
-		BlackBoardKey key = INVALID_KEY;
-		size_t itemSize = 0;
-	};
-
 	class BlackBoard {
 		//VARIABLES
 	private:
-		//Idea is that we store data in here with a header value so we know the memory layout
-		char* data = nullptr;
-		size_t dataSize = 0;
-		char* pointer = nullptr; //Points to current free space
+		clv::mem::ListAllocator memoryBlock;
+		BlackBoardKey nextKey = 1;
 
-		size_t nextKey = 1;
+		std::map<BlackBoardKey, void*> dataMap;
 
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
-		BlackBoard() {
-			dataSize = 1024 * 1024; //Lets just give ourselves a meg at the moment
-			data = reinterpret_cast<char*>(malloc(dataSize));
-			pointer = data;
+		BlackBoard() 
+			: memoryBlock(1024 * 1024) { //Lets just give ourselves a meg at the moment
 		}
 
-		~BlackBoard() {
-			free(data);
-		}
+		~BlackBoard() = default;
 
 		template<typename DataType>
 		BlackBoardKey addItem(DataType item) {
-			//TODO: Search the current array to see if there are any free spots of the correct size
-
-			const size_t headerSize = sizeof(BlackBoardDataHeader);
-			const size_t itemSize = sizeof(DataType);
-			const size_t totalSize = headerSize + itemSize;
-
-			//TODO: resize and copy elements to new area if not enough space
-			CLV_ASSERT(pointer + totalSize <= data + dataSize, "Not enough space!");
-
-			BlackBoardDataHeader header{};
-			if(pointer != data) {
-				header.prevItem = pointer;
-				//TODO: Update nextItem of previous
+			void* block = memoryBlock.alloc(sizeof(item));
+			if(block == nullptr) {
+				//TODO: Error
 			}
-			header.key = nextKey++;
-			header.itemSize = itemSize;
 
-			//TODO: Doing memcpy for simplicity, try placement new
-			memcpy(pointer, &header, headerSize);
-			pointer += headerSize;
-			memcpy(pointer, &item, itemSize);
-			pointer += itemSize;
+			*reinterpret_cast<DataType*>(block) = item;
 
-			return header.key;
+			const BlackBoardKey key = nextKey++;
+			dataMap[key] = block;
+
+			return key;
 		}
 
 		template<typename DataType>
 		DataType* getItem(BlackBoardKey key) {
-			//TODO: Return nullptr if key is invalid;
-
-			if(pointer == data) {
+			if(dataMap.find(key) == dataMap.end()) {
 				return nullptr;
 			}
 
-			char* iter = data;
-			while(iter != nullptr) {
-				auto* header = reinterpret_cast<BlackBoardDataHeader*>(iter);
-				if(header->key == key) {
-					return reinterpret_cast<DataType*>(iter + sizeof(BlackBoardDataHeader));
-				} else {
-					iter = header->nextItem;
-				}
-			}
-
-			return nullptr;
+			return reinterpret_cast<DataType*>(dataMap[key]);
 		}
 
 		void removeItem(BlackBoardKey key) {
-			//TODO: Return nullptr if key is invalid;
-
-			if(pointer == data) {
+			if(dataMap.find(key) == dataMap.end()) {
 				return;
 			}
 
-			char* iter = data;
-			while(iter != nullptr) {
-				auto* header = reinterpret_cast<BlackBoardDataHeader*>(iter);
-				if(header->key == key) {
-					header->key = INVALID_KEY;
-					break;
-				} else {
-					iter = header->nextItem;
-				}
-			}
+			memoryBlock.free(dataMap[key]);
+			dataMap.erase(key);
 		}
 
 	private:
