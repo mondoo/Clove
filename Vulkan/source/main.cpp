@@ -257,13 +257,8 @@ private:
 	}
 
 	void initVulkan() {
-		/*createInstance();
-		setupDebugMessenger();*/
-
-		auto pair = clv::gfx::vk::initialiseVK();
-		instance = pair.first;
-		debugMessenger = pair.second;
-
+		createInstance();
+		setupDebugMessenger();
 		createSurface();
 		pickPhysicalDevice();
 		createLogicalDevice();
