@@ -79,6 +79,8 @@ set(
 
 set(
 	RenderingFiles
+		${BLB_INCLUDE}/Rendering/ForwardRenderer3D.hpp
+		${BLB_SOURCE}/Rendering/ForwardRenderer3D.cpp
 		${BLB_INCLUDE}/Rendering/Material.hpp
 		${BLB_INCLUDE}/Rendering/Material.inl
 		${BLB_SOURCE}/Rendering/Material.cpp
