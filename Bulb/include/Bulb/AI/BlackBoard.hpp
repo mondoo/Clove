@@ -10,10 +10,7 @@ namespace blb::ai {
 		
 		//VARIABLES
 	private:
-		static inline constexpr Key INVALID_KEY = 0;
-
 		clv::mem::ListAllocator memoryBlock;
-		Key nextKey = 1;
 
 		std::map<Key, void*> dataMap;
 
@@ -31,12 +28,9 @@ namespace blb::ai {
 		~BlackBoard();
 
 		template<typename DataType>
-		Key addItem(DataType item);
-
+		void setValue(Key key, DataType value);
 		template<typename DataType>
-		DataType* getItem(Key key);
-
-		void removeItem(Key key);
+		std::optional<DataType> getValue(Key key);
 	};
 }
 

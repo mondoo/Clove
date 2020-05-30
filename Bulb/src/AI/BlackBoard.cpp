@@ -14,13 +14,4 @@ namespace blb::ai {
 	BlackBoard& BlackBoard::operator=(BlackBoard&& other) noexcept = default;
 
 	BlackBoard::~BlackBoard() = default;
-
-	void BlackBoard::removeItem(BlackBoard::Key key) {
-		if(dataMap.find(key) == dataMap.end()) {
-			return;
-		}
-
-		memoryBlock.free(dataMap[key]);
-		dataMap.erase(key);
-	}
 }
