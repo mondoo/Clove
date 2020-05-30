@@ -1,8 +1,9 @@
 #include "Bulb/Controller/BTAIController.hpp"
 
 namespace blb {
-	BTAIController::BTAIController(ai::BehaviourTree behaviourTree)
-		: behaviourTree(std::move(behaviourTree)){
+	BTAIController::BTAIController(ai::BehaviourTree behaviourTree, ai::BlackBoard::Key possessedEntityKey)
+		: behaviourTree(std::move(behaviourTree))
+		, possessedEntityKey(possessedEntityKey){
 	}
 
 	BTAIController::BTAIController(BTAIController&& other) noexcept = default;
@@ -12,7 +13,7 @@ namespace blb {
 	BTAIController::~BTAIController() = default;
 
 	void BTAIController::possess(blb::ecs::Entity entity) {
-		//behaviourTree.getBlackBoard().
+		behaviourTree.getBlackBoard().setValue(possessedEntityKey, entity);
 	}
 
 	void BTAIController::update(const clv::utl::DeltaTime deltaTime) {

@@ -9,11 +9,12 @@ namespace blb {
 		//VARIABLES
 	private:
 		ai::BehaviourTree behaviourTree;
+		ai::BlackBoard::Key possessedEntityKey;
 
 		//FUNCTIONS
 	public:
 		BTAIController() = delete;
-		BTAIController(ai::BehaviourTree behaviourTree);
+		BTAIController(ai::BehaviourTree behaviourTree, ai::BlackBoard::Key possessedEntityKey);
 
 		BTAIController(const BTAIController& other) = delete;
 		BTAIController(BTAIController&& other) noexcept;
