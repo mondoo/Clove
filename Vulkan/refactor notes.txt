@@ -1,0 +1,15 @@
+should the renderer initialise the graphics.
+ - Takes a window and the api type it want's to init
+  - or atleast some type of window data (so it won't have a dependency on the windowing library in future)
+I don't think meshes should have the actual buffer on them, we can use stack allocators to make the allocations faster.
+
+I think the window should be associated with a renderer, then that renderer renders to that window. 
+If we remove the buffers ect. from Meshes then they can be submitted to any renderer.
+
+Cameras no longer have render targets?
+ - Only question with this is how to handle rendering to texture?
+
+
+Summary:
+Window: Does not initialise graphics context. Has getters to retrieve the information to do so
+Render: Takes in window and api enum and initialises the context it needs
