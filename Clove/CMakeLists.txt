@@ -18,6 +18,8 @@ target_include_directories(
 		include
 
 	#Libraries
+	PUBLIC
+		Vulkan::Vulkan #Temp public
 	INTERFACE
         vendor/glm
 
@@ -40,6 +42,8 @@ target_link_libraries(
     PUBLIC
 		spdlog
 		$<$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>:Glad>
+
+		Vulkan::Vulkan #Temp public
 
 		#Below are public until wrappers have been made
 		portaudio_static

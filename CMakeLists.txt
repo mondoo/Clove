@@ -57,5 +57,6 @@ if(ENABLE_CLANG_TIDY)
 	endif()
 endif()
 
-#Vulkan
+#Vulkan - test
 add_subdirectory(Vulkan)
+add_subdirectory(VKBackendTest)

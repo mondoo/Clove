@@ -18,7 +18,7 @@ namespace blb::rnd {
 }
 
 namespace blb::rnd {
-	class Renderer3D {
+	class IRenderer3D { //Temp IRenderer3D until old renderer has been removed
 		//TYPES
 	public:
 		struct ComposedCameraData {
@@ -46,7 +46,7 @@ namespace blb::rnd {
 #include <Clove/Graphics/Vulkan/VKGraphicsFactory.hpp>
 
 namespace blb::rnd {
-	class ForwardRenderer3D : public Renderer3D {
+	class ForwardRenderer3D : public IRenderer3D {
 		//VARIABLES
 	private:
 		//Using shared_ptrs of the actual types until API is abstracted
