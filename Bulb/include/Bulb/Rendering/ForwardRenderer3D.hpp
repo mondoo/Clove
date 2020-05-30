@@ -4,6 +4,10 @@
 
 #include <Clove/Graphics/GraphicsTypes.hpp>
 
+namespace clv::plt {
+	class Window;
+}
+
 namespace clv::gfx {
 	class RenderTarget;
 }
@@ -39,14 +43,19 @@ namespace blb::rnd {
 	};
 }
 
+#include <Clove/Graphics/Vulkan/VKGraphicsFactory.hpp>
+
 namespace blb::rnd {
 	class ForwardRenderer3D : public Renderer3D {
 		//VARIABLES
 	private:
+		//Using shared_ptrs of the actual types until API is abstracted
+		std::shared_ptr<clv::gfx::vk::VKGraphicsFactory> graphicsFactory;
 
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
+		ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API);
 
 		void begin() final;
 

@@ -1,6 +1,10 @@
 #include "Bulb/Rendering/ForwardRenderer3D.hpp"
 
 namespace blb::rnd {
+	ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API){
+		graphicsFactory = std::make_shared<clv::gfx::vk::VKGraphicsFactory>();
+	}
+
 	void ForwardRenderer3D::begin() {
 	}
 
