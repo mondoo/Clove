@@ -14,5 +14,6 @@ namespace clv::gfx::vk{
 	public:
 		//TODO: Ctors
 		VKGraphicsFactory();
+		~VKGraphicsFactory();
 	};
 }

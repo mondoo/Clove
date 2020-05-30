@@ -22,6 +22,13 @@ namespace clv::gfx::vk{
 		}
 	}
 
+	void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
+		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+		if(func != nullptr) {
+			func(instance, debugMessenger, pAllocator);
+		}
+	}
+
 	static bool checkValidationLayerSupport(const std::vector<const char*>& validationLayers) {
 		uint32_t layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -108,5 +115,12 @@ namespace clv::gfx::vk{
 			CLV_LOG_ERROR("Failed to create VK instance");
 		}
 #endif
+	}
+
+	VKGraphicsFactory::~VKGraphicsFactory() {
+#if CLV_DEBUG
+		destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+#endif
+		vkDestroyInstance(instance, nullptr);
 	}
 }
