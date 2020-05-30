@@ -53,8 +53,8 @@ namespace clv::plt{
     MacWindow::MacWindow(const WindowDescriptor& descriptor){
 		MacData data = { { descriptor.width, descriptor.height } };
 		
-		graphicsFactory = gfx::initialise(descriptor.api);
-		surface = graphicsFactory->createSurface(&data);
+		//graphicsFactory = gfx::initialise(descriptor.api);
+		//surface = graphicsFactory->createSurface(&data);
 		
 		NSString* nameString = [NSString stringWithCString:descriptor.title.c_str() encoding:[NSString defaultCStringEncoding]];
 		
@@ -70,8 +70,8 @@ namespace clv::plt{
 	MacWindow::MacWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api){
 		MacData data = { { size.x, size.y } };
 		
-		graphicsFactory = gfx::initialise(api);
-		surface = graphicsFactory->createSurface(&data);
+		//graphicsFactory = gfx::initialise(api);
+		//surface = graphicsFactory->createSurface(&data);
 		
 		windowProxy = [[MacWindowProxy alloc] initWithParentWindow:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getMTLView()
 													  parentWindow:parentWindow

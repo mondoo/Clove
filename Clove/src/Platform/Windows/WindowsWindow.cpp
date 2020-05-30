@@ -62,13 +62,6 @@ namespace clv::plt {
 		open = true;
 
 		CLV_LOG_DEBUG("Window created");
-
-		graphicsFactory = gfx::initialise(descriptor.api);
-
-		data = { windowsHandle, descriptor.width, descriptor.height };
-
-		surface = graphicsFactory->createSurface(&data);
-		surface->makeCurrent();
 	}
 
 	WindowsWindow::WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) {
@@ -113,19 +106,9 @@ namespace clv::plt {
 		open = true;
 
 		CLV_LOG_DEBUG("Window created");
-
-		graphicsFactory = gfx::initialise(api);
-
-		data = { windowsHandle, size.x, size.y };
-
-		surface = graphicsFactory->createSurface(&data);
-		surface->makeCurrent();
 	}
 
 	WindowsWindow::~WindowsWindow() {
-		//Reset context first, before the window is destroyed
-		surface.reset();
-
 		UnregisterClass(className, instance);
 		DestroyWindow(windowsHandle);
 	}
@@ -283,9 +266,6 @@ namespace clv::plt {
 				//Window
 			case WM_SIZE: {
 				const mth::vec2ui size = { pt.x, pt.y };
-				if(surface) { //Can be called before the surface is initialised
-					surface->resizeBuffers(size);
-				}
 				onWindowResize.broadcast(size);
 			} break;
 		}

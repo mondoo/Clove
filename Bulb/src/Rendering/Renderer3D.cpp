@@ -50,8 +50,9 @@ namespace blb::rnd {
 	Renderer3D::SceneData::~SceneData() = default;
 
 	Renderer3D::Renderer3D(plt::Window& window) {
+#if 0
 		GraphicsFactory& factory = *window.getGraphicsFactory();
-
+		
 		//Mesh
 		meshCommandBuffer = factory.createCommandBuffer();
 
@@ -186,6 +187,7 @@ namespace blb::rnd {
 
 		bufferDesc.bufferSize = sizeof(NumberAlignment);
 		lightIndexBuffer = factory.createBuffer(bufferDesc, nullptr);
+#endif
 	}
 
 	void Renderer3D::begin() {

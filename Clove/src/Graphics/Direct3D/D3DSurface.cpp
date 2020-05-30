@@ -10,6 +10,7 @@
 namespace clv::gfx::d3d{
 	D3DSurface::D3DSurface(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, void* windowData) 
 		: factory(std::move(factory)) {
+		#if 0 
 		plt::WindowsData* data = reinterpret_cast<plt::WindowsData*>(windowData);
 
 		DX11_INFO_PROVIDER;
@@ -67,6 +68,7 @@ namespace clv::gfx::d3d{
 		DX11_THROW_INFO(d3dDevice.CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
 
 		renderTarget = std::make_shared<D3DRenderTarget>(this->factory, renderTargetView, depthStencilView);
+		#endif
 	}
 
 	D3DSurface::D3DSurface(D3DSurface&& other) noexcept = default;

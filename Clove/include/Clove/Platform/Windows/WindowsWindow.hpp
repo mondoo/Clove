@@ -6,12 +6,6 @@
 #include "Clove/Platform/Windows/WindowsException.hpp"
 
 namespace clv::plt {
-	struct WindowsData {
-		HWND handle;
-		int32_t width;
-		int32_t height;
-	};
-
 	class WindowsWindow : public Window {
 		//VARIABLES
 	private:
@@ -21,8 +15,6 @@ namespace clv::plt {
 
 		HINSTANCE instance;
 		HWND windowsHandle;
-
-		WindowsData data;
 
 		//FUNCTIONS
 	public:

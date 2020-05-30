@@ -9,13 +9,6 @@ namespace clv::gfx {
 }
 
 namespace clv::plt {
-	struct LinuxData {
-		Display* display = nullptr;
-		::Window* window;
-
-		XVisualInfo** visual = nullptr;
-	};
-
 	class LinuxWindow : public Window {
 		//VARIABLES
 	private:
@@ -34,8 +27,6 @@ namespace clv::plt {
 		Atom atomWmDeleteWindow;
 
 		mth::vec2i prevConfigureNotifySize = {};
-
-		LinuxData data;
 
 		//FUNCTIONS
 	public:

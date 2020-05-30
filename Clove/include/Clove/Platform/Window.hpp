@@ -21,9 +21,6 @@ namespace clv::plt{
 		Keyboard keyboard;
 		Mouse mouse;
 
-		std::shared_ptr<gfx::GraphicsFactory> graphicsFactory;
-		std::shared_ptr<gfx::Surface> surface;
-
 		//FUNCTIONS
 	public:
 		Window();
@@ -36,9 +33,8 @@ namespace clv::plt{
 
 		virtual ~Window();
 
-		void beginFrame();
-		void endFrame();
-		
+		virtual void processInput() = 0;
+
 		void setVSync(bool enabled);
 		bool isVSync() const;
 
@@ -54,11 +50,5 @@ namespace clv::plt{
 
 		Keyboard& getKeyboard();
 		Mouse& getMouse();
-
-		const std::shared_ptr<gfx::GraphicsFactory>& getGraphicsFactory();
-		const std::shared_ptr<gfx::Surface>& getSurface() const;
-
-	protected:
-		virtual void processInput() = 0;
 	};
 }

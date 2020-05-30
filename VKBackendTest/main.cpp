@@ -12,12 +12,11 @@ int main(){
 	auto renderer = blb::rnd::ForwardRenderer3D(*mainWindow, clv::gfx::API::Vulkan);
 
 	while(mainWindow->isOpen()) {
-		mainWindow->beginFrame();
-
-		mainWindow->endFrame();
-
+		mainWindow->processInput();
 		if(mainWindow->getKeyboard().isKeyPressed(clv::Key::Escape)) {
 			break;
 		}
+
+
 	}
 }

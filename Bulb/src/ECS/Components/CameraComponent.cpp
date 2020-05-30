@@ -15,7 +15,7 @@ namespace blb::ecs {
 	CameraComponent::CameraComponent(plt::Window& window, const ProjectionMode projection) {
 		viewport = { 0, 0, window.getSize().x, window.getSize().y };
 		window.onWindowResize.bind(&CameraComponent::updateViewportSize, this);
-		renderTarget = window.getSurface()->getRenderTarget();
+		//renderTarget = window.getSurface()->getRenderTarget();
 		setProjectionMode(projection);
 	}
 

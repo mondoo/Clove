@@ -10,6 +10,7 @@ using glXCreateContextAttribsARBProc = GLXContext (*)(Display *, GLXFBConfig, GL
 namespace clv::gfx::ogl{
 	GLXSurface::GLXSurface(std::shared_ptr<GraphicsFactory> factory, void* windowData) 
 		: factory(std::move(factory)) {
+		#if 0
 		plt::LinuxData* data = reinterpret_cast<plt::LinuxData*>(windowData);
 		display = data->display;
 		window = data->window;
@@ -78,6 +79,7 @@ namespace clv::gfx::ogl{
 
 			context = glXCreateContext(display, visual, nullptr, GL_TRUE);
 		}
+		#endif
 	}
 
 	GLXSurface::GLXSurface(GLXSurface&& other) noexcept = default;

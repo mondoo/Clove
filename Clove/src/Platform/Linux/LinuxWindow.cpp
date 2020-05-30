@@ -19,11 +19,11 @@ namespace clv::plt{
         screen = DefaultScreenOfDisplay(display); //Get the screen of the display
         screenID = DefaultScreen(display);
 
-		graphicsFactory = gfx::initialise(descriptor.api);
+		//graphicsFactory = gfx::initialise(descriptor.api);
 
-		//Create the context first to get the visual info
-        data = { display, &window, &visual };
-        surface = graphicsFactory->createSurface(&data);
+		////Create the context first to get the visual info
+  //      data = { display, &window, &visual };
+  //      surface = graphicsFactory->createSurface(&data);
 
         if(screenID != visual->screen){
             //TODO: Exception
@@ -84,11 +84,11 @@ namespace clv::plt{
         screen = DefaultScreenOfDisplay(display); //Get the screen of the display
         screenID = DefaultScreen(display);
 
-		graphicsFactory = gfx::initialise(api);
+		//graphicsFactory = gfx::initialise(api);
 
-		//Create the context first to get the visual info
-        data = { display, &window, &visual };
-        surface = graphicsFactory->createSurface(&data);
+		////Create the context first to get the visual info
+  //      data = { display, &window, &visual };
+  //      surface = graphicsFactory->createSurface(&data);
 
         if(screenID != visual->screen){
             //TODO: Exception
@@ -278,9 +278,6 @@ namespace clv::plt{
 						if(static_cast<uint32_t>(xce.width) != prevConfigureNotifySize.x || static_cast<uint32_t>(xce.height) != prevConfigureNotifySize.y){
 							const mth::vec2i size{ xce.width, xce.height };
 							prevConfigureNotifySize = size;
-							if(surface){
-								surface->resizeBuffers(size);
-							}
 							onWindowResize.broadcast(size);
 						}
 					}

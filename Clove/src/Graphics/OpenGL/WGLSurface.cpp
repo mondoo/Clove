@@ -9,6 +9,7 @@
 namespace clv::gfx::ogl{
 	WGLSurface::WGLSurface(std::shared_ptr<GraphicsFactory>  factory, void* windowData) 
 		: factory(std::move(factory)) {
+		#if 0
 		windowsHandle = reinterpret_cast<plt::WindowsData*>(windowData)->handle;
 
 		windowsDeviceContext = GetDC(windowsHandle);
@@ -62,6 +63,7 @@ namespace clv::gfx::ogl{
 
 			wglContext = wglCreateContext(windowsDeviceContext);
 		}
+		#endif
 	}
 
 	WGLSurface::WGLSurface(WGLSurface&& other) noexcept = default;
