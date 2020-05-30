@@ -19,46 +19,25 @@ namespace blb::ai {
 
 		//FUNCTIONS
 	public:
-		//TODO: Ctors
-		BlackBoard() 
-			: memoryBlock(1024 * 1024) { //Lets just give ourselves a meg at the moment
-		}
+		BlackBoard();
+		BlackBoard(size_t memorySize);
 
-		~BlackBoard() = default;
+		BlackBoard(const BlackBoard& other) = delete;
+		BlackBoard(BlackBoard&& other) noexcept;
 
-		template<typename DataType>
-		Key addItem(DataType item) {
-			void* block = memoryBlock.alloc(sizeof(item));
-			if(block == nullptr) {
-				//TODO: Error
-			}
+		BlackBoard& operator=(const BlackBoard& other) = delete;
+		BlackBoard& operator=(BlackBoard&& other) noexcept;
 
-			*reinterpret_cast<DataType*>(block) = item;
-
-			const Key key = nextKey++;
-			dataMap[key] = block;
-
-			return key;
-		}
+		~BlackBoard();
 
 		template<typename DataType>
-		DataType* getItem(Key key) {
-			if(dataMap.find(key) == dataMap.end()) {
-				return nullptr;
-			}
+		Key addItem(DataType item);
 
-			return reinterpret_cast<DataType*>(dataMap[key]);
-		}
+		template<typename DataType>
+		DataType* getItem(Key key);
 
-		void removeItem(Key key) {
-			if(dataMap.find(key) == dataMap.end()) {
-				return;
-			}
-
-			memoryBlock.free(dataMap[key]);
-			dataMap.erase(key);
-		}
-
-	private:
+		void removeItem(Key key);
 	};
 }
+
+#include "BlackBoard.inl"

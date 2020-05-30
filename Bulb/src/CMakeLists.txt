@@ -11,6 +11,7 @@ set(
 		${BLB_INCLUDE}/AI/BehaviourTree.hpp
 		${BLB_SOURCE}/AI/BehaviourTree.cpp
 		${BLB_INCLUDE}/AI/BlackBoard.hpp
+		${BLB_INCLUDE}/AI/BlackBoard.inl
 		${BLB_SOURCE}/AI/BlackBoard.cpp
 		${BLB_INCLUDE}/AI/Composite.hpp
 		${BLB_SOURCE}/AI/Composite.cpp
