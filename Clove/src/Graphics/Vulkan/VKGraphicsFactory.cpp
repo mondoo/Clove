@@ -1,5 +1,9 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsFactory.hpp"
 
+//TODO: Abstract away
+#include "Clove/Platform/Windows/CloveWindows.hpp"
+#include <vulkan/vulkan_win32.h>
+
 //TODO: Move this callback (and the set up) into VKException.hpp
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -13,7 +17,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 }
 
 namespace clv::gfx::vk{
-	VkResult createDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
+	static VkResult createDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
 		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 		if(func != nullptr) {
 			return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
@@ -22,7 +26,7 @@ namespace clv::gfx::vk{
 		}
 	}
 
-	void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
+	static void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
 		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
 		if(func != nullptr) {
 			func(instance, debugMessenger, pAllocator);
@@ -54,16 +58,16 @@ namespace clv::gfx::vk{
 		return true;
 	}
 
-	VKGraphicsFactory::VKGraphicsFactory() {
+	VKGraphicsFactory::VKGraphicsFactory(void* nativeWindow) {
 		std::vector<const char*> extensions {
 			VK_KHR_SURFACE_EXTENSION_NAME,
 			"VK_KHR_win32_surface", //TODO: Platform agnostic extensions
-	#if CLV_DEBUG
+#if CLV_DEBUG
 			VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-	#endif
+#endif
 		};
 
-	#if CLV_DEBUG
+#if CLV_DEBUG
 		const std::vector<const char*> validationLayers{
 			"VK_LAYER_KHRONOS_validation"
 		};
@@ -71,13 +75,13 @@ namespace clv::gfx::vk{
 		if(!checkValidationLayerSupport(validationLayers)) {
 			CLV_LOG_WARN("Vulkan validation layers are not supported on this device!");
 		}
-	#endif
+#endif
 
 		VkApplicationInfo appInfo{};
 		appInfo.sType				= VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName	= "No Name"; //TODO: Get app name
+		appInfo.pApplicationName	= "No Name";				//TODO: Get app name
 		appInfo.applicationVersion	= VK_MAKE_VERSION(1, 0, 0); //TODO: Get app version
-		appInfo.pEngineName			= "Garlic";
+		appInfo.pEngineName			= "Garlic";					//TODO: Add a variable for the engine name
 		appInfo.engineVersion		= VK_MAKE_VERSION(1, 0, 0); //TODO: Get engine version
 		appInfo.apiVersion			= VK_API_VERSION_1_2;
 
@@ -106,21 +110,34 @@ namespace clv::gfx::vk{
 #endif
 
 		if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-			throw std::runtime_error("Failed to create instance!"); //TODO: Remove exception
+			CLV_LOG_ERROR("Failed to create VK instance");
+			return;
 		}
 
-		//TODO: Move this debug messenger setup else where
 #if CLV_DEBUG
+		//TODO: Move this debug messenger setup else where
 		if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-			CLV_LOG_ERROR("Failed to create VK instance");
+			CLV_LOG_ERROR("Failed to create vk debug message callback");
 		}
 #endif
+
+		//TODO: Platform agnostic surface creation
+		VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{};
+		surfaceCreateInfo.sType		= VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+		surfaceCreateInfo.hinstance = GetModuleHandle(nullptr);
+		surfaceCreateInfo.hwnd		= reinterpret_cast<HWND>(nativeWindow);
+
+		if(vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, nullptr, &surface) != VK_SUCCESS) {
+			CLV_LOG_ERROR("Failed to create Vulkan surface");
+		}
 	}
 
 	VKGraphicsFactory::~VKGraphicsFactory() {
 #if CLV_DEBUG
 		destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #endif
+		vkDestroySurfaceKHR(instance, surface, nullptr);
+		
 		vkDestroyInstance(instance, nullptr);
 	}
 }
