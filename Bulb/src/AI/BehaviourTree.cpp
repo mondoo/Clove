@@ -13,7 +13,7 @@ namespace blb::ai {
 		rootTask = std::move(task);
 	}
 
-	BlackBoard& BehaviourTree::BlackBoard(){
+	BlackBoard& BehaviourTree::getBlackBoard() {
 		return blackboard;
 	}
 
