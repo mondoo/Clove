@@ -16,8 +16,10 @@ namespace blb::ecs {
 	public:
 		virtual ~ComponentContainerInterface();
 
-		virtual void cloneComponent(EntityID fromID, EntityID toID) = 0;
-		virtual void removeComponent(EntityID entityID) = 0;
+		virtual bool hasComponent(EntityID entityId) const = 0;
+
+		virtual void cloneComponent(EntityID fromId, EntityID toId) = 0;
+		virtual void removeComponent(EntityID entityId) = 0;
 	};
 
 	template<typename ComponentType>
@@ -27,7 +29,7 @@ namespace blb::ecs {
 		clv::mem::PoolAllocator<ComponentType> componentAllocator;
 
 		std::unordered_map<EntityID, size_t> entityIDToIndex;
-		std::vector<ComponentType*> components;
+		std::vector<ComponentType*> components; //TODO: It might be better to iterator over the allocators storage rather than having this vector
 
 		clv::EventDispatcher* ecsEventDispatcher;
 
@@ -44,12 +46,14 @@ namespace blb::ecs {
 
 		~ComponentContainer();
 
-		void cloneComponent(EntityID fromID, EntityID toID) final;
-		void removeComponent(EntityID entityID) final;
+		bool hasComponent(EntityID entityId) const final;
+
+		void cloneComponent(EntityID fromId, EntityID toId) final;
+		void removeComponent(EntityID entityId) final;
 
 		template<typename... ConstructArgs>
-		ComponentPtr<ComponentType> addComponent(EntityID entityID, ConstructArgs&&... args);
-		ComponentPtr<ComponentType> getComponent(EntityID entityID);
+		ComponentPtr<ComponentType> addComponent(EntityID entityId, ConstructArgs&&... args);
+		ComponentPtr<ComponentType> getComponent(EntityID entityId);
 	};
 
 	class ComponentManager {

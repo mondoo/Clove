@@ -20,6 +20,15 @@ namespace blb::ecs{
 	}
 
 	template<typename ComponentType>
+	bool Entity::hasComponent() const {
+		if(isValid()) {
+			return world->getComponent<ComponentType>(getID());
+		} else {
+			return false;
+		}
+	}
+
+	template<typename ComponentType>
 	void Entity::removeComponent(){
 		if(isValid()){
 			world->removeComponent<ComponentType>(getID());

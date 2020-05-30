@@ -9,6 +9,7 @@ set(BUILD_ENET OFF CACHE BOOL "Set when you want to build apps with enet UDP net
 set(BUILD_EXTRAS OFF CACHE BOOL "Set when you want to build extras")
 set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "Set when you want to build Bullet 3 OpenGL3+ demos")
 set(BUILD_UNIT_TESTS OFF CACHE BOOL "Build unit tests")
+set(BUILD_REGTEST OFF CACHE BOOL "")
 set(USE_GLUT OFF CACHE BOOL "Use GLUT")
 set(USE_GRAPHICAL_BENCHMARK OFF CACHE BOOL "Use graphical benchmark")
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "If the test suit for assimp is built in addition to the library")
@@ -45,8 +46,6 @@ set_target_properties(assimp PROPERTIES FOLDER ${DependencyFolder}/assimp)
 set_target_properties(IrrXML PROPERTIES FOLDER ${DependencyFolder}/assimp)
 if(MSVC)
     set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER ${DependencyFolder}/assimp)
-    set_target_properties(zlib PROPERTIES FOLDER ${DependencyFolder}/assimp)
-    set_target_properties(zlibstatic PROPERTIES FOLDER ${DependencyFolder}/assimp)
 endif()
 
 #portaudio

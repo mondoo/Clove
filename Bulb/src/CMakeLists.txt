@@ -100,6 +100,16 @@ set(
 )
 
 set(
+	StateMachineFiles
+		${BLB_INCLUDE}/StateMachine/State.hpp
+		${BLB_INCLUDE}/StateMachine/State.inl
+		${BLB_INCLUDE}/StateMachine/StateMachine.hpp
+		${BLB_INCLUDE}/StateMachine/StateMachine.inl
+		${BLB_INCLUDE}/StateMachine/Transition.hpp
+		${BLB_INCLUDE}/StateMachine/Transition.inl
+)
+
+set(
 	UIFiles
 		${BLB_INCLUDE}/UI/DrawableElement.hpp
 		${BLB_INCLUDE}/UI/Image.hpp
@@ -187,6 +197,7 @@ target_sources(
 		${ECSFiles}
 		${PhysicsFiles}
 		${RenderingFiles}
+		${StateMachineFiles}
 		${UIFiles}
 		${ShaderFiles}
 
