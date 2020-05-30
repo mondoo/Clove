@@ -33,11 +33,8 @@ set(
 set(
 	ControllerFiles
 		${BLB_INCLUDE}/Controller/Controller.hpp
-		${BLB_INCLUDE}/Controller/AIController.hpp
-		${BLB_SOURCE}/Controller/AIController.cpp
-		${BLB_INCLUDE}/Controller/Brain.hpp
-		${BLB_INCLUDE}/Controller/BTBrain.hpp
-		${BLB_SOURCE}/Controller/BTBrain.cpp
+		${BLB_INCLUDE}/Controller/BTAIController.hpp
+		${BLB_SOURCE}/Controller/BTAIController.cpp
 		${BLB_INCLUDE}/Controller/PlayerController.hpp
 )
 
