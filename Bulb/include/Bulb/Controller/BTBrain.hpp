@@ -11,9 +11,16 @@ namespace blb {
 
 		//FUNCTIONS
 	public:
-		//TODO: Ctors
 		BTBrain() = delete;
 		BTBrain(ai::BehaviourTree behaviourTree);
+
+		BTBrain(const BTBrain& other) = delete;
+		BTBrain(BTBrain&& other) noexcept;
+
+		BTBrain& operator=(const BTBrain& other) = delete;
+		BTBrain& operator=(BTBrain&& other) noexcept;
+
+		~BTBrain();
 
 		void update(const clv::utl::DeltaTime deltaTime) override;
 	};
