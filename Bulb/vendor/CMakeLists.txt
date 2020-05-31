@@ -45,8 +45,6 @@ set_target_properties(assimp PROPERTIES FOLDER ${DependencyFolder}/assimp)
 set_target_properties(IrrXML PROPERTIES FOLDER ${DependencyFolder}/assimp)
 if(MSVC)
     set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER ${DependencyFolder}/assimp)
-    set_target_properties(zlib PROPERTIES FOLDER ${DependencyFolder}/assimp)
-    set_target_properties(zlibstatic PROPERTIES FOLDER ${DependencyFolder}/assimp)
 endif()
 
 #portaudio
