@@ -1,5 +1,5 @@
 //TODO: Need the full path here because we convert it to a blob and so the relative path is from there
-#include "F:/RingsOfPower/Engine/Garlic/Bulb/res/Shaders/PCSS.hlsl"
+#include "F:/RingsOfPower/Engine/Garlic/Bulb/res/Shaders/ShadowFunctions.hlsl"
 
 #define MAX_LIGHTS 10
 
@@ -157,5 +157,6 @@ float calculatePointLightShadow(float3 fragPos, int lightIndex){
 	const float3 fragToLight = fragPos - pointLights[lightIndex].position;
 	const float diskRadius = 0.1f;
 
+	//Only using PCF for point shadow maps as calculating the penumbra and sampling wide locations can get complicated
 	return GenerateShadow_PCF(pointShadowDepthMap, pointShadowDepthSampler, fragToLight, farPlane, lightIndex, shadowOffsetBias, diskRadius);
 }

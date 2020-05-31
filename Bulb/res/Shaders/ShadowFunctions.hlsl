@@ -134,27 +134,6 @@ float GenerateShadow_PCSS(Texture2DArray tex, SamplerState state, float3 project
 }
 
 //Point shadow maps
-float getAverageBlockerDistance(TextureCubeArray tex, SamplerState state, float3 fragToLight, float farPlane, int lightIndex, float offset){
-    int blockers = 0;
-    float avgerageBlockerDist = 0.0f;
-    
-    const float currentDepth = length(fragToLight);
-    
-    for(int i = 0; i < poissonDiskSamples; ++i){
-        const float3 sampleLocation = fragToLight + poissonDisk3D[i] * offset;
-
-        const float depth = tex.Sample(state, float4(sampleLocation, lightIndex)).r;
-        if(depth < currentDepth){
-            blockers++;
-            avgerageBlockerDist += depth;
-        }
-    }
-    
-    avgerageBlockerDist /= blockers;
-    
-    return avgerageBlockerDist;
-}
-
 float GenerateShadow_PCF(TextureCubeArray tex, SamplerState state, float3 fragToLight, float farPlane, int lightIndex, float shadowOffsetBias, float diskRadius){
     const float currentDepth = length(fragToLight);
     
@@ -170,19 +149,4 @@ float GenerateShadow_PCF(TextureCubeArray tex, SamplerState state, float3 fragTo
 	shadow /= poissonDiskSamples;
     
     return shadow;
-}
-
-float GenerateShadow_PCSS(TextureCubeArray tex, SamplerState state, float3 fragToLight, float farPlane, int lightIndex, float shadowOffsetBias, float diskRadius){
-    const float currentDepth = length(fragToLight);
-
-    float averageBlockerDistance = getAverageBlockerDistance(tex, state, fragToLight, farPlane, lightIndex, diskRadius);
-    
-    if(averageBlockerDistance == 0.0f){
-        return 0.0f;
-    }else{
-        const float penumbraSize = estimatePenumbraSize(lightSize, currentDepth, averageBlockerDistance);
-        const float shadow = GenerateShadow_PCF(tex, state, fragToLight, farPlane, lightIndex, shadowOffsetBias, penumbraSize);
-        
-        return shadow;
-    }
 }
