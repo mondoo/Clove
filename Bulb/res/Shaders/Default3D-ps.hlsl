@@ -155,10 +155,7 @@ float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace){
 float calculatePointLightShadow(float3 fragPos, int lightIndex){
 	const float farPlane = pointLights[lightIndex].farplane;
 	const float3 fragToLight = fragPos - pointLights[lightIndex].position;
+	const float diskRadius = 0.1f;
 
-	float width, height, elements;
-	pointShadowDepthMap.GetDimensions(width, height, elements);
-	const float2 texelSize = 1.0f / float2(width, height);
-
-	return GenerateShadow_PCF(pointShadowDepthMap, pointShadowDepthSampler, fragToLight, farPlane, lightIndex, shadowOffsetBias, texelSize);
+	return GenerateShadow_PCF(pointShadowDepthMap, pointShadowDepthSampler, fragToLight, farPlane, lightIndex, shadowOffsetBias, diskRadius);
 }
