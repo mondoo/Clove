@@ -58,7 +58,7 @@ float estimatePenumbraSize(float lightSize, float recieverDepth, float averageBl
 }
 
 //Directional Shadow maps
-float2 getAverageBlockerDistance(Texture2DArray tex, SamplerState state, float3 projectionCoords, int lightIndex, float offset){
+float getAverageBlockerDistance(Texture2DArray tex, SamplerState state, float3 projectionCoords, int lightIndex, float offset){
     int blockers = 0;
     float avgerageBlockerDist = 0.0f;
     
@@ -77,7 +77,7 @@ float2 getAverageBlockerDistance(Texture2DArray tex, SamplerState state, float3 
     
     avgerageBlockerDist /= blockers;
     
-    return float2(avgerageBlockerDist, float(blockers));
+    return avgerageBlockerDist;
 }
 
 float GenerateShadow_PCF(Texture2DArray tex, SamplerState state, float3 projectionCoords, int lightIndex, float shadowOffsetBias, float2 texelSize){
@@ -100,7 +100,7 @@ float GenerateShadow_PCSS(Texture2DArray tex, SamplerState state, float3 project
     if(averageBlockerDistance == 0.0f){
         return 0.0f;
     }else{
-        const float penumbraSize = estimatePenumbraSize(lightSize, projectionCoords.z, averageBlockerDistance.x);
+        const float penumbraSize = estimatePenumbraSize(lightSize, projectionCoords.z, averageBlockerDistance);
         const float shadow = GenerateShadow_PCF(tex, state, projectionCoords, lightIndex, shadowOffsetBias, penumbraSize);
         
         return shadow;
@@ -108,7 +108,7 @@ float GenerateShadow_PCSS(Texture2DArray tex, SamplerState state, float3 project
 }
 
 //Point shadow maps
-float2 getAverageBlockerDistance(TextureCubeArray tex, SamplerState state, float3 fragToLight, float farPlane, int lightIndex, float offset){
+float getAverageBlockerDistance(TextureCubeArray tex, SamplerState state, float3 fragToLight, float farPlane, int lightIndex, float offset){
     int blockers = 0;
     float avgerageBlockerDist = 0.0f;
     
@@ -126,7 +126,7 @@ float2 getAverageBlockerDistance(TextureCubeArray tex, SamplerState state, float
     
     avgerageBlockerDist /= blockers;
     
-    return float2(avgerageBlockerDist, float(blockers));
+    return avgerageBlockerDist;
 }
 
 float GenerateShadow_PCF(TextureCubeArray tex, SamplerState state, float3 fragToLight, float farPlane, int lightIndex, float shadowOffsetBias, float diskRadius){
@@ -154,7 +154,7 @@ float GenerateShadow_PCSS(TextureCubeArray tex, SamplerState state, float3 fragT
     if(averageBlockerDistance == 0.0f){
         return 0.0f;
     }else{
-        const float penumbraSize = estimatePenumbraSize(lightSize, currentDepth, averageBlockerDistance.x);
+        const float penumbraSize = estimatePenumbraSize(lightSize, currentDepth, averageBlockerDistance);
         const float shadow = GenerateShadow_PCF(tex, state, fragToLight, farPlane, lightIndex, shadowOffsetBias, penumbraSize);
         
         return shadow;
