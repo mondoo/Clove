@@ -1,5 +1,5 @@
 static const uint poissonDiskSamples = 32;
-static const float2 poissonDisk[poissonDiskSamples] = {
+static const float2 poissonDisk2D[poissonDiskSamples] = {
     float2(  0.0f, 0.0f ), 
     float2(  0.8048486986946776f,  -0.5852050849392686f   ),    
     float2( -0.9958393427837682f,   0.036113738734521734f ),  
@@ -33,6 +33,40 @@ static const float2 poissonDisk[poissonDiskSamples] = {
     float2( -0.634849590405609f,    0.2817332624087997f   ),
     float2( -0.7317371150804994f,  -0.11790178286328051f  ),
 };
+static const float3 poissonDisk3D[poissonDiskSamples] = {
+    float3(  0.0f, 0.0f, 0.0f ),
+    float3(  0.2970119350527858f,    0.9137044248167985f,  -0.2693162154312882f ),
+    float3( -0.5171754761255204f,   -0.709248152150239f,    0.46867384029139963f ),
+    float3( -0.44538581381036385f,   0.28360623328457013f, -0.8441223927872976f ),
+    float3(  0.9810220725274866f,   -0.03544184377706667f,  0.17332364083523577f ),
+    float3( -0.9740271565497202f,    0.15618226999047652f,  0.005380007988301553f ),
+    float3(  0.5613422345001199f,   -0.48618871047817114f, -0.6112433033660324f ),
+    float3( -0.23843837356943492f,   0.02383594171908807f,  0.9418022313791492f ),
+    float3(  0.13896078198464487f,   0.7750322892150238f,   0.5611438228329888f ),
+    float3( -0.3944238993375644f,   -0.5203523037866771f,  -0.580587962468195f ),
+    float3(  0.258348240119418f,    -0.7710682808090137f,   0.4040138356452848f ),
+    float3( -0.3788265054940143f,    0.6283224441938055f,   0.04380878402602242f ),
+    float3(  0.5851829658312667f,    0.17123641719530672f,  0.7913176109387675f ),
+    float3(  0.7800894810307873f,    0.4223602536913283f,  -0.42843161836658683f ),
+    float3(  0.022100030903691288f, -0.9574684087141979f,  -0.21196897809182866f ),
+    float3(  0.28087695199073925f,   0.3716651489529634f,  -0.7877022660088109f ),
+    float3( -0.7333323577804098f,   -0.12035806808429757f,  0.6201782413736597f ),
+    float3( -0.13545667538302653f,  -0.49555732176214096f,  0.833756018374939f ),
+    float3(  0.08934321061509666f,  -0.1363771999642559f,  -0.65334642691584f ),
+    float3(  0.5063477941713882f,    0.438095355895574f,    0.16041913115059864f ),
+    float3(  0.6831890469255234f,   -0.6848472827183825f,   0.04422258099795258f ),
+    float3( -0.8909167124004707f,   -0.43741388763160216f, -0.04101949447077831f ),
+    float3( -0.6456120970369887f,    0.33508298363644984f, -0.36794591506542956f ),
+    float3( -0.642834063259088f,     0.40577414602941736f,  0.5205182035837411f ),
+    float3(  0.33615414783357084f,  -0.29141800057456785f,  0.6676744591274754f ),
+    float3(  0.5225751275161967f,   -0.07081083769194643f, -0.15914862768827528f ),
+    float3( -0.12108896280875198f,   0.6040323650803143f,  -0.43918371409069085f ),
+    float3(  0.18732151744880107f,  -0.4569176464322416f,  -0.17696909897077215f ),
+    float3( -0.502620567981614f,    -0.8635201089075424f,  -0.037891317515832953f ),
+    float3( -0.3899037751374441f,   -0.40756585831125985f, -0.0460740097707099f ),
+    float3(  0.1403252738408343f,    0.2225453510387535f,   0.41550032815707305f ),
+    float3(  0.6121164036106788f,    0.05820146081120524f, -0.7132630308929806f ),  
+};
 
 float2 rotate(float2 pos, float angle){
     float2 rotated;
@@ -48,7 +82,7 @@ float2 getAverageBlockerDistance(Texture2DArray tex, SamplerState state, float3 
     const float currentDepth = projectionCoords.z;
     
     for(int i = 0; i < poissonDiskSamples; ++i){
-        const float2 rotatedOffset = rotate(poissonDisk[i] * offset, radians(45));
+        const float2 rotatedOffset = rotate(poissonDisk2D[i] * offset, radians(45));
         const float2 sampleLocation = projectionCoords.xy + rotatedOffset;
         
         const float depth = tex.Sample(state, float3(sampleLocation, lightIndex)).r;
@@ -73,8 +107,8 @@ float GenerateShadow_PCF(Texture2DArray tex, SamplerState state, float3 projecti
 	
 	float shadow = 0.0f;
 	for(uint i = 0; i < poissonDiskSamples; ++i){
-		const float2 sampleLocation = projectionCoords.xy + poissonDisk[i] * texelSize;
-		float closestDepth = tex.Sample(state, float3(sampleLocation, lightIndex)).r; //TODO: Try tex.Gather to use bilinear filtering
+		const float2 sampleLocation = projectionCoords.xy + poissonDisk2D[i] * texelSize;
+		float closestDepth = tex.Sample(state, float3(sampleLocation, lightIndex)).r;
 		shadow += currentDepth - shadowOffsetBias > closestDepth ? 1.0f : 0.0f;
 	}	
 	shadow /= poissonDiskSamples;
