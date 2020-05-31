@@ -115,6 +115,23 @@ float GenerateShadow_PCF(Texture2DArray tex, SamplerState state, float3 projecti
     
     return shadow;
 }
+
+float GenerateShadow_PCF(TextureCubeArray tex, SamplerState state, float3 fragToLight, float farPlane, float lightIndex, float shadowOffsetBias, float2 texelSize){
+    float currentDepth = length(fragToLight);
+    
+    float shadow = 0.0;
+	for(uint i = 0; i < poissonDiskSamples; ++i){
+		const float3 sampleLocation = fragToLight + poissonDisk3D[i] * float3(texelSize.xy, 1.0f / 6.0f);
+		float closestDepth = tex.Sample(state, float4(sampleLocation, lightIndex)).r;
+		closestDepth *= farPlane;
+		if((currentDepth - shadowOffsetBias) > closestDepth){
+			shadow += 1.0;
+		}
+	}
+	shadow /= poissonDiskSamples;
+    
+    return shadow;
+}
     
 float GenerateShadow_PCSS(Texture2DArray tex, SamplerState state, float3 projectionCoords, float lightIndex, float shadowOffsetBias, float2 texelSize){   
     const float offset = 1.0f / 50.0f; //Chosen by experiementation, maybe something we'd want to control with a constant buffer in future

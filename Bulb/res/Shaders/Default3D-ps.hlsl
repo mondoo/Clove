@@ -154,24 +154,11 @@ float calculateDirectionalLightShadow(int lightIndex, float4 vertPosLightSpace){
 
 float calculatePointLightShadow(float3 fragPos, int lightIndex){
 	const float farPlane = pointLights[lightIndex].farplane;
-
-	float3 fragToLight = fragPos - pointLights[lightIndex].position;
-	float currentDepth = length(fragToLight);
+	const float3 fragToLight = fragPos - pointLights[lightIndex].position;
 
 	float width, height, elements;
 	pointShadowDepthMap.GetDimensions(width, height, elements);
 	const float2 texelSize = 1.0f / float2(width, height);
-	
-	float shadow = 0.0;
-	for(uint i = 0; i < poissonDiskSamples; ++i){
-		const float3 sampleLocation = fragToLight + poissonDisk3D[i] * float3(texelSize.xy, 1.0f / 6.0f);
-		float closestDepth = pointShadowDepthMap.Sample(pointShadowDepthSampler, float4(sampleLocation, lightIndex)).r;
-		closestDepth *= farPlane;
-		if((currentDepth - shadowOffsetBias) > closestDepth){
-			shadow += 1.0;
-		}
-	}
-	shadow /= poissonDiskSamples;
 
-	return shadow;
+	return GenerateShadow_PCF(pointShadowDepthMap, pointShadowDepthSampler, fragToLight, farPlane, lightIndex, shadowOffsetBias, texelSize);
 }
