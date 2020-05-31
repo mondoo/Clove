@@ -69,7 +69,7 @@ static const float3 poissonDisk3D[poissonDiskSamples] = {
 };
 
 static const float offset = 1.0f / 50.0f; //Chosen by experiementation, maybe something we'd want to control with a constant buffer in future
-static const float lightSize = 1.0f; //NOTE: Currently we only have a point and directional lights (an no area lights) so our light size is hard coded
+static const float lightSize = 0.3f; //NOTE: Currently we only have a point and directional lights (an no area lights) so our light size is hard coded
 
 float2 rotate(float2 pos, float angle){
     float2 rotated;
