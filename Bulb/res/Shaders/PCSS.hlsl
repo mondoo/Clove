@@ -48,7 +48,7 @@ float2 getAverageBlockerDistance(Texture2DArray tex, SamplerState state, float3 
     const float currentDepth = projectionCoords.z;
     
     for(int i = 0; i < poissonDiskSamples; ++i){
-        const float2 rotatedOffset = rotate(poissonDisk[i] * offset, 0.785398f);
+        const float2 rotatedOffset = rotate(poissonDisk[i] * offset, radians(45));
         const float2 sampleLocation = projectionCoords.xy + rotatedOffset;
         
         const float depth = tex.Sample(state, float3(sampleLocation, lightIndex)).r;
