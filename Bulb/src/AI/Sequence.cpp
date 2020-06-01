@@ -9,9 +9,9 @@ namespace blb::ai {
 
 	Sequence::~Sequence() = default;
 
-	Task::Status Sequence::activate(clv::utl::DeltaTime deltaTime) {
+	Task::Status Sequence::activate(const clv::utl::DeltaTime deltaTime, BlackBoard& blackboard) {
 		for(const auto& child : children) {
-			const Status status = child->activate(deltaTime);
+			const Status status = child->activate(deltaTime, blackboard);
 			if(status != Status::Success) {
 				return status;
 			}

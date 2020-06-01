@@ -10,6 +10,9 @@ set(
 	AIFiles
 		${BLB_INCLUDE}/AI/BehaviourTree.hpp
 		${BLB_SOURCE}/AI/BehaviourTree.cpp
+		${BLB_INCLUDE}/AI/BlackBoard.hpp
+		${BLB_INCLUDE}/AI/BlackBoard.inl
+		${BLB_SOURCE}/AI/BlackBoard.cpp
 		${BLB_INCLUDE}/AI/Composite.hpp
 		${BLB_SOURCE}/AI/Composite.cpp
 		${BLB_INCLUDE}/AI/Decorator.hpp
@@ -25,6 +28,14 @@ set(
 	AudioFiles
 		${BLB_INCLUDE}/Audio/Sound.hpp
 		${BLB_SOURCE}/Audio/Sound.cpp
+)
+
+set(
+	ControllerFiles
+		${BLB_INCLUDE}/Controller/Controller.hpp
+		${BLB_INCLUDE}/Controller/BTAIController.hpp
+		${BLB_SOURCE}/Controller/BTAIController.cpp
+		${BLB_INCLUDE}/Controller/PlayerController.hpp
 )
 
 set(
@@ -45,8 +56,6 @@ set(
 		${BLB_INCLUDE}/ECS/System.hpp
 		${BLB_INCLUDE}/ECS/Components/AudioComponent.hpp
 		${BLB_SOURCE}/ECS/Components/AudioComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/BehaviourTreeComponent.hpp
-		${BLB_SOURCE}/ECS/Components/BehaviourTreeComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/CameraComponent.hpp
 		${BLB_SOURCE}/ECS/Components/CameraComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
@@ -61,8 +70,6 @@ set(
 		${BLB_SOURCE}/ECS/Components/TransformComponent.cpp
 		${BLB_INCLUDE}/ECS/Systems/AudioSystem.hpp
 		${BLB_SOURCE}/ECS/Systems/AudioSystem.cpp
-		${BLB_INCLUDE}/ECS/Systems/BehaviourTreeSystem.hpp
-		${BLB_SOURCE}/ECS/Systems/BehaviourTreeSystem.cpp
 		${BLB_INCLUDE}/ECS/Systems/RenderSystem.hpp
 		${BLB_SOURCE}/ECS/Systems/RenderSystem.cpp
 		${BLB_INCLUDE}/ECS/Systems/PhysicsSystem.hpp
@@ -195,6 +202,7 @@ target_sources(
         
 		${AIFiles}
 		${AudioFiles}
+		${ControllerFiles}
 		${ECSFiles}
 		${PhysicsFiles}
 		${RenderingFiles}

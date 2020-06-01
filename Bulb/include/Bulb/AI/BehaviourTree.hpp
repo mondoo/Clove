@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Bulb/AI/BlackBoard.hpp"
 #include "Bulb/AI/Task.hpp"
 
 namespace blb::ai {
 	class BehaviourTree {
 		//VARIABLES
 	private:
+		BlackBoard blackboard;
 		std::unique_ptr<Task> rootTask;
 
 		//FUNCTIONS
@@ -21,6 +23,8 @@ namespace blb::ai {
 		~BehaviourTree();
 
 		void setRootTask(std::unique_ptr<Task> task);
+
+		BlackBoard& getBlackBoard();
 
 		void run(clv::utl::DeltaTime deltaTime);
 	};

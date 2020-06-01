@@ -1,6 +1,10 @@
 #pragma once
 
 namespace blb::ai {
+	class BlackBoard;
+}
+
+namespace blb::ai {
 	class Task {
 		//TYPES
 	public:
@@ -14,6 +18,6 @@ namespace blb::ai {
 	public:
 		virtual ~Task() = default;
 
-		virtual Status activate(clv::utl::DeltaTime deltaTime) = 0;
+		virtual Status activate(const clv::utl::DeltaTime deltaTime, BlackBoard& blackboard) = 0;
 	};
 }
