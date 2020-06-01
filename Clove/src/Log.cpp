@@ -3,7 +3,9 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
-namespace clv{
+clv::Log::Context garlicLogContext = clv::Log::createContext("GARLIC", "GarlicLog.txt");
+
+namespace clv {
 	Log::Context createContext(std::string_view loggerName, std::string_view fileName) {
 		const std::string consolePattern = "%^[%T] %n: %v%$";
 		const std::string filePattern = "[%D %T][%l] %n: %v";
