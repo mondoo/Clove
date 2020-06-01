@@ -94,3 +94,6 @@ namespace clv {
 }
 
 #define GARLIC_LOG(context, level, ...) context.log(level, __VA_ARGS__);
+
+//Temp
+static inline clv::Log::Context garlicLogContext = clv::Log::createContext("GARLIC", "GarlicLog.txt");
