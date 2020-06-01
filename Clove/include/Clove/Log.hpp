@@ -35,7 +35,7 @@ namespace clv {
 						logger->debug(msg, args...);
 						break;
 					case Level::Info:
-						logger->debug(msg, args...);
+						logger->info(msg, args...);
 						break;
 					case Level::Warning:
 						logger->warn(msg, args...);
@@ -59,7 +59,7 @@ namespace clv {
 						logger->debug(msg);
 						break;
 					case Level::Info:
-						logger->debug(msg);
+						logger->info(msg);
 						break;
 					case Level::Warning:
 						logger->warn(msg);
