@@ -30,19 +30,19 @@ namespace clv {
 			void log(Level level, const char* msg, Args&&... args) {
 				switch(level) {
 					case Level::Trace:
-						logger->trace(msg, args);
+						logger->trace(msg, args...);
 						break;
 					case Level::Debug:
-						logger->debug(msg, args);
+						logger->debug(msg, args...);
 						break;
 					case Level::Warning:
-						logger->warn(msg, args);
+						logger->warn(msg, args...);
 						break;
 					case Level::Error:
-						logger->error(msg, args);
+						logger->error(msg, args...);
 						break;
 					case Level::Critical:
-						logger->critical(msg, args);
+						logger->critical(msg, args...);
 						break;
 				}
 			}
