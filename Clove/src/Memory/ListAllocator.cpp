@@ -26,6 +26,7 @@ namespace clv::mem {
 		list = std::move(list);
 
 		freeMemory = other.freeMemory;
+		other.freeMemory = false;
 	}
 
 	ListAllocator& ListAllocator::operator=(ListAllocator&& other) noexcept {
@@ -36,6 +37,7 @@ namespace clv::mem {
 		list = std::move(list);
 
 		freeMemory = other.freeMemory;
+		other.freeMemory = false;
 
 		return *this;
 	}
