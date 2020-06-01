@@ -25,6 +25,7 @@ namespace clv {
 
 		std::vector<spdlog::sink_ptr> sinks{ consoleSink, fileSink };
 		auto logger = std::make_shared<spdlog::logger>(loggerName.data(), sinks.begin(), sinks.end());
+		logger->set_level(spdlog::level::trace);
 
 		return Log::Context{ logger };
 	}
