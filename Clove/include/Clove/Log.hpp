@@ -11,6 +11,7 @@ namespace clv {
 		enum class Level {
 			Trace,
 			Debug,
+			Info,
 			Warning,
 			Error,
 			Critical
@@ -35,6 +36,9 @@ namespace clv {
 					case Level::Debug:
 						logger->debug(msg, args...);
 						break;
+					case Level::Info:
+						logger->debug(msg, args...);
+						break;
 					case Level::Warning:
 						logger->warn(msg, args...);
 						break;
@@ -47,12 +51,16 @@ namespace clv {
 				}
 			}
 
-			void log(Level level, const char* msg) {
+			template<typename T>
+			void log(Level level, const T& msg) {
 				switch(level) {
 					case Level::Trace:
 						logger->trace(msg);
 						break;
 					case Level::Debug:
+						logger->debug(msg);
+						break;
+					case Level::Info:
 						logger->debug(msg);
 						break;
 					case Level::Warning:
