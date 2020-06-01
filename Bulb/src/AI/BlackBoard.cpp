@@ -9,9 +9,17 @@ namespace blb::ai {
 		: memoryBlock(memorySize) {
 	}
 
-	BlackBoard::BlackBoard(BlackBoard&& other) noexcept = default;
+	BlackBoard::BlackBoard(BlackBoard&& other) noexcept 
+		: memoryBlock(std::move(other.memoryBlock)) {
+		dataMap = std::move(other.dataMap);
+	}
 
-	BlackBoard& BlackBoard::operator=(BlackBoard&& other) noexcept = default;
+	BlackBoard& BlackBoard::operator=(BlackBoard&& other) noexcept {
+		memoryBlock = std::move(other.memoryBlock);
+		dataMap = std::move(other.dataMap);
+
+		return *this;
+	}
 
 	BlackBoard::~BlackBoard() = default;
 }
