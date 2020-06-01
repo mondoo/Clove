@@ -49,7 +49,7 @@ namespace clv::mem {
 	template<typename... Args>
 	ItemType* PoolAllocator<ItemType>::alloc(Args&&... args) {
 		if(nextFree == nullptr) {
-			CLV_LOG_ERROR("{0}: At the end of the free list. Cannot allocate new elements", CLV_FUNCTION_NAME_PRETTY);
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: At the end of the free list. Cannot allocate new elements", CLV_FUNCTION_NAME_PRETTY);
 			return nullptr;
 		}
 

@@ -34,7 +34,7 @@ namespace clv::mem {
 
 	void* StackAllocator::alloc(size_t bytes) {
 		if((top - stack) + bytes > stackSize) {
-			CLV_LOG_ERROR("{0}: Not enough space left to allocate {1} bytes.", CLV_FUNCTION_NAME_PRETTY, bytes);
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Not enough space left to allocate {1} bytes.", CLV_FUNCTION_NAME_PRETTY, bytes);
 			return nullptr;
 		}
 

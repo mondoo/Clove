@@ -26,7 +26,7 @@ namespace blb::ecs {
 	}
 
 	AudioSystem::AudioSystem() {
-		CLV_LOG_TRACE("Portaudio intialised");
+		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Portaudio intialised");
 		PACall(Pa_Initialize());
 	}
 
@@ -35,7 +35,7 @@ namespace blb::ecs {
 	AudioSystem& AudioSystem::operator=(AudioSystem&& other) noexcept = default;
 
 	AudioSystem::~AudioSystem() {
-		CLV_LOG_TRACE("Portaudio shutdown");
+		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Portaudio shutdown");
 		PACall(Pa_Terminate());
 	}
 

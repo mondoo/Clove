@@ -51,8 +51,8 @@ namespace clv{
 		int32_t sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, &wideString[0], static_cast<int32_t>(wideString.size()), nullptr, 0, nullptr, nullptr);
 
 		if(sizeNeeded <= 0){
-			CLV_LOG_ERROR("Was unable to convert wide char to multi byte");
-			CLV_LOG_ERROR(GetLastError());
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Was unable to convert wide char to multi byte");
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, GetLastError());
 		} else{
 			WideCharToMultiByte(CP_UTF8, 0, &wideString[0], static_cast<int32_t>(wideString.size()), &string[0], sizeNeeded, nullptr, nullptr);
 		}

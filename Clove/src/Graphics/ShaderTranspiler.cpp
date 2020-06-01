@@ -23,7 +23,7 @@ namespace clv::gfx::ShaderTranspiler{
 			case clv::gfx::ShaderStage::Geometry:
 				return EShLanguage::EShLangGeometry;
 			default:
-				CLV_LOG_ERROR("Unsupported shader stage {0}", CLV_FUNCTION_NAME);
+				GARLIC_LOG(garlicLogContext, Log::Level::Error, "Unsupported shader stage {0}", CLV_FUNCTION_NAME);
 				return EShLanguage::EShLangVertex;
 		}
 	}
@@ -172,7 +172,7 @@ namespace clv::gfx::ShaderTranspiler{
 		const char* log = shader.getInfoLog();
 
 		if(strlen(log) > 0){
-			CLV_LOG_ERROR("Error compiling shader: {0}", log);
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Error compiling shader: {0}", log);
 			return "";
 		}
 
