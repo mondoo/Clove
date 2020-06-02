@@ -59,8 +59,11 @@ namespace clv::gfx::vk{
 	}
 
 	VKGraphicsFactory::VKGraphicsFactory(void* nativeWindow) {
-		std::vector<const char*> extensions {
+		std::vector<const char*> deviceExtensions {
 			VK_KHR_SURFACE_EXTENSION_NAME,
+		};
+
+		std::vector<const char*> requiredExtensions {
 			"VK_KHR_win32_surface", //TODO: Platform agnostic extensions
 #if CLV_DEBUG
 			VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
@@ -97,8 +100,8 @@ namespace clv::gfx::vk{
 		VkInstanceCreateInfo createInfo{};
 		createInfo.sType					= VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		createInfo.pApplicationInfo			= &appInfo;
-		createInfo.enabledExtensionCount	= std::size(extensions);
-		createInfo.ppEnabledExtensionNames	= std::data(extensions);
+		createInfo.enabledExtensionCount	= std::size(requiredExtensions);
+		createInfo.ppEnabledExtensionNames	= std::data(requiredExtensions);
 #if CLV_DEBUG
 		createInfo.enabledLayerCount		= std::size(validationLayers);
 		createInfo.ppEnabledLayerNames		= std::data(validationLayers);
