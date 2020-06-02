@@ -6,14 +6,14 @@ namespace clv::gfx::vk {
 	class VKGraphicsFactory {
 		//VARIABLES
 	private:
-		VkDebugUtilsMessengerEXT debugMessenger;
+		VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
 
-		VkInstance instance;
+		VkInstance instance = VK_NULL_HANDLE;
 
-		VkSurfaceKHR surface;
+		VkSurfaceKHR surface = VK_NULL_HANDLE;
 
-		VkPhysicalDevice physicalDevice;
-		VkDevice logicalDevice;
+		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+		VkDevice logicalDevice = VK_NULL_HANDLE;
 
 		//FUNCTIONS
 	public:

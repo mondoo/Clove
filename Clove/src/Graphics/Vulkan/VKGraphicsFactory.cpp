@@ -17,6 +17,22 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 }
 
 namespace clv::gfx::vk{
+	struct QueueFamilyIndices {
+		std::optional<uint32_t> graphicsFamily;
+		std::optional<uint32_t> presentFamily;
+		std::optional<uint32_t> transferFamily;
+
+		bool isComplete() const {
+			return graphicsFamily && presentFamily && transferFamily;
+		}
+	};
+
+	struct SwapChainSupportDetails {
+		VkSurfaceCapabilitiesKHR capabilities;
+		std::vector<VkSurfaceFormatKHR> formats;
+		std::vector<VkPresentModeKHR> presentModes;
+	};
+
 	static VkResult createDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
 		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 		if(func != nullptr) {
@@ -58,6 +74,121 @@ namespace clv::gfx::vk{
 		return true;
 	}
 
+	static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
+		QueueFamilyIndices indices;
+
+		uint32_t queueFamilyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+		int i = 0;
+		for(const auto& queueFamily : queueFamilies) {
+			//Make sure we have the queue family that'll let us render graphics
+			if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+				indices.graphicsFamily = i;
+			}
+
+			//Make sure we have a queue family that'll let us present to a window, might not be the same family that supports graphics
+			//We could enforce this by only choosing devices that have presentation support in it's graphics family
+			VkBool32 presentSupport = VK_FALSE;
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+			if(presentSupport == VK_TRUE) {
+				indices.presentFamily = i;
+			}
+
+			//Find a transfer queue family that specifically doesn't support graphics
+			if(queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT && !(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
+				indices.transferFamily = i;
+			}
+
+			if(indices.isComplete()) {
+				break;
+			}
+
+			++i;
+		}
+
+		return indices;
+	}
+
+	static bool checkDeviceExtensionsSupport(VkPhysicalDevice device, const std::vector<const char*>& extensions) {
+		uint32_t extensionCount;
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+
+		std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+		for(const char* extensionName : extensions) {
+			bool found = false;
+
+			for(const auto& extensionProperties : availableExtensions) {
+				if(std::strcmp(extensionName, extensionProperties.extensionName) == 0) {
+					found = true;
+					break;
+				}
+			}
+
+			if(!found) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	static SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface) {
+		SwapChainSupportDetails details;
+
+		//Surface capabilities
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
+
+		//Surface formats
+		uint32_t formatCount;
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
+
+		if(formatCount > 0) {
+			details.formats.resize(formatCount);
+			vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
+		}
+
+		//Surface presentation modes
+		uint32_t presentModeCount;
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
+
+		if(presentModeCount > 0) {
+			details.presentModes.resize(presentModeCount);
+			vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
+		}
+
+		return details;
+	}
+
+	static bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, const std::vector<const char*>& extensions) {
+		//TODO: It might be better to give each physical device a score in future, so we can try and get the best one but fall back to others if not
+
+		//Basic properties (name, type, supported vk version)
+		//VkPhysicalDeviceProperties devicePoperties;
+		//vkGetPhysicalDeviceProperties(device, &devicePoperties);
+
+		//Feature (texture compression, 64 bit floats, multi viewport rendering)
+		VkPhysicalDeviceFeatures deviceFeatures;
+		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+		QueueFamilyIndices indices = findQueueFamilies(device, surface);
+		const bool extentionsAreSupported = checkDeviceExtensionsSupport(device, extensions);
+
+		bool swapChainIsAdequate = false;
+		if(extentionsAreSupported) {
+			SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device, surface);
+			//We'll consider the swap chain adequate if we have once supported image format and presentation mode
+			swapChainIsAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+		}
+
+		return indices.isComplete() && extentionsAreSupported && swapChainIsAdequate && deviceFeatures.samplerAnisotropy;
+	}
+
 	VKGraphicsFactory::VKGraphicsFactory(void* nativeWindow) {
 		std::vector<const char*> deviceExtensions {
 			VK_KHR_SWAPCHAIN_EXTENSION_NAME,
@@ -80,6 +211,8 @@ namespace clv::gfx::vk{
 			CLV_LOG_WARN("Vulkan validation layers are not supported on this device!");
 		}
 #endif
+
+		//CREATE INSTANCE
 
 		VkApplicationInfo appInfo{};
 		appInfo.sType				= VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -122,8 +255,11 @@ namespace clv::gfx::vk{
 		//TODO: Move this debug messenger setup else where
 		if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
 			CLV_LOG_ERROR("Failed to create vk debug message callback");
+			return;
 		}
 #endif
+
+		//CREATE SURFACE
 
 		//TODO: Platform agnostic surface creation
 		VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{};
@@ -133,6 +269,38 @@ namespace clv::gfx::vk{
 
 		if(vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, nullptr, &surface) != VK_SUCCESS) {
 			CLV_LOG_ERROR("Failed to create Vulkan surface");
+			return;
+		}
+
+		//PICK PHYSICAL DEVICE
+
+		uint32_t deviceCount = 0;
+		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+		if(deviceCount == 0) {
+			CLV_LOG_ERROR("failed to find GPUs with Vulkan support!");
+			return;
+		}
+		std::vector<VkPhysicalDevice> devices(deviceCount);
+		vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+		for(const auto& device : devices) {
+			if(isDeviceSuitable(device, surface, deviceExtensions)) {
+				physicalDevice = device;
+				break;
+			}
+		}
+
+		if(physicalDevice == VK_NULL_HANDLE) {
+			CLV_LOG_ERROR("failed to find a suitable GPU!");
+			return;
+		} else {
+			VkPhysicalDeviceProperties devicePoperties;
+			vkGetPhysicalDeviceProperties(physicalDevice, &devicePoperties);
+
+			CLV_LOG_INFO("Vulkan capable physical device found");
+			CLV_LOG_INFO("\tDevice:\t{0}", devicePoperties.deviceName);
+			CLV_LOG_INFO("\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
+			CLV_LOG_INFO("\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
 		}
 	}
 
