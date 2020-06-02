@@ -60,10 +60,11 @@ namespace clv::gfx::vk{
 
 	VKGraphicsFactory::VKGraphicsFactory(void* nativeWindow) {
 		std::vector<const char*> deviceExtensions {
-			VK_KHR_SURFACE_EXTENSION_NAME,
+			VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 		};
 
 		std::vector<const char*> requiredExtensions {
+			VK_KHR_SURFACE_EXTENSION_NAME,
 			"VK_KHR_win32_surface", //TODO: Platform agnostic extensions
 #if CLV_DEBUG
 			VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
