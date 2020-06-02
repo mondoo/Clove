@@ -213,94 +213,150 @@ namespace clv::gfx::vk{
 #endif
 
 		//CREATE INSTANCE
-
-		VkApplicationInfo appInfo{};
-		appInfo.sType				= VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName	= "No Name";				//TODO: Get app name
-		appInfo.applicationVersion	= VK_MAKE_VERSION(1, 0, 0); //TODO: Get app version
-		appInfo.pEngineName			= "Garlic";					//TODO: Add a variable for the engine name
-		appInfo.engineVersion		= VK_MAKE_VERSION(1, 0, 0); //TODO: Get engine version
-		appInfo.apiVersion			= VK_API_VERSION_1_2;
+		{
+			VkApplicationInfo appInfo{};
+			appInfo.sType				= VK_STRUCTURE_TYPE_APPLICATION_INFO;
+			appInfo.pApplicationName	= "No Name";				//TODO: Get app name
+			appInfo.applicationVersion	= VK_MAKE_VERSION(1, 0, 0); //TODO: Get app version
+			appInfo.pEngineName			= "Garlic";					//TODO: Add a variable for the engine name
+			appInfo.engineVersion		= VK_MAKE_VERSION(1, 0, 0);	//TODO: Get engine version
+			appInfo.apiVersion			= VK_API_VERSION_1_2;
 
 #if CLV_DEBUG
-		VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo{};
-		debugMessengerCreateInfo.sType				= VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-		debugMessengerCreateInfo.messageSeverity	= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-		debugMessengerCreateInfo.messageType		= VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-		debugMessengerCreateInfo.pfnUserCallback	= debugCallback;
-		debugMessengerCreateInfo.pUserData			= nullptr;
+			VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo{};
+			debugMessengerCreateInfo.sType				= VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+			debugMessengerCreateInfo.messageSeverity	= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+			debugMessengerCreateInfo.messageType		= VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+			debugMessengerCreateInfo.pfnUserCallback	= debugCallback;
+			debugMessengerCreateInfo.pUserData			= nullptr;
 #endif
 
-		VkInstanceCreateInfo createInfo{};
-		createInfo.sType					= VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		createInfo.pApplicationInfo			= &appInfo;
-		createInfo.enabledExtensionCount	= std::size(requiredExtensions);
-		createInfo.ppEnabledExtensionNames	= std::data(requiredExtensions);
+			VkInstanceCreateInfo createInfo{};
+			createInfo.sType					= VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+			createInfo.pApplicationInfo			= &appInfo;
+			createInfo.enabledExtensionCount	= std::size(requiredExtensions);
+			createInfo.ppEnabledExtensionNames	= std::data(requiredExtensions);
 #if CLV_DEBUG
-		createInfo.enabledLayerCount		= std::size(validationLayers);
-		createInfo.ppEnabledLayerNames		= std::data(validationLayers);
-		createInfo.pNext					= &debugMessengerCreateInfo; //Setting the pNext allows us to debug the creation and destruction of the instance (as normaly we need an instance pointer to enable debugging)
+			createInfo.enabledLayerCount		= std::size(validationLayers);
+			createInfo.ppEnabledLayerNames		= std::data(validationLayers);
+			createInfo.pNext					= &debugMessengerCreateInfo; //Setting the pNext allows us to debug the creation and destruction of the instance (as normaly we need an instance pointer to enable debugging)
 #else
-		createInfo.enabledLayerCount		= 0;
-		createInfo.ppEnabledLayerNames		= nullptr;
-		createInfo.pNext					= nullptr;
+			createInfo.enabledLayerCount		= 0;
+			createInfo.ppEnabledLayerNames		= nullptr;
+			createInfo.pNext					= nullptr;
 #endif
 
-		if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-			CLV_LOG_ERROR("Failed to create VK instance");
-			return;
-		}
+			if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
+				CLV_LOG_ERROR("Failed to create VK instance");
+				return;
+			}
 
 #if CLV_DEBUG
-		//TODO: Move this debug messenger setup else where
-		if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-			CLV_LOG_ERROR("Failed to create vk debug message callback");
-			return;
-		}
+			//TODO: Move this debug messenger setup else where
+			if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
+				CLV_LOG_ERROR("Failed to create vk debug message callback");
+				return;
+			}
 #endif
+		}
 
 		//CREATE SURFACE
+		{
+			//TODO: Platform agnostic surface creation
+			VkWin32SurfaceCreateInfoKHR createInfo{};
+			createInfo.sType		= VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+			createInfo.hinstance	= GetModuleHandle(nullptr);
+			createInfo.hwnd			= reinterpret_cast<HWND>(nativeWindow);
 
-		//TODO: Platform agnostic surface creation
-		VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{};
-		surfaceCreateInfo.sType		= VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-		surfaceCreateInfo.hinstance = GetModuleHandle(nullptr);
-		surfaceCreateInfo.hwnd		= reinterpret_cast<HWND>(nativeWindow);
-
-		if(vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, nullptr, &surface) != VK_SUCCESS) {
-			CLV_LOG_ERROR("Failed to create Vulkan surface");
-			return;
-		}
-
-		//PICK PHYSICAL DEVICE
-
-		uint32_t deviceCount = 0;
-		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-		if(deviceCount == 0) {
-			CLV_LOG_ERROR("failed to find GPUs with Vulkan support!");
-			return;
-		}
-		std::vector<VkPhysicalDevice> devices(deviceCount);
-		vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-
-		for(const auto& device : devices) {
-			if(isDeviceSuitable(device, surface, deviceExtensions)) {
-				physicalDevice = device;
-				break;
+			if(vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
+				CLV_LOG_ERROR("Failed to create Vulkan surface");
+				return;
 			}
 		}
 
-		if(physicalDevice == VK_NULL_HANDLE) {
-			CLV_LOG_ERROR("failed to find a suitable GPU!");
-			return;
-		} else {
-			VkPhysicalDeviceProperties devicePoperties;
-			vkGetPhysicalDeviceProperties(physicalDevice, &devicePoperties);
+		//PICK PHYSICAL DEVICE
+		{
+			uint32_t deviceCount = 0;
+			vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+			if(deviceCount == 0) {
+				CLV_LOG_ERROR("failed to find GPUs with Vulkan support!");
+				return;
+			}
+			std::vector<VkPhysicalDevice> devices(deviceCount);
+			vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
-			CLV_LOG_INFO("Vulkan capable physical device found");
-			CLV_LOG_INFO("\tDevice:\t{0}", devicePoperties.deviceName);
-			CLV_LOG_INFO("\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
-			CLV_LOG_INFO("\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
+			for(const auto& device : devices) {
+				if(isDeviceSuitable(device, surface, deviceExtensions)) {
+					physicalDevice = device;
+					break;
+				}
+			}
+
+			if(physicalDevice == VK_NULL_HANDLE) {
+				CLV_LOG_ERROR("failed to find a suitable GPU!");
+				return;
+			} else {
+				VkPhysicalDeviceProperties devicePoperties;
+				vkGetPhysicalDeviceProperties(physicalDevice, &devicePoperties);
+
+				CLV_LOG_INFO("Vulkan capable physical device found");
+				CLV_LOG_INFO("\tDevice:\t{0}", devicePoperties.deviceName);
+				CLV_LOG_INFO("\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
+				CLV_LOG_INFO("\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
+			}
+		}
+
+		//CREATE LOGICAL DEVICE
+		{
+			//TODO: Cache result
+			QueueFamilyIndices indices = findQueueFamilies(physicalDevice, surface);
+
+			std::set<uint32_t> uniqueQueueFamilies{ 
+				*indices.graphicsFamily, 
+				*indices.presentFamily, 
+				*indices.transferFamily 
+			};
+
+			constexpr float queuePriority = 1.0f;
+			std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+			for(uint32_t queueFamily : uniqueQueueFamilies) {
+				VkDeviceQueueCreateInfo queueCreateinfo{};
+				queueCreateinfo.sType				= VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+				queueCreateinfo.queueFamilyIndex	= queueFamily;
+				queueCreateinfo.queueCount			= 1;
+				queueCreateinfo.pQueuePriorities	= &queuePriority;
+
+				queueCreateInfos.push_back(queueCreateinfo);
+			}
+
+			//Sepcify our device features
+			VkPhysicalDeviceFeatures deviceFeatures{};
+			deviceFeatures.samplerAnisotropy = VK_TRUE;
+
+			VkDeviceCreateInfo createInfo{};
+			createInfo.sType					= VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+			createInfo.queueCreateInfoCount		= static_cast<uint32_t>(std::size(queueCreateInfos));
+			createInfo.pQueueCreateInfos		= std::data(queueCreateInfos);
+			createInfo.pEnabledFeatures			= &deviceFeatures;
+			createInfo.enabledExtensionCount	= static_cast<uint32_t>(std::size(deviceExtensions));
+			createInfo.ppEnabledExtensionNames	= std::data(deviceExtensions);
+
+#if CLV_DEBUG
+			//We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
+			createInfo.enabledLayerCount	= static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledLayerNames	= validationLayers.data();
+#else
+			createInfo.enabledLayerCount	= 0;
+#endif
+
+			if(vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
+				CLV_LOG_ERROR("failed to create logical device!");
+				return;
+			}
+
+			vkGetDeviceQueue(logicalDevice, *indices.graphicsFamily, 0, &graphicsQueue);
+			vkGetDeviceQueue(logicalDevice, *indices.transferFamily, 0, &transferQueue);
+			vkGetDeviceQueue(logicalDevice, *indices.presentFamily, 0, &presentQueue);
 		}
 	}
 
@@ -308,8 +364,9 @@ namespace clv::gfx::vk{
 #if CLV_DEBUG
 		destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #endif
+		vkDestroyDevice(logicalDevice, nullptr);
 		vkDestroySurfaceKHR(instance, surface, nullptr);
-		
+
 		vkDestroyInstance(instance, nullptr);
 	}
 }

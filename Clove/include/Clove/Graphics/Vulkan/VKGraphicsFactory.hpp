@@ -15,6 +15,11 @@ namespace clv::gfx::vk {
 		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 		VkDevice logicalDevice = VK_NULL_HANDLE;
 
+		//TODO: Putting the queues here for now, perhaps they'll be better elsewhere?
+		VkQueue graphicsQueue = VK_NULL_HANDLE;
+		VkQueue transferQueue = VK_NULL_HANDLE;
+		VkQueue presentQueue = VK_NULL_HANDLE;
+
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
