@@ -127,6 +127,8 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKPipelineObject.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsFactory.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsFactory.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKSwapchain.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKSwapchain.cpp
 )
 
 set(

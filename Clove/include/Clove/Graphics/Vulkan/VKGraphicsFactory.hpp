@@ -2,6 +2,9 @@
 
 #include <vulkan/vulkan.h>
 
+//TODO: Remove
+#include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
+
 namespace clv::gfx::vk {
 	class VKGraphicsFactory {
 		//VARIABLES
@@ -15,7 +18,7 @@ namespace clv::gfx::vk {
 		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 		VkDevice logicalDevice = VK_NULL_HANDLE;
 
-		//TODO: Putting the queues here for now, perhaps they'll be better elsewhere?
+		//TODO: Move these out into an abstraction
 		VkQueue graphicsQueue = VK_NULL_HANDLE;
 		VkQueue transferQueue = VK_NULL_HANDLE;
 		VkQueue presentQueue = VK_NULL_HANDLE;
@@ -25,5 +28,7 @@ namespace clv::gfx::vk {
 		//TODO: Ctors
 		VKGraphicsFactory(void* nativeWindow);
 		~VKGraphicsFactory();
+
+		std::unique_ptr<VKSwapchain> createSwapChain();
 	};
 }

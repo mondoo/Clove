@@ -369,4 +369,9 @@ namespace clv::gfx::vk{
 
 		vkDestroyInstance(instance, nullptr);
 	}
+
+	std::unique_ptr<VKSwapchain> VKGraphicsFactory::createSwapChain() {
+		//TODO:
+		return nullptr;
+	}
 }
