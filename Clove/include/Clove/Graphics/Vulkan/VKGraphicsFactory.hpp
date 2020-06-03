@@ -1,9 +1,28 @@
 #pragma once
 
+//TODO: Remove to cpp
+#include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
+#include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
+
 #include <vulkan/vulkan.h>
 
-//TODO: Remove
-#include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
+namespace clv::gfx::vk {
+	struct QueueFamilyIndices {
+		std::optional<uint32_t> graphicsFamily;
+		std::optional<uint32_t> presentFamily;
+		std::optional<uint32_t> transferFamily;
+
+		bool isComplete() const {
+			return graphicsFamily && presentFamily && transferFamily;
+		}
+	};
+
+	struct SwapChainSupportDetails {
+		VkSurfaceCapabilitiesKHR capabilities;
+		std::vector<VkSurfaceFormatKHR> formats;
+		std::vector<VkPresentModeKHR> presentModes;
+	};
+}
 
 namespace clv::gfx::vk {
 	class VKGraphicsFactory {
@@ -18,10 +37,7 @@ namespace clv::gfx::vk {
 		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 		VkDevice logicalDevice = VK_NULL_HANDLE;
 
-		//TODO: Move these out into an abstraction
-		VkQueue graphicsQueue = VK_NULL_HANDLE;
-		VkQueue transferQueue = VK_NULL_HANDLE;
-		VkQueue presentQueue = VK_NULL_HANDLE;
+		QueueFamilyIndices queueFamilyIndices;
 
 		//FUNCTIONS
 	public:
@@ -29,6 +45,7 @@ namespace clv::gfx::vk {
 		VKGraphicsFactory(void* nativeWindow);
 		~VKGraphicsFactory();
 
+		std::unique_ptr<VKCommandQueue> createCommandQueue(const CommandQueueDescriptor& descriptor);
 		std::unique_ptr<VKSwapchain> createSwapChain();
 	};
 }

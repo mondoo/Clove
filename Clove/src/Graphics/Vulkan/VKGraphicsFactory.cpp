@@ -17,22 +17,6 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 }
 
 namespace clv::gfx::vk{
-	struct QueueFamilyIndices {
-		std::optional<uint32_t> graphicsFamily;
-		std::optional<uint32_t> presentFamily;
-		std::optional<uint32_t> transferFamily;
-
-		bool isComplete() const {
-			return graphicsFamily && presentFamily && transferFamily;
-		}
-	};
-
-	struct SwapChainSupportDetails {
-		VkSurfaceCapabilitiesKHR capabilities;
-		std::vector<VkSurfaceFormatKHR> formats;
-		std::vector<VkPresentModeKHR> presentModes;
-	};
-
 	static VkResult createDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
 		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 		if(func != nullptr) {
@@ -308,13 +292,12 @@ namespace clv::gfx::vk{
 
 		//CREATE LOGICAL DEVICE
 		{
-			//TODO: Cache result
-			QueueFamilyIndices indices = findQueueFamilies(physicalDevice, surface);
+			queueFamilyIndices = findQueueFamilies(physicalDevice, surface);
 
 			std::set<uint32_t> uniqueQueueFamilies{ 
-				*indices.graphicsFamily, 
-				*indices.presentFamily, 
-				*indices.transferFamily 
+				*queueFamilyIndices.graphicsFamily, 
+				*queueFamilyIndices.presentFamily, 
+				*queueFamilyIndices.transferFamily 
 			};
 
 			constexpr float queuePriority = 1.0f;
@@ -340,7 +323,6 @@ namespace clv::gfx::vk{
 			createInfo.pEnabledFeatures			= &deviceFeatures;
 			createInfo.enabledExtensionCount	= static_cast<uint32_t>(std::size(deviceExtensions));
 			createInfo.ppEnabledExtensionNames	= std::data(deviceExtensions);
-
 #if CLV_DEBUG
 			//We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
 			createInfo.enabledLayerCount	= static_cast<uint32_t>(validationLayers.size());
@@ -353,10 +335,6 @@ namespace clv::gfx::vk{
 				CLV_LOG_ERROR("failed to create logical device!");
 				return;
 			}
-
-			vkGetDeviceQueue(logicalDevice, *indices.graphicsFamily, 0, &graphicsQueue);
-			vkGetDeviceQueue(logicalDevice, *indices.transferFamily, 0, &transferQueue);
-			vkGetDeviceQueue(logicalDevice, *indices.presentFamily, 0, &presentQueue);
 		}
 	}
 
@@ -368,6 +346,29 @@ namespace clv::gfx::vk{
 		vkDestroySurfaceKHR(instance, surface, nullptr);
 
 		vkDestroyInstance(instance, nullptr);
+	}
+
+	std::unique_ptr<VKCommandQueue> VKGraphicsFactory::createCommandQueue(const CommandQueueDescriptor& descriptor) {
+		VkQueue queue;
+		uint32_t familyIndex;
+		switch(descriptor.type) {
+			case QueueType::Graphics:
+				familyIndex = *queueFamilyIndices.graphicsFamily;
+				break;
+			case QueueType::Present:
+				familyIndex = *queueFamilyIndices.presentFamily;
+				break;
+			case QueueType::Transfer:
+				familyIndex = *queueFamilyIndices.transferFamily;
+				break;
+			default:
+				CLV_LOG_ERROR("Queue type not supported");
+				return nullptr;
+		}
+		
+		vkGetDeviceQueue(logicalDevice, familyIndex, 0, &queue);
+
+		return std::make_unique<VKCommandQueue>(familyIndex, queue, descriptor.flags);
 	}
 
 	std::unique_ptr<VKSwapchain> VKGraphicsFactory::createSwapChain() {
