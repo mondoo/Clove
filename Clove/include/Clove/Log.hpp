@@ -74,7 +74,7 @@ namespace clv {
 			}
 		};
 
-		Context createContext(std::string_view loggerName, std::string_view fileName);
+		Context createContext(Log::Level consoleLogLevel, std::string_view loggerName, std::string_view fileName);
 	};
 }
 
