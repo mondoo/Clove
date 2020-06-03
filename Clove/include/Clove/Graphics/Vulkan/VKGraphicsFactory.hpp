@@ -45,7 +45,10 @@ namespace clv::gfx::vk {
 		VKGraphicsFactory(void* nativeWindow);
 		~VKGraphicsFactory();
 
-		std::unique_ptr<VKCommandQueue> createCommandQueue(const CommandQueueDescriptor& descriptor);
+		std::unique_ptr<VKGraphicsQueue> createGraphicsQueue(CommandQueueDescriptor descriptor);
+		std::unique_ptr<VKPresentQueue> createPresentQueue();
+		std::unique_ptr<VKTransferQueue> createTransferQueue(CommandQueueDescriptor descriptor);
+
 		std::unique_ptr<VKSwapchain> createSwapChain();
 	};
 }

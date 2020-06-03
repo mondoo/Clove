@@ -348,27 +348,16 @@ namespace clv::gfx::vk{
 		vkDestroyInstance(instance, nullptr);
 	}
 
-	std::unique_ptr<VKCommandQueue> VKGraphicsFactory::createCommandQueue(const CommandQueueDescriptor& descriptor) {
-		VkQueue queue;
-		uint32_t familyIndex;
-		switch(descriptor.type) {
-			case QueueType::Graphics:
-				familyIndex = *queueFamilyIndices.graphicsFamily;
-				break;
-			case QueueType::Present:
-				familyIndex = *queueFamilyIndices.presentFamily;
-				break;
-			case QueueType::Transfer:
-				familyIndex = *queueFamilyIndices.transferFamily;
-				break;
-			default:
-				CLV_LOG_ERROR("Queue type not supported");
-				return nullptr;
-		}
-		
-		vkGetDeviceQueue(logicalDevice, familyIndex, 0, &queue);
+	std::unique_ptr<VKGraphicsQueue> VKGraphicsFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
+		return std::make_unique<VKGraphicsQueue>(logicalDevice, *queueFamilyIndices.graphicsFamily, std::move(descriptor));
+	}
 
-		return std::make_unique<VKCommandQueue>(familyIndex, queue, descriptor.flags);
+	std::unique_ptr<VKPresentQueue> VKGraphicsFactory::createPresentQueue() {
+		return std::make_unique<VKPresentQueue>(logicalDevice, *queueFamilyIndices.presentFamily);
+	}
+
+	std::unique_ptr<VKTransferQueue> VKGraphicsFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
+		return std::make_unique<VKTransferQueue>(logicalDevice, *queueFamilyIndices.transferFamily, std::move(descriptor));
 	}
 
 	std::unique_ptr<VKSwapchain> VKGraphicsFactory::createSwapChain() {
