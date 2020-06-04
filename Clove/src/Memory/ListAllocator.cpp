@@ -7,14 +7,14 @@ namespace clv::mem {
 #if CLV_ENABLE_MEMORY_DEBUGGING
 		CLV_LOG_TRACE("Constructing new ListAllocator. Size {0}. ", listSize);
 #endif
-		rawList = reinterpret_cast<char*>(malloc(listSize));
+		rawList = reinterpret_cast<std::byte*>(malloc(listSize));
 		head = rawList;
 	}
 
-	ListAllocator::ListAllocator(char* start, size_t sizeBytes)
+	ListAllocator::ListAllocator(std::byte* start, size_t sizeBytes)
 		: listSize(sizeBytes)
 		, freeMemory(false) {
-		rawList = reinterpret_cast<char*>(start);
+		rawList = reinterpret_cast<std::byte*>(start);
 		head = rawList;
 	}
 
@@ -74,7 +74,7 @@ namespace clv::mem {
 	}
 
 	void ListAllocator::free(void* ptr) {
-		char* data		= reinterpret_cast<char*>(ptr);
+		std::byte* data = reinterpret_cast<std::byte*>(ptr);
 		Header* header	= reinterpret_cast<Header*>(data - sizeof(Header));
 
 		list.push_back(header);

@@ -8,9 +8,9 @@ namespace clv::mem {
 
 		//VARIABLES
 	private:
-		char* stack;
+		std::byte* stack;
 		size_t stackSize = 0;
-		char* top = nullptr;
+		std::byte* top	 = nullptr;
 
 		bool freeMemory = true;
 
@@ -18,7 +18,7 @@ namespace clv::mem {
 	public:
 		StackAllocator() = delete;
 		StackAllocator(size_t sizeBytes);
-		StackAllocator(char* start, size_t sizeBytes);
+		StackAllocator(std::byte* start, size_t sizeBytes);
 		
 		StackAllocator(const StackAllocator& other) = delete;
 		StackAllocator(StackAllocator&& other) noexcept;

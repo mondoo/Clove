@@ -12,9 +12,9 @@ namespace clv::mem {
 
 		//VARIABLES
 	private:
-		char* rawList;
+		std::byte* rawList;
 		size_t listSize = 0;
-		char* head = nullptr;
+		std::byte* head = nullptr;
 
 		std::list<Header*> list;
 
@@ -24,7 +24,7 @@ namespace clv::mem {
 	public:
 		ListAllocator() = delete;
 		ListAllocator(size_t sizeBytes);
-		ListAllocator(char* start, size_t sizeBytes);
+		ListAllocator(std::byte* start, size_t sizeBytes);
 
 		ListAllocator(const ListAllocator& other) = delete;
 		ListAllocator(ListAllocator&& other) noexcept;

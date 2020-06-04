@@ -7,7 +7,7 @@ namespace clv::mem {
 #if CLV_ENABLE_MEMORY_DEBUGGING
 		CLV_LOG_TRACE("Constructing new PoolAllocator. Arena size {0}. ", arenaSize);
 #endif
-		pool = reinterpret_cast<char*>(malloc(numElements * sizeof(PoolItem)));
+		pool	 = reinterpret_cast<std::byte*>(malloc(numElements * sizeof(PoolItem)));
 		nextFree = reinterpret_cast<PoolItem*>(pool);
 
 		PoolItem* iter = reinterpret_cast<PoolItem*>(pool);
@@ -18,7 +18,7 @@ namespace clv::mem {
 	}
 
 	template<typename ItemType>
-	PoolAllocator<ItemType>::PoolAllocator(char* start, size_t numElements)
+	PoolAllocator<ItemType>::PoolAllocator(std::byte* start, size_t numElements)
 		: numElements(numElements)
 		, freeMemory(false) {
 

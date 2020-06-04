@@ -7,11 +7,11 @@ namespace clv::mem {
 #if CLV_ENABLE_MEMORY_DEBUGGING
 		CLV_LOG_TRACE("Constructing new StackAllocator. Size {0}. ", stackSize);
 #endif
-		stack = reinterpret_cast<char*>(malloc(stackSize));
+		stack = reinterpret_cast<std::byte*>(malloc(stackSize));
 		top = stack;
 	}
 
-	StackAllocator::StackAllocator(char* start, size_t sizeBytes)
+	StackAllocator::StackAllocator(std::byte* start, size_t sizeBytes)
 		: stackSize(sizeBytes)
 		, freeMemory(false) {
 		stack = start;

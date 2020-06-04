@@ -12,7 +12,7 @@ namespace clv::mem {
 
 		//VARIABLES
 	private:
-		char* pool;
+		std::byte* pool;
 		size_t numElements;
 		PoolItem* nextFree = nullptr;
 
@@ -22,7 +22,7 @@ namespace clv::mem {
 	public:
 		PoolAllocator() = delete;
 		PoolAllocator(size_t numElements);
-		PoolAllocator(char* start, size_t numElements);
+		PoolAllocator(std::byte* start, size_t numElements);
 
 		PoolAllocator(const PoolAllocator& other) = delete;
 		PoolAllocator(PoolAllocator&& other) noexcept;
