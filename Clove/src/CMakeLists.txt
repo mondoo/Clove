@@ -220,6 +220,7 @@ set(
 	${CLV_INCLUDE}/Clove.hpp
 	${CLV_INCLUDE}/Core.hpp
 	${CLV_INCLUDE}/Log.hpp
+	${CLV_INCLUDE}/Log.inl
 	${CLV_SOURCE}/Log.cpp
 
 		${EventFiles}

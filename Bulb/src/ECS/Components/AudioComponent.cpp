@@ -41,7 +41,7 @@ namespace blb::ecs {
 		if(sound.isValid()) {
 			requestedPlayback = playback;
 		} else {
-			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
 		}
 	}
 
@@ -49,7 +49,7 @@ namespace blb::ecs {
 		if(sound.isValid()) {
 			requestedStopMode = StopMode::pause;
 		} else {
-			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
 		}
 	}
 
@@ -59,7 +59,7 @@ namespace blb::ecs {
 				requestedPlayback = currentPlayback;
 			}
 		} else {
-			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
 		}
 	}
 
@@ -67,7 +67,7 @@ namespace blb::ecs {
 		if(sound.isValid()) {
 			requestedStopMode = StopMode::stop;
 		} else {
-			CLV_LOG_ERROR("{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
 		}
 	}
 

@@ -89,7 +89,7 @@ namespace blb::phy {
 		startTransform.setIdentity();
 
 		if(isKinematic && mass > 0.0f) {
-			CLV_LOG_WARN("Kinematic body has non 0 mass. Setting to 0");
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Warning, "Kinematic body has non 0 mass. Setting to 0");
 			mass = 0.0f;
 		} else {
 			collisionShape->calculateLocalInertia(mass, localInertia);

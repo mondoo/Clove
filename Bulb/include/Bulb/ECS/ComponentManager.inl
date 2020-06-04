@@ -35,7 +35,7 @@ namespace blb::ecs {
 				addComponent(toId, *componentPtr);
 			}
 		} else {
-			CLV_LOG_ERROR("Component that is not copyable was attempted to be copied. Entity will be incomplete");
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Component that is not copyable was attempted to be copied. Entity will be incomplete");
 		}
 	}
 
@@ -70,7 +70,7 @@ namespace blb::ecs {
 	ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityId, ConstructArgs&&... args) {
 		ComponentType* comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
 		if(comp == nullptr) {
-			CLV_LOG_ERROR("{0}: Could not create component", CLV_FUNCTION_NAME_PRETTY);
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Could not create component", CLV_FUNCTION_NAME_PRETTY);
 			return { comp };
 		}
 

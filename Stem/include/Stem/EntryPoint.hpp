@@ -4,8 +4,6 @@
 
 int main() {
 	CLV_PROFILE_BEGIN_SESSION("Startup", "GarlicProfile-Startup.json");
-	clv::Log::init();
-
 	stm::Application app{};
 
 	app.start();

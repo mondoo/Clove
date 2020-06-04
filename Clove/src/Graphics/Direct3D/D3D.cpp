@@ -35,7 +35,7 @@ namespace clv::gfx::d3d{
 			&d3dContext
 		));
 
-		CLV_LOG_INFO("Successfully initialised Direct3D");
+		GARLIC_LOG(garlicLogContext, Log::Level::Info, "Successfully initialised Direct3D");
 
 		return std::make_shared<D3DGraphicsFactory>(d3dDevice, d3dContext);
 	}

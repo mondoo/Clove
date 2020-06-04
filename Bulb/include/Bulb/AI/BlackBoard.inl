@@ -4,7 +4,7 @@ namespace blb::ai {
 		if(dataMap.find(key) == dataMap.end()) {
 			void* block = memoryBlock.alloc(sizeof(DataType));
 			if(block == nullptr) {
-				CLV_LOG_ERROR("{0}: Could not allocate space for new item", CLV_FUNCTION_NAME);
+				GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Could not allocate space for new item", CLV_FUNCTION_NAME);
 				return;
 			}
 

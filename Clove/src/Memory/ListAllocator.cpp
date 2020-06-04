@@ -61,7 +61,7 @@ namespace clv::mem {
 
 		if(header == nullptr) {
 			if((head - rawList) + bytes > listSize) {
-				CLV_LOG_ERROR("{0}: Not enough space left to allocate {1} bytes.", CLV_FUNCTION_NAME_PRETTY, bytes);
+				GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Not enough space left to allocate {1} bytes.", CLV_FUNCTION_NAME_PRETTY, bytes);
 				return nullptr;
 			}
 

@@ -8,7 +8,7 @@
 
 namespace clv::plt {
 	WindowsWindow::WindowsWindow(const WindowDescriptor& descriptor) {
-		CLV_LOG_TRACE("Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
+		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
 		instance = GetModuleHandle(nullptr);
 
@@ -27,7 +27,7 @@ namespace clv::plt {
 
 		RegisterClassEx(&wc);
 
-		CLV_LOG_TRACE("Windows class registered");
+		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Windows class registered");
 
 		const std::string wideTitle(descriptor.title.begin(), descriptor.title.end());
 
@@ -61,7 +61,7 @@ namespace clv::plt {
 
 		open = true;
 
-		CLV_LOG_DEBUG("Window created");
+		GARLIC_LOG(garlicLogContext, Log::Level::Debug, "Window created");
 
 		graphicsFactory = gfx::initialise(descriptor.api);
 
@@ -72,7 +72,7 @@ namespace clv::plt {
 	}
 
 	WindowsWindow::WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) {
-		CLV_LOG_TRACE("Creating child window: ({1}, {2})", size.x, size.y);
+		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
 
 		WNDCLASSEX wc{};
 		wc.cbSize			= sizeof(wc);
@@ -89,7 +89,7 @@ namespace clv::plt {
 
 		RegisterClassEx(&wc);
 
-		CLV_LOG_TRACE("Windows class registered");
+		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Windows class registered");
 
 		const DWORD windowStyle = WS_CHILD | WS_VISIBLE;
 
@@ -112,7 +112,7 @@ namespace clv::plt {
 
 		open = true;
 
-		CLV_LOG_DEBUG("Window created");
+		GARLIC_LOG(garlicLogContext, Log::Level::Debug, "Window created");
 
 		graphicsFactory = gfx::initialise(api);
 

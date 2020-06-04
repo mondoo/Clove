@@ -7,7 +7,7 @@
 #endif
 
 #if CLV_ENABLE_ASSERTS
-	#define CLV_ASSERT(x, ...) { if(!(x)){ CLV_LOG_ERROR("Assertion Failed: {0}", __VA_ARGS__); CLV_DEBUG_BREAK; } }
+	#define CLV_ASSERT(x, ...) { if(!(x)){ GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Assertion Failed: {0}", __VA_ARGS__); CLV_DEBUG_BREAK; } }
 #else
 	#define CLV_ASSERT(x, ...) (x)
 #endif

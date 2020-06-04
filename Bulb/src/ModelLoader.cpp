@@ -121,7 +121,7 @@ namespace blb::ModelLoader {
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs);
 		if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
-			CLV_LOG_ERROR("Assimp Error: {0}", importer.GetErrorString());
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Assimp Error: {0}", importer.GetErrorString());
 			return { meshes };
 		}
 
