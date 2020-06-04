@@ -36,7 +36,7 @@ namespace blb::ecs {
 
 		//Transform and submit cameras
 		for(auto&& [transform, camera] : world.getComponentSets<TransformComponent, CameraComponent>()) {
-			const mth::vec3f& position = transform->getPosition();
+			const mth::vec3f& position = transform->getPosition(TransformSpace::World);
 
 			const mth::vec3f camFront	= transform->getForward();
 			const mth::vec3f camUp		= transform->getUp();

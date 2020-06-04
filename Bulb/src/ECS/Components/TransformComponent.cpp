@@ -124,7 +124,7 @@ namespace blb::ecs{
 	}
 
 	mth::vec3f TransformComponent::getForward() const {
-		mth::vec3f eulerRot = mth::quaternionToEuler(getRotation());
+		mth::vec3f eulerRot = mth::quaternionToEuler(getRotation(TransformSpace::World));
 
 		mth::vec3f front;
 		front.x = sin(eulerRot.y) * cos(eulerRot.x);
