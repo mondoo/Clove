@@ -27,6 +27,11 @@ namespace clv::mem {
 
 		freeMemory		 = other.freeMemory;
 		other.freeMemory = false;
+
+#if CLV_DEBUG
+		allocations = other.allocations;
+		frees		= other.frees;
+#endif
 	}
 
 	ListAllocator& ListAllocator::operator=(ListAllocator&& other) noexcept {
@@ -39,13 +44,17 @@ namespace clv::mem {
 		freeMemory		 = other.freeMemory;
 		other.freeMemory = false;
 
+#if CLV_DEBUG
+		allocations = other.allocations;
+		frees		= other.frees;
+#endif
 		return *this;
 	}
 
 	ListAllocator::~ListAllocator() {
 		if(freeMemory) {
 #if CLV_DEBUG
-			if(list.size() > 0) {
+			if(allocations > frees) {
 				GARLIC_LOG(garlicLogContext, Log::Level::Warning, "List Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
 			}
 #endif
@@ -74,6 +83,9 @@ namespace clv::mem {
 			header->blockSize = bytes;
 			head += sizeof(Header) + bytes;
 		}
+#if CLV_DEBUG
+		++allocations;
+#endif
 
 		return reinterpret_cast<char*>(header) + sizeof(Header);
 	}
@@ -83,5 +95,8 @@ namespace clv::mem {
 		Header* header	= reinterpret_cast<Header*>(data - sizeof(Header));
 
 		list.push_back(header);
+#if CLV_DEBUG
+		++frees;
+#endif
 	}
 }

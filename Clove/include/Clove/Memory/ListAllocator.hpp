@@ -20,6 +20,11 @@ namespace clv::mem {
 
 		bool freeMemory = true;
 
+#if CLV_DEBUG
+		uint32_t allocations = 0;
+		uint32_t frees		 = 0;
+#endif
+
 		//FUNCTIONS
 	public:
 		ListAllocator() = delete;
@@ -30,7 +35,7 @@ namespace clv::mem {
 		ListAllocator(ListAllocator&& other) noexcept;
 
 		ListAllocator& operator=(const ListAllocator& other) = delete;
-		ListAllocator& operator=(ListAllocator&& other) noexcept;
+		ListAllocator& operator								 =(ListAllocator&& other) noexcept;
 
 		~ListAllocator();
 
