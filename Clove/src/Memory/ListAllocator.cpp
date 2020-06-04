@@ -5,7 +5,7 @@ namespace clv::mem {
 		: listSize(sizeBytes)
 		, freeMemory(true) {
 #if CLV_ENABLE_MEMORY_DEBUGGING
-		CLV_LOG_TRACE("Constructing new ListAllocator. Size {0}. ", listSize);
+		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructing new ListAllocator. Size {0}. ", listSize);
 #endif
 		rawList = reinterpret_cast<std::byte*>(malloc(listSize));
 		head = rawList;

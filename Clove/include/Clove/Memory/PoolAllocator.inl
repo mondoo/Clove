@@ -5,7 +5,7 @@ namespace clv::mem {
 		: numElements(numElements)
 		, freeMemory(true) {
 #if CLV_ENABLE_MEMORY_DEBUGGING
-		CLV_LOG_TRACE("Constructing new PoolAllocator. Arena size {0}. ", arenaSize);
+		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructing new PoolAllocator. Arena size {0}. ", arenaSize);
 #endif
 		pool	 = reinterpret_cast<std::byte*>(malloc(numElements * sizeof(PoolItem)));
 		nextFree = reinterpret_cast<PoolItem*>(pool);

@@ -5,7 +5,7 @@ namespace clv::mem {
 		: stackSize(sizeBytes)
 		, freeMemory(true) {
 #if CLV_ENABLE_MEMORY_DEBUGGING
-		CLV_LOG_TRACE("Constructing new StackAllocator. Size {0}. ", stackSize);
+		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructing new StackAllocator. Size {0}. ", stackSize);
 #endif
 		stack = reinterpret_cast<std::byte*>(malloc(stackSize));
 		top = stack;
