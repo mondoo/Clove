@@ -21,8 +21,7 @@ namespace clv::mem {
 	PoolAllocator<ItemType>::PoolAllocator(std::byte* start, size_t numElements)
 		: numElements(numElements)
 		, freeMemory(false) {
-
-		pool = start;
+		pool	 = start;
 		nextFree = reinterpret_cast<PoolItem*>(pool);
 
 		PoolItem* iter = reinterpret_cast<PoolItem*>(pool);
@@ -41,6 +40,19 @@ namespace clv::mem {
 	template<typename ItemType>
 	PoolAllocator<ItemType>::~PoolAllocator() {
 		if(freeMemory) {
+#if CLV_DEBUG
+			size_t availableElements = 0;
+			PoolItem* item			 = nextFree;
+			
+			while(item != nullptr) {
+				++availableElements;
+				item = item->next;
+			}
+
+			if(availableElements < numElements) {
+				GARLIC_LOG(garlicLogContext, Log::Level::Warning, "List Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
+			}
+#endif
 			::free(pool);
 		}
 	}
@@ -54,7 +66,7 @@ namespace clv::mem {
 		}
 
 		PoolItem* poolItem = nextFree;
-		nextFree = poolItem->next;
+		nextFree		   = poolItem->next;
 
 		ItemType* item = reinterpret_cast<ItemType*>(poolItem->item);
 		new(item) ItemType(std::forward<Args>(args)...);
@@ -67,7 +79,7 @@ namespace clv::mem {
 		item->~ItemType();
 
 		PoolItem* poolItem = reinterpret_cast<PoolItem*>(item);
-		poolItem->next = nextFree;
-		nextFree = poolItem;
+		poolItem->next	   = nextFree;
+		nextFree		   = poolItem;
 	}
 }

@@ -8,14 +8,14 @@ namespace clv::mem {
 		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructing new StackAllocator. Size {0}. ", stackSize);
 #endif
 		stack = reinterpret_cast<std::byte*>(malloc(stackSize));
-		top = stack;
+		top	  = stack;
 	}
 
 	StackAllocator::StackAllocator(std::byte* start, size_t sizeBytes)
 		: stackSize(sizeBytes)
 		, freeMemory(false) {
 		stack = start;
-		top = stack;
+		top	  = stack;
 	}
 
 	StackAllocator::StackAllocator(StackAllocator&& other) noexcept = default;
@@ -24,6 +24,11 @@ namespace clv::mem {
 
 	StackAllocator::~StackAllocator() {
 		if(freeMemory) {
+#if CLV_DEBUG
+			if(top > stack) {
+				GARLIC_LOG(garlicLogContext, Log::Level::Warning, "Stack Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
+			}
+#endif
 			::free(stack);
 		}
 	}

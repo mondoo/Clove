@@ -8,35 +8,35 @@ namespace clv::mem {
 		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructing new ListAllocator. Size {0}. ", listSize);
 #endif
 		rawList = reinterpret_cast<std::byte*>(malloc(listSize));
-		head = rawList;
+		head	= rawList;
 	}
 
 	ListAllocator::ListAllocator(std::byte* start, size_t sizeBytes)
 		: listSize(sizeBytes)
 		, freeMemory(false) {
 		rawList = reinterpret_cast<std::byte*>(start);
-		head = rawList;
+		head	= rawList;
 	}
 
 	ListAllocator::ListAllocator(ListAllocator&& other) noexcept {
-		rawList = other.rawList;
+		rawList	 = other.rawList;
 		listSize = other.listSize;
-		head = other.head;
+		head	 = other.head;
 
 		list = std::move(list);
 
-		freeMemory = other.freeMemory;
+		freeMemory		 = other.freeMemory;
 		other.freeMemory = false;
 	}
 
 	ListAllocator& ListAllocator::operator=(ListAllocator&& other) noexcept {
-		rawList = other.rawList;
+		rawList	 = other.rawList;
 		listSize = other.listSize;
-		head = other.head;
+		head	 = other.head;
 
 		list = std::move(list);
 
-		freeMemory = other.freeMemory;
+		freeMemory		 = other.freeMemory;
 		other.freeMemory = false;
 
 		return *this;
@@ -44,13 +44,18 @@ namespace clv::mem {
 
 	ListAllocator::~ListAllocator() {
 		if(freeMemory) {
+#if CLV_DEBUG
+			if(list.size() > 0) {
+				GARLIC_LOG(garlicLogContext, Log::Level::Warning, "List Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
+			}
+#endif
 			::free(rawList);
 		}
 	}
 
 	void* ListAllocator::alloc(size_t bytes) {
 		Header* header = nullptr;
-		for(auto* freeHeader : list) { //Finding first available
+		for(auto* freeHeader : list) {//Finding first available
 			if(bytes <= freeHeader->blockSize) {
 				header = freeHeader;
 				list.remove(header);
@@ -65,7 +70,7 @@ namespace clv::mem {
 				return nullptr;
 			}
 
-			header = reinterpret_cast<Header*>(head);
+			header			  = reinterpret_cast<Header*>(head);
 			header->blockSize = bytes;
 			head += sizeof(Header) + bytes;
 		}
