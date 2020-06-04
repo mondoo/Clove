@@ -100,7 +100,7 @@ namespace clv::gfx::ogl{
 			if(strstr(extensions, "GLX_EXT_swap_control") != 0){
 				glxSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC)glXGetProcAddress((GLubyte*)"glxSwapIntervalEXT");
 			} else{
-				CLV_LOG_ERROR("Could not find the GLX_EXT_swap_control. Cannot enable / disable vsync");
+				GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Could not find the GLX_EXT_swap_control. Cannot enable / disable vsync");
 			}
 		}
 
