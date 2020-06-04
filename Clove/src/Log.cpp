@@ -4,7 +4,7 @@
 #include <spdlog/sinks/basic_file_sink.h>
 
 #if CLV_DEBUG
-clv::Log::Context garlicLogContext = clv::Log::createContext(clv::Log::Level::Debug, "GARLIC", "GarlicLog.txt");
+clv::Log::Context garlicLogContext = clv::Log::createContext(clv::Log::Level::Trace, "GARLIC", "GarlicLog.txt");
 #else
 clv::Log::Context garlicLogContext = clv::Log::createContext(clv::Log::Level::Info, "GARLIC", "GarlicLog.txt");
 #endif
