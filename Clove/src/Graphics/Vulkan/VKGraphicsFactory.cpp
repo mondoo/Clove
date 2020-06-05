@@ -261,7 +261,7 @@ namespace clv::gfx::vk{
 			RECT windowRect;
 			GetClientRect(reinterpret_cast<HWND>(nativeWindow), &windowRect);
 
-			windowExtent = VkExtent2D{ windowRect.right - windowRect.left, windowRect.bottom - windowRect.top };
+			windowExtent = VkExtent2D{ static_cast<uint32_t>(windowRect.right - windowRect.left), static_cast<uint32_t>(windowRect.bottom - windowRect.top) };
 		}
 
 		//PICK PHYSICAL DEVICE
