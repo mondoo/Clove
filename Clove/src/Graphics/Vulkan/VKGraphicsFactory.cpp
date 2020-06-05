@@ -256,6 +256,12 @@ namespace clv::gfx::vk{
 				CLV_LOG_ERROR("Failed to create Vulkan surface");
 				return;
 			}
+
+			//Getting the window extent. This needs to be handled agnostically
+			RECT windowRect;
+			GetClientRect(reinterpret_cast<HWND>(nativeWindow), &windowRect);
+
+			windowExtent = VkExtent2D{ windowRect.right - windowRect.left, windowRect.bottom - windowRect.top };
 		}
 
 		//PICK PHYSICAL DEVICE
