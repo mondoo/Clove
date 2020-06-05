@@ -34,6 +34,6 @@ namespace clv::gfx::vk {
 		std::unique_ptr<VKPresentQueue> createPresentQueue();
 		std::unique_ptr<VKTransferQueue> createTransferQueue(CommandQueueDescriptor descriptor);
 
-		std::unique_ptr<VKSwapchain> createSwapChain();
+		std::unique_ptr<VKSwapchain> createSwapChain(SwapchainDescriptor descriptor);
 	};
 }

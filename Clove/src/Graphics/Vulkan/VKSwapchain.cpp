@@ -39,7 +39,7 @@ namespace clv::gfx::vk {
 		}
 	}
 
-	VKSwapchain::VKSwapchain(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, SwapChainDescriptor descriptor) 
+	VKSwapchain::VKSwapchain(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, VkExtent2D windowExtent, SwapchainDescriptor descriptor) 
 		: device(device){
 		SwapChainSupportDetails swapChainSuport = querySwapChainSupport(physicalDevice);
 

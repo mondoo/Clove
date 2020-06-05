@@ -6,7 +6,7 @@
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
-	class SwapChainDescriptor {
+	class SwapchainDescriptor {
 	};
 }
 
@@ -26,7 +26,8 @@ namespace clv::gfx::vk {
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
-		VKSwapchain(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, SwapChainDescriptor descriptor);
+		//TODO: Put factory params into a struct
+		VKSwapchain(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, VkExtent2D windowExtent, SwapchainDescriptor descriptor);
 		~VKSwapchain();
 
 		//TODO: a 'present' function, takes the presentation queue
