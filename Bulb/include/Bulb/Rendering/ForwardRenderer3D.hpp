@@ -56,6 +56,7 @@ namespace blb::rnd {
 	public:
 		//TODO: Ctors
 		ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API);
+		~ForwardRenderer3D();
 
 		void begin() final;
 
