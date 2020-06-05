@@ -27,7 +27,7 @@ namespace clv::gfx::vk {
 	public:
 		//TODO: Ctors
 		//TODO: Put factory params into a struct
-		VKSwapchain(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, VkExtent2D windowExtent, SwapchainDescriptor descriptor);
+		VKSwapchain(VkDevice device, SwapchainSupportDetails supportDetails, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, VkExtent2D windowExtent, SwapchainDescriptor descriptor);
 		~VKSwapchain();
 
 		//TODO: a 'present' function, takes the presentation queue

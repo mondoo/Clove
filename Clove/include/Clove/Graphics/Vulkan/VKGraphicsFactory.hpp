@@ -21,6 +21,7 @@ namespace clv::gfx::vk {
 		VkDevice logicalDevice = VK_NULL_HANDLE;
 
 		QueueFamilyIndices queueFamilyIndices;
+		SwapchainSupportDetails physicalDeviceSwapchainSupport;
 
 		VkExtent2D windowExtent;
 

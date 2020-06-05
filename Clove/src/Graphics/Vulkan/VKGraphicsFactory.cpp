@@ -122,8 +122,8 @@ namespace clv::gfx::vk{
 		return true;
 	}
 
-	static SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface) {
-		SwapChainSupportDetails details;
+	static SwapchainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface) {
+		SwapchainSupportDetails details;
 
 		//Surface capabilities
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
@@ -165,7 +165,7 @@ namespace clv::gfx::vk{
 
 		bool swapChainIsAdequate = false;
 		if(extentionsAreSupported) {
-			SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device, surface);
+			SwapchainSupportDetails swapChainSupport = querySwapChainSupport(device, surface);
 			//We'll consider the swap chain adequate if we have once supported image format and presentation mode
 			swapChainIsAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
 		}
@@ -293,6 +293,8 @@ namespace clv::gfx::vk{
 				CLV_LOG_INFO("\tDevice:\t{0}", devicePoperties.deviceName);
 				CLV_LOG_INFO("\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
 				CLV_LOG_INFO("\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
+
+				physicalDeviceSwapchainSupport = querySwapChainSupport(physicalDevice, surface);
 			}
 		}
 
@@ -367,6 +369,6 @@ namespace clv::gfx::vk{
 	}
 
 	std::unique_ptr<VKSwapchain> VKGraphicsFactory::createSwapChain(SwapchainDescriptor descriptor) {
-		return std::make_unique<VKSwapchain>(logicalDevice, physicalDevice, surface, queueFamilyIndices, windowExtent, std::move(descriptor));
+		return std::make_unique<VKSwapchain>(logicalDevice, physicalDeviceSwapchainSupport, surface, queueFamilyIndices, windowExtent, std::move(descriptor));
 	}
 }
