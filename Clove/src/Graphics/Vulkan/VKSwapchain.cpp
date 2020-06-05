@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
 
+#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+
 namespace clv::gfx::vk {
 	static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {
 		for(const auto& availableFormat : availableFormats) {
@@ -85,7 +87,11 @@ namespace clv::gfx::vk {
 		swapChainImageFormat = surfaceFormat.format;
 		swapChainExtent = extent;
 
-		//TODO: Create image views
+		swapChainImageViews.resize(swapChainImages.size());
+
+		for(size_t i = 0; i < swapChainImages.size(); ++i) {
+			swapChainImageViews[i] = createImageView(device, swapChainImages[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+		}
 	}
 
 	VKSwapchain::~VKSwapchain(){
