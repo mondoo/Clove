@@ -22,20 +22,16 @@ namespace clv::gfx::vk {
 		return VK_PRESENT_MODE_FIFO_KHR;
 	}
 
-	static VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
-		if(capabilities.currentExtent.width != UINT32_MAX) {
+	static VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, const VkExtent2D& windowExtent) {
+		if(capabilities.currentExtent.width != UINT32_MAX) { //If width / height are max then the window manager is allowing us to differ in size
 			return capabilities.currentExtent;
 		} else {
-			int width;
-			int height;
-			glfwGetFramebufferSize(window, &width, &height);
+			VkExtent2D actualExent;
 
-			VkExtent2D actualExtent{ width, height };
+			actualExent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, windowExtent.width));
+			actualExent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, windowExtent.height));
 
-			actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
-			actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
-
-			return actualExtent;
+			return actualExent;
 		}
 	}
 
@@ -45,7 +41,7 @@ namespace clv::gfx::vk {
 
 		VkSurfaceFormatKHR surfaceFormat	= chooseSwapSurfaceFormat(swapChainSuport.formats);
 		VkPresentModeKHR presentMode		= chooseSwapPresentMode(swapChainSuport.presentModes);
-		VkExtent2D extent					= chooseSwapExtent(swapChainSuport.capabilities);
+		VkExtent2D extent					= chooseSwapExtent(swapChainSuport.capabilities, windowExtent);
 
 		uint32_t queueFamilyIndices[] = { *familyIndices.graphicsFamily, *familyIndices.presentFamily };
 
