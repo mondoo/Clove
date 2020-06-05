@@ -3,7 +3,7 @@
 //TODO: Remove
 #include <vulkan/vulkan.h>
 
-namespace clv::gfx::vk {
+namespace clv::gfx {
 	enum class QueueFlags {
 		None,
 		Transient, //Buffers will be short lived

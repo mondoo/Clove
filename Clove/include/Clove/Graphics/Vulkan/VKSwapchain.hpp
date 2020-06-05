@@ -5,7 +5,7 @@
 //TODO: Remove
 #include <vulkan/vulkan.h>
 
-namespace clv::gfx::vk {
+namespace clv::gfx {
 	class SwapchainDescriptor {
 	};
 }
