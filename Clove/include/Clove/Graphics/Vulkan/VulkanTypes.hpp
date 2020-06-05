@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vulkan/vulkan.h>
+
 namespace clv::gfx::vk {
 	struct QueueFamilyIndices {
 		std::optional<uint32_t> graphicsFamily;
