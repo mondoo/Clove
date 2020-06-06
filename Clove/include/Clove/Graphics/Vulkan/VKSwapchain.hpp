@@ -32,5 +32,7 @@ namespace clv::gfx::vk {
 
 		//TODO: a 'present' function, takes the presentation queue
 		//TODO: a 'resize' function
+
+		VkFormat getFormat() const;
 	};
 }

@@ -25,23 +25,23 @@ namespace clv::gfx::vk {
 	}
 
 	static VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, const VkExtent2D& windowExtent) {
-		if(capabilities.currentExtent.width != UINT32_MAX) { //If width / height are max then the window manager is allowing us to differ in size
+		if(capabilities.currentExtent.width != UINT32_MAX) {//If width / height are max then the window manager is allowing us to differ in size
 			return capabilities.currentExtent;
 		} else {
 			VkExtent2D actualExent;
 
-			actualExent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, windowExtent.width));
+			actualExent.width  = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, windowExtent.width));
 			actualExent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, windowExtent.height));
 
 			return actualExent;
 		}
 	}
 
-	VKSwapchain::VKSwapchain(VkDevice device, SwapchainSupportDetails supportDetails, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, VkExtent2D windowExtent, SwapchainDescriptor descriptor) 
-		: device(device){
-		VkSurfaceFormatKHR surfaceFormat	= chooseSwapSurfaceFormat(supportDetails.formats);
-		VkPresentModeKHR presentMode		= chooseSwapPresentMode(supportDetails.presentModes);
-		VkExtent2D extent					= chooseSwapExtent(supportDetails.capabilities, windowExtent);
+	VKSwapchain::VKSwapchain(VkDevice device, SwapchainSupportDetails supportDetails, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, VkExtent2D windowExtent, SwapchainDescriptor descriptor)
+		: device(device) {
+		VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(supportDetails.formats);
+		VkPresentModeKHR presentMode	 = chooseSwapPresentMode(supportDetails.presentModes);
+		VkExtent2D extent				 = chooseSwapExtent(supportDetails.capabilities, windowExtent);
 
 		uint32_t queueFamilyIndices[] = { *familyIndices.graphicsFamily, *familyIndices.presentFamily };
 
@@ -61,19 +61,19 @@ namespace clv::gfx::vk {
 		createInfo.imageArrayLayers = 1;
 		createInfo.imageUsage		= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 		if(familyIndices.graphicsFamily != familyIndices.presentFamily) {
-			createInfo.imageSharingMode			= VK_SHARING_MODE_CONCURRENT;
-			createInfo.queueFamilyIndexCount	= 2;
-			createInfo.pQueueFamilyIndices		= queueFamilyIndices;
+			createInfo.imageSharingMode		 = VK_SHARING_MODE_CONCURRENT;
+			createInfo.queueFamilyIndexCount = 2;
+			createInfo.pQueueFamilyIndices	 = queueFamilyIndices;
 		} else {
-			createInfo.imageSharingMode			= VK_SHARING_MODE_EXCLUSIVE;
-			createInfo.queueFamilyIndexCount	= 0;
-			createInfo.pQueueFamilyIndices		= nullptr;
+			createInfo.imageSharingMode		 = VK_SHARING_MODE_EXCLUSIVE;
+			createInfo.queueFamilyIndexCount = 0;
+			createInfo.pQueueFamilyIndices	 = nullptr;
 		}
-		createInfo.preTransform		= supportDetails.capabilities.currentTransform;
-		createInfo.compositeAlpha	= VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-		createInfo.presentMode		= presentMode;
-		createInfo.clipped			= VK_TRUE;
-		createInfo.oldSwapchain		= VK_NULL_HANDLE;
+		createInfo.preTransform	  = supportDetails.capabilities.currentTransform;
+		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+		createInfo.presentMode	  = presentMode;
+		createInfo.clipped		  = VK_TRUE;
+		createInfo.oldSwapchain	  = VK_NULL_HANDLE;
 
 		if(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
 			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create swap chain");
@@ -85,7 +85,7 @@ namespace clv::gfx::vk {
 		vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
 
 		swapChainImageFormat = surfaceFormat.format;
-		swapChainExtent = extent;
+		swapChainExtent		 = extent;
 
 		swapChainImageViews.resize(swapChainImages.size());
 
@@ -94,10 +94,14 @@ namespace clv::gfx::vk {
 		}
 	}
 
-	VKSwapchain::~VKSwapchain(){
+	VKSwapchain::~VKSwapchain() {
 		for(auto imageView : swapChainImageViews) {
 			vkDestroyImageView(device, imageView, nullptr);
 		}
 		vkDestroySwapchainKHR(device, swapChain, nullptr);
+	}
+
+	VkFormat VKSwapchain::getFormat() const {
+		return swapChainImageFormat;
 	}
 }
