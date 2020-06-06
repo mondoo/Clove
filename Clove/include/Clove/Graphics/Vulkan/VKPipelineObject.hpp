@@ -13,14 +13,14 @@ namespace clv::gfx {
 
 	struct ViewportDescriptor {
 		ElementState state{ ElementState::Static };
-		mth::vec2f position{ 0.0f, 0.0f };
-		mth::vec2f size{ 0.0f, 0.0f };
+		mth::vec2i position{ 0.0f, 0.0f };
+		mth::vec2ui size{ 0.0f, 0.0f };
 	};
 
 	struct ScissorDescriptor {
 		ElementState state{ ElementState::Static };
-		mth::vec2f position{ 0.0f, 0.0f };
-		mth::vec2f size{ 0.0f, 0.0f };
+		mth::vec2i position{ 0.0f, 0.0f };
+		mth::vec2ui size{ 0.0f, 0.0f };
 	};
 
 	struct RasteriserDescriptor {
