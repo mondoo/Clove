@@ -34,11 +34,11 @@ namespace blb::rnd {
 			if(FT_Init_FreeType(&library) != FT_Err_Ok) {
 				CLV_ASSERT(false, "Could not load freetype");
 			} else {
-				CLV_LOG_TRACE("Constructed FreeType library");
+				GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructed FreeType library");
 			}
 
 			const auto libraryDeleter = [](FT_Library lib) {
-				CLV_LOG_TRACE("FreeType library has been deleted");
+				GARLIC_LOG(garlicLogContext, Log::Level::Trace, "FreeType library has been deleted");
 				FT_Done_FreeType(lib);
 			};
 			ftLibReference = FTLibSharedPtr(library, libraryDeleter);

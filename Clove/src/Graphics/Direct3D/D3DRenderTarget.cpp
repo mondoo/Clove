@@ -79,7 +79,7 @@ namespace clv::gfx::d3d {
 		} else if(depthStencilView) {
 			depthStencilView->GetDevice(&device);
 		} else {
-			CLV_LOG_ERROR("{0}: could not retrieve device", CLV_FUNCTION_NAME_PRETTY);
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: could not retrieve device", CLV_FUNCTION_NAME_PRETTY);
 			return;
 		}
 

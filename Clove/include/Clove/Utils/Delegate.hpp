@@ -1,7 +1,7 @@
 #pragma once
 
-namespace clv::utl{
-	struct MultiCastDelegateHandle{
+namespace clv::utl {
+	struct MultiCastDelegateHandle {
 		//VARIABLES
 	public:
 		using IdType = int32_t;
@@ -13,24 +13,27 @@ namespace clv::utl{
 		//FUNCTIONS
 	public:
 		MultiCastDelegateHandle() = default;
-		MultiCastDelegateHandle(IdType id) : id(id) {}
+		MultiCastDelegateHandle(IdType id)
+			: id(id) {}
 
-		operator IdType() const noexcept { return id.value_or(INVALID_ID); }
+		operator IdType() const noexcept {
+			return id.value_or(INVALID_ID);
+		}
 	};
 }
 
-namespace std{
+namespace std {
 	template<>
-	struct hash<clv::utl::MultiCastDelegateHandle>{
-		std::size_t operator()(const clv::utl::MultiCastDelegateHandle& handle) const noexcept{
+	struct hash<clv::utl::MultiCastDelegateHandle> {
+		std::size_t operator()(const clv::utl::MultiCastDelegateHandle& handle) const noexcept {
 			return hash<clv::utl::MultiCastDelegateHandle::IdType>()(handle);
 		}
 	};
 }
 
-namespace clv::utl{
+namespace clv::utl {
 	template<typename FunctionPrototype>
-	class SingleCastDelegate{
+	class SingleCastDelegate {
 		//VARIABLES
 	private:
 		std::function<FunctionPrototype> functionPointer;
@@ -47,8 +50,8 @@ namespace clv::utl{
 
 		~SingleCastDelegate();
 
-		template<typename BindFunctionPrototype, typename ObjectType>
-		void bind(BindFunctionPrototype&& function, ObjectType* object);
+		template<typename RetType, typename ObjectType, typename... Args>
+		void bind(RetType (ObjectType::*function)(Args...), ObjectType* object);
 		template<typename BindFunctionPrototype>
 		void bind(BindFunctionPrototype&& function);
 
@@ -57,12 +60,12 @@ namespace clv::utl{
 		bool isBound() const;
 		operator bool() const;
 
-		template<typename ...Args>
-		auto broadcast(Args&& ...args) const;
+		template<typename... Args>
+		auto broadcast(Args&&... args) const;
 	};
 
 	template<typename FunctionPrototype>
-	class MultiCastDelegate{
+	class MultiCastDelegate {
 		//VARIABLES
 	private:
 		std::unordered_map<MultiCastDelegateHandle, std::function<FunctionPrototype>> functionPointers;
@@ -81,16 +84,16 @@ namespace clv::utl{
 
 		~MultiCastDelegate();
 
-		template<typename BindFunctionPrototype, typename ObjectType>
-		[[nodiscard]] MultiCastDelegateHandle bind(BindFunctionPrototype&& function, ObjectType* object);
+		template<typename RetType, typename ObjectType, typename... Args>
+		[[nodiscard]] MultiCastDelegateHandle bind(RetType (ObjectType::*function)(Args...), ObjectType* object);
 		template<typename BindFunctionPrototype>
 		[[nodiscard]] MultiCastDelegateHandle bind(BindFunctionPrototype&& function);
 
 		void unbind(const MultiCastDelegateHandle& handle);
 		void unbindAll();
 
-		template<typename ...Args>
-		void broadcast(Args&& ...args) const;
+		template<typename... Args>
+		void broadcast(Args&&... args) const;
 	};
 }
 

@@ -73,9 +73,9 @@ namespace clv::gfx::ogl{
 
 			context = glXCreateContextAttribsARB(display, bestFbc, 0, GL_TRUE, attributes);
 
-			CLV_LOG_DEBUG("Succesfully created an OpenGL {0}.{1} context", major, minor);
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Succesfully created an OpenGL {0}.{1} context", major, minor);
 		}else{
-			CLV_LOG_WARN("Could not retrieve glXCreateContextAttribsARBProc. Application might not support OpenGL3.2+ contexts");
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Warning, "Could not retrieve glXCreateContextAttribsARBProc. Application might not support OpenGL3.2+ contexts");
 
 			context = glXCreateContext(display, visual, nullptr, GL_TRUE);
 		}
@@ -102,14 +102,14 @@ namespace clv::gfx::ogl{
 			if(strstr(extensions, "GLX_EXT_swap_control") != 0){
 				glxSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC)glXGetProcAddress((GLubyte*)"glxSwapIntervalEXT");
 			} else{
-				CLV_LOG_ERROR("Could not find the GLX_EXT_swap_control. Cannot enable / disable vsync");
+				GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Could not find the GLX_EXT_swap_control. Cannot enable / disable vsync");
 			}
 		}
 
 		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
 
-		CLV_LOG_TRACE("GL version: {0}", glGetString(GL_VERSION));
-		CLV_LOG_TRACE("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+		GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, "GL version: {0}", glGetString(GL_VERSION));
+		GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, "GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 		glDebugMessageCallback(errorCallback, nullptr);
 		glEnable(GL_DEBUG_OUTPUT);
@@ -125,9 +125,9 @@ namespace clv::gfx::ogl{
 			const int32_t interval = enabled ? 1 : 0;
 			glxSwapIntervalEXT(display, drawable, interval);
 	
-			CLV_LOG_TRACE("Swap interval for GLX was set to: {0}", interval);
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, "Swap interval for GLX was set to: {0}", interval);
 		}else{
-			CLV_LOG_ERROR("Could not set swap interval. glxSwapIntervalEXT is unitialised. Please make sure this context is current");
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Could not set swap interval. glxSwapIntervalEXT is unitialised. Please make sure this context is current");
 		}
 	}
 
@@ -140,7 +140,7 @@ namespace clv::gfx::ogl{
 		
 			return (interval > 0);
 		}else{
-			CLV_LOG_ERROR("glxSwapIntervalEXT is unitialised. Could not retrieve swap interval. Please make sure this context is current");
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "glxSwapIntervalEXT is unitialised. Could not retrieve swap interval. Please make sure this context is current");
 			return false;
 		}
 	}

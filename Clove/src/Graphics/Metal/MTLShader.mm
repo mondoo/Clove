@@ -14,7 +14,7 @@ namespace clv::gfx::mtl{
 		if(error.code != 0){
 			for (NSString* key in [error userInfo]) {
 				NSString* value = [error userInfo][key];
-				CLV_LOG_ERROR("Error in function '{0}': {1}", CLV_FUNCTION_NAME_PRETTY, [value cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+				GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Error in function '{0}': {1}", CLV_FUNCTION_NAME_PRETTY, [value cStringUsingEncoding:[NSString defaultCStringEncoding]]);
 			}
 		}
 			
@@ -35,7 +35,7 @@ namespace clv::gfx::mtl{
 		if(error.code != 0){
 			for (NSString* key in [error userInfo]) {
 				NSString* value = [error userInfo][key];
-				CLV_LOG_ERROR("Error in function '{0}': {1}", CLV_FUNCTION_NAME_PRETTY, [value cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+				GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Error in function '{0}': {1}", CLV_FUNCTION_NAME_PRETTY, [value cStringUsingEncoding:[NSString defaultCStringEncoding]]);
 			}
 		}
 			

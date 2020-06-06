@@ -8,7 +8,6 @@
 #include "Bulb/AI/Task.hpp"
 
 #include "Bulb/ECS/Components/AudioComponent.hpp"
-#include "Bulb/ECS/Components/BehaviourTreeComponent.hpp"
 #include "Bulb/ECS/Components/CameraComponent.hpp"
 #include "Bulb/ECS/Components/DirectionalLightComponent.hpp"
 #include "Bulb/ECS/Components/ModelComponent.hpp"
@@ -17,7 +16,6 @@
 #include "Bulb/ECS/Components/TransformComponent.hpp"
 #include "Bulb/ECS/Entity.hpp"
 #include "Bulb/ECS/Systems/AudioSystem.hpp"
-#include "Bulb/ECS/Systems/BehaviourTreeSystem.hpp"
 #include "Bulb/ECS/Systems/PhysicsSystem.hpp"
 #include "Bulb/ECS/Systems/RenderSystem.hpp"
 #include "Bulb/ECS/World.hpp"

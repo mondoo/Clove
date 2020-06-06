@@ -17,7 +17,7 @@ namespace blb::ecs{
 
 		parent = other.parent;
 		//Not copying children for now, transform component has no knowledge of other components
-		CLV_LOG_WARN("{0}: Unable to copy transform's children.", CLV_FUNCTION_NAME_PRETTY);
+		GARLIC_LOG(garlicLogContext, Log::Level::Warning, "{0}: Unable to copy transform's children.", CLV_FUNCTION_NAME_PRETTY);
 
 		if(parent != nullptr){
 			parent->children.push_back(this);
@@ -33,7 +33,7 @@ namespace blb::ecs{
 
 		parent = other.parent;
 		//Not copying children for now, transform component has no knowledge of other components
-		CLV_LOG_WARN("{0}: Unable to copy transform's children.", CLV_FUNCTION_NAME_PRETTY);
+		GARLIC_LOG(garlicLogContext, Log::Level::Warning, "{0}: Unable to copy transform's children.", CLV_FUNCTION_NAME_PRETTY);
 
 		if(parent != nullptr){
 			parent->children.push_back(this);
@@ -124,7 +124,7 @@ namespace blb::ecs{
 	}
 
 	mth::vec3f TransformComponent::getForward() const {
-		mth::vec3f eulerRot = mth::quaternionToEuler(getRotation());
+		mth::vec3f eulerRot = mth::quaternionToEuler(getRotation(TransformSpace::World));
 
 		mth::vec3f front;
 		front.x = sin(eulerRot.y) * cos(eulerRot.x);

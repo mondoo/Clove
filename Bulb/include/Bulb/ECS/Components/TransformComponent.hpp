@@ -32,13 +32,13 @@ namespace blb::ecs {
 
 		~TransformComponent();
 
-		clv::mth::vec3f getPosition(TransformSpace space = TransformSpace::Local) const;
-		clv::mth::quatf getRotation(TransformSpace space = TransformSpace::Local) const;
-		clv::mth::vec3f getScale(TransformSpace space = TransformSpace::Local) const;
+		clv::mth::vec3f getPosition(TransformSpace space = TransformSpace::World) const;
+		clv::mth::quatf getRotation(TransformSpace space = TransformSpace::World) const;
+		clv::mth::vec3f getScale(TransformSpace space = TransformSpace::World) const;
 
-		void setPosition(const clv::mth::vec3f& position, TransformSpace space = TransformSpace::Local);
-		void setRotation(const clv::mth::quatf& rotation, TransformSpace space = TransformSpace::Local);
-		void setScale(const clv::mth::vec3f& scale, TransformSpace space = TransformSpace::Local);
+		void setPosition(const clv::mth::vec3f& position, TransformSpace space = TransformSpace::World);
+		void setRotation(const clv::mth::quatf& rotation, TransformSpace space = TransformSpace::World);
+		void setScale(const clv::mth::vec3f& scale, TransformSpace space = TransformSpace::World);
 
 		clv::mth::vec3f getForward() const;
 		clv::mth::vec3f getRight() const;

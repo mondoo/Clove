@@ -13,9 +13,13 @@ namespace blb::ai {
 		rootTask = std::move(task);
 	}
 
+	BlackBoard& BehaviourTree::getBlackBoard() {
+		return blackboard;
+	}
+
 	void BehaviourTree::run(clv::utl::DeltaTime deltaTime) {
 		if(rootTask != nullptr) {
-			rootTask->activate(deltaTime);
+			rootTask->activate(deltaTime, blackboard);
 		}
 	}
 }

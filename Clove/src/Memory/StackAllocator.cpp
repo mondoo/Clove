@@ -5,17 +5,17 @@ namespace clv::mem {
 		: stackSize(sizeBytes)
 		, freeMemory(true) {
 #if CLV_ENABLE_MEMORY_DEBUGGING
-		CLV_LOG_TRACE("Constructing new StackAllocator. Size {0}. ", stackSize);
+		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructing new StackAllocator. Size {0}. ", stackSize);
 #endif
-		stack = reinterpret_cast<char*>(malloc(stackSize));
-		top = stack;
+		stack = reinterpret_cast<std::byte*>(malloc(stackSize));
+		top	  = stack;
 	}
 
-	StackAllocator::StackAllocator(char* start, size_t sizeBytes)
+	StackAllocator::StackAllocator(std::byte* start, size_t sizeBytes)
 		: stackSize(sizeBytes)
 		, freeMemory(false) {
 		stack = start;
-		top = stack;
+		top	  = stack;
 	}
 
 	StackAllocator::StackAllocator(StackAllocator&& other) noexcept = default;
@@ -24,6 +24,11 @@ namespace clv::mem {
 
 	StackAllocator::~StackAllocator() {
 		if(freeMemory) {
+#if CLV_DEBUG
+			if(top > stack) {
+				GARLIC_LOG(garlicLogContext, Log::Level::Warning, "Stack Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
+			}
+#endif
 			::free(stack);
 		}
 	}
@@ -34,7 +39,7 @@ namespace clv::mem {
 
 	void* StackAllocator::alloc(size_t bytes) {
 		if((top - stack) + bytes > stackSize) {
-			CLV_LOG_ERROR("{0}: Not enough space left to allocate {1} bytes.", CLV_FUNCTION_NAME_PRETTY, bytes);
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Not enough space left to allocate {1} bytes.", CLV_FUNCTION_NAME_PRETTY, bytes);
 			return nullptr;
 		}
 

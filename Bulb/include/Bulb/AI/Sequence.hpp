@@ -16,6 +16,6 @@ namespace blb::ai {
 
 		~Sequence();
 
-		virtual Status activate(clv::utl::DeltaTime deltaTime) override;
+		Status activate(const clv::utl::DeltaTime deltaTime, BlackBoard& blackboard) override;
 	};
 }

@@ -83,7 +83,7 @@ namespace clv::gfx::d3d{
 
 	void D3DSurface::setVSync(bool enabled){
 		swapInterval = enabled ? 1u : 0u;
-		CLV_LOG_TRACE("Swap interval for DirectX was set to: {0}", swapInterval);
+		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Swap interval for DirectX was set to: {0}", swapInterval);
 	}
 
 	bool D3DSurface::isVsync() const{
