@@ -5,6 +5,7 @@
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
+#include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -40,5 +41,7 @@ namespace clv::gfx::vk {
 
 		std::unique_ptr<VKShader> createShader(std::string_view filePath);
 		std::unique_ptr<VKShader> createShader(std::vector<std::byte> byteCode);
+
+		std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
 	};
 }

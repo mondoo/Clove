@@ -379,4 +379,8 @@ namespace clv::gfx::vk{
 	std::unique_ptr<VKShader> VKGraphicsFactory::createShader(std::vector<std::byte> byteCode) {
 		return std::make_unique<VKShader>(logicalDevice, std::move(byteCode));
 	}
+
+	std::unique_ptr<VKPipelineObject> VKGraphicsFactory::createPipelineObject(PiplineObjectDescriptor descriptor) {
+		return std::make_unique<VKPipelineObject>(logicalDevice, std::move(descriptor));
+	}
 }
