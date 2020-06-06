@@ -108,10 +108,31 @@ namespace clv::gfx::vk {
 		}
 
 		//Pipeline
-		//TODO: pipeline
+		VkGraphicsPipelineCreateInfo pipelineInfo{};
+		pipelineInfo.sType				 = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineInfo.stageCount			 = std::size(shaderStages);
+		pipelineInfo.pStages			 = std::data(shaderStages);
+		pipelineInfo.pVertexInputState	 = &vertexInputInfo;
+		pipelineInfo.pInputAssemblyState = &inputAssembly;
+		pipelineInfo.pViewportState		 = &viewportState;
+		pipelineInfo.pRasterizationState = &rasterizer;
+		pipelineInfo.pMultisampleState	 = &multisampling;
+		pipelineInfo.pDepthStencilState	 = nullptr;//TODO
+		pipelineInfo.pColorBlendState	 = &colorBlending;
+		pipelineInfo.pDynamicState		 = nullptr;//TODO
+		pipelineInfo.layout				 = pipelineLayout;
+		pipelineInfo.renderPass			 = descriptor.renderPass->getRenderPass();
+		pipelineInfo.subpass			 = 0;//The subpass of the renderpass that'll use this pipeline
+		pipelineInfo.basePipelineHandle	 = VK_NULL_HANDLE;
+		pipelineInfo.basePipelineIndex	 = -1;
+
+		if(vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS) {
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics pipeline");
+		}
 	}
 
 	VKPipelineObject::~VKPipelineObject() {
+		vkDestroyPipeline(device, pipeline, nullptr);
 		vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 	}
 }

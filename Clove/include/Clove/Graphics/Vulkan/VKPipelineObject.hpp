@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Clove/Graphics/Vulkan/VKShader.hpp"
-
 //TODO: Remove
+#include "Clove/Graphics/Vulkan/VKShader.hpp"
+#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx {
@@ -35,6 +35,8 @@ namespace clv::gfx {
 		ScissorDescriptor scissorDescriptor;
 
 		RasteriserDescriptor rasteriserDescriptor;
+
+		std::shared_ptr<vk::VKRenderPass> renderPass;
 	};
 }
 
