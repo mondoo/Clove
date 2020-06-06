@@ -104,4 +104,8 @@ namespace clv::gfx::vk {
 	VkFormat VKSwapchain::getFormat() const {
 		return swapChainImageFormat;
 	}
+
+	VkExtent2D VKSwapchain::getExtent() const {
+		return swapChainExtent;
+	}
 }

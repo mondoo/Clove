@@ -34,5 +34,6 @@ namespace clv::gfx::vk {
 		//TODO: a 'resize' function
 
 		VkFormat getFormat() const;
+		VkExtent2D getExtent() const;
 	};
 }
