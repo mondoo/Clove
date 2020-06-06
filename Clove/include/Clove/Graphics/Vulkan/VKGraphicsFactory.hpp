@@ -1,9 +1,10 @@
 #pragma once
 
 //TODO: Remove to cpp
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+#include "Clove/Graphics/Vulkan/VKShader.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -36,5 +37,8 @@ namespace clv::gfx::vk {
 		std::unique_ptr<VKTransferQueue> createTransferQueue(CommandQueueDescriptor descriptor);
 
 		std::unique_ptr<VKSwapchain> createSwapChain(SwapchainDescriptor descriptor);
+
+		std::unique_ptr<VKShader> createShader(std::string_view filePath);
+		std::unique_ptr<VKShader> createShader(std::vector<std::byte> byteCode);
 	};
 }

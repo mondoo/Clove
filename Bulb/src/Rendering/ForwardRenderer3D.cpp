@@ -15,6 +15,9 @@ namespace blb::rnd {
 		auto transferQueue = graphicsFactory->createTransferQueue({ clv::gfx::QueueFlags::Transient });
 
 		auto swapchain = graphicsFactory->createSwapChain({});
+
+		auto vertShader = graphicsFactory->createShader("vert.spirv");
+		auto fragShader = graphicsFactory->createShader("frag.spirv");
 	}
 
 	ForwardRenderer3D::~ForwardRenderer3D() = default;

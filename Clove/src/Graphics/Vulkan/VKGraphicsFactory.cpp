@@ -371,4 +371,12 @@ namespace clv::gfx::vk{
 	std::unique_ptr<VKSwapchain> VKGraphicsFactory::createSwapChain(SwapchainDescriptor descriptor) {
 		return std::make_unique<VKSwapchain>(logicalDevice, physicalDeviceSwapchainSupport, surface, queueFamilyIndices, windowExtent, std::move(descriptor));
 	}
+
+	std::unique_ptr<VKShader> VKGraphicsFactory::createShader(std::string_view filePath) {
+		return std::make_unique<VKShader>(logicalDevice, filePath);
+	}
+
+	std::unique_ptr<VKShader> VKGraphicsFactory::createShader(std::vector<std::byte> byteCode) {
+		return std::make_unique<VKShader>(logicalDevice, std::move(byteCode));
+	}
 }
