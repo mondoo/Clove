@@ -3,8 +3,6 @@
 #include <Bulb/Rendering/ForwardRenderer3D.hpp>
 
 int main(){
-	clv::Log::init();
-
 	auto platform = clv::plt::createPlatformInstance();
 	auto mainWindow = platform->createWindow({ "Vulkan refactor!", 1280, 720 });
 	mainWindow->setVSync(true);
