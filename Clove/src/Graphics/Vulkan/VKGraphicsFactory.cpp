@@ -192,7 +192,7 @@ namespace clv::gfx::vk{
 		};
 
 		if(!checkValidationLayerSupport(validationLayers)) {
-			CLV_LOG_WARN("Vulkan validation layers are not supported on this device!");
+			GARLIC_LOG(garlicLogContext, Log::Level::Warning, "Vulkan validation layers are not supported on this device. Unable to provide debugging infomation");
 		}
 #endif
 
@@ -231,14 +231,14 @@ namespace clv::gfx::vk{
 #endif
 
 			if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-				CLV_LOG_ERROR("Failed to create VK instance");
+				GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create VK instance");
 				return;
 			}
 
 #if CLV_DEBUG
 			//TODO: Move this debug messenger setup else where
 			if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-				CLV_LOG_ERROR("Failed to create vk debug message callback");
+				GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create vk debug message callback");
 				return;
 			}
 #endif
@@ -253,7 +253,7 @@ namespace clv::gfx::vk{
 			createInfo.hwnd			= reinterpret_cast<HWND>(nativeWindow);
 
 			if(vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
-				CLV_LOG_ERROR("Failed to create Vulkan surface");
+				GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create Vulkan surface");
 				return;
 			}
 
@@ -269,7 +269,7 @@ namespace clv::gfx::vk{
 			uint32_t deviceCount = 0;
 			vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 			if(deviceCount == 0) {
-				CLV_LOG_ERROR("failed to find GPUs with Vulkan support!");
+				GARLIC_LOG(garlicLogContext, Log::Level::Error, "failed to find GPUs with Vulkan support!");
 				return;
 			}
 			std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -283,16 +283,16 @@ namespace clv::gfx::vk{
 			}
 
 			if(physicalDevice == VK_NULL_HANDLE) {
-				CLV_LOG_ERROR("failed to find a suitable GPU!");
+				GARLIC_LOG(garlicLogContext, Log::Level::Error, "failed to find a suitable GPU!");
 				return;
 			} else {
 				VkPhysicalDeviceProperties devicePoperties;
 				vkGetPhysicalDeviceProperties(physicalDevice, &devicePoperties);
 
-				CLV_LOG_INFO("Vulkan capable physical device found");
-				CLV_LOG_INFO("\tDevice:\t{0}", devicePoperties.deviceName);
-				CLV_LOG_INFO("\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
-				CLV_LOG_INFO("\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
+				GARLIC_LOG(garlicLogContext, Log::Level::Info, "Vulkan capable physical device found");
+				GARLIC_LOG(garlicLogContext, Log::Level::Info, "\tDevice:\t{0}", devicePoperties.deviceName);
+				GARLIC_LOG(garlicLogContext, Log::Level::Info, "\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
+				GARLIC_LOG(garlicLogContext, Log::Level::Info, "\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
 
 				physicalDeviceSwapchainSupport = querySwapChainSupport(physicalDevice, surface);
 			}
@@ -340,7 +340,7 @@ namespace clv::gfx::vk{
 #endif
 
 			if(vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
-				CLV_LOG_ERROR("failed to create logical device!");
+				GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create logical device");
 				return;
 			}
 		}

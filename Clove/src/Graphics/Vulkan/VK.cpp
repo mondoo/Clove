@@ -64,7 +64,7 @@ namespace clv::gfx::vk {
 		};
 
 		if(!checkValidationLayerSupport(validationLayers)) {
-			CLV_LOG_WARN("Vulkan validation layers are not supported on this device!");
+			GARLIC_LOG(garlicLogContext, Log::Level::Warning, "Vulkan validation layers are not supported on this device. Unable to provide debugging infomation");
 		}
 	#endif
 

@@ -76,7 +76,7 @@ namespace clv::gfx::vk {
 		createInfo.oldSwapchain		= VK_NULL_HANDLE;
 
 		if(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
-			CLV_LOG_ERROR("failed to create swap chain!");
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create swap chain");
 			return;
 		}
 

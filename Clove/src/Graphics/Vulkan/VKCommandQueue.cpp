@@ -11,7 +11,7 @@ namespace clv::gfx::vk {
 		poolInfo.flags				= descriptor.flags == QueueFlags::Transient ? VK_COMMAND_POOL_CREATE_TRANSIENT_BIT : 0;
 
 		if(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-			CLV_LOG_ERROR("Failed to create graphics command pool");
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
 		}
 	}
 
@@ -35,7 +35,7 @@ namespace clv::gfx::vk {
 		poolInfo.flags				= descriptor.flags == QueueFlags::Transient ? VK_COMMAND_POOL_CREATE_TRANSIENT_BIT : 0;
 
 		if(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-			CLV_LOG_ERROR("Failed to create graphics command pool");
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
 		}
 	}
 

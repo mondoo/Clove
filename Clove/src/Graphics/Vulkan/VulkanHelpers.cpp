@@ -15,7 +15,7 @@ namespace clv::gfx::vk {
 
 		VkImageView imageView;
 		if(vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
-			CLV_LOG_ERROR("failed to create texture image view!");
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create texture image view");
 			return VK_NULL_HANDLE;
 		}
 
