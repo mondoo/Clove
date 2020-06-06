@@ -380,6 +380,10 @@ namespace clv::gfx::vk{
 		return std::make_unique<VKShader>(logicalDevice, std::move(byteCode));
 	}
 
+	std::unique_ptr<VKRenderPass> VKGraphicsFactory::createRenderPass(VKSwapchain& swapchain, RenderPassDescriptor descriptor) {
+		return std::make_unique<VKRenderPass>(logicalDevice, swapchain, std::move(descriptor));
+	}
+
 	std::unique_ptr<VKPipelineObject> VKGraphicsFactory::createPipelineObject(PiplineObjectDescriptor descriptor) {
 		return std::make_unique<VKPipelineObject>(logicalDevice, std::move(descriptor));
 	}
