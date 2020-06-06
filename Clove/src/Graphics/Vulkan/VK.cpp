@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Vulkan/VK.hpp"
 
+//TODO: Delete these VK/GL/D3D headers
+
 //#include <vulkan/vulkan.h>
 
 //TODO: Move this callback (and the set up) into VKException.hpp
