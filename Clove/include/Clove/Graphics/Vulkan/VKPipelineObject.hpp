@@ -15,5 +15,17 @@ namespace clv::gfx {
 
 namespace clv::gfx::vk {
 	class VKPipelineObject {
+		//VARIABLES
+	private:
+		VkDevice device = VK_NULL_HANDLE;
+
+		VkPipeline pipeline = VK_NULL_HANDLE;
+
+		//FUNCTIONS
+	public:
+		//TODO: Ctors
+		VKPipelineObject(VkDevice device, PiplineObjectDescriptor descriptor);
+
+		~VKPipelineObject();
 	};
 }
