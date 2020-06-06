@@ -1,18 +1,11 @@
 project(Vulkan)
 set(ApplicationFolder "Garlic/Vulkan")
 
-#compile spirv
-add_custom_command(
-	OUTPUT vert.spirv
-	COMMAND glslc -fshader-stage=vertex ${CMAKE_CURRENT_SOURCE_DIR}/source/vert.glsl -o vert.spirv
-	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/vert.glsl
-)
+include(../Clove/cmake/CompileShader.cmake)
 
-add_custom_command(
-	OUTPUT frag.spirv
-	COMMAND glslc -fshader-stage=fragment ${CMAKE_CURRENT_SOURCE_DIR}/source/frag.glsl -o frag.spirv
-	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/frag.glsl
-)
+#compile spirv
+compileShader("${CMAKE_CURRENT_SOURCE_DIR}/source/vert.glsl" "vert.spirv" "vertex")
+compileShader("${CMAKE_CURRENT_SOURCE_DIR}/source/frag.glsl" "frag.spirv" "fragment")
 
 add_executable(
 	${PROJECT_NAME}
