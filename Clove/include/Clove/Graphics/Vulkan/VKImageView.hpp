@@ -17,5 +17,8 @@ namespace clv::gfx::vk {
 		//TODO: Ctors
 		VKImageView(VkDevice device, VkImageView imageView);
 		~VKImageView();
+
+		//VK specific
+		VkImageView getImageView() const;
 	};
 }

@@ -9,4 +9,8 @@ namespace clv::gfx::vk {
 	VKImageView::~VKImageView() {
 		vkDestroyImageView(device, imageView, nullptr);
 	}
+
+	VkImageView VKImageView::getImageView() const {
+		return imageView;
+	}
 }

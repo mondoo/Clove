@@ -29,6 +29,17 @@ namespace blb::rnd {
 		pipelineDescriptor.renderPass			   = renderPass;
 
 		auto pipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+
+		std::vector<std::shared_ptr<clv::gfx::vk::VKFramebuffer>> swapChainFrameBuffers;
+		for(auto& swapChainImageView : swapchain->getImageViews()) {
+			clv::gfx::FramebufferDescriptor frameBufferDescriptor{};
+			frameBufferDescriptor.renderPass  = renderPass;
+			frameBufferDescriptor.attachments = { swapChainImageView };
+			frameBufferDescriptor.width		  = swapchain->getExtent().width;
+			frameBufferDescriptor.height	  = swapchain->getExtent().height;
+
+			swapChainFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(frameBufferDescriptor));
+		}
 	}
 
 	ForwardRenderer3D::~ForwardRenderer3D() = default;
