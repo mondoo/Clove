@@ -43,7 +43,7 @@ namespace clv::gfx::vk {
 		VkPresentModeKHR presentMode	 = chooseSwapPresentMode(supportDetails.presentModes);
 		VkExtent2D extent				 = chooseSwapExtent(supportDetails.capabilities, windowExtent);
 
-		uint32_t queueFamilyIndices[] = { *familyIndices.graphicsFamily, *familyIndices.presentFamily };
+		std::array queueFamilyIndices{ *familyIndices.graphicsFamily, *familyIndices.presentFamily };
 
 		//Request one more than the minimum images the swap chain can support because sometimes we might need to wait for the driver
 		uint32_t imageCount = supportDetails.capabilities.minImageCount + 1;
@@ -62,8 +62,8 @@ namespace clv::gfx::vk {
 		createInfo.imageUsage		= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 		if(familyIndices.graphicsFamily != familyIndices.presentFamily) {
 			createInfo.imageSharingMode		 = VK_SHARING_MODE_CONCURRENT;
-			createInfo.queueFamilyIndexCount = 2;
-			createInfo.pQueueFamilyIndices	 = queueFamilyIndices;
+			createInfo.queueFamilyIndexCount = std::size(queueFamilyIndices);
+			createInfo.pQueueFamilyIndices	 = std::data(queueFamilyIndices);
 		} else {
 			createInfo.imageSharingMode		 = VK_SHARING_MODE_EXCLUSIVE;
 			createInfo.queueFamilyIndexCount = 0;
