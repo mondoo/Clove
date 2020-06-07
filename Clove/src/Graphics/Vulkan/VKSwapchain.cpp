@@ -81,23 +81,19 @@ namespace clv::gfx::vk {
 		}
 
 		vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
-		swapChainImages.resize(imageCount);
-		vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
+		images.resize(imageCount);
+		vkGetSwapchainImagesKHR(device, swapChain, &imageCount, images.data());
 
 		swapChainImageFormat = surfaceFormat.format;
 		swapChainExtent		 = extent;
 
-		swapChainImageViews.resize(swapChainImages.size());
-
-		for(size_t i = 0; i < swapChainImages.size(); ++i) {
-			swapChainImageViews[i] = createImageView(device, swapChainImages[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+		imageViews.resize(std::size(images));
+		for(size_t i = 0; i < images.size(); ++i) {
+			imageViews[i] = std::make_shared<VKImageView>(device, createImageView(device, images[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT));
 		}
 	}
 
 	VKSwapchain::~VKSwapchain() {
-		for(auto imageView : swapChainImageViews) {
-			vkDestroyImageView(device, imageView, nullptr);
-		}
 		vkDestroySwapchainKHR(device, swapChain, nullptr);
 	}
 
@@ -107,5 +103,9 @@ namespace clv::gfx::vk {
 
 	VkExtent2D VKSwapchain::getExtent() const {
 		return swapChainExtent;
+	}
+
+	const std::vector<std::shared_ptr<VKImageView>>& VKSwapchain::getImageViews() const {
+		return imageViews;
 	}
 }

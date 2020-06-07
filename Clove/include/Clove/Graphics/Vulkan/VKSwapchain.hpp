@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+#include "Clove/Graphics/Vulkan/VKImageView.hpp"
 
 //TODO: Remove
 #include <vulkan/vulkan.h>
@@ -20,8 +21,8 @@ namespace clv::gfx::vk {
 		VkFormat swapChainImageFormat;
 		VkExtent2D swapChainExtent;
 
-		std::vector<VkImage> swapChainImages;
-		std::vector<VkImageView> swapChainImageViews;
+		std::vector<VkImage> images;
+		std::vector<std::shared_ptr<VKImageView>> imageViews;
 
 		//FUNCTIONS
 	public:
@@ -35,5 +36,7 @@ namespace clv::gfx::vk {
 
 		ImageFormat getImageFormat() const;
 		VkExtent2D getExtent() const;
+
+		const std::vector<std::shared_ptr<VKImageView>>& getImageViews() const;
 	};
 }

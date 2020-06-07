@@ -133,6 +133,8 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKFramebuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsFactory.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsFactory.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKImageView.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKImageView.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKShader.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKShader.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKSwapchain.hpp
