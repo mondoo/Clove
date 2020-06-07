@@ -4,8 +4,11 @@
 #include <vulkan/vulkan.h>
 #include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
 
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+
 namespace clv::gfx {
 	struct RenderPassDescriptor {
+		ImageFormat imageFormat{ ImageFormat::Unkown };
 	};
 }
 
@@ -20,10 +23,10 @@ namespace clv::gfx::vk {
 		//FUNCTIONS
 	public:
 		//TODO: ctors
-		//TODO: Swapcahin is temp
-		VKRenderPass(VkDevice device, VKSwapchain& swapchain, RenderPassDescriptor descriptor);
+		VKRenderPass(VkDevice device, RenderPassDescriptor descriptor);
 		~VKRenderPass();
 
+		//VK specific
 		VkRenderPass getRenderPass() const;
 	};
 }

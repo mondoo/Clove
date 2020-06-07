@@ -43,7 +43,7 @@ namespace clv::gfx::vk {
 		std::unique_ptr<VKShader> createShader(std::string_view filePath);
 		std::unique_ptr<VKShader> createShader(std::vector<std::byte> byteCode);
 
-		std::unique_ptr<VKRenderPass> createRenderPass(VKSwapchain& swapchain, RenderPassDescriptor descriptor);
+		std::unique_ptr<VKRenderPass> createRenderPass(RenderPassDescriptor descriptor);
 
 		std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
 	};

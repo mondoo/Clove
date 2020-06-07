@@ -19,7 +19,7 @@ namespace blb::rnd {
 		std::shared_ptr<clv::gfx::vk::VKShader> vertShader = graphicsFactory->createShader("vert.spirv");
 		std::shared_ptr<clv::gfx::vk::VKShader> fragShader = graphicsFactory->createShader("frag.spirv");
 
-		std::shared_ptr<clv::gfx::vk::VKRenderPass> renderPass = graphicsFactory->createRenderPass(*swapchain, {});
+		std::shared_ptr<clv::gfx::vk::VKRenderPass> renderPass = graphicsFactory->createRenderPass({ swapchain->getImageFormat() });
 
 		clv::gfx::PiplineObjectDescriptor pipelineDescriptor;
 		pipelineDescriptor.vertexShader			   = vertShader;

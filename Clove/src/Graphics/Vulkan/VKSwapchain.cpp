@@ -101,8 +101,8 @@ namespace clv::gfx::vk {
 		vkDestroySwapchainKHR(device, swapChain, nullptr);
 	}
 
-	VkFormat VKSwapchain::getFormat() const {
-		return swapChainImageFormat;
+	ImageFormat VKSwapchain::getImageFormat() const {
+		return convertImageFormat(swapChainImageFormat);
 	}
 
 	VkExtent2D VKSwapchain::getExtent() const {

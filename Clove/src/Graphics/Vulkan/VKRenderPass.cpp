@@ -1,11 +1,13 @@
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 
+#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+
 namespace clv::gfx::vk {
-	VKRenderPass::VKRenderPass(VkDevice device, VKSwapchain& swapchain, RenderPassDescriptor descriptor)
+	VKRenderPass::VKRenderPass(VkDevice device, RenderPassDescriptor descriptor)
 		: device(device) {
 		//TODO: Hard coding in the attachments for now
 		VkAttachmentDescription colourAttachment{};
-		colourAttachment.format			= swapchain.getFormat();
+		colourAttachment.format			= convertImageFormat(descriptor.imageFormat);
 		colourAttachment.samples		= VK_SAMPLE_COUNT_1_BIT;
 		colourAttachment.loadOp			= VK_ATTACHMENT_LOAD_OP_CLEAR;
 		colourAttachment.storeOp		= VK_ATTACHMENT_STORE_OP_STORE;
