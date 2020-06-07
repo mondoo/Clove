@@ -387,4 +387,8 @@ namespace clv::gfx::vk{
 	std::unique_ptr<VKPipelineObject> VKGraphicsFactory::createPipelineObject(PiplineObjectDescriptor descriptor) {
 		return std::make_unique<VKPipelineObject>(logicalDevice, std::move(descriptor));
 	}
+
+	std::unique_ptr<VKFramebuffer> VKGraphicsFactory::createFramebuffer(FramebufferDescriptor descriptor) {
+		return std::make_unique<VKFramebuffer>(logicalDevice, std::move(descriptor));
+	}
 }

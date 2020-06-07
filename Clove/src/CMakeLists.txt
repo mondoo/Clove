@@ -129,6 +129,8 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKPipelineObject.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKRenderPass.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKRenderPass.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKFramebuffer.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKFramebuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsFactory.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsFactory.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKShader.hpp

@@ -7,6 +7,7 @@
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
+#include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -46,5 +47,7 @@ namespace clv::gfx::vk {
 		std::unique_ptr<VKRenderPass> createRenderPass(RenderPassDescriptor descriptor);
 
 		std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
+
+		std::unique_ptr<VKFramebuffer> createFramebuffer(FramebufferDescriptor descriptor);
 	};
 }
