@@ -3,6 +3,11 @@
 //TODO: Remove
 #include <vulkan/vulkan.h>
 
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+
 namespace clv::gfx::vk {
 	VkImageView createImageView(VkDevice device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+
+	ImageFormat convertImageFormat(VkFormat vulkanFormat);
+	VkFormat converImageFormat(ImageFormat garlicFormat);
 }
