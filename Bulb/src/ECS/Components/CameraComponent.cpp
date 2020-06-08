@@ -48,6 +48,10 @@ namespace blb::ecs {
 		return camera.getProjectionMode();
 	}
 
+	const std::shared_ptr<clv::gfx::RenderTarget>& CameraComponent::getRenderTarget() const {
+		return camera.getRenderTarget();
+	}
+
 	const clv::gfx::Viewport& CameraComponent::getViewport() const {
 		return camera.getViewport();
 	}

@@ -86,6 +86,10 @@ namespace blb::rnd {
 		return currentProjectionMode;
 	}
 
+	const std::shared_ptr<clv::gfx::RenderTarget>& Camera::getRenderTarget() const{
+		return renderTarget;
+	}
+
 	const clv::gfx::Viewport& Camera::getViewport() const {
 		return viewport;
 	}

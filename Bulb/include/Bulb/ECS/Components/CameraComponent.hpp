@@ -37,6 +37,8 @@ namespace blb::ecs {
 
 		rnd::ProjectionMode getProjectionMode() const;
 
+		const std::shared_ptr<clv::gfx::RenderTarget>& getRenderTarget() const;
+
 		const clv::gfx::Viewport& getViewport() const;
 	};
 }
