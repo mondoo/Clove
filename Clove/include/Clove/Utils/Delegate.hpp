@@ -55,6 +55,7 @@ namespace clv::utl {
 			if(auto lock = binder.lock()) {
 				lock->unbind(getId());
 			}
+			id.reset();
 		}
 
 		IdType getId() const {
