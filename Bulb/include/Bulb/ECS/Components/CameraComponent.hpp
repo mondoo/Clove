@@ -2,23 +2,7 @@
 
 #include "Bulb/ECS/Component.hpp"
 
-#include "Clove/Graphics/GraphicsTypes.hpp"
-#include "Bulb/Rendering/ShaderBufferTypes.hpp"
-
-namespace clv::gfx {
-	class RenderTarget;
-}
-
-namespace clv::plt {
-	class Window;
-}
-
-namespace blb::ecs {
-	enum class ProjectionMode {
-		orthographic,
-		perspective
-	};
-}
+#include "Bulb/Rendering/Camera.hpp"
 
 namespace blb::ecs {
 	class CameraComponent : public Component<CameraComponent> {
@@ -26,21 +10,12 @@ namespace blb::ecs {
 
 		//VARIABLES
 	private:
-		ProjectionMode currentProjectionMode;
-		clv::mth::mat4f currentProjection = clv::mth::mat4f{ 1.0f };
-		clv::mth::mat4f currentView = clv::mth::mat4f{ 1.0f };
-
-		blb::rnd::CameraRenderData cameraRenderData;
-
-		std::shared_ptr<clv::gfx::RenderTarget> renderTarget;
-		clv::gfx::Viewport viewport;
-
-		float zoomLevel = 1.0f;
+		rnd::Camera camera;
 
 		//FUNCTIONS
 	public:
-		CameraComponent(std::shared_ptr<clv::gfx::RenderTarget> renderTarget, const clv::gfx::Viewport& viewport, const ProjectionMode projection);
-		CameraComponent(clv::plt::Window& window, const ProjectionMode projection);
+		CameraComponent() = delete;
+		CameraComponent(rnd::Camera camera);
 
 		CameraComponent(const CameraComponent& other);
 		CameraComponent(CameraComponent&& other) noexcept;
@@ -55,8 +30,8 @@ namespace blb::ecs {
 
 		const clv::gfx::Viewport& getViewport() const;
 
-		void setProjectionMode(const ProjectionMode mode);
-		ProjectionMode getProjectionMode() const;
+		void setProjectionMode(const rnd::ProjectionMode mode);
+		rnd::ProjectionMode getProjectionMode() const;
 
 		void setZoomLevel(float zoom);
 

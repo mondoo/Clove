@@ -2,7 +2,7 @@
 
 #include "Bulb/Rendering/RenderingConstants.hpp"
 
-namespace blb::rnd{
+namespace blb::rnd {
 	struct alignas(16) MaterialData {
 		float sininess;
 	};
@@ -17,9 +17,9 @@ namespace blb::rnd{
 	};
 
 	struct CameraRenderData {
-		clv::mth::vec3f position;
-		clv::mth::mat4f lookAt;
-		clv::mth::mat4f projection;
+		clv::mth::vec3f position{};
+		clv::mth::mat4f lookAt	   = clv::mth::mat4f{ 1.0f };
+		clv::mth::mat4f projection = clv::mth::mat4f{ 1.0f };
 	};
 
 	struct VertexData {
@@ -63,7 +63,7 @@ namespace blb::rnd{
 	};
 	struct DirectionalShadowTransformArray {
 		std::array<clv::mth::mat4f, MAX_LIGHTS> transforms;
-		clv::mth::mat4f& operator[](const size_t index){
+		clv::mth::mat4f& operator[](const size_t index) {
 			return transforms[index];
 		}
 	};
