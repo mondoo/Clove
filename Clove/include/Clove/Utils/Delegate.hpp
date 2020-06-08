@@ -12,8 +12,8 @@ namespace clv::utl {
 
 		//VARIABLES
 	private:
-		const std::optional<IdType> id{};
 		static constexpr IdType INVALID_ID{ -1 };
+		std::optional<IdType> id{};
 
 		std::weak_ptr<Binder> binder;
 
@@ -25,7 +25,29 @@ namespace clv::utl {
 			, binder(std::move(binder)) {
 		}
 
+		DelegateHandle(const DelegateHandle& other) = delete;
+		DelegateHandle(DelegateHandle&& other) noexcept{
+			reset();
+
+			id = std::move(other.id);
+			binder = std::move(other.binder);
+		}
+
+		DelegateHandle& operator=(const DelegateHandle& other) = delete;
+		DelegateHandle& operator=(DelegateHandle&& other) {
+			reset();
+
+			id	  = std::move(other.id);
+			binder = std::move(other.binder);
+
+			return *this;
+		}
+
 		~DelegateHandle() {
+			reset();
+		}
+
+		void reset(){
 			if(auto lock = binder.lock()) {
 				lock->unbind(getId());
 			}
