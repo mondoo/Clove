@@ -86,6 +86,8 @@ set(
 
 set(
 	RenderingFiles
+		${BLB_INCLUDE}/Rendering/Camera.hpp
+		${BLB_SOURCE}/Rendering/Camera.cpp
 		${BLB_INCLUDE}/Rendering/Material.hpp
 		${BLB_INCLUDE}/Rendering/Material.inl
 		${BLB_SOURCE}/Rendering/Material.cpp
