@@ -47,28 +47,12 @@ namespace clv::utl {
 	}
 
 	template<typename FunctionPrototype>
-	template<typename RetType, typename ObjectType, typename... Args>
-	MultiCastDelegateHandle MultiCastDelegate<FunctionPrototype>::bind(RetType (ObjectType::*function)(Args...), ObjectType* object) {
-		auto functionPointer = [object, function](Args&&... args) -> RetType {
-			return (object->*function)(std::forward<Args>(args)...);
+	MultiCastDelegate<FunctionPrototype>::MultiCastDelegate() {
+		handleBinder = std::make_shared<DelegateHandle::Binder>();
+		handleBinder->unbind = [this](DelegateHandle::IdType id) {
+			unbind(id);
 		};
-
-		auto handle = MultiCastDelegateHandle{ nextId++ };
-		functionPointers.emplace(std::make_pair(handle, functionPointer));
-
-		return handle;
 	}
-
-	template<typename FunctionPrototype>
-	template<typename BindFunctionPrototype>
-	MultiCastDelegateHandle MultiCastDelegate<FunctionPrototype>::bind(BindFunctionPrototype&& function) {
-		auto handle = MultiCastDelegateHandle{ nextId++ };
-		functionPointers.emplace(std::make_pair(handle, function));
-		return handle;
-	}
-
-	template<typename FunctionPrototype>
-	MultiCastDelegate<FunctionPrototype>::MultiCastDelegate() = default;
 
 	template<typename FunctionPrototype>
 	MultiCastDelegate<FunctionPrototype>::MultiCastDelegate(MultiCastDelegate&& other) noexcept {
@@ -85,8 +69,29 @@ namespace clv::utl {
 	MultiCastDelegate<FunctionPrototype>::~MultiCastDelegate() = default;
 
 	template<typename FunctionPrototype>
-	void MultiCastDelegate<FunctionPrototype>::unbind(const MultiCastDelegateHandle& handle) {
-		functionPointers.erase(handle);
+	template<typename RetType, typename ObjectType, typename... Args>
+	DelegateHandle MultiCastDelegate<FunctionPrototype>::bind(RetType (ObjectType::*function)(Args...), ObjectType* object) {
+		auto functionPointer = [object, function](Args&&... args) -> RetType {
+			return (object->*function)(std::forward<Args>(args)...);
+		};
+
+		auto handle = MultiCastDelegateHandle{ nextId++ };
+		functionPointers.emplace(std::make_pair(handle, functionPointer));
+
+		return handle;
+	}
+
+	template<typename FunctionPrototype>
+	template<typename BindFunctionPrototype>
+	DelegateHandle MultiCastDelegate<FunctionPrototype>::bind(BindFunctionPrototype&& function) {
+		auto handle = DelegateHandle{ nextId++, handleBinder };
+		functionPointers.emplace(std::make_pair(handle.getId(), function));
+		return handle;
+	}
+
+	template<typename FunctionPrototype>
+	void MultiCastDelegate<FunctionPrototype>::unbind(DelegateHandle::IdType id) {
+		functionPointers.erase(id);
 	}
 
 	template<typename FunctionPrototype>

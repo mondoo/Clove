@@ -1,46 +1,38 @@
 #pragma once
 
 namespace clv::utl {
-	struct HandleBinder {
-		std::function<void(int32_t)> unbind;
-	};
-
 	struct DelegateHandle {
-		//VARIABLES
+		//TYPES
 	public:
 		using IdType = int32_t;
 
-	private:
-		const std::optional<IdType> id = {};
-		static constexpr IdType INVALID_ID = -1;
+		struct Binder {
+			std::function<void(IdType)> unbind;
+		};
 
-		std::weak_ptr<HandleBinder> binder;
+		//VARIABLES
+	private:
+		const std::optional<IdType> id{};
+		static constexpr IdType INVALID_ID{ -1 };
+
+		std::weak_ptr<Binder> binder;
 
 		//FUNCTIONS
 	public:
-		DelegateHandle(){
-			//TODO
+		DelegateHandle() = default;
+		DelegateHandle(IdType id, std::weak_ptr<Binder> binder)
+			: id(id)
+			, binder(std::move(binder)) {
 		}
-		~DelegateHandle(){
+
+		~DelegateHandle() {
 			if(auto lock = binder.lock()) {
-				lock->unbind(id.value_or(INVALID_ID));
+				lock->unbind(getId());
 			}
 		}
-		/*MultiCastDelegateHandle() = default;
-		MultiCastDelegateHandle(IdType id)
-			: id(id) {}
 
-		operator IdType() const noexcept {
+		IdType getId() const {
 			return id.value_or(INVALID_ID);
-		}*/
-	};
-}
-
-namespace std {
-	template<>
-	struct hash<clv::utl::MultiCastDelegateHandle> {
-		std::size_t operator()(const clv::utl::MultiCastDelegateHandle& handle) const noexcept {
-			return hash<clv::utl::MultiCastDelegateHandle::IdType>()(handle);
 		}
 	};
 }
@@ -82,11 +74,11 @@ namespace clv::utl {
 	class MultiCastDelegate {
 		//VARIABLES
 	private:
-		std::shared_ptr<HandleBinder> handleBinder;
+		std::shared_ptr<DelegateHandle::Binder> handleBinder;
 
-		std::unordered_map<MultiCastDelegateHandle, std::function<FunctionPrototype>> functionPointers;
+		std::unordered_map<DelegateHandle::IdType, std::function<FunctionPrototype>> functionPointers;
 
-		inline static MultiCastDelegateHandle::IdType nextId = 0;
+		inline static DelegateHandle::IdType nextId = 0;
 
 		//FUNCTIONS
 	public:
@@ -101,11 +93,11 @@ namespace clv::utl {
 		~MultiCastDelegate();
 
 		template<typename RetType, typename ObjectType, typename... Args>
-		[[nodiscard]] MultiCastDelegateHandle bind(RetType (ObjectType::*function)(Args...), ObjectType* object);
+		[[nodiscard]] DelegateHandle bind(RetType (ObjectType::*function)(Args...), ObjectType* object);
 		template<typename BindFunctionPrototype>
-		[[nodiscard]] MultiCastDelegateHandle bind(BindFunctionPrototype&& function);
+		[[nodiscard]] DelegateHandle bind(BindFunctionPrototype&& function);
 
-		void unbind(const MultiCastDelegateHandle& handle);
+		void unbind(DelegateHandle::IdType id);
 		void unbindAll();
 
 		template<typename... Args>
