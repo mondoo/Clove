@@ -26,10 +26,10 @@ namespace clv::utl {
 		}
 
 		DelegateHandle(const DelegateHandle& other) = delete;
-		DelegateHandle(DelegateHandle&& other) noexcept{
+		DelegateHandle(DelegateHandle&& other) noexcept {
 			reset();
 
-			id = std::move(other.id);
+			id	   = std::move(other.id);
 			binder = std::move(other.binder);
 		}
 
@@ -37,7 +37,7 @@ namespace clv::utl {
 		DelegateHandle& operator=(DelegateHandle&& other) {
 			reset();
 
-			id	  = std::move(other.id);
+			id	   = std::move(other.id);
 			binder = std::move(other.binder);
 
 			return *this;
@@ -47,7 +47,11 @@ namespace clv::utl {
 			reset();
 		}
 
-		void reset(){
+		bool isValid() const {
+			return id.has_value();
+		}
+
+		void reset() {
 			if(auto lock = binder.lock()) {
 				lock->unbind(getId());
 			}
