@@ -10,35 +10,15 @@ namespace blb::rnd {
 	Camera::Camera(clv::plt::Window& window, const ProjectionMode projection) {
 	}
 
-	Camera::Camera(const Camera& other) {
-	}
+	Camera::Camera(const Camera& other) = default;
 
-	Camera::Camera(Camera&& other) noexcept {
-	}
+	Camera::Camera(Camera&& other) noexcept = default;
 
-	Camera& Camera::operator=(const Camera& other) {
+	Camera& Camera::operator=(const Camera& other) = default;
 
-	}
+	Camera& Camera::operator=(Camera&& other) noexcept = default;
 
-	Camera& Camera::operator=(Camera&& other) noexcept{
-
-	}
-
-	Camera::~Camera(){
-
-	}
-
-	const clv::mth::mat4f& Camera::getProjection() const {
-		return projection;
-	}
-
-	const clv::mth::mat4f& Camera::getView() const {
-		return view;
-	}
-
-	const clv::gfx::Viewport& Camera::getViewport() const {
-		return viewport;
-	}
+	Camera::~Camera() = default;
 
 	void Camera::setProjectionMode(const ProjectionMode mode) {
 		constexpr float orthographicSize = 15.0f;
@@ -54,12 +34,12 @@ namespace blb::rnd {
 		currentProjectionMode = mode;
 
 		switch(currentProjectionMode) {
-			case ProjectionMode::orthographic:
-				currentProjection = mth::createOrthographicMatrix(-othoZoom * aspect, othoZoom * aspect, -othoZoom, othoZoom, nearPlane, farPlane);
+			case ProjectionMode::Orthographic:
+				projection = mth::createOrthographicMatrix(-othoZoom * aspect, othoZoom * aspect, -othoZoom, othoZoom, nearPlane, farPlane);
 				break;
 
-			case ProjectionMode::perspective:
-				currentProjection = mth::createPerspectiveMatrix(45.0f * zoomLevel, aspect, nearPlane, farPlane);
+			case ProjectionMode::Perspective:
+				projection = mth::createPerspectiveMatrix(45.0f * zoomLevel, aspect, nearPlane, farPlane);
 				break;
 
 			default:
@@ -67,20 +47,33 @@ namespace blb::rnd {
 		}
 	}
 
-	ProjectionMode Camera::getProjectionMode() const {
-		return currentProjectionMode;
+	void Camera::setView(clv::mth::mat4f view) {
+		this->view = std::move(view);
 	}
 
 	void Camera::setZoomLevel(float zoom) {
 		zoomLevel = zoom;
-
 		setProjectionMode(currentProjectionMode);
 	}
 
-	void Camera::updateViewportSize(const mth::vec2ui& viewportSize) {
-		viewport.width	= viewportSize.x;
-		viewport.height = viewportSize.y;
-
+	void Camera::setViewport(clv::gfx::Viewport viewport) {
+		this->viewport = std::move(viewport);
 		setProjectionMode(currentProjectionMode);
+	}
+
+	const clv::mth::mat4f& Camera::getProjection() const {
+		return projection;
+	}
+
+	const clv::mth::mat4f& Camera::getView() const {
+		return view;
+	}
+
+	ProjectionMode Camera::getProjectionMode() const {
+		return currentProjectionMode;
+	}
+
+	const clv::gfx::Viewport& Camera::getViewport() const {
+		return viewport;
 	}
 }
