@@ -1,13 +1,26 @@
 #include "Bulb/Rendering/Camera.hpp"
 
+#include <Clove/Graphics/Surface.hpp>
+#include <Clove/Platform/Window.hpp>
+
 using namespace clv;
 using namespace clv::gfx;
 
 namespace blb::rnd {
-	Camera::Camera(std::shared_ptr<clv::gfx::RenderTarget> renderTarget, const clv::gfx::Viewport& viewport, const ProjectionMode projection) {
+	Camera::Camera(std::shared_ptr<clv::gfx::RenderTarget> renderTarget, const clv::gfx::Viewport& viewport, const ProjectionMode projection)
+		: renderTarget(std::move(renderTarget))
+		, viewport(viewport) {
+		setProjectionMode(projection);
 	}
 
 	Camera::Camera(clv::plt::Window& window, const ProjectionMode projection) {
+		window.onWindowResize.bind([this](const mth::vec2ui& size) {
+			setViewport({ 0, 0, size.x, size.y });
+		});
+
+		renderTarget = window.getSurface()->getRenderTarget();
+		viewport	 = { 0, 0, window.getSize().x, window.getSize().y };
+		setProjectionMode(projection);
 	}
 
 	Camera::Camera(const Camera& other) = default;
