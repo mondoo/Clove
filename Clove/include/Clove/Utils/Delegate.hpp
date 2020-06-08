@@ -33,7 +33,10 @@ namespace clv::utl {
 
 		DelegateHandle& operator=(const DelegateHandle& other) = delete;
 		DelegateHandle& operator=(DelegateHandle&& other) {
-			reset();
+			if(isValid()) {
+				GARLIC_LOG(garlicLogContext, Log::Level::Warning, "Active DelegateHandle is being overriden. Resetting to avoid dangling function pointer");
+				reset();
+			}
 			id	   = std::move(other.id);
 			binder = std::move(other.binder);
 			return *this;
