@@ -33,6 +33,10 @@ namespace blb::rnd {
 
 	Camera::~Camera() = default;
 
+	void Camera::setView(clv::mth::mat4f view) {
+		this->view = std::move(view);
+	}
+
 	void Camera::setProjectionMode(const ProjectionMode mode) {
 		constexpr float orthographicSize = 15.0f;
 		const float othoZoom			 = orthographicSize * zoomLevel;
@@ -60,10 +64,6 @@ namespace blb::rnd {
 		}
 	}
 
-	void Camera::setView(clv::mth::mat4f view) {
-		this->view = std::move(view);
-	}
-
 	void Camera::setZoomLevel(float zoom) {
 		zoomLevel = zoom;
 		setProjectionMode(currentProjectionMode);
@@ -74,13 +74,13 @@ namespace blb::rnd {
 		setProjectionMode(currentProjectionMode);
 	}
 
-	const clv::mth::mat4f& Camera::getProjection() const {
-		return projection;
-	}
-
 	const clv::mth::mat4f& Camera::getView() const {
 		return view;
 	}
+
+	const clv::mth::mat4f& Camera::getProjection() const {
+		return projection;
+	}	
 
 	ProjectionMode Camera::getProjectionMode() const {
 		return currentProjectionMode;

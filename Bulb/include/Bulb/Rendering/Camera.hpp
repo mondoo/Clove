@@ -45,15 +45,15 @@ namespace blb::rnd {
 
 		~Camera();
 
-		void setProjectionMode(const ProjectionMode mode);
 		void setView(clv::mth::mat4f view);
+		void setProjectionMode(const ProjectionMode mode);
 
 		void setZoomLevel(float zoom);
 
 		void setViewport(clv::gfx::Viewport viewport);
 
-		const clv::mth::mat4f& getProjection() const;
 		const clv::mth::mat4f& getView() const;
+		const clv::mth::mat4f& getProjection() const;
 
 		ProjectionMode getProjectionMode() const;
 
