@@ -1,7 +1,11 @@
 #pragma once
 
 namespace clv::utl {
-	struct MultiCastDelegateHandle {
+	struct HandleBinder {
+		std::function<void(int32_t)> unbind;
+	};
+
+	struct DelegateHandle {
 		//VARIABLES
 	public:
 		using IdType = int32_t;
@@ -10,15 +14,25 @@ namespace clv::utl {
 		const std::optional<IdType> id = {};
 		static constexpr IdType INVALID_ID = -1;
 
+		std::weak_ptr<HandleBinder> binder;
+
 		//FUNCTIONS
 	public:
-		MultiCastDelegateHandle() = default;
+		DelegateHandle(){
+			//TODO
+		}
+		~DelegateHandle(){
+			if(auto lock = binder.lock()) {
+				lock->unbind(id.value_or(INVALID_ID));
+			}
+		}
+		/*MultiCastDelegateHandle() = default;
 		MultiCastDelegateHandle(IdType id)
 			: id(id) {}
 
 		operator IdType() const noexcept {
 			return id.value_or(INVALID_ID);
-		}
+		}*/
 	};
 }
 
@@ -68,6 +82,8 @@ namespace clv::utl {
 	class MultiCastDelegate {
 		//VARIABLES
 	private:
+		std::shared_ptr<HandleBinder> handleBinder;
+
 		std::unordered_map<MultiCastDelegateHandle, std::function<FunctionPrototype>> functionPointers;
 
 		inline static MultiCastDelegateHandle::IdType nextId = 0;
