@@ -38,17 +38,18 @@ namespace blb::ecs {
 		for(auto&& [transform, camera] : world.getComponentSets<TransformComponent, CameraComponent>()) {
 			const mth::vec3f& position = transform->getPosition(TransformSpace::World);
 
-			const mth::vec3f camFront	= transform->getForward();
-			const mth::vec3f camUp		= transform->getUp();
+			const mth::vec3f camFront = transform->getForward();
+			const mth::vec3f camUp	  = transform->getUp();
 
 			const mth::mat4f lookAt = mth::lookAt(position, position + camFront, camUp);
-			camera->currentView = lookAt;
+			camera->setView(lookAt);
 
-			camera->cameraRenderData.lookAt = lookAt;
-			camera->cameraRenderData.position = position;
-			camera->cameraRenderData.projection = camera->currentProjection;
+			CameraRenderData renderData{};
+			renderData.lookAt	  = lookAt;
+			renderData.position	  = position;
+			renderData.projection = camera->getProjection();
 
-			renderer->submitCamera({ camera->viewport, camera->cameraRenderData, camera->renderTarget });
+			renderer->submitCamera({ camera->getViewport(), std::move(renderData), camera->getRenderTarget() });
 		}
 
 		//Submit meshes
@@ -64,7 +65,7 @@ namespace blb::ecs {
 		//Submit directional lights
 		for(auto&& [light] : world.getComponentSets<DirectionalLightComponent>()) {
 			light->lightData.shadowTransform = light->shadowProj * mth::lookAt(-mth::normalise(light->lightData.data.direction) * (light->farDist / 2.0f), mth::vec3f{ 0.0f, 0.0f, 0.0f }, mth::vec3f{ 0.0f, 1.0f, 0.0f });
-			
+
 			renderer->submitLight(light->lightData);
 		}
 
@@ -72,13 +73,13 @@ namespace blb::ecs {
 		for(auto&& [transform, light] : world.getComponentSets<TransformComponent, PointLightComponent>()) {
 			const mth::vec3f& position = transform->getPosition();
 
-			light->lightData.data.position = position;
-			light->lightData.shadowTransforms[0] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{  1.0f,  0.0f,  0.0f }, mth::vec3f{  0.0f, -1.0f,  0.0f });
-			light->lightData.shadowTransforms[1] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ -1.0f,  0.0f,  0.0f }, mth::vec3f{  0.0f, -1.0f,  0.0f });
-			light->lightData.shadowTransforms[2] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{  0.0f,  1.0f,  0.0f }, mth::vec3f{  0.0f,  0.0f,  1.0f });
-			light->lightData.shadowTransforms[3] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{  0.0f, -1.0f,  0.0f }, mth::vec3f{  0.0f,  0.0f, -1.0f });
-			light->lightData.shadowTransforms[4] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{  0.0f,  0.0f,  1.0f }, mth::vec3f{  0.0f, -1.0f,  0.0f });
-			light->lightData.shadowTransforms[5] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{  0.0f,  0.0f, -1.0f }, mth::vec3f{  0.0f, -1.0f,  0.0f });
+			light->lightData.data.position		 = position;
+			light->lightData.shadowTransforms[0] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 1.0f, 0.0f, 0.0f }, mth::vec3f{ 0.0f, -1.0f, 0.0f });
+			light->lightData.shadowTransforms[1] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ -1.0f, 0.0f, 0.0f }, mth::vec3f{ 0.0f, -1.0f, 0.0f });
+			light->lightData.shadowTransforms[2] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0f, 1.0f, 0.0f }, mth::vec3f{ 0.0f, 0.0f, 1.0f });
+			light->lightData.shadowTransforms[3] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0f, -1.0f, 0.0f }, mth::vec3f{ 0.0f, 0.0f, -1.0f });
+			light->lightData.shadowTransforms[4] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0f, 0.0f, 1.0f }, mth::vec3f{ 0.0f, -1.0f, 0.0f });
+			light->lightData.shadowTransforms[5] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0f, 0.0f, -1.0f }, mth::vec3f{ 0.0f, -1.0f, 0.0f });
 
 			renderer->submitLight(light->lightData);
 		}
