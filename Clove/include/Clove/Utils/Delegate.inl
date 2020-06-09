@@ -75,7 +75,7 @@ namespace clv::utl {
 			return (object->*function)(std::forward<Args>(args)...);
 		};
 
-		auto handle = MultiCastDelegateHandle{ nextId++ };
+		auto handle = DelegateHandle{ nextId++, handleBinder };
 		functionPointers.emplace(std::make_pair(handle, functionPointer));
 
 		return handle;
