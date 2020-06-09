@@ -17,10 +17,10 @@ namespace blb::ecs {
 		CameraComponent() = delete;
 		CameraComponent(rnd::Camera camera);
 
-		CameraComponent(const CameraComponent& other);
+		CameraComponent(const CameraComponent& other) = delete;
 		CameraComponent(CameraComponent&& other) noexcept;
 
-		CameraComponent& operator=(const CameraComponent& other);
+		CameraComponent& operator=(const CameraComponent& other) = delete;
 		CameraComponent& operator=(CameraComponent&& other) noexcept;
 
 		~CameraComponent();

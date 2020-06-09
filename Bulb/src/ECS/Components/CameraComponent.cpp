@@ -10,11 +10,7 @@ namespace blb::ecs {
 		: camera(std::move(camera)) {
 	}
 
-	CameraComponent::CameraComponent(const CameraComponent& other) = default;
-
 	CameraComponent::CameraComponent(CameraComponent&& other) noexcept = default;
-
-	CameraComponent& CameraComponent::operator=(const CameraComponent& other) = default;
 
 	CameraComponent& CameraComponent::operator=(CameraComponent&& other) noexcept = default;
 

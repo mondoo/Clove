@@ -23,11 +23,7 @@ namespace blb::rnd {
 		setProjectionMode(projection);
 	}
 
-	Camera::Camera(const Camera& other) = default;
-
 	Camera::Camera(Camera&& other) noexcept = default;
-
-	Camera& Camera::operator=(const Camera& other) = default;
 
 	Camera& Camera::operator=(Camera&& other) noexcept = default;
 
@@ -80,13 +76,13 @@ namespace blb::rnd {
 
 	const clv::mth::mat4f& Camera::getProjection() const {
 		return projection;
-	}	
+	}
 
 	ProjectionMode Camera::getProjectionMode() const {
 		return currentProjectionMode;
 	}
 
-	const std::shared_ptr<clv::gfx::RenderTarget>& Camera::getRenderTarget() const{
+	const std::shared_ptr<clv::gfx::RenderTarget>& Camera::getRenderTarget() const {
 		return renderTarget;
 	}
 
