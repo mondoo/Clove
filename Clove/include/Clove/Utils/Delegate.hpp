@@ -60,6 +60,10 @@ namespace clv::utl {
 		IdType getId() const {
 			return id.value_or(INVALID_ID);
 		}
+
+		operator IdType() const{
+			return getId();
+		}
 	};
 }
 
