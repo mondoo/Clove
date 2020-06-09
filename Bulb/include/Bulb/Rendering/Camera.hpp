@@ -31,16 +31,18 @@ namespace blb::rnd {
 
 		float zoomLevel = 1.0f;
 
+		clv::DelegateHandle windowResizeHandle;
+
 		//FUNCTIONS
 	public:
 		Camera() = delete;
 		Camera(std::shared_ptr<clv::gfx::RenderTarget> renderTarget, const clv::gfx::Viewport& viewport, const ProjectionMode projection);
 		Camera(clv::plt::Window& window, const ProjectionMode projection);
 
-		Camera(const Camera& other);
+		Camera(const Camera& other) = delete;
 		Camera(Camera&& other) noexcept;
 
-		Camera& operator=(const Camera& other);
+		Camera& operator=(const Camera& other) = delete;
 		Camera& operator=(Camera&& other) noexcept;
 
 		~Camera();

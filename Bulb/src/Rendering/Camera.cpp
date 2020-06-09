@@ -14,7 +14,7 @@ namespace blb::rnd {
 	}
 
 	Camera::Camera(clv::plt::Window& window, const ProjectionMode projection) {
-		window.onWindowResize.bind([this](const mth::vec2ui& size) {
+		windowResizeHandle = window.onWindowResize.bind([this](const mth::vec2ui& size) {
 			setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
 		});
 
@@ -23,13 +23,33 @@ namespace blb::rnd {
 		setProjectionMode(projection);
 	}
 
-	Camera::Camera(const Camera& other) = default;
+	Camera::Camera(Camera&& other) noexcept{
+		currentProjectionMode = std::move(other.currentProjectionMode);
+		view				  = std::move(other.view);
+		projection			  = std::move(other.projection);
 
-	Camera::Camera(Camera&& other) noexcept = default;
+		renderTarget = std::move(other.renderTarget);
+		viewport	 = std::move(other.viewport);
+		
+		zoomLevel = std::move(other.zoomLevel);
 
-	Camera& Camera::operator=(const Camera& other) = default;
+		windowResizeHandle = std::move(other.windowResizeHandle);
+	}
 
-	Camera& Camera::operator=(Camera&& other) noexcept = default;
+	Camera& Camera::operator=(Camera&& other) noexcept{
+		currentProjectionMode = std::move(other.currentProjectionMode);
+		view				  = std::move(other.view);
+		projection			  = std::move(other.projection);
+
+		renderTarget = std::move(other.renderTarget);
+		viewport	 = std::move(other.viewport);
+
+		zoomLevel = std::move(other.zoomLevel);
+
+		windowResizeHandle = std::move(other.windowResizeHandle);
+
+		return *this;
+	}
 
 	Camera::~Camera() = default;
 
@@ -80,13 +100,13 @@ namespace blb::rnd {
 
 	const clv::mth::mat4f& Camera::getProjection() const {
 		return projection;
-	}	
+	}
 
 	ProjectionMode Camera::getProjectionMode() const {
 		return currentProjectionMode;
 	}
 
-	const std::shared_ptr<clv::gfx::RenderTarget>& Camera::getRenderTarget() const{
+	const std::shared_ptr<clv::gfx::RenderTarget>& Camera::getRenderTarget() const {
 		return renderTarget;
 	}
 

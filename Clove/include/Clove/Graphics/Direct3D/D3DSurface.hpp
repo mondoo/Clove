@@ -18,7 +18,7 @@ namespace clv::gfx::d3d{
 	class D3DSurface : public Surface{
 		//VARIABLES
 	public:
-		utl::SingleCastDelegate<void()> onDeviceRemoved;
+		SingleCastDelegate<void()> onDeviceRemoved;
 
 	private:
 		std::shared_ptr<GraphicsFactory> factory;
