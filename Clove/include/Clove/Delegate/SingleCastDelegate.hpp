@@ -15,7 +15,7 @@ namespace clv {
 		SingleCastDelegate(SingleCastDelegate&& other) noexcept;
 
 		SingleCastDelegate& operator=(const SingleCastDelegate& other) = delete;
-		SingleCastDelegate& operator								   =(SingleCastDelegate&& other) noexcept;
+		SingleCastDelegate& operator=(SingleCastDelegate&& other) noexcept;
 
 		~SingleCastDelegate();
 

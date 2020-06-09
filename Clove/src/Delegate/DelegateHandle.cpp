@@ -38,6 +38,7 @@ namespace clv {
 	DelegateHandle::IdType DelegateHandle::getId() const {
 		return id.value_or(INVALID_ID);
 	}
+
 	DelegateHandle::operator IdType() const {
 		return getId();
 	}
