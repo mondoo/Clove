@@ -14,7 +14,7 @@ namespace blb::rnd {
 	}
 
 	Camera::Camera(clv::plt::Window& window, const ProjectionMode projection) {
-		window.onWindowResize.bind([this](const mth::vec2ui& size) {
+		windowResizeHandle = window.onWindowResize.bind([this](const mth::vec2ui& size) {
 			setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
 		});
 
