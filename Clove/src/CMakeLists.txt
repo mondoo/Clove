@@ -7,6 +7,16 @@ add_library(${PROJECT_NAME} STATIC)
 
 #Files
 set(
+	DelegateFiles
+		${CLV_INCLUDE}/Delegate/DelegateHandle.hpp
+		${CLV_SOURCE}/Delegate/DelegateHandle.cpp
+		${CLV_INCLUDE}/Delegate/MultiCastDelegate.hpp
+		${CLV_INCLUDE}/Delegate/MultiCastDelegate.inl
+		${CLV_INCLUDE}/Delegate/SingleCastDelegate.hpp
+		${CLV_INCLUDE}/Delegate/SingleCastDelegate.inl
+)
+
+set(
 	EventFiles
 		${CLV_INCLUDE}/Event/EventContainerBase.hpp
 		${CLV_SOURCE}/Event/EventContainerBase.cpp
@@ -207,8 +217,6 @@ set(
 
 set(
 	UtilityFiles
-		${CLV_INCLUDE}/Utils/Delegate.hpp
-		${CLV_INCLUDE}/Utils/Delegate.inl
 		${CLV_INCLUDE}/Utils/DeltaTime.hpp
 		${CLV_SOURCE}/Utils/DeltaTime.cpp
 		${CLV_INCLUDE}/Utils/Timer.hpp
@@ -223,6 +231,7 @@ set(
 	${CLV_INCLUDE}/Log.inl
 	${CLV_SOURCE}/Log.cpp
 
+		${DelegateFiles}
 		${EventFiles}
 		${ExceptionFiles}
 		${GraphicsFiles}

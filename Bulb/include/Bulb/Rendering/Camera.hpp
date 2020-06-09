@@ -31,7 +31,7 @@ namespace blb::rnd {
 
 		float zoomLevel = 1.0f;
 
-		clv::utl::DelegateHandle windowResizeHandle;
+		clv::DelegateHandle windowResizeHandle;
 
 		//FUNCTIONS
 	public:
