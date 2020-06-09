@@ -23,9 +23,33 @@ namespace blb::rnd {
 		setProjectionMode(projection);
 	}
 
-	Camera::Camera(Camera&& other) noexcept = default;
+	Camera::Camera(Camera&& other) noexcept{
+		currentProjectionMode = std::move(other.currentProjectionMode);
+		view				  = std::move(other.view);
+		projection			  = std::move(other.projection);
 
-	Camera& Camera::operator=(Camera&& other) noexcept = default;
+		renderTarget = std::move(other.renderTarget);
+		viewport	 = std::move(other.viewport);
+		
+		zoomLevel = std::move(other.zoomLevel);
+
+		windowResizeHandle = std::move(other.windowResizeHandle);
+	}
+
+	Camera& Camera::operator=(Camera&& other) noexcept{
+		currentProjectionMode = std::move(other.currentProjectionMode);
+		view				  = std::move(other.view);
+		projection			  = std::move(other.projection);
+
+		renderTarget = std::move(other.renderTarget);
+		viewport	 = std::move(other.viewport);
+
+		zoomLevel = std::move(other.zoomLevel);
+
+		windowResizeHandle = std::move(other.windowResizeHandle);
+
+		return *this;
+	}
 
 	Camera::~Camera() = default;
 
