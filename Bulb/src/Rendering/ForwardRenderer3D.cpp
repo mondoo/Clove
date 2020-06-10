@@ -41,6 +41,24 @@ namespace blb::rnd {
 		for(size_t i = 0; i < swapChainFrameBuffers.size(); ++i) {
 			commandBuffers.emplace_back(graphicsQueue->allocateCommandBuffer());
 		}
+
+		clv::gfx::RenderArea renderArea{};
+		renderArea.origin = { 0, 0 };
+		renderArea.size	  = {swapchain->getExtent().width, swapchain->getExtent().height };
+
+		clv::mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
+
+		//Record our command buffers
+		for(size_t i = 0; i < commandBuffers.size(); ++i) {
+			commandBuffers[i]->beginRecording();
+
+			commandBuffers[i]->beginRenderPass(*renderPass, *swapChainFrameBuffers[i], renderArea, clearColour);
+			commandBuffers[i]->bindPipelineObject(*pipelineObject);
+			commandBuffers[i]->drawIndexed();
+			commandBuffers[i]->endRenderPass();
+
+			commandBuffers[i]->endRecording();
+		}
 	}
 
 	ForwardRenderer3D::~ForwardRenderer3D() = default;

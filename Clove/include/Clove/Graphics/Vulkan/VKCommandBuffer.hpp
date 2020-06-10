@@ -10,7 +10,7 @@ namespace clv::gfx{
 	//TODO: Need some sort of generic area?
 	struct RenderArea{
 		mth::vec2i origin;
-		mth::vec2i size;
+		mth::vec2ui size;
 	};
 }
 
