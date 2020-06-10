@@ -2,6 +2,7 @@
 
 //TODO: Remove
 #include <vulkan/vulkan.h>
+#include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 
 namespace clv::gfx {
 	enum class QueueFlags {
@@ -30,9 +31,10 @@ namespace clv::gfx::vk {
 		VKGraphicsQueue() = delete;
 		VKGraphicsQueue(VkDevice device, uint32_t queueFamilyIndex, CommandQueueDescriptor descriptor);
 
-		//TODO: Functions to allocate, destroy and submit buffers
-
 		~VKGraphicsQueue();
+
+		//TODO: Functions to allocate, destroy and submit buffers
+		std::unique_ptr<VKCommandBuffer> allocateCommandBuffer();
 	};
 
 	class VKPresentQueue {
@@ -47,9 +49,9 @@ namespace clv::gfx::vk {
 		VKPresentQueue() = delete;
 		VKPresentQueue(VkDevice device, uint32_t queueFamilyIndex);
 
-		//TODO: Functions to present
-
 		~VKPresentQueue();
+
+		//TODO: Functions to present
 	};
 
 	class VKTransferQueue {
@@ -66,8 +68,9 @@ namespace clv::gfx::vk {
 		VKTransferQueue() = delete;
 		VKTransferQueue(VkDevice device, uint32_t queueFamilyIndex, CommandQueueDescriptor descriptor);
 
-		//TODO: Functions to allocate, destroy and submit buffers
-
 		~VKTransferQueue();
+
+		//TODO: Functions to allocate, destroy and submit buffers
+		std::unique_ptr<VKCommandBuffer> allocateCommandBuffer();
 	};
 }

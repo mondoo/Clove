@@ -123,6 +123,8 @@ set(
 	VulkanGraphicsFiles
 		${CLV_INCLUDE}/Graphics/Vulkan/VK.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VK.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKCommandBuffer.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKCommandBuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKCommandQueue.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKCommandQueue.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKPipelineObject.hpp

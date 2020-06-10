@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
+#include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 
 #include <Clove/Platform/Window.hpp>
 
@@ -39,6 +40,12 @@ namespace blb::rnd {
 			frameBufferDescriptor.height	  = swapchain->getExtent().height;
 
 			swapChainFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(frameBufferDescriptor));
+		}
+
+		std::vector<std::shared_ptr<clv::gfx::vk::VKCommandBuffer>> commandBuffers;
+		commandBuffers.reserve(swapChainFrameBuffers.size());
+		for(size_t i = 0; i < swapChainFrameBuffers.size(); ++i) {
+			commandBuffers.emplace_back(graphicsQueue->allocateCommandBuffer());
 		}
 	}
 
