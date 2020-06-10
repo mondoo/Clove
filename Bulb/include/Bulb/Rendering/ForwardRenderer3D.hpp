@@ -4,6 +4,11 @@
 
 #include <Clove/Graphics/GraphicsTypes.hpp>
 
+//TODO: Move to cpp
+#include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
+#include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
+#include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
+
 namespace clv::plt {
 	class Window;
 }
@@ -51,6 +56,18 @@ namespace blb::rnd {
 	private:
 		//Using shared_ptrs of the actual types until API is abstracted
 		std::shared_ptr<clv::gfx::vk::VKGraphicsFactory> graphicsFactory;
+
+		std::shared_ptr<clv::gfx::vk::VKGraphicsQueue> graphicsQueue;
+		std::shared_ptr<clv::gfx::vk::VKPresentQueue> presentQueue;
+		std::shared_ptr<clv::gfx::vk::VKTransferQueue> transferQueue;
+
+		std::shared_ptr<clv::gfx::vk::VKSwapchain> swapchain;
+
+		std::shared_ptr<clv::gfx::vk::VKPipelineObject> pipelineObject;
+
+		std::vector<std::shared_ptr<clv::gfx::vk::VKFramebuffer>> swapChainFrameBuffers;
+
+		std::vector<std::shared_ptr<clv::gfx::vk::VKCommandBuffer>> commandBuffers;
 
 		//FUNCTIONS
 	public:

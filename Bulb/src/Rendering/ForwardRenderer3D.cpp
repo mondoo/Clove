@@ -1,9 +1,5 @@
 #include "Bulb/Rendering/ForwardRenderer3D.hpp"
 
-#include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
-#include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
-#include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
-
 #include <Clove/Platform/Window.hpp>
 
 namespace blb::rnd {
@@ -11,11 +7,11 @@ namespace blb::rnd {
 		graphicsFactory = std::make_shared<clv::gfx::vk::VKGraphicsFactory>(window.getNativeWindow());
 
 		//Retrieving data as a test
-		auto graphicsQueue = graphicsFactory->createGraphicsQueue({ clv::gfx::QueueFlags::None });
-		auto presentQueue  = graphicsFactory->createPresentQueue();
-		auto transferQueue = graphicsFactory->createTransferQueue({ clv::gfx::QueueFlags::Transient });
+		graphicsQueue = graphicsFactory->createGraphicsQueue({ clv::gfx::QueueFlags::None });
+		presentQueue  = graphicsFactory->createPresentQueue();
+		transferQueue = graphicsFactory->createTransferQueue({ clv::gfx::QueueFlags::Transient });
 
-		auto swapchain = graphicsFactory->createSwapChain({});
+		swapchain = graphicsFactory->createSwapChain({});
 
 		std::shared_ptr<clv::gfx::vk::VKShader> vertShader = graphicsFactory->createShader("vert.spirv");
 		std::shared_ptr<clv::gfx::vk::VKShader> fragShader = graphicsFactory->createShader("frag.spirv");
@@ -29,9 +25,8 @@ namespace blb::rnd {
 		pipelineDescriptor.scissorDescriptor.size  = { swapchain->getExtent().width, swapchain->getExtent().height };
 		pipelineDescriptor.renderPass			   = renderPass;
 
-		auto pipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+		pipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
 
-		std::vector<std::shared_ptr<clv::gfx::vk::VKFramebuffer>> swapChainFrameBuffers;
 		for(auto& swapChainImageView : swapchain->getImageViews()) {
 			clv::gfx::FramebufferDescriptor frameBufferDescriptor{};
 			frameBufferDescriptor.renderPass  = renderPass;
@@ -42,7 +37,6 @@ namespace blb::rnd {
 			swapChainFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(frameBufferDescriptor));
 		}
 
-		std::vector<std::shared_ptr<clv::gfx::vk::VKCommandBuffer>> commandBuffers;
 		commandBuffers.reserve(swapChainFrameBuffers.size());
 		for(size_t i = 0; i < swapChainFrameBuffers.size(); ++i) {
 			commandBuffers.emplace_back(graphicsQueue->allocateCommandBuffer());
