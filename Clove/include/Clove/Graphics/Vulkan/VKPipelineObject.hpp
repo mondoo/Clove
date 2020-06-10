@@ -55,5 +55,9 @@ namespace clv::gfx::vk {
 		VKPipelineObject(VkDevice device, PiplineObjectDescriptor descriptor);
 
 		~VKPipelineObject();
+
+		VkPipeline getPipeline() const{
+			return pipeline;
+		}
 	};
 }

@@ -1,15 +1,16 @@
 #pragma once
 
 //TODO: Remove
-#include <vulkan/vulkan.h>
-#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
+#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
+
+#include <vulkan/vulkan.h>
 
 namespace clv::gfx {
 	struct FramebufferDescriptor {
 		std::shared_ptr<vk::VKRenderPass> renderPass;
 		std::vector<std::shared_ptr<vk::VKImageView>> attachments;
-		uint32_t width = 0;
+		uint32_t width	= 0;
 		uint32_t height = 0;
 	};
 }
@@ -29,5 +30,9 @@ namespace clv::gfx::vk {
 		//TODO: Ctors
 		VKFramebuffer(VkDevice device, FramebufferDescriptor descriptor);
 		~VKFramebuffer();
+
+		VkFramebuffer getFrameBuffer() const {
+			return framebuffer;
+		}
 	};
 }
