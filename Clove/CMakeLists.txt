@@ -50,6 +50,7 @@ target_link_libraries(
 		spirv-cross-glsl
 		spirv-cross-hlsl
 		spirv-cross-msl
+		OpenAL
 
 	#Windows
 	PRIVATE
