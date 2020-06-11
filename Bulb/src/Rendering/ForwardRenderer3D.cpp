@@ -4,6 +4,7 @@
 
 namespace blb::rnd {
 	ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API) {
+		//TODO: Add an abstraction for creating the factory
 		graphicsFactory = std::make_shared<clv::gfx::vk::VKGraphicsFactory>(window.getNativeWindow());
 
 		//Retrieving data as a test
