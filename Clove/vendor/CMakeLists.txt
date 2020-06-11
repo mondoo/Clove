@@ -25,7 +25,6 @@ endfunction()
 
 #Vendor defaults
 set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
-set(PA_BUILD_SHARED OFF CACHE BOOL "Build shared/dynamic library")
 set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")
 set(SPIRV_CROSS_ENABLE_C_API OFF CACHE BOOL "Enable C API wrapper support in static library.")

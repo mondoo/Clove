@@ -19,9 +19,6 @@
 [submodule "Bulb/vendor/freetype2"]
 	path = Bulb/vendor/freetype2
 	url = https://git.savannah.gnu.org/git/freetype/freetype2.git
-[submodule "Bulb/vendor/portaudio"]
-	path = Bulb/vendor/portaudio
-	url = https://git.assembla.com/portaudio.git
 [submodule "Bulb/vendor/libsndfile"]
 	path = Bulb/vendor/libsndfile
 	url = https://github.com/erikd/libsndfile.git

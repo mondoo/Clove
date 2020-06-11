@@ -4,13 +4,13 @@
 #include "Bulb/ECS/World.hpp"
 
 //TODO: Clove wrapper for audio
-#include <portaudio.h>
+//#include <portaudio.h>
 
-#define PACall(x)                                                                        \
-	{                                                                                      \
-		auto err = x;                                                                        \
-		CLV_ASSERT(err == paNoError, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(err)); \
-	}
+//#define PACall(x)                                                                        \
+//	{                                                                                      \
+//		auto err = x;                                                                        \
+//		CLV_ASSERT(err == paNoError, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(err)); \
+//	}
 
 using namespace clv;
 
@@ -20,14 +20,14 @@ namespace blb::ecs {
 			return false;
 		}
 
-		PaError error = Pa_IsStreamActive(stream);
-		CLV_ASSERT(error >= 0, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(error));
-		return error > 0;
+		//PaError error = Pa_IsStreamActive(stream);
+		//CLV_ASSERT(error >= 0, /*"Port audio assertion: {0}",*/ Pa_GetErrorText(error));
+		return /*error > 0*/ false;
 	}
 
 	AudioSystem::AudioSystem() {
 		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Portaudio intialised");
-		PACall(Pa_Initialize());
+		//PACall(Pa_Initialize());
 	}
 
 	AudioSystem::AudioSystem(AudioSystem&& other) noexcept = default;
@@ -36,7 +36,7 @@ namespace blb::ecs {
 
 	AudioSystem::~AudioSystem() {
 		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Portaudio shutdown");
-		PACall(Pa_Terminate());
+		//PACall(Pa_Terminate());
 	}
 
 	void AudioSystem::registerToEvents(clv::EventDispatcher& dispatcher) {
@@ -82,19 +82,19 @@ namespace blb::ecs {
 
 		component->playbackPosition = 0;
 
-		PaStreamParameters outputParameters;
+		/*PaStreamParameters outputParameters;
 		outputParameters.device = Pa_GetDefaultOutputDevice();
 		outputParameters.sampleFormat = paInt32;
 		outputParameters.channelCount = component->sound.getChannels();
 		outputParameters.suggestedLatency = 0.2f;
-		outputParameters.hostApiSpecificStreamInfo = nullptr;
+		outputParameters.hostApiSpecificStreamInfo = nullptr;*/
 
 		switch(playback) {
 			case PlaybackMode::once:
-				PACall(Pa_OpenStream(&component->stream, 0, &outputParameters, component->sound.getSamplerate(), paFramesPerBufferUnspecified, paNoFlag, &AudioSystem::soundPlayback_Once, component));
+				//PACall(Pa_OpenStream(&component->stream, 0, &outputParameters, component->sound.getSamplerate(), paFramesPerBufferUnspecified, paNoFlag, &AudioSystem::soundPlayback_Once, component));
 				break;
 			case PlaybackMode::repeat:
-				PACall(Pa_OpenStream(&component->stream, 0, &outputParameters, component->sound.getSamplerate(), paFramesPerBufferUnspecified, paNoFlag, &AudioSystem::soundPlayback_Loop, component));
+				//PACall(Pa_OpenStream(&component->stream, 0, &outputParameters, component->sound.getSamplerate(), paFramesPerBufferUnspecified, paNoFlag, &AudioSystem::soundPlayback_Loop, component));
 				break;
 			default:
 				CLV_ASSERT(false, "{0} : Invalid playback mode!", CLV_FUNCTION_NAME);
@@ -103,20 +103,20 @@ namespace blb::ecs {
 
 		component->currentPlayback = playback;
 
-		PACall(Pa_StartStream(component->stream));
+		//PACall(Pa_StartStream(component->stream));
 		component->playing = true;
 	}
 
 	void AudioSystem::pauseSound(AudioComponent* component) {
 		if(isStreamActive(component->stream)) {
-			PACall(Pa_StopStream(component->stream));
+			//PACall(Pa_StopStream(component->stream));
 			component->playing = false;
 		}
 	}
 
 	void AudioSystem::stopSound(AudioComponent* component) {
 		if(isStreamActive(component->stream)) {
-			PACall(Pa_CloseStream(component->stream));
+			//PACall(Pa_CloseStream(component->stream));
 			component->stream = nullptr;
 			component->playing = false;
 			component->currentPlayback.reset();
@@ -150,7 +150,7 @@ namespace blb::ecs {
 			currentFrameCount -= frameCountToRead;
 		}
 
-		return paContinue;
+		return /*paContinue*/ 0;
 	}
 
 	int AudioSystem::soundPlayback_Once(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData) {
@@ -166,7 +166,7 @@ namespace blb::ecs {
 
 			//Get the amount of frames to read
 			if(currentFrameCount > (data->sound.getFrames() - data->playbackPosition)) {
-				return paComplete;
+				return /*paComplete*/ 0;
 			} else {
 				frameCountToRead = currentFrameCount;
 				data->playbackPosition += frameCountToRead;
@@ -179,6 +179,6 @@ namespace blb::ecs {
 			currentFrameCount -= frameCountToRead;
 		}
 
-		return paContinue;
+		return /*paContinue*/ 0;
 	}
 }

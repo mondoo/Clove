@@ -39,9 +39,6 @@ target_link_libraries(
 		spdlog
 		$<$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>:Glad>
 
-		#Below are public until wrappers have been made
-		portaudio_static
-
 	PRIVATE 
 		stb
 		$<$<NOT:$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>>:Glad>
