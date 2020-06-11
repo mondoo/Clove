@@ -23,13 +23,6 @@ function(add_subdirectory_with_folder _folder_name _folder)
     endforeach()
 endfunction()
 
-#Vendor defaults
-set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
-set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
-set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")
-set(SPIRV_CROSS_ENABLE_C_API OFF CACHE BOOL "Enable C API wrapper support in static library.")
-set(SPIRV_CROSS_ENABLE_TESTS OFF CACHE BOOL "Enable SPIR-V Cross tests.")
-
 #dxerr
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	add_subdirectory(dxerr)
@@ -41,10 +34,12 @@ add_subdirectory(Glad)
 set_target_properties(Glad PROPERTIES FOLDER ${DependencyFolder})
 
 #glm
+set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
 add_subdirectory(glm)
 set_target_properties(glm_static PROPERTIES FOLDER ${DependencyFolder})
 
 #spdlog
+set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 add_subdirectory(spdlog)
 set_target_properties(spdlog PROPERTIES FOLDER ${DependencyFolder})
 
@@ -53,7 +48,10 @@ add_subdirectory(stb)
 set_target_properties(stb PROPERTIES FOLDER ${DependencyFolder})
 
 #glslang
+set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")
 add_subdirectory_with_folder(${DependencyFolder}/glslang glslang)
 
 #SPIRV-Cross
+set(SPIRV_CROSS_ENABLE_C_API OFF CACHE BOOL "Enable C API wrapper support in static library.")
+set(SPIRV_CROSS_ENABLE_TESTS OFF CACHE BOOL "Enable SPIR-V Cross tests.")
 add_subdirectory_with_folder(${DependencyFolder}/SPIRV-Cross SPIRV-Cross)
