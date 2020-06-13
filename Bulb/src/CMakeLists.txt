@@ -102,6 +102,8 @@ set(
 		${BLB_SOURCE}/Rendering/Renderables/Font.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Mesh.hpp
 		${BLB_SOURCE}/Rendering/Renderables/Mesh.cpp
+		${BLB_INCLUDE}/Rendering/Renderables/SkeletalMesh.hpp
+		${BLB_SOURCE}/Rendering/Renderables/SkeletalMesh.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Model.hpp
 		${BLB_SOURCE}/Rendering/Renderables/Model.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Sprite.hpp
