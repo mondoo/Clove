@@ -59,7 +59,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{runner.workspace}}/build
-      run: cmake ${{ matrix.config.gen }} $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      run: cmake ${{ matrix.config.gen }} $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DGAR_BUILD_EXAMPLES=ON
 
     - name: Build
       shell: bash
