@@ -1,32 +1,25 @@
 #pragma once
 
-namespace blb::rnd {
-    //Skeleton Data
-    struct Joint {
-        clv::mth::mat4f inverseBindPose;
-        uint8_t parentIndex;
-    };
+#include "Bulb/Rendering/Renderables/Mesh.hpp"
+#include "Bulb/Rendering/AnimationTypes.hpp"
+#include "Bulb/Rendering/Animator.hpp"
 
-    struct Skeleton {
-        std::vector<Joint> joints;
-    };
-
-    //Pose Data
-    struct JointPose {
-        clv::mth::quatf rotation;
-        clv::mth::vec4f position;
-        clv::mth::vec4f scale;
-    };
-
-    struct SkeletonPose {
-        Skeleton* skeleton;
-        //One item for every joint in the skeleton
-        std::vector<JointPose> localPoses;
-        std::vector<clv::mth::mat4f> globalPoses;
-    };
-}
+//TODO: Support submeshes (probably convert this into a model)
 
 namespace blb::rnd {
     class SkeletalMesh {
+        //VARIABLES
+   // private:
+    public:
+        //Temp, owning the skeleton for now but when using submeshes it will make sense to have this stored somewhere else. Which also allow skeletons to be reused
+        Skeleton skeleton;
+        Animator animator;
+
+        //TEMP: just storing a mesh now to reduce code duplication
+        std::shared_ptr<Mesh> mesh;
+
+        //FUNCTIONS
+    public:
+        //TODO: Ctors
     };
 }

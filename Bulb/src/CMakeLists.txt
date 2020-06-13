@@ -86,6 +86,7 @@ set(
 
 set(
 	RenderingFiles
+		${BLB_INCLUDE}/Rendering/AnimationTypes.hpp
 		${BLB_INCLUDE}/Rendering/Animator.hpp
 		${BLB_SOURCE}/Rendering/Animator.cpp
 		${BLB_INCLUDE}/Rendering/Camera.hpp
