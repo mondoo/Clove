@@ -5,7 +5,7 @@ int main() {
     std::unique_ptr<clv::plt::Platform> platformInstance = clv::plt::createPlatformInstance();
 
     //Create the window which we will render to
-    std::shared_ptr<clv::plt::Window> window = platformInstance->createWindow({ "Rotating Cube", 1280, 720, clv::plt::getPlatformPreferedAPI() });
+    std::shared_ptr<clv::plt::Window> window = platformInstance->createWindow({ "Skeletal Animation", 1280, 720, clv::plt::getPlatformPreferedAPI() });
     window->setVSync(true);
 
     //Cache of the 'previous frame time' that'll be used to calculate the delta time
