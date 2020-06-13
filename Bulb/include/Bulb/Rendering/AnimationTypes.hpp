@@ -3,7 +3,7 @@
 namespace blb::rnd {
     struct Joint {
         //TODO: it looks like this will be calculated on inport?
-        clv::mth::mat4f inverseBindPose;
+        clv::mth::mat4f inverseBindPose; //Converts a model space coord into this joint's coord space (Bm->j)
         uint8_t parentIndex;
     };
 
