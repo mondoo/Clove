@@ -38,7 +38,6 @@ namespace blb::rnd {
 }
 
 namespace blb::rnd {
-    //TODO: Returns an array of matrices of where a joint should be, so index 4 of the array is the position for joint 4 etc.
     class Animator {
         //VARIABLES
         //private:
@@ -58,14 +57,14 @@ namespace blb::rnd {
             auto& nextPose = getNextPose(currentTime);
             auto& prevPose = getPrevPose(currentTime);
 
-            //Lerp between them
+            //Lerp between them to create the target pose
             const float timeBetweenPoses = nextPose.timeStamp - prevPose.timeStamp;
             const float timeFromPrevPose = currentTime - prevPose.timeStamp;
             const float normTime         = timeFromPrevPose / timeBetweenPoses;
 
             auto currentAnimPose = lerpJointPoses(prevPose, nextPose, normTime);
 
-            //Get the current model transform of the pose (Cj->m)
+            //Get the current joint to model matrix of the target pose (Cj->m)
             auto currentJointToModel = calculateCurrentJointToModelMatrices(currentAnimPose, currentClip.skeleton);
 
             //Calculate skinning matrix K = Bm->j * Cj->m
