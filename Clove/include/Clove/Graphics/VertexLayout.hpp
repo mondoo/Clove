@@ -44,8 +44,8 @@ namespace clv::gfx {
 	};
 	template<>
 	struct VertexElementData<VertexElementType::weights>{
-		using DataType = mth::vec3f; //weights need to add up to 1 so we can omitt the last entry
-        static constexpr uint32_t elementCount = 3u;
+		using DataType = mth::vec4f; //TODO: As a future memory optimisation we can make this a vec3 as it all adds up to 1 anyway
+        static constexpr uint32_t elementCount = 4u;
         static constexpr std::string_view semantic = "WEIGHTS";
 	};
 
