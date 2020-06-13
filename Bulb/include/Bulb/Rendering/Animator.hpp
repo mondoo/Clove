@@ -9,8 +9,31 @@ namespace blb::rnd {
         //TODO:
     }
 
-    static std::vector<clv::mth::mat4f> calculateCurrentJointToWorlMatrices(const std::vector<JointPose>& poses, const Skeleton* skeleton){
-        //TODO
+    static clv::mth::mat4f getJointToModelMatrix(const JointPose& pose, const std::optional<JointIndexType>& parentIndex, const std::vector<JointPose>& poses, const Skeleton* skeleton) {
+        //TODO: A lot of recalculations here, perhaps we can make it so we don't revisit joints once they are done
+
+        const clv::mth::mat4f translationMatrix = clv::mth::translate(clv::mth::mat4f(1.0f), pose.position);
+        const clv::mth::mat4f rotationMatrix    = clv::mth::quaternionToMatrix4(pose.rotation);
+        const clv::mth::mat4f scaleMatrix       = clv::mth::scale(clv::mth::mat4f(1.0f), pose.scale);
+
+        const clv::mth::mat4f poseTransform = translationMatrix * rotationMatrix * scaleMatrix;
+
+        if(parentIndex.has_value()) {
+            const JointIndexType index                = parentIndex.value();
+            const clv::mth::mat4f parentPoseTransform = getJointToModelMatrix(poses[index], skeleton->joints[index].parentIndex, poses, skeleton);
+
+            return parentPoseTransform * poseTransform;
+        } else {
+            return poseTransform;
+        }
+    }
+
+    static std::vector<clv::mth::mat4f> calculateCurrentJointToModelMatrices(const std::vector<JointPose>& poses, const Skeleton* skeleton) {
+        const size_t size = poses.size();
+        std::vector<clv::mth::mat4f> jointToModelMatrices(size);
+        for(size_t i = 0; i < size; ++i) {
+            jointToModelMatrices[i] = getJointToModelMatrix(poses[i], skeleton->joints[i].parentIndex, poses, skeleton);
+        }
     }
 }
 
@@ -18,7 +41,7 @@ namespace blb::rnd {
     //TODO: Returns an array of matrices of where a joint should be, so index 4 of the array is the position for joint 4 etc.
     class Animator {
         //VARIABLES
-    //private:
+        //private:
     public:
         float currentTime = 0.0f;
         AnimationClip currentClip;
@@ -43,7 +66,7 @@ namespace blb::rnd {
             auto currentAnimPose = lerpJointPoses(prevPose, nextPose, normTime);
 
             //Get the current model transform of the pose (Cj->m)
-            auto currentJointToModel = calculateCurrentJointToWorlMatrices(currentAnimPose, currentClip.skeleton);
+            auto currentJointToModel = calculateCurrentJointToModelMatrices(currentAnimPose, currentClip.skeleton);
 
             //Calculate skinning matrix K = Bm->j * Cj->m
             std::vector<clv::mth::mat4f> skinningMatrix(currentJointToModel.size());
