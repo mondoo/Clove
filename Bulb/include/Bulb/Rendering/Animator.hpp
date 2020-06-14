@@ -70,7 +70,7 @@ namespace blb::rnd {
             //Calculate skinning matrix K = Bm->j * Cj->m
             std::vector<clv::mth::mat4f> skinningMatrix(currentJointToModel.size());
             for(size_t i = 0; i < currentJointToModel.size(); ++i) {
-                skinningMatrix[i] = currentClip.skeleton->joints[i].inverseBindPose * currentJointToModel[i];
+                skinningMatrix[i] = currentJointToModel[i] * currentClip.skeleton->joints[i].inverseBindPose ;
             }
 
             return skinningMatrix;
