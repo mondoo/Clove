@@ -1,8 +1,8 @@
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 
 namespace clv::gfx::vk {
-	VKSemaphore::VKSemaphore(VkDevice device) 
-		: device(device){
+	VKSemaphore::VKSemaphore(VkDevice device)
+		: device(device) {
 		VkSemaphoreCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -13,5 +13,9 @@ namespace clv::gfx::vk {
 
 	VKSemaphore::~VKSemaphore() {
 		vkDestroySemaphore(device, semaphore, nullptr);
+	}
+
+	VkSemaphore VKSemaphore::getSemaphore() const {
+		return semaphore;
 	}
 }

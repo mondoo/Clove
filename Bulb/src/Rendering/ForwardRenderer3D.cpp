@@ -91,6 +91,6 @@ namespace blb::rnd {
 	}
 
 	void ForwardRenderer3D::end() {
-
+		uint32_t imageIndex = swapchain->aquireNextImage(imageAvailableSemaphore.get());
 	}
 }

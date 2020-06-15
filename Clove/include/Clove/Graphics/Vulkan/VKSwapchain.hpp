@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
+#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 
 //TODO: Remove
 #include <vulkan/vulkan.h>
@@ -36,6 +37,8 @@ namespace clv::gfx::vk {
 
 		ImageFormat getImageFormat() const;
 		VkExtent2D getExtent() const;
+
+		uint32_t aquireNextImage(const VKSemaphore* semaphore);
 
 		const std::vector<std::shared_ptr<VKImageView>>& getImageViews() const;
 	};

@@ -15,5 +15,7 @@ namespace clv::gfx::vk {
 		//TODO: Other Ctors
 		VKSemaphore(VkDevice device);
 		~VKSemaphore();
+
+		VkSemaphore getSemaphore() const;
 	};
 }
