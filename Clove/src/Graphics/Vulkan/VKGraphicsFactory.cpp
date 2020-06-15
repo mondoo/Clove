@@ -391,4 +391,8 @@ namespace clv::gfx::vk{
 	std::unique_ptr<VKFramebuffer> VKGraphicsFactory::createFramebuffer(FramebufferDescriptor descriptor) {
 		return std::make_unique<VKFramebuffer>(logicalDevice, std::move(descriptor));
 	}
+
+	std::unique_ptr<VKSemaphore> VKGraphicsFactory::createSemaphore() {
+		return std::make_unique<VKSemaphore>(logicalDevice);
+	}
 }

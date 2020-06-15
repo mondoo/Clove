@@ -127,12 +127,14 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKCommandBuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKCommandQueue.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKCommandQueue.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKFramebuffer.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKFramebuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKPipelineObject.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKPipelineObject.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKRenderPass.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKRenderPass.cpp
-		${CLV_INCLUDE}/Graphics/Vulkan/VKFramebuffer.hpp
-		${CLV_SOURCE}/Graphics/Vulkan/VKFramebuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKSemaphore.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKSemaphore.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsFactory.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsFactory.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKImageView.hpp

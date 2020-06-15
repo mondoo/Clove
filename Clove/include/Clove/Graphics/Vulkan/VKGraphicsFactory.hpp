@@ -3,11 +3,12 @@
 //TODO: Remove to cpp
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
+#include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
-#include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -49,5 +50,7 @@ namespace clv::gfx::vk {
 		std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
 
 		std::unique_ptr<VKFramebuffer> createFramebuffer(FramebufferDescriptor descriptor);
+
+		std::unique_ptr<VKSemaphore> createSemaphore();
 	};
 }
