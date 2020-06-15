@@ -15,6 +15,10 @@ int main(){
 			break;
 		}
 
+		renderer.begin();
 
+		//TODO: Submit mesh data
+
+		renderer.end();
 	}
 }

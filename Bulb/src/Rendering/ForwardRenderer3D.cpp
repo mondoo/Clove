@@ -65,6 +65,7 @@ namespace blb::rnd {
 	ForwardRenderer3D::~ForwardRenderer3D() = default;
 
 	void ForwardRenderer3D::begin() {
+		//TODO
 	}
 
 	void ForwardRenderer3D::submitMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
