@@ -60,6 +60,10 @@ namespace blb::rnd {
 
 			commandBuffers[i]->endRecording();
 		}
+
+		//Create semaphores for frame synchronisation
+		renderFinishedSemaphore = graphicsFactory->createSemaphore();
+		imageAvailableSemaphore = graphicsFactory->createSemaphore();
 	}
 
 	ForwardRenderer3D::~ForwardRenderer3D() = default;
@@ -87,5 +91,6 @@ namespace blb::rnd {
 	}
 
 	void ForwardRenderer3D::end() {
+
 	}
 }

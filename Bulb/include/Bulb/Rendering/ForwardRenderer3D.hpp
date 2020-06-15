@@ -69,6 +69,9 @@ namespace blb::rnd {
 
 		std::vector<std::shared_ptr<clv::gfx::vk::VKCommandBuffer>> commandBuffers;
 
+		std::shared_ptr<clv::gfx::vk::VKSemaphore> renderFinishedSemaphore;
+		std::shared_ptr<clv::gfx::vk::VKSemaphore> imageAvailableSemaphore;
+
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
