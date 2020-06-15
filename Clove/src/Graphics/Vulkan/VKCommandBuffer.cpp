@@ -48,4 +48,8 @@ namespace clv::gfx::vk {
 			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to end recording command buffer");
 		}
 	}
+
+	VkCommandBuffer VKCommandBuffer::getCommandBuffer() const {
+		return commandBuffer;
+	}
 }

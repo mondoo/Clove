@@ -35,5 +35,7 @@ namespace clv::gfx::vk {
 		void endRenderPass();
 
 		void endRecording();
+
+		VkCommandBuffer getCommandBuffer() const;
 	};
 }

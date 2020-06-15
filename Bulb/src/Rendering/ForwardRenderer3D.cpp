@@ -91,6 +91,21 @@ namespace blb::rnd {
 	}
 
 	void ForwardRenderer3D::end() {
+		//Aquire the next available image
 		uint32_t imageIndex = swapchain->aquireNextImage(imageAvailableSemaphore.get());
+
+		//Submit that command buffer associated with that image
+		clv::gfx::GraphicsSubmitInfo submitInfo{};
+		submitInfo.waitSemaphores	= { imageAvailableSemaphore };
+		submitInfo.waitStages		= { clv::gfx::WaitStage::ColourAttachmentOutput };
+		submitInfo.commandBuffers	= { commandBuffers[imageIndex] };
+		submitInfo.signalSemaphores = { renderFinishedSemaphore };
+		graphicsQueue->submit(submitInfo);
+
+		//Subpass Dependecies
+		//TODO:
+
+		//Present current image
+		//TODO:
 	}
 }

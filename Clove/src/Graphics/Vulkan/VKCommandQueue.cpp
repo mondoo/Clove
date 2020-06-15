@@ -1,6 +1,13 @@
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 
 namespace clv::gfx::vk {
+	static VkPipelineStageFlagBits getPipelineStageFlag(WaitStage stage) {
+		switch(stage) {
+			case WaitStage::ColourAttachmentOutput:
+				return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		}
+	}
+
 	VKGraphicsQueue::VKGraphicsQueue(VkDevice device, uint32_t queueFamilyIndex, CommandQueueDescriptor descriptor)
 		: device(device) {
 		vkGetDeviceQueue(device, queueFamilyIndex, 0, &queue);
@@ -36,6 +43,47 @@ namespace clv::gfx::vk {
 		}
 
 		return std::make_unique<VKCommandBuffer>(commandBuffer);
+	}
+
+	void VKGraphicsQueue::submit(const GraphicsSubmitInfo& submitInfo) {
+		//Wait semaphores / stages
+		const size_t waitSemaphoreCount = std::size(submitInfo.waitSemaphores);
+		std::vector<VkSemaphore> waitSemaphores(waitSemaphoreCount);
+		for(size_t i = 0; i < waitSemaphoreCount; ++i) {
+			waitSemaphores[i] = submitInfo.waitSemaphores[i]->getSemaphore();
+		}
+		std::vector<VkPipelineStageFlags> waitStages(waitSemaphoreCount);
+		for(size_t i = 0; i < waitSemaphoreCount; i++) {
+			waitStages[i] = getPipelineStageFlag(submitInfo.waitStages[i]);
+		}
+
+		//Command buffers
+		const size_t commandBufferCount = std::size(submitInfo.commandBuffers);
+		std::vector<VkCommandBuffer> commandBuffers(commandBufferCount);
+		for(size_t i = 0; i < commandBufferCount; i++) {
+			commandBuffers[i] = submitInfo.commandBuffers[i]->getCommandBuffer();
+		}
+
+		//Signal semaphores
+		const size_t signalSemaphoreCount = std::size(submitInfo.signalSemaphores);
+		std::vector<VkSemaphore> signalSemaphores(signalSemaphoreCount);
+		for(size_t i = 0; i < signalSemaphoreCount; i++) {
+			signalSemaphores[i] = submitInfo.signalSemaphores[i]->getSemaphore();
+		}
+
+		VkSubmitInfo vkSubmitInfo{};
+		vkSubmitInfo.sType				  = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		vkSubmitInfo.waitSemaphoreCount	  = waitSemaphoreCount;
+		vkSubmitInfo.pWaitSemaphores	  = std::data(waitSemaphores);
+		vkSubmitInfo.pWaitDstStageMask	  = std::data(waitStages);
+		vkSubmitInfo.commandBufferCount	  = commandBufferCount;
+		vkSubmitInfo.pCommandBuffers	  = std::data(commandBuffers);
+		vkSubmitInfo.signalSemaphoreCount = signalSemaphoreCount;
+		vkSubmitInfo.pSignalSemaphores	  = std::data(signalSemaphores);
+
+		if(vkQueueSubmit(queue, 1, &vkSubmitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to submit graphics command buffer(s)");
+		}
 	}
 
 	VKPresentQueue::VKPresentQueue(VkDevice device, uint32_t queueFamilyIndex) {

@@ -4,6 +4,8 @@
 #include <vulkan/vulkan.h>
 #include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 
+#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
+
 namespace clv::gfx {
 	enum class QueueFlags {
 		None,
@@ -12,6 +14,21 @@ namespace clv::gfx {
 
 	struct CommandQueueDescriptor{
 		QueueFlags flags;
+	};
+
+	//Graphic ssubmit info:
+	enum class WaitStage{
+		ColourAttachmentOutput
+	};
+
+	struct GraphicsSubmitInfo {
+		//Each element in the semaphore maps to an element in the waitStages
+		std::vector<std::shared_ptr<vk::VKSemaphore>> waitSemaphores;
+		std::vector<WaitStage> waitStages;
+
+		std::vector<std::shared_ptr<vk::VKCommandBuffer>> commandBuffers;
+
+		std::vector<std::shared_ptr<vk::VKSemaphore>> signalSemaphores;
 	};
 }
 
@@ -35,6 +52,8 @@ namespace clv::gfx::vk {
 
 		//TODO: Functions to allocate, destroy and submit buffers
 		std::unique_ptr<VKCommandBuffer> allocateCommandBuffer();
+
+		void submit(const GraphicsSubmitInfo& submitInfo);
 	};
 
 	class VKPresentQueue {
