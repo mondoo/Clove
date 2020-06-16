@@ -127,6 +127,8 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKCommandBuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKCommandQueue.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKCommandQueue.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKFence.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKFence.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKFramebuffer.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKFramebuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKPipelineObject.hpp

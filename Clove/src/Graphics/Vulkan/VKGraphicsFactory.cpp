@@ -395,4 +395,8 @@ namespace clv::gfx::vk{
 	std::unique_ptr<VKSemaphore> VKGraphicsFactory::createSemaphore() {
 		return std::make_unique<VKSemaphore>(logicalDevice);
 	}
+
+	std::unique_ptr<VKFence> VKGraphicsFactory::createFence(FenceDescriptor descriptor) {
+		return std::make_unique<VKFence>(logicalDevice, descriptor);
+	}
 }

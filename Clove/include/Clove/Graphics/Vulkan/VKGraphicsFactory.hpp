@@ -9,6 +9,7 @@
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
+#include "Clove/Graphics/Vulkan/VKFence.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -52,5 +53,6 @@ namespace clv::gfx::vk {
 		std::unique_ptr<VKFramebuffer> createFramebuffer(FramebufferDescriptor descriptor);
 
 		std::unique_ptr<VKSemaphore> createSemaphore();
+		std::unique_ptr<VKFence> createFence(FenceDescriptor descriptor);
 	};
 }
