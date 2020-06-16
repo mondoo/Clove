@@ -66,6 +66,7 @@ namespace clv::gfx::vk {
 		//VARIABLES
 	private:
 		//uint32_t queueFamilyIndex = 0;
+		VkDevice device = VK_NULL_HANDLE;
 		VkQueue queue = VK_NULL_HANDLE;
 
 		//FUNCTIONS

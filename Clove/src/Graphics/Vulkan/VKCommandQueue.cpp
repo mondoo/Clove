@@ -86,7 +86,8 @@ namespace clv::gfx::vk {
 		}
 	}
 
-	VKPresentQueue::VKPresentQueue(VkDevice device, uint32_t queueFamilyIndex) {
+	VKPresentQueue::VKPresentQueue(VkDevice device, uint32_t queueFamilyIndex) 
+		: device(device) {
 		vkGetDeviceQueue(device, queueFamilyIndex, 0, &queue);
 	}
 
@@ -110,6 +111,9 @@ namespace clv::gfx::vk {
 
 		//TODO: Error handling
 		vkQueuePresentKHR(queue, &vkpresentInfo);
+
+		//TEMP: waiting here
+		vkDeviceWaitIdle(device);
 	}
 
 	VKTransferQueue::VKTransferQueue(VkDevice device, uint32_t queueFamilyIndex, CommandQueueDescriptor descriptor)
