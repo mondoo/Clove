@@ -74,7 +74,12 @@ namespace blb::rnd {
 		imagesInFlight.resize(swapchain->getImageViews().size());
 	}
 
-	ForwardRenderer3D::~ForwardRenderer3D() = default;
+	ForwardRenderer3D::~ForwardRenderer3D(){
+		//Wait for all of our fences before shutting down so we don't delete objects while vulkan is using them
+		for(auto& fence : inFlightFences) {
+			fence->waitForFence();
+		}
+	}
 
 	void ForwardRenderer3D::begin() {
 		//TODO
