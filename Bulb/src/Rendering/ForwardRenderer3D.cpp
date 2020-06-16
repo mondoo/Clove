@@ -102,9 +102,6 @@ namespace blb::rnd {
 		submitInfo.signalSemaphores = { renderFinishedSemaphore };
 		graphicsQueue->submit(submitInfo);
 
-		//Subpass Dependecies
-		//TODO:
-
 		//Present current image
 		//TODO:
 	}
