@@ -5,6 +5,7 @@
 #include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
+#include "Clove/Graphics/Vulkan/VKFence.hpp"
 
 namespace clv::gfx {
 	enum class QueueFlags {
@@ -59,7 +60,7 @@ namespace clv::gfx::vk {
 
 		std::unique_ptr<VKCommandBuffer> allocateCommandBuffer();
 
-		void submit(const GraphicsSubmitInfo& submitInfo);
+		void submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<VKFence>& fence);
 	};
 
 	class VKPresentQueue {

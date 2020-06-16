@@ -21,4 +21,8 @@ namespace clv::gfx::vk {
 	void VKFence::resetFence() {
 		vkResetFences(device, 1, &fence);
 	}
+
+	VkFence VKFence::getFence() const {
+		return fence;
+	}
 }

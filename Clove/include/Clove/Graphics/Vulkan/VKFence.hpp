@@ -24,5 +24,7 @@ namespace clv::gfx::vk {
 
 		void waitForFence();
 		void resetFence();
+
+		VkFence getFence() const;
 	};
 }

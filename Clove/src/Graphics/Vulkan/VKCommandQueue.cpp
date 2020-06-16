@@ -45,7 +45,7 @@ namespace clv::gfx::vk {
 		return std::make_unique<VKCommandBuffer>(commandBuffer);
 	}
 
-	void VKGraphicsQueue::submit(const GraphicsSubmitInfo& submitInfo) {
+	void VKGraphicsQueue::submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<VKFence>& fence) {
 		//Wait semaphores / stages
 		const size_t waitSemaphoreCount = std::size(submitInfo.waitSemaphores);
 		std::vector<VkSemaphore> waitSemaphores(waitSemaphoreCount);
@@ -81,7 +81,7 @@ namespace clv::gfx::vk {
 		vkSubmitInfo.signalSemaphoreCount = signalSemaphoreCount;
 		vkSubmitInfo.pSignalSemaphores	  = std::data(signalSemaphores);
 
-		if(vkQueueSubmit(queue, 1, &vkSubmitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+		if(vkQueueSubmit(queue, 1, &vkSubmitInfo, fence ? fence->getFence() : VK_NULL_HANDLE) != VK_SUCCESS) {
 			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to submit graphics command buffer(s)");
 		}
 	}
@@ -111,9 +111,6 @@ namespace clv::gfx::vk {
 
 		//TODO: Error handling
 		vkQueuePresentKHR(queue, &vkpresentInfo);
-
-		//TEMP: waiting here
-		vkDeviceWaitIdle(device);
 	}
 
 	VKTransferQueue::VKTransferQueue(VkDevice device, uint32_t queueFamilyIndex, CommandQueueDescriptor descriptor)
