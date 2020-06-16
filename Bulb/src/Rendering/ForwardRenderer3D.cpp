@@ -62,8 +62,15 @@ namespace blb::rnd {
 		}
 
 		//Create semaphores for frame synchronisation
-		renderFinishedSemaphore = graphicsFactory->createSemaphore();
-		imageAvailableSemaphore = graphicsFactory->createSemaphore();
+		for(auto& renderFinishedSemaphore : renderFinishedSemaphores) {
+			renderFinishedSemaphore = graphicsFactory->createSemaphore();
+		}
+		for(auto& imageAvailableSemaphore : imageAvailableSemaphores) {
+			imageAvailableSemaphore = graphicsFactory->createSemaphore();
+		}
+		for(auto& inFlightFence : inFlightFences) {
+			inFlightFence = graphicsFactory->createFence({ true });
+		}
 	}
 
 	ForwardRenderer3D::~ForwardRenderer3D() = default;
@@ -91,22 +98,27 @@ namespace blb::rnd {
 	}
 
 	void ForwardRenderer3D::end() {
+		inFlightFences[currentFrame]->waitForFence();
+		inFlightFences[currentFrame]->resetFence();
+
 		//Aquire the next available image
-		uint32_t imageIndex = swapchain->aquireNextImage(imageAvailableSemaphore.get());
+		uint32_t imageIndex = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get());
 
 		//Submit that command buffer associated with that image
 		clv::gfx::GraphicsSubmitInfo submitInfo{};
-		submitInfo.waitSemaphores	= { imageAvailableSemaphore };
+		submitInfo.waitSemaphores	= { imageAvailableSemaphores[currentFrame] };
 		submitInfo.waitStages		= { clv::gfx::WaitStage::ColourAttachmentOutput };
 		submitInfo.commandBuffers	= { commandBuffers[imageIndex] };
-		submitInfo.signalSemaphores = { renderFinishedSemaphore };
-		graphicsQueue->submit(submitInfo);
+		submitInfo.signalSemaphores = { renderFinishedSemaphores[currentFrame] };
+		graphicsQueue->submit(submitInfo, inFlightFences[currentFrame]);
 
 		//Present current image
 		clv::gfx::PresentInfo presentInfo{};
-		presentInfo.waitSemaphores = { renderFinishedSemaphore };
+		presentInfo.waitSemaphores = { renderFinishedSemaphores[currentFrame] };
 		presentInfo.swapChain	   = swapchain;
 		presentInfo.imageIndex	   = imageIndex;
 		presentQueue->present(presentInfo);
+
+		currentFrame = (currentFrame + 1) % maxFramesInFlight;
 	}
 }

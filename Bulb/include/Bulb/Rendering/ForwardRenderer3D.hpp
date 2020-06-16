@@ -54,6 +54,9 @@ namespace blb::rnd {
 	class ForwardRenderer3D : public IRenderer3D {
 		//VARIABLES
 	private:
+		static constexpr size_t maxFramesInFlight = 2;
+		size_t currentFrame						  = 0;
+
 		//Using shared_ptrs of the actual types until API is abstracted
 		std::shared_ptr<clv::gfx::vk::VKGraphicsFactory> graphicsFactory;
 
@@ -69,8 +72,9 @@ namespace blb::rnd {
 
 		std::vector<std::shared_ptr<clv::gfx::vk::VKCommandBuffer>> commandBuffers;
 
-		std::shared_ptr<clv::gfx::vk::VKSemaphore> renderFinishedSemaphore;
-		std::shared_ptr<clv::gfx::vk::VKSemaphore> imageAvailableSemaphore;
+		std::array<std::shared_ptr<clv::gfx::vk::VKSemaphore>, maxFramesInFlight> renderFinishedSemaphores;
+		std::array<std::shared_ptr<clv::gfx::vk::VKSemaphore>, maxFramesInFlight> imageAvailableSemaphores;
+		std::array<std::shared_ptr<clv::gfx::vk::VKFence>, maxFramesInFlight> inFlightFences;
 
 		//FUNCTIONS
 	public:
