@@ -92,6 +92,26 @@ namespace clv::gfx::vk {
 
 	VKPresentQueue::~VKPresentQueue() = default;
 
+	void VKPresentQueue::present(const PresentInfo& presentInfo) {
+		//Wait semaphores
+		const size_t waitSemaphoreCount = std::size(presentInfo.waitSemaphores);
+		std::vector<VkSemaphore> waitSemaphores(waitSemaphoreCount);
+		for(size_t i = 0; i < waitSemaphoreCount; ++i) {
+			waitSemaphores[i] = presentInfo.waitSemaphores[i]->getSemaphore();
+		}
+
+		VkPresentInfoKHR vkpresentInfo{};
+		vkpresentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		vkpresentInfo.waitSemaphoreCount = waitSemaphoreCount;
+		vkpresentInfo.pWaitSemaphores	 = std::data(waitSemaphores);
+		vkpresentInfo.swapchainCount	 = 1;
+		vkpresentInfo.pSwapchains		 = &presentInfo.swapChain->getSwapchain();
+		vkpresentInfo.pImageIndices		 = &presentInfo.imageIndex;
+
+		//TODO: Error handling
+		vkQueuePresentKHR(queue, &vkpresentInfo);
+	}
+
 	VKTransferQueue::VKTransferQueue(VkDevice device, uint32_t queueFamilyIndex, CommandQueueDescriptor descriptor)
 		: device(device) {
 		vkGetDeviceQueue(device, queueFamilyIndex, 0, &queue);

@@ -113,6 +113,10 @@ namespace clv::gfx::vk {
 		return imageIndex;
 	}
 
+	const VkSwapchainKHR& VKSwapchain::getSwapchain() const {
+		return swapChain;
+	}
+
 	const std::vector<std::shared_ptr<VKImageView>>& VKSwapchain::getImageViews() const {
 		return imageViews;
 	}

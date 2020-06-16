@@ -40,6 +40,8 @@ namespace clv::gfx::vk {
 
 		uint32_t aquireNextImage(const VKSemaphore* semaphore);
 
+		const VkSwapchainKHR& getSwapchain() const;
+
 		const std::vector<std::shared_ptr<VKImageView>>& getImageViews() const;
 	};
 }

@@ -103,6 +103,10 @@ namespace blb::rnd {
 		graphicsQueue->submit(submitInfo);
 
 		//Present current image
-		//TODO:
+		clv::gfx::PresentInfo presentInfo{};
+		presentInfo.waitSemaphores = { renderFinishedSemaphore };
+		presentInfo.swapChain	   = swapchain;
+		presentInfo.imageIndex	   = imageIndex;
+		presentQueue->present(presentInfo);
 	}
 }

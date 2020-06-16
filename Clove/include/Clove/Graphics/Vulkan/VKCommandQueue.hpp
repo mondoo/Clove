@@ -30,6 +30,13 @@ namespace clv::gfx {
 
 		std::vector<std::shared_ptr<vk::VKSemaphore>> signalSemaphores;
 	};
+
+	struct PresentInfo{
+		std::vector<std::shared_ptr<vk::VKSemaphore>> waitSemaphores;
+
+		std::shared_ptr<clv::gfx::vk::VKSwapchain> swapChain;
+		uint32_t imageIndex;
+	};
 }
 
 namespace clv::gfx::vk {
@@ -50,7 +57,6 @@ namespace clv::gfx::vk {
 
 		~VKGraphicsQueue();
 
-		//TODO: Functions to allocate, destroy and submit buffers
 		std::unique_ptr<VKCommandBuffer> allocateCommandBuffer();
 
 		void submit(const GraphicsSubmitInfo& submitInfo);
@@ -70,7 +76,7 @@ namespace clv::gfx::vk {
 
 		~VKPresentQueue();
 
-		//TODO: Functions to present
+		void present(const PresentInfo& presentInfo);
 	};
 
 	class VKTransferQueue {
@@ -89,7 +95,6 @@ namespace clv::gfx::vk {
 
 		~VKTransferQueue();
 
-		//TODO: Functions to allocate, destroy and submit buffers
 		std::unique_ptr<VKCommandBuffer> allocateCommandBuffer();
 	};
 }
