@@ -71,6 +71,7 @@ namespace blb::rnd {
 		for(auto& inFlightFence : inFlightFences) {
 			inFlightFence = graphicsFactory->createFence({ true });
 		}
+		imagesInFlight.resize(swapchain->getImageViews().size());
 	}
 
 	ForwardRenderer3D::~ForwardRenderer3D() = default;
@@ -99,10 +100,17 @@ namespace blb::rnd {
 
 	void ForwardRenderer3D::end() {
 		inFlightFences[currentFrame]->waitForFence();
-		inFlightFences[currentFrame]->resetFence();
 
 		//Aquire the next available image
 		uint32_t imageIndex = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get());
+
+		//Check if we're already using this image, if so wait
+		if(imagesInFlight[imageIndex] != nullptr) {
+			imagesInFlight[imageIndex]->waitForFence();
+		}
+		imagesInFlight[imageIndex] = inFlightFences[currentFrame]; //Ptr copy here, could be slowing things down
+
+		inFlightFences[currentFrame]->resetFence();
 
 		//Submit that command buffer associated with that image
 		clv::gfx::GraphicsSubmitInfo submitInfo{};

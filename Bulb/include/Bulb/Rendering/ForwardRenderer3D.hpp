@@ -75,6 +75,7 @@ namespace blb::rnd {
 		std::array<std::shared_ptr<clv::gfx::vk::VKSemaphore>, maxFramesInFlight> renderFinishedSemaphores;
 		std::array<std::shared_ptr<clv::gfx::vk::VKSemaphore>, maxFramesInFlight> imageAvailableSemaphores;
 		std::array<std::shared_ptr<clv::gfx::vk::VKFence>, maxFramesInFlight> inFlightFences;
+		std::vector<std::shared_ptr<clv::gfx::vk::VKFence>> imagesInFlight;
 
 		//FUNCTIONS
 	public:
