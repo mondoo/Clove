@@ -2,6 +2,7 @@
 
 #include "Clove/Audio/OpenAL/ALBuffer.hpp"
 #include "Clove/Audio/OpenAL/ALSource.hpp"
+#include "Clove/Audio/OpenAL/ALListener.hpp"
 
 namespace clv {
     ALFactory::ALFactory(){
@@ -32,5 +33,9 @@ namespace clv {
 
     std::unique_ptr<AudioSource> ALFactory::createAudioSource() {
         return std::make_unique<ALSource>();
+    }
+
+    std::unique_ptr<AudioListener> ALFactory::createAudioListener(){
+        return std::make_unique<ALListener>();
     }
 }
