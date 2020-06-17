@@ -22,5 +22,7 @@ namespace clv {
         ALBuffer& operator=(ALBuffer&& other) noexcept;
 
         ~ALBuffer();
+
+        ALuint getBufferId() const;
     };
 }

@@ -26,4 +26,8 @@ namespace clv {
     ALBuffer::~ALBuffer() {
         alDeleteBuffers(1, &buffer);
     }
+
+    ALuint ALBuffer::getBufferId() const {
+        return buffer;
+    }
 }
