@@ -3,9 +3,6 @@
 #include <Bulb/Bulb.hpp>
 
 int main() {
-	//Initialise the logger
-	clv::Log::init();
-
 	//Create the platform instance we'll use to make OS calls
 	std::unique_ptr<clv::plt::Platform> platformInstance = clv::plt::createPlatformInstance();
 

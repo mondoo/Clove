@@ -237,6 +237,8 @@ set(
 
 set(
 	UtilityFiles
+		${CLV_INCLUDE}/Utils/Cast.hpp
+		${CLV_INCLUDE}/Utils/Cast.inl
 		${CLV_INCLUDE}/Utils/DeltaTime.hpp
 		${CLV_SOURCE}/Utils/DeltaTime.cpp
 		${CLV_INCLUDE}/Utils/Timer.hpp
