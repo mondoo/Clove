@@ -140,5 +140,7 @@ namespace WavLoader {
 
         char* data = new char[size];
         file.read(data, size);
+
+        return data;
     }
 }
