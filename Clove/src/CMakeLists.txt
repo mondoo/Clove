@@ -8,6 +8,8 @@ add_library(${PROJECT_NAME} STATIC)
 #Files
 set(
 	AudioFiles
+		${CLV_INCLUDE}/Audio/Audio.hpp
+		${CLV_SOURCE}/Audio/Audio.cpp
 		${CLV_INCLUDE}/Audio/AudioBuffer.hpp
 		${CLV_INCLUDE}/Audio/AudioFactory.hpp
 		${CLV_INCLUDE}/Audio/AudioListener.hpp
