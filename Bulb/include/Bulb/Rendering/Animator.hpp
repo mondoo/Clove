@@ -6,7 +6,20 @@
 //TODO: Move to cpp
 namespace blb::rnd {
     static std::vector<JointPose> lerpJointPoses(const AnimationPose& posesA, const AnimationPose& posesB, float time) {
-        //TODO:
+        const size_t jointCount = posesA.poses.size();
+
+        std::vector<JointPose> lerpedPoses;
+        lerpedPoses.resize(jointCount);
+
+        for(size_t i = 0; i < jointCount; ++i) {
+            const auto pos   = clv::mth::lerp(posesA.poses[i].position, posesB.poses[i].position, time);
+            const auto rot   = clv::mth::lerp(posesA.poses[i].rotation, posesB.poses[i].rotation, time);
+            const auto scale = clv::mth::lerp(posesA.poses[i].scale, posesB.poses[i].scale, time);
+
+            lerpedPoses[i] = { rot, pos, scale };
+        }
+
+        return lerpedPoses;
     }
 
     static clv::mth::mat4f getJointToModelMatrix(const JointPose& pose, const std::optional<JointIndexType>& parentIndex, const std::vector<JointPose>& poses, const Skeleton* skeleton) {
