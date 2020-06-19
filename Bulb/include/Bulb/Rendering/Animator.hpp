@@ -91,11 +91,21 @@ namespace blb::rnd {
 
     private:
         const AnimationPose& getNextPose(float animationTime) {
-            //TODO
+            for(size_t i = 0; i < currentClip.poses.size(); ++i) {
+                if(currentClip.poses[i].timeStamp > animationTime) {
+                    return currentClip.poses[i];
+                }
+            }
+
+            return currentClip.poses[currentClip.poses.size() - 1];
         }
 
-        const AnimationPose& getPrevPose(float animationtime) {
-            //TODO
+        const AnimationPose& getPrevPose(float animationTime) {
+            for(size_t i = 0; i < currentClip.poses.size(); ++i) {
+                if(currentClip.poses[i].timeStamp >= animationTime) {
+                    return currentClip.poses[std::min<size_t>(0, i - 1)];
+                }
+            }
         }
     };
 }
