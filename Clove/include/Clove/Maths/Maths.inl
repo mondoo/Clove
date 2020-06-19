@@ -76,4 +76,14 @@ namespace clv::mth{
 	mat<C, R, T, Q> transpose(const mat<C, R, T, Q>& m){
 		return glm::transpose(m);
 	}
+
+	template<length_t L, typename T, qualifier Q>
+	vec<L, T, Q> lerp(const vec<L, T, Q>& a, const vec<L, T, Q>& b, T t){
+        return glm::lerp(a, b, t);
+	}
+
+	template<typename T, qualifier Q>
+	quat<T, Q> lerp(const quat<T, Q>& a, const quat<T, Q>& b, T t){
+        return glm::lerp(a, b, t);
+	}
 }

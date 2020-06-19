@@ -44,6 +44,12 @@ namespace clv::mth{
 
 	template<length_t C, length_t R, typename T, qualifier Q>
 	mat<C, R, T, Q> transpose(const mat<C, R, T, Q>& m);
+
+	template<length_t L, typename T, qualifier Q>
+    vec<L, T, Q> lerp(const vec<L, T, Q>& a, const vec<L, T, Q>& b, T t);
+
+	template<typename T, qualifier Q>
+    quat<T, Q> lerp(const quat<T, Q>& a, const quat<T, Q>& b, T t);
 }
 
 #include "Maths.inl"
