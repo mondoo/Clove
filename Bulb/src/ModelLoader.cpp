@@ -77,7 +77,11 @@ namespace blb::ModelLoader {
 		return texture;
 	}
 
-	static std::shared_ptr<rnd::Mesh> processMesh(aiMesh* mesh, const aiScene* scene, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
+	enum class MeshType{
+		Default,
+		Animated
+	};
+	static std::shared_ptr<rnd::Mesh> processMesh(aiMesh* mesh, const aiScene* scene, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory, const MeshType meshType) {
 		gfx::VertexLayout layout;
 		if(mesh->HasPositions()) {
 			layout.add(gfx::VertexElementType::position3D);
@@ -88,6 +92,10 @@ namespace blb::ModelLoader {
 		//if(mesh->HasTextureCoords(0)) {
 		layout.add(gfx::VertexElementType::texture2D);
 		//}
+        if(meshType == MeshType::Animated) {
+            layout.add(gfx::VertexElementType::jointIds);
+            layout.add(gfx::VertexElementType::weights);
+		}
 		//Skipping colours for now
 		/*if(mesh->HasVertexColors(0)) {
 			layout.add(gfx::VertexElementType::colour3D);
@@ -99,6 +107,18 @@ namespace blb::ModelLoader {
 
 		const size_t vertexCount = mesh->mNumVertices;
 		vertexBufferData.resize(vertexCount);
+
+		//Build the map of jointIds + weights for each vertex
+        std::unordered_map<size_t, std::vector<std::pair<rnd::JointIndexType, float>>> vertWeightPairs;
+		if(meshType == MeshType::Animated) {
+            for(rnd::JointIndexType i = 0; i < mesh->mNumBones; ++i) {
+                aiBone* bone = mesh->mBones[i];
+                for(size_t j = 0; j < bone->mNumWeights; ++j) {
+                    const aiVertexWeight& vertexWeight = bone->mWeights[j];
+                    vertWeightPairs[vertexWeight.mVertexId].emplace_back(i, vertexWeight.mWeight);
+                }
+            }
+        }
 
 		for(size_t i = 0; i < vertexCount; ++i) {
 			if(mesh->HasPositions()) {
@@ -125,6 +145,21 @@ namespace blb::ModelLoader {
 					0.0f,
 					0.0f
 				};
+			}
+            if(meshType == MeshType::Animated) {
+                mth::vec4i jointIds = vertexBufferData[i].getAttribute<gfx::VertexElementType::jointIds>();
+                mth::vec4f weights  = vertexBufferData[i].getAttribute<gfx::VertexElementType::weights>();
+                std::vector<std::pair<rnd::JointIndexType, float>> weightPairs = vertWeightPairs[i];
+
+                for(size_t j = 0; j < 4; ++j){
+                    if(j < weightPairs.size()) {
+                        jointIds[j] = weightPairs[j].first;
+                        weights[j]  = weightPairs[j].second;
+                    } else {
+                        jointIds[j] = 0;
+                        weights[j]  = 0.0f;
+					}
+				}
 			}
 		}
 
@@ -166,7 +201,7 @@ namespace blb::ModelLoader {
 
 		for(size_t i = 0; i < scene->mNumMeshes; ++i) {
             aiMesh* mesh = scene->mMeshes[i];
-            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory));
+            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Default));
         }
 
 		return { meshes };
@@ -184,10 +219,10 @@ namespace blb::ModelLoader {
             return { meshes };
         }
 
-		//TODO: Rempve
+		//TODO: Remove
 		for(size_t i = 0; i < scene->mNumMeshes; ++i) {
             aiMesh* mesh = scene->mMeshes[i];
-            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory));
+            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Animated));
         }
 
 		rnd::SkeletalMesh animatedModel{ meshes };
@@ -224,10 +259,10 @@ namespace blb::ModelLoader {
             joint.parentIndex = getJointParentId(skeleton, joint.name, nodeNameMap);
 		}
 
-		//Set weights
-		//TODO
+		//TODO: Load animations
 
 		animatedModel.skeleton = std::move(skeleton);
+
         return animatedModel;
 	}
 }
