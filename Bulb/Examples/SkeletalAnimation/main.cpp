@@ -11,7 +11,7 @@ int main() {
     //Cache of the 'previous frame time' that'll be used to calculate the delta time
     auto prevFrameTime = std::chrono::system_clock::now();
 
-    auto model    = blb::ModelLoader::loadModel(SOURCE_DIR "/CharacterRunning.fbx", window->getGraphicsFactory());
+    auto model    = blb::ModelLoader::loadAnimatedModel(SOURCE_DIR "/CharacterRunning.fbx", window->getGraphicsFactory());
     auto renderer = std::make_shared<blb::rnd::Renderer3D>(*window);
     auto camera   = blb::rnd::Camera{ *window, blb::rnd::ProjectionMode::Perspective };
 
