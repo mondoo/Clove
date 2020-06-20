@@ -102,17 +102,6 @@ namespace blb::ModelLoader {
 		return std::make_shared<rnd::Mesh>(vertexBufferData, indices, meshMaterial->createInstance());
 	}
 
-	static void processNode(aiNode* node, const aiScene* scene, std::vector<std::shared_ptr<rnd::Mesh>>& meshes, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
-		for(size_t i = 0; i < node->mNumMeshes; ++i) {
-			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			meshes.emplace_back(processMesh(mesh, scene, graphicsFactory));
-		}
-
-		for(size_t i = 0; i < node->mNumChildren; ++i) {
-			processNode(node->mChildren[i], scene, meshes, graphicsFactory);
-		}
-	}
-
 	rnd::Model loadModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
 		CLV_PROFILE_FUNCTION();
 
@@ -125,7 +114,10 @@ namespace blb::ModelLoader {
 			return { meshes };
 		}
 
-		processNode(scene->mRootNode, scene, meshes, graphicsFactory);
+		for(size_t i = 0; i < scene->mNumMeshes; ++i) {
+            aiMesh* mesh = scene->mMeshes[i];
+            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory));
+        }
 
 		return { meshes };
 	}
