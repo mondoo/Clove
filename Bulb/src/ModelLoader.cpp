@@ -219,14 +219,6 @@ namespace blb::ModelLoader {
             return { meshes };
         }
 
-		//TODO: Remove
-		for(size_t i = 0; i < scene->mNumMeshes; ++i) {
-            aiMesh* mesh = scene->mMeshes[i];
-            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Animated));
-        }
-
-		rnd::SkeletalMesh animatedModel{ meshes };
-
 		//TODO: Support multiple skeletons?
 		rnd::Skeleton skeleton;
 
@@ -235,11 +227,12 @@ namespace blb::ModelLoader {
         buildNodeNameMap(nodeNameMap, scene->mRootNode);
 
 		//Build skeleton
+        bool skeletonSet = false;
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
-			//TODO: Process meshes here
-
             aiMesh* mesh = scene->mMeshes[i];
-            if(mesh->mNumBones <= 0) {
+            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Animated));
+
+            if(mesh->mNumBones <= 0 || skeletonSet) {
                 continue;
 			}
 
@@ -250,8 +243,8 @@ namespace blb::ModelLoader {
 				skeleton.joints[i].inverseBindPose = convertToGarlicMatrix(bone->mOffsetMatrix);
 			}
 
-			//Just doing one skeleton for now
-			break;
+			//Only doing one sekelton for now
+            skeletonSet = true;
         }
 
 		//Set parents
@@ -261,6 +254,7 @@ namespace blb::ModelLoader {
 
 		//TODO: Load animations
 
+		rnd::SkeletalMesh animatedModel{ meshes };
 		animatedModel.skeleton = std::move(skeleton);
 
         return animatedModel;
