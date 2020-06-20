@@ -38,6 +38,30 @@ namespace blb::ModelLoader {
         return garlicMat;
 	}
 
+	static void buildNodeNameMap(std::unordered_map<std::string_view, aiNode*>& map, aiNode* rootNode){
+        map[rootNode->mName.C_Str()] = rootNode;
+        for(size_t i = 0; i < rootNode->mNumChildren; ++i) {
+            buildNodeNameMap(map, rootNode->mChildren[i]);
+		}
+	}
+
+	static std::optional<rnd::JointIndexType> getJointParentId(const rnd::Skeleton& skeleton, std::string_view jointName, std::unordered_map<std::string_view, aiNode*>& nodeNameMap) {
+        aiNode* jointNode = nodeNameMap[jointName];
+        if(jointNode->mParent == nullptr) {
+            return {};
+        }
+
+		aiString* parentName = &jointNode->mParent->mName;
+        for(size_t i = 0; i < skeleton.joints.size(); ++i) {
+            if(skeleton.joints[i].name == parentName->C_Str()) {
+                return i;
+			}
+		}
+		GARLIC_LOG(garlicLogContext, Log::Level::Warning, "{0}| Joint: {1} has a parent but it couldn't be found in the skeleton", CLV_FUNCTION_NAME_PRETTY, jointName);
+
+		return {};
+	}
+
 	static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
 		std::shared_ptr<gfx::Texture> texture;
 
@@ -160,6 +184,7 @@ namespace blb::ModelLoader {
             return { meshes };
         }
 
+		//TODO: Rempve
 		for(size_t i = 0; i < scene->mNumMeshes; ++i) {
             aiMesh* mesh = scene->mMeshes[i];
             meshes.emplace_back(processMesh(mesh, scene, graphicsFactory));
@@ -170,8 +195,14 @@ namespace blb::ModelLoader {
 		//TODO: Support multiple skeletons?
 		rnd::Skeleton skeleton;
 
-		//Go through bones
+		//Build scene map
+        std::unordered_map<std::string_view, aiNode*> nodeNameMap;
+        buildNodeNameMap(nodeNameMap, scene->mRootNode);
+
+		//Build skeleton
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
+			//TODO: Process meshes here
+
             aiMesh* mesh = scene->mMeshes[i];
             if(mesh->mNumBones <= 0) {
                 continue;
@@ -180,17 +211,23 @@ namespace blb::ModelLoader {
             skeleton.joints.resize(mesh->mNumBones);
             for(size_t i = 0; i < mesh->mNumBones; i++) {
                 aiBone* bone = mesh->mBones[i];
-
-				//TODO: Parent
+				skeleton.joints[i].name            = bone->mName.C_Str();
 				skeleton.joints[i].inverseBindPose = convertToGarlicMatrix(bone->mOffsetMatrix);
-
-				//TODO: Get weights, have to index back into the vertex buffer
 			}
 
 			//Just doing one skeleton for now
 			break;
         }
 
+		//Set parents
+        for(auto& joint : skeleton.joints) {
+            joint.parentIndex = getJointParentId(skeleton, joint.name, nodeNameMap);
+		}
+
+		//Set weights
+		//TODO
+
+		animatedModel.skeleton = std::move(skeleton);
         return animatedModel;
 	}
 }

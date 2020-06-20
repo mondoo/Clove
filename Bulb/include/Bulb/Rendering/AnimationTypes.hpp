@@ -4,8 +4,8 @@ namespace blb::rnd {
     using JointIndexType = uint8_t;
 
     struct Joint {
-        //TODO: it looks like this will be calculated on inport?
-        clv::mth::mat4f inverseBindPose; //Converts a model space coord into this joint's coord space (Bm->j)
+        std::string name;
+        clv::mth::mat4f inverseBindPose; //Bm->j
         std::optional<JointIndexType> parentIndex;
     };
 
