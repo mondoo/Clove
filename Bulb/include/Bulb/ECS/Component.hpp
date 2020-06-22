@@ -22,8 +22,10 @@ namespace blb::ecs {
 	};
 
 	/**
-	 * The base class for all Components
-	 * @tparam DetivedClassType The type of class that derives from this class
+	 * @brief The base class for all Components.
+	 *
+	 * @tparam DetivedClassType The type of class that derives from this class.
+	 *
 	 * @see TransformComponent
 	 */
 	template<typename DerivedClassType>
@@ -60,11 +62,13 @@ namespace blb::ecs {
 	};
 
 	/**
-	 * Wraps a pointer to a Component
+	 * @brief Wraps a pointer to a Component.
+	 *
 	 * A ComponentPtr acts similar to a std::weak_ptr except that ComponentPtrs can't be locked.
 	 * Once the Component this class points to has been removed from the World this
-	 * class will act like a nullptr
-	 * @tparam ComponentType The type of Component to point to
+	 * class will act like a nullptr.
+	 *
+	 * @tparam ComponentType The type of Component to point to.
 	 */
 	template<typename ComponentType>
 	class ComponentPtr {
@@ -90,7 +94,7 @@ namespace blb::ecs {
 		bool isValid() const;
 
 		/**
-		 * Resets this ComponentPtr, turing it into a nullptr
+		 * @brief Resets this ComponentPtr, turing it into a nullptr.
 		 */
 		void reset();
 
