@@ -45,4 +45,18 @@ namespace clv::gfx::vk {
 				return VK_FORMAT_B8G8R8A8_UNORM;
 		}
 	}
+
+	Result convertResult(VkResult result) {
+		switch(result) {
+			case VK_SUCCESS:
+				return Result::Success;
+			case VK_SUBOPTIMAL_KHR:
+				return Result::Success_SwapchainSuboptimal;
+			case VK_ERROR_OUT_OF_DATE_KHR:
+				return Result::Error_SwapchainOutOfDate;
+			default:
+				CLV_ASSERT(false, "Unkown result type");
+				return Result::Unkown;
+		}
+	}
 }

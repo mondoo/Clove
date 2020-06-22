@@ -39,7 +39,7 @@ namespace clv::gfx::vk {
 		ImageFormat getImageFormat() const;
 		VkExtent2D getExtent() const;
 
-		uint32_t aquireNextImage(const VKSemaphore* semaphore);
+		Result aquireNextImage(const VKSemaphore* semaphore, uint32_t& outImageIndex);
 
 		const VkSwapchainKHR& getSwapchain() const;
 

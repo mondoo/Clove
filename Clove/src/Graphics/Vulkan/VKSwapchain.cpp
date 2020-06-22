@@ -110,12 +110,11 @@ namespace clv::gfx::vk {
 		return swapChainExtent;
 	}
 
-	uint32_t VKSwapchain::aquireNextImage(const VKSemaphore* semaphore) {
-		uint32_t imageIndex;
+	Result VKSwapchain::aquireNextImage(const VKSemaphore* semaphore, uint32_t& outImageIndex) {
 		VkSemaphore vkSemaphore = semaphore ? semaphore->getSemaphore() : VK_NULL_HANDLE;
-		vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &imageIndex);
+		const VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex);
 
-		return imageIndex;
+		return convertResult(result);
 	}
 
 	const VkSwapchainKHR& VKSwapchain::getSwapchain() const {

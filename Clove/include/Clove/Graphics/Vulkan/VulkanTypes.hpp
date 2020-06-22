@@ -9,6 +9,15 @@ namespace clv::gfx {
 		B8G8R8A8_SRGB,
 		B8G8R8A8_UNORM
 	};
+
+	enum class Result {
+		Success,
+		Success_SwapchainSuboptimal,
+		
+		Error_SwapchainOutOfDate,
+
+		Unkown
+	};
 }
 
 namespace clv::gfx::vk {

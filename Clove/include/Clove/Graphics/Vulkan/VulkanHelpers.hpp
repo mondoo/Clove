@@ -10,4 +10,6 @@ namespace clv::gfx::vk {
 
 	ImageFormat convertImageFormat(VkFormat vulkanFormat);
 	VkFormat convertImageFormat(ImageFormat garlicFormat);
+
+	Result convertResult(VkResult result);
 }
