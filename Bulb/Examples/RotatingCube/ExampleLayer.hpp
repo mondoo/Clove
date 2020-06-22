@@ -1,38 +1,44 @@
 #pragma once
 
+#include <Bulb/ECS/Entity.hpp>
+#include <Bulb/ECS/World.hpp>
 #include <Bulb/Layer.hpp>
 
-#include <Bulb/ECS/World.hpp>
-#include <Bulb/ECS/Entity.hpp>
-
 namespace clv::plt {
-	class Window;
+    class Window;
+}
+
+namespace blb::rnd {
+    class Renderer3D;
 }
 
 class ExampleLayer : public blb::Layer {
-	//VARIABLES
+    //VARIABLES
 private:
-	//The window we want to render to
-	std::shared_ptr<clv::plt::Window> window;
+    //The window we want to render to
+    std::shared_ptr<clv::plt::Window> window;
 
-	//The ECS world that this layer has
-	blb::ecs::World world;
+    //The renderer we'll use
+    std::shared_ptr<blb::rnd::Renderer3D> renderer;
 
-	//The entities we want in our world
-	blb::ecs::Entity cubeEntity;
-	blb::ecs::Entity lightEntity;
-	blb::ecs::Entity cameraEntity;
+    //The ECS world that this layer has
+    blb::ecs::World world;
 
-	//FUNCTIONS
+    //The entities we want in our world
+    blb::ecs::Entity cubeEntity;
+    blb::ecs::Entity lightEntity;
+    blb::ecs::Entity cameraEntity;
+
+    //FUNCTIONS
 public:
-	ExampleLayer(std::shared_ptr<clv::plt::Window> window);
+    ExampleLayer(std::shared_ptr<clv::plt::Window> window);
 
-	//Called when the layer is attached
-	virtual void onAttach() override;
+    //Called when the layer is attached
+    virtual void onAttach() override;
 
-	//Called once per frame
-	virtual void onUpdate(clv::utl::DeltaTime deltaTime) override;
+    //Called once per frame
+    virtual void onUpdate(clv::utl::DeltaTime deltaTime) override;
 
-	//Called when the layer has been detached
-	virtual void onDetach() override;
+    //Called when the layer has been detached
+    virtual void onDetach() override;
 };

@@ -5,8 +5,6 @@
 using namespace clv;
 
 int main(){
-	Log::init();
-
 	//Create the platform instance to make OS calls
 	auto platform = plt::createPlatformInstance();
 

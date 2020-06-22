@@ -14,8 +14,8 @@ namespace clv::plt{
 	class Window{
 		//VARIABLES
 	public:
-		utl::SingleCastDelegate<void()> onWindowCloseDelegate;
-		utl::MultiCastDelegate<void(const mth::vec2ui&)> onWindowResize;
+		SingleCastDelegate<void()> onWindowCloseDelegate;
+		MultiCastDelegate<void(const mth::vec2ui&)> onWindowResize;
 
 	protected:
 		Keyboard keyboard;

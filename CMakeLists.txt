@@ -17,7 +17,7 @@ set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #Garlic settings
 option(GAR_BUILD_BULB "Build the Bulb framework" ON)
-CMAKE_DEPENDENT_OPTION(GAR_BUILD_STEM "Build the Stem application (requries Bulb)" OFF "GAR_BUILD_BULB" OFF)
+CMAKE_DEPENDENT_OPTION(GAR_BUILD_STEM "Build the Stem application (requries Bulb)" ON "GAR_BUILD_BULB" OFF)
 CMAKE_DEPENDENT_OPTION(GAR_BUILD_SCAPE "Build the Scape editor (requries Stem)" OFF "GAR_BUILD_STEM" OFF)
 option(GAR_BUILD_EXAMPLES OFF)
 option(GAR_ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)

@@ -10,7 +10,7 @@ namespace blb::ecs {
 
 		//VARIABLES
 	public:
-		clv::utl::MultiCastDelegate<void(RigidBodyComponent*)> onBodyCollision;
+		clv::MultiCastDelegate<void(RigidBodyComponent*)> onBodyCollision;
 
 	private:
 		std::unique_ptr<phy::RigidBody> rigidBody;
