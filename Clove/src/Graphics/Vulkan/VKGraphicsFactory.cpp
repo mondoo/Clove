@@ -393,4 +393,8 @@ namespace clv::gfx::vk{
 	std::unique_ptr<VKFence> VKGraphicsFactory::createFence(FenceDescriptor descriptor) {
 		return std::make_unique<VKFence>(logicalDevice, descriptor);
 	}
+
+	void VKGraphicsFactory::waitForIdleDevice() {
+		vkDeviceWaitIdle(logicalDevice);
+	}
 }

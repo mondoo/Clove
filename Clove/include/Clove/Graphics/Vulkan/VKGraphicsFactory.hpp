@@ -52,5 +52,7 @@ namespace clv::gfx::vk {
 
 		std::unique_ptr<VKSemaphore> createSemaphore();
 		std::unique_ptr<VKFence> createFence(FenceDescriptor descriptor);
+
+		void waitForIdleDevice();
 	};
 }

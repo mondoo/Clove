@@ -74,10 +74,8 @@ namespace blb::rnd {
 	}
 
 	ForwardRenderer3D::~ForwardRenderer3D(){
-		//Wait for all of our fences before shutting down so we don't delete objects while vulkan is using them
-		for(auto& fence : inFlightFences) {
-			fence->waitForFence();
-		}
+		//Wait for an idle device before shutting down so resources aren't freed while in use
+		graphicsFactory->waitForIdleDevice();
 	}
 
 	void ForwardRenderer3D::begin() {
