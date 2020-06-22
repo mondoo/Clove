@@ -7,12 +7,11 @@ namespace blb::rnd {
 		//TODO: Add an abstraction for creating the factory
 		graphicsFactory = std::make_shared<clv::gfx::vk::VKGraphicsFactory>(window.getNativeWindow());
 
-		//Retrieving data as a test
 		graphicsQueue = graphicsFactory->createGraphicsQueue({ clv::gfx::QueueFlags::None });
 		presentQueue  = graphicsFactory->createPresentQueue();
 		transferQueue = graphicsFactory->createTransferQueue({ clv::gfx::QueueFlags::Transient });
 
-		swapchain = graphicsFactory->createSwapChain({});
+		swapchain = graphicsFactory->createSwapChain({ window.getSize() });
 
 		std::shared_ptr<clv::gfx::vk::VKShader> vertShader = graphicsFactory->createShader("vert.spirv");
 		std::shared_ptr<clv::gfx::vk::VKShader> fragShader = graphicsFactory->createShader("frag.spirv");
@@ -133,5 +132,9 @@ namespace blb::rnd {
 		presentQueue->present(presentInfo);
 
 		currentFrame = (currentFrame + 1) % maxFramesInFlight;
+	}
+
+	void ForwardRenderer3D::recreateSwapchain() {
+
 	}
 }

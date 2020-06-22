@@ -256,12 +256,6 @@ namespace clv::gfx::vk{
 				GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create Vulkan surface");
 				return;
 			}
-
-			//Getting the window extent. This needs to be handled agnostically
-			RECT windowRect;
-			GetClientRect(reinterpret_cast<HWND>(nativeWindow), &windowRect);
-
-			windowExtent = VkExtent2D{ static_cast<uint32_t>(windowRect.right - windowRect.left), static_cast<uint32_t>(windowRect.bottom - windowRect.top) };
 		}
 
 		//PICK PHYSICAL DEVICE
@@ -369,7 +363,7 @@ namespace clv::gfx::vk{
 	}
 
 	std::unique_ptr<VKSwapchain> VKGraphicsFactory::createSwapChain(SwapchainDescriptor descriptor) {
-		return std::make_unique<VKSwapchain>(logicalDevice, physicalDeviceSwapchainSupport, surface, queueFamilyIndices, windowExtent, std::move(descriptor));
+		return std::make_unique<VKSwapchain>(logicalDevice, physicalDeviceSwapchainSupport, surface, queueFamilyIndices, std::move(descriptor));
 	}
 
 	std::unique_ptr<VKShader> VKGraphicsFactory::createShader(std::string_view filePath) {

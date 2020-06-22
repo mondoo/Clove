@@ -29,8 +29,6 @@ namespace clv::gfx::vk {
 		QueueFamilyIndices queueFamilyIndices;
 		SwapchainSupportDetails physicalDeviceSwapchainSupport;
 
-		VkExtent2D windowExtent;
-
 		//FUNCTIONS
 	public:
 		//TODO: Ctors

@@ -5,9 +5,9 @@
 #include <Clove/Graphics/GraphicsTypes.hpp>
 
 //TODO: Move to cpp
+#include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
-#include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 
 namespace clv::plt {
 	class Window;
@@ -23,8 +23,8 @@ namespace blb::rnd {
 }
 
 namespace blb::rnd {
-	class IRenderer3D { //Temp IRenderer3D until old renderer has been removed
-		//TYPES
+	class IRenderer3D {//Temp IRenderer3D until old renderer has been removed
+					   //TYPES
 	public:
 		struct ComposedCameraData {
 			clv::gfx::Viewport viewport;
@@ -37,12 +37,12 @@ namespace blb::rnd {
 		virtual void begin() = 0;
 
 		virtual void submitMesh(const std::shared_ptr<rnd::Mesh>& mesh) = 0;
-		virtual void submitLight(const DirectionalLight& light) = 0;
-		virtual void submitLight(const PointLight& light) = 0;
-		virtual void submitCamera(const ComposedCameraData& camera) = 0;
+		virtual void submitLight(const DirectionalLight& light)			= 0;
+		virtual void submitLight(const PointLight& light)				= 0;
+		virtual void submitCamera(const ComposedCameraData& camera)		= 0;
 
 		virtual void submitWidget(const std::shared_ptr<Sprite>& widget) = 0;
-		virtual void submitText(const std::shared_ptr<Sprite>& text) = 0;
+		virtual void submitText(const std::shared_ptr<Sprite>& text)	 = 0;
 
 		virtual void end() = 0;
 	};
@@ -94,5 +94,8 @@ namespace blb::rnd {
 		void submitText(const std::shared_ptr<Sprite>& text) final;
 
 		void end() final;
+
+	private:
+		void recreateSwapchain();
 	};
 }

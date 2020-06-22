@@ -37,8 +37,13 @@ namespace clv::gfx::vk {
 		}
 	}
 
-	VKSwapchain::VKSwapchain(VkDevice device, SwapchainSupportDetails supportDetails, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, VkExtent2D windowExtent, SwapchainDescriptor descriptor)
+	VKSwapchain::VKSwapchain(VkDevice device, SwapchainSupportDetails supportDetails, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, SwapchainDescriptor descriptor)
 		: device(device) {
+		VkExtent2D windowExtent{
+			descriptor.extent.x,
+			descriptor.extent.y
+		};
+
 		VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(supportDetails.formats);
 		VkPresentModeKHR presentMode	 = chooseSwapPresentMode(supportDetails.presentModes);
 		VkExtent2D extent				 = chooseSwapExtent(supportDetails.capabilities, windowExtent);
