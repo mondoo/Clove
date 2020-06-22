@@ -287,8 +287,6 @@ namespace clv::gfx::vk{
 				GARLIC_LOG(garlicLogContext, Log::Level::Info, "\tDevice:\t{0}", devicePoperties.deviceName);
 				GARLIC_LOG(garlicLogContext, Log::Level::Info, "\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
 				GARLIC_LOG(garlicLogContext, Log::Level::Info, "\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
-
-				physicalDeviceSwapchainSupport = querySwapChainSupport(physicalDevice, surface);
 			}
 		}
 
@@ -363,7 +361,7 @@ namespace clv::gfx::vk{
 	}
 
 	std::unique_ptr<VKSwapchain> VKGraphicsFactory::createSwapChain(SwapchainDescriptor descriptor) {
-		return std::make_unique<VKSwapchain>(logicalDevice, physicalDeviceSwapchainSupport, surface, queueFamilyIndices, std::move(descriptor));
+        return std::make_unique<VKSwapchain>(logicalDevice, querySwapChainSupport(physicalDevice, surface), surface, queueFamilyIndices, std::move(descriptor));
 	}
 
 	std::unique_ptr<VKShader> VKGraphicsFactory::createShader(std::string_view filePath) {
