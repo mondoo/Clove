@@ -18,7 +18,7 @@ namespace blb::rnd {
 			setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
 		});
 
-		renderTarget = window.getSurface()->getRenderTarget();
+		//renderTarget = window.getSurface()->getRenderTarget();
 		viewport	 = { 0, 0, window.getSize().x, window.getSize().y };
 		setProjectionMode(projection);
 	}
