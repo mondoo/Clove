@@ -3,6 +3,12 @@
 #include "Bulb/ECS/Entity.hpp"
 
 namespace blb {
+	/**
+	 * @brief A Controller allows specific actions to effect an Entity
+	 *
+	 * @see BTAIController
+	 * @see PlayerController
+	 */
 	class Controller {
 		//FUNCTIONS
 	public:
