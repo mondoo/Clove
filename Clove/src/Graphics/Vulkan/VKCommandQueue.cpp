@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 
+#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+
 namespace clv::gfx::vk {
 	static VkPipelineStageFlagBits getPipelineStageFlag(WaitStage stage) {
 		switch(stage) {
@@ -93,7 +95,7 @@ namespace clv::gfx::vk {
 
 	VKPresentQueue::~VKPresentQueue() = default;
 
-	void VKPresentQueue::present(const PresentInfo& presentInfo) {
+	Result VKPresentQueue::present(const PresentInfo& presentInfo) {
 		//Wait semaphores
 		const size_t waitSemaphoreCount = std::size(presentInfo.waitSemaphores);
 		std::vector<VkSemaphore> waitSemaphores(waitSemaphoreCount);
@@ -109,8 +111,9 @@ namespace clv::gfx::vk {
 		vkpresentInfo.pSwapchains		 = &presentInfo.swapChain->getSwapchain();
 		vkpresentInfo.pImageIndices		 = &presentInfo.imageIndex;
 
-		//TODO: Error handling
-		vkQueuePresentKHR(queue, &vkpresentInfo);
+		const VkResult result = vkQueuePresentKHR(queue, &vkpresentInfo);
+
+		return convertResult(result);
 	}
 
 	VKTransferQueue::VKTransferQueue(VkDevice device, uint32_t queueFamilyIndex, CommandQueueDescriptor descriptor)

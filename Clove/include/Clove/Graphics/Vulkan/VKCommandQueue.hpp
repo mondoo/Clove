@@ -78,7 +78,7 @@ namespace clv::gfx::vk {
 
 		~VKPresentQueue();
 
-		void present(const PresentInfo& presentInfo);
+		Result present(const PresentInfo& presentInfo);
 	};
 
 	class VKTransferQueue {
