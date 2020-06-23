@@ -54,6 +54,10 @@ namespace blb::rnd {
 	class ForwardRenderer3D : public IRenderer3D {
 		//VARIABLES
 	private:
+		clv::DelegateHandle windowResizeHandle;
+        clv::mth::vec2ui windowSize;
+        bool needNewSwapchain = false;
+
 		static constexpr size_t maxFramesInFlight = 2;
 		size_t currentFrame						  = 0;
 
@@ -96,6 +100,7 @@ namespace blb::rnd {
 		void end() final;
 
 	private:
+        void onWindowResize(const clv::mth::vec2ui& size);
 		void recreateSwapchain();
 	};
 }

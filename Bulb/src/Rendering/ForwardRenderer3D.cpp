@@ -4,6 +4,9 @@
 
 namespace blb::rnd {
 	ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API) {
+		windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
+        windowSize         = window.getSize();
+
 		//TODO: Add an abstraction for creating the factory
 		graphicsFactory = std::make_shared<clv::gfx::vk::VKGraphicsFactory>(window.getNativeWindow());
 
@@ -11,7 +14,7 @@ namespace blb::rnd {
 		presentQueue  = graphicsFactory->createPresentQueue();
 		transferQueue = graphicsFactory->createTransferQueue({ clv::gfx::QueueFlags::Transient });
 
-		swapchain = graphicsFactory->createSwapChain({ window.getSize() });
+		swapchain = graphicsFactory->createSwapChain({ windowSize });
 
 		std::shared_ptr<clv::gfx::vk::VKShader> vertShader = graphicsFactory->createShader("vert.spirv");
 		std::shared_ptr<clv::gfx::vk::VKShader> fragShader = graphicsFactory->createShader("frag.spirv");
@@ -101,10 +104,20 @@ namespace blb::rnd {
 	}
 
 	void ForwardRenderer3D::end() {
+        if(needNewSwapchain) {
+            recreateSwapchain();
+            return;
+        }
+
 		inFlightFences[currentFrame]->waitForFence();
 
 		//Aquire the next available image
-		uint32_t imageIndex = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get());
+		uint32_t imageIndex;
+		clv::gfx::Result result = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get(), imageIndex);
+        if(result == clv::gfx::Result::Error_SwapchainOutOfDate) {
+            recreateSwapchain();
+            return;
+        }
 
 		//Check if we're already using this image, if so wait
 		if(imagesInFlight[imageIndex] != nullptr) {
@@ -114,7 +127,7 @@ namespace blb::rnd {
 
 		inFlightFences[currentFrame]->resetFence();
 
-		//Submit that command buffer associated with that image
+		//Submit the command buffer associated with that image
 		clv::gfx::GraphicsSubmitInfo submitInfo{};
 		submitInfo.waitSemaphores	= { imageAvailableSemaphores[currentFrame] };
 		submitInfo.waitStages		= { clv::gfx::WaitStage::ColourAttachmentOutput };
@@ -127,12 +140,87 @@ namespace blb::rnd {
 		presentInfo.waitSemaphores = { renderFinishedSemaphores[currentFrame] };
 		presentInfo.swapChain	   = swapchain;
 		presentInfo.imageIndex	   = imageIndex;
-		presentQueue->present(presentInfo);
+        result = presentQueue->present(presentInfo);
+        if(needNewSwapchain || result == clv::gfx::Result::Error_SwapchainOutOfDate || result == clv::gfx::Result::Success_SwapchainSuboptimal) {
+            recreateSwapchain();
+        }
 
 		currentFrame = (currentFrame + 1) % maxFramesInFlight;
 	}
 
-	void ForwardRenderer3D::recreateSwapchain() {
-
+	void ForwardRenderer3D::onWindowResize(const clv::mth::vec2ui& size) {
+        windowSize = size;
+        needNewSwapchain = true;
 	}
+
+	void ForwardRenderer3D::recreateSwapchain() {
+		//TODO: Clean this up
+
+		//Set this to true in case we need to wait for the window to unminimise
+		needNewSwapchain = true;
+
+		if(windowSize.x == 0 || windowSize.y == 0) {
+            return;
+		}
+
+        graphicsFactory->waitForIdleDevice();
+
+		//Explicitly free resources to avoid problems when recreating the swap chain itself
+        swapchain.reset();
+        pipelineObject.reset();
+        swapChainFrameBuffers.clear();
+        commandBuffers.clear();
+
+        //Recreate our swap chain
+        swapchain = graphicsFactory->createSwapChain({ windowSize });
+
+        std::shared_ptr<clv::gfx::vk::VKShader> vertShader = graphicsFactory->createShader("vert.spirv");
+        std::shared_ptr<clv::gfx::vk::VKShader> fragShader = graphicsFactory->createShader("frag.spirv");
+
+        std::shared_ptr<clv::gfx::vk::VKRenderPass> renderPass = graphicsFactory->createRenderPass({ swapchain->getImageFormat() });
+
+        clv::gfx::PiplineObjectDescriptor pipelineDescriptor;
+        pipelineDescriptor.vertexShader            = vertShader;
+        pipelineDescriptor.fragmentShader          = fragShader;
+        pipelineDescriptor.viewportDescriptor.size = { swapchain->getExtent().width, swapchain->getExtent().height };
+        pipelineDescriptor.scissorDescriptor.size  = { swapchain->getExtent().width, swapchain->getExtent().height };
+        pipelineDescriptor.renderPass              = renderPass;
+
+        pipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+
+        for(auto& swapChainImageView : swapchain->getImageViews()) {
+            clv::gfx::FramebufferDescriptor frameBufferDescriptor{};
+            frameBufferDescriptor.renderPass  = renderPass;
+            frameBufferDescriptor.attachments = { swapChainImageView };
+            frameBufferDescriptor.width       = swapchain->getExtent().width;
+            frameBufferDescriptor.height      = swapchain->getExtent().height;
+
+            swapChainFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(frameBufferDescriptor));
+        }
+
+        commandBuffers.reserve(swapChainFrameBuffers.size());
+        for(size_t i = 0; i < swapChainFrameBuffers.size(); ++i) {
+            commandBuffers.emplace_back(graphicsQueue->allocateCommandBuffer());
+        }
+
+        clv::gfx::RenderArea renderArea{};
+        renderArea.origin = { 0, 0 };
+        renderArea.size   = { swapchain->getExtent().width, swapchain->getExtent().height };
+
+        clv::mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
+
+        //Record our command buffers
+        for(size_t i = 0; i < commandBuffers.size(); ++i) {
+            commandBuffers[i]->beginRecording();
+
+            commandBuffers[i]->beginRenderPass(*renderPass, *swapChainFrameBuffers[i], renderArea, clearColour);
+            commandBuffers[i]->bindPipelineObject(*pipelineObject);
+            commandBuffers[i]->drawIndexed();
+            commandBuffers[i]->endRenderPass();
+
+            commandBuffers[i]->endRecording();
+        }
+
+		needNewSwapchain = false;
+    }
 }
