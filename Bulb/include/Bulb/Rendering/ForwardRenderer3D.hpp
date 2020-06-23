@@ -70,6 +70,8 @@ namespace blb::rnd {
 
 		std::shared_ptr<clv::gfx::vk::VKSwapchain> swapchain;
 
+		std::shared_ptr<clv::gfx::vk::VKRenderPass> renderPass;
+
 		std::shared_ptr<clv::gfx::vk::VKPipelineObject> pipelineObject;
 
 		std::vector<std::shared_ptr<clv::gfx::vk::VKFramebuffer>> swapChainFrameBuffers;
@@ -102,5 +104,9 @@ namespace blb::rnd {
 	private:
         void onWindowResize(const clv::mth::vec2ui& size);
 		void recreateSwapchain();
+
+		void createPipeline();
+        void createSwapchainFrameBuffers();
+        void recordCommandBuffers();
 	};
 }
