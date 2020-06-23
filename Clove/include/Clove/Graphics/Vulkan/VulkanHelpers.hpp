@@ -12,4 +12,6 @@ namespace clv::gfx::vk {
 	VkFormat convertImageFormat(ImageFormat garlicFormat);
 
 	Result convertResult(VkResult result);
+
+	VkFormat convertAttributeFormat(VertexAttributeFormat garlicFormat);
 }

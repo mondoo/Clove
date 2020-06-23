@@ -59,4 +59,20 @@ namespace clv::gfx::vk {
 				return Result::Unkown;
 		}
 	}
+
+	VkFormat convertAttributeFormat(VertexAttributeFormat garlicFormat) {
+        switch(garlicFormat) {
+            case VertexAttributeFormat::R32_SFLOAT:
+                return VK_FORMAT_R32_SFLOAT;
+            case VertexAttributeFormat::R32G32_SFLOAT:
+                return VK_FORMAT_R32G32_SFLOAT;
+            case VertexAttributeFormat::R32G32B32_SFLOAT:
+                return VK_FORMAT_R32G32B32_SFLOAT;
+            case VertexAttributeFormat::R32G32B32A32_SFLOAT:
+                return VK_FORMAT_R32G32B32A32_SFLOAT;
+            default:
+                CLV_ASSERT(false, "{0}: Unkown format passed", CLV_FUNCTION_NAME_PRETTY);
+                return VK_FORMAT_UNDEFINED;
+        }
+    }
 }

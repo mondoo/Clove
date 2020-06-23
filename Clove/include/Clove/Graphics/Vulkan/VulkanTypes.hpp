@@ -18,6 +18,25 @@ namespace clv::gfx {
 
 		Unkown
 	};
+
+	enum class VertexAttributeFormat{
+		R32_SFLOAT,
+		R32G32_SFLOAT,
+        R32G32B32_SFLOAT,
+        R32G32B32A32_SFLOAT
+	};
+
+	struct VertexInputBindingDescriptor {
+        uint32_t binding = 0;
+        uint32_t stride = 0;
+    };
+
+	struct VertexAttributeDescriptor{
+        uint32_t binding  = 0;
+		uint32_t location = 0;
+        VertexAttributeFormat format;
+        uint32_t offset = 0;
+	};
 }
 
 namespace clv::gfx::vk {
