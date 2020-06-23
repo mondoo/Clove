@@ -97,6 +97,7 @@ set(
 		${BLB_INCLUDE}/Rendering/MaterialInstance.inl
 		${BLB_SOURCE}/Rendering/MaterialInstance.cpp
 		${BLB_INCLUDE}/Rendering/RenderingConstants.hpp
+		${BLB_INCLUDE}/Rendering/RenderingTypes.hpp
 		${BLB_INCLUDE}/Rendering/ShaderBufferTypes.hpp
 		${BLB_INCLUDE}/Rendering/Renderer3D.hpp
 		${BLB_SOURCE}/Rendering/Renderer3D.cpp
