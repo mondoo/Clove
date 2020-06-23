@@ -48,12 +48,21 @@ namespace blb::rnd {
 	};
 }
 
+#include "Bulb/Rendering/RenderingTypes.hpp"
+
 #include <Clove/Graphics/Vulkan/VKGraphicsFactory.hpp>
 
 namespace blb::rnd {
 	class ForwardRenderer3D : public IRenderer3D {
 		//VARIABLES
 	private:
+		//TEMP
+        const std::vector<Vertex> vertices = {
+            { {  0.0f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
+            { {  0.5f,  0.5f }, { 0.0f, 1.0f, 0.0f } },
+            { { -0.5f,  0.5f }, { 0.0f, 0.0f, 1.0f } }
+        };
+
 		clv::DelegateHandle windowResizeHandle;
         clv::mth::vec2ui windowSize;
         bool needNewSwapchain = false;
