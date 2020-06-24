@@ -3,7 +3,6 @@
 #include <Clove/Log.hpp>
 
 #include <fstream>
-#include <bit>
 
 namespace WavLoader {
     auto wavLogContext = clv::Log::createContext(clv::Log::Level::Error, "WAVLOADER", "ExampleLog.txt");
