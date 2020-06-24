@@ -14,6 +14,7 @@ int main(){
 	if(file.getNumChannels() == 1){
 		descriptor.format = file.getBitDepth() == 8 ? clv::BufferFormat::Mono8 : clv::BufferFormat::Mono16;
 	}else{
+		//TODO: 3D sound can't be played with stereo sounds, log warn?
 		descriptor.format = file.getBitDepth() == 8 ? clv::BufferFormat::Stereo8 : clv::BufferFormat::Stereo16;
 	}
 	descriptor.sampleRate = file.getSampleRate();
@@ -26,5 +27,21 @@ int main(){
 	audioSource->setLooping(true);
 	audioSource->play();
 
-	while(true);
+	auto prevFrameTime = std::chrono::system_clock::now();
+	while(true){
+		auto currFrameTime = std::chrono::system_clock::now();
+		std::chrono::duration<float> deltaSeconds = currFrameTime - prevFrameTime;
+		prevFrameTime = currFrameTime;
+
+		static float total = 0.0f;
+		total += deltaSeconds.count();
+
+		float x = sin(total) * 10.0f;
+		audioSource->setPosition({x, 0.0f, 0.0f});
+
+		//Stop after 15 seconds
+		if(total >= 15.0f){
+			break;
+		}
+	}
 }
