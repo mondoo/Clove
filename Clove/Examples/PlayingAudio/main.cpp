@@ -1,47 +1,47 @@
-#include <Clove/Clove.hpp>
-
 #include "AudioFile.h"
+
+#include <Clove/Clove.hpp>
 
 //An example on how to play audio through Clove
 
-int main(){
-	auto audioFactory = clv::createAudioFactory(clv::AudioAPI::OpenAl);
+int main() {
+    auto audioFactory = clv::createAudioFactory(clv::AudioAPI::OpenAl);
 
-	AudioFile<double> file;
-	file.load(SOURCE_DIR "/beep.wav");
+    AudioFile<double> file;
+    file.load(SOURCE_DIR "/beep.wav");
 
-	clv::AudioBufferDescriptor descriptor{};
-	if(file.getNumChannels() == 1){
-		descriptor.format = file.getBitDepth() == 8 ? clv::BufferFormat::Mono8 : clv::BufferFormat::Mono16;
-	}else{
-		//TODO: 3D sound can't be played with stereo sounds, log warn?
-		descriptor.format = file.getBitDepth() == 8 ? clv::BufferFormat::Stereo8 : clv::BufferFormat::Stereo16;
-	}
-	descriptor.sampleRate = file.getSampleRate();
+    clv::AudioBufferDescriptor descriptor{};
+    if(file.getNumChannels() == 1) {
+        descriptor.format = file.getBitDepth() == 8 ? clv::BufferFormat::Mono8 : clv::BufferFormat::Mono16;
+    } else {
+        //TODO: 3D sound can't be played with stereo sounds, log warn?
+        descriptor.format = file.getBitDepth() == 8 ? clv::BufferFormat::Stereo8 : clv::BufferFormat::Stereo16;
+    }
+    descriptor.sampleRate = file.getSampleRate();
 
-	auto audioBuffer = audioFactory->createAudioBuffer(descriptor, file.samples[0].data(), file.samples[0].size()); //TODO: Use both channels
-	auto audioSource = audioFactory->createAudioSource();
+    auto audioBuffer = audioFactory->createAudioBuffer(descriptor, file.samples[0].data(), file.samples[0].size());//TODO: Use both channels
+    auto audioSource = audioFactory->createAudioSource();
 
-	audioSource->setBuffer(*audioBuffer);
+    audioSource->setBuffer(*audioBuffer);
 
-	audioSource->setLooping(true);
-	audioSource->play();
+    audioSource->setLooping(true);
+    audioSource->play();
 
-	auto prevFrameTime = std::chrono::system_clock::now();
-	while(true){
-		auto currFrameTime = std::chrono::system_clock::now();
-		std::chrono::duration<float> deltaSeconds = currFrameTime - prevFrameTime;
-		prevFrameTime = currFrameTime;
+    auto prevFrameTime = std::chrono::system_clock::now();
+    while(true) {
+        auto currFrameTime                        = std::chrono::system_clock::now();
+        std::chrono::duration<float> deltaSeconds = currFrameTime - prevFrameTime;
+        prevFrameTime                             = currFrameTime;
 
-		static float total = 0.0f;
-		total += deltaSeconds.count();
+        static float total = 0.0f;
+        total += deltaSeconds.count();
 
-		float x = sin(total) * 10.0f;
-		audioSource->setPosition({x, 0.0f, 0.0f});
+        float x = sin(total) * 10.0f;
+        audioSource->setPosition({ x, 0.0f, 0.0f });
 
-		//Stop after 15 seconds
-		if(total >= 15.0f){
-			break;
-		}
-	}
+        //Stop after 15 seconds
+        if(total >= 15.0f) {
+            break;
+        }
+    }
 }
