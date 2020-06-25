@@ -20,6 +20,8 @@ set(
 	OpenALAudioFiles
 		${CLV_INCLUDE}/Audio/OpenAL/ALBuffer.hpp
 		${CLV_SOURCE}/Audio/OpenAL/ALBuffer.cpp
+		${CLV_INCLUDE}/Audio/OpenAL/ALError.hpp
+		${CLV_SOURCE}/Audio/OpenAL/ALError.cpp
 		${CLV_INCLUDE}/Audio/OpenAL/ALFactory.hpp
 		${CLV_SOURCE}/Audio/OpenAL/ALFactory.cpp
 		${CLV_INCLUDE}/Audio/OpenAL/ALListener.hpp
