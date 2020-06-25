@@ -1,5 +1,7 @@
 #include "Clove/Audio/OpenAL/ALBuffer.hpp"
 
+#include "Clove/Audio/OpenAL/ALError.hpp"
+
 namespace clv {
     static ALenum convertFormat(BufferFormat format) {
         switch(format) {
@@ -15,8 +17,8 @@ namespace clv {
     }
 
     ALBuffer::ALBuffer(AudioBufferDescriptor descriptor, const void* data, size_t dataSize) {
-        alGenBuffers(1, &buffer);
-        alBufferData(buffer, convertFormat(descriptor.format), data, dataSize, descriptor.sampleRate);
+        alCall(alGenBuffers(1, &buffer));
+        alCall(alBufferData(buffer, convertFormat(descriptor.format), data, dataSize, descriptor.sampleRate));
     }
 
     ALBuffer::ALBuffer(ALBuffer&& other) noexcept = default;
@@ -24,7 +26,7 @@ namespace clv {
     ALBuffer& ALBuffer::operator=(ALBuffer&& other) noexcept = default;
 
     ALBuffer::~ALBuffer() {
-        alDeleteBuffers(1, &buffer);
+        alCall(alDeleteBuffers(1, &buffer));
     }
 
     ALuint ALBuffer::getBufferId() const {
