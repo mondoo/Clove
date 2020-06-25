@@ -1,6 +1,8 @@
 #include "Clove/Audio/OpenAL/ALListener.hpp"
 
-namespace clv{
+#include "Clove/Audio/OpenAL/ALError.hpp"
+
+namespace clv {
     ALListener::ALListener() = default;
 
     ALListener::ALListener(ALListener&& other) noexcept = default;
@@ -10,10 +12,10 @@ namespace clv{
     ALListener::~ALListener() = default;
 
     void ALListener::setPosition(const clv::mth::vec3f& position) {
-        alListener3f(AL_POSITION, position.x, position.y, position.z);
+        alCall(alListener3f(AL_POSITION, position.x, position.y, position.z));
     }
 
     void ALListener::setVelocity(const clv::mth::vec3f& velocity) {
-        alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+        alCall(alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z));
     }
 }

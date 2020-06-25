@@ -1,28 +1,29 @@
 #include "Clove/Audio/OpenAL/ALFactory.hpp"
 
 #include "Clove/Audio/OpenAL/ALBuffer.hpp"
-#include "Clove/Audio/OpenAL/ALSource.hpp"
+#include "Clove/Audio/OpenAL/ALError.hpp"
 #include "Clove/Audio/OpenAL/ALListener.hpp"
+#include "Clove/Audio/OpenAL/ALSource.hpp"
 
 namespace clv {
-    ALFactory::ALFactory(){
+    ALFactory::ALFactory() {
         alDevice = alcOpenDevice(nullptr);
         if(!alDevice) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create OpenAL device");
             return;
         }
 
-        alContext = alcCreateContext(alDevice, nullptr);
-        alcMakeContextCurrent(alContext);
+        alcCall(alContext = alcCreateContext(alDevice, nullptr), alDevice);
+        alcCall(alcMakeContextCurrent(alContext), alDevice);
     }
 
     ALFactory::ALFactory(ALFactory&& other) noexcept = default;
 
     ALFactory& ALFactory::operator=(ALFactory&& other) noexcept = default;
 
-    ALFactory::~ALFactory(){
-        alcMakeContextCurrent(nullptr);
-        alcDestroyContext(alContext);
+    ALFactory::~ALFactory() {
+        alcCall(alcMakeContextCurrent(nullptr), alDevice);
+        alcCall(alcDestroyContext(alContext), alDevice);
 
         alcCloseDevice(alDevice);
     }
@@ -35,7 +36,7 @@ namespace clv {
         return std::make_unique<ALSource>();
     }
 
-    std::unique_ptr<AudioListener> ALFactory::createAudioListener(){
+    std::unique_ptr<AudioListener> ALFactory::createAudioListener() {
         return std::make_unique<ALListener>();
     }
 }
