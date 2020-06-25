@@ -8,7 +8,7 @@ namespace clv {
     class ALBuffer : public AudioBuffer{
         //VARIABLES
     private:
-        ALuint buffer;
+        ALuint buffer = 0;
 
         //FUNCTIONS
     public:
