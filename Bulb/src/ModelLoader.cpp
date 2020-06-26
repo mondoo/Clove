@@ -38,6 +38,14 @@ namespace blb::ModelLoader {
         return garlicMat;
 	}
 
+	static mth::vec3f convertToGarlicVec(const aiVector3D& aiVec){
+        return { aiVec.x, aiVec.y, aiVec.z };
+	}
+
+	static mth::quatf convertToGarlicQuat(const aiQuaternion& aiQuat){
+        return { aiQuat.w, aiQuat.x, aiQuat.y, aiQuat.z };
+	}
+
 	static void buildNodeNameMap(std::unordered_map<std::string_view, aiNode*>& map, aiNode* rootNode){
         map[rootNode->mName.C_Str()] = rootNode;
         for(size_t i = 0; i < rootNode->mNumChildren; ++i) {
@@ -60,6 +68,16 @@ namespace blb::ModelLoader {
 		GARLIC_LOG(garlicLogContext, Log::Level::Warning, "{0}| Joint: {1} has a parent but it couldn't be found in the skeleton", CLV_FUNCTION_NAME_PRETTY, jointName);
 
 		return {};
+	}
+
+	static rnd::JointIndexType getJointIndex(const rnd::Skeleton& skeleton, std::string_view jointName){
+        for(size_t i = 0; i < skeleton.joints.size(); ++i) {
+            if(skeleton.joints[i].name == jointName) {
+                return i;
+            }
+        }
+		//TODO: Error
+        return std::numeric_limits<rnd::JointIndexType>::max();
 	}
 
 	static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
@@ -252,7 +270,45 @@ namespace blb::ModelLoader {
             joint.parentIndex = getJointParentId(skeleton, joint.name, nodeNameMap);
 		}
 
-		//TODO: Load animations
+		//Load animations
+        std::vector<rnd::AnimationClip> animationClips(scene->mNumAnimations);
+        for(size_t i = 0; i < scene->mNumAnimations; ++i) {
+            aiAnimation* animation = scene->mAnimations[i];
+
+			/*
+			aiNodeAnim represents the entire timeline for one joint
+			AnimationPose represents the current point in time for all joints
+			*/
+
+			//We have one pose for each pos/rot/scale key
+			//TODO: Assuming they are all the same size (numpos numscale numrot)
+			//TODO: Skipping the first one because it's 'Armature', this is assumptive though
+			std::vector<rnd::AnimationPose> poses(animation->mChannels[1]->mNumPositionKeys);
+            for(size_t key = 0; key < animation->mChannels[1]->mNumPositionKeys; ++key) {
+                //TODO: Basing everything off of the first frame, this needs to change
+                poses[key].poses.resize(skeleton.joints.size()); //Pose for every joint
+                poses[key].timeStamp = animation->mChannels[1]->mPositionKeys[key].mTime;
+
+                for(size_t j = 1; j < animation->mNumChannels; ++j) {//TODO: Skipping the first one as that's the root node (I think)
+                    aiNodeAnim* channel = animation->mChannels[j];
+
+                    //This needs to happen outside the loop basically
+                    const rnd::JointIndexType jointIndex = getJointIndex(skeleton, channel->mNodeName.C_Str());
+
+                    poses[key].poses[jointIndex].position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
+                    poses[key].poses[jointIndex].rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
+                    poses[key].poses[jointIndex].scale    = convertToGarlicVec(channel->mScalingKeys[key].mValue);
+                }
+            }
+
+            //TODO: Assuming each animation is for our skeleton
+            rnd::AnimationClip clip{};
+            clip.skeleton = &skeleton; //TODO: Move will break this
+            clip.duration = scene->mAnimations[i]->mDuration;
+            clip.poses    = std::move(poses);
+		}
+
+		//TODO: Store the animation clips somewhere
 
 		rnd::SkeletalMesh animatedModel{ meshes };
 		animatedModel.skeleton = std::move(skeleton);
