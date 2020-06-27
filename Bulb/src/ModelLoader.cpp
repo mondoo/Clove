@@ -399,32 +399,41 @@ namespace blb::ModelLoader {
                 timePoseIndexMap[time] = animClip.poses.size() - 1;
 			}
 
+            const auto retrieveJointPoses = [&](float time, rnd::JointIndexType jointIndex, const rnd::AnimationPose& currAnimPose, std::map<float, std::vector<rnd::JointIndexType>>& missingElementMap) {
+                struct LerpData{
+                    const float lerpTime;
+                    const rnd::JointPose& prevPose;
+                    const rnd::JointPose& nextPose;
+                };
+
+                const size_t prevPoseIndex = getPreviousIndex(animClip, time, jointIndex, timePoseIndexMap, missingElementMap);
+                const size_t nextPoseIndex = getNextIndex(animClip, time, jointIndex, timePoseIndexMap, missingElementMap);
+
+                const rnd::AnimationPose& prevAnimPose = animClip.poses[prevPoseIndex];
+                const rnd::AnimationPose& nextAnimPose = animClip.poses[nextPoseIndex];
+
+                const float timeBetweenPoses = nextAnimPose.timeStamp - prevAnimPose.timeStamp;
+                const float timeFromPrevPose = currAnimPose.timeStamp - prevAnimPose.timeStamp;
+                const float normTime         = timeFromPrevPose / timeBetweenPoses;
+
+                return LerpData{
+                    normTime,
+                    prevAnimPose.poses[jointIndex],
+                    nextAnimPose.poses[jointIndex],
+                };
+            };
+
 			//Interpolate missing keyframes
             for(auto& [time, jointIndices] : missingPositions) {
-                const size_t currPoseIndex           = timePoseIndexMap[time];
+                const size_t currPoseIndex       = timePoseIndexMap[time];
                 rnd::AnimationPose& currAnimPose = animClip.poses[currPoseIndex];
 
-                //These will be different for each joint
                 for(rnd::JointIndexType jointIndex : jointIndices) {
-                    const size_t prevPoseIndex = getPreviousIndex(animClip, time, jointIndex, timePoseIndexMap, missingPositions);
-                    const size_t nextPoseIndex = getNextIndex(animClip, time, jointIndex, timePoseIndexMap, missingPositions);
-
-                    const rnd::AnimationPose& prevAnimPose = animClip.poses[prevPoseIndex];
-                    const rnd::AnimationPose& nextAnimPose = animClip.poses[nextPoseIndex];
-
-                    const float timeBetweenPoses = nextAnimPose.timeStamp - prevAnimPose.timeStamp;
-                    const float timeFromPrevPose = currAnimPose.timeStamp - prevAnimPose.timeStamp;
-                    const float normTime         = timeFromPrevPose / timeBetweenPoses;
-
-                    const rnd::JointPose& prevPos = prevAnimPose.poses[jointIndex];
-                    const rnd::JointPose& nextPos = nextAnimPose.poses[jointIndex];
+                    auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingPositions);
 
                     rnd::JointPose& pose = currAnimPose.poses[jointIndex];
-                    pose.position        = mth::lerp(prevPos.position, nextPos.position, normTime);
+                    pose.position        = mth::lerp(lerpData.prevPose.position, lerpData.nextPose.position, lerpData.lerpTime);
                 }
-
-                //TODO: Handle currIndex at 0
-                //TODO: Handle currIndex at size - 1
             }
 
             //TODO: rotation
