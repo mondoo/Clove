@@ -290,9 +290,10 @@ namespace blb::ModelLoader {
         std::vector<rnd::AnimationClip> animationClips(scene->mNumAnimations);
         for(size_t animIndex = 0; animIndex < scene->mNumAnimations; ++animIndex) {
             aiAnimation* animation = scene->mAnimations[animIndex];
+            rnd::AnimationClip& animClip = animationClips[animIndex];
 			
-			animationClips[animIndex].skeleton = &skeleton;//TODO: Move will break this, just point it to the animated model's skeleton
-            animationClips[animIndex].duration = animation->mDuration;
+			animClip.skeleton = &skeleton;//TODO: Move will break this, just point it to the animated model's skeleton
+            animClip.duration = animation->mDuration;
 
             //Get all the key frame times for every possible channel
             std::set<float> times;
@@ -317,13 +318,15 @@ namespace blb::ModelLoader {
 
 			//Get each channel's pose at each time
             for(float time : times) {
-                rnd::AnimationPose pose;
-                pose.timeStamp = time;
-                pose.poses.resize(skeleton.joints.size());
+                rnd::AnimationPose animPose;
+                animPose.timeStamp = time;
+                animPose.poses.resize(skeleton.joints.size());
 
 				for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
                     aiNodeAnim* channel = animation->mChannels[channelIndex];
+
                     const rnd::JointIndexType jointIndex = getJointIndex(skeleton, channel->mNodeName.C_Str());
+                    rnd::JointPose& jointPose            = animPose.poses[jointIndex];
                     
 					bool positionFound = false;
                     bool rotationFound = false;
@@ -331,25 +334,22 @@ namespace blb::ModelLoader {
 
 					for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
                         if(channel->mPositionKeys[key].mTime == time) {
-                            pose.poses[jointIndex].position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
-                            
-							positionFound = true;
+                            jointPose.position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
+                            positionFound      = true;
                             break;
-						}
+                        }
                     }
                     for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
                         if(channel->mRotationKeys[key].mTime == time) {
-                            pose.poses[jointIndex].rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
-                            
-							rotationFound = true;
+                            jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
+                            rotationFound      = true;
                             break;
                         }
                     }
                     for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
                         if(channel->mScalingKeys[key].mTime == time) {
-                            pose.poses[jointIndex].scale = convertToGarlicVec(channel->mScalingKeys[key].mValue);
-                            
-							scaleFound = true;
+                            jointPose.scale = convertToGarlicVec(channel->mScalingKeys[key].mValue);
+                            scaleFound      = true;
                             break;
                         }
                     }
@@ -365,8 +365,8 @@ namespace blb::ModelLoader {
                     }
                 }
 
-				animationClips[animIndex].poses.emplace_back(std::move(pose));
-                timePoseIndexMap[time] = animationClips[animIndex].poses.size() - 1;
+				animClip.poses.emplace_back(std::move(animPose));
+                timePoseIndexMap[time] = animClip.poses.size() - 1;
 			}
 
 			//Interpolate missing keyframes
@@ -375,19 +375,23 @@ namespace blb::ModelLoader {
                 const size_t prevIndex = currIndex - 1;
                 const size_t nextIndex = currIndex + 1;
 
-                const float prevTime = animationClips[animIndex].poses[prevIndex].timeStamp;
-                const float currTime = animationClips[animIndex].poses[currIndex].timeStamp;
-                const float nextTime = animationClips[animIndex].poses[nextIndex].timeStamp;
+                const rnd::AnimationPose& prevAnimPose = animClip.poses[prevIndex];
+                rnd::AnimationPose& currAnimPose       = animClip.poses[currIndex];
+                const rnd::AnimationPose& nextAnimPose = animClip.poses[nextIndex];
+
+                const float prevTime = prevAnimPose.timeStamp;
+                const float currTime = currAnimPose.timeStamp;
+                const float nextTime = nextAnimPose.timeStamp;
 
                 const float timeBetweenPoses = nextTime - prevTime;
                 const float timeFromPrevPose = currTime - prevTime;
                 const float normTime         = timeFromPrevPose / timeBetweenPoses;
 
                 for(rnd::JointIndexType jointIndex : jointIndices) {
-                    const rnd::JointPose& prevPos = animationClips[animIndex].poses[prevIndex].poses[jointIndex];
-                    const rnd::JointPose& nextPos = animationClips[animIndex].poses[nextIndex].poses[jointIndex];
+                    const rnd::JointPose& prevPos = prevAnimPose.poses[jointIndex];
+                    const rnd::JointPose& nextPos = nextAnimPose.poses[jointIndex];
 
-                    rnd::JointPose& pose = animationClips[animIndex].poses[currIndex].poses[jointIndex];
+                    rnd::JointPose& pose = currAnimPose.poses[jointIndex];
                     pose.position        = mth::lerp(prevPos.position, nextPos.position, normTime);
                 }
 
