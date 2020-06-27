@@ -288,40 +288,54 @@ namespace blb::ModelLoader {
 
 		//Load animations
         std::vector<rnd::AnimationClip> animationClips(scene->mNumAnimations);
-        for(size_t i = 0; i < scene->mNumAnimations; ++i) {
-            aiAnimation* animation = scene->mAnimations[i];
+        for(size_t animIndex = 0; animIndex < scene->mNumAnimations; ++animIndex) {
+            aiAnimation* animation = scene->mAnimations[animIndex];
+			
+			animationClips[animIndex].skeleton = &skeleton;//TODO: Move will break this, just point it to the animated model's skeleton
+            animationClips[animIndex].duration = animation->mDuration;
 
-			/*
-			aiNodeAnim represents the entire timeline for one joint
-			AnimationPose represents the current point in time for all joints
-			*/
-
-			//We have one pose for each pos/rot/scale key
-			//TODO: Assuming they are all the same size (numpos numscale numrot)
-			//TODO: Skipping the first one because it's 'Armature', this is assumptive though
-			std::vector<rnd::AnimationPose> poses(animation->mChannels[1]->mNumPositionKeys);
-            for(size_t key = 0; key < animation->mChannels[1]->mNumPositionKeys; ++key) {
-                //TODO: Basing everything off of the first frame, this needs to change
-                poses[key].poses.resize(skeleton.joints.size()); //Pose for every joint
-                poses[key].timeStamp = animation->mChannels[1]->mPositionKeys[key].mTime;
-
-                for(size_t j = 1; j < animation->mNumChannels; ++j) {//TODO: Skipping the first one as that's the root node (I think)
-                    aiNodeAnim* channel = animation->mChannels[j];
-
-                    //This needs to happen outside the loop basically
-                    const rnd::JointIndexType jointIndex = getJointIndex(skeleton, channel->mNodeName.C_Str());
-
-                    poses[key].poses[jointIndex].position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
-                    poses[key].poses[jointIndex].rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
-                    poses[key].poses[jointIndex].scale    = convertToGarlicVec(channel->mScalingKeys[key].mValue);
+            //Get times
+            std::set<float> times;
+            for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
+                aiNodeAnim* channel = animation->mChannels[channelIndex];
+                for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
+                    times.emplace(channel->mPositionKeys[key].mTime);
+                }
+                for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
+                    times.emplace(channel->mRotationKeys[key].mTime);
+                }
+                for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
+                    times.emplace(channel->mScalingKeys[key].mTime);
                 }
             }
 
-            //TODO: Assuming each animation is for our skeleton
-            rnd::AnimationClip clip{};
-            clip.skeleton = &skeleton; //TODO: Move will break this
-            clip.duration = scene->mAnimations[i]->mDuration;
-            clip.poses    = std::move(poses);
+			//Get each channel's pose at each time
+            for(float time : times) {
+                rnd::AnimationPose pose;
+                pose.timeStamp = time;
+                pose.poses.resize(skeleton.joints.size());
+
+				for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
+                    aiNodeAnim* channel = animation->mChannels[channelIndex];
+                    for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
+                        if(channel->mPositionKeys[key].mTime == time) {
+                            pose.poses[getJointIndex(skeleton, channel->mNodeName.C_Str())].position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
+						}
+                    }
+                    for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
+                        if(channel->mRotationKeys[key].mTime == time) {
+                            pose.poses[getJointIndex(skeleton, channel->mNodeName.C_Str())].rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
+                        }
+                    }
+                    for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
+                        if(channel->mScalingKeys[key].mTime == time) {
+                            pose.poses[getJointIndex(skeleton, channel->mNodeName.C_Str())].scale = convertToGarlicVec(channel->mScalingKeys[key].mValue);
+                        }
+                    }
+                }
+
+				animationClips[animIndex].poses.emplace_back(std::move(pose));
+			}
 		}
 
 		//TODO: Store the animation clips somewhere
