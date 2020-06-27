@@ -294,7 +294,7 @@ namespace blb::ModelLoader {
 			animationClips[animIndex].skeleton = &skeleton;//TODO: Move will break this, just point it to the animated model's skeleton
             animationClips[animIndex].duration = animation->mDuration;
 
-            //Get times
+            //Get all the key frame times for every possible channel
             std::set<float> times;
             for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
                 aiNodeAnim* channel = animation->mChannels[channelIndex];
@@ -309,6 +309,12 @@ namespace blb::ModelLoader {
                 }
             }
 
+			std::map<float, std::vector<rnd::JointIndexType>> missingPositions;
+            std::map<float, std::vector<rnd::JointIndexType>> missingRotations;
+            std::map<float, std::vector<rnd::JointIndexType>> missingScale;
+
+            std::map<float, size_t> timePoseIndexMap;
+
 			//Get each channel's pose at each time
             for(float time : times) {
                 rnd::AnimationPose pose;
@@ -317,25 +323,80 @@ namespace blb::ModelLoader {
 
 				for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
                     aiNodeAnim* channel = animation->mChannels[channelIndex];
-                    for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
+                    const rnd::JointIndexType jointIndex = getJointIndex(skeleton, channel->mNodeName.C_Str());
+                    
+					bool positionFound = false;
+                    bool rotationFound = false;
+                    bool scaleFound    = false;
+
+					for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
                         if(channel->mPositionKeys[key].mTime == time) {
-                            pose.poses[getJointIndex(skeleton, channel->mNodeName.C_Str())].position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
+                            pose.poses[jointIndex].position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
+                            
+							positionFound = true;
+                            break;
 						}
                     }
                     for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
                         if(channel->mRotationKeys[key].mTime == time) {
-                            pose.poses[getJointIndex(skeleton, channel->mNodeName.C_Str())].rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
+                            pose.poses[jointIndex].rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
+                            
+							rotationFound = true;
+                            break;
                         }
                     }
                     for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
                         if(channel->mScalingKeys[key].mTime == time) {
-                            pose.poses[getJointIndex(skeleton, channel->mNodeName.C_Str())].scale = convertToGarlicVec(channel->mScalingKeys[key].mValue);
+                            pose.poses[jointIndex].scale = convertToGarlicVec(channel->mScalingKeys[key].mValue);
+                            
+							scaleFound = true;
+                            break;
                         }
+                    }
+
+                    if(!positionFound) {
+                        missingPositions[time].push_back(jointIndex);
+                    }
+                    if(!rotationFound) {
+                        missingRotations[time].push_back(jointIndex);
+                    }
+                    if(!scaleFound) {
+                        missingScale[time].push_back(jointIndex);
                     }
                 }
 
 				animationClips[animIndex].poses.emplace_back(std::move(pose));
+                timePoseIndexMap[time] = animationClips[animIndex].poses.size() - 1;
 			}
+
+			//Interpolate missing keyframes
+            for(auto& [time, jointIndices] : missingPositions) {
+                const size_t currIndex = timePoseIndexMap[time];
+                const size_t prevIndex = currIndex - 1;
+                const size_t nextIndex = currIndex + 1;
+
+                const float prevTime = animationClips[animIndex].poses[prevIndex].timeStamp;
+                const float currTime = animationClips[animIndex].poses[currIndex].timeStamp;
+                const float nextTime = animationClips[animIndex].poses[nextIndex].timeStamp;
+
+                const float timeBetweenPoses = nextTime - prevTime;
+                const float timeFromPrevPose = currTime - prevTime;
+                const float normTime         = timeFromPrevPose / timeBetweenPoses;
+
+                for(rnd::JointIndexType jointIndex : jointIndices) {
+                    const rnd::JointPose& prevPos = animationClips[animIndex].poses[prevIndex].poses[jointIndex];
+                    const rnd::JointPose& nextPos = animationClips[animIndex].poses[nextIndex].poses[jointIndex];
+
+                    rnd::JointPose& pose = animationClips[animIndex].poses[currIndex].poses[jointIndex];
+                    pose.position        = mth::lerp(prevPos.position, nextPos.position, normTime);
+                }
+
+                //TODO: Handle currIndex at 0
+                //TODO: Handle currIndex at size - 1
+            }
+
+            //TODO: rotation
+            //TODO: scale
 		}
 
 		//TODO: Store the animation clips somewhere
