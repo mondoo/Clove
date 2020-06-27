@@ -80,6 +80,36 @@ namespace blb::ModelLoader {
         return std::numeric_limits<rnd::JointIndexType>::max();
 	}
 
+    static size_t getPreviousIndex(const rnd::AnimationClip& clip, float time, rnd::JointIndexType jointIndex, std::map<float, size_t>& timePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>>& missingPoseMap) {
+        size_t currIndex = timePoseIndexMap[time];
+        for(int i = currIndex - 1; i >= 0; --i) {
+            const float timeStamp = clip.poses[i].timeStamp;
+            const auto missingPoses = missingPoseMap[timeStamp];
+
+            if(timePoseIndexMap.find(timeStamp) != timePoseIndexMap.end() &&
+               std::find(missingPoses.begin(), missingPoses.end(), jointIndex) == missingPoses.end()) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+
+    static size_t getNextIndex(const rnd::AnimationClip& clip, float time, rnd::JointIndexType jointIndex, std::map<float, size_t>& timePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>>& missingPoseMap) {
+        size_t currIndex = timePoseIndexMap[time];
+        for(int i = currIndex + 1; i < clip.poses.size(); ++i) {
+            const float timeStamp   = clip.poses[i].timeStamp;
+            const auto missingPoses = missingPoseMap[timeStamp];
+
+            if(timePoseIndexMap.find(timeStamp) != timePoseIndexMap.end() &&
+               std::find(missingPoses.begin(), missingPoses.end(), jointIndex) == missingPoses.end()) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
 	static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
 		std::shared_ptr<gfx::Texture> texture;
 
@@ -371,23 +401,21 @@ namespace blb::ModelLoader {
 
 			//Interpolate missing keyframes
             for(auto& [time, jointIndices] : missingPositions) {
-                const size_t currIndex = timePoseIndexMap[time];
-                const size_t prevIndex = currIndex - 1;
-                const size_t nextIndex = currIndex + 1;
+                const size_t currPoseIndex           = timePoseIndexMap[time];
+                rnd::AnimationPose& currAnimPose = animClip.poses[currPoseIndex];
 
-                const rnd::AnimationPose& prevAnimPose = animClip.poses[prevIndex];
-                rnd::AnimationPose& currAnimPose       = animClip.poses[currIndex];
-                const rnd::AnimationPose& nextAnimPose = animClip.poses[nextIndex];
-
-                const float prevTime = prevAnimPose.timeStamp;
-                const float currTime = currAnimPose.timeStamp;
-                const float nextTime = nextAnimPose.timeStamp;
-
-                const float timeBetweenPoses = nextTime - prevTime;
-                const float timeFromPrevPose = currTime - prevTime;
-                const float normTime         = timeFromPrevPose / timeBetweenPoses;
-
+                //These will be different for each joint
                 for(rnd::JointIndexType jointIndex : jointIndices) {
+                    const size_t prevPoseIndex = getPreviousIndex(animClip, time, jointIndex, timePoseIndexMap, missingPositions);
+                    const size_t nextPoseIndex = getNextIndex(animClip, time, jointIndex, timePoseIndexMap, missingPositions);
+
+                    const rnd::AnimationPose& prevAnimPose = animClip.poses[prevPoseIndex];
+                    const rnd::AnimationPose& nextAnimPose = animClip.poses[nextPoseIndex];
+
+                    const float timeBetweenPoses = nextAnimPose.timeStamp - prevAnimPose.timeStamp;
+                    const float timeFromPrevPose = currAnimPose.timeStamp - prevAnimPose.timeStamp;
+                    const float normTime         = timeFromPrevPose / timeBetweenPoses;
+
                     const rnd::JointPose& prevPos = prevAnimPose.poses[jointIndex];
                     const rnd::JointPose& nextPos = nextAnimPose.poses[jointIndex];
 
