@@ -254,9 +254,25 @@ namespace blb::ModelLoader {
                 continue;
 			}
 
-            skeleton.joints.resize(mesh->mNumBones);
-            for(size_t i = 0; i < mesh->mNumBones; i++) {
-                aiBone* bone = mesh->mBones[i];
+			//Make sure the the very root node of the skeleton is added because that appears in animations
+            size_t skeletonSize;
+            size_t startIndex;
+            if(aiNode* skeletonRoot = nodeNameMap[mesh->mBones[0]->mName.C_Str()]->mParent) {
+                skeletonSize = mesh->mNumBones + 1;
+                startIndex   = 1;
+
+                skeleton.joints.resize(skeletonSize);
+                skeleton.joints[0].name            = skeletonRoot->mName.C_Str();
+                skeleton.joints[0].inverseBindPose = mth::inverse(convertToGarlicMatrix(skeletonRoot->mTransformation));
+            } else {
+                skeletonSize = mesh->mNumBones;
+                startIndex   = 0;
+
+				skeleton.joints.resize(skeletonSize);
+			}
+
+            for(size_t i = startIndex; i < skeletonSize; i++) {
+                aiBone* bone = mesh->mBones[i - startIndex];
 				skeleton.joints[i].name            = bone->mName.C_Str();
 				skeleton.joints[i].inverseBindPose = convertToGarlicMatrix(bone->mOffsetMatrix);
 			}
