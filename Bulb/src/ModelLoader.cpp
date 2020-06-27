@@ -435,9 +435,28 @@ namespace blb::ModelLoader {
                     pose.position        = mth::lerp(lerpData.prevPose.position, lerpData.nextPose.position, lerpData.lerpTime);
                 }
             }
+            for(auto& [time, jointIndices] : missingRotations) {
+                const size_t currPoseIndex       = timePoseIndexMap[time];
+                rnd::AnimationPose& currAnimPose = animClip.poses[currPoseIndex];
 
-            //TODO: rotation
-            //TODO: scale
+                for(rnd::JointIndexType jointIndex : jointIndices) {
+                    auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingRotations);
+
+                    rnd::JointPose& pose = currAnimPose.poses[jointIndex];
+                    pose.rotation        = mth::lerp(lerpData.prevPose.rotation, lerpData.nextPose.rotation, lerpData.lerpTime);
+                }
+            }
+            for(auto& [time, jointIndices] : missingScale) {
+                const size_t currPoseIndex       = timePoseIndexMap[time];
+                rnd::AnimationPose& currAnimPose = animClip.poses[currPoseIndex];
+
+                for(rnd::JointIndexType jointIndex : jointIndices) {
+                    auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingScale);
+
+                    rnd::JointPose& pose = currAnimPose.poses[jointIndex];
+                    pose.scale        = mth::lerp(lerpData.prevPose.scale, lerpData.nextPose.scale, lerpData.lerpTime);
+                }
+            }
 		}
 
 		//TODO: Store the animation clips somewhere
