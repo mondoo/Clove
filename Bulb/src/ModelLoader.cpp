@@ -384,6 +384,9 @@ namespace blb::ModelLoader {
                         }
                     }
 
+                    //Because the Animator expects every AnimationPose to have a pose for every joint
+                    //we need to keep track of all the missing elements so we can interpolate between them later
+                    //TODO: To simplify this we can refactor the animator to handle a pose not having an entry for every joints
                     if(!positionFound) {
                         missingPositions[time].push_back(jointIndex);
                     }
