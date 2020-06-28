@@ -8,6 +8,8 @@
 #include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
+//TEMP
+#include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 
 namespace clv::plt {
 	class Window;
@@ -62,7 +64,7 @@ namespace blb::rnd {
             { {  0.5f,  0.5f }, { 0.0f, 1.0f, 0.0f } },
             { { -0.5f,  0.5f }, { 0.0f, 0.0f, 1.0f } }
         };
-        std::shared_ptr<VkBuffer> vertexBuffer;
+        std::shared_ptr<clv::gfx::vk::VKBuffer> vertexBuffer;
 		//~TEMP
 
 		clv::DelegateHandle windowResizeHandle;
