@@ -5,6 +5,7 @@
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 
 namespace clv::gfx{
 	//TODO: Need some sort of generic area?
@@ -30,7 +31,7 @@ namespace clv::gfx::vk {
 		void beginRenderPass(VKRenderPass& renderPass, VKFramebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour);
 
 		void bindPipelineObject(VKPipelineObject& pipelineObject);
-        void bindVertexBuffer(VkBuffer& vertexBuffer);
+        void bindVertexBuffer(VKBuffer& vertexBuffer);
 		void drawIndexed(const size_t vertexCount);
 
 		void endRenderPass();

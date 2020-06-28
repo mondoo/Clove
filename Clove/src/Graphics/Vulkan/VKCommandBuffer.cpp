@@ -31,8 +31,10 @@ namespace clv::gfx::vk {
 		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
-	void VKCommandBuffer::bindVertexBuffer(VkBuffer& vertexBuffer) {
-        vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertexBuffer, { 0 });
+	void VKCommandBuffer::bindVertexBuffer(VKBuffer& vertexBuffer) {
+        VkBuffer buffers[] = { vertexBuffer.getBuffer() };
+        VkDeviceSize offsets[] = { 0 };
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
     }
 
 	void VKCommandBuffer::bindPipelineObject(VKPipelineObject& pipelineObject) {
