@@ -10,6 +10,7 @@
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
+#include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -51,6 +52,8 @@ namespace clv::gfx::vk {
 
 		std::unique_ptr<VKSemaphore> createSemaphore();
 		std::unique_ptr<VKFence> createFence(FenceDescriptor descriptor);
+
+		std::unique_ptr<VkBuffer> createBuffer(BufferDescriptor descriptor);
 
 		void waitForIdleDevice();
 	};

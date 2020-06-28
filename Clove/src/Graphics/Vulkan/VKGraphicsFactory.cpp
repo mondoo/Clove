@@ -389,8 +389,12 @@ namespace clv::gfx::vk{
 	}
 
 	std::unique_ptr<VKFence> VKGraphicsFactory::createFence(FenceDescriptor descriptor) {
-		return std::make_unique<VKFence>(logicalDevice, descriptor);
+		return std::make_unique<VKFence>(logicalDevice, std::move(descriptor));
 	}
+
+	std::unique_ptr<VkBuffer> VKGraphicsFactory::createBuffer(BufferDescriptor descriptor) {
+        return std::make_unique<VKBuffer>(logicalDevice, std::move(descriptor));
+    }
 
 	void VKGraphicsFactory::waitForIdleDevice() {
 		vkDeviceWaitIdle(logicalDevice);
