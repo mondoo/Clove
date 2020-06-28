@@ -50,6 +50,9 @@ namespace blb::rnd {
 	ForwardRenderer3D::~ForwardRenderer3D(){
 		//Wait for an idle device before shutting down so resources aren't freed while in use
 		graphicsFactory->waitForIdleDevice();
+
+        //Reset buffer manually to ensure correct destruction order
+        vertexBuffer.reset();
 	}
 
 	void ForwardRenderer3D::begin() {
