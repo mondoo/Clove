@@ -43,7 +43,7 @@ namespace clv::gfx::vk {
         return -1;
     }
 
-    VKBuffer::VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor descriptor)
+    VKBuffer::VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor2 descriptor)
         : device(device)
         , descriptor(std::move(descriptor)) {
         VkBufferCreateInfo createInfo{};

@@ -28,7 +28,7 @@ namespace clv::gfx {
         Concurrent
     };
 
-    struct BufferDescriptor {
+    struct BufferDescriptor2 { //TODO: Remove 2, this is because it is conflicting the previously defined type
         size_t size = 0;
         BufferUsageMode usageFlags;
         BufferSharingMode sharingMode;
@@ -43,13 +43,13 @@ namespace clv::gfx::vk {
         VkBuffer buffer = VK_NULL_HANDLE;
         VkDeviceMemory bufferMemory;
 
-        BufferDescriptor descriptor;
+        BufferDescriptor2 descriptor;
 
         //FUNCTIONS
     public:
         //TODO: Ctors
         VKBuffer() = delete;
-        VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor descriptor);
+        VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor2 descriptor);
 
         ~VKBuffer();
 

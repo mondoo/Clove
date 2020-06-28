@@ -37,7 +37,7 @@ namespace blb::rnd {
 		imagesInFlight.resize(swapchain->getImageViews().size());
 
 		//TEMP
-        clv::gfx::BufferDescriptor bufferDescriptor{};
+        clv::gfx::BufferDescriptor2 bufferDescriptor{};
         bufferDescriptor.size        = sizeof(Vertex) * std::size(vertices);
         bufferDescriptor.usageFlags  = clv::gfx::BufferUsageMode::VertexBuffer;
         bufferDescriptor.sharingMode = clv::gfx::BufferSharingMode::Exclusive;
