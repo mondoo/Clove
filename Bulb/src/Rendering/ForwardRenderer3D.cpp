@@ -24,6 +24,7 @@ namespace blb::rnd {
         bufferDescriptor.sharingMode = clv::gfx::BufferSharingMode::Exclusive;
 
         vertexBuffer = graphicsFactory->createBuffer(bufferDescriptor);
+        vertexBuffer->map(std::data(vertices), bufferDescriptor.size);
         //~TEMP
 
         createPipeline();

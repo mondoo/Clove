@@ -53,7 +53,7 @@ namespace clv::gfx::vk {
 
         ~VKBuffer();
 
-        void map(void* data, const size_t size);
+        void map(const void* data, const size_t size);
 
         VkBuffer getBuffer() const;
     };
