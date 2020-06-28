@@ -35,6 +35,15 @@ namespace blb::rnd {
 			inFlightFence = graphicsFactory->createFence({ true });
 		}
 		imagesInFlight.resize(swapchain->getImageViews().size());
+
+		//TEMP
+        clv::gfx::BufferDescriptor bufferDescriptor{};
+        bufferDescriptor.size        = sizeof(Vertex) * std::size(vertices);
+        bufferDescriptor.usageFlags  = clv::gfx::BufferUsageMode::VertexBuffer;
+        bufferDescriptor.sharingMode = clv::gfx::BufferSharingMode::Exclusive;
+
+        vertexBuffer = graphicsFactory->createBuffer(bufferDescriptor);
+		//~TEMP
 	}
 
 	ForwardRenderer3D::~ForwardRenderer3D(){

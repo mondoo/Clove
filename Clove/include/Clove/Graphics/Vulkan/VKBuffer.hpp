@@ -41,14 +41,19 @@ namespace clv::gfx::vk {
     private:
         VkDevice device = VK_NULL_HANDLE;
         VkBuffer buffer = VK_NULL_HANDLE;
+        VkDeviceMemory bufferMemory;
+
+        BufferDescriptor descriptor;
 
         //FUNCTIONS
     public:
         //TODO: Ctors
         VKBuffer() = delete;
-        VKBuffer(VkDevice device, BufferDescriptor descriptor);
+        VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor descriptor);
 
         ~VKBuffer();
+
+        void map(void* data, const size_t size);
 
         VkBuffer getBuffer() const;
     };
