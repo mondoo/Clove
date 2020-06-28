@@ -1,23 +1,23 @@
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 
 namespace clv::gfx::vk {
-    VkBufferUsageFlags getUsageFlags(UsageType garlicUsageFlags) {
+    static VkBufferUsageFlags getUsageFlags(BufferUsageMode garlicUsageFlags) {
         VkBufferUsageFlags flags = 0;
 
-        if((garlicUsageFlags & static_cast<UsageType>(BufferUsageMode::TransferSource)) != 0) {
+        if((garlicUsageFlags & BufferUsageMode::TransferSource) != 0) {
             flags |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
         }
-        if((garlicUsageFlags & static_cast<UsageType>(BufferUsageMode::TransferDestination)) != 0) {
+        if((garlicUsageFlags & BufferUsageMode::TransferDestination) != 0) {
             flags |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
         }
-        if((garlicUsageFlags & static_cast<UsageType>(BufferUsageMode::VertexBuffer)) != 0) {
+        if((garlicUsageFlags & BufferUsageMode::VertexBuffer) != 0) {
             flags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
         }
 
         return flags;
     }
 
-    VkSharingMode getSharingMode(BufferSharingMode garlicSharingMode) {
+    static VkSharingMode getSharingMode(BufferSharingMode garlicSharingMode) {
         switch(garlicSharingMode) {
             case BufferSharingMode::Exclusive:
                 return VK_SHARING_MODE_EXCLUSIVE;
