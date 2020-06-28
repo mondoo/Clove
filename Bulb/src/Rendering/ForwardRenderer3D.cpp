@@ -17,6 +17,15 @@ namespace blb::rnd {
 		swapchain  = graphicsFactory->createSwapChain({ windowSize });
         renderPass = graphicsFactory->createRenderPass({ swapchain->getImageFormat() });
 
+		//TEMP
+        clv::gfx::BufferDescriptor2 bufferDescriptor{};
+        bufferDescriptor.size        = sizeof(Vertex) * std::size(vertices);
+        bufferDescriptor.usageFlags  = clv::gfx::BufferUsageMode::VertexBuffer;
+        bufferDescriptor.sharingMode = clv::gfx::BufferSharingMode::Exclusive;
+
+        vertexBuffer = graphicsFactory->createBuffer(bufferDescriptor);
+        //~TEMP
+
         createPipeline();
         createSwapchainFrameBuffers();
 
@@ -35,15 +44,6 @@ namespace blb::rnd {
 			inFlightFence = graphicsFactory->createFence({ true });
 		}
 		imagesInFlight.resize(swapchain->getImageViews().size());
-
-		//TEMP
-        clv::gfx::BufferDescriptor2 bufferDescriptor{};
-        bufferDescriptor.size        = sizeof(Vertex) * std::size(vertices);
-        bufferDescriptor.usageFlags  = clv::gfx::BufferUsageMode::VertexBuffer;
-        bufferDescriptor.sharingMode = clv::gfx::BufferSharingMode::Exclusive;
-
-        vertexBuffer = graphicsFactory->createBuffer(bufferDescriptor);
-		//~TEMP
 	}
 
 	ForwardRenderer3D::~ForwardRenderer3D(){
