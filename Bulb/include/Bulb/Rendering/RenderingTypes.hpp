@@ -16,6 +16,7 @@ namespace blb::rnd {
             return descriptor;
         }
 
+        //TODO: This should be done per vertex shader
         static std::vector<clv::gfx::VertexAttributeDescriptor> getVertexAttributes() {
             std::vector<clv::gfx::VertexAttributeDescriptor> attributes(2);
 
