@@ -196,7 +196,8 @@ namespace blb::rnd {
 
             commandBuffers[i]->beginRenderPass(*renderPass, *swapChainFrameBuffers[i], renderArea, clearColour);
             commandBuffers[i]->bindPipelineObject(*pipelineObject);
-            commandBuffers[i]->drawIndexed();
+            commandBuffers[i]->bindVertexBuffer(*vertexBuffer);
+            commandBuffers[i]->drawIndexed(std::size(vertices));
             commandBuffers[i]->endRenderPass();
 
             commandBuffers[i]->endRecording();

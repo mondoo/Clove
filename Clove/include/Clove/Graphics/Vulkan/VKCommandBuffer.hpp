@@ -30,7 +30,8 @@ namespace clv::gfx::vk {
 		void beginRenderPass(VKRenderPass& renderPass, VKFramebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour);
 
 		void bindPipelineObject(VKPipelineObject& pipelineObject);
-		void drawIndexed(); //TEMP: Not using buffers right now, this is just for testing
+        void bindVertexBuffer(VkBuffer& vertexBuffer);
+		void drawIndexed(const size_t vertexCount);
 
 		void endRenderPass();
 

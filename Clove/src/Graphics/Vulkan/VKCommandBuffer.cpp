@@ -31,12 +31,16 @@ namespace clv::gfx::vk {
 		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
+	void VKCommandBuffer::bindVertexBuffer(VkBuffer& vertexBuffer) {
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertexBuffer, { 0 });
+    }
+
 	void VKCommandBuffer::bindPipelineObject(VKPipelineObject& pipelineObject) {
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineObject.getPipeline());
 	}
 
-	void VKCommandBuffer::drawIndexed() {
-		vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+	void VKCommandBuffer::drawIndexed(const size_t vertexCount) {
+        vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
 	}
 
 	void VKCommandBuffer::endRenderPass() {
