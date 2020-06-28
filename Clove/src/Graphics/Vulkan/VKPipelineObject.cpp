@@ -1,9 +1,33 @@
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 
+#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+
 namespace clv::gfx::vk {
+    static VkVertexInputBindingDescription getBindingDescription(const VertexInputBindingDescriptor& garlicDescriptor) {
+        VkVertexInputBindingDescription description{};
+        description.binding   = garlicDescriptor.binding;
+        description.stride    = garlicDescriptor.stride;
+        description.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        return description;
+    }
+
+    static std::vector<VkVertexInputAttributeDescription> getAttributes(const std::vector<VertexAttributeDescriptor>& garlicAttributes) {
+        std::vector<VkVertexInputAttributeDescription> attributes(std::size(garlicAttributes));
+        for(size_t i = 0; i < std::size(attributes); ++i) {
+            attributes[i].binding  = garlicAttributes[i].binding;
+            attributes[i].location = garlicAttributes[i].location;
+            attributes[i].format   = convertAttributeFormat(garlicAttributes[i].format);
+            attributes[i].offset   = garlicAttributes[i].offset;
+		}
+		return attributes;
+    }
+
 	VKPipelineObject::VKPipelineObject(VkDevice device, PiplineObjectDescriptor descriptor)
 		: device(device) {
 		std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
+
+		VkVertexInputBindingDescription inputBindingDescription         = getBindingDescription(descriptor.vertexInput);
+        std::vector<VkVertexInputAttributeDescription> vertexAttributes = getAttributes(descriptor.vertexAttributes);
 
 		//Vertex shader
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
@@ -22,13 +46,12 @@ namespace clv::gfx::vk {
 		shaderStages[1]			   = fragShaderStageInfo;
 
 		//Vertex input
-		//TEMP: vertex data is currently hard coded in the shaders, so this is emptier than usual
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType							= VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexInputInfo.vertexBindingDescriptionCount	= 0;
-		vertexInputInfo.pVertexBindingDescriptions		= nullptr;
-		vertexInputInfo.vertexAttributeDescriptionCount = 0;
-		vertexInputInfo.pVertexAttributeDescriptions	= nullptr;
+		vertexInputInfo.vertexBindingDescriptionCount	= 1;
+        vertexInputInfo.pVertexBindingDescriptions      = &inputBindingDescription;
+		vertexInputInfo.vertexAttributeDescriptionCount = std::size(vertexAttributes);
+		vertexInputInfo.pVertexAttributeDescriptions	= std::data(vertexAttributes);
 
 		//Input assembly
 		VkPipelineInputAssemblyStateCreateInfo inputAssembly{};

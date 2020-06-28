@@ -3,6 +3,7 @@
 //TODO: Remove
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx {
@@ -30,6 +31,9 @@ namespace clv::gfx {
 	struct PiplineObjectDescriptor {
 		std::shared_ptr<vk::VKShader> vertexShader;
 		std::shared_ptr<vk::VKShader> fragmentShader;
+
+		VertexInputBindingDescriptor vertexInput;
+        std::vector<VertexAttributeDescriptor> vertexAttributes;
 
 		ViewportDescriptor viewportDescriptor;
 		ScissorDescriptor scissorDescriptor;

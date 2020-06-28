@@ -148,6 +148,8 @@ namespace blb::rnd {
         clv::gfx::PiplineObjectDescriptor pipelineDescriptor;
         pipelineDescriptor.vertexShader            = graphicsFactory->createShader("vert.spirv");
         pipelineDescriptor.fragmentShader          = graphicsFactory->createShader("frag.spirv");
+        pipelineDescriptor.vertexInput             = Vertex::getInputBindingDescriptor();
+        pipelineDescriptor.vertexAttributes        = Vertex::getVertexAttributes();
         pipelineDescriptor.viewportDescriptor.size = { swapchain->getExtent().width, swapchain->getExtent().height };
         pipelineDescriptor.scissorDescriptor.size  = { swapchain->getExtent().width, swapchain->getExtent().height };
         pipelineDescriptor.renderPass              = renderPass;
