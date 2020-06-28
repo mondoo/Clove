@@ -30,7 +30,7 @@ namespace clv::gfx {
 
     struct BufferDescriptor {
         size_t size = 0;
-        BufferUsageMode usageFlags = 0;
+        BufferUsageMode usageFlags;
         BufferSharingMode sharingMode;
     };
 }
