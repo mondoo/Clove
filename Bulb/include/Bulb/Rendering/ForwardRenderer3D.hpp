@@ -62,6 +62,8 @@ namespace blb::rnd {
             { {  0.5f,  0.5f }, { 0.0f, 1.0f, 0.0f } },
             { { -0.5f,  0.5f }, { 0.0f, 0.0f, 1.0f } }
         };
+        std::shared_ptr<VkBuffer> vertexBuffer;
+		//~TEMP
 
 		clv::DelegateHandle windowResizeHandle;
         clv::mth::vec2ui windowSize;
