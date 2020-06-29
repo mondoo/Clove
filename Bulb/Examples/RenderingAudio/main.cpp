@@ -3,21 +3,24 @@
 int main(){
     blb::aud::Sound sound(SOURCE_DIR "/beep.wav");
 
-    //bool is16 = sound.
+    bool is16 = sound.file.format() & SF_FORMAT_PCM_16 != 0;
 
     clv::AudioBufferDescriptor descriptor{};
     if(sound.getChannels() == 1) {
-        //descriptor.format = file.getBitDepth() == 8 ? clv::BufferFormat::Mono8 : clv::BufferFormat::Mono16;
+        descriptor.format = is16 ? clv::BufferFormat::Mono16 : clv::BufferFormat::Mono8;
     } else {
-        //descriptor.format = file.getBitDepth() == 8 ? clv::BufferFormat::Stereo8 : clv::BufferFormat::Stereo16;
+        descriptor.format = is16 ? clv::BufferFormat::Stereo16 : clv::BufferFormat::Stereo8;
     }
     descriptor.sampleRate = sound.getSamplerate();
 
+    void* buff;
+    sound.file.readRaw(buff, sound.getFrames());
+
     auto audioFactory = clv::createAudioFactory(clv::AudioAPI::OpenAl);
-    //auto audioBuffer = audioFactory->createAudioBuffer(descriptor, file.samples[0].data(), file.samples[0].size());//TODO: Use both channels
+    auto audioBuffer = audioFactory->createAudioBuffer(descriptor, buff, sound.getFrames());//TODO: Use both channels
     auto audioSource = audioFactory->createAudioSource();
 
-    //audioSource->setBuffer(*audioBuffer);
+    audioSource->setBuffer(*audioBuffer);
 
     audioSource->setLooping(true);
     audioSource->play();
