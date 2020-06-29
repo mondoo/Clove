@@ -8,6 +8,8 @@ namespace blb::aud {
 
 		//VARIABLES
 	private:
+	    //TEMP
+	public:
 		//TODO: Rewrite this to use the raw ptr? just to remove the header dependency
 		SndfileHandle file;
 
