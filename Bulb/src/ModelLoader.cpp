@@ -268,7 +268,7 @@ namespace blb::ModelLoader {
         }
 
 		//TODO: Support multiple skeletons?
-		rnd::Skeleton skeleton;
+		std::unique_ptr<rnd::Skeleton> skeleton = std::make_unique<rnd::Skeleton>(); //TODO: Made into a unique ptr to avoid errors from std::move. Perhaps we should put this in an allocator?
 
 		//Build scene map
         std::unordered_map<std::string_view, aiNode*> nodeNameMap;
@@ -291,20 +291,20 @@ namespace blb::ModelLoader {
                 skeletonSize = mesh->mNumBones + 1;
                 startIndex   = 1;
 
-                skeleton.joints.resize(skeletonSize);
-                skeleton.joints[0].name            = skeletonRoot->mName.C_Str();
-                skeleton.joints[0].inverseBindPose = mth::inverse(convertToGarlicMatrix(skeletonRoot->mTransformation));
+                skeleton->joints.resize(skeletonSize);
+                skeleton->joints[0].name            = skeletonRoot->mName.C_Str();
+                skeleton->joints[0].inverseBindPose = mth::inverse(convertToGarlicMatrix(skeletonRoot->mTransformation));
             } else {
                 skeletonSize = mesh->mNumBones;
                 startIndex   = 0;
 
-				skeleton.joints.resize(skeletonSize);
+				skeleton->joints.resize(skeletonSize);
 			}
 
             for(size_t i = startIndex; i < skeletonSize; i++) {
                 aiBone* bone = mesh->mBones[i - startIndex];
-				skeleton.joints[i].name            = bone->mName.C_Str();
-				skeleton.joints[i].inverseBindPose = convertToGarlicMatrix(bone->mOffsetMatrix);
+				skeleton->joints[i].name            = bone->mName.C_Str();
+				skeleton->joints[i].inverseBindPose = convertToGarlicMatrix(bone->mOffsetMatrix);
 			}
 
 			//Only doing one sekelton for now
@@ -312,8 +312,8 @@ namespace blb::ModelLoader {
         }
 
 		//Set parents
-        for(auto& joint : skeleton.joints) {
-            joint.parentIndex = getJointParentId(skeleton, joint.name, nodeNameMap);
+        for(auto& joint : skeleton->joints) {
+            joint.parentIndex = getJointParentId(*skeleton, joint.name, nodeNameMap);
 		}
 
 		//Load animations
@@ -322,7 +322,7 @@ namespace blb::ModelLoader {
             aiAnimation* animation = scene->mAnimations[animIndex];
             rnd::AnimationClip& animClip = animationClips[animIndex];
 			
-			animClip.skeleton = &skeleton;//TODO: Move will break this, just point it to the animated model's skeleton
+			animClip.skeleton = skeleton.get();
             animClip.duration = animation->mDuration;
 
             //Get all the key frame times for every possible channel
@@ -350,12 +350,12 @@ namespace blb::ModelLoader {
             for(float time : times) {
                 rnd::AnimationPose animPose;
                 animPose.timeStamp = time;
-                animPose.poses.resize(skeleton.joints.size());
+                animPose.poses.resize(skeleton->joints.size());
 
 				for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
                     aiNodeAnim* channel = animation->mChannels[channelIndex];
 
-                    const rnd::JointIndexType jointIndex = getJointIndex(skeleton, channel->mNodeName.C_Str());
+                    const rnd::JointIndexType jointIndex = getJointIndex(*skeleton, channel->mNodeName.C_Str());
                     rnd::JointPose& jointPose            = animPose.poses[jointIndex];
                     
 					bool positionFound = false;
