@@ -65,7 +65,7 @@ namespace blb::ModelLoader {
                 return i;
 			}
 		}
-		GARLIC_LOG(garlicLogContext, Log::Level::Warning, "{0}| Joint: {1} has a parent but it couldn't be found in the skeleton", CLV_FUNCTION_NAME_PRETTY, jointName);
+		GARLIC_LOG(garlicLogContext, Log::Level::Debug, "{0}: Joint \"{1}\" has a parent but it couldn't be found in the skeleton", CLV_FUNCTION_NAME, jointName);
 
 		return {};
 	}
