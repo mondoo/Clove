@@ -1,9 +1,9 @@
 #include <Bulb/Bulb.hpp>
 
 int main(){
-    blb::aud::Sound sound(SOURCE_DIR "/beep.wav");
+    blb::aud::Sound sound(SOURCE_DIR "/bounce.wav");
 
-    bool is16 = sound.file.format() & SF_FORMAT_PCM_16 != 0;
+    bool is16 = (sound.file.format() & SF_FORMAT_PCM_16) != 0;
 
     clv::AudioBufferDescriptor descriptor{};
     if(sound.getChannels() == 1) {
@@ -13,12 +13,14 @@ int main(){
     }
     descriptor.sampleRate = sound.getSamplerate();
 
-    void* buff;
-    sound.file.readRaw(buff, sound.getFrames());
+    short* buff = new short[sound.getFrames() * sound.getChannels()];
+    sound.file.readf(buff, sound.getFrames());
 
     auto audioFactory = clv::createAudioFactory(clv::AudioAPI::OpenAl);
-    auto audioBuffer = audioFactory->createAudioBuffer(descriptor, buff, sound.getFrames());//TODO: Use both channels
+    auto audioBuffer = audioFactory->createAudioBuffer(descriptor, buff, sound.getFrames() * sound.getChannels() * sizeof(short));
     auto audioSource = audioFactory->createAudioSource();
+
+    delete[] buff;
 
     audioSource->setBuffer(*audioBuffer);
 
@@ -35,7 +37,7 @@ int main(){
         total += deltaSeconds.count();
 
         float x = sin(total) * 10.0f;
-        audioSource->setPosition({ x, 0.0f, 0.0f });
+        audioSource->setPosition({ x, 0.0f, 3.0f });
 
         //Stop after 15 seconds
         if(total >= 15.0f) {
