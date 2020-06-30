@@ -47,6 +47,11 @@ namespace clv::gfx::vk {
 		return std::make_unique<VKGraphicsCommandBuffer>(commandBuffer);
 	}
 
+	void VKGraphicsQueue::freeCommandBuffer(VKGraphicsCommandBuffer& buffer) {
+        VkCommandBuffer buffers[] = { buffer.getCommandBuffer() };
+        vkFreeCommandBuffers(device, commandPool, 1, buffers);
+    }
+
 	void VKGraphicsQueue::submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<VKFence>& fence) {
 		//Wait semaphores / stages
 		const size_t waitSemaphoreCount = std::size(submitInfo.waitSemaphores);
@@ -152,6 +157,11 @@ namespace clv::gfx::vk {
 
 		return std::make_unique<VKTransferCommandBuffer>(commandBuffer);
 	}
+
+	void VKTransferQueue::freeCommandBuffer(VKTransferCommandBuffer& buffer) {
+        VkCommandBuffer buffers[] = { buffer.getCommandBuffer() };
+        vkFreeCommandBuffers(device, commandPool, 1, buffers);
+    }
 
 	void VKTransferQueue::submit(const TransferSubmitInfo& submitInfo) {
         const size_t commandBufferCount = std::size(submitInfo.commandBuffers);

@@ -65,6 +65,7 @@ namespace clv::gfx::vk {
 		~VKGraphicsQueue();
 
 		std::unique_ptr<VKGraphicsCommandBuffer> allocateCommandBuffer();
+        void freeCommandBuffer(VKGraphicsCommandBuffer& buffer);
 
 		void submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<VKFence>& fence);
 	};
@@ -106,6 +107,7 @@ namespace clv::gfx::vk {
 		~VKTransferQueue();
 
 		std::unique_ptr<VKTransferCommandBuffer> allocateCommandBuffer();
+        void freeCommandBuffer(VKTransferCommandBuffer& buffer);
 
 		void submit(const TransferSubmitInfo& submitInfo);
 	};
