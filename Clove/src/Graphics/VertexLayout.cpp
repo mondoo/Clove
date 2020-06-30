@@ -51,6 +51,10 @@ namespace clv::gfx{
 			return VertexElementType::normal;
 		} else if (VertexElementData<VertexElementType::colour3D>::semantic == semantic){
 			return VertexElementType::colour3D;
+        } else if(VertexElementData<VertexElementType::jointIds>::semantic == semantic) {
+            return VertexElementType::jointIds;
+		} else if(VertexElementData<VertexElementType::weights>::semantic == semantic) {
+            return VertexElementType::weights;
 		}
 
 		CLV_ASSERT(false, "{0} could not find proper element type", CLV_FUNCTION_NAME);
