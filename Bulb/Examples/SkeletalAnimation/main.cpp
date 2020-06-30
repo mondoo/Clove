@@ -15,6 +15,9 @@ int main() {
     auto renderer = std::make_shared<blb::rnd::Renderer3D>(*window);
     auto camera   = blb::rnd::Camera{ *window, blb::rnd::ProjectionMode::Perspective };
 
+    //Set the current clip
+    model.animator.currentClip = &model.animClips[0];
+
     static constexpr float size     = 50.0f;
     static constexpr float nearDist = 0.5f;
     static constexpr float farDist  = 1000.0f;
@@ -57,12 +60,15 @@ int main() {
         renderer->submitLight(dirLight);
 
         //Mesh
+        auto matrixPalet = model.animator.update(deltaSeconds.count());
         for(auto& mesh : model.getMeshes()) {
             auto rot = clv::mth::rotate(clv::mth::mat4f{ 1.0f }, clv::mth::asRadians(-90.0f), { 1.0f, 0.0f, 0.0f });
             rot = clv::mth::rotate(rot, clv::mth::asRadians(90.0f), { 0.0f, 0.0f, 1.0f });
 
             mesh->getMaterialInstance().setData(clv::gfx::BBP_ModelData, blb::rnd::VertexData{ rot, clv::mth::transpose(clv::mth::inverse(rot)) }, clv::gfx::ShaderStage::Vertex);
-            renderer->submitMesh(mesh);
+            //Note that we need to provide the size of the maximum amount of joints
+            mesh->getMaterialInstance().setData(clv::gfx::BBP_SkeletalData, matrixPalet.data(), sizeof(clv::mth::mat4f) * blb::rnd::MAX_JOINTS, clv::gfx::ShaderStage::Vertex);
+            renderer->submitAnimatedMesh(mesh);
         }
 
         renderer->end();
