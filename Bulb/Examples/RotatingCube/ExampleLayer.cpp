@@ -4,8 +4,11 @@
 
 ExampleLayer::ExampleLayer(std::shared_ptr<clv::plt::Window> window) 
 	: window(std::move(window)) {
+	//Initialise our renderer
+    renderer = std::make_shared<blb::rnd::Renderer3D>(*this->window);
+
 	//Add on any systems we want to use
-	world.addSystem<blb::ecs::RenderSystem>(*this->window);
+    world.addSystem<blb::ecs::RenderSystem>(renderer);
 }
 
 void ExampleLayer::onAttach() {
@@ -27,12 +30,15 @@ void ExampleLayer::onAttach() {
 	cameraEntity = world.createEntity();
 	cameraEntity.addComponent<blb::ecs::TransformComponent>()->setPosition({ 0.0f, 0.0f, -5.0f });
 	//The CameraComponent requires a window or a render target to render to
-	cameraEntity.addComponent<blb::ecs::CameraComponent>(*window, blb::ecs::ProjectionMode::perspective);
+    cameraEntity.addComponent<blb::ecs::CameraComponent>(blb::rnd::Camera{ *window, blb::rnd::ProjectionMode::Perspective });
 }
 
 void ExampleLayer::onUpdate(clv::utl::DeltaTime deltaTime) {
 	constexpr float rotationSpeed = 0.5f;
 	static float rotation = 0.0f;
+
+	//Tell the renderer we're begining a frame
+    renderer->begin();
 
 	//Retrieve the transform component from the cube entity
 	blb::ecs::ComponentPtr<blb::ecs::TransformComponent> cubeTransform = cubeEntity.getComponent<blb::ecs::TransformComponent>();
@@ -43,6 +49,9 @@ void ExampleLayer::onUpdate(clv::utl::DeltaTime deltaTime) {
 
 	//Update the ECS world
 	world.update(deltaTime);
+
+	//End our frame
+    renderer->end();
 }
 
 void ExampleLayer::onDetach() {
