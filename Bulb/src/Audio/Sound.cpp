@@ -1,5 +1,7 @@
 #include "Bulb/Audio/Sound.hpp"
 
+#include <Clove/Audio/AudioBuffer.hpp>
+#include <Clove/Audio/AudioFactory.hpp>
 #include <sndfile.h>
 
 namespace blb::aud {
@@ -18,19 +20,35 @@ namespace blb::aud {
 }
 
 namespace blb::aud {
-    Sound::Sound() = default;
+    static clv::BufferFormat getBufferFormat(const SF_INFO& fileInfo) {
+        const bool is16 = (fileInfo.format & SF_FORMAT_PCM_16) != 0;
 
-    Sound::Sound(std::string_view filePath)
-        : data(std::make_shared<SoundData>(filePath)){
+        if(fileInfo.channels == 1) {
+            return is16 ? clv::BufferFormat::Mono16 : clv::BufferFormat::Mono8;
+        } else {
+            return is16 ? clv::BufferFormat::Stereo16 : clv::BufferFormat::Stereo8;
+        }
     }
 
-    Sound::Sound(const Sound& other) = default;
+    Sound::Sound() = default;
 
-    Sound::Sound(Sound&& other) = default;
+    Sound::Sound(clv::AudioFactory& factory, std::string_view filePath)
+        : data(std::make_shared<SoundData>(filePath)) {
+        const size_t bufferSize = data->fileInfo.channels * data->fileInfo.frames;
+        short* rawBuffer        = new short[bufferSize];
+        sf_readf_short(data->file, rawBuffer, data->fileInfo.frames);
 
-    Sound& Sound::operator=(const Sound& other) = default;
+        clv::AudioBufferDescriptor descriptor{};
+        descriptor.format     = getBufferFormat(data->fileInfo);
+        descriptor.sampleRate = data->fileInfo.samplerate;
+        buffer                = factory.createAudioBuffer(std::move(descriptor), rawBuffer, bufferSize * sizeof(short));
 
-    Sound& Sound::operator=(Sound&& other) = default;
+        delete[] rawBuffer;
+    }
+
+    Sound::Sound(Sound&& other) noexcept = default;
+
+    Sound& Sound::operator=(Sound&& other) noexcept = default;
 
     Sound::~Sound() = default;
 }
