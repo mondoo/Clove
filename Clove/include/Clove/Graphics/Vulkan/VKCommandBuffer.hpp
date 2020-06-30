@@ -9,10 +9,15 @@
 
 namespace clv::gfx{
 	//TODO: Need some sort of generic area?
-	struct RenderArea{
-		mth::vec2i origin;
-		mth::vec2ui size;
-	};
+    struct RenderArea {
+        mth::vec2i origin;
+        mth::vec2ui size;
+    };
+
+    enum class CommandBufferUsage {
+        Default,
+        OneTimeSubmit,
+    };
 }
 
 namespace clv::gfx::vk {
@@ -26,7 +31,7 @@ namespace clv::gfx::vk {
 		//TODO: Ctors
 		VKCommandBuffer(VkCommandBuffer commandBuffer);
 
-		void beginRecording();
+		void beginRecording(CommandBufferUsage usageFlag);
 
 		void beginRenderPass(VKRenderPass& renderPass, VKFramebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour);
 

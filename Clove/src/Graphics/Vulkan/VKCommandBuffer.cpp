@@ -1,14 +1,26 @@
 #include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 
 namespace clv::gfx::vk {
+	static VkCommandBufferUsageFlags getCommandBufferUsageFlags(CommandBufferUsage garlicUsage) {
+        switch(garlicUsage) {
+            case clv::gfx::CommandBufferUsage::Default:
+                return 0;
+            case clv::gfx::CommandBufferUsage::OneTimeSubmit:
+                return VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+            default:
+                CLV_ASSERT(false, "{0}: Unkown usage type", CLV_FUNCTION_NAME);
+                return 0;
+        }
+    }
+
 	VKCommandBuffer::VKCommandBuffer(VkCommandBuffer commandBuffer)
 		: commandBuffer(commandBuffer) {
 	}
 
-	void VKCommandBuffer::beginRecording() {
+	void VKCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType			   = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags			   = 0;
+		beginInfo.flags			   = getCommandBufferUsageFlags(usageFlag);
 		beginInfo.pInheritanceInfo = nullptr;
 
 		if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {

@@ -196,7 +196,7 @@ namespace blb::rnd {
 
         //Record our command buffers
         for(size_t i = 0; i < commandBuffers.size(); ++i) {
-            commandBuffers[i]->beginRecording();
+            commandBuffers[i]->beginRecording(clv::gfx::CommandBufferUsage::Default);
 
             commandBuffers[i]->beginRenderPass(*renderPass, *swapChainFrameBuffers[i], renderArea, clearColour);
             commandBuffers[i]->bindPipelineObject(*pipelineObject);
