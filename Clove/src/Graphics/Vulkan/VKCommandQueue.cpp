@@ -152,4 +152,27 @@ namespace clv::gfx::vk {
 
 		return std::make_unique<VKTransferCommandBuffer>(commandBuffer);
 	}
+
+	void VKTransferQueue::submit(const TransferSubmitInfo& submitInfo) {
+        const size_t commandBufferCount = std::size(submitInfo.commandBuffers);
+        std::vector<VkCommandBuffer> commandBuffers(commandBufferCount);
+        for(size_t i = 0; i < commandBufferCount; i++) {
+            commandBuffers[i] = submitInfo.commandBuffers[i]->getCommandBuffer();
+        }
+
+		VkSubmitInfo vkSubmitInfo{};
+        vkSubmitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        vkSubmitInfo.waitSemaphoreCount   = 0;
+        vkSubmitInfo.pWaitSemaphores      = nullptr;
+        vkSubmitInfo.pWaitDstStageMask    = 0;
+        vkSubmitInfo.commandBufferCount   = commandBufferCount;
+        vkSubmitInfo.pCommandBuffers      = std::data(commandBuffers);
+        vkSubmitInfo.signalSemaphoreCount = 0;
+        vkSubmitInfo.pSignalSemaphores    = nullptr;
+
+        if(vkQueueSubmit(queue, 1, &vkSubmitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to submit graphics command buffer(s)");
+        }
+        vkQueueWaitIdle(queue); //Because we're not using fences we'll just wait for the queue to complete for now
+    }
 }

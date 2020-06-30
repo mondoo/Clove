@@ -38,6 +38,10 @@ namespace clv::gfx {
 		std::shared_ptr<clv::gfx::vk::VKSwapchain> swapChain;
 		uint32_t imageIndex;
 	};
+
+	struct TransferSubmitInfo{
+        std::vector<std::shared_ptr<vk::VKTransferCommandBuffer>> commandBuffers;
+	};
 }
 
 namespace clv::gfx::vk {
@@ -102,5 +106,7 @@ namespace clv::gfx::vk {
 		~VKTransferQueue();
 
 		std::unique_ptr<VKTransferCommandBuffer> allocateCommandBuffer();
+
+		void submit(const TransferSubmitInfo& submitInfo);
 	};
 }
