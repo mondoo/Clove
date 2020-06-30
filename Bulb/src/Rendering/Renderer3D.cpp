@@ -1,6 +1,7 @@
 #include "Bulb/Rendering/Renderer3D.hpp"
 
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
+#include "Bulb/Rendering/Renderables/SkeletalMesh.hpp"
 #include "Bulb/Rendering/Renderables/Sprite.hpp"
 #include "Bulb/Rendering/RenderingConstants.hpp"
 
@@ -19,6 +20,8 @@ extern "C" const char	default3d_vs[];
 extern "C" const size_t default3d_vsLength;
 extern "C" const char	default3d_ps[];
 extern "C" const size_t default3d_psLength;
+extern "C" const char   skeletal3d_vs[];
+extern "C" const size_t skeletal3d_vsLength;
 
 extern "C" const char	default2d_vs[];
 extern "C" const size_t default2d_vsLength;
@@ -55,11 +58,17 @@ namespace blb::rnd {
 		//Mesh
 		meshCommandBuffer = factory.createCommandBuffer();
 
-		auto meshVS = factory.createShader({ ShaderStage::Vertex }, default3d_vs, default3d_vsLength);
-		auto meshPS = factory.createShader({ ShaderStage::Pixel }, default3d_ps, default3d_psLength);
-		meshPipelineObject = factory.createPipelineObject();
+        auto meshVS        = factory.createShader({ ShaderStage::Vertex }, default3d_vs, default3d_vsLength);
+        auto meshPS        = factory.createShader({ ShaderStage::Pixel }, default3d_ps, default3d_psLength);
+        auto animMeshVS    = factory.createShader({ ShaderStage::Vertex }, skeletal3d_vs, skeletal3d_vsLength);
+
+        meshPipelineObject = factory.createPipelineObject();
 		meshPipelineObject->setVertexShader(*meshVS);
 		meshPipelineObject->setPixelShader(*meshPS);
+
+		animatedMeshPipelineObject = factory.createPipelineObject();
+        animatedMeshPipelineObject->setVertexShader(*animMeshVS);
+        animatedMeshPipelineObject->setPixelShader(*meshPS);
 
 		//UI
 		uiCommandBuffer = factory.createCommandBuffer();
@@ -209,6 +218,10 @@ namespace blb::rnd {
 		scene.meshes.push_back(mesh);
 	}
 
+	void Renderer3D::submitAnimatedMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
+        scene.animatedMeshes.push_back(mesh);
+    }
+
 	void Renderer3D::submitLight(const DirectionalLight& light) {
 		const uint32_t lightIndex = scene.numDirectionalLights++;
 
@@ -240,7 +253,6 @@ namespace blb::rnd {
 
 		//Draw all meshes in the scene
 		meshCommandBuffer->setDepthEnabled(true);
-		meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
 		meshCommandBuffer->bindTexture(directionalShadowMapTexture.get(), TBP_DirectionalShadow);
 		meshCommandBuffer->bindTexture(pointShadowMapTexture.get(), TBP_PointShadow);
 
@@ -273,10 +285,16 @@ namespace blb::rnd {
 			meshCommandBuffer->updateBufferData(*viewPosition, &viewPos);
 			meshCommandBuffer->bindShaderResourceBuffer(*viewPosition, ShaderStage::Pixel, BBP_ViewData);
 
-			for(auto& mesh : scene.meshes) {
-				mesh->draw(*meshCommandBuffer, meshPipelineObject->getVertexLayout());
-			}
-		}
+			meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
+            for(auto& mesh : scene.meshes) { //TODO: We should submit the models instead of the underlying meshes
+                mesh->draw(*meshCommandBuffer, meshPipelineObject->getVertexLayout());
+            }
+
+            meshCommandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
+            for(auto& mesh : scene.animatedMeshes) {
+                mesh->draw(*meshCommandBuffer, animatedMeshPipelineObject->getVertexLayout());
+            }
+        }
 
 		meshCommandBuffer->bindTexture(nullptr, TBP_DirectionalShadow);
 		meshCommandBuffer->bindTexture(nullptr, TBP_PointShadow);
