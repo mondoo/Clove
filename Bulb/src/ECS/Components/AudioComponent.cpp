@@ -38,37 +38,37 @@ namespace blb::ecs {
 	}
 
 	void AudioComponent::play(PlaybackMode playback) {
-		if(sound.isValid()) {
+		/*if(sound.isValid()) {
 			requestedPlayback = playback;
 		} else {
 			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
-		}
+		}*/
 	}
 
 	void AudioComponent::pause() {
-		if(sound.isValid()) {
+		/*if(sound.isValid()) {
 			requestedStopMode = StopMode::pause;
 		} else {
 			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
-		}
+		}*/
 	}
 
 	void AudioComponent::resume() {
-		if(sound.isValid()) {
+		/*if(sound.isValid()) {
 			if(currentPlayback && !isPlaying()) {
 				requestedPlayback = currentPlayback;
 			}
 		} else {
 			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
-		}
+		}*/
 	}
 
 	void AudioComponent::stop() {
-		if(sound.isValid()) {
+		/*if(sound.isValid()) {
 			requestedStopMode = StopMode::stop;
 		} else {
 			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0} called without valid sound. Please call setSound with an initialised Sound class", CLV_FUNCTION_NAME);
-		}
+		}*/
 	}
 
 	bool AudioComponent::isPlaying() {

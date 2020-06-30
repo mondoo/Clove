@@ -132,19 +132,19 @@ namespace blb::ecs {
 
 		while(currentFrameCount > 0) {
 			//Seek to the position
-			data->sound.seek(data->playbackPosition, SEEK_SET);
+			//data->sound.seek(data->playbackPosition, SEEK_SET);
 
 			//Get the amount of frames to read
-			if(currentFrameCount > (data->sound.getFrames() - data->playbackPosition)) {
+			/*if(currentFrameCount > (data->sound.getFrames() - data->playbackPosition)) {
 				frameCountToRead = data->sound.getFrames() - data->playbackPosition;
 				data->playbackPosition = 0;
 			} else {
 				frameCountToRead = currentFrameCount;
 				data->playbackPosition += frameCountToRead;
-			}
+			}*/
 
 			//Read X amount of frames into cursor
-			data->sound.readf(cursor, frameCountToRead);
+			//data->sound.readf(cursor, frameCountToRead);
 
 			cursor += frameCountToRead;
 			currentFrameCount -= frameCountToRead;
@@ -162,18 +162,18 @@ namespace blb::ecs {
 
 		while(currentFrameCount > 0) {
 			//Seek to the position
-			data->sound.seek(data->playbackPosition, SEEK_SET);
+			//data->sound.seek(data->playbackPosition, SEEK_SET);
 
 			//Get the amount of frames to read
-			if(currentFrameCount > (data->sound.getFrames() - data->playbackPosition)) {
-				return /*paComplete*/ 0;
+			/*if(currentFrameCount > (data->sound.getFrames() - data->playbackPosition)) {
+				return  0;
 			} else {
 				frameCountToRead = currentFrameCount;
 				data->playbackPosition += frameCountToRead;
-			}
+			}*/
 
 			//Read X amount of frames into cursor
-			data->sound.readf(cursor, frameCountToRead);
+			//data->sound.readf(cursor, frameCountToRead);
 
 			cursor += frameCountToRead;
 			currentFrameCount -= frameCountToRead;
