@@ -57,15 +57,20 @@ namespace blb::rnd {
         //private:
     public:
         float currentTime = 0.0f;
-        AnimationClip currentClip;
+        AnimationClip* currentClip = nullptr;
 
         //FUNCTIONS
     public:
         //TODO: Ctors
 
         std::vector<clv::mth::mat4f> update(const clv::utl::DeltaTime deltaTime) {
+            if(currentClip == nullptr) {
+                GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Current clip is now set, could not create palet", CLV_FUNCTION_NAME);
+                return {};
+            }
+
             //TODO: single play (current will loop)
-            currentTime = fmod(currentTime += deltaTime, currentClip.duration);
+            currentTime = fmod(currentTime += deltaTime, currentClip->duration);
 
             //Get the poses either side of the animation
             auto& nextPose = getNextPose(currentTime);
@@ -79,12 +84,12 @@ namespace blb::rnd {
             auto currentAnimPose = lerpJointPoses(prevPose, nextPose, normTime);
 
             //Get the current joint to model matrix of the target pose (Cj->m)
-            auto currentJointToModel = calculateCurrentJointToModelMatrices(currentAnimPose, currentClip.skeleton);
+            auto currentJointToModel = calculateCurrentJointToModelMatrices(currentAnimPose, currentClip->skeleton);
 
             //Calculate skinning matrix K = Bm->j * Cj->m
             std::vector<clv::mth::mat4f> skinningMatrix(currentJointToModel.size());
             for(size_t i = 0; i < currentJointToModel.size(); ++i) {
-                skinningMatrix[i] = currentJointToModel[i] * currentClip.skeleton->joints[i].inverseBindPose ;
+                skinningMatrix[i] = currentJointToModel[i] * currentClip->skeleton->joints[i].inverseBindPose;
             }
 
             return skinningMatrix;
@@ -92,19 +97,19 @@ namespace blb::rnd {
 
     private:
         const AnimationPose& getNextPose(float animationTime) {
-            for(size_t i = 0; i < currentClip.poses.size(); ++i) {
-                if(currentClip.poses[i].timeStamp > animationTime) {
-                    return currentClip.poses[i];
+            for(size_t i = 0; i < currentClip->poses.size(); ++i) {
+                if(currentClip->poses[i].timeStamp > animationTime) {
+                    return currentClip->poses[i];
                 }
             }
 
-            return currentClip.poses[currentClip.poses.size() - 1];
+            return currentClip->poses[currentClip->poses.size() - 1];
         }
 
         const AnimationPose& getPrevPose(float animationTime) {
-            for(size_t i = 0; i < currentClip.poses.size(); ++i) {
-                if(currentClip.poses[i].timeStamp >= animationTime) {
-                    return currentClip.poses[std::min<size_t>(0, i - 1)];
+            for(size_t i = 0; i < currentClip->poses.size(); ++i) {
+                if(currentClip->poses[i].timeStamp >= animationTime) {
+                    return currentClip->poses[std::min<size_t>(0, i - 1)];
                 }
             }
         }
