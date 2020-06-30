@@ -24,7 +24,6 @@ namespace blb {
 	 * How this is done is governed by a list of Transitions
 	 *
 	 * @tparam Action The type of Action this State deals with
-	 *
 	 * @see Transition
 	 */
 	template<typename Action>

@@ -26,7 +26,6 @@ namespace blb::ecs {
 		 * @brief Gets called after the System is initialised. Override to bind to any events in the scope of the World.
 		 *
 		 * @param dispatcher The EventDispatcher inside the World.
-		 *
 		 * @see EventDispatcher.
 		 */
 		virtual void registerToEvents(clv::EventDispatcher& dispatcher) {}

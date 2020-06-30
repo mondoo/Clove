@@ -60,7 +60,6 @@ namespace blb::ecs {
 		 * @brief Clones an Entiy's Components, returning a new Entity with the same Component layout.
 		 *
 		 * @param ID The Id of the entity to be cloned.
-		 *
 		 * @return The newly cloned entity.
 		 */
 		Entity cloneEntitiesComponents(EntityID ID);
@@ -71,7 +70,6 @@ namespace blb::ecs {
 		 * An entity is valid if it is part of this World and has a valid EntityID.
 		 *
 		 * @param ID The Entity to check.
-		 *
 		 * @return Returns true if the entity is valid.
 		 */
 		bool isEntityValid(EntityID ID);
@@ -80,9 +78,7 @@ namespace blb::ecs {
 		 * @brief Returns an Entity wrapper for the given Id.
 		 *
 		 * @param ID The entity to get.
-		 *
 		 * @return The Entity wrapper for the given ID.
-		 *
 		 * @see Entity.
 		 */
 		Entity getEntity(EntityID ID);
@@ -112,12 +108,9 @@ namespace blb::ecs {
 		 * @brief Adds a Component to this world.
 		 *
 		 * @tparam ComponentType The type of Component to add.
-		 *
 		 * @param entityId The Entity to add the component to.
 		 * @param args Construction arguments to be forwarded to the component's constructor.
-		 *
 		 * @return A ComponentPtr to the newly created component.
-		 *
 		 * @see ComponentPtr.
 		 */
 		template<typename ComponentType, typename... ConstructArgs>
@@ -126,11 +119,8 @@ namespace blb::ecs {
 		 * @brief Gets the Component for an Entity.
 		 *
 		 * @tparam ComponentType The type of Component to get.
-		 *
 		 * @param entityId The Entity to get the component from.
-		 *
 		 * @return A ComponentPtr to the component if it exists on the Entity.
-		 *
 		 * @see ComponentPtr.
 		 */
 		template<typename ComponentType>
@@ -139,9 +129,7 @@ namespace blb::ecs {
 		 * @brief Checks to see if the component exists on an Entity.
 		 *
 		 * @tparam ComponentType The type of the Component to check for.
-		 *
 		 * @param entityId The entity to check.
-		 *
 		 * @return Returns true if the Component exists on the Entity.
 		 */
 		template<typename ComponentType>
@@ -150,7 +138,6 @@ namespace blb::ecs {
 		 * @brief Removes a component from an Entity.
 		 *
 		 * @tparam ComponentType The type of Component to remove.
-		 *
 		 * @param entiyId The Entity to remove the Component from.
 		 */
 		template<typename ComponentType>
@@ -165,9 +152,7 @@ namespace blb::ecs {
 		 * and a ModelComponent.
 		 *
 		 * @tparam ComponentTypes A variadic template of the components needed.
-		 *
 		 * @return A vector of tuples of Components for each entity that matches.
-		 *
 		 * @see ComponentPtr.
 		 */
 		template<typename... ComponentTypes>
@@ -177,7 +162,6 @@ namespace blb::ecs {
 		 * @brief Adds a System to the World.
 		 *
 		 * @tparam SystemType The type of System to add.
-		 * 
 		 * @param args Construction arguments that'll be forwarded to the System.
 		 */
 		template<typename SystemType, typename... ConstructArgs>

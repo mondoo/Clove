@@ -25,7 +25,6 @@ namespace blb::ecs {
 	 * @brief The base class for all Components.
 	 *
 	 * @tparam DetivedClassType The type of class that derives from this class.
-	 *
 	 * @see TransformComponent
 	 */
 	template<typename DerivedClassType>
