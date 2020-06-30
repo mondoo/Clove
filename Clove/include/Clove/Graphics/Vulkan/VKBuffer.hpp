@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+
 //TODO: Remove
 #include <vulkan/vulkan.hpp>
 
@@ -49,7 +51,7 @@ namespace clv::gfx::vk {
     public:
         //TODO: Ctors
         VKBuffer() = delete;
-        VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor2 descriptor);
+        VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor2 descriptor, const QueueFamilyIndices& familyIndices);
 
         ~VKBuffer();
 

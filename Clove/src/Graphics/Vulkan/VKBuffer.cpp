@@ -17,18 +17,6 @@ namespace clv::gfx::vk {
         return flags;
     }
 
-    static VkSharingMode getSharingMode(BufferSharingMode garlicSharingMode) {
-        switch(garlicSharingMode) {
-            case BufferSharingMode::Exclusive:
-                return VK_SHARING_MODE_EXCLUSIVE;
-            case BufferSharingMode::Concurrent:
-                return VK_SHARING_MODE_CONCURRENT;
-            default:
-                CLV_ASSERT(false, "{0}: Unhandled sharing mode", CLV_FUNCTION_NAME);
-                return VK_SHARING_MODE_EXCLUSIVE;
-        }
-    }
-
     static uint32_t getMemoryTypeIndex(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice) {
         VkPhysicalDeviceMemoryProperties memoryProperties{};
         vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
@@ -43,18 +31,26 @@ namespace clv::gfx::vk {
         return -1;
     }
 
-    VKBuffer::VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor2 descriptor)
+    VKBuffer::VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor2 descriptor, const QueueFamilyIndices& familyIndices)
         : device(device)
         , descriptor(std::move(descriptor)) {
+        std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
+
         VkBufferCreateInfo createInfo{};
         createInfo.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         createInfo.pNext                 = nullptr;
         createInfo.flags                 = 0;
         createInfo.size                  = descriptor.size;
         createInfo.usage                 = getUsageFlags(this->descriptor.usageFlags);
-        createInfo.sharingMode           = getSharingMode(this->descriptor.sharingMode);
-        createInfo.queueFamilyIndexCount = 0;
-        createInfo.pQueueFamilyIndices   = nullptr;
+        if(this->descriptor.sharingMode == BufferSharingMode::Exclusive) {
+            createInfo.sharingMode           = VK_SHARING_MODE_EXCLUSIVE;
+            createInfo.queueFamilyIndexCount = 0;
+            createInfo.pQueueFamilyIndices   = nullptr;
+        } else {
+            createInfo.sharingMode           = VK_SHARING_MODE_CONCURRENT;
+            createInfo.queueFamilyIndexCount = std::size(sharedQueueIndices);
+            createInfo.pQueueFamilyIndices   = std::data(sharedQueueIndices);
+        }
 
         if(vkCreateBuffer(device, &createInfo, nullptr, &buffer) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create buffer");
