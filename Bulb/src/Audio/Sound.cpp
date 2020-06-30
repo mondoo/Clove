@@ -1,43 +1,36 @@
 #include "Bulb/Audio/Sound.hpp"
 
+#include <sndfile.h>
+
 namespace blb::aud {
-	Sound::Sound() = default;
+    struct SoundData {
+        SNDFILE* file;
+        SF_INFO fileInfo;
 
-	Sound::Sound(std::string_view filePath)
-		: file(filePath.data()) {
-	}
+        SoundData(std::string_view path) {
+            file = sf_open(path.data(), SFM_READ, &fileInfo);
+        }
 
-	Sound::Sound(const Sound& other) = default;
+        ~SoundData() {
+            sf_close(file);
+        }
+    };
+}
 
-	Sound::Sound(Sound&& other) = default;
+namespace blb::aud {
+    Sound::Sound() = default;
 
-	Sound& Sound::operator=(const Sound& other) = default;
+    Sound::Sound(std::string_view filePath)
+        : data(std::make_shared<SoundData>(filePath)){
+    }
 
-	Sound& Sound::operator=(Sound&& other) = default;
+    Sound::Sound(const Sound& other) = default;
 
-	Sound::~Sound() = default;
+    Sound::Sound(Sound&& other) = default;
 
-	bool Sound::isValid() const {
-		return file.refCount() > 0;
-	}
+    Sound& Sound::operator=(const Sound& other) = default;
 
-	sf_count_t Sound::seek(sf_count_t frames, int whence) {
-		return file.seek(frames, whence);
-	}
+    Sound& Sound::operator=(Sound&& other) = default;
 
-	sf_count_t Sound::readf(int* ptr, sf_count_t frames) {
-		return file.readf(ptr, frames);
-	}
-
-	int32_t Sound::getChannels() const {
-		return file.channels();
-	}
-
-	int32_t Sound::getSamplerate() const {
-		return file.samplerate();
-	}
-
-	int32_t Sound::getFrames() const {
-		return file.frames();
-	}
+    Sound::~Sound() = default;
 }
