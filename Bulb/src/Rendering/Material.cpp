@@ -38,6 +38,21 @@ namespace blb::rnd{
 		return MaterialInstance{ shared_from_this() };
 	}
 
+	void Material::setData(clv::gfx::BufferBindingPoint bindingPoint, void* data, const size_t sizeBytes, clv::gfx::ShaderStage shaderType) {
+        if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()) {
+            iter->second.buffer->updateData(&data);
+        } else {
+            clv::gfx::BufferDescriptor srdesc{};
+            srdesc.elementSize = 0;
+            srdesc.bufferSize  = sizeBytes;
+            srdesc.bufferType  = clv::gfx::BufferType::ShaderResourceBuffer;
+            srdesc.bufferUsage = clv::gfx::BufferUsage::Dynamic;
+
+            auto buffer              = graphicsFactory->createBuffer(srdesc, data);
+            shaderData[bindingPoint] = { buffer, shaderType };
+        }
+    }
+
 	void Material::setAlbedoTexture(const std::string& path){
 		TextureDescriptor tdesc{};
 		albedoTexture = graphicsFactory->createTexture(tdesc, path);
