@@ -27,7 +27,7 @@ namespace clv::gfx {
 		std::vector<std::shared_ptr<vk::VKSemaphore>> waitSemaphores;
 		std::vector<WaitStage> waitStages;
 
-		std::vector<std::shared_ptr<vk::VKCommandBuffer>> commandBuffers;
+		std::vector<std::shared_ptr<vk::VKGraphicsCommandBuffer>> commandBuffers;
 
 		std::vector<std::shared_ptr<vk::VKSemaphore>> signalSemaphores;
 	};
@@ -42,6 +42,8 @@ namespace clv::gfx {
 
 namespace clv::gfx::vk {
 	//TODO: Move out into different files
+
+	//Creates buffers for encoding graphics commands
 	class VKGraphicsQueue {
 		//VARIABLES
 	private:
@@ -58,7 +60,7 @@ namespace clv::gfx::vk {
 
 		~VKGraphicsQueue();
 
-		std::unique_ptr<VKCommandBuffer> allocateCommandBuffer();
+		std::unique_ptr<VKGraphicsCommandBuffer> allocateCommandBuffer();
 
 		void submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<VKFence>& fence);
 	};

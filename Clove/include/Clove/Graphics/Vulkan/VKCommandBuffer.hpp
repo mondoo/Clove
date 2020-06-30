@@ -21,7 +21,9 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx::vk {
-	class VKCommandBuffer {
+	//TODO: Move out into different files
+
+	class VKGraphicsCommandBuffer {
 		//VARIABLES
 	private:
 		VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
@@ -29,7 +31,7 @@ namespace clv::gfx::vk {
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
-		VKCommandBuffer(VkCommandBuffer commandBuffer);
+        VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer);
 
 		void beginRecording(CommandBufferUsage usageFlag);
 

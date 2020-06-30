@@ -13,11 +13,11 @@ namespace clv::gfx::vk {
         }
     }
 
-	VKCommandBuffer::VKCommandBuffer(VkCommandBuffer commandBuffer)
+	VKGraphicsCommandBuffer::VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer)
 		: commandBuffer(commandBuffer) {
 	}
 
-	void VKCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
+	void VKGraphicsCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType			   = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		beginInfo.flags			   = getCommandBufferUsageFlags(usageFlag);
@@ -28,7 +28,7 @@ namespace clv::gfx::vk {
 		}
 	}
 
-	void VKCommandBuffer::beginRenderPass(VKRenderPass& renderPass, VKFramebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour) {
+	void VKGraphicsCommandBuffer::beginRenderPass(VKRenderPass& renderPass, VKFramebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour) {
 		VkClearValue clearValue = { clearColour.r, clearColour.g, clearColour.b, clearColour.a };
 
 		VkRenderPassBeginInfo renderPassInfo{};
@@ -43,31 +43,31 @@ namespace clv::gfx::vk {
 		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
-	void VKCommandBuffer::bindVertexBuffer(VKBuffer& vertexBuffer) {
+	void VKGraphicsCommandBuffer::bindVertexBuffer(VKBuffer& vertexBuffer) {
         VkBuffer buffers[] = { vertexBuffer.getBuffer() };
         VkDeviceSize offsets[] = { 0 };
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
     }
 
-	void VKCommandBuffer::bindPipelineObject(VKPipelineObject& pipelineObject) {
+	void VKGraphicsCommandBuffer::bindPipelineObject(VKPipelineObject& pipelineObject) {
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineObject.getPipeline());
 	}
 
-	void VKCommandBuffer::drawIndexed(const size_t vertexCount) {
+	void VKGraphicsCommandBuffer::drawIndexed(const size_t vertexCount) {
         vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
 	}
 
-	void VKCommandBuffer::endRenderPass() {
+	void VKGraphicsCommandBuffer::endRenderPass() {
 		vkCmdEndRenderPass(commandBuffer);
 	}
 
-	void VKCommandBuffer::endRecording() {
+	void VKGraphicsCommandBuffer::endRecording() {
 		if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
 			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to end recording command buffer");
 		}
 	}
 
-	VkCommandBuffer VKCommandBuffer::getCommandBuffer() const {
+	VkCommandBuffer VKGraphicsCommandBuffer::getCommandBuffer() const {
 		return commandBuffer;
 	}
 }

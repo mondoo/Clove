@@ -89,7 +89,7 @@ namespace blb::rnd {
 
 		std::vector<std::shared_ptr<clv::gfx::vk::VKFramebuffer>> swapChainFrameBuffers;
 
-		std::vector<std::shared_ptr<clv::gfx::vk::VKCommandBuffer>> commandBuffers;
+		std::vector<std::shared_ptr<clv::gfx::vk::VKGraphicsCommandBuffer>> commandBuffers;
 
 		std::array<std::shared_ptr<clv::gfx::vk::VKSemaphore>, maxFramesInFlight> renderFinishedSemaphores;
 		std::array<std::shared_ptr<clv::gfx::vk::VKSemaphore>, maxFramesInFlight> imageAvailableSemaphores;

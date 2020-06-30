@@ -28,7 +28,7 @@ namespace clv::gfx::vk {
 		vkDestroyCommandPool(device, commandPool, nullptr);
 	}
 
-	std::unique_ptr<VKCommandBuffer> VKGraphicsQueue::allocateCommandBuffer() {
+	std::unique_ptr<VKGraphicsCommandBuffer> VKGraphicsQueue::allocateCommandBuffer() {
 		//TODO: Multiple command buffer allocation
 
 		VkCommandBuffer commandBuffer;
@@ -44,7 +44,7 @@ namespace clv::gfx::vk {
 			return nullptr;
 		}
 
-		return std::make_unique<VKCommandBuffer>(commandBuffer);
+		return std::make_unique<VKGraphicsCommandBuffer>(commandBuffer);
 	}
 
 	void VKGraphicsQueue::submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<VKFence>& fence) {
