@@ -18,6 +18,10 @@ namespace clv::gfx{
         Default,
         OneTimeSubmit,
     };
+
+    enum class IndexType{
+        Uint16
+    };
 }
 
 namespace clv::gfx::vk {
@@ -39,7 +43,8 @@ namespace clv::gfx::vk {
 
 		void bindPipelineObject(VKPipelineObject& pipelineObject);
         void bindVertexBuffer(VKBuffer& vertexBuffer);
-		void drawIndexed(const size_t vertexCount);
+        void bindIndexBuffer(VKBuffer& indexBuffer, IndexType indexType);
+        void drawIndexed(const size_t indexCount);
 
 		void endRenderPass();
 

@@ -60,11 +60,21 @@ namespace blb::rnd {
 	private:
 		//TEMP
         const std::vector<Vertex> vertices = {
-            { {  0.0f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
-            { {  0.5f,  0.5f }, { 0.0f, 1.0f, 0.0f } },
-            { { -0.5f,  0.5f }, { 0.0f, 0.0f, 1.0f } }
+            { { -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
+            { {  0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f } },
+            { {  0.5f,  0.5f }, { 0.0f, 0.0f, 1.0f } },
+            { { -0.5f,  0.5f }, { 1.0f, 1.0f, 1.0f } },
+        };
+        const std::vector<uint16_t> indices = {
+            0,
+            1,
+            2,
+            2,
+            3,
+            0
         };
         std::shared_ptr<clv::gfx::vk::VKBuffer> vertexBuffer;
+        std::shared_ptr<clv::gfx::vk::VKBuffer> indexBuffer;
 		//~TEMP
 
 		clv::DelegateHandle windowResizeHandle;

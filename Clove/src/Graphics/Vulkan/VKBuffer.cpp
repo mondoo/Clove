@@ -13,6 +13,9 @@ namespace clv::gfx::vk {
         if((garlicUsageFlags & BufferUsageMode::VertexBuffer) != 0) {
             flags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
         }
+        if((garlicUsageFlags & BufferUsageMode::IndexBuffer) != 0) {
+            flags |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+        }
 
         return flags;
     }

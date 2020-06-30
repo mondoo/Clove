@@ -13,6 +13,16 @@ namespace clv::gfx::vk {
         }
     }
 
+	static VkIndexType getIndexType(IndexType garlicType){
+        switch(garlicType) {
+            case IndexType::Uint16:
+                return VK_INDEX_TYPE_UINT16;
+            default:
+                CLV_ASSERT(false, "{0}: Unkown index type", CLV_FUNCTION_NAME);
+                return VK_INDEX_TYPE_UINT16;
+        }
+	}
+
 	VKGraphicsCommandBuffer::VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer)
 		: commandBuffer(commandBuffer) {
 	}
@@ -49,12 +59,16 @@ namespace clv::gfx::vk {
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
     }
 
+	void VKGraphicsCommandBuffer::bindIndexBuffer(VKBuffer& indexBuffer, IndexType indexType) {
+        vkCmdBindIndexBuffer(commandBuffer, indexBuffer.getBuffer(), 0, getIndexType(indexType));
+    }
+
 	void VKGraphicsCommandBuffer::bindPipelineObject(VKPipelineObject& pipelineObject) {
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineObject.getPipeline());
 	}
 
-	void VKGraphicsCommandBuffer::drawIndexed(const size_t vertexCount) {
-        vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
+	void VKGraphicsCommandBuffer::drawIndexed(const size_t indexCount) {
+        vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
 	}
 
 	void VKGraphicsCommandBuffer::endRenderPass() {

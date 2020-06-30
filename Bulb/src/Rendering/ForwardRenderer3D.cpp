@@ -47,6 +47,16 @@ namespace blb::rnd {
         transferCommandBuffer->endRecording();
         transferQueue->submit({ { transferCommandBuffer } });
         transferQueue->freeCommandBuffer(*transferCommandBuffer);
+
+        //Note just creating an index buffer but this should be staged as well
+        clv::gfx::BufferDescriptor2 indexDescriptor{};
+        indexDescriptor.size               = sizeof(uint16_t) * std::size(indices);
+        indexDescriptor.usageFlags         = clv::gfx::BufferUsageMode::IndexBuffer;
+        indexDescriptor.sharingMode        = clv::gfx::BufferSharingMode::Exclusive;
+        indexDescriptor.memoryProperties   = clv::gfx::BufferMemoryProperties::HostVisible;
+
+        indexBuffer = graphicsFactory->createBuffer(indexDescriptor);
+        indexBuffer->map(std::data(indices), indexDescriptor.size);
         //~TEMP
 
         createPipeline();
@@ -75,6 +85,7 @@ namespace blb::rnd {
 
         //Reset buffer manually to ensure correct destruction order
         vertexBuffer.reset();
+        indexBuffer.reset();
 	}
 
 	void ForwardRenderer3D::begin() {
@@ -223,7 +234,8 @@ namespace blb::rnd {
             commandBuffers[i]->beginRenderPass(*renderPass, *swapChainFrameBuffers[i], renderArea, clearColour);
             commandBuffers[i]->bindPipelineObject(*pipelineObject);
             commandBuffers[i]->bindVertexBuffer(*vertexBuffer);
-            commandBuffers[i]->drawIndexed(std::size(vertices));
+            commandBuffers[i]->bindIndexBuffer(*indexBuffer, clv::gfx::IndexType::Uint16);
+            commandBuffers[i]->drawIndexed(std::size(indices));
             commandBuffers[i]->endRenderPass();
 
             commandBuffers[i]->endRecording();

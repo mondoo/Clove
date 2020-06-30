@@ -11,6 +11,7 @@ namespace clv::gfx {
         TransferSource      = 1 << 0,
         TransferDestination = 1 << 1,
         VertexBuffer        = 1 << 2,
+        IndexBuffer         = 1 << 3,
     };
     // clang-format off
     inline constexpr BufferUsageMode operator&(BufferUsageMode l, BufferUsageMode r) { return static_cast<BufferUsageMode>(static_cast<UsageType>(l) & static_cast<UsageType>(r)); }
