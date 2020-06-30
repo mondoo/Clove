@@ -18,14 +18,35 @@ namespace blb::rnd {
         renderPass = graphicsFactory->createRenderPass({ swapchain->getImageFormat() });
 
 		//TEMP
-        clv::gfx::BufferDescriptor2 bufferDescriptor{};
-        bufferDescriptor.size             = sizeof(Vertex) * std::size(vertices);
-        bufferDescriptor.usageFlags       = clv::gfx::BufferUsageMode::VertexBuffer;
-        bufferDescriptor.sharingMode      = clv::gfx::BufferSharingMode::Exclusive;
-        bufferDescriptor.memoryProperties = clv::gfx::BufferMemoryProperties::HostVisible;
+        const size_t vertexBufferSize = sizeof(Vertex) * std::size(vertices);
 
-        vertexBuffer = graphicsFactory->createBuffer(bufferDescriptor);
-        vertexBuffer->map(std::data(vertices), bufferDescriptor.size);
+        //Staging buffer
+        clv::gfx::BufferDescriptor2 stagingDescriptor{};
+        stagingDescriptor.size             = vertexBufferSize;
+        stagingDescriptor.usageFlags       = clv::gfx::BufferUsageMode::TransferSource;
+        stagingDescriptor.sharingMode      = clv::gfx::BufferSharingMode::Exclusive; //Only accessed by the transfer queue
+        stagingDescriptor.memoryProperties = clv::gfx::BufferMemoryProperties::HostVisible;
+
+        auto stagingBuffer = graphicsFactory->createBuffer(stagingDescriptor);
+
+        //Vertex buffer
+        clv::gfx::BufferDescriptor2 vertexDescriptor{};
+        vertexDescriptor.size             = vertexBufferSize;
+        vertexDescriptor.usageFlags       = clv::gfx::BufferUsageMode::TransferDestination | clv::gfx::BufferUsageMode::VertexBuffer;
+        vertexDescriptor.sharingMode      = clv::gfx::BufferSharingMode::Concurrent; //Accessed by transfer and graphics queue
+        vertexDescriptor.memoryProperties = clv::gfx::BufferMemoryProperties::DeviceLocal;
+
+        vertexBuffer = graphicsFactory->createBuffer(vertexDescriptor);
+        
+        //Map the vertives onto our CPU visible buffer then transfer to our GPU optimised buffer
+        stagingBuffer->map(std::data(vertices), stagingDescriptor.size);
+
+        std::shared_ptr<clv::gfx::vk::VKTransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
+        transferCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
+        transferCommandBuffer->copyBuffer(*stagingBuffer, 0, *vertexBuffer, 0, vertexBufferSize);
+        transferCommandBuffer->endRecording();
+        transferQueue->submit({ { transferCommandBuffer } });
+        transferQueue->freeCommandBuffer(*transferCommandBuffer);
         //~TEMP
 
         createPipeline();
