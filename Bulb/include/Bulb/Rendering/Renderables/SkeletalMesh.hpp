@@ -12,6 +12,7 @@ namespace blb::rnd {
         //Temp, owning the skeleton for now but when using submeshes it will make sense to have this stored somewhere else. Which also allow skeletons to be reused
         Skeleton skeleton;
         Animator animator; //TODO: not sure if this should live here
+        std::vector<AnimationClip> animClips; //TODO: Should clips live on the animated model?
 
         //FUNCTIONS
     public:

@@ -462,10 +462,9 @@ namespace blb::ModelLoader {
             }
 		}
 
-		//TODO: Store the animation clips somewhere
-
 		rnd::SkeletalMesh animatedModel{ meshes };
-		animatedModel.skeleton = std::move(skeleton);
+        animatedModel.skeleton  = std::move(skeleton);
+        animatedModel.animClips = std::move(animationClips);
 
         return animatedModel;
 	}
