@@ -206,6 +206,7 @@ namespace blb::rnd {
 		}
 
 		scene.meshes.clear();
+        scene.animatedMeshes.clear();
 		scene.numDirectionalLights = 0;
 		scene.numPointLights = 0;
 		scene.cameras.clear();
