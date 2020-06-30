@@ -47,6 +47,7 @@ namespace blb::rnd {
         for(size_t i = 0; i < size; ++i) {
             jointToModelMatrices[i] = getJointToModelMatrix(poses[i], skeleton->joints[i].parentIndex, poses, skeleton);
         }
+        return jointToModelMatrices;
     }
 }
 
