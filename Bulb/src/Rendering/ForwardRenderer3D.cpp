@@ -19,9 +19,10 @@ namespace blb::rnd {
 
 		//TEMP
         clv::gfx::BufferDescriptor2 bufferDescriptor{};
-        bufferDescriptor.size        = sizeof(Vertex) * std::size(vertices);
-        bufferDescriptor.usageFlags  = clv::gfx::BufferUsageMode::VertexBuffer;
-        bufferDescriptor.sharingMode = clv::gfx::BufferSharingMode::Exclusive;
+        bufferDescriptor.size             = sizeof(Vertex) * std::size(vertices);
+        bufferDescriptor.usageFlags       = clv::gfx::BufferUsageMode::VertexBuffer;
+        bufferDescriptor.sharingMode      = clv::gfx::BufferSharingMode::Exclusive;
+        bufferDescriptor.memoryProperties = clv::gfx::BufferMemoryProperties::HostVisible;
 
         vertexBuffer = graphicsFactory->createBuffer(bufferDescriptor);
         vertexBuffer->map(std::data(vertices), bufferDescriptor.size);

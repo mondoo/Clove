@@ -31,6 +31,18 @@ namespace clv::gfx::vk {
         return -1;
     }
 
+    static VkMemoryPropertyFlags getMemoryPropertyFlags(BufferMemoryProperties garlicProperties) {
+        switch(garlicProperties) {
+            case BufferMemoryProperties::DeviceLocal:
+                return VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+            case BufferMemoryProperties::HostVisible:
+                //Including HOST_COHERENT here as this makes mapping memory more simple
+                return VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+            default:
+                break;
+        }
+    }
+
     VKBuffer::VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor2 descriptor, const QueueFamilyIndices& familyIndices)
         : device(device)
         , descriptor(std::move(descriptor)) {
@@ -64,7 +76,7 @@ namespace clv::gfx::vk {
         allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.pNext           = nullptr;
         allocInfo.allocationSize  = memoryRequirements.size;
-        allocInfo.memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, physicalDevice);//TODO: user specified flags
+        allocInfo.memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, getMemoryPropertyFlags(this->descriptor.memoryProperties), physicalDevice);//TODO: user specified flags
 
         if(vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate buffer memory");

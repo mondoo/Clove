@@ -30,10 +30,16 @@ namespace clv::gfx {
         Concurrent
     };
 
-    struct BufferDescriptor2 { //TODO: Remove 2, this is because it is conflicting the previously defined type
+    enum class BufferMemoryProperties {
+        DeviceLocal, //GPU optimised, can't be written to be CPU
+        HostVisible, //Can be written to by CPU, not GPU optimised
+    };
+
+    struct BufferDescriptor2 {//TODO: Remove 2, this is because it is conflicting the previously defined type
         size_t size = 0;
         BufferUsageMode usageFlags;
         BufferSharingMode sharingMode;
+        BufferMemoryProperties memoryProperties;
     };
 }
 
