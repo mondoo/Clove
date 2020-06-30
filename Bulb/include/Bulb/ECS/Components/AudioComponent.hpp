@@ -23,7 +23,7 @@ namespace blb::ecs {
 
 		//VARIABLES
 	private:
-		aud::Sound sound;
+		//aud::Sound sound;
 
 		PaStream* stream = nullptr;
 		uint32_t playbackPosition = 0u;

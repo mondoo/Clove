@@ -6,7 +6,7 @@ namespace blb::ecs {
 	AudioComponent::AudioComponent(const AudioComponent& other) = default;
 
 	AudioComponent::AudioComponent(AudioComponent&& other) noexcept {
-		sound = std::move(other.sound);
+//		sound = std::move(other.sound);
 
 		stream = other.stream;
 		playbackPosition = other.playbackPosition;
@@ -19,7 +19,7 @@ namespace blb::ecs {
 	AudioComponent& AudioComponent::operator=(const AudioComponent& other) = default;
 
 	AudioComponent& AudioComponent::operator=(AudioComponent&& other) noexcept {
-		sound = std::move(other.sound);
+		//sound = std::move(other.sound);
 
 		stream = other.stream;
 		playbackPosition = other.playbackPosition;
@@ -34,7 +34,7 @@ namespace blb::ecs {
 	AudioComponent::~AudioComponent() = default;
 
 	void AudioComponent::setSound(aud::Sound sound) {
-		this->sound = std::move(sound);
+		//this->sound = std::move(sound);
 	}
 
 	void AudioComponent::play(PlaybackMode playback) {
