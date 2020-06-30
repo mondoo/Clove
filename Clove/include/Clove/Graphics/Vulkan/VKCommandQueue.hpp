@@ -65,6 +65,7 @@ namespace clv::gfx::vk {
 		void submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<VKFence>& fence);
 	};
 
+	//Allows for presentation of swapchains
 	class VKPresentQueue {
 		//VARIABLES
 	private:
@@ -83,6 +84,7 @@ namespace clv::gfx::vk {
 		Result present(const PresentInfo& presentInfo);
 	};
 
+	//Creates buffers for encoding transfer commands
 	class VKTransferQueue {
 		//VARIABLES
 	private:
@@ -99,6 +101,6 @@ namespace clv::gfx::vk {
 
 		~VKTransferQueue();
 
-		std::unique_ptr<VKCommandBuffer> allocateCommandBuffer();
+		std::unique_ptr<VKTransferCommandBuffer> allocateCommandBuffer();
 	};
 }

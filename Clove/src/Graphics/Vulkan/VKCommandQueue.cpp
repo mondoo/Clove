@@ -134,7 +134,7 @@ namespace clv::gfx::vk {
 		vkDestroyCommandPool(device, commandPool, nullptr);
 	}
 
-	std::unique_ptr<VKCommandBuffer> VKTransferQueue::allocateCommandBuffer() {
+	std::unique_ptr<VKTransferCommandBuffer> VKTransferQueue::allocateCommandBuffer() {
 		//TODO: Multiple command buffer allocation
 
 		VkCommandBuffer commandBuffer;
@@ -150,6 +150,6 @@ namespace clv::gfx::vk {
 			return nullptr;
 		}
 
-		return std::make_unique<VKCommandBuffer>(commandBuffer);
+		return std::make_unique<VKTransferCommandBuffer>(commandBuffer);
 	}
 }

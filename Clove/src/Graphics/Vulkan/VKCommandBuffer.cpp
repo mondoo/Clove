@@ -70,4 +70,37 @@ namespace clv::gfx::vk {
 	VkCommandBuffer VKGraphicsCommandBuffer::getCommandBuffer() const {
 		return commandBuffer;
 	}
+
+	VKTransferCommandBuffer::VKTransferCommandBuffer(VkCommandBuffer commandBuffer) 
+		: commandBuffer(commandBuffer){
+    }
+
+	void VKTransferCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
+        VkCommandBufferBeginInfo beginInfo{};
+        beginInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags            = getCommandBufferUsageFlags(usageFlag);
+        beginInfo.pInheritanceInfo = nullptr;
+
+        if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to begin recording command buffer");
+        }
+    }
+
+	void VKTransferCommandBuffer::copyBuffer(VKBuffer& source, const size_t sourceOffset, VKBuffer& destination, const size_t destinationOffset, const size_t sizeBytes) {
+        VkBufferCopy copyRegion{};
+        copyRegion.srcOffset = sourceOffset;
+        copyRegion.dstOffset = destinationOffset;
+        copyRegion.size      = sizeBytes;
+        vkCmdCopyBuffer(commandBuffer, source.getBuffer(), destination.getBuffer(), 1, &copyRegion);
+    }
+
+	void VKTransferCommandBuffer::endRecording() {
+        if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to end recording command buffer");
+        }
+    }
+
+	VkCommandBuffer VKTransferCommandBuffer::getCommandBuffer() const {
+        return commandBuffer;
+    }
 }

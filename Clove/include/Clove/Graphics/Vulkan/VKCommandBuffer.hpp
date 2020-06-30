@@ -47,4 +47,23 @@ namespace clv::gfx::vk {
 
 		VkCommandBuffer getCommandBuffer() const;
 	};
+
+	class VKTransferCommandBuffer{
+        //VARIABLES
+    private:
+        VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
+
+        //FUNCTIONS
+    public:
+        //TODO: Ctors
+        VKTransferCommandBuffer(VkCommandBuffer commandBuffer);
+
+        void beginRecording(CommandBufferUsage usageFlag);
+
+        void copyBuffer(VKBuffer& source, const size_t sourceOffset, VKBuffer& destination, const size_t destinationOffset, const size_t sizeBytes);
+
+        void endRecording();
+
+        VkCommandBuffer getCommandBuffer() const;
+	};
 }
