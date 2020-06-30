@@ -31,7 +31,7 @@ namespace blb {
 		~StateMachine();
 
 		/**
-		 * @brief Runs through the current Action to test for any Transitions that were activated
+		 * @brief Runs through the current State to test for any Transitions that were activated
 		 *
 		 * @return A vector of Actions to perform
 		 */
