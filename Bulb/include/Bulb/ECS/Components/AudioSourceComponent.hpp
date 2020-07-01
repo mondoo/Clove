@@ -18,7 +18,7 @@ namespace blb::ecs {
 		stop
 	};
 
-	class AudioComponent : public Component<AudioComponent> {
+	class AudioSourceComponent : public Component<AudioSourceComponent> {
 		friend class AudioSystem;
 
 		//VARIABLES
@@ -36,17 +36,15 @@ namespace blb::ecs {
 
 		//FUNCTIONS
 	public:
-		AudioComponent();
+        AudioSourceComponent();
 
-		AudioComponent(const AudioComponent& other);
-		AudioComponent(AudioComponent&& other) noexcept;
+        AudioSourceComponent(const AudioSourceComponent& other);
+        AudioSourceComponent(AudioSourceComponent&& other) noexcept;
 
-		AudioComponent& operator=(const AudioComponent& other);
-		AudioComponent& operator=(AudioComponent&& other) noexcept;
+        AudioSourceComponent& operator=(const AudioSourceComponent& other);
+        AudioSourceComponent& operator=(AudioSourceComponent&& other) noexcept;
 
-		~AudioComponent();
-
-		//void setSound(aud::Sound sound);
+		~AudioSourceComponent();
 
 		void play(PlaybackMode playback = PlaybackMode::once);
 		void pause();

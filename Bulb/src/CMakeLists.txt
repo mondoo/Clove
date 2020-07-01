@@ -54,8 +54,8 @@ set(
 		${BLB_INCLUDE}/ECS/World.inl
 		${BLB_SOURCE}/ECS/World.cpp
 		${BLB_INCLUDE}/ECS/System.hpp
-		${BLB_INCLUDE}/ECS/Components/AudioComponent.hpp
-		${BLB_SOURCE}/ECS/Components/AudioComponent.cpp
+		${BLB_INCLUDE}/ECS/Components/AudioSourceComponent.hpp
+		${BLB_SOURCE}/ECS/Components/AudioSourceComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/CameraComponent.hpp
 		${BLB_SOURCE}/ECS/Components/CameraComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
