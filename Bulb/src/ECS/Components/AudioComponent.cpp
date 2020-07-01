@@ -33,9 +33,9 @@ namespace blb::ecs {
 
 	AudioComponent::~AudioComponent() = default;
 
-	void AudioComponent::setSound(aud::Sound sound) {
+	//void AudioComponent::setSound(aud::Sound sound) {
 		//this->sound = std::move(sound);
-	}
+	//}
 
 	void AudioComponent::play(PlaybackMode playback) {
 		/*if(sound.isValid()) {

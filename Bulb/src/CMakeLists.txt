@@ -26,8 +26,8 @@ set(
 
 set(
 	AudioFiles
-		${BLB_INCLUDE}/Audio/Sound.hpp
-		${BLB_SOURCE}/Audio/Sound.cpp
+		${BLB_INCLUDE}/Audio/SoundLoader.hpp
+		${BLB_SOURCE}/Audio/SoundLoader.cpp
 )
 
 set(

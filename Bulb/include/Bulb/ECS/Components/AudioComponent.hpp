@@ -2,7 +2,7 @@
 
 #include "Bulb/ECS/Component.hpp"
 
-#include "Bulb/Audio/Sound.hpp"
+//#include "Bulb/Audio/Sound.hpp"
 
 //PortAudio type def (see portaudio.h)
 typedef void PaStream;
@@ -46,7 +46,7 @@ namespace blb::ecs {
 
 		~AudioComponent();
 
-		void setSound(aud::Sound sound);
+		//void setSound(aud::Sound sound);
 
 		void play(PlaybackMode playback = PlaybackMode::once);
 		void pause();
