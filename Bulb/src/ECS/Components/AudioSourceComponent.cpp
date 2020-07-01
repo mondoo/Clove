@@ -1,13 +1,20 @@
 #include "Bulb/ECS/Components/AudioSourceComponent.hpp"
 
-namespace blb::ecs {
-    AudioSourceComponent::AudioSourceComponent() = default;
+#include "Bulb/Audio/SoundLoader.hpp"
 
-    AudioSourceComponent::AudioSourceComponent(const AudioSourceComponent& other) = default;
+#include <Clove/Audio/AudioBuffer.hpp>
+#include <Clove/Audio/AudioSource.hpp>
+#include <Clove/Audio/AudioFactory.hpp>
+
+namespace blb::ecs {
+    AudioSourceComponent::AudioSourceComponent(clv::AudioFactory& factory, std::string_view filePath){
+        buffer = aud::SoundLoader::loadSound(factory, filePath);
+        source = factory.createAudioSource();
+
+        source->setBuffer(*buffer);
+    }
 
     AudioSourceComponent::AudioSourceComponent(AudioSourceComponent&& other) noexcept = default;
-
-    AudioSourceComponent& AudioSourceComponent::operator=(const AudioSourceComponent& other) = default;
 
     AudioSourceComponent& AudioSourceComponent::operator=(AudioSourceComponent&& other) noexcept = default;
 

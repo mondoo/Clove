@@ -2,55 +2,48 @@
 
 #include "Bulb/ECS/Component.hpp"
 
-//#include "Bulb/Audio/Sound.hpp"
-
-//PortAudio type def (see portaudio.h)
-typedef void PaStream;
+namespace clv{
+    class AudioBuffer;
+    class AudioFactory;
+    class AudioSource;
+}
 
 namespace blb::ecs {
-	enum class PlaybackMode {
-		once,
-		repeat
-	};
+    enum class PlaybackMode {
+        Once,
+        Repeat
+    };
+}
 
-	enum class StopMode {
-		pause,
-		stop
-	};
+namespace blb::ecs {
+    class AudioSourceComponent : public Component<AudioSourceComponent> {
+        friend class AudioSystem;
 
-	class AudioSourceComponent : public Component<AudioSourceComponent> {
-		friend class AudioSystem;
+        //VARIABLES
+    private:
+        std::shared_ptr<clv::AudioBuffer> buffer;
+        std::unique_ptr<clv::AudioSource> source;
 
-		//VARIABLES
-	private:
-		//aud::Sound sound;
+        bool playing = false;
 
-		PaStream* stream = nullptr;
-		uint32_t playbackPosition = 0u;
+        //FUNCTIONS
+    public:
+        AudioSourceComponent() = delete;
+        AudioSourceComponent(clv::AudioFactory& factory, std::string_view filePath);
 
-		std::optional<PlaybackMode> requestedPlayback;
-		std::optional<PlaybackMode> currentPlayback;
-		std::optional<StopMode> requestedStopMode;
-
-		bool playing = false;
-
-		//FUNCTIONS
-	public:
-        AudioSourceComponent();
-
-        AudioSourceComponent(const AudioSourceComponent& other);
+        AudioSourceComponent(const AudioSourceComponent& other) = delete;
         AudioSourceComponent(AudioSourceComponent&& other) noexcept;
 
-        AudioSourceComponent& operator=(const AudioSourceComponent& other);
+        AudioSourceComponent& operator=(const AudioSourceComponent& other) = delete;
         AudioSourceComponent& operator=(AudioSourceComponent&& other) noexcept;
 
-		~AudioSourceComponent();
+        ~AudioSourceComponent();
 
-		void play(PlaybackMode playback = PlaybackMode::once);
-		void pause();
-		void resume();
-		void stop();
+        void play(PlaybackMode playback = PlaybackMode::Once);
+        void pause();
+        void resume();
+        void stop();
 
-		bool isPlaying();
-	};
+        bool isPlaying();
+    };
 }
