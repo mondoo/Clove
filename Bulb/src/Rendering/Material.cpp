@@ -40,7 +40,7 @@ namespace blb::rnd{
 
 	void Material::setData(clv::gfx::BufferBindingPoint bindingPoint, void* data, const size_t sizeBytes, clv::gfx::ShaderStage shaderType) {
         if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()) {
-            iter->second.buffer->updateData(&data);
+            iter->second.buffer->updateData(data);
         } else {
             clv::gfx::BufferDescriptor srdesc{};
             srdesc.elementSize = 0;
