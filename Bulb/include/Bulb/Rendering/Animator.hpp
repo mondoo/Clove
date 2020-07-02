@@ -5,7 +5,7 @@
 
 //TODO: Move to cpp
 namespace blb::rnd {
-    static std::vector<JointPose> lerpJointPoses(const AnimationPose& posesA, const AnimationPose& posesB, float time) {
+    static std::vector<JointPose> lerpJointPoses(const AnimationPose& posesA, const AnimationPose& posesB, const float time) {
         const size_t jointCount = posesA.poses.size();
 
         std::vector<JointPose> lerpedPoses;
@@ -72,9 +72,8 @@ namespace blb::rnd {
             //TODO: single play (current will loop)
             currentTime = fmod(currentTime += deltaTime, currentClip->duration);
 
-            //Get the poses either side of the animation
-            auto& nextPose = getNextPose(currentTime);
-            auto& prevPose = getPrevPose(currentTime);
+            //Get the poses either side of the animation time
+            const auto& [prevPose, nextPose] = getPrevNextPose(currentTime);
 
             //Lerp between them to create the target pose
             const float timeBetweenPoses = nextPose.timeStamp - prevPose.timeStamp;
@@ -86,7 +85,7 @@ namespace blb::rnd {
             //Get the current joint to model matrix of the target pose (Cj->m)
             auto currentJointToModel = calculateCurrentJointToModelMatrices(currentAnimPose, currentClip->skeleton);
 
-            //Calculate skinning matrix K = Bm->j * Cj->m
+            //Calculate skinning matrix K = Cj->m * Bm->j (right to left)
             std::vector<clv::mth::mat4f> skinningMatrix(currentJointToModel.size());
             for(size_t i = 0; i < currentJointToModel.size(); ++i) {
                 skinningMatrix[i] = currentJointToModel[i] * currentClip->skeleton->joints[i].inverseBindPose;
@@ -96,22 +95,19 @@ namespace blb::rnd {
         }
 
     private:
-        const AnimationPose& getNextPose(float animationTime) {
+        std::pair<const AnimationPose&, const AnimationPose&> getPrevNextPose(float animationTime){
+            size_t prevIndex = 0;
+            size_t nextIndex = 0;
+
             for(size_t i = 0; i < currentClip->poses.size(); ++i) {
+                nextIndex = i;
                 if(currentClip->poses[i].timeStamp > animationTime) {
-                    return currentClip->poses[i];
+                    break;
                 }
+                prevIndex = i;
             }
 
-            return currentClip->poses[currentClip->poses.size() - 1];
-        }
-
-        const AnimationPose& getPrevPose(float animationTime) {
-            for(size_t i = 0; i < currentClip->poses.size(); ++i) {
-                if(currentClip->poses[i].timeStamp >= animationTime) {
-                    return currentClip->poses[std::min<size_t>(0, i - 1)];
-                }
-            }
+            return { currentClip->poses[prevIndex], currentClip->poses[nextIndex] };
         }
     };
 }
