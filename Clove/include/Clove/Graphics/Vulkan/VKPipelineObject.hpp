@@ -3,6 +3,7 @@
 //TODO: Remove
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include <vulkan/vulkan.h>
 
@@ -41,6 +42,8 @@ namespace clv::gfx {
 		RasteriserDescriptor rasteriserDescriptor;
 
 		std::shared_ptr<vk::VKRenderPass> renderPass;
+
+		std::vector<std::shared_ptr<clv::gfx::vk::VKDescriptorSetLayout>> descriptorSetLayouts;
 	};
 }
 

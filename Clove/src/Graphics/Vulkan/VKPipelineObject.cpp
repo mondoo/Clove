@@ -22,12 +22,22 @@ namespace clv::gfx::vk {
 		return attributes;
     }
 
+	static std::vector<VkDescriptorSetLayout> getDescriptorSetLayouts(const std::vector<std::shared_ptr<VKDescriptorSetLayout>>& garlicLayouts) {
+        std::vector<VkDescriptorSetLayout> layouts(std::size(garlicLayouts));
+        for(size_t i = 0; i < std::size(layouts); ++i) {
+            layouts[i] = garlicLayouts[i]->getLayout();
+		}
+        return layouts;
+    }
+
 	VKPipelineObject::VKPipelineObject(VkDevice device, PiplineObjectDescriptor descriptor)
 		: device(device) {
 		std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
 
 		VkVertexInputBindingDescription inputBindingDescription         = getBindingDescription(descriptor.vertexInput);
         std::vector<VkVertexInputAttributeDescription> vertexAttributes = getAttributes(descriptor.vertexAttributes);
+
+		std::vector<VkDescriptorSetLayout> descriptorLayouts = getDescriptorSetLayouts(descriptor.descriptorSetLayouts);
 
 		//Vertex shader
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
@@ -117,11 +127,10 @@ namespace clv::gfx::vk {
 		colorBlending.blendConstants[3] = 0.0f;
 
 		//Pipeline Layout
-		//TODO: pipeline layout
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType				  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount		  = 0;
-		pipelineLayoutInfo.pSetLayouts			  = nullptr;
+		pipelineLayoutInfo.setLayoutCount		  = std::size(descriptorLayouts);
+		pipelineLayoutInfo.pSetLayouts			  = std::data(descriptorLayouts);
 		pipelineLayoutInfo.pushConstantRangeCount = 0;
 		pipelineLayoutInfo.pPushConstantRanges	  = nullptr;
 
