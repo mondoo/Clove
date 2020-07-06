@@ -11,6 +11,7 @@
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -45,6 +46,7 @@ namespace clv::gfx::vk {
 		std::unique_ptr<VKShader> createShader(std::vector<std::byte> byteCode);
 
 		std::unique_ptr<VKRenderPass> createRenderPass(RenderPassDescriptor descriptor);
+        std::unique_ptr<VKDescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayoutDescriptor descriptor);
 
 		std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
 

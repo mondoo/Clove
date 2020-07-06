@@ -376,6 +376,10 @@ namespace clv::gfx::vk{
 		return std::make_unique<VKRenderPass>(logicalDevice, std::move(descriptor));
 	}
 
+	std::unique_ptr<VKDescriptorSetLayout> VKGraphicsFactory::createDescriptorSetLayout(DescriptorSetLayoutDescriptor descriptor) {
+        return std::make_unique<VKDescriptorSetLayout>(logicalDevice, std::move(descriptor));
+    }
+
 	std::unique_ptr<VKPipelineObject> VKGraphicsFactory::createPipelineObject(PiplineObjectDescriptor descriptor) {
 		return std::make_unique<VKPipelineObject>(logicalDevice, std::move(descriptor));
 	}
