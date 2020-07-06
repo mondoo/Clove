@@ -10,6 +10,7 @@
 #include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
 //TEMP
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 
 namespace clv::plt {
 	class Window;
@@ -59,6 +60,12 @@ namespace blb::rnd {
 		//VARIABLES
 	private:
 		//TEMP
+		struct ModeViewProj{
+            clv::mth::mat4f model;
+            clv::mth::mat4f view;
+            clv::mth::mat4f proj;
+		};
+
         const std::vector<Vertex> vertices = {
             { { -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
             { {  0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f } },
@@ -94,6 +101,7 @@ namespace blb::rnd {
 		std::shared_ptr<clv::gfx::vk::VKSwapchain> swapchain;
 
 		std::shared_ptr<clv::gfx::vk::VKRenderPass> renderPass;
+        std::shared_ptr<clv::gfx::vk::VKDescriptorSetLayout> descriptorSetLayout;
 
 		std::shared_ptr<clv::gfx::vk::VKPipelineObject> pipelineObject;
 

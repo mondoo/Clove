@@ -17,6 +17,18 @@ namespace blb::rnd {
 		swapchain  = graphicsFactory->createSwapChain({ windowSize });
         renderPass = graphicsFactory->createRenderPass({ swapchain->getImageFormat() });
 
+        //TODO: Retrieve these from the shaders
+        clv::gfx::DescriptorBindingDescriptor descriptorBinding{};
+        descriptorBinding.binding   = 0;
+        descriptorBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
+        descriptorBinding.arraySize = 1;
+        descriptorBinding.stage     = clv::gfx::DescriptorStage::Vertex;
+
+        clv::gfx::DescriptorSetLayoutDescriptor descriptorSetLayoutDescriptor{};
+        descriptorSetLayoutDescriptor.bindings.push_back(descriptorBinding);
+
+        descriptorSetLayout = graphicsFactory->createDescriptorSetLayout(descriptorSetLayoutDescriptor);
+
 		//TEMP
         const size_t vertexBufferSize = sizeof(Vertex) * std::size(vertices);
 
@@ -199,6 +211,7 @@ namespace blb::rnd {
         pipelineDescriptor.viewportDescriptor.size = { swapchain->getExtent().width, swapchain->getExtent().height };
         pipelineDescriptor.scissorDescriptor.size  = { swapchain->getExtent().width, swapchain->getExtent().height };
         pipelineDescriptor.renderPass              = renderPass;
+        pipelineDescriptor.descriptorSetLayouts    = { descriptorSetLayout };
 
         pipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
