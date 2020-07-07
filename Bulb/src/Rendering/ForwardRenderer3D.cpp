@@ -73,6 +73,7 @@ namespace blb::rnd {
 
         createPipeline();
         createSwapchainFrameBuffers();
+        createUniformBuffers();
 
         recordCommandBuffers();
 
@@ -146,6 +147,8 @@ namespace blb::rnd {
 
 		inFlightFences[currentFrame]->resetFence();
 
+        //Update our UBOs
+
 		//Submit the command buffer associated with that image
 		clv::gfx::GraphicsSubmitInfo submitInfo{};
 		submitInfo.waitSemaphores	= { imageAvailableSemaphores[currentFrame] };
@@ -196,6 +199,7 @@ namespace blb::rnd {
 
         createPipeline();
         createSwapchainFrameBuffers();
+        createUniformBuffers();
         
 		recordCommandBuffers();
 
@@ -225,6 +229,21 @@ namespace blb::rnd {
             frameBufferDescriptor.height      = swapchain->getExtent().height;
 
             swapChainFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(frameBufferDescriptor));
+        }
+    }
+
+    void ForwardRenderer3D::createUniformBuffers() {
+        const size_t frameBufferNum = std::size(swapChainFrameBuffers);
+        uniformBuffers.resize(frameBufferNum);
+
+        for(size_t i = 0; i < frameBufferNum; ++i) {
+            clv::gfx::BufferDescriptor2 descriptor{};
+            descriptor.size             = sizeof(ModelViewProj);
+            descriptor.usageFlags       = clv::gfx::BufferUsageMode::UniformBuffer;
+            descriptor.sharingMode      = clv::gfx::BufferSharingMode::Exclusive;
+            descriptor.memoryProperties = clv::gfx::BufferMemoryProperties::HostVisible;
+
+            uniformBuffers[i] = graphicsFactory->createBuffer(std::move(descriptor));
         }
     }
 
