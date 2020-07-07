@@ -146,5 +146,6 @@ namespace blb::rnd {
         void createUniformBuffers();
         void recordCommandBuffers();
 
+		void updateUniformBuffer(const size_t imageIndex);
 	};
 }
