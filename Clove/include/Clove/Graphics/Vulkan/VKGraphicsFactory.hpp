@@ -12,6 +12,7 @@
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -51,6 +52,7 @@ namespace clv::gfx::vk {
 		std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
 
 		std::unique_ptr<VKFramebuffer> createFramebuffer(FramebufferDescriptor descriptor);
+        std::unique_ptr<VKDescriptorPool> createDescriptorPool(DescriptorPoolDescriptor descriptor);
 
 		std::unique_ptr<VKSemaphore> createSemaphore();
 		std::unique_ptr<VKFence> createFence(FenceDescriptor descriptor);

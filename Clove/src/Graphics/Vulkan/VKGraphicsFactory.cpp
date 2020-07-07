@@ -388,6 +388,10 @@ namespace clv::gfx::vk{
 		return std::make_unique<VKFramebuffer>(logicalDevice, std::move(descriptor));
 	}
 
+	std::unique_ptr<VKDescriptorPool> VKGraphicsFactory::createDescriptorPool(DescriptorPoolDescriptor descriptor) {
+        return std::make_unique<VKDescriptorPool>(logicalDevice, std::move(descriptor));
+    }
+
 	std::unique_ptr<VKSemaphore> VKGraphicsFactory::createSemaphore() {
 		return std::make_unique<VKSemaphore>(logicalDevice);
 	}
