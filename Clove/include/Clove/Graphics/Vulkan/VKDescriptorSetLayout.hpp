@@ -12,15 +12,15 @@ namespace clv::gfx {
         Vertex,
     };
 
-    struct DescriptorBindingDescriptor {
+    struct DescriptorBindingInfo {
         uint32_t binding = 0;
         DescriptorType type;
-        size_t arraySize = 0;
+        size_t arraySize = 0; //If this descriptor represents an array it'll be the size of the array else 1
         DescriptorStage stage;
     };
 
     struct DescriptorSetLayoutDescriptor {
-        std::vector<DescriptorBindingDescriptor> bindings;
+        std::vector<DescriptorBindingInfo> bindings;
     };
 }
 

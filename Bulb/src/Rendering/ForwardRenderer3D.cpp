@@ -18,7 +18,7 @@ namespace blb::rnd {
         renderPass = graphicsFactory->createRenderPass({ swapchain->getImageFormat() });
 
         //TODO: Retrieve these from the shaders
-        clv::gfx::DescriptorBindingDescriptor descriptorBinding{};
+        clv::gfx::DescriptorBindingInfo descriptorBinding{};
         descriptorBinding.binding   = 0;
         descriptorBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
         descriptorBinding.arraySize = 1;
