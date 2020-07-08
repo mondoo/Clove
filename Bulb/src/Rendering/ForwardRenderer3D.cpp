@@ -269,6 +269,10 @@ namespace blb::rnd {
         std::vector<std::shared_ptr<clv::gfx::vk::VKDescriptorSetLayout>> layouts(std::size(swapChainFrameBuffers), descriptorSetLayout);
         
         descriptorSets = descriptorPool->allocateDescriptorSets(layouts);
+
+        for(size_t i = 0; i < std::size(swapChainFrameBuffers); ++i) {
+            descriptorSets[i]->writeFrom(*uniformBuffers[i], 0, sizeof(ModelViewProj), 0);
+        }
     }
 
 	void blb::rnd::ForwardRenderer3D::recordCommandBuffers() {
@@ -291,6 +295,7 @@ namespace blb::rnd {
             commandBuffers[i]->bindPipelineObject(*pipelineObject);
             commandBuffers[i]->bindVertexBuffer(*vertexBuffer);
             commandBuffers[i]->bindIndexBuffer(*indexBuffer, clv::gfx::IndexType::Uint16);
+            commandBuffers[i]->bindDescriptorSet(*descriptorSets[i], *pipelineObject);
             commandBuffers[i]->drawIndexed(std::size(indices));
             commandBuffers[i]->endRenderPass();
 
@@ -306,7 +311,7 @@ namespace blb::rnd {
 
         ModelViewProj ubo{};
         ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        ubo.view  = glm::lookAt(glm::vec3(0.0f, glm::sin(time), -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ubo.view  = glm::lookAt(glm::vec3(0.0f, 2.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         ubo.proj  = glm::perspective(glm::radians(45.0f), static_cast<float>(swapchain->getExtent().width) / static_cast<float>(swapchain->getExtent().height), 0.1f, 10.0f);
 
         uniformBuffers[imageIndex]->map(&ubo, sizeof(ubo));
