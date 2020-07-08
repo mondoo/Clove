@@ -141,6 +141,8 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKCommandQueue.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorPool.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptorPool.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorSet.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptorSet.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorSetLayout.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptorSetLayout.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKFence.hpp
