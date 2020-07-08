@@ -2,18 +2,9 @@
 
 #include "Clove/Graphics/Vulkan/VKDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
+#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
-    static VkDescriptorType getDescriptorType(DescriptorType garlicType) {
-        switch(garlicType) {
-            case DescriptorType::UniformBuffer:
-                return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            default:
-                CLV_ASSERT(false, "{0}: Unkown type", CLV_FUNCTION_NAME);
-                return VK_DESCRIPTOR_TYPE_MAX_ENUM;
-        }
-    }
-
     VKDescriptorPool::VKDescriptorPool(VkDevice device, DescriptorPoolDescriptor descriptor)
         : device(device) {
         const size_t numDescriptorTypes = std::size(descriptor.poolTypes);

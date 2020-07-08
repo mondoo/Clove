@@ -2,12 +2,9 @@
 
 //TODO: Remove
 #include <vulkan/vulkan.h>
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 namespace clv::gfx {
-    enum class DescriptorType {
-        UniformBuffer,
-    };
-
     struct DescriptorInfo {
         DescriptorType type;
         uint32_t count;//number of this type to allocate

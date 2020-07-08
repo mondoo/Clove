@@ -38,6 +38,10 @@ namespace clv::gfx {
         VertexAttributeFormat format;
         uint32_t offset = 0;
 	};
+
+	enum class DescriptorType {
+        UniformBuffer,
+    };
 }
 
 namespace clv::gfx::vk {

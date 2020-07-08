@@ -75,4 +75,14 @@ namespace clv::gfx::vk {
                 return VK_FORMAT_UNDEFINED;
         }
     }
+
+	VkDescriptorType getDescriptorType(DescriptorType garlicType) {
+        switch(garlicType) {
+            case DescriptorType::UniformBuffer:
+                return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            default:
+                CLV_ASSERT(false, "{0}: Unkown type", CLV_FUNCTION_NAME);
+                return VK_DESCRIPTOR_TYPE_MAX_ENUM;
+        }
+    }
 }

@@ -14,4 +14,6 @@ namespace clv::gfx::vk {
 	Result convertResult(VkResult result);
 
 	VkFormat convertAttributeFormat(VertexAttributeFormat garlicFormat);
+
+	VkDescriptorType getDescriptorType(DescriptorType garlicType);
 }

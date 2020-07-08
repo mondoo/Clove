@@ -2,12 +2,9 @@
 
 //TODO: Move
 #include <vulkan/vulkan.h>
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 namespace clv::gfx {
-    enum class DescriptorType {
-        UniformBuffer,
-    };
-
     enum class DescriptorStage {
         Vertex,
     };
