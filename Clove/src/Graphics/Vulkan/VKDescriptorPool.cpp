@@ -69,4 +69,17 @@ namespace clv::gfx::vk {
 
         return descriptorSets;
     }
+
+    void VKDescriptorPool::freeDescriptorSets(const std::vector<std::shared_ptr<VKDescriptorSet>>& descriptorSets) {
+        const size_t numSets = std::size(descriptorSets);
+
+        std::vector<VkDescriptorSet> vulkanSets(numSets);
+        for(size_t i = 0; i < numSets; ++i) {
+            vulkanSets[i] = descriptorSets[i]->getDescriptorSet();
+        }
+
+        if(vkFreeDescriptorSets(device, pool, numSets, std::data(vulkanSets)) != VK_SUCCESS) {
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to free descriptor sets");
+        }
+    }
 }

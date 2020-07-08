@@ -41,5 +41,6 @@ namespace clv::gfx::vk {
 
         //Allocates a descriptor set for each layout provided
         std::vector<std::shared_ptr<VKDescriptorSet>> allocateDescriptorSets(const std::vector<std::shared_ptr<VKDescriptorSetLayout>>& layouts);
+        void freeDescriptorSets(const std::vector<std::shared_ptr<VKDescriptorSet>>& descriptorSets);
     };
 }
