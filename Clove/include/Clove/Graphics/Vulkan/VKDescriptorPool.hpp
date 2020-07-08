@@ -4,19 +4,24 @@
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx {
-    enum class DescriptorType{
+    enum class DescriptorType {
         UniformBuffer,
     };
 
     struct DescriptorInfo {
         DescriptorType type;
-        size_t count; //how many of this type we'll allocate
+        uint32_t count;//number of this type to allocate
     };
 
-    struct DescriptorPoolDescriptor{
+    struct DescriptorPoolDescriptor {
         std::vector<DescriptorInfo> poolTypes;
-        size_t maxSets; //how many could be allocated at a given time
+        uint32_t maxSets;//the maximum amount of sets that can be allocated
     };
+}
+
+namespace clv::gfx::vk {
+    class VKDescriptorSet;
+    class VKDescriptorSetLayout;
 }
 
 namespace clv::gfx::vk {
@@ -33,5 +38,8 @@ namespace clv::gfx::vk {
         //TODO: Ctors
         VKDescriptorPool(VkDevice device, DescriptorPoolDescriptor descriptor);
         ~VKDescriptorPool();
+
+        //Allocates a descriptor set for each layout provided
+        std::vector<std::shared_ptr<VKDescriptorSet>> allocateDescriptorSets(const std::vector<std::shared_ptr<VKDescriptorSetLayout>>& layouts);
     };
 }

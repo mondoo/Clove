@@ -1,5 +1,8 @@
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 
+#include "Clove/Graphics/Vulkan/VKDescriptorSet.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
+
 namespace clv::gfx::vk {
     static VkDescriptorType getDescriptorType(DescriptorType garlicType) {
         switch(garlicType) {
@@ -35,5 +38,35 @@ namespace clv::gfx::vk {
 
     VKDescriptorPool::~VKDescriptorPool() {
         vkDestroyDescriptorPool(device, pool, nullptr);
+    }
+
+    std::vector<std::shared_ptr<VKDescriptorSet>> VKDescriptorPool::allocateDescriptorSets(const std::vector<std::shared_ptr<VKDescriptorSetLayout>>& layouts) {
+        const size_t numSets = std::size(layouts);
+
+        std::vector<VkDescriptorSetLayout> vulkanLayouts(numSets);
+        for(size_t i = 0; i < numSets; ++i) {
+            vulkanLayouts[i] = layouts[i]->getLayout();
+        }
+
+        std::vector<VkDescriptorSet> vulkanSets(numSets);
+
+        VkDescriptorSetAllocateInfo allocInfo{};
+        allocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.pNext              = nullptr;
+        allocInfo.descriptorPool     = pool;
+        allocInfo.descriptorSetCount = static_cast<uint32_t>(numSets);
+        allocInfo.pSetLayouts        = std::data(vulkanLayouts);
+
+        if(vkAllocateDescriptorSets(device, &allocInfo, std::data(vulkanSets)) != VK_SUCCESS) {
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate new descriptor sets");
+            return {};
+        }
+
+        std::vector<std::shared_ptr<VKDescriptorSet>> descriptorSets(numSets);
+        for(size_t i = 0; i < numSets; ++i) {
+            descriptorSets[i] = std::make_shared<VKDescriptorSet>(vulkanSets[i]);
+        }
+
+        return descriptorSets;
     }
 }
