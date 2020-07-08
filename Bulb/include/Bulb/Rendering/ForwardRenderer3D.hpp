@@ -8,6 +8,7 @@
 #include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 //TEMP
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
@@ -120,6 +121,9 @@ namespace blb::rnd {
 		std::array<std::shared_ptr<clv::gfx::vk::VKFence>, maxFramesInFlight> inFlightFences;
 		std::vector<std::shared_ptr<clv::gfx::vk::VKFence>> imagesInFlight;
 
+		std::shared_ptr<clv::gfx::vk::VKDescriptorPool> descriptorPool;
+        std::vector<std::shared_ptr<clv::gfx::vk::VKDescriptorSet>> descriptorSets;
+
 		//FUNCTIONS
 	public:
 		//TODO: Ctors
@@ -146,6 +150,7 @@ namespace blb::rnd {
         void createSwapchainFrameBuffers();
         void createUniformBuffers();
         void createDescriptorPool();
+        void createDescriptorSets(); //TEMP: Would probably just allocate sets as we needed, not necessarily when the swap chain resizes
         void recordCommandBuffers();
 
 		void updateUniformBuffer(const size_t imageIndex);

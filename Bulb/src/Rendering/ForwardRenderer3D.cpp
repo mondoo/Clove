@@ -75,6 +75,7 @@ namespace blb::rnd {
         createSwapchainFrameBuffers();
         createUniformBuffers();
         createDescriptorPool();
+        createDescriptorSets();
 
         recordCommandBuffers();
 
@@ -203,6 +204,7 @@ namespace blb::rnd {
         createSwapchainFrameBuffers();
         createUniformBuffers();
         createDescriptorPool();
+        createDescriptorSets();
         
 		recordCommandBuffers();
 
@@ -260,6 +262,13 @@ namespace blb::rnd {
         poolDescriptor.maxSets = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
 
         descriptorPool = graphicsFactory->createDescriptorPool(std::move(poolDescriptor));
+    }
+
+    void ForwardRenderer3D::createDescriptorSets() {
+        //We need to make one set for each frame-in-flight, so we duplicate the layout we havbe
+        std::vector<std::shared_ptr<clv::gfx::vk::VKDescriptorSetLayout>> layouts(std::size(swapChainFrameBuffers), descriptorSetLayout);
+        
+        descriptorSets = descriptorPool->allocateDescriptorSets(layouts);
     }
 
 	void blb::rnd::ForwardRenderer3D::recordCommandBuffers() {
