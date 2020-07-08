@@ -6,6 +6,7 @@
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptorSet.hpp"
 
 namespace clv::gfx{
 	//TODO: Need some sort of generic area?
@@ -44,6 +45,8 @@ namespace clv::gfx::vk {
 		void bindPipelineObject(VKPipelineObject& pipelineObject);
         void bindVertexBuffer(VKBuffer& vertexBuffer);
         void bindIndexBuffer(VKBuffer& indexBuffer, IndexType indexType);
+        void bindDescriptorSet(VKDescriptorSet& descriptorSet, const VKPipelineObject& pipeline);
+
         void drawIndexed(const size_t indexCount);
 
 		void endRenderPass();

@@ -66,5 +66,8 @@ namespace clv::gfx::vk {
 		VkPipeline getPipeline() const{
 			return pipeline;
 		}
+		VkPipelineLayout getLayout() const{
+            return pipelineLayout;
+		}
 	};
 }

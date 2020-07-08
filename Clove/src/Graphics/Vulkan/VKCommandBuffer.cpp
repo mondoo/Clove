@@ -67,6 +67,11 @@ namespace clv::gfx::vk {
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineObject.getPipeline());
 	}
 
+	void VKGraphicsCommandBuffer::bindDescriptorSet(VKDescriptorSet& descriptorSet, const VKPipelineObject& pipeline) {
+        VkDescriptorSet sets[] = { descriptorSet.getDescriptorSet() };
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getLayout(), 0, 1, sets, 0, nullptr);
+    }
+
 	void VKGraphicsCommandBuffer::drawIndexed(const size_t indexCount) {
         vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
 	}
