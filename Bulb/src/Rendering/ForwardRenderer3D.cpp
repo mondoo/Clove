@@ -101,6 +101,7 @@ namespace blb::rnd {
         //Reset buffer manually to ensure correct destruction order
         vertexBuffer.reset();
         indexBuffer.reset();
+        uniformBuffers.clear();
 	}
 
 	void ForwardRenderer3D::begin() {
