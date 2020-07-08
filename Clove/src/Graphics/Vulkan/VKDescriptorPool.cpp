@@ -64,7 +64,7 @@ namespace clv::gfx::vk {
 
         std::vector<std::shared_ptr<VKDescriptorSet>> descriptorSets(numSets);
         for(size_t i = 0; i < numSets; ++i) {
-            descriptorSets[i] = std::make_shared<VKDescriptorSet>(vulkanSets[i]);
+            descriptorSets[i] = std::make_shared<VKDescriptorSet>(device, vulkanSets[i]);
         }
 
         return descriptorSets;

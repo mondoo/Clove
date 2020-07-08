@@ -4,15 +4,23 @@
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
+    class VKBuffer;
+}
+
+namespace clv::gfx::vk {
     class VKDescriptorSet{
         //VARIABLES
     private:
-        VkDescriptorSet descriptorSet;
+        VkDevice device = VK_NULL_HANDLE;
+
+        VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
 
         //FUNCTIONS
     public:
         //TODO: Ctors
-        VKDescriptorSet(VkDescriptorSet descriptorSet);
+        VKDescriptorSet(VkDevice device, VkDescriptorSet descriptorSet);
+
+        void writeFrom(VKBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot);
 
         VkDescriptorSet getDescriptorSet() const;
     };
