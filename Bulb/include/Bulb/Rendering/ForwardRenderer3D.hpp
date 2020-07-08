@@ -8,6 +8,7 @@
 #include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 //TEMP
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
@@ -144,6 +145,7 @@ namespace blb::rnd {
 		void createPipeline();
         void createSwapchainFrameBuffers();
         void createUniformBuffers();
+        void createDescriptorPool();
         void recordCommandBuffers();
 
 		void updateUniformBuffer(const size_t imageIndex);

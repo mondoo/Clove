@@ -29,7 +29,7 @@ namespace blb::rnd {
 
         descriptorSetLayout = graphicsFactory->createDescriptorSetLayout(descriptorSetLayoutDescriptor);
 
-		//TEMP
+		//TEMP - Testing drawing
         const size_t vertexBufferSize = sizeof(Vertex) * std::size(vertices);
 
         //Staging buffer
@@ -74,6 +74,7 @@ namespace blb::rnd {
         createPipeline();
         createSwapchainFrameBuffers();
         createUniformBuffers();
+        createDescriptorPool();
 
         recordCommandBuffers();
 
@@ -201,6 +202,7 @@ namespace blb::rnd {
         createPipeline();
         createSwapchainFrameBuffers();
         createUniformBuffers();
+        createDescriptorPool();
         
 		recordCommandBuffers();
 
@@ -246,6 +248,18 @@ namespace blb::rnd {
 
             uniformBuffers[i] = graphicsFactory->createBuffer(std::move(descriptor));
         }
+    }
+
+    void ForwardRenderer3D::createDescriptorPool() {
+        clv::gfx::DescriptorInfo descriptorInfo{};
+        descriptorInfo.type  = clv::gfx::DescriptorType::UniformBuffer;
+        descriptorInfo.count = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
+
+        clv::gfx::DescriptorPoolDescriptor poolDescriptor{};
+        poolDescriptor.poolTypes.emplace_back(std::move(descriptorInfo));
+        poolDescriptor.maxSets = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
+
+        descriptorPool = graphicsFactory->createDescriptorPool(std::move(poolDescriptor));
     }
 
 	void blb::rnd::ForwardRenderer3D::recordCommandBuffers() {
