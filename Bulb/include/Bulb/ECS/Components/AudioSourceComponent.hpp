@@ -2,7 +2,7 @@
 
 #include "Bulb/ECS/Component.hpp"
 
-namespace clv{
+namespace clv {
     class AudioBuffer;
     class AudioFactory;
     class AudioSource;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Bulb/ECS/Components/AudioListenerComponent.hpp>
+
 #include "Bulb/ECS/System.hpp"
 
 namespace blb::ecs {
