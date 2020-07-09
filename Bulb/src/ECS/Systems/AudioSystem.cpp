@@ -28,14 +28,21 @@ namespace blb::ecs {
         CLV_ASSERT(numListeners <= 1, "Only one listener is allowed per world");
         if(numListeners > 0){
             auto&& [transform, listener] = listenerSet[0];
-            //TODO: Velocity
-            listener->listener->setPosition(transform->getPosition());
+
+            const mth::vec3f prevPos = listener->listener->getPosition();
+            const mth::vec3f currPos = transform->getPosition();
+
+            listener->listener->setPosition(currPos);
+            listener->listener->setVelocity(currPos - prevPos);
         }
 
         //Source
         for(auto&& [transform, source] : world.getComponentSets<TransformComponent, AudioSourceComponent>()) {
-            //TODO: Velocity
-            source->source->setPosition(transform->getPosition());
+            const mth::vec3f prevPos = source->source->getPosition();
+            const mth::vec3f currPos = transform->getPosition();
+
+            source->source->setPosition(currPos);
+            source->source->setVelocity(currPos - prevPos);
         }
     }
 }
