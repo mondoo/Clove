@@ -95,10 +95,14 @@ namespace clv::gfx::ogl{
 
 	GLTexture::GLTexture(std::shared_ptr<GraphicsFactory> factory, const TextureDescriptor& descriptor, const std::string& pathToTexture)
 		: factory(std::move(factory))
-		, descriptor(descriptor){
-		int width = 0;
-		int height = 0;
-		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
+		, descriptor(descriptor)
+        , BPP(4) {
+        int width      = 0;
+        int height     = 0;
+        int desiredBPP = 0;
+
+        unsigned char* localBuffer    = stbi_load(pathToTexture.c_str(), &width, &height, &desiredBPP, BPP);//Force images to be imported to 4 bits per pixel, desiredBPP will be what the image wants to be
+		
 		this->descriptor.dimensions.x = width;
 		this->descriptor.dimensions.y = height;
 
