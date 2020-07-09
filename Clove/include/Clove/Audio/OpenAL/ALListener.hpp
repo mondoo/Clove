@@ -18,7 +18,10 @@ namespace clv {
 
         ~ALListener();
 
-        void setPosition(const clv::mth::vec3f& position) override;
-        void setVelocity(const clv::mth::vec3f& velocity) override;
+        void setPosition(const mth::vec3f& position) override;
+        void setVelocity(const mth::vec3f& velocity) override;
+
+        mth::vec3f getPosition() const override;
+        mth::vec3f getVelocity() const override;
     };
 }

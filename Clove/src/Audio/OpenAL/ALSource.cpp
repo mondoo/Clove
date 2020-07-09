@@ -29,12 +29,24 @@ namespace clv {
         alCall(alSourcei(source, AL_LOOPING, isLooping ? AL_TRUE : AL_FALSE));
     }
 
-    void ALSource::setPosition(const clv::mth::vec3f& position) {
+    void ALSource::setPosition(const mth::vec3f& position) {
         alCall(alSource3f(source, AL_POSITION, position.x, position.y, position.z));
     }
 
-    void ALSource::setVelocity(const clv::mth::vec3f& velocity) {
+    void ALSource::setVelocity(const mth::vec3f& velocity) {
         alCall(alSource3f(source, AL_VELOCITY, velocity.x, velocity.y, velocity.z));
+    }
+
+    mth::vec3f ALSource::getPosition() const {
+        mth::vec3f position{};
+        alCall(alGetSource3f(source, AL_POSITION, &position.x, &position.y, &position.z));
+        return position;
+    }
+
+    mth::vec3f ALSource::getVelocity() const {
+        mth::vec3f velocity{};
+        alCall(alGetSource3f(source, AL_VELOCITY, &velocity.x, &velocity.y, &velocity.z));
+        return velocity;
     }
 
     void ALSource::play() {
