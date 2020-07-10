@@ -1,16 +1,18 @@
 #pragma once
 
 namespace clv {
-    enum class BufferFormat {
+    enum class AudioFormat {
         Mono8,
         Mono16,
         Stereo8,
         Stereo16
     };
 
-    struct AudioBufferDescriptor {
-        BufferFormat format;
-        size_t sampleRate;
+    struct AudioDataDescriptor {
+        AudioFormat format;
+        size_t sampleRate = 0;
+        const void* data  = nullptr;
+        size_t dataSize   = 0;
     };
 }
 
@@ -19,5 +21,7 @@ namespace clv {
         //FUNCTIONS
     public:
         virtual ~AudioBuffer() = default;
+
+        virtual void map(const AudioDataDescriptor& descriptor) = 0;
     };
 }

@@ -28,8 +28,12 @@ namespace clv {
         alcCloseDevice(alDevice);
     }
 
-    std::unique_ptr<AudioBuffer> ALFactory::createAudioBuffer(AudioBufferDescriptor descriptor, const void* data, size_t dataSize) {
-        return std::make_unique<ALBuffer>(descriptor, data, dataSize);
+    std::unique_ptr<AudioBuffer> ALFactory::createAudioBuffer() {
+        return std::make_unique<ALBuffer>();
+    }
+
+    std::unique_ptr<AudioBuffer> ALFactory::createAudioBuffer(const AudioDataDescriptor& descriptor) {
+        return std::make_unique<ALBuffer>(descriptor);
     }
 
     std::unique_ptr<AudioSource> ALFactory::createAudioSource() {

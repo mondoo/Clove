@@ -3,22 +3,26 @@
 #include "Clove/Audio/OpenAL/ALError.hpp"
 
 namespace clv {
-    static ALenum convertFormat(BufferFormat format) {
+    static ALenum convertFormat(AudioFormat format) {
         switch(format) {
-            case BufferFormat::Mono8:
+            case AudioFormat::Mono8:
                 return AL_FORMAT_MONO8;
-            case BufferFormat::Mono16:
+            case AudioFormat::Mono16:
                 return AL_FORMAT_MONO16;
-            case BufferFormat::Stereo8:
+            case AudioFormat::Stereo8:
                 return AL_FORMAT_STEREO8;
-            case BufferFormat::Stereo16:
+            case AudioFormat::Stereo16:
                 return AL_FORMAT_STEREO16;
         }
     }
 
-    ALBuffer::ALBuffer(AudioBufferDescriptor descriptor, const void* data, size_t dataSize) {
+    ALBuffer::ALBuffer() {
         alCall(alGenBuffers(1, &buffer));
-        alCall(alBufferData(buffer, convertFormat(descriptor.format), data, dataSize, descriptor.sampleRate));
+    }
+
+    ALBuffer::ALBuffer(const AudioDataDescriptor& descriptor) {
+        alCall(alGenBuffers(1, &buffer));
+        map(descriptor);
     }
 
     ALBuffer::ALBuffer(ALBuffer&& other) noexcept = default;
@@ -27,6 +31,10 @@ namespace clv {
 
     ALBuffer::~ALBuffer() {
         alCall(alDeleteBuffers(1, &buffer));
+    }
+
+    void ALBuffer::map(const AudioDataDescriptor& descriptor) {
+        alCall(alBufferData(buffer, convertFormat(descriptor.format), descriptor.data, descriptor.dataSize, descriptor.sampleRate));
     }
 
     ALuint ALBuffer::getBufferId() const {

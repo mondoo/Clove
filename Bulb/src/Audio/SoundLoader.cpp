@@ -5,13 +5,13 @@
 #include <sndfile.h>
 
 namespace blb::aud {
-    static clv::BufferFormat getBufferFormat(const SF_INFO& fileInfo) {
+    static clv::AudioFormat getBufferFormat(const SF_INFO& fileInfo) {
         const bool is16 = (fileInfo.format & SF_FORMAT_PCM_16) != 0;
 
         if(fileInfo.channels == 1) {
-            return is16 ? clv::BufferFormat::Mono16 : clv::BufferFormat::Mono8;
+            return is16 ? clv::AudioFormat::Mono16 : clv::AudioFormat::Mono8;
         } else {
-            return is16 ? clv::BufferFormat::Stereo16 : clv::BufferFormat::Stereo8;
+            return is16 ? clv::AudioFormat::Stereo16 : clv::AudioFormat::Stereo8;
         }
     }
 
@@ -25,10 +25,12 @@ namespace blb::aud {
         short* rawBuffer        = new short[bufferSize];
         sf_readf_short(file, rawBuffer, fileInfo.frames);
 
-        clv::AudioBufferDescriptor descriptor{};
+        clv::AudioDataDescriptor descriptor{};
         descriptor.format     = getBufferFormat(fileInfo);
         descriptor.sampleRate = fileInfo.samplerate;
-        auto buffer           = factory.createAudioBuffer(std::move(descriptor), rawBuffer, bufferSize * sizeof(short));
+        descriptor.data       = rawBuffer;
+        descriptor.dataSize   = bufferSize * sizeof(short);
+        auto buffer           = factory.createAudioBuffer(std::move(descriptor));
 
         delete[] rawBuffer;
 

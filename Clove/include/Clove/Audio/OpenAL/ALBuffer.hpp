@@ -12,8 +12,8 @@ namespace clv {
 
         //FUNCTIONS
     public:
-        ALBuffer() = delete;
-        ALBuffer(AudioBufferDescriptor descriptor, const void* data, size_t dataSize);
+        ALBuffer();
+        ALBuffer(const AudioDataDescriptor& descriptor);
 
         ALBuffer(const ALBuffer& other) = delete;
         ALBuffer(ALBuffer&& other) noexcept;
@@ -22,6 +22,8 @@ namespace clv {
         ALBuffer& operator=(ALBuffer&& other) noexcept;
 
         ~ALBuffer();
+
+        void map(const AudioDataDescriptor& descriptor) override;
 
         ALuint getBufferId() const;
     };
