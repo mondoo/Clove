@@ -20,8 +20,8 @@ namespace clv {
         alCall(alGenBuffers(1, &buffer));
     }
 
-    ALBuffer::ALBuffer(const AudioDataDescriptor& descriptor) {
-        alCall(alGenBuffers(1, &buffer));
+    ALBuffer::ALBuffer(const AudioDataDescriptor& descriptor) 
+        : ALBuffer(){
         map(descriptor);
     }
 
