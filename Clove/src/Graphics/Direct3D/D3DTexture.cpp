@@ -121,10 +121,13 @@ namespace clv::gfx::d3d{
 
 	D3DTexture::D3DTexture(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture)
 		: factory(std::move(factory))
-		, descriptor(descriptor){
+		, descriptor(descriptor)
+		, BPP(4){
 		int width = 0;
 		int height = 0;
-		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
+        int desiredBPP = 0;
+
+		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &desiredBPP, BPP);//Force images to be imported to 4 bits per pixel, desiredBPP will be what the image wants to be
 
 		this->descriptor.dimensions.x = static_cast<uint32_t>(width);
 		this->descriptor.dimensions.y = static_cast<uint32_t>(height);
@@ -195,7 +198,7 @@ namespace clv::gfx::d3d{
 
 			D3D11_SUBRESOURCE_DATA initialData{};
 			initialData.pSysMem				= data;
-			initialData.SysMemPitch			= descriptor.dimensions.x * BPP;
+            initialData.SysMemPitch			= descriptor.dimensions.x * BPP;
 			initialData.SysMemSlicePitch	= 0u;
 
 			DX11_THROW_INFO(d3dDevice.CreateTexture2D(&textureDesc, &initialData, &d3dTexture));
