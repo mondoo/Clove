@@ -24,6 +24,9 @@ namespace clv {
 
         void setBuffer(const AudioBuffer& buffer) override;
 
+        void queueBuffer(const AudioBuffer& buffer) override;
+        void unQueueBuffer(const AudioBuffer& buffer) override;
+
         void setPitch(float pitch) override;
         void setLooping(bool isLooping) override;
 
@@ -32,6 +35,9 @@ namespace clv {
 
         mth::vec3f getPosition() const override;
         mth::vec3f getVelocity() const override;
+
+        virtual uint32_t getNumBuffersQueued() const override;
+        virtual uint32_t getNumBuffersProcessed() const override;
 
         void play() override;
         void pause() override;

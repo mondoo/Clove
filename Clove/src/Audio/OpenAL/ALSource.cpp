@@ -21,6 +21,18 @@ namespace clv {
         alCall(alSourcei(source, AL_BUFFER, alBuffer->getBufferId()));
     }
 
+    void ALSource::queueBuffer(const AudioBuffer& buffer) {
+        const ALBuffer* alBuffer = safeCast<const ALBuffer>(&buffer);
+        const ALuint buffers[]   = { alBuffer->getBufferId() };
+        alCall(alSourceQueueBuffers(source, 1, buffers));
+    }
+
+    void ALSource::unQueueBuffer(const AudioBuffer& buffer) {
+        const ALBuffer* alBuffer = safeCast<const ALBuffer>(&buffer);
+        ALuint buffers[]         = { alBuffer->getBufferId() };
+        alCall(alSourceUnqueueBuffers(source, 1, buffers));
+    }
+
     void ALSource::setPitch(float pitch) {
         alCall(alSourcef(source, AL_PITCH, pitch));
     }
@@ -47,6 +59,18 @@ namespace clv {
         mth::vec3f velocity{};
         alCall(alGetSource3f(source, AL_VELOCITY, &velocity.x, &velocity.y, &velocity.z));
         return velocity;
+    }
+
+    uint32_t ALSource::getNumBuffersQueued() const {
+        ALint buffersQeued = 0;
+        alCall(alGetSourcei(source, AL_BUFFERS_QUEUED, &buffersQeued));
+        return static_cast<uint32_t>(buffersQeued);
+    }
+
+    uint32_t ALSource::getNumBuffersProcessed() const {
+        ALint buffersProcessed = 0;
+        alCall(alGetSourcei(source, AL_BUFFERS_PROCESSED, &buffersProcessed));
+        return static_cast<uint32_t>(buffersProcessed);
     }
 
     void ALSource::play() {
