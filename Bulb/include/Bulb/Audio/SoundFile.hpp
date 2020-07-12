@@ -45,7 +45,7 @@ namespace blb::aud {
         Format getFormat() const;
 
         //Reads the current amount of frames into a buffer of that size (frames * num of channels). user needs to delete pointer. returns pointer and size of entire buffer in bytes
-        //it will read from the current seeked position (default start of file)
+        //it will read from the current seeked position (default start of file) and then seek frames * num of channels along
         std::pair<short*, size_t> read(const uint32_t frames);
 
         //Seek to the position in the file. ex: SeekPosition::Beginning, frames = 5 will be 5 frames from the beginning of the file

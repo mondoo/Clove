@@ -25,8 +25,8 @@ int main() {
 
     //Get some data set up initially
     {
+        //Reading also seeks the file's cursor along along
         auto [bufferAData, bufferASize] = file.read(framesPerBuffer);
-        file.seek(blb::aud::SoundFile::SeekPosition::Beginning, framesPerBuffer);
         auto [bufferBData, bufferBSize] = file.read(framesPerBuffer);
 
         //Map buffers
@@ -61,13 +61,20 @@ int main() {
         std::chrono::duration<float> deltaSeconds = currFrameTime - prevFrameTime;
         prevFrameTime                             = currFrameTime;
 
+        static float total = 0.0f;
+        total += deltaSeconds.count();
+
+        //Stop after 15 seconds
+        if(total >= 30.0f) {
+            break;
+        }
+
         //Update buffers
         uint32_t numProcessed = audioSource->getNumBuffersProcessed();
         if(numProcessed > 0) {
             while(numProcessed-- > 0) {
                 auto buffer = audioSource->unQueueBuffers(1)[0];
 
-                file.seek(blb::aud::SoundFile::SeekPosition::Current, framesPerBuffer);
                 auto [data, size] = file.read(framesPerBuffer);
 
                 clv::AudioDataDescriptor bufferData{};
@@ -80,17 +87,7 @@ int main() {
                 audioSource->queueBuffers({ buffer });
             }
         }
-
-        static float total = 0.0f;
-        total += deltaSeconds.count();
-
-        //Stop after 15 seconds
-        if(total >= 30.0f) {
-            break;
-        }
     }
-
-    audioSource->unQueueBuffers(2);
 
     return 0;
 }
