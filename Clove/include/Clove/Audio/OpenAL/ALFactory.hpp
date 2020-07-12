@@ -24,7 +24,7 @@ namespace clv {
         ~ALFactory();
 
         std::unique_ptr<AudioBuffer> createAudioBuffer() override;
-        std::unique_ptr<AudioBuffer> createAudioBuffer(const AudioDataDescriptor& descriptor) override;
+        std::unique_ptr<AudioBuffer> createAudioBuffer(const AudioBuffer::DataInfo& info) override;
         std::unique_ptr<AudioSource> createAudioSource() override;
         std::unique_ptr<AudioListener> createAudioListener() override;
     };

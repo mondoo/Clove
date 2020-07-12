@@ -1,12 +1,12 @@
 #include <Bulb/Bulb.hpp>
 
-static clv::AudioFormat getBufferFormat(const blb::aud::SoundFile& file) {
+static clv::AudioBuffer::Format getBufferFormat(const blb::aud::SoundFile& file) {
     const bool is16 = file.getFormat() == blb::aud::SoundFile::Format::S16;
 
     if(file.getChannels() == 1) {
-        return is16 ? clv::AudioFormat::Mono16 : clv::AudioFormat::Mono8;
+        return is16 ? clv::AudioBuffer::Format::Mono16 : clv::AudioBuffer::Format::Mono8;
     } else {
-        return is16 ? clv::AudioFormat::Stereo16 : clv::AudioFormat::Stereo8;
+        return is16 ? clv::AudioBuffer::Format::Stereo16 : clv::AudioBuffer::Format::Stereo8;
     }
 }
 
@@ -17,7 +17,7 @@ int main() {
 
     auto [rawBuffer, bufferSize] = file.read(file.getFrames());
 
-    clv::AudioDataDescriptor descriptor{};
+    clv::AudioBuffer::DataInfo descriptor{};
     descriptor.format     = getBufferFormat(file);
     descriptor.sampleRate = file.getSampleRate();
     descriptor.data       = rawBuffer;

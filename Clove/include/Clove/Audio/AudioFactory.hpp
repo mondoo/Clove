@@ -11,7 +11,7 @@ namespace clv {
         virtual ~AudioFactory() = default;
 
         virtual std::unique_ptr<AudioBuffer> createAudioBuffer() = 0;
-        virtual std::unique_ptr<AudioBuffer> createAudioBuffer(const AudioDataDescriptor& descriptor) = 0;
+        virtual std::unique_ptr<AudioBuffer> createAudioBuffer(const AudioBuffer::DataInfo& info) = 0;
         virtual std::unique_ptr<AudioSource> createAudioSource() = 0;
         virtual std::unique_ptr<AudioListener> createAudioListener() = 0;
     };

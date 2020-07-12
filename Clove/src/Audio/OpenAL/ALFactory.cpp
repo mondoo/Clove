@@ -32,8 +32,8 @@ namespace clv {
         return std::make_unique<ALBuffer>();
     }
 
-    std::unique_ptr<AudioBuffer> ALFactory::createAudioBuffer(const AudioDataDescriptor& descriptor) {
-        return std::make_unique<ALBuffer>(descriptor);
+    std::unique_ptr<AudioBuffer> ALFactory::createAudioBuffer(const AudioBuffer::DataInfo& info) {
+        return std::make_unique<ALBuffer>(info);
     }
 
     std::unique_ptr<AudioSource> ALFactory::createAudioSource() {
