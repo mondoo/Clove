@@ -1,7 +1,9 @@
 #pragma once
 
 namespace blb::aud {
-    //SoundFile class opens a sound file and allows access to the data
+	/**
+	 * @brief Opens a sound file (.wav etc.) and allows acess to the data
+	 */
     class SoundFile {
         //TYPES
     private:
@@ -9,17 +11,17 @@ namespace blb::aud {
 
     public:
         enum class Format {
-            unknown,
-            s8, //signed 8bit data
-            s16,//signed 16bit data
-            s24,//signed 24bit data
-            s32,//signed 32bit data
+            Unknown,
+            S8, /**< signed 8 bit data */
+            S16,/**< signed 16 bit data */
+            S24,/**< signed 24 bit data */
+            S32,/**< signed 32 bit data */
         };
 
         enum class SeekPosition{
-            Beginning, //Use the beginning of the file
-            Current, //Use the current posititon of the cursor
-            End //Use the end of the file
+            Beginning, /**< Use the beginning of the file */
+            Current, /**< Use the current posititon of the cursor */
+            End /**< Use the end of the file */
         };
 
         //VARIABLES
@@ -44,11 +46,22 @@ namespace blb::aud {
         uint32_t getSampleRate() const;
         Format getFormat() const;
 
-        //Reads the current amount of frames into a buffer of that size (frames * num of channels). user needs to delete pointer. returns pointer and size of entire buffer in bytes
-        //it will read from the current seeked position (default start of file) and then seek frames * num of channels along
-        std::pair<short*, size_t> read(const uint32_t frames);
+        /**
+		 * @brief Reads the amount of frames and returns a pointer to that data
+		 * @details Reads from the current seek position (default start of file) and
+		 * moves the cursor frames amount long.
+		 * @param frames How many frames to read
+		 * @returns Returns an std::pair containing a pointer to the data and how many btyes long the buffer is
+		 */
+		std::pair<short*, size_t> read(const uint32_t frames);
 
-        //Seek to the position in the file. ex: SeekPosition::Beginning, frames = 5 will be 5 frames from the beginning of the file
-        void seek(SeekPosition position, uint32_t frames = 0);
+        /**
+		 * @brief Moves the internal cursor.
+		 * @details The next read called after calling seek will cause the data to
+		 * be read from that position.
+		 *@param position Where to start the seek from
+		 *@param frames How many frames from position to put the cursor
+		 */
+		void seek(SeekPosition position, uint32_t frames = 0);
     };
 }
