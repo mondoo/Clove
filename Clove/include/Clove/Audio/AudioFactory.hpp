@@ -5,6 +5,9 @@
 #include "Clove/Audio/AudioSource.hpp"
 
 namespace clv {
+	/**
+	 * @brief Responsible for creating all audio objects.
+	 */
     class AudioFactory {
         //FUNCTIONS
     public:

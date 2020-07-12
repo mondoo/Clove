@@ -1,6 +1,11 @@
 #pragma once
 
 namespace clv {
+	/**
+	 * @brief Represents a buffer of data that can be played with an AudioSource
+	 * @details Created from an AudioFactory. Can be created empty and then
+	 * updated later.
+	 */
     class AudioBuffer {
 		//TYPES
 	public:
@@ -22,6 +27,9 @@ namespace clv {
     public:
         virtual ~AudioBuffer() = default;
 
+		/**
+		 * @brief Write data into the buffer.
+		 */
         virtual void map(const DataInfo& info) = 0;
     };
 }

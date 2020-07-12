@@ -1,6 +1,12 @@
 #pragma once
 
 namespace clv {
+	/**
+	 * @brief Handle to the listener in the 'audio scene'
+	 * @details Only one listener is active when playing audio. This class
+	 * exposes functions for setting values on the listener object. Such as
+	 * setting the position
+	 */
     class AudioListener {
         //FUNCTIONS
     public:
