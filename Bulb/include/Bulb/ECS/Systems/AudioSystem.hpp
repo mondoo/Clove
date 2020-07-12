@@ -5,10 +5,10 @@
 #include "Bulb/ECS/System.hpp"
 
 namespace blb::ecs {
+	/**
+	 * @brief Enables an ecs::World to play poisitional audio
+	 */
 	class AudioSystem : public System {
-		//VARIABLES
-	private:
-
 		//FUNCTIONS
 	public:
 		AudioSystem();

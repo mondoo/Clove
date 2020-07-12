@@ -16,6 +16,9 @@ namespace blb::ecs {
 }
 
 namespace blb::ecs {
+	/**
+	 * @brief Allows an entity to determine where a sound is coming from
+	 */
     class AudioSourceComponent : public Component<AudioSourceComponent> {
         friend class AudioSystem;
 

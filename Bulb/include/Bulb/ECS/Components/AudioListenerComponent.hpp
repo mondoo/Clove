@@ -8,6 +8,10 @@ namespace clv {
 }
 
 namespace blb::ecs {
+	/**
+	 * @brief Allows an entity to determine where a sound comes from
+	 * @details Every ecs::World can only have 1 AudioListenerComponent
+	 */
     class AudioListenerComponent : public Component<AudioListenerComponent> {
         friend class AudioSystem;
 
