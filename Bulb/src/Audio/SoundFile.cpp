@@ -3,6 +3,20 @@
 #include <sndfile.h>
 
 namespace blb::aud {
+    static int getWhence(SoundFile::SeekPosition position){
+        switch(position) {
+            case SoundFile::SeekPosition::Beginning:
+                return SEEK_SET;
+            case SoundFile::SeekPosition::Current:
+                return SEEK_CUR;
+            case SoundFile::SeekPosition::End:
+                return SEEK_END;
+            default:
+                CLV_ASSERT(false, "{0}: Default statement hit", CLV_FUNCTION_NAME);
+                return 0;
+        }
+    }
+
     struct SoundFile::FileData {
         SNDFILE* file;
         SF_INFO fileInfo;
@@ -57,5 +71,9 @@ namespace blb::aud {
         sf_readf_short(data->file, buffer, frames);
 
         return { buffer, bufferSize };
+    }
+
+    void SoundFile::seek(SeekPosition position, uint32_t frames) {
+        sf_seek(data->file, frames, getWhence(position));
     }
 }

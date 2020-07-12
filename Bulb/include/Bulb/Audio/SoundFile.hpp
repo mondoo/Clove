@@ -16,6 +16,12 @@ namespace blb::aud {
             s32,//signed 32bit data
         };
 
+        enum class SeekPosition{
+            Beginning, //Use the beginning of the file
+            Current, //Use the current posititon of the cursor
+            End //Use the end of the file
+        };
+
         //VARIABLES
     private:
         std::unique_ptr<FileData> data;
@@ -39,6 +45,10 @@ namespace blb::aud {
         Format getFormat() const;
 
         //Reads the current amount of frames into a buffer of that size (frames * num of channels). user needs to delete pointer. returns pointer and size of entire buffer in bytes
+        //it will read from the current seeked position (default start of file)
         std::pair<short*, size_t> read(const uint32_t frames);
+
+        //Seek to the position in the file. ex: SeekPosition::Beginning, frames = 5 will be 5 frames from the beginning of the file
+        void seek(SeekPosition position, uint32_t frames = 0);
     };
 }
