@@ -14,8 +14,9 @@ namespace clv {
         virtual void setBuffer(const AudioBuffer& buffer) = 0;
 
         //Queues a buffer to be played sequentially
-        virtual void queueBuffer(const AudioBuffer& buffer)   = 0;
-        virtual void unQueueBuffer(const AudioBuffer& buffer) = 0;
+        virtual void queueBuffers(std::vector<std::shared_ptr<AudioBuffer>> buffers)   = 0;
+        //Un queues the number of buffers, can get num of unqueuable buffers by calling getNumBuffersProcessed
+        virtual std::vector<std::shared_ptr<AudioBuffer>> unQueueBuffers(const uint32_t numToUnqueue) = 0;
 
         virtual void setPitch(float pitch)      = 0;
         virtual void setLooping(bool isLooping) = 0;

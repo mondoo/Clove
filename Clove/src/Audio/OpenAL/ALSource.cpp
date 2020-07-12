@@ -21,16 +21,53 @@ namespace clv {
         alCall(alSourcei(source, AL_BUFFER, alBuffer->getBufferId()));
     }
 
-    void ALSource::queueBuffer(const AudioBuffer& buffer) {
-        const ALBuffer* alBuffer = safeCast<const ALBuffer>(&buffer);
-        const ALuint buffers[]   = { alBuffer->getBufferId() };
-        alCall(alSourceQueueBuffers(source, 1, buffers));
+    void ALSource::queueBuffers(std::vector<std::shared_ptr<AudioBuffer>> buffers) {
+        //Get the buffer Id of all of the buffers to placed into the queue
+        std::vector<ALuint> alBuffers(std::size(buffers));
+        for(size_t i = 0; i < std::size(alBuffers); ++i) {
+            const ALBuffer* alBuffer = safeCast<const ALBuffer>(buffers[i].get());
+            alBuffers[i]             = alBuffer->getBufferId();
+        }
+
+        alCall(alSourceQueueBuffers(source, std::size(alBuffers), alBuffers.data()));
+
+        bufferQueue.insert(std::end(bufferQueue), std::begin(buffers), std::end(buffers));
     }
 
-    void ALSource::unQueueBuffer(const AudioBuffer& buffer) {
-        const ALBuffer* alBuffer = safeCast<const ALBuffer>(&buffer);
-        ALuint buffers[]         = { alBuffer->getBufferId() };
-        alCall(alSourceUnqueueBuffers(source, 1, buffers));
+    std::vector<std::shared_ptr<AudioBuffer>> ALSource::unQueueBuffers(const uint32_t numToUnqueue) {
+#if CLV_DEBUG
+        const uint32_t maxAbleToUnQueue = getNumBuffersProcessed();
+        CLV_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}, Can't unqueue {1} buffers. Only {2} buffers have been processed", CLV_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
+#endif
+
+        ALuint* buffers = new ALuint[numToUnqueue];
+        alCall(alSourceUnqueueBuffers(source, numToUnqueue, buffers));
+
+        std::set<ALuint> pendingBuffers;
+        for(size_t i = 0; i < numToUnqueue; i++) {
+            pendingBuffers.emplace(buffers[i]);
+        }
+
+        delete[] buffers;
+
+        std::vector<std::shared_ptr<AudioBuffer>> removedBuffers;
+        removedBuffers.reserve(numToUnqueue);
+
+        auto removeIter = std::remove_if(std::begin(bufferQueue), std::end(bufferQueue), [&](const std::shared_ptr<AudioBuffer>& buffer) {
+            const ALBuffer* alBuffer = safeCast<const ALBuffer>(buffer.get());
+            const ALuint bufferId    = alBuffer->getBufferId();
+
+            if(pendingBuffers.find(bufferId) != pendingBuffers.end()) {
+                removedBuffers.push_back(buffer);
+                return true;
+            }
+
+            return false;
+        });
+
+        bufferQueue.erase(removeIter, std::end(bufferQueue));
+
+        return removedBuffers;
     }
 
     void ALSource::setPitch(float pitch) {

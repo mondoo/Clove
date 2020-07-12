@@ -10,6 +10,8 @@ namespace clv {
     private:
         ALuint source;
 
+        std::vector<std::shared_ptr<AudioBuffer>> bufferQueue;
+
         //FUNCTIONS
     public:
         ALSource();
@@ -24,8 +26,8 @@ namespace clv {
 
         void setBuffer(const AudioBuffer& buffer) override;
 
-        void queueBuffer(const AudioBuffer& buffer) override;
-        void unQueueBuffer(const AudioBuffer& buffer) override;
+        void queueBuffers(std::vector<std::shared_ptr<AudioBuffer>> buffers) override;
+        std::vector<std::shared_ptr<AudioBuffer>> unQueueBuffers(const uint32_t numToUnqueue) override;
 
         void setPitch(float pitch) override;
         void setLooping(bool isLooping) override;
