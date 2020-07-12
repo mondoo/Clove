@@ -1,17 +1,12 @@
 #include "Bulb/ECS/Components/AudioSourceComponent.hpp"
 
-//#include "Bulb/Audio/SoundLoader.hpp"
-
 #include <Clove/Audio/AudioBuffer.hpp>
 #include <Clove/Audio/AudioSource.hpp>
 #include <Clove/Audio/AudioFactory.hpp>
 
 namespace blb::ecs {
-    AudioSourceComponent::AudioSourceComponent(clv::AudioFactory& factory, std::string_view filePath){
-        //buffer = aud::SoundLoader::loadSound(factory, filePath);
+    AudioSourceComponent::AudioSourceComponent(clv::AudioFactory& factory){
         source = factory.createAudioSource();
-
-        source->setBuffer(*buffer);
     }
 
     AudioSourceComponent::AudioSourceComponent(AudioSourceComponent&& other) noexcept = default;
@@ -20,23 +15,32 @@ namespace blb::ecs {
 
     AudioSourceComponent::~AudioSourceComponent() = default;
 
-	void AudioSourceComponent::play(PlaybackMode playback) {
+    void AudioSourceComponent::setBuffer(const clv::AudioBuffer& buffer) {
+        source->setBuffer(buffer);
+    }
 
+    void AudioSourceComponent::queueBuffers(std::vector<std::shared_ptr<clv::AudioBuffer>> buffers) {
+        source->queueBuffers(std::move(buffers));
+    }
+
+    std::vector<std::shared_ptr<clv::AudioBuffer>> AudioSourceComponent::unQueueBuffers(const uint32_t numToUnQueue) {
+        return source->unQueueBuffers(numToUnQueue);
+    }
+
+	void AudioSourceComponent::play(PlaybackMode playback) {
+        source->setLooping(playback == PlaybackMode::Repeat);
+        source->play();
 	}
 
 	void AudioSourceComponent::pause() {
-
+        source->pause();
 	}
 
 	void AudioSourceComponent::resume() {
-
+        source->play();
 	}
 
 	void AudioSourceComponent::stop() {
-
-	}
-
-	bool AudioSourceComponent::isPlaying() {
-		return playing;
+        source->stop();
 	}
 }

@@ -21,15 +21,12 @@ namespace blb::ecs {
 
         //VARIABLES
     private:
-        std::shared_ptr<clv::AudioBuffer> buffer;
         std::unique_ptr<clv::AudioSource> source;
-
-        bool playing = false;
 
         //FUNCTIONS
     public:
         AudioSourceComponent() = delete;
-        AudioSourceComponent(clv::AudioFactory& factory, std::string_view filePath);
+        AudioSourceComponent(clv::AudioFactory& factory);
 
         AudioSourceComponent(const AudioSourceComponent& other) = delete;
         AudioSourceComponent(AudioSourceComponent&& other) noexcept;
@@ -39,11 +36,13 @@ namespace blb::ecs {
 
         ~AudioSourceComponent();
 
+        void setBuffer(const clv::AudioBuffer& buffer);
+        void queueBuffers(std::vector<std::shared_ptr<clv::AudioBuffer>> buffers);
+        std::vector<std::shared_ptr<clv::AudioBuffer>> unQueueBuffers(const uint32_t numToUnQueue);
+
         void play(PlaybackMode playback = PlaybackMode::Once);
         void pause();
         void resume();
         void stop();
-
-        bool isPlaying();
     };
 }
