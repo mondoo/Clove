@@ -8,7 +8,6 @@ namespace blb{
 namespace blb {
 	/**
 	 * @brief A StateMachine manages States and Transitions. Determining what Action to execute.
-	 *
 	 * @tparam Action The type of Action this StateMachine handles
 	 */
 	template<typename Action>
@@ -32,7 +31,6 @@ namespace blb {
 
 		/**
 		 * @brief Runs through the current State to test for any Transitions that were activated
-		 *
 		 * @return A vector of Actions to perform
 		 */
 		std::vector<Action*> update();

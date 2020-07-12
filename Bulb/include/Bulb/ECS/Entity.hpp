@@ -10,8 +10,7 @@ namespace blb::ecs{
 namespace blb::ecs{
 	/**
 	 * @brief A wrapper class for an EntityId.
-	 *
-	 * This class wraps an EntityId and a pointer to the World that owns it. Allowing
+	 * @details This class wraps an EntityId and a pointer to the World that owns it. Allowing
 	 * for a convenient way to access the Entity.
 	 */
 	class Entity{
@@ -36,42 +35,34 @@ namespace blb::ecs{
 
 		/**
 		 * @brief Checks if this Entity is valid.
-		 *
-		 * An Entity will be valid if it has a valid World pointer and has a valid EntityId.
-		 *
+		 * @details An Entity will be valid if it has a valid World pointer and has a valid EntityId.
 		 * @return Returns true of the Entity is valid.
-		 * @see World::isEntityValid.
+		 * @see	World::isEntityValid.
 		 */
 		bool isValid() const;
 
 		/**
 		 * @brief Gets the underlying EntityId this class wraps.
-		 *
 		 * @return The EntityID this class wraps.
 		 */
 		EntityID getID() const;
 
 		/**
 		 * @brief Clones this Entity's components.
-		 *
-		 * Creates a new Entity with the same Components as this one.
-		 *
+		 * @details Creates a new Entity with the same Components as this one.
 		 * @return A new Entity with the same Component layout.
 		 * @see World::cloneEntitiesComponents.
 		 */
 		Entity clone();
 		/**
 		 * @brief Destroys this Entity, removing it from the World.
-		 *
-		 * Calls World::destroyEntity.
-		 *
+		 * @details Calls World::destroyEntity.
 		 * @see World::destroyEntity.
 		 */
 		void destroy();
 
 		/**
 		 * @brief Adds a new Component to this Entity.
-		 *
 		 * @tparam ComponentType The type of Component to add.
 		 * @param args Construction arguments forwarded to the Component.
 		 * @return A ComponentPtr to the added Component.
@@ -82,7 +73,6 @@ namespace blb::ecs{
 		ComponentPtr<ComponentType> addComponent(ConstructorArgs&& ...args);
 		/**
 		 * @brief Gets a Component from this Entity.
-		 *
 		 * @tparam ComponentType The type of Component to get.
 		 * @return A ComponentPtr to the component if it exists.
 		 * @see World::getComponent
@@ -92,7 +82,6 @@ namespace blb::ecs{
 		ComponentPtr<ComponentType> getComponent() const;
 		/**
 		 * @brief Checks to see if this Entity has a Component.
-		 *
 		 * @tparam ComponentType The type of Component to check for.
 		 * @return Returns true if the component exists.
 		 * @see World::hasComponent.
@@ -101,7 +90,6 @@ namespace blb::ecs{
 		bool hasComponent() const;
 		/**
 		 * @brief Removes a component from this Entity.
-		 *
 		 * @tparam The type of Component to remove.
 		 * @see World::removeComponent.
 		 */
