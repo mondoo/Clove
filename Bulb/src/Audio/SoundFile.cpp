@@ -50,17 +50,17 @@ namespace blb::aud {
 
     SoundFile::Format SoundFile::getFormat() const {
         if((data->fileInfo.format & SF_FORMAT_PCM_S8) != 0) {
-            return Format::s8;
+            return Format::S8;
         } else if((data->fileInfo.format & SF_FORMAT_PCM_16) != 0) {
-            return Format::s16;
+            return Format::S16;
         } else if((data->fileInfo.format & SF_FORMAT_PCM_24) != 0) {
-            return Format::s24;
+            return Format::S24;
         } else if((data->fileInfo.format & SF_FORMAT_PCM_32) != 0) {
-            return Format::s32;
+            return Format::S32;
         }
 
         CLV_ASSERT(false, "{0}, Unknown file format", CLV_FUNCTION_NAME_PRETTY);
-        return Format::unknown;
+        return Format::Unknown;
     }
 
     std::pair<short*, size_t> SoundFile::read(const uint32_t frames) {

@@ -1,7 +1,7 @@
 #include <Bulb/Bulb.hpp>
 
 static clv::AudioFormat getBufferFormat(const blb::aud::SoundFile& file) {
-    const bool is16 = file.getFormat() == blb::aud::SoundFile::Format::s16;
+    const bool is16 = file.getFormat() == blb::aud::SoundFile::Format::S16;
 
     if(file.getChannels() == 1) {
         return is16 ? clv::AudioFormat::Mono16 : clv::AudioFormat::Mono8;
