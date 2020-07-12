@@ -15,20 +15,44 @@ int main() {
 
     auto audioFactory = clv::createAudioFactory(clv::AudioAPI::OpenAl);
 
-    auto [rawBuffer, bufferSize] = file.read(file.getFrames());
-
-    clv::AudioDataDescriptor descriptor{};
-    descriptor.format     = getBufferFormat(file);
-    descriptor.sampleRate = file.getSampleRate();
-    descriptor.data       = rawBuffer;
-    descriptor.dataSize   = bufferSize;
-    auto audioBuffer      = audioFactory->createAudioBuffer(std::move(descriptor));
-
-    delete rawBuffer;
+    std::shared_ptr<clv::AudioBuffer> bufferA = audioFactory->createAudioBuffer();
+    std::shared_ptr<clv::AudioBuffer> bufferB = audioFactory->createAudioBuffer();
 
     auto audioSource = audioFactory->createAudioSource();
-    audioSource->setBuffer(*audioBuffer);
-    audioSource->setLooping(true);
+    
+    //Stream with 2 buffers each having a quater of the file
+    const uint32_t framesPerBuffer = file.getFrames() / 4;
+
+    //Get some data set up initially
+    {
+        auto [bufferAData, bufferASize] = file.read(framesPerBuffer);
+        file.seek(blb::aud::SoundFile::SeekPosition::Beginning, framesPerBuffer);
+        auto [bufferBData, bufferBSize] = file.read(framesPerBuffer);
+
+        //Map buffers
+        {
+            clv::AudioDataDescriptor bufferData{};
+            bufferData.format     = getBufferFormat(file);
+            bufferData.sampleRate = file.getSampleRate();
+            bufferData.data       = bufferAData;
+            bufferData.dataSize   = bufferASize;
+            bufferA->map(std::move(bufferData));
+        }
+        {
+            clv::AudioDataDescriptor bufferData{};
+            bufferData.format     = getBufferFormat(file);
+            bufferData.sampleRate = file.getSampleRate();
+            bufferData.data       = bufferBData;
+            bufferData.dataSize   = bufferBSize;
+            bufferB->map(std::move(bufferData));
+        }
+
+        delete bufferAData;
+        delete bufferBData;
+    }
+
+    audioSource->queueBuffers({ bufferA, bufferB });
+
     audioSource->play();
 
     auto prevFrameTime = std::chrono::system_clock::now();
@@ -37,17 +61,36 @@ int main() {
         std::chrono::duration<float> deltaSeconds = currFrameTime - prevFrameTime;
         prevFrameTime                             = currFrameTime;
 
+        //Update buffers
+        uint32_t numProcessed = audioSource->getNumBuffersProcessed();
+        if(numProcessed > 0) {
+            while(numProcessed-- > 0) {
+                auto buffer = audioSource->unQueueBuffers(1)[0];
+
+                file.seek(blb::aud::SoundFile::SeekPosition::Current, framesPerBuffer);
+                auto [data, size] = file.read(framesPerBuffer);
+
+                clv::AudioDataDescriptor bufferData{};
+                bufferData.format     = getBufferFormat(file);
+                bufferData.sampleRate = file.getSampleRate();
+                bufferData.data       = data;
+                bufferData.dataSize   = size;
+                buffer->map(std::move(bufferData));
+
+                audioSource->queueBuffers({ buffer });
+            }
+        }
+
         static float total = 0.0f;
         total += deltaSeconds.count();
 
-        float x = sin(total) * 10.0f;
-        audioSource->setPosition({ x, 0.0f, 3.0f });
-
         //Stop after 15 seconds
-        if(total >= 15.0f) {
+        if(total >= 30.0f) {
             break;
         }
     }
+
+    audioSource->unQueueBuffers(2);
 
     return 0;
 }
