@@ -7,10 +7,18 @@ namespace blb::aud {
     private:
         struct FileData;
 
+        enum class Format {
+            unknown,
+            s8, //signed 8bit data
+            s16,//signed 16bit data
+            s24,//signed 24bit data
+            s32,//signed 32bit data
+        };
+
         //VARIABLES
     private:
         std::unique_ptr<FileData> data;
-        
+
         //FUNCTIONS
     public:
         SoundFile() = delete;
@@ -23,5 +31,11 @@ namespace blb::aud {
         SoundFile& operator=(SoundFile&& other) noexcept;
 
         ~SoundFile();
+
+        uint32_t getChannels() const;
+        uint32_t getFrames() const;
+        uint32_t getSampleRate() const;
+        Format getFormat() const;
+
     };
 }
