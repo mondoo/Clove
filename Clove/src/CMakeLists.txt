@@ -7,6 +7,30 @@ add_library(${PROJECT_NAME} STATIC)
 
 #Files
 set(
+	AudioFiles
+		${CLV_INCLUDE}/Audio/Audio.hpp
+		${CLV_SOURCE}/Audio/Audio.cpp
+		${CLV_INCLUDE}/Audio/AudioBuffer.hpp
+		${CLV_INCLUDE}/Audio/AudioFactory.hpp
+		${CLV_INCLUDE}/Audio/AudioListener.hpp
+		${CLV_INCLUDE}/Audio/AudioSource.hpp	
+)
+
+set(
+	OpenALAudioFiles
+		${CLV_INCLUDE}/Audio/OpenAL/ALBuffer.hpp
+		${CLV_SOURCE}/Audio/OpenAL/ALBuffer.cpp
+		${CLV_INCLUDE}/Audio/OpenAL/ALError.hpp
+		${CLV_SOURCE}/Audio/OpenAL/ALError.cpp
+		${CLV_INCLUDE}/Audio/OpenAL/ALFactory.hpp
+		${CLV_SOURCE}/Audio/OpenAL/ALFactory.cpp
+		${CLV_INCLUDE}/Audio/OpenAL/ALListener.hpp
+		${CLV_SOURCE}/Audio/OpenAL/ALListener.cpp
+		${CLV_INCLUDE}/Audio/OpenAL/ALSource.hpp
+		${CLV_SOURCE}/Audio/OpenAL/ALSource.cpp
+)
+
+set(
 	DelegateFiles
 		${CLV_INCLUDE}/Delegate/DelegateHandle.hpp
 		${CLV_SOURCE}/Delegate/DelegateHandle.cpp
@@ -233,6 +257,8 @@ set(
 	${CLV_INCLUDE}/Log.inl
 	${CLV_SOURCE}/Log.cpp
 
+		${AudioFiles}
+			${OpenALAudioFiles}
 		${DelegateFiles}
 		${EventFiles}
 		${ExceptionFiles}
