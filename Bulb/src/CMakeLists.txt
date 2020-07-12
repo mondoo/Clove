@@ -30,8 +30,6 @@ set(
 		${BLB_SOURCE}/Audio/AudioStream.cpp
 		${BLB_INCLUDE}/Audio/SoundFile.hpp
 		${BLB_SOURCE}/Audio/SoundFile.cpp
-		${BLB_INCLUDE}/Audio/SoundLoader.hpp
-		${BLB_SOURCE}/Audio/SoundLoader.cpp
 )
 
 set(

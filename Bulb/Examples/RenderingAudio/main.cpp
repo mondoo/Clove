@@ -1,9 +1,30 @@
 #include <Bulb/Bulb.hpp>
 
-int main(){
+static clv::AudioFormat getBufferFormat(const blb::aud::SoundFile& file) {
+    const bool is16 = file.getFormat() == blb::aud::SoundFile::Format::s16;
+
+    if(file.getChannels() == 1) {
+        return is16 ? clv::AudioFormat::Mono16 : clv::AudioFormat::Mono8;
+    } else {
+        return is16 ? clv::AudioFormat::Stereo16 : clv::AudioFormat::Stereo8;
+    }
+}
+
+int main() {
+    blb::aud::SoundFile file{ SOURCE_DIR "/bounce.wav" };
+
     auto audioFactory = clv::createAudioFactory(clv::AudioAPI::OpenAl);
 
-    auto audioBuffer = blb::aud::SoundLoader::loadSound(*audioFactory, SOURCE_DIR "/bounce.wav");
+    auto [rawBuffer, bufferSize] = file.read(file.getFrames());
+
+    clv::AudioDataDescriptor descriptor{};
+    descriptor.format     = getBufferFormat(file);
+    descriptor.sampleRate = file.getSampleRate();
+    descriptor.data       = rawBuffer;
+    descriptor.dataSize   = bufferSize;
+    auto audioBuffer      = audioFactory->createAudioBuffer(std::move(descriptor));
+
+    delete rawBuffer;
 
     auto audioSource = audioFactory->createAudioSource();
     audioSource->setBuffer(*audioBuffer);

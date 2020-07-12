@@ -6,7 +6,7 @@
 #include "Bulb/AI/Selector.hpp"
 #include "Bulb/AI/Sequence.hpp"
 #include "Bulb/AI/Task.hpp"
-#include "Bulb/Audio/SoundLoader.hpp"
+#include "Bulb/Audio/SoundFile.hpp"
 #include "Bulb/ECS/Components/AudioSourceComponent.hpp"
 #include "Bulb/ECS/Components/CameraComponent.hpp"
 #include "Bulb/ECS/Components/DirectionalLightComponent.hpp"

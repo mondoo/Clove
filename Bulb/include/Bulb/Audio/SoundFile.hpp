@@ -7,6 +7,7 @@ namespace blb::aud {
     private:
         struct FileData;
 
+    public:
         enum class Format {
             unknown,
             s8, //signed 8bit data

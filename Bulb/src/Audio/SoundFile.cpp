@@ -52,7 +52,7 @@ namespace blb::aud {
     std::pair<short*, size_t> SoundFile::read(const uint32_t frames) {
         const size_t elementCount = frames * getChannels();
         const size_t bufferSize   = elementCount * sizeof(short);
-        short* buffer             = new short[elementCount];
+        short* buffer             = reinterpret_cast<short*>(malloc(bufferSize));
 
         sf_readf_short(data->file, buffer, frames);
 
