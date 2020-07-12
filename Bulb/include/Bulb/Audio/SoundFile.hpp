@@ -37,5 +37,7 @@ namespace blb::aud {
         uint32_t getSampleRate() const;
         Format getFormat() const;
 
+        //Reads the current amount of frames into a buffer of that size (frames * num of channels). user needs to delete pointer. returns pointer and size of entire buffer in bytes
+        std::pair<short*, size_t> read(const uint32_t frames);
     };
 }

@@ -48,4 +48,14 @@ namespace blb::aud {
         CLV_ASSERT(false, "{0}, Unknown file format", CLV_FUNCTION_NAME_PRETTY);
         return Format::unknown;
     }
+
+    std::pair<short*, size_t> SoundFile::read(const uint32_t frames) {
+        const size_t elementCount = frames * getChannels();
+        const size_t bufferSize   = elementCount * sizeof(short);
+        short* buffer             = new short[elementCount];
+
+        sf_readf_short(data->file, buffer, frames);
+
+        return { buffer, bufferSize };
+    }
 }
