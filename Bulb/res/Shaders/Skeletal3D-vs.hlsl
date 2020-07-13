@@ -45,7 +45,7 @@ VSOut main(float3 pos : POSITION3D, float2 tex : TEXCOORD, float3 norm : NORMAL,
         const float weight = weights[j];
         
         animatedPos += (mul(jointTransform, float4(pos, 1.0f)) * weight);
-        animatedNormal += (mul(jointTransform, float4(norm, 1.0f)) * weight);
+        animatedNormal += (mul(jointTransform, float4(norm, 0.0f)) * weight);
     }
 
     vso.pos = mul(mvp, animatedPos);
