@@ -293,7 +293,7 @@ namespace blb::ModelLoader {
 
                 skeleton->joints.resize(skeletonSize);
                 skeleton->joints[0].name            = skeletonRoot->mName.C_Str();
-                skeleton->joints[0].inverseBindPose = mth::inverse(convertToGarlicMatrix(skeletonRoot->mTransformation));
+                skeleton->joints[0].inverseBindPose = mth::mat4f{ 1.0f };
             } else {
                 skeletonSize = mesh->mNumBones;
                 startIndex   = 0;
