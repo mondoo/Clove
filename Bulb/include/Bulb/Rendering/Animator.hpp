@@ -2,6 +2,7 @@
 
 //Temp, need the join pose
 #include "Bulb/Rendering/AnimationTypes.hpp"
+#include "Bulb/Rendering/RenderingConstants.hpp"
 
 //TODO: Move to cpp
 namespace blb::rnd {
@@ -63,7 +64,7 @@ namespace blb::rnd {
     public:
         //TODO: Ctors
 
-        std::vector<clv::mth::mat4f> update(const clv::utl::DeltaTime deltaTime) {
+        std::array<clv::mth::mat4f, MAX_JOINTS> update(const clv::utl::DeltaTime deltaTime) {
             if(currentClip == nullptr) {
                 GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Current clip is now set, could not create palet", CLV_FUNCTION_NAME);
                 return {};
@@ -80,15 +81,19 @@ namespace blb::rnd {
             const float timeFromPrevPose = currentTime - prevPose.timeStamp;
             const float normTime         = timeFromPrevPose / timeBetweenPoses;
 
-            auto currentAnimPose = lerpJointPoses(prevPose, nextPose, normTime);
+            const auto currentAnimPose = lerpJointPoses(prevPose, nextPose, normTime);
 
             //Get the current joint to model matrix of the target pose (Cj->m)
-            auto currentJointToModel = calculateCurrentJointToModelMatrices(currentAnimPose, currentClip->skeleton);
+            const auto currentJointToModel = calculateCurrentJointToModelMatrices(currentAnimPose, currentClip->skeleton);
 
             //Calculate skinning matrix K = Cj->m * Bm->j (right to left)
-            std::vector<clv::mth::mat4f> skinningMatrix(currentJointToModel.size());
-            for(size_t i = 0; i < currentJointToModel.size(); ++i) {
-                skinningMatrix[i] = currentJointToModel[i] * currentClip->skeleton->joints[i].inverseBindPose;
+            std::array<clv::mth::mat4f, MAX_JOINTS> skinningMatrix;
+            for(size_t i = 0; i < std::size(skinningMatrix); ++i) {
+                if(i < std::size(currentJointToModel)) {
+                    skinningMatrix[i] = currentJointToModel[i] * currentClip->skeleton->joints[i].inverseBindPose;
+                } else {
+                    skinningMatrix[i] = clv::mth::mat4f{ 1.0f };
+                }
             }
 
             return skinningMatrix;
