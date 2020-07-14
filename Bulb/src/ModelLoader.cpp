@@ -16,23 +16,23 @@ namespace blb::ModelLoader {
         mth::mat4f garlicMat;
 
         garlicMat[0][0] = aiMat.a1;
-        garlicMat[1][0] = aiMat.b1;
-        garlicMat[2][0] = aiMat.c1;
-        garlicMat[3][0] = aiMat.d1;
+        garlicMat[0][1] = aiMat.b1;
+        garlicMat[0][2] = aiMat.c1;
+        garlicMat[0][3] = aiMat.d1;
 
-        garlicMat[0][1] = aiMat.a2;
+        garlicMat[1][0] = aiMat.a2;
         garlicMat[1][1] = aiMat.b2;
-        garlicMat[2][1] = aiMat.c2;
-        garlicMat[3][1] = aiMat.d2;
+        garlicMat[1][2] = aiMat.c2;
+        garlicMat[1][3] = aiMat.d2;
 
-        garlicMat[0][2] = aiMat.a3;
-        garlicMat[1][2] = aiMat.b3;
+        garlicMat[2][0] = aiMat.a3;
+        garlicMat[2][1] = aiMat.b3;
         garlicMat[2][2] = aiMat.c3;
-        garlicMat[3][2] = aiMat.d3;
+        garlicMat[2][3] = aiMat.d3;
 
-        garlicMat[0][3] = aiMat.a4;
-        garlicMat[1][3] = aiMat.b4;
-        garlicMat[2][3] = aiMat.c4;
+        garlicMat[3][0] = aiMat.a4;
+        garlicMat[3][1] = aiMat.b4;
+        garlicMat[3][2] = aiMat.c4;
         garlicMat[3][3] = aiMat.d4;
 
         return garlicMat;
