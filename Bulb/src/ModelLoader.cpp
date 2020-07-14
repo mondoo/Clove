@@ -81,13 +81,14 @@ namespace blb::ModelLoader {
 	}
 
     static size_t getPreviousIndex(const rnd::AnimationClip& clip, float time, rnd::JointIndexType jointIndex, std::map<float, size_t>& timePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>>& missingPoseMap) {
-        size_t currIndex = timePoseIndexMap[time];
+        const size_t currIndex = timePoseIndexMap[time];
         for(int i = currIndex - 1; i >= 0; --i) {
             const float timeStamp = clip.poses[i].timeStamp;
             const auto missingPoses = missingPoseMap[timeStamp];
 
-            if(timePoseIndexMap.find(timeStamp) != timePoseIndexMap.end() &&
-               std::find(missingPoses.begin(), missingPoses.end(), jointIndex) == missingPoses.end()) {
+            const bool isValidTimeStamp = timePoseIndexMap.find(timeStamp) != timePoseIndexMap.end();
+            const bool isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
+            if(isValidTimeStamp && !isMissingPose) {
                 return i;
             }
         }
@@ -96,13 +97,14 @@ namespace blb::ModelLoader {
     }
 
     static size_t getNextIndex(const rnd::AnimationClip& clip, float time, rnd::JointIndexType jointIndex, std::map<float, size_t>& timePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>>& missingPoseMap) {
-        size_t currIndex = timePoseIndexMap[time];
+        const size_t currIndex = timePoseIndexMap[time];
         for(int i = currIndex + 1; i < clip.poses.size(); ++i) {
             const float timeStamp   = clip.poses[i].timeStamp;
             const auto missingPoses = missingPoseMap[timeStamp];
 
-            if(timePoseIndexMap.find(timeStamp) != timePoseIndexMap.end() &&
-               std::find(missingPoses.begin(), missingPoses.end(), jointIndex) == missingPoses.end()) {
+            const bool isValidTimeStamp = timePoseIndexMap.find(timeStamp) != timePoseIndexMap.end();
+            const bool isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
+            if(isValidTimeStamp && !isMissingPose) {
                 return i;
             }
         }
@@ -348,9 +350,9 @@ namespace blb::ModelLoader {
 
 			//Get each channel's pose at each time
             for(float time : times) {
-                rnd::AnimationPose animPose;
+                rnd::AnimationPose animPose{};
                 animPose.timeStamp = time;
-                animPose.poses.resize(skeleton->joints.size());
+                animPose.poses.resize(std::size(skeleton->joints));
 
 				for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
                     aiNodeAnim* channel = animation->mChannels[channelIndex];
@@ -399,7 +401,7 @@ namespace blb::ModelLoader {
                 }
 
 				animClip.poses.emplace_back(std::move(animPose));
-                timePoseIndexMap[time] = animClip.poses.size() - 1;
+                timePoseIndexMap[time] = std::size(animClip.poses) - 1;
 			}
 
             const auto retrieveJointPoses = [&](float time, rnd::JointIndexType jointIndex, const rnd::AnimationPose& currAnimPose, std::map<float, std::vector<rnd::JointIndexType>>& missingElementMap) {
@@ -432,7 +434,7 @@ namespace blb::ModelLoader {
                 rnd::AnimationPose& currAnimPose = animClip.poses[currPoseIndex];
 
                 for(rnd::JointIndexType jointIndex : jointIndices) {
-                    auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingPositions);
+                    const auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingPositions);
 
                     rnd::JointPose& pose = currAnimPose.poses[jointIndex];
                     pose.position        = mth::lerp(lerpData.prevPose.position, lerpData.nextPose.position, lerpData.lerpTime);
@@ -443,7 +445,7 @@ namespace blb::ModelLoader {
                 rnd::AnimationPose& currAnimPose = animClip.poses[currPoseIndex];
 
                 for(rnd::JointIndexType jointIndex : jointIndices) {
-                    auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingRotations);
+                    const auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingRotations);
 
                     rnd::JointPose& pose = currAnimPose.poses[jointIndex];
                     pose.rotation        = mth::lerp(lerpData.prevPose.rotation, lerpData.nextPose.rotation, lerpData.lerpTime);
@@ -454,10 +456,10 @@ namespace blb::ModelLoader {
                 rnd::AnimationPose& currAnimPose = animClip.poses[currPoseIndex];
 
                 for(rnd::JointIndexType jointIndex : jointIndices) {
-                    auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingScale);
+                    const auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingScale);
 
                     rnd::JointPose& pose = currAnimPose.poses[jointIndex];
-                    pose.scale        = mth::lerp(lerpData.prevPose.scale, lerpData.nextPose.scale, lerpData.lerpTime);
+                    pose.scale           = mth::lerp(lerpData.prevPose.scale, lerpData.nextPose.scale, lerpData.lerpTime);
                 }
             }
 		}
