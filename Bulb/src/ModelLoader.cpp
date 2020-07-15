@@ -286,28 +286,12 @@ namespace blb::ModelLoader {
                 continue;
 			}
 
-			//Make sure the the very root node of the skeleton is added because that appears in animations
-            size_t skeletonSize;
-            size_t startIndex;
-            if(aiNode* skeletonRoot = nodeNameMap[mesh->mBones[0]->mName.C_Str()]->mParent) {
-                skeletonSize = mesh->mNumBones + 1;
-                startIndex   = 1;
-
-                skeleton->joints.resize(skeletonSize);
-                skeleton->joints[0].name            = skeletonRoot->mName.C_Str();
-                skeleton->joints[0].inverseBindPose = mth::mat4f{ 1.0f };
-            } else {
-                skeletonSize = mesh->mNumBones;
-                startIndex   = 0;
-
-				skeleton->joints.resize(skeletonSize);
-			}
-
-            for(size_t i = startIndex; i < skeletonSize; i++) {
-                aiBone* bone = mesh->mBones[i - startIndex];
-				skeleton->joints[i].name            = bone->mName.C_Str();
-				skeleton->joints[i].inverseBindPose = convertToGarlicMatrix(bone->mOffsetMatrix);
-			}
+            skeleton->joints.resize(mesh->mNumBones);
+            for(size_t i = 0; i < mesh->mNumBones; i++) {
+                aiBone* bone                        = mesh->mBones[i];
+                skeleton->joints[i].name            = bone->mName.C_Str();
+                skeleton->joints[i].inverseBindPose = convertToGarlicMatrix(bone->mOffsetMatrix);
+            }
 
 			//Only doing one sekelton for now
             skeletonSet = true;
@@ -356,6 +340,11 @@ namespace blb::ModelLoader {
 
 				for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
                     aiNodeAnim* channel = animation->mChannels[channelIndex];
+
+                    //TODO: The 'Armature' represents the root motion (I think). If so then this should contribute to the model and not the animation
+                    if(strcmp(channel->mNodeName.C_Str(), "Armature") == 0) {
+                        continue;
+                    }
 
                     const rnd::JointIndexType jointIndex = getJointIndex(*skeleton, channel->mNodeName.C_Str());
                     rnd::JointPose& jointPose            = animPose.poses[jointIndex];
