@@ -14,7 +14,7 @@ namespace blb::rnd {
 
         for(size_t i = 0; i < jointCount; ++i) {
             const auto pos   = clv::mth::lerp(posesA.poses[i].position, posesB.poses[i].position, time);
-            const auto rot   = clv::mth::lerp(posesA.poses[i].rotation, posesB.poses[i].rotation, time);
+            const auto rot   = clv::mth::slerp(posesA.poses[i].rotation, posesB.poses[i].rotation, time);
             const auto scale = clv::mth::lerp(posesA.poses[i].scale, posesB.poses[i].scale, time);
 
             lerpedPoses[i] = { rot, pos, scale };

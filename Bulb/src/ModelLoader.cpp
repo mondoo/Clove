@@ -437,7 +437,7 @@ namespace blb::ModelLoader {
                     const auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingRotations);
 
                     rnd::JointPose& pose = currAnimPose.poses[jointIndex];
-                    pose.rotation        = mth::lerp(lerpData.prevPose.rotation, lerpData.nextPose.rotation, lerpData.lerpTime);
+                    pose.rotation        = mth::slerp(lerpData.prevPose.rotation, lerpData.nextPose.rotation, lerpData.lerpTime);
                 }
             }
             for(auto& [time, jointIndices] : missingScale) {
