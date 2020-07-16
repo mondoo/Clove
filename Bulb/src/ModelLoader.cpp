@@ -80,13 +80,13 @@ namespace blb::ModelLoader {
         return std::numeric_limits<rnd::JointIndexType>::max();
 	}
 
-    static size_t getPreviousIndex(const rnd::AnimationClip& clip, float time, rnd::JointIndexType jointIndex, std::map<float, size_t>& timePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>>& missingPoseMap) {
-        const size_t currIndex = timePoseIndexMap[time];
+    static size_t getPreviousIndex(const rnd::AnimationClip& clip, float frame, float framesPerSecond, rnd::JointIndexType jointIndex, std::map<float, size_t>& framePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>>& missingPoseMap) {
+        const size_t currIndex = framePoseIndexMap[frame];
         for(int i = currIndex - 1; i >= 0; --i) {
-            const float timeStamp = clip.poses[i].timeStamp;
-            const auto missingPoses = missingPoseMap[timeStamp];
+            const float poseFrame   = clip.poses[i].timeStamp * framesPerSecond;//Get the time of the pose before this one to check if it's not a missing pose
+            const auto missingPoses = missingPoseMap[poseFrame];
 
-            const bool isValidTimeStamp = timePoseIndexMap.find(timeStamp) != timePoseIndexMap.end();
+            const bool isValidTimeStamp = framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end();
             const bool isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
             if(isValidTimeStamp && !isMissingPose) {
                 return i;
@@ -96,13 +96,13 @@ namespace blb::ModelLoader {
         return -1;
     }
 
-    static size_t getNextIndex(const rnd::AnimationClip& clip, float time, rnd::JointIndexType jointIndex, std::map<float, size_t>& timePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>>& missingPoseMap) {
-        const size_t currIndex = timePoseIndexMap[time];
+    static size_t getNextIndex(const rnd::AnimationClip& clip, float frame, float framesPerSecond, rnd::JointIndexType jointIndex, std::map<float, size_t>& framePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>>& missingPoseMap) {
+        const size_t currIndex = framePoseIndexMap[frame];
         for(int i = currIndex + 1; i < clip.poses.size(); ++i) {
-            const float timeStamp   = clip.poses[i].timeStamp;
-            const auto missingPoses = missingPoseMap[timeStamp];
+            const float poseFrame   = clip.poses[i].timeStamp * framesPerSecond;//Get the time of the pose after this one to check if it's not a missing pose
+            const auto missingPoses = missingPoseMap[poseFrame];
 
-            const bool isValidTimeStamp = timePoseIndexMap.find(timeStamp) != timePoseIndexMap.end();
+            const bool isValidTimeStamp = framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end();
             const bool isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
             if(isValidTimeStamp && !isMissingPose) {
                 return i;
@@ -309,20 +309,20 @@ namespace blb::ModelLoader {
             rnd::AnimationClip& animClip = animationClips[animIndex];
 			
 			animClip.skeleton = skeleton.get();
-            animClip.duration = animation->mDuration;
+            animClip.duration = animation->mDuration / animation->mTicksPerSecond; //Our clip is in seconds where as the animation is in frames
 
             //Get all the key frame times for every possible channel
-            std::set<float> times;
+            std::set<float> frames;
             for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
                 aiNodeAnim* channel = animation->mChannels[channelIndex];
                 for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
-                    times.emplace(channel->mPositionKeys[key].mTime);
+                    frames.emplace(channel->mPositionKeys[key].mTime);
                 }
                 for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
-                    times.emplace(channel->mRotationKeys[key].mTime);
+                    frames.emplace(channel->mRotationKeys[key].mTime);
                 }
                 for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
-                    times.emplace(channel->mScalingKeys[key].mTime);
+                    frames.emplace(channel->mScalingKeys[key].mTime);
                 }
             }
 
@@ -330,12 +330,12 @@ namespace blb::ModelLoader {
             std::map<float, std::vector<rnd::JointIndexType>> missingRotations;
             std::map<float, std::vector<rnd::JointIndexType>> missingScale;
 
-            std::map<float, size_t> timePoseIndexMap;
+            std::map<float, size_t> framePoseIndexMap;
 
 			//Get each channel's pose at each time
-            for(float time : times) {
+            for(float frame : frames) {
                 rnd::AnimationPose animPose{};
-                animPose.timeStamp = time;
+                animPose.timeStamp = frame / animation->mTicksPerSecond;
                 animPose.poses.resize(std::size(skeleton->joints));
 
 				for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
@@ -354,21 +354,21 @@ namespace blb::ModelLoader {
                     bool scaleFound    = false;
 
 					for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
-                        if(channel->mPositionKeys[key].mTime == time) {
+                        if(channel->mPositionKeys[key].mTime == frame) {
                             jointPose.position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
                             positionFound      = true;
                             break;
                         }
                     }
                     for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
-                        if(channel->mRotationKeys[key].mTime == time) {
+                        if(channel->mRotationKeys[key].mTime == frame) {
                             jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
                             rotationFound      = true;
                             break;
                         }
                     }
                     for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
-                        if(channel->mScalingKeys[key].mTime == time) {
+                        if(channel->mScalingKeys[key].mTime == frame) {
                             jointPose.scale = convertToGarlicVec(channel->mScalingKeys[key].mValue);
                             scaleFound      = true;
                             break;
@@ -379,18 +379,18 @@ namespace blb::ModelLoader {
                     //we need to keep track of all the missing elements so we can interpolate between them later
                     //TODO: To simplify this we can refactor the animator to handle a pose not having an entry for every joints
                     if(!positionFound) {
-                        missingPositions[time].push_back(jointIndex);
+                        missingPositions[frame].push_back(jointIndex);
                     }
                     if(!rotationFound) {
-                        missingRotations[time].push_back(jointIndex);
+                        missingRotations[frame].push_back(jointIndex);
                     }
                     if(!scaleFound) {
-                        missingScale[time].push_back(jointIndex);
+                        missingScale[frame].push_back(jointIndex);
                     }
                 }
 
 				animClip.poses.emplace_back(std::move(animPose));
-                timePoseIndexMap[time] = std::size(animClip.poses) - 1;
+                framePoseIndexMap[frame] = std::size(animClip.poses) - 1;
 			}
 
             const auto retrieveJointPoses = [&](float time, rnd::JointIndexType jointIndex, const rnd::AnimationPose& currAnimPose, std::map<float, std::vector<rnd::JointIndexType>>& missingElementMap) {
@@ -400,8 +400,8 @@ namespace blb::ModelLoader {
                     const rnd::JointPose& nextPose;
                 };
 
-                const size_t prevPoseIndex = getPreviousIndex(animClip, time, jointIndex, timePoseIndexMap, missingElementMap);
-                const size_t nextPoseIndex = getNextIndex(animClip, time, jointIndex, timePoseIndexMap, missingElementMap);
+                const size_t prevPoseIndex = getPreviousIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap);
+                const size_t nextPoseIndex = getNextIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap);
 
                 const rnd::AnimationPose& prevAnimPose = animClip.poses[prevPoseIndex];
                 const rnd::AnimationPose& nextAnimPose = animClip.poses[nextPoseIndex];
@@ -419,7 +419,7 @@ namespace blb::ModelLoader {
 
 			//Interpolate missing keyframes
             for(auto& [time, jointIndices] : missingPositions) {
-                const size_t currPoseIndex       = timePoseIndexMap[time];
+                const size_t currPoseIndex       = framePoseIndexMap[time];
                 rnd::AnimationPose& currAnimPose = animClip.poses[currPoseIndex];
 
                 for(rnd::JointIndexType jointIndex : jointIndices) {
@@ -430,7 +430,7 @@ namespace blb::ModelLoader {
                 }
             }
             for(auto& [time, jointIndices] : missingRotations) {
-                const size_t currPoseIndex       = timePoseIndexMap[time];
+                const size_t currPoseIndex       = framePoseIndexMap[time];
                 rnd::AnimationPose& currAnimPose = animClip.poses[currPoseIndex];
 
                 for(rnd::JointIndexType jointIndex : jointIndices) {
@@ -441,7 +441,7 @@ namespace blb::ModelLoader {
                 }
             }
             for(auto& [time, jointIndices] : missingScale) {
-                const size_t currPoseIndex       = timePoseIndexMap[time];
+                const size_t currPoseIndex       = framePoseIndexMap[time];
                 rnd::AnimationPose& currAnimPose = animClip.poses[currPoseIndex];
 
                 for(rnd::JointIndexType jointIndex : jointIndices) {
