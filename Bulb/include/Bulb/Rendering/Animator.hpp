@@ -71,7 +71,7 @@ namespace blb::rnd {
             }
 
             //TODO: single play (current will loop)
-            currentTime = fmod(currentTime += deltaTime, currentClip->duration);
+            currentTime = fmod(currentTime + deltaTime, currentClip->duration);
 
             //Get the poses either side of the animation time
             const auto& [prevPose, nextPose] = getPrevNextPose(currentTime);
