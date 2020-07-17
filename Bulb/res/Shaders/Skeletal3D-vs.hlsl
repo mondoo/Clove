@@ -1,12 +1,12 @@
 #define MAX_LIGHTS 10
 #define MAX_JOINTS 255 //std::numeric_limits<uint8_t>::max();
 
-cbuffer viewBuffer : register(b1){
+cbuffer viewBuffer : register(b2){
 	matrix view;
 	matrix projection;
 };
 
-cbuffer modelBuffer : register(b4){
+cbuffer modelBuffer : register(b5){
     matrix model;
     matrix normalMatrix;
 }
@@ -16,11 +16,11 @@ cbuffer LightCount : register(b9){
 	int numPointLight;
 }
 
-cbuffer directionalLightTransform : register(b13){
+cbuffer directionalLightTransform : register(b11){
     matrix directionalLightTransforms[MAX_LIGHTS]; 
 }
 
-cbuffer SkeletalData : register(b14){
+cbuffer SkeletalData : register(b13){
     matrix jointTransforms[MAX_JOINTS];    
 }
 
