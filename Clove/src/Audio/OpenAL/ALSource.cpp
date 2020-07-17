@@ -17,7 +17,7 @@ namespace clv {
     }
 
     void ALSource::setBuffer(const AudioBuffer& buffer) {
-        const ALBuffer* alBuffer = safeCast<const ALBuffer>(&buffer);
+        const ALBuffer* alBuffer = polyCast<const ALBuffer>(&buffer);
         alCall(alSourcei(source, AL_BUFFER, alBuffer->getBufferId()));
     }
 
@@ -25,7 +25,7 @@ namespace clv {
         //Get the buffer Id of all of the buffers to placed into the queue
         std::vector<ALuint> alBuffers(std::size(buffers));
         for(size_t i = 0; i < std::size(alBuffers); ++i) {
-            const ALBuffer* alBuffer = safeCast<const ALBuffer>(buffers[i].get());
+            const ALBuffer* alBuffer = polyCast<const ALBuffer>(buffers[i].get());
             alBuffers[i]             = alBuffer->getBufferId();
         }
 
@@ -54,7 +54,7 @@ namespace clv {
         removedBuffers.reserve(numToUnqueue);
 
         auto removeIter = std::remove_if(std::begin(bufferQueue), std::end(bufferQueue), [&](const std::shared_ptr<AudioBuffer>& buffer) {
-            const ALBuffer* alBuffer = safeCast<const ALBuffer>(buffer.get());
+            const ALBuffer* alBuffer = polyCast<const ALBuffer>(buffer.get());
             const ALuint bufferId    = alBuffer->getBufferId();
 
             if(pendingBuffers.find(bufferId) != pendingBuffers.end()) {

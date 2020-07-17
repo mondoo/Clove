@@ -1,6 +1,6 @@
 namespace clv {
     template<typename DestType, typename SourceType>
-    DestType* safeCast(SourceType* source) {
+    DestType* polyCast(SourceType* source) {
 #if CLV_DEBUG
         auto* result = dynamic_cast<DestType*>(source);
         CLV_ASSERT(result != nullptr, "Cast failed");
