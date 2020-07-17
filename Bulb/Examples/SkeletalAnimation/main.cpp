@@ -32,6 +32,9 @@ int main() {
     dirLight.data            = std::move(dirLightData);
     dirLight.shadowTransform = clv::mth::createOrthographicMatrix(-size, size, -size, size, nearDist, farDist);
 
+    bool anim = true;
+
+
     //Run our program while the window is open
     while(window->isOpen()) {
         //Calculate the delta time
@@ -62,12 +65,15 @@ int main() {
         //Mesh
         auto matrixPalet = model.animator.update(deltaSeconds.count());
         for(auto& mesh : model.getMeshes()) {
+            static float angle = 0.0f;
+            angle += deltaSeconds.count() * 25.0f;
             auto rot = clv::mth::rotate(clv::mth::mat4f{ 1.0f }, clv::mth::asRadians(-90.0f), { 1.0f, 0.0f, 0.0f });
-            rot = clv::mth::rotate(rot, clv::mth::asRadians(90.0f), { 0.0f, 0.0f, 1.0f });
+            rot = clv::mth::rotate(rot, clv::mth::asRadians(90.0f + angle), { 0.0f, 0.0f, 1.0f });
 
-            mesh->getMaterialInstance().setData(clv::gfx::BBP_ModelData, blb::rnd::VertexData{ rot, clv::mth::transpose(clv::mth::inverse(rot)) }, clv::gfx::ShaderStage::Vertex);
-            //Note that we need to provide the size of the maximum amount of joints
+            //NOTE: need to do the size of the while joint array
             mesh->getMaterialInstance().setData(clv::gfx::BBP_SkeletalData, matrixPalet.data(), sizeof(clv::mth::mat4f) * blb::rnd::MAX_JOINTS, clv::gfx::ShaderStage::Vertex);
+            mesh->getMaterialInstance().setData(clv::gfx::BBP_ModelData, blb::rnd::VertexData{ rot, clv::mth::transpose(clv::mth::inverse(rot)) }, clv::gfx::ShaderStage::Vertex);
+            
             renderer->submitAnimatedMesh(mesh);
         }
 
