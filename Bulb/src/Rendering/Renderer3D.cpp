@@ -291,6 +291,7 @@ namespace blb::rnd {
                 mesh->draw(*meshCommandBuffer, meshPipelineObject->getVertexLayout());
             }
 
+			//TODO: All meshes should be drawn like this with a identity matrix palette
             meshCommandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
             for(auto& mesh : scene.animatedMeshes) {
                 mesh->draw(*meshCommandBuffer, animatedMeshPipelineObject->getVertexLayout());
@@ -316,8 +317,11 @@ namespace blb::rnd {
 			directionalShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
 
 			for(auto& mesh : scene.meshes) {
-				mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
-			}
+                mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
+            }
+            for(auto& mesh : scene.animatedMeshes) {
+                mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
+            }
 		}
 
 		//Generate the point shadow map for each mesh in the scene
@@ -339,6 +343,9 @@ namespace blb::rnd {
 			for(auto& mesh : scene.meshes) {
 				mesh->draw(*pointShadowCommandBuffer, pointShadowPipelineObject->getVertexLayout());
 			}
+            for(auto& mesh : scene.animatedMeshes) {
+                mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
+            }
 		}
 
 		//Render each UI element
