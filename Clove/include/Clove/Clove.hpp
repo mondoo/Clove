@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Clove/Core.hpp"
-
 #include "Clove/Audio/Audio.hpp"
 #include "Clove/Audio/AudioFactory.hpp"
 #include "Clove/Audio/AudioBuffer.hpp"
