@@ -27,6 +27,7 @@
 #include "Bulb/LayerStack.hpp"
 
 #include "Bulb/ModelLoader.hpp"
+#include "Bulb/TextureLoader.hpp"
 
 #include "Bulb/Rendering/Material.hpp"
 #include "Bulb/Rendering/MaterialInstance.hpp"

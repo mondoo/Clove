@@ -204,6 +204,9 @@ target_sources(
 
 		${BLB_INCLUDE}/ModelLoader.hpp
 		${BLB_SOURCE}/ModelLoader.cpp
+
+		${BLB_INCLUDE}/TextureLoader.hpp
+		${BLB_SOURCE}/TextureLoader.cpp
         
 		${AIFiles}
 		${AudioFiles}
