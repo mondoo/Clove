@@ -134,13 +134,6 @@ target_compile_definitions(
 		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
 		CLV_PLATFORM_MACOS=$<PLATFORM_ID:Darwin>
 
-	#Engine
-	INTERFACE
-		CLV_ENGINE=0
-
-	PRIVATE
-		CLV_ENGINE=1
-
 	#Libraries
 	PUBLIC
 		GLM_FORCE_DEPTH_ZERO_TO_ONE
