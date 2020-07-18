@@ -49,10 +49,6 @@ set_target_properties(glm_static PROPERTIES FOLDER ${DependencyFolder})
 add_subdirectory(spdlog)
 set_target_properties(spdlog PROPERTIES FOLDER ${DependencyFolder})
 
-#stb
-add_subdirectory(stb)
-set_target_properties(stb PROPERTIES FOLDER ${DependencyFolder})
-
 #glslang
 add_subdirectory_with_folder(${DependencyFolder}/glslang glslang)
 

@@ -2,7 +2,7 @@
 
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 
-#include <stb_image.h>
+//#include <stb_image.h>
 
 namespace clv::gfx::d3d{
 	static DXGI_FORMAT getFormatForTexture(const TextureUsage usage){
@@ -124,16 +124,16 @@ namespace clv::gfx::d3d{
 		, descriptor(descriptor){
 		int width = 0;
 		int height = 0;
-		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
+		//unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
 
-		this->descriptor.dimensions.x = static_cast<uint32_t>(width);
-		this->descriptor.dimensions.y = static_cast<uint32_t>(height);
+		//this->descriptor.dimensions.x = static_cast<uint32_t>(width);
+		//this->descriptor.dimensions.y = static_cast<uint32_t>(height);
 
-		createTexture(d3dDevice, this->descriptor, localBuffer);
+		//createTexture(d3dDevice, this->descriptor, localBuffer);
 
-		if(localBuffer != nullptr){
-			stbi_image_free(localBuffer);
-		}
+		//if(localBuffer != nullptr){
+		//	stbi_image_free(localBuffer);
+		//}
 	}
 
 	D3DTexture::D3DTexture(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, const TextureDescriptor& descriptor, const void* data, int32_t BPP)

@@ -1,6 +1,6 @@
 #include "Clove/Graphics/OpenGL/GLTexture.hpp"
 
-#include <stb_image.h>
+//#include <stb_image.h>
 
 namespace clv::gfx::ogl{
 	static GLenum getTarget(const TextureStyle style, const uint8_t arraySize){
@@ -98,15 +98,15 @@ namespace clv::gfx::ogl{
 		, descriptor(descriptor){
 		int width = 0;
 		int height = 0;
-		unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
-		this->descriptor.dimensions.x = width;
-		this->descriptor.dimensions.y = height;
+		//unsigned char* localBuffer = stbi_load(pathToTexture.c_str(), &width, &height, &BPP, 4); //4 = RGBA
+		//this->descriptor.dimensions.x = width;
+		//this->descriptor.dimensions.y = height;
 
-		createTexture(this->descriptor, localBuffer);
+		//createTexture(this->descriptor, localBuffer);
 
-		if(localBuffer){
-			stbi_image_free(localBuffer);
-		}
+		//if(localBuffer){
+		//	stbi_image_free(localBuffer);
+		//}
 	}
 
 	GLTexture::GLTexture(std::shared_ptr<GraphicsFactory> factory, const TextureDescriptor& descriptor, const void* data, int32_t BPP)

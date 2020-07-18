@@ -48,8 +48,7 @@ target_link_libraries(
 		#Below are public until wrappers have been made
 		portaudio_static
 
-	PRIVATE 
-		stb
+	PRIVATE
 		$<$<NOT:$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>>:Glad>
 		glm
 		glslang
