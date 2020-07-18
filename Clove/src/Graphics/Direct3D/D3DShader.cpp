@@ -7,7 +7,7 @@
 namespace clv::gfx::d3d {
 	static UINT getShaderFlags() {
 		UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
-	#if CLV_DEBUG
+	#if GARLIC_DEBUG
 		flags |= D3DCOMPILE_DEBUG;
 	#endif
 
@@ -23,7 +23,7 @@ namespace clv::gfx::d3d {
 			case ShaderStage::Pixel:
 				return "ps_5_0";
 			default:
-				CLV_ASSERT(false, "Unhandled shader stage in {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Unhandled shader stage in {0}", GARLIC_FUNCTION_NAME);
 				return "";
 		}
 	}

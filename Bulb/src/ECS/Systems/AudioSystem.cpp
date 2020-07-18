@@ -25,7 +25,7 @@ namespace blb::ecs {
         //Listener
         const auto listenerSet = world.getComponentSets<TransformComponent, AudioListenerComponent>();
         const size_t numListeners  = std::size(listenerSet);
-        CLV_ASSERT(numListeners <= 1, "Only one listener is allowed per world");
+        GARLIC_ASSERT(numListeners <= 1, "Only one listener is allowed per world");
         if(numListeners > 0){
             auto&& [transform, listener] = listenerSet[0];
 

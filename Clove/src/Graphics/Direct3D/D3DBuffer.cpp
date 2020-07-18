@@ -3,6 +3,8 @@
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/D3DGraphicsFactory.hpp"
 
+#include <Root/Definitions.hpp>
+
 namespace clv::gfx::d3d {
 	static UINT getD3DBufferType(BufferType cloveType) {
 		switch(cloveType) {
@@ -13,7 +15,7 @@ namespace clv::gfx::d3d {
 			case BufferType::ShaderResourceBuffer:
 				return D3D11_BIND_CONSTANT_BUFFER;
 			default:
-				CLV_ASSERT(false, "Unknown buffer type in {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Unknown buffer type in {0}", GARLIC_FUNCTION_NAME);
 				return 0u;
 		}
 	}
@@ -25,7 +27,7 @@ namespace clv::gfx::d3d {
 			case BufferUsage::Dynamic:
 				return D3D11_USAGE_DYNAMIC;
 			default:
-				CLV_ASSERT(false, "Unknown buffer usage in {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Unknown buffer usage in {0}", GARLIC_FUNCTION_NAME);
 				return D3D11_USAGE_DEFAULT;
 		}
 	}

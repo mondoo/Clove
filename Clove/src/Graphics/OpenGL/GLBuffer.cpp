@@ -1,5 +1,7 @@
 #include "Clove/Graphics/OpenGL/GLBuffer.hpp"
 
+#include <Root/Definitions.hpp>
+
 namespace clv::gfx::ogl{
 	static GLenum getGLBufferType(BufferType cloveType){
 		switch (cloveType){
@@ -10,7 +12,7 @@ namespace clv::gfx::ogl{
 		case BufferType::ShaderResourceBuffer:
 			return GL_UNIFORM_BUFFER;
 		default:
-			CLV_ASSERT(false, "Unkown buffer type in {0}", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "Unkown buffer type in {0}", GARLIC_FUNCTION_NAME);
 			return 0;
 		}
 	}
@@ -22,7 +24,7 @@ namespace clv::gfx::ogl{
 		case BufferUsage::Dynamic:
 			return GL_DYNAMIC_DRAW;
 		default:
-			CLV_ASSERT(false, "Unkown buffer usage in {0}", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "Unkown buffer usage in {0}", GARLIC_FUNCTION_NAME);
 			return 0;
 		}
 	}

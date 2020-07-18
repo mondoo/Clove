@@ -3,6 +3,7 @@
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 
 #include <stb_image.h>
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx::d3d{
 	static DXGI_FORMAT getFormatForTexture(const TextureUsage usage){
@@ -18,7 +19,7 @@ namespace clv::gfx::d3d{
 			return DXGI_FORMAT_R8_UNORM;
 
 		default:
-			CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "Unkown type in {0}", GARLIC_FUNCTION_NAME);
 			return DXGI_FORMAT_R8G8B8A8_UNORM;
 		}
 	}
@@ -36,7 +37,7 @@ namespace clv::gfx::d3d{
 			return (arraySize > 1) ? D3D11_SRV_DIMENSION_TEXTURECUBEARRAY : D3D11_SRV_DIMENSION_TEXTURECUBE;
 
 		default:
-			CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "Unkown type in {0}", GARLIC_FUNCTION_NAME);
 			return D3D11_SRV_DIMENSION_TEXTURE2D;
 		}
 	}
@@ -72,7 +73,7 @@ namespace clv::gfx::d3d{
 			break;
 
 		default:
-			CLV_ASSERT(false, "Unhandled dimension in {0}" CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "Unhandled dimension in {0}" GARLIC_FUNCTION_NAME);
 			break;
 		}
 
@@ -92,7 +93,7 @@ namespace clv::gfx::d3d{
 			return D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
 
 		default:
-			CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "Unkown type in {0}", GARLIC_FUNCTION_NAME);
 			return D3D11_BIND_SHADER_RESOURCE;
 		}
 	}
@@ -114,7 +115,7 @@ namespace clv::gfx::d3d{
 			return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 
 		default:
-			CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "Unkown type in {0}", GARLIC_FUNCTION_NAME);
 			return D3D11_FILTER_MIN_MAG_MIP_POINT;
 		}
 	}
@@ -194,7 +195,7 @@ namespace clv::gfx::d3d{
 		textureDesc.MiscFlags			= getMiscFlags(descriptor.style);
 
 		if(data != nullptr){
-			CLV_ASSERT(descriptor.arraySize == 1, "DX Textures with array size greater than 1 not supported");
+			GARLIC_ASSERT(descriptor.arraySize == 1, "DX Textures with array size greater than 1 not supported");
 
 			D3D11_SUBRESOURCE_DATA initialData{};
 			initialData.pSysMem				= data;

@@ -1,4 +1,5 @@
-#include "PoolAllocator.hpp"
+#include <Root/Definitions.hpp>
+
 namespace clv::mem {
 	template<typename ItemType>
 	PoolAllocator<ItemType>::PoolAllocator(size_t numElements)
@@ -40,7 +41,7 @@ namespace clv::mem {
 	template<typename ItemType>
 	PoolAllocator<ItemType>::~PoolAllocator() {
 		if(freeMemory) {
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 			size_t availableElements = 0;
 			PoolItem* item			 = nextFree;
 			
@@ -50,7 +51,7 @@ namespace clv::mem {
 			}
 
 			if(availableElements < numElements) {
-				GARLIC_LOG(garlicLogContext, Log::Level::Warning, "List Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
+				GARLIC_LOG(garlicLogContext, Log::Level::Warning, "Pool Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
 			}
 #endif
 			::free(pool);
@@ -61,7 +62,7 @@ namespace clv::mem {
 	template<typename... Args>
 	ItemType* PoolAllocator<ItemType>::alloc(Args&&... args) {
 		if(nextFree == nullptr) {
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: At the end of the free list. Cannot allocate new elements", CLV_FUNCTION_NAME_PRETTY);
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: At the end of the free list. Cannot allocate new elements", GARLIC_FUNCTION_NAME_PRETTY);
 			return nullptr;
 		}
 

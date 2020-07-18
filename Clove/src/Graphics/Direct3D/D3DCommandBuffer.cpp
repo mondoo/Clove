@@ -94,7 +94,7 @@ namespace clv::gfx::d3d{
 				break;
 
 			default:
-				CLV_ASSERT(false, "Unhandled shader type in {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Unhandled shader type in {0}", GARLIC_FUNCTION_NAME);
 				break;
 		}
 	}

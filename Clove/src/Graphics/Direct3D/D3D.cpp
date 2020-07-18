@@ -13,7 +13,7 @@ namespace clv::gfx::d3d{
 		Microsoft::WRL::ComPtr<ID3D11Device> d3dDevice;
 
 		UINT flags = 0;
-	#if CLV_DEBUG
+	#if GARLIC_DEBUG
 		flags |= D3D11_CREATE_DEVICE_DEBUG;
 	#endif
 

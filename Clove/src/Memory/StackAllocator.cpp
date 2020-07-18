@@ -1,5 +1,7 @@
 #include "Clove/Memory/StackAllocator.hpp"
 
+#include <Root/Definitions.hpp>
+
 namespace clv::mem {
 	StackAllocator::StackAllocator(size_t sizeBytes)
 		: stackSize(sizeBytes)
@@ -24,7 +26,7 @@ namespace clv::mem {
 
 	StackAllocator::~StackAllocator() {
 		if(freeMemory) {
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 			if(top > stack) {
 				GARLIC_LOG(garlicLogContext, Log::Level::Warning, "Stack Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
 			}
@@ -39,7 +41,7 @@ namespace clv::mem {
 
 	void* StackAllocator::alloc(size_t bytes) {
 		if((top - stack) + bytes > stackSize) {
-			GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Not enough space left to allocate {1} bytes.", CLV_FUNCTION_NAME_PRETTY, bytes);
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Not enough space left to allocate {1} bytes.", GARLIC_FUNCTION_NAME_PRETTY, bytes);
 			return nullptr;
 		}
 

@@ -3,7 +3,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 clv::Log::Context garlicLogContext = clv::Log::createContext(clv::Log::Level::Trace, "GARLIC", "GarlicLog.txt");
 #else
 clv::Log::Context garlicLogContext = clv::Log::createContext(clv::Log::Level::Info, "GARLIC", "GarlicLog.txt");

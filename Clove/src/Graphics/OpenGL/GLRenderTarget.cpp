@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/OpenGL/GLTexture.hpp"
 
+#include <Root/Definitions.hpp>
+
 namespace clv::gfx::ogl{
 	GLRenderTarget::GLRenderTarget(std::shared_ptr<GraphicsFactory> factory)
 		: factory(std::move(factory)){
@@ -12,7 +14,7 @@ namespace clv::gfx::ogl{
 		glGenFramebuffers(1, &frameBufferID);
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
 
-		CLV_ASSERT(colourTexture != nullptr || depthStencilTexture != nullptr, "{0}: Render target needs at least one valid texture", CLV_FUNCTION_NAME);
+		GARLIC_ASSERT(colourTexture != nullptr || depthStencilTexture != nullptr, "{0}: Render target needs at least one valid texture", GARLIC_FUNCTION_NAME);
 
 		//Colour buffer
 		if(colourTexture != nullptr){
@@ -20,7 +22,7 @@ namespace clv::gfx::ogl{
 			const TextureUsage usage = glColourTexture->getDescriptor().usage;
 			const GLuint textureRenderID = glColourTexture->getTextureID();
 
-			CLV_ASSERT(usage == TextureUsage::RenderTarget_Colour, "Incorrect texture type for colour texture");
+			GARLIC_ASSERT(usage == TextureUsage::RenderTarget_Colour, "Incorrect texture type for colour texture");
 
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureRenderID, 0);
 		} else{
@@ -37,7 +39,7 @@ namespace clv::gfx::ogl{
 			const GLuint textureRenderID = gldepthStencilTexture->getTextureID();
 
 			//NOTE: Asserting here but this will need to change when adding stencil buffers
-			CLV_ASSERT(usage == TextureUsage::RenderTarget_Depth, "Incorrect texture type for depth stencil texture");
+			GARLIC_ASSERT(usage == TextureUsage::RenderTarget_Depth, "Incorrect texture type for depth stencil texture");
 
 			if(style == TextureStyle::Cubemap || arraySize > 1) {
 				glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureRenderID, 0);

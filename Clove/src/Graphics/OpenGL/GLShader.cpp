@@ -12,7 +12,7 @@ namespace clv::gfx::ogl{
 		case ShaderStage::Pixel:
 			return GL_FRAGMENT_SHADER;
 		default:
-			CLV_ASSERT(false, "Uknown stage in {0}", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "Uknown stage in {0}", GARLIC_FUNCTION_NAME);
 			return GL_VERTEX_SHADER;
 		}
 	}
@@ -26,7 +26,7 @@ namespace clv::gfx::ogl{
 		case GL_GEOMETRY_SHADER:
 			return "geometry";
 		default:
-			CLV_ASSERT(false, "Uknown stage in {0}", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "Uknown stage in {0}", GARLIC_FUNCTION_NAME);
 			return "unkown";
 		}
 	}

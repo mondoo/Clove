@@ -4,11 +4,11 @@
 
 namespace clv::plt{
 	constexpr clv::gfx::API getPlatformPreferedAPI(){
-	#if CLV_PLATFORM_WINDOWS
+	#if GARLIC_PLATFORM_WINDOWS
 		return clv::gfx::API::Direct3D11;
-	#elif CLV_PLATFORM_LINUX
+	#elif GARLIC_PLATFORM_LINUX
 		return clv::gfx::API::OpenGL4;
-	#elif CLV_PLATFORM_MACOS
+	#elif GARLIC_PLATFORM_MACOS
 		return clv::gfx::API::Metal1;
 	#endif
 	}
