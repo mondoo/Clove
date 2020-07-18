@@ -95,7 +95,7 @@ namespace clv::gfx::mtl{
 			case TextureStyle::Cubemap:
 				return MTLTextureTypeCube;
 			default:
-				CLV_ASSERT(false, "Unhandled texture type in {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Unhandled texture type in {0}", GARLIC_FUNCTION_NAME);
 				return MTLTextureType2D;
 		}
 	}
@@ -115,7 +115,7 @@ namespace clv::gfx::mtl{
 				return MTLPixelFormatR8Unorm;
 
 			default:
-				CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Unkown type in {0}", GARLIC_FUNCTION_NAME);
 				return MTLPixelFormatRGBA8Unorm;
 		}
 	}
@@ -130,7 +130,7 @@ namespace clv::gfx::mtl{
 				return MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
 
 			default:
-				CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Unkown type in {0}", GARLIC_FUNCTION_NAME);
 				return MTLTextureUsageShaderRead;
 		}
 	}
@@ -145,7 +145,7 @@ namespace clv::gfx::mtl{
 				return MTLStorageModePrivate;
 
 			default:
-				CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Unkown type in {0}", GARLIC_FUNCTION_NAME);
 				return MTLStorageModeShared;
 		}
 	}
@@ -159,7 +159,7 @@ namespace clv::gfx::mtl{
 				return MTLSamplerMinMagFilterLinear;
 
 			default:
-				CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Unkown type in {0}", GARLIC_FUNCTION_NAME);
 				return MTLSamplerMinMagFilterNearest;
 		}
 	}

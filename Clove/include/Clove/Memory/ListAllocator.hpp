@@ -20,7 +20,7 @@ namespace clv::mem {
 
 		bool freeMemory = true;
 
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 		uint32_t allocations = 0;
 		uint32_t frees		 = 0;
 #endif

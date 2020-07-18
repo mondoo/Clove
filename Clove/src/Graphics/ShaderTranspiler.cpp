@@ -12,6 +12,7 @@
 #include <spirv_glsl.hpp>
 #include <spirv_hlsl.hpp>
 #include <spirv_msl.hpp>
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx::ShaderTranspiler{
 	static EShLanguage getEShStage(ShaderStage stage){
@@ -23,7 +24,7 @@ namespace clv::gfx::ShaderTranspiler{
 			case clv::gfx::ShaderStage::Geometry:
 				return EShLanguage::EShLangGeometry;
 			default:
-				GARLIC_LOG(garlicLogContext, Log::Level::Error, "Unsupported shader stage {0}", CLV_FUNCTION_NAME);
+				GARLIC_LOG(garlicLogContext, Log::Level::Error, "Unsupported shader stage {0}", GARLIC_FUNCTION_NAME);
 				return EShLanguage::EShLangVertex;
 		}
 	}
@@ -178,7 +179,7 @@ namespace clv::gfx::ShaderTranspiler{
 
 		glslang::SpvOptions spvOptions{};
 		spvOptions.validate				= false;
-	#if CLV_DEBUG
+	#if GARLIC_DEBUG
 		spvOptions.generateDebugInfo	= true;
 		spvOptions.disableOptimizer		= true;
 	#else

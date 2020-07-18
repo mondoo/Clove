@@ -1,3 +1,5 @@
+#include <Root/Definitions.hpp>
+
 namespace clv::gfx{
 	constexpr size_t VertexElement::sizeOf(VertexElementType type){
 		switch(type){
@@ -12,7 +14,7 @@ namespace clv::gfx{
 			case VertexElementType::colour3D:
 				return sizeof(VertexElementData<VertexElementType::colour3D>::DataType);
 			default:
-				CLV_ASSERT(false, "Invalid element type. {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Invalid element type. {0}", GARLIC_FUNCTION_NAME);
 				return 0u;
 		}
 	}
@@ -30,7 +32,7 @@ namespace clv::gfx{
 			case VertexElementType::colour3D:
 				return VertexElementData<VertexElementType::colour3D>::elementCount;
 			default:
-				CLV_ASSERT(false, "Invalid element type. {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Invalid element type. {0}", GARLIC_FUNCTION_NAME);
 				return 0u;
 		}
 	}
@@ -48,7 +50,7 @@ namespace clv::gfx{
 			case VertexElementType::colour3D:
 				return VertexElementData<VertexElementType::colour3D>::semantic;
 			default:
-				CLV_ASSERT(false, "Invalid element type. {0}", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "Invalid element type. {0}", GARLIC_FUNCTION_NAME);
 				return nullptr;
 		}
 	}
@@ -65,7 +67,7 @@ namespace clv::gfx{
 		if constexpr(std::is_assignable_v<DestDataType, SourceDataType>){
 			*reinterpret_cast<DestDataType*>(attribute) = value;
 		} else{
-			CLV_ASSERT(false, "Types are not assignable. {0}", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "Types are not assignable. {0}", GARLIC_FUNCTION_NAME);
 		}
 	}
 
@@ -101,7 +103,7 @@ namespace clv::gfx{
 				break;
 
 			default:
-				CLV_ASSERT(false, "Element type is not supported");
+				GARLIC_ASSERT(false, "Element type is not supported");
 				break;
 		}
 	}

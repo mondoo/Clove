@@ -12,7 +12,7 @@ namespace clv::gfx::ogl {
 			case VertexElementType::colour3D:
 				return GL_FLOAT;
 			default:
-				CLV_ASSERT(false, "Invalid element type");
+				GARLIC_ASSERT(false, "Invalid element type");
 				return GL_FLOAT;
 		}
 	}
@@ -26,7 +26,7 @@ namespace clv::gfx::ogl {
 			case VertexElementType::colour3D:
 				return GL_FALSE;
 			default:
-				CLV_ASSERT(false, "Invalid element type");
+				GARLIC_ASSERT(false, "Invalid element type");
 				return GL_FALSE;
 		}
 	}

@@ -3,6 +3,8 @@
 #include "Clove/Audio/OpenAL/ALBuffer.hpp"
 #include "Clove/Audio/OpenAL/ALError.hpp"
 
+#include <Root/Definitions.hpp>
+
 namespace clv {
     ALSource::ALSource() {
         alCall(alGenSources(1, &source));
@@ -35,9 +37,9 @@ namespace clv {
     }
 
     std::vector<std::shared_ptr<AudioBuffer>> ALSource::unQueueBuffers(const uint32_t numToUnqueue) {
-#if CLV_DEBUG
+#if GARLIC_DEBUG
         const uint32_t maxAbleToUnQueue = getNumBuffersProcessed();
-        CLV_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}, Can't unqueue {1} buffers. Only {2} buffers have been processed", CLV_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
+        GARLIC_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}, Can't unqueue {1} buffers. Only {2} buffers have been processed", GARLIC_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
 #endif
 
         ALuint* buffers = new ALuint[numToUnqueue];

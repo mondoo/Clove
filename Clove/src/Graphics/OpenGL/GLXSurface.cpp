@@ -104,7 +104,7 @@ namespace clv::gfx::ogl{
 			}
 		}
 
-		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+		GARLIC_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
 
 		GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, "GL version: {0}", glGetString(GL_VERSION));
 		GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, "GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));

@@ -4,11 +4,12 @@
 #include "Clove/Graphics/Direct3D/D3DTexture.hpp"
 
 #include <d3d11.h>
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx::d3d {
 	D3DRenderTarget::D3DRenderTarget(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, Texture* colourTexture, Texture* depthStencilTexture)
 		: factory(std::move(factory)) {
-		CLV_ASSERT(colourTexture != nullptr || depthStencilTexture != nullptr, "{0}: Render target needs at least one valid texture", CLV_FUNCTION_NAME);
+		GARLIC_ASSERT(colourTexture != nullptr || depthStencilTexture != nullptr, "{0}: Render target needs at least one valid texture", GARLIC_FUNCTION_NAME);
 
 		DX11_INFO_PROVIDER;
 
@@ -79,7 +80,7 @@ namespace clv::gfx::d3d {
 		} else if(depthStencilView) {
 			depthStencilView->GetDevice(&device);
 		} else {
-			GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: could not retrieve device", CLV_FUNCTION_NAME_PRETTY);
+			GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: could not retrieve device", GARLIC_FUNCTION_NAME_PRETTY);
 			return;
 		}
 

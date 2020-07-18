@@ -1,6 +1,6 @@
 #pragma once
 
-#if CLV_PLATFORM_WINDOWS
+#if GARLIC_PLATFORM_WINDOWS
 	#include "Clove/Platform/Windows/CloveWindows.hpp"
 #endif
 
@@ -9,19 +9,19 @@ namespace clv{
 		None		= -2,
 		Undefined 	= -1,
 
-	#if CLV_PLATFORM_WINDOWS
+	#if GARLIC_PLATFORM_WINDOWS
 		_1			= MK_LBUTTON,
 		_2			= MK_RBUTTON,
 		_3			= MK_MBUTTON,
 		_4			= MK_XBUTTON1,
 		_5			= MK_XBUTTON2,
-	#elif CLV_PLATFORM_LINUX
+	#elif GARLIC_PLATFORM_LINUX
 		_1			= 1,
 		_2			= 2,
 		_3			= 3,
 		_4			= 8,
 		_5			= 9,
-	#elif CLV_PLATFORM_MACOS
+	#elif GARLIC_PLATFORM_MACOS
 		_1 			= 1 << 0,
 		_2			= 1 << 1,
 		_3			= 1 << 2,
@@ -34,11 +34,11 @@ namespace clv{
 		Middle		= _3,
 	};
 
-#if CLV_PLATFORM_WINDOWS
+#if GARLIC_PLATFORM_WINDOWS
 	#define CLV_WHEEL_DELTA WHEEL_DELTA
-#elif CLV_PLATFORM_LINUX
+#elif GARLIC_PLATFORM_LINUX
 	#define CLV_WHEEL_DELTA 1
-#elif CLV_PLATFORM_MACOS
+#elif GARLIC_PLATFORM_MACOS
 	#define CLV_WHEEL_DELTA 1
 #endif
 

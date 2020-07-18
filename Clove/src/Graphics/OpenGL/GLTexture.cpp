@@ -1,6 +1,7 @@
 #include "Clove/Graphics/OpenGL/GLTexture.hpp"
 
 #include <stb_image.h>
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx::ogl{
 	static GLenum getTarget(const TextureStyle style, const uint8_t arraySize){
@@ -12,7 +13,7 @@ namespace clv::gfx::ogl{
 			return (arraySize > 1) ? GL_TEXTURE_CUBE_MAP_ARRAY : GL_TEXTURE_CUBE_MAP;
 
 		default:
-			CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "{0}: Unhandled texture type", GARLIC_FUNCTION_NAME);
 			break;
 		}
 
@@ -34,7 +35,7 @@ namespace clv::gfx::ogl{
 			return GL_RED;
 
 		default:
-			CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "{0}: Unhandled texture type", GARLIC_FUNCTION_NAME);
 			return GL_RGBA8;
 		}
 	}
@@ -54,7 +55,7 @@ namespace clv::gfx::ogl{
 			return GL_RED;
 
 		default:
-			CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "{0}: Unhandled texture type", GARLIC_FUNCTION_NAME);
 			return GL_RGBA;
 		}
 	}
@@ -74,7 +75,7 @@ namespace clv::gfx::ogl{
 			return GL_UNSIGNED_BYTE;
 
 		default:
-			CLV_ASSERT(false, "{0}: Unhandled texture type", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "{0}: Unhandled texture type", GARLIC_FUNCTION_NAME);
 			return GL_UNSIGNED_BYTE;
 		}
 	}
@@ -88,7 +89,7 @@ namespace clv::gfx::ogl{
 			return GL_LINEAR;
 
 		default:
-			CLV_ASSERT(false, "Unkown type in {0}", CLV_FUNCTION_NAME);
+			GARLIC_ASSERT(false, "Unkown type in {0}", GARLIC_FUNCTION_NAME);
 			return GL_NEAREST;
 		}
 	}
@@ -164,7 +165,7 @@ namespace clv::gfx::ogl{
 				break;
 
 			default:
-				CLV_ASSERT(false, "{0}: Unhandled usage type", CLV_FUNCTION_NAME);
+				GARLIC_ASSERT(false, "{0}: Unhandled usage type", GARLIC_FUNCTION_NAME);
 				break;
 		}
 

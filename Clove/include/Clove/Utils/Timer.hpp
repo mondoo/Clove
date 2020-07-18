@@ -64,7 +64,7 @@ namespace clv::utl{
 	#define CLV_PROFILE_BEGIN_SESSION(name, filepath) ::clv::utl::Timer::get().beginSession(name, filepath)
 	#define CLV_PROFILE_END_SESSION() ::clv::utl::Timer::get().endSession()
 	#define CLV_PROFILE_SCOPE(name) ::clv::utl::ScopedTimerClock timer##__LINE__(name)
-	#define CLV_PROFILE_FUNCTION() CLV_PROFILE_SCOPE(CLV_FUNCTION_NAME_PRETTY)
+	#define CLV_PROFILE_FUNCTION() CLV_PROFILE_SCOPE(GARLIC_FUNCTION_NAME_PRETTY)
 #else
 	#define CLV_PROFILE_BEGIN_SESSION(name, filepath)
 	#define CLV_PROFILE_END_SESSION()

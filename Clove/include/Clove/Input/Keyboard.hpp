@@ -7,22 +7,22 @@
 #include <optional>
 
 namespace clv::plt{
-#if CLV_PLATFORM_WINDOWS
+#if GARLIC_PLATFORM_WINDOWS
 	class WindowsWindow;
-#elif CLV_PLATFORM_LINUX
+#elif GARLIC_PLATFORM_LINUX
 	class LinuxWindow;
-#elif CLV_PLATFORM_MACOS
+#elif GARLIC_PLATFORM_MACOS
 	class MacWindow;
 #endif
 }
 
 namespace clv{
 	class Keyboard{
-	#if CLV_PLATFORM_WINDOWS
+	#if GARLIC_PLATFORM_WINDOWS
 		friend class plt::WindowsWindow;
-	#elif CLV_PLATFORM_LINUX
+	#elif GARLIC_PLATFORM_LINUX
 		friend class plt::LinuxWindow;
-	#elif CLV_PLATFORM_MACOS
+	#elif GARLIC_PLATFORM_MACOS
 		friend class plt::MacWindow;
 	#endif
 		

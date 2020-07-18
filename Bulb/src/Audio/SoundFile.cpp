@@ -1,6 +1,7 @@
 #include "Bulb/Audio/SoundFile.hpp"
 
 #include <sndfile.h>
+#include <Root/Definitions.hpp>
 
 namespace blb::aud {
     static int getWhence(SoundFile::SeekPosition position){
@@ -12,7 +13,7 @@ namespace blb::aud {
             case SoundFile::SeekPosition::End:
                 return SEEK_END;
             default:
-                CLV_ASSERT(false, "{0}: Default statement hit", CLV_FUNCTION_NAME);
+                GARLIC_ASSERT(false, "{0}: Default statement hit", GARLIC_FUNCTION_NAME);
                 return 0;
         }
     }
@@ -59,7 +60,7 @@ namespace blb::aud {
             return Format::S32;
         }
 
-        CLV_ASSERT(false, "{0}, Unknown file format", CLV_FUNCTION_NAME_PRETTY);
+        GARLIC_ASSERT(false, "{0}, Unknown file format", GARLIC_FUNCTION_NAME_PRETTY);
         return Format::Unknown;
     }
 
