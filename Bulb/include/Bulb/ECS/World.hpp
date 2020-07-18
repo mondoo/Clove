@@ -3,6 +3,7 @@
 #include "Bulb/ECS/ComponentManager.hpp"
 #include "Bulb/ECS/ECSTypes.hpp"
 #include "Bulb/ECS/System.hpp"
+#include "Bulb/ECS/ComponentSet.hpp"
 
 #include <Clove/Event/EventDispatcher.hpp>
 
@@ -129,17 +130,15 @@ namespace blb::ecs {
 		void removeComponent(EntityID entityId);
 
 		/**
-		 * @brief Returns a vector of tuples of ComponentPtrs for each Entity matching the Components given.
-		 * @details	Each element in the vector is a tuple. Each tuple contains the Components for  a single Entity.
-		 * For example, if you call this with getComponentSets<TransformComponent, ModelComponent>()
-		 * each tuple will represent a single Entity that has both a TransformComponent
-		 * and a ModelComponent.
+		 * @brief Finds all entitys that have the same components as ComponentTypes and returns them as a ComponentSet.
+		 * @details	A ComponentSet is an array of tuples where each tuple are the components for a given entity.
 		 * @tparam ComponentTypes A variadic template of the components needed.
 		 * @return A vector of tuples of Components for each entity that matches.
 		 * @see	ComponentPtr.
+		 * @see ComponentSet.
 		 */
 		template<typename... ComponentTypes>
-		std::vector<std::tuple<ComponentPtr<ComponentTypes>...>> getComponentSets();
+        ComponentSet<ComponentTypes...> getComponentSets();
 
 		/**
 		 * @brief Adds a System to the World.
