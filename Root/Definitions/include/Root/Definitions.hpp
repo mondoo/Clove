@@ -32,3 +32,5 @@
 #else
     #define GARLIC_APIENTRY
 #endif
+
+#define GARLIC_BIT(x) (1 << x)
