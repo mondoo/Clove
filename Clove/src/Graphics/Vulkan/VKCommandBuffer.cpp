@@ -140,6 +140,20 @@ namespace clv::gfx::vk {
         vkCmdCopyBuffer(commandBuffer, source.getBuffer(), destination.getBuffer(), 1, &copyRegion);
     }
 
+    void VKTransferCommandBuffer::copyBufferToImage(VKBuffer& source, const size_t sourceOffset, VKImage& destination, ImageLayout destinationLayout, const mth::vec3i& destinationOffset, const mth::vec3ui& destinationExtent) {
+        VkBufferImageCopy copyRegion{};
+        copyRegion.bufferOffset                    = sourceOffset;
+        copyRegion.bufferRowLength                 = 0;                        //Tightly packed
+        copyRegion.bufferImageHeight               = 0;                        //Tightly packed
+        copyRegion.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;//TODO: Handle other aspect masks
+        copyRegion.imageSubresource.mipLevel       = 0;
+        copyRegion.imageSubresource.baseArrayLayer = 0;
+        copyRegion.imageSubresource.layerCount     = 1;
+        copyRegion.imageOffset                     = { destinationOffset.x, destinationOffset.y, destinationOffset.z };
+        copyRegion.imageExtent                     = { destinationExtent.x, destinationExtent.y, destinationExtent.z };
+        vkCmdCopyBufferToImage(commandBuffer, source.getBuffer(), destination.getImage(), convertImageLayout(destinationLayout), 1, &copyRegion);
+    }
+
     void VKTransferCommandBuffer::transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout) {
         VkImageMemoryBarrier barrier{};
         barrier.sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;

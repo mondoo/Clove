@@ -71,6 +71,7 @@ namespace clv::gfx::vk {
         void endRecording();
 
         void copyBufferToBuffer(VKBuffer& source, const size_t sourceOffset, VKBuffer& destination, const size_t destinationOffset, const size_t sizeBytes);
+        void copyBufferToImage(VKBuffer& source, const size_t sourceOffset, VKImage& destination, ImageLayout destinationLayout, const mth::vec3i& destinationOffset, const mth::vec3ui& destinationExtent);
 
         void transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout);
 
