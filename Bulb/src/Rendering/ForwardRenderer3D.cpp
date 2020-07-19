@@ -31,13 +31,19 @@ namespace blb::rnd {
 
 		//TEMP - Testing drawing
         const size_t vertexBufferSize = sizeof(Vertex) * std::size(vertices);
+        const size_t indexBufferSize  = sizeof(uint16_t) * std::size(indices);
 
-        //Staging buffer
+        //Staging buffers
         clv::gfx::BufferDescriptor2 stagingDescriptor{};
-        stagingDescriptor.size             = vertexBufferSize;
         stagingDescriptor.usageFlags       = clv::gfx::BufferUsageMode::TransferSource;
-        stagingDescriptor.sharingMode      = clv::gfx::BufferSharingMode::Exclusive; //Only accessed by the transfer queue
-        stagingDescriptor.memoryProperties = clv::gfx::BufferMemoryProperties::HostVisible;
+        stagingDescriptor.sharingMode      = clv::gfx::SharingMode::Exclusive; //Only accessed by the transfer queue
+        stagingDescriptor.memoryProperties = clv::gfx::MemoryProperties::HostVisible;
+
+        stagingDescriptor.size   = vertexBufferSize;
+        auto stagingBufferVertex = graphicsFactory->createBuffer(stagingDescriptor);
+
+        stagingDescriptor.size  = indexBufferSize;
+        auto stagingBufferIndex = graphicsFactory->createBuffer(stagingDescriptor);
 
         auto stagingBuffer = graphicsFactory->createBuffer(stagingDescriptor);
 
@@ -45,30 +51,38 @@ namespace blb::rnd {
         clv::gfx::BufferDescriptor2 vertexDescriptor{};
         vertexDescriptor.size             = vertexBufferSize;
         vertexDescriptor.usageFlags       = clv::gfx::BufferUsageMode::TransferDestination | clv::gfx::BufferUsageMode::VertexBuffer;
-        vertexDescriptor.sharingMode      = clv::gfx::BufferSharingMode::Concurrent; //Accessed by transfer and graphics queue
-        vertexDescriptor.memoryProperties = clv::gfx::BufferMemoryProperties::DeviceLocal;
+        vertexDescriptor.sharingMode      = clv::gfx::SharingMode::Concurrent;//Accessed by transfer and graphics queue
+        vertexDescriptor.memoryProperties = clv::gfx::MemoryProperties::DeviceLocal;
 
         vertexBuffer = graphicsFactory->createBuffer(vertexDescriptor);
+
+        //Index Buffer
+        clv::gfx::BufferDescriptor2 indexDescriptor{};
+        indexDescriptor.size             = indexBufferSize;
+        indexDescriptor.usageFlags       = clv::gfx::BufferUsageMode::TransferDestination | clv::gfx::BufferUsageMode::IndexBuffer;
+        indexDescriptor.sharingMode      = clv::gfx::SharingMode::Concurrent;
+        indexDescriptor.memoryProperties = clv::gfx::MemoryProperties::DeviceLocal;
+
+        indexBuffer = graphicsFactory->createBuffer(indexDescriptor);
+
+        //Texture
+        //TODO...
         
-        //Map the vertives onto our CPU visible buffer then transfer to our GPU optimised buffer
-        stagingBuffer->map(std::data(vertices), stagingDescriptor.size);
+        //Map the data onto our CPU visible buffer
+        stagingBufferVertex->map(std::data(vertices), vertexBufferSize);
+        stagingBufferIndex->map(std::data(indices), indexBufferSize);       
 
         std::shared_ptr<clv::gfx::vk::VKTransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
         transferCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
-        transferCommandBuffer->copyBuffer(*stagingBuffer, 0, *vertexBuffer, 0, vertexBufferSize);
+        transferCommandBuffer->copyBuffer(*stagingBufferVertex, 0, *vertexBuffer, 0, vertexBufferSize);
+        transferCommandBuffer->copyBuffer(*stagingBufferIndex, 0, *indexBuffer, 0, indexBufferSize);
         transferCommandBuffer->endRecording();
         transferQueue->submit({ { transferCommandBuffer } });
         transferQueue->freeCommandBuffer(*transferCommandBuffer);
+        
 
-        //Note just creating an index buffer but this should be staged as well
-        clv::gfx::BufferDescriptor2 indexDescriptor{};
-        indexDescriptor.size               = sizeof(uint16_t) * std::size(indices);
-        indexDescriptor.usageFlags         = clv::gfx::BufferUsageMode::IndexBuffer;
-        indexDescriptor.sharingMode        = clv::gfx::BufferSharingMode::Exclusive;
-        indexDescriptor.memoryProperties   = clv::gfx::BufferMemoryProperties::HostVisible;
+        //Adding a texture
 
-        indexBuffer = graphicsFactory->createBuffer(indexDescriptor);
-        indexBuffer->map(std::data(indices), indexDescriptor.size);
         //~TEMP
 
         createPipeline();
