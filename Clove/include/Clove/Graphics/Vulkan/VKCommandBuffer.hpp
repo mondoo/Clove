@@ -6,6 +6,7 @@
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSet.hpp"
 
 namespace clv::gfx{
@@ -39,8 +40,10 @@ namespace clv::gfx::vk {
         VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer);
 
 		void beginRecording(CommandBufferUsage usageFlag);
+        void endRecording();
 
 		void beginRenderPass(VKRenderPass& renderPass, VKFramebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour);
+        void endRenderPass();
 
 		void bindPipelineObject(VKPipelineObject& pipelineObject);
         void bindVertexBuffer(VKBuffer& vertexBuffer);
@@ -49,9 +52,7 @@ namespace clv::gfx::vk {
 
         void drawIndexed(const size_t indexCount);
 
-		void endRenderPass();
-
-		void endRecording();
+        void transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout);
 
 		VkCommandBuffer getCommandBuffer() const;
 	};
@@ -67,10 +68,11 @@ namespace clv::gfx::vk {
         VKTransferCommandBuffer(VkCommandBuffer commandBuffer);
 
         void beginRecording(CommandBufferUsage usageFlag);
+        void endRecording();
 
         void copyBufferToBuffer(VKBuffer& source, const size_t sourceOffset, VKBuffer& destination, const size_t destinationOffset, const size_t sizeBytes);
 
-        void endRecording();
+        void transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout);
 
         VkCommandBuffer getCommandBuffer() const;
 	};

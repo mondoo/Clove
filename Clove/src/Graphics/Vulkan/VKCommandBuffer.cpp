@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 
+#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+
 namespace clv::gfx::vk {
 	static VkCommandBufferUsageFlags getCommandBufferUsageFlags(CommandBufferUsage garlicUsage) {
         switch(garlicUsage) {
@@ -38,6 +40,12 @@ namespace clv::gfx::vk {
 		}
 	}
 
+    void VKGraphicsCommandBuffer::endRecording() {
+        if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to end recording command buffer");
+        }
+    }
+
 	void VKGraphicsCommandBuffer::beginRenderPass(VKRenderPass& renderPass, VKFramebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour) {
 		VkClearValue clearValue = { clearColour.r, clearColour.g, clearColour.b, clearColour.a };
 
@@ -52,6 +60,10 @@ namespace clv::gfx::vk {
 
 		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
+
+    void VKGraphicsCommandBuffer::endRenderPass() {
+        vkCmdEndRenderPass(commandBuffer);
+    }
 
 	void VKGraphicsCommandBuffer::bindVertexBuffer(VKBuffer& vertexBuffer) {
         VkBuffer buffers[] = { vertexBuffer.getBuffer() };
@@ -76,15 +88,24 @@ namespace clv::gfx::vk {
         vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
 	}
 
-	void VKGraphicsCommandBuffer::endRenderPass() {
-		vkCmdEndRenderPass(commandBuffer);
-	}
-
-	void VKGraphicsCommandBuffer::endRecording() {
-		if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to end recording command buffer");
-		}
-	}
+    void VKGraphicsCommandBuffer::transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout) {
+        VkImageMemoryBarrier barrier{};
+        barrier.sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrier.pNext                           = nullptr;
+        barrier.srcAccessMask                   = 0;//TODO
+        barrier.dstAccessMask                   = 0;//TODO
+        barrier.oldLayout                       = convertImageLayout(previousLayout);
+        barrier.newLayout                       = convertImageLayout(newLayout);
+        barrier.srcQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
+        barrier.image                           = image.getImage();
+        barrier.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;//TODO: Handle other aspect masks
+        barrier.subresourceRange.baseMipLevel   = 0;
+        barrier.subresourceRange.levelCount     = 1;
+        barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount     = 1;
+        vkCmdPipelineBarrier(commandBuffer, 0 /* TODO */, 0 /* TODO */, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+    }
 
 	VkCommandBuffer VKGraphicsCommandBuffer::getCommandBuffer() const {
 		return commandBuffer;
@@ -105,6 +126,12 @@ namespace clv::gfx::vk {
         }
     }
 
+    void VKTransferCommandBuffer::endRecording() {
+        if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to end recording command buffer");
+        }
+    }
+
 	void VKTransferCommandBuffer::copyBufferToBuffer(VKBuffer& source, const size_t sourceOffset, VKBuffer& destination, const size_t destinationOffset, const size_t sizeBytes) {
         VkBufferCopy copyRegion{};
         copyRegion.srcOffset = sourceOffset;
@@ -113,10 +140,23 @@ namespace clv::gfx::vk {
         vkCmdCopyBuffer(commandBuffer, source.getBuffer(), destination.getBuffer(), 1, &copyRegion);
     }
 
-	void VKTransferCommandBuffer::endRecording() {
-        if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to end recording command buffer");
-        }
+    void VKTransferCommandBuffer::transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout) {
+        VkImageMemoryBarrier barrier{};
+        barrier.sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrier.pNext                           = nullptr;
+        barrier.srcAccessMask                   = 0;//TODO
+        barrier.dstAccessMask                   = 0;//TODO
+        barrier.oldLayout                       = convertImageLayout(previousLayout);
+        barrier.newLayout                       = convertImageLayout(newLayout);
+        barrier.srcQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
+        barrier.image                           = image.getImage();
+        barrier.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;//TODO: Handle other aspect masks
+        barrier.subresourceRange.baseMipLevel   = 0;
+        barrier.subresourceRange.levelCount     = 1;
+        barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount     = 1;
+        vkCmdPipelineBarrier(commandBuffer, 0 /* TODO */, 0 /* TODO */, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     }
 
 	VkCommandBuffer VKTransferCommandBuffer::getCommandBuffer() const {
