@@ -19,9 +19,6 @@ add_subdirectory_with_folder(${DependencyFolder} glm)
 set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 add_subdirectory_with_folder(${DependencyFolder} spdlog)
 
-#stb
-add_subdirectory_with_folder(${DependencyFolder} stb)
-
 #glslang
 set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")
 add_subdirectory_with_folder(${DependencyFolder}/glslang glslang)
