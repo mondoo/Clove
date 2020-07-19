@@ -18,8 +18,8 @@ add_executable(
 )
 set_target_properties(Vulkan PROPERTIES FOLDER ${ApplicationFolder})
 
-add_subdirectory(vendor/glfw)
-set_target_properties(glfw PROPERTIES FOLDER ${ApplicationFolder})
+#add_subdirectory(vendor/glfw)
+#set_target_properties(glfw PROPERTIES FOLDER ${ApplicationFolder})
 
 #For Vulkan
 find_package(Vulkan REQUIRED)
@@ -40,7 +40,7 @@ target_link_libraries(
 		Clove
 
 		Vulkan::Vulkan
-		glfw
+		#glfw
 		stb
 )
 
