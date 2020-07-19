@@ -89,6 +89,7 @@ namespace blb::rnd {
         };
         std::shared_ptr<clv::gfx::vk::VKBuffer> vertexBuffer;
         std::shared_ptr<clv::gfx::vk::VKBuffer> indexBuffer;
+        std::shared_ptr<clv::gfx::vk::VKImage> texture;
 		//~TEMP
 
 		clv::DelegateHandle windowResizeHandle;

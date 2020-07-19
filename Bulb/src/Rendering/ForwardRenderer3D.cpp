@@ -71,9 +71,16 @@ namespace blb::rnd {
 
         indexBuffer = graphicsFactory->createBuffer(indexDescriptor);
 
-        //Texture
-        //TODO...
+        //Texture Image
+        clv::gfx::ImageDescriptor textureDescriptor{};
+        textureDescriptor.type             = clv::gfx::ImageType::_2D;
+        textureDescriptor.usageFlags       = clv::gfx::ImageUsageMode::TransferDestination | clv::gfx::ImageUsageMode::Sampled;
+        textureDescriptor.dimensions       = textureData.dimensions;
+        textureDescriptor.format           = clv::gfx::ImageFormat::R8G8B8A8_SRGB; //This will be how the texels in the staging buffer will be layed out (when they are mapped from the raw buffer)
+        textureDescriptor.sharingMode      = clv::gfx::SharingMode::Concurrent;
+        textureDescriptor.memoryProperties = clv::gfx::MemoryProperties::DeviceLocal; //We have no way to write to images directly, but we still only plan on pushing data once
         
+        texture = graphicsFactory->createImage(textureDescriptor);
 
         //Map the data onto our CPU visible (staging) buffers
         stagingBufferVertex->map(std::data(vertices), vertexBufferSize);
