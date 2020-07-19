@@ -53,6 +53,16 @@ namespace clv::gfx {
         DeviceLocal,//GPU optimised, can't be written to be CPU
         HostVisible,//Can be written to by CPU, not GPU optimised
     };
+
+	enum class ImageLayout{
+		Undefined,
+		General,
+        TransferDestinationOptimal,
+		ShaderReadOnlyOptimal,
+		ColourAttachmentOptimal,
+		DepthStencilAttachmentOptimal,
+		DepthStencilReadOnlyOptimal
+	};
 }
 
 namespace clv::gfx::vk {

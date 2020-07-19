@@ -19,4 +19,6 @@ namespace clv::gfx::vk {
 
     uint32_t getMemoryTypeIndex(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice);
     VkMemoryPropertyFlags getMemoryPropertyFlags(MemoryProperties garlicProperties);
+
+    VkImageLayout convertImageLayout(ImageLayout garlicFormat);
 }

@@ -114,4 +114,26 @@ namespace clv::gfx::vk {
                 break;
         }
     }
+
+    VkImageLayout convertImageLayout(ImageLayout garlicFormat) {
+        switch(garlicFormat) {
+            case ImageLayout::Undefined:
+                return VK_IMAGE_LAYOUT_UNDEFINED;
+            case ImageLayout::General:
+                return VK_IMAGE_LAYOUT_GENERAL;
+            case ImageLayout::TransferDestinationOptimal:
+                return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            case ImageLayout::ShaderReadOnlyOptimal:
+                return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            case ImageLayout::ColourAttachmentOptimal:
+                return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            case ImageLayout::DepthStencilAttachmentOptimal:
+                return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+            case ImageLayout::DepthStencilReadOnlyOptimal:
+                return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+            default:
+                CLV_ASSERT(false, "{0}: Unkown image layout", CLV_FUNCTION_NAME);
+                return VK_IMAGE_LAYOUT_UNDEFINED;
+        }
+    }
 }
