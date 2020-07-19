@@ -4,12 +4,18 @@
 
 namespace blb::TextureLoader {
     LoadedTextureData loadTexture(std::string_view texturePath) {
+        int width;
+        int height;
+        int channels;
+        void* localBuffer = stbi_load(texturePath.data(), &width, &height, &channels, STBI_rgb_alpha);
+
         LoadedTextureData data{};
-        void* localBuffer = stbi_load(texturePath.data(), &data.dimensions.x, &data.dimensions.y, &data.channels, STBI_rgb_alpha);
-        data.channels     = STBI_rgb_alpha; //Make sure the channels are what we forced it to be
-        data.buffer       = std::unique_ptr<void, std::function<void(void*)>>(localBuffer, [](void* buffer) {
+        data.buffer     = std::unique_ptr<void, std::function<void(void*)>>(localBuffer, [](void* buffer) {
             stbi_image_free(buffer);
         });
+        data.dimensions = { static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
+        data.channels   = STBI_rgb_alpha;//Make sure the channels are what we forced it to be
+
         return data;
     }
 }
