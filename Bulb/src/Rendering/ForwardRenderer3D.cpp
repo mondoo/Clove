@@ -87,14 +87,31 @@ namespace blb::rnd {
         stagingBufferIndex->map(std::data(indices), indexBufferSize);     
         stagingBufferTexture->map(textureData.buffer.get(), textureBufferSize);
 
+        //Transfer the data onto our GPU optimised buffers
         std::shared_ptr<clv::gfx::vk::VKTransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
+
         transferCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
         transferCommandBuffer->copyBufferToBuffer(*stagingBufferVertex, 0, *vertexBuffer, 0, vertexBufferSize);
         transferCommandBuffer->copyBufferToBuffer(*stagingBufferIndex, 0, *indexBuffer, 0, indexBufferSize);
+        transferCommandBuffer->transitionImageLayout(*texture, clv::gfx::ImageLayout::Undefined, clv::gfx::ImageLayout::TransferDestinationOptimal);
+        transferCommandBuffer->copyBufferToImage(*stagingBufferTexture, 0, *texture, clv::gfx::ImageLayout::TransferDestinationOptimal, { 0, 0, 0 }, { textureData.dimensions.x, textureData.dimensions.y, 1 });
         transferCommandBuffer->endRecording();
+
+        //Transition an image layout to shader optimal can only be done on a command buffer that's part of the graphics queue family
+        std::shared_ptr<clv::gfx::vk::VKGraphicsCommandBuffer> transitionCommandBuffer = graphicsQueue->allocateCommandBuffer();
+
+        transitionCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
+        transitionCommandBuffer->transitionImageLayout(*texture, clv::gfx::ImageLayout::TransferDestinationOptimal, clv::gfx::ImageLayout::ShaderReadOnlyOptimal);
+        transitionCommandBuffer->endRecording();
+
         transferQueue->submit({ { transferCommandBuffer } });
         transferQueue->freeCommandBuffer(*transferCommandBuffer);
 
+        clv::gfx::GraphicsSubmitInfo submitInfo{};
+        submitInfo.commandBuffers = { { transitionCommandBuffer } };
+        graphicsQueue->submit(submitInfo, nullptr);
+        graphicsFactory->waitForIdleDevice(); //We need to wait for out buffer to be executed before freeing
+        graphicsQueue->freeCommandBuffer(*transitionCommandBuffer);
         //~TEMP
 
         createPipeline();
@@ -128,6 +145,7 @@ namespace blb::rnd {
         vertexBuffer.reset();
         indexBuffer.reset();
         uniformBuffers.clear();
+        texture.reset();
 	}
 
 	void ForwardRenderer3D::begin() {
