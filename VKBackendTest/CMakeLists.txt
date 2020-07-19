@@ -16,6 +16,7 @@ add_executable(
 	frag.spirv
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER ${ApplicationFolder})
+target_compile_definitions(${PROJECT_NAME} PRIVATE SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 #Libraries
 target_link_libraries(
