@@ -1,6 +1,10 @@
 #pragma once
 
-#include "Clove/Core.hpp"
+#include "Clove/Audio/Audio.hpp"
+#include "Clove/Audio/AudioFactory.hpp"
+#include "Clove/Audio/AudioBuffer.hpp"
+#include "Clove/Audio/AudioSource.hpp"
+#include "Clove/Audio/AudioListener.hpp"
 
 #include "Clove/Exception/CloveException.hpp"
 

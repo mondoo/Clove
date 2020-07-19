@@ -1,4 +1,3 @@
-#Clove specific ignores
 [Bb]uild/
 .vscode/
 !Bulb.Desktop.csproj
@@ -6,3 +5,4 @@ compile_commands.json
 .clangd/
 .DS_Store
 .vs
+CMakeSettings.json

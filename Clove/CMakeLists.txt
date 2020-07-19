@@ -38,6 +38,10 @@ endif()
 target_link_libraries(
 	Clove
 
+	#Garlic
+	PUBLIC
+		Root.Definitions
+
     #Cross platform
     PUBLIC
 		spdlog
@@ -45,10 +49,8 @@ target_link_libraries(
 
 		Vulkan::Vulkan #Temp public
 
-		#Below are public until wrappers have been made
-		portaudio_static
-
-	PRIVATE
+	PRIVATE 
+		stb
 		$<$<NOT:$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>>:Glad>
 		glm
 		glslang
@@ -58,6 +60,7 @@ target_link_libraries(
 		spirv-cross-glsl
 		spirv-cross-hlsl
 		spirv-cross-msl
+		OpenAL
 
 	#Windows
 	PRIVATE
@@ -109,7 +112,6 @@ target_precompile_headers(
 
 	#Clove headers
 	PUBLIC
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Core.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Log.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsTypes.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/Maths.hpp">
@@ -131,24 +133,6 @@ target_compile_definitions(
 		CLV_ENABLE_MEMORY_DEBUGGING=$<BOOL:${GAR_CLV_ENABLE_MEMORY_DEBUGGING}>
 		CLV_TRACK_MEMORY_ALLOCATIONS=$<BOOL:${GAR_TRACK_MEMORY_ALLOCATIONS}>
 		CLV_IMGUI_COMPATIBLE=$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>
-
-	#Config
-	PUBLIC
-		CLV_DEBUG=$<CONFIG:Debug>
-		CLV_RELEASE=$<CONFIG:Release>
-
-	#Platform
-	PUBLIC
-		CLV_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
-		CLV_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
-		CLV_PLATFORM_MACOS=$<PLATFORM_ID:Darwin>
-
-	#Engine
-	INTERFACE
-		CLV_ENGINE=0
-
-	PRIVATE
-		CLV_ENGINE=1
 
 	#Libraries
 	PUBLIC

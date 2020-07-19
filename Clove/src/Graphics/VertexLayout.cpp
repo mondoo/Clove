@@ -53,7 +53,7 @@ namespace clv::gfx{
 			return VertexElementType::colour3D;
 		}
 
-		CLV_ASSERT(false, "{0} could not find proper element type", CLV_FUNCTION_NAME);
+		GARLIC_ASSERT(false, "{0} could not find proper element type", GARLIC_FUNCTION_NAME);
 		return VertexElementType::position2D;
 	}
 
@@ -100,7 +100,7 @@ namespace clv::gfx{
 				return element;
 			}
 		}
-		CLV_ASSERT(false, "Could not find element of type. {0}", CLV_FUNCTION_NAME);
+		GARLIC_ASSERT(false, "Could not find element of type. {0}", GARLIC_FUNCTION_NAME);
 		return elements.front();
 	}
 
@@ -113,7 +113,7 @@ namespace clv::gfx{
 	Vertex::Vertex(char* data, const VertexLayout& layout)
 		: data(data)
 		, layout(layout){
-		CLV_ASSERT(data != nullptr, "Data is nullptr. {0}", CLV_FUNCTION_NAME);
+		GARLIC_ASSERT(data != nullptr, "Data is nullptr. {0}", GARLIC_FUNCTION_NAME);
 	}
 
 	VertexBufferData::VertexBufferData(const VertexBufferData& other) = default;

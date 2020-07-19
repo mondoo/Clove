@@ -30,6 +30,9 @@ option(GAR_CLV_IMGUI_COMPATIBLE "Links Glad publicly so users can initialise Dea
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+#Root
+add_subdirectory(Root)
+
 #Clove
 add_subdirectory(Clove)
 

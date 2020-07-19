@@ -124,7 +124,7 @@ namespace clv::gfx::d3d{
 	void D3DSurface::present(){
 		DX11_INFO_PROVIDER;
 
-	#if CLV_DEBUG
+	#if GARLIC_DEBUG
 		infoManager.set();
 	#endif
 		if(FAILED(hr = swapChain->Present(swapInterval, 0u))){

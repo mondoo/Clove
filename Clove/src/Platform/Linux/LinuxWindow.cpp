@@ -157,7 +157,7 @@ namespace clv::plt{
         if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0){
             return { posX, posY };
         }else{
-            CLV_ASSERT(false, "Could not get window geometry");
+            GARLIC_ASSERT(false, "Could not get window geometry");
             return { 0, 0 };
         }
     }
@@ -174,7 +174,7 @@ namespace clv::plt{
         if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0){
             return { width, height };
         }else{
-            CLV_ASSERT(false, "Could not get window geometry");
+            GARLIC_ASSERT(false, "Could not get window geometry");
             return { 0, 0 };
         }
     }

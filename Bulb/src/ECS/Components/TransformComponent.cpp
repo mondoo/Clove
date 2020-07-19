@@ -1,5 +1,7 @@
 #include "Bulb/ECS/Components/TransformComponent.hpp"
 
+#include <Root/Definitions.hpp>
+
 using namespace clv;
 
 namespace blb::ecs{
@@ -17,7 +19,7 @@ namespace blb::ecs{
 
 		parent = other.parent;
 		//Not copying children for now, transform component has no knowledge of other components
-		GARLIC_LOG(garlicLogContext, Log::Level::Warning, "{0}: Unable to copy transform's children.", CLV_FUNCTION_NAME_PRETTY);
+		GARLIC_LOG(garlicLogContext, Log::Level::Warning, "{0}: Unable to copy transform's children.", GARLIC_FUNCTION_NAME_PRETTY);
 
 		if(parent != nullptr){
 			parent->children.push_back(this);
@@ -33,7 +35,7 @@ namespace blb::ecs{
 
 		parent = other.parent;
 		//Not copying children for now, transform component has no knowledge of other components
-		GARLIC_LOG(garlicLogContext, Log::Level::Warning, "{0}: Unable to copy transform's children.", CLV_FUNCTION_NAME_PRETTY);
+		GARLIC_LOG(garlicLogContext, Log::Level::Warning, "{0}: Unable to copy transform's children.", GARLIC_FUNCTION_NAME_PRETTY);
 
 		if(parent != nullptr){
 			parent->children.push_back(this);
@@ -61,7 +63,7 @@ namespace blb::ecs{
 			case TransformSpace::World:
 				return getWorldPosition();
 			default:
-				CLV_ASSERT(false, "Default statement hit in {0}", CLV_FUNCTION_NAME_PRETTY);
+				GARLIC_ASSERT(false, "Default statement hit in {0}", GARLIC_FUNCTION_NAME_PRETTY);
 				return {};
 		}
 	}
@@ -73,7 +75,7 @@ namespace blb::ecs{
 			case TransformSpace::World:
 				return getWorldRotation();
 			default:
-				CLV_ASSERT(false, "Default statement hit in {0}", CLV_FUNCTION_NAME_PRETTY);
+				GARLIC_ASSERT(false, "Default statement hit in {0}", GARLIC_FUNCTION_NAME_PRETTY);
 				return {};
 		}
 	}
@@ -85,7 +87,7 @@ namespace blb::ecs{
 			case TransformSpace::World:
 				return getWorldScale();
 			default:
-				CLV_ASSERT(false, "Default statement hit in {0}", CLV_FUNCTION_NAME_PRETTY);
+				GARLIC_ASSERT(false, "Default statement hit in {0}", GARLIC_FUNCTION_NAME_PRETTY);
 				return {};
 		}
 	}
@@ -152,7 +154,7 @@ namespace blb::ecs{
 				return getWorldTransformMatrix();
 				break;
 			default:
-				CLV_ASSERT(false, "Default statement hit in {0}", CLV_FUNCTION_NAME_PRETTY);
+				GARLIC_ASSERT(false, "Default statement hit in {0}", GARLIC_FUNCTION_NAME_PRETTY);
 				return {};
 		}
 	}

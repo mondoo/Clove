@@ -63,7 +63,7 @@ namespace clv::gfx::d3d{
 		return "Clove DX11 Exception [DEVICE REMOVED] (GXGI_ERROR_DEVICE_REMOVED)";
 	}
 
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 	DXGIInfoManager InfoException::infoManager;
 #endif
 
@@ -99,7 +99,7 @@ namespace clv::gfx::d3d{
 		return info;
 	}
 
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 	DXGIInfoManager& InfoException::getInfoManager(){
 		return infoManager;
 	}

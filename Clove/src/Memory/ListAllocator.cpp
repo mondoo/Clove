@@ -1,5 +1,7 @@
 #include "Clove/Memory/ListAllocator.hpp"
 
+#include <Root/Definitions.hpp>
+
 namespace clv::mem {
 	ListAllocator::ListAllocator(size_t sizeBytes)
 		: listSize(sizeBytes)
@@ -28,7 +30,7 @@ namespace clv::mem {
 		freeMemory		 = other.freeMemory;
 		other.freeMemory = false;
 
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 		allocations = other.allocations;
 		frees		= other.frees;
 #endif
@@ -44,7 +46,7 @@ namespace clv::mem {
 		freeMemory		 = other.freeMemory;
 		other.freeMemory = false;
 
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 		allocations = other.allocations;
 		frees		= other.frees;
 #endif
@@ -53,7 +55,7 @@ namespace clv::mem {
 
 	ListAllocator::~ListAllocator() {
 		if(freeMemory) {
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 			if(allocations > frees) {
 				GARLIC_LOG(garlicLogContext, Log::Level::Warning, "List Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
 			}
@@ -75,7 +77,7 @@ namespace clv::mem {
 
 		if(header == nullptr) {
 			if((head - rawList) + bytes > listSize) {
-				GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Not enough space left to allocate {1} bytes.", CLV_FUNCTION_NAME_PRETTY, bytes);
+				GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Not enough space left to allocate {1} bytes.", GARLIC_FUNCTION_NAME_PRETTY, bytes);
 				return nullptr;
 			}
 
@@ -83,7 +85,7 @@ namespace clv::mem {
 			header->blockSize = bytes;
 			head += sizeof(Header) + bytes;
 		}
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 		++allocations;
 #endif
 
@@ -95,7 +97,7 @@ namespace clv::mem {
 		Header* header	= reinterpret_cast<Header*>(data - sizeof(Header));
 
 		list.push_back(header);
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 		++frees;
 #endif
 	}

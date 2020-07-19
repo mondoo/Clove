@@ -26,8 +26,8 @@ set(
 
 set(
 	AudioFiles
-		${BLB_INCLUDE}/Audio/Sound.hpp
-		${BLB_SOURCE}/Audio/Sound.cpp
+		${BLB_INCLUDE}/Audio/SoundFile.hpp
+		${BLB_SOURCE}/Audio/SoundFile.cpp
 )
 
 set(
@@ -44,6 +44,7 @@ set(
 		${BLB_INCLUDE}/ECS/Component.inl
 		${BLB_INCLUDE}/ECS/ComponentManager.hpp
 		${BLB_INCLUDE}/ECS/ComponentManager.inl
+		${BLB_INCLUDE}/ECS/ComponentSet.hpp
 		${BLB_SOURCE}/ECS/ComponentManager.cpp
 		${BLB_INCLUDE}/ECS/ECSEvents.hpp
 		${BLB_INCLUDE}/ECS/ECSTypes.hpp
@@ -54,8 +55,10 @@ set(
 		${BLB_INCLUDE}/ECS/World.inl
 		${BLB_SOURCE}/ECS/World.cpp
 		${BLB_INCLUDE}/ECS/System.hpp
-		${BLB_INCLUDE}/ECS/Components/AudioComponent.hpp
-		${BLB_SOURCE}/ECS/Components/AudioComponent.cpp
+		${BLB_INCLUDE}/ECS/Components/AudioListenerComponent.hpp
+		${BLB_SOURCE}/ECS/Components/AudioListenerComponent.cpp
+		${BLB_INCLUDE}/ECS/Components/AudioSourceComponent.hpp
+		${BLB_SOURCE}/ECS/Components/AudioSourceComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/CameraComponent.hpp
 		${BLB_SOURCE}/ECS/Components/CameraComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp

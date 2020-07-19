@@ -4,6 +4,7 @@
 #include <Clove/Graphics/Texture.hpp>
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include <Root/Definitions.hpp>
 
 using namespace clv;
 using namespace clv::gfx;
@@ -18,7 +19,7 @@ namespace blb::rnd {
 
 	static Font::FacePtr copyFace(FT_Face face) {
 		if(FT_Reference_Face(face) != FT_Err_Ok) {
-			CLV_ASSERT(false, "Could not reference face");
+			GARLIC_ASSERT(false, "Could not reference face");
 		}
 		return makeUniqueFace(face);
 	}
@@ -32,7 +33,7 @@ namespace blb::rnd {
 		if(ftLib.use_count() == 0) {
 			FT_Library library;
 			if(FT_Init_FreeType(&library) != FT_Err_Ok) {
-				CLV_ASSERT(false, "Could not load freetype");
+				GARLIC_ASSERT(false, "Could not load freetype");
 			} else {
 				GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructed FreeType library");
 			}
@@ -120,7 +121,7 @@ namespace blb::rnd {
 	Font::FacePtr Font::createFace(const std::string& filePath) {
 		FT_Face face;
 		if(FT_New_Face(ftLibReference.get(), filePath.c_str(), 0, &face) != FT_Err_Ok) {
-			CLV_ASSERT(false, "Could not load font");
+			GARLIC_ASSERT(false, "Could not load font");
 		}
 
 		return makeUniqueFace(face);
@@ -129,7 +130,7 @@ namespace blb::rnd {
 	Font::FacePtr Font::createFace(const unsigned char* bytes, const std::size_t size) {
 		FT_Face face;
 		if(FT_New_Memory_Face(ftLibReference.get(), bytes, size, 0, &face) != FT_Err_Ok) {
-			CLV_ASSERT(false, "Could not load font");
+			GARLIC_ASSERT(false, "Could not load font");
 		}
 
 		return makeUniqueFace(face);

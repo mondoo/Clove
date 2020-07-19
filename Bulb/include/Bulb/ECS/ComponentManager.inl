@@ -1,6 +1,7 @@
 #include "Bulb/ECS/ECSEvents.hpp"
 
 #include <Clove/Event/EventDispatcher.hpp>
+#include <Root/Definitions.hpp>
 
 namespace blb::ecs {
 	template<typename ComponentType>
@@ -70,7 +71,7 @@ namespace blb::ecs {
 	ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityId, ConstructArgs&&... args) {
 		ComponentType* comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
 		if(comp == nullptr) {
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Could not create component", CLV_FUNCTION_NAME_PRETTY);
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Could not create component", GARLIC_FUNCTION_NAME_PRETTY);
 			return { comp };
 		}
 

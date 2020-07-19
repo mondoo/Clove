@@ -21,6 +21,11 @@ namespace blb::ecs {
 		virtual ComponentID getComponentID() const = 0;
 	};
 
+	/**
+	 * @brief The base class for all Components.
+	 * @tparam DetivedClassType The type of class that derives from this class.
+	 * @see	TransformComponent
+	 */
 	template<typename DerivedClassType>
 	class Component : public ComponentInterface {
 		friend class ComponentPtr<DerivedClassType>;
@@ -54,6 +59,13 @@ namespace blb::ecs {
 		void detachPointer(ComponentPtr<DerivedClassType>* ptr);
 	};
 
+	/**
+	 * @brief Wraps a pointer to a Component.
+	 * @details A ComponentPtr acts similar to a std::weak_ptr except that ComponentPtrs can't be locked.
+	 * Once the Component this class points to has been removed from the World this
+	 * class will act like a nullptr.
+	 * @tparam ComponentType The type of Component to point to.
+	 */
 	template<typename ComponentType>
 	class ComponentPtr {
 		friend class Component<ComponentType>;
@@ -77,6 +89,9 @@ namespace blb::ecs {
 
 		bool isValid() const;
 
+		/**
+		 * @brief Resets this ComponentPtr, turing it into a nullptr.
+		 */
 		void reset();
 
 		ComponentType* get() const;

@@ -56,7 +56,7 @@ namespace clv::gfx::d3d{
 	private:
 		std::string info;
 
-	#if CLV_DEBUG
+	#if GARLIC_DEBUG
 		static DXGIInfoManager infoManager;
 	#endif
 
@@ -76,7 +76,7 @@ namespace clv::gfx::d3d{
 
 		std::string getErrorInfo() const noexcept;
 
-	#if CLV_DEBUG
+	#if GARLIC_DEBUG
 		static DXGIInfoManager& getInfoManager();
 	#endif
 	};
@@ -85,7 +85,7 @@ namespace clv::gfx::d3d{
 #define DX11_EXCEPT_NOINFO(hr) clv::gfx::d3d::D3DException(__LINE__, __FILE__, (hr))
 #define DX11_THROW_NOINFO(hrcall) { if(FAILED(hr = (hrcall))){ throw DX11_EXCEPT_NOINFO(hr); } }
 
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 	#define DX11_EXCEPT(hr) clv::gfx::d3d::D3DException(__LINE__, __FILE__, (hr), infoManager.getMessages())
 	#define DX11_THROW_INFO(hrcall) infoManager.set(); if(FAILED(hr = (hrcall))) throw DX11_EXCEPT(hr)
 	#define DX11_DEVICE_REMOVED_EXCPTION(hr) clv::gfx::d3d::DeviceRemovedException(__LINE__, __FILE__, (hr), infoManager.getMessages())

@@ -6,6 +6,8 @@
 #include "Clove/Graphics/OpenGL/GLException.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
+#include <Root/Definitions.hpp>
+
 namespace clv::gfx::ogl{
 	WGLSurface::WGLSurface(std::shared_ptr<GraphicsFactory>  factory, void* windowData) 
 		: factory(std::move(factory)) {
@@ -93,7 +95,7 @@ namespace clv::gfx::ogl{
 			}
 		}
 
-		CLV_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+		GARLIC_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
 
 		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "GL version: {0}", glGetString(GL_VERSION));
 		GARLIC_LOG(garlicLogContext, Log::Level::Trace, "GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));

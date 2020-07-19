@@ -18,12 +18,6 @@ target_include_directories(
 	PUBLIC
 		include
 
-	#Libraries
-	INTERFACE
-		#TODO: Get rid of the lbsndfile paths below (see Sound.hpp)
-		vendor/libsndfile/src
-		${CMAKE_CURRENT_BINARY_DIR}/vendor/libsndfile/src
-
 	PRIVATE
 		vendor/freetype2/include
 		vendor/bullet3/src

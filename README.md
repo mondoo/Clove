@@ -5,6 +5,7 @@ The Garlic game engine is comprised of the following components:
 
 |Component|Language|Description|
 |-|-|-|
+|Root(WIP)|C++|A collection of core libraries for the entire engine (Definitions, Events, Memory etc.)|
 |Clove|C++|The abstraction layer (Graphics, Platform, Audio etc.)|
 |Bulb|C++|Built around Clove, implements higher level systems used in games (AI, ECS, Physics, etc.)|
 |Stem(WIP)|C++|A prebuilt application layer built ontop of Bulb. Provides a framework for games|

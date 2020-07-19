@@ -3,14 +3,14 @@
 namespace clv::gfx{
 	enum class API{
 		None,
-	#if CLV_PLATFORM_WINDOWS
+	#if GARLIC_PLATFORM_WINDOWS
 		OpenGL4,
 		Direct3D11,
 		Vulkan,
-	#elif CLV_PLATFORM_LINUX
+	#elif GARLIC_PLATFORM_LINUX
 		OpenGL4,
 		Vulkan,
-	#elif CLV_PLATFORM_MACOS
+	#elif GARLIC_PLATFORM_MACOS
 		Metal1,
 	#endif
 	};

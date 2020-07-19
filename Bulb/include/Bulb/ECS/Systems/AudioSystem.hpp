@@ -1,28 +1,14 @@
 #pragma once
 
+#include <Bulb/ECS/Components/AudioListenerComponent.hpp>
+
 #include "Bulb/ECS/System.hpp"
 
-#include "Bulb/ECS/Components/AudioComponent.hpp"
-#include "Bulb/ECS/ECSEvents.hpp"
-
-#include <Clove/Event/EventHandle.hpp>
-
-//PortAudio type defas (see portaudio.h)
-typedef void PaStream;
-typedef unsigned long PaStreamCallbackFlags;
-
-struct PaStreamCallbackTimeInfo;
-
-//namespace blb::ecs::aud{
-//	class AudioComponent;
-//}
-
 namespace blb::ecs {
+	/**
+	 * @brief Enables an ecs::World to play poisitional audio
+	 */
 	class AudioSystem : public System {
-		//VARIABLES
-	private:
-		clv::EventHandle componentRemovedHandle;
-
 		//FUNCTIONS
 	public:
 		AudioSystem();
@@ -35,18 +21,6 @@ namespace blb::ecs {
 
 		~AudioSystem();
 
-		void registerToEvents(clv::EventDispatcher& dispatcher) override;
-
 		void update(World& world, clv::utl::DeltaTime deltaTime) override;
-
-	private:
-		void onComponentRemoved(const ComponentRemovedEvent<AudioComponent>& event);
-
-		void startSound(AudioComponent* component, PlaybackMode playback);
-		void pauseSound(AudioComponent* component);
-		void stopSound(AudioComponent* component);
-
-		static int soundPlayback_Loop(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);
-		static int soundPlayback_Once(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);
 	};
 }

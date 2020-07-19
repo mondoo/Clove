@@ -6,9 +6,9 @@
 #include "Clove/Graphics/OpenGL/GLPipelineObject.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 #include "Clove/Graphics/OpenGL/GLShader.hpp"
-#if CLV_PLATFORM_WINDOWS
+#if GARLIC_PLATFORM_WINDOWS
 	#include "Clove/Graphics/OpenGL/WGLSurface.hpp"
-#elif CLV_PLATFORM_LINUX
+#elif GARLIC_PLATFORM_LINUX
 	#include "Clove/Graphics/OpenGL/GLXSurface.hpp"
 #endif
 
@@ -50,9 +50,9 @@ namespace clv::gfx::ogl{
 	}
 
 	std::shared_ptr<Surface> GLGraphicsFactory::createSurface(void* windowData){
-	#if CLV_PLATFORM_WINDOWS
+	#if GARLIC_PLATFORM_WINDOWS
 		return std::make_shared<WGLSurface>(shared_from_this(), windowData);
-	#elif CLV_PLATFORM_LINUX
+	#elif GARLIC_PLATFORM_LINUX
 		return std::make_shared<GLXSurface>(shared_from_this(), windowData);
 	#endif
 	}

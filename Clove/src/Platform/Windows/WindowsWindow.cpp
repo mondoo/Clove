@@ -4,6 +4,8 @@
 #include "Clove/Graphics/GraphicsFactory.hpp"
 #include "Clove/Graphics/Surface.hpp"
 
+#include <Root/Definitions.hpp>
+
 #define CLV_WINDOWS_QUIT 25397841 //Note: this number is completely random
 
 namespace clv::plt {
@@ -203,7 +205,7 @@ namespace clv::plt {
 				//Keyboard
 			case WM_KEYDOWN:
 			case WM_SYSKEYDOWN:
-				if(!(lParam & BIT(30)) || keyboard.isAutoRepeatEnabled()) {
+                if(!(lParam & GARLIC_BIT(30)) || keyboard.isAutoRepeatEnabled()) {
 					keyboard.onKeyPressed(static_cast<Key>(wParam));
 				}
 				break;

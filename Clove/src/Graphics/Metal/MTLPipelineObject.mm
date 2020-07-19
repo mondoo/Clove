@@ -54,7 +54,7 @@ namespace clv::gfx::mtl{
 	}
 	
 	void MTLPipelineObject::setGeometryShader(const Shader& geometryShader){
-		CLV_ASSERT(false, "Geometry shader not supported on Metal!");
+		GARLIC_ASSERT(false, "Geometry shader not supported on Metal!");
 	}
 	
 	void MTLPipelineObject::setPixelShader(const Shader& pixelShader){
@@ -100,7 +100,7 @@ namespace clv::gfx::mtl{
 			case VertexElementType::colour3D:
 				return MTLVertexFormatFloat3;
 			default:
-				CLV_ASSERT(false, "Invalid element type");
+				GARLIC_ASSERT(false, "Invalid element type");
 				return MTLVertexFormatFloat3;
 		}
 	}
