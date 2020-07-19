@@ -246,8 +246,8 @@ namespace blb::rnd {
             clv::gfx::BufferDescriptor2 descriptor{};
             descriptor.size             = sizeof(ModelViewProj);
             descriptor.usageFlags       = clv::gfx::BufferUsageMode::UniformBuffer;
-            descriptor.sharingMode      = clv::gfx::BufferSharingMode::Exclusive;
-            descriptor.memoryProperties = clv::gfx::BufferMemoryProperties::HostVisible;
+            descriptor.sharingMode      = clv::gfx::SharingMode::Exclusive;
+            descriptor.memoryProperties = clv::gfx::MemoryProperties::HostVisible;
 
             uniformBuffers[i] = graphicsFactory->createBuffer(std::move(descriptor));
         }

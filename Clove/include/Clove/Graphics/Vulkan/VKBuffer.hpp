@@ -14,6 +14,7 @@ namespace clv::gfx {
         IndexBuffer         = 1 << 3,
         UniformBuffer       = 1 << 4,
     };
+    //TODO: Move to macro
     // clang-format off
     inline constexpr BufferUsageMode operator&(BufferUsageMode l, BufferUsageMode r) { return static_cast<BufferUsageMode>(static_cast<UsageType>(l) & static_cast<UsageType>(r)); }
     inline constexpr BufferUsageMode operator|(BufferUsageMode l, BufferUsageMode r) { return static_cast<BufferUsageMode>(static_cast<UsageType>(l) | static_cast<UsageType>(r)); }
@@ -27,21 +28,11 @@ namespace clv::gfx {
     inline constexpr bool operator!=(BufferUsageMode l, UsageType r){ return !(l == r); }
     // clang-format on
 
-    enum class BufferSharingMode {
-        Exclusive,
-        Concurrent
-    };
-
-    enum class BufferMemoryProperties {
-        DeviceLocal, //GPU optimised, can't be written to be CPU
-        HostVisible, //Can be written to by CPU, not GPU optimised
-    };
-
     struct BufferDescriptor2 {//TODO: Remove 2, this is because it is conflicting the previously defined type
         size_t size = 0;
         BufferUsageMode usageFlags;
-        BufferSharingMode sharingMode;
-        BufferMemoryProperties memoryProperties;
+        SharingMode sharingMode;
+        MemoryProperties memoryProperties;
     };
 }
 

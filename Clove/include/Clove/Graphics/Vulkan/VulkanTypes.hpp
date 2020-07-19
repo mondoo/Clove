@@ -42,6 +42,16 @@ namespace clv::gfx {
 	enum class DescriptorType {
         UniformBuffer,
     };
+
+	enum class SharingMode {
+        Exclusive,
+        Concurrent
+    };
+
+	enum class MemoryProperties {
+        DeviceLocal,//GPU optimised, can't be written to be CPU
+        HostVisible,//Can be written to by CPU, not GPU optimised
+    };
 }
 
 namespace clv::gfx::vk {

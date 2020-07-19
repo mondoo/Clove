@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 
+#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+
 namespace clv::gfx::vk {
     static VkBufferUsageFlags getUsageFlags(BufferUsageMode garlicUsageFlags) {
         VkBufferUsageFlags flags = 0;
@@ -23,32 +25,6 @@ namespace clv::gfx::vk {
         return flags;
     }
 
-    static uint32_t getMemoryTypeIndex(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice) {
-        VkPhysicalDeviceMemoryProperties memoryProperties{};
-        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
-
-        for(uint32_t i = 0; i < memoryProperties.memoryTypeCount; ++i) {
-            if(typeFilter & (1 << i) != 0 && (memoryProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-                return i;
-            }
-        }
-
-        CLV_ASSERT(false, "{0}: Failed to find the specified index", CLV_FUNCTION_NAME);
-        return -1;
-    }
-
-    static VkMemoryPropertyFlags getMemoryPropertyFlags(BufferMemoryProperties garlicProperties) {
-        switch(garlicProperties) {
-            case BufferMemoryProperties::DeviceLocal:
-                return VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-            case BufferMemoryProperties::HostVisible:
-                //Including HOST_COHERENT here as this makes mapping memory more simple
-                return VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-            default:
-                break;
-        }
-    }
-
     VKBuffer::VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor2 descriptor, const QueueFamilyIndices& familyIndices)
         : device(device)
         , descriptor(std::move(descriptor)) {
@@ -60,7 +36,7 @@ namespace clv::gfx::vk {
         createInfo.flags                 = 0;
         createInfo.size                  = descriptor.size;
         createInfo.usage                 = getUsageFlags(this->descriptor.usageFlags);
-        if(this->descriptor.sharingMode == BufferSharingMode::Exclusive) {
+        if(this->descriptor.sharingMode == SharingMode::Exclusive) {
             createInfo.sharingMode           = VK_SHARING_MODE_EXCLUSIVE;
             createInfo.queueFamilyIndexCount = 0;
             createInfo.pQueueFamilyIndices   = nullptr;
