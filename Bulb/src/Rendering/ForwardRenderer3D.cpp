@@ -1,5 +1,7 @@
 #include "Bulb/Rendering/ForwardRenderer3D.hpp"
 
+#include "Bulb/TextureLoader.hpp"
+
 #include <Clove/Platform/Window.hpp>
 
 namespace blb::rnd {
@@ -30,8 +32,11 @@ namespace blb::rnd {
         descriptorSetLayout = graphicsFactory->createDescriptorSetLayout(descriptorSetLayoutDescriptor);
 
 		//TEMP - Testing drawing
+        const auto textureData        = TextureLoader::loadTexture("F:/RingsOfPower/Engine/Garlic/VKBackendTest/texture.jpg");
+
         const size_t vertexBufferSize = sizeof(Vertex) * std::size(vertices);
         const size_t indexBufferSize  = sizeof(uint16_t) * std::size(indices);
+        const size_t textureBufferSize = textureData.dimensions.x * textureData.dimensions.y * textureData.channels;
 
         //Staging buffers
         clv::gfx::BufferDescriptor2 stagingDescriptor{};
@@ -45,7 +50,8 @@ namespace blb::rnd {
         stagingDescriptor.size  = indexBufferSize;
         auto stagingBufferIndex = graphicsFactory->createBuffer(stagingDescriptor);
 
-        auto stagingBuffer = graphicsFactory->createBuffer(stagingDescriptor);
+        stagingDescriptor.size    = textureBufferSize;
+        auto stagingBufferTexture = graphicsFactory->createBuffer(stagingDescriptor);
 
         //Vertex buffer
         clv::gfx::BufferDescriptor2 vertexDescriptor{};
@@ -68,9 +74,11 @@ namespace blb::rnd {
         //Texture
         //TODO...
         
-        //Map the data onto our CPU visible buffer
+
+        //Map the data onto our CPU visible (staging) buffers
         stagingBufferVertex->map(std::data(vertices), vertexBufferSize);
-        stagingBufferIndex->map(std::data(indices), indexBufferSize);       
+        stagingBufferIndex->map(std::data(indices), indexBufferSize);     
+        stagingBufferTexture->map(textureData.buffer.get(), textureBufferSize);
 
         std::shared_ptr<clv::gfx::vk::VKTransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
         transferCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
@@ -79,9 +87,6 @@ namespace blb::rnd {
         transferCommandBuffer->endRecording();
         transferQueue->submit({ { transferCommandBuffer } });
         transferQueue->freeCommandBuffer(*transferCommandBuffer);
-        
-
-        //Adding a texture
 
         //~TEMP
 
