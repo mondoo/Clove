@@ -184,6 +184,17 @@ namespace clv::gfx::vk {
     }
 
     void VKTransferCommandBuffer::transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout) {
+        const bool isValidLayout =
+            newLayout != ImageLayout::ShaderReadOnlyOptimal &&
+            newLayout != ImageLayout::ColourAttachmentOptimal &&
+            newLayout != ImageLayout::DepthStencilAttachmentOptimal &&
+            newLayout != ImageLayout::DepthStencilReadOnlyOptimal;
+
+        if(!isValidLayout) {
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Invalid newLayout. This command buffer cannot handle transfering images to the following layouts:\n\tImageLayout::ShaderReadOnlyOptimal\n\tImageLayout::ColourAttachmentOptimal\n\tImageLayout::DepthStencilAttachmentOptimal\n\tImageLayout::DepthStencilReadOnlyOptimal", CLV_FUNCTION_NAME);
+            return;
+        }
+
         const VkImageLayout vkPrevLayout = convertImageLayout(previousLayout);
         const VkImageLayout vkNextLayout = convertImageLayout(newLayout);
 
