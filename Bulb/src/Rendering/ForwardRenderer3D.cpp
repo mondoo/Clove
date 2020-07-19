@@ -74,8 +74,8 @@ namespace blb::rnd {
 
         std::shared_ptr<clv::gfx::vk::VKTransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
         transferCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
-        transferCommandBuffer->copyBuffer(*stagingBufferVertex, 0, *vertexBuffer, 0, vertexBufferSize);
-        transferCommandBuffer->copyBuffer(*stagingBufferIndex, 0, *indexBuffer, 0, indexBufferSize);
+        transferCommandBuffer->copyBufferToBuffer(*stagingBufferVertex, 0, *vertexBuffer, 0, vertexBufferSize);
+        transferCommandBuffer->copyBufferToBuffer(*stagingBufferIndex, 0, *indexBuffer, 0, indexBufferSize);
         transferCommandBuffer->endRecording();
         transferQueue->submit({ { transferCommandBuffer } });
         transferQueue->freeCommandBuffer(*transferCommandBuffer);

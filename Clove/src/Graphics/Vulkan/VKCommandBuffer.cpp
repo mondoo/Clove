@@ -105,7 +105,7 @@ namespace clv::gfx::vk {
         }
     }
 
-	void VKTransferCommandBuffer::copyBuffer(VKBuffer& source, const size_t sourceOffset, VKBuffer& destination, const size_t destinationOffset, const size_t sizeBytes) {
+	void VKTransferCommandBuffer::copyBufferToBuffer(VKBuffer& source, const size_t sourceOffset, VKBuffer& destination, const size_t destinationOffset, const size_t sizeBytes) {
         VkBufferCopy copyRegion{};
         copyRegion.srcOffset = sourceOffset;
         copyRegion.dstOffset = destinationOffset;

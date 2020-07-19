@@ -68,7 +68,7 @@ namespace clv::gfx::vk {
 
         void beginRecording(CommandBufferUsage usageFlag);
 
-        void copyBuffer(VKBuffer& source, const size_t sourceOffset, VKBuffer& destination, const size_t destinationOffset, const size_t sizeBytes);
+        void copyBufferToBuffer(VKBuffer& source, const size_t sourceOffset, VKBuffer& destination, const size_t destinationOffset, const size_t sizeBytes);
 
         void endRecording();
 
