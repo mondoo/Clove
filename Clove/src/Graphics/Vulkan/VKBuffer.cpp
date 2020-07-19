@@ -74,7 +74,7 @@ namespace clv::gfx::vk {
     }
 
     void VKBuffer::map(const void* data, const size_t size) {
-        CLV_ASSERT(size == descriptor.size, "{0}: Cannot map memory that is a different size to what the buffer expects", CLV_FUNCTION_NAME);
+        GARLIC_ASSERT(size == descriptor.size, "{0}: Cannot map memory that is a different size to what the buffer expects", GARLIC_FUNCTION_NAME);
 
         void* cpuAccessibleMemory;
 

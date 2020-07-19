@@ -32,7 +32,7 @@ namespace clv::gfx::vk {
             case VK_FORMAT_B8G8R8A8_UNORM:
                 return ImageFormat::B8G8R8A8_UNORM;
             default:
-                CLV_ASSERT(false, "Format not supported by garlic");
+                GARLIC_ASSERT(false, "Format not supported by garlic");
                 return ImageFormat::Unkown;
         }
     }
@@ -59,7 +59,7 @@ namespace clv::gfx::vk {
             case VK_ERROR_OUT_OF_DATE_KHR:
                 return Result::Error_SwapchainOutOfDate;
             default:
-                CLV_ASSERT(false, "Unkown result type");
+                GARLIC_ASSERT(false, "Unkown result type");
                 return Result::Unkown;
         }
     }
@@ -75,7 +75,7 @@ namespace clv::gfx::vk {
             case VertexAttributeFormat::R32G32B32A32_SFLOAT:
                 return VK_FORMAT_R32G32B32A32_SFLOAT;
             default:
-                CLV_ASSERT(false, "{0}: Unkown format passed", CLV_FUNCTION_NAME_PRETTY);
+                GARLIC_ASSERT(false, "{0}: Unkown format passed", GARLIC_FUNCTION_NAME_PRETTY);
                 return VK_FORMAT_UNDEFINED;
         }
     }
@@ -85,7 +85,7 @@ namespace clv::gfx::vk {
             case DescriptorType::UniformBuffer:
                 return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             default:
-                CLV_ASSERT(false, "{0}: Unkown type", CLV_FUNCTION_NAME);
+                GARLIC_ASSERT(false, "{0}: Unkown type", GARLIC_FUNCTION_NAME);
                 return VK_DESCRIPTOR_TYPE_MAX_ENUM;
         }
     }
@@ -100,7 +100,7 @@ namespace clv::gfx::vk {
             }
         }
 
-        CLV_ASSERT(false, "{0}: Failed to find the specified index", CLV_FUNCTION_NAME);
+        GARLIC_ASSERT(false, "{0}: Failed to find the specified index", GARLIC_FUNCTION_NAME);
         return -1;
     }
 
@@ -132,7 +132,7 @@ namespace clv::gfx::vk {
             case ImageLayout::DepthStencilReadOnlyOptimal:
                 return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
             default:
-                CLV_ASSERT(false, "{0}: Unkown image layout", CLV_FUNCTION_NAME);
+                GARLIC_ASSERT(false, "{0}: Unkown image layout", GARLIC_FUNCTION_NAME);
                 return VK_IMAGE_LAYOUT_UNDEFINED;
         }
     }

@@ -10,7 +10,7 @@ namespace clv::gfx::vk {
             case clv::gfx::CommandBufferUsage::OneTimeSubmit:
                 return VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
             default:
-                CLV_ASSERT(false, "{0}: Unkown usage type", CLV_FUNCTION_NAME);
+                GARLIC_ASSERT(false, "{0}: Unkown usage type", GARLIC_FUNCTION_NAME);
                 return 0;
         }
     }
@@ -20,7 +20,7 @@ namespace clv::gfx::vk {
             case IndexType::Uint16:
                 return VK_INDEX_TYPE_UINT16;
             default:
-                CLV_ASSERT(false, "{0}: Unkown index type", CLV_FUNCTION_NAME);
+                GARLIC_ASSERT(false, "{0}: Unkown index type", GARLIC_FUNCTION_NAME);
                 return VK_INDEX_TYPE_UINT16;
         }
 	}
@@ -31,7 +31,7 @@ namespace clv::gfx::vk {
         } else if(oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
             return { VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT };
         } else {
-            CLV_ASSERT(false, "{0}: Unhandled layout transition", CLV_FUNCTION_NAME);
+            GARLIC_ASSERT(false, "{0}: Unhandled layout transition", GARLIC_FUNCTION_NAME);
             return { 0, 0 };
         }
     }
@@ -42,7 +42,7 @@ namespace clv::gfx::vk {
         } else if(oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
             return { VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT };
         } else {
-            CLV_ASSERT(false, "{0}: Unhandled layout transition", CLV_FUNCTION_NAME);
+            GARLIC_ASSERT(false, "{0}: Unhandled layout transition", GARLIC_FUNCTION_NAME);
             return { 0, 0 };
         }
     }
@@ -191,7 +191,7 @@ namespace clv::gfx::vk {
             newLayout != ImageLayout::DepthStencilReadOnlyOptimal;
 
         if(!isValidLayout) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Invalid newLayout. This command buffer cannot handle transfering images to the following layouts:\n\tImageLayout::ShaderReadOnlyOptimal\n\tImageLayout::ColourAttachmentOptimal\n\tImageLayout::DepthStencilAttachmentOptimal\n\tImageLayout::DepthStencilReadOnlyOptimal", CLV_FUNCTION_NAME);
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Invalid newLayout. This command buffer cannot handle transfering images to the following layouts:\n\tImageLayout::ShaderReadOnlyOptimal\n\tImageLayout::ColourAttachmentOptimal\n\tImageLayout::DepthStencilAttachmentOptimal\n\tImageLayout::DepthStencilReadOnlyOptimal", GARLIC_FUNCTION_NAME);
             return;
         }
 

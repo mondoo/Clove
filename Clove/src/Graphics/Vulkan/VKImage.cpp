@@ -29,7 +29,7 @@ namespace clv::gfx::vk {
             case ImageType::_3D:
                 return VK_IMAGE_TYPE_3D;
             default:
-                CLV_ASSERT(false, "{0}: Unhandled image type");
+                GARLIC_ASSERT(false, "{0}: Unhandled image type");
                 return VK_IMAGE_TYPE_2D;
         }
     }

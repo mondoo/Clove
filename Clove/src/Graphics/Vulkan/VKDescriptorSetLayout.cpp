@@ -8,7 +8,7 @@ namespace clv::gfx::vk {
             case DescriptorStage::Vertex:
                 return VK_SHADER_STAGE_VERTEX_BIT;
             default:
-                CLV_ASSERT(false, "{0}: Unkown type", CLV_FUNCTION_NAME);
+                GARLIC_ASSERT(false, "{0}: Unkown type", GARLIC_FUNCTION_NAME);
                 return 0;
         }
     }
