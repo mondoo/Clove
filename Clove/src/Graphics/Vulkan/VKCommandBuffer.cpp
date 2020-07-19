@@ -25,6 +25,28 @@ namespace clv::gfx::vk {
         }
 	}
 
+    static std::pair<VkAccessFlags, VkAccessFlags> getAccessFlags(VkImageLayout oldLayout, VkImageLayout newLayout){
+        if(oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+            return { 0, VK_ACCESS_TRANSFER_WRITE_BIT };
+        } else if(oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+            return { VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT };
+        } else {
+            CLV_ASSERT(false, "{0}: Unhandled layout transition", CLV_FUNCTION_NAME);
+            return { 0, 0 };
+        }
+    }
+
+    static std::pair<VkPipelineStageFlags, VkPipelineStageFlags> getStageFlags(VkImageLayout oldLayout, VkImageLayout newLayout){
+        if(oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+            return { VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT };
+        } else if(oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+            return { VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT };
+        } else {
+            CLV_ASSERT(false, "{0}: Unhandled layout transition", CLV_FUNCTION_NAME);
+            return { 0, 0 };
+        }
+    }
+
 	VKGraphicsCommandBuffer::VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer)
 		: commandBuffer(commandBuffer) {
 	}
@@ -89,13 +111,20 @@ namespace clv::gfx::vk {
 	}
 
     void VKGraphicsCommandBuffer::transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout) {
+        const VkImageLayout vkPrevLayout = convertImageLayout(previousLayout);
+        const VkImageLayout vkNextLayout = convertImageLayout(newLayout);
+
+        //src = what happens before the barrier, dst = what needs to wait on the barrier
+        const auto [srcAccess, dstAccess] = getAccessFlags(vkPrevLayout, vkNextLayout);
+        const auto [srcStage, dstStage]   = getStageFlags(vkPrevLayout, vkNextLayout);
+
         VkImageMemoryBarrier barrier{};
         barrier.sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         barrier.pNext                           = nullptr;
-        barrier.srcAccessMask                   = 0;//TODO
-        barrier.dstAccessMask                   = 0;//TODO
-        barrier.oldLayout                       = convertImageLayout(previousLayout);
-        barrier.newLayout                       = convertImageLayout(newLayout);
+        barrier.srcAccessMask                   = srcAccess;
+        barrier.dstAccessMask                   = dstAccess;
+        barrier.oldLayout                       = vkPrevLayout;
+        barrier.newLayout                       = vkNextLayout;
         barrier.srcQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
         barrier.dstQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
         barrier.image                           = image.getImage();
@@ -104,7 +133,7 @@ namespace clv::gfx::vk {
         barrier.subresourceRange.levelCount     = 1;
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount     = 1;
-        vkCmdPipelineBarrier(commandBuffer, 0 /* TODO */, 0 /* TODO */, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+        vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     }
 
 	VkCommandBuffer VKGraphicsCommandBuffer::getCommandBuffer() const {
@@ -155,13 +184,20 @@ namespace clv::gfx::vk {
     }
 
     void VKTransferCommandBuffer::transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout) {
+        const VkImageLayout vkPrevLayout = convertImageLayout(previousLayout);
+        const VkImageLayout vkNextLayout = convertImageLayout(newLayout);
+
+        //src = what happens before the barrier, dst = what needs to wait on the barrier
+        const auto [srcAccess, dstAccess] = getAccessFlags(vkPrevLayout, vkNextLayout);
+        const auto [srcStage, dstStage]   = getStageFlags(vkPrevLayout, vkNextLayout);
+
         VkImageMemoryBarrier barrier{};
         barrier.sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         barrier.pNext                           = nullptr;
-        barrier.srcAccessMask                   = 0;//TODO
-        barrier.dstAccessMask                   = 0;//TODO
-        barrier.oldLayout                       = convertImageLayout(previousLayout);
-        barrier.newLayout                       = convertImageLayout(newLayout);
+        barrier.srcAccessMask                   = srcAccess;
+        barrier.dstAccessMask                   = dstAccess;
+        barrier.oldLayout                       = vkPrevLayout;
+        barrier.newLayout                       = vkNextLayout;
         barrier.srcQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
         barrier.dstQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
         barrier.image                           = image.getImage();
@@ -170,7 +206,7 @@ namespace clv::gfx::vk {
         barrier.subresourceRange.levelCount     = 1;
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount     = 1;
-        vkCmdPipelineBarrier(commandBuffer, 0 /* TODO */, 0 /* TODO */, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+        vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     }
 
 	VkCommandBuffer VKTransferCommandBuffer::getCommandBuffer() const {
