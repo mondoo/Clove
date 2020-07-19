@@ -131,8 +131,6 @@ set(
 
 set(
 	VulkanGraphicsFiles
-		${CLV_INCLUDE}/Graphics/Vulkan/VK.hpp
-		${CLV_SOURCE}/Graphics/Vulkan/VK.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKBuffer.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKBuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKCommandBuffer.hpp

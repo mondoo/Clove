@@ -3,7 +3,6 @@
 #if CLV_PLATFORM_WINDOWS
 	#include "Clove/Graphics/OpenGL/GL.hpp"
 	#include "Clove/Graphics/Direct3D/D3D.hpp"
-	#include "Clove/Graphics/Vulkan/VK.hpp"
 #elif CLV_PLATFORM_LINUX
 	#include "Clove/Graphics/OpenGL/GL.hpp"
 	#include "Clove/Graphics/Vulkan/VK.hpp"
