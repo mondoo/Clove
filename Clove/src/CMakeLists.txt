@@ -157,6 +157,8 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKSemaphore.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsFactory.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsFactory.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKImage.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKImage.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKImageView.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKImageView.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKShader.hpp

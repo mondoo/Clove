@@ -25,6 +25,8 @@ namespace clv::gfx::vk {
     ImageFormat convertImageFormat(VkFormat vulkanFormat) {
         switch(vulkanFormat) {
             //Formats supported by garlic
+            case VK_FORMAT_R8G8B8A8_SRGB:
+                return ImageFormat::R8G8B8A8_SRGB;
             case VK_FORMAT_B8G8R8A8_SRGB:
                 return ImageFormat::B8G8R8A8_SRGB;
             case VK_FORMAT_B8G8R8A8_UNORM:
@@ -39,6 +41,8 @@ namespace clv::gfx::vk {
         switch(garlicFormat) {
             case ImageFormat::Unkown:
                 return VK_FORMAT_UNDEFINED;
+            case ImageFormat::R8G8B8A8_SRGB:
+                return VK_FORMAT_R8G8B8A8_SRGB;
             case ImageFormat::B8G8R8A8_SRGB:
                 return VK_FORMAT_B8G8R8A8_SRGB;
             case ImageFormat::B8G8R8A8_UNORM:

@@ -11,6 +11,7 @@
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/GRaphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 
@@ -58,6 +59,7 @@ namespace clv::gfx::vk {
 		std::unique_ptr<VKFence> createFence(FenceDescriptor descriptor);
 
 		std::unique_ptr<VKBuffer> createBuffer(BufferDescriptor2 descriptor);
+        std::unique_ptr<VKImage> createImage(ImageDescriptor descriptor);
 
 		void waitForIdleDevice();
 	};

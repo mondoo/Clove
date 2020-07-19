@@ -6,6 +6,7 @@
 namespace clv::gfx {
 	enum class ImageFormat {
 		Unkown,
+        R8G8B8A8_SRGB,
 		B8G8R8A8_SRGB,
 		B8G8R8A8_UNORM
 	};

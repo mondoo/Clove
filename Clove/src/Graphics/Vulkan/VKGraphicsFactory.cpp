@@ -404,6 +404,10 @@ namespace clv::gfx::vk{
         return std::make_unique<VKBuffer>(logicalDevice, physicalDevice, std::move(descriptor), queueFamilyIndices);
     }
 
+	std::unique_ptr<VKImage> VKGraphicsFactory::createImage(ImageDescriptor descriptor) {
+        return std::make_unique<VKImage>(logicalDevice, physicalDevice, std::move(descriptor), queueFamilyIndices);
+    }
+
 	void VKGraphicsFactory::waitForIdleDevice() {
 		vkDeviceWaitIdle(logicalDevice);
 	}
