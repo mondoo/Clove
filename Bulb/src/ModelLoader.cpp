@@ -266,7 +266,7 @@ namespace blb::ModelLoader {
         const aiScene* scene = importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs);
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Assimp Error: {0}", importer.GetErrorString());
-            return { meshes };
+            return { meshes, nullptr, {} };
         }
 
 		//TODO: Support multiple skeletons?
@@ -453,10 +453,7 @@ namespace blb::ModelLoader {
             }
 		}
 
-		rnd::AnimatedModel animatedModel{ meshes };
-        animatedModel.skeleton  = std::move(skeleton);
-        animatedModel.animClips = std::move(animationClips);
-
+		rnd::AnimatedModel animatedModel{ meshes, std::move(skeleton), std::move(animationClips) };
         return animatedModel;
 	}
 }

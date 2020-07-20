@@ -60,7 +60,7 @@ int main() {
         renderer->submitLight(dirLight);
 
         //Mesh
-        auto matrixPalet = model.animator.update(deltaSeconds.count());
+        auto matrixPalet = model.update(deltaSeconds.count());
         for(auto& mesh : model.getMeshes()) {
             static float angle = 0.0f;
             angle += deltaSeconds.count() * 25.0f;

@@ -1,21 +1,39 @@
 #pragma once
 
-#include "Bulb/Rendering/Renderables/StaticModel.hpp"
 #include "Bulb/Rendering/AnimationTypes.hpp"
 #include "Bulb/Rendering/Animator.hpp"
+#include "Bulb/Rendering/Renderables/StaticModel.hpp"
 
 namespace blb::rnd {
+    /**
+     * @brief Represents a collection of meshes that can be animated.
+     */
     class AnimatedModel : public StaticModel {
         //VARIABLES
-   // private:
-    public:
-        //Temp, owning the skeleton for now but when using submeshes it will make sense to have this stored somewhere else. Which also allow skeletons to be reused
+    private:
+        Animator animator;
+
         std::unique_ptr<Skeleton> skeleton;
-        Animator animator; //TODO: not sure if this should live here
-        std::vector<AnimationClip> animClips; //TODO: Should clips live on the animated model?
+        std::vector<AnimationClip> animClips;
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
+        AnimatedModel() = delete;
+        AnimatedModel(std::vector<std::shared_ptr<Mesh>> meshes, std::unique_ptr<Skeleton> skeleton, std::vector<AnimationClip> animClips);
+
+        AnimatedModel(const AnimatedModel& other) = delete;
+        AnimatedModel(AnimatedModel&& other) noexcept;
+
+        AnimatedModel& operator=(const AnimatedModel& other) = delete;
+        AnimatedModel& operator=(AnimatedModel&& other) noexcept;
+
+        ~AnimatedModel();
+
+        /**
+         * @brief Updates the internal animator.
+         * @param deltaTime The time since the last frame
+         * @returns The matrix palette for the skeleton for a given frame
+         */
+        std::array<clv::mth::mat4f, MAX_JOINTS> update(const clv::utl::DeltaTime deltaTime);
     };
 }
