@@ -15,9 +15,6 @@ int main() {
     auto renderer = std::make_shared<blb::rnd::Renderer3D>(*window);
     auto camera   = blb::rnd::Camera{ *window, blb::rnd::ProjectionMode::Perspective };
 
-    //Set the current clip
-    model.animator.currentClip = &model.animClips[0];
-
     static constexpr float size     = 50.0f;
     static constexpr float nearDist = 0.5f;
     static constexpr float farDist  = 1000.0f;
