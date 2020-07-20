@@ -270,7 +270,7 @@ namespace blb::ModelLoader {
         }
 
 		//TODO: Support multiple skeletons?
-		std::unique_ptr<rnd::Skeleton> skeleton = std::make_unique<rnd::Skeleton>(); //TODO: Made into a unique ptr to avoid errors from std::move. Perhaps we should put this in an allocator?
+		std::unique_ptr<rnd::Skeleton> skeleton = std::make_unique<rnd::Skeleton>();
 
 		//Build scene map
         std::unordered_map<std::string_view, aiNode*> nodeNameMap;
