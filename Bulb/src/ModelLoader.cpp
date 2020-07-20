@@ -257,7 +257,7 @@ namespace blb::ModelLoader {
 		return { meshes };
 	}
 
-	rnd::SkeletalMesh loadAnimatedModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory){
+	rnd::AnimatedModel loadAnimatedModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory){
         CLV_PROFILE_FUNCTION();
 
         std::vector<std::shared_ptr<rnd::Mesh>> meshes;
@@ -453,7 +453,7 @@ namespace blb::ModelLoader {
             }
 		}
 
-		rnd::SkeletalMesh animatedModel{ meshes };
+		rnd::AnimatedModel animatedModel{ meshes };
         animatedModel.skeleton  = std::move(skeleton);
         animatedModel.animClips = std::move(animationClips);
 

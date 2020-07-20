@@ -22,7 +22,7 @@ namespace clv::plt {
 namespace blb::rnd {
 	class Sprite;
 	class Mesh;
-    class SkeletalMesh;
+    class AnimatedModel;
 }
 
 namespace blb::rnd {

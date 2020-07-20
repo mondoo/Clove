@@ -5,7 +5,7 @@
 #include "Bulb/Rendering/Animator.hpp"
 
 namespace blb::rnd {
-    class SkeletalMesh : public Model { // TODO: Rename to AnimatedModel
+    class AnimatedModel : public Model {
         //VARIABLES
    // private:
     public:
