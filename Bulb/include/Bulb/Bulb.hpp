@@ -32,6 +32,7 @@
 #include "Bulb/Rendering/MaterialInstance.hpp"
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 #include "Bulb/Rendering/Renderables/StaticModel.hpp"
+#include "Bulb/Rendering/Renderables/AnimatedModel.hpp"
 #include "Bulb/Rendering/Renderables/Sprite.hpp"
 #include "Bulb/Rendering/Renderer3D.hpp"
 
