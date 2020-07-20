@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Bulb/Rendering/Renderables/Model.hpp"
+#include "Bulb/Rendering/Renderables/StaticModel.hpp"
 #include "Bulb/Rendering/Renderables/AnimatedModel.hpp"
 
 namespace clv::gfx{
@@ -8,6 +8,6 @@ namespace clv::gfx{
 }
 
 namespace blb::ModelLoader {
-	rnd::Model loadModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory);
+    rnd::StaticModel loadStaticModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory);
     rnd::AnimatedModel loadAnimatedModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory);
 }

@@ -2,7 +2,7 @@
 
 #include "Bulb/ECS/Component.hpp"
 
-#include "Bulb/Rendering/Renderables/Model.hpp"
+#include "Bulb/Rendering/Renderables/StaticModel.hpp"
 
 namespace blb::ecs {
 	class ModelComponent : public Component<ModelComponent> {
@@ -10,12 +10,12 @@ namespace blb::ecs {
 
 		//VARIABLES
 	private:
-		rnd::Model model;
+		rnd::StaticModel model;
 
 		//FUNCTIONS
 	public:
 		ModelComponent() = delete;
-		ModelComponent(rnd::Model model);
+		ModelComponent(rnd::StaticModel model);
 
 		ModelComponent(const ModelComponent& other);
 		ModelComponent(ModelComponent&& other) noexcept;
@@ -25,6 +25,6 @@ namespace blb::ecs {
 
 		~ModelComponent();
 
-		rnd::Model& getModel();
+		rnd::StaticModel& getModel();
 	};
 }

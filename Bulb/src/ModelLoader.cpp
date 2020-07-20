@@ -237,7 +237,7 @@ namespace blb::ModelLoader {
 		return std::make_shared<rnd::Mesh>(vertexBufferData, indices, meshMaterial->createInstance());
 	}
 
-	rnd::Model loadModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
+	rnd::StaticModel loadStaticModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
 		CLV_PROFILE_FUNCTION();
 
 		std::vector<std::shared_ptr<rnd::Mesh>> meshes;

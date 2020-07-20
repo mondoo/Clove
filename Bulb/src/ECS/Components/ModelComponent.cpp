@@ -3,7 +3,7 @@
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 
 namespace blb::ecs {
-	ModelComponent::ModelComponent(rnd::Model model)
+	ModelComponent::ModelComponent(rnd::StaticModel model)
 		: model(std::move(model)) {
 	}
 
@@ -22,7 +22,7 @@ namespace blb::ecs {
 
 	ModelComponent::~ModelComponent() = default;
 
-	rnd::Model& ModelComponent::getModel(){
+	rnd::StaticModel& ModelComponent::getModel(){
 		return model;
 	}
 }

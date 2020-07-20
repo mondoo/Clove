@@ -107,8 +107,8 @@ set(
 		${BLB_SOURCE}/Rendering/Renderables/Mesh.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/AnimatedModel.hpp
 		${BLB_SOURCE}/Rendering/Renderables/AnimatedModel.cpp
-		${BLB_INCLUDE}/Rendering/Renderables/Model.hpp
-		${BLB_SOURCE}/Rendering/Renderables/Model.cpp
+		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.hpp
+		${BLB_SOURCE}/Rendering/Renderables/StaticModel.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Sprite.hpp
 		${BLB_SOURCE}/Rendering/Renderables/Sprite.cpp
 )

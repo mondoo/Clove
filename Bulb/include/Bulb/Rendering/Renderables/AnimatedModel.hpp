@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Bulb/Rendering/Renderables/Model.hpp"
+#include "Bulb/Rendering/Renderables/StaticModel.hpp"
 #include "Bulb/Rendering/AnimationTypes.hpp"
 #include "Bulb/Rendering/Animator.hpp"
 
 namespace blb::rnd {
-    class AnimatedModel : public Model {
+    class AnimatedModel : public StaticModel {
         //VARIABLES
    // private:
     public:

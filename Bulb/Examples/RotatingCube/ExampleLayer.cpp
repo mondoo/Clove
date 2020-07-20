@@ -13,7 +13,7 @@ ExampleLayer::ExampleLayer(std::shared_ptr<clv::plt::Window> window)
 
 void ExampleLayer::onAttach() {
 	//Load in our mesh
-	blb::rnd::Model cube = blb::ModelLoader::loadModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
+	blb::rnd::StaticModel cube = blb::ModelLoader::loadModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
 
 	//Create the entity that will act as our cube
 	cubeEntity = world.createEntity();
