@@ -319,9 +319,9 @@ namespace blb::rnd {
 			for(auto& mesh : scene.meshes) {
                 mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
             }
-            for(auto& mesh : scene.animatedMeshes) {
+            /*for(auto& mesh : scene.animatedMeshes) {
                 mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
-            }
+            }*/
 		}
 
 		//Generate the point shadow map for each mesh in the scene
@@ -343,9 +343,9 @@ namespace blb::rnd {
 			for(auto& mesh : scene.meshes) {
 				mesh->draw(*pointShadowCommandBuffer, pointShadowPipelineObject->getVertexLayout());
 			}
-            for(auto& mesh : scene.animatedMeshes) {
+            /*for(auto& mesh : scene.animatedMeshes) {
                 mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
-            }
+            }*/
 		}
 
 		//Render each UI element

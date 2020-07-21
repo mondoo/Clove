@@ -11,11 +11,12 @@ cbuffer modelBuffer : register(b5){
 }
 
 cbuffer LightCount : register(b9){
+    
 	int numDirectionalLight;
 	int numPointLight;
 }
 
-cbuffer directionalLightTransform : register(b11){
+cbuffer directionalLightTransform : register(b12){
     matrix directionalLightTransforms[MAX_LIGHTS]; 
 }
 
