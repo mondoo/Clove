@@ -15,22 +15,23 @@ int main() {
     auto renderer = std::make_shared<blb::rnd::Renderer3D>(*window);
     auto camera   = blb::rnd::Camera{ *window, blb::rnd::ProjectionMode::Perspective };
 
+    auto floor = blb::ModelLoader::loadStaticModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
+
     static constexpr float size     = 50.0f;
     static constexpr float nearDist = 0.5f;
     static constexpr float farDist  = 1000.0f;
 
     blb::rnd::DirectionalLightData dirLightData;
-    dirLightData.direction = { 0.0f, -1.0f, 1.0f };
+    dirLightData.direction = { 1.0f, -1.0f, 0.0f };
     dirLightData.ambient   = { 0.01f, 0.01f, 0.01f };
     dirLightData.diffuse   = { 0.75f, 0.75f, 0.75f };
     dirLightData.specular  = { 1.0f, 1.0f, 1.0f };
 
     blb::rnd::DirectionalLight dirLight;
     dirLight.data            = std::move(dirLightData);
-    dirLight.shadowTransform = clv::mth::createOrthographicMatrix(-size, size, -size, size, nearDist, farDist);
+    dirLight.shadowTransform = clv::mth::createOrthographicMatrix(-size, size, -size, size, nearDist, farDist) * clv::mth::lookAt(-clv::mth::normalise(dirLight.data.direction) * (farDist / 2.0f), clv::mth::vec3f{ 0.0f, 0.0f, 0.0f }, clv::mth::vec3f{ 0.0f, 1.0f, 0.0f });
 
     bool anim = true;
-
 
     //Run our program while the window is open
     while(window->isOpen()) {
@@ -59,7 +60,7 @@ int main() {
         //Light
         renderer->submitLight(dirLight);
 
-        //Mesh
+        //Animated Model
         auto matrixPalet = model.update(deltaSeconds.count());
         for(auto& mesh : model.getMeshes()) {
             static float angle = 0.0f;
@@ -72,6 +73,18 @@ int main() {
             mesh->getMaterialInstance().setData(clv::gfx::BBP_ModelData, blb::rnd::VertexData{ rot, clv::mth::transpose(clv::mth::inverse(rot)) }, clv::gfx::ShaderStage::Vertex);
             
             renderer->submitAnimatedMesh(mesh);
+        }
+
+        //Static Model
+        for(auto& mesh : floor.getMeshes()) {
+            auto translation = clv::mth::translate(clv::mth::mat4f{ 1.0f }, { 0.0f, 0.0f, 0.0f });
+            auto scale = clv::mth::scale(clv::mth::mat4f{ 1.0f }, { 10.0f, 0.1f, 10.0f });
+            
+            auto transform = translation * scale;
+
+            mesh->getMaterialInstance().setData(clv::gfx::BBP_ModelData, blb::rnd::VertexData{ transform, clv::mth::transpose(clv::mth::inverse(transform)) }, clv::gfx::ShaderStage::Vertex);
+
+            renderer->submitMesh(mesh);
         }
 
         renderer->end();
