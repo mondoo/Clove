@@ -7,7 +7,6 @@ namespace clv {
 }
 
 namespace blb::ecs {
-	class ComponentInterface;
 	class World;
 }
 
