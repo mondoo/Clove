@@ -62,7 +62,7 @@ namespace blb::ModelLoader {
 		aiString* parentName = &jointNode->mParent->mName;
         for(size_t i = 0; i < skeleton.joints.size(); ++i) {
             if(skeleton.joints[i].name == parentName->C_Str()) {
-                return i;
+                return static_cast<rnd::JointIndexType>(i);
 			}
 		}
 		GARLIC_LOG(garlicLogContext, Log::Level::Debug, "{0}: Joint \"{1}\" has a parent but it couldn't be found in the skeleton", CLV_FUNCTION_NAME, jointName);
@@ -73,7 +73,7 @@ namespace blb::ModelLoader {
 	static rnd::JointIndexType getJointIndex(const rnd::Skeleton& skeleton, std::string_view jointName){
         for(size_t i = 0; i < skeleton.joints.size(); ++i) {
             if(skeleton.joints[i].name == jointName) {
-                return i;
+                return static_cast<rnd::JointIndexType>(i);
             }
         }
 		//TODO: Error
@@ -316,13 +316,13 @@ namespace blb::ModelLoader {
             for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
                 aiNodeAnim* channel = animation->mChannels[channelIndex];
                 for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
-                    frames.emplace(channel->mPositionKeys[key].mTime);
+                    frames.emplace(static_cast<float>(channel->mPositionKeys[key].mTime));
                 }
                 for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
-                    frames.emplace(channel->mRotationKeys[key].mTime);
+                    frames.emplace(static_cast<float>(channel->mRotationKeys[key].mTime));
                 }
                 for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
-                    frames.emplace(channel->mScalingKeys[key].mTime);
+                    frames.emplace(static_cast<float>(channel->mScalingKeys[key].mTime));
                 }
             }
 
