@@ -1,6 +1,6 @@
 # Garlic
 
-The goal of Garlic is to create an extremely modular engine where libraries can be used independantly.
+The goal of Garlic is to create an extremely modular engine where libraries can be used independently.
 
 Please note that the engine is still in very early development and so the API will fluctuate wildly and without warning!
 
