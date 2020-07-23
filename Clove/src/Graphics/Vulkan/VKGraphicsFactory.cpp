@@ -314,7 +314,7 @@ namespace clv::gfx::vk{
 
 			//Sepcify our device features
 			VkPhysicalDeviceFeatures deviceFeatures{};
-			deviceFeatures.samplerAnisotropy = VK_TRUE;
+			deviceFeatures.samplerAnisotropy = VK_TRUE; //TODO: Maybe we want to expose this to users?
 
 			VkDeviceCreateInfo createInfo{};
 			createInfo.sType					= VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
