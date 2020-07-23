@@ -4,6 +4,7 @@
 
 //TODO: Remove
 #include <vulkan/vulkan.hpp>
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx {
     using UsageType = uint8_t;
@@ -14,19 +15,7 @@ namespace clv::gfx {
         IndexBuffer         = 1 << 3,
         UniformBuffer       = 1 << 4,
     };
-    //TODO: Move to macro
-    // clang-format off
-    inline constexpr BufferUsageMode operator&(BufferUsageMode l, BufferUsageMode r) { return static_cast<BufferUsageMode>(static_cast<UsageType>(l) & static_cast<UsageType>(r)); }
-    inline constexpr BufferUsageMode operator|(BufferUsageMode l, BufferUsageMode r) { return static_cast<BufferUsageMode>(static_cast<UsageType>(l) | static_cast<UsageType>(r)); }
-    inline constexpr BufferUsageMode operator^(BufferUsageMode l, BufferUsageMode r) { return static_cast<BufferUsageMode>(static_cast<UsageType>(l) ^ static_cast<UsageType>(r)); }
-
-    inline constexpr BufferUsageMode operator&=(BufferUsageMode l, BufferUsageMode r) { l = l & r; return l; }
-    inline constexpr BufferUsageMode operator|=(BufferUsageMode l, BufferUsageMode r) { l = l | r; return l; }
-    inline constexpr BufferUsageMode operator^=(BufferUsageMode l, BufferUsageMode r) { l = l ^ r; return l; }
-
-    inline constexpr bool operator==(BufferUsageMode l, UsageType r){ return static_cast<UsageType>(l) == r; }
-    inline constexpr bool operator!=(BufferUsageMode l, UsageType r){ return !(l == r); }
-    // clang-format on
+    GARLIC_ENUM_BIT_FLAG_OPERATORS(BufferUsageMode, UsageType)
 
     struct BufferDescriptor2 {//TODO: Remove 2, this is because it is conflicting the previously defined type
         size_t size = 0;

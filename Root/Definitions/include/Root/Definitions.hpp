@@ -34,3 +34,32 @@
 #endif
 
 #define GARLIC_BIT(x) (1 << x)
+
+#define GARLIC_ENUM_BIT_FLAG_OPERATORS(EnumType, IntegralType)                                              \
+    inline constexpr EnumType operator&(EnumType l, EnumType r) {                                  \
+        return static_cast<EnumType>(static_cast<IntegralType>(l) & static_cast<IntegralType>(r)); \
+    }                                                                                              \
+    inline constexpr EnumType operator|(EnumType l, EnumType r) {                                  \
+        return static_cast<EnumType>(static_cast<IntegralType>(l) | static_cast<IntegralType>(r)); \
+    }                                                                                              \
+    inline constexpr EnumType operator^(EnumType l, EnumType r) {                                  \
+        return static_cast<EnumType>(static_cast<IntegralType>(l) ^ static_cast<IntegralType>(r)); \
+    }                                                                                              \
+    inline constexpr EnumType operator&=(EnumType l, EnumType r) {                                 \
+        l = l & r;                                                                                 \
+        return l;                                                                                  \
+    }                                                                                              \
+    inline constexpr EnumType operator|=(EnumType l, EnumType r) {                                 \
+        l = l | r;                                                                                 \
+        return l;                                                                                  \
+    }                                                                                              \
+    inline constexpr EnumType operator^=(EnumType l, EnumType r) {                                 \
+        l = l ^ r;                                                                                 \
+        return l;                                                                                  \
+    }                                                                                              \
+    inline constexpr bool operator==(EnumType l, IntegralType r) {                                 \
+        return static_cast<IntegralType>(l) == r;                                                  \
+    }                                                                                              \
+    inline constexpr bool operator!=(EnumType l, IntegralType r) {                                 \
+        return !(l == r);                                                                          \
+    }

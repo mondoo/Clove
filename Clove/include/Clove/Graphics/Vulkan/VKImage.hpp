@@ -4,6 +4,7 @@
 
 //TODO: Remove
 #include <vulkan/vulkan.h>
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx {
     using UsageType = uint8_t;
@@ -13,19 +14,7 @@ namespace clv::gfx {
         ColourAttachment       = 1 << 2,//To be used in an image view for a frame buffer
         DepthStencilAttachment = 1 << 3,//To be used in an image view for a depth / stencil attachment
     };
-    //TODO: Move to macro
-    // clang-format off
-    inline constexpr ImageUsageMode operator&(ImageUsageMode l, ImageUsageMode r) { return static_cast<ImageUsageMode>(static_cast<UsageType>(l) & static_cast<UsageType>(r)); }
-    inline constexpr ImageUsageMode operator|(ImageUsageMode l, ImageUsageMode r) { return static_cast<ImageUsageMode>(static_cast<UsageType>(l) | static_cast<UsageType>(r)); }
-    inline constexpr ImageUsageMode operator^(ImageUsageMode l, ImageUsageMode r) { return static_cast<ImageUsageMode>(static_cast<UsageType>(l) ^ static_cast<UsageType>(r)); }
-
-    inline constexpr ImageUsageMode operator&=(ImageUsageMode l, ImageUsageMode r) { l = l & r; return l; }
-    inline constexpr ImageUsageMode operator|=(ImageUsageMode l, ImageUsageMode r) { l = l | r; return l; }
-    inline constexpr ImageUsageMode operator^=(ImageUsageMode l, ImageUsageMode r) { l = l ^ r; return l; }
-
-    inline constexpr bool operator==(ImageUsageMode l, UsageType r){ return static_cast<UsageType>(l) == r; }
-    inline constexpr bool operator!=(ImageUsageMode l, UsageType r){ return !(l == r); }
-    // clang-format on
+    GARLIC_ENUM_BIT_FLAG_OPERATORS(ImageUsageMode, UsageType)
 
     enum class ImageType {
         _2D,
