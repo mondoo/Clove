@@ -14,6 +14,7 @@
 #include "Clove/GRaphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
+#include "Clove/Graphics/Vulkan/VKSampler.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -60,6 +61,8 @@ namespace clv::gfx::vk {
 
 		std::unique_ptr<VKBuffer> createBuffer(BufferDescriptor2 descriptor);
         std::unique_ptr<VKImage> createImage(ImageDescriptor descriptor);
+
+		std::unique_ptr<VKSampler> createSampler(SamplerDescriptor descriptor);
 
 		void waitForIdleDevice();
 	};

@@ -175,6 +175,8 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKPipelineObject.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKRenderPass.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKRenderPass.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKSampler.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKSampler.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKSemaphore.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKSemaphore.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsFactory.hpp
