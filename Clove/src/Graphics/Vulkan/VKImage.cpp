@@ -1,6 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
 
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Graphics/Vulkan/VKImageView.hpp"
 
 namespace clv::gfx::vk {
     static VkImageUsageFlags getUsageFlags(ImageUsageMode garlicUsageFlags) {
@@ -31,6 +32,18 @@ namespace clv::gfx::vk {
             default:
                 GARLIC_ASSERT(false, "{0}: Unhandled image type");
                 return VK_IMAGE_TYPE_2D;
+        }
+    }
+
+    static VkImageViewType getImageViewType(ImageType garlicImageType){
+        switch(garlicImageType) {
+            case ImageType::_2D:
+                return VK_IMAGE_VIEW_TYPE_2D;
+            case ImageType::_3D:
+                return VK_IMAGE_VIEW_TYPE_3D;
+            default:
+                GARLIC_ASSERT(false, "{0}: Unhandled image type");
+                return VK_IMAGE_VIEW_TYPE_2D;
         }
     }
 
@@ -87,6 +100,30 @@ namespace clv::gfx::vk {
     VKImage::~VKImage() {
         vkDestroyImage(device, image, nullptr);
         vkFreeMemory(device, imageMemory, nullptr);
+    }
+
+    std::unique_ptr<VKImageView> VKImage::createView() const {
+        VkImageViewCreateInfo viewInfo{};
+        viewInfo.sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        viewInfo.pNext                           = nullptr;
+        viewInfo.flags                           = 0;
+        viewInfo.image                           = image;
+        viewInfo.viewType                        = getImageViewType(descriptor.type);
+        viewInfo.format                          = convertImageFormat(descriptor.format);
+        viewInfo.components.r                    = VK_COMPONENT_SWIZZLE_IDENTITY;
+        viewInfo.components.g                    = VK_COMPONENT_SWIZZLE_IDENTITY;
+        viewInfo.components.b                    = VK_COMPONENT_SWIZZLE_IDENTITY;
+        viewInfo.components.a                    = VK_COMPONENT_SWIZZLE_IDENTITY;
+        viewInfo.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+        viewInfo.subresourceRange.baseMipLevel   = 0;
+        viewInfo.subresourceRange.levelCount     = 1;
+        viewInfo.subresourceRange.baseArrayLayer = 0;
+        viewInfo.subresourceRange.layerCount     = 1;
+
+        VkImageView imageView;
+        GARLIC_ASSERT(vkCreateImageView(device, &viewInfo, nullptr, &imageView) == VK_SUCCESS, "{0}: Unable to create imageview", GARLIC_FUNCTION_NAME);
+
+        return std::make_unique<VKImageView>(device, imageView);
     }
 
     VkImage VKImage::getImage() const{

@@ -32,6 +32,10 @@ namespace clv::gfx {
 }
 
 namespace clv::gfx::vk {
+    class VKImageView;
+}
+
+namespace clv::gfx::vk {
     class VKImage {
         //VARIABLES
     private:
@@ -46,6 +50,8 @@ namespace clv::gfx::vk {
         //TODO: other ctors
         VKImage(VkDevice device, VkPhysicalDevice physicalDevice, ImageDescriptor descriptor, const QueueFamilyIndices& familyIndices);
         ~VKImage();
+
+        std::unique_ptr<VKImageView> createView() const;
 
         VkImage getImage() const;
     };
