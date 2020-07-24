@@ -19,15 +19,21 @@ namespace blb::rnd {
 		swapchain  = graphicsFactory->createSwapChain({ windowSize });
         renderPass = graphicsFactory->createRenderPass({ swapchain->getImageFormat() });
 
-        //TODO: Retrieve these from the shaders
-        clv::gfx::DescriptorBindingInfo descriptorBinding{};
-        descriptorBinding.binding   = 0;
-        descriptorBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
-        descriptorBinding.arraySize = 1;
-        descriptorBinding.stage     = clv::gfx::DescriptorStage::Vertex;
+        //TODO: Retrieve these from the shaders? Can these be created if the shader doesn't want them?
+        clv::gfx::DescriptorBindingInfo uboLayoutBinding{};
+        uboLayoutBinding.binding   = 0;
+        uboLayoutBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
+        uboLayoutBinding.arraySize = 1;
+        uboLayoutBinding.stage     = clv::gfx::DescriptorStage::Vertex;
+
+        clv::gfx::DescriptorBindingInfo samplerLayoutBinding{};
+        samplerLayoutBinding.binding   = 1;
+        samplerLayoutBinding.type      = clv::gfx::DescriptorType::CombinedImageSampler;
+        samplerLayoutBinding.arraySize = 1;
+        samplerLayoutBinding.stage     = clv::gfx::DescriptorStage::Pixel;
 
         clv::gfx::DescriptorSetLayoutDescriptor descriptorSetLayoutDescriptor{};
-        descriptorSetLayoutDescriptor.bindings.push_back(descriptorBinding);
+        descriptorSetLayoutDescriptor.bindings = { uboLayoutBinding, samplerLayoutBinding };
 
         descriptorSetLayout = graphicsFactory->createDescriptorSetLayout(descriptorSetLayoutDescriptor);
 
@@ -112,6 +118,20 @@ namespace blb::rnd {
         graphicsQueue->submit(submitInfo, nullptr);
         graphicsFactory->waitForIdleDevice(); //We need to wait for out buffer to be executed before freeing
         graphicsQueue->freeCommandBuffer(*transitionCommandBuffer);
+
+        //Create the objects we need to send the image to the shaders
+        clv::gfx::SamplerDescriptor samplerDescriptor{};
+        samplerDescriptor.minFilter        = clv::gfx::SamplerFilter::Linear;
+        samplerDescriptor.magFilter        = clv::gfx::SamplerFilter::Linear;
+        samplerDescriptor.addressModeU     = clv::gfx::SamplerAddressMode::Repeat;
+        samplerDescriptor.addressModeV     = clv::gfx::SamplerAddressMode::Repeat;
+        samplerDescriptor.addressModeW     = clv::gfx::SamplerAddressMode::Repeat;
+        samplerDescriptor.enableAnisotropy = true;
+        samplerDescriptor.maxAnisotropy    = 16.0f;
+        
+        imageView = texture->createView();
+        sampler   = graphicsFactory->createSampler(std::move(samplerDescriptor));
+
         //~TEMP
 
         createPipeline();
@@ -141,11 +161,13 @@ namespace blb::rnd {
 		//Wait for an idle device before shutting down so resources aren't freed while in use
 		graphicsFactory->waitForIdleDevice();
 
-        //Reset buffer manually to ensure correct destruction order
+        //Reset these manually as they would fail after the device has been destroyed (how to solve this?)
         vertexBuffer.reset();
         indexBuffer.reset();
         uniformBuffers.clear();
         texture.reset();
+        sampler.reset();
+        imageView.reset();
 	}
 
 	void ForwardRenderer3D::begin() {
@@ -298,13 +320,16 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::createDescriptorPool() {
-        clv::gfx::DescriptorInfo descriptorInfo{};
-        descriptorInfo.type  = clv::gfx::DescriptorType::UniformBuffer;
-        descriptorInfo.count = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
+        clv::gfx::DescriptorInfo uboInfo{};
+        uboInfo.type  = clv::gfx::DescriptorType::UniformBuffer;
+        uboInfo.count = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
+        clv::gfx::DescriptorInfo samplerInfo{};
+        samplerInfo.type  = clv::gfx::DescriptorType::CombinedImageSampler;
+        samplerInfo.count = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
 
         clv::gfx::DescriptorPoolDescriptor poolDescriptor{};
-        poolDescriptor.poolTypes.emplace_back(std::move(descriptorInfo));
-        poolDescriptor.maxSets = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
+        poolDescriptor.poolTypes = { std::move(uboInfo), std::move(samplerInfo) };
+        poolDescriptor.maxSets   = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
 
         descriptorPool = graphicsFactory->createDescriptorPool(std::move(poolDescriptor));
     }
@@ -317,6 +342,7 @@ namespace blb::rnd {
 
         for(size_t i = 0; i < std::size(swapChainFrameBuffers); ++i) {
             descriptorSets[i]->writeFrom(*uniformBuffers[i], 0, sizeof(ModelViewProj), 0);
+            descriptorSets[i]->writeFrom(*sampler, *imageView, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
         }
     }
 

@@ -74,10 +74,10 @@ namespace blb::rnd {
         std::vector<std::shared_ptr<clv::gfx::vk::VKBuffer>> uniformBuffers;
         
         const std::vector<Vertex> vertices = {
-            { { -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
-            { {  0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f } },
-            { {  0.5f,  0.5f }, { 0.0f, 0.0f, 1.0f } },
-            { { -0.5f,  0.5f }, { 1.0f, 1.0f, 1.0f } },
+            { { -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } },
+            { {  0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
+            { {  0.5f,  0.5f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
+            { { -0.5f,  0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
         };
         const std::vector<uint16_t> indices = {
             0,
@@ -90,6 +90,8 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::vk::VKBuffer> vertexBuffer;
         std::shared_ptr<clv::gfx::vk::VKBuffer> indexBuffer;
         std::shared_ptr<clv::gfx::vk::VKImage> texture;
+        std::shared_ptr<clv::gfx::vk::VKImageView> imageView;
+        std::shared_ptr<clv::gfx::vk::VKSampler> sampler;
 		//~TEMP
 
 		clv::DelegateHandle windowResizeHandle;
