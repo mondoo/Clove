@@ -49,7 +49,8 @@ namespace blb::aud {
         /**
 		 * @brief Reads the amount of frames and returns a pointer to that data
 		 * @details Reads from the current seek position (default start of file) and
-		 * moves the cursor frames amount long.
+		 * moves the cursor frames amount long. Note that the caller is expected to 
+         * delete the pointer to the data
 		 * @param frames How many frames to read
 		 * @returns Returns an std::pair containing a pointer to the data and how many btyes long the buffer is
 		 */
