@@ -108,7 +108,19 @@ namespace clv::gfx::vk {
 		multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
 		//Depth / Stencil
-		//TODO: depth / stencil
+        VkPipelineDepthStencilStateCreateInfo depthStencil{};
+        depthStencil.sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+        depthStencil.pNext                 = nullptr;
+        depthStencil.flags                 = 0;
+        depthStencil.depthTestEnable       = VK_TRUE;
+        depthStencil.depthWriteEnable      = VK_TRUE;
+        depthStencil.depthCompareOp        = VK_COMPARE_OP_LESS;
+        depthStencil.depthBoundsTestEnable = VK_FALSE;
+        depthStencil.stencilTestEnable     = VK_FALSE;
+        depthStencil.front                 = {};
+        depthStencil.back                  = {};
+        depthStencil.minDepthBounds        = 0.0f;
+        depthStencil.maxDepthBounds        = 1.0f;
 
 		//Colour blending
 		VkPipelineColorBlendAttachmentState colourBlendAttachment{};
@@ -142,14 +154,16 @@ namespace clv::gfx::vk {
 		//Pipeline
 		VkGraphicsPipelineCreateInfo pipelineInfo{};
 		pipelineInfo.sType				 = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        pipelineInfo.pNext               = nullptr;
 		pipelineInfo.stageCount			 = std::size(shaderStages);
 		pipelineInfo.pStages			 = std::data(shaderStages);
 		pipelineInfo.pVertexInputState	 = &vertexInputInfo;
 		pipelineInfo.pInputAssemblyState = &inputAssembly;
+        pipelineInfo.pTessellationState  = nullptr;
 		pipelineInfo.pViewportState		 = &viewportState;
 		pipelineInfo.pRasterizationState = &rasterizer;
 		pipelineInfo.pMultisampleState	 = &multisampling;
-		pipelineInfo.pDepthStencilState	 = nullptr;//TODO
+		pipelineInfo.pDepthStencilState	 = &depthStencil;
 		pipelineInfo.pColorBlendState	 = &colorBlending;
 		pipelineInfo.pDynamicState		 = nullptr;//TODO
 		pipelineInfo.layout				 = pipelineLayout;
