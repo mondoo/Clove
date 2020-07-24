@@ -110,6 +110,8 @@ namespace blb::rnd {
 		std::shared_ptr<clv::gfx::vk::VKTransferQueue> transferQueue;
 
 		std::shared_ptr<clv::gfx::vk::VKSwapchain> swapchain;
+        std::shared_ptr<clv::gfx::vk::VKImage> depthImage;
+        std::shared_ptr<clv::gfx::vk::VKImageView> depthImageView;
 
 		std::shared_ptr<clv::gfx::vk::VKRenderPass> renderPass;
         std::shared_ptr<clv::gfx::vk::VKDescriptorSetLayout> descriptorSetLayout;
@@ -150,6 +152,8 @@ namespace blb::rnd {
         void onWindowResize(const clv::mth::vec2ui& size);
 		void recreateSwapchain();
 
+		void createRenderpass();
+        void createDepthBuffer();
 		void createPipeline();
         void createSwapchainFrameBuffers();
         void createUniformBuffers();

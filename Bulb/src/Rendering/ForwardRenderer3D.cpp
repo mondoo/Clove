@@ -17,38 +17,9 @@ namespace blb::rnd {
 		transferQueue = graphicsFactory->createTransferQueue({ clv::gfx::QueueFlags::Transient });
 
 		swapchain  = graphicsFactory->createSwapChain({ windowSize });
-        {//Render pass
-            //Define what attachments we have
-            clv::gfx::AttachmentDescriptor colourAttachment{};
-            colourAttachment.format        = swapchain->getImageFormat();
-            colourAttachment.initialLayout = clv::gfx::ImageLayout::Undefined;
-            colourAttachment.finalLayout   = clv::gfx::ImageLayout::Present;
+        createRenderpass();
 
-            //Define attachment references so the subpass knows which slot each attachment will be in
-            clv::gfx::AttachmentReference colourReference{};
-            colourReference.attachmentIndex = 0;
-            colourReference.layout          = clv::gfx::ImageLayout::ColourAttachmentOptimal;
-
-            clv::gfx::SubpassDescriptor subpass{};
-            subpass.colourAttachments = { colourReference };
-
-            //Make sure we define any dependecies between subpasses
-            clv::gfx::SubpassDependecy dependecy{};
-            dependecy.sourceSubpass      = clv::gfx::SUBPASS_EXTERNAL;
-            dependecy.destinationSubpass = 0;
-            dependecy.sourceStage        = clv::gfx::PipelineStage::ColourAttachmentOutput;
-            dependecy.destinationStage   = clv::gfx::PipelineStage::ColourAttachmentOutput;
-            dependecy.sourceAccess       = clv::gfx::AccessType::None;
-            dependecy.destinationAccess  = clv::gfx::AccessType::ColourAttachmentWrite;
-
-            //Create render pass
-            clv::gfx::RenderPassDescriptor renderPassDescriptor{};
-            renderPassDescriptor.attachments  = { std::move(colourAttachment) };
-            renderPassDescriptor.subpasses    = { std::move(subpass) };
-            renderPassDescriptor.dependencies = { std::move(dependecy) };
-
-            renderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
-        }
+        createDepthBuffer();
 
         //TODO: Retrieve these from the shaders? Can these be created if the shader doesn't want them?
         clv::gfx::DescriptorBindingInfo uboLayoutBinding{};
@@ -296,38 +267,9 @@ namespace blb::rnd {
 
         //Recreate our swap chain
         swapchain = graphicsFactory->createSwapChain({ windowSize });
-        {//Render pass
-            //Define what attachments we have
-            clv::gfx::AttachmentDescriptor colourAttachment{};
-            colourAttachment.format        = swapchain->getImageFormat();
-            colourAttachment.initialLayout = clv::gfx::ImageLayout::Undefined;
-            colourAttachment.finalLayout   = clv::gfx::ImageLayout::Present;
+        createRenderpass();
 
-            //Define attachment references so the subpass knows which slot each attachment will be in
-            clv::gfx::AttachmentReference colourReference{};
-            colourReference.attachmentIndex = 0;
-            colourReference.layout          = clv::gfx::ImageLayout::ColourAttachmentOptimal;
-
-            clv::gfx::SubpassDescriptor subpass{};
-            subpass.colourAttachments = { colourReference };
-
-            //Make sure we define any dependecies between subpasses
-            clv::gfx::SubpassDependecy dependecy{};
-            dependecy.sourceSubpass      = clv::gfx::SUBPASS_EXTERNAL;
-            dependecy.destinationSubpass = 0;
-            dependecy.sourceStage        = clv::gfx::PipelineStage::ColourAttachmentOutput;
-            dependecy.destinationStage   = clv::gfx::PipelineStage::ColourAttachmentOutput;
-            dependecy.sourceAccess       = clv::gfx::AccessType::None;
-            dependecy.destinationAccess  = clv::gfx::AccessType::ColourAttachmentWrite;
-
-            //Create render pass
-            clv::gfx::RenderPassDescriptor renderPassDescriptor{};
-            renderPassDescriptor.attachments  = { std::move(colourAttachment) };
-            renderPassDescriptor.subpasses    = { std::move(subpass) };
-            renderPassDescriptor.dependencies = { std::move(dependecy) };
-
-            renderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
-        }
+        createDepthBuffer();
 
         createPipeline();
         createSwapchainFrameBuffers();
@@ -338,6 +280,62 @@ namespace blb::rnd {
 		recordCommandBuffers();
 
 		needNewSwapchain = false;
+    }
+
+    void ForwardRenderer3D::createRenderpass() {
+        //Define what attachments we have
+        clv::gfx::AttachmentDescriptor colourAttachment{};
+        colourAttachment.format        = swapchain->getImageFormat();
+        colourAttachment.initialLayout = clv::gfx::ImageLayout::Undefined;
+        colourAttachment.finalLayout   = clv::gfx::ImageLayout::Present;
+
+        clv::gfx::AttachmentDescriptor depthAttachment{};
+        depthAttachment.format        = clv::gfx::ImageFormat::D32_SFLOAT;
+        depthAttachment.initialLayout = clv::gfx::ImageLayout::Undefined;
+        depthAttachment.finalLayout   = clv::gfx::ImageLayout::DepthStencilAttachmentOptimal;
+
+        //Define attachment references so the subpass knows which slot each attachment will be in
+        clv::gfx::AttachmentReference colourReference{};
+        colourReference.attachmentIndex = 0;
+        colourReference.layout          = clv::gfx::ImageLayout::ColourAttachmentOptimal;
+
+        clv::gfx::AttachmentReference depthReference{};
+        depthReference.attachmentIndex = 1;
+        depthReference.layout          = clv::gfx::ImageLayout::DepthStencilAttachmentOptimal;
+
+        clv::gfx::SubpassDescriptor subpass{};
+        subpass.colourAttachments = { colourReference };
+        subpass.depthAttachment   = depthReference;
+
+        //Make sure we define any dependecies between subpasses
+        clv::gfx::SubpassDependecy dependecy{};
+        dependecy.sourceSubpass      = clv::gfx::SUBPASS_EXTERNAL;
+        dependecy.destinationSubpass = 0;
+        dependecy.sourceStage        = clv::gfx::PipelineStage::ColourAttachmentOutput;
+        dependecy.destinationStage   = clv::gfx::PipelineStage::ColourAttachmentOutput;
+        dependecy.sourceAccess       = clv::gfx::AccessType::None;
+        dependecy.destinationAccess  = clv::gfx::AccessType::ColourAttachmentWrite;
+
+        //Create render pass
+        clv::gfx::RenderPassDescriptor renderPassDescriptor{};
+        renderPassDescriptor.attachments  = { std::move(colourAttachment), std::move(depthAttachment) };
+        renderPassDescriptor.subpasses    = { std::move(subpass) };
+        renderPassDescriptor.dependencies = { std::move(dependecy) };
+
+        renderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
+    }
+
+    void ForwardRenderer3D::createDepthBuffer() {
+        clv::gfx::ImageDescriptor depthDescriptor{};
+        depthDescriptor.type             = clv::gfx::ImageType::_2D;
+        depthDescriptor.usageFlags       = clv::gfx::ImageUsageMode::DepthStencilAttachment;
+        depthDescriptor.dimensions       = { swapchain->getExtent().width, swapchain->getExtent().height };
+        depthDescriptor.format           = clv::gfx::ImageFormat::D32_SFLOAT;
+        depthDescriptor.sharingMode      = clv::gfx::SharingMode::Concurrent;
+        depthDescriptor.memoryProperties = clv::gfx::MemoryProperties::DeviceLocal;
+
+        depthImage     = graphicsFactory->createImage(std::move(depthDescriptor));
+        depthImageView = depthImage->createView();
     }
 
     void ForwardRenderer3D::createPipeline() {
@@ -358,7 +356,7 @@ namespace blb::rnd {
         for(auto& swapChainImageView : swapchain->getImageViews()) {
             clv::gfx::FramebufferDescriptor frameBufferDescriptor{};
             frameBufferDescriptor.renderPass  = renderPass;
-            frameBufferDescriptor.attachments = { swapChainImageView };
+            frameBufferDescriptor.attachments = { swapChainImageView, depthImageView };
             frameBufferDescriptor.width       = swapchain->getExtent().width;
             frameBufferDescriptor.height      = swapchain->getExtent().height;
 
@@ -419,12 +417,13 @@ namespace blb::rnd {
         renderArea.size   = { swapchain->getExtent().width, swapchain->getExtent().height };
 
         clv::mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
+        clv::gfx::DepthStencilValue depthStencilClearValue{ 1.0f, 0 };
 
         //Record our command buffers
         for(size_t i = 0; i < commandBuffers.size(); ++i) {
             commandBuffers[i]->beginRecording(clv::gfx::CommandBufferUsage::Default);
 
-            commandBuffers[i]->beginRenderPass(*renderPass, *swapChainFrameBuffers[i], renderArea, clearColour);
+            commandBuffers[i]->beginRenderPass(*renderPass, *swapChainFrameBuffers[i], renderArea, clearColour, depthStencilClearValue);
             commandBuffers[i]->bindPipelineObject(*pipelineObject);
             commandBuffers[i]->bindVertexBuffer(*vertexBuffer);
             commandBuffers[i]->bindIndexBuffer(*indexBuffer, clv::gfx::IndexType::Uint16);
