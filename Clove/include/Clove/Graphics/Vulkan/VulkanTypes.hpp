@@ -6,9 +6,12 @@
 namespace clv::gfx {
 	enum class ImageFormat {
 		Unkown,
-        R8G8B8A8_SRGB,
+		
+		R8G8B8A8_SRGB,
 		B8G8R8A8_SRGB,
-		B8G8R8A8_UNORM
+		B8G8R8A8_UNORM,
+
+		D32_SFLOAT
 	};
 
 	//TODO: Have Success and Error then OR those with other codes so you can just check for succes or error

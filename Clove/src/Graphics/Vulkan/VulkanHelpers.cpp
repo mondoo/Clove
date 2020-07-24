@@ -31,8 +31,10 @@ namespace clv::gfx::vk {
                 return ImageFormat::B8G8R8A8_SRGB;
             case VK_FORMAT_B8G8R8A8_UNORM:
                 return ImageFormat::B8G8R8A8_UNORM;
+            case VK_FORMAT_D32_SFLOAT:
+                return ImageFormat::D32_SFLOAT;
             default:
-                GARLIC_ASSERT(false, "Format not supported by garlic");
+                GARLIC_ASSERT(false, "{0}: Format not supported by garlic", GARLIC_FUNCTION_NAME);
                 return ImageFormat::Unkown;
         }
     }
@@ -47,6 +49,11 @@ namespace clv::gfx::vk {
                 return VK_FORMAT_B8G8R8A8_SRGB;
             case ImageFormat::B8G8R8A8_UNORM:
                 return VK_FORMAT_B8G8R8A8_UNORM;
+            case ImageFormat::D32_SFLOAT:
+                return VK_FORMAT_D32_SFLOAT;
+            default:
+                GARLIC_ASSERT(false, "{0}: Unkown format", GARLIC_FUNCTION_NAME);
+                return VK_FORMAT_UNDEFINED;
         }
     }
 
