@@ -20,8 +20,10 @@ extern "C" const char	default3d_vs[];
 extern "C" const size_t default3d_vsLength;
 extern "C" const char	default3d_ps[];
 extern "C" const size_t default3d_psLength;
-extern "C" const char   skeletal3d_vs[];
+extern "C" const char skeletal3d_vs[];
 extern "C" const size_t skeletal3d_vsLength;
+extern "C" const char skeletalshadow_vs[];
+extern "C" const size_t skeletalshadow_vsLength;
 
 extern "C" const char	default2d_vs[];
 extern "C" const size_t default2d_vsLength;
@@ -139,13 +141,20 @@ namespace blb::rnd {
 		directionalShadowRenderTarget	= factory.createRenderTarget(nullptr, directionalShadowMapTexture.get());
 		directionalShadowCommandBuffer	= factory.createCommandBuffer();
 
-		auto dirShadowVS = factory.createShader({ ShaderStage::Vertex }, genshadowmap_vs, genshadowmap_vsLength);
-		auto dirShadowGS = factory.createShader({ ShaderStage::Geometry }, genshadowmap_gs, genshadowmap_gsLength);
-		auto dirShadowPS = factory.createShader({ ShaderStage::Pixel }, genshadowmap_ps, genshadowmap_psLength);
+		auto dirShadowVS                = factory.createShader({ ShaderStage::Vertex }, genshadowmap_vs, genshadowmap_vsLength);
+        auto skeletalShadowVS           = factory.createShader({ ShaderStage::Vertex }, skeletalshadow_vs, skeletalshadow_vsLength);
+        auto dirShadowGS                = factory.createShader({ ShaderStage::Geometry }, genshadowmap_gs, genshadowmap_gsLength);
+        auto dirShadowPS                = factory.createShader({ ShaderStage::Pixel }, genshadowmap_ps, genshadowmap_psLength);
+		
 		directionalShadowPipelineObject = factory.createPipelineObject();
-		directionalShadowPipelineObject->setVertexShader(*dirShadowVS);
+        directionalShadowPipelineObject->setVertexShader(*dirShadowVS);
 		directionalShadowPipelineObject->setGeometryShader(*dirShadowGS);
 		directionalShadowPipelineObject->setPixelShader(*dirShadowPS);
+
+		animatedDirectionalShadowPipelineObject = factory.createPipelineObject();
+        animatedDirectionalShadowPipelineObject->setVertexShader(*skeletalShadowVS);
+        animatedDirectionalShadowPipelineObject->setGeometryShader(*dirShadowGS);
+        animatedDirectionalShadowPipelineObject->setPixelShader(*dirShadowPS);
 
 		//Point shadow map
 		gfx::TextureDescriptor psDesc{};
@@ -162,7 +171,7 @@ namespace blb::rnd {
 		auto pointShadowGS = factory.createShader({ ShaderStage::Geometry }, gencubeshadowmap_gs, gencubeshadowmap_gsLength);
 		auto pointShadowPS = factory.createShader({ ShaderStage::Pixel }, gencubeshadowmap_ps, gencubeshadowmap_psLength);
 		pointShadowPipelineObject = factory.createPipelineObject();
-		pointShadowPipelineObject->setVertexShader(*pointShadowVS);
+        pointShadowPipelineObject->setVertexShader(*dirShadowVS);
 		pointShadowPipelineObject->setGeometryShader(*pointShadowGS);
 		pointShadowPipelineObject->setPixelShader(*pointShadowPS);
 
@@ -305,7 +314,6 @@ namespace blb::rnd {
 		directionalShadowCommandBuffer->beginEncoding(directionalShadowRenderTarget);
 		directionalShadowCommandBuffer->clearTarget();
 		directionalShadowCommandBuffer->setDepthEnabled(true);
-		directionalShadowCommandBuffer->bindPipelineObject(*directionalShadowPipelineObject);
 		directionalShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
 		for(int32_t i = 0; i < scene.numDirectionalLights; ++i) {
@@ -316,9 +324,12 @@ namespace blb::rnd {
 			directionalShadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
 			directionalShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
 
-			for(auto& mesh : scene.meshes) {
+			directionalShadowCommandBuffer->bindPipelineObject(*directionalShadowPipelineObject);
+            for(auto& mesh : scene.meshes) {
                 mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
             }
+
+            directionalShadowCommandBuffer->bindPipelineObject(*animatedDirectionalShadowPipelineObject);
             for(auto& mesh : scene.animatedMeshes) {
                 mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
             }

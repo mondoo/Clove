@@ -68,9 +68,13 @@ namespace blb::rnd {
 		std::shared_ptr<clv::gfx::RenderTarget> pointShadowRenderTarget;
 
 		std::shared_ptr<clv::gfx::PipelineObject> directionalShadowPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> animatedDirectionalShadowPipelineObject;
+
 		std::shared_ptr<clv::gfx::PipelineObject> pointShadowPipelineObject;
+
         std::shared_ptr<clv::gfx::PipelineObject> meshPipelineObject;
         std::shared_ptr<clv::gfx::PipelineObject> animatedMeshPipelineObject;
+
 		std::shared_ptr<clv::gfx::PipelineObject> widgetPipelineObject;
 		std::shared_ptr<clv::gfx::PipelineObject> textPipelineObject;
 

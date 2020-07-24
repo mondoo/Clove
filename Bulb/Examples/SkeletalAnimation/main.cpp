@@ -11,11 +11,11 @@ int main() {
     //Cache of the 'previous frame time' that'll be used to calculate the delta time
     auto prevFrameTime = std::chrono::system_clock::now();
 
+    //Create the objects we will render
     auto model    = blb::ModelLoader::loadAnimatedModel(SOURCE_DIR "/CharacterRunning.fbx", window->getGraphicsFactory());
-    auto renderer = std::make_shared<blb::rnd::Renderer3D>(*window);
+    auto floor    = blb::ModelLoader::loadStaticModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
     auto camera   = blb::rnd::Camera{ *window, blb::rnd::ProjectionMode::Perspective };
-
-    auto floor = blb::ModelLoader::loadStaticModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
+    auto renderer = std::make_shared<blb::rnd::Renderer3D>(*window);
 
     static constexpr float size     = 50.0f;
     static constexpr float nearDist = 0.5f;
