@@ -3,57 +3,93 @@
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
-	VKRenderPass::VKRenderPass(VkDevice device, RenderPassDescriptor descriptor)
-		: device(device) {
-		//TODO: Hard coding in the attachments for now
-		VkAttachmentDescription colourAttachment{};
-		colourAttachment.format			= convertImageFormat(descriptor.imageFormat);
-		colourAttachment.samples		= VK_SAMPLE_COUNT_1_BIT;
-		colourAttachment.loadOp			= VK_ATTACHMENT_LOAD_OP_CLEAR;
-		colourAttachment.storeOp		= VK_ATTACHMENT_STORE_OP_STORE;
-		colourAttachment.stencilLoadOp	= VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		colourAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		colourAttachment.initialLayout	= VK_IMAGE_LAYOUT_UNDEFINED;
-		colourAttachment.finalLayout	= VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    VKRenderPass::VKRenderPass(VkDevice device, RenderPassDescriptor descriptor)
+        : device(device) {
+        //Attachments
+        const size_t attachmentSize = std::size(descriptor.attachments);
+        std::vector<VkAttachmentDescription> attachments(attachmentSize);
+        for(size_t i = 0; i < attachmentSize; ++i) {
+            VkAttachmentDescription attachment{};
+            attachment.format         = convertImageFormat(descriptor.attachments[i].format);
+            attachment.samples        = VK_SAMPLE_COUNT_1_BIT;
+            attachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
+            attachment.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
+            attachment.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+            attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            attachment.initialLayout  = convertImageLayout(descriptor.attachments[i].initialLayout);
+            attachment.finalLayout    = convertImageLayout(descriptor.attachments[i].finalLayout);
 
-		VkAttachmentReference colourAttachmentReference{};
-		colourAttachmentReference.attachment = 0;
-		colourAttachmentReference.layout	 = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            attachments[i] = std::move(attachment);
+        }
 
-		VkSubpassDescription subpass{};
-		subpass.pipelineBindPoint	 = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpass.colorAttachmentCount = 1;
-		subpass.pColorAttachments	 = &colourAttachmentReference;
+        //Subpasses
+        const size_t subpassesSize = std::size(descriptor.subpasses);
+        std::vector<VkSubpassDescription> subpasses(subpassesSize);
+        std::vector<std::vector<VkAttachmentReference>> attachmentReferences(subpassesSize); //Define the references seperately so they aren't destroyed
+        for(size_t i = 0; i < subpassesSize; ++i) {
+            //Attachment References: Colour
+            const size_t colourAttachmentSize = std::size(descriptor.subpasses[i].colourAttachments);
+            attachmentReferences[i].resize(colourAttachmentSize);
+            for(size_t j = 0; j < colourAttachmentSize; ++j) {
+                VkAttachmentReference reference{};
+                reference.attachment = descriptor.subpasses[i].colourAttachments[j].attachmentIndex;
+                reference.layout     = convertImageLayout(descriptor.subpasses[i].colourAttachments[j].layout);
 
-		//Make sure we transition our image between srcStageMask and dstStageMask
-		//TODO: Configure this in the descriptor
-		VkSubpassDependency dependency{};
-		dependency.srcSubpass	 = VK_SUBPASS_EXTERNAL;
-		dependency.dstSubpass	 = 0;
-		dependency.srcStageMask	 = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependency.dstStageMask	 = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependency.srcAccessMask = 0;
-		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+                attachmentReferences[i][j] = std::move(reference);
+            }
 
-		VkRenderPassCreateInfo renderPassInfo{};
-		renderPassInfo.sType		   = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = 1;
-		renderPassInfo.pAttachments	   = &colourAttachment;
-		renderPassInfo.subpassCount	   = 1;
-		renderPassInfo.pSubpasses	   = &subpass;
-		renderPassInfo.dependencyCount = 1;
-		renderPassInfo.pDependencies   = &dependency;
+            VkSubpassDescription subpass{};
+            subpass.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS; //TODO: Only supporting graphics for now
+            subpass.colorAttachmentCount = colourAttachmentSize;
+            subpass.pColorAttachments    = std::data(attachmentReferences[i]);
+            if(descriptor.subpasses[i].depthAttachment) {
+                VkAttachmentReference reference{};
+                reference.attachment = descriptor.subpasses[i].depthAttachment->attachmentIndex;
+                reference.layout     = convertImageLayout(descriptor.subpasses[i].depthAttachment->layout);
 
-		if(vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
+                subpass.pDepthStencilAttachment = &reference;
+            } else {
+                subpass.pDepthStencilAttachment = nullptr;
+            }
+
+            subpasses[i] = std::move(subpass);
+        }
+
+        //Dependencies
+        const size_t dependecySize = std::size(descriptor.dependencies);
+        std::vector<VkSubpassDependency> dependecies(dependecySize);
+        for(size_t i = 0; i < dependecySize; ++i) {
+            VkSubpassDependency dependency{};
+            dependency.srcSubpass    = descriptor.dependencies[i].sourceSubpass == SUBPASS_EXTERNAL ? VK_SUBPASS_EXTERNAL : descriptor.dependencies[i].sourceSubpass;
+            dependency.dstSubpass    = descriptor.dependencies[i].destinationSubpass == SUBPASS_EXTERNAL ? VK_SUBPASS_EXTERNAL : descriptor.dependencies[i].destinationSubpass;
+            dependency.srcStageMask  = convertPipelineStage(descriptor.dependencies[i].sourceStage);
+            dependency.dstStageMask  = convertPipelineStage(descriptor.dependencies[i].destinationStage);
+            dependency.srcAccessMask = convertAccessType(descriptor.dependencies[i].sourceAccess);
+            dependency.dstAccessMask = convertAccessType(descriptor.dependencies[i].destinationAccess);
+
+            dependecies[i] = std::move(dependency);
+        }
+
+        //Renderpass
+        VkRenderPassCreateInfo renderPassInfo{};
+        renderPassInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+        renderPassInfo.attachmentCount = attachmentSize;
+        renderPassInfo.pAttachments    = std::data(attachments);
+        renderPassInfo.subpassCount    = subpassesSize;
+        renderPassInfo.pSubpasses      = std::data(subpasses);
+        renderPassInfo.dependencyCount = dependecySize;
+        renderPassInfo.pDependencies   = std::data(dependecies);
+        
+        if(vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
 			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create render pass");
 		}
-	}
+    }
 
-	VKRenderPass::~VKRenderPass() {
-		vkDestroyRenderPass(device, renderPass, nullptr);
-	}
+    VKRenderPass::~VKRenderPass() {
+        vkDestroyRenderPass(device, renderPass, nullptr);
+    }
 
-	VkRenderPass VKRenderPass::getRenderPass() const {
-		return renderPass;
-	}
+    VkRenderPass VKRenderPass::getRenderPass() const {
+        return renderPass;
+    }
 }

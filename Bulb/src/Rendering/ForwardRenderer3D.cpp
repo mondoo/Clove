@@ -17,7 +17,38 @@ namespace blb::rnd {
 		transferQueue = graphicsFactory->createTransferQueue({ clv::gfx::QueueFlags::Transient });
 
 		swapchain  = graphicsFactory->createSwapChain({ windowSize });
-        renderPass = graphicsFactory->createRenderPass({ swapchain->getImageFormat() });
+        {//Render pass
+            //Define what attachments we have
+            clv::gfx::AttachmentDescriptor colourAttachment{};
+            colourAttachment.format        = swapchain->getImageFormat();
+            colourAttachment.initialLayout = clv::gfx::ImageLayout::Undefined;
+            colourAttachment.finalLayout   = clv::gfx::ImageLayout::Present;
+
+            //Define attachment references so the subpass knows which slot each attachment will be in
+            clv::gfx::AttachmentReference colourReference{};
+            colourReference.attachmentIndex = 0;
+            colourReference.layout          = clv::gfx::ImageLayout::ColourAttachmentOptimal;
+
+            clv::gfx::SubpassDescriptor subpass{};
+            subpass.colourAttachments = { colourReference };
+
+            //Make sure we define any dependecies between subpasses
+            clv::gfx::SubpassDependecy dependecy{};
+            dependecy.sourceSubpass      = clv::gfx::SUBPASS_EXTERNAL;
+            dependecy.destinationSubpass = 0;
+            dependecy.sourceStage        = clv::gfx::PipelineStage::ColourAttachmentOutput;
+            dependecy.destinationStage   = clv::gfx::PipelineStage::ColourAttachmentOutput;
+            dependecy.sourceAccess       = clv::gfx::AccessType::None;
+            dependecy.destinationAccess  = clv::gfx::AccessType::ColourAttachmentWrite;
+
+            //Create render pass
+            clv::gfx::RenderPassDescriptor renderPassDescriptor{};
+            renderPassDescriptor.attachments  = { std::move(colourAttachment) };
+            renderPassDescriptor.subpasses    = { std::move(subpass) };
+            renderPassDescriptor.dependencies = { std::move(dependecy) };
+
+            renderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
+        }
 
         //TODO: Retrieve these from the shaders? Can these be created if the shader doesn't want them?
         clv::gfx::DescriptorBindingInfo uboLayoutBinding{};
@@ -265,7 +296,38 @@ namespace blb::rnd {
 
         //Recreate our swap chain
         swapchain = graphicsFactory->createSwapChain({ windowSize });
-        renderPass = graphicsFactory->createRenderPass({ swapchain->getImageFormat() });
+        {//Render pass
+            //Define what attachments we have
+            clv::gfx::AttachmentDescriptor colourAttachment{};
+            colourAttachment.format        = swapchain->getImageFormat();
+            colourAttachment.initialLayout = clv::gfx::ImageLayout::Undefined;
+            colourAttachment.finalLayout   = clv::gfx::ImageLayout::Present;
+
+            //Define attachment references so the subpass knows which slot each attachment will be in
+            clv::gfx::AttachmentReference colourReference{};
+            colourReference.attachmentIndex = 0;
+            colourReference.layout          = clv::gfx::ImageLayout::ColourAttachmentOptimal;
+
+            clv::gfx::SubpassDescriptor subpass{};
+            subpass.colourAttachments = { colourReference };
+
+            //Make sure we define any dependecies between subpasses
+            clv::gfx::SubpassDependecy dependecy{};
+            dependecy.sourceSubpass      = clv::gfx::SUBPASS_EXTERNAL;
+            dependecy.destinationSubpass = 0;
+            dependecy.sourceStage        = clv::gfx::PipelineStage::ColourAttachmentOutput;
+            dependecy.destinationStage   = clv::gfx::PipelineStage::ColourAttachmentOutput;
+            dependecy.sourceAccess       = clv::gfx::AccessType::None;
+            dependecy.destinationAccess  = clv::gfx::AccessType::ColourAttachmentWrite;
+
+            //Create render pass
+            clv::gfx::RenderPassDescriptor renderPassDescriptor{};
+            renderPassDescriptor.attachments  = { std::move(colourAttachment) };
+            renderPassDescriptor.subpasses    = { std::move(subpass) };
+            renderPassDescriptor.dependencies = { std::move(dependecy) };
+
+            renderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
+        }
 
         createPipeline();
         createSwapchainFrameBuffers();

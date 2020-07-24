@@ -130,6 +130,8 @@ namespace clv::gfx::vk {
                 return VK_IMAGE_LAYOUT_UNDEFINED;
             case ImageLayout::General:
                 return VK_IMAGE_LAYOUT_GENERAL;
+            case ImageLayout::Present:
+                return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
             case ImageLayout::TransferDestinationOptimal:
                 return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
             case ImageLayout::ShaderReadOnlyOptimal:
@@ -143,6 +145,30 @@ namespace clv::gfx::vk {
             default:
                 GARLIC_ASSERT(false, "{0}: Unkown image layout", GARLIC_FUNCTION_NAME);
                 return VK_IMAGE_LAYOUT_UNDEFINED;
+        }
+    }
+
+    VkPipelineStageFlags convertPipelineStage(PipelineStage garlicStage) {
+        switch(garlicStage) {
+            case PipelineStage::Top:
+                return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+            case PipelineStage::ColourAttachmentOutput:
+                return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            default: 
+                GARLIC_ASSERT(false, "{0}: Unkown pipeline stage", GARLIC_FUNCTION_NAME);
+                return 0;
+        }
+    }
+
+    VkAccessFlags convertAccessType(AccessType garlicAccess) {
+        switch(garlicAccess) {
+            case AccessType::None:
+                return 0;
+            case AccessType::ColourAttachmentWrite:
+                return VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+            default:
+                GARLIC_ASSERT(false, "{0}: Unkown access type", GARLIC_FUNCTION_NAME);
+                return 0;
         }
     }
 }

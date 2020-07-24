@@ -4,6 +4,16 @@
 
 //TODO: Move out generic types
 namespace clv::gfx {
+    //TODO: Have Success and Error then OR those with other codes so you can just check for succes or error
+    enum class Result {
+        Success,
+        Success_SwapchainSuboptimal,
+
+        Error_SwapchainOutOfDate,
+
+        Unkown
+    };
+
 	enum class ImageFormat {
 		Unkown,
 		
@@ -14,15 +24,16 @@ namespace clv::gfx {
 		D32_SFLOAT
 	};
 
-	//TODO: Have Success and Error then OR those with other codes so you can just check for succes or error
-	enum class Result {
-		Success,
-		Success_SwapchainSuboptimal,
-		
-		Error_SwapchainOutOfDate,
-
-		Unkown
-	};
+	enum class ImageLayout {
+        Undefined,
+        General,
+		Present,
+        TransferDestinationOptimal,
+        ShaderReadOnlyOptimal,
+        ColourAttachmentOptimal,
+        DepthStencilAttachmentOptimal,
+        DepthStencilReadOnlyOptimal
+    };
 
 	enum class VertexAttributeFormat{
 		R32_SFLOAT,
@@ -58,15 +69,17 @@ namespace clv::gfx {
         HostVisible,//Can be written to by CPU, not GPU optimised
     };
 
-	enum class ImageLayout{
-		Undefined,
-		General,
-        TransferDestinationOptimal,
-		ShaderReadOnlyOptimal,
-		ColourAttachmentOptimal,
-		DepthStencilAttachmentOptimal,
-		DepthStencilReadOnlyOptimal
+	enum class PipelineStage {
+		Top,
+        ColourAttachmentOutput,
 	};
+
+	enum class AccessType{
+		None,
+		ColourAttachmentWrite,
+	};
+
+	inline constexpr uint32_t SUBPASS_EXTERNAL = ~0U;
 }
 
 namespace clv::gfx::vk {

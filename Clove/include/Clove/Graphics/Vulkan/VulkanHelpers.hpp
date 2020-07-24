@@ -21,4 +21,8 @@ namespace clv::gfx::vk {
     VkMemoryPropertyFlags getMemoryPropertyFlags(MemoryProperties garlicProperties);
 
     VkImageLayout convertImageLayout(ImageLayout garlicFormat);
+
+    VkPipelineStageFlags convertPipelineStage(PipelineStage garlicStage);
+
+    VkAccessFlags convertAccessType(AccessType garlicAccess);
 }
