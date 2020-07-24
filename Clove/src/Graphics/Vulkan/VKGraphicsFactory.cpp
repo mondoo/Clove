@@ -181,12 +181,12 @@ namespace clv::gfx::vk{
 		std::vector<const char*> requiredExtensions {
 			VK_KHR_SURFACE_EXTENSION_NAME,
 			"VK_KHR_win32_surface", //TODO: Platform agnostic extensions
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 			VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 #endif
 		};
 
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 		const std::vector<const char*> validationLayers{
 			"VK_LAYER_KHRONOS_validation"
 		};
@@ -206,7 +206,7 @@ namespace clv::gfx::vk{
 			appInfo.engineVersion		= VK_MAKE_VERSION(1, 0, 0);	//TODO: Get engine version
 			appInfo.apiVersion			= VK_API_VERSION_1_2;
 
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 			VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo{};
 			debugMessengerCreateInfo.sType				= VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 			debugMessengerCreateInfo.messageSeverity	= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
@@ -220,7 +220,7 @@ namespace clv::gfx::vk{
 			createInfo.pApplicationInfo			= &appInfo;
 			createInfo.enabledExtensionCount	= std::size(requiredExtensions);
 			createInfo.ppEnabledExtensionNames	= std::data(requiredExtensions);
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 			createInfo.enabledLayerCount		= std::size(validationLayers);
 			createInfo.ppEnabledLayerNames		= std::data(validationLayers);
 			createInfo.pNext					= &debugMessengerCreateInfo; //Setting the pNext allows us to debug the creation and destruction of the instance (as normaly we need an instance pointer to enable debugging)
@@ -235,7 +235,7 @@ namespace clv::gfx::vk{
 				return;
 			}
 
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 			//TODO: Move this debug messenger setup else where
 			if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
 				GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create vk debug message callback");
@@ -323,7 +323,7 @@ namespace clv::gfx::vk{
 			createInfo.pEnabledFeatures			= &deviceFeatures;
 			createInfo.enabledExtensionCount	= static_cast<uint32_t>(std::size(deviceExtensions));
 			createInfo.ppEnabledExtensionNames	= std::data(deviceExtensions);
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 			//We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
 			createInfo.enabledLayerCount	= static_cast<uint32_t>(validationLayers.size());
 			createInfo.ppEnabledLayerNames	= validationLayers.data();
@@ -339,7 +339,7 @@ namespace clv::gfx::vk{
 	}
 
 	VKGraphicsFactory::~VKGraphicsFactory() {
-#if CLV_DEBUG
+#if GARLIC_DEBUG
 		destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #endif
 		vkDestroyDevice(logicalDevice, nullptr);
