@@ -16,6 +16,11 @@ namespace clv::gfx{
         mth::vec2ui size;
     };
 
+    struct DepthStencilValue{
+        float depth{ 0.0f };
+        uint32_t stencil{ 0 };
+    };
+
     enum class CommandBufferUsage {
         Default,
         OneTimeSubmit,
@@ -42,7 +47,7 @@ namespace clv::gfx::vk {
 		void beginRecording(CommandBufferUsage usageFlag);
         void endRecording();
 
-		void beginRenderPass(VKRenderPass& renderPass, VKFramebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour);
+		void beginRenderPass(VKRenderPass& renderPass, VKFramebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour, const DepthStencilValue& depthStencilClearValue);
         void endRenderPass();
 
 		void bindPipelineObject(VKPipelineObject& pipelineObject);
