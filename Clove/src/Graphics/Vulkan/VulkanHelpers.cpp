@@ -148,6 +148,30 @@ namespace clv::gfx::vk {
         }
     }
 
+    VkAttachmentLoadOp convertLoadOp(LoadOperation garlicOperation) {
+        switch(garlicOperation) {
+            case LoadOperation::DontCare:
+                return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+            case LoadOperation::Clear:
+                return VK_ATTACHMENT_LOAD_OP_CLEAR;
+            default:
+                GARLIC_ASSERT(false, "{0}: Unkown operation", GARLIC_FUNCTION_NAME);
+                return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        }
+    }
+
+    VkAttachmentStoreOp convertStoreOp(StoreOperation garlicOperation) {
+        switch(garlicOperation) {
+            case StoreOperation::DontCare:
+                return VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            case StoreOperation::Store:
+                return VK_ATTACHMENT_STORE_OP_STORE;
+            default:
+                GARLIC_ASSERT(false, "{0}: Unkown operation", GARLIC_FUNCTION_NAME);
+                return VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        }
+    }
+
     VkPipelineStageFlags convertPipelineStage(PipelineStage garlicStage) {
         switch(garlicStage) {
             case PipelineStage::Top:

@@ -22,6 +22,10 @@ namespace clv::gfx::vk {
 
     VkImageLayout convertImageLayout(ImageLayout garlicFormat);
 
+    VkAttachmentLoadOp convertLoadOp(LoadOperation garlicOperation);
+
+    VkAttachmentStoreOp convertStoreOp(StoreOperation garlicOperation);
+
     VkPipelineStageFlags convertPipelineStage(PipelineStage garlicStage);
 
     VkAccessFlags convertAccessType(AccessType garlicAccess);

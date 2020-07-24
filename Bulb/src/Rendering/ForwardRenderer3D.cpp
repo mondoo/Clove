@@ -285,14 +285,18 @@ namespace blb::rnd {
     void ForwardRenderer3D::createRenderpass() {
         //Define what attachments we have
         clv::gfx::AttachmentDescriptor colourAttachment{};
-        colourAttachment.format        = swapchain->getImageFormat();
-        colourAttachment.initialLayout = clv::gfx::ImageLayout::Undefined;
-        colourAttachment.finalLayout   = clv::gfx::ImageLayout::Present;
+        colourAttachment.format         = swapchain->getImageFormat();
+        colourAttachment.loadOperation  = clv::gfx::LoadOperation::Clear;
+        colourAttachment.storeOperation = clv::gfx::StoreOperation::Store;
+        colourAttachment.initialLayout  = clv::gfx::ImageLayout::Undefined;
+        colourAttachment.finalLayout    = clv::gfx::ImageLayout::Present;
 
         clv::gfx::AttachmentDescriptor depthAttachment{};
-        depthAttachment.format        = clv::gfx::ImageFormat::D32_SFLOAT;
-        depthAttachment.initialLayout = clv::gfx::ImageLayout::Undefined;
-        depthAttachment.finalLayout   = clv::gfx::ImageLayout::DepthStencilAttachmentOptimal;
+        depthAttachment.format         = clv::gfx::ImageFormat::D32_SFLOAT;
+        depthAttachment.loadOperation  = clv::gfx::LoadOperation::Clear;
+        depthAttachment.storeOperation = clv::gfx::StoreOperation::DontCare;
+        depthAttachment.initialLayout  = clv::gfx::ImageLayout::Undefined;
+        depthAttachment.finalLayout    = clv::gfx::ImageLayout::DepthStencilAttachmentOptimal;
 
         //Define attachment references so the subpass knows which slot each attachment will be in
         clv::gfx::AttachmentReference colourReference{};

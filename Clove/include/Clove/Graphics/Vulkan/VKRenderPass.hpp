@@ -9,8 +9,11 @@
 namespace clv::gfx {
     struct AttachmentDescriptor {
         ImageFormat format{ ImageFormat::Unkown };
+        LoadOperation loadOperation{ LoadOperation::DontCare };
+        StoreOperation storeOperation{ StoreOperation::DontCare };
         ImageLayout initialLayout{ ImageLayout::Undefined };
         ImageLayout finalLayout{ ImageLayout::Undefined };
+        
     };
 
     struct AttachmentReference {

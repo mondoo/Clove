@@ -74,10 +74,20 @@ namespace clv::gfx {
         ColourAttachmentOutput,
 	};
 
-	enum class AccessType{
-		None,
-		ColourAttachmentWrite,
-	};
+	enum class AccessType {
+        None,
+        ColourAttachmentWrite,
+    };
+
+    enum class LoadOperation {
+        DontCare,
+        Clear,
+    };
+
+    enum class StoreOperation {
+        DontCare,
+        Store,
+    };
 
 	inline constexpr uint32_t SUBPASS_EXTERNAL = ~0U;
 }
