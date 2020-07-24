@@ -78,14 +78,15 @@ namespace blb::rnd {
             { {  0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
             { {  0.5f,  0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
             { { -0.5f,  0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
+
+			{ { -0.5f, -0.5f, 0.5f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } },
+            { {  0.5f, -0.5f, 0.5f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
+            { {  0.5f,  0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
+            { { -0.5f,  0.5f, 0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
         };
         const std::vector<uint16_t> indices = {
-            0,
-            1,
-            2,
-            2,
-            3,
-            0
+            0, 1, 2, 2, 3, 0,
+			4, 5, 6, 6, 7, 4
         };
         std::shared_ptr<clv::gfx::vk::VKBuffer> vertexBuffer;
         std::shared_ptr<clv::gfx::vk::VKBuffer> indexBuffer;
