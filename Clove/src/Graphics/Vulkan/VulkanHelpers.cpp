@@ -84,6 +84,8 @@ namespace clv::gfx::vk {
         switch(garlicType) {
             case DescriptorType::UniformBuffer:
                 return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            case DescriptorType::CombinedImageSampler:
+                return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             default:
                 GARLIC_ASSERT(false, "{0}: Unkown type", GARLIC_FUNCTION_NAME);
                 return VK_DESCRIPTOR_TYPE_MAX_ENUM;

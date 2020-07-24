@@ -7,6 +7,7 @@
 namespace clv::gfx {
     enum class DescriptorStage {
         Vertex,
+        Pixel
     };
 
     struct DescriptorBindingInfo {

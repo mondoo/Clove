@@ -38,5 +38,7 @@ namespace clv::gfx::vk {
         //TODO: Ctors
         VKSampler(VkDevice device, SamplerDescriptor descriptor);
         ~VKSampler();
+
+        VkSampler getSampler() const;
     };
 }

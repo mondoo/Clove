@@ -7,6 +7,8 @@ namespace clv::gfx::vk {
         switch(garlicStage) {
             case DescriptorStage::Vertex:
                 return VK_SHADER_STAGE_VERTEX_BIT;
+            case DescriptorStage::Pixel:
+                return VK_SHADER_STAGE_FRAGMENT_BIT;
             default:
                 GARLIC_ASSERT(false, "{0}: Unkown type", GARLIC_FUNCTION_NAME);
                 return 0;

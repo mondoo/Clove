@@ -59,4 +59,8 @@ namespace clv::gfx::vk {
     VKSampler::~VKSampler() {
         vkDestroySampler(device, sampler, nullptr);
     }
+    
+    VkSampler VKSampler::getSampler() const {
+        return sampler;
+    }
 }
