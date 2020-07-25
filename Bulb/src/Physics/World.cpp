@@ -69,7 +69,7 @@ namespace blb::phy{
 	}
 
 	void World::addRigidBody(RigidBody* rigidBody){
-		dynamicsWorld->addRigidBody(rigidBody->body.get());
+		dynamicsWorld->addRigidBody(rigidBody->body.get(), rigidBody->descriptor.collisionGroup, rigidBody->descriptor.collisionMask);
 	}
 
 	void World::removeRigidBody(RigidBody* rigidBody){

@@ -3,38 +3,28 @@
 #include <btBulletDynamicsCommon.h>
 
 namespace blb::phy {
-	RigidBody::RigidBody(const RigidBodyInitInfo& initInfo, const clv::mth::vec3f& cubeSize)
-		: mass(initInfo.mass)
-		, isKinematic(initInfo.isKinematic)
-		, respondToCollision(initInfo.respondToCollision)
+	RigidBody::RigidBody(RigidBodyDescriptor descriptor, const clv::mth::vec3f& cubeSize)
+        : descriptor(std::move(descriptor))
 		, cubeSize(cubeSize) {
-		initialise(mass, isKinematic, respondToCollision, cubeSize);
+        initialise(this->descriptor, cubeSize);
 	}
 
 	RigidBody::RigidBody(const RigidBody& other) {
-		mass = other.mass;
-		isKinematic = other.isKinematic;
-		respondToCollision = other.respondToCollision;
+        descriptor  = std::move(other.descriptor);
+        cubeSize    = other.cubeSize;
+        userPointer = other.userPointer;
 
-		cubeSize = other.cubeSize;
-
-		userPointer = other.userPointer;
-
-		initialise(mass, isKinematic, respondToCollision, cubeSize);
+        initialise(descriptor, cubeSize);
 	}
 
 	RigidBody::RigidBody(RigidBody&& other) noexcept = default;
 
 	RigidBody& RigidBody::operator=(const RigidBody& other) {
-		mass = other.mass;
-		isKinematic = other.isKinematic;
-		respondToCollision = other.respondToCollision;
+        descriptor  = std::move(other.descriptor);
+        cubeSize    = other.cubeSize;
+        userPointer = other.userPointer;
 
-		cubeSize = other.cubeSize;
-
-		userPointer = other.userPointer;
-
-		initialise(mass, isKinematic, respondToCollision, cubeSize);
+        initialise(descriptor, cubeSize);
 
 		return *this;
 	}
@@ -81,32 +71,28 @@ namespace blb::phy {
 		return userPointer;
 	}
 
-	void RigidBody::initialise(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize) {
+	void RigidBody::initialise(const RigidBodyDescriptor& descriptor, const clv::mth::vec3f& cubeSize) {
 		collisionShape = std::make_unique<btBoxShape>(btVector3{ cubeSize.x, cubeSize.y, cubeSize.z });
 
 		btVector3 localInertia(0, 0, 0);
 		btTransform startTransform;
 		startTransform.setIdentity();
 
-		if(isKinematic && mass > 0.0f) {
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Warning, "Kinematic body has non 0 mass. Setting to 0");
-			mass = 0.0f;
+		if(descriptor.isKinematic && descriptor.mass > 0.0f) {
+			GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Kinematic RigidBody has non 0 mass. Kinematic takes precedence");
 		} else {
-			collisionShape->calculateLocalInertia(mass, localInertia);
+            collisionShape->calculateLocalInertia(descriptor.mass, localInertia);
 		}
 
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, collisionShape.get(), localInertia);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(descriptor.mass, myMotionState, collisionShape.get(), localInertia);
 
 		body = std::make_unique<btRigidBody>(rbInfo);
 		body->setUserPointer(this);
 
 		int flags = body->getCollisionFlags();
-		if(isKinematic) {
+        if(descriptor.isKinematic) {
 			flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
-		}
-		if(!respondToCollision) {
-			flags |= btCollisionObject::CF_NO_CONTACT_RESPONSE;
 		}
 		body->setCollisionFlags(flags);
 	}
