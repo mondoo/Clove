@@ -49,7 +49,12 @@ namespace blb::phy {
 		const btVector3 btvel{ velocity.x, velocity.y, velocity.z };
 		body->setLinearVelocity(btvel);
 		body->activate();
-	}
+    }
+
+    clv::mth::vec3f RigidBody::getLinearVelocity() const {
+        const btVector3 btvel = body->getLinearVelocity();
+        return { btvel.x(), btvel.y(), btvel.z() };
+    }
 
 	clv::mth::vec3f RigidBody::getPhysicsPosition() const {
 		btTransform btTrans = body->getWorldTransform();

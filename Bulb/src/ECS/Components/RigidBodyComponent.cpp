@@ -40,7 +40,11 @@ namespace blb::ecs {
 
 	void RigidBodyComponent::setLinearVelocity(const clv::mth::vec3f& velocity) {
 		rigidBody->setLinearVelocity(velocity);
-	}
+    }
+
+    clv::mth::vec3f RigidBodyComponent::getLinearVelocity() const {
+        return rigidBody->getLinearVelocity();
+    }
 
 	void RigidBodyComponent::initialiseRigidBody(phy::RigidBody* body) {
 		body->setUserPointer(this);

@@ -30,6 +30,7 @@ namespace blb::ecs {
 		~RigidBodyComponent();
 
 		void setLinearVelocity(const clv::mth::vec3f& velocity);
+        clv::mth::vec3f getLinearVelocity() const;
 
 	private:
 		void initialiseRigidBody(phy::RigidBody* body);
