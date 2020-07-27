@@ -171,7 +171,7 @@ namespace blb::rnd {
 		auto pointShadowGS = factory.createShader({ ShaderStage::Geometry }, gencubeshadowmap_gs, gencubeshadowmap_gsLength);
 		auto pointShadowPS = factory.createShader({ ShaderStage::Pixel }, gencubeshadowmap_ps, gencubeshadowmap_psLength);
 		pointShadowPipelineObject = factory.createPipelineObject();
-        pointShadowPipelineObject->setVertexShader(*dirShadowVS);
+        pointShadowPipelineObject->setVertexShader(*pointShadowVS);
 		pointShadowPipelineObject->setGeometryShader(*pointShadowGS);
 		pointShadowPipelineObject->setPixelShader(*pointShadowPS);
 
