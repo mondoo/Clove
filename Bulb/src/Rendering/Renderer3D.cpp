@@ -331,7 +331,7 @@ namespace blb::rnd {
 
             directionalShadowCommandBuffer->bindPipelineObject(*animatedDirectionalShadowPipelineObject);
             for(auto& mesh : scene.animatedMeshes) {
-                mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
+                mesh->draw(*directionalShadowCommandBuffer, animatedDirectionalShadowPipelineObject->getVertexLayout());
             }
 		}
 
