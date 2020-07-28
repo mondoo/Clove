@@ -19,7 +19,7 @@ struct PointLightData{
 	
 	float farplane;
 };
-cbuffer LightBuffer : register(b2){
+cbuffer LightBuffer : register(b3){
 	DirectionalLightData directionalLights[MAX_LIGHTS];
 	PointLightData pointLights[MAX_LIGHTS];
 };

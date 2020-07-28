@@ -13,13 +13,13 @@ ExampleLayer::ExampleLayer(std::shared_ptr<clv::plt::Window> window)
 
 void ExampleLayer::onAttach() {
 	//Load in our mesh
-	blb::rnd::Model cube = blb::ModelLoader::loadModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
+	blb::rnd::StaticModel cube = blb::ModelLoader::loadStaticModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
 
 	//Create the entity that will act as our cube
 	cubeEntity = world.createEntity();
 	//Add components that will define our entity and interact with certain systems
 	cubeEntity.addComponent<blb::ecs::TransformComponent>();
-	cubeEntity.addComponent<blb::ecs::ModelComponent>(cube);
+	cubeEntity.addComponent<blb::ecs::StaticModelComponent>(cube);
 
 	//Add our light entity
 	lightEntity = world.createEntity();

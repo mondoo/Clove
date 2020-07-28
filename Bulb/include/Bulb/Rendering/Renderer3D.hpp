@@ -22,6 +22,7 @@ namespace clv::plt {
 namespace blb::rnd {
 	class Sprite;
 	class Mesh;
+    class AnimatedModel;
 }
 
 namespace blb::rnd {
@@ -41,6 +42,7 @@ namespace blb::rnd {
 			std::vector<ComposedCameraData> cameras;
 
 			std::vector<std::shared_ptr<rnd::Mesh>> meshes;
+            std::vector<std::shared_ptr<rnd::Mesh>> animatedMeshes;
 
 			int32_t numDirectionalLights = 0u;
 			int32_t numPointLights = 0u;
@@ -66,8 +68,14 @@ namespace blb::rnd {
 		std::shared_ptr<clv::gfx::RenderTarget> pointShadowRenderTarget;
 
 		std::shared_ptr<clv::gfx::PipelineObject> directionalShadowPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> animatedDirectionalShadowPipelineObject;
+
 		std::shared_ptr<clv::gfx::PipelineObject> pointShadowPipelineObject;
-		std::shared_ptr<clv::gfx::PipelineObject> meshPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> animatedPointShadowPipelineObject;
+
+        std::shared_ptr<clv::gfx::PipelineObject> meshPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> animatedMeshPipelineObject;
+
 		std::shared_ptr<clv::gfx::PipelineObject> widgetPipelineObject;
 		std::shared_ptr<clv::gfx::PipelineObject> textPipelineObject;
 
@@ -107,7 +115,8 @@ namespace blb::rnd {
 
 		void begin();
 
-		void submitMesh(const std::shared_ptr<rnd::Mesh>& mesh);
+		void submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh);
+        void submitAnimatedMesh(const std::shared_ptr<rnd::Mesh>& mesh);
 		void submitLight(const DirectionalLight& light);
 		void submitLight(const PointLight& light);
 		void submitCamera(const ComposedCameraData& camera);

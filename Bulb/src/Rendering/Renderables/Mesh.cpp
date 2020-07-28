@@ -15,24 +15,33 @@ namespace blb::rnd{
 
 		for(int32_t i = 0; i < vertexCount; ++i) {
 			for(int32_t j = 0; j < newLayout.count(); ++j) {
-				switch(newLayout.resolve(j).getType()) {
-					case VertexElementType::position2D:
-						vertexArray[i].getAttribute<VertexElementType::position2D>() = source[i].getAttribute<VertexElementType::position2D>();
-						break;
+                switch(newLayout.resolve(j).getType()) {
+                    case VertexElementType::position2D:
+                        vertexArray[i].getAttribute<VertexElementType::position2D>() = source[i].getAttribute<VertexElementType::position2D>();
+                        break;
 
-					case VertexElementType::position3D:
-						vertexArray[i].getAttribute<VertexElementType::position3D>() = source[i].getAttribute<VertexElementType::position3D>();
-						break;
+                    case VertexElementType::position3D:
+                        vertexArray[i].getAttribute<VertexElementType::position3D>() = source[i].getAttribute<VertexElementType::position3D>();
+                        break;
 
-					case VertexElementType::texture2D:
-						vertexArray[i].getAttribute<VertexElementType::texture2D>() = source[i].getAttribute<VertexElementType::texture2D>();
-						break;
+                    case VertexElementType::texture2D:
+                        vertexArray[i].getAttribute<VertexElementType::texture2D>() = source[i].getAttribute<VertexElementType::texture2D>();
+                        break;
 
-					case VertexElementType::normal:
-						vertexArray[i].getAttribute<VertexElementType::normal>() = source[i].getAttribute<VertexElementType::normal>();
-						break;
-					default:
-						break;
+                    case VertexElementType::normal:
+                        vertexArray[i].getAttribute<VertexElementType::normal>() = source[i].getAttribute<VertexElementType::normal>();
+                        break;
+
+                    case VertexElementType::jointIds:
+                        vertexArray[i].getAttribute<VertexElementType::jointIds>() = source[i].getAttribute<VertexElementType::jointIds>();
+                        break;
+
+                    case VertexElementType::weights:
+                        vertexArray[i].getAttribute<VertexElementType::weights>() = source[i].getAttribute<VertexElementType::weights>();
+                        break;
+                    default:
+                        CLV_ASSERT(false, "{0}: Unknown vertex element", CLV_FUNCTION_NAME);
+                        break;
 				}
 			}
 		}

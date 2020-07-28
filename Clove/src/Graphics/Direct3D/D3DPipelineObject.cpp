@@ -18,6 +18,10 @@ namespace clv::gfx::d3d {
 				return DXGI_FORMAT_R32G32B32_FLOAT;
 			case VertexElementType::colour3D:
 				return DXGI_FORMAT_R32G32B32_FLOAT;
+            case VertexElementType::jointIds:
+                return DXGI_FORMAT_R32G32B32A32_SINT;
+            case VertexElementType::weights:
+                return DXGI_FORMAT_R32G32B32A32_FLOAT;
 			default:
 				GARLIC_ASSERT(false, "Invalid element type");
 				return DXGI_FORMAT_R32G32B32_FLOAT;

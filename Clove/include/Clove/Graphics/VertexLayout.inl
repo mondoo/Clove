@@ -11,8 +11,12 @@ namespace clv::gfx{
 				return sizeof(VertexElementData<VertexElementType::texture2D>::DataType);
 			case VertexElementType::normal:
 				return sizeof(VertexElementData<VertexElementType::normal>::DataType);
-			case VertexElementType::colour3D:
-				return sizeof(VertexElementData<VertexElementType::colour3D>::DataType);
+            case VertexElementType::colour3D:
+                return sizeof(VertexElementData<VertexElementType::colour3D>::DataType);
+            case VertexElementType::jointIds:
+                return sizeof(VertexElementData<VertexElementType::jointIds>::DataType);
+            case VertexElementType::weights:
+                return sizeof(VertexElementData<VertexElementType::weights>::DataType);
 			default:
 				GARLIC_ASSERT(false, "Invalid element type. {0}", GARLIC_FUNCTION_NAME);
 				return 0u;
@@ -31,6 +35,10 @@ namespace clv::gfx{
 				return VertexElementData<VertexElementType::normal>::elementCount;
 			case VertexElementType::colour3D:
 				return VertexElementData<VertexElementType::colour3D>::elementCount;
+            case VertexElementType::jointIds:
+                return VertexElementData<VertexElementType::jointIds>::elementCount;
+            case VertexElementType::weights:
+                return VertexElementData<VertexElementType::weights>::elementCount;
 			default:
 				GARLIC_ASSERT(false, "Invalid element type. {0}", GARLIC_FUNCTION_NAME);
 				return 0u;
@@ -49,6 +57,10 @@ namespace clv::gfx{
 				return VertexElementData<VertexElementType::normal>::semantic;
 			case VertexElementType::colour3D:
 				return VertexElementData<VertexElementType::colour3D>::semantic;
+            case VertexElementType::jointIds:
+                return VertexElementData<VertexElementType::jointIds>::semantic;
+            case VertexElementType::weights:
+                return VertexElementData<VertexElementType::weights>::semantic;
 			default:
 				GARLIC_ASSERT(false, "Invalid element type. {0}", GARLIC_FUNCTION_NAME);
 				return nullptr;

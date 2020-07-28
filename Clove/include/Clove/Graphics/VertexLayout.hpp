@@ -36,6 +36,18 @@ namespace clv::gfx {
 		static constexpr uint32_t elementCount = 3u;
 		static constexpr std::string_view semantic = "COLOUR3D";
 	};
+	template<>
+	struct VertexElementData<VertexElementType::jointIds>{
+		using DataType = mth::vec4i;
+        static constexpr uint32_t elementCount = 4u;
+        static constexpr std::string_view semantic = "JOINTIDS";
+	};
+	template<>
+	struct VertexElementData<VertexElementType::weights>{
+		using DataType = mth::vec4f; //TODO: As a future memory optimisation we can make this a vec3 as it all adds up to 1 anyway
+        static constexpr uint32_t elementCount = 4u;
+        static constexpr std::string_view semantic = "WEIGHTS";
+	};
 
 	class VertexElement {
 		//VARIABLES

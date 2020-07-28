@@ -84,4 +84,8 @@ namespace blb::rnd {
 	struct alignas(16) NumberAlignment {
 		int32_t num;
 	};
+
+	struct SkeletalData {
+        std::array<clv::mth::mat4f, MAX_JOINTS> jointTransforms;
+    };
 }

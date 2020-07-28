@@ -24,7 +24,9 @@ namespace clv::gfx{
 		position3D,
 		texture2D,
 		normal,
-		colour3D
+		colour3D,
+		jointIds,
+		weights,
 	};
 
 	struct Viewport{
@@ -34,20 +36,26 @@ namespace clv::gfx{
 		int32_t height = 0;
 	};
 
-	enum BufferBindingPoint{
-		BBP_CameraMatrices 				= 1u,
-		BBP_LightData 					= 2u,
-		BBP_ViewData 					= 3u,
-		BBP_ModelData 					= 4u,
-		BBP_MaterialData 				= 5u,
-		BBP_2DData 						= 6u,
-		BBP_PointShadowTransform		= 7u,
-		BBP_CubeDepthData 				= 8u,
-		BBP_CurrentLights 				= 9u,
-		BBP_CurrentFaceIndex 			= 10u,
-		BBP_DirectionalShadowTransform	= 11u,
-		BBP_Colour 						= 12u,
-		BBP_AllDirectionalTransform		= 13u,
+	enum BufferBindingPoint {
+		//General
+        BBP_Colour                     = 1u,
+
+		//2D
+        BBP_2DData                     = 2u,
+
+		//3D
+        BBP_CameraMatrices             = 2u,
+        BBP_LightData                  = 3u,
+        BBP_ViewData                   = 4u,
+        BBP_ModelData                  = 5u,
+        BBP_MaterialData               = 6u,
+        BBP_PointShadowTransform       = 7u,
+        BBP_CubeDepthData              = 8u,
+        BBP_CurrentLights              = 9u,
+        BBP_CurrentFaceIndex           = 10u,
+        BBP_DirectionalShadowTransform = 11u,
+        BBP_AllDirectionalTransform    = 12u,
+        BBP_SkeletalData               = 13u,
 	};
 
 	enum TextureBindingPoint{

@@ -1,7 +1,7 @@
 Texture2D albedoTexture : register(t1);
 SamplerState albedoSampler : register(s1);
 
-cbuffer colourBufferData : register(b12){
+cbuffer colourBufferData : register(b1){
 	float4 colour;
 };
 
