@@ -2,7 +2,7 @@
 
 #include "Bulb/ECS/Components/CameraComponent.hpp"
 #include "Bulb/ECS/Components/DirectionalLightComponent.hpp"
-#include "Bulb/ECS/Components/ModelComponent.hpp"
+#include "Bulb/ECS/Components/StaticModelComponent.hpp"
 #include "Bulb/ECS/Components/PointLightComponent.hpp"
 #include "Bulb/ECS/Components/TransformComponent.hpp"
 #include "Bulb/ECS/World.hpp"
@@ -53,7 +53,7 @@ namespace blb::ecs {
 		}
 
 		//Submit meshes
-		for(auto&& [transform, renderable] : world.getComponentSets<TransformComponent, ModelComponent>()) {
+		for(auto&& [transform, renderable] : world.getComponentSets<TransformComponent, StaticModelComponent>()) {
 			const mth::mat4f modelTransform = transform->getTransformationMatrix(TransformSpace::World);
 
 			for(auto& mesh : renderable->model.getMeshes()) {

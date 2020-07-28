@@ -10,7 +10,7 @@
 #include "Bulb/ECS/Components/AudioComponent.hpp"
 #include "Bulb/ECS/Components/CameraComponent.hpp"
 #include "Bulb/ECS/Components/DirectionalLightComponent.hpp"
-#include "Bulb/ECS/Components/ModelComponent.hpp"
+#include "Bulb/ECS/Components/StaticModelComponent.hpp"
 #include "Bulb/ECS/Components/PointLightComponent.hpp"
 #include "Bulb/ECS/Components/RigidBodyComponent.hpp"
 #include "Bulb/ECS/Components/TransformComponent.hpp"

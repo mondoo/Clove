@@ -60,12 +60,12 @@ set(
 		${BLB_SOURCE}/ECS/Components/CameraComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
 		${BLB_SOURCE}/ECS/Components/DirectionalLightComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/ModelComponent.hpp
-		${BLB_SOURCE}/ECS/Components/ModelComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/PointLightComponent.hpp
 		${BLB_SOURCE}/ECS/Components/PointLightComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/RigidBodyComponent.hpp
 		${BLB_SOURCE}/ECS/Components/RigidBodyComponent.cpp
+		${BLB_INCLUDE}/ECS/Components/StaticModelComponent.hpp
+		${BLB_SOURCE}/ECS/Components/StaticModelComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/TransformComponent.hpp
 		${BLB_SOURCE}/ECS/Components/TransformComponent.cpp
 		${BLB_INCLUDE}/ECS/Systems/AudioSystem.hpp
