@@ -12,6 +12,22 @@ namespace blb::rnd {
         }
     }
 
+    AnimatedModel::AnimatedModel(const AnimatedModel& other) 
+        : StaticModel(other)
+        , skeleton(std::make_unique<Skeleton>(*other.skeleton))
+        , animClips(other.animClips) {
+
+        for(auto& clip : animClips) {
+            clip.skeleton = skeleton.get();
+        }
+
+        if(std::size(animClips) == 0) {
+            GARLIC_LOG(garlicLogContext, clv::Log::Level::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
+        } else {
+            animator.setCurrentClip(&animClips[0]);
+        }
+    }
+
     AnimatedModel::AnimatedModel(AnimatedModel&& other) noexcept
         : StaticModel(other)
         , animator(std::move(other.animator))
@@ -19,7 +35,25 @@ namespace blb::rnd {
         , animClips(std::move(other.animClips)){
     }
 
-    AnimatedModel& AnimatedModel::operator=(AnimatedModel&& other) noexcept{
+    AnimatedModel& AnimatedModel::operator=(const AnimatedModel& other) {
+        StaticModel::operator=(other);
+        skeleton             = std::make_unique<Skeleton>(*other.skeleton);
+        animClips            = other.animClips;
+
+        for(auto& clip : animClips) {
+            clip.skeleton = skeleton.get();
+        }
+
+        if(std::size(animClips) == 0) {
+            GARLIC_LOG(garlicLogContext, clv::Log::Level::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
+        } else {
+            animator.setCurrentClip(&animClips[0]);
+        }
+
+        return *this;
+    }
+
+    AnimatedModel& AnimatedModel::operator=(AnimatedModel&& other) noexcept {
         StaticModel::operator=(other);
         animator             = std::move(other.animator);
         skeleton             = std::move(other.skeleton);

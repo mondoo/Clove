@@ -21,10 +21,10 @@ namespace blb::rnd {
         AnimatedModel() = delete;
         AnimatedModel(std::vector<std::shared_ptr<Mesh>> meshes, std::unique_ptr<Skeleton> skeleton, std::vector<AnimationClip> animClips);
 
-        AnimatedModel(const AnimatedModel& other) = delete;
+        AnimatedModel(const AnimatedModel& other);
         AnimatedModel(AnimatedModel&& other) noexcept;
 
-        AnimatedModel& operator=(const AnimatedModel& other) = delete;
+        AnimatedModel& operator=(const AnimatedModel& other);
         AnimatedModel& operator=(AnimatedModel&& other) noexcept;
 
         ~AnimatedModel();
