@@ -7,6 +7,7 @@
 #include "Bulb/AI/Sequence.hpp"
 #include "Bulb/AI/Task.hpp"
 
+#include "Bulb/ECS/Components/AnimatedModelComponent.hpp"
 #include "Bulb/ECS/Components/AudioComponent.hpp"
 #include "Bulb/ECS/Components/CameraComponent.hpp"
 #include "Bulb/ECS/Components/DirectionalLightComponent.hpp"

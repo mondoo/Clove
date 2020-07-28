@@ -54,6 +54,8 @@ set(
 		${BLB_INCLUDE}/ECS/World.inl
 		${BLB_SOURCE}/ECS/World.cpp
 		${BLB_INCLUDE}/ECS/System.hpp
+		${BLB_INCLUDE}/ECS/Components/AnimatedModelComponent.hpp
+		${BLB_SOURCE}/ECS/Components/AnimatedModelComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/AudioComponent.hpp
 		${BLB_SOURCE}/ECS/Components/AudioComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/CameraComponent.hpp
