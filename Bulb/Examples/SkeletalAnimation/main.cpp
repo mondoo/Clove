@@ -12,15 +12,16 @@ int main() {
     auto prevFrameTime = std::chrono::system_clock::now();
 
     //Create the objects we will render
-    auto model    = blb::ModelLoader::loadAnimatedModel(SOURCE_DIR "/CharacterRunning.fbx", window->getGraphicsFactory());
-    auto floor    = blb::ModelLoader::loadStaticModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
+    blb::rnd::AnimatedModel model = blb::ModelLoader::loadAnimatedModel(SOURCE_DIR "/CharacterRunning.fbx", window->getGraphicsFactory());
+    blb::rnd::StaticModel floor   = blb::ModelLoader::loadStaticModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
+
     auto camera   = blb::rnd::Camera{ *window, blb::rnd::ProjectionMode::Perspective };
     auto renderer = std::make_shared<blb::rnd::Renderer3D>(*window);
 
-    constexpr float size                  = 50.0f;
-    constexpr float nearDist              = 0.5f;
-    constexpr float farDist               = 1000.0f;
-    const clv::mth::mat4f pointShadowProj = clv::mth::createPerspectiveMatrix(clv::mth::asRadians(90.0f), 1.0f, nearDist, farDist);
+    //Create the data structures that we'll use to describe a directional light
+    constexpr float size     = 50.0f;
+    constexpr float nearDist = 0.5f;
+    constexpr float farDist  = 1000.0f;
 
     blb::rnd::DirectionalLightData dirLightData{};
     dirLightData.direction = { 1.0f, -1.0f, 0.0f };
@@ -31,27 +32,6 @@ int main() {
     blb::rnd::DirectionalLight dirLight{};
     dirLight.data            = std::move(dirLightData);
     dirLight.shadowTransform = clv::mth::createOrthographicMatrix(-size, size, -size, size, nearDist, farDist) * clv::mth::lookAt(-clv::mth::normalise(dirLight.data.direction) * (farDist / 2.0f), clv::mth::vec3f{ 0.0f, 0.0f, 0.0f }, clv::mth::vec3f{ 0.0f, 1.0f, 0.0f });
-
-    blb::rnd::PointLightData pointLightData{};
-    pointLightData.position  = { 4.0f, 5.0f, 0.0f };
-    pointLightData.ambient   = { 0.01f, 0.01f, 0.01f };
-    pointLightData.diffuse   = { 0.75f, 0.75f, 0.75f };
-    pointLightData.specular  = { 1.0f, 1.0f, 1.0f };
-    pointLightData.constant  = 1.0f;
-    pointLightData.linear    = 0.0014f;
-    pointLightData.quadratic = 0.000007f;
-    pointLightData.farPlane  = farDist;
-
-    blb::rnd::PointLight pointLight{};
-    pointLight.data = std::move(pointLightData);
-    pointLight.shadowTransforms[0] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{  1.0f,  0.0f,  0.0f },  clv::mth::vec3f{ 0.0f, -1.0f,  0.0f });
-    pointLight.shadowTransforms[1] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{ -1.0f,  0.0f,  0.0f },  clv::mth::vec3f{ 0.0f, -1.0f,  0.0f });
-    pointLight.shadowTransforms[2] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{  0.0f,  1.0f,  0.0f },  clv::mth::vec3f{ 0.0f,  0.0f,  1.0f });
-    pointLight.shadowTransforms[3] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{  0.0f, -1.0f,  0.0f },  clv::mth::vec3f{ 0.0f,  0.0f, -1.0f });
-    pointLight.shadowTransforms[4] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{  0.0f,  0.0f,  1.0f },  clv::mth::vec3f{ 0.0f, -1.0f,  0.0f });
-    pointLight.shadowTransforms[5] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{  0.0f,  0.0f, -1.0f },  clv::mth::vec3f{ 0.0f, -1.0f,  0.0f });
-
-    bool anim = true;
 
     //Run our program while the window is open
     while(window->isOpen()) {
@@ -65,7 +45,7 @@ int main() {
 
         renderer->begin();
 
-        //Camera
+        //Calculate and then submit our camera to the renderer
         const clv::mth::vec3f position{ 0.0f, 5.0f, -10.0f };
         const clv::mth::vec3f camFront{ 0.0f, 0.0f, 1.0f };
         const clv::mth::vec3f camUp{ 0.0f, 1.0f, 0.0f };
@@ -77,32 +57,31 @@ int main() {
         renderData.projection = camera.getProjection();
         renderer->submitCamera({ camera.getViewport(), std::move(renderData), camera.getRenderTarget() });
 
-        //Light
-        //renderer->submitLight(dirLight);
-        renderer->submitLight(pointLight);
+        renderer->submitLight(dirLight);
 
-        //Animated Model
-        auto matrixPalet = model.update(deltaSeconds.count());
+        //Calculate a rotation matrix for our model
+        static float angle = 0.0f;
+        angle += deltaSeconds.count() * 25.0f;
+        auto rot = clv::mth::rotate(clv::mth::mat4f{ 1.0f }, clv::mth::asRadians(-90.0f), { 1.0f, 0.0f, 0.0f });
+        rot      = clv::mth::rotate(rot, clv::mth::asRadians(90.0f + angle), { 0.0f, 0.0f, 1.0f });
+
+        //Retrieve the matrix palet for the current frame. This contains all the calculated joint positions of our skeleton
+        std::array<clv::mth::mat4f, blb::rnd::MAX_JOINTS> matrixPalet = model.update(deltaSeconds.count());
         for(auto& mesh : model.getMeshes()) {
-            static float angle = 0.0f;
-            angle += deltaSeconds.count() * 25.0f;
-            auto rot = clv::mth::rotate(clv::mth::mat4f{ 1.0f }, clv::mth::asRadians(-90.0f), { 1.0f, 0.0f, 0.0f });
-            rot = clv::mth::rotate(rot, clv::mth::asRadians(90.0f + angle), { 0.0f, 0.0f, 1.0f });
-
-            //NOTE: need to do the size of the while joint array
+            //Submit the matrix palet and rotation matrix to our mesh's material. This will send the data to the shader
             mesh->getMaterialInstance().setData(clv::gfx::BBP_SkeletalData, matrixPalet.data(), sizeof(clv::mth::mat4f) * blb::rnd::MAX_JOINTS, clv::gfx::ShaderStage::Vertex);
             mesh->getMaterialInstance().setData(clv::gfx::BBP_ModelData, blb::rnd::VertexData{ rot, clv::mth::transpose(clv::mth::inverse(rot)) }, clv::gfx::ShaderStage::Vertex);
-            
+
+            //Tell the renderer we're submitting this as an animated mesh
             renderer->submitAnimatedMesh(mesh);
         }
 
-        //Static Model
-        for(auto& mesh : floor.getMeshes()) {
-            auto translation = clv::mth::translate(clv::mth::mat4f{ 1.0f }, { 0.0f, 0.0f, 0.0f });
-            auto scale = clv::mth::scale(clv::mth::mat4f{ 1.0f }, { 10.0f, 0.1f, 10.0f });
-            
-            auto transform = translation * scale;
+        //Do something similar for our floor but this won;t animated
+        auto translation = clv::mth::translate(clv::mth::mat4f{ 1.0f }, { 0.0f, 0.0f, 0.0f });
+        auto scale       = clv::mth::scale(clv::mth::mat4f{ 1.0f }, { 10.0f, 0.1f, 10.0f });
+        auto transform = translation * scale;
 
+        for(auto& mesh : floor.getMeshes()) {
             mesh->getMaterialInstance().setData(clv::gfx::BBP_ModelData, blb::rnd::VertexData{ transform, clv::mth::transpose(clv::mth::inverse(transform)) }, clv::gfx::ShaderStage::Vertex);
 
             renderer->submitStaticMesh(mesh);
