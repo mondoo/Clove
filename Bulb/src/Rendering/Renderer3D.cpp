@@ -233,7 +233,7 @@ namespace blb::rnd {
 		scene.widgetsToRender.clear();
 	}
 
-	void Renderer3D::submitMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
+	void Renderer3D::submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
 		scene.meshes.push_back(mesh);
 	}
 

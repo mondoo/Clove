@@ -115,7 +115,7 @@ namespace blb::rnd {
 
 		void begin();
 
-		void submitMesh(const std::shared_ptr<rnd::Mesh>& mesh);
+		void submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh);
         void submitAnimatedMesh(const std::shared_ptr<rnd::Mesh>& mesh);
 		void submitLight(const DirectionalLight& light);
 		void submitLight(const PointLight& light);

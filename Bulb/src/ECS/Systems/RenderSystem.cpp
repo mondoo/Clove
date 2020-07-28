@@ -58,7 +58,7 @@ namespace blb::ecs {
 
 			for(auto& mesh : renderable->model.getMeshes()) {
 				mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
-				renderer->submitMesh(mesh);
+				renderer->submitStaticMesh(mesh);
 			}
 		}
 

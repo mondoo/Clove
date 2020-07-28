@@ -105,7 +105,7 @@ int main() {
 
             mesh->getMaterialInstance().setData(clv::gfx::BBP_ModelData, blb::rnd::VertexData{ transform, clv::mth::transpose(clv::mth::inverse(transform)) }, clv::gfx::ShaderStage::Vertex);
 
-            renderer->submitMesh(mesh);
+            renderer->submitStaticMesh(mesh);
         }
 
         renderer->end();
