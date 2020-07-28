@@ -5,6 +5,9 @@ namespace blb::rnd {
 }
 
 namespace blb::rnd {
+    /**
+     * @brief Represents a collection of meshes.
+     */
 	class StaticModel {
 		//VARIABLES
 	private:
