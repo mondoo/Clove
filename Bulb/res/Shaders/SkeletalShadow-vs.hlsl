@@ -15,8 +15,6 @@ cbuffer SkeletalData : register(b13){
 }
 
 float4 main(float3 pos : POSITION3D, int4 jointIds : JOINTIDS, float4 weights : WEIGHTS) : SV_Position{   
-    const matrix mvp = mul(lightSpaceMatrix, model);
-    
     float4 animatedPos = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 animatedNormal = float4(0.0f, 0.0f, 0.0f, 0.0f);
     
@@ -28,5 +26,5 @@ float4 main(float3 pos : POSITION3D, int4 jointIds : JOINTIDS, float4 weights : 
         //animatedNormal += (mul(jointTransform, float4(norm, 0.0f)) * weight);
     }
 
-	return mul(mvp, animatedPos);
+	return mul(mul(lightSpaceMatrix, model), animatedPos);
 }
