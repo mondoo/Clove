@@ -151,6 +151,7 @@ set(
 		${BLB_RESOURCE}/Shaders/GenShadowMap-vs.hlsl
 		${BLB_RESOURCE}/Shaders/ShadowFunctions.hlsl
 		${BLB_RESOURCE}/Shaders/Skeletal3D-vs.hlsl
+		${BLB_RESOURCE}/Shaders/SkeletalCubeShadow-vs.hlsl
 		${BLB_RESOURCE}/Shaders/SkeletalShadow-vs.hlsl
 )
 

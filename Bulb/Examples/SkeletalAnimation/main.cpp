@@ -17,19 +17,39 @@ int main() {
     auto camera   = blb::rnd::Camera{ *window, blb::rnd::ProjectionMode::Perspective };
     auto renderer = std::make_shared<blb::rnd::Renderer3D>(*window);
 
-    static constexpr float size     = 50.0f;
-    static constexpr float nearDist = 0.5f;
-    static constexpr float farDist  = 1000.0f;
+    constexpr float size                  = 50.0f;
+    constexpr float nearDist              = 0.5f;
+    constexpr float farDist               = 1000.0f;
+    const clv::mth::mat4f pointShadowProj = clv::mth::createPerspectiveMatrix(clv::mth::asRadians(90.0f), 1.0f, nearDist, farDist);
 
-    blb::rnd::DirectionalLightData dirLightData;
+    blb::rnd::DirectionalLightData dirLightData{};
     dirLightData.direction = { 1.0f, -1.0f, 0.0f };
     dirLightData.ambient   = { 0.01f, 0.01f, 0.01f };
     dirLightData.diffuse   = { 0.75f, 0.75f, 0.75f };
     dirLightData.specular  = { 1.0f, 1.0f, 1.0f };
 
-    blb::rnd::DirectionalLight dirLight;
+    blb::rnd::DirectionalLight dirLight{};
     dirLight.data            = std::move(dirLightData);
     dirLight.shadowTransform = clv::mth::createOrthographicMatrix(-size, size, -size, size, nearDist, farDist) * clv::mth::lookAt(-clv::mth::normalise(dirLight.data.direction) * (farDist / 2.0f), clv::mth::vec3f{ 0.0f, 0.0f, 0.0f }, clv::mth::vec3f{ 0.0f, 1.0f, 0.0f });
+
+    blb::rnd::PointLightData pointLightData{};
+    pointLightData.position  = { 4.0f, 5.0f, 0.0f };
+    pointLightData.ambient   = { 0.01f, 0.01f, 0.01f };
+    pointLightData.diffuse   = { 0.75f, 0.75f, 0.75f };
+    pointLightData.specular  = { 1.0f, 1.0f, 1.0f };
+    pointLightData.constant  = 1.0f;
+    pointLightData.linear    = 0.0014f;
+    pointLightData.quadratic = 0.000007f;
+    pointLightData.farPlane  = farDist;
+
+    blb::rnd::PointLight pointLight{};
+    pointLight.data = std::move(pointLightData);
+    pointLight.shadowTransforms[0] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{  1.0f,  0.0f,  0.0f },  clv::mth::vec3f{ 0.0f, -1.0f,  0.0f });
+    pointLight.shadowTransforms[1] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{ -1.0f,  0.0f,  0.0f },  clv::mth::vec3f{ 0.0f, -1.0f,  0.0f });
+    pointLight.shadowTransforms[2] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{  0.0f,  1.0f,  0.0f },  clv::mth::vec3f{ 0.0f,  0.0f,  1.0f });
+    pointLight.shadowTransforms[3] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{  0.0f, -1.0f,  0.0f },  clv::mth::vec3f{ 0.0f,  0.0f, -1.0f });
+    pointLight.shadowTransforms[4] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{  0.0f,  0.0f,  1.0f },  clv::mth::vec3f{ 0.0f, -1.0f,  0.0f });
+    pointLight.shadowTransforms[5] = pointShadowProj * clv::mth::lookAt(pointLight.data.position, pointLight.data.position + clv::mth::vec3f{  0.0f,  0.0f, -1.0f },  clv::mth::vec3f{ 0.0f, -1.0f,  0.0f });
 
     bool anim = true;
 
@@ -58,7 +78,8 @@ int main() {
         renderer->submitCamera({ camera.getViewport(), std::move(renderData), camera.getRenderTarget() });
 
         //Light
-        renderer->submitLight(dirLight);
+        //renderer->submitLight(dirLight);
+        renderer->submitLight(pointLight);
 
         //Animated Model
         auto matrixPalet = model.update(deltaSeconds.count());

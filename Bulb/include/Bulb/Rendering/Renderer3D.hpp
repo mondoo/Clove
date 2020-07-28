@@ -71,6 +71,7 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::PipelineObject> animatedDirectionalShadowPipelineObject;
 
 		std::shared_ptr<clv::gfx::PipelineObject> pointShadowPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> animatedPointShadowPipelineObject;
 
         std::shared_ptr<clv::gfx::PipelineObject> meshPipelineObject;
         std::shared_ptr<clv::gfx::PipelineObject> animatedMeshPipelineObject;
