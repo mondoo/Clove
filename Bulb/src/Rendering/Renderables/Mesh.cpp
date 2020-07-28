@@ -40,7 +40,7 @@ namespace blb::rnd{
                         vertexArray[i].getAttribute<VertexElementType::weights>() = source[i].getAttribute<VertexElementType::weights>();
                         break;
                     default:
-                        CLV_ASSERT(false, "{0}: Unknown vertex element", CLV_FUNCTION_NAME);
+                        GARLIC_ASSERT(false, "{0}: Unknown vertex element", GARLIC_FUNCTION_NAME);
                         break;
 				}
 			}

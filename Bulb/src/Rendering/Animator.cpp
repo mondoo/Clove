@@ -64,7 +64,7 @@ namespace blb::rnd {
         CLV_PROFILE_FUNCTION();
 
         if(currentClip == nullptr) {
-            GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Current clip is not set, could not create palet", CLV_FUNCTION_NAME);
+            GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Current clip is not set, could not create palet", GARLIC_FUNCTION_NAME);
             return {};
         }
 
