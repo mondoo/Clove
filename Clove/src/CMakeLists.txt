@@ -63,94 +63,11 @@ set(
 
 set(
 	GraphicsFiles
-		${CLV_INCLUDE}/Graphics/Buffer.hpp
-		${CLV_INCLUDE}/Graphics/Texture.hpp
-		${CLV_INCLUDE}/Graphics/CommandBuffer.hpp
-		${CLV_INCLUDE}/Graphics/FactoryChild.hpp
 		${CLV_INCLUDE}/Graphics/Graphics.hpp		
 		${CLV_SOURCE}/Graphics/Graphics.cpp
 		${CLV_INCLUDE}/Graphics/GraphicsTypes.hpp
-		${CLV_INCLUDE}/Graphics/PipelineObject.hpp
-		${CLV_INCLUDE}/Graphics/GraphicsFactory.hpp
-		${CLV_INCLUDE}/Graphics/RenderTarget.hpp
-		${CLV_INCLUDE}/Graphics/Shader.hpp
 		${CLV_INCLUDE}/Graphics/ShaderTranspiler.hpp		
 		${CLV_SOURCE}/Graphics/ShaderTranspiler.cpp
-		${CLV_INCLUDE}/Graphics/Surface.hpp
-		${CLV_INCLUDE}/Graphics/VertexLayout.hpp
-		${CLV_INCLUDE}/Graphics/VertexLayout.inl
-		${CLV_SOURCE}/Graphics/VertexLayout.cpp	
-)
-
-set(
-	Direct3DGraphicsFiles
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DBuffer.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DBuffer.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DTexture.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DTexture.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3D.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3D.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DCommandBuffer.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DCommandBuffer.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DException.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DException.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DPipelineObject.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DPipelineObject.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DGraphicsFactory.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DGraphicsFactory.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DRenderTarget.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DRenderTarget.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DShader.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DShader.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DSurface.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DSurface.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/DXGIInfoManager.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/DXGIInfoManager.cpp
-)
-
-set(
-	MetalGraphicsFiles
-		${CLV_INCLUDE}/Graphics/Metal/MTLBuffer.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLBuffer.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLTexture.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLTexture.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTL.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTL.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLCommandBuffer.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLCommandBuffer.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLPipelineObject.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLPipelineObject.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLGraphicsFactory.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLGraphicsFactory.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLRenderTarget.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLRenderTarget.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLShader.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLShader.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLSurface.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLSurface.mm
-)
-
-set(
-	OpenGLGraphicsFiles
-		${CLV_INCLUDE}/Graphics/OpenGL/GLBuffer.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLBuffer.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLTexture.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLTexture.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GL.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GL.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLCommandBuffer.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLCommandBuffer.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLException.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLException.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLPipelineObject.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLPipelineObject.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLGraphicsFactory.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLGraphicsFactory.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLRenderTarget.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLRenderTarget.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLShader.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLShader.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLSurface.hpp
 )
 
 set(
@@ -192,18 +109,6 @@ set(
 		${CLV_INCLUDE}/Graphics/Vulkan/VulkanHelpers.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VulkanHelpers.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VulkanTypes.hpp
-)
-
-set(
-	WindowsGLGraphicsFiles
-		${CLV_INCLUDE}/Graphics/OpenGL/WGLSurface.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/WGLSurface.cpp
-)
-
-set(
-	LinuxGLGraphicsFiles
-		${CLV_INCLUDE}/Graphics/OpenGL/GLXSurface.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLXSurface.cpp
 )
 
 set(
@@ -303,11 +208,6 @@ set(
 		${EventFiles}
 		${ExceptionFiles}
 		${GraphicsFiles}
-			${OpenGLGraphicsFiles}
-				${WindowsGLGraphicsFiles}
-				${LinuxGLGraphicsFiles}
-			${Direct3DGraphicsFiles}
-			${MetalGraphicsFiles}
 			${VulkanGraphicsFiles}
 		${MemoryFiles}
 		${InputFiles}
@@ -339,9 +239,9 @@ target_sources(
 
 #Don't compile platform specific files
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set_source_files_properties(${LinuxGLGraphicsFiles} ${MetalGraphicsFiles} ${LinuxPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+	set_source_files_properties(${LinuxPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set_source_files_properties(${WindowsGLGraphicsFiles} ${Direct3DGraphicsFiles} ${MetalGraphicsFiles} ${WindowsPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+	set_source_files_properties(${WindowsPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-	set_source_files_properties(${WindowsGLGraphicsFiles} ${LinuxGLGraphicsFiles} ${Direct3DGraphicsFiles} ${WindowsPlatformFiles} ${LinuxPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+	set_source_files_properties(${WindowsPlatformFiles} ${LinuxPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 endif()
