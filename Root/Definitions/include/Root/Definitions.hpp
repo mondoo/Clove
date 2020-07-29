@@ -35,7 +35,7 @@
 
 #define GARLIC_BIT(x) (1 << x)
 
-#define GARLIC_ENUM_BIT_FLAG_OPERATORS(EnumType, IntegralType)                                              \
+#define GARLIC_ENUM_BIT_FLAG_OPERATORS(EnumType, IntegralType)                                     \
     inline constexpr EnumType operator&(EnumType l, EnumType r) {                                  \
         return static_cast<EnumType>(static_cast<IntegralType>(l) & static_cast<IntegralType>(r)); \
     }                                                                                              \

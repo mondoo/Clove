@@ -1,41 +1,42 @@
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 namespace clv::gfx::vk {
-    static VkBufferUsageFlags getUsageFlags(BufferUsageMode garlicUsageFlags) {
+    static VkBufferUsageFlags getUsageFlags(GraphicsBuffer::UsageMode garlicUsageFlags) {
         VkBufferUsageFlags flags = 0;
 
-        if((garlicUsageFlags & BufferUsageMode::TransferSource) != 0) {
+        if((garlicUsageFlags & GraphicsBuffer::UsageMode::TransferSource) != 0) {
             flags |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
         }
-        if((garlicUsageFlags & BufferUsageMode::TransferDestination) != 0) {
+        if((garlicUsageFlags & GraphicsBuffer::UsageMode::TransferDestination) != 0) {
             flags |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
         }
-        if((garlicUsageFlags & BufferUsageMode::VertexBuffer) != 0) {
+        if((garlicUsageFlags & GraphicsBuffer::UsageMode::VertexBuffer) != 0) {
             flags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
         }
-        if((garlicUsageFlags & BufferUsageMode::IndexBuffer) != 0) {
+        if((garlicUsageFlags & GraphicsBuffer::UsageMode::IndexBuffer) != 0) {
             flags |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
         }
-        if((garlicUsageFlags & BufferUsageMode::UniformBuffer) != 0) {
+        if((garlicUsageFlags & GraphicsBuffer::UsageMode::UniformBuffer) != 0) {
             flags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
         }
 
         return flags;
     }
 
-    VKBuffer::VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, BufferDescriptor2 descriptor, const QueueFamilyIndices& familyIndices)
+    VKBuffer::VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, Descriptor descriptor, const QueueFamilyIndices& familyIndices)
         : device(device)
         , descriptor(std::move(descriptor)) {
         std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
 
         VkBufferCreateInfo createInfo{};
-        createInfo.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        createInfo.pNext                 = nullptr;
-        createInfo.flags                 = 0;
-        createInfo.size                  = descriptor.size;
-        createInfo.usage                 = getUsageFlags(this->descriptor.usageFlags);
+        createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        createInfo.pNext = nullptr;
+        createInfo.flags = 0;
+        createInfo.size  = descriptor.size;
+        createInfo.usage = getUsageFlags(this->descriptor.usageFlags);
         if(this->descriptor.sharingMode == SharingMode::Exclusive) {
             createInfo.sharingMode           = VK_SHARING_MODE_EXCLUSIVE;
             createInfo.queueFamilyIndexCount = 0;
