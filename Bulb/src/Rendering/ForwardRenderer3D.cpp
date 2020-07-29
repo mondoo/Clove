@@ -50,7 +50,7 @@ namespace blb::rnd {
         clv::gfx::BufferDescriptor2 stagingDescriptor{};
         stagingDescriptor.usageFlags       = clv::gfx::BufferUsageMode::TransferSource;
         stagingDescriptor.sharingMode      = clv::gfx::SharingMode::Exclusive; //Only accessed by the transfer queue
-        stagingDescriptor.memoryProperties = clv::gfx::MemoryProperties::HostVisible;
+        stagingDescriptor.memoryType = clv::gfx::MemoryType::SystemMemory;
 
         stagingDescriptor.size   = vertexBufferSize;
         auto stagingBufferVertex = graphicsFactory->createBuffer(stagingDescriptor);
@@ -66,7 +66,7 @@ namespace blb::rnd {
         vertexDescriptor.size             = vertexBufferSize;
         vertexDescriptor.usageFlags       = clv::gfx::BufferUsageMode::TransferDestination | clv::gfx::BufferUsageMode::VertexBuffer;
         vertexDescriptor.sharingMode      = clv::gfx::SharingMode::Concurrent;//Accessed by transfer and graphics queue
-        vertexDescriptor.memoryProperties = clv::gfx::MemoryProperties::DeviceLocal;
+        vertexDescriptor.memoryType = clv::gfx::MemoryType::VideoMemory;
 
         vertexBuffer = graphicsFactory->createBuffer(vertexDescriptor);
 
@@ -75,7 +75,7 @@ namespace blb::rnd {
         indexDescriptor.size             = indexBufferSize;
         indexDescriptor.usageFlags       = clv::gfx::BufferUsageMode::TransferDestination | clv::gfx::BufferUsageMode::IndexBuffer;
         indexDescriptor.sharingMode      = clv::gfx::SharingMode::Concurrent;
-        indexDescriptor.memoryProperties = clv::gfx::MemoryProperties::DeviceLocal;
+        indexDescriptor.memoryType = clv::gfx::MemoryType::VideoMemory;
 
         indexBuffer = graphicsFactory->createBuffer(indexDescriptor);
 
@@ -85,8 +85,8 @@ namespace blb::rnd {
         textureDescriptor.usageFlags       = clv::gfx::ImageUsageMode::TransferDestination | clv::gfx::ImageUsageMode::Sampled;
         textureDescriptor.dimensions       = textureData.dimensions;
         textureDescriptor.format           = clv::gfx::ImageFormat::R8G8B8A8_SRGB; //This will be how the texels in the staging buffer will be layed out (when they are mapped from the raw buffer)
-        textureDescriptor.sharingMode      = clv::gfx::SharingMode::Concurrent;
-        textureDescriptor.memoryProperties = clv::gfx::MemoryProperties::DeviceLocal; //We have no way to write to images directly, but we still only plan on pushing data once
+        textureDescriptor.sharingMode      = clv::gfx::SharingMode::Exclusive;
+        textureDescriptor.memoryType = clv::gfx::MemoryType::VideoMemory; //We have no way to write to images directly, but we still only plan on pushing data once
         
         texture = graphicsFactory->createImage(textureDescriptor);
 
@@ -336,7 +336,7 @@ namespace blb::rnd {
         depthDescriptor.dimensions       = { swapchain->getExtent().width, swapchain->getExtent().height };
         depthDescriptor.format           = clv::gfx::ImageFormat::D32_SFLOAT;
         depthDescriptor.sharingMode      = clv::gfx::SharingMode::Concurrent;
-        depthDescriptor.memoryProperties = clv::gfx::MemoryProperties::DeviceLocal;
+        depthDescriptor.memoryType = clv::gfx::MemoryType::VideoMemory;
 
         depthImage     = graphicsFactory->createImage(std::move(depthDescriptor));
         depthImageView = depthImage->createView();
@@ -377,7 +377,7 @@ namespace blb::rnd {
             descriptor.size             = sizeof(ModelViewProj);
             descriptor.usageFlags       = clv::gfx::BufferUsageMode::UniformBuffer;
             descriptor.sharingMode      = clv::gfx::SharingMode::Exclusive;
-            descriptor.memoryProperties = clv::gfx::MemoryProperties::HostVisible;
+            descriptor.memoryType = clv::gfx::MemoryType::SystemMemory;
 
             uniformBuffers[i] = graphicsFactory->createBuffer(std::move(descriptor));
         }

@@ -27,7 +27,7 @@ namespace clv::gfx {
         clv::mth::vec2ui dimensions;
         ImageFormat format;
         SharingMode sharingMode;
-        MemoryProperties memoryProperties;
+        MemoryType memoryType;
     };
 }
 

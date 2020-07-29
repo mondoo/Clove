@@ -100,11 +100,11 @@ namespace clv::gfx::vk {
     }
 
     uint32_t getMemoryTypeIndex(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice) {
-        VkPhysicalDeviceMemoryProperties memoryProperties{};
-        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
+        VkPhysicalDeviceMemoryProperties memoryType{};
+        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryType);
 
-        for(uint32_t i = 0; i < memoryProperties.memoryTypeCount; ++i) {
-            if((typeFilter & (1 << i)) != 0 && (memoryProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+        for(uint32_t i = 0; i < memoryType.memoryTypeCount; ++i) {
+            if((typeFilter & (1 << i)) != 0 && (memoryType.memoryTypes[i].propertyFlags & properties) == properties) {
                 return i;
             }
         }
@@ -113,11 +113,11 @@ namespace clv::gfx::vk {
         return -1;
     }
 
-    VkMemoryPropertyFlags getMemoryPropertyFlags(MemoryProperties garlicProperties) {
+    VkMemoryPropertyFlags getMemoryPropertyFlags(MemoryType garlicProperties) {
         switch(garlicProperties) {
-            case MemoryProperties::DeviceLocal:
+            case MemoryType::VideoMemory:
                 return VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-            case MemoryProperties::HostVisible:
+            case MemoryType::SystemMemory:
                 return VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;//Including HOST_COHERENT here as this makes mapping memory more simple
             default:
                 break;

@@ -21,7 +21,7 @@ namespace clv::gfx {
         size_t size = 0;
         BufferUsageMode usageFlags;
         SharingMode sharingMode;
-        MemoryProperties memoryProperties;
+        MemoryType memoryType;
     };
 }
 

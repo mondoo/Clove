@@ -64,9 +64,9 @@ namespace clv::gfx {
         Concurrent
     };
 
-	enum class MemoryProperties {
-        DeviceLocal,//GPU optimised, can't be written to be CPU
-        HostVisible,//Can be written to by CPU, not GPU optimised
+	enum class MemoryType {
+        VideoMemory,//Can't be written to be CPU, GPU optimised
+        SystemMemory,//Can be written to by CPU, not GPU optimised
     };
 
 	enum class PipelineStage {

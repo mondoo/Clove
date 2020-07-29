@@ -58,7 +58,7 @@ namespace clv::gfx::vk {
         allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.pNext           = nullptr;
         allocInfo.allocationSize  = memoryRequirements.size;
-        allocInfo.memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, getMemoryPropertyFlags(this->descriptor.memoryProperties), physicalDevice);//TODO: user specified flags
+        allocInfo.memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, getMemoryPropertyFlags(this->descriptor.memoryType), physicalDevice);//TODO: user specified flags
 
         if(vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate buffer memory");
