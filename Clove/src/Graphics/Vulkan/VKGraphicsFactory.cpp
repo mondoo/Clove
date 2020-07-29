@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsFactory.hpp"
 
+#include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+
 //TODO: Abstract away
 #include "Clove/Platform/Windows/CloveWindows.hpp"
 #include <vulkan/vulkan_win32.h>
@@ -400,7 +402,7 @@ namespace clv::gfx::vk{
 		return std::make_unique<VKFence>(logicalDevice, std::move(descriptor));
 	}
 
-	std::unique_ptr<VKBuffer> VKGraphicsFactory::createBuffer(BufferDescriptor2 descriptor) {
+	std::unique_ptr<GraphicsBuffer> VKGraphicsFactory::createBuffer(GraphicsBuffer::Descriptor descriptor) {
         return std::make_unique<VKBuffer>(logicalDevice, physicalDevice, std::move(descriptor), queueFamilyIndices);
     }
 
