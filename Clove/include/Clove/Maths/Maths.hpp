@@ -44,6 +44,18 @@ namespace clv::mth{
 
 	template<length_t C, length_t R, typename T, qualifier Q>
 	mat<C, R, T, Q> transpose(const mat<C, R, T, Q>& m);
+
+	//Linear interpolate between two vectors
+    template<length_t L, typename T, qualifier Q>
+    vec<L, T, Q> lerp(const vec<L, T, Q>& a, const vec<L, T, Q>& b, T t);
+
+	//Linear interpolate between two quaternions
+    template<typename T, qualifier Q>
+    quat<T, Q> lerp(const quat<T, Q>& a, const quat<T, Q>& b, T t);
+
+	//Spherical linear interpolate between two quaternions
+    template<typename T, qualifier Q>
+    quat<T, Q> slerp(const quat<T, Q>& a, const quat<T, Q>& b, T t);
 }
 
 #include "Maths.inl"

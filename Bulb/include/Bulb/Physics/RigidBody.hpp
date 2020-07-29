@@ -4,14 +4,19 @@ class btCollisionShape;
 class btRigidBody;
 
 namespace blb::phy {
-	struct RigidBodyInitInfo {
-		float mass = 1.0f;
-		float isKinematic = false;
-		float respondToCollision = true;
-	};
+    struct RigidBodyDescriptor {
+        float mass               = 1.0f;
+        float isKinematic        = false; /**< If true, stops the body being affected by gravity */
+
+		uint32_t collisionGroup = 0; /**< Bit flag of the collision groups this body is a part of */
+        uint32_t collisionMask  = 0; /**< Bit flag of which collision groups this body collides with */
+    };
 }
 
 namespace blb::phy {
+    /**
+	 * @brief A RigidBody is an object that can be collided with but does not deform
+	 */
 	class RigidBody {
 		friend class World;
 
@@ -20,9 +25,7 @@ namespace blb::phy {
 		std::unique_ptr<btCollisionShape> collisionShape;
 		std::unique_ptr<btRigidBody> body;
 
-		float mass = 0.0f;
-		bool isKinematic = false;
-		bool respondToCollision = true;
+		RigidBodyDescriptor descriptor{};
 
 		clv::mth::vec3f cubeSize{};
 
@@ -32,7 +35,7 @@ namespace blb::phy {
 	public:
 		RigidBody() = delete;
 		//Only supporting box shapes
-		RigidBody(const RigidBodyInitInfo& initInfo, const clv::mth::vec3f& cubeSize);
+		RigidBody(RigidBodyDescriptor initInfo, const clv::mth::vec3f& cubeSize);
 
 		RigidBody(const RigidBody& other);
 		RigidBody(RigidBody&& other) noexcept;
@@ -46,6 +49,7 @@ namespace blb::phy {
 		void setWorldRotation(const clv::mth::quatf& rotation);
 
 		void setLinearVelocity(const clv::mth::vec3f& velocity);
+        clv::mth::vec3f getLinearVelocity() const;
 
 		clv::mth::vec3f getPhysicsPosition() const;
 		clv::mth::quatf getPhysicsRotation() const;
@@ -54,6 +58,6 @@ namespace blb::phy {
 		void* getUserPointer() const;
 
 	private:
-		void initialise(float mass, bool isKinematic, bool respondToCollision, const clv::mth::vec3f& cubeSize);
+        void initialise(const RigidBodyDescriptor& descriptor, const clv::mth::vec3f& cubeSize);
 	};
 }

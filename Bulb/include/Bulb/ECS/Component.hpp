@@ -13,21 +13,13 @@ namespace blb::ecs {
 }
 
 namespace blb::ecs {
-	class ComponentInterface {
-		//FUNCTIONS
-	public:
-		virtual ~ComponentInterface() = default;
-
-		virtual ComponentID getComponentID() const = 0;
-	};
-
 	/**
 	 * @brief The base class for all Components.
 	 * @tparam DetivedClassType The type of class that derives from this class.
 	 * @see	TransformComponent
 	 */
 	template<typename DerivedClassType>
-	class Component : public ComponentInterface {
+	class Component {
 		friend class ComponentPtr<DerivedClassType>;
 		friend class ComponentContainer<DerivedClassType>;
 
@@ -50,7 +42,7 @@ namespace blb::ecs {
 		virtual ~Component();
 
 		static ComponentID id();
-		ComponentID getComponentID() const final;
+		ComponentID getComponentID() const;
 
 		EntityID getEntityID() const;
 

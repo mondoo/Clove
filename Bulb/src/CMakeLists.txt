@@ -55,6 +55,8 @@ set(
 		${BLB_INCLUDE}/ECS/World.inl
 		${BLB_SOURCE}/ECS/World.cpp
 		${BLB_INCLUDE}/ECS/System.hpp
+		${BLB_INCLUDE}/ECS/Components/AnimatedModelComponent.hpp
+		${BLB_SOURCE}/ECS/Components/AnimatedModelComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/AudioListenerComponent.hpp
 		${BLB_SOURCE}/ECS/Components/AudioListenerComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/AudioSourceComponent.hpp
@@ -63,12 +65,12 @@ set(
 		${BLB_SOURCE}/ECS/Components/CameraComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
 		${BLB_SOURCE}/ECS/Components/DirectionalLightComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/ModelComponent.hpp
-		${BLB_SOURCE}/ECS/Components/ModelComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/PointLightComponent.hpp
 		${BLB_SOURCE}/ECS/Components/PointLightComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/RigidBodyComponent.hpp
 		${BLB_SOURCE}/ECS/Components/RigidBodyComponent.cpp
+		${BLB_INCLUDE}/ECS/Components/StaticModelComponent.hpp
+		${BLB_SOURCE}/ECS/Components/StaticModelComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/TransformComponent.hpp
 		${BLB_SOURCE}/ECS/Components/TransformComponent.cpp
 		${BLB_INCLUDE}/ECS/Systems/AudioSystem.hpp
@@ -89,6 +91,9 @@ set(
 
 set(
 	RenderingFiles
+		${BLB_INCLUDE}/Rendering/AnimationTypes.hpp
+		${BLB_INCLUDE}/Rendering/Animator.hpp
+		${BLB_SOURCE}/Rendering/Animator.cpp
 		${BLB_INCLUDE}/Rendering/Camera.hpp
 		${BLB_SOURCE}/Rendering/Camera.cpp
 		${BLB_INCLUDE}/Rendering/ForwardRenderer3D.hpp
@@ -108,8 +113,10 @@ set(
 		${BLB_SOURCE}/Rendering/Renderables/Font.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Mesh.hpp
 		${BLB_SOURCE}/Rendering/Renderables/Mesh.cpp
-		${BLB_INCLUDE}/Rendering/Renderables/Model.hpp
-		${BLB_SOURCE}/Rendering/Renderables/Model.cpp
+		${BLB_INCLUDE}/Rendering/Renderables/AnimatedModel.hpp
+		${BLB_SOURCE}/Rendering/Renderables/AnimatedModel.cpp
+		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.hpp
+		${BLB_SOURCE}/Rendering/Renderables/StaticModel.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Sprite.hpp
 		${BLB_SOURCE}/Rendering/Renderables/Sprite.cpp
 )
@@ -151,6 +158,9 @@ set(
 		${BLB_RESOURCE}/Shaders/GenShadowMap-ps.hlsl
 		${BLB_RESOURCE}/Shaders/GenShadowMap-vs.hlsl
 		${BLB_RESOURCE}/Shaders/ShadowFunctions.hlsl
+		${BLB_RESOURCE}/Shaders/Skeletal3D-vs.hlsl
+		${BLB_RESOURCE}/Shaders/SkeletalCubeShadow-vs.hlsl
+		${BLB_RESOURCE}/Shaders/SkeletalShadow-vs.hlsl
 )
 
 #Convert resources into c strings
