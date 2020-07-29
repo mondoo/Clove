@@ -69,6 +69,10 @@ namespace clv::gfx::vk {
         vkBindBufferMemory(device, buffer, bufferMemory, 0);
     }
 
+    VKBuffer::VKBuffer(VKBuffer&& other) noexcept = default;
+
+    VKBuffer& VKBuffer::operator=(VKBuffer&& other) noexcept = default;
+
     VKBuffer::~VKBuffer() {
         vkDestroyBuffer(device, buffer, nullptr);
         vkFreeMemory(device, bufferMemory, nullptr);

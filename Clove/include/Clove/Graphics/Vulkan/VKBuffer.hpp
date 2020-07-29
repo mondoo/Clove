@@ -9,7 +9,7 @@ namespace clv::gfx::vk {
 }
 
 namespace clv::gfx::vk {
-    class VKBuffer : public GraphicsBuffer{
+    class VKBuffer : public GraphicsBuffer {
         //VARIABLES
     private:
         VkDevice device = VK_NULL_HANDLE;
@@ -20,9 +20,14 @@ namespace clv::gfx::vk {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
         VKBuffer() = delete;
         VKBuffer(VkDevice device, VkPhysicalDevice physicalDevice, Descriptor descriptor, const QueueFamilyIndices& familyIndices);
+
+        VKBuffer(const VKBuffer& other) = delete;
+        VKBuffer(VKBuffer&& other) noexcept;
+
+        VKBuffer& operator=(const VKBuffer& other) = delete;
+        VKBuffer& operator=(VKBuffer&& other) noexcept;
 
         ~VKBuffer();
 
