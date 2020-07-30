@@ -68,6 +68,7 @@ set(
 		${CLV_INCLUDE}/Graphics/GraphicsBuffer.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsFactory.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsImage.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsImageView.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsTypes.hpp
 		${CLV_INCLUDE}/Graphics/ShaderTranspiler.hpp		
 		${CLV_SOURCE}/Graphics/ShaderTranspiler.cpp
