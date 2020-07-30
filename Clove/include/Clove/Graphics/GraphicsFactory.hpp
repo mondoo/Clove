@@ -3,6 +3,9 @@
 #include "Clove/Graphics/GraphicsBuffer.hpp"
 
 namespace clv::gfx {
+    /**
+     * @brief Used to create graphics objects. Abstracts away the underlying API.
+     */
     class GraphicsFactory {
         //FUNCTIONS
     public:

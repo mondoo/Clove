@@ -5,6 +5,9 @@
 #include <Root/Definitions.hpp>
 
 namespace clv::gfx {
+    /**
+     * @brief Represents an arbitrary section of memory. Used in graphics operations.
+     */
     class GraphicsBuffer {
         //TYPES
     public:
