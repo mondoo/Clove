@@ -3,7 +3,6 @@
 #include "Clove/Graphics/GraphicsFactory.hpp"
 
 //TODO: Remove to cpp
-#include "Clove/GRaphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
@@ -61,7 +60,7 @@ namespace clv::gfx::vk {
         std::unique_ptr<VKFence> createFence(FenceDescriptor descriptor);
 
         std::unique_ptr<GraphicsBuffer> createBuffer(GraphicsBuffer::Descriptor descriptor) override;
-        std::unique_ptr<VKImage> createImage(ImageDescriptor descriptor);
+        std::unique_ptr<GraphicsImage> createImage(GraphicsImage::Descriptor descriptor) override;
 
         std::unique_ptr<VKSampler> createSampler(SamplerDescriptor descriptor);
 

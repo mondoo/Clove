@@ -1,33 +1,33 @@
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
 
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
+#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
-    static VkImageUsageFlags getUsageFlags(ImageUsageMode garlicUsageFlags) {
+    static VkImageUsageFlags getUsageFlags(GraphicsImage::UsageMode garlicUsageFlags) {
         VkBufferUsageFlags flags = 0;
 
-        if((garlicUsageFlags & ImageUsageMode::TransferDestination) != 0) {
+        if((garlicUsageFlags & GraphicsImage::UsageMode::TransferDestination) != 0) {
             flags |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
         }
-        if((garlicUsageFlags & ImageUsageMode::Sampled) != 0) {
+        if((garlicUsageFlags & GraphicsImage::UsageMode::Sampled) != 0) {
             flags |= VK_IMAGE_USAGE_SAMPLED_BIT;
         }
-        if((garlicUsageFlags & ImageUsageMode::ColourAttachment) != 0) {
+        if((garlicUsageFlags & GraphicsImage::UsageMode::ColourAttachment) != 0) {
             flags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
         }
-        if((garlicUsageFlags & ImageUsageMode::DepthStencilAttachment) != 0) {
+        if((garlicUsageFlags & GraphicsImage::UsageMode::DepthStencilAttachment) != 0) {
             flags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
         }
 
         return flags;
     }
 
-    static VkImageType getImageType(ImageType garlicImageType) {
+    static VkImageType getImageType(GraphicsImage::Type garlicImageType) {
         switch(garlicImageType) {
-            case ImageType::_2D:
+            case GraphicsImage::Type::_2D:
                 return VK_IMAGE_TYPE_2D;
-            case ImageType::_3D:
+            case GraphicsImage::Type::_3D:
                 return VK_IMAGE_TYPE_3D;
             default:
                 GARLIC_ASSERT(false, "{0}: Unhandled image type");
@@ -35,11 +35,11 @@ namespace clv::gfx::vk {
         }
     }
 
-    static VkImageViewType getImageViewType(ImageType garlicImageType){
+    static VkImageViewType getImageViewType(GraphicsImage::Type garlicImageType) {
         switch(garlicImageType) {
-            case ImageType::_2D:
+            case GraphicsImage::Type::_2D:
                 return VK_IMAGE_VIEW_TYPE_2D;
-            case ImageType::_3D:
+            case GraphicsImage::Type::_3D:
                 return VK_IMAGE_VIEW_TYPE_3D;
             default:
                 GARLIC_ASSERT(false, "{0}: Unhandled image type");
@@ -47,7 +47,7 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKImage::VKImage(VkDevice device, VkPhysicalDevice physicalDevice, ImageDescriptor descriptor, const QueueFamilyIndices& familyIndices)
+    VKImage::VKImage(VkDevice device, VkPhysicalDevice physicalDevice, Descriptor descriptor, const QueueFamilyIndices& familyIndices)
         : device(device)
         , descriptor(std::move(descriptor)) {
         std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
@@ -102,7 +102,7 @@ namespace clv::gfx::vk {
         vkFreeMemory(device, imageMemory, nullptr);
     }
 
-    std::unique_ptr<VKImageView> VKImage::createView() const {
+    std::unique_ptr<GraphicsImageView> VKImage::createView() const {
         VkImageViewCreateInfo viewInfo{};
         viewInfo.sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.pNext                           = nullptr;
@@ -114,7 +114,7 @@ namespace clv::gfx::vk {
         viewInfo.components.g                    = VK_COMPONENT_SWIZZLE_IDENTITY;
         viewInfo.components.b                    = VK_COMPONENT_SWIZZLE_IDENTITY;
         viewInfo.components.a                    = VK_COMPONENT_SWIZZLE_IDENTITY;
-        viewInfo.subresourceRange.aspectMask     = descriptor.format == ImageFormat::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT; //TODO: Handle depth / stencil
+        viewInfo.subresourceRange.aspectMask     = descriptor.format == ImageFormat::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;//TODO: Handle depth / stencil
         viewInfo.subresourceRange.baseMipLevel   = 0;
         viewInfo.subresourceRange.levelCount     = 1;
         viewInfo.subresourceRange.baseArrayLayer = 0;
@@ -126,7 +126,7 @@ namespace clv::gfx::vk {
         return std::make_unique<VKImageView>(device, imageView);
     }
 
-    VkImage VKImage::getImage() const{
+    VkImage VKImage::getImage() const {
         return image;
     }
 }

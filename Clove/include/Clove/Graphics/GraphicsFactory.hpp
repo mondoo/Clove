@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsBuffer.hpp"
+#include "Clove/Graphics/GraphicsImage.hpp"
 
 namespace clv::gfx {
     /**
@@ -32,10 +33,10 @@ namespace clv::gfx {
         //std::unique_ptr<VKFence> createFence(FenceDescriptor descriptor);
 
         virtual std::unique_ptr<GraphicsBuffer> createBuffer(GraphicsBuffer::Descriptor descriptor) = 0;
-        //std::unique_ptr<VKImage> createImage(ImageDescriptor descriptor);
+        virtual std::unique_ptr<GraphicsImage> createImage(GraphicsImage::Descriptor descriptor) = 0;
 
         //std::unique_ptr<VKSampler> createSampler(SamplerDescriptor descriptor);
 
-        void waitForIdleDevice();
+        //void waitForIdleDevice();
     };
 }
