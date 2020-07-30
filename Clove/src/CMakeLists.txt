@@ -66,7 +66,6 @@ set(
 		${CLV_INCLUDE}/Graphics/Graphics.hpp		
 		${CLV_SOURCE}/Graphics/Graphics.cpp
 		${CLV_INCLUDE}/Graphics/GraphicsBuffer.hpp
-		${CLV_SOURCE}/Graphics/GraphicsBuffer.cpp
 		${CLV_INCLUDE}/Graphics/GraphicsFactory.hpp		
 		${CLV_SOURCE}/Graphics/GraphicsFactory.cpp
 		${CLV_INCLUDE}/Graphics/GraphicsTypes.hpp
