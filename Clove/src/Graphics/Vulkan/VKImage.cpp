@@ -97,6 +97,10 @@ namespace clv::gfx::vk {
         vkBindImageMemory(device, image, imageMemory, 0);
     }
 
+    VKImage::VKImage(VKImage&& other) noexcept = default;
+
+    VKImage& VKImage::operator=(VKImage&& other) noexcept = default;
+
     VKImage::~VKImage() {
         vkDestroyImage(device, image, nullptr);
         vkFreeMemory(device, imageMemory, nullptr);

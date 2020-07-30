@@ -17,8 +17,14 @@ namespace clv::gfx::vk {
 
         //FUNCTIONS
     public:
-        //TODO: other ctors
         VKImage(VkDevice device, VkPhysicalDevice physicalDevice, Descriptor descriptor, const QueueFamilyIndices& familyIndices);
+        
+        VKImage(const VKImage& other) = delete;
+        VKImage(VKImage&& other) noexcept;
+
+        VKImage& operator=(const VKImage& other) = delete;
+        VKImage& operator=(VKImage&& other) noexcept;
+        
         ~VKImage();
 
         std::unique_ptr<GraphicsImageView> createView() const override;
