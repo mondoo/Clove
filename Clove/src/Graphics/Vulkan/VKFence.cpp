@@ -1,28 +1,32 @@
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 
 namespace clv::gfx::vk {
-	VKFence::VKFence(VkDevice device, FenceDescriptor desccriptor)
-		: device(device) {
-		VkFenceCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		createInfo.flags = desccriptor.createSignaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
+    VKFence::VKFence(VkDevice device, Descriptor descriptor)
+        : device(device) {
+        VkFenceCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        createInfo.flags = descriptor.signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
 
-		vkCreateFence(device, &createInfo, nullptr, &fence);
-	}
+        vkCreateFence(device, &createInfo, nullptr, &fence);
+    }
 
-	VKFence::~VKFence() {
-		vkDestroyFence(device, fence, nullptr);
-	}
+    VKFence::VKFence(VKFence&& other) noexcept = default;
 
-	void VKFence::waitForFence() {
-		vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
-	}
+    VKFence& VKFence::operator=(VKFence&& other) noexcept = default;
 
-	void VKFence::resetFence() {
-		vkResetFences(device, 1, &fence);
-	}
+    VKFence::~VKFence() {
+        vkDestroyFence(device, fence, nullptr);
+    }
 
-	VkFence VKFence::getFence() const {
-		return fence;
-	}
+    void VKFence::wait() {
+        vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+    }
+
+    void VKFence::reset() {
+        vkResetFences(device, 1, &fence);
+    }
+
+    VkFence VKFence::getFence() const {
+        return fence;
+    }
 }

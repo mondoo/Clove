@@ -11,24 +11,7 @@
 
 namespace clv::gfx{
 	//TODO: Need some sort of generic area?
-    struct RenderArea {
-        mth::vec2i origin;
-        mth::vec2ui size;
-    };
-
-    struct DepthStencilValue{
-        float depth{ 0.0f };
-        uint32_t stencil{ 0 };
-    };
-
-    enum class CommandBufferUsage {
-        Default,
-        OneTimeSubmit,
-    };
-
-    enum class IndexType{
-        Uint16
-    };
+    
 }
 
 namespace clv::gfx::vk {

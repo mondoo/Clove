@@ -6,12 +6,10 @@
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
-#include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VKSampler.hpp"
-#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
@@ -56,8 +54,8 @@ namespace clv::gfx::vk {
         std::unique_ptr<VKFramebuffer> createFramebuffer(FramebufferDescriptor descriptor);
         std::unique_ptr<VKDescriptorPool> createDescriptorPool(DescriptorPoolDescriptor descriptor);
 
-        std::unique_ptr<VKSemaphore> createSemaphore();
-        std::unique_ptr<VKFence> createFence(FenceDescriptor descriptor);
+        std::unique_ptr<Semaphore> createSemaphore() override;
+        std::unique_ptr<Fence> createFence(Fence::Descriptor descriptor) override;
 
         std::unique_ptr<GraphicsBuffer> createBuffer(GraphicsBuffer::Descriptor descriptor) override;
         std::unique_ptr<GraphicsImage> createImage(GraphicsImage::Descriptor descriptor) override;

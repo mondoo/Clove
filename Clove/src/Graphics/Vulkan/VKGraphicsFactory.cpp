@@ -2,6 +2,8 @@
 
 #include "Clove/GRaphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKFence.hpp"
+#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 
 //TODO: Abstract away
 #include "Clove/Platform/Windows/CloveWindows.hpp"
@@ -395,11 +397,11 @@ namespace clv::gfx::vk {
         return std::make_unique<VKDescriptorPool>(logicalDevice, std::move(descriptor));
     }
 
-    std::unique_ptr<VKSemaphore> VKGraphicsFactory::createSemaphore() {
+    std::unique_ptr<Semaphore> VKGraphicsFactory::createSemaphore() {
         return std::make_unique<VKSemaphore>(logicalDevice);
     }
 
-    std::unique_ptr<VKFence> VKGraphicsFactory::createFence(FenceDescriptor descriptor) {
+    std::unique_ptr<Fence> VKGraphicsFactory::createFence(Fence::Descriptor descriptor) {
         return std::make_unique<VKFence>(logicalDevice, std::move(descriptor));
     }
 

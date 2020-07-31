@@ -1,21 +1,29 @@
 #pragma once
 
-//TODO: Remove
+#include "Clove/Graphics/Semaphore.hpp"
+
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
-	class VKSemaphore {
-		//VARIABLES
-	private:
-		VkDevice device;
-		VkSemaphore semaphore;
+    class VKSemaphore : public Semaphore {
+        //VARIABLES
+    private:
+        VkDevice device;
+        VkSemaphore semaphore;
 
-		//FUNCTIONS
-	public:
-		//TODO: Other Ctors
-		VKSemaphore(VkDevice device);
-		~VKSemaphore();
+        //FUNCTIONS
+    public:
+        VKSemaphore() = delete;
+        VKSemaphore(VkDevice device);
 
-		VkSemaphore getSemaphore() const;
-	};
+        VKSemaphore(const VKSemaphore& other) = delete;
+        VKSemaphore(VKSemaphore&& other) noexcept;
+
+        VKSemaphore& operator=(const VKSemaphore& other) = delete;
+        VKSemaphore& operator=(VKSemaphore&& other) noexcept;
+
+        ~VKSemaphore();
+
+        VkSemaphore getSemaphore() const;
+    };
 }

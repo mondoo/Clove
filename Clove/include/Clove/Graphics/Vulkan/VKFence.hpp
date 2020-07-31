@@ -1,30 +1,32 @@
 #pragma once
 
-//TODO: Remove
+#include "Clove/Graphics/Fence.hpp"
+
 #include <vulkan/vulkan.h>
 
-namespace clv::gfx{
-	struct FenceDescriptor{
-		bool createSignaled;
-	};
-}
-
 namespace clv::gfx::vk {
-	class VKFence{
-		//VARIABLES
-	private:
-		VkDevice device;
-		VkFence fence;
+    class VKFence : public Fence {
+        //VARIABLES
+    private:
+        VkDevice device;
+        VkFence fence;
 
-		//FUNCTIONS
-	public:
-		//TODO: Ctors
-		VKFence(VkDevice device, FenceDescriptor desccriptor);
-		~VKFence();
+        //FUNCTIONS
+    public:
+        VKFence() = delete;
+        VKFence(VkDevice device, Descriptor descriptor);
 
-		void waitForFence();
-		void resetFence();
+        VKFence(const VKFence& other) = delete;
+        VKFence(VKFence&& other) noexcept;
 
-		VkFence getFence() const;
-	};
+        VKFence& operator=(const VKFence& other) = delete;
+        VKFence& operator=(VKFence&& other) noexcept;
+
+        ~VKFence();
+
+        void wait() override;
+        void reset() override;
+
+        VkFence getFence() const;
+    };
 }

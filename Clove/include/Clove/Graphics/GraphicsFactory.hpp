@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Clove/Graphics/Fence.hpp"
 #include "Clove/Graphics/GraphicsBuffer.hpp"
 #include "Clove/Graphics/GraphicsImage.hpp"
+#include "Clove/Graphics/Semaphore.hpp"
 
 namespace clv::gfx {
     /**
@@ -29,11 +31,11 @@ namespace clv::gfx {
         //std::unique_ptr<VKFramebuffer> createFramebuffer(FramebufferDescriptor descriptor);
         //std::unique_ptr<VKDescriptorPool> createDescriptorPool(DescriptorPoolDescriptor descriptor);
 
-        //std::unique_ptr<VKSemaphore> createSemaphore();
-        //std::unique_ptr<VKFence> createFence(FenceDescriptor descriptor);
+        virtual std::unique_ptr<Semaphore> createSemaphore() = 0;
+        virtual std::unique_ptr<Fence> createFence(Fence::Descriptor descriptor) = 0;
 
         virtual std::unique_ptr<GraphicsBuffer> createBuffer(GraphicsBuffer::Descriptor descriptor) = 0;
-        virtual std::unique_ptr<GraphicsImage> createImage(GraphicsImage::Descriptor descriptor) = 0;
+        virtual std::unique_ptr<GraphicsImage> createImage(GraphicsImage::Descriptor descriptor)    = 0;
 
         //std::unique_ptr<VKSampler> createSampler(SamplerDescriptor descriptor);
 
