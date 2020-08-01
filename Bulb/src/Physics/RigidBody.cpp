@@ -51,6 +51,18 @@ namespace blb::phy {
         body->activate();
     }
 
+    void RigidBody::applyForce(const clv::mth::vec3f& force, const clv::mth::vec3f& relativeOffset) {
+        const btVector3 btForce{ force.x, force.y, force.z };
+        const btVector3 btOffset{ relativeOffset.x, relativeOffset.y, relativeOffset.z };
+        body->applyForce(btForce, btOffset);
+    }
+
+    void RigidBody::applyImpulse(const clv::mth::vec3f& impulse, const clv::mth::vec3f& relativeOffset) {
+        const btVector3 btImpulse{ impulse.x, impulse.y, impulse.z };
+        const btVector3 btOffset{ relativeOffset.x, relativeOffset.y, relativeOffset.z };
+        body->applyForce(btImpulse, btOffset);
+    }
+
     clv::mth::vec3f RigidBody::getPhysicsPosition() const {
         btTransform btTrans = body->getWorldTransform();
         const auto pos      = btTrans.getOrigin();

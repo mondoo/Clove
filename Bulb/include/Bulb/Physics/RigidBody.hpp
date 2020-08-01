@@ -15,7 +15,7 @@ namespace blb::phy {
 
 namespace blb::phy {
     /**
-	 * @brief A RigidBody is an object that can be collided with but does not deform
+	 * @brief A RigidBody is an object that can be collided with but does not deform.
 	 */
     class RigidBody {
         friend class World;
@@ -29,7 +29,7 @@ namespace blb::phy {
 
         clv::mth::vec3f cubeSize{};
 
-        void* userPointer = nullptr;
+        void* userPointer{ nullptr };
 
         //FUNCTIONS
     public:
@@ -49,6 +49,9 @@ namespace blb::phy {
         void setWorldRotation(const clv::mth::quatf& rotation);
 
         void setLinearVelocity(const clv::mth::vec3f& velocity);
+
+        void applyForce(const clv::mth::vec3f& force, const clv::mth::vec3f& relativeOffset = { 0.0f, 0.0f, 0.0f });
+        void applyImpulse(const clv::mth::vec3f& impulse, const clv::mth::vec3f& relativeOffset = { 0.0f, 0.0f, 0.0f });
 
         clv::mth::vec3f getPhysicsPosition() const;
         clv::mth::quatf getPhysicsRotation() const;

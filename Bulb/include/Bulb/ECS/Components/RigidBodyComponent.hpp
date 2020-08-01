@@ -30,6 +30,10 @@ namespace blb::ecs {
 		~RigidBodyComponent();
 
 		void setLinearVelocity(const clv::mth::vec3f& velocity);
+
+		void applyForce(const clv::mth::vec3f& force, const clv::mth::vec3f& relativeOffset = { 0.0f, 0.0f, 0.0f });
+        void applyImpulse(const clv::mth::vec3f& impulse, const clv::mth::vec3f& relativeOffset = { 0.0f, 0.0f, 0.0f });
+
         clv::mth::vec3f getLinearVelocity() const;
 
 	private:
