@@ -1,6 +1,7 @@
 #include "Bulb/Rendering/Renderer3D.hpp"
 
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
+#include "Bulb/Rendering/Renderables/AnimatedModel.hpp"
 #include "Bulb/Rendering/Renderables/Sprite.hpp"
 #include "Bulb/Rendering/RenderingConstants.hpp"
 
@@ -19,6 +20,12 @@ extern "C" const char	default3d_vs[];
 extern "C" const size_t default3d_vsLength;
 extern "C" const char	default3d_ps[];
 extern "C" const size_t default3d_psLength;
+extern "C" const char   skeletal3d_vs[];
+extern "C" const size_t skeletal3d_vsLength;
+extern "C" const char	skeletalcubeshadow_vs[];
+extern "C" const size_t skeletalcubeshadow_vsLength;
+extern "C" const char   skeletalshadow_vs[];
+extern "C" const size_t skeletalshadow_vsLength;
 
 extern "C" const char	default2d_vs[];
 extern "C" const size_t default2d_vsLength;
@@ -55,11 +62,17 @@ namespace blb::rnd {
 		//Mesh
 		meshCommandBuffer = factory.createCommandBuffer();
 
-		auto meshVS = factory.createShader({ ShaderStage::Vertex }, default3d_vs, default3d_vsLength);
-		auto meshPS = factory.createShader({ ShaderStage::Pixel }, default3d_ps, default3d_psLength);
-		meshPipelineObject = factory.createPipelineObject();
+        auto meshVS        = factory.createShader({ ShaderStage::Vertex }, default3d_vs, default3d_vsLength);
+        auto meshPS        = factory.createShader({ ShaderStage::Pixel }, default3d_ps, default3d_psLength);
+        auto animMeshVS    = factory.createShader({ ShaderStage::Vertex }, skeletal3d_vs, skeletal3d_vsLength);
+
+        meshPipelineObject = factory.createPipelineObject();
 		meshPipelineObject->setVertexShader(*meshVS);
 		meshPipelineObject->setPixelShader(*meshPS);
+
+		animatedMeshPipelineObject = factory.createPipelineObject();
+        animatedMeshPipelineObject->setVertexShader(*animMeshVS);
+        animatedMeshPipelineObject->setPixelShader(*meshPS);
 
 		//UI
 		uiCommandBuffer = factory.createCommandBuffer();
@@ -130,13 +143,20 @@ namespace blb::rnd {
 		directionalShadowRenderTarget	= factory.createRenderTarget(nullptr, directionalShadowMapTexture.get());
 		directionalShadowCommandBuffer	= factory.createCommandBuffer();
 
-		auto dirShadowVS = factory.createShader({ ShaderStage::Vertex }, genshadowmap_vs, genshadowmap_vsLength);
-		auto dirShadowGS = factory.createShader({ ShaderStage::Geometry }, genshadowmap_gs, genshadowmap_gsLength);
-		auto dirShadowPS = factory.createShader({ ShaderStage::Pixel }, genshadowmap_ps, genshadowmap_psLength);
+		auto dirShadowVS                = factory.createShader({ ShaderStage::Vertex }, genshadowmap_vs, genshadowmap_vsLength);
+        auto skeletalShadowVS           = factory.createShader({ ShaderStage::Vertex }, skeletalshadow_vs, skeletalshadow_vsLength);
+        auto dirShadowGS                = factory.createShader({ ShaderStage::Geometry }, genshadowmap_gs, genshadowmap_gsLength);
+        auto dirShadowPS                = factory.createShader({ ShaderStage::Pixel }, genshadowmap_ps, genshadowmap_psLength);
+		
 		directionalShadowPipelineObject = factory.createPipelineObject();
-		directionalShadowPipelineObject->setVertexShader(*dirShadowVS);
+        directionalShadowPipelineObject->setVertexShader(*dirShadowVS);
 		directionalShadowPipelineObject->setGeometryShader(*dirShadowGS);
 		directionalShadowPipelineObject->setPixelShader(*dirShadowPS);
+
+		animatedDirectionalShadowPipelineObject = factory.createPipelineObject();
+        animatedDirectionalShadowPipelineObject->setVertexShader(*skeletalShadowVS);
+        animatedDirectionalShadowPipelineObject->setGeometryShader(*dirShadowGS);
+        animatedDirectionalShadowPipelineObject->setPixelShader(*dirShadowPS);
 
 		//Point shadow map
 		gfx::TextureDescriptor psDesc{};
@@ -149,13 +169,20 @@ namespace blb::rnd {
 		pointShadowRenderTarget		= factory.createRenderTarget(nullptr, pointShadowMapTexture.get());
 		pointShadowCommandBuffer	= factory.createCommandBuffer();
 
-		auto pointShadowVS = factory.createShader({ ShaderStage::Vertex }, gencubeshadowmap_vs, gencubeshadowmap_vsLength);
-		auto pointShadowGS = factory.createShader({ ShaderStage::Geometry }, gencubeshadowmap_gs, gencubeshadowmap_gsLength);
-		auto pointShadowPS = factory.createShader({ ShaderStage::Pixel }, gencubeshadowmap_ps, gencubeshadowmap_psLength);
+		auto pointShadowVS         = factory.createShader({ ShaderStage::Vertex }, gencubeshadowmap_vs, gencubeshadowmap_vsLength);
+        auto skeletalPointShadowVS = factory.createShader({ ShaderStage::Vertex }, skeletalcubeshadow_vs, skeletalcubeshadow_vsLength);
+        auto pointShadowGS         = factory.createShader({ ShaderStage::Geometry }, gencubeshadowmap_gs, gencubeshadowmap_gsLength);
+        auto pointShadowPS         = factory.createShader({ ShaderStage::Pixel }, gencubeshadowmap_ps, gencubeshadowmap_psLength);
+
 		pointShadowPipelineObject = factory.createPipelineObject();
-		pointShadowPipelineObject->setVertexShader(*pointShadowVS);
+        pointShadowPipelineObject->setVertexShader(*pointShadowVS);
 		pointShadowPipelineObject->setGeometryShader(*pointShadowGS);
 		pointShadowPipelineObject->setPixelShader(*pointShadowPS);
+
+		animatedPointShadowPipelineObject = factory.createPipelineObject();
+        animatedPointShadowPipelineObject->setVertexShader(*skeletalPointShadowVS);
+        animatedPointShadowPipelineObject->setGeometryShader(*pointShadowGS);
+        animatedPointShadowPipelineObject->setPixelShader(*pointShadowPS);
 
 		//Buffers
 		gfx::BufferDescriptor bufferDesc{};
@@ -197,6 +224,7 @@ namespace blb::rnd {
 		}
 
 		scene.meshes.clear();
+        scene.animatedMeshes.clear();
 		scene.numDirectionalLights = 0;
 		scene.numPointLights = 0;
 		scene.cameras.clear();
@@ -205,9 +233,13 @@ namespace blb::rnd {
 		scene.widgetsToRender.clear();
 	}
 
-	void Renderer3D::submitMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
+	void Renderer3D::submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
 		scene.meshes.push_back(mesh);
 	}
+
+	void Renderer3D::submitAnimatedMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
+        scene.animatedMeshes.push_back(mesh);
+    }
 
 	void Renderer3D::submitLight(const DirectionalLight& light) {
 		const uint32_t lightIndex = scene.numDirectionalLights++;
@@ -240,7 +272,6 @@ namespace blb::rnd {
 
 		//Draw all meshes in the scene
 		meshCommandBuffer->setDepthEnabled(true);
-		meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
 		meshCommandBuffer->bindTexture(directionalShadowMapTexture.get(), TBP_DirectionalShadow);
 		meshCommandBuffer->bindTexture(pointShadowMapTexture.get(), TBP_PointShadow);
 
@@ -273,10 +304,17 @@ namespace blb::rnd {
 			meshCommandBuffer->updateBufferData(*viewPosition, &viewPos);
 			meshCommandBuffer->bindShaderResourceBuffer(*viewPosition, ShaderStage::Pixel, BBP_ViewData);
 
-			for(auto& mesh : scene.meshes) {
-				mesh->draw(*meshCommandBuffer, meshPipelineObject->getVertexLayout());
-			}
-		}
+			meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
+            for(auto& mesh : scene.meshes) { //TODO: We should submit the models instead of the underlying meshes
+                mesh->draw(*meshCommandBuffer, meshPipelineObject->getVertexLayout());
+            }
+
+			//TODO: All meshes should be drawn like this with a identity matrix palette
+            meshCommandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
+            for(auto& mesh : scene.animatedMeshes) {
+                mesh->draw(*meshCommandBuffer, animatedMeshPipelineObject->getVertexLayout());
+            }
+        }
 
 		meshCommandBuffer->bindTexture(nullptr, TBP_DirectionalShadow);
 		meshCommandBuffer->bindTexture(nullptr, TBP_PointShadow);
@@ -285,7 +323,6 @@ namespace blb::rnd {
 		directionalShadowCommandBuffer->beginEncoding(directionalShadowRenderTarget);
 		directionalShadowCommandBuffer->clearTarget();
 		directionalShadowCommandBuffer->setDepthEnabled(true);
-		directionalShadowCommandBuffer->bindPipelineObject(*directionalShadowPipelineObject);
 		directionalShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
 		for(int32_t i = 0; i < scene.numDirectionalLights; ++i) {
@@ -296,16 +333,21 @@ namespace blb::rnd {
 			directionalShadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
 			directionalShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
 
-			for(auto& mesh : scene.meshes) {
-				mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
-			}
+			directionalShadowCommandBuffer->bindPipelineObject(*directionalShadowPipelineObject);
+            for(auto& mesh : scene.meshes) {
+                mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
+            }
+
+            directionalShadowCommandBuffer->bindPipelineObject(*animatedDirectionalShadowPipelineObject);
+            for(auto& mesh : scene.animatedMeshes) {
+                mesh->draw(*directionalShadowCommandBuffer, animatedDirectionalShadowPipelineObject->getVertexLayout());
+            }
 		}
 
 		//Generate the point shadow map for each mesh in the scene
 		pointShadowCommandBuffer->beginEncoding(pointShadowRenderTarget);
 		pointShadowCommandBuffer->clearTarget();
 		pointShadowCommandBuffer->setDepthEnabled(true);
-		pointShadowCommandBuffer->bindPipelineObject(*pointShadowPipelineObject);
 		pointShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
 		for(int32_t i = 0; i < scene.numPointLights; ++i) {
@@ -317,9 +359,15 @@ namespace blb::rnd {
 			pointShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
 			pointShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Pixel, BBP_CurrentFaceIndex);
 
+			pointShadowCommandBuffer->bindPipelineObject(*pointShadowPipelineObject);
 			for(auto& mesh : scene.meshes) {
 				mesh->draw(*pointShadowCommandBuffer, pointShadowPipelineObject->getVertexLayout());
 			}
+
+			pointShadowCommandBuffer->bindPipelineObject(*animatedPointShadowPipelineObject);
+            for(auto& mesh : scene.animatedMeshes) {
+                mesh->draw(*pointShadowCommandBuffer, animatedPointShadowPipelineObject->getVertexLayout());
+            }
 		}
 
 		//Render each UI element

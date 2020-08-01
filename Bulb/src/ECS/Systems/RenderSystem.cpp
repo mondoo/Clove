@@ -1,8 +1,9 @@
 #include "Bulb/ECS/Systems/RenderSystem.hpp"
 
+#include "Bulb/ECS/Components/AnimatedModelComponent.hpp"
 #include "Bulb/ECS/Components/CameraComponent.hpp"
 #include "Bulb/ECS/Components/DirectionalLightComponent.hpp"
-#include "Bulb/ECS/Components/ModelComponent.hpp"
+#include "Bulb/ECS/Components/StaticModelComponent.hpp"
 #include "Bulb/ECS/Components/PointLightComponent.hpp"
 #include "Bulb/ECS/Components/TransformComponent.hpp"
 #include "Bulb/ECS/World.hpp"
@@ -52,15 +53,28 @@ namespace blb::ecs {
 			renderer->submitCamera({ camera->getViewport(), std::move(renderData), camera->getRenderTarget() });
 		}
 
-		//Submit meshes
-		for(auto&& [transform, renderable] : world.getComponentSets<TransformComponent, ModelComponent>()) {
+		//Submit static meshes
+		for(auto&& [transform, staticModel] : world.getComponentSets<TransformComponent, StaticModelComponent>()) {
 			const mth::mat4f modelTransform = transform->getTransformationMatrix(TransformSpace::World);
 
-			for(auto& mesh : renderable->model.getMeshes()) {
+			for(auto& mesh : staticModel->model.getMeshes()) {
 				mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
-				renderer->submitMesh(mesh);
+
+				renderer->submitStaticMesh(mesh);
 			}
 		}
+		//Submit animated meshes
+        for(auto&& [transform, animatedModel] : world.getComponentSets<TransformComponent, AnimedModelComponent>()) {
+            const mth::mat4f modelTransform = transform->getTransformationMatrix(TransformSpace::World);
+            auto matrixPalet                = animatedModel->model.update(deltaTime);
+
+            for(auto& mesh : animatedModel->model.getMeshes()) {
+                mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
+                mesh->getMaterialInstance().setData(clv::gfx::BBP_SkeletalData, matrixPalet.data(), sizeof(clv::mth::mat4f) * blb::rnd::MAX_JOINTS, clv::gfx::ShaderStage::Vertex);
+
+                renderer->submitAnimatedMesh(mesh);
+            }
+        }
 
 		//Submit directional lights
 		for(auto&& [light] : world.getComponentSets<DirectionalLightComponent>()) {

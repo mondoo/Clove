@@ -45,6 +45,7 @@ namespace blb::rnd{
 
 		template<typename DataType>
 		void setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderStage shaderType);
+        void setData(clv::gfx::BufferBindingPoint bindingPoint, void* data, const size_t sizeBytes, clv::gfx::ShaderStage shaderType);
 
 		void setAlbedoTexture(const std::string& path);
 		void setAlbedoTexture(std::shared_ptr<clv::gfx::Texture> texture);

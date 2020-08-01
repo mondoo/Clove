@@ -119,16 +119,16 @@ struct PointLightData{
 	
 	float farplane;
 };
-cbuffer LightBuffer : register(b2){
+cbuffer LightBuffer : register(b3){
 	DirectionalLightData directionalLights[MAX_LIGHTS];
 	PointLightData pointLights[MAX_LIGHTS];
 };
 
-cbuffer ViewBuffer : register(b3){
+cbuffer ViewBuffer : register(b4){
     float3 viewPos;
 }
 
-cbuffer MaterialBuffer : register(b5){
+cbuffer MaterialBuffer : register(b6){
     float shininess;
 }
 
@@ -137,7 +137,7 @@ cbuffer LightCount : register(b9){
 	int numPointLight;
 }
 
-cbuffer colourDataBuffer : register(b12){
+cbuffer colourDataBuffer : register(b1){
 	float4 colour;
 }
 
