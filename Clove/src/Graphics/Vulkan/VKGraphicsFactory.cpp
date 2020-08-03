@@ -5,6 +5,7 @@
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
+#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 
 //TODO: Abstract away
 #include "Clove/Platform/Windows/CloveWindows.hpp"
@@ -378,7 +379,7 @@ namespace clv::gfx::vk {
         return std::make_unique<VKShader>(logicalDevice, std::move(byteCode));
     }
 
-    std::unique_ptr<VKRenderPass> VKGraphicsFactory::createRenderPass(RenderPassDescriptor descriptor) {
+    std::unique_ptr<RenderPass> VKGraphicsFactory::createRenderPass(RenderPass::Descriptor descriptor) {
         return std::make_unique<VKRenderPass>(logicalDevice, std::move(descriptor));
     }
 

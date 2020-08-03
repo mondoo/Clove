@@ -3,7 +3,7 @@
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
-    VKRenderPass::VKRenderPass(VkDevice device, RenderPassDescriptor descriptor)
+    VKRenderPass::VKRenderPass(VkDevice device, RenderPass::Descriptor descriptor)
         : device(device) {
         //Attachments
         const size_t attachmentSize = std::size(descriptor.attachments);
@@ -25,7 +25,7 @@ namespace clv::gfx::vk {
         //Subpasses
         const size_t subpassesSize = std::size(descriptor.subpasses);
         std::vector<VkSubpassDescription> subpasses(subpassesSize);
-        std::vector<std::vector<VkAttachmentReference>> attachmentReferences(subpassesSize); //Define the references seperately so they aren't destroyed
+        std::vector<std::vector<VkAttachmentReference>> attachmentReferences(subpassesSize);//Define the references seperately so they aren't destroyed
         for(size_t i = 0; i < subpassesSize; ++i) {
             //Attachment References: Colour
             const size_t colourAttachmentSize = std::size(descriptor.subpasses[i].colourAttachments);
@@ -39,7 +39,7 @@ namespace clv::gfx::vk {
             }
 
             VkSubpassDescription subpass{};
-            subpass.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS; //TODO: Only supporting graphics for now
+            subpass.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;//TODO: Only supporting graphics for now
             subpass.colorAttachmentCount = colourAttachmentSize;
             subpass.pColorAttachments    = std::data(attachmentReferences[i]);
             if(descriptor.subpasses[i].depthAttachment) {
@@ -79,11 +79,15 @@ namespace clv::gfx::vk {
         renderPassInfo.pSubpasses      = std::data(subpasses);
         renderPassInfo.dependencyCount = dependecySize;
         renderPassInfo.pDependencies   = std::data(dependecies);
-        
+
         if(vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
-			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create render pass");
-		}
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create render pass");
+        }
     }
+
+    VKRenderPass::VKRenderPass(VKRenderPass&& other) noexcept = default;
+
+    VKRenderPass& VKRenderPass::operator=(VKRenderPass&& other) noexcept = default;
 
     VKRenderPass::~VKRenderPass() {
         vkDestroyRenderPass(device, renderPass, nullptr);

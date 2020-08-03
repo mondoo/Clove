@@ -8,7 +8,6 @@
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
-#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VKSampler.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
@@ -45,7 +44,7 @@ namespace clv::gfx::vk {
         std::unique_ptr<Shader> createShader(std::string_view filePath) override;
         std::unique_ptr<Shader> createShader(std::vector<std::byte> byteCode) override;
 
-        std::unique_ptr<VKRenderPass> createRenderPass(RenderPassDescriptor descriptor);
+        std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor) override;
         std::unique_ptr<VKDescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayoutDescriptor descriptor);
 
         std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);

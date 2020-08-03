@@ -119,6 +119,4 @@ namespace clv::gfx {
         DontCare,
         Store,
     };
-
-    inline constexpr uint32_t SUBPASS_EXTERNAL = ~0U;
 }

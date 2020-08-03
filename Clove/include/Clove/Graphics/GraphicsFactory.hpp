@@ -3,6 +3,7 @@
 #include "Clove/Graphics/Fence.hpp"
 #include "Clove/Graphics/GraphicsBuffer.hpp"
 #include "Clove/Graphics/GraphicsImage.hpp"
+#include "Clove/Graphics/RenderPass.hpp"
 #include "Clove/Graphics/Semaphore.hpp"
 #include "Clove/Graphics/Shader.hpp"
 #include "Clove/Graphics/Swapchain.hpp"
@@ -25,7 +26,7 @@ namespace clv::gfx {
         virtual std::unique_ptr<Shader> createShader(std::string_view filePath)       = 0;
         virtual std::unique_ptr<Shader> createShader(std::vector<std::byte> byteCode) = 0;
 
-        //std::unique_ptr<VKRenderPass> createRenderPass(RenderPassDescriptor descriptor);
+        virtual std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor) = 0;
         //std::unique_ptr<VKDescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayoutDescriptor descriptor);
 
         //std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);

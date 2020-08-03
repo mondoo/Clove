@@ -9,7 +9,7 @@
 namespace clv::gfx {
 	struct FramebufferDescriptor {
 		std::shared_ptr<vk::VKRenderPass> renderPass;
-		std::vector<std::shared_ptr<vk::VKImageView>> attachments;
+		std::vector<std::shared_ptr<vk::VKImageView>> attachments; //The order of the attachments here has to match the corresponding render pass
 		uint32_t width	= 0;
 		uint32_t height = 0;
 	};

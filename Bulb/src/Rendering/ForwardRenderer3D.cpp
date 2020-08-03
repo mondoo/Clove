@@ -311,8 +311,8 @@ namespace blb::rnd {
         subpass.colourAttachments = { colourReference };
         subpass.depthAttachment   = depthReference;
 
-        //Make sure we define any dependecies between subpasses
-        clv::gfx::SubpassDependecy dependecy{};
+        //Wait on the implicit subpass at the start so we transition our image when we have one
+        clv::gfx::SubpassDependency dependecy{};
         dependecy.sourceSubpass      = clv::gfx::SUBPASS_EXTERNAL;
         dependecy.destinationSubpass = 0;
         dependecy.sourceStage        = clv::gfx::PipelineStage::ColourAttachmentOutput;
