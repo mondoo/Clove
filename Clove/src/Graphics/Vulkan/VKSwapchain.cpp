@@ -95,7 +95,7 @@ namespace clv::gfx::vk {
 
         imageViews.resize(std::size(images));
         for(size_t i = 0; i < images.size(); ++i) {
-            imageViews[i] = std::make_shared<VKImageView>(device, createImageView(device, images[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT));
+            imageViews[i] = std::make_shared<VKImageView>(device, createImageView(device, images[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT));
         }
     }
 

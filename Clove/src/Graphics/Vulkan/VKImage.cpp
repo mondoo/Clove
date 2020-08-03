@@ -107,27 +107,8 @@ namespace clv::gfx::vk {
     }
 
     std::unique_ptr<GraphicsImageView> VKImage::createView() const {
-        VkImageViewCreateInfo viewInfo{};
-        viewInfo.sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        viewInfo.pNext                           = nullptr;
-        viewInfo.flags                           = 0;
-        viewInfo.image                           = image;
-        viewInfo.viewType                        = getImageViewType(descriptor.type);
-        viewInfo.format                          = convertImageFormat(descriptor.format);
-        viewInfo.components.r                    = VK_COMPONENT_SWIZZLE_IDENTITY;
-        viewInfo.components.g                    = VK_COMPONENT_SWIZZLE_IDENTITY;
-        viewInfo.components.b                    = VK_COMPONENT_SWIZZLE_IDENTITY;
-        viewInfo.components.a                    = VK_COMPONENT_SWIZZLE_IDENTITY;
-        viewInfo.subresourceRange.aspectMask     = descriptor.format == ImageFormat::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;//TODO: Handle depth / stencil
-        viewInfo.subresourceRange.baseMipLevel   = 0;
-        viewInfo.subresourceRange.levelCount     = 1;
-        viewInfo.subresourceRange.baseArrayLayer = 0;
-        viewInfo.subresourceRange.layerCount     = 1;
-
-        VkImageView imageView;
-        GARLIC_ASSERT(vkCreateImageView(device, &viewInfo, nullptr, &imageView) == VK_SUCCESS, "{0}: Unable to create imageview", GARLIC_FUNCTION_NAME);
-
-        return std::make_unique<VKImageView>(device, imageView);
+        const VkImageAspectFlags aspectFlags = descriptor.format == ImageFormat::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
+        return std::make_unique<VKImageView>(device, createImageView(device, image, getImageViewType(descriptor.type), convertImageFormat(descriptor.format), aspectFlags));
     }
 
     VkImage VKImage::getImage() const {

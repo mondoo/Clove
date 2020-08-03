@@ -14,6 +14,7 @@ namespace clv::gfx::vk {
 
 		//FUNCTIONS
 	public:
+        VKImageView() = delete;
 		VKImageView(VkDevice device, VkImageView imageView);
 
 		VKImageView(const VKImageView& other) = delete;

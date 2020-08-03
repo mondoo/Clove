@@ -1,12 +1,11 @@
 #pragma once
 
-//TODO: Remove
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
-    VkImageView createImageView(VkDevice device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+    VkImageView createImageView(VkDevice device, VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags);
 
     ImageFormat convertImageFormat(VkFormat vulkanFormat);
     VkFormat convertImageFormat(ImageFormat garlicFormat);
