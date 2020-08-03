@@ -4,6 +4,7 @@
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
+#include "Clove/Graphics/Vulkan/VKShader.hpp"
 
 //TODO: Abstract away
 #include "Clove/Platform/Windows/CloveWindows.hpp"
@@ -369,11 +370,11 @@ namespace clv::gfx::vk {
         return std::make_unique<VKSwapchain>(logicalDevice, querySwapChainSupport(physicalDevice, surface), surface, queueFamilyIndices, std::move(descriptor));
     }
 
-    std::unique_ptr<VKShader> VKGraphicsFactory::createShader(std::string_view filePath) {
+    std::unique_ptr<Shader> VKGraphicsFactory::createShader(std::string_view filePath) {
         return std::make_unique<VKShader>(logicalDevice, filePath);
     }
 
-    std::unique_ptr<VKShader> VKGraphicsFactory::createShader(std::vector<std::byte> byteCode) {
+    std::unique_ptr<Shader> VKGraphicsFactory::createShader(std::vector<std::byte> byteCode) {
         return std::make_unique<VKShader>(logicalDevice, std::move(byteCode));
     }
 

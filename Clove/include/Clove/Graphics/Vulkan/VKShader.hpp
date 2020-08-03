@@ -1,24 +1,31 @@
 #pragma once
 
-//TODO: Remove
+#include "Clove/Graphics/Shader.hpp"
+
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
-	class VKShader {
-		//VARIABLES
-	private:
-		VkDevice device;
+    class VKShader : public Shader {
+        //VARIABLES
+    private:
+        VkDevice device;
 
-		VkShaderModule module = VK_NULL_HANDLE;
+        VkShaderModule module = VK_NULL_HANDLE;
 
-		//FUNCTIONS
-	public:
-		//TODO: Ctors
-		VKShader(VkDevice device, std::string_view filePath);
-		VKShader(VkDevice device, std::vector<std::byte> byteCode);
+        //FUNCTIONS
+    public:
+        VKShader() = delete;
+        VKShader(VkDevice device, std::string_view filePath);
+        VKShader(VkDevice device, std::vector<std::byte> byteCode);
 
-		~VKShader();
+        VKShader(const VKShader& other) = delete;
+        VKShader(VKShader&& other) noexcept;
 
-		VkShaderModule getModule() const;
-	};
+        VKShader& operator=(const VKShader& other) = delete;
+        VKShader& operator=(VKShader&& other) noexcept;
+
+        ~VKShader();
+
+        VkShaderModule getModule() const;
+    };
 }

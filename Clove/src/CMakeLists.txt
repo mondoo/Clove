@@ -72,6 +72,7 @@ set(
 		${CLV_INCLUDE}/Graphics/GraphicsImageView.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsTypes.hpp
 		${CLV_INCLUDE}/Graphics/Semaphore.hpp
+		${CLV_INCLUDE}/Graphics/Shader.hpp
 		${CLV_INCLUDE}/Graphics/ShaderTranspiler.hpp		
 		${CLV_SOURCE}/Graphics/ShaderTranspiler.cpp
 )
