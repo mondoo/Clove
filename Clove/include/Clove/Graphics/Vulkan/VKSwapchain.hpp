@@ -1,48 +1,47 @@
 #pragma once
 
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
-#include "Clove/Graphics/Vulkan/VKImageView.hpp"
-#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
+#include "Clove/Graphics/Swapchain.hpp"
+#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
-//TODO: Remove
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx {
-	struct SwapchainDescriptor {
-		clv::mth::vec2ui extent;
-	};
+    class VKImageView;
 }
 
 namespace clv::gfx::vk {
-	class VKSwapchain {
-		//VARIABLES
-	private:
-		VkDevice device = VK_NULL_HANDLE;
-		VkSwapchainKHR swapChain = VK_NULL_HANDLE;
+    class VKSwapchain : public Swapchain {
+        //VARIABLES
+    private:
+        VkDevice device          = VK_NULL_HANDLE;
+        VkSwapchainKHR swapChain = VK_NULL_HANDLE;
 
-		VkFormat swapChainImageFormat;
-		VkExtent2D swapChainExtent;
+        VkFormat swapChainImageFormat;
+        VkExtent2D swapChainExtent;
 
-		std::vector<VkImage> images;
-		std::vector<std::shared_ptr<VKImageView>> imageViews;
+        std::vector<VkImage> images;
+        std::vector<std::shared_ptr<VKImageView>> imageViews;
 
-		//FUNCTIONS
-	public:
-		//TODO: Ctors
-		//TODO: Put factory params into a struct
-		VKSwapchain(VkDevice device, SwapchainSupportDetails supportDetails, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, SwapchainDescriptor descriptor);
-		~VKSwapchain();
+        //FUNCTIONS
+    public:
+        VKSwapchain() = delete;
+        VKSwapchain(VkDevice device, SwapchainSupportDetails supportDetails, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, Descriptor descriptor);
 
-		//TODO: a 'present' function, takes the presentation queue
-		//TODO: a 'resize' function
+        VKSwapchain(const VKSwapchain& other) = delete;
+        VKSwapchain(VKSwapchain&& other) noexcept;
 
-		ImageFormat getImageFormat() const;
-		VkExtent2D getExtent() const;
+        VKSwapchain& operator=(const VKSwapchain& other) = delete;
+        VKSwapchain& operator=(VKSwapchain&& other) noexcept;
 
-		Result aquireNextImage(const VKSemaphore* semaphore, uint32_t& outImageIndex);
+        ~VKSwapchain();
 
-		const VkSwapchainKHR& getSwapchain() const;
+        ImageFormat getImageFormat() const override;
+        clv::mth::vec2ui getExtent() const override;
 
-		const std::vector<std::shared_ptr<VKImageView>>& getImageViews() const;
-	};
+        Result aquireNextImage(const Semaphore* semaphore, uint32_t& outImageIndex) override;
+
+        std::vector<std::shared_ptr<GraphicsImageView>> getImageViews() const override;
+
+        VkSwapchainKHR getSwapchain() const;
+    };
 }

@@ -40,7 +40,7 @@ namespace clv::gfx::vk {
         std::unique_ptr<VKPresentQueue> createPresentQueue();
         std::unique_ptr<VKTransferQueue> createTransferQueue(CommandQueueDescriptor descriptor);
 
-        std::unique_ptr<VKSwapchain> createSwapChain(SwapchainDescriptor descriptor);
+        std::unique_ptr<Swapchain> createSwapChain(Swapchain::Descriptor descriptor) override;
 
         std::unique_ptr<Shader> createShader(std::string_view filePath) override;
         std::unique_ptr<Shader> createShader(std::vector<std::byte> byteCode) override;

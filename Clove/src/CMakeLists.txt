@@ -75,6 +75,7 @@ set(
 		${CLV_INCLUDE}/Graphics/Shader.hpp
 		${CLV_INCLUDE}/Graphics/ShaderTranspiler.hpp		
 		${CLV_SOURCE}/Graphics/ShaderTranspiler.cpp
+		${CLV_INCLUDE}/Graphics/Swapchain.hpp
 )
 
 set(

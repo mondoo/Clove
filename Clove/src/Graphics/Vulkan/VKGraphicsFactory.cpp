@@ -366,7 +366,7 @@ namespace clv::gfx::vk {
         return std::make_unique<VKTransferQueue>(logicalDevice, *queueFamilyIndices.transferFamily, std::move(descriptor));
     }
 
-    std::unique_ptr<VKSwapchain> VKGraphicsFactory::createSwapChain(SwapchainDescriptor descriptor) {
+    std::unique_ptr<Swapchain> VKGraphicsFactory::createSwapChain(Swapchain::Descriptor descriptor) {
         return std::make_unique<VKSwapchain>(logicalDevice, querySwapChainSupport(physicalDevice, surface), surface, queueFamilyIndices, std::move(descriptor));
     }
 

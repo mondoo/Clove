@@ -5,6 +5,7 @@
 #include "Clove/Graphics/GraphicsImage.hpp"
 #include "Clove/Graphics/Semaphore.hpp"
 #include "Clove/Graphics/Shader.hpp"
+#include "Clove/Graphics/Swapchain.hpp"
 
 namespace clv::gfx {
     /**
@@ -19,7 +20,7 @@ namespace clv::gfx {
         //std::unique_ptr<VKPresentQueue> createPresentQueue();
         //std::unique_ptr<VKTransferQueue> createTransferQueue(CommandQueueDescriptor descriptor);
 
-        //std::unique_ptr<VKSwapchain> createSwapChain(SwapchainDescriptor descriptor);
+        virtual std::unique_ptr<Swapchain> createSwapChain(Swapchain::Descriptor descriptor) = 0;
 
         virtual std::unique_ptr<Shader> createShader(std::string_view filePath)       = 0;
         virtual std::unique_ptr<Shader> createShader(std::vector<std::byte> byteCode) = 0;
