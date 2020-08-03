@@ -8,6 +8,9 @@ namespace clv::gfx{
 }
 
 namespace clv::gfx {
+    /**
+     * @brief A Swapchain allows presentation of rendering results to a Window
+     */
     class Swapchain {
         //TYPES
     public:
