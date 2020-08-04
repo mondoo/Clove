@@ -29,10 +29,10 @@ namespace clv::gfx {
     };
 
     struct Viewport {
-        int32_t x      = 0;
-        int32_t y      = 0;
-        int32_t width  = 0;
-        int32_t height = 0;
+        int32_t x{ 0 };
+        int32_t y{ 0 };
+        int32_t width{ 0 };
+        int32_t height{ 0 };
     };
 
     //TODO: Have Success and Error then OR those with other codes so you can just check for succes or error
@@ -74,15 +74,15 @@ namespace clv::gfx {
     };
 
     struct VertexInputBindingDescriptor {
-        uint32_t binding = 0;
-        uint32_t stride  = 0;
+        uint32_t binding{ 0 };
+        uint32_t stride{ 0 };
     };
 
     struct VertexAttributeDescriptor {
-        uint32_t binding  = 0;
-        uint32_t location = 0;
+        uint32_t binding{ 0 };
+        uint32_t location{ 0 };
         VertexAttributeFormat format;
-        uint32_t offset = 0;
+        uint32_t offset{ 0 };
     };
 
     enum class DescriptorType {
