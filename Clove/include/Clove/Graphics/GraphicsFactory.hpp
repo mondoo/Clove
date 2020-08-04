@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/Fence.hpp"
+#include "Clove/Graphics/Framebuffer.hpp"
 #include "Clove/Graphics/GraphicsBuffer.hpp"
 #include "Clove/Graphics/GraphicsImage.hpp"
 #include "Clove/Graphics/RenderPass.hpp"
@@ -31,7 +32,7 @@ namespace clv::gfx {
 
         //std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
 
-        //std::unique_ptr<VKFramebuffer> createFramebuffer(FramebufferDescriptor descriptor);
+        virtual std::unique_ptr<Framebuffer> createFramebuffer(Framebuffer::Descriptor descriptor) = 0;
         //std::unique_ptr<VKDescriptorPool> createDescriptorPool(DescriptorPoolDescriptor descriptor);
 
         virtual std::unique_ptr<Semaphore> createSemaphore()                     = 0;

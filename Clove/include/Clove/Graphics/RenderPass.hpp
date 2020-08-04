@@ -56,7 +56,7 @@ namespace clv::gfx {
         //TYPES
     public:
         struct Descriptor {
-            std::vector<AttachmentDescriptor> attachments; /**< The order of these attachments has to match that of the corresponding Framebuffer */
+            std::vector<AttachmentDescriptor> attachments;
             std::vector<SubpassDescriptor> subpasses;
             std::vector<SubpassDependency> dependencies;
         };

@@ -6,7 +6,6 @@
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
-#include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKSampler.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
@@ -49,7 +48,7 @@ namespace clv::gfx::vk {
 
         std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
 
-        std::unique_ptr<VKFramebuffer> createFramebuffer(FramebufferDescriptor descriptor);
+        std::unique_ptr<Framebuffer> createFramebuffer(Framebuffer::Descriptor descriptor) override;
         std::unique_ptr<VKDescriptorPool> createDescriptorPool(DescriptorPoolDescriptor descriptor);
 
         std::unique_ptr<Semaphore> createSemaphore() override;

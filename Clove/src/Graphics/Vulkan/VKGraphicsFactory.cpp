@@ -3,9 +3,10 @@
 #include "Clove/GRaphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
+#include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
-#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 
 //TODO: Abstract away
 #include "Clove/Platform/Windows/CloveWindows.hpp"
@@ -391,7 +392,7 @@ namespace clv::gfx::vk {
         return std::make_unique<VKPipelineObject>(logicalDevice, std::move(descriptor));
     }
 
-    std::unique_ptr<VKFramebuffer> VKGraphicsFactory::createFramebuffer(FramebufferDescriptor descriptor) {
+    std::unique_ptr<Framebuffer> VKGraphicsFactory::createFramebuffer(Framebuffer::Descriptor descriptor) {
         return std::make_unique<VKFramebuffer>(logicalDevice, std::move(descriptor));
     }
 

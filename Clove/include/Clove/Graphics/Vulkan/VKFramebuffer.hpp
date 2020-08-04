@@ -1,38 +1,30 @@
 #pragma once
 
-//TODO: Remove
-#include "Clove/Graphics/Vulkan/VKImageView.hpp"
-#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
+#include "Clove/Graphics/Framebuffer.hpp"
 
 #include <vulkan/vulkan.h>
 
-namespace clv::gfx {
-	struct FramebufferDescriptor {
-		std::shared_ptr<vk::VKRenderPass> renderPass;
-		std::vector<std::shared_ptr<vk::VKImageView>> attachments; //The order of the attachments here has to match the corresponding render pass
-		uint32_t width	= 0;
-		uint32_t height = 0;
-	};
-}
-
 namespace clv::gfx::vk {
-	class VKFramebuffer {
-		//VARIABLES
-	private:
-		VkDevice device = VK_NULL_HANDLE;
+    class VKFramebuffer : public Framebuffer {
+        //VARIABLES
+    private:
+        VkDevice device = VK_NULL_HANDLE;
 
-		VkFramebuffer framebuffer = VK_NULL_HANDLE;
+        VkFramebuffer framebuffer = VK_NULL_HANDLE;
 
-		FramebufferDescriptor descriptor;
+        //FUNCTIONS
+    public:
+        VKFramebuffer() = delete;
+        VKFramebuffer(VkDevice device, Descriptor descriptor);
 
-		//FUNCTIONS
-	public:
-		//TODO: Ctors
-		VKFramebuffer(VkDevice device, FramebufferDescriptor descriptor);
-		~VKFramebuffer();
+        VKFramebuffer(const VKFramebuffer& other) = delete;
+        VKFramebuffer(VKFramebuffer&& other) noexcept;
 
-		VkFramebuffer getFrameBuffer() const {
-			return framebuffer;
-		}
-	};
+        VKFramebuffer& operator=(const VKFramebuffer& other) = delete;
+        VKFramebuffer& operator=(VKFramebuffer&& other) noexcept;
+
+        ~VKFramebuffer();
+
+        VkFramebuffer getFrameBuffer() const;
+    };
 }

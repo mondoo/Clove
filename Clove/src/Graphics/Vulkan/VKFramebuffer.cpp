@@ -1,30 +1,44 @@
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 
+#include "Clove/Graphics/Vulkan/VKImageView.hpp"
+#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
+#include "Clove/Utils/Cast.hpp"
+
 namespace clv::gfx::vk {
-	VKFramebuffer::VKFramebuffer(VkDevice device, FramebufferDescriptor descriptor)
-		: device(device)
-		, descriptor(std::move(descriptor)) {
-		std::vector<VkImageView> attachments;
-		attachments.reserve(std::size(this->descriptor.attachments));
-		for(auto& attachment : this->descriptor.attachments) {
-			attachments.push_back(attachment->getImageView());
-		}
+    VKFramebuffer::VKFramebuffer(VkDevice device, Descriptor descriptor)
+        : device(device) {
+        std::vector<VkImageView> attachments;
+        attachments.reserve(std::size(descriptor.attachments));
+        for(auto& attachment : descriptor.attachments) {
+            const VKImageView* vkImageView = polyCast<VKImageView>(&attachment);
+            attachments.push_back(vkImageView->getImageView());
+        }
 
-		VkFramebufferCreateInfo framebufferInfo{};
-		framebufferInfo.sType			= VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebufferInfo.renderPass		= this->descriptor.renderPass->getRenderPass();
-		framebufferInfo.attachmentCount = std::size(attachments);
-		framebufferInfo.pAttachments	= std::data(attachments);
-		framebufferInfo.width			= this->descriptor.width;
-		framebufferInfo.height			= this->descriptor.height;
-		framebufferInfo.layers			= 1;
+        VkFramebufferCreateInfo framebufferInfo{};
+        framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.pNext           = nullptr;
+        framebufferInfo.flags           = 0;
+        framebufferInfo.renderPass      = polyCast<VKRenderPass>(&descriptor.renderPass)->getRenderPass();
+        framebufferInfo.attachmentCount = std::size(attachments);
+        framebufferInfo.pAttachments    = std::data(attachments);
+        framebufferInfo.width           = descriptor.width;
+        framebufferInfo.height          = descriptor.height;
+        framebufferInfo.layers          = 1;
 
-		if(vkCreateFramebuffer(device, &framebufferInfo, nullptr, &framebuffer) != VK_SUCCESS) {
-			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create framebuffer");
-		}
-	}
+        if(vkCreateFramebuffer(device, &framebufferInfo, nullptr, &framebuffer) != VK_SUCCESS) {
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create framebuffer");
+        }
+    }
 
-	VKFramebuffer::~VKFramebuffer() {
-		vkDestroyFramebuffer(device, framebuffer, nullptr);
-	}
+    VKFramebuffer::VKFramebuffer(VKFramebuffer&& other) noexcept = default;
+
+    VKFramebuffer& VKFramebuffer::operator=(VKFramebuffer&& other) noexcept = default;
+
+    VKFramebuffer::~VKFramebuffer() {
+        vkDestroyFramebuffer(device, framebuffer, nullptr);
+    }
+
+    VkFramebuffer VKFramebuffer::getFrameBuffer() const {
+        return framebuffer;
+    }
 }
