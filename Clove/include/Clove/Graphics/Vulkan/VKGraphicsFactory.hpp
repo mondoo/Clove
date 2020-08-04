@@ -5,7 +5,6 @@
 //TODO: Remove to cpp
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
-#include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKSampler.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
@@ -44,7 +43,7 @@ namespace clv::gfx::vk {
         std::unique_ptr<Shader> createShader(std::vector<std::byte> byteCode) override;
 
         std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor) override;
-        std::unique_ptr<VKDescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayoutDescriptor descriptor);
+        std::unique_ptr<DescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) override;
 
         std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
 

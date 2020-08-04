@@ -15,8 +15,8 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKDescriptorSetLayout::VKDescriptorSetLayout(VkDevice device, DescriptorSetLayoutDescriptor descriptor) 
-        : device(device){
+    VKDescriptorSetLayout::VKDescriptorSetLayout(VkDevice device, Descriptor descriptor)
+        : device(device) {
         std::vector<VkDescriptorSetLayoutBinding> layoutBindings(std::size(descriptor.bindings));
 
         for(size_t i = 0; i < std::size(layoutBindings); ++i) {
@@ -38,8 +38,12 @@ namespace clv::gfx::vk {
 
         if(vkCreateDescriptorSetLayout(device, &createInfo, nullptr, &layout) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create descriptor set");
-        } 
+        }
     }
+
+    VKDescriptorSetLayout::VKDescriptorSetLayout(VKDescriptorSetLayout&& other) noexcept = default;
+
+    VKDescriptorSetLayout& VKDescriptorSetLayout::operator=(VKDescriptorSetLayout&& other) noexcept = default;
 
     VKDescriptorSetLayout::~VKDescriptorSetLayout() {
         vkDestroyDescriptorSetLayout(device, layout, nullptr);

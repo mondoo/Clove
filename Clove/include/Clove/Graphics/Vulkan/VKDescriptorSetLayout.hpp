@@ -1,30 +1,11 @@
 #pragma once
 
-//TODO: Move
+#include "Clove/Graphics/DescriptorSetLayout.hpp"
+
 #include <vulkan/vulkan.h>
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
-
-namespace clv::gfx {
-    enum class DescriptorStage {
-        Vertex,
-        Pixel
-    };
-
-    struct DescriptorBindingInfo {
-        uint32_t binding = 0;
-        DescriptorType type;
-        size_t arraySize = 0; //If this descriptor represents an array it'll be the size of the array else 1
-        DescriptorStage stage;
-    };
-
-    struct DescriptorSetLayoutDescriptor {
-        std::vector<DescriptorBindingInfo> bindings;
-    };
-}
 
 namespace clv::gfx::vk {
-    //Describes all of the descriptors that the shaders will use
-    class VKDescriptorSetLayout {
+    class VKDescriptorSetLayout : public DescriptorSetLayout {
         //VARIABLES
     private:
         VkDevice device = VK_NULL_HANDLE;
@@ -33,8 +14,15 @@ namespace clv::gfx::vk {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
-        VKDescriptorSetLayout(VkDevice device, DescriptorSetLayoutDescriptor descriptor);
+        VKDescriptorSetLayout() = delete;
+        VKDescriptorSetLayout(VkDevice device, Descriptor descriptor);
+
+        VKDescriptorSetLayout(const VKDescriptorSetLayout& other) = delete;
+        VKDescriptorSetLayout(VKDescriptorSetLayout&& other) noexcept;
+
+        VKDescriptorSetLayout& operator=(const VKDescriptorSetLayout& other) = delete;
+        VKDescriptorSetLayout& operator=(VKDescriptorSetLayout&& other) noexcept;
+
         ~VKDescriptorSetLayout();
 
         VkDescriptorSetLayout getLayout() const;

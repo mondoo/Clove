@@ -7,6 +7,7 @@
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 
 //TODO: Abstract away
 #include "Clove/Platform/Windows/CloveWindows.hpp"
@@ -384,7 +385,7 @@ namespace clv::gfx::vk {
         return std::make_unique<VKRenderPass>(logicalDevice, std::move(descriptor));
     }
 
-    std::unique_ptr<VKDescriptorSetLayout> VKGraphicsFactory::createDescriptorSetLayout(DescriptorSetLayoutDescriptor descriptor) {
+    std::unique_ptr<DescriptorSetLayout> VKGraphicsFactory::createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) {
         return std::make_unique<VKDescriptorSetLayout>(logicalDevice, std::move(descriptor));
     }
 

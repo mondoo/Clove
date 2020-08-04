@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Clove/Graphics/DescriptorSetLayout.hpp"
 #include "Clove/Graphics/Fence.hpp"
 #include "Clove/Graphics/Framebuffer.hpp"
 #include "Clove/Graphics/GraphicsBuffer.hpp"
@@ -28,7 +29,7 @@ namespace clv::gfx {
         virtual std::unique_ptr<Shader> createShader(std::vector<std::byte> byteCode) = 0;
 
         virtual std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor) = 0;
-        //std::unique_ptr<VKDescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayoutDescriptor descriptor);
+        virtual std::unique_ptr<DescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) = 0;
 
         //std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
 

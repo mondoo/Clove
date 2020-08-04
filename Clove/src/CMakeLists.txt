@@ -63,10 +63,11 @@ set(
 
 set(
 	GraphicsFiles
-		${CLV_INCLUDE}/Graphics/Graphics.hpp		
-		${CLV_SOURCE}/Graphics/Graphics.cpp
+		${CLV_INCLUDE}/Graphics/DescriptorSetLayout.hpp
 		${CLV_INCLUDE}/Graphics/Fence.hpp
 		${CLV_INCLUDE}/Graphics/Framebuffer.hpp
+		${CLV_INCLUDE}/Graphics/Graphics.hpp		
+		${CLV_SOURCE}/Graphics/Graphics.cpp
 		${CLV_INCLUDE}/Graphics/GraphicsBuffer.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsFactory.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsImage.hpp
