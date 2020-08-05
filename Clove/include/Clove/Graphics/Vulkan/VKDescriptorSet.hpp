@@ -1,18 +1,11 @@
 #pragma once
 
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+#include "Clove/Graphics/DescriptorSet.hpp"
 
-//TODO: Remove
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
-    class VKBuffer;
-    class VKSampler;
-    class VKImageView;
-}
-
-namespace clv::gfx::vk {
-    class VKDescriptorSet{
+    class VKDescriptorSet : public DescriptorSet {
         //VARIABLES
     private:
         VkDevice device = VK_NULL_HANDLE;
@@ -21,11 +14,19 @@ namespace clv::gfx::vk {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
+        VKDescriptorSet() = delete;
         VKDescriptorSet(VkDevice device, VkDescriptorSet descriptorSet);
 
-        void writeFrom(const VKBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot);
-        void writeFrom(const VKSampler& sampler, const VKImageView& imageView, const ImageLayout layout, const uint32_t bindingSlot);
+        VKDescriptorSet(const VKDescriptorSet& other) = delete;
+        VKDescriptorSet(VKDescriptorSet&& other) noexcept;
+
+        VKDescriptorSet& operator=(const VKDescriptorSet& other) = delete;
+        VKDescriptorSet& operator=(VKDescriptorSet&& other) noexcept;
+
+        ~VKDescriptorSet();
+
+        void writeFrom(const Buffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot) override;
+        void writeFrom(const Sampler& sampler, const GraphicsImageView& imageView, const ImageLayout layout, const uint32_t bindingSlot) override;
 
         VkDescriptorSet getDescriptorSet() const;
     };

@@ -63,6 +63,7 @@ set(
 
 set(
 	GraphicsFiles
+		${CLV_INCLUDE}/Graphics/DescriptorSet.hpp
 		${CLV_INCLUDE}/Graphics/DescriptorSetLayout.hpp
 		${CLV_INCLUDE}/Graphics/Fence.hpp
 		${CLV_INCLUDE}/Graphics/Framebuffer.hpp
