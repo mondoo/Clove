@@ -2,6 +2,7 @@
 
 #include "Clove/GRaphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
@@ -398,7 +399,7 @@ namespace clv::gfx::vk {
         return std::make_unique<VKFramebuffer>(logicalDevice, std::move(descriptor));
     }
 
-    std::unique_ptr<VKDescriptorPool> VKGraphicsFactory::createDescriptorPool(DescriptorPoolDescriptor descriptor) {
+    std::unique_ptr<DescriptorPool> VKGraphicsFactory::createDescriptorPool(DescriptorPool::Descriptor descriptor) {
         return std::make_unique<VKDescriptorPool>(logicalDevice, std::move(descriptor));
     }
 

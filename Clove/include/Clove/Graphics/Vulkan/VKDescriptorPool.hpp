@@ -1,29 +1,11 @@
 #pragma once
 
-//TODO: Remove
+#include "Clove/Graphics/DescriptorPool.hpp"
+
 #include <vulkan/vulkan.h>
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
-
-namespace clv::gfx {
-    struct DescriptorInfo {
-        DescriptorType type;
-        uint32_t count;//number of this type to allocate
-    };
-
-    struct DescriptorPoolDescriptor {
-        std::vector<DescriptorInfo> poolTypes;
-        uint32_t maxSets;//the maximum amount of sets that can be allocated
-    };
-}
 
 namespace clv::gfx::vk {
-    class VKDescriptorSet;
-    class VKDescriptorSetLayout;
-}
-
-namespace clv::gfx::vk {
-    //Used to allocate descriptor sets
-    class VKDescriptorPool {
+    class VKDescriptorPool : public DescriptorPool {
         //VARIABLES
     private:
         VkDevice device = VK_NULL_HANDLE;
@@ -32,12 +14,18 @@ namespace clv::gfx::vk {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
-        VKDescriptorPool(VkDevice device, DescriptorPoolDescriptor descriptor);
+        VKDescriptorPool() = delete;
+        VKDescriptorPool(VkDevice device, Descriptor descriptor);
+
+        VKDescriptorPool(const VKDescriptorPool& other) = delete;
+        VKDescriptorPool(VKDescriptorPool&& other) noexcept;
+
+        VKDescriptorPool& operator=(const VKDescriptorPool& other) = delete;
+        VKDescriptorPool& operator=(VKDescriptorPool&& other) noexcept;
+
         ~VKDescriptorPool();
 
-        //Allocates a descriptor set for each layout provided
-        std::vector<std::shared_ptr<VKDescriptorSet>> allocateDescriptorSets(const std::vector<std::shared_ptr<VKDescriptorSetLayout>>& layouts);
-        void freeDescriptorSets(const std::vector<std::shared_ptr<VKDescriptorSet>>& descriptorSets);
+        std::vector<std::shared_ptr<DescriptorSet>> allocateDescriptorSets(const std::vector<std::shared_ptr<DescriptorSetLayout>>& layouts) override;
+        void freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets) override;
     };
 }

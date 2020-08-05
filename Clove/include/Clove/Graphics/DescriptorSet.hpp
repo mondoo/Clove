@@ -10,7 +10,7 @@ namespace clv::gfx {
 
 namespace clv::gfx {
     /**
-     * @brief Represents an actual binding in a shader. Used to write data from certain objects into it.
+     * @brief Used to write data from certain objects into a binding inside a Shader.
      */
     class DescriptorSet {
         //FUNCTIONS

@@ -5,7 +5,7 @@
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
-    VKDescriptorPool::VKDescriptorPool(VkDevice device, DescriptorPoolDescriptor descriptor)
+    VKDescriptorPool::VKDescriptorPool(VkDevice device, Descriptor descriptor)
         : device(device) {
         const size_t numDescriptorTypes = std::size(descriptor.poolTypes);
         std::vector<VkDescriptorPoolSize> poolSizes(numDescriptorTypes);
@@ -27,16 +27,20 @@ namespace clv::gfx::vk {
         }
     }
 
+    VKDescriptorPool::VKDescriptorPool(VKDescriptorPool&& other) noexcept = default;
+
+    VKDescriptorPool& VKDescriptorPool::operator=(VKDescriptorPool&& other) noexcept = default;
+
     VKDescriptorPool::~VKDescriptorPool() {
         vkDestroyDescriptorPool(device, pool, nullptr);
     }
 
-    std::vector<std::shared_ptr<VKDescriptorSet>> VKDescriptorPool::allocateDescriptorSets(const std::vector<std::shared_ptr<VKDescriptorSetLayout>>& layouts) {
+    std::vector<std::shared_ptr<DescriptorSet>> VKDescriptorPool::allocateDescriptorSets(const std::vector<std::shared_ptr<DescriptorSetLayout>>& layouts) {
         const size_t numSets = std::size(layouts);
 
         std::vector<VkDescriptorSetLayout> vulkanLayouts(numSets);
         for(size_t i = 0; i < numSets; ++i) {
-            vulkanLayouts[i] = layouts[i]->getLayout();
+            vulkanLayouts[i] = polyCast<VKDescriptorSetLayout>(layouts[i].get())->getLayout();
         }
 
         std::vector<VkDescriptorSet> vulkanSets(numSets);
@@ -53,7 +57,7 @@ namespace clv::gfx::vk {
             return {};
         }
 
-        std::vector<std::shared_ptr<VKDescriptorSet>> descriptorSets(numSets);
+        std::vector<std::shared_ptr<DescriptorSet>> descriptorSets(numSets);
         for(size_t i = 0; i < numSets; ++i) {
             descriptorSets[i] = std::make_shared<VKDescriptorSet>(device, vulkanSets[i]);
         }
@@ -61,12 +65,12 @@ namespace clv::gfx::vk {
         return descriptorSets;
     }
 
-    void VKDescriptorPool::freeDescriptorSets(const std::vector<std::shared_ptr<VKDescriptorSet>>& descriptorSets) {
+    void VKDescriptorPool::freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets) {
         const size_t numSets = std::size(descriptorSets);
 
         std::vector<VkDescriptorSet> vulkanSets(numSets);
         for(size_t i = 0; i < numSets; ++i) {
-            vulkanSets[i] = descriptorSets[i]->getDescriptorSet();
+            vulkanSets[i] = polyCast<VKDescriptorSet>(descriptorSets[i].get())->getDescriptorSet();
         }
 
         if(vkFreeDescriptorSets(device, pool, numSets, std::data(vulkanSets)) != VK_SUCCESS) {
