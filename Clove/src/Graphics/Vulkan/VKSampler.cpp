@@ -1,11 +1,11 @@
 #include "Clove/Graphics/Vulkan/VKSampler.hpp"
 
 namespace clv::gfx::vk {
-    static VkFilter getFilter(SamplerFilter garlicfilter) {
+    static VkFilter getFilter(Sampler::Filter garlicfilter) {
         switch(garlicfilter) {
-            case SamplerFilter::Nearest:
+            case Sampler::Filter::Nearest:
                 return VK_FILTER_NEAREST;
-            case SamplerFilter::Linear:
+            case Sampler::Filter::Linear:
                 return VK_FILTER_LINEAR;
             default:
                 GARLIC_ASSERT(false, "{0}: Unkown type", GARLIC_FUNCTION_NAME);
@@ -13,15 +13,15 @@ namespace clv::gfx::vk {
         }
     }
 
-    static VkSamplerAddressMode getAddressMode(SamplerAddressMode garlicMode) {
+    static VkSamplerAddressMode getAddressMode(Sampler::AddressMode garlicMode) {
         switch(garlicMode) {
-            case SamplerAddressMode::Repeat:
+            case Sampler::AddressMode::Repeat:
                 return VK_SAMPLER_ADDRESS_MODE_REPEAT;
-            case SamplerAddressMode::MirroredRepeat:
+            case Sampler::AddressMode::MirroredRepeat:
                 return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
-            case SamplerAddressMode::ClampToEdge:
+            case Sampler::AddressMode::ClampToEdge:
                 return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-            case SamplerAddressMode::ClampToBorder:
+            case Sampler::AddressMode::ClampToBorder:
                 return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
             default:
                 GARLIC_ASSERT(false, "{0}: Unkown type", GARLIC_FUNCTION_NAME);
@@ -29,7 +29,7 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKSampler::VKSampler(VkDevice device, SamplerDescriptor descriptor)
+    VKSampler::VKSampler(VkDevice device, Descriptor descriptor)
         : device(device) {
         VkSamplerCreateInfo createInfo{};
         createInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -56,10 +56,14 @@ namespace clv::gfx::vk {
         }
     }
 
+    VKSampler::VKSampler(VKSampler&& other) noexcept = default;
+
+    VKSampler& VKSampler::operator=(VKSampler&& other) noexcept = default;
+
     VKSampler::~VKSampler() {
         vkDestroySampler(device, sampler, nullptr);
     }
-    
+
     VkSampler VKSampler::getSampler() const {
         return sampler;
     }

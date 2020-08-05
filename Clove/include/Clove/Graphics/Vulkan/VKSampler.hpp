@@ -1,33 +1,11 @@
 #pragma once
 
-//TODO: move
+#include "Clove/Graphics/Sampler.hpp"
+
 #include <vulkan/vulkan.h>
 
-namespace clv::gfx {
-    enum class SamplerFilter{
-        Nearest,
-        Linear
-    };
-    enum class SamplerAddressMode{
-        Repeat,
-        MirroredRepeat,
-        ClampToEdge,
-        ClampToBorder
-    };
-
-    struct SamplerDescriptor {
-        SamplerFilter minFilter;
-        SamplerFilter magFilter;
-        SamplerAddressMode addressModeU;
-        SamplerAddressMode addressModeV;
-        SamplerAddressMode addressModeW;
-        bool enableAnisotropy = false;
-        float maxAnisotropy   = 1.0f;
-    };
-}
-
 namespace clv::gfx::vk {
-    class VKSampler {
+    class VKSampler : public Sampler {
         //VARIABLES
     private:
         VkDevice device;
@@ -35,8 +13,15 @@ namespace clv::gfx::vk {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
-        VKSampler(VkDevice device, SamplerDescriptor descriptor);
+        VKSampler() = delete;
+        VKSampler(VkDevice device, Descriptor descriptor);
+
+        VKSampler(const VKSampler& other) = delete;
+        VKSampler(VKSampler&& other) noexcept;
+
+        VKSampler& operator=(const VKSampler& other) = delete;
+        VKSampler& operator=(VKSampler&& other) noexcept;
+
         ~VKSampler();
 
         VkSampler getSampler() const;

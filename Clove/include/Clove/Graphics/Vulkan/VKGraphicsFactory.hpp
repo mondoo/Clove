@@ -6,7 +6,6 @@
 #include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
-#include "Clove/Graphics/Vulkan/VKSampler.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
@@ -56,7 +55,7 @@ namespace clv::gfx::vk {
         std::unique_ptr<GraphicsBuffer> createBuffer(GraphicsBuffer::Descriptor descriptor) override;
         std::unique_ptr<GraphicsImage> createImage(GraphicsImage::Descriptor descriptor) override;
 
-        std::unique_ptr<VKSampler> createSampler(SamplerDescriptor descriptor);
+        std::unique_ptr<Sampler> createSampler(Sampler::Descriptor descriptor) override;
 
         void waitForIdleDevice();
     };

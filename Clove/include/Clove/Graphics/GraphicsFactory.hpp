@@ -6,6 +6,7 @@
 #include "Clove/Graphics/GraphicsBuffer.hpp"
 #include "Clove/Graphics/GraphicsImage.hpp"
 #include "Clove/Graphics/RenderPass.hpp"
+#include "Clove/Graphics/Sampler.hpp"
 #include "Clove/Graphics/Semaphore.hpp"
 #include "Clove/Graphics/Shader.hpp"
 #include "Clove/Graphics/Swapchain.hpp"
@@ -28,7 +29,7 @@ namespace clv::gfx {
         virtual std::unique_ptr<Shader> createShader(std::string_view filePath)       = 0;
         virtual std::unique_ptr<Shader> createShader(std::vector<std::byte> byteCode) = 0;
 
-        virtual std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor) = 0;
+        virtual std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor)                            = 0;
         virtual std::unique_ptr<DescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) = 0;
 
         //std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
@@ -42,7 +43,7 @@ namespace clv::gfx {
         virtual std::unique_ptr<GraphicsBuffer> createBuffer(GraphicsBuffer::Descriptor descriptor) = 0;
         virtual std::unique_ptr<GraphicsImage> createImage(GraphicsImage::Descriptor descriptor)    = 0;
 
-        //std::unique_ptr<VKSampler> createSampler(SamplerDescriptor descriptor);
+        virtual std::unique_ptr<Sampler> createSampler(Sampler::Descriptor descriptor) = 0;
 
         //void waitForIdleDevice();
     };

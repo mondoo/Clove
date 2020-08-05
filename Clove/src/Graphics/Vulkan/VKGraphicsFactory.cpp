@@ -2,12 +2,13 @@
 
 #include "Clove/GRaphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
+#include "Clove/Graphics/Vulkan/VKSampler.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
-#include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 
 //TODO: Abstract away
 #include "Clove/Platform/Windows/CloveWindows.hpp"
@@ -417,7 +418,7 @@ namespace clv::gfx::vk {
         return std::make_unique<VKImage>(logicalDevice, physicalDevice, std::move(descriptor), queueFamilyIndices);
     }
 
-    std::unique_ptr<VKSampler> VKGraphicsFactory::createSampler(SamplerDescriptor descriptor) {
+    std::unique_ptr<Sampler> VKGraphicsFactory::createSampler(Sampler::Descriptor descriptor) {
         return std::make_unique<VKSampler>(logicalDevice, std::move(descriptor));
     }
 
