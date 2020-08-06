@@ -116,7 +116,7 @@ namespace clv::gfx::vk {
     }
 
     Result VKSwapchain::aquireNextImage(const Semaphore* semaphore, uint32_t& outImageIndex) {
-        VkSemaphore vkSemaphore = semaphore ? polyCast<VKSemaphore>(semaphore)->getSemaphore() : VK_NULL_HANDLE;
+        VkSemaphore vkSemaphore = semaphore ? polyCast<const VKSemaphore>(semaphore)->getSemaphore() : VK_NULL_HANDLE;
         const VkResult result   = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex);
 
         return convertResult(result);

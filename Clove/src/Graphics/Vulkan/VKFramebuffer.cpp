@@ -10,7 +10,7 @@ namespace clv::gfx::vk {
         std::vector<VkImageView> attachments;
         attachments.reserve(std::size(descriptor.attachments));
         for(auto& attachment : descriptor.attachments) {
-            const VKImageView* vkImageView = polyCast<VKImageView>(&attachment);
+            const VKImageView* vkImageView = polyCast<VKImageView>(attachment.get());
             attachments.push_back(vkImageView->getImageView());
         }
 
@@ -18,7 +18,7 @@ namespace clv::gfx::vk {
         framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebufferInfo.pNext           = nullptr;
         framebufferInfo.flags           = 0;
-        framebufferInfo.renderPass      = polyCast<VKRenderPass>(&descriptor.renderPass)->getRenderPass();
+        framebufferInfo.renderPass      = polyCast<VKRenderPass>(descriptor.renderPass.get())->getRenderPass();
         framebufferInfo.attachmentCount = std::size(attachments);
         framebufferInfo.pAttachments    = std::data(attachments);
         framebufferInfo.width           = descriptor.width;
