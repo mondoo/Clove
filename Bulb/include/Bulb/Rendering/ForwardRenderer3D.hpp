@@ -3,6 +3,8 @@
 #include "Bulb/Rendering/ShaderBufferTypes.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
 
+#include "Bulb/Rendering/RenderingTypes.hpp"
+
 #include <Clove/Graphics/GraphicsTypes.hpp>
 
 //TEMP
@@ -47,10 +49,6 @@ namespace blb::rnd {
         virtual void end() = 0;
     };
 }
-
-#include "Bulb/Rendering/RenderingTypes.hpp"
-
-#include <Clove/Graphics/Vulkan/VKGraphicsFactory.hpp>
 
 namespace blb::rnd {
     class ForwardRenderer3D : public IRenderer3D {

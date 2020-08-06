@@ -1,7 +1,6 @@
 #pragma once
 
-//TODO: Remove
-#include <Clove/Graphics/Vulkan/VulkanTypes.hpp>
+#include <Clove/Graphics/GraphicsTypes.hpp>
 
 namespace blb::rnd {
     struct Vertex {
