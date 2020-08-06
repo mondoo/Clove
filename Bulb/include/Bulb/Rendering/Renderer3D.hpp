@@ -3,7 +3,7 @@
 #include "Bulb/Rendering/ShaderBufferTypes.hpp"
 
 #include <Clove/Graphics/GraphicsTypes.hpp>
-#include <Clove/Graphics/VertexLayout.hpp>
+//#include <Clove/Graphics/VertexLayout.hpp>
 
 namespace clv::gfx {
 	class GraphicsFactory;
@@ -104,7 +104,7 @@ namespace blb::rnd {
 		std::shared_ptr<clv::gfx::Buffer> lightIndexBuffer;
 		std::shared_ptr<clv::gfx::Buffer> shadowLightPosBuffer;
 
-		clv::gfx::VertexLayout uiVbLayout;
+		/*clv::gfx::VertexLayout uiVbLayout;*/
 
 		SceneData scene;
 

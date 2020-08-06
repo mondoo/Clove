@@ -48,7 +48,7 @@ namespace blb::ui {
 		const mth::mat4f model = translation * rotation * scale;
 		const mth::mat4f projection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
 
-		sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
+		//sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
 
 		renderer.submitWidget(sprite);
 	}

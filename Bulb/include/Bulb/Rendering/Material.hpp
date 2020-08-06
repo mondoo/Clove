@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
-#include "Clove/Graphics/Texture.hpp"
-#include "Clove/Graphics/Buffer.hpp"
+//#include "Clove/Graphics/Texture.hpp"
+//#include "Clove/Graphics/Buffer.hpp"
 
 namespace clv::gfx{
 	class GraphicsFactory;
@@ -12,7 +12,7 @@ namespace blb::rnd{
 	class MaterialInstance;
 
 	struct ShaderData {
-		std::shared_ptr<clv::gfx::Buffer> buffer;
+		//std::shared_ptr<clv::gfx::Buffer> buffer;
 		clv::gfx::ShaderStage shaderType;
 	};
 }
@@ -25,9 +25,9 @@ namespace blb::rnd{
 	private:
 		std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
-		std::shared_ptr<clv::gfx::Texture> albedoTexture;
-		std::shared_ptr<clv::gfx::Texture> specTexture;
-		std::unordered_map<clv::gfx::BufferBindingPoint, ShaderData> shaderData;
+		//std::shared_ptr<clv::gfx::Texture> albedoTexture;
+		//std::shared_ptr<clv::gfx::Texture> specTexture;
+		//std::unordered_map<clv::gfx::BufferBindingPoint, ShaderData> shaderData;
 
 		//FUNCTIONS
 	public:
@@ -43,15 +43,15 @@ namespace blb::rnd{
 
 		MaterialInstance createInstance();
 
-		template<typename DataType>
+		/*template<typename DataType>
 		void setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderStage shaderType);
-        void setData(clv::gfx::BufferBindingPoint bindingPoint, void* data, const size_t sizeBytes, clv::gfx::ShaderStage shaderType);
+        void setData(clv::gfx::BufferBindingPoint bindingPoint, void* data, const size_t sizeBytes, clv::gfx::ShaderStage shaderType);*/
 
-		void setAlbedoTexture(const std::string& path);
+		/*void setAlbedoTexture(const std::string& path);
 		void setAlbedoTexture(std::shared_ptr<clv::gfx::Texture> texture);
 
 		void setSpecularTexture(const std::string& path);
-		void setSpecularTexture(std::shared_ptr<clv::gfx::Texture> texture);
+		void setSpecularTexture(std::shared_ptr<clv::gfx::Texture> texture);*/
 	};
 }
 

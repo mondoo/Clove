@@ -5,12 +5,12 @@
 #include "Bulb/Rendering/Renderables/Sprite.hpp"
 #include "Bulb/Rendering/RenderingConstants.hpp"
 
-#include <Clove/Graphics/CommandBuffer.hpp>
+//#include <Clove/Graphics/CommandBuffer.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/PipelineObject.hpp>
-#include <Clove/Graphics/RenderTarget.hpp>
-#include <Clove/Graphics/Texture.hpp>
-#include <Clove/Graphics/Surface.hpp>
+//#include <Clove/Graphics/RenderTarget.hpp>
+//#include <Clove/Graphics/Texture.hpp>
+//#include <Clove/Graphics/Surface.hpp>
 #include <Clove/Platform/Window.hpp>
 
 using namespace clv;
@@ -221,9 +221,9 @@ namespace blb::rnd {
 		CLV_PROFILE_FUNCTION();
 
 		//Clear all render targets
-		for(auto& camera : scene.cameras) {
+		/*for(auto& camera : scene.cameras) {
 			camera.target->clear();
-		}
+		}*/
 
 		scene.meshes.clear();
         scene.animatedMeshes.clear();
@@ -272,146 +272,146 @@ namespace blb::rnd {
 	void Renderer3D::end() {
 		CLV_PROFILE_FUNCTION();
 
-		//Draw all meshes in the scene
-		meshCommandBuffer->setDepthEnabled(true);
-		meshCommandBuffer->bindTexture(directionalShadowMapTexture.get(), TBP_DirectionalShadow);
-		meshCommandBuffer->bindTexture(pointShadowMapTexture.get(), TBP_PointShadow);
+		////Draw all meshes in the scene
+		//meshCommandBuffer->setDepthEnabled(true);
+		//meshCommandBuffer->bindTexture(directionalShadowMapTexture.get(), TBP_DirectionalShadow);
+		//meshCommandBuffer->bindTexture(pointShadowMapTexture.get(), TBP_PointShadow);
 
-		meshCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
-		meshCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_LightData);
-		//TODO: Remove duplicated updateBufferData
-		pointShadowCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
-		pointShadowCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_LightData);
+		//meshCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
+		//meshCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_LightData);
+		////TODO: Remove duplicated updateBufferData
+		//pointShadowCommandBuffer->updateBufferData(*lightArrayBuffer, &scene.lightDataArray);
+		//pointShadowCommandBuffer->bindShaderResourceBuffer(*lightArrayBuffer, ShaderStage::Pixel, BBP_LightData);
 
-		auto numLights = LightCount{ scene.numDirectionalLights, scene.numPointLights };
-		meshCommandBuffer->updateBufferData(*lightNumBuffer, &numLights);
-		meshCommandBuffer->bindShaderResourceBuffer(*lightNumBuffer, ShaderStage::Vertex, BBP_CurrentLights);
-		meshCommandBuffer->bindShaderResourceBuffer(*lightNumBuffer, ShaderStage::Pixel, BBP_CurrentLights);
+		//auto numLights = LightCount{ scene.numDirectionalLights, scene.numPointLights };
+		//meshCommandBuffer->updateBufferData(*lightNumBuffer, &numLights);
+		//meshCommandBuffer->bindShaderResourceBuffer(*lightNumBuffer, ShaderStage::Vertex, BBP_CurrentLights);
+		//meshCommandBuffer->bindShaderResourceBuffer(*lightNumBuffer, ShaderStage::Pixel, BBP_CurrentLights);
 
-		meshCommandBuffer->updateBufferData(*directionalShadowTransformArrayBuffer, &scene.directionalShadowTransformArray);
-		meshCommandBuffer->bindShaderResourceBuffer(*directionalShadowTransformArrayBuffer, ShaderStage::Vertex, BBP_AllDirectionalTransform);
+		//meshCommandBuffer->updateBufferData(*directionalShadowTransformArrayBuffer, &scene.directionalShadowTransformArray);
+		//meshCommandBuffer->bindShaderResourceBuffer(*directionalShadowTransformArrayBuffer, ShaderStage::Vertex, BBP_AllDirectionalTransform);
 
-		for(auto& camera : scene.cameras) {
-			meshCommandBuffer->beginEncoding(camera.target);
+		//for(auto& camera : scene.cameras) {
+		//	meshCommandBuffer->beginEncoding(camera.target);
 
-			meshCommandBuffer->setViewport(camera.viewport);
+		//	meshCommandBuffer->setViewport(camera.viewport);
 
-			const CameraRenderData& camRenderData = camera.bufferData;
+		//	const CameraRenderData& camRenderData = camera.bufferData;
 
-			auto viewData = ViewData{ camRenderData.lookAt, camRenderData.projection };
-			meshCommandBuffer->updateBufferData(*viewBuffer, &viewData);
-			meshCommandBuffer->bindShaderResourceBuffer(*viewBuffer, ShaderStage::Vertex, BBP_CameraMatrices);
+		//	auto viewData = ViewData{ camRenderData.lookAt, camRenderData.projection };
+		//	meshCommandBuffer->updateBufferData(*viewBuffer, &viewData);
+		//	meshCommandBuffer->bindShaderResourceBuffer(*viewBuffer, ShaderStage::Vertex, BBP_CameraMatrices);
 
-			auto viewPos = ViewPos{ camRenderData.position };
-			meshCommandBuffer->updateBufferData(*viewPosition, &viewPos);
-			meshCommandBuffer->bindShaderResourceBuffer(*viewPosition, ShaderStage::Pixel, BBP_ViewData);
+		//	auto viewPos = ViewPos{ camRenderData.position };
+		//	meshCommandBuffer->updateBufferData(*viewPosition, &viewPos);
+		//	meshCommandBuffer->bindShaderResourceBuffer(*viewPosition, ShaderStage::Pixel, BBP_ViewData);
 
-			meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
-            for(auto& mesh : scene.meshes) { //TODO: We should submit the models instead of the underlying meshes
-                mesh->draw(*meshCommandBuffer, meshPipelineObject->getVertexLayout());
-            }
+		//	meshCommandBuffer->bindPipelineObject(*meshPipelineObject);
+  //          for(auto& mesh : scene.meshes) { //TODO: We should submit the models instead of the underlying meshes
+  //              mesh->draw(*meshCommandBuffer, meshPipelineObject->getVertexLayout());
+  //          }
 
-			//TODO: All meshes should be drawn like this with a identity matrix palette
-            meshCommandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
-            for(auto& mesh : scene.animatedMeshes) {
-                mesh->draw(*meshCommandBuffer, animatedMeshPipelineObject->getVertexLayout());
-            }
-        }
+		//	//TODO: All meshes should be drawn like this with a identity matrix palette
+  //          meshCommandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
+  //          for(auto& mesh : scene.animatedMeshes) {
+  //              mesh->draw(*meshCommandBuffer, animatedMeshPipelineObject->getVertexLayout());
+  //          }
+  //      }
 
-		meshCommandBuffer->bindTexture(nullptr, TBP_DirectionalShadow);
-		meshCommandBuffer->bindTexture(nullptr, TBP_PointShadow);
+		//meshCommandBuffer->bindTexture(nullptr, TBP_DirectionalShadow);
+		//meshCommandBuffer->bindTexture(nullptr, TBP_PointShadow);
 
-		//Generate the directional shadow map for each mesh in the scene
-		directionalShadowCommandBuffer->beginEncoding(directionalShadowRenderTarget);
-		directionalShadowCommandBuffer->clearTarget();
-		directionalShadowCommandBuffer->setDepthEnabled(true);
-		directionalShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
+		////Generate the directional shadow map for each mesh in the scene
+		//directionalShadowCommandBuffer->beginEncoding(directionalShadowRenderTarget);
+		//directionalShadowCommandBuffer->clearTarget();
+		//directionalShadowCommandBuffer->setDepthEnabled(true);
+		//directionalShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
-		for(int32_t i = 0; i < scene.numDirectionalLights; ++i) {
-			directionalShadowCommandBuffer->updateBufferData(*directionalShadowTransformBuffer, &scene.directionalShadowTransformArray[i]);
-			directionalShadowCommandBuffer->bindShaderResourceBuffer(*directionalShadowTransformBuffer, ShaderStage::Vertex, BBP_DirectionalShadowTransform);
+		//for(int32_t i = 0; i < scene.numDirectionalLights; ++i) {
+		//	directionalShadowCommandBuffer->updateBufferData(*directionalShadowTransformBuffer, &scene.directionalShadowTransformArray[i]);
+		//	directionalShadowCommandBuffer->bindShaderResourceBuffer(*directionalShadowTransformBuffer, ShaderStage::Vertex, BBP_DirectionalShadowTransform);
 
-			auto lightIndex = NumberAlignment{ i };
-			directionalShadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
-			directionalShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
+		//	auto lightIndex = NumberAlignment{ i };
+		//	directionalShadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
+		//	directionalShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
 
-			directionalShadowCommandBuffer->bindPipelineObject(*directionalShadowPipelineObject);
-            for(auto& mesh : scene.meshes) {
-                mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
-            }
+		//	directionalShadowCommandBuffer->bindPipelineObject(*directionalShadowPipelineObject);
+  //          for(auto& mesh : scene.meshes) {
+  //              mesh->draw(*directionalShadowCommandBuffer, directionalShadowPipelineObject->getVertexLayout());
+  //          }
 
-            directionalShadowCommandBuffer->bindPipelineObject(*animatedDirectionalShadowPipelineObject);
-            for(auto& mesh : scene.animatedMeshes) {
-                mesh->draw(*directionalShadowCommandBuffer, animatedDirectionalShadowPipelineObject->getVertexLayout());
-            }
-		}
+  //          directionalShadowCommandBuffer->bindPipelineObject(*animatedDirectionalShadowPipelineObject);
+  //          for(auto& mesh : scene.animatedMeshes) {
+  //              mesh->draw(*directionalShadowCommandBuffer, animatedDirectionalShadowPipelineObject->getVertexLayout());
+  //          }
+		//}
 
-		//Generate the point shadow map for each mesh in the scene
-		pointShadowCommandBuffer->beginEncoding(pointShadowRenderTarget);
-		pointShadowCommandBuffer->clearTarget();
-		pointShadowCommandBuffer->setDepthEnabled(true);
-		pointShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
+		////Generate the point shadow map for each mesh in the scene
+		//pointShadowCommandBuffer->beginEncoding(pointShadowRenderTarget);
+		//pointShadowCommandBuffer->clearTarget();
+		//pointShadowCommandBuffer->setDepthEnabled(true);
+		//pointShadowCommandBuffer->setViewport({ 0, 0, shadowMapSize, shadowMapSize });
 
-		for(int32_t i = 0; i < scene.numPointLights; ++i) {
-			pointShadowCommandBuffer->updateBufferData(*pointShadowTransformBuffer, &scene.pointShadowTransformArray[i]);
-			pointShadowCommandBuffer->bindShaderResourceBuffer(*pointShadowTransformBuffer, ShaderStage::Geometry, BBP_PointShadowTransform);
+		//for(int32_t i = 0; i < scene.numPointLights; ++i) {
+		//	pointShadowCommandBuffer->updateBufferData(*pointShadowTransformBuffer, &scene.pointShadowTransformArray[i]);
+		//	pointShadowCommandBuffer->bindShaderResourceBuffer(*pointShadowTransformBuffer, ShaderStage::Geometry, BBP_PointShadowTransform);
 
-			auto lightIndex = NumberAlignment{ i * 6 };
-			pointShadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
-			pointShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
-			pointShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Pixel, BBP_CurrentFaceIndex);
+		//	auto lightIndex = NumberAlignment{ i * 6 };
+		//	pointShadowCommandBuffer->updateBufferData(*lightIndexBuffer, &lightIndex);
+		//	pointShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Geometry, BBP_CurrentFaceIndex);
+		//	pointShadowCommandBuffer->bindShaderResourceBuffer(*lightIndexBuffer, ShaderStage::Pixel, BBP_CurrentFaceIndex);
 
-			pointShadowCommandBuffer->bindPipelineObject(*pointShadowPipelineObject);
-			for(auto& mesh : scene.meshes) {
-				mesh->draw(*pointShadowCommandBuffer, pointShadowPipelineObject->getVertexLayout());
-			}
+		//	pointShadowCommandBuffer->bindPipelineObject(*pointShadowPipelineObject);
+		//	for(auto& mesh : scene.meshes) {
+		//		mesh->draw(*pointShadowCommandBuffer, pointShadowPipelineObject->getVertexLayout());
+		//	}
 
-			pointShadowCommandBuffer->bindPipelineObject(*animatedPointShadowPipelineObject);
-            for(auto& mesh : scene.animatedMeshes) {
-                mesh->draw(*pointShadowCommandBuffer, animatedPointShadowPipelineObject->getVertexLayout());
-            }
-		}
+		//	pointShadowCommandBuffer->bindPipelineObject(*animatedPointShadowPipelineObject);
+  //          for(auto& mesh : scene.animatedMeshes) {
+  //              mesh->draw(*pointShadowCommandBuffer, animatedPointShadowPipelineObject->getVertexLayout());
+  //          }
+		//}
 
-		//Render each UI element
-		const uint32_t vbStride = static_cast<uint32_t>(uiVbLayout.size());
+		////Render each UI element
+		//const uint32_t vbStride = static_cast<uint32_t>(uiVbLayout.size());
 
-		//TODO: We don't want the UI on every render target
-		for(auto& camera : scene.cameras) {
-			uiCommandBuffer->beginEncoding(camera.target);
+		////TODO: We don't want the UI on every render target
+		//for(auto& camera : scene.cameras) {
+		//	uiCommandBuffer->beginEncoding(camera.target);
 
-			uiCommandBuffer->setViewport(camera.viewport);
-			uiCommandBuffer->setDepthEnabled(false);
+		//	uiCommandBuffer->setViewport(camera.viewport);
+		//	uiCommandBuffer->setDepthEnabled(false);
 
-			uiCommandBuffer->bindPipelineObject(*widgetPipelineObject);
+		//	uiCommandBuffer->bindPipelineObject(*widgetPipelineObject);
 
-			//Widgets
-			for(auto& sprite : scene.widgetsToRender) {
-				sprite->getMaterialInstance().bind(*uiCommandBuffer);
+		//	//Widgets
+		//	for(auto& sprite : scene.widgetsToRender) {
+		//		sprite->getMaterialInstance().bind(*uiCommandBuffer);
 
-				uiCommandBuffer->bindVertexBuffer(*widgetVB, vbStride);
-				uiCommandBuffer->bindIndexBuffer(*uiIndexBuffer);
+		//		uiCommandBuffer->bindVertexBuffer(*widgetVB, vbStride);
+		//		uiCommandBuffer->bindIndexBuffer(*uiIndexBuffer);
 
-				uiCommandBuffer->drawIndexed(6u); //TODO: Remove hard coded value
-			}
+		//		uiCommandBuffer->drawIndexed(6u); //TODO: Remove hard coded value
+		//	}
 
-			uiCommandBuffer->bindPipelineObject(*textPipelineObject);
+		//	uiCommandBuffer->bindPipelineObject(*textPipelineObject);
 
-			//Text
-			for(auto& text : scene.textToRender) {
-				text->getMaterialInstance().bind(*uiCommandBuffer);
+		//	//Text
+		//	for(auto& text : scene.textToRender) {
+		//		text->getMaterialInstance().bind(*uiCommandBuffer);
 
-				uiCommandBuffer->bindVertexBuffer(*textVB, vbStride);
-				uiCommandBuffer->bindIndexBuffer(*uiIndexBuffer);
+		//		uiCommandBuffer->bindVertexBuffer(*textVB, vbStride);
+		//		uiCommandBuffer->bindIndexBuffer(*uiIndexBuffer);
 
-				uiCommandBuffer->drawIndexed(6u); //TODO: Remove hard coded value
-			}
-		}
-		
+		//		uiCommandBuffer->drawIndexed(6u); //TODO: Remove hard coded value
+		//	}
+		//}
+		//
 
-		//End encoding in order items need to be generated
-		directionalShadowCommandBuffer->endEncoding();
-		pointShadowCommandBuffer->endEncoding();
-		meshCommandBuffer->endEncoding();
-		uiCommandBuffer->endEncoding();
+		////End encoding in order items need to be generated
+		//directionalShadowCommandBuffer->endEncoding();
+		//pointShadowCommandBuffer->endEncoding();
+		//meshCommandBuffer->endEncoding();
+		//uiCommandBuffer->endEncoding();
 	}
 }

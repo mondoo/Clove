@@ -10,13 +10,6 @@
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 #include "Bulb/Rendering/Renderer3D.hpp"
 
-#include <Clove/Graphics/CommandBuffer.hpp>
-#include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Graphics/PipelineObject.hpp>
-#include <Clove/Graphics/RenderTarget.hpp>
-#include <Clove/Graphics/Texture.hpp>
-#include <Clove/Platform/Window.hpp>
-
 using namespace clv;
 using namespace clv::gfx;
 using namespace blb::rnd;
@@ -58,7 +51,7 @@ namespace blb::ecs {
 			const mth::mat4f modelTransform = transform->getTransformationMatrix(TransformSpace::World);
 
 			for(auto& mesh : staticModel->model.getMeshes()) {
-				mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
+				//mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
 
 				renderer->submitStaticMesh(mesh);
 			}
@@ -69,8 +62,8 @@ namespace blb::ecs {
             auto matrixPalet                = animatedModel->model.update(deltaTime);
 
             for(auto& mesh : animatedModel->model.getMeshes()) {
-                mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
-                mesh->getMaterialInstance().setData(clv::gfx::BBP_SkeletalData, matrixPalet.data(), sizeof(clv::mth::mat4f) * blb::rnd::MAX_JOINTS, clv::gfx::ShaderStage::Vertex);
+                //mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
+                //mesh->getMaterialInstance().setData(clv::gfx::BBP_SkeletalData, matrixPalet.data(), sizeof(clv::mth::mat4f) * blb::rnd::MAX_JOINTS, clv::gfx::ShaderStage::Vertex);
 
                 renderer->submitAnimatedMesh(mesh);
             }

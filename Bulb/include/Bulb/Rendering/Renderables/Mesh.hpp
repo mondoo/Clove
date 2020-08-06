@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
-#include "Clove/Graphics/VertexLayout.hpp"
+//#include "Clove/Graphics/VertexLayout.hpp"
 #include "Bulb/Rendering/MaterialInstance.hpp"
 
 namespace clv::gfx {
@@ -15,11 +15,11 @@ namespace blb::rnd {
 	class Mesh {
 		//VARIABLES
 	private:
-		std::unordered_map<clv::gfx::VertexLayout, std::shared_ptr<clv::gfx::Buffer>, clv::gfx::VertexLayoutHasher> vertexBufferMap;
+		//std::unordered_map<clv::gfx::VertexLayout, std::shared_ptr<clv::gfx::Buffer>, clv::gfx::VertexLayoutHasher> vertexBufferMap;
 		std::shared_ptr<clv::gfx::Buffer> indexBuffer;
 		MaterialInstance materialInstance;
 
-		clv::gfx::VertexBufferData loadedBufferData;
+		//clv::gfx::VertexBufferData loadedBufferData;
 		std::vector<uint32_t> indices;
 
 		//FUNCTIONS

@@ -1,14 +1,14 @@
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 
-#include "Clove/Graphics/Buffer.hpp"
+//#include "Clove/Graphics/Buffer.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
-#include "Clove/Graphics/CommandBuffer.hpp"
+//#include "Clove/Graphics/CommandBuffer.hpp"
 
 using namespace clv;
 using namespace clv::gfx;
 
 namespace blb::rnd{
-	static VertexBufferData transferVertexBufferData(VertexBufferData& source, const VertexLayout& newLayout){
+	/*static VertexBufferData transferVertexBufferData(VertexBufferData& source, const VertexLayout& newLayout){
 		const size_t vertexCount = source.size();
 		gfx::VertexBufferData vertexArray{ newLayout };
 		vertexArray.resize(vertexCount);
@@ -47,9 +47,9 @@ namespace blb::rnd{
 		}
 
 		return vertexArray;
-	}
+	}*/
 
-	static std::shared_ptr<clv::gfx::Buffer> createVertexBuffer(const VertexBufferData& vertexArray, GraphicsFactory& graphicsFactory) {
+	/*static std::shared_ptr<clv::gfx::Buffer> createVertexBuffer(const VertexBufferData& vertexArray, GraphicsFactory& graphicsFactory) {
 		BufferDescriptor vbdesc{};
 		vbdesc.elementSize	= vertexArray.getLayout().size();
 		vbdesc.bufferSize	= vertexArray.sizeBytes();
@@ -58,9 +58,9 @@ namespace blb::rnd{
 		auto vertexBuffer	= graphicsFactory.createBuffer(vbdesc, vertexArray.data());
 
 		return vertexBuffer;
-	}
+	}*/
 
-	static std::shared_ptr<clv::gfx::Buffer> createIndexBuffer(const std::vector<uint32_t>& indices, GraphicsFactory& graphicsFactory) {
+	/*static std::shared_ptr<clv::gfx::Buffer> createIndexBuffer(const std::vector<uint32_t>& indices, GraphicsFactory& graphicsFactory) {
 		const std::size_t indexSize = sizeof(uint32_t);
 
 		BufferDescriptor ibdesc{};
@@ -71,30 +71,30 @@ namespace blb::rnd{
 		auto indexBuffer	= graphicsFactory.createBuffer(ibdesc, indices.data());
 
 		return indexBuffer;
-	}
+	}*/
 
 	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32_t>& indices, MaterialInstance materialInstance)
 		: materialInstance(std::move(materialInstance))
-		, loadedBufferData(vbData)
+		//, loadedBufferData(vbData)
 		, indices(indices) {
 	}
 
 	Mesh::Mesh(const Mesh& other) = default;
 
 	Mesh::Mesh(Mesh&& other) noexcept
-		: materialInstance(std::move(other.materialInstance))
-		, loadedBufferData(std::move(other.loadedBufferData)) {
-		vertexBufferMap	= std::move(other.vertexBufferMap);
-		indexBuffer		= std::move(other.indexBuffer);
-		indices			= std::move(other.indices);
+		: materialInstance(std::move(other.materialInstance)){
+		//, loadedBufferData(std::move(other.loadedBufferData)) {
+		//vertexBufferMap	= std::move(other.vertexBufferMap);
+		//indexBuffer		= std::move(other.indexBuffer);
+		//indices			= std::move(other.indices);
 	}
 
 	Mesh& Mesh::operator=(const Mesh& other) = default;
 
 	Mesh& Mesh::operator=(Mesh&& other) noexcept {
 		materialInstance	= std::move(other.materialInstance);
-		loadedBufferData	= std::move(other.loadedBufferData);
-		vertexBufferMap		= std::move(other.vertexBufferMap);
+		//loadedBufferData	= std::move(other.loadedBufferData);
+		//vertexBufferMap		= std::move(other.vertexBufferMap);
 		indexBuffer			= std::move(other.indexBuffer);
 		indices				= std::move(other.indices);
 
@@ -116,7 +116,7 @@ namespace blb::rnd{
 	}
 
 	void Mesh::draw(CommandBuffer& commandBuffer, const VertexLayout& layout){
-		if(indexBuffer == nullptr) {
+		/*if(indexBuffer == nullptr) {
 			indexBuffer = createIndexBuffer(indices, *commandBuffer.getFactory());
 		}
 
@@ -129,6 +129,6 @@ namespace blb::rnd{
 
 		materialInstance.bind(commandBuffer);
 
-		commandBuffer.drawIndexed(getIndexCount());
+		commandBuffer.drawIndexed(getIndexCount());*/
 	}
 }

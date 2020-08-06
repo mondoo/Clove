@@ -2,8 +2,8 @@
 
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 
-#include <Clove/Graphics/Texture.hpp>
-#include <Clove/Graphics/VertexLayout.hpp>
+//#include <Clove/Graphics/Texture.hpp>
+//#include <Clove/Graphics/VertexLayout.hpp>
 #include <Clove/Platform/Window.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -112,130 +112,130 @@ namespace blb::ModelLoader {
         return -1;
     }
 
-	static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
-		std::shared_ptr<gfx::Texture> texture;
+	//static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
+	//	std::shared_ptr<gfx::Texture> texture;
 
-		//TODO: Support multiple textures of the same type
-		if(material->GetTextureCount(type) > 0) {
-			aiString path;
-			material->GetTexture(type, 0, &path);
+	//	//TODO: Support multiple textures of the same type
+	//	if(material->GetTextureCount(type) > 0) {
+	//		aiString path;
+	//		material->GetTexture(type, 0, &path);
 
-			gfx::TextureDescriptor descriptor{};
-			texture = graphicsFactory->createTexture(descriptor, path.C_Str());
-		}
+	//		gfx::TextureDescriptor descriptor{};
+	//		texture = graphicsFactory->createTexture(descriptor, path.C_Str());
+	//	}
 
-		return texture;
-	}
+	//	return texture;
+	//}
 
 	enum class MeshType{
 		Default,
 		Animated
 	};
-	static std::shared_ptr<rnd::Mesh> processMesh(aiMesh* mesh, const aiScene* scene, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory, const MeshType meshType) {
-		gfx::VertexLayout layout;
-		if(mesh->HasPositions()) {
-			layout.add(gfx::VertexElementType::position3D);
-		}
-		if(mesh->HasNormals()) {
-			layout.add(gfx::VertexElementType::normal);
-		}
-		//if(mesh->HasTextureCoords(0)) {
-		layout.add(gfx::VertexElementType::texture2D);
-		//}
-        if(meshType == MeshType::Animated) {
-            layout.add(gfx::VertexElementType::jointIds);
-            layout.add(gfx::VertexElementType::weights);
-		}
-		//Skipping colours for now
-		/*if(mesh->HasVertexColors(0)) {
-			layout.add(gfx::VertexElementType::colour3D);
-		}*/
+	//static std::shared_ptr<rnd::Mesh> processMesh(aiMesh* mesh, const aiScene* scene, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory, const MeshType meshType) {
+	//	gfx::VertexLayout layout;
+	//	if(mesh->HasPositions()) {
+	//		layout.add(gfx::VertexElementType::position3D);
+	//	}
+	//	if(mesh->HasNormals()) {
+	//		layout.add(gfx::VertexElementType::normal);
+	//	}
+	//	//if(mesh->HasTextureCoords(0)) {
+	//	layout.add(gfx::VertexElementType::texture2D);
+	//	//}
+ //       if(meshType == MeshType::Animated) {
+ //           layout.add(gfx::VertexElementType::jointIds);
+ //           layout.add(gfx::VertexElementType::weights);
+	//	}
+	//	//Skipping colours for now
+	//	/*if(mesh->HasVertexColors(0)) {
+	//		layout.add(gfx::VertexElementType::colour3D);
+	//	}*/
 
-		gfx::VertexBufferData vertexBufferData{ layout };
-		std::vector<uint32_t> indices;
-		std::shared_ptr<rnd::Material> meshMaterial = std::make_shared<rnd::Material>(graphicsFactory);
+	//	gfx::VertexBufferData vertexBufferData{ layout };
+	//	std::vector<uint32_t> indices;
+	//	std::shared_ptr<rnd::Material> meshMaterial = std::make_shared<rnd::Material>(graphicsFactory);
 
-		const size_t vertexCount = mesh->mNumVertices;
-		vertexBufferData.resize(vertexCount);
+	//	const size_t vertexCount = mesh->mNumVertices;
+	//	vertexBufferData.resize(vertexCount);
 
-		//Build the map of jointIds + weights for each vertex
-        std::unordered_map<size_t, std::vector<std::pair<rnd::JointIndexType, float>>> vertWeightPairs;
-		if(meshType == MeshType::Animated) {
-            for(rnd::JointIndexType i = 0; i < mesh->mNumBones; ++i) {
-                aiBone* bone = mesh->mBones[i];
-                for(size_t j = 0; j < bone->mNumWeights; ++j) {
-                    const aiVertexWeight& vertexWeight = bone->mWeights[j];
-                    vertWeightPairs[vertexWeight.mVertexId].emplace_back(i, vertexWeight.mWeight);
-                }
-            }
-        }
+	//	//Build the map of jointIds + weights for each vertex
+ //       std::unordered_map<size_t, std::vector<std::pair<rnd::JointIndexType, float>>> vertWeightPairs;
+	//	if(meshType == MeshType::Animated) {
+ //           for(rnd::JointIndexType i = 0; i < mesh->mNumBones; ++i) {
+ //               aiBone* bone = mesh->mBones[i];
+ //               for(size_t j = 0; j < bone->mNumWeights; ++j) {
+ //                   const aiVertexWeight& vertexWeight = bone->mWeights[j];
+ //                   vertWeightPairs[vertexWeight.mVertexId].emplace_back(i, vertexWeight.mWeight);
+ //               }
+ //           }
+ //       }
 
-		for(size_t i = 0; i < vertexCount; ++i) {
-			if(mesh->HasPositions()) {
-				vertexBufferData[i].getAttribute<gfx::VertexElementType::position3D>() = {
-					mesh->mVertices[i].x,
-					mesh->mVertices[i].y,
-					mesh->mVertices[i].z
-				};
-			}
-			if(mesh->HasNormals()) {
-				vertexBufferData[i].getAttribute<gfx::VertexElementType::normal>() = {
-					mesh->mNormals[i].x,
-					mesh->mNormals[i].y,
-					mesh->mNormals[i].z
-				};
-			}
-			if(mesh->HasTextureCoords(0)) {
-				vertexBufferData[i].getAttribute<gfx::VertexElementType::texture2D>() = {
-					mesh->mTextureCoords[0][i].x,
-					mesh->mTextureCoords[0][i].y
-				};
-			} else {
-				vertexBufferData[i].getAttribute<gfx::VertexElementType::texture2D>() = {
-					0.0f,
-					0.0f
-				};
-			}
-            if(meshType == MeshType::Animated) {
-                mth::vec4i& jointIds = vertexBufferData[i].getAttribute<gfx::VertexElementType::jointIds>();
-                mth::vec4f& weights  = vertexBufferData[i].getAttribute<gfx::VertexElementType::weights>();
-                const std::vector<std::pair<rnd::JointIndexType, float>>& weightPairs = vertWeightPairs[i];
+	//	for(size_t i = 0; i < vertexCount; ++i) {
+	//		if(mesh->HasPositions()) {
+	//			vertexBufferData[i].getAttribute<gfx::VertexElementType::position3D>() = {
+	//				mesh->mVertices[i].x,
+	//				mesh->mVertices[i].y,
+	//				mesh->mVertices[i].z
+	//			};
+	//		}
+	//		if(mesh->HasNormals()) {
+	//			vertexBufferData[i].getAttribute<gfx::VertexElementType::normal>() = {
+	//				mesh->mNormals[i].x,
+	//				mesh->mNormals[i].y,
+	//				mesh->mNormals[i].z
+	//			};
+	//		}
+	//		if(mesh->HasTextureCoords(0)) {
+	//			vertexBufferData[i].getAttribute<gfx::VertexElementType::texture2D>() = {
+	//				mesh->mTextureCoords[0][i].x,
+	//				mesh->mTextureCoords[0][i].y
+	//			};
+	//		} else {
+	//			vertexBufferData[i].getAttribute<gfx::VertexElementType::texture2D>() = {
+	//				0.0f,
+	//				0.0f
+	//			};
+	//		}
+ //           if(meshType == MeshType::Animated) {
+ //               mth::vec4i& jointIds = vertexBufferData[i].getAttribute<gfx::VertexElementType::jointIds>();
+ //               mth::vec4f& weights  = vertexBufferData[i].getAttribute<gfx::VertexElementType::weights>();
+ //               const std::vector<std::pair<rnd::JointIndexType, float>>& weightPairs = vertWeightPairs[i];
 
-                for(size_t j = 0; j < 4; ++j){
-                    if(j < weightPairs.size()) {
-                        jointIds[j] = weightPairs[j].first;
-                        weights[j]  = weightPairs[j].second;
-                    } else {
-                        jointIds[j] = 0;
-                        weights[j]  = 0.0f;
-					}
-				}
-			}
-		}
+ //               for(size_t j = 0; j < 4; ++j){
+ //                   if(j < weightPairs.size()) {
+ //                       jointIds[j] = weightPairs[j].first;
+ //                       weights[j]  = weightPairs[j].second;
+ //                   } else {
+ //                       jointIds[j] = 0;
+ //                       weights[j]  = 0.0f;
+	//				}
+	//			}
+	//		}
+	//	}
 
-		for(size_t i = 0; i < mesh->mNumFaces; ++i) {
-			aiFace face = mesh->mFaces[i];
-			for(size_t j = 0; j < face.mNumIndices; ++j) {
-				indices.emplace_back(face.mIndices[j]);
-			}
-		}
+	//	for(size_t i = 0; i < mesh->mNumFaces; ++i) {
+	//		aiFace face = mesh->mFaces[i];
+	//		for(size_t j = 0; j < face.mNumIndices; ++j) {
+	//			indices.emplace_back(face.mIndices[j]);
+	//		}
+	//	}
 
-		if(mesh->mMaterialIndex >= 0) {
-			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+	//	if(mesh->mMaterialIndex >= 0) {
+	//		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-			auto diffuseTexture = loadMaterialTexture(material, aiTextureType_DIFFUSE, graphicsFactory);
-			auto specularTexture = loadMaterialTexture(material, aiTextureType_SPECULAR, graphicsFactory);
+	//		auto diffuseTexture = loadMaterialTexture(material, aiTextureType_DIFFUSE, graphicsFactory);
+	//		auto specularTexture = loadMaterialTexture(material, aiTextureType_SPECULAR, graphicsFactory);
 
-			if(diffuseTexture) {
-				meshMaterial->setAlbedoTexture(std::move(diffuseTexture));
-			}
-			if(specularTexture) {
-				meshMaterial->setSpecularTexture(std::move(specularTexture));
-			}
-		}
+	//		if(diffuseTexture) {
+	//			meshMaterial->setAlbedoTexture(std::move(diffuseTexture));
+	//		}
+	//		if(specularTexture) {
+	//			meshMaterial->setSpecularTexture(std::move(specularTexture));
+	//		}
+	//	}
 
-		return std::make_shared<rnd::Mesh>(vertexBufferData, indices, meshMaterial->createInstance());
-	}
+	//	return std::make_shared<rnd::Mesh>(vertexBufferData, indices, meshMaterial->createInstance());
+	//}
 
 	rnd::StaticModel loadStaticModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
 		CLV_PROFILE_FUNCTION();
@@ -251,7 +251,7 @@ namespace blb::ModelLoader {
 
 		for(size_t i = 0; i < scene->mNumMeshes; ++i) {
             aiMesh* mesh = scene->mMeshes[i];
-            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Default));
+            //meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Default));
         }
 
 		return { meshes };
@@ -280,7 +280,7 @@ namespace blb::ModelLoader {
         bool skeletonSet = false;
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
             aiMesh* mesh = scene->mMeshes[i];
-            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Animated));
+           // meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Animated));
 
             if(mesh->mNumBones <= 0 || skeletonSet) {
                 continue;

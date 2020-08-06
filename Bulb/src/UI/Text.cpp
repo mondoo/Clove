@@ -74,7 +74,7 @@ namespace blb::ui {
 				model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
 				auto character = std::make_shared<rnd::Sprite>(glyph.character, graphicsFactory);
-				character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
+				//character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
 
 				renderer.submitText(character);
 			}

@@ -1,7 +1,7 @@
 #include "Bulb/Rendering/Renderables/Font.hpp"
 
 #include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Graphics/Texture.hpp>
+//#include <Clove/Graphics/Texture.hpp>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <Root/Definitions.hpp>
@@ -104,17 +104,17 @@ namespace blb::rnd {
 		}
 
 		const uint8_t textureArraySize = 1;
-		const TextureDescriptor descriptor{
+		/*const TextureDescriptor descriptor{
 			TextureStyle::Default,
 			TextureUsage::Font,
 			TextureFilter::Nearest,
 			glyph.size,
 			textureArraySize
-		};
+		};*/
 
-		auto texture = graphicsFactory->createTexture(descriptor, faceBuffer, 1);
+		//auto texture = graphicsFactory->createTexture(descriptor, faceBuffer, 1);
 
-		glyph.character = std::move(texture);
+		//glyph.character = std::move(texture);
 		return glyph;
 	}
 
