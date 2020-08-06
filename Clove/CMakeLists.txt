@@ -18,13 +18,11 @@ target_include_directories(
 		include
 
 	#Libraries
-	PUBLIC
-		Vulkan::Vulkan #Temp public
 	INTERFACE
         vendor/glm
 
 	PRIVATE
-		$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/vendor/wglext>
+		Vulkan::Vulkan #Temp public
 )
 
 #Libraries
@@ -45,13 +43,9 @@ target_link_libraries(
     #Cross platform
     PUBLIC
 		spdlog
-		$<$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>:Glad>
-
-		Vulkan::Vulkan #Temp public
 
 	PRIVATE 
 		stb
-		$<$<NOT:$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>>:Glad>
 		glm
 		glslang
 		glslang-default-resource-limits
@@ -64,11 +58,6 @@ target_link_libraries(
 
 	#Windows
 	PRIVATE
-		$<$<PLATFORM_ID:Windows>:dxerr>
-		$<$<PLATFORM_ID:Windows>:opengl32>
-		$<$<PLATFORM_ID:Windows>:d3d11>
-		$<$<PLATFORM_ID:Windows>:dxguid>
-		$<$<PLATFORM_ID:Windows>:d3dcompiler>
 		$<$<PLATFORM_ID:Windows>:Vulkan::Vulkan>
 
 	#Linux
