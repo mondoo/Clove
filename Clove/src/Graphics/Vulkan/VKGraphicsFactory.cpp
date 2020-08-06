@@ -6,6 +6,7 @@
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VKSampler.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
@@ -391,7 +392,7 @@ namespace clv::gfx::vk {
         return std::make_unique<VKDescriptorSetLayout>(logicalDevice, std::move(descriptor));
     }
 
-    std::unique_ptr<VKPipelineObject> VKGraphicsFactory::createPipelineObject(PiplineObjectDescriptor descriptor) {
+    std::unique_ptr<PipelineObject> VKGraphicsFactory::createPipelineObject(PipelineObject::Descriptor descriptor) {
         return std::make_unique<VKPipelineObject>(logicalDevice, std::move(descriptor));
     }
 

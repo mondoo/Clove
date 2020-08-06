@@ -6,6 +6,7 @@
 #include "Clove/Graphics/Framebuffer.hpp"
 #include "Clove/Graphics/GraphicsBuffer.hpp"
 #include "Clove/Graphics/GraphicsImage.hpp"
+#include "Clove/Graphics/PipelineObject.hpp"
 #include "Clove/Graphics/RenderPass.hpp"
 #include "Clove/Graphics/Sampler.hpp"
 #include "Clove/Graphics/Semaphore.hpp"
@@ -33,7 +34,7 @@ namespace clv::gfx {
         virtual std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor)                            = 0;
         virtual std::unique_ptr<DescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) = 0;
 
-        //std::unique_ptr<VKPipelineObject> createPipelineObject(PiplineObjectDescriptor descriptor);
+        virtual std::unique_ptr<PipelineObject> createPipelineObject(PipelineObject::Descriptor descriptor) = 0;
 
         virtual std::unique_ptr<Framebuffer> createFramebuffer(Framebuffer::Descriptor descriptor)          = 0;
         virtual std::unique_ptr<DescriptorPool> createDescriptorPool(DescriptorPool::Descriptor descriptor) = 0;

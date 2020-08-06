@@ -75,6 +75,7 @@ set(
 		${CLV_INCLUDE}/Graphics/GraphicsImage.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsImageView.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsTypes.hpp
+		${CLV_INCLUDE}/Graphics/PipelineObject.hpp
 		${CLV_INCLUDE}/Graphics/RenderPass.hpp
 		${CLV_INCLUDE}/Graphics/Sampler.hpp
 		${CLV_INCLUDE}/Graphics/Semaphore.hpp

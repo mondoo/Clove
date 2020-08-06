@@ -1,73 +1,32 @@
 #pragma once
 
-//TODO: Remove
-#include "Clove/Graphics/Vulkan/VKShader.hpp"
-#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
-#include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+#include "Clove/Graphics/PipelineObject.hpp"
+
 #include <vulkan/vulkan.h>
 
-namespace clv::gfx {
-	enum class ElementState {
-		Static,
-		Dynamic
-	};
-
-	struct ViewportDescriptor {
-		ElementState state{ ElementState::Static };
-		mth::vec2i position{ 0.0f, 0.0f };
-		mth::vec2ui size{ 0.0f, 0.0f };
-	};
-
-	struct ScissorDescriptor {
-		ElementState state{ ElementState::Static };
-		mth::vec2i position{ 0.0f, 0.0f };
-		mth::vec2ui size{ 0.0f, 0.0f };
-	};
-
-	struct RasteriserDescriptor {
-	};
-
-	//TODO: Remove vulkan references
-	struct PiplineObjectDescriptor {
-		std::shared_ptr<vk::VKShader> vertexShader;
-		std::shared_ptr<vk::VKShader> fragmentShader;
-
-		VertexInputBindingDescriptor vertexInput;
-        std::vector<VertexAttributeDescriptor> vertexAttributes;
-
-		ViewportDescriptor viewportDescriptor;
-		ScissorDescriptor scissorDescriptor;
-
-		RasteriserDescriptor rasteriserDescriptor;
-
-		std::shared_ptr<vk::VKRenderPass> renderPass;
-
-		std::vector<std::shared_ptr<clv::gfx::vk::VKDescriptorSetLayout>> descriptorSetLayouts;
-	};
-}
-
 namespace clv::gfx::vk {
-	class VKPipelineObject {
-		//VARIABLES
-	private:
-		VkDevice device = VK_NULL_HANDLE;
+    class VKPipelineObject : public PipelineObject {
+        //VARIABLES
+    private:
+        VkDevice device = VK_NULL_HANDLE;
 
-		VkPipeline pipeline				= VK_NULL_HANDLE;
-		VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
+        VkPipeline pipeline             = VK_NULL_HANDLE;
+        VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
 
-		//FUNCTIONS
-	public:
-		//TODO: Ctors
-		VKPipelineObject(VkDevice device, PiplineObjectDescriptor descriptor);
+        //FUNCTIONS
+    public:
+        VKPipelineObject() = delete;
+        VKPipelineObject(VkDevice device, Descriptor descriptor);
 
-		~VKPipelineObject();
+        VKPipelineObject(const VKPipelineObject& other) = delete;
+        VKPipelineObject(VKPipelineObject&& other) noexcept;
 
-		VkPipeline getPipeline() const{
-			return pipeline;
-		}
-		VkPipelineLayout getLayout() const{
-            return pipelineLayout;
-		}
-	};
+        VKPipelineObject& operator=(const VKPipelineObject& other) = delete;
+        VKPipelineObject& operator=(VKPipelineObject&& other) noexcept;
+
+        ~VKPipelineObject();
+
+        VkPipeline getPipeline() const;
+        VkPipelineLayout getLayout() const;
+    };
 }
