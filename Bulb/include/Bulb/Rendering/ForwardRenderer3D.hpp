@@ -108,7 +108,7 @@ namespace blb::rnd {
         size_t currentFrame                       = 0;
 
         //Using shared_ptrs of the actual types until API is abstracted
-        std::shared_ptr<clv::gfx::vk::VKGraphicsFactory> graphicsFactory;
+        std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
         std::shared_ptr<clv::gfx::GraphicsQueue> graphicsQueue;
         std::shared_ptr<clv::gfx::PresentQueue> presentQueue;
