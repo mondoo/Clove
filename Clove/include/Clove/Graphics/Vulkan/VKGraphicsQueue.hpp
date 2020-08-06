@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/GraphicsQueue.hpp"
 
+#include <vulkan/vulkan.h>
+
 namespace clv::gfx::vk {
     class VKGraphicsQueue : public GraphicsQueue {
         //VARIABLES
