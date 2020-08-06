@@ -22,9 +22,9 @@ namespace clv::gfx {
 
         struct Descriptor {
             size_t size{ 0 };
-            UsageMode usageFlags{ 0 };
-            SharingMode sharingMode{ 0 };
-            MemoryType memoryType{ 0 };
+            UsageMode usageFlags;
+            SharingMode sharingMode;
+            MemoryType memoryType;
         };
 
         //FUNCTIONS
