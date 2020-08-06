@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsFactory.hpp"
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
