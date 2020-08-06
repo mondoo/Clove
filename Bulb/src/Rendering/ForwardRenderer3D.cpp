@@ -4,14 +4,14 @@
 
 #include <Clove/Graphics/DescriptorSet.hpp>
 #include <Clove/Platform/Window.hpp>
+#include <Clove/Graphics/Graphics.hpp>
 
 namespace blb::rnd {
     ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API) {
         windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
         windowSize         = window.getSize();
 
-        //TODO: Add an abstraction for creating the factory
-        graphicsFactory = std::make_shared<clv::gfx::vk::VKGraphicsFactory>(window.getNativeWindow());
+        graphicsFactory = clv::gfx::createGraphicsFactory(clv::gfx::API::Vulkan, window.getNativeWindow());
 
         graphicsQueue = graphicsFactory->createGraphicsQueue({ clv::gfx::QueueFlags::None });
         presentQueue  = graphicsFactory->createPresentQueue();

@@ -15,11 +15,11 @@ namespace clv::gfx{
 		switch(api){
 			#if GARLIC_PLATFORM_WINDOWS
 			case API::Vulkan:
-                return std::make_unique<GraphicsFactory>(nativeWindow);
+                return std::make_unique<vk::VKGraphicsFactory>(nativeWindow);
 
 			#elif GARLIC_PLATFORM_LINUX
             case API::Vulkan:
-                return std::make_unique<GraphicsFactory>(nativeWindow);
+                return std::make_unique<vk::VKGraphicsFactory>(nativeWindow);
 				
 			#elif GARLIC_PLATFORM_MACOS
 			//TODO: Metal
