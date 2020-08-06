@@ -2,11 +2,6 @@
 
 #include "Clove/Graphics/GraphicsFactory.hpp"
 
-//TODO: Remove to cpp
-#include "Clove/Graphics/Vulkan/VKCommandQueue.hpp"
-#include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
-
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
@@ -30,9 +25,9 @@ namespace clv::gfx::vk {
         VKGraphicsFactory(void* nativeWindow);
         ~VKGraphicsFactory();
 
-        std::unique_ptr<VKGraphicsQueue> createGraphicsQueue(CommandQueueDescriptor descriptor);
-        std::unique_ptr<VKPresentQueue> createPresentQueue();
-        std::unique_ptr<VKTransferQueue> createTransferQueue(CommandQueueDescriptor descriptor);
+        std::unique_ptr<GraphicsQueue> createGraphicsQueue(CommandQueueDescriptor descriptor) override;
+        std::unique_ptr<PresentQueue> createPresentQueue() override;
+        std::unique_ptr<TransferQueue> createTransferQueue(CommandQueueDescriptor descriptor) override;
 
         std::unique_ptr<Swapchain> createSwapChain(Swapchain::Descriptor descriptor) override;
 

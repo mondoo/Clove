@@ -1,7 +1,27 @@
 #include "Clove/Graphics/Vulkan/VKTransferQueue.hpp"
 
+#include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
+
 namespace clv::gfx::vk {
-    std::unique_ptr<VKTransferCommandBuffer> VKTransferQueue::allocateCommandBuffer() {
+    VKTransferQueue::VKTransferQueue(VkDevice device, uint32_t queueFamilyIndex, CommandQueueDescriptor descriptor)
+        : device(device) {
+        vkGetDeviceQueue(device, queueFamilyIndex, 0, &queue);
+
+        VkCommandPoolCreateInfo poolInfo{};
+        poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolInfo.queueFamilyIndex = queueFamilyIndex;
+        poolInfo.flags            = descriptor.flags == QueueFlags::Transient ? VK_COMMAND_POOL_CREATE_TRANSIENT_BIT : 0;
+
+        if(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
+        }
+    }
+
+    VKTransferQueue::~VKTransferQueue() {
+        vkDestroyCommandPool(device, commandPool, nullptr);
+    }
+
+    std::unique_ptr<TransferCommandBuffer> VKTransferQueue::allocateCommandBuffer() {
         //TODO: Multiple command buffer allocation
 
         VkCommandBuffer commandBuffer;
@@ -20,8 +40,8 @@ namespace clv::gfx::vk {
         return std::make_unique<VKTransferCommandBuffer>(commandBuffer);
     }
 
-    void VKTransferQueue::freeCommandBuffer(VKTransferCommandBuffer& buffer) {
-        VkCommandBuffer buffers[] = { buffer.getCommandBuffer() };
+    void VKTransferQueue::freeCommandBuffer(TransferCommandBuffer& buffer) {
+        VkCommandBuffer buffers[] = { polyCast<VKTransferCommandBuffer>(&buffer)->getCommandBuffer() };
         vkFreeCommandBuffers(device, commandPool, 1, buffers);
     }
 
@@ -29,7 +49,7 @@ namespace clv::gfx::vk {
         const size_t commandBufferCount = std::size(submitInfo.commandBuffers);
         std::vector<VkCommandBuffer> commandBuffers(commandBufferCount);
         for(size_t i = 0; i < commandBufferCount; i++) {
-            commandBuffers[i] = submitInfo.commandBuffers[i]->getCommandBuffer();
+            commandBuffers[i] = polyCast<VKTransferCommandBuffer>(submitInfo.commandBuffers[i].get())->getCommandBuffer();
         }
 
         VkSubmitInfo vkSubmitInfo{};

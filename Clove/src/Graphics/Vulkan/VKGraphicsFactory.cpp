@@ -6,11 +6,15 @@
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKGraphicsQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/VKPresentQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VKSampler.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
+#include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
+#include "Clove/Graphics/Vulkan/VKTransferQueue.hpp"
 
 //TODO: Abstract away
 #include "Clove/Platform/Windows/CloveWindows.hpp"
@@ -360,15 +364,15 @@ namespace clv::gfx::vk {
         vkDestroyInstance(instance, nullptr);
     }
 
-    std::unique_ptr<VKGraphicsQueue> VKGraphicsFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
+    std::unique_ptr<GraphicsQueue> VKGraphicsFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
         return std::make_unique<VKGraphicsQueue>(logicalDevice, *queueFamilyIndices.graphicsFamily, std::move(descriptor));
     }
 
-    std::unique_ptr<VKPresentQueue> VKGraphicsFactory::createPresentQueue() {
+    std::unique_ptr<PresentQueue> VKGraphicsFactory::createPresentQueue() {
         return std::make_unique<VKPresentQueue>(logicalDevice, *queueFamilyIndices.presentFamily);
     }
 
-    std::unique_ptr<VKTransferQueue> VKGraphicsFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
+    std::unique_ptr<TransferQueue> VKGraphicsFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
         return std::make_unique<VKTransferQueue>(logicalDevice, *queueFamilyIndices.transferFamily, std::move(descriptor));
     }
 

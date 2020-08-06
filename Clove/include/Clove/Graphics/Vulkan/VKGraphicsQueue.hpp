@@ -1,43 +1,31 @@
 #pragma once
 
-#include "Clove/Graphics/Vulkan/VKGraphicsCommandBuffer.hpp"
+#include "Clove/Graphics/GraphicsQueue.hpp"
 
-#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
-#include "Clove/Graphics/Vulkan/VKFence.hpp"
-
-namespace clv::gfx{
-    struct GraphicsSubmitInfo {
-        //Each element in the semaphore maps to an element in the waitStages
-        std::vector<std::shared_ptr<vk::VKSemaphore>> waitSemaphores;
-        std::vector<WaitStage> waitStages;
-
-        std::vector<std::shared_ptr<vk::VKGraphicsCommandBuffer>> commandBuffers;
-
-        std::vector<std::shared_ptr<vk::VKSemaphore>> signalSemaphores;
-    };
-}
-
-namespace clv::gfx::vk{
-    //Creates buffers for encoding graphics commands
-    class VKGraphicsQueue {
+namespace clv::gfx::vk {
+    class VKGraphicsQueue : public GraphicsQueue {
         //VARIABLES
     private:
-        //uint32_t queueFamilyIndex = 0;
         VkDevice device           = VK_NULL_HANDLE;
         VkQueue queue             = VK_NULL_HANDLE;
         VkCommandPool commandPool = VK_NULL_HANDLE;
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
         VKGraphicsQueue() = delete;
         VKGraphicsQueue(VkDevice device, uint32_t queueFamilyIndex, CommandQueueDescriptor descriptor);
 
+        VKGraphicsQueue(const VKGraphicsQueue& other) = delete;
+        VKGraphicsQueue(VKGraphicsQueue&& other) noexcept;
+
+        VKGraphicsQueue& operator=(const VKGraphicsQueue& other) = delete;
+        VKGraphicsQueue& operator=(VKGraphicsQueue&& other) noexcept;
+
         ~VKGraphicsQueue();
 
-        std::unique_ptr<VKGraphicsCommandBuffer> allocateCommandBuffer();
-        void freeCommandBuffer(VKGraphicsCommandBuffer& buffer);
+        std::unique_ptr<GraphicsCommandBuffer> allocateCommandBuffer() override;
+        void freeCommandBuffer(GraphicsCommandBuffer& buffer) override;
 
-        void submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<VKFence>& fence);
+        void submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<Fence>& fence) override;
     };
 }

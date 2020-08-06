@@ -6,12 +6,15 @@
 #include "Clove/Graphics/Framebuffer.hpp"
 #include "Clove/Graphics/GraphicsBuffer.hpp"
 #include "Clove/Graphics/GraphicsImage.hpp"
+#include "Clove/Graphics/GraphicsQueue.hpp"
 #include "Clove/Graphics/PipelineObject.hpp"
+#include "Clove/Graphics/PresentQueue.hpp"
 #include "Clove/Graphics/RenderPass.hpp"
 #include "Clove/Graphics/Sampler.hpp"
 #include "Clove/Graphics/Semaphore.hpp"
 #include "Clove/Graphics/Shader.hpp"
 #include "Clove/Graphics/Swapchain.hpp"
+#include "Clove/Graphics/TransferQueue.hpp"
 
 namespace clv::gfx {
     /**
@@ -22,9 +25,9 @@ namespace clv::gfx {
     public:
         virtual ~GraphicsFactory() = default;
 
-        //std::unique_ptr<VKGraphicsQueue> createGraphicsQueue(CommandQueueDescriptor descriptor);
-        //std::unique_ptr<VKPresentQueue> createPresentQueue();
-        //std::unique_ptr<VKTransferQueue> createTransferQueue(CommandQueueDescriptor descriptor);
+        virtual std::unique_ptr<GraphicsQueue> createGraphicsQueue(CommandQueueDescriptor descriptor) = 0;
+        virtual std::unique_ptr<PresentQueue> createPresentQueue()                                    = 0;
+        virtual std::unique_ptr<TransferQueue> createTransferQueue(CommandQueueDescriptor descriptor) = 0;
 
         virtual std::unique_ptr<Swapchain> createSwapChain(Swapchain::Descriptor descriptor) = 0;
 

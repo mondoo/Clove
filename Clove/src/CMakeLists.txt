@@ -75,8 +75,10 @@ set(
 		${CLV_INCLUDE}/Graphics/GraphicsFactory.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsImage.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsImageView.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsQueue.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsTypes.hpp
 		${CLV_INCLUDE}/Graphics/PipelineObject.hpp
+		${CLV_INCLUDE}/Graphics/PresentQueue.hpp
 		${CLV_INCLUDE}/Graphics/RenderPass.hpp
 		${CLV_INCLUDE}/Graphics/Sampler.hpp
 		${CLV_INCLUDE}/Graphics/Semaphore.hpp
@@ -85,6 +87,7 @@ set(
 		${CLV_SOURCE}/Graphics/ShaderTranspiler.cpp
 		${CLV_INCLUDE}/Graphics/Swapchain.hpp
 		${CLV_INCLUDE}/Graphics/TransferCommandBuffer.hpp
+		${CLV_INCLUDE}/Graphics/TransferQueue.hpp
 )
 
 set(

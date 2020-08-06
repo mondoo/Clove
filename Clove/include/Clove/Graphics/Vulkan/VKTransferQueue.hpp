@@ -1,19 +1,14 @@
 #pragma once
 
-#include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/TransferQueue.hpp"
 
-namespace clv::gfx {
-    struct TransferSubmitInfo {
-        std::vector<std::shared_ptr<vk::VKTransferCommandBuffer>> commandBuffers;
-    };
-}
+#include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
-    //Creates buffers for encoding transfer commands
-    class VKTransferQueue {
+    class VKTransferQueue : public TransferQueue {
         //VARIABLES
     private:
-        //uint32_t queueFamilyIndex = 0;
         VkDevice device           = VK_NULL_HANDLE;
         VkQueue queue             = VK_NULL_HANDLE;
         VkCommandPool commandPool = VK_NULL_HANDLE;
@@ -26,9 +21,9 @@ namespace clv::gfx::vk {
 
         ~VKTransferQueue();
 
-        std::unique_ptr<VKTransferCommandBuffer> allocateCommandBuffer();
-        void freeCommandBuffer(VKTransferCommandBuffer& buffer);
+        std::unique_ptr<TransferCommandBuffer> allocateCommandBuffer() override;
+        void freeCommandBuffer(TransferCommandBuffer& buffer) override;
 
-        void submit(const TransferSubmitInfo& submitInfo);
+        void submit(const TransferSubmitInfo& submitInfo) override;
     };
 }

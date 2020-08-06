@@ -1,5 +1,9 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsQueue.hpp"
 
+#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
+#include "Clove/Graphics/Vulkan/VKFence.hpp"
+#include "Clove/Graphics/Vulkan/VKGraphicsCommandBuffer.hpp"
+
 namespace clv::gfx::vk {
     static VkPipelineStageFlagBits getPipelineStageFlag(WaitStage stage) {
         switch(stage) {
@@ -22,11 +26,15 @@ namespace clv::gfx::vk {
         }
     }
 
+    VKGraphicsQueue::VKGraphicsQueue(VKGraphicsQueue&& other) noexcept = default;
+
+    VKGraphicsQueue& VKGraphicsQueue::operator=(VKGraphicsQueue&& other) noexcept = default;
+
     VKGraphicsQueue::~VKGraphicsQueue() {
         vkDestroyCommandPool(device, commandPool, nullptr);
     }
 
-    std::unique_ptr<VKGraphicsCommandBuffer> VKGraphicsQueue::allocateCommandBuffer() {
+    std::unique_ptr<GraphicsCommandBuffer> VKGraphicsQueue::allocateCommandBuffer() {
         //TODO: Multiple command buffer allocation
 
         VkCommandBuffer commandBuffer;
@@ -45,35 +53,35 @@ namespace clv::gfx::vk {
         return std::make_unique<VKGraphicsCommandBuffer>(commandBuffer);
     }
 
-    void VKGraphicsQueue::freeCommandBuffer(VKGraphicsCommandBuffer& buffer) {
-        VkCommandBuffer buffers[] = { buffer.getCommandBuffer() };
+    void VKGraphicsQueue::freeCommandBuffer(GraphicsCommandBuffer& buffer) {
+        VkCommandBuffer buffers[] = { polyCast<VKGraphicsCommandBuffer>(&buffer)->getCommandBuffer() };
         vkFreeCommandBuffers(device, commandPool, 1, buffers);
     }
 
-    void VKGraphicsQueue::submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<VKFence>& fence) {
+    void VKGraphicsQueue::submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<Fence>& fence) {
         //Wait semaphores / stages
         const size_t waitSemaphoreCount = std::size(submitInfo.waitSemaphores);
         std::vector<VkSemaphore> waitSemaphores(waitSemaphoreCount);
         for(size_t i = 0; i < waitSemaphoreCount; ++i) {
-            waitSemaphores[i] = submitInfo.waitSemaphores[i]->getSemaphore();
+            waitSemaphores[i] = polyCast<VKSemaphore>(submitInfo.waitSemaphores[i].get())->getSemaphore();
         }
         std::vector<VkPipelineStageFlags> waitStages(waitSemaphoreCount);
-        for(size_t i = 0; i < waitSemaphoreCount; i++) {
+        for(size_t i = 0; i < waitSemaphoreCount; ++i) {
             waitStages[i] = getPipelineStageFlag(submitInfo.waitStages[i]);
         }
 
         //Command buffers
         const size_t commandBufferCount = std::size(submitInfo.commandBuffers);
         std::vector<VkCommandBuffer> commandBuffers(commandBufferCount);
-        for(size_t i = 0; i < commandBufferCount; i++) {
-            commandBuffers[i] = submitInfo.commandBuffers[i]->getCommandBuffer();
+        for(size_t i = 0; i < commandBufferCount; ++i) {
+            commandBuffers[i] = polyCast<VKGraphicsCommandBuffer>(submitInfo.commandBuffers[i].get())->getCommandBuffer();
         }
 
         //Signal semaphores
         const size_t signalSemaphoreCount = std::size(submitInfo.signalSemaphores);
         std::vector<VkSemaphore> signalSemaphores(signalSemaphoreCount);
-        for(size_t i = 0; i < signalSemaphoreCount; i++) {
-            signalSemaphores[i] = submitInfo.signalSemaphores[i]->getSemaphore();
+        for(size_t i = 0; i < signalSemaphoreCount; ++i) {
+            signalSemaphores[i] = polyCast<VKSemaphore>(submitInfo.signalSemaphores[i].get())->getSemaphore();
         }
 
         VkSubmitInfo vkSubmitInfo{};
@@ -86,7 +94,7 @@ namespace clv::gfx::vk {
         vkSubmitInfo.signalSemaphoreCount = signalSemaphoreCount;
         vkSubmitInfo.pSignalSemaphores    = std::data(signalSemaphores);
 
-        if(vkQueueSubmit(queue, 1, &vkSubmitInfo, fence ? fence->getFence() : VK_NULL_HANDLE) != VK_SUCCESS) {
+        if(vkQueueSubmit(queue, 1, &vkSubmitInfo, fence ? polyCast<VKFence>(fence.get())->getFence() : VK_NULL_HANDLE) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to submit graphics command buffer(s)");
         }
     }
