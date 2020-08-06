@@ -1,19 +1,12 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/TransferCommandBuffer.hpp"
 
 #include <vulkan/vulkan.h>
 
-//TODO: remove
-#include "Clove/Graphics/Vulkan/VKBuffer.hpp"
-#include "Clove/Graphics/Vulkan/VKDescriptorSet.hpp"
-#include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
-#include "Clove/Graphics/Vulkan/VKImage.hpp"
-#include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
-#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
-
 namespace clv::gfx::vk {
-    class VKTransferCommandBuffer {
+    class VKTransferCommandBuffer : public TransferCommandBuffer {
         //VARIABLES
     private:
         VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
@@ -31,13 +24,13 @@ namespace clv::gfx::vk {
 
         ~VKTransferCommandBuffer();
 
-        void beginRecording(CommandBufferUsage usageFlag);
-        void endRecording();
+        void beginRecording(CommandBufferUsage usageFlag) override;
+        void endRecording() override;
 
-        void copyBufferToBuffer(VKBuffer& source, const size_t sourceOffset, VKBuffer& destination, const size_t destinationOffset, const size_t sizeBytes);
-        void copyBufferToImage(VKBuffer& source, const size_t sourceOffset, VKImage& destination, ImageLayout destinationLayout, const mth::vec3i& destinationOffset, const mth::vec3ui& destinationExtent);
+        void copyBufferToBuffer(GraphicsBuffer& source, const size_t sourceOffset, GraphicsBuffer& destination, const size_t destinationOffset, const size_t sizeBytes) override;
+        void copyBufferToImage(GraphicsBuffer& source, const size_t sourceOffset, GraphicsImage& destination, ImageLayout destinationLayout, const mth::vec3i& destinationOffset, const mth::vec3ui& destinationExtent) override;
 
-        void transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout);
+        void transitionImageLayout(GraphicsImage& image, ImageLayout previousLayout, ImageLayout newLayout) override;
 
         VkCommandBuffer getCommandBuffer() const;
     };

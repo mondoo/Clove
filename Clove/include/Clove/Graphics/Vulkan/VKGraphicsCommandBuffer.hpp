@@ -1,19 +1,12 @@
 #pragma once
 
+#include "Clove/Graphics/GraphicsCommandBuffer.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
-//TODO: Remove
-#include "Clove/Graphics/Vulkan/VKBuffer.hpp"
-#include "Clove/Graphics/Vulkan/VKDescriptorSet.hpp"
-#include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
-#include "Clove/Graphics/Vulkan/VKImage.hpp"
-#include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
-#include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
-
 namespace clv::gfx::vk {
-    class VKGraphicsCommandBuffer {
+    class VKGraphicsCommandBuffer : public GraphicsCommandBuffer{
         //VARIABLES
     private:
         VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
@@ -31,20 +24,20 @@ namespace clv::gfx::vk {
 
         ~VKGraphicsCommandBuffer();
 
-        void beginRecording(CommandBufferUsage usageFlag);
-        void endRecording();
+        void beginRecording(CommandBufferUsage usageFlag) override;
+        void endRecording() override;
 
-        void beginRenderPass(VKRenderPass& renderPass, VKFramebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour, const DepthStencilValue& depthStencilClearValue);
-        void endRenderPass();
+        void beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour, const DepthStencilValue& depthStencilClearValue) override;
+        void endRenderPass() override;
 
-        void bindPipelineObject(VKPipelineObject& pipelineObject);
-        void bindVertexBuffer(VKBuffer& vertexBuffer);
-        void bindIndexBuffer(VKBuffer& indexBuffer, IndexType indexType);
-        void bindDescriptorSet(VKDescriptorSet& descriptorSet, const VKPipelineObject& pipeline);
+        void bindPipelineObject(PipelineObject& pipelineObject) override;
+        void bindVertexBuffer(GraphicsBuffer& vertexBuffer) override;
+        void bindIndexBuffer(GraphicsBuffer& indexBuffer, IndexType indexType) override;
+        void bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline) override;
 
-        void drawIndexed(const size_t indexCount);
+        void drawIndexed(const size_t indexCount) override;
 
-        void transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout);
+        void transitionImageLayout(GraphicsImage& image, ImageLayout previousLayout, ImageLayout newLayout) override;
 
         VkCommandBuffer getCommandBuffer() const;
     };

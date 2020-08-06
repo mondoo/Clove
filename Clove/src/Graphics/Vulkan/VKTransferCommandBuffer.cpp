@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
 
+#include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
@@ -30,15 +32,16 @@ namespace clv::gfx::vk {
         }
     }
 
-    void VKTransferCommandBuffer::copyBufferToBuffer(VKBuffer& source, const size_t sourceOffset, VKBuffer& destination, const size_t destinationOffset, const size_t sizeBytes) {
+    void VKTransferCommandBuffer::copyBufferToBuffer(GraphicsBuffer& source, const size_t sourceOffset, GraphicsBuffer& destination, const size_t destinationOffset, const size_t sizeBytes) {
         VkBufferCopy copyRegion{};
         copyRegion.srcOffset = sourceOffset;
         copyRegion.dstOffset = destinationOffset;
         copyRegion.size      = sizeBytes;
-        vkCmdCopyBuffer(commandBuffer, source.getBuffer(), destination.getBuffer(), 1, &copyRegion);
+
+        vkCmdCopyBuffer(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKBuffer>(&destination)->getBuffer(), 1, &copyRegion);
     }
 
-    void VKTransferCommandBuffer::copyBufferToImage(VKBuffer& source, const size_t sourceOffset, VKImage& destination, ImageLayout destinationLayout, const mth::vec3i& destinationOffset, const mth::vec3ui& destinationExtent) {
+    void VKTransferCommandBuffer::copyBufferToImage(GraphicsBuffer& source, const size_t sourceOffset, GraphicsImage& destination, ImageLayout destinationLayout, const mth::vec3i& destinationOffset, const mth::vec3ui& destinationExtent) {
         VkBufferImageCopy copyRegion{};
         copyRegion.bufferOffset                    = sourceOffset;
         copyRegion.bufferRowLength                 = 0;                        //Tightly packed
@@ -49,10 +52,11 @@ namespace clv::gfx::vk {
         copyRegion.imageSubresource.layerCount     = 1;
         copyRegion.imageOffset                     = { destinationOffset.x, destinationOffset.y, destinationOffset.z };
         copyRegion.imageExtent                     = { destinationExtent.x, destinationExtent.y, destinationExtent.z };
-        vkCmdCopyBufferToImage(commandBuffer, source.getBuffer(), destination.getImage(), convertImageLayout(destinationLayout), 1, &copyRegion);
+
+        vkCmdCopyBufferToImage(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKImage>(&destination)->getImage(), convertImageLayout(destinationLayout), 1, &copyRegion);
     }
 
-    void VKTransferCommandBuffer::transitionImageLayout(VKImage& image, ImageLayout previousLayout, ImageLayout newLayout) {
+    void VKTransferCommandBuffer::transitionImageLayout(GraphicsImage& image, ImageLayout previousLayout, ImageLayout newLayout) {
         const bool isValidLayout =
             newLayout != ImageLayout::ShaderReadOnlyOptimal &&
             newLayout != ImageLayout::ColourAttachmentOptimal &&
@@ -81,12 +85,13 @@ namespace clv::gfx::vk {
         barrier.newLayout                       = vkNextLayout;
         barrier.srcQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
         barrier.dstQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
-        barrier.image                           = image.getImage();
+        barrier.image                           = polyCast<VKImage>(&image)->getImage();
         barrier.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;//TODO: Handle other aspect masks
         barrier.subresourceRange.baseMipLevel   = 0;
         barrier.subresourceRange.levelCount     = 1;
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount     = 1;
+
         vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     }
 

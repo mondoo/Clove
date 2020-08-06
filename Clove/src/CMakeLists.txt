@@ -71,6 +71,7 @@ set(
 		${CLV_INCLUDE}/Graphics/Graphics.hpp		
 		${CLV_SOURCE}/Graphics/Graphics.cpp
 		${CLV_INCLUDE}/Graphics/GraphicsBuffer.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsCommandBuffer.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsFactory.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsImage.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsImageView.hpp
@@ -83,6 +84,7 @@ set(
 		${CLV_INCLUDE}/Graphics/ShaderTranspiler.hpp		
 		${CLV_SOURCE}/Graphics/ShaderTranspiler.cpp
 		${CLV_INCLUDE}/Graphics/Swapchain.hpp
+		${CLV_INCLUDE}/Graphics/TransferCommandBuffer.hpp
 )
 
 set(
