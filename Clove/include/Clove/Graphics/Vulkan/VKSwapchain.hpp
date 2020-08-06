@@ -5,7 +5,7 @@
 
 #include <vulkan/vulkan.h>
 
-namespace clv::gfx {
+namespace clv::gfx::vk {
     class VKImageView;
 }
 

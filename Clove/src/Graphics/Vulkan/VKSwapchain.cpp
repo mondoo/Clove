@@ -2,6 +2,7 @@
 
 #include "Clove/Utils/Cast.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
+#include "Clove/Graphics/Vulkan/VKImageView.hpp"
 
 namespace clv::gfx::vk {
     static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {
