@@ -354,6 +354,10 @@ namespace clv::gfx::vk {
         }
     }
 
+    VKGraphicsFactory::VKGraphicsFactory(VKGraphicsFactory&& other) noexcept = default;
+
+    VKGraphicsFactory& VKGraphicsFactory::operator=(VKGraphicsFactory&& other) noexcept = default;
+
     VKGraphicsFactory::~VKGraphicsFactory() {
 #if GARLIC_DEBUG
         destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);

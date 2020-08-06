@@ -21,8 +21,15 @@ namespace clv::gfx::vk {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
+        VKGraphicsFactory() = delete;
         VKGraphicsFactory(void* nativeWindow);
+
+        VKGraphicsFactory(const VKGraphicsFactory& other) = delete;
+        VKGraphicsFactory(VKGraphicsFactory&& other) noexcept;
+
+        VKGraphicsFactory& operator=(const VKGraphicsFactory& other) = delete;
+        VKGraphicsFactory& operator=(VKGraphicsFactory&& other) noexcept;
+
         ~VKGraphicsFactory();
 
         std::unique_ptr<GraphicsQueue> createGraphicsQueue(CommandQueueDescriptor descriptor) override;
@@ -50,6 +57,6 @@ namespace clv::gfx::vk {
 
         std::unique_ptr<Sampler> createSampler(Sampler::Descriptor descriptor) override;
 
-        void waitForIdleDevice();
+        void waitForIdleDevice() override;
     };
 }

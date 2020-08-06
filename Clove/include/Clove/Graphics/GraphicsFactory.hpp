@@ -50,6 +50,6 @@ namespace clv::gfx {
 
         virtual std::unique_ptr<Sampler> createSampler(Sampler::Descriptor descriptor) = 0;
 
-        //void waitForIdleDevice();
+        virtual void waitForIdleDevice() = 0;
     };
 }
