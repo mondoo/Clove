@@ -3,6 +3,7 @@
 #include "Bulb/TextureLoader.hpp"
 
 #include <Clove/Graphics/DescriptorSet.hpp>
+#include <Clove/Graphics/GraphicsImageView.hpp>
 #include <Clove/Platform/Window.hpp>
 #include <Clove/Graphics/Graphics.hpp>
 
