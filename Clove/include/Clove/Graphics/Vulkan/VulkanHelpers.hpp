@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+#include "Clove/Graphics/GraphicsTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -28,4 +29,9 @@ namespace clv::gfx::vk {
     VkPipelineStageFlags convertPipelineStage(PipelineStage garlicStage);
 
     VkAccessFlags convertAccessType(AccessType garlicAccess);
+
+    VkCommandBufferUsageFlags getCommandBufferUsageFlags(CommandBufferUsage garlicUsage);
+    VkIndexType getIndexType(IndexType garlicType);
+    std::pair<VkAccessFlags, VkAccessFlags> getAccessFlags(VkImageLayout oldLayout, VkImageLayout newLayout);
+    std::pair<VkPipelineStageFlags, VkPipelineStageFlags> getStageFlags(VkImageLayout oldLayout, VkImageLayout newLayout);
 }

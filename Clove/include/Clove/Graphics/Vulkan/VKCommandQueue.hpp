@@ -2,7 +2,8 @@
 
 //TODO: Remove
 #include <vulkan/vulkan.h>
-#include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKGraphicsCommandBuffer.hpp"
 
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKFence.hpp"

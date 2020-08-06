@@ -89,8 +89,6 @@ set(
 	VulkanGraphicsFiles
 		${CLV_INCLUDE}/Graphics/Vulkan/VKBuffer.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKBuffer.cpp
-		${CLV_INCLUDE}/Graphics/Vulkan/VKCommandBuffer.hpp
-		${CLV_SOURCE}/Graphics/Vulkan/VKCommandBuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKCommandQueue.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKCommandQueue.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorPool.hpp
@@ -103,6 +101,8 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKFence.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKFramebuffer.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKFramebuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsCommandBuffer.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsCommandBuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKPipelineObject.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKPipelineObject.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKRenderPass.hpp
@@ -121,6 +121,8 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKShader.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKSwapchain.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKSwapchain.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKTransferCommandBuffer.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKTransferCommandBuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VulkanHelpers.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VulkanHelpers.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VulkanTypes.hpp

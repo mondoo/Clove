@@ -201,4 +201,52 @@ namespace clv::gfx::vk {
                 return 0;
         }
     }
+
+    VkCommandBufferUsageFlags getCommandBufferUsageFlags(CommandBufferUsage garlicUsage) {
+        switch(garlicUsage) {
+            case clv::gfx::CommandBufferUsage::Default:
+                return 0;
+            case clv::gfx::CommandBufferUsage::OneTimeSubmit:
+                return VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+            default:
+                GARLIC_ASSERT(false, "{0}: Unkown usage type", GARLIC_FUNCTION_NAME);
+                return 0;
+        }
+    }
+
+    VkIndexType getIndexType(IndexType garlicType) {
+        switch(garlicType) {
+            case IndexType::Uint16:
+                return VK_INDEX_TYPE_UINT16;
+            default:
+                GARLIC_ASSERT(false, "{0}: Unkown index type", GARLIC_FUNCTION_NAME);
+                return VK_INDEX_TYPE_UINT16;
+        }
+    }
+
+    std::pair<VkAccessFlags, VkAccessFlags> getAccessFlags(VkImageLayout oldLayout, VkImageLayout newLayout) {
+        if(oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+            return { 0, VK_ACCESS_TRANSFER_WRITE_BIT };
+        } else if(oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+            return { VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT };
+        } else if(oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+            return { 0, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT };
+        } else {
+            GARLIC_ASSERT(false, "{0}: Unhandled layout transition", GARLIC_FUNCTION_NAME);
+            return { 0, 0 };
+        }
+    }
+
+    std::pair<VkPipelineStageFlags, VkPipelineStageFlags> getStageFlags(VkImageLayout oldLayout, VkImageLayout newLayout) {
+        if(oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+            return { VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT };
+        } else if(oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+            return { VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT };
+        } else if(oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+            return { VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT };
+        } else {
+            GARLIC_ASSERT(false, "{0}: Unhandled layout transition", GARLIC_FUNCTION_NAME);
+            return { 0, 0 };
+        }
+    }
 }
