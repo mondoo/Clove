@@ -89,8 +89,6 @@ set(
 	VulkanGraphicsFiles
 		${CLV_INCLUDE}/Graphics/Vulkan/VKBuffer.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKBuffer.cpp
-		${CLV_INCLUDE}/Graphics/Vulkan/VKCommandQueue.hpp
-		${CLV_SOURCE}/Graphics/Vulkan/VKCommandQueue.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorPool.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptorPool.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorSet.hpp
@@ -103,26 +101,32 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKFramebuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsCommandBuffer.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsCommandBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsFactory.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsFactory.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsQueue.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsQueue.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKImage.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKImage.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKImageView.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKImageView.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKPipelineObject.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKPipelineObject.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKPresentQueue.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKPresentQueue.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKRenderPass.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKRenderPass.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKSampler.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKSampler.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKSemaphore.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKSemaphore.cpp
-		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsFactory.hpp
-		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsFactory.cpp
-		${CLV_INCLUDE}/Graphics/Vulkan/VKImage.hpp
-		${CLV_SOURCE}/Graphics/Vulkan/VKImage.cpp
-		${CLV_INCLUDE}/Graphics/Vulkan/VKImageView.hpp
-		${CLV_SOURCE}/Graphics/Vulkan/VKImageView.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKShader.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKShader.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKSwapchain.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKSwapchain.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKTransferCommandBuffer.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKTransferCommandBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKTransferQueue.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKTransferQueue.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VulkanHelpers.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VulkanHelpers.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VulkanTypes.hpp

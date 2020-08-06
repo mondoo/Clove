@@ -138,4 +138,17 @@ namespace clv::gfx {
     enum class IndexType {
         Uint16
     };
+
+    enum class QueueFlags {
+        None,
+        Transient,/**< Buffers will be short lived */
+    };
+
+    struct CommandQueueDescriptor {
+        QueueFlags flags;
+    };
+
+    enum class WaitStage {
+        ColourAttachmentOutput
+    };
 }
