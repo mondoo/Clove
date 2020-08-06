@@ -18,7 +18,7 @@ namespace clv::gfx::vk {
 
     VKDescriptorSet::~VKDescriptorSet() = default;
 
-    void VKDescriptorSet::writeFrom(const Buffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot) {
+    void VKDescriptorSet::writeFrom(const GraphicsBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot) {
         const auto* vkBuffer = polyCast<VKBuffer>(&buffer);
 
         VkDescriptorBufferInfo bufferInfo{};

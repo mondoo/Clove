@@ -25,7 +25,7 @@ namespace clv::gfx::vk {
 
         ~VKDescriptorSet();
 
-        void writeFrom(const Buffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot) override;
+        void writeFrom(const GraphicsBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot) override;
         void writeFrom(const Sampler& sampler, const GraphicsImageView& imageView, const ImageLayout layout, const uint32_t bindingSlot) override;
 
         VkDescriptorSet getDescriptorSet() const;

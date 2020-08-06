@@ -3,7 +3,7 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx {
-    class Buffer;
+    class GraphicsBuffer;
     class Sampler;
     class GraphicsImageView;
 }
@@ -17,7 +17,7 @@ namespace clv::gfx {
     public:
         virtual ~DescriptorSet() = default;
 
-        virtual void writeFrom(const Buffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot)                        = 0;
+        virtual void writeFrom(const GraphicsBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot)                = 0;
         virtual void writeFrom(const Sampler& sampler, const GraphicsImageView& imageView, const ImageLayout layout, const uint32_t bindingSlot) = 0;
     };
 }
