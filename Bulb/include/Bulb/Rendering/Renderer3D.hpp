@@ -12,6 +12,7 @@ namespace clv::gfx {
 namespace blb::rnd {
     class Mesh;
     class Sprite;
+    class Material;
 }
 
 namespace blb::rnd {
@@ -28,9 +29,8 @@ namespace blb::rnd {
     public:
         virtual void begin() = 0;
 
-        virtual void submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const clv::mth::mat4f& transform) = 0;
-        virtual void submitQuad(const clv::mth::mat4f& transform, const clv::mth::vec4f& colour)                                                                                                    = 0;
-        virtual void submitQuad(const clv::mth::mat4f& transform, const std::shared_ptr<clv::gfx::GraphicsImageView>& texture)                                                                      = 0;
+        virtual void submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const clv::mth::mat4f& transform, const Material& material) = 0;
+        virtual void submitQuad(const clv::mth::mat4f& transform, const Material& material)                                                                                                                                   = 0;
 
         virtual void submitStaticMesh(const std::shared_ptr<Mesh>& mesh)   = 0;
         virtual void submitAnimatedMesh(const std::shared_ptr<Mesh>& mesh) = 0;

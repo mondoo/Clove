@@ -178,13 +178,10 @@ namespace blb::rnd {
         //TODO
     }
 
-    void ForwardRenderer3D::submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const clv::mth::mat4f& transform) {
+    void ForwardRenderer3D::submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const clv::mth::mat4f& transform, const Material& material) {
     }
 
-    void ForwardRenderer3D::submitQuad(const clv::mth::mat4f& transform, const clv::mth::vec4f& colour) {
-    }
-
-    void ForwardRenderer3D::submitQuad(const clv::mth::mat4f& transform, const std::shared_ptr<clv::gfx::GraphicsImageView>& texture) {
+    void ForwardRenderer3D::submitQuad(const clv::mth::mat4f& transform, const Material& material) {
     }
 
     void ForwardRenderer3D::submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
