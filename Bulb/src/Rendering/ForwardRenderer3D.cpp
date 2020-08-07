@@ -8,11 +8,11 @@
 #include <Clove/Graphics/Graphics.hpp>
 
 namespace blb::rnd {
-    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API) {
+    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API api) {
         windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
         windowSize         = window.getSize();
 
-        graphicsFactory = clv::gfx::createGraphicsFactory(clv::gfx::API::Vulkan, window.getNativeWindow());
+        graphicsFactory = clv::gfx::createGraphicsFactory(api, window.getNativeWindow());
 
         graphicsQueue = graphicsFactory->createGraphicsQueue({ clv::gfx::QueueFlags::None });
         presentQueue  = graphicsFactory->createPresentQueue();

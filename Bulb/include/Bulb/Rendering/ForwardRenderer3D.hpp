@@ -114,7 +114,7 @@ namespace blb::rnd {
         //FUNCTIONS
     public:
         //TODO: Ctors
-        ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API);
+        ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API api);
         ~ForwardRenderer3D();
 
         void begin() final;
