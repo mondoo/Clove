@@ -108,7 +108,6 @@ set(
 		${BLB_INCLUDE}/Rendering/RenderingTypes.hpp
 		${BLB_INCLUDE}/Rendering/ShaderBufferTypes.hpp
 		${BLB_INCLUDE}/Rendering/Renderer3D.hpp
-		${BLB_SOURCE}/Rendering/Renderer3D.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Font.hpp
 		${BLB_SOURCE}/Rendering/Renderables/Font.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Mesh.hpp
