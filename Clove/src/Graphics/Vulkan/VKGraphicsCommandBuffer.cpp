@@ -58,10 +58,10 @@ namespace clv::gfx::vk {
         vkCmdEndRenderPass(commandBuffer);
     }
 
-    void VKGraphicsCommandBuffer::bindVertexBuffer(GraphicsBuffer& vertexBuffer) {
+    void VKGraphicsCommandBuffer::bindVertexBuffer(GraphicsBuffer& vertexBuffer, const uint32_t binding) {
         VkBuffer buffers[]     = { polyCast<VKBuffer>(&vertexBuffer)->getBuffer() };
         VkDeviceSize offsets[] = { 0 };
-        vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+        vkCmdBindVertexBuffers(commandBuffer, binding, 1, buffers, offsets);
     }
 
     void VKGraphicsCommandBuffer::bindIndexBuffer(GraphicsBuffer& indexBuffer, IndexType indexType) {

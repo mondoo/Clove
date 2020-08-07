@@ -431,7 +431,7 @@ namespace blb::rnd {
 
             commandBuffers[i]->beginRenderPass(*renderPass, *swapChainFrameBuffers[i], renderArea, clearColour, depthStencilClearValue);
             commandBuffers[i]->bindPipelineObject(*pipelineObject);
-            commandBuffers[i]->bindVertexBuffer(*vertexBuffer);
+            commandBuffers[i]->bindVertexBuffer(*vertexBuffer, 0);
             commandBuffers[i]->bindIndexBuffer(*indexBuffer, clv::gfx::IndexType::Uint16);
             commandBuffers[i]->bindDescriptorSet(*descriptorSets[i], *pipelineObject);
             commandBuffers[i]->drawIndexed(std::size(indices));

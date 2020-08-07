@@ -74,12 +74,12 @@ namespace clv::gfx {
     };
 
     struct VertexInputBindingDescriptor {
-        uint32_t binding{ 0 };
+        uint32_t binding{ 0 }; /**< Which binding in the shader this input describes */
         uint32_t stride{ 0 };
     };
 
     struct VertexAttributeDescriptor {
-        uint32_t binding{ 0 };
+        uint32_t binding{ 0 }; /**< Binding that the data is taken from when bound with a command buffer */
         uint32_t location{ 0 };
         VertexAttributeFormat format;
         uint32_t offset{ 0 };
@@ -96,8 +96,8 @@ namespace clv::gfx {
     };
 
     enum class MemoryType {
-        VideoMemory, //Can't be written to be CPU, GPU optimised
-        SystemMemory,//Can be written to by CPU, not GPU optimised
+        VideoMemory, /**< Can't be written to be CPU, GPU optimised */
+        SystemMemory,/**< Can be written to by CPU, not GPU optimised */
     };
 
     enum class PipelineStage {

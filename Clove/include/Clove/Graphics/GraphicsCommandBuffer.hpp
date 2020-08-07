@@ -28,7 +28,7 @@ namespace clv::gfx {
         virtual void endRenderPass()                                                                                                                                                                 = 0;
 
         virtual void bindPipelineObject(PipelineObject& pipelineObject)                              = 0;
-        virtual void bindVertexBuffer(GraphicsBuffer& vertexBuffer)                                  = 0;
+        virtual void bindVertexBuffer(GraphicsBuffer& vertexBuffer, const uint32_t binding)          = 0;
         virtual void bindIndexBuffer(GraphicsBuffer& indexBuffer, IndexType indexType)               = 0;
         virtual void bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline) = 0;
 
