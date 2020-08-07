@@ -123,7 +123,8 @@ namespace blb::rnd {
         void submitQuad(const clv::mth::mat4f& transform, const clv::mth::vec4f& colour) final;
         void submitQuad(const clv::mth::mat4f& transform, const std::shared_ptr<clv::gfx::GraphicsImageView>& texture) final;
 
-        void submitMesh(const std::shared_ptr<rnd::Mesh>& mesh) final;
+        void submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh) final;
+        void submitAnimatedMesh(const std::shared_ptr<rnd::Mesh>& mesh) final;
         void submitLight(const DirectionalLight& light) final;
         void submitLight(const PointLight& light) final;
         void submitCamera(const ComposedCameraData& camera) final;

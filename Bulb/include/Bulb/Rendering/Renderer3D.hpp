@@ -32,10 +32,11 @@ namespace blb::rnd {
         virtual void submitQuad(const clv::mth::mat4f& transform, const clv::mth::vec4f& colour)                                                                                                    = 0;
         virtual void submitQuad(const clv::mth::mat4f& transform, const std::shared_ptr<clv::gfx::GraphicsImageView>& texture)                                                                      = 0;
 
-        virtual void submitMesh(const std::shared_ptr<Mesh>& mesh) = 0;
-        virtual void submitLight(const DirectionalLight& light)         = 0;
-        virtual void submitLight(const PointLight& light)               = 0;
-        virtual void submitCamera(const ComposedCameraData& camera)     = 0;
+        virtual void submitStaticMesh(const std::shared_ptr<Mesh>& mesh)   = 0;
+        virtual void submitAnimatedMesh(const std::shared_ptr<Mesh>& mesh) = 0;
+        virtual void submitLight(const DirectionalLight& light)            = 0;
+        virtual void submitLight(const PointLight& light)                  = 0;
+        virtual void submitCamera(const ComposedCameraData& camera)        = 0;
 
         virtual void submitWidget(const std::shared_ptr<Sprite>& widget) = 0;
         virtual void submitText(const std::shared_ptr<Sprite>& text)     = 0;

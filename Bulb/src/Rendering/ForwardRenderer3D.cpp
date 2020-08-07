@@ -187,7 +187,10 @@ namespace blb::rnd {
     void ForwardRenderer3D::submitQuad(const clv::mth::mat4f& transform, const std::shared_ptr<clv::gfx::GraphicsImageView>& texture) {
     }
 
-    void ForwardRenderer3D::submitMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
+    void ForwardRenderer3D::submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
+    }
+
+    void ForwardRenderer3D::submitAnimatedMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
     }
 
     void ForwardRenderer3D::submitLight(const DirectionalLight& light) {
