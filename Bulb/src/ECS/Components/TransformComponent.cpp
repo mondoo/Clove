@@ -164,14 +164,21 @@ namespace blb::ecs{
 	}
 
 	void TransformComponent::addChild(ComponentPtr<TransformComponent> child) {
-		if(child != nullptr && child != this){
-			children.push_back(child);
-			if(child->parent != nullptr){
-				removeItemFromVector(child, child->parent->children);
-			}
-			child->parent = this;
-		}
-	}
+        if(child != nullptr && child != this) {
+            children.push_back(child);
+            if(child->parent != nullptr) {
+                removeItemFromVector(child, child->parent->children);
+            }
+            child->parent = this;
+        }
+    }
+
+	void TransformComponent::removeChild(ComponentPtr<TransformComponent> child) {
+        if(child != nullptr && child != this && child->parent == this) {
+            removeItemFromVector(child, children);
+            child->parent = nullptr;
+        }
+    }
 
 	const std::vector<ComponentPtr<TransformComponent>>& TransformComponent::getChildren() const {
 		return children;

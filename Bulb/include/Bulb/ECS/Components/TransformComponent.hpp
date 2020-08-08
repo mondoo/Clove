@@ -49,6 +49,7 @@ namespace blb::ecs {
 		ComponentPtr<TransformComponent> getParent() const;
 
 		void addChild(ComponentPtr<TransformComponent> child);
+        void removeChild(ComponentPtr<TransformComponent> child);
 		const std::vector<ComponentPtr<TransformComponent>>& getChildren() const;
 
 	private:
