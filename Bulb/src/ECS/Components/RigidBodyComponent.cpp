@@ -55,6 +55,6 @@ namespace blb::ecs {
     }
 
 	void RigidBodyComponent::initialiseRigidBody(phy::RigidBody* body) {
-		body->setUserPointer(this);
+		body->setUserData(this);
 	}
 }

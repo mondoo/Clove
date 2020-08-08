@@ -12,7 +12,7 @@ namespace blb::phy {
     RigidBody::RigidBody(const RigidBody& other) {
         descriptor  = std::move(other.descriptor);
         cubeSize    = other.cubeSize;
-        userPointer = other.userPointer;
+        userData    = other.userData;
 
         initialise(descriptor, cubeSize);
     }
@@ -22,7 +22,7 @@ namespace blb::phy {
     RigidBody& RigidBody::operator=(const RigidBody& other) {
         descriptor  = std::move(other.descriptor);
         cubeSize    = other.cubeSize;
-        userPointer = other.userPointer;
+        userData    = other.userData;
 
         initialise(descriptor, cubeSize);
 
@@ -82,12 +82,12 @@ namespace blb::phy {
         return { btvel.x(), btvel.y(), btvel.z() };
     }
 
-    void RigidBody::setUserPointer(void* pointer) {
-        userPointer = pointer;
+    void RigidBody::setUserData(std::any data) {
+        userData = data;
     }
 
-    void* RigidBody::getUserPointer() const {
-        return userPointer;
+    std::any RigidBody::getUserData() const {
+        return userData;
     }
 
     void RigidBody::initialise(const RigidBodyDescriptor& descriptor, const clv::mth::vec3f& cubeSize) {

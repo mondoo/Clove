@@ -1,5 +1,7 @@
 #pragma once
 
+#include <any>
+
 class btCollisionShape;
 class btRigidBody;
 
@@ -29,7 +31,7 @@ namespace blb::phy {
 
         clv::mth::vec3f cubeSize{};
 
-        void* userPointer{ nullptr };
+        std::any userData{};
 
         //FUNCTIONS
     public:
@@ -58,8 +60,8 @@ namespace blb::phy {
 
         clv::mth::vec3f getLinearVelocity() const;
 
-        void setUserPointer(void* pointer);
-        void* getUserPointer() const;
+        void setUserData(std::any data);
+        std::any getUserData() const;
 
     private:
         void initialise(const RigidBodyDescriptor& descriptor, const clv::mth::vec3f& cubeSize);

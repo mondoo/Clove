@@ -52,8 +52,8 @@ namespace blb::ecs {
 
 		//Handle collisions
 		for(const phy::CollisionManifold& manifold : physicsWorld->getCollisionManifolds()) {
-			auto* compA = static_cast<RigidBodyComponent*>(manifold.bodyA->getUserPointer());
-			auto* compB = static_cast<RigidBodyComponent*>(manifold.bodyB->getUserPointer());
+			auto* compA = std::any_cast<RigidBodyComponent*>(manifold.bodyA->getUserData());
+            auto* compB = std::any_cast<RigidBodyComponent*>(manifold.bodyB->getUserData());
 
 			compA->onBodyCollision.broadcast(compB);
 			compB->onBodyCollision.broadcast(compA);
