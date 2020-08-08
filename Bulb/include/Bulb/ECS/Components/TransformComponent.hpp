@@ -10,6 +10,9 @@ namespace blb::ecs {
 }
 
 namespace blb::ecs {
+    /**
+     * @brief A TransformComponent holds the position, rotation and scale of an Entity.
+     */
     class TransformComponent : public Component<TransformComponent> {
         //VARIABLES
     private:
