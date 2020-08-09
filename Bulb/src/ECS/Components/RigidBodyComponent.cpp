@@ -50,8 +50,24 @@ namespace blb::ecs {
         rigidBody->applyImpulse(impulse, relativeOffset);
     }
 
+    void RigidBodyComponent::setRestitution(float restitution) {
+        rigidBody->setRestitution(restitution);
+    }
+
+    void RigidBodyComponent::setAngularFactor(const clv::mth::vec3f& factor) {
+        rigidBody->setAngularFactor(factor);
+    }
+
     clv::mth::vec3f RigidBodyComponent::getLinearVelocity() const {
         return rigidBody->getLinearVelocity();
+    }
+
+    float RigidBodyComponent::getRestitution() const {
+        return rigidBody->getRestitution();
+    }
+
+    clv::mth::vec3f RigidBodyComponent::getAngularFactor() const {
+        return rigidBody->getAngularFactor();
     }
 
 	void RigidBodyComponent::initialiseRigidBody(phy::RigidBody* body) {

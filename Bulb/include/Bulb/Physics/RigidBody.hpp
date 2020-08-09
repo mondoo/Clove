@@ -55,6 +55,14 @@ namespace blb::phy {
         void applyForce(const clv::mth::vec3f& force, const clv::mth::vec3f& relativeOffset = { 0.0f, 0.0f, 0.0f });
         void applyImpulse(const clv::mth::vec3f& impulse, const clv::mth::vec3f& relativeOffset = { 0.0f, 0.0f, 0.0f });
 
+        void setRestitution(float restitution);
+
+        /**
+         * @brief Set the factor which rotations are multiplied against.
+         * @details For example, giving a factor of {0.0f, 0.0f, 0.0f} would stop rotations entirely.
+         */
+        void setAngularFactor(const clv::mth::vec3f& factor);
+
         clv::mth::vec3f getPhysicsPosition() const;
         clv::mth::quatf getPhysicsRotation() const;
 
@@ -62,6 +70,10 @@ namespace blb::phy {
 
         void setUserData(std::any data);
         std::any getUserData() const;
+
+        float getRestitution() const;
+
+        clv::mth::vec3f getAngularFactor() const;
 
     private:
         void initialise(const RigidBodyDescriptor& descriptor, const clv::mth::vec3f& cubeSize);

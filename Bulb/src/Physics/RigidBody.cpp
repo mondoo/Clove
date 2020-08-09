@@ -65,6 +65,14 @@ namespace blb::phy {
         body->activate();
     }
 
+    void RigidBody::setRestitution(float restitution) {
+        body->setRestitution(restitution);
+    }
+
+    void RigidBody::setAngularFactor(const clv::mth::vec3f& factor) {
+        body->setAngularFactor({ factor.x, factor.y, factor.z });
+    }
+
     clv::mth::vec3f RigidBody::getPhysicsPosition() const {
         btTransform btTrans = body->getWorldTransform();
         const auto pos      = btTrans.getOrigin();
@@ -88,6 +96,15 @@ namespace blb::phy {
 
     std::any RigidBody::getUserData() const {
         return userData;
+    }
+
+    float RigidBody::getRestitution() const {
+        return body->getRestitution();
+    }
+
+    clv::mth::vec3f RigidBody::getAngularFactor() const {
+        const auto factor = body->getAngularFactor();
+        return { factor.x(), factor.y(), factor.z() };
     }
 
     void RigidBody::initialise(const RigidBodyDescriptor& descriptor, const clv::mth::vec3f& cubeSize) {

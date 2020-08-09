@@ -5,6 +5,10 @@
 #include "Bulb/Physics/RigidBody.hpp"
 
 namespace blb::ecs {
+    /**
+	 * @brief Enables an entity to respond to physics events.
+	 * @see RigidBody
+	 */
 	class RigidBodyComponent : public Component<RigidBodyComponent> {
 		friend class PhysicsSystem;
 
@@ -34,7 +38,15 @@ namespace blb::ecs {
 		void applyForce(const clv::mth::vec3f& force, const clv::mth::vec3f& relativeOffset = { 0.0f, 0.0f, 0.0f });
         void applyImpulse(const clv::mth::vec3f& impulse, const clv::mth::vec3f& relativeOffset = { 0.0f, 0.0f, 0.0f });
 
+		void setRestitution(float restitution);
+
+        void setAngularFactor(const clv::mth::vec3f& factor);
+
         clv::mth::vec3f getLinearVelocity() const;
+
+		float getRestitution() const;
+
+        clv::mth::vec3f getAngularFactor() const;
 
 	private:
 		void initialiseRigidBody(phy::RigidBody* body);
