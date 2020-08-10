@@ -9,8 +9,9 @@ namespace clv::gfx::vk {
 
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        poolInfo.queueFamilyIndex = queueFamilyIndex;
+        poolInfo.pNext            = nullptr;
         poolInfo.flags            = descriptor.flags == QueueFlags::Transient ? VK_COMMAND_POOL_CREATE_TRANSIENT_BIT : 0;
+        poolInfo.queueFamilyIndex = queueFamilyIndex;
 
         if(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
