@@ -18,7 +18,7 @@ namespace clv::gfx::vk {
 
     VKDescriptorSet::~VKDescriptorSet() = default;
 
-    void VKDescriptorSet::writeFrom(const GraphicsBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot) {
+    void VKDescriptorSet::write(const GraphicsBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot) {
         const auto* vkBuffer = polyCast<const VKBuffer>(&buffer);
 
         VkDescriptorBufferInfo bufferInfo{};
@@ -41,7 +41,7 @@ namespace clv::gfx::vk {
         vkUpdateDescriptorSets(device, 1, &writeInfo, 0, nullptr);
     }
 
-    void VKDescriptorSet::writeFrom(const Sampler& sampler, const GraphicsImageView& imageView, const ImageLayout layout, const uint32_t bindingSlot) {
+    void VKDescriptorSet::write(const GraphicsImageView& imageView, const Sampler& sampler, const ImageLayout layout, const uint32_t bindingSlot) {
         const auto* vkSampler   = polyCast<const VKSampler>(&sampler);
         const auto* vkImageView = polyCast<const VKImageView>(&imageView);
 

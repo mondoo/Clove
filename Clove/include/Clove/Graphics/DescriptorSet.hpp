@@ -10,14 +10,17 @@ namespace clv::gfx {
 
 namespace clv::gfx {
     /**
-     * @brief Used to write data from certain objects into a binding inside a Shader.
+     * @brief Used to associate data from certain containers into a binding inside a Shader.
+     * @details Once a container has been written to a DescriptorSet then when ever the
+     * DescriptorSet is bound then that container's data will be used for the associated
+     * binding slot.
      */
     class DescriptorSet {
         //FUNCTIONS
     public:
         virtual ~DescriptorSet() = default;
 
-        virtual void writeFrom(const GraphicsBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot)                = 0;
-        virtual void writeFrom(const Sampler& sampler, const GraphicsImageView& imageView, const ImageLayout layout, const uint32_t bindingSlot) = 0;
+        virtual void write(const GraphicsBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot)                = 0;
+        virtual void write(const GraphicsImageView& imageView, const Sampler& sampler, const ImageLayout layout, const uint32_t bindingSlot) = 0;
     };
 }

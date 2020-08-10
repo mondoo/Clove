@@ -313,8 +313,8 @@ namespace blb::rnd {
         descriptorSets = descriptorPool->allocateDescriptorSets(layouts);
 
         for(size_t i = 0; i < std::size(swapChainFrameBuffers); ++i) {
-            descriptorSets[i]->writeFrom(*uniformBuffers[i], 0, sizeof(ModelViewProj), 0);
-            descriptorSets[i]->writeFrom(*sampler, *imageView, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
+            descriptorSets[i]->write(*uniformBuffers[i], 0, sizeof(ModelViewProj), 0);
+            descriptorSets[i]->write(*sampler, *imageView, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
         }
     }
 
