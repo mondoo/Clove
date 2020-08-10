@@ -26,56 +26,10 @@ namespace blb::rnd {
     class Mesh;
 }
 
-
-
 namespace blb::rnd {
     class ForwardRenderer3D : public Renderer3D {
         //VARIABLES
     private:
-        //TEMP
-        struct ModelViewProj {
-            clv::mth::mat4f model;
-            clv::mth::mat4f view;
-            clv::mth::mat4f proj;
-        };
-        //We have an array of these because we basically have a UBO per frame in flight
-        //TODO: How would we control this for the client? Would they need to request a UBO each frame?
-        //	Mesh, Sprite, Material etc. Would need to be set up specifically with this in mind.
-        //	Perhaps they can store the data and sort out the buffers when given to the renderer
-        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;
-
-        const std::vector<Vertex> vertices = {
-            { { -0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } },
-            { { 0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
-            { { 0.5f, 0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
-            { { -0.5f, 0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
-
-            { { -0.5f, -0.5f, 0.5f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } },
-            { { 0.5f, -0.5f, 0.5f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
-            { { 0.5f, 0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
-            { { -0.5f, 0.5f, 0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
-        };
-        const std::vector<uint16_t> indices = {
-            0,
-            1,
-            2,
-            2,
-            3,
-            0,
-            4,
-            5,
-            6,
-            6,
-            7,
-            4
-        };
-        std::shared_ptr<clv::gfx::GraphicsBuffer> vertexBuffer;
-        std::shared_ptr<clv::gfx::GraphicsBuffer> indexBuffer;
-        std::shared_ptr<clv::gfx::GraphicsImage> texture;
-        std::shared_ptr<clv::gfx::GraphicsImageView> imageView;
-        std::shared_ptr<clv::gfx::Sampler> sampler;
-        //~TEMP
-
         clv::DelegateHandle windowResizeHandle;
         clv::mth::vec2ui windowSize;
         bool needNewSwapchain = false;
@@ -83,7 +37,6 @@ namespace blb::rnd {
         static constexpr size_t maxFramesInFlight = 2;
         size_t currentFrame                       = 0;
 
-        //Using shared_ptrs of the actual types until API is abstracted
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
         std::shared_ptr<clv::gfx::GraphicsQueue> graphicsQueue;
