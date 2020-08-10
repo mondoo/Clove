@@ -133,6 +133,8 @@ namespace blb::rnd {
 
         void end() final;
 
+        const std::shared_ptr<clv::gfx::GraphicsFactory>& getGraphicsFactory() const final;
+
     private:
         void onWindowResize(const clv::mth::vec2ui& size);
         void recreateSwapchain();

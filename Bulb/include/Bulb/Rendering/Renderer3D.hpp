@@ -7,6 +7,7 @@
 namespace clv::gfx {
     class GraphicsBuffer;
     class GraphicsImageView;
+    class GraphicsFactory;
 }
 
 namespace blb::rnd {
@@ -42,5 +43,7 @@ namespace blb::rnd {
         virtual void submitText(const std::shared_ptr<Sprite>& text)     = 0;
 
         virtual void end() = 0;
+
+        virtual const std::shared_ptr<clv::gfx::GraphicsFactory>& getGraphicsFactory() const = 0;
     };
 }

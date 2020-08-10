@@ -253,6 +253,10 @@ namespace blb::rnd {
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
 
+    const std::shared_ptr<clv::gfx::GraphicsFactory>& ForwardRenderer3D::getGraphicsFactory() const {
+        return graphicsFactory;
+    }
+
     void ForwardRenderer3D::onWindowResize(const clv::mth::vec2ui& size) {
         windowSize       = size;
         needNewSwapchain = true;
