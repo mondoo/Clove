@@ -37,6 +37,17 @@ namespace blb::rnd {
         static constexpr size_t maxFramesInFlight = 2;
         size_t currentFrame                       = 0;
 
+        struct ModelViewProj {
+            clv::mth::mat4f model;
+            clv::mth::mat4f view;
+            clv::mth::mat4f proj;
+        };
+        //We have an array of these because we basically have a UBO per frame in flight
+        //TODO: How would we control this for the client? Would they need to request a UBO each frame?
+        //	Mesh, Sprite, Material etc. Would need to be set up specifically with this in mind.
+        //	Perhaps they can store the data and sort out the buffers when given to the renderer
+        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;
+
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
         std::shared_ptr<clv::gfx::GraphicsQueue> graphicsQueue;
