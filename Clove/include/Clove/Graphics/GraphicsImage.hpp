@@ -20,9 +20,9 @@ namespace clv::gfx {
         using UsageType = uint8_t;
         enum class UsageMode : UsageType {
             TransferDestination    = 1 << 0, /**< To be used as a destination in a transfer operation */
-            Sampled                = 1 << 1, /**< To be used in an image view that's sampled in a shader */
-            ColourAttachment       = 1 << 2, /**< To be used in an image view for a frame buffer */
-            DepthStencilAttachment = 1 << 3, /**< To be used in an image view for a depth / stencil attachment */
+            Sampled                = 1 << 1, /**< To be used in a GraphicsImageView that's sampled in a shader */
+            ColourAttachment       = 1 << 2, /**< To be used in a GraphicsImageView for a frame buffer */
+            DepthStencilAttachment = 1 << 3, /**< To be used in a GraphicsImageView for a depth / stencil attachment */
         };
 
         enum class Type {
