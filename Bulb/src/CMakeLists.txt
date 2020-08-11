@@ -101,9 +101,6 @@ set(
 		${BLB_INCLUDE}/Rendering/Material.hpp
 		${BLB_INCLUDE}/Rendering/Material.inl
 		${BLB_SOURCE}/Rendering/Material.cpp
-		${BLB_INCLUDE}/Rendering/MaterialInstance.hpp
-		${BLB_INCLUDE}/Rendering/MaterialInstance.inl
-		${BLB_SOURCE}/Rendering/MaterialInstance.cpp
 		${BLB_INCLUDE}/Rendering/RenderingConstants.hpp
 		${BLB_INCLUDE}/Rendering/RenderingTypes.hpp
 		${BLB_INCLUDE}/Rendering/ShaderBufferTypes.hpp
