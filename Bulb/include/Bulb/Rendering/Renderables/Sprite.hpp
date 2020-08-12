@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Bulb/Rendering/MaterialInstance.hpp"
+//#include "Bulb/Rendering/MaterialInstance.hpp"
 
 namespace clv::gfx {
 	class GraphicsFactory;
@@ -11,14 +11,14 @@ namespace blb::rnd {
 	class Sprite {
 		//VARIABLES
 	private:
-		MaterialInstance materialInstance;
+		//MaterialInstance materialInstance;
 
 		//FUNCTIONS
 	public:
 		Sprite(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 		Sprite(const std::string& pathToTexture, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 		Sprite(const std::shared_ptr<clv::gfx::Texture>& texture, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
-		Sprite(const std::shared_ptr<Material>& material);
+		//Sprite(const std::shared_ptr<Material>& material);
 
 		Sprite(const Sprite& other);
 		Sprite(Sprite&& other) noexcept;
@@ -28,6 +28,6 @@ namespace blb::rnd {
 
 		~Sprite();
 
-		MaterialInstance& getMaterialInstance();
+		//MaterialInstance& getMaterialInstance();
 	};
 }

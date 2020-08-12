@@ -73,16 +73,16 @@ namespace blb::rnd{
 		return indexBuffer;
 	}*/
 
-	Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32_t>& indices, MaterialInstance materialInstance)
-		: materialInstance(std::move(materialInstance))
-		//, loadedBufferData(vbData)
-		, indices(indices) {
-	}
+	//Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32_t>& indices, MaterialInstance materialInstance)
+	//	: materialInstance(std::move(materialInstance))
+	//	//, loadedBufferData(vbData)
+	//	, indices(indices) {
+	//}
 
 	Mesh::Mesh(const Mesh& other) = default;
 
-	Mesh::Mesh(Mesh&& other) noexcept
-		: materialInstance(std::move(other.materialInstance)){
+	Mesh::Mesh(Mesh&& other) noexcept {
+		//: materialInstance(std::move(other.materialInstance)){
 		//, loadedBufferData(std::move(other.loadedBufferData)) {
 		//vertexBufferMap	= std::move(other.vertexBufferMap);
 		//indexBuffer		= std::move(other.indexBuffer);
@@ -92,7 +92,7 @@ namespace blb::rnd{
 	Mesh& Mesh::operator=(const Mesh& other) = default;
 
 	Mesh& Mesh::operator=(Mesh&& other) noexcept {
-		materialInstance	= std::move(other.materialInstance);
+		//materialInstance	= std::move(other.materialInstance);
 		//loadedBufferData	= std::move(other.loadedBufferData);
 		//vertexBufferMap		= std::move(other.vertexBufferMap);
 		indexBuffer			= std::move(other.indexBuffer);
@@ -103,13 +103,13 @@ namespace blb::rnd{
 
 	Mesh::~Mesh() = default;
 
-	void Mesh::setMaterialInstance(MaterialInstance materialInstance) {
+	/*void Mesh::setMaterialInstance(MaterialInstance materialInstance) {
 		this->materialInstance = std::move(materialInstance);
 	}
 
 	MaterialInstance& Mesh::getMaterialInstance() {
 		return materialInstance;
-	}
+	}*/
 
 	uint32_t Mesh::getIndexCount(){
 		return static_cast<uint32_t>(indices.size());

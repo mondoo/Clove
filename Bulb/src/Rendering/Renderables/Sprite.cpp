@@ -8,22 +8,22 @@ using namespace clv::gfx;
 
 namespace blb::rnd {
 	Sprite::Sprite(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
-		: materialInstance(std::make_shared<Material>(std::move(graphicsFactory))) {
+		/*: materialInstance(std::make_shared<Material>(std::move(graphicsFactory)))*/ {
 	}
 
 	Sprite::Sprite(const std::string& pathToTexture, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
-		: materialInstance(std::make_shared<Material>(graphicsFactory)) {
+		/*: materialInstance(std::make_shared<Material>(graphicsFactory))*/ {
 		//materialInstance.setAlbedoTexture(graphicsFactory->createTexture({}, pathToTexture));
 	}
 
 	Sprite::Sprite(const std::shared_ptr<clv::gfx::Texture>& texture, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
-		: materialInstance(std::make_shared<Material>(std::move(graphicsFactory))) {
+		/*: materialInstance(std::make_shared<Material>(std::move(graphicsFactory)))*/ {
 		//materialInstance.setAlbedoTexture(texture);
 	}
 
-	Sprite::Sprite(const std::shared_ptr<Material>& material)
+	/*Sprite::Sprite(const std::shared_ptr<Material>& material)
 		: materialInstance(material) {
-	}
+	}*/
 
 	Sprite::Sprite(const Sprite& other) = default;
 
@@ -35,7 +35,7 @@ namespace blb::rnd {
 
 	Sprite::~Sprite() = default;
 
-	MaterialInstance& Sprite::getMaterialInstance() {
+	/*MaterialInstance& Sprite::getMaterialInstance() {
 		return materialInstance;
-	}
+	}*/
 }

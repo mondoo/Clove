@@ -29,7 +29,7 @@
 #include "Bulb/Physics/RigidBody.hpp"
 #include "Bulb/Physics/World.hpp"
 #include "Bulb/Rendering/Material.hpp"
-#include "Bulb/Rendering/MaterialInstance.hpp"
+//#include "Bulb/Rendering/MaterialInstance.hpp"
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 #include "Bulb/Rendering/Renderables/StaticModel.hpp"
 #include "Bulb/Rendering/Renderables/AnimatedModel.hpp"
