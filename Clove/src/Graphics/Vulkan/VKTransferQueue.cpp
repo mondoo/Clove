@@ -3,15 +3,18 @@
 #include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
 
 namespace clv::gfx::vk {
-    VKTransferQueue::VKTransferQueue(VkDevice device, uint32_t queueFamilyIndex, CommandQueueDescriptor descriptor)
-        : device(device) {
-        vkGetDeviceQueue(device, queueFamilyIndex, 0, &queue);
+    VKTransferQueue::VKTransferQueue(VkDevice device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)
+        : device(device)
+        , queueFamilyIndices(std::move(queueFamilyIndices)) {
+        const uint32_t familyIndex = *this->queueFamilyIndices.transferFamily;
+
+        vkGetDeviceQueue(device, familyIndex, 0, &queue);
 
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         poolInfo.pNext            = nullptr;
         poolInfo.flags            = descriptor.flags == QueueFlags::Transient ? VK_COMMAND_POOL_CREATE_TRANSIENT_BIT : 0;
-        poolInfo.queueFamilyIndex = queueFamilyIndex;
+        poolInfo.queueFamilyIndex = familyIndex;
 
         if(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
@@ -38,7 +41,7 @@ namespace clv::gfx::vk {
             return nullptr;
         }
 
-        return std::make_unique<VKTransferCommandBuffer>(commandBuffer);
+        return std::make_unique<VKTransferCommandBuffer>(commandBuffer, queueFamilyIndices);
     }
 
     void VKTransferQueue::freeCommandBuffer(TransferCommandBuffer& buffer) {

@@ -43,8 +43,8 @@ namespace clv::gfx {
         PipelineStage sourceStage;      /**< Which PipelineStage on the sourceSubpass we wait on */
         PipelineStage destinationStage; /**< Which PipelineStage on the destinationSubpass that waits on this dependency */
 
-        AccessType sourceAccess;      /**< Which operation on the sourceSubpass we wait on */
-        AccessType destinationAccess; /**< Which operation on the destinationSubpass that should wait on this dependency */
+        AccessFlags sourceAccess;      /**< Which operation on the sourceSubpass we wait on */
+        AccessFlags destinationAccess; /**< Which operation on the destinationSubpass that should wait on this dependency */
     };
 
     /**

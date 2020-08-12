@@ -28,10 +28,10 @@ namespace clv::gfx::vk {
 
     VkPipelineStageFlags convertPipelineStage(PipelineStage garlicStage);
 
-    VkAccessFlags convertAccessType(AccessType garlicAccess);
+    VkAccessFlags convertAccessFlags(AccessFlags garlicAccess);
+
+    uint32_t getQueueFamilyIndex(QueueType type, const QueueFamilyIndices& indices);
 
     VkCommandBufferUsageFlags getCommandBufferUsageFlags(CommandBufferUsage garlicUsage);
     VkIndexType getIndexType(IndexType garlicType);
-    std::pair<VkAccessFlags, VkAccessFlags> getAccessFlags(VkImageLayout oldLayout, VkImageLayout newLayout);
-    std::pair<VkPipelineStageFlags, VkPipelineStageFlags> getStageFlags(VkImageLayout oldLayout, VkImageLayout newLayout);
 }

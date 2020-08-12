@@ -369,7 +369,7 @@ namespace clv::gfx::vk {
     }
 
     std::unique_ptr<GraphicsQueue> VKGraphicsFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
-        return std::make_unique<VKGraphicsQueue>(logicalDevice, *queueFamilyIndices.graphicsFamily, std::move(descriptor));
+        return std::make_unique<VKGraphicsQueue>(logicalDevice, queueFamilyIndices, std::move(descriptor));
     }
 
     std::unique_ptr<PresentQueue> VKGraphicsFactory::createPresentQueue() {
@@ -377,7 +377,7 @@ namespace clv::gfx::vk {
     }
 
     std::unique_ptr<TransferQueue> VKGraphicsFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
-        return std::make_unique<VKTransferQueue>(logicalDevice, *queueFamilyIndices.transferFamily, std::move(descriptor));
+        return std::make_unique<VKTransferQueue>(logicalDevice, queueFamilyIndices, std::move(descriptor));
     }
 
     std::unique_ptr<Swapchain> VKGraphicsFactory::createSwapChain(Swapchain::Descriptor descriptor) {

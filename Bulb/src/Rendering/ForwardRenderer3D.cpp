@@ -225,8 +225,8 @@ namespace blb::rnd {
         dependecy.destinationSubpass = 0;
         dependecy.sourceStage        = clv::gfx::PipelineStage::ColourAttachmentOutput;
         dependecy.destinationStage   = clv::gfx::PipelineStage::ColourAttachmentOutput;
-        dependecy.sourceAccess       = clv::gfx::AccessType::None;
-        dependecy.destinationAccess  = clv::gfx::AccessType::ColourAttachmentWrite;
+        dependecy.sourceAccess       = clv::gfx::AccessFlags::None;
+        dependecy.destinationAccess  = clv::gfx::AccessFlags::ColourAttachmentWrite;
 
         //Create render pass
         clv::gfx::RenderPass::Descriptor renderPassDescriptor{};

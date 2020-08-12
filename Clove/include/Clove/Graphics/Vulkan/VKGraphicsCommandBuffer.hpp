@@ -2,19 +2,22 @@
 
 #include "Clove/Graphics/GraphicsCommandBuffer.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
-    class VKGraphicsCommandBuffer : public GraphicsCommandBuffer{
+    class VKGraphicsCommandBuffer : public GraphicsCommandBuffer {
         //VARIABLES
     private:
         VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
 
+        QueueFamilyIndices queueFamilyIndices;
+
         //FUNCTIONS
     public:
         VKGraphicsCommandBuffer() = delete;
-        VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer);
+        VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices);
 
         VKGraphicsCommandBuffer(const VKGraphicsCommandBuffer& other) = delete;
         VKGraphicsCommandBuffer(VKGraphicsCommandBuffer&& other) noexcept;
@@ -37,7 +40,8 @@ namespace clv::gfx::vk {
 
         void drawIndexed(const size_t indexCount) override;
 
-        void transitionImageLayout(GraphicsImage& image, ImageLayout previousLayout, ImageLayout newLayout) override;
+        void bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
+        void imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 
         VkCommandBuffer getCommandBuffer() const;
     };

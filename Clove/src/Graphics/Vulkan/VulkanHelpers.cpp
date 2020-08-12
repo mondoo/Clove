@@ -182,23 +182,63 @@ namespace clv::gfx::vk {
         switch(garlicStage) {
             case PipelineStage::Top:
                 return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+            case PipelineStage::Transfer:
+                return VK_PIPELINE_STAGE_TRANSFER_BIT;
+            case PipelineStage::PixelShader:
+                return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+            case PipelineStage::EarlyPixelTest:
+                return VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
             case PipelineStage::ColourAttachmentOutput:
                 return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-            default: 
+            default:
                 GARLIC_ASSERT(false, "{0}: Unkown pipeline stage", GARLIC_FUNCTION_NAME);
-                return 0;
+                return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         }
     }
 
-    VkAccessFlags convertAccessType(AccessType garlicAccess) {
-        switch(garlicAccess) {
-            case AccessType::None:
-                return 0;
-            case AccessType::ColourAttachmentWrite:
-                return VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    VkAccessFlags convertAccessFlags(AccessFlags garlicAccess) {
+        VkAccessFlags flags = 0;
+        uint32_t total      = 0;
+
+        if((garlicAccess & AccessFlags::TransferWrite) != 0) {
+            flags |= VK_ACCESS_TRANSFER_WRITE_BIT;
+            total += static_cast<AccessFlagsType>(AccessFlags::TransferWrite);
+        }
+        if((garlicAccess & AccessFlags::ShaderRead) != 0) {
+            flags |= VK_ACCESS_SHADER_READ_BIT;
+            total += static_cast<AccessFlagsType>(AccessFlags::ShaderRead);
+        }
+        if((garlicAccess & AccessFlags::ColourAttachmentWrite) != 0) {
+            flags |= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+            total += static_cast<AccessFlagsType>(AccessFlags::ColourAttachmentWrite);
+        }
+        if((garlicAccess & AccessFlags::DepthStencilAttachmentRead) != 0) {
+            flags |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+            total += static_cast<AccessFlagsType>(AccessFlags::DepthStencilAttachmentRead);
+        }
+        if((garlicAccess & AccessFlags::DepthStencilAttachmentWrite) != 0) {
+            flags |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+            total += static_cast<AccessFlagsType>(AccessFlags::DepthStencilAttachmentWrite);
+        }
+
+        if(total != static_cast<AccessFlagsType>(garlicAccess)) {
+            GARLIC_ASSERT(false, "{0}: Unhandled access type", GARLIC_FUNCTION_NAME);
+        }
+
+        return flags;
+    }
+
+    uint32_t getQueueFamilyIndex(QueueType type, const QueueFamilyIndices& indices) {
+        switch(type) {
+            case QueueType::None:
+                return VK_QUEUE_FAMILY_IGNORED;
+            case QueueType::Graphics:
+                return *indices.graphicsFamily;
+            case QueueType::Transfer:
+                return *indices.transferFamily;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown access type", GARLIC_FUNCTION_NAME);
-                return 0;
+                GARLIC_ASSERT(false, "{0}: Unkown queue type", GARLIC_FUNCTION_NAME);
+                return VK_QUEUE_FAMILY_IGNORED;
         }
     }
 
@@ -224,7 +264,7 @@ namespace clv::gfx::vk {
         }
     }
 
-    std::pair<VkAccessFlags, VkAccessFlags> getAccessFlags(VkImageLayout oldLayout, VkImageLayout newLayout) {
+    /*std::pair<VkAccessFlags, VkAccessFlags> getAccessFlags(VkImageLayout oldLayout, VkImageLayout newLayout) {
         if(oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
             return { 0, VK_ACCESS_TRANSFER_WRITE_BIT };
         } else if(oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
@@ -248,5 +288,5 @@ namespace clv::gfx::vk {
             GARLIC_ASSERT(false, "{0}: Unhandled layout transition", GARLIC_FUNCTION_NAME);
             return { 0, 0 };
         }
-    }
+    }*/
 }

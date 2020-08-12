@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Root/Definitions.hpp>
+
 namespace clv::gfx {
     enum class API {
         None,
@@ -96,19 +98,28 @@ namespace clv::gfx {
     };
 
     enum class MemoryType {
-        VideoMemory, /**< Can't be written to be CPU, GPU optimised */
-        SystemMemory,/**< Can be written to by CPU, not GPU optimised */
+        VideoMemory,  /**< Can't be written to be CPU, GPU optimised */
+        SystemMemory, /**< Can be written to by CPU, not GPU optimised */
     };
 
     enum class PipelineStage {
         Top,
+        Transfer,
+        PixelShader,
+        EarlyPixelTest,
         ColourAttachmentOutput,
     };
 
-    enum class AccessType {
-        None,
-        ColourAttachmentWrite,
+    using AccessFlagsType = uint16_t;
+    enum class AccessFlags : AccessFlagsType {
+        None                        = 0,
+        TransferWrite               = 1 << 0,
+        ShaderRead                  = 1 << 1,
+        ColourAttachmentWrite       = 1 << 2,
+        DepthStencilAttachmentRead  = 1 << 3,
+        DepthStencilAttachmentWrite = 1 << 4
     };
+    GARLIC_ENUM_BIT_FLAG_OPERATORS(AccessFlags, AccessFlagsType)
 
     enum class LoadOperation {
         DontCare,
@@ -141,7 +152,7 @@ namespace clv::gfx {
 
     enum class QueueFlags {
         None,
-        Transient,/**< Buffers will be short lived */
+        Transient, /**< Buffers will be short lived */
     };
 
     struct CommandQueueDescriptor {
@@ -150,5 +161,27 @@ namespace clv::gfx {
 
     enum class WaitStage {
         ColourAttachmentOutput
+    };
+
+    enum class QueueType {
+        None,
+        Graphics,
+        Transfer
+    };
+
+    struct BufferMemoryBarrierInfo {
+        AccessFlags sourceAccess;
+        AccessFlags destinationAccess;
+        QueueType sourceQueue{ QueueType::None };      /**< If set signifies which queue this is being transfered from. */
+        QueueType destinationQueue{ QueueType::None }; /**< If set signifies which queue this is being transfered to. */ 
+    };
+
+    struct ImageMemoryBarrierInfo {
+        AccessFlags sourceAccess;
+        AccessFlags destinationAccess;
+        ImageLayout oldImageLayout;
+        ImageLayout newImageLayout;
+        QueueType sourceQueue{ QueueType::None };      /**< If set signifies which queue this is being transfered from. */
+        QueueType destinationQueue{ QueueType::None }; /**< If set signifies which queue this is being transfered to. */ 
     };
 }

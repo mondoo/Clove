@@ -1,8 +1,8 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsQueue.hpp"
 
-#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKGraphicsCommandBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 
 namespace clv::gfx::vk {
     static VkPipelineStageFlagBits getPipelineStageFlag(WaitStage stage) {
@@ -12,15 +12,18 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKGraphicsQueue::VKGraphicsQueue(VkDevice device, uint32_t queueFamilyIndex, CommandQueueDescriptor descriptor)
-        : device(device) {
-        vkGetDeviceQueue(device, queueFamilyIndex, 0, &queue);
+    VKGraphicsQueue::VKGraphicsQueue(VkDevice device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)
+        : device(device)
+        , queueFamilyIndices(std::move(queueFamilyIndices)) {
+        const uint32_t familyIndex = *this->queueFamilyIndices.graphicsFamily;
+
+        vkGetDeviceQueue(device, familyIndex, 0, &queue);
 
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         poolInfo.pNext            = nullptr;
         poolInfo.flags            = descriptor.flags == QueueFlags::Transient ? VK_COMMAND_POOL_CREATE_TRANSIENT_BIT : 0;
-        poolInfo.queueFamilyIndex = queueFamilyIndex;
+        poolInfo.queueFamilyIndex = familyIndex;
 
         if(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
@@ -51,7 +54,7 @@ namespace clv::gfx::vk {
             return nullptr;
         }
 
-        return std::make_unique<VKGraphicsCommandBuffer>(commandBuffer);
+        return std::make_unique<VKGraphicsCommandBuffer>(commandBuffer, queueFamilyIndices);
     }
 
     void VKGraphicsQueue::freeCommandBuffer(GraphicsCommandBuffer& buffer) {

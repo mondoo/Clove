@@ -64,8 +64,8 @@ namespace clv::gfx::vk {
             dependency.dstSubpass    = descriptor.dependencies[i].destinationSubpass == SUBPASS_EXTERNAL ? VK_SUBPASS_EXTERNAL : descriptor.dependencies[i].destinationSubpass;
             dependency.srcStageMask  = convertPipelineStage(descriptor.dependencies[i].sourceStage);
             dependency.dstStageMask  = convertPipelineStage(descriptor.dependencies[i].destinationStage);
-            dependency.srcAccessMask = convertAccessType(descriptor.dependencies[i].sourceAccess);
-            dependency.dstAccessMask = convertAccessType(descriptor.dependencies[i].destinationAccess);
+            dependency.srcAccessMask = convertAccessFlags(descriptor.dependencies[i].sourceAccess);
+            dependency.dstAccessMask = convertAccessFlags(descriptor.dependencies[i].destinationAccess);
 
             dependecies[i] = std::move(dependency);
         }

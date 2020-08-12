@@ -3,6 +3,7 @@
 #include <Bulb/Rendering/ForwardRenderer3D.hpp>
 #include <Bulb/Rendering/RenderingTypes.hpp>
 #include <Bulb/TextureLoader.hpp>
+#include <Clove/Graphics/GraphicsTypes.hpp>
 
 int main(){
 	auto platform = clv::plt::createPlatformInstance();
@@ -96,18 +97,43 @@ int main(){
     //Transfer the data onto our GPU optimised buffers
     std::shared_ptr<clv::gfx::TransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
 
+    clv::gfx::ImageMemoryBarrierInfo layoutTransferInfo{};
+    layoutTransferInfo.sourceAccess      = clv::gfx::AccessFlags::None;
+    layoutTransferInfo.destinationAccess = clv::gfx::AccessFlags::TransferWrite;
+    layoutTransferInfo.oldImageLayout    = clv::gfx::ImageLayout::Undefined;
+    layoutTransferInfo.newImageLayout    = clv::gfx::ImageLayout::TransferDestinationOptimal;
+    layoutTransferInfo.sourceQueue       = clv::gfx::QueueType::None;
+    layoutTransferInfo.destinationQueue  = clv::gfx::QueueType::None;
+
+    clv::gfx::ImageMemoryBarrierInfo transferQueueReleaseInfo{};
+    transferQueueReleaseInfo.sourceAccess      = clv::gfx::AccessFlags::TransferWrite;
+    transferQueueReleaseInfo.destinationAccess = clv::gfx::AccessFlags::None;
+    transferQueueReleaseInfo.oldImageLayout    = clv::gfx::ImageLayout::TransferDestinationOptimal;
+    transferQueueReleaseInfo.newImageLayout    = clv::gfx::ImageLayout::TransferDestinationOptimal;
+    transferQueueReleaseInfo.sourceQueue       = clv::gfx::QueueType::Transfer;
+    transferQueueReleaseInfo.destinationQueue  = clv::gfx::QueueType::Graphics;
+
     transferCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
     transferCommandBuffer->copyBufferToBuffer(*stagingBufferVertex, 0, *vertexBuffer, 0, vertexBufferSize);
     transferCommandBuffer->copyBufferToBuffer(*stagingBufferIndex, 0, *indexBuffer, 0, indexBufferSize);
-    transferCommandBuffer->transitionImageLayout(*texture, clv::gfx::ImageLayout::Undefined, clv::gfx::ImageLayout::TransferDestinationOptimal);
+    transferCommandBuffer->imageMemoryBarrier(*texture, layoutTransferInfo, clv::gfx::PipelineStage::Top, clv::gfx::PipelineStage::Transfer);
     transferCommandBuffer->copyBufferToImage(*stagingBufferTexture, 0, *texture, clv::gfx::ImageLayout::TransferDestinationOptimal, { 0, 0, 0 }, { textureData.dimensions.x, textureData.dimensions.y, 1 });
+    transferCommandBuffer->imageMemoryBarrier(*texture, transferQueueReleaseInfo, clv::gfx::PipelineStage::Transfer, clv::gfx::PipelineStage::Transfer);
     transferCommandBuffer->endRecording();
 
     //Transitioning an image layout to shader optimal can only be done on a command buffer that's part of the graphics queue family
     std::shared_ptr<clv::gfx::GraphicsCommandBuffer> transitionCommandBuffer = graphicsQueue->allocateCommandBuffer();
 
+    clv::gfx::ImageMemoryBarrierInfo graphicsQueueAcquireInfo{};
+    graphicsQueueAcquireInfo.sourceAccess      = clv::gfx::AccessFlags::TransferWrite;
+    graphicsQueueAcquireInfo.destinationAccess = clv::gfx::AccessFlags::ShaderRead;
+    graphicsQueueAcquireInfo.oldImageLayout    = clv::gfx::ImageLayout::TransferDestinationOptimal;
+    graphicsQueueAcquireInfo.newImageLayout    = clv::gfx::ImageLayout::ShaderReadOnlyOptimal;
+    graphicsQueueAcquireInfo.sourceQueue       = clv::gfx::QueueType::Transfer;
+    graphicsQueueAcquireInfo.destinationQueue  = clv::gfx::QueueType::Graphics;
+
     transitionCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
-    transitionCommandBuffer->transitionImageLayout(*texture, clv::gfx::ImageLayout::TransferDestinationOptimal, clv::gfx::ImageLayout::ShaderReadOnlyOptimal);
+    transitionCommandBuffer->imageMemoryBarrier(*texture, graphicsQueueAcquireInfo, clv::gfx::PipelineStage::Transfer, clv::gfx::PipelineStage::PixelShader);
     transitionCommandBuffer->endRecording();
 
     transferQueue->submit({ { transferCommandBuffer } });
@@ -148,7 +174,7 @@ int main(){
     //Reset these manually as they would fail after the device has been destroyed (how to solve this?)
     vertexBuffer.reset();
     indexBuffer.reset();
-    uniformBuffers.clear();
+    //uniformBuffers.clear();
     texture.reset();
     sampler.reset();
     imageView.reset();

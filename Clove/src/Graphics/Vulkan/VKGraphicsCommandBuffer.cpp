@@ -10,8 +10,9 @@
 #include "Clove/Utils/Cast.hpp"
 
 namespace clv::gfx::vk {
-    VKGraphicsCommandBuffer::VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer)
-        : commandBuffer(commandBuffer) {
+    VKGraphicsCommandBuffer::VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
+        : commandBuffer(commandBuffer)
+        , queueFamilyIndices(std::move(queueFamilyIndices)) {
     }
 
     VKGraphicsCommandBuffer::VKGraphicsCommandBuffer(VKGraphicsCommandBuffer&& other) noexcept = default;
@@ -61,6 +62,7 @@ namespace clv::gfx::vk {
     void VKGraphicsCommandBuffer::bindVertexBuffer(GraphicsBuffer& vertexBuffer, const uint32_t binding) {
         VkBuffer buffers[]     = { polyCast<VKBuffer>(&vertexBuffer)->getBuffer() };
         VkDeviceSize offsets[] = { 0 };
+
         vkCmdBindVertexBuffers(commandBuffer, binding, 1, buffers, offsets);
     }
 
@@ -74,6 +76,7 @@ namespace clv::gfx::vk {
 
     void VKGraphicsCommandBuffer::bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline) {
         VkDescriptorSet sets[] = { polyCast<VKDescriptorSet>(&descriptorSet)->getDescriptorSet() };
+
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<const VKPipelineObject>(&pipeline)->getLayout(), 0, 1, sets, 0, nullptr);
     }
 
@@ -81,31 +84,51 @@ namespace clv::gfx::vk {
         vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
     }
 
-    void VKGraphicsCommandBuffer::transitionImageLayout(GraphicsImage& image, ImageLayout previousLayout, ImageLayout newLayout) {
-        const VkImageLayout vkPrevLayout = convertImageLayout(previousLayout);
-        const VkImageLayout vkNextLayout = convertImageLayout(newLayout);
+    void VKGraphicsCommandBuffer::bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
+        const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
+        const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
-        //src = what happens before the barrier, dst = what needs to wait on the barrier
-        //TODO: Take src and dst as params
-        const auto [srcAccess, dstAccess] = getAccessFlags(vkPrevLayout, vkNextLayout);
-        const auto [srcStage, dstStage]   = getStageFlags(vkPrevLayout, vkNextLayout);
+        VkBufferMemoryBarrier barrier{};
+        barrier.sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+        barrier.pNext               = nullptr;
+        barrier.srcAccessMask       = convertAccessFlags(barrierInfo.sourceAccess);
+        barrier.dstAccessMask       = convertAccessFlags(barrierInfo.destinationAccess);
+        barrier.srcQueueFamilyIndex = sourceFamilyIndex;
+        barrier.dstQueueFamilyIndex = destinationFamilyIndex;
+        barrier.buffer              = polyCast<VKBuffer>(&buffer)->getBuffer();
+        barrier.offset              = 0;
+        barrier.size                = VK_WHOLE_SIZE;
+
+        const VkPipelineStageFlags vkSourceStage      = convertPipelineStage(sourceStage);
+        const VkPipelineStageFlags vkDestinationStage = convertPipelineStage(destinationStage);
+
+        vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
+    }
+
+    void VKGraphicsCommandBuffer::imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
+        const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
+        const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
         VkImageMemoryBarrier barrier{};
         barrier.sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         barrier.pNext                           = nullptr;
-        barrier.srcAccessMask                   = srcAccess;
-        barrier.dstAccessMask                   = dstAccess;
-        barrier.oldLayout                       = vkPrevLayout;
-        barrier.newLayout                       = vkNextLayout;
-        barrier.srcQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
-        barrier.dstQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
+        barrier.srcAccessMask                   = convertAccessFlags(barrierInfo.sourceAccess);
+        barrier.dstAccessMask                   = convertAccessFlags(barrierInfo.destinationAccess);
+        barrier.oldLayout                       = convertImageLayout(barrierInfo.oldImageLayout);
+        barrier.newLayout                       = convertImageLayout(barrierInfo.newImageLayout);
+        barrier.srcQueueFamilyIndex             = sourceFamilyIndex;
+        barrier.dstQueueFamilyIndex             = destinationFamilyIndex;
         barrier.image                           = polyCast<VKImage>(&image)->getImage();
         barrier.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;//TODO: Handle other aspect masks
         barrier.subresourceRange.baseMipLevel   = 0;
         barrier.subresourceRange.levelCount     = 1;
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount     = 1;
-        vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+
+        const VkPipelineStageFlags vkSourceStage      = convertPipelineStage(sourceStage);
+        const VkPipelineStageFlags vkDestinationStage = convertPipelineStage(destinationStage);
+
+        vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     }
 
     VkCommandBuffer VKGraphicsCommandBuffer::getCommandBuffer() const {

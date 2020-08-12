@@ -9,6 +9,7 @@ namespace clv::gfx {
     class GraphicsBuffer;
     class DescriptorSet;
     class GraphicsImage;
+    class GraphicsBuffer;
 }
 
 namespace clv::gfx {
@@ -34,6 +35,7 @@ namespace clv::gfx {
 
         virtual void drawIndexed(const size_t indexCount) = 0;
 
-        virtual void transitionImageLayout(GraphicsImage& image, ImageLayout previousLayout, ImageLayout newLayout) = 0;
+        virtual void bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) = 0;
+        virtual void imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage)     = 0;
     };
 }
