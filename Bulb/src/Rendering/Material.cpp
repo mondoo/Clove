@@ -1,73 +1,113 @@
 #include "Bulb/Rendering/Material.hpp"
 
-#include "Bulb/Rendering/MaterialInstance.hpp"
-#include "Bulb/Rendering/ShaderBufferTypes.hpp"
-//#include "Clove/Graphics/Texture.hpp"
+#include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Clove/Graphics/GraphicsImage.hpp>
+#include <Clove/Graphics/GraphicsImageView.hpp>
 
-using namespace clv::gfx;
+namespace blb::rnd {
+    Material::Material(const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
+        using namespace clv::gfx;
 
-namespace blb::rnd{
-	Material::Material(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory) 
-		: graphicsFactory(std::move(graphicsFactory)) {
-		/*uint32_t white = 0xffffffff;
-		TextureDescriptor descriptor{};
-		descriptor.dimensions = { 1, 1 };
-		auto blankTexture = this->graphicsFactory->createTexture(descriptor, &white, 4);
-		albedoTexture = blankTexture;
-		specTexture = blankTexture;
+        auto transferQueue = graphicsFactory->createTransferQueue({ QueueFlags::Transient });
+        auto graphicsQueue = graphicsFactory->createGraphicsQueue({ QueueFlags::Transient });
 
-		setData(BBP_Colour, clv::mth::vec4f(1.0f, 1.0f, 1.0f, 1.0f), ShaderStage::Pixel);
-		setData(BBP_MaterialData, MaterialData{ 32.0f }, ShaderStage::Pixel);*/
-	}
+        std::shared_ptr<TransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
+        std::shared_ptr<GraphicsCommandBuffer> graphicsCommandBuffer = graphicsQueue->allocateCommandBuffer();
 
-	Material::Material(const Material& other) = default;
+        GraphicsImage::Descriptor imageDesc{};
+        imageDesc.type        = GraphicsImage::Type::_2D;
+        imageDesc.dimensions  = { 1, 1 };
+        imageDesc.usageFlags  = GraphicsImage::UsageMode::TransferDestination | GraphicsImage::UsageMode::Sampled;
+        imageDesc.format      = ImageFormat::R8G8B8A8_SRGB;
+        imageDesc.sharingMode = SharingMode::Exclusive;
+        imageDesc.memoryType  = MemoryType::VideoMemory;
+        defaultImage          = graphicsFactory->createImage(imageDesc);
 
-	Material::Material(Material&& other) noexcept{
-		/*albedoTexture	= std::move(other.albedoTexture);
-		specTexture		= std::move(other.specTexture);
-		shaderData		= std::move(other.shaderData);*/
-	}
+        GraphicsBuffer::Descriptor bufferDesc{};
+        bufferDesc.size        = 4;
+        bufferDesc.usageFlags  = GraphicsBuffer::UsageMode::TransferSource;
+        bufferDesc.sharingMode = SharingMode::Exclusive;
+        bufferDesc.memoryType  = MemoryType::SystemMemory;
+        auto transferBuffer    = graphicsFactory->createBuffer(std::move(bufferDesc));
 
-	Material& Material::operator=(const Material& other) = default;
+        uint32_t white = 0xffffffff;
+        transferBuffer->map(&white, 4);
 
-	Material& Material::operator=(Material&& other) noexcept = default;
+        //Change the layout of the default image, write the buffer into it and then release the queue ownership
+        clv::gfx::ImageMemoryBarrierInfo layoutTransferInfo{};
+        layoutTransferInfo.sourceAccess      = clv::gfx::AccessFlags::None;
+        layoutTransferInfo.destinationAccess = clv::gfx::AccessFlags::TransferWrite;
+        layoutTransferInfo.oldImageLayout    = clv::gfx::ImageLayout::Undefined;
+        layoutTransferInfo.newImageLayout    = clv::gfx::ImageLayout::TransferDestinationOptimal;
+        layoutTransferInfo.sourceQueue       = clv::gfx::QueueType::None;
+        layoutTransferInfo.destinationQueue  = clv::gfx::QueueType::None;
 
-	Material::~Material() = default;
+        clv::gfx::ImageMemoryBarrierInfo transferQueueReleaseInfo{};
+        transferQueueReleaseInfo.sourceAccess      = clv::gfx::AccessFlags::TransferWrite;
+        transferQueueReleaseInfo.destinationAccess = clv::gfx::AccessFlags::None;
+        transferQueueReleaseInfo.oldImageLayout    = clv::gfx::ImageLayout::TransferDestinationOptimal;
+        transferQueueReleaseInfo.newImageLayout    = clv::gfx::ImageLayout::TransferDestinationOptimal;
+        transferQueueReleaseInfo.sourceQueue       = clv::gfx::QueueType::Transfer;
+        transferQueueReleaseInfo.destinationQueue  = clv::gfx::QueueType::Graphics;
 
-	MaterialInstance Material::createInstance(){
-		return MaterialInstance{ shared_from_this() };
-	}
+        transferCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
+        transferCommandBuffer->imageMemoryBarrier(*defaultImage, layoutTransferInfo, clv::gfx::PipelineStage::Top, clv::gfx::PipelineStage::Transfer);
+        transferCommandBuffer->copyBufferToImage(*transferBuffer, 0, *defaultImage, clv::gfx::ImageLayout::TransferDestinationOptimal, { 0, 0, 0 }, { imageDesc.dimensions.x, imageDesc.dimensions.y, 1 });
+        transferCommandBuffer->imageMemoryBarrier(*defaultImage, transferQueueReleaseInfo, clv::gfx::PipelineStage::Transfer, clv::gfx::PipelineStage::Transfer);
+        transferCommandBuffer->endRecording();
 
-	/*void Material::setData(clv::gfx::BufferBindingPoint bindingPoint, void* data, const size_t sizeBytes, clv::gfx::ShaderStage shaderType) {
-        if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()) {
-            iter->second.buffer->updateData(data);
-        } else {
-            clv::gfx::BufferDescriptor srdesc{};
-            srdesc.elementSize = 0;
-            srdesc.bufferSize  = sizeBytes;
-            srdesc.bufferType  = clv::gfx::BufferType::ShaderResourceBuffer;
-            srdesc.bufferUsage = clv::gfx::BufferUsage::Dynamic;
+        //Acquire queue ownership to a graphics queue
+        clv::gfx::ImageMemoryBarrierInfo graphicsQueueAcquireInfo{};
+        graphicsQueueAcquireInfo.sourceAccess      = clv::gfx::AccessFlags::TransferWrite;
+        graphicsQueueAcquireInfo.destinationAccess = clv::gfx::AccessFlags::ShaderRead;
+        graphicsQueueAcquireInfo.oldImageLayout    = clv::gfx::ImageLayout::TransferDestinationOptimal;
+        graphicsQueueAcquireInfo.newImageLayout    = clv::gfx::ImageLayout::ShaderReadOnlyOptimal;
+        graphicsQueueAcquireInfo.sourceQueue       = clv::gfx::QueueType::Transfer;
+        graphicsQueueAcquireInfo.destinationQueue  = clv::gfx::QueueType::Graphics;
 
-            auto buffer              = graphicsFactory->createBuffer(srdesc, data);
-            shaderData[bindingPoint] = { buffer, shaderType };
-        }
-    }*/
+        graphicsCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
+        graphicsCommandBuffer->imageMemoryBarrier(*defaultImage, graphicsQueueAcquireInfo, clv::gfx::PipelineStage::Transfer, clv::gfx::PipelineStage::PixelShader);
+        graphicsCommandBuffer->endRecording();
+        
+        auto fence = graphicsFactory->createFence({ false });
 
-	/*void Material::setAlbedoTexture(const std::string& path){
-		TextureDescriptor tdesc{};
-		albedoTexture = graphicsFactory->createTexture(tdesc, path);
-	}*/
+        GraphicsSubmitInfo submitInfo{};
+        submitInfo.commandBuffers = { graphicsCommandBuffer };
 
-	/*void Material::setAlbedoTexture(std::shared_ptr<Texture> texture){
-		albedoTexture = std::move(texture);
-	}*/
+        transferQueue->submit({ { transferCommandBuffer } });
+        graphicsQueue->submit(std::move(submitInfo), fence.get());
 
-	/*void Material::setSpecularTexture(const std::string& path){
-		TextureDescriptor tdesc{};
-		specTexture = graphicsFactory->createTexture(tdesc, path);
-	}*/
+        transferQueue->freeCommandBuffer(*transferCommandBuffer);
+        fence->wait();
+        graphicsQueue->freeCommandBuffer(*graphicsCommandBuffer);
 
-	/*void Material::setSpecularTexture(std::shared_ptr<Texture> texture){
-		specTexture = std::move(texture);
-	}*/
+        diffuseView  = defaultImage->createView();
+        specularView = defaultImage->createView();
+    }
+
+    Material::Material(const Material& other) = default;
+
+    Material::Material(Material&& other) noexcept = default;
+
+    Material& Material::operator=(const Material& other) = default;
+
+    Material& Material::operator=(Material&& other) noexcept = default;
+
+    Material::~Material() = default;
+
+    void Material::setDiffuseTexture(std::shared_ptr<clv::gfx::GraphicsImage> image) {
+        diffuseImage = std::move(image);
+    }
+
+    void Material::setSpecularTexture(std::shared_ptr<clv::gfx::GraphicsImage> image) {
+        specularImage = std::move(image);
+    }
+
+    void Material::setColour(clv::mth::vec4f colour) {
+        this->colour = std::move(colour);
+    }
+
+    void Material::setShininess(float shininess) {
+        this->shininess = shininess;
+    }
 }

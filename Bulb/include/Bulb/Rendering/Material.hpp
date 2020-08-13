@@ -1,58 +1,49 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
-//#include "Clove/Graphics/Texture.hpp"
-//#include "Clove/Graphics/Buffer.hpp"
 
-namespace clv::gfx{
-	class GraphicsFactory;
+namespace clv::gfx {
+    class GraphicsFactory;
+    class GraphicsImage;
+    class GraphicsImageView;
 }
 
-namespace blb::rnd{
-	class MaterialInstance;
+namespace blb::rnd {
+    /**
+	 * @brief A Material contains values that will be passed to shaders to customise
+	 * what an object looks like.
+	 */
+    class Material {
+        //VARIABLES
+    private:
+        std::shared_ptr<clv::gfx::GraphicsImage> defaultImage;
 
-	struct ShaderData {
-		//std::shared_ptr<clv::gfx::Buffer> buffer;
-		clv::gfx::ShaderStage shaderType;
-	};
+        std::shared_ptr<clv::gfx::GraphicsImage> diffuseImage;
+        std::shared_ptr<clv::gfx::GraphicsImage> specularImage;
+
+        std::shared_ptr<clv::gfx::GraphicsImageView> diffuseView;
+        std::shared_ptr<clv::gfx::GraphicsImageView> specularView;
+
+        clv::mth::vec4f colour{ 1.0f };
+        float shininess{ 32.0f };
+
+        //FUNCTIONS
+    public:
+        Material() = delete;
+        Material(const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory);
+
+        Material(const Material& other);
+        Material(Material&& other) noexcept;
+
+        Material& operator=(const Material& other);
+        Material& operator=(Material&& other) noexcept;
+
+        ~Material();
+
+        void setDiffuseTexture(std::shared_ptr<clv::gfx::GraphicsImage> image);
+        void setSpecularTexture(std::shared_ptr<clv::gfx::GraphicsImage> image);
+
+        void setColour(clv::mth::vec4f colour);
+        void setShininess(float shininess);
+    };
 }
-
-namespace blb::rnd{
-	class Material : public std::enable_shared_from_this<Material>{
-		friend class MaterialInstance;
-
-		//VARIABLES
-	private:
-		std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
-
-		//std::shared_ptr<clv::gfx::Texture> albedoTexture;
-		//std::shared_ptr<clv::gfx::Texture> specTexture;
-		//std::unordered_map<clv::gfx::BufferBindingPoint, ShaderData> shaderData;
-
-		//FUNCTIONS
-	public:
-		Material(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
-
-		Material(const Material& other);
-		Material(Material&& other) noexcept;
-
-		Material& operator=(const Material& other);
-		Material& operator=(Material&& other) noexcept;
-
-		~Material();
-
-		MaterialInstance createInstance();
-
-		/*template<typename DataType>
-		void setData(clv::gfx::BufferBindingPoint bindingPoint, DataType&& data, clv::gfx::ShaderStage shaderType);
-        void setData(clv::gfx::BufferBindingPoint bindingPoint, void* data, const size_t sizeBytes, clv::gfx::ShaderStage shaderType);*/
-
-		/*void setAlbedoTexture(const std::string& path);
-		void setAlbedoTexture(std::shared_ptr<clv::gfx::Texture> texture);
-
-		void setSpecularTexture(const std::string& path);
-		void setSpecularTexture(std::shared_ptr<clv::gfx::Texture> texture);*/
-	};
-}
-
-#include "Material.inl"
