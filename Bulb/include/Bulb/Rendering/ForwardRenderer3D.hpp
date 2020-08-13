@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Bulb/Rendering/Renderer3D.hpp"
-
 #include "Bulb/Rendering/ShaderBufferTypes.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
 
@@ -24,10 +22,19 @@ namespace clv::gfx {
 namespace blb::rnd {
     class Sprite;
     class Mesh;
+    class Material;
 }
 
 namespace blb::rnd {
-    class ForwardRenderer3D : public Renderer3D {
+    class ForwardRenderer3D {
+        //TYPES
+    public:
+        struct ComposedCameraData {
+            clv::gfx::Viewport viewport;
+            CameraRenderData bufferData;
+            //std::shared_ptr<clv::gfx::RenderTarget> target;
+        };
+
         //VARIABLES
     private:
         clv::DelegateHandle windowResizeHandle;
@@ -81,23 +88,23 @@ namespace blb::rnd {
         ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API api);
         ~ForwardRenderer3D();
 
-        void begin() final;
+        void begin();
 
-        void submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const clv::mth::mat4f& transform, const Material& material) final;
-        void submitQuad(const clv::mth::mat4f& transform, const Material& material) final;
+        void submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const clv::mth::mat4f& transform, const Material& material);
+        void submitQuad(const clv::mth::mat4f& transform, const Material& material); //Just take image view?
 
-        void submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh) final;
-        void submitAnimatedMesh(const std::shared_ptr<rnd::Mesh>& mesh) final;
-        void submitLight(const DirectionalLight& light) final;
-        void submitLight(const PointLight& light) final;
-        void submitCamera(const ComposedCameraData& camera) final;
+        void submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh);
+        void submitAnimatedMesh(const std::shared_ptr<rnd::Mesh>& mesh);
+        void submitLight(const DirectionalLight& light);
+        void submitLight(const PointLight& light);
+        void submitCamera(const ComposedCameraData& camera);
 
-        void submitWidget(const std::shared_ptr<Sprite>& widget) final;
-        void submitText(const std::shared_ptr<Sprite>& text) final;
+        void submitWidget(const std::shared_ptr<Sprite>& widget);
+        void submitText(const std::shared_ptr<Sprite>& text);
 
-        void end() final;
+        void end();
 
-        const std::shared_ptr<clv::gfx::GraphicsFactory>& getGraphicsFactory() const final;
+        const std::shared_ptr<clv::gfx::GraphicsFactory>& getGraphicsFactory() const;
 
     private:
         void onWindowResize(const clv::mth::vec2ui& size);

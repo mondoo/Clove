@@ -131,7 +131,7 @@ namespace blb::rnd {
         submitInfo.waitStages       = { clv::gfx::WaitStage::ColourAttachmentOutput };
         submitInfo.commandBuffers   = { commandBuffers[imageIndex] };
         submitInfo.signalSemaphores = { renderFinishedSemaphores[currentFrame] };
-        graphicsQueue->submit(submitInfo, inFlightFences[currentFrame]);
+        graphicsQueue->submit(submitInfo, inFlightFences[currentFrame].get());
 
         //Present current image
         clv::gfx::PresentInfo presentInfo{};
@@ -314,7 +314,7 @@ namespace blb::rnd {
 
         for(size_t i = 0; i < std::size(swapChainFrameBuffers); ++i) {
             descriptorSets[i]->write(*uniformBuffers[i], 0, sizeof(ModelViewProj), 0);
-            descriptorSets[i]->write(*sampler, *imageView, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
+            descriptorSets[i]->write(*imageView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
         }
     }
 

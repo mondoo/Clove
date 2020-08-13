@@ -8,14 +8,14 @@
 #include "Bulb/ECS/Components/TransformComponent.hpp"
 #include "Bulb/ECS/World.hpp"
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
-#include "Bulb/Rendering/Renderer3D.hpp"
+#include "Bulb/Rendering/ForwardRenderer3D.hpp"
 
 using namespace clv;
 using namespace clv::gfx;
 using namespace blb::rnd;
 
 namespace blb::ecs {
-	RenderSystem::RenderSystem(std::shared_ptr<Renderer3D> renderer)
+    RenderSystem::RenderSystem(std::shared_ptr<ForwardRenderer3D> renderer)
 		: renderer(std::move(renderer)) {
 	}
 
