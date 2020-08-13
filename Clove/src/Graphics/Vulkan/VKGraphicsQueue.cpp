@@ -62,7 +62,7 @@ namespace clv::gfx::vk {
         vkFreeCommandBuffers(device, commandPool, 1, buffers);
     }
 
-    void VKGraphicsQueue::submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<Fence>& fence) {
+    void VKGraphicsQueue::submit(const GraphicsSubmitInfo& submitInfo, const Fence* fence) {
         //Wait semaphores / stages
         const size_t waitSemaphoreCount = std::size(submitInfo.waitSemaphores);
         std::vector<VkSemaphore> waitSemaphores(waitSemaphoreCount);
@@ -98,7 +98,7 @@ namespace clv::gfx::vk {
         vkSubmitInfo.signalSemaphoreCount = signalSemaphoreCount;
         vkSubmitInfo.pSignalSemaphores    = std::data(signalSemaphores);
 
-        if(vkQueueSubmit(queue, 1, &vkSubmitInfo, fence ? polyCast<VKFence>(fence.get())->getFence() : VK_NULL_HANDLE) != VK_SUCCESS) {
+        if(vkQueueSubmit(queue, 1, &vkSubmitInfo, fence ? polyCast<const VKFence>(fence)->getFence() : VK_NULL_HANDLE) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to submit graphics command buffer(s)");
         }
     }

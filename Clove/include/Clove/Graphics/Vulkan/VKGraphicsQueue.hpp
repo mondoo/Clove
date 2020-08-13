@@ -31,6 +31,6 @@ namespace clv::gfx::vk {
         std::unique_ptr<GraphicsCommandBuffer> allocateCommandBuffer() override;
         void freeCommandBuffer(GraphicsCommandBuffer& buffer) override;
 
-        void submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<Fence>& fence) override;
+        void submit(const GraphicsSubmitInfo& submitInfo, const Fence* fence) override;
     };
 }

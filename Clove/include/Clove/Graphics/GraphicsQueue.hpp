@@ -10,6 +10,7 @@ namespace clv::gfx {
     struct GraphicsSubmitInfo {
         std::vector<std::shared_ptr<Semaphore>> waitSemaphores; /**< Each element in the semaphore maps to an element in the waitStages */
         std::vector<WaitStage> waitStages;
+        //TODO: Make the above a pair
 
         std::vector<std::shared_ptr<GraphicsCommandBuffer>> commandBuffers;
 
@@ -29,6 +30,6 @@ namespace clv::gfx {
         virtual std::unique_ptr<GraphicsCommandBuffer> allocateCommandBuffer() = 0;
         virtual void freeCommandBuffer(GraphicsCommandBuffer& buffer)          = 0;
 
-        virtual void submit(const GraphicsSubmitInfo& submitInfo, const std::shared_ptr<Fence>& fence) = 0;
+        virtual void submit(const GraphicsSubmitInfo& submitInfo, const Fence* fence) = 0;
     };
 }
