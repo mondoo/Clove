@@ -97,10 +97,12 @@ namespace blb::rnd {
 
     void Material::setDiffuseTexture(std::shared_ptr<clv::gfx::GraphicsImage> image) {
         diffuseImage = std::move(image);
+        diffuseView  = diffuseImage->createView();
     }
 
     void Material::setSpecularTexture(std::shared_ptr<clv::gfx::GraphicsImage> image) {
         specularImage = std::move(image);
+        specularView = specularImage->createView();
     }
 
     void Material::setColour(clv::mth::vec4f colour) {

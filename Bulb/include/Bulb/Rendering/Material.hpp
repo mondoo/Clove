@@ -14,6 +14,8 @@ namespace blb::rnd {
 	 * what an object looks like.
 	 */
     class Material {
+        friend class ForwardRenderer3D;
+
         //VARIABLES
     private:
         std::shared_ptr<clv::gfx::GraphicsImage> defaultImage;
