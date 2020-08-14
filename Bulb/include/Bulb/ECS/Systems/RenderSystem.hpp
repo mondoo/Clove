@@ -7,19 +7,19 @@ namespace clv::plt {
 }
 
 namespace blb::rnd {
-	class Renderer3D;
+    class ForwardRenderer3D;
 }
 
 namespace blb::ecs {
 	class RenderSystem : public System {
 		//VARIABLES
 	private:
-		std::shared_ptr<rnd::Renderer3D> renderer;
+        std::shared_ptr<rnd::ForwardRenderer3D> renderer;
 
 		//FUNCTIONS
 	public:
 		RenderSystem() = delete;
-		RenderSystem(std::shared_ptr<rnd::Renderer3D> renderer);
+        RenderSystem(std::shared_ptr<rnd::ForwardRenderer3D> renderer);
 
 		RenderSystem(const RenderSystem& other) = delete;
 		RenderSystem(RenderSystem&& other) noexcept;
