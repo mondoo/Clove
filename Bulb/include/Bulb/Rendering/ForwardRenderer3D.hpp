@@ -41,19 +41,18 @@ namespace blb::rnd {
         clv::mth::vec2ui windowSize;
         bool needNewSwapchain = false;
 
-        static constexpr size_t maxFramesInFlight = 2;
-        size_t currentFrame                       = 0;
+        static constexpr size_t maxFramesInFlight{ 2 };
+        size_t currentFrame{ 0 };
+        uint32_t imageIndex{ 0 };
 
         struct ModelViewProj {
             clv::mth::mat4f model;
             clv::mth::mat4f view;
             clv::mth::mat4f proj;
         };
-        //We have an array of these because we basically have a UBO per frame in flight
-        //TODO: How would we control this for the client? Would they need to request a UBO each frame?
-        //	Mesh, Sprite, Material etc. Would need to be set up specifically with this in mind.
-        //	Perhaps they can store the data and sort out the buffers when given to the renderer
+        
         std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;
+        std::shared_ptr<clv::gfx::Sampler> sampler;
 
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
@@ -90,7 +89,7 @@ namespace blb::rnd {
 
         void begin();
 
-        void submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const clv::mth::mat4f& transform, const Material& material);
+        void submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const size_t indexCount, const clv::mth::mat4f& transform, const Material& material);
         void submitQuad(const clv::mth::mat4f& transform, const Material& material); //Just take image view?
 
         void submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh);
@@ -116,9 +115,6 @@ namespace blb::rnd {
         void createSwapchainFrameBuffers();
         void createUniformBuffers();
         void createDescriptorPool();
-        void createDescriptorSets();//TEMP: Would probably just allocate sets as we needed, not necessarily when the swap chain resizes
-        void recordCommandBuffers();
-
-        void updateUniformBuffer(const size_t imageIndex);
+        void createDescriptorSets();
     };
 }

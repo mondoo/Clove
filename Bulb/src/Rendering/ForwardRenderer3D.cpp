@@ -1,5 +1,8 @@
 #include "Bulb/Rendering/ForwardRenderer3D.hpp"
 
+#include "Bulb/TextureLoader.hpp"
+#include "Bulb/Rendering/Material.hpp"
+
 #include <Clove/Graphics/DescriptorSet.hpp>
 #include <Clove/Graphics/GraphicsImageView.hpp>
 #include <Clove/Platform/Window.hpp>
@@ -12,7 +15,7 @@ namespace blb::rnd {
 
         graphicsFactory = clv::gfx::createGraphicsFactory(api, window.getNativeWindow());
 
-        graphicsQueue = graphicsFactory->createGraphicsQueue({ clv::gfx::QueueFlags::None });
+        graphicsQueue = graphicsFactory->createGraphicsQueue({ clv::gfx::QueueFlags::ReuseBuffers });
         presentQueue  = graphicsFactory->createPresentQueue();
         transferQueue = graphicsFactory->createTransferQueue({ clv::gfx::QueueFlags::Transient });
 
@@ -39,15 +42,7 @@ namespace blb::rnd {
 
         descriptorSetLayout = graphicsFactory->createDescriptorSetLayout(descriptorSetLayoutDescriptor);
 
-        createPipeline();
-        createSwapchainFrameBuffers();
-        createUniformBuffers();
-        createDescriptorPool();
-        createDescriptorSets();
-
-        recordCommandBuffers();
-
-        needNewSwapchain = false;
+        recreateSwapchain();
 
         //Create semaphores for frame synchronisation
         for(auto& renderFinishedSemaphore : renderFinishedSemaphores) {
@@ -60,18 +55,82 @@ namespace blb::rnd {
             inFlightFence = graphicsFactory->createFence({ true });
         }
         imagesInFlight.resize(swapchain->getImageViews().size());
+
+        clv::gfx::Sampler::Descriptor samplerDescriptor{};
+        samplerDescriptor.minFilter        = clv::gfx::Sampler::Filter::Linear;
+        samplerDescriptor.magFilter        = clv::gfx::Sampler::Filter::Linear;
+        samplerDescriptor.addressModeU     = clv::gfx::Sampler::AddressMode::Repeat;
+        samplerDescriptor.addressModeV     = clv::gfx::Sampler::AddressMode::Repeat;
+        samplerDescriptor.addressModeW     = clv::gfx::Sampler::AddressMode::Repeat;
+        samplerDescriptor.enableAnisotropy = true;
+        samplerDescriptor.maxAnisotropy    = 16.0f;
+
+        sampler = graphicsFactory->createSampler(std::move(samplerDescriptor));
     }
 
     ForwardRenderer3D::~ForwardRenderer3D() {
         //Wait for an idle device before shutting down so resources aren't freed while in use
         graphicsFactory->waitForIdleDevice();
+
+        //Reset these manually as they would fail after the device has been destroyed (how to solve this?)
+        uniformBuffers.clear();
+        sampler.reset();
+        for(auto& buffer : commandBuffers) {
+            graphicsQueue->freeCommandBuffer(*buffer);
+        }
+        commandBuffers.clear();
     }
 
     void ForwardRenderer3D::begin() {
-        //TODO
+        if(needNewSwapchain) {
+            recreateSwapchain();
+        }
+
+        //Wait on the current frame / current images to be available
+        inFlightFences[currentFrame]->wait();
+
+        //Aquire the next available image
+        clv::gfx::Result result = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get(), imageIndex);
+        if(result == clv::gfx::Result::Error_SwapchainOutOfDate) {
+            recreateSwapchain();
+        }
+
+        //Check if we're already using this image, if so wait
+        if(imagesInFlight[imageIndex] != nullptr) {
+            imagesInFlight[imageIndex]->wait();
+        }
+        imagesInFlight[imageIndex] = inFlightFences[currentFrame];//Ptr copy here, could be slowing things down
+
+        inFlightFences[currentFrame]->reset();
+
+        //Start our command buffers
+        clv::gfx::RenderArea renderArea{};
+        renderArea.origin = { 0, 0 };
+        renderArea.size   = { swapchain->getExtent().x, swapchain->getExtent().y };
+
+        clv::mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
+        clv::gfx::DepthStencilValue depthStencilClearValue{ 1.0f, 0 };
+
+        commandBuffers[imageIndex]->beginRecording(clv::gfx::CommandBufferUsage::Default);
+        commandBuffers[imageIndex]->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, clearColour, depthStencilClearValue);
+        commandBuffers[imageIndex]->bindPipelineObject(*pipelineObject);
     }
 
-    void ForwardRenderer3D::submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const clv::mth::mat4f& transform, const Material& material) {
+    void ForwardRenderer3D::submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const size_t indexCount, const clv::mth::mat4f& transform, const Material& material) {
+        ModelViewProj ubo{};
+        ubo.model = transform;
+        ubo.view  = glm::lookAt(glm::vec3(0.0f, 2.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ubo.proj  = glm::perspective(glm::radians(45.0f), static_cast<float>(swapchain->getExtent().x) / static_cast<float>(swapchain->getExtent().y), 0.1f, 10.0f);
+
+        uniformBuffers[imageIndex]->map(&ubo, sizeof(ubo));
+        
+        descriptorSets[imageIndex]->write(*uniformBuffers[imageIndex], 0, sizeof(ModelViewProj), 0);
+        descriptorSets[imageIndex]->write(*material.diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
+        
+        commandBuffers[imageIndex]->bindVertexBuffer(*vertexBuffer, 0);
+        commandBuffers[imageIndex]->bindIndexBuffer(*indexBuffer, clv::gfx::IndexType::Uint16);
+        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex], *pipelineObject);
+        commandBuffers[imageIndex]->drawIndexed(indexCount);
     }
 
     void ForwardRenderer3D::submitQuad(const clv::mth::mat4f& transform, const Material& material) {
@@ -99,31 +158,8 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::end() {
-        if(needNewSwapchain) {
-            recreateSwapchain();
-            return;
-        }
-
-        inFlightFences[currentFrame]->wait();
-
-        //Aquire the next available image
-        uint32_t imageIndex;
-        clv::gfx::Result result = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get(), imageIndex);
-        if(result == clv::gfx::Result::Error_SwapchainOutOfDate) {
-            recreateSwapchain();
-            return;
-        }
-
-        //Check if we're already using this image, if so wait
-        if(imagesInFlight[imageIndex] != nullptr) {
-            imagesInFlight[imageIndex]->wait();
-        }
-        imagesInFlight[imageIndex] = inFlightFences[currentFrame];//Ptr copy here, could be slowing things down
-
-        inFlightFences[currentFrame]->reset();
-
-        //Update our UBOs
-        updateUniformBuffer(imageIndex);
+        commandBuffers[imageIndex]->endRenderPass();
+        commandBuffers[imageIndex]->endRecording();
 
         //Submit the command buffer associated with that image
         clv::gfx::GraphicsSubmitInfo submitInfo{};
@@ -138,9 +174,10 @@ namespace blb::rnd {
         presentInfo.waitSemaphores = { renderFinishedSemaphores[currentFrame] };
         presentInfo.swapChain      = swapchain;
         presentInfo.imageIndex     = imageIndex;
-        result                     = presentQueue->present(presentInfo);
+        clv::gfx::Result result = presentQueue->present(presentInfo);
         if(needNewSwapchain || result == clv::gfx::Result::Error_SwapchainOutOfDate || result == clv::gfx::Result::Success_SwapchainSuboptimal) {
             recreateSwapchain();
+            GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Swapchain recreated at end of loop");
         }
 
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
@@ -171,6 +208,9 @@ namespace blb::rnd {
         swapchain.reset();
         pipelineObject.reset();
         swapChainFrameBuffers.clear();
+        for(auto& buffer : commandBuffers) {
+            graphicsQueue->freeCommandBuffer(*buffer);
+        }
         commandBuffers.clear();
 
         //Recreate our swap chain
@@ -185,7 +225,10 @@ namespace blb::rnd {
         createDescriptorPool();
         createDescriptorSets();
 
-        recordCommandBuffers();
+        commandBuffers.reserve(swapChainFrameBuffers.size());
+        for(size_t i = 0; i < swapChainFrameBuffers.size(); ++i) {
+            commandBuffers.emplace_back(graphicsQueue->allocateCommandBuffer());
+        }
 
         needNewSwapchain = false;
     }
@@ -295,6 +338,7 @@ namespace blb::rnd {
         clv::gfx::DescriptorInfo uboInfo{};
         uboInfo.type  = clv::gfx::DescriptorType::UniformBuffer;
         uboInfo.count = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
+
         clv::gfx::DescriptorInfo samplerInfo{};
         samplerInfo.type  = clv::gfx::DescriptorType::CombinedImageSampler;
         samplerInfo.count = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
@@ -311,53 +355,5 @@ namespace blb::rnd {
         std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> layouts(std::size(swapChainFrameBuffers), descriptorSetLayout);
 
         descriptorSets = descriptorPool->allocateDescriptorSets(layouts);
-
-        for(size_t i = 0; i < std::size(swapChainFrameBuffers); ++i) {
-            descriptorSets[i]->write(*uniformBuffers[i], 0, sizeof(ModelViewProj), 0);
-            descriptorSets[i]->write(*imageView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
-        }
-    }
-
-    void blb::rnd::ForwardRenderer3D::recordCommandBuffers() {
-        commandBuffers.reserve(swapChainFrameBuffers.size());
-        for(size_t i = 0; i < swapChainFrameBuffers.size(); ++i) {
-            commandBuffers.emplace_back(graphicsQueue->allocateCommandBuffer());
-        }
-
-        clv::gfx::RenderArea renderArea{};
-        renderArea.origin = { 0, 0 };
-        renderArea.size   = { swapchain->getExtent().x, swapchain->getExtent().y };
-
-        clv::mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
-        clv::gfx::DepthStencilValue depthStencilClearValue{ 1.0f, 0 };
-
-        //Record our command buffers
-        for(size_t i = 0; i < commandBuffers.size(); ++i) {
-            commandBuffers[i]->beginRecording(clv::gfx::CommandBufferUsage::Default);
-
-            commandBuffers[i]->beginRenderPass(*renderPass, *swapChainFrameBuffers[i], renderArea, clearColour, depthStencilClearValue);
-            commandBuffers[i]->bindPipelineObject(*pipelineObject);
-            commandBuffers[i]->bindVertexBuffer(*vertexBuffer, 0);
-            commandBuffers[i]->bindIndexBuffer(*indexBuffer, clv::gfx::IndexType::Uint16);
-            commandBuffers[i]->bindDescriptorSet(*descriptorSets[i], *pipelineObject);
-            commandBuffers[i]->drawIndexed(std::size(indices));
-            commandBuffers[i]->endRenderPass();
-
-            commandBuffers[i]->endRecording();
-        }
-    }
-
-    void ForwardRenderer3D::updateUniformBuffer(const size_t imageIndex) {
-        static auto startTime = std::chrono::high_resolution_clock::now();
-
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        float time       = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-        ModelViewProj ubo{};
-        ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        ubo.view  = glm::lookAt(glm::vec3(0.0f, 2.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ubo.proj  = glm::perspective(glm::radians(45.0f), static_cast<float>(swapchain->getExtent().x) / static_cast<float>(swapchain->getExtent().y), 0.1f, 10.0f);
-
-        uniformBuffers[imageIndex]->map(&ubo, sizeof(ubo));
     }
 }

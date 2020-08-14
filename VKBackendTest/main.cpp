@@ -4,14 +4,15 @@
 #include <Bulb/Rendering/RenderingTypes.hpp>
 #include <Bulb/TextureLoader.hpp>
 #include <Clove/Graphics/GraphicsTypes.hpp>
+#include <Bulb/Rendering/Material.hpp>
 
 int main(){
 	auto platform = clv::plt::createPlatformInstance();
 	auto mainWindow = platform->createWindow({ "Vulkan refactor!", 1280, 720 });
 	mainWindow->setVSync(true);
 
-	auto renderer = blb::rnd::ForwardRenderer3D(*mainWindow, clv::gfx::API::Vulkan);
-    auto graphicsFactory = renderer.getGraphicsFactory();
+	auto* renderer = new blb::rnd::ForwardRenderer3D(*mainWindow, clv::gfx::API::Vulkan);
+    auto graphicsFactory = renderer->getGraphicsFactory();
 
     auto graphicsQueue = graphicsFactory->createGraphicsQueue({ clv::gfx::QueueFlags::None });
     auto transferQueue = graphicsFactory->createTransferQueue({ clv::gfx::QueueFlags::Transient });
@@ -28,15 +29,14 @@ int main(){
         { { -0.5f, 0.5f, 0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
     };
     const std::vector<uint16_t> indices = {
-        0, 1, 2, 2, 3, 0,
+        0, 1, 2, 2, 3, 0, 
         4, 5, 6, 6, 7, 4
     };
     std::shared_ptr<clv::gfx::GraphicsBuffer> vertexBuffer;
     std::shared_ptr<clv::gfx::GraphicsBuffer> indexBuffer;
     std::shared_ptr<clv::gfx::GraphicsImage> texture;
     std::shared_ptr<clv::gfx::GraphicsImageView> imageView;
-    std::shared_ptr<clv::gfx::Sampler> sampler;
-
+    //std::shared_ptr<clv::gfx::Sampler> sampler;
 
     //CREATE THE THINGS
     const auto textureData = blb::TextureLoader::loadTexture("F:/RingsOfPower/Engine/Garlic/VKBackendTest/texture.jpg");
@@ -139,43 +139,54 @@ int main(){
     transferQueue->submit({ { transferCommandBuffer } });
     transferQueue->freeCommandBuffer(*transferCommandBuffer);
 
+    auto transferCompleteFance = graphicsFactory->createFence({ false });
+
     clv::gfx::GraphicsSubmitInfo submitInfo{};
     submitInfo.commandBuffers = { { transitionCommandBuffer } };
-    graphicsQueue->submit(submitInfo, nullptr);
-    graphicsFactory->waitForIdleDevice();//We need to wait for out buffer to be executed before freeing
+    graphicsQueue->submit(submitInfo, transferCompleteFance.get());
+    transferCompleteFance->wait();
     graphicsQueue->freeCommandBuffer(*transitionCommandBuffer);
 
     //Create the objects we need to send the image to the shaders
-    clv::gfx::Sampler::Descriptor samplerDescriptor{};
+    /*clv::gfx::Sampler::Descriptor samplerDescriptor{};
     samplerDescriptor.minFilter        = clv::gfx::Sampler::Filter::Linear;
     samplerDescriptor.magFilter        = clv::gfx::Sampler::Filter::Linear;
     samplerDescriptor.addressModeU     = clv::gfx::Sampler::AddressMode::Repeat;
     samplerDescriptor.addressModeV     = clv::gfx::Sampler::AddressMode::Repeat;
     samplerDescriptor.addressModeW     = clv::gfx::Sampler::AddressMode::Repeat;
     samplerDescriptor.enableAnisotropy = true;
-    samplerDescriptor.maxAnisotropy    = 16.0f;
+    samplerDescriptor.maxAnisotropy    = 16.0f;*/
 
     imageView = texture->createView();
-    sampler   = graphicsFactory->createSampler(std::move(samplerDescriptor));
+    //sampler   = graphicsFactory->createSampler(std::move(samplerDescriptor));
+    
+    blb::rnd::Material material(graphicsFactory);
+    material.setDiffuseTexture(std::move(texture));
 
 	while(mainWindow->isOpen()) {
+        static auto startTime = std::chrono::high_resolution_clock::now();
+
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        float time       = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
 		mainWindow->processInput();
 		if(mainWindow->getKeyboard().isKeyPressed(clv::Key::Escape)) {
 			break;
 		}
 
-		renderer.begin();
+		renderer->begin();
 
-		//TODO: Submit mesh data
+        const auto transform = clv::mth::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        renderer->submitPrimitive(vertexBuffer, indexBuffer, std::size(indices), transform, material);
 
-		renderer.end();
+		renderer->end();
 	}
 
     //Reset these manually as they would fail after the device has been destroyed (how to solve this?)
+    delete renderer;
+
     vertexBuffer.reset();
     indexBuffer.reset();
-    //uniformBuffers.clear();
     texture.reset();
-    sampler.reset();
     imageView.reset();
 }
