@@ -1,7 +1,7 @@
 #include "Bulb/UI/Text.hpp"
 
 #include "Bulb/Rendering/Renderables/Sprite.hpp"
-#include "Bulb/Rendering/Renderer3D.hpp"
+//#include "Bulb/Rendering/Renderer3D.hpp"
 
 //Temp?
 #include "Clove/Graphics/GraphicsTypes.hpp"
@@ -76,7 +76,7 @@ namespace blb::ui {
 				auto character = std::make_shared<rnd::Sprite>(glyph.character, graphicsFactory);
 				//character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
 
-				renderer.submitText(character);
+				//renderer.submitText(character);
 			}
 
 			cursorPos.x += glyph.advance.x;
