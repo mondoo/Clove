@@ -32,6 +32,8 @@ namespace clv::gfx::vk {
 
     uint32_t getQueueFamilyIndex(QueueType type, const QueueFamilyIndices& indices);
 
+    VkCommandPoolCreateFlags convertCommandPoolCreateFlags(QueueFlags garlicFlags);
+
     VkCommandBufferUsageFlags getCommandBufferUsageFlags(CommandBufferUsage garlicUsage);
     VkIndexType getIndexType(IndexType garlicType);
 }

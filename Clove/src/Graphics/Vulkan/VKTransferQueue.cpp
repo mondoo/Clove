@@ -1,6 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKTransferQueue.hpp"
 
 #include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
     VKTransferQueue::VKTransferQueue(VkDevice device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)
@@ -13,7 +14,7 @@ namespace clv::gfx::vk {
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         poolInfo.pNext            = nullptr;
-        poolInfo.flags            = descriptor.flags == QueueFlags::Transient ? VK_COMMAND_POOL_CREATE_TRANSIENT_BIT : 0;
+        poolInfo.flags            = convertCommandPoolCreateFlags(descriptor.flags);
         poolInfo.queueFamilyIndex = familyIndex;
 
         if(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
