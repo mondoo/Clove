@@ -42,7 +42,7 @@ namespace blb::ecs {
 		}
 
 		//Step physics world
-		physicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
+		physicsWorld->stepSimulation(deltaTime);
 
 		//Update transforms
 		for(auto&& [transform, rigidBody] : componentTuples) {
