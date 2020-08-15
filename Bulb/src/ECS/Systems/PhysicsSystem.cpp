@@ -37,8 +37,8 @@ namespace blb::ecs {
 
 		//Update rigid bodies
 		for(auto&& [transform, rigidBody] : componentTuples) {
-			rigidBody->rigidBody->setWorldPosition(transform->getPosition());
-			rigidBody->rigidBody->setWorldRotation(transform->getRotation());
+			rigidBody->rigidBody->setWorldPosition(transform->getPosition(TransformSpace::World));
+			rigidBody->rigidBody->setWorldRotation(transform->getRotation(TransformSpace::World));
 		}
 
 		//Step physics world
@@ -46,8 +46,8 @@ namespace blb::ecs {
 
 		//Update transforms
 		for(auto&& [transform, rigidBody] : componentTuples) {
-			transform->setPosition(rigidBody->rigidBody->getPhysicsPosition());
-			transform->setRotation(rigidBody->rigidBody->getPhysicsRotation());
+            transform->setPosition(rigidBody->rigidBody->getPhysicsPosition(), TransformSpace::World);
+            transform->setRotation(rigidBody->rigidBody->getPhysicsRotation(), TransformSpace::World);
 		}
 
 		//Handle collisions
