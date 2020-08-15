@@ -37,17 +37,22 @@ namespace blb::phy {
         btTransform btTrans = body->getWorldTransform();
         btTrans.setOrigin({ position.x, position.y, position.z });
         body->setWorldTransform(btTrans);
+
+        body->activate();
     }
 
     void RigidBody::setWorldRotation(const clv::mth::quatf& rotation) {
         btTransform btTrans = body->getWorldTransform();
         btTrans.setRotation({ rotation.x, rotation.y, rotation.z, rotation.w });//GLM is pitch yaw roll while Bullet is yaw pitch roll
         body->setWorldTransform(btTrans);
+
+        body->activate();
     }
 
     void RigidBody::setLinearVelocity(const clv::mth::vec3f& velocity) {
         const btVector3 btvel{ velocity.x, velocity.y, velocity.z };
         body->setLinearVelocity(btvel);
+
         body->activate();
     }
 
@@ -55,6 +60,7 @@ namespace blb::phy {
         const btVector3 btForce{ force.x, force.y, force.z };
         const btVector3 btOffset{ relativeOffset.x, relativeOffset.y, relativeOffset.z };
         body->applyForce(btForce, btOffset);
+
         body->activate();
     }
 
@@ -62,6 +68,7 @@ namespace blb::phy {
         const btVector3 btImpulse{ impulse.x, impulse.y, impulse.z };
         const btVector3 btOffset{ relativeOffset.x, relativeOffset.y, relativeOffset.z };
         body->applyForce(btImpulse, btOffset);
+
         body->activate();
     }
 
