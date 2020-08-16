@@ -30,7 +30,7 @@ namespace blb::phy{
 	void World::stepSimulation(clv::utl::DeltaTime deltaTime){
 		CLV_PROFILE_FUNCTION();
 
-		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds(), 0);
+		dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 
 		collisionManifolds.clear();
 		//TODO: Just use dispatcher-> ?
