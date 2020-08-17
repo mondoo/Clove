@@ -53,7 +53,7 @@ namespace blb::ecs {
 			for(auto& mesh : staticModel->model.getMeshes()) {
 				//mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
 
-				renderer->submitStaticMesh(mesh);
+				//renderer->submitStaticMesh(mesh);
 			}
 		}
 		//Submit animated meshes
@@ -65,7 +65,7 @@ namespace blb::ecs {
                 //mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
                 //mesh->getMaterialInstance().setData(clv::gfx::BBP_SkeletalData, matrixPalet.data(), sizeof(clv::mth::mat4f) * blb::rnd::MAX_JOINTS, clv::gfx::ShaderStage::Vertex);
 
-                renderer->submitAnimatedMesh(mesh);
+                //renderer->submitAnimatedMesh(mesh);
             }
         }
 

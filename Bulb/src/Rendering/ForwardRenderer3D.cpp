@@ -3,6 +3,7 @@
 #include "Bulb/TextureLoader.hpp"
 #include "Bulb/Rendering/Material.hpp"
 #include "Bulb/Rendering/Vertex.hpp"
+#include "Bulb/Rendering/Renderables/Mesh.hpp"
 
 #include <Clove/Graphics/DescriptorSet.hpp>
 #include <Clove/Graphics/GraphicsImageView.hpp>
@@ -83,6 +84,32 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::begin() {
+        currentFrameData.meshes.clear();
+    }
+
+    void ForwardRenderer3D::submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform) {
+        currentFrameData.meshes.push_back({ std::move(mesh), std::move(transform) });
+    }
+
+    void ForwardRenderer3D::submitAnimatedMesh(std::shared_ptr<rnd::Mesh> mesh, clv::mth::mat4f transform) {
+    }
+
+    void ForwardRenderer3D::submitLight(const DirectionalLight& light) {
+    }
+
+    void ForwardRenderer3D::submitLight(const PointLight& light) {
+    }
+
+    void ForwardRenderer3D::submitCamera(const ComposedCameraData& camera) {
+    }
+
+    void ForwardRenderer3D::submitWidget(const std::shared_ptr<Sprite>& widget) {
+    }
+
+    void ForwardRenderer3D::submitText(const std::shared_ptr<Sprite>& text) {
+    }
+
+    void ForwardRenderer3D::end() {
         if(needNewSwapchain) {
             recreateSwapchain();
         }
@@ -104,7 +131,7 @@ namespace blb::rnd {
 
         inFlightFences[currentFrame]->reset();
 
-        //Start our command buffers
+        //Record our command buffers
         clv::gfx::RenderArea renderArea{};
         renderArea.origin = { 0, 0 };
         renderArea.size   = { swapchain->getExtent().x, swapchain->getExtent().y };
@@ -115,50 +142,25 @@ namespace blb::rnd {
         commandBuffers[imageIndex]->beginRecording(clv::gfx::CommandBufferUsage::Default);
         commandBuffers[imageIndex]->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, clearColour, depthStencilClearValue);
         commandBuffers[imageIndex]->bindPipelineObject(*pipelineObject);
-    }
 
-    void ForwardRenderer3D::submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const size_t indexCount, const clv::mth::mat4f& transform, const Material& material) {
-        ModelViewProj ubo{};
-        ubo.model = transform;
-        ubo.view  = glm::lookAt(glm::vec3(0.0f, 2.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ubo.proj  = glm::perspective(glm::radians(45.0f), static_cast<float>(swapchain->getExtent().x) / static_cast<float>(swapchain->getExtent().y), 0.1f, 10.0f);
+        for(auto&& [mesh, transform] : currentFrameData.meshes) {
+            ModelViewProj ubo{};
+            ubo.model = transform;
+            ubo.view  = glm::lookAt(glm::vec3(0.0f, 2.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            ubo.proj  = glm::perspective(glm::radians(45.0f), static_cast<float>(swapchain->getExtent().x) / static_cast<float>(swapchain->getExtent().y), 0.1f, 10.0f);
 
-        uniformBuffers[imageIndex]->map(&ubo, sizeof(ubo));
-        
-        descriptorSets[imageIndex]->write(*uniformBuffers[imageIndex], 0, sizeof(ModelViewProj), 0);
-        descriptorSets[imageIndex]->write(*material.diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
-        
-        commandBuffers[imageIndex]->bindVertexBuffer(*vertexBuffer, 0);
-        commandBuffers[imageIndex]->bindIndexBuffer(*indexBuffer, clv::gfx::IndexType::Uint16);
-        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex], *pipelineObject);
-        commandBuffers[imageIndex]->drawIndexed(indexCount);
-    }
+            uniformBuffers[imageIndex]->map(&ubo, sizeof(ubo));
 
-    void ForwardRenderer3D::submitQuad(const clv::mth::mat4f& transform, const Material& material) {
-    }
+            //TODO: Need a descriptor set per mesh
+            descriptorSets[imageIndex]->write(*uniformBuffers[imageIndex], 0, sizeof(ModelViewProj), 0);
+            descriptorSets[imageIndex]->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
 
-    void ForwardRenderer3D::submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
-    }
+            commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
+            commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), clv::gfx::IndexType::Uint16);
+            commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex], *pipelineObject);
+            commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
+        }
 
-    void ForwardRenderer3D::submitAnimatedMesh(const std::shared_ptr<rnd::Mesh>& mesh) {
-    }
-
-    void ForwardRenderer3D::submitLight(const DirectionalLight& light) {
-    }
-
-    void ForwardRenderer3D::submitLight(const PointLight& light) {
-    }
-
-    void ForwardRenderer3D::submitCamera(const ComposedCameraData& camera) {
-    }
-
-    void ForwardRenderer3D::submitWidget(const std::shared_ptr<Sprite>& widget) {
-    }
-
-    void ForwardRenderer3D::submitText(const std::shared_ptr<Sprite>& text) {
-    }
-
-    void ForwardRenderer3D::end() {
         commandBuffers[imageIndex]->endRenderPass();
         commandBuffers[imageIndex]->endRecording();
 
@@ -175,7 +177,7 @@ namespace blb::rnd {
         presentInfo.waitSemaphores = { renderFinishedSemaphores[currentFrame] };
         presentInfo.swapChain      = swapchain;
         presentInfo.imageIndex     = imageIndex;
-        clv::gfx::Result result = presentQueue->present(presentInfo);
+        result = presentQueue->present(presentInfo);
         if(needNewSwapchain || result == clv::gfx::Result::Error_SwapchainOutOfDate || result == clv::gfx::Result::Success_SwapchainSuboptimal) {
             recreateSwapchain();
             GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Swapchain recreated at end of loop");

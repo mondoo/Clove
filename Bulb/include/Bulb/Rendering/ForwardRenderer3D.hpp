@@ -43,6 +43,10 @@ namespace blb::rnd {
         size_t currentFrame{ 0 };
         uint32_t imageIndex{ 0 };
 
+        struct {
+            std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
+        } currentFrameData;
+
         struct ModelViewProj {
             clv::mth::mat4f model;
             clv::mth::mat4f view;
@@ -87,11 +91,8 @@ namespace blb::rnd {
 
         void begin();
 
-        void submitPrimitive(const std::shared_ptr<clv::gfx::GraphicsBuffer>& vertexBuffer, const std::shared_ptr<clv::gfx::GraphicsBuffer>& indexBuffer, const size_t indexCount, const clv::mth::mat4f& transform, const Material& material);
-        void submitQuad(const clv::mth::mat4f& transform, const Material& material); //Just take image view?
-
-        void submitStaticMesh(const std::shared_ptr<rnd::Mesh>& mesh);
-        void submitAnimatedMesh(const std::shared_ptr<rnd::Mesh>& mesh);
+        void submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);
+        void submitAnimatedMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);
         void submitLight(const DirectionalLight& light);
         void submitLight(const PointLight& light);
         void submitCamera(const ComposedCameraData& camera);
