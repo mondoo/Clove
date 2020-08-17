@@ -5,11 +5,11 @@
 #include <Clove/Graphics/GraphicsImageView.hpp>
 
 namespace blb::rnd {
-    Material::Material(const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
+    Material::Material(clv::gfx::GraphicsFactory& factory) {
         using namespace clv::gfx;
 
-        auto transferQueue = graphicsFactory->createTransferQueue({ QueueFlags::Transient });
-        auto graphicsQueue = graphicsFactory->createGraphicsQueue({ QueueFlags::Transient });
+        auto transferQueue = factory.createTransferQueue({ QueueFlags::Transient });
+        auto graphicsQueue = factory.createGraphicsQueue({ QueueFlags::Transient });
 
         std::shared_ptr<TransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
         std::shared_ptr<GraphicsCommandBuffer> graphicsCommandBuffer = graphicsQueue->allocateCommandBuffer();
@@ -21,14 +21,14 @@ namespace blb::rnd {
         imageDesc.format      = ImageFormat::R8G8B8A8_SRGB;
         imageDesc.sharingMode = SharingMode::Exclusive;
         imageDesc.memoryType  = MemoryType::VideoMemory;
-        defaultImage          = graphicsFactory->createImage(imageDesc);
+        defaultImage          = factory.createImage(imageDesc);
 
         GraphicsBuffer::Descriptor bufferDesc{};
         bufferDesc.size        = 4;
         bufferDesc.usageFlags  = GraphicsBuffer::UsageMode::TransferSource;
         bufferDesc.sharingMode = SharingMode::Exclusive;
         bufferDesc.memoryType  = MemoryType::SystemMemory;
-        auto transferBuffer    = graphicsFactory->createBuffer(std::move(bufferDesc));
+        auto transferBuffer    = factory.createBuffer(std::move(bufferDesc));
 
         uint32_t white = 0xffffffff;
         transferBuffer->map(&white, 4);
@@ -69,7 +69,7 @@ namespace blb::rnd {
         graphicsCommandBuffer->imageMemoryBarrier(*defaultImage, graphicsQueueAcquireInfo, clv::gfx::PipelineStage::Transfer, clv::gfx::PipelineStage::PixelShader);
         graphicsCommandBuffer->endRecording();
         
-        auto fence = graphicsFactory->createFence({ false });
+        auto fence = factory.createFence({ false });
 
         GraphicsSubmitInfo submitInfo{};
         submitInfo.commandBuffers = { graphicsCommandBuffer };

@@ -32,7 +32,7 @@ namespace blb::rnd {
         //FUNCTIONS
     public:
         Material() = delete;
-        Material(const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory);
+        Material(clv::gfx::GraphicsFactory& factory);
 
         Material(const Material& other);
         Material(Material&& other) noexcept;
