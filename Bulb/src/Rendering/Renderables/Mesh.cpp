@@ -1,134 +1,92 @@
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 
-//#include "Clove/Graphics/Buffer.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
-//#include "Clove/Graphics/CommandBuffer.hpp"
-
-using namespace clv;
-using namespace clv::gfx;
 
 namespace blb::rnd{
-	/*static VertexBufferData transferVertexBufferData(VertexBufferData& source, const VertexLayout& newLayout){
-		const size_t vertexCount = source.size();
-		gfx::VertexBufferData vertexArray{ newLayout };
-		vertexArray.resize(vertexCount);
+    Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices, clv::gfx::GraphicsFactory& factory) 
+        : Mesh(vertices, indices, Material{ factory }, factory) {
+    }
 
-		for(int32_t i = 0; i < vertexCount; ++i) {
-			for(int32_t j = 0; j < newLayout.count(); ++j) {
-                switch(newLayout.resolve(j).getType()) {
-                    case VertexElementType::position2D:
-                        vertexArray[i].getAttribute<VertexElementType::position2D>() = source[i].getAttribute<VertexElementType::position2D>();
-                        break;
+    Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices, Material material, clv::gfx::GraphicsFactory& factory) 
+        : material(std::move(material)){
+        const size_t vertexBufferSize = sizeof(blb::rnd::Vertex) * std::size(vertices);
+        const size_t indexBufferSize   = sizeof(uint16_t) * std::size(indices);
 
-                    case VertexElementType::position3D:
-                        vertexArray[i].getAttribute<VertexElementType::position3D>() = source[i].getAttribute<VertexElementType::position3D>();
-                        break;
+        //Staging buffers
+        clv::gfx::GraphicsBuffer::Descriptor stagingDescriptor{};
+        stagingDescriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::TransferSource;
+        stagingDescriptor.sharingMode = clv::gfx::SharingMode::Exclusive;//Only accessed by the transfer queue
+        stagingDescriptor.memoryType  = clv::gfx::MemoryType::SystemMemory;
 
-                    case VertexElementType::texture2D:
-                        vertexArray[i].getAttribute<VertexElementType::texture2D>() = source[i].getAttribute<VertexElementType::texture2D>();
-                        break;
+        stagingDescriptor.size   = vertexBufferSize;
+        auto stagingBufferVertex = factory.createBuffer(stagingDescriptor);
 
-                    case VertexElementType::normal:
-                        vertexArray[i].getAttribute<VertexElementType::normal>() = source[i].getAttribute<VertexElementType::normal>();
-                        break;
+        stagingDescriptor.size  = indexBufferSize;
+        auto stagingBufferIndex = factory.createBuffer(stagingDescriptor);
 
-                    case VertexElementType::jointIds:
-                        vertexArray[i].getAttribute<VertexElementType::jointIds>() = source[i].getAttribute<VertexElementType::jointIds>();
-                        break;
+        //Vertex buffer
+        clv::gfx::GraphicsBuffer::Descriptor vertexDescriptor{};
+        vertexDescriptor.size        = vertexBufferSize;
+        vertexDescriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::TransferDestination | clv::gfx::GraphicsBuffer::UsageMode::VertexBuffer;
+        vertexDescriptor.sharingMode = clv::gfx::SharingMode::Concurrent; //Accessed by transfer and graphics queue, can be optimised with just Exclusive if transfered between queues
+        vertexDescriptor.memoryType  = clv::gfx::MemoryType::VideoMemory;
 
-                    case VertexElementType::weights:
-                        vertexArray[i].getAttribute<VertexElementType::weights>() = source[i].getAttribute<VertexElementType::weights>();
-                        break;
-                    default:
-                        GARLIC_ASSERT(false, "{0}: Unknown vertex element", GARLIC_FUNCTION_NAME);
-                        break;
-				}
-			}
-		}
+        vertexBuffer = factory.createBuffer(vertexDescriptor);
 
-		return vertexArray;
-	}*/
+        //Index Buffer
+        clv::gfx::GraphicsBuffer::Descriptor indexDescriptor{};
+        indexDescriptor.size        = indexBufferSize;
+        indexDescriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::TransferDestination | clv::gfx::GraphicsBuffer::UsageMode::IndexBuffer;
+        indexDescriptor.sharingMode = clv::gfx::SharingMode::Concurrent; //Accessed by transfer and graphics queue, can be optimised with just Exclusive if transfered between queues
+        indexDescriptor.memoryType  = clv::gfx::MemoryType::VideoMemory;
 
-	/*static std::shared_ptr<clv::gfx::Buffer> createVertexBuffer(const VertexBufferData& vertexArray, GraphicsFactory& graphicsFactory) {
-		BufferDescriptor vbdesc{};
-		vbdesc.elementSize	= vertexArray.getLayout().size();
-		vbdesc.bufferSize	= vertexArray.sizeBytes();
-		vbdesc.bufferType	= BufferType::VertexBuffer;
-		vbdesc.bufferUsage	= BufferUsage::Default;
-		auto vertexBuffer	= graphicsFactory.createBuffer(vbdesc, vertexArray.data());
+        indexBuffer = factory.createBuffer(indexDescriptor);
 
-		return vertexBuffer;
-	}*/
+        //Map the data int system memory
+        stagingBufferVertex->map(std::data(vertices), vertexBufferSize);
+        stagingBufferIndex->map(std::data(indices), indexBufferSize);
 
-	/*static std::shared_ptr<clv::gfx::Buffer> createIndexBuffer(const std::vector<uint32_t>& indices, GraphicsFactory& graphicsFactory) {
-		const std::size_t indexSize = sizeof(uint32_t);
+        //Transfer the data to video memory
+        auto transferQueue = factory.createTransferQueue({ clv::gfx::QueueFlags::Transient });
 
-		BufferDescriptor ibdesc{};
-		ibdesc.elementSize	= indexSize;
-		ibdesc.bufferSize	= indices.size() * indexSize;
-		ibdesc.bufferType	= BufferType::IndexBuffer;
-		ibdesc.bufferUsage	= BufferUsage::Default;
-		auto indexBuffer	= graphicsFactory.createBuffer(ibdesc, indices.data());
+        std::shared_ptr<clv::gfx::TransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
 
-		return indexBuffer;
-	}*/
+        transferCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
+        transferCommandBuffer->copyBufferToBuffer(*stagingBufferVertex, 0, *vertexBuffer, 0, vertexBufferSize);
+        transferCommandBuffer->copyBufferToBuffer(*stagingBufferIndex, 0, *indexBuffer, 0, indexBufferSize);
+        transferCommandBuffer->endRecording();
 
-	//Mesh::Mesh(const VertexBufferData& vbData, const std::vector<uint32_t>& indices, MaterialInstance materialInstance)
-	//	: materialInstance(std::move(materialInstance))
-	//	//, loadedBufferData(vbData)
-	//	, indices(indices) {
-	//}
+        transferQueue->submit({ { transferCommandBuffer } });
+        transferQueue->freeCommandBuffer(*transferCommandBuffer);
+    }
 
 	Mesh::Mesh(const Mesh& other) = default;
 
-	Mesh::Mesh(Mesh&& other) noexcept {
-		//: materialInstance(std::move(other.materialInstance)){
-		//, loadedBufferData(std::move(other.loadedBufferData)) {
-		//vertexBufferMap	= std::move(other.vertexBufferMap);
-		//indexBuffer		= std::move(other.indexBuffer);
-		//indices			= std::move(other.indices);
-	}
+	Mesh::Mesh(Mesh&& other) noexcept = default;
 
 	Mesh& Mesh::operator=(const Mesh& other) = default;
 
-	Mesh& Mesh::operator=(Mesh&& other) noexcept {
-		//materialInstance	= std::move(other.materialInstance);
-		//loadedBufferData	= std::move(other.loadedBufferData);
-		//vertexBufferMap		= std::move(other.vertexBufferMap);
-		indexBuffer			= std::move(other.indexBuffer);
-		indices				= std::move(other.indices);
-
-		return *this;
-	}
+	Mesh& Mesh::operator=(Mesh&& other) noexcept = default;
 
 	Mesh::~Mesh() = default;
 
-	/*void Mesh::setMaterialInstance(MaterialInstance materialInstance) {
-		this->materialInstance = std::move(materialInstance);
-	}
+    void Mesh::setMaterial(Material material) {
+        this->material = std::move(material);
+    }
 
-	MaterialInstance& Mesh::getMaterialInstance() {
-		return materialInstance;
-	}*/
+    const Material& Mesh::getMaterial() const {
+        return material;
+    }
 
-	uint32_t Mesh::getIndexCount(){
-		return static_cast<uint32_t>(indices.size());
-	}
+	size_t Mesh::getIndexCount() {
+        return std::size(indices);
+    }
 
-	void Mesh::draw(CommandBuffer& commandBuffer, const VertexLayout& layout){
-		/*if(indexBuffer == nullptr) {
-			indexBuffer = createIndexBuffer(indices, *commandBuffer.getFactory());
-		}
+    const std::shared_ptr<clv::gfx::GraphicsBuffer>& Mesh::getVertexBuffer() const {
+        return vertexBuffer;
+    }
 
-		if(vertexBufferMap.find(layout) == vertexBufferMap.end()) {
-			vertexBufferMap[layout] = createVertexBuffer(transferVertexBufferData(loadedBufferData, layout), *commandBuffer.getFactory());
-		}
-		
-		commandBuffer.bindVertexBuffer(*vertexBufferMap[layout], layout.size());
-		commandBuffer.bindIndexBuffer(*indexBuffer);
-
-		materialInstance.bind(commandBuffer);
-
-		commandBuffer.drawIndexed(getIndexCount());*/
-	}
+    const std::shared_ptr<clv::gfx::GraphicsBuffer>& Mesh::getIndexBuffer() const {
+        return indexBuffer;
+    }
 }

@@ -5,6 +5,7 @@
 #include <Bulb/TextureLoader.hpp>
 #include <Clove/Graphics/GraphicsTypes.hpp>
 #include <Bulb/Rendering/Material.hpp>
+#include <Bulb/Rendering/Renderables/Mesh.hpp>
 
 int main(){
 	auto platform = clv::plt::createPlatformInstance();
@@ -32,51 +33,22 @@ int main(){
         0, 1, 2, 2, 3, 0, 
         4, 5, 6, 6, 7, 4
     };
-    std::shared_ptr<clv::gfx::GraphicsBuffer> vertexBuffer;
-    std::shared_ptr<clv::gfx::GraphicsBuffer> indexBuffer;
+
     std::shared_ptr<clv::gfx::GraphicsImage> texture;
     std::shared_ptr<clv::gfx::GraphicsImageView> imageView;
-    //std::shared_ptr<clv::gfx::Sampler> sampler;
 
     //CREATE THE THINGS
     const auto textureData = blb::TextureLoader::loadTexture("F:/RingsOfPower/Engine/Garlic/VKBackendTest/texture.jpg");
 
-    const size_t vertexBufferSize  = sizeof(blb::rnd::Vertex) * std::size(vertices);
-    const size_t indexBufferSize   = sizeof(uint16_t) * std::size(indices);
     const size_t textureBufferSize = textureData.dimensions.x * textureData.dimensions.y * textureData.channels;
 
-    //Staging buffers
+    //Staging buffer
     clv::gfx::GraphicsBuffer::Descriptor stagingDescriptor{};
     stagingDescriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::TransferSource;
     stagingDescriptor.sharingMode = clv::gfx::SharingMode::Exclusive;//Only accessed by the transfer queue
     stagingDescriptor.memoryType  = clv::gfx::MemoryType::SystemMemory;
-
-    stagingDescriptor.size   = vertexBufferSize;
-    auto stagingBufferVertex = graphicsFactory->createBuffer(stagingDescriptor);
-
-    stagingDescriptor.size  = indexBufferSize;
-    auto stagingBufferIndex = graphicsFactory->createBuffer(stagingDescriptor);
-
     stagingDescriptor.size    = textureBufferSize;
     auto stagingBufferTexture = graphicsFactory->createBuffer(stagingDescriptor);
-
-    //Vertex buffer
-    clv::gfx::GraphicsBuffer::Descriptor vertexDescriptor{};
-    vertexDescriptor.size        = vertexBufferSize;
-    vertexDescriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::TransferDestination | clv::gfx::GraphicsBuffer::UsageMode::VertexBuffer;
-    vertexDescriptor.sharingMode = clv::gfx::SharingMode::Concurrent;//Accessed by transfer and graphics queue
-    vertexDescriptor.memoryType  = clv::gfx::MemoryType::VideoMemory;
-
-    vertexBuffer = graphicsFactory->createBuffer(vertexDescriptor);
-
-    //Index Buffer
-    clv::gfx::GraphicsBuffer::Descriptor indexDescriptor{};
-    indexDescriptor.size        = indexBufferSize;
-    indexDescriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::TransferDestination | clv::gfx::GraphicsBuffer::UsageMode::IndexBuffer;
-    indexDescriptor.sharingMode = clv::gfx::SharingMode::Concurrent;
-    indexDescriptor.memoryType  = clv::gfx::MemoryType::VideoMemory;
-
-    indexBuffer = graphicsFactory->createBuffer(indexDescriptor);
 
     //Texture Image
     clv::gfx::GraphicsImage::Descriptor textureDescriptor{};
@@ -90,8 +62,6 @@ int main(){
     texture = graphicsFactory->createImage(textureDescriptor);
 
     //Map the data onto our CPU visible (staging) buffers
-    stagingBufferVertex->map(std::data(vertices), vertexBufferSize);
-    stagingBufferIndex->map(std::data(indices), indexBufferSize);
     stagingBufferTexture->map(textureData.buffer.get(), textureBufferSize);
 
     //Transfer the data onto our GPU optimised buffers
@@ -114,8 +84,6 @@ int main(){
     transferQueueReleaseInfo.destinationQueue  = clv::gfx::QueueType::Graphics;
 
     transferCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
-    transferCommandBuffer->copyBufferToBuffer(*stagingBufferVertex, 0, *vertexBuffer, 0, vertexBufferSize);
-    transferCommandBuffer->copyBufferToBuffer(*stagingBufferIndex, 0, *indexBuffer, 0, indexBufferSize);
     transferCommandBuffer->imageMemoryBarrier(*texture, layoutTransferInfo, clv::gfx::PipelineStage::Top, clv::gfx::PipelineStage::Transfer);
     transferCommandBuffer->copyBufferToImage(*stagingBufferTexture, 0, *texture, clv::gfx::ImageLayout::TransferDestinationOptimal, { 0, 0, 0 }, { textureData.dimensions.x, textureData.dimensions.y, 1 });
     transferCommandBuffer->imageMemoryBarrier(*texture, transferQueueReleaseInfo, clv::gfx::PipelineStage::Transfer, clv::gfx::PipelineStage::Transfer);
@@ -147,21 +115,9 @@ int main(){
     transferCompleteFance->wait();
     graphicsQueue->freeCommandBuffer(*transitionCommandBuffer);
 
-    //Create the objects we need to send the image to the shaders
-    /*clv::gfx::Sampler::Descriptor samplerDescriptor{};
-    samplerDescriptor.minFilter        = clv::gfx::Sampler::Filter::Linear;
-    samplerDescriptor.magFilter        = clv::gfx::Sampler::Filter::Linear;
-    samplerDescriptor.addressModeU     = clv::gfx::Sampler::AddressMode::Repeat;
-    samplerDescriptor.addressModeV     = clv::gfx::Sampler::AddressMode::Repeat;
-    samplerDescriptor.addressModeW     = clv::gfx::Sampler::AddressMode::Repeat;
-    samplerDescriptor.enableAnisotropy = true;
-    samplerDescriptor.maxAnisotropy    = 16.0f;*/
-
-    imageView = texture->createView();
-    //sampler   = graphicsFactory->createSampler(std::move(samplerDescriptor));
-    
-    blb::rnd::Material material(graphicsFactory);
+    blb::rnd::Material material(*graphicsFactory);
     material.setDiffuseTexture(std::move(texture));
+    std::shared_ptr<blb::rnd::Mesh> mesh = std::make_shared<blb::rnd::Mesh>(vertices, indices, std::move(material), *graphicsFactory);
 
 	while(mainWindow->isOpen()) {
         static auto startTime = std::chrono::high_resolution_clock::now();
