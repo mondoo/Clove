@@ -101,8 +101,8 @@ set(
 		${BLB_INCLUDE}/Rendering/Material.hpp
 		${BLB_SOURCE}/Rendering/Material.cpp
 		${BLB_INCLUDE}/Rendering/RenderingConstants.hpp
-		${BLB_INCLUDE}/Rendering/RenderingTypes.hpp
 		${BLB_INCLUDE}/Rendering/ShaderBufferTypes.hpp
+		${BLB_INCLUDE}/Rendering/Vertex.hpp
 		${BLB_INCLUDE}/Rendering/Renderables/Font.hpp
 		${BLB_SOURCE}/Rendering/Renderables/Font.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Mesh.hpp

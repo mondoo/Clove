@@ -1,7 +1,7 @@
 #include <Bulb/Bulb.hpp>
 
 #include <Bulb/Rendering/ForwardRenderer3D.hpp>
-#include <Bulb/Rendering/RenderingTypes.hpp>
+#include <Bulb/Rendering/Vertex.hpp>
 #include <Bulb/TextureLoader.hpp>
 #include <Clove/Graphics/GraphicsTypes.hpp>
 #include <Bulb/Rendering/Material.hpp>

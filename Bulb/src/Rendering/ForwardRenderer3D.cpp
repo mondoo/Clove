@@ -2,6 +2,7 @@
 
 #include "Bulb/TextureLoader.hpp"
 #include "Bulb/Rendering/Material.hpp"
+#include "Bulb/Rendering/Vertex.hpp"
 
 #include <Clove/Graphics/DescriptorSet.hpp>
 #include <Clove/Graphics/GraphicsImageView.hpp>

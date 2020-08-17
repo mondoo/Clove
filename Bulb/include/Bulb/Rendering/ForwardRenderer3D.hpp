@@ -3,8 +3,6 @@
 #include "Bulb/Rendering/ShaderBufferTypes.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
 
-#include "Bulb/Rendering/RenderingTypes.hpp"
-
 #include <Clove/Graphics/GraphicsTypes.hpp>
 
 //TEMP
