@@ -6,7 +6,7 @@ namespace clv::gfx::vk {
         std::basic_ifstream<std::byte> file(filePath.data(), std::ios::ate | std::ios::binary);
 
         if(!file.is_open()) {
-            GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Failed to open file");
+            GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Failed to open file", GARLIC_FUNCTION_NAME);
             return {};
         }
 
