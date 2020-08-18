@@ -4,6 +4,8 @@
 
 namespace blb::TextureLoader {
     LoadedTextureData loadTexture(std::string_view texturePath) {
+        stbi_set_flip_vertically_on_load(1); //Note: Might need to change this when other APIs come into play
+
         int width;
         int height;
         int channels;

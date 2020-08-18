@@ -168,10 +168,14 @@ namespace blb::rnd {
 
         size_t meshIndex = 0;
         for(auto&& [mesh, transform] : currentFrameData.meshes) {
+            const auto pos   = clv::mth::vec3f(0.0f, 0.0f, -2.0f);
+            const auto front = clv::mth::vec3f(0.0f, 0.0f, 1.0f);
+            const auto up    = clv::mth::vec3f(0.0f, -1.0f, 0.0f); //This is required because Vulkan uses negative y on it's NDC
+
             ModelViewProj ubo{};
             ubo.model = transform;
-            ubo.view  = glm::lookAt(glm::vec3(0.0f, 2.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            ubo.proj  = glm::perspective(glm::radians(45.0f), static_cast<float>(swapchain->getExtent().x) / static_cast<float>(swapchain->getExtent().y), 0.1f, 10.0f);
+            ubo.view  = clv::mth::lookAt(pos, pos + front, up);
+            ubo.proj  = clv::mth::createPerspectiveMatrix(clv::mth::asRadians(45.0f), static_cast<float>(swapchain->getExtent().x) / static_cast<float>(swapchain->getExtent().y), 0.1f, 10.0f);
 
             uniformBuffers[imageIndex][meshIndex]->map(&ubo, sizeof(ubo));
 
