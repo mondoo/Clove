@@ -1,7 +1,7 @@
 #include "Bulb/UI/Image.hpp"
 
 #include "Bulb/Rendering/Renderables/Sprite.hpp"
-#include "Bulb/Rendering/Renderer3D.hpp"
+//#include "Bulb/Rendering/Renderer3D.hpp"
 
 using namespace clv;
 using namespace clv::gfx;
@@ -50,6 +50,6 @@ namespace blb::ui {
 
 		//sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
 
-		renderer.submitWidget(sprite);
+		//renderer.submitWidget(sprite);
 	}
 }
