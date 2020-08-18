@@ -133,10 +133,9 @@ namespace blb::ModelLoader {
 	};
 	static std::shared_ptr<rnd::Mesh> processMesh(aiMesh* mesh, const aiScene* scene, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory, const MeshType meshType) {
         const size_t vertexCount = mesh->mNumVertices;
-        const size_t indexCount  = mesh->mNumFaces;
 
 		std::vector<rnd::Vertex> vertices(vertexCount);
-        std::vector<uint16_t> indices(indexCount);
+        std::vector<uint16_t> indices;
         rnd::Material meshMaterial{ *graphicsFactory };
 
 		//Build the map of jointIds + weights for each vertex
@@ -189,10 +188,10 @@ namespace blb::ModelLoader {
 		}
 
         //Build the index array
-		for(size_t i = 0; i < indexCount; ++i) {
+        for(size_t i = 0; i < mesh->mNumFaces; ++i) {
 			aiFace face = mesh->mFaces[i];
 			for(size_t j = 0; j < face.mNumIndices; ++j) {
-				indices[j] = face.mIndices[j];
+				indices.emplace_back(face.mIndices[j]);
 			}
 		}
 
