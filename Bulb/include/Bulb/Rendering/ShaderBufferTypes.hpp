@@ -16,12 +16,6 @@ namespace blb::rnd {
 		clv::mth::vec3f pos;
 	};
 
-	struct CameraRenderData {
-		clv::mth::vec3f position{};
-		clv::mth::mat4f lookAt	   = clv::mth::mat4f{ 1.0f };
-		clv::mth::mat4f projection = clv::mth::mat4f{ 1.0f };
-	};
-
 	struct VertexData {
 		clv::mth::mat4f model;
 		clv::mth::mat4f normalMatrix;
