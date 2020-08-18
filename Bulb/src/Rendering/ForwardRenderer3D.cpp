@@ -11,6 +11,11 @@
 #include <Clove/Graphics/GraphicsImageView.hpp>
 #include <Clove/Platform/Window.hpp>
 
+extern "C" const char vert[];
+extern "C" const size_t vertLength;
+extern "C" const char frag[];
+extern "C" const size_t fragLength;
+
 namespace blb::rnd {
     ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API api) {
         windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
@@ -328,8 +333,8 @@ namespace blb::rnd {
 
     void ForwardRenderer3D::createPipeline() {
         clv::gfx::PipelineObject::Descriptor pipelineDescriptor;
-        pipelineDescriptor.vertexShader            = graphicsFactory->createShader("vert.spirv");
-        pipelineDescriptor.fragmentShader          = graphicsFactory->createShader("frag.spirv");
+        pipelineDescriptor.vertexShader            = graphicsFactory->createShader(reinterpret_cast<const std::byte*>(vert), vertLength);
+        pipelineDescriptor.fragmentShader          = graphicsFactory->createShader(reinterpret_cast<const std::byte*>(frag), fragLength);
         pipelineDescriptor.vertexInput             = Vertex::getInputBindingDescriptor();
         pipelineDescriptor.vertexAttributes        = Vertex::getVertexAttributes();
         pipelineDescriptor.viewportDescriptor.size = { swapchain->getExtent().x, swapchain->getExtent().y };

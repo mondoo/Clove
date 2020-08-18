@@ -4,9 +4,7 @@ set(BLB_RESOURCE ${CMAKE_CURRENT_SOURCE_DIR}/../res)
 
 include(../../Clove/cmake/CompileShader.cmake)
 
-project(Bulb)
-
-add_library(${PROJECT_NAME} STATIC)
+add_library(Bulb STATIC)
 
 set(
 	AIFiles
@@ -148,12 +146,6 @@ set(
 compileShader("${BLB_RESOURCE}/Shaders/vert.glsl" "vert.spirv" "vertex")
 compileShader("${BLB_RESOURCE}/Shaders/frag.glsl" "frag.spirv" "fragment")
 
-set(
-	CompiledShaderFiles
-		vert.spirv
-		frag.spirv
-)
-
 #Convert resources into c strings
 set(ResourceBinaries)
 
@@ -179,6 +171,8 @@ function(embeddResource resources readType)
 endfunction()
 
 embeddResource("${BLB_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf" "rb")
+embeddResource("vert.spirv" "rb")
+embeddResource("frag.spirv" "rb")
 
 #Organise the source tree
 file(GLOB_RECURSE header ${BLB_INCLUDE}/*.h ${BLB_INCLUDE}/*.hpp ${BLB_INCLUDE}/*.inl)
@@ -194,7 +188,7 @@ source_group(PCH FILES
 )
 
 target_sources(
-	${PROJECT_NAME}
+	Bulb
 	PRIVATE
 		${BLB_INCLUDE}/Bulb.hpp
 
@@ -221,7 +215,6 @@ target_sources(
 		${UIFiles}
 
 		${ShaderFiles}
-		${CompiledShaderFiles}
 
 		${ResourceBinaries}
 )
