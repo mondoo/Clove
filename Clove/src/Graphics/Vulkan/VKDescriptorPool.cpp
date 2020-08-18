@@ -5,6 +5,17 @@
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
+    static VkDescriptorPoolCreateFlags getDescriptorPoolFlags(DescriptorPool::Flag garlicFlag){
+        switch(garlicFlag) {
+            case DescriptorPool::Flag::None:
+                return 0;
+            case DescriptorPool::Flag::FreeDescriptorSet:
+                return VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+            default:
+                GARLIC_ASSERT(false, "{0} Unknown flag", GARLIC_FUNCTION_NAME);
+        }
+    }
+
     VKDescriptorPool::VKDescriptorPool(VkDevice device, Descriptor descriptor)
         : device(device) {
         const size_t numDescriptorTypes = std::size(descriptor.poolTypes);
@@ -17,7 +28,7 @@ namespace clv::gfx::vk {
         VkDescriptorPoolCreateInfo createInfo{};
         createInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
         createInfo.pNext         = nullptr;
-        createInfo.flags         = 0;
+        createInfo.flags         = getDescriptorPoolFlags(descriptor.flag);
         createInfo.maxSets       = descriptor.maxSets;
         createInfo.poolSizeCount = std::size(poolSizes);
         createInfo.pPoolSizes    = std::data(poolSizes);

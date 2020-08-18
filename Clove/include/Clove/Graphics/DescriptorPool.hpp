@@ -19,8 +19,14 @@ namespace clv::gfx {
     class DescriptorPool {
         //TYPES
     public:
+        enum class Flag{
+            None,
+            FreeDescriptorSet /**< Descriptor sets can be freed */
+        };
+
         struct Descriptor {
             std::vector<DescriptorInfo> poolTypes;
+            Flag flag;
             uint32_t maxSets; /**< the maximum amount of sets that can be allocated */
         };
 

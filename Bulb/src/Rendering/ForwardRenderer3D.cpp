@@ -348,6 +348,7 @@ namespace blb::rnd {
 
         clv::gfx::DescriptorPool::Descriptor poolDescriptor{};
         poolDescriptor.poolTypes = { std::move(uboInfo), std::move(samplerInfo) };
+        poolDescriptor.flag      = clv::gfx::DescriptorPool::Flag::FreeDescriptorSet;
         poolDescriptor.maxSets   = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
 
         descriptorPool = graphicsFactory->createDescriptorPool(std::move(poolDescriptor));
