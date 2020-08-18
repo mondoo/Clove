@@ -41,6 +41,7 @@ namespace clv::gfx::vk {
 
         std::unique_ptr<Shader> createShader(std::string_view filePath) override;
         std::unique_ptr<Shader> createShader(std::vector<std::byte> byteCode) override;
+        std::unique_ptr<Shader> createShader(const std::byte* byteCode, const size_t numBytes) override;
 
         std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor) override;
         std::unique_ptr<DescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) override;

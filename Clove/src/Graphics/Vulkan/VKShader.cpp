@@ -26,13 +26,17 @@ namespace clv::gfx::vk {
     }
 
     VKShader::VKShader(VkDevice device, std::vector<std::byte> byteCode)
-        : device(device) {
+        : VKShader(device, std::data(byteCode), std::size(byteCode)) {
+    }
+
+    VKShader::VKShader(VkDevice device, const std::byte* byteCode, const size_t numBytes) 
+    : device(device) {
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.pNext    = nullptr;
         createInfo.flags    = 0;
-        createInfo.codeSize = std::size(byteCode);
-        createInfo.pCode    = reinterpret_cast<uint32_t*>(std::data(byteCode));
+        createInfo.codeSize = numBytes;
+        createInfo.pCode    = reinterpret_cast<const uint32_t*>(byteCode);
 
         if(vkCreateShaderModule(device, &createInfo, nullptr, &module) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create shader module");

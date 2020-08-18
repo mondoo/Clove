@@ -17,6 +17,7 @@ namespace clv::gfx::vk {
         VKShader() = delete;
         VKShader(VkDevice device, std::string_view filePath);
         VKShader(VkDevice device, std::vector<std::byte> byteCode);
+        VKShader(VkDevice device, const std::byte* byteCode, const size_t numBytes);
 
         VKShader(const VKShader& other) = delete;
         VKShader(VKShader&& other) noexcept;

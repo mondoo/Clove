@@ -392,6 +392,10 @@ namespace clv::gfx::vk {
         return std::make_unique<VKShader>(logicalDevice, std::move(byteCode));
     }
 
+    std::unique_ptr<Shader> VKGraphicsFactory::createShader(const std::byte* byteCode, const size_t numBytes) {
+        return std::make_unique<VKShader>(logicalDevice, byteCode, numBytes);
+    }
+
     std::unique_ptr<RenderPass> VKGraphicsFactory::createRenderPass(RenderPass::Descriptor descriptor) {
         return std::make_unique<VKRenderPass>(logicalDevice, std::move(descriptor));
     }

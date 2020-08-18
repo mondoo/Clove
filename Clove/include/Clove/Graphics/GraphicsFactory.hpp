@@ -33,6 +33,7 @@ namespace clv::gfx {
 
         virtual std::unique_ptr<Shader> createShader(std::string_view filePath)       = 0;
         virtual std::unique_ptr<Shader> createShader(std::vector<std::byte> byteCode) = 0;
+        virtual std::unique_ptr<Shader> createShader(const std::byte* byteCode, const size_t numBytes) = 0;
 
         virtual std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor)                            = 0;
         virtual std::unique_ptr<DescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) = 0;
