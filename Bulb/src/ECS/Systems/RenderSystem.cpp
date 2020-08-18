@@ -38,12 +38,7 @@ namespace blb::ecs {
 			const mth::mat4f lookAt = mth::lookAt(position, position + camFront, camUp);
 			camera->setView(lookAt);
 
-			CameraRenderData renderData{};
-			renderData.lookAt	  = lookAt;
-			renderData.position	  = position;
-			renderData.projection = camera->getProjection();
-
-			//renderer->submitCamera({ camera->getViewport(), std::move(renderData)/*, camera->getRenderTarget()*/ });
+			renderer->submitCamera(camera->camera);
 		}
 
 		//Submit static meshes
@@ -51,9 +46,7 @@ namespace blb::ecs {
 			const mth::mat4f modelTransform = transform->getTransformationMatrix(TransformSpace::World);
 
 			for(auto& mesh : staticModel->model.getMeshes()) {
-				//mesh->getMaterialInstance().setData(BBP_ModelData, VertexData{ modelTransform, mth::transpose(mth::inverse(modelTransform)) }, ShaderStage::Vertex);
-
-				//renderer->submitStaticMesh(mesh);
+                renderer->submitStaticMesh(mesh, modelTransform);
 			}
 		}
 		//Submit animated meshes
