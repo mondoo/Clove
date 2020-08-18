@@ -131,6 +131,27 @@ namespace blb::rnd {
 
         inFlightFences[currentFrame]->reset();
 
+        //Allocate a descriptor set for each mesh to be drawn
+        const size_t meshCount = std::size(currentFrameData.meshes);
+        if(maxDescriptorSets < meshCount) {
+            maxDescriptorSets = meshCount;
+            descriptorPool    = createDescriptorPool(maxDescriptorSets * swapChainFrameBuffers.size()); //Make sure to pool enough for all images
+        }
+
+        const size_t numDescriptorSets = std::size(descriptorSets[imageIndex]);
+        if(numDescriptorSets < meshCount) {
+            if(numDescriptorSets > 0) {
+                descriptorPool->freeDescriptorSets(descriptorSets[imageIndex]);
+            }
+
+            std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> layouts(meshCount, descriptorSetLayout);
+            descriptorSets[imageIndex] = descriptorPool->allocateDescriptorSets(layouts);
+        }
+
+        if(std::size(uniformBuffers[imageIndex]) < meshCount) {
+            uniformBuffers[imageIndex] = createUniformBuffers(meshCount);
+        }
+
         //Record our command buffers
         clv::gfx::RenderArea renderArea{};
         renderArea.origin = { 0, 0 };
@@ -143,22 +164,24 @@ namespace blb::rnd {
         commandBuffers[imageIndex]->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, clearColour, depthStencilClearValue);
         commandBuffers[imageIndex]->bindPipelineObject(*pipelineObject);
 
+        size_t meshIndex = 0;
         for(auto&& [mesh, transform] : currentFrameData.meshes) {
             ModelViewProj ubo{};
             ubo.model = transform;
             ubo.view  = glm::lookAt(glm::vec3(0.0f, 2.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
             ubo.proj  = glm::perspective(glm::radians(45.0f), static_cast<float>(swapchain->getExtent().x) / static_cast<float>(swapchain->getExtent().y), 0.1f, 10.0f);
 
-            uniformBuffers[imageIndex]->map(&ubo, sizeof(ubo));
+            uniformBuffers[imageIndex][meshIndex]->map(&ubo, sizeof(ubo));
 
-            //TODO: Need a descriptor set per mesh
-            descriptorSets[imageIndex]->write(*uniformBuffers[imageIndex], 0, sizeof(ModelViewProj), 0);
-            descriptorSets[imageIndex]->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
+            descriptorSets[imageIndex][meshIndex]->write(*uniformBuffers[imageIndex][meshIndex], 0, sizeof(ModelViewProj), 0);
+            descriptorSets[imageIndex][meshIndex]->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
 
             commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), clv::gfx::IndexType::Uint16);
-            commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex], *pipelineObject);
+            commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex][meshIndex], *pipelineObject);
             commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
+
+            ++meshIndex;
         }
 
         commandBuffers[imageIndex]->endRenderPass();
@@ -196,8 +219,6 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::recreateSwapchain() {
-        //TODO: Clean this up
-
         //Set this to true in case we need to wait for the window to unminimise
         needNewSwapchain = true;
 
@@ -218,18 +239,21 @@ namespace blb::rnd {
 
         //Recreate our swap chain
         swapchain = graphicsFactory->createSwapChain({ windowSize });
+
         createRenderpass();
 
         createDepthBuffer();
 
         createPipeline();
         createSwapchainFrameBuffers();
-        createUniformBuffers();
-        createDescriptorPool();
-        createDescriptorSets();
 
-        commandBuffers.reserve(swapChainFrameBuffers.size());
-        for(size_t i = 0; i < swapChainFrameBuffers.size(); ++i) {
+        const size_t imageCount = std::size(swapChainFrameBuffers);
+        
+        uniformBuffers.resize(imageCount);
+        descriptorSets.resize(imageCount);
+
+        commandBuffers.reserve(imageCount);
+        for(size_t i = 0; i < imageCount; ++i) {
             commandBuffers.emplace_back(graphicsQueue->allocateCommandBuffer());
         }
 
@@ -322,11 +346,10 @@ namespace blb::rnd {
         }
     }
 
-    void ForwardRenderer3D::createUniformBuffers() {
-        const size_t frameBufferNum = std::size(swapChainFrameBuffers);
-        uniformBuffers.resize(frameBufferNum);
+    std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> ForwardRenderer3D::createUniformBuffers(const uint32_t bufferCount) {
+        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers(bufferCount);
 
-        for(size_t i = 0; i < frameBufferNum; ++i) {
+        for(size_t i = 0; i < bufferCount; ++i) {
             clv::gfx::GraphicsBuffer::Descriptor descriptor{};
             descriptor.size        = sizeof(ModelViewProj);
             descriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::UniformBuffer;
@@ -335,29 +358,24 @@ namespace blb::rnd {
 
             uniformBuffers[i] = graphicsFactory->createBuffer(std::move(descriptor));
         }
+
+        return uniformBuffers;
     }
 
-    void ForwardRenderer3D::createDescriptorPool() {
+    std::shared_ptr<clv::gfx::DescriptorPool> ForwardRenderer3D::createDescriptorPool(const uint32_t setCount) {
         clv::gfx::DescriptorInfo uboInfo{};
         uboInfo.type  = clv::gfx::DescriptorType::UniformBuffer;
-        uboInfo.count = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
+        uboInfo.count = setCount;
 
         clv::gfx::DescriptorInfo samplerInfo{};
         samplerInfo.type  = clv::gfx::DescriptorType::CombinedImageSampler;
-        samplerInfo.count = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
+        samplerInfo.count = setCount;
 
         clv::gfx::DescriptorPool::Descriptor poolDescriptor{};
         poolDescriptor.poolTypes = { std::move(uboInfo), std::move(samplerInfo) };
-        poolDescriptor.flag      = clv::gfx::DescriptorPool::Flag::FreeDescriptorSet;
-        poolDescriptor.maxSets   = static_cast<uint32_t>(std::size(swapChainFrameBuffers));
+        poolDescriptor.flag      = clv::gfx::DescriptorPool::Flag::None;
+        poolDescriptor.maxSets   = setCount;
 
-        descriptorPool = graphicsFactory->createDescriptorPool(std::move(poolDescriptor));
-    }
-
-    void ForwardRenderer3D::createDescriptorSets() {
-        //We need to make one set for each frame-in-flight, so we duplicate the layout we havbe
-        std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> layouts(std::size(swapChainFrameBuffers), descriptorSetLayout);
-
-        descriptorSets = descriptorPool->allocateDescriptorSets(layouts);
+        return graphicsFactory->createDescriptorPool(std::move(poolDescriptor));
     }
 }

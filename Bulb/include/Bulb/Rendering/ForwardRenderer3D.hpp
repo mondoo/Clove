@@ -52,8 +52,8 @@ namespace blb::rnd {
             clv::mth::mat4f view;
             clv::mth::mat4f proj;
         };
-        
-        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;
+
+        std::vector<std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>>> uniformBuffers;
         std::shared_ptr<clv::gfx::Sampler> sampler;
 
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
@@ -81,7 +81,8 @@ namespace blb::rnd {
         std::vector<std::shared_ptr<clv::gfx::Fence>> imagesInFlight;
 
         std::shared_ptr<clv::gfx::DescriptorPool> descriptorPool;
-        std::vector<std::shared_ptr<clv::gfx::DescriptorSet>> descriptorSets;
+        std::vector<std::vector<std::shared_ptr<clv::gfx::DescriptorSet>>> descriptorSets;//Set per image per primitive
+        uint32_t maxDescriptorSets = 0;
 
         //FUNCTIONS
     public:
@@ -112,8 +113,7 @@ namespace blb::rnd {
         void createDepthBuffer();
         void createPipeline();
         void createSwapchainFrameBuffers();
-        void createUniformBuffers();
-        void createDescriptorPool();
-        void createDescriptorSets();
+        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> createUniformBuffers(const uint32_t bufferCount);
+        std::shared_ptr<clv::gfx::DescriptorPool> createDescriptorPool(const uint32_t setCount);
     };
 }

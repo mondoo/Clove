@@ -133,9 +133,9 @@ int main(){
 		renderer->begin();
 
         const auto transform = clv::mth::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        const auto position  = clv::mth::translate(clv::mth::mat4f{ 1.0f }, { 0.0f, 0.0f, 5.0f });
+        const auto position  = clv::mth::translate(clv::mth::mat4f{ 1.0f }, { 0.0f, 0.0f, 2.0f });
         renderer->submitStaticMesh(mesh, transform);
-        //renderer->submitStaticMesh(mesh, position);
+        renderer->submitStaticMesh(mesh, position);
 
 		renderer->end();
 	}
