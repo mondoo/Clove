@@ -6,6 +6,7 @@
 #include <Clove/Graphics/GraphicsTypes.hpp>
 #include <Bulb/Rendering/Material.hpp>
 #include <Bulb/Rendering/Renderables/Mesh.hpp>
+#include <Bulb/Rendering/Camera.hpp>
 
 int main(){
 	auto platform = clv::plt::createPlatformInstance();
@@ -119,6 +120,13 @@ int main(){
     material.setDiffuseTexture(std::move(texture));
     std::shared_ptr<blb::rnd::Mesh> mesh = std::make_shared<blb::rnd::Mesh>(vertices, indices, std::move(material), *graphicsFactory);
 
+    const auto pos   = clv::mth::vec3f(0.0f, 0.0f, -2.0f);
+    const auto front = clv::mth::vec3f(0.0f, 0.0f, 1.0f);
+    const auto up    = clv::mth::vec3f(0.0f, -1.0f, 0.0f);//This is required because Vulkan uses negative y on it's NDC
+
+    blb::rnd::Camera cam{ *mainWindow, blb::rnd::Camera::ProjectionMode::Perspective };
+    cam.setView(clv::mth::lookAt(pos, pos + front, up));
+
 	while(mainWindow->isOpen()) {
         static auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -131,6 +139,8 @@ int main(){
 		}
 
 		renderer->begin();
+
+        renderer->submitCamera(cam);
 
         const auto transform = clv::mth::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         const auto position  = clv::mth::translate(clv::mth::mat4f{ 1.0f }, { 0.0f, sin(time) * 0.5f + 0.5f, 0.0f });

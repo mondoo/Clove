@@ -1,14 +1,15 @@
 #include "Bulb/Rendering/ForwardRenderer3D.hpp"
 
-#include "Bulb/TextureLoader.hpp"
+#include "Bulb/Rendering/Camera.hpp"
 #include "Bulb/Rendering/Material.hpp"
-#include "Bulb/Rendering/Vertex.hpp"
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
+#include "Bulb/Rendering/Vertex.hpp"
+#include "Bulb/TextureLoader.hpp"
 
 #include <Clove/Graphics/DescriptorSet.hpp>
+#include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Graphics/GraphicsImageView.hpp>
 #include <Clove/Platform/Window.hpp>
-#include <Clove/Graphics/Graphics.hpp>
 
 namespace blb::rnd {
     ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API api) {
@@ -87,6 +88,11 @@ namespace blb::rnd {
         currentFrameData.meshes.clear();
     }
 
+    void ForwardRenderer3D::submitCamera(const Camera& camera) {
+        currentFrameData.view       = camera.getView();
+        currentFrameData.projection = camera.getProjection();
+    }
+
     void ForwardRenderer3D::submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform) {
         currentFrameData.meshes.push_back({ std::move(mesh), std::move(transform) });
     }
@@ -100,9 +106,6 @@ namespace blb::rnd {
     void ForwardRenderer3D::submitLight(const PointLight& light) {
     }
 
-    void ForwardRenderer3D::submitCamera(const ComposedCameraData& camera) {
-    }
-
     void ForwardRenderer3D::submitWidget(const std::shared_ptr<Sprite>& widget) {
     }
 
@@ -112,7 +115,7 @@ namespace blb::rnd {
     void ForwardRenderer3D::end() {
         if(needNewSwapchain) {
             recreateSwapchain();
-            return; //return early just in case the window was minimised
+            return;//return early just in case the window was minimised
         }
 
         //Wait on the current frame / current images to be available
@@ -137,7 +140,7 @@ namespace blb::rnd {
         const size_t meshCount = std::size(currentFrameData.meshes);
         if(maxDescriptorSets < meshCount) {
             maxDescriptorSets = meshCount;
-            descriptorPool    = createDescriptorPool(maxDescriptorSets * swapChainFrameBuffers.size()); //Make sure to pool enough for all images
+            descriptorPool    = createDescriptorPool(maxDescriptorSets * swapChainFrameBuffers.size());//Make sure to pool enough for all images
         }
 
         const size_t numDescriptorSets = std::size(descriptorSets[imageIndex]);
@@ -168,14 +171,10 @@ namespace blb::rnd {
 
         size_t meshIndex = 0;
         for(auto&& [mesh, transform] : currentFrameData.meshes) {
-            const auto pos   = clv::mth::vec3f(0.0f, 0.0f, -2.0f);
-            const auto front = clv::mth::vec3f(0.0f, 0.0f, 1.0f);
-            const auto up    = clv::mth::vec3f(0.0f, -1.0f, 0.0f); //This is required because Vulkan uses negative y on it's NDC
-
             ModelViewProj ubo{};
             ubo.model = transform;
-            ubo.view  = clv::mth::lookAt(pos, pos + front, up);
-            ubo.proj  = clv::mth::createPerspectiveMatrix(clv::mth::asRadians(45.0f), static_cast<float>(swapchain->getExtent().x) / static_cast<float>(swapchain->getExtent().y), 0.1f, 10.0f);
+            ubo.view  = currentFrameData.view;
+            ubo.proj  = currentFrameData.projection;
 
             uniformBuffers[imageIndex][meshIndex]->map(&ubo, sizeof(ubo));
 
@@ -206,8 +205,8 @@ namespace blb::rnd {
         presentInfo.waitSemaphores = { renderFinishedSemaphores[currentFrame] };
         presentInfo.swapChain      = swapchain;
         presentInfo.imageIndex     = imageIndex;
-        result = presentQueue->present(presentInfo);
-        
+        result                     = presentQueue->present(presentInfo);
+
         if(needNewSwapchain || result == clv::gfx::Result::Error_SwapchainOutOfDate || result == clv::gfx::Result::Success_SwapchainSuboptimal) {
             recreateSwapchain();
             GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Swapchain recreated at end of loop");
@@ -255,7 +254,7 @@ namespace blb::rnd {
         createSwapchainFrameBuffers();
 
         const size_t imageCount = std::size(swapChainFrameBuffers);
-        
+
         uniformBuffers.resize(imageCount);
         descriptorSets.resize(imageCount);
 

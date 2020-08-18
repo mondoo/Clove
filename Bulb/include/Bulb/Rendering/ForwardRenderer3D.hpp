@@ -18,6 +18,7 @@ namespace clv::gfx {
 }
 
 namespace blb::rnd {
+    class Camera;
     class Sprite;
     class Mesh;
     class Material;
@@ -25,14 +26,6 @@ namespace blb::rnd {
 
 namespace blb::rnd {
     class ForwardRenderer3D {
-        //TYPES
-    public:
-        struct ComposedCameraData {
-            clv::gfx::Viewport viewport;
-            CameraRenderData bufferData;
-            //std::shared_ptr<clv::gfx::RenderTarget> target;
-        };
-
         //VARIABLES
     private:
         clv::DelegateHandle windowResizeHandle;
@@ -44,6 +37,9 @@ namespace blb::rnd {
         uint32_t imageIndex{ 0 };
 
         struct {
+            clv::mth::mat4f view;
+            clv::mth::mat4f projection;
+
             std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
         } currentFrameData;
 
@@ -92,11 +88,15 @@ namespace blb::rnd {
 
         void begin();
 
+        /**
+         * @brief Submit the active camera the renderer will use.
+         */
+        void submitCamera(const Camera& camera);
+
         void submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);
         void submitAnimatedMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);
         void submitLight(const DirectionalLight& light);
         void submitLight(const PointLight& light);
-        void submitCamera(const ComposedCameraData& camera);
 
         void submitWidget(const std::shared_ptr<Sprite>& widget);
         void submitText(const std::shared_ptr<Sprite>& text);
