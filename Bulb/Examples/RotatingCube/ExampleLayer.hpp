@@ -9,7 +9,7 @@ namespace clv::plt {
 }
 
 namespace blb::rnd {
-    class Renderer3D;
+    class ForwardRenderer3D;
 }
 
 class ExampleLayer : public blb::Layer {
@@ -19,7 +19,7 @@ private:
     std::shared_ptr<clv::plt::Window> window;
 
     //The renderer we'll use
-    std::shared_ptr<blb::rnd::Renderer3D> renderer;
+    std::shared_ptr<blb::rnd::ForwardRenderer3D> renderer;
 
     //The ECS world that this layer has
     blb::ecs::World world;

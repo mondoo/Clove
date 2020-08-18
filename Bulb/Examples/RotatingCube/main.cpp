@@ -24,16 +24,13 @@ int main() {
 		std::chrono::duration<float> deltaSeconds = currFrameTime - prevFrameTime;
 		prevFrameTime = currFrameTime;
 
-		//Tell our window we're beginning a frame so it can handle any input events
-		window->beginFrame();
+		//Tell our window to process any input events
+		window->processInput();
 
 		//Update all of our layers
 		for(auto&& layer : *layerStack) {
 			layer->onUpdate(deltaSeconds.count());
 		}
-
-		//Tell our window we've finished frame so it can present it's back buffer
-		window->endFrame();
 	}
 
 	return 0;

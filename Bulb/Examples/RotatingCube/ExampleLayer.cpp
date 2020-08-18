@@ -1,11 +1,12 @@
 #include "ExampleLayer.hpp"
 
 #include <Bulb/Bulb.hpp>
+#include <Bulb/Rendering/ForwardRenderer3D.hpp>
 
 ExampleLayer::ExampleLayer(std::shared_ptr<clv::plt::Window> window) 
-	: window(std::move(window)) {
+	: window(std::move(window)){
 	//Initialise our renderer
-    renderer = std::make_shared<blb::rnd::Renderer3D>(*this->window);
+    renderer = std::make_shared<blb::rnd::ForwardRenderer3D>(*this->window, clv::gfx::API::Vulkan);
 
 	//Add on any systems we want to use
     world.addSystem<blb::ecs::RenderSystem>(renderer);
@@ -13,7 +14,7 @@ ExampleLayer::ExampleLayer(std::shared_ptr<clv::plt::Window> window)
 
 void ExampleLayer::onAttach() {
 	//Load in our mesh
-	blb::rnd::StaticModel cube = blb::ModelLoader::loadStaticModel(SOURCE_DIR "/cube.obj", window->getGraphicsFactory());
+    blb::rnd::StaticModel cube = blb::ModelLoader::loadStaticModel(SOURCE_DIR "/cube.obj", renderer->getGraphicsFactory());
 
 	//Create the entity that will act as our cube
 	cubeEntity = world.createEntity();
@@ -30,7 +31,7 @@ void ExampleLayer::onAttach() {
 	cameraEntity = world.createEntity();
 	cameraEntity.addComponent<blb::ecs::TransformComponent>()->setPosition({ 0.0f, 0.0f, -5.0f });
 	//The CameraComponent requires a window or a render target to render to
-    cameraEntity.addComponent<blb::ecs::CameraComponent>(blb::rnd::Camera{ *window, blb::rnd::ProjectionMode::Perspective });
+    cameraEntity.addComponent<blb::ecs::CameraComponent>(blb::rnd::Camera{ *window, blb::rnd::Camera::ProjectionMode::Perspective });
 }
 
 void ExampleLayer::onUpdate(clv::utl::DeltaTime deltaTime) {
