@@ -43,7 +43,7 @@ namespace blb::ecs {
 			renderData.position	  = position;
 			renderData.projection = camera->getProjection();
 
-			renderer->submitCamera({ camera->getViewport(), std::move(renderData)/*, camera->getRenderTarget()*/ });
+			//renderer->submitCamera({ camera->getViewport(), std::move(renderData)/*, camera->getRenderTarget()*/ });
 		}
 
 		//Submit static meshes
