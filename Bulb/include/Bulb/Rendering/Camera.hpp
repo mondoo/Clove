@@ -7,14 +7,14 @@ namespace clv::plt {
 }
 
 namespace blb::rnd {
-    enum class ProjectionMode {
-        Orthographic,
-        Perspective
-    };
-}
-
-namespace blb::rnd {
     class Camera {
+        //TYPES
+    public:
+        enum class ProjectionMode {
+            Orthographic,
+            Perspective
+        };
+
         //VARIABLES
     private:
         ProjectionMode currentProjectionMode;

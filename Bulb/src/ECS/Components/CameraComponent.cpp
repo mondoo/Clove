@@ -19,7 +19,7 @@ namespace blb::ecs {
         camera.setView(std::move(view));
     }
 
-    void CameraComponent::setProjectionMode(const rnd::ProjectionMode mode) {
+    void CameraComponent::setProjectionMode(const rnd::Camera::ProjectionMode mode) {
         camera.setProjectionMode(mode);
     }
 
@@ -39,7 +39,7 @@ namespace blb::ecs {
         return camera.getProjection();
     }
 
-    rnd::ProjectionMode CameraComponent::getProjectionMode() const {
+    rnd::Camera::ProjectionMode CameraComponent::getProjectionMode() const {
         return camera.getProjectionMode();
     }
 

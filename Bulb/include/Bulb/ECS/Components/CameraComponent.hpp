@@ -25,7 +25,7 @@ namespace blb::ecs {
         ~CameraComponent();
 
         void setView(clv::mth::mat4f view);
-        void setProjectionMode(const rnd::ProjectionMode mode);
+        void setProjectionMode(const rnd::Camera::ProjectionMode mode);
 
         void setZoomLevel(float zoom);
 
@@ -34,7 +34,7 @@ namespace blb::ecs {
         const clv::mth::mat4f& getView() const;
         const clv::mth::mat4f& getProjection() const;
 
-        rnd::ProjectionMode getProjectionMode() const;
+        rnd::Camera::ProjectionMode getProjectionMode() const;
 
         const clv::gfx::Viewport& getViewport() const;
     };

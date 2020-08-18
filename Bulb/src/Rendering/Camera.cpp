@@ -75,7 +75,7 @@ namespace blb::rnd {
         return projection;
     }
 
-    ProjectionMode Camera::getProjectionMode() const {
+    Camera::ProjectionMode Camera::getProjectionMode() const {
         return currentProjectionMode;
     }
 
