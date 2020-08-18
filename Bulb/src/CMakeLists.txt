@@ -2,6 +2,8 @@ set(BLB_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
 set(BLB_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../include/Bulb)
 set(BLB_RESOURCE ${CMAKE_CURRENT_SOURCE_DIR}/../res)
 
+include(../../Clove/cmake/CompileShader.cmake)
+
 project(Bulb)
 
 add_library(${PROJECT_NAME} STATIC)
@@ -139,22 +141,17 @@ set(
 
 set(
 	ShaderFiles
-		${BLB_RESOURCE}/Shaders/Default2D-ps.hlsl
-		${BLB_RESOURCE}/Shaders/Default2D-vs.hlsl
-		${BLB_RESOURCE}/Shaders/Default3D-ps.hlsl
-		${BLB_RESOURCE}/Shaders/Default3D-vs.hlsl
-		${BLB_RESOURCE}/Shaders/Font-ps.hlsl
-		${BLB_RESOURCE}/Shaders/Font-vs.hlsl
-		${BLB_RESOURCE}/Shaders/GenCubeShadowMap-gs.hlsl
-		${BLB_RESOURCE}/Shaders/GenCubeShadowMap-ps.hlsl
-		${BLB_RESOURCE}/Shaders/GenCubeShadowMap-vs.hlsl
-		${BLB_RESOURCE}/Shaders/GenShadowMap-gs.hlsl
-		${BLB_RESOURCE}/Shaders/GenShadowMap-ps.hlsl
-		${BLB_RESOURCE}/Shaders/GenShadowMap-vs.hlsl
-		${BLB_RESOURCE}/Shaders/ShadowFunctions.hlsl
-		${BLB_RESOURCE}/Shaders/Skeletal3D-vs.hlsl
-		${BLB_RESOURCE}/Shaders/SkeletalCubeShadow-vs.hlsl
-		${BLB_RESOURCE}/Shaders/SkeletalShadow-vs.hlsl
+		${BLB_RESOURCE}/Shaders/vert.glsl
+		${BLB_RESOURCE}/Shaders/frag.glsl
+)
+
+compileShader("${BLB_RESOURCE}/Shaders/vert.glsl" "vert.spirv" "vertex")
+compileShader("${BLB_RESOURCE}/Shaders/frag.glsl" "frag.spirv" "fragment")
+
+set(
+	CompiledShaderFiles
+		vert.spirv
+		frag.spirv
 )
 
 #Convert resources into c strings
@@ -181,13 +178,12 @@ function(embeddResource resources readType)
 	set(ResourceBinaries ${ResourceBinaries} ${files} PARENT_SCOPE)
 endfunction()
 
-embeddResource("${ShaderFiles}" "r")
 embeddResource("${BLB_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf" "rb")
 
 #Organise the source tree
 file(GLOB_RECURSE header ${BLB_INCLUDE}/*.h ${BLB_INCLUDE}/*.hpp ${BLB_INCLUDE}/*.inl)
 file(GLOB_RECURSE source *.cpp *.m *.mm)
-file(GLOB_RECURSE resource ${BLB_RESOURCE}/*.hlsl)
+file(GLOB_RECURSE resource ${BLB_RESOURCE}/*.glsl)
 source_group(TREE ${BLB_INCLUDE} FILES ${header})
 source_group(TREE ${BLB_SOURCE} FILES ${source})
 source_group(TREE ${BLB_RESOURCE} FILES ${resource})
@@ -223,7 +219,9 @@ target_sources(
 		${RenderingFiles}
 		${StateMachineFiles}
 		${UIFiles}
+
 		${ShaderFiles}
+		${CompiledShaderFiles}
 
 		${ResourceBinaries}
 )
