@@ -112,6 +112,7 @@ namespace blb::rnd {
     void ForwardRenderer3D::end() {
         if(needNewSwapchain) {
             recreateSwapchain();
+            return; //return early just in case the window was minimised
         }
 
         //Wait on the current frame / current images to be available
@@ -121,6 +122,7 @@ namespace blb::rnd {
         clv::gfx::Result result = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get(), imageIndex);
         if(result == clv::gfx::Result::Error_SwapchainOutOfDate) {
             recreateSwapchain();
+            return;//return early just in case the window was minimised
         }
 
         //Check if we're already using this image, if so wait
@@ -201,6 +203,7 @@ namespace blb::rnd {
         presentInfo.swapChain      = swapchain;
         presentInfo.imageIndex     = imageIndex;
         result = presentQueue->present(presentInfo);
+        
         if(needNewSwapchain || result == clv::gfx::Result::Error_SwapchainOutOfDate || result == clv::gfx::Result::Success_SwapchainSuboptimal) {
             recreateSwapchain();
             GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Swapchain recreated at end of loop");
