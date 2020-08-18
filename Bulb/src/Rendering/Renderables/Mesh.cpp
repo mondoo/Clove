@@ -8,9 +8,11 @@ namespace blb::rnd{
     }
 
     Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices, Material material, clv::gfx::GraphicsFactory& factory) 
-        : material(std::move(material)){
-        const size_t vertexBufferSize = sizeof(blb::rnd::Vertex) * std::size(vertices);
-        const size_t indexBufferSize   = sizeof(uint16_t) * std::size(indices);
+        : vertices(std::move(vertices))
+        , indices(std::move(indices))
+        , material(std::move(material)){
+        const size_t vertexBufferSize = sizeof(blb::rnd::Vertex) * std::size(this->vertices);
+        const size_t indexBufferSize  = sizeof(uint16_t) * std::size(this->indices);
 
         //Staging buffers
         clv::gfx::GraphicsBuffer::Descriptor stagingDescriptor{};
@@ -43,8 +45,8 @@ namespace blb::rnd{
         indexBuffer = factory.createBuffer(indexDescriptor);
 
         //Map the data int system memory
-        stagingBufferVertex->map(std::data(vertices), vertexBufferSize);
-        stagingBufferIndex->map(std::data(indices), indexBufferSize);
+        stagingBufferVertex->map(std::data(this->vertices), vertexBufferSize);
+        stagingBufferIndex->map(std::data(this->indices), indexBufferSize);
 
         //Transfer the data to video memory
         auto transferQueue = factory.createTransferQueue({ clv::gfx::QueueFlags::Transient });
