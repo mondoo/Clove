@@ -352,6 +352,8 @@ namespace clv::gfx::vk {
                 return;
             }
         }
+
+        devicePtr = DevicePointer(instance, surface, physicalDevice, logicalDevice, debugMessenger);
     }
 
     VKGraphicsFactory::VKGraphicsFactory(VKGraphicsFactory&& other) noexcept = default;

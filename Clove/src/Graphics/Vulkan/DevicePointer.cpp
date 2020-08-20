@@ -10,9 +10,10 @@ namespace clv::gfx::vk {
 
     DevicePointer::DevicePointer() = default;
 
-    DevicePointer::DevicePointer(VkInstance instance, VkSurfaceKHR surface, VkDevice logicalDevice, VkDebugUtilsMessengerEXT debugMessenger)
+    DevicePointer::DevicePointer(VkInstance instance, VkSurfaceKHR surface, VkPhysicalDevice physicalDevice, VkDevice logicalDevice, VkDebugUtilsMessengerEXT debugMessenger)
         : instance(instance)
         , surface(surface)
+        , physicalDevice(physicalDevice)
         , logicalDevice(logicalDevice)
         , debugMessenger(debugMessenger) {
         counter = new uint32_t(1);

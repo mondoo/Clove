@@ -10,6 +10,7 @@ namespace clv::gfx::vk {
         //VARIABLES
     private:
         VkDevice logicalDevice{ VK_NULL_HANDLE };
+        VkPhysicalDevice physicalDevice{ VK_NULL_HANDLE };
 
         VkInstance instance{ VK_NULL_HANDLE };
         VkSurfaceKHR surface{ VK_NULL_HANDLE };
@@ -20,7 +21,7 @@ namespace clv::gfx::vk {
         //FUNCTIONS
     public:
         DevicePointer();
-        DevicePointer(VkInstance instance, VkSurfaceKHR surface, VkDevice logicalDevice, VkDebugUtilsMessengerEXT debugMessenger);
+        DevicePointer(VkInstance instance, VkSurfaceKHR surface, VkPhysicalDevice physicalDevice, VkDevice logicalDevice, VkDebugUtilsMessengerEXT debugMessenger);
 
         DevicePointer(const DevicePointer& other);
         DevicePointer(DevicePointer&& other) noexcept;
@@ -31,6 +32,9 @@ namespace clv::gfx::vk {
         ~DevicePointer();
 
         inline VkDevice get() const;
+        inline VkPhysicalDevice getPhysical() const;
+
+        inline VkSurfaceKHR getSurface() const;
 
     private:
         void release();
