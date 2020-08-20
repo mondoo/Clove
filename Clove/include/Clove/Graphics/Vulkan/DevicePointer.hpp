@@ -19,7 +19,7 @@ namespace clv::gfx::vk {
 
         //FUNCTIONS
     public:
-        DevicePointer() = delete;
+        DevicePointer();
         DevicePointer(VkInstance instance, VkSurfaceKHR surface, VkDevice logicalDevice, VkDebugUtilsMessengerEXT debugMessenger);
 
         DevicePointer(const DevicePointer& other);
@@ -31,5 +31,8 @@ namespace clv::gfx::vk {
         ~DevicePointer();
 
         VkDevice get() const;
+
+    private:
+        void release();
     };
 }

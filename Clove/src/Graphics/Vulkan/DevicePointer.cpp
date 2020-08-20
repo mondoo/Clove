@@ -8,6 +8,8 @@ namespace clv::gfx::vk {
         }
     }
 
+    DevicePointer::DevicePointer() = default;
+
     DevicePointer::DevicePointer(VkInstance instance, VkSurfaceKHR surface, VkDevice logicalDevice, VkDebugUtilsMessengerEXT debugMessenger)
         : instance(instance)
         , surface(surface)
@@ -16,25 +18,31 @@ namespace clv::gfx::vk {
         counter = new uint32_t(1);
     }
 
-    DevicePointer::DevicePointer(const DevicePointer& other)
-        : instance(other.instance)
-        , surface(other.surface)
-        , logicalDevice(other.logicalDevice)
-        , debugMessenger(other.debugMessenger) {
+    DevicePointer::DevicePointer(const DevicePointer& other) {
+        release();
+
+        instance       = other.instance;
+        surface        = other.surface;
+        logicalDevice  = other.logicalDevice;
+        debugMessenger = other.debugMessenger;
+
         counter = other.counter;
         ++(*counter);
     }
 
-    DevicePointer::DevicePointer(DevicePointer&& other) noexcept
-        : instance(other.instance)
-        , surface(other.surface)
-        , logicalDevice(other.logicalDevice)
-        , debugMessenger(other.debugMessenger) {
-        counter = other.counter;
-        ++(*counter);
+    DevicePointer::DevicePointer(DevicePointer&& other) noexcept {
+        instance       = std::move(other.instance);
+        surface        = std::move(other.surface);
+        logicalDevice  = std::move(other.logicalDevice);
+        debugMessenger = std::move(other.debugMessenger);
+
+        counter = std::move(other.counter);
+        //++(*counter);
     }
 
     DevicePointer& DevicePointer::operator=(const DevicePointer& other) {
+        release();
+
         instance       = other.instance;
         surface        = other.surface;
         logicalDevice  = other.logicalDevice;
@@ -45,17 +53,25 @@ namespace clv::gfx::vk {
     }
 
     DevicePointer& DevicePointer::operator=(DevicePointer&& other) noexcept {
-        instance       = other.instance;
-        surface        = other.surface;
-        logicalDevice  = other.logicalDevice;
-        debugMessenger = other.debugMessenger;
+        instance       = std::move(other.instance);
+        surface        = std::move(other.surface);
+        logicalDevice  = std::move(other.logicalDevice);
+        debugMessenger = std::move(other.debugMessenger);
 
-        counter = other.counter;
-        ++(*counter);
+        counter = std::move(other.counter);
+        //++(*counter);
     }
 
     DevicePointer::~DevicePointer() {
-        if(--(*counter) == 0) {
+        release();
+    }
+
+    VkDevice DevicePointer::get() const {
+        return logicalDevice;
+    }
+
+    void DevicePointer::release() {
+        if(counter != nullptr && --(*counter) == 0) {
 #if GARLIC_DEBUG
             destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #endif
@@ -67,9 +83,5 @@ namespace clv::gfx::vk {
 
             delete counter;
         }
-    }
-
-    VkDevice DevicePointer::get() const {
-        return logicalDevice;
     }
 }
