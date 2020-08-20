@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/Swapchain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -13,8 +14,8 @@ namespace clv::gfx::vk {
     class VKSwapchain : public Swapchain {
         //VARIABLES
     private:
-        VkDevice device          = VK_NULL_HANDLE;
-        VkSwapchainKHR swapChain = VK_NULL_HANDLE;
+        DevicePointer device;
+        VkSwapchainKHR swapchain{ VK_NULL_HANDLE };
 
         VkFormat swapChainImageFormat;
         VkExtent2D swapChainExtent;
@@ -25,7 +26,7 @@ namespace clv::gfx::vk {
         //FUNCTIONS
     public:
         VKSwapchain() = delete;
-        VKSwapchain(VkDevice device, SwapchainSupportDetails supportDetails, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, Descriptor descriptor);
+        VKSwapchain(DevicePointer device, SwapchainSupportDetails supportDetails, const QueueFamilyIndices& familyIndices, Descriptor descriptor);
 
         VKSwapchain(const VKSwapchain& other) = delete;
         VKSwapchain(VKSwapchain&& other) noexcept;

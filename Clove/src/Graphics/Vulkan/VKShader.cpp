@@ -21,16 +21,16 @@ namespace clv::gfx::vk {
         return buffer;
     }
 
-    VKShader::VKShader(VkDevice device, std::string_view filePath)
-        : VKShader(device, readFile(filePath)) {
+    VKShader::VKShader(DevicePointer device, std::string_view filePath)
+        : VKShader(std::move(device), readFile(filePath)) {
     }
 
-    VKShader::VKShader(VkDevice device, std::vector<std::byte> byteCode)
-        : VKShader(device, std::data(byteCode), std::size(byteCode)) {
+    VKShader::VKShader(DevicePointer device, std::vector<std::byte> byteCode)
+        : VKShader(std::move(device), std::data(byteCode), std::size(byteCode)) {
     }
 
-    VKShader::VKShader(VkDevice device, const std::byte* byteCode, const size_t numBytes) 
-    : device(device) {
+    VKShader::VKShader(DevicePointer device, const std::byte* byteCode, const size_t numBytes) 
+    : device(std::move(device)) {
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.pNext    = nullptr;
@@ -38,7 +38,7 @@ namespace clv::gfx::vk {
         createInfo.codeSize = numBytes;
         createInfo.pCode    = reinterpret_cast<const uint32_t*>(byteCode);
 
-        if(vkCreateShaderModule(device, &createInfo, nullptr, &module) != VK_SUCCESS) {
+        if(vkCreateShaderModule(this->device.get(), &createInfo, nullptr, &module) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create shader module");
         }
     }
@@ -48,7 +48,7 @@ namespace clv::gfx::vk {
     VKShader& VKShader::operator=(VKShader&& other) noexcept = default;
 
     VKShader::~VKShader() {
-        vkDestroyShaderModule(device, module, nullptr);
+        vkDestroyShaderModule(device.get(), module, nullptr);
     }
 
     VkShaderModule VKShader::getModule() const {

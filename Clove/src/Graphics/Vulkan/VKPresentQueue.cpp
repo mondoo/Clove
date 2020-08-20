@@ -6,9 +6,9 @@
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
-    VKPresentQueue::VKPresentQueue(VkDevice device, uint32_t queueFamilyIndex)
-        : device(device) {
-        vkGetDeviceQueue(device, queueFamilyIndex, 0, &queue);
+    VKPresentQueue::VKPresentQueue(DevicePointer device, uint32_t queueFamilyIndex)
+        : device(std::move(device)) {
+        vkGetDeviceQueue(this->device.get(), queueFamilyIndex, 0, &queue);
     }
 
     VKPresentQueue::VKPresentQueue(VKPresentQueue&& other) noexcept = default;

@@ -3,8 +3,8 @@
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
-    VKRenderPass::VKRenderPass(VkDevice device, RenderPass::Descriptor descriptor)
-        : device(device) {
+    VKRenderPass::VKRenderPass(DevicePointer device, RenderPass::Descriptor descriptor)
+        : device(std::move(device)) {
         //Attachments
         const size_t attachmentSize = std::size(descriptor.attachments);
         std::vector<VkAttachmentDescription> attachments(attachmentSize);
@@ -80,7 +80,7 @@ namespace clv::gfx::vk {
         renderPassInfo.dependencyCount = dependecySize;
         renderPassInfo.pDependencies   = std::data(dependecies);
 
-        if(vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
+        if(vkCreateRenderPass(this->device.get(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create render pass");
         }
     }
@@ -90,7 +90,7 @@ namespace clv::gfx::vk {
     VKRenderPass& VKRenderPass::operator=(VKRenderPass&& other) noexcept = default;
 
     VKRenderPass::~VKRenderPass() {
-        vkDestroyRenderPass(device, renderPass, nullptr);
+        vkDestroyRenderPass(device.get(), renderPass, nullptr);
     }
 
     VkRenderPass VKRenderPass::getRenderPass() const {

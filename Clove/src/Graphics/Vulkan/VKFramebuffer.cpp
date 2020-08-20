@@ -5,8 +5,8 @@
 #include "Clove/Utils/Cast.hpp"
 
 namespace clv::gfx::vk {
-    VKFramebuffer::VKFramebuffer(VkDevice device, Descriptor descriptor)
-        : device(device) {
+    VKFramebuffer::VKFramebuffer(DevicePointer device, Descriptor descriptor)
+        : device(std::move(device)) {
         std::vector<VkImageView> attachments;
         attachments.reserve(std::size(descriptor.attachments));
         for(auto& attachment : descriptor.attachments) {
@@ -25,7 +25,7 @@ namespace clv::gfx::vk {
         framebufferInfo.height          = descriptor.height;
         framebufferInfo.layers          = 1;
 
-        if(vkCreateFramebuffer(device, &framebufferInfo, nullptr, &framebuffer) != VK_SUCCESS) {
+        if(vkCreateFramebuffer(this->device.get(), &framebufferInfo, nullptr, &framebuffer) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create framebuffer");
         }
     }
@@ -35,7 +35,7 @@ namespace clv::gfx::vk {
     VKFramebuffer& VKFramebuffer::operator=(VKFramebuffer&& other) noexcept = default;
 
     VKFramebuffer::~VKFramebuffer() {
-        vkDestroyFramebuffer(device, framebuffer, nullptr);
+        vkDestroyFramebuffer(device.get(), framebuffer, nullptr);
     }
 
     VkFramebuffer VKFramebuffer::getFrameBuffer() const {

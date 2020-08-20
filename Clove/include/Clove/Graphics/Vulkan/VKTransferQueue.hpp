@@ -3,6 +3,7 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/TransferQueue.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+#include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -10,9 +11,9 @@ namespace clv::gfx::vk {
     class VKTransferQueue : public TransferQueue {
         //VARIABLES
     private:
-        VkDevice device           = VK_NULL_HANDLE;
-        VkQueue queue             = VK_NULL_HANDLE;
-        VkCommandPool commandPool = VK_NULL_HANDLE;
+        DevicePointer device;
+        VkQueue queue{ VK_NULL_HANDLE };
+        VkCommandPool commandPool{ VK_NULL_HANDLE };
 
         QueueFamilyIndices queueFamilyIndices;
 
@@ -20,7 +21,7 @@ namespace clv::gfx::vk {
     public:
         //TODO: Ctors
         VKTransferQueue() = delete;
-        VKTransferQueue(VkDevice device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor);
+        VKTransferQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor);
 
         ~VKTransferQueue();
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/Fence.hpp"
+#include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -8,13 +9,14 @@ namespace clv::gfx::vk {
     class VKFence : public Fence {
         //VARIABLES
     private:
-        VkDevice device;
-        VkFence fence;
+        DevicePointer device;
+
+        VkFence fence{ VK_NULL_HANDLE };
 
         //FUNCTIONS
     public:
         VKFence() = delete;
-        VKFence(VkDevice device, Descriptor descriptor);
+        VKFence(DevicePointer device, Descriptor descriptor);
 
         VKFence(const VKFence& other) = delete;
         VKFence(VKFence&& other) noexcept;

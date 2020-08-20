@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/GraphicsQueue.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+#include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -9,16 +10,16 @@ namespace clv::gfx::vk {
     class VKGraphicsQueue : public GraphicsQueue {
         //VARIABLES
     private:
-        VkDevice device           = VK_NULL_HANDLE;
-        VkQueue queue             = VK_NULL_HANDLE;
-        VkCommandPool commandPool = VK_NULL_HANDLE;
+        DevicePointer device;
+        VkQueue queue{ VK_NULL_HANDLE };
+        VkCommandPool commandPool{ VK_NULL_HANDLE };
 
         QueueFamilyIndices queueFamilyIndices;
 
         //FUNCTIONS
     public:
         VKGraphicsQueue() = delete;
-        VKGraphicsQueue(VkDevice device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor);
+        VKGraphicsQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor);
 
         VKGraphicsQueue(const VKGraphicsQueue& other) = delete;
         VKGraphicsQueue(VKGraphicsQueue&& other) noexcept;

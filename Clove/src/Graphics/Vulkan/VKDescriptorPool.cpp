@@ -16,8 +16,8 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKDescriptorPool::VKDescriptorPool(VkDevice device, Descriptor descriptor)
-        : device(device) {
+    VKDescriptorPool::VKDescriptorPool(DevicePointer device, Descriptor descriptor)
+        : device(std::move(device)) {
         const size_t numDescriptorTypes = std::size(descriptor.poolTypes);
         std::vector<VkDescriptorPoolSize> poolSizes(numDescriptorTypes);
         for(size_t i = 0; i < numDescriptorTypes; ++i) {
@@ -33,7 +33,7 @@ namespace clv::gfx::vk {
         createInfo.poolSizeCount = std::size(poolSizes);
         createInfo.pPoolSizes    = std::data(poolSizes);
 
-        if(vkCreateDescriptorPool(device, &createInfo, nullptr, &pool) != VK_SUCCESS) {
+        if(vkCreateDescriptorPool(this->device.get(), &createInfo, nullptr, &pool) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create descriptor pool");
         }
     }
@@ -43,7 +43,7 @@ namespace clv::gfx::vk {
     VKDescriptorPool& VKDescriptorPool::operator=(VKDescriptorPool&& other) noexcept = default;
 
     VKDescriptorPool::~VKDescriptorPool() {
-        vkDestroyDescriptorPool(device, pool, nullptr);
+        vkDestroyDescriptorPool(device.get(), pool, nullptr);
     }
 
     std::vector<std::shared_ptr<DescriptorSet>> VKDescriptorPool::allocateDescriptorSets(const std::vector<std::shared_ptr<DescriptorSetLayout>>& layouts) {
@@ -63,14 +63,14 @@ namespace clv::gfx::vk {
         allocInfo.descriptorSetCount = static_cast<uint32_t>(numSets);
         allocInfo.pSetLayouts        = std::data(vulkanLayouts);
 
-        if(vkAllocateDescriptorSets(device, &allocInfo, std::data(vulkanSets)) != VK_SUCCESS) {
+        if(vkAllocateDescriptorSets(device.get(), &allocInfo, std::data(vulkanSets)) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate new descriptor sets");
             return {};
         }
 
         std::vector<std::shared_ptr<DescriptorSet>> descriptorSets(numSets);
         for(size_t i = 0; i < numSets; ++i) {
-            descriptorSets[i] = std::make_shared<VKDescriptorSet>(device, vulkanSets[i]);
+            descriptorSets[i] = std::make_shared<VKDescriptorSet>(device.get(), vulkanSets[i]);
         }
 
         return descriptorSets;
@@ -84,7 +84,7 @@ namespace clv::gfx::vk {
             vulkanSets[i] = polyCast<VKDescriptorSet>(descriptorSets[i].get())->getDescriptorSet();
         }
 
-        if(vkFreeDescriptorSets(device, pool, numSets, std::data(vulkanSets)) != VK_SUCCESS) {
+        if(vkFreeDescriptorSets(device.get(), pool, numSets, std::data(vulkanSets)) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to free descriptor sets");
         }
     }

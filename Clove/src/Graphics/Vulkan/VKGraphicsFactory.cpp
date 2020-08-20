@@ -42,13 +42,6 @@ namespace clv::gfx::vk {
         }
     }
 
-    static void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
-        auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
-        if(func != nullptr) {
-            func(instance, debugMessenger, pAllocator);
-        }
-    }
-
     static bool checkValidationLayerSupport(const std::vector<const char*>& validationLayers) {
         uint32_t layerCount;
         vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -213,6 +206,8 @@ namespace clv::gfx::vk {
 #endif
 
         //CREATE INSTANCE
+        VkInstance instance;
+        VkDebugUtilsMessengerEXT debugMessenger;
         {
             VkApplicationInfo appInfo{};
             appInfo.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -261,6 +256,7 @@ namespace clv::gfx::vk {
         }
 
         //CREATE SURFACE
+        VkSurfaceKHR surface;
         {
             //TODO: Platform agnostic surface creation
             VkWin32SurfaceCreateInfoKHR createInfo{};
@@ -275,6 +271,7 @@ namespace clv::gfx::vk {
         }
 
         //PICK PHYSICAL DEVICE
+        VkPhysicalDevice physicalDevice;
         {
             uint32_t deviceCount = 0;
             vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
@@ -307,6 +304,7 @@ namespace clv::gfx::vk {
         }
 
         //CREATE LOGICAL DEVICE
+        VkDevice logicalDevice;
         {
             queueFamilyIndices = findQueueFamilies(physicalDevice, surface);
 
@@ -360,85 +358,77 @@ namespace clv::gfx::vk {
 
     VKGraphicsFactory& VKGraphicsFactory::operator=(VKGraphicsFactory&& other) noexcept = default;
 
-    VKGraphicsFactory::~VKGraphicsFactory() {
-#if GARLIC_DEBUG
-        destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-#endif
-        vkDestroyDevice(logicalDevice, nullptr);
-        vkDestroySurfaceKHR(instance, surface, nullptr);
-
-        vkDestroyInstance(instance, nullptr);
-    }
+    VKGraphicsFactory::~VKGraphicsFactory() = default;
 
     std::unique_ptr<GraphicsQueue> VKGraphicsFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
-        return std::make_unique<VKGraphicsQueue>(logicalDevice, queueFamilyIndices, std::move(descriptor));
+        return std::make_unique<VKGraphicsQueue>(devicePtr, queueFamilyIndices, std::move(descriptor));
     }
 
     std::unique_ptr<PresentQueue> VKGraphicsFactory::createPresentQueue() {
-        return std::make_unique<VKPresentQueue>(logicalDevice, *queueFamilyIndices.presentFamily);
+        return std::make_unique<VKPresentQueue>(devicePtr, *queueFamilyIndices.presentFamily);
     }
 
     std::unique_ptr<TransferQueue> VKGraphicsFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
-        return std::make_unique<VKTransferQueue>(logicalDevice, queueFamilyIndices, std::move(descriptor));
+        return std::make_unique<VKTransferQueue>(devicePtr, queueFamilyIndices, std::move(descriptor));
     }
 
     std::unique_ptr<Swapchain> VKGraphicsFactory::createSwapChain(Swapchain::Descriptor descriptor) {
-        return std::make_unique<VKSwapchain>(logicalDevice, querySwapChainSupport(physicalDevice, surface), surface, queueFamilyIndices, std::move(descriptor));
+        return std::make_unique<VKSwapchain>(devicePtr, querySwapChainSupport(devicePtr.getPhysical(), devicePtr.getSurface()), queueFamilyIndices, std::move(descriptor));
     }
 
     std::unique_ptr<Shader> VKGraphicsFactory::createShader(std::string_view filePath) {
-        return std::make_unique<VKShader>(logicalDevice, filePath);
+        return std::make_unique<VKShader>(devicePtr, filePath);
     }
 
     std::unique_ptr<Shader> VKGraphicsFactory::createShader(std::vector<std::byte> byteCode) {
-        return std::make_unique<VKShader>(logicalDevice, std::move(byteCode));
+        return std::make_unique<VKShader>(devicePtr, std::move(byteCode));
     }
 
     std::unique_ptr<Shader> VKGraphicsFactory::createShader(const std::byte* byteCode, const size_t numBytes) {
-        return std::make_unique<VKShader>(logicalDevice, byteCode, numBytes);
+        return std::make_unique<VKShader>(devicePtr, byteCode, numBytes);
     }
 
     std::unique_ptr<RenderPass> VKGraphicsFactory::createRenderPass(RenderPass::Descriptor descriptor) {
-        return std::make_unique<VKRenderPass>(logicalDevice, std::move(descriptor));
+        return std::make_unique<VKRenderPass>(devicePtr, std::move(descriptor));
     }
 
     std::unique_ptr<DescriptorSetLayout> VKGraphicsFactory::createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) {
-        return std::make_unique<VKDescriptorSetLayout>(logicalDevice, std::move(descriptor));
+        return std::make_unique<VKDescriptorSetLayout>(devicePtr, std::move(descriptor));
     }
 
     std::unique_ptr<PipelineObject> VKGraphicsFactory::createPipelineObject(PipelineObject::Descriptor descriptor) {
-        return std::make_unique<VKPipelineObject>(logicalDevice, std::move(descriptor));
+        return std::make_unique<VKPipelineObject>(devicePtr, std::move(descriptor));
     }
 
     std::unique_ptr<Framebuffer> VKGraphicsFactory::createFramebuffer(Framebuffer::Descriptor descriptor) {
-        return std::make_unique<VKFramebuffer>(logicalDevice, std::move(descriptor));
+        return std::make_unique<VKFramebuffer>(devicePtr, std::move(descriptor));
     }
 
     std::unique_ptr<DescriptorPool> VKGraphicsFactory::createDescriptorPool(DescriptorPool::Descriptor descriptor) {
-        return std::make_unique<VKDescriptorPool>(logicalDevice, std::move(descriptor));
+        return std::make_unique<VKDescriptorPool>(devicePtr, std::move(descriptor));
     }
 
     std::unique_ptr<Semaphore> VKGraphicsFactory::createSemaphore() {
-        return std::make_unique<VKSemaphore>(logicalDevice);
+        return std::make_unique<VKSemaphore>(devicePtr);
     }
 
     std::unique_ptr<Fence> VKGraphicsFactory::createFence(Fence::Descriptor descriptor) {
-        return std::make_unique<VKFence>(logicalDevice, std::move(descriptor));
+        return std::make_unique<VKFence>(devicePtr, std::move(descriptor));
     }
 
     std::unique_ptr<GraphicsBuffer> VKGraphicsFactory::createBuffer(GraphicsBuffer::Descriptor descriptor) {
-        return std::make_unique<VKBuffer>(logicalDevice, physicalDevice, std::move(descriptor), queueFamilyIndices);
+        return std::make_unique<VKBuffer>(devicePtr, std::move(descriptor), queueFamilyIndices);
     }
 
     std::unique_ptr<GraphicsImage> VKGraphicsFactory::createImage(GraphicsImage::Descriptor descriptor) {
-        return std::make_unique<VKImage>(logicalDevice, physicalDevice, std::move(descriptor), queueFamilyIndices);
+        return std::make_unique<VKImage>(devicePtr, std::move(descriptor), queueFamilyIndices);
     }
 
     std::unique_ptr<Sampler> VKGraphicsFactory::createSampler(Sampler::Descriptor descriptor) {
-        return std::make_unique<VKSampler>(logicalDevice, std::move(descriptor));
+        return std::make_unique<VKSampler>(devicePtr, std::move(descriptor));
     }
 
     void VKGraphicsFactory::waitForIdleDevice() {
-        vkDeviceWaitIdle(logicalDevice);
+        vkDeviceWaitIdle(devicePtr.get());
     }
 }

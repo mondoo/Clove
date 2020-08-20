@@ -39,8 +39,8 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKSwapchain::VKSwapchain(VkDevice device, SwapchainSupportDetails supportDetails, VkSurfaceKHR surface, const QueueFamilyIndices& familyIndices, Descriptor descriptor)
-        : device(device) {
+    VKSwapchain::VKSwapchain(DevicePointer device, SwapchainSupportDetails supportDetails, const QueueFamilyIndices& familyIndices, Descriptor descriptor)
+        : device(std::move(device)) {
         VkExtent2D windowExtent{
             descriptor.extent.x,
             descriptor.extent.y
@@ -60,7 +60,7 @@ namespace clv::gfx::vk {
 
         VkSwapchainCreateInfoKHR createInfo{};
         createInfo.sType            = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-        createInfo.surface          = surface;
+        createInfo.surface          = this->device.getSurface();
         createInfo.minImageCount    = imageCount;
         createInfo.imageFormat      = surfaceFormat.format;
         createInfo.imageColorSpace  = surfaceFormat.colorSpace;
@@ -82,21 +82,21 @@ namespace clv::gfx::vk {
         createInfo.clipped        = VK_TRUE;
         createInfo.oldSwapchain   = VK_NULL_HANDLE;
 
-        if(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
+        if(vkCreateSwapchainKHR(this->device.get(), &createInfo, nullptr, &swapchain) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create swap chain");
             return;
         }
 
-        vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
+        vkGetSwapchainImagesKHR(this->device.get(), swapchain, &imageCount, nullptr);
         images.resize(imageCount);
-        vkGetSwapchainImagesKHR(device, swapChain, &imageCount, images.data());
+        vkGetSwapchainImagesKHR(this->device.get(), swapchain, &imageCount, images.data());
 
         swapChainImageFormat = surfaceFormat.format;
         swapChainExtent      = extent;
 
         imageViews.resize(std::size(images));
         for(size_t i = 0; i < images.size(); ++i) {
-            imageViews[i] = std::make_shared<VKImageView>(device, createImageView(device, images[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT));
+            imageViews[i] = std::make_shared<VKImageView>(this->device.get(), createImageView(this->device.get(), images[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT));
         }
     }
 
@@ -105,7 +105,7 @@ namespace clv::gfx::vk {
     VKSwapchain& VKSwapchain::operator=(VKSwapchain&& other) noexcept = default;
 
     VKSwapchain::~VKSwapchain() {
-        vkDestroySwapchainKHR(device, swapChain, nullptr);
+        vkDestroySwapchainKHR(device.get(), swapchain, nullptr);
     }
 
     ImageFormat VKSwapchain::getImageFormat() const {
@@ -118,7 +118,7 @@ namespace clv::gfx::vk {
 
     Result VKSwapchain::aquireNextImage(const Semaphore* semaphore, uint32_t& outImageIndex) {
         VkSemaphore vkSemaphore = semaphore ? polyCast<const VKSemaphore>(semaphore)->getSemaphore() : VK_NULL_HANDLE;
-        const VkResult result   = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex);
+        const VkResult result   = vkAcquireNextImageKHR(device.get(), swapchain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex);
 
         return convertResult(result);
     }
@@ -128,6 +128,6 @@ namespace clv::gfx::vk {
     }
 
     VkSwapchainKHR VKSwapchain::getSwapchain() const {
-        return swapChain;
+        return swapchain;
     }
 }

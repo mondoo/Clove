@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/PresentQueue.hpp"
+#include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -8,13 +9,13 @@ namespace clv::gfx::vk {
     class VKPresentQueue : public PresentQueue {
         //VARIABLES
     private:
-        VkDevice device = VK_NULL_HANDLE;
-        VkQueue queue   = VK_NULL_HANDLE;
+        DevicePointer device;
+        VkQueue queue{ VK_NULL_HANDLE };
 
         //FUNCTIONS
     public:
         VKPresentQueue() = delete;
-        VKPresentQueue(VkDevice device, uint32_t queueFamilyIndex);
+        VKPresentQueue(DevicePointer device, uint32_t queueFamilyIndex);
 
         VKPresentQueue(const VKPresentQueue& other) = delete;
         VKPresentQueue(VKPresentQueue&& other) noexcept;

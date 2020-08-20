@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/PipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -8,15 +9,15 @@ namespace clv::gfx::vk {
     class VKPipelineObject : public PipelineObject {
         //VARIABLES
     private:
-        VkDevice device = VK_NULL_HANDLE;
+        DevicePointer device;
 
-        VkPipeline pipeline             = VK_NULL_HANDLE;
-        VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
+        VkPipeline pipeline{ VK_NULL_HANDLE };
+        VkPipelineLayout pipelineLayout{ VK_NULL_HANDLE };
 
         //FUNCTIONS
     public:
         VKPipelineObject() = delete;
-        VKPipelineObject(VkDevice device, Descriptor descriptor);
+        VKPipelineObject(DevicePointer device, Descriptor descriptor);
 
         VKPipelineObject(const VKPipelineObject& other) = delete;
         VKPipelineObject(VKPipelineObject&& other) noexcept;

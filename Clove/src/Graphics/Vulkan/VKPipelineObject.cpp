@@ -34,8 +34,8 @@ namespace clv::gfx::vk {
         return layouts;
     }
 
-    VKPipelineObject::VKPipelineObject(VkDevice device, Descriptor descriptor)
-        : device(device) {
+    VKPipelineObject::VKPipelineObject(DevicePointer device, Descriptor descriptor)
+        : device(std::move(device)) {
         std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
 
         VkVertexInputBindingDescription inputBindingDescription         = getBindingDescription(descriptor.vertexInput);
@@ -154,7 +154,7 @@ namespace clv::gfx::vk {
         pipelineLayoutInfo.pushConstantRangeCount = 0;
         pipelineLayoutInfo.pPushConstantRanges    = nullptr;
 
-        if(vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+        if(vkCreatePipelineLayout(this->device.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create pipeline layout");
             return;
         }
@@ -180,7 +180,7 @@ namespace clv::gfx::vk {
         pipelineInfo.basePipelineHandle  = VK_NULL_HANDLE;
         pipelineInfo.basePipelineIndex   = -1;
 
-        if(vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS) {
+        if(vkCreateGraphicsPipelines(this->device.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics pipeline");
         }
     }
@@ -190,8 +190,8 @@ namespace clv::gfx::vk {
     VKPipelineObject& VKPipelineObject::operator=(VKPipelineObject&& other) noexcept = default;
 
     VKPipelineObject::~VKPipelineObject() {
-        vkDestroyPipeline(device, pipeline, nullptr);
-        vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+        vkDestroyPipeline(device.get(), pipeline, nullptr);
+        vkDestroyPipelineLayout(device.get(), pipelineLayout, nullptr);
     }
     
     VkPipeline VKPipelineObject::getPipeline() const {

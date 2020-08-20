@@ -13,12 +13,12 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKGraphicsQueue::VKGraphicsQueue(VkDevice device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)
-        : device(device)
+    VKGraphicsQueue::VKGraphicsQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)
+        : device(std::move(device))
         , queueFamilyIndices(std::move(queueFamilyIndices)) {
         const uint32_t familyIndex = *this->queueFamilyIndices.graphicsFamily;
 
-        vkGetDeviceQueue(device, familyIndex, 0, &queue);
+        vkGetDeviceQueue(this->device.get(), familyIndex, 0, &queue);
 
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -26,7 +26,7 @@ namespace clv::gfx::vk {
         poolInfo.flags            = convertCommandPoolCreateFlags(descriptor.flags);
         poolInfo.queueFamilyIndex = familyIndex;
 
-        if(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+        if(vkCreateCommandPool(this->device.get(), &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
         }
     }
@@ -36,7 +36,7 @@ namespace clv::gfx::vk {
     VKGraphicsQueue& VKGraphicsQueue::operator=(VKGraphicsQueue&& other) noexcept = default;
 
     VKGraphicsQueue::~VKGraphicsQueue() {
-        vkDestroyCommandPool(device, commandPool, nullptr);
+        vkDestroyCommandPool(device.get(), commandPool, nullptr);
     }
 
     std::unique_ptr<GraphicsCommandBuffer> VKGraphicsQueue::allocateCommandBuffer() {
@@ -50,7 +50,7 @@ namespace clv::gfx::vk {
         allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         allocInfo.commandBufferCount = 1;
 
-        if(vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer) != VK_SUCCESS) {
+        if(vkAllocateCommandBuffers(device.get(), &allocInfo, &commandBuffer) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate command buffer");
             return nullptr;
         }
@@ -60,7 +60,7 @@ namespace clv::gfx::vk {
 
     void VKGraphicsQueue::freeCommandBuffer(GraphicsCommandBuffer& buffer) {
         VkCommandBuffer buffers[] = { polyCast<VKGraphicsCommandBuffer>(&buffer)->getCommandBuffer() };
-        vkFreeCommandBuffers(device, commandPool, 1, buffers);
+        vkFreeCommandBuffers(device.get(), commandPool, 1, buffers);
     }
 
     void VKGraphicsQueue::submit(const GraphicsSubmitInfo& submitInfo, const Fence* fence) {

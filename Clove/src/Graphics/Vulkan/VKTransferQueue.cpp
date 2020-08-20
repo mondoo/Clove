@@ -4,12 +4,12 @@
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
-    VKTransferQueue::VKTransferQueue(VkDevice device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)
-        : device(device)
+    VKTransferQueue::VKTransferQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)
+        : device(std::move(device))
         , queueFamilyIndices(std::move(queueFamilyIndices)) {
         const uint32_t familyIndex = *this->queueFamilyIndices.transferFamily;
 
-        vkGetDeviceQueue(device, familyIndex, 0, &queue);
+        vkGetDeviceQueue(this->device.get(), familyIndex, 0, &queue);
 
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -17,13 +17,13 @@ namespace clv::gfx::vk {
         poolInfo.flags            = convertCommandPoolCreateFlags(descriptor.flags);
         poolInfo.queueFamilyIndex = familyIndex;
 
-        if(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+        if(vkCreateCommandPool(this->device.get(), &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
         }
     }
 
     VKTransferQueue::~VKTransferQueue() {
-        vkDestroyCommandPool(device, commandPool, nullptr);
+        vkDestroyCommandPool(device.get(), commandPool, nullptr);
     }
 
     std::unique_ptr<TransferCommandBuffer> VKTransferQueue::allocateCommandBuffer() {
@@ -37,7 +37,7 @@ namespace clv::gfx::vk {
         allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         allocInfo.commandBufferCount = 1;
 
-        if(vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer) != VK_SUCCESS) {
+        if(vkAllocateCommandBuffers(device.get(), &allocInfo, &commandBuffer) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate command buffer");
             return nullptr;
         }
@@ -47,7 +47,7 @@ namespace clv::gfx::vk {
 
     void VKTransferQueue::freeCommandBuffer(TransferCommandBuffer& buffer) {
         VkCommandBuffer buffers[] = { polyCast<VKTransferCommandBuffer>(&buffer)->getCommandBuffer() };
-        vkFreeCommandBuffers(device, commandPool, 1, buffers);
+        vkFreeCommandBuffers(device.get(), commandPool, 1, buffers);
     }
 
     void VKTransferQueue::submit(const TransferSubmitInfo& submitInfo) {

@@ -47,8 +47,8 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKImage::VKImage(VkDevice device, VkPhysicalDevice physicalDevice, Descriptor descriptor, const QueueFamilyIndices& familyIndices)
-        : device(device)
+    VKImage::VKImage(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices)
+        : device(std::move(device))
         , descriptor(std::move(descriptor)) {
         std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
 
@@ -75,26 +75,26 @@ namespace clv::gfx::vk {
         }
         createInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-        if(vkCreateImage(device, &createInfo, nullptr, &image) != VK_SUCCESS) {
+        if(vkCreateImage(this->device.get(), &createInfo, nullptr, &image) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create image");
             return;
         }
 
         VkMemoryRequirements memoryRequirements{};
-        vkGetImageMemoryRequirements(device, image, &memoryRequirements);
+        vkGetImageMemoryRequirements(this->device.get(), image, &memoryRequirements);
 
         VkMemoryAllocateInfo allocInfo{};
         allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.pNext           = nullptr;
         allocInfo.allocationSize  = memoryRequirements.size;
-        allocInfo.memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, getMemoryPropertyFlags(this->descriptor.memoryType), physicalDevice);//TODO: user specified flags
+        allocInfo.memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, getMemoryPropertyFlags(this->descriptor.memoryType), this->device.getPhysical());//TODO: user specified flags
 
-        if(vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
+        if(vkAllocateMemory(this->device.get(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate buffer memory");
             return;
         }
 
-        vkBindImageMemory(device, image, imageMemory, 0);
+        vkBindImageMemory(this->device.get(), image, imageMemory, 0);
     }
 
     VKImage::VKImage(VKImage&& other) noexcept = default;
@@ -102,13 +102,13 @@ namespace clv::gfx::vk {
     VKImage& VKImage::operator=(VKImage&& other) noexcept = default;
 
     VKImage::~VKImage() {
-        vkDestroyImage(device, image, nullptr);
-        vkFreeMemory(device, imageMemory, nullptr);
+        vkDestroyImage(device.get(), image, nullptr);
+        vkFreeMemory(device.get(), imageMemory, nullptr);
     }
 
     std::unique_ptr<GraphicsImageView> VKImage::createView() const {
         const VkImageAspectFlags aspectFlags = descriptor.format == ImageFormat::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
-        return std::make_unique<VKImageView>(device, createImageView(device, image, getImageViewType(descriptor.type), convertImageFormat(descriptor.format), aspectFlags));
+        return std::make_unique<VKImageView>(device.get(), createImageView(device.get(), image, getImageViewType(descriptor.type), convertImageFormat(descriptor.format), aspectFlags));
     }
 
     VkImage VKImage::getImage() const {

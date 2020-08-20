@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/GraphicsImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+#include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -9,15 +10,16 @@ namespace clv::gfx::vk {
     class VKImage : public GraphicsImage {
         //VARIABLES
     private:
-        VkDevice device = VK_NULL_HANDLE;
-        VkImage image   = VK_NULL_HANDLE;
-        VkDeviceMemory imageMemory;
+        DevicePointer device;
+
+        VkImage image{ VK_NULL_HANDLE };
+        VkDeviceMemory imageMemory{ VK_NULL_HANDLE };
 
         Descriptor descriptor;
 
         //FUNCTIONS
     public:
-        VKImage(VkDevice device, VkPhysicalDevice physicalDevice, Descriptor descriptor, const QueueFamilyIndices& familyIndices);
+        VKImage(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices);
         
         VKImage(const VKImage& other) = delete;
         VKImage(VKImage&& other) noexcept;

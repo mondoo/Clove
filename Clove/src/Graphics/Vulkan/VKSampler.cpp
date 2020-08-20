@@ -29,8 +29,8 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKSampler::VKSampler(VkDevice device, Descriptor descriptor)
-        : device(device) {
+    VKSampler::VKSampler(DevicePointer device, Descriptor descriptor)
+        : device(std::move(device)) {
         VkSamplerCreateInfo createInfo{};
         createInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
         createInfo.pNext                   = nullptr;
@@ -51,7 +51,7 @@ namespace clv::gfx::vk {
         createInfo.borderColor             = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
         createInfo.unnormalizedCoordinates = VK_FALSE;
 
-        if(vkCreateSampler(device, &createInfo, nullptr, &sampler) != VK_SUCCESS) {
+        if(vkCreateSampler(this->device.get(), &createInfo, nullptr, &sampler) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Failed to create sampler", GARLIC_FUNCTION_NAME);
         }
     }
@@ -61,7 +61,7 @@ namespace clv::gfx::vk {
     VKSampler& VKSampler::operator=(VKSampler&& other) noexcept = default;
 
     VKSampler::~VKSampler() {
-        vkDestroySampler(device, sampler, nullptr);
+        vkDestroySampler(device.get(), sampler, nullptr);
     }
 
     VkSampler VKSampler::getSampler() const {
