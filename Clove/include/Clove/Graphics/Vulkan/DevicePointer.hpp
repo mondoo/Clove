@@ -30,7 +30,7 @@ namespace clv::gfx::vk {
 
         ~DevicePointer();
 
-        VkDevice get() const;
+        inline VkDevice get() const;
 
     private:
         void release();

@@ -66,10 +66,6 @@ namespace clv::gfx::vk {
         release();
     }
 
-    VkDevice DevicePointer::get() const {
-        return logicalDevice;
-    }
-
     void DevicePointer::release() {
         if(counter != nullptr && --(*counter) == 0) {
 #if GARLIC_DEBUG

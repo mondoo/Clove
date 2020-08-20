@@ -93,6 +93,7 @@ set(
 set(
 	VulkanGraphicsFiles
 		${CLV_INCLUDE}/Graphics/Vulkan/DevicePointer.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/DevicePointer.inl
 		${CLV_SOURCE}/Graphics/Vulkan/DevicePointer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKBuffer.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKBuffer.cpp
