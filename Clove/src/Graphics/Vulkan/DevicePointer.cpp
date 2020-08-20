@@ -50,6 +50,8 @@ namespace clv::gfx::vk {
 
         counter = other.counter;
         ++(*counter);
+
+        return *this;
     }
 
     DevicePointer& DevicePointer::operator=(DevicePointer&& other) noexcept {
@@ -60,6 +62,8 @@ namespace clv::gfx::vk {
 
         counter = std::move(other.counter);
         //++(*counter);
+
+        return *this;
     }
 
     DevicePointer::~DevicePointer() {
