@@ -4,10 +4,10 @@ namespace clv::gfx::vk {
     }
 
     VkPhysicalDevice DevicePointer::getPhysical() const {
-        return VkPhysicalDevice();
+        return physicalDevice;
     }
 
     VkSurfaceKHR DevicePointer::getSurface() const {
-        return VkSurfaceKHR();
+        return surface;
     }
 }
