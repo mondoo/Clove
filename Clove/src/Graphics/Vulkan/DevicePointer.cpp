@@ -39,8 +39,8 @@ namespace clv::gfx::vk {
         logicalDevice  = std::move(other.logicalDevice);
         debugMessenger = std::move(other.debugMessenger);
 
-        counter = std::move(other.counter);
-        //++(*counter);
+        counter       = other.counter;
+        other.counter = nullptr;
     }
 
     DevicePointer& DevicePointer::operator=(const DevicePointer& other) {
@@ -65,8 +65,8 @@ namespace clv::gfx::vk {
         logicalDevice  = std::move(other.logicalDevice);
         debugMessenger = std::move(other.debugMessenger);
 
-        counter = std::move(other.counter);
-        //++(*counter);
+        counter = other.counter;
+        other.counter = nullptr;
 
         return *this;
     }
