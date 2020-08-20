@@ -24,6 +24,7 @@ namespace clv::gfx::vk {
 
         instance       = other.instance;
         surface        = other.surface;
+        physicalDevice = other.physicalDevice;
         logicalDevice  = other.logicalDevice;
         debugMessenger = other.debugMessenger;
 
@@ -36,6 +37,7 @@ namespace clv::gfx::vk {
 
         instance       = std::move(other.instance);
         surface        = std::move(other.surface);
+        physicalDevice = std::move(other.physicalDevice);
         logicalDevice  = std::move(other.logicalDevice);
         debugMessenger = std::move(other.debugMessenger);
 
@@ -48,6 +50,7 @@ namespace clv::gfx::vk {
 
         instance       = other.instance;
         surface        = other.surface;
+        physicalDevice = other.physicalDevice;
         logicalDevice  = other.logicalDevice;
         debugMessenger = other.debugMessenger;
 
@@ -62,10 +65,11 @@ namespace clv::gfx::vk {
 
         instance       = std::move(other.instance);
         surface        = std::move(other.surface);
+        physicalDevice = std::move(other.physicalDevice);
         logicalDevice  = std::move(other.logicalDevice);
         debugMessenger = std::move(other.debugMessenger);
 
-        counter = other.counter;
+        counter       = other.counter;
         other.counter = nullptr;
 
         return *this;
