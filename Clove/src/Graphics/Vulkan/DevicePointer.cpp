@@ -32,6 +32,8 @@ namespace clv::gfx::vk {
     }
 
     DevicePointer::DevicePointer(DevicePointer&& other) noexcept {
+        release();
+
         instance       = std::move(other.instance);
         surface        = std::move(other.surface);
         logicalDevice  = std::move(other.logicalDevice);
@@ -56,6 +58,8 @@ namespace clv::gfx::vk {
     }
 
     DevicePointer& DevicePointer::operator=(DevicePointer&& other) noexcept {
+        release();
+
         instance       = std::move(other.instance);
         surface        = std::move(other.surface);
         logicalDevice  = std::move(other.logicalDevice);
