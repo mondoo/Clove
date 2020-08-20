@@ -36,3 +36,5 @@ namespace clv::gfx::vk {
         void release();
     };
 }
+
+#include "DevicePointer.inl"
