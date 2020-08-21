@@ -18,7 +18,7 @@ namespace blb::rnd {
 
         //VARIABLES
     private:
-        std::shared_ptr<clv::gfx::GraphicsImage> defaultImage;
+        static std::weak_ptr<clv::gfx::GraphicsImage> defaultImage;
 
         std::shared_ptr<clv::gfx::GraphicsImage> diffuseImage;
         std::shared_ptr<clv::gfx::GraphicsImage> specularImage;
