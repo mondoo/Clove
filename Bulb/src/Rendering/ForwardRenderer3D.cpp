@@ -11,10 +11,10 @@
 #include <Clove/Graphics/GraphicsImageView.hpp>
 #include <Clove/Platform/Window.hpp>
 
-extern "C" const char vert[];
-extern "C" const size_t vertLength;
-extern "C" const char frag[];
-extern "C" const size_t fragLength;
+extern "C" const char mesh_v[];
+extern "C" const size_t mesh_vLength;
+extern "C" const char mesh_p[];
+extern "C" const size_t mesh_pLength;
 
 namespace blb::rnd {
     ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API api) {
@@ -333,8 +333,8 @@ namespace blb::rnd {
 
     void ForwardRenderer3D::createPipeline() {
         clv::gfx::PipelineObject::Descriptor pipelineDescriptor;
-        pipelineDescriptor.vertexShader            = graphicsFactory->createShader(reinterpret_cast<const std::byte*>(vert), vertLength);
-        pipelineDescriptor.fragmentShader          = graphicsFactory->createShader(reinterpret_cast<const std::byte*>(frag), fragLength);
+        pipelineDescriptor.vertexShader            = graphicsFactory->createShader(reinterpret_cast<const std::byte*>(mesh_v), mesh_vLength);
+        pipelineDescriptor.fragmentShader          = graphicsFactory->createShader(reinterpret_cast<const std::byte*>(mesh_p), mesh_pLength);
         pipelineDescriptor.vertexInput             = Vertex::getInputBindingDescriptor();
         pipelineDescriptor.vertexAttributes        = Vertex::getVertexAttributes();
         pipelineDescriptor.viewportDescriptor.size = { swapchain->getExtent().x, swapchain->getExtent().y };

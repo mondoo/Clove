@@ -139,12 +139,12 @@ set(
 
 set(
 	ShaderFiles
-		${BLB_RESOURCE}/Shaders/vert.glsl
-		${BLB_RESOURCE}/Shaders/frag.glsl
+		${BLB_RESOURCE}/Shaders/Mesh-v.glsl
+		${BLB_RESOURCE}/Shaders/Mesh-p.glsl
 )
 
-compileShader("${BLB_RESOURCE}/Shaders/vert.glsl" "vert.spirv" "vertex")
-compileShader("${BLB_RESOURCE}/Shaders/frag.glsl" "frag.spirv" "fragment")
+compileShader("${BLB_RESOURCE}/Shaders/Mesh-v.glsl" "Mesh-v.spirv" "vertex")
+compileShader("${BLB_RESOURCE}/Shaders/Mesh-p.glsl" "Mesh-p.spirv" "fragment")
 
 #Convert resources into c strings
 set(ResourceBinaries)
@@ -171,8 +171,8 @@ function(embeddResource resources readType)
 endfunction()
 
 embeddResource("${BLB_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf" "rb")
-embeddResource("vert.spirv" "rb")
-embeddResource("frag.spirv" "rb")
+embeddResource("Mesh-v.spirv" "rb")
+embeddResource("Mesh-p.spirv" "rb")
 
 #Organise the source tree
 file(GLOB_RECURSE header ${BLB_INCLUDE}/*.h ${BLB_INCLUDE}/*.hpp ${BLB_INCLUDE}/*.inl)
