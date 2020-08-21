@@ -165,9 +165,10 @@ namespace blb::ModelLoader {
                 vertices[i].texCoord.y = mesh->mTextureCoords[0][i].y;
 			}
             if(mesh->HasVertexColors(0)) {
-                vertices[i].colour.r = mesh->mColors[0][i].r;
-                vertices[i].colour.g = mesh->mColors[0][i].g;
-                vertices[i].colour.b = mesh->mColors[0][i].b;
+                const aiColor4D& colour = mesh->mColors[0][i];
+                vertices[i].colour      = { colour.r, colour.g, colour.b };
+            } else {
+                vertices[i].colour = { 1.0f, 1.0f, 1.0f };
             }
             if(meshType == MeshType::Animated) {
                 //TODO
