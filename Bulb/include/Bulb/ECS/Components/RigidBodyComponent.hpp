@@ -22,7 +22,7 @@ namespace blb::ecs {
 		//FUNCTIONS
 	public:
 		RigidBodyComponent();
-		RigidBodyComponent(phy::RigidBodyDescriptor initInfo, const clv::mth::vec3f& cubeSize);
+		RigidBodyComponent(phy::RigidBody::Descriptor initInfo, const clv::mth::vec3f& cubeSize);
 		RigidBodyComponent(std::unique_ptr<phy::RigidBody> rigidBody);
 
 		RigidBodyComponent(const RigidBodyComponent& other);

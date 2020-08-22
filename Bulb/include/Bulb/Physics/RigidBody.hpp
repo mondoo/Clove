@@ -6,28 +6,28 @@ class btCollisionShape;
 class btRigidBody;
 
 namespace blb::phy {
-    struct RigidBodyDescriptor {
-        float mass        = 1.0f;
-        float isKinematic = false; /**< If true, stops the body being affected by gravity */
-
-        uint32_t collisionGroup = 0; /**< Bit flag of the collision groups this body is a part of */
-        uint32_t collisionMask  = 0; /**< Bit flag of which collision groups this body collides with */
-    };
-}
-
-namespace blb::phy {
     /**
 	 * @brief A RigidBody is an object that can be collided with but does not deform.
 	 */
     class RigidBody {
         friend class World;
 
+        //TYPES
+    public:
+        struct Descriptor {
+            float mass        = 1.0f;
+            float isKinematic = false; /**< If true, stops the body being affected by gravity */
+
+            uint32_t collisionGroup = 0; /**< Bit flag of the collision groups this body is a part of */
+            uint32_t collisionMask  = 0; /**< Bit flag of which collision groups this body collides with */
+        };
+
         //VARIABLES
     private:
         std::unique_ptr<btCollisionShape> collisionShape;
         std::unique_ptr<btRigidBody> body;
 
-        RigidBodyDescriptor descriptor{};
+        Descriptor descriptor{};
 
         clv::mth::vec3f cubeSize{};
 
@@ -37,7 +37,7 @@ namespace blb::phy {
     public:
         RigidBody() = delete;
         //Only supporting box shapes
-        RigidBody(RigidBodyDescriptor initInfo, const clv::mth::vec3f& cubeSize);
+        RigidBody(Descriptor initInfo, const clv::mth::vec3f& cubeSize);
 
         RigidBody(const RigidBody& other);
         RigidBody(RigidBody&& other) noexcept;
@@ -76,6 +76,6 @@ namespace blb::phy {
         clv::mth::vec3f getAngularFactor() const;
 
     private:
-        void initialise(const RigidBodyDescriptor& descriptor, const clv::mth::vec3f& cubeSize);
+        void initialise(const Descriptor& descriptor, const clv::mth::vec3f& cubeSize);
     };
 }

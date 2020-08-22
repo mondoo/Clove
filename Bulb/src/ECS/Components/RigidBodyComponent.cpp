@@ -6,11 +6,11 @@ using namespace clv;
 
 namespace blb::ecs {
 	RigidBodyComponent::RigidBodyComponent() {
-		rigidBody = std::make_unique<phy::RigidBody>(phy::RigidBodyDescriptor{}, mth::vec3f{ 1.0f, 1.0f, 1.0f });
+		rigidBody = std::make_unique<phy::RigidBody>(phy::RigidBody::Descriptor{}, mth::vec3f{ 1.0f, 1.0f, 1.0f });
 		initialiseRigidBody(rigidBody.get());
 	}
 
-	RigidBodyComponent::RigidBodyComponent(phy::RigidBodyDescriptor initInfo, const mth::vec3f& cubeSize) {
+	RigidBodyComponent::RigidBodyComponent(phy::RigidBody::Descriptor initInfo, const mth::vec3f& cubeSize) {
 		rigidBody = std::make_unique<phy::RigidBody>(std::move(initInfo), cubeSize);
 		initialiseRigidBody(rigidBody.get());
 	}

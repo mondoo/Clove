@@ -3,7 +3,7 @@
 #include <btBulletDynamicsCommon.h>
 
 namespace blb::phy {
-    RigidBody::RigidBody(RigidBodyDescriptor descriptor, const clv::mth::vec3f& cubeSize)
+    RigidBody::RigidBody(Descriptor descriptor, const clv::mth::vec3f& cubeSize)
         : descriptor(std::move(descriptor))
         , cubeSize(cubeSize) {
         initialise(this->descriptor, cubeSize);
@@ -114,7 +114,7 @@ namespace blb::phy {
         return { factor.x(), factor.y(), factor.z() };
     }
 
-    void RigidBody::initialise(const RigidBodyDescriptor& descriptor, const clv::mth::vec3f& cubeSize) {
+    void RigidBody::initialise(const Descriptor& descriptor, const clv::mth::vec3f& cubeSize) {
         collisionShape = std::make_unique<btBoxShape>(btVector3{ cubeSize.x, cubeSize.y, cubeSize.z });
 
         btVector3 localInertia(0, 0, 0);
