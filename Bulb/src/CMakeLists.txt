@@ -85,14 +85,6 @@ set(
 )
 
 set(
-	PhysicsFiles
-		${BLB_INCLUDE}/Physics/RigidBody.hpp
-		${BLB_SOURCE}/Physics/RigidBody.cpp
-		${BLB_INCLUDE}/Physics/World.hpp
-		${BLB_SOURCE}/Physics/World.cpp
-)
-
-set(
 	RenderingFiles
 		${BLB_INCLUDE}/Rendering/AnimationTypes.hpp
 		${BLB_INCLUDE}/Rendering/Animator.hpp
