@@ -12,6 +12,7 @@ class btSequentialImpulseConstraintSolver;
 class btDiscreteDynamicsWorld;
 
 namespace blb::ecs {
+    class CubeColliderComponent;
 	class RigidBodyComponent;
 }
 
@@ -26,8 +27,11 @@ namespace blb::ecs {
 
         btDiscreteDynamicsWorld* dynamicsWorld{ nullptr };
 
-		clv::EventHandle componentAddedHandle;
-		clv::EventHandle componentRemovedHandle;
+		clv::EventHandle cubeColliderAddedHandle;
+        clv::EventHandle cubeColliderRemovedHandle;
+
+		clv::EventHandle rigidBodyAddedHandle;
+		clv::EventHandle rigidBodyRemovedHandle;
 
 		//FUNCTIONS
 	public:
@@ -43,13 +47,17 @@ namespace blb::ecs {
 
 		void registerToEvents(clv::EventDispatcher& dispatcher) override;
 
+		void preUpdate(World& world) override;
 		void update(World& world, clv::utl::DeltaTime deltaTime) override;
 
 		//TODO
 		//RigidBody* rayCast(const clv::mth::vec3f& begin, const clv::mth::vec3f& end);
 
 	private:
-		void onComponentAdded(const ComponentAddedEvent<RigidBodyComponent>& event);
-		void onComponentRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event);
+        void onCubeColliderAdded(const ComponentAddedEvent<CubeColliderComponent>& event);
+        void onCubeColliderRemoved(const ComponentRemovedEvent<CubeColliderComponent>& event);
+
+		void onRigidBodyAdded(const ComponentAddedEvent<RigidBodyComponent>& event);
+		void onRigidBodyRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event);
 	};
 }

@@ -5,6 +5,7 @@
 #include "Bulb/ECS/Components/TransformComponent.hpp"
 #include "Bulb/ECS/World.hpp"
 
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 #include <Clove/Event/EventDispatcher.hpp>
 #include <btBulletDynamicsCommon.h>
 
@@ -34,21 +35,96 @@ namespace blb::ecs {
     }
 
     void PhysicsSystem::registerToEvents(EventDispatcher& dispatcher) {
-        componentAddedHandle   = dispatcher.bindToEvent<ComponentAddedEvent<RigidBodyComponent>>(std::bind(&PhysicsSystem::onComponentAdded, this, std::placeholders::_1));
-        componentRemovedHandle = dispatcher.bindToEvent<ComponentRemovedEvent<RigidBodyComponent>>(std::bind(&PhysicsSystem::onComponentRemoved, this, std::placeholders::_1));
+        cubeColliderAddedHandle = dispatcher.bindToEvent<ComponentAddedEvent<CubeColliderComponent>>([this](const ComponentAddedEvent<CubeColliderComponent>& event) {
+            onCubeColliderAdded(event);
+        });
+
+        cubeColliderRemovedHandle = dispatcher.bindToEvent<ComponentRemovedEvent<CubeColliderComponent>>([this](const ComponentRemovedEvent<CubeColliderComponent>& event) {
+            onCubeColliderRemoved(event);
+        });
+
+        rigidBodyAddedHandle = dispatcher.bindToEvent<ComponentAddedEvent<RigidBodyComponent>>([this](const ComponentAddedEvent<RigidBodyComponent>& event) {
+            onRigidBodyAdded(event);
+        });
+
+        rigidBodyRemovedHandle = dispatcher.bindToEvent<ComponentRemovedEvent<RigidBodyComponent>>([this](const ComponentRemovedEvent<RigidBodyComponent>& event) {
+            onRigidBodyRemoved(event);
+        });
+    }
+
+    void PhysicsSystem::preUpdate(World& world) {
+        CLV_PROFILE_FUNCTION();
+
+        //Make sure any colliders are properly paired with their rigid body
+        for(auto&& [cubeCollider, rigidBody] : world.getComponentSets<CubeColliderComponent, RigidBodyComponent>()) {
+            if(cubeCollider->collisionObject != nullptr) {
+                dynamicsWorld->removeCollisionObject(cubeCollider->collisionObject.get());
+                cubeCollider->collisionObject.reset();
+            }
+
+            if(rigidBody->standInShape != nullptr) {
+                dynamicsWorld->removeCollisionObject(rigidBody->body.get());
+                rigidBody->body->setCollisionShape(cubeCollider->collisionShape.get());
+                dynamicsWorld->addRigidBody(rigidBody->body.get());
+
+                rigidBody->standInShape.reset();
+            }
+        }
+
+        //Make sure any recently un-paired colliders are updated
+        for(auto&& [cubeCollider] : world.getComponentSets<CubeColliderComponent>()) {
+            if(world.hasComponent<RigidBodyComponent>(cubeCollider->getEntityID())) {
+                continue;
+            }
+
+            if(cubeCollider->collisionObject == nullptr) {
+                cubeCollider->collisionObject = std::make_unique<btGhostObject>();
+                cubeCollider->collisionObject->setCollisionShape(cubeCollider->collisionShape.get());
+                dynamicsWorld->addCollisionObject(cubeCollider->collisionObject.get());
+            }
+        }
+
+        //Make sure any recently un-paired rigid bodies are update
+        for(auto&& [rigidBody] : world.getComponentSets<RigidBodyComponent>()) {
+            if(world.hasComponent<CubeColliderComponent>(rigidBody->getEntityID())) {
+                continue;
+            }
+
+            if(rigidBody->standInShape == nullptr) {
+                btRigidBody* body = rigidBody->body.get();
+
+                dynamicsWorld->removeCollisionObject(body);
+                rigidBody->standInShape = RigidBodyComponent::createStandInShape();
+                body->setCollisionShape(rigidBody->standInShape.get());
+                dynamicsWorld->addRigidBody(body);
+            }
+        }
     }
 
     void PhysicsSystem::update(World& world, utl::DeltaTime deltaTime) {
         CLV_PROFILE_FUNCTION();
 
-        //Update the location of the colliders
-        for(auto&& [transform, cubeCollider] : world.getComponentSets<TransformComponent, CubeColliderComponent>()) {
-            //TODO: Need a way to update just the colliders
-        }
-        for(auto&& [transform, rigidBody] : world.getComponentSets<TransformComponent, RigidBodyComponent>()) {
+        const auto cubeColliders = world.getComponentSets<TransformComponent, CubeColliderComponent>();
+        const auto rigidBodies   = world.getComponentSets<TransformComponent, RigidBodyComponent>();
+
+        //Notify Bullet of the location of the colliders
+        for(auto&& [transform, cubeCollider] : cubeColliders) {
+            if(world.hasComponent<RigidBodyComponent>(cubeCollider->getEntityID())) {
+                continue;
+            }
+
             const auto pos = transform->getPosition(TransformSpace::World);
             const auto rot = transform->getRotation(TransformSpace::World);
-            
+
+            btTransform btTrans = cubeCollider->collisionObject->getWorldTransform();
+            btTrans.setOrigin({ pos.x, pos.y, pos.z });
+            btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w });
+            cubeCollider->collisionObject->setWorldTransform(btTrans);
+        }
+        for(auto&& [transform, rigidBody] : rigidBodies) {
+            const auto pos = transform->getPosition(TransformSpace::World);
+            const auto rot = transform->getRotation(TransformSpace::World);
+
             btTransform btTrans = rigidBody->body->getWorldTransform();
             btTrans.setOrigin({ pos.x, pos.y, pos.z });
             btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w });
@@ -76,11 +152,20 @@ namespace blb::ecs {
         //    }
         //}
 
-        //Retrieve the location of the colliders
-        for(auto&& [transform, cubeCollider] : world.getComponentSets<TransformComponent, CubeColliderComponent>()) {
-            //TODO: Need a way to update just the colliders
+        //Apply any simulation updates
+        for(auto&& [transform, cubeCollider] : cubeColliders) {
+            if(world.hasComponent<RigidBodyComponent>(cubeCollider->getEntityID())) {
+                continue;
+            }
+
+            const btTransform& btTrans = cubeCollider->collisionObject->getWorldTransform();
+            const btVector3& pos       = btTrans.getOrigin();
+            const btQuaternion& rot    = btTrans.getRotation();
+
+            transform->setPosition({ pos.x(), pos.y(), pos.z() }, TransformSpace::World);
+            transform->setRotation({ rot.getW(), rot.getX(), rot.getY(), rot.getZ() }, TransformSpace::World);
         }
-        for(auto&& [transform, rigidBody] : world.getComponentSets<TransformComponent, RigidBodyComponent>()) {
+        for(auto&& [transform, rigidBody] : rigidBodies) {
             const btTransform& btTrans = rigidBody->body->getWorldTransform();
             const btVector3& pos       = btTrans.getOrigin();
             const btQuaternion& rot    = btTrans.getRotation();
@@ -111,11 +196,21 @@ namespace blb::ecs {
         }
     }*/
 
-    void PhysicsSystem::onComponentAdded(const ComponentAddedEvent<RigidBodyComponent>& event) {
+    void PhysicsSystem::onCubeColliderAdded(const ComponentAddedEvent<CubeColliderComponent>& event) {
+        dynamicsWorld->addCollisionObject(event.component->collisionObject.get());
+    }
+
+    void PhysicsSystem::onCubeColliderRemoved(const ComponentRemovedEvent<CubeColliderComponent>& event) {
+        if(btCollisionObject* object = event.component->collisionObject.get()) {
+            dynamicsWorld->removeCollisionObject(object);
+        }
+    }
+
+    void PhysicsSystem::onRigidBodyAdded(const ComponentAddedEvent<RigidBodyComponent>& event) {
         dynamicsWorld->addRigidBody(event.component->body.get());
     }
 
-    void PhysicsSystem::onComponentRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event) {
+    void PhysicsSystem::onRigidBodyRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event) {
         dynamicsWorld->removeCollisionObject(event.component->body.get());
     }
 }

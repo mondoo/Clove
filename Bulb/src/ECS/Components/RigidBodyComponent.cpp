@@ -82,7 +82,7 @@ namespace blb::ecs {
     }
 
     void RigidBodyComponent::initialiseRigidBody() {
-        emptyShape = std::make_unique<btEmptyShape>(/*0.1f*/);
+        standInShape = createStandInShape();
 
         btVector3 localInertia(0, 0, 0);
         btTransform startTransform;
@@ -91,13 +91,13 @@ namespace blb::ecs {
         if(isKinematic && mass > 0.0f) {
             GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Kinematic RigidBody has non 0 mass. Kinematic takes precedence");
         } else {
-            //collisionShape->calculateLocalInertia(mass, localInertia);
+            standInShape->calculateLocalInertia(mass, localInertia);
         }
 
         btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, emptyShape.get(), localInertia);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, standInShape.get(), localInertia);
 
-        body = std::make_shared<btRigidBody>(rbInfo);
+        body = std::make_unique<btRigidBody>(rbInfo);
         body->setUserPointer(this);
 
         int flags = body->getCollisionFlags();
@@ -105,5 +105,9 @@ namespace blb::ecs {
             flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
         }
         body->setCollisionFlags(flags);
+    }
+
+    std::unique_ptr<btSphereShape> RigidBodyComponent::createStandInShape() {
+        return std::make_unique<btSphereShape>(0.1f);
     }
 }
