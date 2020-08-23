@@ -55,6 +55,7 @@ set(
 		${BLB_INCLUDE}/ECS/World.inl
 		${BLB_SOURCE}/ECS/World.cpp
 		${BLB_INCLUDE}/ECS/System.hpp
+
 		${BLB_INCLUDE}/ECS/Components/AnimatedModelComponent.hpp
 		${BLB_SOURCE}/ECS/Components/AnimatedModelComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/AudioListenerComponent.hpp
@@ -63,6 +64,8 @@ set(
 		${BLB_SOURCE}/ECS/Components/AudioSourceComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/CameraComponent.hpp
 		${BLB_SOURCE}/ECS/Components/CameraComponent.cpp
+		${BLB_INCLUDE}/ECS/Components/CubeColliderComponent.hpp
+		${BLB_SOURCE}/ECS/Components/CubeColliderComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
 		${BLB_SOURCE}/ECS/Components/DirectionalLightComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/PointLightComponent.hpp
