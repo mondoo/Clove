@@ -5,9 +5,11 @@
 
 #include <Clove/Event/EventHandle.hpp>
 
-namespace blb::phy {
-	class World;
-}
+class btDefaultCollisionConfiguration;
+class btCollisionDispatcher;
+class btBroadphaseInterface;
+class btSequentialImpulseConstraintSolver;
+class btDiscreteDynamicsWorld;
 
 namespace blb::ecs {
 	class RigidBodyComponent;
@@ -17,7 +19,12 @@ namespace blb::ecs {
 	class PhysicsSystem : public System {
 		//VARIABLES
 	private:
-		std::shared_ptr<phy::World> physicsWorld;
+        btDefaultCollisionConfiguration* collisionConfiguration{ nullptr };
+        btCollisionDispatcher* dispatcher{ nullptr };
+        btBroadphaseInterface* overlappingPairCache{ nullptr };
+        btSequentialImpulseConstraintSolver* solver{ nullptr };
+
+        btDiscreteDynamicsWorld* dynamicsWorld{ nullptr };
 
 		clv::EventHandle componentAddedHandle;
 		clv::EventHandle componentRemovedHandle;
@@ -25,7 +32,6 @@ namespace blb::ecs {
 		//FUNCTIONS
 	public:
 		PhysicsSystem();
-		PhysicsSystem(std::shared_ptr<phy::World> physicsWorld);
 
 		PhysicsSystem(const PhysicsSystem& other) = delete;
 		PhysicsSystem(PhysicsSystem&& other) noexcept;
@@ -38,6 +44,9 @@ namespace blb::ecs {
 		void registerToEvents(clv::EventDispatcher& dispatcher) override;
 
 		void update(World& world, clv::utl::DeltaTime deltaTime) override;
+
+		//TODO
+		//RigidBody* rayCast(const clv::mth::vec3f& begin, const clv::mth::vec3f& end);
 
 	private:
 		void onComponentAdded(const ComponentAddedEvent<RigidBodyComponent>& event);
