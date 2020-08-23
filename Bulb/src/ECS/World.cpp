@@ -9,10 +9,12 @@ namespace blb::ecs {
 	EntityID World::nextID = 1;
 
 	World::World()
-		: componentManager(&ecsEventdispatcher){
+		: componentManager(&ecsEventDispatcher){
 	}
 
-	World::~World() = default;
+	World::~World() {
+        destroyAllEntites();
+    }
 
 	void World::update(utl::DeltaTime deltaTime) {
 		CLV_PROFILE_FUNCTION();

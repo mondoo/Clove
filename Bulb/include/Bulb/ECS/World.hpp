@@ -20,7 +20,7 @@ namespace blb::ecs {
 	class World {
 		//VARIABLES
 	private:
-		clv::EventDispatcher ecsEventdispatcher;
+		clv::EventDispatcher ecsEventDispatcher;
 
 		ComponentManager componentManager;
 
