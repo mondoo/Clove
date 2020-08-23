@@ -5,30 +5,38 @@
 using namespace clv;
 
 namespace blb::ecs {
-	RigidBodyComponent::RigidBodyComponent() {
-		
-	}
+    RigidBodyComponent::RigidBodyComponent() {
+        initialiseRigidBody();
+    }
 
-	
-	RigidBodyComponent::RigidBodyComponent(const RigidBodyComponent& other) {
-		/*rigidBody = std::make_unique<phy::RigidBody>(*other.body);
-		initialiseRigidBody(rigidBody.get());*/
-	}
+    RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic)
+        : mass(mass)
+        , isKinematic(isKinematic) {
+        initialiseRigidBody();
+    }
 
-	RigidBodyComponent::RigidBodyComponent(RigidBodyComponent&& other) noexcept = default;
+    RigidBodyComponent::RigidBodyComponent(const RigidBodyComponent& other)
+        : mass(other.mass)
+        , isKinematic(other.isKinematic) {
+        initialiseRigidBody();
+    }
 
-	RigidBodyComponent& RigidBodyComponent::operator=(const RigidBodyComponent& other) {
-		/*rigidBody = std::make_unique<phy::RigidBody>(*other.rigidBody);
-		initialiseRigidBody(rigidBody.get());*/
+    RigidBodyComponent::RigidBodyComponent(RigidBodyComponent&& other) noexcept = default;
 
-		return *this;
-	}
+    RigidBodyComponent& RigidBodyComponent::operator=(const RigidBodyComponent& other) {
+        mass        = other.mass;
+        isKinematic = other.isKinematic;
 
-	RigidBodyComponent& RigidBodyComponent::operator=(RigidBodyComponent&& other) noexcept = default;
+        initialiseRigidBody();
 
-	RigidBodyComponent::~RigidBodyComponent() = default;
+        return *this;
+    }
 
-	void RigidBodyComponent::setLinearVelocity(const clv::mth::vec3f& velocity) {
+    RigidBodyComponent& RigidBodyComponent::operator=(RigidBodyComponent&& other) noexcept = default;
+
+    RigidBodyComponent::~RigidBodyComponent() = default;
+
+    void RigidBodyComponent::setLinearVelocity(const clv::mth::vec3f& velocity) {
         const btVector3 btvel{ velocity.x, velocity.y, velocity.z };
         body->setLinearVelocity(btvel);
 
@@ -73,8 +81,8 @@ namespace blb::ecs {
         return { factor.x(), factor.y(), factor.z() };
     }
 
-	void RigidBodyComponent::initialiseRigidBody(/*phy::RigidBody* body*/) {
-        //collisionShape = std::make_unique<btBoxShape>(btVector3{ cubeSize.x, cubeSize.y, cubeSize.z });
+    void RigidBodyComponent::initialiseRigidBody() {
+        emptyShape = std::make_unique<btEmptyShape>(/*0.1f*/);
 
         btVector3 localInertia(0, 0, 0);
         btTransform startTransform;
@@ -83,12 +91,11 @@ namespace blb::ecs {
         if(isKinematic && mass > 0.0f) {
             GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Kinematic RigidBody has non 0 mass. Kinematic takes precedence");
         } else {
-            //TODO
             //collisionShape->calculateLocalInertia(mass, localInertia);
         }
 
         btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, nullptr, localInertia);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, emptyShape.get(), localInertia);
 
         body = std::make_shared<btRigidBody>(rbInfo);
         body->setUserPointer(this);
@@ -98,5 +105,5 @@ namespace blb::ecs {
             flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
         }
         body->setCollisionFlags(flags);
-	}
+    }
 }

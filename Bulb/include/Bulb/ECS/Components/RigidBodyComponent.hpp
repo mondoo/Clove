@@ -2,6 +2,7 @@
 
 #include "Bulb/ECS/Component.hpp"
 
+class btEmptyShape;
 class btRigidBody;
 
 namespace blb::ecs {
@@ -12,48 +13,50 @@ namespace blb::ecs {
 	 * CubeColliderComponent or similar the rigid body will use that shape
 	 * to detect collisions.
 	 */
-	class RigidBodyComponent : public Component<RigidBodyComponent> {
-		friend class PhysicsSystem;
+    class RigidBodyComponent : public Component<RigidBodyComponent> {
+        friend class PhysicsSystem;
 
-		//VARIABLES
-	private:
-        float mass        = 1.0f;
-        float isKinematic = false; /**< If true, stops the body being affected by gravity */
+        //VARIABLES
+    private:
+        float mass       = 1.0f;
+        bool isKinematic = false; /**< If true, stops the body being affected by gravity */
 
-		//TODO
-		//uint32_t collisionGroup = 0; /**< Bit flag of the collision groups this body is a part of */
+        //TODO
+        //uint32_t collisionGroup = 0; /**< Bit flag of the collision groups this body is a part of */
         //uint32_t collisionMask  = 0; /**< Bit flag of which collision groups this body collides with */
 
+        std::unique_ptr<btEmptyShape> sphereShape; /**< Acts as a stand in shape until a _ColliderComponent has been added */
         std::shared_ptr<btRigidBody> body;
 
-		//FUNCTIONS
-	public:
+        //FUNCTIONS
+    public:
         RigidBodyComponent();
+        RigidBodyComponent(float mass, bool isKinematic);
 
-		RigidBodyComponent(const RigidBodyComponent& other);
-		RigidBodyComponent(RigidBodyComponent&& other) noexcept;
+        RigidBodyComponent(const RigidBodyComponent& other);
+        RigidBodyComponent(RigidBodyComponent&& other) noexcept;
 
-		RigidBodyComponent& operator=(const RigidBodyComponent& other);
-		RigidBodyComponent& operator=(RigidBodyComponent&& other) noexcept;
+        RigidBodyComponent& operator=(const RigidBodyComponent& other);
+        RigidBodyComponent& operator=(RigidBodyComponent&& other) noexcept;
 
-		~RigidBodyComponent();
+        ~RigidBodyComponent();
 
-		void setLinearVelocity(const clv::mth::vec3f& velocity);
+        void setLinearVelocity(const clv::mth::vec3f& velocity);
 
-		void applyForce(const clv::mth::vec3f& force, const clv::mth::vec3f& relativeOffset = { 0.0f, 0.0f, 0.0f });
+        void applyForce(const clv::mth::vec3f& force, const clv::mth::vec3f& relativeOffset = { 0.0f, 0.0f, 0.0f });
         void applyImpulse(const clv::mth::vec3f& impulse, const clv::mth::vec3f& relativeOffset = { 0.0f, 0.0f, 0.0f });
 
-		void setRestitution(float restitution);
+        void setRestitution(float restitution);
 
         void setAngularFactor(const clv::mth::vec3f& factor);
 
         clv::mth::vec3f getLinearVelocity() const;
 
-		float getRestitution() const;
+        float getRestitution() const;
 
         clv::mth::vec3f getAngularFactor() const;
 
-	private:
-		void initialiseRigidBody(/*phy::RigidBody* body*/);
-	};
+    private:
+        void initialiseRigidBody();
+    };
 }
