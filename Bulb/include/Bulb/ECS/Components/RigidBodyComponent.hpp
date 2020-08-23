@@ -25,7 +25,7 @@ namespace blb::ecs {
         //uint32_t collisionGroup = 0; /**< Bit flag of the collision groups this body is a part of */
         //uint32_t collisionMask  = 0; /**< Bit flag of which collision groups this body collides with */
 
-        std::unique_ptr<btEmptyShape> sphereShape; /**< Acts as a stand in shape until a _ColliderComponent has been added */
+        std::unique_ptr<btEmptyShape> emptyShape; /**< Acts as a stand in shape until a _ColliderComponent has been added */
         std::shared_ptr<btRigidBody> body;
 
         //FUNCTIONS
