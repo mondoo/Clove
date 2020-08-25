@@ -43,6 +43,15 @@ namespace clv::gfx::vk {
         //FUNCTIONS
     public:
         MemoryAllocator(DevicePointer device);
+
         //TODO: ctors
+
+        ~MemoryAllocator();
+
+        void allocate(VkBuffer buffer, VkDeviceSize allocationSize, uint32_t typeFilter, VkMemoryPropertyFlags properties);
+        void allocate(VkImage image, VkDeviceSize allocationSize, uint32_t typeFilter, VkMemoryPropertyFlags properties);
+
+        //TODO: Free blocks
+        //void free();
     };
 }
