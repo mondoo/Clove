@@ -105,20 +105,6 @@ namespace clv::gfx::vk {
         }
     }
 
-    uint32_t getMemoryTypeIndex(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice) {
-        VkPhysicalDeviceMemoryProperties memoryType{};
-        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryType);
-
-        for(uint32_t i = 0; i < memoryType.memoryTypeCount; ++i) {
-            if((typeFilter & (1 << i)) != 0 && (memoryType.memoryTypes[i].propertyFlags & properties) == properties) {
-                return i;
-            }
-        }
-
-        GARLIC_ASSERT(false, "{0}: Failed to find the specified index", GARLIC_FUNCTION_NAME);
-        return -1;
-    }
-
     VkMemoryPropertyFlags getMemoryPropertyFlags(MemoryType garlicProperties) {
         switch(garlicProperties) {
             case MemoryType::VideoMemory:

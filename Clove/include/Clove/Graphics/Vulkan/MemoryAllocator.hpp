@@ -8,7 +8,9 @@ namespace clv::gfx::vk {
     class MemoryAllocator {
         //TYPES
     private:
-        using MemoryType = uint32_t;
+        /**
+         * @brief Represents a single VkDeviceMemory allocation.
+         */
         class Block {
             //VARIABLES
         private:
@@ -20,7 +22,7 @@ namespace clv::gfx::vk {
             //FUNCTIONS
         public:
             Block() = delete;
-            Block(VkDevice device, VkDeviceSize size, MemoryType memoryTypeIndex);
+            Block(VkDevice device, VkDeviceSize size, uint32_t memoryTypeIndex);
 
             //TODO: other ctors
 
@@ -34,11 +36,11 @@ namespace clv::gfx::vk {
 
         //VARIABLES
     private:
-        static constexpr size_t memorySize = 256 * 1024 * 1024;
+        static constexpr size_t blockSize = 256 * 1024 * 1024;
 
         DevicePointer device;
 
-        std::unordered_map<MemoryType, Block> memoryBlocks;
+        std::unordered_map<uint32_t, std::vector<Block>> memoryBlocks;
 
         //FUNCTIONS
     public:
@@ -48,8 +50,8 @@ namespace clv::gfx::vk {
 
         ~MemoryAllocator();
 
-        void allocate(VkBuffer buffer, VkDeviceSize allocationSize, uint32_t typeFilter, VkMemoryPropertyFlags properties);
-        void allocate(VkImage image, VkDeviceSize allocationSize, uint32_t typeFilter, VkMemoryPropertyFlags properties);
+        void allocate(VkBuffer buffer, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties);
+        void allocate(VkImage image, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties);
 
         //TODO: Free blocks
         //void free();
