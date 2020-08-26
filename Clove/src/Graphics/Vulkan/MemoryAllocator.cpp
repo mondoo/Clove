@@ -17,7 +17,8 @@ namespace clv::gfx::vk {
 
     MemoryAllocator::Block::Block(VkDevice device, VkDeviceSize size, uint32_t memoryTypeIndex)
         : device(device)
-        , size(size) {
+        , size(size)
+        , memoryTypeIndex(memoryTypeIndex) {
         VkMemoryAllocateInfo info{};
         info.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         info.pNext           = nullptr;
@@ -25,10 +26,41 @@ namespace clv::gfx::vk {
         info.memoryTypeIndex = memoryTypeIndex;
 
         vkAllocateMemory(device, &info, nullptr, &memory);
+
+        chunks.emplace_back(0, size, true);
     }
 
     MemoryAllocator::Block::~Block() {
         vkFreeMemory(device, memory, nullptr);
+    }
+
+    //TODO: This should return a pointer to the chunk
+    std::optional<MemoryAllocator::Block::Chunk> MemoryAllocator::Block::allocate(const VkDeviceSize size) {
+        //TODO: Correct alignment
+
+        for(auto& chunk : chunks) {
+            if(chunk.free && chunk.size >= size) {
+                if(const VkDeviceSize remainingSize = chunk.size - size; remainingSize > 0) {
+                    //If we have room left in the chunk, split it and put the excess back in the list
+                    chunk.size = size;
+                    chunks.emplace_back( size + 1, remainingSize, true );
+                }
+
+                chunk.free = false;
+                return chunk;
+            }
+        }
+
+        return std::nullopt;
+    }
+
+    void MemoryAllocator::Block::free(Chunk chunk) {
+        /*
+        - check chunk before it
+            - if free merge
+        - check chunk after it
+            - if free merge
+        */
     }
 
     MemoryAllocator::MemoryAllocator(DevicePointer device)
@@ -42,16 +74,19 @@ namespace clv::gfx::vk {
         vkGetBufferMemoryRequirements(device.get(), buffer, &memoryRequirements);
 
         const uint32_t memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, properties, device.getPhysical());
-        
-        if(allocationSize > blockSize) {
-            //TODO: Allocate a block specifically for this buffer
-        }else if(std::find(std::begin(memoryBlocks), std::end(memoryBlocks), memoryTypeIndex) == std::end(memoryBlocks)) {
-            memoryBlocks[memoryTypeIndex].emplace_back(device.get(), blockSize, memoryTypeIndex);
-        }
-        
-        //vkBindBufferMemory(device.get(), buffer, bufferMemory, 0);
 
-       
+        for(auto& block : memoryBlocks) {
+            if(block.getMemoryTypeIndex() == memoryTypeIndex) {
+                //Try and allocate from the block
+            }
+        }
+
+        memoryBlocks.emplace_back(device.get(), blockSize, memoryTypeIndex);
+        //Do the allocate
+        
+
+
+        //vkBindBufferMemory(device.get(), buffer, bufferMemory, 0);
     }
 
     void MemoryAllocator::allocate(VkImage image, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties) {

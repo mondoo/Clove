@@ -12,12 +12,26 @@ namespace clv::gfx::vk {
          * @brief Represents a single VkDeviceMemory allocation.
          */
         class Block {
+            //TYPES
+        public:
+            /**
+             * @brief A chunk of allocated memory inside the Block
+             */
+            struct Chunk {
+                VkDeviceSize offset{ 0 };
+                VkDeviceSize size{ 0 };
+                bool free{ true };
+            };
+
             //VARIABLES
         private:
             VkDevice device{ VK_NULL_HANDLE };
 
             VkDeviceMemory memory{ VK_NULL_HANDLE };
             VkDeviceSize size{ 0 };
+            uint32_t memoryTypeIndex{ 0 };
+
+            std::vector<Chunk> chunks;
 
             //FUNCTIONS
         public:
@@ -28,19 +42,26 @@ namespace clv::gfx::vk {
 
             ~Block();
 
+            std::optional<Chunk> allocate(const VkDeviceSize size);
+            void free(Chunk chunk);
+
             //TODO: Move to .inl
-            inline VkDeviceSize getSize() const{
+            inline VkDeviceSize getSize() const {
                 return size;
+            }
+
+            inline uint32_t getMemoryTypeIndex() const {
+                return memoryTypeIndex;
             }
         };
 
         //VARIABLES
     private:
-        static constexpr size_t blockSize = 256 * 1024 * 1024;
+        static constexpr size_t blockSize = 256 * 1024 * 1024; //256MB
 
         DevicePointer device;
 
-        std::unordered_map<uint32_t, std::vector<Block>> memoryBlocks;
+        std::vector<Block> memoryBlocks;
 
         //FUNCTIONS
     public:
