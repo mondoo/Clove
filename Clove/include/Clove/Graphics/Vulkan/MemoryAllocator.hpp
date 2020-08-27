@@ -15,11 +15,13 @@ namespace clv::gfx::vk {
             //TYPES
         public:
             /**
-             * @brief A chunk of allocated memory inside the Block
+             * @brief A portion of allocated memory inside a VkDeviceMemory.
              */
             struct Chunk {
                 VkDeviceSize offset{ 0 };
                 VkDeviceSize size{ 0 };
+                VkDeviceMemory memory{ VK_NULL_HANDLE };
+
                 bool free{ true };
             };
 
@@ -57,7 +59,7 @@ namespace clv::gfx::vk {
 
         //VARIABLES
     private:
-        static constexpr size_t blockSize = 256 * 1024 * 1024; //256MB
+        static constexpr VkDeviceSize blockSize = 256 * 1024 * 1024;//256MB
 
         DevicePointer device;
 
@@ -76,5 +78,8 @@ namespace clv::gfx::vk {
 
         //TODO: Free blocks
         //void free();
+
+    private:
+
     };
 }

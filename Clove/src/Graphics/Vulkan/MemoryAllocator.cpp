@@ -27,7 +27,7 @@ namespace clv::gfx::vk {
 
         vkAllocateMemory(device, &info, nullptr, &memory);
 
-        chunks.emplace_back(0, size, true);
+        chunks.emplace_back(0, size, memory, true);
     }
 
     MemoryAllocator::Block::~Block() {
@@ -43,7 +43,7 @@ namespace clv::gfx::vk {
                 if(const VkDeviceSize remainingSize = chunk.size - size; remainingSize > 0) {
                     //If we have room left in the chunk, split it and put the excess back in the list
                     chunk.size = size;
-                    chunks.emplace_back( size + 1, remainingSize, true );
+                    chunks.emplace_back(size + 1, remainingSize, memory, true);
                 }
 
                 chunk.free = false;
@@ -75,18 +75,23 @@ namespace clv::gfx::vk {
 
         const uint32_t memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, properties, device.getPhysical());
 
+        std::optional<Block::Chunk> freeChunk;
         for(auto& block : memoryBlocks) {
             if(block.getMemoryTypeIndex() == memoryTypeIndex) {
-                //Try and allocate from the block
+                freeChunk = block.allocate(allocationSize);
+                return;
             }
         }
 
-        memoryBlocks.emplace_back(device.get(), blockSize, memoryTypeIndex);
-        //Do the allocate
-        
+        if(!freeChunk.has_value()) {
+            //Make sure if allocate a new block that's big enough
+            const VkDeviceSize size = std::max(allocationSize, blockSize);
+            memoryBlocks.emplace_back(device.get(), size, memoryTypeIndex);
+            freeChunk = memoryBlocks.back().allocate(size);
+            GARLIC_ASSERT(freeChunk.has_value(), "{0}: Newly allocated Block does not have enough room", GARLIC_FUNCTION_NAME_PRETTY);
+        }
 
-
-        //vkBindBufferMemory(device.get(), buffer, bufferMemory, 0);
+        vkBindBufferMemory(device.get(), buffer, freeChunk->memory, freeChunk->offset);
     }
 
     void MemoryAllocator::allocate(VkImage image, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties) {
