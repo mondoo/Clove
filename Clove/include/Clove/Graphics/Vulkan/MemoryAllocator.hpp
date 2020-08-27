@@ -7,24 +7,23 @@
 namespace clv::gfx::vk {
     class MemoryAllocator {
         //TYPES
+    public:
+        /**
+         * @brief A portion of allocated memory inside a VkDeviceMemory.
+         */
+        struct Chunk {
+            VkDeviceSize offset{ 0 };
+            VkDeviceSize size{ 0 };
+            VkDeviceMemory memory{ VK_NULL_HANDLE };
+
+            bool free{ true };
+        };
+
     private:
         /**
          * @brief Represents a single VkDeviceMemory allocation.
          */
         class Block {
-            //TYPES
-        public:
-            /**
-             * @brief A portion of allocated memory inside a VkDeviceMemory.
-             */
-            struct Chunk {
-                VkDeviceSize offset{ 0 };
-                VkDeviceSize size{ 0 };
-                VkDeviceMemory memory{ VK_NULL_HANDLE };
-
-                bool free{ true };
-            };
-
             //VARIABLES
         private:
             VkDevice device{ VK_NULL_HANDLE };
@@ -44,8 +43,8 @@ namespace clv::gfx::vk {
 
             ~Block();
 
-            std::optional<Chunk> allocate(const VkDeviceSize size);
-            void free(Chunk chunk);
+            Chunk* allocate(const VkDeviceSize size);
+            void free(Chunk* chunk);
 
             //TODO: Move to .inl
             inline VkDeviceSize getSize() const {
@@ -73,11 +72,8 @@ namespace clv::gfx::vk {
 
         ~MemoryAllocator();
 
-        void allocate(VkBuffer buffer, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties);
-        void allocate(VkImage image, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties);
-
-        //TODO: Free blocks
-        //void free();
+        Chunk* allocate(const VkMemoryRequirements& memoryRequirements, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties);
+        void free(Chunk* chunk);
 
     private:
 

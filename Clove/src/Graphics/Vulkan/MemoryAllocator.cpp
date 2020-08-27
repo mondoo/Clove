@@ -27,15 +27,14 @@ namespace clv::gfx::vk {
 
         vkAllocateMemory(device, &info, nullptr, &memory);
 
-        chunks.emplace_back(0, size, memory, true);
+        chunks.push_back({ 0, size, memory, true });
     }
 
     MemoryAllocator::Block::~Block() {
         vkFreeMemory(device, memory, nullptr);
     }
 
-    //TODO: This should return a pointer to the chunk
-    std::optional<MemoryAllocator::Block::Chunk> MemoryAllocator::Block::allocate(const VkDeviceSize size) {
+    MemoryAllocator::Chunk* MemoryAllocator::Block::allocate(const VkDeviceSize size) {
         //TODO: Correct alignment
 
         for(auto& chunk : chunks) {
@@ -43,18 +42,19 @@ namespace clv::gfx::vk {
                 if(const VkDeviceSize remainingSize = chunk.size - size; remainingSize > 0) {
                     //If we have room left in the chunk, split it and put the excess back in the list
                     chunk.size = size;
-                    chunks.emplace_back(size + 1, remainingSize, memory, true);
+                    chunks.push_back({ size + 1, remainingSize, memory, true });
                 }
 
                 chunk.free = false;
-                return chunk;
+                return &chunk; //TODO: This will cause an issue when the vector is resized
             }
         }
 
-        return std::nullopt;
+        return nullptr;
     }
 
-    void MemoryAllocator::Block::free(Chunk chunk) {
+    void MemoryAllocator::Block::free(Chunk* chunk) {
+        chunk->free = true;
         /*
         - check chunk before it
             - if free merge
@@ -69,32 +69,32 @@ namespace clv::gfx::vk {
 
     MemoryAllocator::~MemoryAllocator() = default;
 
-    void MemoryAllocator::allocate(VkBuffer buffer, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties) {
-        VkMemoryRequirements memoryRequirements{};
-        vkGetBufferMemoryRequirements(device.get(), buffer, &memoryRequirements);
-
+    MemoryAllocator::Chunk* MemoryAllocator::allocate(const VkMemoryRequirements& memoryRequirements, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties) {
         const uint32_t memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, properties, device.getPhysical());
 
-        std::optional<Block::Chunk> freeChunk;
+        Chunk* freeChunk;
         for(auto& block : memoryBlocks) {
             if(block.getMemoryTypeIndex() == memoryTypeIndex) {
                 freeChunk = block.allocate(allocationSize);
-                return;
+
+                if(freeChunk != nullptr) {
+                    break;
+                }
             }
         }
 
-        if(!freeChunk.has_value()) {
+        if(freeChunk == nullptr) {
             //Make sure if allocate a new block that's big enough
             const VkDeviceSize size = std::max(allocationSize, blockSize);
             memoryBlocks.emplace_back(device.get(), size, memoryTypeIndex);
             freeChunk = memoryBlocks.back().allocate(size);
-            GARLIC_ASSERT(freeChunk.has_value(), "{0}: Newly allocated Block does not have enough room", GARLIC_FUNCTION_NAME_PRETTY);
+            GARLIC_ASSERT(freeChunk != nullptr, "{0}: Newly allocated Block does not have enough room", GARLIC_FUNCTION_NAME_PRETTY);
         }
 
-        vkBindBufferMemory(device.get(), buffer, freeChunk->memory, freeChunk->offset);
+        return freeChunk;
     }
 
-    void MemoryAllocator::allocate(VkImage image, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties) {
+    void MemoryAllocator::free(Chunk* chunk) {
         //TODO
     }
 }
