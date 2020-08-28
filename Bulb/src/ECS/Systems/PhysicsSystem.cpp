@@ -1,5 +1,6 @@
 #include "Bulb/ECS/Systems/PhysicsSystem.hpp"
 
+#include "Bulb/ECS/Components/CollisionResponseComponent.hpp"
 #include "Bulb/ECS/Components/CubeColliderComponent.hpp"
 #include "Bulb/ECS/Components/RigidBodyComponent.hpp"
 #include "Bulb/ECS/Components/TransformComponent.hpp"
@@ -113,7 +114,7 @@ namespace blb::ecs {
             btTransform btTrans = collisionObject.getWorldTransform();
             btTrans.setOrigin({ pos.x, pos.y, pos.z });
             btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w });
-           collisionObject.setWorldTransform(btTrans);
+            collisionObject.setWorldTransform(btTrans);
         };
 
         //Notify Bullet of the location of the colliders
@@ -126,29 +127,25 @@ namespace blb::ecs {
         }
         for(auto&& [transform, rigidBody] : rigidBodies) {
             updateCollider(*transform, *rigidBody->body);
-
         }
 
         //Step physics world
         dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 
-        //TODO
-        //collisionManifolds.clear();
-        ////TODO: Just use dispatcher-> ?
-        //int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
-        //for(int i = 0; i < numManifolds; ++i) {
-        //    btPersistentManifold* manifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
-        //    int numContacts                = manifold->getNumContacts();
-        //    if(numContacts > 0) {
-        //        const btCollisionObject* obA = manifold->getBody0();
-        //        const btCollisionObject* obB = manifold->getBody1();
+        //Gather collision manifolds
+        int numManifolds = dispatcher->getNumManifolds();
+        for(int i = 0; i < numManifolds; ++i) {
+            btPersistentManifold* manifold = dispatcher->getManifoldByIndexInternal(i);
+            if(manifold->getNumContacts() > 0) {
+                const btCollisionObject* obA = manifold->getBody0();
+                const btCollisionObject* obB = manifold->getBody1();
 
-        //        RigidBody* bodyA = static_cast<RigidBody*>(obA->getUserPointer());
-        //        RigidBody* bodyB = static_cast<RigidBody*>(obB->getUserPointer());
+                EntityID entityA = obA->getUserIndex();
+                EntityID entityB = obB->getUserIndex();
 
-        //        collisionManifolds.emplace_back(CollisionManifold{ bodyA, bodyB });
-        //    }
-        //}
+                collisionManifolds.emplace_back(CollisionManifold{ entityA, entityB });
+            }
+        }
 
         const auto updateTransform = [](TransformComponent& transform, const btCollisionObject& collisionObject) {
             const btTransform& btTrans = collisionObject.getWorldTransform();
@@ -170,12 +167,24 @@ namespace blb::ecs {
         for(auto&& [transform, rigidBody] : rigidBodies) {
             updateTransform(*transform, *rigidBody->body);
         }
+    }
 
-        //TODO
-        //Handle collisions
-        /*for(const phy::CollisionManifold& manifold : physicsWorld->getCollisionManifolds()) {
-			
-		}*/
+    void PhysicsSystem::postUpdate(World& world) {
+        //Broadcast collision events
+        for(const auto& manifold : collisionManifolds) {
+            Entity entityA = world.getEntity(manifold.entityA);
+            Entity entityB = world.getEntity(manifold.entityB);
+
+            if(auto entityAComp = entityA.getComponent<CollisionResponseComponent>()) {
+                entityAComp->onCollision.broadcast(Collision{ entityA, entityB });
+            }
+
+            if(auto entityBComp = entityA.getComponent<CollisionResponseComponent>()) {
+                entityBComp->onCollision.broadcast(Collision{ entityB, entityA });
+            }
+        }
+
+        collisionManifolds.clear();
     }
 
     //TODO
@@ -194,7 +203,10 @@ namespace blb::ecs {
     }*/
 
     void PhysicsSystem::onCubeColliderAdded(const ComponentAddedEvent<CubeColliderComponent>& event) {
-        dynamicsWorld->addCollisionObject(event.component->collisionObject.get());
+        auto* component = event.component;
+
+        dynamicsWorld->addCollisionObject(component->collisionObject.get());
+        component->collisionObject->setUserIndex(component->getEntityID());
     }
 
     void PhysicsSystem::onCubeColliderRemoved(const ComponentRemovedEvent<CubeColliderComponent>& event) {
@@ -204,7 +216,10 @@ namespace blb::ecs {
     }
 
     void PhysicsSystem::onRigidBodyAdded(const ComponentAddedEvent<RigidBodyComponent>& event) {
-        dynamicsWorld->addRigidBody(event.component->body.get());
+        auto* component = event.component;
+
+        dynamicsWorld->addRigidBody(component->body.get());
+        component->body->setUserIndex(component->getEntityID());
     }
 
     void PhysicsSystem::onRigidBodyRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event) {

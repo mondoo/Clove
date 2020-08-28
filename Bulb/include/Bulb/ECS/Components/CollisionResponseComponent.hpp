@@ -7,8 +7,8 @@
 
 namespace blb::ecs {
     struct Collision {
+        Entity entity;   /**< 'this' Entity. */
         Entity collider; /**< The Entity that collided with this entity */
-        Entity collidee; /**< 'this' Entity. */
     };
 
     /**

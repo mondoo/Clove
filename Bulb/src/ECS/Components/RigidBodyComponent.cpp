@@ -98,7 +98,6 @@ namespace blb::ecs {
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, standInShape.get(), localInertia);
 
         body = std::make_unique<btRigidBody>(rbInfo);
-        body->setUserPointer(this);
 
         int flags = body->getCollisionFlags();
         if(isKinematic) {
