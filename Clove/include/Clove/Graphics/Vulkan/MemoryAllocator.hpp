@@ -76,7 +76,7 @@ namespace clv::gfx::vk {
 
         ~MemoryAllocator();
 
-        Chunk* allocate(const VkMemoryRequirements& memoryRequirements, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties);
+        Chunk* allocate(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags properties);
         void free(Chunk* chunk);
 
     private:

@@ -77,13 +77,13 @@ namespace clv::gfx::vk {
 
     MemoryAllocator::~MemoryAllocator() = default;
 
-    MemoryAllocator::Chunk* MemoryAllocator::allocate(const VkMemoryRequirements& memoryRequirements, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties) {
+    MemoryAllocator::Chunk* MemoryAllocator::allocate(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags properties) {
         const uint32_t memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, properties, device.getPhysical());
 
         Chunk* freeChunk{ nullptr };
         for(auto& block : memoryBlocks) {
             if(block.getMemoryTypeIndex() == memoryTypeIndex) {
-                freeChunk = block.allocate(allocationSize);
+                freeChunk = block.allocate(memoryRequirements.size);
 
                 if(freeChunk != nullptr) {
                     break;
@@ -93,9 +93,9 @@ namespace clv::gfx::vk {
 
         if(freeChunk == nullptr) {
             //Make sure if allocate a new block that's big enough
-            const VkDeviceSize size = std::max(allocationSize, blockSize);
+            const VkDeviceSize size = std::max(memoryRequirements.size, blockSize);
             memoryBlocks.emplace_back(device.get(), size, memoryTypeIndex);
-            freeChunk = memoryBlocks.back().allocate(allocationSize);
+            freeChunk = memoryBlocks.back().allocate(memoryRequirements.size);
             GARLIC_ASSERT(freeChunk != nullptr, "{0}: Newly allocated Block does not have enough room", GARLIC_FUNCTION_NAME_PRETTY);
         }
 
