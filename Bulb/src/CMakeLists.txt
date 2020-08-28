@@ -64,6 +64,7 @@ set(
 		${BLB_SOURCE}/ECS/Components/AudioSourceComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/CameraComponent.hpp
 		${BLB_SOURCE}/ECS/Components/CameraComponent.cpp
+		${BLB_INCLUDE}/ECS/Components/CollisionResponseComponent.hpp
 		${BLB_INCLUDE}/ECS/Components/CubeColliderComponent.hpp
 		${BLB_SOURCE}/ECS/Components/CubeColliderComponent.cpp
 		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
