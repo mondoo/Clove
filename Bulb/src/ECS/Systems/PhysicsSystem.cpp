@@ -84,7 +84,7 @@ namespace blb::ecs {
             }
         }
 
-        //Make sure any recently un-paired rigid bodies are update
+        //Make sure any recently un-paired rigid bodies are updated
         for(auto&& [rigidBody] : world.getComponentSets<RigidBodyComponent>()) {
             if(world.hasComponent<CubeColliderComponent>(rigidBody->getEntityID())) {
                 continue;
@@ -107,28 +107,27 @@ namespace blb::ecs {
         const auto cubeColliders = world.getComponentSets<TransformComponent, CubeColliderComponent>();
         const auto rigidBodies   = world.getComponentSets<TransformComponent, RigidBodyComponent>();
 
+        const auto updateCollider = [](const TransformComponent& transform, btCollisionObject& collisionObject) {
+            const auto pos = transform.getPosition(TransformSpace::World);
+            const auto rot = transform.getRotation(TransformSpace::World);
+
+            btTransform btTrans = collisionObject.getWorldTransform();
+            btTrans.setOrigin({ pos.x, pos.y, pos.z });
+            btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w });
+           collisionObject.setWorldTransform(btTrans);
+        };
+
         //Notify Bullet of the location of the colliders
         for(auto&& [transform, cubeCollider] : cubeColliders) {
             if(world.hasComponent<RigidBodyComponent>(cubeCollider->getEntityID())) {
                 continue;
             }
 
-            const auto pos = transform->getPosition(TransformSpace::World);
-            const auto rot = transform->getRotation(TransformSpace::World);
-
-            btTransform btTrans = cubeCollider->collisionObject->getWorldTransform();
-            btTrans.setOrigin({ pos.x, pos.y, pos.z });
-            btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w });
-            cubeCollider->collisionObject->setWorldTransform(btTrans);
+            updateCollider(*transform, *cubeCollider->collisionObject);
         }
         for(auto&& [transform, rigidBody] : rigidBodies) {
-            const auto pos = transform->getPosition(TransformSpace::World);
-            const auto rot = transform->getRotation(TransformSpace::World);
+            updateCollider(*transform, *rigidBody->body);
 
-            btTransform btTrans = rigidBody->body->getWorldTransform();
-            btTrans.setOrigin({ pos.x, pos.y, pos.z });
-            btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w });
-            rigidBody->body->setWorldTransform(btTrans);
         }
 
         //Step physics world
@@ -152,26 +151,25 @@ namespace blb::ecs {
         //    }
         //}
 
+        const auto updateTransform = [](TransformComponent& transform, const btCollisionObject& collisionObject) {
+            const btTransform& btTrans = collisionObject.getWorldTransform();
+            const btVector3& pos       = btTrans.getOrigin();
+            const btQuaternion& rot    = btTrans.getRotation();
+
+            transform.setPosition({ pos.x(), pos.y(), pos.z() }, TransformSpace::World);
+            transform.setRotation({ rot.getW(), rot.getX(), rot.getY(), rot.getZ() }, TransformSpace::World);
+        };
+
         //Apply any simulation updates
         for(auto&& [transform, cubeCollider] : cubeColliders) {
             if(world.hasComponent<RigidBodyComponent>(cubeCollider->getEntityID())) {
                 continue;
             }
 
-            const btTransform& btTrans = cubeCollider->collisionObject->getWorldTransform();
-            const btVector3& pos       = btTrans.getOrigin();
-            const btQuaternion& rot    = btTrans.getRotation();
-
-            transform->setPosition({ pos.x(), pos.y(), pos.z() }, TransformSpace::World);
-            transform->setRotation({ rot.getW(), rot.getX(), rot.getY(), rot.getZ() }, TransformSpace::World);
+            updateTransform(*transform, *cubeCollider->collisionObject);
         }
         for(auto&& [transform, rigidBody] : rigidBodies) {
-            const btTransform& btTrans = rigidBody->body->getWorldTransform();
-            const btVector3& pos       = btTrans.getOrigin();
-            const btQuaternion& rot    = btTrans.getRotation();
-
-            transform->setPosition({ pos.x(), pos.y(), pos.z() }, TransformSpace::World);
-            transform->setRotation({ rot.getW(), rot.getX(), rot.getY(), rot.getZ() }, TransformSpace::World);
+            updateTransform(*transform, *rigidBody->body);
         }
 
         //TODO
