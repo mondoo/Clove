@@ -77,7 +77,7 @@ namespace clv::gfx::vk {
     MemoryAllocator::Chunk* MemoryAllocator::allocate(const VkMemoryRequirements& memoryRequirements, VkDeviceSize allocationSize, VkMemoryPropertyFlags properties) {
         const uint32_t memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, properties, device.getPhysical());
 
-        Chunk* freeChunk;
+        Chunk* freeChunk{ nullptr };
         for(auto& block : memoryBlocks) {
             if(block.getMemoryTypeIndex() == memoryTypeIndex) {
                 freeChunk = block.allocate(allocationSize);
