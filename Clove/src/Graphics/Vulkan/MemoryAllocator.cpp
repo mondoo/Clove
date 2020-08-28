@@ -41,18 +41,21 @@ namespace clv::gfx::vk {
     MemoryAllocator::Chunk* MemoryAllocator::Block::allocate(const VkDeviceSize size) {
         //TODO: Correct alignment
 
-        for(auto& chunk : chunks) {
-            if(chunk->free && chunk->size >= size) {
-                if(const VkDeviceSize remainingSize = chunk->size - size; remainingSize > 0) {
-                    //If we have room left in the chunk, split it and put the excess back in the list
-                    chunk->size = size;
-                    chunks.emplace_back(std::make_unique<Chunk>(Chunk{ size + 1, remainingSize, memory, true }));
-                }
+        auto chunkIter = std::find_if(std::begin(chunks), std::end(chunks), [size](const std::unique_ptr<Chunk>& chunk) {
+            return chunk->free && chunk->size >= size;
+        });
 
-                chunk->free = false;
+        if(chunkIter != std::end(chunks)) {
+            if(const VkDeviceSize remainingSize = (*chunkIter)->size - size; remainingSize > 0) {
+                //If we have room left in the chunk, split it and put the excess back in the list
+                (*chunkIter)->size = size;
 
-                return chunk.get();
+                auto newChunk = std::make_unique<Chunk>(Chunk{ size + 1, remainingSize, memory, true });
+                chunkIter = chunks.insert(chunkIter + 1, std::move(newChunk)) - 1;
             }
+
+            (*chunkIter)->free = false;
+            return (*chunkIter).get();
         }
 
         return nullptr;
