@@ -92,7 +92,7 @@ namespace clv::gfx::vk {
             //Make sure if allocate a new block that's big enough
             const VkDeviceSize size = std::max(allocationSize, blockSize);
             memoryBlocks.emplace_back(device.get(), size, memoryTypeIndex);
-            freeChunk = memoryBlocks.back().allocate(size);
+            freeChunk = memoryBlocks.back().allocate(allocationSize);
             GARLIC_ASSERT(freeChunk != nullptr, "{0}: Newly allocated Block does not have enough room", GARLIC_FUNCTION_NAME_PRETTY);
         }
 
