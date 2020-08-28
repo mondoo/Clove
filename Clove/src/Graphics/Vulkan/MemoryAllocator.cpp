@@ -27,8 +27,12 @@ namespace clv::gfx::vk {
 
         vkAllocateMemory(device, &info, nullptr, &memory);
 
-        chunks.push_back({ 0, size, memory, true });
+        chunks.emplace_back(std::make_unique<Chunk>(Chunk{ 0, size, memory, true }));
     }
+
+    MemoryAllocator::Block::Block(Block&& other) noexcept = default;
+
+    MemoryAllocator::Block& MemoryAllocator::Block::operator=(Block&& other) noexcept = default;
 
     MemoryAllocator::Block::~Block() {
         vkFreeMemory(device, memory, nullptr);
@@ -38,15 +42,16 @@ namespace clv::gfx::vk {
         //TODO: Correct alignment
 
         for(auto& chunk : chunks) {
-            if(chunk.free && chunk.size >= size) {
-                if(const VkDeviceSize remainingSize = chunk.size - size; remainingSize > 0) {
+            if(chunk->free && chunk->size >= size) {
+                if(const VkDeviceSize remainingSize = chunk->size - size; remainingSize > 0) {
                     //If we have room left in the chunk, split it and put the excess back in the list
-                    chunk.size = size;
-                    chunks.push_back({ size + 1, remainingSize, memory, true });
+                    chunk->size = size;
+                    chunks.emplace_back(std::make_unique<Chunk>(Chunk{ size + 1, remainingSize, memory, true }));
                 }
 
-                chunk.free = false;
-                return &chunk; //TODO: This will cause an issue when the vector is resized
+                chunk->free = false;
+
+                return chunk.get();
             }
         }
 

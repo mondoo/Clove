@@ -32,14 +32,18 @@ namespace clv::gfx::vk {
             VkDeviceSize size{ 0 };
             uint32_t memoryTypeIndex{ 0 };
 
-            std::vector<Chunk> chunks;
+            std::vector<std::unique_ptr<Chunk>> chunks; //TODO: Having pointers here just so resising the vector isn't an issue
 
             //FUNCTIONS
         public:
             Block() = delete;
             Block(VkDevice device, VkDeviceSize size, uint32_t memoryTypeIndex);
 
-            //TODO: other ctors
+            Block(const Block& other) = delete;
+            Block(Block&& other) noexcept;
+
+            Block& operator=(const Block& other) = delete;
+            Block& operator=(Block&& other) noexcept;
 
             ~Block();
 
