@@ -78,8 +78,7 @@ namespace blb::ecs {
             }
 
             if(cubeCollider->collisionObject == nullptr) {
-                cubeCollider->collisionObject = std::make_unique<btGhostObject>();
-                cubeCollider->collisionObject->setCollisionShape(cubeCollider->collisionShape.get());
+                cubeCollider->constructCollisionObject();
                 dynamicsWorld->addCollisionObject(cubeCollider->collisionObject.get());
             }
         }

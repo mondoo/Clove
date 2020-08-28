@@ -38,5 +38,7 @@ namespace blb::ecs {
 
     private:
         void initialiseCubeCollider();
+
+        void constructCollisionObject();
     };
 }

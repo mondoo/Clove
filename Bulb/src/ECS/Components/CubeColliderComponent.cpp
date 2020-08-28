@@ -30,8 +30,13 @@ namespace blb::ecs {
 
     void CubeColliderComponent::initialiseCubeCollider() {
         collisionShape  = std::make_unique<btBoxShape>(btVector3{ cubeSize.x, cubeSize.y, cubeSize.z });
-        collisionObject = std::make_unique<btGhostObject>();
 
+        constructCollisionObject();
+    }
+
+    void CubeColliderComponent::constructCollisionObject() {
+        collisionObject = std::make_unique<btGhostObject>();
         collisionObject->setCollisionShape(collisionShape.get());
+        collisionObject->setUserPointer(this);
     }
 }
