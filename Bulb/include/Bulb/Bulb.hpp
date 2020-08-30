@@ -25,8 +25,6 @@
 #include "Bulb/Layer.hpp"
 #include "Bulb/LayerStack.hpp"
 #include "Bulb/ModelLoader.hpp"
-#include "Bulb/Physics/RigidBody.hpp"
-#include "Bulb/Physics/World.hpp"
 #include "Bulb/Rendering/Material.hpp"
 #include "Bulb/Rendering/MaterialInstance.hpp"
 #include "Bulb/Rendering/Renderables/Mesh.hpp"

@@ -1,46 +1,75 @@
 #pragma once
 
-#include "Bulb/ECS/System.hpp"
 #include "Bulb/ECS/ECSEvents.hpp"
+#include "Bulb/ECS/System.hpp"
+#include "Bulb/ECS/Entity.hpp"
 
 #include <Clove/Event/EventHandle.hpp>
 
-namespace blb::phy {
-	class World;
+class btDefaultCollisionConfiguration;
+class btCollisionDispatcher;
+class btBroadphaseInterface;
+class btSequentialImpulseConstraintSolver;
+class btDiscreteDynamicsWorld;
+
+namespace blb::ecs {
+    class CubeColliderComponent;
+    class RigidBodyComponent;
 }
 
 namespace blb::ecs {
-	class RigidBodyComponent;
-}
+    class PhysicsSystem : public System {
+        //TYPES
+    private:
+        struct CollisionManifold {
+            EntityID entityA;
+            EntityID entityB;
+        };
 
-namespace blb::ecs {
-	class PhysicsSystem : public System {
-		//VARIABLES
-	private:
-		std::shared_ptr<phy::World> physicsWorld;
+        //VARIABLES
+    private:
+        btDefaultCollisionConfiguration* collisionConfiguration{ nullptr };
+        btCollisionDispatcher* dispatcher{ nullptr };
+        btBroadphaseInterface* overlappingPairCache{ nullptr };
+        btSequentialImpulseConstraintSolver* solver{ nullptr };
 
-		clv::EventHandle componentAddedHandle;
-		clv::EventHandle componentRemovedHandle;
+        btDiscreteDynamicsWorld* dynamicsWorld{ nullptr };
 
-		//FUNCTIONS
-	public:
-		PhysicsSystem();
-		PhysicsSystem(std::shared_ptr<phy::World> physicsWorld);
+        clv::EventHandle cubeColliderAddedHandle;
+        clv::EventHandle cubeColliderRemovedHandle;
 
-		PhysicsSystem(const PhysicsSystem& other) = delete;
-		PhysicsSystem(PhysicsSystem&& other) noexcept;
+        clv::EventHandle rigidBodyAddedHandle;
+        clv::EventHandle rigidBodyRemovedHandle;
 
-		PhysicsSystem& operator=(const PhysicsSystem& other) = delete;
-		PhysicsSystem& operator=(PhysicsSystem&& other) noexcept;
+        //FUNCTIONS
+    public:
+        PhysicsSystem();
 
-		~PhysicsSystem();
+        PhysicsSystem(const PhysicsSystem& other) = delete;
+        PhysicsSystem(PhysicsSystem&& other) noexcept;
 
-		void registerToEvents(clv::EventDispatcher& dispatcher) override;
+        PhysicsSystem& operator=(const PhysicsSystem& other) = delete;
+        PhysicsSystem& operator=(PhysicsSystem&& other) noexcept;
 
-		void update(World& world, clv::utl::DeltaTime deltaTime) override;
+        ~PhysicsSystem();
 
-	private:
-		void onComponentAdded(const ComponentAddedEvent<RigidBodyComponent>& event);
-		void onComponentRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event);
-	};
+        void registerToEvents(clv::EventDispatcher& dispatcher) override;
+
+        void preUpdate(World& world) override;
+        void update(World& world, clv::utl::DeltaTime deltaTime) override;
+        void postUpdate(World& world) override;
+
+        /**
+         * @brief Fires a ray into the world.
+         * @returns The ID of the first Entity hit.
+         */
+        EntityID rayCast(const clv::mth::vec3f& begin, const clv::mth::vec3f& end);
+
+    private:
+        void onCubeColliderAdded(const ComponentAddedEvent<CubeColliderComponent>& event);
+        void onCubeColliderRemoved(const ComponentRemovedEvent<CubeColliderComponent>& event);
+
+        void onRigidBodyAdded(const ComponentAddedEvent<RigidBodyComponent>& event);
+        void onRigidBodyRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event);
+    };
 }
