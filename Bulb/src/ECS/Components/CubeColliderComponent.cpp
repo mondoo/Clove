@@ -37,5 +37,6 @@ namespace blb::ecs {
     void CubeColliderComponent::constructCollisionObject() {
         collisionObject = std::make_unique<btGhostObject>();
         collisionObject->setCollisionShape(collisionShape.get());
+        collisionObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
     }
 }
