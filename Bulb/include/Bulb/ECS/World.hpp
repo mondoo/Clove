@@ -142,11 +142,13 @@ namespace blb::ecs {
 
 		/**
 		 * @brief Adds a System to the World.
+		 * @note The lifetime of the System is tied to the World
 		 * @tparam SystemType The type of System to add.
 		 * @param args Construction arguments that'll be forwarded to the System.
+		 * @return Returns a pointer to the System.
 		 */
 		template<typename SystemType, typename... ConstructArgs>
-		void addSystem(ConstructArgs&&... args);
+        SystemType* addSystem(ConstructArgs&&... args);
 
 	private:
 		enum class FoundState { NullptrFound, EndOfTuple };
