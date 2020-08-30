@@ -9,23 +9,20 @@ namespace blb::ecs {
         initialiseRigidBody();
     }
 
-    RigidBodyComponent::RigidBodyComponent(float mass, bool isKinematic)
-        : mass(mass)
-        , isKinematic(isKinematic) {
+    RigidBodyComponent::RigidBodyComponent(Descriptor descriptor)
+        : descriptor(std::move(descriptor)) {
         initialiseRigidBody();
     }
 
     RigidBodyComponent::RigidBodyComponent(const RigidBodyComponent& other)
-        : mass(other.mass)
-        , isKinematic(other.isKinematic) {
+        : descriptor(other.descriptor) {
         initialiseRigidBody();
     }
 
     RigidBodyComponent::RigidBodyComponent(RigidBodyComponent&& other) noexcept = default;
 
     RigidBodyComponent& RigidBodyComponent::operator=(const RigidBodyComponent& other) {
-        mass        = other.mass;
-        isKinematic = other.isKinematic;
+        descriptor = other.descriptor;
 
         initialiseRigidBody();
 
@@ -88,19 +85,19 @@ namespace blb::ecs {
         btTransform startTransform;
         startTransform.setIdentity();
 
-        if(isKinematic && mass > 0.0f) {
+        if(descriptor.isKinematic && descriptor.mass > 0.0f) {
             GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Kinematic RigidBody has non 0 mass. Kinematic takes precedence");
         } else {
-            standInShape->calculateLocalInertia(mass, localInertia);
+            standInShape->calculateLocalInertia(descriptor.mass, localInertia);
         }
 
         btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, standInShape.get(), localInertia);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(descriptor.mass, myMotionState, standInShape.get(), localInertia);
 
         body = std::make_unique<btRigidBody>(rbInfo);
 
         int flags = body->getCollisionFlags();
-        if(isKinematic) {
+        if(descriptor.isKinematic) {
             flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
         }
         body->setCollisionFlags(flags);

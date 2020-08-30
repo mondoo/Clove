@@ -16,14 +16,19 @@ namespace blb::ecs {
     class RigidBodyComponent : public Component<RigidBodyComponent> {
         friend class PhysicsSystem;
 
+        //TYPES
+    public:
+        struct Descriptor{
+            float mass       = 1.0f;
+            bool isKinematic = false; /**< If true, stops the body being affected by gravity */
+
+            uint32_t collisionGroup = 0; /**< Bit flag of the collision groups this body is a part of */
+            uint32_t collisionMask  = 0; /**< Bit flag of which collision groups this body collides with */
+        };
+
         //VARIABLES
     private:
-        float mass       = 1.0f;
-        bool isKinematic = false; /**< If true, stops the body being affected by gravity */
-
-        //TODO
-        //uint32_t collisionGroup = 0; /**< Bit flag of the collision groups this body is a part of */
-        //uint32_t collisionMask  = 0; /**< Bit flag of which collision groups this body collides with */
+        Descriptor descriptor;
 
         std::unique_ptr<btSphereShape> standInShape; /**< Stand in shape until a _ColliderComponent has been added */
         std::unique_ptr<btRigidBody> body;
@@ -31,7 +36,7 @@ namespace blb::ecs {
         //FUNCTIONS
     public:
         RigidBodyComponent();
-        RigidBodyComponent(float mass, bool isKinematic);
+        RigidBodyComponent(Descriptor descriptor);
 
         RigidBodyComponent(const RigidBodyComponent& other);
         RigidBodyComponent(RigidBodyComponent&& other) noexcept;

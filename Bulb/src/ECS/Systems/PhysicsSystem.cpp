@@ -66,7 +66,7 @@ namespace blb::ecs {
             if(rigidBody->standInShape != nullptr) {
                 dynamicsWorld->removeCollisionObject(rigidBody->body.get());
                 rigidBody->body->setCollisionShape(cubeCollider->collisionShape.get());
-                dynamicsWorld->addRigidBody(rigidBody->body.get());
+                dynamicsWorld->addRigidBody(rigidBody->body.get(), rigidBody->descriptor.collisionGroup, rigidBody->descriptor.collisionMask);
 
                 rigidBody->standInShape.reset();
             }
@@ -96,7 +96,7 @@ namespace blb::ecs {
                 dynamicsWorld->removeCollisionObject(body);
                 rigidBody->standInShape = RigidBodyComponent::createStandInShape();
                 body->setCollisionShape(rigidBody->standInShape.get());
-                dynamicsWorld->addRigidBody(body);
+                dynamicsWorld->addRigidBody(body, rigidBody->descriptor.collisionGroup, rigidBody->descriptor.collisionMask);
             }
         }
     }
@@ -217,7 +217,7 @@ namespace blb::ecs {
     void PhysicsSystem::onRigidBodyAdded(const ComponentAddedEvent<RigidBodyComponent>& event) {
         auto* component = event.component;
 
-        dynamicsWorld->addRigidBody(component->body.get());
+        dynamicsWorld->addRigidBody(component->body.get(), component->descriptor.collisionGroup, component->descriptor.collisionMask);
         component->body->setUserIndex(component->getEntityID());
     }
 
