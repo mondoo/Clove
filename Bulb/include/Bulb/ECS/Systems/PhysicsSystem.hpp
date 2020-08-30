@@ -35,8 +35,6 @@ namespace blb::ecs {
 
         btDiscreteDynamicsWorld* dynamicsWorld{ nullptr };
 
-        std::vector<CollisionManifold> collisionManifolds;
-
         clv::EventHandle cubeColliderAddedHandle;
         clv::EventHandle cubeColliderRemovedHandle;
 

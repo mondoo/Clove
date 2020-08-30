@@ -132,21 +132,6 @@ namespace blb::ecs {
         //Step physics world
         dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 
-        //Gather collision manifolds
-        int numManifolds = dispatcher->getNumManifolds();
-        for(int i = 0; i < numManifolds; ++i) {
-            btPersistentManifold* manifold = dispatcher->getManifoldByIndexInternal(i);
-            if(manifold->getNumContacts() > 0) {
-                const btCollisionObject* obA = manifold->getBody0();
-                const btCollisionObject* obB = manifold->getBody1();
-
-                EntityID entityA = obA->getUserIndex();
-                EntityID entityB = obB->getUserIndex();
-
-                collisionManifolds.emplace_back(CollisionManifold{ entityA, entityB });
-            }
-        }
-
         const auto updateTransform = [](TransformComponent& transform, const btCollisionObject& collisionObject) {
             const btTransform& btTrans = collisionObject.getWorldTransform();
             const btVector3& pos       = btTrans.getOrigin();
@@ -170,6 +155,23 @@ namespace blb::ecs {
     }
 
     void PhysicsSystem::postUpdate(World& world) {
+        //Gather collision manifolds
+        const int numManifolds = dispatcher->getNumManifolds();
+        std::vector<CollisionManifold> collisionManifolds(numManifolds);
+
+        for(int i = 0; i < numManifolds; ++i) {
+            btPersistentManifold* manifold = dispatcher->getManifoldByIndexInternal(i);
+            if(manifold->getNumContacts() > 0) {
+                const btCollisionObject* obA = manifold->getBody0();
+                const btCollisionObject* obB = manifold->getBody1();
+
+                EntityID entityA = obA->getUserIndex();
+                EntityID entityB = obB->getUserIndex();
+
+                collisionManifolds[i] = CollisionManifold{ entityA, entityB };
+            }
+        }
+
         //Broadcast collision events
         for(const auto& manifold : collisionManifolds) {
             Entity entityA = world.getEntity(manifold.entityA);
@@ -179,12 +181,10 @@ namespace blb::ecs {
                 entityAComp->onCollision.broadcast(Collision{ entityA, entityB });
             }
 
-            if(auto entityBComp = entityA.getComponent<CollisionResponseComponent>()) {
+            if(auto entityBComp = entityB.getComponent<CollisionResponseComponent>()) {
                 entityBComp->onCollision.broadcast(Collision{ entityB, entityA });
             }
         }
-
-        collisionManifolds.clear();
     }
 
     //TODO
