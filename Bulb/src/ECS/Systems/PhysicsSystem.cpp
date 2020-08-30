@@ -187,8 +187,7 @@ namespace blb::ecs {
         }
     }
 
-    //TODO
-    /*RigidBody* PhysicsSystem::rayCast(const clv::mth::vec3f& begin, const clv::mth::vec3f& end) {
+    EntityID PhysicsSystem::rayCast(const clv::mth::vec3f& begin, const clv::mth::vec3f& end) {
         btVector3 btBegin{ begin.x, begin.y, begin.z };
         btVector3 btEnd{ end.x, end.y, end.z };
 
@@ -196,11 +195,11 @@ namespace blb::ecs {
         dynamicsWorld->rayTest(btBegin, btEnd, callBack);
 
         if(callBack.m_collisionObject != nullptr) {
-            return static_cast<RigidBody*>(callBack.m_collisionObject->getUserPointer());
+            return callBack.m_collisionObject->getUserIndex();
         } else {
-            return nullptr;
+            return INVALID_ENTITY_ID;
         }
-    }*/
+    }
 
     void PhysicsSystem::onCubeColliderAdded(const ComponentAddedEvent<CubeColliderComponent>& event) {
         auto* component = event.component;

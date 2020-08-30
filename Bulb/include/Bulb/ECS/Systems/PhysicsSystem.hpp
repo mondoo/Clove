@@ -49,7 +49,7 @@ namespace blb::ecs {
         PhysicsSystem(PhysicsSystem&& other) noexcept;
 
         PhysicsSystem& operator=(const PhysicsSystem& other) = delete;
-        PhysicsSystem& operator                              =(PhysicsSystem&& other) noexcept;
+        PhysicsSystem& operator=(PhysicsSystem&& other) noexcept;
 
         ~PhysicsSystem();
 
@@ -59,8 +59,11 @@ namespace blb::ecs {
         void update(World& world, clv::utl::DeltaTime deltaTime) override;
         void postUpdate(World& world) override;
 
-        //TODO
-        //RigidBody* rayCast(const clv::mth::vec3f& begin, const clv::mth::vec3f& end);
+        /**
+         * @brief Fires a ray into the world.
+         * @returns The ID of the first Entity hit.
+         */
+        EntityID rayCast(const clv::mth::vec3f& begin, const clv::mth::vec3f& end);
 
     private:
         void onCubeColliderAdded(const ComponentAddedEvent<CubeColliderComponent>& event);
