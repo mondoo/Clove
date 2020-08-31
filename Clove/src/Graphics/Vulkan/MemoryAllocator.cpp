@@ -131,6 +131,10 @@ namespace clv::gfx::vk {
         : device(std::move(device)) {
     }
 
+    MemoryAllocator::MemoryAllocator(MemoryAllocator&& other) noexcept = default;
+
+    MemoryAllocator& MemoryAllocator::operator=(MemoryAllocator&& other) = default;
+
     MemoryAllocator::~MemoryAllocator() = default;
 
     const MemoryAllocator::Chunk* MemoryAllocator::allocate(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags properties) {

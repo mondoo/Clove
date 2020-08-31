@@ -62,7 +62,7 @@ namespace clv::gfx::vk {
             ~Block();
 
             const Chunk* allocate(const VkDeviceSize size, const VkDeviceSize alignment);
-            bool free(const Chunk*& chunk);
+            bool free(const Chunk*& chunkPtr);
 
             //TODO: Move to .inl
             inline VkDeviceSize getSize() const {
@@ -84,9 +84,14 @@ namespace clv::gfx::vk {
 
         //FUNCTIONS
     public:
+        MemoryAllocator() = delete;
         MemoryAllocator(DevicePointer device);
 
-        //TODO: ctors
+        MemoryAllocator(const MemoryAllocator& other) = delete;
+        MemoryAllocator(MemoryAllocator&& other) noexcept;
+
+        MemoryAllocator& operator=(const MemoryAllocator& other) = delete;
+        MemoryAllocator& operator=(MemoryAllocator&& other);
 
         ~MemoryAllocator();
 
