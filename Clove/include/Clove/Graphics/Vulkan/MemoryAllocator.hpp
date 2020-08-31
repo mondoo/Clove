@@ -12,11 +12,18 @@ namespace clv::gfx::vk {
          * @brief A portion of allocated memory inside a VkDeviceMemory.
          */
         struct Chunk {
-            VkDeviceSize offset{ 0 };
-            VkDeviceSize size{ 0 };
+            VkDeviceSize offset{ 0 }; /**< Offset in to the memory this chunk occupies. */
+            VkDeviceSize size{ 0 };   /**< Size of this memory chunk. */
+
             VkDeviceMemory memory{ VK_NULL_HANDLE };
 
             bool free{ true };
+
+            Chunk(VkDeviceSize offset, VkDeviceSize size, VkDeviceMemory memory)
+                : offset(offset)
+                , size(size)
+                , memory(memory) {
+            }
         };
 
     private:
@@ -32,7 +39,7 @@ namespace clv::gfx::vk {
             VkDeviceSize size{ 0 };
             uint32_t memoryTypeIndex{ 0 };
 
-            std::vector<std::unique_ptr<Chunk>> chunks; //TODO: Having pointers here just so resising the vector isn't an issue
+            std::vector<std::unique_ptr<Chunk>> chunks;//Having pointers here just so resizing the vector isn't an issue
 
             //FUNCTIONS
         public:
@@ -47,8 +54,8 @@ namespace clv::gfx::vk {
 
             ~Block();
 
-            Chunk* allocate(const VkDeviceSize size);
-            void free(Chunk* chunk);
+            const Chunk* allocate(const VkDeviceSize size, const VkDeviceSize alignment);
+            void free(const Chunk* chunk);
 
             //TODO: Move to .inl
             inline VkDeviceSize getSize() const {
@@ -76,10 +83,7 @@ namespace clv::gfx::vk {
 
         ~MemoryAllocator();
 
-        Chunk* allocate(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags properties);
-        void free(Chunk* chunk);
-
-    private:
-
+        const Chunk* allocate(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags properties);
+        void free(const Chunk* chunk);
     };
 }

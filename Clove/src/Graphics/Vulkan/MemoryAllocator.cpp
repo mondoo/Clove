@@ -27,42 +27,70 @@ namespace clv::gfx::vk {
 
         vkAllocateMemory(device, &info, nullptr, &memory);
 
-        chunks.emplace_back(std::make_unique<Chunk>(Chunk{ 0, size, memory, true }));
+        chunks.emplace_back(std::make_unique<Chunk>(0, size, memory));
     }
 
-    MemoryAllocator::Block::Block(Block&& other) noexcept = default;
+    MemoryAllocator::Block::Block(Block&& other) noexcept
+        : device(other.device)
+        , memory(other.memory)
+        , size(other.size)
+        , memoryTypeIndex(other.memoryTypeIndex)
+        , chunks(std::move(other.chunks)) {
+        other.memory = VK_NULL_HANDLE;//Make sure the moved block no longer points to our memory
+    }
 
-    MemoryAllocator::Block& MemoryAllocator::Block::operator=(Block&& other) noexcept = default;
+    MemoryAllocator::Block& MemoryAllocator::Block::operator=(Block&& other) noexcept {
+        device          = other.device;
+        memory          = other.memory;
+        size            = other.size;
+        memoryTypeIndex = other.memoryTypeIndex;
+        chunks          = std::move(other.chunks);
+
+        other.memory    = VK_NULL_HANDLE;//Make sure the moved block no longer points to our memory
+
+        return *this;
+    }
 
     MemoryAllocator::Block::~Block() {
         vkFreeMemory(device, memory, nullptr);
     }
 
-    MemoryAllocator::Chunk* MemoryAllocator::Block::allocate(const VkDeviceSize size) {
-        //TODO: Correct alignment
+    const MemoryAllocator::Chunk* MemoryAllocator::Block::allocate(const VkDeviceSize size, const VkDeviceSize alignment) {
+        for(size_t i = 0; i < std::size(chunks); ++i) {
+            if(chunks[i]->free) {
+                const VkDeviceSize remainingAlignment  = chunks[i]->offset % alignment;                               //How much we're off from the alignment
+                const VkDeviceSize alignmentCorrection = remainingAlignment != 0 ? alignment - remainingAlignment : 0;//How much we compensate for to achieve a multiple of alignment
 
-        auto chunkIter = std::find_if(std::begin(chunks), std::end(chunks), [size](const std::unique_ptr<Chunk>& chunk) {
-            return chunk->free && chunk->size >= size;
-        });
+                if(const VkDeviceSize chunkSize = chunks[i]->size - alignmentCorrection; chunkSize >= size) {
+                    const auto prevOffset = chunks[i]->offset;
 
-        if(chunkIter != std::end(chunks)) {
-            if(const VkDeviceSize remainingSize = (*chunkIter)->size - size; remainingSize > 0) {
-                //If we have room left in the chunk, split it and put the excess back in the list
-                (*chunkIter)->size = size;
+                    chunks[i]->offset += alignmentCorrection;
+                    chunks[i]->size = chunkSize;
+                    chunks[i]->free = false;
 
-                auto newChunk = std::make_unique<Chunk>(Chunk{ size + 1, remainingSize, memory, true });
-                chunkIter = chunks.insert(chunkIter + 1, std::move(newChunk)) - 1;
+                    //Add back the extra bits to the chunk to the left
+                    if(const auto extraBits = chunks[i]->offset - prevOffset; extraBits > 0) {
+                        chunks[i - 1]->size += extraBits;
+                    }
+
+                    //If we have room left in the chunk, split it and put the excess back in the list.
+                    if(const VkDeviceSize remainingSize = chunks[i]->size - size; remainingSize > 0) {
+                        auto newChunk = std::make_unique<Chunk>(chunks[i]->offset + size, remainingSize, memory);
+                        chunks.insert(std::begin(chunks) + i + 1, std::move(newChunk));
+
+                        chunks[i]->size = size;
+                    }
+
+                    return chunks[i].get();
+                }
             }
-
-            (*chunkIter)->free = false;
-            return (*chunkIter).get();
         }
 
         return nullptr;
     }
 
-    void MemoryAllocator::Block::free(Chunk* chunk) {
-        chunk->free = true;
+    void MemoryAllocator::Block::free(const Chunk* chunk) {
+        //chunk->free = true;
         /*
         - check chunk before it
             - if free merge
@@ -77,13 +105,13 @@ namespace clv::gfx::vk {
 
     MemoryAllocator::~MemoryAllocator() = default;
 
-    MemoryAllocator::Chunk* MemoryAllocator::allocate(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags properties) {
+    const MemoryAllocator::Chunk* MemoryAllocator::allocate(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags properties) {
         const uint32_t memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, properties, device.getPhysical());
 
-        Chunk* freeChunk{ nullptr };
+        const Chunk* freeChunk{ nullptr };
         for(auto& block : memoryBlocks) {
             if(block.getMemoryTypeIndex() == memoryTypeIndex) {
-                freeChunk = block.allocate(memoryRequirements.size);
+                freeChunk = block.allocate(memoryRequirements.size, memoryRequirements.alignment);
 
                 if(freeChunk != nullptr) {
                     break;
@@ -95,14 +123,14 @@ namespace clv::gfx::vk {
             //Make sure if allocate a new block that's big enough
             const VkDeviceSize size = std::max(memoryRequirements.size, blockSize);
             memoryBlocks.emplace_back(device.get(), size, memoryTypeIndex);
-            freeChunk = memoryBlocks.back().allocate(memoryRequirements.size);
+            freeChunk = memoryBlocks.back().allocate(memoryRequirements.size, memoryRequirements.alignment);
             GARLIC_ASSERT(freeChunk != nullptr, "{0}: Newly allocated Block does not have enough room", GARLIC_FUNCTION_NAME_PRETTY);
         }
 
         return freeChunk;
     }
 
-    void MemoryAllocator::free(Chunk* chunk) {
+    void MemoryAllocator::free(const Chunk* chunk) {
         //TODO
     }
 }
