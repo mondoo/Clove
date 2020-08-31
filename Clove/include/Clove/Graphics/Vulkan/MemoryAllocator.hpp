@@ -55,7 +55,7 @@ namespace clv::gfx::vk {
             ~Block();
 
             const Chunk* allocate(const VkDeviceSize size, const VkDeviceSize alignment);
-            void free(const Chunk* chunk);
+            bool free(const Chunk*& chunk);
 
             //TODO: Move to .inl
             inline VkDeviceSize getSize() const {
@@ -84,6 +84,6 @@ namespace clv::gfx::vk {
         ~MemoryAllocator();
 
         const Chunk* allocate(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags properties);
-        void free(const Chunk* chunk);
+        void free(const Chunk*& chunk);
     };
 }

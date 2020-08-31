@@ -89,14 +89,43 @@ namespace clv::gfx::vk {
         return nullptr;
     }
 
-    void MemoryAllocator::Block::free(const Chunk* chunk) {
-        //chunk->free = true;
-        /*
-        - check chunk before it
-            - if free merge
-        - check chunk after it
-            - if free merge
-        */
+    bool MemoryAllocator::Block::free(const Chunk*& chunk) {
+        for(size_t i = 0; i < std::size(chunks); ++i) {
+            if(chunks[i].get() == chunk) {
+                chunks[i]->free   = true;
+
+                bool removeIndex = false;
+                bool removeRight = false;
+
+                //Merge neighbouring chunks
+                if(i < std::size(chunks) - 1 && chunks[i + 1]->free) {
+                    //Merge right into us
+                    chunks[i]->size += chunks[i + 1]->size;
+
+                    removeRight = true;
+                }
+                if(i > 0 && chunks[i - 1]->free) {
+                    //Merge ourselves into left
+                    chunks[i - 1]->size += chunks[i]->size;
+
+                    removeIndex = true;
+                }
+                
+
+                //Remove the right most first to preserve indices
+                if (removeRight){
+                    chunks.erase(std::begin(chunks) + i + 1);
+                }
+                if(removeIndex) {
+                    chunks.erase(std::begin(chunks) + i);
+                }
+
+                chunk = nullptr;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     MemoryAllocator::MemoryAllocator(DevicePointer device)
@@ -130,7 +159,11 @@ namespace clv::gfx::vk {
         return freeChunk;
     }
 
-    void MemoryAllocator::free(const Chunk* chunk) {
-        //TODO
+    void MemoryAllocator::free(const Chunk*& chunk) {
+        for(auto& block : memoryBlocks) {
+            if(block.free(chunk)) {
+                break;
+            }
+        }
     }
 }
