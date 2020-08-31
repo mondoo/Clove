@@ -47,9 +47,10 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKImage::VKImage(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices)
+    VKImage::VKImage(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device(std::move(device))
-        , descriptor(std::move(descriptor)) {
+        , descriptor(std::move(descriptor))
+        , memoryAllocator(std::move(memoryAllocator)) {
         std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
 
         VkImageCreateInfo createInfo{};
@@ -83,18 +84,9 @@ namespace clv::gfx::vk {
         VkMemoryRequirements memoryRequirements{};
         vkGetImageMemoryRequirements(this->device.get(), image, &memoryRequirements);
 
-        VkMemoryAllocateInfo allocInfo{};
-        allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.pNext           = nullptr;
-        allocInfo.allocationSize  = memoryRequirements.size;
-        allocInfo.memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, getMemoryPropertyFlags(this->descriptor.memoryType), this->device.getPhysical());//TODO: user specified flags
+        allocatedBlock = this->memoryAllocator->allocate(memoryRequirements, getMemoryPropertyFlags(this->descriptor.memoryType));
 
-        if(vkAllocateMemory(this->device.get(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate buffer memory");
-            return;
-        }
-
-        vkBindImageMemory(this->device.get(), image, imageMemory, 0);
+        vkBindImageMemory(this->device.get(), image, allocatedBlock->memory, allocatedBlock->offset);
     }
 
     VKImage::VKImage(VKImage&& other) noexcept = default;
@@ -103,7 +95,7 @@ namespace clv::gfx::vk {
 
     VKImage::~VKImage() {
         vkDestroyImage(device.get(), image, nullptr);
-        vkFreeMemory(device.get(), imageMemory, nullptr);
+        memoryAllocator->free(allocatedBlock);
     }
 
     std::unique_ptr<GraphicsImageView> VKImage::createView() const {

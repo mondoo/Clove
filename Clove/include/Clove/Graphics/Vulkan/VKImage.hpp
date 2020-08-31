@@ -3,8 +3,13 @@
 #include "Clove/Graphics/GraphicsImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
+#include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 
 #include <vulkan/vulkan.h>
+
+namespace clv::gfx::vk {
+    struct QueueFamilyIndices;
+}
 
 namespace clv::gfx::vk {
     class VKImage : public GraphicsImage {
@@ -13,13 +18,16 @@ namespace clv::gfx::vk {
         DevicePointer device;
 
         VkImage image{ VK_NULL_HANDLE };
-        VkDeviceMemory imageMemory{ VK_NULL_HANDLE };
 
         Descriptor descriptor;
 
+        std::shared_ptr<MemoryAllocator> memoryAllocator;
+        const MemoryAllocator::Chunk* allocatedBlock{ nullptr };
+
         //FUNCTIONS
     public:
-        VKImage(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices);
+        VKImage() = delete;
+        VKImage(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator);
         
         VKImage(const VKImage& other) = delete;
         VKImage(VKImage&& other) noexcept;

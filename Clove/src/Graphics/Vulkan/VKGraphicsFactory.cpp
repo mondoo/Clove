@@ -1,6 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsFactory.hpp"
 
 #include "Clove/GRaphics/Vulkan/VKImage.hpp"
+#include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
@@ -352,6 +353,8 @@ namespace clv::gfx::vk {
         }
 
         devicePtr = DevicePointer(instance, surface, physicalDevice, logicalDevice, debugMessenger);
+
+        memoryAllocator = std::make_shared<MemoryAllocator>(devicePtr);
     }
 
     VKGraphicsFactory::VKGraphicsFactory(VKGraphicsFactory&& other) noexcept = default;
@@ -417,11 +420,11 @@ namespace clv::gfx::vk {
     }
 
     std::unique_ptr<GraphicsBuffer> VKGraphicsFactory::createBuffer(GraphicsBuffer::Descriptor descriptor) {
-        return std::make_unique<VKBuffer>(devicePtr, std::move(descriptor), queueFamilyIndices);
+        return std::make_unique<VKBuffer>(devicePtr, std::move(descriptor), queueFamilyIndices, memoryAllocator);
     }
 
     std::unique_ptr<GraphicsImage> VKGraphicsFactory::createImage(GraphicsImage::Descriptor descriptor) {
-        return std::make_unique<VKImage>(devicePtr, std::move(descriptor), queueFamilyIndices);
+        return std::make_unique<VKImage>(devicePtr, std::move(descriptor), queueFamilyIndices, memoryAllocator);
     }
 
     std::unique_ptr<Sampler> VKGraphicsFactory::createSampler(Sampler::Descriptor descriptor) {

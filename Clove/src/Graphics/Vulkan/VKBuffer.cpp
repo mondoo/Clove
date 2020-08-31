@@ -26,9 +26,10 @@ namespace clv::gfx::vk {
         return flags;
     }
 
-    VKBuffer::VKBuffer(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices)
+    VKBuffer::VKBuffer(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device(std::move(device))
-        , descriptor(std::move(descriptor)) {
+        , descriptor(std::move(descriptor))
+        , memoryAllocator(std::move(memoryAllocator)) {
         std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
 
         VkBufferCreateInfo createInfo{};
@@ -55,18 +56,9 @@ namespace clv::gfx::vk {
         VkMemoryRequirements memoryRequirements{};
         vkGetBufferMemoryRequirements(this->device.get(), buffer, &memoryRequirements);
 
-        VkMemoryAllocateInfo allocInfo{};
-        allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.pNext           = nullptr;
-        allocInfo.allocationSize  = memoryRequirements.size;
-        allocInfo.memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, getMemoryPropertyFlags(this->descriptor.memoryType), this->device.getPhysical());//TODO: user specified flags
+        allocatedBlock = this->memoryAllocator->allocate(memoryRequirements, getMemoryPropertyFlags(this->descriptor.memoryType));
 
-        if(vkAllocateMemory(this->device.get(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate buffer memory");
-            return;
-        }
-
-        vkBindBufferMemory(this->device.get(), buffer, bufferMemory, 0);
+        vkBindBufferMemory(this->device.get(), buffer, allocatedBlock->memory, allocatedBlock->offset);
     }
 
     VKBuffer::VKBuffer(VKBuffer&& other) noexcept = default;
@@ -75,17 +67,17 @@ namespace clv::gfx::vk {
 
     VKBuffer::~VKBuffer() {
         vkDestroyBuffer(device.get(), buffer, nullptr);
-        vkFreeMemory(device.get(), bufferMemory, nullptr);
+        memoryAllocator->free(allocatedBlock);
     }
 
     void VKBuffer::map(const void* data, const size_t size) {
-        GARLIC_ASSERT(size == descriptor.size, "{0}: Cannot map memory that is a different size to what the buffer expects", GARLIC_FUNCTION_NAME);
+        GARLIC_ASSERT(size <= allocatedBlock->size, "{0}: Cannot map memory that is bigger than the buffer has allocated", GARLIC_FUNCTION_NAME);
 
         void* cpuAccessibleMemory;
 
-        vkMapMemory(device.get(), bufferMemory, 0, descriptor.size, 0, &cpuAccessibleMemory);
-        memcpy(cpuAccessibleMemory, data, descriptor.size);
-        vkUnmapMemory(device.get(), bufferMemory);
+        vkMapMemory(device.get(), allocatedBlock->memory, allocatedBlock->offset, size, 0, &cpuAccessibleMemory);
+        memcpy(cpuAccessibleMemory, data, size);
+        vkUnmapMemory(device.get(), allocatedBlock->memory);
     }
 
     VkBuffer VKBuffer::getBuffer() const {

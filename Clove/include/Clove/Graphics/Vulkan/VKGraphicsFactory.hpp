@@ -1,10 +1,14 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsFactory.hpp"
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
+
+namespace clv::gfx::vk {
+    class MemoryAllocator;
+}
 
 namespace clv::gfx::vk {
     class VKGraphicsFactory : public GraphicsFactory {
@@ -13,6 +17,8 @@ namespace clv::gfx::vk {
         DevicePointer devicePtr;
 
         QueueFamilyIndices queueFamilyIndices;
+
+        std::shared_ptr<MemoryAllocator> memoryAllocator;
 
         //FUNCTIONS
     public:
