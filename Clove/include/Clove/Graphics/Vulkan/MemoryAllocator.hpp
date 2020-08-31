@@ -24,6 +24,13 @@ namespace clv::gfx::vk {
                 , size(size)
                 , memory(memory) {
             }
+
+            friend bool operator==(const Chunk& lhs, const Chunk& rhs) {
+                return lhs.offset == rhs.offset &&
+                    lhs.size == rhs.size &&
+                    lhs.memory == rhs.memory &&
+                    lhs.free == rhs.free;
+            }
         };
 
     private:
@@ -39,7 +46,7 @@ namespace clv::gfx::vk {
             VkDeviceSize size{ 0 };
             uint32_t memoryTypeIndex{ 0 };
 
-            std::vector<std::unique_ptr<Chunk>> chunks;//Having pointers here just so resizing the vector isn't an issue
+            std::list<Chunk> chunks;
 
             //FUNCTIONS
         public:

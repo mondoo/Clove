@@ -27,7 +27,7 @@ namespace clv::gfx::vk {
 
         vkAllocateMemory(device, &info, nullptr, &memory);
 
-        chunks.emplace_back(std::make_unique<Chunk>(0, size, memory));
+        chunks.emplace_back(0, size, memory);
     }
 
     MemoryAllocator::Block::Block(Block&& other) noexcept
@@ -46,7 +46,7 @@ namespace clv::gfx::vk {
         memoryTypeIndex = other.memoryTypeIndex;
         chunks          = std::move(other.chunks);
 
-        other.memory    = VK_NULL_HANDLE;//Make sure the moved block no longer points to our memory
+        other.memory = VK_NULL_HANDLE;//Make sure the moved block no longer points to our memory
 
         return *this;
     }
@@ -56,32 +56,30 @@ namespace clv::gfx::vk {
     }
 
     const MemoryAllocator::Chunk* MemoryAllocator::Block::allocate(const VkDeviceSize size, const VkDeviceSize alignment) {
-        for(size_t i = 0; i < std::size(chunks); ++i) {
-            if(chunks[i]->free) {
-                const VkDeviceSize remainingAlignment  = chunks[i]->offset % alignment;                               //How much we're off from the alignment
+        for(auto chunk = std::begin(chunks); chunk != std::end(chunks); ++chunk) {
+            if(chunk->free) {
+                const VkDeviceSize remainingAlignment  = chunk->offset % alignment;                                   //How much we're off from the alignment
                 const VkDeviceSize alignmentCorrection = remainingAlignment != 0 ? alignment - remainingAlignment : 0;//How much we compensate for to achieve a multiple of alignment
 
-                if(const VkDeviceSize chunkSize = chunks[i]->size - alignmentCorrection; chunkSize >= size) {
-                    const auto prevOffset = chunks[i]->offset;
+                if(const VkDeviceSize chunkSize = chunk->size - alignmentCorrection; chunkSize >= size) {
+                    const auto prevOffset = chunk->offset;
 
-                    chunks[i]->offset += alignmentCorrection;
-                    chunks[i]->size = chunkSize;
-                    chunks[i]->free = false;
+                    chunk->offset += alignmentCorrection;
+                    chunk->size = chunkSize;
+                    chunk->free = false;
 
                     //Add back the extra bits to the chunk to the left
-                    if(const auto extraBits = chunks[i]->offset - prevOffset; extraBits > 0) {
-                        chunks[i - 1]->size += extraBits;
+                    if(const auto extraBits = chunk->offset - prevOffset; extraBits > 0) {
+                        std::prev(chunk)->size += extraBits;
                     }
 
                     //If we have room left in the chunk, split it and put the excess back in the list.
-                    if(const VkDeviceSize remainingSize = chunks[i]->size - size; remainingSize > 0) {
-                        auto newChunk = std::make_unique<Chunk>(chunks[i]->offset + size, remainingSize, memory);
-                        chunks.insert(std::begin(chunks) + i + 1, std::move(newChunk));
-
-                        chunks[i]->size = size;
+                    if(const VkDeviceSize remainingSize = chunk->size - size; remainingSize > 0) {
+                        chunks.insert(std::next(chunk), Chunk(chunk->offset + size, remainingSize, memory));
+                        chunk->size = size;
                     }
 
-                    return chunks[i].get();
+                    return &*chunk;
                 }
             }
         }
@@ -89,38 +87,39 @@ namespace clv::gfx::vk {
         return nullptr;
     }
 
-    bool MemoryAllocator::Block::free(const Chunk*& chunk) {
-        for(size_t i = 0; i < std::size(chunks); ++i) {
-            if(chunks[i].get() == chunk) {
-                chunks[i]->free   = true;
+    bool MemoryAllocator::Block::free(const Chunk*& chunkPtr) {
+        for(auto chunk = std::begin(chunks); chunk != std::end(chunks); ++chunk) {
+            if(*chunk == *chunkPtr) {
+                chunk->free = true;
 
                 bool removeIndex = false;
                 bool removeRight = false;
 
                 //Merge neighbouring chunks
-                if(i < std::size(chunks) - 1 && chunks[i + 1]->free) {
+                if(auto rightChunk = std::next(chunk); rightChunk != std::end(chunks) && rightChunk->free) {
                     //Merge right into us
-                    chunks[i]->size += chunks[i + 1]->size;
+                    chunk->size += rightChunk->size;
 
                     removeRight = true;
                 }
-                if(i > 0 && chunks[i - 1]->free) {
-                    //Merge ourselves into left
-                    chunks[i - 1]->size += chunks[i]->size;
+                if(chunk != std::begin(chunks)) {
+                    if(auto leftChunk = std::prev(chunk); leftChunk->free) {
+                        //Merge ourselves into left
+                        leftChunk->size += chunk->size;
 
-                    removeIndex = true;
+                        removeIndex = true;
+                    }
                 }
-                
 
                 //Remove the right most first to preserve indices
-                if (removeRight){
-                    chunks.erase(std::begin(chunks) + i + 1);
+                if(removeRight) {
+                    chunks.erase(std::next(chunk));
                 }
                 if(removeIndex) {
-                    chunks.erase(std::begin(chunks) + i);
+                    chunks.erase(chunk);
                 }
 
-                chunk = nullptr;
+                chunkPtr = nullptr;
                 return true;
             }
         }
