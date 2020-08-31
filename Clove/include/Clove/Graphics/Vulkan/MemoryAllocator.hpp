@@ -64,14 +64,9 @@ namespace clv::gfx::vk {
             const Chunk* allocate(const VkDeviceSize size, const VkDeviceSize alignment);
             bool free(const Chunk*& chunkPtr);
 
-            //TODO: Move to .inl
-            inline VkDeviceSize getSize() const {
-                return size;
-            }
+            inline VkDeviceSize getSize() const;
 
-            inline uint32_t getMemoryTypeIndex() const {
-                return memoryTypeIndex;
-            }
+            inline uint32_t getMemoryTypeIndex() const;
         };
 
         //VARIABLES
@@ -99,3 +94,5 @@ namespace clv::gfx::vk {
         void free(const Chunk*& chunk);
     };
 }
+
+#include "MemoryAllocator.inl"
