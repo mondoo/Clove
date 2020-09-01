@@ -5,7 +5,6 @@
 
 #include <Clove/Graphics/GraphicsTypes.hpp>
 
-//TEMP
 #include "Clove/Graphics/DescriptorSetLayout.hpp"
 #include "Clove/Graphics/GraphicsBuffer.hpp"
 
@@ -41,6 +40,9 @@ namespace blb::rnd {
             clv::mth::mat4f projection;
 
             std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
+
+            uint32_t numLights{ 0 };
+            std::array<DirectionalLightData, MAX_LIGHTS> directionalLights;
         } currentFrameData;
 
         struct ModelViewProj {

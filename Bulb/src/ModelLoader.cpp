@@ -158,7 +158,9 @@ namespace blb::ModelLoader {
                 vertices[i].position.z = mesh->mVertices[i].z;
 			}
 			if(mesh->HasNormals()) {
-				//TODO
+                vertices[i].normal.x = mesh->mNormals[i].x;
+                vertices[i].normal.y = mesh->mNormals[i].y;
+                vertices[i].normal.z = mesh->mNormals[i].z;
 			}
 			if(mesh->HasTextureCoords(0)) {
                 vertices[i].texCoord.x = mesh->mTextureCoords[0][i].x;
