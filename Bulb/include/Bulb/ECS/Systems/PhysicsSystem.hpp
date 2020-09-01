@@ -71,5 +71,8 @@ namespace blb::ecs {
 
         void onRigidBodyAdded(const ComponentAddedEvent<RigidBodyComponent>& event);
         void onRigidBodyRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event);
+
+        void addBodyToWorld(btDiscreteDynamicsWorld* world, const RigidBodyComponent& rigidBodyComponent);
+        void addColliderToWorld(btDiscreteDynamicsWorld* world, const CubeColliderComponent& colliderComponent);
     };
 }
