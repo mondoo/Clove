@@ -225,7 +225,7 @@ namespace blb::ecs {
     }
 
     void PhysicsSystem::addColliderToWorld(btDiscreteDynamicsWorld* world, const CubeColliderComponent& colliderComponent) {
-        dynamicsWorld->addCollisionObject(colliderComponent.collisionObject.get());
+        dynamicsWorld->addCollisionObject(colliderComponent.collisionObject.get(), ~0, ~0); //Add the collider to every group and collide with every other group
         colliderComponent.collisionObject->setUserIndex(colliderComponent.getEntityID());
     }
 }
