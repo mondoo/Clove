@@ -34,7 +34,7 @@ namespace blb::rnd {
             auto transferBuffer    = factory.createBuffer(std::move(bufferDesc));
 
             uint32_t white = 0xffffffff;
-            transferBuffer->map(&white, 4);
+            transferBuffer->map(&white, 0, 4);
 
             //Change the layout of the default image, write the buffer into it and then release the queue ownership
             clv::gfx::ImageMemoryBarrierInfo layoutTransferInfo{};

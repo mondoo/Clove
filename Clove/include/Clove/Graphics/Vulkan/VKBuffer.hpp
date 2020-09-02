@@ -36,7 +36,7 @@ namespace clv::gfx::vk {
 
         ~VKBuffer();
 
-        void map(const void* data, const size_t size) override;
+        void map(const void* data, const size_t offset, const size_t size) override;
 
         VkBuffer getBuffer() const;
     };

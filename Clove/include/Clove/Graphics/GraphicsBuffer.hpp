@@ -31,7 +31,7 @@ namespace clv::gfx {
     public:
         virtual ~GraphicsBuffer() = default;
 
-        virtual void map(const void* data, const size_t size) = 0;
+        virtual void map(const void* data, const size_t offset, const size_t size) = 0;
     };
 
     GARLIC_ENUM_BIT_FLAG_OPERATORS(GraphicsBuffer::UsageMode, GraphicsBuffer::UsageType)

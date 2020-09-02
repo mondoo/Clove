@@ -45,8 +45,8 @@ namespace blb::rnd{
         indexBuffer = factory.createBuffer(indexDescriptor);
 
         //Map the data int system memory
-        stagingBufferVertex->map(std::data(this->vertices), vertexBufferSize);
-        stagingBufferIndex->map(std::data(this->indices), indexBufferSize);
+        stagingBufferVertex->map(std::data(this->vertices), 0, vertexBufferSize);
+        stagingBufferIndex->map(std::data(this->indices), 0, indexBufferSize);
 
         //Transfer the data to video memory
         auto transferQueue = factory.createTransferQueue({ clv::gfx::QueueFlags::Transient });

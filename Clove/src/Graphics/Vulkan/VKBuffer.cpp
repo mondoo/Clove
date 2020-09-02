@@ -70,12 +70,10 @@ namespace clv::gfx::vk {
         memoryAllocator->free(allocatedBlock);
     }
 
-    void VKBuffer::map(const void* data, const size_t size) {
-        GARLIC_ASSERT(size <= allocatedBlock->size, "{0}: Cannot map memory that is bigger than the buffer has allocated", GARLIC_FUNCTION_NAME);
+    void VKBuffer::map(const void* data, const size_t offset, const size_t size) {
+        void* cpuAccessibleMemory{ nullptr };
 
-        void* cpuAccessibleMemory;
-
-        vkMapMemory(device.get(), allocatedBlock->memory, allocatedBlock->offset, size, 0, &cpuAccessibleMemory);
+        vkMapMemory(device.get(), allocatedBlock->memory, allocatedBlock->offset + offset, size, 0, &cpuAccessibleMemory);
         memcpy(cpuAccessibleMemory, data, size);
         vkUnmapMemory(device.get(), allocatedBlock->memory);
     }
