@@ -2,7 +2,7 @@
 
 #define MAX_LIGHTS 10
 
-layout(binding = 1) uniform sampler2D texSampler;
+layout(set = 0, binding = 1) uniform sampler2D texSampler;
 
 struct DirectionalLightData{
 	vec3 direction;
@@ -23,12 +23,12 @@ struct DirectionalLightData{
 //	
 //	float farplane;
 //};
-layout(binding = 2) uniform Lights{
+layout(std140, set = 0, binding = 2) uniform Lights{
 	DirectionalLightData directionalLights[MAX_LIGHTS];
 	//PointLightData pointLights[MAX_LIGHTS];
 } lights;
 
-layout(binding = 3) uniform NumLights{
+layout(std140, set = 0, binding = 3) uniform NumLights{
 	int numDirLights;
 } numLights;
 
