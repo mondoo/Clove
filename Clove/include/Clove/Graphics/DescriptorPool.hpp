@@ -19,7 +19,7 @@ namespace clv::gfx {
     class DescriptorPool {
         //TYPES
     public:
-        enum class Flag{
+        enum class Flag {
             None,
             FreeDescriptorSet /**< Descriptor sets can be freed */
         };
