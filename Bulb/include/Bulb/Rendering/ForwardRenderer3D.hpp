@@ -41,8 +41,8 @@ namespace blb::rnd {
 
             std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
 
-            uint32_t numLights{ 0 };
-            std::array<DirectionalLightData, MAX_LIGHTS> directionalLights;
+            LightDataArray lights;
+            LightCount numLights;
         } currentFrameData;
 
         struct ModelViewProj {

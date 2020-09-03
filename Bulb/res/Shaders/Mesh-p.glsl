@@ -11,25 +11,26 @@ struct DirectionalLightData{
 	vec3 diffuse;
 	vec3 specular;
 };
-//struct PointLightData{
-//	float3 position;
-//	
-//	float constant;
-//	float3 ambient;
-//	float linearV;
-//	float3 diffuse;
-//	float quadratic;
-//	float3 specular;
-//	
-//	float farplane;
-//};
+struct PointLightData{
+	vec3 position;
+	
+	float constant;
+	vec3 ambient;
+	float linearV;
+	vec3 diffuse;
+	float quadratic;
+	vec3 specular;
+	
+	float farplane;
+};
 layout(std140, set = 0, binding = 2) uniform Lights{
 	DirectionalLightData directionalLights[MAX_LIGHTS];
-	//PointLightData pointLights[MAX_LIGHTS];
+	PointLightData pointLights[MAX_LIGHTS]; //Unused: Just keeping here for padding for now
 } lights;
 
 layout(std140, set = 0, binding = 3) uniform NumLights{
 	int numDirLights;
+	int numPointLights; //Unused: Just keeping here for padding for now
 } numLights;
 
 layout(location = 0) in vec3 fragColour;

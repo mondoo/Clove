@@ -33,11 +33,11 @@ namespace blb::rnd {
         createDepthBuffer();
 
         //TODO: Retrieve these from the shaders? Can these be created if the shader doesn't want them?
-        clv::gfx::DescriptorBindingInfo uboLayoutBinding{};
-        uboLayoutBinding.binding   = 0;
-        uboLayoutBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
-        uboLayoutBinding.arraySize = 1;
-        uboLayoutBinding.stage     = clv::gfx::DescriptorStage::Vertex;
+        clv::gfx::DescriptorBindingInfo mvpLayoutBinding{};
+        mvpLayoutBinding.binding   = 0;
+        mvpLayoutBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
+        mvpLayoutBinding.arraySize = 1;
+        mvpLayoutBinding.stage     = clv::gfx::DescriptorStage::Vertex;
 
         clv::gfx::DescriptorBindingInfo samplerLayoutBinding{};
         samplerLayoutBinding.binding   = 1;
@@ -45,8 +45,20 @@ namespace blb::rnd {
         samplerLayoutBinding.arraySize = 1;
         samplerLayoutBinding.stage     = clv::gfx::DescriptorStage::Pixel;
 
+        clv::gfx::DescriptorBindingInfo lightDataBindingInfo{};
+        lightDataBindingInfo.binding   = 2;
+        lightDataBindingInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
+        lightDataBindingInfo.arraySize = 1;
+        lightDataBindingInfo.stage     = clv::gfx::DescriptorStage::Pixel;
+
+        clv::gfx::DescriptorBindingInfo lightCountBindingInfo{};
+        lightCountBindingInfo.binding  = 3;
+        lightCountBindingInfo.type     = clv::gfx::DescriptorType::UniformBuffer;
+        lightCountBindingInfo.arraySize = 1;
+        lightCountBindingInfo.stage     = clv::gfx::DescriptorStage::Pixel;
+
         clv::gfx::DescriptorSetLayout::Descriptor descriptorSetLayoutDescriptor{};
-        descriptorSetLayoutDescriptor.bindings = { uboLayoutBinding, samplerLayoutBinding };
+        descriptorSetLayoutDescriptor.bindings = { mvpLayoutBinding, samplerLayoutBinding, lightDataBindingInfo, lightCountBindingInfo };
 
         descriptorSetLayout = graphicsFactory->createDescriptorSetLayout(descriptorSetLayoutDescriptor);
 
@@ -91,6 +103,7 @@ namespace blb::rnd {
 
     void ForwardRenderer3D::begin() {
         currentFrameData.meshes.clear();
+        currentFrameData.numLights.numDirectional = 0;
     }
 
     void ForwardRenderer3D::submitCamera(const Camera& camera) {
@@ -106,6 +119,7 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::submitLight(const DirectionalLight& light) {
+        currentFrameData.lights.directionalLights[currentFrameData.numLights.numDirectional++] = light.data;
     }
 
     void ForwardRenderer3D::submitLight(const PointLight& light) {
@@ -181,9 +195,26 @@ namespace blb::rnd {
             ubo.view  = currentFrameData.view;
             ubo.proj  = currentFrameData.projection;
 
-            uniformBuffers[imageIndex][meshIndex]->map(&ubo, sizeof(ubo));
+            //TEMP: Adjusting the offsets
+            //TODO: Retrieve this from the device limits
+            constexpr size_t minOffUniformBufferAlignment = 256;
 
-            descriptorSets[imageIndex][meshIndex]->write(*uniformBuffers[imageIndex][meshIndex], 0, sizeof(ModelViewProj), 0);
+            const size_t uboSize = sizeof(ubo);
+            const size_t lightSize = sizeof(currentFrameData.lights);
+            const size_t numLightsSize = sizeof(currentFrameData.numLights);
+
+            const size_t uboOffset = 0;
+            const size_t lightOffset = uboSize + (minOffUniformBufferAlignment - (uboSize % minOffUniformBufferAlignment));
+            const size_t numLightsOffset = (lightOffset + lightSize) - (minOffUniformBufferAlignment - ((lightOffset + lightSize) % minOffUniformBufferAlignment));
+            //~TEMP
+
+            uniformBuffers[imageIndex][meshIndex]->map(&ubo, uboOffset, uboSize);
+            uniformBuffers[imageIndex][meshIndex]->map(&currentFrameData.lights, lightOffset, lightSize);
+            uniformBuffers[imageIndex][meshIndex]->map(&currentFrameData.numLights, numLightsOffset, numLightsSize);
+
+            descriptorSets[imageIndex][meshIndex]->write(*uniformBuffers[imageIndex][meshIndex], uboOffset, uboSize, 0);
+            descriptorSets[imageIndex][meshIndex]->write(*uniformBuffers[imageIndex][meshIndex], lightOffset, lightSize, 2);
+            descriptorSets[imageIndex][meshIndex]->write(*uniformBuffers[imageIndex][meshIndex], numLightsOffset, numLightsSize, 3);
             descriptorSets[imageIndex][meshIndex]->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
 
             commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
@@ -360,9 +391,12 @@ namespace blb::rnd {
     std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> ForwardRenderer3D::createUniformBuffers(const uint32_t bufferCount) {
         std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers(bufferCount);
 
+        constexpr size_t minOffUniformBufferAlignment = 256; //TODO: Get from the device limits
+        constexpr size_t padding                      = minOffUniformBufferAlignment * 2;
+
         for(size_t i = 0; i < bufferCount; ++i) {
             clv::gfx::GraphicsBuffer::Descriptor descriptor{};
-            descriptor.size        = sizeof(ModelViewProj);
+            descriptor.size        = sizeof(ModelViewProj) + sizeof(LightDataArray) + sizeof(LightCount) + padding;
             descriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::UniformBuffer;
             descriptor.sharingMode = clv::gfx::SharingMode::Exclusive;
             descriptor.memoryType  = clv::gfx::MemoryType::SystemMemory;
@@ -376,7 +410,7 @@ namespace blb::rnd {
     std::shared_ptr<clv::gfx::DescriptorPool> ForwardRenderer3D::createDescriptorPool(const uint32_t setCount) {
         clv::gfx::DescriptorInfo uboInfo{};
         uboInfo.type  = clv::gfx::DescriptorType::UniformBuffer;
-        uboInfo.count = setCount;
+        uboInfo.count = setCount * 3; //We have 3 uniform buffers
 
         clv::gfx::DescriptorInfo samplerInfo{};
         samplerInfo.type  = clv::gfx::DescriptorType::CombinedImageSampler;
