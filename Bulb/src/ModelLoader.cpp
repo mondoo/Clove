@@ -217,13 +217,17 @@ namespace blb::ModelLoader {
 		return std::make_shared<rnd::Mesh>(std::move(vertices), std::move(indices), std::move(meshMaterial), *graphicsFactory);
 	}
 
+    static const aiScene* openFile(std::string_view modelFilePath, Assimp::Importer& importer) {
+        return importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
+    }
+
 	rnd::StaticModel loadStaticModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory>& graphicsFactory) {
 		CLV_PROFILE_FUNCTION();
 
 		std::vector<std::shared_ptr<rnd::Mesh>> meshes;
 
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs);
+        const aiScene* scene = openFile(modelFilePath.data(), importer);
 		if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
 			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Assimp Error: {0}", importer.GetErrorString());
 			return { meshes };
@@ -243,7 +247,7 @@ namespace blb::ModelLoader {
         std::vector<std::shared_ptr<rnd::Mesh>> meshes;
 
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs);
+        const aiScene* scene = openFile(modelFilePath.data(), importer);
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, nullptr, {} };
