@@ -2,6 +2,7 @@
 
 #include "Bulb/Rendering/ShaderBufferTypes.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
+#include "Clove/Graphics/GraphicsDevice.hpp"
 
 #include <Clove/Graphics/GraphicsTypes.hpp>
 
@@ -54,6 +55,7 @@ namespace blb::rnd {
         std::vector<std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>>> uniformBuffers;
         std::shared_ptr<clv::gfx::Sampler> sampler;
 
+        std::shared_ptr<clv::gfx::GraphicsDevice> graphicsDevice;
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
         std::shared_ptr<clv::gfx::GraphicsQueue> graphicsQueue;

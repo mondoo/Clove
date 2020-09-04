@@ -72,6 +72,7 @@ set(
 		${CLV_SOURCE}/Graphics/Graphics.cpp
 		${CLV_INCLUDE}/Graphics/GraphicsBuffer.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsCommandBuffer.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsDevice.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsFactory.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsImage.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsImageView.hpp
@@ -112,6 +113,8 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKFramebuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsCommandBuffer.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsCommandBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsDevice.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsDevice.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsFactory.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsFactory.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsQueue.hpp

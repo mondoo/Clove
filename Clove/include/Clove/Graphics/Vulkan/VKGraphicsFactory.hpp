@@ -17,13 +17,14 @@ namespace clv::gfx::vk {
         DevicePointer devicePtr;
 
         QueueFamilyIndices queueFamilyIndices;
+        SwapchainSupportDetails swapchainSupportDetails;
 
         std::shared_ptr<MemoryAllocator> memoryAllocator;
 
         //FUNCTIONS
     public:
         VKGraphicsFactory() = delete;
-        VKGraphicsFactory(void* nativeWindow);
+        VKGraphicsFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices, SwapchainSupportDetails swapchainSupportDetails);
 
         VKGraphicsFactory(const VKGraphicsFactory& other) = delete;
         VKGraphicsFactory(VKGraphicsFactory&& other) noexcept;
@@ -59,6 +60,5 @@ namespace clv::gfx::vk {
 
         std::unique_ptr<Sampler> createSampler(Sampler::Descriptor descriptor) override;
 
-        void waitForIdleDevice() override;
     };
 }

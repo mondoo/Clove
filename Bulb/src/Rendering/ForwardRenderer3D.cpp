@@ -21,7 +21,8 @@ namespace blb::rnd {
         windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
         windowSize         = window.getSize();
 
-        graphicsFactory = clv::gfx::createGraphicsFactory(api, window.getNativeWindow());
+        graphicsDevice  = clv::gfx::createGraphicsDevice(api, window.getNativeWindow());
+        graphicsFactory = graphicsDevice->getGraphicsFactory();
 
         graphicsQueue = graphicsFactory->createGraphicsQueue({ clv::gfx::QueueFlags::ReuseBuffers });
         presentQueue  = graphicsFactory->createPresentQueue();
@@ -90,7 +91,7 @@ namespace blb::rnd {
 
     ForwardRenderer3D::~ForwardRenderer3D() {
         //Wait for an idle device before shutting down so resources aren't freed while in use
-        graphicsFactory->waitForIdleDevice();
+        graphicsDevice->waitForIdleDevice();
 
         //Reset these manually as they would fail after the device has been destroyed (how to solve this?)
         uniformBuffers.clear();
@@ -268,7 +269,7 @@ namespace blb::rnd {
             return;
         }
 
-        graphicsFactory->waitForIdleDevice();
+        graphicsDevice->waitForIdleDevice();
 
         //Explicitly free resources to avoid problems when recreating the swap chain itself
         swapchain.reset();
