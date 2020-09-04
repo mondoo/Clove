@@ -197,8 +197,7 @@ namespace blb::rnd {
             ubo.proj  = currentFrameData.projection;
 
             //TEMP: Adjusting the offsets
-            //TODO: Retrieve this from the device limits
-            constexpr size_t minOffUniformBufferAlignment = 256;
+            const size_t minOffUniformBufferAlignment = graphicsDevice->getLimits().minUniformBufferOffsetAlignment;
 
             const size_t uboSize = sizeof(ubo);
             const size_t lightSize = sizeof(currentFrameData.lights);
@@ -392,8 +391,8 @@ namespace blb::rnd {
     std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> ForwardRenderer3D::createUniformBuffers(const uint32_t bufferCount) {
         std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers(bufferCount);
 
-        constexpr size_t minOffUniformBufferAlignment = 256; //TODO: Get from the device limits
-        constexpr size_t padding                      = minOffUniformBufferAlignment * 2;
+        const size_t minOffUniformBufferAlignment = graphicsDevice->getLimits().minUniformBufferOffsetAlignment;
+        const size_t padding                      = minOffUniformBufferAlignment * 2; //Add padding so that each element has room to be aligned
 
         for(size_t i = 0; i < bufferCount; ++i) {
             clv::gfx::GraphicsBuffer::Descriptor descriptor{};

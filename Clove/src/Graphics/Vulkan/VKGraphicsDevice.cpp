@@ -148,10 +148,6 @@ namespace clv::gfx::vk {
     static bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, const std::vector<const char*>& extensions) {
         //TODO: It might be better to give each physical device a score in future, so we can try and get the best one but fall back to others if not
 
-        //Basic properties (name, type, supported vk version)
-        //VkPhysicalDeviceProperties devicePoperties;
-        //vkGetPhysicalDeviceProperties(device, &devicePoperties);
-
         //Feature (texture compression, 64 bit floats, multi viewport rendering)
         VkPhysicalDeviceFeatures deviceFeatures;
         vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
@@ -356,5 +352,14 @@ namespace clv::gfx::vk {
 
     void VKGraphicsDevice::waitForIdleDevice() {
         vkDeviceWaitIdle(devicePtr.get());
+    }
+
+    GraphicsDevice::Limits VKGraphicsDevice::getLimits() const {
+        VkPhysicalDeviceProperties devicePoperties;
+        vkGetPhysicalDeviceProperties(devicePtr.getPhysical(), &devicePoperties);
+
+        return {
+            devicePoperties.limits.minUniformBufferOffsetAlignment
+        };
     }
 }

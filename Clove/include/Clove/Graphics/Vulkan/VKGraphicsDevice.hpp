@@ -32,5 +32,7 @@ namespace clv::gfx::vk {
         std::shared_ptr<GraphicsFactory> getGraphicsFactory() const override;
 
         void waitForIdleDevice() override;
+
+        Limits getLimits() const override;
     };
 }
