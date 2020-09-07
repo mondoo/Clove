@@ -4,7 +4,7 @@
 
 namespace blb::rnd{
     Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices, clv::gfx::GraphicsFactory& factory) 
-        : Mesh(vertices, indices, Material{ factory }, factory) {
+        : Mesh(std::move(vertices), std::move(indices), Material{ factory }, factory) {
     }
 
     Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices, Material material, clv::gfx::GraphicsFactory& factory) 
