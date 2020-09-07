@@ -16,7 +16,11 @@ namespace clv::gfx {
     };
 
     /**
-     * @brief Describes all of the bindings that the shaders will use.
+     * @brief Describes the layout of an entire DescriptorSet.
+     * @details A 'set' is defined in the shader by: layout(set = 0, binding = 1). This
+     * layout describes the type of binding in each binding slot for a given set. The index
+     * of the set is defined in the array of DescriptorSetLayouts given to the 
+     * PiplineObject::Descriptor.
      */
     class DescriptorSetLayout {
         //TYPES

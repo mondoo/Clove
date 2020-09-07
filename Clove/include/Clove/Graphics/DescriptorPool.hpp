@@ -8,7 +8,7 @@ namespace clv::gfx {
 
     struct DescriptorInfo {
         DescriptorType type;
-        uint32_t count; /**< Number of this type to allocate across all sets. */
+        uint32_t count; /**< Number of this type to allocate across all DescriptorSets. */
     };
 }
 
@@ -21,13 +21,13 @@ namespace clv::gfx {
     public:
         enum class Flag {
             None,
-            FreeDescriptorSet /**< Descriptor sets can be freed */
+            FreeDescriptorSet /**< DescriptorSets can be freed */
         };
 
         struct Descriptor {
             std::vector<DescriptorInfo> poolTypes;
             Flag flag;
-            uint32_t maxSets; /**< The maximum amount of sets that can be allocated from this pool. */
+            uint32_t maxSets; /**< The maximum amount of DescriptorSets that can be allocated from this pool. */
         };
 
         //FUNCTIONS
