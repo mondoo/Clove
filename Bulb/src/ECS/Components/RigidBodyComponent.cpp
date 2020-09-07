@@ -91,8 +91,8 @@ namespace blb::ecs {
             standInShape->calculateLocalInertia(descriptor.mass, localInertia);
         }
 
-        btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(descriptor.mass, myMotionState, standInShape.get(), localInertia);
+        motionState = std::make_unique<btDefaultMotionState>(startTransform);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(descriptor.mass, motionState.get(), standInShape.get(), localInertia);
 
         body = std::make_unique<btRigidBody>(rbInfo);
 

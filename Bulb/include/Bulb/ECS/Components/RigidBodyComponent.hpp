@@ -4,6 +4,7 @@
 
 class btSphereShape;
 class btRigidBody;
+class btDefaultMotionState;
 
 namespace blb::ecs {
     /**
@@ -18,7 +19,7 @@ namespace blb::ecs {
 
         //TYPES
     public:
-        struct Descriptor{
+        struct Descriptor {
             float mass       = 1.0f;
             bool isKinematic = false; /**< If true, stops the body being affected by gravity */
 
@@ -32,6 +33,8 @@ namespace blb::ecs {
 
         std::unique_ptr<btSphereShape> standInShape; /**< Stand in shape until a _ColliderComponent has been added */
         std::unique_ptr<btRigidBody> body;
+
+        std::unique_ptr<btDefaultMotionState> motionState;
 
         //FUNCTIONS
     public:
