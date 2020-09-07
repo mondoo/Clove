@@ -8,7 +8,7 @@ namespace clv::gfx {
 
     struct DescriptorInfo {
         DescriptorType type;
-        uint32_t count; /**< number of this type to allocate */
+        uint32_t count; /**< Number of this type to allocate across all sets. */
     };
 }
 
@@ -27,7 +27,7 @@ namespace clv::gfx {
         struct Descriptor {
             std::vector<DescriptorInfo> poolTypes;
             Flag flag;
-            uint32_t maxSets; /**< the maximum amount of sets that can be allocated */
+            uint32_t maxSets; /**< The maximum amount of sets that can be allocated from this pool. */
         };
 
         //FUNCTIONS
