@@ -355,7 +355,7 @@ namespace blb::rnd {
         depthDescriptor.usageFlags  = clv::gfx::GraphicsImage::UsageMode::DepthStencilAttachment;
         depthDescriptor.dimensions  = { swapchain->getExtent().x, swapchain->getExtent().y };
         depthDescriptor.format      = clv::gfx::ImageFormat::D32_SFLOAT;
-        depthDescriptor.sharingMode = clv::gfx::SharingMode::Concurrent;
+        depthDescriptor.sharingMode = clv::gfx::SharingMode::Exclusive;
         depthDescriptor.memoryType  = clv::gfx::MemoryType::VideoMemory;
 
         depthImage     = graphicsFactory->createImage(std::move(depthDescriptor));
