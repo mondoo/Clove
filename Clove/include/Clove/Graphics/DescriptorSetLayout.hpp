@@ -8,7 +8,7 @@ namespace clv::gfx {
         Pixel
     };
 
-    struct DescriptorBindingInfo {
+    struct DescriptorSetBindingInfo {
         uint32_t binding{ 0 };
         DescriptorType type;
         size_t arraySize{ 1 };/**< If this descriptor represents an array it'll be the size of the array else 1 */
@@ -26,7 +26,7 @@ namespace clv::gfx {
         //TYPES
     public:
         struct Descriptor {
-            std::vector<DescriptorBindingInfo> bindings;
+            std::vector<DescriptorSetBindingInfo> bindings;
         };
 
         //FUNCTIONS

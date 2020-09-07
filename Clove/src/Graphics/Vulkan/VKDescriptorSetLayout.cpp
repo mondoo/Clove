@@ -20,7 +20,7 @@ namespace clv::gfx::vk {
         std::vector<VkDescriptorSetLayoutBinding> layoutBindings(std::size(descriptor.bindings));
 
         for(size_t i = 0; i < std::size(layoutBindings); ++i) {
-            const DescriptorBindingInfo& bindingDescriptor = descriptor.bindings[i];
+            const DescriptorSetBindingInfo& bindingDescriptor = descriptor.bindings[i];
 
             layoutBindings[i].binding            = bindingDescriptor.binding;
             layoutBindings[i].descriptorType     = getDescriptorType(bindingDescriptor.type);

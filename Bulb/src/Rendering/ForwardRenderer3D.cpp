@@ -34,25 +34,25 @@ namespace blb::rnd {
         createDepthBuffer();
 
         //TODO: Retrieve these from the shaders? Can these be created if the shader doesn't want them?
-        clv::gfx::DescriptorBindingInfo mvpLayoutBinding{};
+        clv::gfx::DescriptorSetBindingInfo mvpLayoutBinding{};
         mvpLayoutBinding.binding   = 0;
         mvpLayoutBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
         mvpLayoutBinding.arraySize = 1;
         mvpLayoutBinding.stage     = clv::gfx::DescriptorStage::Vertex;
 
-        clv::gfx::DescriptorBindingInfo samplerLayoutBinding{};
+        clv::gfx::DescriptorSetBindingInfo samplerLayoutBinding{};
         samplerLayoutBinding.binding   = 1;
         samplerLayoutBinding.type      = clv::gfx::DescriptorType::CombinedImageSampler;
         samplerLayoutBinding.arraySize = 1;
         samplerLayoutBinding.stage     = clv::gfx::DescriptorStage::Pixel;
 
-        clv::gfx::DescriptorBindingInfo lightDataBindingInfo{};
+        clv::gfx::DescriptorSetBindingInfo lightDataBindingInfo{};
         lightDataBindingInfo.binding   = 2;
         lightDataBindingInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
         lightDataBindingInfo.arraySize = 1;
         lightDataBindingInfo.stage     = clv::gfx::DescriptorStage::Pixel;
 
-        clv::gfx::DescriptorBindingInfo lightCountBindingInfo{};
+        clv::gfx::DescriptorSetBindingInfo lightCountBindingInfo{};
         lightCountBindingInfo.binding  = 3;
         lightCountBindingInfo.type     = clv::gfx::DescriptorType::UniformBuffer;
         lightCountBindingInfo.arraySize = 1;
