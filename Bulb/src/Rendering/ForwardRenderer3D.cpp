@@ -4,6 +4,7 @@
 #include "Bulb/Rendering/Material.hpp"
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 #include "Bulb/Rendering/Vertex.hpp"
+#include "Bulb/Rendering/RenderingHelpers.hpp"
 #include "Bulb/TextureLoader.hpp"
 
 #include <Clove/Graphics/DescriptorSet.hpp>
@@ -33,35 +34,7 @@ namespace blb::rnd {
 
         createDepthBuffer();
 
-        //TODO: Retrieve these from the shaders? Can these be created if the shader doesn't want them?
-        clv::gfx::DescriptorSetBindingInfo mvpLayoutBinding{};
-        mvpLayoutBinding.binding   = 0;
-        mvpLayoutBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
-        mvpLayoutBinding.arraySize = 1;
-        mvpLayoutBinding.stage     = clv::gfx::DescriptorStage::Vertex;
-
-        clv::gfx::DescriptorSetBindingInfo samplerLayoutBinding{};
-        samplerLayoutBinding.binding   = 1;
-        samplerLayoutBinding.type      = clv::gfx::DescriptorType::CombinedImageSampler;
-        samplerLayoutBinding.arraySize = 1;
-        samplerLayoutBinding.stage     = clv::gfx::DescriptorStage::Pixel;
-
-        clv::gfx::DescriptorSetBindingInfo lightDataBindingInfo{};
-        lightDataBindingInfo.binding   = 2;
-        lightDataBindingInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
-        lightDataBindingInfo.arraySize = 1;
-        lightDataBindingInfo.stage     = clv::gfx::DescriptorStage::Pixel;
-
-        clv::gfx::DescriptorSetBindingInfo lightCountBindingInfo{};
-        lightCountBindingInfo.binding  = 3;
-        lightCountBindingInfo.type     = clv::gfx::DescriptorType::UniformBuffer;
-        lightCountBindingInfo.arraySize = 1;
-        lightCountBindingInfo.stage     = clv::gfx::DescriptorStage::Pixel;
-
-        clv::gfx::DescriptorSetLayout::Descriptor descriptorSetLayoutDescriptor{};
-        descriptorSetLayoutDescriptor.bindings = { mvpLayoutBinding, samplerLayoutBinding, lightDataBindingInfo, lightCountBindingInfo };
-
-        descriptorSetLayout = graphicsFactory->createDescriptorSetLayout(descriptorSetLayoutDescriptor);
+        descriptorSetLayout = createDescriptorSets(*graphicsFactory)[0]; //Just straight using index 0 for now
 
         recreateSwapchain();
 
