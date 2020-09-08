@@ -137,15 +137,22 @@ set(
 		${BLB_SOURCE}/UI/UIFrame.cpp
 )
 
+#Shader files that are only used for includes
 set(
-	ShaderFiles
+	ShaderIncludes
 		${BLB_RESOURCE}/Shaders/Constants.glsl
-		${BLB_RESOURCE}/Shaders/Mesh-v.glsl
-		${BLB_RESOURCE}/Shaders/Mesh-p.glsl
 )
 
-compileShader("${BLB_RESOURCE}/Shaders/Mesh-v.glsl" "Mesh-v.spirv" "vertex")
-compileShader("${BLB_RESOURCE}/Shaders/Mesh-p.glsl" "Mesh-p.spirv" "fragment")
+set(
+	ShaderFiles
+		${BLB_RESOURCE}/Shaders/Mesh-v.glsl
+		${BLB_RESOURCE}/Shaders/Mesh-p.glsl
+
+		${ShaderIncludes}
+)
+
+compileShader("${BLB_RESOURCE}/Shaders/Mesh-v.glsl" "Mesh-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/Mesh-p.glsl" "Mesh-p.spirv" "fragment" "${ShaderIncludes}")
 
 #Convert resources into c strings
 set(ResourceBinaries)
