@@ -139,6 +139,7 @@ set(
 
 set(
 	ShaderFiles
+		${BLB_RESOURCE}/Shaders/Constants.glsl
 		${BLB_RESOURCE}/Shaders/Mesh-v.glsl
 		${BLB_RESOURCE}/Shaders/Mesh-p.glsl
 )

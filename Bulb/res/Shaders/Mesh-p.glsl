@@ -1,8 +1,8 @@
 #version 450
 
-#define MAX_LIGHTS 10
+#include "Constants.glsl"
 
-layout(set = 0, binding = 1) uniform sampler2D texSampler;
+layout(set = SET_SHADER, binding = 1) uniform sampler2D texSampler;
 
 struct DirectionalLightData{
 	vec3 direction;
@@ -23,12 +23,12 @@ struct PointLightData{
 	
 	float farplane;
 };
-layout(std140, set = 0, binding = 2) uniform Lights{
+layout(std140, set = SET_SHADER, binding = 2) uniform Lights{
 	DirectionalLightData directionalLights[MAX_LIGHTS];
 	PointLightData pointLights[MAX_LIGHTS]; //Unused: Just keeping here for padding for now
 } lights;
 
-layout(std140, set = 0, binding = 3) uniform NumLights{
+layout(std140, set = SET_SHADER, binding = 3) uniform NumLights{
 	int numDirLights;
 	int numPointLights; //Unused: Just keeping here for padding for now
 } numLights;
