@@ -10,7 +10,7 @@ namespace clv::gfx {
         //TYPES
     public:
         struct Descriptor {
-            bool signaled{ false };
+            bool signaled{ false }; /**< If true, will initialised the Fence as signaled. */
         };
 
         //FUNCTIONS
@@ -18,9 +18,12 @@ namespace clv::gfx {
         virtual ~Fence() = default;
 
         /**
-         * @brief Makes the current thread wait until the Fence has been signaled
+         * @brief Makes the current thread wait until the Fence has been signaled.
          */
         virtual void wait() = 0;
+        /**
+         * @brief Resets the Fence back into an unsignaled state.
+         */
         virtual void reset() = 0;
     };
 }
