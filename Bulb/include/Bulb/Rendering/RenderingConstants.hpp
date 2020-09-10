@@ -14,10 +14,10 @@ namespace blb::rnd {
 	 * @brief Defines a mapping between set slots
 	 */
     enum class DescriptorSetSlots {
-        Shader   = 0, /**< Shader specific data. Unlikely to be shared across shaders. */
-        Model    = 1,
-        View     = 2,
-        Material = 3, /**< Diffuse, specular, colour, shininess etc.*/
+        PerPimitive = 0, /**< For data that will change per primitive submitted. */
+        View        = 1,
+        Lighting    = 2,
+
         Lighting = 4,
     };
 }
