@@ -102,10 +102,12 @@ set(
 		${CLV_INCLUDE}/Graphics/Vulkan/VKBuffer.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKBuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorPool.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorPool.inl
 		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptorPool.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorSet.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptorSet.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorSetLayout.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorSetLayout.inl
 		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptorSetLayout.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKFence.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKFence.cpp

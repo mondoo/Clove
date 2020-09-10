@@ -17,19 +17,20 @@ namespace clv::gfx::vk {
     }
 
     VKDescriptorPool::VKDescriptorPool(DevicePointer device, Descriptor descriptor)
-        : device(std::move(device)) {
-        const size_t numDescriptorTypes = std::size(descriptor.poolTypes);
+        : device(std::move(device))
+        , descriptor(std::move(descriptor)){
+        const size_t numDescriptorTypes = std::size(this->descriptor.poolTypes);
         std::vector<VkDescriptorPoolSize> poolSizes(numDescriptorTypes);
         for(size_t i = 0; i < numDescriptorTypes; ++i) {
-            poolSizes[i].type            = getDescriptorType(descriptor.poolTypes[i].type);
-            poolSizes[i].descriptorCount = descriptor.poolTypes[i].count;
+            poolSizes[i].type            = getDescriptorType(this->descriptor.poolTypes[i].type);
+            poolSizes[i].descriptorCount = this->descriptor.poolTypes[i].count;
         }
 
         VkDescriptorPoolCreateInfo createInfo{};
         createInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
         createInfo.pNext         = nullptr;
-        createInfo.flags         = getDescriptorPoolFlags(descriptor.flag);
-        createInfo.maxSets       = descriptor.maxSets;
+        createInfo.flags         = getDescriptorPoolFlags(this->descriptor.flag);
+        createInfo.maxSets       = this->descriptor.maxSets;
         createInfo.poolSizeCount = std::size(poolSizes);
         createInfo.pPoolSizes    = std::data(poolSizes);
 

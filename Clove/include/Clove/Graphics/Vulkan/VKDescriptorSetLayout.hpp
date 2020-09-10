@@ -11,6 +11,8 @@ namespace clv::gfx::vk {
     private:
         DevicePointer device;
 
+        Descriptor descriptor;
+
         VkDescriptorSetLayout layout{ VK_NULL_HANDLE };
 
         //FUNCTIONS
@@ -26,6 +28,10 @@ namespace clv::gfx::vk {
 
         ~VKDescriptorSetLayout();
 
-        VkDescriptorSetLayout getLayout() const;
+        inline const Descriptor& getDescriptor() const override;
+
+        inline VkDescriptorSetLayout getLayout() const;
     };
 }
+
+#include "VKDescriptorSetLayout.inl"

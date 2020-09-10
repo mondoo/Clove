@@ -34,6 +34,8 @@ namespace clv::gfx {
     public:
         virtual ~DescriptorPool() = default;
 
+        virtual const Descriptor& getDescriptor() const = 0;
+
         /** 
          * @brief Allocates a descriptor set for each layout provided.
          */

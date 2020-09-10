@@ -16,11 +16,12 @@ namespace clv::gfx::vk {
     }
 
     VKDescriptorSetLayout::VKDescriptorSetLayout(DevicePointer device, Descriptor descriptor)
-        : device(std::move(device)) {
-        std::vector<VkDescriptorSetLayoutBinding> layoutBindings(std::size(descriptor.bindings));
+        : device(std::move(device)) 
+        , descriptor(std::move(descriptor)){
+        std::vector<VkDescriptorSetLayoutBinding> layoutBindings(std::size(this->descriptor.bindings));
 
         for(size_t i = 0; i < std::size(layoutBindings); ++i) {
-            const DescriptorSetBindingInfo& bindingDescriptor = descriptor.bindings[i];
+            const DescriptorSetBindingInfo& bindingDescriptor = this->descriptor.bindings[i];
 
             layoutBindings[i].binding            = bindingDescriptor.binding;
             layoutBindings[i].descriptorType     = getDescriptorType(bindingDescriptor.type);
@@ -47,9 +48,5 @@ namespace clv::gfx::vk {
 
     VKDescriptorSetLayout::~VKDescriptorSetLayout() {
         vkDestroyDescriptorSetLayout(device.get(), layout, nullptr);
-    }
-
-    VkDescriptorSetLayout VKDescriptorSetLayout::getLayout() const {
-        return layout;
     }
 }

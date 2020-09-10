@@ -11,6 +11,8 @@ namespace clv::gfx::vk {
     private:
         DevicePointer device;
 
+        Descriptor descriptor;
+
         VkDescriptorPool pool{ VK_NULL_HANDLE };
 
         //FUNCTIONS
@@ -26,7 +28,11 @@ namespace clv::gfx::vk {
 
         ~VKDescriptorPool();
 
+        inline const Descriptor& getDescriptor() const override;
+
         std::vector<std::shared_ptr<DescriptorSet>> allocateDescriptorSets(const std::vector<std::shared_ptr<DescriptorSetLayout>>& layouts) override;
         void freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets) override;
     };
 }
+
+#include "VKDescriptorPool.inl"

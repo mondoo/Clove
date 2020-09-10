@@ -32,5 +32,7 @@ namespace clv::gfx {
         //FUNCTIONS
     public:
         virtual ~DescriptorSetLayout() = default;
+
+        virtual const Descriptor& getDescriptor() const = 0;
     };
 }
