@@ -2,9 +2,10 @@
 
 #include <Clove/Graphics/DescriptorSetLayout.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Clove/Graphics/GraphicsTypes.hpp>
 
 namespace blb::rnd {
-    std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> createDescriptorSets(clv::gfx::GraphicsFactory& factory) {
+    std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> createDescriptorSetLayouts(clv::gfx::GraphicsFactory& factory) {
         clv::gfx::DescriptorSetBindingInfo mvpLayoutBinding{};
         mvpLayoutBinding.binding   = 0;
         mvpLayoutBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
@@ -33,5 +34,15 @@ namespace blb::rnd {
         descriptorSetLayoutDescriptor.bindings = { mvpLayoutBinding, samplerLayoutBinding, lightDataBindingInfo, lightCountBindingInfo };
 
         return { factory.createDescriptorSetLayout(descriptorSetLayoutDescriptor) };
+    }
+
+    std::unordered_map<clv::gfx::DescriptorType, uint32_t> countElements(const clv::gfx::DescriptorSetLayout& descriptorSet) {
+        std::unordered_map<clv::gfx::DescriptorType, uint32_t> counts;
+        const auto& descriptor = descriptorSet.getDescriptor();
+        for(auto& binding : descriptor.bindings) {
+            counts[binding.type]++;
+        }
+
+        return counts;
     }
 }
