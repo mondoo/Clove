@@ -1,13 +1,12 @@
 #pragma once
 
 #include "Bulb/Rendering/ShaderBufferTypes.hpp"
-#include "Clove/Graphics/GraphicsFactory.hpp"
-#include "Clove/Graphics/GraphicsDevice.hpp"
 
+#include <Clove/Graphics/DescriptorSetLayout.hpp>
+#include <Clove/Graphics/GraphicsBuffer.hpp>
+#include <Clove/Graphics/GraphicsDevice.hpp>
+#include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/GraphicsTypes.hpp>
-
-#include "Clove/Graphics/DescriptorSetLayout.hpp"
-#include "Clove/Graphics/GraphicsBuffer.hpp"
 
 namespace clv::plt {
     class Window;
@@ -26,6 +25,14 @@ namespace blb::rnd {
 
 namespace blb::rnd {
     class ForwardRenderer3D {
+        //TYPES
+    private:
+        struct InFlightImageDescriptorSets {
+            std::vector<std::shared_ptr<clv::gfx::DescriptorSet>> primitiveSets;
+            std::shared_ptr<clv::gfx::DescriptorSet> viewSet;
+            std::shared_ptr<clv::gfx::DescriptorSet> lightingSet;
+        };
+
         //VARIABLES
     private:
         clv::DelegateHandle windowResizeHandle;
@@ -46,6 +53,7 @@ namespace blb::rnd {
             LightCount numLights;
         } currentFrameData;
 
+        //
         struct ModelViewProj {
             clv::mth::mat4f model;
             clv::mth::mat4f view;
@@ -54,6 +62,7 @@ namespace blb::rnd {
 
         std::vector<std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>>> uniformBuffers;
         std::shared_ptr<clv::gfx::Sampler> sampler;
+        //
 
         std::shared_ptr<clv::gfx::GraphicsDevice> graphicsDevice;
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
@@ -67,7 +76,6 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
 
         std::shared_ptr<clv::gfx::RenderPass> renderPass;
-        std::shared_ptr<clv::gfx::DescriptorSetLayout> descriptorSetLayout;
 
         std::shared_ptr<clv::gfx::PipelineObject> pipelineObject;
 
@@ -80,9 +88,9 @@ namespace blb::rnd {
         std::array<std::shared_ptr<clv::gfx::Fence>, maxFramesInFlight> inFlightFences;
         std::vector<std::shared_ptr<clv::gfx::Fence>> imagesInFlight;
 
-        std::shared_ptr<clv::gfx::DescriptorPool> descriptorPool;
-        std::vector<std::vector<std::shared_ptr<clv::gfx::DescriptorSet>>> descriptorSets;//Set per image per primitive
-        uint32_t maxDescriptorSets = 0;
+        std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> descriptorSetLayouts;
+        std::vector<InFlightImageDescriptorSets> descriptorSets;//One for each image.
+        std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> descriptorPool;
 
         //FUNCTIONS
     public:
@@ -118,6 +126,6 @@ namespace blb::rnd {
         void createPipeline();
         void createSwapchainFrameBuffers();
         std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> createUniformBuffers(const uint32_t bufferCount);
-        std::shared_ptr<clv::gfx::DescriptorPool> createDescriptorPool(const uint32_t setCount);
+        std::shared_ptr<clv::gfx::DescriptorPool> createDescriptorPool(const std::unordered_map<clv::gfx::DescriptorType, uint32_t>& bindingCount, const uint32_t setCount);
     };
 }

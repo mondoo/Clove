@@ -3,8 +3,8 @@
 #include "Bulb/Rendering/Camera.hpp"
 #include "Bulb/Rendering/Material.hpp"
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
-#include "Bulb/Rendering/Vertex.hpp"
 #include "Bulb/Rendering/RenderingHelpers.hpp"
+#include "Bulb/Rendering/Vertex.hpp"
 #include "Bulb/TextureLoader.hpp"
 
 #include <Clove/Graphics/DescriptorSet.hpp>
@@ -34,7 +34,7 @@ namespace blb::rnd {
 
         createDepthBuffer();
 
-        descriptorSetLayout = createDescriptorSets(*graphicsFactory)[0]; //Just straight using index 0 for now
+        descriptorSetLayouts = createDescriptorSetLayouts(*graphicsFactory);
 
         recreateSwapchain();
 
@@ -131,19 +131,35 @@ namespace blb::rnd {
 
         //Allocate a descriptor set for each mesh to be drawn
         const size_t meshCount = std::size(currentFrameData.meshes);
-        if(maxDescriptorSets < meshCount) {
-            maxDescriptorSets = meshCount;
-            descriptorPool    = createDescriptorPool(maxDescriptorSets * swapChainFrameBuffers.size());//Make sure to pool enough for all images
-        }
+        if(std::size(descriptorSets[imageIndex].primitiveSets) < meshCount) {
+            const auto primitiveIndex = static_cast<size_t>(DescriptorSetSlots::PerPimitive);
+            const auto viewIndex      = static_cast<size_t>(DescriptorSetSlots::View);
+            const auto lightingIndex  = static_cast<size_t>(DescriptorSetSlots::Lighting);
 
-        const size_t numDescriptorSets = std::size(descriptorSets[imageIndex]);
-        if(numDescriptorSets < meshCount) {
-            if(numDescriptorSets > 0) {
-                descriptorPool->freeDescriptorSets(descriptorSets[imageIndex]);
+            //TODO: Doing it all in here for now
+            auto primitiveSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[primitiveIndex]);
+            //auto viewSetBindingCount      = countDescriptorBindingTypes(*descriptorSetLayouts[viewIndex]);
+            //auto lightingSetBindingCount  = countDescriptorBindingTypes(*descriptorSetLayouts[lightingIndex]);
+
+            for(auto& [key, val] : primitiveSetBindingCount) {
+                val *= meshCount;
             }
 
-            std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> layouts(meshCount, descriptorSetLayout);
-            descriptorSets[imageIndex] = descriptorPool->allocateDescriptorSets(layouts);
+            auto allCounts = primitiveSetBindingCount;
+            //allCounts.merge(viewSetBindingCount);
+            //allCounts.merge(lightingSetBindingCount);
+
+            //TODO: Hard coding the amount of different sets in
+            if(descriptorPool[imageIndex] == nullptr) {
+                //TODO: meshCount won't work here when start using the other descriptor sets. But it would be meshCount + 2 basically
+                descriptorPool[imageIndex] = createDescriptorPool(allCounts, meshCount);//Make sure to pool enough for all images
+            }
+
+            //TODO: Do we even need to store these? we could just nuke the pool at the beginning of the frame
+            std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[primitiveIndex]);
+            descriptorSets[imageIndex].primitiveSets = descriptorPool[imageIndex]->allocateDescriptorSets(layouts);
+            //descriptorSets[imageIndex].viewSet       = descriptorPool->allocateDescriptorSets(descriptorSetLayouts[viewIndex]);
+            //descriptorSets[imageIndex].lightingSet   = descriptorPool->allocateDescriptorSets(descriptorSetLayouts[lightingIndex]);
         }
 
         if(std::size(uniformBuffers[imageIndex]) < meshCount) {
@@ -164,6 +180,8 @@ namespace blb::rnd {
 
         size_t meshIndex = 0;
         for(auto&& [mesh, transform] : currentFrameData.meshes) {
+            std::shared_ptr<clv::gfx::DescriptorSet>& meshDescriptorSet = descriptorSets[imageIndex].primitiveSets[meshIndex];
+
             ModelViewProj ubo{};
             ubo.model = transform;
             ubo.view  = currentFrameData.view;
@@ -172,12 +190,12 @@ namespace blb::rnd {
             //TEMP: Adjusting the offsets
             const size_t minOffUniformBufferAlignment = graphicsDevice->getLimits().minUniformBufferOffsetAlignment;
 
-            const size_t uboSize = sizeof(ubo);
-            const size_t lightSize = sizeof(currentFrameData.lights);
+            const size_t uboSize       = sizeof(ubo);
+            const size_t lightSize     = sizeof(currentFrameData.lights);
             const size_t numLightsSize = sizeof(currentFrameData.numLights);
 
-            const size_t uboOffset = 0;
-            const size_t lightOffset = uboSize + (minOffUniformBufferAlignment - (uboSize % minOffUniformBufferAlignment));
+            const size_t uboOffset       = 0;
+            const size_t lightOffset     = uboSize + (minOffUniformBufferAlignment - (uboSize % minOffUniformBufferAlignment));
             const size_t numLightsOffset = (lightOffset + lightSize) - (minOffUniformBufferAlignment - ((lightOffset + lightSize) % minOffUniformBufferAlignment));
             //~TEMP
 
@@ -185,14 +203,14 @@ namespace blb::rnd {
             uniformBuffers[imageIndex][meshIndex]->map(&currentFrameData.lights, lightOffset, lightSize);
             uniformBuffers[imageIndex][meshIndex]->map(&currentFrameData.numLights, numLightsOffset, numLightsSize);
 
-            descriptorSets[imageIndex][meshIndex]->write(*uniformBuffers[imageIndex][meshIndex], uboOffset, uboSize, 0);
-            descriptorSets[imageIndex][meshIndex]->write(*uniformBuffers[imageIndex][meshIndex], lightOffset, lightSize, 2);
-            descriptorSets[imageIndex][meshIndex]->write(*uniformBuffers[imageIndex][meshIndex], numLightsOffset, numLightsSize, 3);
-            descriptorSets[imageIndex][meshIndex]->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
+            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], uboOffset, uboSize, 0);
+            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], lightOffset, lightSize, 2);
+            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], numLightsOffset, numLightsSize, 3);
+            meshDescriptorSet->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
 
             commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), clv::gfx::IndexType::Uint16);
-            commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex][meshIndex], *pipelineObject);
+            commandBuffers[imageIndex]->bindDescriptorSet(*meshDescriptorSet, *pipelineObject);
             commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
 
             ++meshIndex;
@@ -265,6 +283,7 @@ namespace blb::rnd {
         const size_t imageCount = std::size(swapChainFrameBuffers);
 
         uniformBuffers.resize(imageCount);
+        descriptorPool.resize(imageCount);
         descriptorSets.resize(imageCount);
 
         commandBuffers.reserve(imageCount);
@@ -305,19 +324,19 @@ namespace blb::rnd {
         subpass.depthAttachment   = depthReference;
 
         //Wait on the implicit subpass at the start so we transition our image when we have one
-        clv::gfx::SubpassDependency dependecy{};
-        dependecy.sourceSubpass      = clv::gfx::SUBPASS_EXTERNAL;
-        dependecy.destinationSubpass = 0;
-        dependecy.sourceStage        = clv::gfx::PipelineStage::ColourAttachmentOutput;
-        dependecy.destinationStage   = clv::gfx::PipelineStage::ColourAttachmentOutput;
-        dependecy.sourceAccess       = clv::gfx::AccessFlags::None;
-        dependecy.destinationAccess  = clv::gfx::AccessFlags::ColourAttachmentWrite;
+        clv::gfx::SubpassDependency dependency{};
+        dependency.sourceSubpass      = clv::gfx::SUBPASS_EXTERNAL;
+        dependency.destinationSubpass = 0;
+        dependency.sourceStage        = clv::gfx::PipelineStage::ColourAttachmentOutput;
+        dependency.destinationStage   = clv::gfx::PipelineStage::ColourAttachmentOutput;
+        dependency.sourceAccess       = clv::gfx::AccessFlags::None;
+        dependency.destinationAccess  = clv::gfx::AccessFlags::ColourAttachmentWrite;
 
         //Create render pass
         clv::gfx::RenderPass::Descriptor renderPassDescriptor{};
         renderPassDescriptor.attachments  = { std::move(colourAttachment), std::move(depthAttachment) };
         renderPassDescriptor.subpasses    = { std::move(subpass) };
-        renderPassDescriptor.dependencies = { std::move(dependecy) };
+        renderPassDescriptor.dependencies = { std::move(dependency) };
 
         renderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
     }
@@ -344,7 +363,7 @@ namespace blb::rnd {
         pipelineDescriptor.viewportDescriptor.size = { swapchain->getExtent().x, swapchain->getExtent().y };
         pipelineDescriptor.scissorDescriptor.size  = { swapchain->getExtent().x, swapchain->getExtent().y };
         pipelineDescriptor.renderPass              = renderPass;
-        pipelineDescriptor.descriptorSetLayouts    = { descriptorSetLayout };
+        pipelineDescriptor.descriptorSetLayouts    = descriptorSetLayouts;
 
         pipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
@@ -365,7 +384,7 @@ namespace blb::rnd {
         std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers(bufferCount);
 
         const size_t minOffUniformBufferAlignment = graphicsDevice->getLimits().minUniformBufferOffsetAlignment;
-        const size_t padding                      = minOffUniformBufferAlignment * 2; //Add padding so that each element has room to be aligned
+        const size_t padding                      = minOffUniformBufferAlignment * 2;//Add padding so that each element has room to be aligned
 
         for(size_t i = 0; i < bufferCount; ++i) {
             clv::gfx::GraphicsBuffer::Descriptor descriptor{};
@@ -380,14 +399,14 @@ namespace blb::rnd {
         return uniformBuffers;
     }
 
-    std::shared_ptr<clv::gfx::DescriptorPool> ForwardRenderer3D::createDescriptorPool(const uint32_t setCount) {
+    std::shared_ptr<clv::gfx::DescriptorPool> ForwardRenderer3D::createDescriptorPool(const std::unordered_map<clv::gfx::DescriptorType, uint32_t>& bindingCount, const uint32_t setCount) {
         clv::gfx::DescriptorInfo uboInfo{};
         uboInfo.type  = clv::gfx::DescriptorType::UniformBuffer;
-        uboInfo.count = setCount * 3; //We have 3 uniform buffers
+        uboInfo.count = bindingCount.at(uboInfo.type);
 
         clv::gfx::DescriptorInfo samplerInfo{};
         samplerInfo.type  = clv::gfx::DescriptorType::CombinedImageSampler;
-        samplerInfo.count = setCount;
+        samplerInfo.count = bindingCount.at(samplerInfo.type);
 
         clv::gfx::DescriptorPool::Descriptor poolDescriptor{};
         poolDescriptor.poolTypes = { std::move(uboInfo), std::move(samplerInfo) };
