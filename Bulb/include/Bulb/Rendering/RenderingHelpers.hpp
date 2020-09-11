@@ -7,7 +7,7 @@ namespace clv::gfx {
 
 namespace blb::rnd {
     /**
-     * @brief Creates all descriptor sets according to DescriptorSetSlots. Index 0 is left empty for shader specific data.
+     * @brief Creates all descriptor sets according to DescriptorSetSlots.
      */
     std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> createDescriptorSetLayouts(clv::gfx::GraphicsFactory& factory);
 
@@ -15,5 +15,5 @@ namespace blb::rnd {
      * @brief Counts the different binding types in a DescriptorSetLayout.
      * @returns A map where each key is the binding type and the value is the count.
      */
-    std::unordered_map<clv::gfx::DescriptorType, uint32_t> countElements(const clv::gfx::DescriptorSetLayout& descriptorSet);
+    std::unordered_map<clv::gfx::DescriptorType, uint32_t> countDescriptorBindingTypes(const clv::gfx::DescriptorSetLayout& descriptorSetLayout);
 }

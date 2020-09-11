@@ -36,9 +36,9 @@ namespace blb::rnd {
         return { factory.createDescriptorSetLayout(descriptorSetLayoutDescriptor) };
     }
 
-    std::unordered_map<clv::gfx::DescriptorType, uint32_t> countElements(const clv::gfx::DescriptorSetLayout& descriptorSet) {
+    std::unordered_map<clv::gfx::DescriptorType, uint32_t> countDescriptorBindingTypes(const clv::gfx::DescriptorSetLayout& descriptorSetLayout) {
         std::unordered_map<clv::gfx::DescriptorType, uint32_t> counts;
-        const auto& descriptor = descriptorSet.getDescriptor();
+        const auto& descriptor = descriptorSetLayout.getDescriptor();
         for(auto& binding : descriptor.bindings) {
             counts[binding.type]++;
         }
