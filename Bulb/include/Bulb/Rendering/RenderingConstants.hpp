@@ -17,7 +17,5 @@ namespace blb::rnd {
         PerPimitive = 0, /**< For data that will change per primitive submitted. */
         View        = 1,
         Lighting    = 2,
-
-        Lighting = 4,
     };
 }
