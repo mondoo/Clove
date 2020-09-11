@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Clove/Graphics/GraphicsTypes.hpp>
+
 namespace clv::gfx {
     class DescriptorSetLayout;
     class GraphicsFactory;
