@@ -39,7 +39,10 @@ namespace clv::gfx {
         /** 
          * @brief Allocates a descriptor set for each layout provided.
          */
+        virtual std::shared_ptr<DescriptorSet> allocateDescriptorSets(const std::shared_ptr<DescriptorSetLayout>& layout)                            = 0;
         virtual std::vector<std::shared_ptr<DescriptorSet>> allocateDescriptorSets(const std::vector<std::shared_ptr<DescriptorSetLayout>>& layouts) = 0;
-        virtual void freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets)                                           = 0;
+
+        virtual void freeDescriptorSets(const std::shared_ptr<DescriptorSet>& descriptorSet)               = 0;
+        virtual void freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets) = 0;
     };
 }

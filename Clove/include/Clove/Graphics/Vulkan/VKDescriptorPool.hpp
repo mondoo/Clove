@@ -30,7 +30,10 @@ namespace clv::gfx::vk {
 
         inline const Descriptor& getDescriptor() const override;
 
+        std::shared_ptr<DescriptorSet> allocateDescriptorSets(const std::shared_ptr<DescriptorSetLayout>& layout) override;
         std::vector<std::shared_ptr<DescriptorSet>> allocateDescriptorSets(const std::vector<std::shared_ptr<DescriptorSetLayout>>& layouts) override;
+
+        void freeDescriptorSets(const std::shared_ptr<DescriptorSet>& descriptorSet) override;
         void freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets) override;
     };
 }

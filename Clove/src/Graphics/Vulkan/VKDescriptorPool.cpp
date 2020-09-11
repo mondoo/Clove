@@ -47,6 +47,10 @@ namespace clv::gfx::vk {
         vkDestroyDescriptorPool(device.get(), pool, nullptr);
     }
 
+    std::shared_ptr<DescriptorSet> VKDescriptorPool::allocateDescriptorSets(const std::shared_ptr<DescriptorSetLayout>& layout) {
+        return allocateDescriptorSets(std::vector{ layout })[0];
+    }
+
     std::vector<std::shared_ptr<DescriptorSet>> VKDescriptorPool::allocateDescriptorSets(const std::vector<std::shared_ptr<DescriptorSetLayout>>& layouts) {
         const size_t numSets = std::size(layouts);
 
@@ -75,6 +79,10 @@ namespace clv::gfx::vk {
         }
 
         return descriptorSets;
+    }
+
+    void VKDescriptorPool::freeDescriptorSets(const std::shared_ptr<DescriptorSet>& descriptorSet) {
+        freeDescriptorSets(std::vector{ descriptorSet });
     }
 
     void VKDescriptorPool::freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets) {
