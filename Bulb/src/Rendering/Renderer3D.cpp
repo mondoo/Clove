@@ -16,39 +16,39 @@
 using namespace clv;
 using namespace clv::gfx;
 
-extern "C" const char	default3d_vs[];
+extern "C" const unsigned char	default3d_vs[];
 extern "C" const size_t default3d_vsLength;
-extern "C" const char	default3d_ps[];
+extern "C" const unsigned char default3d_ps[];
 extern "C" const size_t default3d_psLength;
-extern "C" const char   skeletal3d_vs[];
+extern "C" const unsigned char skeletal3d_vs[];
 extern "C" const size_t skeletal3d_vsLength;
-extern "C" const char	skeletalcubeshadow_vs[];
+extern "C" const unsigned char skeletalcubeshadow_vs[];
 extern "C" const size_t skeletalcubeshadow_vsLength;
-extern "C" const char   skeletalshadow_vs[];
+extern "C" const unsigned char skeletalshadow_vs[];
 extern "C" const size_t skeletalshadow_vsLength;
 
-extern "C" const char	default2d_vs[];
+extern "C" const unsigned char default2d_vs[];
 extern "C" const size_t default2d_vsLength;
-extern "C" const char	default2d_ps[];
+extern "C" const unsigned char default2d_ps[];
 extern "C" const size_t default2d_psLength;
 
-extern "C" const char	font_vs[];
+extern "C" const unsigned char font_vs[];
 extern "C" const size_t font_vsLength;
-extern "C" const char	font_ps[];
+extern "C" const unsigned char font_ps[];
 extern "C" const size_t font_psLength;
 
-extern "C" const char	genshadowmap_vs[];
+extern "C" const unsigned char genshadowmap_vs[];
 extern "C" const size_t genshadowmap_vsLength;
-extern "C" const char	genshadowmap_gs[];
+extern "C" const unsigned char genshadowmap_gs[];
 extern "C" const size_t genshadowmap_gsLength;
-extern "C" const char	genshadowmap_ps[];
+extern "C" const unsigned char genshadowmap_ps[];
 extern "C" const size_t genshadowmap_psLength;
 
-extern "C" const char	gencubeshadowmap_vs[];
+extern "C" const unsigned char gencubeshadowmap_vs[];
 extern "C" const size_t gencubeshadowmap_vsLength;
-extern "C" const char	gencubeshadowmap_gs[];
+extern "C" const unsigned char gencubeshadowmap_gs[];
 extern "C" const size_t gencubeshadowmap_gsLength;
-extern "C" const char	gencubeshadowmap_ps[];
+extern "C" const unsigned char gencubeshadowmap_ps[];
 extern "C" const size_t gencubeshadowmap_psLength;
 
 namespace blb::rnd {
@@ -62,9 +62,9 @@ namespace blb::rnd {
 		//Mesh
 		meshCommandBuffer = factory.createCommandBuffer();
 
-        auto meshVS        = factory.createShader({ ShaderStage::Vertex }, default3d_vs, default3d_vsLength);
-        auto meshPS        = factory.createShader({ ShaderStage::Pixel }, default3d_ps, default3d_psLength);
-        auto animMeshVS    = factory.createShader({ ShaderStage::Vertex }, skeletal3d_vs, skeletal3d_vsLength);
+        auto meshVS     = factory.createShader({ ShaderStage::Vertex }, { reinterpret_cast<const std::byte*>(default3d_vs), default3d_vsLength });
+        auto meshPS     = factory.createShader({ ShaderStage::Pixel }, { reinterpret_cast<const std::byte*>(default3d_ps), default3d_psLength });
+        auto animMeshVS = factory.createShader({ ShaderStage::Vertex }, { reinterpret_cast<const std::byte*>(skeletal3d_vs), skeletal3d_vsLength });
 
         meshPipelineObject = factory.createPipelineObject();
 		meshPipelineObject->setVertexShader(*meshVS);
@@ -77,14 +77,14 @@ namespace blb::rnd {
 		//UI
 		uiCommandBuffer = factory.createCommandBuffer();
 
-		auto widgetVS = factory.createShader({ ShaderStage::Vertex }, default2d_vs, default2d_vsLength);
-		auto widgetPS = factory.createShader({ ShaderStage::Pixel }, default2d_ps, default2d_psLength);
+		auto widgetVS        = factory.createShader({ ShaderStage::Vertex }, { reinterpret_cast<const std::byte*>(default2d_vs), default2d_vsLength });
+        auto widgetPS        = factory.createShader({ ShaderStage::Pixel }, { reinterpret_cast<const std::byte*>(default2d_ps), default2d_psLength });
 		widgetPipelineObject = factory.createPipelineObject();
 		widgetPipelineObject->setVertexShader(*widgetVS);
 		widgetPipelineObject->setPixelShader(*widgetPS);
 
-		auto textVS = factory.createShader({ ShaderStage::Vertex }, font_vs, font_vsLength);
-		auto textPS = factory.createShader({ ShaderStage::Pixel }, font_ps, font_psLength);
+		auto textVS        = factory.createShader({ ShaderStage::Vertex }, { reinterpret_cast<const std::byte*>(font_vs), font_vsLength });
+        auto textPS        = factory.createShader({ ShaderStage::Pixel }, { reinterpret_cast<const std::byte*>(font_ps), font_psLength });
 		textPipelineObject = factory.createPipelineObject();
 		textPipelineObject->setVertexShader(*textVS);
 		textPipelineObject->setPixelShader(*textPS);
@@ -143,10 +143,10 @@ namespace blb::rnd {
 		directionalShadowRenderTarget	= factory.createRenderTarget(nullptr, directionalShadowMapTexture.get());
 		directionalShadowCommandBuffer	= factory.createCommandBuffer();
 
-		auto dirShadowVS                = factory.createShader({ ShaderStage::Vertex }, genshadowmap_vs, genshadowmap_vsLength);
-        auto skeletalShadowVS           = factory.createShader({ ShaderStage::Vertex }, skeletalshadow_vs, skeletalshadow_vsLength);
-        auto dirShadowGS                = factory.createShader({ ShaderStage::Geometry }, genshadowmap_gs, genshadowmap_gsLength);
-        auto dirShadowPS                = factory.createShader({ ShaderStage::Pixel }, genshadowmap_ps, genshadowmap_psLength);
+		auto dirShadowVS                = factory.createShader({ ShaderStage::Vertex }, { reinterpret_cast<const std::byte*>(genshadowmap_vs), genshadowmap_vsLength });
+        auto skeletalShadowVS           = factory.createShader({ ShaderStage::Vertex }, { reinterpret_cast<const std::byte*>(skeletalshadow_vs), skeletalshadow_vsLength });
+        auto dirShadowGS                = factory.createShader({ ShaderStage::Geometry }, { reinterpret_cast<const std::byte*>(genshadowmap_gs), genshadowmap_gsLength });
+        auto dirShadowPS                = factory.createShader({ ShaderStage::Pixel }, { reinterpret_cast<const std::byte*>(genshadowmap_ps), genshadowmap_psLength });
 		
 		directionalShadowPipelineObject = factory.createPipelineObject();
         directionalShadowPipelineObject->setVertexShader(*dirShadowVS);
@@ -169,10 +169,10 @@ namespace blb::rnd {
 		pointShadowRenderTarget		= factory.createRenderTarget(nullptr, pointShadowMapTexture.get());
 		pointShadowCommandBuffer	= factory.createCommandBuffer();
 
-		auto pointShadowVS         = factory.createShader({ ShaderStage::Vertex }, gencubeshadowmap_vs, gencubeshadowmap_vsLength);
-        auto skeletalPointShadowVS = factory.createShader({ ShaderStage::Vertex }, skeletalcubeshadow_vs, skeletalcubeshadow_vsLength);
-        auto pointShadowGS         = factory.createShader({ ShaderStage::Geometry }, gencubeshadowmap_gs, gencubeshadowmap_gsLength);
-        auto pointShadowPS         = factory.createShader({ ShaderStage::Pixel }, gencubeshadowmap_ps, gencubeshadowmap_psLength);
+		auto pointShadowVS         = factory.createShader({ ShaderStage::Vertex }, { reinterpret_cast<const std::byte*>(gencubeshadowmap_vs), gencubeshadowmap_vsLength });
+        auto skeletalPointShadowVS = factory.createShader({ ShaderStage::Vertex }, { reinterpret_cast<const std::byte*>(skeletalcubeshadow_vs), skeletalcubeshadow_vsLength });
+        auto pointShadowGS         = factory.createShader({ ShaderStage::Geometry }, { reinterpret_cast<const std::byte*>(gencubeshadowmap_gs), gencubeshadowmap_gsLength });
+        auto pointShadowPS         = factory.createShader({ ShaderStage::Pixel }, { reinterpret_cast<const std::byte*>(gencubeshadowmap_ps), gencubeshadowmap_psLength });
 
 		pointShadowPipelineObject = factory.createPipelineObject();
         pointShadowPipelineObject->setVertexShader(*pointShadowVS);

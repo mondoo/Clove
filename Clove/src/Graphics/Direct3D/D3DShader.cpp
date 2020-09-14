@@ -53,7 +53,7 @@ namespace clv::gfx::d3d {
 		delete[] wideCharArray;
 	}
 
-	D3DShader::D3DShader(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, ShaderDescriptor descriptor, const char* bytes, const std::size_t size)
+	D3DShader::D3DShader(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, ShaderDescriptor descriptor, std::span<const std::byte> sourceBytes)
 		: factory(std::move(factory))
 		, descriptor(std::move(descriptor)) {
 		const D3D_SHADER_MACRO defines[] = {
@@ -62,7 +62,7 @@ namespace clv::gfx::d3d {
 		};
 
 		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-		HRESULT hr = D3DCompile(bytes, size, nullptr, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", getShaderProfile(this->descriptor.stage), getShaderFlags(), 0, &shaderBlob, &errorBlob);
+        HRESULT hr = D3DCompile(sourceBytes.data(), sourceBytes.size_bytes(), nullptr, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", getShaderProfile(this->descriptor.stage), getShaderFlags(), 0, &shaderBlob, &errorBlob);
 		if(FAILED(hr)) {
 			if(errorBlob != nullptr) {
 				//TODO: Update to a clove log

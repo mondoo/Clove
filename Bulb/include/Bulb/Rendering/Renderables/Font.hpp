@@ -1,5 +1,7 @@
 #pragma once
 
+#include <span>
+
 //Forward dec (see freetype.h)
 typedef struct FT_LibraryRec_* FT_Library;
 typedef struct FT_FaceRec_* FT_Face;
@@ -41,7 +43,7 @@ namespace blb::rnd {
 		Font() = delete;
 		Font(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 		Font(const std::string& filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
-		Font(const unsigned char* bytes, const std::size_t size, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
+		Font(std::span<const std::byte> bytes, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 
 		Font(const Font& other);
 		Font(Font&& other) noexcept;
@@ -56,6 +58,6 @@ namespace blb::rnd {
 
 	private:
 		FacePtr createFace(const std::string& filePath);
-		FacePtr createFace(const unsigned char* bytes, const std::size_t size);
+        FacePtr createFace(std::span<const std::byte> bytes);
 	};
 }
