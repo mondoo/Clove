@@ -109,7 +109,6 @@ target_precompile_headers(
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsHelpers.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Delegate/MultiCastDelegate.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Delegate/SingleCastDelegate.hpp">
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/Cast.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/DeltaTime.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/Timer.hpp">
 )
