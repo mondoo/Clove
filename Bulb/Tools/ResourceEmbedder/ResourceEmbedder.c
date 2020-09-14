@@ -27,11 +27,7 @@ int main(int argc, char** argv) {
 
 	FILE* out = openOrExit(fileName, "w");
 	fprintf(out, "#include <stdlib.h>\n\n");
-	if(strcmp(argv[3], openType)) {
-		fprintf(out, "const unsigned char %s[] = {\n", name);
-	} else {
-		fprintf(out, "const char %s[] = {\n", name);	
-	}
+	fprintf(out, "const unsigned char %s[] = {\n", name);
 
 	unsigned char buf[256];
 	size_t nread = 0;
