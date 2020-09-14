@@ -10,6 +10,8 @@ namespace clv::gfx::ogl {
 			case VertexElementType::texture2D:
 			case VertexElementType::normal:
 			case VertexElementType::colour3D:
+            case VertexElementType::jointIds:
+            case VertexElementType::weights:
 				return GL_FLOAT;
 			default:
 				GARLIC_ASSERT(false, "Invalid element type");
@@ -23,7 +25,9 @@ namespace clv::gfx::ogl {
 			case VertexElementType::position3D:
 			case VertexElementType::texture2D:
 			case VertexElementType::normal:
-			case VertexElementType::colour3D:
+            case VertexElementType::colour3D:
+            case VertexElementType::jointIds:
+            case VertexElementType::weights:
 				return GL_FALSE;
 			default:
 				GARLIC_ASSERT(false, "Invalid element type");
