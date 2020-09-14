@@ -104,7 +104,6 @@ target_precompile_headers(
 
 	#Clove headers
 	PUBLIC
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Log.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsTypes.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/Maths.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsHelpers.hpp">

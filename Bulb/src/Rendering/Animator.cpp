@@ -2,6 +2,8 @@
 
 #include "Bulb/Rendering/AnimationTypes.hpp"
 
+#include <Clove/Log.hpp>
+
 namespace blb::rnd {
     static std::vector<JointPose> lerpJointPoses(const AnimationPose& posesA, const AnimationPose& posesB, const float time) {
         const size_t jointCount = posesA.poses.size();

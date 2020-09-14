@@ -1,6 +1,7 @@
 #include "Bulb/ECS/Components/TransformComponent.hpp"
 
 #include <Root/Definitions.hpp>
+#include <Clove/Log.hpp>
 
 using namespace clv;
 

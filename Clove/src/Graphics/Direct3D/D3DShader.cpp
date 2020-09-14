@@ -1,6 +1,7 @@
 #include "Clove/Graphics/Direct3D/D3DShader.hpp"
 
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
+#include "Clove/Log.hpp"
 
 #include <d3dcompiler.h>
 

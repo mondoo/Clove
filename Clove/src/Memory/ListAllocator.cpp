@@ -1,5 +1,7 @@
 #include "Clove/Memory/ListAllocator.hpp"
 
+#include "Clove/Log.hpp"
+
 #include <Root/Definitions.hpp>
 
 namespace clv::mem {

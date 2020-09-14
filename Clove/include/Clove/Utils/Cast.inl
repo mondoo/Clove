@@ -1,5 +1,7 @@
 #include <Root/Definitions.hpp>
 
+#include "Clove/Log.hpp"
+
 namespace clv {
     template<typename DestType, typename SourceType>
     DestType* polyCast(SourceType* source) {

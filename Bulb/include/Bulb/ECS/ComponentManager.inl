@@ -1,6 +1,7 @@
 #include "Bulb/ECS/ECSEvents.hpp"
 
 #include <Clove/Event/EventDispatcher.hpp>
+#include <Clove/Log.hpp>
 #include <Root/Definitions.hpp>
 
 namespace blb::ecs {

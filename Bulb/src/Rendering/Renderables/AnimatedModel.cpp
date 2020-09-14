@@ -1,5 +1,7 @@
 #include "Bulb/Rendering/Renderables/AnimatedModel.hpp"
 
+#include <Clove/Log.hpp>
+
 namespace blb::rnd {
     AnimatedModel::AnimatedModel(std::vector<std::shared_ptr<Mesh>> meshes, std::unique_ptr<Skeleton> skeleton, std::vector<AnimationClip> animClips)
         : StaticModel(std::move(meshes))

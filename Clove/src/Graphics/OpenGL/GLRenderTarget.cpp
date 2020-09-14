@@ -1,6 +1,7 @@
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
 
 #include "Clove/Graphics/OpenGL/GLTexture.hpp"
+#include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
 

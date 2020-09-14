@@ -2,6 +2,7 @@
 
 #include "Clove/Audio/OpenAL/ALBuffer.hpp"
 #include "Clove/Audio/OpenAL/ALError.hpp"
+#include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
 

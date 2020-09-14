@@ -4,6 +4,7 @@
 #include "Clove/Audio/OpenAL/ALError.hpp"
 #include "Clove/Audio/OpenAL/ALListener.hpp"
 #include "Clove/Audio/OpenAL/ALSource.hpp"
+#include "Clove/Log.hpp"
 
 namespace clv {
     ALFactory::ALFactory() {

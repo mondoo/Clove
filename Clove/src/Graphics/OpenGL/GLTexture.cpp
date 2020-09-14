@@ -1,5 +1,7 @@
 #include "Clove/Graphics/OpenGL/GLTexture.hpp"
 
+#include "Clove/Log.hpp"
+
 #include <stb_image.h>
 #include <Root/Definitions.hpp>
 
