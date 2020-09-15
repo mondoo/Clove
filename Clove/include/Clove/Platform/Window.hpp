@@ -52,6 +52,8 @@ namespace clv::plt{
 
 		virtual bool isOpen() const = 0;
 
+        virtual void close() = 0;
+
 		Keyboard& getKeyboard();
 		Mouse& getMouse();
 
