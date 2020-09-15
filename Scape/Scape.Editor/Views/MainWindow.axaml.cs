@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Scape.Membrane;
+using System;
 
 namespace Scape.Editor.Views {
 	public class MainWindow : Window {
@@ -11,10 +12,11 @@ namespace Scape.Editor.Views {
             this.AttachDevTools();
 #endif
 
-			//Create and run the engine from here
-			Engine e = new Engine();
-			e.start();
-			e.run();
+			Opened += (object sender, EventArgs e) => {
+				Engine engine = new Engine();
+				engine.start();
+				engine.run();
+			};
 		}
 
 		private void InitializeComponent() {
