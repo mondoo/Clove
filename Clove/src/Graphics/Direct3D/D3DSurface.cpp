@@ -4,6 +4,7 @@
 #include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Log.hpp"
 
 #include <d3d11.h>
 

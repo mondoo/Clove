@@ -61,6 +61,8 @@ namespace clv::plt {
 
 		bool isOpen() const override;
 
+		void close() override;
+
 	protected:
 		void processInput() override;
 	};

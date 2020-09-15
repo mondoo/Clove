@@ -1,37 +1,37 @@
 #pragma once
 
-namespace blb{
-	class Layer;
+namespace blb {
+    class Layer;
 
-	class LayerStack{
-		//VARIABLES
-	private:
-		std::vector<std::shared_ptr<Layer>> layers;
+    class LayerStack {
+        //VARIABLES
+    private:
+        std::vector<std::shared_ptr<Layer>> layers;
 
-		uint32_t layerInsertIndex = 0;
+        uint32_t layerInsertIndex = 0;
 
-		//FUNCTIONS
-	public:
-		LayerStack();
-		LayerStack(const LayerStack& other);
-		LayerStack(LayerStack&& other) noexcept;
+        //FUNCTIONS
+    public:
+        LayerStack();
 
-		~LayerStack();
+        LayerStack(const LayerStack& other);
+        LayerStack(LayerStack&& other) noexcept;
 
-		void pushLayer(std::shared_ptr<Layer> layer);
-		void popLayer(const std::shared_ptr<Layer>& layer);
+        LayerStack& operator=(const LayerStack& other);
+        LayerStack& operator=(LayerStack&& other) noexcept;
 
-		void pushOverlay(std::shared_ptr<Layer> overlay);
-		void popOverlay(const std::shared_ptr<Layer>& overlay);
+        ~LayerStack();
 
-		std::vector<std::shared_ptr<Layer>>::iterator begin();
-		std::vector<std::shared_ptr<Layer>>::iterator end();
+        void pushLayer(std::shared_ptr<Layer> layer);
+        void popLayer(const std::shared_ptr<Layer>& layer);
 
-		std::vector<std::shared_ptr<Layer>>::reverse_iterator rbegin();
-		std::vector<std::shared_ptr<Layer>>::reverse_iterator rend();
+        void pushOverlay(std::shared_ptr<Layer> overlay);
+        void popOverlay(const std::shared_ptr<Layer>& overlay);
 
-		LayerStack& operator=(const LayerStack& other);
-		LayerStack& operator=(LayerStack&& other) noexcept;
-	};
+        std::vector<std::shared_ptr<Layer>>::iterator begin();
+        std::vector<std::shared_ptr<Layer>>::iterator end();
+
+        std::vector<std::shared_ptr<Layer>>::reverse_iterator rbegin();
+        std::vector<std::shared_ptr<Layer>>::reverse_iterator rend();
+    };
 }
-

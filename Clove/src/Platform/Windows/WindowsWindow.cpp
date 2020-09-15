@@ -3,6 +3,7 @@
 #include "Clove/Graphics/Graphics.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
 #include "Clove/Graphics/Surface.hpp"
+#include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
 
@@ -169,16 +170,21 @@ namespace clv::plt {
 
 	bool WindowsWindow::isOpen() const {
 		return open;
-	}
+    }
+
+    void WindowsWindow::close() {
+        if(onWindowCloseDelegate.isBound()) {
+            onWindowCloseDelegate.broadcast();
+        }
+        open = false;
+        CloseWindow(windowsHandle);
+    }
 
 	void WindowsWindow::processInput() {
 		MSG msg;
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			if(msg.wParam == CLV_WINDOWS_QUIT) {
-				if(onWindowCloseDelegate.isBound()) {
-					onWindowCloseDelegate.broadcast();
-				}
-				open = false;
+                close();
 			}
 
 			TranslateMessage(&msg);

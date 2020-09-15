@@ -2,6 +2,7 @@
 
 #include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/Texture.hpp>
+#include <Clove/Log.hpp>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <Root/Definitions.hpp>

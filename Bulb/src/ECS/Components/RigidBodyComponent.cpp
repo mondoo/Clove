@@ -1,6 +1,7 @@
 #include "Bulb/ECS/Components/RigidBodyComponent.hpp"
 
 #include <btBulletDynamicsCommon.h>
+#include <Clove/Log.hpp>
 
 using namespace clv;
 

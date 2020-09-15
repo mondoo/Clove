@@ -1,5 +1,7 @@
 #include "Clove/Graphics/OpenGL/GLBuffer.hpp"
 
+#include "Clove/Log.hpp"
+
 #include <Root/Definitions.hpp>
 
 namespace clv::gfx::ogl{

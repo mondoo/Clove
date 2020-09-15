@@ -1,5 +1,7 @@
 #include "Clove/Graphics/OpenGL/GLException.hpp"
 
+#include "Clove/Log.hpp"
+
 #include <glad/glad.h>
 
 namespace clv::gfx::ogl{

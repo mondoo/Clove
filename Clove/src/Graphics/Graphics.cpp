@@ -8,6 +8,7 @@
 #elif GARLIC_PLATFORM_MACOS
 	#include "Clove/Graphics/Metal/MTL.hpp"
 #endif
+#include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
 

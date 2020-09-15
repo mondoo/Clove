@@ -1,10 +1,11 @@
 #include "Bulb/Audio/SoundFile.hpp"
 
-#include <sndfile.h>
+#include <Clove/Log.hpp>
 #include <Root/Definitions.hpp>
+#include <sndfile.h>
 
 namespace blb::aud {
-    static int getWhence(SoundFile::SeekPosition position){
+    static int getWhence(SoundFile::SeekPosition position) {
         switch(position) {
             case SoundFile::SeekPosition::Beginning:
                 return SEEK_SET;

@@ -1,6 +1,7 @@
 #include "Clove/Graphics/Direct3D/D3DTexture.hpp"
 
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
+#include "Clove/Log.hpp"
 
 #include <stb_image.h>
 #include <Root/Definitions.hpp>

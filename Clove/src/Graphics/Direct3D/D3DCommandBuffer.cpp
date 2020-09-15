@@ -8,6 +8,7 @@
 #include "Clove/Graphics/Direct3D/D3DRenderTarget.hpp"
 #include "Clove/Graphics/Direct3D/D3DShader.hpp"
 #include "Clove/Graphics/Direct3D/D3DSurface.hpp"
+#include "Clove/Log.hpp"
 
 #include <d3d11.h>
 

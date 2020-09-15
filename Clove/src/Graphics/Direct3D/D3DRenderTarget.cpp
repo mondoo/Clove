@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/Direct3D/D3DException.hpp"
 #include "Clove/Graphics/Direct3D/D3DTexture.hpp"
+#include "Clove/Log.hpp"
 
 #include <d3d11.h>
 #include <Root/Definitions.hpp>

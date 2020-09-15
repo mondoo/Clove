@@ -5,6 +5,7 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/OpenGL/GLException.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
+#include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
 
