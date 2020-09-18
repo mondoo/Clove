@@ -16,7 +16,7 @@ set(BUILD_STATIC_LIBS ON CACHE BOOL "Build static library")
 set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #Garlic settings
-option(GAR_BUILD_SCAPE "Build Scape, Garlic's editor" OFF)
+option(GAR_BUILD_SCAPE "Build Scape, Garlic's editor" ON)
 option(GAR_BUILD_EXAMPLES OFF)
 option(GAR_ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
 
@@ -35,7 +35,7 @@ add_subdirectory(Bulb)
 add_subdirectory(Stem)
 
 #Garlic's editor
-if(GAR_BUILD_SCAPE AND MSVC)  #not currently supported without MSVC
+if(GAR_BUILD_SCAPE)  #not currently supported without MSVC
 	add_subdirectory(Scape)
 endif()
 
