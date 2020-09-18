@@ -15,7 +15,6 @@ target_compile_definitions(
 	INTERFACE
 		#Config
 		GARLIC_DEBUG=$<CONFIG:Debug>
-		GARLIC_RELEASE=$<CONFIG:Release>
 
 		#Platform
 		GARLIC_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
