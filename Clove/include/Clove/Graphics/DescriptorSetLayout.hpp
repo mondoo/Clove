@@ -21,6 +21,8 @@ namespace clv::gfx {
      * layout describes the type of binding in each binding slot for a given set. The index
      * of the set is defined in the array of DescriptorSetLayouts given to the 
      * PiplineObject::Descriptor.
+     * @see DescriptorSet
+     * @see DescriptorPool
      */
     class DescriptorSetLayout {
         //TYPES
