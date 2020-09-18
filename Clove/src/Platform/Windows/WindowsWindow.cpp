@@ -228,7 +228,7 @@ namespace clv::plt {
 				//Keyboard
 			case WM_KEYDOWN:
 			case WM_SYSKEYDOWN:
-                if(!(lParam & GARLIC_BIT(30)) || keyboard.isAutoRepeatEnabled()) {
+                if(!(lParam & (1 << 30)) || keyboard.isAutoRepeatEnabled()) {
 					keyboard.onKeyPressed(static_cast<Key>(wParam));
 				}
 				break;
