@@ -1,7 +1,12 @@
+#CMake
+option(GAR_ENABLE_DEBUG_DEFINITION "Sets the GARLIC_DEBUG definition to 1. Allowing for various debug functionality / information to be enabled" OFF)
+
+#Library
 add_library(
 	Root.Definitions INTERFACE
 )
 
+#Include
 target_include_directories(
 	Root.Definitions 
 	
@@ -9,18 +14,17 @@ target_include_directories(
 		include
 )
 
+#Preprocessor
 target_compile_definitions(
 	Root.Definitions 
 
 	INTERFACE
-		#Config
-		GARLIC_DEBUG=$<CONFIG:Debug>
-
 		#Platform
 		GARLIC_PLATFORM_WINDOWS=$<PLATFORM_ID:Windows>
 		GARLIC_PLATFORM_LINUX=$<PLATFORM_ID:Linux>
 		GARLIC_PLATFORM_MACOS=$<PLATFORM_ID:Darwin>
 
 		#Flags
+		GARLIC_DEBUG=$<BOOL:${GAR_ENABLE_DEBUG_DEFINITION}>
 		GARLIC_ENABLE_ASSERTS=GARLIC_DEBUG
 )
