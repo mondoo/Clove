@@ -210,7 +210,7 @@ namespace blb::rnd {
 
             commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), clv::gfx::IndexType::Uint16);
-            commandBuffers[imageIndex]->bindDescriptorSet(*meshDescriptorSet, *pipelineObject);
+            commandBuffers[imageIndex]->bindDescriptorSet(*meshDescriptorSet, *pipelineObject, 0); //TODO: Get correct setNum
             commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
 
             ++meshIndex;

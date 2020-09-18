@@ -36,7 +36,7 @@ namespace clv::gfx::vk {
         void bindPipelineObject(PipelineObject& pipelineObject) override;
         void bindVertexBuffer(GraphicsBuffer& vertexBuffer, const uint32_t binding) override;
         void bindIndexBuffer(GraphicsBuffer& indexBuffer, IndexType indexType) override;
-        void bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline) override;
+        void bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline, const uint32_t setNum) override;
 
         void drawIndexed(const size_t indexCount) override;
 

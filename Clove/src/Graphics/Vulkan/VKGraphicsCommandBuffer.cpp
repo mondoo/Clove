@@ -74,10 +74,10 @@ namespace clv::gfx::vk {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<VKPipelineObject>(&pipelineObject)->getPipeline());
     }
 
-    void VKGraphicsCommandBuffer::bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline) {
+    void VKGraphicsCommandBuffer::bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline, const uint32_t setNum) {
         VkDescriptorSet sets[] = { polyCast<VKDescriptorSet>(&descriptorSet)->getDescriptorSet() };
 
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<const VKPipelineObject>(&pipeline)->getLayout(), 0, 1, sets, 0, nullptr);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<const VKPipelineObject>(&pipeline)->getLayout(), setNum, 1, sets, 0, nullptr);
     }
 
     void VKGraphicsCommandBuffer::drawIndexed(const size_t indexCount) {
