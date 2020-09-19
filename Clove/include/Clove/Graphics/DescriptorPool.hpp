@@ -44,5 +44,10 @@ namespace clv::gfx {
 
         virtual void freeDescriptorSets(const std::shared_ptr<DescriptorSet>& descriptorSet)               = 0;
         virtual void freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets) = 0;
+
+        /**
+         * @brief Resets this pool freeing all DescriptorSets allocated from it.
+         */
+        virtual void reset() = 0;
     };
 }

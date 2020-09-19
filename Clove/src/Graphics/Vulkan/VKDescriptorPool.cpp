@@ -5,7 +5,7 @@
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
-    static VkDescriptorPoolCreateFlags getDescriptorPoolFlags(DescriptorPool::Flag garlicFlag){
+    static VkDescriptorPoolCreateFlags getDescriptorPoolFlags(DescriptorPool::Flag garlicFlag) {
         switch(garlicFlag) {
             case DescriptorPool::Flag::None:
                 return 0;
@@ -18,7 +18,7 @@ namespace clv::gfx::vk {
 
     VKDescriptorPool::VKDescriptorPool(DevicePointer device, Descriptor descriptor)
         : device(std::move(device))
-        , descriptor(std::move(descriptor)){
+        , descriptor(std::move(descriptor)) {
         const size_t numDescriptorTypes = std::size(this->descriptor.poolTypes);
         std::vector<VkDescriptorPoolSize> poolSizes(numDescriptorTypes);
         for(size_t i = 0; i < numDescriptorTypes; ++i) {
@@ -96,5 +96,9 @@ namespace clv::gfx::vk {
         if(vkFreeDescriptorSets(device.get(), pool, numSets, std::data(vulkanSets)) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to free descriptor sets");
         }
+    }
+
+    void VKDescriptorPool::reset() {
+        vkResetDescriptorPool(device.get(), pool, 0);
     }
 }

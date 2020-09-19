@@ -35,6 +35,8 @@ namespace clv::gfx::vk {
 
         void freeDescriptorSets(const std::shared_ptr<DescriptorSet>& descriptorSet) override;
         void freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets) override;
+
+        void reset() override;
     };
 }
 
