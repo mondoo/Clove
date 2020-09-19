@@ -27,6 +27,11 @@ namespace clv::gfx {
     struct RasteriserDescriptor {
         //TODO
     };
+
+    struct PushConstantDescriptor {
+        ShaderStage stage;
+        uint32_t size{ 0 };
+    };
 }
 
 namespace clv::gfx {
@@ -51,6 +56,7 @@ namespace clv::gfx {
             std::shared_ptr<RenderPass> renderPass;
 
             std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts;
+            std::vector<PushConstantDescriptor> pushConstants;
         };
 
         //FUNCTIONS

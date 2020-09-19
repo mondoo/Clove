@@ -33,6 +33,8 @@ namespace clv::gfx {
         virtual void bindIndexBuffer(GraphicsBuffer& indexBuffer, IndexType indexType)                                      = 0;
         virtual void bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline, const uint32_t setNum) = 0;
 
+        virtual void pushConstant(PipelineObject& pipelineObject, const ShaderStage stage, const uint32_t size, const void* data) = 0;
+
         virtual void drawIndexed(const size_t indexCount) = 0;
 
         virtual void bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) = 0;

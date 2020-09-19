@@ -28,6 +28,20 @@ namespace clv::gfx::vk {
         return imageView;
     }
 
+    VkShaderStageFlags convertShaderStage(ShaderStage stage) {
+        switch(stage) {
+            case ShaderStage::Vertex:
+                return VK_SHADER_STAGE_VERTEX_BIT;
+            case ShaderStage::Pixel:
+                return VK_SHADER_STAGE_FRAGMENT_BIT;
+            case ShaderStage::Geometry:
+                return VK_SHADER_STAGE_GEOMETRY_BIT;
+            default:
+                GARLIC_ASSERT(false, "{0}: Stage not supported", GARLIC_FUNCTION_NAME);
+                return VK_SHADER_STAGE_VERTEX_BIT;
+        }
+    }
+
     ImageFormat convertImageFormat(VkFormat vulkanFormat) {
         switch(vulkanFormat) {
             //Formats supported by garlic

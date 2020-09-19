@@ -80,6 +80,10 @@ namespace clv::gfx::vk {
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<const VKPipelineObject>(&pipeline)->getLayout(), setNum, 1, sets, 0, nullptr);
     }
 
+    void VKGraphicsCommandBuffer::pushConstant(PipelineObject& pipelineObject, const ShaderStage stage, const uint32_t size, const void* data) {
+        vkCmdPushConstants(commandBuffer, polyCast<VKPipelineObject>(&pipelineObject)->getLayout(), convertShaderStage(stage), 0, size, data);
+    }
+
     void VKGraphicsCommandBuffer::drawIndexed(const size_t indexCount) {
         vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
     }

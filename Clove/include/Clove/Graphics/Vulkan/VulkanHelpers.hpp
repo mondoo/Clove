@@ -1,12 +1,14 @@
 #pragma once
 
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
     VkImageView createImageView(VkDevice device, VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags);
+
+    VkShaderStageFlags convertShaderStage(ShaderStage stage);
 
     ImageFormat convertImageFormat(VkFormat vulkanFormat);
     VkFormat convertImageFormat(ImageFormat garlicFormat);

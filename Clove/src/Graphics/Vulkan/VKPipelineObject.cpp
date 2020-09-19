@@ -41,11 +41,18 @@ namespace clv::gfx::vk {
         VkVertexInputBindingDescription inputBindingDescription         = getBindingDescription(descriptor.vertexInput);
         std::vector<VkVertexInputAttributeDescription> vertexAttributes = getAttributes(descriptor.vertexAttributes);
 
-        std::vector<VKDescriptorSetLayout*> castedLayouts(descriptor.descriptorSetLayouts.size());
-        for(size_t i = 0; i < castedLayouts.size(); ++i) {
+        std::vector<VKDescriptorSetLayout*> castedLayouts(std::size(descriptor.descriptorSetLayouts));
+        for(size_t i = 0; i < std::size(castedLayouts); ++i) {
             castedLayouts[i] = polyCast<VKDescriptorSetLayout>(descriptor.descriptorSetLayouts[i].get());
         }
         std::vector<VkDescriptorSetLayout> descriptorLayouts = getDescriptorSetLayouts(castedLayouts);
+
+        std::vector<VkPushConstantRange> vkPushConstantRanges(std::size(descriptor.pushConstants));
+        for(size_t i = 0; i < std::size(vkPushConstantRanges); ++i) {
+            vkPushConstantRanges[i].stageFlags = convertShaderStage(descriptor.pushConstants[i].stage);
+            vkPushConstantRanges[i].offset     = 0;
+            vkPushConstantRanges[i].size       = descriptor.pushConstants[i].size;
+        }
 
         //Vertex shader
         VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
@@ -151,8 +158,8 @@ namespace clv::gfx::vk {
         pipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutInfo.setLayoutCount         = std::size(descriptorLayouts);
         pipelineLayoutInfo.pSetLayouts            = std::data(descriptorLayouts);
-        pipelineLayoutInfo.pushConstantRangeCount = 0;
-        pipelineLayoutInfo.pPushConstantRanges    = nullptr;
+        pipelineLayoutInfo.pushConstantRangeCount = std::size(vkPushConstantRanges);
+        pipelineLayoutInfo.pPushConstantRanges    = std::data(vkPushConstantRanges);
 
         if(vkCreatePipelineLayout(this->device.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create pipeline layout");
@@ -193,11 +200,11 @@ namespace clv::gfx::vk {
         vkDestroyPipeline(device.get(), pipeline, nullptr);
         vkDestroyPipelineLayout(device.get(), pipelineLayout, nullptr);
     }
-    
+
     VkPipeline VKPipelineObject::getPipeline() const {
         return pipeline;
     }
-    
+
     VkPipelineLayout VKPipelineObject::getLayout() const {
         return pipelineLayout;
     }
