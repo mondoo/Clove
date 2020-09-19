@@ -82,7 +82,8 @@ namespace blb::rnd {
 
         std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> descriptorSetLayouts;
         std::vector<InFlightImageDescriptorSets> descriptorSets;//One for each image.
-        std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> descriptorPool;
+        std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> materialDescriptorPool;//One for each image.
+        std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> frameDescriptorPool;//One for each image. For descriptors which are set once per frame
 
         //FUNCTIONS
     public:

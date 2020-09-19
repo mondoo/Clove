@@ -130,35 +130,19 @@ namespace blb::rnd {
         inFlightFences[currentFrame]->reset();
 
         //Allocate a descriptor set for each mesh to be drawn
-        const size_t meshCount = std::size(currentFrameData.meshes);
-        if(std::size(descriptorSets[imageIndex].materialSets) < meshCount) {
+        if(const size_t meshCount = std::size(currentFrameData.meshes); std::size(descriptorSets[imageIndex].materialSets) < meshCount) {
             const auto materialIndex = static_cast<size_t>(DescriptorSetSlots::Material);
-            const auto viewIndex     = static_cast<size_t>(DescriptorSetSlots::View);
-            const auto lightingIndex = static_cast<size_t>(DescriptorSetSlots::Lighting);
 
-            //TODO: Doing it all in here for now, move out the others
-            auto primitiveSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[materialIndex]);
-            auto viewSetBindingCount      = countDescriptorBindingTypes(*descriptorSetLayouts[viewIndex]);
-            auto lightingSetBindingCount  = countDescriptorBindingTypes(*descriptorSetLayouts[lightingIndex]);
-
-            for(auto& [key, val] : primitiveSetBindingCount) {
+            auto materialSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[materialIndex]);
+            for(auto& [key, val] : materialSetBindingCount) {
                 val *= meshCount;
             }
 
-            auto allCounts = primitiveSetBindingCount;
-            allCounts.merge(viewSetBindingCount);
-            allCounts.merge(lightingSetBindingCount);
-
-            //TODO: Hard coding the amount of different sets in
-            if(descriptorPool[imageIndex] == nullptr) {
-                descriptorPool[imageIndex] = createDescriptorPool(allCounts, meshCount + 2);
-            }
+            materialDescriptorPool[imageIndex] = createDescriptorPool(materialSetBindingCount, meshCount);
 
             //TODO: Do we even need to store these? we could just nuke the pool at the beginning of the frame
             std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[materialIndex]);
-            descriptorSets[imageIndex].materialSets = descriptorPool[imageIndex]->allocateDescriptorSets(layouts);
-            descriptorSets[imageIndex].viewSet      = descriptorPool[imageIndex]->allocateDescriptorSets(descriptorSetLayouts[viewIndex]);
-            descriptorSets[imageIndex].lightingSet  = descriptorPool[imageIndex]->allocateDescriptorSets(descriptorSetLayouts[lightingIndex]);
+            descriptorSets[imageIndex].materialSets = materialDescriptorPool[imageIndex]->allocateDescriptorSets(layouts);
         }
 
         //Record our command buffers
@@ -203,7 +187,7 @@ namespace blb::rnd {
         descriptorSets[imageIndex].lightingSet->write(*uniformBuffers[imageIndex], lightOffset, lightSize, 0);
         descriptorSets[imageIndex].lightingSet->write(*uniformBuffers[imageIndex], numLightsOffset, numLightsSize, 1);
 
-        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, 1);//TODO: Get correct setNum
+        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, 1);    //TODO: Get correct setNum
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, 2);//TODO: Get correct setNum
 
         //Bind all mesh data
@@ -295,12 +279,33 @@ namespace blb::rnd {
         const size_t imageCount = std::size(swapChainFrameBuffers);
 
         uniformBuffers = createUniformBuffers(imageCount);
-        descriptorPool.resize(imageCount);
+
+        materialDescriptorPool.resize(imageCount);
+        frameDescriptorPool.resize(imageCount);
         descriptorSets.resize(imageCount);
 
+        //Allocate frame scope descriptor pools
+        const auto viewIndex     = static_cast<size_t>(DescriptorSetSlots::View);
+        const auto lightingIndex = static_cast<size_t>(DescriptorSetSlots::Lighting);
+
+        auto viewSetBindingCount     = countDescriptorBindingTypes(*descriptorSetLayouts[viewIndex]);
+        auto lightingSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[static_cast<size_t>(DescriptorSetSlots::Lighting)]);
+
+        constexpr uint32_t totalSets {2};//Only 2 sets will be allocated from these pools
+        auto bindingCounts = viewSetBindingCount;
+        bindingCounts.merge(lightingSetBindingCount);
+
         commandBuffers.reserve(imageCount);
+
         for(size_t i = 0; i < imageCount; ++i) {
-            commandBuffers.emplace_back(graphicsQueue->allocateCommandBuffer());
+            //Create command buffers
+            commandBuffers.emplace_back(graphicsQueue->allocateCommandBuffer()); 
+
+            //Allocate Descriptor Sets
+            frameDescriptorPool[i] = createDescriptorPool(bindingCounts, totalSets);
+
+            descriptorSets[i].viewSet     = frameDescriptorPool[i]->allocateDescriptorSets(descriptorSetLayouts[viewIndex]);
+            descriptorSets[i].lightingSet = frameDescriptorPool[i]->allocateDescriptorSets(descriptorSetLayouts[lightingIndex]);
         }
 
         needNewSwapchain = false;
@@ -417,16 +422,17 @@ namespace blb::rnd {
     }
 
     std::shared_ptr<clv::gfx::DescriptorPool> ForwardRenderer3D::createDescriptorPool(const std::unordered_map<clv::gfx::DescriptorType, uint32_t>& bindingCount, const uint32_t setCount) {
-        clv::gfx::DescriptorInfo uboInfo{};
-        uboInfo.type  = clv::gfx::DescriptorType::UniformBuffer;
-        uboInfo.count = bindingCount.at(uboInfo.type);
+        std::vector<clv::gfx::DescriptorInfo> poolTypes;
+        for(auto&& [type, count] : bindingCount){
+            clv::gfx::DescriptorInfo info{};
+            info.type = type;
+            info.count = count;
 
-        clv::gfx::DescriptorInfo samplerInfo{};
-        samplerInfo.type  = clv::gfx::DescriptorType::CombinedImageSampler;
-        samplerInfo.count = bindingCount.at(samplerInfo.type);
+            poolTypes.emplace_back(info);
+        }
 
         clv::gfx::DescriptorPool::Descriptor poolDescriptor{};
-        poolDescriptor.poolTypes = { std::move(uboInfo), std::move(samplerInfo) };
+        poolDescriptor.poolTypes = std::move(poolTypes);
         poolDescriptor.flag      = clv::gfx::DescriptorPool::Flag::None;
         poolDescriptor.maxSets   = setCount;
 
