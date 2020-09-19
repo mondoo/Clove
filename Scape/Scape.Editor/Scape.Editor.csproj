@@ -13,6 +13,8 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.11" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\build\Scape\Scape.Membrane\Scape.Membrane.vcxproj" />
+    <Reference Include="Scape.Membrane">
+      <HintPath>..\..\build\lib\Debug\Scape.Membrane.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
