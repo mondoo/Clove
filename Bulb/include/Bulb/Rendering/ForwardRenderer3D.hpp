@@ -53,16 +53,8 @@ namespace blb::rnd {
             LightCount numLights;
         } currentFrameData;
 
-        //
-        struct ModelViewProj {
-            clv::mth::mat4f model;
-            clv::mth::mat4f view;
-            clv::mth::mat4f proj;
-        };
-
         std::vector<std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>>> uniformBuffers;
         std::shared_ptr<clv::gfx::Sampler> sampler;
-        //
 
         std::shared_ptr<clv::gfx::GraphicsDevice> graphicsDevice;
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;

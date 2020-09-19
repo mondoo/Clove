@@ -2,11 +2,15 @@
 
 #include "Constants.glsl"
 
-layout(std140, set = SET_PER_PRIMITIVE, binding = 0) uniform ModelViewProj{
+layout(std140, set = SET_PER_PRIMITIVE, binding = 0) uniform Model{
 	mat4 model;
+	mat4 normalMatrix;
+};
+
+layout(std140, set = SET_PER_PRIMITIVE, binding = 1) uniform ViewProj{
 	mat4 view;
 	mat4 proj;
-} mvp;
+};
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
@@ -19,11 +23,11 @@ layout(location = 2) out vec3 vertPos;
 layout(location = 3) out vec3 vertNorm;
 
 void main(){
-	gl_Position = mvp.proj * mvp.view * mvp.model * vec4(position, 1.0f);
+	gl_Position = proj * view * model * vec4(position, 1.0f);
 	
 	fragColour = colour;
 	fragTexCoord = texCoord;
 
-	vertPos = vec3(mvp.model * vec4(position, 1.0f));
-	vertNorm = mat3(transpose(inverse(mvp.model))) * normal; //TODO: inverse / transpose on CPU
+	vertPos = vec3(model * vec4(position, 1.0f));
+	vertNorm = mat3(normalMatrix) * normal;
 }

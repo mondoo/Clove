@@ -182,35 +182,46 @@ namespace blb::rnd {
         for(auto&& [mesh, transform] : currentFrameData.meshes) {
             std::shared_ptr<clv::gfx::DescriptorSet>& meshDescriptorSet = descriptorSets[imageIndex].primitiveSets[meshIndex];
 
-            ModelViewProj ubo{};
-            ubo.model = transform;
-            ubo.view  = currentFrameData.view;
-            ubo.proj  = currentFrameData.projection;
+            VertexData modelData{};
+            modelData.model        = transform;
+            modelData.normalMatrix = clv::mth::inverse(clv::mth::transpose(transform));
+
+            ViewData viewData{};
+            viewData.view       = currentFrameData.view;
+            viewData.projection = currentFrameData.projection;
 
             //TEMP: Adjusting the offsets
             const size_t minOffUniformBufferAlignment = graphicsDevice->getLimits().minUniformBufferOffsetAlignment;
 
-            const size_t uboSize       = sizeof(ubo);
+            const auto getByteBoundary = [minOffUniformBufferAlignment](const size_t currentOffset) {
+                return minOffUniformBufferAlignment - (currentOffset % minOffUniformBufferAlignment);
+            };
+
+            const size_t modelSize     = sizeof(modelData);
+            const size_t viewSize      = sizeof(viewData);
             const size_t lightSize     = sizeof(currentFrameData.lights);
             const size_t numLightsSize = sizeof(currentFrameData.numLights);
 
-            const size_t uboOffset       = 0;
-            const size_t lightOffset     = uboSize + (minOffUniformBufferAlignment - (uboSize % minOffUniformBufferAlignment));
-            const size_t numLightsOffset = (lightOffset + lightSize) - (minOffUniformBufferAlignment - ((lightOffset + lightSize) % minOffUniformBufferAlignment));
+            const size_t modelOffset     = 0;
+            const size_t viewOffset      = modelSize + getByteBoundary(modelSize);
+            const size_t lightOffset     = (viewOffset + viewSize) + getByteBoundary(viewOffset + viewSize);
+            const size_t numLightsOffset = (lightOffset + lightSize) + getByteBoundary(lightOffset + lightSize);
             //~TEMP
 
-            uniformBuffers[imageIndex][meshIndex]->map(&ubo, uboOffset, uboSize);
+            uniformBuffers[imageIndex][meshIndex]->map(&modelData, modelOffset, modelSize);
+            uniformBuffers[imageIndex][meshIndex]->map(&viewData, viewOffset, viewSize);
             uniformBuffers[imageIndex][meshIndex]->map(&currentFrameData.lights, lightOffset, lightSize);
             uniformBuffers[imageIndex][meshIndex]->map(&currentFrameData.numLights, numLightsOffset, numLightsSize);
 
-            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], uboOffset, uboSize, 0);
-            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], lightOffset, lightSize, 2);
-            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], numLightsOffset, numLightsSize, 3);
-            meshDescriptorSet->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 1);
+            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], modelOffset, modelSize, 0);
+            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], viewOffset, viewSize, 1);
+            meshDescriptorSet->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 2);
+            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], lightOffset, lightSize, 3);
+            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], numLightsOffset, numLightsSize, 4);
 
             commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), clv::gfx::IndexType::Uint16);
-            commandBuffers[imageIndex]->bindDescriptorSet(*meshDescriptorSet, *pipelineObject, 0); //TODO: Get correct setNum
+            commandBuffers[imageIndex]->bindDescriptorSet(*meshDescriptorSet, *pipelineObject, 0);//TODO: Get correct setNum
             commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
 
             ++meshIndex;
@@ -388,7 +399,7 @@ namespace blb::rnd {
 
         for(size_t i = 0; i < bufferCount; ++i) {
             clv::gfx::GraphicsBuffer::Descriptor descriptor{};
-            descriptor.size        = sizeof(ModelViewProj) + sizeof(LightDataArray) + sizeof(LightCount) + padding;
+            descriptor.size        = sizeof(VertexData) + sizeof(ViewData) + sizeof(LightDataArray) + sizeof(LightCount) + padding;
             descriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::UniformBuffer;
             descriptor.sharingMode = clv::gfx::SharingMode::Exclusive;
             descriptor.memoryType  = clv::gfx::MemoryType::SystemMemory;
