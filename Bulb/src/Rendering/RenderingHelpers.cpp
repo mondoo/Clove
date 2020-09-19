@@ -6,11 +6,11 @@
 
 namespace blb::rnd {
     std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> createDescriptorSetLayouts(clv::gfx::GraphicsFactory& factory) {
-        clv::gfx::DescriptorSetBindingInfo modelLayoutBinding{};
-        modelLayoutBinding.binding   = 0;
-        modelLayoutBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
-        modelLayoutBinding.arraySize = 1;
-        modelLayoutBinding.stage     = clv::gfx::DescriptorStage::Vertex;
+        // clv::gfx::DescriptorSetBindingInfo modelLayoutBinding{};
+        // modelLayoutBinding.binding   = 0;
+        // modelLayoutBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
+        // modelLayoutBinding.arraySize = 1;
+        // modelLayoutBinding.stage     = clv::gfx::DescriptorStage::Vertex;
 
         clv::gfx::DescriptorSetBindingInfo viewLayoutBinding{};
         viewLayoutBinding.binding   = 1;
@@ -37,7 +37,7 @@ namespace blb::rnd {
         lightCountBindingInfo.stage     = clv::gfx::DescriptorStage::Pixel;
 
         clv::gfx::DescriptorSetLayout::Descriptor descriptorSetLayoutDescriptor{};
-        descriptorSetLayoutDescriptor.bindings = { modelLayoutBinding, viewLayoutBinding, samplerLayoutBinding, lightDataBindingInfo, lightCountBindingInfo };
+        descriptorSetLayoutDescriptor.bindings = { /*modelLayoutBinding,*/ viewLayoutBinding, samplerLayoutBinding, lightDataBindingInfo, lightCountBindingInfo };
 
         return { factory.createDescriptorSetLayout(descriptorSetLayoutDescriptor) };
     }

@@ -197,23 +197,23 @@ namespace blb::rnd {
                 return minOffUniformBufferAlignment - (currentOffset % minOffUniformBufferAlignment);
             };
 
-            const size_t modelSize     = sizeof(modelData);
+            //const size_t modelSize     = sizeof(modelData);
             const size_t viewSize      = sizeof(viewData);
             const size_t lightSize     = sizeof(currentFrameData.lights);
             const size_t numLightsSize = sizeof(currentFrameData.numLights);
 
-            const size_t modelOffset     = 0;
-            const size_t viewOffset      = modelSize + getByteBoundary(modelSize);
+            // const size_t modelOffset     = 0;
+            const size_t viewOffset      = 0;//modelSize + getByteBoundary(modelSize);
             const size_t lightOffset     = (viewOffset + viewSize) + getByteBoundary(viewOffset + viewSize);
             const size_t numLightsOffset = (lightOffset + lightSize) + getByteBoundary(lightOffset + lightSize);
             //~TEMP
 
-            uniformBuffers[imageIndex][meshIndex]->map(&modelData, modelOffset, modelSize);
+            //uniformBuffers[imageIndex][meshIndex]->map(&modelData, modelOffset, modelSize);
             uniformBuffers[imageIndex][meshIndex]->map(&viewData, viewOffset, viewSize);
             uniformBuffers[imageIndex][meshIndex]->map(&currentFrameData.lights, lightOffset, lightSize);
             uniformBuffers[imageIndex][meshIndex]->map(&currentFrameData.numLights, numLightsOffset, numLightsSize);
 
-            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], modelOffset, modelSize, 0);
+            //meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], modelOffset, modelSize, 0);
             meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], viewOffset, viewSize, 1);
             meshDescriptorSet->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 2);
             meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], lightOffset, lightSize, 3);
@@ -222,6 +222,7 @@ namespace blb::rnd {
             commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), clv::gfx::IndexType::Uint16);
             commandBuffers[imageIndex]->bindDescriptorSet(*meshDescriptorSet, *pipelineObject, 0);//TODO: Get correct setNum
+            commandBuffers[imageIndex]->pushConstant(*pipelineObject, clv::gfx::ShaderStage::Vertex, sizeof(VertexData), &modelData);
             commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
 
             ++meshIndex;
@@ -366,6 +367,10 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::createPipeline() {
+        clv::gfx::PushConstantDescriptor modelPushConstant{};
+        modelPushConstant.stage = clv::gfx::ShaderStage::Vertex;
+        modelPushConstant.size  = sizeof(VertexData);
+
         clv::gfx::PipelineObject::Descriptor pipelineDescriptor;
         pipelineDescriptor.vertexShader            = graphicsFactory->createShader(reinterpret_cast<const std::byte*>(mesh_v), mesh_vLength);
         pipelineDescriptor.fragmentShader          = graphicsFactory->createShader(reinterpret_cast<const std::byte*>(mesh_p), mesh_pLength);
@@ -375,6 +380,7 @@ namespace blb::rnd {
         pipelineDescriptor.scissorDescriptor.size  = { swapchain->getExtent().x, swapchain->getExtent().y };
         pipelineDescriptor.renderPass              = renderPass;
         pipelineDescriptor.descriptorSetLayouts    = descriptorSetLayouts;
+        pipelineDescriptor.pushConstants           = { modelPushConstant };
 
         pipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
@@ -399,7 +405,7 @@ namespace blb::rnd {
 
         for(size_t i = 0; i < bufferCount; ++i) {
             clv::gfx::GraphicsBuffer::Descriptor descriptor{};
-            descriptor.size        = sizeof(VertexData) + sizeof(ViewData) + sizeof(LightDataArray) + sizeof(LightCount) + padding;
+            descriptor.size        = /*sizeof(VertexData) + */ sizeof(ViewData) + sizeof(LightDataArray) + sizeof(LightCount) + padding;
             descriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::UniformBuffer;
             descriptor.sharingMode = clv::gfx::SharingMode::Exclusive;
             descriptor.memoryType  = clv::gfx::MemoryType::SystemMemory;

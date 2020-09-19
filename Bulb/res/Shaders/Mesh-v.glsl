@@ -2,7 +2,7 @@
 
 #include "Constants.glsl"
 
-layout(std140, set = SET_PER_PRIMITIVE, binding = 0) uniform Model{
+layout(std140, push_constant) uniform Model{
 	mat4 model;
 	mat4 normalMatrix;
 };
