@@ -129,22 +129,6 @@ namespace blb::rnd {
 
         inFlightFences[currentFrame]->reset();
 
-        //Allocate a descriptor set for each mesh to be drawn
-        if(const size_t meshCount = std::size(currentFrameData.meshes); std::size(descriptorSets[imageIndex].materialSets) < meshCount) {
-            const auto materialIndex = static_cast<size_t>(DescriptorSetSlots::Material);
-
-            auto materialSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[materialIndex]);
-            for(auto& [key, val] : materialSetBindingCount) {
-                val *= meshCount;
-            }
-
-            materialDescriptorPool[imageIndex] = createDescriptorPool(materialSetBindingCount, meshCount);
-
-            //TODO: Do we even need to store these? we could just nuke the pool at the beginning of the frame
-            std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[materialIndex]);
-            descriptorSets[imageIndex].materialSets = materialDescriptorPool[imageIndex]->allocateDescriptorSets(layouts);
-        }
-
         //Record our command buffers
         clv::gfx::RenderArea renderArea{};
         renderArea.origin = { 0, 0 };
@@ -190,10 +174,26 @@ namespace blb::rnd {
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, 1);    //TODO: Get correct setNum
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, 2);//TODO: Get correct setNum
 
+        const auto materialIndex = static_cast<size_t>(DescriptorSetSlots::Material);
+        const size_t meshCount = std::size(currentFrameData.meshes); 
+        
+        //Allocate a descriptor set for each mesh to be drawn
+        if(materialDescriptorPool[imageIndex] == nullptr || materialDescriptorPool[imageIndex]->getDescriptor().maxSets < meshCount) {
+            auto materialSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[materialIndex]);
+            for(auto& [key, val] : materialSetBindingCount) {
+                val *= meshCount;
+            }
+            materialDescriptorPool[imageIndex] = createDescriptorPool(materialSetBindingCount, meshCount);
+        }
+
+        materialDescriptorPool[imageIndex]->reset();
+        std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[materialIndex]);
+        std::vector<std::shared_ptr<clv::gfx::DescriptorSet>> materialSets = materialDescriptorPool[imageIndex]->allocateDescriptorSets(layouts);
+
         //Bind all mesh data
         size_t meshIndex = 0;
         for(auto&& [mesh, transform] : currentFrameData.meshes) {
-            std::shared_ptr<clv::gfx::DescriptorSet>& materialDescriptorSet = descriptorSets[imageIndex].materialSets[meshIndex];
+            std::shared_ptr<clv::gfx::DescriptorSet>& materialDescriptorSet = materialSets[meshIndex];
 
             VertexData modelData{};
             modelData.model        = transform;

@@ -28,7 +28,6 @@ namespace blb::rnd {
         //TYPES
     private:
         struct InFlightImageDescriptorSets {
-            std::vector<std::shared_ptr<clv::gfx::DescriptorSet>> materialSets;
             std::shared_ptr<clv::gfx::DescriptorSet> viewSet;
             std::shared_ptr<clv::gfx::DescriptorSet> lightingSet;
         };
