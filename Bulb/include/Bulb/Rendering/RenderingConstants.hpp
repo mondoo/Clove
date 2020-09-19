@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstdint>
+#include <limits>
+
 namespace blb::rnd {
     /**
 	 * All variables here are reflected in Constants.glsl.
