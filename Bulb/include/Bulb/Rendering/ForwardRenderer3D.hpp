@@ -52,7 +52,18 @@ namespace blb::rnd {
             LightCount numLights;
         } currentFrameData;
 
-        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers; //One per image. Currently no per mesh data is stored in a buffer
+        //Contains size / offsets for each piece of data placed inside the per frame uniform buffer
+        struct {
+            size_t viewSize{ 0 };
+            size_t lightSize{ 0 };
+            size_t numLightsSize{ 0 };
+
+            size_t viewOffset{ 0 };
+            size_t lightOffset{ 0 };
+            size_t numLightsOffset{ 0 };
+        } uniformBufferLayout;
+
+        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;//One per image. Currently no per mesh data is stored in a buffer
         std::shared_ptr<clv::gfx::Sampler> sampler;
 
         std::shared_ptr<clv::gfx::GraphicsDevice> graphicsDevice;
@@ -80,9 +91,9 @@ namespace blb::rnd {
         std::vector<std::shared_ptr<clv::gfx::Fence>> imagesInFlight;
 
         std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> descriptorSetLayouts;
-        std::vector<InFlightImageDescriptorSets> descriptorSets;//One for each image.
+        std::vector<InFlightImageDescriptorSets> descriptorSets;                      //One for each image.
         std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> materialDescriptorPool;//One for each image.
-        std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> frameDescriptorPool;//One for each image. For descriptors which are set once per frame
+        std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> frameDescriptorPool;   //One for each image. For descriptors which are set once per frame
 
         //FUNCTIONS
     public:
