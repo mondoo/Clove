@@ -28,7 +28,7 @@ namespace blb::rnd {
         //TYPES
     private:
         struct InFlightImageDescriptorSets {
-            std::vector<std::shared_ptr<clv::gfx::DescriptorSet>> primitiveSets;
+            std::vector<std::shared_ptr<clv::gfx::DescriptorSet>> materialSets;
             std::shared_ptr<clv::gfx::DescriptorSet> viewSet;
             std::shared_ptr<clv::gfx::DescriptorSet> lightingSet;
         };
@@ -53,7 +53,7 @@ namespace blb::rnd {
             LightCount numLights;
         } currentFrameData;
 
-        std::vector<std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>>> uniformBuffers;
+        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers; //One per image. Currently no per mesh data is stored in a buffer
         std::shared_ptr<clv::gfx::Sampler> sampler;
 
         std::shared_ptr<clv::gfx::GraphicsDevice> graphicsDevice;

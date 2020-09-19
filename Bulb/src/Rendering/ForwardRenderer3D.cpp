@@ -131,39 +131,34 @@ namespace blb::rnd {
 
         //Allocate a descriptor set for each mesh to be drawn
         const size_t meshCount = std::size(currentFrameData.meshes);
-        if(std::size(descriptorSets[imageIndex].primitiveSets) < meshCount) {
-            const auto primitiveIndex = static_cast<size_t>(DescriptorSetSlots::PerPimitive);
-            const auto viewIndex      = static_cast<size_t>(DescriptorSetSlots::View);
-            const auto lightingIndex  = static_cast<size_t>(DescriptorSetSlots::Lighting);
+        if(std::size(descriptorSets[imageIndex].materialSets) < meshCount) {
+            const auto materialIndex = static_cast<size_t>(DescriptorSetSlots::Material);
+            const auto viewIndex     = static_cast<size_t>(DescriptorSetSlots::View);
+            const auto lightingIndex = static_cast<size_t>(DescriptorSetSlots::Lighting);
 
-            //TODO: Doing it all in here for now
-            auto primitiveSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[primitiveIndex]);
-            //auto viewSetBindingCount      = countDescriptorBindingTypes(*descriptorSetLayouts[viewIndex]);
-            //auto lightingSetBindingCount  = countDescriptorBindingTypes(*descriptorSetLayouts[lightingIndex]);
+            //TODO: Doing it all in here for now, move out the others
+            auto primitiveSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[materialIndex]);
+            auto viewSetBindingCount      = countDescriptorBindingTypes(*descriptorSetLayouts[viewIndex]);
+            auto lightingSetBindingCount  = countDescriptorBindingTypes(*descriptorSetLayouts[lightingIndex]);
 
             for(auto& [key, val] : primitiveSetBindingCount) {
                 val *= meshCount;
             }
 
             auto allCounts = primitiveSetBindingCount;
-            //allCounts.merge(viewSetBindingCount);
-            //allCounts.merge(lightingSetBindingCount);
+            allCounts.merge(viewSetBindingCount);
+            allCounts.merge(lightingSetBindingCount);
 
             //TODO: Hard coding the amount of different sets in
             if(descriptorPool[imageIndex] == nullptr) {
-                //TODO: meshCount won't work here when start using the other descriptor sets. But it would be meshCount + 2 basically
-                descriptorPool[imageIndex] = createDescriptorPool(allCounts, meshCount);//Make sure to pool enough for all images
+                descriptorPool[imageIndex] = createDescriptorPool(allCounts, meshCount + 2);
             }
 
             //TODO: Do we even need to store these? we could just nuke the pool at the beginning of the frame
-            std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[primitiveIndex]);
-            descriptorSets[imageIndex].primitiveSets = descriptorPool[imageIndex]->allocateDescriptorSets(layouts);
-            //descriptorSets[imageIndex].viewSet       = descriptorPool->allocateDescriptorSets(descriptorSetLayouts[viewIndex]);
-            //descriptorSets[imageIndex].lightingSet   = descriptorPool->allocateDescriptorSets(descriptorSetLayouts[lightingIndex]);
-        }
-
-        if(std::size(uniformBuffers[imageIndex]) < meshCount) {
-            uniformBuffers[imageIndex] = createUniformBuffers(meshCount);
+            std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[materialIndex]);
+            descriptorSets[imageIndex].materialSets = descriptorPool[imageIndex]->allocateDescriptorSets(layouts);
+            descriptorSets[imageIndex].viewSet      = descriptorPool[imageIndex]->allocateDescriptorSets(descriptorSetLayouts[viewIndex]);
+            descriptorSets[imageIndex].lightingSet  = descriptorPool[imageIndex]->allocateDescriptorSets(descriptorSetLayouts[lightingIndex]);
         }
 
         //Record our command buffers
@@ -178,51 +173,56 @@ namespace blb::rnd {
         commandBuffers[imageIndex]->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, clearColour, depthStencilClearValue);
         commandBuffers[imageIndex]->bindPipelineObject(*pipelineObject);
 
+        //Write / Bind the descriptor sets for the per frame data
+        ViewData viewData{};
+        viewData.view       = currentFrameData.view;
+        viewData.projection = currentFrameData.projection;
+
+        //TEMP: Adjusting the offsets
+        const size_t minOffUniformBufferAlignment = graphicsDevice->getLimits().minUniformBufferOffsetAlignment;
+
+        const auto getByteBoundary = [minOffUniformBufferAlignment](const size_t currentOffset) {
+            return minOffUniformBufferAlignment - (currentOffset % minOffUniformBufferAlignment);
+        };
+
+        const size_t viewSize      = sizeof(viewData);
+        const size_t lightSize     = sizeof(currentFrameData.lights);
+        const size_t numLightsSize = sizeof(currentFrameData.numLights);
+
+        const size_t viewOffset      = 0;//modelSize + getByteBoundary(modelSize);
+        const size_t lightOffset     = (viewOffset + viewSize) + getByteBoundary(viewOffset + viewSize);
+        const size_t numLightsOffset = (lightOffset + lightSize) + getByteBoundary(lightOffset + lightSize);
+        //~TEMP
+
+        uniformBuffers[imageIndex]->map(&viewData, viewOffset, viewSize);
+        uniformBuffers[imageIndex]->map(&currentFrameData.lights, lightOffset, lightSize);
+        uniformBuffers[imageIndex]->map(&currentFrameData.numLights, numLightsOffset, numLightsSize);
+
+        //TODO: We could propbably do this when we create the buffers
+        descriptorSets[imageIndex].viewSet->write(*uniformBuffers[imageIndex], viewOffset, viewSize, 0);
+        descriptorSets[imageIndex].lightingSet->write(*uniformBuffers[imageIndex], lightOffset, lightSize, 0);
+        descriptorSets[imageIndex].lightingSet->write(*uniformBuffers[imageIndex], numLightsOffset, numLightsSize, 1);
+
+        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, 1);//TODO: Get correct setNum
+        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, 2);//TODO: Get correct setNum
+
+        //Bind all mesh data
         size_t meshIndex = 0;
         for(auto&& [mesh, transform] : currentFrameData.meshes) {
-            std::shared_ptr<clv::gfx::DescriptorSet>& meshDescriptorSet = descriptorSets[imageIndex].primitiveSets[meshIndex];
+            std::shared_ptr<clv::gfx::DescriptorSet>& materialDescriptorSet = descriptorSets[imageIndex].materialSets[meshIndex];
 
             VertexData modelData{};
             modelData.model        = transform;
             modelData.normalMatrix = clv::mth::inverse(clv::mth::transpose(transform));
 
-            ViewData viewData{};
-            viewData.view       = currentFrameData.view;
-            viewData.projection = currentFrameData.projection;
-
-            //TEMP: Adjusting the offsets
-            const size_t minOffUniformBufferAlignment = graphicsDevice->getLimits().minUniformBufferOffsetAlignment;
-
-            const auto getByteBoundary = [minOffUniformBufferAlignment](const size_t currentOffset) {
-                return minOffUniformBufferAlignment - (currentOffset % minOffUniformBufferAlignment);
-            };
-
-            //const size_t modelSize     = sizeof(modelData);
-            const size_t viewSize      = sizeof(viewData);
-            const size_t lightSize     = sizeof(currentFrameData.lights);
-            const size_t numLightsSize = sizeof(currentFrameData.numLights);
-
-            // const size_t modelOffset     = 0;
-            const size_t viewOffset      = 0;//modelSize + getByteBoundary(modelSize);
-            const size_t lightOffset     = (viewOffset + viewSize) + getByteBoundary(viewOffset + viewSize);
-            const size_t numLightsOffset = (lightOffset + lightSize) + getByteBoundary(lightOffset + lightSize);
-            //~TEMP
-
-            //uniformBuffers[imageIndex][meshIndex]->map(&modelData, modelOffset, modelSize);
-            uniformBuffers[imageIndex][meshIndex]->map(&viewData, viewOffset, viewSize);
-            uniformBuffers[imageIndex][meshIndex]->map(&currentFrameData.lights, lightOffset, lightSize);
-            uniformBuffers[imageIndex][meshIndex]->map(&currentFrameData.numLights, numLightsOffset, numLightsSize);
-
-            //meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], modelOffset, modelSize, 0);
-            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], viewOffset, viewSize, 1);
-            meshDescriptorSet->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 2);
-            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], lightOffset, lightSize, 3);
-            meshDescriptorSet->write(*uniformBuffers[imageIndex][meshIndex], numLightsOffset, numLightsSize, 4);
+            materialDescriptorSet->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 0);
 
             commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), clv::gfx::IndexType::Uint16);
-            commandBuffers[imageIndex]->bindDescriptorSet(*meshDescriptorSet, *pipelineObject, 0);//TODO: Get correct setNum
+
+            commandBuffers[imageIndex]->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, 0);//TODO: Get correct setNum
             commandBuffers[imageIndex]->pushConstant(*pipelineObject, clv::gfx::ShaderStage::Vertex, sizeof(VertexData), &modelData);
+
             commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
 
             ++meshIndex;
@@ -294,7 +294,7 @@ namespace blb::rnd {
 
         const size_t imageCount = std::size(swapChainFrameBuffers);
 
-        uniformBuffers.resize(imageCount);
+        uniformBuffers = createUniformBuffers(imageCount);
         descriptorPool.resize(imageCount);
         descriptorSets.resize(imageCount);
 
@@ -405,7 +405,7 @@ namespace blb::rnd {
 
         for(size_t i = 0; i < bufferCount; ++i) {
             clv::gfx::GraphicsBuffer::Descriptor descriptor{};
-            descriptor.size        = /*sizeof(VertexData) + */ sizeof(ViewData) + sizeof(LightDataArray) + sizeof(LightCount) + padding;
+            descriptor.size        = sizeof(ViewData) + sizeof(LightDataArray) + sizeof(LightCount) + padding;
             descriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::UniformBuffer;
             descriptor.sharingMode = clv::gfx::SharingMode::Exclusive;
             descriptor.memoryType  = clv::gfx::MemoryType::SystemMemory;

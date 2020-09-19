@@ -17,7 +17,7 @@ namespace blb::rnd {
 	 * @brief Defines a mapping between set slots
 	 */
     enum class DescriptorSetSlots {
-        PerPimitive = 0, /**< For data that will change per primitive submitted. */
+        Material    = 0,
         View        = 1,
         Lighting    = 2,
     };

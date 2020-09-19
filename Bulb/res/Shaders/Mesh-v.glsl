@@ -7,7 +7,7 @@ layout(std140, push_constant) uniform Model{
 	mat4 normalMatrix;
 };
 
-layout(std140, set = SET_PER_PRIMITIVE, binding = 1) uniform ViewProj{
+layout(std140, set = SET_VIEW, binding = 0) uniform ViewProj{
 	mat4 view;
 	mat4 proj;
 };
