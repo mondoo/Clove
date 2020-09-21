@@ -79,7 +79,7 @@ namespace clv::mth{
 
 	template<length_t L, typename T, qualifier Q>
     vec<L, T, Q> lerp(const vec<L, T, Q>& a, const vec<L, T, Q>& b, T t) {
-        return glm::lerp(a, b, t);
+        return glm::mix(a, b, t);
     }
 
 	template<typename T, qualifier Q>
