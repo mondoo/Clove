@@ -4,6 +4,7 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/OpenGL/GLException.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
+#include "Clove/Log.hpp"
 
 using glXCreateContextAttribsARBProc = GLXContext (*)(Display *, GLXFBConfig, GLXContext, int, const int *);
 

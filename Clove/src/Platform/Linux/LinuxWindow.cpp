@@ -3,6 +3,9 @@
 #include "Clove/Graphics/Graphics.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
 #include "Clove/Graphics/Surface.hpp"
+#include "Clove/Log.hpp"
+
+#include <Root/Definitions.hpp>
 
 namespace clv::plt{
 	LinuxWindow::LinuxWindow(const WindowDescriptor& descriptor){
