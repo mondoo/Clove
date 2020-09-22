@@ -4,6 +4,8 @@
 
 #import <MetalKit/MetalKit.h>
 
+#include <span>
+
 namespace clv::gfx::mtl{
 	class MTLGraphicsFactory : public GraphicsFactory{
 		//VARIABLES
@@ -35,7 +37,7 @@ namespace clv::gfx::mtl{
 		std::shared_ptr<RenderTarget> createRenderTarget(Texture* colourTexture, Texture* depthStencilTexture) override;
 
 		std::shared_ptr<Shader> createShader(ShaderDescriptor descriptor, std::string_view pathToShader) override;
-		std::shared_ptr<Shader> createShader(ShaderDescriptor descriptor, const char* bytes, const std::size_t size) override;
+		std::shared_ptr<Shader> createShader(ShaderDescriptor descriptor, std::span<const std::byte> sourceBytes) override;
 
 		std::shared_ptr<Surface> createSurface(void* windowData) override;
 	};
