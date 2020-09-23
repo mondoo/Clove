@@ -17,7 +17,3 @@ target_link_libraries(
 		PRIVATE
 			Stem
 )
-
-set_target_properties(Scape.Membrane PROPERTIES COMMON_LANGUAGE_RUNTIME "")
-set_target_properties(Scape.Membrane PROPERTIES DOTNET_TARGET_FRAMEWORK "netcoreapp3.1")
-#set_target_properties(Scape.Membrane PROPERTIES VS_DOTNET_REFERENCES "System")

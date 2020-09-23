@@ -1,27 +1,13 @@
 #pragma once
 
-namespace stm {
-    class Application;
-}
+#ifdef EXPORT
+    #define SCAPE_DLL __declspec(dllexport)
+#else
+    #define SCAPE_DLL __declspec(dllimport)
+#endif
 
-namespace Scape::Membrane {
-    /**
-     * @brief Wraps a Stem Application.
-     */
-public
-    ref class Engine {
-        //VARIABLES
-    private:
-        stm::Application* app;
+extern "C" {
+SCAPE_DLL void startEngine();
 
-        //FUNCTIONS
-    public:
-        Engine();
-
-        ~Engine();
-        !Engine();
-
-        void start();
-        void run();
-    };
+SCAPE_DLL void runEngine();
 }
