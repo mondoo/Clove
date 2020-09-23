@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Bulb/ECS/ECSEvents.hpp"
-#include "Bulb/ECS/System.hpp"
 #include "Bulb/ECS/Entity.hpp"
+#include "Bulb/ECS/System.hpp"
 
 #include <Clove/Event/EventHandle.hpp>
+
+#include <unordered_set>
 
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
@@ -24,22 +26,40 @@ namespace blb::ecs {
         struct CollisionManifold {
             EntityID entityA;
             EntityID entityB;
+
+            constexpr friend bool operator==(const CollisionManifold& lhs, const CollisionManifold& rhs) {
+                return  (lhs.entityA == rhs.entityA && lhs.entityB == rhs.entityB) ||
+                        (lhs.entityA == rhs.entityB && lhs.entityB == rhs.entityA);
+            }
+            constexpr friend bool operator!=(const CollisionManifold& lhs, const CollisionManifold& rhs) {
+                return !(lhs == rhs);
+            }
+        };
+
+        struct ManifoldHasher {
+            size_t operator()(const CollisionManifold& manifold) const {
+                size_t a = std::hash<EntityID>{}(manifold.entityA);
+                size_t b = std::hash<EntityID>{}(manifold.entityB);
+                return a ^ (b << 1);
+            }
         };
 
         //VARIABLES
     private:
-        btDefaultCollisionConfiguration* collisionConfiguration{ nullptr };
-        btCollisionDispatcher* dispatcher{ nullptr };
-        btBroadphaseInterface* overlappingPairCache{ nullptr };
-        btSequentialImpulseConstraintSolver* solver{ nullptr };
+        std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
+        std::unique_ptr<btCollisionDispatcher> dispatcher;
+        std::unique_ptr<btBroadphaseInterface> overlappingPairCache;
+        std::unique_ptr<btSequentialImpulseConstraintSolver> solver;
 
-        btDiscreteDynamicsWorld* dynamicsWorld{ nullptr };
+        std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
 
         clv::EventHandle cubeColliderAddedHandle;
         clv::EventHandle cubeColliderRemovedHandle;
 
         clv::EventHandle rigidBodyAddedHandle;
         clv::EventHandle rigidBodyRemovedHandle;
+
+        std::unordered_set<CollisionManifold, ManifoldHasher> currentCollisions;
 
         //FUNCTIONS
     public:
@@ -72,7 +92,7 @@ namespace blb::ecs {
         void onRigidBodyAdded(const ComponentAddedEvent<RigidBodyComponent>& event);
         void onRigidBodyRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event);
 
-        void addBodyToWorld(btDiscreteDynamicsWorld* world, const RigidBodyComponent& rigidBodyComponent);
-        void addColliderToWorld(btDiscreteDynamicsWorld* world, const CubeColliderComponent& colliderComponent);
+        void addBodyToWorld(const RigidBodyComponent& rigidBodyComponent);
+        void addColliderToWorld(const CubeColliderComponent& colliderComponent);
     };
 }

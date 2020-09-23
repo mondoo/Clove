@@ -24,10 +24,10 @@ namespace clv::gfx::mtl{
 		[error release];
 	}
 
-	MTLShader::MTLShader(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, ShaderDescriptor descriptor, const char* bytes, const std::size_t size)
+MTLShader::MTLShader(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, ShaderDescriptor descriptor, std::span<const std::byte> sourceBytes)
 		: factory(std::move(factory))
 		, descriptor(std::move(descriptor)){
-		std::string mslSource = ShaderTranspiler::transpileFromBytes(bytes, size, this->descriptor.stage, ShaderType::MSL);
+		std::string mslSource = ShaderTranspiler::transpileFromBytes(reinterpret_cast<const char*>(sourceBytes.data()), sourceBytes.size_bytes(), this->descriptor.stage, ShaderType::MSL);
 		NSString* nsMslSource = [NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]];
 
 		NSError* error = nullptr;

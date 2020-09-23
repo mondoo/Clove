@@ -1,1 +1,12 @@
-Checks: '-*,modernize-*,diagnostic-*,analyzer-*,readability-*,performance-*,-modernize-use-auto,-modernize-use-trailing-return-type,-modernise-use-nodiscard,-readability-identifier-naming,-readability-else-after-return,-readability-avoid-const-params-in-decls,-readability-uppercase-literal-suffix'
+Checks: '-*,
+modernize-*,
+diagnostic-*,
+analyzer-*,
+readability-*,
+performance-*,
+-modernize-use-trailing-return-type,
+-readability-identifier-naming,
+-readability-else-after-return,
+-readability-avoid-const-params-in-decls,
+-readability-uppercase-literal-suffix,
+-readability-redundant-access-specifiers'

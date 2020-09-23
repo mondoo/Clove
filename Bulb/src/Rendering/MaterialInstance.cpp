@@ -50,7 +50,7 @@ namespace blb::rnd{
 		}
 	}
 
-	void MaterialInstance::setData(clv::gfx::BufferBindingPoint bindingPoint, void* data, const size_t sizeBytes, clv::gfx::ShaderStage shaderType) {
+	void MaterialInstance::setData(clv::gfx::BufferBindingPoint bindingPoint, const void* data, const size_t sizeBytes, clv::gfx::ShaderStage shaderType) {
         if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()) {
             iter->second.buffer->updateData(data);
         } else {

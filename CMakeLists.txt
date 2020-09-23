@@ -18,7 +18,6 @@ set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 #Garlic settings
 option(GAR_BUILD_SCAPE "Build Scape, Garlic's editor" ON)
 option(GAR_BUILD_EXAMPLES OFF)
-option(GAR_ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
 
 #Clove settings
 option(GAR_CLV_ENABLE_PROFILING "Enables the Clove profiler which will print function timings to a file" OFF)
@@ -37,13 +36,4 @@ add_subdirectory(Stem)
 #Garlic's editor
 if(GAR_BUILD_SCAPE)  #not currently supported without MSVC
 	add_subdirectory(Scape)
-endif()
-
-if(ENABLE_CLANG_TIDY)
-	find_program(CLANGTIDY clang-tidy)
-	if(CLANGTIDY)
-		set(CMAKE_CXX_CLANG_TIDY ${CLANGTIDY})
-	else()
-    	message(SEND_ERROR "clang-tidy requested but executable not found")
-	endif()
 endif()

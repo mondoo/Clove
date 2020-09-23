@@ -20,6 +20,13 @@ namespace blb::ecs {
     class CollisionResponseComponent : public Component<CollisionResponseComponent> {
         //VARIABLES
     public:
-        clv::MultiCastDelegate<void(const Collision&)> onCollision;
+        /**
+         * @brief Called on the frame the collision event starts.
+         */
+        clv::MultiCastDelegate<void(const Collision&)> onCollisionBegin;
+        /**
+         * @brief Called on the frame the collision event ends.
+         */
+        clv::MultiCastDelegate<void(const Collision&)> onCollisionEnd;
     };
 }

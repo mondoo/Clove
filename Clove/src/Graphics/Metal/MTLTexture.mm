@@ -1,6 +1,7 @@
 #include "Clove/Graphics/Metal/MTLTexture.hpp"
 
 #include <stb_image.h>
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx::mtl{
 	MTLTexture::MTLTexture(std::shared_ptr<GraphicsFactory> factory, id<MTLDevice> mtlDevice, const TextureDescriptor& descriptor, const std::string& pathToTexture)
