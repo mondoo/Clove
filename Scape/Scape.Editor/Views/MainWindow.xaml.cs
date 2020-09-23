@@ -1,11 +1,17 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Scape.Membrane;
 using System;
+using System.Runtime.InteropServices;
 
 namespace Scape.Editor.Views {
 	public class MainWindow : Window {
+		[DllImport("F:/garlic/build/lib/Debug/Scape.Membrane.dll")]
+		static extern void startEngine();
+
+		[DllImport("F:/garlic/build/lib/Debug/Scape.Membrane.dll")]
+		static extern void runEngine();
+
 		public MainWindow() {
 			InitializeComponent();
 #if DEBUG
@@ -13,9 +19,8 @@ namespace Scape.Editor.Views {
 #endif
 
 			Opened += (object sender, EventArgs e) => {
-				Engine engine = new Engine();
-				engine.start();
-				engine.run();
+				startEngine();
+				runEngine();
 			};
 		}
 
