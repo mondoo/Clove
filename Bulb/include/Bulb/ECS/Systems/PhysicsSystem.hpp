@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Bulb/ECS/ECSEvents.hpp"
-#include "Bulb/ECS/System.hpp"
 #include "Bulb/ECS/Entity.hpp"
+#include "Bulb/ECS/System.hpp"
 
 #include <Clove/Event/EventHandle.hpp>
+
+#include <unordered_set>
 
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
@@ -24,6 +26,22 @@ namespace blb::ecs {
         struct CollisionManifold {
             EntityID entityA;
             EntityID entityB;
+
+            constexpr friend bool operator==(const CollisionManifold& lhs, const CollisionManifold& rhs) {
+                return  (lhs.entityA == rhs.entityA && lhs.entityB == rhs.entityB) ||
+                        (lhs.entityA == rhs.entityB && lhs.entityB == rhs.entityA);
+            }
+            constexpr friend bool operator!=(const CollisionManifold& lhs, const CollisionManifold& rhs) {
+                return !(lhs == rhs);
+            }
+        };
+
+        struct ManifoldHasher {
+            size_t operator()(const CollisionManifold& manifold) const {
+                size_t a = std::hash<EntityID>{}(manifold.entityA);
+                size_t b = std::hash<EntityID>{}(manifold.entityB);
+                return a ^ (b << 1);
+            }
         };
 
         //VARIABLES
@@ -40,6 +58,8 @@ namespace blb::ecs {
 
         clv::EventHandle rigidBodyAddedHandle;
         clv::EventHandle rigidBodyRemovedHandle;
+
+        std::unordered_set<CollisionManifold, ManifoldHasher> currentCollisions;
 
         //FUNCTIONS
     public:
