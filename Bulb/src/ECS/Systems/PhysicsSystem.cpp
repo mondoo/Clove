@@ -14,26 +14,19 @@ using namespace clv;
 
 namespace blb::ecs {
     PhysicsSystem::PhysicsSystem() {
-        collisionConfiguration = new btDefaultCollisionConfiguration();
-        dispatcher             = new btCollisionDispatcher(collisionConfiguration);
-        overlappingPairCache   = new btDbvtBroadphase();
-        solver                 = new btSequentialImpulseConstraintSolver;
+        collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
+        dispatcher             = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
+        overlappingPairCache   = std::make_unique<btDbvtBroadphase>();
+        solver                 = std::make_unique<btSequentialImpulseConstraintSolver>();
 
-        dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+        dynamicsWorld =  std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(), overlappingPairCache.get(), solver.get(), collisionConfiguration.get());
     }
 
     PhysicsSystem::PhysicsSystem(PhysicsSystem&& other) noexcept = default;
 
     PhysicsSystem& PhysicsSystem::operator=(PhysicsSystem&& other) noexcept = default;
 
-    PhysicsSystem::~PhysicsSystem() {
-        delete dynamicsWorld;
-
-        delete solver;
-        delete overlappingPairCache;
-        delete dispatcher;
-        delete collisionConfiguration;
-    }
+    PhysicsSystem::~PhysicsSystem() = default;
 
     void PhysicsSystem::registerToEvents(EventDispatcher& dispatcher) {
         cubeColliderAddedHandle = dispatcher.bindToEvent<ComponentAddedEvent<CubeColliderComponent>>([this](const ComponentAddedEvent<CubeColliderComponent>& event) {
@@ -66,7 +59,7 @@ namespace blb::ecs {
             if(rigidBody->standInShape != nullptr) {
                 dynamicsWorld->removeCollisionObject(rigidBody->body.get());
                 rigidBody->body->setCollisionShape(cubeCollider->collisionShape.get());
-                addBodyToWorld(dynamicsWorld, *rigidBody);
+                addBodyToWorld(*rigidBody);
 
                 rigidBody->standInShape.reset();
             }
@@ -80,7 +73,7 @@ namespace blb::ecs {
 
             if(cubeCollider->collisionObject == nullptr) {
                 cubeCollider->constructCollisionObject();
-                addColliderToWorld(dynamicsWorld, *cubeCollider);
+                addColliderToWorld(*cubeCollider);
             }
         }
 
@@ -96,7 +89,7 @@ namespace blb::ecs {
                 dynamicsWorld->removeCollisionObject(body);
                 rigidBody->standInShape = RigidBodyComponent::createStandInShape();
                 body->setCollisionShape(rigidBody->standInShape.get());
-                addBodyToWorld(dynamicsWorld, *rigidBody);
+                addBodyToWorld(*rigidBody);
             }
         }
     }
@@ -202,7 +195,7 @@ namespace blb::ecs {
     }
 
     void PhysicsSystem::onCubeColliderAdded(const ComponentAddedEvent<CubeColliderComponent>& event) {
-        addColliderToWorld(dynamicsWorld, *event.component);
+        addColliderToWorld(*event.component);
     }
 
     void PhysicsSystem::onCubeColliderRemoved(const ComponentRemovedEvent<CubeColliderComponent>& event) {
@@ -212,19 +205,19 @@ namespace blb::ecs {
     }
 
     void PhysicsSystem::onRigidBodyAdded(const ComponentAddedEvent<RigidBodyComponent>& event) {
-        addBodyToWorld(dynamicsWorld, *event.component);
+        addBodyToWorld(*event.component);
     }
 
     void PhysicsSystem::onRigidBodyRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event) {
         dynamicsWorld->removeCollisionObject(event.component->body.get());
     }
 
-    void PhysicsSystem::addBodyToWorld(btDiscreteDynamicsWorld* world, const RigidBodyComponent& rigidBodyComponent) {
+    void PhysicsSystem::addBodyToWorld(const RigidBodyComponent& rigidBodyComponent) {
         dynamicsWorld->addRigidBody(rigidBodyComponent.body.get(), rigidBodyComponent.descriptor.collisionGroup, rigidBodyComponent.descriptor.collisionMask);
         rigidBodyComponent.body->setUserIndex(rigidBodyComponent.getEntityID());
     }
 
-    void PhysicsSystem::addColliderToWorld(btDiscreteDynamicsWorld* world, const CubeColliderComponent& colliderComponent) {
+    void PhysicsSystem::addColliderToWorld(const CubeColliderComponent& colliderComponent) {
         dynamicsWorld->addCollisionObject(colliderComponent.collisionObject.get(), ~0, ~0); //Add the collider to every group and collide with every other group
         colliderComponent.collisionObject->setUserIndex(colliderComponent.getEntityID());
     }

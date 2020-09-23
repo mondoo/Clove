@@ -28,12 +28,12 @@ namespace blb::ecs {
 
         //VARIABLES
     private:
-        btDefaultCollisionConfiguration* collisionConfiguration{ nullptr };
-        btCollisionDispatcher* dispatcher{ nullptr };
-        btBroadphaseInterface* overlappingPairCache{ nullptr };
-        btSequentialImpulseConstraintSolver* solver{ nullptr };
+        std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
+        std::unique_ptr<btCollisionDispatcher> dispatcher;
+        std::unique_ptr<btBroadphaseInterface> overlappingPairCache;
+        std::unique_ptr<btSequentialImpulseConstraintSolver> solver;
 
-        btDiscreteDynamicsWorld* dynamicsWorld{ nullptr };
+        std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
 
         clv::EventHandle cubeColliderAddedHandle;
         clv::EventHandle cubeColliderRemovedHandle;
@@ -72,7 +72,7 @@ namespace blb::ecs {
         void onRigidBodyAdded(const ComponentAddedEvent<RigidBodyComponent>& event);
         void onRigidBodyRemoved(const ComponentRemovedEvent<RigidBodyComponent>& event);
 
-        void addBodyToWorld(btDiscreteDynamicsWorld* world, const RigidBodyComponent& rigidBodyComponent);
-        void addColliderToWorld(btDiscreteDynamicsWorld* world, const CubeColliderComponent& colliderComponent);
+        void addBodyToWorld(const RigidBodyComponent& rigidBodyComponent);
+        void addColliderToWorld(const CubeColliderComponent& colliderComponent);
     };
 }
