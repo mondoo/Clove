@@ -46,6 +46,8 @@ namespace blb::rnd {
             clv::mth::mat4f view;
             clv::mth::mat4f projection;
 
+            clv::mth::vec3f viewPosition;
+
             std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
 
             LightDataArray lights;
@@ -55,12 +57,18 @@ namespace blb::rnd {
         //Contains size / offsets for each piece of data placed inside the per frame uniform buffer
         struct {
             size_t viewSize{ 0 };
+            size_t viewPosSize{ 0 };
             size_t lightSize{ 0 };
             size_t numLightsSize{ 0 };
 
             size_t viewOffset{ 0 };
+            size_t viewPosOffset{ 0 };
             size_t lightOffset{ 0 };
             size_t numLightsOffset{ 0 };
+
+            size_t totalSize() const{
+                return viewSize + viewPosSize + lightSize + numLightsSize;
+            }
         } uniformBufferLayout;
 
         std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;//One per image. Currently no per mesh data is stored in a buffer
@@ -106,7 +114,7 @@ namespace blb::rnd {
         /**
          * @brief Submit the active camera the renderer will use.
          */
-        void submitCamera(const Camera& camera);
+        void submitCamera(const Camera& camera, clv::mth::vec3f position);
 
         void submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);
         void submitAnimatedMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);

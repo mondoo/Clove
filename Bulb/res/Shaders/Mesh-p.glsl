@@ -4,6 +4,10 @@
 
 layout(set = SET_MATERIAL, binding = 0) uniform sampler2D texSampler;
 
+layout(set = SET_VIEW, binding = 1) uniform ViewPosition{
+	vec3 viewPos;
+};
+
 struct DirectionalLightData{
 	vec3 direction;
 
@@ -27,7 +31,6 @@ layout(std140, set = SET_LIGHTING, binding = 0) uniform Lights{
 	DirectionalLightData directionalLights[MAX_LIGHTS];
 	PointLightData pointLights[MAX_LIGHTS];
 };
-
 layout(std140, set = SET_LIGHTING, binding = 1) uniform NumLights{
 	int numDirLights;
 	int numPointLights;
@@ -43,6 +46,8 @@ layout(location = 0) out vec4 outColour;
 void main(){
 	vec3 colour = vec3(texture(texSampler, fragTexCoord));
 
+	vec3 viewDir = normalize(viewPos - vertPos);
+
 	vec3 normal = normalize(vertNorm);
 
 	vec3 totalAmbient = vec3(0);
@@ -51,17 +56,19 @@ void main(){
 
 	//Directional lighting
 	for(int i = 0; i < numDirLights; ++i){
-		const vec3 lightDir = normalize(-directionalLights[i].direction);
+		const vec3 lightDir = normalize(-directionalLights[i].direction); //Gets the direction towards the light
 		
 		//Ambient
 		totalAmbient += directionalLights[i].ambient * colour;
 	
 		//Diffuse
-		const float diffIntensity = max(dot(normal, lightDir), 0.0);
+		const float diffIntensity = max(dot(normal, lightDir), 0.0f);
 		totalAmbient += directionalLights[i].diffuse * colour * diffIntensity;
 
 		//Specular
-		//TODO
+		const vec3 reflectDir = reflect(-lightDir, normal);
+		const float specIntensity = pow(max(dot(viewDir, reflectDir), 0.0f), 32.0f); //TODO: Add shiniess as a material param
+		totalSpecular += directionalLights[i].specular * colour * specIntensity;
 	}
 
 	//Point lighting

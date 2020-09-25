@@ -32,8 +32,14 @@ namespace blb::rnd {
             viewLayoutBinding.arraySize = 1;
             viewLayoutBinding.stage     = clv::gfx::DescriptorStage::Vertex;
 
+            clv::gfx::DescriptorSetBindingInfo viewPosBinding{};
+            viewPosBinding.binding   = 1;
+            viewPosBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
+            viewPosBinding.arraySize = 1;
+            viewPosBinding.stage     = clv::gfx::DescriptorStage::Pixel;
+
             clv::gfx::DescriptorSetLayout::Descriptor viewSetLayoutDescriptor{};
-            viewSetLayoutDescriptor.bindings = { viewLayoutBinding };
+            viewSetLayoutDescriptor.bindings = { viewLayoutBinding, viewPosBinding };
 
             viewSetLayout = factory.createDescriptorSetLayout(viewSetLayoutDescriptor);
         }

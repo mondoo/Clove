@@ -33,11 +33,13 @@ namespace blb::rnd {
         };
 
         uniformBufferLayout.viewSize      = sizeof(ViewData);
+        uniformBufferLayout.viewPosSize   = sizeof(ViewData);
         uniformBufferLayout.lightSize     = sizeof(LightDataArray);
         uniformBufferLayout.numLightsSize = sizeof(LightCount);
 
         uniformBufferLayout.viewOffset      = 0;
-        uniformBufferLayout.lightOffset     = uniformBufferLayout.viewSize + getByteBoundary(uniformBufferLayout.viewSize);
+        uniformBufferLayout.viewPosOffset   = uniformBufferLayout.viewSize + getByteBoundary(uniformBufferLayout.viewSize);
+        uniformBufferLayout.lightOffset     = (uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize) + getByteBoundary(uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize);
         uniformBufferLayout.numLightsOffset = (uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize) + getByteBoundary(uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize);
 
         //Object initialisation
@@ -96,9 +98,11 @@ namespace blb::rnd {
         currentFrameData.numLights.numDirectional = 0;
     }
 
-    void ForwardRenderer3D::submitCamera(const Camera& camera) {
+    void ForwardRenderer3D::submitCamera(const Camera& camera, clv::mth::vec3f position) {
         currentFrameData.view       = camera.getView();
         currentFrameData.projection = camera.getProjection();
+
+        currentFrameData.viewPosition = position;
     }
 
     void ForwardRenderer3D::submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform) {
@@ -163,12 +167,13 @@ namespace blb::rnd {
         viewData.projection = currentFrameData.projection;
 
         uniformBuffers[imageIndex]->map(&viewData, uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize);
+        uniformBuffers[imageIndex]->map(&currentFrameData.viewPosition, uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize);
 
         uniformBuffers[imageIndex]->map(&currentFrameData.lights, uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize);
         uniformBuffers[imageIndex]->map(&currentFrameData.numLights, uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize);
 
-        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, 1);    //TODO: Get correct setNum
-        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, 2);//TODO: Get correct setNum
+        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
+        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
 
         const auto materialIndex = static_cast<size_t>(DescriptorSetSlots::Material);
         const size_t meshCount   = std::size(currentFrameData.meshes);
@@ -305,6 +310,7 @@ namespace blb::rnd {
 
             //As we only have one UBO per frame for every DescriptorSet we can write the buffer into them straight away
             descriptorSets[i].viewSet->write(*uniformBuffers[i], uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize, 0);
+            descriptorSets[i].viewSet->write(*uniformBuffers[i], uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize, 1);
 
             descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize, 0);
             descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize, 1);
@@ -412,7 +418,7 @@ namespace blb::rnd {
 
         for(size_t i = 0; i < bufferCount; ++i) {
             clv::gfx::GraphicsBuffer::Descriptor descriptor{};
-            descriptor.size        = sizeof(ViewData) + sizeof(LightDataArray) + sizeof(LightCount) + padding;
+            descriptor.size        = uniformBufferLayout.totalSize() + padding;
             descriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::UniformBuffer;
             descriptor.sharingMode = clv::gfx::SharingMode::Exclusive;
             descriptor.memoryType  = clv::gfx::MemoryType::SystemMemory;

@@ -30,7 +30,7 @@ namespace blb::ecs {
 
 		//Transform and submit cameras
 		for(auto&& [transform, camera] : world.getComponentSets<TransformComponent, CameraComponent>()) {
-			const mth::vec3f& position = transform->getPosition(TransformSpace::World);
+			const mth::vec3f position = transform->getPosition(TransformSpace::World);
 
 			const mth::vec3f camFront = transform->getForward();
 			const mth::vec3f camUp	  = transform->getUp();
@@ -38,7 +38,7 @@ namespace blb::ecs {
 			const mth::mat4f lookAt = mth::lookAt(position, position + camFront, camUp);
 			camera->setView(lookAt);
 
-			renderer->submitCamera(camera->camera);
+			renderer->submitCamera(camera->camera, std::move(position));
 		}
 
 		//Submit static meshes
