@@ -25,13 +25,13 @@ struct PointLightData{
 };
 layout(std140, set = SET_LIGHTING, binding = 0) uniform Lights{
 	DirectionalLightData directionalLights[MAX_LIGHTS];
-	PointLightData pointLights[MAX_LIGHTS]; //Unused: Just keeping here for padding for now
-} lights;
+	PointLightData pointLights[MAX_LIGHTS];
+};
 
 layout(std140, set = SET_LIGHTING, binding = 1) uniform NumLights{
 	int numDirLights;
-	int numPointLights; //Unused: Just keeping here for padding for now
-} numLights;
+	int numPointLights;
+};
 
 layout(location = 0) in vec3 fragColour;
 layout(location = 1) in vec2 fragTexCoord;
@@ -44,19 +44,28 @@ void main(){
 	vec3 colour = vec3(texture(texSampler, fragTexCoord));
 
 	vec3 normal = normalize(vertNorm);
-	vec3 lightDir = normalize(-lights.directionalLights[0].direction);
 
-	//TODO: Assuming there's always one light for now - will need updating to a loop
+	vec3 totalAmbient = vec3(0);
+	vec3 totalDiffuse = vec3(0);
+	vec3 totalSpecular = vec3(0);
 
-	//Ambient
-	vec3 ambient = lights.directionalLights[0].ambient * colour;
+	//Directional lighting
+	for(int i = 0; i < numDirLights; ++i){
+		const vec3 lightDir = normalize(-directionalLights[i].direction);
+		
+		//Ambient
+		totalAmbient += directionalLights[i].ambient * colour;
 	
-	//Diffuse
-	float diffIntensity = max(dot(normal, lightDir), 0.0);
-	vec3 diffuse = lights.directionalLights[0].diffuse * colour * diffIntensity;
+		//Diffuse
+		const float diffIntensity = max(dot(normal, lightDir), 0.0);
+		totalAmbient += directionalLights[i].diffuse * colour * diffIntensity;
 
-	//Specular
+		//Specular
+		//TODO
+	}
+
+	//Point lighting
 	//TODO
 
-	outColour = vec4(ambient + diffuse, 1.0);
+	outColour = vec4(totalAmbient + totalDiffuse /*+ totalSpecular*/, 1.0);
 }
