@@ -16,7 +16,7 @@ namespace blb::rnd {
             samplerLayoutBinding.binding   = 0;
             samplerLayoutBinding.type      = clv::gfx::DescriptorType::CombinedImageSampler;
             samplerLayoutBinding.arraySize = 1;
-            samplerLayoutBinding.stage     = clv::gfx::DescriptorStage::Pixel;
+            samplerLayoutBinding.stage     = clv::gfx::ShaderStage::Pixel;
 
             clv::gfx::DescriptorSetLayout::Descriptor materialSetLayoutDescriptor{};
             materialSetLayoutDescriptor.bindings = { samplerLayoutBinding };
@@ -30,13 +30,13 @@ namespace blb::rnd {
             viewLayoutBinding.binding   = 0;
             viewLayoutBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
             viewLayoutBinding.arraySize = 1;
-            viewLayoutBinding.stage     = clv::gfx::DescriptorStage::Vertex;
+            viewLayoutBinding.stage     = clv::gfx::ShaderStage::Vertex;
 
             clv::gfx::DescriptorSetBindingInfo viewPosBinding{};
             viewPosBinding.binding   = 1;
             viewPosBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
             viewPosBinding.arraySize = 1;
-            viewPosBinding.stage     = clv::gfx::DescriptorStage::Pixel;
+            viewPosBinding.stage     = clv::gfx::ShaderStage::Pixel;
 
             clv::gfx::DescriptorSetLayout::Descriptor viewSetLayoutDescriptor{};
             viewSetLayoutDescriptor.bindings = { viewLayoutBinding, viewPosBinding };
@@ -50,13 +50,13 @@ namespace blb::rnd {
             lightDataBindingInfo.binding   = 0;
             lightDataBindingInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
             lightDataBindingInfo.arraySize = 1;
-            lightDataBindingInfo.stage     = clv::gfx::DescriptorStage::Pixel;
+            lightDataBindingInfo.stage     = clv::gfx::ShaderStage::Pixel;
 
             clv::gfx::DescriptorSetBindingInfo lightCountBindingInfo{};
             lightCountBindingInfo.binding   = 1;
             lightCountBindingInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
             lightCountBindingInfo.arraySize = 1;
-            lightCountBindingInfo.stage     = clv::gfx::DescriptorStage::Pixel;
+            lightCountBindingInfo.stage     = clv::gfx::ShaderStage::Pixel;
 
             clv::gfx::DescriptorSetLayout::Descriptor lightingSetLayoutDescriptor{};
             lightingSetLayoutDescriptor.bindings = { lightDataBindingInfo, lightCountBindingInfo };

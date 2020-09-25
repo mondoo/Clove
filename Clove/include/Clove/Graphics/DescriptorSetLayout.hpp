@@ -3,16 +3,11 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
 namespace clv::gfx {
-    enum class DescriptorStage {
-        Vertex,
-        Pixel
-    };
-
     struct DescriptorSetBindingInfo {
         uint32_t binding{ 0 };
         DescriptorType type;
         size_t arraySize{ 1 };/**< If this descriptor represents an array it'll be the size of the array else 1 */
-        DescriptorStage stage;
+        ShaderStage stage;
     };
 
     /**

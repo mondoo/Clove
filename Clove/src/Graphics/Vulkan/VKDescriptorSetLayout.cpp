@@ -3,18 +3,6 @@
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
 namespace clv::gfx::vk {
-    static VkShaderStageFlags getShaderStages(DescriptorStage garlicStage) {
-        switch(garlicStage) {
-            case DescriptorStage::Vertex:
-                return VK_SHADER_STAGE_VERTEX_BIT;
-            case DescriptorStage::Pixel:
-                return VK_SHADER_STAGE_FRAGMENT_BIT;
-            default:
-                GARLIC_ASSERT(false, "{0}: Unkown type", GARLIC_FUNCTION_NAME);
-                return 0;
-        }
-    }
-
     VKDescriptorSetLayout::VKDescriptorSetLayout(DevicePointer device, Descriptor descriptor)
         : device(std::move(device)) 
         , descriptor(std::move(descriptor)){
@@ -26,7 +14,7 @@ namespace clv::gfx::vk {
             layoutBindings[i].binding            = bindingDescriptor.binding;
             layoutBindings[i].descriptorType     = getDescriptorType(bindingDescriptor.type);
             layoutBindings[i].descriptorCount    = bindingDescriptor.arraySize;
-            layoutBindings[i].stageFlags         = getShaderStages(bindingDescriptor.stage);
+            layoutBindings[i].stageFlags         = convertShaderStage(bindingDescriptor.stage);
             layoutBindings[i].pImmutableSamplers = nullptr;
         }
 
