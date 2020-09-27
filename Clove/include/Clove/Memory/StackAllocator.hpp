@@ -1,38 +1,52 @@
 #pragma once
 
 namespace clv::mem {
-	class StackAllocator {
-		//TYPES
-	public:
-		using Marker = size_t;
+    /**
+     * @brief A memory allocator that is good for temporary allocations.
+     * @details A StackAllocator allows any sized allocation but cannot free specific blocks of memory.
+     * Instead you must either free the entire allocator or free everything beyond a certain marker.
+     */
+    class StackAllocator {
+        //TYPES
+    public:
+        using Marker = size_t;
 
-		//VARIABLES
-	private:
-		std::byte* stack;
-		size_t stackSize = 0;
-		std::byte* top	 = nullptr;
+        //VARIABLES
+    private:
+        std::byte* stack;
+        size_t stackSize = 0;
+        std::byte* top   = nullptr;
 
-		bool freeMemory = true;
+        bool freeMemory = true;
 
-		//FUNCTIONS
-	public:
-		StackAllocator() = delete;
-		StackAllocator(size_t sizeBytes);
-		StackAllocator(std::byte* start, size_t sizeBytes);
-		
-		StackAllocator(const StackAllocator& other) = delete;
-		StackAllocator(StackAllocator&& other) noexcept;
+        //FUNCTIONS
+    public:
+        StackAllocator() = delete;
+        StackAllocator(size_t sizeBytes);
+        StackAllocator(std::byte* start, size_t sizeBytes);
 
-		StackAllocator& operator=(const StackAllocator& other) = delete;
-		StackAllocator& operator=(StackAllocator&& other) noexcept;
+        StackAllocator(const StackAllocator& other) = delete;
+        StackAllocator(StackAllocator&& other) noexcept;
 
-		~StackAllocator();
+        StackAllocator& operator=(const StackAllocator& other) = delete;
+        StackAllocator& operator=(StackAllocator&& other) noexcept;
 
-		Marker markPosition();
+        ~StackAllocator();
 
-		void* alloc(size_t bytes);
+        /**
+         * @returns A marker of the current stack position of the allocator.
+         */
+        Marker markPosition();
 
-		void free();
-		void free(Marker marker);
-	};
+        void* alloc(size_t bytes);
+
+        /**
+         * @brief Free the entire allocator, effectively resetting the stack.
+         */
+        void free();
+        /**
+         * @brief Free everything allocated after the marker.
+         */
+        void free(Marker marker);
+    };
 }

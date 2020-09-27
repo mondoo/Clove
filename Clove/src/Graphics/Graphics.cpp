@@ -7,6 +7,7 @@
 #elif GARLIC_PLATFORM_MACOS
 	//TODO: Metal
 #endif
+#include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
 

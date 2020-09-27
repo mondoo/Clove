@@ -3,6 +3,9 @@
 #include "Clove/Graphics/Graphics.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
 #include "Clove/Graphics/Surface.hpp"
+#include "Clove/Log.hpp"
+
+#include <Root/Definitions.hpp>
 
 namespace clv::plt{
 	LinuxWindow::LinuxWindow(const WindowDescriptor& descriptor){
@@ -191,6 +194,14 @@ namespace clv::plt{
 		return open;
 	}
 
+    void LinuxWindow::close() {
+        if(onWindowCloseDelegate.isBound()) {
+            onWindowCloseDelegate.broadcast();
+        }
+        open = false;
+        XCloseDisplay(display);
+    }
+
 	void LinuxWindow::processInput(){
 		if(XPending(display) > 0){
 			KeySym xkeysym = 0;
@@ -199,10 +210,7 @@ namespace clv::plt{
 			switch(xevent.type){
 				case ClientMessage:
 					if(xevent.xclient.data.l[0] == atomWmDeleteWindow){
-						if(onWindowCloseDelegate.isBound()) {
-							onWindowCloseDelegate.broadcast();
-						}
-						open = false;
+                        close();
 					}
 					break;
 				case DestroyNotify:

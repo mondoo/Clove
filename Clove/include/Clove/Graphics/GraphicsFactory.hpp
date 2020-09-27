@@ -16,6 +16,8 @@
 #include "Clove/Graphics/Swapchain.hpp"
 #include "Clove/Graphics/TransferQueue.hpp"
 
+#include <span>
+
 namespace clv::gfx {
     /**
      * @brief Used to create graphics objects. Abstracts away the underlying API.
@@ -32,8 +34,7 @@ namespace clv::gfx {
         virtual std::unique_ptr<Swapchain> createSwapChain(Swapchain::Descriptor descriptor) = 0;
 
         virtual std::unique_ptr<Shader> createShader(std::string_view filePath)       = 0;
-        virtual std::unique_ptr<Shader> createShader(std::vector<std::byte> byteCode) = 0;
-        virtual std::unique_ptr<Shader> createShader(const std::byte* byteCode, const size_t numBytes) = 0;
+        virtual std::unique_ptr<Shader> createShader(std::span<const std::byte> byteCode) = 0;
 
         virtual std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor)                            = 0;
         virtual std::unique_ptr<DescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) = 0;

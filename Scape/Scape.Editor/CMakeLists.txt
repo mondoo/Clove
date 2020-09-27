@@ -1,0 +1,1 @@
+include_external_msproject(Scape.Editor "${CMAKE_CURRENT_SOURCE_DIR}/Scape.Editor.csproj")

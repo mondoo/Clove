@@ -7,6 +7,7 @@
 
 #include <Clove/Audio/AudioListener.hpp>
 #include <Clove/Audio/AudioSource.hpp>
+#include <Clove/Log.hpp>
 
 using namespace clv;
 
@@ -23,10 +24,10 @@ namespace blb::ecs {
         CLV_PROFILE_FUNCTION();
 
         //Listener
-        const auto listenerSet = world.getComponentSets<TransformComponent, AudioListenerComponent>();
-        const size_t numListeners  = std::size(listenerSet);
+        const auto listenerSet    = world.getComponentSets<TransformComponent, AudioListenerComponent>();
+        const size_t numListeners = std::size(listenerSet);
         GARLIC_ASSERT(numListeners <= 1, "Only one listener is allowed per world");
-        if(numListeners > 0){
+        if(numListeners > 0) {
             auto&& [transform, listener] = listenerSet[0];
 
             const mth::vec3f prevPos = listener->listener->getPosition();

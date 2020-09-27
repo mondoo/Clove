@@ -1,5 +1,7 @@
 #include "Clove/Platform/Windows/WindowsException.hpp"
 
+#include "Clove/Log.hpp"
+
 namespace clv{
 	WindowsException::WindowsException(int lineNum, const char* file, HRESULT hr)
 		: CloveException(lineNum, file)

@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.16.0)
+cmake_minimum_required(VERSION 3.18.0)
 
 include(CMakeDependentOption)
 
 project(Garlic)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CSharp_FLAGS "/langversion:8.0")
 
@@ -16,11 +16,8 @@ set(BUILD_STATIC_LIBS ON CACHE BOOL "Build static library")
 set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #Garlic settings
-option(GAR_BUILD_BULB "Build the Bulb framework" ON)
-CMAKE_DEPENDENT_OPTION(GAR_BUILD_STEM "Build the Stem application (requries Bulb)" ON "GAR_BUILD_BULB" OFF)
-CMAKE_DEPENDENT_OPTION(GAR_BUILD_SCAPE "Build the Scape editor (requries Stem)" OFF "GAR_BUILD_STEM" OFF)
+option(GAR_BUILD_SCAPE "Build Scape, Garlic's editor" OFF)
 option(GAR_BUILD_EXAMPLES OFF)
-option(GAR_ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
 
 #Clove settings
 option(GAR_CLV_ENABLE_PROFILING "Enables the Clove profiler which will print function timings to a file" OFF)
@@ -30,32 +27,13 @@ option(GAR_CLV_IMGUI_COMPATIBLE "Links Glad publicly so users can initialise Dea
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-#Root
+#Garlic's modules
 add_subdirectory(Root)
-
-#Clove
 add_subdirectory(Clove)
+add_subdirectory(Bulb)
+add_subdirectory(Stem)
 
-#Bulb
-if(GAR_BUILD_BULB)
-	add_subdirectory(Bulb)
-endif()
-
-#Stem
-if(GAR_BUILD_STEM)
-	add_subdirectory(Stem)
-endif()
-
-#Scape
+#Garlic's editor
 if(GAR_BUILD_SCAPE AND MSVC)  #not currently supported without MSVC
 	add_subdirectory(Scape)
-endif()
-
-if(ENABLE_CLANG_TIDY)
-	find_program(CLANGTIDY clang-tidy)
-	if(CLANGTIDY)
-		set(CMAKE_CXX_CLANG_TIDY ${CLANGTIDY})
-	else()
-    	message(SEND_ERROR "clang-tidy requested but executable not found")
-	endif()
 endif()

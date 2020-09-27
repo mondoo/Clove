@@ -2,6 +2,7 @@
 
 #include <Clove/Graphics/GraphicsFactory.hpp>
 //#include <Clove/Graphics/Texture.hpp>
+#include <Clove/Log.hpp>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <Root/Definitions.hpp>
@@ -48,7 +49,7 @@ namespace blb::rnd {
 			ftLibReference = ftLib.lock();
 		}
 
-		face = createFace(roboto_black, roboto_blackLength);
+		face = createFace({ reinterpret_cast<const std::byte*>(roboto_black), roboto_blackLength });
 	}
 
 	Font::Font(const std::string& filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
@@ -56,9 +57,9 @@ namespace blb::rnd {
 		face = createFace(filePath);
 	}
 
-	Font::Font(const unsigned char* bytes, const std::size_t size, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
+	Font::Font(std::span<const std::byte> bytes, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
 		: Font(std::move(graphicsFactory)) {
-		face = createFace(bytes, size);
+		face = createFace(std::move(bytes));
 	}
 
 	Font::Font(const Font& other)
@@ -127,9 +128,9 @@ namespace blb::rnd {
 		return makeUniqueFace(face);
 	}
 
-	Font::FacePtr Font::createFace(const unsigned char* bytes, const std::size_t size) {
+	Font::FacePtr Font::createFace(std::span<const std::byte> bytes) {
 		FT_Face face;
-		if(FT_New_Memory_Face(ftLibReference.get(), bytes, size, 0, &face) != FT_Err_Ok) {
+		if(FT_New_Memory_Face(ftLibReference.get(), reinterpret_cast<const unsigned char*>(bytes.data()), bytes.size_bytes(), 0, &face) != FT_Err_Ok) {
 			GARLIC_ASSERT(false, "Could not load font");
 		}
 

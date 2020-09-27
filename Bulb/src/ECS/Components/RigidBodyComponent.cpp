@@ -1,52 +1,110 @@
 #include "Bulb/ECS/Components/RigidBodyComponent.hpp"
 
-#include "Bulb/Physics/RigidBody.hpp"
+#include <btBulletDynamicsCommon.h>
+#include <Clove/Log.hpp>
 
 using namespace clv;
 
 namespace blb::ecs {
-	RigidBodyComponent::RigidBodyComponent() {
-		rigidBody = std::make_unique<phy::RigidBody>(phy::RigidBodyDescriptor{}, mth::vec3f{ 1.0f, 1.0f, 1.0f });
-		initialiseRigidBody(rigidBody.get());
-	}
+    RigidBodyComponent::RigidBodyComponent() {
+        initialiseRigidBody();
+    }
 
-	RigidBodyComponent::RigidBodyComponent(phy::RigidBodyDescriptor initInfo, const mth::vec3f& cubeSize) {
-		rigidBody = std::make_unique<phy::RigidBody>(std::move(initInfo), cubeSize);
-		initialiseRigidBody(rigidBody.get());
-	}
+    RigidBodyComponent::RigidBodyComponent(Descriptor descriptor)
+        : descriptor(std::move(descriptor)) {
+        initialiseRigidBody();
+    }
 
-	RigidBodyComponent::RigidBodyComponent(std::unique_ptr<phy::RigidBody> rigidBody)
-		: rigidBody(std::move(rigidBody)) {
-		initialiseRigidBody(rigidBody.get());
-	}
+    RigidBodyComponent::RigidBodyComponent(const RigidBodyComponent& other)
+        : descriptor(other.descriptor) {
+        initialiseRigidBody();
+    }
 
-	RigidBodyComponent::RigidBodyComponent(const RigidBodyComponent& other) {
-		rigidBody = std::make_unique<phy::RigidBody>(*other.rigidBody);
-		initialiseRigidBody(rigidBody.get());
-	}
+    RigidBodyComponent::RigidBodyComponent(RigidBodyComponent&& other) noexcept = default;
 
-	RigidBodyComponent::RigidBodyComponent(RigidBodyComponent&& other) noexcept = default;
+    RigidBodyComponent& RigidBodyComponent::operator=(const RigidBodyComponent& other) {
+        descriptor = other.descriptor;
 
-	RigidBodyComponent& RigidBodyComponent::operator=(const RigidBodyComponent& other) {
-		rigidBody = std::make_unique<phy::RigidBody>(*other.rigidBody);
-		initialiseRigidBody(rigidBody.get());
+        initialiseRigidBody();
 
-		return *this;
-	}
+        return *this;
+    }
 
-	RigidBodyComponent& RigidBodyComponent::operator=(RigidBodyComponent&& other) noexcept = default;
+    RigidBodyComponent& RigidBodyComponent::operator=(RigidBodyComponent&& other) noexcept = default;
 
-	RigidBodyComponent::~RigidBodyComponent() = default;
+    RigidBodyComponent::~RigidBodyComponent() = default;
 
-	void RigidBodyComponent::setLinearVelocity(const clv::mth::vec3f& velocity) {
-		rigidBody->setLinearVelocity(velocity);
+    void RigidBodyComponent::setLinearVelocity(const clv::mth::vec3f& velocity) {
+        const btVector3 btvel{ velocity.x, velocity.y, velocity.z };
+        body->setLinearVelocity(btvel);
+
+        body->activate();
+    }
+
+    void RigidBodyComponent::applyForce(const clv::mth::vec3f& force, const clv::mth::vec3f& relativeOffset) {
+        const btVector3 btForce{ force.x, force.y, force.z };
+        const btVector3 btOffset{ relativeOffset.x, relativeOffset.y, relativeOffset.z };
+        body->applyForce(btForce, btOffset);
+
+        body->activate();
+    }
+
+    void RigidBodyComponent::applyImpulse(const clv::mth::vec3f& impulse, const clv::mth::vec3f& relativeOffset) {
+        const btVector3 btImpulse{ impulse.x, impulse.y, impulse.z };
+        const btVector3 btOffset{ relativeOffset.x, relativeOffset.y, relativeOffset.z };
+        body->applyForce(btImpulse, btOffset);
+
+        body->activate();
+    }
+
+    void RigidBodyComponent::setRestitution(float restitution) {
+        body->setRestitution(restitution);
+    }
+
+    void RigidBodyComponent::setAngularFactor(const clv::mth::vec3f& factor) {
+        body->setAngularFactor({ factor.x, factor.y, factor.z });
     }
 
     clv::mth::vec3f RigidBodyComponent::getLinearVelocity() const {
-        return rigidBody->getLinearVelocity();
+        const btVector3 btvel = body->getLinearVelocity();
+        return { btvel.x(), btvel.y(), btvel.z() };
     }
 
-	void RigidBodyComponent::initialiseRigidBody(phy::RigidBody* body) {
-		body->setUserPointer(this);
-	}
+    float RigidBodyComponent::getRestitution() const {
+        return body->getRestitution();
+    }
+
+    clv::mth::vec3f RigidBodyComponent::getAngularFactor() const {
+        const auto factor = body->getAngularFactor();
+        return { factor.x(), factor.y(), factor.z() };
+    }
+
+    void RigidBodyComponent::initialiseRigidBody() {
+        standInShape = createStandInShape();
+
+        btVector3 localInertia(0, 0, 0);
+        btTransform startTransform;
+        startTransform.setIdentity();
+
+        if(descriptor.isKinematic && descriptor.mass > 0.0f) {
+            GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Kinematic RigidBody has non 0 mass. Kinematic takes precedence");
+        } else {
+            standInShape->calculateLocalInertia(descriptor.mass, localInertia);
+        }
+
+        motionState = std::make_unique<btDefaultMotionState>(startTransform);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(descriptor.mass, motionState.get(), standInShape.get(), localInertia);
+
+        body = std::make_unique<btRigidBody>(rbInfo);
+
+        int flags = body->getCollisionFlags();
+        if(descriptor.isKinematic) {
+            flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
+        }
+        body->setCollisionFlags(flags);
+    }
+
+    std::unique_ptr<btSphereShape> RigidBodyComponent::createStandInShape() {
+        return std::make_unique<btSphereShape>(0.1f);
+    }
 }

@@ -6,11 +6,11 @@
 
 #include <glm/glm.hpp>
 
-namespace clv::mth{
-	template<typename T, qualifier Q>
-	using quat = glm::qua<T, Q>;
+namespace clv::mth {
+    template<typename T, qualifier Q>
+    using quat = glm::qua<T, Q>;
 
-	using quatf = quat<float, qualifier::defaultp>;
+    using quatf = quat<float, qualifier::defaultp>;
 
-	//TODO: All the other ps
+    //TODO: All the other ps
 }

@@ -2,6 +2,8 @@
 
 #define ENABLE_HLSL
 
+#include "Clove/Log.hpp"
+
 #include <SPIRV/GlslangToSpv.h>
 #include <SPIRV/disassemble.h>
 #include <SPIRV/SPVRemapper.h>

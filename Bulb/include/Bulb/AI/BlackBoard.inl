@@ -1,5 +1,7 @@
 #include <Root/Definitions.hpp>
 
+#include <Clove/Log.hpp>
+
 namespace blb::ai {
 	template<typename DataType>
 	void BlackBoard::setValue(Key key, DataType value) {
