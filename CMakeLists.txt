@@ -8,6 +8,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CSharp_FLAGS "/langversion:8.0")
 
+#Required for linking shared object (*.so) files on Linux
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 #default settings
 set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
