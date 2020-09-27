@@ -47,8 +47,8 @@ namespace blb::rnd {
 	};
 
 	struct alignas(16) LightCount {
-		int32_t numDirectional;
-		int32_t numPoint;
+		int32_t numDirectional{ 0 };
+		int32_t numPoint{ 0 };
 	};
 
 	//Lighting data needed shadows
