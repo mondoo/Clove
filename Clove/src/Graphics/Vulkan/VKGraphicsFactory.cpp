@@ -51,12 +51,8 @@ namespace clv::gfx::vk {
         return std::make_unique<VKShader>(devicePtr, filePath);
     }
 
-    std::unique_ptr<Shader> VKGraphicsFactory::createShader(std::vector<std::byte> byteCode) {
+    std::unique_ptr<Shader> VKGraphicsFactory::createShader(std::span<const std::byte> byteCode) {
         return std::make_unique<VKShader>(devicePtr, std::move(byteCode));
-    }
-
-    std::unique_ptr<Shader> VKGraphicsFactory::createShader(const std::byte* byteCode, const size_t numBytes) {
-        return std::make_unique<VKShader>(devicePtr, byteCode, numBytes);
     }
 
     std::unique_ptr<RenderPass> VKGraphicsFactory::createRenderPass(RenderPass::Descriptor descriptor) {

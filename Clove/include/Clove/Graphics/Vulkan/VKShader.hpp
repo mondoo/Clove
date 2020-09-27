@@ -4,6 +4,7 @@
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
+#include <span>
 
 namespace clv::gfx::vk {
     class VKShader : public Shader {
@@ -17,8 +18,7 @@ namespace clv::gfx::vk {
     public:
         VKShader() = delete;
         VKShader(DevicePointer device, std::string_view filePath);
-        VKShader(DevicePointer device, std::vector<std::byte> byteCode);
-        VKShader(DevicePointer device, const std::byte* byteCode, const size_t numBytes);
+        VKShader(DevicePointer device, std::span<const std::byte> byteCode);
 
         VKShader(const VKShader& other) = delete;
         VKShader(VKShader&& other) noexcept;

@@ -386,8 +386,8 @@ namespace blb::rnd {
         modelPushConstant.size  = sizeof(VertexData);
 
         clv::gfx::PipelineObject::Descriptor pipelineDescriptor;
-        pipelineDescriptor.vertexShader            = graphicsFactory->createShader(reinterpret_cast<const std::byte*>(mesh_v), mesh_vLength);
-        pipelineDescriptor.fragmentShader          = graphicsFactory->createShader(reinterpret_cast<const std::byte*>(mesh_p), mesh_pLength);
+        pipelineDescriptor.vertexShader            = graphicsFactory->createShader({ reinterpret_cast<const std::byte*>(mesh_v), mesh_vLength });
+        pipelineDescriptor.fragmentShader          = graphicsFactory->createShader({ reinterpret_cast<const std::byte*>(mesh_p), mesh_pLength });
         pipelineDescriptor.vertexInput             = Vertex::getInputBindingDescriptor();
         pipelineDescriptor.vertexAttributes        = Vertex::getVertexAttributes();
         pipelineDescriptor.viewportDescriptor.size = { swapchain->getExtent().x, swapchain->getExtent().y };
