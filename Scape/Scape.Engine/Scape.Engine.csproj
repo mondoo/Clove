@@ -1,5 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    
+    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
+    <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(IsWindows)'=='true'">
+    <DefineConstants>SCAPE_PLATFORM_WINDOWS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsOSX)'=='true'">
+    <DefineConstants>SCAPE_PLATFORM_MACOS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsLinux)'=='true'">
+    <DefineConstants>SCAPE_PLATFORM_LINUX</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Create a custom target to build Scape.Membrane and copy the binary -->
+  <!-- <Target Name="BuildMembrane" BeforeTargets="Build">
+    <Copy SourceFiles="../../build/lib/Debug/Scape.Membrane.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" Condition="'$(IsWindows)'=='true'"/>
+  </Target> -->
 </Project>
