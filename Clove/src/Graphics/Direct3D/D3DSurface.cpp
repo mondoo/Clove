@@ -111,8 +111,8 @@ namespace clv::gfx::d3d{
 		DX11_THROW_INFO(swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer));
 		DX11_THROW_INFO(d3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, &renderTargetView));
 
-		depthTexDesc.Width = size.x;
-		depthTexDesc.Height = size.y;
+		depthTexDesc.Width = size.x > 0 ? size.x : 1;
+		depthTexDesc.Height = size.y > 0 ? size.y : 1;
 
 		DX11_THROW_INFO(d3dDevice->CreateTexture2D(&depthTexDesc, nullptr, &depthStencil));
 		DX11_THROW_INFO(d3dDevice->CreateDepthStencilView(depthStencil.Get(), &dsvDesc, &depthStencilView));
