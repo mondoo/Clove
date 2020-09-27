@@ -54,6 +54,8 @@ void main(){
 	vec3 totalDiffuse = vec3(0);
 	vec3 totalSpecular = vec3(0);
 
+	const float shiniess =  32.0f; //TODO: Add shiniess as a material param
+
 	//Directional lighting
 	for(int i = 0; i < numDirLights; ++i){
 		const vec3 lightDir = normalize(-directionalLights[i].direction); //Gets the direction towards the light
@@ -67,12 +69,38 @@ void main(){
 
 		//Specular
 		const vec3 reflectDir = reflect(-lightDir, normal);
-		const float specIntensity = pow(max(dot(viewDir, reflectDir), 0.0f), 32.0f); //TODO: Add shiniess as a material param
+		const float specIntensity = pow(max(dot(viewDir, reflectDir), 0.0f), shiniess);
 		totalSpecular += directionalLights[i].specular * colour * specIntensity;
 	}
 
 	//Point lighting
-	//TODO
+	for(int i = 0; i < numPointLights; ++i){
+		const vec3 lightDir = normalize(pointLights[i].position - vertPos);
+
+		//Ambient
+		vec3 ambient = pointLights[i].ambient * colour;
+
+		//Diffuse
+		const float diffIntensity = max(dot(normal, lightDir), 0.0f);
+		vec3 diffuse = pointLights[i].diffuse * diffIntensity * colour;
+
+		//Specular
+		const vec3 reflectDir = reflect(-lightDir, normal);
+		const float specIntensity = pow(max(dot(viewDir, reflectDir), 0.0f), shiniess);
+		vec3 specular = pointLights[i].specular * specIntensity * colour;
+
+		//Attenuation
+		float dist = length(pointLights[i].position - vertPos);
+		float attenuation = 1.0f / (pointLights[i].constant + (pointLights[i].linearV * dist) + (pointLights[i].quadratic * (dist * dist)));
+
+		ambient		*= attenuation;
+		diffuse		*= attenuation;
+		specular	*= attenuation;
+
+		totalAmbient += ambient;
+		totalDiffuse += diffuse;
+		totalSpecular += specular;
+	}
 
 	outColour = vec4(totalAmbient + totalDiffuse + totalSpecular, 1.0);
 }

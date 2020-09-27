@@ -97,6 +97,7 @@ namespace blb::rnd {
     void ForwardRenderer3D::begin() {
         currentFrameData.meshes.clear();
         currentFrameData.numLights.numDirectional = 0;
+        currentFrameData.numLights.numPoint = 0;
     }
 
     void ForwardRenderer3D::submitCamera(const Camera& camera, clv::mth::vec3f position) {
@@ -118,6 +119,7 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::submitLight(const PointLight& light) {
+        currentFrameData.lights.pointLights[currentFrameData.numLights.numPoint++] = light.data;
     }
 
     void ForwardRenderer3D::submitWidget(const std::shared_ptr<Sprite>& widget) {
