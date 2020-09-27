@@ -1,5 +1,9 @@
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 
+#include "Clove/Log.hpp"
+
+#include <Root/Definitions.hpp>
+
 namespace clv::gfx::vk {
     VkImageView createImageView(VkDevice device, VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags) {
         VkImageViewCreateInfo viewInfo{};

@@ -4,6 +4,7 @@
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Utils/Cast.hpp"
 
 namespace clv::gfx::vk {
     VKPresentQueue::VKPresentQueue(DevicePointer device, uint32_t queueFamilyIndex)

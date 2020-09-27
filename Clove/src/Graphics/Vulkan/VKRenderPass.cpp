@@ -1,6 +1,9 @@
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Log.hpp"
+
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx::vk {
     VKRenderPass::VKRenderPass(DevicePointer device, RenderPass::Descriptor descriptor)

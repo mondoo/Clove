@@ -1,5 +1,9 @@
 #include "Clove/Graphics/Vulkan/VKSampler.hpp"
 
+#include "Clove/Log.hpp"
+
+#include <Root/Definitions.hpp>
+
 namespace clv::gfx::vk {
     static VkFilter getFilter(Sampler::Filter garlicfilter) {
         switch(garlicfilter) {

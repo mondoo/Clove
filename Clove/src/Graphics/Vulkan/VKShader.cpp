@@ -1,5 +1,9 @@
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
 
+#include "Clove/Log.hpp"
+
+#include <Root/Definitions.hpp>
+
 namespace clv::gfx::vk {
     static std::vector<std::byte> readFile(std::string_view filePath) {
         //Start at the end so we can get the file size

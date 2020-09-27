@@ -1,6 +1,9 @@
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Log.hpp"
+
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx::vk {
     VKDescriptorSetLayout::VKDescriptorSetLayout(DevicePointer device, Descriptor descriptor)

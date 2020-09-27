@@ -1,5 +1,8 @@
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 
+#include "Clove/Log.hpp"
+#include <Root/Definitions.hpp>
+
 namespace clv::gfx::vk {
     static uint32_t getMemoryTypeIndex(uint32_t typeBits, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice) {
         VkPhysicalDeviceMemoryProperties memoryType{};

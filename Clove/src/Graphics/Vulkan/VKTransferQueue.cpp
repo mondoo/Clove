@@ -2,6 +2,10 @@
 
 #include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Log.hpp"
+#include "Clove/Utils/Cast.hpp"
+
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx::vk {
     VKTransferQueue::VKTransferQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)

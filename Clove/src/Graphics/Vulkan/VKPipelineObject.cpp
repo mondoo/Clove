@@ -5,6 +5,10 @@
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
+#include "Clove/Log.hpp"
+#include "Clove/Utils/Cast.hpp"
+
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx::vk {
     static VkVertexInputBindingDescription getBindingDescription(const VertexInputBindingDescriptor& garlicDescriptor) {

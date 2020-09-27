@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 
+#include "Clove/Log.hpp"
+
 namespace clv::gfx::vk {
     VKSemaphore::VKSemaphore(DevicePointer device)
         : device(std::move(device)) {

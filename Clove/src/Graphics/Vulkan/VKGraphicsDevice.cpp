@@ -1,12 +1,14 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsDevice.hpp"
 
 #include "Clove/Graphics/Vulkan/VKGraphicsFactory.hpp"
+#include "Clove/Log.hpp"
 
 //TODO: Abstract away
 #include "Clove/Platform/Windows/CloveWindows.hpp"
 
 #include <vulkan/vulkan_win32.h>
 #include <vulkan/vulkan.h>
+#include <Root/Definitions.hpp>
 
 //TODO: Move this callback (and the set up) into VKException.hpp
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(

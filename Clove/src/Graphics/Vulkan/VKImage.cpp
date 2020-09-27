@@ -2,6 +2,9 @@
 
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Log.hpp"
+
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx::vk {
     static VkImageUsageFlags getUsageFlags(GraphicsImage::UsageMode garlicUsageFlags) {

@@ -5,6 +5,7 @@
 //#include <Clove/Graphics/Texture.hpp>
 //#include <Clove/Graphics/VertexLayout.hpp>
 #include <Clove/Platform/Window.hpp>
+#include <Clove/Log.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>

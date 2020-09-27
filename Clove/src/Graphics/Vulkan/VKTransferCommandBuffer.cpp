@@ -3,6 +3,10 @@
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Log.hpp"
+#include "Clove/Utils/Cast.hpp"
+
+#include <Root/Definitions.hpp>
 
 namespace clv::gfx::vk {
     VKTransferCommandBuffer::VKTransferCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)

@@ -11,6 +11,7 @@
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Graphics/GraphicsImageView.hpp>
 #include <Clove/Platform/Window.hpp>
+#include <Clove/Log.hpp>
 
 extern "C" const char mesh_v[];
 extern "C" const size_t mesh_vLength;
