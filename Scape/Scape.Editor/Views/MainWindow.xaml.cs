@@ -6,21 +6,17 @@ using System.Runtime.InteropServices;
 
 namespace Scape.Editor.Views {
 	public class MainWindow : Window {
-		[DllImport("F:/garlic/build/lib/Debug/Scape.Membrane.dll")]
-		static extern void startEngine();
-
-		[DllImport("F:/garlic/build/lib/Debug/Scape.Membrane.dll")]
-		static extern void runEngine();
-
 		public MainWindow() {
+			Scape.Engine.Application app = new Scape.Engine.Application();
+
 			InitializeComponent();
 #if DEBUG
             this.AttachDevTools();
 #endif
 
 			Opened += (object sender, EventArgs e) => {
-				startEngine();
-				runEngine();
+				app.start();
+				//app.run();
 			};
 		}
 

@@ -1,1 +1,1 @@
-Membrane is a C++ library that wraps Stem in a C like way. Allowing C# to call it's functions in a /P:invoke style
+Scape.Membrane is a C++ library that wraps Stem to make it possible to use it with C# and p/invoke.

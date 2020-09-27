@@ -1,7 +1,7 @@
 set(
 	Files
-		Engine.hpp
-		Engine.cpp
+		Application.hpp
+		Application.cpp
 )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Files})
