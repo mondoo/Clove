@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Scape.Editor": {
-      "commandName": "Project",
-      "nativeDebugging": true
-    }
-  }
-}

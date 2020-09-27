@@ -1,21 +1,22 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Scape.Membrane;
 using System;
+using System.Runtime.InteropServices;
 
 namespace Scape.Editor.Views {
 	public class MainWindow : Window {
 		public MainWindow() {
+			Scape.Engine.Application app = new Scape.Engine.Application();
+
 			InitializeComponent();
 #if DEBUG
             this.AttachDevTools();
 #endif
 
 			Opened += (object sender, EventArgs e) => {
-				Engine engine = new Engine();
-				engine.start();
-				engine.run();
+				app.start();
+				//app.run();
 			};
 		}
 

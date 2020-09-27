@@ -1,4 +1,6 @@
-#include "Engine.hpp"
+#define EXPORT
+
+#include "Application.hpp"
 
 #include <Stem/Application.hpp>
 #include <Bulb/Layer.hpp>
@@ -16,22 +18,18 @@ std::shared_ptr<blb::Layer> createApplicationLayer(const stm::Application& app) 
     return std::make_shared<blb::Layer>("Empty layer");
 }
 
-namespace Scape::Membrane {
-    Engine::Engine(){
-        app = new stm::Application;
-    }
+stm::Application* application_create(){
+    return new stm::Application;
+}
 
-    Engine::~Engine(){
-        this->!Engine();
-    }
+void application_destroy(stm::Application* app){
+    delete app;
+}
 
-    Engine::!Engine() {
-        delete app;
-    }
-    void Engine::start() {
-        app->start();
-    }
-    void Engine::run() {
-        app->run();
-    }
+void application_start(stm::Application* app){
+    app->start();
+}
+
+void application_run(stm::Application* app){
+    app->run();
 }

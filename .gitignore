@@ -6,5 +6,6 @@ compile_commands.json
 .DS_Store
 .vs
 CMakeSettings.json
-Scape/Scape.Editor/bin
-Scape/Scape.Editor/obj
+Scape/*/bin
+Scape/*/obj
+Scape/*/GarlicLog.txt

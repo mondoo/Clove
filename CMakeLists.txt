@@ -8,6 +8,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CSharp_FLAGS "/langversion:8.0")
 
+#Required for linking shared object (*.so) files on Linux
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 #default settings
 set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
@@ -16,7 +19,7 @@ set(BUILD_STATIC_LIBS ON CACHE BOOL "Build static library")
 set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #Garlic settings
-option(GAR_BUILD_SCAPE "Build Scape, Garlic's editor" OFF)
+option(GAR_BUILD_SCAPE "Build Scape, Garlic's editor" ON)
 option(GAR_BUILD_EXAMPLES OFF)
 
 #Clove settings
@@ -34,6 +37,6 @@ add_subdirectory(Bulb)
 add_subdirectory(Stem)
 
 #Garlic's editor
-if(GAR_BUILD_SCAPE AND MSVC)  #not currently supported without MSVC
+if(GAR_BUILD_SCAPE)  #not currently supported without MSVC
 	add_subdirectory(Scape)
 endif()
