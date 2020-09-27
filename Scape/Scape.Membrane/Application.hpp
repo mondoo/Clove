@@ -1,9 +1,13 @@
 #pragma once
 
-#ifdef EXPORT
-    #define SCAPE_DLL __declspec(dllexport)
+#if GARLIC_PLATFORM_WINDOWS
+    #ifdef EXPORT
+        #define SCAPE_DLL __declspec(dllexport)
+    #else
+        #define SCAPE_DLL __declspec(dllimport)
+    #endif
 #else
-    #define SCAPE_DLL __declspec(dllimport)
+    #define SCAPE_DLL
 #endif
 
 namespace stm {
