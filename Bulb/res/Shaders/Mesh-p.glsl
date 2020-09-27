@@ -74,5 +74,5 @@ void main(){
 	//Point lighting
 	//TODO
 
-	outColour = vec4(totalAmbient + totalDiffuse /*+ totalSpecular*/, 1.0);
+	outColour = vec4(totalAmbient + totalDiffuse + totalSpecular, 1.0);
 }
