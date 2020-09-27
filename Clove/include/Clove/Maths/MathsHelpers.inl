@@ -35,7 +35,24 @@ namespace clv::mth {
 
     template<typename T>
     mat<4, 4, T, qualifier::defaultp> createPerspectiveMatrix(T fovy, T aspect, T zNear, T zFar) {
-        return glm::perspective(fovy, aspect, zNear, zFar);
+        /*
+            Defining our own implementation for this function as using glm with vulkan will
+            result in y+ moving objects downwards.
+
+            copied from glm::perspective 
+        */
+
+        assert(abs(aspect - std::numeric_limits<T>::epsilon()) > static_cast<T>(0));
+
+        const T tanHalfFovy = tan(fovy / static_cast<T>(2));
+
+        mat<4, 4, T, qualifier::defaultp> result(static_cast<T>(0));
+        result[0][0] = static_cast<T>(1) / (aspect * tanHalfFovy);
+        result[1][1] = -(static_cast<T>(1) / (tanHalfFovy));//Invert the Y, as stated above.
+        result[2][2] = zFar / (zFar - zNear);
+        result[2][3] = static_cast<T>(1);
+        result[3][2] = -(zFar * zNear) / (zFar - zNear);
+        return result;
     }
 
     template<typename T, qualifier Q>

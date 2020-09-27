@@ -117,7 +117,7 @@ namespace clv::gfx::vk {
         rasterizer.polygonMode             = VK_POLYGON_MODE_FILL;
         rasterizer.lineWidth               = 1.0f;//Any thicker requires the 'wideLines' feature
         rasterizer.cullMode                = VK_CULL_MODE_BACK_BIT;
-        rasterizer.frontFace               = VK_FRONT_FACE_CLOCKWISE;
+        rasterizer.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable         = VK_FALSE;
 
         //Multisampling
