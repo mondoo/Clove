@@ -8,8 +8,8 @@ namespace Scape.Engine
         public const string MembraneDll = "../../build/lib/Debug/Scape.Membrane.dll";
 #elif SCAPE_PLATFORM_MACOS
         public const string MembraneDll = ""; //TODO
-#elif SCAPE_PLATFORM_linux
-        public const string MembraneDll = ""; //TODO
+#elif SCAPE_PLATFORM_LINUX
+        public const string MembraneDll = "../../build/Scape/Scape.Membrane/libScape.Membrane.so";
 #endif
     }
 }
