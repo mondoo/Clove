@@ -63,7 +63,7 @@ void main(){
 	
 		//Diffuse
 		const float diffIntensity = max(dot(normal, lightDir), 0.0f);
-		totalAmbient += directionalLights[i].diffuse * colour * diffIntensity;
+		totalDiffuse += directionalLights[i].diffuse * colour * diffIntensity;
 
 		//Specular
 		const vec3 reflectDir = reflect(-lightDir, normal);
