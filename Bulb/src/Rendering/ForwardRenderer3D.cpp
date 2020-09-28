@@ -10,8 +10,10 @@
 #include <Clove/Graphics/DescriptorSet.hpp>
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Graphics/GraphicsImageView.hpp>
-#include <Clove/Platform/Window.hpp>
 #include <Clove/Log.hpp>
+#include <Clove/Platform/Window.hpp>
+
+using namespace clv::gfx;
 
 extern "C" const char mesh_v[];
 extern "C" const size_t mesh_vLength;
@@ -19,11 +21,11 @@ extern "C" const char mesh_p[];
 extern "C" const size_t mesh_pLength;
 
 namespace blb::rnd {
-    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API api) {
+    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const API api) {
         windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
         windowSize         = window.getSize();
 
-        graphicsDevice  = clv::gfx::createGraphicsDevice(api, window.getNativeWindow());
+        graphicsDevice  = createGraphicsDevice(api, window.getNativeWindow());
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
         //Define the layout of the buffer backing the uniform object buffer
@@ -44,9 +46,9 @@ namespace blb::rnd {
         uniformBufferLayout.numLightsOffset = (uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize) + getByteBoundary(uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize);
 
         //Object initialisation
-        graphicsQueue = graphicsFactory->createGraphicsQueue({ clv::gfx::QueueFlags::ReuseBuffers });
+        graphicsQueue = graphicsFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
         presentQueue  = graphicsFactory->createPresentQueue();
-        transferQueue = graphicsFactory->createTransferQueue({ clv::gfx::QueueFlags::Transient });
+        transferQueue = graphicsFactory->createTransferQueue({ QueueFlags::Transient });
 
         swapchain = graphicsFactory->createSwapChain({ windowSize });
         createRenderpass();
@@ -69,12 +71,12 @@ namespace blb::rnd {
         }
         imagesInFlight.resize(swapchain->getImageViews().size());
 
-        clv::gfx::Sampler::Descriptor samplerDescriptor{};
-        samplerDescriptor.minFilter        = clv::gfx::Sampler::Filter::Linear;
-        samplerDescriptor.magFilter        = clv::gfx::Sampler::Filter::Linear;
-        samplerDescriptor.addressModeU     = clv::gfx::Sampler::AddressMode::Repeat;
-        samplerDescriptor.addressModeV     = clv::gfx::Sampler::AddressMode::Repeat;
-        samplerDescriptor.addressModeW     = clv::gfx::Sampler::AddressMode::Repeat;
+        Sampler::Descriptor samplerDescriptor{};
+        samplerDescriptor.minFilter        = Sampler::Filter::Linear;
+        samplerDescriptor.magFilter        = Sampler::Filter::Linear;
+        samplerDescriptor.addressModeU     = Sampler::AddressMode::Repeat;
+        samplerDescriptor.addressModeV     = Sampler::AddressMode::Repeat;
+        samplerDescriptor.addressModeW     = Sampler::AddressMode::Repeat;
         samplerDescriptor.enableAnisotropy = true;
         samplerDescriptor.maxAnisotropy    = 16.0f;
 
@@ -101,7 +103,7 @@ namespace blb::rnd {
     void ForwardRenderer3D::begin() {
         currentFrameData.meshes.clear();
         currentFrameData.numLights.numDirectional = 0;
-        currentFrameData.numLights.numPoint = 0;
+        currentFrameData.numLights.numPoint       = 0;
     }
 
     void ForwardRenderer3D::submitCamera(const Camera& camera, clv::mth::vec3f position) {
@@ -142,8 +144,8 @@ namespace blb::rnd {
         inFlightFences[currentFrame]->wait();
 
         //Aquire the next available image
-        clv::gfx::Result result = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get(), imageIndex);
-        if(result == clv::gfx::Result::Error_SwapchainOutOfDate) {
+        Result result = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get(), imageIndex);
+        if(result == Result::Error_SwapchainOutOfDate) {
             recreateSwapchain();
             return;//return early just in case the window was minimised
         }
@@ -157,14 +159,14 @@ namespace blb::rnd {
         inFlightFences[currentFrame]->reset();
 
         //Record our command buffers
-        clv::gfx::RenderArea renderArea{};
+        RenderArea renderArea{};
         renderArea.origin = { 0, 0 };
         renderArea.size   = { swapchain->getExtent().x, swapchain->getExtent().y };
 
         clv::mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
-        clv::gfx::DepthStencilValue depthStencilClearValue{ 1.0f, 0 };
+        DepthStencilValue depthStencilClearValue{ 1.0f, 0 };
 
-        commandBuffers[imageIndex]->beginRecording(clv::gfx::CommandBufferUsage::Default);
+        commandBuffers[imageIndex]->beginRecording(CommandBufferUsage::Default);
         commandBuffers[imageIndex]->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, clearColour, depthStencilClearValue);
         commandBuffers[imageIndex]->bindPipelineObject(*pipelineObject);
 
@@ -195,25 +197,25 @@ namespace blb::rnd {
         }
 
         materialDescriptorPool[imageIndex]->reset();
-        std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[materialIndex]);
-        std::vector<std::shared_ptr<clv::gfx::DescriptorSet>> materialSets = materialDescriptorPool[imageIndex]->allocateDescriptorSets(layouts);
+        std::vector<std::shared_ptr<DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[materialIndex]);
+        std::vector<std::shared_ptr<DescriptorSet>> materialSets = materialDescriptorPool[imageIndex]->allocateDescriptorSets(layouts);
 
         //Bind all mesh data
         size_t meshIndex = 0;
         for(auto&& [mesh, transform] : currentFrameData.meshes) {
-            std::shared_ptr<clv::gfx::DescriptorSet>& materialDescriptorSet = materialSets[meshIndex];
+            std::shared_ptr<DescriptorSet>& materialDescriptorSet = materialSets[meshIndex];
 
             VertexData modelData{};
             modelData.model        = transform;
             modelData.normalMatrix = clv::mth::inverse(clv::mth::transpose(transform));
 
-            materialDescriptorSet->write(*mesh->getMaterial().diffuseView, *sampler, clv::gfx::ImageLayout::ShaderReadOnlyOptimal, 0);
+            materialDescriptorSet->write(*mesh->getMaterial().diffuseView, *sampler, ImageLayout::ShaderReadOnlyOptimal, 0);
 
             commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-            commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), clv::gfx::IndexType::Uint16);
+            commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
             commandBuffers[imageIndex]->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, 0);//TODO: Get correct setNum
-            commandBuffers[imageIndex]->pushConstant(*pipelineObject, clv::gfx::ShaderStage::Vertex, sizeof(VertexData), &modelData);
+            commandBuffers[imageIndex]->pushConstant(*pipelineObject, ShaderStage::Vertex, sizeof(VertexData), &modelData);
 
             commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
 
@@ -224,21 +226,21 @@ namespace blb::rnd {
         commandBuffers[imageIndex]->endRecording();
 
         //Submit the command buffer associated with that image
-        clv::gfx::GraphicsSubmitInfo submitInfo{};
+        GraphicsSubmitInfo submitInfo{};
         submitInfo.waitSemaphores   = { imageAvailableSemaphores[currentFrame] };
-        submitInfo.waitStages       = { clv::gfx::WaitStage::ColourAttachmentOutput };
+        submitInfo.waitStages       = { WaitStage::ColourAttachmentOutput };
         submitInfo.commandBuffers   = { commandBuffers[imageIndex] };
         submitInfo.signalSemaphores = { renderFinishedSemaphores[currentFrame] };
         graphicsQueue->submit(submitInfo, inFlightFences[currentFrame].get());
 
         //Present current image
-        clv::gfx::PresentInfo presentInfo{};
+        PresentInfo presentInfo{};
         presentInfo.waitSemaphores = { renderFinishedSemaphores[currentFrame] };
         presentInfo.swapChain      = swapchain;
         presentInfo.imageIndex     = imageIndex;
         result                     = presentQueue->present(presentInfo);
 
-        if(needNewSwapchain || result == clv::gfx::Result::Error_SwapchainOutOfDate || result == clv::gfx::Result::Success_SwapchainSuboptimal) {
+        if(needNewSwapchain || result == Result::Error_SwapchainOutOfDate || result == Result::Success_SwapchainSuboptimal) {
             recreateSwapchain();
             GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Swapchain recreated at end of loop");
         }
@@ -246,7 +248,7 @@ namespace blb::rnd {
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
 
-    const std::shared_ptr<clv::gfx::GraphicsFactory>& ForwardRenderer3D::getGraphicsFactory() const {
+    const std::shared_ptr<GraphicsFactory>& ForwardRenderer3D::getGraphicsFactory() const {
         return graphicsFactory;
     }
 
@@ -328,44 +330,44 @@ namespace blb::rnd {
 
     void ForwardRenderer3D::createRenderpass() {
         //Define what attachments we have
-        clv::gfx::AttachmentDescriptor colourAttachment{};
+        AttachmentDescriptor colourAttachment{};
         colourAttachment.format         = swapchain->getImageFormat();
-        colourAttachment.loadOperation  = clv::gfx::LoadOperation::Clear;
-        colourAttachment.storeOperation = clv::gfx::StoreOperation::Store;
-        colourAttachment.initialLayout  = clv::gfx::ImageLayout::Undefined;
-        colourAttachment.finalLayout    = clv::gfx::ImageLayout::Present;
+        colourAttachment.loadOperation  = LoadOperation::Clear;
+        colourAttachment.storeOperation = StoreOperation::Store;
+        colourAttachment.initialLayout  = ImageLayout::Undefined;
+        colourAttachment.finalLayout    = ImageLayout::Present;
 
-        clv::gfx::AttachmentDescriptor depthAttachment{};
-        depthAttachment.format         = clv::gfx::ImageFormat::D32_SFLOAT;
-        depthAttachment.loadOperation  = clv::gfx::LoadOperation::Clear;
-        depthAttachment.storeOperation = clv::gfx::StoreOperation::DontCare;
-        depthAttachment.initialLayout  = clv::gfx::ImageLayout::Undefined;
-        depthAttachment.finalLayout    = clv::gfx::ImageLayout::DepthStencilAttachmentOptimal;
+        AttachmentDescriptor depthAttachment{};
+        depthAttachment.format         = ImageFormat::D32_SFLOAT;
+        depthAttachment.loadOperation  = LoadOperation::Clear;
+        depthAttachment.storeOperation = StoreOperation::DontCare;
+        depthAttachment.initialLayout  = ImageLayout::Undefined;
+        depthAttachment.finalLayout    = ImageLayout::DepthStencilAttachmentOptimal;
 
         //Define attachment references so the subpass knows which slot each attachment will be in
-        clv::gfx::AttachmentReference colourReference{};
+        AttachmentReference colourReference{};
         colourReference.attachmentIndex = 0;
-        colourReference.layout          = clv::gfx::ImageLayout::ColourAttachmentOptimal;
+        colourReference.layout          = ImageLayout::ColourAttachmentOptimal;
 
-        clv::gfx::AttachmentReference depthReference{};
+        AttachmentReference depthReference{};
         depthReference.attachmentIndex = 1;
-        depthReference.layout          = clv::gfx::ImageLayout::DepthStencilAttachmentOptimal;
+        depthReference.layout          = ImageLayout::DepthStencilAttachmentOptimal;
 
-        clv::gfx::SubpassDescriptor subpass{};
+        SubpassDescriptor subpass{};
         subpass.colourAttachments = { colourReference };
         subpass.depthAttachment   = depthReference;
 
         //Wait on the implicit subpass at the start so we transition our image when we have one
-        clv::gfx::SubpassDependency dependency{};
-        dependency.sourceSubpass      = clv::gfx::SUBPASS_EXTERNAL;
+        SubpassDependency dependency{};
+        dependency.sourceSubpass      = SUBPASS_EXTERNAL;
         dependency.destinationSubpass = 0;
-        dependency.sourceStage        = clv::gfx::PipelineStage::ColourAttachmentOutput;
-        dependency.destinationStage   = clv::gfx::PipelineStage::ColourAttachmentOutput;
-        dependency.sourceAccess       = clv::gfx::AccessFlags::None;
-        dependency.destinationAccess  = clv::gfx::AccessFlags::ColourAttachmentWrite;
+        dependency.sourceStage        = PipelineStage::ColourAttachmentOutput;
+        dependency.destinationStage   = PipelineStage::ColourAttachmentOutput;
+        dependency.sourceAccess       = AccessFlags::None;
+        dependency.destinationAccess  = AccessFlags::ColourAttachmentWrite;
 
         //Create render pass
-        clv::gfx::RenderPass::Descriptor renderPassDescriptor{};
+        RenderPass::Descriptor renderPassDescriptor{};
         renderPassDescriptor.attachments  = { std::move(colourAttachment), std::move(depthAttachment) };
         renderPassDescriptor.subpasses    = { std::move(subpass) };
         renderPassDescriptor.dependencies = { std::move(dependency) };
@@ -374,24 +376,24 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::createDepthBuffer() {
-        clv::gfx::GraphicsImage::Descriptor depthDescriptor{};
-        depthDescriptor.type        = clv::gfx::GraphicsImage::Type::_2D;
-        depthDescriptor.usageFlags  = clv::gfx::GraphicsImage::UsageMode::DepthStencilAttachment;
+        GraphicsImage::Descriptor depthDescriptor{};
+        depthDescriptor.type        = GraphicsImage::Type::_2D;
+        depthDescriptor.usageFlags  = GraphicsImage::UsageMode::DepthStencilAttachment;
         depthDescriptor.dimensions  = { swapchain->getExtent().x, swapchain->getExtent().y };
-        depthDescriptor.format      = clv::gfx::ImageFormat::D32_SFLOAT;
-        depthDescriptor.sharingMode = clv::gfx::SharingMode::Exclusive;
-        depthDescriptor.memoryType  = clv::gfx::MemoryType::VideoMemory;
+        depthDescriptor.format      = ImageFormat::D32_SFLOAT;
+        depthDescriptor.sharingMode = SharingMode::Exclusive;
+        depthDescriptor.memoryType  = MemoryType::VideoMemory;
 
         depthImage     = graphicsFactory->createImage(std::move(depthDescriptor));
         depthImageView = depthImage->createView();
     }
 
     void ForwardRenderer3D::createPipeline() {
-        clv::gfx::PushConstantDescriptor modelPushConstant{};
-        modelPushConstant.stage = clv::gfx::ShaderStage::Vertex;
+        PushConstantDescriptor modelPushConstant{};
+        modelPushConstant.stage = ShaderStage::Vertex;
         modelPushConstant.size  = sizeof(VertexData);
 
-        clv::gfx::PipelineObject::Descriptor pipelineDescriptor;
+        PipelineObject::Descriptor pipelineDescriptor;
         pipelineDescriptor.vertexShader            = graphicsFactory->createShader({ reinterpret_cast<const std::byte*>(mesh_v), mesh_vLength });
         pipelineDescriptor.fragmentShader          = graphicsFactory->createShader({ reinterpret_cast<const std::byte*>(mesh_p), mesh_pLength });
         pipelineDescriptor.vertexInput             = Vertex::getInputBindingDescriptor();
@@ -407,7 +409,7 @@ namespace blb::rnd {
 
     void ForwardRenderer3D::createSwapchainFrameBuffers() {
         for(auto& swapChainImageView : swapchain->getImageViews()) {
-            clv::gfx::Framebuffer::Descriptor frameBufferDescriptor{};
+            Framebuffer::Descriptor frameBufferDescriptor{};
             frameBufferDescriptor.renderPass  = renderPass;
             frameBufferDescriptor.attachments = { swapChainImageView, depthImageView };
             frameBufferDescriptor.width       = swapchain->getExtent().x;
@@ -417,18 +419,18 @@ namespace blb::rnd {
         }
     }
 
-    std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> ForwardRenderer3D::createUniformBuffers(const uint32_t bufferCount) {
-        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers(bufferCount);
+    std::vector<std::shared_ptr<GraphicsBuffer>> ForwardRenderer3D::createUniformBuffers(const uint32_t bufferCount) {
+        std::vector<std::shared_ptr<GraphicsBuffer>> uniformBuffers(bufferCount);
 
         const size_t minOffUniformBufferAlignment = graphicsDevice->getLimits().minUniformBufferOffsetAlignment;
         const size_t padding                      = minOffUniformBufferAlignment * 2;//Add padding so that each element has room to be aligned
 
         for(size_t i = 0; i < bufferCount; ++i) {
-            clv::gfx::GraphicsBuffer::Descriptor descriptor{};
+            GraphicsBuffer::Descriptor descriptor{};
             descriptor.size        = uniformBufferLayout.totalSize() + padding;
-            descriptor.usageFlags  = clv::gfx::GraphicsBuffer::UsageMode::UniformBuffer;
-            descriptor.sharingMode = clv::gfx::SharingMode::Exclusive;
-            descriptor.memoryType  = clv::gfx::MemoryType::SystemMemory;
+            descriptor.usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer;
+            descriptor.sharingMode = SharingMode::Exclusive;
+            descriptor.memoryType  = MemoryType::SystemMemory;
 
             uniformBuffers[i] = graphicsFactory->createBuffer(std::move(descriptor));
         }
@@ -436,19 +438,19 @@ namespace blb::rnd {
         return uniformBuffers;
     }
 
-    std::shared_ptr<clv::gfx::DescriptorPool> ForwardRenderer3D::createDescriptorPool(const std::unordered_map<clv::gfx::DescriptorType, uint32_t>& bindingCount, const uint32_t setCount) {
-        std::vector<clv::gfx::DescriptorInfo> poolTypes;
+    std::shared_ptr<DescriptorPool> ForwardRenderer3D::createDescriptorPool(const std::unordered_map<DescriptorType, uint32_t>& bindingCount, const uint32_t setCount) {
+        std::vector<DescriptorInfo> poolTypes;
         for(auto&& [type, count] : bindingCount) {
-            clv::gfx::DescriptorInfo info{};
+            DescriptorInfo info{};
             info.type  = type;
             info.count = count;
 
             poolTypes.emplace_back(info);
         }
 
-        clv::gfx::DescriptorPool::Descriptor poolDescriptor{};
+        DescriptorPool::Descriptor poolDescriptor{};
         poolDescriptor.poolTypes = std::move(poolTypes);
-        poolDescriptor.flag      = clv::gfx::DescriptorPool::Flag::None;
+        poolDescriptor.flag      = DescriptorPool::Flag::None;
         poolDescriptor.maxSets   = setCount;
 
         return graphicsFactory->createDescriptorPool(std::move(poolDescriptor));
