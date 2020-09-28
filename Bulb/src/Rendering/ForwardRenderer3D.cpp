@@ -81,6 +81,17 @@ namespace blb::rnd {
         samplerDescriptor.maxAnisotropy    = 16.0f;
 
         sampler = graphicsFactory->createSampler(std::move(samplerDescriptor));
+
+        //Create the shadow map used for directional lighting
+        GraphicsImage::Descriptor shadowMapDescriptor {
+            .type        = GraphicsImage::Type::_2D,
+            .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
+            .dimensions  = { shadowMapSize, shadowMapSize },
+            .format      = ImageFormat::D32_SFLOAT,
+            .sharingMode = SharingMode::Exclusive,
+            .memoryType  = MemoryType::VideoMemory
+        };
+        shadowMap = graphicsFactory->createImage(std::move(shadowMapDescriptor));
     }
 
     ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;

@@ -102,6 +102,8 @@ namespace blb::rnd {
         std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;//One per image. Currently no per mesh data is stored in a buffer
         std::shared_ptr<clv::gfx::Sampler> sampler;//Generic sampler passed along with textures
 
+        std::shared_ptr<clv::gfx::GraphicsImage> shadowMap;
+
         //FUNCTIONS
     public:
         ForwardRenderer3D() = delete;

@@ -19,7 +19,7 @@ namespace clv::gfx {
     public:
         using UsageType = uint8_t;
         enum class UsageMode : UsageType {
-            TransferDestination    = 1 << 0, /**< To be used as a destination in a transfer operation */
+            TransferDestination    = 1 << 0, /**< To be used as a destination in a transfer operation. Such as writing data from a system memory backed buffer to a video memory backed buffer */
             Sampled                = 1 << 1, /**< To be used in a GraphicsImageView that's sampled in a shader */
             ColourAttachment       = 1 << 2, /**< To be used in a GraphicsImageView for a frame buffer */
             DepthStencilAttachment = 1 << 3, /**< To be used in a GraphicsImageView for a depth / stencil attachment */
