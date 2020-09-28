@@ -111,6 +111,9 @@ namespace clv::gfx {
     };
 
     using AccessFlagsType = uint16_t;
+    /**
+     * @brief Memory access types that will participate in a memory dependency.
+     */
     enum class AccessFlags : AccessFlagsType {
         None                        = 0,
         TransferWrite               = 1 << 0,
