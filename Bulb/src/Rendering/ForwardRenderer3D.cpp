@@ -81,6 +81,10 @@ namespace blb::rnd {
         sampler = graphicsFactory->createSampler(std::move(samplerDescriptor));
     }
 
+    ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;
+
+    ForwardRenderer3D& ForwardRenderer3D::operator=(ForwardRenderer3D&& other) noexcept = default;
+
     ForwardRenderer3D::~ForwardRenderer3D() {
         //Wait for an idle device before shutting down so resources aren't freed while in use
         graphicsDevice->waitForIdleDevice();

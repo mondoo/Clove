@@ -71,9 +71,6 @@ namespace blb::rnd {
             }
         } uniformBufferLayout;
 
-        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;//One per image. Currently no per mesh data is stored in a buffer
-        std::shared_ptr<clv::gfx::Sampler> sampler;
-
         std::shared_ptr<clv::gfx::GraphicsDevice> graphicsDevice;
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
@@ -86,7 +83,6 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
 
         std::shared_ptr<clv::gfx::RenderPass> renderPass;
-
         std::shared_ptr<clv::gfx::PipelineObject> pipelineObject;
 
         std::vector<std::shared_ptr<clv::gfx::Framebuffer>> swapChainFrameBuffers;
@@ -103,10 +99,20 @@ namespace blb::rnd {
         std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> materialDescriptorPool;//One for each image.
         std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> frameDescriptorPool;   //One for each image. For descriptors which are set once per frame
 
+        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;//One per image. Currently no per mesh data is stored in a buffer
+        std::shared_ptr<clv::gfx::Sampler> sampler;//Generic sampler passed along with textures
+
         //FUNCTIONS
     public:
-        //TODO: Ctors
+        ForwardRenderer3D() = delete;
         ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API api);
+
+        ForwardRenderer3D(const ForwardRenderer3D& other) = delete;
+        ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
+
+        ForwardRenderer3D& operator=(const ForwardRenderer3D& other) = delete;
+        ForwardRenderer3D& operator=(ForwardRenderer3D&& other) noexcept;
+
         ~ForwardRenderer3D();
 
         void begin();
