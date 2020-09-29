@@ -20,6 +20,11 @@ extern "C" const size_t mesh_vLength;
 extern "C" const char mesh_p[];
 extern "C" const size_t mesh_pLength;
 
+extern "C" const char genshadowmap_v[];
+extern "C" const size_t genshadowmap_vLength;
+extern "C" const char genshadowmap_p[];
+extern "C" const size_t genshadowmap_pLength;
+
 namespace blb::rnd {
     ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const API api) {
         windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
@@ -83,7 +88,7 @@ namespace blb::rnd {
         sampler = graphicsFactory->createSampler(std::move(samplerDescriptor));
 
         //Create the shadow map used for directional lighting
-        GraphicsImage::Descriptor shadowMapDescriptor {
+        GraphicsImage::Descriptor shadowMapDescriptor{
             .type        = GraphicsImage::Type::_2D,
             .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
             .dimensions  = { shadowMapSize, shadowMapSize },
@@ -91,7 +96,65 @@ namespace blb::rnd {
             .sharingMode = SharingMode::Exclusive,
             .memoryType  = MemoryType::VideoMemory
         };
-        shadowMap = graphicsFactory->createImage(std::move(shadowMapDescriptor));
+        shadowMap     = graphicsFactory->createImage(std::move(shadowMapDescriptor));
+        shadowMapView = shadowMap->createView();
+        //TODO: Transition layout so it's prepped
+
+        //TODO: Just making everything here until I figure out the best way to do this
+        {
+            //Render pass for generating the shadow map
+            AttachmentDescriptor depthAttachment{
+                .format         = ImageFormat::D32_SFLOAT,
+                .loadOperation  = LoadOperation::Clear,
+                .storeOperation = StoreOperation::DontCare,
+                .initialLayout  = ImageLayout::Undefined,
+                .finalLayout    = ImageLayout::ShaderReadOnlyOptimal,
+            };
+
+            AttachmentReference depthReference{
+                .attachmentIndex = 0,
+                .layout          = ImageLayout::DepthStencilAttachmentOptimal,
+            };
+
+            SubpassDescriptor subpass{
+                .colourAttachments = {},
+                .depthAttachment   = depthReference,
+            };
+
+            RenderPass::Descriptor renderPassDescriptor{
+                .attachments  = { std::move(depthAttachment) },
+                .subpasses    = { std::move(subpass) },
+                .dependencies = {},
+            };
+
+            shadowMapRenderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
+
+            //Pipeline for the shadow map
+            PushConstantDescriptor modelPushConstant{
+                .stage = Shader::Stage::Vertex,
+                .size  = sizeof(VertexData),
+            };
+
+            AreaDescriptor viewScissorArea{
+                .state = ElementState::Static,
+                .position = {0.0f, 0.0f},
+                .size = { shadowMapSize, shadowMapSize }
+            };
+
+            PipelineObject::Descriptor pipelineDescriptor{
+                .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<const std::byte*>(genshadowmap_v), genshadowmap_vLength }),
+                .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<const std::byte*>(genshadowmap_p), genshadowmap_pLength }),
+                .vertexInput          = Vertex::getInputBindingDescriptor(),
+                .vertexAttributes     = Vertex::getVertexAttributes(),
+                .viewportDescriptor   = viewScissorArea,
+                .scissorDescriptor    = viewScissorArea,
+                .renderPass           = shadowMapRenderPass,
+                .descriptorSetLayouts = descriptorSetLayouts, //TODO: Using all of the possible layouts. Is it better to only define the ones it needs?
+                .pushConstants        = { modelPushConstant },
+            };
+
+            shadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+        }
     }
 
     ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;

@@ -52,7 +52,7 @@ namespace blb::rnd {
 
             LightDataArray lights;
             DirectionalShadowTransformArray directionalShadowTransforms;
-            
+
             LightCount numLights;
         } currentFrameData;
 
@@ -105,6 +105,9 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
 
         std::shared_ptr<clv::gfx::GraphicsImage> shadowMap;
+        std::shared_ptr<clv::gfx::GraphicsImageView> shadowMapView;
+        std::shared_ptr<clv::gfx::RenderPass> shadowMapRenderPass;
+        std::shared_ptr<clv::gfx::PipelineObject> shadowMapPipelineObject;
 
         //FUNCTIONS
     public:
