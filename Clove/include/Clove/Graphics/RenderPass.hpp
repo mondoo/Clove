@@ -13,16 +13,16 @@ namespace clv::gfx {
         ImageFormat format{ ImageFormat::Unkown };
         LoadOperation loadOperation{ LoadOperation::DontCare };
         StoreOperation storeOperation{ StoreOperation::DontCare };
-        ImageLayout initialLayout{ ImageLayout::Undefined };
-        ImageLayout finalLayout{ ImageLayout::Undefined };
+        ImageLayout initialLayout{ ImageLayout::Undefined }; /**< What layout the RenderPass will expect the image to be in. */
+        ImageLayout finalLayout{ ImageLayout::Undefined };   /**< What layout the image will be transitioned to at the end of the RenderPass.*/
     };
 
     /**
      * @brief Allows an attachment to be referenced between multiple subpasses.
      */
     struct AttachmentReference {
-        uint32_t attachmentIndex{ 0 }; /**< the index of the attachment in RenderPassDescriptor::attachments this refernces uses */
-        ImageLayout layout{ ImageLayout::Undefined };
+        uint32_t attachmentIndex{ 0 };                /**< The index of the attachment in RenderPassDescriptor::attachments this refernces uses. */
+        ImageLayout layout{ ImageLayout::Undefined }; /**< What layout the attachment will transition to when used during the subpass. */
     };
 
     /**

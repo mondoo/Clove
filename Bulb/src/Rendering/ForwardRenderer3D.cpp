@@ -371,7 +371,7 @@ namespace blb::rnd {
         subpass.colourAttachments = { colourReference };
         subpass.depthAttachment   = depthReference;
 
-        //Wait on the implicit subpass at the start so we transition our image when we have one
+        //Wait on the implicit subpass at the start. This is so the subpass can transition the layout at the right time
         SubpassDependency dependency{};
         dependency.sourceSubpass      = SUBPASS_EXTERNAL;
         dependency.destinationSubpass = 0;
