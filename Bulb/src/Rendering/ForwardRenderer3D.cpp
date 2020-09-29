@@ -132,7 +132,10 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::submitLight(const DirectionalLight& light) {
-        currentFrameData.lights.directionalLights[currentFrameData.numLights.numDirectional++] = light.data;
+        const uint32_t lightIndex = currentFrameData.numLights.numDirectional++;
+
+        currentFrameData.lights.directionalLights[lightIndex] = light.data;
+        currentFrameData.directionalShadowTransforms[lightIndex] = light.shadowTransform;
     }
 
     void ForwardRenderer3D::submitLight(const PointLight& light) {

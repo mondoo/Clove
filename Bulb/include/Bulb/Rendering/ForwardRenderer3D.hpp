@@ -51,6 +51,8 @@ namespace blb::rnd {
             std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
 
             LightDataArray lights;
+            DirectionalShadowTransformArray directionalShadowTransforms;
+            
             LightCount numLights;
         } currentFrameData;
 
@@ -79,9 +81,6 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::TransferQueue> transferQueue;
 
         std::shared_ptr<clv::gfx::Swapchain> swapchain;
-        std::shared_ptr<clv::gfx::GraphicsImage> depthImage;
-        std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
-
         std::shared_ptr<clv::gfx::RenderPass> renderPass;
         std::shared_ptr<clv::gfx::PipelineObject> pipelineObject;
 
@@ -101,6 +100,9 @@ namespace blb::rnd {
 
         std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;//One per image. Currently no per mesh data is stored in a buffer
         std::shared_ptr<clv::gfx::Sampler> sampler;//Generic sampler passed along with textures
+
+        std::shared_ptr<clv::gfx::GraphicsImage> depthImage;
+        std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
 
         std::shared_ptr<clv::gfx::GraphicsImage> shadowMap;
 
