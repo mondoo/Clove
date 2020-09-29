@@ -32,14 +32,14 @@ namespace clv::gfx::vk {
         return imageView;
     }
 
-    VkShaderStageFlags convertShaderStage(ShaderStage stage) {
+    VkShaderStageFlags convertShaderStage(Shader::Stage stage) {
         switch(stage) {
-            case ShaderStage::Vertex:
+            case Shader::Stage::Vertex:
                 return VK_SHADER_STAGE_VERTEX_BIT;
-            case ShaderStage::Pixel:
+            case Shader::Stage::Pixel:
                 return VK_SHADER_STAGE_FRAGMENT_BIT;
-            case ShaderStage::Geometry:
-                return VK_SHADER_STAGE_GEOMETRY_BIT;
+            //case ShaderStage::Geometry:
+            //    return VK_SHADER_STAGE_GEOMETRY_BIT;
             default:
                 GARLIC_ASSERT(false, "{0}: Stage not supported", GARLIC_FUNCTION_NAME);
                 return VK_SHADER_STAGE_VERTEX_BIT;

@@ -38,7 +38,7 @@ namespace clv::gfx::vk {
         void bindIndexBuffer(GraphicsBuffer& indexBuffer, IndexType indexType) override;
         void bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline, const uint32_t setNum) override;
 
-        void pushConstant(PipelineObject& pipelineObject, const ShaderStage stage, const uint32_t size, const void* data) override;
+        void pushConstant(PipelineObject& pipelineObject, const Shader::Stage stage, const uint32_t size, const void* data) override;
 
         void drawIndexed(const size_t indexCount) override;
 

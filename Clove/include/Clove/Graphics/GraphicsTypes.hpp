@@ -14,12 +14,6 @@ namespace clv::gfx {
 #endif
     };
 
-    enum class ShaderStage {
-        Vertex,
-        Pixel,
-        Geometry
-    };
-
     enum class VertexElementType {
         position2D,
         position3D,

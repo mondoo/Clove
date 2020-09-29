@@ -229,7 +229,7 @@ namespace blb::rnd {
             commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
             commandBuffers[imageIndex]->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, 0);//TODO: Get correct setNum
-            commandBuffers[imageIndex]->pushConstant(*pipelineObject, ShaderStage::Vertex, sizeof(VertexData), &modelData);
+            commandBuffers[imageIndex]->pushConstant(*pipelineObject, Shader::Stage::Vertex, sizeof(VertexData), &modelData);
 
             commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
 
@@ -404,7 +404,7 @@ namespace blb::rnd {
 
     void ForwardRenderer3D::createPipeline() {
         PushConstantDescriptor modelPushConstant{};
-        modelPushConstant.stage = ShaderStage::Vertex;
+        modelPushConstant.stage = Shader::Stage::Vertex;
         modelPushConstant.size  = sizeof(VertexData);
 
         PipelineObject::Descriptor pipelineDescriptor;

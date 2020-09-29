@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/Shader.hpp"
 
 namespace clv::gfx {
     struct DescriptorSetBindingInfo {
         uint32_t binding{ 0 };
         DescriptorType type;
         size_t arraySize{ 1 };/**< If this descriptor represents an array it'll be the size of the array else 1 */
-        ShaderStage stage;
+        Shader::Stage stage;
     };
 
     /**

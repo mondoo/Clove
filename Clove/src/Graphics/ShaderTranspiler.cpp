@@ -17,21 +17,21 @@
 #include <Root/Definitions.hpp>
 
 namespace clv::gfx::ShaderTranspiler{
-	static EShLanguage getEShStage(ShaderStage stage){
+	static EShLanguage getEShStage(Shader::Stage stage){
 		switch(stage){
-			case clv::gfx::ShaderStage::Vertex:
+			case clv::gfx::Shader::Stage::Vertex:
 				return EShLanguage::EShLangVertex;
-			case clv::gfx::ShaderStage::Pixel:
+			case clv::gfx::Shader::Stage::Pixel:
 				return EShLanguage::EShLangFragment;
-			case clv::gfx::ShaderStage::Geometry:
-				return EShLanguage::EShLangGeometry;
+			// case clv::gfx::Shader::Stage::Geometry:
+			// 	return EShLanguage::EShLangGeometry;
 			default:
 				GARLIC_LOG(garlicLogContext, Log::Level::Error, "Unsupported shader stage {0}", GARLIC_FUNCTION_NAME);
 				return EShLanguage::EShLangVertex;
 		}
 	}
 
-	static std::string spirvToGlsl(ShaderStage stage, const std::vector<uint32_t>& spirvSource) {
+	static std::string spirvToGlsl(Shader::Stage stage, const std::vector<uint32_t>& spirvSource) {
 		spirv_cross::CompilerGLSL glsl(spirvSource);
 		spirv_cross::CompilerGLSL::Options scoptions;
 
@@ -54,7 +54,7 @@ namespace clv::gfx::ShaderTranspiler{
 		}
 
 		//Remap names to semantics
-		if(stage == ShaderStage::Vertex) {
+		if(stage == Shader::Stage::Vertex) {
 			for(auto& resource : resources.stage_inputs) {
 				const uint32_t location = glsl.get_decoration(resource.id, spv::DecorationLocation);
 				std::string str = glsl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
@@ -63,17 +63,17 @@ namespace clv::gfx::ShaderTranspiler{
 			}
 		}
 
-		if(stage == ShaderStage::Geometry) {
-			const uint32_t invocations = glsl.get_execution_mode_argument(spv::ExecutionMode::ExecutionModeInvocations);
-			if(invocations == 196624) { //Unset invocations default to this, unset it
-				glsl.unset_execution_mode(spv::ExecutionMode::ExecutionModeInvocations);
-			}
-		}
+		// if(stage == Shader::Stage::Geometry) {
+		// 	const uint32_t invocations = glsl.get_execution_mode_argument(spv::ExecutionMode::ExecutionModeInvocations);
+		// 	if(invocations == 196624) { //Unset invocations default to this, unset it
+		// 		glsl.unset_execution_mode(spv::ExecutionMode::ExecutionModeInvocations);
+		// 	}
+		// }
 
 		return glsl.compile();
 	}
 
-	static std::string spirvToMSL(ShaderStage stage, const std::vector<uint32_t>& spirvSource) {
+	static std::string spirvToMSL(Shader::Stage stage, const std::vector<uint32_t>& spirvSource) {
 		spirv_cross::CompilerMSL msl(spirvSource);
 		spirv_cross::CompilerMSL::Options scoptions;
 
@@ -111,7 +111,7 @@ namespace clv::gfx::ShaderTranspiler{
 		}
 
 		//Remap names to semantics
-		if(stage == ShaderStage::Vertex) {
+		if(stage == Shader::Stage::Vertex) {
 			for(auto& resource : resources.stage_inputs) {
 				const uint32_t location = msl.get_decoration(resource.id, spv::DecorationLocation);
 				std::string str = msl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
@@ -123,7 +123,7 @@ namespace clv::gfx::ShaderTranspiler{
 		return msl.compile();
 	}
 
-	std::string transpileFromFile(std::string_view filePath, ShaderStage stage, ShaderType outputType){
+	std::string transpileFromFile(std::string_view filePath, Shader::Stage stage, ShaderType outputType){
 		std::ifstream stream(filePath.data());
 
 		std::string line;
@@ -135,11 +135,11 @@ namespace clv::gfx::ShaderTranspiler{
 		return transpileFromSource(ss.str(), stage, outputType);
 	}
 
-	std::string transpileFromBytes(const char* bytes, const std::size_t size, ShaderStage stage, ShaderType outputType) {
+	std::string transpileFromBytes(const char* bytes, const std::size_t size, Shader::Stage stage, ShaderType outputType) {
 		return transpileFromSource({ bytes, size }, stage, outputType);
 	}
 
-	std::string transpileFromSource(std::string_view source, ShaderStage stage, ShaderType outputType){		
+	std::string transpileFromSource(std::string_view source, Shader::Stage stage, ShaderType outputType){		
 		std::string shaderSource;
 		if(outputType == ShaderType::GLSL) {
 			shaderSource = "#define GLSL\n\n";

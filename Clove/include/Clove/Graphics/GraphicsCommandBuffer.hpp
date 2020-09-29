@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/Shader.hpp"
 
 namespace clv::gfx {
     class RenderPass;
@@ -33,7 +34,7 @@ namespace clv::gfx {
         virtual void bindIndexBuffer(GraphicsBuffer& indexBuffer, IndexType indexType)                                      = 0;
         virtual void bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline, const uint32_t setNum) = 0;
 
-        virtual void pushConstant(PipelineObject& pipelineObject, const ShaderStage stage, const uint32_t size, const void* data) = 0;
+        virtual void pushConstant(PipelineObject& pipelineObject, const Shader::Stage stage, const uint32_t size, const void* data) = 0;
 
         virtual void drawIndexed(const size_t indexCount) = 0;
 

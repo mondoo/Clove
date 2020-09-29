@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/Shader.hpp"
 
 namespace clv::gfx {
     class Shader;
@@ -29,7 +30,7 @@ namespace clv::gfx {
     };
 
     struct PushConstantDescriptor {
-        ShaderStage stage;
+        Shader::Stage stage;
         uint32_t size{ 0 };
     };
 }
