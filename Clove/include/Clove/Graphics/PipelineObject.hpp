@@ -13,13 +13,7 @@ namespace clv::gfx {
         Dynamic
     };
 
-    struct ViewportDescriptor {
-        ElementState state{ ElementState::Static };
-        mth::vec2i position{ 0.0f, 0.0f };
-        mth::vec2ui size{ 0.0f, 0.0f };
-    };
-
-    struct ScissorDescriptor {
+    struct AreaDescriptor {
         ElementState state{ ElementState::Static };
         mth::vec2i position{ 0.0f, 0.0f };
         mth::vec2ui size{ 0.0f, 0.0f };
@@ -49,8 +43,8 @@ namespace clv::gfx {
             VertexInputBindingDescriptor vertexInput;
             std::vector<VertexAttributeDescriptor> vertexAttributes;
 
-            ViewportDescriptor viewportDescriptor;
-            ScissorDescriptor scissorDescriptor;
+            AreaDescriptor viewportDescriptor;
+            AreaDescriptor scissorDescriptor;
 
             RasteriserDescriptor rasteriserDescriptor;
 
