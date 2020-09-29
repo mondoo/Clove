@@ -143,12 +143,16 @@ set(
 
 set(
 	ShaderFiles
+		${BLB_RESOURCE}/Shaders/GenShadowMap-v.glsl
+		${BLB_RESOURCE}/Shaders/GenShadowMap-p.glsl
 		${BLB_RESOURCE}/Shaders/Mesh-v.glsl
 		${BLB_RESOURCE}/Shaders/Mesh-p.glsl
 
 		${ShaderIncludes}
 )
 
+compileShader("${BLB_RESOURCE}/Shaders/GenShadowMap-v.glsl" "GenShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/GenShadowMap-p.glsl" "GenShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
 compileShader("${BLB_RESOURCE}/Shaders/Mesh-v.glsl" "Mesh-v.spirv" "vertex" "${ShaderIncludes}")
 compileShader("${BLB_RESOURCE}/Shaders/Mesh-p.glsl" "Mesh-p.spirv" "fragment" "${ShaderIncludes}")
 
@@ -179,6 +183,8 @@ endfunction()
 embeddResource("${BLB_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf" "rb")
 embeddResource("Mesh-v.spirv" "rb")
 embeddResource("Mesh-p.spirv" "rb")
+embeddResource("GenShadowMap-v.spirv" "rb")
+embeddResource("GenShadowMap-p.spirv" "rb")
 
 #Organise the source tree
 file(GLOB_RECURSE header ${BLB_INCLUDE}/*.h ${BLB_INCLUDE}/*.hpp ${BLB_INCLUDE}/*.inl)
