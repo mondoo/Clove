@@ -59,8 +59,14 @@ namespace blb::rnd {
             lightCountBindingInfo.arraySize = 1;
             lightCountBindingInfo.stage     = clv::gfx::Shader::Stage::Pixel;
 
+            clv::gfx::DescriptorSetBindingInfo directionalShadowTransformsInfo{};
+            directionalShadowTransformsInfo.binding   = 2;
+            directionalShadowTransformsInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
+            directionalShadowTransformsInfo.arraySize = 1;
+            directionalShadowTransformsInfo.stage     = clv::gfx::Shader::Stage::Vertex;
+
             clv::gfx::DescriptorSetLayout::Descriptor lightingSetLayoutDescriptor{};
-            lightingSetLayoutDescriptor.bindings = { lightDataBindingInfo, lightCountBindingInfo };
+            lightingSetLayoutDescriptor.bindings = { lightDataBindingInfo, lightCountBindingInfo, directionalShadowTransformsInfo };
 
             lightingSetLayout = factory.createDescriptorSetLayout(lightingSetLayoutDescriptor);
         }
