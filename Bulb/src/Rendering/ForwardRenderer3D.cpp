@@ -135,9 +135,9 @@ namespace blb::rnd {
             shadowMapRenderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
 
             //Pipeline for the shadow map
-            PushConstantDescriptor modelPushConstant{
+            PushConstantDescriptor pushConstant{
                 .stage = Shader::Stage::Vertex,
-                .size  = sizeof(VertexData),
+                .size  = sizeof(clv::mth::mat4f) * 2,
             };
 
             AreaDescriptor viewScissorArea{
@@ -154,8 +154,8 @@ namespace blb::rnd {
                 .viewportDescriptor   = viewScissorArea,
                 .scissorDescriptor    = viewScissorArea,
                 .renderPass           = shadowMapRenderPass,
-                .descriptorSetLayouts = descriptorSetLayouts,//TODO: Using all of the possible layouts. Is it better to only define the ones it needs?
-                .pushConstants        = { modelPushConstant },
+                .descriptorSetLayouts = {},
+                .pushConstants        = { pushConstant },
             };
 
             shadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);

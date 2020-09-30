@@ -2,13 +2,11 @@
 
 #include "Constants.glsl"
 
+//TODO: Putting the light space as a push constant but may be better as a buffer
+//because this shader gets called per mesh
 layout(std140, push_constant) uniform Model{
 	mat4 model;
-	mat4 normalMatrix;
-};
-
-layout(std140, set = SET_LIGHTING, binding = 2) uniform DirectionalLightSpace{
-    mat4 lightSpaceMatrix;
+	mat4 lightSpaceMatrix;
 };
 
 layout(location = 0) in vec3 position;
