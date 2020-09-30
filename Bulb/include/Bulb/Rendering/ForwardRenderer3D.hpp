@@ -104,8 +104,8 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::GraphicsImage> depthImage;
         std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
 
-        std::shared_ptr<clv::gfx::GraphicsImage> shadowMap;
-        std::shared_ptr<clv::gfx::GraphicsImageView> shadowMapView;
+        std::vector<std::shared_ptr<clv::gfx::GraphicsImage>> shadowMaps;
+        std::vector<std::shared_ptr<clv::gfx::GraphicsImageView>> shadowMapViews;
         std::shared_ptr<clv::gfx::RenderPass> shadowMapRenderPass;
         std::shared_ptr<clv::gfx::PipelineObject> shadowMapPipelineObject;
 

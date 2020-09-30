@@ -87,21 +87,25 @@ namespace blb::rnd {
 
         sampler = graphicsFactory->createSampler(std::move(samplerDescriptor));
 
-        //Create the shadow map used for directional lighting
-        GraphicsImage::Descriptor shadowMapDescriptor{
-            .type        = GraphicsImage::Type::_2D,
-            .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
-            .dimensions  = { shadowMapSize, shadowMapSize },
-            .format      = ImageFormat::D32_SFLOAT,
-            .sharingMode = SharingMode::Exclusive,
-            .memoryType  = MemoryType::VideoMemory
-        };
-        shadowMap     = graphicsFactory->createImage(std::move(shadowMapDescriptor));
-        shadowMapView = shadowMap->createView();
-        //TODO: Transition layout so it's prepped
-
         //TODO: Just making everything here until I figure out the best way to do this
         {
+            //TODO: Hard coding in 3 for now
+            shadowMaps.resize(3);
+            shadowMapViews.resize(3);
+            for(size_t i = 0; i < 3; ++i) {
+                //Create the shadow map used for directional lighting
+                GraphicsImage::Descriptor shadowMapDescriptor{
+                    .type        = GraphicsImage::Type::_2D,
+                    .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
+                    .dimensions  = { shadowMapSize, shadowMapSize },
+                    .format      = ImageFormat::D32_SFLOAT,
+                    .sharingMode = SharingMode::Exclusive,
+                    .memoryType  = MemoryType::VideoMemory
+                };
+                shadowMaps[i]     = graphicsFactory->createImage(std::move(shadowMapDescriptor));
+                shadowMapViews[i] = shadowMaps[i]->createView();
+                //TODO: Transition layout so it's prepped
+            }
             //Render pass for generating the shadow map
             AttachmentDescriptor depthAttachment{
                 .format         = ImageFormat::D32_SFLOAT,
