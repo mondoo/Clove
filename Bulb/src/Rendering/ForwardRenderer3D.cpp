@@ -111,7 +111,7 @@ namespace blb::rnd {
             AttachmentDescriptor depthAttachment{
                 .format         = ImageFormat::D32_SFLOAT,
                 .loadOperation  = LoadOperation::Clear,
-                .storeOperation = StoreOperation::DontCare,
+                .storeOperation = StoreOperation::Store,
                 .initialLayout  = ImageLayout::Undefined,
                 .finalLayout    = ImageLayout::ShaderReadOnlyOptimal,
             };
