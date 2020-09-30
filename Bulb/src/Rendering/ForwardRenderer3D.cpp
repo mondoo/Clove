@@ -166,8 +166,8 @@ namespace blb::rnd {
                 Framebuffer::Descriptor frameBuffer{
                     .renderPass  = shadowMapRenderPass,
                     .attachments = { view },
-                    .width = shadowMapSize,
-                    .height = shadowMapSize
+                    .width       = shadowMapSize,
+                    .height      = shadowMapSize
                 };
                 shadowMapFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(frameBuffer));
             }
@@ -214,7 +214,7 @@ namespace blb::rnd {
     void ForwardRenderer3D::submitLight(const DirectionalLight& light) {
         const uint32_t lightIndex = currentFrameData.numLights.numDirectional++;
 
-        currentFrameData.lights.directionalLights[lightIndex] = light.data;
+        currentFrameData.lights.directionalLights[lightIndex]    = light.data;
         currentFrameData.directionalShadowTransforms[lightIndex] = light.shadowTransform;
     }
 
@@ -257,10 +257,37 @@ namespace blb::rnd {
         renderArea.origin = { 0, 0 };
         renderArea.size   = { swapchain->getExtent().x, swapchain->getExtent().y };
 
+        RenderArea shadowArea{
+            .origin = { 0, 0 },
+            .size   = { shadowMapSize, shadowMapSize }
+        };
+
         clv::mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
         DepthStencilValue depthStencilClearValue{ 1.0f, 0 };
 
         commandBuffers[imageIndex]->beginRecording(CommandBufferUsage::Default);
+
+        //SHADOW MAP
+        commandBuffers[imageIndex]->beginRenderPass(*shadowMapRenderPass, *shadowMapFrameBuffers[imageIndex], shadowArea, clearColour, depthStencilClearValue);
+        commandBuffers[imageIndex]->bindPipelineObject(*shadowMapPipelineObject);
+
+        //TODO: Loop through each light. Just doing the one for now
+        for(size_t i = 0; i < 1; ++i) {
+            for(auto&& [mesh, transform] : currentFrameData.meshes) {
+                const clv::mth::mat4f pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
+                
+                commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
+                commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
+
+                commandBuffers[imageIndex]->pushConstant(*shadowMapPipelineObject, Shader::Stage::Vertex, sizeof(pushConstantData), pushConstantData);
+
+                commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
+            }
+        }
+
+        commandBuffers[imageIndex]->endRenderPass();
+
+        //FINAL IMAGE
         commandBuffers[imageIndex]->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, clearColour, depthStencilClearValue);
         commandBuffers[imageIndex]->bindPipelineObject(*pipelineObject);
 
@@ -317,6 +344,7 @@ namespace blb::rnd {
         }
 
         commandBuffers[imageIndex]->endRenderPass();
+
         commandBuffers[imageIndex]->endRecording();
 
         //Submit the command buffer associated with that image
