@@ -106,6 +106,7 @@ namespace blb::rnd {
                 shadowMapViews[i] = shadowMaps[i]->createView();
                 //TODO: Transition layout so it's prepped
             }
+
             //Render pass for generating the shadow map
             AttachmentDescriptor depthAttachment{
                 .format         = ImageFormat::D32_SFLOAT,
@@ -140,9 +141,9 @@ namespace blb::rnd {
             };
 
             AreaDescriptor viewScissorArea{
-                .state = ElementState::Static,
-                .position = {0.0f, 0.0f},
-                .size = { shadowMapSize, shadowMapSize }
+                .state    = ElementState::Static,
+                .position = { 0.0f, 0.0f },
+                .size     = { shadowMapSize, shadowMapSize }
             };
 
             PipelineObject::Descriptor pipelineDescriptor{
@@ -153,11 +154,23 @@ namespace blb::rnd {
                 .viewportDescriptor   = viewScissorArea,
                 .scissorDescriptor    = viewScissorArea,
                 .renderPass           = shadowMapRenderPass,
-                .descriptorSetLayouts = descriptorSetLayouts, //TODO: Using all of the possible layouts. Is it better to only define the ones it needs?
+                .descriptorSetLayouts = descriptorSetLayouts,//TODO: Using all of the possible layouts. Is it better to only define the ones it needs?
                 .pushConstants        = { modelPushConstant },
             };
 
             shadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+
+            //Frame buffer for shadow map
+            shadowMapFrameBuffers.reserve(std::size(shadowMapViews));
+            for(auto& view : shadowMapViews) {
+                Framebuffer::Descriptor frameBuffer{
+                    .renderPass  = shadowMapRenderPass,
+                    .attachments = { view },
+                    .width = shadowMapSize,
+                    .height = shadowMapSize
+                };
+                shadowMapFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(frameBuffer));
+            }
         }
     }
 
