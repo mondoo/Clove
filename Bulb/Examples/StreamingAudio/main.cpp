@@ -14,21 +14,21 @@ static clv::AudioBuffer::Format getBufferFormat(const blb::aud::SoundFile& file)
 }
 
 int main() {
-	//Load our file to play audio from
+    //Load our file to play audio from
     blb::aud::SoundFile file{ SOURCE_DIR "/countdown.wav" };
 
-	//Create an AudioFactory that uses OpenAL
-	//An AudioFactory creates all of the components needed to play audio
+    //Create an AudioFactory that uses OpenAL
+    //An AudioFactory creates all of the components needed to play audio
     std::unique_ptr<clv::AudioFactory> audioFactory = clv::createAudioFactory(clv::AudioAPI::OpenAl);
 
-	//Create 2 empty buffers. One will be playing audio and the other will
-	//have the next section of audio data read into
+    //Create 2 empty buffers. One will be playing audio and the other will
+    //have the next section of audio data read into
     std::shared_ptr<clv::AudioBuffer> bufferA = audioFactory->createAudioBuffer();
     std::shared_ptr<clv::AudioBuffer> bufferB = audioFactory->createAudioBuffer();
 
-	//Create the AudioSource to control where the sound is played from
+    //Create the AudioSource to control where the sound is played from
     std::unique_ptr<clv::AudioSource> audioSource = audioFactory->createAudioSource();
-    
+
     //Stream with 2 buffers each having a quater of the file
     const uint32_t framesPerBuffer = file.getFrames() / 4;
 
@@ -56,14 +56,14 @@ int main() {
             bufferB->map(std::move(bufferData));
         }
 
-		//Clean up raw data after usage
+        //Clean up raw data after usage
         delete bufferAData;
         delete bufferBData;
     }
 
-	//Put our buffers into the AudioSource's internal queue
+    //Put our buffers into the AudioSource's internal queue
     audioSource->queueBuffers({ bufferA, bufferB });
-	//Start plating the queue
+    //Start plating the queue
     audioSource->play();
 
     auto prevFrameTime = std::chrono::system_clock::now();
@@ -75,13 +75,13 @@ int main() {
         static float total = 0.0f;
         total += deltaSeconds.count();
 
-        //Stop after 15 seconds
+        //Stop after 30 seconds
         if(total >= 30.0f) {
             break;
         }
 
         //While we have a buffer that has been processed. Load up the
-		//next chunk of data and then queue that buffer
+        //next chunk of data and then queue that buffer
         uint32_t numProcessed = audioSource->getNumBuffersProcessed();
         if(numProcessed > 0) {
             while(numProcessed-- > 0) {
