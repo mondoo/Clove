@@ -6,6 +6,7 @@ build:windows:
   tags:
     - windows
   before_script:
+    - git submodule update --init --recursive
     - choco install -y cmake
     - $env:Path += ';C:\Program Files\CMake\bin'
   script:
