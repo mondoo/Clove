@@ -5,6 +5,9 @@ build:windows:
   stage: build
   tags:
     - windows
+  before_script:
+    - choco install -y cmake
+    - $env:Path += ';C:\Program Files\CMake\bin'
   script:
     - mkdir build
     - cd build
