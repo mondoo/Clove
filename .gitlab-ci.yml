@@ -1,0 +1,12 @@
+stages:
+  - build
+
+build:windows:
+  stage: build
+  tags:
+    - windows
+  script:
+    - mkdir build
+    - cd build
+    - cmake -G "Visual Studio 16 2019" ..
+    - cmake --build .
