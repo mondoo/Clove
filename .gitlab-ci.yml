@@ -15,3 +15,25 @@ build:windows:
     - cd build
     - cmake -G "Visual Studio 16 2019" ..
     - cmake --build .
+
+build:linux:gcc:
+  stage: build
+  image: registry.gitlab.com/digital-vessel/docker/build_environment/linux:latest
+  before_script:
+    - git submodule update --init --recursive
+  script:
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -G "Unix Makefiles" ..
+    - cmake --build .
+
+build:linux:clang:
+  stage: build
+  image: registry.gitlab.com/digital-vessel/docker/build_environment/linux:latest
+  before_script:
+    - git submodule update --init --recursive
+  script:
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -G "Unix Makefiles" ..
+    - cmake --build .
