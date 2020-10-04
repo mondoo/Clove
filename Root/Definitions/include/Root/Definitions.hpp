@@ -1,6 +1,6 @@
 #pragma once
 
-#if GARLIC_ENABLE_ASSERTS
+#if GARLIC_ENABLE_ASSERTIONS
     #define GARLIC_ASSERT(x, ...)                                                                           \
         {                                                                                                   \
             if(!(x)) {                                                                                      \
