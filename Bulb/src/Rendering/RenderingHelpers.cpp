@@ -59,14 +59,20 @@ namespace blb::rnd {
             lightCountBindingInfo.arraySize = 1;
             lightCountBindingInfo.stage     = clv::gfx::Shader::Stage::Pixel;
 
-            // clv::gfx::DescriptorSetBindingInfo directionalShadowTransformsInfo{};
-            // directionalShadowTransformsInfo.binding   = 2;
-            // directionalShadowTransformsInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
-            // directionalShadowTransformsInfo.arraySize = 1;
-            // directionalShadowTransformsInfo.stage     = clv::gfx::Shader::Stage::Vertex;
+            clv::gfx::DescriptorSetBindingInfo directionalShadowTransformsInfo{};
+            directionalShadowTransformsInfo.binding   = 2;
+            directionalShadowTransformsInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
+            directionalShadowTransformsInfo.arraySize = 1;
+            directionalShadowTransformsInfo.stage     = clv::gfx::Shader::Stage::Vertex;
+
+            clv::gfx::DescriptorSetBindingInfo shadowMapSamplerLayoutBinding{};
+            shadowMapSamplerLayoutBinding.binding   = 3;
+            shadowMapSamplerLayoutBinding.type      = clv::gfx::DescriptorType::CombinedImageSampler;
+            shadowMapSamplerLayoutBinding.arraySize = 1;
+            shadowMapSamplerLayoutBinding.stage     = clv::gfx::Shader::Stage::Pixel;
 
             clv::gfx::DescriptorSetLayout::Descriptor lightingSetLayoutDescriptor{};
-            lightingSetLayoutDescriptor.bindings = { lightDataBindingInfo, lightCountBindingInfo, /*directionalShadowTransformsInfo*/ };
+            lightingSetLayoutDescriptor.bindings = { lightDataBindingInfo, lightCountBindingInfo, directionalShadowTransformsInfo, shadowMapSamplerLayoutBinding };
 
             lightingSetLayout = factory.createDescriptorSetLayout(lightingSetLayoutDescriptor);
         }

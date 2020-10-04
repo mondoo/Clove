@@ -40,15 +40,17 @@ namespace blb::rnd {
             return minOffUniformBufferAlignment - (currentOffset % minOffUniformBufferAlignment);
         };
 
-        uniformBufferLayout.viewSize      = sizeof(ViewData);
-        uniformBufferLayout.viewPosSize   = sizeof(ViewData);
-        uniformBufferLayout.lightSize     = sizeof(LightDataArray);
-        uniformBufferLayout.numLightsSize = sizeof(LightCount);
+        uniformBufferLayout.viewSize            = sizeof(ViewData);
+        uniformBufferLayout.viewPosSize         = sizeof(ViewData);
+        uniformBufferLayout.lightSize           = sizeof(LightDataArray);
+        uniformBufferLayout.numLightsSize       = sizeof(LightCount);
+        uniformBufferLayout.shadowTransformSize = sizeof(clv::mth::mat4f);
 
-        uniformBufferLayout.viewOffset      = 0;
-        uniformBufferLayout.viewPosOffset   = uniformBufferLayout.viewSize + getByteBoundary(uniformBufferLayout.viewSize);
-        uniformBufferLayout.lightOffset     = (uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize) + getByteBoundary(uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize);
-        uniformBufferLayout.numLightsOffset = (uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize) + getByteBoundary(uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize);
+        uniformBufferLayout.viewOffset            = 0;
+        uniformBufferLayout.viewPosOffset         = uniformBufferLayout.viewSize + getByteBoundary(uniformBufferLayout.viewSize);
+        uniformBufferLayout.lightOffset           = (uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize) + getByteBoundary(uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize);
+        uniformBufferLayout.numLightsOffset       = (uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize) + getByteBoundary(uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize);
+        uniformBufferLayout.shadowTransformOffset = (uniformBufferLayout.numLightsOffset + uniformBufferLayout.numLightsSize) + getByteBoundary(uniformBufferLayout.numLightsOffset + uniformBufferLayout.numLightsSize);
 
         //Object initialisation
         graphicsQueue = graphicsFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
@@ -267,7 +269,7 @@ namespace blb::rnd {
 
         commandBuffers[imageIndex]->beginRecording(CommandBufferUsage::Default);
 
-        //SHADOW MAP
+        //SHADOW MAP - TODO: Put this into a seperate command buffer so we're not waiting on an image to be available for this step
         std::array<ClearValue, 1> shadowMapClearValues{
             ClearValue{ {}, depthStencilClearValue }
         };
@@ -308,8 +310,10 @@ namespace blb::rnd {
         uniformBuffers[imageIndex]->map(&viewData, uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize);
         uniformBuffers[imageIndex]->map(&currentFrameData.viewPosition, uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize);
 
+        descriptorSets[imageIndex].lightingSet->write(*shadowMapViews[imageIndex], *sampler, ImageLayout::ShaderReadOnlyOptimal, 3);
         uniformBuffers[imageIndex]->map(&currentFrameData.lights, uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize);
         uniformBuffers[imageIndex]->map(&currentFrameData.numLights, uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize);
+        uniformBuffers[imageIndex]->map(&currentFrameData.directionalShadowTransforms[0], uniformBufferLayout.shadowTransformOffset, uniformBufferLayout.shadowTransformSize);
 
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
@@ -454,6 +458,7 @@ namespace blb::rnd {
 
             descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize, 0);
             descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize, 1);
+            descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.shadowTransformOffset, uniformBufferLayout.shadowTransformSize, 2);
         }
 
         needNewSwapchain = false;

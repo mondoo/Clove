@@ -62,14 +62,16 @@ namespace blb::rnd {
             size_t viewPosSize{ 0 };
             size_t lightSize{ 0 };
             size_t numLightsSize{ 0 };
+            size_t shadowTransformSize{ 0 };
 
             size_t viewOffset{ 0 };
             size_t viewPosOffset{ 0 };
             size_t lightOffset{ 0 };
             size_t numLightsOffset{ 0 };
+            size_t shadowTransformOffset{ 0 };
 
-            size_t totalSize() const{
-                return viewSize + viewPosSize + lightSize + numLightsSize;
+            size_t totalSize() const {
+                return shadowTransformOffset + shadowTransformSize;
             }
         } uniformBufferLayout;
 
@@ -99,7 +101,7 @@ namespace blb::rnd {
         std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> frameDescriptorPool;   //One for each image. For descriptors which are set once per frame
 
         std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;//One per image. Currently no per mesh data is stored in a buffer
-        std::shared_ptr<clv::gfx::Sampler> sampler;//Generic sampler passed along with textures
+        std::shared_ptr<clv::gfx::Sampler> sampler;                           //Generic sampler passed along with textures
 
         std::shared_ptr<clv::gfx::GraphicsImage> depthImage;
         std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
