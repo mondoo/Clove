@@ -29,16 +29,6 @@ set(
 )
 
 set(
-	DelegateFiles
-		${CLV_INCLUDE}/Delegate/DelegateHandle.hpp
-		${CLV_SOURCE}/Delegate/DelegateHandle.cpp
-		${CLV_INCLUDE}/Delegate/MultiCastDelegate.hpp
-		${CLV_INCLUDE}/Delegate/MultiCastDelegate.inl
-		${CLV_INCLUDE}/Delegate/SingleCastDelegate.hpp
-		${CLV_INCLUDE}/Delegate/SingleCastDelegate.inl
-)
-
-set(
 	EventFiles
 		${CLV_INCLUDE}/Event/EventContainerBase.hpp
 		${CLV_SOURCE}/Event/EventContainerBase.cpp
@@ -256,7 +246,6 @@ set(
 
 		${AudioFiles}
 			${OpenALAudioFiles}
-		${DelegateFiles}
 		${EventFiles}
 		${ExceptionFiles}
 		${GraphicsFiles}

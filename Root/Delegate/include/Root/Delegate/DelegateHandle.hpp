@@ -1,6 +1,11 @@
 #pragma once
 
-namespace clv {
+#include <cinttypes>
+#include <functional>
+#include <memory>
+#include <optional>
+
+namespace garlic::inline root {
     /**
 	 * @brief Defines the scope of a delegate binding.
 	 * @details In it's simplest for the handle is just an ID to the

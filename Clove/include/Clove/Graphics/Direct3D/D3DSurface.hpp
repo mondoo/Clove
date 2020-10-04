@@ -10,57 +10,57 @@ struct ID3D11RenderTargetView;
 struct ID3D11DepthStencilView;
 struct ID3D11Texture2D;
 
-namespace clv::gfx::d3d{
-	class D3DRenderTarget;
+namespace clv::gfx::d3d {
+    class D3DRenderTarget;
 }
 
-namespace clv::gfx::d3d{
-	class D3DSurface : public Surface{
-		//VARIABLES
-	public:
-		SingleCastDelegate<void()> onDeviceRemoved;
+namespace clv::gfx::d3d {
+    class D3DSurface : public Surface {
+        //VARIABLES
+    public:
+        garlic::SingleCastDelegate<void()> onDeviceRemoved;
 
-	private:
-		std::shared_ptr<GraphicsFactory> factory;
+    private:
+        std::shared_ptr<GraphicsFactory> factory;
 
-		uint32_t bufferCount = 1u;
+        uint32_t bufferCount = 1u;
 
-		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
-		uint32_t swapInterval = 1u;
+        Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
+        uint32_t swapInterval = 1u;
 
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil;
+        Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
+        Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencil;
 
-		std::shared_ptr<D3DRenderTarget> renderTarget;
-		std::optional<mth::vec2ui> desiredBufferSize;
+        std::shared_ptr<D3DRenderTarget> renderTarget;
+        std::optional<mth::vec2ui> desiredBufferSize;
 
-		//FUNCTIONS
-	public:
-		D3DSurface() = delete;
-		D3DSurface(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, void* windowData);
+        //FUNCTIONS
+    public:
+        D3DSurface() = delete;
+        D3DSurface(std::shared_ptr<GraphicsFactory> factory, ID3D11Device& d3dDevice, void* windowData);
 
-		D3DSurface(const D3DSurface& other) = delete;
-		D3DSurface(D3DSurface&& other) noexcept;
+        D3DSurface(const D3DSurface& other) = delete;
+        D3DSurface(D3DSurface&& other) noexcept;
 
-		D3DSurface& operator=(const D3DSurface& other) = delete;
-		D3DSurface& operator=(D3DSurface&& other) noexcept;
+        D3DSurface& operator=(const D3DSurface& other) = delete;
+        D3DSurface& operator                           =(D3DSurface&& other) noexcept;
 
-		~D3DSurface();
+        ~D3DSurface();
 
-		const std::shared_ptr<GraphicsFactory>& getFactory() const override;
+        const std::shared_ptr<GraphicsFactory>& getFactory() const override;
 
-		void setVSync(bool enabled) override;
-		bool isVsync() const override;
+        void setVSync(bool enabled) override;
+        bool isVsync() const override;
 
-		void resizeBuffers(const mth::vec2ui& size) override;
+        void resizeBuffers(const mth::vec2ui& size) override;
 
-		void makeCurrent() override{};
+        void makeCurrent() override{};
 
-		void present() override;
+        void present() override;
 
-		std::shared_ptr<RenderTarget> getRenderTarget() const override;
+        std::shared_ptr<RenderTarget> getRenderTarget() const override;
 
-		Microsoft::WRL::ComPtr<IDXGISwapChain> getSwapChain() const;
-	};
+        Microsoft::WRL::ComPtr<IDXGISwapChain> getSwapChain() const;
+    };
 }

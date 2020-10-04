@@ -37,6 +37,7 @@ target_link_libraries(
 	#Garlic
 	PUBLIC
 		Root.Definitions
+		Root.Delegate
 
     #Cross platform
     PUBLIC
@@ -107,8 +108,8 @@ target_precompile_headers(
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsTypes.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/Maths.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsHelpers.hpp">
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Delegate/MultiCastDelegate.hpp">
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Delegate/SingleCastDelegate.hpp">
+		$<$<COMPILE_LANGUAGE:CXX>:"Root/Delegate/MultiCastDelegate.hpp">
+		$<$<COMPILE_LANGUAGE:CXX>:"Root/Delegate/SingleCastDelegate.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/DeltaTime.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/Timer.hpp">
 )

@@ -1,8 +1,12 @@
 #pragma once
 
-#include "Clove/Delegate/DelegateHandle.hpp"
+#include "Root/Delegate/DelegateHandle.hpp"
 
-namespace clv {
+#include <functional>
+#include <memory>
+#include <unordered_map>
+
+namespace garlic::inline root {
     /**
 	 * @brief A callback that can have multiple bindings.
 	 * @tparam FunctionPrototype The function prototypes that can be bound to this delegate.

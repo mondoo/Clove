@@ -1,6 +1,8 @@
 #pragma once
 
-namespace clv {
+#include <functional>
+
+namespace garlic::inline root {
     /**
 	 * @brief A callback that can only have a single binding.
 	 * @tparam FunctionPrototype The function prototypes that can be bound to this delegate.
