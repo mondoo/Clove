@@ -1,0 +1,1 @@
+Allows for events to be broadcasted to listeners within the scope of an EventDispatcher.

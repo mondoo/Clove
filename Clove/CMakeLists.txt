@@ -38,6 +38,7 @@ target_link_libraries(
 	PUBLIC
 		Root.Definitions
 		Root.Delegate
+		Root.Event
 
     #Cross platform
     PUBLIC
