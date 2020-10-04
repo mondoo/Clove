@@ -4,6 +4,7 @@
 #include "Root/Event/EventHandle.hpp"
 #include "Root/Event/EventTypes.hpp"
 
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -56,7 +57,7 @@ namespace garlic::inline root {
         EventManager(EventManager&& other) noexcept;
 
         EventManager& operator=(const EventManager& other) = delete;
-        EventManager& operator                             =(EventManager&& other) noexcept;
+        EventManager& operator=(EventManager&& other) noexcept;
 
         ~EventManager();
 
