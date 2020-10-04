@@ -1,9 +1,7 @@
 set(CLV_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
 set(CLV_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../include/Clove)
 
-project(Clove)
-
-add_library(${PROJECT_NAME} STATIC)
+add_library(Clove STATIC)
 
 #Files
 set(
@@ -284,13 +282,13 @@ source_group(TREE ${CLV_INCLUDE} FILES ${header})
 source_group(TREE ${CLV_SOURCE} FILES ${source})
 
 source_group(PCH FILES 
-	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx 
-	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
+	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/Clove.dir/cmake_pch.hxx 
+	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/Clove.dir/cmake_pch.cxx
 )
 
 #Set the target source files
 target_sources(
-	${PROJECT_NAME}
+	Clove
 	PRIVATE
 		${AllFiles}
 )

@@ -1,12 +1,10 @@
 set(STM_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
 set(STM_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../include/Stem)
 
-project(Stem)
-
-add_library(${PROJECT_NAME} STATIC)
+add_library(Stem STATIC)
 
 target_sources(
-	${PROJECT_NAME}
+	Stem
 	PRIVATE
 		${STM_INCLUDE}/EntryPoint.hpp
 

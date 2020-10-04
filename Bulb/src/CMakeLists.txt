@@ -2,9 +2,7 @@ set(BLB_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
 set(BLB_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../include/Bulb)
 set(BLB_RESOURCE ${CMAKE_CURRENT_SOURCE_DIR}/../res)
 
-project(Bulb)
-
-add_library(${PROJECT_NAME} STATIC)
+add_library(Bulb STATIC)
 
 set(
 	AIFiles
@@ -192,12 +190,12 @@ source_group(TREE ${BLB_SOURCE} FILES ${source})
 source_group(TREE ${BLB_RESOURCE} FILES ${resource})
 
 source_group(PCH FILES 
-	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx
-	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
+	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/Bulb.dir/cmake_pch.hxx
+	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/Bulb.dir/cmake_pch.cxx
 )
 
 target_sources(
-	${PROJECT_NAME}
+	Bulb
 	PRIVATE
 		${BLB_INCLUDE}/Bulb.hpp
 
