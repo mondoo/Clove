@@ -3,6 +3,8 @@ stages:
 
 build:windows:
   stage: build
+  only:
+    - master
   tags:
     - windows
   before_script:
@@ -18,6 +20,8 @@ build:windows:
 
 build:linux:gcc:
   stage: build
+  only:
+    - master
   image: registry.gitlab.com/digital-vessel/docker/build_environment/linux:latest
   before_script:
     - git submodule update --init --recursive
@@ -29,6 +33,8 @@ build:linux:gcc:
 
 build:linux:clang:
   stage: build
+  only:
+    - master
   image: registry.gitlab.com/digital-vessel/docker/build_environment/linux:latest
   before_script:
     - git submodule update --init --recursive
