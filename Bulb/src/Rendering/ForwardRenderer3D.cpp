@@ -89,7 +89,7 @@ namespace blb::rnd {
 
         //TODO: Just making everything here until I figure out the best way to do this
         {
-            //TODO: Hard coding in 3 for now
+            //TODO: Hard coding in 3 for now (for frames in flight)
             shadowMaps.resize(3);
             shadowMapViews.resize(3);
             for(size_t i = 0; i < 3; ++i) {
@@ -268,14 +268,18 @@ namespace blb::rnd {
         commandBuffers[imageIndex]->beginRecording(CommandBufferUsage::Default);
 
         //SHADOW MAP
-        commandBuffers[imageIndex]->beginRenderPass(*shadowMapRenderPass, *shadowMapFrameBuffers[imageIndex], shadowArea, clearColour, depthStencilClearValue);
+        std::array<ClearValue, 1> shadowMapClearValues{
+            ClearValue{ {}, depthStencilClearValue }
+        };
+
+        commandBuffers[imageIndex]->beginRenderPass(*shadowMapRenderPass, *shadowMapFrameBuffers[imageIndex], shadowArea, shadowMapClearValues);
         commandBuffers[imageIndex]->bindPipelineObject(*shadowMapPipelineObject);
 
         //TODO: Loop through each light. Just doing the one for now
         for(size_t i = 0; i < 1; ++i) {
             for(auto&& [mesh, transform] : currentFrameData.meshes) {
                 const clv::mth::mat4f pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
-                
+
                 commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                 commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
@@ -288,7 +292,12 @@ namespace blb::rnd {
         commandBuffers[imageIndex]->endRenderPass();
 
         //FINAL IMAGE
-        commandBuffers[imageIndex]->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, clearColour, depthStencilClearValue);
+        std::array<ClearValue, 2> outputClearValues{
+            ClearValue{ clearColour, {} },
+            ClearValue{ {}, depthStencilClearValue }
+        };
+
+        commandBuffers[imageIndex]->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
         commandBuffers[imageIndex]->bindPipelineObject(*pipelineObject);
 
         //Map / Bind the descriptor sets for the per frame data

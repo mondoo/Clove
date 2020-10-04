@@ -128,16 +128,6 @@ namespace clv::gfx {
         Store,
     };
 
-    struct RenderArea {
-        mth::vec2i origin;
-        mth::vec2ui size;
-    };
-
-    struct DepthStencilValue {
-        float depth{ 0.0f };
-        uint32_t stencil{ 0 };
-    };
-
     enum class CommandBufferUsage {
         Default,
         OneTimeSubmit,
@@ -149,7 +139,7 @@ namespace clv::gfx {
 
     enum class QueueFlags {
         None,
-        Transient, /**< Buffers will be short lived */
+        Transient,   /**< Buffers will be short lived */
         ReuseBuffers /**< Buffers can be reused */
     };
 
@@ -171,7 +161,7 @@ namespace clv::gfx {
         AccessFlags sourceAccess;
         AccessFlags destinationAccess;
         QueueType sourceQueue{ QueueType::None };      /**< If set signifies which queue this is being transfered from. */
-        QueueType destinationQueue{ QueueType::None }; /**< If set signifies which queue this is being transfered to. */ 
+        QueueType destinationQueue{ QueueType::None }; /**< If set signifies which queue this is being transfered to. */
     };
 
     struct ImageMemoryBarrierInfo {
@@ -180,6 +170,6 @@ namespace clv::gfx {
         ImageLayout oldImageLayout;
         ImageLayout newImageLayout;
         QueueType sourceQueue{ QueueType::None };      /**< If set signifies which queue this is being transfered from. */
-        QueueType destinationQueue{ QueueType::None }; /**< If set signifies which queue this is being transfered to. */ 
+        QueueType destinationQueue{ QueueType::None }; /**< If set signifies which queue this is being transfered to. */
     };
 }

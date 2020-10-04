@@ -23,14 +23,14 @@ namespace clv::gfx::vk {
         VKGraphicsCommandBuffer(VKGraphicsCommandBuffer&& other) noexcept;
 
         VKGraphicsCommandBuffer& operator=(const VKGraphicsCommandBuffer& other) = delete;
-        VKGraphicsCommandBuffer& operator=(VKGraphicsCommandBuffer&& other) noexcept;
+        VKGraphicsCommandBuffer& operator                                        =(VKGraphicsCommandBuffer&& other) noexcept;
 
         ~VKGraphicsCommandBuffer();
 
         void beginRecording(CommandBufferUsage usageFlag) override;
         void endRecording() override;
 
-        void beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour, const DepthStencilValue& depthStencilClearValue) override;
+        void beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, const RenderArea& renderArea, std::span<ClearValue> clearValues) override;
         void endRenderPass() override;
 
         void bindPipelineObject(PipelineObject& pipelineObject) override;

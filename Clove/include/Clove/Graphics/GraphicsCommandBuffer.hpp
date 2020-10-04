@@ -3,6 +3,8 @@
 #include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/Shader.hpp"
 
+#include <span>
+
 namespace clv::gfx {
     class RenderPass;
     class Framebuffer;
@@ -11,6 +13,23 @@ namespace clv::gfx {
     class DescriptorSet;
     class GraphicsImage;
     class GraphicsBuffer;
+}
+
+namespace clv::gfx {
+    struct RenderArea {
+        mth::vec2i origin;
+        mth::vec2ui size;
+    };
+
+    struct DepthStencilValue {
+        float depth{ 0.0f };
+        uint32_t stencil{ 0 };
+    };
+
+    struct ClearValue {
+        mth::vec4f colour;
+        DepthStencilValue depthStencil;
+    };
 }
 
 namespace clv::gfx {
@@ -26,8 +45,15 @@ namespace clv::gfx {
         virtual void beginRecording(CommandBufferUsage usageFlag) = 0;
         virtual void endRecording()                               = 0;
 
-        virtual void beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour, const DepthStencilValue& depthStencilClearValue) = 0;
-        virtual void endRenderPass()                                                                                                                                                                 = 0;
+        /**
+         * @details Begins a RenderPass. All subsiquent calls will use this render pass.
+         * @param renderPass The RenderPass to begin.
+         * @param frameBuffer The FrameBuffer to use.
+         * @param renderArea What area to render onto the frameBuffer.
+         * @param clearValues An array of clear values. Each element in the array represents an attachment in the frameBuffer.
+         */
+        virtual void beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, const RenderArea& renderArea, std::span<ClearValue> clearValues) = 0;
+        virtual void endRenderPass()                                                                                                                    = 0;
 
         virtual void bindPipelineObject(PipelineObject& pipelineObject)                                                     = 0;
         virtual void bindVertexBuffer(GraphicsBuffer& vertexBuffer, const uint32_t binding)                                 = 0;

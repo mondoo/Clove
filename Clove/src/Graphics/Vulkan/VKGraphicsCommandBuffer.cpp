@@ -38,10 +38,17 @@ namespace clv::gfx::vk {
         }
     }
 
-    void VKGraphicsCommandBuffer::beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, const RenderArea& renderArea, const mth::vec4f& clearColour, const DepthStencilValue& depthStencilClearValue) {
-        std::array<VkClearValue, 2> clearValues{};
-        clearValues[0].color        = { clearColour.r, clearColour.g, clearColour.b, clearColour.a };
-        clearValues[1].depthStencil = { depthStencilClearValue.depth, depthStencilClearValue.stencil };
+    void VKGraphicsCommandBuffer::beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, const RenderArea& renderArea, std::span<ClearValue> clearValues) {
+        std::vector<VkClearValue> vkClearValues(std::size(clearValues));
+        for(uint32_t index = 0; auto& clearValue : clearValues) {
+            const auto& colour       = clearValue.colour;
+            const auto& depthStencil = clearValue.depthStencil;
+
+            vkClearValues[index].color        = { colour.r, colour.g, colour.b, colour.a };
+            vkClearValues[index].depthStencil = { depthStencil.depth, depthStencil.stencil };
+
+            ++index;
+        }
 
         VkRenderPassBeginInfo renderPassInfo{};
         renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -49,8 +56,8 @@ namespace clv::gfx::vk {
         renderPassInfo.framebuffer       = polyCast<VKFramebuffer>(&frameBuffer)->getFrameBuffer();
         renderPassInfo.renderArea.offset = { renderArea.origin.x, renderArea.origin.y };
         renderPassInfo.renderArea.extent = { renderArea.size.x, renderArea.size.y };
-        renderPassInfo.clearValueCount   = std::size(clearValues);
-        renderPassInfo.pClearValues      = std::data(clearValues);
+        renderPassInfo.clearValueCount   = std::size(vkClearValues);
+        renderPassInfo.pClearValues      = std::data(vkClearValues);
 
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     }
