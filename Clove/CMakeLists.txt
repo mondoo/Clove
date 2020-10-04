@@ -128,8 +128,3 @@ target_compile_definitions(
 	PUBLIC
 		GLM_FORCE_DEPTH_ZERO_TO_ONE
 )
-
-#Examples
-if(GAR_BUILD_EXAMPLES)
-	add_subdirectory(Examples)
-endif()

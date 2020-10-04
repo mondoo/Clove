@@ -41,8 +41,3 @@ target_link_libraries(
 		assimp
 		sndfile
 )
-
-#Examples
-if(GAR_BUILD_EXAMPLES)
-	add_subdirectory(Examples)
-endif()

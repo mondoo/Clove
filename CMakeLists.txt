@@ -20,7 +20,6 @@ set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 
 #Garlic settings
 option(GAR_BUILD_SCAPE "Build Scape, Garlic's editor" ON)
-option(GAR_BUILD_EXAMPLES OFF)
 
 #Clove settings
 option(GAR_CLV_ENABLE_PROFILING "Enables the Clove profiler which will print function timings to a file" OFF)
