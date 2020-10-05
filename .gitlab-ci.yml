@@ -9,7 +9,7 @@ build:windows:
     - windows
   before_script:
     - git submodule update --init --recursive
-    - docker login -u runner -p ${DC_REGISTRY_PW} registry.gitlab.com/digital-vessel/docker
+    - docker login -u runner -p ${DV_REGISTRY_PW} registry.gitlab.com/digital-vessel/docker
     - docker run --volume ${CI_PROJECT_DIR}:C:\garlic registry.gitlab.com/digital-vessel/docker/build_environment/windows:latest
     - cd C:\garlic
   script:
