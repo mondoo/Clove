@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Root/Definitions.hpp>
+#include <cinttypes>
+
 namespace clv::gfx {
     /**
      * @brief A Shader represents a small piece of code that runs on the GPU
@@ -7,9 +10,10 @@ namespace clv::gfx {
     class Shader {
         //TYPES
     public:
-        enum class Stage {
-            Vertex,
-            Pixel,
+        using StageType = uint16_t;
+        enum class Stage : StageType {
+            Vertex = 1 << 0,
+            Pixel  = 1 << 1,
             //Geometry //TODO: Implement when feature flags can be checked
         };
 
@@ -17,4 +21,6 @@ namespace clv::gfx {
     public:
         virtual ~Shader() = default;
     };
+
+    GARLIC_ENUM_BIT_FLAG_OPERATORS(Shader::Stage, Shader::StageType)
 }

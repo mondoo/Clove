@@ -33,17 +33,14 @@ namespace clv::gfx::vk {
     }
 
     VkShaderStageFlags convertShaderStage(Shader::Stage stage) {
-        switch(stage) {
-            case Shader::Stage::Vertex:
-                return VK_SHADER_STAGE_VERTEX_BIT;
-            case Shader::Stage::Pixel:
-                return VK_SHADER_STAGE_FRAGMENT_BIT;
-            //case ShaderStage::Geometry:
-            //    return VK_SHADER_STAGE_GEOMETRY_BIT;
-            default:
-                GARLIC_ASSERT(false, "{0}: Stage not supported", GARLIC_FUNCTION_NAME);
-                return VK_SHADER_STAGE_VERTEX_BIT;
+        VkShaderStageFlags vkStage{ 0 };
+        if((stage & Shader::Stage::Vertex) != 0) {
+            vkStage |= VK_SHADER_STAGE_VERTEX_BIT;
         }
+        if((stage & Shader::Stage::Pixel) != 0) {
+            vkStage |= VK_SHADER_STAGE_FRAGMENT_BIT;
+        }
+        return vkStage;
     }
 
     ImageFormat convertImageFormat(VkFormat vulkanFormat) {
