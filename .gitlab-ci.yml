@@ -5,11 +5,12 @@ build:windows:
   stage: build
   only:
     - master
-  image: registry.gitlab.com/digital-vessel/docker/build_environment/windows:latest
   tags:
     - windows
   before_script:
     - git submodule update --init --recursive
+    - docker run --volume ${CI_PROJECT_DIR}:C:\garlic registry.gitlab.com/digital-vessel/docker/build_environment/windows:latest
+    - cd C:\garlic
   script:
     - mkdir build
     - cd build
