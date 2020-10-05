@@ -29,7 +29,7 @@ build:linux:gcc:
     - mkdir build
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -G "Unix Makefiles" ..
-    - cmake --build . --target ALL_BUILD
+    - cmake --build .
 
 build:linux:clang:
   stage: build
@@ -42,4 +42,4 @@ build:linux:clang:
     - mkdir build
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++-10 -G "Unix Makefiles" ..
-    - cmake --build . --target ALL_BUILD
+    - cmake --build .
