@@ -1,6 +1,8 @@
 #pragma once
 
-namespace clv::mem {
+#include <cstddef>
+
+namespace garlic::inline root {
     /**
      * @brief A memory allocator that is good for temporary allocations.
      * @details A StackAllocator allows any sized allocation but cannot free specific blocks of memory.

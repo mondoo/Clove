@@ -1,37 +1,37 @@
 #pragma once
 
-#include <Clove/Memory/ListAllocator.hpp>
+#include <Root/Memory/ListAllocator.hpp>
 
 namespace blb::ai {
-	class BlackBoard {
-		//TYPES
-	public:
-		using Key = size_t;
-		
-		//VARIABLES
-	private:
-		clv::mem::ListAllocator memoryBlock;
+    class BlackBoard {
+        //TYPES
+    public:
+        using Key = size_t;
 
-		std::map<Key, void*> dataMap;
+        //VARIABLES
+    private:
+        garlic::ListAllocator memoryBlock;
 
-		//FUNCTIONS
-	public:
-		BlackBoard();
-		BlackBoard(size_t memorySize);
+        std::map<Key, void*> dataMap;
 
-		BlackBoard(const BlackBoard& other) = delete;
-		BlackBoard(BlackBoard&& other) noexcept;
+        //FUNCTIONS
+    public:
+        BlackBoard();
+        BlackBoard(size_t memorySize);
 
-		BlackBoard& operator=(const BlackBoard& other) = delete;
-		BlackBoard& operator=(BlackBoard&& other) noexcept;
+        BlackBoard(const BlackBoard& other) = delete;
+        BlackBoard(BlackBoard&& other) noexcept;
 
-		~BlackBoard();
+        BlackBoard& operator=(const BlackBoard& other) = delete;
+        BlackBoard& operator=(BlackBoard&& other) noexcept;
 
-		template<typename DataType>
-		void setValue(Key key, DataType value);
-		template<typename DataType>
-		std::optional<DataType> getValue(Key key);
-	};
+        ~BlackBoard();
+
+        template<typename DataType>
+        void setValue(Key key, DataType value);
+        template<typename DataType>
+        std::optional<DataType> getValue(Key key);
+    };
 }
 
 #include "BlackBoard.inl"

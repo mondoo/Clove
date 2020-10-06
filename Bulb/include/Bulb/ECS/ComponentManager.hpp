@@ -3,7 +3,7 @@
 #include "Bulb/ECS/Component.hpp"
 #include "Bulb/ECS/ECSTypes.hpp"
 
-#include <Clove/Memory/PoolAllocator.hpp>
+#include <Root/Memory/PoolAllocator.hpp>
 
 namespace garlic::inline root {
     class EventDispatcher;
@@ -25,7 +25,7 @@ namespace blb::ecs {
     class ComponentContainer : public ComponentContainerInterface {
         //VARIABLES
     private:
-        clv::mem::PoolAllocator<ComponentType> componentAllocator;
+        garlic::PoolAllocator<ComponentType> componentAllocator;
 
         std::unordered_map<EntityID, size_t> entityIDToIndex;
         std::vector<ComponentType*> components;//TODO: It might be better to iterator over the allocators storage rather than having this vector

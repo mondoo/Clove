@@ -139,17 +139,6 @@ set(
 )
 
 set(
-	MemoryFiles
-		${CLV_INCLUDE}/Memory/ListAllocator.hpp
-		${CLV_SOURCE}/Memory/ListAllocator.cpp
-		${CLV_SOURCE}/Memory/AllocationTracker.cpp
-		${CLV_INCLUDE}/Memory/PoolAllocator.hpp
-		${CLV_INCLUDE}/Memory/PoolAllocator.inl
-		${CLV_INCLUDE}/Memory/StackAllocator.hpp
-		${CLV_SOURCE}/Memory/StackAllocator.cpp
-)
-
-set(
 	InputFiles
 		${CLV_INCLUDE}/Input/InputEvent.hpp
 		${CLV_INCLUDE}/Input/Keyboard.hpp
@@ -238,7 +227,6 @@ set(
 				${LinuxGLGraphicsFiles}
 			${Direct3DGraphicsFiles}
 			${MetalGraphicsFiles}
-		${MemoryFiles}
 		${InputFiles}
 		${MathsFiles}
 		${PlatformFiles}

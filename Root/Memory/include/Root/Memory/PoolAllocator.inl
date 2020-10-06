@@ -2,13 +2,13 @@
 
 #include <Root/Definitions.hpp>
 
-namespace clv::mem {
+namespace garlic::inline root {
     template<typename ItemType>
     PoolAllocator<ItemType>::PoolAllocator(size_t numElements)
         : numElements(numElements)
         , freeMemory(true) {
 #if CLV_ENABLE_MEMORY_DEBUGGING
-        GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructing new PoolAllocator. Arena size {0}. ", arenaSize);
+        //GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructing new PoolAllocator. Arena size {0}. ", arenaSize);
 #endif
         pool     = reinterpret_cast<std::byte*>(malloc(numElements * sizeof(PoolItem)));
         nextFree = reinterpret_cast<PoolItem*>(pool);
@@ -53,7 +53,7 @@ namespace clv::mem {
             }
 
             if(availableElements < numElements) {
-                GARLIC_LOG(garlicLogContext, Log::Level::Warning, "Pool Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
+                //GARLIC_LOG(garlicLogContext, Log::Level::Warning, "Pool Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
             }
 #endif
             ::free(pool);

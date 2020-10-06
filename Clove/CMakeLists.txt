@@ -39,6 +39,7 @@ target_link_libraries(
 		Root.Definitions
 		Root.Delegate
 		Root.Event
+		Root.Memory
 
     #Cross platform
     PUBLIC
@@ -123,7 +124,6 @@ target_compile_definitions(
 	PUBLIC
 		CLV_ENABLE_PROFILING=$<BOOL:${GAR_CLV_ENABLE_PROFILING}>
 		CLV_ENABLE_MEMORY_DEBUGGING=$<BOOL:${GAR_CLV_ENABLE_MEMORY_DEBUGGING}>
-		CLV_TRACK_MEMORY_ALLOCATIONS=$<BOOL:${GAR_TRACK_MEMORY_ALLOCATIONS}>
 		CLV_IMGUI_COMPATIBLE=$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>
 
 	#Libraries

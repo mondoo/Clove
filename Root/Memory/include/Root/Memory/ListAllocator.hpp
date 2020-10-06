@@ -1,9 +1,9 @@
 #pragma once
 
-#include <list>
 #include <cstddef>
+#include <list>
 
-namespace clv::mem {
+namespace garlic::inline root {
     /**
      * @brief An allocator that prevents memory fragmentation that works for any size of allocation.
      * @details A ListAllocator is a bit more complicated than a PoolAllocator because

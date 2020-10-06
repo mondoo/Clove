@@ -1,15 +1,16 @@
-#include "Clove/Memory/ListAllocator.hpp"
+#include "Root/Memory/ListAllocator.hpp"
 
-#include "Clove/Log.hpp"
+//TODO: Re-enable logging
+//#include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
 
-namespace clv::mem {
+namespace garlic::inline root {
     ListAllocator::ListAllocator(size_t sizeBytes)
         : listSize(sizeBytes)
         , freeMemory(true) {
 #if CLV_ENABLE_MEMORY_DEBUGGING
-        GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructing new ListAllocator. Size {0}. ", listSize);
+        // GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructing new ListAllocator. Size {0}. ", listSize);
 #endif
         rawList = reinterpret_cast<std::byte*>(malloc(listSize));
         head    = rawList;
@@ -59,7 +60,7 @@ namespace clv::mem {
         if(freeMemory) {
 #if GARLIC_DEBUG
             if(allocations > frees) {
-                GARLIC_LOG(garlicLogContext, Log::Level::Warning, "List Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
+                //GARLIC_LOG(garlicLogContext, Log::Level::Warning, "List Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
             }
 #endif
             ::free(rawList);
@@ -79,7 +80,7 @@ namespace clv::mem {
 
         if(header == nullptr) {
             if((head - rawList) + bytes > listSize) {
-                GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Not enough space left to allocate {1} bytes.", GARLIC_FUNCTION_NAME_PRETTY, bytes);
+                //GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Not enough space left to allocate {1} bytes.", GARLIC_FUNCTION_NAME_PRETTY, bytes);
                 return nullptr;
             }
 
