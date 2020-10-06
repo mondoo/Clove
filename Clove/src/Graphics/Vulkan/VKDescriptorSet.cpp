@@ -33,7 +33,7 @@ namespace clv::gfx::vk {
         writeInfo.dstBinding       = bindingSlot;
         writeInfo.dstArrayElement  = 0;
         writeInfo.descriptorCount  = 1;
-        writeInfo.descriptorType   = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;//TODO: Allow different buffer types
+        writeInfo.descriptorType   = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         writeInfo.pImageInfo       = nullptr;
         writeInfo.pBufferInfo      = &bufferInfo;
         writeInfo.pTexelBufferView = nullptr;
@@ -61,6 +61,35 @@ namespace clv::gfx::vk {
         writeInfo.pImageInfo       = &imageInfo;
         writeInfo.pBufferInfo      = nullptr;
         writeInfo.pTexelBufferView = nullptr;
+
+        vkUpdateDescriptorSets(device, 1, &writeInfo, 0, nullptr);
+    }
+
+    void VKDescriptorSet::write(std::span<std::shared_ptr<GraphicsImageView>> imageViews, const Sampler& sampler, const ImageLayout layout, const uint32_t bindingSlot) {
+        const auto* vkSampler = polyCast<const VKSampler>(&sampler);
+        std::vector<VkDescriptorImageInfo> imageInfos(std::size(imageViews));
+
+        for(size_t i = 0; i < std::size(imageInfos); ++i) {
+            VkDescriptorImageInfo imageInfo{
+                .sampler     = vkSampler->getSampler(),
+                .imageView   = polyCast<const VKImageView>(imageViews[i].get())->getImageView(),
+                .imageLayout = convertImageLayout(layout),
+            };
+            imageInfos[i] = std::move(imageInfo);
+        }
+
+        VkWriteDescriptorSet writeInfo{
+            .sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .pNext            = nullptr,
+            .dstSet           = descriptorSet,
+            .dstBinding       = bindingSlot,
+            .dstArrayElement  = 0,
+            .descriptorCount  = static_cast<uint32_t>(std::size(imageInfos)),
+            .descriptorType   = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            .pImageInfo       = std::data(imageInfos),
+            .pBufferInfo      = nullptr,
+            .pTexelBufferView = nullptr,
+        };
 
         vkUpdateDescriptorSets(device, 1, &writeInfo, 0, nullptr);
     }
