@@ -283,18 +283,21 @@ namespace blb::rnd {
         commandBuffers[imageIndex]->bindPipelineObject(*shadowMapPipelineObject);
 
         //Directional lights
-        for(size_t i = 0; i < currentFrameData.numLights.numDirectional; ++i) {
+        for(size_t i = 0; i < MAX_LIGHTS; ++i) {
+            //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
             commandBuffers[imageIndex]->beginRenderPass(*shadowMapRenderPass, *shadowMapFrameBuffers[imageIndex][i], shadowArea, shadowMapClearValues);
 
-            for(auto&& [mesh, transform] : currentFrameData.meshes) {
-                const clv::mth::mat4f pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
+            if(i < currentFrameData.numLights.numDirectional) {
+                for(auto&& [mesh, transform] : currentFrameData.meshes) {
+                    const clv::mth::mat4f pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
 
-                commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-                commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
+                    commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
+                    commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                commandBuffers[imageIndex]->pushConstant(*shadowMapPipelineObject, Shader::Stage::Vertex, sizeof(pushConstantData), pushConstantData);
+                    commandBuffers[imageIndex]->pushConstant(*shadowMapPipelineObject, Shader::Stage::Vertex, sizeof(pushConstantData), pushConstantData);
 
-                commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
+                    commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
+                }
             }
 
             commandBuffers[imageIndex]->endRenderPass();
