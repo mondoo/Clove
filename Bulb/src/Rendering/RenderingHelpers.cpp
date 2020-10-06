@@ -1,5 +1,7 @@
 #include "Bulb/Rendering/RenderingHelpers.hpp"
 
+#include "Bulb/Rendering/RenderingConstants.hpp"
+
 #include <Clove/Graphics/DescriptorSetLayout.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/GraphicsTypes.hpp>
@@ -57,7 +59,7 @@ namespace blb::rnd {
             lightCountBindingInfo.binding   = 1;
             lightCountBindingInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
             lightCountBindingInfo.arraySize = 1;
-            lightCountBindingInfo.stage     = clv::gfx::Shader::Stage::Pixel;
+            lightCountBindingInfo.stage     = clv::gfx::Shader::Stage::Vertex | clv::gfx::Shader::Stage::Pixel;
 
             clv::gfx::DescriptorSetBindingInfo directionalShadowTransformsInfo{};
             directionalShadowTransformsInfo.binding   = 2;
@@ -68,7 +70,7 @@ namespace blb::rnd {
             clv::gfx::DescriptorSetBindingInfo shadowMapSamplerLayoutBinding{};
             shadowMapSamplerLayoutBinding.binding   = 3;
             shadowMapSamplerLayoutBinding.type      = clv::gfx::DescriptorType::CombinedImageSampler;
-            shadowMapSamplerLayoutBinding.arraySize = 1;
+            shadowMapSamplerLayoutBinding.arraySize = MAX_LIGHTS;
             shadowMapSamplerLayoutBinding.stage     = clv::gfx::Shader::Stage::Pixel;
 
             clv::gfx::DescriptorSetLayout::Descriptor lightingSetLayoutDescriptor{};

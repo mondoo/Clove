@@ -3,7 +3,7 @@
 #include "Constants.glsl"
 
 layout(set = SET_MATERIAL, binding = 0) uniform sampler2D texSampler;
-layout(set = SET_LIGHTING, binding = 3) uniform sampler2D directionalDepthSampler;
+layout(set = SET_LIGHTING, binding = 3) uniform sampler2D directionalDepthSampler[MAX_LIGHTS];
 
 layout(set = SET_VIEW, binding = 1) uniform ViewPosition{
 	vec3 viewPos;
@@ -41,7 +41,7 @@ layout(location = 0) in vec3 fragColour;
 layout(location = 1) in vec2 fragTexCoord;
 layout(location = 2) in vec3 vertPos;
 layout(location = 3) in vec3 vertNorm;
-layout(location = 4) in vec4 vertPosLightSpace;
+layout(location = 4) in vec4 vertPosLightSpaces[MAX_LIGHTS];
 
 layout(location = 0) out vec4 outColour;
 
@@ -104,17 +104,20 @@ void main(){
 		totalSpecular += specular;
 	}
 
-	//Calculate shadow - TODO: Support multiple lights
-	vec3 projCoords = vertPosLightSpace.xyz / vertPosLightSpace.w;
-	projCoords.xy = projCoords.xy * 0.5f + 0.5f;
+	vec3 lighting = vec3(0, 0, 0);
 
-	const float currentDepth = projCoords.z;
-	const float closetDepth = texture(directionalDepthSampler, projCoords.xy).r;
+	//Calculate shadow: Directional
+	for(int i = 0; i < numDirLights; ++i){
+		vec3 projCoords = vertPosLightSpaces[i].xyz / vertPosLightSpaces[i].w;
+		projCoords.xy = projCoords.xy * 0.5f + 0.5f;
 
-	const float bias = 0.005f;
-	const float shadow = currentDepth - bias > closetDepth ? 1.0f : 0.0f;
+		const float currentDepth = projCoords.z;
+		const float closetDepth = texture(directionalDepthSampler[i], projCoords.xy).r;
 
-	vec3 lighting = (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)) * colour);
+		const float bias = 0.005f;
+		const float shadow = currentDepth - bias > closetDepth ? 1.0f : 0.0f;
 
+		lighting += (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)) * colour);
+	}
 	outColour = vec4(lighting, 1.0);
 }

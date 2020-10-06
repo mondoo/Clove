@@ -40,17 +40,17 @@ namespace blb::rnd {
             return minOffUniformBufferAlignment - (currentOffset % minOffUniformBufferAlignment);
         };
 
-        uniformBufferLayout.viewSize            = sizeof(ViewData);
-        uniformBufferLayout.viewPosSize         = sizeof(ViewData);
-        uniformBufferLayout.lightSize           = sizeof(LightDataArray);
-        uniformBufferLayout.numLightsSize       = sizeof(LightCount);
-        uniformBufferLayout.shadowTransformSize = sizeof(clv::mth::mat4f);
+        uniformBufferLayout.viewSize             = sizeof(ViewData);
+        uniformBufferLayout.viewPosSize          = sizeof(ViewData);
+        uniformBufferLayout.lightSize            = sizeof(LightDataArray);
+        uniformBufferLayout.numLightsSize        = sizeof(LightCount);
+        uniformBufferLayout.shadowTransformsSize = sizeof(DirectionalShadowTransformArray);
 
-        uniformBufferLayout.viewOffset            = 0;
-        uniformBufferLayout.viewPosOffset         = uniformBufferLayout.viewSize + getByteBoundary(uniformBufferLayout.viewSize);
-        uniformBufferLayout.lightOffset           = (uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize) + getByteBoundary(uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize);
-        uniformBufferLayout.numLightsOffset       = (uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize) + getByteBoundary(uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize);
-        uniformBufferLayout.shadowTransformOffset = (uniformBufferLayout.numLightsOffset + uniformBufferLayout.numLightsSize) + getByteBoundary(uniformBufferLayout.numLightsOffset + uniformBufferLayout.numLightsSize);
+        uniformBufferLayout.viewOffset             = 0;
+        uniformBufferLayout.viewPosOffset          = uniformBufferLayout.viewSize + getByteBoundary(uniformBufferLayout.viewSize);
+        uniformBufferLayout.lightOffset            = (uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize) + getByteBoundary(uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize);
+        uniformBufferLayout.numLightsOffset        = (uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize) + getByteBoundary(uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize);
+        uniformBufferLayout.shadowTransformsOffset = (uniformBufferLayout.numLightsOffset + uniformBufferLayout.numLightsSize) + getByteBoundary(uniformBufferLayout.numLightsOffset + uniformBufferLayout.numLightsSize);
 
         //Object initialisation
         graphicsQueue = graphicsFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
@@ -95,17 +95,19 @@ namespace blb::rnd {
             shadowMaps.resize(3);
             shadowMapViews.resize(3);
             for(size_t i = 0; i < 3; ++i) {
-                //Create the shadow map used for directional lighting
-                GraphicsImage::Descriptor shadowMapDescriptor{
-                    .type        = GraphicsImage::Type::_2D,
-                    .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
-                    .dimensions  = { shadowMapSize, shadowMapSize },
-                    .format      = ImageFormat::D32_SFLOAT,
-                    .sharingMode = SharingMode::Exclusive,
-                    .memoryType  = MemoryType::VideoMemory
-                };
-                shadowMaps[i]     = graphicsFactory->createImage(std::move(shadowMapDescriptor));
-                shadowMapViews[i] = shadowMaps[i]->createView();
+                for(size_t j = 0; j < MAX_LIGHTS; ++j) {
+                    //Create the shadow map used for directional lighting
+                    GraphicsImage::Descriptor shadowMapDescriptor{
+                        .type        = GraphicsImage::Type::_2D,
+                        .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
+                        .dimensions  = { shadowMapSize, shadowMapSize },
+                        .format      = ImageFormat::D32_SFLOAT,
+                        .sharingMode = SharingMode::Exclusive,
+                        .memoryType  = MemoryType::VideoMemory
+                    };
+                    shadowMaps[i][j]     = graphicsFactory->createImage(std::move(shadowMapDescriptor));
+                    shadowMapViews[i][j] = shadowMaps[i][j]->createView();
+                }
                 //TODO: Transition layout so it's prepped
             }
 
@@ -163,15 +165,19 @@ namespace blb::rnd {
             shadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
 
             //Frame buffer for shadow map
-            shadowMapFrameBuffers.reserve(std::size(shadowMapViews));
-            for(auto& view : shadowMapViews) {
-                Framebuffer::Descriptor frameBuffer{
-                    .renderPass  = shadowMapRenderPass,
-                    .attachments = { view },
-                    .width       = shadowMapSize,
-                    .height      = shadowMapSize
-                };
-                shadowMapFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(frameBuffer));
+            shadowMapFrameBuffers.resize(3);
+            for(size_t i = 0; i < 3; ++i) {//TODO: Hard coding in 3 for now (for frames in flight)
+                for(size_t j = 0; auto& view : shadowMapViews[i]) {
+                    Framebuffer::Descriptor frameBuffer{
+                        .renderPass  = shadowMapRenderPass,
+                        .attachments = { view },
+                        .width       = shadowMapSize,
+                        .height      = shadowMapSize
+                    };
+                    shadowMapFrameBuffers[i][j] = graphicsFactory->createFramebuffer(frameBuffer);
+
+                    ++j;
+                }
             }
         }
     }
@@ -274,11 +280,12 @@ namespace blb::rnd {
             ClearValue{ {}, depthStencilClearValue }
         };
 
-        commandBuffers[imageIndex]->beginRenderPass(*shadowMapRenderPass, *shadowMapFrameBuffers[imageIndex], shadowArea, shadowMapClearValues);
         commandBuffers[imageIndex]->bindPipelineObject(*shadowMapPipelineObject);
 
-        //TODO: Loop through each light. Just doing the one for now
-        for(size_t i = 0; i < 1; ++i) {
+        //Directional lights
+        for(size_t i = 0; i < currentFrameData.numLights.numDirectional; ++i) {
+            commandBuffers[imageIndex]->beginRenderPass(*shadowMapRenderPass, *shadowMapFrameBuffers[imageIndex][i], shadowArea, shadowMapClearValues);
+
             for(auto&& [mesh, transform] : currentFrameData.meshes) {
                 const clv::mth::mat4f pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
 
@@ -289,9 +296,9 @@ namespace blb::rnd {
 
                 commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
             }
-        }
 
-        commandBuffers[imageIndex]->endRenderPass();
+            commandBuffers[imageIndex]->endRenderPass();
+        }
 
         //FINAL IMAGE
         std::array<ClearValue, 2> outputClearValues{
@@ -310,10 +317,10 @@ namespace blb::rnd {
         uniformBuffers[imageIndex]->map(&viewData, uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize);
         uniformBuffers[imageIndex]->map(&currentFrameData.viewPosition, uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize);
 
-        descriptorSets[imageIndex].lightingSet->write(*shadowMapViews[imageIndex], *sampler, ImageLayout::ShaderReadOnlyOptimal, 3);
+        descriptorSets[imageIndex].lightingSet->write(shadowMapViews[imageIndex], *sampler, ImageLayout::ShaderReadOnlyOptimal, 3);
         uniformBuffers[imageIndex]->map(&currentFrameData.lights, uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize);
         uniformBuffers[imageIndex]->map(&currentFrameData.numLights, uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize);
-        uniformBuffers[imageIndex]->map(&currentFrameData.directionalShadowTransforms[0], uniformBufferLayout.shadowTransformOffset, uniformBufferLayout.shadowTransformSize);
+        uniformBuffers[imageIndex]->map(&currentFrameData.directionalShadowTransforms, uniformBufferLayout.shadowTransformsOffset, uniformBufferLayout.shadowTransformsSize);
 
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
@@ -458,7 +465,7 @@ namespace blb::rnd {
 
             descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize, 0);
             descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize, 1);
-            descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.shadowTransformOffset, uniformBufferLayout.shadowTransformSize, 2);
+            descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.shadowTransformsOffset, uniformBufferLayout.shadowTransformsSize, 2);
         }
 
         needNewSwapchain = false;

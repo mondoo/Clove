@@ -62,16 +62,16 @@ namespace blb::rnd {
             size_t viewPosSize{ 0 };
             size_t lightSize{ 0 };
             size_t numLightsSize{ 0 };
-            size_t shadowTransformSize{ 0 };
+            size_t shadowTransformsSize{ 0 };
 
             size_t viewOffset{ 0 };
             size_t viewPosOffset{ 0 };
             size_t lightOffset{ 0 };
             size_t numLightsOffset{ 0 };
-            size_t shadowTransformOffset{ 0 };
+            size_t shadowTransformsOffset{ 0 };
 
             size_t totalSize() const {
-                return shadowTransformOffset + shadowTransformSize;
+                return shadowTransformsOffset + shadowTransformsSize;
             }
         } uniformBufferLayout;
 
@@ -106,9 +106,9 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::GraphicsImage> depthImage;
         std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
 
-        std::vector<std::shared_ptr<clv::gfx::GraphicsImage>> shadowMaps;
-        std::vector<std::shared_ptr<clv::gfx::GraphicsImageView>> shadowMapViews;
-        std::vector<std::shared_ptr<clv::gfx::Framebuffer>> shadowMapFrameBuffers;
+        std::vector<std::array<std::shared_ptr<clv::gfx::GraphicsImage>, MAX_LIGHTS>> shadowMaps;
+        std::vector<std::array<std::shared_ptr<clv::gfx::GraphicsImageView>, MAX_LIGHTS>> shadowMapViews;
+        std::vector<std::array<std::shared_ptr<clv::gfx::Framebuffer>, MAX_LIGHTS>> shadowMapFrameBuffers;
         std::shared_ptr<clv::gfx::RenderPass> shadowMapRenderPass;
         std::shared_ptr<clv::gfx::PipelineObject> shadowMapPipelineObject;
 
@@ -121,7 +121,7 @@ namespace blb::rnd {
         ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D& operator=(const ForwardRenderer3D& other) = delete;
-        ForwardRenderer3D& operator=(ForwardRenderer3D&& other) noexcept;
+        ForwardRenderer3D& operator                                  =(ForwardRenderer3D&& other) noexcept;
 
         ~ForwardRenderer3D();
 
