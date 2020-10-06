@@ -4,6 +4,7 @@
 //#include <Root/Log/Log.hpp>
 
 #include <Root/Definitions.hpp>
+#include <cstdlib>
 
 namespace garlic::inline root {
     ListAllocator::ListAllocator(size_t sizeBytes)
