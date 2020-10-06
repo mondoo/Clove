@@ -7,7 +7,7 @@ namespace garlic::inline root {
         : numElements(numElements)
         , freeMemory(true) {
 #if CLV_ENABLE_MEMORY_DEBUGGING
-        //GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Constructing new PoolAllocator. Arena size {0}. ", arenaSize);
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Constructing new PoolAllocator. Arena size {0}. ", arenaSize);
 #endif
         pool     = reinterpret_cast<std::byte*>(malloc(numElements * sizeof(PoolItem)));
         nextFree = reinterpret_cast<PoolItem*>(pool);
@@ -52,7 +52,7 @@ namespace garlic::inline root {
             }
 
             if(availableElements < numElements) {
-                //GARLIC_LOG(garlicLogContext, garlic::LogLevel::Warning, "Pool Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Warning, "Pool Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
             }
 #endif
             ::free(pool);

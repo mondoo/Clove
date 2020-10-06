@@ -27,7 +27,8 @@ target_link_libraries(
     Root.Memory 
 
     PRIVATE
-        Root.Definitions
+		Root.Definitions
+		Root.Log
 )
 
 #Preprocessor
