@@ -18,7 +18,7 @@ build:linux:gcc:
   stage: build
   only:
     - master
-  image: registry.gitlab.com/digital-vessel/docker/build_environment/linux:latest
+  image: registry.gitlab.com/digital-vessel/docker/build_environment/linux:20.04
   before_script:
     - git submodule update --init --recursive
   script:
@@ -31,7 +31,7 @@ build:linux:clang:
   stage: build
   only:
     - master
-  image: registry.gitlab.com/digital-vessel/docker/build_environment/linux:latest
+  image: registry.gitlab.com/digital-vessel/docker/build_environment/linux:20.04
   before_script:
     - git submodule update --init --recursive
   script:
