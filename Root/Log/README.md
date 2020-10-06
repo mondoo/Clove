@@ -1,0 +1,1 @@
+Garlic's logging library.

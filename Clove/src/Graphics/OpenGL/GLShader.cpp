@@ -76,7 +76,7 @@ namespace clv::gfx::ogl{
 			glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &length);
 			char* message = new char[length];
 			glGetShaderInfoLog(shaderID, length, &length, message);
-			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to compile {0} shader! {1}", getStringFromShaderStage(stage), message);
+			GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to compile {0} shader! {1}", getStringFromShaderStage(stage), message);
 			delete[] message;
 		}
 	}

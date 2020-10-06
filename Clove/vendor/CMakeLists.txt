@@ -15,10 +15,6 @@ add_subdirectory_with_folder(${DependencyFolder} Glad)
 set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
 add_subdirectory_with_folder(${DependencyFolder} glm)
 
-#spdlog
-set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
-add_subdirectory_with_folder(${DependencyFolder} spdlog)
-
 #stb
 add_subdirectory_with_folder(${DependencyFolder} stb)
 

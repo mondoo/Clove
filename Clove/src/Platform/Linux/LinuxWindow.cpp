@@ -3,49 +3,45 @@
 #include "Clove/Graphics/Graphics.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
 #include "Clove/Graphics/Surface.hpp"
-#include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
-namespace clv::plt{
-	LinuxWindow::LinuxWindow(const WindowDescriptor& descriptor){
-		GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
+namespace clv::plt {
+    LinuxWindow::LinuxWindow(const WindowDescriptor& descriptor) {
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
-        display = XOpenDisplay(nullptr); //makes the connection to the client, where to display the window
+        display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
 
-        if(!display){
+        if(!display) {
             //TODO: Exception
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Could not open display");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Could not open display");
             return;
         }
 
-        screen = DefaultScreenOfDisplay(display); //Get the screen of the display
+        screen   = DefaultScreenOfDisplay(display);//Get the screen of the display
         screenID = DefaultScreen(display);
 
-		graphicsFactory = gfx::initialise(descriptor.api);
+        graphicsFactory = gfx::initialise(descriptor.api);
 
-		//Create the context first to get the visual info
-        data = { display, &window, &visual };
+        //Create the context first to get the visual info
+        data    = { display, &window, &visual };
         surface = graphicsFactory->createSurface(&data);
 
-        if(screenID != visual->screen){
+        if(screenID != visual->screen) {
             //TODO: Exception
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Critical, "Screen ID does not match visual->screen");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Critical, "Screen ID does not match visual->screen");
             return;
         }
 
-        windowAttribs = {};
+        windowAttribs                   = {};
         windowAttribs.border_pixel      = BlackPixel(display, screenID);
         windowAttribs.background_pixel  = WhitePixel(display, screenID);
         windowAttribs.override_redirect = true;
         windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), visual->visual, AllocNone);
         windowAttribs.event_mask        = ExposureMask;
 
-        window = XCreateWindow(display, RootWindow(display, screenID),
-                               0, 0, descriptor.width, descriptor.height,
-                               0, visual->depth, InputOutput, visual->visual,
-                               CWBackPixel | CWColormap | CWBorderPixel | CWEventMask,
-                               &windowAttribs);
+        window = XCreateWindow(display, RootWindow(display, screenID), 0, 0, descriptor.width, descriptor.height, 0, visual->depth, InputOutput, visual->visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
 
         //Now that we have a window, we can make the context current
         surface->makeCurrent();
@@ -54,10 +50,10 @@ namespace clv::plt{
         atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
         XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
 
-        XSync(display, false); //Passing true here flushes the event queue
+        XSync(display, false);//Passing true here flushes the event queue
 
         const long keyboardMask = KeyPressMask | KeyReleaseMask | KeymapStateMask;
-        const long mouseMask = PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask;
+        const long mouseMask    = PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask;
 
         XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
 
@@ -68,49 +64,45 @@ namespace clv::plt{
 
         open = true;
 
-        GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Window created");
-	}
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Window created");
+    }
 
-	LinuxWindow::LinuxWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api){
-		GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
+    LinuxWindow::LinuxWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) {
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
 
         const ::Window* nativeParentWindow = reinterpret_cast<::Window*>(parentWindow.getNativeWindow());
 
-        display = XOpenDisplay(nullptr); //makes the connection to the client, where to display the window
+        display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
 
-        if(!display){
+        if(!display) {
             //TODO: Exception
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Could not open display");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Could not open display");
             return;
         }
 
-        screen = DefaultScreenOfDisplay(display); //Get the screen of the display
+        screen   = DefaultScreenOfDisplay(display);//Get the screen of the display
         screenID = DefaultScreen(display);
 
-		graphicsFactory = gfx::initialise(api);
+        graphicsFactory = gfx::initialise(api);
 
-		//Create the context first to get the visual info
-        data = { display, &window, &visual };
+        //Create the context first to get the visual info
+        data    = { display, &window, &visual };
         surface = graphicsFactory->createSurface(&data);
 
-        if(screenID != visual->screen){
+        if(screenID != visual->screen) {
             //TODO: Exception
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Critical, "Screen ID does not match visual->screen");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Critical, "Screen ID does not match visual->screen");
             return;
         }
 
-        windowAttribs = {};
+        windowAttribs                   = {};
         windowAttribs.border_pixel      = BlackPixel(display, screenID);
         windowAttribs.background_pixel  = WhitePixel(display, screenID);
         windowAttribs.override_redirect = true;
         windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), visual->visual, AllocNone);
         windowAttribs.event_mask        = ExposureMask;
 
-        window = XCreateWindow(display, *nativeParentWindow,
-                               position.x, position.y, size.x, size.y,
-                               0, visual->depth, InputOutput, visual->visual,
-                               CWBackPixel | CWColormap | CWBorderPixel | CWEventMask,
-                               &windowAttribs);
+        window = XCreateWindow(display, *nativeParentWindow, position.x, position.y, size.x, size.y, 0, visual->depth, InputOutput, visual->visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
 
         //Now that we have a window, we can make the context current
         surface->makeCurrent();
@@ -119,10 +111,10 @@ namespace clv::plt{
         atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
         XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
 
-        XSync(display, false); //Passing true here flushes the event queue
+        XSync(display, false);//Passing true here flushes the event queue
 
         const long keyboardMask = KeyPressMask | KeyReleaseMask | KeymapStateMask;
-        const long mouseMask = PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask;
+        const long mouseMask    = PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask;
 
         XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
 
@@ -131,24 +123,24 @@ namespace clv::plt{
 
         open = true;
 
-        GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Window created");
-	}
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Window created");
+    }
 
-	LinuxWindow::~LinuxWindow(){
-		//Reset context first, before the display is closed
-		surface.reset();
+    LinuxWindow::~LinuxWindow() {
+        //Reset context first, before the display is closed
+        surface.reset();
 
-		XFree(visual);
-		XFreeColormap(display, windowAttribs.colormap);
-		XDestroyWindow(display, window);
-		XCloseDisplay(display);
-	}
+        XFree(visual);
+        XFreeColormap(display, windowAttribs.colormap);
+        XDestroyWindow(display, window);
+        XCloseDisplay(display);
+    }
 
-	void* LinuxWindow::getNativeWindow() const{
-		return const_cast<::Window*>(&window);
-	}
+    void* LinuxWindow::getNativeWindow() const {
+        return const_cast<::Window*>(&window);
+    }
 
-    mth::vec2i LinuxWindow::getPosition() const{
+    mth::vec2i LinuxWindow::getPosition() const {
         ::Window rootWindow;
         int32_t posX;
         int32_t posY;
@@ -157,15 +149,15 @@ namespace clv::plt{
         uint32_t borderWidth;
         uint32_t depth;
 
-        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0){
+        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
             return { posX, posY };
-        }else{
+        } else {
             GARLIC_ASSERT(false, "Could not get window geometry");
             return { 0, 0 };
         }
     }
 
-    mth::vec2i LinuxWindow::getSize() const{
+    mth::vec2i LinuxWindow::getSize() const {
         ::Window rootWindow;
         int32_t posX;
         int32_t posY;
@@ -174,25 +166,25 @@ namespace clv::plt{
         uint32_t borderWidth;
         uint32_t depth;
 
-        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0){
+        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
             return { width, height };
-        }else{
+        } else {
             GARLIC_ASSERT(false, "Could not get window geometry");
             return { 0, 0 };
         }
     }
 
-    void LinuxWindow::moveWindow(const mth::vec2i &position) {
+    void LinuxWindow::moveWindow(const mth::vec2i& position) {
         XMoveWindow(display, window, position.x, position.y);
     }
 
-    void LinuxWindow::resizeWindow(const mth::vec2i &size) {
+    void LinuxWindow::resizeWindow(const mth::vec2i& size) {
         XResizeWindow(display, window, size.x, size.y);
     }
 
     bool LinuxWindow::isOpen() const {
-		return open;
-	}
+        return open;
+    }
 
     void LinuxWindow::close() {
         if(onWindowCloseDelegate.isBound()) {
@@ -202,98 +194,95 @@ namespace clv::plt{
         XCloseDisplay(display);
     }
 
-	void LinuxWindow::processInput(){
-		if(XPending(display) > 0){
-			KeySym xkeysym = 0;
+    void LinuxWindow::processInput() {
+        if(XPending(display) > 0) {
+            KeySym xkeysym = 0;
 
-			XNextEvent(display, &xevent);
-			switch(xevent.type){
-				case ClientMessage:
-					if(xevent.xclient.data.l[0] == atomWmDeleteWindow){
+            XNextEvent(display, &xevent);
+            switch(xevent.type) {
+                case ClientMessage:
+                    if(xevent.xclient.data.l[0] == atomWmDeleteWindow) {
                         close();
-					}
-					break;
-				case DestroyNotify:
-					if(onWindowCloseDelegate.isBound()) {
-						onWindowCloseDelegate.broadcast();
-					}
-					open = false;
-					break;
+                    }
+                    break;
+                case DestroyNotify:
+                    if(onWindowCloseDelegate.isBound()) {
+                        onWindowCloseDelegate.broadcast();
+                    }
+                    open = false;
+                    break;
 
-				case FocusOut:
-					keyboard.clearState();
-					break;
+                case FocusOut:
+                    keyboard.clearState();
+                    break;
 
-				case KeymapNotify:
-					//Refresh key mappings if the user rebinds keys
-					XRefreshKeyboardMapping(&xevent.xmapping);
-					break;
+                case KeymapNotify:
+                    //Refresh key mappings if the user rebinds keys
+                    XRefreshKeyboardMapping(&xevent.xmapping);
+                    break;
 
-				case KeyPress:
-					xkeysym = XLookupKeysym(&xevent.xkey, 0);
-					keyboard.onKeyPressed(static_cast<Key>(xkeysym));
-					break;
+                case KeyPress:
+                    xkeysym = XLookupKeysym(&xevent.xkey, 0);
+                    keyboard.onKeyPressed(static_cast<Key>(xkeysym));
+                    break;
 
-				case KeyRelease: {
-					bool isRepeat = false;
+                case KeyRelease: {
+                    bool isRepeat = false;
 
-					if (XEventsQueued(display, QueuedAlready)) {
-						XEvent nextEvent;
-						XPeekEvent(display, &nextEvent);
+                    if(XEventsQueued(display, QueuedAlready)) {
+                        XEvent nextEvent;
+                        XPeekEvent(display, &nextEvent);
 
-						isRepeat = nextEvent.type == KeyPress && nextEvent.xkey.keycode == xevent.xkey.keycode;
-						if (isRepeat) {
-							//Consume the next KeyPress event (as that is auto repeat)
-							XNextEvent(display, &xevent);
-						}
-					}
+                        isRepeat = nextEvent.type == KeyPress && nextEvent.xkey.keycode == xevent.xkey.keycode;
+                        if(isRepeat) {
+                            //Consume the next KeyPress event (as that is auto repeat)
+                            XNextEvent(display, &xevent);
+                        }
+                    }
 
-					if(!isRepeat || keyboard.isAutoRepeatEnabled()) {
-						xkeysym = XLookupKeysym(&xevent.xkey, 0);
-						keyboard.onKeyReleased(static_cast<Key>(xkeysym));
-					}
-				}
-					break;
+                    if(!isRepeat || keyboard.isAutoRepeatEnabled()) {
+                        xkeysym = XLookupKeysym(&xevent.xkey, 0);
+                        keyboard.onKeyReleased(static_cast<Key>(xkeysym));
+                    }
+                } break;
 
-					//TODO: Char (I don't think Xlib has a 'typed' event)
+                    //TODO: Char (I don't think Xlib has a 'typed' event)
 
-				case EnterNotify:
-					mouse.onMouseEnter();
-					break;
+                case EnterNotify:
+                    mouse.onMouseEnter();
+                    break;
 
-				case LeaveNotify:
-					mouse.onMouseLeave();
-					break;
+                case LeaveNotify:
+                    mouse.onMouseLeave();
+                    break;
 
-				case ButtonPress:
-					if(xevent.xbutton.button == 4){
-						mouse.onWheelDelta(CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
-					} else if(xevent.xbutton.button == 5){
-						mouse.onWheelDelta(-CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
-					} else{
-						mouse.onButtonPressed(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
-					}
-					break;
+                case ButtonPress:
+                    if(xevent.xbutton.button == 4) {
+                        mouse.onWheelDelta(CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
+                    } else if(xevent.xbutton.button == 5) {
+                        mouse.onWheelDelta(-CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
+                    } else {
+                        mouse.onButtonPressed(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
+                    }
+                    break;
 
-				case ButtonRelease:
-					mouse.onButtonReleased(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
-					break;
+                case ButtonRelease:
+                    mouse.onButtonReleased(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
+                    break;
 
-				//Window
-				case ConfigureNotify:
-					{
-						XConfigureEvent xce = xevent.xconfigure;
-						if(static_cast<uint32_t>(xce.width) != prevConfigureNotifySize.x || static_cast<uint32_t>(xce.height) != prevConfigureNotifySize.y){
-							const mth::vec2i size{ xce.width, xce.height };
-							prevConfigureNotifySize = size;
-							if(surface){
-								surface->resizeBuffers(size);
-							}
-							onWindowResize.broadcast(size);
-						}
-					}
-					break;
-			}
-		}
-	}
+                //Window
+                case ConfigureNotify: {
+                    XConfigureEvent xce = xevent.xconfigure;
+                    if(static_cast<uint32_t>(xce.width) != prevConfigureNotifySize.x || static_cast<uint32_t>(xce.height) != prevConfigureNotifySize.y) {
+                        const mth::vec2i size{ xce.width, xce.height };
+                        prevConfigureNotifySize = size;
+                        if(surface) {
+                            surface->resizeBuffers(size);
+                        }
+                        onWindowResize.broadcast(size);
+                    }
+                } break;
+            }
+        }
+    }
 }

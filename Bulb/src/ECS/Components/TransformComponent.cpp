@@ -1,7 +1,7 @@
 #include "Bulb/ECS/Components/TransformComponent.hpp"
 
 #include <Root/Definitions.hpp>
-#include <Clove/Log.hpp>
+#include <Root/Log/Log.hpp>
 
 using namespace clv;
 
@@ -20,7 +20,7 @@ namespace blb::ecs {
 
         parent = other.parent;
         //Not copying children for now, transform component has no knowledge of other components
-        GARLIC_LOG(garlicLogContext, Log::Level::Warning, "{0}: Unable to copy transform's children.", GARLIC_FUNCTION_NAME_PRETTY);
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Warning, "{0}: Unable to copy transform's children.", GARLIC_FUNCTION_NAME_PRETTY);
 
         if(parent != nullptr) {
             parent->children.push_back(this);
@@ -36,7 +36,7 @@ namespace blb::ecs {
 
         parent = other.parent;
         //Not copying children for now, transform component has no knowledge of other components
-        GARLIC_LOG(garlicLogContext, Log::Level::Warning, "{0}: Unable to copy transform's children.", GARLIC_FUNCTION_NAME_PRETTY);
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Warning, "{0}: Unable to copy transform's children.", GARLIC_FUNCTION_NAME_PRETTY);
 
         if(parent != nullptr) {
             parent->children.push_back(this);

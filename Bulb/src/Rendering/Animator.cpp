@@ -2,8 +2,8 @@
 
 #include "Bulb/Rendering/AnimationTypes.hpp"
 
-#include <Clove/Log.hpp>
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace blb::rnd {
     static std::vector<JointPose> lerpJointPoses(const AnimationPose& posesA, const AnimationPose& posesB, const float time) {
@@ -67,7 +67,7 @@ namespace blb::rnd {
         CLV_PROFILE_FUNCTION();
 
         if(currentClip == nullptr) {
-            GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Current clip is not set, could not create palet", GARLIC_FUNCTION_NAME);
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "{0}: Current clip is not set, could not create palet", GARLIC_FUNCTION_NAME);
             return {};
         }
 

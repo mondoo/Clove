@@ -1,8 +1,8 @@
 #include "Bulb/ECS/ECSEvents.hpp"
 
-#include <Clove/Log.hpp>
 #include <Root/Definitions.hpp>
 #include <Root/Event/EventDispatcher.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace blb::ecs {
     template<typename ComponentType>
@@ -37,7 +37,7 @@ namespace blb::ecs {
                 addComponent(toId, *componentPtr);
             }
         } else {
-            GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Component that is not copyable was attempted to be copied. Entity will be incomplete");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Component that is not copyable was attempted to be copied. Entity will be incomplete");
         }
     }
 
@@ -72,7 +72,7 @@ namespace blb::ecs {
     ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityId, ConstructArgs&&... args) {
         ComponentType* comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
         if(comp == nullptr) {
-            GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Could not create component", GARLIC_FUNCTION_NAME_PRETTY);
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "{0}: Could not create component", GARLIC_FUNCTION_NAME_PRETTY);
             return { comp };
         }
 

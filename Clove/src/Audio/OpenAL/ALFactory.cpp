@@ -4,13 +4,14 @@
 #include "Clove/Audio/OpenAL/ALError.hpp"
 #include "Clove/Audio/OpenAL/ALListener.hpp"
 #include "Clove/Audio/OpenAL/ALSource.hpp"
-#include "Clove/Log.hpp"
+
+#include <Root/Log/Log.hpp>
 
 namespace clv {
     ALFactory::ALFactory() {
         alDevice = alcOpenDevice(nullptr);
         if(!alDevice) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create OpenAL device");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create OpenAL device");
             return;
         }
 

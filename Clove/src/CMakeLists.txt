@@ -214,10 +214,7 @@ set(
 set(
 	AllFiles
 	${CLV_INCLUDE}/Clove.hpp
-	${CLV_INCLUDE}/Log.hpp
-	${CLV_INCLUDE}/Log.inl
-	${CLV_SOURCE}/Log.cpp
-
+	
 		${AudioFiles}
 			${OpenALAudioFiles}
 		${ExceptionFiles}

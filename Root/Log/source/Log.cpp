@@ -1,33 +1,33 @@
-#include "Clove/Log.hpp"
+#include "Root/Log/Log.hpp"
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 #if GARLIC_DEBUG
-clv::Log::Context garlicLogContext = clv::Log::createContext(clv::Log::Level::Trace, "GARLIC", "GarlicLog.txt");
+garlic::root::LogContext garlicLogContext = garlic::root::createLogContext(garlic::root::LogLevel::Trace, "GARLIC", "GarlicLog.txt");
 #else
-clv::Log::Context garlicLogContext = clv::Log::createContext(clv::Log::Level::Info, "GARLIC", "GarlicLog.txt");
+garlic::root::LogContext garlicLogContext = garlic::root::createLogContext(garlic::root::LogLevel::Info, "GARLIC", "GarlicLog.txt");
 #endif
 
-namespace clv {
-    static spdlog::level::level_enum getSpdlogLevel(Log::Level level) {
+namespace garlic::inline root {
+    static spdlog::level::level_enum getSpdlogLevel(LogLevel level) {
         switch(level) {
-            case Log::Level::Trace:
+            case LogLevel::Trace:
                 return spdlog::level::trace;
-            case Log::Level::Debug:
+            case LogLevel::Debug:
                 return spdlog::level::debug;
-            case Log::Level::Info:
+            case LogLevel::Info:
                 return spdlog::level::info;
-            case Log::Level::Warning:
+            case LogLevel::Warning:
                 return spdlog::level::warn;
-            case Log::Level::Error:
+            case LogLevel::Error:
                 return spdlog::level::err;
-            case Log::Level::Critical:
+            case LogLevel::Critical:
                 return spdlog::level::critical;
         }
     }
 
-    Log::Context Log::createContext(Log::Level consoleLogLevel, std::string_view loggerName, std::string_view fileName) {
+    LogContext createLogContext(LogLevel consoleLogLevel, std::string_view loggerName, std::string_view fileName) {
         auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         auto fileSink    = std::make_shared<spdlog::sinks::basic_file_sink_mt>(fileName.data(), true);
 
@@ -41,6 +41,6 @@ namespace clv {
         auto logger = std::make_shared<spdlog::logger>(loggerName.data(), sinks.begin(), sinks.end());
         logger->set_level(spdlog::level::trace);
 
-        return Log::Context{ logger };
+        return LogContext{ logger };
     }
 }

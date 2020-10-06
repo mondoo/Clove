@@ -1,17 +1,5 @@
 #pragma once
 
-#if GARLIC_ENABLE_ASSERTIONS
-    #define GARLIC_ASSERT(x, ...)                                                                           \
-        {                                                                                                   \
-            if(!(x)) {                                                                                      \
-                GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Assertion Failed: {0}", __VA_ARGS__); \
-                GARLIC_DEBUG_BREAK;                                                                         \
-            }                                                                                               \
-        }
-#else
-    #define GARLIC_ASSERT(x, ...) (x)
-#endif
-
 #if defined(__clang__)
     #define GARLIC_DEBUG_BREAK __builtin_debugtrap()
 #elif(defined(__GNUC__) || defined(__GNUG__))

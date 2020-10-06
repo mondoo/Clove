@@ -1,7 +1,7 @@
 #include "Root/Memory/StackAllocator.hpp"
 
 //TODO: Re-enable logging
-//#include "Clove/Log.hpp"
+//#include <Root/Log/Log.hpp>
 
 #include <Root/Definitions.hpp>
 #include <cstdlib>
@@ -11,7 +11,7 @@ namespace garlic::inline root {
         : stackSize(sizeBytes)
         , freeMemory(true) {
 #if CLV_ENABLE_MEMORY_DEBUGGING
-        //GARLIC_LOG(garlicLogContext, Log::Level::Trace, "Constructing new StackAllocator. Size {0}. ", stackSize);
+        //GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Constructing new StackAllocator. Size {0}. ", stackSize);
 #endif
         stack = reinterpret_cast<std::byte*>(malloc(stackSize));
         top   = stack;
@@ -32,7 +32,7 @@ namespace garlic::inline root {
         if(freeMemory) {
 #if GARLIC_DEBUG
             if(top > stack) {
-                //GARLIC_LOG(garlicLogContext, Log::Level::Warning, "Stack Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
+                //GARLIC_LOG(garlicLogContext, garlic::LogLevel::Warning, "Stack Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
             }
 #endif
             ::free(stack);
@@ -45,7 +45,7 @@ namespace garlic::inline root {
 
     void* StackAllocator::alloc(size_t bytes) {
         if((top - stack) + bytes > stackSize) {
-            //GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Not enough space left to allocate {1} bytes.", GARLIC_FUNCTION_NAME_PRETTY, bytes);
+            //GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", GARLIC_FUNCTION_NAME_PRETTY, bytes);
             return nullptr;
         }
 

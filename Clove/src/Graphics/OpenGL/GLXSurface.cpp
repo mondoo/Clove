@@ -1,154 +1,169 @@
 #include "Clove/Graphics/OpenGL/GLXSurface.hpp"
 
-#include "Clove/Platform/Linux/LinuxWindow.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/OpenGL/GLException.hpp"
 #include "Clove/Graphics/OpenGL/GLRenderTarget.hpp"
-#include "Clove/Log.hpp"
+#include "Clove/Platform/Linux/LinuxWindow.hpp"
 
-using glXCreateContextAttribsARBProc = GLXContext (*)(Display *, GLXFBConfig, GLXContext, int, const int *);
+#include <Root/Log/Log.hpp>
 
-namespace clv::gfx::ogl{
-	GLXSurface::GLXSurface(std::shared_ptr<GraphicsFactory> factory, void* windowData) 
-		: factory(std::move(factory)) {
-		plt::LinuxData* data = reinterpret_cast<plt::LinuxData*>(windowData);
-		display = data->display;
-		window = data->window;
+using glXCreateContextAttribsARBProc = GLXContext (*)(Display*, GLXFBConfig, GLXContext, int, const int*);
 
-		int visualAttribs[] = {
-			GLX_X_RENDERABLE, True,
-			GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-			GLX_RENDER_TYPE, GLX_RGBA_BIT,
-			GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
-			GLX_RED_SIZE, 8,
-			GLX_GREEN_SIZE, 8,
-			GLX_BLUE_SIZE, 8,
-			GLX_ALPHA_SIZE, 8,
-			GLX_DEPTH_SIZE, 24,
-			GLX_STENCIL_SIZE, 8,
-			GLX_DOUBLEBUFFER, True,
-			0
-		};
+namespace clv::gfx::ogl {
+    GLXSurface::GLXSurface(std::shared_ptr<GraphicsFactory> factory, void* windowData)
+        : factory(std::move(factory)) {
+        plt::LinuxData* data = reinterpret_cast<plt::LinuxData*>(windowData);
+        display              = data->display;
+        window               = data->window;
 
-		int fbCount;
-		GLXFBConfig* fbc = glXChooseFBConfig(display, DefaultScreen(display), visualAttribs, &fbCount);
+        int visualAttribs[] = {
+            GLX_X_RENDERABLE,
+            True,
+            GLX_DRAWABLE_TYPE,
+            GLX_WINDOW_BIT,
+            GLX_RENDER_TYPE,
+            GLX_RGBA_BIT,
+            GLX_X_VISUAL_TYPE,
+            GLX_TRUE_COLOR,
+            GLX_RED_SIZE,
+            8,
+            GLX_GREEN_SIZE,
+            8,
+            GLX_BLUE_SIZE,
+            8,
+            GLX_ALPHA_SIZE,
+            8,
+            GLX_DEPTH_SIZE,
+            24,
+            GLX_STENCIL_SIZE,
+            8,
+            GLX_DOUBLEBUFFER,
+            True,
+            0
+        };
 
-		//Choose the best frame buffer config
-		int bestFBC = -1;
-		int bestNumSamp = -1;
-		for (int i = 0; i < fbCount; ++i){
-			if (XVisualInfo *vi = glXGetVisualFromFBConfig(display, fbc[i])){
-				int samp_buf = 0;
-				int samples = 0;
-				glXGetFBConfigAttrib(display, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf);
-				glXGetFBConfigAttrib(display, fbc[i], GLX_SAMPLES, &samples);
+        int fbCount;
+        GLXFBConfig* fbc = glXChooseFBConfig(display, DefaultScreen(display), visualAttribs, &fbCount);
 
-				if (bestFBC < 0 || ((samp_buf != 0) && samples > bestNumSamp)){
-					bestFBC = i;
-					bestNumSamp = samples;
-				}
+        //Choose the best frame buffer config
+        int bestFBC     = -1;
+        int bestNumSamp = -1;
+        for(int i = 0; i < fbCount; ++i) {
+            if(XVisualInfo* vi = glXGetVisualFromFBConfig(display, fbc[i])) {
+                int samp_buf = 0;
+                int samples  = 0;
+                glXGetFBConfigAttrib(display, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf);
+                glXGetFBConfigAttrib(display, fbc[i], GLX_SAMPLES, &samples);
 
-				XFree(vi);
-			}
-		}
+                if(bestFBC < 0 || ((samp_buf != 0) && samples > bestNumSamp)) {
+                    bestFBC     = i;
+                    bestNumSamp = samples;
+                }
 
-		GLXFBConfig bestFbc = fbc[bestFBC];
+                XFree(vi);
+            }
+        }
 
-		XFree(fbc);
+        GLXFBConfig bestFbc = fbc[bestFBC];
 
-		visual = glXGetVisualFromFBConfig( display, bestFbc );
-		*data->visual = visual;
+        XFree(fbc);
 
-		glXCreateContextAttribsARBProc glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB((const GLubyte *) "glXCreateContextAttribsARB");
-		if(glXCreateContextAttribsARB != nullptr){
-			const int32_t major = 4;
-			const int32_t minor = 6;
+        visual        = glXGetVisualFromFBConfig(display, bestFbc);
+        *data->visual = visual;
 
-			int32_t attributes[] = {
-				GLX_CONTEXT_MAJOR_VERSION_ARB, major,
-				GLX_CONTEXT_MINOR_VERSION_ARB, minor,
-				GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-				0
-			};
+        glXCreateContextAttribsARBProc glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB((const GLubyte*)"glXCreateContextAttribsARB");
+        if(glXCreateContextAttribsARB != nullptr) {
+            const int32_t major = 4;
+            const int32_t minor = 6;
 
-			context = glXCreateContextAttribsARB(display, bestFbc, 0, GL_TRUE, attributes);
+            int32_t attributes[] = {
+                GLX_CONTEXT_MAJOR_VERSION_ARB,
+                major,
+                GLX_CONTEXT_MINOR_VERSION_ARB,
+                minor,
+                GLX_CONTEXT_FLAGS_ARB,
+                GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+                0
+            };
 
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Succesfully created an OpenGL {0}.{1} context", major, minor);
-		}else{
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Warning, "Could not retrieve glXCreateContextAttribsARBProc. Application might not support OpenGL3.2+ contexts");
+            context = glXCreateContextAttribsARB(display, bestFbc, 0, GL_TRUE, attributes);
 
-			context = glXCreateContext(display, visual, nullptr, GL_TRUE);
-		}
-	}
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Succesfully created an OpenGL {0}.{1} context", major, minor);
+        } else {
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Warning, "Could not retrieve glXCreateContextAttribsARBProc. Application might not support OpenGL3.2+ contexts");
 
-	GLXSurface::GLXSurface(GLXSurface&& other) noexcept = default;
+            context = glXCreateContext(display, visual, nullptr, GL_TRUE);
+        }
+    }
 
-	GLXSurface& GLXSurface::operator=(GLXSurface&& other) noexcept = default;
+    GLXSurface::GLXSurface(GLXSurface&& other) noexcept = default;
 
-	GLXSurface::~GLXSurface(){
-		glXDestroyContext(display, context);
-	}
+    GLXSurface& GLXSurface::operator=(GLXSurface&& other) noexcept = default;
 
-	const std::shared_ptr<GraphicsFactory>& GLXSurface::getFactory() const {
-		return factory;
-	}
+    GLXSurface::~GLXSurface() {
+        glXDestroyContext(display, context);
+    }
 
-	void GLXSurface::makeCurrent(){
-		glXMakeCurrent(display, *window, context);
+    const std::shared_ptr<GraphicsFactory>& GLXSurface::getFactory() const {
+        return factory;
+    }
 
-		if(glxSwapIntervalEXT == nullptr){
-			const char* extensions = (char*)glXQueryExtensionsString(display, visual->screen);
-			if(strstr(extensions, "GLX_EXT_swap_control") != 0){
-				glxSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC)glXGetProcAddress((GLubyte*)"glxSwapIntervalEXT");
-			} else{
-				GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Could not find the GLX_EXT_swap_control. Cannot enable / disable vsync");
-			}
-		}
+    void GLXSurface::makeCurrent() {
+        glXMakeCurrent(display, *window, context);
 
-		GARLIC_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
+        if(glxSwapIntervalEXT == nullptr) {
+            const char* extensions = (char*)glXQueryExtensionsString(display, visual->screen);
+            if(strstr(extensions, "GLX_EXT_swap_control") != 0) {
+                glxSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC)glXGetProcAddress((GLubyte*)"glxSwapIntervalEXT");
+            } else {
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Could not find the GLX_EXT_swap_control. Cannot enable / disable vsync");
+            }
+        }
 
-		GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, "GL version: {0}", glGetString(GL_VERSION));
-		GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, "GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+        GARLIC_ASSERT(gladLoadGL(), "Failed to load OpenGL functions");
 
-		glDebugMessageCallback(errorCallback, nullptr);
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "GL version: {0}", glGetString(GL_VERSION));
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-		renderTarget = std::make_shared<GLRenderTarget>(factory);
-	}
+        glDebugMessageCallback(errorCallback, nullptr);
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
-	void GLXSurface::setVSync(bool enabled){
-		if(glxSwapIntervalEXT != nullptr){
-			GLXDrawable drawable = glXGetCurrentDrawable();
-	
-			const int32_t interval = enabled ? 1 : 0;
-			glxSwapIntervalEXT(display, drawable, interval);
-	
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, "Swap interval for GLX was set to: {0}", interval);
-		}else{
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "Could not set swap interval. glxSwapIntervalEXT is unitialised. Please make sure this context is current");
-		}
-	}
+        renderTarget = std::make_shared<GLRenderTarget>(factory);
+    }
 
-	bool GLXSurface::isVsync() const{
-		if(glxSwapIntervalEXT != nullptr){
-			GLXDrawable drawable = glXGetCurrentDrawable();
+    void GLXSurface::setVSync(bool enabled) {
+        if(glxSwapIntervalEXT != nullptr) {
+            GLXDrawable drawable = glXGetCurrentDrawable();
 
-			uint32_t interval = 0;
-			glXQueryDrawable(display, drawable, GLX_SWAP_INTERVAL_EXT, &interval);
-		
-			return (interval > 0);
-		}else{
-			GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "glxSwapIntervalEXT is unitialised. Could not retrieve swap interval. Please make sure this context is current");
-			return false;
-		}
-	}
+            const int32_t interval = enabled ? 1 : 0;
+            glxSwapIntervalEXT(display, drawable, interval);
 
-	void GLXSurface::present(){
-		glXSwapBuffers(display, *window);
-	}
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Swap interval for GLX was set to: {0}", interval);
+        } else {
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Could not set swap interval. glxSwapIntervalEXT is unitialised. Please make sure this context is current");
+        }
+    }
 
-	std::shared_ptr<RenderTarget> GLXSurface::getRenderTarget() const{
-		return renderTarget;
-	}
+    bool GLXSurface::isVsync() const {
+        if(glxSwapIntervalEXT != nullptr) {
+            GLXDrawable drawable = glXGetCurrentDrawable();
+
+            uint32_t interval = 0;
+            glXQueryDrawable(display, drawable, GLX_SWAP_INTERVAL_EXT, &interval);
+
+            return (interval > 0);
+        } else {
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "glxSwapIntervalEXT is unitialised. Could not retrieve swap interval. Please make sure this context is current");
+            return false;
+        }
+    }
+
+    void GLXSurface::present() {
+        glXSwapBuffers(display, *window);
+    }
+
+    std::shared_ptr<RenderTarget> GLXSurface::getRenderTarget() const {
+        return renderTarget;
+    }
 }

@@ -39,11 +39,11 @@ target_link_libraries(
 		Root.Definitions
 		Root.Delegate
 		Root.Event
+		Root.Log
 		Root.Memory
 
     #Cross platform
     PUBLIC
-		spdlog
 		$<$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>:Glad>
 
 	PRIVATE 

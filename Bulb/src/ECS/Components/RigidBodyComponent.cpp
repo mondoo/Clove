@@ -1,7 +1,7 @@
 #include "Bulb/ECS/Components/RigidBodyComponent.hpp"
 
+#include <Root/Log/Log.hpp>
 #include <btBulletDynamicsCommon.h>
-#include <Clove/Log.hpp>
 
 using namespace clv;
 
@@ -87,7 +87,7 @@ namespace blb::ecs {
         startTransform.setIdentity();
 
         if(descriptor.isKinematic && descriptor.mass > 0.0f) {
-            GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Kinematic RigidBody has non 0 mass. Kinematic takes precedence");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Kinematic RigidBody has non 0 mass. Kinematic takes precedence");
         } else {
             standInShape->calculateLocalInertia(descriptor.mass, localInertia);
         }
