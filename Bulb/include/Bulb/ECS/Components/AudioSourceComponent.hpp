@@ -35,7 +35,7 @@ namespace blb::ecs {
         AudioSourceComponent(AudioSourceComponent&& other) noexcept;
 
         AudioSourceComponent& operator=(const AudioSourceComponent& other) = delete;
-        AudioSourceComponent& operator                                     =(AudioSourceComponent&& other) noexcept;
+        AudioSourceComponent& operator=(AudioSourceComponent&& other) noexcept;
 
         ~AudioSourceComponent();
 

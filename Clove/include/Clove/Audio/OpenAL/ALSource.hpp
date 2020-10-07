@@ -20,7 +20,7 @@ namespace clv {
         ALSource(ALSource&& other) noexcept;
 
         ALSource& operator=(const ALSource& other) = delete;
-        ALSource& operator                         =(ALSource&& other) noexcept;
+        ALSource& operator=(ALSource&& other) noexcept;
 
         ~ALSource();
 
