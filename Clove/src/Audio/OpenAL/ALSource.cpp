@@ -20,9 +20,11 @@ namespace clv {
         alCall(alDeleteSources(1, &source));
     }
 
-    void ALSource::setBuffer(const AudioBuffer& buffer) {
-        const ALBuffer* alBuffer = polyCast<const ALBuffer>(&buffer);
+    void ALSource::setBuffer(std::shared_ptr<AudioBuffer> buffer) {
+        const ALBuffer* alBuffer = polyCast<const ALBuffer>(buffer.get());
         alCall(alSourcei(source, AL_BUFFER, alBuffer->getBufferId()));
+
+        bufferQueue = { buffer };
     }
 
     void ALSource::queueBuffers(std::vector<std::shared_ptr<AudioBuffer>> buffers) {

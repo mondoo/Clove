@@ -20,11 +20,11 @@ namespace clv {
         ALSource(ALSource&& other) noexcept;
 
         ALSource& operator=(const ALSource& other) = delete;
-        ALSource& operator=(ALSource&& other) noexcept;
+        ALSource& operator                         =(ALSource&& other) noexcept;
 
         ~ALSource();
 
-        void setBuffer(const AudioBuffer& buffer) override;
+        void setBuffer(std::shared_ptr<AudioBuffer> buffer) override;
 
         void queueBuffers(std::vector<std::shared_ptr<AudioBuffer>> buffers) override;
         std::vector<std::shared_ptr<AudioBuffer>> unQueueBuffers(const uint32_t numToUnqueue) override;

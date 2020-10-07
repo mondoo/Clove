@@ -16,7 +16,7 @@ namespace clv {
         /**
 		 * @brief Sets buffer to play audio from
 		 */
-        virtual void setBuffer(const AudioBuffer& buffer) = 0;
+        virtual void setBuffer(std::shared_ptr<AudioBuffer> buffer) = 0;
 
         /**
 		 * @brief Queues buffers to be played sequentially.

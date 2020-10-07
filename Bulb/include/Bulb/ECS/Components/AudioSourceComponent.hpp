@@ -16,7 +16,7 @@ namespace blb::ecs {
 }
 
 namespace blb::ecs {
-	/**
+    /**
 	 * @brief Allows an entity to determine where a sound is coming from
 	 */
     class AudioSourceComponent : public Component<AudioSourceComponent> {
@@ -35,11 +35,11 @@ namespace blb::ecs {
         AudioSourceComponent(AudioSourceComponent&& other) noexcept;
 
         AudioSourceComponent& operator=(const AudioSourceComponent& other) = delete;
-        AudioSourceComponent& operator=(AudioSourceComponent&& other) noexcept;
+        AudioSourceComponent& operator                                     =(AudioSourceComponent&& other) noexcept;
 
         ~AudioSourceComponent();
 
-        void setBuffer(const clv::AudioBuffer& buffer);
+        void setBuffer(std::shared_ptr<clv::AudioBuffer> buffer);
         void queueBuffers(std::vector<std::shared_ptr<clv::AudioBuffer>> buffers);
         std::vector<std::shared_ptr<clv::AudioBuffer>> unQueueBuffers(const uint32_t numToUnQueue);
 
