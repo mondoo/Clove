@@ -79,6 +79,9 @@ namespace blb::ecs {
         comp->entityID = entityId;
 
         if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
+#if GARLIC_DEBUG
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Warning, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", GARLIC_FUNCTION_NAME_PRETTY);
+#endif
             components[iter->second] = comp;
         } else {
             components.push_back(comp);
