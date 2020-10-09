@@ -29,14 +29,15 @@ namespace clv::gfx::vk {
         : VKShader(std::move(device), readFile(filePath)) {
     }
 
-    VKShader::VKShader(DevicePointer device, std::span<const std::byte> byteCode) 
+    VKShader::VKShader(DevicePointer device, std::span<const std::byte> byteCode)
         : device(std::move(device)) {
-        VkShaderModuleCreateInfo createInfo{};
-        createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-        createInfo.pNext    = nullptr;
-        createInfo.flags    = 0;
-        createInfo.codeSize = byteCode.size_bytes();
-        createInfo.pCode    = reinterpret_cast<const uint32_t*>(std::data(byteCode));
+        VkShaderModuleCreateInfo createInfo{
+            .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+            .pNext    = nullptr,
+            .flags    = 0,
+            .codeSize = byteCode.size_bytes(),
+            .pCode    = reinterpret_cast<const uint32_t*>(std::data(byteCode)),
+        };
 
         if(vkCreateShaderModule(this->device.get(), &createInfo, nullptr, &module) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create shader module");
@@ -53,5 +54,16 @@ namespace clv::gfx::vk {
 
     VkShaderModule VKShader::getModule() const {
         return module;
+    }
+
+    VkShaderStageFlags VKShader::convertStage(Stage stage) {
+        VkShaderStageFlags vkStage{ 0 };
+        if((stage & Shader::Stage::Vertex) != 0) {
+            vkStage |= VK_SHADER_STAGE_VERTEX_BIT;
+        }
+        if((stage & Shader::Stage::Pixel) != 0) {
+            vkStage |= VK_SHADER_STAGE_FRAGMENT_BIT;
+        }
+        return vkStage;
     }
 }

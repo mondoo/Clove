@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/GraphicsAPI.hpp"
 
 namespace clv::gfx {
     class GraphicsDevice;

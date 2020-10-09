@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Clove/Graphics/CommandBuffer.hpp"
+#include "Clove/Graphics/MemoryBarrier.hpp"
 #include "Clove/Graphics/PipelineObject.hpp"
 #include "Clove/Graphics/Shader.hpp"
 
@@ -29,6 +31,10 @@ namespace clv::gfx {
     struct ClearValue {
         mth::vec4f colour;
         DepthStencilValue depthStencil;
+    };
+
+    enum class IndexType {
+        Uint16
     };
 }
 

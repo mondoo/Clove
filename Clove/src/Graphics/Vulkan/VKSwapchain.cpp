@@ -2,8 +2,8 @@
 
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
+#include "Clove/Graphics/Vulkan/VKResult.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Utils/Cast.hpp"
 
 namespace clv::gfx::vk {
@@ -60,29 +60,26 @@ namespace clv::gfx::vk {
             imageCount = supportDetails.capabilities.maxImageCount;
         }
 
-        VkSwapchainCreateInfoKHR createInfo{};
-        createInfo.sType            = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-        createInfo.surface          = this->device.getSurface();
-        createInfo.minImageCount    = imageCount;
-        createInfo.imageFormat      = surfaceFormat.format;
-        createInfo.imageColorSpace  = surfaceFormat.colorSpace;
-        createInfo.imageExtent      = extent;
-        createInfo.imageArrayLayers = 1;
-        createInfo.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-        if(familyIndices.graphicsFamily != familyIndices.presentFamily) {
-            createInfo.imageSharingMode      = VK_SHARING_MODE_CONCURRENT;
-            createInfo.queueFamilyIndexCount = std::size(queueFamilyIndices);
-            createInfo.pQueueFamilyIndices   = std::data(queueFamilyIndices);
-        } else {
-            createInfo.imageSharingMode      = VK_SHARING_MODE_EXCLUSIVE;
-            createInfo.queueFamilyIndexCount = 0;
-            createInfo.pQueueFamilyIndices   = nullptr;
-        }
-        createInfo.preTransform   = supportDetails.capabilities.currentTransform;
-        createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-        createInfo.presentMode    = presentMode;
-        createInfo.clipped        = VK_TRUE;
-        createInfo.oldSwapchain   = VK_NULL_HANDLE;
+        const bool differentQueueIndices = familyIndices.graphicsFamily != familyIndices.presentFamily;
+
+        VkSwapchainCreateInfoKHR createInfo{
+            .sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+            .surface               = this->device.getSurface(),
+            .minImageCount         = imageCount,
+            .imageFormat           = surfaceFormat.format,
+            .imageColorSpace       = surfaceFormat.colorSpace,
+            .imageExtent           = extent,
+            .imageArrayLayers      = 1,
+            .imageUsage            = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+            .imageSharingMode      = differentQueueIndices ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
+            .queueFamilyIndexCount = differentQueueIndices ? static_cast<uint32_t>(std::size(queueFamilyIndices)) : 0,
+            .pQueueFamilyIndices   = differentQueueIndices ? std::data(queueFamilyIndices) : nullptr,
+            .preTransform          = supportDetails.capabilities.currentTransform,
+            .compositeAlpha        = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+            .presentMode           = presentMode,
+            .clipped               = VK_TRUE,
+            .oldSwapchain          = VK_NULL_HANDLE,
+        };
 
         if(vkCreateSwapchainKHR(this->device.get(), &createInfo, nullptr, &swapchain) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create swap chain");
@@ -98,7 +95,7 @@ namespace clv::gfx::vk {
 
         imageViews.resize(std::size(images));
         for(size_t i = 0; i < images.size(); ++i) {
-            imageViews[i] = std::make_shared<VKImageView>(this->device.get(), createImageView(this->device.get(), images[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT));
+            imageViews[i] = std::make_shared<VKImageView>(this->device.get(), VKImageView::create(this->device.get(), images[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT));
         }
     }
 

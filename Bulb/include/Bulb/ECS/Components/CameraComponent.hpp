@@ -29,13 +29,13 @@ namespace blb::ecs {
 
         void setZoomLevel(float zoom);
 
-        void setViewport(clv::gfx::Viewport viewport);
+        void setViewport(rnd::Viewport viewport);
 
         const clv::mth::mat4f& getView() const;
         const clv::mth::mat4f& getProjection() const;
 
         rnd::Camera::ProjectionMode getProjectionMode() const;
 
-        const clv::gfx::Viewport& getViewport() const;
+        const rnd::Viewport& getViewport() const;
     };
 }

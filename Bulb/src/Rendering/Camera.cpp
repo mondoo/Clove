@@ -6,7 +6,7 @@ using namespace clv;
 using namespace clv::gfx;
 
 namespace blb::rnd {
-    Camera::Camera(clv::gfx::Viewport viewport, const ProjectionMode projection)
+    Camera::Camera(Viewport viewport, const ProjectionMode projection)
         : viewport(std::move(viewport)) {
         setProjectionMode(projection);
     }
@@ -62,7 +62,7 @@ namespace blb::rnd {
         setProjectionMode(currentProjectionMode);
     }
 
-    void Camera::setViewport(clv::gfx::Viewport viewport) {
+    void Camera::setViewport(Viewport viewport) {
         this->viewport = std::move(viewport);
         setProjectionMode(currentProjectionMode);
     }
@@ -79,7 +79,7 @@ namespace blb::rnd {
         return currentProjectionMode;
     }
 
-    const clv::gfx::Viewport& Camera::getViewport() const {
+    const Viewport& Camera::getViewport() const {
         return viewport;
     }
 }

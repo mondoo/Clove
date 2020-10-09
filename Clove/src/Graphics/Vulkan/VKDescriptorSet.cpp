@@ -4,7 +4,6 @@
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
 #include "Clove/Graphics/Vulkan/VKSampler.hpp"
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Utils/Cast.hpp"
 
 namespace clv::gfx::vk {

@@ -63,6 +63,8 @@ set(
 
 set(
 	GraphicsFiles
+		${CLV_INCLUDE}/Graphics/CommandBuffer.hpp
+		${CLV_INCLUDE}/Graphics/Descriptor.hpp
 		${CLV_INCLUDE}/Graphics/DescriptorPool.hpp
 		${CLV_INCLUDE}/Graphics/DescriptorSet.hpp
 		${CLV_INCLUDE}/Graphics/DescriptorSetLayout.hpp
@@ -70,6 +72,7 @@ set(
 		${CLV_INCLUDE}/Graphics/Framebuffer.hpp
 		${CLV_INCLUDE}/Graphics/Graphics.hpp		
 		${CLV_SOURCE}/Graphics/Graphics.cpp
+		${CLV_INCLUDE}/Graphics/GraphicsAPI.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsBuffer.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsCommandBuffer.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsDevice.hpp
@@ -78,10 +81,12 @@ set(
 		${CLV_INCLUDE}/Graphics/GraphicsImageView.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsQueue.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsResource.hpp
-		${CLV_INCLUDE}/Graphics/GraphicsTypes.hpp
+		${CLV_INCLUDE}/Graphics/MemoryBarrier.hpp
 		${CLV_INCLUDE}/Graphics/PipelineObject.hpp
 		${CLV_INCLUDE}/Graphics/PresentQueue.hpp
+		${CLV_INCLUDE}/Graphics/Queue.hpp
 		${CLV_INCLUDE}/Graphics/RenderPass.hpp
+		${CLV_INCLUDE}/Graphics/Result.hpp
 		${CLV_INCLUDE}/Graphics/Sampler.hpp
 		${CLV_INCLUDE}/Graphics/Semaphore.hpp
 		${CLV_INCLUDE}/Graphics/Shader.hpp
@@ -102,6 +107,10 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/MemoryAllocator.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKBuffer.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKCommandBuffer.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKCommandBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptor.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptor.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorPool.hpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorPool.inl
 		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptorPool.cpp
@@ -128,12 +137,18 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKImage.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKImageView.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKImageView.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKMemoryBarrier.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKMemoryBarrier.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKPipelineObject.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKPipelineObject.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKPresentQueue.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKPresentQueue.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKQueue.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKQueue.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKRenderPass.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKRenderPass.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKResult.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKResult.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKSampler.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKSampler.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKSemaphore.hpp
@@ -146,8 +161,6 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKTransferCommandBuffer.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKTransferQueue.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKTransferQueue.cpp
-		${CLV_INCLUDE}/Graphics/Vulkan/VulkanHelpers.hpp
-		${CLV_SOURCE}/Graphics/Vulkan/VulkanHelpers.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VulkanTypes.hpp
 )
 

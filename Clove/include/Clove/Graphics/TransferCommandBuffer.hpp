@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Clove/Graphics/CommandBuffer.hpp"
 #include "Clove/Graphics/GraphicsImage.hpp"
+#include "Clove/Graphics/MemoryBarrier.hpp"
 #include "Clove/Graphics/PipelineObject.hpp"
 
 namespace clv::gfx {

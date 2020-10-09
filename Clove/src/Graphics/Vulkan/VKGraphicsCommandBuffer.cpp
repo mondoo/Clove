@@ -1,16 +1,28 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsCommandBuffer.hpp"
 
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKGraphicsResource.hpp"
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
+#include "Clove/Graphics/Vulkan/VKMemoryBarrier.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Graphics/Vulkan/VKShader.hpp"
 #include "Clove/Utils/Cast.hpp"
 
 namespace clv::gfx::vk {
+    static VkIndexType getIndexType(IndexType garlicType) {
+        switch(garlicType) {
+            case IndexType::Uint16:
+                return VK_INDEX_TYPE_UINT16;
+            default:
+                GARLIC_ASSERT(false, "{0}: Unkown index type", GARLIC_FUNCTION_NAME);
+                return VK_INDEX_TYPE_UINT16;
+        }
+    }
+
     VKGraphicsCommandBuffer::VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
         : commandBuffer(commandBuffer)
         , queueFamilyIndices(std::move(queueFamilyIndices)) {
@@ -93,7 +105,7 @@ namespace clv::gfx::vk {
     }
 
     void VKGraphicsCommandBuffer::pushConstant(PipelineObject& pipelineObject, const Shader::Stage stage, const uint32_t size, const void* data) {
-        vkCmdPushConstants(commandBuffer, polyCast<VKPipelineObject>(&pipelineObject)->getLayout(), convertShaderStage(stage), 0, size, data);
+        vkCmdPushConstants(commandBuffer, polyCast<VKPipelineObject>(&pipelineObject)->getLayout(), VKShader::convertStage(stage), 0, size, data);
     }
 
     void VKGraphicsCommandBuffer::drawIndexed(const size_t indexCount) {

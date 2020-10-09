@@ -2,7 +2,6 @@
 
 #include "Clove/Graphics/Vulkan/VKGraphicsResource.hpp"
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
@@ -101,7 +100,7 @@ namespace clv::gfx::vk {
 
     std::unique_ptr<GraphicsImageView> VKImage::createView() const {
         const VkImageAspectFlags aspectFlags = descriptor.format == Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
-        return std::make_unique<VKImageView>(device.get(), createImageView(device.get(), image, getImageViewType(descriptor.type), convertFormat(descriptor.format), aspectFlags));
+        return std::make_unique<VKImageView>(device.get(), VKImageView::create(device.get(), image, getImageViewType(descriptor.type), convertFormat(descriptor.format), aspectFlags));
     }
 
     VkImage VKImage::getImage() const {

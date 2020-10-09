@@ -1,10 +1,11 @@
 #include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
 
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKGraphicsResource.hpp"
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
+#include "Clove/Graphics/Vulkan/VKMemoryBarrier.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Log.hpp"
 #include "Clove/Utils/Cast.hpp"
 
@@ -23,10 +24,11 @@ namespace clv::gfx::vk {
     VKTransferCommandBuffer::~VKTransferCommandBuffer() = default;
 
     void VKTransferCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
-        VkCommandBufferBeginInfo beginInfo{};
-        beginInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags            = getCommandBufferUsageFlags(usageFlag);
-        beginInfo.pInheritanceInfo = nullptr;
+        VkCommandBufferBeginInfo beginInfo{
+            .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+            .flags            = getCommandBufferUsageFlags(usageFlag),
+            .pInheritanceInfo = nullptr,
+        };
 
         if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to begin recording command buffer");
@@ -40,25 +42,29 @@ namespace clv::gfx::vk {
     }
 
     void VKTransferCommandBuffer::copyBufferToBuffer(GraphicsBuffer& source, const size_t sourceOffset, GraphicsBuffer& destination, const size_t destinationOffset, const size_t sizeBytes) {
-        VkBufferCopy copyRegion{};
-        copyRegion.srcOffset = sourceOffset;
-        copyRegion.dstOffset = destinationOffset;
-        copyRegion.size      = sizeBytes;
+        VkBufferCopy copyRegion{
+            .srcOffset = sourceOffset,
+            .dstOffset = destinationOffset,
+            .size      = sizeBytes,
+        };
 
         vkCmdCopyBuffer(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKBuffer>(&destination)->getBuffer(), 1, &copyRegion);
     }
 
     void VKTransferCommandBuffer::copyBufferToImage(GraphicsBuffer& source, const size_t sourceOffset, GraphicsImage& destination, GraphicsImage::Layout destinationLayout, const mth::vec3i& destinationOffset, const mth::vec3ui& destinationExtent) {
-        VkBufferImageCopy copyRegion{};
-        copyRegion.bufferOffset                    = sourceOffset;
-        copyRegion.bufferRowLength                 = 0;                        //Tightly packed
-        copyRegion.bufferImageHeight               = 0;                        //Tightly packed
-        copyRegion.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;//TODO: Handle other aspect masks
-        copyRegion.imageSubresource.mipLevel       = 0;
-        copyRegion.imageSubresource.baseArrayLayer = 0;
-        copyRegion.imageSubresource.layerCount     = 1;
-        copyRegion.imageOffset                     = { destinationOffset.x, destinationOffset.y, destinationOffset.z };
-        copyRegion.imageExtent                     = { destinationExtent.x, destinationExtent.y, destinationExtent.z };
+        VkBufferImageCopy copyRegion{
+            .bufferOffset      = sourceOffset,
+            .bufferRowLength   = 0,//Tightly packed
+            .bufferImageHeight = 0,//Tightly packed
+            .imageSubresource  = {
+                .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,//TODO: Handle other aspect masks
+                .mipLevel       = 0,
+                .baseArrayLayer = 0,
+                .layerCount     = 1,
+            },
+            .imageOffset = { destinationOffset.x, destinationOffset.y, destinationOffset.z },
+            .imageExtent = { destinationExtent.x, destinationExtent.y, destinationExtent.z },
+        };
 
         vkCmdCopyBufferToImage(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKImage>(&destination)->getImage(), VKImage::convertLayout(destinationLayout), 1, &copyRegion);
     }
@@ -67,16 +73,17 @@ namespace clv::gfx::vk {
         const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
         const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
-        VkBufferMemoryBarrier barrier{};
-        barrier.sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-        barrier.pNext               = nullptr;
-        barrier.srcAccessMask       = convertAccessFlags(barrierInfo.sourceAccess);
-        barrier.dstAccessMask       = convertAccessFlags(barrierInfo.destinationAccess);
-        barrier.srcQueueFamilyIndex = sourceFamilyIndex;
-        barrier.dstQueueFamilyIndex = destinationFamilyIndex;
-        barrier.buffer              = polyCast<VKBuffer>(&buffer)->getBuffer();
-        barrier.offset              = 0;
-        barrier.size                = VK_WHOLE_SIZE;
+        VkBufferMemoryBarrier barrier{
+            .sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+            .pNext               = nullptr,
+            .srcAccessMask       = convertAccessFlags(barrierInfo.sourceAccess),
+            .dstAccessMask       = convertAccessFlags(barrierInfo.destinationAccess),
+            .srcQueueFamilyIndex = sourceFamilyIndex,
+            .dstQueueFamilyIndex = destinationFamilyIndex,
+            .buffer              = polyCast<VKBuffer>(&buffer)->getBuffer(),
+            .offset              = 0,
+            .size                = VK_WHOLE_SIZE,
+        };
 
         const VkPipelineStageFlags vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
         const VkPipelineStageFlags vkDestinationStage = VKPipelineObject::convertStage(destinationStage);
@@ -99,21 +106,24 @@ namespace clv::gfx::vk {
         const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
         const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
-        VkImageMemoryBarrier barrier{};
-        barrier.sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-        barrier.pNext                           = nullptr;
-        barrier.srcAccessMask                   = convertAccessFlags(barrierInfo.sourceAccess);
-        barrier.dstAccessMask                   = convertAccessFlags(barrierInfo.destinationAccess);
-        barrier.oldLayout                       = VKImage::convertLayout(barrierInfo.oldImageLayout);
-        barrier.newLayout                       = VKImage::convertLayout(barrierInfo.newImageLayout);
-        barrier.srcQueueFamilyIndex             = sourceFamilyIndex;
-        barrier.dstQueueFamilyIndex             = destinationFamilyIndex;
-        barrier.image                           = polyCast<VKImage>(&image)->getImage();
-        barrier.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;//TODO: Handle other aspect masks
-        barrier.subresourceRange.baseMipLevel   = 0;
-        barrier.subresourceRange.levelCount     = 1;
-        barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.layerCount     = 1;
+        VkImageMemoryBarrier barrier{
+            .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+            .pNext               = nullptr,
+            .srcAccessMask       = convertAccessFlags(barrierInfo.sourceAccess),
+            .dstAccessMask       = convertAccessFlags(barrierInfo.destinationAccess),
+            .oldLayout           = VKImage::convertLayout(barrierInfo.oldImageLayout),
+            .newLayout           = VKImage::convertLayout(barrierInfo.newImageLayout),
+            .srcQueueFamilyIndex = sourceFamilyIndex,
+            .dstQueueFamilyIndex = destinationFamilyIndex,
+            .image               = polyCast<VKImage>(&image)->getImage(),
+            .subresourceRange    = {
+                .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,//TODO: Handle other aspect masks
+                .baseMipLevel   = 0,
+                .levelCount     = 1,
+                .baseArrayLayer = 0,
+                .layerCount     = 1,
+            },
+        };
 
         const VkPipelineStageFlags vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
         const VkPipelineStageFlags vkDestinationStage = VKPipelineObject::convertStage(destinationStage);

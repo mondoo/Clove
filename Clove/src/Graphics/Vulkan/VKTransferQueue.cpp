@@ -1,7 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKTransferQueue.hpp"
 
+#include "Clove/Graphics/Vulkan/VKQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Log.hpp"
 #include "Clove/Utils/Cast.hpp"
 
@@ -15,11 +15,12 @@ namespace clv::gfx::vk {
 
         vkGetDeviceQueue(this->device.get(), familyIndex, 0, &queue);
 
-        VkCommandPoolCreateInfo poolInfo{};
-        poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        poolInfo.pNext            = nullptr;
-        poolInfo.flags            = convertCommandPoolCreateFlags(descriptor.flags);
-        poolInfo.queueFamilyIndex = familyIndex;
+        VkCommandPoolCreateInfo poolInfo{
+            .sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+            .pNext            = nullptr,
+            .flags            = convertCommandPoolCreateFlags(descriptor.flags),
+            .queueFamilyIndex = familyIndex,
+        };
 
         if(vkCreateCommandPool(this->device.get(), &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
@@ -35,11 +36,12 @@ namespace clv::gfx::vk {
 
         VkCommandBuffer commandBuffer;
 
-        VkCommandBufferAllocateInfo allocInfo{};
-        allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.commandPool        = commandPool;
-        allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandBufferCount = 1;
+        VkCommandBufferAllocateInfo allocInfo{
+            .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+            .commandPool        = commandPool,
+            .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+            .commandBufferCount = 1,
+        };
 
         if(vkAllocateCommandBuffers(device.get(), &allocInfo, &commandBuffer) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate command buffer");
@@ -61,15 +63,16 @@ namespace clv::gfx::vk {
             commandBuffers[i] = polyCast<VKTransferCommandBuffer>(submitInfo.commandBuffers[i].get())->getCommandBuffer();
         }
 
-        VkSubmitInfo vkSubmitInfo{};
-        vkSubmitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        vkSubmitInfo.waitSemaphoreCount   = 0;
-        vkSubmitInfo.pWaitSemaphores      = nullptr;
-        vkSubmitInfo.pWaitDstStageMask    = 0;
-        vkSubmitInfo.commandBufferCount   = commandBufferCount;
-        vkSubmitInfo.pCommandBuffers      = std::data(commandBuffers);
-        vkSubmitInfo.signalSemaphoreCount = 0;
-        vkSubmitInfo.pSignalSemaphores    = nullptr;
+        VkSubmitInfo vkSubmitInfo{
+            .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+            .waitSemaphoreCount   = 0,
+            .pWaitSemaphores      = nullptr,
+            .pWaitDstStageMask    = 0,
+            .commandBufferCount   = static_cast<uint32_t>(commandBufferCount),
+            .pCommandBuffers      = std::data(commandBuffers),
+            .signalSemaphoreCount = 0,
+            .pSignalSemaphores    = nullptr,
+        };
 
         if(vkQueueSubmit(queue, 1, &vkSubmitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to submit graphics command buffer(s)");

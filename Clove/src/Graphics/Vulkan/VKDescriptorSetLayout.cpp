@@ -1,14 +1,15 @@
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
 
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Graphics/Vulkan/VKDescriptor.hpp"
+#include "Clove/Graphics/Vulkan/VKShader.hpp"
 #include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
 
 namespace clv::gfx::vk {
     VKDescriptorSetLayout::VKDescriptorSetLayout(DevicePointer device, Descriptor descriptor)
-        : device(std::move(device)) 
-        , descriptor(std::move(descriptor)){
+        : device(std::move(device))
+        , descriptor(std::move(descriptor)) {
         std::vector<VkDescriptorSetLayoutBinding> layoutBindings(std::size(this->descriptor.bindings));
 
         for(size_t i = 0; i < std::size(layoutBindings); ++i) {
@@ -17,16 +18,17 @@ namespace clv::gfx::vk {
             layoutBindings[i].binding            = bindingDescriptor.binding;
             layoutBindings[i].descriptorType     = getDescriptorType(bindingDescriptor.type);
             layoutBindings[i].descriptorCount    = bindingDescriptor.arraySize;
-            layoutBindings[i].stageFlags         = convertShaderStage(bindingDescriptor.stage);
+            layoutBindings[i].stageFlags         = VKShader::convertStage(bindingDescriptor.stage);
             layoutBindings[i].pImmutableSamplers = nullptr;
         }
 
-        VkDescriptorSetLayoutCreateInfo createInfo{};
-        createInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-        createInfo.pNext        = nullptr;
-        createInfo.flags        = 0;
-        createInfo.bindingCount = std::size(layoutBindings);
-        createInfo.pBindings    = std::data(layoutBindings);
+        VkDescriptorSetLayoutCreateInfo createInfo{
+            .sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+            .pNext        = nullptr,
+            .flags        = 0,
+            .bindingCount = static_cast<uint32_t>(std::size(layoutBindings)),
+            .pBindings    = std::data(layoutBindings),
+        };
 
         if(vkCreateDescriptorSetLayout(this->device.get(), &createInfo, nullptr, &layout) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create descriptor set");

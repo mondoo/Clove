@@ -3,8 +3,6 @@
 #include "Bulb/Rendering/Material.hpp"
 #include "Bulb/Rendering/Vertex.hpp"
 
-#include <Clove/Graphics/GraphicsTypes.hpp>
-
 namespace clv::gfx {
     class GraphicsBuffer;
     class VertexLayout;

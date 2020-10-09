@@ -1,9 +1,16 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsTypes.hpp"
-
 namespace clv::plt {
     class Window;
+}
+
+namespace blb::rnd {
+    struct Viewport {
+        int32_t x{ 0 };
+        int32_t y{ 0 };
+        int32_t width{ 0 };
+        int32_t height{ 0 };
+    };
 }
 
 namespace blb::rnd {
@@ -21,7 +28,7 @@ namespace blb::rnd {
         clv::mth::mat4f view       = clv::mth::mat4f{ 1.0f };
         clv::mth::mat4f projection = clv::mth::mat4f{ 1.0f };
 
-        clv::gfx::Viewport viewport;
+        Viewport viewport;
 
         float zoomLevel = 1.0f;
 
@@ -30,7 +37,7 @@ namespace blb::rnd {
         //FUNCTIONS
     public:
         Camera() = delete;
-        Camera(clv::gfx::Viewport viewport, const ProjectionMode projection);
+        Camera(Viewport viewport, const ProjectionMode projection);
         Camera(clv::plt::Window& window, const ProjectionMode projection);
 
         Camera(const Camera& other) = delete;
@@ -46,13 +53,13 @@ namespace blb::rnd {
 
         void setZoomLevel(float zoom);
 
-        void setViewport(clv::gfx::Viewport viewport);
+        void setViewport(Viewport viewport);
 
         const clv::mth::mat4f& getView() const;
         const clv::mth::mat4f& getProjection() const;
 
         ProjectionMode getProjectionMode() const;
 
-        const clv::gfx::Viewport& getViewport() const;
+        const Viewport& getViewport() const;
     };
 }

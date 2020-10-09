@@ -3,8 +3,8 @@
 #include "Clove/Graphics/Shader.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
-#include <vulkan/vulkan.h>
 #include <span>
+#include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
     class VKShader : public Shader {
@@ -29,5 +29,7 @@ namespace clv::gfx::vk {
         ~VKShader();
 
         VkShaderModule getModule() const;
+
+        static VkShaderStageFlags convertStage(Stage stage);
     };
 }

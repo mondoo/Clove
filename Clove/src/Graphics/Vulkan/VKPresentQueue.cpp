@@ -1,9 +1,9 @@
 #include "Clove/Graphics/Vulkan/VKPresentQueue.hpp"
 
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
+#include "Clove/Graphics/Vulkan/VKResult.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Utils/Cast.hpp"
 
 namespace clv::gfx::vk {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Clove/Graphics/Queue.hpp"
 #include "Clove/Graphics/TransferCommandBuffer.hpp"
 
 namespace clv::gfx {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsImage.hpp"
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/Result.hpp"
 
 namespace clv::gfx {
     class Semaphore;

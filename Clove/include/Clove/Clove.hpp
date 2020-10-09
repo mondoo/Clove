@@ -5,12 +5,9 @@
 #include "Clove/Audio/AudioFactory.hpp"
 #include "Clove/Audio/AudioListener.hpp"
 #include "Clove/Audio/AudioSource.hpp"
-
 #include "Clove/Event/EventDispatcher.hpp"
 #include "Clove/Event/EventHandle.hpp"
-
 #include "Clove/Exception/CloveException.hpp"
-
 #include "Clove/Graphics/DescriptorPool.hpp"
 #include "Clove/Graphics/DescriptorSet.hpp"
 #include "Clove/Graphics/DescriptorSetLayout.hpp"
@@ -23,7 +20,6 @@
 #include "Clove/Graphics/GraphicsImage.hpp"
 #include "Clove/Graphics/GraphicsImageView.hpp"
 #include "Clove/Graphics/GraphicsQueue.hpp"
-#include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/PipelineObject.hpp"
 #include "Clove/Graphics/PresentQueue.hpp"
 #include "Clove/Graphics/RenderPass.hpp"
@@ -33,14 +29,11 @@
 #include "Clove/Graphics/Swapchain.hpp"
 #include "Clove/Graphics/TransferCommandBuffer.hpp"
 #include "Clove/Graphics/TransferQueue.hpp"
-
 #include "Clove/Input/InputEvent.hpp"
 #include "Clove/Input/KeyCodes.hpp"
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Input/MouseButtonCodes.hpp"
-
 #include "Clove/Log.hpp"
-
 #include "Clove/Platform/Platform.hpp"
 #include "Clove/Platform/Window.hpp"

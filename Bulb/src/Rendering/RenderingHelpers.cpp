@@ -4,7 +4,6 @@
 
 #include <Clove/Graphics/DescriptorSetLayout.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Graphics/GraphicsTypes.hpp>
 #include <Clove/Graphics/Shader.hpp>
 
 namespace blb::rnd {

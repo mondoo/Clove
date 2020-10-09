@@ -1,8 +1,8 @@
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
 
+#include "Clove/Graphics/Vulkan/VKDescriptor.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Log.hpp"
 #include "Clove/Utils/Cast.hpp"
 

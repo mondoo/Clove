@@ -27,7 +27,7 @@ namespace blb::ecs {
         camera.setZoomLevel(zoom);
     }
 
-    void CameraComponent::setViewport(clv::gfx::Viewport viewport) {
+    void CameraComponent::setViewport(rnd::Viewport viewport) {
         camera.setViewport(viewport);
     }
 
@@ -43,7 +43,7 @@ namespace blb::ecs {
         return camera.getProjectionMode();
     }
 
-    const clv::gfx::Viewport& CameraComponent::getViewport() const {
+    const rnd::Viewport& CameraComponent::getViewport() const {
         return camera.getViewport();
     }
 }

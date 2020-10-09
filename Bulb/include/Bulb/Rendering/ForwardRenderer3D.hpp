@@ -3,10 +3,10 @@
 #include "Bulb/Rendering/ShaderBufferTypes.hpp"
 
 #include <Clove/Graphics/DescriptorSetLayout.hpp>
+#include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Graphics/GraphicsTypes.hpp>
 
 namespace clv::plt {
     class Window;
@@ -121,7 +121,7 @@ namespace blb::rnd {
         ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D& operator=(const ForwardRenderer3D& other) = delete;
-        ForwardRenderer3D& operator                                  =(ForwardRenderer3D&& other) noexcept;
+        ForwardRenderer3D& operator=(ForwardRenderer3D&& other) noexcept;
 
         ~ForwardRenderer3D();
 

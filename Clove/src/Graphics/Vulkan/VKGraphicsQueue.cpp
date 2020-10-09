@@ -2,21 +2,15 @@
 
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKGraphicsCommandBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/VKQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Log.hpp"
 #include "Clove/Utils/Cast.hpp"
 
 #include <Root/Definitions.hpp>
 
 namespace clv::gfx::vk {
-    static VkPipelineStageFlagBits getPipelineStageFlag(WaitStage stage) {
-        switch(stage) {
-            case WaitStage::ColourAttachmentOutput:
-                return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        }
-    }
-
     VKGraphicsQueue::VKGraphicsQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)
         : device(std::move(device))
         , queueFamilyIndices(std::move(queueFamilyIndices)) {
@@ -24,11 +18,12 @@ namespace clv::gfx::vk {
 
         vkGetDeviceQueue(this->device.get(), familyIndex, 0, &queue);
 
-        VkCommandPoolCreateInfo poolInfo{};
-        poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        poolInfo.pNext            = nullptr;
-        poolInfo.flags            = convertCommandPoolCreateFlags(descriptor.flags);
-        poolInfo.queueFamilyIndex = familyIndex;
+        VkCommandPoolCreateInfo poolInfo{
+            .sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+            .pNext            = nullptr,
+            .flags            = convertCommandPoolCreateFlags(descriptor.flags),
+            .queueFamilyIndex = familyIndex,
+        };
 
         if(vkCreateCommandPool(this->device.get(), &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
@@ -48,11 +43,12 @@ namespace clv::gfx::vk {
 
         VkCommandBuffer commandBuffer;
 
-        VkCommandBufferAllocateInfo allocInfo{};
-        allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.commandPool        = commandPool;
-        allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandBufferCount = 1;
+        VkCommandBufferAllocateInfo allocInfo{
+            .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+            .commandPool        = commandPool,
+            .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+            .commandBufferCount = 1,
+        };
 
         if(vkAllocateCommandBuffers(device.get(), &allocInfo, &commandBuffer) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate command buffer");
@@ -76,7 +72,7 @@ namespace clv::gfx::vk {
         }
         std::vector<VkPipelineStageFlags> waitStages(waitSemaphoreCount);
         for(size_t i = 0; i < waitSemaphoreCount; ++i) {
-            waitStages[i] = getPipelineStageFlag(submitInfo.waitStages[i]);
+            waitStages[i] = VKPipelineObject::convertStage(submitInfo.waitStages[i]);
         }
 
         //Command buffers
@@ -93,15 +89,16 @@ namespace clv::gfx::vk {
             signalSemaphores[i] = polyCast<VKSemaphore>(submitInfo.signalSemaphores[i].get())->getSemaphore();
         }
 
-        VkSubmitInfo vkSubmitInfo{};
-        vkSubmitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        vkSubmitInfo.waitSemaphoreCount   = waitSemaphoreCount;
-        vkSubmitInfo.pWaitSemaphores      = std::data(waitSemaphores);
-        vkSubmitInfo.pWaitDstStageMask    = std::data(waitStages);
-        vkSubmitInfo.commandBufferCount   = commandBufferCount;
-        vkSubmitInfo.pCommandBuffers      = std::data(commandBuffers);
-        vkSubmitInfo.signalSemaphoreCount = signalSemaphoreCount;
-        vkSubmitInfo.pSignalSemaphores    = std::data(signalSemaphores);
+        VkSubmitInfo vkSubmitInfo{
+            .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+            .waitSemaphoreCount   = static_cast<uint32_t>(waitSemaphoreCount),
+            .pWaitSemaphores      = std::data(waitSemaphores),
+            .pWaitDstStageMask    = std::data(waitStages),
+            .commandBufferCount   = static_cast<uint32_t>(commandBufferCount),
+            .pCommandBuffers      = std::data(commandBuffers),
+            .signalSemaphoreCount = static_cast<uint32_t>(signalSemaphoreCount),
+            .pSignalSemaphores    = std::data(signalSemaphores),
+        };
 
         if(vkQueueSubmit(queue, 1, &vkSubmitInfo, fence ? polyCast<const VKFence>(fence)->getFence() : VK_NULL_HANDLE) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to submit graphics command buffer(s)");

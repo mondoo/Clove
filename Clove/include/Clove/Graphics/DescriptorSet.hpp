@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Clove/Graphics/Descriptor.hpp"
 #include "Clove/Graphics/GraphicsImage.hpp"
 
 #include <span>

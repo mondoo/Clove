@@ -373,7 +373,7 @@ namespace blb::rnd {
         //Submit the command buffer associated with that image
         GraphicsSubmitInfo submitInfo{};
         submitInfo.waitSemaphores   = { imageAvailableSemaphores[currentFrame] };
-        submitInfo.waitStages       = { WaitStage::ColourAttachmentOutput };
+        submitInfo.waitStages       = { PipelineObject::Stage::ColourAttachmentOutput };
         submitInfo.commandBuffers   = { commandBuffers[imageIndex] };
         submitInfo.signalSemaphores = { renderFinishedSemaphores[currentFrame] };
         graphicsQueue->submit(submitInfo, inFlightFences[currentFrame].get());

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsCommandBuffer.hpp"
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/PipelineObject.hpp"
+#include "Clove/Graphics/Queue.hpp"
 
 namespace clv::gfx {
     class Fence;
@@ -9,7 +10,7 @@ namespace clv::gfx {
 
     struct GraphicsSubmitInfo {
         std::vector<std::shared_ptr<Semaphore>> waitSemaphores; /**< Each element in the semaphore maps to an element in the waitStages */
-        std::vector<WaitStage> waitStages;
+        std::vector<PipelineObject::Stage> waitStages;          /**< What stage in the pipeline to wait on the semaphore */
         //TODO: Make the above a pair
 
         std::vector<std::shared_ptr<GraphicsCommandBuffer>> commandBuffers;

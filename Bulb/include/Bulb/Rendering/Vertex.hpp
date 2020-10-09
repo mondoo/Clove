@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Clove/Graphics/GraphicsTypes.hpp>
+#include <Clove/Graphics/PipelineObject.hpp>
 
 namespace blb::rnd {
     struct Vertex {

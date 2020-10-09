@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsTypes.hpp"
 #include "Clove/Graphics/TransferQueue.hpp"
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
