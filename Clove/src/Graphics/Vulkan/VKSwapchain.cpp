@@ -1,8 +1,10 @@
 #include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
 
-#include "Clove/Utils/Cast.hpp"
-#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
+#include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
+#include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
+#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Utils/Cast.hpp"
 
 namespace clv::gfx::vk {
     static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {
@@ -108,8 +110,8 @@ namespace clv::gfx::vk {
         vkDestroySwapchainKHR(device.get(), swapchain, nullptr);
     }
 
-    ImageFormat VKSwapchain::getImageFormat() const {
-        return convertImageFormat(swapChainImageFormat);
+    GraphicsImage::Format VKSwapchain::getImageFormat() const {
+        return VKImage::convertFormat(swapChainImageFormat);
     }
 
     clv::mth::vec2ui VKSwapchain::getExtent() const {

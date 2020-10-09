@@ -21,14 +21,14 @@ namespace clv::gfx::vk {
         VKDescriptorSet(VKDescriptorSet&& other) noexcept;
 
         VKDescriptorSet& operator=(const VKDescriptorSet& other) = delete;
-        VKDescriptorSet& operator                                =(VKDescriptorSet&& other) noexcept;
+        VKDescriptorSet& operator=(VKDescriptorSet&& other) noexcept;
 
         ~VKDescriptorSet();
 
         void write(const GraphicsBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot) override;
 
-        void write(const GraphicsImageView& imageView, const Sampler& sampler, const ImageLayout layout, const uint32_t bindingSlot) override;
-        void write(std::span<std::shared_ptr<GraphicsImageView>> imageViews, const Sampler& sampler, const ImageLayout layout, const uint32_t bindingSlot) override;
+        void write(const GraphicsImageView& imageView, const Sampler& sampler, const GraphicsImage::Layout layout, const uint32_t bindingSlot) override;
+        void write(std::span<std::shared_ptr<GraphicsImageView>> imageViews, const Sampler& sampler, const GraphicsImage::Layout layout, const uint32_t bindingSlot) override;
 
         VkDescriptorSet getDescriptorSet() const;
     };

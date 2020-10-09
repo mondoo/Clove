@@ -43,41 +43,6 @@ namespace clv::gfx::vk {
         return vkStage;
     }
 
-    ImageFormat convertImageFormat(VkFormat vulkanFormat) {
-        switch(vulkanFormat) {
-            //Formats supported by garlic
-            case VK_FORMAT_R8G8B8A8_SRGB:
-                return ImageFormat::R8G8B8A8_SRGB;
-            case VK_FORMAT_B8G8R8A8_SRGB:
-                return ImageFormat::B8G8R8A8_SRGB;
-            case VK_FORMAT_B8G8R8A8_UNORM:
-                return ImageFormat::B8G8R8A8_UNORM;
-            case VK_FORMAT_D32_SFLOAT:
-                return ImageFormat::D32_SFLOAT;
-            default:
-                GARLIC_ASSERT(false, "{0}: Format not supported by garlic", GARLIC_FUNCTION_NAME);
-                return ImageFormat::Unkown;
-        }
-    }
-
-    VkFormat convertImageFormat(ImageFormat garlicFormat) {
-        switch(garlicFormat) {
-            case ImageFormat::Unkown:
-                return VK_FORMAT_UNDEFINED;
-            case ImageFormat::R8G8B8A8_SRGB:
-                return VK_FORMAT_R8G8B8A8_SRGB;
-            case ImageFormat::B8G8R8A8_SRGB:
-                return VK_FORMAT_B8G8R8A8_SRGB;
-            case ImageFormat::B8G8R8A8_UNORM:
-                return VK_FORMAT_B8G8R8A8_UNORM;
-            case ImageFormat::D32_SFLOAT:
-                return VK_FORMAT_D32_SFLOAT;
-            default:
-                GARLIC_ASSERT(false, "{0}: Unkown format", GARLIC_FUNCTION_NAME);
-                return VK_FORMAT_UNDEFINED;
-        }
-    }
-
     Result convertResult(VkResult result) {
         switch(result) {
             case VK_SUCCESS:
@@ -128,72 +93,6 @@ namespace clv::gfx::vk {
                 return VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;//Including HOST_COHERENT here as this makes mapping memory more simple
             default:
                 break;
-        }
-    }
-
-    VkImageLayout convertImageLayout(ImageLayout garlicFormat) {
-        switch(garlicFormat) {
-            case ImageLayout::Undefined:
-                return VK_IMAGE_LAYOUT_UNDEFINED;
-            case ImageLayout::General:
-                return VK_IMAGE_LAYOUT_GENERAL;
-            case ImageLayout::Present:
-                return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-            case ImageLayout::TransferDestinationOptimal:
-                return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-            case ImageLayout::ShaderReadOnlyOptimal:
-                return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            case ImageLayout::ColourAttachmentOptimal:
-                return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-            case ImageLayout::DepthStencilAttachmentOptimal:
-                return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-            case ImageLayout::DepthStencilReadOnlyOptimal:
-                return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-            default:
-                GARLIC_ASSERT(false, "{0}: Unkown image layout", GARLIC_FUNCTION_NAME);
-                return VK_IMAGE_LAYOUT_UNDEFINED;
-        }
-    }
-
-    VkAttachmentLoadOp convertLoadOp(LoadOperation garlicOperation) {
-        switch(garlicOperation) {
-            case LoadOperation::DontCare:
-                return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-            case LoadOperation::Clear:
-                return VK_ATTACHMENT_LOAD_OP_CLEAR;
-            default:
-                GARLIC_ASSERT(false, "{0}: Unkown operation", GARLIC_FUNCTION_NAME);
-                return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        }
-    }
-
-    VkAttachmentStoreOp convertStoreOp(StoreOperation garlicOperation) {
-        switch(garlicOperation) {
-            case StoreOperation::DontCare:
-                return VK_ATTACHMENT_STORE_OP_DONT_CARE;
-            case StoreOperation::Store:
-                return VK_ATTACHMENT_STORE_OP_STORE;
-            default:
-                GARLIC_ASSERT(false, "{0}: Unkown operation", GARLIC_FUNCTION_NAME);
-                return VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        }
-    }
-
-    VkPipelineStageFlags convertPipelineStage(PipelineStage garlicStage) {
-        switch(garlicStage) {
-            case PipelineStage::Top:
-                return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-            case PipelineStage::Transfer:
-                return VK_PIPELINE_STAGE_TRANSFER_BIT;
-            case PipelineStage::PixelShader:
-                return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-            case PipelineStage::EarlyPixelTest:
-                return VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-            case PipelineStage::ColourAttachmentOutput:
-                return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-            default:
-                GARLIC_ASSERT(false, "{0}: Unkown pipeline stage", GARLIC_FUNCTION_NAME);
-                return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         }
     }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/GraphicsResource.hpp"
 
 #include <Root/Definitions.hpp>
 
@@ -11,8 +11,8 @@ namespace clv::gfx {
     class GraphicsBuffer {
         //TYPES
     public:
-        using UsageType = uint8_t;
-        enum class UsageMode : UsageType {
+        using UsageModeType = uint8_t;
+        enum class UsageMode : UsageModeType {
             TransferSource      = 1 << 0,
             TransferDestination = 1 << 1,
             VertexBuffer        = 1 << 2,
@@ -34,5 +34,5 @@ namespace clv::gfx {
         virtual void map(const void* data, const size_t offset, const size_t size) = 0;
     };
 
-    GARLIC_ENUM_BIT_FLAG_OPERATORS(GraphicsBuffer::UsageMode, GraphicsBuffer::UsageType)
+    GARLIC_ENUM_BIT_FLAG_OPERATORS(GraphicsBuffer::UsageMode, GraphicsBuffer::UsageModeType)
 }

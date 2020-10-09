@@ -101,7 +101,7 @@ namespace blb::rnd {
                         .type        = GraphicsImage::Type::_2D,
                         .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
                         .dimensions  = { shadowMapSize, shadowMapSize },
-                        .format      = ImageFormat::D32_SFLOAT,
+                        .format      = GraphicsImage::Format::D32_SFLOAT,
                         .sharingMode = SharingMode::Exclusive,
                         .memoryType  = MemoryType::VideoMemory
                     };
@@ -113,16 +113,16 @@ namespace blb::rnd {
 
             //Render pass for generating the shadow map
             AttachmentDescriptor depthAttachment{
-                .format         = ImageFormat::D32_SFLOAT,
+                .format         = GraphicsImage::Format::D32_SFLOAT,
                 .loadOperation  = LoadOperation::Clear,
                 .storeOperation = StoreOperation::Store,
-                .initialLayout  = ImageLayout::Undefined,
-                .finalLayout    = ImageLayout::ShaderReadOnlyOptimal,
+                .initialLayout  = GraphicsImage::Layout::Undefined,
+                .finalLayout    = GraphicsImage::Layout::ShaderReadOnlyOptimal,
             };
 
             AttachmentReference depthReference{
                 .attachmentIndex = 0,
-                .layout          = ImageLayout::DepthStencilAttachmentOptimal,
+                .layout          = GraphicsImage::Layout::DepthStencilAttachmentOptimal,
             };
 
             SubpassDescriptor subpass{
@@ -320,7 +320,7 @@ namespace blb::rnd {
         uniformBuffers[imageIndex]->map(&viewData, uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize);
         uniformBuffers[imageIndex]->map(&currentFrameData.viewPosition, uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize);
 
-        descriptorSets[imageIndex].lightingSet->write(shadowMapViews[imageIndex], *sampler, ImageLayout::ShaderReadOnlyOptimal, 3);
+        descriptorSets[imageIndex].lightingSet->write(shadowMapViews[imageIndex], *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
         uniformBuffers[imageIndex]->map(&currentFrameData.lights, uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize);
         uniformBuffers[imageIndex]->map(&currentFrameData.numLights, uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize);
         uniformBuffers[imageIndex]->map(&currentFrameData.directionalShadowTransforms, uniformBufferLayout.shadowTransformsOffset, uniformBufferLayout.shadowTransformsSize);
@@ -353,7 +353,7 @@ namespace blb::rnd {
             modelData.model        = transform;
             modelData.normalMatrix = clv::mth::inverse(clv::mth::transpose(transform));
 
-            materialDescriptorSet->write(*mesh->getMaterial().diffuseView, *sampler, ImageLayout::ShaderReadOnlyOptimal, 0);
+            materialDescriptorSet->write(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
 
             commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
@@ -480,24 +480,24 @@ namespace blb::rnd {
         colourAttachment.format         = swapchain->getImageFormat();
         colourAttachment.loadOperation  = LoadOperation::Clear;
         colourAttachment.storeOperation = StoreOperation::Store;
-        colourAttachment.initialLayout  = ImageLayout::Undefined;
-        colourAttachment.finalLayout    = ImageLayout::Present;
+        colourAttachment.initialLayout  = GraphicsImage::Layout::Undefined;
+        colourAttachment.finalLayout    = GraphicsImage::Layout::Present;
 
         AttachmentDescriptor depthAttachment{};
-        depthAttachment.format         = ImageFormat::D32_SFLOAT;
+        depthAttachment.format         = GraphicsImage::Format::D32_SFLOAT;
         depthAttachment.loadOperation  = LoadOperation::Clear;
         depthAttachment.storeOperation = StoreOperation::DontCare;
-        depthAttachment.initialLayout  = ImageLayout::Undefined;
-        depthAttachment.finalLayout    = ImageLayout::DepthStencilAttachmentOptimal;
+        depthAttachment.initialLayout  = GraphicsImage::Layout::Undefined;
+        depthAttachment.finalLayout    = GraphicsImage::Layout::DepthStencilAttachmentOptimal;
 
         //Define attachment references so the subpass knows which slot each attachment will be in
         AttachmentReference colourReference{};
         colourReference.attachmentIndex = 0;
-        colourReference.layout          = ImageLayout::ColourAttachmentOptimal;
+        colourReference.layout          = GraphicsImage::Layout::ColourAttachmentOptimal;
 
         AttachmentReference depthReference{};
         depthReference.attachmentIndex = 1;
-        depthReference.layout          = ImageLayout::DepthStencilAttachmentOptimal;
+        depthReference.layout          = GraphicsImage::Layout::DepthStencilAttachmentOptimal;
 
         SubpassDescriptor subpass{};
         subpass.colourAttachments = { colourReference };
@@ -507,8 +507,8 @@ namespace blb::rnd {
         SubpassDependency dependency{};
         dependency.sourceSubpass      = SUBPASS_EXTERNAL;
         dependency.destinationSubpass = 0;
-        dependency.sourceStage        = PipelineStage::ColourAttachmentOutput;
-        dependency.destinationStage   = PipelineStage::ColourAttachmentOutput;
+        dependency.sourceStage        = PipelineObject::Stage::ColourAttachmentOutput;
+        dependency.destinationStage   = PipelineObject::Stage::ColourAttachmentOutput;
         dependency.sourceAccess       = AccessFlags::None;
         dependency.destinationAccess  = AccessFlags::ColourAttachmentWrite;
 
@@ -526,7 +526,7 @@ namespace blb::rnd {
         depthDescriptor.type        = GraphicsImage::Type::_2D;
         depthDescriptor.usageFlags  = GraphicsImage::UsageMode::DepthStencilAttachment;
         depthDescriptor.dimensions  = { swapchain->getExtent().x, swapchain->getExtent().y };
-        depthDescriptor.format      = ImageFormat::D32_SFLOAT;
+        depthDescriptor.format      = GraphicsImage::Format::D32_SFLOAT;
         depthDescriptor.sharingMode = SharingMode::Exclusive;
         depthDescriptor.memoryType  = MemoryType::VideoMemory;
 

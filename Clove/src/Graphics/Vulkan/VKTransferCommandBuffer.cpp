@@ -1,7 +1,9 @@
 #include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
 
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKGraphicsResource.hpp"
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
+#include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Log.hpp"
 #include "Clove/Utils/Cast.hpp"
@@ -46,7 +48,7 @@ namespace clv::gfx::vk {
         vkCmdCopyBuffer(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKBuffer>(&destination)->getBuffer(), 1, &copyRegion);
     }
 
-    void VKTransferCommandBuffer::copyBufferToImage(GraphicsBuffer& source, const size_t sourceOffset, GraphicsImage& destination, ImageLayout destinationLayout, const mth::vec3i& destinationOffset, const mth::vec3ui& destinationExtent) {
+    void VKTransferCommandBuffer::copyBufferToImage(GraphicsBuffer& source, const size_t sourceOffset, GraphicsImage& destination, GraphicsImage::Layout destinationLayout, const mth::vec3i& destinationOffset, const mth::vec3ui& destinationExtent) {
         VkBufferImageCopy copyRegion{};
         copyRegion.bufferOffset                    = sourceOffset;
         copyRegion.bufferRowLength                 = 0;                        //Tightly packed
@@ -58,10 +60,10 @@ namespace clv::gfx::vk {
         copyRegion.imageOffset                     = { destinationOffset.x, destinationOffset.y, destinationOffset.z };
         copyRegion.imageExtent                     = { destinationExtent.x, destinationExtent.y, destinationExtent.z };
 
-        vkCmdCopyBufferToImage(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKImage>(&destination)->getImage(), convertImageLayout(destinationLayout), 1, &copyRegion);
+        vkCmdCopyBufferToImage(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKImage>(&destination)->getImage(), VKImage::convertLayout(destinationLayout), 1, &copyRegion);
     }
 
-    void VKTransferCommandBuffer::bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
+    void VKTransferCommandBuffer::bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
         const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
         const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
@@ -76,24 +78,24 @@ namespace clv::gfx::vk {
         barrier.offset              = 0;
         barrier.size                = VK_WHOLE_SIZE;
 
-        const VkPipelineStageFlags vkSourceStage      = convertPipelineStage(sourceStage);
-        const VkPipelineStageFlags vkDestinationStage = convertPipelineStage(destinationStage);
+        const VkPipelineStageFlags vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
+        const VkPipelineStageFlags vkDestinationStage = VKPipelineObject::convertStage(destinationStage);
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
     }
 
-    void VKTransferCommandBuffer::imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
+    void VKTransferCommandBuffer::imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
         const bool isValidLayout =
-            barrierInfo.newImageLayout != ImageLayout::ShaderReadOnlyOptimal &&
-            barrierInfo.newImageLayout != ImageLayout::ColourAttachmentOptimal &&
-            barrierInfo.newImageLayout != ImageLayout::DepthStencilAttachmentOptimal &&
-            barrierInfo.newImageLayout != ImageLayout::DepthStencilReadOnlyOptimal;
+            barrierInfo.newImageLayout != GraphicsImage::Layout::ShaderReadOnlyOptimal &&
+            barrierInfo.newImageLayout != GraphicsImage::Layout::ColourAttachmentOptimal &&
+            barrierInfo.newImageLayout != GraphicsImage::Layout::DepthStencilAttachmentOptimal &&
+            barrierInfo.newImageLayout != GraphicsImage::Layout::DepthStencilReadOnlyOptimal;
 
         if(!isValidLayout) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Invalid newLayout. This command buffer cannot handle transfering images to the following layouts:\n\tImageLayout::ShaderReadOnlyOptimal\n\tImageLayout::ColourAttachmentOptimal\n\tImageLayout::DepthStencilAttachmentOptimal\n\tImageLayout::DepthStencilReadOnlyOptimal", GARLIC_FUNCTION_NAME);
             return;
         }
-    
+
         const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
         const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
@@ -102,8 +104,8 @@ namespace clv::gfx::vk {
         barrier.pNext                           = nullptr;
         barrier.srcAccessMask                   = convertAccessFlags(barrierInfo.sourceAccess);
         barrier.dstAccessMask                   = convertAccessFlags(barrierInfo.destinationAccess);
-        barrier.oldLayout                       = convertImageLayout(barrierInfo.oldImageLayout);
-        barrier.newLayout                       = convertImageLayout(barrierInfo.newImageLayout);
+        barrier.oldLayout                       = VKImage::convertLayout(barrierInfo.oldImageLayout);
+        barrier.newLayout                       = VKImage::convertLayout(barrierInfo.newImageLayout);
         barrier.srcQueueFamilyIndex             = sourceFamilyIndex;
         barrier.dstQueueFamilyIndex             = destinationFamilyIndex;
         barrier.image                           = polyCast<VKImage>(&image)->getImage();
@@ -113,8 +115,8 @@ namespace clv::gfx::vk {
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount     = 1;
 
-        const VkPipelineStageFlags vkSourceStage      = convertPipelineStage(sourceStage);
-        const VkPipelineStageFlags vkDestinationStage = convertPipelineStage(destinationStage);
+        const VkPipelineStageFlags vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
+        const VkPipelineStageFlags vkDestinationStage = VKPipelineObject::convertStage(destinationStage);
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     }

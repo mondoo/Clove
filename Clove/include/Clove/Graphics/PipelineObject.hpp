@@ -54,6 +54,14 @@ namespace clv::gfx {
             std::vector<PushConstantDescriptor> pushConstants;
         };
 
+        enum class Stage {
+            Top,
+            Transfer,
+            PixelShader,
+            EarlyPixelTest,
+            ColourAttachmentOutput,
+        };
+
         //FUNCTIONS
     public:
         virtual ~PipelineObject() = default;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/PipelineObject.hpp"
 #include "Clove/Graphics/Shader.hpp"
 
 #include <span>
@@ -64,7 +64,7 @@ namespace clv::gfx {
 
         virtual void drawIndexed(const size_t indexCount) = 0;
 
-        virtual void bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) = 0;
-        virtual void imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage)     = 0;
+        virtual void bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) = 0;
+        virtual void imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage)     = 0;
     };
 }

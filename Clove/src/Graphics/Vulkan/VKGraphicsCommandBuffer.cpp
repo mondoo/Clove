@@ -3,6 +3,7 @@
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
+#include "Clove/Graphics/Vulkan/VKGraphicsResource.hpp"
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
@@ -22,10 +23,11 @@ namespace clv::gfx::vk {
     VKGraphicsCommandBuffer::~VKGraphicsCommandBuffer() = default;
 
     void VKGraphicsCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
-        VkCommandBufferBeginInfo beginInfo{};
-        beginInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags            = getCommandBufferUsageFlags(usageFlag);
-        beginInfo.pInheritanceInfo = nullptr;
+        VkCommandBufferBeginInfo beginInfo{
+            .sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+            .flags            = getCommandBufferUsageFlags(usageFlag),
+            .pInheritanceInfo = nullptr,
+        };
 
         if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to begin recording command buffer");
@@ -50,14 +52,17 @@ namespace clv::gfx::vk {
             ++index;
         }
 
-        VkRenderPassBeginInfo renderPassInfo{};
-        renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        renderPassInfo.renderPass        = polyCast<VKRenderPass>(&renderPass)->getRenderPass();
-        renderPassInfo.framebuffer       = polyCast<VKFramebuffer>(&frameBuffer)->getFrameBuffer();
-        renderPassInfo.renderArea.offset = { renderArea.origin.x, renderArea.origin.y };
-        renderPassInfo.renderArea.extent = { renderArea.size.x, renderArea.size.y };
-        renderPassInfo.clearValueCount   = std::size(vkClearValues);
-        renderPassInfo.pClearValues      = std::data(vkClearValues);
+        VkRenderPassBeginInfo renderPassInfo{
+            .sType       = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            .renderPass  = polyCast<VKRenderPass>(&renderPass)->getRenderPass(),
+            .framebuffer = polyCast<VKFramebuffer>(&frameBuffer)->getFrameBuffer(),
+            .renderArea  = {
+                .offset = { renderArea.origin.x, renderArea.origin.y },
+                .extent = { renderArea.size.x, renderArea.size.y },
+            },
+            .clearValueCount = static_cast<uint32_t>(std::size(vkClearValues)),
+            .pClearValues    = std::data(vkClearValues),
+        };
 
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     }
@@ -95,49 +100,53 @@ namespace clv::gfx::vk {
         vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
     }
 
-    void VKGraphicsCommandBuffer::bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
+    void VKGraphicsCommandBuffer::bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
         const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
         const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
-        VkBufferMemoryBarrier barrier{};
-        barrier.sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-        barrier.pNext               = nullptr;
-        barrier.srcAccessMask       = convertAccessFlags(barrierInfo.sourceAccess);
-        barrier.dstAccessMask       = convertAccessFlags(barrierInfo.destinationAccess);
-        barrier.srcQueueFamilyIndex = sourceFamilyIndex;
-        barrier.dstQueueFamilyIndex = destinationFamilyIndex;
-        barrier.buffer              = polyCast<VKBuffer>(&buffer)->getBuffer();
-        barrier.offset              = 0;
-        barrier.size                = VK_WHOLE_SIZE;
+        VkBufferMemoryBarrier barrier{
+            .sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+            .pNext               = nullptr,
+            .srcAccessMask       = convertAccessFlags(barrierInfo.sourceAccess),
+            .dstAccessMask       = convertAccessFlags(barrierInfo.destinationAccess),
+            .srcQueueFamilyIndex = sourceFamilyIndex,
+            .dstQueueFamilyIndex = destinationFamilyIndex,
+            .buffer              = polyCast<VKBuffer>(&buffer)->getBuffer(),
+            .offset              = 0,
+            .size                = VK_WHOLE_SIZE,
+        };
 
-        const VkPipelineStageFlags vkSourceStage      = convertPipelineStage(sourceStage);
-        const VkPipelineStageFlags vkDestinationStage = convertPipelineStage(destinationStage);
+        const VkPipelineStageFlags vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
+        const VkPipelineStageFlags vkDestinationStage = VKPipelineObject::convertStage(destinationStage);
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
     }
 
-    void VKGraphicsCommandBuffer::imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
+    void VKGraphicsCommandBuffer::imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
         const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
         const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
-        VkImageMemoryBarrier barrier{};
-        barrier.sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-        barrier.pNext                           = nullptr;
-        barrier.srcAccessMask                   = convertAccessFlags(barrierInfo.sourceAccess);
-        barrier.dstAccessMask                   = convertAccessFlags(barrierInfo.destinationAccess);
-        barrier.oldLayout                       = convertImageLayout(barrierInfo.oldImageLayout);
-        barrier.newLayout                       = convertImageLayout(barrierInfo.newImageLayout);
-        barrier.srcQueueFamilyIndex             = sourceFamilyIndex;
-        barrier.dstQueueFamilyIndex             = destinationFamilyIndex;
-        barrier.image                           = polyCast<VKImage>(&image)->getImage();
-        barrier.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;//TODO: Handle other aspect masks
-        barrier.subresourceRange.baseMipLevel   = 0;
-        barrier.subresourceRange.levelCount     = 1;
-        barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.layerCount     = 1;
+        VkImageMemoryBarrier barrier{
+            .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+            .pNext               = nullptr,
+            .srcAccessMask       = convertAccessFlags(barrierInfo.sourceAccess),
+            .dstAccessMask       = convertAccessFlags(barrierInfo.destinationAccess),
+            .oldLayout           = VKImage::convertLayout(barrierInfo.oldImageLayout),
+            .newLayout           = VKImage::convertLayout(barrierInfo.newImageLayout),
+            .srcQueueFamilyIndex = sourceFamilyIndex,
+            .dstQueueFamilyIndex = destinationFamilyIndex,
+            .image               = polyCast<VKImage>(&image)->getImage(),
+            .subresourceRange    = {
+                .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,//TODO: Handle other aspect mask,
+                .baseMipLevel   = 0,
+                .levelCount     = 1,
+                .baseArrayLayer = 0,
+                .layerCount     = 1,
+            },
+        };
 
-        const VkPipelineStageFlags vkSourceStage      = convertPipelineStage(sourceStage);
-        const VkPipelineStageFlags vkDestinationStage = convertPipelineStage(destinationStage);
+        const VkPipelineStageFlags vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
+        const VkPipelineStageFlags vkDestinationStage = VKPipelineObject::convertStage(destinationStage);
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     }

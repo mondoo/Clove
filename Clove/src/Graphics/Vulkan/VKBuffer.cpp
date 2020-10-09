@@ -1,6 +1,6 @@
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
+#include "Clove/Graphics/Vulkan/VKGraphicsResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include "Clove/Log.hpp"
 

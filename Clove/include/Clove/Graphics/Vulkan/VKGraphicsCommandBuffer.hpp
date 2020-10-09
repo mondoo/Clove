@@ -23,7 +23,7 @@ namespace clv::gfx::vk {
         VKGraphicsCommandBuffer(VKGraphicsCommandBuffer&& other) noexcept;
 
         VKGraphicsCommandBuffer& operator=(const VKGraphicsCommandBuffer& other) = delete;
-        VKGraphicsCommandBuffer& operator                                        =(VKGraphicsCommandBuffer&& other) noexcept;
+        VKGraphicsCommandBuffer& operator=(VKGraphicsCommandBuffer&& other) noexcept;
 
         ~VKGraphicsCommandBuffer();
 
@@ -42,8 +42,8 @@ namespace clv::gfx::vk {
 
         void drawIndexed(const size_t indexCount) override;
 
-        void bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
-        void imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
+        void bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) override;
+        void imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) override;
 
         VkCommandBuffer getCommandBuffer() const;
     };

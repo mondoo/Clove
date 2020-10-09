@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Clove/Graphics/Swapchain.hpp"
-#include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -36,7 +36,7 @@ namespace clv::gfx::vk {
 
         ~VKSwapchain();
 
-        ImageFormat getImageFormat() const override;
+        GraphicsImage::Format getImageFormat() const override;
         clv::mth::vec2ui getExtent() const override;
 
         Result aquireNextImage(const Semaphore* semaphore, uint32_t& outImageIndex) override;

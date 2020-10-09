@@ -1,5 +1,6 @@
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
 
+#include "Clove/Graphics/Vulkan/VKGraphicsResource.hpp"
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
 #include "Clove/Graphics/Vulkan/VulkanHelpers.hpp"
 #include "Clove/Log.hpp"
@@ -56,28 +57,25 @@ namespace clv::gfx::vk {
         , memoryAllocator(std::move(memoryAllocator)) {
         std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
 
-        VkImageCreateInfo createInfo{};
-        createInfo.sType       = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-        createInfo.pNext       = nullptr;
-        createInfo.flags       = 0;
-        createInfo.imageType   = getImageType(this->descriptor.type);
-        createInfo.format      = convertImageFormat(this->descriptor.format);
-        createInfo.extent      = { this->descriptor.dimensions.x, this->descriptor.dimensions.y, 1 };
-        createInfo.mipLevels   = 1;
-        createInfo.arrayLayers = 1;
-        createInfo.samples     = VK_SAMPLE_COUNT_1_BIT;
-        createInfo.tiling      = VK_IMAGE_TILING_OPTIMAL;
-        createInfo.usage       = getUsageFlags(this->descriptor.usageFlags);
-        if(this->descriptor.sharingMode == SharingMode::Exclusive) {
-            createInfo.sharingMode           = VK_SHARING_MODE_EXCLUSIVE;
-            createInfo.queueFamilyIndexCount = 0;
-            createInfo.pQueueFamilyIndices   = nullptr;
-        } else {
-            createInfo.sharingMode           = VK_SHARING_MODE_CONCURRENT;
-            createInfo.queueFamilyIndexCount = std::size(sharedQueueIndices);
-            createInfo.pQueueFamilyIndices   = std::data(sharedQueueIndices);
-        }
-        createInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        const bool isExclusive = this->descriptor.sharingMode == SharingMode::Exclusive;
+
+        VkImageCreateInfo createInfo{
+            .sType                 = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+            .pNext                 = nullptr,
+            .flags                 = 0,
+            .imageType             = getImageType(this->descriptor.type),
+            .format                = convertFormat(this->descriptor.format),
+            .extent                = { this->descriptor.dimensions.x, this->descriptor.dimensions.y, 1 },
+            .mipLevels             = 1,
+            .arrayLayers           = 1,
+            .samples               = VK_SAMPLE_COUNT_1_BIT,
+            .tiling                = VK_IMAGE_TILING_OPTIMAL,
+            .usage                 = getUsageFlags(this->descriptor.usageFlags),
+            .sharingMode           = isExclusive ? VK_SHARING_MODE_EXCLUSIVE : VK_SHARING_MODE_CONCURRENT,
+            .queueFamilyIndexCount = isExclusive ? 0 : static_cast<uint32_t>(std::size(sharedQueueIndices)),
+            .pQueueFamilyIndices   = isExclusive ? nullptr : std::data(sharedQueueIndices),
+            .initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED,
+        };
 
         if(vkCreateImage(this->device.get(), &createInfo, nullptr, &image) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create image");
@@ -102,11 +100,70 @@ namespace clv::gfx::vk {
     }
 
     std::unique_ptr<GraphicsImageView> VKImage::createView() const {
-        const VkImageAspectFlags aspectFlags = descriptor.format == ImageFormat::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
-        return std::make_unique<VKImageView>(device.get(), createImageView(device.get(), image, getImageViewType(descriptor.type), convertImageFormat(descriptor.format), aspectFlags));
+        const VkImageAspectFlags aspectFlags = descriptor.format == Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
+        return std::make_unique<VKImageView>(device.get(), createImageView(device.get(), image, getImageViewType(descriptor.type), convertFormat(descriptor.format), aspectFlags));
     }
 
     VkImage VKImage::getImage() const {
         return image;
+    }
+
+    GraphicsImage::Format VKImage::convertFormat(VkFormat vulkanFormat) {
+        switch(vulkanFormat) {
+            //Formats supported by garlic
+            case VK_FORMAT_R8G8B8A8_SRGB:
+                return Format::R8G8B8A8_SRGB;
+            case VK_FORMAT_B8G8R8A8_SRGB:
+                return Format::B8G8R8A8_SRGB;
+            case VK_FORMAT_B8G8R8A8_UNORM:
+                return Format::B8G8R8A8_UNORM;
+            case VK_FORMAT_D32_SFLOAT:
+                return Format::D32_SFLOAT;
+            default:
+                GARLIC_ASSERT(false, "{0}: Format not supported by garlic", GARLIC_FUNCTION_NAME);
+                return Format::Unkown;
+        }
+    }
+
+    VkFormat VKImage::convertFormat(Format garlicFormat) {
+        switch(garlicFormat) {
+            case Format::Unkown:
+                return VK_FORMAT_UNDEFINED;
+            case Format::R8G8B8A8_SRGB:
+                return VK_FORMAT_R8G8B8A8_SRGB;
+            case Format::B8G8R8A8_SRGB:
+                return VK_FORMAT_B8G8R8A8_SRGB;
+            case Format::B8G8R8A8_UNORM:
+                return VK_FORMAT_B8G8R8A8_UNORM;
+            case Format::D32_SFLOAT:
+                return VK_FORMAT_D32_SFLOAT;
+            default:
+                GARLIC_ASSERT(false, "{0}: Unkown format", GARLIC_FUNCTION_NAME);
+                return VK_FORMAT_UNDEFINED;
+        }
+    }
+
+    VkImageLayout VKImage::convertLayout(Layout garlicLayout) {
+        switch(garlicLayout) {
+            case Layout::Undefined:
+                return VK_IMAGE_LAYOUT_UNDEFINED;
+            case Layout::General:
+                return VK_IMAGE_LAYOUT_GENERAL;
+            case Layout::Present:
+                return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+            case Layout::TransferDestinationOptimal:
+                return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            case Layout::ShaderReadOnlyOptimal:
+                return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            case Layout::ColourAttachmentOptimal:
+                return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            case Layout::DepthStencilAttachmentOptimal:
+                return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+            case Layout::DepthStencilReadOnlyOptimal:
+                return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+            default:
+                GARLIC_ASSERT(false, "{0}: Unkown image layout", GARLIC_FUNCTION_NAME);
+                return VK_IMAGE_LAYOUT_UNDEFINED;
+        }
     }
 }

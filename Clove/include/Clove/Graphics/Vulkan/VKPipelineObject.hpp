@@ -29,5 +29,7 @@ namespace clv::gfx::vk {
 
         VkPipeline getPipeline() const;
         VkPipelineLayout getLayout() const;
+
+        static VkPipelineStageFlags convertStage(Stage garlicStage);
     };
 }

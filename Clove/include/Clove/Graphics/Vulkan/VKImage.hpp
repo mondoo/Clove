@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsImage.hpp"
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -28,17 +28,22 @@ namespace clv::gfx::vk {
     public:
         VKImage() = delete;
         VKImage(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator);
-        
+
         VKImage(const VKImage& other) = delete;
         VKImage(VKImage&& other) noexcept;
 
         VKImage& operator=(const VKImage& other) = delete;
         VKImage& operator=(VKImage&& other) noexcept;
-        
+
         ~VKImage();
 
         std::unique_ptr<GraphicsImageView> createView() const override;
 
         VkImage getImage() const;
+
+        static Format convertFormat(VkFormat vulkanFormat);
+        static VkFormat convertFormat(Format garlicFormat);
+
+        static VkImageLayout convertLayout(Layout garlicLayout);
     };
 }

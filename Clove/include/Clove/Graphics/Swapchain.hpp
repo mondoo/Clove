@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Clove/Graphics/GraphicsImage.hpp"
 #include "Clove/Graphics/GraphicsTypes.hpp"
 
-namespace clv::gfx{
+namespace clv::gfx {
     class Semaphore;
     class GraphicsImageView;
 }
@@ -22,8 +23,8 @@ namespace clv::gfx {
     public:
         virtual ~Swapchain() = default;
 
-        virtual ImageFormat getImageFormat() const = 0;
-        virtual clv::mth::vec2ui getExtent() const = 0;
+        virtual GraphicsImage::Format getImageFormat() const = 0;
+        virtual clv::mth::vec2ui getExtent() const           = 0;
 
         virtual Result aquireNextImage(const Semaphore* semaphore, uint32_t& outImageIndex) = 0;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/GraphicsImage.hpp"
 
 #include <span>
 
@@ -31,7 +31,7 @@ namespace clv::gfx {
 
         virtual void write(const GraphicsBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot) = 0;
 
-        virtual void write(const GraphicsImageView& imageView, const Sampler& sampler, const ImageLayout layout, const uint32_t bindingSlot)                       = 0;
-        virtual void write(std::span<std::shared_ptr<GraphicsImageView>> imageViews, const Sampler& sampler, const ImageLayout layout, const uint32_t bindingSlot) = 0;
+        virtual void write(const GraphicsImageView& imageView, const Sampler& sampler, const GraphicsImage::Layout layout, const uint32_t bindingSlot)                       = 0;
+        virtual void write(std::span<std::shared_ptr<GraphicsImageView>> imageViews, const Sampler& sampler, const GraphicsImage::Layout layout, const uint32_t bindingSlot) = 0;
     };
 }

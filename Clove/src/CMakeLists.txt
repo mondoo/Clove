@@ -77,6 +77,7 @@ set(
 		${CLV_INCLUDE}/Graphics/GraphicsImage.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsImageView.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsQueue.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsResource.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsTypes.hpp
 		${CLV_INCLUDE}/Graphics/PipelineObject.hpp
 		${CLV_INCLUDE}/Graphics/PresentQueue.hpp
@@ -121,6 +122,8 @@ set(
 		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsFactory.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsQueue.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsQueue.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsResource.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsResource.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKImage.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKImage.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKImageView.hpp

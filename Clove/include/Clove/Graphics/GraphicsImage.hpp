@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsTypes.hpp"
+#include "Clove/Graphics/GraphicsResource.hpp"
 
 #include <Root/Definitions.hpp>
 
@@ -17,8 +17,8 @@ namespace clv::gfx {
     class GraphicsImage {
         //TYPES
     public:
-        using UsageType = uint8_t;
-        enum class UsageMode : UsageType {
+        using UsageModeType = uint8_t;
+        enum class UsageMode : UsageModeType {
             TransferDestination    = 1 << 0, /**< To be used as a destination in a transfer operation. Such as writing data from a system memory backed buffer to a video memory backed buffer */
             Sampled                = 1 << 1, /**< To be used in a GraphicsImageView that's sampled in a shader */
             ColourAttachment       = 1 << 2, /**< To be used in a GraphicsImageView for a frame buffer */
@@ -30,11 +30,32 @@ namespace clv::gfx {
             _3D
         };
 
+        enum class Format {
+            Unkown,
+
+            R8G8B8A8_SRGB,
+            B8G8R8A8_SRGB,
+            B8G8R8A8_UNORM,
+
+            D32_SFLOAT
+        };
+
+        enum class Layout {
+            Undefined,
+            General,
+            Present,
+            TransferDestinationOptimal,
+            ShaderReadOnlyOptimal,
+            ColourAttachmentOptimal,
+            DepthStencilAttachmentOptimal,
+            DepthStencilReadOnlyOptimal
+        };
+
         struct Descriptor {
             Type type;
             UsageMode usageFlags;
             clv::mth::vec2ui dimensions;
-            ImageFormat format;
+            Format format;
             SharingMode sharingMode;
             MemoryType memoryType;
         };
@@ -46,5 +67,5 @@ namespace clv::gfx {
         virtual std::unique_ptr<GraphicsImageView> createView() const = 0;
     };
 
-    GARLIC_ENUM_BIT_FLAG_OPERATORS(GraphicsImage::UsageMode, GraphicsImage::UsageType)
+    GARLIC_ENUM_BIT_FLAG_OPERATORS(GraphicsImage::UsageMode, GraphicsImage::UsageModeType)
 }
