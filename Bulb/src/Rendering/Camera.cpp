@@ -36,7 +36,7 @@ namespace blb::rnd {
 
         const float width  = static_cast<float>(viewport.width);
         const float height = static_cast<float>(viewport.height);
-        const float aspect = width / height;
+        const float aspect = height > 0.0f ? width / height : 0.0f;
 
         const float nearPlane = 0.5f;
         const float farPlane  = 10000.0f;
