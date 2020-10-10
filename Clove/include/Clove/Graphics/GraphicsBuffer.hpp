@@ -31,6 +31,10 @@ namespace clv::gfx {
     public:
         virtual ~GraphicsBuffer() = default;
 
+        /**
+         * @brief Map (write) data into the buffer
+         * @param offset An offset into the buffer where to map the data to
+         */
         virtual void map(const void* data, const size_t offset, const size_t size) = 0;
     };
 

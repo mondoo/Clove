@@ -5,6 +5,13 @@
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
+    /**
+     * @brief Handles allocating memory from Vulkan's VkDeviceMemory. Aims to reduce memory fragmentation
+     * and to reduce the amount of vkAllocateMemory calls.
+     * @details MemoryAllocator pools blocks of memory of 256MB. It will sub-allocate
+     * regions of those blocks as required, keeping the memory contiguous and byte aligned. If an allocation
+     * is larger than 256MB then a new VkDeviceMemory is created of the required size
+     */
     class MemoryAllocator {
         //TYPES
     public:
@@ -91,6 +98,9 @@ namespace clv::gfx::vk {
         ~MemoryAllocator();
 
         const Chunk* allocate(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags properties);
+        /**
+         * @brief Releases the memory the chunk occupies. Nulls the chunk pointer if successful
+         */
         void free(const Chunk*& chunk);
     };
 }
