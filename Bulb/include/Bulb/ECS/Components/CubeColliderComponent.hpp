@@ -25,7 +25,7 @@ namespace blb::ecs {
 
         //FUNCTIONS
     public:
-        CubeColliderComponent() = delete;
+        CubeColliderComponent();
         CubeColliderComponent(clv::mth::vec3f cubeSize);
 
         CubeColliderComponent(const CubeColliderComponent& other);
@@ -36,8 +36,12 @@ namespace blb::ecs {
 
         ~CubeColliderComponent();
 
+        void setCubeSize(clv::mth::vec3f cubeSize);
+        const clv::mth::vec3f& getCubeSize() const;
+
     private:
-        void initialiseCubeCollider();
+        void
+        initialiseCubeCollider();
 
         void constructCollisionObject();
     };
