@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.18.0)
 
 add_subdirectory(external)
 
+enable_testing()
+
 project(Garlic)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -16,9 +18,11 @@ set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
 set(BUILD_STATIC_LIBS ON CACHE BOOL "Build static library")
+set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree") 
 
 #Garlic settings
 option(GAR_BUILD_SCAPE "Build Scape, Garlic's editor" ON)
+option(GAR_BUILD_TESTS "Build Garlic's tests" OFF)
 
 #Clove settings
 option(GAR_CLV_ENABLE_PROFILING "Enables the Clove profiler which will print function timings to a file" OFF)
