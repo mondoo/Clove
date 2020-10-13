@@ -1,4 +1,9 @@
 #StackAllocator
 add_executable(StackAllocatorTest StackAllocatorTests.cpp)
-target_link_libraries(StackAllocatorTest PRIVATE gtest_main Root.Memory )
+target_link_libraries(StackAllocatorTest PRIVATE gtest_main Root.Memory)
 add_test(NAME StackAllocatorTest COMMAND StackAllocatorTest)
+
+#ListAllocator
+add_executable(ListAllocatorTest ListAllocatorTests.cpp)
+target_link_libraries(ListAllocatorTest PRIVATE gtest_main Root.Memory)
+add_test(NAME ListAllocatorTest COMMAND ListAllocatorTest)
