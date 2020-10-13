@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.18.0)
 
-add_subdirectory(external)
-
 enable_testing()
 
 project(Garlic)
@@ -29,6 +27,9 @@ option(GAR_CLV_ENABLE_PROFILING "Enables the Clove profiler which will print fun
 option(GAR_CLV_IMGUI_COMPATIBLE "Links Glad publicly so users can initialise Dear ImGui properly" OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+#Garlic's dependencies
+add_subdirectory(external)
 
 #Garlic's modules
 add_subdirectory(Root)
