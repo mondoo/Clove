@@ -317,13 +317,13 @@ namespace blb::rnd {
         viewData.view       = currentFrameData.view;
         viewData.projection = currentFrameData.projection;
 
-        uniformBuffers[imageIndex]->map(&viewData, uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize);
-        uniformBuffers[imageIndex]->map(&currentFrameData.viewPosition, uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize);
+        uniformBuffers[imageIndex]->write(&viewData, uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize);
+        uniformBuffers[imageIndex]->write(&currentFrameData.viewPosition, uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize);
 
         descriptorSets[imageIndex].lightingSet->write(shadowMapViews[imageIndex], *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
-        uniformBuffers[imageIndex]->map(&currentFrameData.lights, uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize);
-        uniformBuffers[imageIndex]->map(&currentFrameData.numLights, uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize);
-        uniformBuffers[imageIndex]->map(&currentFrameData.directionalShadowTransforms, uniformBufferLayout.shadowTransformsOffset, uniformBufferLayout.shadowTransformsSize);
+        uniformBuffers[imageIndex]->write(&currentFrameData.lights, uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize);
+        uniformBuffers[imageIndex]->write(&currentFrameData.numLights, uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize);
+        uniformBuffers[imageIndex]->write(&currentFrameData.directionalShadowTransforms, uniformBufferLayout.shadowTransformsOffset, uniformBufferLayout.shadowTransformsSize);
 
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));

@@ -33,21 +33,18 @@ namespace clv::gfx::vk {
         , memoryAllocator(std::move(memoryAllocator)) {
         std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
 
-        VkBufferCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        createInfo.pNext = nullptr;
-        createInfo.flags = 0;
-        createInfo.size  = descriptor.size;
-        createInfo.usage = getUsageFlags(this->descriptor.usageFlags);
-        if(this->descriptor.sharingMode == SharingMode::Exclusive) {
-            createInfo.sharingMode           = VK_SHARING_MODE_EXCLUSIVE;
-            createInfo.queueFamilyIndexCount = 0;
-            createInfo.pQueueFamilyIndices   = nullptr;
-        } else {
-            createInfo.sharingMode           = VK_SHARING_MODE_CONCURRENT;
-            createInfo.queueFamilyIndexCount = std::size(sharedQueueIndices);
-            createInfo.pQueueFamilyIndices   = std::data(sharedQueueIndices);
-        }
+        const bool isExclusive = this->descriptor.sharingMode == SharingMode::Exclusive;
+
+        VkBufferCreateInfo createInfo{
+            .sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+            .pNext                 = nullptr,
+            .flags                 = 0,
+            .size                  = descriptor.size,
+            .usage                 = getUsageFlags(this->descriptor.usageFlags),
+            .sharingMode           = isExclusive ? VK_SHARING_MODE_EXCLUSIVE : VK_SHARING_MODE_CONCURRENT,
+            .queueFamilyIndexCount = isExclusive ? 0 : static_cast<uint32_t>(std::size(sharedQueueIndices)),
+            .pQueueFamilyIndices   = isExclusive ? nullptr : std::data(sharedQueueIndices),
+        };
 
         if(vkCreateBuffer(this->device.get(), &createInfo, nullptr, &buffer) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create buffer");
@@ -71,11 +68,19 @@ namespace clv::gfx::vk {
         memoryAllocator->free(allocatedBlock);
     }
 
-    void VKBuffer::map(const void* data, const size_t offset, const size_t size) {
+    void VKBuffer::write(const void* data, const size_t offset, const size_t size) {
         void* cpuAccessibleMemory{ nullptr };
 
         vkMapMemory(device.get(), allocatedBlock->memory, allocatedBlock->offset + offset, size, 0, &cpuAccessibleMemory);
         memcpy(cpuAccessibleMemory, data, size);
+        vkUnmapMemory(device.get(), allocatedBlock->memory);
+    }
+
+    void VKBuffer::read(void* data, const size_t offset, const size_t size) {
+        void* cpuAccessibleMemory{ nullptr };
+
+        vkMapMemory(device.get(), allocatedBlock->memory, allocatedBlock->offset + offset, size, 0, &cpuAccessibleMemory);
+        memcpy(data, cpuAccessibleMemory, size);
         vkUnmapMemory(device.get(), allocatedBlock->memory);
     }
 
