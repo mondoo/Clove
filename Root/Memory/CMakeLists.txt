@@ -39,3 +39,7 @@ target_compile_definitions(
 	PRIVATE
 		GAR_ENABLE_MEMORY_DEBUGGING=$<BOOL:${GAR_CLV_ENABLE_MEMORY_DEBUGGING}>
 )
+
+if(GAR_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()
