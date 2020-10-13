@@ -320,7 +320,7 @@ namespace blb::rnd {
         uniformBuffers[imageIndex]->write(&viewData, uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize);
         uniformBuffers[imageIndex]->write(&currentFrameData.viewPosition, uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize);
 
-        descriptorSets[imageIndex].lightingSet->write(shadowMapViews[imageIndex], *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
+        descriptorSets[imageIndex].lightingSet->map(shadowMapViews[imageIndex], *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
         uniformBuffers[imageIndex]->write(&currentFrameData.lights, uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize);
         uniformBuffers[imageIndex]->write(&currentFrameData.numLights, uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize);
         uniformBuffers[imageIndex]->write(&currentFrameData.directionalShadowTransforms, uniformBufferLayout.shadowTransformsOffset, uniformBufferLayout.shadowTransformsSize);
@@ -353,7 +353,7 @@ namespace blb::rnd {
             modelData.model        = transform;
             modelData.normalMatrix = clv::mth::inverse(clv::mth::transpose(transform));
 
-            materialDescriptorSet->write(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
+            materialDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
 
             commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
@@ -463,12 +463,12 @@ namespace blb::rnd {
             descriptorSets[i].lightingSet = frameDescriptorPool[i]->allocateDescriptorSets(descriptorSetLayouts[lightingIndex]);
 
             //As we only have one UBO per frame for every DescriptorSet we can write the buffer into them straight away
-            descriptorSets[i].viewSet->write(*uniformBuffers[i], uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize, 0);
-            descriptorSets[i].viewSet->write(*uniformBuffers[i], uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize, 1);
+            descriptorSets[i].viewSet->map(*uniformBuffers[i], uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize, 0);
+            descriptorSets[i].viewSet->map(*uniformBuffers[i], uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize, 1);
 
-            descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize, 0);
-            descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize, 1);
-            descriptorSets[i].lightingSet->write(*uniformBuffers[i], uniformBufferLayout.shadowTransformsOffset, uniformBufferLayout.shadowTransformsSize, 2);
+            descriptorSets[i].lightingSet->map(*uniformBuffers[i], uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize, 0);
+            descriptorSets[i].lightingSet->map(*uniformBuffers[i], uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize, 1);
+            descriptorSets[i].lightingSet->map(*uniformBuffers[i], uniformBufferLayout.shadowTransformsOffset, uniformBufferLayout.shadowTransformsSize, 2);
         }
 
         needNewSwapchain = false;

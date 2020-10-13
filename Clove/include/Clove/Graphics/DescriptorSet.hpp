@@ -30,9 +30,23 @@ namespace clv::gfx {
     public:
         virtual ~DescriptorSet() = default;
 
-        virtual void write(const GraphicsBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot) = 0;
+        /**
+         * @brief Maps a region of a buffer into a binding inside a shader.
+         * @param buffer The buffer to map from.
+         * @param offset An offset into the buffer to start mapping from.
+         * @param range The size of the region into the buffer to map.
+         * @param bindingSlot The binding slot inside the shader to map to.
+         */
+        virtual void map(const GraphicsBuffer& buffer, const size_t offset, const size_t range, const uint32_t bindingSlot) = 0;
 
-        virtual void write(const GraphicsImageView& imageView, const Sampler& sampler, const GraphicsImage::Layout layout, const uint32_t bindingSlot)                       = 0;
-        virtual void write(std::span<std::shared_ptr<GraphicsImageView>> imageViews, const Sampler& sampler, const GraphicsImage::Layout layout, const uint32_t bindingSlot) = 0;
+        /**
+         * @brief Maps an image view into a binding inside a shader.
+         * @param imageView The image view to map.
+         * @param sampler A sampler describing how the image should be sampled.
+         * @param layout The layout of the image being mapped.
+         * @param bindingSlot The binding slot inside the shader to map to.
+         */
+        virtual void map(const GraphicsImageView& imageView, const Sampler& sampler, const GraphicsImage::Layout layout, const uint32_t bindingSlot)                       = 0;
+        virtual void map(std::span<std::shared_ptr<GraphicsImageView>> imageViews, const Sampler& sampler, const GraphicsImage::Layout layout, const uint32_t bindingSlot) = 0;
     };
 }
