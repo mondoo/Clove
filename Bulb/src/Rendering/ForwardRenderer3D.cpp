@@ -568,12 +568,9 @@ namespace blb::rnd {
     std::vector<std::shared_ptr<GraphicsBuffer>> ForwardRenderer3D::createUniformBuffers(const uint32_t bufferCount) {
         std::vector<std::shared_ptr<GraphicsBuffer>> uniformBuffers(bufferCount);
 
-        const size_t minOffUniformBufferAlignment = graphicsDevice->getLimits().minUniformBufferOffsetAlignment;
-        const size_t padding                      = minOffUniformBufferAlignment * 2;//Add padding so that each element has room to be aligned
-
         for(size_t i = 0; i < bufferCount; ++i) {
             GraphicsBuffer::Descriptor descriptor{};
-            descriptor.size        = uniformBufferLayout.totalSize() + padding;
+            descriptor.size        = uniformBufferLayout.totalSize();
             descriptor.usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer;
             descriptor.sharingMode = SharingMode::Exclusive;
             descriptor.memoryType  = MemoryType::SystemMemory;
