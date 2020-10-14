@@ -69,6 +69,8 @@ namespace clv::gfx::vk {
     }
 
     void VKBuffer::write(const void* data, const size_t offset, const size_t size) {
+        GARLIC_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only write to SystemMemory buffers", GARLIC_FUNCTION_NAME_PRETTY);
+
         void* cpuAccessibleMemory{ nullptr };
 
         vkMapMemory(device.get(), allocatedBlock->memory, allocatedBlock->offset + offset, size, 0, &cpuAccessibleMemory);
@@ -77,6 +79,8 @@ namespace clv::gfx::vk {
     }
 
     void VKBuffer::read(void* data, const size_t offset, const size_t size) {
+        GARLIC_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only read from SystemMemory buffers", GARLIC_FUNCTION_NAME_PRETTY);
+
         void* cpuAccessibleMemory{ nullptr };
 
         vkMapMemory(device.get(), allocatedBlock->memory, allocatedBlock->offset + offset, size, 0, &cpuAccessibleMemory);
