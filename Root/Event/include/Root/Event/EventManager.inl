@@ -1,3 +1,5 @@
+#include <optional>
+
 namespace garlic::inline root {
     template<typename EventType>
     EventManager::EventContainer<EventType>::EventContainer() = default;
