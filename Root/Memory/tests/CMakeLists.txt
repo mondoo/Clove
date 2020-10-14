@@ -7,3 +7,8 @@ add_test(NAME StackAllocatorTest COMMAND StackAllocatorTest)
 add_executable(ListAllocatorTest ListAllocatorTests.cpp)
 target_link_libraries(ListAllocatorTest PRIVATE gtest_main Root.Memory)
 add_test(NAME ListAllocatorTest COMMAND ListAllocatorTest)
+
+#PoolAllocator
+add_executable(PoolAllocatorTest PoolAllocatorTests.cpp)
+target_link_libraries(PoolAllocatorTest PRIVATE gtest_main Root.Memory)
+add_test(NAME PoolAllocatorTest COMMAND PoolAllocatorTest)
