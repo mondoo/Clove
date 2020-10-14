@@ -33,25 +33,6 @@ namespace blb::rnd {
         graphicsDevice  = createGraphicsDevice(api, window.getNativeWindow());
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
-        //Define the layout of the buffer backing the uniform object buffer
-        const size_t minOffUniformBufferAlignment = graphicsDevice->getLimits().minUniformBufferOffsetAlignment;
-
-        const auto getByteBoundary = [minOffUniformBufferAlignment](const size_t currentOffset) {
-            return minOffUniformBufferAlignment - (currentOffset % minOffUniformBufferAlignment);
-        };
-
-        uniformBufferLayout.viewSize             = sizeof(ViewData);
-        uniformBufferLayout.viewPosSize          = sizeof(clv::mth::vec3f);
-        uniformBufferLayout.lightSize            = sizeof(LightDataArray);
-        uniformBufferLayout.numLightsSize        = sizeof(LightCount);
-        uniformBufferLayout.shadowTransformsSize = sizeof(DirectionalShadowTransformArray);
-
-        uniformBufferLayout.viewOffset             = 0;
-        uniformBufferLayout.viewPosOffset          = uniformBufferLayout.viewSize + getByteBoundary(uniformBufferLayout.viewSize);
-        uniformBufferLayout.lightOffset            = (uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize) + getByteBoundary(uniformBufferLayout.viewPosOffset + uniformBufferLayout.viewPosSize);
-        uniformBufferLayout.numLightsOffset        = (uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize) + getByteBoundary(uniformBufferLayout.lightOffset + uniformBufferLayout.lightSize);
-        uniformBufferLayout.shadowTransformsOffset = (uniformBufferLayout.numLightsOffset + uniformBufferLayout.numLightsSize) + getByteBoundary(uniformBufferLayout.numLightsOffset + uniformBufferLayout.numLightsSize);
-
         //Object initialisation
         graphicsQueue = graphicsFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
         presentQueue  = graphicsFactory->createPresentQueue();
@@ -200,20 +181,20 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::begin() {
-        currentFrameData.meshes.clear();
+        meshes.clear();
         currentFrameData.numLights.numDirectional = 0;
         currentFrameData.numLights.numPoint       = 0;
     }
 
     void ForwardRenderer3D::submitCamera(const Camera& camera, clv::mth::vec3f position) {
-        currentFrameData.view       = camera.getView();
-        currentFrameData.projection = camera.getProjection();
+        currentFrameData.viewData.view       = camera.getView();
+        currentFrameData.viewData.projection = camera.getProjection();
 
         currentFrameData.viewPosition = position;
     }
 
     void ForwardRenderer3D::submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform) {
-        currentFrameData.meshes.push_back({ std::move(mesh), std::move(transform) });
+        meshes.push_back({ std::move(mesh), std::move(transform) });
     }
 
     void ForwardRenderer3D::submitAnimatedMesh(std::shared_ptr<rnd::Mesh> mesh, clv::mth::mat4f transform) {
@@ -288,7 +269,7 @@ namespace blb::rnd {
             commandBuffers[imageIndex]->beginRenderPass(*shadowMapRenderPass, *shadowMapFrameBuffers[imageIndex][i], shadowArea, shadowMapClearValues);
 
             if(i < currentFrameData.numLights.numDirectional) {
-                for(auto&& [mesh, transform] : currentFrameData.meshes) {
+                for(auto&& [mesh, transform] : meshes) {
                     const clv::mth::mat4f pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
 
                     commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
@@ -312,24 +293,21 @@ namespace blb::rnd {
         commandBuffers[imageIndex]->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
         commandBuffers[imageIndex]->bindPipelineObject(*pipelineObject);
 
-        //Map / Bind the descriptor sets for the per frame data
-        ViewData viewData{};
-        viewData.view       = currentFrameData.view;
-        viewData.projection = currentFrameData.projection;
+        //Write the view values into the UBO
+        uniformBuffers[imageIndex]->write(&currentFrameData.viewData, offsetof(FrameData, viewData), sizeof(currentFrameData.viewData));
+        uniformBuffers[imageIndex]->write(&currentFrameData.viewPosition, offsetof(FrameData, viewPosition), sizeof(currentFrameData.viewPosition));
 
-        uniformBuffers[imageIndex]->write(&viewData, uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize);
-        uniformBuffers[imageIndex]->write(&currentFrameData.viewPosition, uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize);
-
+        //Write the lighting values into the UBO
+        uniformBuffers[imageIndex]->write(&currentFrameData.lights, offsetof(FrameData, lights), sizeof(currentFrameData.lights));
+        uniformBuffers[imageIndex]->write(&currentFrameData.numLights, offsetof(FrameData, numLights), sizeof(currentFrameData.numLights));
+        uniformBuffers[imageIndex]->write(&currentFrameData.directionalShadowTransforms, offsetof(FrameData, directionalShadowTransforms), sizeof(currentFrameData.directionalShadowTransforms));
         descriptorSets[imageIndex].lightingSet->map(shadowMapViews[imageIndex], *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
-        uniformBuffers[imageIndex]->write(&currentFrameData.lights, uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize);
-        uniformBuffers[imageIndex]->write(&currentFrameData.numLights, uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize);
-        uniformBuffers[imageIndex]->write(&currentFrameData.directionalShadowTransforms, uniformBufferLayout.shadowTransformsOffset, uniformBufferLayout.shadowTransformsSize);
 
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
 
         const auto materialIndex = static_cast<size_t>(DescriptorSetSlots::Material);
-        const size_t meshCount   = std::size(currentFrameData.meshes);
+        const size_t meshCount   = std::size(meshes);
 
         //Allocate a descriptor set for each mesh to be drawn
         if(materialDescriptorPool[imageIndex] == nullptr || materialDescriptorPool[imageIndex]->getDescriptor().maxSets < meshCount) {
@@ -346,7 +324,7 @@ namespace blb::rnd {
 
         //Bind all mesh data
         size_t meshIndex = 0;
-        for(auto&& [mesh, transform] : currentFrameData.meshes) {
+        for(auto&& [mesh, transform] : meshes) {
             std::shared_ptr<DescriptorSet>& materialDescriptorSet = materialSets[meshIndex];
 
             VertexData modelData{};
@@ -462,13 +440,13 @@ namespace blb::rnd {
             descriptorSets[i].viewSet     = frameDescriptorPool[i]->allocateDescriptorSets(descriptorSetLayouts[viewIndex]);
             descriptorSets[i].lightingSet = frameDescriptorPool[i]->allocateDescriptorSets(descriptorSetLayouts[lightingIndex]);
 
-            //As we only have one UBO per frame for every DescriptorSet we can write the buffer into them straight away
-            descriptorSets[i].viewSet->map(*uniformBuffers[i], uniformBufferLayout.viewOffset, uniformBufferLayout.viewSize, 0);
-            descriptorSets[i].viewSet->map(*uniformBuffers[i], uniformBufferLayout.viewPosOffset, uniformBufferLayout.viewPosSize, 1);
+            //As we only have one UBO per frame for every DescriptorSet we can map the buffer into them straight away
+            descriptorSets[i].viewSet->map(*uniformBuffers[i], offsetof(FrameData, viewData), sizeof(currentFrameData.viewData), 0);
+            descriptorSets[i].viewSet->map(*uniformBuffers[i], offsetof(FrameData, viewPosition), sizeof(currentFrameData.viewPosition), 1);
 
-            descriptorSets[i].lightingSet->map(*uniformBuffers[i], uniformBufferLayout.lightOffset, uniformBufferLayout.lightSize, 0);
-            descriptorSets[i].lightingSet->map(*uniformBuffers[i], uniformBufferLayout.numLightsOffset, uniformBufferLayout.numLightsSize, 1);
-            descriptorSets[i].lightingSet->map(*uniformBuffers[i], uniformBufferLayout.shadowTransformsOffset, uniformBufferLayout.shadowTransformsSize, 2);
+            descriptorSets[i].lightingSet->map(*uniformBuffers[i], offsetof(FrameData, lights), sizeof(currentFrameData.lights), 0);
+            descriptorSets[i].lightingSet->map(*uniformBuffers[i], offsetof(FrameData, numLights), sizeof(currentFrameData.numLights), 1);
+            descriptorSets[i].lightingSet->map(*uniformBuffers[i], offsetof(FrameData, directionalShadowTransforms), sizeof(currentFrameData.directionalShadowTransforms), 2);
         }
 
         needNewSwapchain = false;
@@ -570,7 +548,7 @@ namespace blb::rnd {
 
         for(size_t i = 0; i < bufferCount; ++i) {
             GraphicsBuffer::Descriptor descriptor{};
-            descriptor.size        = uniformBufferLayout.totalSize();
+            descriptor.size        = sizeof(FrameData);
             descriptor.usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer;
             descriptor.sharingMode = SharingMode::Exclusive;
             descriptor.memoryType  = MemoryType::SystemMemory;

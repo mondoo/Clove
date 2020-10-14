@@ -42,38 +42,18 @@ namespace blb::rnd {
         size_t currentFrame{ 0 };
         uint32_t imageIndex{ 0 };
 
-        struct {
-            clv::mth::mat4f view;
-            clv::mth::mat4f projection;
+        struct FrameData {
+            //TODO: Get the alignment from vulkan
+            alignas(256) ViewData viewData;
+            alignas(256) clv::mth::vec3f viewPosition;
 
-            clv::mth::vec3f viewPosition;
+            alignas(256) LightDataArray lights;
+            alignas(256) DirectionalShadowTransformArray directionalShadowTransforms;
 
-            std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
-
-            LightDataArray lights;
-            DirectionalShadowTransformArray directionalShadowTransforms;
-
-            LightCount numLights;
+            alignas(256) LightCount numLights;
         } currentFrameData;
 
-        //Contains size / offsets for each piece of data placed inside the per frame uniform buffer
-        struct {
-            size_t viewSize{ 0 };
-            size_t viewPosSize{ 0 };
-            size_t lightSize{ 0 };
-            size_t numLightsSize{ 0 };
-            size_t shadowTransformsSize{ 0 };
-
-            size_t viewOffset{ 0 };
-            size_t viewPosOffset{ 0 };
-            size_t lightOffset{ 0 };
-            size_t numLightsOffset{ 0 };
-            size_t shadowTransformsOffset{ 0 };
-
-            size_t totalSize() const {
-                return shadowTransformsOffset + shadowTransformsSize;
-            }
-        } uniformBufferLayout;
+        std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
 
         std::shared_ptr<clv::gfx::GraphicsDevice> graphicsDevice;
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
