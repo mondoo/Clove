@@ -125,15 +125,3 @@ TEST(PoolAllocatorTests, CanFreeAndReallocateAnyItem) {
 
     EXPECT_TRUE(someData != nullptr);
 }
-
-TEST(PoolAllocatorTests, CanInitialiseWithARangeOfMemory) {
-    std::array<std::byte, 100> allocatorRange;
-    PoolAllocator<uint32_t> allocator(allocatorRange.data(), allocatorRange.size() / sizeof(uint32_t));
-
-    const uint32_t dataValue = 100;
-
-    uint32_t* data = allocator.alloc(dataValue);
-
-    EXPECT_TRUE(data != nullptr);
-    EXPECT_EQ(dataValue, *data);
-}
