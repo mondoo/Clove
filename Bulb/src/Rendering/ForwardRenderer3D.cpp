@@ -41,7 +41,7 @@ namespace blb::rnd {
         };
 
         uniformBufferLayout.viewSize             = sizeof(ViewData);
-        uniformBufferLayout.viewPosSize          = sizeof(ViewData);
+        uniformBufferLayout.viewPosSize          = sizeof(clv::mth::vec3f);
         uniformBufferLayout.lightSize            = sizeof(LightDataArray);
         uniformBufferLayout.numLightsSize        = sizeof(LightCount);
         uniformBufferLayout.shadowTransformsSize = sizeof(DirectionalShadowTransformArray);
