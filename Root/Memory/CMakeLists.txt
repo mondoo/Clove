@@ -26,7 +26,7 @@ target_include_directories(
 target_link_libraries(
     Root.Memory 
 
-    PRIVATE
+	PUBLIC #Public because PoolAllocator.inl includes the headers
 		Root.Definitions
 		Root.Log
 )
