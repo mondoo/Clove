@@ -16,7 +16,13 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessageTypeFlagsEXT messagType,
     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
     void* pUserData) {
-    std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+    if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) != 0) {
+        GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, pCallbackData->pMessage);
+    } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) != 0) {
+        GARLIC_LOG(garlicLogContext, clv::Log::Level::Warning, pCallbackData->pMessage);
+    } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) != 0) {
+        GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, pCallbackData->pMessage);
+    }
 
     return VK_FALSE;
 }
