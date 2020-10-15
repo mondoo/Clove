@@ -138,6 +138,8 @@ TEST(EventTests, DispatcherResetsHandles) {
         handle = dispatcher.bindToEvent<Event>([&called](Event const& event) {
             called = true;
         });
+
+        EXPECT_TRUE(handle.isValid());
     }
 
     EXPECT_FALSE(handle.isValid());
