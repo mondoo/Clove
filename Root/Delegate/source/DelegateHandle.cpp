@@ -25,7 +25,7 @@ namespace garlic::inline root {
     }
 
     bool DelegateHandle::isValid() const {
-        return id.has_value();
+        return id.has_value() && !proxy.expired();
     }
 
     void DelegateHandle::reset() {
