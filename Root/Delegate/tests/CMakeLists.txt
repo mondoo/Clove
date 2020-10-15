@@ -2,3 +2,8 @@
 add_executable(SingleCastDelegateTest SingleCastDelegateTests.cpp)
 target_link_libraries(SingleCastDelegateTest PRIVATE gtest_main Root.Delegate)
 add_test(NAME SingleCastDelegateTest COMMAND SingleCastDelegateTest)
+
+#MultiCastDelegate
+add_executable(MultiCastDelegateTest MultiCastDelegateTests.cpp)
+target_link_libraries(MultiCastDelegateTest PRIVATE gtest_main Root.Delegate)
+add_test(NAME MultiCastDelegateTest COMMAND MultiCastDelegateTest)
