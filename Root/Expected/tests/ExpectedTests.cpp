@@ -9,3 +9,10 @@ TEST(ExpectedTests, CanConstructWithAValue) {
 
     EXPECT_EQ(testValue, expectedValue.getValue());
 }
+
+TEST(ExpectedTests, CanConstructWithAnError) {
+    std::runtime_error error("Test Error");
+    Expected<int32_t, std::runtime_error> expectedValue(Unexpected{error}));
+
+    EXPECT_EQ(error, expectedValue.getError());
+}
