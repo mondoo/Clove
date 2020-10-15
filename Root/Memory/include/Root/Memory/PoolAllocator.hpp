@@ -24,13 +24,10 @@ namespace garlic::inline root {
         size_t numElements;
         PoolItem* nextFree = nullptr;
 
-        bool freeMemory = true;
-
         //FUNCTIONS
     public:
         PoolAllocator() = delete;
         PoolAllocator(size_t numElements);
-        PoolAllocator(std::byte* start, size_t numElements);
 
         PoolAllocator(const PoolAllocator& other) = delete;
         PoolAllocator(PoolAllocator&& other) noexcept;

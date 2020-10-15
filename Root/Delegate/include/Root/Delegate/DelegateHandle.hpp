@@ -15,12 +15,15 @@ namespace garlic::inline root {
 	 * @see MultiCastDelegate
 	 */
     class DelegateHandle {
+        template<typename FunctionPrototype>
+        friend class MultiCastDelegate;
+
         //TYPES
-    public:
+    private:
         using IdType = int32_t;
 
         struct Proxy {
-            std::function<void(IdType)> unbind;
+            std::function<void(DelegateHandle&)> unbind;
         };
 
         //VARIABLES
@@ -46,8 +49,5 @@ namespace garlic::inline root {
         bool isValid() const;
 
         void reset();
-
-        IdType getId() const;
-        operator IdType() const;
     };
 }

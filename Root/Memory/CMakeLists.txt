@@ -26,7 +26,7 @@ target_include_directories(
 target_link_libraries(
     Root.Memory 
 
-    PRIVATE
+	PUBLIC #Public because PoolAllocator.inl includes the headers
 		Root.Definitions
 		Root.Log
 )
@@ -39,3 +39,7 @@ target_compile_definitions(
 	PRIVATE
 		GAR_ENABLE_MEMORY_DEBUGGING=$<BOOL:${GAR_CLV_ENABLE_MEMORY_DEBUGGING}>
 )
+
+if(GAR_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()

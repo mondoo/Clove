@@ -2,8 +2,8 @@ namespace garlic::inline root {
     template<typename FunctionPrototype>
     MultiCastDelegate<FunctionPrototype>::MultiCastDelegate() {
         handleProxy         = std::make_shared<DelegateHandle::Proxy>();
-        handleProxy->unbind = [this](DelegateHandle::IdType id) {
-            unbind(id);
+        handleProxy->unbind = [this](DelegateHandle& handle) {
+            unbind(handle);
         };
     }
 
@@ -28,8 +28,10 @@ namespace garlic::inline root {
             return (object->*function)(std::forward<Args>(args)...);
         };
 
-        auto handle = DelegateHandle{ nextId++, handleProxy };
-        functionPointers.emplace(std::make_pair(handle.getId(), functionPointer));
+        auto const id = nextId++;
+
+        auto handle = DelegateHandle{ id, handleProxy };
+        functionPointers.emplace(std::make_pair(id, functionPointer));
 
         return handle;
     }
@@ -37,15 +39,18 @@ namespace garlic::inline root {
     template<typename FunctionPrototype>
     template<typename BindFunctionPrototype>
     DelegateHandle MultiCastDelegate<FunctionPrototype>::bind(BindFunctionPrototype&& function) {
-        auto handle = DelegateHandle{ nextId++, handleProxy };
-        functionPointers.emplace(std::make_pair(handle.getId(), function));
+        auto const id = nextId++;
+
+        auto handle = DelegateHandle{ id, handleProxy };
+        functionPointers.emplace(std::make_pair(id, function));
 
         return handle;
     }
 
     template<typename FunctionPrototype>
-    void MultiCastDelegate<FunctionPrototype>::unbind(DelegateHandle::IdType id) {
-        functionPointers.erase(id);
+    void MultiCastDelegate<FunctionPrototype>::unbind(DelegateHandle& handle) {
+        functionPointers.erase(handle.id.value_or(DelegateHandle::INVALID_ID));
+        handle.id.reset();
     }
 
     template<typename FunctionPrototype>

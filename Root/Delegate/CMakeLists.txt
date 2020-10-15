@@ -19,3 +19,7 @@ target_include_directories(
 	PUBLIC
 		include
 )
+
+if(GAR_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()
