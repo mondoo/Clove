@@ -30,16 +30,9 @@ namespace garlic::inline root {
 
     void DelegateHandle::reset() {
         if(auto proxyLock = proxy.lock()) {
-            proxyLock->unbind(getId());
+            proxyLock->unbind(*this);
+        } else {
+            id.reset();
         }
-        id.reset();
-    }
-
-    DelegateHandle::IdType DelegateHandle::getId() const {
-        return id.value_or(INVALID_ID);
-    }
-
-    DelegateHandle::operator IdType() const {
-        return getId();
     }
 }

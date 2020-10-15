@@ -48,7 +48,7 @@ namespace garlic::inline root {
         template<typename BindFunctionPrototype>
         [[nodiscard]] DelegateHandle bind(BindFunctionPrototype&& function);
 
-        void unbind(DelegateHandle::IdType id);
+        void unbind(DelegateHandle& handle);
         void unbindAll();
 
         /**
