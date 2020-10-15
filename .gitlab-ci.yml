@@ -13,7 +13,7 @@ build:windows:
     - docker login -u runner -p ${DV_REGISTRY_PW} registry.gitlab.com/digital-vessel/docker
     - docker pull registry.gitlab.com/digital-vessel/docker/build_environment/windows:1809
   script:
-    - docker run --volume ${CI_PROJECT_DIR}:C:\garlic registry.gitlab.com/digital-vessel/docker/build_environment/windows:1809 cmd /s /c "cd garlic && mkdir build && cd build && cmake .. && cmake --build . --target ALL_BUILD --config Release"
+    - docker run --volume ${CI_PROJECT_DIR}:C:\garlic registry.gitlab.com/digital-vessel/docker/build_environment/windows:1809 cmd /s /c "cd garlic && mkdir build && cd build && cmake -DGAR_BUILD_TESTS=ON .. && cmake --build . --target ALL_BUILD --config Release"
   artifacts:
     paths:
       - build/
@@ -28,7 +28,7 @@ build:linux:gcc:
   script:
     - mkdir build
     - cd build
-    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -G "Unix Makefiles" ..
+    - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
     paths:
@@ -44,7 +44,7 @@ build:linux:clang:
   script:
     - mkdir build
     - cd build
-    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/clang-10 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-10 -G "Unix Makefiles" ..
+    - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/clang-10 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
     paths:
