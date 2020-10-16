@@ -4,12 +4,31 @@ namespace garlic::inline root {
     /**
      * @brief Allows Expected to be constructed as an error properly 
      * if Expected's T and E are the same type.
-     * @tparam T 
+     * @tparam E The error type
      */
     template<typename E>
     class Unexpected {
+        //VARIABLES
     public:
         E value;
+
+        //FUNCTIONS
+    public:
+        Unexpected() noexcept = delete;
+        Unexpected(E const &value) noexcept
+            : value{ value } {
+        }
+        Unexpected(E &&value) noexcept
+            : value(std::move(value)) {
+        }
+
+        Unexpected(Unexpected const &other) noexcept = default;
+        Unexpected(Unexpected &&other) noexcept      = default;
+
+        Unexpected &operator=(Unexpected const &other) noexcept = default;
+        Unexpected &operator=(Unexpected &&other) noexcept = default;
+
+        ~Unexpected() noexcept = default;
     };
 
     /**
@@ -34,18 +53,18 @@ namespace garlic::inline root {
     public:
         Expected() noexcept = default;
         Expected(T const &value) noexcept
-            : value(value) {
+            : value{ value } {
         }
         Expected(T &&value) noexcept
-            : value(std::move(value)) {
+            : value{ std::move(value) } {
         }
         Expected(Unexpected<E> const &error) noexcept
-            : error(error.value)
-            , ok(false) {
+            : error{ error.value }
+            , ok{ false } {
         }
         Expected(Unexpected<E> &&error) noexcept
-            : error(std::move(error.value))
-            , ok(false) {
+            : error{ std::move(error.value) }
+            , ok{ false } {
         }
 
         Expected(Expected const &other) noexcept = default;

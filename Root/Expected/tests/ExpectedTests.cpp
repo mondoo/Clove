@@ -19,6 +19,17 @@ TEST(ExpectedTests, CanConstructWithAnError) {
     EXPECT_EQ(error, expectedValue.getError());
 }
 
+TEST(ExpectedTests, CanImplicitlyConstructUnexpected) {
+    int32_t constexpr testValue{ 5 };
+    struct ErrorType {
+        int x{ testValue };
+    };
+
+    Expected<float, ErrorType> expected(ErrorType{});
+
+    EXPECT_EQ(testValue, expected.getError().x);
+}
+
 TEST(ExpectedTests, CallsDestructorOnValueType) {
     struct Helper {
     public:
