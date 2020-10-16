@@ -8,6 +8,7 @@ namespace garlic::inline root {
      */
     template<typename E>
     class Unexpected {
+    public:
         E value;
     };
 
