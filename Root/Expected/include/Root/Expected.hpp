@@ -27,17 +27,26 @@ namespace garlic::inline root {
             T value;
             E error;
         };
+        bool ok{ true };
 
         //FUNCTIONS
     public:
-        Expected() = default;
-        Expected(T value)
+        Expected() noexcept = default;
+        Expected(T value) noexcept
             : value(std::move(value)) {
         }
-        Expected(Unexpected<E> error)
+        Expected(Unexpected<E> error) noexcept
             : error(error.value) {
         }
-        ~Expected() = default;
+
+        Expected(Expected const &other) noexcept = default;
+        Expected(Expected &&other) noexcept      = default;
+
+        Expected &operator=(Expected const &other) noexcept = default;
+        Expected &operator=(Expected &&other) noexcept = default;
+
+        ~Expected() noexcept {
+        }
 
         T getValue() {
             return value;
