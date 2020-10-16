@@ -11,8 +11,10 @@ TEST(ExpectedTests, CanConstructWithAValue) {
 }
 
 TEST(ExpectedTests, CanConstructWithAnError) {
-    std::runtime_error error("Test Error");
-    Expected<int32_t, std::runtime_error> expectedValue(Unexpected{error}));
+    using ErrorType           = int32_t;
+    ErrorType constexpr error = 42;
+
+    Expected<int32_t, ErrorType> expectedValue(Unexpected<ErrorType>{ error });
 
     EXPECT_EQ(error, expectedValue.getError());
 }
