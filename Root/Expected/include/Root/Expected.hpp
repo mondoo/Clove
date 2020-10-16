@@ -75,12 +75,30 @@ namespace garlic::inline root {
 
         ~Expected() noexcept {}
 
+        T &getValue() & {
+            return value;
+        }
         T const &getValue() const & {
             return value;
         }
+        T &&getValue() && {
+            return std::move(value);
+        }
+        T const &&getValue() const && {
+            return std::move(value);
+        }
 
+        E &getError() & {
+            return error;
+        }
         E const &getError() const & {
             return error;
+        }
+        E &&getError() && {
+            return std::move(error);
+        }
+        E const &&getError() const && {
+            return std::move(error);
         }
 
         bool hasValue() const noexcept {
