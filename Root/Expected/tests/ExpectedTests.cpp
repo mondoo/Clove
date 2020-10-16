@@ -75,3 +75,53 @@ TEST(ExpectedTests, CanCheckIfThereIsAnError) {
     EXPECT_FALSE(hasError.hasValue());
     EXPECT_FALSE(hasError);
 }
+
+TEST(ExpectedTests, DoesNotCopyValueWhenObserving) {
+    struct Helper {
+        bool copied{ false };
+
+        Helper() = default;
+
+        Helper(Helper const &other) {
+            copied = true;
+        }
+        Helper(Helper &&other) noexcept = default;
+
+        Helper &operator=(Helper const &other) {
+            copied = true;
+            return *this;
+        }
+        Helper &operator=(Helper &&other) noexcept = default;
+
+        ~Helper() = default;
+    };
+
+    Expected<Helper, std::exception> expected{ Helper{} };
+
+    EXPECT_FALSE(expected.getValue().copied);
+}
+
+TEST(ExpectedTests, DoesNotCopyErrorWhenObserving) {
+    struct Helper {
+        bool copied{ false };
+
+        Helper() = default;
+
+        Helper(Helper const &other) {
+            copied = true;
+        }
+        Helper(Helper &&other) noexcept = default;
+
+        Helper &operator=(Helper const &other) {
+            copied = true;
+            return *this;
+        }
+        Helper &operator=(Helper &&other) noexcept = default;
+
+        ~Helper() = default;
+    };
+
+    Expected<std::string, Helper> expected{ Unexpected<Helper>{ Helper{} } };
+
+    EXPECT_FALSE(expected.getError().copied);
+}
