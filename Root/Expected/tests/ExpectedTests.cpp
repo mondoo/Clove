@@ -188,3 +188,13 @@ TEST(ExpectedTests, MovesErrorWhenIsAnRRef) {
 
     EXPECT_FALSE(helper.copied);
 }
+
+TEST(ExpectedTests, ThrowsWhenAccessingTheValueWhenItIsAnError) {
+    Expected<int32_t, std::runtime_error> expected{ std::runtime_error{ "Error!" } };
+    Expected<int32_t, std::runtime_error> movedExpected{ std::runtime_error{ "Error!" } };
+    Expected<int32_t, std::string> stringAsErrorExpected{ std::string{ "Error!" } };
+
+    EXPECT_ANY_THROW(expected.getValue());
+    EXPECT_ANY_THROW(std::move(movedExpected.getValue()));
+    EXPECT_ANY_THROW(stringAsErrorExpected.getValue());
+}
