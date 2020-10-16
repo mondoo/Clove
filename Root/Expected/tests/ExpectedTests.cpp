@@ -18,3 +18,49 @@ TEST(ExpectedTests, CanConstructWithAnError) {
 
     EXPECT_EQ(error, expectedValue.getError());
 }
+
+TEST(ExpectedTests, CallsDestructorOnValueType) {
+    struct Helper {
+    public:
+        bool &flag;
+
+    public:
+        Helper(bool &flag)
+            : flag(flag) {
+        }
+        ~Helper() {
+            flag = true;
+        }
+    };
+
+    bool destructorCalled{ false };
+
+    {
+        Expected<Helper, std::exception> expected(Helper{ destructorCalled });
+    }
+
+    EXPECT_TRUE(destructorCalled);
+}
+
+TEST(ExpectedTests, CallsDestructorOnErrorType) {
+    struct Helper {
+    public:
+        bool &flag;
+
+    public:
+        Helper(bool &flag)
+            : flag(flag) {
+        }
+        ~Helper() {
+            flag = true;
+        }
+    };
+
+    bool destructorCalled{ false };
+
+    {
+        Expected<int32_t, Helper> expected(Unexpected<Helper>{ Helper{ destructorCalled } });
+    }
+
+    EXPECT_TRUE(destructorCalled);
+}
