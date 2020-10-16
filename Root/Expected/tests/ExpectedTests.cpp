@@ -198,3 +198,11 @@ TEST(ExpectedTests, ThrowsWhenAccessingTheValueWhenItIsAnError) {
     EXPECT_ANY_THROW(std::move(movedExpected.getValue()));
     EXPECT_ANY_THROW(stringAsErrorExpected.getValue());
 }
+
+TEST(ExpectedTests, AssertsWhenAccessTheErrorWhenItIsAValue) {
+    Expected<int32_t, std::exception> expected{ 1 };
+    Expected<int32_t, std::exception> movedExpected{ 2 };
+
+    EXPECT_DEATH(expected.getError(), "");
+    EXPECT_DEATH(std::move(movedExpected.getError()), "");
+}

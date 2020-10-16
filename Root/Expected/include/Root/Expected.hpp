@@ -1,3 +1,5 @@
+#include <cassert>
+
 #pragma once
 
 namespace garlic::inline root {
@@ -101,15 +103,19 @@ namespace garlic::inline root {
         }
 
         E &getError() & {
+            assert(!ok);
             return error;
         }
         E const &getError() const & {
+            assert(!ok);
             return error;
         }
         E &&getError() && {
+            assert(!ok);
             return std::move(error);
         }
         E const &&getError() const && {
+            assert(!ok);
             return std::move(error);
         }
 
