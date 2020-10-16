@@ -64,3 +64,14 @@ TEST(ExpectedTests, CallsDestructorOnErrorType) {
 
     EXPECT_TRUE(destructorCalled);
 }
+
+TEST(ExpectedTests, CanCheckIfThereIsAnError) {
+    Expected<int32_t, std::exception> hasValue{ 101 };
+    Expected<int32_t, std::exception> hasError{ Unexpected<std::exception>{ std::exception{ "This is an exception" } } };
+
+    EXPECT_TRUE(hasValue.hasValue());
+    EXPECT_TRUE(hasValue);
+
+    EXPECT_FALSE(hasError.hasValue());
+    EXPECT_FALSE(hasError);
+}

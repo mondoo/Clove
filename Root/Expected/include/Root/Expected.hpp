@@ -37,7 +37,8 @@ namespace garlic::inline root {
             : value(std::move(value)) {
         }
         Expected(Unexpected<E> error) noexcept
-            : error(error.value) {
+            : error(error.value)
+            , ok(false) {
         }
 
         Expected(Expected const &other) noexcept = default;
@@ -54,6 +55,13 @@ namespace garlic::inline root {
 
         E getError() {
             return error;
+        }
+
+        bool hasValue() const noexcept {
+            return ok;
+        }
+        operator bool() const noexcept {
+            return hasValue();
         }
     };
 }
