@@ -45,8 +45,7 @@ namespace garlic::inline root {
         Expected &operator=(Expected const &other) noexcept = default;
         Expected &operator=(Expected &&other) noexcept = default;
 
-        ~Expected() noexcept {
-        }
+        ~Expected() noexcept {}
 
         T getValue() {
             return value;
