@@ -242,13 +242,13 @@ namespace blb::rnd {
             modelData.model        = transform;
             modelData.normalMatrix = clv::mth::inverse(clv::mth::transpose(transform));
 
-            materialDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
-
             currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-            currentImageData.commandBuffer->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, 0);//TODO: Get correct setNum
+            materialDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
             currentImageData.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, sizeof(VertexData), &modelData);
+
+            currentImageData.commandBuffer->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Material));
 
             currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
 
