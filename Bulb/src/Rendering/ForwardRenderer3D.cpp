@@ -293,16 +293,13 @@ namespace blb::rnd {
         commandBuffers[imageIndex]->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
         commandBuffers[imageIndex]->bindPipelineObject(*pipelineObject);
 
-        //Write the view values into the UBO
-        uniformBuffers[imageIndex]->write(&currentFrameData.viewData, offsetof(FrameData, viewData), sizeof(currentFrameData.viewData));
-        uniformBuffers[imageIndex]->write(&currentFrameData.viewPosition, offsetof(FrameData, viewPosition), sizeof(currentFrameData.viewPosition));
+        //We can just write the struct straight in as all the mappings are based off of it's layout
+        uniformBuffers[imageIndex]->write(&currentFrameData, 0, sizeof(currentFrameData));
 
-        //Write the lighting values into the UBO
-        uniformBuffers[imageIndex]->write(&currentFrameData.lights, offsetof(FrameData, lights), sizeof(currentFrameData.lights));
-        uniformBuffers[imageIndex]->write(&currentFrameData.numLights, offsetof(FrameData, numLights), sizeof(currentFrameData.numLights));
-        uniformBuffers[imageIndex]->write(&currentFrameData.directionalShadowTransforms, offsetof(FrameData, directionalShadowTransforms), sizeof(currentFrameData.directionalShadowTransforms));
+        //Map any non-UBO pieces of data (such as textures / shadow maps)
         descriptorSets[imageIndex].lightingSet->map(shadowMapViews[imageIndex], *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
 
+        //Bind the descriptor sets that all objects will use
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
 
