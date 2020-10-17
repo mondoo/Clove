@@ -36,7 +36,6 @@ namespace blb::rnd {
         //Object initialisation
         graphicsQueue = graphicsFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
         presentQueue  = graphicsFactory->createPresentQueue();
-        transferQueue = graphicsFactory->createTransferQueue({ QueueFlags::Transient });
 
         swapchain = graphicsFactory->createSwapChain({ windowSize });
         createRenderpass();

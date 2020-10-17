@@ -71,7 +71,6 @@ namespace blb::rnd {
 
         std::shared_ptr<clv::gfx::GraphicsQueue> graphicsQueue;
         std::shared_ptr<clv::gfx::PresentQueue> presentQueue;
-        std::shared_ptr<clv::gfx::TransferQueue> transferQueue;
 
         std::shared_ptr<clv::gfx::Swapchain> swapchain;
         std::vector<std::shared_ptr<clv::gfx::Framebuffer>> swapChainFrameBuffers;
