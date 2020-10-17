@@ -7,10 +7,8 @@
 #include <Clove/Graphics/Shader.hpp>
 
 namespace blb::rnd {
-    std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> createDescriptorSetLayouts(clv::gfx::GraphicsFactory& factory) {
-        std::shared_ptr<clv::gfx::DescriptorSetLayout> materialSetLayout;
-        std::shared_ptr<clv::gfx::DescriptorSetLayout> viewSetLayout;
-        std::shared_ptr<clv::gfx::DescriptorSetLayout> lightingSetLayout;
+    std::unordered_map<DescriptorSetSlots, std::shared_ptr<clv::gfx::DescriptorSetLayout>> createDescriptorSetLayouts(clv::gfx::GraphicsFactory& factory) {
+        std::unordered_map<DescriptorSetSlots, std::shared_ptr<clv::gfx::DescriptorSetLayout>> setLayouts;
 
         //MATERIAL SET
         {
@@ -23,7 +21,7 @@ namespace blb::rnd {
             clv::gfx::DescriptorSetLayout::Descriptor materialSetLayoutDescriptor{};
             materialSetLayoutDescriptor.bindings = { samplerLayoutBinding };
 
-            materialSetLayout = factory.createDescriptorSetLayout(materialSetLayoutDescriptor);
+            setLayouts[DescriptorSetSlots::Material] = factory.createDescriptorSetLayout(materialSetLayoutDescriptor);
         }
 
         //VIEW SET
@@ -43,7 +41,7 @@ namespace blb::rnd {
             clv::gfx::DescriptorSetLayout::Descriptor viewSetLayoutDescriptor{};
             viewSetLayoutDescriptor.bindings = { viewLayoutBinding, viewPosBinding };
 
-            viewSetLayout = factory.createDescriptorSetLayout(viewSetLayoutDescriptor);
+            setLayouts[DescriptorSetSlots::View] = factory.createDescriptorSetLayout(viewSetLayoutDescriptor);
         }
 
         //LIGHTING SET
@@ -75,10 +73,10 @@ namespace blb::rnd {
             clv::gfx::DescriptorSetLayout::Descriptor lightingSetLayoutDescriptor{};
             lightingSetLayoutDescriptor.bindings = { lightDataBindingInfo, lightCountBindingInfo, directionalShadowTransformsInfo, shadowMapSamplerLayoutBinding };
 
-            lightingSetLayout = factory.createDescriptorSetLayout(lightingSetLayoutDescriptor);
+            setLayouts[DescriptorSetSlots::Lighting] = factory.createDescriptorSetLayout(lightingSetLayoutDescriptor);
         }
 
-        return { materialSetLayout, viewSetLayout, lightingSetLayout };
+        return setLayouts;
     }
 
     std::unordered_map<clv::gfx::DescriptorType, uint32_t> countDescriptorBindingTypes(const clv::gfx::DescriptorSetLayout& descriptorSetLayout) {

@@ -55,6 +55,8 @@ namespace blb::rnd {
 
         std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
 
+        std::unordered_map<DescriptorSetSlots, std::shared_ptr<clv::gfx::DescriptorSetLayout>> descriptorSetLayouts;
+
         std::shared_ptr<clv::gfx::GraphicsDevice> graphicsDevice;
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
@@ -75,7 +77,6 @@ namespace blb::rnd {
         std::array<std::shared_ptr<clv::gfx::Fence>, maxFramesInFlight> inFlightFences;
         std::vector<std::shared_ptr<clv::gfx::Fence>> imagesInFlight;
 
-        std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> descriptorSetLayouts;
         std::vector<InFlightImageDescriptorSets> descriptorSets;                      //One for each image.
         std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> materialDescriptorPool;//One for each image.
         std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> frameDescriptorPool;   //One for each image. For descriptors which are set once per frame
@@ -98,7 +99,7 @@ namespace blb::rnd {
         ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API api);
 
         ForwardRenderer3D(const ForwardRenderer3D& other) = delete;
-        ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
+        //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D& operator=(const ForwardRenderer3D& other) = delete;
         ForwardRenderer3D& operator=(ForwardRenderer3D&& other) noexcept;

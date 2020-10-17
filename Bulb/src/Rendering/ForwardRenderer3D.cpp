@@ -163,7 +163,7 @@ namespace blb::rnd {
         }
     }
 
-    ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;
+    //ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;
 
     ForwardRenderer3D& ForwardRenderer3D::operator=(ForwardRenderer3D&& other) noexcept = default;
 
@@ -306,12 +306,11 @@ namespace blb::rnd {
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
         commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
 
-        const auto materialIndex = static_cast<size_t>(DescriptorSetSlots::Material);
-        const size_t meshCount   = std::size(meshes);
+        size_t const meshCount = std::size(meshes);
 
         //Allocate a descriptor set for each mesh to be drawn
         if(materialDescriptorPool[imageIndex] == nullptr || materialDescriptorPool[imageIndex]->getDescriptor().maxSets < meshCount) {
-            auto materialSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[materialIndex]);
+            auto materialSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Material]);
             for(auto& [key, val] : materialSetBindingCount) {
                 val *= meshCount;
             }
@@ -319,7 +318,7 @@ namespace blb::rnd {
         }
 
         materialDescriptorPool[imageIndex]->reset();
-        std::vector<std::shared_ptr<DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[materialIndex]);
+        std::vector<std::shared_ptr<DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[DescriptorSetSlots::Material]);
         std::vector<std::shared_ptr<DescriptorSet>> materialSets = materialDescriptorPool[imageIndex]->allocateDescriptorSets(layouts);
 
         //Bind all mesh data
@@ -418,11 +417,8 @@ namespace blb::rnd {
         descriptorSets.resize(imageCount);
 
         //Allocate frame scope descriptor pools
-        const auto viewIndex     = static_cast<size_t>(DescriptorSetSlots::View);
-        const auto lightingIndex = static_cast<size_t>(DescriptorSetSlots::Lighting);
-
-        auto viewSetBindingCount     = countDescriptorBindingTypes(*descriptorSetLayouts[viewIndex]);
-        auto lightingSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[static_cast<size_t>(DescriptorSetSlots::Lighting)]);
+        auto viewSetBindingCount     = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::View]);
+        auto lightingSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Lighting]);
 
         constexpr uint32_t totalSets{ 2 };//Only 2 sets will be allocated from these pools
         auto bindingCounts = viewSetBindingCount;
@@ -437,8 +433,8 @@ namespace blb::rnd {
             //Allocate frame scope descriptor Sets
             frameDescriptorPool[i] = createDescriptorPool(bindingCounts, totalSets);
 
-            descriptorSets[i].viewSet     = frameDescriptorPool[i]->allocateDescriptorSets(descriptorSetLayouts[viewIndex]);
-            descriptorSets[i].lightingSet = frameDescriptorPool[i]->allocateDescriptorSets(descriptorSetLayouts[lightingIndex]);
+            descriptorSets[i].viewSet     = frameDescriptorPool[i]->allocateDescriptorSets(descriptorSetLayouts[DescriptorSetSlots::View]);
+            descriptorSets[i].lightingSet = frameDescriptorPool[i]->allocateDescriptorSets(descriptorSetLayouts[DescriptorSetSlots::Lighting]);
 
             //As we only have one UBO per frame for every DescriptorSet we can map the buffer into them straight away
             descriptorSets[i].viewSet->map(*uniformBuffers[i], offsetof(FrameData, viewData), sizeof(currentFrameData.viewData), 0);
@@ -513,20 +509,32 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::createPipeline() {
-        PushConstantDescriptor modelPushConstant{};
-        modelPushConstant.stage = Shader::Stage::Vertex;
-        modelPushConstant.size  = sizeof(VertexData);
+        std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayoutsVector{};
+        descriptorSetLayoutsVector.reserve(std::size(descriptorSetLayouts));
+        for(auto&& [key, layout] : descriptorSetLayouts) {
+            descriptorSetLayoutsVector.push_back(layout);
+        }
 
-        PipelineObject::Descriptor pipelineDescriptor;
-        pipelineDescriptor.vertexShader            = graphicsFactory->createShader({ reinterpret_cast<const std::byte*>(mesh_v), mesh_vLength });
-        pipelineDescriptor.fragmentShader          = graphicsFactory->createShader({ reinterpret_cast<const std::byte*>(mesh_p), mesh_pLength });
-        pipelineDescriptor.vertexInput             = Vertex::getInputBindingDescriptor();
-        pipelineDescriptor.vertexAttributes        = Vertex::getVertexAttributes();
-        pipelineDescriptor.viewportDescriptor.size = { swapchain->getExtent().x, swapchain->getExtent().y };
-        pipelineDescriptor.scissorDescriptor.size  = { swapchain->getExtent().x, swapchain->getExtent().y };
-        pipelineDescriptor.renderPass              = renderPass;
-        pipelineDescriptor.descriptorSetLayouts    = descriptorSetLayouts;
-        pipelineDescriptor.pushConstants           = { modelPushConstant };
+        PushConstantDescriptor modelPushConstant{
+            .stage = Shader::Stage::Vertex,
+            .size  = sizeof(VertexData),
+        };
+
+        PipelineObject::Descriptor pipelineDescriptor{
+            .vertexShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(mesh_v), mesh_vLength }),
+            .fragmentShader     = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(mesh_p), mesh_pLength }),
+            .vertexInput        = Vertex::getInputBindingDescriptor(),
+            .vertexAttributes   = Vertex::getVertexAttributes(),
+            .viewportDescriptor = {
+                .size = { swapchain->getExtent().x, swapchain->getExtent().y },
+            },
+            .scissorDescriptor = {
+                .size = { swapchain->getExtent().x, swapchain->getExtent().y },
+            },
+            .renderPass           = renderPass,
+            .descriptorSetLayouts = std::move(descriptorSetLayoutsVector),
+            .pushConstants        = { modelPushConstant },
+        };
 
         pipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }

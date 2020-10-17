@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Bulb/Rendering/RenderingConstants.hpp"
+
 #include <Clove/Graphics/Descriptor.hpp>
 
 namespace clv::gfx {
@@ -11,7 +13,7 @@ namespace blb::rnd {
     /**
      * @brief Creates all descriptor sets according to DescriptorSetSlots.
      */
-    std::vector<std::shared_ptr<clv::gfx::DescriptorSetLayout>> createDescriptorSetLayouts(clv::gfx::GraphicsFactory& factory);
+    std::unordered_map<DescriptorSetSlots, std::shared_ptr<clv::gfx::DescriptorSetLayout>> createDescriptorSetLayouts(clv::gfx::GraphicsFactory& factory);
 
     /**
      * @brief Counts the different binding types in a DescriptorSetLayout.
