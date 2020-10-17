@@ -105,12 +105,12 @@ namespace blb::rnd {
         //FUNCTIONS
     public:
         ForwardRenderer3D() = delete;
-        ForwardRenderer3D(clv::plt::Window& window, const clv::gfx::API api);
+        ForwardRenderer3D(clv::plt::Window& window, clv::gfx::API const api);
 
-        ForwardRenderer3D(const ForwardRenderer3D& other) = delete;
+        ForwardRenderer3D(ForwardRenderer3D const& other) = delete;
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
-        ForwardRenderer3D& operator=(const ForwardRenderer3D& other) = delete;
+        ForwardRenderer3D& operator=(ForwardRenderer3D const& other) = delete;
         ForwardRenderer3D& operator=(ForwardRenderer3D&& other) noexcept;
 
         ~ForwardRenderer3D();
@@ -120,22 +120,22 @@ namespace blb::rnd {
         /**
          * @brief Submit the active camera the renderer will use.
          */
-        void submitCamera(const Camera& camera, clv::mth::vec3f position);
+        void submitCamera(Camera const& camera, clv::mth::vec3f position);
 
         void submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);
         void submitAnimatedMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);
-        void submitLight(const DirectionalLight& light);
-        void submitLight(const PointLight& light);
+        void submitLight(DirectionalLight const& light);
+        void submitLight(PointLight const& light);
 
-        void submitWidget(const std::shared_ptr<Sprite>& widget);
-        void submitText(const std::shared_ptr<Sprite>& text);
+        void submitWidget(std::shared_ptr<Sprite> const& widget);
+        void submitText(std::shared_ptr<Sprite> const& text);
 
         void end();
 
-        const std::shared_ptr<clv::gfx::GraphicsFactory>& getGraphicsFactory() const;
+        std::shared_ptr<clv::gfx::GraphicsFactory> const& getGraphicsFactory() const;
 
     private:
-        void onWindowResize(const clv::mth::vec2ui& size);
+        void onWindowResize(clv::mth::vec2ui const& size);
         void recreateSwapchain();
 
         void createRenderpass();
@@ -149,6 +149,6 @@ namespace blb::rnd {
         void createSwapchainFrameBuffers();
 
         std::shared_ptr<clv::gfx::GraphicsBuffer> createUniformBuffer();
-        std::shared_ptr<clv::gfx::DescriptorPool> createDescriptorPool(const std::unordered_map<clv::gfx::DescriptorType, uint32_t>& bindingCount, const uint32_t setCount);
+        std::shared_ptr<clv::gfx::DescriptorPool> createDescriptorPool(std::unordered_map<clv::gfx::DescriptorType, uint32_t> const& bindingCount, uint32_t const setCount);
     };
 }

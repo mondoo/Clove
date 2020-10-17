@@ -26,7 +26,7 @@ extern "C" const char genshadowmap_p[];
 extern "C" const size_t genshadowmap_pLength;
 
 namespace blb::rnd {
-    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, const API api) {
+    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, API const api) {
         windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
         windowSize         = window.getSize();
 
@@ -62,15 +62,15 @@ namespace blb::rnd {
         }
         imagesInFlight.resize(swapchain->getImageViews().size());
 
-        Sampler::Descriptor samplerDescriptor{};
-        samplerDescriptor.minFilter        = Sampler::Filter::Linear;
-        samplerDescriptor.magFilter        = Sampler::Filter::Linear;
-        samplerDescriptor.addressModeU     = Sampler::AddressMode::Repeat;
-        samplerDescriptor.addressModeV     = Sampler::AddressMode::Repeat;
-        samplerDescriptor.addressModeW     = Sampler::AddressMode::Repeat;
-        samplerDescriptor.enableAnisotropy = true;
-        samplerDescriptor.maxAnisotropy    = 16.0f;
-
+        Sampler::Descriptor samplerDescriptor{
+            .minFilter        = Sampler::Filter::Linear,
+            .magFilter        = Sampler::Filter::Linear,
+            .addressModeU     = Sampler::AddressMode::Repeat,
+            .addressModeV     = Sampler::AddressMode::Repeat,
+            .addressModeW     = Sampler::AddressMode::Repeat,
+            .enableAnisotropy = true,
+            .maxAnisotropy    = 16.0f,
+        };
         sampler = graphicsFactory->createSampler(std::move(samplerDescriptor));
     }
 
@@ -96,7 +96,7 @@ namespace blb::rnd {
         currentFrameData.numLights.numPoint       = 0;
     }
 
-    void ForwardRenderer3D::submitCamera(const Camera& camera, clv::mth::vec3f position) {
+    void ForwardRenderer3D::submitCamera(Camera const& camera, clv::mth::vec3f position) {
         currentFrameData.viewData.view       = camera.getView();
         currentFrameData.viewData.projection = camera.getProjection();
 
@@ -110,21 +110,21 @@ namespace blb::rnd {
     void ForwardRenderer3D::submitAnimatedMesh(std::shared_ptr<rnd::Mesh> mesh, clv::mth::mat4f transform) {
     }
 
-    void ForwardRenderer3D::submitLight(const DirectionalLight& light) {
+    void ForwardRenderer3D::submitLight(DirectionalLight const& light) {
         const uint32_t lightIndex = currentFrameData.numLights.numDirectional++;
 
         currentFrameData.lights.directionalLights[lightIndex]    = light.data;
         currentFrameData.directionalShadowTransforms[lightIndex] = light.shadowTransform;
     }
 
-    void ForwardRenderer3D::submitLight(const PointLight& light) {
+    void ForwardRenderer3D::submitLight(PointLight const& light) {
         currentFrameData.lights.pointLights[currentFrameData.numLights.numPoint++] = light.data;
     }
 
-    void ForwardRenderer3D::submitWidget(const std::shared_ptr<Sprite>& widget) {
+    void ForwardRenderer3D::submitWidget(std::shared_ptr<Sprite> const& widget) {
     }
 
-    void ForwardRenderer3D::submitText(const std::shared_ptr<Sprite>& text) {
+    void ForwardRenderer3D::submitText(std::shared_ptr<Sprite> const& text) {
     }
 
     void ForwardRenderer3D::end() {
@@ -185,7 +185,7 @@ namespace blb::rnd {
 
             if(i < currentFrameData.numLights.numDirectional) {
                 for(auto&& [mesh, transform] : meshes) {
-                    const clv::mth::mat4f pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
+                    clv::mth::mat4f const pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
 
                     currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                     currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
@@ -260,19 +260,21 @@ namespace blb::rnd {
         currentImageData.commandBuffer->endRecording();
 
         //Submit the command buffer associated with that image
-        GraphicsSubmitInfo submitInfo{};
-        submitInfo.waitSemaphores   = { imageAvailableSemaphores[currentFrame] };
-        submitInfo.waitStages       = { PipelineObject::Stage::ColourAttachmentOutput };
-        submitInfo.commandBuffers   = { currentImageData.commandBuffer };
-        submitInfo.signalSemaphores = { renderFinishedSemaphores[currentFrame] };
+        GraphicsSubmitInfo submitInfo{
+            .waitSemaphores   = { imageAvailableSemaphores[currentFrame] },
+            .waitStages       = { PipelineObject::Stage::ColourAttachmentOutput },
+            .commandBuffers   = { currentImageData.commandBuffer },
+            .signalSemaphores = { renderFinishedSemaphores[currentFrame] },
+        };
         graphicsQueue->submit(submitInfo, inFlightFences[currentFrame].get());
 
         //Present current image
-        PresentInfo presentInfo{};
-        presentInfo.waitSemaphores = { renderFinishedSemaphores[currentFrame] };
-        presentInfo.swapChain      = swapchain;
-        presentInfo.imageIndex     = imageIndex;
-        result                     = presentQueue->present(presentInfo);
+        PresentInfo presentInfo{
+            .waitSemaphores = { renderFinishedSemaphores[currentFrame] },
+            .swapChain      = swapchain,
+            .imageIndex     = imageIndex,
+        };
+        result = presentQueue->present(presentInfo);
 
         if(needNewSwapchain || result == Result::Error_SwapchainOutOfDate || result == Result::Success_SwapchainSuboptimal) {
             recreateSwapchain();
@@ -282,11 +284,11 @@ namespace blb::rnd {
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
 
-    const std::shared_ptr<GraphicsFactory>& ForwardRenderer3D::getGraphicsFactory() const {
+    std::shared_ptr<GraphicsFactory> const& ForwardRenderer3D::getGraphicsFactory() const {
         return graphicsFactory;
     }
 
-    void ForwardRenderer3D::onWindowResize(const clv::mth::vec2ui& size) {
+    void ForwardRenderer3D::onWindowResize(clv::mth::vec2ui const& size) {
         windowSize       = size;
         needNewSwapchain = true;
     }
@@ -319,7 +321,7 @@ namespace blb::rnd {
         createPipeline();
         createSwapchainFrameBuffers();
 
-        const size_t imageCount = std::size(swapChainFrameBuffers);
+        size_t const imageCount = std::size(swapChainFrameBuffers);
 
         inFlightImageData.resize(imageCount);
 
@@ -380,47 +382,54 @@ namespace blb::rnd {
 
     void ForwardRenderer3D::createRenderpass() {
         //Define what attachments we have
-        AttachmentDescriptor colourAttachment{};
-        colourAttachment.format         = swapchain->getImageFormat();
-        colourAttachment.loadOperation  = LoadOperation::Clear;
-        colourAttachment.storeOperation = StoreOperation::Store;
-        colourAttachment.initialLayout  = GraphicsImage::Layout::Undefined;
-        colourAttachment.finalLayout    = GraphicsImage::Layout::Present;
+        AttachmentDescriptor colourAttachment{
+            .format         = swapchain->getImageFormat(),
+            .loadOperation  = LoadOperation::Clear,
+            .storeOperation = StoreOperation::Store,
+            .initialLayout  = GraphicsImage::Layout::Undefined,
+            .finalLayout    = GraphicsImage::Layout::Present,
+        };
 
-        AttachmentDescriptor depthAttachment{};
-        depthAttachment.format         = GraphicsImage::Format::D32_SFLOAT;
-        depthAttachment.loadOperation  = LoadOperation::Clear;
-        depthAttachment.storeOperation = StoreOperation::DontCare;
-        depthAttachment.initialLayout  = GraphicsImage::Layout::Undefined;
-        depthAttachment.finalLayout    = GraphicsImage::Layout::DepthStencilAttachmentOptimal;
+        AttachmentDescriptor depthAttachment{
+            .format         = GraphicsImage::Format::D32_SFLOAT,
+            .loadOperation  = LoadOperation::Clear,
+            .storeOperation = StoreOperation::DontCare,
+            .initialLayout  = GraphicsImage::Layout::Undefined,
+            .finalLayout    = GraphicsImage::Layout::DepthStencilAttachmentOptimal,
+        };
 
         //Define attachment references so the subpass knows which slot each attachment will be in
-        AttachmentReference colourReference{};
-        colourReference.attachmentIndex = 0;
-        colourReference.layout          = GraphicsImage::Layout::ColourAttachmentOptimal;
+        AttachmentReference colourReference{
+            .attachmentIndex = 0,
+            .layout          = GraphicsImage::Layout::ColourAttachmentOptimal,
+        };
 
-        AttachmentReference depthReference{};
-        depthReference.attachmentIndex = 1;
-        depthReference.layout          = GraphicsImage::Layout::DepthStencilAttachmentOptimal;
+        AttachmentReference depthReference{
+            .attachmentIndex = 1,
+            .layout          = GraphicsImage::Layout::DepthStencilAttachmentOptimal,
+        };
 
-        SubpassDescriptor subpass{};
-        subpass.colourAttachments = { colourReference };
-        subpass.depthAttachment   = depthReference;
+        SubpassDescriptor subpass{
+            .colourAttachments = { colourReference },
+            .depthAttachment   = depthReference,
+        };
 
         //Wait on the implicit subpass at the start. This is so the subpass can transition the layout at the right time
-        SubpassDependency dependency{};
-        dependency.sourceSubpass      = SUBPASS_EXTERNAL;
-        dependency.destinationSubpass = 0;
-        dependency.sourceStage        = PipelineObject::Stage::ColourAttachmentOutput;
-        dependency.destinationStage   = PipelineObject::Stage::ColourAttachmentOutput;
-        dependency.sourceAccess       = AccessFlags::None;
-        dependency.destinationAccess  = AccessFlags::ColourAttachmentWrite;
+        SubpassDependency dependency{
+            .sourceSubpass      = SUBPASS_EXTERNAL,
+            .destinationSubpass = 0,
+            .sourceStage        = PipelineObject::Stage::ColourAttachmentOutput,
+            .destinationStage   = PipelineObject::Stage::ColourAttachmentOutput,
+            .sourceAccess       = AccessFlags::None,
+            .destinationAccess  = AccessFlags::ColourAttachmentWrite,
+        };
 
         //Create render pass
-        RenderPass::Descriptor renderPassDescriptor{};
-        renderPassDescriptor.attachments  = { std::move(colourAttachment), std::move(depthAttachment) };
-        renderPassDescriptor.subpasses    = { std::move(subpass) };
-        renderPassDescriptor.dependencies = { std::move(dependency) };
+        RenderPass::Descriptor renderPassDescriptor{
+            .attachments  = { std::move(colourAttachment), std::move(depthAttachment) },
+            .subpasses    = { std::move(subpass) },
+            .dependencies = { std::move(dependency) },
+        };
 
         renderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
     }
@@ -454,13 +463,14 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::createDepthBuffer() {
-        GraphicsImage::Descriptor depthDescriptor{};
-        depthDescriptor.type        = GraphicsImage::Type::_2D;
-        depthDescriptor.usageFlags  = GraphicsImage::UsageMode::DepthStencilAttachment;
-        depthDescriptor.dimensions  = { swapchain->getExtent().x, swapchain->getExtent().y };
-        depthDescriptor.format      = GraphicsImage::Format::D32_SFLOAT;
-        depthDescriptor.sharingMode = SharingMode::Exclusive;
-        depthDescriptor.memoryType  = MemoryType::VideoMemory;
+        GraphicsImage::Descriptor depthDescriptor{
+            .type        = GraphicsImage::Type::_2D,
+            .usageFlags  = GraphicsImage::UsageMode::DepthStencilAttachment,
+            .dimensions  = { swapchain->getExtent().x, swapchain->getExtent().y },
+            .format      = GraphicsImage::Format::D32_SFLOAT,
+            .sharingMode = SharingMode::Exclusive,
+            .memoryType  = MemoryType::VideoMemory,
+        };
 
         depthImage     = graphicsFactory->createImage(std::move(depthDescriptor));
         depthImageView = depthImage->createView();
@@ -526,11 +536,12 @@ namespace blb::rnd {
 
     void ForwardRenderer3D::createSwapchainFrameBuffers() {
         for(auto& swapChainImageView : swapchain->getImageViews()) {
-            Framebuffer::Descriptor frameBufferDescriptor{};
-            frameBufferDescriptor.renderPass  = renderPass;
-            frameBufferDescriptor.attachments = { swapChainImageView, depthImageView };
-            frameBufferDescriptor.width       = swapchain->getExtent().x;
-            frameBufferDescriptor.height      = swapchain->getExtent().y;
+            Framebuffer::Descriptor frameBufferDescriptor{
+                .renderPass  = renderPass,
+                .attachments = { swapChainImageView, depthImageView },
+                .width       = swapchain->getExtent().x,
+                .height      = swapchain->getExtent().y,
+            };
 
             swapChainFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(frameBufferDescriptor));
         }
@@ -546,20 +557,22 @@ namespace blb::rnd {
         return graphicsFactory->createBuffer(std::move(descriptor));
     }
 
-    std::shared_ptr<DescriptorPool> ForwardRenderer3D::createDescriptorPool(const std::unordered_map<DescriptorType, uint32_t>& bindingCount, const uint32_t setCount) {
+    std::shared_ptr<DescriptorPool> ForwardRenderer3D::createDescriptorPool(std::unordered_map<DescriptorType, uint32_t> const& bindingCount, const uint32_t setCount) {
         std::vector<DescriptorInfo> poolTypes;
         for(auto&& [type, count] : bindingCount) {
-            DescriptorInfo info{};
-            info.type  = type;
-            info.count = count;
+            DescriptorInfo info{
+                .type  = type,
+                .count = count,
+            };
 
             poolTypes.emplace_back(info);
         }
 
-        DescriptorPool::Descriptor poolDescriptor{};
-        poolDescriptor.poolTypes = std::move(poolTypes);
-        poolDescriptor.flag      = DescriptorPool::Flag::None;
-        poolDescriptor.maxSets   = setCount;
+        DescriptorPool::Descriptor poolDescriptor{
+            .poolTypes = std::move(poolTypes),
+            .flag      = DescriptorPool::Flag::None,
+            .maxSets   = setCount,
+        };
 
         return graphicsFactory->createDescriptorPool(std::move(poolDescriptor));
     }
