@@ -50,6 +50,9 @@ namespace blb::rnd {
         recreateSwapchain();//Also creates the pipeline for the final colour
 
         //Create semaphores for frame synchronisation
+        for(auto& shadowFinishedSemaphore : shadowFinishedSemaphores) {
+            shadowFinishedSemaphore = graphicsFactory->createSemaphore();
+        }
         for(auto& renderFinishedSemaphore : renderFinishedSemaphores) {
             renderFinishedSemaphore = graphicsFactory->createSemaphore();
         }
@@ -168,41 +171,45 @@ namespace blb::rnd {
         clv::mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
         DepthStencilValue depthStencilClearValue{ 1.0f, 0 };
 
-        currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
+        currentImageData.shadowMapCommandBuffer->beginRecording(CommandBufferUsage::Default);
 
-        //SHADOW MAP - TODO: Put this into a seperate command buffer so we're not waiting on an image to be available for this step
+        //SHADOW MAP
         std::array<ClearValue, 1> shadowMapClearValues{
             ClearValue{ {}, depthStencilClearValue }
         };
 
-        currentImageData.commandBuffer->bindPipelineObject(*shadowMapPipelineObject);
+        currentImageData.shadowMapCommandBuffer->bindPipelineObject(*shadowMapPipelineObject);
 
         //Directional lights
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
             //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
-            currentImageData.commandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
+            currentImageData.shadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
 
             if(i < currentFrameData.numLights.numDirectional) {
                 for(auto&& [mesh, transform] : meshes) {
                     clv::mth::mat4f const pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
 
-                    currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-                    currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
+                    currentImageData.shadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
+                    currentImageData.shadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                    currentImageData.commandBuffer->pushConstant(*shadowMapPipelineObject, Shader::Stage::Vertex, sizeof(pushConstantData), pushConstantData);
+                    currentImageData.shadowMapCommandBuffer->pushConstant(*shadowMapPipelineObject, Shader::Stage::Vertex, sizeof(pushConstantData), pushConstantData);
 
-                    currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
+                    currentImageData.shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
                 }
             }
 
-            currentImageData.commandBuffer->endRenderPass();
+            currentImageData.shadowMapCommandBuffer->endRenderPass();
         }
+
+        currentImageData.shadowMapCommandBuffer->endRecording();
 
         //FINAL IMAGE
         std::array<ClearValue, 2> outputClearValues{
             ClearValue{ clearColour, {} },
             ClearValue{ {}, depthStencilClearValue }
         };
+
+        currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
 
         currentImageData.commandBuffer->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
         currentImageData.commandBuffer->bindPipelineObject(*pipelineObject);
@@ -258,13 +265,18 @@ namespace blb::rnd {
 
         currentImageData.commandBuffer->endRecording();
 
-        //Submit the command buffer associated with that image
+        //Submit the command buffers
+        GraphicsSubmitInfo shadowSubmitInfo{
+            .commandBuffers   = { currentImageData.shadowMapCommandBuffer },
+            .signalSemaphores = { shadowFinishedSemaphores[currentFrame] },
+        };
         GraphicsSubmitInfo submitInfo{
-            .waitSemaphores   = { imageAvailableSemaphores[currentFrame] },
-            .waitStages       = { PipelineObject::Stage::ColourAttachmentOutput },
+            .waitSemaphores   = { shadowFinishedSemaphores[currentFrame], imageAvailableSemaphores[currentFrame] },
+            .waitStages       = { PipelineObject::Stage::PixelShader, PipelineObject::Stage::ColourAttachmentOutput },
             .commandBuffers   = { currentImageData.commandBuffer },
             .signalSemaphores = { renderFinishedSemaphores[currentFrame] },
         };
+        graphicsQueue->submit(shadowSubmitInfo, nullptr);
         graphicsQueue->submit(submitInfo, inFlightFences[currentFrame].get());
 
         //Present current image
@@ -334,7 +346,8 @@ namespace blb::rnd {
 
         for(auto& imageData : inFlightImageData) {
             //Create command buffers
-            imageData.commandBuffer = graphicsQueue->allocateCommandBuffer();
+            imageData.commandBuffer          = graphicsQueue->allocateCommandBuffer();
+            imageData.shadowMapCommandBuffer = graphicsQueue->allocateCommandBuffer();
 
             //Create uniform buffers
             imageData.uniformBuffer = createUniformBuffer();

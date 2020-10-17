@@ -42,6 +42,8 @@ namespace blb::rnd {
         //Objects that hold the state / data of each image (in flight)
         struct ImageData {
             std::shared_ptr<clv::gfx::GraphicsCommandBuffer> commandBuffer;
+            std::shared_ptr<clv::gfx::GraphicsCommandBuffer> shadowMapCommandBuffer;
+
             std::shared_ptr<clv::gfx::GraphicsBuffer> uniformBuffer;
 
             //Descriptor pool for sets that change per frame
@@ -96,6 +98,7 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::PipelineObject> shadowMapPipelineObject;
 
         //Synchronisation obects
+        std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> shadowFinishedSemaphores;
         std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> renderFinishedSemaphores;
         std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> imageAvailableSemaphores;
         std::array<std::shared_ptr<clv::gfx::Fence>, maxFramesInFlight> inFlightFences;
