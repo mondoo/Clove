@@ -244,15 +244,13 @@ namespace blb::rnd {
         for(auto&& [mesh, transform] : meshes) {
             std::shared_ptr<DescriptorSet>& materialDescriptorSet = materialSets[meshIndex];
 
-            VertexData modelData{};
-            modelData.model        = transform;
-            modelData.normalMatrix = clv::mth::inverse(clv::mth::transpose(transform));
+            clv::mth::mat4f modelData[]{ transform, clv::mth::inverse(clv::mth::transpose(transform)) };
 
             currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
             materialDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
-            currentImageData.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, sizeof(VertexData), &modelData);
+            currentImageData.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, sizeof(modelData), modelData);
 
             currentImageData.commandBuffer->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Material));
 
@@ -497,7 +495,7 @@ namespace blb::rnd {
 
         PushConstantDescriptor modelPushConstant{
             .stage = Shader::Stage::Vertex,
-            .size  = sizeof(VertexData),
+            .size  = sizeof(clv::mth::mat4f) * 2,
         };
 
         PipelineObject::Descriptor pipelineDescriptor{

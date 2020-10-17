@@ -16,12 +16,7 @@ namespace blb::rnd {
 		clv::mth::vec3f pos;
 	};
 
-	struct VertexData {
-		clv::mth::mat4f model;
-		clv::mth::mat4f normalMatrix;
-	};
-
-	//Lighting data passed to GPU
+    //Lighting data passed to GPU
 	struct DirectionalLightData {
 		alignas(16) clv::mth::vec3f direction{};
 
