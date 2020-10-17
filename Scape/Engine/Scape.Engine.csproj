@@ -23,6 +23,8 @@
     <Exec Command="cmake --build . --target Scape.Membrane --config $(Configuration)" WorkingDirectory="../../build"/>
     <Copy SourceFiles="../../build/lib/$(Configuration)/Scape.Membrane.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true"/>
   </Target>
+  <Target Name="BuildMembrane" BeforeTargets="Build" Condition="'$(IsOSX)'=='true'">
+  </Target>
   <Target Name="BuildMembrane" BeforeTargets="Build" Condition="'$(IsLinux)'=='true'">
     <MakeDir Directories="../../build"/>
     <Exec Command="cmake -DCMAKE_BUILD_TYPE=$(Configuration) .." WorkingDirectory="../../build"/>
