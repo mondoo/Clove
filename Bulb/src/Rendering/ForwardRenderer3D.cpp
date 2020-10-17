@@ -40,12 +40,15 @@ namespace blb::rnd {
 
         swapchain = graphicsFactory->createSwapChain({ windowSize });
         createRenderpass();
+        createShadowMapRenderpass();
+
+        createShadowMapPipeline();
 
         createDepthBuffer();
 
         descriptorSetLayouts = createDescriptorSetLayouts(*graphicsFactory);
 
-        recreateSwapchain();
+        recreateSwapchain();//Also creates the pipeline for the final colour
 
         //Create semaphores for frame synchronisation
         for(auto& renderFinishedSemaphore : renderFinishedSemaphores) {
@@ -69,98 +72,6 @@ namespace blb::rnd {
         samplerDescriptor.maxAnisotropy    = 16.0f;
 
         sampler = graphicsFactory->createSampler(std::move(samplerDescriptor));
-
-        //TODO: Just making everything here until I figure out the best way to do this
-        {
-            //TODO: Hard coding in 3 for now (for frames in flight)
-            shadowMaps.resize(3);
-            shadowMapViews.resize(3);
-            for(size_t i = 0; i < 3; ++i) {
-                for(size_t j = 0; j < MAX_LIGHTS; ++j) {
-                    //Create the shadow map used for directional lighting
-                    GraphicsImage::Descriptor shadowMapDescriptor{
-                        .type        = GraphicsImage::Type::_2D,
-                        .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
-                        .dimensions  = { shadowMapSize, shadowMapSize },
-                        .format      = GraphicsImage::Format::D32_SFLOAT,
-                        .sharingMode = SharingMode::Exclusive,
-                        .memoryType  = MemoryType::VideoMemory
-                    };
-                    shadowMaps[i][j]     = graphicsFactory->createImage(std::move(shadowMapDescriptor));
-                    shadowMapViews[i][j] = shadowMaps[i][j]->createView();
-                }
-                //TODO: Transition layout so it's prepped
-            }
-
-            //Render pass for generating the shadow map
-            AttachmentDescriptor depthAttachment{
-                .format         = GraphicsImage::Format::D32_SFLOAT,
-                .loadOperation  = LoadOperation::Clear,
-                .storeOperation = StoreOperation::Store,
-                .initialLayout  = GraphicsImage::Layout::Undefined,
-                .finalLayout    = GraphicsImage::Layout::ShaderReadOnlyOptimal,
-            };
-
-            AttachmentReference depthReference{
-                .attachmentIndex = 0,
-                .layout          = GraphicsImage::Layout::DepthStencilAttachmentOptimal,
-            };
-
-            SubpassDescriptor subpass{
-                .colourAttachments = {},
-                .depthAttachment   = depthReference,
-            };
-
-            RenderPass::Descriptor renderPassDescriptor{
-                .attachments  = { std::move(depthAttachment) },
-                .subpasses    = { std::move(subpass) },
-                .dependencies = {},
-            };
-
-            shadowMapRenderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
-
-            //Pipeline for the shadow map
-            PushConstantDescriptor pushConstant{
-                .stage = Shader::Stage::Vertex,
-                .size  = sizeof(clv::mth::mat4f) * 2,
-            };
-
-            AreaDescriptor viewScissorArea{
-                .state    = ElementState::Static,
-                .position = { 0.0f, 0.0f },
-                .size     = { shadowMapSize, shadowMapSize }
-            };
-
-            PipelineObject::Descriptor pipelineDescriptor{
-                .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<const std::byte*>(genshadowmap_v), genshadowmap_vLength }),
-                .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<const std::byte*>(genshadowmap_p), genshadowmap_pLength }),
-                .vertexInput          = Vertex::getInputBindingDescriptor(),
-                .vertexAttributes     = Vertex::getVertexAttributes(),
-                .viewportDescriptor   = viewScissorArea,
-                .scissorDescriptor    = viewScissorArea,
-                .renderPass           = shadowMapRenderPass,
-                .descriptorSetLayouts = {},
-                .pushConstants        = { pushConstant },
-            };
-
-            shadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
-
-            //Frame buffer for shadow map
-            shadowMapFrameBuffers.resize(3);
-            for(size_t i = 0; i < 3; ++i) {//TODO: Hard coding in 3 for now (for frames in flight)
-                for(size_t j = 0; auto& view : shadowMapViews[i]) {
-                    Framebuffer::Descriptor frameBuffer{
-                        .renderPass  = shadowMapRenderPass,
-                        .attachments = { view },
-                        .width       = shadowMapSize,
-                        .height      = shadowMapSize
-                    };
-                    shadowMapFrameBuffers[i][j] = graphicsFactory->createFramebuffer(frameBuffer);
-
-                    ++j;
-                }
-            }
-        }
     }
 
     //ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;
@@ -243,7 +154,7 @@ namespace blb::rnd {
 
         inFlightFences[currentFrame]->reset();
 
-        ImageData& currentImage = inFlightImageData[imageIndex];
+        ImageData& currentImageData = inFlightImageData[imageIndex];
 
         //Record our command buffers
         RenderArea renderArea{};
@@ -258,34 +169,34 @@ namespace blb::rnd {
         clv::mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
         DepthStencilValue depthStencilClearValue{ 1.0f, 0 };
 
-        currentImage.commandBuffer->beginRecording(CommandBufferUsage::Default);
+        currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
 
         //SHADOW MAP - TODO: Put this into a seperate command buffer so we're not waiting on an image to be available for this step
         std::array<ClearValue, 1> shadowMapClearValues{
             ClearValue{ {}, depthStencilClearValue }
         };
 
-        currentImage.commandBuffer->bindPipelineObject(*shadowMapPipelineObject);
+        currentImageData.commandBuffer->bindPipelineObject(*shadowMapPipelineObject);
 
         //Directional lights
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
             //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
-            currentImage.commandBuffer->beginRenderPass(*shadowMapRenderPass, *shadowMapFrameBuffers[imageIndex][i], shadowArea, shadowMapClearValues);
+            currentImageData.commandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
 
             if(i < currentFrameData.numLights.numDirectional) {
                 for(auto&& [mesh, transform] : meshes) {
                     const clv::mth::mat4f pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
 
-                    currentImage.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-                    currentImage.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
+                    currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
+                    currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                    currentImage.commandBuffer->pushConstant(*shadowMapPipelineObject, Shader::Stage::Vertex, sizeof(pushConstantData), pushConstantData);
+                    currentImageData.commandBuffer->pushConstant(*shadowMapPipelineObject, Shader::Stage::Vertex, sizeof(pushConstantData), pushConstantData);
 
-                    currentImage.commandBuffer->drawIndexed(mesh->getIndexCount());
+                    currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
                 }
             }
 
-            currentImage.commandBuffer->endRenderPass();
+            currentImageData.commandBuffer->endRenderPass();
         }
 
         //FINAL IMAGE
@@ -294,33 +205,33 @@ namespace blb::rnd {
             ClearValue{ {}, depthStencilClearValue }
         };
 
-        currentImage.commandBuffer->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
-        currentImage.commandBuffer->bindPipelineObject(*pipelineObject);
+        currentImageData.commandBuffer->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
+        currentImageData.commandBuffer->bindPipelineObject(*pipelineObject);
 
         //We can just write the struct straight in as all the mappings are based off of it's layout
-        currentImage.uniformBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
+        currentImageData.uniformBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
 
         //Map any non-UBO pieces of data (such as textures / shadow maps)
-        currentImage.lightingDescriptorSet->map(shadowMapViews[imageIndex], *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
+        currentImageData.lightingDescriptorSet->map(currentImageData.shadowMapViews, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
 
         //Bind the descriptor sets that all objects will use
-        currentImage.commandBuffer->bindDescriptorSet(*currentImage.viewDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
-        currentImage.commandBuffer->bindDescriptorSet(*currentImage.lightingDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
 
         size_t const meshCount = std::size(meshes);
 
         //Allocate a descriptor set for each mesh to be drawn
-        if(currentImage.materialDescriptorPool == nullptr || currentImage.materialDescriptorPool->getDescriptor().maxSets < meshCount) {
+        if(currentImageData.materialDescriptorPool == nullptr || currentImageData.materialDescriptorPool->getDescriptor().maxSets < meshCount) {
             auto materialSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Material]);
             for(auto& [key, val] : materialSetBindingCount) {
                 val *= meshCount;
             }
-            currentImage.materialDescriptorPool = createDescriptorPool(materialSetBindingCount, meshCount);
+            currentImageData.materialDescriptorPool = createDescriptorPool(materialSetBindingCount, meshCount);
         }
 
-        currentImage.materialDescriptorPool->reset();
+        currentImageData.materialDescriptorPool->reset();
         std::vector<std::shared_ptr<DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[DescriptorSetSlots::Material]);
-        std::vector<std::shared_ptr<DescriptorSet>> materialSets = currentImage.materialDescriptorPool->allocateDescriptorSets(layouts);
+        std::vector<std::shared_ptr<DescriptorSet>> materialSets = currentImageData.materialDescriptorPool->allocateDescriptorSets(layouts);
 
         //Bind all mesh data
         size_t meshIndex = 0;
@@ -333,26 +244,26 @@ namespace blb::rnd {
 
             materialDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
 
-            currentImage.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-            currentImage.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
+            currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
+            currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-            currentImage.commandBuffer->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, 0);//TODO: Get correct setNum
-            currentImage.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, sizeof(VertexData), &modelData);
+            currentImageData.commandBuffer->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, 0);//TODO: Get correct setNum
+            currentImageData.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, sizeof(VertexData), &modelData);
 
-            currentImage.commandBuffer->drawIndexed(mesh->getIndexCount());
+            currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
 
             ++meshIndex;
         }
 
-        currentImage.commandBuffer->endRenderPass();
+        currentImageData.commandBuffer->endRenderPass();
 
-        currentImage.commandBuffer->endRecording();
+        currentImageData.commandBuffer->endRecording();
 
         //Submit the command buffer associated with that image
         GraphicsSubmitInfo submitInfo{};
         submitInfo.waitSemaphores   = { imageAvailableSemaphores[currentFrame] };
         submitInfo.waitStages       = { PipelineObject::Stage::ColourAttachmentOutput };
-        submitInfo.commandBuffers   = { currentImage.commandBuffer };
+        submitInfo.commandBuffers   = { currentImageData.commandBuffer };
         submitInfo.signalSemaphores = { renderFinishedSemaphores[currentFrame] };
         graphicsQueue->submit(submitInfo, inFlightFences[currentFrame].get());
 
@@ -440,6 +351,28 @@ namespace blb::rnd {
             imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, lights), sizeof(currentFrameData.lights), 0);
             imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, numLights), sizeof(currentFrameData.numLights), 1);
             imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, directionalShadowTransforms), sizeof(currentFrameData.directionalShadowTransforms), 2);
+
+            //Create the shadow maps for each frame
+            for(size_t i = 0; i < MAX_LIGHTS; ++i) {
+                GraphicsImage::Descriptor shadowMapDescriptor{
+                    .type        = GraphicsImage::Type::_2D,
+                    .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
+                    .dimensions  = { shadowMapSize, shadowMapSize },
+                    .format      = GraphicsImage::Format::D32_SFLOAT,
+                    .sharingMode = SharingMode::Exclusive,
+                    .memoryType  = MemoryType::VideoMemory
+                };
+                imageData.shadowMaps[i]     = graphicsFactory->createImage(std::move(shadowMapDescriptor));
+                imageData.shadowMapViews[i] = imageData.shadowMaps[i]->createView();
+
+                Framebuffer::Descriptor frameBuffer{
+                    .renderPass  = shadowMapRenderPass,
+                    .attachments = { imageData.shadowMapViews[i] },
+                    .width       = shadowMapSize,
+                    .height      = shadowMapSize
+                };
+                imageData.shadowMapFrameBuffers[i] = graphicsFactory->createFramebuffer(frameBuffer);
+            }
         }
 
         needNewSwapchain = false;
@@ -492,6 +425,34 @@ namespace blb::rnd {
         renderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
     }
 
+    void ForwardRenderer3D::createShadowMapRenderpass() {
+        AttachmentDescriptor depthAttachment{
+            .format         = GraphicsImage::Format::D32_SFLOAT,
+            .loadOperation  = LoadOperation::Clear,
+            .storeOperation = StoreOperation::Store,
+            .initialLayout  = GraphicsImage::Layout::Undefined,
+            .finalLayout    = GraphicsImage::Layout::ShaderReadOnlyOptimal,
+        };
+
+        AttachmentReference depthReference{
+            .attachmentIndex = 0,
+            .layout          = GraphicsImage::Layout::DepthStencilAttachmentOptimal,
+        };
+
+        SubpassDescriptor subpass{
+            .colourAttachments = {},
+            .depthAttachment   = depthReference,
+        };
+
+        RenderPass::Descriptor renderPassDescriptor{
+            .attachments  = { std::move(depthAttachment) },
+            .subpasses    = { std::move(subpass) },
+            .dependencies = {},
+        };
+
+        shadowMapRenderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
+    }
+
     void ForwardRenderer3D::createDepthBuffer() {
         GraphicsImage::Descriptor depthDescriptor{};
         depthDescriptor.type        = GraphicsImage::Type::_2D;
@@ -534,6 +495,33 @@ namespace blb::rnd {
         };
 
         pipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+    }
+
+    void ForwardRenderer3D::createShadowMapPipeline() {
+        PushConstantDescriptor pushConstant{
+            .stage = Shader::Stage::Vertex,
+            .size  = sizeof(clv::mth::mat4f) * 2,
+        };
+
+        AreaDescriptor viewScissorArea{
+            .state    = ElementState::Static,
+            .position = { 0.0f, 0.0f },
+            .size     = { shadowMapSize, shadowMapSize }
+        };
+
+        PipelineObject::Descriptor pipelineDescriptor{
+            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(genshadowmap_v), genshadowmap_vLength }),
+            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(genshadowmap_p), genshadowmap_pLength }),
+            .vertexInput          = Vertex::getInputBindingDescriptor(),
+            .vertexAttributes     = Vertex::getVertexAttributes(),
+            .viewportDescriptor   = viewScissorArea,
+            .scissorDescriptor    = viewScissorArea,
+            .renderPass           = shadowMapRenderPass,
+            .descriptorSetLayouts = {},
+            .pushConstants        = { pushConstant },
+        };
+
+        shadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
     void ForwardRenderer3D::createSwapchainFrameBuffers() {

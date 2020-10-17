@@ -42,16 +42,19 @@ namespace blb::rnd {
         //Objects that hold the state / data of each image (in flight)
         struct ImageData {
             std::shared_ptr<clv::gfx::GraphicsCommandBuffer> commandBuffer;
+            std::shared_ptr<clv::gfx::GraphicsBuffer> uniformBuffer;
 
-            std::shared_ptr<clv::gfx::DescriptorSet> viewDescriptorSet;
-            std::shared_ptr<clv::gfx::DescriptorSet> lightingDescriptorSet;
-
-            //Descriptor pool for sets change per frame
+            //Descriptor pool for sets that change per frame
             std::shared_ptr<clv::gfx::DescriptorPool> frameDescriptorPool;
             //Descriptor pool for sets that are for a single mesh's material
             std::shared_ptr<clv::gfx::DescriptorPool> materialDescriptorPool;
 
-            std::shared_ptr<clv::gfx::GraphicsBuffer> uniformBuffer;
+            std::shared_ptr<clv::gfx::DescriptorSet> viewDescriptorSet;
+            std::shared_ptr<clv::gfx::DescriptorSet> lightingDescriptorSet;
+
+            std::array<std::shared_ptr<clv::gfx::GraphicsImage>, MAX_LIGHTS> shadowMaps;
+            std::array<std::shared_ptr<clv::gfx::GraphicsImageView>, MAX_LIGHTS> shadowMapViews;
+            std::array<std::shared_ptr<clv::gfx::Framebuffer>, MAX_LIGHTS> shadowMapFrameBuffers;
         };
 
         //VARIABLES
@@ -90,9 +93,6 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
 
         //Objects for the shadow map pass
-        std::vector<std::array<std::shared_ptr<clv::gfx::GraphicsImage>, MAX_LIGHTS>> shadowMaps;
-        std::vector<std::array<std::shared_ptr<clv::gfx::GraphicsImageView>, MAX_LIGHTS>> shadowMapViews;
-        std::vector<std::array<std::shared_ptr<clv::gfx::Framebuffer>, MAX_LIGHTS>> shadowMapFrameBuffers;
         std::shared_ptr<clv::gfx::RenderPass> shadowMapRenderPass;
         std::shared_ptr<clv::gfx::PipelineObject> shadowMapPipelineObject;
 
@@ -139,9 +139,15 @@ namespace blb::rnd {
         void recreateSwapchain();
 
         void createRenderpass();
+        void createShadowMapRenderpass();
+
         void createDepthBuffer();
+
         void createPipeline();
+        void createShadowMapPipeline();
+
         void createSwapchainFrameBuffers();
+
         std::shared_ptr<clv::gfx::GraphicsBuffer> createUniformBuffer();
         std::shared_ptr<clv::gfx::DescriptorPool> createDescriptorPool(const std::unordered_map<clv::gfx::DescriptorType, uint32_t>& bindingCount, const uint32_t setCount);
     };
