@@ -61,16 +61,7 @@ namespace blb::rnd {
         bool needNewSwapchain{ false };
 
         static size_t constexpr maxFramesInFlight{ 2 };
-        size_t currentFrame{ 0 };
-        uint32_t imageIndex{ 0 };
-
-        FrameData currentFrameData;
-        std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
-
-        std::vector<ImageData> inFlightImageData;
-        std::shared_ptr<clv::gfx::Sampler> sampler;//Generic sampler passed along with textures
-
-        std::unordered_map<DescriptorSetSlots, std::shared_ptr<clv::gfx::DescriptorSetLayout>> descriptorSetLayouts;
+        size_t currentFrame{ 0 };//The current frame we're operating on
 
         std::shared_ptr<clv::gfx::GraphicsDevice> graphicsDevice;
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
@@ -80,24 +71,36 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::TransferQueue> transferQueue;
 
         std::shared_ptr<clv::gfx::Swapchain> swapchain;
-        std::shared_ptr<clv::gfx::RenderPass> renderPass;
-        std::shared_ptr<clv::gfx::PipelineObject> pipelineObject;
-
         std::vector<std::shared_ptr<clv::gfx::Framebuffer>> swapChainFrameBuffers;
 
-        std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> renderFinishedSemaphores;
-        std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> imageAvailableSemaphores;
-        std::array<std::shared_ptr<clv::gfx::Fence>, maxFramesInFlight> inFlightFences;
-        std::vector<std::shared_ptr<clv::gfx::Fence>> imagesInFlight;
+        std::unordered_map<DescriptorSetSlots, std::shared_ptr<clv::gfx::DescriptorSetLayout>> descriptorSetLayouts;
+
+        //Frame / image data objects
+        FrameData currentFrameData;
+        std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
+
+        std::vector<ImageData> inFlightImageData;
+        std::shared_ptr<clv::gfx::Sampler> sampler;//Generic sampler passed along with textures
+
+        //Objects for the final colour render pass
+        std::shared_ptr<clv::gfx::RenderPass> renderPass;
+        std::shared_ptr<clv::gfx::PipelineObject> pipelineObject;
 
         std::shared_ptr<clv::gfx::GraphicsImage> depthImage;
         std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
 
+        //Objects for the shadow map pass
         std::vector<std::array<std::shared_ptr<clv::gfx::GraphicsImage>, MAX_LIGHTS>> shadowMaps;
         std::vector<std::array<std::shared_ptr<clv::gfx::GraphicsImageView>, MAX_LIGHTS>> shadowMapViews;
         std::vector<std::array<std::shared_ptr<clv::gfx::Framebuffer>, MAX_LIGHTS>> shadowMapFrameBuffers;
         std::shared_ptr<clv::gfx::RenderPass> shadowMapRenderPass;
         std::shared_ptr<clv::gfx::PipelineObject> shadowMapPipelineObject;
+
+        //Synchronisation obects
+        std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> renderFinishedSemaphores;
+        std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> imageAvailableSemaphores;
+        std::array<std::shared_ptr<clv::gfx::Fence>, maxFramesInFlight> inFlightFences;
+        std::vector<std::shared_ptr<clv::gfx::Fence>> imagesInFlight;
 
         //FUNCTIONS
     public:

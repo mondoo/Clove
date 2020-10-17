@@ -225,6 +225,9 @@ namespace blb::rnd {
         //Wait on the current frame / current images to be available
         inFlightFences[currentFrame]->wait();
 
+        //The index of the image we're working on in the swap chain. Might not be equal to the currentFrame index
+        uint32_t imageIndex{ 0 };
+
         //Aquire the next available image
         Result result = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get(), imageIndex);
         if(result == Result::Error_SwapchainOutOfDate) {
