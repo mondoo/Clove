@@ -172,12 +172,11 @@ namespace blb::rnd {
         graphicsDevice->waitForIdleDevice();
 
         //Reset these manually as they would fail after the device has been destroyed (how to solve this?)
-        uniformBuffers.clear();
         sampler.reset();
-        for(auto& buffer : commandBuffers) {
-            graphicsQueue->freeCommandBuffer(*buffer);
+        for(auto& imageData : inFlightImageData) {
+            imageData.uniformBuffer.reset();
+            graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
         }
-        commandBuffers.clear();
     }
 
     void ForwardRenderer3D::begin() {
@@ -241,6 +240,8 @@ namespace blb::rnd {
 
         inFlightFences[currentFrame]->reset();
 
+        ImageData& currentImage = inFlightImageData[imageIndex];
+
         //Record our command buffers
         RenderArea renderArea{};
         renderArea.origin = { 0, 0 };
@@ -254,34 +255,34 @@ namespace blb::rnd {
         clv::mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
         DepthStencilValue depthStencilClearValue{ 1.0f, 0 };
 
-        commandBuffers[imageIndex]->beginRecording(CommandBufferUsage::Default);
+        currentImage.commandBuffer->beginRecording(CommandBufferUsage::Default);
 
         //SHADOW MAP - TODO: Put this into a seperate command buffer so we're not waiting on an image to be available for this step
         std::array<ClearValue, 1> shadowMapClearValues{
             ClearValue{ {}, depthStencilClearValue }
         };
 
-        commandBuffers[imageIndex]->bindPipelineObject(*shadowMapPipelineObject);
+        currentImage.commandBuffer->bindPipelineObject(*shadowMapPipelineObject);
 
         //Directional lights
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
             //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
-            commandBuffers[imageIndex]->beginRenderPass(*shadowMapRenderPass, *shadowMapFrameBuffers[imageIndex][i], shadowArea, shadowMapClearValues);
+            currentImage.commandBuffer->beginRenderPass(*shadowMapRenderPass, *shadowMapFrameBuffers[imageIndex][i], shadowArea, shadowMapClearValues);
 
             if(i < currentFrameData.numLights.numDirectional) {
                 for(auto&& [mesh, transform] : meshes) {
                     const clv::mth::mat4f pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
 
-                    commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-                    commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
+                    currentImage.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
+                    currentImage.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                    commandBuffers[imageIndex]->pushConstant(*shadowMapPipelineObject, Shader::Stage::Vertex, sizeof(pushConstantData), pushConstantData);
+                    currentImage.commandBuffer->pushConstant(*shadowMapPipelineObject, Shader::Stage::Vertex, sizeof(pushConstantData), pushConstantData);
 
-                    commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
+                    currentImage.commandBuffer->drawIndexed(mesh->getIndexCount());
                 }
             }
 
-            commandBuffers[imageIndex]->endRenderPass();
+            currentImage.commandBuffer->endRenderPass();
         }
 
         //FINAL IMAGE
@@ -290,33 +291,33 @@ namespace blb::rnd {
             ClearValue{ {}, depthStencilClearValue }
         };
 
-        commandBuffers[imageIndex]->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
-        commandBuffers[imageIndex]->bindPipelineObject(*pipelineObject);
+        currentImage.commandBuffer->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
+        currentImage.commandBuffer->bindPipelineObject(*pipelineObject);
 
         //We can just write the struct straight in as all the mappings are based off of it's layout
-        uniformBuffers[imageIndex]->write(&currentFrameData, 0, sizeof(currentFrameData));
+        currentImage.uniformBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
 
         //Map any non-UBO pieces of data (such as textures / shadow maps)
-        descriptorSets[imageIndex].lightingSet->map(shadowMapViews[imageIndex], *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
+        currentImage.lightingDescriptorSet->map(shadowMapViews[imageIndex], *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
 
         //Bind the descriptor sets that all objects will use
-        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].viewSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
-        commandBuffers[imageIndex]->bindDescriptorSet(*descriptorSets[imageIndex].lightingSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
+        currentImage.commandBuffer->bindDescriptorSet(*currentImage.viewDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
+        currentImage.commandBuffer->bindDescriptorSet(*currentImage.lightingDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
 
         size_t const meshCount = std::size(meshes);
 
         //Allocate a descriptor set for each mesh to be drawn
-        if(materialDescriptorPool[imageIndex] == nullptr || materialDescriptorPool[imageIndex]->getDescriptor().maxSets < meshCount) {
+        if(currentImage.materialDescriptorPool == nullptr || currentImage.materialDescriptorPool->getDescriptor().maxSets < meshCount) {
             auto materialSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Material]);
             for(auto& [key, val] : materialSetBindingCount) {
                 val *= meshCount;
             }
-            materialDescriptorPool[imageIndex] = createDescriptorPool(materialSetBindingCount, meshCount);
+            currentImage.materialDescriptorPool = createDescriptorPool(materialSetBindingCount, meshCount);
         }
 
-        materialDescriptorPool[imageIndex]->reset();
+        currentImage.materialDescriptorPool->reset();
         std::vector<std::shared_ptr<DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[DescriptorSetSlots::Material]);
-        std::vector<std::shared_ptr<DescriptorSet>> materialSets = materialDescriptorPool[imageIndex]->allocateDescriptorSets(layouts);
+        std::vector<std::shared_ptr<DescriptorSet>> materialSets = currentImage.materialDescriptorPool->allocateDescriptorSets(layouts);
 
         //Bind all mesh data
         size_t meshIndex = 0;
@@ -329,26 +330,26 @@ namespace blb::rnd {
 
             materialDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
 
-            commandBuffers[imageIndex]->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-            commandBuffers[imageIndex]->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
+            currentImage.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
+            currentImage.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-            commandBuffers[imageIndex]->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, 0);//TODO: Get correct setNum
-            commandBuffers[imageIndex]->pushConstant(*pipelineObject, Shader::Stage::Vertex, sizeof(VertexData), &modelData);
+            currentImage.commandBuffer->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, 0);//TODO: Get correct setNum
+            currentImage.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, sizeof(VertexData), &modelData);
 
-            commandBuffers[imageIndex]->drawIndexed(mesh->getIndexCount());
+            currentImage.commandBuffer->drawIndexed(mesh->getIndexCount());
 
             ++meshIndex;
         }
 
-        commandBuffers[imageIndex]->endRenderPass();
+        currentImage.commandBuffer->endRenderPass();
 
-        commandBuffers[imageIndex]->endRecording();
+        currentImage.commandBuffer->endRecording();
 
         //Submit the command buffer associated with that image
         GraphicsSubmitInfo submitInfo{};
         submitInfo.waitSemaphores   = { imageAvailableSemaphores[currentFrame] };
         submitInfo.waitStages       = { PipelineObject::Stage::ColourAttachmentOutput };
-        submitInfo.commandBuffers   = { commandBuffers[imageIndex] };
+        submitInfo.commandBuffers   = { currentImage.commandBuffer };
         submitInfo.signalSemaphores = { renderFinishedSemaphores[currentFrame] };
         graphicsQueue->submit(submitInfo, inFlightFences[currentFrame].get());
 
@@ -390,10 +391,9 @@ namespace blb::rnd {
         swapchain.reset();
         pipelineObject.reset();
         swapChainFrameBuffers.clear();
-        for(auto& buffer : commandBuffers) {
-            graphicsQueue->freeCommandBuffer(*buffer);
+        for(auto& imageData : inFlightImageData) {
+            graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
         }
-        commandBuffers.clear();
 
         //Recreate our swap chain
         swapchain = graphicsFactory->createSwapChain({ windowSize });
@@ -407,39 +407,36 @@ namespace blb::rnd {
 
         const size_t imageCount = std::size(swapChainFrameBuffers);
 
-        uniformBuffers = createUniformBuffers(imageCount);
-
-        materialDescriptorPool.resize(imageCount);
-        frameDescriptorPool.resize(imageCount);
-        descriptorSets.resize(imageCount);
+        inFlightImageData.resize(imageCount);
 
         //Allocate frame scope descriptor pools
         auto viewSetBindingCount     = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::View]);
         auto lightingSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Lighting]);
 
-        constexpr uint32_t totalSets{ 2 };//Only 2 sets will be allocated from these pools
+        uint32_t constexpr totalSets{ 2 };//Only 2 sets will be allocated from these pools (view + lighting)
         auto bindingCounts = viewSetBindingCount;
         bindingCounts.merge(lightingSetBindingCount);
 
-        commandBuffers.reserve(imageCount);
-
-        for(size_t i = 0; i < imageCount; ++i) {
+        for(auto& imageData : inFlightImageData) {
             //Create command buffers
-            commandBuffers.emplace_back(graphicsQueue->allocateCommandBuffer());
+            imageData.commandBuffer = graphicsQueue->allocateCommandBuffer();
+
+            //Create uniform buffers
+            imageData.uniformBuffer = createUniformBuffer();
 
             //Allocate frame scope descriptor Sets
-            frameDescriptorPool[i] = createDescriptorPool(bindingCounts, totalSets);
+            imageData.frameDescriptorPool = createDescriptorPool(bindingCounts, totalSets);
 
-            descriptorSets[i].viewSet     = frameDescriptorPool[i]->allocateDescriptorSets(descriptorSetLayouts[DescriptorSetSlots::View]);
-            descriptorSets[i].lightingSet = frameDescriptorPool[i]->allocateDescriptorSets(descriptorSetLayouts[DescriptorSetSlots::Lighting]);
+            imageData.viewDescriptorSet     = imageData.frameDescriptorPool->allocateDescriptorSets(descriptorSetLayouts[DescriptorSetSlots::View]);
+            imageData.lightingDescriptorSet = imageData.frameDescriptorPool->allocateDescriptorSets(descriptorSetLayouts[DescriptorSetSlots::Lighting]);
 
             //As we only have one UBO per frame for every DescriptorSet we can map the buffer into them straight away
-            descriptorSets[i].viewSet->map(*uniformBuffers[i], offsetof(FrameData, viewData), sizeof(currentFrameData.viewData), 0);
-            descriptorSets[i].viewSet->map(*uniformBuffers[i], offsetof(FrameData, viewPosition), sizeof(currentFrameData.viewPosition), 1);
+            imageData.viewDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, viewData), sizeof(currentFrameData.viewData), 0);
+            imageData.viewDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, viewPosition), sizeof(currentFrameData.viewPosition), 1);
 
-            descriptorSets[i].lightingSet->map(*uniformBuffers[i], offsetof(FrameData, lights), sizeof(currentFrameData.lights), 0);
-            descriptorSets[i].lightingSet->map(*uniformBuffers[i], offsetof(FrameData, numLights), sizeof(currentFrameData.numLights), 1);
-            descriptorSets[i].lightingSet->map(*uniformBuffers[i], offsetof(FrameData, directionalShadowTransforms), sizeof(currentFrameData.directionalShadowTransforms), 2);
+            imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, lights), sizeof(currentFrameData.lights), 0);
+            imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, numLights), sizeof(currentFrameData.numLights), 1);
+            imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, directionalShadowTransforms), sizeof(currentFrameData.directionalShadowTransforms), 2);
         }
 
         needNewSwapchain = false;
@@ -548,20 +545,14 @@ namespace blb::rnd {
         }
     }
 
-    std::vector<std::shared_ptr<GraphicsBuffer>> ForwardRenderer3D::createUniformBuffers(const uint32_t bufferCount) {
-        std::vector<std::shared_ptr<GraphicsBuffer>> uniformBuffers(bufferCount);
-
-        for(size_t i = 0; i < bufferCount; ++i) {
-            GraphicsBuffer::Descriptor descriptor{};
-            descriptor.size        = sizeof(FrameData);
-            descriptor.usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer;
-            descriptor.sharingMode = SharingMode::Exclusive;
-            descriptor.memoryType  = MemoryType::SystemMemory;
-
-            uniformBuffers[i] = graphicsFactory->createBuffer(std::move(descriptor));
-        }
-
-        return uniformBuffers;
+    std::shared_ptr<GraphicsBuffer> ForwardRenderer3D::createUniformBuffer() {
+        GraphicsBuffer::Descriptor descriptor{
+            .size        = sizeof(FrameData),
+            .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
+            .sharingMode = SharingMode::Exclusive,
+            .memoryType  = MemoryType::SystemMemory,
+        };
+        return graphicsFactory->createBuffer(std::move(descriptor));
     }
 
     std::shared_ptr<DescriptorPool> ForwardRenderer3D::createDescriptorPool(const std::unordered_map<DescriptorType, uint32_t>& bindingCount, const uint32_t setCount) {

@@ -27,21 +27,7 @@ namespace blb::rnd {
     class ForwardRenderer3D {
         //TYPES
     private:
-        struct InFlightImageDescriptorSets {
-            std::shared_ptr<clv::gfx::DescriptorSet> viewSet;
-            std::shared_ptr<clv::gfx::DescriptorSet> lightingSet;
-        };
-
-        //VARIABLES
-    private:
-        clv::DelegateHandle windowResizeHandle;
-        clv::mth::vec2ui windowSize;
-        bool needNewSwapchain = false;
-
-        static constexpr size_t maxFramesInFlight{ 2 };
-        size_t currentFrame{ 0 };
-        uint32_t imageIndex{ 0 };
-
+        //Frame data that directly translates into a UBO
         struct FrameData {
             //TODO: Get the alignment from vulkan
             alignas(256) ViewData viewData;
@@ -51,9 +37,38 @@ namespace blb::rnd {
             alignas(256) DirectionalShadowTransformArray directionalShadowTransforms;
 
             alignas(256) LightCount numLights;
-        } currentFrameData;
+        };
 
+        //Objects that hold the state / data of each image (in flight)
+        struct ImageData {
+            std::shared_ptr<clv::gfx::GraphicsCommandBuffer> commandBuffer;
+
+            std::shared_ptr<clv::gfx::DescriptorSet> viewDescriptorSet;
+            std::shared_ptr<clv::gfx::DescriptorSet> lightingDescriptorSet;
+
+            //Descriptor pool for sets change per frame
+            std::shared_ptr<clv::gfx::DescriptorPool> frameDescriptorPool;
+            //Descriptor pool for sets that are for a single mesh's material
+            std::shared_ptr<clv::gfx::DescriptorPool> materialDescriptorPool;
+
+            std::shared_ptr<clv::gfx::GraphicsBuffer> uniformBuffer;
+        };
+
+        //VARIABLES
+    private:
+        clv::DelegateHandle windowResizeHandle;
+        clv::mth::vec2ui windowSize;
+        bool needNewSwapchain{ false };
+
+        static size_t constexpr maxFramesInFlight{ 2 };
+        size_t currentFrame{ 0 };
+        uint32_t imageIndex{ 0 };
+
+        FrameData currentFrameData;
         std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
+
+        std::vector<ImageData> inFlightImageData;
+        std::shared_ptr<clv::gfx::Sampler> sampler;//Generic sampler passed along with textures
 
         std::unordered_map<DescriptorSetSlots, std::shared_ptr<clv::gfx::DescriptorSetLayout>> descriptorSetLayouts;
 
@@ -70,19 +85,10 @@ namespace blb::rnd {
 
         std::vector<std::shared_ptr<clv::gfx::Framebuffer>> swapChainFrameBuffers;
 
-        std::vector<std::shared_ptr<clv::gfx::GraphicsCommandBuffer>> commandBuffers;
-
         std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> renderFinishedSemaphores;
         std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> imageAvailableSemaphores;
         std::array<std::shared_ptr<clv::gfx::Fence>, maxFramesInFlight> inFlightFences;
         std::vector<std::shared_ptr<clv::gfx::Fence>> imagesInFlight;
-
-        std::vector<InFlightImageDescriptorSets> descriptorSets;                      //One for each image.
-        std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> materialDescriptorPool;//One for each image.
-        std::vector<std::shared_ptr<clv::gfx::DescriptorPool>> frameDescriptorPool;   //One for each image. For descriptors which are set once per frame
-
-        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> uniformBuffers;//One per image. Currently no per mesh data is stored in a buffer
-        std::shared_ptr<clv::gfx::Sampler> sampler;                           //Generic sampler passed along with textures
 
         std::shared_ptr<clv::gfx::GraphicsImage> depthImage;
         std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
@@ -133,7 +139,7 @@ namespace blb::rnd {
         void createDepthBuffer();
         void createPipeline();
         void createSwapchainFrameBuffers();
-        std::vector<std::shared_ptr<clv::gfx::GraphicsBuffer>> createUniformBuffers(const uint32_t bufferCount);
+        std::shared_ptr<clv::gfx::GraphicsBuffer> createUniformBuffer();
         std::shared_ptr<clv::gfx::DescriptorPool> createDescriptorPool(const std::unordered_map<clv::gfx::DescriptorType, uint32_t>& bindingCount, const uint32_t setCount);
     };
 }
