@@ -17,10 +17,16 @@
   </PropertyGroup>
 
   <!-- Create a custom target to build Scape.Membrane and copy the binary -->
-  <Target Name="BuildMembrane" BeforeTargets="Build">
+  <Target Name="BuildMembrane" BeforeTargets="Build" Condition="'$(IsWindows)'=='true'">
     <MakeDir Directories="../../build"/>
     <Exec Command="cmake .." WorkingDirectory="../../build"/>
     <Exec Command="cmake --build . --target Scape.Membrane --config $(Configuration)" WorkingDirectory="../../build"/>
     <Copy SourceFiles="../../build/lib/$(Configuration)/Scape.Membrane.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true"/>
+  </Target>
+  <Target Name="BuildMembrane" BeforeTargets="Build" Condition="'$(IsLinux)'=='true'">
+    <MakeDir Directories="../../build"/>
+    <Exec Command="cmake -DCMAKE_BUILD_TYPE=$(Configuration) .." WorkingDirectory="../../build"/>
+    <Exec Command="cmake --build . --target Scape.Membrane" WorkingDirectory="../../build"/>
+    <Copy SourceFiles="../../build/Scape/Membrane/libScape.Membrane.so" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true"/>
   </Target>
 </Project>
