@@ -17,7 +17,9 @@
   </PropertyGroup>
 
   <!-- Create a custom target to build Scape.Membrane and copy the binary -->
-  <!-- <Target Name="BuildMembrane" BeforeTargets="Build">
+  <Target Name="BuildMembrane" BeforeTargets="Build">
+    <Exec Command="cmake -S ../.. -B ../../build"/>
+    <Exec Command="cmake --build ../../build"/>
     <Copy SourceFiles="../../build/lib/Debug/Scape.Membrane.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" Condition="'$(IsWindows)'=='true'"/>
-  </Target> -->
+  </Target>
 </Project>
