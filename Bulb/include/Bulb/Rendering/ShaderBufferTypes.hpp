@@ -12,10 +12,6 @@ namespace blb::rnd {
 		clv::mth::mat4f projection;
 	};
 
-	struct alignas(16) ViewPos {
-		clv::mth::vec3f pos;
-	};
-
     //Lighting data passed to GPU
 	struct DirectionalLightData {
 		alignas(16) clv::mth::vec3f direction{};
