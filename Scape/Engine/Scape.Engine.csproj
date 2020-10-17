@@ -18,6 +18,7 @@
 
   <!-- Create a custom target to build Scape.Membrane and copy the binary -->
   <Target Name="BuildMembrane" BeforeTargets="Build">
+    <MakeDir Directories="../../build"/>
     <Exec Command="cmake .." WorkingDirectory="../../build"/>
     <Exec Command="cmake --build . --target Scape.Membrane --config $(Configuration)" WorkingDirectory="../../build"/>
     <Copy SourceFiles="../../build/lib/$(Configuration)/Scape.Membrane.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true"/>
