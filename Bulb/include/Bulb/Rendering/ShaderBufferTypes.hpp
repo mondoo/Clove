@@ -37,10 +37,10 @@ namespace blb::rnd {
 		std::array<PointLightData, MAX_LIGHTS> pointLights{};
 	};
 
-	struct alignas(16) LightCount {
-		int32_t numDirectional{ 0 };
+    struct LightCount {
+        int32_t numDirectional{ 0 };
 		int32_t numPoint{ 0 };
-	};
+    };
 
 	//Lighting data needed shadows
 	struct DirectionalShadowTransform {
