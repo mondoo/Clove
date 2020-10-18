@@ -1,4 +1,4 @@
-#include <cassert>
+
 
 #pragma once
 
@@ -54,20 +54,10 @@ namespace garlic::inline root {
         //FUNCTIONS
     public:
         Expected() noexcept = default;
-        Expected(T const &value) noexcept
-            : value{ value } {
-        }
-        Expected(T &&value) noexcept
-            : value{ std::move(value) } {
-        }
-        Expected(Unexpected<E> const &error) noexcept
-            : error{ error.value }
-            , ok{ false } {
-        }
-        Expected(Unexpected<E> &&error) noexcept
-            : error{ std::move(error.value) }
-            , ok{ false } {
-        }
+        Expected(T const &value) noexcept;
+        Expected(T &&value) noexcept;
+        Expected(Unexpected<E> const &error) noexcept;
+        Expected(Unexpected<E> &&error) noexcept;
 
         Expected(Expected const &other) noexcept = default;
         Expected(Expected &&other) noexcept      = default;
@@ -77,80 +67,26 @@ namespace garlic::inline root {
 
         ~Expected() noexcept {}
 
-        T &getValue() & {
-            if(!ok) {
-                throw error;
-            }
-            return value;
-        }
-        T const &getValue() const & {
-            if(!ok) {
-                throw error;
-            }
-            return value;
-        }
-        T &&getValue() && {
-            if(!ok) {
-                throw error;
-            }
-            return std::move(value);
-        }
-        T const &&getValue() const && {
-            if(!ok) {
-                throw error;
-            }
-            return std::move(value);
-        }
+        bool hasValue() const noexcept;
+        operator bool() const noexcept;
 
-        T *operator->() {
-            if(!ok) {
-                throw error;
-            }
-            return &value;
-        }
-        T const *operator->() const {
-            if(!ok) {
-                throw error;
-            }
-            return &value;
-        }
+        T &getValue() &;
+        T const &getValue() const &;
+        T &&getValue() &&;
+        T const &&getValue() const &&;
 
-        T &operator*() & {
-            return getValue();
-        }
-        T const &operator*() const & {
-            return getValue();
-        }
-        T &&operator*() && {
-            return getValue();
-        }
-        T const &&operator*() const && {
-            return getValue();
-        }
+        T *operator->();
+        T const *operator->() const;
 
-        E &getError() & {
-            assert(!ok);
-            return error;
-        }
-        E const &getError() const & {
-            assert(!ok);
-            return error;
-        }
-        E &&getError() && {
-            assert(!ok);
-            return std::move(error);
-        }
-        E const &&getError() const && {
-            assert(!ok);
-            return std::move(error);
-        }
+        T &operator*() &;
+        T const &operator*() const &;
+        T &&operator*() &&;
+        T const &&operator*() const &&;
 
-        bool hasValue() const noexcept {
-            return ok;
-        }
-        operator bool() const noexcept {
-            return hasValue();
-        }
+        E &getError() &;
+        E const &getError() const &;
+        E &&getError() &&;
+        E const &&getError() const &&;
     };
 }
 
