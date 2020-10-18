@@ -206,3 +206,26 @@ TEST(ExpectedTests, AssertsWhenAccessTheErrorWhenItIsAValue) {
     EXPECT_DEATH(expected.getError(), "");
     EXPECT_DEATH(std::move(movedExpected.getError()), "");
 }
+
+TEST(ExpectedTests, CanReturnProperlyFromAFunction) {
+    class ExpectedReturner {
+    public:
+        Expected<int32_t, std::exception> return42() {
+            return 42;
+        }
+
+        Expected<int32_t, std::exception> returnException() {
+            return std::exception{ "Error!" };
+        }
+    };
+
+    ExpectedReturner helper;
+
+    auto value = helper.return42();
+    auto error = helper.returnException();
+
+    EXPECT_TRUE(value.hasValue());
+    EXPECT_FALSE(error.hasValue());
+
+    EXPECT_EQ(42, value.getValue());
+}
