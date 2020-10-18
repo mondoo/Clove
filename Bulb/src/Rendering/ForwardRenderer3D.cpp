@@ -269,8 +269,16 @@ namespace blb::rnd {
             .signalSemaphores = { shadowFinishedSemaphores[currentFrame] },
         };
         GraphicsSubmitInfo submitInfo{
-            .waitSemaphores   = { shadowFinishedSemaphores[currentFrame], imageAvailableSemaphores[currentFrame] },
-            .waitStages       = { PipelineObject::Stage::PixelShader, PipelineObject::Stage::ColourAttachmentOutput },
+            .waitSemaphores = {
+                {
+                    shadowFinishedSemaphores[currentFrame],
+                    PipelineObject::Stage::PixelShader,
+                },
+                {
+                    imageAvailableSemaphores[currentFrame],
+                    PipelineObject::Stage::ColourAttachmentOutput,
+                },
+            },
             .commandBuffers   = { currentImageData.commandBuffer },
             .signalSemaphores = { renderFinishedSemaphores[currentFrame] },
         };

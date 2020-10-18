@@ -9,13 +9,9 @@ namespace clv::gfx {
     class Semaphore;
 
     struct GraphicsSubmitInfo {
-        std::vector<std::shared_ptr<Semaphore>> waitSemaphores; /**< Each element in the semaphore maps to an element in the waitStages */
-        std::vector<PipelineObject::Stage> waitStages;          /**< What stage in the pipeline to wait on the semaphore */
-        //TODO: Make the above a pair
-
-        std::vector<std::shared_ptr<GraphicsCommandBuffer>> commandBuffers;
-
-        std::vector<std::shared_ptr<Semaphore>> signalSemaphores;
+        std::vector<std::pair<std::shared_ptr<Semaphore>, PipelineObject::Stage>> waitSemaphores; /**< Which semaphore to wait on at what stage */
+        std::vector<std::shared_ptr<GraphicsCommandBuffer>> commandBuffers;                       /**< The command buffers to execute */
+        std::vector<std::shared_ptr<Semaphore>> signalSemaphores;                                 /**< The semaphores that will be signaled when completed */
     };
 }
 
@@ -31,6 +27,6 @@ namespace clv::gfx {
         virtual std::unique_ptr<GraphicsCommandBuffer> allocateCommandBuffer() = 0;
         virtual void freeCommandBuffer(GraphicsCommandBuffer& buffer)          = 0;
 
-        virtual void submit(const GraphicsSubmitInfo& submitInfo, const Fence* fence) = 0;
+        virtual void submit(GraphicsSubmitInfo const& submitInfo, Fence const* fence) = 0;
     };
 }
