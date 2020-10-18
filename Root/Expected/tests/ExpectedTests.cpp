@@ -8,6 +8,7 @@ TEST(ExpectedTests, CanConstructWithAValue) {
     Expected<int32_t, std::exception> expectedValue(testValue);
 
     EXPECT_EQ(testValue, expectedValue.getValue());
+    EXPECT_EQ(testValue, *expectedValue);
 }
 
 TEST(ExpectedTests, CanConstructWithAnError) {
@@ -110,6 +111,7 @@ TEST(ExpectedTests, DoesNotCopyValueWhenObserving) {
     Expected<Helper, std::exception> expected{ Helper{} };
 
     EXPECT_FALSE(expected.getValue().copied);
+    EXPECT_FALSE(expected->copied);
 }
 
 TEST(ExpectedTests, DoesNotCopyErrorWhenObserving) {

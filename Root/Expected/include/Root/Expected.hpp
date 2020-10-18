@@ -102,6 +102,32 @@ namespace garlic::inline root {
             return std::move(value);
         }
 
+        T *operator->() {
+            if(!ok) {
+                throw error;
+            }
+            return &value;
+        }
+        T const *operator->() const {
+            if(!ok) {
+                throw error;
+            }
+            return &value;
+        }
+
+        T &operator*() & {
+            return getValue();
+        }
+        T const &operator*() const & {
+            return getValue();
+        }
+        T &&operator*() && {
+            return getValue();
+        }
+        T const &&operator*() const && {
+            return getValue();
+        }
+
         E &getError() & {
             assert(!ok);
             return error;
