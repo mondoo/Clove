@@ -66,11 +66,7 @@ namespace blb::rnd {
 		std::array<clv::mth::mat4f, 6> shadowTransforms{};
 	};
 
-	struct alignas(16) NumberAlignment {
-		int32_t num;
-	};
-
-	struct SkeletalData {
+    struct SkeletalData {
         std::array<clv::mth::mat4f, MAX_JOINTS> jointTransforms;
     };
 }
