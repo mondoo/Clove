@@ -17,16 +17,18 @@ namespace clv::gfx::vk {
         VKImageView() = delete;
         VKImageView(VkDevice device, VkImageView imageView);
 
-        VKImageView(const VKImageView& other) = delete;
+        VKImageView(VKImageView const& other) = delete;
         VKImageView(VKImageView&& other) noexcept;
 
-        VKImageView& operator=(const VKImageView& other) = delete;
+        VKImageView& operator=(VKImageView const& other) = delete;
         VKImageView& operator=(VKImageView&& other) noexcept;
 
         ~VKImageView();
 
-        VkImageView getImageView() const;
+        inline VkImageView getImageView() const;
 
-        static VkImageView create(VkDevice device, VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags);
+        static VkImageView create(VkDevice device, VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t const layerCount);
     };
 }
+
+#include "VKImageView.inl"

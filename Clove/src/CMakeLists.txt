@@ -134,8 +134,10 @@ set(
 		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsResource.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsResource.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKImage.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKImage.inl
 		${CLV_SOURCE}/Graphics/Vulkan/VKImage.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKImageView.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKImageView.inl
 		${CLV_SOURCE}/Graphics/Vulkan/VKImageView.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKMemoryBarrier.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKMemoryBarrier.cpp
@@ -150,6 +152,7 @@ set(
 		${CLV_INCLUDE}/Graphics/Vulkan/VKResult.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKResult.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKSampler.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKSampler.inl
 		${CLV_SOURCE}/Graphics/Vulkan/VKSampler.cpp
 		${CLV_INCLUDE}/Graphics/Vulkan/VKSemaphore.hpp
 		${CLV_SOURCE}/Graphics/Vulkan/VKSemaphore.cpp

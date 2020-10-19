@@ -29,6 +29,7 @@ namespace clv::gfx::vk {
     static VkImageType getImageType(GraphicsImage::Type garlicImageType) {
         switch(garlicImageType) {
             case GraphicsImage::Type::_2D:
+            case GraphicsImage::Type::Cube:
                 return VK_IMAGE_TYPE_2D;
             case GraphicsImage::Type::_3D:
                 return VK_IMAGE_TYPE_3D;
@@ -44,29 +45,32 @@ namespace clv::gfx::vk {
                 return VK_IMAGE_VIEW_TYPE_2D;
             case GraphicsImage::Type::_3D:
                 return VK_IMAGE_VIEW_TYPE_3D;
+            case GraphicsImage::Type::Cube:
+                return VK_IMAGE_VIEW_TYPE_CUBE;
             default:
                 GARLIC_ASSERT(false, "{0}: Unhandled image type");
                 return VK_IMAGE_VIEW_TYPE_2D;
         }
     }
 
-    VKImage::VKImage(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
+    VKImage::VKImage(DevicePointer device, Descriptor descriptor, QueueFamilyIndices const& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device(std::move(device))
         , descriptor(std::move(descriptor))
         , memoryAllocator(std::move(memoryAllocator)) {
         std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
 
-        const bool isExclusive = this->descriptor.sharingMode == SharingMode::Exclusive;
+        bool const isExclusive = this->descriptor.sharingMode == SharingMode::Exclusive;
+        bool const isCube      = this->descriptor.type == GraphicsImage::Type::Cube;
 
         VkImageCreateInfo createInfo{
             .sType                 = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
             .pNext                 = nullptr,
-            .flags                 = 0,
+            .flags                 = isCube ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0u,
             .imageType             = getImageType(this->descriptor.type),
             .format                = convertFormat(this->descriptor.format),
             .extent                = { this->descriptor.dimensions.x, this->descriptor.dimensions.y, 1 },
             .mipLevels             = 1,
-            .arrayLayers           = 1,
+            .arrayLayers           = isCube ? 6u : 1u,
             .samples               = VK_SAMPLE_COUNT_1_BIT,
             .tiling                = VK_IMAGE_TILING_OPTIMAL,
             .usage                 = getUsageFlags(this->descriptor.usageFlags),
@@ -99,12 +103,9 @@ namespace clv::gfx::vk {
     }
 
     std::unique_ptr<GraphicsImageView> VKImage::createView() const {
-        const VkImageAspectFlags aspectFlags = descriptor.format == Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
-        return std::make_unique<VKImageView>(device.get(), VKImageView::create(device.get(), image, getImageViewType(descriptor.type), convertFormat(descriptor.format), aspectFlags));
-    }
-
-    VkImage VKImage::getImage() const {
-        return image;
+        VkImageAspectFlags const aspectFlags = descriptor.format == Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
+        uint32_t const layerCount            = descriptor.type == Type::Cube ? 6 : 1;
+        return std::make_unique<VKImageView>(device.get(), VKImageView::create(device.get(), image, getImageViewType(descriptor.type), convertFormat(descriptor.format), aspectFlags, layerCount));
     }
 
     GraphicsImage::Format VKImage::convertFormat(VkFormat vulkanFormat) {

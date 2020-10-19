@@ -27,19 +27,19 @@ namespace clv::gfx::vk {
         //FUNCTIONS
     public:
         VKImage() = delete;
-        VKImage(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator);
+        VKImage(DevicePointer device, Descriptor descriptor, QueueFamilyIndices const& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator);
 
-        VKImage(const VKImage& other) = delete;
+        VKImage(VKImage const& other) = delete;
         VKImage(VKImage&& other) noexcept;
 
-        VKImage& operator=(const VKImage& other) = delete;
+        VKImage& operator=(VKImage const& other) = delete;
         VKImage& operator=(VKImage&& other) noexcept;
 
         ~VKImage();
 
         std::unique_ptr<GraphicsImageView> createView() const override;
 
-        VkImage getImage() const;
+        inline VkImage getImage() const;
 
         static Format convertFormat(VkFormat vulkanFormat);
         static VkFormat convertFormat(Format garlicFormat);
@@ -47,3 +47,5 @@ namespace clv::gfx::vk {
         static VkImageLayout convertLayout(Layout garlicLayout);
     };
 }
+
+#include "VKImage.inl"

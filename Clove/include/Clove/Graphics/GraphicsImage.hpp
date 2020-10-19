@@ -27,7 +27,8 @@ namespace clv::gfx {
 
         enum class Type {
             _2D,
-            _3D
+            _3D,
+            Cube
         };
 
         enum class Format {

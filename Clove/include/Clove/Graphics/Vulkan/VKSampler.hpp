@@ -18,14 +18,16 @@ namespace clv::gfx::vk {
         VKSampler() = delete;
         VKSampler(DevicePointer device, Descriptor descriptor);
 
-        VKSampler(const VKSampler& other) = delete;
+        VKSampler(VKSampler const& other) = delete;
         VKSampler(VKSampler&& other) noexcept;
 
-        VKSampler& operator=(const VKSampler& other) = delete;
+        VKSampler& operator=(VKSampler const& other) = delete;
         VKSampler& operator=(VKSampler&& other) noexcept;
 
         ~VKSampler();
 
-        VkSampler getSampler() const;
+        inline VkSampler getSampler() const;
     };
 }
+
+#include "VKSampler.inl"
