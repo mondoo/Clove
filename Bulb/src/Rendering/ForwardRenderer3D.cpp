@@ -93,34 +93,37 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::begin() {
-        meshes.clear();
-        currentFrameData.numLights.numDirectional = 0;
-        currentFrameData.numLights.numPoint       = 0;
+        currentFrameData.meshes.clear();
+        currentFrameData.bufferData.numLights.numDirectional = 0;
+        currentFrameData.bufferData.numLights.numPoint       = 0;
     }
 
     void ForwardRenderer3D::submitCamera(Camera const& camera, clv::mth::vec3f position) {
-        currentFrameData.viewData.view       = camera.getView();
-        currentFrameData.viewData.projection = camera.getProjection();
+        currentFrameData.bufferData.viewData.view       = camera.getView();
+        currentFrameData.bufferData.viewData.projection = camera.getProjection();
 
-        currentFrameData.viewPosition = position;
+        currentFrameData.bufferData.viewPosition = position;
     }
 
     void ForwardRenderer3D::submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform) {
-        meshes.push_back({ std::move(mesh), std::move(transform) });
+        currentFrameData.meshes.push_back({ std::move(mesh), std::move(transform) });
     }
 
     void ForwardRenderer3D::submitAnimatedMesh(std::shared_ptr<rnd::Mesh> mesh, clv::mth::mat4f transform) {
     }
 
     void ForwardRenderer3D::submitLight(DirectionalLight const& light) {
-        const uint32_t lightIndex = currentFrameData.numLights.numDirectional++;
+        uint32_t const lightIndex = currentFrameData.bufferData.numLights.numDirectional++;
 
-        currentFrameData.lights.directionalLights[lightIndex]    = light.data;
-        currentFrameData.directionalShadowTransforms[lightIndex] = light.shadowTransform;
+        currentFrameData.bufferData.lights.directionalLights[lightIndex]    = light.data;
+        currentFrameData.bufferData.directionalShadowTransforms[lightIndex] = light.shadowTransform;
     }
 
     void ForwardRenderer3D::submitLight(PointLight const& light) {
-        currentFrameData.lights.pointLights[currentFrameData.numLights.numPoint++] = light.data;
+        uint32_t const lightIndex = currentFrameData.bufferData.numLights.numPoint++;
+
+        currentFrameData.bufferData.lights.pointLights[lightIndex] = light.data;
+        currentFrameData.pointShadowTransforms[lightIndex]         = light.shadowTransforms;
     }
 
     void ForwardRenderer3D::submitWidget(std::shared_ptr<Sprite> const& widget) {
@@ -185,9 +188,9 @@ namespace blb::rnd {
             //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
             currentImageData.shadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
 
-            if(i < currentFrameData.numLights.numDirectional) {
-                for(auto&& [mesh, transform] : meshes) {
-                    clv::mth::mat4f const pushConstantData[]{ transform, currentFrameData.directionalShadowTransforms[i] };
+            if(i < currentFrameData.bufferData.numLights.numDirectional) {
+                for(auto&& [mesh, transform] : currentFrameData.meshes) {
+                    clv::mth::mat4f const pushConstantData[]{ transform, currentFrameData.bufferData.directionalShadowTransforms[i] };
 
                     currentImageData.shadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                     currentImageData.shadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
@@ -224,7 +227,7 @@ namespace blb::rnd {
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
 
-        size_t const meshCount = std::size(meshes);
+        size_t const meshCount = std::size(currentFrameData.meshes);
 
         //Allocate a descriptor set for each mesh to be drawn
         if(currentImageData.materialDescriptorPool == nullptr || currentImageData.materialDescriptorPool->getDescriptor().maxSets < meshCount) {
@@ -241,7 +244,7 @@ namespace blb::rnd {
 
         //Bind all mesh data
         size_t meshIndex = 0;
-        for(auto&& [mesh, transform] : meshes) {
+        for(auto&& [mesh, transform] : currentFrameData.meshes) {
             std::shared_ptr<DescriptorSet>& materialDescriptorSet = materialSets[meshIndex];
 
             clv::mth::mat4f modelData[]{ transform, clv::mth::inverse(clv::mth::transpose(transform)) };
@@ -365,12 +368,12 @@ namespace blb::rnd {
             imageData.lightingDescriptorSet = imageData.frameDescriptorPool->allocateDescriptorSets(descriptorSetLayouts[DescriptorSetSlots::Lighting]);
 
             //As we only have one UBO per frame for every DescriptorSet we can map the buffer into them straight away
-            imageData.viewDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, viewData), sizeof(currentFrameData.viewData), 0);
-            imageData.viewDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, viewPosition), sizeof(currentFrameData.viewPosition), 1);
+            imageData.viewDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData::BufferData, viewData), sizeof(currentFrameData.bufferData.viewData), 0);
+            imageData.viewDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData::BufferData, viewPosition), sizeof(currentFrameData.bufferData.viewPosition), 1);
 
-            imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, lights), sizeof(currentFrameData.lights), 0);
-            imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, numLights), sizeof(currentFrameData.numLights), 1);
-            imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData, directionalShadowTransforms), sizeof(currentFrameData.directionalShadowTransforms), 2);
+            imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData::BufferData, lights), sizeof(currentFrameData.bufferData.lights), 0);
+            imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData::BufferData, numLights), sizeof(currentFrameData.bufferData.numLights), 1);
+            imageData.lightingDescriptorSet->map(*imageData.uniformBuffer, offsetof(FrameData::BufferData, directionalShadowTransforms), sizeof(currentFrameData.bufferData.directionalShadowTransforms), 2);
 
             //Create the shadow maps for each frame
             for(size_t i = 0; i < MAX_LIGHTS; ++i) {

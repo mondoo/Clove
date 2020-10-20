@@ -27,16 +27,23 @@ namespace blb::rnd {
     class ForwardRenderer3D {
         //TYPES
     private:
-        //Frame data that directly translates into a UBO
+        //Data for an entire frame
         struct FrameData {
-            //TODO: Get the alignment from vulkan
-            alignas(256) ViewData viewData;
-            alignas(256) clv::mth::vec3f viewPosition;
+            //Frame data that directly translates into a UBO
+            struct BufferData {
+                //TODO: Get the alignment from vulkan
+                alignas(256) ViewData viewData;
+                alignas(256) clv::mth::vec3f viewPosition;
 
-            alignas(256) LightDataArray lights;
-            alignas(256) DirectionalShadowTransformArray directionalShadowTransforms;
+                alignas(256) LightDataArray lights;
+                alignas(256) DirectionalShadowTransformArray directionalShadowTransforms;
 
-            alignas(256) LightCount numLights;
+                alignas(256) LightCount numLights;
+            } bufferData;
+
+            std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> pointShadowTransforms;
+
+            std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
         };
 
         //Objects that hold the state / data of each image (in flight)
@@ -81,10 +88,10 @@ namespace blb::rnd {
 
         //Frame / image data objects
         FrameData currentFrameData;
-        std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
-
         std::vector<ImageData> inFlightImageData;
-        std::shared_ptr<clv::gfx::Sampler> sampler;//Generic sampler passed along with textures
+
+        //Generic sampler passed along with textures
+        std::shared_ptr<clv::gfx::Sampler> sampler;
 
         //Objects for the final colour render pass
         std::shared_ptr<clv::gfx::RenderPass> renderPass;
