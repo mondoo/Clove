@@ -64,6 +64,10 @@ namespace blb::rnd {
             std::array<std::shared_ptr<clv::gfx::GraphicsImage>, MAX_LIGHTS> shadowMaps;
             std::array<std::shared_ptr<clv::gfx::GraphicsImageView>, MAX_LIGHTS> shadowMapViews;
             std::array<std::shared_ptr<clv::gfx::Framebuffer>, MAX_LIGHTS> shadowMapFrameBuffers;
+
+            std::array<std::shared_ptr<clv::gfx::GraphicsImage>, MAX_LIGHTS> cubeShadowMaps;
+            std::array<std::shared_ptr<clv::gfx::GraphicsImageView>, MAX_LIGHTS> cubeShadowMapViews;
+            std::array<std::shared_ptr<clv::gfx::Framebuffer>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
         };
 
         //VARIABLES
@@ -149,11 +153,13 @@ namespace blb::rnd {
 
         void createRenderpass();
         void createShadowMapRenderpass();
+        //void createCubeShadowMapRenderpass();
 
         void createDepthBuffer();
 
         void createPipeline();
         void createShadowMapPipeline();
+        void createCubeShadowMapPipeline();
 
         void createSwapchainFrameBuffers();
 

@@ -25,6 +25,11 @@ extern "C" const size_t genshadowmap_vLength;
 extern "C" const char genshadowmap_p[];
 extern "C" const size_t genshadowmap_pLength;
 
+extern "C" const char gencubeshadowmap_v[];
+extern "C" const size_t gencubeshadowmap_vLength;
+extern "C" const char gencubeshadowmap_p[];
+extern "C" const size_t gencubeshadowmap_pLength;
+
 namespace blb::rnd {
     ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, API const api) {
         windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
@@ -40,8 +45,10 @@ namespace blb::rnd {
         swapchain = graphicsFactory->createSwapChain({ windowSize });
         createRenderpass();
         createShadowMapRenderpass();
+        //createCubeShadowMapRenderpass();
 
         createShadowMapPipeline();
+        createCubeShadowMapPipeline();
 
         createDepthBuffer();
 
@@ -64,7 +71,7 @@ namespace blb::rnd {
         }
         imagesInFlight.resize(swapchain->getImageViews().size());
 
-        Sampler::Descriptor samplerDescriptor{
+        sampler = graphicsFactory->createSampler(Sampler::Descriptor{
             .minFilter        = Sampler::Filter::Linear,
             .magFilter        = Sampler::Filter::Linear,
             .addressModeU     = Sampler::AddressMode::Repeat,
@@ -72,8 +79,7 @@ namespace blb::rnd {
             .addressModeW     = Sampler::AddressMode::Repeat,
             .enableAnisotropy = true,
             .maxAnisotropy    = 16.0f,
-        };
-        sampler = graphicsFactory->createSampler(std::move(samplerDescriptor));
+        });
     }
 
     //ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;
@@ -377,24 +383,41 @@ namespace blb::rnd {
 
             //Create the shadow maps for each frame
             for(size_t i = 0; i < MAX_LIGHTS; ++i) {
-                GraphicsImage::Descriptor shadowMapDescriptor{
+                //Directional
+                imageData.shadowMaps[i]     = graphicsFactory->createImage(GraphicsImage::Descriptor{
                     .type        = GraphicsImage::Type::_2D,
                     .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
                     .dimensions  = { shadowMapSize, shadowMapSize },
                     .format      = GraphicsImage::Format::D32_SFLOAT,
                     .sharingMode = SharingMode::Exclusive,
-                    .memoryType  = MemoryType::VideoMemory
-                };
-                imageData.shadowMaps[i]     = graphicsFactory->createImage(std::move(shadowMapDescriptor));
+                    .memoryType  = MemoryType::VideoMemory,
+                });
                 imageData.shadowMapViews[i] = imageData.shadowMaps[i]->createView();
 
-                Framebuffer::Descriptor frameBuffer{
+                imageData.shadowMapFrameBuffers[i] = graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
                     .renderPass  = shadowMapRenderPass,
                     .attachments = { imageData.shadowMapViews[i] },
                     .width       = shadowMapSize,
-                    .height      = shadowMapSize
-                };
-                imageData.shadowMapFrameBuffers[i] = graphicsFactory->createFramebuffer(frameBuffer);
+                    .height      = shadowMapSize,
+                });
+
+                //Point
+                imageData.cubeShadowMaps[i]     = graphicsFactory->createImage(GraphicsImage::Descriptor{
+                    .type        = GraphicsImage::Type::Cube,
+                    .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
+                    .dimensions  = { shadowMapSize, shadowMapSize },
+                    .format      = GraphicsImage::Format::D32_SFLOAT,
+                    .sharingMode = SharingMode::Exclusive,
+                    .memoryType  = MemoryType::VideoMemory,
+                });
+                imageData.cubeShadowMapViews[i] = imageData.cubeShadowMaps[i]->createView();
+
+                imageData.cubeShadowMapFrameBuffers[i] = graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
+                    .renderPass  = shadowMapRenderPass,
+                    .attachments = { imageData.cubeShadowMapViews[i] },
+                    .width       = shadowMapSize,
+                    .height      = shadowMapSize,
+                });
             }
         }
 
@@ -483,6 +506,9 @@ namespace blb::rnd {
         shadowMapRenderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
     }
 
+    //void ForwardRenderer3D::createCubeShadowMapRenderpass() {
+    //}
+
     void ForwardRenderer3D::createDepthBuffer() {
         GraphicsImage::Descriptor depthDescriptor{
             .type        = GraphicsImage::Type::_2D,
@@ -555,27 +581,55 @@ namespace blb::rnd {
         shadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
+    void ForwardRenderer3D::createCubeShadowMapPipeline() {
+        PushConstantDescriptor vertexPushConstant{
+            .stage = Shader::Stage::Vertex,
+            .size  = sizeof(clv::mth::mat4f) * 2,
+        };
+        PushConstantDescriptor pixelPushConstant{
+            .stage = Shader::Stage::Pixel,
+            .size  = sizeof(clv::mth::vec3f) + sizeof(float),
+        };
+
+        AreaDescriptor viewScissorArea{
+            .state    = ElementState::Static,
+            .position = { 0.0f, 0.0f },
+            .size     = { shadowMapSize, shadowMapSize }
+        };
+
+        PipelineObject::Descriptor pipelineDescriptor{
+            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(gencubeshadowmap_v), gencubeshadowmap_vLength }),
+            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(gencubeshadowmap_p), gencubeshadowmap_pLength }),
+            .vertexInput          = Vertex::getInputBindingDescriptor(),
+            .vertexAttributes     = Vertex::getVertexAttributes(),
+            .viewportDescriptor   = viewScissorArea,
+            .scissorDescriptor    = viewScissorArea,
+            .renderPass           = shadowMapRenderPass,
+            .descriptorSetLayouts = {},
+            .pushConstants        = { vertexPushConstant, pixelPushConstant },
+        };
+
+        shadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+    }
+
     void ForwardRenderer3D::createSwapchainFrameBuffers() {
         for(auto& swapChainImageView : swapchain->getImageViews()) {
-            Framebuffer::Descriptor frameBufferDescriptor{
+            swapChainFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
                 .renderPass  = renderPass,
                 .attachments = { swapChainImageView, depthImageView },
                 .width       = swapchain->getExtent().x,
                 .height      = swapchain->getExtent().y,
-            };
-
-            swapChainFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(frameBufferDescriptor));
+            }));
         }
     }
 
     std::shared_ptr<GraphicsBuffer> ForwardRenderer3D::createUniformBuffer() {
-        GraphicsBuffer::Descriptor descriptor{
+        return graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
             .size        = sizeof(FrameData),
             .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
             .sharingMode = SharingMode::Exclusive,
             .memoryType  = MemoryType::SystemMemory,
-        };
-        return graphicsFactory->createBuffer(std::move(descriptor));
+        });
     }
 
     std::shared_ptr<DescriptorPool> ForwardRenderer3D::createDescriptorPool(std::unordered_map<DescriptorType, uint32_t> const& bindingCount, const uint32_t setCount) {
