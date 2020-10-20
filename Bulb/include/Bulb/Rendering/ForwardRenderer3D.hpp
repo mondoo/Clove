@@ -50,6 +50,7 @@ namespace blb::rnd {
         struct ImageData {
             std::shared_ptr<clv::gfx::GraphicsCommandBuffer> commandBuffer;
             std::shared_ptr<clv::gfx::GraphicsCommandBuffer> shadowMapCommandBuffer;
+            std::shared_ptr<clv::gfx::GraphicsCommandBuffer> cubeShadowMapCommandBuffer;
 
             std::shared_ptr<clv::gfx::GraphicsBuffer> uniformBuffer;
 
@@ -107,9 +108,11 @@ namespace blb::rnd {
         //Objects for the shadow map pass
         std::shared_ptr<clv::gfx::RenderPass> shadowMapRenderPass;
         std::shared_ptr<clv::gfx::PipelineObject> shadowMapPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> cubeShadowMapPipelineObject;
 
         //Synchronisation obects
         std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> shadowFinishedSemaphores;
+        std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> cubeShadowFinishedSemaphores;
         std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> renderFinishedSemaphores;
         std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> imageAvailableSemaphores;
         std::array<std::shared_ptr<clv::gfx::Fence>, maxFramesInFlight> inFlightFences;

@@ -60,6 +60,9 @@ namespace blb::rnd {
         for(auto& shadowFinishedSemaphore : shadowFinishedSemaphores) {
             shadowFinishedSemaphore = graphicsFactory->createSemaphore();
         }
+        for(auto& cubeShadowFinishedSemaphore : cubeShadowFinishedSemaphores) {
+            cubeShadowFinishedSemaphore = graphicsFactory->createSemaphore();
+        }
         for(auto& renderFinishedSemaphore : renderFinishedSemaphores) {
             renderFinishedSemaphore = graphicsFactory->createSemaphore();
         }
@@ -180,16 +183,15 @@ namespace blb::rnd {
         clv::mth::vec4f clearColour{ 0.0f, 0.0f, 0.0f, 1.0f };
         DepthStencilValue depthStencilClearValue{ 1.0f, 0 };
 
-        currentImageData.shadowMapCommandBuffer->beginRecording(CommandBufferUsage::Default);
-
-        //SHADOW MAP
+        //SHADOW MAPS
         std::array<ClearValue, 1> shadowMapClearValues{
             ClearValue{ {}, depthStencilClearValue }
         };
 
-        currentImageData.shadowMapCommandBuffer->bindPipelineObject(*shadowMapPipelineObject);
-
         //Directional lights
+        currentImageData.shadowMapCommandBuffer->beginRecording(CommandBufferUsage::Default);
+
+        currentImageData.shadowMapCommandBuffer->bindPipelineObject(*shadowMapPipelineObject);
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
             //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
             currentImageData.shadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
@@ -209,8 +211,42 @@ namespace blb::rnd {
 
             currentImageData.shadowMapCommandBuffer->endRenderPass();
         }
-
         currentImageData.shadowMapCommandBuffer->endRecording();
+
+        //Point lights
+        currentImageData.cubeShadowMapCommandBuffer->beginRecording(CommandBufferUsage::Default);
+
+        currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*cubeShadowMapPipelineObject);
+        for(size_t i = 0; i < MAX_LIGHTS; ++i) {
+            for(size_t j = 0; j < MAX_LIGHTS; ++j) {
+                //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
+                currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
+
+                if(i < currentFrameData.bufferData.numLights.numDirectional) {
+                    for(auto&& [mesh, transform] : currentFrameData.meshes) {
+                        clv::mth::mat4f const vertPushConstantData[]{ transform, currentFrameData.pointShadowTransforms[i][j] };
+                        struct {
+                            clv::mth::vec3f pos{};
+                            float farPlane{};
+                        } pixelPushConstantData{
+                            .pos      = currentFrameData.bufferData.lights.pointLights[i].position,
+                            .farPlane = currentFrameData.bufferData.lights.pointLights[i].farPlane,
+                        };
+
+                        currentImageData.cubeShadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
+                        currentImageData.cubeShadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
+
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*cubeShadowMapPipelineObject, Shader::Stage::Vertex, sizeof(vertPushConstantData), vertPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*cubeShadowMapPipelineObject, Shader::Stage::Pixel, sizeof(pixelPushConstantData), &pixelPushConstantData);
+
+                        currentImageData.cubeShadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
+                    }
+                }
+
+                currentImageData.cubeShadowMapCommandBuffer->endRenderPass();
+            }
+        }
+        currentImageData.cubeShadowMapCommandBuffer->endRecording();
 
         //FINAL IMAGE
         std::array<ClearValue, 2> outputClearValues{
@@ -277,10 +313,18 @@ namespace blb::rnd {
             .commandBuffers   = { currentImageData.shadowMapCommandBuffer },
             .signalSemaphores = { shadowFinishedSemaphores[currentFrame] },
         };
+        GraphicsSubmitInfo cubeShadowSubmitInfo{
+            .commandBuffers   = { currentImageData.cubeShadowMapCommandBuffer },
+            .signalSemaphores = { cubeShadowFinishedSemaphores[currentFrame] },
+        };
         GraphicsSubmitInfo submitInfo{
             .waitSemaphores = {
                 {
                     shadowFinishedSemaphores[currentFrame],
+                    PipelineObject::Stage::PixelShader,
+                },
+                {
+                    cubeShadowFinishedSemaphores[currentFrame],
                     PipelineObject::Stage::PixelShader,
                 },
                 {
@@ -292,15 +336,15 @@ namespace blb::rnd {
             .signalSemaphores = { renderFinishedSemaphores[currentFrame] },
         };
         graphicsQueue->submit(shadowSubmitInfo, nullptr);
+        graphicsQueue->submit(cubeShadowSubmitInfo, nullptr);
         graphicsQueue->submit(submitInfo, inFlightFences[currentFrame].get());
 
         //Present current image
-        PresentInfo presentInfo{
+        result = presentQueue->present(PresentInfo{
             .waitSemaphores = { renderFinishedSemaphores[currentFrame] },
             .swapChain      = swapchain,
             .imageIndex     = imageIndex,
-        };
-        result = presentQueue->present(presentInfo);
+        });
 
         if(needNewSwapchain || result == Result::Error_SwapchainOutOfDate || result == Result::Success_SwapchainSuboptimal) {
             recreateSwapchain();
@@ -361,8 +405,9 @@ namespace blb::rnd {
 
         for(auto& imageData : inFlightImageData) {
             //Create command buffers
-            imageData.commandBuffer          = graphicsQueue->allocateCommandBuffer();
-            imageData.shadowMapCommandBuffer = graphicsQueue->allocateCommandBuffer();
+            imageData.commandBuffer              = graphicsQueue->allocateCommandBuffer();
+            imageData.shadowMapCommandBuffer     = graphicsQueue->allocateCommandBuffer();
+            imageData.cubeShadowMapCommandBuffer = graphicsQueue->allocateCommandBuffer();
 
             //Create uniform buffers
             imageData.uniformBuffer = createUniformBuffer();
@@ -609,7 +654,7 @@ namespace blb::rnd {
             .pushConstants        = { vertexPushConstant, pixelPushConstant },
         };
 
-        shadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+        cubeShadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
     void ForwardRenderer3D::createSwapchainFrameBuffers() {
