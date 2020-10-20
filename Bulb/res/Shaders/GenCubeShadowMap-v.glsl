@@ -1,7 +1,5 @@
 #version 450
 
-#include "Constants.glsl"
-
 layout(std140, push_constant) uniform Model{
 	mat4 model;
 	mat4 lightSpaceMatrix;
@@ -9,6 +7,9 @@ layout(std140, push_constant) uniform Model{
 
 layout(location = 0) in vec3 position;
 
+layout(location = 0) out vec4 fragPos;
+
 void main(){
-    gl_Position = lightSpaceMatrix * model * vec4(position, 1.0f);
+    fragPos = lightSpaceMatrix * model * vec4(position, 1.0f);
+    gl_Position = fragPos;
 }
