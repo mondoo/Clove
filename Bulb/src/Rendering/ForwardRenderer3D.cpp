@@ -218,7 +218,7 @@ namespace blb::rnd {
 
         currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*cubeShadowMapPipelineObject);
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
-            for(size_t j = 0; j < MAX_LIGHTS; ++j) {
+            for(size_t j = 0; j < 6; ++j) {
                 //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
                 currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
 
