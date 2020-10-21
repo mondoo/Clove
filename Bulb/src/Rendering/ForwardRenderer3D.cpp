@@ -222,7 +222,7 @@ namespace blb::rnd {
                 //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
                 currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
 
-                if(i < currentFrameData.bufferData.numLights.numDirectional) {
+                if(i < currentFrameData.bufferData.numLights.numPoint) {
                     for(auto&& [mesh, transform] : currentFrameData.meshes) {
                         clv::mth::mat4f const vertPushConstantData[]{ transform, currentFrameData.pointShadowTransforms[i][j] };
                         struct {
