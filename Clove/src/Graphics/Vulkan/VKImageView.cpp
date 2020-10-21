@@ -16,7 +16,7 @@ namespace clv::gfx::vk {
         vkDestroyImageView(device, imageView, nullptr);
     }
 
-    VkImageView VKImageView::create(VkDevice device, VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t const layerCount) {
+    VkImageView VKImageView::create(VkDevice device, VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t const baseLayer, uint32_t const layerCount) {
         VkImageViewCreateInfo viewInfo{
             .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             .pNext      = nullptr,
@@ -34,7 +34,7 @@ namespace clv::gfx::vk {
                 .aspectMask     = aspectFlags,
                 .baseMipLevel   = 0,
                 .levelCount     = 1,
-                .baseArrayLayer = 0,
+                .baseArrayLayer = baseLayer,
                 .layerCount     = layerCount,
             }
         };

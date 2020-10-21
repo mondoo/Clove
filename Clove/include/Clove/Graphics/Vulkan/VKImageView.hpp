@@ -27,7 +27,7 @@ namespace clv::gfx::vk {
 
         inline VkImageView getImageView() const;
 
-        static VkImageView create(VkDevice device, VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t const layerCount);
+        static VkImageView create(VkDevice device, VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t const baseLayer, uint32_t const layerCount);
     };
 }
 

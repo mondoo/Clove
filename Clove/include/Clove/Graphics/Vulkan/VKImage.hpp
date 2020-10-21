@@ -33,11 +33,11 @@ namespace clv::gfx::vk {
         VKImage(VKImage&& other) noexcept;
 
         VKImage& operator=(VKImage const& other) = delete;
-        VKImage& operator=(VKImage&& other) noexcept;
+        VKImage& operator                        =(VKImage&& other) noexcept;
 
         ~VKImage();
 
-        std::unique_ptr<GraphicsImageView> createView() const override;
+        std::unique_ptr<GraphicsImageView> createView(GraphicsImageView::Descriptor viewDescriptor) const override;
 
         inline VkImage getImage() const;
 

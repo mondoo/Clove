@@ -67,8 +67,9 @@ namespace blb::rnd {
             std::array<std::shared_ptr<clv::gfx::Framebuffer>, MAX_LIGHTS> shadowMapFrameBuffers;
 
             std::array<std::shared_ptr<clv::gfx::GraphicsImage>, MAX_LIGHTS> cubeShadowMaps;
-            std::array<std::shared_ptr<clv::gfx::GraphicsImageView>, MAX_LIGHTS> cubeShadowMapViews;
-            std::array<std::shared_ptr<clv::gfx::Framebuffer>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
+            std::array<std::shared_ptr<clv::gfx::GraphicsImageView>, MAX_LIGHTS> cubeShadowMapViews;                   //Views the whole cube
+            std::array<std::array<std::shared_ptr<clv::gfx::GraphicsImageView>, 6>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
+            std::array<std::array<std::shared_ptr<clv::gfx::Framebuffer>, 6>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
         };
 
         //VARIABLES
@@ -127,7 +128,7 @@ namespace blb::rnd {
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D& operator=(ForwardRenderer3D const& other) = delete;
-        ForwardRenderer3D& operator=(ForwardRenderer3D&& other) noexcept;
+        ForwardRenderer3D& operator                                  =(ForwardRenderer3D&& other) noexcept;
 
         ~ForwardRenderer3D();
 

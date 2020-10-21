@@ -93,8 +93,14 @@ namespace blb::rnd {
             specularImage = defaultImage.lock();
         }
 
-        diffuseView  = diffuseImage->createView();
-        specularView = specularImage->createView();
+        clv::gfx::GraphicsImageView::Descriptor viewDescriptor{
+            .type       = clv::gfx::GraphicsImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        };
+
+        diffuseView  = diffuseImage->createView(viewDescriptor);
+        specularView = specularImage->createView(std::move(viewDescriptor));
     }
 
     Material::Material(const Material& other) = default;
@@ -109,12 +115,20 @@ namespace blb::rnd {
 
     void Material::setDiffuseTexture(std::shared_ptr<clv::gfx::GraphicsImage> image) {
         diffuseImage = std::move(image);
-        diffuseView  = diffuseImage->createView();
+        diffuseView  = diffuseImage->createView(clv::gfx::GraphicsImageView::Descriptor{
+            .type       = clv::gfx::GraphicsImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        });
     }
 
     void Material::setSpecularTexture(std::shared_ptr<clv::gfx::GraphicsImage> image) {
         specularImage = std::move(image);
-        specularView  = specularImage->createView();
+        specularView  = specularImage->createView(clv::gfx::GraphicsImageView::Descriptor{
+            .type       = clv::gfx::GraphicsImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        });
     }
 
     void Material::setColour(clv::mth::vec4f colour) {

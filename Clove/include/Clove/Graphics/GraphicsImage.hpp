@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Clove/Graphics/GraphicsImageView.hpp"
 #include "Clove/Graphics/GraphicsResource.hpp"
 
 #include <Root/Definitions.hpp>
@@ -65,7 +66,7 @@ namespace clv::gfx {
     public:
         virtual ~GraphicsImage() = default;
 
-        virtual std::unique_ptr<GraphicsImageView> createView() const = 0;
+        virtual std::unique_ptr<GraphicsImageView> createView(GraphicsImageView::Descriptor viewDescriptor) const = 0;
     };
 
     GARLIC_ENUM_BIT_FLAG_OPERATORS(GraphicsImage::UsageMode, GraphicsImage::UsageModeType)

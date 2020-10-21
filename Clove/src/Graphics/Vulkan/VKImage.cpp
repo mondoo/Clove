@@ -39,7 +39,7 @@ namespace clv::gfx::vk {
         }
     }
 
-    static VkImageViewType getImageViewType(GraphicsImage::Type garlicImageType) {
+    static VkImageViewType getImageViewType(GraphicsImageView::Type garlicImageType) {
         switch(garlicImageType) {
             case GraphicsImage::Type::_2D:
                 return VK_IMAGE_VIEW_TYPE_2D;
@@ -102,10 +102,14 @@ namespace clv::gfx::vk {
         memoryAllocator->free(allocatedBlock);
     }
 
-    std::unique_ptr<GraphicsImageView> VKImage::createView() const {
+    std::unique_ptr<GraphicsImageView> VKImage::createView(GraphicsImageView::Descriptor viewDescriptor) const {
+        {
+            uint32_t const maxLayers = descriptor.type == Type::Cube ? 6 : 1;
+            GARLIC_ASSERT(viewDescriptor.layer + viewDescriptor.layerCount <= maxLayers, "{0}: GraphicsImageView is not compatible!", GARLIC_FUNCTION_NAME_PRETTY);
+        }
+
         VkImageAspectFlags const aspectFlags = descriptor.format == Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
-        uint32_t const layerCount            = descriptor.type == Type::Cube ? 6 : 1;
-        return std::make_unique<VKImageView>(device.get(), VKImageView::create(device.get(), image, getImageViewType(descriptor.type), convertFormat(descriptor.format), aspectFlags, layerCount));
+        return std::make_unique<VKImageView>(device.get(), VKImageView::create(device.get(), image, getImageViewType(viewDescriptor.type), convertFormat(descriptor.format), aspectFlags, viewDescriptor.layer, viewDescriptor.layerCount));
     }
 
     GraphicsImage::Format VKImage::convertFormat(VkFormat vulkanFormat) {

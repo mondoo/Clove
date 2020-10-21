@@ -220,7 +220,7 @@ namespace blb::rnd {
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
             for(size_t j = 0; j < 6; ++j) {
                 //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
-                currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
+                currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
 
                 if(i < currentFrameData.bufferData.numLights.numPoint) {
                     for(auto&& [mesh, transform] : currentFrameData.meshes) {
@@ -437,7 +437,11 @@ namespace blb::rnd {
                     .sharingMode = SharingMode::Exclusive,
                     .memoryType  = MemoryType::VideoMemory,
                 });
-                imageData.shadowMapViews[i] = imageData.shadowMaps[i]->createView();
+                imageData.shadowMapViews[i] = imageData.shadowMaps[i]->createView(GraphicsImageView::Descriptor{
+                    .type       = GraphicsImageView::Type::_2D,
+                    .layer      = 0,
+                    .layerCount = 1,
+                });
 
                 imageData.shadowMapFrameBuffers[i] = graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
                     .renderPass  = shadowMapRenderPass,
@@ -455,14 +459,26 @@ namespace blb::rnd {
                     .sharingMode = SharingMode::Exclusive,
                     .memoryType  = MemoryType::VideoMemory,
                 });
-                imageData.cubeShadowMapViews[i] = imageData.cubeShadowMaps[i]->createView();
-
-                imageData.cubeShadowMapFrameBuffers[i] = graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
-                    .renderPass  = shadowMapRenderPass,
-                    .attachments = { imageData.cubeShadowMapViews[i] },
-                    .width       = shadowMapSize,
-                    .height      = shadowMapSize,
+                imageData.cubeShadowMapViews[i] = imageData.cubeShadowMaps[i]->createView(GraphicsImageView::Descriptor{
+                    .type       = GraphicsImageView::Type::Cube,
+                    .layer      = 0,
+                    .layerCount = 6,
                 });
+
+                for(size_t j = 0; j < 6; ++j) {
+                    imageData.cubeShadowMapFaceViews[i][j] = imageData.cubeShadowMaps[i]->createView(GraphicsImageView::Descriptor{
+                        .type       = GraphicsImageView::Type::_2D,
+                        .layer      = static_cast<uint32_t>(j),
+                        .layerCount = 1,
+                    });
+
+                    imageData.cubeShadowMapFrameBuffers[i][j] = graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
+                        .renderPass  = shadowMapRenderPass,
+                        .attachments = { imageData.cubeShadowMapFaceViews[i][j] },
+                        .width       = shadowMapSize,
+                        .height      = shadowMapSize,
+                    });
+                }
             }
         }
 
@@ -565,7 +581,11 @@ namespace blb::rnd {
         };
 
         depthImage     = graphicsFactory->createImage(std::move(depthDescriptor));
-        depthImageView = depthImage->createView();
+        depthImageView = depthImage->createView(GraphicsImageView::Descriptor{
+            .type       = GraphicsImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        });
     }
 
     void ForwardRenderer3D::createPipeline() {
