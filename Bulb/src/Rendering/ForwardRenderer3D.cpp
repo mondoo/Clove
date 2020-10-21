@@ -203,7 +203,7 @@ namespace blb::rnd {
                     currentImageData.shadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                     currentImageData.shadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                    currentImageData.shadowMapCommandBuffer->pushConstant(*shadowMapPipelineObject, Shader::Stage::Vertex, sizeof(pushConstantData), pushConstantData);
+                    currentImageData.shadowMapCommandBuffer->pushConstant(*shadowMapPipelineObject, Shader::Stage::Vertex, 0, sizeof(pushConstantData), pushConstantData);
 
                     currentImageData.shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
                 }
@@ -236,8 +236,8 @@ namespace blb::rnd {
                         currentImageData.cubeShadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                         currentImageData.cubeShadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*cubeShadowMapPipelineObject, Shader::Stage::Vertex, sizeof(vertPushConstantData), vertPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*cubeShadowMapPipelineObject, Shader::Stage::Pixel, sizeof(pixelPushConstantData), &pixelPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*cubeShadowMapPipelineObject, Shader::Stage::Vertex, 0, sizeof(vertPushConstantData), vertPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*cubeShadowMapPipelineObject, Shader::Stage::Pixel, sizeof(vertPushConstantData), sizeof(pixelPushConstantData), &pixelPushConstantData);
 
                         currentImageData.cubeShadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
                     }
@@ -295,7 +295,7 @@ namespace blb::rnd {
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
             materialDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
-            currentImageData.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, sizeof(modelData), modelData);
+            currentImageData.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
 
             currentImageData.commandBuffer->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Material));
 
@@ -596,8 +596,9 @@ namespace blb::rnd {
         }
 
         PushConstantDescriptor modelPushConstant{
-            .stage = Shader::Stage::Vertex,
-            .size  = sizeof(clv::mth::mat4f) * 2,
+            .stage  = Shader::Stage::Vertex,
+            .offset = 0,
+            .size   = sizeof(clv::mth::mat4f) * 2,
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
@@ -648,12 +649,14 @@ namespace blb::rnd {
 
     void ForwardRenderer3D::createCubeShadowMapPipeline() {
         PushConstantDescriptor vertexPushConstant{
-            .stage = Shader::Stage::Vertex,
-            .size  = sizeof(clv::mth::mat4f) * 2,
+            .stage  = Shader::Stage::Vertex,
+            .offset = 0,
+            .size   = sizeof(clv::mth::mat4f) * 2,
         };
         PushConstantDescriptor pixelPushConstant{
-            .stage = Shader::Stage::Pixel,
-            .size  = sizeof(clv::mth::vec3f) + sizeof(float),
+            .stage  = Shader::Stage::Pixel,
+            .offset = sizeof(clv::mth::mat4f) * 2,
+            .size   = sizeof(clv::mth::vec3f) + sizeof(float),
         };
 
         AreaDescriptor viewScissorArea{

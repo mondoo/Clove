@@ -1,7 +1,7 @@
 #version 450
 
 layout(std140, push_constant) uniform Light{
-    vec3 lightPos;
+    layout(offset = 128) vec3 lightPos;
     float farPlane;
 };
 

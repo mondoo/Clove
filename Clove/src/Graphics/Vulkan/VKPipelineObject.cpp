@@ -61,16 +61,18 @@ namespace clv::gfx::vk {
         VkVertexInputBindingDescription inputBindingDescription         = getBindingDescription(descriptor.vertexInput);
         std::vector<VkVertexInputAttributeDescription> vertexAttributes = getAttributes(descriptor.vertexAttributes);
 
+        //Descriptor set layouts
         std::vector<VKDescriptorSetLayout*> castedLayouts(std::size(descriptor.descriptorSetLayouts));
         for(size_t i = 0; i < std::size(castedLayouts); ++i) {
             castedLayouts[i] = polyCast<VKDescriptorSetLayout>(descriptor.descriptorSetLayouts[i].get());
         }
         std::vector<VkDescriptorSetLayout> descriptorLayouts = getDescriptorSetLayouts(castedLayouts);
 
+        //Push constants
         std::vector<VkPushConstantRange> vkPushConstantRanges(std::size(descriptor.pushConstants));
         for(size_t i = 0; i < std::size(vkPushConstantRanges); ++i) {
             vkPushConstantRanges[i].stageFlags = VKShader::convertStage(descriptor.pushConstants[i].stage);
-            vkPushConstantRanges[i].offset     = 0;
+            vkPushConstantRanges[i].offset     = descriptor.pushConstants[i].offset;
             vkPushConstantRanges[i].size       = descriptor.pushConstants[i].size;
         }
 

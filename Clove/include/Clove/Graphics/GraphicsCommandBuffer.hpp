@@ -58,19 +58,19 @@ namespace clv::gfx {
          * @param renderArea What area to render onto the frameBuffer.
          * @param clearValues An array of clear values. Each element in the array represents an attachment in the frameBuffer.
          */
-        virtual void beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, const RenderArea& renderArea, std::span<ClearValue> clearValues) = 0;
+        virtual void beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, RenderArea const& renderArea, std::span<ClearValue> clearValues) = 0;
         virtual void endRenderPass()                                                                                                                    = 0;
 
         virtual void bindPipelineObject(PipelineObject& pipelineObject)                                                     = 0;
-        virtual void bindVertexBuffer(GraphicsBuffer& vertexBuffer, const uint32_t binding)                                 = 0;
+        virtual void bindVertexBuffer(GraphicsBuffer& vertexBuffer, uint32_t const binding)                                 = 0;
         virtual void bindIndexBuffer(GraphicsBuffer& indexBuffer, IndexType indexType)                                      = 0;
-        virtual void bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline, const uint32_t setNum) = 0;
+        virtual void bindDescriptorSet(DescriptorSet& descriptorSet, PipelineObject const& pipeline, uint32_t const setNum) = 0;
 
-        virtual void pushConstant(PipelineObject& pipelineObject, const Shader::Stage stage, const uint32_t size, const void* data) = 0;
+        virtual void pushConstant(PipelineObject& pipelineObject, Shader::Stage const stage, size_t const offset, size_t const size, void const* data) = 0;
 
-        virtual void drawIndexed(const size_t indexCount) = 0;
+        virtual void drawIndexed(size_t const indexCount) = 0;
 
-        virtual void bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) = 0;
-        virtual void imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage)     = 0;
+        virtual void bufferMemoryBarrier(GraphicsBuffer& buffer, BufferMemoryBarrierInfo const& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) = 0;
+        virtual void imageMemoryBarrier(GraphicsImage& image, ImageMemoryBarrierInfo const& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage)     = 0;
     };
 }

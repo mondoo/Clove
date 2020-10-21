@@ -52,7 +52,7 @@ namespace clv::gfx::vk {
         }
     }
 
-    void VKGraphicsCommandBuffer::beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, const RenderArea& renderArea, std::span<ClearValue> clearValues) {
+    void VKGraphicsCommandBuffer::beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, RenderArea const& renderArea, std::span<ClearValue> clearValues) {
         std::vector<VkClearValue> vkClearValues(std::size(clearValues));
         for(uint32_t index = 0; auto& clearValue : clearValues) {
             const auto& colour       = clearValue.colour;
@@ -83,7 +83,7 @@ namespace clv::gfx::vk {
         vkCmdEndRenderPass(commandBuffer);
     }
 
-    void VKGraphicsCommandBuffer::bindVertexBuffer(GraphicsBuffer& vertexBuffer, const uint32_t binding) {
+    void VKGraphicsCommandBuffer::bindVertexBuffer(GraphicsBuffer& vertexBuffer, uint32_t const binding) {
         VkBuffer buffers[]     = { polyCast<VKBuffer>(&vertexBuffer)->getBuffer() };
         VkDeviceSize offsets[] = { 0 };
 
@@ -98,21 +98,21 @@ namespace clv::gfx::vk {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<VKPipelineObject>(&pipelineObject)->getPipeline());
     }
 
-    void VKGraphicsCommandBuffer::bindDescriptorSet(DescriptorSet& descriptorSet, const PipelineObject& pipeline, const uint32_t setNum) {
+    void VKGraphicsCommandBuffer::bindDescriptorSet(DescriptorSet& descriptorSet, PipelineObject const& pipeline, uint32_t const setNum) {
         VkDescriptorSet sets[] = { polyCast<VKDescriptorSet>(&descriptorSet)->getDescriptorSet() };
 
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<const VKPipelineObject>(&pipeline)->getLayout(), setNum, 1, sets, 0, nullptr);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<VKPipelineObject const>(&pipeline)->getLayout(), setNum, 1, sets, 0, nullptr);
     }
 
-    void VKGraphicsCommandBuffer::pushConstant(PipelineObject& pipelineObject, const Shader::Stage stage, const uint32_t size, const void* data) {
-        vkCmdPushConstants(commandBuffer, polyCast<VKPipelineObject>(&pipelineObject)->getLayout(), VKShader::convertStage(stage), 0, size, data);
+    void VKGraphicsCommandBuffer::pushConstant(PipelineObject& pipelineObject, Shader::Stage const stage, size_t const offset, size_t const size, void const* data) {
+        vkCmdPushConstants(commandBuffer, polyCast<VKPipelineObject>(&pipelineObject)->getLayout(), VKShader::convertStage(stage), offset, size, data);
     }
 
-    void VKGraphicsCommandBuffer::drawIndexed(const size_t indexCount) {
+    void VKGraphicsCommandBuffer::drawIndexed(size_t const indexCount) {
         vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
     }
 
-    void VKGraphicsCommandBuffer::bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
+    void VKGraphicsCommandBuffer::bufferMemoryBarrier(GraphicsBuffer& buffer, BufferMemoryBarrierInfo const& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
         const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
         const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
@@ -134,7 +134,7 @@ namespace clv::gfx::vk {
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
     }
 
-    void VKGraphicsCommandBuffer::imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
+    void VKGraphicsCommandBuffer::imageMemoryBarrier(GraphicsImage& image, ImageMemoryBarrierInfo const& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
         const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
         const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
