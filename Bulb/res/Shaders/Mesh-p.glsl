@@ -59,6 +59,32 @@ void main(){
 
 	const float shiniess =  32.0f; //TODO: Add shiniess as a material param
 
+	float shadow = 0.0f;
+
+	//Directional shadow
+	for(int i = 0; i < numDirLights; ++i){
+		vec3 projCoords = vertPosLightSpaces[i].xyz / vertPosLightSpaces[i].w;
+		projCoords.xy = projCoords.xy * 0.5f + 0.5f;
+
+		const float currentDepth = projCoords.z;
+		const float closetDepth = texture(directionalDepthSampler[i], projCoords.xy).r;
+
+		const float bias = 0.005f;
+		shadow += currentDepth - bias > closetDepth ? 1.0f : 0.0f;
+	}
+
+	//Point shadow
+	for(int i = 0; i < numPointLights; ++i){
+		const vec3 fragToLight = vertPos - pointLights[i].position;
+		const float closetDepth = texture(pointlDepthSampler[i], fragToLight).r * pointLights[i].farplane;
+		const float currentDepth = length(fragToLight);
+
+		const float bias = 0.005f;
+		shadow += currentDepth - bias > closetDepth ? 1.0f : 0.0f;
+	}
+
+	shadow /= (numDirLights + numPointLights);
+
 	//Directional lighting
 	for(int i = 0; i < numDirLights; ++i){
 		const vec3 lightDir = normalize(-directionalLights[i].direction); //Gets the direction towards the light
@@ -105,33 +131,7 @@ void main(){
 		totalSpecular += specular;
 	}
 
-	vec3 lighting = vec3(0, 0, 0);
-
-	//Directional shadow
-	for(int i = 0; i < numDirLights; ++i){
-		vec3 projCoords = vertPosLightSpaces[i].xyz / vertPosLightSpaces[i].w;
-		projCoords.xy = projCoords.xy * 0.5f + 0.5f;
-
-		const float currentDepth = projCoords.z;
-		const float closetDepth = texture(directionalDepthSampler[i], projCoords.xy).r;
-
-		const float bias = 0.005f;
-		const float shadow = currentDepth - bias > closetDepth ? 1.0f : 0.0f;
-
-		lighting += (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)) * colour);
-	}
-
-	//Point shadow
-	for(int i = 0; i < numPointLights; ++i){
-		const vec3 fragToLight = vertPos - pointLights[i].position;
-		const float closetDepth = texture(pointlDepthSampler[i], fragToLight).r * pointLights[i].farplane;
-		const float currentDepth = length(fragToLight);
-
-		const float bias = 0.005f;
-		const float shadow = currentDepth - bias > closetDepth ? 1.0f : 0.0f;
-
-		lighting += (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)) * colour);
-	}
+	const vec3 lighting = (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)) * colour);
 
 	outColour = vec4(lighting, 1.0);
 }
