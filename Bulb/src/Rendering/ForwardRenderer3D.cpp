@@ -264,6 +264,7 @@ namespace blb::rnd {
 
         //Map any non-UBO pieces of data (such as textures / shadow maps)
         currentImageData.lightingDescriptorSet->map(currentImageData.shadowMapViews, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
+        currentImageData.lightingDescriptorSet->map(currentImageData.cubeShadowMapViews, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 4);
 
         //Bind the descriptor sets that all objects will use
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));

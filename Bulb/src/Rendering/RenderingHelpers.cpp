@@ -12,68 +12,89 @@ namespace blb::rnd {
 
         //MATERIAL SET
         {
-            clv::gfx::DescriptorSetBindingInfo samplerLayoutBinding{};
-            samplerLayoutBinding.binding   = 0;
-            samplerLayoutBinding.type      = clv::gfx::DescriptorType::CombinedImageSampler;
-            samplerLayoutBinding.arraySize = 1;
-            samplerLayoutBinding.stage     = clv::gfx::Shader::Stage::Pixel;
+            clv::gfx::DescriptorSetBindingInfo textureBinding{
+                .binding   = 0,
+                .type      = clv::gfx::DescriptorType::CombinedImageSampler,
+                .arraySize = 1,
+                .stage     = clv::gfx::Shader::Stage::Pixel,
+            };
 
-            clv::gfx::DescriptorSetLayout::Descriptor materialSetLayoutDescriptor{};
-            materialSetLayoutDescriptor.bindings = { samplerLayoutBinding };
-
-            setLayouts[DescriptorSetSlots::Material] = factory.createDescriptorSetLayout(materialSetLayoutDescriptor);
+            setLayouts[DescriptorSetSlots::Material] = factory.createDescriptorSetLayout(clv::gfx::DescriptorSetLayout::Descriptor{
+                .bindings = {
+                    std::move(textureBinding),
+                },
+            });
         }
 
         //VIEW SET
         {
-            clv::gfx::DescriptorSetBindingInfo viewLayoutBinding{};
-            viewLayoutBinding.binding   = 0;
-            viewLayoutBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
-            viewLayoutBinding.arraySize = 1;
-            viewLayoutBinding.stage     = clv::gfx::Shader::Stage::Vertex;
+            clv::gfx::DescriptorSetBindingInfo viewDataBinding{
+                .binding   = 0,
+                .type      = clv::gfx::DescriptorType::UniformBuffer,
+                .arraySize = 1,
+                .stage     = clv::gfx::Shader::Stage::Vertex,
+            };
 
-            clv::gfx::DescriptorSetBindingInfo viewPosBinding{};
-            viewPosBinding.binding   = 1;
-            viewPosBinding.type      = clv::gfx::DescriptorType::UniformBuffer;
-            viewPosBinding.arraySize = 1;
-            viewPosBinding.stage     = clv::gfx::Shader::Stage::Pixel;
+            clv::gfx::DescriptorSetBindingInfo viewPosBinding{
+                .binding   = 1,
+                .type      = clv::gfx::DescriptorType::UniformBuffer,
+                .arraySize = 1,
+                .stage     = clv::gfx::Shader::Stage::Pixel,
+            };
 
-            clv::gfx::DescriptorSetLayout::Descriptor viewSetLayoutDescriptor{};
-            viewSetLayoutDescriptor.bindings = { viewLayoutBinding, viewPosBinding };
-
-            setLayouts[DescriptorSetSlots::View] = factory.createDescriptorSetLayout(viewSetLayoutDescriptor);
+            setLayouts[DescriptorSetSlots::View] = factory.createDescriptorSetLayout(clv::gfx::DescriptorSetLayout::Descriptor{
+                .bindings = {
+                    std::move(viewDataBinding),
+                    std::move(viewPosBinding) },
+            });
         }
 
         //LIGHTING SET
         {
-            clv::gfx::DescriptorSetBindingInfo lightDataBindingInfo{};
-            lightDataBindingInfo.binding   = 0;
-            lightDataBindingInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
-            lightDataBindingInfo.arraySize = 1;
-            lightDataBindingInfo.stage     = clv::gfx::Shader::Stage::Pixel;
+            clv::gfx::DescriptorSetBindingInfo lightDataBinding{
+                .binding   = 0,
+                .type      = clv::gfx::DescriptorType::UniformBuffer,
+                .arraySize = 1,
+                .stage     = clv::gfx::Shader::Stage::Pixel,
+            };
 
-            clv::gfx::DescriptorSetBindingInfo lightCountBindingInfo{};
-            lightCountBindingInfo.binding   = 1;
-            lightCountBindingInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
-            lightCountBindingInfo.arraySize = 1;
-            lightCountBindingInfo.stage     = clv::gfx::Shader::Stage::Vertex | clv::gfx::Shader::Stage::Pixel;
+            clv::gfx::DescriptorSetBindingInfo numLightBinding{
+                .binding   = 1,
+                .type      = clv::gfx::DescriptorType::UniformBuffer,
+                .arraySize = 1,
+                .stage     = clv::gfx::Shader::Stage::Vertex | clv::gfx::Shader::Stage::Pixel,
+            };
 
-            clv::gfx::DescriptorSetBindingInfo directionalShadowTransformsInfo{};
-            directionalShadowTransformsInfo.binding   = 2;
-            directionalShadowTransformsInfo.type      = clv::gfx::DescriptorType::UniformBuffer;
-            directionalShadowTransformsInfo.arraySize = 1;
-            directionalShadowTransformsInfo.stage     = clv::gfx::Shader::Stage::Vertex;
+            clv::gfx::DescriptorSetBindingInfo directionalShadowTransformBinding{
+                .binding   = 2,
+                .type      = clv::gfx::DescriptorType::UniformBuffer,
+                .arraySize = 1,
+                .stage     = clv::gfx::Shader::Stage::Vertex,
+            };
 
-            clv::gfx::DescriptorSetBindingInfo shadowMapSamplerLayoutBinding{};
-            shadowMapSamplerLayoutBinding.binding   = 3;
-            shadowMapSamplerLayoutBinding.type      = clv::gfx::DescriptorType::CombinedImageSampler;
-            shadowMapSamplerLayoutBinding.arraySize = MAX_LIGHTS;
-            shadowMapSamplerLayoutBinding.stage     = clv::gfx::Shader::Stage::Pixel;
+            clv::gfx::DescriptorSetBindingInfo directionalShadowMapBinding{
+                .binding   = 3,
+                .type      = clv::gfx::DescriptorType::CombinedImageSampler,
+                .arraySize = MAX_LIGHTS,
+                .stage     = clv::gfx::Shader::Stage::Pixel,
+            };
 
-            clv::gfx::DescriptorSetLayout::Descriptor lightingSetLayoutDescriptor{};
-            lightingSetLayoutDescriptor.bindings = { lightDataBindingInfo, lightCountBindingInfo, directionalShadowTransformsInfo, shadowMapSamplerLayoutBinding };
+            clv::gfx::DescriptorSetBindingInfo pointShadowMapBinding{
+                .binding   = 4,
+                .type      = clv::gfx::DescriptorType::CombinedImageSampler,
+                .arraySize = MAX_LIGHTS,
+                .stage     = clv::gfx::Shader::Stage::Pixel,
+            };
 
-            setLayouts[DescriptorSetSlots::Lighting] = factory.createDescriptorSetLayout(lightingSetLayoutDescriptor);
+            setLayouts[DescriptorSetSlots::Lighting] = factory.createDescriptorSetLayout(clv::gfx::DescriptorSetLayout::Descriptor{
+                .bindings = {
+                    std::move(lightDataBinding),
+                    std::move(numLightBinding),
+                    std::move(directionalShadowTransformBinding),
+                    std::move(directionalShadowMapBinding),
+                    std::move(pointShadowMapBinding),
+                },
+            });
         }
 
         return setLayouts;

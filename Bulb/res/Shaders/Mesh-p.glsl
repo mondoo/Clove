@@ -4,6 +4,7 @@
 
 layout(set = SET_MATERIAL, binding = 0) uniform sampler2D texSampler;
 layout(set = SET_LIGHTING, binding = 3) uniform sampler2D directionalDepthSampler[MAX_LIGHTS];
+layout(set = SET_LIGHTING, binding = 4) uniform samplerCube pointlDepthSampler[MAX_LIGHTS];
 
 layout(set = SET_VIEW, binding = 1) uniform ViewPosition{
 	vec3 viewPos;
@@ -106,7 +107,7 @@ void main(){
 
 	vec3 lighting = vec3(0, 0, 0);
 
-	//Calculate shadow: Directional
+	//Directional shadow
 	for(int i = 0; i < numDirLights; ++i){
 		vec3 projCoords = vertPosLightSpaces[i].xyz / vertPosLightSpaces[i].w;
 		projCoords.xy = projCoords.xy * 0.5f + 0.5f;
@@ -119,5 +120,18 @@ void main(){
 
 		lighting += (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)) * colour);
 	}
+
+	//Point shadow
+	for(int i = 0; i < numPointLights; ++i){
+		const vec3 fragToLight = vertPos - pointLights[i].position;
+		const float closetDepth = texture(pointlDepthSampler[i], fragToLight).r * pointLights[i].farplane;
+		const float currentDepth = length(fragToLight);
+
+		const float bias = 0.005f;
+		const float shadow = currentDepth - bias > closetDepth ? 1.0f : 0.0f;
+
+		lighting += (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)) * colour);
+	}
+
 	outColour = vec4(lighting, 1.0);
 }
