@@ -2,16 +2,16 @@
 
 #include "Clove/Graphics/Vulkan/VKQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
-#include "Clove/Log.hpp"
 #include "Clove/Utils/Cast.hpp"
 
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     VKTransferQueue::VKTransferQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)
         : device(std::move(device))
         , queueFamilyIndices(std::move(queueFamilyIndices)) {
-        const uint32_t familyIndex = *this->queueFamilyIndices.transferFamily;
+        uint32_t const familyIndex = *this->queueFamilyIndices.transferFamily;
 
         vkGetDeviceQueue(this->device.get(), familyIndex, 0, &queue);
 
@@ -23,7 +23,7 @@ namespace clv::gfx::vk {
         };
 
         if(vkCreateCommandPool(this->device.get(), &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create graphics command pool");
         }
     }
 
@@ -44,20 +44,20 @@ namespace clv::gfx::vk {
         };
 
         if(vkAllocateCommandBuffers(device.get(), &allocInfo, &commandBuffer) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate command buffer");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to allocate command buffer");
             return nullptr;
         }
 
         return std::make_unique<VKTransferCommandBuffer>(commandBuffer, queueFamilyIndices);
     }
 
-    void VKTransferQueue::freeCommandBuffer(TransferCommandBuffer& buffer) {
+    void VKTransferQueue::freeCommandBuffer(TransferCommandBuffer &buffer) {
         VkCommandBuffer buffers[] = { polyCast<VKTransferCommandBuffer>(&buffer)->getCommandBuffer() };
         vkFreeCommandBuffers(device.get(), commandPool, 1, buffers);
     }
 
-    void VKTransferQueue::submit(const TransferSubmitInfo& submitInfo) {
-        const size_t commandBufferCount = std::size(submitInfo.commandBuffers);
+    void VKTransferQueue::submit(TransferSubmitInfo const &submitInfo) {
+        size_t const commandBufferCount = std::size(submitInfo.commandBuffers);
         std::vector<VkCommandBuffer> commandBuffers(commandBufferCount);
         for(size_t i = 0; i < commandBufferCount; i++) {
             commandBuffers[i] = polyCast<VKTransferCommandBuffer>(submitInfo.commandBuffers[i].get())->getCommandBuffer();
@@ -75,7 +75,7 @@ namespace clv::gfx::vk {
         };
 
         if(vkQueueSubmit(queue, 1, &vkSubmitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to submit graphics command buffer(s)");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to submit graphics command buffer(s)");
         }
         vkQueueWaitIdle(queue);//Because we're not using fences we'll just wait for the queue to complete for now
     }

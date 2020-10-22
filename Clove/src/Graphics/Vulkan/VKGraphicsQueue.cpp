@@ -5,10 +5,10 @@
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
-#include "Clove/Log.hpp"
 #include "Clove/Utils/Cast.hpp"
 
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     VKGraphicsQueue::VKGraphicsQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)
@@ -26,13 +26,13 @@ namespace clv::gfx::vk {
         };
 
         if(vkCreateCommandPool(this->device.get(), &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics command pool");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create graphics command pool");
         }
     }
 
-    VKGraphicsQueue::VKGraphicsQueue(VKGraphicsQueue&& other) noexcept = default;
+    VKGraphicsQueue::VKGraphicsQueue(VKGraphicsQueue &&other) noexcept = default;
 
-    VKGraphicsQueue& VKGraphicsQueue::operator=(VKGraphicsQueue&& other) noexcept = default;
+    VKGraphicsQueue &VKGraphicsQueue::operator=(VKGraphicsQueue &&other) noexcept = default;
 
     VKGraphicsQueue::~VKGraphicsQueue() {
         vkDestroyCommandPool(device.get(), commandPool, nullptr);
@@ -51,19 +51,19 @@ namespace clv::gfx::vk {
         };
 
         if(vkAllocateCommandBuffers(device.get(), &allocInfo, &commandBuffer) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate command buffer");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to allocate command buffer");
             return nullptr;
         }
 
         return std::make_unique<VKGraphicsCommandBuffer>(commandBuffer, queueFamilyIndices);
     }
 
-    void VKGraphicsQueue::freeCommandBuffer(GraphicsCommandBuffer& buffer) {
+    void VKGraphicsQueue::freeCommandBuffer(GraphicsCommandBuffer &buffer) {
         VkCommandBuffer buffers[] = { polyCast<VKGraphicsCommandBuffer>(&buffer)->getCommandBuffer() };
         vkFreeCommandBuffers(device.get(), commandPool, 1, buffers);
     }
 
-    void VKGraphicsQueue::submit(GraphicsSubmitInfo const& submitInfo, Fence const* fence) {
+    void VKGraphicsQueue::submit(GraphicsSubmitInfo const &submitInfo, Fence const *fence) {
         //Wait semaphores / stages
         size_t const waitSemaphoreCount{ std::size(submitInfo.waitSemaphores) };
         std::vector<VkSemaphore> waitSemaphores(waitSemaphoreCount);
@@ -102,7 +102,7 @@ namespace clv::gfx::vk {
         VkFence const vkFence = fence ? polyCast<VKFence const>(fence)->getFence() : VK_NULL_HANDLE;
 
         if(vkQueueSubmit(queue, 1, &vkSubmitInfo, vkFence) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to submit graphics command buffer(s)");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to submit graphics command buffer(s)");
         }
     }
 }

@@ -1,5 +1,5 @@
-namespace clv::gfx::vk{
-    const DescriptorPool::Descriptor& VKDescriptorPool::getDescriptor() const {
+namespace clv::gfx::vk {
+    DescriptorPool::Descriptor const &VKDescriptorPool::getDescriptor() const {
         return descriptor;
     }
 }

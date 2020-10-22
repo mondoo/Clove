@@ -1,12 +1,11 @@
 #include "Clove/Graphics/Vulkan/VKMemoryBarrier.hpp"
 
-#include "Clove/Log.hpp"
-
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
-    uint32_t getQueueFamilyIndex(QueueType type, const QueueFamilyIndices& indices) {
+    uint32_t getQueueFamilyIndex(QueueType type, const QueueFamilyIndices &indices) {
         switch(type) {
             case QueueType::None:
                 return VK_QUEUE_FAMILY_IGNORED;

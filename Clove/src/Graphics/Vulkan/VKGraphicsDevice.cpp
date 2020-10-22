@@ -1,34 +1,34 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsDevice.hpp"
 
 #include "Clove/Graphics/Vulkan/VKGraphicsFactory.hpp"
-#include "Clove/Log.hpp"
 
 //TODO: Abstract away
 #include "Clove/Platform/Windows/CloveWindows.hpp"
 
-#include <vulkan/vulkan_win32.h>
-#include <vulkan/vulkan.h>
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
+#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_win32.h>
 
 //TODO: Move this callback (and the set up) into VKException.hpp
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messagType,
-    const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-    void* pUserData) {
+    VkDebugUtilsMessengerCallbackDataEXT const *pCallbackData,
+    void *pUserData) {
     if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) != 0) {
-        GARLIC_LOG(garlicLogContext, clv::Log::Level::Trace, pCallbackData->pMessage);
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) != 0) {
-        GARLIC_LOG(garlicLogContext, clv::Log::Level::Warning, pCallbackData->pMessage);
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Warning, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) != 0) {
-        GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, pCallbackData->pMessage);
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, pCallbackData->pMessage);
     }
 
     return VK_FALSE;
 }
 
 namespace clv::gfx::vk {
-    static VkResult createDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
+    static VkResult createDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerCreateInfoEXT const *pCreateInfo, VkAllocationCallbacks const *pAllocator, VkDebugUtilsMessengerEXT *pDebugMessenger) {
         auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
         if(func != nullptr) {
             return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
@@ -37,17 +37,17 @@ namespace clv::gfx::vk {
         }
     }
 
-    static bool checkValidationLayerSupport(const std::vector<const char*>& validationLayers) {
+    static bool checkValidationLayerSupport(std::vector<char const *> const &validationLayers) {
         uint32_t layerCount;
         vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
         std::vector<VkLayerProperties> availableLayers(layerCount);
         vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-        for(const char* layerName : validationLayers) {
+        for(char const *layerName : validationLayers) {
             bool layerFound = false;
 
-            for(const auto& layerProperties : availableLayers) {
+            for(auto const &layerProperties : availableLayers) {
                 if(std::strcmp(layerName, layerProperties.layerName) == 0) {
                     layerFound = true;
                     break;
@@ -72,7 +72,7 @@ namespace clv::gfx::vk {
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
         int i = 0;
-        for(const auto& queueFamily : queueFamilies) {
+        for(auto const &queueFamily : queueFamilies) {
             //Make sure we have the queue family that'll let us render graphics
             if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 indices.graphicsFamily = i;
@@ -101,17 +101,17 @@ namespace clv::gfx::vk {
         return indices;
     }
 
-    static bool checkDeviceExtensionsSupport(VkPhysicalDevice device, const std::vector<const char*>& extensions) {
+    static bool checkDeviceExtensionsSupport(VkPhysicalDevice device, std::vector<char const *> const &extensions) {
         uint32_t extensionCount;
         vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
         std::vector<VkExtensionProperties> availableExtensions(extensionCount);
         vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
 
-        for(const char* extensionName : extensions) {
+        for(char const *extensionName : extensions) {
             bool found = false;
 
-            for(const auto& extensionProperties : availableExtensions) {
+            for(auto const &extensionProperties : availableExtensions) {
                 if(std::strcmp(extensionName, extensionProperties.extensionName) == 0) {
                     found = true;
                     break;
@@ -153,7 +153,7 @@ namespace clv::gfx::vk {
         return details;
     }
 
-    static bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, const std::vector<const char*>& extensions) {
+    static bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, std::vector<char const *> const &extensions) {
         //TODO: It might be better to give each physical device a score in future, so we can try and get the best one but fall back to others if not
 
         //Feature (texture compression, 64 bit floats, multi viewport rendering)
@@ -161,7 +161,7 @@ namespace clv::gfx::vk {
         vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
         QueueFamilyIndices indices        = findQueueFamilies(device, surface);
-        const bool extentionsAreSupported = checkDeviceExtensionsSupport(device, extensions);
+        bool const extentionsAreSupported = checkDeviceExtensionsSupport(device, extensions);
 
         bool swapChainIsAdequate = false;
         if(extentionsAreSupported) {
@@ -173,12 +173,12 @@ namespace clv::gfx::vk {
         return indices.isComplete() && extentionsAreSupported && swapChainIsAdequate && deviceFeatures.samplerAnisotropy;
     }
 
-    VKGraphicsDevice::VKGraphicsDevice(void* nativeWindow) {
-        std::vector<const char*> deviceExtensions{
+    VKGraphicsDevice::VKGraphicsDevice(void *nativeWindow) {
+        std::vector<char const *> deviceExtensions{
             VK_KHR_SWAPCHAIN_EXTENSION_NAME,
         };
 
-        std::vector<const char*> requiredExtensions {
+        std::vector<char const *> requiredExtensions {
             VK_KHR_SURFACE_EXTENSION_NAME,
                 "VK_KHR_win32_surface",//TODO: Platform agnostic extensions
 #if GARLIC_DEBUG
@@ -187,12 +187,12 @@ namespace clv::gfx::vk {
         };
 
 #if GARLIC_DEBUG
-        const std::vector<const char*> validationLayers{
+        std::vector<char const *> const validationLayers{
             "VK_LAYER_KHRONOS_validation"
         };
 
         if(!checkValidationLayerSupport(validationLayers)) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Warning, "Vulkan validation layers are not supported on this device. Unable to provide debugging infomation");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Warning, "Vulkan validation layers are not supported on this device. Unable to provide debugging infomation");
         }
 #endif
 
@@ -200,47 +200,51 @@ namespace clv::gfx::vk {
         VkInstance instance;
         VkDebugUtilsMessengerEXT debugMessenger;
         {
-            VkApplicationInfo appInfo{};
-            appInfo.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-            appInfo.pApplicationName   = "No Name";               //TODO: Get app name
-            appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);//TODO: Get app version
-            appInfo.pEngineName        = "Garlic";                //TODO: Add a variable for the engine name
-            appInfo.engineVersion      = VK_MAKE_VERSION(1, 0, 0);//TODO: Get engine version
-            appInfo.apiVersion         = VK_API_VERSION_1_2;
+            VkApplicationInfo appInfo{
+                .sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+                .pApplicationName   = "No Name",               //TODO: Get app name
+                .applicationVersion = VK_MAKE_VERSION(1, 0, 0),//TODO: Get app version
+                .pEngineName        = "Garlic",                //TODO: Add a variable for the engine name
+                .engineVersion      = VK_MAKE_VERSION(1, 0, 0),//TODO: Get engine version
+                .apiVersion         = VK_API_VERSION_1_2,
+            };
 
 #if GARLIC_DEBUG
-            VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo{};
-            debugMessengerCreateInfo.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-            debugMessengerCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-            debugMessengerCreateInfo.messageType     = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-            debugMessengerCreateInfo.pfnUserCallback = debugCallback;
-            debugMessengerCreateInfo.pUserData       = nullptr;
+            VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo{
+                .sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+                .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+                .messageType     = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
+                .pfnUserCallback = debugCallback,
+                .pUserData       = nullptr,
+            };
 #endif
 
-            VkInstanceCreateInfo createInfo{};
-            createInfo.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-            createInfo.pApplicationInfo        = &appInfo;
-            createInfo.enabledExtensionCount   = std::size(requiredExtensions);
-            createInfo.ppEnabledExtensionNames = std::data(requiredExtensions);
+            VkInstanceCreateInfo createInfo {
+                .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 #if GARLIC_DEBUG
-            createInfo.enabledLayerCount   = std::size(validationLayers);
-            createInfo.ppEnabledLayerNames = std::data(validationLayers);
-            createInfo.pNext               = &debugMessengerCreateInfo;//Setting the pNext allows us to debug the creation and destruction of the instance (as normaly we need an instance pointer to enable debugging)
+                .pNext                = &debugMessengerCreateInfo,//Setting the pNext allows us to debug the creation and destruction of the instance (as normaly we need an instance pointer to enable debugging)
+                    .pApplicationInfo = &appInfo,
+                .enabledLayerCount    = static_cast<uint32_t>(std::size(validationLayers)),
+                .ppEnabledLayerNames  = std::data(validationLayers),
 #else
-            createInfo.enabledLayerCount   = 0;
-            createInfo.ppEnabledLayerNames = nullptr;
-            createInfo.pNext               = nullptr;
+                .pNext               = nullptr,
+                .pApplicationInfo    = &appInfo,
+                .enabledLayerCount   = 0,
+                .ppEnabledLayerNames = nullptr,
 #endif
+                .enabledExtensionCount   = static_cast<uint32_t>(std::size(requiredExtensions)),
+                .ppEnabledExtensionNames = std::data(requiredExtensions),
+            };
 
             if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-                GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create VK instance");
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create VK instance");
                 return;
             }
 
 #if GARLIC_DEBUG
             //TODO: Move this debug messenger setup else where
             if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-                GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create vk debug message callback");
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create vk debug message callback");
                 return;
             }
 #endif
@@ -250,13 +254,14 @@ namespace clv::gfx::vk {
         VkSurfaceKHR surface;
         {
             //TODO: Platform agnostic surface creation
-            VkWin32SurfaceCreateInfoKHR createInfo{};
-            createInfo.sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-            createInfo.hinstance = GetModuleHandle(nullptr);
-            createInfo.hwnd      = reinterpret_cast<HWND>(nativeWindow);
+            VkWin32SurfaceCreateInfoKHR createInfo{
+                .sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
+                .hinstance = GetModuleHandle(nullptr),
+                .hwnd      = reinterpret_cast<HWND>(nativeWindow),
+            };
 
             if(vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
-                GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create Vulkan surface");
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create Vulkan surface");
                 return;
             }
         }
@@ -267,13 +272,13 @@ namespace clv::gfx::vk {
             uint32_t deviceCount = 0;
             vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
             if(deviceCount == 0) {
-                GARLIC_LOG(garlicLogContext, Log::Level::Error, "failed to find GPUs with Vulkan support!");
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "failed to find GPUs with Vulkan support!");
                 return;
             }
             std::vector<VkPhysicalDevice> devices(deviceCount);
             vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
-            for(const auto& device : devices) {
+            for(auto const &device : devices) {
                 if(isDeviceSuitable(device, surface, deviceExtensions)) {
                     physicalDevice = device;
                     break;
@@ -281,16 +286,16 @@ namespace clv::gfx::vk {
             }
 
             if(physicalDevice == VK_NULL_HANDLE) {
-                GARLIC_LOG(garlicLogContext, Log::Level::Error, "failed to find a suitable GPU!");
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "failed to find a suitable GPU!");
                 return;
             } else {
                 VkPhysicalDeviceProperties devicePoperties;
                 vkGetPhysicalDeviceProperties(physicalDevice, &devicePoperties);
 
-                GARLIC_LOG(garlicLogContext, Log::Level::Info, "Vulkan capable physical device found");
-                GARLIC_LOG(garlicLogContext, Log::Level::Info, "\tDevice:\t{0}", devicePoperties.deviceName);
-                GARLIC_LOG(garlicLogContext, Log::Level::Info, "\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
-                GARLIC_LOG(garlicLogContext, Log::Level::Info, "\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Info, "Vulkan capable physical device found");
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Info, "\tDevice:\t{0}", devicePoperties.deviceName);
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Info, "\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Info, "\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
             }
         }
 
@@ -307,39 +312,42 @@ namespace clv::gfx::vk {
                 *queueFamilyIndices.transferFamily
             };
 
-            constexpr float queuePriority = 1.0f;
+            float constexpr queuePriority = 1.0f;
             std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
             for(uint32_t queueFamily : uniqueQueueFamilies) {
-                VkDeviceQueueCreateInfo queueCreateinfo{};
-                queueCreateinfo.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-                queueCreateinfo.queueFamilyIndex = queueFamily;
-                queueCreateinfo.queueCount       = 1;
-                queueCreateinfo.pQueuePriorities = &queuePriority;
-
+                VkDeviceQueueCreateInfo queueCreateinfo{
+                    .sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+                    .queueFamilyIndex = queueFamily,
+                    .queueCount       = 1,
+                    .pQueuePriorities = &queuePriority,
+                };
                 queueCreateInfos.push_back(queueCreateinfo);
             }
 
             //Sepcify our device features
-            VkPhysicalDeviceFeatures deviceFeatures{};
-            deviceFeatures.samplerAnisotropy = VK_TRUE;//TODO: Maybe we want to expose this to users?
+            VkPhysicalDeviceFeatures deviceFeatures{
+                .samplerAnisotropy = VK_TRUE,//TODO: Maybe we want to expose this to users?
+            };
 
-            VkDeviceCreateInfo createInfo{};
-            createInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-            createInfo.queueCreateInfoCount    = static_cast<uint32_t>(std::size(queueCreateInfos));
-            createInfo.pQueueCreateInfos       = std::data(queueCreateInfos);
-            createInfo.pEnabledFeatures        = &deviceFeatures;
-            createInfo.enabledExtensionCount   = static_cast<uint32_t>(std::size(deviceExtensions));
-            createInfo.ppEnabledExtensionNames = std::data(deviceExtensions);
+            VkDeviceCreateInfo createInfo {
+                .sType                = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+                .queueCreateInfoCount = static_cast<uint32_t>(std::size(queueCreateInfos)),
+                .pQueueCreateInfos    = std::data(queueCreateInfos),
+
 #if GARLIC_DEBUG
-            //We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
-            createInfo.enabledLayerCount   = static_cast<uint32_t>(validationLayers.size());
-            createInfo.ppEnabledLayerNames = validationLayers.data();
+                //We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
+                    .enabledLayerCount = static_cast<uint32_t>(validationLayers.size()),
+                .ppEnabledLayerNames   = validationLayers.data(),
 #else
-            createInfo.enabledLayerCount   = 0;
+                .enabledLayerCount   = 0,
 #endif
+                .enabledExtensionCount   = static_cast<uint32_t>(std::size(deviceExtensions)),
+                .ppEnabledExtensionNames = std::data(deviceExtensions),
+                .pEnabledFeatures        = &deviceFeatures,
+            };
 
             if(vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
-                GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create logical device");
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create logical device");
                 return;
             }
         }
@@ -348,9 +356,9 @@ namespace clv::gfx::vk {
         factory   = std::make_shared<VKGraphicsFactory>(devicePtr, std::move(queueFamilyIndices), querySwapChainSupport(physicalDevice, surface));
     }
 
-    VKGraphicsDevice::VKGraphicsDevice(VKGraphicsDevice&& other) noexcept = default;
+    VKGraphicsDevice::VKGraphicsDevice(VKGraphicsDevice &&other) noexcept = default;
 
-    VKGraphicsDevice& VKGraphicsDevice::operator=(VKGraphicsDevice&& other) noexcept = default;
+    VKGraphicsDevice &VKGraphicsDevice::operator=(VKGraphicsDevice &&other) noexcept = default;
 
     VKGraphicsDevice::~VKGraphicsDevice() = default;
 

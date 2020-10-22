@@ -1,6 +1,6 @@
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
 
-#include "Clove/Log.hpp"
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     VKImageView::VKImageView(VkDevice device, VkImageView imageView)
@@ -8,9 +8,9 @@ namespace clv::gfx::vk {
         , imageView(imageView) {
     }
 
-    VKImageView::VKImageView(VKImageView&& other) noexcept = default;
+    VKImageView::VKImageView(VKImageView &&other) noexcept = default;
 
-    VKImageView& VKImageView::operator=(VKImageView&& other) noexcept = default;
+    VKImageView &VKImageView::operator=(VKImageView &&other) noexcept = default;
 
     VKImageView::~VKImageView() {
         vkDestroyImageView(device, imageView, nullptr);
@@ -41,7 +41,7 @@ namespace clv::gfx::vk {
 
         VkImageView imageView;
         if(vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create texture image view");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create texture image view");
             return VK_NULL_HANDLE;
         }
 

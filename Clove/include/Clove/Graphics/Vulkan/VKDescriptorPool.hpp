@@ -20,21 +20,21 @@ namespace clv::gfx::vk {
         VKDescriptorPool() = delete;
         VKDescriptorPool(DevicePointer device, Descriptor descriptor);
 
-        VKDescriptorPool(const VKDescriptorPool& other) = delete;
-        VKDescriptorPool(VKDescriptorPool&& other) noexcept;
+        VKDescriptorPool(VKDescriptorPool const &other) = delete;
+        VKDescriptorPool(VKDescriptorPool &&other) noexcept;
 
-        VKDescriptorPool& operator=(const VKDescriptorPool& other) = delete;
-        VKDescriptorPool& operator=(VKDescriptorPool&& other) noexcept;
+        VKDescriptorPool &operator=(VKDescriptorPool const &other) = delete;
+        VKDescriptorPool &operator                                 =(VKDescriptorPool &&other) noexcept;
 
         ~VKDescriptorPool();
 
-        inline const Descriptor& getDescriptor() const override;
+        inline Descriptor const &getDescriptor() const override;
 
-        std::shared_ptr<DescriptorSet> allocateDescriptorSets(const std::shared_ptr<DescriptorSetLayout>& layout) override;
-        std::vector<std::shared_ptr<DescriptorSet>> allocateDescriptorSets(const std::vector<std::shared_ptr<DescriptorSetLayout>>& layouts) override;
+        std::shared_ptr<DescriptorSet> allocateDescriptorSets(std::shared_ptr<DescriptorSetLayout> const &layout) override;
+        std::vector<std::shared_ptr<DescriptorSet>> allocateDescriptorSets(std::vector<std::shared_ptr<DescriptorSetLayout>> const &layouts) override;
 
-        void freeDescriptorSets(const std::shared_ptr<DescriptorSet>& descriptorSet) override;
-        void freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets) override;
+        void freeDescriptorSets(std::shared_ptr<DescriptorSet> const &descriptorSet) override;
+        void freeDescriptorSets(std::vector<std::shared_ptr<DescriptorSet>> const &descriptorSets) override;
 
         void reset() override;
     };

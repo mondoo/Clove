@@ -26,20 +26,20 @@ namespace clv::gfx::vk {
         //FUNCTIONS
     public:
         VKSwapchain() = delete;
-        VKSwapchain(DevicePointer device, SwapchainSupportDetails supportDetails, const QueueFamilyIndices& familyIndices, Descriptor descriptor);
+        VKSwapchain(DevicePointer device, SwapchainSupportDetails supportDetails, QueueFamilyIndices const &familyIndices, Descriptor descriptor);
 
-        VKSwapchain(const VKSwapchain& other) = delete;
-        VKSwapchain(VKSwapchain&& other) noexcept;
+        VKSwapchain(VKSwapchain const &other) = delete;
+        VKSwapchain(VKSwapchain &&other) noexcept;
 
-        VKSwapchain& operator=(const VKSwapchain& other) = delete;
-        VKSwapchain& operator=(VKSwapchain&& other) noexcept;
+        VKSwapchain &operator=(VKSwapchain const &other) = delete;
+        VKSwapchain &operator                            =(VKSwapchain &&other) noexcept;
 
         ~VKSwapchain();
 
         GraphicsImage::Format getImageFormat() const override;
         clv::mth::vec2ui getExtent() const override;
 
-        Result aquireNextImage(const Semaphore* semaphore, uint32_t& outImageIndex) override;
+        Result aquireNextImage(Semaphore const *semaphore, uint32_t &outImageIndex) override;
 
         std::vector<std::shared_ptr<GraphicsImageView>> getImageViews() const override;
 

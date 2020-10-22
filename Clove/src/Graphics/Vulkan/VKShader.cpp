@@ -1,8 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
 
-#include "Clove/Log.hpp"
-
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     static std::vector<std::byte> readFile(std::string_view filePath) {
@@ -10,11 +9,11 @@ namespace clv::gfx::vk {
         std::basic_ifstream<std::byte> file(filePath.data(), std::ios::ate | std::ios::binary);
 
         if(!file.is_open()) {
-            GARLIC_LOG(garlicLogContext, clv::Log::Level::Error, "{0}: Failed to open file", GARLIC_FUNCTION_NAME);
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "{0}: Failed to open file", GARLIC_FUNCTION_NAME);
             return {};
         }
 
-        const size_t fileSize = file.tellg();
+        size_t const fileSize = file.tellg();
         std::vector<std::byte> buffer(fileSize);
 
         file.seekg(0);
@@ -29,24 +28,24 @@ namespace clv::gfx::vk {
         : VKShader(std::move(device), readFile(filePath)) {
     }
 
-    VKShader::VKShader(DevicePointer device, std::span<const std::byte> byteCode)
+    VKShader::VKShader(DevicePointer device, std::span<std::byte const> byteCode)
         : device(std::move(device)) {
         VkShaderModuleCreateInfo createInfo{
             .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
             .pNext    = nullptr,
             .flags    = 0,
             .codeSize = byteCode.size_bytes(),
-            .pCode    = reinterpret_cast<const uint32_t*>(std::data(byteCode)),
+            .pCode    = reinterpret_cast<uint32_t const *>(std::data(byteCode)),
         };
 
         if(vkCreateShaderModule(this->device.get(), &createInfo, nullptr, &module) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create shader module");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create shader module");
         }
     }
 
-    VKShader::VKShader(VKShader&& other) noexcept = default;
+    VKShader::VKShader(VKShader &&other) noexcept = default;
 
-    VKShader& VKShader::operator=(VKShader&& other) noexcept = default;
+    VKShader &VKShader::operator=(VKShader &&other) noexcept = default;
 
     VKShader::~VKShader() {
         vkDestroyShaderModule(device.get(), module, nullptr);

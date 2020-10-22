@@ -18,11 +18,11 @@ namespace clv::gfx::vk {
         VKFramebuffer() = delete;
         VKFramebuffer(DevicePointer device, Descriptor descriptor);
 
-        VKFramebuffer(const VKFramebuffer& other) = delete;
-        VKFramebuffer(VKFramebuffer&& other) noexcept;
+        VKFramebuffer(VKFramebuffer const &other) = delete;
+        VKFramebuffer(VKFramebuffer &&other) noexcept;
 
-        VKFramebuffer& operator=(const VKFramebuffer& other) = delete;
-        VKFramebuffer& operator=(VKFramebuffer&& other) noexcept;
+        VKFramebuffer &operator=(VKFramebuffer const &other) = delete;
+        VKFramebuffer &operator                              =(VKFramebuffer &&other) noexcept;
 
         ~VKFramebuffer();
 

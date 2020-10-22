@@ -15,24 +15,24 @@
 #include <spirv_hlsl.hpp>
 #include <spirv_msl.hpp>
 
-namespace clv::gfx::ShaderTranspiler{
-	static EShLanguage getEShStage(Shader::Stage stage){
-		switch(stage){
-			case clv::gfx::Shader::Stage::Vertex:
-				return EShLanguage::EShLangVertex;
-			case clv::gfx::Shader::Stage::Pixel:
-				return EShLanguage::EShLangFragment;
-			// case clv::gfx::Shader::Stage::Geometry:
-			// 	return EShLanguage::EShLangGeometry;
-			default:
-				GARLIC_LOG(garlicLogContext, Log::Level::Error, "Unsupported shader stage {0}", GARLIC_FUNCTION_NAME);
-				return EShLanguage::EShLangVertex;
-		}
-	}
+namespace clv::gfx::ShaderTranspiler {
+    static EShLanguage getEShStage(Shader::Stage stage) {
+        switch(stage) {
+            case clv::gfx::Shader::Stage::Vertex:
+                return EShLanguage::EShLangVertex;
+            case clv::gfx::Shader::Stage::Pixel:
+                return EShLanguage::EShLangFragment;
+            // case clv::gfx::Shader::Stage::Geometry:
+            // 	return EShLanguage::EShLangGeometry;
+            default:
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Unsupported shader stage {0}", GARLIC_FUNCTION_NAME);
+                return EShLanguage::EShLangVertex;
+        }
+    }
 
-	static std::string spirvToGlsl(Shader::Stage stage, const std::vector<uint32_t>& spirvSource) {
-		spirv_cross::CompilerGLSL glsl(spirvSource);
-		spirv_cross::CompilerGLSL::Options scoptions;
+    static std::string spirvToGlsl(Shader::Stage stage, const std::vector<uint32_t> &spirvSource) {
+        spirv_cross::CompilerGLSL glsl(spirvSource);
+        spirv_cross::CompilerGLSL::Options scoptions;
 
         scoptions.version                  = 460;
         scoptions.es                       = false;
@@ -45,36 +45,36 @@ namespace clv::gfx::ShaderTranspiler{
 
         //Make sure the combined image/samplers keep the binding id
         std::map<spirv_cross::ID, uint32_t> samplerBindings;
-        for(auto& resource : resources.separate_samplers) {
+        for(auto &resource : resources.separate_samplers) {
             samplerBindings[resource.id] = glsl.get_decoration(resource.id, spv::DecorationBinding);
         }
-        for(auto& remap : glsl.get_combined_image_samplers()) {
+        for(auto &remap : glsl.get_combined_image_samplers()) {
             glsl.set_decoration(remap.combined_id, spv::DecorationBinding, samplerBindings[remap.sampler_id]);
         }
 
-		//Remap names to semantics
-		if(stage == Shader::Stage::Vertex) {
-			for(auto& resource : resources.stage_inputs) {
-				const uint32_t location = glsl.get_decoration(resource.id, spv::DecorationLocation);
-				std::string str = glsl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
+        //Remap names to semantics
+        if(stage == Shader::Stage::Vertex) {
+            for(auto &resource : resources.stage_inputs) {
+                const uint32_t location = glsl.get_decoration(resource.id, spv::DecorationLocation);
+                std::string str         = glsl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
 
                 glsl.set_name(resource.id, str);
             }
         }
 
-		// if(stage == Shader::Stage::Geometry) {
-		// 	const uint32_t invocations = glsl.get_execution_mode_argument(spv::ExecutionMode::ExecutionModeInvocations);
-		// 	if(invocations == 196624) { //Unset invocations default to this, unset it
-		// 		glsl.unset_execution_mode(spv::ExecutionMode::ExecutionModeInvocations);
-		// 	}
-		// }
+        // if(stage == Shader::Stage::Geometry) {
+        // 	const uint32_t invocations = glsl.get_execution_mode_argument(spv::ExecutionMode::ExecutionModeInvocations);
+        // 	if(invocations == 196624) { //Unset invocations default to this, unset it
+        // 		glsl.unset_execution_mode(spv::ExecutionMode::ExecutionModeInvocations);
+        // 	}
+        // }
 
         return glsl.compile();
     }
 
-	static std::string spirvToMSL(Shader::Stage stage, const std::vector<uint32_t>& spirvSource) {
-		spirv_cross::CompilerMSL msl(spirvSource);
-		spirv_cross::CompilerMSL::Options scoptions;
+    static std::string spirvToMSL(Shader::Stage stage, const std::vector<uint32_t> &spirvSource) {
+        spirv_cross::CompilerMSL msl(spirvSource);
+        spirv_cross::CompilerMSL::Options scoptions;
 
         scoptions.platform = spirv_cross::CompilerMSL::Options::Platform::macOS;
         msl.set_msl_options(scoptions);
@@ -94,26 +94,26 @@ namespace clv::gfx::ShaderTranspiler{
         };
 
         //Set up correct buffer bindings
-        for(auto& resource : resources.uniform_buffers) {
+        for(auto &resource : resources.uniform_buffers) {
             const uint32_t binding = msl.get_decoration(resource.id, spv::DecorationBinding);
             remapMSLBindings(binding, resource.id);
         }
 
         //Set up correct texture bindings
-        for(auto& resource : resources.separate_images) {
+        for(auto &resource : resources.separate_images) {
             const uint32_t binding = msl.get_decoration(resource.id, spv::DecorationBinding);
             remapMSLBindings(binding, resource.id);
         }
-        for(auto& resource : resources.separate_samplers) {
+        for(auto &resource : resources.separate_samplers) {
             const uint32_t binding = msl.get_decoration(resource.id, spv::DecorationBinding);
             remapMSLBindings(binding, resource.id);
         }
 
-		//Remap names to semantics
-		if(stage == Shader::Stage::Vertex) {
-			for(auto& resource : resources.stage_inputs) {
-				const uint32_t location = msl.get_decoration(resource.id, spv::DecorationLocation);
-				std::string str = msl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
+        //Remap names to semantics
+        if(stage == Shader::Stage::Vertex) {
+            for(auto &resource : resources.stage_inputs) {
+                const uint32_t location = msl.get_decoration(resource.id, spv::DecorationLocation);
+                std::string str         = msl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
 
                 msl.set_name(resource.id, str);
             }
@@ -122,8 +122,8 @@ namespace clv::gfx::ShaderTranspiler{
         return msl.compile();
     }
 
-	std::string transpileFromFile(std::string_view filePath, Shader::Stage stage, ShaderType outputType){
-		std::ifstream stream(filePath.data());
+    std::string transpileFromFile(std::string_view filePath, Shader::Stage stage, ShaderType outputType) {
+        std::ifstream stream(filePath.data());
 
         std::string line;
         std::stringstream ss;
@@ -134,23 +134,23 @@ namespace clv::gfx::ShaderTranspiler{
         return transpileFromSource(ss.str(), stage, outputType);
     }
 
-	std::string transpileFromBytes(const char* bytes, const std::size_t size, Shader::Stage stage, ShaderType outputType) {
-		return transpileFromSource({ bytes, size }, stage, outputType);
-	}
+    std::string transpileFromBytes(const char *bytes, const std::size_t size, Shader::Stage stage, ShaderType outputType) {
+        return transpileFromSource({ bytes, size }, stage, outputType);
+    }
 
-	std::string transpileFromSource(std::string_view source, Shader::Stage stage, ShaderType outputType){		
-		std::string shaderSource;
-		if(outputType == ShaderType::GLSL) {
-			shaderSource = "#define GLSL\n\n";
-		}
-		shaderSource.append(source);
+    std::string transpileFromSource(std::string_view source, Shader::Stage stage, ShaderType outputType) {
+        std::string shaderSource;
+        if(outputType == ShaderType::GLSL) {
+            shaderSource = "#define GLSL\n\n";
+        }
+        shaderSource.append(source);
 
         glslang::InitializeProcess();
 
         const EShLanguage eshstage = getEShStage(stage);
         glslang::TShader shader(eshstage);
 
-        const char* rawSource = shaderSource.data();
+        const char *rawSource = shaderSource.data();
         shader.setStrings(&rawSource, 1);
 
         TBuiltInResource builtInResources = glslang::DefaultTBuiltInResource;
@@ -171,7 +171,7 @@ namespace clv::gfx::ShaderTranspiler{
 
         shader.parse(&builtInResources, 100, true, messages);
 
-        const char* log = shader.getInfoLog();
+        const char *log = shader.getInfoLog();
 
         if(strlen(log) > 0) {
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Error compiling shader: {0}", log);
@@ -190,7 +190,7 @@ namespace clv::gfx::ShaderTranspiler{
 
         std::vector<uint32_t> spirvSource;
         spv::SpvBuildLogger logger;
-        glslang::TIntermediate* inter = shader.getIntermediate();
+        glslang::TIntermediate *inter = shader.getIntermediate();
         glslang::GlslangToSpv(*inter, spirvSource, &logger, &spvOptions);
 
         glslang::FinalizeProcess();

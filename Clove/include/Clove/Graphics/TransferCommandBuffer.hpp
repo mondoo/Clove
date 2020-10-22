@@ -22,10 +22,10 @@ namespace clv::gfx {
         virtual void beginRecording(CommandBufferUsage usageFlag) = 0;
         virtual void endRecording()                               = 0;
 
-        virtual void copyBufferToBuffer(GraphicsBuffer& source, const size_t sourceOffset, GraphicsBuffer& destination, const size_t destinationOffset, const size_t sizeBytes)                                                           = 0;
-        virtual void copyBufferToImage(GraphicsBuffer& source, const size_t sourceOffset, GraphicsImage& destination, GraphicsImage::Layout destinationLayout, const mth::vec3i& destinationOffset, const mth::vec3ui& destinationExtent) = 0;
+        virtual void copyBufferToBuffer(GraphicsBuffer &source, size_t const sourceOffset, GraphicsBuffer &destination, size_t const destinationOffset, size_t const sizeBytes)                                                           = 0;
+        virtual void copyBufferToImage(GraphicsBuffer &source, size_t const sourceOffset, GraphicsImage &destination, GraphicsImage::Layout destinationLayout, mth::vec3i const &destinationOffset, mth::vec3ui const &destinationExtent) = 0;
 
-        virtual void bufferMemoryBarrier(GraphicsBuffer& buffer, const BufferMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) = 0;
-        virtual void imageMemoryBarrier(GraphicsImage& image, const ImageMemoryBarrierInfo& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage)     = 0;
+        virtual void bufferMemoryBarrier(GraphicsBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) = 0;
+        virtual void imageMemoryBarrier(GraphicsImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage)     = 0;
     };
 }

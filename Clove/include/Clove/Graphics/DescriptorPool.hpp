@@ -34,16 +34,16 @@ namespace clv::gfx {
     public:
         virtual ~DescriptorPool() = default;
 
-        virtual const Descriptor& getDescriptor() const = 0;
+        virtual const Descriptor &getDescriptor() const = 0;
 
         /** 
          * @brief Allocates a descriptor set for each layout provided.
          */
-        virtual std::shared_ptr<DescriptorSet> allocateDescriptorSets(const std::shared_ptr<DescriptorSetLayout>& layout)                            = 0;
-        virtual std::vector<std::shared_ptr<DescriptorSet>> allocateDescriptorSets(const std::vector<std::shared_ptr<DescriptorSetLayout>>& layouts) = 0;
+        virtual std::shared_ptr<DescriptorSet> allocateDescriptorSets(std::shared_ptr<DescriptorSetLayout> const &layout)                            = 0;
+        virtual std::vector<std::shared_ptr<DescriptorSet>> allocateDescriptorSets(std::vector<std::shared_ptr<DescriptorSetLayout>> const &layouts) = 0;
 
-        virtual void freeDescriptorSets(const std::shared_ptr<DescriptorSet>& descriptorSet)               = 0;
-        virtual void freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets) = 0;
+        virtual void freeDescriptorSets(std::shared_ptr<DescriptorSet> const &descriptorSet)               = 0;
+        virtual void freeDescriptorSets(std::vector<std::shared_ptr<DescriptorSet>> const &descriptorSets) = 0;
 
         /**
          * @brief Resets this pool freeing all DescriptorSets allocated from it.

@@ -26,7 +26,7 @@ namespace clv::gfx {
         virtual GraphicsImage::Format getImageFormat() const = 0;
         virtual clv::mth::vec2ui getExtent() const           = 0;
 
-        virtual Result aquireNextImage(const Semaphore* semaphore, uint32_t& outImageIndex) = 0;
+        virtual Result aquireNextImage(Semaphore const *semaphore, uint32_t &outImageIndex) = 0;
 
         virtual std::vector<std::shared_ptr<GraphicsImageView>> getImageViews() const = 0;
     };

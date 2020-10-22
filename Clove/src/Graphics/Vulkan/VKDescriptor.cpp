@@ -1,8 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKDescriptor.hpp"
 
-#include "Clove/Log.hpp"
-
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     VkDescriptorType getDescriptorType(DescriptorType garlicType) {

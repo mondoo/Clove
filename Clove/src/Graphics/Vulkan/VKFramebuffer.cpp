@@ -9,30 +9,31 @@ namespace clv::gfx::vk {
         : device(std::move(device)) {
         std::vector<VkImageView> attachments;
         attachments.reserve(std::size(descriptor.attachments));
-        for(auto& attachment : descriptor.attachments) {
-            const VKImageView* vkImageView = polyCast<VKImageView>(attachment.get());
+        for(auto &attachment : descriptor.attachments) {
+            VKImageView const *vkImageView = polyCast<VKImageView>(attachment.get());
             attachments.push_back(vkImageView->getImageView());
         }
 
-        VkFramebufferCreateInfo framebufferInfo{};
-        framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        framebufferInfo.pNext           = nullptr;
-        framebufferInfo.flags           = 0;
-        framebufferInfo.renderPass      = polyCast<VKRenderPass>(descriptor.renderPass.get())->getRenderPass();
-        framebufferInfo.attachmentCount = std::size(attachments);
-        framebufferInfo.pAttachments    = std::data(attachments);
-        framebufferInfo.width           = descriptor.width;
-        framebufferInfo.height          = descriptor.height;
-        framebufferInfo.layers          = 1;
+        VkFramebufferCreateInfo framebufferInfo{
+            .sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+            .pNext           = nullptr,
+            .flags           = 0,
+            .renderPass      = polyCast<VKRenderPass>(descriptor.renderPass.get())->getRenderPass(),
+            .attachmentCount = static_cast<uint32_t>(std::size(attachments)),
+            .pAttachments    = std::data(attachments),
+            .width           = descriptor.width,
+            .height          = descriptor.height,
+            .layers          = 1,
+        };
 
         if(vkCreateFramebuffer(this->device.get(), &framebufferInfo, nullptr, &framebuffer) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create framebuffer");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create framebuffer");
         }
     }
 
-    VKFramebuffer::VKFramebuffer(VKFramebuffer&& other) noexcept = default;
+    VKFramebuffer::VKFramebuffer(VKFramebuffer &&other) noexcept = default;
 
-    VKFramebuffer& VKFramebuffer::operator=(VKFramebuffer&& other) noexcept = default;
+    VKFramebuffer &VKFramebuffer::operator=(VKFramebuffer &&other) noexcept = default;
 
     VKFramebuffer::~VKFramebuffer() {
         vkDestroyFramebuffer(device.get(), framebuffer, nullptr);

@@ -19,11 +19,11 @@ namespace clv::gfx::vk {
         VKPipelineObject() = delete;
         VKPipelineObject(DevicePointer device, Descriptor descriptor);
 
-        VKPipelineObject(const VKPipelineObject& other) = delete;
-        VKPipelineObject(VKPipelineObject&& other) noexcept;
+        VKPipelineObject(VKPipelineObject const &other) = delete;
+        VKPipelineObject(VKPipelineObject &&other) noexcept;
 
-        VKPipelineObject& operator=(const VKPipelineObject& other) = delete;
-        VKPipelineObject& operator=(VKPipelineObject&& other) noexcept;
+        VKPipelineObject &operator=(VKPipelineObject const &other) = delete;
+        VKPipelineObject &operator                                 =(VKPipelineObject &&other) noexcept;
 
         ~VKPipelineObject();
 

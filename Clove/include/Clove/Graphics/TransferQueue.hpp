@@ -19,8 +19,8 @@ namespace clv::gfx {
         virtual ~TransferQueue() = default;
 
         virtual std::unique_ptr<TransferCommandBuffer> allocateCommandBuffer() = 0;
-        virtual void freeCommandBuffer(TransferCommandBuffer& buffer)          = 0;
+        virtual void freeCommandBuffer(TransferCommandBuffer &buffer)          = 0;
 
-        virtual void submit(const TransferSubmitInfo& submitInfo) = 0;
+        virtual void submit(TransferSubmitInfo const &submitInfo) = 0;
     };
 }

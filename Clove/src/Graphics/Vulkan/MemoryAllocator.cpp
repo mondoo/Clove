@@ -1,7 +1,7 @@
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 
-#include "Clove/Log.hpp"
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     static uint32_t getMemoryTypeIndex(uint32_t typeBits, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice) {
@@ -33,7 +33,7 @@ namespace clv::gfx::vk {
         chunks.emplace_back(0, size, memory);
     }
 
-    MemoryAllocator::Block::Block(Block&& other) noexcept
+    MemoryAllocator::Block::Block(Block &&other) noexcept
         : device(other.device)
         , memory(other.memory)
         , size(other.size)
@@ -42,7 +42,7 @@ namespace clv::gfx::vk {
         other.memory = VK_NULL_HANDLE;//Make sure the moved block no longer points to our memory
     }
 
-    MemoryAllocator::Block& MemoryAllocator::Block::operator=(Block&& other) noexcept {
+    MemoryAllocator::Block &MemoryAllocator::Block::operator=(Block &&other) noexcept {
         device          = other.device;
         memory          = other.memory;
         size            = other.size;
@@ -58,7 +58,7 @@ namespace clv::gfx::vk {
         vkFreeMemory(device, memory, nullptr);
     }
 
-    const MemoryAllocator::Chunk* MemoryAllocator::Block::allocate(const VkDeviceSize size, const VkDeviceSize alignment) {
+    const MemoryAllocator::Chunk *MemoryAllocator::Block::allocate(const VkDeviceSize size, const VkDeviceSize alignment) {
         for(auto chunk = std::begin(chunks); chunk != std::end(chunks); ++chunk) {
             if(chunk->free) {
                 const VkDeviceSize remainingAlignment  = chunk->offset % alignment;                                   //How much we're off from the alignment
@@ -90,7 +90,7 @@ namespace clv::gfx::vk {
         return nullptr;
     }
 
-    bool MemoryAllocator::Block::free(const Chunk*& chunkPtr) {
+    bool MemoryAllocator::Block::free(const Chunk *&chunkPtr) {
         for(auto chunk = std::begin(chunks); chunk != std::end(chunks); ++chunk) {
             if(*chunk == *chunkPtr) {
                 chunk->free = true;
@@ -134,17 +134,17 @@ namespace clv::gfx::vk {
         : device(std::move(device)) {
     }
 
-    MemoryAllocator::MemoryAllocator(MemoryAllocator&& other) noexcept = default;
+    MemoryAllocator::MemoryAllocator(MemoryAllocator &&other) noexcept = default;
 
-    MemoryAllocator& MemoryAllocator::operator=(MemoryAllocator&& other) = default;
+    MemoryAllocator &MemoryAllocator::operator=(MemoryAllocator &&other) = default;
 
     MemoryAllocator::~MemoryAllocator() = default;
 
-    const MemoryAllocator::Chunk* MemoryAllocator::allocate(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags properties) {
+    const MemoryAllocator::Chunk *MemoryAllocator::allocate(const VkMemoryRequirements &memoryRequirements, VkMemoryPropertyFlags properties) {
         const uint32_t memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, properties, device.getPhysical());
 
-        const Chunk* freeChunk{ nullptr };
-        for(auto& block : memoryBlocks) {
+        const Chunk *freeChunk{ nullptr };
+        for(auto &block : memoryBlocks) {
             if(block.getMemoryTypeIndex() == memoryTypeIndex) {
                 freeChunk = block.allocate(memoryRequirements.size, memoryRequirements.alignment);
 
@@ -165,8 +165,8 @@ namespace clv::gfx::vk {
         return freeChunk;
     }
 
-    void MemoryAllocator::free(const Chunk*& chunk) {
-        for(auto& block : memoryBlocks) {
+    void MemoryAllocator::free(const Chunk *&chunk) {
+        for(auto &block : memoryBlocks) {
             if(block.free(chunk)) {
                 break;
             }

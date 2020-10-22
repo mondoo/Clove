@@ -3,9 +3,9 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsResource.hpp"
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
-#include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     static VkAttachmentLoadOp convertLoadOp(LoadOperation garlicOperation) {
@@ -126,13 +126,13 @@ namespace clv::gfx::vk {
         };
 
         if(vkCreateRenderPass(this->device.get(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create render pass");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create render pass");
         }
     }
 
-    VKRenderPass::VKRenderPass(VKRenderPass&& other) noexcept = default;
+    VKRenderPass::VKRenderPass(VKRenderPass &&other) noexcept = default;
 
-    VKRenderPass& VKRenderPass::operator=(VKRenderPass&& other) noexcept = default;
+    VKRenderPass &VKRenderPass::operator=(VKRenderPass &&other) noexcept = default;
 
     VKRenderPass::~VKRenderPass() {
         vkDestroyRenderPass(device.get(), renderPass, nullptr);

@@ -2,9 +2,9 @@
 
 #include "Clove/Graphics/Vulkan/VKGraphicsResource.hpp"
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
-#include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     static VkImageUsageFlags getUsageFlags(GraphicsImage::UsageMode garlicUsageFlags) {
@@ -53,7 +53,7 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKImage::VKImage(DevicePointer device, Descriptor descriptor, QueueFamilyIndices const& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
+    VKImage::VKImage(DevicePointer device, Descriptor descriptor, QueueFamilyIndices const &familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device(std::move(device))
         , descriptor(std::move(descriptor))
         , memoryAllocator(std::move(memoryAllocator)) {
@@ -81,7 +81,7 @@ namespace clv::gfx::vk {
         };
 
         if(vkCreateImage(this->device.get(), &createInfo, nullptr, &image) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create image");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create image");
             return;
         }
 
@@ -93,9 +93,9 @@ namespace clv::gfx::vk {
         vkBindImageMemory(this->device.get(), image, allocatedBlock->memory, allocatedBlock->offset);
     }
 
-    VKImage::VKImage(VKImage&& other) noexcept = default;
+    VKImage::VKImage(VKImage &&other) noexcept = default;
 
-    VKImage& VKImage::operator=(VKImage&& other) noexcept = default;
+    VKImage &VKImage::operator=(VKImage &&other) noexcept = default;
 
     VKImage::~VKImage() {
         vkDestroyImage(device.get(), image, nullptr);

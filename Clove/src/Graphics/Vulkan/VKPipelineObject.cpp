@@ -4,10 +4,10 @@
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
-#include "Clove/Log.hpp"
 #include "Clove/Utils/Cast.hpp"
 
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     static VkFormat convertAttributeFormat(VertexAttributeFormat garlicFormat) {
@@ -26,7 +26,7 @@ namespace clv::gfx::vk {
         }
     }
 
-    static VkVertexInputBindingDescription getBindingDescription(const VertexInputBindingDescriptor& garlicDescriptor) {
+    static VkVertexInputBindingDescription getBindingDescription(VertexInputBindingDescriptor const &garlicDescriptor) {
         VkVertexInputBindingDescription description{
             .binding   = garlicDescriptor.binding,
             .stride    = garlicDescriptor.stride,
@@ -35,7 +35,7 @@ namespace clv::gfx::vk {
         return description;
     }
 
-    static std::vector<VkVertexInputAttributeDescription> getAttributes(const std::vector<VertexAttributeDescriptor>& garlicAttributes) {
+    static std::vector<VkVertexInputAttributeDescription> getAttributes(std::vector<VertexAttributeDescriptor> const &garlicAttributes) {
         std::vector<VkVertexInputAttributeDescription> attributes(std::size(garlicAttributes));
         for(size_t i = 0; i < std::size(attributes); ++i) {
             attributes[i].binding  = garlicAttributes[i].binding;
@@ -46,7 +46,7 @@ namespace clv::gfx::vk {
         return attributes;
     }
 
-    static std::vector<VkDescriptorSetLayout> getDescriptorSetLayouts(const std::vector<VKDescriptorSetLayout*>& garlicLayouts) {
+    static std::vector<VkDescriptorSetLayout> getDescriptorSetLayouts(std::vector<VKDescriptorSetLayout *> const &garlicLayouts) {
         std::vector<VkDescriptorSetLayout> layouts(std::size(garlicLayouts));
         for(size_t i = 0; i < std::size(layouts); ++i) {
             layouts[i] = garlicLayouts[i]->getLayout();
@@ -62,7 +62,7 @@ namespace clv::gfx::vk {
         std::vector<VkVertexInputAttributeDescription> vertexAttributes = getAttributes(descriptor.vertexAttributes);
 
         //Descriptor set layouts
-        std::vector<VKDescriptorSetLayout*> castedLayouts(std::size(descriptor.descriptorSetLayouts));
+        std::vector<VKDescriptorSetLayout *> castedLayouts(std::size(descriptor.descriptorSetLayouts));
         for(size_t i = 0; i < std::size(castedLayouts); ++i) {
             castedLayouts[i] = polyCast<VKDescriptorSetLayout>(descriptor.descriptorSetLayouts[i].get());
         }
@@ -194,7 +194,7 @@ namespace clv::gfx::vk {
         };
 
         if(vkCreatePipelineLayout(this->device.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create pipeline layout");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create pipeline layout");
             return;
         }
 
@@ -221,13 +221,13 @@ namespace clv::gfx::vk {
         };
 
         if(vkCreateGraphicsPipelines(this->device.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create graphics pipeline");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create graphics pipeline");
         }
     }
 
-    VKPipelineObject::VKPipelineObject(VKPipelineObject&& other) noexcept = default;
+    VKPipelineObject::VKPipelineObject(VKPipelineObject &&other) noexcept = default;
 
-    VKPipelineObject& VKPipelineObject::operator=(VKPipelineObject&& other) noexcept = default;
+    VKPipelineObject &VKPipelineObject::operator=(VKPipelineObject &&other) noexcept = default;
 
     VKPipelineObject::~VKPipelineObject() {
         vkDestroyPipeline(device.get(), pipeline, nullptr);

@@ -10,7 +10,7 @@
 #define CLV_WINDOWS_QUIT 25397841//Note: this number is completely random
 
 namespace clv::plt {
-    WindowsWindow::WindowsWindow(const WindowDescriptor& descriptor) {
+    WindowsWindow::WindowsWindow(WindowDescriptor const &descriptor) {
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
         instance = GetModuleHandle(nullptr);
@@ -64,10 +64,10 @@ namespace clv::plt {
 
         open = true;
 
-		GARLIC_LOG(garlicLogContext, Log::Level::Debug, "Window created");
-	}
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Window created");
+    }
 
-    WindowsWindow::WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) {
+    WindowsWindow::WindowsWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size, gfx::API const api) {
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
 
         WNDCLASSEX wc{};
@@ -108,15 +108,15 @@ namespace clv::plt {
 
         open = true;
 
-		GARLIC_LOG(garlicLogContext, Log::Level::Debug, "Window created");
-	}
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Window created");
+    }
 
-	WindowsWindow::~WindowsWindow() {
-		UnregisterClass(className, instance);
-		DestroyWindow(windowsHandle);
-	}
+    WindowsWindow::~WindowsWindow() {
+        UnregisterClass(className, instance);
+        DestroyWindow(windowsHandle);
+    }
 
-    void* WindowsWindow::getNativeWindow() const {
+    void *WindowsWindow::getNativeWindow() const {
         return windowsHandle;
     }
 
@@ -135,17 +135,17 @@ namespace clv::plt {
         return { windowRect.right - windowRect.left, windowRect.bottom - windowRect.top };
     }
 
-    void WindowsWindow::moveWindow(const mth::vec2i& position) {
-        const mth::vec2i size = getSize();
-        const BOOL moved      = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
+    void WindowsWindow::moveWindow(mth::vec2i const &position) {
+        mth::vec2i const size = getSize();
+        BOOL const moved      = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
         if(!moved) {
             throw CLV_WINDOWS_LAST_EXCEPTION;
         }
     }
 
-    void WindowsWindow::resizeWindow(const mth::vec2i& size) {
-        const mth::vec2i position = getPosition();
-        const BOOL resized        = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
+    void WindowsWindow::resizeWindow(mth::vec2i const &size) {
+        mth::vec2i const position = getPosition();
+        BOOL const resized        = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
         if(!resized) {
             throw CLV_WINDOWS_LAST_EXCEPTION;
         }
@@ -178,8 +178,8 @@ namespace clv::plt {
     LRESULT CALLBACK WindowsWindow::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         if(msg == WM_NCCREATE) {
             //Extract the ptr to our window class
-            const CREATESTRUCTW* const create = reinterpret_cast<CREATESTRUCTW*>(lParam);
-            WindowsWindow* const window       = static_cast<WindowsWindow*>(create->lpCreateParams);
+            const CREATESTRUCTW *const create = reinterpret_cast<CREATESTRUCTW *>(lParam);
+            WindowsWindow *const window       = static_cast<WindowsWindow *>(create->lpCreateParams);
             //Store our windows class into the windows api
             SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
             //Switch over to the normal procedure handler
@@ -192,7 +192,7 @@ namespace clv::plt {
 
     LRESULT CALLBACK WindowsWindow::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         //Forward message to our windows instance
-        WindowsWindow* const window = reinterpret_cast<WindowsWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+        WindowsWindow *const window = reinterpret_cast<WindowsWindow *>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
         return window->HandleMsg(hWnd, msg, wParam, lParam);
     }
 
@@ -271,12 +271,12 @@ namespace clv::plt {
                 mouse.onWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam), pt.x, pt.y);
                 break;
 
-				//Window
-			case WM_SIZE: {
-				const mth::vec2ui size = { pt.x, pt.y };
-				onWindowResize.broadcast(size);
-			} break;
-		}
-		return DefWindowProc(hWnd, msg, wParam, lParam);
-	}
+                //Window
+            case WM_SIZE: {
+                const mth::vec2ui size = { pt.x, pt.y };
+                onWindowResize.broadcast(size);
+            } break;
+        }
+        return DefWindowProc(hWnd, msg, wParam, lParam);
+    }
 }

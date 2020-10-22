@@ -3,10 +3,10 @@
 #include "Clove/Graphics/Vulkan/VKDescriptor.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorSetLayout.hpp"
-#include "Clove/Log.hpp"
 #include "Clove/Utils/Cast.hpp"
 
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     static VkDescriptorPoolCreateFlags getDescriptorPoolFlags(DescriptorPool::Flag garlicFlag) {
@@ -23,40 +23,41 @@ namespace clv::gfx::vk {
     VKDescriptorPool::VKDescriptorPool(DevicePointer device, Descriptor descriptor)
         : device(std::move(device))
         , descriptor(std::move(descriptor)) {
-        const size_t numDescriptorTypes = std::size(this->descriptor.poolTypes);
+        size_t const numDescriptorTypes = std::size(this->descriptor.poolTypes);
         std::vector<VkDescriptorPoolSize> poolSizes(numDescriptorTypes);
         for(size_t i = 0; i < numDescriptorTypes; ++i) {
             poolSizes[i].type            = getDescriptorType(this->descriptor.poolTypes[i].type);
             poolSizes[i].descriptorCount = this->descriptor.poolTypes[i].count;
         }
 
-        VkDescriptorPoolCreateInfo createInfo{};
-        createInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        createInfo.pNext         = nullptr;
-        createInfo.flags         = getDescriptorPoolFlags(this->descriptor.flag);
-        createInfo.maxSets       = this->descriptor.maxSets;
-        createInfo.poolSizeCount = std::size(poolSizes);
-        createInfo.pPoolSizes    = std::data(poolSizes);
+        VkDescriptorPoolCreateInfo createInfo{
+            .sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+            .pNext         = nullptr,
+            .flags         = getDescriptorPoolFlags(this->descriptor.flag),
+            .maxSets       = this->descriptor.maxSets,
+            .poolSizeCount = static_cast<uint32_t>(std::size(poolSizes)),
+            .pPoolSizes    = std::data(poolSizes),
+        };
 
         if(vkCreateDescriptorPool(this->device.get(), &createInfo, nullptr, &pool) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create descriptor pool");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create descriptor pool");
         }
     }
 
-    VKDescriptorPool::VKDescriptorPool(VKDescriptorPool&& other) noexcept = default;
+    VKDescriptorPool::VKDescriptorPool(VKDescriptorPool &&other) noexcept = default;
 
-    VKDescriptorPool& VKDescriptorPool::operator=(VKDescriptorPool&& other) noexcept = default;
+    VKDescriptorPool &VKDescriptorPool::operator=(VKDescriptorPool &&other) noexcept = default;
 
     VKDescriptorPool::~VKDescriptorPool() {
         vkDestroyDescriptorPool(device.get(), pool, nullptr);
     }
 
-    std::shared_ptr<DescriptorSet> VKDescriptorPool::allocateDescriptorSets(const std::shared_ptr<DescriptorSetLayout>& layout) {
+    std::shared_ptr<DescriptorSet> VKDescriptorPool::allocateDescriptorSets(std::shared_ptr<DescriptorSetLayout> const &layout) {
         return allocateDescriptorSets(std::vector{ layout })[0];
     }
 
-    std::vector<std::shared_ptr<DescriptorSet>> VKDescriptorPool::allocateDescriptorSets(const std::vector<std::shared_ptr<DescriptorSetLayout>>& layouts) {
-        const size_t numSets = std::size(layouts);
+    std::vector<std::shared_ptr<DescriptorSet>> VKDescriptorPool::allocateDescriptorSets(std::vector<std::shared_ptr<DescriptorSetLayout>> const &layouts) {
+        size_t const numSets = std::size(layouts);
 
         std::vector<VkDescriptorSetLayout> vulkanLayouts(numSets);
         for(size_t i = 0; i < numSets; ++i) {
@@ -65,15 +66,16 @@ namespace clv::gfx::vk {
 
         std::vector<VkDescriptorSet> vulkanSets(numSets);
 
-        VkDescriptorSetAllocateInfo allocInfo{};
-        allocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-        allocInfo.pNext              = nullptr;
-        allocInfo.descriptorPool     = pool;
-        allocInfo.descriptorSetCount = static_cast<uint32_t>(numSets);
-        allocInfo.pSetLayouts        = std::data(vulkanLayouts);
+        VkDescriptorSetAllocateInfo allocInfo{
+            .sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+            .pNext              = nullptr,
+            .descriptorPool     = pool,
+            .descriptorSetCount = static_cast<uint32_t>(numSets),
+            .pSetLayouts        = std::data(vulkanLayouts),
+        };
 
         if(vkAllocateDescriptorSets(device.get(), &allocInfo, std::data(vulkanSets)) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to allocate new descriptor sets");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to allocate new descriptor sets");
             return {};
         }
 
@@ -85,12 +87,12 @@ namespace clv::gfx::vk {
         return descriptorSets;
     }
 
-    void VKDescriptorPool::freeDescriptorSets(const std::shared_ptr<DescriptorSet>& descriptorSet) {
+    void VKDescriptorPool::freeDescriptorSets(std::shared_ptr<DescriptorSet> const &descriptorSet) {
         freeDescriptorSets(std::vector{ descriptorSet });
     }
 
-    void VKDescriptorPool::freeDescriptorSets(const std::vector<std::shared_ptr<DescriptorSet>>& descriptorSets) {
-        const size_t numSets = std::size(descriptorSets);
+    void VKDescriptorPool::freeDescriptorSets(std::vector<std::shared_ptr<DescriptorSet>> const &descriptorSets) {
+        size_t const numSets = std::size(descriptorSets);
 
         std::vector<VkDescriptorSet> vulkanSets(numSets);
         for(size_t i = 0; i < numSets; ++i) {
@@ -98,7 +100,7 @@ namespace clv::gfx::vk {
         }
 
         if(vkFreeDescriptorSets(device.get(), pool, numSets, std::data(vulkanSets)) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to free descriptor sets");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to free descriptor sets");
         }
     }
 

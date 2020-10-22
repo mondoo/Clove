@@ -19,13 +19,13 @@ namespace clv::gfx::vk {
         //FUNCTIONS
     public:
         VKGraphicsDevice() = delete;
-        VKGraphicsDevice(void* nativeWindow);
+        VKGraphicsDevice(void *nativeWindow);
 
-        VKGraphicsDevice(const VKGraphicsDevice& other) = delete;
-        VKGraphicsDevice(VKGraphicsDevice&& other) noexcept;
+        VKGraphicsDevice(VKGraphicsDevice const &other) = delete;
+        VKGraphicsDevice(VKGraphicsDevice &&other) noexcept;
 
-        VKGraphicsDevice& operator=(const VKGraphicsDevice& other) = delete;
-        VKGraphicsDevice& operator=(VKGraphicsDevice&& other) noexcept;
+        VKGraphicsDevice &operator=(VKGraphicsDevice const &other) = delete;
+        VKGraphicsDevice &operator                                 =(VKGraphicsDevice &&other) noexcept;
 
         ~VKGraphicsDevice();
 

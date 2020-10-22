@@ -25,8 +25,8 @@ namespace clv::gfx::vk {
         ~VKTransferQueue();
 
         std::unique_ptr<TransferCommandBuffer> allocateCommandBuffer() override;
-        void freeCommandBuffer(TransferCommandBuffer& buffer) override;
+        void freeCommandBuffer(TransferCommandBuffer &buffer) override;
 
-        void submit(const TransferSubmitInfo& submitInfo) override;
+        void submit(TransferSubmitInfo const &submitInfo) override;
     };
 }

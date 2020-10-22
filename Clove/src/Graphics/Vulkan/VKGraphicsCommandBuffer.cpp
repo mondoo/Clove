@@ -28,9 +28,9 @@ namespace clv::gfx::vk {
         , queueFamilyIndices(std::move(queueFamilyIndices)) {
     }
 
-    VKGraphicsCommandBuffer::VKGraphicsCommandBuffer(VKGraphicsCommandBuffer&& other) noexcept = default;
+    VKGraphicsCommandBuffer::VKGraphicsCommandBuffer(VKGraphicsCommandBuffer &&other) noexcept = default;
 
-    VKGraphicsCommandBuffer& VKGraphicsCommandBuffer::operator=(VKGraphicsCommandBuffer&& other) noexcept = default;
+    VKGraphicsCommandBuffer &VKGraphicsCommandBuffer::operator=(VKGraphicsCommandBuffer &&other) noexcept = default;
 
     VKGraphicsCommandBuffer::~VKGraphicsCommandBuffer() = default;
 
@@ -42,21 +42,21 @@ namespace clv::gfx::vk {
         };
 
         if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to begin recording command buffer");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to begin recording command buffer");
         }
     }
 
     void VKGraphicsCommandBuffer::endRecording() {
         if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to end recording command buffer");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to end recording command buffer");
         }
     }
 
-    void VKGraphicsCommandBuffer::beginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer, RenderArea const& renderArea, std::span<ClearValue> clearValues) {
+    void VKGraphicsCommandBuffer::beginRenderPass(RenderPass &renderPass, Framebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) {
         std::vector<VkClearValue> vkClearValues(std::size(clearValues));
-        for(uint32_t index = 0; auto& clearValue : clearValues) {
-            const auto& colour       = clearValue.colour;
-            const auto& depthStencil = clearValue.depthStencil;
+        for(uint32_t index = 0; auto &clearValue : clearValues) {
+            auto const &colour       = clearValue.colour;
+            auto const &depthStencil = clearValue.depthStencil;
 
             vkClearValues[index].color        = { colour.r, colour.g, colour.b, colour.a };
             vkClearValues[index].depthStencil = { depthStencil.depth, depthStencil.stencil };
@@ -83,28 +83,28 @@ namespace clv::gfx::vk {
         vkCmdEndRenderPass(commandBuffer);
     }
 
-    void VKGraphicsCommandBuffer::bindVertexBuffer(GraphicsBuffer& vertexBuffer, uint32_t const binding) {
+    void VKGraphicsCommandBuffer::bindVertexBuffer(GraphicsBuffer &vertexBuffer, uint32_t const binding) {
         VkBuffer buffers[]     = { polyCast<VKBuffer>(&vertexBuffer)->getBuffer() };
         VkDeviceSize offsets[] = { 0 };
 
         vkCmdBindVertexBuffers(commandBuffer, binding, 1, buffers, offsets);
     }
 
-    void VKGraphicsCommandBuffer::bindIndexBuffer(GraphicsBuffer& indexBuffer, IndexType indexType) {
+    void VKGraphicsCommandBuffer::bindIndexBuffer(GraphicsBuffer &indexBuffer, IndexType indexType) {
         vkCmdBindIndexBuffer(commandBuffer, polyCast<VKBuffer>(&indexBuffer)->getBuffer(), 0, getIndexType(indexType));
     }
 
-    void VKGraphicsCommandBuffer::bindPipelineObject(PipelineObject& pipelineObject) {
+    void VKGraphicsCommandBuffer::bindPipelineObject(PipelineObject &pipelineObject) {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<VKPipelineObject>(&pipelineObject)->getPipeline());
     }
 
-    void VKGraphicsCommandBuffer::bindDescriptorSet(DescriptorSet& descriptorSet, PipelineObject const& pipeline, uint32_t const setNum) {
+    void VKGraphicsCommandBuffer::bindDescriptorSet(DescriptorSet &descriptorSet, PipelineObject const &pipeline, uint32_t const setNum) {
         VkDescriptorSet sets[] = { polyCast<VKDescriptorSet>(&descriptorSet)->getDescriptorSet() };
 
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<VKPipelineObject const>(&pipeline)->getLayout(), setNum, 1, sets, 0, nullptr);
     }
 
-    void VKGraphicsCommandBuffer::pushConstant(PipelineObject& pipelineObject, Shader::Stage const stage, size_t const offset, size_t const size, void const* data) {
+    void VKGraphicsCommandBuffer::pushConstant(PipelineObject &pipelineObject, Shader::Stage const stage, size_t const offset, size_t const size, void const *data) {
         vkCmdPushConstants(commandBuffer, polyCast<VKPipelineObject>(&pipelineObject)->getLayout(), VKShader::convertStage(stage), offset, size, data);
     }
 
@@ -112,7 +112,7 @@ namespace clv::gfx::vk {
         vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
     }
 
-    void VKGraphicsCommandBuffer::bufferMemoryBarrier(GraphicsBuffer& buffer, BufferMemoryBarrierInfo const& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
+    void VKGraphicsCommandBuffer::bufferMemoryBarrier(GraphicsBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
         const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
         const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
@@ -128,15 +128,15 @@ namespace clv::gfx::vk {
             .size                = VK_WHOLE_SIZE,
         };
 
-        const VkPipelineStageFlags vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
-        const VkPipelineStageFlags vkDestinationStage = VKPipelineObject::convertStage(destinationStage);
+        VkPipelineStageFlags const vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
+        VkPipelineStageFlags const vkDestinationStage = VKPipelineObject::convertStage(destinationStage);
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
     }
 
-    void VKGraphicsCommandBuffer::imageMemoryBarrier(GraphicsImage& image, ImageMemoryBarrierInfo const& barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
-        const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
-        const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
+    void VKGraphicsCommandBuffer::imageMemoryBarrier(GraphicsImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
+        uint32_t const sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
+        uint32_t const destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
 
         VkImageMemoryBarrier barrier{
             .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -157,8 +157,8 @@ namespace clv::gfx::vk {
             },
         };
 
-        const VkPipelineStageFlags vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
-        const VkPipelineStageFlags vkDestinationStage = VKPipelineObject::convertStage(destinationStage);
+        VkPipelineStageFlags const vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
+        VkPipelineStageFlags const vkDestinationStage = VKPipelineObject::convertStage(destinationStage);
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     }

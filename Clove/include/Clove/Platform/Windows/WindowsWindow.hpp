@@ -1,53 +1,52 @@
 #pragma once
 
 #include "Clove/Platform/Window.hpp"
-
 #include "Clove/Platform/Windows/CloveWindows.hpp"
 #include "Clove/Platform/Windows/WindowsException.hpp"
 
 namespace clv::plt {
-	class WindowsWindow : public Window {
-		//VARIABLES
-	private:
-		bool open = false;
+    class WindowsWindow : public Window {
+        //VARIABLES
+    private:
+        bool open = false;
 
-		static constexpr LPCSTR className = "Clove";
+        static LPCSTR constexpr className = "Clove";
 
-		HINSTANCE instance;
-		HWND windowsHandle;
+        HINSTANCE instance;
+        HWND windowsHandle;
 
-		//FUNCTIONS
-	public:
-		WindowsWindow() = delete;
-		WindowsWindow(const WindowDescriptor& descriptor);
-		WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api);
+        //FUNCTIONS
+    public:
+        WindowsWindow() = delete;
+        WindowsWindow(WindowDescriptor const &descriptor);
+        WindowsWindow(Window const &parentWindow, const mth::vec2i &position, mth::vec2i const &size, gfx::API const api);
 
-		WindowsWindow(const WindowsWindow& other) = delete;
-		WindowsWindow(WindowsWindow&& other) noexcept = delete;
+        WindowsWindow(WindowsWindow const &other)     = delete;
+        WindowsWindow(WindowsWindow &&other) noexcept = delete;
 
-		WindowsWindow& operator=(const WindowsWindow& other) = delete;
-		WindowsWindow& operator=(WindowsWindow&& other) noexcept = delete;
+        WindowsWindow &operator=(WindowsWindow const &other) = delete;
+        WindowsWindow &operator=(WindowsWindow &&other) noexcept = delete;
 
-		~WindowsWindow();
+        ~WindowsWindow();
 
-		void* getNativeWindow() const override;
+        void *getNativeWindow() const override;
 
-		mth::vec2i getPosition() const override;
-		mth::vec2i getSize() const override;
+        mth::vec2i getPosition() const override;
+        mth::vec2i getSize() const override;
 
-		void moveWindow(const mth::vec2i& position) override;
-		void resizeWindow(const mth::vec2i& size) override;
+        void moveWindow(mth::vec2i const &position) override;
+        void resizeWindow(mth::vec2i const &size) override;
 
-		bool isOpen() const override;
+        bool isOpen() const override;
 
-		void close() override;
+        void close() override;
 
-	protected:
-		void processInput() override;
+    protected:
+        void processInput() override;
 
-	private:
-		static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-		static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-		LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	};
+    private:
+        static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+        static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+        LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    };
 }

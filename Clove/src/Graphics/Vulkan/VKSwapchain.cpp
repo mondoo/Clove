@@ -7,8 +7,8 @@
 #include "Clove/Utils/Cast.hpp"
 
 namespace clv::gfx::vk {
-    static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {
-        for(const auto& availableFormat : availableFormats) {
+    static VkSurfaceFormatKHR chooseSwapSurfaceFormat(std::vector<VkSurfaceFormatKHR> const &availableFormats) {
+        for(auto const &availableFormat : availableFormats) {
             if(availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
                 return availableFormat;
             }
@@ -18,8 +18,8 @@ namespace clv::gfx::vk {
         return availableFormats[0];
     }
 
-    static VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) {
-        for(const auto& availablePresentMode : availablePresentModes) {
+    static VkPresentModeKHR chooseSwapPresentMode(std::vector<VkPresentModeKHR> const &availablePresentModes) {
+        for(auto const &availablePresentMode : availablePresentModes) {
             if(availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
                 return availablePresentMode;
             }
@@ -28,7 +28,7 @@ namespace clv::gfx::vk {
         return VK_PRESENT_MODE_FIFO_KHR;
     }
 
-    static VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, const VkExtent2D& windowExtent) {
+    static VkExtent2D chooseSwapExtent(VkSurfaceCapabilitiesKHR const &capabilities, VkExtent2D const &windowExtent) {
         if(capabilities.currentExtent.width != UINT32_MAX) {//If width / height are max then the window manager is allowing us to differ in size
             return capabilities.currentExtent;
         } else {
@@ -41,7 +41,7 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKSwapchain::VKSwapchain(DevicePointer device, SwapchainSupportDetails supportDetails, const QueueFamilyIndices& familyIndices, Descriptor descriptor)
+    VKSwapchain::VKSwapchain(DevicePointer device, SwapchainSupportDetails supportDetails, QueueFamilyIndices const &familyIndices, Descriptor descriptor)
         : device(std::move(device)) {
         VkExtent2D windowExtent{
             descriptor.extent.x,
@@ -82,7 +82,7 @@ namespace clv::gfx::vk {
         };
 
         if(vkCreateSwapchainKHR(this->device.get(), &createInfo, nullptr, &swapchain) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create swap chain");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create swap chain");
             return;
         }
 
@@ -99,9 +99,9 @@ namespace clv::gfx::vk {
         }
     }
 
-    VKSwapchain::VKSwapchain(VKSwapchain&& other) noexcept = default;
+    VKSwapchain::VKSwapchain(VKSwapchain &&other) noexcept = default;
 
-    VKSwapchain& VKSwapchain::operator=(VKSwapchain&& other) noexcept = default;
+    VKSwapchain &VKSwapchain::operator=(VKSwapchain &&other) noexcept = default;
 
     VKSwapchain::~VKSwapchain() {
         vkDestroySwapchainKHR(device.get(), swapchain, nullptr);
@@ -115,9 +115,9 @@ namespace clv::gfx::vk {
         return { swapChainExtent.width, swapChainExtent.height };
     }
 
-    Result VKSwapchain::aquireNextImage(const Semaphore* semaphore, uint32_t& outImageIndex) {
+    Result VKSwapchain::aquireNextImage(Semaphore const *semaphore, uint32_t &outImageIndex) {
         VkSemaphore vkSemaphore = semaphore ? polyCast<const VKSemaphore>(semaphore)->getSemaphore() : VK_NULL_HANDLE;
-        const VkResult result   = vkAcquireNextImageKHR(device.get(), swapchain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex);
+        VkResult const result   = vkAcquireNextImageKHR(device.get(), swapchain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex);
 
         return convertResult(result);
     }

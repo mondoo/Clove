@@ -2,7 +2,8 @@
 
 #include "Clove/Graphics/Vulkan/VKGraphicsResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
-#include "Clove/Log.hpp"
+
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     static VkBufferUsageFlags getUsageFlags(GraphicsBuffer::UsageMode garlicUsageFlags) {
@@ -27,7 +28,7 @@ namespace clv::gfx::vk {
         return flags;
     }
 
-    VKBuffer::VKBuffer(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
+    VKBuffer::VKBuffer(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices &familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device(std::move(device))
         , descriptor(std::move(descriptor))
         , memoryAllocator(std::move(memoryAllocator)) {
@@ -47,7 +48,7 @@ namespace clv::gfx::vk {
         };
 
         if(vkCreateBuffer(this->device.get(), &createInfo, nullptr, &buffer) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create buffer");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create buffer");
             return;
         }
 
@@ -59,29 +60,29 @@ namespace clv::gfx::vk {
         vkBindBufferMemory(this->device.get(), buffer, allocatedBlock->memory, allocatedBlock->offset);
     }
 
-    VKBuffer::VKBuffer(VKBuffer&& other) noexcept = default;
+    VKBuffer::VKBuffer(VKBuffer &&other) noexcept = default;
 
-    VKBuffer& VKBuffer::operator=(VKBuffer&& other) noexcept = default;
+    VKBuffer &VKBuffer::operator=(VKBuffer &&other) noexcept = default;
 
     VKBuffer::~VKBuffer() {
         vkDestroyBuffer(device.get(), buffer, nullptr);
         memoryAllocator->free(allocatedBlock);
     }
 
-    void VKBuffer::write(const void* data, const size_t offset, const size_t size) {
+    void VKBuffer::write(const void *data, const size_t offset, const size_t size) {
         GARLIC_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only write to SystemMemory buffers", GARLIC_FUNCTION_NAME_PRETTY);
 
-        void* cpuAccessibleMemory{ nullptr };
+        void *cpuAccessibleMemory{ nullptr };
 
         vkMapMemory(device.get(), allocatedBlock->memory, allocatedBlock->offset + offset, size, 0, &cpuAccessibleMemory);
         memcpy(cpuAccessibleMemory, data, size);
         vkUnmapMemory(device.get(), allocatedBlock->memory);
     }
 
-    void VKBuffer::read(void* data, const size_t offset, const size_t size) {
+    void VKBuffer::read(void *data, const size_t offset, const size_t size) {
         GARLIC_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only read from SystemMemory buffers", GARLIC_FUNCTION_NAME_PRETTY);
 
-        void* cpuAccessibleMemory{ nullptr };
+        void *cpuAccessibleMemory{ nullptr };
 
         vkMapMemory(device.get(), allocatedBlock->memory, allocatedBlock->offset + offset, size, 0, &cpuAccessibleMemory);
         memcpy(data, cpuAccessibleMemory, size);

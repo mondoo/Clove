@@ -1,6 +1,6 @@
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 
-#include "Clove/Log.hpp"
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     VKSemaphore::VKSemaphore(DevicePointer device)
@@ -9,13 +9,13 @@ namespace clv::gfx::vk {
         createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
         if(vkCreateSemaphore(this->device.get(), &createInfo, nullptr, &semaphore) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Failed to create semaphore");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create semaphore");
         }
     }
 
-    VKSemaphore::VKSemaphore(VKSemaphore&& other) noexcept = default;
+    VKSemaphore::VKSemaphore(VKSemaphore &&other) noexcept = default;
 
-    VKSemaphore& VKSemaphore::operator=(VKSemaphore&& other) noexcept = default;
+    VKSemaphore &VKSemaphore::operator=(VKSemaphore &&other) noexcept = default;
 
     VKSemaphore::~VKSemaphore() {
         vkDestroySemaphore(device.get(), semaphore, nullptr);

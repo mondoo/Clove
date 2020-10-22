@@ -1,8 +1,7 @@
 #include "Clove/Graphics/Vulkan/VKSampler.hpp"
 
-#include "Clove/Log.hpp"
-
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
     static VkFilter getFilter(Sampler::Filter garlicfilter) {
@@ -57,13 +56,13 @@ namespace clv::gfx::vk {
         };
 
         if(vkCreateSampler(this->device.get(), &createInfo, nullptr, &sampler) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "{0}: Failed to create sampler", GARLIC_FUNCTION_NAME);
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "{0}: Failed to create sampler", GARLIC_FUNCTION_NAME);
         }
     }
 
-    VKSampler::VKSampler(VKSampler&& other) noexcept = default;
+    VKSampler::VKSampler(VKSampler &&other) noexcept = default;
 
-    VKSampler& VKSampler::operator=(VKSampler&& other) noexcept = default;
+    VKSampler &VKSampler::operator=(VKSampler &&other) noexcept = default;
 
     VKSampler::~VKSampler() {
         vkDestroySampler(device.get(), sampler, nullptr);
