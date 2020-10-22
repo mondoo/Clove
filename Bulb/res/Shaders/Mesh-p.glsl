@@ -4,7 +4,7 @@
 
 layout(set = SET_MATERIAL, binding = 0) uniform sampler2D texSampler;
 layout(set = SET_LIGHTING, binding = 3) uniform sampler2D directionalDepthSampler[MAX_LIGHTS];
-layout(set = SET_LIGHTING, binding = 4) uniform samplerCube pointlDepthSampler[MAX_LIGHTS];
+layout(set = SET_LIGHTING, binding = 4) uniform samplerCube pointLightDepthSampler[MAX_LIGHTS];
 
 layout(set = SET_VIEW, binding = 1) uniform ViewPosition{
 	vec3 viewPos;
@@ -60,6 +60,7 @@ void main(){
 	const float shiniess =  32.0f; //TODO: Add shiniess as a material param
 
 	float shadow = 0.0f;
+	const float bias = 0.005f;
 
 	//Directional shadow
 	for(int i = 0; i < numDirLights; ++i){
@@ -69,17 +70,16 @@ void main(){
 		const float currentDepth = projCoords.z;
 		const float closetDepth = texture(directionalDepthSampler[i], projCoords.xy).r;
 
-		const float bias = 0.005f;
 		shadow += currentDepth - bias > closetDepth ? 1.0f : 0.0f;
 	}
 
 	//Point shadow
 	for(int i = 0; i < numPointLights; ++i){
 		const vec3 fragToLight = vertPos - pointLights[i].position;
-		const float closetDepth = texture(pointlDepthSampler[i], fragToLight).r * pointLights[i].farplane;
+
+		const float closetDepth = texture(pointLightDepthSampler[i], fragToLight).r * pointLights[i].farplane;
 		const float currentDepth = length(fragToLight);
 
-		const float bias = 0.005f;
 		shadow += currentDepth - bias > closetDepth ? 1.0f : 0.0f;
 	}
 
