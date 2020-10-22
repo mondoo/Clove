@@ -1,9 +1,7 @@
 set(CLV_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
 set(CLV_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../include/Clove)
 
-project(Clove)
-
-add_library(${PROJECT_NAME} STATIC)
+add_library(Clove STATIC)
 
 #Files
 set(
@@ -28,31 +26,6 @@ set(
 		${CLV_SOURCE}/Audio/OpenAL/ALListener.cpp
 		${CLV_INCLUDE}/Audio/OpenAL/ALSource.hpp
 		${CLV_SOURCE}/Audio/OpenAL/ALSource.cpp
-)
-
-set(
-	DelegateFiles
-		${CLV_INCLUDE}/Delegate/DelegateHandle.hpp
-		${CLV_SOURCE}/Delegate/DelegateHandle.cpp
-		${CLV_INCLUDE}/Delegate/MultiCastDelegate.hpp
-		${CLV_INCLUDE}/Delegate/MultiCastDelegate.inl
-		${CLV_INCLUDE}/Delegate/SingleCastDelegate.hpp
-		${CLV_INCLUDE}/Delegate/SingleCastDelegate.inl
-)
-
-set(
-	EventFiles
-		${CLV_INCLUDE}/Event/EventContainerBase.hpp
-		${CLV_SOURCE}/Event/EventContainerBase.cpp
-		${CLV_INCLUDE}/Event/EventDispatcher.hpp
-		${CLV_INCLUDE}/Event/EventDispatcher.inl
-		${CLV_SOURCE}/Event/EventDispatcher.cpp
-		${CLV_INCLUDE}/Event/EventHandle.hpp
-		${CLV_SOURCE}/Event/EventHandle.cpp
-		${CLV_INCLUDE}/Event/EventManager.hpp
-		${CLV_INCLUDE}/Event/EventManager.inl
-		${CLV_SOURCE}/Event/EventManager.cpp
-		${CLV_INCLUDE}/Event/EventTypes.hpp
 )
 
 set(
@@ -168,17 +141,6 @@ set(
 )
 
 set(
-	MemoryFiles
-		${CLV_INCLUDE}/Memory/ListAllocator.hpp
-		${CLV_SOURCE}/Memory/ListAllocator.cpp
-		${CLV_SOURCE}/Memory/AllocationTracker.cpp
-		${CLV_INCLUDE}/Memory/PoolAllocator.hpp
-		${CLV_INCLUDE}/Memory/PoolAllocator.inl
-		${CLV_INCLUDE}/Memory/StackAllocator.hpp
-		${CLV_SOURCE}/Memory/StackAllocator.cpp
-)
-
-set(
 	InputFiles
 		${CLV_INCLUDE}/Input/InputEvent.hpp
 		${CLV_INCLUDE}/Input/Keyboard.hpp
@@ -254,18 +216,12 @@ set(
 set(
 	AllFiles
 	${CLV_INCLUDE}/Clove.hpp
-	${CLV_INCLUDE}/Log.hpp
-	${CLV_INCLUDE}/Log.inl
-	${CLV_SOURCE}/Log.cpp
-
+	
 		${AudioFiles}
 			${OpenALAudioFiles}
-		${DelegateFiles}
-		${EventFiles}
 		${ExceptionFiles}
 		${GraphicsFiles}
 			${VulkanGraphicsFiles}
-		${MemoryFiles}
 		${InputFiles}
 		${MathsFiles}
 		${PlatformFiles}
@@ -282,13 +238,13 @@ source_group(TREE ${CLV_INCLUDE} FILES ${header})
 source_group(TREE ${CLV_SOURCE} FILES ${source})
 
 source_group(PCH FILES 
-	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.hxx 
-	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/${PROJECT_NAME}.dir/cmake_pch.cxx
+	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/Clove.dir/cmake_pch.hxx 
+	${CMAKE_CURRENT_BINARY_DIR}/CmakeFiles/Clove.dir/cmake_pch.cxx
 )
 
 #Set the target source files
 target_sources(
-	${PROJECT_NAME}
+	Clove
 	PRIVATE
 		${AllFiles}
 )

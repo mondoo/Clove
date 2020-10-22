@@ -3,7 +3,7 @@
 #include "Bulb/ECS/Component.hpp"
 #include "Bulb/ECS/Entity.hpp"
 
-#include <Clove/Delegate/MultiCastDelegate.hpp>
+#include <Root/Delegate/MultiCastDelegate.hpp>
 
 namespace blb::ecs {
     struct Collision {
@@ -23,10 +23,10 @@ namespace blb::ecs {
         /**
          * @brief Called on the frame the collision event starts.
          */
-        clv::MultiCastDelegate<void(const Collision&)> onCollisionBegin;
+        garlic::MultiCastDelegate<void(const Collision&)> onCollisionBegin;
         /**
          * @brief Called on the frame the collision event ends.
          */
-        clv::MultiCastDelegate<void(const Collision&)> onCollisionEnd;
+        garlic::MultiCastDelegate<void(const Collision&)> onCollisionEnd;
     };
 }

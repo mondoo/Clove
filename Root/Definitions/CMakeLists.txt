@@ -1,5 +1,5 @@
 #CMake
-option(GAR_ENABLE_DEBUG_DEFINITION "Sets the GARLIC_DEBUG definition to 1. Allowing for various debug functionality / information to be enabled" OFF)
+option(GAR_ENABLE_DEBUG_DEFINITION "Sets the GARLIC_DEBUG macro to 1. Allowing for various debug functionality / information to be enabled" OFF)
 
 #Library
 add_library(
@@ -26,5 +26,4 @@ target_compile_definitions(
 
 		#Flags
 		GARLIC_DEBUG=$<BOOL:${GAR_ENABLE_DEBUG_DEFINITION}>
-		GARLIC_ENABLE_ASSERTS=GARLIC_DEBUG
 )

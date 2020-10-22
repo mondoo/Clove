@@ -7,7 +7,7 @@
 #include "Bulb/ECS/World.hpp"
 
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
-#include <Clove/Event/EventDispatcher.hpp>
+#include <Root/Event/EventDispatcher.hpp>
 #include <btBulletDynamicsCommon.h>
 
 using namespace clv;
@@ -43,7 +43,7 @@ namespace blb::ecs {
 
     PhysicsSystem::~PhysicsSystem() = default;
 
-    void PhysicsSystem::registerToEvents(EventDispatcher& dispatcher) {
+    void PhysicsSystem::registerToEvents(garlic::EventDispatcher& dispatcher) {
         cubeColliderAddedHandle = dispatcher.bindToEvent<ComponentAddedEvent<CubeColliderComponent>>([this](const ComponentAddedEvent<CubeColliderComponent>& event) {
             onCubeColliderAdded(event);
         });

@@ -4,8 +4,7 @@
 #include "Bulb/ECS/Entity.hpp"
 #include "Bulb/ECS/System.hpp"
 
-#include <Clove/Event/EventHandle.hpp>
-
+#include <Root/Event/EventHandle.hpp>
 #include <unordered_set>
 
 class btDefaultCollisionConfiguration;
@@ -28,8 +27,8 @@ namespace blb::ecs {
             EntityID entityB;
 
             constexpr friend bool operator==(const CollisionManifold& lhs, const CollisionManifold& rhs) {
-                return  (lhs.entityA == rhs.entityA && lhs.entityB == rhs.entityB) ||
-                        (lhs.entityA == rhs.entityB && lhs.entityB == rhs.entityA);
+                return (lhs.entityA == rhs.entityA && lhs.entityB == rhs.entityB) ||
+                    (lhs.entityA == rhs.entityB && lhs.entityB == rhs.entityA);
             }
             constexpr friend bool operator!=(const CollisionManifold& lhs, const CollisionManifold& rhs) {
                 return !(lhs == rhs);
@@ -53,11 +52,11 @@ namespace blb::ecs {
 
         std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
 
-        clv::EventHandle cubeColliderAddedHandle;
-        clv::EventHandle cubeColliderRemovedHandle;
+        garlic::EventHandle cubeColliderAddedHandle;
+        garlic::EventHandle cubeColliderRemovedHandle;
 
-        clv::EventHandle rigidBodyAddedHandle;
-        clv::EventHandle rigidBodyRemovedHandle;
+        garlic::EventHandle rigidBodyAddedHandle;
+        garlic::EventHandle rigidBodyRemovedHandle;
 
         std::unordered_set<CollisionManifold, ManifoldHasher> currentCollisions;
 
@@ -73,7 +72,7 @@ namespace blb::ecs {
 
         ~PhysicsSystem();
 
-        void registerToEvents(clv::EventDispatcher& dispatcher) override;
+        void registerToEvents(garlic::EventDispatcher& dispatcher) override;
 
         void preUpdate(World& world) override;
         void update(World& world, clv::utl::DeltaTime deltaTime) override;

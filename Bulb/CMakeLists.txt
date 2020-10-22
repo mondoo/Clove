@@ -42,8 +42,3 @@ target_link_libraries(
 		sndfile
 		stb
 )
-
-#Examples
-if(GAR_BUILD_EXAMPLES)
-	add_subdirectory(Examples)
-endif()

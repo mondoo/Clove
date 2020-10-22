@@ -39,11 +39,12 @@ target_link_libraries(
 	#Garlic
 	PUBLIC
 		Root.Definitions
+		Root.Delegate
+		Root.Event
+		Root.Log
+		Root.Memory
 
     #Cross platform
-    PUBLIC
-		spdlog
-
 	PRIVATE 
 		stb
 		glm
@@ -104,8 +105,8 @@ target_precompile_headers(
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsTypes.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/Maths.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsHelpers.hpp">
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Delegate/MultiCastDelegate.hpp">
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Delegate/SingleCastDelegate.hpp">
+		$<$<COMPILE_LANGUAGE:CXX>:"Root/Delegate/MultiCastDelegate.hpp">
+		$<$<COMPILE_LANGUAGE:CXX>:"Root/Delegate/SingleCastDelegate.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/DeltaTime.hpp">
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/Timer.hpp">
 )
@@ -118,7 +119,6 @@ target_compile_definitions(
 	PUBLIC
 		CLV_ENABLE_PROFILING=$<BOOL:${GAR_CLV_ENABLE_PROFILING}>
 		CLV_ENABLE_MEMORY_DEBUGGING=$<BOOL:${GAR_CLV_ENABLE_MEMORY_DEBUGGING}>
-		CLV_TRACK_MEMORY_ALLOCATIONS=$<BOOL:${GAR_TRACK_MEMORY_ALLOCATIONS}>
 		CLV_IMGUI_COMPATIBLE=$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>
 
 	#Libraries
@@ -127,8 +127,3 @@ target_compile_definitions(
 		GLM_FORCE_LEFT_HANDED
 		GLM_FORCE_DEPTH_ZERO_TO_ONE
 )
-
-#Examples
-if(GAR_BUILD_EXAMPLES)
-	add_subdirectory(Examples)
-endif()

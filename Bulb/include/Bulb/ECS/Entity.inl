@@ -22,8 +22,8 @@ namespace blb::ecs{
 	template<typename ComponentType>
 	bool Entity::hasComponent() const {
 		if(isValid()) {
-			return world->getComponent<ComponentType>(getID());
-		} else {
+            return world->hasComponent<ComponentType>(getID());
+        } else {
 			return false;
 		}
 	}

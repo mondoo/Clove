@@ -6,10 +6,6 @@ include(../../cmake/VendorHelpers.cmake)
 set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
 add_subdirectory_with_folder(${DependencyFolder} glm)
 
-#spdlog
-set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
-add_subdirectory_with_folder(${DependencyFolder} spdlog)
-
 #glslang
 set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")
 add_subdirectory_with_folder(${DependencyFolder}/glslang glslang)

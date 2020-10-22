@@ -1,11 +1,11 @@
 #include "Bulb/ECS/Components/AudioSourceComponent.hpp"
 
 #include <Clove/Audio/AudioBuffer.hpp>
-#include <Clove/Audio/AudioSource.hpp>
 #include <Clove/Audio/AudioFactory.hpp>
+#include <Clove/Audio/AudioSource.hpp>
 
 namespace blb::ecs {
-    AudioSourceComponent::AudioSourceComponent(clv::AudioFactory& factory){
+    AudioSourceComponent::AudioSourceComponent(clv::AudioFactory& factory) {
         source = factory.createAudioSource();
     }
 
@@ -15,8 +15,8 @@ namespace blb::ecs {
 
     AudioSourceComponent::~AudioSourceComponent() = default;
 
-    void AudioSourceComponent::setBuffer(const clv::AudioBuffer& buffer) {
-        source->setBuffer(buffer);
+    void AudioSourceComponent::setBuffer(std::shared_ptr<clv::AudioBuffer> buffer) {
+        source->setBuffer(std::move(buffer));
     }
 
     void AudioSourceComponent::queueBuffers(std::vector<std::shared_ptr<clv::AudioBuffer>> buffers) {
@@ -27,20 +27,20 @@ namespace blb::ecs {
         return source->unQueueBuffers(numToUnQueue);
     }
 
-	void AudioSourceComponent::play(PlaybackMode playback) {
+    void AudioSourceComponent::play(PlaybackMode playback) {
         source->setLooping(playback == PlaybackMode::Repeat);
         source->play();
-	}
+    }
 
-	void AudioSourceComponent::pause() {
+    void AudioSourceComponent::pause() {
         source->pause();
-	}
+    }
 
-	void AudioSourceComponent::resume() {
+    void AudioSourceComponent::resume() {
         source->play();
-	}
+    }
 
-	void AudioSourceComponent::stop() {
+    void AudioSourceComponent::stop() {
         source->stop();
-	}
+    }
 }

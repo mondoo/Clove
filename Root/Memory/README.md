@@ -1,0 +1,1 @@
+Memory library for Garlic. Contains several allocators used.

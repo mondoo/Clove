@@ -1,0 +1,54 @@
+#pragma once
+
+#include <cstddef>
+
+namespace garlic::inline root {
+    /**
+     * @brief A memory allocator that is good for temporary allocations.
+     * @details A StackAllocator allows any sized allocation but cannot free specific blocks of memory.
+     * Instead you must either free the entire allocator or free everything beyond a certain marker.
+     */
+    class StackAllocator {
+        //TYPES
+    public:
+        using Marker = size_t;
+
+        //VARIABLES
+    private:
+        std::byte* stack;
+        size_t stackSize = 0;
+        std::byte* top   = nullptr;
+
+        bool freeMemory = true;
+
+        //FUNCTIONS
+    public:
+        StackAllocator() = delete;
+        StackAllocator(size_t sizeBytes);
+        StackAllocator(std::byte* start, size_t sizeBytes);
+
+        StackAllocator(const StackAllocator& other) = delete;
+        StackAllocator(StackAllocator&& other) noexcept;
+
+        StackAllocator& operator=(const StackAllocator& other) = delete;
+        StackAllocator& operator=(StackAllocator&& other) noexcept;
+
+        ~StackAllocator();
+
+        /**
+         * @returns A marker of the current stack position of the allocator.
+         */
+        Marker markPosition();
+
+        void* alloc(size_t bytes);
+
+        /**
+         * @brief Free the entire allocator, effectively resetting the stack.
+         */
+        void free();
+        /**
+         * @brief Free everything allocated after the marker.
+         */
+        void free(Marker marker);
+    };
+}

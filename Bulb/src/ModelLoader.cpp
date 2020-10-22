@@ -66,7 +66,7 @@ namespace blb::ModelLoader {
                 return static_cast<rnd::JointIndexType>(i);
 			}
 		}
-        GARLIC_LOG(garlicLogContext, Log::Level::Debug, "{0}: Joint \"{1}\" has a parent but it couldn't be found in the skeleton", GARLIC_FUNCTION_NAME, jointName);
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "{0}: Joint \"{1}\" has a parent but it couldn't be found in the skeleton", GARLIC_FUNCTION_NAME, jointName);
 
 		return {};
 	}
@@ -230,7 +230,7 @@ namespace blb::ModelLoader {
 		Assimp::Importer importer;
         const aiScene* scene = openFile(modelFilePath.data(), importer);
 		if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
-			GARLIC_LOG(garlicLogContext, Log::Level::Error, "Assimp Error: {0}", importer.GetErrorString());
+			GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
 			return { meshes };
 		}
 
@@ -250,7 +250,7 @@ namespace blb::ModelLoader {
         Assimp::Importer importer;
         const aiScene* scene = openFile(modelFilePath.data(), importer);
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
-            GARLIC_LOG(garlicLogContext, Log::Level::Error, "Assimp Error: {0}", importer.GetErrorString());
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, nullptr, {} };
         }
 

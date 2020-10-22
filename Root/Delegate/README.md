@@ -1,0 +1,1 @@
+Wraps function pointers in an easy to use API.

@@ -7,9 +7,9 @@
 #elif GARLIC_PLATFORM_MACOS
 	//TODO: Metal
 #endif
-#include "Clove/Log.hpp"
 
 #include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace clv::gfx{
     std::unique_ptr<GraphicsDevice> createGraphicsDevice(API api, void* nativeWindow) {

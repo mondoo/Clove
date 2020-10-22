@@ -34,6 +34,6 @@
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Input/MouseButtonCodes.hpp"
-#include "Clove/Log.hpp"
+
 #include "Clove/Platform/Platform.hpp"
 #include "Clove/Platform/Window.hpp"
