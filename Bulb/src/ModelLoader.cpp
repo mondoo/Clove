@@ -265,7 +265,7 @@ namespace blb::ModelLoader {
         bool skeletonSet = false;
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
             aiMesh *mesh = scene->mMeshes[i];
-            // meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Animated));
+            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Animated));
 
             if(mesh->mNumBones <= 0 || skeletonSet) {
                 continue;
