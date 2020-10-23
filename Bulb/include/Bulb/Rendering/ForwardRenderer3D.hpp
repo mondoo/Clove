@@ -45,7 +45,7 @@ namespace blb::rnd {
             std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> pointShadowTransforms;
 
             std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> staticMeshes;
-            std::vector<std::tuple<std::shared_ptr<Mesh>, clv::mth::mat4f, std::array<clv::mth::mat4f, MAX_JOINTS>>> animatedMeshes
+            std::vector<std::tuple<std::shared_ptr<Mesh>, clv::mth::mat4f, std::array<clv::mth::mat4f, MAX_JOINTS>>> animatedMeshes;
         };
 
         //Objects that hold the state / data of each image (in flight)
@@ -131,7 +131,7 @@ namespace blb::rnd {
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D &operator=(ForwardRenderer3D const &other) = delete;
-        ForwardRenderer3D &operator                                  =(ForwardRenderer3D &&other) noexcept;
+        ForwardRenderer3D &operator=(ForwardRenderer3D &&other) noexcept;
 
         ~ForwardRenderer3D();
 
