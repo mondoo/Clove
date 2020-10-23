@@ -10,8 +10,8 @@
 #include <Clove/Graphics/DescriptorSet.hpp>
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Graphics/GraphicsImageView.hpp>
-#include <Clove/Log.hpp>
 #include <Clove/Platform/Window.hpp>
+#include <Root/Log/Log.hpp>
 
 using namespace clv::gfx;
 
@@ -349,7 +349,7 @@ namespace blb::rnd {
 
         if(needNewSwapchain || result == Result::Error_SwapchainOutOfDate || result == Result::Success_SwapchainSuboptimal) {
             recreateSwapchain();
-            GARLIC_LOG(garlicLogContext, clv::Log::Level::Debug, "Swapchain recreated at end of loop");
+            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Swapchain recreated at end of loop");
         }
 
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
