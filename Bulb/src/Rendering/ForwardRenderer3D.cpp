@@ -15,8 +15,10 @@
 
 using namespace clv::gfx;
 
-extern "C" const char mesh_v[];
-extern "C" const size_t mesh_vLength;
+extern "C" const char animatedmesh_v[];
+extern "C" const size_t animatedmesh_vLength;
+extern "C" const char staticmesh_v[];
+extern "C" const size_t staticmesh_vLength;
 extern "C" const char mesh_p[];
 extern "C" const size_t mesh_pLength;
 
@@ -258,7 +260,6 @@ namespace blb::rnd {
         currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
 
         currentImageData.commandBuffer->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
-        currentImageData.commandBuffer->bindPipelineObject(*pipelineObject);
 
         //We can just write the struct straight in as all the mappings are based off of it's layout
         currentImageData.uniformBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
@@ -268,8 +269,8 @@ namespace blb::rnd {
         currentImageData.lightingDescriptorSet->map(currentImageData.cubeShadowMapViews, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 4);
 
         //Bind the descriptor sets that all objects will use
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
 
         size_t const meshCount = std::size(currentFrameData.staticMeshes) + std::size(currentFrameData.animatedMeshes);
 
@@ -289,6 +290,7 @@ namespace blb::rnd {
         size_t meshIndex = 0;
 
         //Bind all static mesh data
+        currentImageData.commandBuffer->bindPipelineObject(*staticMeshPipelineObject);
         for(auto &&[mesh, transform] : currentFrameData.staticMeshes) {
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[meshIndex];
 
@@ -299,8 +301,8 @@ namespace blb::rnd {
             currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-            currentImageData.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
-            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+            currentImageData.commandBuffer->pushConstant(*staticMeshPipelineObject, Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
+            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
             currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
 
@@ -315,6 +317,7 @@ namespace blb::rnd {
         });
 
         //Bind all animated mesh data
+        currentImageData.commandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
         for(auto &&[mesh, transform, matrixPalet] : currentFrameData.animatedMeshes) {
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[meshIndex];
 
@@ -327,8 +330,8 @@ namespace blb::rnd {
             currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-            currentImageData.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
-            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+            currentImageData.commandBuffer->pushConstant(*staticMeshPipelineObject, Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
+            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
             currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
 
@@ -406,7 +409,7 @@ namespace blb::rnd {
 
         //Explicitly free resources to avoid problems when recreating the swap chain itself
         swapchain.reset();
-        pipelineObject.reset();
+        staticMeshPipelineObject.reset();
         swapChainFrameBuffers.clear();
         for(auto &imageData : inFlightImageData) {
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
@@ -633,7 +636,7 @@ namespace blb::rnd {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(mesh_v), mesh_vLength }),
+            .vertexShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmesh_v), staticmesh_vLength }),
             .fragmentShader     = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(mesh_p), mesh_pLength }),
             .vertexInput        = Vertex::getInputBindingDescriptor(),
             .vertexAttributes   = Vertex::getVertexAttributes(),
@@ -648,7 +651,12 @@ namespace blb::rnd {
             .pushConstants        = { modelPushConstant },
         };
 
-        pipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+        staticMeshPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+
+        pipelineDescriptor.vertexShader   = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmesh_v), animatedmesh_vLength }),
+        pipelineDescriptor.fragmentShader = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(mesh_p), mesh_pLength }),
+
+        animatedMeshPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
     void ForwardRenderer3D::createShadowMapPipeline() {

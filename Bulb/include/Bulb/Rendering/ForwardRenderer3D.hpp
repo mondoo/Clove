@@ -103,7 +103,8 @@ namespace blb::rnd {
 
         //Objects for the final colour render pass
         std::shared_ptr<clv::gfx::RenderPass> renderPass;
-        std::shared_ptr<clv::gfx::PipelineObject> pipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> staticMeshPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> animatedMeshPipelineObject;
 
         std::shared_ptr<clv::gfx::GraphicsImage> depthImage;
         std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
@@ -130,7 +131,7 @@ namespace blb::rnd {
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D &operator=(ForwardRenderer3D const &other) = delete;
-        ForwardRenderer3D &operator=(ForwardRenderer3D &&other) noexcept;
+        ForwardRenderer3D &operator                                  =(ForwardRenderer3D &&other) noexcept;
 
         ~ForwardRenderer3D();
 

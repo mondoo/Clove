@@ -2,7 +2,7 @@
 
 #include "Constants.glsl"
 
-layout(set = SET_MATERIAL, binding = 0) uniform sampler2D texSampler;
+layout(set = SET_MESH, binding = 0) uniform sampler2D texSampler;
 layout(set = SET_LIGHTING, binding = 3) uniform sampler2D directionalDepthSampler[MAX_LIGHTS];
 layout(set = SET_LIGHTING, binding = 4) uniform samplerCube pointLightDepthSampler[MAX_LIGHTS];
 
