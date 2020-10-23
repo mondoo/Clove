@@ -6,13 +6,13 @@ using namespace clv;
 using namespace clv::gfx;
 
 namespace blb::rnd {
-    Camera::Camera(Viewport viewport, const ProjectionMode projection)
+    Camera::Camera(Viewport viewport, ProjectionMode const projection)
         : viewport(std::move(viewport)) {
         setProjectionMode(projection);
     }
 
-    Camera::Camera(clv::plt::Window& window, const ProjectionMode projection) {
-        windowResizeHandle = window.onWindowResize.bind([this](const mth::vec2ui& size) {
+    Camera::Camera(clv::plt::Window &window, ProjectionMode const projection) {
+        windowResizeHandle = window.onWindowResize.bind([this](mth::vec2ui const &size) {
             setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
         });
 
@@ -20,9 +20,9 @@ namespace blb::rnd {
         setProjectionMode(projection);
     }
 
-    Camera::Camera(Camera&& other) noexcept = default;
+    Camera::Camera(Camera &&other) noexcept = default;
 
-    Camera& Camera::operator=(Camera&& other) noexcept = default;
+    Camera &Camera::operator=(Camera &&other) noexcept = default;
 
     Camera::~Camera() = default;
 
@@ -30,16 +30,16 @@ namespace blb::rnd {
         this->view = std::move(view);
     }
 
-    void Camera::setProjectionMode(const ProjectionMode mode) {
-        constexpr float orthographicSize = 15.0f;
-        const float othoZoom             = orthographicSize * zoomLevel;
+    void Camera::setProjectionMode(ProjectionMode const mode) {
+        float constexpr orthographicSize = 15.0f;
+        float const othoZoom             = orthographicSize * zoomLevel;
 
-        const float width  = static_cast<float>(viewport.width);
-        const float height = static_cast<float>(viewport.height);
-        const float aspect = height > 0.0f ? width / height : 0.0f;
+        float const width  = static_cast<float>(viewport.width);
+        float const height = static_cast<float>(viewport.height);
+        float const aspect = height > 0.0f ? width / height : 0.0f;
 
-        const float nearPlane = 0.5f;
-        const float farPlane  = 10000.0f;
+        float const nearPlane = 0.5f;
+        float const farPlane  = 10000.0f;
 
         currentProjectionMode = mode;
 
@@ -67,11 +67,11 @@ namespace blb::rnd {
         setProjectionMode(currentProjectionMode);
     }
 
-    const clv::mth::mat4f& Camera::getView() const {
+    clv::mth::mat4f const &Camera::getView() const {
         return view;
     }
 
-    const clv::mth::mat4f& Camera::getProjection() const {
+    clv::mth::mat4f const &Camera::getProjection() const {
         return projection;
     }
 
@@ -79,7 +79,7 @@ namespace blb::rnd {
         return currentProjectionMode;
     }
 
-    const Viewport& Camera::getViewport() const {
+    Viewport const &Camera::getViewport() const {
         return viewport;
     }
 }

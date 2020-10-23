@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Root/Delegate/DelegateHandle.hpp>
+
 namespace clv::plt {
     class Window;
 }
@@ -32,34 +34,34 @@ namespace blb::rnd {
 
         float zoomLevel = 1.0f;
 
-        clv::DelegateHandle windowResizeHandle;
+        garlic::DelegateHandle windowResizeHandle;
 
         //FUNCTIONS
     public:
         Camera() = delete;
-        Camera(Viewport viewport, const ProjectionMode projection);
-        Camera(clv::plt::Window& window, const ProjectionMode projection);
+        Camera(Viewport viewport, ProjectionMode const projection);
+        Camera(clv::plt::Window &window, ProjectionMode const projection);
 
-        Camera(const Camera& other) = delete;
-        Camera(Camera&& other) noexcept;
+        Camera(Camera const &other) = delete;
+        Camera(Camera &&other) noexcept;
 
-        Camera& operator=(const Camera& other) = delete;
-        Camera& operator=(Camera&& other) noexcept;
+        Camera &operator=(Camera const &other) = delete;
+        Camera &operator=(Camera &&other) noexcept;
 
         ~Camera();
 
         void setView(clv::mth::mat4f view);
-        void setProjectionMode(const ProjectionMode mode);
+        void setProjectionMode(ProjectionMode const mode);
 
         void setZoomLevel(float zoom);
 
         void setViewport(Viewport viewport);
 
-        const clv::mth::mat4f& getView() const;
-        const clv::mth::mat4f& getProjection() const;
+        clv::mth::mat4f const &getView() const;
+        clv::mth::mat4f const &getProjection() const;
 
         ProjectionMode getProjectionMode() const;
 
-        const Viewport& getViewport() const;
+        Viewport const &getViewport() const;
     };
 }

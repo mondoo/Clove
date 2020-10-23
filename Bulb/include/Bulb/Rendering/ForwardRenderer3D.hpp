@@ -7,6 +7,7 @@
 #include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Root/Delegate/DelegateHandle.hpp>
 
 namespace clv::plt {
     class Window;
@@ -74,7 +75,7 @@ namespace blb::rnd {
 
         //VARIABLES
     private:
-        clv::DelegateHandle windowResizeHandle;
+        garlic::DelegateHandle windowResizeHandle;
         clv::mth::vec2ui windowSize;
         bool needNewSwapchain{ false };
 
@@ -122,13 +123,13 @@ namespace blb::rnd {
         //FUNCTIONS
     public:
         ForwardRenderer3D() = delete;
-        ForwardRenderer3D(clv::plt::Window& window, clv::gfx::API const api);
+        ForwardRenderer3D(clv::plt::Window &window, clv::gfx::API const api);
 
-        ForwardRenderer3D(ForwardRenderer3D const& other) = delete;
+        ForwardRenderer3D(ForwardRenderer3D const &other) = delete;
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
-        ForwardRenderer3D& operator=(ForwardRenderer3D const& other) = delete;
-        ForwardRenderer3D& operator                                  =(ForwardRenderer3D&& other) noexcept;
+        ForwardRenderer3D &operator=(ForwardRenderer3D const &other) = delete;
+        ForwardRenderer3D &operator=(ForwardRenderer3D &&other) noexcept;
 
         ~ForwardRenderer3D();
 
@@ -137,22 +138,22 @@ namespace blb::rnd {
         /**
          * @brief Submit the active camera the renderer will use.
          */
-        void submitCamera(Camera const& camera, clv::mth::vec3f position);
+        void submitCamera(Camera const &camera, clv::mth::vec3f position);
 
         void submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);
         void submitAnimatedMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);
-        void submitLight(DirectionalLight const& light);
-        void submitLight(PointLight const& light);
+        void submitLight(DirectionalLight const &light);
+        void submitLight(PointLight const &light);
 
-        void submitWidget(std::shared_ptr<Sprite> const& widget);
-        void submitText(std::shared_ptr<Sprite> const& text);
+        void submitWidget(std::shared_ptr<Sprite> const &widget);
+        void submitText(std::shared_ptr<Sprite> const &text);
 
         void end();
 
-        std::shared_ptr<clv::gfx::GraphicsFactory> const& getGraphicsFactory() const;
+        std::shared_ptr<clv::gfx::GraphicsFactory> const &getGraphicsFactory() const;
 
     private:
-        void onWindowResize(clv::mth::vec2ui const& size);
+        void onWindowResize(clv::mth::vec2ui const &size);
         void recreateSwapchain();
 
         void createRenderpass();
@@ -168,6 +169,6 @@ namespace blb::rnd {
         void createSwapchainFrameBuffers();
 
         std::shared_ptr<clv::gfx::GraphicsBuffer> createUniformBuffer();
-        std::shared_ptr<clv::gfx::DescriptorPool> createDescriptorPool(std::unordered_map<clv::gfx::DescriptorType, uint32_t> const& bindingCount, uint32_t const setCount);
+        std::shared_ptr<clv::gfx::DescriptorPool> createDescriptorPool(std::unordered_map<clv::gfx::DescriptorType, uint32_t> const &bindingCount, uint32_t const setCount);
     };
 }
