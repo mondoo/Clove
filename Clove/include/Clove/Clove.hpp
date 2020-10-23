@@ -5,8 +5,6 @@
 #include "Clove/Audio/AudioFactory.hpp"
 #include "Clove/Audio/AudioListener.hpp"
 #include "Clove/Audio/AudioSource.hpp"
-#include "Clove/Event/EventDispatcher.hpp"
-#include "Clove/Event/EventHandle.hpp"
 #include "Clove/Exception/CloveException.hpp"
 #include "Clove/Graphics/DescriptorPool.hpp"
 #include "Clove/Graphics/DescriptorSet.hpp"
@@ -34,6 +32,5 @@
 #include "Clove/Input/Keyboard.hpp"
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Input/MouseButtonCodes.hpp"
-
 #include "Clove/Platform/Platform.hpp"
 #include "Clove/Platform/Window.hpp"
