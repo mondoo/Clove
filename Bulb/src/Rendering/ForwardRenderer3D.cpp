@@ -105,6 +105,7 @@ namespace blb::rnd {
 
     void ForwardRenderer3D::begin() {
         currentFrameData.staticMeshes.clear();
+        currentFrameData.animatedMeshes.clear();
         currentFrameData.bufferData.numLights.numDirectional = 0;
         currentFrameData.bufferData.numLights.numPoint       = 0;
     }
