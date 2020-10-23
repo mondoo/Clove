@@ -16,7 +16,7 @@ namespace blb::rnd {
 	 * @brief Defines a mapping between set slots
 	 */
     enum class DescriptorSetSlots {
-        Material = 0,
+        Mesh     = 0,
         View     = 1,
         Lighting = 2,
     };

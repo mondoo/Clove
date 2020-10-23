@@ -7,10 +7,10 @@
 #include <Clove/Graphics/Shader.hpp>
 
 namespace blb::rnd {
-    std::unordered_map<DescriptorSetSlots, std::shared_ptr<clv::gfx::DescriptorSetLayout>> createDescriptorSetLayouts(clv::gfx::GraphicsFactory& factory) {
+    std::unordered_map<DescriptorSetSlots, std::shared_ptr<clv::gfx::DescriptorSetLayout>> createDescriptorSetLayouts(clv::gfx::GraphicsFactory &factory) {
         std::unordered_map<DescriptorSetSlots, std::shared_ptr<clv::gfx::DescriptorSetLayout>> setLayouts;
 
-        //MATERIAL SET
+        //MESH SET
         {
             clv::gfx::DescriptorSetBindingInfo textureBinding{
                 .binding   = 0,
@@ -19,9 +19,17 @@ namespace blb::rnd {
                 .stage     = clv::gfx::Shader::Stage::Pixel,
             };
 
-            setLayouts[DescriptorSetSlots::Material] = factory.createDescriptorSetLayout(clv::gfx::DescriptorSetLayout::Descriptor{
+            clv::gfx::DescriptorSetBindingInfo skeletonBinding{
+                .binding   = 1,
+                .type      = clv::gfx::DescriptorType::UniformBuffer,
+                .arraySize = 1,
+                .stage     = clv::gfx::Shader::Stage::Vertex,
+            };
+
+            setLayouts[DescriptorSetSlots::Mesh] = factory.createDescriptorSetLayout(clv::gfx::DescriptorSetLayout::Descriptor{
                 .bindings = {
                     std::move(textureBinding),
+                    std::move(skeletonBinding),
                 },
             });
         }
@@ -100,10 +108,10 @@ namespace blb::rnd {
         return setLayouts;
     }
 
-    std::unordered_map<clv::gfx::DescriptorType, uint32_t> countDescriptorBindingTypes(const clv::gfx::DescriptorSetLayout& descriptorSetLayout) {
+    std::unordered_map<clv::gfx::DescriptorType, uint32_t> countDescriptorBindingTypes(const clv::gfx::DescriptorSetLayout &descriptorSetLayout) {
         std::unordered_map<clv::gfx::DescriptorType, uint32_t> counts;
-        const auto& descriptor = descriptorSetLayout.getDescriptor();
-        for(auto& binding : descriptor.bindings) {
+        const auto &descriptor = descriptorSetLayout.getDescriptor();
+        for(auto &binding : descriptor.bindings) {
             counts[binding.type]++;
         }
 

@@ -59,7 +59,7 @@ namespace blb::rnd {
             //Descriptor pool for sets that change per frame
             std::shared_ptr<clv::gfx::DescriptorPool> frameDescriptorPool;
             //Descriptor pool for sets that are for a single mesh's material
-            std::shared_ptr<clv::gfx::DescriptorPool> materialDescriptorPool;
+            std::shared_ptr<clv::gfx::DescriptorPool> meshDescriptorPool;
 
             std::shared_ptr<clv::gfx::DescriptorSet> viewDescriptorSet;
             std::shared_ptr<clv::gfx::DescriptorSet> lightingDescriptorSet;

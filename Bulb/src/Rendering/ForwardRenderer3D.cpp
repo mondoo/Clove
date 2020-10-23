@@ -271,35 +271,64 @@ namespace blb::rnd {
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
 
-        size_t const meshCount = std::size(currentFrameData.staticMeshes);
+        size_t const meshCount = std::size(currentFrameData.staticMeshes) + std::size(currentFrameData.animatedMeshes);
 
         //Allocate a descriptor set for each mesh to be drawn
-        if(currentImageData.materialDescriptorPool == nullptr || currentImageData.materialDescriptorPool->getDescriptor().maxSets < meshCount) {
-            auto materialSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Material]);
-            for(auto &[key, val] : materialSetBindingCount) {
+        if(currentImageData.meshDescriptorPool == nullptr || currentImageData.meshDescriptorPool->getDescriptor().maxSets < meshCount) {
+            auto meshSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Mesh]);
+            for(auto &[key, val] : meshSetBindingCount) {
                 val *= meshCount;
             }
-            currentImageData.materialDescriptorPool = createDescriptorPool(materialSetBindingCount, meshCount);
+            currentImageData.meshDescriptorPool = createDescriptorPool(meshSetBindingCount, meshCount);
         }
 
-        currentImageData.materialDescriptorPool->reset();
-        std::vector<std::shared_ptr<DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[DescriptorSetSlots::Material]);
-        std::vector<std::shared_ptr<DescriptorSet>> materialSets = currentImageData.materialDescriptorPool->allocateDescriptorSets(layouts);
+        currentImageData.meshDescriptorPool->reset();
+        std::vector<std::shared_ptr<DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[DescriptorSetSlots::Mesh]);
+        std::vector<std::shared_ptr<DescriptorSet>> meshSets = currentImageData.meshDescriptorPool->allocateDescriptorSets(layouts);
 
-        //Bind all mesh data
         size_t meshIndex = 0;
+
+        //Bind all static mesh data
         for(auto &&[mesh, transform] : currentFrameData.staticMeshes) {
-            std::shared_ptr<DescriptorSet> &materialDescriptorSet = materialSets[meshIndex];
+            std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[meshIndex];
 
             clv::mth::mat4f modelData[]{ transform, clv::mth::inverse(clv::mth::transpose(transform)) };
+
+            meshDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
 
             currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-            materialDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
             currentImageData.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
+            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
-            currentImageData.commandBuffer->bindDescriptorSet(*materialDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Material));
+            currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
+
+            ++meshIndex;
+        }
+
+        auto paletBuffer = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
+            .size        = sizeof(clv::mth::mat4f) * MAX_JOINTS,
+            .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
+            .sharingMode = SharingMode::Exclusive,
+            .memoryType  = MemoryType::SystemMemory,
+        });
+
+        //Bind all animated mesh data
+        for(auto &&[mesh, transform, matrixPalet] : currentFrameData.animatedMeshes) {
+            std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[meshIndex];
+
+            paletBuffer->write(std::data(matrixPalet), 0, sizeof(matrixPalet));
+            clv::mth::mat4f modelData[]{ transform, clv::mth::inverse(clv::mth::transpose(transform)) };
+
+            meshDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
+            meshDescriptorSet->map(*paletBuffer, 0, sizeof(matrixPalet), 1);
+
+            currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
+            currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
+
+            currentImageData.commandBuffer->pushConstant(*pipelineObject, Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
+            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
             currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
 
