@@ -54,7 +54,8 @@ namespace blb::rnd {
             std::shared_ptr<clv::gfx::GraphicsCommandBuffer> shadowMapCommandBuffer;
             std::shared_ptr<clv::gfx::GraphicsCommandBuffer> cubeShadowMapCommandBuffer;
 
-            std::shared_ptr<clv::gfx::GraphicsBuffer> uniformBuffer;
+            std::shared_ptr<clv::gfx::GraphicsBuffer> uniformBuffer;            //Holds data used across all meshes
+            std::vector<std::unique_ptr<clv::gfx::GraphicsBuffer>> paletBuffers;//Holds the matrix palets for each mesh
 
             //Descriptor pool for sets that change per frame
             std::shared_ptr<clv::gfx::DescriptorPool> frameDescriptorPool;
@@ -170,7 +171,6 @@ namespace blb::rnd {
 
         void createSwapchainFrameBuffers();
 
-        std::shared_ptr<clv::gfx::GraphicsBuffer> createUniformBuffer();
         std::shared_ptr<clv::gfx::DescriptorPool> createDescriptorPool(std::unordered_map<clv::gfx::DescriptorType, uint32_t> const &bindingCount, uint32_t const setCount);
     };
 }

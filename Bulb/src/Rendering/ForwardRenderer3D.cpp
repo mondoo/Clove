@@ -273,7 +273,10 @@ namespace blb::rnd {
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
 
-        size_t const meshCount = std::size(currentFrameData.staticMeshes) + std::size(currentFrameData.animatedMeshes);
+        size_t const staticMeshCount   = std::size(currentFrameData.staticMeshes);
+        size_t const animatedMeshCount = std::size(currentFrameData.animatedMeshes);
+
+        size_t const meshCount = staticMeshCount + animatedMeshCount;
 
         //Allocate a descriptor set for each mesh to be drawn
         if(currentImageData.meshDescriptorPool == nullptr || currentImageData.meshDescriptorPool->getDescriptor().maxSets < meshCount) {
@@ -310,23 +313,28 @@ namespace blb::rnd {
             ++meshIndex;
         }
 
-        auto paletBuffer = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
-            .size        = sizeof(clv::mth::mat4f) * MAX_JOINTS,
-            .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
-            .sharingMode = SharingMode::Exclusive,
-            .memoryType  = MemoryType::SystemMemory,
-        });
-
         //Bind all animated mesh data
+        if(currentImageData.paletBuffers.capacity() < animatedMeshCount) {
+            currentImageData.paletBuffers.resize(animatedMeshCount);
+        }
         currentImageData.commandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
-        for(auto &&[mesh, transform, matrixPalet] : currentFrameData.animatedMeshes) {
+        for(size_t animatedMeshIndex = 0; auto &&[mesh, transform, matrixPalet] : currentFrameData.animatedMeshes) {
+            if(currentImageData.paletBuffers[animatedMeshIndex] == nullptr) {
+                currentImageData.paletBuffers[animatedMeshIndex] = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
+                    .size        = sizeof(clv::mth::mat4f) * MAX_JOINTS,
+                    .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
+                    .sharingMode = SharingMode::Exclusive,
+                    .memoryType  = MemoryType::SystemMemory,
+                });
+            }
+
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[meshIndex];
 
-            paletBuffer->write(std::data(matrixPalet), 0, sizeof(matrixPalet));
+            currentImageData.paletBuffers[animatedMeshIndex]->write(std::data(matrixPalet), 0, sizeof(matrixPalet));
             clv::mth::mat4f modelData[]{ transform, clv::mth::inverse(clv::mth::transpose(transform)) };
 
             meshDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
-            meshDescriptorSet->map(*paletBuffer, 0, sizeof(matrixPalet), 1);
+            meshDescriptorSet->map(*currentImageData.paletBuffers[animatedMeshIndex], 0, sizeof(matrixPalet), 1);
 
             currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
@@ -337,6 +345,7 @@ namespace blb::rnd {
             currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
 
             ++meshIndex;
+            ++animatedMeshIndex;
         }
 
         currentImageData.commandBuffer->endRenderPass();
@@ -445,7 +454,12 @@ namespace blb::rnd {
             imageData.cubeShadowMapCommandBuffer = graphicsQueue->allocateCommandBuffer();
 
             //Create uniform buffers
-            imageData.uniformBuffer = createUniformBuffer();
+            imageData.uniformBuffer = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
+                .size        = sizeof(FrameData),
+                .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
+                .sharingMode = SharingMode::Exclusive,
+                .memoryType  = MemoryType::SystemMemory,
+            });
 
             //Allocate frame scope descriptor Sets
             imageData.frameDescriptorPool = createDescriptorPool(bindingCounts, totalSets);
@@ -729,15 +743,6 @@ namespace blb::rnd {
                 .height      = swapchain->getExtent().y,
             }));
         }
-    }
-
-    std::shared_ptr<GraphicsBuffer> ForwardRenderer3D::createUniformBuffer() {
-        return graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
-            .size        = sizeof(FrameData),
-            .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
-            .sharingMode = SharingMode::Exclusive,
-            .memoryType  = MemoryType::SystemMemory,
-        });
     }
 
     std::shared_ptr<DescriptorPool> ForwardRenderer3D::createDescriptorPool(std::unordered_map<DescriptorType, uint32_t> const &bindingCount, const uint32_t setCount) {
