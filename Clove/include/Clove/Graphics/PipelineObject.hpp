@@ -11,7 +11,8 @@ namespace clv::gfx {
         R32_SFLOAT,
         R32G32_SFLOAT,
         R32G32B32_SFLOAT,
-        R32G32B32A32_SFLOAT
+        R32G32B32A32_SFLOAT,
+        R32G32B32A32_SINT,
     };
 
     struct VertexInputBindingDescriptor {

@@ -8,6 +8,8 @@ namespace blb::rnd {
         clv::mth::vec3f normal;
         clv::mth::vec2f texCoord;
         clv::mth::vec3f colour;
+        clv::mth::vec4i jointIds;
+        clv::mth::vec4f weights;
 
         static clv::gfx::VertexInputBindingDescriptor getInputBindingDescriptor() {
             clv::gfx::VertexInputBindingDescriptor descriptor{};
@@ -40,6 +42,16 @@ namespace blb::rnd {
             attributes[3].location = 3;
             attributes[3].format   = clv::gfx::VertexAttributeFormat::R32G32B32_SFLOAT;
             attributes[3].offset   = offsetof(Vertex, colour);
+
+            attributes[4].binding  = 0;
+            attributes[4].location = 4;
+            attributes[4].format   = clv::gfx::VertexAttributeFormat::R32G32B32A32_SINT;
+            attributes[4].offset   = offsetof(Vertex, jointIds);
+
+            attributes[5].binding  = 0;
+            attributes[5].location = 5;
+            attributes[5].format   = clv::gfx::VertexAttributeFormat::R32G32B32A32_SFLOAT;
+            attributes[5].offset   = offsetof(Vertex, weights);
 
             return attributes;
         }

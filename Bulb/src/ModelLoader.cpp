@@ -174,20 +174,20 @@ namespace blb::ModelLoader {
                 vertices[i].colour = { 1.0f, 1.0f, 1.0f };
             }
             if(meshType == MeshType::Animated) {
-                //TODO
-                /*mth::vec4i& jointIds = vertexBufferData[i].getAttribute<gfx::VertexElementType::jointIds>();
-                mth::vec4f& weights  = vertexBufferData[i].getAttribute<gfx::VertexElementType::weights>();
-                const std::vector<std::pair<rnd::JointIndexType, float>>& weightPairs = vertWeightPairs[i];
+                mth::vec4i &jointIds = vertices[i].jointIds;
+                mth::vec4f &weights  = vertices[i].weights;
 
-                for(size_t j = 0; j < 4; ++j){
+                const std::vector<std::pair<rnd::JointIndexType, float>> &weightPairs = vertWeightPairs[i];
+
+                for(size_t j = 0; j < 4; ++j) {
                     if(j < weightPairs.size()) {
                         jointIds[j] = weightPairs[j].first;
                         weights[j]  = weightPairs[j].second;
                     } else {
                         jointIds[j] = 0;
                         weights[j]  = 0.0f;
-					}
-				}*/
+                    }
+                }
             }
         }
 

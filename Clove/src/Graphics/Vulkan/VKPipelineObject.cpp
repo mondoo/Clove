@@ -20,6 +20,8 @@ namespace clv::gfx::vk {
                 return VK_FORMAT_R32G32B32_SFLOAT;
             case VertexAttributeFormat::R32G32B32A32_SFLOAT:
                 return VK_FORMAT_R32G32B32A32_SFLOAT;
+            case VertexAttributeFormat::R32G32B32A32_SINT:
+                return VK_FORMAT_R32G32B32A32_SINT;
             default:
                 GARLIC_ASSERT(false, "{0}: Unkown format passed", GARLIC_FUNCTION_NAME_PRETTY);
                 return VK_FORMAT_UNDEFINED;
