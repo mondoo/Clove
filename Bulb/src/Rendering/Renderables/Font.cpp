@@ -2,7 +2,6 @@
 
 #include <Clove/Graphics/GraphicsFactory.hpp>
 //#include <Clove/Graphics/Texture.hpp>
-#include <Clove/Graphics/Texture.hpp>
 #include <Root/Log/Log.hpp>
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -49,10 +48,10 @@ namespace blb::rnd {
             ftLibReference = ftLib.lock();
         }
 
-        face = createFace({ reinterpret_cast<const std::byte*>(roboto_black), roboto_blackLength });
+        face = createFace({ reinterpret_cast<const std::byte *>(roboto_black), roboto_blackLength });
     }
 
-    Font::Font(const std::string& filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
+    Font::Font(const std::string &filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
         : Font(std::move(graphicsFactory)) {
         face = createFace(filePath);
     }
@@ -62,7 +61,7 @@ namespace blb::rnd {
         face = createFace(std::move(bytes));
     }
 
-    Font::Font(const Font& other)
+    Font::Font(const Font &other)
         : face(nullptr, nullptr) {
         graphicsFactory = other.graphicsFactory;
         ftLibReference  = other.ftLibReference;
@@ -70,9 +69,9 @@ namespace blb::rnd {
         face = copyFace(other.face.get());
     }
 
-    Font::Font(Font&& other) noexcept = default;
+    Font::Font(Font &&other) noexcept = default;
 
-    Font& Font::operator=(const Font& other) {
+    Font &Font::operator=(const Font &other) {
         graphicsFactory = other.graphicsFactory;
         ftLibReference  = other.ftLibReference;
 
@@ -81,7 +80,7 @@ namespace blb::rnd {
         return *this;
     }
 
-    Font& Font::operator=(Font&& other) noexcept = default;
+    Font &Font::operator=(Font &&other) noexcept = default;
 
     Font::~Font() = default;
 
@@ -98,7 +97,7 @@ namespace blb::rnd {
             mth::vec2f{ face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 }
         };
 
-        unsigned char* faceBuffer = face->glyph->bitmap.buffer;
+        unsigned char *faceBuffer = face->glyph->bitmap.buffer;
 
         if(faceBuffer == nullptr) {
             return glyph;
@@ -119,7 +118,7 @@ namespace blb::rnd {
         return glyph;
     }
 
-    Font::FacePtr Font::createFace(const std::string& filePath) {
+    Font::FacePtr Font::createFace(const std::string &filePath) {
         FT_Face face;
         if(FT_New_Face(ftLibReference.get(), filePath.c_str(), 0, &face) != FT_Err_Ok) {
             GARLIC_ASSERT(false, "Could not load font");
@@ -130,7 +129,7 @@ namespace blb::rnd {
 
     Font::FacePtr Font::createFace(std::span<const std::byte> bytes) {
         FT_Face face;
-        if(FT_New_Memory_Face(ftLibReference.get(), reinterpret_cast<const unsigned char*>(bytes.data()), bytes.size_bytes(), 0, &face) != FT_Err_Ok) {
+        if(FT_New_Memory_Face(ftLibReference.get(), reinterpret_cast<const unsigned char *>(bytes.data()), bytes.size_bytes(), 0, &face) != FT_Err_Ok) {
             GARLIC_ASSERT(false, "Could not load font");
         }
 
