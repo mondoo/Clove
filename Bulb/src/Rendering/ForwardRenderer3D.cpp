@@ -31,7 +31,7 @@ extern "C" const char gencubeshadowmap_p[];
 extern "C" const size_t gencubeshadowmap_pLength;
 
 namespace blb::rnd {
-    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window& window, API const api) {
+    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window &window, API const api) {
         windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
         windowSize         = window.getSize();
 
@@ -57,19 +57,19 @@ namespace blb::rnd {
         recreateSwapchain();//Also creates the pipeline for the final colour
 
         //Create semaphores for frame synchronisation
-        for(auto& shadowFinishedSemaphore : shadowFinishedSemaphores) {
+        for(auto &shadowFinishedSemaphore : shadowFinishedSemaphores) {
             shadowFinishedSemaphore = graphicsFactory->createSemaphore();
         }
-        for(auto& cubeShadowFinishedSemaphore : cubeShadowFinishedSemaphores) {
+        for(auto &cubeShadowFinishedSemaphore : cubeShadowFinishedSemaphores) {
             cubeShadowFinishedSemaphore = graphicsFactory->createSemaphore();
         }
-        for(auto& renderFinishedSemaphore : renderFinishedSemaphores) {
+        for(auto &renderFinishedSemaphore : renderFinishedSemaphores) {
             renderFinishedSemaphore = graphicsFactory->createSemaphore();
         }
-        for(auto& imageAvailableSemaphore : imageAvailableSemaphores) {
+        for(auto &imageAvailableSemaphore : imageAvailableSemaphores) {
             imageAvailableSemaphore = graphicsFactory->createSemaphore();
         }
-        for(auto& inFlightFence : inFlightFences) {
+        for(auto &inFlightFence : inFlightFences) {
             inFlightFence = graphicsFactory->createFence({ true });
         }
         imagesInFlight.resize(swapchain->getImageViews().size());
@@ -87,7 +87,7 @@ namespace blb::rnd {
 
     //ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;
 
-    ForwardRenderer3D& ForwardRenderer3D::operator=(ForwardRenderer3D&& other) noexcept = default;
+    ForwardRenderer3D &ForwardRenderer3D::operator=(ForwardRenderer3D &&other) noexcept = default;
 
     ForwardRenderer3D::~ForwardRenderer3D() {
         //Wait for an idle device before shutting down so resources aren't freed while in use
@@ -95,19 +95,19 @@ namespace blb::rnd {
 
         //Reset these manually as they would fail after the device has been destroyed (how to solve this?)
         sampler.reset();
-        for(auto& imageData : inFlightImageData) {
+        for(auto &imageData : inFlightImageData) {
             imageData.uniformBuffer.reset();
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
         }
     }
 
     void ForwardRenderer3D::begin() {
-        currentFrameData.meshes.clear();
+        currentFrameData.staticMeshes.clear();
         currentFrameData.bufferData.numLights.numDirectional = 0;
         currentFrameData.bufferData.numLights.numPoint       = 0;
     }
 
-    void ForwardRenderer3D::submitCamera(Camera const& camera, clv::mth::vec3f position) {
+    void ForwardRenderer3D::submitCamera(Camera const &camera, clv::mth::vec3f position) {
         currentFrameData.bufferData.viewData.view       = camera.getView();
         currentFrameData.bufferData.viewData.projection = camera.getProjection();
 
@@ -115,30 +115,31 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform) {
-        currentFrameData.meshes.push_back({ std::move(mesh), std::move(transform) });
+        currentFrameData.staticMeshes.push_back({ std::move(mesh), std::move(transform) });
     }
 
-    void ForwardRenderer3D::submitAnimatedMesh(std::shared_ptr<rnd::Mesh> mesh, clv::mth::mat4f transform) {
+    void ForwardRenderer3D::submitAnimatedMesh(std::shared_ptr<rnd::Mesh> mesh, clv::mth::mat4f transform, std::array<clv::mth::mat4f, blb::rnd::MAX_JOINTS> matrixPalet) {
+        currentFrameData.animatedMeshes.push_back({ std::move(mesh), std::move(transform), std::move(matrixPalet) });
     }
 
-    void ForwardRenderer3D::submitLight(DirectionalLight const& light) {
+    void ForwardRenderer3D::submitLight(DirectionalLight const &light) {
         uint32_t const lightIndex = currentFrameData.bufferData.numLights.numDirectional++;
 
         currentFrameData.bufferData.lights.directionalLights[lightIndex]    = light.data;
         currentFrameData.bufferData.directionalShadowTransforms[lightIndex] = light.shadowTransform;
     }
 
-    void ForwardRenderer3D::submitLight(PointLight const& light) {
+    void ForwardRenderer3D::submitLight(PointLight const &light) {
         uint32_t const lightIndex = currentFrameData.bufferData.numLights.numPoint++;
 
         currentFrameData.bufferData.lights.pointLights[lightIndex] = light.data;
         currentFrameData.pointShadowTransforms[lightIndex]         = light.shadowTransforms;
     }
 
-    void ForwardRenderer3D::submitWidget(std::shared_ptr<Sprite> const& widget) {
+    void ForwardRenderer3D::submitWidget(std::shared_ptr<Sprite> const &widget) {
     }
 
-    void ForwardRenderer3D::submitText(std::shared_ptr<Sprite> const& text) {
+    void ForwardRenderer3D::submitText(std::shared_ptr<Sprite> const &text) {
     }
 
     void ForwardRenderer3D::end() {
@@ -168,7 +169,7 @@ namespace blb::rnd {
 
         inFlightFences[currentFrame]->reset();
 
-        ImageData& currentImageData = inFlightImageData[imageIndex];
+        ImageData &currentImageData = inFlightImageData[imageIndex];
 
         //Record our command buffers
         RenderArea renderArea{};
@@ -197,7 +198,7 @@ namespace blb::rnd {
             currentImageData.shadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
 
             if(i < currentFrameData.bufferData.numLights.numDirectional) {
-                for(auto&& [mesh, transform] : currentFrameData.meshes) {
+                for(auto &&[mesh, transform] : currentFrameData.staticMeshes) {
                     clv::mth::mat4f const pushConstantData[]{ transform, currentFrameData.bufferData.directionalShadowTransforms[i] };
 
                     currentImageData.shadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
@@ -223,7 +224,7 @@ namespace blb::rnd {
                 currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
 
                 if(i < currentFrameData.bufferData.numLights.numPoint) {
-                    for(auto&& [mesh, transform] : currentFrameData.meshes) {
+                    for(auto &&[mesh, transform] : currentFrameData.staticMeshes) {
                         clv::mth::mat4f const vertPushConstantData[]{ transform, currentFrameData.pointShadowTransforms[i][j] };
                         struct {
                             clv::mth::vec3f pos{};
@@ -270,12 +271,12 @@ namespace blb::rnd {
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *pipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
 
-        size_t const meshCount = std::size(currentFrameData.meshes);
+        size_t const meshCount = std::size(currentFrameData.staticMeshes);
 
         //Allocate a descriptor set for each mesh to be drawn
         if(currentImageData.materialDescriptorPool == nullptr || currentImageData.materialDescriptorPool->getDescriptor().maxSets < meshCount) {
             auto materialSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Material]);
-            for(auto& [key, val] : materialSetBindingCount) {
+            for(auto &[key, val] : materialSetBindingCount) {
                 val *= meshCount;
             }
             currentImageData.materialDescriptorPool = createDescriptorPool(materialSetBindingCount, meshCount);
@@ -287,8 +288,8 @@ namespace blb::rnd {
 
         //Bind all mesh data
         size_t meshIndex = 0;
-        for(auto&& [mesh, transform] : currentFrameData.meshes) {
-            std::shared_ptr<DescriptorSet>& materialDescriptorSet = materialSets[meshIndex];
+        for(auto &&[mesh, transform] : currentFrameData.staticMeshes) {
+            std::shared_ptr<DescriptorSet> &materialDescriptorSet = materialSets[meshIndex];
 
             clv::mth::mat4f modelData[]{ transform, clv::mth::inverse(clv::mth::transpose(transform)) };
 
@@ -355,11 +356,11 @@ namespace blb::rnd {
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
 
-    std::shared_ptr<GraphicsFactory> const& ForwardRenderer3D::getGraphicsFactory() const {
+    std::shared_ptr<GraphicsFactory> const &ForwardRenderer3D::getGraphicsFactory() const {
         return graphicsFactory;
     }
 
-    void ForwardRenderer3D::onWindowResize(clv::mth::vec2ui const& size) {
+    void ForwardRenderer3D::onWindowResize(clv::mth::vec2ui const &size) {
         windowSize       = size;
         needNewSwapchain = true;
     }
@@ -378,7 +379,7 @@ namespace blb::rnd {
         swapchain.reset();
         pipelineObject.reset();
         swapChainFrameBuffers.clear();
-        for(auto& imageData : inFlightImageData) {
+        for(auto &imageData : inFlightImageData) {
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
         }
 
@@ -404,7 +405,7 @@ namespace blb::rnd {
         auto bindingCounts = viewSetBindingCount;
         bindingCounts.merge(lightingSetBindingCount);
 
-        for(auto& imageData : inFlightImageData) {
+        for(auto &imageData : inFlightImageData) {
             //Create command buffers
             imageData.commandBuffer              = graphicsQueue->allocateCommandBuffer();
             imageData.shadowMapCommandBuffer     = graphicsQueue->allocateCommandBuffer();
@@ -592,7 +593,7 @@ namespace blb::rnd {
     void ForwardRenderer3D::createPipeline() {
         std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayoutsVector{};
         descriptorSetLayoutsVector.reserve(std::size(descriptorSetLayouts));
-        for(auto&& [key, layout] : descriptorSetLayouts) {
+        for(auto &&[key, layout] : descriptorSetLayouts) {
             descriptorSetLayoutsVector.push_back(layout);
         }
 
@@ -603,8 +604,8 @@ namespace blb::rnd {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(mesh_v), mesh_vLength }),
-            .fragmentShader     = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(mesh_p), mesh_pLength }),
+            .vertexShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(mesh_v), mesh_vLength }),
+            .fragmentShader     = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(mesh_p), mesh_pLength }),
             .vertexInput        = Vertex::getInputBindingDescriptor(),
             .vertexAttributes   = Vertex::getVertexAttributes(),
             .viewportDescriptor = {
@@ -634,8 +635,8 @@ namespace blb::rnd {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(genshadowmap_v), genshadowmap_vLength }),
-            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(genshadowmap_p), genshadowmap_pLength }),
+            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(genshadowmap_v), genshadowmap_vLength }),
+            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(genshadowmap_p), genshadowmap_pLength }),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = Vertex::getVertexAttributes(),
             .viewportDescriptor   = viewScissorArea,
@@ -667,8 +668,8 @@ namespace blb::rnd {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(gencubeshadowmap_v), gencubeshadowmap_vLength }),
-            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const*>(gencubeshadowmap_p), gencubeshadowmap_pLength }),
+            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(gencubeshadowmap_v), gencubeshadowmap_vLength }),
+            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(gencubeshadowmap_p), gencubeshadowmap_pLength }),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = Vertex::getVertexAttributes(),
             .viewportDescriptor   = viewScissorArea,
@@ -682,7 +683,7 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::createSwapchainFrameBuffers() {
-        for(auto& swapChainImageView : swapchain->getImageViews()) {
+        for(auto &swapChainImageView : swapchain->getImageViews()) {
             swapChainFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
                 .renderPass  = renderPass,
                 .attachments = { swapChainImageView, depthImageView },
@@ -701,9 +702,9 @@ namespace blb::rnd {
         });
     }
 
-    std::shared_ptr<DescriptorPool> ForwardRenderer3D::createDescriptorPool(std::unordered_map<DescriptorType, uint32_t> const& bindingCount, const uint32_t setCount) {
+    std::shared_ptr<DescriptorPool> ForwardRenderer3D::createDescriptorPool(std::unordered_map<DescriptorType, uint32_t> const &bindingCount, const uint32_t setCount) {
         std::vector<DescriptorInfo> poolTypes;
-        for(auto&& [type, count] : bindingCount) {
+        for(auto &&[type, count] : bindingCount) {
             DescriptorInfo info{
                 .type  = type,
                 .count = count,

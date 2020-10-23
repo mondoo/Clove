@@ -44,7 +44,8 @@ namespace blb::rnd {
 
             std::array<std::array<clv::mth::mat4f, 6>, MAX_LIGHTS> pointShadowTransforms;
 
-            std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> meshes;
+            std::vector<std::pair<std::shared_ptr<Mesh>, clv::mth::mat4f>> staticMeshes;
+            std::vector<std::tuple<std::shared_ptr<Mesh>, clv::mth::mat4f, std::array<clv::mth::mat4f, MAX_JOINTS>>> animatedMeshes
         };
 
         //Objects that hold the state / data of each image (in flight)
@@ -141,7 +142,7 @@ namespace blb::rnd {
         void submitCamera(Camera const &camera, clv::mth::vec3f position);
 
         void submitStaticMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);
-        void submitAnimatedMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform);
+        void submitAnimatedMesh(std::shared_ptr<Mesh> mesh, clv::mth::mat4f transform, std::array<clv::mth::mat4f, blb::rnd::MAX_JOINTS> matrixPalet);
         void submitLight(DirectionalLight const &light);
         void submitLight(PointLight const &light);
 
