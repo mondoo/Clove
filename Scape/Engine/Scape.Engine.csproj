@@ -22,16 +22,24 @@
     <MakeDir Directories="$(CppBuildPath)" Condition="!Exists('$(CppBuildPath)')"/>
     <Exec Command="cmake .." WorkingDirectory="$(CppBuildPath)"/>
     <Exec Command="cmake --build . --target Scape.Membrane --config $(Configuration)" WorkingDirectory="$(CppBuildPath)"/>
-    <Copy SourceFiles="$(CppBuildPath)/lib/$(Configuration)/Scape.Membrane.dll" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true"/>
+    <ItemGroup>
+      <Content Include="$(CppBuildPath)/lib/$(Configuration)/Scape.Membrane.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
   </Target>
 
   <Target Name="BuildMembrane" BeforeTargets="Build" Condition="'$(IsOSX)'=='true'">
   </Target>
 
-  <Target Name="BuildMembrane" BeforeTargets="Build" Returns="$(OutputPath)libScape.Membrane.so" Condition="'$(IsLinux)'=='true'">
+  <Target Name="BuildMembrane" BeforeTargets="BeforeBuild" Condition="'$(IsLinux)'=='true'">
     <MakeDir Directories="$(CppBuildPath)" Condition="!Exists('$(CppBuildPath)')"/>
     <Exec Command="cmake -DCMAKE_BUILD_TYPE=$(Configuration) .." WorkingDirectory="$(CppBuildPath)"/>
     <Exec Command="cmake --build . --target Scape.Membrane" WorkingDirectory="$(CppBuildPath)"/>
-    <Copy SourceFiles="$(CppBuildPath)/Scape/Membrane/libScape.Membrane.so" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true"/>
+    <ItemGroup>
+      <Content Include="$(CppBuildPath)/Scape/Membrane/libScape.Membrane.so">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
   </Target>
 </Project>
