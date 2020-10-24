@@ -79,7 +79,7 @@ TEST(ExpectedTests, CallsDestructorOnErrorType) {
 
 TEST(ExpectedTests, CanCheckIfThereIsAnError) {
     Expected<int32_t, std::exception> hasValue{ 101 };
-    Expected<int32_t, std::exception> hasError{ Unexpected<std::exception>{ std::exception{ "This is an exception" } } };
+    Expected<int32_t, std::exception> hasError{ Unexpected<std::exception>{ std::exception{} } };
 
     EXPECT_TRUE(hasValue.hasValue());
     EXPECT_TRUE(hasValue);
@@ -217,7 +217,7 @@ TEST(ExpectedTests, CanReturnProperlyFromAFunction) {
         }
 
         Expected<int32_t, std::exception> returnException() {
-            return std::exception{ "Error!" };
+            return Unexpected{ std::exception{} };
         }
     };
 
