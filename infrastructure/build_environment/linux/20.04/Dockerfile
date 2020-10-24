@@ -15,15 +15,26 @@ RUN make install
 
 FROM ubuntu:20.04
 
-RUN apt-get update -y && apt-get install -y
+RUN apt-get update -y
+RUN apt-get install -y
 
 #Install any utilities
 RUN apt-get install -y git
 RUN apt-get install -y make
+RUN apt-get install -y wget
 
 #Install the compilers
 RUN apt-get install -y g++-10
-RUN apt-get install -y clang-10 
+RUN apt-get install -y clang-10
+
+#Install dotnet
+RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+RUN dpkg -i packages-microsoft-prod.deb
+RUN apt-get update -y
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get install -y dotnet-sdk-3.1
 
 #Install cmake
 COPY --from=builder /cmake_install /cmake_install
