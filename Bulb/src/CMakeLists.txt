@@ -147,6 +147,8 @@ set(
 		${BLB_RESOURCE}/Shaders/StaticMeshShadowMap-v.glsl
 		${BLB_RESOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl
 		${BLB_RESOURCE}/Shaders/AnimatedMesh-v.glsl
+		${BLB_RESOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl
+		${BLB_RESOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl
 		${BLB_RESOURCE}/Shaders/Mesh-p.glsl
 		${BLB_RESOURCE}/Shaders/MeshShadowMap-p.glsl
 		${BLB_RESOURCE}/Shaders/MeshCubeShadowMap-p.glsl
@@ -157,7 +159,11 @@ set(
 compileShader("${BLB_RESOURCE}/Shaders/StaticMesh-v.glsl" "StaticMesh-v.spirv" "vertex" "${ShaderIncludes}")
 compileShader("${BLB_RESOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "StaticMeshShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
 compileShader("${BLB_RESOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "StaticMeshCubeShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+
 compileShader("${BLB_RESOURCE}/Shaders/AnimatedMesh-v.glsl" "AnimatedMesh-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl" "AnimatedMeshShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl" "AnimatedMeshCubeShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+
 compileShader("${BLB_RESOURCE}/Shaders/Mesh-p.glsl" "Mesh-p.spirv" "fragment" "${ShaderIncludes}")
 compileShader("${BLB_RESOURCE}/Shaders/MeshShadowMap-p.glsl" "MeshShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
 compileShader("${BLB_RESOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "MeshCubeShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
@@ -191,6 +197,8 @@ embeddResource("StaticMesh-v.spirv" "rb")
 embeddResource("StaticMeshShadowMap-v.spirv" "rb")
 embeddResource("StaticMeshCubeShadowMap-v.spirv" "rb")
 embeddResource("AnimatedMesh-v.spirv" "rb")
+embeddResource("AnimatedMeshShadowMap-v.spirv" "rb")
+embeddResource("AnimatedMeshCubeShadowMap-v.spirv" "rb")
 embeddResource("Mesh-p.spirv" "rb")
 embeddResource("MeshShadowMap-p.spirv" "rb")
 embeddResource("MeshCubeShadowMap-p.spirv" "rb")
