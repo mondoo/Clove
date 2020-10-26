@@ -6,16 +6,16 @@
 
 namespace blb::ecs {
     template<typename ComponentType>
-    ComponentContainer<ComponentType>::ComponentContainer(garlic::EventDispatcher* dispatcher)
-        : ecsEventDispatcher(dispatcher)
-        , componentAllocator(1000) {
+    ComponentContainer<ComponentType>::ComponentContainer(garlic::EventDispatcher *dispatcher)
+        : ecsEventDispatcher{ dispatcher }
+        , componentAllocator{ 100 } {
     }
 
     template<typename ComponentType>
-    ComponentContainer<ComponentType>::ComponentContainer(ComponentContainer&& other) noexcept = default;
+    ComponentContainer<ComponentType>::ComponentContainer(ComponentContainer &&other) noexcept = default;
 
     template<typename ComponentType>
-    ComponentContainer<ComponentType>& ComponentContainer<ComponentType>::operator=(ComponentContainer&& other) noexcept = default;
+    ComponentContainer<ComponentType> &ComponentContainer<ComponentType>::operator=(ComponentContainer &&other) noexcept = default;
 
     template<typename ComponentType>
     ComponentContainer<ComponentType>::~ComponentContainer() = default;
@@ -33,7 +33,7 @@ namespace blb::ecs {
     void ComponentContainer<ComponentType>::cloneComponent(EntityID fromId, EntityID toId) {
         if constexpr(std::is_copy_constructible_v<ComponentType>) {
             if(auto iter = entityIDToIndex.find(fromId); iter != entityIDToIndex.end()) {
-                ComponentType* componentPtr = components[iter->second];
+                ComponentType *componentPtr = components[iter->second];
                 addComponent(toId, *componentPtr);
             }
         } else {
@@ -47,7 +47,7 @@ namespace blb::ecs {
             const size_t index     = iter->second;
             const size_t lastIndex = components.size() - 1;
 
-            ComponentType* removedComp = components[index];
+            ComponentType *removedComp = components[index];
 
             if(index < lastIndex) {
                 components[index] = components.back();
@@ -69,8 +69,8 @@ namespace blb::ecs {
 
     template<typename ComponentType>
     template<typename... ConstructArgs>
-    ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityId, ConstructArgs&&... args) {
-        ComponentType* comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
+    ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityId, ConstructArgs &&... args) {
+        ComponentType *comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
         if(comp == nullptr) {
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "{0}: Could not create component", GARLIC_FUNCTION_NAME_PRETTY);
             return { comp };
@@ -104,15 +104,15 @@ namespace blb::ecs {
     }
 
     template<typename ComponentType>
-    ComponentContainer<ComponentType>& ComponentManager::getComponentContainer() {
-        const ComponentID componentID = ComponentType::id();
+    ComponentContainer<ComponentType> &ComponentManager::getComponentContainer() {
+        ComponentID const componentID = ComponentType::id();
         if(auto iter = containers.find(componentID); iter != containers.end()) {
-            return static_cast<ComponentContainer<ComponentType>&>(*iter->second.get());
+            return static_cast<ComponentContainer<ComponentType> &>(*iter->second.get());
         } else {
             auto container = std::make_unique<ComponentContainer<ComponentType>>(ecsEventDispatcher);
 
             containers[componentID] = std::move(container);
-            return static_cast<ComponentContainer<ComponentType>&>(*containers[componentID].get());
+            return static_cast<ComponentContainer<ComponentType> &>(*containers[componentID].get());
         }
     }
 }
