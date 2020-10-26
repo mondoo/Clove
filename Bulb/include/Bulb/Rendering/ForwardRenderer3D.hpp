@@ -112,8 +112,10 @@ namespace blb::rnd {
 
         //Objects for the shadow map pass
         std::shared_ptr<clv::gfx::RenderPass> shadowMapRenderPass;
-        std::shared_ptr<clv::gfx::PipelineObject> shadowMapPipelineObject;
-        std::shared_ptr<clv::gfx::PipelineObject> cubeShadowMapPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> staticMeshShadowMapPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> animatedMeshShadowMapPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> staticMeshCubeShadowMapPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> animatedMeshCubeShadowMapPipelineObject;
 
         //Synchronisation obects
         std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> shadowFinishedSemaphores;
