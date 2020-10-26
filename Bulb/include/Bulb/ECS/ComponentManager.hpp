@@ -25,23 +25,23 @@ namespace blb::ecs {
     class ComponentContainer : public ComponentContainerInterface {
         //VARIABLES
     private:
-        garlic::PoolAllocator<ComponentType> componentAllocator;
+        garlic::PoolAllocator<ComponentType, garlic::AllocatorStrategy::Dynamic> componentAllocator;
 
         std::unordered_map<EntityID, size_t> entityIDToIndex;
-        std::vector<ComponentType*> components;//TODO: It might be better to iterator over the allocators storage rather than having this vector
+        std::vector<ComponentType *> components;
 
-        garlic::EventDispatcher* ecsEventDispatcher;
+        garlic::EventDispatcher *ecsEventDispatcher;
 
         //FUNCTIONS
     public:
         ComponentContainer() = delete;
-        ComponentContainer(garlic::EventDispatcher* dispatcher);
+        ComponentContainer(garlic::EventDispatcher *dispatcher);
 
-        ComponentContainer(const ComponentContainer& other) = delete;
-        ComponentContainer(ComponentContainer&& other) noexcept;
+        ComponentContainer(ComponentContainer const &other) = delete;
+        ComponentContainer(ComponentContainer &&other) noexcept;
 
-        ComponentContainer& operator=(const ComponentContainer& other) = delete;
-        ComponentContainer& operator=(ComponentContainer&& other) noexcept;
+        ComponentContainer &operator=(ComponentContainer const &other) = delete;
+        ComponentContainer &operator=(ComponentContainer &&other) noexcept;
 
         ~ComponentContainer();
 
@@ -51,7 +51,7 @@ namespace blb::ecs {
         void removeComponent(EntityID entityId) final;
 
         template<typename... ConstructArgs>
-        ComponentPtr<ComponentType> addComponent(EntityID entityId, ConstructArgs&&... args);
+        ComponentPtr<ComponentType> addComponent(EntityID entityId, ConstructArgs &&... args);
         ComponentPtr<ComponentType> getComponent(EntityID entityId);
     };
 
@@ -60,23 +60,23 @@ namespace blb::ecs {
     private:
         std::unordered_map<ComponentID, std::unique_ptr<ComponentContainerInterface>> containers;
 
-        garlic::EventDispatcher* ecsEventDispatcher;
+        garlic::EventDispatcher *ecsEventDispatcher;
 
         //FUNCTIONS
     public:
         ComponentManager() = delete;
-        ComponentManager(garlic::EventDispatcher* dispatcher);
+        ComponentManager(garlic::EventDispatcher *dispatcher);
 
-        ComponentManager(const ComponentManager& other)     = delete;
-        ComponentManager(ComponentManager&& other) noexcept = delete;
+        ComponentManager(ComponentManager const &other)     = delete;
+        ComponentManager(ComponentManager &&other) noexcept = delete;
 
-        ComponentManager& operator=(const ComponentManager& other) = delete;
-        ComponentManager& operator=(ComponentManager&& other) noexcept = delete;
+        ComponentManager &operator=(ComponentManager const &other) = delete;
+        ComponentManager &operator=(ComponentManager &&other) noexcept = delete;
 
         ~ComponentManager();
 
         template<typename ComponentType>
-        ComponentContainer<ComponentType>& getComponentContainer();
+        ComponentContainer<ComponentType> &getComponentContainer();
 
         void cloneEntitiesComponents(EntityID fromID, EntityID toID);
 
