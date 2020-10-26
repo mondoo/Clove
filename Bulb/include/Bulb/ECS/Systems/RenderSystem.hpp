@@ -3,7 +3,7 @@
 #include "Bulb/ECS/System.hpp"
 
 namespace clv::plt {
-	class Window;
+    class Window;
 }
 
 namespace blb::rnd {
@@ -11,24 +11,24 @@ namespace blb::rnd {
 }
 
 namespace blb::ecs {
-	class RenderSystem : public System {
-		//VARIABLES
-	private:
+    class RenderSystem : public System {
+        //VARIABLES
+    private:
         std::shared_ptr<rnd::ForwardRenderer3D> renderer;
 
-		//FUNCTIONS
-	public:
-		RenderSystem() = delete;
+        //FUNCTIONS
+    public:
+        RenderSystem() = delete;
         RenderSystem(std::shared_ptr<rnd::ForwardRenderer3D> renderer);
 
-		RenderSystem(const RenderSystem& other) = delete;
-		RenderSystem(RenderSystem&& other) noexcept;
+        RenderSystem(RenderSystem const &other) = delete;
+        RenderSystem(RenderSystem &&other) noexcept;
 
-		RenderSystem& operator=(const RenderSystem& other) = delete;
-		RenderSystem& operator=(RenderSystem&& other) noexcept;
+        RenderSystem &operator=(RenderSystem const &other) = delete;
+        RenderSystem &operator=(RenderSystem &&other) noexcept;
 
-		~RenderSystem();
+        ~RenderSystem();
 
-		void update(World& world, clv::utl::DeltaTime deltaTime) override;
-	};
+        void update(World &world, clv::utl::DeltaTime deltaTime) override;
+    };
 }
