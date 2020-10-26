@@ -143,24 +143,24 @@ set(
 
 set(
 	ShaderFiles
-		${BLB_RESOURCE}/Shaders/GenShadowMap-v.glsl
-		${BLB_RESOURCE}/Shaders/GenShadowMap-p.glsl
-		${BLB_RESOURCE}/Shaders/GenCubeShadowMap-v.glsl
-		${BLB_RESOURCE}/Shaders/GenCubeShadowMap-p.glsl
 		${BLB_RESOURCE}/Shaders/StaticMesh-v.glsl
+		${BLB_RESOURCE}/Shaders/StaticMeshShadowMap-v.glsl
+		${BLB_RESOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl
 		${BLB_RESOURCE}/Shaders/AnimatedMesh-v.glsl
 		${BLB_RESOURCE}/Shaders/Mesh-p.glsl
+		${BLB_RESOURCE}/Shaders/MeshShadowMap-p.glsl
+		${BLB_RESOURCE}/Shaders/MeshCubeShadowMap-p.glsl
 
 		${ShaderIncludes}
 )
 
-compileShader("${BLB_RESOURCE}/Shaders/GenShadowMap-v.glsl" "GenShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
-compileShader("${BLB_RESOURCE}/Shaders/GenShadowMap-p.glsl" "GenShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
-compileShader("${BLB_RESOURCE}/Shaders/GenCubeShadowMap-v.glsl" "GenCubeShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
-compileShader("${BLB_RESOURCE}/Shaders/GenCubeShadowMap-p.glsl" "GenCubeShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
 compileShader("${BLB_RESOURCE}/Shaders/StaticMesh-v.glsl" "StaticMesh-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "StaticMeshShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "StaticMeshCubeShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
 compileShader("${BLB_RESOURCE}/Shaders/AnimatedMesh-v.glsl" "AnimatedMesh-v.spirv" "vertex" "${ShaderIncludes}")
 compileShader("${BLB_RESOURCE}/Shaders/Mesh-p.glsl" "Mesh-p.spirv" "fragment" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/MeshShadowMap-p.glsl" "MeshShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "MeshCubeShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
 
 #Convert resources into c strings
 set(ResourceBinaries)
@@ -188,12 +188,12 @@ endfunction()
 
 embeddResource("${BLB_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf" "rb")
 embeddResource("StaticMesh-v.spirv" "rb")
+embeddResource("StaticMeshShadowMap-v.spirv" "rb")
+embeddResource("StaticMeshCubeShadowMap-v.spirv" "rb")
 embeddResource("AnimatedMesh-v.spirv" "rb")
 embeddResource("Mesh-p.spirv" "rb")
-embeddResource("GenShadowMap-v.spirv" "rb")
-embeddResource("GenShadowMap-p.spirv" "rb")
-embeddResource("GenCubeShadowMap-v.spirv" "rb")
-embeddResource("GenCubeShadowMap-p.spirv" "rb")
+embeddResource("MeshShadowMap-p.spirv" "rb")
+embeddResource("MeshCubeShadowMap-p.spirv" "rb")
 
 #Organise the source tree
 file(GLOB_RECURSE header ${BLB_INCLUDE}/*.h ${BLB_INCLUDE}/*.hpp ${BLB_INCLUDE}/*.inl)

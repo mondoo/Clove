@@ -15,22 +15,22 @@
 
 using namespace clv::gfx;
 
-extern "C" const char animatedmesh_v[];
-extern "C" const size_t animatedmesh_vLength;
 extern "C" const char staticmesh_v[];
 extern "C" const size_t staticmesh_vLength;
+extern "C" const char staticmeshshadowmap_v[];
+extern "C" const size_t staticmeshshadowmap_vLength;
+extern "C" const char staticmeshcubeshadowmap_v[];
+extern "C" const size_t staticmeshcubeshadowmap_vLength;
+
+extern "C" const char animatedmesh_v[];
+extern "C" const size_t animatedmesh_vLength;
+
 extern "C" const char mesh_p[];
 extern "C" const size_t mesh_pLength;
-
-extern "C" const char genshadowmap_v[];
-extern "C" const size_t genshadowmap_vLength;
-extern "C" const char genshadowmap_p[];
-extern "C" const size_t genshadowmap_pLength;
-
-extern "C" const char gencubeshadowmap_v[];
-extern "C" const size_t gencubeshadowmap_vLength;
-extern "C" const char gencubeshadowmap_p[];
-extern "C" const size_t gencubeshadowmap_pLength;
+extern "C" const char meshshadowmap_p[];
+extern "C" const size_t meshshadowmap_pLength;
+extern "C" const char meshcubeshadowmap_p[];
+extern "C" const size_t meshcubeshadowmap_pLength;
 
 namespace blb::rnd {
     ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window &window, API const api) {
@@ -687,8 +687,8 @@ namespace blb::rnd {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(genshadowmap_v), genshadowmap_vLength }),
-            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(genshadowmap_p), genshadowmap_pLength }),
+            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmeshshadowmap_v), staticmeshshadowmap_vLength }),
+            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(meshshadowmap_p), meshshadowmap_pLength }),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = Vertex::getVertexAttributes(),
             .viewportDescriptor   = viewScissorArea,
@@ -720,8 +720,8 @@ namespace blb::rnd {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(gencubeshadowmap_v), gencubeshadowmap_vLength }),
-            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(gencubeshadowmap_p), gencubeshadowmap_pLength }),
+            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmeshcubeshadowmap_v), staticmeshcubeshadowmap_vLength }),
+            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(meshcubeshadowmap_p), meshcubeshadowmap_pLength }),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = Vertex::getVertexAttributes(),
             .viewportDescriptor   = viewScissorArea,
