@@ -55,7 +55,6 @@ test:windows:
     - windows-1809
   before_script:
     - choco install -y cmake
-    - choco upgrade -y visualstudio2019buildtools
   script:
     - cd build
     - ctest -C Release
