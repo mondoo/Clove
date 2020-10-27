@@ -15,7 +15,7 @@ build:windows:
   script:
     - mkdir build
     - cd build
-    - cmake -G "Visual Studio 16 2019"
+    - cmake -DGAR_BUILD_TESTS=ON -G "Visual Studio 16 2019" ..
     - cmake --build . --target ALL_BUILD --config Release
   artifacts:
     paths:
