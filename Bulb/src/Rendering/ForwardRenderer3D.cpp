@@ -249,9 +249,9 @@ namespace blb::rnd {
             meshDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
 
             for(size_t i = 0; i < MAX_LIGHTS; ++i) {
+                //Directional lights
                 //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
                 currentImageData.shadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
-
                 if(i < currentFrameData.bufferData.numLights.numDirectional) {
                     clv::mth::mat4f const pushConstantData[]{ transform, currentFrameData.bufferData.directionalShadowTransforms[i] };
 
@@ -262,9 +262,9 @@ namespace blb::rnd {
 
                     currentImageData.shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
                 }
-
                 currentImageData.shadowMapCommandBuffer->endRenderPass();
 
+                //Point lights
                 for(size_t j = 0; j < 6; ++j) {
                     //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
                     currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
@@ -292,6 +292,7 @@ namespace blb::rnd {
                 }
             }
 
+            //Final colour
             currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
@@ -329,23 +330,23 @@ namespace blb::rnd {
             meshDescriptorSet->map(*currentImageData.paletBuffers[animatedMeshIndex], 0, sizeof(matrixPalet), 1);
 
             for(size_t i = 0; i < MAX_LIGHTS; ++i) {
+                //Directional lights
                 //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
                 currentImageData.shadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
-
                 if(i < currentFrameData.bufferData.numLights.numDirectional) {
                     clv::mth::mat4f const pushConstantData[]{ transform, currentFrameData.bufferData.directionalShadowTransforms[i] };
 
                     currentImageData.shadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                     currentImageData.shadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                    currentImageData.shadowMapCommandBuffer->pushConstant(*staticMeshShadowMapPipelineObject, Shader::Stage::Vertex, 0, sizeof(pushConstantData), pushConstantData);
-                    currentImageData.shadowMapCommandBuffer->bindDescriptorSet(*meshDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+                    currentImageData.shadowMapCommandBuffer->pushConstant(*animatedMeshShadowMapPipelineObject, Shader::Stage::Vertex, 0, sizeof(pushConstantData), pushConstantData);
+                    currentImageData.shadowMapCommandBuffer->bindDescriptorSet(*meshDescriptorSet, *animatedMeshShadowMapPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
                     currentImageData.shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
                 }
-
                 currentImageData.shadowMapCommandBuffer->endRenderPass();
 
+                //Point lights
                 for(size_t j = 0; j < 6; ++j) {
                     //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
                     currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
@@ -363,9 +364,9 @@ namespace blb::rnd {
                         currentImageData.cubeShadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                         currentImageData.cubeShadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*staticMeshCubeShadowMapPipelineObject, Shader::Stage::Vertex, 0, sizeof(vertPushConstantData), vertPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*staticMeshCubeShadowMapPipelineObject, Shader::Stage::Pixel, sizeof(vertPushConstantData), sizeof(pixelPushConstantData), &pixelPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->bindDescriptorSet(*meshDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*animatedMeshCubeShadowMapPipelineObject, Shader::Stage::Vertex, 0, sizeof(vertPushConstantData), vertPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*animatedMeshCubeShadowMapPipelineObject, Shader::Stage::Pixel, sizeof(vertPushConstantData), sizeof(pixelPushConstantData), &pixelPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->bindDescriptorSet(*meshDescriptorSet, *animatedMeshCubeShadowMapPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
                         currentImageData.cubeShadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
                     }
@@ -374,6 +375,7 @@ namespace blb::rnd {
                 }
             }
 
+            //Final colour
             currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
