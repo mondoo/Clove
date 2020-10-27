@@ -8,6 +8,5 @@ layout(std140, push_constant) uniform Light{
 layout(location = 0) in vec4 fragPos;
 
 void main(){
-    const float lightDistance = length(fragPos.xyz - lightPos.xyz) / farPlane;
-    gl_FragDepth = lightDistance;
+    gl_FragDepth = length(fragPos.xyz - lightPos.xyz) / farPlane;
 }

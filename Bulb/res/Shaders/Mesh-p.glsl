@@ -77,8 +77,8 @@ void main(){
 	for(int i = 0; i < numPointLights; ++i){
 		const vec3 fragToLight = vertPos - pointLights[i].position;
 
-		const float closetDepth = texture(pointLightDepthSampler[i], fragToLight).r * pointLights[i].farplane;
 		const float currentDepth = length(fragToLight);
+		const float closetDepth = texture(pointLightDepthSampler[i], fragToLight).r * pointLights[i].farplane;
 
 		shadow += currentDepth - bias > closetDepth ? 1.0f : 0.0f;
 	}
