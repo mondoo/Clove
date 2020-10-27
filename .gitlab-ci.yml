@@ -8,10 +8,15 @@ build:windows:
     - windows-1809
   before_script:
     - git submodule update --init --recursive
-    - docker login -u runner -p ${DV_REGISTRY_PW} registry.gitlab.com/digital-vessel/garlic-engine/garlic
-    - docker pull registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/windows:1809
+    - choco install -y cmake
+    - choco install -y python
+    - choco upgrade -y visualstudio2019buildtools
+    - $env:Path += ';C:\Program Files\Cmake\bin'
   script:
-    - docker run --volume ${CI_PROJECT_DIR}:C:\garlic registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/windows:1809 cmd /s /c "cd garlic && mkdir build && cd build && cmake -DGAR_BUILD_TESTS=ON .. && cmake --build . --target ALL_BUILD --config Release"
+    - mkdir build
+    - cd build
+    - cmake -G "Visual Studio 16 2019"
+    - cmake --build . --target ALL_BUILD --config Release
   artifacts:
     paths:
       - build/
@@ -49,10 +54,11 @@ test:windows:
   tags:
     - windows-1809
   before_script:
-    - docker login -u runner -p ${DV_REGISTRY_PW} registry.gitlab.com/digital-vessel/garlic-engine/garlic
-    - docker pull registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/windows:1809
+    - choco install -y cmake
+    - choco upgrade -y visualstudio2019buildtools
   script:
-    - docker run --volume ${CI_PROJECT_DIR}:C:\garlic registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/windows:1809 cmd /s /c "cd garlic/build && ctest -C Release"
+    - cd build
+    - ctest -C Release
   dependencies:
     - build:windows
   needs:
