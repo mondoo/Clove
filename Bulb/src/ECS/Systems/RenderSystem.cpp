@@ -73,8 +73,8 @@ namespace blb::ecs {
             light->lightData.data.position       = position;
             light->lightData.shadowTransforms[0] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 1.0f, 0.0f, 0.0f }, mth::vec3f{ 0.0f, 1.0f, 0.0f });
             light->lightData.shadowTransforms[1] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ -1.0f, 0.0f, 0.0f }, mth::vec3f{ 0.0f, 1.0f, 0.0f });
-            light->lightData.shadowTransforms[2] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0f, 1.0f, 0.0f }, mth::vec3f{ 0.0f, 0.0f, 1.0f });
-            light->lightData.shadowTransforms[3] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0f, -1.0f, 0.0f }, mth::vec3f{ 0.0f, 0.0f, -1.0f });
+            light->lightData.shadowTransforms[2] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0f, 1.0f, 0.0f }, mth::vec3f{ 0.0f, 0.0f, -1.0f });
+            light->lightData.shadowTransforms[3] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0f, -1.0f, 0.0f }, mth::vec3f{ 0.0f, 0.0f, 1.0f });
             light->lightData.shadowTransforms[4] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0f, 0.0f, 1.0f }, mth::vec3f{ 0.0f, 1.0f, 0.0f });
             light->lightData.shadowTransforms[5] = light->shadowProj * mth::lookAt(position, position + mth::vec3f{ 0.0f, 0.0f, -1.0f }, mth::vec3f{ 0.0f, 1.0f, 0.0f });
 
