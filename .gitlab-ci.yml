@@ -8,9 +8,10 @@ build:windows:
     - windows-1809
   before_script:
     - git submodule update --init --recursive
-    - choco install -y cmake.install --installargs '"ADD_CMAKE_TO_PATH=System"'
+    - choco install -y cmake
     - choco install -y python
     - choco upgrade -y visualstudio2019buildtools
+    - $env:Path += ';C:\Program Files\CMake\bin'
   script:
     - mkdir build
     - cd build
@@ -53,7 +54,8 @@ test:windows:
   tags:
     - windows-1809
   before_script:
-    - choco install -y cmake.install --installargs '"ADD_CMAKE_TO_PATH=System"'
+    - choco install -y cmake
+    - $env:Path += ';C:\Program Files\CMake\bin'
   script:
     - cd build
     - ctest -C Release
