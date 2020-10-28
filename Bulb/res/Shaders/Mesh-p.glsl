@@ -46,6 +46,11 @@ layout(location = 4) in vec4 vertPosLightSpaces[MAX_LIGHTS];
 
 layout(location = 0) out vec4 outColour;
 
+//Adjusts the bias to be in between min and max based off of the angle to the light
+float adjustBias(float minBias, float maxBias, vec3 normal, vec3 lightDir){
+	return max(maxBias * (1.0f - dot(normal, lightDir)), minBias);
+}
+
 void main(){
 	vec3 colour = vec3(texture(texSampler, fragTexCoord));
 
@@ -59,31 +64,10 @@ void main(){
 
 	const float shiniess =  32.0f; //TODO: Add shiniess as a material param
 
+	const float minBias = 0.000f;
+	const float maxBias = 0.005f;
+
 	float shadow = 0.0f;
-	const float bias = 0.005f;
-
-	//Directional shadow
-	for(int i = 0; i < numDirLights; ++i){
-		vec3 projCoords = vertPosLightSpaces[i].xyz / vertPosLightSpaces[i].w;
-		projCoords.xy = projCoords.xy * 0.5f + 0.5f;
-
-		const float currentDepth = projCoords.z;
-		const float closetDepth = texture(directionalDepthSampler[i], projCoords.xy).r;
-
-		shadow += currentDepth - bias > closetDepth ? 1.0f : 0.0f;
-	}
-
-	//Point shadow
-	for(int i = 0; i < numPointLights; ++i){
-		const vec3 fragToLight = vertPos - pointLights[i].position;
-
-		const float currentDepth = length(fragToLight);
-		const float closetDepth = texture(pointLightDepthSampler[i], fragToLight).r * pointLights[i].farplane;
-
-		shadow += currentDepth - bias > closetDepth ? 1.0f : 0.0f;
-	}
-
-	shadow /= (numDirLights + numPointLights);
 
 	//Directional lighting
 	for(int i = 0; i < numDirLights; ++i){
@@ -100,6 +84,15 @@ void main(){
 		const vec3 reflectDir = reflect(-lightDir, normal);
 		const float specIntensity = pow(max(dot(viewDir, reflectDir), 0.0f), shiniess);
 		totalSpecular += directionalLights[i].specular * specIntensity;
+
+		//Shadow
+		vec3 projCoords = vertPosLightSpaces[i].xyz / vertPosLightSpaces[i].w;
+		projCoords.xy = projCoords.xy * 0.5f + 0.5f;
+
+		const float currentDepth = projCoords.z;
+		const float closetDepth = texture(directionalDepthSampler[i], projCoords.xy).r;
+
+		shadow += currentDepth - adjustBias(minBias, maxBias, normal, lightDir) > closetDepth ? 1.0f : 0.0f;
 	}
 
 	//Point lighting
@@ -129,8 +122,17 @@ void main(){
 		totalAmbient += ambient;
 		totalDiffuse += diffuse;
 		totalSpecular += specular;
+
+		//Shadow
+		const vec3 fragToLight = vertPos - pointLights[i].position;
+
+		const float currentDepth = length(fragToLight);
+		const float closetDepth = texture(pointLightDepthSampler[i], fragToLight).r * pointLights[i].farplane;
+
+		shadow += currentDepth - adjustBias(minBias, maxBias, normal, lightDir) > closetDepth ? 1.0f : 0.0f;
 	}
 
+	shadow /= (numDirLights + numPointLights);
 	const vec3 lighting = (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)) * colour);
 
 	outColour = vec4(lighting, 1.0);
