@@ -1,6 +1,9 @@
 #pragma once
 
+#include "AllocatorStrategy.hpp"
+
 #include <cstddef>
+#include <memory>
 
 namespace garlic::inline root {
     /**
@@ -9,31 +12,43 @@ namespace garlic::inline root {
      * a linked list, inserting new items into free spaces. A PoolAllocator is less flexible than a
      * ListAllocator because it can only allocate a single item but can very easily avoid memory fragmentation.
      */
-    template<typename ItemType>
+    template<typename ItemType, AllocatorStrategy strategy = AllocatorStrategy::Fixed>
     class PoolAllocator {
         //TYPES
     private:
         union PoolItem {
-            PoolItem* next;
+            PoolItem *next;
             alignas(alignof(ItemType)) char item[sizeof(ItemType)];
+        };
+
+        struct PoolArena {
+            //VARIABLES
+        public:
+            std::unique_ptr<PoolItem[]> storage;
+            std::unique_ptr<PoolArena> next;
+
+            //FUNCTIONS
+        public:
+            PoolArena(size_t const itemCount);
         };
 
         //VARIABLES
     private:
-        std::byte* pool;
-        size_t numElements;
-        PoolItem* nextFree = nullptr;
+        size_t elementsPerArena{ 0 };
+
+        std::unique_ptr<PoolArena> arena;
+        PoolItem *nextFree{ nullptr };
 
         //FUNCTIONS
     public:
         PoolAllocator() = delete;
-        PoolAllocator(size_t numElements);
+        PoolAllocator(size_t const elementsPerArena);
 
-        PoolAllocator(const PoolAllocator& other) = delete;
-        PoolAllocator(PoolAllocator&& other) noexcept;
+        PoolAllocator(PoolAllocator const &other) = delete;
+        PoolAllocator(PoolAllocator &&other) noexcept;
 
-        PoolAllocator& operator=(const PoolAllocator& other) = delete;
-        PoolAllocator& operator=(PoolAllocator&& other) noexcept;
+        PoolAllocator &operator=(PoolAllocator const &other) = delete;
+        PoolAllocator &operator=(PoolAllocator &&other) noexcept;
 
         ~PoolAllocator();
 
@@ -41,12 +56,12 @@ namespace garlic::inline root {
          * @brief Allocates a new item of ItemType. Calling it's constructor.
          */
         template<typename... Args>
-        ItemType* alloc(Args&&... args);
+        ItemType *alloc(Args &&... args);
 
         /**
          * @brief Frees an item, calling it's destructor.
          */
-        void free(ItemType* item);
+        void free(ItemType *item);
     };
 }
 
