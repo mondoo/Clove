@@ -246,6 +246,8 @@ namespace blb::rnd {
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
 
             meshDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
+
+            ++index;
         }
         for(size_t index = staticMeshCount; auto &&[mesh, transform, matrixPalet] : currentFrameData.animatedMeshes) {
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
@@ -253,6 +255,8 @@ namespace blb::rnd {
 
             meshDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
             meshDescriptorSet->map(*currentImageData.paletBuffers[animatedMeshIndex], 0, sizeof(matrixPalet), 1);
+
+            ++index;
         }
 
         //DIRECTIONAL LIGHTS
