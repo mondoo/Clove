@@ -11,6 +11,7 @@ build:windows:
     - choco install -y cmake
     - choco install -y python
     - choco upgrade -y visualstudio2019buildtools
+    - choco install -y vulkan-sdk
     - $env:Path += ';C:\Program Files\CMake\bin'
   script:
     - mkdir build
