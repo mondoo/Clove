@@ -197,8 +197,8 @@ namespace clv::gfx::vk {
 #endif
 
         //CREATE INSTANCE
-        VkInstance instance;
-        VkDebugUtilsMessengerEXT debugMessenger;
+        VkInstance instance{ VK_NULL_HANDLE };
+        VkDebugUtilsMessengerEXT debugMessenger{ VK_NULL_HANDLE };
         {
             VkApplicationInfo appInfo{
                 .sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO,
