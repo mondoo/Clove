@@ -99,8 +99,9 @@ namespace blb::rnd {
         FrameData currentFrameData;
         std::vector<ImageData> inFlightImageData;
 
-        //Generic sampler passed along with textures
-        std::shared_ptr<clv::gfx::Sampler> sampler;
+        //Samplers passed along with textures
+        std::shared_ptr<clv::gfx::Sampler> textureSampler;
+        std::shared_ptr<clv::gfx::Sampler> shadowSampler;
 
         //Objects for the final colour render pass
         std::shared_ptr<clv::gfx::RenderPass> renderPass;

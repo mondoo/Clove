@@ -14,7 +14,7 @@ namespace clv::gfx {
         enum class AddressMode {
             Repeat,
             MirroredRepeat,
-            ClampToEdge,
+            ClampToEdge, /**< Stretches the image from it's edge to the edge of the target */
             ClampToBorder
         };
 

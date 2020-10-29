@@ -80,7 +80,7 @@ namespace blb::rnd {
         }
         imagesInFlight.resize(swapchain->getImageViews().size());
 
-        sampler = graphicsFactory->createSampler(Sampler::Descriptor{
+        textureSampler = graphicsFactory->createSampler(Sampler::Descriptor{
             .minFilter        = Sampler::Filter::Linear,
             .magFilter        = Sampler::Filter::Linear,
             .addressModeU     = Sampler::AddressMode::Repeat,
@@ -88,6 +88,15 @@ namespace blb::rnd {
             .addressModeW     = Sampler::AddressMode::Repeat,
             .enableAnisotropy = true,
             .maxAnisotropy    = 16.0f,
+        });
+
+        shadowSampler = graphicsFactory->createSampler(Sampler::Descriptor{
+            .minFilter        = Sampler::Filter::Linear,
+            .magFilter        = Sampler::Filter::Linear,
+            .addressModeU     = Sampler::AddressMode::ClampToBorder,
+            .addressModeV     = Sampler::AddressMode::ClampToBorder,
+            .addressModeW     = Sampler::AddressMode::ClampToBorder,
+            .enableAnisotropy = false,
         });
     }
 
@@ -100,7 +109,7 @@ namespace blb::rnd {
         graphicsDevice->waitForIdleDevice();
 
         //Reset these manually as they would fail after the device has been destroyed (how to solve this?)
-        sampler.reset();
+        textureSampler.reset();
         for(auto &imageData : inFlightImageData) {
             imageData.uniformBuffer.reset();
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
@@ -208,8 +217,8 @@ namespace blb::rnd {
         currentImageData.uniformBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
 
         //Map any non-UBO pieces of data (such as textures / shadow maps)
-        currentImageData.lightingDescriptorSet->map(currentImageData.shadowMapViews, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
-        currentImageData.lightingDescriptorSet->map(currentImageData.cubeShadowMapViews, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 4);
+        currentImageData.lightingDescriptorSet->map(currentImageData.shadowMapViews, *shadowSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
+        currentImageData.lightingDescriptorSet->map(currentImageData.cubeShadowMapViews, *shadowSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 4);
 
         //Allocate a descriptor set for each mesh to be drawn
         if(currentImageData.meshDescriptorPool == nullptr || currentImageData.meshDescriptorPool->getDescriptor().maxSets < meshCount) {
@@ -245,7 +254,7 @@ namespace blb::rnd {
         for(size_t index = 0; auto &&[mesh, transform] : currentFrameData.staticMeshes) {
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
 
-            meshDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
+            meshDescriptorSet->map(*mesh->getMaterial().diffuseView, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
 
             ++index;
         }
@@ -253,7 +262,7 @@ namespace blb::rnd {
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
             size_t const animatedMeshIndex                    = index - staticMeshCount;
 
-            meshDescriptorSet->map(*mesh->getMaterial().diffuseView, *sampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
+            meshDescriptorSet->map(*mesh->getMaterial().diffuseView, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
             meshDescriptorSet->map(*currentImageData.paletBuffers[animatedMeshIndex], 0, sizeof(matrixPalet), 1);
 
             ++index;
@@ -269,6 +278,7 @@ namespace blb::rnd {
                 currentImageData.shadowMapCommandBuffer->bindPipelineObject(*staticMeshShadowMapPipelineObject);
                 for(size_t index = 0; auto &&[mesh, transform] : currentFrameData.staticMeshes) {
                     std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
+
                     clv::mth::mat4f const pushConstantData[]{ transform, currentFrameData.bufferData.directionalShadowTransforms[i] };
 
                     currentImageData.shadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
@@ -310,20 +320,21 @@ namespace blb::rnd {
                 //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
                 currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
                 if(i < currentFrameData.bufferData.numLights.numPoint) {
+                    struct {
+                        clv::mth::vec3f pos{};
+                        float farPlane{};
+                    } const pixelPushConstantData{
+                        .pos      = currentFrameData.bufferData.lights.pointLights[i].position,
+                        .farPlane = currentFrameData.bufferData.lights.pointLights[i].farPlane,
+                    };
+
                     //Static
                     currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*staticMeshCubeShadowMapPipelineObject);
                     for(size_t index = 0; auto &&[mesh, transform] : currentFrameData.staticMeshes) {
                         std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
 
                         clv::mth::mat4f const vertPushConstantData[]{ transform, currentFrameData.pointShadowTransforms[i][j] };
-                        struct {
-                            clv::mth::vec3f pos{};
-                            float farPlane{};
-                        } pixelPushConstantData{
-                            .pos      = currentFrameData.bufferData.lights.pointLights[i].position,
-                            .farPlane = currentFrameData.bufferData.lights.pointLights[i].farPlane,
-                        };
-
+ 
                         currentImageData.cubeShadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                         currentImageData.cubeShadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
@@ -341,14 +352,7 @@ namespace blb::rnd {
                         std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
 
                         clv::mth::mat4f const vertPushConstantData[]{ transform, currentFrameData.pointShadowTransforms[i][j] };
-                        struct {
-                            clv::mth::vec3f pos{};
-                            float farPlane{};
-                        } pixelPushConstantData{
-                            .pos      = currentFrameData.bufferData.lights.pointLights[i].position,
-                            .farPlane = currentFrameData.bufferData.lights.pointLights[i].farPlane,
-                        };
-
+                        
                         currentImageData.cubeShadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                         currentImageData.cubeShadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
