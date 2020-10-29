@@ -64,8 +64,8 @@ void main(){
 
 	const float shiniess =  32.0f; //TODO: Add shiniess as a material param
 
-	const float minBias = 0.000f;
-	const float maxBias = 0.005f;
+	const float minBias = 0.0f;
+	const float maxBias = 0.0005f;
 
 	float shadow = 0.0f;
 
