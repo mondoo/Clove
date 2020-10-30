@@ -40,9 +40,9 @@ layout(std140, set = SET_LIGHTING, binding = 1) uniform NumLights{
 
 layout(location = 0) in vec3 fragColour;
 layout(location = 1) in vec2 fragTexCoord;
-layout(location = 2) in vec3 vertPos;
-layout(location = 3) in vec3 vertNorm;
-layout(location = 4) in vec4 vertPosLightSpaces[MAX_LIGHTS];
+layout(location = 2) in vec3 fragPos;
+layout(location = 3) in vec3 fragNorm;
+layout(location = 4) in vec4 fragPosLightSpaces[MAX_LIGHTS];
 
 layout(location = 0) out vec4 outColour;
 
@@ -54,9 +54,9 @@ float adjustBias(float minBias, float maxBias, vec3 normal, vec3 lightDir){
 void main(){
 	vec3 colour = vec3(texture(texSampler, fragTexCoord));
 
-	vec3 viewDir = normalize(viewPos - vertPos);
+	vec3 viewDir = normalize(viewPos - fragPos);
 
-	vec3 normal = normalize(vertNorm);
+	vec3 normal = normalize(fragNorm);
 
 	vec3 totalAmbient = vec3(0);
 	vec3 totalDiffuse = vec3(0);
@@ -86,7 +86,7 @@ void main(){
 		totalSpecular += directionalLights[i].specular * specIntensity;
 
 		//Shadow
-		vec3 projCoords = vertPosLightSpaces[i].xyz / vertPosLightSpaces[i].w;
+		vec3 projCoords = fragPosLightSpaces[i].xyz / fragPosLightSpaces[i].w;
 		projCoords.xy = projCoords.xy * 0.5f + 0.5f;
 
 		const float currentDepth = projCoords.z;
@@ -97,7 +97,7 @@ void main(){
 
 	//Point lighting
 	for(int i = 0; i < numPointLights; ++i){
-		const vec3 lightDir = normalize(pointLights[i].position - vertPos);
+		const vec3 lightDir = normalize(pointLights[i].position - fragPos);
 
 		//Ambient
 		vec3 ambient = pointLights[i].ambient;
@@ -112,7 +112,7 @@ void main(){
 		vec3 specular = pointLights[i].specular * specIntensity;
 
 		//Attenuation
-		float dist = length(pointLights[i].position - vertPos);
+		float dist = length(pointLights[i].position - fragPos);
 		float attenuation = 1.0f / (pointLights[i].constant + (pointLights[i].linearV * dist) + (pointLights[i].quadratic * (dist * dist)));
 
 		ambient		*= attenuation;
@@ -124,10 +124,10 @@ void main(){
 		totalSpecular += specular;
 
 		//Shadow
-		const vec3 fragToLight = vertPos - pointLights[i].position;
+		const vec3 lightToFrag = fragPos - pointLights[i].position;
 
-		const float currentDepth = length(fragToLight);
-		const float closetDepth = texture(pointLightDepthSampler[i], fragToLight).r * pointLights[i].farplane;
+		const float currentDepth = length(lightToFrag);
+		const float closetDepth = texture(pointLightDepthSampler[i], lightToFrag).r * pointLights[i].farplane;
 
 		shadow += currentDepth - adjustBias(minBias, maxBias, normal, lightDir) > closetDepth ? 1.0f : 0.0f;
 	}
