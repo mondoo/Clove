@@ -373,13 +373,13 @@ namespace blb::rnd {
         //FINAL COLOUR
         currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
 
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
-
         currentImageData.commandBuffer->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
 
         //Static
         currentImageData.commandBuffer->bindPipelineObject(*staticMeshPipelineObject);
+        
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
         for(size_t index = 0; auto &&[mesh, transform] : currentFrameData.staticMeshes) {
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
 
@@ -398,6 +398,9 @@ namespace blb::rnd {
 
         //Animated
         currentImageData.commandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
+
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *animatedMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *animatedMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
         for(size_t index = staticMeshCount; auto &&[mesh, transform, matrixPalet] : currentFrameData.animatedMeshes) {
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
 
@@ -406,8 +409,8 @@ namespace blb::rnd {
             currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-            currentImageData.commandBuffer->pushConstant(*staticMeshPipelineObject, Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
-            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+            currentImageData.commandBuffer->pushConstant(*animatedMeshPipelineObject, Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
+            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, *animatedMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
             currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
 
