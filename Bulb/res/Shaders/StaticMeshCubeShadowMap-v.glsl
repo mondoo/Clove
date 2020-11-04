@@ -7,9 +7,9 @@ layout(std140, push_constant) uniform Model{
 
 layout(location = 0) in vec3 position;
 
-layout(location = 0) out vec4 fragPos;
+layout(location = 0) out vec4 vertPos;
 
 void main(){
-    fragPos = lightSpaceMatrix * model * vec4(position, 1.0f);
-    gl_Position = fragPos;
+    vertPos = model * vec4(position, 1.0f);
+    gl_Position = lightSpaceMatrix * vertPos;
 }

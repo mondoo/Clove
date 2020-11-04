@@ -15,11 +15,9 @@ layout(location = 0) in vec3 position;
 layout(location = 4) in ivec4 jointIds;
 layout(location = 5) in vec4 weights;
 
-layout(location = 0) out vec4 fragPos;
+layout(location = 0) out vec4 vertPos;
 
 void main(){
-    const mat4 mvp = lightSpaceMatrix * model;
-    
     vec4 animatedPos = vec4(0.0f);
     
     for(int i = 0; i < 4; ++i){ //4 is the max amount of weights
@@ -29,6 +27,6 @@ void main(){
         animatedPos += (jointTransform * vec4(position, 1.0f)) * weight;
     }
 
-    fragPos = mvp * animatedPos;
-    gl_Position = fragPos;
+    vertPos = model * animatedPos;
+    gl_Position = lightSpaceMatrix * vertPos;
 }
