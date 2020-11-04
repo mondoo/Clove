@@ -284,7 +284,7 @@ namespace blb::rnd {
                     currentImageData.shadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                     currentImageData.shadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                    currentImageData.shadowMapCommandBuffer->pushConstant(*staticMeshShadowMapPipelineObject, Shader::Stage::Vertex, 0, sizeof(pushConstantData), pushConstantData);
+                    currentImageData.shadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(pushConstantData), pushConstantData);
 
                     currentImageData.shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
 
@@ -301,8 +301,8 @@ namespace blb::rnd {
                     currentImageData.shadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                     currentImageData.shadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                    currentImageData.shadowMapCommandBuffer->pushConstant(*animatedMeshShadowMapPipelineObject, Shader::Stage::Vertex, 0, sizeof(pushConstantData), pushConstantData);
-                    currentImageData.shadowMapCommandBuffer->bindDescriptorSet(*meshDescriptorSet, *animatedMeshShadowMapPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+                    currentImageData.shadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(pushConstantData), pushConstantData);
+                    currentImageData.shadowMapCommandBuffer->bindDescriptorSet(*meshDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
                     currentImageData.shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
 
@@ -338,8 +338,8 @@ namespace blb::rnd {
                         currentImageData.cubeShadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                         currentImageData.cubeShadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*staticMeshCubeShadowMapPipelineObject, Shader::Stage::Vertex, 0, sizeof(vertPushConstantData), vertPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*staticMeshCubeShadowMapPipelineObject, Shader::Stage::Pixel, sizeof(vertPushConstantData), sizeof(pixelPushConstantData), &pixelPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(vertPushConstantData), vertPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Pixel, sizeof(vertPushConstantData), sizeof(pixelPushConstantData), &pixelPushConstantData);
 
                         currentImageData.cubeShadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
 
@@ -356,9 +356,9 @@ namespace blb::rnd {
                         currentImageData.cubeShadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
                         currentImageData.cubeShadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*animatedMeshCubeShadowMapPipelineObject, Shader::Stage::Vertex, 0, sizeof(vertPushConstantData), vertPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(*animatedMeshCubeShadowMapPipelineObject, Shader::Stage::Pixel, sizeof(vertPushConstantData), sizeof(pixelPushConstantData), &pixelPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->bindDescriptorSet(*meshDescriptorSet, *animatedMeshCubeShadowMapPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(vertPushConstantData), vertPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Pixel, sizeof(vertPushConstantData), sizeof(pixelPushConstantData), &pixelPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->bindDescriptorSet(*meshDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
                         currentImageData.cubeShadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
 
@@ -378,8 +378,8 @@ namespace blb::rnd {
         //Static
         currentImageData.commandBuffer->bindPipelineObject(*staticMeshPipelineObject);
         
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::View));
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
         for(size_t index = 0; auto &&[mesh, transform] : currentFrameData.staticMeshes) {
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
 
@@ -388,8 +388,8 @@ namespace blb::rnd {
             currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-            currentImageData.commandBuffer->pushConstant(*staticMeshPipelineObject, Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
-            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, *staticMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+            currentImageData.commandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
+            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
             currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
 
@@ -399,8 +399,8 @@ namespace blb::rnd {
         //Animated
         currentImageData.commandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
 
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, *animatedMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::View));
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, *animatedMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::View));
+        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
         for(size_t index = staticMeshCount; auto &&[mesh, transform, matrixPalet] : currentFrameData.animatedMeshes) {
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
 
@@ -409,8 +409,8 @@ namespace blb::rnd {
             currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
             currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
 
-            currentImageData.commandBuffer->pushConstant(*animatedMeshPipelineObject, Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
-            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, *animatedMeshPipelineObject, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+            currentImageData.commandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
+            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
             currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
 

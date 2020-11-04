@@ -83,6 +83,14 @@ namespace clv::gfx::vk {
         vkCmdEndRenderPass(commandBuffer);
     }
 
+    void VKGraphicsCommandBuffer::bindPipelineObject(PipelineObject &pipelineObject) {
+        auto const *pipeline = polyCast<VKPipelineObject>(&pipelineObject);
+
+        currentLayout = pipeline->getLayout();
+
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->getPipeline());
+    }
+
     void VKGraphicsCommandBuffer::bindVertexBuffer(GraphicsBuffer &vertexBuffer, uint32_t const binding) {
         VkBuffer buffers[]     = { polyCast<VKBuffer>(&vertexBuffer)->getBuffer() };
         VkDeviceSize offsets[] = { 0 };
@@ -94,18 +102,14 @@ namespace clv::gfx::vk {
         vkCmdBindIndexBuffer(commandBuffer, polyCast<VKBuffer>(&indexBuffer)->getBuffer(), 0, getIndexType(indexType));
     }
 
-    void VKGraphicsCommandBuffer::bindPipelineObject(PipelineObject &pipelineObject) {
-        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<VKPipelineObject>(&pipelineObject)->getPipeline());
-    }
-
-    void VKGraphicsCommandBuffer::bindDescriptorSet(DescriptorSet &descriptorSet, PipelineObject const &pipeline, uint32_t const setNum) {
+    void VKGraphicsCommandBuffer::bindDescriptorSet(DescriptorSet &descriptorSet, uint32_t const setNum) {
         VkDescriptorSet sets[] = { polyCast<VKDescriptorSet>(&descriptorSet)->getDescriptorSet() };
 
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, polyCast<VKPipelineObject const>(&pipeline)->getLayout(), setNum, 1, sets, 0, nullptr);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, currentLayout, setNum, 1, sets, 0, nullptr);
     }
 
-    void VKGraphicsCommandBuffer::pushConstant(PipelineObject &pipelineObject, Shader::Stage const stage, size_t const offset, size_t const size, void const *data) {
-        vkCmdPushConstants(commandBuffer, polyCast<VKPipelineObject>(&pipelineObject)->getLayout(), VKShader::convertStage(stage), offset, size, data);
+    void VKGraphicsCommandBuffer::pushConstant(Shader::Stage const stage, size_t const offset, size_t const size, void const *data) {
+        vkCmdPushConstants(commandBuffer, currentLayout, VKShader::convertStage(stage), offset, size, data);
     }
 
     void VKGraphicsCommandBuffer::drawIndexed(size_t const indexCount) {
