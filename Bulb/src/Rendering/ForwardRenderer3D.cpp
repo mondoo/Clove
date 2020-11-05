@@ -268,58 +268,59 @@ namespace blb::rnd {
             ++index;
         }
 
-        //DIRECTIONAL LIGHTS
+        //Lambda used to draw a mesh
+        auto const drawMesh = [](GraphicsCommandBuffer &commandBuffer, Mesh &mesh) {
+            commandBuffer.bindVertexBuffer(*mesh.getVertexBuffer(), 0);
+            commandBuffer.bindIndexBuffer(*mesh.getIndexBuffer(), IndexType::Uint16);
+
+            commandBuffer.drawIndexed(mesh.getIndexCount());
+        };
+
+        //DIRECTIONAL LIGHT SHADOWS
         currentImageData.shadowMapCommandBuffer->beginRecording(CommandBufferUsage::Default);
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
             //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
             currentImageData.shadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
             if(i < currentFrameData.bufferData.numLights.numDirectional) {
+                clv::mth::mat4f pushConstantData[]{ clv::mth::mat4f{ 1.0f }, currentFrameData.bufferData.directionalShadowTransforms[i] };
+                size_t const pushConstantSize = sizeof(pushConstantData);
+
                 //Static
                 currentImageData.shadowMapCommandBuffer->bindPipelineObject(*staticMeshShadowMapPipelineObject);
-                for(size_t index = 0; auto &&[mesh, transform] : currentFrameData.staticMeshes) {
-                    std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
+                for(auto &&[mesh, transform] : currentFrameData.staticMeshes) {
+                    pushConstantData[0] = transform;
 
-                    clv::mth::mat4f const pushConstantData[]{ transform, currentFrameData.bufferData.directionalShadowTransforms[i] };
+                    currentImageData.shadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, pushConstantSize, pushConstantData);
 
-                    currentImageData.shadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-                    currentImageData.shadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
-
-                    currentImageData.shadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(pushConstantData), pushConstantData);
-
-                    currentImageData.shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
-
-                    ++index;
+                    drawMesh(*currentImageData.shadowMapCommandBuffer, *mesh);
                 }
 
                 //Animated
                 currentImageData.shadowMapCommandBuffer->bindPipelineObject(*animatedMeshShadowMapPipelineObject);
                 for(size_t index = staticMeshCount; auto &&[mesh, transform, matrixPalet] : currentFrameData.animatedMeshes) {
-                    std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
+                    std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index++];
+                    pushConstantData[0]                               = transform;
 
-                    clv::mth::mat4f const pushConstantData[]{ transform, currentFrameData.bufferData.directionalShadowTransforms[i] };
-
-                    currentImageData.shadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-                    currentImageData.shadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
-
-                    currentImageData.shadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(pushConstantData), pushConstantData);
+                    currentImageData.shadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, pushConstantSize, pushConstantData);
                     currentImageData.shadowMapCommandBuffer->bindDescriptorSet(*meshDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
-                    currentImageData.shadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
-
-                    ++index;
+                    drawMesh(*currentImageData.shadowMapCommandBuffer, *mesh);
                 }
             }
             currentImageData.shadowMapCommandBuffer->endRenderPass();
         }
         currentImageData.shadowMapCommandBuffer->endRecording();
 
-        //POINT LIGHTS
+        //POINT LIGHT SHADOWS
         currentImageData.cubeShadowMapCommandBuffer->beginRecording(CommandBufferUsage::Default);
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
             for(size_t j = 0; j < 6; ++j) {
                 //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
                 currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
                 if(i < currentFrameData.bufferData.numLights.numPoint) {
+                    clv::mth::mat4f vertPushConstantData[]{ clv::mth::mat4f{ 1.0f }, currentFrameData.pointShadowTransforms[i][j] };
+                    size_t const vertPushConstantSize = sizeof(vertPushConstantData);
+
                     struct {
                         clv::mth::vec3f pos{};
                         float farPlane{};
@@ -327,42 +328,31 @@ namespace blb::rnd {
                         .pos      = currentFrameData.bufferData.lights.pointLights[i].position,
                         .farPlane = currentFrameData.bufferData.lights.pointLights[i].farPlane,
                     };
+                    size_t const pixelPushConstantOffset = sizeof(vertPushConstantData);
+                    size_t const pixelPushConstantSize   = sizeof(pixelPushConstantData);
 
                     //Static
                     currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*staticMeshCubeShadowMapPipelineObject);
-                    for(size_t index = 0; auto &&[mesh, transform] : currentFrameData.staticMeshes) {
-                        std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
+                    for(auto &&[mesh, transform] : currentFrameData.staticMeshes) {
+                        vertPushConstantData[0] = transform;
 
-                        clv::mth::mat4f const vertPushConstantData[]{ transform, currentFrameData.pointShadowTransforms[i][j] };
- 
-                        currentImageData.cubeShadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-                        currentImageData.cubeShadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, vertPushConstantSize, vertPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Pixel, pixelPushConstantOffset, pixelPushConstantSize, &pixelPushConstantData);
 
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(vertPushConstantData), vertPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Pixel, sizeof(vertPushConstantData), sizeof(pixelPushConstantData), &pixelPushConstantData);
-
-                        currentImageData.cubeShadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
-
-                        ++index;
+                        drawMesh(*currentImageData.cubeShadowMapCommandBuffer, *mesh);
                     }
 
                     //Animated
                     currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*animatedMeshCubeShadowMapPipelineObject);
                     for(size_t index = staticMeshCount; auto &&[mesh, transform, matrixPalet] : currentFrameData.animatedMeshes) {
-                        std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
+                        std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index++];
+                        vertPushConstantData[0]                           = transform;
 
-                        clv::mth::mat4f const vertPushConstantData[]{ transform, currentFrameData.pointShadowTransforms[i][j] };
-                        
-                        currentImageData.cubeShadowMapCommandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-                        currentImageData.cubeShadowMapCommandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
-
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(vertPushConstantData), vertPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Pixel, sizeof(vertPushConstantData), sizeof(pixelPushConstantData), &pixelPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, vertPushConstantSize, vertPushConstantData);
+                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Pixel, pixelPushConstantOffset, pixelPushConstantSize, &pixelPushConstantData);
                         currentImageData.cubeShadowMapCommandBuffer->bindDescriptorSet(*meshDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
-                        currentImageData.cubeShadowMapCommandBuffer->drawIndexed(mesh->getIndexCount());
-
-                        ++index;
+                        drawMesh(*currentImageData.cubeShadowMapCommandBuffer, *mesh);
                     }
                 }
                 currentImageData.cubeShadowMapCommandBuffer->endRenderPass();
@@ -371,29 +361,25 @@ namespace blb::rnd {
         currentImageData.cubeShadowMapCommandBuffer->endRecording();
 
         //FINAL COLOUR
-        currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
+        auto const bindMesh = [&](GraphicsCommandBuffer &commandBuffer, Mesh &mesh, clv::mth::mat4f const& transform, size_t const index) {
+            std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
+            clv::mth::mat4f const modelData[]{ transform, clv::mth::inverse(clv::mth::transpose(transform)) };
 
+            commandBuffer.pushConstant(Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
+            commandBuffer.bindDescriptorSet(*meshDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+        };
+
+        currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
         currentImageData.commandBuffer->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
 
         //Static
         currentImageData.commandBuffer->bindPipelineObject(*staticMeshPipelineObject);
-        
+
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::View));
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
         for(size_t index = 0; auto &&[mesh, transform] : currentFrameData.staticMeshes) {
-            std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
-
-            clv::mth::mat4f modelData[]{ transform, clv::mth::inverse(clv::mth::transpose(transform)) };
-
-            currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-            currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
-
-            currentImageData.commandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
-            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
-
-            currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
-
-            ++index;
+            bindMesh(*currentImageData.commandBuffer, *mesh, transform, index++);
+            drawMesh(*currentImageData.commandBuffer, *mesh);
         }
 
         //Animated
@@ -402,23 +388,11 @@ namespace blb::rnd {
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::View));
         currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
         for(size_t index = staticMeshCount; auto &&[mesh, transform, matrixPalet] : currentFrameData.animatedMeshes) {
-            std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
-
-            clv::mth::mat4f modelData[]{ transform, clv::mth::inverse(clv::mth::transpose(transform)) };
-
-            currentImageData.commandBuffer->bindVertexBuffer(*mesh->getVertexBuffer(), 0);
-            currentImageData.commandBuffer->bindIndexBuffer(*mesh->getIndexBuffer(), IndexType::Uint16);
-
-            currentImageData.commandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(modelData), modelData);
-            currentImageData.commandBuffer->bindDescriptorSet(*meshDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Mesh));
-
-            currentImageData.commandBuffer->drawIndexed(mesh->getIndexCount());
-
-            ++index;
+            bindMesh(*currentImageData.commandBuffer, *mesh, transform, index++);
+            drawMesh(*currentImageData.commandBuffer, *mesh);
         }
 
         currentImageData.commandBuffer->endRenderPass();
-
         currentImageData.commandBuffer->endRecording();
 
         //Submit the command buffers
