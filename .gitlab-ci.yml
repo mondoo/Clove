@@ -49,6 +49,19 @@ build:clang:
     paths:
       - build/
 
+build:scape:windows:
+  stage: build
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  before_script:
+    - git submodule update --init --recursive
+    - choco install -y cmake
+    - choco install -y python
+    - choco upgrade -y visualstudio2019buildtools
+    - $env:Path += ';C:\Program Files\CMake\bin'
+  script:
+    - cd Scape/Editor
+    - dotnet build -c Release
+
 build:scape:linux:
   stage: build
   image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
