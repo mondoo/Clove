@@ -29,7 +29,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="BuildMembrane" BeforeTargets="Build" Condition="'$(IsOSX)'=='true'">
+  <Target Name="BuildMembrane" BeforeTargets="BeforeBuild" Condition="'$(IsOSX)'=='true'">
   </Target>
 
   <Target Name="BuildMembrane" BeforeTargets="BeforeBuild" Condition="'$(IsLinux)'=='true'">
