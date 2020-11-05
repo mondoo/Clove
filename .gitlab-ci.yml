@@ -51,7 +51,8 @@ build:clang:
 
 build:scape:windows:
   stage: build
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  tags:
+    - windows-1809
   before_script:
     - git submodule update --init --recursive
     - choco install -y cmake
