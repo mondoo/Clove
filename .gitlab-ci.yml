@@ -100,7 +100,7 @@ test:engine:gcc:
     - build:engine:gcc
 
 test:engine:clang:
-  stage: test
+  stage: test-engine
   image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
   script:
     - cd build
