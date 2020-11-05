@@ -2,7 +2,7 @@ stages:
   - build
   - test
 
-build:windows:
+build:msvc:
   stage: build
   tags:
     - windows-1809
@@ -21,9 +21,9 @@ build:windows:
     paths:
       - build/
 
-build:linux:gcc:
+build:gcc:
   stage: build
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:1.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
   before_script:
     - git submodule update --init --recursive
   script:
@@ -35,9 +35,9 @@ build:linux:gcc:
     paths:
       - build/
 
-build:linux:clang:
+build:clang:
   stage: build
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:1.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
   before_script:
     - git submodule update --init --recursive
   script:
@@ -49,7 +49,30 @@ build:linux:clang:
     paths:
       - build/
 
-test:windows:
+build:scape:windows:
+  stage: build
+  tags:
+    - windows-1809
+  before_script:
+    - git submodule update --init --recursive
+    - choco install -y cmake
+    - choco install -y python
+    - choco upgrade -y visualstudio2019buildtools
+    - $env:Path += ';C:\Program Files\CMake\bin'
+  script:
+    - cd Scape/Editor
+    - dotnet build -c Release
+
+build:scape:linux:
+  stage: build
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  before_script:
+    - git submodule update --init --recursive
+  script:
+    - cd Scape/Editor
+    - dotnet build -c Release
+
+test:msvc:
   stage: test
   tags:
     - windows-1809
@@ -60,28 +83,28 @@ test:windows:
     - cd build
     - ctest -C Release
   dependencies:
-    - build:windows
+    - build:msvc
   needs:
-    - build:windows
+    - build:msvc
 
-test:linux:gcc:
+test:gcc:
   stage: test
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:1.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
   script:
     - cd build
     - ctest -C Release
   dependencies:
-    - build:linux:gcc
+    - build:gcc
   needs:
-    - build:linux:gcc
+    - build:gcc
 
-test:linux:clang:
+test:clang:
   stage: test
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:1.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
   script:
     - cd build
     - ctest -C Release
   dependencies:
-    - build:linux:clang
+    - build:clang
   needs:
-    - build:linux:clang
+    - build:clang
