@@ -5,18 +5,18 @@
 using namespace garlic;
 
 TEST(PoolAllocatorTests, CanAllocateAnItem) {
-    const size_t numOfItems = 100;
+    size_t constexpr numOfItems = 100;
 
     PoolAllocator<float> allocator(numOfItems);
 
-    float* data = allocator.alloc();
+    float *data = allocator.alloc();
 
     EXPECT_TRUE(data != nullptr);
 }
 
 TEST(PoolAllocatorTests, CanAllocateAnItemAndConstructItem) {
-    constexpr int xVal   = 4;
-    constexpr float bVal = 32.333f;
+    int constexpr xVal   = 4;
+    float constexpr bVal = 32.333f;
     struct Data {
         Data() = default;
         Data(int x, float b)
@@ -28,11 +28,11 @@ TEST(PoolAllocatorTests, CanAllocateAnItemAndConstructItem) {
         float b{ 0.0f };
     };
 
-    const size_t numOfItems = 100;
+    size_t constexpr numOfItems = 100;
     PoolAllocator<Data> allocator(numOfItems);
 
-    Data* dataA = allocator.alloc();
-    Data* dataB = allocator.alloc(xVal, bVal);
+    Data *dataA = allocator.alloc();
+    Data *dataB = allocator.alloc(xVal, bVal);
 
     EXPECT_EQ(dataA->x, 0);
     EXPECT_EQ(dataA->b, 0.0f);
@@ -45,22 +45,22 @@ TEST(PoolAllocatorTests, CanAllocateAnItemAndConstructItem) {
 
 TEST(PoolAllocatorTests, CallsAnItemsDestructor) {
     struct Helper {
-        Helper(bool* flag)
+        Helper(bool *flag)
             : flag(flag) {
         }
         ~Helper() {
             *flag = true;
         }
 
-        bool* flag{ nullptr };
+        bool *flag{ nullptr };
     };
 
     bool wasDeconstructorCalled{ false };
 
-    const size_t numOfItems = 100;
+    size_t constexpr numOfItems = 100;
     PoolAllocator<Helper> allocator(numOfItems);
 
-    Helper* data = allocator.alloc(&wasDeconstructorCalled);
+    Helper *data = allocator.alloc(&wasDeconstructorCalled);
 
     EXPECT_TRUE(data->flag);
 
@@ -70,7 +70,7 @@ TEST(PoolAllocatorTests, CallsAnItemsDestructor) {
 }
 
 TEST(PoolAllocatorTests, CannotAllocateMoreThanTheAllocatorHas) {
-    const size_t numOfItems = 5;
+    size_t constexpr numOfItems = 5;
 
     PoolAllocator<float> allocator(numOfItems);
 
@@ -78,17 +78,17 @@ TEST(PoolAllocatorTests, CannotAllocateMoreThanTheAllocatorHas) {
         allocator.alloc();
     }
 
-    float* data = allocator.alloc();
+    float *data = allocator.alloc();
 
     EXPECT_FALSE(data != nullptr);
 }
 
 TEST(PoolAllocatorTests, CanFreeAndReallocateItems) {
-    const size_t numOfItems = 5;
+    size_t constexpr numOfItems = 5;
 
     PoolAllocator<float> allocator(numOfItems);
 
-    float* lastElem{ nullptr };
+    float *lastElem{ nullptr };
     for(size_t i = 0; i < numOfItems; ++i) {
         lastElem = allocator.alloc();
     }
@@ -97,23 +97,23 @@ TEST(PoolAllocatorTests, CanFreeAndReallocateItems) {
 
     allocator.free(lastElem);
 
-    float* someData = allocator.alloc();
+    float *someData = allocator.alloc();
 
     EXPECT_TRUE(someData != nullptr);
 }
 
 TEST(PoolAllocatorTests, CanFreeAndReallocateAnyItem) {
-    const size_t numOfItems = 10;
-    const size_t allocIndex = 5;
+    size_t constexpr numOfItems = 10;
+    size_t constexpr allocIndex = 5;
 
     PoolAllocator<float> allocator(numOfItems);
 
-    float* middleElem{ nullptr };
+    float *middleElem{ nullptr };
     for(size_t i = 0; i < numOfItems; ++i) {
         if(i == allocIndex) {
             middleElem = allocator.alloc();
         } else {
-            auto* discarded = allocator.alloc();
+            auto *discarded = allocator.alloc();
         }
     }
 
@@ -121,7 +121,23 @@ TEST(PoolAllocatorTests, CanFreeAndReallocateAnyItem) {
 
     allocator.free(middleElem);
 
-    float* someData = allocator.alloc();
+    float *someData = allocator.alloc();
 
     EXPECT_TRUE(someData != nullptr);
+}
+
+TEST(PoolAllocatorTests, AllocatorCanGrow) {
+    size_t constexpr numOfItems = 5;
+
+    PoolAllocator<float, AllocatorStrategy::Dynamic> allocator(numOfItems);
+
+    for(size_t i = 0; i < numOfItems; ++i){
+        auto *elem = allocator.alloc();
+    }
+
+    float constexpr value = 32.0f;
+    auto *elem            = allocator.alloc(value);
+
+    EXPECT_TRUE(elem != nullptr);
+    EXPECT_EQ(value, *elem);
 }

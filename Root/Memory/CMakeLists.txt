@@ -5,7 +5,8 @@ set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 
 #Library
 add_library(
-    Root.Memory STATIC
+	Root.Memory STATIC
+		${INCLUDE}/AllocatorStrategy.hpp
         ${INCLUDE}/ListAllocator.hpp
 		${SOURCE}/ListAllocator.cpp
 		${INCLUDE}/PoolAllocator.hpp
