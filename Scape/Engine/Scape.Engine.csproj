@@ -18,26 +18,30 @@
   </PropertyGroup>
 
   <!-- Create a custom target to build Scape.Membrane and copy the binary -->
-  <Target Name="BuildMembrane" BeforeTargets="BeforeBuild" Condition="'$(IsWindows)'=='true'">
+  <Target Name="BuildMembrane" BeforeTargets="BeforeBuild">
     <MakeDir Directories="$(CppBuildPath)" Condition="!Exists('$(CppBuildPath)')"/>
-    <Exec Command="cmake .." WorkingDirectory="$(CppBuildPath)"/>
-    <Exec Command="cmake --build . --target Scape.Membrane --config $(Configuration)" WorkingDirectory="$(CppBuildPath)"/>
-    <ItemGroup>
+
+    <!-- Windows -->
+    <Exec Command="cmake .." WorkingDirectory="$(CppBuildPath)" Condition="'$(IsWindows)'=='true'"/>
+    <Exec Command="cmake --build . --target Scape.Membrane --config $(Configuration)" WorkingDirectory="$(CppBuildPath)" Condition="'$(IsWindows)'=='true'"/>
+
+    <ItemGroup Condition="'$(IsWindows)'=='true'">
       <Content Include="$(CppBuildPath)/lib/$(Configuration)/Scape.Membrane.dll">
+        <Link>Scape.Membrane.dll</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
-  </Target>
 
-  <Target Name="BuildMembrane" BeforeTargets="BeforeBuild" Condition="'$(IsOSX)'=='true'">
-  </Target>
+    <!-- MacOS -->
+    <!-- TODO -->
 
-  <Target Name="BuildMembrane" BeforeTargets="BeforeBuild" Condition="'$(IsLinux)'=='true'">
-    <MakeDir Directories="$(CppBuildPath)" Condition="!Exists('$(CppBuildPath)')"/>
-    <Exec Command="cmake -DCMAKE_BUILD_TYPE=$(Configuration) -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 .." WorkingDirectory="$(CppBuildPath)"/>
-    <Exec Command="cmake --build . --target Scape.Membrane" WorkingDirectory="$(CppBuildPath)"/>
-    <ItemGroup>
+    <!-- Linux -->
+    <Exec Command="cmake -DCMAKE_BUILD_TYPE=$(Configuration) -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 .." WorkingDirectory="$(CppBuildPath)" Condition="'$(IsLinux)'=='true'"/>
+    <Exec Command="cmake --build . --target Scape.Membrane" WorkingDirectory="$(CppBuildPath)" Condition="'$(IsLinux)'=='true'"/>
+
+    <ItemGroup Condition="'$(IsLinux)'=='true'">
       <Content Include="$(CppBuildPath)/Scape/Membrane/libScape.Membrane.so">
+        <Link>libScape.Membrane.so</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
