@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <!-- Create a custom target to build Scape.Membrane and copy the binary -->
-  <Target Name="BuildMembrane" BeforeTargets="Build" Condition="'$(IsWindows)'=='true'">
+  <Target Name="BuildMembrane" BeforeTargets="BeforeBuild" Condition="'$(IsWindows)'=='true'">
     <MakeDir Directories="$(CppBuildPath)" Condition="!Exists('$(CppBuildPath)')"/>
     <Exec Command="cmake .." WorkingDirectory="$(CppBuildPath)"/>
     <Exec Command="cmake --build . --target Scape.Membrane --config $(Configuration)" WorkingDirectory="$(CppBuildPath)"/>
@@ -34,7 +34,7 @@
 
   <Target Name="BuildMembrane" BeforeTargets="BeforeBuild" Condition="'$(IsLinux)'=='true'">
     <MakeDir Directories="$(CppBuildPath)" Condition="!Exists('$(CppBuildPath)')"/>
-    <Exec Command="cmake -DCMAKE_BUILD_TYPE=$(Configuration) .." WorkingDirectory="$(CppBuildPath)"/>
+    <Exec Command="cmake -DCMAKE_BUILD_TYPE=$(Configuration) -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 .." WorkingDirectory="$(CppBuildPath)"/>
     <Exec Command="cmake --build . --target Scape.Membrane" WorkingDirectory="$(CppBuildPath)"/>
     <ItemGroup>
       <Content Include="$(CppBuildPath)/Scape/Membrane/libScape.Membrane.so">
