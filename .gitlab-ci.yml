@@ -58,7 +58,7 @@ build:scape:linux:
     - cd Scape/Editor
     - dotnet build -c Release
 
-test:windows:
+test:msvc:
   stage: test
   tags:
     - windows-1809
@@ -69,28 +69,28 @@ test:windows:
     - cd build
     - ctest -C Release
   dependencies:
-    - build:windows
+    - build:msvc
   needs:
-    - build:windows
+    - build:msvc
 
-test:linux:gcc:
+test:gcc:
   stage: test
   image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
   script:
     - cd build
     - ctest -C Release
   dependencies:
-    - build:linux:gcc
+    - build:gcc
   needs:
-    - build:linux:gcc
+    - build:gcc
 
-test:linux:clang:
+test:clang:
   stage: test
   image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
   script:
     - cd build
     - ctest -C Release
   dependencies:
-    - build:linux:clang
+    - build:clang
   needs:
-    - build:linux:clang
+    - build:clang
