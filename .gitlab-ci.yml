@@ -1,9 +1,10 @@
 stages:
-  - build
-  - test
+  - build-engine
+  - build-editor
+  - test-engine
 
-build:msvc:
-  stage: build
+build:engine:msvc:
+  stage: build-engine
   tags:
     - windows-1809
   before_script:
@@ -21,36 +22,36 @@ build:msvc:
     paths:
       - build/
 
-build:gcc:
-  stage: build
+build:engine:gcc:
+  stage: build-engine
   image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
   before_script:
     - git submodule update --init --recursive
   script:
     - mkdir build
     - cd build
-    - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -G "Unix Makefiles" ..
+    - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
     paths:
       - build/
 
-build:clang:
-  stage: build
+build:engine:clang:
+  stage: build-engine
   image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
   before_script:
     - git submodule update --init --recursive
   script:
     - mkdir build
     - cd build
-    - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/clang-10 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-10 -G "Unix Makefiles" ..
+    - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
     paths:
       - build/
 
-build:scape:windows:
-  stage: build
+build:editor:msvc:
+  stage: build-editor
   tags:
     - windows-1809
   before_script:
@@ -62,18 +63,22 @@ build:scape:windows:
   script:
     - cd Scape/Editor
     - dotnet build -c Release
+  dependencies:
+    - build:engine:msvc
 
-build:scape:linux:
-  stage: build
+build:editor:gcc:
+  stage: build-editor
   image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
   before_script:
     - git submodule update --init --recursive
   script:
     - cd Scape/Editor
     - dotnet build -c Release
+  dependencies:
+    - build:engine:gcc
 
-test:msvc:
-  stage: test
+test:engine:msvc:
+  stage: test-engine
   tags:
     - windows-1809
   before_script:
@@ -83,28 +88,22 @@ test:msvc:
     - cd build
     - ctest -C Release
   dependencies:
-    - build:msvc
-  needs:
-    - build:msvc
+    - build:engine:msvc
 
-test:gcc:
+test:engine:gcc:
+  stage: test-engine
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  script:
+    - cd build
+    - ctest -C Release
+  dependencies:
+    - build:engine:gcc
+
+test:engine:clang:
   stage: test
   image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
   script:
     - cd build
     - ctest -C Release
   dependencies:
-    - build:gcc
-  needs:
-    - build:gcc
-
-test:clang:
-  stage: test
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
-  script:
-    - cd build
-    - ctest -C Release
-  dependencies:
-    - build:clang
-  needs:
-    - build:clang
+    - build:engine:clang
