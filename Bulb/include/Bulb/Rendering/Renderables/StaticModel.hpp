@@ -1,33 +1,41 @@
 #pragma once
 
+#include "Bulb/Rendering/Material.hpp"
+
 namespace blb::rnd {
-	class Mesh;
+    class Mesh;
 }
 
 namespace blb::rnd {
     /**
      * @brief Represents a collection of meshes.
      */
-	class StaticModel {
-		//VARIABLES
-	private:
-		std::vector<std::shared_ptr<Mesh>> meshes;
+    class StaticModel {
+        //VARIABLES
+    private:
+        std::vector<std::shared_ptr<Mesh>> meshes;
+        std::shared_ptr<Material> material;
 
-		//FUNCTIONS
-	public:
-		StaticModel() = delete;
-		StaticModel(std::vector<std::shared_ptr<Mesh>> meshes);
-		
-		StaticModel(const StaticModel& other);
-		StaticModel(StaticModel&& other);
+        //FUNCTIONS
+    public:
+        StaticModel() = delete;
+        StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material);
 
-		StaticModel& operator=(const StaticModel& other);
-		StaticModel& operator=(StaticModel&& other);
+        StaticModel(StaticModel const &other);
+        StaticModel(StaticModel &&other);
 
-		~StaticModel();
+        StaticModel &operator=(StaticModel const &other);
+        StaticModel &operator=(StaticModel &&other);
 
-		const std::vector<std::shared_ptr<Mesh>>& getMeshes() const;
+        ~StaticModel();
 
-		std::shared_ptr<Mesh>& operator[](size_t index);
-	};
+        inline void setMaterial(std::shared_ptr<Material> material);
+        inline std::shared_ptr<Material> const &getMaterial() const;
+
+        inline std::vector<std::shared_ptr<Mesh>> const &getMeshes() const;
+
+        inline std::shared_ptr<Mesh> &operator[](size_t index);
+    };
 }
+
+#include "StaticModel.inl"

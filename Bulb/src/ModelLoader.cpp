@@ -13,7 +13,7 @@
 using namespace clv;
 
 namespace blb::ModelLoader {
-    static mth::mat4f convertToGarlicMatrix(const aiMatrix4x4 &aiMat) {
+    static mth::mat4f convertToGarlicMatrix(aiMatrix4x4 const &aiMat) {
         mth::mat4f garlicMat;
 
         garlicMat[0][0] = aiMat.a1;
@@ -39,11 +39,11 @@ namespace blb::ModelLoader {
         return garlicMat;
     }
 
-    static mth::vec3f convertToGarlicVec(const aiVector3D &aiVec) {
+    static mth::vec3f convertToGarlicVec(aiVector3D const &aiVec) {
         return { aiVec.x, aiVec.y, aiVec.z };
     }
 
-    static mth::quatf convertToGarlicQuat(const aiQuaternion &aiQuat) {
+    static mth::quatf convertToGarlicQuat(aiQuaternion const &aiQuat) {
         return { aiQuat.w, aiQuat.x, aiQuat.y, aiQuat.z };
     }
 
@@ -54,7 +54,7 @@ namespace blb::ModelLoader {
         }
     }
 
-    static std::optional<rnd::JointIndexType> getJointParentId(const rnd::Skeleton &skeleton, std::string_view jointName, std::unordered_map<std::string_view, aiNode *> &nodeNameMap) {
+    static std::optional<rnd::JointIndexType> getJointParentId(rnd::Skeleton const &skeleton, std::string_view jointName, std::unordered_map<std::string_view, aiNode *> &nodeNameMap) {
         aiNode *jointNode = nodeNameMap[jointName];
         if(jointNode->mParent == nullptr) {
             return {};
@@ -71,7 +71,7 @@ namespace blb::ModelLoader {
         return {};
     }
 
-    static rnd::JointIndexType getJointIndex(const rnd::Skeleton &skeleton, std::string_view jointName) {
+    static rnd::JointIndexType getJointIndex(rnd::Skeleton const &skeleton, std::string_view jointName) {
         for(size_t i = 0; i < skeleton.joints.size(); ++i) {
             if(skeleton.joints[i].name == jointName) {
                 return static_cast<rnd::JointIndexType>(i);
@@ -81,14 +81,14 @@ namespace blb::ModelLoader {
         return std::numeric_limits<rnd::JointIndexType>::max();
     }
 
-    static size_t getPreviousIndex(const rnd::AnimationClip &clip, float frame, float framesPerSecond, rnd::JointIndexType jointIndex, std::map<float, size_t> &framePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>> &missingPoseMap) {
-        const size_t currIndex = framePoseIndexMap[frame];
+    static size_t getPreviousIndex(rnd::AnimationClip const &clip, float frame, float framesPerSecond, rnd::JointIndexType jointIndex, std::map<float, size_t> &framePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>> &missingPoseMap) {
+        size_t const currIndex = framePoseIndexMap[frame];
         for(int i = currIndex - 1; i >= 0; --i) {
-            const float poseFrame   = clip.poses[i].timeStamp * framesPerSecond;//Get the time of the pose before this one to check if it's not a missing pose
-            const auto missingPoses = missingPoseMap[poseFrame];
+            float const poseFrame   = clip.poses[i].timeStamp * framesPerSecond;//Get the time of the pose before this one to check if it's not a missing pose
+            auto const missingPoses = missingPoseMap[poseFrame];
 
-            const bool isValidTimeStamp = framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end();
-            const bool isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
+            bool const isValidTimeStamp = framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end();
+            bool const isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
             if(isValidTimeStamp && !isMissingPose) {
                 return i;
             }
@@ -97,14 +97,14 @@ namespace blb::ModelLoader {
         return -1;
     }
 
-    static size_t getNextIndex(const rnd::AnimationClip &clip, float frame, float framesPerSecond, rnd::JointIndexType jointIndex, std::map<float, size_t> &framePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>> &missingPoseMap) {
-        const size_t currIndex = framePoseIndexMap[frame];
+    static size_t getNextIndex(rnd::AnimationClip const &clip, float frame, float framesPerSecond, rnd::JointIndexType jointIndex, std::map<float, size_t> &framePoseIndexMap, std::map<float, std::vector<rnd::JointIndexType>> &missingPoseMap) {
+        size_t const currIndex = framePoseIndexMap[frame];
         for(int i = currIndex + 1; i < clip.poses.size(); ++i) {
-            const float poseFrame   = clip.poses[i].timeStamp * framesPerSecond;//Get the time of the pose after this one to check if it's not a missing pose
-            const auto missingPoses = missingPoseMap[poseFrame];
+            float const poseFrame   = clip.poses[i].timeStamp * framesPerSecond;//Get the time of the pose after this one to check if it's not a missing pose
+            auto const missingPoses = missingPoseMap[poseFrame];
 
-            const bool isValidTimeStamp = framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end();
-            const bool isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
+            bool const isValidTimeStamp = framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end();
+            bool const isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
             if(isValidTimeStamp && !isMissingPose) {
                 return i;
             }
@@ -132,12 +132,11 @@ namespace blb::ModelLoader {
         Default,
         Animated
     };
-    static std::shared_ptr<rnd::Mesh> processMesh(aiMesh *mesh, const aiScene *scene, const std::shared_ptr<clv::gfx::GraphicsFactory> &graphicsFactory, const MeshType meshType) {
-        const size_t vertexCount = mesh->mNumVertices;
+    static std::shared_ptr<rnd::Mesh> processMesh(aiMesh *mesh, aiScene const *scene, std::shared_ptr<clv::gfx::GraphicsFactory> const &graphicsFactory, MeshType const meshType) {
+        size_t const vertexCount = mesh->mNumVertices;
 
         std::vector<rnd::Vertex> vertices(vertexCount);
         std::vector<uint16_t> indices;
-        rnd::Material meshMaterial{ *graphicsFactory };
 
         //Build the map of jointIds + weights for each vertex
         std::unordered_map<size_t, std::vector<std::pair<rnd::JointIndexType, float>>> vertWeightPairs;
@@ -145,7 +144,7 @@ namespace blb::ModelLoader {
             for(rnd::JointIndexType i = 0; i < mesh->mNumBones; ++i) {
                 aiBone *bone = mesh->mBones[i];
                 for(size_t j = 0; j < bone->mNumWeights; ++j) {
-                    const aiVertexWeight &vertexWeight = bone->mWeights[j];
+                    aiVertexWeight const &vertexWeight = bone->mWeights[j];
                     vertWeightPairs[vertexWeight.mVertexId].emplace_back(i, vertexWeight.mWeight);
                 }
             }
@@ -168,7 +167,7 @@ namespace blb::ModelLoader {
                 vertices[i].texCoord.y = mesh->mTextureCoords[0][i].y;
             }
             if(mesh->HasVertexColors(0)) {
-                const aiColor4D &colour = mesh->mColors[0][i];
+                aiColor4D const &colour = mesh->mColors[0][i];
                 vertices[i].colour      = { colour.r, colour.g, colour.b };
             } else {
                 vertices[i].colour = { 1.0f, 1.0f, 1.0f };
@@ -177,7 +176,7 @@ namespace blb::ModelLoader {
                 mth::vec4i &jointIds = vertices[i].jointIds;
                 mth::vec4f &weights  = vertices[i].weights;
 
-                const std::vector<std::pair<rnd::JointIndexType, float>> &weightPairs = vertWeightPairs[i];
+                std::vector<std::pair<rnd::JointIndexType, float>> const &weightPairs = vertWeightPairs[i];
 
                 for(size_t j = 0; j < 4; ++j) {
                     if(j < weightPairs.size()) {
@@ -215,14 +214,14 @@ namespace blb::ModelLoader {
 			}*/
         }
 
-        return std::make_shared<rnd::Mesh>(std::move(vertices), std::move(indices), std::move(meshMaterial), *graphicsFactory);
+        return std::make_shared<rnd::Mesh>(std::move(vertices), std::move(indices), *graphicsFactory);
     }
 
     static const aiScene *openFile(std::string_view modelFilePath, Assimp::Importer &importer) {
         return importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
     }
 
-    rnd::StaticModel loadStaticModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory> &graphicsFactory) {
+    rnd::StaticModel loadStaticModel(std::string_view modelFilePath, std::shared_ptr<clv::gfx::GraphicsFactory> const &graphicsFactory) {
         CLV_PROFILE_FUNCTION();
 
         std::vector<std::shared_ptr<rnd::Mesh>> meshes;
@@ -231,7 +230,7 @@ namespace blb::ModelLoader {
         const aiScene *scene = openFile(modelFilePath.data(), importer);
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
-            return { meshes };
+            return { meshes, std::make_shared<rnd::Material>(*graphicsFactory) };
         }
 
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
@@ -239,10 +238,10 @@ namespace blb::ModelLoader {
             meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Default));
         }
 
-        return { meshes };
+        return { meshes, std::make_shared<rnd::Material>(*graphicsFactory) };
     }
 
-    rnd::AnimatedModel loadAnimatedModel(std::string_view modelFilePath, const std::shared_ptr<clv::gfx::GraphicsFactory> &graphicsFactory) {
+    rnd::AnimatedModel loadAnimatedModel(std::string_view modelFilePath, std::shared_ptr<clv::gfx::GraphicsFactory> const &graphicsFactory) {
         CLV_PROFILE_FUNCTION();
 
         std::vector<std::shared_ptr<rnd::Mesh>> meshes;
@@ -251,7 +250,7 @@ namespace blb::ModelLoader {
         const aiScene *scene = openFile(modelFilePath.data(), importer);
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
-            return { meshes, nullptr, {} };
+            return { meshes, std::make_shared<rnd::Material>(*graphicsFactory), nullptr, {} };
         }
 
         //TODO: Support multiple skeletons?
@@ -331,7 +330,7 @@ namespace blb::ModelLoader {
                         continue;
                     }
 
-                    const rnd::JointIndexType jointIndex = getJointIndex(*skeleton, channel->mNodeName.C_Str());
+                    rnd::JointIndexType const jointIndex = getJointIndex(*skeleton, channel->mNodeName.C_Str());
                     rnd::JointPose &jointPose            = animPose.poses[jointIndex];
 
                     bool positionFound = false;
@@ -378,22 +377,22 @@ namespace blb::ModelLoader {
                 framePoseIndexMap[frame] = std::size(animClip.poses) - 1;
             }
 
-            const auto retrieveJointPoses = [&](float time, rnd::JointIndexType jointIndex, const rnd::AnimationPose &currAnimPose, std::map<float, std::vector<rnd::JointIndexType>> &missingElementMap) {
+            auto const retrieveJointPoses = [&](float time, rnd::JointIndexType jointIndex, rnd::AnimationPose const &currAnimPose, std::map<float, std::vector<rnd::JointIndexType>> &missingElementMap) {
                 struct LerpData {
-                    const float lerpTime;
-                    const rnd::JointPose &prevPose;
-                    const rnd::JointPose &nextPose;
+                    float const lerpTime;
+                    rnd::JointPose const &prevPose;
+                    rnd::JointPose const &nextPose;
                 };
 
-                const size_t prevPoseIndex = getPreviousIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap);
-                const size_t nextPoseIndex = getNextIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap);
+                size_t const prevPoseIndex = getPreviousIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap);
+                size_t const nextPoseIndex = getNextIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap);
 
-                const rnd::AnimationPose &prevAnimPose = animClip.poses[prevPoseIndex];
-                const rnd::AnimationPose &nextAnimPose = animClip.poses[nextPoseIndex];
+                rnd::AnimationPose const &prevAnimPose = animClip.poses[prevPoseIndex];
+                rnd::AnimationPose const &nextAnimPose = animClip.poses[nextPoseIndex];
 
-                const float timeBetweenPoses = nextAnimPose.timeStamp - prevAnimPose.timeStamp;
-                const float timeFromPrevPose = currAnimPose.timeStamp - prevAnimPose.timeStamp;
-                const float normTime         = timeFromPrevPose / timeBetweenPoses;
+                float const timeBetweenPoses = nextAnimPose.timeStamp - prevAnimPose.timeStamp;
+                float const timeFromPrevPose = currAnimPose.timeStamp - prevAnimPose.timeStamp;
+                float const normTime         = timeFromPrevPose / timeBetweenPoses;
 
                 return LerpData{
                     normTime,
@@ -404,33 +403,33 @@ namespace blb::ModelLoader {
 
             //Interpolate missing keyframes
             for(auto &[time, jointIndices] : missingPositions) {
-                const size_t currPoseIndex       = framePoseIndexMap[time];
+                size_t const currPoseIndex       = framePoseIndexMap[time];
                 rnd::AnimationPose &currAnimPose = animClip.poses[currPoseIndex];
 
                 for(rnd::JointIndexType jointIndex : jointIndices) {
-                    const auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingPositions);
+                    auto const lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingPositions);
 
                     rnd::JointPose &pose = currAnimPose.poses[jointIndex];
                     pose.position        = mth::lerp(lerpData.prevPose.position, lerpData.nextPose.position, lerpData.lerpTime);
                 }
             }
             for(auto &[time, jointIndices] : missingRotations) {
-                const size_t currPoseIndex       = framePoseIndexMap[time];
+                size_t const currPoseIndex       = framePoseIndexMap[time];
                 rnd::AnimationPose &currAnimPose = animClip.poses[currPoseIndex];
 
                 for(rnd::JointIndexType jointIndex : jointIndices) {
-                    const auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingRotations);
+                    auto const lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingRotations);
 
                     rnd::JointPose &pose = currAnimPose.poses[jointIndex];
                     pose.rotation        = mth::slerp(lerpData.prevPose.rotation, lerpData.nextPose.rotation, lerpData.lerpTime);
                 }
             }
             for(auto &[time, jointIndices] : missingScale) {
-                const size_t currPoseIndex       = framePoseIndexMap[time];
+                size_t const currPoseIndex       = framePoseIndexMap[time];
                 rnd::AnimationPose &currAnimPose = animClip.poses[currPoseIndex];
 
                 for(rnd::JointIndexType jointIndex : jointIndices) {
-                    const auto lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingScale);
+                    auto const lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingScale);
 
                     rnd::JointPose &pose = currAnimPose.poses[jointIndex];
                     pose.scale           = mth::lerp(lerpData.prevPose.scale, lerpData.nextPose.scale, lerpData.lerpTime);
@@ -438,7 +437,6 @@ namespace blb::ModelLoader {
             }
         }
 
-        rnd::AnimatedModel animatedModel{ meshes, std::move(skeleton), std::move(animationClips) };
-        return animatedModel;
+        return { meshes, std::make_shared<rnd::Material>(*graphicsFactory), std::move(skeleton), std::move(animationClips) };
     }
 }

@@ -2,38 +2,33 @@
 
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 
-namespace blb::rnd{
-	StaticModel::StaticModel(std::vector<std::shared_ptr<Mesh>> meshes)
-		: meshes(std::move(meshes)){
-	}
+namespace blb::rnd {
+    StaticModel::StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material)
+        : meshes(std::move(meshes))
+        , material(std::move(material)) {
+    }
 
-	StaticModel::StaticModel(const StaticModel& other){
-		meshes.clear();
-		for(const std::shared_ptr<Mesh>& mesh : other.meshes) {
-			meshes.emplace_back(std::make_shared<Mesh>(*mesh));
-		}
-	}
+    StaticModel::StaticModel(StaticModel const &other) 
+		: material(std::make_shared<Material>(*other.material)){
+        meshes.clear();
+        for(auto const &mesh : other.meshes) {
+            meshes.emplace_back(std::make_shared<Mesh>(*mesh));
+        }
+    }
 
-	StaticModel::StaticModel(StaticModel&& other) = default;
+    StaticModel::StaticModel(StaticModel &&other) = default;
 
-	StaticModel& StaticModel::operator=(const StaticModel& other){
-		meshes.clear();
-		for(const std::shared_ptr<Mesh>& mesh : other.meshes) {
-			meshes.emplace_back(std::make_shared<Mesh>(*mesh));
-		}
+    StaticModel &StaticModel::operator=(StaticModel const &other) {
+        material = std::make_shared<Material>(*other.material);
+        meshes.clear();
+        for(auto const &mesh : other.meshes) {
+            meshes.emplace_back(std::make_shared<Mesh>(*mesh));
+        }
 
-		return *this;
-	}
+        return *this;
+    }
 
-	StaticModel& StaticModel::operator=(StaticModel&& other) = default;
+    StaticModel &StaticModel::operator=(StaticModel &&other) = default;
 
-	StaticModel::~StaticModel() = default;
-	
-	const std::vector<std::shared_ptr<Mesh>>& StaticModel::getMeshes() const {
-		return meshes;
-	}
-
-	std::shared_ptr<Mesh>& StaticModel::operator[](size_t index) {
-		return meshes[index];
-	}
+    StaticModel::~StaticModel() = default;
 }

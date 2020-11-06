@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Bulb/Rendering/Material.hpp"
 #include "Bulb/Rendering/Vertex.hpp"
 
 namespace clv::gfx {
@@ -8,6 +7,7 @@ namespace clv::gfx {
     class VertexLayout;
     class VertexBufferData;
     class CommandBuffer;
+    class GraphicsFactory;
 }
 
 namespace blb::rnd {
@@ -16,7 +16,6 @@ namespace blb::rnd {
     private:
         std::shared_ptr<clv::gfx::GraphicsBuffer> vertexBuffer;
         std::shared_ptr<clv::gfx::GraphicsBuffer> indexBuffer;
-        Material material;
 
         std::vector<Vertex> vertices;
         std::vector<uint16_t> indices;
@@ -24,23 +23,21 @@ namespace blb::rnd {
         //FUNCTIONS
     public:
         Mesh() = delete;
-        Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices, clv::gfx::GraphicsFactory& factory);
-        Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices, Material material, clv::gfx::GraphicsFactory& factory);
+        Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices, clv::gfx::GraphicsFactory &factory);
 
-        Mesh(const Mesh& other);
-        Mesh(Mesh&& other) noexcept;
+        Mesh(Mesh const &other);
+        Mesh(Mesh &&other) noexcept;
 
-        Mesh& operator=(const Mesh& other);
-        Mesh& operator=(Mesh&& other) noexcept;
+        Mesh &operator=(Mesh const &other);
+        Mesh &operator=(Mesh &&other) noexcept;
 
         ~Mesh();
 
-        void setMaterial(Material material);
-        const Material& getMaterial() const;
+        inline size_t getIndexCount();
 
-        size_t getIndexCount();
-
-        const std::shared_ptr<clv::gfx::GraphicsBuffer>& getVertexBuffer() const;
-        const std::shared_ptr<clv::gfx::GraphicsBuffer>& getIndexBuffer() const;
+        inline std::shared_ptr<clv::gfx::GraphicsBuffer> const &getVertexBuffer() const;
+        inline std::shared_ptr<clv::gfx::GraphicsBuffer> const &getIndexBuffer() const;
     };
 }
+
+#include "Mesh.inl"

@@ -7,81 +7,83 @@
 namespace blb::rnd {
     std::weak_ptr<clv::gfx::GraphicsImage> Material::defaultImage{};
 
-    Material::Material(clv::gfx::GraphicsFactory& factory) {
+    Material::Material(clv::gfx::GraphicsFactory &factory) {
         using namespace clv::gfx;
 
         if(defaultImage.use_count() == 0) {
+            clv::mth::vec2f constexpr imageDimensions{ 1.0f, 1.0f };
+            uint32_t constexpr bytesPerPixel{ 4 };
+            uint32_t constexpr white{ 0xffffffff };
+
             auto transferQueue = factory.createTransferQueue({ QueueFlags::Transient });
             auto graphicsQueue = factory.createGraphicsQueue({ QueueFlags::Transient });
 
             std::shared_ptr<TransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
             std::shared_ptr<GraphicsCommandBuffer> graphicsCommandBuffer = graphicsQueue->allocateCommandBuffer();
 
-            GraphicsImage::Descriptor imageDesc{};
-            imageDesc.type                       = GraphicsImage::Type::_2D;
-            imageDesc.dimensions                 = { 1, 1 };
-            imageDesc.usageFlags                 = GraphicsImage::UsageMode::TransferDestination | GraphicsImage::UsageMode::Sampled;
-            imageDesc.format                     = GraphicsImage::Format::R8G8B8A8_SRGB;
-            imageDesc.sharingMode                = SharingMode::Exclusive;
-            imageDesc.memoryType                 = MemoryType::VideoMemory;
-            std::shared_ptr<GraphicsImage> image = factory.createImage(imageDesc);
+            std::shared_ptr<GraphicsImage> image = factory.createImage(GraphicsImage::Descriptor{
+                .type        = GraphicsImage::Type::_2D,
+                .usageFlags  = GraphicsImage::UsageMode::TransferDestination | GraphicsImage::UsageMode::Sampled,
+                .dimensions  = imageDimensions,
+                .format      = GraphicsImage::Format::R8G8B8A8_SRGB,
+                .sharingMode = SharingMode::Exclusive,
+                .memoryType  = MemoryType::VideoMemory,
+            });
 
-            GraphicsBuffer::Descriptor bufferDesc{};
-            bufferDesc.size        = 4;
-            bufferDesc.usageFlags  = GraphicsBuffer::UsageMode::TransferSource;
-            bufferDesc.sharingMode = SharingMode::Exclusive;
-            bufferDesc.memoryType  = MemoryType::SystemMemory;
-            auto transferBuffer    = factory.createBuffer(std::move(bufferDesc));
-
-            uint32_t white = 0xffffffff;
-            transferBuffer->write(&white, 0, 4);
+            auto transferBuffer = factory.createBuffer(GraphicsBuffer::Descriptor{
+                .size        = bytesPerPixel,
+                .usageFlags  = GraphicsBuffer::UsageMode::TransferSource,
+                .sharingMode = SharingMode::Exclusive,
+                .memoryType  = MemoryType::SystemMemory,
+            });
+            transferBuffer->write(&white, 0, bytesPerPixel);
 
             //Change the layout of the default image, write the buffer into it and then release the queue ownership
-            clv::gfx::ImageMemoryBarrierInfo layoutTransferInfo{};
-            layoutTransferInfo.sourceAccess      = clv::gfx::AccessFlags::None;
-            layoutTransferInfo.destinationAccess = clv::gfx::AccessFlags::TransferWrite;
-            layoutTransferInfo.oldImageLayout    = clv::gfx::GraphicsImage::Layout::Undefined;
-            layoutTransferInfo.newImageLayout    = clv::gfx::GraphicsImage::Layout::TransferDestinationOptimal;
-            layoutTransferInfo.sourceQueue       = clv::gfx::QueueType::None;
-            layoutTransferInfo.destinationQueue  = clv::gfx::QueueType::None;
+            ImageMemoryBarrierInfo const layoutTransferInfo{
+                .sourceAccess      = AccessFlags::None,
+                .destinationAccess = AccessFlags::TransferWrite,
+                .oldImageLayout    = GraphicsImage::Layout::Undefined,
+                .newImageLayout    = GraphicsImage::Layout::TransferDestinationOptimal,
+                .sourceQueue       = QueueType::None,
+                .destinationQueue  = QueueType::None,
+            };
 
-            clv::gfx::ImageMemoryBarrierInfo transferQueueReleaseInfo{};
-            transferQueueReleaseInfo.sourceAccess      = clv::gfx::AccessFlags::TransferWrite;
-            transferQueueReleaseInfo.destinationAccess = clv::gfx::AccessFlags::None;
-            transferQueueReleaseInfo.oldImageLayout    = clv::gfx::GraphicsImage::Layout::TransferDestinationOptimal;
-            transferQueueReleaseInfo.newImageLayout    = clv::gfx::GraphicsImage::Layout::TransferDestinationOptimal;
-            transferQueueReleaseInfo.sourceQueue       = clv::gfx::QueueType::Transfer;
-            transferQueueReleaseInfo.destinationQueue  = clv::gfx::QueueType::Graphics;
+            ImageMemoryBarrierInfo const transferQueueReleaseInfo{
+                .sourceAccess      = AccessFlags::TransferWrite,
+                .destinationAccess = AccessFlags::None,
+                .oldImageLayout    = GraphicsImage::Layout::TransferDestinationOptimal,
+                .newImageLayout    = GraphicsImage::Layout::TransferDestinationOptimal,
+                .sourceQueue       = QueueType::Transfer,
+                .destinationQueue  = QueueType::Graphics,
+            };
 
-            transferCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
-            transferCommandBuffer->imageMemoryBarrier(*image, layoutTransferInfo, clv::gfx::PipelineObject::Stage::Top, clv::gfx::PipelineObject::Stage::Transfer);
-            transferCommandBuffer->copyBufferToImage(*transferBuffer, 0, *image, clv::gfx::GraphicsImage::Layout::TransferDestinationOptimal, { 0, 0, 0 }, { imageDesc.dimensions.x, imageDesc.dimensions.y, 1 });
-            transferCommandBuffer->imageMemoryBarrier(*image, transferQueueReleaseInfo, clv::gfx::PipelineObject::Stage::Transfer, clv::gfx::PipelineObject::Stage::Transfer);
+            transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
+            transferCommandBuffer->imageMemoryBarrier(*image, std::move(layoutTransferInfo), PipelineObject::Stage::Top, PipelineObject::Stage::Transfer);
+            transferCommandBuffer->copyBufferToImage(*transferBuffer, 0, *image, GraphicsImage::Layout::TransferDestinationOptimal, { 0, 0, 0 }, { imageDimensions.x, imageDimensions.y, 1 });
+            transferCommandBuffer->imageMemoryBarrier(*image, std::move(transferQueueReleaseInfo), PipelineObject::Stage::Transfer, PipelineObject::Stage::Transfer);
             transferCommandBuffer->endRecording();
 
-            //Acquire queue ownership to a graphics queue
-            clv::gfx::ImageMemoryBarrierInfo graphicsQueueAcquireInfo{};
-            graphicsQueueAcquireInfo.sourceAccess      = clv::gfx::AccessFlags::TransferWrite;
-            graphicsQueueAcquireInfo.destinationAccess = clv::gfx::AccessFlags::ShaderRead;
-            graphicsQueueAcquireInfo.oldImageLayout    = clv::gfx::GraphicsImage::Layout::TransferDestinationOptimal;
-            graphicsQueueAcquireInfo.newImageLayout    = clv::gfx::GraphicsImage::Layout::ShaderReadOnlyOptimal;
-            graphicsQueueAcquireInfo.sourceQueue       = clv::gfx::QueueType::Transfer;
-            graphicsQueueAcquireInfo.destinationQueue  = clv::gfx::QueueType::Graphics;
+            //Acquire ownership of the image to a graphics queue
+            ImageMemoryBarrierInfo const graphicsQueueAcquireInfo{
+                .sourceAccess      = AccessFlags::TransferWrite,
+                .destinationAccess = AccessFlags::ShaderRead,
+                .oldImageLayout    = GraphicsImage::Layout::TransferDestinationOptimal,
+                .newImageLayout    = GraphicsImage::Layout::ShaderReadOnlyOptimal,
+                .sourceQueue       = QueueType::Transfer,
+                .destinationQueue  = QueueType::Graphics,
+            };
 
-            graphicsCommandBuffer->beginRecording(clv::gfx::CommandBufferUsage::OneTimeSubmit);
-            graphicsCommandBuffer->imageMemoryBarrier(*image, graphicsQueueAcquireInfo, clv::gfx::PipelineObject::Stage::Transfer, clv::gfx::PipelineObject::Stage::PixelShader);
+            graphicsCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
+            graphicsCommandBuffer->imageMemoryBarrier(*image, std::move(graphicsQueueAcquireInfo), PipelineObject::Stage::Transfer, PipelineObject::Stage::PixelShader);
             graphicsCommandBuffer->endRecording();
 
-            auto fence = factory.createFence({ false });
+            auto graphicsQueueFinishedFence = factory.createFence({ false });
 
-            GraphicsSubmitInfo submitInfo{};
-            submitInfo.commandBuffers = { graphicsCommandBuffer };
-
-            transferQueue->submit({ { transferCommandBuffer } });
-            graphicsQueue->submit(std::move(submitInfo), fence.get());
+            transferQueue->submit(TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer } });
+            graphicsQueue->submit(GraphicsSubmitInfo{ .commandBuffers = { graphicsCommandBuffer } }, graphicsQueueFinishedFence.get());
 
             transferQueue->freeCommandBuffer(*transferCommandBuffer);
-            fence->wait();
+            graphicsQueueFinishedFence->wait();
             graphicsQueue->freeCommandBuffer(*graphicsCommandBuffer);
 
             defaultImage = image;
@@ -93,8 +95,8 @@ namespace blb::rnd {
             specularImage = defaultImage.lock();
         }
 
-        clv::gfx::GraphicsImageView::Descriptor viewDescriptor{
-            .type       = clv::gfx::GraphicsImageView::Type::_2D,
+        GraphicsImageView::Descriptor const viewDescriptor{
+            .type       = GraphicsImageView::Type::_2D,
             .layer      = 0,
             .layerCount = 1,
         };
@@ -103,13 +105,13 @@ namespace blb::rnd {
         specularView = specularImage->createView(std::move(viewDescriptor));
     }
 
-    Material::Material(const Material& other) = default;
+    Material::Material(Material const &other) = default;
 
-    Material::Material(Material&& other) noexcept = default;
+    Material::Material(Material &&other) noexcept = default;
 
-    Material& Material::operator=(const Material& other) = default;
+    Material &Material::operator=(Material const &other) = default;
 
-    Material& Material::operator=(Material&& other) noexcept = default;
+    Material &Material::operator=(Material &&other) noexcept = default;
 
     Material::~Material() = default;
 
@@ -129,13 +131,5 @@ namespace blb::rnd {
             .layer      = 0,
             .layerCount = 1,
         });
-    }
-
-    void Material::setColour(clv::mth::vec4f colour) {
-        this->colour = std::move(colour);
-    }
-
-    void Material::setShininess(float shininess) {
-        this->shininess = shininess;
     }
 }

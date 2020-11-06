@@ -25,8 +25,12 @@ namespace clv::gfx {
         virtual ~GraphicsQueue() = default;
 
         virtual std::unique_ptr<GraphicsCommandBuffer> allocateCommandBuffer() = 0;
-        virtual void freeCommandBuffer(GraphicsCommandBuffer& buffer)          = 0;
+        virtual void freeCommandBuffer(GraphicsCommandBuffer &buffer)          = 0;
 
-        virtual void submit(GraphicsSubmitInfo const& submitInfo, Fence const* fence) = 0;
+        /**
+         * @brief Submit command buffers to be processed.
+         * @param signalFence An optional fence that will be signaled when this submission is complete.
+         */
+        virtual void submit(GraphicsSubmitInfo const &submitInfo, Fence const *signalFence) = 0;
     };
 }

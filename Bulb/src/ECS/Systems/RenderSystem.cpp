@@ -46,7 +46,7 @@ namespace blb::ecs {
             mth::mat4f const modelTransform = transform->getTransformationMatrix(TransformSpace::World);
 
             for(auto &mesh : staticModel->model.getMeshes()) {
-                renderer->submitStaticMesh(mesh, modelTransform);
+                renderer->submitStaticMesh(rnd::ForwardRenderer3D::StaticMeshInfo{ mesh, staticModel->model.getMaterial(), modelTransform });
             }
         }
         //Submit animated meshes
@@ -55,7 +55,7 @@ namespace blb::ecs {
             auto const matrixPalet          = animatedModel->model.update(deltaTime);
 
             for(auto &mesh : animatedModel->model.getMeshes()) {
-                renderer->submitAnimatedMesh(mesh, modelTransform, matrixPalet);
+                renderer->submitAnimatedMesh(rnd::ForwardRenderer3D::AnimatedMeshInfo{ mesh, animatedModel->model.getMaterial(), modelTransform, matrixPalet });
             }
         }
 

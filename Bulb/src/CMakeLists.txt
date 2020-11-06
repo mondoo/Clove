@@ -95,6 +95,7 @@ set(
 		${BLB_INCLUDE}/Rendering/ForwardRenderer3D.hpp
 		${BLB_SOURCE}/Rendering/ForwardRenderer3D.cpp
 		${BLB_INCLUDE}/Rendering/Material.hpp
+		${BLB_INCLUDE}/Rendering/Material.inl
 		${BLB_SOURCE}/Rendering/Material.cpp
 		${BLB_INCLUDE}/Rendering/RenderingConstants.hpp
 		${BLB_INCLUDE}/Rendering/RenderingHelpers.hpp
@@ -104,10 +105,13 @@ set(
 		${BLB_INCLUDE}/Rendering/Renderables/Font.hpp
 		${BLB_SOURCE}/Rendering/Renderables/Font.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Mesh.hpp
+		${BLB_INCLUDE}/Rendering/Renderables/Mesh.inl
 		${BLB_SOURCE}/Rendering/Renderables/Mesh.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/AnimatedModel.hpp
+		${BLB_INCLUDE}/Rendering/Renderables/AnimatedModel.inl
 		${BLB_SOURCE}/Rendering/Renderables/AnimatedModel.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.hpp
+		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${BLB_SOURCE}/Rendering/Renderables/StaticModel.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Sprite.hpp
 		${BLB_SOURCE}/Rendering/Renderables/Sprite.cpp

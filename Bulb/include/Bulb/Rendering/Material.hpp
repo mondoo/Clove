@@ -30,20 +30,22 @@ namespace blb::rnd {
         //FUNCTIONS
     public:
         Material() = delete;
-        Material(clv::gfx::GraphicsFactory& factory);
+        Material(clv::gfx::GraphicsFactory &factory);
 
-        Material(const Material& other);
-        Material(Material&& other) noexcept;
+        Material(Material const &other);
+        Material(Material &&other) noexcept;
 
-        Material& operator=(const Material& other);
-        Material& operator=(Material&& other) noexcept;
+        Material &operator=(Material const &other);
+        Material &operator=(Material &&other) noexcept;
 
         ~Material();
 
         void setDiffuseTexture(std::shared_ptr<clv::gfx::GraphicsImage> image);
         void setSpecularTexture(std::shared_ptr<clv::gfx::GraphicsImage> image);
 
-        void setColour(clv::mth::vec4f colour);
-        void setShininess(float shininess);
+        inline void setColour(clv::mth::vec4f colour);
+        inline void setShininess(float shininess);
     };
 }
+
+#include "Material.inl"
