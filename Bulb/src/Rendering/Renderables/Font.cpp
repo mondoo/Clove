@@ -1,5 +1,7 @@
 #include "Bulb/Rendering/Renderables/Font.hpp"
 
+#include "Bulb/Rendering/RenderingHelpers.hpp"
+
 #include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Root/Log/Log.hpp>
@@ -105,31 +107,18 @@ namespace blb::rnd {
             return glyph;
         }
 
-        size_t constexpr bytesPerPixel{ 4 };
-        size_t const sizeBytes{ static_cast<size_t>(glyph.size.x) * static_cast<size_t>(glyph.size.y) * bytesPerPixel };
+        size_t constexpr bytesPerTexel{ 4 };
+        size_t const sizeBytes{ static_cast<size_t>(glyph.size.x) * static_cast<size_t>(glyph.size.y) * bytesPerTexel };
 
-        auto transferQueue = graphicsFactory->createTransferQueue({ QueueFlags::Transient });
-
-        std::shared_ptr<TransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
-
-        auto transferBuffer = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
-            .size        = sizeBytes,
-            .usageFlags  = GraphicsBuffer::UsageMode::TransferSource,
-            .sharingMode = SharingMode::Exclusive,
-            .memoryType  = MemoryType::SystemMemory,
-        });
-        transferBuffer->write(faceBuffer, 0, sizeBytes);
-
-        glyph.character = graphicsFactory->createImage(GraphicsImage::Descriptor{
+        GraphicsImage::Descriptor const glyphImageDescriptor{
             .type        = GraphicsImage::Type::_2D,
             .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::TransferDestination,
             .dimensions  = glyph.size,
             .format      = GraphicsImage::Format::R8G8B8A8_SRGB,
-            .sharingMode = SharingMode::Concurrent,
-            .memoryType  = MemoryType::VideoMemory,
-        });
+            .sharingMode = SharingMode::Exclusive,
+        };
 
-        transferCommandBuffer->copyBufferToImage(*transferBuffer, 0, *glyph.character, GraphicsImage::Layout::Undefined, { 0, 0, 0 }, { glyph.size.x, glyph.size.y, 1 });
+        glyph.character = createImageWithData(*graphicsFactory, std::move(glyphImageDescriptor), faceBuffer, sizeBytes);
 
         return glyph;
     }

@@ -13,9 +13,9 @@ namespace clv::gfx {
 
 namespace blb::rnd {
     struct Glyph {
-        clv::mth::vec2f size{};
-        clv::mth::vec2f bearing{};
-        clv::mth::vec2f advance{};
+        clv::mth::vec2ui size{};
+        clv::mth::vec2i bearing{};
+        clv::mth::vec2i advance{};
         std::shared_ptr<clv::gfx::GraphicsImage> character;
     };
 }
