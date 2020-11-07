@@ -51,7 +51,7 @@ namespace clv::gfx::vk {
         vkCmdCopyBuffer(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKBuffer>(&destination)->getBuffer(), 1, &copyRegion);
     }
 
-    void VKTransferCommandBuffer::copyBufferToImage(GraphicsBuffer &source, size_t const sourceOffset, GraphicsImage &destination, GraphicsImage::Layout destinationLayout, mth::vec3i const &destinationOffset, mth::vec3ui const &destinationExtent) {
+    void VKTransferCommandBuffer::copyBufferToImage(GraphicsBuffer &source, size_t const sourceOffset, GraphicsImage &destination, mth::vec3i const &destinationOffset, mth::vec3ui const &destinationExtent) {
         VkBufferImageCopy copyRegion{
             .bufferOffset      = sourceOffset,
             .bufferRowLength   = 0,//Tightly packed
@@ -66,7 +66,7 @@ namespace clv::gfx::vk {
             .imageExtent = { destinationExtent.x, destinationExtent.y, destinationExtent.z },
         };
 
-        vkCmdCopyBufferToImage(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKImage>(&destination)->getImage(), VKImage::convertLayout(destinationLayout), 1, &copyRegion);
+        vkCmdCopyBufferToImage(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKImage>(&destination)->getImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
     }
 
     void VKTransferCommandBuffer::bufferMemoryBarrier(GraphicsBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {

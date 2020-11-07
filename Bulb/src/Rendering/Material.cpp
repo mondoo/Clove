@@ -59,7 +59,7 @@ namespace blb::rnd {
 
             transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
             transferCommandBuffer->imageMemoryBarrier(*image, std::move(layoutTransferInfo), PipelineObject::Stage::Top, PipelineObject::Stage::Transfer);
-            transferCommandBuffer->copyBufferToImage(*transferBuffer, 0, *image, GraphicsImage::Layout::TransferDestinationOptimal, { 0, 0, 0 }, { imageDimensions.x, imageDimensions.y, 1 });
+            transferCommandBuffer->copyBufferToImage(*transferBuffer, 0, *image, { 0, 0, 0 }, { imageDimensions.x, imageDimensions.y, 1 });
             transferCommandBuffer->imageMemoryBarrier(*image, std::move(transferQueueReleaseInfo), PipelineObject::Stage::Transfer, PipelineObject::Stage::Transfer);
             transferCommandBuffer->endRecording();
 

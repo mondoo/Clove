@@ -22,7 +22,7 @@ namespace clv::gfx::vk {
         VKTransferCommandBuffer(VKTransferCommandBuffer &&other) noexcept;
 
         VKTransferCommandBuffer &operator=(VKTransferCommandBuffer const &other) = delete;
-        VKTransferCommandBuffer &operator                                        =(VKTransferCommandBuffer &&other) noexcept;
+        VKTransferCommandBuffer &operator=(VKTransferCommandBuffer &&other) noexcept;
 
         ~VKTransferCommandBuffer();
 
@@ -30,7 +30,7 @@ namespace clv::gfx::vk {
         void endRecording() override;
 
         void copyBufferToBuffer(GraphicsBuffer &source, size_t const sourceOffset, GraphicsBuffer &destination, size_t const destinationOffset, size_t const sizeBytes) override;
-        void copyBufferToImage(GraphicsBuffer &source, size_t const sourceOffset, GraphicsImage &destination, GraphicsImage::Layout destinationLayout, mth::vec3i const &destinationOffset, mth::vec3ui const &destinationExtent) override;
+        void copyBufferToImage(GraphicsBuffer &source, size_t const sourceOffset, GraphicsImage &destination, mth::vec3i const &destinationOffset, mth::vec3ui const &destinationExtent) override;
 
         void bufferMemoryBarrier(GraphicsBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) override;
         void imageMemoryBarrier(GraphicsImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) override;
