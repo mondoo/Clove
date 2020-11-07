@@ -126,7 +126,7 @@ namespace blb::rnd {
             .dimensions  = glyph.size,
             .format      = GraphicsImage::Format::R8G8B8A8_SRGB,
             .sharingMode = SharingMode::Concurrent,
-            .memoryType  = MemoryType::SystemMemory,
+            .memoryType  = MemoryType::VideoMemory,
         });
 
         transferCommandBuffer->copyBufferToImage(*transferBuffer, 0, *glyph.character, GraphicsImage::Layout::Undefined, { 0, 0, 0 }, { glyph.size.x, glyph.size.y, 1 });
