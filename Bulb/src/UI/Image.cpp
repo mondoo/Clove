@@ -1,6 +1,6 @@
 #include "Bulb/UI/Image.hpp"
 
-#include "Bulb/Rendering/Renderables/Sprite.hpp"
+//#include "Bulb/Rendering/Renderables/Sprite.hpp"
 //#include "Bulb/Rendering/Renderer3D.hpp"
 
 using namespace clv;
@@ -8,7 +8,7 @@ using namespace clv::gfx;
 
 namespace blb::ui {
 	Image::Image(std::shared_ptr<GraphicsFactory> graphicsFactory) {
-		sprite = std::make_shared<rnd::Sprite>(std::move(graphicsFactory));
+		//sprite = std::make_shared<rnd::Sprite>(std::move(graphicsFactory));
 	}
 
 	void Image::setPosition(clv::mth::vec2f position) {

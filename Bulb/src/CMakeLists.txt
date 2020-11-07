@@ -113,8 +113,6 @@ set(
 		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.hpp
 		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${BLB_SOURCE}/Rendering/Renderables/StaticModel.cpp
-		${BLB_INCLUDE}/Rendering/Renderables/Sprite.hpp
-		${BLB_SOURCE}/Rendering/Renderables/Sprite.cpp
 )
 
 set(

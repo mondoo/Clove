@@ -1,6 +1,6 @@
 #include "Bulb/UI/Text.hpp"
 
-#include "Bulb/Rendering/Renderables/Sprite.hpp"
+//#include "Bulb/Rendering/Renderables/Sprite.hpp"
 //#include "Bulb/Rendering/Renderer3D.hpp"
 
 #include "Clove/Platform/Window.hpp"
@@ -71,7 +71,7 @@ namespace blb::ui {
                 model            = mth::translate(mth::mat4f(1.0f), { xpos, ypos, 0.0f });
                 model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
-                auto character = std::make_shared<rnd::Sprite>(glyph.character, graphicsFactory);
+                //auto character = std::make_shared<rnd::Sprite>(glyph.character, graphicsFactory);
                 //character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
 
                 //renderer.submitText(character);

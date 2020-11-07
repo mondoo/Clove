@@ -31,7 +31,6 @@
 #include "Bulb/Rendering/Renderables/Mesh.hpp"
 #include "Bulb/Rendering/Renderables/StaticModel.hpp"
 #include "Bulb/Rendering/Renderables/AnimatedModel.hpp"
-#include "Bulb/Rendering/Renderables/Sprite.hpp"
 #include "Bulb/UI/Image.hpp"
 #include "Bulb/UI/Text.hpp"
 

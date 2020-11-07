@@ -6,15 +6,15 @@ namespace clv::gfx {
 	class GraphicsFactory;
 }
 
-namespace blb::rnd {
-	class Sprite;
-}
+// namespace blb::rnd {
+// 	class Sprite;
+// }
 
 namespace blb::ui {
 	class Image : public DrawableElement {
 		//VARIABLES
 	private:
-		std::shared_ptr<rnd::Sprite> sprite;
+		//std::shared_ptr<rnd::Sprite> sprite;
 
 		clv::mth::vec2f position{ 0.0f, 0.0f };
 		float rotation{ 0.0f };
