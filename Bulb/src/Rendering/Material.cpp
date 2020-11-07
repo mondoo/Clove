@@ -27,7 +27,6 @@ namespace blb::rnd {
                 .dimensions  = imageDimensions,
                 .format      = GraphicsImage::Format::R8G8B8A8_SRGB,
                 .sharingMode = SharingMode::Exclusive,
-                .memoryType  = MemoryType::VideoMemory,
             });
 
             auto transferBuffer = factory.createBuffer(GraphicsBuffer::Descriptor{

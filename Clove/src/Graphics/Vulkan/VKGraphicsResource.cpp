@@ -4,17 +4,6 @@
 #include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
-    VkMemoryPropertyFlags getMemoryPropertyFlags(MemoryType garlicProperties) {
-        switch(garlicProperties) {
-            case MemoryType::VideoMemory:
-                return VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-            case MemoryType::SystemMemory:
-                return VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;//Including HOST_COHERENT here as this makes mapping memory more simple
-            default:
-                break;
-        }
-    }
-
     VkAccessFlags convertAccessFlags(AccessFlags garlicAccess) {
         VkAccessFlags flags = 0;
         uint32_t total      = 0;

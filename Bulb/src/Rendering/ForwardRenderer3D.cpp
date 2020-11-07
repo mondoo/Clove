@@ -527,7 +527,6 @@ namespace blb::rnd {
                     .dimensions  = { shadowMapSize, shadowMapSize },
                     .format      = GraphicsImage::Format::D32_SFLOAT,
                     .sharingMode = SharingMode::Exclusive,
-                    .memoryType  = MemoryType::VideoMemory,
                 });
                 imageData.shadowMapViews[i] = imageData.shadowMaps[i]->createView(GraphicsImageView::Descriptor{
                     .type       = GraphicsImageView::Type::_2D,
@@ -549,7 +548,6 @@ namespace blb::rnd {
                     .dimensions  = { shadowMapSize, shadowMapSize },
                     .format      = GraphicsImage::Format::D32_SFLOAT,
                     .sharingMode = SharingMode::Exclusive,
-                    .memoryType  = MemoryType::VideoMemory,
                 });
                 imageData.cubeShadowMapViews[i] = imageData.cubeShadowMaps[i]->createView(GraphicsImageView::Descriptor{
                     .type       = GraphicsImageView::Type::Cube,
@@ -669,7 +667,6 @@ namespace blb::rnd {
             .dimensions  = { swapchain->getExtent().x, swapchain->getExtent().y },
             .format      = GraphicsImage::Format::D32_SFLOAT,
             .sharingMode = SharingMode::Exclusive,
-            .memoryType  = MemoryType::VideoMemory,
         };
 
         depthImage     = graphicsFactory->createImage(std::move(depthDescriptor));

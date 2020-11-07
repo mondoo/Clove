@@ -21,24 +21,24 @@ namespace clv::gfx::vk {
         Descriptor descriptor;
 
         std::shared_ptr<MemoryAllocator> memoryAllocator;
-        const MemoryAllocator::Chunk* allocatedBlock{ nullptr };
+        MemoryAllocator::Chunk const *allocatedBlock{ nullptr };
 
         //FUNCTIONS
     public:
         VKBuffer() = delete;
-        VKBuffer(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator);
+        VKBuffer(DevicePointer device, Descriptor descriptor, QueueFamilyIndices const &familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator);
 
-        VKBuffer(const VKBuffer& other) = delete;
-        VKBuffer(VKBuffer&& other) noexcept;
+        VKBuffer(VKBuffer const &other) = delete;
+        VKBuffer(VKBuffer &&other) noexcept;
 
-        VKBuffer& operator=(const VKBuffer& other) = delete;
-        VKBuffer& operator=(VKBuffer&& other) noexcept;
+        VKBuffer &operator=(const VKBuffer &other) = delete;
+        VKBuffer &operator=(VKBuffer &&other) noexcept;
 
         ~VKBuffer();
 
-        void write(const void* data, const size_t offset, const size_t size) override;
+        void write(void const *data, size_t const offset, size_t const size) override;
 
-        void read(void* data, const size_t offset, const size_t size) override;
+        void read(void *data, size_t const offset, size_t const size) override;
 
         VkBuffer getBuffer() const;
     };

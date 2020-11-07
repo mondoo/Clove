@@ -88,7 +88,7 @@ namespace clv::gfx::vk {
         VkMemoryRequirements memoryRequirements{};
         vkGetImageMemoryRequirements(this->device.get(), image, &memoryRequirements);
 
-        allocatedBlock = this->memoryAllocator->allocate(memoryRequirements, getMemoryPropertyFlags(this->descriptor.memoryType));
+        allocatedBlock = this->memoryAllocator->allocate(memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
         vkBindImageMemory(this->device.get(), image, allocatedBlock->memory, allocatedBlock->offset);
     }

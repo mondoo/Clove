@@ -32,20 +32,20 @@ namespace clv::gfx {
         virtual ~GraphicsBuffer() = default;
 
         /**
-         * @brief Write data into the buffer.
+         * @brief Write data into the buffer. Requires the buffer to be created with MemoryType::SystemMemory.
          * @param data A pointer to the data that will be written to this buffer.
          * @param offset An offset into the buffer where to write the data to.
          * @param size Size of the region to write to.
          */
-        virtual void write(const void* data, const size_t offset, const size_t size) = 0;
+        virtual void write(void const *data, size_t const offset, size_t const size) = 0;
 
         /**
-         * @brief Read a region of memory from the buffer.
+         * @brief Read a region of memory from the buffer. Requires the buffer to be created with MemoryType::SystemMemory.
          * @param data A caller owned pointer that will be written to with the read data.
          * @param offset An offset into the buffer where to read the data from.
          * @param size Size of the region to read from.
          */
-        virtual void read(void* data, const size_t offset, const size_t size) = 0;
+        virtual void read(void *data, size_t const offset, size_t const size) = 0;
     };
 
     GARLIC_ENUM_BIT_FLAG_OPERATORS(GraphicsBuffer::UsageMode, GraphicsBuffer::UsageModeType)

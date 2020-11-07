@@ -6,6 +6,17 @@
 #include <Root/Log/Log.hpp>
 
 namespace clv::gfx::vk {
+    static VkMemoryPropertyFlags getMemoryPropertyFlags(MemoryType garlicProperties) {
+        switch(garlicProperties) {
+            case MemoryType::VideoMemory:
+                return VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+            case MemoryType::SystemMemory:
+                return VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;//Including HOST_COHERENT here as this makes mapping memory more simple
+            default:
+                break;
+        }
+    }
+    
     static VkBufferUsageFlags getUsageFlags(GraphicsBuffer::UsageMode garlicUsageFlags) {
         VkBufferUsageFlags flags = 0;
 
@@ -28,13 +39,13 @@ namespace clv::gfx::vk {
         return flags;
     }
 
-    VKBuffer::VKBuffer(DevicePointer device, Descriptor descriptor, const QueueFamilyIndices &familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
+    VKBuffer::VKBuffer(DevicePointer device, Descriptor descriptor, QueueFamilyIndices const &familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device(std::move(device))
         , descriptor(std::move(descriptor))
         , memoryAllocator(std::move(memoryAllocator)) {
         std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
 
-        const bool isExclusive = this->descriptor.sharingMode == SharingMode::Exclusive;
+        bool const isExclusive = this->descriptor.sharingMode == SharingMode::Exclusive;
 
         VkBufferCreateInfo createInfo{
             .sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
@@ -69,7 +80,7 @@ namespace clv::gfx::vk {
         memoryAllocator->free(allocatedBlock);
     }
 
-    void VKBuffer::write(const void *data, const size_t offset, const size_t size) {
+    void VKBuffer::write(void const *data, size_t const offset, size_t const size) {
         GARLIC_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only write to SystemMemory buffers", GARLIC_FUNCTION_NAME_PRETTY);
 
         void *cpuAccessibleMemory{ nullptr };
@@ -79,7 +90,7 @@ namespace clv::gfx::vk {
         vkUnmapMemory(device.get(), allocatedBlock->memory);
     }
 
-    void VKBuffer::read(void *data, const size_t offset, const size_t size) {
+    void VKBuffer::read(void *data, size_t const offset, size_t const size) {
         GARLIC_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only read from SystemMemory buffers", GARLIC_FUNCTION_NAME_PRETTY);
 
         void *cpuAccessibleMemory{ nullptr };
