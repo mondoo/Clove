@@ -34,9 +34,9 @@ namespace blb::ui {
 	const clv::mth::vec2f& Image::getSize() const {
 		return size;
 	}
-	
-	void Image::draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) {
-		const mth::vec2f screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
+
+    void Image::draw(rnd::ForwardRenderer3D &renderer, const clv::mth::vec2f &drawSpace) {
+        const mth::vec2f screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
 
 		//Move the position to origin at the top left
 		const mth::vec2f pos = { position.x - screenHalfSize.x, -position.y + screenHalfSize.y };
@@ -51,5 +51,5 @@ namespace blb::ui {
 		//sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
 
 		//renderer.submitWidget(sprite);
-	}
+    }
 }

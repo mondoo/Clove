@@ -49,7 +49,7 @@ namespace blb::ui {
         return scale;
     }
 
-    void Text::draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) {
+    void Text::draw(rnd::ForwardRenderer3D &renderer, const clv::mth::vec2f &drawSpace) {
         const mth::vec2f screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
 
         mth::vec2f cursorPos = { position.x - screenHalfSize.x, -position.y + screenHalfSize.y };

@@ -46,9 +46,9 @@ namespace blb::ui {
 		float getRotation() const;
 		const clv::mth::vec2f& getScale() const;
 
-		void draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) override;
+        void draw(rnd::ForwardRenderer3D &renderer, const clv::mth::vec2f &drawSpace) override;
 
-		void setText(std::string text);
+        void setText(std::string text);
 		void setFontSize(uint32_t size);
 
 		std::size_t getTextLength() const;

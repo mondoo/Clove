@@ -1,7 +1,7 @@
 #pragma once
 
 namespace blb::rnd {
-	class Renderer3D;
+    class ForwardRenderer3D;
 }
 
 namespace blb::ui {
@@ -10,6 +10,6 @@ namespace blb::ui {
 	public:
 		virtual ~DrawableElement() = default;
 
-		virtual void draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) = 0;
-	};
+        virtual void draw(rnd::ForwardRenderer3D &renderer, const clv::mth::vec2f &drawSpace) = 0;
+    };
 }
