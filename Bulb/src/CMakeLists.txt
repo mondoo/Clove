@@ -129,9 +129,11 @@ set(
 	UIFiles
 		${BLB_INCLUDE}/UI/DrawableElement.hpp
 		${BLB_INCLUDE}/UI/Image.hpp
+		${BLB_INCLUDE}/UI/Image.inl
 		${BLB_SOURCE}/UI/Image.cpp
 		${BLB_INCLUDE}/UI/InputElement.hpp
 		${BLB_INCLUDE}/UI/Text.hpp
+		${BLB_INCLUDE}/UI/Text.inl
 		${BLB_SOURCE}/UI/Text.cpp
 		${BLB_INCLUDE}/UI/UIFrame.hpp
 		${BLB_SOURCE}/UI/UIFrame.cpp

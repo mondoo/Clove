@@ -1,60 +1,60 @@
 #pragma once
 
+#include "Bulb/Rendering/Renderables/Font.hpp"
 #include "Bulb/UI/DrawableElement.hpp"
 
-#include "Bulb/Rendering/Renderables/Font.hpp"
-
 namespace clv::gfx {
-	class GrpahicsFactory;
+    class GrpahicsFactory;
 }
 
 namespace blb::ui {
-	class Text : public DrawableElement {
-		//VARIABLES
-	private:
-		std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
+    class Text : public DrawableElement {
+        //VARIABLES
+    private:
+        std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
-		rnd::Font font;
-		std::string text;
+        rnd::Font font;
+        std::string text;
 
-		bool isBufferDirty = false;
-		std::vector<rnd::Glyph> characters;
+        bool isBufferDirty{ false };
+        std::vector<rnd::Glyph> characters;
 
-		clv::mth::vec2f position{ 0.0f, 0.0f };
-		float rotation{ 0.0f };
-		clv::mth::vec2f scale{ 1.0f, 1.0f };
+        clv::mth::vec2f position{ 0.0f, 0.0f };
+        float rotation{ 0.0f };
+        clv::mth::vec2f scale{ 1.0f, 1.0f };
 
-		//FUNCTIONS
-	public:
-		Text() = delete;
-		Text(rnd::Font font, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
+        //FUNCTIONS
+    public:
+        Text() = delete;
+        Text(rnd::Font font);
 
-		Text(const Text& other);
-		Text(Text&& other);
+        Text(Text const &other);
+        Text(Text &&other);
 
-		Text& operator=(const Text& other);
-		Text& operator=(Text&& other);
+        Text &operator=(Text const &other);
+        Text &operator=(Text &&other);
 
-		~Text();
+        ~Text();
 
-		//TODO: Interface for these?
-		void setPosition(clv::mth::vec2f position);
-		void setRotation(float rotation);
-		void setScale(clv::mth::vec2f scale);
+        inline void setPosition(clv::mth::vec2f position);
+        inline void setRotation(float rotation);
+        inline void setScale(clv::mth::vec2f scale);
 
-		const clv::mth::vec2f& getPosition() const;
-		float getRotation() const;
-		const clv::mth::vec2f& getScale() const;
+        inline clv::mth::vec2f const &getPosition() const;
+        inline float getRotation() const;
+        inline clv::mth::vec2f const &getScale() const;
 
-        void draw(rnd::ForwardRenderer3D &renderer, const clv::mth::vec2f &drawSpace) override;
+        void draw(rnd::ForwardRenderer3D &renderer, clv::mth::vec2f const &drawSpace) override;
 
-        void setText(std::string text);
-		void setFontSize(uint32_t size);
+        inline void setText(std::string text);
+        inline void setFontSize(uint32_t const size);
 
-		std::size_t getTextLength() const;
-		const rnd::Glyph& getBufferForCharAt(size_t index);
+        inline std::size_t getTextLength() const;
+        rnd::Glyph const &getBufferForCharAt(size_t index);
 
-	private:
-		void buildGlyphs();
-	};
+    private:
+        void buildGlyphs();
+    };
 }
+
+#include "Text.inl"

@@ -164,8 +164,8 @@ namespace blb::rnd {
         void submitLight(DirectionalLight const &light);
         void submitLight(PointLight const &light);
 
-        void submitWidget(std::shared_ptr<clv::gfx::GraphicsImageView> const &widget, clv::mth::vec3f const position);
-        void submitText(std::shared_ptr<clv::gfx::GraphicsImageView> const &text, clv::mth::vec3f const position);
+        void submitWidget(std::shared_ptr<clv::gfx::GraphicsImageView> const &widget, clv::mth::mat4f const modelProjection);
+        void submitText(std::shared_ptr<clv::gfx::GraphicsImageView> const &text, clv::mth::mat4f const modelProjection);
 
         void end();
 

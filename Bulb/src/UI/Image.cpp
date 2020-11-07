@@ -1,55 +1,65 @@
 #include "Bulb/UI/Image.hpp"
 
-//#include "Bulb/Rendering/Renderables/Sprite.hpp"
-//#include "Bulb/Rendering/Renderer3D.hpp"
+#include "Bulb/Rendering/ForwardRenderer3D.hpp"
+#include "Bulb/Rendering/RenderingHelpers.hpp"
+
+#include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Clove/Graphics/GraphicsImage.hpp>
+#include <Clove/Graphics/GraphicsImageView.hpp>
 
 using namespace clv;
 using namespace clv::gfx;
 
 namespace blb::ui {
-	Image::Image(std::shared_ptr<GraphicsFactory> graphicsFactory) {
-		//sprite = std::make_shared<rnd::Sprite>(std::move(graphicsFactory));
-	}
+    Image::Image(GraphicsFactory &factory) {
+        clv::mth::vec2f constexpr imageDimensions{ 1.0f, 1.0f };
+        uint32_t constexpr bytesPerTexel{ 4 };
+        uint32_t constexpr white{ 0xffffffff };
 
-	void Image::setPosition(clv::mth::vec2f position) {
-		this->position = std::move(position);
-	}
+        GraphicsImage::Descriptor const imageDescriptor{
+            .type        = GraphicsImage::Type::_2D,
+            .usageFlags  = GraphicsImage::UsageMode::TransferDestination | GraphicsImage::UsageMode::Sampled,
+            .dimensions  = imageDimensions,
+            .format      = GraphicsImage::Format::R8G8B8A8_SRGB,
+            .sharingMode = SharingMode::Exclusive,
+        };
 
-	void Image::setRotation(float rotation) {
-		this->rotation = rotation;
-	}
+        image = rnd::createImageWithData(factory, std::move(imageDescriptor), &white, bytesPerTexel);
+    }
 
-	void Image::setSize(clv::mth::vec2f size) {
-		this->size = std::move(size);
-	}
+    Image::Image(std::shared_ptr<clv::gfx::GraphicsImage> graphicsImage)
+        : image(std::move(image)) {
+    }
 
-	const clv::mth::vec2f& Image::getPosition() const {
-		return position;
-	}
+    Image::Image(Image const &other) = default;
 
-	float Image::getRotation() const {
-		return rotation;
-	}
+    Image::Image(Image &&other) noexcept = default;
 
-	const clv::mth::vec2f& Image::getSize() const {
-		return size;
-	}
+    Image &Image::operator=(Image const &other) = default;
 
-    void Image::draw(rnd::ForwardRenderer3D &renderer, const clv::mth::vec2f &drawSpace) {
-        const mth::vec2f screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
+    Image &Image::operator=(Image &&other) noexcept = default;
 
-		//Move the position to origin at the top left
-		const mth::vec2f pos = { position.x - screenHalfSize.x, -position.y + screenHalfSize.y };
+    Image::~Image() = default;
 
-		const mth::mat4f translation	= mth::translate(mth::mat4f{ 1.0f }, { pos, 0.0f });
-		const mth::mat4f rotation		= mth::rotate(mth::mat4f{ 1.0f }, this->rotation, { 0.0f, 0.0f, 1.0f });
-		const mth::mat4f scale			= mth::scale(mth::mat4f{ 1.0f }, mth::vec3f{ size, 0.0f });
+    void Image::draw(rnd::ForwardRenderer3D &renderer, clv::mth::vec2f const &drawSpace) {
+        GraphicsImageView::Descriptor constexpr viewDescriptor{
+            .type       = GraphicsImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        };
 
-		const mth::mat4f model = translation * rotation * scale;
-		const mth::mat4f projection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
+        mth::vec2f const screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
 
-		//sprite->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
+        //Move the position to origin at the top left
+        mth::vec2f const pos{ position.x - screenHalfSize.x, -position.y + screenHalfSize.y };
 
-		//renderer.submitWidget(sprite);
+        mth::mat4f const translation = mth::translate(mth::mat4f{ 1.0f }, { pos, 0.0f });
+        mth::mat4f const rotation    = mth::rotate(mth::mat4f{ 1.0f }, this->rotation, { 0.0f, 0.0f, 1.0f });
+        mth::mat4f const scale       = mth::scale(mth::mat4f{ 1.0f }, mth::vec3f{ size, 0.0f });
+
+        mth::mat4f const model{ translation * rotation * scale };
+        mth::mat4f const projection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
+
+        renderer.submitWidget(image->createView(viewDescriptor), model * projection);
     }
 }

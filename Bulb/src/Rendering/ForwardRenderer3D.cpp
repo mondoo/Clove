@@ -152,10 +152,10 @@ namespace blb::rnd {
         currentFrameData.pointShadowTransforms[lightIndex]         = light.shadowTransforms;
     }
 
-    void ForwardRenderer3D::submitWidget(std::shared_ptr<GraphicsImageView> const &widget, clv::mth::vec3f const position) {
+    void ForwardRenderer3D::submitWidget(std::shared_ptr<GraphicsImageView> const &widget, clv::mth::mat4f const modelProjection) {
     }
 
-    void ForwardRenderer3D::submitText(std::shared_ptr<GraphicsImageView> const &text, clv::mth::vec3f const position) {
+    void ForwardRenderer3D::submitText(std::shared_ptr<GraphicsImageView> const &text, clv::mth::mat4f const modelProjection) {
     }
 
     void ForwardRenderer3D::end() {
