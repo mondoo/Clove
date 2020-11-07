@@ -124,6 +124,7 @@ namespace blb::rnd {
             .type        = GraphicsImage::Type::_2D,
             .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::TransferDestination,
             .dimensions  = glyph.size,
+            .format      = GraphicsImage::Format::R8G8B8A8_SRGB,
             .sharingMode = SharingMode::Concurrent,
             .memoryType  = MemoryType::SystemMemory,
         });
