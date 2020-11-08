@@ -7,6 +7,11 @@ namespace blb::rnd {
         float sininess;
     };
 
+    struct ModelData{
+        clv::mth::mat4f model;
+        clv::mth::mat4f inverseTransposeModel;
+    };
+
     struct ViewData {
         clv::mth::mat4f view;
         clv::mth::mat4f projection;

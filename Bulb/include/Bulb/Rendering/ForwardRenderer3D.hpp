@@ -67,8 +67,8 @@ namespace blb::rnd {
             std::shared_ptr<clv::gfx::GraphicsCommandBuffer> shadowMapCommandBuffer;
             std::shared_ptr<clv::gfx::GraphicsCommandBuffer> cubeShadowMapCommandBuffer;
 
-            std::shared_ptr<clv::gfx::GraphicsBuffer> uniformBuffer;            //Holds data used across all meshes
-            std::vector<std::unique_ptr<clv::gfx::GraphicsBuffer>> paletBuffers;//Holds the matrix palets for each mesh
+            std::shared_ptr<clv::gfx::GraphicsBuffer> frameBuffer;               //Holds data used across all meshes (lighting, camera etc.)
+            std::vector<std::unique_ptr<clv::gfx::GraphicsBuffer>> objectBuffers;//Holds the data for each object
 
             //Descriptor pool for sets that change per frame
             std::shared_ptr<clv::gfx::DescriptorPool> frameDescriptorPool;

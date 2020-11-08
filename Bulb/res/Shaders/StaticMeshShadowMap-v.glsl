@@ -2,8 +2,12 @@
 
 #include "Constants.glsl"
 
-layout(std140, push_constant) uniform Model{
+layout(std140, set = SET_MESH, binding = 1) uniform Model{
 	mat4 model;
+	mat4 normalMatrix;
+};
+
+layout(std140, push_constant) uniform LightSpace{
 	mat4 lightSpaceMatrix;
 };
 
