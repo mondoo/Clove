@@ -357,7 +357,7 @@ namespace blb::rnd {
                     for(size_t index = 0; auto &meshInfo : currentFrameData.staticMeshes) {
                         currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, vertPushConstantSize, &vertPushConstantData);
                         currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Pixel, pixelPushConstantOffset, pixelPushConstantSize, &pixelPushConstantData);
-                        currentImageData.shadowMapCommandBuffer->bindDescriptorSet(*meshSets[index++], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+                        currentImageData.cubeShadowMapCommandBuffer->bindDescriptorSet(*meshSets[index++], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
                         drawMesh(*currentImageData.cubeShadowMapCommandBuffer, *meshInfo.mesh);
                     }
