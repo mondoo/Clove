@@ -349,7 +349,7 @@ namespace blb::rnd {
                         .pos      = currentFrameData.bufferData.lights.pointLights[i].position,
                         .farPlane = currentFrameData.bufferData.lights.pointLights[i].farPlane,
                     };
-                    size_t const pixelPushConstantOffset = sizeof(vertPushConstantData);
+                    size_t const pixelPushConstantOffset = vertPushConstantSize;
                     size_t const pixelPushConstantSize   = sizeof(pixelPushConstantData);
 
                     //Static
@@ -666,9 +666,6 @@ namespace blb::rnd {
         shadowMapRenderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
     }
 
-    //void ForwardRenderer3D::createCubeShadowMapRenderpass() {
-    //}
-
     void ForwardRenderer3D::createDepthBuffer() {
         GraphicsImage::Descriptor depthDescriptor{
             .type        = GraphicsImage::Type::_2D,
@@ -756,7 +753,7 @@ namespace blb::rnd {
         };
         PushConstantDescriptor pixelPushConstant{
             .stage  = Shader::Stage::Pixel,
-            .offset = sizeof(clv::mth::mat4f),
+            .offset = vertexPushConstant.size,
             .size   = sizeof(clv::mth::vec3f) + sizeof(float),
         };
 

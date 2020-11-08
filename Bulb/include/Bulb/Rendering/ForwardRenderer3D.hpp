@@ -177,7 +177,6 @@ namespace blb::rnd {
 
         void createRenderpass();
         void createShadowMapRenderpass();
-        //void createCubeShadowMapRenderpass();
 
         void createDepthBuffer();
 
