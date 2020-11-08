@@ -59,6 +59,17 @@ namespace blb::rnd {
 
             std::vector<StaticMeshInfo> staticMeshes;
             std::vector<AnimatedMeshInfo> animatedMeshes;
+
+            void forEachStaticMesh(std::function<void(Mesh const &, size_t const index)> func) {
+                for(size_t index = 0; auto const &meshInfo : staticMeshes) {
+                    func(*meshInfo.mesh, index++);
+                }
+            }
+            void forEachAnimatedMesh(std::function<void(Mesh const &, size_t const index)> func) {
+                for(size_t index = std::size(staticMeshes); auto const &meshInfo : animatedMeshes) {
+                    func(*meshInfo.mesh, index++);
+                }
+            }
         };
 
         //Objects that hold the state / data of each image (in flight)

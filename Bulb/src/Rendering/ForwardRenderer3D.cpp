@@ -238,6 +238,18 @@ namespace blb::rnd {
             alignas(256) std::array<clv::mth::mat4f, MAX_JOINTS> matrixPallet;
         };
 
+        auto const writeObjectBuffer = [&graphicsFactory = graphicsFactory](std::unique_ptr<GraphicsBuffer> &buffer, MeshUBOLayout const &layout) {
+            if(buffer == nullptr) {
+                buffer = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
+                    .size        = sizeof(layout),
+                    .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
+                    .sharingMode = SharingMode::Exclusive,
+                    .memoryType  = MemoryType::SystemMemory,
+                });
+            }
+            buffer->write(&layout, 0, sizeof(layout));
+        };
+
         //Populate and map the UBOs for each mesh
         if(currentImageData.objectBuffers.capacity() < meshCount) {
             currentImageData.objectBuffers.resize(meshCount);
@@ -250,15 +262,7 @@ namespace blb::rnd {
                 },
             };
 
-            if(currentImageData.objectBuffers[index] == nullptr) {
-                currentImageData.objectBuffers[index] = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
-                    .size        = sizeof(layout),
-                    .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
-                    .sharingMode = SharingMode::Exclusive,
-                    .memoryType  = MemoryType::SystemMemory,
-                });
-            }
-            currentImageData.objectBuffers[index]->write(&layout, 0, sizeof(layout));
+            writeObjectBuffer(currentImageData.objectBuffers[index], layout);
 
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
             meshDescriptorSet->map(*meshInfo.material->diffuseView, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
@@ -275,15 +279,7 @@ namespace blb::rnd {
                 .matrixPallet = meshInfo.matrixPalet,
             };
 
-            if(currentImageData.objectBuffers[index] == nullptr) {
-                currentImageData.objectBuffers[index] = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
-                    .size        = sizeof(ModelData) * (sizeof(clv::mth::mat4f) * MAX_JOINTS),
-                    .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
-                    .sharingMode = SharingMode::Exclusive,
-                    .memoryType  = MemoryType::SystemMemory,
-                });
-            }
-            currentImageData.objectBuffers[index]->write(&layout, 0, sizeof(layout));
+            writeObjectBuffer(currentImageData.objectBuffers[index], layout);
 
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
             meshDescriptorSet->map(*meshInfo.material->diffuseView, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
@@ -294,7 +290,7 @@ namespace blb::rnd {
         }
 
         //Lambda used to draw a mesh
-        auto const drawMesh = [](GraphicsCommandBuffer &commandBuffer, Mesh &mesh) {
+        auto const drawMesh = [](GraphicsCommandBuffer &commandBuffer, Mesh const &mesh) {
             commandBuffer.bindVertexBuffer(*mesh.getVertexBuffer(), 0);
             commandBuffer.bindIndexBuffer(*mesh.getIndexBuffer(), IndexType::Uint16);
 
@@ -310,23 +306,20 @@ namespace blb::rnd {
                 clv::mth::mat4f const &pushConstantData{ currentFrameData.bufferData.directionalShadowTransforms[i] };
                 size_t const pushConstantSize = sizeof(pushConstantData);
 
+                auto const generateShadowMap = [&](Mesh const &mesh, size_t const index) {
+                    currentImageData.shadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, pushConstantSize, &pushConstantData);
+                    currentImageData.shadowMapCommandBuffer->bindDescriptorSet(*meshSets[index], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+
+                    drawMesh(*currentImageData.shadowMapCommandBuffer, mesh);
+                };
+
                 //Static
                 currentImageData.shadowMapCommandBuffer->bindPipelineObject(*staticMeshShadowMapPipelineObject);
-                for(size_t index = 0; auto &meshInfo : currentFrameData.staticMeshes) {
-                    currentImageData.shadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, pushConstantSize, &pushConstantData);
-                    currentImageData.shadowMapCommandBuffer->bindDescriptorSet(*meshSets[index++], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
-
-                    drawMesh(*currentImageData.shadowMapCommandBuffer, *meshInfo.mesh);
-                }
+                currentFrameData.forEachStaticMesh(generateShadowMap);
 
                 //Animated
                 currentImageData.shadowMapCommandBuffer->bindPipelineObject(*animatedMeshShadowMapPipelineObject);
-                for(size_t index = staticMeshCount; auto &meshInfo : currentFrameData.animatedMeshes) {
-                    currentImageData.shadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, pushConstantSize, &pushConstantData);
-                    currentImageData.shadowMapCommandBuffer->bindDescriptorSet(*meshSets[index++], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
-
-                    drawMesh(*currentImageData.shadowMapCommandBuffer, *meshInfo.mesh);
-                }
+                currentFrameData.forEachAnimatedMesh(generateShadowMap);
             }
             currentImageData.shadowMapCommandBuffer->endRenderPass();
         }
@@ -352,25 +345,21 @@ namespace blb::rnd {
                     size_t const pixelPushConstantOffset = vertPushConstantSize;
                     size_t const pixelPushConstantSize   = sizeof(pixelPushConstantData);
 
-                    //Static
-                    currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*staticMeshCubeShadowMapPipelineObject);
-                    for(size_t index = 0; auto &meshInfo : currentFrameData.staticMeshes) {
+                    auto const generateCubeShadowMap = [&](Mesh const &mesh, size_t const index) {
                         currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, vertPushConstantSize, &vertPushConstantData);
                         currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Pixel, pixelPushConstantOffset, pixelPushConstantSize, &pixelPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->bindDescriptorSet(*meshSets[index++], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+                        currentImageData.cubeShadowMapCommandBuffer->bindDescriptorSet(*meshSets[index], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
 
-                        drawMesh(*currentImageData.cubeShadowMapCommandBuffer, *meshInfo.mesh);
-                    }
+                        drawMesh(*currentImageData.cubeShadowMapCommandBuffer, mesh);
+                    };
+
+                    //Static
+                    currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*staticMeshCubeShadowMapPipelineObject);
+                    currentFrameData.forEachStaticMesh(generateCubeShadowMap);
 
                     //Animated
                     currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*animatedMeshCubeShadowMapPipelineObject);
-                    for(size_t index = staticMeshCount; auto &meshInfo : currentFrameData.animatedMeshes) {
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Vertex, 0, vertPushConstantSize, &vertPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(Shader::Stage::Pixel, pixelPushConstantOffset, pixelPushConstantSize, &pixelPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->bindDescriptorSet(*meshSets[index++], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
-
-                        drawMesh(*currentImageData.cubeShadowMapCommandBuffer, *meshInfo.mesh);
-                    }
+                    currentFrameData.forEachAnimatedMesh(generateCubeShadowMap);
                 }
                 currentImageData.cubeShadowMapCommandBuffer->endRenderPass();
             }
@@ -378,31 +367,32 @@ namespace blb::rnd {
         currentImageData.cubeShadowMapCommandBuffer->endRecording();
 
         //FINAL COLOUR
-        currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
-        currentImageData.commandBuffer->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
+        {
+            auto const render = [&](Mesh const &mesh, size_t const index) {
+                currentImageData.commandBuffer->bindDescriptorSet(*meshSets[index], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
+                drawMesh(*currentImageData.commandBuffer, mesh);
+            };
 
-        //Static
-        currentImageData.commandBuffer->bindPipelineObject(*staticMeshPipelineObject);
+            currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
+            currentImageData.commandBuffer->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
 
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::View));
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
-        for(size_t index = 0; auto &meshInfo : currentFrameData.staticMeshes) {
-            currentImageData.commandBuffer->bindDescriptorSet(*meshSets[index++], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
-            drawMesh(*currentImageData.commandBuffer, *meshInfo.mesh);
+            //Static
+            currentImageData.commandBuffer->bindPipelineObject(*staticMeshPipelineObject);
+
+            currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::View));
+            currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
+            currentFrameData.forEachStaticMesh(render);
+
+            //Animated
+            currentImageData.commandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
+
+            currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::View));
+            currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
+            currentFrameData.forEachAnimatedMesh(render);
+
+            currentImageData.commandBuffer->endRenderPass();
+            currentImageData.commandBuffer->endRecording();
         }
-
-        //Animated
-        currentImageData.commandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
-
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::View));
-        currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
-        for(size_t index = staticMeshCount; auto &meshInfo : currentFrameData.animatedMeshes) {
-            currentImageData.commandBuffer->bindDescriptorSet(*meshSets[index++], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
-            drawMesh(*currentImageData.commandBuffer, *meshInfo.mesh);
-        }
-
-        currentImageData.commandBuffer->endRenderPass();
-        currentImageData.commandBuffer->endRecording();
 
         //Submit the command buffers
         GraphicsSubmitInfo shadowSubmitInfo{
@@ -450,7 +440,8 @@ namespace blb::rnd {
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
 
-    std::shared_ptr<GraphicsFactory> const &ForwardRenderer3D::getGraphicsFactory() const {
+    std::shared_ptr<GraphicsFactory> const &
+    ForwardRenderer3D::getGraphicsFactory() const {
         return graphicsFactory;
     }
 

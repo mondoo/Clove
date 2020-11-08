@@ -33,7 +33,7 @@ namespace blb::rnd {
 
         ~Mesh();
 
-        inline size_t getIndexCount();
+        inline size_t getIndexCount() const;
 
         inline std::shared_ptr<clv::gfx::GraphicsBuffer> const &getVertexBuffer() const;
         inline std::shared_ptr<clv::gfx::GraphicsBuffer> const &getIndexBuffer() const;

@@ -1,5 +1,5 @@
 namespace blb::rnd {
-    size_t Mesh::getIndexCount() {
+    size_t Mesh::getIndexCount() const {
         return std::size(indices);
     }
 
