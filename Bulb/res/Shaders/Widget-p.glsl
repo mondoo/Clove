@@ -3,7 +3,7 @@
 #include "Constants.glsl"
 
 layout(std140, push_constant) uniform Colour{
-    vec4 colour;
+    layout(offset = 64) vec4 colour;
 };
 
 layout(set = SET_UI, binding = 0) uniform sampler2D texSampler;
