@@ -30,7 +30,7 @@ namespace clv::gfx::vk {
 
     static VkVertexInputBindingDescription getBindingDescription(VertexInputBindingDescriptor const &garlicDescriptor) {
         VkVertexInputBindingDescription description{
-            .binding   = garlicDescriptor.binding,
+            .binding   = 0,
             .stride    = garlicDescriptor.stride,
             .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
         };
@@ -40,7 +40,7 @@ namespace clv::gfx::vk {
     static std::vector<VkVertexInputAttributeDescription> getAttributes(std::vector<VertexAttributeDescriptor> const &garlicAttributes) {
         std::vector<VkVertexInputAttributeDescription> attributes(std::size(garlicAttributes));
         for(size_t i = 0; i < std::size(attributes); ++i) {
-            attributes[i].binding  = garlicAttributes[i].binding;
+            attributes[i].binding  = 0,
             attributes[i].location = garlicAttributes[i].location;
             attributes[i].format   = convertAttributeFormat(garlicAttributes[i].format);
             attributes[i].offset   = garlicAttributes[i].offset;

@@ -91,11 +91,11 @@ namespace clv::gfx::vk {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->getPipeline());
     }
 
-    void VKGraphicsCommandBuffer::bindVertexBuffer(GraphicsBuffer &vertexBuffer, uint32_t const binding) {
+    void VKGraphicsCommandBuffer::bindVertexBuffer(GraphicsBuffer &vertexBuffer) {
         VkBuffer buffers[]     = { polyCast<VKBuffer>(&vertexBuffer)->getBuffer() };
         VkDeviceSize offsets[] = { 0 };
 
-        vkCmdBindVertexBuffers(commandBuffer, binding, 1, buffers, offsets);
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
     }
 
     void VKGraphicsCommandBuffer::bindIndexBuffer(GraphicsBuffer &indexBuffer, IndexType indexType) {

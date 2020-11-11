@@ -291,7 +291,7 @@ namespace blb::rnd {
 
         //Lambda used to draw a mesh
         auto const drawMesh = [](GraphicsCommandBuffer &commandBuffer, Mesh const &mesh) {
-            commandBuffer.bindVertexBuffer(*mesh.getVertexBuffer(), 0);
+            commandBuffer.bindVertexBuffer(*mesh.getVertexBuffer());
             commandBuffer.bindIndexBuffer(*mesh.getIndexBuffer(), IndexType::Uint16);
 
             commandBuffer.drawIndexed(mesh.getIndexCount());

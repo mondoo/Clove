@@ -16,15 +16,13 @@ namespace clv::gfx {
     };
 
     struct VertexInputBindingDescriptor {
-        uint32_t binding{ 0 }; /**< Which binding in the shader this input describes */
-        uint32_t stride{ 0 };
+        uint32_t stride{ 0 }; /**< Size of each vertex buffer element. */
     };
 
     struct VertexAttributeDescriptor {
-        uint32_t binding{ 0 }; /**< Binding that the data is taken from when bound with a command buffer */
-        uint32_t location{ 0 };
+        uint32_t location{ 0 }; /**< Maps to the location specified in the shader. */
         VertexAttributeFormat format;
-        uint32_t offset{ 0 };
+        uint32_t offset{ 0 }; /**< Offset into the vertex buffer element of this attribute. */
     };
 
     enum class ElementState {
