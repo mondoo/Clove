@@ -9,21 +9,21 @@ typedef struct FT_FaceRec_ *FT_Face;
 namespace clv::gfx {
     class GraphicsFactory;
     class GraphicsImage;
-}
-
-namespace blb::rnd {
-    struct Glyph {
-        clv::mth::vec2ui size{};
-        clv::mth::vec2i bearing{};
-        clv::mth::vec2i advance{};
-        std::shared_ptr<clv::gfx::GraphicsImage> character;
-    };
+    class GraphicsImageView;
 }
 
 namespace blb::rnd {
     class Font {
         //TYPES
     public:
+        struct Glyph {
+            clv::mth::vec2ui size{};
+            clv::mth::vec2i bearing{};
+            clv::mth::vec2i advance{};
+            std::shared_ptr<clv::gfx::GraphicsImage> character;
+            std::shared_ptr<clv::gfx::GraphicsImageView> characterView;
+        };
+
         using FTLibWeakPtr   = std::weak_ptr<std::remove_pointer_t<FT_Library>>;
         using FTLibSharedPtr = std::shared_ptr<std::remove_pointer_t<FT_Library>>;
 

@@ -5,6 +5,7 @@
 namespace clv::gfx {
     class GraphicsFactory;
     class GraphicsImage;
+    class GraphicsImageView;
 }
 
 namespace blb::ui {
@@ -12,6 +13,7 @@ namespace blb::ui {
         //VARIABLES
     private:
         std::shared_ptr<clv::gfx::GraphicsImage> image;
+        std::shared_ptr<clv::gfx::GraphicsImageView> imageView;
 
         clv::mth::vec2f position{ 0.0f, 0.0f };
         float rotation{ 0.0f };

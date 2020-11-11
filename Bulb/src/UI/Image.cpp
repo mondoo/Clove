@@ -16,7 +16,7 @@ namespace blb::ui {
         uint32_t constexpr bytesPerTexel{ 4 };
         uint32_t constexpr white{ 0xffffffff };
 
-        GraphicsImage::Descriptor const imageDescriptor{
+        GraphicsImage::Descriptor constexpr imageDescriptor{
             .type        = GraphicsImage::Type::_2D,
             .usageFlags  = GraphicsImage::UsageMode::TransferDestination | GraphicsImage::UsageMode::Sampled,
             .dimensions  = imageDimensions,
@@ -24,7 +24,14 @@ namespace blb::ui {
             .sharingMode = SharingMode::Exclusive,
         };
 
+        GraphicsImageView::Descriptor constexpr viewDescriptor{
+            .type       = GraphicsImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        };
+
         image = rnd::createImageWithData(factory, std::move(imageDescriptor), &white, bytesPerTexel);
+        imageView = image->createView(std::move(viewDescriptor));
     }
 
     Image::Image(std::shared_ptr<clv::gfx::GraphicsImage> graphicsImage)
@@ -42,12 +49,6 @@ namespace blb::ui {
     Image::~Image() = default;
 
     void Image::draw(rnd::ForwardRenderer3D &renderer, clv::mth::vec2f const &drawSpace) {
-        GraphicsImageView::Descriptor constexpr viewDescriptor{
-            .type       = GraphicsImageView::Type::_2D,
-            .layer      = 0,
-            .layerCount = 1,
-        };
-
         mth::vec2f const screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
 
         //Move the position to origin at the top left
@@ -60,6 +61,6 @@ namespace blb::ui {
         mth::mat4f const model{ translation * rotation * scale };
         mth::mat4f const projection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
 
-        renderer.submitWidget(image->createView(viewDescriptor), model * projection);
+        renderer.submitWidget(imageView, model * projection);
     }
 }

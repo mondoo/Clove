@@ -90,7 +90,7 @@ namespace blb::rnd {
         FT_Set_Pixel_Sizes(face.get(), 0, static_cast<FT_UInt>(size));
     }
 
-    Glyph Font::getChar(char ch) const {
+    Font::Glyph Font::getChar(char ch) const {
         using namespace clv::gfx;
 
         FT_Load_Char(face.get(), ch, FT_LOAD_RENDER);
@@ -118,7 +118,14 @@ namespace blb::rnd {
             .sharingMode = SharingMode::Exclusive,
         };
 
+        GraphicsImageView::Descriptor constexpr viewDescriptor{
+            .type       = GraphicsImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        };
+
         glyph.character = createImageWithData(*graphicsFactory, std::move(glyphImageDescriptor), faceBuffer, sizeBytes);
+        glyph.characterView = glyph.character->createView(std::move(viewDescriptor));
 
         return glyph;
     }

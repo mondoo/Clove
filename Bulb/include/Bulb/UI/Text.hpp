@@ -17,7 +17,7 @@ namespace blb::ui {
         std::string text;
 
         bool isBufferDirty{ false };
-        std::vector<rnd::Glyph> characters;
+        std::vector<rnd::Font::Glyph> characters;
 
         clv::mth::vec2f position{ 0.0f, 0.0f };
         float rotation{ 0.0f };
@@ -50,7 +50,7 @@ namespace blb::ui {
         inline void setFontSize(uint32_t const size);
 
         inline std::size_t getTextLength() const;
-        rnd::Glyph const &getBufferForCharAt(size_t index);
+        rnd::Font::Glyph const &getBufferForCharAt(size_t index);
 
     private:
         void buildGlyphs();
