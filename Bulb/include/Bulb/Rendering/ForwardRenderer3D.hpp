@@ -60,6 +60,9 @@ namespace blb::rnd {
             std::vector<StaticMeshInfo> staticMeshes;
             std::vector<AnimatedMeshInfo> animatedMeshes;
 
+            std::vector<std::pair<std::shared_ptr<clv::gfx::GraphicsImageView>, clv::mth::mat4f>> widgets;
+            std::vector<std::pair<std::shared_ptr<clv::gfx::GraphicsImageView>, clv::mth::mat4f>> text;
+
             void forEachStaticMesh(std::function<void(Mesh const &, size_t const index)> func) {
                 for(size_t index = 0; auto const &meshInfo : staticMeshes) {
                     func(*meshInfo.mesh, index++);
@@ -85,9 +88,12 @@ namespace blb::rnd {
             std::shared_ptr<clv::gfx::DescriptorPool> frameDescriptorPool;
             //Descriptor pool for sets that are for a single mesh's material
             std::shared_ptr<clv::gfx::DescriptorPool> meshDescriptorPool;
+            //Descriptor pool for sets that are for a ui element.
+            std::shared_ptr<clv::gfx::DescriptorPool> uiDescriptorPool;
 
             std::shared_ptr<clv::gfx::DescriptorSet> viewDescriptorSet;
             std::shared_ptr<clv::gfx::DescriptorSet> lightingDescriptorSet;
+            std::shared_ptr<clv::gfx::DescriptorSet> uiDescriptorSet;
 
             std::array<std::shared_ptr<clv::gfx::GraphicsImage>, MAX_LIGHTS> shadowMaps;
             std::array<std::shared_ptr<clv::gfx::GraphicsImageView>, MAX_LIGHTS> shadowMapViews;
@@ -106,7 +112,10 @@ namespace blb::rnd {
         bool needNewSwapchain{ false };
 
         static size_t constexpr maxFramesInFlight{ 2 };
-        size_t currentFrame{ 0 };//The current frame we're operating on
+        size_t currentFrame{ 0 };//The current frame we're operating
+
+        //'Square' mesh used to render UI
+        std::unique_ptr<Mesh> uiMesh;
 
         std::shared_ptr<clv::gfx::GraphicsDevice> graphicsDevice;
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
@@ -131,6 +140,8 @@ namespace blb::rnd {
         std::shared_ptr<clv::gfx::RenderPass> renderPass;
         std::shared_ptr<clv::gfx::PipelineObject> staticMeshPipelineObject;
         std::shared_ptr<clv::gfx::PipelineObject> animatedMeshPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> widgetPipelineObject;
+        std::shared_ptr<clv::gfx::PipelineObject> textPipelineObject;
 
         std::shared_ptr<clv::gfx::GraphicsImage> depthImage;
         std::shared_ptr<clv::gfx::GraphicsImageView> depthImageView;
@@ -175,8 +186,8 @@ namespace blb::rnd {
         void submitLight(DirectionalLight const &light);
         void submitLight(PointLight const &light);
 
-        void submitWidget(std::shared_ptr<clv::gfx::GraphicsImageView> const &widget, clv::mth::mat4f const modelProjection);
-        void submitText(std::shared_ptr<clv::gfx::GraphicsImageView> const &text, clv::mth::mat4f const modelProjection);
+        void submitWidget(std::shared_ptr<clv::gfx::GraphicsImageView> const widget, clv::mth::mat4f const modelProjection);
+        void submitText(std::shared_ptr<clv::gfx::GraphicsImageView> const text, clv::mth::mat4f const modelProjection);
 
         void end();
 
@@ -194,6 +205,7 @@ namespace blb::rnd {
         void createPipeline();
         void createShadowMapPipeline();
         void createCubeShadowMapPipeline();
+        void createUiPipeline();
 
         void createSwapchainFrameBuffers();
 

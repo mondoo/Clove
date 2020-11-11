@@ -118,6 +118,22 @@ namespace blb::rnd {
             });
         }
 
+        //UI SET
+        {
+            DescriptorSetBindingInfo textureBinding{
+                .binding   = 0,
+                .type      = DescriptorType::CombinedImageSampler,
+                .arraySize = 1,
+                .stage     = Shader::Stage::Pixel,
+            };
+
+            setLayouts[DescriptorSetSlots::UI] = factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
+                .bindings = {
+                    std::move(textureBinding),
+                },
+            });
+        }
+
         return setLayouts;
     }
 

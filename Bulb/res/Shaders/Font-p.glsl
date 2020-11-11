@@ -6,7 +6,7 @@ layout(std140, push_constant) uniform Colour{
     layout(offset = 64) vec4 colour;
 };
 
-layout(set = SET_UI, binding = 0) uniform sampler2D texSampler;
+layout(set = 0, binding = 0) uniform sampler2D texSampler;
 
 layout(location = 0) in vec2 texCoord;
 

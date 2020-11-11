@@ -36,6 +36,13 @@ extern "C" const size_t meshshadowmap_pLength;
 extern "C" const char meshcubeshadowmap_p[];
 extern "C" const size_t meshcubeshadowmap_pLength;
 
+extern "C" const char ui_v[];
+extern "C" const size_t ui_vLength;
+extern "C" const char widget_p[];
+extern "C" const size_t widget_pLength;
+extern "C" const char font_p[];
+extern "C" const size_t font_pLength;
+
 namespace blb::rnd {
     ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window &window, API const api) {
         windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
@@ -98,6 +105,32 @@ namespace blb::rnd {
             .addressModeW     = Sampler::AddressMode::ClampToBorder,
             .enableAnisotropy = false,
         });
+
+        std::vector<Vertex> const uiVertices{
+            Vertex{
+                .position = { 0.0f, 1.0f, 0.0f },
+                .texCoord = { 0.0f, 0.0f },
+            },
+            Vertex{
+                .position = { 1.0f, 1.0f, 0.0f },
+                .texCoord = { 1.0f, 0.0f },
+            },
+            Vertex{
+                .position = { 0.0f, 0.0f, 0.0f },
+                .texCoord = { 1.0f, 1.0f },
+            },
+            Vertex{
+                .position = { 1.0f, 0.0f, 0.0f },
+                .texCoord = { 0.0f, 1.0f },
+            },
+        };
+
+        std::vector<uint16_t> const uiIndices{
+            0, 1, 2,
+            2, 1, 3,
+        };
+
+        uiMesh = std::make_unique<Mesh>(std::move(uiVertices), std::move(uiIndices), *graphicsFactory);
     }
 
     //ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;
@@ -119,6 +152,9 @@ namespace blb::rnd {
     void ForwardRenderer3D::begin() {
         currentFrameData.staticMeshes.clear();
         currentFrameData.animatedMeshes.clear();
+        currentFrameData.widgets.clear();
+        currentFrameData.text.clear();
+
         currentFrameData.bufferData.numLights.numDirectional = 0;
         currentFrameData.bufferData.numLights.numPoint       = 0;
     }
@@ -152,10 +188,12 @@ namespace blb::rnd {
         currentFrameData.pointShadowTransforms[lightIndex]         = light.shadowTransforms;
     }
 
-    void ForwardRenderer3D::submitWidget(std::shared_ptr<GraphicsImageView> const &widget, clv::mth::mat4f const modelProjection) {
+    void ForwardRenderer3D::submitWidget(std::shared_ptr<GraphicsImageView> const widget, clv::mth::mat4f const modelProjection) {
+        currentFrameData.widgets.push_back({ std::move(widget), std::move(modelProjection) });
     }
 
-    void ForwardRenderer3D::submitText(std::shared_ptr<GraphicsImageView> const &text, clv::mth::mat4f const modelProjection) {
+    void ForwardRenderer3D::submitText(std::shared_ptr<GraphicsImageView> const text, clv::mth::mat4f const modelProjection) {
+        currentFrameData.text.push_back({ std::move(text), std::move(modelProjection) });
     }
 
     void ForwardRenderer3D::end() {
@@ -366,6 +404,23 @@ namespace blb::rnd {
         }
         currentImageData.cubeShadowMapCommandBuffer->endRecording();
 
+        //Allocate a descriptor set for each ui element to be drawn
+        size_t const widgetCount{ std::size(currentFrameData.widgets) };
+        size_t const textCount{ std::size(currentFrameData.text) };
+        size_t const uiElementCount{ widgetCount + textCount };
+
+        if(currentImageData.uiDescriptorPool == nullptr || currentImageData.uiDescriptorPool->getDescriptor().maxSets < uiElementCount) {
+            auto uiSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::UI]);
+            for(auto &[key, val] : uiSetBindingCount) {
+                val *= uiElementCount;
+            }
+            currentImageData.uiDescriptorPool = createDescriptorPool(uiSetBindingCount, uiElementCount);
+        }
+
+        currentImageData.uiDescriptorPool->reset();
+        std::vector<std::shared_ptr<DescriptorSetLayout>> uiLayouts(uiElementCount, descriptorSetLayouts[DescriptorSetSlots::UI]);
+        std::vector<std::shared_ptr<DescriptorSet>> uiSets = currentImageData.uiDescriptorPool->allocateDescriptorSets(uiLayouts);
+
         //FINAL COLOUR
         {
             auto const render = [&](Mesh const &mesh, size_t const index) {
@@ -389,6 +444,38 @@ namespace blb::rnd {
             currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::View));
             currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
             currentFrameData.forEachAnimatedMesh(render);
+
+            //Widgets
+            currentImageData.commandBuffer->bindPipelineObject(*widgetPipelineObject);
+            for(size_t index{ 0 }; auto &&[texture, modelProj] : currentFrameData.widgets) {
+                clv::mth::vec4f constexpr colour{ 1.0f };//Temp colour
+
+                uiSets[index]->map(*texture, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
+                
+                currentImageData.commandBuffer->bindDescriptorSet(*uiSets[index], 0);
+                currentImageData.commandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(modelProj), &modelProj);
+                currentImageData.commandBuffer->pushConstant(Shader::Stage::Pixel, sizeof(modelProj), sizeof(colour), &colour);
+
+                drawMesh(*currentImageData.commandBuffer, *uiMesh);
+
+                ++index;
+            }
+
+            //Text
+            currentImageData.commandBuffer->bindPipelineObject(*textPipelineObject);
+            for(size_t index{ widgetCount }; auto &&[texture, modelProj] : currentFrameData.text) {
+                clv::mth::vec4f constexpr colour{ 1.0f };//Temp colour
+
+                uiSets[index]->map(*texture, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
+                
+                currentImageData.commandBuffer->bindDescriptorSet(*uiSets[index], 0);
+                currentImageData.commandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(modelProj), &modelProj);
+                currentImageData.commandBuffer->pushConstant(Shader::Stage::Pixel, sizeof(modelProj), sizeof(colour), &colour);
+
+                drawMesh(*currentImageData.commandBuffer, *uiMesh);
+
+                ++index;
+            }
 
             currentImageData.commandBuffer->endRenderPass();
             currentImageData.commandBuffer->endRecording();
@@ -476,6 +563,7 @@ namespace blb::rnd {
         createDepthBuffer();
 
         createPipeline();
+        createUiPipeline();
         createSwapchainFrameBuffers();
 
         size_t const imageCount = std::size(swapChainFrameBuffers);
@@ -738,10 +826,68 @@ namespace blb::rnd {
             .offset   = offsetof(Vertex, weights),
         });
 
-        pipelineDescriptor.vertexShader = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmesh_v), animatedmesh_vLength });
+        pipelineDescriptor.vertexShader     = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmesh_v), animatedmesh_vLength });
         pipelineDescriptor.vertexAttributes = std::move(vertexAttributes);
 
         animatedMeshPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+    }
+
+    void ForwardRenderer3D::createUiPipeline() {
+        size_t constexpr totalAttributes{ 2 };
+        std::vector<VertexAttributeDescriptor> vertexAttributes{};
+        vertexAttributes.reserve(totalAttributes);
+
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 0,
+            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
+            .offset   = offsetof(Vertex, position),
+        });
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 1,
+            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
+            .offset   = offsetof(Vertex, texCoord),
+        });
+
+        AreaDescriptor viewScissorArea{
+            .state    = ElementState::Static,
+            .position = { 0.0f, 0.0f },
+            .size     = { shadowMapSize, shadowMapSize }
+        };
+
+        DepthStateDescriptor depthState{
+            .depthTest  = false,
+            .depthWrite = false,
+        };
+
+        PushConstantDescriptor vertexPushConstant{
+            .stage  = Shader::Stage::Vertex,
+            .offset = 0,
+            .size   = sizeof(clv::mth::mat4f),
+        };
+        PushConstantDescriptor pixelPushConstant{
+            .stage  = Shader::Stage::Pixel,
+            .offset = vertexPushConstant.size,
+            .size   = sizeof(clv::mth::vec4f),
+        };
+
+        PipelineObject::Descriptor pipelineDescriptor{
+            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(ui_v), ui_vLength }),
+            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(widget_p), widget_pLength }),
+            .vertexInput          = Vertex::getInputBindingDescriptor(),
+            .vertexAttributes     = vertexAttributes,
+            .viewportDescriptor   = viewScissorArea,
+            .scissorDescriptor    = viewScissorArea,
+            .depthState           = depthState,
+            .renderPass           = renderPass,
+            .descriptorSetLayouts = { descriptorSetLayouts[DescriptorSetSlots::UI] },
+            .pushConstants        = { std::move(vertexPushConstant), std::move(pixelPushConstant) },
+        };
+
+        widgetPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+
+        pipelineDescriptor.fragmentShader = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(font_p), font_pLength });
+
+        textPipelineObject = graphicsFactory->createPipelineObject(std::move(pipelineDescriptor));
     }
 
     void ForwardRenderer3D::createShadowMapPipeline() {
