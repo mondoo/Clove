@@ -40,6 +40,11 @@ namespace clv::gfx {
         //TODO
     };
 
+    struct DepthStateDescriptor{
+        bool depthTest{ true };
+        bool depthWrite{ true };
+    };
+
     struct PushConstantDescriptor {
         Shader::Stage stage;
         size_t offset{ 0 }; /**< Offset specified in the shader (layout(offset = x)). Required if using different push constants for different stages. */
@@ -65,6 +70,8 @@ namespace clv::gfx {
             AreaDescriptor scissorDescriptor;
 
             RasteriserDescriptor rasteriserDescriptor;
+
+            DepthStateDescriptor depthState;
 
             std::shared_ptr<RenderPass> renderPass;
 
