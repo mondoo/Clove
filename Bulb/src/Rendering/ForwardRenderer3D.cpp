@@ -675,6 +675,33 @@ namespace blb::rnd {
     }
 
     void ForwardRenderer3D::createPipeline() {
+        //Create attributes for non-animated meshes
+        size_t constexpr totalAttributes{ 6 };
+        std::vector<VertexAttributeDescriptor> vertexAttributes{};
+        vertexAttributes.reserve(totalAttributes);
+
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 0,
+            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
+            .offset   = offsetof(Vertex, position),
+        });
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 1,
+            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
+            .offset   = offsetof(Vertex, normal),
+        });
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 2,
+            .format   = VertexAttributeFormat::R32G32_SFLOAT,
+            .offset   = offsetof(Vertex, texCoord),
+        });
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 3,
+            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
+            .offset   = offsetof(Vertex, colour),
+        });
+
+        //Put all descriptor sets into a contiguous vector
         std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayoutsVector{};
         descriptorSetLayoutsVector.reserve(std::size(descriptorSetLayouts));
         for(auto &&[key, layout] : descriptorSetLayouts) {
@@ -685,7 +712,7 @@ namespace blb::rnd {
             .vertexShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmesh_v), staticmesh_vLength }),
             .fragmentShader     = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(mesh_p), mesh_pLength }),
             .vertexInput        = Vertex::getInputBindingDescriptor(),
-            .vertexAttributes   = Vertex::getVertexAttributes(),
+            .vertexAttributes   = vertexAttributes,
             .viewportDescriptor = {
                 .size = { swapchain->getExtent().x, swapchain->getExtent().y },
             },
@@ -699,12 +726,35 @@ namespace blb::rnd {
 
         staticMeshPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
 
+        //Modify the pipeline for animated meshes
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 4,
+            .format   = VertexAttributeFormat::R32G32B32A32_SINT,
+            .offset   = offsetof(Vertex, jointIds),
+        });
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 5,
+            .format   = VertexAttributeFormat::R32G32B32A32_SFLOAT,
+            .offset   = offsetof(Vertex, weights),
+        });
+
         pipelineDescriptor.vertexShader = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmesh_v), animatedmesh_vLength });
+        pipelineDescriptor.vertexAttributes = std::move(vertexAttributes);
 
         animatedMeshPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
     void ForwardRenderer3D::createShadowMapPipeline() {
+        size_t constexpr totalAttributes{ 3 };
+        std::vector<VertexAttributeDescriptor> vertexAttributes{};
+        vertexAttributes.reserve(totalAttributes);
+
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 0,
+            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
+            .offset   = offsetof(Vertex, position),
+        });
+
         PushConstantDescriptor pushConstant{
             .stage = Shader::Stage::Vertex,
             .size  = sizeof(clv::mth::mat4f),
@@ -720,7 +770,7 @@ namespace blb::rnd {
             .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmeshshadowmap_v), staticmeshshadowmap_vLength }),
             .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(meshshadowmap_p), meshshadowmap_pLength }),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
-            .vertexAttributes     = Vertex::getVertexAttributes(),
+            .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
             .renderPass           = shadowMapRenderPass,
@@ -730,13 +780,35 @@ namespace blb::rnd {
 
         staticMeshShadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
 
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 4,
+            .format   = VertexAttributeFormat::R32G32B32A32_SINT,
+            .offset   = offsetof(Vertex, jointIds),
+        });
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 5,
+            .format   = VertexAttributeFormat::R32G32B32A32_SFLOAT,
+            .offset   = offsetof(Vertex, weights),
+        });
+
         pipelineDescriptor.vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmeshshadowmap_v), animatedmeshshadowmap_vLength });
+        pipelineDescriptor.vertexAttributes     = std::move(vertexAttributes);
         pipelineDescriptor.descriptorSetLayouts = { descriptorSetLayouts[DescriptorSetSlots::Mesh] };
 
         animatedMeshShadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
     void ForwardRenderer3D::createCubeShadowMapPipeline() {
+        size_t constexpr totalAttributes{ 3 };
+        std::vector<VertexAttributeDescriptor> vertexAttributes{};
+        vertexAttributes.reserve(totalAttributes);
+
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 0,
+            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
+            .offset   = offsetof(Vertex, position),
+        });
+
         PushConstantDescriptor vertexPushConstant{
             .stage  = Shader::Stage::Vertex,
             .offset = 0,
@@ -758,7 +830,7 @@ namespace blb::rnd {
             .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmeshcubeshadowmap_v), staticmeshcubeshadowmap_vLength }),
             .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(meshcubeshadowmap_p), meshcubeshadowmap_pLength }),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
-            .vertexAttributes     = Vertex::getVertexAttributes(),
+            .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
             .renderPass           = shadowMapRenderPass,
@@ -768,7 +840,19 @@ namespace blb::rnd {
 
         staticMeshCubeShadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
 
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 4,
+            .format   = VertexAttributeFormat::R32G32B32A32_SINT,
+            .offset   = offsetof(Vertex, jointIds),
+        });
+        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+            .location = 5,
+            .format   = VertexAttributeFormat::R32G32B32A32_SFLOAT,
+            .offset   = offsetof(Vertex, weights),
+        });
+
         pipelineDescriptor.vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmeshcubeshadowmap_v), animatedmeshcubeshadowmap_vLength });
+        pipelineDescriptor.vertexAttributes     = std::move(vertexAttributes);
         pipelineDescriptor.descriptorSetLayouts = { descriptorSetLayouts[DescriptorSetSlots::Mesh] };
 
         animatedMeshCubeShadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
