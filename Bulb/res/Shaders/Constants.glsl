@@ -5,3 +5,4 @@
 #define SET_MESH 0
 #define SET_VIEW 1
 #define SET_LIGHTING 2
+#define SET_UI 3

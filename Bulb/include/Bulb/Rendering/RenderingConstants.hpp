@@ -19,5 +19,6 @@ namespace blb::rnd {
         Mesh     = 0,
         View     = 1,
         Lighting = 2,
+        UI       = 3,
     };
 }

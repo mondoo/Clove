@@ -150,12 +150,18 @@ set(
 		${BLB_RESOURCE}/Shaders/StaticMesh-v.glsl
 		${BLB_RESOURCE}/Shaders/StaticMeshShadowMap-v.glsl
 		${BLB_RESOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl
+
 		${BLB_RESOURCE}/Shaders/AnimatedMesh-v.glsl
 		${BLB_RESOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl
 		${BLB_RESOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl
+
 		${BLB_RESOURCE}/Shaders/Mesh-p.glsl
 		${BLB_RESOURCE}/Shaders/MeshShadowMap-p.glsl
 		${BLB_RESOURCE}/Shaders/MeshCubeShadowMap-p.glsl
+
+		${BLB_RESOURCE}/Shaders/UI-v.glsl
+		${BLB_RESOURCE}/Shaders/Widget-p.glsl
+		${BLB_RESOURCE}/Shaders/Font-p.glsl
 
 		${ShaderIncludes}
 )
@@ -171,6 +177,11 @@ compileShader("${BLB_RESOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl" "Animat
 compileShader("${BLB_RESOURCE}/Shaders/Mesh-p.glsl" "Mesh-p.spirv" "fragment" "${ShaderIncludes}")
 compileShader("${BLB_RESOURCE}/Shaders/MeshShadowMap-p.glsl" "MeshShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
 compileShader("${BLB_RESOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "MeshCubeShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
+
+
+compileShader("${BLB_RESOURCE}/Shaders/UI-v.glsl" "UI-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/Widget-p.glsl" "Widget-p.spirv" "fragment" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/Font-p.glsl" "Font-p.spirv" "fragment" "${ShaderIncludes}")
 
 #Convert resources into c strings
 set(ResourceBinaries)
@@ -197,15 +208,22 @@ function(embeddResource resources readType)
 endfunction()
 
 embeddResource("${BLB_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf" "rb")
+
 embeddResource("StaticMesh-v.spirv" "rb")
 embeddResource("StaticMeshShadowMap-v.spirv" "rb")
 embeddResource("StaticMeshCubeShadowMap-v.spirv" "rb")
+
 embeddResource("AnimatedMesh-v.spirv" "rb")
 embeddResource("AnimatedMeshShadowMap-v.spirv" "rb")
 embeddResource("AnimatedMeshCubeShadowMap-v.spirv" "rb")
+
 embeddResource("Mesh-p.spirv" "rb")
 embeddResource("MeshShadowMap-p.spirv" "rb")
 embeddResource("MeshCubeShadowMap-p.spirv" "rb")
+
+embeddResource("UI-v.spirv" "rb")
+embeddResource("Widget-p.spirv" "rb")
+embeddResource("Font-p.spirv" "rb")
 
 #Organise the source tree
 file(GLOB_RECURSE header ${BLB_INCLUDE}/*.h ${BLB_INCLUDE}/*.hpp ${BLB_INCLUDE}/*.inl)
