@@ -30,7 +30,7 @@ namespace blb::ui {
             .layerCount = 1,
         };
 
-        image = rnd::createImageWithData(factory, std::move(imageDescriptor), &white, bytesPerTexel);
+        image     = rnd::createImageWithData(factory, std::move(imageDescriptor), &white, bytesPerTexel);
         imageView = image->createView(std::move(viewDescriptor));
     }
 
@@ -49,7 +49,7 @@ namespace blb::ui {
     Image::~Image() = default;
 
     void Image::draw(rnd::ForwardRenderer3D &renderer, clv::mth::vec2f const &drawSpace) {
-        mth::vec2f const screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
+        mth::vec2f const screenHalfSize{ drawSpace.x / 2.0f, drawSpace.y / 2.0f };
 
         //Move the position to origin at the top left
         mth::vec2f const pos{ position.x - screenHalfSize.x, -position.y + screenHalfSize.y };
@@ -61,6 +61,6 @@ namespace blb::ui {
         mth::mat4f const model{ translation * rotation * scale };
         mth::mat4f const projection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
 
-        renderer.submitWidget(imageView, model * projection);
+        renderer.submitWidget(imageView, projection * model);
     }
 }

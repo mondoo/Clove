@@ -126,8 +126,8 @@ namespace blb::rnd {
         };
 
         std::vector<uint16_t> const uiIndices{
-            0, 1, 2,
-            2, 1, 3,
+            0, 2, 3,
+            0, 3, 1,
         };
 
         uiMesh = std::make_unique<Mesh>(std::move(uiVertices), std::move(uiIndices), *graphicsFactory);

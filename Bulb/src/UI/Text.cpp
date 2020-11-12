@@ -42,7 +42,7 @@ namespace blb::ui {
                 model            = mth::translate(mth::mat4f(1.0f), { xpos, ypos, 0.0f });
                 model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
 
-                renderer.submitText(glyph.characterView, model * projection);
+                renderer.submitText(glyph.characterView, projection * model);
             }
 
             cursorPos.x += glyph.advance.x;
