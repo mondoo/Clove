@@ -117,11 +117,11 @@ namespace blb::rnd {
             },
             Vertex{
                 .position = { 0.0f, 0.0f, 0.0f },
-                .texCoord = { 1.0f, 1.0f },
+                .texCoord = { 0.0f, 1.0f },
             },
             Vertex{
                 .position = { 1.0f, 0.0f, 0.0f },
-                .texCoord = { 0.0f, 1.0f },
+                .texCoord = { 1.0f, 1.0f },
             },
         };
 
