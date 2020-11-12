@@ -33,7 +33,7 @@ namespace clv::gfx::vk {
         VKImage(VKImage&& other) noexcept;
 
         VKImage& operator=(VKImage const& other) = delete;
-        VKImage& operator                        =(VKImage&& other) noexcept;
+        VKImage& operator=(VKImage&& other) noexcept;
 
         ~VKImage();
 

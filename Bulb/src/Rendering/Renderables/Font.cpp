@@ -100,6 +100,7 @@ namespace blb::rnd {
             .bearing = { face->glyph->bitmap_left, face->glyph->bitmap_top },
             .advance = { face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 }
         };
+        
 
         unsigned char *faceBuffer = face->glyph->bitmap.buffer;
 
@@ -107,14 +108,14 @@ namespace blb::rnd {
             return glyph;
         }
 
-        size_t constexpr bytesPerTexel{ 4 };
+        size_t constexpr bytesPerTexel{ 1 }; //FT uses 1 byte per texel/pixel
         size_t const sizeBytes{ static_cast<size_t>(glyph.size.x) * static_cast<size_t>(glyph.size.y) * bytesPerTexel };
 
         GraphicsImage::Descriptor const glyphImageDescriptor{
             .type        = GraphicsImage::Type::_2D,
             .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::TransferDestination,
             .dimensions  = glyph.size,
-            .format      = GraphicsImage::Format::R8G8B8A8_SRGB,
+            .format      = GraphicsImage::Format::R8_UNORM,//The bitmaps only use the red channel
             .sharingMode = SharingMode::Exclusive,
         };
 
