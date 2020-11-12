@@ -73,6 +73,8 @@ namespace clv::gfx {
 
             DepthStateDescriptor depthState;
 
+            bool enableBlending{ true };
+
             std::shared_ptr<RenderPass> renderPass;
 
             std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts;
