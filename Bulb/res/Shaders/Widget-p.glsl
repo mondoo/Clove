@@ -13,6 +13,5 @@ layout(location = 0) in vec2 texCoord;
 layout(location = 0) out vec4 outColour;
 
 void main(){
-    outColour = colour;
-    outColour.a *= texture(texSampler, texCoord).r;
+    outColour = texture(texSampler, texCoord) * colour;
 }
