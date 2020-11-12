@@ -134,6 +134,7 @@ namespace blb::rnd {
 
         //Samplers passed along with textures
         std::shared_ptr<clv::gfx::Sampler> textureSampler;
+        std::shared_ptr<clv::gfx::Sampler> uiSampler;
         std::shared_ptr<clv::gfx::Sampler> shadowSampler;
 
         //Objects for the final colour render pass

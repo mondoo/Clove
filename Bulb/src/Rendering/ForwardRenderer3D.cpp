@@ -97,6 +97,15 @@ namespace blb::rnd {
             .maxAnisotropy    = 16.0f,
         });
 
+        uiSampler = graphicsFactory->createSampler(Sampler::Descriptor{
+            .minFilter        = Sampler::Filter::Nearest,
+            .magFilter        = Sampler::Filter::Nearest,
+            .addressModeU     = Sampler::AddressMode::ClampToBorder,
+            .addressModeV     = Sampler::AddressMode::ClampToBorder,
+            .addressModeW     = Sampler::AddressMode::ClampToBorder,
+            .enableAnisotropy = false,
+        });
+
         shadowSampler = graphicsFactory->createSampler(Sampler::Descriptor{
             .minFilter        = Sampler::Filter::Linear,
             .magFilter        = Sampler::Filter::Linear,
@@ -450,7 +459,7 @@ namespace blb::rnd {
             for(size_t index{ 0 }; auto &&[texture, modelProj] : currentFrameData.widgets) {
                 clv::mth::vec4f constexpr colour{ 1.0f };//Temp colour
 
-                uiSets[index]->map(*texture, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
+                uiSets[index]->map(*texture, *uiSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
                 
                 currentImageData.commandBuffer->bindDescriptorSet(*uiSets[index], 0);
                 currentImageData.commandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(modelProj), &modelProj);
@@ -466,8 +475,8 @@ namespace blb::rnd {
             for(size_t index{ widgetCount }; auto &&[texture, modelProj] : currentFrameData.text) {
                 clv::mth::vec4f constexpr colour{ 1.0f };//Temp colour
 
-                uiSets[index]->map(*texture, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
-                
+                uiSets[index]->map(*texture, *uiSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
+
                 currentImageData.commandBuffer->bindDescriptorSet(*uiSets[index], 0);
                 currentImageData.commandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(modelProj), &modelProj);
                 currentImageData.commandBuffer->pushConstant(Shader::Stage::Pixel, sizeof(modelProj), sizeof(colour), &colour);
