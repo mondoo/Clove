@@ -41,11 +41,11 @@ namespace clv::gfx::vk {
 
     static VkImageViewType getImageViewType(GraphicsImageView::Type garlicImageType) {
         switch(garlicImageType) {
-            case GraphicsImage::Type::_2D:
+            case GraphicsImageView::Type::_2D:
                 return VK_IMAGE_VIEW_TYPE_2D;
-            case GraphicsImage::Type::_3D:
+            case GraphicsImageView::Type::_3D:
                 return VK_IMAGE_VIEW_TYPE_3D;
-            case GraphicsImage::Type::Cube:
+            case GraphicsImageView::Type::Cube:
                 return VK_IMAGE_VIEW_TYPE_CUBE;
             default:
                 GARLIC_ASSERT(false, "{0}: Unhandled image type");
