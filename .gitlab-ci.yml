@@ -26,7 +26,7 @@ build:engine:msvc:
 
 build:engine:gcc:
   stage: build-engine
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
   before_script:
     - git submodule update --init --recursive
   script:
@@ -40,7 +40,7 @@ build:engine:gcc:
 
 build:engine:clang:
   stage: build-engine
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
   before_script:
     - git submodule update --init --recursive
   script:
@@ -70,7 +70,7 @@ build:editor:msvc:
 
 build:editor:gcc:
   stage: build-editor
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
   before_script:
     - git submodule update --init --recursive
   script:
@@ -94,7 +94,7 @@ test:engine:msvc:
 
 test:engine:gcc:
   stage: test-engine
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
   script:
     - cd build
     - ctest -C Release
@@ -103,7 +103,7 @@ test:engine:gcc:
 
 test:engine:clang:
   stage: test-engine
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
   script:
     - cd build
     - ctest -C Release
