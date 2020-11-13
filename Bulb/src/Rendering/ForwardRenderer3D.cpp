@@ -135,8 +135,12 @@ namespace blb::rnd {
         };
 
         std::vector<uint16_t> const uiIndices{
-            0, 2, 3,
-            0, 3, 1,
+            0,
+            2,
+            3,
+            0,
+            3,
+            1,
         };
 
         uiMesh = std::make_unique<Mesh>(std::move(uiVertices), std::move(uiIndices), *graphicsFactory);
@@ -460,7 +464,7 @@ namespace blb::rnd {
                 clv::mth::vec4f constexpr colour{ 1.0f };//Temp colour
 
                 uiSets[index]->map(*texture, *uiSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
-                
+
                 currentImageData.commandBuffer->bindDescriptorSet(*uiSets[index], 0);
                 currentImageData.commandBuffer->pushConstant(Shader::Stage::Vertex, 0, sizeof(modelProj), &modelProj);
                 currentImageData.commandBuffer->pushConstant(Shader::Stage::Pixel, sizeof(modelProj), sizeof(colour), &colour);
@@ -798,27 +802,26 @@ namespace blb::rnd {
             .offset   = offsetof(Vertex, colour),
         });
 
-        //Put all descriptor sets into a contiguous vector
-        std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayoutsVector{};
-        descriptorSetLayoutsVector.reserve(std::size(descriptorSetLayouts));
-        for(auto &&[key, layout] : descriptorSetLayouts) {
-            descriptorSetLayoutsVector.push_back(layout);
-        }
+        AreaDescriptor viewScissorArea{
+            .state    = ElementState::Static,
+            .position = { 0.0f, 0.0f },
+            .size     = { swapchain->getExtent().x, swapchain->getExtent().y }
+        };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmesh_v), staticmesh_vLength }),
-            .fragmentShader     = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(mesh_p), mesh_pLength }),
-            .vertexInput        = Vertex::getInputBindingDescriptor(),
-            .vertexAttributes   = vertexAttributes,
-            .viewportDescriptor = {
-                .size = { swapchain->getExtent().x, swapchain->getExtent().y },
-            },
-            .scissorDescriptor = {
-                .size = { swapchain->getExtent().x, swapchain->getExtent().y },
-            },
+            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmesh_v), staticmesh_vLength }),
+            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(mesh_p), mesh_pLength }),
+            .vertexInput          = Vertex::getInputBindingDescriptor(),
+            .vertexAttributes     = vertexAttributes,
+            .viewportDescriptor   = viewScissorArea,
+            .scissorDescriptor    = viewScissorArea,
             .renderPass           = renderPass,
-            .descriptorSetLayouts = std::move(descriptorSetLayoutsVector),
-            .pushConstants        = {},
+            .descriptorSetLayouts = {
+                descriptorSetLayouts[DescriptorSetSlots::Mesh],
+                descriptorSetLayouts[DescriptorSetSlots::View],
+                descriptorSetLayouts[DescriptorSetSlots::Lighting],
+            },
+            .pushConstants = {},
         };
 
         staticMeshPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
@@ -860,7 +863,7 @@ namespace blb::rnd {
         AreaDescriptor viewScissorArea{
             .state    = ElementState::Static,
             .position = { 0.0f, 0.0f },
-            .size     = { shadowMapSize, shadowMapSize }
+            .size     = { swapchain->getExtent().x, swapchain->getExtent().y }
         };
 
         DepthStateDescriptor depthState{
