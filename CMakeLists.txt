@@ -38,6 +38,6 @@ add_subdirectory(Bulb)
 add_subdirectory(Stem)
 
 #Garlic's editor
-if(GAR_BUILD_SCAPE)  #not currently supported without MSVC
+if(GAR_BUILD_SCAPE)
 	add_subdirectory(Scape)
 endif()
