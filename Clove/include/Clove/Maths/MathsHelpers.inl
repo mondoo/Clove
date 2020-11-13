@@ -4,7 +4,7 @@
 
 namespace clv::mth {
     template<typename T>
-    typename T::value_type const *valuePtr( T const &v) {
+    typename T::value_type const *valuePtr(T const &v) {
         return glm::value_ptr(v);
     }
 
@@ -24,40 +24,19 @@ namespace clv::mth {
     }
 
     template<typename T>
-    mat<4, 4, T, qualifier::defaultp> createOrthographicMatrix(T left, T right, T bottom, T top) {
-        /*
-            Defining our own implementation for this function as using glm with vulkan will
-            result in objects being flipped on the Y plane.
-        */
-
-        mat<4, 4, T, qualifier::defaultp> result{ static_cast<T>(1) };
-        result[0][0] = static_cast<T>(2) / (right - left);
-        result[1][1] = static_cast<T>(2) / (bottom - top);
-        result[2][2] = -static_cast<T>(1);
-        result[3][1] = -(right + left) / (right - left);
-        result[3][0] = -(bottom + top) / (bottom - top);
-        return result;
+    mat<4, 4, T, qualifier::defaultp> constexpr createOrthographicMatrix(T left, T right, T bottom, T top) {
+        //Swap the bottom and top so the winding order is correct after applying the matrix
+        return glm::ortho(left, right, top, bottom);
     }
 
     template<typename T>
-    mat<4, 4, T, qualifier::defaultp> createOrthographicMatrix(T left, T right, T bottom, T top, T near, T far) {
-        /*
-            Defining our own implementation for this function as using glm with vulkan will
-            result in objects being flipped on the Y plane.
-        */
-
-        mat<4, 4, T, qualifier::defaultp> result{ 1 };
-        result[0][0] = static_cast<T>(2) / (right - left);
-        result[1][1] = static_cast<T>(2) / (bottom - top);
-        result[2][2] = static_cast<T>(1) / (far - near);
-        result[3][0] = -(right + left) / (right - left);
-        result[3][1] = -(bottom + top) / (bottom - top);
-        result[3][2] = -near / (far - near);
-        return result;
+    mat<4, 4, T, qualifier::defaultp> constexpr createOrthographicMatrix(T left, T right, T bottom, T top, T near, T far) {
+        //Swap the bottom and top so the winding order is correct after applying the matrix
+        return glm::ortho(left, right, top, bottom, near, far);
     }
 
     template<typename T>
-    mat<4, 4, T, qualifier::defaultp> createPerspectiveMatrix(T fovy, T aspect, T zNear, T zFar) {
+    mat<4, 4, T, qualifier::defaultp> constexpr createPerspectiveMatrix(T fovy, T aspect, T zNear, T zFar) {
         /*
             Defining our own implementation for this function as using glm with vulkan will
             result in y+ moving objects downwards.
@@ -65,19 +44,20 @@ namespace clv::mth {
 
         assert(abs(aspect - std::numeric_limits<T>::epsilon()) > static_cast<T>(0));
 
-        T const tanHalfFovy = tan(fovy / static_cast<T>(2));
+        T const tanHalfFovy{ tan(fovy / static_cast<T>(2)) };
 
         mat<4, 4, T, qualifier::defaultp> result{ static_cast<T>(0) };
         result[0][0] = static_cast<T>(1) / (aspect * tanHalfFovy);
-        result[1][1] = -(static_cast<T>(1) / (tanHalfFovy));//Invert the Y
+        result[1][1] = -(static_cast<T>(1) / (tanHalfFovy));
         result[2][2] = zFar / (zFar - zNear);
         result[2][3] = static_cast<T>(1);
         result[3][2] = -(zFar * zNear) / (zFar - zNear);
+
         return result;
     }
 
     template<typename T, qualifier Q>
-    quat<T, Q> eulerToQuaternion( vec<3, T, Q> const &euler) {
+    quat<T, Q> eulerToQuaternion(vec<3, T, Q> const &euler) {
         return matrixToQuaternion(glm::yawPitchRoll(euler.y, euler.x, euler.z));
     }
 
@@ -119,7 +99,7 @@ namespace clv::mth {
     }
 
     template<typename T, qualifier Q>
-    vec<3, T, Q> screenToWorld(vec<2, T, Q> const &screenPos, T screenDepth,  vec<2, T, Q> const &screenSize, mat<4, 4, T, Q> const &viewMatrix,  mat<4, 4, T, Q> const &projectionMatrix) {
+    vec<3, T, Q> screenToWorld(vec<2, T, Q> const &screenPos, T screenDepth, vec<2, T, Q> const &screenSize, mat<4, 4, T, Q> const &viewMatrix, mat<4, 4, T, Q> const &projectionMatrix) {
         vec<4, T, Q> NDC{
             ((screenPos.x / screenSize.x) - 0.5f) * 2.0f,
             -((screenPos.y / screenSize.y) - 0.5f) * 2.0f,
