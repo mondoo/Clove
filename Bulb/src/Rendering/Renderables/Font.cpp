@@ -109,7 +109,7 @@ namespace blb::rnd {
         }
 
         size_t constexpr bytesPerTexel{ 1 }; //FT uses 1 byte per texel/pixel
-        size_t const sizeBytes{ static_cast<size_t>(glyph.size.x) * static_cast<size_t>(glyph.size.y) * bytesPerTexel };
+        size_t const sizeBytes{ static_cast<size_t>(glyph.size.x * glyph.size.y * bytesPerTexel) };
 
         GraphicsImage::Descriptor const glyphImageDescriptor{
             .type        = GraphicsImage::Type::_2D,
@@ -119,14 +119,12 @@ namespace blb::rnd {
             .sharingMode = SharingMode::Exclusive,
         };
 
-        GraphicsImageView::Descriptor constexpr viewDescriptor{
+        glyph.character = createImageWithData(*graphicsFactory, std::move(glyphImageDescriptor), faceBuffer, sizeBytes);
+        glyph.characterView = glyph.character->createView(GraphicsImageView::Descriptor{
             .type       = GraphicsImageView::Type::_2D,
             .layer      = 0,
             .layerCount = 1,
-        };
-
-        glyph.character = createImageWithData(*graphicsFactory, std::move(glyphImageDescriptor), faceBuffer, sizeBytes);
-        glyph.characterView = glyph.character->createView(std::move(viewDescriptor));
+        });
 
         return glyph;
     }
