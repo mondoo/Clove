@@ -1,14 +1,20 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsDevice.hpp"
-
 #include "Clove/Graphics/Vulkan/VKGraphicsFactory.hpp"
+#if GARLIC_PLATFORM_WINDOWS
+    #include "Clove/Platform/Windows/CloveWindows.hpp"
 
-//TODO: Abstract away
-#include "Clove/Platform/Windows/CloveWindows.hpp"
+    #include <vulkan/vulkan_win32.h>
+#elif GARLIC_PLATFORM_MACOS
+#elif GARLIC_PLATFORM_LINUX
+    #include "Clove/Platform/Linux/CloveLinux.hpp"
+    #include "Clove/Platform/Linux/LinuxWindow.hpp"
 
+    #include <vulkan/vulkan_xlib.h>
+#endif
 #include <Root/Definitions.hpp>
 #include <Root/Log/Log.hpp>
+#include <vulkan/vk_sdk_platform.h>
 #include <vulkan/vulkan.h>
-#include <vulkan/vulkan_win32.h>
 
 //TODO: Move this callback (and the set up) into VKException.hpp
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
@@ -173,14 +179,19 @@ namespace clv::gfx::vk {
         return indices.isComplete() && extentionsAreSupported && swapChainIsAdequate && deviceFeatures.samplerAnisotropy;
     }
 
-    VKGraphicsDevice::VKGraphicsDevice(void *nativeWindow) {
+    VKGraphicsDevice::VKGraphicsDevice(std::any nativeWindow) {
         std::vector<char const *> deviceExtensions{
             VK_KHR_SWAPCHAIN_EXTENSION_NAME,
         };
 
         std::vector<char const *> requiredExtensions {
             VK_KHR_SURFACE_EXTENSION_NAME,
-                "VK_KHR_win32_surface",//TODO: Platform agnostic extensions
+#if GARLIC_PLATFORM_WINDOWS
+                VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
+#elif GARLIC_PLATFORM_MACOS
+#elif GARLIC_PLATFORM_LINUX
+                VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
+#endif
 #if GARLIC_DEBUG
                 VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 #endif
@@ -253,17 +264,32 @@ namespace clv::gfx::vk {
         //CREATE SURFACE
         VkSurfaceKHR surface;
         {
-            //TODO: Platform agnostic surface creation
+#if GARLIC_PLATFORM_WINDOWS
             VkWin32SurfaceCreateInfoKHR createInfo{
                 .sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
                 .hinstance = GetModuleHandle(nullptr),
-                .hwnd      = reinterpret_cast<HWND>(nativeWindow),
+                .hwnd      = std::any_cast<HWND>(nativeWindow),
             };
 
             if(vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
                 GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create Vulkan surface");
                 return;
             }
+#elif GARLIC_PLATFORM_MACOS
+#elif GARLIC_PLATFORM_LINUX
+            auto const linuxNativeWindow = std::any_cast<plt::LinuxWindow::NativeWindow>(nativeWindow);
+
+            VkXlibSurfaceCreateInfoKHR createInfo{
+                .sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
+                .dpy    = linuxNativeWindow.display,
+                .window = linuxNativeWindow.window,
+            };
+
+            if(vkCreateXlibSurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
+                GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create Vulkan surface");
+                return;
+            }
+#endif
         }
 
         //PICK PHYSICAL DEVICE

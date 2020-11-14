@@ -4,6 +4,8 @@
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
+#include <any>
+
 namespace clv::gfx::vk {
     class VKGraphicsFactory;
 }
@@ -19,13 +21,13 @@ namespace clv::gfx::vk {
         //FUNCTIONS
     public:
         VKGraphicsDevice() = delete;
-        VKGraphicsDevice(void *nativeWindow);
+        VKGraphicsDevice(std::any nativeWindow);
 
         VKGraphicsDevice(VKGraphicsDevice const &other) = delete;
         VKGraphicsDevice(VKGraphicsDevice &&other) noexcept;
 
         VKGraphicsDevice &operator=(VKGraphicsDevice const &other) = delete;
-        VKGraphicsDevice &operator                                 =(VKGraphicsDevice &&other) noexcept;
+        VKGraphicsDevice &operator=(VKGraphicsDevice &&other) noexcept;
 
         ~VKGraphicsDevice();
 
