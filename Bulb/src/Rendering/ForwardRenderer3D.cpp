@@ -589,7 +589,9 @@ namespace blb::rnd {
 
         uint32_t constexpr totalSets{ 2 };//Only 2 sets will be allocated from these pools (view + lighting)
         auto bindingCounts = viewSetBindingCount;
-        bindingCounts.merge(lightingSetBindingCount);
+        for(auto &&[type, count] : lightingSetBindingCount){
+            bindingCounts[type] += count;
+        }
 
         for(auto &imageData : inFlightImageData) {
             //Create command buffers
