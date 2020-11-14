@@ -61,10 +61,18 @@ namespace clv::gfx {
         virtual void beginRenderPass(RenderPass &renderPass, Framebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) = 0;
         virtual void endRenderPass()                                                                                                                    = 0;
 
-        virtual void bindPipelineObject(PipelineObject &pipelineObject)                     = 0;
-        virtual void bindVertexBuffer(GraphicsBuffer &vertexBuffer)                         = 0;
-        virtual void bindIndexBuffer(GraphicsBuffer &indexBuffer, IndexType indexType)      = 0;
-        virtual void bindDescriptorSet(DescriptorSet &descriptorSet, uint32_t const setNum) = 0;
+        virtual void bindPipelineObject(PipelineObject &pipelineObject) = 0;
+        /**
+         * @brief Bind a vertex buffer to be used in the next draw call.
+         * @param offset Offset into the buffer where the vertices begin.
+         */
+        virtual void bindVertexBuffer(GraphicsBuffer &vertexBuffer, size_t const offset) = 0;
+        /**
+         * @brief Bind an index buffer to be used in the next draw call.
+         * @param offset Offset into the buffer where the indices being.
+         */
+        virtual void bindIndexBuffer(GraphicsBuffer &indexBuffer, size_t const offset, IndexType indexType) = 0;
+        virtual void bindDescriptorSet(DescriptorSet &descriptorSet, uint32_t const setNum)                 = 0;
 
         virtual void pushConstant(Shader::Stage const stage, size_t const offset, size_t const size, void const *data) = 0;
 

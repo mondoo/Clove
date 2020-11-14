@@ -14,11 +14,13 @@ namespace blb::rnd {
     class Mesh {
         //VARIABLES
     private:
-        std::shared_ptr<clv::gfx::GraphicsBuffer> vertexBuffer;
-        std::shared_ptr<clv::gfx::GraphicsBuffer> indexBuffer;
+        std::shared_ptr<clv::gfx::GraphicsBuffer> buffer;
 
         std::vector<Vertex> vertices;
         std::vector<uint16_t> indices;
+
+        size_t vertexOffset{ 0 };
+        size_t indexOffset{ 0 };
 
         //FUNCTIONS
     public:
@@ -33,10 +35,18 @@ namespace blb::rnd {
 
         ~Mesh();
 
-        inline size_t getIndexCount() const;
+        inline std::shared_ptr<clv::gfx::GraphicsBuffer> const &getGraphicsBuffer() const;
 
-        inline std::shared_ptr<clv::gfx::GraphicsBuffer> const &getVertexBuffer() const;
-        inline std::shared_ptr<clv::gfx::GraphicsBuffer> const &getIndexBuffer() const;
+        /**
+         * @brief Returns the offset into the graphics buffer for the vertices.
+         */
+        inline size_t getVertexOffset() const;
+
+        /**
+         * @brief Returns the offset into the graphics buffer for the indices.
+         */
+        inline size_t getIndexOffset() const;
+        inline size_t getIndexCount() const;
     };
 }
 
