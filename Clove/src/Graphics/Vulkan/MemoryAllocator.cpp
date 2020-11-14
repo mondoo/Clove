@@ -58,26 +58,26 @@ namespace clv::gfx::vk {
         vkFreeMemory(device, memory, nullptr);
     }
 
-    const MemoryAllocator::Chunk *MemoryAllocator::Block::allocate(const VkDeviceSize size, const VkDeviceSize alignment) {
+    MemoryAllocator::Chunk const *MemoryAllocator::Block::allocate(VkDeviceSize const size, VkDeviceSize const alignment) {
         for(auto chunk = std::begin(chunks); chunk != std::end(chunks); ++chunk) {
             if(chunk->free) {
-                const VkDeviceSize remainingAlignment  = chunk->offset % alignment;                                   //How much we're off from the alignment
-                const VkDeviceSize alignmentCorrection = remainingAlignment != 0 ? alignment - remainingAlignment : 0;//How much we compensate for to achieve a multiple of alignment
+                VkDeviceSize const remainingAlignment{ chunk->offset % alignment };                                    //How much we're off from the alignment
+                VkDeviceSize const alignmentCorrection{ remainingAlignment != 0 ? alignment - remainingAlignment : 0 };//How much we compensate for to achieve a multiple of alignment
 
-                if(const VkDeviceSize chunkSize = chunk->size - alignmentCorrection; chunkSize >= size) {
-                    const auto prevOffset = chunk->offset;
+                if(VkDeviceSize const chunkSize = chunk->size - alignmentCorrection; chunkSize >= size) {
+                    auto const prevOffset = chunk->offset;
 
                     chunk->offset += alignmentCorrection;
                     chunk->size = chunkSize;
                     chunk->free = false;
 
                     //Add back the extra bits to the chunk to the left
-                    if(const auto extraBits = chunk->offset - prevOffset; extraBits > 0) {
+                    if(auto const extraBits{ chunk->offset - prevOffset }; extraBits > 0) {
                         std::prev(chunk)->size += extraBits;
                     }
 
                     //If we have room left in the chunk, split it and put the excess back in the list.
-                    if(const VkDeviceSize remainingSize = chunk->size - size; remainingSize > 0) {
+                    if(VkDeviceSize const remainingSize{ chunk->size - size }; remainingSize > 0) {
                         chunks.insert(std::next(chunk), Chunk(chunk->offset + size, remainingSize, memory));
                         chunk->size = size;
                     }
@@ -90,13 +90,13 @@ namespace clv::gfx::vk {
         return nullptr;
     }
 
-    bool MemoryAllocator::Block::free(const Chunk *&chunkPtr) {
+    bool MemoryAllocator::Block::free(Chunk const *&chunkPtr) {
         for(auto chunk = std::begin(chunks); chunk != std::end(chunks); ++chunk) {
             if(*chunk == *chunkPtr) {
                 chunk->free = true;
 
-                bool removeIndex = false;
-                bool removeRight = false;
+                bool removeIndex{ false };
+                bool removeRight{ false };
 
                 //Merge neighbouring chunks
                 if(auto rightChunk = std::next(chunk); rightChunk != std::end(chunks) && rightChunk->free) {
@@ -140,10 +140,10 @@ namespace clv::gfx::vk {
 
     MemoryAllocator::~MemoryAllocator() = default;
 
-    const MemoryAllocator::Chunk *MemoryAllocator::allocate(const VkMemoryRequirements &memoryRequirements, VkMemoryPropertyFlags properties) {
-        const uint32_t memoryTypeIndex = getMemoryTypeIndex(memoryRequirements.memoryTypeBits, properties, device.getPhysical());
+    MemoryAllocator::Chunk const *MemoryAllocator::allocate(VkMemoryRequirements const &memoryRequirements, VkMemoryPropertyFlags properties) {
+        uint32_t const memoryTypeIndex{ getMemoryTypeIndex(memoryRequirements.memoryTypeBits, properties, device.getPhysical()) };
 
-        const Chunk *freeChunk{ nullptr };
+        Chunk const *freeChunk{ nullptr };
         for(auto &block : memoryBlocks) {
             if(block.getMemoryTypeIndex() == memoryTypeIndex) {
                 freeChunk = block.allocate(memoryRequirements.size, memoryRequirements.alignment);
@@ -156,7 +156,7 @@ namespace clv::gfx::vk {
 
         if(freeChunk == nullptr) {
             //Make sure if allocate a new block that's big enough
-            const VkDeviceSize size = std::max(memoryRequirements.size, blockSize);
+            VkDeviceSize const size{ std::max(memoryRequirements.size, blockSize) };
             memoryBlocks.emplace_back(device.get(), size, memoryTypeIndex);
             freeChunk = memoryBlocks.back().allocate(memoryRequirements.size, memoryRequirements.alignment);
             GARLIC_ASSERT(freeChunk != nullptr, "{0}: Newly allocated Block does not have enough room", GARLIC_FUNCTION_NAME_PRETTY);
@@ -165,7 +165,7 @@ namespace clv::gfx::vk {
         return freeChunk;
     }
 
-    void MemoryAllocator::free(const Chunk *&chunk) {
+    void MemoryAllocator::free(Chunk const *&chunk) {
         for(auto &block : memoryBlocks) {
             if(block.free(chunk)) {
                 break;

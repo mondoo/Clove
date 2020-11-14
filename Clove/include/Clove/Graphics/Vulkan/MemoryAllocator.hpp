@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
+#include <list>
 #include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
@@ -32,7 +33,7 @@ namespace clv::gfx::vk {
                 , memory(memory) {
             }
 
-            friend bool operator==(const Chunk& lhs, const Chunk& rhs) {
+            friend bool operator==(Chunk const &lhs, Chunk const &rhs) {
                 return lhs.offset == rhs.offset &&
                     lhs.size == rhs.size &&
                     lhs.memory == rhs.memory &&
@@ -60,16 +61,16 @@ namespace clv::gfx::vk {
             Block() = delete;
             Block(VkDevice device, VkDeviceSize size, uint32_t memoryTypeIndex);
 
-            Block(const Block& other) = delete;
-            Block(Block&& other) noexcept;
+            Block(Block const &other) = delete;
+            Block(Block &&other) noexcept;
 
-            Block& operator=(const Block& other) = delete;
-            Block& operator=(Block&& other) noexcept;
+            Block &operator=(Block const &other) = delete;
+            Block &operator=(Block &&other) noexcept;
 
             ~Block();
 
-            const Chunk* allocate(const VkDeviceSize size, const VkDeviceSize alignment);
-            bool free(const Chunk*& chunkPtr);
+            Chunk const *allocate(VkDeviceSize const size, VkDeviceSize const alignment);
+            bool free(Chunk const *&chunkPtr);
 
             inline VkDeviceSize getSize() const;
 
@@ -78,7 +79,7 @@ namespace clv::gfx::vk {
 
         //VARIABLES
     private:
-        static constexpr VkDeviceSize blockSize = 256 * 1024 * 1024;//256MB
+        static VkDeviceSize constexpr blockSize = 256 * 1024 * 1024;//256MB
 
         DevicePointer device;
 
@@ -89,19 +90,19 @@ namespace clv::gfx::vk {
         MemoryAllocator() = delete;
         MemoryAllocator(DevicePointer device);
 
-        MemoryAllocator(const MemoryAllocator& other) = delete;
-        MemoryAllocator(MemoryAllocator&& other) noexcept;
+        MemoryAllocator(MemoryAllocator const &other) = delete;
+        MemoryAllocator(MemoryAllocator &&other) noexcept;
 
-        MemoryAllocator& operator=(const MemoryAllocator& other) = delete;
-        MemoryAllocator& operator=(MemoryAllocator&& other);
+        MemoryAllocator &operator=(MemoryAllocator const &other) = delete;
+        MemoryAllocator &operator=(MemoryAllocator &&other);
 
         ~MemoryAllocator();
 
-        const Chunk* allocate(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags properties);
+        Chunk const *allocate(VkMemoryRequirements const &memoryRequirements, VkMemoryPropertyFlags properties);
         /**
          * @brief Releases the memory the chunk occupies. Nulls the chunk pointer if successful
          */
-        void free(const Chunk*& chunk);
+        void free(Chunk const *&chunk);
     };
 }
 
