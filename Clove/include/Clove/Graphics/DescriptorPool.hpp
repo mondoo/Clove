@@ -8,7 +8,7 @@ namespace clv::gfx {
 
     struct DescriptorInfo {
         DescriptorType type;
-        uint32_t count; /**< Number of this type to allocate across all DescriptorSets. */
+        uint32_t count; /**< Number of this type to allocate across all DescriptorSets (usually the array size of each binding). */
     };
 }
 

@@ -141,7 +141,7 @@ namespace blb::rnd {
         std::unordered_map<DescriptorType, uint32_t> counts;
         auto const &descriptor = descriptorSetLayout.getDescriptor();
         for(auto &binding : descriptor.bindings) {
-            counts[binding.type]++;
+            counts[binding.type] += binding.arraySize;
         }
 
         return counts;
