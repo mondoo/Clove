@@ -1,4 +1,4 @@
-#include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
+#include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
 
 #include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKImageView.hpp"
