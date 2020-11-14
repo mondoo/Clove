@@ -2,21 +2,21 @@
 
 #include "Clove/Platform/Platform.hpp"
 
-namespace clv::plt{
-	class WindowsPlatform : public Platform{
-		//FUNCTIONS
-	public:
-		WindowsPlatform();
+namespace clv::plt {
+    class WindowsPlatform : public Platform {
+        //FUNCTIONS
+    public:
+        WindowsPlatform();
 
-		WindowsPlatform(const WindowsPlatform& other) = delete;
-		WindowsPlatform(WindowsPlatform&& other) noexcept;
+        WindowsPlatform(WindowsPlatform const &other) = delete;
+        WindowsPlatform(WindowsPlatform &&other) noexcept;
 
-		WindowsPlatform& operator=(const WindowsPlatform& other) = delete;
-		WindowsPlatform& operator=(WindowsPlatform&& other) noexcept;
+        WindowsPlatform &operator=(WindowsPlatform const &other) = delete;
+        WindowsPlatform &operator=(WindowsPlatform &&other) noexcept;
 
-		~WindowsPlatform();
+        ~WindowsPlatform();
 
-		std::shared_ptr<Window> createWindow(const WindowDescriptor& descriptor) override;
-		std::shared_ptr<Window> createChildWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) override;
-	};
+        std::shared_ptr<Window> createWindow(WindowDescriptor const &descriptor) override;
+        std::shared_ptr<Window> createChildWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size) override;
+    };
 }

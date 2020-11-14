@@ -32,7 +32,7 @@ namespace clv::plt {
 	public:
 		LinuxWindow() = delete;
 		LinuxWindow(const WindowDescriptor& descriptor);
-		LinuxWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api);
+        LinuxWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size);
 
 		LinuxWindow(const LinuxWindow& other) = delete;
 		LinuxWindow(LinuxWindow&& other) noexcept = delete;

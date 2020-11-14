@@ -67,7 +67,7 @@ namespace clv::plt {
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Window created");
     }
 
-    WindowsWindow::WindowsWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size, gfx::API const api) {
+    WindowsWindow::WindowsWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size) {
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
 
         WNDCLASSEX wc{};

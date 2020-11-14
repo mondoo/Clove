@@ -67,7 +67,7 @@ namespace clv::plt {
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Window created");
     }
 
-    LinuxWindow::LinuxWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) {
+    LinuxWindow::LinuxWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size) {
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
 
         const ::Window* nativeParentWindow = reinterpret_cast<::Window*>(parentWindow.getNativeWindow());

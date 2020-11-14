@@ -19,7 +19,7 @@ namespace clv::plt {
     public:
         WindowsWindow() = delete;
         WindowsWindow(WindowDescriptor const &descriptor);
-        WindowsWindow(Window const &parentWindow, const mth::vec2i &position, mth::vec2i const &size, gfx::API const api);
+        WindowsWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size);
 
         WindowsWindow(WindowsWindow const &other)     = delete;
         WindowsWindow(WindowsWindow &&other) noexcept = delete;
