@@ -1,6 +1,6 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsFactory.hpp"
 
-#include "Clove/GRaphics/Vulkan/VKImage.hpp"
+#include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
@@ -14,7 +14,7 @@
 #include "Clove/Graphics/Vulkan/VKSampler.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKShader.hpp"
-#include "Clove/Graphics/Vulkan/VKSwapChain.hpp"
+#include "Clove/Graphics/Vulkan/VKSwapchain.hpp"
 #include "Clove/Graphics/Vulkan/VKTransferQueue.hpp"
 
 namespace clv::gfx::vk {
