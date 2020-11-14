@@ -2,31 +2,28 @@
 
 #include "Clove/Graphics/Graphics.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
-#include "Clove/Graphics/Surface.hpp"
 
 #include <Root/Definitions.hpp>
 #include <Root/Log/Log.hpp>
 
 namespace clv::plt {
-    LinuxWindow::LinuxWindow(const WindowDescriptor& descriptor) {
+    LinuxWindow::LinuxWindow(WindowDescriptor const &descriptor) {
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
-        display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
+        nativeWindow.display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
 
-        if(!display) {
+        if(!nativeWindow.display) {
             //TODO: Exception
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Could not open display");
             return;
         }
 
-        screen   = DefaultScreenOfDisplay(display);//Get the screen of the display
-        screenID = DefaultScreen(display);
+        screen   = DefaultScreenOfDisplay(nativeWindow.display);//Get the screen of the display
+        screenID = DefaultScreen(nativeWindow.display);
 
-		//graphicsFactory = gfx::initialise(descriptor.api);
-
-		////Create the context first to get the visual info
-  //      data = { display, &window, &visual };
-  //      surface = graphicsFactory->createSurface(&data);
+        ////Create the context first to get the visual info
+        //      data = { display, &window, &visual };
+        //      surface = graphicsFactory->createSurface(&data);
 
         if(screenID != visual->screen) {
             //TODO: Exception
@@ -35,32 +32,29 @@ namespace clv::plt {
         }
 
         windowAttribs                   = {};
-        windowAttribs.border_pixel      = BlackPixel(display, screenID);
-        windowAttribs.background_pixel  = WhitePixel(display, screenID);
+        windowAttribs.border_pixel      = BlackPixel(nativeWindow.display, screenID);
+        windowAttribs.background_pixel  = WhitePixel(nativeWindow.display, screenID);
         windowAttribs.override_redirect = true;
-        windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), visual->visual, AllocNone);
+        windowAttribs.colormap          = XCreateColormap(nativeWindow.display, RootWindow(nativeWindow.display, screenID), visual->visual, AllocNone);
         windowAttribs.event_mask        = ExposureMask;
 
-        window = XCreateWindow(display, RootWindow(display, screenID), 0, 0, descriptor.width, descriptor.height, 0, visual->depth, InputOutput, visual->visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
-
-        //Now that we have a window, we can make the context current
-        surface->makeCurrent();
+        nativeWindow.window = XCreateWindow(nativeWindow.display, RootWindow(nativeWindow.display, screenID), 0, 0, descriptor.width, descriptor.height, 0, visual->depth, InputOutput, visual->visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
 
         //Remap the delete window message so we can gracefully close the application
-        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
-        XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
+        atomWmDeleteWindow = XInternAtom(nativeWindow.display, "WM_DELETE_WINDOW", false);
+        XSetWMProtocols(nativeWindow.display, nativeWindow.window, &atomWmDeleteWindow, 1);
 
-        XSync(display, false);//Passing true here flushes the event queue
+        XSync(nativeWindow.display, false);//Passing true here flushes the event queue
 
-        const long keyboardMask = KeyPressMask | KeyReleaseMask | KeymapStateMask;
-        const long mouseMask    = PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask;
+        long const keyboardMask{ KeyPressMask | KeyReleaseMask | KeymapStateMask };
+        long const mouseMask{ PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask };
 
-        XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
+        XSelectInput(nativeWindow.display, nativeWindow.window, keyboardMask | mouseMask | StructureNotifyMask);
 
-        XStoreName(display, window, descriptor.title.c_str());
+        XStoreName(nativeWindow.display, nativeWindow.window, descriptor.title.c_str());
 
-        XClearWindow(display, window);
-        XMapRaised(display, window);
+        XClearWindow(nativeWindow.display, nativeWindow.window);
+        XMapRaised(nativeWindow.display, nativeWindow.window);
 
         open = true;
 
@@ -70,24 +64,24 @@ namespace clv::plt {
     LinuxWindow::LinuxWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size) {
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
 
-        const ::Window* nativeParentWindow = reinterpret_cast<::Window*>(parentWindow.getNativeWindow());
+        NativeWindow const nativeParentWindow = std::any_cast<NativeWindow>(parentWindow.getNativeWindow());
 
-        display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
+        nativeWindow.display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
 
-        if(!display) {
+        if(!nativeWindow.display) {
             //TODO: Exception
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Could not open display");
             return;
         }
 
-        screen   = DefaultScreenOfDisplay(display);//Get the screen of the display
-        screenID = DefaultScreen(display);
+        screen   = DefaultScreenOfDisplay(nativeWindow.display);//Get the screen of the display
+        screenID = DefaultScreen(nativeWindow.display);
 
-		//graphicsFactory = gfx::initialise(api);
+        //graphicsFactory = gfx::initialise(api);
 
-		////Create the context first to get the visual info
-  //      data = { display, &window, &visual };
-  //      surface = graphicsFactory->createSurface(&data);
+        ////Create the context first to get the visual info
+        //      data = { display, &window, &visual };
+        //      surface = graphicsFactory->createSurface(&data);
 
         if(screenID != visual->screen) {
             //TODO: Exception
@@ -96,30 +90,27 @@ namespace clv::plt {
         }
 
         windowAttribs                   = {};
-        windowAttribs.border_pixel      = BlackPixel(display, screenID);
-        windowAttribs.background_pixel  = WhitePixel(display, screenID);
+        windowAttribs.border_pixel      = BlackPixel(nativeWindow.display, screenID);
+        windowAttribs.background_pixel  = WhitePixel(nativeWindow.display, screenID);
         windowAttribs.override_redirect = true;
-        windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), visual->visual, AllocNone);
+        windowAttribs.colormap          = XCreateColormap(nativeWindow.display, RootWindow(nativeWindow.display, screenID), visual->visual, AllocNone);
         windowAttribs.event_mask        = ExposureMask;
 
-        window = XCreateWindow(display, *nativeParentWindow, position.x, position.y, size.x, size.y, 0, visual->depth, InputOutput, visual->visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
-
-        //Now that we have a window, we can make the context current
-        surface->makeCurrent();
+        nativeWindow.window = XCreateWindow(nativeWindow.display, nativeParentWindow.window, position.x, position.y, size.x, size.y, 0, visual->depth, InputOutput, visual->visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
 
         //Remap the delete window message so we can gracefully close the application
-        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
-        XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
+        atomWmDeleteWindow = XInternAtom(nativeWindow.display, "WM_DELETE_WINDOW", false);
+        XSetWMProtocols(nativeWindow.display, nativeWindow.window, &atomWmDeleteWindow, 1);
 
-        XSync(display, false);//Passing true here flushes the event queue
+        XSync(nativeWindow.display, false);//Passing true here flushes the event queue
 
-        const long keyboardMask = KeyPressMask | KeyReleaseMask | KeymapStateMask;
-        const long mouseMask    = PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask;
+        long const keyboardMask{ KeyPressMask | KeyReleaseMask | KeymapStateMask };
+        long const mouseMask{ PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask };
 
-        XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
+        XSelectInput(nativeWindow.display, nativeWindow.window, keyboardMask | mouseMask | StructureNotifyMask);
 
-        XClearWindow(display, window);
-        XMapRaised(display, window);
+        XClearWindow(nativeWindow.display, nativeWindow.window);
+        XMapRaised(nativeWindow.display, nativeWindow.window);
 
         open = true;
 
@@ -127,17 +118,14 @@ namespace clv::plt {
     }
 
     LinuxWindow::~LinuxWindow() {
-        //Reset context first, before the display is closed
-        surface.reset();
-
         XFree(visual);
-        XFreeColormap(display, windowAttribs.colormap);
-        XDestroyWindow(display, window);
-        XCloseDisplay(display);
+        XFreeColormap(nativeWindow.display, windowAttribs.colormap);
+        XDestroyWindow(nativeWindow.display, nativeWindow.window);
+        XCloseDisplay(nativeWindow.display);
     }
 
     std::any LinuxWindow::getNativeWindow() const {
-        return const_cast<::Window *>(&window);
+        return nativeWindow;
     }
 
     mth::vec2i LinuxWindow::getPosition() const {
@@ -149,7 +137,7 @@ namespace clv::plt {
         uint32_t borderWidth;
         uint32_t depth;
 
-        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
+        if(XGetGeometry(nativeWindow.display, nativeWindow.window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
             return { posX, posY };
         } else {
             GARLIC_ASSERT(false, "Could not get window geometry");
@@ -166,7 +154,7 @@ namespace clv::plt {
         uint32_t borderWidth;
         uint32_t depth;
 
-        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
+        if(XGetGeometry(nativeWindow.display, nativeWindow.window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
             return { width, height };
         } else {
             GARLIC_ASSERT(false, "Could not get window geometry");
@@ -174,12 +162,12 @@ namespace clv::plt {
         }
     }
 
-    void LinuxWindow::moveWindow(const mth::vec2i& position) {
-        XMoveWindow(display, window, position.x, position.y);
+    void LinuxWindow::moveWindow(mth::vec2i const &position) {
+        XMoveWindow(nativeWindow.display, nativeWindow.window, position.x, position.y);
     }
 
-    void LinuxWindow::resizeWindow(const mth::vec2i& size) {
-        XResizeWindow(display, window, size.x, size.y);
+    void LinuxWindow::resizeWindow(mth::vec2i const &size) {
+        XResizeWindow(nativeWindow.display, nativeWindow.window, size.x, size.y);
     }
 
     bool LinuxWindow::isOpen() const {
@@ -191,14 +179,14 @@ namespace clv::plt {
             onWindowCloseDelegate.broadcast();
         }
         open = false;
-        XCloseDisplay(display);
+        XCloseDisplay(nativeWindow.display);
     }
 
     void LinuxWindow::processInput() {
-        if(XPending(display) > 0) {
+        if(XPending(nativeWindow.display) > 0) {
             KeySym xkeysym = 0;
 
-            XNextEvent(display, &xevent);
+            XNextEvent(nativeWindow.display, &xevent);
             switch(xevent.type) {
                 case ClientMessage:
                     if(xevent.xclient.data.l[0] == atomWmDeleteWindow) {
@@ -229,14 +217,14 @@ namespace clv::plt {
                 case KeyRelease: {
                     bool isRepeat = false;
 
-                    if(XEventsQueued(display, QueuedAlready)) {
+                    if(XEventsQueued(nativeWindow.display, QueuedAlready)) {
                         XEvent nextEvent;
-                        XPeekEvent(display, &nextEvent);
+                        XPeekEvent(nativeWindow.display, &nextEvent);
 
                         isRepeat = nextEvent.type == KeyPress && nextEvent.xkey.keycode == xevent.xkey.keycode;
                         if(isRepeat) {
                             //Consume the next KeyPress event (as that is auto repeat)
-                            XNextEvent(display, &xevent);
+                            XNextEvent(nativeWindow.display, &xevent);
                         }
                     }
 
@@ -270,18 +258,16 @@ namespace clv::plt {
                     mouse.onButtonReleased(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
                     break;
 
-				//Window
-				case ConfigureNotify:
-					{
-						XConfigureEvent xce = xevent.xconfigure;
-						if(static_cast<uint32_t>(xce.width) != prevConfigureNotifySize.x || static_cast<uint32_t>(xce.height) != prevConfigureNotifySize.y){
-							const mth::vec2i size{ xce.width, xce.height };
-							prevConfigureNotifySize = size;
-							onWindowResize.broadcast(size);
-						}
-					}
-					break;
-			}
-		}
-	}
+                //Window
+                case ConfigureNotify: {
+                    XConfigureEvent xce = xevent.xconfigure;
+                    if(static_cast<uint32_t>(xce.width) != prevConfigureNotifySize.x || static_cast<uint32_t>(xce.height) != prevConfigureNotifySize.y) {
+                        const mth::vec2i size{ xce.width, xce.height };
+                        prevConfigureNotifySize = size;
+                        onWindowResize.broadcast(size);
+                    }
+                } break;
+            }
+        }
+    }
 }
