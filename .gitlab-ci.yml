@@ -12,8 +12,8 @@ build:engine:msvc:
     - choco install -y cmake
     - choco install -y python
     - choco upgrade -y visualstudio2019buildtools
-    - choco install -y vulkan-sdk --version=1.2.135.0
-    - $env:VULKAN_SDK = 'C:\VulkanSDK\1.2.135.0'
+    - choco install -y vulkan-sdk --version=1.2.154.0
+    - $env:VULKAN_SDK = 'C:\VulkanSDK\1.2.154.0'
     - $env:Path += ';C:\Program Files\CMake\bin'
   script:
     - mkdir build
