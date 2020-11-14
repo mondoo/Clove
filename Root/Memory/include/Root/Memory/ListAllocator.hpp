@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cinttypes>
 #include <list>
 
 namespace garlic::inline root {
