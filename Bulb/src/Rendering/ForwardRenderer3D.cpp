@@ -272,17 +272,20 @@ namespace blb::rnd {
         currentImageData.lightingDescriptorSet->map(currentImageData.cubeShadowMapViews, *shadowSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 4);
 
         //Allocate a descriptor set for each mesh to be drawn
-        if(currentImageData.meshDescriptorPool == nullptr || currentImageData.meshDescriptorPool->getDescriptor().maxSets < meshCount) {
-            auto meshSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Mesh]);
-            for(auto &[key, val] : meshSetBindingCount) {
-                val *= meshCount;
+        std::vector<std::shared_ptr<DescriptorSet>> meshSets;
+        if(meshCount > 0) {
+            if(currentImageData.meshDescriptorPool == nullptr || currentImageData.meshDescriptorPool->getDescriptor().maxSets < meshCount) {
+                auto meshSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Mesh]);
+                for(auto &[key, val] : meshSetBindingCount) {
+                    val *= meshCount;
+                }
+                currentImageData.meshDescriptorPool = createDescriptorPool(meshSetBindingCount, meshCount);
             }
-            currentImageData.meshDescriptorPool = createDescriptorPool(meshSetBindingCount, meshCount);
-        }
 
-        currentImageData.meshDescriptorPool->reset();
-        std::vector<std::shared_ptr<DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[DescriptorSetSlots::Mesh]);
-        std::vector<std::shared_ptr<DescriptorSet>> meshSets = currentImageData.meshDescriptorPool->allocateDescriptorSets(layouts);
+            currentImageData.meshDescriptorPool->reset();
+            std::vector<std::shared_ptr<DescriptorSetLayout>> layouts(meshCount, descriptorSetLayouts[DescriptorSetSlots::Mesh]);
+            meshSets = currentImageData.meshDescriptorPool->allocateDescriptorSets(layouts);
+        }
 
         struct MeshUBOLayout {
             alignas(256) ModelData model;
@@ -422,18 +425,21 @@ namespace blb::rnd {
         size_t const textCount{ std::size(currentFrameData.text) };
         size_t const uiElementCount{ widgetCount + textCount };
 
-        if(currentImageData.uiDescriptorPool == nullptr || currentImageData.uiDescriptorPool->getDescriptor().maxSets < uiElementCount) {
-            auto uiSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::UI]);
-            for(auto &[key, val] : uiSetBindingCount) {
-                val *= uiElementCount;
+        std::vector<std::shared_ptr<DescriptorSet>> uiSets;
+        if(uiElementCount > 0) {
+            if(currentImageData.uiDescriptorPool == nullptr || currentImageData.uiDescriptorPool->getDescriptor().maxSets < uiElementCount) {
+                auto uiSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::UI]);
+                for(auto &[key, val] : uiSetBindingCount) {
+                    val *= uiElementCount;
+                }
+                currentImageData.uiDescriptorPool = createDescriptorPool(uiSetBindingCount, uiElementCount);
             }
-            currentImageData.uiDescriptorPool = createDescriptorPool(uiSetBindingCount, uiElementCount);
+
+            currentImageData.uiDescriptorPool->reset();
+            std::vector<std::shared_ptr<DescriptorSetLayout>> uiLayouts(uiElementCount, descriptorSetLayouts[DescriptorSetSlots::UI]);
+            uiSets = currentImageData.uiDescriptorPool->allocateDescriptorSets(uiLayouts);
         }
-
-        currentImageData.uiDescriptorPool->reset();
-        std::vector<std::shared_ptr<DescriptorSetLayout>> uiLayouts(uiElementCount, descriptorSetLayouts[DescriptorSetSlots::UI]);
-        std::vector<std::shared_ptr<DescriptorSet>> uiSets = currentImageData.uiDescriptorPool->allocateDescriptorSets(uiLayouts);
-
+        
         //FINAL COLOUR
         {
             auto const render = [&](Mesh const &mesh, size_t const index) {
@@ -589,7 +595,7 @@ namespace blb::rnd {
 
         uint32_t constexpr totalSets{ 2 };//Only 2 sets will be allocated from these pools (view + lighting)
         auto bindingCounts = viewSetBindingCount;
-        for(auto &&[type, count] : lightingSetBindingCount){
+        for(auto &&[type, count] : lightingSetBindingCount) {
             bindingCounts[type] += count;
         }
 
