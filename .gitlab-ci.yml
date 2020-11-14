@@ -12,7 +12,10 @@ build:engine:msvc:
     - choco install -y cmake
     - choco install -y python
     - choco upgrade -y visualstudio2019buildtools
-    - $env:Path += ';C:\Program Files\CMake\bin'
+    - curl.exe -o vksdk.exe https://sdk.lunarg.com/sdk/download/1.2.154.1/windows/VulkanSDK-1.2.154.1-Installer.exe?Human=true
+    - .\vksdk.exe /S /D=C:\VulkanSDK | Out-Null
+    - $env:VULKAN_SDK = 'C:\VulkanSDK'
+    - $env:Path += ';C:\Program Files\CMake\bin;C:\VulkanSDK\Bin'
   script:
     - mkdir build
     - cd build
@@ -24,7 +27,7 @@ build:engine:msvc:
 
 build:engine:gcc:
   stage: build-engine
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
   before_script:
     - git submodule update --init --recursive
   script:
@@ -38,7 +41,7 @@ build:engine:gcc:
 
 build:engine:clang:
   stage: build-engine
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
   before_script:
     - git submodule update --init --recursive
   script:
@@ -59,7 +62,10 @@ build:editor:msvc:
     - choco install -y cmake
     - choco install -y python
     - choco upgrade -y visualstudio2019buildtools
-    - $env:Path += ';C:\Program Files\CMake\bin'
+    - curl.exe -o vksdk.exe https://sdk.lunarg.com/sdk/download/1.2.154.1/windows/VulkanSDK-1.2.154.1-Installer.exe?Human=true
+    - .\vksdk.exe /S /D=C:\VulkanSDK | Out-Null
+    - $env:VULKAN_SDK = 'C:\VulkanSDK'
+    - $env:Path += ';C:\Program Files\CMake\bin;C:\VulkanSDK\Bin'
   script:
     - cd Scape/Editor
     - dotnet build -c Release
@@ -68,7 +74,7 @@ build:editor:msvc:
 
 build:editor:gcc:
   stage: build-editor
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
   before_script:
     - git submodule update --init --recursive
   script:
@@ -92,7 +98,7 @@ test:engine:msvc:
 
 test:engine:gcc:
   stage: test-engine
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
   script:
     - cd build
     - ctest -C Release
@@ -101,7 +107,7 @@ test:engine:gcc:
 
 test:engine:clang:
   stage: test-engine
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:2.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
   script:
     - cd build
     - ctest -C Release

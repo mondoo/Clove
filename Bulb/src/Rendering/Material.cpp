@@ -1,73 +1,76 @@
 #include "Bulb/Rendering/Material.hpp"
 
-#include "Bulb/Rendering/MaterialInstance.hpp"
-#include "Bulb/Rendering/ShaderBufferTypes.hpp"
-#include "Clove/Graphics/Texture.hpp"
+#include "Bulb/Rendering/RenderingHelpers.hpp"
 
-using namespace clv::gfx;
+#include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Clove/Graphics/GraphicsImage.hpp>
+#include <Clove/Graphics/GraphicsImageView.hpp>
 
-namespace blb::rnd{
-	Material::Material(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory) 
-		: graphicsFactory(std::move(graphicsFactory)) {
-		uint32_t white = 0xffffffff;
-		TextureDescriptor descriptor{};
-		descriptor.dimensions = { 1, 1 };
-		auto blankTexture = this->graphicsFactory->createTexture(descriptor, &white, 4);
-		albedoTexture = blankTexture;
-		specTexture = blankTexture;
+namespace blb::rnd {
+    std::weak_ptr<clv::gfx::GraphicsImage> Material::defaultImage{};
 
-		setData(BBP_Colour, clv::mth::vec4f(1.0f, 1.0f, 1.0f, 1.0f), ShaderStage::Pixel);
-		setData(BBP_MaterialData, MaterialData{ 32.0f }, ShaderStage::Pixel);
-	}
+    Material::Material(clv::gfx::GraphicsFactory &factory) {
+        using namespace clv::gfx;
 
-	Material::Material(const Material& other) = default;
+        if(defaultImage.use_count() == 0) {
+            clv::mth::vec2f constexpr imageDimensions{ 1.0f, 1.0f };
+            uint32_t constexpr bytesPerTexel{ 4 };
+            uint32_t constexpr white{ 0xffffffff };
 
-	Material::Material(Material&& other) noexcept{
-		albedoTexture	= std::move(other.albedoTexture);
-		specTexture		= std::move(other.specTexture);
-		shaderData		= std::move(other.shaderData);
-	}
+            GraphicsImage::Descriptor const imageDescriptor{
+                .type        = GraphicsImage::Type::_2D,
+                .usageFlags  = GraphicsImage::UsageMode::TransferDestination | GraphicsImage::UsageMode::Sampled,
+                .dimensions  = imageDimensions,
+                .format      = GraphicsImage::Format::R8G8B8A8_SRGB,
+                .sharingMode = SharingMode::Exclusive,
+            };
 
-	Material& Material::operator=(const Material& other) = default;
+            std::shared_ptr<GraphicsImage> image = createImageWithData(factory, std::move(imageDescriptor), &white, bytesPerTexel);
 
-	Material& Material::operator=(Material&& other) noexcept = default;
+            defaultImage = image;
 
-	Material::~Material() = default;
-
-	MaterialInstance Material::createInstance(){
-		return MaterialInstance{ shared_from_this() };
-	}
-
-	void Material::setData(clv::gfx::BufferBindingPoint bindingPoint, void* data, const size_t sizeBytes, clv::gfx::ShaderStage shaderType) {
-        if(auto iter = shaderData.find(bindingPoint); iter != shaderData.end()) {
-            iter->second.buffer->updateData(data);
+            diffuseImage  = image;
+            specularImage = image;
         } else {
-            clv::gfx::BufferDescriptor srdesc{};
-            srdesc.elementSize = 0;
-            srdesc.bufferSize  = sizeBytes;
-            srdesc.bufferType  = clv::gfx::BufferType::ShaderResourceBuffer;
-            srdesc.bufferUsage = clv::gfx::BufferUsage::Dynamic;
-
-            auto buffer              = graphicsFactory->createBuffer(srdesc, data);
-            shaderData[bindingPoint] = { buffer, shaderType };
+            diffuseImage  = defaultImage.lock();
+            specularImage = defaultImage.lock();
         }
+
+        GraphicsImageView::Descriptor const viewDescriptor{
+            .type       = GraphicsImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        };
+
+        diffuseView  = diffuseImage->createView(viewDescriptor);
+        specularView = specularImage->createView(std::move(viewDescriptor));
     }
 
-	void Material::setAlbedoTexture(const std::string& path){
-		TextureDescriptor tdesc{};
-		albedoTexture = graphicsFactory->createTexture(tdesc, path);
-	}
+    Material::Material(Material const &other) = default;
 
-	void Material::setAlbedoTexture(std::shared_ptr<Texture> texture){
-		albedoTexture = std::move(texture);
-	}
+    Material::Material(Material &&other) noexcept = default;
 
-	void Material::setSpecularTexture(const std::string& path){
-		TextureDescriptor tdesc{};
-		specTexture = graphicsFactory->createTexture(tdesc, path);
-	}
+    Material &Material::operator=(Material const &other) = default;
 
-	void Material::setSpecularTexture(std::shared_ptr<Texture> texture){
-		specTexture = std::move(texture);
-	}
+    Material &Material::operator=(Material &&other) noexcept = default;
+
+    Material::~Material() = default;
+
+    void Material::setDiffuseTexture(std::shared_ptr<clv::gfx::GraphicsImage> image) {
+        diffuseImage = std::move(image);
+        diffuseView  = diffuseImage->createView(clv::gfx::GraphicsImageView::Descriptor{
+            .type       = clv::gfx::GraphicsImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        });
+    }
+
+    void Material::setSpecularTexture(std::shared_ptr<clv::gfx::GraphicsImage> image) {
+        specularImage = std::move(image);
+        specularView  = specularImage->createView(clv::gfx::GraphicsImageView::Descriptor{
+            .type       = clv::gfx::GraphicsImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        });
+    }
 }

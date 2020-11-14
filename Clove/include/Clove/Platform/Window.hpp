@@ -4,6 +4,8 @@
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Platform/PlatformTypes.hpp"
 
+#include <any>
+
 namespace clv::gfx {
     enum class API;
     class GraphicsFactory;
@@ -21,12 +23,9 @@ namespace clv::plt {
         Keyboard keyboard;
         Mouse mouse;
 
-        std::shared_ptr<gfx::GraphicsFactory> graphicsFactory;
-        std::shared_ptr<gfx::Surface> surface;
-
-        //FUNCTIONS
-    public:
-        Window();
+		//FUNCTIONS
+	public:
+		Window();
 
         Window(const Window& other)     = delete;
         Window(Window&& other) noexcept = delete;
@@ -36,13 +35,12 @@ namespace clv::plt {
 
         virtual ~Window();
 
-        void beginFrame();
-        void endFrame();
+		virtual void processInput() = 0;
 
         void setVSync(bool enabled);
         bool isVSync() const;
 
-        virtual void* getNativeWindow() const = 0;
+        virtual std::any getNativeWindow() const = 0;
 
         virtual mth::vec2i getPosition() const = 0;
         virtual mth::vec2i getSize() const     = 0;
@@ -54,13 +52,7 @@ namespace clv::plt {
 
         virtual void close() = 0;
 
-        Keyboard& getKeyboard();
-        Mouse& getMouse();
-
-        const std::shared_ptr<gfx::GraphicsFactory>& getGraphicsFactory();
-        const std::shared_ptr<gfx::Surface>& getSurface() const;
-
-    protected:
-        virtual void processInput() = 0;
-    };
+		Keyboard& getKeyboard();
+		Mouse& getMouse();
+	};
 }

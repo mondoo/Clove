@@ -36,106 +36,108 @@ set(
 
 set(
 	GraphicsFiles
-		${CLV_INCLUDE}/Graphics/Buffer.hpp
-		${CLV_INCLUDE}/Graphics/Texture.hpp
 		${CLV_INCLUDE}/Graphics/CommandBuffer.hpp
-		${CLV_INCLUDE}/Graphics/FactoryChild.hpp
+		${CLV_INCLUDE}/Graphics/Descriptor.hpp
+		${CLV_INCLUDE}/Graphics/DescriptorPool.hpp
+		${CLV_INCLUDE}/Graphics/DescriptorSet.hpp
+		${CLV_INCLUDE}/Graphics/DescriptorSetLayout.hpp
+		${CLV_INCLUDE}/Graphics/Fence.hpp
+		${CLV_INCLUDE}/Graphics/Framebuffer.hpp
 		${CLV_INCLUDE}/Graphics/Graphics.hpp		
 		${CLV_SOURCE}/Graphics/Graphics.cpp
-		${CLV_INCLUDE}/Graphics/GraphicsTypes.hpp
-		${CLV_INCLUDE}/Graphics/PipelineObject.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsAPI.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsBuffer.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsCommandBuffer.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsDevice.hpp
 		${CLV_INCLUDE}/Graphics/GraphicsFactory.hpp
-		${CLV_INCLUDE}/Graphics/RenderTarget.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsImage.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsImageView.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsQueue.hpp
+		${CLV_INCLUDE}/Graphics/GraphicsResource.hpp
+		${CLV_INCLUDE}/Graphics/MemoryBarrier.hpp
+		${CLV_INCLUDE}/Graphics/PipelineObject.hpp
+		${CLV_INCLUDE}/Graphics/PresentQueue.hpp
+		${CLV_INCLUDE}/Graphics/Queue.hpp
+		${CLV_INCLUDE}/Graphics/RenderPass.hpp
+		${CLV_INCLUDE}/Graphics/Result.hpp
+		${CLV_INCLUDE}/Graphics/Sampler.hpp
+		${CLV_INCLUDE}/Graphics/Semaphore.hpp
 		${CLV_INCLUDE}/Graphics/Shader.hpp
 		${CLV_INCLUDE}/Graphics/ShaderTranspiler.hpp		
 		${CLV_SOURCE}/Graphics/ShaderTranspiler.cpp
-		${CLV_INCLUDE}/Graphics/Surface.hpp
-		${CLV_INCLUDE}/Graphics/VertexLayout.hpp
-		${CLV_INCLUDE}/Graphics/VertexLayout.inl
-		${CLV_SOURCE}/Graphics/VertexLayout.cpp	
+		${CLV_INCLUDE}/Graphics/Swapchain.hpp
+		${CLV_INCLUDE}/Graphics/TransferCommandBuffer.hpp
+		${CLV_INCLUDE}/Graphics/TransferQueue.hpp
 )
 
 set(
-	Direct3DGraphicsFiles
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DBuffer.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DBuffer.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DTexture.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DTexture.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3D.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3D.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DCommandBuffer.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DCommandBuffer.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DException.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DException.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DPipelineObject.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DPipelineObject.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DGraphicsFactory.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DGraphicsFactory.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DRenderTarget.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DRenderTarget.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DShader.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DShader.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/D3DSurface.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/D3DSurface.cpp
-		${CLV_INCLUDE}/Graphics/Direct3D/DXGIInfoManager.hpp
-		${CLV_SOURCE}/Graphics/Direct3D/DXGIInfoManager.cpp
-)
-
-set(
-	MetalGraphicsFiles
-		${CLV_INCLUDE}/Graphics/Metal/MTLBuffer.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLBuffer.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLTexture.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLTexture.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTL.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTL.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLCommandBuffer.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLCommandBuffer.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLPipelineObject.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLPipelineObject.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLGraphicsFactory.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLGraphicsFactory.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLRenderTarget.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLRenderTarget.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLShader.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLShader.mm
-		${CLV_INCLUDE}/Graphics/Metal/MTLSurface.hpp
-		${CLV_SOURCE}/Graphics/Metal/MTLSurface.mm
-)
-
-set(
-	OpenGLGraphicsFiles
-		${CLV_INCLUDE}/Graphics/OpenGL/GLBuffer.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLBuffer.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLTexture.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLTexture.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GL.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GL.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLCommandBuffer.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLCommandBuffer.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLException.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLException.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLPipelineObject.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLPipelineObject.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLGraphicsFactory.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLGraphicsFactory.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLRenderTarget.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLRenderTarget.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLShader.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLShader.cpp
-		${CLV_INCLUDE}/Graphics/OpenGL/GLSurface.hpp
-)
-
-set(
-	WindowsGLGraphicsFiles
-		${CLV_INCLUDE}/Graphics/OpenGL/WGLSurface.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/WGLSurface.cpp
-)
-
-set(
-	LinuxGLGraphicsFiles
-		${CLV_INCLUDE}/Graphics/OpenGL/GLXSurface.hpp
-		${CLV_SOURCE}/Graphics/OpenGL/GLXSurface.cpp
+	VulkanGraphicsFiles
+		${CLV_INCLUDE}/Graphics/Vulkan/DevicePointer.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/DevicePointer.inl
+		${CLV_SOURCE}/Graphics/Vulkan/DevicePointer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/MemoryAllocator.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/MemoryAllocator.inl
+		${CLV_SOURCE}/Graphics/Vulkan/MemoryAllocator.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKBuffer.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKCommandBuffer.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKCommandBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptor.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptor.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorPool.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorPool.inl
+		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptorPool.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorSet.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptorSet.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorSetLayout.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKDescriptorSetLayout.inl
+		${CLV_SOURCE}/Graphics/Vulkan/VKDescriptorSetLayout.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKFence.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKFence.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKFramebuffer.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKFramebuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsCommandBuffer.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsCommandBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsDevice.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsDevice.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsFactory.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsFactory.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsQueue.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsQueue.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKGraphicsResource.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKGraphicsResource.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKImage.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKImage.inl
+		${CLV_SOURCE}/Graphics/Vulkan/VKImage.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKImageView.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKImageView.inl
+		${CLV_SOURCE}/Graphics/Vulkan/VKImageView.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKMemoryBarrier.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKMemoryBarrier.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKPipelineObject.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKPipelineObject.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKPresentQueue.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKPresentQueue.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKQueue.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKQueue.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKRenderPass.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKRenderPass.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKResult.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKResult.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKSampler.hpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKSampler.inl
+		${CLV_SOURCE}/Graphics/Vulkan/VKSampler.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKSemaphore.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKSemaphore.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKShader.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKShader.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKSwapchain.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKSwapchain.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKTransferCommandBuffer.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKTransferCommandBuffer.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VKTransferQueue.hpp
+		${CLV_SOURCE}/Graphics/Vulkan/VKTransferQueue.cpp
+		${CLV_INCLUDE}/Graphics/Vulkan/VulkanTypes.hpp
 )
 
 set(
@@ -219,11 +221,7 @@ set(
 			${OpenALAudioFiles}
 		${ExceptionFiles}
 		${GraphicsFiles}
-			${OpenGLGraphicsFiles}
-				${WindowsGLGraphicsFiles}
-				${LinuxGLGraphicsFiles}
-			${Direct3DGraphicsFiles}
-			${MetalGraphicsFiles}
+			${VulkanGraphicsFiles}
 		${InputFiles}
 		${MathsFiles}
 		${PlatformFiles}
@@ -253,9 +251,9 @@ target_sources(
 
 #Don't compile platform specific files
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set_source_files_properties(${LinuxGLGraphicsFiles} ${MetalGraphicsFiles} ${LinuxPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+	set_source_files_properties(${LinuxPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	set_source_files_properties(${WindowsGLGraphicsFiles} ${Direct3DGraphicsFiles} ${MetalGraphicsFiles} ${WindowsPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+	set_source_files_properties(${WindowsPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-	set_source_files_properties(${WindowsGLGraphicsFiles} ${LinuxGLGraphicsFiles} ${Direct3DGraphicsFiles} ${WindowsPlatformFiles} ${LinuxPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+	set_source_files_properties(${WindowsPlatformFiles} ${LinuxPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 endif()

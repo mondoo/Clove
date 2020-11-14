@@ -28,12 +28,6 @@ namespace clv::gfx{
 }
 
 namespace clv::plt{
-	struct MacData{
-		mth::vec2ui size{};
-	};
-}
-
-namespace clv::plt{
 	class MacWindow : public Window{
 		//VARIABLES
 	private:

@@ -25,7 +25,7 @@ namespace clv::mth {
     T lengthSquared(const vec<L, T, Q>& vec);
 
     template<typename T, qualifier Q>
-    mat<4, 4, T, Q> lookAt(const vec<3, T, Q>& eye, const vec<3, T, Q>& center, const vec<3, T, Q>& up);
+    mat<4, 4, T, Q> lookAt(const vec<3, T, Q>& eye, const vec<3, T, Q>& center, const vec<3, T, Q>& worldUp);
 
     template<typename T, qualifier Q>
     mat<4, 4, T, Q> translate(const mat<4, 4, T, Q>& m, const vec<3, T, Q>& v);

@@ -1,7 +1,9 @@
 #include "Bulb/Rendering/Renderables/Font.hpp"
 
+#include "Bulb/Rendering/RenderingHelpers.hpp"
+
 #include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Graphics/Texture.hpp>
+#include <Clove/Graphics/GraphicsImage.hpp>
 #include <Root/Log/Log.hpp>
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -38,7 +40,7 @@ namespace blb::rnd {
                 GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Constructed FreeType library");
             }
 
-            const auto libraryDeleter = [](FT_Library lib) {
+            auto const libraryDeleter = [](FT_Library lib) {
                 GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "FreeType library has been deleted");
                 FT_Done_FreeType(lib);
             };
@@ -48,20 +50,20 @@ namespace blb::rnd {
             ftLibReference = ftLib.lock();
         }
 
-        face = createFace({ reinterpret_cast<const std::byte*>(roboto_black), roboto_blackLength });
+        face = createFace({ reinterpret_cast<std::byte const *>(roboto_black), roboto_blackLength });
     }
 
-    Font::Font(const std::string& filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
+    Font::Font(std::string const &filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
         : Font(std::move(graphicsFactory)) {
         face = createFace(filePath);
     }
 
-    Font::Font(std::span<const std::byte> bytes, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
+    Font::Font(std::span<std::byte const> bytes, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
         : Font(std::move(graphicsFactory)) {
         face = createFace(std::move(bytes));
     }
 
-    Font::Font(const Font& other)
+    Font::Font(Font const &other)
         : face(nullptr, nullptr) {
         graphicsFactory = other.graphicsFactory;
         ftLibReference  = other.ftLibReference;
@@ -69,9 +71,9 @@ namespace blb::rnd {
         face = copyFace(other.face.get());
     }
 
-    Font::Font(Font&& other) noexcept = default;
+    Font::Font(Font &&other) noexcept = default;
 
-    Font& Font::operator=(const Font& other) {
+    Font &Font::operator=(Font const &other) {
         graphicsFactory = other.graphicsFactory;
         ftLibReference  = other.ftLibReference;
 
@@ -80,7 +82,7 @@ namespace blb::rnd {
         return *this;
     }
 
-    Font& Font::operator=(Font&& other) noexcept = default;
+    Font &Font::operator=(Font &&other) noexcept = default;
 
     Font::~Font() = default;
 
@@ -88,37 +90,46 @@ namespace blb::rnd {
         FT_Set_Pixel_Sizes(face.get(), 0, static_cast<FT_UInt>(size));
     }
 
-    Glyph Font::getChar(char ch) const {
+    Font::Glyph Font::getChar(char ch) const {
+        using namespace clv::gfx;
+
         FT_Load_Char(face.get(), ch, FT_LOAD_RENDER);
 
         Glyph glyph{
-            mth::vec2f{ face->glyph->bitmap.width, face->glyph->bitmap.rows },
-            mth::vec2f{ face->glyph->bitmap_left, face->glyph->bitmap_top },
-            mth::vec2f{ face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 }
+            .size    = { face->glyph->bitmap.width, face->glyph->bitmap.rows },
+            .bearing = { face->glyph->bitmap_left, face->glyph->bitmap_top },
+            .advance = { face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 }
         };
+        
 
-        unsigned char* faceBuffer = face->glyph->bitmap.buffer;
+        unsigned char *faceBuffer = face->glyph->bitmap.buffer;
 
         if(faceBuffer == nullptr) {
             return glyph;
         }
 
-        const uint8_t textureArraySize = 1;
-        const TextureDescriptor descriptor{
-            TextureStyle::Default,
-            TextureUsage::Font,
-            TextureFilter::Nearest,
-            glyph.size,
-            textureArraySize
+        size_t constexpr bytesPerTexel{ 1 }; //FT uses 1 byte per texel/pixel
+        size_t const sizeBytes{ static_cast<size_t>(glyph.size.x * glyph.size.y * bytesPerTexel) };
+
+        GraphicsImage::Descriptor const glyphImageDescriptor{
+            .type        = GraphicsImage::Type::_2D,
+            .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::TransferDestination,
+            .dimensions  = glyph.size,
+            .format      = GraphicsImage::Format::R8_UNORM,//The bitmaps only use the red channel
+            .sharingMode = SharingMode::Exclusive,
         };
 
-        auto texture = graphicsFactory->createTexture(descriptor, faceBuffer, 1);
+        glyph.character = createImageWithData(*graphicsFactory, std::move(glyphImageDescriptor), faceBuffer, sizeBytes);
+        glyph.characterView = glyph.character->createView(GraphicsImageView::Descriptor{
+            .type       = GraphicsImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        });
 
-        glyph.character = std::move(texture);
         return glyph;
     }
 
-    Font::FacePtr Font::createFace(const std::string& filePath) {
+    Font::FacePtr Font::createFace(std::string const &filePath) {
         FT_Face face;
         if(FT_New_Face(ftLibReference.get(), filePath.c_str(), 0, &face) != FT_Err_Ok) {
             GARLIC_ASSERT(false, "Could not load font");
@@ -127,9 +138,9 @@ namespace blb::rnd {
         return makeUniqueFace(face);
     }
 
-    Font::FacePtr Font::createFace(std::span<const std::byte> bytes) {
+    Font::FacePtr Font::createFace(std::span<std::byte const> bytes) {
         FT_Face face;
-        if(FT_New_Memory_Face(ftLibReference.get(), reinterpret_cast<const unsigned char*>(bytes.data()), bytes.size_bytes(), 0, &face) != FT_Err_Ok) {
+        if(FT_New_Memory_Face(ftLibReference.get(), reinterpret_cast<unsigned char const *>(bytes.data()), bytes.size_bytes(), 0, &face) != FT_Err_Ok) {
             GARLIC_ASSERT(false, "Could not load font");
         }
 

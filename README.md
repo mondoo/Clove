@@ -18,6 +18,6 @@ Currently, **Clove** supports the following platforms:
 
 |**Platform**|**API**|
 |-|-|
-|Windows|Direct3D 11, OpenGL 4.6|
-|Linux|OpenGL 4.6|
-|MacOS(WIP)|Metal 1(WIP)|
+|Windows|Vulkan|
+|Linux|Vulkan|
+|MacOS(WIP)|Metal(WIP)|

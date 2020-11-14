@@ -1,4 +1,4 @@
-FROM gcc:10 as builder
+FROM gcc:10 as cmake_builder
 
 RUN apt-get install -y git
 
@@ -37,14 +37,18 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y dotnet-sdk-3.1
 
 #Install cmake
-COPY --from=builder /cmake_install /cmake_install
+COPY --from=cmake_builder /cmake_install /cmake_install
 ENV PATH "/cmake_install/bin:$PATH"
 
 #Install X11
 RUN apt-get install -y libx11-dev
 
-#Install OpenGL
-RUN apt-get install -y libgl1-mesa-glx
-RUN apt-get install -y libgl1-mesa-dev
+#Install Vulkan
+RUN apt-get install -y gnupg2
+RUN apt-get install -y ca-certificates wget
+RUN wget -qO - https://packages.lunarg.com/lunarg-signing-key-pub.asc | apt-key add -
+RUN wget -qO /etc/apt/sources.list.d/lunarg-vulkan-1.2.154-focal.list https://packages.lunarg.com/vulkan/1.2.154/lunarg-vulkan-1.2.154-focal.list
+RUN apt-get update -y
+RUN apt-get install -y vulkan-sdk
 
 CMD [ "/bin/bash" ]

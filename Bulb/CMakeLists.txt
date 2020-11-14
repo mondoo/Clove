@@ -40,4 +40,5 @@ target_link_libraries(
 		#
 		assimp
 		sndfile
+		stb
 )

@@ -1,22 +1,26 @@
 #pragma once
 
-#include "Clove/Graphics/FactoryChild.hpp"
-
-#include "Clove/Graphics/GraphicsTypes.hpp"
-#include "Clove/Graphics/VertexLayout.hpp"
+#include <Root/Definitions.hpp>
+#include <cinttypes>
 
 namespace clv::gfx {
-	struct ShaderDescriptor {
-		ShaderStage stage;
-	};
-}
+    /**
+     * @brief A Shader represents a small piece of code that runs on the GPU
+     */
+    class Shader {
+        //TYPES
+    public:
+        using StageType = uint16_t;
+        enum class Stage : StageType {
+            Vertex = 1 << 0,
+            Pixel  = 1 << 1,
+            //Geometry //TODO: Implement when feature flags can be checked
+        };
 
-namespace clv::gfx {
-	class Shader : public FactoryChild {
-		//FUNCTIONS
-	public:
-		virtual ~Shader() = default;
+        //FUNCTIONS
+    public:
+        virtual ~Shader() = default;
+    };
 
-		virtual const ShaderDescriptor& getDescriptor() const = 0;
-	};
+    GARLIC_ENUM_BIT_FLAG_OPERATORS(Shader::Stage, Shader::StageType)
 }

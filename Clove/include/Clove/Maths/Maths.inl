@@ -38,8 +38,8 @@ namespace clv::mth {
     }
 
     template<typename T, qualifier Q>
-    mat<4, 4, T, Q> lookAt(const vec<3, T, Q>& eye, const vec<3, T, Q>& center, const vec<3, T, Q>& up) {
-        return glm::lookAt(eye, center, up);
+    mat<4, 4, T, Q> lookAt(const vec<3, T, Q>& eye, const vec<3, T, Q>& center, const vec<3, T, Q>& worldUp) {
+        return glm::lookAt(eye, center, worldUp);
     }
 
     template<typename T, qualifier Q>

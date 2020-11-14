@@ -2,21 +2,9 @@ set(DependencyFolder "Garlic/Clove/Dependencies")
 
 include(../../cmake/VendorHelpers.cmake)
 
-#dxerr
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	add_subdirectory(dxerr)
-	set_target_properties(dxerr PROPERTIES FOLDER ${DependencyFolder})
-endif()
-
-#Glad
-add_subdirectory_with_folder(${DependencyFolder} Glad)
-
 #glm
 set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
 add_subdirectory_with_folder(${DependencyFolder} glm)
-
-#stb
-add_subdirectory_with_folder(${DependencyFolder} stb)
 
 #glslang
 set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")

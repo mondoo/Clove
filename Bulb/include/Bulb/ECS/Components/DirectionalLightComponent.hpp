@@ -29,6 +29,9 @@ namespace blb::ecs {
 
 		~DirectionalLightComponent();
 
+		/**
+		 * @brief Sets the direction the light faces.
+		 */
 		void setDirection(const clv::mth::vec3f& direction);
 		const clv::mth::vec3f& getDirection() const;
 	};

@@ -1,33 +1,36 @@
 #pragma once
 
-#include "Bulb/Rendering/ShaderBufferTypes.hpp"
-#include "Clove/Graphics/GraphicsTypes.hpp"
-
-namespace clv::gfx {
-    class RenderTarget;
-}
+#include <Root/Delegate/DelegateHandle.hpp>
 
 namespace clv::plt {
     class Window;
 }
 
 namespace blb::rnd {
-    enum class ProjectionMode {
-        Orthographic,
-        Perspective
+    struct Viewport {
+        int32_t x{ 0 };
+        int32_t y{ 0 };
+        int32_t width{ 0 };
+        int32_t height{ 0 };
     };
 }
 
 namespace blb::rnd {
     class Camera {
+        //TYPES
+    public:
+        enum class ProjectionMode {
+            Orthographic,
+            Perspective
+        };
+
         //VARIABLES
     private:
         ProjectionMode currentProjectionMode;
         clv::mth::mat4f view       = clv::mth::mat4f{ 1.0f };
         clv::mth::mat4f projection = clv::mth::mat4f{ 1.0f };
 
-        std::shared_ptr<clv::gfx::RenderTarget> renderTarget;
-        clv::gfx::Viewport viewport;
+        Viewport viewport;
 
         float zoomLevel = 1.0f;
 
@@ -36,31 +39,29 @@ namespace blb::rnd {
         //FUNCTIONS
     public:
         Camera() = delete;
-        Camera(std::shared_ptr<clv::gfx::RenderTarget> renderTarget, const clv::gfx::Viewport& viewport, const ProjectionMode projection);
-        Camera(clv::plt::Window& window, const ProjectionMode projection);
+        Camera(Viewport viewport, ProjectionMode const projection);
+        Camera(clv::plt::Window &window, ProjectionMode const projection);
 
-        Camera(const Camera& other) = delete;
-        Camera(Camera&& other) noexcept;
+        Camera(Camera const &other) = delete;
+        Camera(Camera &&other) noexcept;
 
-        Camera& operator=(const Camera& other) = delete;
-        Camera& operator=(Camera&& other) noexcept;
+        Camera &operator=(Camera const &other) = delete;
+        Camera &operator=(Camera &&other) noexcept;
 
         ~Camera();
 
         void setView(clv::mth::mat4f view);
-        void setProjectionMode(const ProjectionMode mode);
+        void setProjectionMode(ProjectionMode const mode);
 
         void setZoomLevel(float zoom);
 
-        void setViewport(clv::gfx::Viewport viewport);
+        void setViewport(Viewport viewport);
 
-        const clv::mth::mat4f& getView() const;
-        const clv::mth::mat4f& getProjection() const;
+        clv::mth::mat4f const &getView() const;
+        clv::mth::mat4f const &getProjection() const;
 
         ProjectionMode getProjectionMode() const;
 
-        const std::shared_ptr<clv::gfx::RenderTarget>& getRenderTarget() const;
-
-        const clv::gfx::Viewport& getViewport() const;
+        Viewport const &getViewport() const;
     };
 }

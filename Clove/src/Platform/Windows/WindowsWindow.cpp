@@ -2,7 +2,6 @@
 
 #include "Clove/Graphics/Graphics.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
-#include "Clove/Graphics/Surface.hpp"
 
 #include <Root/Definitions.hpp>
 #include <Root/Log/Log.hpp>
@@ -10,7 +9,7 @@
 #define CLV_WINDOWS_QUIT 25397841//Note: this number is completely random
 
 namespace clv::plt {
-    WindowsWindow::WindowsWindow(const WindowDescriptor& descriptor) {
+    WindowsWindow::WindowsWindow(WindowDescriptor const &descriptor) {
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
         instance = GetModuleHandle(nullptr);
@@ -32,9 +31,9 @@ namespace clv::plt {
 
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Windows class registered");
 
-        const std::string wideTitle(descriptor.title.begin(), descriptor.title.end());
+        std::string const wideTitle(descriptor.title.begin(), descriptor.title.end());
 
-        const DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_VISIBLE;
+        DWORD const windowStyle{ WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_VISIBLE };
 
         RECT wr{};
         wr.left   = 0;
@@ -65,16 +64,9 @@ namespace clv::plt {
         open = true;
 
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Window created");
-
-        graphicsFactory = gfx::initialise(descriptor.api);
-
-        data = { windowsHandle, descriptor.width, descriptor.height };
-
-        surface = graphicsFactory->createSurface(&data);
-        surface->makeCurrent();
     }
 
-    WindowsWindow::WindowsWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api) {
+    WindowsWindow::WindowsWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size) {
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
 
         WNDCLASSEX wc{};
@@ -94,7 +86,7 @@ namespace clv::plt {
 
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Windows class registered");
 
-        const DWORD windowStyle = WS_CHILD | WS_VISIBLE;
+        DWORD const windowStyle{ WS_CHILD | WS_VISIBLE };
 
         windowsHandle = CreateWindow(
             wc.lpszClassName,
@@ -104,7 +96,7 @@ namespace clv::plt {
             position.y,
             size.x,
             size.y,
-            reinterpret_cast<HWND>(parentWindow.getNativeWindow()),
+            std::any_cast<HWND>(parentWindow.getNativeWindow()),
             nullptr,
             instance,
             this);
@@ -116,24 +108,14 @@ namespace clv::plt {
         open = true;
 
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Window created");
-
-        graphicsFactory = gfx::initialise(api);
-
-        data = { windowsHandle, size.x, size.y };
-
-        surface = graphicsFactory->createSurface(&data);
-        surface->makeCurrent();
     }
 
     WindowsWindow::~WindowsWindow() {
-        //Reset context first, before the window is destroyed
-        surface.reset();
-
         UnregisterClass(className, instance);
         DestroyWindow(windowsHandle);
     }
 
-    void* WindowsWindow::getNativeWindow() const {
+    std::any WindowsWindow::getNativeWindow() const {
         return windowsHandle;
     }
 
@@ -152,17 +134,17 @@ namespace clv::plt {
         return { windowRect.right - windowRect.left, windowRect.bottom - windowRect.top };
     }
 
-    void WindowsWindow::moveWindow(const mth::vec2i& position) {
-        const mth::vec2i size = getSize();
-        const BOOL moved      = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
+    void WindowsWindow::moveWindow(mth::vec2i const &position) {
+        mth::vec2i const size = getSize();
+        BOOL const moved      = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
         if(!moved) {
             throw CLV_WINDOWS_LAST_EXCEPTION;
         }
     }
 
-    void WindowsWindow::resizeWindow(const mth::vec2i& size) {
-        const mth::vec2i position = getPosition();
-        const BOOL resized        = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
+    void WindowsWindow::resizeWindow(mth::vec2i const &size) {
+        mth::vec2i const position = getPosition();
+        BOOL const resized        = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
         if(!resized) {
             throw CLV_WINDOWS_LAST_EXCEPTION;
         }
@@ -195,8 +177,8 @@ namespace clv::plt {
     LRESULT CALLBACK WindowsWindow::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         if(msg == WM_NCCREATE) {
             //Extract the ptr to our window class
-            const CREATESTRUCTW* const create = reinterpret_cast<CREATESTRUCTW*>(lParam);
-            WindowsWindow* const window       = static_cast<WindowsWindow*>(create->lpCreateParams);
+            const CREATESTRUCTW *const create = reinterpret_cast<CREATESTRUCTW *>(lParam);
+            WindowsWindow *const window       = static_cast<WindowsWindow *>(create->lpCreateParams);
             //Store our windows class into the windows api
             SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
             //Switch over to the normal procedure handler
@@ -209,7 +191,7 @@ namespace clv::plt {
 
     LRESULT CALLBACK WindowsWindow::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         //Forward message to our windows instance
-        WindowsWindow* const window = reinterpret_cast<WindowsWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+        WindowsWindow *const window = reinterpret_cast<WindowsWindow *>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
         return window->HandleMsg(hWnd, msg, wParam, lParam);
     }
 
@@ -291,9 +273,6 @@ namespace clv::plt {
                 //Window
             case WM_SIZE: {
                 const mth::vec2ui size = { pt.x, pt.y };
-                if(surface) {//Can be called before the surface is initialised
-                    surface->resizeBuffers(size);
-                }
                 onWindowResize.broadcast(size);
             } break;
         }

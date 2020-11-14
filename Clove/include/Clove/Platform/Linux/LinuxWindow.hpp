@@ -1,69 +1,64 @@
 #pragma once
 
+#include "Clove/Platform/Linux/CloveLinux.hpp"
 #include "Clove/Platform/Window.hpp"
 
-#include "Clove/Platform/Linux/CloveLinux.hpp"
-
 namespace clv::gfx {
-	class GraphicsFactory;
+    class GraphicsFactory;
 }
 
 namespace clv::plt {
-	struct LinuxData {
-		Display* display = nullptr;
-		::Window* window;
+    class LinuxWindow : public Window {
+        //TYPES
+    public:
+        struct NativeWindow {
+            Display *display{ nullptr };
+            ::Window window;
+        };
 
-		XVisualInfo** visual = nullptr;
-	};
+        //VARIABLES
+    private:
+        bool open{ false };
 
-	class LinuxWindow : public Window {
-		//VARIABLES
-	private:
-		bool open = false;
+        NativeWindow nativeWindow;
+        Screen *screen{ nullptr };
+        int32_t screenID;
 
-		Display* display = nullptr;
-		Screen* screen = nullptr;
-		int32_t screenID;
-		::Window window;
+        XEvent xevent;
+		
+        XSetWindowAttributes windowAttribs;
 
-		XEvent xevent;
+        Atom atomWmDeleteWindow;
 
-		XVisualInfo* visual = nullptr; //TODO: unique_ptr with custom deleter
-		XSetWindowAttributes windowAttribs;
+        mth::vec2i prevConfigureNotifySize = {};
 
-		Atom atomWmDeleteWindow;
+        //FUNCTIONS
+    public:
+        LinuxWindow() = delete;
+        LinuxWindow(WindowDescriptor const &descriptor);
+        LinuxWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size);
 
-		mth::vec2i prevConfigureNotifySize = {};
+        LinuxWindow(LinuxWindow const &other)     = delete;
+        LinuxWindow(LinuxWindow &&other) noexcept = delete;
 
-		LinuxData data;
+        LinuxWindow &operator=(LinuxWindow const &other) = delete;
+        LinuxWindow &operator=(LinuxWindow &&other) noexcept = delete;
 
-		//FUNCTIONS
-	public:
-		LinuxWindow() = delete;
-		LinuxWindow(const WindowDescriptor& descriptor);
-		LinuxWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api);
+        ~LinuxWindow();
 
-		LinuxWindow(const LinuxWindow& other) = delete;
-		LinuxWindow(LinuxWindow&& other) noexcept = delete;
+        std::any getNativeWindow() const override;
 
-		LinuxWindow& operator=(const LinuxWindow& other) = delete;
-		LinuxWindow& operator=(LinuxWindow&& other) noexcept = delete;
+        mth::vec2i getPosition() const override;
+        mth::vec2i getSize() const override;
 
-		~LinuxWindow();
+        void moveWindow(mth::vec2i const &position) override;
+        void resizeWindow(mth::vec2i const &size) override;
 
-		void* getNativeWindow() const override;
+        bool isOpen() const override;
 
-		mth::vec2i getPosition() const override;
-		mth::vec2i getSize() const override;
+        void close() override;
 
-		void moveWindow(const mth::vec2i& position) override;
-		void resizeWindow(const mth::vec2i& size) override;
-
-		bool isOpen() const override;
-
-		void close() override;
-
-	protected:
-		void processInput() override;
-	};
+    protected:
+        void processInput() override;
+    };
 }

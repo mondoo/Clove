@@ -7,6 +7,8 @@ add_subdirectory(vendor)
 add_subdirectory(src)
 set_target_properties(Clove PROPERTIES FOLDER ${EngineFolder})
 
+find_package(Vulkan REQUIRED)
+
 #Includes
 target_include_directories(
 	Clove
@@ -20,7 +22,7 @@ target_include_directories(
         vendor/glm
 
 	PRIVATE
-		$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/vendor/wglext>
+		Vulkan::Vulkan #Temp public
 )
 
 #Libraries
@@ -43,12 +45,8 @@ target_link_libraries(
 		Root.Memory
 
     #Cross platform
-    PUBLIC
-		$<$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>:Glad>
-
 	PRIVATE 
 		stb
-		$<$<NOT:$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>>:Glad>
 		glm
 		glslang
 		glslang-default-resource-limits
@@ -61,17 +59,13 @@ target_link_libraries(
 
 	#Windows
 	PRIVATE
-		$<$<PLATFORM_ID:Windows>:dxerr>
-		$<$<PLATFORM_ID:Windows>:opengl32>
-		$<$<PLATFORM_ID:Windows>:d3d11>
-		$<$<PLATFORM_ID:Windows>:dxguid>
-		$<$<PLATFORM_ID:Windows>:d3dcompiler>
+		$<$<PLATFORM_ID:Windows>:Vulkan::Vulkan>
 
 	#Linux
 	PRIVATE
-		$<$<PLATFORM_ID:Linux>:GLX>
 		$<$<PLATFORM_ID:Linux>:X11>
 		$<$<PLATFORM_ID:Linux>:dl>
+		$<$<PLATFORM_ID:Linux>:Vulkan::Vulkan>
 
 	#MacOS
 	PRIVATE
@@ -116,7 +110,7 @@ target_precompile_headers(
 		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/Timer.hpp">
 )
 
-#Preprocessor
+#Preprocessor Clove
 target_compile_definitions(
 	Clove
 
@@ -128,5 +122,7 @@ target_compile_definitions(
 
 	#Libraries
 	PUBLIC
+		GLM_FORCE_RADIANS
+		GLM_FORCE_LEFT_HANDED
 		GLM_FORCE_DEPTH_ZERO_TO_ONE
 )

@@ -1,45 +1,53 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsTypes.hpp"
-#include "Clove/Graphics/VertexLayout.hpp"
-#include "Bulb/Rendering/MaterialInstance.hpp"
+#include "Bulb/Rendering/Vertex.hpp"
 
 namespace clv::gfx {
-	class Buffer;
-	class VertexLayout;
-	class VertexBufferData;
-	class CommandBuffer;
+    class GraphicsBuffer;
+    class VertexLayout;
+    class VertexBufferData;
+    class CommandBuffer;
+    class GraphicsFactory;
 }
 
 namespace blb::rnd {
-	class Mesh {
-		//VARIABLES
-	private:
-		std::unordered_map<clv::gfx::VertexLayout, std::shared_ptr<clv::gfx::Buffer>, clv::gfx::VertexLayoutHasher> vertexBufferMap;
-		std::shared_ptr<clv::gfx::Buffer> indexBuffer;
-		MaterialInstance materialInstance;
+    class Mesh {
+        //VARIABLES
+    private:
+        std::shared_ptr<clv::gfx::GraphicsBuffer> buffer;
 
-		clv::gfx::VertexBufferData loadedBufferData;
-		std::vector<uint32_t> indices;
+        std::vector<Vertex> vertices;
+        std::vector<uint16_t> indices;
 
-		//FUNCTIONS
-	public:
-		Mesh() = delete;
-		Mesh(const clv::gfx::VertexBufferData& vbData, const std::vector<uint32_t>& indices, MaterialInstance materialInstance);
+        size_t vertexOffset{ 0 };
+        size_t indexOffset{ 0 };
 
-		Mesh(const Mesh& other);
-		Mesh(Mesh&& other) noexcept;
+        //FUNCTIONS
+    public:
+        Mesh() = delete;
+        Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices, clv::gfx::GraphicsFactory &factory);
 
-		Mesh& operator=(const Mesh& other);
-		Mesh& operator=(Mesh&& other) noexcept;
+        Mesh(Mesh const &other);
+        Mesh(Mesh &&other) noexcept;
 
-		~Mesh();
+        Mesh &operator=(Mesh const &other);
+        Mesh &operator=(Mesh &&other) noexcept;
 
-		void setMaterialInstance(MaterialInstance materialInstance);
-		MaterialInstance& getMaterialInstance();
+        ~Mesh();
 
-		uint32_t getIndexCount();
+        inline std::shared_ptr<clv::gfx::GraphicsBuffer> const &getGraphicsBuffer() const;
 
-		void draw(clv::gfx::CommandBuffer& commandBuffer, const clv::gfx::VertexLayout& layout);
-	};
+        /**
+         * @brief Returns the offset into the graphics buffer for the vertices.
+         */
+        inline size_t getVertexOffset() const;
+
+        /**
+         * @brief Returns the offset into the graphics buffer for the indices.
+         */
+        inline size_t getIndexOffset() const;
+        inline size_t getIndexCount() const;
+    };
 }
+
+#include "Mesh.inl"

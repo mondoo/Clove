@@ -1,114 +1,65 @@
 #include "Bulb/UI/Text.hpp"
 
-#include "Bulb/Rendering/Renderables/Sprite.hpp"
-#include "Bulb/Rendering/Renderer3D.hpp"
-
-//Temp?
-#include "Clove/Graphics/GraphicsTypes.hpp"
-#include "Clove/Platform/Window.hpp"
-//#include "Bulb/Rendering/Renderables/Sprite.hpp"
+#include "Bulb/Rendering/ForwardRenderer3D.hpp"
 
 using namespace clv;
 using namespace clv::gfx;
 
 namespace blb::ui {
-	Text::Text(rnd::Font font, std::shared_ptr<GraphicsFactory> graphicsFactory)
-		: graphicsFactory(std::move(graphicsFactory))
-		, font(std::move(font)) {
-	}
+    Text::Text(rnd::Font font)
+        : font(std::move(font)) {
+    }
 
-	Text::Text(const Text& other) = default;
+    Text::Text(Text const &other) = default;
 
-	Text::Text(Text&& other) = default;
+    Text::Text(Text &&other) = default;
 
-	Text& Text::operator=(const Text& other) = default;
+    Text &Text::operator=(Text const &other) = default;
 
-	Text& Text::operator=(Text&& other) = default;
+    Text &Text::operator=(Text &&other) = default;
 
-	Text::~Text() = default;
+    Text::~Text() = default;
 
-	void Text::setPosition(clv::mth::vec2f position) {
-		this->position = std::move(position);
-	}
+    void Text::draw(rnd::ForwardRenderer3D &renderer, clv::mth::vec2f const &drawSpace) {
+        mth::vec2f const screenHalfSize{ drawSpace.x / 2.0f, drawSpace.y / 2.0f };
 
-	void Text::setRotation(float rotation) {
-		this->rotation = rotation;
-	}
+        mth::vec2f cursorPos{ position.x - screenHalfSize.x, -position.y + screenHalfSize.y };
 
-	void Text::setScale(clv::mth::vec2f scale) {
-		this->scale = std::move(scale);
-	}
+        mth::mat4f const projection{ mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y) };
 
-	const clv::mth::vec2f& Text::getPosition() const {
-		return position;
-	}
+        for(size_t i = 0; i < getTextLength(); ++i) {
+            rnd::Font::Glyph const &glyph{getBufferForCharAt(i)};
 
-	float Text::getRotation() const {
-		return rotation;
-	}
+            //For spaces we just skip and proceed
+            if(glyph.character != nullptr) {
+                uint32_t const width{ glyph.size.x };
+                uint32_t const height{ glyph.size.y };
 
-	const clv::mth::vec2f& Text::getScale() const {
-		return scale;
-	}
+                float const xpos{ cursorPos.x + glyph.bearing.x };
+                float const ypos{ cursorPos.y - (height - glyph.bearing.y) };
 
-	void Text::draw(rnd::Renderer3D& renderer, const clv::mth::vec2f& drawSpace) {
-		const mth::vec2f screenHalfSize{ static_cast<float>(drawSpace.x) / 2.0f, static_cast<float>(drawSpace.y) / 2.0f };
+                mth::mat4f model{ mth::translate(mth::mat4f{ 1.0f }, { xpos, ypos, 0.0f }) };
+                model *= mth::scale(mth::mat4f{ 1.0f }, { width, height, 0.0f });
 
-		mth::vec2f cursorPos = { position.x - screenHalfSize.x, -position.y + screenHalfSize.y };
+                renderer.submitText(glyph.characterView, projection * model);
+            }
 
-		const mth::mat4f projection = mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y);
+            cursorPos.x += glyph.advance.x;
+        }
+    }
 
-		for(size_t i = 0; i < getTextLength(); ++i) {
-			const rnd::Glyph& glyph = getBufferForCharAt(i);
+    rnd::Font::Glyph const &Text::getBufferForCharAt(size_t index) {
+        if(isBufferDirty) {
+            buildGlyphs();
+        }
+        return characters[index];
+    }
 
-			//For spaces we just skip and proceed
-			if(glyph.character != nullptr) {
-				const float width = glyph.size.x;
-				const float height = glyph.size.y;
-
-				const float xpos = cursorPos.x + glyph.bearing.x;
-				const float ypos = cursorPos.y - (height - glyph.bearing.y);
-
-				mth::mat4f model = mth::mat4f(1.0f);
-				model = mth::translate(mth::mat4f(1.0f), { xpos, ypos, 0.0f });
-				model *= mth::scale(mth::mat4f(1.0f), { width, height, 0.0f });
-
-				auto character = std::make_shared<rnd::Sprite>(glyph.character, graphicsFactory);
-				character->getMaterialInstance().setData(BufferBindingPoint::BBP_2DData, projection * model, ShaderStage::Vertex);
-
-				renderer.submitText(character);
-			}
-
-			cursorPos.x += glyph.advance.x;
-		}
-	}
-
-	void Text::setText(std::string text) {
-		this->text = std::move(text);
-		isBufferDirty = true;
-	}
-
-	void Text::setFontSize(uint32_t size) {
-		font.setFontSize(size);
-		isBufferDirty = true;
-	}
-
-	std::size_t Text::getTextLength() const {
-		return text.length();
-	}
-
-	const rnd::Glyph& Text::getBufferForCharAt(size_t index) {
-		if(isBufferDirty) {
-			buildGlyphs();
-		}
-		return characters[index];
-	}
-
-	void Text::buildGlyphs() {
-		characters.clear();
-		for(size_t i = 0; i < text.length(); ++i) {
-			characters.emplace_back(font.getChar(text[i]));
-		}
-		isBufferDirty = false;
-	}
+    void Text::buildGlyphs() {
+        characters.clear();
+        for(size_t i = 0; i < text.length(); ++i) {
+            characters.emplace_back(font.getChar(text[i]));
+        }
+        isBufferDirty = false;
+    }
 }

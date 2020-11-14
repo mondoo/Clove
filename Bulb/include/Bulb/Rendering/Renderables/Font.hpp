@@ -3,61 +3,61 @@
 #include <span>
 
 //Forward dec (see freetype.h)
-typedef struct FT_LibraryRec_* FT_Library;
-typedef struct FT_FaceRec_* FT_Face;
+typedef struct FT_LibraryRec_ *FT_Library;
+typedef struct FT_FaceRec_ *FT_Face;
 
 namespace clv::gfx {
-	class GraphicsFactory;
-	class Texture;
+    class GraphicsFactory;
+    class GraphicsImage;
+    class GraphicsImageView;
 }
 
 namespace blb::rnd {
-	struct Glyph {
-		clv::mth::vec2f size{};
-		clv::mth::vec2f bearing{};
-		clv::mth::vec2f advance{};
-		std::shared_ptr<clv::gfx::Texture> character;
-	};
-}
+    class Font {
+        //TYPES
+    public:
+        struct Glyph {
+            clv::mth::vec2ui size{};
+            clv::mth::vec2i bearing{};
+            clv::mth::vec2i advance{};
+            std::shared_ptr<clv::gfx::GraphicsImage> character;
+            std::shared_ptr<clv::gfx::GraphicsImageView> characterView;
+        };
 
-namespace blb::rnd {
-	class Font {
-		//TYPES
-	public:
-		using FTLibWeakPtr		= std::weak_ptr<std::remove_pointer_t<FT_Library>>;
-		using FTLibSharedPtr	= std::shared_ptr<std::remove_pointer_t<FT_Library>>;
+        using FTLibWeakPtr   = std::weak_ptr<std::remove_pointer_t<FT_Library>>;
+        using FTLibSharedPtr = std::shared_ptr<std::remove_pointer_t<FT_Library>>;
 
-		using FacePtr			= std::unique_ptr<std::remove_pointer_t<FT_Face>, void (*)(FT_Face)>;
+        using FacePtr = std::unique_ptr<std::remove_pointer_t<FT_Face>, void (*)(FT_Face)>;
 
-		//VARIABLES
-	private:
-		std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
+        //VARIABLES
+    private:
+        std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
-		static FTLibWeakPtr ftLib;
-		FTLibSharedPtr		ftLibReference;
+        static FTLibWeakPtr ftLib;
+        FTLibSharedPtr ftLibReference;
 
-		FacePtr face;
+        FacePtr face;
 
-		//FUNCTIONS
-	public:
-		Font() = delete;
-		Font(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
-		Font(const std::string& filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
-		Font(std::span<const std::byte> bytes, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
+        //FUNCTIONS
+    public:
+        Font() = delete;
+        Font(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
+        Font(std::string const &filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
+        Font(std::span<std::byte const> bytes, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
 
-		Font(const Font& other);
-		Font(Font&& other) noexcept;
+        Font(Font const &other);
+        Font(Font &&other) noexcept;
 
-		Font& operator=(const Font& other);
-		Font& operator=(Font&& other) noexcept;
+        Font &operator=(Font const &other);
+        Font &operator=(Font &&other) noexcept;
 
-		~Font();
+        ~Font();
 
-		void setFontSize(uint32_t size);
-		Glyph getChar(char ch) const;
+        void setFontSize(uint32_t size);
+        Glyph getChar(char ch) const;
 
-	private:
-		FacePtr createFace(const std::string& filePath);
-        FacePtr createFace(std::span<const std::byte> bytes);
-	};
+    private:
+        FacePtr createFace(std::string const &filePath);
+        FacePtr createFace(std::span<std::byte const> bytes);
+    };
 }

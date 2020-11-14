@@ -2,6 +2,8 @@ set(BLB_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
 set(BLB_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../include/Bulb)
 set(BLB_RESOURCE ${CMAKE_CURRENT_SOURCE_DIR}/../res)
 
+include(../../Clove/cmake/CompileShader.cmake)
+
 add_library(Bulb STATIC)
 
 set(
@@ -90,26 +92,27 @@ set(
 		${BLB_SOURCE}/Rendering/Animator.cpp
 		${BLB_INCLUDE}/Rendering/Camera.hpp
 		${BLB_SOURCE}/Rendering/Camera.cpp
+		${BLB_INCLUDE}/Rendering/ForwardRenderer3D.hpp
+		${BLB_SOURCE}/Rendering/ForwardRenderer3D.cpp
 		${BLB_INCLUDE}/Rendering/Material.hpp
 		${BLB_INCLUDE}/Rendering/Material.inl
 		${BLB_SOURCE}/Rendering/Material.cpp
-		${BLB_INCLUDE}/Rendering/MaterialInstance.hpp
-		${BLB_INCLUDE}/Rendering/MaterialInstance.inl
-		${BLB_SOURCE}/Rendering/MaterialInstance.cpp
 		${BLB_INCLUDE}/Rendering/RenderingConstants.hpp
+		${BLB_INCLUDE}/Rendering/RenderingHelpers.hpp
+		${BLB_SOURCE}/Rendering/RenderingHelpers.cpp
 		${BLB_INCLUDE}/Rendering/ShaderBufferTypes.hpp
-		${BLB_INCLUDE}/Rendering/Renderer3D.hpp
-		${BLB_SOURCE}/Rendering/Renderer3D.cpp
+		${BLB_INCLUDE}/Rendering/Vertex.hpp
 		${BLB_INCLUDE}/Rendering/Renderables/Font.hpp
 		${BLB_SOURCE}/Rendering/Renderables/Font.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/Mesh.hpp
+		${BLB_INCLUDE}/Rendering/Renderables/Mesh.inl
 		${BLB_SOURCE}/Rendering/Renderables/Mesh.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/AnimatedModel.hpp
+		${BLB_INCLUDE}/Rendering/Renderables/AnimatedModel.inl
 		${BLB_SOURCE}/Rendering/Renderables/AnimatedModel.cpp
 		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.hpp
+		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${BLB_SOURCE}/Rendering/Renderables/StaticModel.cpp
-		${BLB_INCLUDE}/Rendering/Renderables/Sprite.hpp
-		${BLB_SOURCE}/Rendering/Renderables/Sprite.cpp
 )
 
 set(
@@ -126,33 +129,58 @@ set(
 	UIFiles
 		${BLB_INCLUDE}/UI/DrawableElement.hpp
 		${BLB_INCLUDE}/UI/Image.hpp
+		${BLB_INCLUDE}/UI/Image.inl
 		${BLB_SOURCE}/UI/Image.cpp
 		${BLB_INCLUDE}/UI/InputElement.hpp
 		${BLB_INCLUDE}/UI/Text.hpp
+		${BLB_INCLUDE}/UI/Text.inl
 		${BLB_SOURCE}/UI/Text.cpp
 		${BLB_INCLUDE}/UI/UIFrame.hpp
 		${BLB_SOURCE}/UI/UIFrame.cpp
 )
 
+#Shader files that are only used for includes
+set(
+	ShaderIncludes
+		${BLB_RESOURCE}/Shaders/Constants.glsl
+)
+
 set(
 	ShaderFiles
-		${BLB_RESOURCE}/Shaders/Default2D-ps.hlsl
-		${BLB_RESOURCE}/Shaders/Default2D-vs.hlsl
-		${BLB_RESOURCE}/Shaders/Default3D-ps.hlsl
-		${BLB_RESOURCE}/Shaders/Default3D-vs.hlsl
-		${BLB_RESOURCE}/Shaders/Font-ps.hlsl
-		${BLB_RESOURCE}/Shaders/Font-vs.hlsl
-		${BLB_RESOURCE}/Shaders/GenCubeShadowMap-gs.hlsl
-		${BLB_RESOURCE}/Shaders/GenCubeShadowMap-ps.hlsl
-		${BLB_RESOURCE}/Shaders/GenCubeShadowMap-vs.hlsl
-		${BLB_RESOURCE}/Shaders/GenShadowMap-gs.hlsl
-		${BLB_RESOURCE}/Shaders/GenShadowMap-ps.hlsl
-		${BLB_RESOURCE}/Shaders/GenShadowMap-vs.hlsl
-		${BLB_RESOURCE}/Shaders/ShadowFunctions.hlsl
-		${BLB_RESOURCE}/Shaders/Skeletal3D-vs.hlsl
-		${BLB_RESOURCE}/Shaders/SkeletalCubeShadow-vs.hlsl
-		${BLB_RESOURCE}/Shaders/SkeletalShadow-vs.hlsl
+		${BLB_RESOURCE}/Shaders/StaticMesh-v.glsl
+		${BLB_RESOURCE}/Shaders/StaticMeshShadowMap-v.glsl
+		${BLB_RESOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl
+
+		${BLB_RESOURCE}/Shaders/AnimatedMesh-v.glsl
+		${BLB_RESOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl
+		${BLB_RESOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl
+
+		${BLB_RESOURCE}/Shaders/Mesh-p.glsl
+		${BLB_RESOURCE}/Shaders/MeshShadowMap-p.glsl
+		${BLB_RESOURCE}/Shaders/MeshCubeShadowMap-p.glsl
+
+		${BLB_RESOURCE}/Shaders/UI-v.glsl
+		${BLB_RESOURCE}/Shaders/Widget-p.glsl
+		${BLB_RESOURCE}/Shaders/Font-p.glsl
+
+		${ShaderIncludes}
 )
+
+compileShader("${BLB_RESOURCE}/Shaders/StaticMesh-v.glsl" "StaticMesh-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "StaticMeshShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "StaticMeshCubeShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+
+compileShader("${BLB_RESOURCE}/Shaders/AnimatedMesh-v.glsl" "AnimatedMesh-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl" "AnimatedMeshShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl" "AnimatedMeshCubeShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+
+compileShader("${BLB_RESOURCE}/Shaders/Mesh-p.glsl" "Mesh-p.spirv" "fragment" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/MeshShadowMap-p.glsl" "MeshShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "MeshCubeShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
+
+compileShader("${BLB_RESOURCE}/Shaders/UI-v.glsl" "UI-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/Widget-p.glsl" "Widget-p.spirv" "fragment" "${ShaderIncludes}")
+compileShader("${BLB_RESOURCE}/Shaders/Font-p.glsl" "Font-p.spirv" "fragment" "${ShaderIncludes}")
 
 #Convert resources into c strings
 set(ResourceBinaries)
@@ -178,13 +206,28 @@ function(embeddResource resources readType)
 	set(ResourceBinaries ${ResourceBinaries} ${files} PARENT_SCOPE)
 endfunction()
 
-embeddResource("${ShaderFiles}" "r")
 embeddResource("${BLB_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf" "rb")
+
+embeddResource("StaticMesh-v.spirv" "rb")
+embeddResource("StaticMeshShadowMap-v.spirv" "rb")
+embeddResource("StaticMeshCubeShadowMap-v.spirv" "rb")
+
+embeddResource("AnimatedMesh-v.spirv" "rb")
+embeddResource("AnimatedMeshShadowMap-v.spirv" "rb")
+embeddResource("AnimatedMeshCubeShadowMap-v.spirv" "rb")
+
+embeddResource("Mesh-p.spirv" "rb")
+embeddResource("MeshShadowMap-p.spirv" "rb")
+embeddResource("MeshCubeShadowMap-p.spirv" "rb")
+
+embeddResource("UI-v.spirv" "rb")
+embeddResource("Widget-p.spirv" "rb")
+embeddResource("Font-p.spirv" "rb")
 
 #Organise the source tree
 file(GLOB_RECURSE header ${BLB_INCLUDE}/*.h ${BLB_INCLUDE}/*.hpp ${BLB_INCLUDE}/*.inl)
 file(GLOB_RECURSE source *.cpp *.m *.mm)
-file(GLOB_RECURSE resource ${BLB_RESOURCE}/*.hlsl)
+file(GLOB_RECURSE resource ${BLB_RESOURCE}/*.glsl)
 source_group(TREE ${BLB_INCLUDE} FILES ${header})
 source_group(TREE ${BLB_SOURCE} FILES ${source})
 source_group(TREE ${BLB_RESOURCE} FILES ${resource})
@@ -208,6 +251,9 @@ target_sources(
 
 		${BLB_INCLUDE}/ModelLoader.hpp
 		${BLB_SOURCE}/ModelLoader.cpp
+
+		${BLB_INCLUDE}/TextureLoader.hpp
+		${BLB_SOURCE}/TextureLoader.cpp
         
 		${AIFiles}
 		${AudioFiles}
@@ -217,6 +263,7 @@ target_sources(
 		${RenderingFiles}
 		${StateMachineFiles}
 		${UIFiles}
+
 		${ShaderFiles}
 
 		${ResourceBinaries}
