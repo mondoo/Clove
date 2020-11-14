@@ -62,7 +62,10 @@ build:editor:msvc:
     - choco install -y cmake
     - choco install -y python
     - choco upgrade -y visualstudio2019buildtools
-    - $env:Path += ';C:\Program Files\CMake\bin'
+    - curl.exe -o vksdk.exe https://sdk.lunarg.com/sdk/download/1.2.154.1/windows/VulkanSDK-1.2.154.1-Installer.exe?Human=true
+    - .\vksdk.exe /S /D=C:\VulkanSDK | Out-Null
+    - $env:VULKAN_SDK = 'C:\VulkanSDK'
+    - $env:Path += ';C:\Program Files\CMake\bin;C:\VulkanSDK\Bin'
   script:
     - cd Scape/Editor
     - dotnet build -c Release
