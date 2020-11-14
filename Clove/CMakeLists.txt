@@ -63,7 +63,6 @@ target_link_libraries(
 
 	#Linux
 	PRIVATE
-		$<$<PLATFORM_ID:Linux>:GLX>
 		$<$<PLATFORM_ID:Linux>:X11>
 		$<$<PLATFORM_ID:Linux>:dl>
 		$<$<PLATFORM_ID:Linux>:Vulkan::Vulkan>
