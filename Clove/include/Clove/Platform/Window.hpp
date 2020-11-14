@@ -4,6 +4,8 @@
 #include "Clove/Input/Mouse.hpp"
 #include "Clove/Platform/PlatformTypes.hpp"
 
+#include <any>
+
 namespace clv::gfx {
     enum class API;
     class GraphicsFactory;
@@ -38,7 +40,7 @@ namespace clv::plt {
         void setVSync(bool enabled);
         bool isVSync() const;
 
-        virtual void* getNativeWindow() const = 0;
+        virtual std::any getNativeWindow() const = 0;
 
         virtual mth::vec2i getPosition() const = 0;
         virtual mth::vec2i getSize() const     = 0;

@@ -29,7 +29,7 @@ namespace clv::plt {
 
         ~WindowsWindow();
 
-        void *getNativeWindow() const override;
+        std::any getNativeWindow() const override;
 
         mth::vec2i getPosition() const override;
         mth::vec2i getSize() const override;

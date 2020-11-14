@@ -2,7 +2,6 @@
 
 #include "Clove/Graphics/Graphics.hpp"
 #include "Clove/Graphics/GraphicsFactory.hpp"
-//#include "Clove/Graphics/Surface.hpp"
 
 #include <Root/Definitions.hpp>
 #include <Root/Log/Log.hpp>
@@ -32,9 +31,9 @@ namespace clv::plt {
 
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Windows class registered");
 
-        const std::string wideTitle(descriptor.title.begin(), descriptor.title.end());
+        std::string const wideTitle(descriptor.title.begin(), descriptor.title.end());
 
-        const DWORD windowStyle = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_VISIBLE;
+        DWORD const windowStyle{ WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_VISIBLE };
 
         RECT wr{};
         wr.left   = 0;
@@ -87,7 +86,7 @@ namespace clv::plt {
 
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Windows class registered");
 
-        const DWORD windowStyle = WS_CHILD | WS_VISIBLE;
+        DWORD const windowStyle{ WS_CHILD | WS_VISIBLE };
 
         windowsHandle = CreateWindow(
             wc.lpszClassName,
@@ -97,7 +96,7 @@ namespace clv::plt {
             position.y,
             size.x,
             size.y,
-            reinterpret_cast<HWND>(parentWindow.getNativeWindow()),
+            std::any_cast<HWND>(parentWindow.getNativeWindow()),
             nullptr,
             instance,
             this);
@@ -116,7 +115,7 @@ namespace clv::plt {
         DestroyWindow(windowsHandle);
     }
 
-    void *WindowsWindow::getNativeWindow() const {
+    std::any WindowsWindow::getNativeWindow() const {
         return windowsHandle;
     }
 

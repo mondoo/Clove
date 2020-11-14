@@ -136,8 +136,8 @@ namespace clv::plt {
         XCloseDisplay(display);
     }
 
-    void* LinuxWindow::getNativeWindow() const {
-        return const_cast<::Window*>(&window);
+    std::any LinuxWindow::getNativeWindow() const {
+        return const_cast<::Window *>(&window);
     }
 
     mth::vec2i LinuxWindow::getPosition() const {
