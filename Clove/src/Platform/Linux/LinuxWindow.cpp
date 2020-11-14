@@ -21,24 +21,14 @@ namespace clv::plt {
         screen   = DefaultScreenOfDisplay(nativeWindow.display);//Get the screen of the display
         screenID = DefaultScreen(nativeWindow.display);
 
-        ////Create the context first to get the visual info
-        //      data = { display, &window, &visual };
-        //      surface = graphicsFactory->createSurface(&data);
-
-        if(screenID != visual->screen) {
-            //TODO: Exception
-            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Critical, "Screen ID does not match visual->screen");
-            return;
-        }
-
         windowAttribs                   = {};
         windowAttribs.border_pixel      = BlackPixel(nativeWindow.display, screenID);
         windowAttribs.background_pixel  = WhitePixel(nativeWindow.display, screenID);
         windowAttribs.override_redirect = true;
-        windowAttribs.colormap          = XCreateColormap(nativeWindow.display, RootWindow(nativeWindow.display, screenID), visual->visual, AllocNone);
+        windowAttribs.colormap          = XCreateColormap(nativeWindow.display, RootWindow(nativeWindow.display, screenID), screen->root_visual, AllocNone);
         windowAttribs.event_mask        = ExposureMask;
 
-        nativeWindow.window = XCreateWindow(nativeWindow.display, RootWindow(nativeWindow.display, screenID), 0, 0, descriptor.width, descriptor.height, 0, visual->depth, InputOutput, visual->visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
+        nativeWindow.window = XCreateWindow(nativeWindow.display, RootWindow(nativeWindow.display, screenID), 0, 0, descriptor.width, descriptor.height, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
 
         //Remap the delete window message so we can gracefully close the application
         atomWmDeleteWindow = XInternAtom(nativeWindow.display, "WM_DELETE_WINDOW", false);
@@ -77,26 +67,14 @@ namespace clv::plt {
         screen   = DefaultScreenOfDisplay(nativeWindow.display);//Get the screen of the display
         screenID = DefaultScreen(nativeWindow.display);
 
-        //graphicsFactory = gfx::initialise(api);
-
-        ////Create the context first to get the visual info
-        //      data = { display, &window, &visual };
-        //      surface = graphicsFactory->createSurface(&data);
-
-        if(screenID != visual->screen) {
-            //TODO: Exception
-            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Critical, "Screen ID does not match visual->screen");
-            return;
-        }
-
         windowAttribs                   = {};
         windowAttribs.border_pixel      = BlackPixel(nativeWindow.display, screenID);
         windowAttribs.background_pixel  = WhitePixel(nativeWindow.display, screenID);
         windowAttribs.override_redirect = true;
-        windowAttribs.colormap          = XCreateColormap(nativeWindow.display, RootWindow(nativeWindow.display, screenID), visual->visual, AllocNone);
+        windowAttribs.colormap          = XCreateColormap(nativeWindow.display, RootWindow(nativeWindow.display, screenID), screen->root_visual, AllocNone);
         windowAttribs.event_mask        = ExposureMask;
 
-        nativeWindow.window = XCreateWindow(nativeWindow.display, nativeParentWindow.window, position.x, position.y, size.x, size.y, 0, visual->depth, InputOutput, visual->visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
+        nativeWindow.window = XCreateWindow(nativeWindow.display, nativeParentWindow.window, position.x, position.y, size.x, size.y, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
 
         //Remap the delete window message so we can gracefully close the application
         atomWmDeleteWindow = XInternAtom(nativeWindow.display, "WM_DELETE_WINDOW", false);
@@ -118,7 +96,6 @@ namespace clv::plt {
     }
 
     LinuxWindow::~LinuxWindow() {
-        XFree(visual);
         XFreeColormap(nativeWindow.display, windowAttribs.colormap);
         XDestroyWindow(nativeWindow.display, nativeWindow.window);
         XCloseDisplay(nativeWindow.display);

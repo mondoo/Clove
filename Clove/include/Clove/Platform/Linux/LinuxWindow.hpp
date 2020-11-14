@@ -25,8 +25,7 @@ namespace clv::plt {
         int32_t screenID;
 
         XEvent xevent;
-
-        XVisualInfo *visual{ nullptr };//TODO: unique_ptr with custom deleter
+		
         XSetWindowAttributes windowAttribs;
 
         Atom atomWmDeleteWindow;
