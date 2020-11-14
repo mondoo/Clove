@@ -7,7 +7,6 @@ namespace blb::rnd {
         : vertices(std::move(vertices))
         , indices(std::move(indices)) {
         using namespace clv::gfx;
-        using enum GraphicsBuffer::UsageMode;
 
         size_t const vertexBufferSize{ sizeof(Vertex) * std::size(this->vertices) };
         size_t const indexBufferSize{ sizeof(uint16_t) * std::size(this->indices) };
@@ -23,7 +22,7 @@ namespace blb::rnd {
         //Staging buffer
         auto stagingBuffer = factory.createBuffer(GraphicsBuffer::Descriptor{
             .size        = totalSize,
-            .usageFlags  = TransferSource,
+            .usageFlags  = GraphicsBuffer::UsageMode::TransferSource,
             .sharingMode = SharingMode::Exclusive,
             .memoryType  = MemoryType::SystemMemory,
         });
@@ -31,7 +30,7 @@ namespace blb::rnd {
         //Buffer
         buffer = factory.createBuffer(GraphicsBuffer::Descriptor{
             .size        = totalSize,
-            .usageFlags  = TransferDestination | VertexBuffer | IndexBuffer,
+            .usageFlags  = GraphicsBuffer::UsageMode::TransferDestination | GraphicsBuffer::UsageMode::VertexBuffer | GraphicsBuffer::UsageMode::IndexBuffer,
             .sharingMode = SharingMode::Concurrent,
             .memoryType  = MemoryType::VideoMemory,
         });
