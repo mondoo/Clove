@@ -42,8 +42,6 @@ namespace clv::mth {
             result in y+ moving objects downwards.
         */
 
-        assert(abs(aspect - std::numeric_limits<T>::epsilon()) > static_cast<T>(0));
-
         T const tanHalfFovy{ tan(fovy / static_cast<T>(2)) };
 
         mat<4, 4, T, qualifier::defaultp> result{ static_cast<T>(0) };
