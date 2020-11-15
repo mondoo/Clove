@@ -74,7 +74,7 @@ function(embeddSOURCE SOURCEs readType)
 	set(ResourceBinaries ${ResourceBinaries} ${files} PARENT_SCOPE)
 endfunction()
 
-embeddSOURCE("${ASSETS}/Fonts/Roboto/Roboto-Black.ttf" "rb")
+embeddSOURCE("${ASSETS}/fonts/Roboto/Roboto-Black.ttf" "rb")
 
 embeddSOURCE("StaticMesh-v.spirv" "rb")
 embeddSOURCE("StaticMeshShadowMap-v.spirv" "rb")
