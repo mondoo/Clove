@@ -87,6 +87,3 @@ target_sources(
 		${ECSFiles}
 		${StateMachineFiles}
 )
-
-#Set as header only so VS doesn't try to compile them
-set_source_files_properties(${ShaderFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
