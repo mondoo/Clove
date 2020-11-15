@@ -20,7 +20,6 @@ target_include_directories(
 
 	PRIVATE
 		vendor/freetype2/include
-		vendor/bullet3/src
 )
 
 #Libraries
@@ -33,11 +32,6 @@ target_link_libraries(
 
 	PRIVATE
 		freetype
-		#Order of these are important
-		BulletDynamics
-		BulletCollision
-		LinearMath
-		#
 		assimp
 		sndfile
 		stb

@@ -55,34 +55,6 @@ set(
 		${BLB_INCLUDE}/ECS/World.inl
 		${BLB_SOURCE}/ECS/World.cpp
 		${BLB_INCLUDE}/ECS/System.hpp
-
-		${BLB_INCLUDE}/ECS/Components/AnimatedModelComponent.hpp
-		${BLB_SOURCE}/ECS/Components/AnimatedModelComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/AudioListenerComponent.hpp
-		${BLB_SOURCE}/ECS/Components/AudioListenerComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/AudioSourceComponent.hpp
-		${BLB_SOURCE}/ECS/Components/AudioSourceComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/CameraComponent.hpp
-		${BLB_SOURCE}/ECS/Components/CameraComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/CollisionResponseComponent.hpp
-		${BLB_INCLUDE}/ECS/Components/CubeColliderComponent.hpp
-		${BLB_SOURCE}/ECS/Components/CubeColliderComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
-		${BLB_SOURCE}/ECS/Components/DirectionalLightComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/PointLightComponent.hpp
-		${BLB_SOURCE}/ECS/Components/PointLightComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/RigidBodyComponent.hpp
-		${BLB_SOURCE}/ECS/Components/RigidBodyComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/StaticModelComponent.hpp
-		${BLB_SOURCE}/ECS/Components/StaticModelComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/TransformComponent.hpp
-		${BLB_SOURCE}/ECS/Components/TransformComponent.cpp
-		${BLB_INCLUDE}/ECS/Systems/AudioSystem.hpp
-		${BLB_SOURCE}/ECS/Systems/AudioSystem.cpp
-		${BLB_INCLUDE}/ECS/Systems/RenderSystem.hpp
-		${BLB_SOURCE}/ECS/Systems/RenderSystem.cpp
-		${BLB_INCLUDE}/ECS/Systems/PhysicsSystem.hpp
-		${BLB_SOURCE}/ECS/Systems/PhysicsSystem.cpp
 )
 
 set(
