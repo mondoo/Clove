@@ -2,7 +2,7 @@
 
 #include <Bulb/Bulb.hpp>
 
-namespace stm {
+namespace garlic::inline stem {
     Application::Application() = default;
 
     Application::~Application() = default;
