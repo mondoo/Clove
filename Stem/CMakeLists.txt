@@ -1,9 +1,96 @@
 set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Stem)
+set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 
 set(ApplicationFolder "Garlic/Stem")
 
 add_subdirectory(external)
+add_subdirectory(tools)
+
+#Prepare SOURCEs to be inbedded
+set(
+	ShaderIncludes
+		${SOURCE}/Shaders/Constants.glsl
+)
+
+set(
+	ShaderFiles
+		${SOURCE}/Shaders/StaticMesh-v.glsl
+		${SOURCE}/Shaders/StaticMeshShadowMap-v.glsl
+		${SOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl
+
+		${SOURCE}/Shaders/AnimatedMesh-v.glsl
+		${SOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl
+		${SOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl
+
+		${SOURCE}/Shaders/Mesh-p.glsl
+		${SOURCE}/Shaders/MeshShadowMap-p.glsl
+		${SOURCE}/Shaders/MeshCubeShadowMap-p.glsl
+
+		${SOURCE}/Shaders/UI-v.glsl
+		${SOURCE}/Shaders/Widget-p.glsl
+		${SOURCE}/Shaders/Font-p.glsl
+
+		${ShaderIncludes}
+)
+
+compileShader("${SOURCE}/Shaders/StaticMesh-v.glsl" "StaticMesh-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${SOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "StaticMeshShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${SOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "StaticMeshCubeShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+
+compileShader("${SOURCE}/Shaders/AnimatedMesh-v.glsl" "AnimatedMesh-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${SOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl" "AnimatedMeshShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${SOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl" "AnimatedMeshCubeShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
+
+compileShader("${SOURCE}/Shaders/Mesh-p.glsl" "Mesh-p.spirv" "fragment" "${ShaderIncludes}")
+compileShader("${SOURCE}/Shaders/MeshShadowMap-p.glsl" "MeshShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
+compileShader("${SOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "MeshCubeShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
+
+compileShader("${SOURCE}/Shaders/UI-v.glsl" "UI-v.spirv" "vertex" "${ShaderIncludes}")
+compileShader("${SOURCE}/Shaders/Widget-p.glsl" "Widget-p.spirv" "fragment" "${ShaderIncludes}")
+compileShader("${SOURCE}/Shaders/Font-p.glsl" "Font-p.spirv" "fragment" "${ShaderIncludes}")
+
+#Convert SOURCEs into c strings
+set(ResourceBinaries)
+
+function(embeddSOURCE SOURCEs readType)
+	set(files)
+
+	foreach(res IN ITEMS ${SOURCEs})
+		get_filename_component(fileName ${res} NAME_WLE)
+
+		string(REPLACE "-" "_" fileName ${fileName})
+		string(TOLOWER ${fileName} fileName)
+
+		add_custom_command(
+			OUTPUT ${fileName}.c
+			COMMAND ResourceEmbedder ${fileName} ${res} ${readType}
+			DEPENDS ${res}
+		)
+
+		set(files ${files} "${fileName}.c")
+	endforeach()
+
+	set(ResourceBinaries ${ResourceBinaries} ${files} PARENT_SCOPE)
+endfunction()
+
+embeddSOURCE("${ASSETS}/Fonts/Roboto/Roboto-Black.ttf" "rb")
+
+embeddSOURCE("StaticMesh-v.spirv" "rb")
+embeddSOURCE("StaticMeshShadowMap-v.spirv" "rb")
+embeddSOURCE("StaticMeshCubeShadowMap-v.spirv" "rb")
+
+embeddSOURCE("AnimatedMesh-v.spirv" "rb")
+embeddSOURCE("AnimatedMeshShadowMap-v.spirv" "rb")
+embeddSOURCE("AnimatedMeshCubeShadowMap-v.spirv" "rb")
+
+embeddSOURCE("Mesh-p.spirv" "rb")
+embeddSOURCE("MeshShadowMap-p.spirv" "rb")
+embeddSOURCE("MeshCubeShadowMap-p.spirv" "rb")
+
+embeddSOURCE("UI-v.spirv" "rb")
+embeddSOURCE("Widget-p.spirv" "rb")
+embeddSOURCE("Font-p.spirv" "rb")
 
 #Stem
 add_library(
@@ -101,6 +188,10 @@ add_library(
 
 		${INCLUDE}/TextureLoader.hpp
 		${SOURCE}/TextureLoader.cpp
+
+		${ShaderFiles}
+
+		${ResourceBinaries}
 )
 
 set_target_properties(Stem PROPERTIES FOLDER ${ApplicationFolder})

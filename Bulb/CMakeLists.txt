@@ -3,9 +3,6 @@ set(FrameworkFolder "Garlic/Bulb")
 #Dependencies
 add_subdirectory(vendor)
 
-#Tools
-add_subdirectory(Tools)
-
 #Bulb
 add_subdirectory(src)
 set_target_properties(Bulb PROPERTIES FOLDER ${FrameworkFolder})

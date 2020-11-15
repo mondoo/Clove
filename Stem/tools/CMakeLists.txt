@@ -1,4 +1,4 @@
-set(ToolsFolder "Garlic/Bulb/Tools")
+set(ToolsFolder "Garlic/Stem/Tools")
 
 #ResourceEmbedder
 add_subdirectory(ResourceEmbedder)
