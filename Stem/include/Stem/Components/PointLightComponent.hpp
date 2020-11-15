@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Stem/Rendering/ShaderBufferTypes.hpp"
+
 #include <Bulb/ECS/Component.hpp>
-#include <Bulb/Rendering/ShaderBufferTypes.hpp>
 
 namespace garlic::inline stem {
     class PointLightComponent : public blb::ecs::Component<PointLightComponent> {
@@ -9,7 +10,7 @@ namespace garlic::inline stem {
 
         //VARIABLES
     private:
-        blb::rnd::PointLight lightData;
+        PointLight lightData;
 
         static float constexpr aspect{ 1.0f };//shadow width / shadow height
         static float constexpr nearDist{ 0.5f };

@@ -7,12 +7,6 @@
 [submodule "Clove/vendor/SPIRV-Cross"]
 	path = Clove/vendor/SPIRV-Cross
 	url = https://github.com/KhronosGroup/SPIRV-Cross.git
-[submodule "Bulb/vendor/assimp"]
-	path = Bulb/vendor/assimp
-	url = https://github.com/assimp/assimp.git
-[submodule "Bulb/vendor/freetype2"]
-	path = Bulb/vendor/freetype2
-	url = https://git.savannah.gnu.org/git/freetype/freetype2.git
 [submodule "Bulb/vendor/libsndfile"]
 	path = Bulb/vendor/libsndfile
 	url = https://github.com/erikd/libsndfile.git
@@ -28,3 +22,9 @@
 [submodule "Stem/external/bullet3"]
 	path = Stem/external/bullet3
 	url = https://github.com/bulletphysics/bullet3.git
+[submodule "Stem/external/assimp"]
+	path = Stem/external/assimp
+	url = https://github.com/assimp/assimp.git
+[submodule "Stem/external/freetype2"]
+	path = Stem/external/freetype2
+	url = https://git.savannah.gnu.org/git/freetype/freetype2.git

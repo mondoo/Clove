@@ -17,9 +17,6 @@ target_include_directories(
 	#Bulb
 	PUBLIC
 		include
-
-	PRIVATE
-		vendor/freetype2/include
 )
 
 #Libraries
@@ -31,8 +28,5 @@ target_link_libraries(
 		Clove
 
 	PRIVATE
-		freetype
-		assimp
 		sndfile
-		stb
 )

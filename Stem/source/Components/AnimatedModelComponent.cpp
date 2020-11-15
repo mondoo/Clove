@@ -1,17 +1,17 @@
 #include "Stem/Components/AnimatedModelComponent.hpp"
 
 namespace garlic::inline stem {
-    AnimedModelComponent::AnimedModelComponent(blb::rnd::AnimatedModel model)
+    AnimatedModelComponent::AnimatedModelComponent(AnimatedModel model)
         : model(std::move(model)) {
     }
 
-    AnimedModelComponent::AnimedModelComponent(AnimedModelComponent const &other) = default;
+    AnimatedModelComponent::AnimatedModelComponent(AnimatedModelComponent const &other) = default;
 
-    AnimedModelComponent::AnimedModelComponent(AnimedModelComponent &&other) noexcept = default;
+    AnimatedModelComponent::AnimatedModelComponent(AnimatedModelComponent &&other) noexcept = default;
 
-    AnimedModelComponent &AnimedModelComponent::operator=(AnimedModelComponent const &other) = default;
+    AnimatedModelComponent &AnimatedModelComponent::operator=(AnimatedModelComponent const &other) = default;
 
-    AnimedModelComponent &AnimedModelComponent::operator=(AnimedModelComponent &&other) noexcept = default;
+    AnimatedModelComponent &AnimatedModelComponent::operator=(AnimatedModelComponent &&other) noexcept = default;
 
-    AnimedModelComponent::~AnimedModelComponent() = default;
+    AnimatedModelComponent::~AnimatedModelComponent() = default;
 }

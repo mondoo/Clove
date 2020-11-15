@@ -2,7 +2,7 @@
 
 namespace garlic::inline stem {
     DirectionalLightComponent::DirectionalLightComponent() {
-        lightData = blb::rnd::DirectionalLight{
+        lightData = DirectionalLight{
             .data = {
                 .direction = { 0.0f, 0.0f, 0.0f },
                 .ambient   = { 0.01f, 0.01f, 0.01f },

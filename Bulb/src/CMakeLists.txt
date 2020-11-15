@@ -58,36 +58,6 @@ set(
 )
 
 set(
-	RenderingFiles
-		${BLB_INCLUDE}/Rendering/AnimationTypes.hpp
-		${BLB_INCLUDE}/Rendering/Animator.hpp
-		${BLB_SOURCE}/Rendering/Animator.cpp
-		${BLB_INCLUDE}/Rendering/Camera.hpp
-		${BLB_SOURCE}/Rendering/Camera.cpp
-		${BLB_INCLUDE}/Rendering/ForwardRenderer3D.hpp
-		${BLB_SOURCE}/Rendering/ForwardRenderer3D.cpp
-		${BLB_INCLUDE}/Rendering/Material.hpp
-		${BLB_INCLUDE}/Rendering/Material.inl
-		${BLB_SOURCE}/Rendering/Material.cpp
-		${BLB_INCLUDE}/Rendering/RenderingConstants.hpp
-		${BLB_INCLUDE}/Rendering/RenderingHelpers.hpp
-		${BLB_SOURCE}/Rendering/RenderingHelpers.cpp
-		${BLB_INCLUDE}/Rendering/ShaderBufferTypes.hpp
-		${BLB_INCLUDE}/Rendering/Vertex.hpp
-		${BLB_INCLUDE}/Rendering/Renderables/Font.hpp
-		${BLB_SOURCE}/Rendering/Renderables/Font.cpp
-		${BLB_INCLUDE}/Rendering/Renderables/Mesh.hpp
-		${BLB_INCLUDE}/Rendering/Renderables/Mesh.inl
-		${BLB_SOURCE}/Rendering/Renderables/Mesh.cpp
-		${BLB_INCLUDE}/Rendering/Renderables/AnimatedModel.hpp
-		${BLB_INCLUDE}/Rendering/Renderables/AnimatedModel.inl
-		${BLB_SOURCE}/Rendering/Renderables/AnimatedModel.cpp
-		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.hpp
-		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.inl
-		${BLB_SOURCE}/Rendering/Renderables/StaticModel.cpp
-)
-
-set(
 	StateMachineFiles
 		${BLB_INCLUDE}/StateMachine/State.hpp
 		${BLB_INCLUDE}/StateMachine/State.inl
@@ -95,20 +65,6 @@ set(
 		${BLB_INCLUDE}/StateMachine/StateMachine.inl
 		${BLB_INCLUDE}/StateMachine/Transition.hpp
 		${BLB_INCLUDE}/StateMachine/Transition.inl
-)
-
-set(
-	UIFiles
-		${BLB_INCLUDE}/UI/DrawableElement.hpp
-		${BLB_INCLUDE}/UI/Image.hpp
-		${BLB_INCLUDE}/UI/Image.inl
-		${BLB_SOURCE}/UI/Image.cpp
-		${BLB_INCLUDE}/UI/InputElement.hpp
-		${BLB_INCLUDE}/UI/Text.hpp
-		${BLB_INCLUDE}/UI/Text.inl
-		${BLB_SOURCE}/UI/Text.cpp
-		${BLB_INCLUDE}/UI/UIFrame.hpp
-		${BLB_SOURCE}/UI/UIFrame.cpp
 )
 
 #Shader files that are only used for includes
@@ -220,21 +176,12 @@ target_sources(
 		${BLB_SOURCE}/Layer.cpp
 		${BLB_INCLUDE}/LayerStack.hpp
 		${BLB_SOURCE}/LayerStack.cpp
-
-		${BLB_INCLUDE}/ModelLoader.hpp
-		${BLB_SOURCE}/ModelLoader.cpp
-
-		${BLB_INCLUDE}/TextureLoader.hpp
-		${BLB_SOURCE}/TextureLoader.cpp
         
 		${AIFiles}
 		${AudioFiles}
 		${ControllerFiles}
 		${ECSFiles}
-		${PhysicsFiles}
-		${RenderingFiles}
 		${StateMachineFiles}
-		${UIFiles}
 
 		${ShaderFiles}
 

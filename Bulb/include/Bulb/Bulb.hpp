@@ -11,13 +11,5 @@
 #include "Bulb/ECS/World.hpp"
 #include "Bulb/Layer.hpp"
 #include "Bulb/LayerStack.hpp"
-#include "Bulb/ModelLoader.hpp"
-#include "Bulb/Rendering/Material.hpp"
-#include "Bulb/Rendering/Renderables/AnimatedModel.hpp"
-#include "Bulb/Rendering/Renderables/Mesh.hpp"
-#include "Bulb/Rendering/Renderables/StaticModel.hpp"
-#include "Bulb/TextureLoader.hpp"
-#include "Bulb/UI/Image.hpp"
-#include "Bulb/UI/Text.hpp"
 
 #include <Clove/Clove.hpp>

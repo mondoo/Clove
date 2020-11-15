@@ -4,7 +4,7 @@ using namespace clv;
 
 namespace garlic::inline stem {
     PointLightComponent::PointLightComponent() {
-        lightData = blb::rnd::PointLight{
+        lightData = PointLight{
             .data = {
                 .constant  = 1.0f,
                 .ambient   = { 0.01f, 0.01f, 0.01f },

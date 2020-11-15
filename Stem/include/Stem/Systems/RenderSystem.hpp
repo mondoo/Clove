@@ -6,7 +6,7 @@ namespace clv::plt {
     class Window;
 }
 
-namespace blb::rnd {
+namespace garlic::inline stem {
     class ForwardRenderer3D;
 }
 
@@ -14,12 +14,12 @@ namespace garlic::inline stem {
     class RenderSystem : public blb::ecs::System {
         //VARIABLES
     private:
-        std::shared_ptr<blb::rnd::ForwardRenderer3D> renderer;
+        std::shared_ptr<ForwardRenderer3D> renderer;
 
         //FUNCTIONS
     public:
         RenderSystem() = delete;
-        RenderSystem(std::shared_ptr<blb::rnd::ForwardRenderer3D> renderer);
+        RenderSystem(std::shared_ptr<ForwardRenderer3D> renderer);
 
         RenderSystem(RenderSystem const &other) = delete;
         RenderSystem(RenderSystem &&other) noexcept;

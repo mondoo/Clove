@@ -1,9 +1,9 @@
 #include "Stem/Components/StaticModelComponent.hpp"
 
-#include <Bulb/Rendering/Renderables/Mesh.hpp>
+#include "Stem/Rendering/Renderables/Mesh.hpp"
 
 namespace garlic::inline stem {
-    StaticModelComponent::StaticModelComponent(blb::rnd::StaticModel model)
+    StaticModelComponent::StaticModelComponent(StaticModel model)
         : model(std::move(model)) {
     }
 

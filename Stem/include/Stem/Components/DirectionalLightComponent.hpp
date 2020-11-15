@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Stem/Rendering/ShaderBufferTypes.hpp"
+
 #include <Bulb/ECS/Component.hpp>
-#include <Bulb/Rendering/ShaderBufferTypes.hpp>
 
 namespace garlic::inline stem {
     class DirectionalLightComponent : public blb::ecs::Component<DirectionalLightComponent> {
@@ -9,7 +10,7 @@ namespace garlic::inline stem {
 
         //VARIABLES
     private:
-        blb::rnd::DirectionalLight lightData;
+        DirectionalLight lightData;
 
         static float constexpr size{ 50.0f };
         static float constexpr nearDist{ 0.5f };

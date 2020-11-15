@@ -1,7 +1,7 @@
 #include "Stem/Components/CameraComponent.hpp"
 
 namespace garlic::inline stem {
-    CameraComponent::CameraComponent(blb::rnd::Camera camera)
+    CameraComponent::CameraComponent(Camera camera)
         : camera(std::move(camera)) {
     }
 

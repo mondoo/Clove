@@ -41,12 +41,56 @@ add_library(
 		${INCLUDE}/Components/TransformComponent.inl
 		${SOURCE}/Components/TransformComponent.cpp
 
+		${INCLUDE}/Rendering/AnimationTypes.hpp
+		${INCLUDE}/Rendering/Animator.hpp
+		${SOURCE}/Rendering/Animator.cpp
+		${INCLUDE}/Rendering/Camera.hpp
+		${SOURCE}/Rendering/Camera.cpp
+		${INCLUDE}/Rendering/ForwardRenderer3D.hpp
+		${SOURCE}/Rendering/ForwardRenderer3D.cpp
+		${INCLUDE}/Rendering/Material.hpp
+		${INCLUDE}/Rendering/Material.inl
+		${SOURCE}/Rendering/Material.cpp
+		${INCLUDE}/Rendering/RenderingConstants.hpp
+		${INCLUDE}/Rendering/RenderingHelpers.hpp
+		${SOURCE}/Rendering/RenderingHelpers.cpp
+		${INCLUDE}/Rendering/ShaderBufferTypes.hpp
+		${INCLUDE}/Rendering/Vertex.hpp
+		${INCLUDE}/Rendering/Renderables/Font.hpp
+		${SOURCE}/Rendering/Renderables/Font.cpp
+		${INCLUDE}/Rendering/Renderables/Mesh.hpp
+		${INCLUDE}/Rendering/Renderables/Mesh.inl
+		${SOURCE}/Rendering/Renderables/Mesh.cpp
+		${INCLUDE}/Rendering/Renderables/AnimatedModel.hpp
+		${INCLUDE}/Rendering/Renderables/AnimatedModel.inl
+		${SOURCE}/Rendering/Renderables/AnimatedModel.cpp
+		${INCLUDE}/Rendering/Renderables/StaticModel.hpp
+		${INCLUDE}/Rendering/Renderables/StaticModel.inl
+		${SOURCE}/Rendering/Renderables/StaticModel.cpp
+
 		${INCLUDE}/Systems/AudioSystem.hpp
 		${SOURCE}/Systems/AudioSystem.cpp
 		${INCLUDE}/Systems/RenderSystem.hpp
 		${SOURCE}/Systems/RenderSystem.cpp
 		${INCLUDE}/Systems/PhysicsSystem.hpp
 		${SOURCE}/Systems/PhysicsSystem.cpp
+
+		${INCLUDE}/UI/DrawableElement.hpp
+		${INCLUDE}/UI/Image.hpp
+		${INCLUDE}/UI/Image.inl
+		${SOURCE}/UI/Image.cpp
+		${INCLUDE}/UI/InputElement.hpp
+		${INCLUDE}/UI/Text.hpp
+		${INCLUDE}/UI/Text.inl
+		${SOURCE}/UI/Text.cpp
+		${INCLUDE}/UI/UIFrame.hpp
+		${SOURCE}/UI/UIFrame.cpp
+		
+		${INCLUDE}/ModelLoader.hpp
+		${SOURCE}/ModelLoader.cpp
+
+		${INCLUDE}/TextureLoader.hpp
+		${SOURCE}/TextureLoader.cpp
 )
 
 set_target_properties(Stem PROPERTIES FOLDER ${ApplicationFolder})
@@ -58,6 +102,7 @@ target_include_directories(
 		include
 
 	PRIVATE
+		external/freetype2/include
 		external/bullet3/src
 )
 
@@ -72,4 +117,8 @@ target_link_libraries(
 		BulletDynamics
 		BulletCollision
 		LinearMath
+
+		assimp
+		stb
+		freetype
 )

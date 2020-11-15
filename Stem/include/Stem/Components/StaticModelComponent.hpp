@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Stem/Rendering/Renderables/StaticModel.hpp"
+
 #include <Bulb/ECS/Component.hpp>
-#include <Bulb/Rendering/Renderables/StaticModel.hpp>
 
 namespace garlic::inline stem {
     class StaticModelComponent : public blb::ecs::Component<StaticModelComponent> {
@@ -9,12 +10,12 @@ namespace garlic::inline stem {
 
         //VARIABLES
     private:
-        blb::rnd::StaticModel model;
+        StaticModel model;
 
         //FUNCTIONS
     public:
         StaticModelComponent() = delete;
-        StaticModelComponent(blb::rnd::StaticModel model);
+        StaticModelComponent(StaticModel model);
 
         StaticModelComponent(StaticModelComponent const &other);
         StaticModelComponent(StaticModelComponent &&other) noexcept;
@@ -24,7 +25,7 @@ namespace garlic::inline stem {
 
         ~StaticModelComponent();
 
-        inline blb::rnd::StaticModel &getModel();
+        inline StaticModel &getModel();
     };
 }
 

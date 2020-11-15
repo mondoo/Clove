@@ -6,14 +6,13 @@
 #include "Stem/Components/PointLightComponent.hpp"
 #include "Stem/Components/StaticModelComponent.hpp"
 #include "Stem/Components/TransformComponent.hpp"
+#include "Stem/Rendering/ForwardRenderer3D.hpp"
+#include "Stem/Rendering/Renderables/Mesh.hpp"
 
 #include <Bulb/ECS/World.hpp>
-#include <Bulb/Rendering/ForwardRenderer3D.hpp>
-#include <Bulb/Rendering/Renderables/Mesh.hpp>
 
 using namespace clv;
 using namespace clv::gfx;
-using namespace blb::rnd;
 
 namespace garlic::inline stem {
     RenderSystem::RenderSystem(std::shared_ptr<ForwardRenderer3D> renderer)
@@ -51,7 +50,7 @@ namespace garlic::inline stem {
             }
         }
         //Submit animated meshes
-        for(auto &&[transform, animatedModel] : world.getComponentSets<TransformComponent, AnimedModelComponent>()) {
+        for(auto &&[transform, animatedModel] : world.getComponentSets<TransformComponent, AnimatedModelComponent>()) {
             mth::mat4f const modelTransform{ transform->getTransformationMatrix(TransformSpace::World) };
             auto const matrixPalet{ animatedModel->model.update(deltaTime) };
 

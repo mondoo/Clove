@@ -3,7 +3,7 @@ namespace garlic::inline stem {
         camera.setView(std::move(view));
     }
 
-    void CameraComponent::setProjectionMode(blb::rnd::Camera::ProjectionMode const mode) {
+    void CameraComponent::setProjectionMode(Camera::ProjectionMode const mode) {
         camera.setProjectionMode(mode);
     }
 
@@ -11,7 +11,7 @@ namespace garlic::inline stem {
         camera.setZoomLevel(zoom);
     }
 
-    void CameraComponent::setViewport(blb::rnd::Viewport viewport) {
+    void CameraComponent::setViewport(Viewport viewport) {
         camera.setViewport(viewport);
     }
 
@@ -23,11 +23,11 @@ namespace garlic::inline stem {
         return camera.getProjection();
     }
 
-    blb::rnd::Camera::ProjectionMode CameraComponent::getProjectionMode() const {
+    Camera::ProjectionMode CameraComponent::getProjectionMode() const {
         return camera.getProjectionMode();
     }
 
-    blb::rnd::Viewport const &CameraComponent::getViewport() const {
+    Viewport const &CameraComponent::getViewport() const {
         return camera.getViewport();
     }
 }

@@ -1,30 +1,31 @@
 #pragma once
 
+#include "Stem/Rendering/Renderables/AnimatedModel.hpp"
+
 #include <Bulb/ECS/Component.hpp>
-#include <Bulb/Rendering/Renderables/AnimatedModel.hpp>
 
 namespace garlic::inline stem {
-    class AnimedModelComponent : public blb::ecs::Component<AnimedModelComponent> {
+    class AnimatedModelComponent : public blb::ecs::Component<AnimatedModelComponent> {
         friend class RenderSystem;
 
         //VARIABLES
     private:
-        blb::rnd::AnimatedModel model;
+        AnimatedModel model;
 
         //FUNCTIONS
     public:
-        AnimedModelComponent() = delete;
-        AnimedModelComponent(blb::rnd::AnimatedModel model);
+        AnimatedModelComponent() = delete;
+        AnimatedModelComponent(AnimatedModel model);
 
-        AnimedModelComponent(AnimedModelComponent const &other);
-        AnimedModelComponent(AnimedModelComponent &&other) noexcept;
+        AnimatedModelComponent(AnimatedModelComponent const &other);
+        AnimatedModelComponent(AnimatedModelComponent &&other) noexcept;
 
-        AnimedModelComponent &operator=(AnimedModelComponent const &other);
-        AnimedModelComponent &operator=(AnimedModelComponent &&other) noexcept;
+        AnimatedModelComponent &operator=(AnimatedModelComponent const &other);
+        AnimatedModelComponent &operator=(AnimatedModelComponent &&other) noexcept;
 
-        ~AnimedModelComponent();
+        ~AnimatedModelComponent();
 
-        inline blb::rnd::AnimatedModel &getModel();
+        inline AnimatedModel &getModel();
     };
 }
 

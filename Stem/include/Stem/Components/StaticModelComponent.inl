@@ -1,5 +1,5 @@
 namespace garlic::inline stem {
-    blb::rnd::StaticModel &StaticModelComponent::getModel() {
+    StaticModel &StaticModelComponent::getModel() {
         return model;
     }
 }
