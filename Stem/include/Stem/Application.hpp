@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Bulb/LayerStack.hpp>
+#include "Stem/LayerStack.hpp"
+
 #include <Clove/Platform/PlatformTypes.hpp>
 
 namespace clv::plt {
@@ -8,7 +9,7 @@ namespace clv::plt {
     class Window;
 }
 
-namespace blb {
+namespace garlic::inline stem {
     class Layer;
 }
 
@@ -25,7 +26,7 @@ namespace garlic::inline stem {
         std::unique_ptr<clv::plt::Platform> platformInstance;
         std::shared_ptr<clv::plt::Window> window;
 
-        blb::LayerStack layerStack;
+        LayerStack layerStack;
 
         std::chrono::system_clock::time_point prevFrameTime;
 
@@ -43,4 +44,4 @@ namespace garlic::inline stem {
 
 //To be defined by the client
 extern garlic::Application::Descriptor getApplicationDescriptor();
-extern std::shared_ptr<blb::Layer> createApplicationLayer(garlic::Application const &app);
+extern std::shared_ptr<garlic::Layer> createApplicationLayer(garlic::Application const &app);

@@ -8,11 +8,6 @@ add_subdirectory(external)
 #Stem
 add_library(
 	Stem STATIC
-		${INCLUDE}/EntryPoint.hpp
-
-		${INCLUDE}/Application.hpp
-		${SOURCE}/Application.cpp
-
 		${INCLUDE}/Components/AnimatedModelComponent.hpp
 		${INCLUDE}/Components/AnimatedModelComponent.inl
 		${SOURCE}/Components/AnimatedModelComponent.cpp
@@ -85,6 +80,18 @@ add_library(
 		${SOURCE}/UI/Text.cpp
 		${INCLUDE}/UI/UIFrame.hpp
 		${SOURCE}/UI/UIFrame.cpp
+
+		${INCLUDE}/EntryPoint.hpp
+
+		${INCLUDE}/Application.hpp
+		${SOURCE}/Application.cpp
+
+		${INCLUDE}/Layer.hpp
+		${INCLUDE}/Layer.inl
+		${SOURCE}/Layer.cpp
+		${INCLUDE}/LayerStack.hpp
+		${INCLUDE}/LayerStack.inl
+		${SOURCE}/LayerStack.cpp
 		
 		${INCLUDE}/ModelLoader.hpp
 		${SOURCE}/ModelLoader.cpp

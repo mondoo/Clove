@@ -9,7 +9,5 @@
 #include "Bulb/Audio/SoundFile.hpp"
 #include "Bulb/ECS/Entity.hpp"
 #include "Bulb/ECS/World.hpp"
-#include "Bulb/Layer.hpp"
-#include "Bulb/LayerStack.hpp"
 
 #include <Clove/Clove.hpp>

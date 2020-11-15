@@ -1,23 +1,23 @@
-#include "Bulb/LayerStack.hpp"
+#include "Stem/LayerStack.hpp"
 
-#include "Bulb/Layer.hpp"
+#include "Stem/Layer.hpp"
 
 #include <Root/Log/Log.hpp>
 
-namespace blb {
+namespace garlic::inline stem {
     LayerStack::LayerStack() = default;
 
-    LayerStack::LayerStack(const LayerStack& other) = default;
+    LayerStack::LayerStack(LayerStack const &other) = default;
 
-    LayerStack::LayerStack(LayerStack&& other) noexcept = default;
+    LayerStack::LayerStack(LayerStack &&other) noexcept = default;
 
-    LayerStack& LayerStack::operator=(const LayerStack& other) = default;
+    LayerStack &LayerStack::operator=(LayerStack const &other) = default;
 
-    LayerStack& LayerStack::operator=(LayerStack&& other) noexcept = default;
+    LayerStack &LayerStack::operator=(LayerStack &&other) noexcept = default;
 
     LayerStack::~LayerStack() {
         GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Deconstructing layer stack...");
-        for(auto& layer : layers) {
+        for(auto &layer : layers) {
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "{0} detached", layer->getName());
             layer->onDetach();
         }
@@ -29,7 +29,7 @@ namespace blb {
         layers.emplace(layers.begin() + layerInsertIndex++, std::move(layer));
     }
 
-    void LayerStack::popLayer(const std::shared_ptr<Layer>& layer) {
+    void LayerStack::popLayer(std::shared_ptr<Layer> const &layer) {
         if(auto it = std::find(layers.begin(), layers.end(), layer); it != layers.end()) {
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Popped layer: {0}", (*it)->getName());
             (*it)->onDetach();
@@ -44,27 +44,11 @@ namespace blb {
         layers.emplace_back(std::move(overlay));
     }
 
-    void LayerStack::popOverlay(const std::shared_ptr<Layer>& overlay) {
+    void LayerStack::popOverlay(std::shared_ptr<Layer> const &overlay) {
         if(auto it = std::find(layers.begin(), layers.end(), overlay); it != layers.end()) {
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Popped overlay: {0}", (*it)->getName());
             (*it)->onDetach();
             layers.erase(it);
         }
-    }
-
-    std::vector<std::shared_ptr<Layer>>::iterator LayerStack::begin() {
-        return layers.begin();
-    }
-
-    std::vector<std::shared_ptr<Layer>>::iterator LayerStack::end() {
-        return layers.end();
-    }
-
-    std::vector<std::shared_ptr<Layer>>::reverse_iterator LayerStack::rbegin() {
-        return layers.rbegin();
-    }
-
-    std::vector<std::shared_ptr<Layer>>::reverse_iterator LayerStack::rend() {
-        return layers.rend();
     }
 }

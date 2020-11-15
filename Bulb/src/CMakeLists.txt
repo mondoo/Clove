@@ -171,11 +171,6 @@ target_sources(
 		${BLB_INCLUDE}/Bulb.hpp
 
 		${BLB_INCLUDE}/InputResponse.hpp
-
-		${BLB_INCLUDE}/Layer.hpp
-		${BLB_SOURCE}/Layer.cpp
-		${BLB_INCLUDE}/LayerStack.hpp
-		${BLB_SOURCE}/LayerStack.cpp
         
 		${AIFiles}
 		${AudioFiles}

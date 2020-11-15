@@ -1,6 +1,10 @@
 #include "Stem/Application.hpp"
 
-#include <Bulb/Bulb.hpp>
+#include "Stem/Layer.hpp"
+
+#include <Clove/Platform/Platform.hpp>
+#include <Clove/Platform/Window.hpp>
+#include <Clove/Input/InputEvent.hpp>
 
 namespace garlic::inline stem {
     Application::Application() = default;

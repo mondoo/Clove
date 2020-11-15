@@ -2,34 +2,37 @@
 
 #include "Application.hpp"
 
-#include <Bulb/Layer.hpp>
 #include <Stem/Application.hpp>
+#include <Stem/Layer.hpp>
 
-garlic::Application::Descriptor getApplicationDescriptor() {
-    garlic::Application::Descriptor descriptor{};
-    descriptor.windowDescriptor.title  = "Garlic";
-    descriptor.windowDescriptor.width  = 1280;
-    descriptor.windowDescriptor.height = 720;
+using namespace garlic;
 
-    return descriptor;
+Application::Descriptor getApplicationDescriptor() {
+    return Application::Descriptor{
+        .windowDescriptor = {
+            .title  = "Garlic",
+            .width  = 1280,
+            .height = 720,
+        }
+    };
 }
 
-std::shared_ptr<blb::Layer> createApplicationLayer(garlic::Application const &app) {
-    return std::make_shared<blb::Layer>("Empty layer");
+std::shared_ptr<Layer> createApplicationLayer(Application const &app) {
+    return std::make_shared<Layer>("Empty layer");
 }
 
-garlic::Application *application_create() {
-    return new garlic::Application;
+Application *application_create() {
+    return new Application;
 }
 
-void application_destroy(garlic::Application *app) {
+void application_destroy(Application *app) {
     delete app;
 }
 
-void application_start(garlic::Application *app) {
+void application_start(Application *app) {
     app->start();
 }
 
-void application_run(garlic::Application *app) {
+void application_run(Application *app) {
     app->run();
 }
