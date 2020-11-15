@@ -21,6 +21,8 @@ build:engine:msvc:
     - cd build
     - cmake -DGAR_BUILD_TESTS=ON -G "Visual Studio 16 2019" ..
     - cmake --build . --target ALL_BUILD --config Release
+    - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -G "Visual Studio 16 2019" ..
+    - cmake --build . --target ALL_BUILD --config Debug
   artifacts:
     paths:
       - build/
@@ -35,6 +37,8 @@ build:engine:gcc:
     - cd build
     - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
     - cmake --build .
+    - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
+    - cmake --build .
   artifacts:
     paths:
       - build/
@@ -48,6 +52,8 @@ build:engine:clang:
     - mkdir build
     - cd build
     - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
+    - cmake --build .
+    - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
     paths:
@@ -69,6 +75,7 @@ build:editor:msvc:
   script:
     - cd Scape/Editor
     - dotnet build -c Release
+    - dotnet build -c Debug
   dependencies:
     - build:engine:msvc
 
@@ -80,6 +87,7 @@ build:editor:gcc:
   script:
     - cd Scape/Editor
     - dotnet build -c Release
+    - dotnet build -c Debug
   dependencies:
     - build:engine:gcc
 
