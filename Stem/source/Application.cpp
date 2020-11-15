@@ -1,10 +1,10 @@
 #include "Stem/Application.hpp"
 
+#include "Stem/InputEvent.hpp"
 #include "Stem/Layer.hpp"
 
 #include <Clove/Platform/Platform.hpp>
 #include <Clove/Platform/Window.hpp>
-#include <Clove/Input/InputEvent.hpp>
 
 namespace garlic::inline stem {
     Application::Application() = default;
@@ -31,17 +31,17 @@ namespace garlic::inline stem {
 
             //Respond to input
             while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
-                clv::InputEvent const event{ *keyEvent, clv::InputEventType::Keyboard };
+                InputEvent const event{ *keyEvent, InputEventType::Keyboard };
                 for(auto const &layer : layerStack) {
-                    if(layer->onInputEvent(event) == blb::InputResponse::Consumed) {
+                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
                         break;
                     }
                 }
             }
             while(auto mouseEvent = window->getMouse().getEvent()) {
-                clv::InputEvent const event{ *mouseEvent, clv::InputEventType::Mouse };
+                InputEvent const event{ *mouseEvent, InputEventType::Mouse };
                 for(auto const &layer : layerStack) {
-                    if(layer->onInputEvent(event) == blb::InputResponse::Consumed) {
+                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
                         break;
                     }
                 }

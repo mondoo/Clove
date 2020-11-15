@@ -8,13 +8,13 @@ namespace garlic::inline stem {
         : size(std::move(size)) {
     }
 
-    blb::InputResponse UIFrame::propagateInput(clv::InputEvent const &inputEvent) {
+    InputResponse UIFrame::propagateInput(InputEvent const &inputEvent) {
         switch(inputEvent.eventType) {
-            case clv::InputEventType::Keyboard:
+            case InputEventType::Keyboard:
                 //TODO: Needs to check if the elemet has focus
                 break;
 
-            case clv::InputEventType::Mouse: {
+            case InputEventType::Mouse: {
                 auto const &mouseEvent = std::get<clv::Mouse::Event>(inputEvent.event);
                 for(auto &element : inputElements) {
                     ElementBounds const bounds = element->getBounds();
@@ -22,8 +22,8 @@ namespace garlic::inline stem {
 
                     if(mx >= bounds.start.x && mx <= bounds.end.x &&
                        my >= bounds.start.y && my <= bounds.end.y) {
-                        if(element->onMouseEvent(mouseEvent) == blb::InputResponse::Consumed) {
-                            return blb::InputResponse::Consumed;
+                        if(element->onMouseEvent(mouseEvent) == InputResponse::Consumed) {
+                            return InputResponse::Consumed;
                         }
                     }
                 }
@@ -32,7 +32,7 @@ namespace garlic::inline stem {
                 break;
         }
 
-        return blb::InputResponse::Ignored;
+        return InputResponse::Ignored;
     }
 
     void UIFrame::drawChildren(ForwardRenderer3D &renderer) {

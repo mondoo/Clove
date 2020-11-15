@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Bulb/InputResponse.hpp"
+#include "Stem/InputResponse.hpp"
 
 #include <Clove/Input/Keyboard.hpp>
 #include <Clove/Input/Mouse.hpp>
@@ -18,8 +18,8 @@ namespace garlic::inline stem {
     public:
         virtual ~InputElement() = default;
 
-        virtual blb::InputResponse onKeyEvent(clv::Keyboard::Event const &event) = 0;
-        virtual blb::InputResponse onMouseEvent(clv::Mouse::Event const &event)  = 0;
+        virtual InputResponse onKeyEvent(clv::Keyboard::Event const &event) = 0;
+        virtual InputResponse onMouseEvent(clv::Mouse::Event const &event)  = 0;
 
         virtual ElementBounds getBounds() const = 0;
     };

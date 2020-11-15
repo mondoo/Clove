@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Bulb/InputResponse.hpp"
-
-#include <Clove/Input/InputEvent.hpp>
+#include "Stem/InputResponse.hpp"
+#include "Stem/InputEvent.hpp"
 
 namespace garlic::inline stem {
     class ForwardRenderer3D;
@@ -28,7 +27,7 @@ namespace garlic::inline stem {
         UIFrame() = delete;
         UIFrame(clv::mth::vec2i size);
 
-        blb::InputResponse propagateInput(clv::InputEvent const &inputEvent);
+        InputResponse propagateInput(InputEvent const &inputEvent);
 
         void drawChildren(ForwardRenderer3D &renderer);
 

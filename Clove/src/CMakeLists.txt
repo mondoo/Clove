@@ -142,7 +142,6 @@ set(
 
 set(
 	InputFiles
-		${CLV_INCLUDE}/Input/InputEvent.hpp
 		${CLV_INCLUDE}/Input/Keyboard.hpp
 		${CLV_INCLUDE}/Input/Keyboard.inl
 		${CLV_SOURCE}/Input/Keyboard.cpp

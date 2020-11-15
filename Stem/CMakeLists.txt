@@ -81,10 +81,13 @@ add_library(
 		${INCLUDE}/UI/UIFrame.hpp
 		${SOURCE}/UI/UIFrame.cpp
 
-		${INCLUDE}/EntryPoint.hpp
-
 		${INCLUDE}/Application.hpp
 		${SOURCE}/Application.cpp
+
+		${INCLUDE}/EntryPoint.hpp
+
+		${INCLUDE}/InputEvent.hpp
+		${INCLUDE}/InputResponse.hpp
 
 		${INCLUDE}/Layer.hpp
 		${INCLUDE}/Layer.inl

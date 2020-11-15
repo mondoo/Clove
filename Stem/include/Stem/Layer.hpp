@@ -1,10 +1,7 @@
 #pragma once
 
-#include "Bulb/InputResponse.hpp"
-
-namespace clv {
-    struct InputEvent;
-}
+#include "Stem/InputResponse.hpp"
+#include "Stem/InputEvent.hpp"
 
 namespace garlic::inline stem {
     class Layer {
@@ -18,7 +15,7 @@ namespace garlic::inline stem {
         virtual ~Layer() = default;
 
         virtual void onAttach() {}
-        virtual blb::InputResponse onInputEvent(clv::InputEvent const &inputEvent);
+        virtual InputResponse onInputEvent(InputEvent const &inputEvent);
         virtual void onUpdate(clv::utl::DeltaTime const deltaTime) {}
         virtual void onDetach() {}
 

@@ -170,7 +170,6 @@ target_sources(
 	PRIVATE
 		${BLB_INCLUDE}/Bulb.hpp
 
-		${BLB_INCLUDE}/InputResponse.hpp
         
 		${AIFiles}
 		${AudioFiles}

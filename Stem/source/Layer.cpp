@@ -5,7 +5,7 @@ namespace garlic::inline stem {
         : debugName(std::move(name)) {
     }
 
-    blb::InputResponse Layer::onInputEvent(clv::InputEvent const &inputEvent) {
-        return blb::InputResponse::Ignored;
+    InputResponse Layer::onInputEvent(InputEvent const &inputEvent) {
+        return InputResponse::Ignored;
     }
 }
