@@ -1,8 +1,5 @@
 set(FrameworkFolder "Garlic/Bulb")
 
-#Dependencies
-add_subdirectory(vendor)
-
 #Bulb
 add_subdirectory(src)
 set_target_properties(Bulb PROPERTIES FOLDER ${FrameworkFolder})
@@ -23,7 +20,4 @@ target_link_libraries(
 	#Cross Platform
     PUBLIC
 		Clove
-
-	PRIVATE
-		sndfile
 )

@@ -25,12 +25,6 @@ set(
 )
 
 set(
-	AudioFiles
-		${BLB_INCLUDE}/Audio/SoundFile.hpp
-		${BLB_SOURCE}/Audio/SoundFile.cpp
-)
-
-set(
 	ControllerFiles
 		${BLB_INCLUDE}/Controller/Controller.hpp
 		${BLB_INCLUDE}/Controller/BTAIController.hpp
@@ -89,7 +83,6 @@ target_sources(
 		${BLB_INCLUDE}/Bulb.hpp
 
 		${AIFiles}
-		${AudioFiles}
 		${ControllerFiles}
 		${ECSFiles}
 		${StateMachineFiles}

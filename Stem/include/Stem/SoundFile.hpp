@@ -1,7 +1,7 @@
 #pragma once
 
-namespace blb::aud {
-	/**
+namespace garlic::inline stem {
+    /**
 	 * @brief Opens a sound file (.wav etc.) and allows acess to the data
 	 */
     class SoundFile {
@@ -12,16 +12,16 @@ namespace blb::aud {
     public:
         enum class Format {
             Unknown,
-            S8, /**< signed 8 bit data */
-            S16,/**< signed 16 bit data */
-            S24,/**< signed 24 bit data */
-            S32,/**< signed 32 bit data */
+            S8,  /**< signed 8 bit data */
+            S16, /**< signed 16 bit data */
+            S24, /**< signed 24 bit data */
+            S32, /**< signed 32 bit data */
         };
 
-        enum class SeekPosition{
+        enum class SeekPosition {
             Beginning, /**< Use the beginning of the file */
-            Current, /**< Use the current posititon of the cursor */
-            End /**< Use the end of the file */
+            Current,   /**< Use the current posititon of the cursor */
+            End        /**< Use the end of the file */
         };
 
         //VARIABLES
@@ -33,11 +33,11 @@ namespace blb::aud {
         SoundFile() = delete;
         SoundFile(std::string_view file);
 
-        SoundFile(const SoundFile& other) = delete;
-        SoundFile(SoundFile&& other) noexcept;
+        SoundFile(SoundFile const &other) = delete;
+        SoundFile(SoundFile &&other) noexcept;
 
-        SoundFile& operator=(const SoundFile& other) = delete;
-        SoundFile& operator=(SoundFile&& other) noexcept;
+        SoundFile &operator=(SoundFile const &other) = delete;
+        SoundFile &operator=(SoundFile &&other) noexcept;
 
         ~SoundFile();
 
@@ -54,7 +54,7 @@ namespace blb::aud {
 		 * @param frames How many frames to read
 		 * @returns Returns an std::pair containing a pointer to the data and how many btyes long the buffer is
 		 */
-		std::pair<short*, size_t> read(const uint32_t frames);
+        std::pair<short *, size_t> read(uint32_t const frames);
 
         /**
 		 * @brief Moves the internal cursor.
@@ -63,6 +63,6 @@ namespace blb::aud {
 		 *@param position Where to start the seek from
 		 *@param frames How many frames from position to put the cursor
 		 */
-		void seek(SeekPosition position, uint32_t frames = 0);
+        void seek(SeekPosition position, uint32_t frames = 0);
     };
 }

@@ -49,3 +49,7 @@ set_target_properties(stb PROPERTIES FOLDER ${DependencyFolder})
 #freetype2
 add_subdirectory(freetype2)
 set_target_properties(freetype PROPERTIES FOLDER ${DependencyFolder})
+
+#libsndfile
+add_subdirectory(libsndfile)
+set_target_properties(sndfile PROPERTIES FOLDER ${DependencyFolder})

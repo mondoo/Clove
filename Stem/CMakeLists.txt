@@ -222,4 +222,5 @@ target_link_libraries(
 		assimp
 		stb
 		freetype
+		sndfile
 )

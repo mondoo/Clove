@@ -1,10 +1,10 @@
-#include "Bulb/Audio/SoundFile.hpp"
+#include "Stem/SoundFile.hpp"
 
 #include <Root/Definitions.hpp>
 #include <Root/Log/Log.hpp>
 #include <sndfile.h>
 
-namespace blb::aud {
+namespace garlic::inline stem {
     static int getWhence(SoundFile::SeekPosition position) {
         switch(position) {
             case SoundFile::SeekPosition::Beginning:
@@ -20,7 +20,7 @@ namespace blb::aud {
     }
 
     struct SoundFile::FileData {
-        SNDFILE* file;
+        SNDFILE *file;
         SF_INFO fileInfo;
     };
 
@@ -30,9 +30,9 @@ namespace blb::aud {
         data->file = sf_open(file.data(), SFM_READ, &data->fileInfo);
     }
 
-    SoundFile::SoundFile(SoundFile&& other) noexcept = default;
+    SoundFile::SoundFile(SoundFile &&other) noexcept = default;
 
-    SoundFile& SoundFile::operator=(SoundFile&& other) noexcept = default;
+    SoundFile &SoundFile::operator=(SoundFile &&other) noexcept = default;
 
     SoundFile::~SoundFile() {
         sf_close(data->file);
@@ -65,10 +65,10 @@ namespace blb::aud {
         return Format::Unknown;
     }
 
-    std::pair<short*, size_t> SoundFile::read(const uint32_t frames) {
-        const size_t elementCount = frames * getChannels();
-        const size_t bufferSize   = elementCount * sizeof(short);
-        short* buffer             = reinterpret_cast<short*>(malloc(bufferSize));
+    std::pair<short *, size_t> SoundFile::read(const uint32_t frames) {
+        size_t const elementCount = frames * getChannels();
+        size_t const bufferSize   = elementCount * sizeof(short);
+        short *buffer             = reinterpret_cast<short *>(malloc(bufferSize));
 
         sf_readf_short(data->file, buffer, frames);
 
