@@ -11,8 +11,6 @@ namespace Scape.Engine
 
         ~Application() => application_destroy(app);
 
-        public void start() => application_start(app);
-
         public void run() => application_run(app);
 
         #region Membrane functions
@@ -20,8 +18,6 @@ namespace Scape.Engine
         private static extern IntPtr application_create();
         [DllImport(Import.MembraneDll)]
         private static extern void application_destroy(IntPtr app);
-        [DllImport(Import.MembraneDll)]
-        private static extern void application_start(IntPtr app);
         [DllImport(Import.MembraneDll)]
         private static extern void application_run(IntPtr app);
         #endregion

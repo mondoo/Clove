@@ -18,7 +18,5 @@ extern "C" {
 SCAPE_DLL garlic::Application *application_create();
 SCAPE_DLL void application_destroy(garlic::Application *app);
 
-SCAPE_DLL void application_start(garlic::Application *app);
-
 SCAPE_DLL void application_run(garlic::Application *app);
 }
