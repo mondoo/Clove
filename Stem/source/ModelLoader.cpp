@@ -130,7 +130,7 @@ namespace garlic::inline stem::ModelLoader {
         Default,
         Animated
     };
-    static std::shared_ptr<Mesh> processMesh(aiMesh *mesh, aiScene const *scene, std::shared_ptr<clv::gfx::GraphicsFactory> const &graphicsFactory, MeshType const meshType) {
+    static std::shared_ptr<Mesh> processMesh(aiMesh *mesh, aiScene const *scene, MeshType const meshType) {
         size_t const vertexCount = mesh->mNumVertices;
 
         std::vector<Vertex> vertices(vertexCount);
@@ -212,14 +212,14 @@ namespace garlic::inline stem::ModelLoader {
 			}*/
         }
 
-        return std::make_shared<Mesh>(std::move(vertices), std::move(indices), *graphicsFactory);
+        return std::make_shared<Mesh>(std::move(vertices), std::move(indices));
     }
 
     static const aiScene *openFile(std::string_view modelFilePath, Assimp::Importer &importer) {
         return importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
     }
 
-    StaticModel loadStaticModel(std::string_view modelFilePath, std::shared_ptr<clv::gfx::GraphicsFactory> const &graphicsFactory) {
+    StaticModel loadStaticModel(std::string_view modelFilePath) {
         CLV_PROFILE_FUNCTION();
 
         std::vector<std::shared_ptr<Mesh>> meshes;
@@ -228,18 +228,18 @@ namespace garlic::inline stem::ModelLoader {
         const aiScene *scene = openFile(modelFilePath.data(), importer);
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
-            return { meshes, std::make_shared<Material>(*graphicsFactory) };
+            return { meshes, std::make_shared<Material>() };
         }
 
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
             aiMesh *mesh = scene->mMeshes[i];
-            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Default));
+            meshes.emplace_back(processMesh(mesh, scene, MeshType::Default));
         }
 
-        return { meshes, std::make_shared<Material>(*graphicsFactory) };
+        return { meshes, std::make_shared<Material>() };
     }
 
-    AnimatedModel loadAnimatedModel(std::string_view modelFilePath, std::shared_ptr<clv::gfx::GraphicsFactory> const &graphicsFactory) {
+    AnimatedModel loadAnimatedModel(std::string_view modelFilePath) {
         CLV_PROFILE_FUNCTION();
 
         std::vector<std::shared_ptr<Mesh>> meshes;
@@ -248,7 +248,7 @@ namespace garlic::inline stem::ModelLoader {
         const aiScene *scene = openFile(modelFilePath.data(), importer);
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
-            return { meshes, std::make_shared<Material>(*graphicsFactory), nullptr, {} };
+            return { meshes, std::make_shared<Material>(), nullptr, {} };
         }
 
         //TODO: Support multiple skeletons?
@@ -262,7 +262,7 @@ namespace garlic::inline stem::ModelLoader {
         bool skeletonSet = false;
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
             aiMesh *mesh = scene->mMeshes[i];
-            meshes.emplace_back(processMesh(mesh, scene, graphicsFactory, MeshType::Animated));
+            meshes.emplace_back(processMesh(mesh, scene, MeshType::Animated));
 
             if(mesh->mNumBones <= 0 || skeletonSet) {
                 continue;
@@ -435,6 +435,6 @@ namespace garlic::inline stem::ModelLoader {
             }
         }
 
-        return { meshes, std::make_shared<Material>(*graphicsFactory), std::move(skeleton), std::move(animationClips) };
+        return { meshes, std::make_shared<Material>(), std::move(skeleton), std::move(animationClips) };
     }
 }

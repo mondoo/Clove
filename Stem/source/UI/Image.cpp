@@ -1,8 +1,10 @@
 #include "Stem/UI/Image.hpp"
 
+#include "Stem/Application.hpp"
 #include "Stem/Rendering/ForwardRenderer3D.hpp"
 #include "Stem/Rendering/RenderingHelpers.hpp"
 
+#include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Graphics/GraphicsImageView.hpp>
@@ -11,10 +13,12 @@ using namespace clv;
 using namespace clv::gfx;
 
 namespace garlic::inline stem {
-    Image::Image(GraphicsFactory &factory) {
+    Image::Image() {
         clv::mth::vec2ui constexpr imageDimensions{ 1, 1 };
         uint32_t constexpr bytesPerTexel{ 4 };
         uint32_t constexpr white{ 0xffffffff };
+
+        GraphicsFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
 
         GraphicsImage::Descriptor constexpr imageDescriptor{
             .type        = GraphicsImage::Type::_2D,

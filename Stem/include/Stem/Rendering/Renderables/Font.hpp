@@ -40,10 +40,9 @@ namespace garlic::inline stem {
 
         //FUNCTIONS
     public:
-        Font() = delete;
-        Font(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
-        Font(std::string const &filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
-        Font(std::span<std::byte const> bytes, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory);
+        Font();
+        Font(std::string const &filePath);
+        Font(std::span<std::byte const> bytes);
 
         Font(Font const &other);
         Font(Font &&other) noexcept;

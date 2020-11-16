@@ -1,12 +1,17 @@
 #include "Stem/Rendering/Renderables/Mesh.hpp"
 
+#include "Stem/Application.hpp"
+
+#include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
 
 namespace garlic::inline stem {
-    Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices, clv::gfx::GraphicsFactory &factory)
+    Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices)
         : vertices(std::move(vertices))
         , indices(std::move(indices)) {
         using namespace clv::gfx;
+
+        clv::gfx::GraphicsFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
 
         size_t const vertexBufferSize{ sizeof(Vertex) * std::size(this->vertices) };
         size_t const indexBufferSize{ sizeof(uint16_t) * std::size(this->indices) };

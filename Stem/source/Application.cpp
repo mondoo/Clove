@@ -3,6 +3,8 @@
 #include "Stem/InputEvent.hpp"
 #include "Stem/Layer.hpp"
 
+#include <Clove/Graphics/Graphics.hpp>
+#include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Platform/Platform.hpp>
 #include <Clove/Platform/Window.hpp>
 #include <Root/Definitions.hpp>
@@ -10,23 +12,31 @@
 
 namespace garlic::inline stem {
     Application *Application::instance{ nullptr };
-    
+
     Application::Application() {
-        GARLIC_ASSERT(instance != nullptr, "Only one Application can be active");
+        GARLIC_ASSERT(instance == nullptr, "Only one Application can be active");
         instance = this;
-    }
 
-    Application::~Application() = default;
+        auto const descriptor{ getApplicationDescriptor() };
 
-    void Application::start() {
+        //Platform
         platformInstance = clv::plt::createPlatformInstance();
-        window           = platformInstance->createWindow(getApplicationDescriptor().windowDescriptor);
+        window           = platformInstance->createWindow(descriptor.windowDescriptor);
+
+        //Graphics
+        graphicsDevice = clv::gfx::createGraphicsDevice(descriptor.graphicsApi, window->getNativeWindow());
+
+        //Audio
+        //...
+
         window->setVSync(true);
 
         layerStack.pushLayer(createApplicationLayer(*this));
 
         prevFrameTime = std::chrono::system_clock::now();
     }
+
+    Application::~Application() = default;
 
     Application &Application::get() {
         return *instance;
@@ -67,5 +77,9 @@ namespace garlic::inline stem {
 
     std::shared_ptr<clv::plt::Window> const &Application::getWindow() const {
         return window;
+    }
+
+    clv::gfx::GraphicsDevice *Application::getGraphicsDevice() const{
+        return graphicsDevice.get();
     }
 }

@@ -6,6 +6,7 @@
 #include "Stem/Rendering/RenderingHelpers.hpp"
 #include "Stem/Rendering/Vertex.hpp"
 #include "Stem/TextureLoader.hpp"
+#include "Stem/Application.hpp"
 
 #include <Clove/Graphics/DescriptorSet.hpp>
 #include <Clove/Graphics/Graphics.hpp>
@@ -44,11 +45,11 @@ extern "C" const char font_p[];
 extern "C" const size_t font_pLength;
 
 namespace garlic::inline stem {
-    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window &window, API const api) {
+    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window &window) {
         windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
         windowSize         = window.getSize();
 
-        graphicsDevice  = createGraphicsDevice(api, window.getNativeWindow());
+        graphicsDevice  = Application::get().getGraphicsDevice();
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
         //Object initialisation
@@ -143,7 +144,7 @@ namespace garlic::inline stem {
             1,
         };
 
-        uiMesh = std::make_unique<Mesh>(std::move(uiVertices), std::move(uiIndices), *graphicsFactory);
+        uiMesh = std::make_unique<Mesh>(std::move(uiVertices), std::move(uiIndices));
     }
 
     //ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;

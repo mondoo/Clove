@@ -29,8 +29,7 @@ namespace garlic::inline stem {
 
         //FUNCTIONS
     public:
-        Material() = delete;
-        Material(clv::gfx::GraphicsFactory &factory);
+        Material();
 
         Material(Material const &other);
         Material(Material &&other) noexcept;

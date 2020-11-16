@@ -21,8 +21,7 @@ namespace garlic::inline stem {
 
         //FUNCTIONS
     public:
-        Image() = delete;
-        Image(clv::gfx::GraphicsFactory& factory);
+        Image();
         Image(std::shared_ptr<clv::gfx::GraphicsImage> graphicsImage);
 
         Image(Image const &other);
