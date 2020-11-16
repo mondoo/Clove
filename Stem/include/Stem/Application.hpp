@@ -21,6 +21,7 @@ namespace clv {
 
 namespace garlic::inline stem {
     class Layer;
+    class ForwardRenderer3D;
 }
 
 namespace garlic::inline stem {
@@ -42,12 +43,11 @@ namespace garlic::inline stem {
         std::unique_ptr<clv::AudioFactory> audioFactory;
 
         std::shared_ptr<clv::plt::Window> window;
+        std::unique_ptr<ForwardRenderer3D> renderer;
 
         LayerStack layerStack;
 
         std::chrono::system_clock::time_point prevFrameTime;
-
-        //Renderer
 
         //FUNCTIONS
     public:
@@ -68,10 +68,11 @@ namespace garlic::inline stem {
          */
         void run();
 
-        std::shared_ptr<clv::plt::Window> const &getWindow() const;
-
         clv::gfx::GraphicsDevice *getGraphicsDevice() const;
         clv::AudioFactory *getAudioFactory() const;
+
+        std::shared_ptr<clv::plt::Window> const &getWindow() const;
+        ForwardRenderer3D *getRenderer() const;
     };
 }
 

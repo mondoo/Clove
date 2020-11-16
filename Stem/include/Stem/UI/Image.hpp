@@ -40,7 +40,7 @@ namespace garlic::inline stem {
         inline float getRotation() const;
         inline clv::mth::vec2f const &getSize() const;
 
-        void draw(ForwardRenderer3D &renderer, clv::mth::vec2f const &drawSpace) override;
+        void draw(clv::mth::vec2f const &drawSpace) override;
     };
 }
 

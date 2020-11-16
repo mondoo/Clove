@@ -14,12 +14,11 @@ namespace garlic::inline stem {
     class RenderSystem : public blb::ecs::System {
         //VARIABLES
     private:
-        std::shared_ptr<ForwardRenderer3D> renderer;
+        ForwardRenderer3D *renderer;
 
         //FUNCTIONS
     public:
-        RenderSystem() = delete;
-        RenderSystem(std::shared_ptr<ForwardRenderer3D> renderer);
+        RenderSystem();
 
         RenderSystem(RenderSystem const &other) = delete;
         RenderSystem(RenderSystem &&other) noexcept;

@@ -2,6 +2,7 @@
 
 #include "Stem/InputEvent.hpp"
 #include "Stem/Layer.hpp"
+#include "Stem/Rendering/ForwardRenderer3D.hpp"
 
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
@@ -31,6 +32,7 @@ namespace garlic::inline stem {
         audioFactory = clv::createAudioFactory(descriptor.audioApi);
 
         window->setVSync(true);
+        renderer = std::make_unique<ForwardRenderer3D>();
 
         layerStack.pushLayer(createApplicationLayer(*this));
 
@@ -69,15 +71,15 @@ namespace garlic::inline stem {
                 }
             }
 
+            renderer->begin();
+
             //Do frame logic
             for(auto const &layer : layerStack) {
                 layer->onUpdate(deltaSeonds.count());
             }
-        }
-    }
 
-    std::shared_ptr<clv::plt::Window> const &Application::getWindow() const {
-        return window;
+            renderer->end();
+        }
     }
 
     clv::gfx::GraphicsDevice *Application::getGraphicsDevice() const{
@@ -86,5 +88,13 @@ namespace garlic::inline stem {
 
     clv::AudioFactory *Application::getAudioFactory() const{
         return audioFactory.get();
+    }
+
+    std::shared_ptr<clv::plt::Window> const &Application::getWindow() const {
+        return window;
+    }
+
+    ForwardRenderer3D *Application::getRenderer() const {
+        return renderer.get();
     }
 }

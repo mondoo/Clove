@@ -164,8 +164,7 @@ namespace garlic::inline stem {
 
         //FUNCTIONS
     public:
-        ForwardRenderer3D() = delete;
-        ForwardRenderer3D(clv::plt::Window &window);
+        ForwardRenderer3D();
 
         ForwardRenderer3D(ForwardRenderer3D const &other) = delete;
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;

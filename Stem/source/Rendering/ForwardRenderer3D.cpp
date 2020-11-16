@@ -1,12 +1,12 @@
 #include "Stem/Rendering/ForwardRenderer3D.hpp"
 
+#include "Stem/Application.hpp"
 #include "Stem/Rendering/Camera.hpp"
 #include "Stem/Rendering/Material.hpp"
 #include "Stem/Rendering/Renderables/Mesh.hpp"
 #include "Stem/Rendering/RenderingHelpers.hpp"
 #include "Stem/Rendering/Vertex.hpp"
 #include "Stem/TextureLoader.hpp"
-#include "Stem/Application.hpp"
 
 #include <Clove/Graphics/DescriptorSet.hpp>
 #include <Clove/Graphics/Graphics.hpp>
@@ -45,9 +45,10 @@ extern "C" const char font_p[];
 extern "C" const size_t font_pLength;
 
 namespace garlic::inline stem {
-    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window &window) {
-        windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
-        windowSize         = window.getSize();
+    ForwardRenderer3D::ForwardRenderer3D() {
+        auto window{ Application::get().getWindow() };
+        windowResizeHandle = window->onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
+        windowSize         = window->getSize();
 
         graphicsDevice  = Application::get().getGraphicsDevice();
         graphicsFactory = graphicsDevice->getGraphicsFactory();

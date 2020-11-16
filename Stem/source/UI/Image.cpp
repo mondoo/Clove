@@ -50,7 +50,7 @@ namespace garlic::inline stem {
 
     Image::~Image() = default;
 
-    void Image::draw(ForwardRenderer3D &renderer, clv::mth::vec2f const &drawSpace) {
+    void Image::draw(clv::mth::vec2f const &drawSpace) {
         mth::vec2f const screenHalfSize{ drawSpace / 2.0f };
 
         //Move the position to origin at the top left
@@ -63,6 +63,6 @@ namespace garlic::inline stem {
         mth::mat4f const model{ translation * rotation * scale };
         mth::mat4f const projection{ mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y) };
 
-        renderer.submitWidget(imageView, projection * model);
+        Application::get().getRenderer()->submitWidget(imageView, projection * model);
     }
 }
