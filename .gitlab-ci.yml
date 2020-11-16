@@ -45,6 +45,9 @@ build-engine-debug-msvc:
     - cd build
     - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -G "Visual Studio 16 2019" ..
     - cmake --build . --target ALL_BUILD --config Debug
+  artifacts:
+    paths:
+      - build/
 
 build-engine-release-gcc:
   stage: build-engine
@@ -70,6 +73,9 @@ build-engine-debug-gcc:
     - cd build
     - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
     - cmake --build .
+  artifacts:
+    paths:
+      - build/
 
 build-engine-release-clang:
   stage: build-engine
@@ -84,6 +90,9 @@ build-engine-release-clang:
   artifacts:
     paths:
       - build/
+  artifacts:
+    paths:
+      - build/
 
 build-engine-debug-clang:
   stage: build-engine
@@ -95,6 +104,9 @@ build-engine-debug-clang:
     - cd build
     - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
     - cmake --build .
+  artifacts:
+    paths:
+      - build/
 
 #Test: Engine
 test-engine-msvc:
@@ -152,7 +164,7 @@ build-editor-debug-msvc:
     - cd Scape/Editor
     - dotnet build -c Debug
   dependencies:
-    - build-engine-release-msvc
+    - build-engine-debug-msvc
 
 build-editor-release-gcc:
   stage: build-editor
@@ -174,4 +186,4 @@ build-editor-debug-gcc:
     - cd Scape/Editor
     - dotnet build -c Debug
   dependencies:
-    - build-engine-release-gcc
+    - build-engine-debug-gcc
