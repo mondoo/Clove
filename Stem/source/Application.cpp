@@ -5,9 +5,16 @@
 
 #include <Clove/Platform/Platform.hpp>
 #include <Clove/Platform/Window.hpp>
+#include <Root/Definitions.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace garlic::inline stem {
-    Application::Application() = default;
+    Application *Application::instance{ nullptr };
+    
+    Application::Application() {
+        GARLIC_ASSERT(instance != nullptr, "Only one Application can be active");
+        instance = this;
+    }
 
     Application::~Application() = default;
 
@@ -19,6 +26,10 @@ namespace garlic::inline stem {
         layerStack.pushLayer(createApplicationLayer(*this));
 
         prevFrameTime = std::chrono::system_clock::now();
+    }
+
+    Application &Application::get() {
+        return *instance;
     }
 
     void Application::run() {

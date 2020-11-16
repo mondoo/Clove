@@ -23,6 +23,8 @@ namespace garlic::inline stem {
 
         //VARIABLES
     private:
+        static Application *instance;
+
         std::unique_ptr<clv::plt::Platform> platformInstance;
         std::shared_ptr<clv::plt::Window> window;
 
@@ -33,7 +35,16 @@ namespace garlic::inline stem {
         //FUNCTIONS
     public:
         Application();
+
+        Application(const Application &other) = delete;
+        Application(Application&& other) noexcept = delete;
+
+        Application &operator=(const Application& other) = delete;
+        Application &operator=(Application &&other) noexcept = delete;
+
         ~Application();
+
+        static Application &get();
 
         void start();
         void run();
