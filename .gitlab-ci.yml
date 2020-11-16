@@ -90,9 +90,6 @@ build-engine-release-clang:
   artifacts:
     paths:
       - build/
-  artifacts:
-    paths:
-      - build/
 
 build-engine-debug-clang:
   stage: build-engine
