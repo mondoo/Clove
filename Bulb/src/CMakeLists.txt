@@ -25,12 +25,6 @@ set(
 )
 
 set(
-	AudioFiles
-		${BLB_INCLUDE}/Audio/SoundFile.hpp
-		${BLB_SOURCE}/Audio/SoundFile.cpp
-)
-
-set(
 	ControllerFiles
 		${BLB_INCLUDE}/Controller/Controller.hpp
 		${BLB_INCLUDE}/Controller/BTAIController.hpp
@@ -55,64 +49,6 @@ set(
 		${BLB_INCLUDE}/ECS/World.inl
 		${BLB_SOURCE}/ECS/World.cpp
 		${BLB_INCLUDE}/ECS/System.hpp
-
-		${BLB_INCLUDE}/ECS/Components/AnimatedModelComponent.hpp
-		${BLB_SOURCE}/ECS/Components/AnimatedModelComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/AudioListenerComponent.hpp
-		${BLB_SOURCE}/ECS/Components/AudioListenerComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/AudioSourceComponent.hpp
-		${BLB_SOURCE}/ECS/Components/AudioSourceComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/CameraComponent.hpp
-		${BLB_SOURCE}/ECS/Components/CameraComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/CollisionResponseComponent.hpp
-		${BLB_INCLUDE}/ECS/Components/CubeColliderComponent.hpp
-		${BLB_SOURCE}/ECS/Components/CubeColliderComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/DirectionalLightComponent.hpp
-		${BLB_SOURCE}/ECS/Components/DirectionalLightComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/PointLightComponent.hpp
-		${BLB_SOURCE}/ECS/Components/PointLightComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/RigidBodyComponent.hpp
-		${BLB_SOURCE}/ECS/Components/RigidBodyComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/StaticModelComponent.hpp
-		${BLB_SOURCE}/ECS/Components/StaticModelComponent.cpp
-		${BLB_INCLUDE}/ECS/Components/TransformComponent.hpp
-		${BLB_SOURCE}/ECS/Components/TransformComponent.cpp
-		${BLB_INCLUDE}/ECS/Systems/AudioSystem.hpp
-		${BLB_SOURCE}/ECS/Systems/AudioSystem.cpp
-		${BLB_INCLUDE}/ECS/Systems/RenderSystem.hpp
-		${BLB_SOURCE}/ECS/Systems/RenderSystem.cpp
-		${BLB_INCLUDE}/ECS/Systems/PhysicsSystem.hpp
-		${BLB_SOURCE}/ECS/Systems/PhysicsSystem.cpp
-)
-
-set(
-	RenderingFiles
-		${BLB_INCLUDE}/Rendering/AnimationTypes.hpp
-		${BLB_INCLUDE}/Rendering/Animator.hpp
-		${BLB_SOURCE}/Rendering/Animator.cpp
-		${BLB_INCLUDE}/Rendering/Camera.hpp
-		${BLB_SOURCE}/Rendering/Camera.cpp
-		${BLB_INCLUDE}/Rendering/ForwardRenderer3D.hpp
-		${BLB_SOURCE}/Rendering/ForwardRenderer3D.cpp
-		${BLB_INCLUDE}/Rendering/Material.hpp
-		${BLB_INCLUDE}/Rendering/Material.inl
-		${BLB_SOURCE}/Rendering/Material.cpp
-		${BLB_INCLUDE}/Rendering/RenderingConstants.hpp
-		${BLB_INCLUDE}/Rendering/RenderingHelpers.hpp
-		${BLB_SOURCE}/Rendering/RenderingHelpers.cpp
-		${BLB_INCLUDE}/Rendering/ShaderBufferTypes.hpp
-		${BLB_INCLUDE}/Rendering/Vertex.hpp
-		${BLB_INCLUDE}/Rendering/Renderables/Font.hpp
-		${BLB_SOURCE}/Rendering/Renderables/Font.cpp
-		${BLB_INCLUDE}/Rendering/Renderables/Mesh.hpp
-		${BLB_INCLUDE}/Rendering/Renderables/Mesh.inl
-		${BLB_SOURCE}/Rendering/Renderables/Mesh.cpp
-		${BLB_INCLUDE}/Rendering/Renderables/AnimatedModel.hpp
-		${BLB_INCLUDE}/Rendering/Renderables/AnimatedModel.inl
-		${BLB_SOURCE}/Rendering/Renderables/AnimatedModel.cpp
-		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.hpp
-		${BLB_INCLUDE}/Rendering/Renderables/StaticModel.inl
-		${BLB_SOURCE}/Rendering/Renderables/StaticModel.cpp
 )
 
 set(
@@ -125,104 +61,8 @@ set(
 		${BLB_INCLUDE}/StateMachine/Transition.inl
 )
 
-set(
-	UIFiles
-		${BLB_INCLUDE}/UI/DrawableElement.hpp
-		${BLB_INCLUDE}/UI/Image.hpp
-		${BLB_INCLUDE}/UI/Image.inl
-		${BLB_SOURCE}/UI/Image.cpp
-		${BLB_INCLUDE}/UI/InputElement.hpp
-		${BLB_INCLUDE}/UI/Text.hpp
-		${BLB_INCLUDE}/UI/Text.inl
-		${BLB_SOURCE}/UI/Text.cpp
-		${BLB_INCLUDE}/UI/UIFrame.hpp
-		${BLB_SOURCE}/UI/UIFrame.cpp
-)
-
 #Shader files that are only used for includes
-set(
-	ShaderIncludes
-		${BLB_RESOURCE}/Shaders/Constants.glsl
-)
 
-set(
-	ShaderFiles
-		${BLB_RESOURCE}/Shaders/StaticMesh-v.glsl
-		${BLB_RESOURCE}/Shaders/StaticMeshShadowMap-v.glsl
-		${BLB_RESOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl
-
-		${BLB_RESOURCE}/Shaders/AnimatedMesh-v.glsl
-		${BLB_RESOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl
-		${BLB_RESOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl
-
-		${BLB_RESOURCE}/Shaders/Mesh-p.glsl
-		${BLB_RESOURCE}/Shaders/MeshShadowMap-p.glsl
-		${BLB_RESOURCE}/Shaders/MeshCubeShadowMap-p.glsl
-
-		${BLB_RESOURCE}/Shaders/UI-v.glsl
-		${BLB_RESOURCE}/Shaders/Widget-p.glsl
-		${BLB_RESOURCE}/Shaders/Font-p.glsl
-
-		${ShaderIncludes}
-)
-
-compileShader("${BLB_RESOURCE}/Shaders/StaticMesh-v.glsl" "StaticMesh-v.spirv" "vertex" "${ShaderIncludes}")
-compileShader("${BLB_RESOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "StaticMeshShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
-compileShader("${BLB_RESOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "StaticMeshCubeShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
-
-compileShader("${BLB_RESOURCE}/Shaders/AnimatedMesh-v.glsl" "AnimatedMesh-v.spirv" "vertex" "${ShaderIncludes}")
-compileShader("${BLB_RESOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl" "AnimatedMeshShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
-compileShader("${BLB_RESOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl" "AnimatedMeshCubeShadowMap-v.spirv" "vertex" "${ShaderIncludes}")
-
-compileShader("${BLB_RESOURCE}/Shaders/Mesh-p.glsl" "Mesh-p.spirv" "fragment" "${ShaderIncludes}")
-compileShader("${BLB_RESOURCE}/Shaders/MeshShadowMap-p.glsl" "MeshShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
-compileShader("${BLB_RESOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "MeshCubeShadowMap-p.spirv" "fragment" "${ShaderIncludes}")
-
-compileShader("${BLB_RESOURCE}/Shaders/UI-v.glsl" "UI-v.spirv" "vertex" "${ShaderIncludes}")
-compileShader("${BLB_RESOURCE}/Shaders/Widget-p.glsl" "Widget-p.spirv" "fragment" "${ShaderIncludes}")
-compileShader("${BLB_RESOURCE}/Shaders/Font-p.glsl" "Font-p.spirv" "fragment" "${ShaderIncludes}")
-
-#Convert resources into c strings
-set(ResourceBinaries)
-
-function(embeddResource resources readType)
-	set(files)
-
-	foreach(res IN ITEMS ${resources})
-		get_filename_component(fileName ${res} NAME_WLE)
-
-		string(REPLACE "-" "_" fileName ${fileName})
-		string(TOLOWER ${fileName} fileName)
-
-		add_custom_command(
-			OUTPUT ${fileName}.c
-			COMMAND ResourceEmbedder ${fileName} ${res} ${readType}
-			DEPENDS ${res}
-		)
-
-		set(files ${files} "${fileName}.c")
-	endforeach()
-
-	set(ResourceBinaries ${ResourceBinaries} ${files} PARENT_SCOPE)
-endfunction()
-
-embeddResource("${BLB_RESOURCE}/Fonts/Roboto/Roboto-Black.ttf" "rb")
-
-embeddResource("StaticMesh-v.spirv" "rb")
-embeddResource("StaticMeshShadowMap-v.spirv" "rb")
-embeddResource("StaticMeshCubeShadowMap-v.spirv" "rb")
-
-embeddResource("AnimatedMesh-v.spirv" "rb")
-embeddResource("AnimatedMeshShadowMap-v.spirv" "rb")
-embeddResource("AnimatedMeshCubeShadowMap-v.spirv" "rb")
-
-embeddResource("Mesh-p.spirv" "rb")
-embeddResource("MeshShadowMap-p.spirv" "rb")
-embeddResource("MeshCubeShadowMap-p.spirv" "rb")
-
-embeddResource("UI-v.spirv" "rb")
-embeddResource("Widget-p.spirv" "rb")
-embeddResource("Font-p.spirv" "rb")
 
 #Organise the source tree
 file(GLOB_RECURSE header ${BLB_INCLUDE}/*.h ${BLB_INCLUDE}/*.hpp ${BLB_INCLUDE}/*.inl)
@@ -242,32 +82,8 @@ target_sources(
 	PRIVATE
 		${BLB_INCLUDE}/Bulb.hpp
 
-		${BLB_INCLUDE}/InputResponse.hpp
-
-		${BLB_INCLUDE}/Layer.hpp
-		${BLB_SOURCE}/Layer.cpp
-		${BLB_INCLUDE}/LayerStack.hpp
-		${BLB_SOURCE}/LayerStack.cpp
-
-		${BLB_INCLUDE}/ModelLoader.hpp
-		${BLB_SOURCE}/ModelLoader.cpp
-
-		${BLB_INCLUDE}/TextureLoader.hpp
-		${BLB_SOURCE}/TextureLoader.cpp
-        
 		${AIFiles}
-		${AudioFiles}
 		${ControllerFiles}
 		${ECSFiles}
-		${PhysicsFiles}
-		${RenderingFiles}
 		${StateMachineFiles}
-		${UIFiles}
-
-		${ShaderFiles}
-
-		${ResourceBinaries}
 )
-
-#Set as header only so VS doesn't try to compile them
-set_source_files_properties(${ShaderFiles} PROPERTIES HEADER_FILE_ONLY TRUE)

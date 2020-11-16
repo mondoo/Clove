@@ -1,11 +1,5 @@
 set(FrameworkFolder "Garlic/Bulb")
 
-#Dependencies
-add_subdirectory(vendor)
-
-#Tools
-add_subdirectory(Tools)
-
 #Bulb
 add_subdirectory(src)
 set_target_properties(Bulb PROPERTIES FOLDER ${FrameworkFolder})
@@ -17,10 +11,6 @@ target_include_directories(
 	#Bulb
 	PUBLIC
 		include
-
-	PRIVATE
-		vendor/freetype2/include
-		vendor/bullet3/src
 )
 
 #Libraries
@@ -30,15 +20,4 @@ target_link_libraries(
 	#Cross Platform
     PUBLIC
 		Clove
-
-	PRIVATE
-		freetype
-		#Order of these are important
-		BulletDynamics
-		BulletCollision
-		LinearMath
-		#
-		assimp
-		sndfile
-		stb
 )

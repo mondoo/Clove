@@ -10,15 +10,15 @@
     #define SCAPE_DLL
 #endif
 
-namespace stm {
+namespace garlic::inline stem {
     class Application;
 }
 
 extern "C" {
-SCAPE_DLL stm::Application* application_create();
-SCAPE_DLL void application_destroy(stm::Application* app);
+SCAPE_DLL garlic::Application *application_create();
+SCAPE_DLL void application_destroy(garlic::Application *app);
 
-SCAPE_DLL void application_start(stm::Application* app);
+SCAPE_DLL void application_start(garlic::Application *app);
 
-SCAPE_DLL void application_run(stm::Application* app);
+SCAPE_DLL void application_run(garlic::Application *app);
 }
