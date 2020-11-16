@@ -186,6 +186,9 @@ add_library(
 		${INCLUDE}/ModelLoader.hpp
 		${SOURCE}/ModelLoader.cpp
 
+		${INCLUDE}/SoundFile.hpp
+		${SOURCE}/SoundFile.cpp
+
 		${INCLUDE}/TextureLoader.hpp
 		${SOURCE}/TextureLoader.cpp
 
