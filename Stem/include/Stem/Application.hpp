@@ -19,6 +19,10 @@ namespace clv {
     class AudioFactory;
 }
 
+namespace blb::ecs {
+    class World;
+}
+
 namespace garlic::inline stem {
     class Layer;
     class ForwardRenderer3D;
@@ -44,6 +48,7 @@ namespace garlic::inline stem {
 
         std::shared_ptr<clv::plt::Window> window;
         std::unique_ptr<ForwardRenderer3D> renderer;
+        std::unique_ptr<blb::ecs::World> world;
 
         LayerStack layerStack;
 
@@ -53,10 +58,10 @@ namespace garlic::inline stem {
     public:
         Application();
 
-        Application(const Application &other)     = delete;
+        Application(Application const &other)     = delete;
         Application(Application &&other) noexcept = delete;
 
-        Application &operator=(const Application &other) = delete;
+        Application &operator=(Application const &other) = delete;
         Application &operator=(Application &&other) noexcept = delete;
 
         ~Application();
@@ -73,6 +78,7 @@ namespace garlic::inline stem {
 
         std::shared_ptr<clv::plt::Window> const &getWindow() const;
         ForwardRenderer3D *getRenderer() const;
+        blb::ecs::World *getECSWorld() const;
     };
 }
 

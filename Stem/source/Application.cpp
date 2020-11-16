@@ -4,13 +4,14 @@
 #include "Stem/Layer.hpp"
 #include "Stem/Rendering/ForwardRenderer3D.hpp"
 
+#include <Bulb/ECS/World.hpp>
+#include <Clove/Audio/AudioFactory.hpp>
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Platform/Platform.hpp>
 #include <Clove/Platform/Window.hpp>
 #include <Root/Definitions.hpp>
 #include <Root/Log/Log.hpp>
-#include <Clove/Audio/AudioFactory.hpp>
 
 namespace garlic::inline stem {
     Application *Application::instance{ nullptr };
@@ -33,6 +34,7 @@ namespace garlic::inline stem {
 
         window->setVSync(true);
         renderer = std::make_unique<ForwardRenderer3D>();
+        world    = std::make_unique<blb::ecs::World>();
 
         layerStack.pushLayer(createApplicationLayer(*this));
 
@@ -52,6 +54,7 @@ namespace garlic::inline stem {
             prevFrameTime                            = currFrameTime;
 
             window->processInput();
+            renderer->begin();
 
             //Respond to input
             while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
@@ -71,22 +74,24 @@ namespace garlic::inline stem {
                 }
             }
 
-            renderer->begin();
-
-            //Do frame logic
+            //Do client logic
             for(auto const &layer : layerStack) {
                 layer->onUpdate(deltaSeonds.count());
             }
 
+            //Update ECS
+            world->update(deltaSeonds.count());
+
+            //Render
             renderer->end();
         }
     }
 
-    clv::gfx::GraphicsDevice *Application::getGraphicsDevice() const{
+    clv::gfx::GraphicsDevice *Application::getGraphicsDevice() const {
         return graphicsDevice.get();
     }
 
-    clv::AudioFactory *Application::getAudioFactory() const{
+    clv::AudioFactory *Application::getAudioFactory() const {
         return audioFactory.get();
     }
 
@@ -96,5 +101,9 @@ namespace garlic::inline stem {
 
     ForwardRenderer3D *Application::getRenderer() const {
         return renderer.get();
+    }
+
+    blb::ecs::World *Application::getECSWorld() const {
+        return world.get();
     }
 }
