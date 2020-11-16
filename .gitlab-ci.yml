@@ -10,8 +10,12 @@
     - $env:VULKAN_SDK = 'C:\VulkanSDK'
     - $env:Path += ';C:\Program Files\CMake\bin;C:\VulkanSDK\Bin'
 
-variables:
-  LINUX_ENV_IMAGE: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
+.windows_tag: &windows_runner_tags
+  tags:
+    - windows-1809
+
+.linux_image: &linux_env_image
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
 
 stages:
   - build-engine
@@ -21,8 +25,7 @@ stages:
 #Build: Engine
 build-engine-release-msvc:
   stage: build-engine
-  tags:
-    - windows-1809
+  <<: *windows_runner_tags
   <<: *set_up_windows_env
   script:
     - mkdir build
@@ -35,8 +38,7 @@ build-engine-release-msvc:
 
 build-engine-debug-msvc:
   stage: build-engine
-  tags:
-    - windows-1809
+  <<: *windows_runner_tags
   <<: *set_up_windows_env
   script:
     - mkdir build
@@ -46,7 +48,7 @@ build-engine-debug-msvc:
 
 build-engine-release-gcc:
   stage: build-engine
-  image: &LINUX_ENV_IMAGE
+  <<: *linux_env_image
   before_script:
     - git submodule update --init --recursive
   script:
@@ -60,7 +62,7 @@ build-engine-release-gcc:
 
 build-engine-debug-gcc:
   stage: build-engine
-  image: &LINUX_ENV_IMAGE
+  <<: *linux_env_image
   before_script:
     - git submodule update --init --recursive
   script:
@@ -71,7 +73,7 @@ build-engine-debug-gcc:
 
 build-engine-release-clang:
   stage: build-engine
-  image: &LINUX_ENV_IMAGE
+  <<: *linux_env_image
   before_script:
     - git submodule update --init --recursive
   script:
@@ -85,7 +87,7 @@ build-engine-release-clang:
 
 build-engine-debug-clang:
   stage: build-engine
-  image: &LINUX_ENV_IMAGE
+  <<: *linux_env_image
   before_script:
     - git submodule update --init --recursive
   script:
@@ -97,8 +99,7 @@ build-engine-debug-clang:
 #Test: Engine
 test-engine-msvc:
   stage: test-engine
-  tags:
-    - windows-1809
+  <<: *windows_runner_tags
   before_script:
     - choco install -y cmake
     - $env:Path += ';C:\Program Files\CMake\bin'
@@ -112,7 +113,7 @@ test-engine-msvc:
 
 test-engine-gcc:
   stage: test-engine
-  image: &LINUX_ENV_IMAGE
+  <<: *linux_env_image
   script:
     - cd build
     - ctest -C Release
@@ -123,7 +124,7 @@ test-engine-gcc:
 
 test-engine-clang:
   stage: test-engine
-  image: &LINUX_ENV_IMAGE
+  <<: *linux_env_image
   script:
     - cd build
     - ctest -C Release
@@ -135,8 +136,7 @@ test-engine-clang:
 #Build: Editor
 build-editor-release-msvc:
   stage: build-editor
-  tags:
-    - windows-1809
+  <<: *windows_runner_tags
   <<: *set_up_windows_env
   script:
     - cd Scape/Editor
@@ -146,8 +146,7 @@ build-editor-release-msvc:
 
 build-editor-debug-msvc:
   stage: build-editor
-  tags:
-    - windows-1809
+  <<: *windows_runner_tags
   <<: *set_up_windows_env
   script:
     - cd Scape/Editor
@@ -157,7 +156,7 @@ build-editor-debug-msvc:
 
 build-editor-release-gcc:
   stage: build-editor
-  image: &LINUX_ENV_IMAGE
+  <<: *linux_env_image
   before_script:
     - git submodule update --init --recursive
   script:
@@ -168,7 +167,7 @@ build-editor-release-gcc:
 
 build-editor-debug-gcc:
   stage: build-editor
-  image: &LINUX_ENV_IMAGE
+  <<: *linux_env_image
   before_script:
     - git submodule update --init --recursive
   script:
