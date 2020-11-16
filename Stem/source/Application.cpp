@@ -9,6 +9,7 @@
 #include <Clove/Platform/Window.hpp>
 #include <Root/Definitions.hpp>
 #include <Root/Log/Log.hpp>
+#include <Clove/Audio/AudioFactory.hpp>
 
 namespace garlic::inline stem {
     Application *Application::instance{ nullptr };
@@ -27,7 +28,7 @@ namespace garlic::inline stem {
         graphicsDevice = clv::gfx::createGraphicsDevice(descriptor.graphicsApi, window->getNativeWindow());
 
         //Audio
-        //...
+        audioFactory = clv::createAudioFactory(descriptor.audioApi);
 
         window->setVSync(true);
 
@@ -81,5 +82,9 @@ namespace garlic::inline stem {
 
     clv::gfx::GraphicsDevice *Application::getGraphicsDevice() const{
         return graphicsDevice.get();
+    }
+
+    clv::AudioFactory *Application::getAudioFactory() const{
+        return audioFactory.get();
     }
 }

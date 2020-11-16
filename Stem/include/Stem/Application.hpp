@@ -38,10 +38,10 @@ namespace garlic::inline stem {
         static Application *instance;
 
         std::unique_ptr<clv::plt::Platform> platformInstance;
-        std::shared_ptr<clv::plt::Window> window;
-
         std::unique_ptr<clv::gfx::GraphicsDevice> graphicsDevice;
-        //Audio factory
+        std::unique_ptr<clv::AudioFactory> audioFactory;
+
+        std::shared_ptr<clv::plt::Window> window;
 
         LayerStack layerStack;
 
@@ -71,6 +71,7 @@ namespace garlic::inline stem {
         std::shared_ptr<clv::plt::Window> const &getWindow() const;
 
         clv::gfx::GraphicsDevice *getGraphicsDevice() const;
+        clv::AudioFactory *getAudioFactory() const;
     };
 }
 
