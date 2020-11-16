@@ -25,7 +25,7 @@ namespace garlic::inline stem {
         //FUNCTIONS
     public:
         Mesh() = delete;
-        Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices, clv::gfx::GraphicsFactory &factory);
+        Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices);
 
         Mesh(Mesh const &other);
         Mesh(Mesh &&other) noexcept;

@@ -1,7 +1,9 @@
 #include "Stem/Rendering/Material.hpp"
 
+#include "Stem/Application.hpp"
 #include "Stem/Rendering/RenderingHelpers.hpp"
 
+#include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Graphics/GraphicsImageView.hpp>
@@ -9,10 +11,12 @@
 namespace garlic::inline stem {
     std::weak_ptr<clv::gfx::GraphicsImage> Material::defaultImage{};
 
-    Material::Material(clv::gfx::GraphicsFactory &factory) {
+    Material::Material() {
         using namespace clv::gfx;
 
         if(defaultImage.use_count() == 0) {
+            GraphicsFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
+
             clv::mth::vec2f constexpr imageDimensions{ 1.0f, 1.0f };
             uint32_t constexpr bytesPerTexel{ 4 };
             uint32_t constexpr white{ 0xffffffff };

@@ -1,5 +1,7 @@
 #include "Stem/Rendering/Camera.hpp"
 
+#include "Stem/Application.hpp"
+
 #include <Clove/Platform/Window.hpp>
 
 using namespace clv;
@@ -11,12 +13,14 @@ namespace garlic::inline stem {
         setProjectionMode(projection);
     }
 
-    Camera::Camera(clv::plt::Window &window, ProjectionMode const projection) {
-        windowResizeHandle = window.onWindowResize.bind([this](mth::vec2ui const &size) {
+    Camera::Camera(ProjectionMode const projection) {
+        auto window{ Application::get().getWindow() };
+
+        windowResizeHandle = window->onWindowResize.bind([this](mth::vec2ui const &size) {
             setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
         });
 
-        viewport = { 0, 0, window.getSize().x, window.getSize().y };
+        viewport = { 0, 0, window->getSize().x, window->getSize().y };
         setProjectionMode(projection);
     }
 

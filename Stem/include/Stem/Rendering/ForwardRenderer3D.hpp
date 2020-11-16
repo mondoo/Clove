@@ -117,7 +117,7 @@ namespace garlic::inline stem {
         //'Square' mesh used to render UI
         std::unique_ptr<Mesh> uiMesh;
 
-        std::shared_ptr<clv::gfx::GraphicsDevice> graphicsDevice;
+        clv::gfx::GraphicsDevice* graphicsDevice;
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
         std::shared_ptr<clv::gfx::GraphicsQueue> graphicsQueue;
@@ -164,8 +164,7 @@ namespace garlic::inline stem {
 
         //FUNCTIONS
     public:
-        ForwardRenderer3D() = delete;
-        ForwardRenderer3D(clv::plt::Window &window, clv::gfx::API const api);
+        ForwardRenderer3D();
 
         ForwardRenderer3D(ForwardRenderer3D const &other) = delete;
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;

@@ -1,12 +1,14 @@
 #include "Stem/Components/AudioSourceComponent.hpp"
 
+#include "Stem/Application.hpp"
+
 #include <Clove/Audio/AudioBuffer.hpp>
 #include <Clove/Audio/AudioFactory.hpp>
 #include <Clove/Audio/AudioSource.hpp>
 
 namespace garlic::inline stem {
-    AudioSourceComponent::AudioSourceComponent(clv::AudioFactory &factory) {
-        source = factory.createAudioSource();
+    AudioSourceComponent::AudioSourceComponent() {
+        source = Application::get().getAudioFactory()->createAudioSource();
     }
 
     AudioSourceComponent::AudioSourceComponent(AudioSourceComponent &&other) noexcept = default;

@@ -35,9 +35,9 @@ namespace garlic::inline stem {
         return InputResponse::Ignored;
     }
 
-    void UIFrame::drawChildren(ForwardRenderer3D &renderer) {
+    void UIFrame::drawChildren() {
         for(auto &element : drawables) {
-            element->draw(renderer, size);
+            element->draw(size);
         }
     }
 }

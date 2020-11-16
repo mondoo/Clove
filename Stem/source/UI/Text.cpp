@@ -1,6 +1,7 @@
 #include "Stem/UI/Text.hpp"
 
 #include "Stem/Rendering/ForwardRenderer3D.hpp"
+#include "Stem/Application.hpp"
 
 using namespace clv;
 using namespace clv::gfx;
@@ -20,7 +21,7 @@ namespace garlic::inline stem {
 
     Text::~Text() = default;
 
-    void Text::draw(ForwardRenderer3D &renderer, clv::mth::vec2f const &drawSpace) {
+    void Text::draw(clv::mth::vec2f const &drawSpace) {
         mth::vec2f const screenHalfSize{ drawSpace.x / 2.0f, drawSpace.y / 2.0f };
 
         mth::vec2f cursorPos{ position.x - screenHalfSize.x, -position.y + screenHalfSize.y };
@@ -41,7 +42,7 @@ namespace garlic::inline stem {
                 mth::mat4f model{ mth::translate(mth::mat4f{ 1.0f }, { xpos, ypos, 0.0f }) };
                 model *= mth::scale(mth::mat4f{ 1.0f }, { width, height, 0.0f });
 
-                renderer.submitText(glyph.characterView, projection * model);
+                Application::get().getRenderer()->submitText(glyph.characterView, projection * model);
             }
 
             cursorPos.x += glyph.advance.x;

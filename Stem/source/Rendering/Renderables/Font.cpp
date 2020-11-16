@@ -1,7 +1,9 @@
 #include "Stem/Rendering/Renderables/Font.hpp"
 
+#include "Stem/Application.hpp"
 #include "Stem/Rendering/RenderingHelpers.hpp"
 
+#include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Root/Log/Log.hpp>
@@ -29,8 +31,8 @@ namespace garlic::inline stem {
 
     Font::FTLibWeakPtr Font::ftLib = {};
 
-    Font::Font(std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
-        : graphicsFactory(std::move(graphicsFactory))
+    Font::Font()
+        : graphicsFactory(Application::get().getGraphicsDevice()->getGraphicsFactory())
         , face(nullptr, nullptr) {
         if(ftLib.use_count() == 0) {
             FT_Library library;
@@ -53,13 +55,13 @@ namespace garlic::inline stem {
         face = createFace({ reinterpret_cast<std::byte const *>(roboto_black), roboto_blackLength });
     }
 
-    Font::Font(std::string const &filePath, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
-        : Font(std::move(graphicsFactory)) {
+    Font::Font(std::string const &filePath)
+        : Font() {
         face = createFace(filePath);
     }
 
-    Font::Font(std::span<std::byte const> bytes, std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory)
-        : Font(std::move(graphicsFactory)) {
+    Font::Font(std::span<std::byte const> bytes)
+        : Font() {
         face = createFace(std::move(bytes));
     }
 

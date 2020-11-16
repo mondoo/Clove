@@ -4,10 +4,6 @@
 #include "Stem/InputEvent.hpp"
 
 namespace garlic::inline stem {
-    class ForwardRenderer3D;
-}
-
-namespace garlic::inline stem {
     class DrawableElement;
     class InputElement;
 }
@@ -29,7 +25,7 @@ namespace garlic::inline stem {
 
         InputResponse propagateInput(InputEvent const &inputEvent);
 
-        void drawChildren(ForwardRenderer3D &renderer);
+        void drawChildren();
 
         template<typename Element>
         void addElement(std::shared_ptr<Element> element) {

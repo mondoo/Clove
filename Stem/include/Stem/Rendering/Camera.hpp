@@ -40,13 +40,13 @@ namespace garlic::inline stem {
     public:
         Camera() = delete;
         Camera(Viewport viewport, ProjectionMode const projection);
-        Camera(clv::plt::Window &window, ProjectionMode const projection);
+        Camera( ProjectionMode const projection);
 
         Camera(Camera const &other) = delete;
         Camera(Camera &&other) noexcept;
 
         Camera &operator=(Camera const &other) = delete;
-        Camera &operator                       =(Camera &&other) noexcept;
+        Camera &operator=(Camera &&other) noexcept;
 
         ~Camera();
 

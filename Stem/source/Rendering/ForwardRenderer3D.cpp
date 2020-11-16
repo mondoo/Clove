@@ -1,5 +1,6 @@
 #include "Stem/Rendering/ForwardRenderer3D.hpp"
 
+#include "Stem/Application.hpp"
 #include "Stem/Rendering/Camera.hpp"
 #include "Stem/Rendering/Material.hpp"
 #include "Stem/Rendering/Renderables/Mesh.hpp"
@@ -44,11 +45,12 @@ extern "C" const char font_p[];
 extern "C" const size_t font_pLength;
 
 namespace garlic::inline stem {
-    ForwardRenderer3D::ForwardRenderer3D(clv::plt::Window &window, API const api) {
-        windowResizeHandle = window.onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
-        windowSize         = window.getSize();
+    ForwardRenderer3D::ForwardRenderer3D() {
+        auto window{ Application::get().getWindow() };
+        windowResizeHandle = window->onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
+        windowSize         = window->getSize();
 
-        graphicsDevice  = createGraphicsDevice(api, window.getNativeWindow());
+        graphicsDevice  = Application::get().getGraphicsDevice();
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
         //Object initialisation
@@ -143,7 +145,7 @@ namespace garlic::inline stem {
             1,
         };
 
-        uiMesh = std::make_unique<Mesh>(std::move(uiVertices), std::move(uiIndices), *graphicsFactory);
+        uiMesh = std::make_unique<Mesh>(std::move(uiVertices), std::move(uiIndices));
     }
 
     //ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;

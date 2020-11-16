@@ -15,7 +15,6 @@ namespace Scape.Editor.Views {
 #endif
 
 			Opened += (object sender, EventArgs e) => {
-				app.start();
 				//app.run();
 			};
 		}

@@ -29,10 +29,6 @@ void application_destroy(Application *app) {
     delete app;
 }
 
-void application_start(Application *app) {
-    app->start();
-}
-
 void application_run(Application *app) {
     app->run();
 }

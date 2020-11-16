@@ -1,8 +1,10 @@
 #include "Stem/UI/Image.hpp"
 
+#include "Stem/Application.hpp"
 #include "Stem/Rendering/ForwardRenderer3D.hpp"
 #include "Stem/Rendering/RenderingHelpers.hpp"
 
+#include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Graphics/GraphicsImageView.hpp>
@@ -11,10 +13,12 @@ using namespace clv;
 using namespace clv::gfx;
 
 namespace garlic::inline stem {
-    Image::Image(GraphicsFactory &factory) {
+    Image::Image() {
         clv::mth::vec2ui constexpr imageDimensions{ 1, 1 };
         uint32_t constexpr bytesPerTexel{ 4 };
         uint32_t constexpr white{ 0xffffffff };
+
+        GraphicsFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
 
         GraphicsImage::Descriptor constexpr imageDescriptor{
             .type        = GraphicsImage::Type::_2D,
@@ -46,7 +50,7 @@ namespace garlic::inline stem {
 
     Image::~Image() = default;
 
-    void Image::draw(ForwardRenderer3D &renderer, clv::mth::vec2f const &drawSpace) {
+    void Image::draw(clv::mth::vec2f const &drawSpace) {
         mth::vec2f const screenHalfSize{ drawSpace / 2.0f };
 
         //Move the position to origin at the top left
@@ -59,6 +63,6 @@ namespace garlic::inline stem {
         mth::mat4f const model{ translation * rotation * scale };
         mth::mat4f const projection{ mth::createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y) };
 
-        renderer.submitWidget(imageView, projection * model);
+        Application::get().getRenderer()->submitWidget(imageView, projection * model);
     }
 }

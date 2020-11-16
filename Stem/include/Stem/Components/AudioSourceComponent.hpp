@@ -28,8 +28,7 @@ namespace garlic::inline stem {
 
         //FUNCTIONS
     public:
-        AudioSourceComponent() = delete;
-        AudioSourceComponent(clv::AudioFactory &factory);
+        AudioSourceComponent();
 
         AudioSourceComponent(AudioSourceComponent const &other) = delete;
         AudioSourceComponent(AudioSourceComponent &&other) noexcept;

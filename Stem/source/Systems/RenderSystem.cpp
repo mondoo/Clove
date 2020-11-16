@@ -8,6 +8,7 @@
 #include "Stem/Components/TransformComponent.hpp"
 #include "Stem/Rendering/ForwardRenderer3D.hpp"
 #include "Stem/Rendering/Renderables/Mesh.hpp"
+#include "Stem/Application.hpp"
 
 #include <Bulb/ECS/World.hpp>
 
@@ -15,8 +16,8 @@ using namespace clv;
 using namespace clv::gfx;
 
 namespace garlic::inline stem {
-    RenderSystem::RenderSystem(std::shared_ptr<ForwardRenderer3D> renderer)
-        : renderer(std::move(renderer)) {
+    RenderSystem::RenderSystem()
+        : renderer(Application::get().getRenderer()) {
     }
 
     RenderSystem::RenderSystem(RenderSystem &&other) noexcept = default;
