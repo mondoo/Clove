@@ -1,5 +1,2 @@
-set(EditorFolder "Garlic/Scape")
-
+add_subdirectory(Editor)
 add_subdirectory(Membrane)
-
-set_target_properties(Scape.Membrane PROPERTIES FOLDER ${EditorFolder})

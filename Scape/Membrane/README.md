@@ -1,1 +1,1 @@
-Scape.Membrane is a C++ library that wraps Stem to make it possible to use it with C# and p/invoke.
+Scape.Membrane is a C++/CLR library that glues Stem into a WPF application.
