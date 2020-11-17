@@ -21,3 +21,22 @@ Currently, **Clove** supports the following platforms:
 |Windows|Vulkan|
 |Linux|Vulkan|
 |MacOS(WIP)|Metal(WIP)|
+
+## Building
+
+Garlic is built using CMake.  
+Inside the project directory, use the following commands to generate and build the project:
+```
+mkdir build
+cd build
+cmake ..
+cmake --build .
+```
+
+## Linking
+
+If using Garlic as a `sub_directory` inside a CMakeLists then OpenAL will need to be placed into the same directory as your exe.  
+This can be achieved by putting the following snippet inside the CMakeLists that builds your executable:
+```
+set_target_properties(OpenAL PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+```
