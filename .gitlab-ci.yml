@@ -15,16 +15,15 @@
     - windows-1809
 
 .linux_image: &linux_env_image
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
+  image: registry.gitlab.com/digital-vessel/garlic/garlic/build_environment/linux:3.0.0
 
 stages:
-  - build-engine
-  - test-engine
-  - build-editor
+  - build
+  - test
 
-#Build: Engine
-build-engine-release-msvc:
-  stage: build-engine
+#Build
+build-release-msvc:
+  stage: build
   <<: *windows_runner_tags
   <<: *set_up_windows_env
   script:
@@ -36,8 +35,8 @@ build-engine-release-msvc:
     paths:
       - build/
 
-build-engine-debug-msvc:
-  stage: build-engine
+build-debug-msvc:
+  stage: build
   <<: *windows_runner_tags
   <<: *set_up_windows_env
   script:
@@ -49,8 +48,8 @@ build-engine-debug-msvc:
     paths:
       - build/
 
-build-engine-release-gcc:
-  stage: build-engine
+build-release-gcc:
+  stage: build
   <<: *linux_env_image
   before_script:
     - git submodule update --init --recursive
@@ -63,8 +62,8 @@ build-engine-release-gcc:
     paths:
       - build/
 
-build-engine-debug-gcc:
-  stage: build-engine
+build-debug-gcc:
+  stage: build
   <<: *linux_env_image
   before_script:
     - git submodule update --init --recursive
@@ -77,8 +76,8 @@ build-engine-debug-gcc:
     paths:
       - build/
 
-build-engine-release-clang:
-  stage: build-engine
+build-release-clang:
+  stage: build
   <<: *linux_env_image
   before_script:
     - git submodule update --init --recursive
@@ -91,8 +90,8 @@ build-engine-release-clang:
     paths:
       - build/
 
-build-engine-debug-clang:
-  stage: build-engine
+build-debug-clang:
+  stage: build
   <<: *linux_env_image
   before_script:
     - git submodule update --init --recursive
@@ -105,9 +104,9 @@ build-engine-debug-clang:
     paths:
       - build/
 
-#Test: Engine
-test-engine-msvc:
-  stage: test-engine
+#Test
+test-msvc:
+  stage: test
   <<: *windows_runner_tags
   before_script:
     - choco install -y cmake
@@ -116,71 +115,28 @@ test-engine-msvc:
     - cd build
     - ctest -C Release
   dependencies:
-    - build-engine-release-msvc
+    - build-release-msvc
   needs:
-    - build-engine-release-msvc
+    - build-release-msvc
 
-test-engine-gcc:
-  stage: test-engine
+test-gcc:
+  stage: test
   <<: *linux_env_image
   script:
     - cd build
     - ctest -C Release
   dependencies:
-    - build-engine-release-gcc
+    - build-release-gcc
   needs:
-    - build-engine-release-gcc
+    - build-release-gcc
 
-test-engine-clang:
-  stage: test-engine
+test-clang:
+  stage: test
   <<: *linux_env_image
   script:
     - cd build
     - ctest -C Release
   dependencies:
-    - build-engine-release-clang
+    - build-release-clang
   needs:
-    - build-engine-release-clang
-
-#Build: Editor
-build-editor-release-msvc:
-  stage: build-editor
-  <<: *windows_runner_tags
-  <<: *set_up_windows_env
-  script:
-    - cd Scape/Editor
-    - dotnet build -c Release
-  dependencies:
-    - build-engine-release-msvc
-
-build-editor-debug-msvc:
-  stage: build-editor
-  <<: *windows_runner_tags
-  <<: *set_up_windows_env
-  script:
-    - cd Scape/Editor
-    - dotnet build -c Debug
-  dependencies:
-    - build-engine-debug-msvc
-
-build-editor-release-gcc:
-  stage: build-editor
-  <<: *linux_env_image
-  before_script:
-    - git submodule update --init --recursive
-  script:
-    - cd Scape/Editor
-    - dotnet build -c Release
-  dependencies:
-    - build-engine-release-gcc
-
-build-editor-debug-gcc:
-  stage: build-editor
-  <<: *linux_env_image
-  before_script:
-    - git submodule update --init --recursive
-  script:
-    - cd Scape/Editor
-    - dotnet build -c Debug
-  dependencies:
-    - build-engine-debug-gcc
+    - build-release-clang
