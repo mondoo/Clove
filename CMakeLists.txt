@@ -2,11 +2,15 @@ cmake_minimum_required(VERSION 3.18.0)
 
 enable_testing()
 
-project(Garlic LANGUAGES CXX CSharp)
+if(MSVC)
+	project(Garlic LANGUAGES CXX)
+	set(CMAKE_CSharp_FLAGS "/langversion:8.0")
+else()
+	project(Garlic LANGUAGES CXX CSharp)
+endif()
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CSharp_FLAGS "/langversion:8.0")
 
 #Required for linking shared object (*.so) files on Linux
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
