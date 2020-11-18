@@ -5,25 +5,25 @@
 #include <AL/al.h>
 
 namespace clv {
-    class ALBuffer : public AudioBuffer{
+    class ALBuffer : public AudioBuffer {
         //VARIABLES
     private:
-        ALuint buffer = 0;
+        ALuint buffer{ 0 };
+        Descriptor descriptor;
 
         //FUNCTIONS
     public:
-        ALBuffer();
-        ALBuffer(const DataInfo& info);
+        ALBuffer(Descriptor descriptor);
 
-        ALBuffer(const ALBuffer& other) = delete;
-        ALBuffer(ALBuffer&& other) noexcept;
+        ALBuffer(ALBuffer const &other) = delete;
+        ALBuffer(ALBuffer &&other) noexcept;
 
-        ALBuffer& operator=(const ALBuffer& other) = delete;
-        ALBuffer& operator=(ALBuffer&& other) noexcept;
+        ALBuffer &operator=(ALBuffer const &other) = delete;
+        ALBuffer &operator=(ALBuffer &&other) noexcept;
 
         ~ALBuffer();
 
-        void map(const DataInfo& info) override;
+        void write(void const *data, size_t const size) override;
 
         ALuint getBufferId() const;
     };
