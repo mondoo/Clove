@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.18.0)
 enable_testing()
 
 if(MSVC)
-	project(Garlic LANGUAGES CXX)
+	project(Garlic LANGUAGES CXX CSharp)
 	set(CMAKE_CSharp_FLAGS "/langversion:8.0")
 else()
-	project(Garlic LANGUAGES CXX CSharp)
+	project(Garlic LANGUAGES CXX)
 endif()
 
 set(CMAKE_CXX_STANDARD 20)
