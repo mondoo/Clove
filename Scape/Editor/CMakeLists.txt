@@ -31,9 +31,7 @@ csharp_set_xaml_cs_properties(
 )
 
 set_property(SOURCE App.xaml PROPERTY VS_XAML_TYPE "ApplicationDefinition")
-
 set_property(TARGET Scape.Editor PROPERTY VS_DOTNET_FRAMEWORK_VERSION "netcore3.1")
-set_property(TARGET Scape.Editor PROPERTY WIN32_EXECUTABLE TRUE)
 
 set_property(
     TARGET Scape.Editor PROPERTY VS_DOTNET_REFERENCES

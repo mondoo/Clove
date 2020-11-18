@@ -2,7 +2,7 @@ set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Scape/Membrane)
 
 add_library(
-    Scape.Membrane
+    Scape.Membrane SHARED
         ${INCLUDE}/Application.hpp
         ${SOURCE}/Application.cpp
 )
@@ -18,7 +18,7 @@ target_link_libraries(
     Scape.Membrane
 
     PUBLIC
-        Stem
+        #Stem
 )
 
 set_target_properties(Scape.Membrane PROPERTIES COMMON_LANGUAGE_RUNTIME "")

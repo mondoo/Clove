@@ -1,8 +1,11 @@
 #pragma once
 
-#include <Stem/Application.hpp>
+//#include <Stem/Application.hpp>
 
-namespace garlic::scape::membrane{
-    public ref class Application{
+namespace Garlic {
+public ref class Application {
+    public:
+        void hello() {
+        }
     };
 }
