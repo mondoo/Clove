@@ -48,7 +48,7 @@ extern "C" const size_t font_pLength;
 namespace garlic::inline stem {
     ForwardRenderer3D::ForwardRenderer3D(std::unique_ptr<RenderTarget> renderTarget)
         : renderTarget(std::move(renderTarget)) {
-        renderTargetPropertyChangedHandle = renderTarget->onPropertiesChanged.bind(&ForwardRenderer3D::recreateSwapchain, this);
+        renderTargetPropertyChangedHandle = this->renderTarget->onPropertiesChanged.bind(&ForwardRenderer3D::recreateSwapchain, this);
 
         graphicsDevice  = Application::get().getGraphicsDevice();
         graphicsFactory = graphicsDevice->getGraphicsFactory();
@@ -84,7 +84,7 @@ namespace garlic::inline stem {
         for(auto &inFlightFence : inFlightFences) {
             inFlightFence = graphicsFactory->createFence({ true });
         }
-        imagesInFlight.resize(renderTarget->getImageViews().size());
+        imagesInFlight.resize(this->renderTarget->getImageViews().size());
 
         textureSampler = graphicsFactory->createSampler(Sampler::Descriptor{
             .minFilter        = Sampler::Filter::Linear,

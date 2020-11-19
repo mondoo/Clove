@@ -17,7 +17,7 @@ namespace garlic::inline stem {
         //VARIABLES
     public:
         //Gets called when the properties of this RenderTarget change. Usually requiring rendering primitives to be recreated.
-        MultiCastDelegate<void()> onPropertiesChanged;
+        MultiCastDelegate<void()> onPropertiesChanged{};
 
         //FUNCTIONS
     public:
