@@ -1,8 +1,5 @@
 include(CSharpUtilities)
 
-#Create a new project to set the language of the editor. This is to remain compatible with macos / linux
-project(Garlic-Editor LANGUAGES CSharp)
-
 add_executable(
     Scape.Editor
 	    App.xaml
