@@ -1,7 +1,7 @@
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 namespace clv::gfx::vk {
-    static void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
+    static void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks *pAllocator) {
         auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
         if(func != nullptr) {
             func(instance, debugMessenger, pAllocator);
@@ -19,7 +19,7 @@ namespace clv::gfx::vk {
         counter = new uint32_t(1);
     }
 
-    DevicePointer::DevicePointer(const DevicePointer& other) {
+    DevicePointer::DevicePointer(DevicePointer const &other) {
         release();
 
         instance       = other.instance;
@@ -32,7 +32,7 @@ namespace clv::gfx::vk {
         ++(*counter);
     }
 
-    DevicePointer::DevicePointer(DevicePointer&& other) noexcept {
+    DevicePointer::DevicePointer(DevicePointer &&other) noexcept {
         release();
 
         instance       = std::move(other.instance);
@@ -45,7 +45,7 @@ namespace clv::gfx::vk {
         other.counter = nullptr;
     }
 
-    DevicePointer& DevicePointer::operator=(const DevicePointer& other) {
+    DevicePointer &DevicePointer::operator=(DevicePointer const &other) {
         release();
 
         instance       = other.instance;
@@ -60,7 +60,7 @@ namespace clv::gfx::vk {
         return *this;
     }
 
-    DevicePointer& DevicePointer::operator=(DevicePointer&& other) noexcept {
+    DevicePointer &DevicePointer::operator=(DevicePointer &&other) noexcept {
         release();
 
         instance       = std::move(other.instance);
@@ -86,8 +86,9 @@ namespace clv::gfx::vk {
 #endif
 
             vkDestroyDevice(logicalDevice, nullptr);
-            vkDestroySurfaceKHR(instance, surface, nullptr);
-
+            if(surface != VK_NULL_HANDLE) {
+                vkDestroySurfaceKHR(instance, surface, nullptr);
+            }
             vkDestroyInstance(instance, nullptr);
 
             delete counter;

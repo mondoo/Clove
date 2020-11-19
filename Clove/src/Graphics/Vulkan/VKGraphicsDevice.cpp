@@ -84,12 +84,13 @@ namespace clv::gfx::vk {
                 indices.graphicsFamily = i;
             }
 
-            //Make sure we have a queue family that'll let us present to a window, might not be the same family that supports graphics
-            //We could enforce this by only choosing devices that have presentation support in it's graphics family
-            VkBool32 presentSupport = VK_FALSE;
-            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
-            if(presentSupport == VK_TRUE) {
-                indices.presentFamily = i;
+            //If we have a surface, check if we have presentation support. Otherwise we're running headless
+            if(surface != VK_NULL_HANDLE) {
+                VkBool32 presentSupport{ VK_FALSE };
+                vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+                if(presentSupport == VK_TRUE) {
+                    indices.presentFamily = i;
+                }
             }
 
             //Find a transfer queue family that specifically doesn't support graphics
@@ -97,7 +98,8 @@ namespace clv::gfx::vk {
                 indices.transferFamily = i;
             }
 
-            if(indices.isComplete()) {
+            bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
+            if(indices.isComplete(requirePresentFamily)) {
                 break;
             }
 
@@ -169,14 +171,20 @@ namespace clv::gfx::vk {
         QueueFamilyIndices indices        = findQueueFamilies(device, surface);
         bool const extentionsAreSupported = checkDeviceExtensionsSupport(device, extensions);
 
-        bool swapChainIsAdequate{ false };
+        std::optional<bool> swapChainIsAdequate{};
         if(extentionsAreSupported) {
-            SwapchainSupportDetails const swapChainSupport{ querySwapChainSupport(device, surface) };
-            //We'll consider the swap chain adequate if we have one supported image format and presentation mode
-            swapChainIsAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+            //If we don't have a surface then we're headless
+            if(surface != VK_NULL_HANDLE) {
+                SwapchainSupportDetails const swapChainSupport{ querySwapChainSupport(device, surface) };
+                //We'll consider the swap chain adequate if we have one supported image format and presentation mode
+                swapChainIsAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+            }
+        } else {
+            swapChainIsAdequate = false;
         }
 
-        return indices.isComplete() && extentionsAreSupported && swapChainIsAdequate && deviceFeatures.samplerAnisotropy;
+        bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
+        return indices.isComplete(requirePresentFamily) && extentionsAreSupported && swapChainIsAdequate.value_or(true) && deviceFeatures.samplerAnisotropy;
     }
 
     VKGraphicsDevice::VKGraphicsDevice(std::any nativeWindow) {
@@ -207,7 +215,7 @@ namespace clv::gfx::vk {
         }
 #endif
 
-        //CREATE INSTANCE
+        //Create instance
         VkInstance instance{ VK_NULL_HANDLE };
         VkDebugUtilsMessengerEXT debugMessenger{ VK_NULL_HANDLE };
         {
@@ -253,7 +261,6 @@ namespace clv::gfx::vk {
             }
 
 #if GARLIC_DEBUG
-            //TODO: Move this debug messenger setup else where
             if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
                 GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create vk debug message callback");
                 return;
@@ -261,9 +268,9 @@ namespace clv::gfx::vk {
 #endif
         }
 
-        //CREATE SURFACE
-        VkSurfaceKHR surface;
-        {
+        //Create surface
+        VkSurfaceKHR surface{ VK_NULL_HANDLE };
+        if(nativeWindow.has_value()) {
 #if GARLIC_PLATFORM_WINDOWS
             VkWin32SurfaceCreateInfoKHR createInfo{
                 .sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
@@ -276,6 +283,7 @@ namespace clv::gfx::vk {
                 return;
             }
 #elif GARLIC_PLATFORM_MACOS
+            GARLIC_ASSERT(false, "Vulkan implementation not provided on MacOS");
 #elif GARLIC_PLATFORM_LINUX
             auto const linuxNativeWindow = std::any_cast<plt::LinuxWindow::NativeWindow>(nativeWindow);
 
@@ -292,7 +300,7 @@ namespace clv::gfx::vk {
 #endif
         }
 
-        //PICK PHYSICAL DEVICE
+        //Pick physical device
         VkPhysicalDevice physicalDevice;
         {
             uint32_t deviceCount = 0;
@@ -325,20 +333,20 @@ namespace clv::gfx::vk {
             }
         }
 
-        QueueFamilyIndices queueFamilyIndices;
+        QueueFamilyIndices queueFamilyIndices{ findQueueFamilies(physicalDevice, surface) };
 
-        //CREATE LOGICAL DEVICE
+        //Create logical device
         VkDevice logicalDevice;
         {
-            queueFamilyIndices = findQueueFamilies(physicalDevice, surface);
-
             std::set<uint32_t> uniqueQueueFamilies{
                 *queueFamilyIndices.graphicsFamily,
-                *queueFamilyIndices.presentFamily,
                 *queueFamilyIndices.transferFamily
             };
+            if(queueFamilyIndices.presentFamily.has_value()) {
+                uniqueQueueFamilies.emplace(*queueFamilyIndices.presentFamily);
+            }
 
-            float constexpr queuePriority = 1.0f;
+            float constexpr queuePriority{ 1.0f };
             std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
             for(uint32_t queueFamily : uniqueQueueFamilies) {
                 VkDeviceQueueCreateInfo queueCreateinfo{
@@ -365,7 +373,7 @@ namespace clv::gfx::vk {
                     .enabledLayerCount = static_cast<uint32_t>(validationLayers.size()),
                 .ppEnabledLayerNames   = validationLayers.data(),
 #else
-                .enabledLayerCount   = 0,
+                .enabledLayerCount = 0,
 #endif
                 .enabledExtensionCount   = static_cast<uint32_t>(std::size(deviceExtensions)),
                 .ppEnabledExtensionNames = std::data(deviceExtensions),
@@ -379,7 +387,11 @@ namespace clv::gfx::vk {
         }
 
         devicePtr = DevicePointer(instance, surface, physicalDevice, logicalDevice, debugMessenger);
-        factory   = std::make_shared<VKGraphicsFactory>(devicePtr, std::move(queueFamilyIndices), querySwapChainSupport(physicalDevice, surface));
+        if(surface != VK_NULL_HANDLE) {
+            factory = std::make_shared<VKGraphicsFactory>(devicePtr, std::move(queueFamilyIndices), querySwapChainSupport(physicalDevice, surface));
+        } else {
+            factory = std::make_shared<VKGraphicsFactory>(devicePtr, std::move(queueFamilyIndices), std::nullopt);
+        }
     }
 
     VKGraphicsDevice::VKGraphicsDevice(VKGraphicsDevice &&other) noexcept = default;

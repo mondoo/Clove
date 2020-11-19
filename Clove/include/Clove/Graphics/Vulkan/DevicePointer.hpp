@@ -16,18 +16,18 @@ namespace clv::gfx::vk {
         VkSurfaceKHR surface{ VK_NULL_HANDLE };
         VkDebugUtilsMessengerEXT debugMessenger{ VK_NULL_HANDLE };
 
-        uint32_t* counter{ nullptr };
+        uint32_t *counter{ nullptr };
 
         //FUNCTIONS
     public:
         DevicePointer();
         DevicePointer(VkInstance instance, VkSurfaceKHR surface, VkPhysicalDevice physicalDevice, VkDevice logicalDevice, VkDebugUtilsMessengerEXT debugMessenger);
 
-        DevicePointer(const DevicePointer& other);
-        DevicePointer(DevicePointer&& other) noexcept;
+        DevicePointer(DevicePointer const &other);
+        DevicePointer(DevicePointer &&other) noexcept;
 
-        DevicePointer& operator=(const DevicePointer& other);
-        DevicePointer& operator=(DevicePointer&& other) noexcept;
+        DevicePointer &operator=(DevicePointer const &other);
+        DevicePointer &operator=(DevicePointer &&other) noexcept;
 
         ~DevicePointer();
 

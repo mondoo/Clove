@@ -8,6 +8,7 @@
 #include <Clove/Graphics/Semaphore.hpp>
 #include <Clove/Graphics/Swapchain.hpp>
 #include <Clove/Platform/Window.hpp>
+#include <Root/Log/Log.hpp>
 
 namespace garlic::inline stem {
     SwapchainRenderTarget::SwapchainRenderTarget() {
@@ -17,7 +18,12 @@ namespace garlic::inline stem {
         windowSize         = window->getSize();
         windowResizeHandle = window->onWindowResize.bind(&SwapchainRenderTarget::onWindowSizeChanged, this);
 
-        presentQueue = graphicsFactory->createPresentQueue();
+        auto expectedPresentQueue{ graphicsFactory->createPresentQueue() };
+        if(expectedPresentQueue.hasValue()) {
+            presentQueue = std::move(expectedPresentQueue.getValue());
+        } else {
+            GARLIC_ASSERT(false, expectedPresentQueue.getError());
+        }
 
         createSwapchain();
     }
@@ -81,7 +87,12 @@ namespace garlic::inline stem {
 
         graphicsDevice->waitForIdleDevice();
 
-        swapchain = graphicsFactory->createSwapChain({ windowSize });
+        auto expectedSwapchain{ graphicsFactory->createSwapChain({ windowSize }) };
+        if(expectedSwapchain.hasValue()) {
+            swapchain = std::move(expectedSwapchain.getValue());
+        } else {
+            GARLIC_ASSERT(false, expectedSwapchain.getError());
+        }
 
         onPropertiesChanged.broadcast();
     }

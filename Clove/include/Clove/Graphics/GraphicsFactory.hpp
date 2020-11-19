@@ -16,6 +16,7 @@
 #include "Clove/Graphics/Swapchain.hpp"
 #include "Clove/Graphics/TransferQueue.hpp"
 
+#include <Root/Expected.hpp>
 #include <span>
 
 namespace clv::gfx {
@@ -28,12 +29,12 @@ namespace clv::gfx {
         virtual ~GraphicsFactory() = default;
 
         virtual std::unique_ptr<GraphicsQueue> createGraphicsQueue(CommandQueueDescriptor descriptor) = 0;
-        virtual std::unique_ptr<PresentQueue> createPresentQueue()                                    = 0;
+        virtual garlic::Expected<std::unique_ptr<PresentQueue>, std::string> createPresentQueue()             = 0;
         virtual std::unique_ptr<TransferQueue> createTransferQueue(CommandQueueDescriptor descriptor) = 0;
 
-        virtual std::unique_ptr<Swapchain> createSwapChain(Swapchain::Descriptor descriptor) = 0;
+        virtual garlic::Expected<std::unique_ptr<Swapchain>, std::string> createSwapChain(Swapchain::Descriptor descriptor) = 0;
 
-        virtual std::unique_ptr<Shader> createShader(std::string_view filePath)       = 0;
+        virtual std::unique_ptr<Shader> createShader(std::string_view filePath)           = 0;
         virtual std::unique_ptr<Shader> createShader(std::span<const std::byte> byteCode) = 0;
 
         virtual std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor)                            = 0;

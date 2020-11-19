@@ -1,6 +1,5 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsFactory.hpp"
 
-#include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
@@ -8,6 +7,7 @@
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKGraphicsQueue.hpp"
+#include "Clove/Graphics/Vulkan/VKImage.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VKPresentQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKRenderPass.hpp"
@@ -18,16 +18,16 @@
 #include "Clove/Graphics/Vulkan/VKTransferQueue.hpp"
 
 namespace clv::gfx::vk {
-    VKGraphicsFactory::VKGraphicsFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices, SwapchainSupportDetails swapchainSupportDetails)
+    VKGraphicsFactory::VKGraphicsFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices, std::optional<SwapchainSupportDetails> swapchainSupportDetails)
         : devicePtr(std::move(devicePtr))
         , queueFamilyIndices(std::move(queueFamilyIndices))
         , swapchainSupportDetails(std::move(swapchainSupportDetails)) {
         memoryAllocator = std::make_shared<MemoryAllocator>(this->devicePtr);
     }
 
-    VKGraphicsFactory::VKGraphicsFactory(VKGraphicsFactory&& other) noexcept = default;
+    VKGraphicsFactory::VKGraphicsFactory(VKGraphicsFactory &&other) noexcept = default;
 
-    VKGraphicsFactory& VKGraphicsFactory::operator=(VKGraphicsFactory&& other) noexcept = default;
+    VKGraphicsFactory &VKGraphicsFactory::operator=(VKGraphicsFactory &&other) noexcept = default;
 
     VKGraphicsFactory::~VKGraphicsFactory() = default;
 
@@ -35,23 +35,31 @@ namespace clv::gfx::vk {
         return std::make_unique<VKGraphicsQueue>(devicePtr, queueFamilyIndices, std::move(descriptor));
     }
 
-    std::unique_ptr<PresentQueue> VKGraphicsFactory::createPresentQueue() {
-        return std::make_unique<VKPresentQueue>(devicePtr, *queueFamilyIndices.presentFamily);
+    garlic::Expected<std::unique_ptr<PresentQueue>, std::string> VKGraphicsFactory::createPresentQueue() {
+        if(queueFamilyIndices.presentFamily.has_value()){
+            return std::make_unique<VKPresentQueue>(devicePtr, *queueFamilyIndices.presentFamily);
+        }else{
+            return garlic::Unexpected<std::string>("Presentation queue not available. GraphicsDevice is likely headless");
+        }
     }
 
     std::unique_ptr<TransferQueue> VKGraphicsFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
         return std::make_unique<VKTransferQueue>(devicePtr, queueFamilyIndices, std::move(descriptor));
     }
 
-    std::unique_ptr<Swapchain> VKGraphicsFactory::createSwapChain(Swapchain::Descriptor descriptor) {
-        return std::make_unique<VKSwapchain>(devicePtr, swapchainSupportDetails, queueFamilyIndices, std::move(descriptor));
+    garlic::Expected<std::unique_ptr<Swapchain>, std::string> VKGraphicsFactory::createSwapChain(Swapchain::Descriptor descriptor) {
+        if(swapchainSupportDetails.has_value()){
+            return std::make_unique<VKSwapchain>(devicePtr, *swapchainSupportDetails, queueFamilyIndices, std::move(descriptor));
+        }else{
+            return garlic::Unexpected<std::string>("Swapchain is not available. GraphicsDevice is likely headless");
+        }
     }
 
     std::unique_ptr<Shader> VKGraphicsFactory::createShader(std::string_view filePath) {
         return std::make_unique<VKShader>(devicePtr, filePath);
     }
 
-    std::unique_ptr<Shader> VKGraphicsFactory::createShader(std::span<const std::byte> byteCode) {
+    std::unique_ptr<Shader> VKGraphicsFactory::createShader(std::span<std::byte const> byteCode) {
         return std::make_unique<VKShader>(devicePtr, std::move(byteCode));
     }
 

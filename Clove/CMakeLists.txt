@@ -43,6 +43,7 @@ target_link_libraries(
 		Root.Event
 		Root.Log
 		Root.Memory
+		Root.Expected
 
     #Cross platform
 	PRIVATE 
