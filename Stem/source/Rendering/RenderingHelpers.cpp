@@ -37,11 +37,19 @@ namespace garlic::inline stem {
                 .stage     = Shader::Stage::Vertex,
             };
 
+            DescriptorSetBindingInfo colourBinding{
+                .binding   = 3,
+                .type      = DescriptorType::UniformBuffer,
+                .arraySize = 1,
+                .stage     = Shader::Stage::Pixel,
+            };
+
             setLayouts[DescriptorSetSlots::Mesh] = factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
                 .bindings = {
                     std::move(textureBinding),
                     std::move(modelBinding),
                     std::move(skeletonBinding),
+                    std::move(colourBinding),
                 },
             });
         }

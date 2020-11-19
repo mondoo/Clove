@@ -5,7 +5,7 @@
 #include "Clove/Audio/AudioSource.hpp"
 
 namespace clv {
-	/**
+    /**
 	 * @brief Responsible for creating all audio objects.
 	 */
     class AudioFactory {
@@ -13,9 +13,8 @@ namespace clv {
     public:
         virtual ~AudioFactory() = default;
 
-        virtual std::unique_ptr<AudioBuffer> createAudioBuffer() = 0;
-        virtual std::unique_ptr<AudioBuffer> createAudioBuffer(const AudioBuffer::DataInfo& info) = 0;
-        virtual std::unique_ptr<AudioSource> createAudioSource() = 0;
-        virtual std::unique_ptr<AudioListener> createAudioListener() = 0;
+        virtual std::unique_ptr<AudioBuffer> createAudioBuffer(AudioBuffer::Descriptor descriptor) = 0;
+        virtual std::unique_ptr<AudioSource> createAudioSource()                                   = 0;
+        virtual std::unique_ptr<AudioListener> createAudioListener()                               = 0;
     };
 }

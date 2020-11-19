@@ -38,6 +38,10 @@ layout(std140, set = SET_LIGHTING, binding = 1) uniform NumLights{
 	int numPointLights;
 };
 
+layout(std140, set = SET_MESH, binding = 3) uniform Colour{
+	vec4 colour;
+};
+
 layout(location = 0) in vec3 fragColour;
 layout(location = 1) in vec2 fragTexCoord;
 layout(location = 2) in vec3 fragPos;
@@ -52,7 +56,7 @@ float adjustBias(float minBias, float maxBias, vec3 normal, vec3 lightDir){
 }
 
 void main(){
-	vec3 colour = vec3(texture(texSampler, fragTexCoord));
+	vec3 texelColour = vec3(texture(texSampler, fragTexCoord));
 
 	vec3 viewDir = normalize(viewPos - fragPos);
 
@@ -133,7 +137,7 @@ void main(){
 	}
 
 	shadow /= (numDirLights + numPointLights);
-	const vec3 lighting = (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)) * colour);
+	const vec3 lighting = (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular))) * texelColour;
 
-	outColour = vec4(lighting, 1.0);
+	outColour = vec4(lighting, 1.0) * colour;
 }

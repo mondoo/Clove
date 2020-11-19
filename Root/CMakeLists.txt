@@ -1,5 +1,6 @@
 add_subdirectory(Definitions)
 add_subdirectory(Delegate)
 add_subdirectory(Event)
+add_subdirectory(Expected)
 add_subdirectory(Log)
 add_subdirectory(Memory)

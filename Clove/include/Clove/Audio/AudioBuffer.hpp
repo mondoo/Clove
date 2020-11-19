@@ -15,21 +15,21 @@ namespace clv {
 			Stereo8,
 			Stereo16
 		};
-		
-		struct DataInfo {
-			Format format;
-			size_t sampleRate = 0;
-			const void* data  = nullptr;
-			size_t dataSize   = 0;
-		};
-		
+
+		struct Descriptor{
+            Format format;
+            size_t sampleRate{ 0 };
+        };
+
         //FUNCTIONS
     public:
         virtual ~AudioBuffer() = default;
 
-		/**
-		 * @brief Write data into the buffer.
-		 */
-        virtual void map(const DataInfo& info) = 0;
+        /**
+         * @brief Write data into the buffer.
+         * @param data A pointer to the data that will be written to this buffer.
+         * @param size Size of the region to write to.
+         */
+        virtual void write(void const *data, size_t const size) = 0;
     };
 }

@@ -291,6 +291,7 @@ namespace garlic::inline stem {
 
         struct MeshUBOLayout {
             alignas(256) ModelData model;
+            alignas(256) clv::mth::vec4f colour;
             alignas(256) std::array<clv::mth::mat4f, MAX_JOINTS> matrixPallet;
         };
 
@@ -316,6 +317,7 @@ namespace garlic::inline stem {
                     meshInfo.transform,
                     clv::mth::inverse(clv::mth::transpose(meshInfo.transform)),
                 },
+                .colour = meshInfo.material->colour,
             };
 
             writeObjectBuffer(currentImageData.objectBuffers[index], layout);
@@ -323,6 +325,7 @@ namespace garlic::inline stem {
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
             meshDescriptorSet->map(*meshInfo.material->diffuseView, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
             meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), 1);
+            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, colour), sizeof(clv::mth::vec4f), 3);
 
             ++index;
         }
@@ -332,6 +335,7 @@ namespace garlic::inline stem {
                     meshInfo.transform,
                     clv::mth::inverse(clv::mth::transpose(meshInfo.transform)),
                 },
+                .colour       = meshInfo.material->colour,
                 .matrixPallet = meshInfo.matrixPalet,
             };
 
@@ -341,6 +345,7 @@ namespace garlic::inline stem {
             meshDescriptorSet->map(*meshInfo.material->diffuseView, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
             meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), 1);
             meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, matrixPallet), sizeof(clv::mth::mat4f) * MAX_JOINTS, 2);
+            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, colour), sizeof(clv::mth::vec4f), 3);
 
             ++index;
         }
