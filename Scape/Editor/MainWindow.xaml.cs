@@ -13,7 +13,6 @@ namespace Editor
             InitializeComponent();
 
             Garlic.Application app = new Garlic.Application();
-            app.hello();
         }
     }
 }

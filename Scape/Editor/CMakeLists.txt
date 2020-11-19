@@ -48,3 +48,6 @@ set_property(
 	"System.Xml.Linq"
     "WindowsBase"
 )
+
+#Set the output directory of OpenAL
+set_target_properties(OpenAL PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

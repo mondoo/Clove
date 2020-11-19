@@ -1,11 +1,15 @@
 #pragma once
 
-//#include <Stem/Application.hpp>
+#include <Scape/Wrapper/Application.hpp>
 
 namespace Garlic {
 public ref class Application {
+    private:
+        wrapper::Application *app;
+
     public:
-        void hello() {
-        }
+        Application();
+        ~Application();
+        !Application();
     };
 }

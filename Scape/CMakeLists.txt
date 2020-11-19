@@ -2,4 +2,5 @@
 project(Garlic-Editor LANGUAGES C CXX CSharp)
 
 add_subdirectory(Editor)
+add_subdirectory(Wrapper)
 add_subdirectory(Membrane)

@@ -18,7 +18,7 @@ target_link_libraries(
     Scape.Membrane
 
     PUBLIC
-        #Stem
+        Scape.Wrapper
 )
 
 set_target_properties(Scape.Membrane PROPERTIES COMMON_LANGUAGE_RUNTIME "")

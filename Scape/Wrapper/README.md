@@ -1,0 +1,1 @@
+Wrapper is a temporary project to allow a C++/CLR library (Membrane) to link to a C++20 project. CLR only supports C++17.
