@@ -11,5 +11,8 @@ public ref class Application {
         Application();
         ~Application();
         !Application();
+
+        void shutdown();
+        bool tick();
     };
 }

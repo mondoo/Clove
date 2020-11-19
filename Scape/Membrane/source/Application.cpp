@@ -6,9 +6,18 @@ namespace Garlic{
     }
 
     Application::~Application() {
+        this->!Application();
     }
 
     Application::!Application(){
         delete app;
+    }
+
+    void Application::shutdown(){
+        app->shutdown();
+    }
+
+    bool Application::tick() {
+        return app->tick();
     }
 }

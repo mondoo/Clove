@@ -20,3 +20,9 @@ target_link_libraries(
     PRIVATE
         Stem
 )
+
+target_compile_definitions(
+    Scape.Wrapper
+    PRIVATE
+        ASSET_DIR="${CMAKE_CURRENT_SOURCE_DIR}/assets"
+)

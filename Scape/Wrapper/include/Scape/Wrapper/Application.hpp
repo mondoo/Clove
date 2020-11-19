@@ -12,5 +12,8 @@ namespace wrapper {
         public:
             Application();
             ~Application();
+
+            void shutdown();
+            bool tick();
     };
 }
