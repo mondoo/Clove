@@ -1,4 +1,5 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsDevice.hpp"
+
 #include "Clove/Graphics/Vulkan/VKGraphicsFactory.hpp"
 #if GARLIC_PLATFORM_WINDOWS
     #include "Clove/Platform/Windows/CloveWindows.hpp"
@@ -71,14 +72,13 @@ namespace clv::gfx::vk {
     static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
         QueueFamilyIndices indices;
 
-        uint32_t queueFamilyCount = 0;
+        uint32_t queueFamilyCount{ 0 };
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 
         std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
-        int i = 0;
-        for(auto const &queueFamily : queueFamilies) {
+        for(int i{ 0 }; auto const &queueFamily : queueFamilies) {
             //Make sure we have the queue family that'll let us render graphics
             if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 indices.graphicsFamily = i;
@@ -169,10 +169,10 @@ namespace clv::gfx::vk {
         QueueFamilyIndices indices        = findQueueFamilies(device, surface);
         bool const extentionsAreSupported = checkDeviceExtensionsSupport(device, extensions);
 
-        bool swapChainIsAdequate = false;
+        bool swapChainIsAdequate{ false };
         if(extentionsAreSupported) {
-            SwapchainSupportDetails swapChainSupport = querySwapChainSupport(device, surface);
-            //We'll consider the swap chain adequate if we have once supported image format and presentation mode
+            SwapchainSupportDetails const swapChainSupport{ querySwapChainSupport(device, surface) };
+            //We'll consider the swap chain adequate if we have one supported image format and presentation mode
             swapChainIsAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
         }
 

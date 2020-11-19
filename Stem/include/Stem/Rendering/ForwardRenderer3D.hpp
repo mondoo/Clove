@@ -22,6 +22,7 @@ namespace garlic::inline stem {
     class Sprite;
     class Mesh;
     class Material;
+    class RenderTarget;
 }
 
 namespace garlic::inline stem {
@@ -107,12 +108,12 @@ namespace garlic::inline stem {
 
         //VARIABLES
     private:
-        garlic::DelegateHandle windowResizeHandle;
-        clv::mth::vec2ui windowSize;
-        bool needNewSwapchain{ false };
-
         static size_t constexpr maxFramesInFlight{ 2 };
         size_t currentFrame{ 0 };//The current frame we're operating
+
+        DelegateHandle renderTargetPropertyChangedHandle;
+        std::unique_ptr<RenderTarget> renderTarget;
+        std::vector<std::shared_ptr<clv::gfx::Framebuffer>> frameBuffers;
 
         //'Square' mesh used to render UI
         std::unique_ptr<Mesh> uiMesh;
@@ -121,10 +122,6 @@ namespace garlic::inline stem {
         std::shared_ptr<clv::gfx::GraphicsFactory> graphicsFactory;
 
         std::shared_ptr<clv::gfx::GraphicsQueue> graphicsQueue;
-        std::shared_ptr<clv::gfx::PresentQueue> presentQueue;
-
-        std::shared_ptr<clv::gfx::Swapchain> swapchain;
-        std::vector<std::shared_ptr<clv::gfx::Framebuffer>> swapChainFrameBuffers;
 
         std::unordered_map<DescriptorSetSlots, std::shared_ptr<clv::gfx::DescriptorSetLayout>> descriptorSetLayouts;
 
@@ -164,7 +161,8 @@ namespace garlic::inline stem {
 
         //FUNCTIONS
     public:
-        ForwardRenderer3D();
+        ForwardRenderer3D() = delete;
+        ForwardRenderer3D(std::unique_ptr<RenderTarget> renderTarget);
 
         ForwardRenderer3D(ForwardRenderer3D const &other) = delete;
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
@@ -191,10 +189,7 @@ namespace garlic::inline stem {
 
         void end();
 
-        std::shared_ptr<clv::gfx::GraphicsFactory> const &getGraphicsFactory() const;
-
     private:
-        void onWindowResize(clv::mth::vec2ui const &size);
         void recreateSwapchain();
 
         void createRenderpass();
@@ -207,7 +202,7 @@ namespace garlic::inline stem {
         void createCubeShadowMapPipeline();
         void createUiPipeline();
 
-        void createSwapchainFrameBuffers();
+        void createRenderTargetFrameBuffers();
 
         std::shared_ptr<clv::gfx::DescriptorPool> createDescriptorPool(std::unordered_map<clv::gfx::DescriptorType, uint32_t> const &bindingCount, uint32_t const setCount);
     };

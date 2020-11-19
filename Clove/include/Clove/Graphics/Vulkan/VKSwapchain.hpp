@@ -32,14 +32,14 @@ namespace clv::gfx::vk {
         VKSwapchain(VKSwapchain &&other) noexcept;
 
         VKSwapchain &operator=(VKSwapchain const &other) = delete;
-        VKSwapchain &operator                            =(VKSwapchain &&other) noexcept;
+        VKSwapchain &operator=(VKSwapchain &&other) noexcept;
 
         ~VKSwapchain();
 
+        std::pair<uint32_t, Result> aquireNextImage(Semaphore const *availableSemaphore) override;
+        
         GraphicsImage::Format getImageFormat() const override;
-        clv::mth::vec2ui getExtent() const override;
-
-        Result aquireNextImage(Semaphore const *semaphore, uint32_t &outImageIndex) override;
+        clv::mth::vec2ui getSize() const override;
 
         std::vector<std::shared_ptr<GraphicsImageView>> getImageViews() const override;
 

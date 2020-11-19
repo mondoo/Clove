@@ -60,7 +60,7 @@ namespace clv::gfx::vk {
             imageCount = supportDetails.capabilities.maxImageCount;
         }
 
-        const bool differentQueueIndices = familyIndices.graphicsFamily != familyIndices.presentFamily;
+        const bool differentQueueIndices{ familyIndices.graphicsFamily != familyIndices.presentFamily };
 
         VkSwapchainCreateInfoKHR createInfo{
             .sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
@@ -107,19 +107,20 @@ namespace clv::gfx::vk {
         vkDestroySwapchainKHR(device.get(), swapchain, nullptr);
     }
 
+    std::pair<uint32_t, Result> VKSwapchain::aquireNextImage(Semaphore const *availableSemaphore) {
+        uint32_t outImageIndex{ 0 };
+        VkSemaphore vkSemaphore = availableSemaphore ? polyCast<const VKSemaphore>(availableSemaphore)->getSemaphore() : VK_NULL_HANDLE;
+        VkResult const result   = vkAcquireNextImageKHR(device.get(), swapchain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex);
+
+        return { outImageIndex, convertResult(result) };
+    }
+
     GraphicsImage::Format VKSwapchain::getImageFormat() const {
         return VKImage::convertFormat(swapChainImageFormat);
     }
 
-    clv::mth::vec2ui VKSwapchain::getExtent() const {
+    clv::mth::vec2ui VKSwapchain::getSize() const {
         return { swapChainExtent.width, swapChainExtent.height };
-    }
-
-    Result VKSwapchain::aquireNextImage(Semaphore const *semaphore, uint32_t &outImageIndex) {
-        VkSemaphore vkSemaphore = semaphore ? polyCast<const VKSemaphore>(semaphore)->getSemaphore() : VK_NULL_HANDLE;
-        VkResult const result   = vkAcquireNextImageKHR(device.get(), swapchain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex);
-
-        return convertResult(result);
     }
 
     std::vector<std::shared_ptr<GraphicsImageView>> VKSwapchain::getImageViews() const {

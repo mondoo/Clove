@@ -136,6 +136,9 @@ add_library(
 		${INCLUDE}/Rendering/RenderingConstants.hpp
 		${INCLUDE}/Rendering/RenderingHelpers.hpp
 		${SOURCE}/Rendering/RenderingHelpers.cpp
+		${INCLUDE}/Rendering/RenderTarget.hpp
+		${INCLUDE}/Rendering/SwapchainRenderTarget.hpp
+		${SOURCE}/Rendering/SwapchainRenderTarget.cpp
 		${INCLUDE}/Rendering/ShaderBufferTypes.hpp
 		${INCLUDE}/Rendering/Vertex.hpp
 		${INCLUDE}/Rendering/Renderables/Font.hpp
@@ -218,6 +221,7 @@ target_link_libraries(
 	Stem 
 	PUBLIC 
 		Bulb
+		Root.Expected
 
 	PRIVATE
 		#Order of these are important

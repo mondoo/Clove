@@ -3,6 +3,7 @@
 #include "Stem/InputEvent.hpp"
 #include "Stem/Layer.hpp"
 #include "Stem/Rendering/ForwardRenderer3D.hpp"
+#include "Stem/Rendering/SwapchainRenderTarget.hpp"
 
 #include <Bulb/ECS/World.hpp>
 #include <Clove/Audio/AudioFactory.hpp>
@@ -33,7 +34,7 @@ namespace garlic::inline stem {
         audioFactory = clv::createAudioFactory(descriptor.audioApi);
 
         window->setVSync(true);
-        renderer = std::make_unique<ForwardRenderer3D>();
+        renderer = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
         world    = std::make_unique<blb::ecs::World>();
 
         layerStack.pushLayer(createApplicationLayer(*this));

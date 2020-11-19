@@ -23,10 +23,16 @@ namespace clv::gfx {
     public:
         virtual ~Swapchain() = default;
 
-        virtual GraphicsImage::Format getImageFormat() const = 0;
-        virtual clv::mth::vec2ui getExtent() const           = 0;
+        /**
+         * @brief Aquire the next available image that can be rendered to.
+         * @param availableSemaphore A Sempahore that the Swapchain will signal when the image is ready, can be nullptr.
+         * @return Returns a pair that contains an index to the GraphicsImageView in the array retrieved from getImageViews
+         * and a Result for if the operation was successful.
+         */
+        virtual std::pair<uint32_t, Result> aquireNextImage(Semaphore const *availableSemaphore) = 0;
 
-        virtual Result aquireNextImage(Semaphore const *semaphore, uint32_t &outImageIndex) = 0;
+        virtual GraphicsImage::Format getImageFormat() const = 0;
+        virtual clv::mth::vec2ui getSize() const             = 0;
 
         virtual std::vector<std::shared_ptr<GraphicsImageView>> getImageViews() const = 0;
     };

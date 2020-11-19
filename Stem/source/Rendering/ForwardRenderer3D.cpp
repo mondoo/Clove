@@ -3,6 +3,7 @@
 #include "Stem/Application.hpp"
 #include "Stem/Rendering/Camera.hpp"
 #include "Stem/Rendering/Material.hpp"
+#include "Stem/Rendering/RenderTarget.hpp"
 #include "Stem/Rendering/Renderables/Mesh.hpp"
 #include "Stem/Rendering/RenderingHelpers.hpp"
 #include "Stem/Rendering/Vertex.hpp"
@@ -45,19 +46,15 @@ extern "C" const char font_p[];
 extern "C" const size_t font_pLength;
 
 namespace garlic::inline stem {
-    ForwardRenderer3D::ForwardRenderer3D() {
-        auto window{ Application::get().getWindow() };
-        windowResizeHandle = window->onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
-        windowSize         = window->getSize();
+    ForwardRenderer3D::ForwardRenderer3D(std::unique_ptr<RenderTarget> renderTarget)
+        : renderTarget(std::move(renderTarget)) {
+        renderTargetPropertyChangedHandle = renderTarget->onPropertiesChanged.bind(&ForwardRenderer3D::recreateSwapchain, this);
 
         graphicsDevice  = Application::get().getGraphicsDevice();
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
         //Object initialisation
         graphicsQueue = graphicsFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
-        presentQueue  = graphicsFactory->createPresentQueue();
-
-        swapchain = graphicsFactory->createSwapChain({ windowSize });
 
         descriptorSetLayouts = createDescriptorSetLayouts(*graphicsFactory);
 
@@ -87,7 +84,7 @@ namespace garlic::inline stem {
         for(auto &inFlightFence : inFlightFences) {
             inFlightFence = graphicsFactory->createFence({ true });
         }
-        imagesInFlight.resize(swapchain->getImageViews().size());
+        imagesInFlight.resize(renderTarget->getImageViews().size());
 
         textureSampler = graphicsFactory->createSampler(Sampler::Descriptor{
             .minFilter        = Sampler::Filter::Linear,
@@ -212,23 +209,17 @@ namespace garlic::inline stem {
     }
 
     void ForwardRenderer3D::end() {
-        if(needNewSwapchain) {
-            recreateSwapchain();
-            return;//return early just in case the window was minimised
-        }
-
         //Wait on the current frame / current images to be available
         inFlightFences[currentFrame]->wait();
 
-        //The index of the image we're working on in the swap chain. Might not be equal to the currentFrame index
-        uint32_t imageIndex{ 0 };
-
         //Aquire the next available image
-        Result result = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get(), imageIndex);
-        if(result == Result::Error_SwapchainOutOfDate) {
-            recreateSwapchain();
-            return;//return early just in case the window was minimised
+        Expected<uint32_t, std::string> const result = renderTarget->aquireNextImage(imageAvailableSemaphores[currentFrame].get());
+        if(!result.hasValue()) {
+            GARLIC_LOG(garlicLogContext, LogLevel::Warning, result.getError());
+            return;
         }
+
+        size_t const imageIndex{ result.getValue() };
 
         //Check if we're already using this image, if so wait
         if(imagesInFlight[imageIndex] != nullptr) {
@@ -243,7 +234,7 @@ namespace garlic::inline stem {
         //Rendering constants / globals
         RenderArea renderArea{
             .origin = { 0, 0 },
-            .size   = { swapchain->getExtent().x, swapchain->getExtent().y },
+            .size   = renderTarget->getSize(),
         };
         RenderArea shadowArea{
             .origin = { 0, 0 },
@@ -455,7 +446,7 @@ namespace garlic::inline stem {
             };
 
             currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
-            currentImageData.commandBuffer->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
+            currentImageData.commandBuffer->beginRenderPass(*renderPass, *frameBuffers[imageIndex], renderArea, outputClearValues);
 
             //Static
             currentImageData.commandBuffer->bindPipelineObject(*staticMeshPipelineObject);
@@ -539,50 +530,20 @@ namespace garlic::inline stem {
         graphicsQueue->submit(submitInfo, inFlightFences[currentFrame].get());
 
         //Present current image
-        result = presentQueue->present(PresentInfo{
-            .waitSemaphores = { renderFinishedSemaphores[currentFrame] },
-            .swapChain      = swapchain,
-            .imageIndex     = imageIndex,
-        });
-
-        if(needNewSwapchain || result == Result::Error_SwapchainOutOfDate || result == Result::Success_SwapchainSuboptimal) {
-            recreateSwapchain();
-            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Swapchain recreated at end of loop");
-        }
+        renderTarget->present(imageIndex, { renderFinishedSemaphores[currentFrame] });
 
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
 
-    std::shared_ptr<GraphicsFactory> const &
-    ForwardRenderer3D::getGraphicsFactory() const {
-        return graphicsFactory;
-    }
-
-    void ForwardRenderer3D::onWindowResize(clv::mth::vec2ui const &size) {
-        windowSize       = size;
-        needNewSwapchain = true;
-    }
-
     void ForwardRenderer3D::recreateSwapchain() {
-        //Set this to true in case we need to wait for the window to unminimise
-        needNewSwapchain = true;
-
-        if(windowSize.x == 0 || windowSize.y == 0) {
-            return;
-        }
-
         graphicsDevice->waitForIdleDevice();
 
         //Explicitly free resources to avoid problems when recreating the swap chain itself
-        swapchain.reset();
         staticMeshPipelineObject.reset();
-        swapChainFrameBuffers.clear();
+        frameBuffers.clear();
         for(auto &imageData : inFlightImageData) {
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
         }
-
-        //Recreate our swap chain
-        swapchain = graphicsFactory->createSwapChain({ windowSize });
 
         createRenderpass();
 
@@ -590,9 +551,9 @@ namespace garlic::inline stem {
 
         createPipeline();
         createUiPipeline();
-        createSwapchainFrameBuffers();
+        createRenderTargetFrameBuffers();
 
-        size_t const imageCount = std::size(swapChainFrameBuffers);
+        size_t const imageCount = std::size(frameBuffers);
 
         inFlightImageData.resize(imageCount);
 
@@ -687,14 +648,12 @@ namespace garlic::inline stem {
                 }
             }
         }
-
-        needNewSwapchain = false;
     }
 
     void ForwardRenderer3D::createRenderpass() {
         //Define what attachments we have
         AttachmentDescriptor colourAttachment{
-            .format         = swapchain->getImageFormat(),
+            .format         = renderTarget->getImageFormat(),
             .loadOperation  = LoadOperation::Clear,
             .storeOperation = StoreOperation::Store,
             .initialLayout  = GraphicsImage::Layout::Undefined,
@@ -777,7 +736,7 @@ namespace garlic::inline stem {
         GraphicsImage::Descriptor depthDescriptor{
             .type        = GraphicsImage::Type::_2D,
             .usageFlags  = GraphicsImage::UsageMode::DepthStencilAttachment,
-            .dimensions  = { swapchain->getExtent().x, swapchain->getExtent().y },
+            .dimensions  = renderTarget->getSize(),
             .format      = GraphicsImage::Format::D32_SFLOAT,
             .sharingMode = SharingMode::Exclusive,
         };
@@ -820,7 +779,7 @@ namespace garlic::inline stem {
         AreaDescriptor viewScissorArea{
             .state    = ElementState::Static,
             .position = { 0.0f, 0.0f },
-            .size     = { swapchain->getExtent().x, swapchain->getExtent().y }
+            .size     = renderTarget->getSize(),
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
@@ -878,7 +837,7 @@ namespace garlic::inline stem {
         AreaDescriptor viewScissorArea{
             .state    = ElementState::Static,
             .position = { 0.0f, 0.0f },
-            .size     = { swapchain->getExtent().x, swapchain->getExtent().y }
+            .size     = renderTarget->getSize(),
         };
 
         DepthStateDescriptor depthState{
@@ -1033,13 +992,13 @@ namespace garlic::inline stem {
         animatedMeshCubeShadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
-    void ForwardRenderer3D::createSwapchainFrameBuffers() {
-        for(auto &swapChainImageView : swapchain->getImageViews()) {
-            swapChainFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
+    void ForwardRenderer3D::createRenderTargetFrameBuffers() {
+        for(auto &imageView : renderTarget->getImageViews()) {
+            frameBuffers.emplace_back(graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
                 .renderPass  = renderPass,
-                .attachments = { swapChainImageView, depthImageView },
-                .width       = swapchain->getExtent().x,
-                .height      = swapchain->getExtent().y,
+                .attachments = { imageView, depthImageView },
+                .width       = renderTarget->getSize().x,
+                .height      = renderTarget->getSize().y,
             }));
         }
     }
