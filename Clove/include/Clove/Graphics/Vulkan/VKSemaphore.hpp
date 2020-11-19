@@ -26,6 +26,9 @@ namespace clv::gfx::vk {
 
         ~VKSemaphore();
 
+        void wait() override;
+        void signal() override;
+
         VkSemaphore getSemaphore() const;
     };
 }

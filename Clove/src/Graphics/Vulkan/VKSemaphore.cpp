@@ -17,6 +17,26 @@ namespace clv::gfx::vk {
 
     VKSemaphore &VKSemaphore::operator=(VKSemaphore &&other) noexcept = default;
 
+    void VKSemaphore::wait() {
+        VkSemaphoreWaitInfo waitInfo{
+            .sType          = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO,
+            .semaphoreCount = 1,
+            .pSemaphores    = &semaphore,
+        };
+
+        vkWaitSemaphores(device.get(), &waitInfo, UINT64_MAX);
+    }
+
+    void VKSemaphore::signal() {
+        VkSemaphoreSignalInfo signalInfo{
+            .sType     = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO,
+            .semaphore = semaphore,
+            .value     = 1,
+        };
+
+        vkSignalSemaphore(device.get(), &signalInfo);
+    }
+
     VKSemaphore::~VKSemaphore() {
         vkDestroySemaphore(device.get(), semaphore, nullptr);
     }
