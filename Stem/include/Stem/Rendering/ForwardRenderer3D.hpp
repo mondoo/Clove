@@ -190,7 +190,7 @@ namespace garlic::inline stem {
         void end();
 
     private:
-        void recreateSwapchain();
+        void onRenderTargetPropertiesChanged();
 
         void createRenderpass();
         void createShadowMapRenderpass();

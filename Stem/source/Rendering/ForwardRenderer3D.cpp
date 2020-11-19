@@ -48,7 +48,7 @@ extern "C" const size_t font_pLength;
 namespace garlic::inline stem {
     ForwardRenderer3D::ForwardRenderer3D(std::unique_ptr<RenderTarget> renderTarget)
         : renderTarget(std::move(renderTarget)) {
-        renderTargetPropertyChangedHandle = this->renderTarget->onPropertiesChanged.bind(&ForwardRenderer3D::recreateSwapchain, this);
+        renderTargetPropertyChangedHandle = this->renderTarget->onPropertiesChanged.bind(&ForwardRenderer3D::onRenderTargetPropertiesChanged, this);
 
         graphicsDevice  = Application::get().getGraphicsDevice();
         graphicsFactory = graphicsDevice->getGraphicsFactory();
@@ -66,7 +66,7 @@ namespace garlic::inline stem {
 
         createDepthBuffer();
 
-        recreateSwapchain();//Also creates the pipeline for the final colour
+        onRenderTargetPropertiesChanged();//Also creates the pipeline for the final colour
 
         //Create semaphores for frame synchronisation
         for(auto &shadowFinishedSemaphore : shadowFinishedSemaphores) {
@@ -535,7 +535,7 @@ namespace garlic::inline stem {
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
 
-    void ForwardRenderer3D::recreateSwapchain() {
+    void ForwardRenderer3D::onRenderTargetPropertiesChanged() {
         graphicsDevice->waitForIdleDevice();
 
         //Explicitly free resources to avoid problems when recreating the swap chain itself

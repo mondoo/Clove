@@ -72,6 +72,10 @@ namespace garlic::inline stem {
     }
 
     void SwapchainRenderTarget::createSwapchain() {
+        if(windowSize.x == 0 || windowSize.y == 0) {
+            return;
+        }
+
         auto const graphicsDevice  = Application::get().getGraphicsDevice();
         auto const graphicsFactory = graphicsDevice->getGraphicsFactory();
 
