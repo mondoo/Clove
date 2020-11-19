@@ -38,7 +38,7 @@ namespace garlic::inline stem {
 
         ~SwapchainRenderTarget();
 
-        Expected<uint32_t, std::string> aquireNextImage(clv::gfx::Semaphore const *availableSemaphore) override;
+        Expected<uint32_t, std::string> aquireNextImage(std::shared_ptr<clv::gfx::Semaphore> availableSemaphore) override;
 
         void present(uint32_t imageIndex, std::vector<std::shared_ptr<clv::gfx::Semaphore>> waitSemaphores) override;
 

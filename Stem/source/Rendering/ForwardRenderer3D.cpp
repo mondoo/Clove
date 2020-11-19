@@ -213,7 +213,7 @@ namespace garlic::inline stem {
         inFlightFences[currentFrame]->wait();
 
         //Aquire the next available image
-        Expected<uint32_t, std::string> const result = renderTarget->aquireNextImage(imageAvailableSemaphores[currentFrame].get());
+        Expected<uint32_t, std::string> const result = renderTarget->aquireNextImage(imageAvailableSemaphores[currentFrame]);
         if(!result.hasValue()) {
             GARLIC_LOG(garlicLogContext, LogLevel::Warning, result.getError());
             return;

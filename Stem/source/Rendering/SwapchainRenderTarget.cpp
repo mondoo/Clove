@@ -34,12 +34,12 @@ namespace garlic::inline stem {
 
     SwapchainRenderTarget::~SwapchainRenderTarget() = default;
 
-    Expected<uint32_t, std::string> SwapchainRenderTarget::aquireNextImage(clv::gfx::Semaphore const *availableSemaphore) {
+    Expected<uint32_t, std::string> SwapchainRenderTarget::aquireNextImage(std::shared_ptr<clv::gfx::Semaphore> availableSemaphore) {
         if(windowSize.x == 0 || windowSize.y == 0) {
             return Unexpected<std::string>{ "Cannot acquire image while Window is minimised." };
         }
 
-        auto [imageIndex, result] = swapchain->aquireNextImage(availableSemaphore);
+        auto [imageIndex, result] = swapchain->aquireNextImage(availableSemaphore.get());
         if(result == clv::gfx::Result::Error_SwapchainOutOfDate) {
             createSwapchain();
             return Unexpected<std::string>{ "Swapchain was recreated." };

@@ -130,6 +130,8 @@ add_library(
 		${SOURCE}/Rendering/Camera.cpp
 		${INCLUDE}/Rendering/ForwardRenderer3D.hpp
 		${SOURCE}/Rendering/ForwardRenderer3D.cpp
+		${INCLUDE}/Rendering/GraphicsImageRenderTarget.hpp
+		${SOURCE}/Rendering/GraphicsImageRenderTarget.cpp
 		${INCLUDE}/Rendering/Material.hpp
 		${INCLUDE}/Rendering/Material.inl
 		${SOURCE}/Rendering/Material.cpp

@@ -36,7 +36,7 @@ namespace garlic::inline stem {
          * @param availableSemaphore A Semaphore that will be signaled when the image is ready. Can be nullptr
          * @return Returns the image index.
          */
-        virtual Expected<uint32_t, std::string> aquireNextImage(clv::gfx::Semaphore const *availableSemaphore) = 0;
+        virtual Expected<uint32_t, std::string> aquireNextImage(std::shared_ptr<clv::gfx::Semaphore> availableSemaphore) = 0;
 
         /**
          * @brief Tells the RenderTarget that all operations on the image are completed and it is ready to be presented.
