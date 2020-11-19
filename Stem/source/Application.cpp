@@ -24,16 +24,19 @@ namespace garlic::inline stem {
         auto const descriptor{ getApplicationDescriptor() };
 
         //Platform
-        platformInstance = clv::plt::createPlatformInstance();
-        window           = platformInstance->createWindow(descriptor.windowDescriptor);
+        if(descriptor.windowDescriptor.has_value()) {
+            platformInstance = clv::plt::createPlatformInstance();
+
+            window = platformInstance->createWindow(*descriptor.windowDescriptor);
+            window->setVSync(true);
+        }
 
         //Graphics
-        graphicsDevice = clv::gfx::createGraphicsDevice(descriptor.graphicsApi, window->getNativeWindow());
+        graphicsDevice = clv::gfx::createGraphicsDevice(descriptor.graphicsApi, window != nullptr ? window->getNativeWindow() : std::any{});
 
         //Audio
         audioFactory = clv::createAudioFactory(descriptor.audioApi);
 
-        window->setVSync(true);
         renderer = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
         world    = std::make_unique<blb::ecs::World>();
 
@@ -53,10 +56,10 @@ namespace garlic::inline stem {
     }
 
     void Application::tick() {
-        if(getState() == State::Stopped){
+        if(getState() == State::Stopped) {
             return;
         }
-        
+
         auto const currFrameTime{ std::chrono::system_clock::now() };
         std::chrono::duration<float> const deltaSeonds{ currFrameTime - prevFrameTime };
         prevFrameTime = currFrameTime;
@@ -94,7 +97,7 @@ namespace garlic::inline stem {
         renderer->end();
     }
 
-    void Application::shutdown(){
+    void Application::shutdown() {
         window->close();
     }
 

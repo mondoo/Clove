@@ -51,7 +51,7 @@ public:
 
 garlic::Application::Descriptor getApplicationDescriptor() {
     return garlic::Application::Descriptor{
-        .windowDescriptor = {
+        .windowDescriptor = clv::plt::WindowDescriptor{
             .title  = "Temp",
             .width  = 800,
             .height = 600,

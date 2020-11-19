@@ -5,6 +5,7 @@
 #include <Clove/Audio/Audio.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Platform/PlatformTypes.hpp>
+#include <optional>
 
 namespace clv::plt {
     class Platform;
@@ -33,7 +34,7 @@ namespace garlic::inline stem {
         //TYPES
     public:
         struct Descriptor {
-            clv::plt::WindowDescriptor windowDescriptor;
+            std::optional<clv::plt::WindowDescriptor> windowDescriptor; /** Not providing a window descriptor will create a headless application. */
             clv::gfx::API graphicsApi{ clv::gfx::API::Vulkan };
             clv::AudioAPI audioApi{ clv::AudioAPI::OpenAl };
         };
