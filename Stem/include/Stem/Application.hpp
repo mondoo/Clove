@@ -82,6 +82,11 @@ namespace garlic::inline stem {
          */
         void tick();
 
+        /**
+         * @brief Transition to State::Stoped if the application is in State::Running.
+         */
+        void shutdown();
+
         clv::gfx::GraphicsDevice *getGraphicsDevice() const;
         clv::AudioFactory *getAudioFactory() const;
 

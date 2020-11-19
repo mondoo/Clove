@@ -52,6 +52,10 @@ namespace garlic::inline stem {
     }
 
     void Application::tick() {
+        if(getState() == State::Stopped){
+            return;
+        }
+        
         auto const currFrameTime{ std::chrono::system_clock::now() };
         std::chrono::duration<float> const deltaSeonds{ currFrameTime - prevFrameTime };
         prevFrameTime = currFrameTime;
@@ -87,6 +91,10 @@ namespace garlic::inline stem {
 
         //Render
         renderer->end();
+    }
+
+    void Application::shutdown(){
+        window->close();
     }
 
     clv::gfx::GraphicsDevice *Application::getGraphicsDevice() const {
