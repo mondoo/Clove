@@ -47,44 +47,46 @@ namespace garlic::inline stem {
         return *instance;
     }
 
-    void Application::run() {
-        while(window->isOpen()) {
-            auto currFrameTime                       = std::chrono::system_clock::now();
-            std::chrono::duration<float> deltaSeonds = currFrameTime - prevFrameTime;
-            prevFrameTime                            = currFrameTime;
+    Application::State Application::getState() const {
+        return window->isOpen() ? State::Running : State::Stopped;
+    }
 
-            window->processInput();
-            renderer->begin();
+    void Application::tick() {
+        auto const currFrameTime{ std::chrono::system_clock::now() };
+        std::chrono::duration<float> const deltaSeonds{ currFrameTime - prevFrameTime };
+        prevFrameTime = currFrameTime;
 
-            //Respond to input
-            while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
-                InputEvent const event{ *keyEvent, InputEventType::Keyboard };
-                for(auto const &layer : layerStack) {
-                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                        break;
-                    }
-                }
-            }
-            while(auto mouseEvent = window->getMouse().getEvent()) {
-                InputEvent const event{ *mouseEvent, InputEventType::Mouse };
-                for(auto const &layer : layerStack) {
-                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                        break;
-                    }
-                }
-            }
+        window->processInput();
+        renderer->begin();
 
-            //Do client logic
+        //Respond to input
+        while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
+            InputEvent const event{ *keyEvent, InputEventType::Keyboard };
             for(auto const &layer : layerStack) {
-                layer->onUpdate(deltaSeonds.count());
+                if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                    break;
+                }
             }
-
-            //Update ECS
-            world->update(deltaSeonds.count());
-
-            //Render
-            renderer->end();
         }
+        while(auto mouseEvent = window->getMouse().getEvent()) {
+            InputEvent const event{ *mouseEvent, InputEventType::Mouse };
+            for(auto const &layer : layerStack) {
+                if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                    break;
+                }
+            }
+        }
+
+        //Do client logic
+        for(auto const &layer : layerStack) {
+            layer->onUpdate(deltaSeonds.count());
+        }
+
+        //Update ECS
+        world->update(deltaSeonds.count());
+
+        //Render
+        renderer->end();
     }
 
     clv::gfx::GraphicsDevice *Application::getGraphicsDevice() const {

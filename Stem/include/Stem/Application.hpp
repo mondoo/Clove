@@ -38,6 +38,11 @@ namespace garlic::inline stem {
             clv::AudioAPI audioApi{ clv::AudioAPI::OpenAl };
         };
 
+        enum class State {
+            Running,
+            Stopped
+        };
+
         //VARIABLES
     private:
         static Application *instance;
@@ -68,10 +73,14 @@ namespace garlic::inline stem {
 
         static Application &get();
 
+        State getState() const;
+
         /**
-         * @brief Runs the main application loop until told to exit.
+         * @brief Performs a single iteration of the main application loop.
+         * @details getState should be called before calling this to check
+         * if the application should still be running.
          */
-        void run();
+        void tick();
 
         clv::gfx::GraphicsDevice *getGraphicsDevice() const;
         clv::AudioFactory *getAudioFactory() const;

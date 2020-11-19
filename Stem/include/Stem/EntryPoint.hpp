@@ -8,7 +8,9 @@ int main() {
 	CLV_PROFILE_END_SESSION();
 
 	CLV_PROFILE_BEGIN_SESSION("Runtime", "GarlicProfile-Runtime.json");
-	app.run();
+	while(app.getState() != garlic::Application::State::Stopped){
+        app.tick();
+    }
 	CLV_PROFILE_END_SESSION();
 
 	return 0;
