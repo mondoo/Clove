@@ -13,7 +13,8 @@ namespace wrapper {
             Application();
             ~Application();
 
+            bool isRunning();
+            void tick();
             void shutdown();
-            bool tick();
     };
 }

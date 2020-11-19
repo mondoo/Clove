@@ -13,11 +13,15 @@ namespace Garlic{
         delete app;
     }
 
-    void Application::shutdown(){
-        app->shutdown();
+    bool Application::isRunning(){
+        return app->isRunning();
     }
 
-    bool Application::tick() {
-        return app->tick();
+    void Application::tick() {
+        app->tick();
+    }
+
+    void Application::shutdown(){
+        app->shutdown();
     }
 }

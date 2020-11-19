@@ -12,7 +12,8 @@ public ref class Application {
         ~Application();
         !Application();
 
+        bool isRunning();
+        void tick();
         void shutdown();
-        bool tick();
     };
 }

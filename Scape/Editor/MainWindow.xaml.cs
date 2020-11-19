@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
@@ -23,6 +23,11 @@ namespace Editor
 
             app = new Garlic.Application();
 
+            appThread = new Thread(new ThreadStart(RunApplication));
+            appThread.Name = "Garlic application thread";
+            appThread.Start();
+
+            //Make sure we notify the thread when we want to close
             Closing += (object sender, CancelEventArgs e) =>
             {
                 lock (appThreadLock)
@@ -31,22 +36,25 @@ namespace Editor
                 }
                 appThread.Join();
             };
-
-            appThread = new Thread(new ThreadStart(TickApplication));
-            appThread.Name = "Garlic application thread";
-            appThread.Start();
         }
 
-        private void TickApplication()
+        private void RunApplication()
         {
-            while (app.tick())
+            while (app.isRunning())
             {
+                bool shouldExit = false;
                 lock (appThreadLock)
                 {
-                    if (exit)
-                    {
-                        app.shutdown();
-                    }
+                    shouldExit = exit;
+                }
+
+                if (shouldExit)
+                {
+                    app.shutdown();
+                }
+                else
+                {
+                    app.tick();
                 }
             }
         }

@@ -75,16 +75,15 @@ namespace wrapper {
 
     Application::~Application() = default;
 
-    void Application::shutdown() {
-        appWrapper->app.shutdown();
+    bool Application::isRunning(){
+        return appWrapper->app.getState() == garlic::Application::State::Running;
     }
 
-    bool Application::tick() {
-        if(appWrapper->app.getState() == garlic::Application::State::Running) {
-            appWrapper->app.tick();
-            return true;
-        } else {
-            return false;
-        }
+    void Application::tick() {
+        appWrapper->app.tick();
+    }
+
+    void Application::shutdown() {
+        appWrapper->app.shutdown();
     }
 }
