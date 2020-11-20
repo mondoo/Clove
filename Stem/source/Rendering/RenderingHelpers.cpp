@@ -218,7 +218,7 @@ namespace garlic::inline stem {
         auto graphicsQueueFinishedFence = factory.createFence({ false });
 
         transferQueue->submit(TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer } });
-        graphicsQueue->submit(GraphicsSubmitInfo{ .commandBuffers = { graphicsCommandBuffer } }, graphicsQueueFinishedFence.get());
+        graphicsQueue->submit({ GraphicsSubmitInfo{ .commandBuffers = { graphicsCommandBuffer } } }, graphicsQueueFinishedFence.get());
 
         transferQueue->freeCommandBuffer(*transferCommandBuffer);
         graphicsQueueFinishedFence->wait();

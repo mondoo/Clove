@@ -69,7 +69,7 @@ namespace clv::gfx {
         virtual void bindVertexBuffer(GraphicsBuffer &vertexBuffer, size_t const offset) = 0;
         /**
          * @brief Bind an index buffer to be used in the next draw call.
-         * @param offset Offset into the buffer where the indices being.
+         * @param offset Offset into the buffer where the indices begin.
          */
         virtual void bindIndexBuffer(GraphicsBuffer &indexBuffer, size_t const offset, IndexType indexType) = 0;
         virtual void bindDescriptorSet(DescriptorSet &descriptorSet, uint32_t const setNum)                 = 0;
