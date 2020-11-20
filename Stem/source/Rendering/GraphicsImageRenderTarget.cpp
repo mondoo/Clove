@@ -20,14 +20,14 @@ namespace garlic::inline stem {
 
     Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(std::shared_ptr<clv::gfx::Semaphore> availableSemaphore) {
         //Signal the semaphore straight away as we only have one image.
-        availableSemaphore->signal();
+        //availableSemaphore->signal();
         return 0;
     }
 
     void GraphicsImageRenderTarget::present(uint32_t imageIndex, std::vector<std::shared_ptr<clv::gfx::Semaphore>> waitSemaphores) {
         //Wait on the semaphores to be signaled as we've only got one image and are not doing any fancy double / tripple buffering.
         for(auto &semaphore : waitSemaphores) {
-            semaphore->wait();
+            //semaphore->wait();
         }
     }
 

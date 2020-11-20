@@ -8,14 +8,5 @@ namespace clv::gfx {
         //FUNCTIONS
     public:
         virtual ~Semaphore() = default;
-
-        /**
-         * @brief Makes the current thread wait until the Semaphore has been signaled.
-         */
-        virtual void wait() = 0;
-        /**
-         * @brief Signals the Semaphore.
-         */
-        virtual void signal() = 0;
     };
 }
