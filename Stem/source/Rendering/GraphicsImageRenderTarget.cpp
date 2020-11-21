@@ -18,17 +18,17 @@ namespace garlic::inline stem {
 
     GraphicsImageRenderTarget::~GraphicsImageRenderTarget() = default;
 
-    Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(std::shared_ptr<clv::gfx::Semaphore> availableSemaphore) {
+    Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(size_t const frameId) {
         //Signal the semaphore straight away as we only have one image.
         //availableSemaphore->signal();
         return 0;
     }
 
-    void GraphicsImageRenderTarget::present(uint32_t imageIndex, std::vector<std::shared_ptr<clv::gfx::Semaphore>> waitSemaphores) {
+    void GraphicsImageRenderTarget::submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo primarySubmission, std::vector<clv::gfx::GraphicsSubmitInfo> secondarySubmissions) {
         //Wait on the semaphores to be signaled as we've only got one image and are not doing any fancy double / tripple buffering.
-        for(auto &semaphore : waitSemaphores) {
-            //semaphore->wait();
-        }
+        // for(auto &semaphore : waitSemaphores) {
+        //     //semaphore->wait();
+        // }
     }
 
     clv::gfx::GraphicsImage::Format GraphicsImageRenderTarget::getImageFormat() const {

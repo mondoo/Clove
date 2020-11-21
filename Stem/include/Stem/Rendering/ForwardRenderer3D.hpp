@@ -82,7 +82,7 @@ namespace garlic::inline stem {
             std::shared_ptr<clv::gfx::GraphicsCommandBuffer> shadowMapCommandBuffer;
             std::shared_ptr<clv::gfx::GraphicsCommandBuffer> cubeShadowMapCommandBuffer;
 
-            std::shared_ptr<clv::gfx::GraphicsBuffer> frameBuffer;               //Holds data used across all meshes (lighting, camera etc.)
+            std::shared_ptr<clv::gfx::GraphicsBuffer> frameDataBuffer;               //Holds data used across all meshes (lighting, camera etc.)
             std::vector<std::unique_ptr<clv::gfx::GraphicsBuffer>> objectBuffers;//Holds the data for each object
 
             //Descriptor pool for sets that change per frame
@@ -109,7 +109,7 @@ namespace garlic::inline stem {
         //VARIABLES
     private:
         static size_t constexpr maxFramesInFlight{ 2 };
-        size_t currentFrame{ 0 };//The current frame we're operating
+        size_t currentFrame{ 0 };//The current frame we're operating on
 
         DelegateHandle renderTargetPropertyChangedHandle;
         std::unique_ptr<RenderTarget> renderTarget;
@@ -154,10 +154,6 @@ namespace garlic::inline stem {
         //Synchronisation obects
         std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> shadowFinishedSemaphores;
         std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> cubeShadowFinishedSemaphores;
-        std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> renderFinishedSemaphores;
-        std::array<std::shared_ptr<clv::gfx::Semaphore>, maxFramesInFlight> imageAvailableSemaphores;
-        std::array<std::shared_ptr<clv::gfx::Fence>, maxFramesInFlight> inFlightFences;
-        std::vector<std::shared_ptr<clv::gfx::Fence>> imagesInFlight;
 
         //FUNCTIONS
     public:

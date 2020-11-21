@@ -32,9 +32,9 @@ namespace garlic::inline stem {
 
         ~GraphicsImageRenderTarget();
 
-        Expected<uint32_t, std::string> aquireNextImage(std::shared_ptr<clv::gfx::Semaphore> availableSemaphore) override;
+        Expected<uint32_t, std::string> aquireNextImage(size_t const frameId) override;
 
-        void present(uint32_t imageIndex, std::vector<std::shared_ptr<clv::gfx::Semaphore>> waitSemaphores) override;
+        void submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo primarySubmission, std::vector<clv::gfx::GraphicsSubmitInfo> secondarySubmissions) override;
 
         clv::gfx::GraphicsImage::Format getImageFormat() const override;
         clv::mth::vec2ui getSize() const override;

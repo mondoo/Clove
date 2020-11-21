@@ -75,16 +75,6 @@ namespace garlic::inline stem {
         for(auto &cubeShadowFinishedSemaphore : cubeShadowFinishedSemaphores) {
             cubeShadowFinishedSemaphore = graphicsFactory->createSemaphore();
         }
-        for(auto &renderFinishedSemaphore : renderFinishedSemaphores) {
-            renderFinishedSemaphore = graphicsFactory->createSemaphore();
-        }
-        for(auto &imageAvailableSemaphore : imageAvailableSemaphores) {
-            imageAvailableSemaphore = graphicsFactory->createSemaphore();
-        }
-        for(auto &inFlightFence : inFlightFences) {
-            inFlightFence = graphicsFactory->createFence({ true });
-        }
-        imagesInFlight.resize(this->renderTarget->getImageViews().size());
 
         textureSampler = graphicsFactory->createSampler(Sampler::Descriptor{
             .minFilter        = Sampler::Filter::Linear,
@@ -156,7 +146,7 @@ namespace garlic::inline stem {
         //Reset these manually as they would fail after the device has been destroyed (how to solve this?)
         textureSampler.reset();
         for(auto &imageData : inFlightImageData) {
-            imageData.frameBuffer.reset();
+            imageData.frameDataBuffer.reset();
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
         }
     }
@@ -209,25 +199,14 @@ namespace garlic::inline stem {
     }
 
     void ForwardRenderer3D::end() {
-        //Wait on the current frame / current images to be available
-        inFlightFences[currentFrame]->wait();
-
-        //Aquire the next available image
-        Expected<uint32_t, std::string> const result = renderTarget->aquireNextImage(imageAvailableSemaphores[currentFrame]);
+        //Aquire the next available image from the render target
+        Expected<uint32_t, std::string> const result = renderTarget->aquireNextImage(currentFrame);
         if(!result.hasValue()) {
             GARLIC_LOG(garlicLogContext, LogLevel::Warning, result.getError());
             return;
         }
 
         size_t const imageIndex{ result.getValue() };
-
-        //Check if we're already using this image, if so wait
-        if(imagesInFlight[imageIndex] != nullptr) {
-            imagesInFlight[imageIndex]->wait();
-        }
-        imagesInFlight[imageIndex] = inFlightFences[currentFrame];//Ptr copy here, could be slowing things down
-
-        inFlightFences[currentFrame]->reset();
 
         ImageData &currentImageData = inFlightImageData[imageIndex];
 
@@ -258,7 +237,7 @@ namespace garlic::inline stem {
         size_t const meshCount = staticMeshCount + animatedMeshCount;
 
         //We can just write the struct straight in as all the mappings are based off of it's layout
-        currentImageData.frameBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
+        currentImageData.frameDataBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
 
         //Map any non-UBO pieces of data (such as textures / shadow maps)
         currentImageData.lightingDescriptorSet->map(currentImageData.shadowMapViews, *shadowSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
@@ -509,26 +488,12 @@ namespace garlic::inline stem {
         };
         GraphicsSubmitInfo submitInfo{
             .waitSemaphores = {
-                {
-                    shadowFinishedSemaphores[currentFrame],
-                    PipelineObject::Stage::PixelShader,
-                },
-                {
-                    cubeShadowFinishedSemaphores[currentFrame],
-                    PipelineObject::Stage::PixelShader,
-                },
-                {
-                    imageAvailableSemaphores[currentFrame],
-                    PipelineObject::Stage::ColourAttachmentOutput,
-                },
+                { shadowFinishedSemaphores[currentFrame], PipelineObject::Stage::PixelShader },
+                { cubeShadowFinishedSemaphores[currentFrame], PipelineObject::Stage::PixelShader },
             },
-            .commandBuffers   = { currentImageData.commandBuffer },
-            .signalSemaphores = { renderFinishedSemaphores[currentFrame] },
+            .commandBuffers = { currentImageData.commandBuffer },
         };
-        graphicsQueue->submit({ std::move(shadowSubmitInfo), std::move(cubeShadowSubmitInfo), std::move(submitInfo) }, inFlightFences[currentFrame].get());
-
-        //Present current image
-        renderTarget->present(imageIndex, { renderFinishedSemaphores[currentFrame] });
+        renderTarget->submit(imageIndex, currentFrame, std::move(submitInfo), { std::move(shadowSubmitInfo), std::move(cubeShadowSubmitInfo) } /* , inFlightFences[currentFrame].get() */);
 
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
@@ -572,7 +537,7 @@ namespace garlic::inline stem {
             imageData.cubeShadowMapCommandBuffer = graphicsQueue->allocateCommandBuffer();
 
             //Create uniform buffers
-            imageData.frameBuffer = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
+            imageData.frameDataBuffer = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
                 .size        = sizeof(FrameData),
                 .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
                 .sharingMode = SharingMode::Exclusive,
@@ -586,12 +551,12 @@ namespace garlic::inline stem {
             imageData.lightingDescriptorSet = imageData.frameDescriptorPool->allocateDescriptorSets(descriptorSetLayouts[DescriptorSetSlots::Lighting]);
 
             //As we only have one UBO per frame for every DescriptorSet we can map the buffer into them straight away
-            imageData.viewDescriptorSet->map(*imageData.frameBuffer, offsetof(FrameData::BufferData, viewData), sizeof(currentFrameData.bufferData.viewData), 0);
-            imageData.viewDescriptorSet->map(*imageData.frameBuffer, offsetof(FrameData::BufferData, viewPosition), sizeof(currentFrameData.bufferData.viewPosition), 1);
+            imageData.viewDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, viewData), sizeof(currentFrameData.bufferData.viewData), 0);
+            imageData.viewDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, viewPosition), sizeof(currentFrameData.bufferData.viewPosition), 1);
 
-            imageData.lightingDescriptorSet->map(*imageData.frameBuffer, offsetof(FrameData::BufferData, lights), sizeof(currentFrameData.bufferData.lights), 0);
-            imageData.lightingDescriptorSet->map(*imageData.frameBuffer, offsetof(FrameData::BufferData, numLights), sizeof(currentFrameData.bufferData.numLights), 1);
-            imageData.lightingDescriptorSet->map(*imageData.frameBuffer, offsetof(FrameData::BufferData, directionalShadowTransforms), sizeof(currentFrameData.bufferData.directionalShadowTransforms), 2);
+            imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, lights), sizeof(currentFrameData.bufferData.lights), 0);
+            imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, numLights), sizeof(currentFrameData.bufferData.numLights), 1);
+            imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, directionalShadowTransforms), sizeof(currentFrameData.bufferData.directionalShadowTransforms), 2);
 
             //Create the shadow maps for each frame
             for(size_t i = 0; i < MAX_LIGHTS; ++i) {
