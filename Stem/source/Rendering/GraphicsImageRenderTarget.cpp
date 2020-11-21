@@ -33,9 +33,8 @@ namespace garlic::inline stem {
         return 0;
     }
 
-    void GraphicsImageRenderTarget::submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo primarySubmission, std::vector<clv::gfx::GraphicsSubmitInfo> secondarySubmissions) {
-        secondarySubmissions.emplace_back(std::move(primarySubmission));
-        graphicsQueue->submit(secondarySubmissions, frameInFlight.get());
+    void GraphicsImageRenderTarget::submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo submission) {
+        graphicsQueue->submit({ std::move(submission) }, frameInFlight.get());
     }
 
     clv::gfx::GraphicsImage::Format GraphicsImageRenderTarget::getImageFormat() const {
@@ -58,6 +57,7 @@ namespace garlic::inline stem {
     std::shared_ptr<clv::gfx::GraphicsImage> GraphicsImageRenderTarget::getNextReadyImage() {
         //Stall until we are ready to return the image.
         frameInFlight->wait();
+
         return renderTargetImage;
     }
 

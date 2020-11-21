@@ -356,6 +356,13 @@ namespace garlic::inline stem {
         }
         currentImageData.shadowMapCommandBuffer->endRecording();
 
+        //Submit the command buffer for the directional shadow map
+        GraphicsSubmitInfo shadowSubmitInfo{
+            .commandBuffers   = { currentImageData.shadowMapCommandBuffer },
+            .signalSemaphores = { shadowFinishedSemaphores[currentFrame] },
+        };
+        graphicsQueue->submit({ std::move(shadowSubmitInfo) }, nullptr);
+
         //POINT LIGHT SHADOWS
         currentImageData.cubeShadowMapCommandBuffer->beginRecording(CommandBufferUsage::Default);
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
@@ -396,6 +403,13 @@ namespace garlic::inline stem {
             }
         }
         currentImageData.cubeShadowMapCommandBuffer->endRecording();
+
+        //Submit the command buffer for the point shadow map
+        GraphicsSubmitInfo cubeShadowSubmitInfo{
+            .commandBuffers   = { currentImageData.cubeShadowMapCommandBuffer },
+            .signalSemaphores = { cubeShadowFinishedSemaphores[currentFrame] },
+        };
+        graphicsQueue->submit({ std::move(cubeShadowSubmitInfo) }, nullptr);
 
         //Allocate a descriptor set for each ui element to be drawn
         size_t const widgetCount{ std::size(currentFrameData.widgets) };
@@ -477,15 +491,7 @@ namespace garlic::inline stem {
             currentImageData.commandBuffer->endRecording();
         }
 
-        //Submit the command buffers
-        GraphicsSubmitInfo shadowSubmitInfo{
-            .commandBuffers   = { currentImageData.shadowMapCommandBuffer },
-            .signalSemaphores = { shadowFinishedSemaphores[currentFrame] },
-        };
-        GraphicsSubmitInfo cubeShadowSubmitInfo{
-            .commandBuffers   = { currentImageData.cubeShadowMapCommandBuffer },
-            .signalSemaphores = { cubeShadowFinishedSemaphores[currentFrame] },
-        };
+        //Submit the colour output to the render target
         GraphicsSubmitInfo submitInfo{
             .waitSemaphores = {
                 { shadowFinishedSemaphores[currentFrame], PipelineObject::Stage::PixelShader },
@@ -493,7 +499,7 @@ namespace garlic::inline stem {
             },
             .commandBuffers = { currentImageData.commandBuffer },
         };
-        renderTarget->submit(imageIndex, currentFrame, std::move(submitInfo), { std::move(shadowSubmitInfo), std::move(cubeShadowSubmitInfo) } /* , inFlightFences[currentFrame].get() */);
+        renderTarget->submit(imageIndex, currentFrame, std::move(submitInfo));
 
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }

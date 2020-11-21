@@ -46,10 +46,9 @@ namespace garlic::inline stem {
          * @param imageIndex The image index of the getImageViews array this submission is for.
          * @param frameId Which frame is currently being rendered. This 
          * number will be from 0 - N-1 where N is the total number of frames in flight.
-         * @param primarySubmission The primary submission. i.e. The command buffer for the final colour
-         * @param secondarySubmissions Any graphics submissions the primarySubmission depends on. i.e. Shadow map generation.
+         * @param submission The graphics queue submission that uses the imageIndex image.
          */
-        virtual void submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo primarySubmission, std::vector<clv::gfx::GraphicsSubmitInfo> secondarySubmissions) = 0;
+        virtual void submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo submission) = 0;
 
         virtual clv::gfx::GraphicsImage::Format getImageFormat() const = 0;
         virtual clv::mth::vec2ui getSize() const                       = 0;

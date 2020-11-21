@@ -72,17 +72,16 @@ namespace garlic::inline stem {
         return imageIndex;
     }
 
-    void SwapchainRenderTarget::submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo primarySubmission, std::vector<clv::gfx::GraphicsSubmitInfo> secondarySubmissions) {
+    void SwapchainRenderTarget::submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo submission) {
         if(std::size(renderFinishedSemaphores) <= frameId) {
             renderFinishedSemaphores.emplace_back(graphicsFactory->createSemaphore());
         }
 
         //Inject the sempahores we use to synchronise with the swapchain and present queue
-        primarySubmission.waitSemaphores.push_back({ imageAvailableSemaphores[frameId], clv::gfx::PipelineObject::Stage::ColourAttachmentOutput });
-        primarySubmission.signalSemaphores.push_back(renderFinishedSemaphores[frameId]);
+        submission.waitSemaphores.push_back({ imageAvailableSemaphores[frameId], clv::gfx::PipelineObject::Stage::ColourAttachmentOutput });
+        submission.signalSemaphores.push_back(renderFinishedSemaphores[frameId]);
 
-        secondarySubmissions.emplace_back(std::move(primarySubmission));
-        graphicsQueue->submit(secondarySubmissions, framesInFlight[frameId].get());
+        graphicsQueue->submit({ std::move(submission) }, framesInFlight[frameId].get());
 
         auto const result = presentQueue->present(clv::gfx::PresentInfo{
             .waitSemaphores = { renderFinishedSemaphores[frameId] },

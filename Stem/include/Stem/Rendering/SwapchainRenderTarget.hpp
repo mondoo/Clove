@@ -53,7 +53,7 @@ namespace garlic::inline stem {
 
         Expected<uint32_t, std::string> aquireNextImage(size_t const frameId) override;
 
-        void submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo primarySubmission, std::vector<clv::gfx::GraphicsSubmitInfo> secondarySubmissions) override;
+        void submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo submission) override;
 
         clv::gfx::GraphicsImage::Format getImageFormat() const override;
         clv::mth::vec2ui getSize() const override;
