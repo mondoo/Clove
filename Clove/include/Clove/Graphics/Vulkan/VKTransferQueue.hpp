@@ -27,6 +27,6 @@ namespace clv::gfx::vk {
         std::unique_ptr<TransferCommandBuffer> allocateCommandBuffer() override;
         void freeCommandBuffer(TransferCommandBuffer &buffer) override;
 
-        void submit(TransferSubmitInfo const &submitInfo) override;
+        void submit(std::vector<TransferSubmitInfo> const &submissions, Fence const *signalFence) override;
     };
 }

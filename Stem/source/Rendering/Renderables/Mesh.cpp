@@ -49,7 +49,11 @@ namespace garlic::inline stem {
         transferCommandBuffer->copyBufferToBuffer(*stagingBuffer, 0, *buffer, 0, totalSize);
         transferCommandBuffer->endRecording();
 
-        transferQueue->submit({ { transferCommandBuffer } });
+        auto transferQueueFinishedFence = factory.createFence({ false });
+
+        transferQueue->submit({ TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer } } }, transferQueueFinishedFence.get());
+
+        transferQueueFinishedFence->wait();
         transferQueue->freeCommandBuffer(*transferCommandBuffer);
     }
 

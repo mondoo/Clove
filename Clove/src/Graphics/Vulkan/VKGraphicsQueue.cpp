@@ -39,8 +39,6 @@ namespace clv::gfx::vk {
     }
 
     std::unique_ptr<GraphicsCommandBuffer> VKGraphicsQueue::allocateCommandBuffer() {
-        //TODO: Multiple command buffer allocation
-
         VkCommandBuffer commandBuffer;
 
         VkCommandBufferAllocateInfo allocInfo{
@@ -63,45 +61,56 @@ namespace clv::gfx::vk {
         vkFreeCommandBuffers(device.get(), commandPool, 1, buffers);
     }
 
-    void VKGraphicsQueue::submit(GraphicsSubmitInfo const &submitInfo, Fence const *fence) {
-        //Wait semaphores / stages
-        size_t const waitSemaphoreCount{ std::size(submitInfo.waitSemaphores) };
-        std::vector<VkSemaphore> waitSemaphores(waitSemaphoreCount);
-        std::vector<VkPipelineStageFlags> waitStages(waitSemaphoreCount);
+    void VKGraphicsQueue::submit(std::vector<GraphicsSubmitInfo> const &submissions, Fence const *signalFence) {
+        auto const submissioncount{ std::size(submissions) };
+        std::vector<VkSubmitInfo> vkSubmissions;
+        vkSubmissions.reserve(submissioncount);
 
-        for(size_t i = 0; i < waitSemaphoreCount; ++i) {
-            waitSemaphores[i] = polyCast<VKSemaphore>(submitInfo.waitSemaphores[i].first.get())->getSemaphore();
-            waitStages[i]     = VKPipelineObject::convertStage(submitInfo.waitSemaphores[i].second);
+        std::vector<std::vector<VkSemaphore>> waitSemaphores(submissioncount);
+        std::vector<std::vector<VkPipelineStageFlags>> waitStages(submissioncount);
+        std::vector<std::vector<VkCommandBuffer>> commandBuffers(submissioncount);
+        std::vector<std::vector<VkSemaphore>> signalSemaphores(submissioncount);
+
+        for(size_t i{ 0 }; i < submissioncount; ++i) {
+            //Wait semaphores / stages
+            size_t const waitSemaphoreCount{ std::size(submissions[i].waitSemaphores) };
+            waitSemaphores[i].resize(waitSemaphoreCount);
+            waitStages[i].resize(waitSemaphoreCount);
+
+            for(size_t j = 0; j < waitSemaphoreCount; ++j) {
+                waitSemaphores[i][j] = polyCast<VKSemaphore>(submissions[i].waitSemaphores[j].first.get())->getSemaphore();
+                waitStages[i][j]     = VKPipelineObject::convertStage(submissions[i].waitSemaphores[j].second);
+            }
+
+            //Command buffers
+            size_t const commandBufferCount{ std::size(submissions[i].commandBuffers) };
+            commandBuffers[i].resize(commandBufferCount);
+            for(size_t j = 0; j < commandBufferCount; ++j) {
+                commandBuffers[i][j] = polyCast<VKGraphicsCommandBuffer>(submissions[i].commandBuffers[j].get())->getCommandBuffer();
+            }
+
+            //Signal semaphores
+            size_t const signalSemaphoreCount{ std::size(submissions[i].signalSemaphores) };
+            signalSemaphores[i].resize(signalSemaphoreCount);
+            for(size_t j = 0; j < signalSemaphoreCount; ++j) {
+                signalSemaphores[i][j] = polyCast<VKSemaphore>(submissions[i].signalSemaphores[j].get())->getSemaphore();
+            }
+
+            vkSubmissions.emplace_back(VkSubmitInfo{
+                .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                .waitSemaphoreCount   = static_cast<uint32_t>(waitSemaphoreCount),
+                .pWaitSemaphores      = std::data(waitSemaphores[i]),
+                .pWaitDstStageMask    = std::data(waitStages[i]),
+                .commandBufferCount   = static_cast<uint32_t>(commandBufferCount),
+                .pCommandBuffers      = std::data(commandBuffers[i]),
+                .signalSemaphoreCount = static_cast<uint32_t>(signalSemaphoreCount),
+                .pSignalSemaphores    = std::data(signalSemaphores[i]),
+            });
         }
 
-        //Command buffers
-        size_t const commandBufferCount{ std::size(submitInfo.commandBuffers) };
-        std::vector<VkCommandBuffer> commandBuffers(commandBufferCount);
-        for(size_t i = 0; i < commandBufferCount; ++i) {
-            commandBuffers[i] = polyCast<VKGraphicsCommandBuffer>(submitInfo.commandBuffers[i].get())->getCommandBuffer();
-        }
+        VkFence const vkFence{ signalFence ? polyCast<VKFence const>(signalFence)->getFence() : VK_NULL_HANDLE };
 
-        //Signal semaphores
-        size_t const signalSemaphoreCount{ std::size(submitInfo.signalSemaphores) };
-        std::vector<VkSemaphore> signalSemaphores(signalSemaphoreCount);
-        for(size_t i = 0; i < signalSemaphoreCount; ++i) {
-            signalSemaphores[i] = polyCast<VKSemaphore>(submitInfo.signalSemaphores[i].get())->getSemaphore();
-        }
-
-        VkSubmitInfo vkSubmitInfo{
-            .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            .waitSemaphoreCount   = static_cast<uint32_t>(waitSemaphoreCount),
-            .pWaitSemaphores      = std::data(waitSemaphores),
-            .pWaitDstStageMask    = std::data(waitStages),
-            .commandBufferCount   = static_cast<uint32_t>(commandBufferCount),
-            .pCommandBuffers      = std::data(commandBuffers),
-            .signalSemaphoreCount = static_cast<uint32_t>(signalSemaphoreCount),
-            .pSignalSemaphores    = std::data(signalSemaphores),
-        };
-
-        VkFence const vkFence = fence ? polyCast<VKFence const>(fence)->getFence() : VK_NULL_HANDLE;
-
-        if(vkQueueSubmit(queue, 1, &vkSubmitInfo, vkFence) != VK_SUCCESS) {
+        if(vkQueueSubmit(queue, std::size(vkSubmissions), std::data(vkSubmissions), vkFence) != VK_SUCCESS) {
             GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to submit graphics command buffer(s)");
         }
     }

@@ -215,12 +215,15 @@ namespace garlic::inline stem {
         graphicsCommandBuffer->imageMemoryBarrier(*image, std::move(graphicsQueueAcquireInfo), PipelineObject::Stage::Transfer, PipelineObject::Stage::PixelShader);
         graphicsCommandBuffer->endRecording();
 
+        auto transferQueueFinishedFence = factory.createFence({ false });
         auto graphicsQueueFinishedFence = factory.createFence({ false });
 
-        transferQueue->submit(TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer } });
-        graphicsQueue->submit(GraphicsSubmitInfo{ .commandBuffers = { graphicsCommandBuffer } }, graphicsQueueFinishedFence.get());
+        transferQueue->submit({ TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer } } }, transferQueueFinishedFence.get());
+        graphicsQueue->submit({ GraphicsSubmitInfo{ .commandBuffers = { graphicsCommandBuffer } } }, graphicsQueueFinishedFence.get());
 
+        transferQueueFinishedFence->wait();
         transferQueue->freeCommandBuffer(*transferCommandBuffer);
+        
         graphicsQueueFinishedFence->wait();
         graphicsQueue->freeCommandBuffer(*graphicsCommandBuffer);
 

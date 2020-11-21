@@ -525,9 +525,7 @@ namespace garlic::inline stem {
             .commandBuffers   = { currentImageData.commandBuffer },
             .signalSemaphores = { renderFinishedSemaphores[currentFrame] },
         };
-        graphicsQueue->submit(shadowSubmitInfo, nullptr);
-        graphicsQueue->submit(cubeShadowSubmitInfo, nullptr);
-        graphicsQueue->submit(submitInfo, inFlightFences[currentFrame].get());
+        graphicsQueue->submit({ std::move(shadowSubmitInfo), std::move(cubeShadowSubmitInfo), std::move(submitInfo) }, inFlightFences[currentFrame].get());
 
         //Present current image
         renderTarget->present(imageIndex, { renderFinishedSemaphores[currentFrame] });

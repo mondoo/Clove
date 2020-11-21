@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Clove/Graphics/GraphicsQueue.hpp"
-#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
+#include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -21,17 +21,17 @@ namespace clv::gfx::vk {
         VKGraphicsQueue() = delete;
         VKGraphicsQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor);
 
-        VKGraphicsQueue(const VKGraphicsQueue& other) = delete;
-        VKGraphicsQueue(VKGraphicsQueue&& other) noexcept;
+        VKGraphicsQueue(const VKGraphicsQueue &other) = delete;
+        VKGraphicsQueue(VKGraphicsQueue &&other) noexcept;
 
-        VKGraphicsQueue& operator=(const VKGraphicsQueue& other) = delete;
-        VKGraphicsQueue& operator=(VKGraphicsQueue&& other) noexcept;
+        VKGraphicsQueue &operator=(const VKGraphicsQueue &other) = delete;
+        VKGraphicsQueue &operator=(VKGraphicsQueue &&other) noexcept;
 
         ~VKGraphicsQueue();
 
         std::unique_ptr<GraphicsCommandBuffer> allocateCommandBuffer() override;
-        void freeCommandBuffer(GraphicsCommandBuffer& buffer) override;
+        void freeCommandBuffer(GraphicsCommandBuffer &buffer) override;
 
-        void submit(GraphicsSubmitInfo const& submitInfo, Fence const* fence) override;
+        void submit(std::vector<GraphicsSubmitInfo> const &submissions, Fence const *signalFence) override;
     };
 }
