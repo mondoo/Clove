@@ -7,14 +7,22 @@
 
 #include <queue>
 
+namespace clv::gfx{
+    class Fence;
+    class GraphicsQueue;
+}
+
 namespace garlic::inline stem {
     /**
-     * @brief A RenderTarget backed by a GraphicsImage.
+     * @brief A RenderTarget backed by a GraphicsImages.
      */
     class GraphicsImageRenderTarget : public RenderTarget {
         //VARIABLES
     private:
         clv::gfx::GraphicsImage::Descriptor imageDescriptor;
+
+        std::shared_ptr<clv::gfx::GraphicsQueue> graphicsQueue;
+        std::shared_ptr<clv::gfx::Fence> frameInFlight;
 
         std::shared_ptr<clv::gfx::GraphicsImage> renderTargetImage;
         std::shared_ptr<clv::gfx::GraphicsImageView> renderTargetView;
@@ -44,12 +52,12 @@ namespace garlic::inline stem {
         void resize(clv::mth::vec2ui size);
 
         /**
-         * @brief Returns an image that has been drawn to.
-         * @details Images returned from this have been made available by calling present
+         * @brief Returns an image that has been rendered to.
+         * @details Images returned from this have been made available by calling submit
          * signifying that all graphics operations have been done on them and it is ready
          * to be displayed.
          */
-        std::shared_ptr<clv::gfx::GraphicsImage> getPresentedImage();
+        std::shared_ptr<clv::gfx::GraphicsImage> getNextReadyImage();
 
     private:
         void createImages();

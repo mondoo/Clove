@@ -2,13 +2,20 @@
 
 #include "Stem/Application.hpp"
 
+#include <Clove/Graphics/Fence.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Graphics/Semaphore.hpp>
+#include <Clove/Graphics/GraphicsQueue.hpp>
 
 namespace garlic::inline stem {
     GraphicsImageRenderTarget::GraphicsImageRenderTarget(clv::gfx::GraphicsImage::Descriptor imageDescriptor)
-        : imageDescriptor{ std::move(imageDescriptor) }{
+        : imageDescriptor{ std::move(imageDescriptor) } {
+        auto const graphicsFactory = Application::get().getGraphicsDevice()->getGraphicsFactory();
+
+        //We won't be allocating any buffers from this queue, only using it to submit
+        graphicsQueue = graphicsFactory->createGraphicsQueue(clv::gfx::CommandQueueDescriptor{ .flags = clv::gfx::QueueFlags::None });
+        frameInFlight = graphicsFactory->createFence({ true });
+
         createImages();
     }
 
@@ -19,16 +26,16 @@ namespace garlic::inline stem {
     GraphicsImageRenderTarget::~GraphicsImageRenderTarget() = default;
 
     Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(size_t const frameId) {
-        //Signal the semaphore straight away as we only have one image.
-        //availableSemaphore->signal();
+        //Because we only have one frame, just wait for the graphics queue to finish using it then return
+        frameInFlight->wait();
+        frameInFlight->reset();
+
         return 0;
     }
 
     void GraphicsImageRenderTarget::submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo primarySubmission, std::vector<clv::gfx::GraphicsSubmitInfo> secondarySubmissions) {
-        //Wait on the semaphores to be signaled as we've only got one image and are not doing any fancy double / tripple buffering.
-        // for(auto &semaphore : waitSemaphores) {
-        //     //semaphore->wait();
-        // }
+        secondarySubmissions.emplace_back(std::move(primarySubmission));
+        graphicsQueue->submit(secondarySubmissions, frameInFlight.get());
     }
 
     clv::gfx::GraphicsImage::Format GraphicsImageRenderTarget::getImageFormat() const {
@@ -48,14 +55,18 @@ namespace garlic::inline stem {
         createImages();
     }
 
-    std::shared_ptr<clv::gfx::GraphicsImage> GraphicsImageRenderTarget::getPresentedImage() {
-        //Return the only image available as double / tripple buffering is not yet implemented.
+    std::shared_ptr<clv::gfx::GraphicsImage> GraphicsImageRenderTarget::getNextReadyImage() {
+        //Stall until we are ready to return the image.
+        frameInFlight->wait();
         return renderTargetImage;
     }
 
     void GraphicsImageRenderTarget::createImages() {
         auto const device{ Application::get().getGraphicsDevice() };
         auto const factory{ device->getGraphicsFactory() };
+
+        //Make sure we're not using the image when we re-create it
+        frameInFlight->wait();
 
         renderTargetImage = factory->createImage(imageDescriptor);
         renderTargetView  = renderTargetImage->createView(clv::gfx::GraphicsImageView::Descriptor{
