@@ -84,7 +84,7 @@ namespace clv::gfx::vk {
             .imageExtent = { sourceExtent.x, sourceExtent.y, sourceExtent.z },
         };
 
-        vkCmdCopyImageToBuffer(commandBuffer, polyCast<VKImage>(&destination)->getImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, polyCast<VKBuffer>(&source)->getBuffer(), 1, &copyRegion);
+        vkCmdCopyImageToBuffer(commandBuffer, polyCast<VKImage>(&source)->getImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, polyCast<VKBuffer>(&destination)->getBuffer(), 1, &copyRegion);
     }
 
     void VKTransferCommandBuffer::bufferMemoryBarrier(GraphicsBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
