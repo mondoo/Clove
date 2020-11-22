@@ -82,6 +82,7 @@ namespace wrapper {
             .sharingMode = SharingMode::Concurrent,
         };
         appWrapper = std::make_unique<AppWrapper>(clv::gfx::API::Vulkan, clv::AudioAPI::OpenAl, std::move(renderTargetImageDescriptor));
+        appWrapper->app->pushLayer(std::make_shared<TestLayer>());
     }
 
     Application::~Application() = default;
