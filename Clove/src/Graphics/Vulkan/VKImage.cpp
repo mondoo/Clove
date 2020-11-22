@@ -10,6 +10,9 @@ namespace clv::gfx::vk {
     static VkImageUsageFlags getUsageFlags(GraphicsImage::UsageMode garlicUsageFlags) {
         VkBufferUsageFlags flags = 0;
 
+        if((garlicUsageFlags & GraphicsImage::UsageMode::TransferSource) != 0) {
+            flags |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+        }
         if((garlicUsageFlags & GraphicsImage::UsageMode::TransferDestination) != 0) {
             flags |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
         }
@@ -158,6 +161,8 @@ namespace clv::gfx::vk {
                 return VK_IMAGE_LAYOUT_GENERAL;
             case Layout::Present:
                 return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+            case Layout::TransferSourceOptimal:
+                return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
             case Layout::TransferDestinationOptimal:
                 return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
             case Layout::ShaderReadOnlyOptimal:

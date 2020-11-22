@@ -1,1 +1,0 @@
-Translates all of the objects / functions defined in Stem and Scape.Membrane to a C# API.

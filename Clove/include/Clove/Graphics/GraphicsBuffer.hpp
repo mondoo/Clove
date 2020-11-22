@@ -13,8 +13,8 @@ namespace clv::gfx {
     public:
         using UsageModeType = uint8_t;
         enum class UsageMode : UsageModeType {
-            TransferSource      = 1 << 0,
-            TransferDestination = 1 << 1,
+            TransferSource      = 1 << 0, /**< To be used as a source in a transfer operation. */
+            TransferDestination = 1 << 1, /**< To be used as a destination in a transfer operation. */
             VertexBuffer        = 1 << 2,
             IndexBuffer         = 1 << 3,
             UniformBuffer       = 1 << 4,

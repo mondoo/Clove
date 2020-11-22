@@ -2,9 +2,8 @@
 
 namespace clv::gfx {
     /**
-     * @brief A Fence is a synchronisation object that can be accessed from the application itself.
-     * @details A Fence is best used when the application needs to be synchronised with rendering
-     * operations.
+     * @brief A Fence is a synchronisation object that can be used to synchronise the application
+     * with a graphics operation.
      */
     class Fence {
         //TYPES

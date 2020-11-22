@@ -8,8 +8,8 @@ namespace clv::gfx::vk {
 		std::optional<uint32_t> presentFamily;
 		std::optional<uint32_t> transferFamily;
 
-		bool isComplete() const {
-			return graphicsFamily && presentFamily && transferFamily;
+		bool isComplete(bool const requirePresentFamily) const {
+			return graphicsFamily && (presentFamily || !requirePresentFamily) && transferFamily;
 		}
 	};
 

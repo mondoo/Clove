@@ -5,6 +5,8 @@
 #include <Clove/Audio/Audio.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Platform/PlatformTypes.hpp>
+#include <Clove/Graphics/GraphicsImage.hpp>
+#include <optional>
 
 namespace clv::plt {
     class Platform;
@@ -26,16 +28,16 @@ namespace blb::ecs {
 namespace garlic::inline stem {
     class Layer;
     class ForwardRenderer3D;
+    class GraphicsImageRenderTarget;
 }
 
 namespace garlic::inline stem {
     class Application {
         //TYPES
     public:
-        struct Descriptor {
-            clv::plt::WindowDescriptor windowDescriptor;
-            clv::gfx::API graphicsApi{ clv::gfx::API::Vulkan };
-            clv::AudioAPI audioApi{ clv::AudioAPI::OpenAl };
+        enum class State {
+            Running,
+            Stopped
         };
 
         //VARIABLES
@@ -56,7 +58,7 @@ namespace garlic::inline stem {
 
         //FUNCTIONS
     public:
-        Application();
+        //Application() = delete;
 
         Application(Application const &other)     = delete;
         Application(Application &&other) noexcept = delete;
@@ -66,12 +68,33 @@ namespace garlic::inline stem {
 
         ~Application();
 
-        static Application &get();
+        /**
+         * @brief Creates a standard Garlic application that opens and manages it's own window
+         */
+        friend std::unique_ptr<Application> createApplication(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::plt::WindowDescriptor windowDescriptor);
 
         /**
-         * @brief Runs the main application loop until told to exit.
+         * @brief Create a headles Garlic application without a window.
          */
-        void run();
+        friend std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget*> createHeadlessApplication(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetDescriptor);
+
+        static Application &get();
+
+        void pushLayer(std::shared_ptr<Layer> layer);
+
+        State getState() const;
+
+        /**
+         * @brief Performs a single iteration of the main application loop.
+         * @details getState should be called before calling this to check
+         * if the application should still be running.
+         */
+        void tick();
+
+        /**
+         * @brief Transition to State::Stoped if the application is in State::Running.
+         */
+        void shutdown();
 
         clv::gfx::GraphicsDevice *getGraphicsDevice() const;
         clv::AudioFactory *getAudioFactory() const;
@@ -79,9 +102,8 @@ namespace garlic::inline stem {
         std::shared_ptr<clv::plt::Window> const &getWindow() const;
         ForwardRenderer3D *getRenderer() const;
         blb::ecs::World *getECSWorld() const;
+
+    private:
+        Application();
     };
 }
-
-//To be defined by the client
-extern garlic::Application::Descriptor getApplicationDescriptor();
-extern std::shared_ptr<garlic::Layer> createApplicationLayer(garlic::Application const &app);

@@ -4,8 +4,9 @@
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
-#include <vulkan/vulkan.h>
+#include <optional>
 #include <span>
+#include <vulkan/vulkan.h>
 
 namespace clv::gfx::vk {
     class MemoryAllocator;
@@ -18,31 +19,31 @@ namespace clv::gfx::vk {
         DevicePointer devicePtr;
 
         QueueFamilyIndices queueFamilyIndices;
-        SwapchainSupportDetails swapchainSupportDetails;
+        std::optional<SwapchainSupportDetails> swapchainSupportDetails;
 
         std::shared_ptr<MemoryAllocator> memoryAllocator;
 
         //FUNCTIONS
     public:
         VKGraphicsFactory() = delete;
-        VKGraphicsFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices, SwapchainSupportDetails swapchainSupportDetails);
+        VKGraphicsFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices, std::optional<SwapchainSupportDetails> swapchainSupportDetails);
 
-        VKGraphicsFactory(const VKGraphicsFactory& other) = delete;
-        VKGraphicsFactory(VKGraphicsFactory&& other) noexcept;
+        VKGraphicsFactory(VKGraphicsFactory const &other) = delete;
+        VKGraphicsFactory(VKGraphicsFactory &&other) noexcept;
 
-        VKGraphicsFactory& operator=(const VKGraphicsFactory& other) = delete;
-        VKGraphicsFactory& operator=(VKGraphicsFactory&& other) noexcept;
+        VKGraphicsFactory &operator=(VKGraphicsFactory const &other) = delete;
+        VKGraphicsFactory &operator=(VKGraphicsFactory &&other) noexcept;
 
         ~VKGraphicsFactory();
 
         std::unique_ptr<GraphicsQueue> createGraphicsQueue(CommandQueueDescriptor descriptor) override;
-        std::unique_ptr<PresentQueue> createPresentQueue() override;
+        garlic::Expected<std::unique_ptr<PresentQueue>, std::string> createPresentQueue() override;
         std::unique_ptr<TransferQueue> createTransferQueue(CommandQueueDescriptor descriptor) override;
 
-        std::unique_ptr<Swapchain> createSwapChain(Swapchain::Descriptor descriptor) override;
+        garlic::Expected<std::unique_ptr<Swapchain>, std::string> createSwapChain(Swapchain::Descriptor descriptor) override;
 
         std::unique_ptr<Shader> createShader(std::string_view filePath) override;
-        std::unique_ptr<Shader> createShader(std::span<const std::byte> byteCode) override;
+        std::unique_ptr<Shader> createShader(std::span<std::byte const> byteCode) override;
 
         std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor) override;
         std::unique_ptr<DescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) override;
@@ -59,6 +60,5 @@ namespace clv::gfx::vk {
         std::unique_ptr<GraphicsImage> createImage(GraphicsImage::Descriptor descriptor) override;
 
         std::unique_ptr<Sampler> createSampler(Sampler::Descriptor descriptor) override;
-
     };
 }

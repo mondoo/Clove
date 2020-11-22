@@ -18,11 +18,11 @@ namespace clv::gfx::vk {
         VKSemaphore() = delete;
         VKSemaphore(DevicePointer device);
 
-        VKSemaphore(const VKSemaphore& other) = delete;
-        VKSemaphore(VKSemaphore&& other) noexcept;
+        VKSemaphore(VKSemaphore const &other) = delete;
+        VKSemaphore(VKSemaphore &&other) noexcept;
 
-        VKSemaphore& operator=(const VKSemaphore& other) = delete;
-        VKSemaphore& operator=(VKSemaphore&& other) noexcept;
+        VKSemaphore &operator=(VKSemaphore const &other) = delete;
+        VKSemaphore &operator=(VKSemaphore &&other) noexcept;
 
         ~VKSemaphore();
 

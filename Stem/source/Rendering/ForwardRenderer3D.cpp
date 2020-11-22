@@ -3,6 +3,7 @@
 #include "Stem/Application.hpp"
 #include "Stem/Rendering/Camera.hpp"
 #include "Stem/Rendering/Material.hpp"
+#include "Stem/Rendering/RenderTarget.hpp"
 #include "Stem/Rendering/Renderables/Mesh.hpp"
 #include "Stem/Rendering/RenderingHelpers.hpp"
 #include "Stem/Rendering/Vertex.hpp"
@@ -45,19 +46,15 @@ extern "C" const char font_p[];
 extern "C" const size_t font_pLength;
 
 namespace garlic::inline stem {
-    ForwardRenderer3D::ForwardRenderer3D() {
-        auto window{ Application::get().getWindow() };
-        windowResizeHandle = window->onWindowResize.bind(&ForwardRenderer3D::onWindowResize, this);
-        windowSize         = window->getSize();
+    ForwardRenderer3D::ForwardRenderer3D(std::unique_ptr<RenderTarget> renderTarget)
+        : renderTarget(std::move(renderTarget)) {
+        renderTargetPropertyChangedHandle = this->renderTarget->onPropertiesChanged.bind(&ForwardRenderer3D::onRenderTargetPropertiesChanged, this);
 
         graphicsDevice  = Application::get().getGraphicsDevice();
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
         //Object initialisation
         graphicsQueue = graphicsFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
-        presentQueue  = graphicsFactory->createPresentQueue();
-
-        swapchain = graphicsFactory->createSwapChain({ windowSize });
 
         descriptorSetLayouts = createDescriptorSetLayouts(*graphicsFactory);
 
@@ -69,7 +66,7 @@ namespace garlic::inline stem {
 
         createDepthBuffer();
 
-        recreateSwapchain();//Also creates the pipeline for the final colour
+        onRenderTargetPropertiesChanged();//Also creates the pipeline for the final colour
 
         //Create semaphores for frame synchronisation
         for(auto &shadowFinishedSemaphore : shadowFinishedSemaphores) {
@@ -78,16 +75,6 @@ namespace garlic::inline stem {
         for(auto &cubeShadowFinishedSemaphore : cubeShadowFinishedSemaphores) {
             cubeShadowFinishedSemaphore = graphicsFactory->createSemaphore();
         }
-        for(auto &renderFinishedSemaphore : renderFinishedSemaphores) {
-            renderFinishedSemaphore = graphicsFactory->createSemaphore();
-        }
-        for(auto &imageAvailableSemaphore : imageAvailableSemaphores) {
-            imageAvailableSemaphore = graphicsFactory->createSemaphore();
-        }
-        for(auto &inFlightFence : inFlightFences) {
-            inFlightFence = graphicsFactory->createFence({ true });
-        }
-        imagesInFlight.resize(swapchain->getImageViews().size());
 
         textureSampler = graphicsFactory->createSampler(Sampler::Descriptor{
             .minFilter        = Sampler::Filter::Linear,
@@ -159,7 +146,7 @@ namespace garlic::inline stem {
         //Reset these manually as they would fail after the device has been destroyed (how to solve this?)
         textureSampler.reset();
         for(auto &imageData : inFlightImageData) {
-            imageData.frameBuffer.reset();
+            imageData.frameDataBuffer.reset();
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
         }
     }
@@ -212,38 +199,21 @@ namespace garlic::inline stem {
     }
 
     void ForwardRenderer3D::end() {
-        if(needNewSwapchain) {
-            recreateSwapchain();
-            return;//return early just in case the window was minimised
+        //Aquire the next available image from the render target
+        Expected<uint32_t, std::string> const result = renderTarget->aquireNextImage(currentFrame);
+        if(!result.hasValue()) {
+            GARLIC_LOG(garlicLogContext, LogLevel::Warning, result.getError());
+            return;
         }
 
-        //Wait on the current frame / current images to be available
-        inFlightFences[currentFrame]->wait();
-
-        //The index of the image we're working on in the swap chain. Might not be equal to the currentFrame index
-        uint32_t imageIndex{ 0 };
-
-        //Aquire the next available image
-        Result result = swapchain->aquireNextImage(imageAvailableSemaphores[currentFrame].get(), imageIndex);
-        if(result == Result::Error_SwapchainOutOfDate) {
-            recreateSwapchain();
-            return;//return early just in case the window was minimised
-        }
-
-        //Check if we're already using this image, if so wait
-        if(imagesInFlight[imageIndex] != nullptr) {
-            imagesInFlight[imageIndex]->wait();
-        }
-        imagesInFlight[imageIndex] = inFlightFences[currentFrame];//Ptr copy here, could be slowing things down
-
-        inFlightFences[currentFrame]->reset();
+        size_t const imageIndex{ result.getValue() };
 
         ImageData &currentImageData = inFlightImageData[imageIndex];
 
         //Rendering constants / globals
         RenderArea renderArea{
             .origin = { 0, 0 },
-            .size   = { swapchain->getExtent().x, swapchain->getExtent().y },
+            .size   = renderTarget->getSize(),
         };
         RenderArea shadowArea{
             .origin = { 0, 0 },
@@ -267,7 +237,7 @@ namespace garlic::inline stem {
         size_t const meshCount = staticMeshCount + animatedMeshCount;
 
         //We can just write the struct straight in as all the mappings are based off of it's layout
-        currentImageData.frameBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
+        currentImageData.frameDataBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
 
         //Map any non-UBO pieces of data (such as textures / shadow maps)
         currentImageData.lightingDescriptorSet->map(currentImageData.shadowMapViews, *shadowSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 3);
@@ -386,6 +356,13 @@ namespace garlic::inline stem {
         }
         currentImageData.shadowMapCommandBuffer->endRecording();
 
+        //Submit the command buffer for the directional shadow map
+        GraphicsSubmitInfo shadowSubmitInfo{
+            .commandBuffers   = { currentImageData.shadowMapCommandBuffer },
+            .signalSemaphores = { shadowFinishedSemaphores[currentFrame] },
+        };
+        graphicsQueue->submit({ std::move(shadowSubmitInfo) }, nullptr);
+
         //POINT LIGHT SHADOWS
         currentImageData.cubeShadowMapCommandBuffer->beginRecording(CommandBufferUsage::Default);
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
@@ -427,6 +404,13 @@ namespace garlic::inline stem {
         }
         currentImageData.cubeShadowMapCommandBuffer->endRecording();
 
+        //Submit the command buffer for the point shadow map
+        GraphicsSubmitInfo cubeShadowSubmitInfo{
+            .commandBuffers   = { currentImageData.cubeShadowMapCommandBuffer },
+            .signalSemaphores = { cubeShadowFinishedSemaphores[currentFrame] },
+        };
+        graphicsQueue->submit({ std::move(cubeShadowSubmitInfo) }, nullptr);
+
         //Allocate a descriptor set for each ui element to be drawn
         size_t const widgetCount{ std::size(currentFrameData.widgets) };
         size_t const textCount{ std::size(currentFrameData.text) };
@@ -455,7 +439,7 @@ namespace garlic::inline stem {
             };
 
             currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
-            currentImageData.commandBuffer->beginRenderPass(*renderPass, *swapChainFrameBuffers[imageIndex], renderArea, outputClearValues);
+            currentImageData.commandBuffer->beginRenderPass(*renderPass, *frameBuffers[imageIndex], renderArea, outputClearValues);
 
             //Static
             currentImageData.commandBuffer->bindPipelineObject(*staticMeshPipelineObject);
@@ -507,80 +491,28 @@ namespace garlic::inline stem {
             currentImageData.commandBuffer->endRecording();
         }
 
-        //Submit the command buffers
-        GraphicsSubmitInfo shadowSubmitInfo{
-            .commandBuffers   = { currentImageData.shadowMapCommandBuffer },
-            .signalSemaphores = { shadowFinishedSemaphores[currentFrame] },
-        };
-        GraphicsSubmitInfo cubeShadowSubmitInfo{
-            .commandBuffers   = { currentImageData.cubeShadowMapCommandBuffer },
-            .signalSemaphores = { cubeShadowFinishedSemaphores[currentFrame] },
-        };
+        //Submit the colour output to the render target
         GraphicsSubmitInfo submitInfo{
             .waitSemaphores = {
-                {
-                    shadowFinishedSemaphores[currentFrame],
-                    PipelineObject::Stage::PixelShader,
-                },
-                {
-                    cubeShadowFinishedSemaphores[currentFrame],
-                    PipelineObject::Stage::PixelShader,
-                },
-                {
-                    imageAvailableSemaphores[currentFrame],
-                    PipelineObject::Stage::ColourAttachmentOutput,
-                },
+                { shadowFinishedSemaphores[currentFrame], PipelineObject::Stage::PixelShader },
+                { cubeShadowFinishedSemaphores[currentFrame], PipelineObject::Stage::PixelShader },
             },
-            .commandBuffers   = { currentImageData.commandBuffer },
-            .signalSemaphores = { renderFinishedSemaphores[currentFrame] },
+            .commandBuffers = { currentImageData.commandBuffer },
         };
-        graphicsQueue->submit({ std::move(shadowSubmitInfo), std::move(cubeShadowSubmitInfo), std::move(submitInfo) }, inFlightFences[currentFrame].get());
-
-        //Present current image
-        result = presentQueue->present(PresentInfo{
-            .waitSemaphores = { renderFinishedSemaphores[currentFrame] },
-            .swapChain      = swapchain,
-            .imageIndex     = imageIndex,
-        });
-
-        if(needNewSwapchain || result == Result::Error_SwapchainOutOfDate || result == Result::Success_SwapchainSuboptimal) {
-            recreateSwapchain();
-            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Debug, "Swapchain recreated at end of loop");
-        }
+        renderTarget->submit(imageIndex, currentFrame, std::move(submitInfo));
 
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
 
-    std::shared_ptr<GraphicsFactory> const &
-    ForwardRenderer3D::getGraphicsFactory() const {
-        return graphicsFactory;
-    }
-
-    void ForwardRenderer3D::onWindowResize(clv::mth::vec2ui const &size) {
-        windowSize       = size;
-        needNewSwapchain = true;
-    }
-
-    void ForwardRenderer3D::recreateSwapchain() {
-        //Set this to true in case we need to wait for the window to unminimise
-        needNewSwapchain = true;
-
-        if(windowSize.x == 0 || windowSize.y == 0) {
-            return;
-        }
-
+    void ForwardRenderer3D::onRenderTargetPropertiesChanged() {
         graphicsDevice->waitForIdleDevice();
 
         //Explicitly free resources to avoid problems when recreating the swap chain itself
-        swapchain.reset();
         staticMeshPipelineObject.reset();
-        swapChainFrameBuffers.clear();
+        frameBuffers.clear();
         for(auto &imageData : inFlightImageData) {
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
         }
-
-        //Recreate our swap chain
-        swapchain = graphicsFactory->createSwapChain({ windowSize });
 
         createRenderpass();
 
@@ -588,9 +520,9 @@ namespace garlic::inline stem {
 
         createPipeline();
         createUiPipeline();
-        createSwapchainFrameBuffers();
+        createRenderTargetFrameBuffers();
 
-        size_t const imageCount = std::size(swapChainFrameBuffers);
+        size_t const imageCount = std::size(frameBuffers);
 
         inFlightImageData.resize(imageCount);
 
@@ -611,7 +543,7 @@ namespace garlic::inline stem {
             imageData.cubeShadowMapCommandBuffer = graphicsQueue->allocateCommandBuffer();
 
             //Create uniform buffers
-            imageData.frameBuffer = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
+            imageData.frameDataBuffer = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
                 .size        = sizeof(FrameData),
                 .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
                 .sharingMode = SharingMode::Exclusive,
@@ -625,12 +557,12 @@ namespace garlic::inline stem {
             imageData.lightingDescriptorSet = imageData.frameDescriptorPool->allocateDescriptorSets(descriptorSetLayouts[DescriptorSetSlots::Lighting]);
 
             //As we only have one UBO per frame for every DescriptorSet we can map the buffer into them straight away
-            imageData.viewDescriptorSet->map(*imageData.frameBuffer, offsetof(FrameData::BufferData, viewData), sizeof(currentFrameData.bufferData.viewData), 0);
-            imageData.viewDescriptorSet->map(*imageData.frameBuffer, offsetof(FrameData::BufferData, viewPosition), sizeof(currentFrameData.bufferData.viewPosition), 1);
+            imageData.viewDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, viewData), sizeof(currentFrameData.bufferData.viewData), 0);
+            imageData.viewDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, viewPosition), sizeof(currentFrameData.bufferData.viewPosition), 1);
 
-            imageData.lightingDescriptorSet->map(*imageData.frameBuffer, offsetof(FrameData::BufferData, lights), sizeof(currentFrameData.bufferData.lights), 0);
-            imageData.lightingDescriptorSet->map(*imageData.frameBuffer, offsetof(FrameData::BufferData, numLights), sizeof(currentFrameData.bufferData.numLights), 1);
-            imageData.lightingDescriptorSet->map(*imageData.frameBuffer, offsetof(FrameData::BufferData, directionalShadowTransforms), sizeof(currentFrameData.bufferData.directionalShadowTransforms), 2);
+            imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, lights), sizeof(currentFrameData.bufferData.lights), 0);
+            imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, numLights), sizeof(currentFrameData.bufferData.numLights), 1);
+            imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, directionalShadowTransforms), sizeof(currentFrameData.bufferData.directionalShadowTransforms), 2);
 
             //Create the shadow maps for each frame
             for(size_t i = 0; i < MAX_LIGHTS; ++i) {
@@ -685,14 +617,12 @@ namespace garlic::inline stem {
                 }
             }
         }
-
-        needNewSwapchain = false;
     }
 
     void ForwardRenderer3D::createRenderpass() {
         //Define what attachments we have
         AttachmentDescriptor colourAttachment{
-            .format         = swapchain->getImageFormat(),
+            .format         = renderTarget->getImageFormat(),
             .loadOperation  = LoadOperation::Clear,
             .storeOperation = StoreOperation::Store,
             .initialLayout  = GraphicsImage::Layout::Undefined,
@@ -775,7 +705,7 @@ namespace garlic::inline stem {
         GraphicsImage::Descriptor depthDescriptor{
             .type        = GraphicsImage::Type::_2D,
             .usageFlags  = GraphicsImage::UsageMode::DepthStencilAttachment,
-            .dimensions  = { swapchain->getExtent().x, swapchain->getExtent().y },
+            .dimensions  = renderTarget->getSize(),
             .format      = GraphicsImage::Format::D32_SFLOAT,
             .sharingMode = SharingMode::Exclusive,
         };
@@ -818,7 +748,7 @@ namespace garlic::inline stem {
         AreaDescriptor viewScissorArea{
             .state    = ElementState::Static,
             .position = { 0.0f, 0.0f },
-            .size     = { swapchain->getExtent().x, swapchain->getExtent().y }
+            .size     = renderTarget->getSize(),
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
@@ -876,7 +806,7 @@ namespace garlic::inline stem {
         AreaDescriptor viewScissorArea{
             .state    = ElementState::Static,
             .position = { 0.0f, 0.0f },
-            .size     = { swapchain->getExtent().x, swapchain->getExtent().y }
+            .size     = renderTarget->getSize(),
         };
 
         DepthStateDescriptor depthState{
@@ -1031,13 +961,13 @@ namespace garlic::inline stem {
         animatedMeshCubeShadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
-    void ForwardRenderer3D::createSwapchainFrameBuffers() {
-        for(auto &swapChainImageView : swapchain->getImageViews()) {
-            swapChainFrameBuffers.emplace_back(graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
+    void ForwardRenderer3D::createRenderTargetFrameBuffers() {
+        for(auto &imageView : renderTarget->getImageViews()) {
+            frameBuffers.emplace_back(graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
                 .renderPass  = renderPass,
-                .attachments = { swapChainImageView, depthImageView },
-                .width       = swapchain->getExtent().x,
-                .height      = swapchain->getExtent().y,
+                .attachments = { imageView, depthImageView },
+                .width       = renderTarget->getSize().x,
+                .height      = renderTarget->getSize().y,
             }));
         }
     }

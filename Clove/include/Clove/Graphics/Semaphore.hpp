@@ -2,8 +2,7 @@
 
 namespace clv::gfx {
     /**
-     * @brief A Semaphore is a synchronisation object that is used internally by the graphics API.
-     * @details Semaphores can be used to insert dependencies between GraphicsQueues.
+     * @brief A Semaphore is a synchronisation object that is used to synchronise queue operations.
      */
     class Semaphore {
         //FUNCTIONS

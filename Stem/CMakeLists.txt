@@ -130,12 +130,17 @@ add_library(
 		${SOURCE}/Rendering/Camera.cpp
 		${INCLUDE}/Rendering/ForwardRenderer3D.hpp
 		${SOURCE}/Rendering/ForwardRenderer3D.cpp
+		${INCLUDE}/Rendering/GraphicsImageRenderTarget.hpp
+		${SOURCE}/Rendering/GraphicsImageRenderTarget.cpp
 		${INCLUDE}/Rendering/Material.hpp
 		${INCLUDE}/Rendering/Material.inl
 		${SOURCE}/Rendering/Material.cpp
 		${INCLUDE}/Rendering/RenderingConstants.hpp
 		${INCLUDE}/Rendering/RenderingHelpers.hpp
 		${SOURCE}/Rendering/RenderingHelpers.cpp
+		${INCLUDE}/Rendering/RenderTarget.hpp
+		${INCLUDE}/Rendering/SwapchainRenderTarget.hpp
+		${SOURCE}/Rendering/SwapchainRenderTarget.cpp
 		${INCLUDE}/Rendering/ShaderBufferTypes.hpp
 		${INCLUDE}/Rendering/Vertex.hpp
 		${INCLUDE}/Rendering/Renderables/Font.hpp
@@ -170,8 +175,6 @@ add_library(
 
 		${INCLUDE}/Application.hpp
 		${SOURCE}/Application.cpp
-
-		${INCLUDE}/EntryPoint.hpp
 
 		${INCLUDE}/InputEvent.hpp
 		${INCLUDE}/InputResponse.hpp
@@ -218,6 +221,7 @@ target_link_libraries(
 	Stem 
 	PUBLIC 
 		Bulb
+		Root.Expected
 
 	PRIVATE
 		#Order of these are important
