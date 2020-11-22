@@ -123,7 +123,9 @@ namespace garlic::inline stem {
     }
 
     void Application::shutdown() {
-        window->close();
+        if(window != nullptr) {
+            window->close();
+        }
     }
 
     clv::gfx::GraphicsDevice *Application::getGraphicsDevice() const {
