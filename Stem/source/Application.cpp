@@ -70,7 +70,11 @@ namespace garlic::inline stem {
     }
 
     Application::State Application::getState() const {
-        return window->isOpen() ? State::Running : State::Stopped;
+        if(window != nullptr) {
+            return window->isOpen() ? State::Running : State::Stopped;
+        } else {
+            return State::Running;
+        }
     }
 
     void Application::tick() {
@@ -82,23 +86,24 @@ namespace garlic::inline stem {
         std::chrono::duration<float> const deltaSeonds{ currFrameTime - prevFrameTime };
         prevFrameTime = currFrameTime;
 
-        window->processInput();
-        renderer->begin();
-
         //Respond to input
-        while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
-            InputEvent const event{ *keyEvent, InputEventType::Keyboard };
-            for(auto const &layer : layerStack) {
-                if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                    break;
+        if(window != nullptr) {
+            window->processInput();
+
+            while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
+                InputEvent const event{ *keyEvent, InputEventType::Keyboard };
+                for(auto const &layer : layerStack) {
+                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                        break;
+                    }
                 }
             }
-        }
-        while(auto mouseEvent = window->getMouse().getEvent()) {
-            InputEvent const event{ *mouseEvent, InputEventType::Mouse };
-            for(auto const &layer : layerStack) {
-                if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                    break;
+            while(auto mouseEvent = window->getMouse().getEvent()) {
+                InputEvent const event{ *mouseEvent, InputEventType::Mouse };
+                for(auto const &layer : layerStack) {
+                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                        break;
+                    }
                 }
             }
         }
@@ -107,6 +112,8 @@ namespace garlic::inline stem {
         for(auto const &layer : layerStack) {
             layer->onUpdate(deltaSeonds.count());
         }
+
+        renderer->begin();
 
         //Update ECS
         world->update(deltaSeonds.count());
