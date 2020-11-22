@@ -3,11 +3,13 @@
 #include <memory>
 
 struct AppWrapper;
+struct LayerWrapper;
 
 namespace wrapper {
     class Application {
     private:
         std::unique_ptr<AppWrapper> appWrapper;
+        std::unique_ptr<LayerWrapper> layerWrapper;
 
         int width;
         int height;

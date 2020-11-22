@@ -13,7 +13,7 @@ public ref class Application {
         wrapper::Application *app;
 
         //The bitmap image that will back our image in WPF
-        System::Windows::Media::Imaging::WriteableBitmap ^ writeableBitmap;
+        //System::Windows::Media::Imaging::WriteableBitmap ^ writeableBitmap;
 
     public:
         Application(int const width, int const height);
@@ -25,5 +25,7 @@ public ref class Application {
         void shutdown();
 
         void resize(int width, int height);
+
+        void render(System::IntPtr backBuffer);
     };
 }

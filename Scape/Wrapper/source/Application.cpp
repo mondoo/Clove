@@ -22,8 +22,15 @@
 class TestLayer : public garlic::Layer {
 private:
     blb::ecs::Entity cubeEnt;
+    blb::ecs::Entity camEnt;
+
+    garlic::Viewport viewport;
 
 public:
+    TestLayer(clv::mth::vec2ui size)
+        : viewport{ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) } {
+    }
+
     TestLayer() {
         garlic::Application::get().getECSWorld()->addSystem<garlic::RenderSystem>();
     }
@@ -39,9 +46,9 @@ public:
         lightEnt.addComponent<garlic::TransformComponent>()->setPosition({ 5.0f, 0.0f, 0.0f });
         lightEnt.addComponent<garlic::PointLightComponent>();
 
-        auto camEnt = world->createEntity();
+        camEnt = world->createEntity();
         camEnt.addComponent<garlic::TransformComponent>()->setPosition({ 0.0f, 0.0f, -10.0f });
-        camEnt.addComponent<garlic::CameraComponent>(garlic::Camera{ garlic::Camera::ProjectionMode::Perspective });
+        camEnt.addComponent<garlic::CameraComponent>(garlic::Camera{ viewport, garlic::Camera::ProjectionMode::Perspective });
     }
 
     void onUpdate(clv::utl::DeltaTime const deltaTime) override {
@@ -54,10 +61,16 @@ public:
     void onDetach() override {
         garlic::Application::get().getECSWorld()->destroyAllEntites();
     }
+
+    void resize(clv::mth::vec2ui size) {
+        viewport.width = size.x;
+        viewport.height = size.y;
+        camEnt.getComponent<garlic::CameraComponent>()->setViewport(viewport);
+    }
 };
 
 struct AppWrapper {
-    AppWrapper(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetImageDesc){
+    AppWrapper(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetImageDesc) {
         auto [app, rt] = garlic::createHeadlessApplication(graphicsApi, audioApi, std::move(renderTargetImageDesc));
         this->app      = std::move(app);
         this->rt       = std::move(rt);
@@ -67,12 +80,16 @@ struct AppWrapper {
     garlic::GraphicsImageRenderTarget *rt;
 };
 
+struct LayerWrapper {
+    std::shared_ptr<TestLayer> layer;
+};
+
 namespace wrapper {
     Application::Application(int const width, int const height)
         : width{ width }
         , height{ height } {
         using namespace clv::gfx;
-        
+
         //Hard coding format to B8G8R8A8_SRGB
         GraphicsImage::Descriptor const renderTargetImageDescriptor{
             .type        = GraphicsImage::Type::_2D,
@@ -82,7 +99,10 @@ namespace wrapper {
             .sharingMode = SharingMode::Concurrent,
         };
         appWrapper = std::make_unique<AppWrapper>(clv::gfx::API::Vulkan, clv::AudioAPI::OpenAl, std::move(renderTargetImageDescriptor));
-        appWrapper->app->pushLayer(std::make_shared<TestLayer>());
+
+        layerWrapper        = std::make_unique<LayerWrapper>();
+        layerWrapper->layer = std::make_shared<TestLayer>();
+        appWrapper->app->pushLayer(layerWrapper->layer);
     }
 
     Application::~Application() = default;
@@ -101,6 +121,8 @@ namespace wrapper {
 
     void Application::resize(int const width, int const height) {
         appWrapper->rt->resize({ width, height });
+        layerWrapper->layer->resize({ width, height });
+
         this->width  = width;
         this->height = height;
     }
