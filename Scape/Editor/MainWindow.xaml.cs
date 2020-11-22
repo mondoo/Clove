@@ -1,7 +1,9 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Editor
 {
@@ -13,25 +15,38 @@ namespace Editor
         private Garlic.Application app;
 
         private Thread appThread;
-        private object appThreadLock = new object();
+        private object appLock = new object();
 
         private bool exit = false;
+        private object exitLock = new object();
 
         public MainWindow()
         {
             InitializeComponent();
 
             //Initialise and start the application loop
-            app = new Garlic.Application((int)RenderArea.ActualWidth, (int)RenderArea.ActualHeight);
+            int width = (int)RenderArea.ActualWidth;
+            int height = (int)RenderArea.ActualHeight;
+
+            app = new Garlic.Application(width > 0 ? width : 1, height > 0 ? height : 1);
 
             appThread = new Thread(new ThreadStart(RunApplication));
             appThread.Name = "Garlic application thread";
             appThread.Start();
 
+            //Notify the app when ever we change size
+            RenderArea.SizeChanged += (object sender, SizeChangedEventArgs e) =>
+            {
+                lock(appLock)
+                {
+                    app.resize((int)RenderArea.ActualWidth, (int)RenderArea.ActualHeight);
+                }
+            };
+
             //Make sure we notify the thread when we want to close
             Closing += (object sender, CancelEventArgs e) =>
             {
-                lock (appThreadLock)
+                lock (exitLock)
                 {
                     exit = true;
                 }
@@ -41,21 +56,30 @@ namespace Editor
 
         private void RunApplication()
         {
-            while (app.isRunning())
+            while (true)
             {
-                bool shouldExit = false;
-                lock (appThreadLock)
+                lock (exitLock)
                 {
-                    shouldExit = exit;
+                    if (exit)
+                    {
+                        lock (appLock)
+                        {
+                            app.shutdown();
+                        }
+                        break;
+                    }
                 }
 
-                if (shouldExit)
+                lock (appLock)
                 {
-                    app.shutdown();
-                }
-                else
-                {
-                    app.tick();
+                    if (app.isRunning())
+                    {
+                        app.tick();
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
         }

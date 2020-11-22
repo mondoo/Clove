@@ -30,23 +30,12 @@ csharp_set_xaml_cs_properties(
     MainWindow.xaml.cs
 )
 
-set_property(SOURCE App.xaml PROPERTY VS_XAML_TYPE "ApplicationDefinition")
-set_property(TARGET Scape.Editor PROPERTY VS_DOTNET_FRAMEWORK_VERSION "netcore3.1")
+set_source_files_properties(App.xaml PROPERTIES VS_XAML_TYPE "ApplicationDefinition")
 
-set_property(
-    TARGET Scape.Editor PROPERTY VS_DOTNET_REFERENCES
-	"Microsoft.CSharp"
-	"PresentationCore"
-	"PresentationFramework"
-	"System"
-	"System.Core"
-	"System.Data"
-	"System.Data.DataSetExtensions"
-	"System.Net.Http"
-	"System.Xaml"
-	"System.Xml"
-	"System.Xml.Linq"
-    "WindowsBase"
+set_target_properties(Scape.Editor 
+	PROPERTIES 
+		VS_DOTNET_FRAMEWORK_VERSION "netcore3.1"
+        VS_DOTNET_REFERENCES "Microsoft.CSharp;PresentationCore;PresentationFramework;System;System.Core;System.Data;System.Xaml;System.Xml;WindowsBase"
 )
 
 #Set the output directory of OpenAL

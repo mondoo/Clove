@@ -21,4 +21,8 @@ target_link_libraries(
         Scape.Wrapper
 )
 
-set_target_properties(Scape.Membrane PROPERTIES COMMON_LANGUAGE_RUNTIME "")
+set_target_properties(Scape.Membrane 
+    PROPERTIES 
+        COMMON_LANGUAGE_RUNTIME ""
+        VS_DOTNET_REFERENCES "System;PresentationCore;PresentationFramework;WindowsBase"
+)

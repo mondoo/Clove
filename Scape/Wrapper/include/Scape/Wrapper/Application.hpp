@@ -19,5 +19,9 @@ namespace wrapper {
         bool isRunning();
         void tick();
         void shutdown();
+
+        void resize(int const width, int const height);
+
+        void copyRenderTargetToPointer(void *ptr);
     };
 }

@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:Editor"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+	<Grid>
+		<TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="Test text box" VerticalAlignment="Top" Width="104" Height="419"/>
+		<UserControl Margin="109,0,0,0">
+			<Image x:Name="RenderArea" Margin="10" Width="663"/>
+		</UserControl>
+	</Grid>
 </Window>

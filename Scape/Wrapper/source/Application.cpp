@@ -2,7 +2,12 @@
 
 #include <Bulb/ECS/Entity.hpp>
 #include <Bulb/ECS/World.hpp>
+#include <Clove/Graphics/GraphicsDevice.hpp>
+#include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
+#include <Clove/Graphics/TransferCommandBuffer.hpp>
+#include <Clove/Graphics/TransferQueue.hpp>
+#include <Root/Log/Log.hpp>
 #include <Stem/Application.hpp>
 #include <Stem/Components/CameraComponent.hpp>
 #include <Stem/Components/PointLightComponent.hpp>
@@ -10,9 +15,9 @@
 #include <Stem/Components/TransformComponent.hpp>
 #include <Stem/Layer.hpp>
 #include <Stem/ModelLoader.hpp>
-#include <Stem/Systems/RenderSystem.hpp>
 #include <Stem/Rendering/Camera.hpp>
 #include <Stem/Rendering/GraphicsImageRenderTarget.hpp>
+#include <Stem/Systems/RenderSystem.hpp>
 
 class TestLayer : public garlic::Layer {
 private:
@@ -92,5 +97,51 @@ namespace wrapper {
     void Application::shutdown() {
         appWrapper->app->shutdown();
     }
+
+    void Application::resize(int const width, int const height) {
+        appWrapper->rt->resize({ width, height });
+        this->width  = width;
+        this->height = height;
+    }
+
+    void Application::copyRenderTargetToPointer(void *ptr) {
+        using namespace clv::gfx;
+
+        auto const factory{ garlic::Application::get().getGraphicsDevice()->getGraphicsFactory() };
+
+        auto const transferFinishedFence{ factory->createFence({}) };
+        auto const transferQueue{ factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::Transient }) };
+        std::shared_ptr<TransferCommandBuffer> const transferBuffer{ transferQueue->allocateCommandBuffer() };
+
+        size_t constexpr bytesPerPixel{ 4 };
+        size_t const bufferSize{ width * height * bytesPerPixel };
+        auto const renderTargetBuffer = factory->createBuffer(GraphicsBuffer::Descriptor{
+            .size        = bufferSize,
+            .usageFlags  = GraphicsBuffer::UsageMode::TransferDestination,
+            .sharingMode = SharingMode::Exclusive,
+            .memoryType  = MemoryType::SystemMemory,
+        });
+
+        auto const renderTargetImage = appWrapper->rt->getNextReadyImage();
+
+        ImageMemoryBarrierInfo constexpr layoutTransferInfo{
+            .sourceAccess      = AccessFlags::None,
+            .destinationAccess = AccessFlags::TransferWrite,
+            .oldImageLayout    = GraphicsImage::Layout::Undefined,
+            .newImageLayout    = GraphicsImage::Layout::TransferSourceOptimal,
+            .sourceQueue       = QueueType::None,
+            .destinationQueue  = QueueType::None,
+        };
+
+        transferBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
+        transferBuffer->imageMemoryBarrier(*renderTargetImage, std::move(layoutTransferInfo), PipelineObject::Stage::Top, PipelineObject::Stage::Transfer);
+        transferBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { width, height, 1 }, *renderTargetBuffer, 0);
+        transferBuffer->endRecording();
+
+        transferQueue->submit({ TransferSubmitInfo{ .commandBuffers = { transferBuffer } } }, transferFinishedFence.get());
+        transferFinishedFence->wait();
+        transferQueue->freeCommandBuffer(*transferBuffer);
+
+        renderTargetBuffer->read(ptr, 0, bufferSize);
     }
 }
