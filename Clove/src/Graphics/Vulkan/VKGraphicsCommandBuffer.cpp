@@ -117,8 +117,8 @@ namespace clv::gfx::vk {
     }
 
     void VKGraphicsCommandBuffer::bufferMemoryBarrier(GraphicsBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
-        const uint32_t sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
-        const uint32_t destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
+        const uint32_t sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
+        const uint32_t destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
 
         VkBufferMemoryBarrier barrier{
             .sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
@@ -132,15 +132,15 @@ namespace clv::gfx::vk {
             .size                = VK_WHOLE_SIZE,
         };
 
-        VkPipelineStageFlags const vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
-        VkPipelineStageFlags const vkDestinationStage = VKPipelineObject::convertStage(destinationStage);
+        VkPipelineStageFlags const vkSourceStage{ VKPipelineObject::convertStage(sourceStage) };
+        VkPipelineStageFlags const vkDestinationStage{ VKPipelineObject::convertStage(destinationStage) };
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
     }
 
     void VKGraphicsCommandBuffer::imageMemoryBarrier(GraphicsImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
-        uint32_t const sourceFamilyIndex      = getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices);
-        uint32_t const destinationFamilyIndex = getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices);
+        uint32_t const sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
+        uint32_t const destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
 
         VkImageMemoryBarrier barrier{
             .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -161,8 +161,8 @@ namespace clv::gfx::vk {
             },
         };
 
-        VkPipelineStageFlags const vkSourceStage      = VKPipelineObject::convertStage(sourceStage);
-        VkPipelineStageFlags const vkDestinationStage = VKPipelineObject::convertStage(destinationStage);
+        VkPipelineStageFlags const vkSourceStage{ VKPipelineObject::convertStage(sourceStage) };
+        VkPipelineStageFlags const vkDestinationStage{ VKPipelineObject::convertStage(destinationStage) };
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     }
