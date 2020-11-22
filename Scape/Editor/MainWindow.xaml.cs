@@ -14,13 +14,16 @@ namespace Editor
     public partial class MainWindow : Window
     {
         private Garlic.Application app;
+
         private WriteableBitmap imageSource; //Owning this here for now as the UI thread needs to lock it
+        private IntPtr backBuffer;
+        private object backBufferLock = new object();
 
         private Thread appThread;
-        private object appLock = new object();
+        private bool exitThread = false;
 
-        private bool exit = false;
-        private object exitLock = new object();
+        private Size size = new Size();
+        private bool sizeChanged = false;
 
         public MainWindow()
         {
@@ -44,10 +47,7 @@ namespace Editor
             //Make sure we notify the thread when we want to close
             Closing += (object sender, CancelEventArgs e) =>
             {
-                lock (exitLock)
-                {
-                    exit = true;
-                }
+                exitThread = true;
                 appThread.Join();
             };
         }
@@ -55,62 +55,57 @@ namespace Editor
         private void OnRenderAreaSizeChanged(object sender, SizeChangedEventArgs e)
         {
             CreateImageSource(e.NewSize);
-            app.resize((int)e.NewSize.Width, (int)e.NewSize.Height);
+            sizeChanged = true;
+            size = e.NewSize;
         }
 
         private void CreateImageSource(Size size)
         {
-            imageSource = new WriteableBitmap((int)size.Width, (int)size.Height, 96, 96, PixelFormats.Pbgra32, null);
+            lock (backBufferLock)
+            {
+                imageSource = new WriteableBitmap((int)size.Width, (int)size.Height, 96, 96, PixelFormats.Pbgra32, null);
+                backBuffer = imageSource.BackBuffer;
+            }
             RenderArea.Source = imageSource;
         }
 
         private void RunApplication()
         {
-            while (true)
+            while (!exitThread)
             {
-                lock (exitLock)
+                if (sizeChanged)
                 {
-                    if (exit)
-                    {
-                        lock (appLock)
-                        {
-                            app.shutdown();
-                        }
-                        break;
-                    }
+                    app.resize((int)size.Width, (int)size.Height);
+                    sizeChanged = false;
                 }
 
-                lock (appLock)
+                if (app.isRunning())
                 {
-                    if (app.isRunning())
+                    //Update the application
+                    app.tick();
+
+                    //Render to image
+                    lock (backBufferLock)
                     {
-                        //Update the application
-                        app.tick();
-
-                        //Tell the dispatcher on the thread that owns the image source to lock it
-                        IntPtr backBuffer = new IntPtr();
-                        Application.Current.Dispatcher.Invoke(DispatcherPriority.Render, (Action)(() =>
-                        {
-                            imageSource.Lock();
-                            backBuffer = imageSource.BackBuffer;
-                        }));
-
-                        //Render to image
                         app.render(backBuffer);
+                    }
 
-                        //Tell the dispatcher on the thread that owns the image source to unlock it
-                        Application.Current.Dispatcher.Invoke(DispatcherPriority.Render, (Action)(() =>
-                        {
-                            imageSource.AddDirtyRect(new Int32Rect(0, 0, (int)imageSource.Width, (int)imageSource.Height));
-                            imageSource.Unlock();
-                        }));
-                    }
-                    else
+                    //Update the image source through the dispatcher on the thread that owns the image
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
                     {
-                        break;
-                    }
+                        imageSource.Lock();
+                        imageSource.AddDirtyRect(new Int32Rect(0, 0, (int)imageSource.Width, (int)imageSource.Height));
+                        imageSource.Unlock();
+                    }));
+                }
+                else
+                {
+                    //Return to avoid calling shutdown if the app exits by itself
+                    return;
                 }
             }
+
+            app.shutdown();
         }
     }
 }
