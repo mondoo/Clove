@@ -36,9 +36,10 @@ namespace clv::gfx::vk {
     }
 
     garlic::Expected<std::unique_ptr<PresentQueue>, std::string> VKGraphicsFactory::createPresentQueue() {
-        if(queueFamilyIndices.presentFamily.has_value()){
-            return std::make_unique<VKPresentQueue>(devicePtr, *queueFamilyIndices.presentFamily);
-        }else{
+        if(queueFamilyIndices.presentFamily.has_value()) {
+            std::unique_ptr<PresentQueue> queue = std::make_unique<VKPresentQueue>(devicePtr, *queueFamilyIndices.presentFamily);
+            return queue;
+        } else {
             return garlic::Unexpected<std::string>("Presentation queue not available. GraphicsDevice is likely headless");
         }
     }
@@ -48,9 +49,10 @@ namespace clv::gfx::vk {
     }
 
     garlic::Expected<std::unique_ptr<Swapchain>, std::string> VKGraphicsFactory::createSwapChain(Swapchain::Descriptor descriptor) {
-        if(swapchainSupportDetails.has_value()){
-            return std::make_unique<VKSwapchain>(devicePtr, *swapchainSupportDetails, queueFamilyIndices, std::move(descriptor));
-        }else{
+        if(swapchainSupportDetails.has_value()) {
+            std::unique_ptr<Swapchain> swapchain = std::make_unique<VKSwapchain>(devicePtr, *swapchainSupportDetails, queueFamilyIndices, std::move(descriptor));
+            return swapchain;
+        } else {
             return garlic::Unexpected<std::string>("Swapchain is not available. GraphicsDevice is likely headless");
         }
     }
