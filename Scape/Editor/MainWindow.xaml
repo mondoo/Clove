@@ -7,9 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 	<Grid>
-		<TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="Test text box" VerticalAlignment="Top" Width="104" Height="419"/>
-		<UserControl Margin="109,0,0,0">
-			<Image x:Name="RenderArea" Margin="10" Width="663"/>
-		</UserControl>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="6*"/>
+		</Grid.ColumnDefinitions>
+
+		<TextBox TextWrapping="Wrap" Text="Test text box"/>
+		<Image x:Name="RenderArea" Margin="10" Grid.Column="1" Stretch="Fill"/>
 	</Grid>
 </Window>

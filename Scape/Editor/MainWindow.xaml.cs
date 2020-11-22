@@ -54,9 +54,9 @@ namespace Editor
 
         private void OnRenderAreaSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            CreateImageSource(e.NewSize);
-            sizeChanged = true;
             size = e.NewSize;
+            CreateImageSource(size);
+            sizeChanged = true;
         }
 
         private void CreateImageSource(Size size)
