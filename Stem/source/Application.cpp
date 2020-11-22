@@ -23,10 +23,9 @@ namespace garlic::inline stem {
     std::unique_ptr<Application> createApplication(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::plt::WindowDescriptor windowDescriptor) {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
 
-        app->window = app->platformInstance->createWindow(std::move(windowDescriptor));
-
         //Platform
         app->platformInstance = clv::plt::createPlatformInstance();
+        app->window           = app->platformInstance->createWindow(std::move(windowDescriptor));
 
         //Graphics
         app->graphicsDevice = clv::gfx::createGraphicsDevice(graphicsApi, app->window->getNativeWindow());
