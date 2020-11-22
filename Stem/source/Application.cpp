@@ -123,6 +123,7 @@ namespace garlic::inline stem {
     }
 
     void Application::shutdown() {
+        graphicsDevice->waitForIdleDevice();
         if(window != nullptr) {
             window->close();
         }
