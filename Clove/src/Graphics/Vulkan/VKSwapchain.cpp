@@ -6,6 +6,8 @@
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Utils/Cast.hpp"
 
+#include <Root/Log/Log.hpp>
+
 namespace clv::gfx::vk {
     static VkSurfaceFormatKHR chooseSwapSurfaceFormat(std::vector<VkSurfaceFormatKHR> const &availableFormats) {
         for(auto const &availableFormat : availableFormats) {
@@ -15,6 +17,7 @@ namespace clv::gfx::vk {
         }
 
         //Fall back to the first one if we can't find a surface format we want
+        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Warning, "Swapchain could not find desired format. Using first available format from the surface");
         return availableFormats[0];
     }
 
@@ -60,7 +63,7 @@ namespace clv::gfx::vk {
             imageCount = supportDetails.capabilities.maxImageCount;
         }
 
-        const bool differentQueueIndices{ familyIndices.graphicsFamily != familyIndices.presentFamily };
+        bool const differentQueueIndices{ familyIndices.graphicsFamily != familyIndices.presentFamily };
 
         VkSwapchainCreateInfoKHR createInfo{
             .sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
