@@ -2,6 +2,7 @@
 
 #include <Bulb/ECS/Entity.hpp>
 #include <Bulb/ECS/World.hpp>
+#include <Clove/Graphics/GraphicsImage.hpp>
 #include <Stem/Application.hpp>
 #include <Stem/Components/CameraComponent.hpp>
 #include <Stem/Components/PointLightComponent.hpp>
@@ -11,6 +12,7 @@
 #include <Stem/ModelLoader.hpp>
 #include <Stem/Systems/RenderSystem.hpp>
 #include <Stem/Rendering/Camera.hpp>
+#include <Stem/Rendering/GraphicsImageRenderTarget.hpp>
 
 class TestLayer : public garlic::Layer {
 private:
@@ -49,41 +51,46 @@ public:
     }
 };
 
-garlic::Application::Descriptor getApplicationDescriptor() {
-    return garlic::Application::Descriptor{
-        .windowDescriptor = clv::plt::WindowDescriptor{
-            .title  = "Temp",
-            .width  = 800,
-            .height = 600,
-        },
-    };
-}
-
-std::shared_ptr<garlic::Layer>
-createApplicationLayer(garlic::Application const &app) {
-    return std::make_shared<TestLayer>();
-}
-
 struct AppWrapper {
-    garlic::Application app{};
+    AppWrapper(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetImageDesc){
+        auto [app, rt] = garlic::createHeadlessApplication(graphicsApi, audioApi, std::move(renderTargetImageDesc));
+        this->app      = std::move(app);
+        this->rt       = std::move(rt);
+    }
+
+    std::unique_ptr<garlic::Application> app;
+    garlic::GraphicsImageRenderTarget *rt;
 };
 
 namespace wrapper {
-    Application::Application() {
-        appWrapper = std::make_unique<AppWrapper>();
+    Application::Application(int const width, int const height)
+        : width{ width }
+        , height{ height } {
+        using namespace clv::gfx;
+        
+        //Hard coding format to B8G8R8A8_SRGB
+        GraphicsImage::Descriptor const renderTargetImageDescriptor{
+            .type        = GraphicsImage::Type::_2D,
+            .usageFlags  = GraphicsImage::UsageMode::ColourAttachment | GraphicsImage::UsageMode::TransferSource,
+            .dimensions  = { width, height },
+            .format      = GraphicsImage::Format::B8G8R8A8_SRGB,
+            .sharingMode = SharingMode::Concurrent,
+        };
+        appWrapper = std::make_unique<AppWrapper>(clv::gfx::API::Vulkan, clv::AudioAPI::OpenAl, std::move(renderTargetImageDescriptor));
     }
 
     Application::~Application() = default;
 
-    bool Application::isRunning(){
-        return appWrapper->app.getState() == garlic::Application::State::Running;
+    bool Application::isRunning() {
+        return appWrapper->app->getState() == garlic::Application::State::Running;
     }
 
     void Application::tick() {
-        appWrapper->app.tick();
+        appWrapper->app->tick();
     }
 
     void Application::shutdown() {
-        appWrapper->app.shutdown();
+        appWrapper->app->shutdown();
+    }
     }
 }

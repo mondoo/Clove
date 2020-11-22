@@ -3,6 +3,7 @@
 #include "Stem/InputEvent.hpp"
 #include "Stem/Layer.hpp"
 #include "Stem/Rendering/ForwardRenderer3D.hpp"
+#include "Stem/Rendering/GraphicsImageRenderTarget.hpp"
 #include "Stem/Rendering/SwapchainRenderTarget.hpp"
 
 #include <Bulb/ECS/World.hpp>
@@ -17,38 +18,55 @@
 namespace garlic::inline stem {
     Application *Application::instance{ nullptr };
 
-    Application::Application() {
-        GARLIC_ASSERT(instance == nullptr, "Only one Application can be active");
-        instance = this;
+    Application::~Application() = default;
 
-        auto const descriptor{ getApplicationDescriptor() };
+    std::unique_ptr<Application> createApplication(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::plt::WindowDescriptor windowDescriptor) {
+        std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
+
+        app->window = app->platformInstance->createWindow(std::move(windowDescriptor));
 
         //Platform
-        if(descriptor.windowDescriptor.has_value()) {
-            platformInstance = clv::plt::createPlatformInstance();
-
-            window = platformInstance->createWindow(*descriptor.windowDescriptor);
-            window->setVSync(true);
-        }
+        app->platformInstance = clv::plt::createPlatformInstance();
 
         //Graphics
-        graphicsDevice = clv::gfx::createGraphicsDevice(descriptor.graphicsApi, window != nullptr ? window->getNativeWindow() : std::any{});
+        app->graphicsDevice = clv::gfx::createGraphicsDevice(graphicsApi, app->window->getNativeWindow());
+        app->renderer       = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
 
         //Audio
-        audioFactory = clv::createAudioFactory(descriptor.audioApi);
+        app->audioFactory = clv::createAudioFactory(audioApi);
 
-        renderer = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
-        world    = std::make_unique<blb::ecs::World>();
+        app->world = std::make_unique<blb::ecs::World>();
 
-        layerStack.pushLayer(createApplicationLayer(*this));
-
-        prevFrameTime = std::chrono::system_clock::now();
+        return app;
     }
 
-    Application::~Application() = default;
+    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadlessApplication(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetDescriptor) {
+        std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
+
+        //Platform
+        app->platformInstance = clv::plt::createPlatformInstance();
+
+        //Graphics
+        app->graphicsDevice = clv::gfx::createGraphicsDevice(graphicsApi, std::any{});
+
+        auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(std::move(renderTargetDescriptor)) };
+        auto *renderTargetPtr{ renderTarget.get() };
+        app->renderer = std::make_unique<ForwardRenderer3D>(std::move(renderTarget));
+
+        //Audio
+        app->audioFactory = clv::createAudioFactory(audioApi);
+
+        app->world = std::make_unique<blb::ecs::World>();
+
+        return std::make_pair(std::move(app), renderTargetPtr);
+    }
 
     Application &Application::get() {
         return *instance;
+    }
+
+    void Application::pushLayer(std::shared_ptr<Layer> layer) {
+        layerStack.pushLayer(std::move(layer));
     }
 
     Application::State Application::getState() const {
@@ -56,7 +74,7 @@ namespace garlic::inline stem {
     }
 
     void Application::tick() {
-        if(getState() == State::Stopped) {
+        if(getState() != State::Running) {
             return;
         }
 
@@ -119,5 +137,12 @@ namespace garlic::inline stem {
 
     blb::ecs::World *Application::getECSWorld() const {
         return world.get();
+    }
+
+    Application::Application() {
+        GARLIC_ASSERT(instance == nullptr, "Only one Application can be active");
+        instance = this;
+
+        prevFrameTime = std::chrono::system_clock::now();
     }
 }

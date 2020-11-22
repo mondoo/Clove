@@ -5,6 +5,7 @@
 #include <Clove/Audio/Audio.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Platform/PlatformTypes.hpp>
+#include <Clove/Graphics/GraphicsImage.hpp>
 #include <optional>
 
 namespace clv::plt {
@@ -27,18 +28,13 @@ namespace blb::ecs {
 namespace garlic::inline stem {
     class Layer;
     class ForwardRenderer3D;
+    class GraphicsImageRenderTarget;
 }
 
 namespace garlic::inline stem {
     class Application {
         //TYPES
     public:
-        struct Descriptor {
-            std::optional<clv::plt::WindowDescriptor> windowDescriptor; /** Not providing a window descriptor will create a headless application. */
-            clv::gfx::API graphicsApi{ clv::gfx::API::Vulkan };
-            clv::AudioAPI audioApi{ clv::AudioAPI::OpenAl };
-        };
-
         enum class State {
             Running,
             Stopped
@@ -62,7 +58,7 @@ namespace garlic::inline stem {
 
         //FUNCTIONS
     public:
-        Application();
+        //Application() = delete;
 
         Application(Application const &other)     = delete;
         Application(Application &&other) noexcept = delete;
@@ -72,7 +68,19 @@ namespace garlic::inline stem {
 
         ~Application();
 
+        /**
+         * @brief Creates a standard Garlic application that opens and manages it's own window
+         */
+        friend std::unique_ptr<Application> createApplication(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::plt::WindowDescriptor windowDescriptor);
+
+        /**
+         * @brief Create a headles Garlic application without a window.
+         */
+        friend std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget*> createHeadlessApplication(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetDescriptor);
+
         static Application &get();
+
+        void pushLayer(std::shared_ptr<Layer> layer);
 
         State getState() const;
 
@@ -94,9 +102,8 @@ namespace garlic::inline stem {
         std::shared_ptr<clv::plt::Window> const &getWindow() const;
         ForwardRenderer3D *getRenderer() const;
         blb::ecs::World *getECSWorld() const;
+
+    private:
+        Application();
     };
 }
-
-//To be defined by the client
-extern garlic::Application::Descriptor getApplicationDescriptor();
-extern std::shared_ptr<garlic::Layer> createApplicationLayer(garlic::Application const &app);

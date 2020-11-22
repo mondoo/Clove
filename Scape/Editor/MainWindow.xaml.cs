@@ -21,7 +21,8 @@ namespace Editor
         {
             InitializeComponent();
 
-            app = new Garlic.Application();
+            //Initialise and start the application loop
+            app = new Garlic.Application((int)RenderArea.ActualWidth, (int)RenderArea.ActualHeight);
 
             appThread = new Thread(new ThreadStart(RunApplication));
             appThread.Name = "Garlic application thread";

@@ -176,8 +176,6 @@ add_library(
 		${INCLUDE}/Application.hpp
 		${SOURCE}/Application.cpp
 
-		${INCLUDE}/EntryPoint.hpp
-
 		${INCLUDE}/InputEvent.hpp
 		${INCLUDE}/InputResponse.hpp
 
