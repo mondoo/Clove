@@ -9,7 +9,7 @@ namespace clv::gfx {
         //TYPES
     public:
         struct Descriptor {
-            bool signaled{ false }; /**< If true, will initialised the Fence as signaled. */
+            bool signaled{ false }; /**< If true, will initialise the Fence as signaled. */
         };
 
         //FUNCTIONS
