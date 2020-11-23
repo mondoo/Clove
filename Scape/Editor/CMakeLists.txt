@@ -12,6 +12,8 @@ add_executable(
 		
 		ViewModel.cs
 		MainWindowViewModel.cs
+
+		EditorLogger.cs
 )
 
 target_link_libraries(

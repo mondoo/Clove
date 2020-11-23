@@ -15,6 +15,9 @@ namespace Editor
     public partial class EditorApp : Application
     {
         private MainWindow editorWindow;
+        private MainWindowViewModel editorWindowViewModel;
+
+        private EditorLogger editorLogger;
 
         private Garlic.Application engineApp;
 
@@ -30,27 +33,37 @@ namespace Editor
 
         private void EditorStartup(object sender, StartupEventArgs e)
         {
+            editorWindowViewModel = new MainWindowViewModel();
+
+            editorLogger = new EditorLogger();
+            editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => editorWindowViewModel.LogText += e2.Text;
+
+            Console.SetOut(editorLogger);
+
+            //Initialise the editor window
             editorWindow = new MainWindow();
-            MainWindow = editorWindow;
+            editorWindow.DataContext = editorWindowViewModel;
+
+            editorWindow.RenderArea.SizeChanged += OnRenderAreaSizeChanged;
+            editorWindow.Closing += StopEngine;
+
             editorWindow.Show();
+            MainWindow = editorWindow;
+
+            Console.WriteLine("test1");
+            Console.WriteLine("test2");
 
             //Initialise and start the application loop
             int width = editorWindow.RenderArea.ActualWidth > 0 ? (int)editorWindow.RenderArea.ActualWidth : 1;
             int height = editorWindow.RenderArea.ActualHeight > 0 ? (int)editorWindow.RenderArea.ActualHeight : 1;
-
-            CreateImageSource(new Size(width, width));
+            size = new Size(width, width);
+            CreateImageSource(size);
 
             engineApp = new Garlic.Application(width, height);
 
             engineThread = new Thread(new ThreadStart(RunEngineApplication));
             engineThread.Name = "Garlic application thread";
             engineThread.Start();
-
-            //Notify the app when ever we change size
-            editorWindow.RenderArea.SizeChanged += OnRenderAreaSizeChanged;
-
-            //Make sure we notify the thread when we want to close
-            editorWindow.Closing += StopEngine;
         }
 
         private void OnRenderAreaSizeChanged(object sender, SizeChangedEventArgs e)
