@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 
-namespace clv::mth {
+namespace garlic::clove {
     template<length_t L, typename T, qualifier Q>
     using vec = glm::vec<L, T, Q>;
 

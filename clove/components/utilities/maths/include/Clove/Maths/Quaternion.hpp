@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 
-namespace clv::mth {
+namespace garlic::clove {
     template<typename T, qualifier Q>
     using quat = glm::qua<T, Q>;
 
