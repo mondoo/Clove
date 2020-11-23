@@ -329,7 +329,7 @@ namespace garlic::inline stem {
         };
 
         //DIRECTIONAL LIGHT SHADOWS
-        currentImageData.shadowMapCommandBuffer->beginRecording(CommandBufferUsage::Default);
+        currentImageData.shadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
             //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
             currentImageData.shadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
@@ -364,7 +364,7 @@ namespace garlic::inline stem {
         graphicsQueue->submit({ std::move(shadowSubmitInfo) }, nullptr);
 
         //POINT LIGHT SHADOWS
-        currentImageData.cubeShadowMapCommandBuffer->beginRecording(CommandBufferUsage::Default);
+        currentImageData.cubeShadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
             for(size_t j = 0; j < 6; ++j) {
                 //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
@@ -438,7 +438,7 @@ namespace garlic::inline stem {
                 drawMesh(*currentImageData.commandBuffer, mesh);
             };
 
-            currentImageData.commandBuffer->beginRecording(CommandBufferUsage::Default);
+            currentImageData.commandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
             currentImageData.commandBuffer->beginRenderPass(*renderPass, *frameBuffers[imageIndex], renderArea, outputClearValues);
 
             //Static
