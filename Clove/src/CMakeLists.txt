@@ -193,8 +193,6 @@ set(
 	UtilityFiles
 		${CLV_INCLUDE}/Utils/DeltaTime.hpp
 		${CLV_SOURCE}/Utils/DeltaTime.cpp
-		${CLV_INCLUDE}/Utils/Timer.hpp
-		${CLV_SOURCE}/Utils/Timer.cpp
 )
 
 set(

@@ -49,6 +49,7 @@ target_link_libraries(
 		CloveLog
 		CloveMaths
 		CloveMemory
+		CloveTimer
 
     #Cross platform
 	PRIVATE 
@@ -112,7 +113,6 @@ target_compile_definitions(
 
 	#General
 	PUBLIC
-		CLV_ENABLE_PROFILING=$<BOOL:${GAR_CLV_ENABLE_PROFILING}>
 		CLV_ENABLE_MEMORY_DEBUGGING=$<BOOL:${GAR_CLV_ENABLE_MEMORY_DEBUGGING}>
 		CLV_IMGUI_COMPATIBLE=$<BOOL:${GAR_CLV_IMGUI_COMPATIBLE}>
 

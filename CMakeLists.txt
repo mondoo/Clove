@@ -23,7 +23,6 @@ option(GAR_BUILD_SCAPE "Build Scape, Garlic's editor" ON)
 option(GAR_BUILD_TESTS "Build Garlic's tests" OFF)
 
 #Clove settings
-option(GAR_CLV_ENABLE_PROFILING "Enables the Clove profiler which will print function timings to a file" OFF)
 option(GAR_CLV_IMGUI_COMPATIBLE "Links Glad publicly so users can initialise Dear ImGui properly" OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
