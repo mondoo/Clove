@@ -1,5 +1,6 @@
 add_subdirectory(definitions)
 add_subdirectory(delegate)
+add_subdirectory(delta_time)
 add_subdirectory(event)
 add_subdirectory(expected)
 add_subdirectory(log)

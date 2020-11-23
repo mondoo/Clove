@@ -190,12 +190,6 @@ set(
 )
 
 set(
-	UtilityFiles
-		${CLV_INCLUDE}/Utils/DeltaTime.hpp
-		${CLV_SOURCE}/Utils/DeltaTime.cpp
-)
-
-set(
 	AllFiles
 	${CLV_INCLUDE}/Clove.hpp
 	
@@ -209,7 +203,6 @@ set(
 			${WindowsPlatformFiles}
 			${LinuxPlatformFiles}
 			${MacOSPlatformFiles}
-		${UtilityFiles}
 )
 
 #Organise the source tree

@@ -44,6 +44,7 @@ target_link_libraries(
 		CloveCast
 		CloveDefinitions
 		CloveDelegate
+		CloveDeltaTime
 		CloveEvent
 		CloveExpected
 		CloveLog
