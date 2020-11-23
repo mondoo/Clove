@@ -2,8 +2,8 @@ include(CSharpUtilities)
 
 add_executable(
     Scape.Editor
-	    App.xaml
-        App.xaml.cs
+	    EditorApp.xaml
+        EditorApp.xaml.cs
 
 	    AssemblyInfo.cs
         
@@ -23,14 +23,14 @@ csharp_set_designer_cs_properties(
 )
 
 csharp_set_xaml_cs_properties(
-	App.xaml
-    App.xaml.cs
+	EditorApp.xaml
+    EditorApp.xaml.cs
     
 	MainWindow.xaml
     MainWindow.xaml.cs
 )
 
-set_source_files_properties(App.xaml PROPERTIES VS_XAML_TYPE "ApplicationDefinition")
+set_source_files_properties(EditorApp.xaml PROPERTIES VS_XAML_TYPE "ApplicationDefinition")
 
 set_target_properties(Scape.Editor 
 	PROPERTIES 
