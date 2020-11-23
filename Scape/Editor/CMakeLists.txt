@@ -8,8 +8,10 @@ add_executable(
 	    AssemblyInfo.cs
         
 	    MainWindow.xaml
-	    MainWindow.xaml.cs
+		MainWindow.xaml.cs
+		
 		ViewModel.cs
+		MainWindowViewModel.cs
 )
 
 target_link_libraries(
