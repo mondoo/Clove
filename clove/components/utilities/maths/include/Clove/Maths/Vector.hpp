@@ -1,7 +1,5 @@
 #pragma once
 
-//Wrapping glm in clv::mth
-
 #include "Clove/Maths/glmWrappers.hpp"
 
 #include <glm/glm.hpp>
@@ -24,6 +22,4 @@ namespace clv::mth {
     using vec2f = vec<2, float, qualifier::defaultp>;
     using vec3f = vec<3, float, qualifier::defaultp>;
     using vec4f = vec<4, float, qualifier::defaultp>;
-
-    //TODO: All the other ps
 }

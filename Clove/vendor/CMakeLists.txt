@@ -2,9 +2,7 @@ set(DependencyFolder "Garlic/Clove/Dependencies")
 
 include(../../cmake/VendorHelpers.cmake)
 
-#glm
-set(GLM_TEST_ENABLE OFF CACHE BOOL "Build unit tests")
-add_subdirectory_with_folder(${DependencyFolder} glm)
+
 
 #glslang
 set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")

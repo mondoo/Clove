@@ -1,6 +1,6 @@
 #pragma once
 
-namespace clv::mth {
+namespace garlic::clove {
     template<typename T>
     typename T::value_type const *valuePtr(T const &v);
 

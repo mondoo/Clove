@@ -152,19 +152,6 @@ set(
 )
 
 set(
-	MathsFiles
-		${CLV_INCLUDE}/Maths/glmWrappers.hpp
-		${CLV_INCLUDE}/Maths/Maths.hpp
-		${CLV_INCLUDE}/Maths/Maths.inl
-		${CLV_INCLUDE}/Maths/MathsHelpers.hpp
-		${CLV_INCLUDE}/Maths/MathsHelpers.inl
-		${CLV_INCLUDE}/Maths/MathsTypes.hpp
-		${CLV_INCLUDE}/Maths/Matrix.hpp
-		${CLV_INCLUDE}/Maths/Quaternion.hpp
-		${CLV_INCLUDE}/Maths/Vector.hpp
-)
-
-set(
 	PlatformFiles
 		${CLV_INCLUDE}/Platform/Platform.hpp
 		${CLV_SOURCE}/Platform/Platform.cpp
@@ -222,7 +209,6 @@ set(
 		${GraphicsFiles}
 			${VulkanGraphicsFiles}
 		${InputFiles}
-		${MathsFiles}
 		${PlatformFiles}
 			${WindowsPlatformFiles}
 			${LinuxPlatformFiles}

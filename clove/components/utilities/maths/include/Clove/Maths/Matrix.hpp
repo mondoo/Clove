@@ -1,7 +1,5 @@
 #pragma once
 
-//Wrapping glm in clv::mth
-
 #include "Clove/Maths/glmWrappers.hpp"
 
 #include <glm/glm.hpp>
@@ -18,6 +16,4 @@ namespace clv::mth {
 
     using mat4x4f = mat<4, 4, float, qualifier::defaultp>;
     using mat4f   = mat4x4f;
-
-    //TODO: All the other ps
 }

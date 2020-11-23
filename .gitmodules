@@ -1,6 +1,3 @@
-[submodule "Clove/vendor/glm"]
-	path = Clove/vendor/glm
-	url = https://github.com/g-truc/glm.git
 [submodule "Clove/vendor/glslang"]
 	path = Clove/vendor/glslang
 	url = https://github.com/KhronosGroup/glslang.git
@@ -28,3 +25,6 @@
 [submodule "spdlog"]
 	path = clove/components/utilities/log/external/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "glm"]
+	path = clove/components/utilities/maths/external/glm
+	url = https://github.com/g-truc/glm.git

@@ -38,13 +38,15 @@ endif()
 target_link_libraries(
 	Clove
 
-	#Garlic
+	#Components
 	PUBLIC
+		#Utilities
 		CloveDefinitions
 		CloveDelegate
 		CloveEvent
 		CloveExpected
 		CloveLog
+		CloveMaths
 		CloveMemory
 
     #Cross platform

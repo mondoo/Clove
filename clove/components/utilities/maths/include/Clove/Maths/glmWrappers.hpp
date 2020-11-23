@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-namespace clv::mth {
+namespace garlic::clove {
     using length_t  = glm::length_t;
     using qualifier = glm::qualifier;
 }
