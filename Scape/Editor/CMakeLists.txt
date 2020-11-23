@@ -9,6 +9,7 @@ add_executable(
         
 	    MainWindow.xaml
 	    MainWindow.xaml.cs
+		ViewModel.cs
 )
 
 target_link_libraries(
