@@ -1,5 +1,7 @@
 set(EngineFolder "Garlic/Clove")
 
+add_subdirectory(components)
+
 #Dependencies
 add_subdirectory(vendor)
 
@@ -38,12 +40,12 @@ target_link_libraries(
 
 	#Garlic
 	PUBLIC
-		Root.Definitions
-		Root.Delegate
-		Root.Event
-		Root.Log
-		Root.Memory
-		Root.Expected
+		CloveDefinitions
+		CloveDelegate
+		CloveEvent
+		CloveExpected
+		CloveLog
+		CloveMemory
 
     #Cross platform
 	PRIVATE 
@@ -99,16 +101,6 @@ target_precompile_headers(
 		$<$<COMPILE_LANGUAGE:CXX>:<unordered_map$<ANGLE-R>>
 		$<$<COMPILE_LANGUAGE:CXX>:<set$<ANGLE-R>>
 		$<$<COMPILE_LANGUAGE:CXX>:<unordered_set$<ANGLE-R>>
-
-	#Clove headers
-	PUBLIC
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsTypes.hpp">
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/Maths.hpp">
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Maths/MathsHelpers.hpp">
-		$<$<COMPILE_LANGUAGE:CXX>:"Root/Delegate/MultiCastDelegate.hpp">
-		$<$<COMPILE_LANGUAGE:CXX>:"Root/Delegate/SingleCastDelegate.hpp">
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/DeltaTime.hpp">
-		$<$<COMPILE_LANGUAGE:CXX>:"Clove/Utils/Timer.hpp">
 )
 
 #Preprocessor Clove

@@ -32,8 +32,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory(external)
 
 #Garlic's modules
-add_subdirectory(Root)
-add_subdirectory(Clove)
+add_subdirectory(clove)
 add_subdirectory(Bulb)
 add_subdirectory(Stem)
 

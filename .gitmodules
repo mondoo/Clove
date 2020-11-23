@@ -10,9 +10,6 @@
 [submodule "Clove/vendor/openal-soft"]
 	path = Clove/vendor/openal-soft
 	url = https://github.com/kcat/openal-soft.git
-[submodule "Root/Log/external/spdlog"]
-	path = Root/Log/external/spdlog
-	url = https://github.com/gabime/spdlog.git
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest.git
@@ -28,3 +25,6 @@
 [submodule "Stem/external/libsndfile"]
 	path = Stem/external/libsndfile
 	url = https://github.com/erikd/libsndfile.git
+[submodule "spdlog"]
+	path = clove/components/utilities/log/external/spdlog
+	url = https://github.com/gabime/spdlog.git
