@@ -34,7 +34,7 @@ set_source_files_properties(App.xaml PROPERTIES VS_XAML_TYPE "ApplicationDefinit
 
 set_target_properties(Scape.Editor 
 	PROPERTIES 
-		VS_DOTNET_FRAMEWORK_VERSION "netcore3.1"
+		VS_DOTNET_FRAMEWORK_VERSION "4.8"
         VS_DOTNET_REFERENCES "Microsoft.CSharp;PresentationCore;PresentationFramework;System;System.Core;System.Data;System.Xaml;System.Xml;WindowsBase"
 )
 
