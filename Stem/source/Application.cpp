@@ -20,7 +20,7 @@ namespace garlic::inline stem {
 
     Application::~Application() = default;
 
-    std::unique_ptr<Application> createApplication(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::plt::WindowDescriptor windowDescriptor) {
+    std::unique_ptr<Application> Application::create(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::plt::WindowDescriptor windowDescriptor) {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
 
         //Platform
@@ -39,7 +39,7 @@ namespace garlic::inline stem {
         return app;
     }
 
-    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadlessApplication(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetDescriptor) {
+    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetDescriptor) {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
 
         //Platform

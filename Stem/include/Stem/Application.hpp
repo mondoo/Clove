@@ -4,8 +4,8 @@
 
 #include <Clove/Audio/Audio.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
-#include <Clove/Platform/PlatformTypes.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
+#include <Clove/Platform/PlatformTypes.hpp>
 #include <optional>
 
 namespace clv::plt {
@@ -58,8 +58,6 @@ namespace garlic::inline stem {
 
         //FUNCTIONS
     public:
-        //Application() = delete;
-
         Application(Application const &other)     = delete;
         Application(Application &&other) noexcept = delete;
 
@@ -71,12 +69,12 @@ namespace garlic::inline stem {
         /**
          * @brief Creates a standard Garlic application that opens and manages it's own window
          */
-        friend std::unique_ptr<Application> createApplication(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::plt::WindowDescriptor windowDescriptor);
+        static std::unique_ptr<Application> create(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::plt::WindowDescriptor windowDescriptor);
 
         /**
          * @brief Create a headles Garlic application without a window.
          */
-        friend std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget*> createHeadlessApplication(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetDescriptor);
+        static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetDescriptor);
 
         static Application &get();
 

@@ -71,7 +71,7 @@ public:
 
 struct AppWrapper {
     AppWrapper(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetImageDesc) {
-        auto [app, rt] = garlic::createHeadlessApplication(graphicsApi, audioApi, std::move(renderTargetImageDesc));
+        auto [app, rt] = garlic::Application::createHeadless(graphicsApi, audioApi, std::move(renderTargetImageDesc));
         this->app      = std::move(app);
         this->rt       = std::move(rt);
     }
