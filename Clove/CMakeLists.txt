@@ -41,6 +41,7 @@ target_link_libraries(
 	#Components
 	PUBLIC
 		#Utilities
+		CloveCast
 		CloveDefinitions
 		CloveDelegate
 		CloveEvent
