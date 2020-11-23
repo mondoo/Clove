@@ -1,3 +1,5 @@
+add_subdirectory(external)
+
 #Library
 add_library(
     CloveMaths INTERFACE
