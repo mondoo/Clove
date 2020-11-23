@@ -9,7 +9,11 @@
 
 namespace clv::gfx{
     class Fence;
+    class Semaphore;
     class GraphicsQueue;
+    class TransferQueue;
+    class TransferCommandBuffer;
+    class GraphicsBuffer;
 }
 
 namespace garlic::inline stem {
@@ -22,10 +26,15 @@ namespace garlic::inline stem {
         clv::gfx::GraphicsImage::Descriptor imageDescriptor;
 
         std::shared_ptr<clv::gfx::GraphicsQueue> graphicsQueue;
+        std::shared_ptr<clv::gfx::TransferQueue> transferQueue;
+        std::shared_ptr<clv::gfx::TransferCommandBuffer> transferCommandBuffer;
+
+        std::shared_ptr<clv::gfx::Semaphore> renderFinishedSemaphore;
         std::shared_ptr<clv::gfx::Fence> frameInFlight;
 
         std::shared_ptr<clv::gfx::GraphicsImage> renderTargetImage;
         std::shared_ptr<clv::gfx::GraphicsImageView> renderTargetView;
+        std::shared_ptr<clv::gfx::GraphicsBuffer> renderTargetBuffer;
 
         //FUNCTIONS
     public:
@@ -52,12 +61,9 @@ namespace garlic::inline stem {
         void resize(clv::mth::vec2ui size);
 
         /**
-         * @brief Returns an image that has been rendered to.
-         * @details Images returned from this have been made available by calling submit
-         * signifying that all graphics operations have been done on them and it is ready
-         * to be displayed.
+         * @brief Returns a buffer containing the data of a recently written to image.
          */
-        std::shared_ptr<clv::gfx::GraphicsImage> getNextReadyImage();
+        std::shared_ptr<clv::gfx::GraphicsBuffer> getNextReadyBuffer();
 
     private:
         void createImages();

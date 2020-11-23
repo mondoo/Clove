@@ -6,6 +6,7 @@
 #include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/GraphicsQueue.hpp>
+#include <Clove/Graphics/GraphicsBuffer.hpp>
 
 namespace garlic::inline stem {
     GraphicsImageRenderTarget::GraphicsImageRenderTarget(clv::gfx::GraphicsImage::Descriptor imageDescriptor)
@@ -14,7 +15,12 @@ namespace garlic::inline stem {
 
         //We won't be allocating any buffers from this queue, only using it to submit
         graphicsQueue = graphicsFactory->createGraphicsQueue(clv::gfx::CommandQueueDescriptor{ .flags = clv::gfx::QueueFlags::None });
-        frameInFlight = graphicsFactory->createFence({ true });
+        transferQueue = graphicsFactory->createTransferQueue(clv::gfx::CommandQueueDescriptor{ .flags = clv::gfx::QueueFlags::ReuseBuffers });
+
+        frameInFlight           = graphicsFactory->createFence({ true });
+        renderFinishedSemaphore = graphicsFactory->createSemaphore();
+
+        transferCommandBuffer = transferQueue->allocateCommandBuffer();
 
         createImages();
     }
@@ -26,7 +32,7 @@ namespace garlic::inline stem {
     GraphicsImageRenderTarget::~GraphicsImageRenderTarget() = default;
 
     Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(size_t const frameId) {
-        //Because we only have one frame, just wait for the graphics queue to finish using it then return
+        //Because we only have one frame, just wait for the graphics/transfer queues to finish using it then return
         frameInFlight->wait();
         frameInFlight->reset();
 
@@ -34,7 +40,16 @@ namespace garlic::inline stem {
     }
 
     void GraphicsImageRenderTarget::submit(uint32_t imageIndex, size_t const frameId, clv::gfx::GraphicsSubmitInfo submission) {
-        graphicsQueue->submit({ std::move(submission) }, frameInFlight.get());
+        using namespace clv::gfx;
+
+        submission.signalSemaphores.push_back(renderFinishedSemaphore);
+        graphicsQueue->submit({ std::move(submission) }, nullptr);
+
+        TransferSubmitInfo transferSubmission{
+            .waitSemaphores = { { renderFinishedSemaphore, PipelineObject::Stage::Transfer } },
+            .commandBuffers = { transferCommandBuffer },
+        };
+        transferQueue->submit({ std::move(transferSubmission) }, frameInFlight.get());
     }
 
     clv::gfx::GraphicsImage::Format GraphicsImageRenderTarget::getImageFormat() const {
@@ -54,14 +69,16 @@ namespace garlic::inline stem {
         createImages();
     }
 
-    std::shared_ptr<clv::gfx::GraphicsImage> GraphicsImageRenderTarget::getNextReadyImage() {
+    std::shared_ptr<clv::gfx::GraphicsBuffer> GraphicsImageRenderTarget::getNextReadyBuffer() {
         //Stall until we are ready to return the image.
         frameInFlight->wait();
 
-        return renderTargetImage;
+        return renderTargetBuffer;
     }
 
     void GraphicsImageRenderTarget::createImages() {
+        using namespace clv::gfx;
+
         auto const device{ Application::get().getGraphicsDevice() };
         auto const factory{ device->getGraphicsFactory() };
 
@@ -69,11 +86,35 @@ namespace garlic::inline stem {
         frameInFlight->wait();
 
         renderTargetImage = factory->createImage(imageDescriptor);
-        renderTargetView  = renderTargetImage->createView(clv::gfx::GraphicsImageView::Descriptor{
-            .type       = clv::gfx::GraphicsImageView::Type::_2D,
+        renderTargetView  = renderTargetImage->createView(GraphicsImageView::Descriptor{
+            .type       = GraphicsImageView::Type::_2D,
             .layer      = 0,
             .layerCount = 1,
         });
+
+        size_t constexpr bytesPerPixel{ 4 };//Assuming image format is 4 bbp
+        size_t const bufferSize{ imageDescriptor.dimensions.x * imageDescriptor.dimensions.y * bytesPerPixel };
+        renderTargetBuffer = factory->createBuffer(GraphicsBuffer::Descriptor{
+            .size        = bufferSize,
+            .usageFlags  = GraphicsBuffer::UsageMode::TransferDestination,
+            .sharingMode = SharingMode::Exclusive,
+            .memoryType  = MemoryType::SystemMemory,
+        });
+
+        //Pre-record the transfer command
+        ImageMemoryBarrierInfo constexpr layoutTransferInfo{
+            .sourceAccess      = AccessFlags::None,
+            .destinationAccess = AccessFlags::TransferWrite,
+            .oldImageLayout    = GraphicsImage::Layout::Undefined,
+            .newImageLayout    = GraphicsImage::Layout::TransferSourceOptimal,
+            .sourceQueue       = QueueType::None,
+            .destinationQueue  = QueueType::None,
+        };
+
+        transferCommandBuffer->beginRecording(CommandBufferUsage::Default);
+        transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, std::move(layoutTransferInfo), PipelineObject::Stage::Top, PipelineObject::Stage::Transfer);
+        transferCommandBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { imageDescriptor.dimensions, 1 }, *renderTargetBuffer, 0);
+        transferCommandBuffer->endRecording();
 
         onPropertiesChanged.broadcast();
     }

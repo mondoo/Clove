@@ -63,7 +63,7 @@ public:
     }
 
     void resize(clv::mth::vec2ui size) {
-        viewport.width = size.x;
+        viewport.width  = size.x;
         viewport.height = size.y;
         camEnt.getComponent<garlic::CameraComponent>()->setViewport(viewport);
     }
@@ -128,43 +128,8 @@ namespace wrapper {
     }
 
     void Application::copyRenderTargetToPointer(void *ptr) {
-        using namespace clv::gfx;
-
-        auto const factory{ garlic::Application::get().getGraphicsDevice()->getGraphicsFactory() };
-
-        auto const transferFinishedFence{ factory->createFence({}) };
-        auto const transferQueue{ factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::Transient }) };
-        std::shared_ptr<TransferCommandBuffer> const transferBuffer{ transferQueue->allocateCommandBuffer() };
-
-        size_t constexpr bytesPerPixel{ 4 };
-        size_t const bufferSize{ width * height * bytesPerPixel };
-        auto const renderTargetBuffer = factory->createBuffer(GraphicsBuffer::Descriptor{
-            .size        = bufferSize,
-            .usageFlags  = GraphicsBuffer::UsageMode::TransferDestination,
-            .sharingMode = SharingMode::Exclusive,
-            .memoryType  = MemoryType::SystemMemory,
-        });
-
-        auto const renderTargetImage = appWrapper->rt->getNextReadyImage();
-
-        ImageMemoryBarrierInfo constexpr layoutTransferInfo{
-            .sourceAccess      = AccessFlags::None,
-            .destinationAccess = AccessFlags::TransferWrite,
-            .oldImageLayout    = GraphicsImage::Layout::Undefined,
-            .newImageLayout    = GraphicsImage::Layout::TransferSourceOptimal,
-            .sourceQueue       = QueueType::None,
-            .destinationQueue  = QueueType::None,
-        };
-
-        transferBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        transferBuffer->imageMemoryBarrier(*renderTargetImage, std::move(layoutTransferInfo), PipelineObject::Stage::Top, PipelineObject::Stage::Transfer);
-        transferBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { width, height, 1 }, *renderTargetBuffer, 0);
-        transferBuffer->endRecording();
-
-        transferQueue->submit({ TransferSubmitInfo{ .commandBuffers = { transferBuffer } } }, transferFinishedFence.get());
-        transferFinishedFence->wait();
-        transferQueue->freeCommandBuffer(*transferBuffer);
-
-        renderTargetBuffer->read(ptr, 0, bufferSize);
+        auto const renderTargetBuffer = appWrapper->rt->getNextReadyBuffer();
+        size_t constexpr bbp{ 4 };
+        renderTargetBuffer->read(ptr, 0, width * height * bbp);
     }
 }
