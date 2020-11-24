@@ -19,7 +19,7 @@ namespace garlic::clove {
 @property garlic::clove::MacWindow *cloveWindow;
 
 - (instancetype)initWithWindowData:(MTLView*)view width:(unsigned int)width height:(unsigned int)height name: (NSString*)name;
-- (instancetype)initWithParentWindow:(MTLView *)view parentWindow:(const garlic::clove::Window &)parentWindow position:(const clv::mth::vec2i &)position size:(const clv::mth::vec2i &)size;
+- (instancetype)initWithParentWindow:(MTLView *)view parentWindow:(const garlic::clove::Window &)parentWindow position:(const vec2i &)position size:(const vec2i &)size;
 
 @end
 
@@ -39,7 +39,7 @@ namespace garlic::clove {
 	public:
 		MacWindow() = delete;
 		MacWindow(const WindowDescriptor& descriptor);
-		MacWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api);
+		MacWindow(const Window& parentWindow, const vec2i& position, const vec2i& size, const gfx::API api);
 
 		MacWindow(const MacWindow& other) = delete;
 		MacWindow(MacWindow&& other) noexcept = delete;
@@ -51,11 +51,11 @@ namespace garlic::clove {
 
 		void* getNativeWindow() const override;
 		
-		mth::vec2i getPosition() const override;
-		mth::vec2i getSize() const override;
+		vec2i getPosition() const override;
+		vec2i getSize() const override;
 
-		void moveWindow(const mth::vec2i& position) override;
-		void resizeWindow(const mth::vec2i& size) override;
+		void moveWindow(const vec2i& position) override;
+		void resizeWindow(const vec2i& size) override;
 
 		bool isOpen() const override;
 

@@ -24,13 +24,13 @@ namespace garlic::clove {
 
         Atom atomWmDeleteWindow;
 
-        mth::vec2i prevConfigureNotifySize = {};
+        vec2i prevConfigureNotifySize = {};
 
         //FUNCTIONS
     public:
         LinuxWindow() = delete;
         LinuxWindow(WindowDescriptor const &descriptor);
-        LinuxWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size);
+        LinuxWindow(Window const &parentWindow, vec2i const &position, vec2i const &size);
 
         LinuxWindow(LinuxWindow const &other)     = delete;
         LinuxWindow(LinuxWindow &&other) noexcept = delete;
@@ -42,11 +42,11 @@ namespace garlic::clove {
 
         std::any getNativeWindow() const override;
 
-        mth::vec2i getPosition() const override;
-        mth::vec2i getSize() const override;
+        vec2i getPosition() const override;
+        vec2i getSize() const override;
 
-        void moveWindow(mth::vec2i const &position) override;
-        void resizeWindow(mth::vec2i const &size) override;
+        void moveWindow(vec2i const &position) override;
+        void resizeWindow(vec2i const &size) override;
 
         bool isOpen() const override;
 

@@ -51,7 +51,7 @@ namespace garlic::clove {
         GARLIC_LOG(garlicLogContext, LogLevel::Debug, "Window created");
     }
 
-    LinuxWindow::LinuxWindow(Window const &parentWindow, mth::vec2i const &position, mth::vec2i const &size) {
+    LinuxWindow::LinuxWindow(Window const &parentWindow, vec2i const &position, vec2i const &size) {
         GARLIC_LOG(garlicLogContext, LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
 
         auto [parentDisplay, parentWindow] = std::any_cast<std::pair<Display, ::Window>>(parentWindow.getNativeWindow());
@@ -105,7 +105,7 @@ namespace garlic::clove {
         return std::make_pair<Display *, ::Window>(display, window);
     }
 
-    mth::vec2i LinuxWindow::getPosition() const {
+    vec2i LinuxWindow::getPosition() const {
         ::Window rootWindow;
         int32_t posX;
         int32_t posY;
@@ -122,7 +122,7 @@ namespace garlic::clove {
         }
     }
 
-    mth::vec2i LinuxWindow::getSize() const {
+    vec2i LinuxWindow::getSize() const {
         ::Window rootWindow;
         int32_t posX;
         int32_t posY;
@@ -139,11 +139,11 @@ namespace garlic::clove {
         }
     }
 
-    void LinuxWindow::moveWindow(mth::vec2i const &position) {
+    void LinuxWindow::moveWindow(vec2i const &position) {
         XMoveWindow(display, window, position.x, position.y);
     }
 
-    void LinuxWindow::resizeWindow(mth::vec2i const &size) {
+    void LinuxWindow::resizeWindow(vec2i const &size) {
         XResizeWindow(display, window, size.x, size.y);
     }
 
@@ -239,7 +239,7 @@ namespace garlic::clove {
                 case ConfigureNotify: {
                     XConfigureEvent xce = xevent.xconfigure;
                     if(static_cast<uint32_t>(xce.width) != prevConfigureNotifySize.x || static_cast<uint32_t>(xce.height) != prevConfigureNotifySize.y) {
-                        const mth::vec2i size{ xce.width, xce.height };
+                        const vec2i size{ xce.width, xce.height };
                         prevConfigureNotifySize = size;
                         onWindowResize.broadcast(size);
                     }

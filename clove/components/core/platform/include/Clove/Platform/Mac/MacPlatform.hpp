@@ -17,6 +17,6 @@ namespace garlic::clove {
         ~MacPlatform();
 
         std::shared_ptr<Window> createWindow(const WindowDescriptor &props) override;
-        std::shared_ptr<Window> createChildWindow(const Window &parentWindow, const mth::vec2i &position, const mth::vec2i &size, const gfx::API api) override;
+        std::shared_ptr<Window> createChildWindow(const Window &parentWindow, const vec2i &position, const vec2i &size, const gfx::API api) override;
     };
 }

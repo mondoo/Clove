@@ -23,7 +23,7 @@
 	return self;
 }
 
-- (instancetype)initWithParentWindow:(MTLView*)view parentWindow:(const clv::plt::Window&)parentWindow position:(const clv::mth::vec2i&)position size:(const clv::mth::vec2i&)size{
+- (instancetype)initWithParentWindow:(MTLView*)view parentWindow:(const Window&)parentWindow position:(const vec2i&)position size:(const vec2i&)size{
 	const NSRect rect = NSMakeRect(position.x, position.y, size.x, size.y);
 	const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 	
@@ -67,7 +67,7 @@ namespace garlic::clove{
 		open = true;
     }
 	
-	MacWindow::MacWindow(const Window& parentWindow, const mth::vec2i& position, const mth::vec2i& size, const gfx::API api){
+	MacWindow::MacWindow(const Window& parentWindow, const vec2i& position, const vec2i& size, const gfx::API api){
 		MacData data = { { size.x, size.y } };
 		
 		//graphicsFactory = gfx::initialise(api);
@@ -90,23 +90,23 @@ namespace garlic::clove{
 		return [windowProxy window];
 	}
 	
-	mth::vec2i MacWindow::getPosition() const{
+	vec2i MacWindow::getPosition() const{
 		NSRect frame = [[windowProxy window] frame];
 		return { frame.origin.x, frame.origin.y };
 	}
 	
-	mth::vec2i MacWindow::getSize() const{
+	vec2i MacWindow::getSize() const{
 		NSRect frame = [[windowProxy window] frame];
 		return { frame.size.width, frame.size.height };
 	}
 
-	void MacWindow::moveWindow(const mth::vec2i& position){
-		const mth::vec2i size = getSize();
+	void MacWindow::moveWindow(const vec2i& position){
+		const vec2i size = getSize();
 		[[windowProxy window] setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}
 	
-	void MacWindow::resizeWindow(const mth::vec2i& size){
-		const mth::vec2i position = getPosition();
+	void MacWindow::resizeWindow(const vec2i& size){
+		const vec2i position = getPosition();
 		[[windowProxy window] setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}
 	
@@ -130,7 +130,7 @@ namespace garlic::clove{
 											  inMode:NSDefaultRunLoopMode
 											 dequeue:YES];
 			
-				mth::vec<2, int32_t, mth::qualifier::defaultp> mouseLoc{ static_cast<int32_t>([NSEvent mouseLocation].x), static_cast<int32_t>([NSEvent mouseLocation].y) };
+				vec<2, int32_t, qualifier::defaultp> mouseLoc{ static_cast<int32_t>([NSEvent mouseLocation].x), static_cast<int32_t>([NSEvent mouseLocation].y) };
 				switch ([event type]){
 					case NSEventTypeKeyDown:
 						keyboard.onKeyPressed(static_cast<Key>([event keyCode]));
