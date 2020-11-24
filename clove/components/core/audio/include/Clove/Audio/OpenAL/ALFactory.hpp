@@ -4,7 +4,7 @@
 
 #include <AL/alc.h>
 
-namespace clv {
+namespace garlic::clove {
     class ALFactory : public AudioFactory {
         //VARIABLES
     private:

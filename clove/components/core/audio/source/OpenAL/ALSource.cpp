@@ -2,26 +2,27 @@
 
 #include "Clove/Audio/OpenAL/ALBuffer.hpp"
 #include "Clove/Audio/OpenAL/ALError.hpp"
-#include "Clove/Utils/Cast.hpp"
 
-#include <Root/Definitions.hpp>
-#include <Root/Log/Log.hpp>
+#include <Clove/Cast.hpp>
+#include <Clove/Definitions.hpp>
+#include <Clove/Log/Log.hpp>
+#include <set>
 
-namespace clv {
+namespace garlic::clove {
     ALSource::ALSource() {
         alCall(alGenSources(1, &source));
     }
 
-    ALSource::ALSource(ALSource&& other) noexcept = default;
+    ALSource::ALSource(ALSource &&other) noexcept = default;
 
-    ALSource& ALSource::operator=(ALSource&& other) noexcept = default;
+    ALSource &ALSource::operator=(ALSource &&other) noexcept = default;
 
     ALSource::~ALSource() {
         alCall(alDeleteSources(1, &source));
     }
 
     void ALSource::setBuffer(std::shared_ptr<AudioBuffer> buffer) {
-        const ALBuffer* alBuffer = polyCast<const ALBuffer>(buffer.get());
+        ALBuffer const *alBuffer{ polyCast<ALBuffer const>(buffer.get()) };
         alCall(alSourcei(source, AL_BUFFER, alBuffer->getBufferId()));
 
         bufferQueue = { buffer };
@@ -31,8 +32,8 @@ namespace clv {
         //Get the buffer Id of all of the buffers to placed into the queue
         std::vector<ALuint> alBuffers(std::size(buffers));
         for(size_t i = 0; i < std::size(alBuffers); ++i) {
-            const ALBuffer* alBuffer = polyCast<const ALBuffer>(buffers[i].get());
-            alBuffers[i]             = alBuffer->getBufferId();
+            ALBuffer const *alBuffer{ polyCast<ALBuffer const>(buffers[i].get()) };
+            alBuffers[i] = alBuffer->getBufferId();
         }
 
         alCall(alSourceQueueBuffers(source, std::size(alBuffers), alBuffers.data()));
@@ -40,13 +41,13 @@ namespace clv {
         bufferQueue.insert(std::end(bufferQueue), std::begin(buffers), std::end(buffers));
     }
 
-    std::vector<std::shared_ptr<AudioBuffer>> ALSource::unQueueBuffers(const uint32_t numToUnqueue) {
+    std::vector<std::shared_ptr<AudioBuffer>> ALSource::unQueueBuffers(uint32_t const numToUnqueue) {
 #if GARLIC_DEBUG
         const uint32_t maxAbleToUnQueue = getNumBuffersProcessed();
         GARLIC_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}, Can't unqueue {1} buffers. Only {2} buffers have been processed", GARLIC_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
 #endif
 
-        ALuint* buffers = new ALuint[numToUnqueue];
+        ALuint *buffers = new ALuint[numToUnqueue];
         alCall(alSourceUnqueueBuffers(source, numToUnqueue, buffers));
 
         std::set<ALuint> pendingBuffers;
@@ -59,9 +60,9 @@ namespace clv {
         std::vector<std::shared_ptr<AudioBuffer>> removedBuffers;
         removedBuffers.reserve(numToUnqueue);
 
-        auto removeIter = std::remove_if(std::begin(bufferQueue), std::end(bufferQueue), [&](const std::shared_ptr<AudioBuffer>& buffer) {
-            const ALBuffer* alBuffer = polyCast<const ALBuffer>(buffer.get());
-            const ALuint bufferId    = alBuffer->getBufferId();
+        auto removeIter = std::remove_if(std::begin(bufferQueue), std::end(bufferQueue), [&](std::shared_ptr<AudioBuffer> const &buffer) {
+            ALBuffer const *alBuffer{ polyCast<const ALBuffer>(buffer.get()) };
+            ALuint const bufferId{ alBuffer->getBufferId() };
 
             if(pendingBuffers.find(bufferId) != pendingBuffers.end()) {
                 removedBuffers.push_back(buffer);
@@ -84,22 +85,22 @@ namespace clv {
         alCall(alSourcei(source, AL_LOOPING, isLooping ? AL_TRUE : AL_FALSE));
     }
 
-    void ALSource::setPosition(const mth::vec3f& position) {
+    void ALSource::setPosition(vec3f const &position) {
         alCall(alSource3f(source, AL_POSITION, position.x, position.y, position.z));
     }
 
-    void ALSource::setVelocity(const mth::vec3f& velocity) {
+    void ALSource::setVelocity(vec3f const &velocity) {
         alCall(alSource3f(source, AL_VELOCITY, velocity.x, velocity.y, velocity.z));
     }
 
-    mth::vec3f ALSource::getPosition() const {
-        mth::vec3f position{};
+    vec3f ALSource::getPosition() const {
+        vec3f position{};
         alCall(alGetSource3f(source, AL_POSITION, &position.x, &position.y, &position.z));
         return position;
     }
 
-    mth::vec3f ALSource::getVelocity() const {
-        mth::vec3f velocity{};
+    vec3f ALSource::getVelocity() const {
+        vec3f velocity{};
         alCall(alGetSource3f(source, AL_VELOCITY, &velocity.x, &velocity.y, &velocity.z));
         return velocity;
     }

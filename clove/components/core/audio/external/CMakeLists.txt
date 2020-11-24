@@ -1,11 +1,3 @@
-set(DependencyFolder "Garlic/Clove/Dependencies")
-
-include(../../cmake/VendorHelpers.cmake)
-
-
-
-
-
 #openal-soft
 set(ALSOFT_DLOPEN OFF CACHE BOOL "Check for the dlopen API for loading optional libs")
 set(ALSOFT_EXAMPLES OFF CACHE BOOL "Build example programs")
@@ -17,4 +9,4 @@ set(ALSOFT_INSTALL_HRTF_DEFS OFF CACHE BOOL "Install HRTF definitions files")
 set(ALSOFT_INSTALL_UTILS OFF CACHE BOOL "Install utility programs (openal-info, alsoft-config, ...)")
 set(ALSOFT_UPDATE_BUILD_VERSION OFF CACHE BOOL "Update git build version info")
 set(ALSOFT_UTILS OFF CACHE BOOL "Build utility programs")
-add_subdirectory_with_folder(${DependencyFolder}/OpenAL-Soft openal-soft)
+add_subdirectory(openal-soft)

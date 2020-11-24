@@ -5,13 +5,13 @@
 #include "Clove/Audio/OpenAL/ALListener.hpp"
 #include "Clove/Audio/OpenAL/ALSource.hpp"
 
-#include <Root/Log/Log.hpp>
+#include <Clove/Log/Log.hpp>
 
-namespace clv {
+namespace garlic::clove {
     ALFactory::ALFactory() {
         alDevice = alcOpenDevice(nullptr);
         if(!alDevice) {
-            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Failed to create OpenAL device");
+            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create OpenAL device");
             return;
         }
 
@@ -19,9 +19,9 @@ namespace clv {
         alcCall(alcMakeContextCurrent(alContext), alDevice);
     }
 
-    ALFactory::ALFactory(ALFactory&& other) noexcept = default;
+    ALFactory::ALFactory(ALFactory &&other) noexcept = default;
 
-    ALFactory& ALFactory::operator=(ALFactory&& other) noexcept = default;
+    ALFactory &ALFactory::operator=(ALFactory &&other) noexcept = default;
 
     ALFactory::~ALFactory() {
         alcCall(alcMakeContextCurrent(nullptr), alDevice);

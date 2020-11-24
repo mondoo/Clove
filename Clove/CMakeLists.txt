@@ -1,13 +1,10 @@
-set(EngineFolder "Garlic/Clove")
-
 add_subdirectory(components)
 
-#Dependencies
-add_subdirectory(vendor)
-
-#Clove
-add_subdirectory(src)
-set_target_properties(Clove PROPERTIES FOLDER ${EngineFolder})
+#Library
+add_library(
+	Clove STATIC
+		source/temp.cpp	
+)
 
 #Includes
 target_include_directories(
@@ -24,6 +21,7 @@ target_link_libraries(
 	#Components
 	PUBLIC
 		#Core
+		CloveAudio
 		CloveGraphics
 		ClovePlatform
 		
@@ -37,12 +35,7 @@ target_link_libraries(
 		CloveLog
 		CloveMaths
 		CloveMemory
-		CloveTimer
-
-    #Cross platform
-	PRIVATE 
-		stb
-		OpenAL
+		CloveTimer		
 )
 
 #Precompiled header ($<ANGLE-R> makes sure #include ">" doesn't happen)

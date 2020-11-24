@@ -2,7 +2,7 @@
 
 #include "Clove/Audio/OpenAL/ALError.hpp"
 
-namespace clv {
+namespace garlic::clove {
     static ALenum convertFormat(AudioBuffer::Format format) {
         switch(format) {
             case AudioBuffer::Format::Mono8:

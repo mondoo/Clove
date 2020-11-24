@@ -4,7 +4,7 @@
 #include "Clove/Audio/AudioListener.hpp"
 #include "Clove/Audio/AudioSource.hpp"
 
-namespace clv {
+namespace garlic::clove {
     /**
 	 * @brief Responsible for creating all audio objects.
 	 */

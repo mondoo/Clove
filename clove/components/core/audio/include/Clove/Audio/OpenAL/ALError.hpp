@@ -1,10 +1,11 @@
 #pragma once
 
 #include <AL/al.h>
+#include <string_view>
 
-namespace clv {
-    void printErrorAl(ALenum error, const std::string_view fileName, const uint_fast32_t line);
-    void printErrorAlc(ALenum error, const std::string_view fileName, const uint_fast32_t line);
+namespace garlic::clove {
+    void printErrorAl(ALenum error, std::string_view const fileName, uint_fast32_t const line);
+    void printErrorAlc(ALenum error, std::string_view const fileName, uint_fast32_t const line);
 }
 
 #define alCall(call)                                 \

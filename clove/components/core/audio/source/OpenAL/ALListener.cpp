@@ -2,33 +2,31 @@
 
 #include "Clove/Audio/OpenAL/ALError.hpp"
 
-#include <Clove/Maths/Vector.hpp>
-
-namespace clv {
+namespace garlic::clove {
     ALListener::ALListener() = default;
 
-    ALListener::ALListener(ALListener&& other) noexcept = default;
+    ALListener::ALListener(ALListener &&other) noexcept = default;
 
-    ALListener& ALListener::operator=(ALListener&& other) noexcept = default;
+    ALListener &ALListener::operator=(ALListener &&other) noexcept = default;
 
     ALListener::~ALListener() = default;
 
-    void ALListener::setPosition(const clv::mth::vec3f& position) {
+    void ALListener::setPosition(vec3f const &position) {
         alCall(alListener3f(AL_POSITION, position.x, position.y, position.z));
     }
 
-    void ALListener::setVelocity(const clv::mth::vec3f& velocity) {
+    void ALListener::setVelocity(vec3f const &velocity) {
         alCall(alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z));
     }
 
-    mth::vec3f ALListener::getPosition() const {
-        mth::vec3f position{};
+    vec3f ALListener::getPosition() const {
+        vec3f position{};
         alCall(alGetListener3f(AL_POSITION, &position.x, &position.y, &position.z));
         return position;
     }
 
-    mth::vec3f ALListener::getVelocity() const {
-        mth::vec3f velocity{};
+    vec3f ALListener::getVelocity() const {
+        vec3f velocity{};
         alCall(alGetListener3f(AL_VELOCITY, &velocity.x, &velocity.y, &velocity.z));
         return velocity;
     }

@@ -4,7 +4,7 @@
 
 #include <AL/al.h>
 
-namespace clv {
+namespace garlic::clove {
     class ALBuffer : public AudioBuffer {
         //VARIABLES
     private:

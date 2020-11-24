@@ -1,6 +1,3 @@
-[submodule "Clove/vendor/openal-soft"]
-	path = Clove/vendor/openal-soft
-	url = https://github.com/kcat/openal-soft.git
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest.git
@@ -28,3 +25,6 @@
 [submodule "glslang"]
 	path = clove/components/core/graphics/external/glslang
 	url = https://github.com/KhronosGroup/glslang.git
+[submodule "openal-soft"]
+	path = clove/components/core/audio/external/openal-soft
+	url = https://github.com/kcat/openal-soft.git

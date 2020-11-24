@@ -1,10 +1,14 @@
 #pragma once
 
-namespace clv {
+#include <Clove/Maths/Vector.hpp>
+#include <memory>
+#include <vector>
+
+namespace garlic::clove {
     class AudioBuffer;
 }
 
-namespace clv {
+namespace garlic::clove {
     /**
 	 * @brief An AudioSource allows sound to played from a cetain point in space
 	 */
@@ -32,16 +36,16 @@ namespace clv {
 		 * @param numToQueue The number of buffers to remove from the queue. must be <= getNumBuffersProcessed.
 		 * @returns A vector of AudioBuffers removed from the queue.
 		 */
-        virtual std::vector<std::shared_ptr<AudioBuffer>> unQueueBuffers(const uint32_t numToUnqueue) = 0;
+        virtual std::vector<std::shared_ptr<AudioBuffer>> unQueueBuffers(uint32_t const numToUnqueue) = 0;
 
         virtual void setPitch(float pitch)      = 0;
         virtual void setLooping(bool isLooping) = 0;
 
-        virtual void setPosition(const clv::mth::vec3f& position) = 0;
-        virtual void setVelocity(const clv::mth::vec3f& velocity) = 0;
+        virtual void setPosition(vec3f const &position) = 0;
+        virtual void setVelocity(vec3f const &velocity) = 0;
 
-        virtual clv::mth::vec3f getPosition() const = 0;
-        virtual clv::mth::vec3f getVelocity() const = 0;
+        virtual vec3f getPosition() const = 0;
+        virtual vec3f getVelocity() const = 0;
 
         /**
 		 * @brief How many buffers are in the queue (not played or playing)

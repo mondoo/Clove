@@ -1,6 +1,6 @@
 #pragma once
 
-namespace clv {
+namespace garlic::clove {
 	/**
 	 * @brief Represents a buffer of data that can be played with an AudioSource
 	 * @details Created from an AudioFactory. Can be created empty and then
