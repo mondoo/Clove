@@ -228,8 +228,10 @@ target_link_libraries(
 		CloveGraphics 
 		ClovePlatform 
  
-		#Systems 
+		#Systems
+		CloveAI
 		CloveECS 
+		CloveStateMachine
 		 
 		#Utilities 
 		CloveCast 

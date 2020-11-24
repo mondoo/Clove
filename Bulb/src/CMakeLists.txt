@@ -14,16 +14,6 @@ set(
 		${BLB_INCLUDE}/Controller/PlayerController.hpp
 )
 
-set(
-	StateMachineFiles
-		${BLB_INCLUDE}/StateMachine/State.hpp
-		${BLB_INCLUDE}/StateMachine/State.inl
-		${BLB_INCLUDE}/StateMachine/StateMachine.hpp
-		${BLB_INCLUDE}/StateMachine/StateMachine.inl
-		${BLB_INCLUDE}/StateMachine/Transition.hpp
-		${BLB_INCLUDE}/StateMachine/Transition.inl
-)
-
 #Shader files that are only used for includes
 
 
@@ -46,5 +36,4 @@ target_sources(
 		${BLB_INCLUDE}/Bulb.hpp
 
 		${ControllerFiles}
-		${StateMachineFiles}
 )
