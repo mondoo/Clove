@@ -4,14 +4,7 @@ include(../../cmake/VendorHelpers.cmake)
 
 
 
-#glslang
-set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")
-add_subdirectory_with_folder(${DependencyFolder}/glslang glslang)
 
-#SPIRV-Cross
-set(SPIRV_CROSS_ENABLE_C_API OFF CACHE BOOL "Enable C API wrapper support in static library.")
-set(SPIRV_CROSS_ENABLE_TESTS OFF CACHE BOOL "Enable SPIR-V Cross tests.")
-add_subdirectory_with_folder(${DependencyFolder}/SPIRV-Cross SPIRV-Cross)
 
 #openal-soft
 set(ALSOFT_DLOPEN OFF CACHE BOOL "Check for the dlopen API for loading optional libs")

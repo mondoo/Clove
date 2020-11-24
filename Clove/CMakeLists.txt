@@ -9,8 +9,6 @@ add_subdirectory(vendor)
 add_subdirectory(src)
 set_target_properties(Clove PROPERTIES FOLDER ${EngineFolder})
 
-find_package(Vulkan REQUIRED)
-
 #Includes
 target_include_directories(
 	Clove
@@ -22,9 +20,6 @@ target_include_directories(
 	#Libraries
 	INTERFACE
         vendor/glm
-
-	PRIVATE
-		Vulkan::Vulkan #Temp public
 )
 
 #Libraries
@@ -40,6 +35,9 @@ target_link_libraries(
 
 	#Components
 	PUBLIC
+		#Core
+		CloveGraphics
+
 		#Utilities
 		CloveCast
 		CloveDefinitions
@@ -55,25 +53,12 @@ target_link_libraries(
     #Cross platform
 	PRIVATE 
 		stb
-		glm
-		glslang
-		glslang-default-resource-limits
-		SPIRV
-		spirv-cross-core
-		spirv-cross-glsl
-		spirv-cross-hlsl
-		spirv-cross-msl
 		OpenAL
-
-	#Windows
-	PRIVATE
-		$<$<PLATFORM_ID:Windows>:Vulkan::Vulkan>
 
 	#Linux
 	PRIVATE
 		$<$<PLATFORM_ID:Linux>:X11>
 		$<$<PLATFORM_ID:Linux>:dl>
-		$<$<PLATFORM_ID:Linux>:Vulkan::Vulkan>
 
 	#MacOS
 	PRIVATE
