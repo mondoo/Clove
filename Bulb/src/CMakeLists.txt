@@ -7,24 +7,6 @@ include(../../Clove/cmake/CompileShader.cmake)
 add_library(Bulb STATIC)
 
 set(
-	AIFiles
-		${BLB_INCLUDE}/AI/BehaviourTree.hpp
-		${BLB_SOURCE}/AI/BehaviourTree.cpp
-		${BLB_INCLUDE}/AI/BlackBoard.hpp
-		${BLB_INCLUDE}/AI/BlackBoard.inl
-		${BLB_SOURCE}/AI/BlackBoard.cpp
-		${BLB_INCLUDE}/AI/Composite.hpp
-		${BLB_SOURCE}/AI/Composite.cpp
-		${BLB_INCLUDE}/AI/Decorator.hpp
-		${BLB_SOURCE}/AI/Decorator.cpp
-		${BLB_INCLUDE}/AI/Selector.hpp
-		${BLB_SOURCE}/AI/Selector.cpp
-		${BLB_INCLUDE}/AI/Sequence.hpp
-		${BLB_SOURCE}/AI/Sequence.cpp
-		${BLB_INCLUDE}/AI/Task.hpp
-)
-
-set(
 	ControllerFiles
 		${BLB_INCLUDE}/Controller/Controller.hpp
 		${BLB_INCLUDE}/Controller/BTAIController.hpp
@@ -63,7 +45,6 @@ target_sources(
 	PRIVATE
 		${BLB_INCLUDE}/Bulb.hpp
 
-		${AIFiles}
 		${ControllerFiles}
 		${StateMachineFiles}
 )

@@ -1,8 +1,10 @@
 #pragma once
 
-#include <Root/Memory/ListAllocator.hpp>
+#include <Clove/Memory/ListAllocator.hpp>
+#include <map>
+#include <optional>
 
-namespace blb::ai {
+namespace garlic::clove {
     class BlackBoard {
         //TYPES
     public:
@@ -10,20 +12,20 @@ namespace blb::ai {
 
         //VARIABLES
     private:
-        garlic::ListAllocator memoryBlock;
+        ListAllocator memoryBlock;
 
-        std::map<Key, void*> dataMap;
+        std::map<Key, void *> dataMap;
 
         //FUNCTIONS
     public:
         BlackBoard();
         BlackBoard(size_t memorySize);
 
-        BlackBoard(const BlackBoard& other) = delete;
-        BlackBoard(BlackBoard&& other) noexcept;
+        BlackBoard(BlackBoard const &other) = delete;
+        BlackBoard(BlackBoard &&other) noexcept;
 
-        BlackBoard& operator=(const BlackBoard& other) = delete;
-        BlackBoard& operator=(BlackBoard&& other) noexcept;
+        BlackBoard &operator=(BlackBoard const &other) = delete;
+        BlackBoard &operator=(BlackBoard &&other) noexcept;
 
         ~BlackBoard();
 
