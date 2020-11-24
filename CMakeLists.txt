@@ -33,7 +33,6 @@ add_subdirectory(external)
 #Garlic's modules
 add_subdirectory(clove)
 add_subdirectory(Bulb)
-add_subdirectory(Stem)
 
 #Garlic's editor
 if(GAR_BUILD_SCAPE AND MSVC)

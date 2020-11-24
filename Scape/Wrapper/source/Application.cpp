@@ -1,13 +1,13 @@
 #include "Scape/Wrapper/Application.hpp"
 
-#include <Bulb/ECS/Entity.hpp>
-#include <Bulb/ECS/World.hpp>
+#include <Clove/ECS/Entity.hpp>
+#include <Clove/ECS/World.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Graphics/TransferCommandBuffer.hpp>
 #include <Clove/Graphics/TransferQueue.hpp>
-#include <Root/Log/Log.hpp>
+#include <Clove/Log/Log.hpp>
 #include <Stem/Application.hpp>
 #include <Stem/Components/CameraComponent.hpp>
 #include <Stem/Components/PointLightComponent.hpp>
@@ -27,7 +27,7 @@ private:
     garlic::Viewport viewport;
 
 public:
-    TestLayer(clv::mth::vec2ui size)
+    TestLayer(vec2ui size)
         : viewport{ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) } {
     }
 
@@ -51,7 +51,7 @@ public:
         camEnt.addComponent<garlic::CameraComponent>(garlic::Camera{ viewport, garlic::Camera::ProjectionMode::Perspective });
     }
 
-    void onUpdate(clv::utl::DeltaTime const deltaTime) override {
+    void onUpdate(DeltaTime const deltaTime) override {
         static float time{ 0.0f };
         time += deltaTime;
 
@@ -62,7 +62,7 @@ public:
         garlic::Application::get().getECSWorld()->destroyAllEntites();
     }
 
-    void resize(clv::mth::vec2ui size) {
+    void resize(vec2ui size) {
         viewport.width  = size.x;
         viewport.height = size.y;
         camEnt.getComponent<garlic::CameraComponent>()->setViewport(viewport);
@@ -70,7 +70,7 @@ public:
 };
 
 struct AppWrapper {
-    AppWrapper(clv::gfx::API graphicsApi, clv::AudioAPI audioApi, clv::gfx::GraphicsImage::Descriptor renderTargetImageDesc) {
+    AppWrapper(garlic::clove::GraphicsApi graphicsApi, clv::AudioAPI audioApi, garlic::clove::GraphicsImage::Descriptor renderTargetImageDesc) {
         auto [app, rt] = garlic::Application::createHeadless(graphicsApi, audioApi, std::move(renderTargetImageDesc));
         this->app      = std::move(app);
         this->rt       = std::move(rt);
@@ -88,7 +88,7 @@ namespace wrapper {
     Application::Application(int const width, int const height)
         : width{ width }
         , height{ height } {
-        using namespace clv::gfx;
+        using namespace garlic::clove;
 
         //Hard coding format to B8G8R8A8_SRGB
         GraphicsImage::Descriptor const renderTargetImageDescriptor{
@@ -98,7 +98,7 @@ namespace wrapper {
             .format      = GraphicsImage::Format::B8G8R8A8_SRGB,
             .sharingMode = SharingMode::Concurrent,
         };
-        appWrapper = std::make_unique<AppWrapper>(clv::gfx::API::Vulkan, clv::AudioAPI::OpenAl, std::move(renderTargetImageDescriptor));
+        appWrapper = std::make_unique<AppWrapper>(garlic::clove::GraphicsApi::Vulkan, clv::AudioAPI::OpenAl, std::move(renderTargetImageDescriptor));
 
         layerWrapper        = std::make_unique<LayerWrapper>();
         layerWrapper->layer = std::make_shared<TestLayer>();
