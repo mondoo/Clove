@@ -30,9 +30,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 #Garlic's dependencies
 add_subdirectory(external)
 
-#Garlic's modules
+#Garlic's engine
 add_subdirectory(clove)
-add_subdirectory(Bulb)
 
 #Garlic's editor
 if(GAR_BUILD_SCAPE AND MSVC)
