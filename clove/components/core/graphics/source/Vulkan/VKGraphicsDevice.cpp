@@ -284,12 +284,12 @@ namespace garlic::clove {
 #elif GARLIC_PLATFORM_MACOS
             GARLIC_ASSERT(false, "Vulkan implementation not provided on MacOS");
 #elif GARLIC_PLATFORM_LINUX
-            auto const linuxNativeWindow = std::any_cast<plt::LinuxWindow::NativeWindow>(nativeWindow);
+            auto const [display, window] = std::any_cast<std::pair<Display, ::Window>>(nativeWindow);
 
             VkXlibSurfaceCreateInfoKHR createInfo{
                 .sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
-                .dpy    = linuxNativeWindow.display,
-                .window = linuxNativeWindow.window,
+                .dpy    = display,
+                .window = window,
             };
 
             if(vkCreateXlibSurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {

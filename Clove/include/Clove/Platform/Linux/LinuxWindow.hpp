@@ -3,24 +3,18 @@
 #include "Clove/Platform/Linux/CloveLinux.hpp"
 #include "Clove/Platform/Window.hpp"
 
-namespace clv::gfx {
+namespace garlic::clove {
     class GraphicsFactory;
 }
 
 namespace clv::plt {
     class LinuxWindow : public Window {
-        //TYPES
-    public:
-        struct NativeWindow {
-            Display *display{ nullptr };
-            ::Window window;
-        };
-
         //VARIABLES
     private:
         bool open{ false };
 
-        NativeWindow nativeWindow;
+        Display *display{ nullptr };
+        ::Window window;
         Screen *screen{ nullptr };
         int32_t screenID;
 
