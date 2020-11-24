@@ -27,13 +27,14 @@ option(GAR_CLV_IMGUI_COMPATIBLE "Links Glad publicly so users can initialise Dea
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-#Garlic's dependencies
+#Dependencies
 add_subdirectory(external)
 
-#Garlic's engine
+#Engine
 add_subdirectory(clove)
 
-#Garlic's editor
+#Editor
 if(GAR_BUILD_SCAPE AND MSVC)
-	add_subdirectory(Scape)
+	add_subdirectory(membrane)
+	#add_subdirectory(Scape)
 endif()
