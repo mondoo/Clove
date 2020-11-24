@@ -16,19 +16,7 @@ target_include_directories(
 	#Clove
 	PUBLIC
 		include
-
-	#Libraries
-	INTERFACE
-        vendor/glm
 )
-
-#Libraries
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-	find_library(CLV_COCOA_LIB Cocoa)
-	find_library(CLV_METAL_LIB Metal)
-	find_library(CLV_APPKIT_LIB AppKit)
-	find_library(CLV_QUARTZ_LIB QuartzCore)
-endif()
 
 target_link_libraries(
 	Clove
@@ -37,7 +25,8 @@ target_link_libraries(
 	PUBLIC
 		#Core
 		CloveGraphics
-
+		ClovePlatform
+		
 		#Utilities
 		CloveCast
 		CloveDefinitions
@@ -54,18 +43,6 @@ target_link_libraries(
 	PRIVATE 
 		stb
 		OpenAL
-
-	#Linux
-	PRIVATE
-		$<$<PLATFORM_ID:Linux>:X11>
-		$<$<PLATFORM_ID:Linux>:dl>
-
-	#MacOS
-	PRIVATE
-		$<$<PLATFORM_ID:Darwin>:${CLV_COCOA_LIB}>
-		$<$<PLATFORM_ID:Darwin>:${CLV_METAL_LIB}>
-		$<$<PLATFORM_ID:Darwin>:${CLV_APPKIT_LIB}>
-		$<$<PLATFORM_ID:Darwin>:${CLV_QUARTZ_LIB}>
 )
 
 #Precompiled header ($<ANGLE-R> makes sure #include ">" doesn't happen)

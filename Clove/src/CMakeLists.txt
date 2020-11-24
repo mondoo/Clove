@@ -35,66 +35,12 @@ set(
 )
 
 set(
-	InputFiles
-		${CLV_INCLUDE}/Input/Keyboard.hpp
-		${CLV_INCLUDE}/Input/Keyboard.inl
-		${CLV_SOURCE}/Input/Keyboard.cpp
-		${CLV_INCLUDE}/Input/KeyCodes.hpp
-		${CLV_INCLUDE}/Input/Mouse.hpp
-		${CLV_SOURCE}/Input/Mouse.cpp
-		${CLV_INCLUDE}/Input/MouseButtonCodes.hpp
-)
-
-set(
-	PlatformFiles
-		${CLV_INCLUDE}/Platform/Platform.hpp
-		${CLV_SOURCE}/Platform/Platform.cpp
-		${CLV_INCLUDE}/Platform/PlatformTypes.hpp
-		${CLV_INCLUDE}/Platform/Window.hpp
-		${CLV_SOURCE}/Platform/Window.cpp
-)
-
-set(
-	WindowsPlatformFiles
-		${CLV_INCLUDE}/Platform/Windows/CloveWindows.hpp
-		${CLV_INCLUDE}/Platform/Windows/WindowsPlatform.hpp
-		${CLV_SOURCE}/Platform/Windows/WindowsPlatform.cpp
-		${CLV_INCLUDE}/Platform/Windows/WindowsException.hpp
-		${CLV_SOURCE}/Platform/Windows/WindowsException.cpp
-		${CLV_INCLUDE}/Platform/Windows/WindowsWindow.hpp
-		${CLV_SOURCE}/Platform/Windows/WindowsWindow.cpp
-)
-
-set(
-	LinuxPlatformFiles
-		${CLV_INCLUDE}/Platform/Linux/CloveLinux.hpp
-		${CLV_INCLUDE}/Platform/Linux/LinuxPlatform.hpp
-		${CLV_SOURCE}/Platform/Linux/LinuxPlatform.cpp
-		${CLV_INCLUDE}/Platform/Linux/LinuxWindow.hpp
-		${CLV_SOURCE}/Platform/Linux/LinuxWindow.cpp
-)
-
-set(
-	MacOSPlatformFiles
-		${CLV_INCLUDE}/Platform/Mac/CloveMac.hpp
-		${CLV_INCLUDE}/Platform/Mac/MacPlatform.hpp
-		${CLV_SOURCE}/Platform/Mac/MacPlatform.mm
-		${CLV_INCLUDE}/Platform/Mac/MacWindow.hpp
-		${CLV_SOURCE}/Platform/Mac/MacWindow.mm
-)
-
-set(
 	AllFiles
 	${CLV_INCLUDE}/Clove.hpp
 	
 		${AudioFiles}
 			${OpenALAudioFiles}
 		${ExceptionFiles}
-		${InputFiles}
-		${PlatformFiles}
-			${WindowsPlatformFiles}
-			${LinuxPlatformFiles}
-			${MacOSPlatformFiles}
 )
 
 #Organise the source tree
