@@ -2,7 +2,7 @@
 
 #include "Clove/Maths/glmWrappers.hpp"
 
-#include <glm/glm.hpp>
+#include <glm/detail/type_quat.hpp>
 
 namespace garlic::clove {
     template<typename T, qualifier Q>
