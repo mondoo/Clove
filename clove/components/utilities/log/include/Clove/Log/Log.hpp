@@ -1,7 +1,9 @@
 #pragma once
 
-#include <spdlog/spdlog.h>
-#include <string_view>
+//As spdlog uses mutex we can't use it when building /clr
+#ifndef _M_CEE
+    #include <spdlog/spdlog.h>
+    #include <string_view>
 
 namespace garlic::clove {
     enum class LogLevel {
@@ -33,9 +35,17 @@ namespace garlic::clove {
     LogContext createLogContext(LogLevel consoleLogLevel, std::string_view loggerName, std::string_view fileName);
 }
 
-#include "Log.inl"
+    #include "Log.inl"
 
-#define GARLIC_LOG(context, level, ...) context.log(level, __VA_ARGS__);
+    #define GARLIC_LOG(context, level, ...) context.log(level, __VA_ARGS__);
+#else
+namespace garlic::clove {
+    struct LogContext {
+    };
+}
+
+    #define GARLIC_LOG(context, level, ...)
+#endif
 
 #if GARLIC_ENABLE_ASSERTIONS
     #define GARLIC_ASSERT(x, ...)                                                                                   \
