@@ -1,12 +1,12 @@
-#include "Bulb/ECS/ECSEvents.hpp"
+#include "Clove/ECS/ECSEvents.hpp"
 
-#include <Root/Definitions.hpp>
-#include <Root/Event/EventDispatcher.hpp>
-#include <Root/Log/Log.hpp>
+#include <Clove/Definitions.hpp>
+#include <Clove/Event/EventDispatcher.hpp>
+#include <Clove/Log/Log.hpp>
 
-namespace blb::ecs {
+namespace garlic::clove {
     template<typename ComponentType>
-    ComponentContainer<ComponentType>::ComponentContainer(garlic::EventDispatcher *dispatcher)
+    ComponentContainer<ComponentType>::ComponentContainer(EventDispatcher *dispatcher)
         : ecsEventDispatcher{ dispatcher }
         , componentAllocator{ 100 } {
     }
@@ -37,7 +37,7 @@ namespace blb::ecs {
                 addComponent(toId, *componentPtr);
             }
         } else {
-            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Component that is not copyable was attempted to be copied. Entity will be incomplete");
+            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Component that is not copyable was attempted to be copied. Entity will be incomplete");
         }
     }
 
@@ -72,7 +72,7 @@ namespace blb::ecs {
     ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityId, ConstructArgs &&... args) {
         ComponentType *comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
         if(comp == nullptr) {
-            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "{0}: Could not create component", GARLIC_FUNCTION_NAME_PRETTY);
+            GARLIC_LOG(garlicLogContext, LogLevel::Error, "{0}: Could not create component", GARLIC_FUNCTION_NAME_PRETTY);
             return { comp };
         }
 
@@ -80,7 +80,7 @@ namespace blb::ecs {
 
         if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
 #if GARLIC_DEBUG
-            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Warning, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", GARLIC_FUNCTION_NAME_PRETTY);
+            GARLIC_LOG(garlicLogContext, LogLevel::Warning, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", GARLIC_FUNCTION_NAME_PRETTY);
 #endif
             components[iter->second] = comp;
         } else {

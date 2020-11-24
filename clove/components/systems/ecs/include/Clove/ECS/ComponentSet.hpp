@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Bulb/ECS/Component.hpp"
+#include "Clove/ECS/Component.hpp"
 
-namespace blb::ecs {
+namespace garlic::clove {
     /**
 	 * @brief a ComponentSet represents a set of components obtained from an entity.
 	 * @details Internally a ComponentSet is a vector of tuples where each tuple 

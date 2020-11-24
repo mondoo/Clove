@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Clove/Utils/DeltaTime.hpp"
+#include <Clove/DeltaTime.hpp>
 
-namespace garlic::inline root {
+namespace garlic::clove {
     class EventDispatcher;
 }
 
-namespace blb::ecs {
+namespace garlic::clove {
     class World;
 }
 
-namespace blb::ecs {
+namespace garlic::clove {
     /**
 	 * @brief The base class for all Systems.
 	 */
@@ -26,23 +26,23 @@ namespace blb::ecs {
 		 * @param dispatcher The EventDispatcher inside the World.
 		 * @see	EventDispatcher.
 		 */
-        virtual void registerToEvents(garlic::EventDispatcher& dispatcher) {}
+        virtual void registerToEvents(EventDispatcher &dispatcher) {}
 
         /**
 		 * @brief Called before update.
 		 * @param world The World that owns this System.
 		 */
-        virtual void preUpdate(World& world) {}
+        virtual void preUpdate(World &world) {}
         /**
 		 * @brief Called once per frame.
 		 * @param world The World that owns this System.
 		 * @param deltaTime The time passed since the last frame.
 		 */
-        virtual void update(World& world, clv::utl::DeltaTime deltaTime) = 0;
+        virtual void update(World &world, DeltaTime deltaTime) = 0;
         /**
 		 * @brief Called after update.
 		 * @param world The World that owns this System.
 		 */
-        virtual void postUpdate(World& world) {}
+        virtual void postUpdate(World &world) {}
     };
 }

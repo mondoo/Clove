@@ -24,6 +24,9 @@ target_link_libraries(
 		CloveAudio
 		CloveGraphics
 		ClovePlatform
+
+		#Systems
+		CloveECS
 		
 		#Utilities
 		CloveCast

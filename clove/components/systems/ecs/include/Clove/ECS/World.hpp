@@ -1,18 +1,20 @@
 #pragma once
 
-#include "Bulb/ECS/ComponentManager.hpp"
-#include "Bulb/ECS/ComponentSet.hpp"
-#include "Bulb/ECS/ECSTypes.hpp"
-#include "Bulb/ECS/System.hpp"
+#include "Clove/ECS/ComponentManager.hpp"
+#include "Clove/ECS/ComponentSet.hpp"
+#include "Clove/ECS/ECSTypes.hpp"
+#include "Clove/ECS/System.hpp"
 
-#include <Root/Event/EventDispatcher.hpp>
+#include <Clove/Event/EventDispatcher.hpp>
+#include <set>
+#include <vector>
 
-namespace blb::ecs {
+namespace garlic::clove {
     class Entity;
     class System;
 }
 
-namespace blb::ecs {
+namespace garlic::clove {
     /**
 	 * @brief The ECS World that contains the Entities Systems and Components.
 	 * @details A World acts as a container that stores all of the elements that make an ECS.
@@ -20,7 +22,7 @@ namespace blb::ecs {
     class World {
         //VARIABLES
     private:
-        garlic::EventDispatcher ecsEventDispatcher;
+        EventDispatcher ecsEventDispatcher;
 
         ComponentManager componentManager;
 
@@ -34,11 +36,11 @@ namespace blb::ecs {
     public:
         World();
 
-        World(const World& other)     = delete;
-        World(World&& other) noexcept = delete;
+        World(World const &other)     = delete;
+        World(World &&other) noexcept = delete;
 
-        World& operator=(const World& other) = delete;
-        World& operator=(World&& other) noexcept = delete;
+        World &operator=(World const &other) = delete;
+        World &operator=(World &&other) noexcept = delete;
 
         ~World();
 
@@ -47,7 +49,7 @@ namespace blb::ecs {
 		 * @details Called once per frame. Goes through each System in the World
 		 * and updates them.
 		 */
-        void update(clv::utl::DeltaTime deltaTime);
+        void update(DeltaTime deltaTime);
 
         /**
 		 * @brief Creates an entity to be part of this World.
@@ -103,7 +105,7 @@ namespace blb::ecs {
 		 * @see	ComponentPtr.
 		 */
         template<typename ComponentType, typename... ConstructArgs>
-        ComponentPtr<ComponentType> addComponent(EntityID entityId, ConstructArgs&&... args);
+        ComponentPtr<ComponentType> addComponent(EntityID entityId, ConstructArgs &&... args);
         /**
 		 * @brief Gets the Component for an Entity.
 		 * @tparam ComponentType The type of Component to get.
@@ -148,13 +150,13 @@ namespace blb::ecs {
 		 * @return Returns a pointer to the System.
 		 */
         template<typename SystemType, typename... ConstructArgs>
-        SystemType* addSystem(ConstructArgs&&... args);
+        SystemType *addSystem(ConstructArgs &&... args);
 
     private:
         enum class FoundState { NullptrFound,
                                 EndOfTuple };
         template<std::size_t index, typename... ComponentTypes>
-        FoundState checkForNullptr(const std::tuple<ComponentPtr<ComponentTypes>...>& tuple);
+        FoundState checkForNullptr(std::tuple<ComponentPtr<ComponentTypes>...> const &tuple);
     };
 }
 

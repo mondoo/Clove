@@ -1,9 +1,9 @@
-#include "Bulb/ECS/ComponentManager.hpp"
+#include "Clove/ECS/ComponentManager.hpp"
 
-namespace blb::ecs {
+namespace garlic::clove {
     ComponentContainerInterface::~ComponentContainerInterface() = default;
 
-    ComponentManager::ComponentManager(garlic::EventDispatcher *dispatcher)
+    ComponentManager::ComponentManager(EventDispatcher *dispatcher)
         : ecsEventDispatcher(dispatcher) {
     }
 

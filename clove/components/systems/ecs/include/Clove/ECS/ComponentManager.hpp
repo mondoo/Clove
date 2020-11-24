@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Bulb/ECS/Component.hpp"
-#include "Bulb/ECS/ECSTypes.hpp"
+#include "Clove/ECS/Component.hpp"
+#include "Clove/ECS/ECSTypes.hpp"
 
-#include <Root/Memory/PoolAllocator.hpp>
+#include <Clove/Memory/PoolAllocator.hpp>
 
-namespace garlic::inline root {
+namespace garlic::clove {
     class EventDispatcher;
 }
 
-namespace blb::ecs {
+namespace garlic::clove {
     class ComponentContainerInterface {
         //FUNCTIONS
     public:
@@ -25,17 +25,17 @@ namespace blb::ecs {
     class ComponentContainer : public ComponentContainerInterface {
         //VARIABLES
     private:
-        garlic::PoolAllocator<ComponentType, garlic::AllocatorStrategy::Dynamic> componentAllocator;
+        PoolAllocator<ComponentType, AllocatorStrategy::Dynamic> componentAllocator;
 
         std::unordered_map<EntityID, size_t> entityIDToIndex;
         std::vector<ComponentType *> components;
 
-        garlic::EventDispatcher *ecsEventDispatcher;
+        EventDispatcher *ecsEventDispatcher;
 
         //FUNCTIONS
     public:
         ComponentContainer() = delete;
-        ComponentContainer(garlic::EventDispatcher *dispatcher);
+        ComponentContainer(EventDispatcher *dispatcher);
 
         ComponentContainer(ComponentContainer const &other) = delete;
         ComponentContainer(ComponentContainer &&other) noexcept;
@@ -60,12 +60,12 @@ namespace blb::ecs {
     private:
         std::unordered_map<ComponentID, std::unique_ptr<ComponentContainerInterface>> containers;
 
-        garlic::EventDispatcher *ecsEventDispatcher;
+        EventDispatcher *ecsEventDispatcher;
 
         //FUNCTIONS
     public:
         ComponentManager() = delete;
-        ComponentManager(garlic::EventDispatcher *dispatcher);
+        ComponentManager(EventDispatcher *dispatcher);
 
         ComponentManager(ComponentManager const &other)     = delete;
         ComponentManager(ComponentManager &&other) noexcept = delete;

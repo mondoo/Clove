@@ -33,25 +33,6 @@ set(
 )
 
 set(
-	ECSFiles
-		${BLB_INCLUDE}/ECS/Component.hpp
-		${BLB_INCLUDE}/ECS/Component.inl
-		${BLB_INCLUDE}/ECS/ComponentManager.hpp
-		${BLB_INCLUDE}/ECS/ComponentManager.inl
-		${BLB_INCLUDE}/ECS/ComponentSet.hpp
-		${BLB_SOURCE}/ECS/ComponentManager.cpp
-		${BLB_INCLUDE}/ECS/ECSEvents.hpp
-		${BLB_INCLUDE}/ECS/ECSTypes.hpp
-		${BLB_INCLUDE}/ECS/Entity.hpp
-		${BLB_INCLUDE}/ECS/Entity.inl
-		${BLB_SOURCE}/ECS/Entity.cpp
-		${BLB_INCLUDE}/ECS/World.hpp
-		${BLB_INCLUDE}/ECS/World.inl
-		${BLB_SOURCE}/ECS/World.cpp
-		${BLB_INCLUDE}/ECS/System.hpp
-)
-
-set(
 	StateMachineFiles
 		${BLB_INCLUDE}/StateMachine/State.hpp
 		${BLB_INCLUDE}/StateMachine/State.inl
@@ -84,6 +65,5 @@ target_sources(
 
 		${AIFiles}
 		${ControllerFiles}
-		${ECSFiles}
 		${StateMachineFiles}
 )
