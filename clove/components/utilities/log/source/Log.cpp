@@ -5,43 +5,51 @@
 #include <spdlog/spdlog.h>
 
 namespace garlic::clove {
-    static std::shared_ptr<spdlog::logger> logger = []() {
-        auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-        auto fileSink    = std::make_shared<spdlog::sinks::basic_file_sink_mt>("GARLIC_LOG.txt", true);
+    class SpdLogOutput : public Logger::Output {
+        //VARIABLES
+    private:
+        std::shared_ptr<spdlog::logger> logger;
 
-        consoleSink->set_pattern("%^[%T] %v%$");
-        fileSink->set_pattern("[%D %T][%l] %v");
+        //FUNCTIONS
+    public:
+        SpdLogOutput() {
+            auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+            auto fileSink    = std::make_shared<spdlog::sinks::basic_file_sink_mt>("GARLIC_LOG.txt", true);
 
-        consoleSink->set_level(spdlog::level::trace);
-        fileSink->set_level(spdlog::level::trace);
+            consoleSink->set_pattern("%^[%T] %v%$");
+            fileSink->set_pattern("[%D %T][%l] %v");
 
-        std::vector<spdlog::sink_ptr> sinks{ consoleSink, fileSink };
-        auto logger{ std::make_shared<spdlog::logger>("GARLIC_LOGGER", sinks.begin(), sinks.end()) };
-        logger->set_level(spdlog::level::trace);
+            consoleSink->set_level(spdlog::level::trace);
+            fileSink->set_level(spdlog::level::trace);
 
-        return logger;
-    }();
+            std::vector<spdlog::sink_ptr> sinks{ consoleSink, fileSink };
+            logger = std::make_shared<spdlog::logger>("GARLIC_LOGGER", sinks.begin(), sinks.end());
+            logger->set_level(spdlog::level::trace);
+        };
 
-    void Logger::doLog(LogLevel level, std::string_view msg) {
-        switch(level) {
-            case LogLevel::Trace:
-                logger->trace(msg);
-                break;
-            case LogLevel::Debug:
-                logger->debug(msg);
-                break;
-            case LogLevel::Info:
-                logger->info(msg);
-                break;
-            case LogLevel::Warning:
-                logger->warn(msg);
-                break;
-            case LogLevel::Error:
-                logger->error(msg);
-                break;
-            case LogLevel::Critical:
-                logger->critical(msg);
-                break;
+        void doLog(LogLevel level, std::string_view msg) override {
+            switch(level) {
+                case LogLevel::Trace:
+                    logger->trace(msg);
+                    break;
+                case LogLevel::Debug:
+                    logger->debug(msg);
+                    break;
+                case LogLevel::Info:
+                    logger->info(msg);
+                    break;
+                case LogLevel::Warning:
+                    logger->warn(msg);
+                    break;
+                case LogLevel::Error:
+                    logger->error(msg);
+                    break;
+                case LogLevel::Critical:
+                    logger->critical(msg);
+                    break;
+            }
         }
-    }
+    };
+
+    std::unique_ptr<Logger::Output> Logger::out = std::make_unique<SpdLogOutput>();
 }
