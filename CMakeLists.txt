@@ -19,7 +19,7 @@ set(BUILD_STATIC_LIBS ON CACHE BOOL "Build static library")
 set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree") 
 
 #Garlic settings
-option(GAR_BUILD_SCAPE "Build Scape, Garlic's editor" ON)
+option(GAR_BUILD_BULB "Build Bulb, Garlic's editor" ON)
 option(GAR_BUILD_TESTS "Build Garlic's tests" OFF)
 
 #Clove settings
@@ -34,7 +34,7 @@ add_subdirectory(external)
 add_subdirectory(clove)
 
 #Editor
-if(GAR_BUILD_SCAPE AND MSVC)
+if(GAR_BUILD_BULB AND MSVC)
 	add_subdirectory(membrane)
-	#add_subdirectory(Scape)
+	add_subdirectory(bulb)
 endif()

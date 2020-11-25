@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Editor
+namespace Garlic.Bulb
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

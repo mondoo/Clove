@@ -7,7 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.ComponentModel;
 
-namespace Editor
+namespace Garlic.Bulb
 {
     /// <summary>
     /// Interaction logic for Editor.xaml
@@ -16,7 +16,7 @@ namespace Editor
     {
         private MainWindow editorWindow;
 
-        private Garlic.Application engineApp;
+        private garlic.membrane.Application engineApp;
 
         private WriteableBitmap imageSource; //Owning this here for now as the UI thread needs to lock it
         private IntPtr backBuffer;
@@ -40,7 +40,7 @@ namespace Editor
 
             CreateImageSource(new Size(width, width));
 
-            engineApp = new Garlic.Application(width, height);
+            engineApp = new garlic.membrane.Application(width, height);
 
             engineThread = new Thread(new ThreadStart(RunEngineApplication));
             engineThread.Name = "Garlic application thread";
