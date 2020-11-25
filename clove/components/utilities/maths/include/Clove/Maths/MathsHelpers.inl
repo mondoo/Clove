@@ -47,7 +47,7 @@ namespace garlic::clove {
             result in y+ moving objects downwards.
         */
 
-        T const tanHalfFovy{ tan(fovy / static_cast<T>(2)) };
+        T const tanHalfFovy{ std::tan(fovy / static_cast<T>(2)) };
 
         mat<4, 4, T> result{ static_cast<T>(0) };
         result[0][0] = static_cast<T>(1) / (aspect * tanHalfFovy);
