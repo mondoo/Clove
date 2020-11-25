@@ -12,6 +12,7 @@
 #include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Layer.hpp>
+#include <Clove/Log/Log.hpp>
 #include <Clove/ModelLoader.hpp>
 #include <Clove/Rendering/Camera.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
@@ -64,6 +65,14 @@ namespace garlic::membrane {
             camEnt.getComponent<clove::CameraComponent>()->setViewport(viewport);
         }
     };
+
+    class ConsoleLogger : public clove::Logger::Output {
+    public:
+        void doLog(clove::LogLevel level, std::string_view msg) override {
+            //Conver to std::string as there seems to be issues when using std::data(msg)
+            System::Console::WriteLine(gcnew System::String(std::string{ std::begin(msg), std::end(msg) }.c_str()));
+        }
+    };
 }
 
 namespace garlic::membrane {
@@ -71,6 +80,9 @@ namespace garlic::membrane {
         : width{ width }
         , height{ height } {
         using namespace garlic::clove;
+
+        //Set the logger for Clove to redirect to System.Console
+        Logger::setOutput(std::make_unique<ConsoleLogger>());
 
         //Hard coding format to B8G8R8A8_SRGB
         GraphicsImage::Descriptor renderTargetImageDescriptor{};

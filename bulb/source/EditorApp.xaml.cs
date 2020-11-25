@@ -50,9 +50,6 @@ namespace Garlic.Bulb
             editorWindow.Show();
             MainWindow = editorWindow;
 
-            Console.WriteLine("test1");
-            Console.WriteLine("test2");
-
             //Initialise and start the application loop
             int width = editorWindow.RenderArea.ActualWidth > 0 ? (int)editorWindow.RenderArea.ActualWidth : 1;
             int height = editorWindow.RenderArea.ActualHeight > 0 ? (int)editorWindow.RenderArea.ActualHeight : 1;
