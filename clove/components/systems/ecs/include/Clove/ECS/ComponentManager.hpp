@@ -5,6 +5,8 @@
 
 #include <Clove/Memory/PoolAllocator.hpp>
 #include <memory>
+#include <unordered_map>
+#include <vector>
 
 namespace garlic::clove {
     class EventDispatcher;

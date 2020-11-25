@@ -3,6 +3,7 @@
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 #include <fstream>
+#include <vector>
 
 namespace garlic::clove {
     static std::vector<std::byte> readFile(std::string_view filePath) {
