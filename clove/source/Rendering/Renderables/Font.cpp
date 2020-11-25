@@ -36,11 +36,11 @@ namespace garlic::clove {
             if(FT_Init_FreeType(&library) != FT_Err_Ok) {
                 GARLIC_ASSERT(false, "Could not load freetype");
             } else {
-                GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Trace, "Constructed FreeType library");
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Constructed FreeType library");
             }
 
             auto const libraryDeleter = [](FT_Library lib) {
-                GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Trace, "FreeType library has been deleted");
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "FreeType library has been deleted");
                 FT_Done_FreeType(lib);
             };
             ftLibReference = FTLibSharedPtr(library, libraryDeleter);

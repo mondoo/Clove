@@ -56,7 +56,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateSampler(this->device.get(), &createInfo, nullptr, &sampler) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "{0}: Failed to create sampler", GARLIC_FUNCTION_NAME);
+            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to create sampler", GARLIC_FUNCTION_NAME);
         }
     }
 

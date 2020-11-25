@@ -43,13 +43,13 @@ namespace garlic::clove {
         };
 
         if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "Failed to begin recording command buffer");
+            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to begin recording command buffer");
         }
     }
 
     void VKGraphicsCommandBuffer::endRecording() {
         if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "Failed to end recording command buffer");
+            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to end recording command buffer");
         }
     }
 

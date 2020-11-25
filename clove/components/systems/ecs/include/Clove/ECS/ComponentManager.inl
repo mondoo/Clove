@@ -37,7 +37,7 @@ namespace garlic::clove {
                 addComponent(toId, *componentPtr);
             }
         } else {
-            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "Component that is not copyable was attempted to be copied. Entity will be incomplete");
+            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Component that is not copyable was attempted to be copied. Entity will be incomplete");
         }
     }
 
@@ -72,7 +72,7 @@ namespace garlic::clove {
     ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityId, ConstructArgs &&... args) {
         ComponentType *comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
         if(comp == nullptr) {
-            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "{0}: Could not create component", GARLIC_FUNCTION_NAME_PRETTY);
+            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Could not create component", GARLIC_FUNCTION_NAME_PRETTY);
             return { comp };
         }
 
@@ -80,7 +80,7 @@ namespace garlic::clove {
 
         if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
 #if GARLIC_DEBUG
-            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Warning, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", GARLIC_FUNCTION_NAME_PRETTY);
+            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", GARLIC_FUNCTION_NAME_PRETTY);
 #endif
             components[iter->second] = comp;
         } else {

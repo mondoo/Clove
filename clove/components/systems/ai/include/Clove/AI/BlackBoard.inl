@@ -7,7 +7,7 @@ namespace garlic::clove {
         if(dataMap.find(key) == dataMap.end()) {
             void *block = memoryBlock.alloc(sizeof(DataType));
             if(block == nullptr) {
-                GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "{0}: Could not allocate space for new item", GARLIC_FUNCTION_NAME);
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Could not allocate space for new item", GARLIC_FUNCTION_NAME);
                 return;
             }
 

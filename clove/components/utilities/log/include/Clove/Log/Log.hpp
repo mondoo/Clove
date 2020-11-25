@@ -51,7 +51,7 @@ namespace garlic::clove {
     #define GARLIC_ASSERT(x, ...)                                                                                        \
         {                                                                                                                \
             if(!(x)) {                                                                                                   \
-                GARLIC_LOG(LOG_CATEGORY_GARLIC, ::garlic::clove::LogLevel::Error, "Assertion Failed: {0}", __VA_ARGS__); \
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, ::garlic::clove::LogLevel::Error, "Assertion Failed: {0}", __VA_ARGS__); \
                 GARLIC_DEBUG_BREAK;                                                                                      \
             }                                                                                                            \
         }
@@ -59,6 +59,6 @@ namespace garlic::clove {
     #define GARLIC_ASSERT(x, ...) (x)
 #endif
 
-GARLIC_DECLARE_LOG_CATEGORY(GARLIC)
-
 #include "Log.inl"
+
+GARLIC_DECLARE_LOG_CATEGORY(CLOVE)

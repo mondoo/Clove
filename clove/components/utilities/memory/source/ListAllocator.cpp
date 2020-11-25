@@ -9,7 +9,7 @@ namespace garlic::clove {
         : listSize(sizeBytes)
         , freeMemory(true) {
 #if CLV_ENABLE_MEMORY_DEBUGGING
-        GARLIC_LOG(LOG_CATEGORY_GARLIC, garlic::LogLevel::Trace, "Constructing new ListAllocator. Size {0}. ", listSize);
+        GARLIC_LOG(LOG_CATEGORY_CLOVE, garlic::LogLevel::Trace, "Constructing new ListAllocator. Size {0}. ", listSize);
 #endif
         rawList = reinterpret_cast<std::byte *>(malloc(listSize));
         head    = rawList;
@@ -59,7 +59,7 @@ namespace garlic::clove {
         if(freeMemory) {
 #if GARLIC_DEBUG
             if(allocations > frees) {
-                GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Warning, "List Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "List Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
             }
 #endif
             ::free(rawList);
@@ -79,7 +79,7 @@ namespace garlic::clove {
 
         if(header == nullptr) {
             if((head - rawList) + bytes > listSize) {
-                GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", GARLIC_FUNCTION_NAME_PRETTY, bytes);
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", GARLIC_FUNCTION_NAME_PRETTY, bytes);
                 return nullptr;
             }
 

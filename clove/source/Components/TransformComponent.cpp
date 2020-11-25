@@ -20,7 +20,7 @@ namespace garlic::clove {
 
         parent = other.parent;
         //Not copying children for now, transform component has no knowledge of other components
-        GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Warning, "{0}: Unable to copy transform's children.", GARLIC_FUNCTION_NAME_PRETTY);
+        GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: Unable to copy transform's children.", GARLIC_FUNCTION_NAME_PRETTY);
 
         if(parent != nullptr) {
             parent->children.push_back(this);
@@ -36,7 +36,7 @@ namespace garlic::clove {
 
         parent = other.parent;
         //Not copying children for now, transform component has no knowledge of other components
-        GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Warning, "{0}: Unable to copy transform's children.", GARLIC_FUNCTION_NAME_PRETTY);
+        GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: Unable to copy transform's children.", GARLIC_FUNCTION_NAME_PRETTY);
 
         if(parent != nullptr) {
             parent->children.push_back(this);
