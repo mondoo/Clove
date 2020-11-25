@@ -1,0 +1,3 @@
+add_subdirectory(ai)
+add_subdirectory(ecs)
+add_subdirectory(state_machine)
