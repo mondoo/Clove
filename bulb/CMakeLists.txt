@@ -2,6 +2,7 @@ include(CSharpUtilities)
 
 #Create another project to enable C#
 project(Garlic-Editor LANGUAGES C CXX CSharp)
+set(CMAKE_CSharp_FLAGS "/langversion:8.0")
 
 set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 
@@ -47,8 +48,7 @@ csharp_set_xaml_cs_properties(
 set_source_files_properties(${SOURCE}/EditorApp.xaml PROPERTIES VS_XAML_TYPE "ApplicationDefinition")
 
 #Target properties
-set_target_properties(Bulb 
-	PROPERTIES 
+set_target_properties(Bulb PROPERTIES 
 		VS_DOTNET_FRAMEWORK_VERSION "4.8"
         VS_DOTNET_REFERENCES "Microsoft.CSharp;PresentationCore;PresentationFramework;System;System.Core;System.Data;System.Xaml;System.Xml;WindowsBase"
 )
