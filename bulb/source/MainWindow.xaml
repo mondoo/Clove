@@ -15,7 +15,7 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<Image x:Name="RenderArea" Margin="10" Stretch="Fill"/>
+		<Image x:Name="RenderArea" Stretch="Fill"/>
 		<TextBox x:Name="Log" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8"/>
 	</Grid>
 </Window>
