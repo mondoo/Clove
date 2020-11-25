@@ -22,9 +22,6 @@ set(BUILD_TESTING OFF CACHE BOOL "Build the testing tree")
 option(GAR_BUILD_BULB "Build Bulb, Garlic's editor" ON)
 option(GAR_BUILD_TESTS "Build Garlic's tests" OFF)
 
-#Clove settings
-option(GAR_CLV_IMGUI_COMPATIBLE "Links Glad publicly so users can initialise Dear ImGui properly" OFF)
-
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #Dependencies
