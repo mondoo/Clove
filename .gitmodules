@@ -1,30 +1,30 @@
-[submodule "Clove/vendor/glm"]
-	path = Clove/vendor/glm
-	url = https://github.com/g-truc/glm.git
-[submodule "Clove/vendor/glslang"]
-	path = Clove/vendor/glslang
-	url = https://github.com/KhronosGroup/glslang.git
-[submodule "Clove/vendor/SPIRV-Cross"]
-	path = Clove/vendor/SPIRV-Cross
-	url = https://github.com/KhronosGroup/SPIRV-Cross.git
-[submodule "Clove/vendor/openal-soft"]
-	path = Clove/vendor/openal-soft
-	url = https://github.com/kcat/openal-soft.git
-[submodule "Root/Log/external/spdlog"]
-	path = Root/Log/external/spdlog
-	url = https://github.com/gabime/spdlog.git
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest.git
-[submodule "Stem/external/bullet3"]
-	path = Stem/external/bullet3
-	url = https://github.com/bulletphysics/bullet3.git
-[submodule "Stem/external/assimp"]
-	path = Stem/external/assimp
+[submodule "spdlog"]
+	path = clove/components/utilities/log/external/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "glm"]
+	path = clove/components/utilities/maths/external/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "SPIRV-Cross"]
+	path = clove/components/core/graphics/external/SPIRV-Cross
+	url = https://github.com/KhronosGroup/SPIRV-Cross.git
+[submodule "glslang"]
+	path = clove/components/core/graphics/external/glslang
+	url = https://github.com/KhronosGroup/glslang.git
+[submodule "openal-soft"]
+	path = clove/components/core/audio/external/openal-soft
+	url = https://github.com/kcat/openal-soft.git
+[submodule "assimp"]
+	path = clove/external/assimp
 	url = https://github.com/assimp/assimp.git
-[submodule "Stem/external/freetype2"]
-	path = Stem/external/freetype2
+[submodule "bullet3"]
+	path = clove/external/bullet3
+	url = https://github.com/bulletphysics/bullet3.git
+[submodule "freetype2"]
+	path = clove/external/freetype2
 	url = https://git.savannah.gnu.org/git/freetype/freetype2.git
-[submodule "Stem/external/libsndfile"]
-	path = Stem/external/libsndfile
+[submodule "libsndfile"]
+	path = clove/external/libsndfile
 	url = https://github.com/erikd/libsndfile.git

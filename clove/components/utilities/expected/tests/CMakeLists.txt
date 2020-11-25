@@ -1,0 +1,3 @@
+add_executable(ExpectedTest ExpectedTests.cpp)
+target_link_libraries(ExpectedTest PRIVATE gtest_main CloveExpected)
+add_test(NAME ExpectedTest COMMAND ExpectedTest)
