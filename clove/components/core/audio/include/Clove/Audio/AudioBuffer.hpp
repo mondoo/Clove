@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 namespace garlic::clove {
 	/**
 	 * @brief Represents a buffer of data that can be played with an AudioSource

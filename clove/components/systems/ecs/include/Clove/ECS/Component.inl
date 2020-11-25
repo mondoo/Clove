@@ -1,3 +1,5 @@
+#include <algorithm>
+
 namespace garlic::clove {
     template<typename DerivedClassType>
     Component<DerivedClassType>::Component() = default;

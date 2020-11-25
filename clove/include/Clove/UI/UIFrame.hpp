@@ -3,6 +3,8 @@
 #include "Clove/InputResponse.hpp"
 #include "Clove/InputEvent.hpp"
 
+#include <memory>
+
 namespace garlic::clove {
     class DrawableElement;
     class InputElement;

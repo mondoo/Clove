@@ -4,6 +4,7 @@
 #include "Clove/ECS/ECSTypes.hpp"
 
 #include <Clove/Memory/PoolAllocator.hpp>
+#include <memory>
 
 namespace garlic::clove {
     class EventDispatcher;

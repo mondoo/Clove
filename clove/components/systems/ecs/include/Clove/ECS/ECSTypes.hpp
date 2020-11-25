@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cinttypes>
+#include <cstddef>
 
 namespace garlic::clove {
     using EntityID    = uint32_t;

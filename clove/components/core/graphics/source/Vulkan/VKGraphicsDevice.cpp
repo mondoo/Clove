@@ -10,6 +10,12 @@
 #include <vulkan/vulkan.h>
 //~~~~
 
+//Remove xlib defs from vulkan.h
+#if GARLIC_PLATFORM_LINUX
+    #undef None
+    #undef Success
+#endif
+
 #include "Clove/Graphics/Vulkan/VKGraphicsDevice.hpp"
 #include "Clove/Graphics/Vulkan/VKGraphicsFactory.hpp"
 
@@ -284,7 +290,7 @@ namespace garlic::clove {
 #elif GARLIC_PLATFORM_MACOS
             GARLIC_ASSERT(false, "Vulkan implementation not provided on MacOS");
 #elif GARLIC_PLATFORM_LINUX
-            auto const [display, window] = std::any_cast<std::pair<Display, ::Window>>(nativeWindow);
+            auto const [display, window] = std::any_cast<std::pair<Display * , ::Window>>(nativeWindow);
 
             VkXlibSurfaceCreateInfoKHR createInfo{
                 .sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,

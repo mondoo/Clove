@@ -1,20 +1,17 @@
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
 
-#include "Clove/Graphics/Graphics.hpp"
-#include "Clove/Graphics/GraphicsFactory.hpp"
-
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
     LinuxWindow::LinuxWindow(WindowDescriptor const &descriptor) {
-        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
+        GARLIC_LOG(garlicLogContext, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
         display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
 
         if(!display) {
             //TODO: Exception
-            GARLIC_LOG(garlicLogContext, garlic::LogLevel::Error, "Could not open display");
+            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Could not open display");
             return;
         }
 
@@ -54,7 +51,7 @@ namespace garlic::clove {
     LinuxWindow::LinuxWindow(Window const &parentWindow, vec2i const &position, vec2i const &size) {
         GARLIC_LOG(garlicLogContext, LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
 
-        auto [parentDisplay, parentWindow] = std::any_cast<std::pair<Display, ::Window>>(parentWindow.getNativeWindow());
+        auto [pDisplay, pWindow] = std::any_cast<std::pair<Display*, ::Window>>(parentWindow.getNativeWindow());
 
         display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
 
@@ -74,7 +71,7 @@ namespace garlic::clove {
         windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), screen->root_visual, AllocNone);
         windowAttribs.event_mask        = ExposureMask;
 
-        window = XCreateWindow(display, parentWindow, position.x, position.y, size.x, size.y, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
+        window = XCreateWindow(display, pWindow, position.x, position.y, size.x, size.y, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
 
         //Remap the delete window message so we can gracefully close the application
         atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
@@ -102,7 +99,7 @@ namespace garlic::clove {
     }
 
     std::any LinuxWindow::getNativeWindow() const {
-        return std::make_pair<Display *, ::Window>(display, window);
+        return std::make_pair(display, window);
     }
 
     vec2i LinuxWindow::getPosition() const {
