@@ -28,9 +28,6 @@ namespace garlic::membrane {
     public:
         TestLayer(clove::vec2ui size)
             : viewport{ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) } {
-        }
-
-        TestLayer() {
             clove::Application::get().getECSWorld()->addSystem<clove::RenderSystem>();
         }
 
