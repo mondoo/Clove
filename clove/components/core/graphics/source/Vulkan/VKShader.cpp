@@ -3,6 +3,7 @@
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 #include <fstream>
+#include <vector>
 
 namespace garlic::clove {
     static std::vector<std::byte> readFile(std::string_view filePath) {
@@ -10,7 +11,7 @@ namespace garlic::clove {
         std::basic_ifstream<std::byte> file(filePath.data(), std::ios::ate | std::ios::binary);
 
         if(!file.is_open()) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Error, "{0}: Failed to open file", GARLIC_FUNCTION_NAME);
+            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to open file", GARLIC_FUNCTION_NAME);
             return {};
         }
 
@@ -40,7 +41,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateShaderModule(this->device.get(), &createInfo, nullptr, &module) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create shader module");
+            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create shader module");
         }
     }
 

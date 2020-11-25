@@ -14,7 +14,12 @@ add_executable(
 	    ${SOURCE}/AssemblyInfo.cs
         
 	    ${SOURCE}/MainWindow.xaml
-	    ${SOURCE}/MainWindow.xaml.cs
+		${SOURCE}/MainWindow.xaml.cs
+		
+		${SOURCE}/ViewModel.cs
+		${SOURCE}/MainWindowViewModel.cs
+		
+		${SOURCE}/EditorLogger.cs
 )
 
 #Libraries

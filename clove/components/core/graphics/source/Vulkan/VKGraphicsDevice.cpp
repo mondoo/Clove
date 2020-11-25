@@ -29,11 +29,11 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessengerCallbackDataEXT const *pCallbackData,
     void *pUserData) {
     if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) != 0) {
-        GARLIC_LOG(garlicLogContext, garlic::clove::LogLevel::Trace, pCallbackData->pMessage);
+        GARLIC_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Trace, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) != 0) {
-        GARLIC_LOG(garlicLogContext, garlic::clove::LogLevel::Warning, pCallbackData->pMessage);
+        GARLIC_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Warning, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) != 0) {
-        GARLIC_LOG(garlicLogContext, garlic::clove::LogLevel::Error, pCallbackData->pMessage);
+        GARLIC_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Error, pCallbackData->pMessage);
     }
 
     return VK_FALSE;
@@ -216,7 +216,7 @@ namespace garlic::clove {
         };
 
         if(!checkValidationLayerSupport(validationLayers)) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Warning, "Vulkan validation layers are not supported on this device. Unable to provide debugging infomation");
+            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Vulkan validation layers are not supported on this device. Unable to provide debugging infomation");
         }
 #endif
 
@@ -261,13 +261,13 @@ namespace garlic::clove {
             };
 
             if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-                GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create VK instance");
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create VK instance");
                 return;
             }
 
 #if GARLIC_DEBUG
             if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-                GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create vk debug message callback");
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create vk debug message callback");
                 return;
             }
 #endif
@@ -284,7 +284,7 @@ namespace garlic::clove {
             };
 
             if(vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
-                GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create Vulkan surface");
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create Vulkan surface");
                 return;
             }
 #elif GARLIC_PLATFORM_MACOS
@@ -299,7 +299,7 @@ namespace garlic::clove {
             };
 
             if(vkCreateXlibSurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
-                GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create Vulkan surface");
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create Vulkan surface");
                 return;
             }
 #endif
@@ -311,7 +311,7 @@ namespace garlic::clove {
             uint32_t deviceCount = 0;
             vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
             if(deviceCount == 0) {
-                GARLIC_LOG(garlicLogContext, LogLevel::Error, "failed to find GPUs with Vulkan support!");
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "failed to find GPUs with Vulkan support!");
                 return;
             }
             std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -325,16 +325,16 @@ namespace garlic::clove {
             }
 
             if(physicalDevice == VK_NULL_HANDLE) {
-                GARLIC_LOG(garlicLogContext, LogLevel::Error, "failed to find a suitable GPU!");
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "failed to find a suitable GPU!");
                 return;
             } else {
                 VkPhysicalDeviceProperties devicePoperties;
                 vkGetPhysicalDeviceProperties(physicalDevice, &devicePoperties);
 
-                GARLIC_LOG(garlicLogContext, LogLevel::Info, "Vulkan capable physical device found");
-                GARLIC_LOG(garlicLogContext, LogLevel::Info, "\tDevice:\t{0}", devicePoperties.deviceName);
-                GARLIC_LOG(garlicLogContext, LogLevel::Info, "\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
-                GARLIC_LOG(garlicLogContext, LogLevel::Info, "\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Vulkan capable physical device found");
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "\tDevice:\t{0}", devicePoperties.deviceName);
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
             }
         }
 
@@ -386,7 +386,7 @@ namespace garlic::clove {
             };
 
             if(vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
-                GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create logical device");
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create logical device");
                 return;
             }
         }

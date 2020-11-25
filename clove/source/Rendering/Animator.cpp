@@ -69,7 +69,7 @@ namespace garlic::clove {
         CLV_PROFILE_FUNCTION();
 
         if(currentClip == nullptr) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Error, "{0}: Current clip is not set, could not create palet", GARLIC_FUNCTION_NAME);
+            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Current clip is not set, could not create palet", GARLIC_FUNCTION_NAME);
             return {};
         }
 

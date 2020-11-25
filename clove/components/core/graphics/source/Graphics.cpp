@@ -22,7 +22,7 @@ namespace garlic::clove {
                 return std::make_unique<VKGraphicsDevice>(std::move(nativeWindow));
 #endif
             default:
-                GARLIC_LOG(garlicLogContext, LogLevel::Error, "Default statement hit. Could not initialise RenderAPI: {0}", GARLIC_FUNCTION_NAME);
+                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Default statement hit. Could not initialise RenderAPI: {0}", GARLIC_FUNCTION_NAME);
                 return nullptr;
         }
     }

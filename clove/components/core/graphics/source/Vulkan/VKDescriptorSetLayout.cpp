@@ -31,7 +31,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateDescriptorSetLayout(this->device.get(), &createInfo, nullptr, &layout) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create descriptor set");
+            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create descriptor set");
         }
     }
 
