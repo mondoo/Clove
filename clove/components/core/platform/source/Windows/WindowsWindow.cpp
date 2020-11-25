@@ -7,7 +7,7 @@
 
 namespace garlic::clove {
     WindowsWindow::WindowsWindow(WindowDescriptor const &descriptor) {
-        GARLIC_LOG(garlicLogContext, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
+        GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
         instance = GetModuleHandle(nullptr);
 
@@ -26,7 +26,7 @@ namespace garlic::clove {
 
         RegisterClassEx(&wc);
 
-        GARLIC_LOG(garlicLogContext, LogLevel::Trace, "Windows class registered");
+        GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Trace, "Windows class registered");
 
         std::string const wideTitle(descriptor.title.begin(), descriptor.title.end());
 
@@ -53,11 +53,11 @@ namespace garlic::clove {
 
         open = true;
 
-        GARLIC_LOG(garlicLogContext, LogLevel::Debug, "Window created");
+        GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Debug, "Window created");
     }
 
     WindowsWindow::WindowsWindow(Window const &parentWindow, vec2i const &position, vec2i const &size) {
-        GARLIC_LOG(garlicLogContext, LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
+        GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
 
         WNDCLASSEX wc{};
         wc.cbSize        = sizeof(wc);
@@ -74,7 +74,7 @@ namespace garlic::clove {
 
         RegisterClassEx(&wc);
 
-        GARLIC_LOG(garlicLogContext, LogLevel::Trace, "Windows class registered");
+        GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Trace, "Windows class registered");
 
         DWORD const windowStyle{ WS_CHILD | WS_VISIBLE };
 
@@ -93,7 +93,7 @@ namespace garlic::clove {
 
         open = true;
 
-        GARLIC_LOG(garlicLogContext, LogLevel::Debug, "Window created");
+        GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Debug, "Window created");
     }
 
     WindowsWindow::~WindowsWindow() {

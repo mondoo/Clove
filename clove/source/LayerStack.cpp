@@ -16,22 +16,22 @@ namespace garlic::clove {
     LayerStack &LayerStack::operator=(LayerStack &&other) noexcept = default;
 
     LayerStack::~LayerStack() {
-        GARLIC_LOG(garlicLogContext, LogLevel::Trace, "Deconstructing layer stack...");
+        GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Trace, "Deconstructing layer stack...");
         for(auto &layer : layers) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Debug, "{0} detached", layer->getName());
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Debug, "{0} detached", layer->getName());
             layer->onDetach();
         }
     }
 
     void LayerStack::pushLayer(std::shared_ptr<Layer> layer) {
-        GARLIC_LOG(garlicLogContext, LogLevel::Trace, "Attached layer: {0}", layer->getName());
+        GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Trace, "Attached layer: {0}", layer->getName());
         layer->onAttach();
         layers.emplace(layers.begin() + layerInsertIndex++, std::move(layer));
     }
 
     void LayerStack::popLayer(std::shared_ptr<Layer> const &layer) {
         if(auto it = std::find(layers.begin(), layers.end(), layer); it != layers.end()) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Debug, "Popped layer: {0}", (*it)->getName());
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Debug, "Popped layer: {0}", (*it)->getName());
             (*it)->onDetach();
             layers.erase(it);
             --layerInsertIndex;
@@ -39,14 +39,14 @@ namespace garlic::clove {
     }
 
     void LayerStack::pushOverlay(std::shared_ptr<Layer> overlay) {
-        GARLIC_LOG(garlicLogContext, LogLevel::Debug, "Attached overlay: {0}", overlay->getName());
+        GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Debug, "Attached overlay: {0}", overlay->getName());
         overlay->onAttach();
         layers.emplace_back(std::move(overlay));
     }
 
     void LayerStack::popOverlay(std::shared_ptr<Layer> const &overlay) {
         if(auto it = std::find(layers.begin(), layers.end(), overlay); it != layers.end()) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Debug, "Popped overlay: {0}", (*it)->getName());
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Debug, "Popped overlay: {0}", (*it)->getName());
             (*it)->onDetach();
             layers.erase(it);
         }

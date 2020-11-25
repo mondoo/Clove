@@ -8,7 +8,7 @@ namespace garlic::clove {
         , skeleton(std::move(skeleton))
         , animClips(std::move(animClips)) {
         if(std::size(this->animClips) == 0) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
         } else {
             animator.setCurrentClip(&this->animClips[0]);
         }
@@ -23,7 +23,7 @@ namespace garlic::clove {
         }
 
         if(std::size(animClips) == 0) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
         } else {
             animator.setCurrentClip(&animClips[0]);
         }
@@ -46,7 +46,7 @@ namespace garlic::clove {
         }
 
         if(std::size(animClips) == 0) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
         } else {
             animator.setCurrentClip(&animClips[0]);
         }

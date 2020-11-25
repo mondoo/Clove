@@ -203,7 +203,7 @@ namespace garlic::clove {
         };
 
         if(vkCreatePipelineLayout(this->device.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create pipeline layout");
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "Failed to create pipeline layout");
             return;
         }
 
@@ -230,7 +230,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateGraphicsPipelines(this->device.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create graphics pipeline");
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "Failed to create graphics pipeline");
         }
     }
 

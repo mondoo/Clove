@@ -59,7 +59,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateBuffer(this->device.get(), &createInfo, nullptr, &buffer) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create buffer");
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "Failed to create buffer");
             return;
         }
 

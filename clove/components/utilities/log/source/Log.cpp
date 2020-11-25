@@ -2,45 +2,46 @@
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-
-#if GARLIC_DEBUG
-garlic::clove::LogContext garlicLogContext = garlic::clove::createLogContext(garlic::clove::LogLevel::Trace, "GARLIC", "GarlicLog.txt");
-#else
-garlic::clove::LogContext garlicLogContext = garlic::clove::createLogContext(garlic::clove::LogLevel::Info, "GARLIC", "GarlicLog.txt");
-#endif
+#include <spdlog/spdlog.h>
 
 namespace garlic::clove {
-    static spdlog::level::level_enum getSpdlogLevel(LogLevel level) {
-        switch(level) {
-            case LogLevel::Trace:
-                return spdlog::level::trace;
-            case LogLevel::Debug:
-                return spdlog::level::debug;
-            case LogLevel::Info:
-                return spdlog::level::info;
-            case LogLevel::Warning:
-                return spdlog::level::warn;
-            case LogLevel::Error:
-                return spdlog::level::err;
-            case LogLevel::Critical:
-                return spdlog::level::critical;
-        }
-    }
-
-    LogContext createLogContext(LogLevel consoleLogLevel, std::string_view loggerName, std::string_view fileName) {
+    static std::shared_ptr<spdlog::logger> logger = []() {
         auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-        auto fileSink    = std::make_shared<spdlog::sinks::basic_file_sink_mt>(fileName.data(), true);
+        auto fileSink    = std::make_shared<spdlog::sinks::basic_file_sink_mt>("GARLIC_LOG.txt", true);
 
-        consoleSink->set_pattern("%^[%T] %n: %v%$");
-        fileSink->set_pattern("[%D %T][%l] %n: %v");
+        consoleSink->set_pattern("%^[%T] %v%$");
+        fileSink->set_pattern("[%D %T][%l] %v");
 
-        consoleSink->set_level(getSpdlogLevel(consoleLogLevel));
+        consoleSink->set_level(spdlog::level::trace);
         fileSink->set_level(spdlog::level::trace);
 
         std::vector<spdlog::sink_ptr> sinks{ consoleSink, fileSink };
-        auto logger = std::make_shared<spdlog::logger>(loggerName.data(), sinks.begin(), sinks.end());
+        auto logger{ std::make_shared<spdlog::logger>("GARLIC_LOGGER", sinks.begin(), sinks.end()) };
         logger->set_level(spdlog::level::trace);
 
-        return LogContext{ logger };
+        return logger;
+    }();
+
+    void Logger::doLog(LogLevel level, std::string_view msg) {
+        switch(level) {
+            case LogLevel::Trace:
+                logger->trace(msg);
+                break;
+            case LogLevel::Debug:
+                logger->debug(msg);
+                break;
+            case LogLevel::Info:
+                logger->info(msg);
+                break;
+            case LogLevel::Warning:
+                logger->warn(msg);
+                break;
+            case LogLevel::Error:
+                logger->error(msg);
+                break;
+            case LogLevel::Critical:
+                logger->critical(msg);
+                break;
+        }
     }
 }

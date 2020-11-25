@@ -15,7 +15,7 @@ namespace garlic::clove {
     PoolAllocator<ItemType, strategy>::PoolAllocator(size_t const elementsPerArena)
         : elementsPerArena{ elementsPerArena } {
 #if CLV_ENABLE_MEMORY_DEBUGGING
-        GARLIC_LOG(garlicLogContext, garlic::LogLevel::Trace, "Constructing new PoolAllocator. Arena size {0}. ", arenaSize);
+        GARLIC_LOG(LOG_CATEGORY_GARLIC, garlic::LogLevel::Trace, "Constructing new PoolAllocator. Arena size {0}. ", arenaSize);
 #endif
         arena    = std::make_unique<PoolArena>(elementsPerArena);
         nextFree = &arena->storage[0];
@@ -40,7 +40,7 @@ namespace garlic::clove {
                 arena          = std::move(newArena);
                 nextFree       = &arena->storage[0];
             } else {
-                GARLIC_LOG(garlicLogContext, LogLevel::Error, "{0}: At the end of the free list. Cannot allocate new elements", GARLIC_FUNCTION_NAME_PRETTY);
+                GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "{0}: At the end of the free list. Cannot allocate new elements", GARLIC_FUNCTION_NAME_PRETTY);
                 return nullptr;
             }
         }

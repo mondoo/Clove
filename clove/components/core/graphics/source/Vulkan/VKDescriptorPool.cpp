@@ -40,7 +40,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateDescriptorPool(this->device.get(), &createInfo, nullptr, &pool) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create descriptor pool");
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "Failed to create descriptor pool");
         }
     }
 
@@ -75,7 +75,7 @@ namespace garlic::clove {
         };
 
         if(vkAllocateDescriptorSets(device.get(), &allocInfo, std::data(vulkanSets)) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to allocate new descriptor sets");
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "Failed to allocate new descriptor sets");
             return {};
         }
 
@@ -100,7 +100,7 @@ namespace garlic::clove {
         }
 
         if(vkFreeDescriptorSets(device.get(), pool, numSets, std::data(vulkanSets)) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to free descriptor sets");
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "Failed to free descriptor sets");
         }
     }
 

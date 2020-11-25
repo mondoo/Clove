@@ -126,7 +126,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateRenderPass(this->device.get(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
-            GARLIC_LOG(garlicLogContext, LogLevel::Error, "Failed to create render pass");
+            GARLIC_LOG(LOG_CATEGORY_GARLIC, LogLevel::Error, "Failed to create render pass");
         }
     }
 

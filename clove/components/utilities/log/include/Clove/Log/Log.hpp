@@ -1,9 +1,12 @@
 #pragma once
 
-//As spdlog uses mutex we can't use it when building /clr
-#ifndef _M_CEE
-    #include <spdlog/spdlog.h>
-    #include <string_view>
+#include <string>
+#include <string_view>
+
+#define GARLIC_DECLARE_LOG_CATEGORY(categoryName)        \
+    struct LOG_CATEGORY_##categoryName {                 \
+        static std::string_view constexpr name{ #categoryName }; \
+    };
 
 namespace garlic::clove {
     enum class LogLevel {
@@ -14,49 +17,33 @@ namespace garlic::clove {
         Error,
         Critical
     };
-
-    struct LogContext {
-    private:
-        std::shared_ptr<spdlog::logger> logger;
-
-    public:
-        LogContext() = delete;
-        LogContext(std::shared_ptr<spdlog::logger> logger)
-            : logger(std::move(logger)) {
-        }
-
-        template<typename... Args>
-        void log(LogLevel level, char const *msg, Args &&... args);
-
-        template<typename T>
-        void log(LogLevel level, T const &msg);
-    };
-
-    LogContext createLogContext(LogLevel consoleLogLevel, std::string_view loggerName, std::string_view fileName);
 }
 
-    #include "Log.inl"
-
-    #define GARLIC_LOG(context, level, ...) context.log(level, __VA_ARGS__);
-#else
 namespace garlic::clove {
-    struct LogContext {
+    class Logger {
+    public:
+        template<typename... Args>
+        static void log(std::string_view category, LogLevel level, std::string_view msg, Args &&... args);
+
+    private:
+        static void doLog(LogLevel level, std::string_view msg);
     };
 }
 
-    #define GARLIC_LOG(context, level, ...)
-#endif
+#define GARLIC_LOG(category, level, ...) ::garlic::clove::Logger::log(category::name, level, __VA_ARGS__);
 
 #if GARLIC_ENABLE_ASSERTIONS
-    #define GARLIC_ASSERT(x, ...)                                                                                   \
-        {                                                                                                           \
-            if(!(x)) {                                                                                              \
-                GARLIC_LOG(garlicLogContext, garlic::clove::LogLevel::Error, "Assertion Failed: {0}", __VA_ARGS__); \
-                GARLIC_DEBUG_BREAK;                                                                                 \
-            }                                                                                                       \
+    #define GARLIC_ASSERT(x, ...)                                                                                        \
+        {                                                                                                                \
+            if(!(x)) {                                                                                                   \
+                GARLIC_LOG(LOG_CATEGORY_GARLIC, ::garlic::clove::LogLevel::Error, "Assertion Failed: {0}", __VA_ARGS__); \
+                GARLIC_DEBUG_BREAK;                                                                                      \
+            }                                                                                                            \
         }
 #else
     #define GARLIC_ASSERT(x, ...) (x)
 #endif
 
-extern garlic::clove::LogContext garlicLogContext;
+GARLIC_DECLARE_LOG_CATEGORY(GARLIC)
+
+#include "Log.inl"
