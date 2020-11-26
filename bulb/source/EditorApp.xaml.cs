@@ -23,13 +23,13 @@ namespace Garlic.Bulb
 
         private WriteableBitmap imageSource; //Owning this here for now as the UI thread needs to lock it
         private IntPtr backBuffer;
-        private object backBufferLock = new object();
 
         private Thread engineThread;
         private bool exitThread = false;
 
         private Size size = new Size();
         private bool sizeChanged = false;
+        private object resizeLock = new object();
 
         private void EditorStartup(object sender, StartupEventArgs e)
         {
@@ -65,9 +65,12 @@ namespace Garlic.Bulb
 
         private void OnRenderAreaSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            size = e.NewSize;
-            CreateImageSource(size);
-            sizeChanged = true;
+            lock (resizeLock)
+            {
+                size = e.NewSize;
+                CreateImageSource(size);
+                sizeChanged = true;
+            }
         }
 
         private void StopEngine(object sender, CancelEventArgs e)
@@ -78,11 +81,9 @@ namespace Garlic.Bulb
 
         private void CreateImageSource(Size size)
         {
-            lock (backBufferLock)
-            {
-                imageSource = new WriteableBitmap((int)size.Width, (int)size.Height, 96, 96, PixelFormats.Pbgra32, null);
-                backBuffer = imageSource.BackBuffer;
-            }
+
+            imageSource = new WriteableBitmap((int)size.Width, (int)size.Height, 96, 96, PixelFormats.Pbgra32, null);
+            backBuffer = imageSource.BackBuffer;
             editorWindow.RenderArea.Source = imageSource;
         }
 
@@ -90,20 +91,19 @@ namespace Garlic.Bulb
         {
             while (!exitThread)
             {
-                if (sizeChanged)
-                {
-                    engineApp.resize((int)size.Width, (int)size.Height);
-                    sizeChanged = false;
-                }
-
                 if (engineApp.isRunning())
                 {
                     //Update the application
                     engineApp.tick();
 
                     //Render to image
-                    lock (backBufferLock)
+                    lock (resizeLock)
                     {
+                        if (sizeChanged)
+                        {
+                            engineApp.resize((int)size.Width, (int)size.Height);
+                            sizeChanged = false;
+                        }
                         engineApp.render(backBuffer);
                     }
 
