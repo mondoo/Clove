@@ -1,17 +1,9 @@
-#include "Clove/Platform/Linux/LinuxPlatform.hpp"
+#include "Clove/Platform/Platform.hpp"
 
 #include "Clove/Platform/Linux/LinuxWindow.hpp"
 
 namespace garlic::clove {
-    LinuxPlatform::LinuxPlatform() = default;
-
-    LinuxPlatform::LinuxPlatform(LinuxPlatform &&other) noexcept = default;
-
-    LinuxPlatform &LinuxPlatform::operator=(LinuxPlatform &&other) noexcept = default;
-
-    LinuxPlatform::~LinuxPlatform() = default;
-
-    std::shared_ptr<Window> LinuxPlatform::createWindow(WindowDescriptor const &props) {
-        return std::make_shared<LinuxWindow>(props);
+    std::unique_ptr<Window> Platform::createWindow(WindowDescriptor const &descriptor) {
+        return std::make_unique<LinuxWindow>(descriptor);
     }
 }

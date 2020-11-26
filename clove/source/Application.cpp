@@ -6,14 +6,14 @@
 #include "Clove/Rendering/GraphicsImageRenderTarget.hpp"
 #include "Clove/Rendering/SwapchainRenderTarget.hpp"
 
-#include <Clove/ECS/World.hpp>
 #include <Clove/Audio/AudioFactory.hpp>
+#include <Clove/Definitions.hpp>
+#include <Clove/ECS/World.hpp>
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
+#include <Clove/Log/Log.hpp>
 #include <Clove/Platform/Platform.hpp>
 #include <Clove/Platform/Window.hpp>
-#include <Clove/Definitions.hpp>
-#include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
     Application *Application::instance{ nullptr };
@@ -24,8 +24,7 @@ namespace garlic::clove {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
 
         //Platform
-        app->platformInstance = createPlatformInstance();
-        app->window           = app->platformInstance->createWindow(std::move(windowDescriptor));
+        app->window = Platform::createWindow(std::move(windowDescriptor));
 
         //Graphics
         app->graphicsDevice = createGraphicsDevice(graphicsApi, app->window->getNativeWindow());
@@ -41,9 +40,6 @@ namespace garlic::clove {
 
     std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioAPI audioApi, GraphicsImage::Descriptor renderTargetDescriptor) {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
-
-        //Platform
-        app->platformInstance = createPlatformInstance();
 
         //Graphics
         app->graphicsDevice = createGraphicsDevice(graphicsApi, std::any{});

@@ -1,23 +1,17 @@
-#import "Clove/Platform/Mac/MacPlatform.hpp"
+#import "Clove/Platform/Platform.hpp"
 
 #import "Clove/Platform/Mac/MacWindow.hpp"
 
 namespace garlic::clove{
-	MacPlatform::MacPlatform(){
-		[NSApplication sharedApplication];
-		[NSApp finishLaunching];
+	// MacPlatform::MacPlatform(){
+	// 	[NSApplication sharedApplication];
+	// 	[NSApp finishLaunching];
 		
-		//This makes it get treated like an app
-		[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-	}
+	// 	//This makes it get treated like an app
+	// 	[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+	// }
 
-	MacPlatform::MacPlatform(MacPlatform&& other) noexcept = default;
-
-	MacPlatform& MacPlatform::operator=(MacPlatform&& other) noexcept = default;
-
-	MacPlatform::~MacPlatform() = default;
-	
-	std::shared_ptr<Window> MacPlatform::createWindow(const WindowDescriptor& props){
-        return std::make_shared<MacWindow>(props);
+	std::unique_ptr<Window> Platform::createWindow(WindowDescriptor const& descriptor){
+        return std::make_unique<MacWindow>(descriptor);
     }
 }
