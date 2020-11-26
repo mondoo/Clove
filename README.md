@@ -8,13 +8,11 @@ The Garlic game engine is comprised of the following components:
 
 |Component|Language|Description|
 |-|-|-|
-|Root|C++|A collection of core libraries for the entire engine (Definitions, Events, Memory etc.)|
-|Clove|C++|A collection of libraries to provide various system abstractions (Graphics, Platform, Audio etc.)|
-|Bulb|C++|A collection of libraries for developing games (AI, ECS, etc.)|
-|Stem|C++|The library that brings the engine together. Built with Root, Clove and Bulb|
-|Scape|C#|Garlic's Editor, built on top of Stem|
+|Clove|C++|Clove is the engine itself. This is where all the platform / graphics / rendering / systems etc. are|
+|Membrane|C++/CLR|Membrane is a translation layer inbetween Clove and Bulb|
+|Bulb|C#|Bulb is the editor. It contains all of the view logic|
 
-Note: Scape is only currently supported on Windows. This could change if CMake has better support for C# on Linux and MacOS.  
+Note: Bulb is only currently supported on Windows.
 
 Currently, **Clove** supports the following platforms:
 
