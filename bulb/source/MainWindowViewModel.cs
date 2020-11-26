@@ -24,7 +24,7 @@ namespace Garlic.Bulb
         public ObservableCollection<object> Entities { get; set; } = new ObservableCollection<object>();
 
         public delegate void AddEntityEventHandler();
-        public event AddEntityEventHandler CreateEntity;
+        public AddEntityEventHandler CreateEntity;
 
         public MainWindowViewModel()
         {
