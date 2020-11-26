@@ -278,7 +278,7 @@ namespace garlic::clove {
         };
 
         //Populate and map the UBOs for each mesh
-        if(currentImageData.objectBuffers.capacity() < meshCount) {
+        if(std::size(currentImageData.objectBuffers) < meshCount) {
             currentImageData.objectBuffers.resize(meshCount);
         }
         for(size_t index = 0; auto &meshInfo : currentFrameData.staticMeshes) {
