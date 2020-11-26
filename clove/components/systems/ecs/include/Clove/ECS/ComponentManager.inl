@@ -79,9 +79,7 @@ namespace garlic::clove {
         comp->entityID = entityId;
 
         if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
-#if CLOVE_DEBUG
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", CLOVE_FUNCTION_NAME_PRETTY);
-#endif
+            CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", CLOVE_FUNCTION_NAME_PRETTY);
             components[iter->second] = comp;
         } else {
             components.push_back(comp);

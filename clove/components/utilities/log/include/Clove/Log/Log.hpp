@@ -44,6 +44,11 @@ namespace garlic::clove {
 }
 
 #define CLOVE_LOG(category, level, ...) ::garlic::clove::Logger::log(category::name, level, __VA_ARGS__);
+#if CLOVE_DEBUG
+    #define CLOVE_LOG_DEBUG(category, level, ...) ::garlic::clove::Logger::log(category::name, level, __VA_ARGS__);
+#else
+    #define CLOVE_LOG_DEBUG(category, level, ...)
+#endif
 
 #if CLOVE_ENABLE_ASSERTIONS
     #define CLOVE_ASSERT(x, ...)                                                                                        \
