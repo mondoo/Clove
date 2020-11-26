@@ -45,7 +45,7 @@ namespace garlic::clove {
 
         open = true;
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Window created");
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Window created");
     }
 
     LinuxWindow::LinuxWindow(Window const &parentWindow, vec2i const &position, vec2i const &size) {
@@ -89,7 +89,7 @@ namespace garlic::clove {
 
         open = true;
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Window created");
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Window created");
     }
 
     LinuxWindow::~LinuxWindow() {

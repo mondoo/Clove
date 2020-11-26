@@ -85,7 +85,7 @@ namespace garlic::clove {
         startTransform.setIdentity();
 
         if(descriptor.isKinematic && descriptor.mass > 0.0f) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Kinematic RigidBody has non 0 mass. Kinematic takes precedence");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Kinematic RigidBody has non 0 mass. Kinematic takes precedence");
         } else {
             standInShape->calculateLocalInertia(descriptor.mass, localInertia);
         }

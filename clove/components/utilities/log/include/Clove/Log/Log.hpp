@@ -12,11 +12,9 @@
 namespace garlic::clove {
     enum class LogLevel {
         Trace,
-        Debug,
         Info,
         Warning,
         Error,
-        Critical
     };
 }
 

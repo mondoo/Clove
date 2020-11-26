@@ -32,9 +32,6 @@ namespace garlic::clove {
                 case LogLevel::Trace:
                     logger->trace(msg);
                     break;
-                case LogLevel::Debug:
-                    logger->debug(msg);
-                    break;
                 case LogLevel::Info:
                     logger->info(msg);
                     break;
@@ -43,9 +40,6 @@ namespace garlic::clove {
                     break;
                 case LogLevel::Error:
                     logger->error(msg);
-                    break;
-                case LogLevel::Critical:
-                    logger->critical(msg);
                     break;
             }
         }
