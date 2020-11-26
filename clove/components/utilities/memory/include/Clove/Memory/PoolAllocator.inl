@@ -14,9 +14,6 @@ namespace garlic::clove {
     template<typename ItemType, AllocatorStrategy strategy>
     PoolAllocator<ItemType, strategy>::PoolAllocator(size_t const elementsPerArena)
         : elementsPerArena{ elementsPerArena } {
-#if CLV_ENABLE_MEMORY_DEBUGGING
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, garlic::LogLevel::Trace, "Constructing new PoolAllocator. Arena size {0}. ", arenaSize);
-#endif
         arena    = std::make_unique<PoolArena>(elementsPerArena);
         nextFree = &arena->storage[0];
     }

@@ -8,9 +8,6 @@ namespace garlic::clove {
     StackAllocator::StackAllocator(size_t sizeBytes)
         : stackSize(sizeBytes)
         , freeMemory(true) {
-#if CLV_ENABLE_MEMORY_DEBUGGING
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, garlic::LogLevel::Trace, "Constructing new StackAllocator. Size {0}. ", stackSize);
-#endif
         stack = reinterpret_cast<std::byte *>(malloc(stackSize));
         top   = stack;
     }
@@ -28,11 +25,6 @@ namespace garlic::clove {
 
     StackAllocator::~StackAllocator() {
         if(freeMemory) {
-#if GARLIC_DEBUG
-            if(top > stack) {
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Stack Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
-            }
-#endif
             ::free(stack);
         }
     }

@@ -8,9 +8,6 @@ namespace garlic::clove {
     ListAllocator::ListAllocator(size_t sizeBytes)
         : listSize(sizeBytes)
         , freeMemory(true) {
-#if CLV_ENABLE_MEMORY_DEBUGGING
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, garlic::LogLevel::Trace, "Constructing new ListAllocator. Size {0}. ", listSize);
-#endif
         rawList = reinterpret_cast<std::byte *>(malloc(listSize));
         head    = rawList;
     }
@@ -31,11 +28,6 @@ namespace garlic::clove {
 
         freeMemory       = other.freeMemory;
         other.freeMemory = false;
-
-#if GARLIC_DEBUG
-        allocations = other.allocations;
-        frees       = other.frees;
-#endif
     }
 
     ListAllocator &ListAllocator::operator=(ListAllocator &&other) noexcept {
@@ -48,20 +40,11 @@ namespace garlic::clove {
         freeMemory       = other.freeMemory;
         other.freeMemory = false;
 
-#if GARLIC_DEBUG
-        allocations = other.allocations;
-        frees       = other.frees;
-#endif
         return *this;
     }
 
     ListAllocator::~ListAllocator() {
         if(freeMemory) {
-#if GARLIC_DEBUG
-            if(allocations > frees) {
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "List Allocator destructed with active memory. Block will be freed but destructors will not be called on occupying elements");
-            }
-#endif
             ::free(rawList);
         }
     }
@@ -87,9 +70,6 @@ namespace garlic::clove {
             header->blockSize = bytes;
             head += sizeof(Header) + bytes;
         }
-#if GARLIC_DEBUG
-        ++allocations;
-#endif
 
         return reinterpret_cast<char *>(header) + sizeof(Header);
     }
@@ -99,8 +79,5 @@ namespace garlic::clove {
         Header *header{ reinterpret_cast<Header *>(data - sizeof(Header)) };
 
         list.push_back(header);
-#if GARLIC_DEBUG
-        ++frees;
-#endif
     }
 }

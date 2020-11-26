@@ -29,11 +29,6 @@ namespace garlic::clove {
 
         bool freeMemory = true;
 
-#if GARLIC_DEBUG
-        uint32_t allocations = 0;
-        uint32_t frees       = 0;
-#endif
-
         //FUNCTIONS
     public:
         ListAllocator() = delete;
