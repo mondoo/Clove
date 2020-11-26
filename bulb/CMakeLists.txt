@@ -20,6 +20,8 @@ add_executable(
 		${SOURCE}/ViewModel.cs
 		${SOURCE}/MainWindowViewModel.cs
 		
+		${SOURCE}/RelayCommand.cs
+
 		${SOURCE}/EditorLogger.cs
 )
 

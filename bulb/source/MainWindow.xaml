@@ -9,13 +9,34 @@
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="5*"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="3*"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<Image x:Name="RenderArea" Stretch="Fill"/>
-		<TextBox x:Name="Log" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8" BorderBrush="{x:Null}" BorderThickness="0"/>
+		<Image x:Name="RenderArea" Grid.Column="1" Stretch="Fill"/>
+		<TextBox x:Name="Log" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8" BorderBrush="{x:Null}" BorderThickness="0"/>
+
+		<StackPanel>
+			<Grid x:Name="EntityControl">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				
+				<TextBlock Grid.Column="0" Text="Entities"/>
+				<Button Grid.Column="1" Content="Add" Command="{Binding AddEntityCommand}"/>
+			</Grid>
+			
+			<ListBox x:Name="EntityList" ItemsSource="{Binding Entities}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="Entity test"/>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</StackPanel>
 	</Grid>
 </Window>
