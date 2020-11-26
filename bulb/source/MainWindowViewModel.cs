@@ -7,7 +7,7 @@ namespace Garlic.Bulb
     public class MainWindowViewModel : ViewModel
     {
         //Commands
-        public ICommand AddEntityCommand { get; private set; }
+        public ICommand CreateEntityCommand { get; private set; }
 
         //Properties
         public string LogText
@@ -24,15 +24,15 @@ namespace Garlic.Bulb
         public ObservableCollection<object> Entities { get; set; } = new ObservableCollection<object>();
 
         public delegate void AddEntityEventHandler();
-        public event AddEntityEventHandler AddEntity;
+        public event AddEntityEventHandler CreateEntity;
 
         public MainWindowViewModel()
         {
-            AddEntityCommand = new RelayCommand(() =>
+            CreateEntityCommand = new RelayCommand(() =>
             {
-                if (AddEntity != null)
+                if (CreateEntity != null)
                 {
-                    AddEntity.Invoke();
+                    CreateEntity.Invoke();
                     Entities.Add(new object());
                 }
             });
