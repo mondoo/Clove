@@ -15,7 +15,7 @@
     - windows-1809
 
 .linux_image: &linux_env_image
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:3.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:4.0.0
 
 stages:
   - build

@@ -27,15 +27,6 @@ RUN apt-get install -y wget
 RUN apt-get install -y g++-10
 RUN apt-get install -y clang-10
 
-#Install dotnet
-RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-RUN dpkg -i packages-microsoft-prod.deb
-RUN apt-get update -y
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get install -y dotnet-sdk-3.1
-
 #Install cmake
 COPY --from=cmake_builder /cmake_install /cmake_install
 ENV PATH "/cmake_install/bin:$PATH"
@@ -44,6 +35,7 @@ ENV PATH "/cmake_install/bin:$PATH"
 RUN apt-get install -y libx11-dev
 
 #Install Vulkan
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y gnupg2
 RUN apt-get install -y ca-certificates wget
 RUN wget -qO - https://packages.lunarg.com/lunarg-signing-key-pub.asc | apt-key add -
