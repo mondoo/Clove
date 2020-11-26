@@ -21,7 +21,7 @@ namespace garlic::clove {
 
     static Font::FacePtr copyFace(FT_Face face) {
         if(FT_Reference_Face(face) != FT_Err_Ok) {
-            GARLIC_ASSERT(false, "Could not reference face");
+            CLOVE_ASSERT(false, "Could not reference face");
         }
         return makeUniqueFace(face);
     }
@@ -34,13 +34,13 @@ namespace garlic::clove {
         if(ftLib.use_count() == 0) {
             FT_Library library;
             if(FT_Init_FreeType(&library) != FT_Err_Ok) {
-                GARLIC_ASSERT(false, "Could not load freetype");
+                CLOVE_ASSERT(false, "Could not load freetype");
             } else {
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Constructed FreeType library");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Constructed FreeType library");
             }
 
             auto const libraryDeleter = [](FT_Library lib) {
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "FreeType library has been deleted");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "FreeType library has been deleted");
                 FT_Done_FreeType(lib);
             };
             ftLibReference = FTLibSharedPtr(library, libraryDeleter);
@@ -130,7 +130,7 @@ namespace garlic::clove {
     Font::FacePtr Font::createFace(std::string const &filePath) {
         FT_Face face;
         if(FT_New_Face(ftLibReference.get(), filePath.c_str(), 0, &face) != FT_Err_Ok) {
-            GARLIC_ASSERT(false, "Could not load font");
+            CLOVE_ASSERT(false, "Could not load font");
         }
 
         return makeUniqueFace(face);
@@ -139,7 +139,7 @@ namespace garlic::clove {
     Font::FacePtr Font::createFace(std::span<std::byte const> bytes) {
         FT_Face face;
         if(FT_New_Memory_Face(ftLibReference.get(), reinterpret_cast<unsigned char const *>(bytes.data()), bytes.size_bytes(), 0, &face) != FT_Err_Ok) {
-            GARLIC_ASSERT(false, "Could not load font");
+            CLOVE_ASSERT(false, "Could not load font");
         }
 
         return makeUniqueFace(face);

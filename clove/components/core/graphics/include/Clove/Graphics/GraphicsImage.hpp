@@ -73,5 +73,5 @@ namespace garlic::clove {
         virtual std::unique_ptr<GraphicsImageView> createView(GraphicsImageView::Descriptor viewDescriptor) const = 0;
     };
 
-    GARLIC_ENUM_BIT_FLAG_OPERATORS(GraphicsImage::UsageMode, GraphicsImage::UsageModeType)
+    CLOVE_ENUM_BIT_FLAG_OPERATORS(GraphicsImage::UsageMode, GraphicsImage::UsageModeType)
 }

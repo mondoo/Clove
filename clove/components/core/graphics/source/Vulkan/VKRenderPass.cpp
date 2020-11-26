@@ -15,7 +15,7 @@ namespace garlic::clove {
             case LoadOperation::Clear:
                 return VK_ATTACHMENT_LOAD_OP_CLEAR;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown operation", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
                 return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         }
     }
@@ -27,7 +27,7 @@ namespace garlic::clove {
             case StoreOperation::Store:
                 return VK_ATTACHMENT_STORE_OP_STORE;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown operation", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
                 return VK_ATTACHMENT_STORE_OP_DONT_CARE;
         }
     }
@@ -126,7 +126,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateRenderPass(this->device.get(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create render pass");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create render pass");
         }
     }
 

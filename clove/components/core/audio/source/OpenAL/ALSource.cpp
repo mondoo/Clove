@@ -42,9 +42,9 @@ namespace garlic::clove {
     }
 
     std::vector<std::shared_ptr<AudioBuffer>> ALSource::unQueueBuffers(uint32_t const numToUnqueue) {
-#if GARLIC_DEBUG
+#if CLOVE_DEBUG
         const uint32_t maxAbleToUnQueue = getNumBuffersProcessed();
-        GARLIC_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}, Can't unqueue {1} buffers. Only {2} buffers have been processed", GARLIC_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
+        CLOVE_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}, Can't unqueue {1} buffers. Only {2} buffers have been processed", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
 #endif
 
         ALuint *buffers = new ALuint[numToUnqueue];

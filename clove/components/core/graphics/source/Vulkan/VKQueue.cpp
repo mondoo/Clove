@@ -13,7 +13,7 @@ namespace garlic::clove {
             case QueueFlags::ReuseBuffers:
                 return VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown queue flag", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Unkown queue flag", CLOVE_FUNCTION_NAME);
                 return 0;
         }
     }

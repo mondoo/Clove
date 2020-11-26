@@ -16,7 +16,7 @@ namespace garlic::clove {
             case DescriptorPool::Flag::FreeDescriptorSet:
                 return VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
             default:
-                GARLIC_ASSERT(false, "{0} Unknown flag", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0} Unknown flag", CLOVE_FUNCTION_NAME);
         }
     }
 
@@ -40,7 +40,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateDescriptorPool(this->device.get(), &createInfo, nullptr, &pool) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create descriptor pool");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create descriptor pool");
         }
     }
 
@@ -75,7 +75,7 @@ namespace garlic::clove {
         };
 
         if(vkAllocateDescriptorSets(device.get(), &allocInfo, std::data(vulkanSets)) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to allocate new descriptor sets");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to allocate new descriptor sets");
             return {};
         }
 
@@ -100,7 +100,7 @@ namespace garlic::clove {
         }
 
         if(vkFreeDescriptorSets(device.get(), pool, numSets, std::data(vulkanSets)) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to free descriptor sets");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to free descriptor sets");
         }
     }
 

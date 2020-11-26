@@ -35,7 +35,7 @@ namespace garlic::clove {
 
     void *StackAllocator::alloc(size_t bytes) {
         if((top - stack) + bytes > stackSize) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", GARLIC_FUNCTION_NAME_PRETTY, bytes);
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, bytes);
             return nullptr;
         }
 

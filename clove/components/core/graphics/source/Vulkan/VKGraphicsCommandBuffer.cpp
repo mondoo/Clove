@@ -19,7 +19,7 @@ namespace garlic::clove {
             case IndexType::Uint16:
                 return VK_INDEX_TYPE_UINT16;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown index type", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
                 return VK_INDEX_TYPE_UINT16;
         }
     }
@@ -43,13 +43,13 @@ namespace garlic::clove {
         };
 
         if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to begin recording command buffer");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to begin recording command buffer");
         }
     }
 
     void VKGraphicsCommandBuffer::endRecording() {
         if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to end recording command buffer");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to end recording command buffer");
         }
     }
 

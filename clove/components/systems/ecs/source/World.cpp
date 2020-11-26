@@ -15,10 +15,10 @@ namespace garlic::clove {
     }
 
     void World::update(DeltaTime deltaTime) {
-        CLV_PROFILE_FUNCTION();
+        CLOVE_PROFILE_FUNCTION();
 
         if(pendingDestroyIDs.size() > 0) {
-            CLV_PROFILE_SCOPE("Destroying pendining entities");
+            CLOVE_PROFILE_SCOPE("Destroying pendining entities");
 
             for(EntityID id : pendingDestroyIDs) {
                 componentManager.onEntityDestroyed(id);

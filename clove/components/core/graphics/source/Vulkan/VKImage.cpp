@@ -38,7 +38,7 @@ namespace garlic::clove {
             case GraphicsImage::Type::_3D:
                 return VK_IMAGE_TYPE_3D;
             default:
-                GARLIC_ASSERT(false, "{0}: Unhandled image type");
+                CLOVE_ASSERT(false, "{0}: Unhandled image type");
                 return VK_IMAGE_TYPE_2D;
         }
     }
@@ -52,7 +52,7 @@ namespace garlic::clove {
             case GraphicsImageView::Type::Cube:
                 return VK_IMAGE_VIEW_TYPE_CUBE;
             default:
-                GARLIC_ASSERT(false, "{0}: Unhandled image type");
+                CLOVE_ASSERT(false, "{0}: Unhandled image type");
                 return VK_IMAGE_VIEW_TYPE_2D;
         }
     }
@@ -85,7 +85,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateImage(this->device.get(), &createInfo, nullptr, &image) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create image");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create image");
             return;
         }
 
@@ -109,7 +109,7 @@ namespace garlic::clove {
     std::unique_ptr<GraphicsImageView> VKImage::createView(GraphicsImageView::Descriptor viewDescriptor) const {
         {
             uint32_t const maxLayers = descriptor.type == Type::Cube ? 6 : 1;
-            GARLIC_ASSERT(viewDescriptor.layer + viewDescriptor.layerCount <= maxLayers, "{0}: GraphicsImageView is not compatible!", GARLIC_FUNCTION_NAME_PRETTY);
+            CLOVE_ASSERT(viewDescriptor.layer + viewDescriptor.layerCount <= maxLayers, "{0}: GraphicsImageView is not compatible!", CLOVE_FUNCTION_NAME_PRETTY);
         }
 
         VkImageAspectFlags const aspectFlags = descriptor.format == Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
@@ -129,7 +129,7 @@ namespace garlic::clove {
             case VK_FORMAT_D32_SFLOAT:
                 return Format::D32_SFLOAT;
             default:
-                GARLIC_ASSERT(false, "{0}: Format not supported by garlic", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Format not supported by garlic", CLOVE_FUNCTION_NAME);
                 return Format::Unkown;
         }
     }
@@ -149,7 +149,7 @@ namespace garlic::clove {
             case Format::D32_SFLOAT:
                 return VK_FORMAT_D32_SFLOAT;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown format", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Unkown format", CLOVE_FUNCTION_NAME);
                 return VK_FORMAT_UNDEFINED;
         }
     }
@@ -175,7 +175,7 @@ namespace garlic::clove {
             case Layout::DepthStencilReadOnlyOptimal:
                 return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown image layout", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Unkown image layout", CLOVE_FUNCTION_NAME);
                 return VK_IMAGE_LAYOUT_UNDEFINED;
         }
     }

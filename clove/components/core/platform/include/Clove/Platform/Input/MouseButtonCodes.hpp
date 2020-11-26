@@ -1,6 +1,6 @@
 #pragma once
 
-#if GARLIC_PLATFORM_WINDOWS
+#if CLOVE_PLATFORM_WINDOWS
     #include "Clove/Platform/Windows/CloveWindows.hpp"
 #endif
 
@@ -11,19 +11,19 @@ namespace garlic::clove {
         None      = -2,
         Undefined = -1,
 
-#if GARLIC_PLATFORM_WINDOWS
+#if CLOVE_PLATFORM_WINDOWS
         _1 = MK_LBUTTON,
         _2 = MK_RBUTTON,
         _3 = MK_MBUTTON,
         _4 = MK_XBUTTON1,
         _5 = MK_XBUTTON2,
-#elif GARLIC_PLATFORM_LINUX
+#elif CLOVE_PLATFORM_LINUX
         _1 = 1,
         _2 = 2,
         _3 = 3,
         _4 = 8,
         _5 = 9,
-#elif GARLIC_PLATFORM_MACOS
+#elif CLOVE_PLATFORM_MACOS
         _1 = 1 << 0,
         _2 = 1 << 1,
         _3 = 1 << 2,
@@ -36,11 +36,11 @@ namespace garlic::clove {
         Middle = _3,
     };
 
-#if GARLIC_PLATFORM_WINDOWS
+#if CLOVE_PLATFORM_WINDOWS
     #define CLV_WHEEL_DELTA WHEEL_DELTA
-#elif GARLIC_PLATFORM_LINUX
+#elif CLOVE_PLATFORM_LINUX
     #define CLV_WHEEL_DELTA 1
-#elif GARLIC_PLATFORM_MACOS
+#elif CLOVE_PLATFORM_MACOS
     #define CLV_WHEEL_DELTA 1
 #endif
 

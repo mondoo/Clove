@@ -14,7 +14,7 @@ namespace garlic::clove {
             case QueueType::Transfer:
                 return *indices.transferFamily;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown queue type", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Unkown queue type", CLOVE_FUNCTION_NAME);
                 return VK_QUEUE_FAMILY_IGNORED;
         }
     }

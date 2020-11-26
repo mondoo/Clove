@@ -1,7 +1,7 @@
-#if GARLIC_PLATFORM_WINDOWS
+#if CLOVE_PLATFORM_WINDOWS
     #define VK_USE_PLATFORM_WIN32_KHR
-#elif GARLIC_PLATFORM_MACOS
-#elif GARLIC_PLATFORM_LINUX
+#elif CLOVE_PLATFORM_MACOS
+#elif CLOVE_PLATFORM_LINUX
     #define VK_USE_PLATFORM_XLIB_KHR
 #endif
 
@@ -11,7 +11,7 @@
 //~~~~
 
 //Remove xlib defs from vulkan.h
-#if GARLIC_PLATFORM_LINUX
+#if CLOVE_PLATFORM_LINUX
     #undef None
     #undef Success
 #endif
@@ -29,11 +29,11 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessengerCallbackDataEXT const *pCallbackData,
     void *pUserData) {
     if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) != 0) {
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Trace, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Trace, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) != 0) {
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Warning, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Warning, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) != 0) {
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Error, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Error, pCallbackData->pMessage);
     }
 
     return VK_FALSE;
@@ -199,24 +199,24 @@ namespace garlic::clove {
 
         std::vector<char const *> requiredExtensions {
             VK_KHR_SURFACE_EXTENSION_NAME,
-#if GARLIC_PLATFORM_WINDOWS
+#if CLOVE_PLATFORM_WINDOWS
                 VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
-#elif GARLIC_PLATFORM_MACOS
-#elif GARLIC_PLATFORM_LINUX
+#elif CLOVE_PLATFORM_MACOS
+#elif CLOVE_PLATFORM_LINUX
                 VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
 #endif
-#if GARLIC_DEBUG
+#if CLOVE_DEBUG
                 VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 #endif
         };
 
-#if GARLIC_DEBUG
+#if CLOVE_DEBUG
         std::vector<char const *> const validationLayers{
             "VK_LAYER_KHRONOS_validation"
         };
 
         if(!checkValidationLayerSupport(validationLayers)) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Vulkan validation layers are not supported on this device. Unable to provide debugging infomation");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Vulkan validation layers are not supported on this device. Unable to provide debugging infomation");
         }
 #endif
 
@@ -233,7 +233,7 @@ namespace garlic::clove {
                 .apiVersion         = VK_API_VERSION_1_2,
             };
 
-#if GARLIC_DEBUG
+#if CLOVE_DEBUG
             VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo{
                 .sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
                 .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
@@ -245,7 +245,7 @@ namespace garlic::clove {
 
             VkInstanceCreateInfo createInfo {
                 .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-#if GARLIC_DEBUG
+#if CLOVE_DEBUG
                 .pNext                = &debugMessengerCreateInfo,//Setting the pNext allows us to debug the creation and destruction of the instance (as normaly we need an instance pointer to enable debugging)
                     .pApplicationInfo = &appInfo,
                 .enabledLayerCount    = static_cast<uint32_t>(std::size(validationLayers)),
@@ -261,13 +261,13 @@ namespace garlic::clove {
             };
 
             if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create VK instance");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create VK instance");
                 return;
             }
 
-#if GARLIC_DEBUG
+#if CLOVE_DEBUG
             if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create vk debug message callback");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create vk debug message callback");
                 return;
             }
 #endif
@@ -276,7 +276,7 @@ namespace garlic::clove {
         //Create surface
         VkSurfaceKHR surface{ VK_NULL_HANDLE };
         if(nativeWindow.has_value()) {
-#if GARLIC_PLATFORM_WINDOWS
+#if CLOVE_PLATFORM_WINDOWS
             VkWin32SurfaceCreateInfoKHR createInfo{
                 .sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
                 .hinstance = GetModuleHandle(nullptr),
@@ -284,12 +284,12 @@ namespace garlic::clove {
             };
 
             if(vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create Vulkan surface");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create Vulkan surface");
                 return;
             }
-#elif GARLIC_PLATFORM_MACOS
-            GARLIC_ASSERT(false, "Vulkan implementation not provided on MacOS");
-#elif GARLIC_PLATFORM_LINUX
+#elif CLOVE_PLATFORM_MACOS
+            CLOVE_ASSERT(false, "Vulkan implementation not provided on MacOS");
+#elif CLOVE_PLATFORM_LINUX
             auto const [display, window] = std::any_cast<std::pair<Display * , ::Window>>(nativeWindow);
 
             VkXlibSurfaceCreateInfoKHR createInfo{
@@ -299,7 +299,7 @@ namespace garlic::clove {
             };
 
             if(vkCreateXlibSurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create Vulkan surface");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create Vulkan surface");
                 return;
             }
 #endif
@@ -311,7 +311,7 @@ namespace garlic::clove {
             uint32_t deviceCount = 0;
             vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
             if(deviceCount == 0) {
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "failed to find GPUs with Vulkan support!");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "failed to find GPUs with Vulkan support!");
                 return;
             }
             std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -325,16 +325,16 @@ namespace garlic::clove {
             }
 
             if(physicalDevice == VK_NULL_HANDLE) {
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "failed to find a suitable GPU!");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "failed to find a suitable GPU!");
                 return;
             } else {
                 VkPhysicalDeviceProperties devicePoperties;
                 vkGetPhysicalDeviceProperties(physicalDevice, &devicePoperties);
 
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Vulkan capable physical device found");
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "\tDevice:\t{0}", devicePoperties.deviceName);
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Vulkan capable physical device found");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "\tDevice:\t{0}", devicePoperties.deviceName);
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
             }
         }
 
@@ -373,7 +373,7 @@ namespace garlic::clove {
                 .queueCreateInfoCount = static_cast<uint32_t>(std::size(queueCreateInfos)),
                 .pQueueCreateInfos    = std::data(queueCreateInfos),
 
-#if GARLIC_DEBUG
+#if CLOVE_DEBUG
                 //We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
                     .enabledLayerCount = static_cast<uint32_t>(validationLayers.size()),
                 .ppEnabledLayerNames   = validationLayers.data(),
@@ -386,7 +386,7 @@ namespace garlic::clove {
             };
 
             if(vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create logical device");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create logical device");
                 return;
             }
         }

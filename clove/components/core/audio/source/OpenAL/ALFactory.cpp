@@ -11,7 +11,7 @@ namespace garlic::clove {
     ALFactory::ALFactory() {
         alDevice = alcOpenDevice(nullptr);
         if(!alDevice) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create OpenAL device");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create OpenAL device");
             return;
         }
 

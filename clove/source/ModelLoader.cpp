@@ -69,7 +69,7 @@ namespace garlic::clove::ModelLoader {
                 return static_cast<JointIndexType>(i);
             }
         }
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "{0}: Joint \"{1}\" has a parent but it couldn't be found in the skeleton", GARLIC_FUNCTION_NAME, jointName);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "{0}: Joint \"{1}\" has a parent but it couldn't be found in the skeleton", CLOVE_FUNCTION_NAME, jointName);
 
         return {};
     }
@@ -225,14 +225,14 @@ namespace garlic::clove::ModelLoader {
     }
 
     StaticModel loadStaticModel(std::string_view modelFilePath) {
-        CLV_PROFILE_FUNCTION();
+        CLOVE_PROFILE_FUNCTION();
 
         std::vector<std::shared_ptr<Mesh>> meshes;
 
         Assimp::Importer importer;
         const aiScene *scene = openFile(modelFilePath.data(), importer);
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>() };
         }
 
@@ -245,14 +245,14 @@ namespace garlic::clove::ModelLoader {
     }
 
     AnimatedModel loadAnimatedModel(std::string_view modelFilePath) {
-        CLV_PROFILE_FUNCTION();
+        CLOVE_PROFILE_FUNCTION();
 
         std::vector<std::shared_ptr<Mesh>> meshes;
 
         Assimp::Importer importer;
         const aiScene *scene = openFile(modelFilePath.data(), importer);
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>(), nullptr, {} };
         }
 

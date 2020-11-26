@@ -9,7 +9,7 @@ namespace garlic::clove {
             case TransformSpace::World:
                 return getWorldPosition();
             default:
-                GARLIC_ASSERT(false, "Default statement hit in {0}", GARLIC_FUNCTION_NAME_PRETTY);
+                CLOVE_ASSERT(false, "Default statement hit in {0}", CLOVE_FUNCTION_NAME_PRETTY);
                 return {};
         }
     }
@@ -21,7 +21,7 @@ namespace garlic::clove {
             case TransformSpace::World:
                 return getWorldRotation();
             default:
-                GARLIC_ASSERT(false, "Default statement hit in {0}", GARLIC_FUNCTION_NAME_PRETTY);
+                CLOVE_ASSERT(false, "Default statement hit in {0}", CLOVE_FUNCTION_NAME_PRETTY);
                 return {};
         }
     }
@@ -33,7 +33,7 @@ namespace garlic::clove {
             case TransformSpace::World:
                 return getWorldScale();
             default:
-                GARLIC_ASSERT(false, "Default statement hit in {0}", GARLIC_FUNCTION_NAME_PRETTY);
+                CLOVE_ASSERT(false, "Default statement hit in {0}", CLOVE_FUNCTION_NAME_PRETTY);
                 return {};
         }
     }
@@ -78,7 +78,7 @@ namespace garlic::clove {
             case TransformSpace::World:
                 return getWorldTransformMatrix();
             default:
-                GARLIC_ASSERT(false, "Default statement hit in {0}", GARLIC_FUNCTION_NAME_PRETTY);
+                CLOVE_ASSERT(false, "Default statement hit in {0}", CLOVE_FUNCTION_NAME_PRETTY);
                 return {};
         }
     }

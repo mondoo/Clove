@@ -25,7 +25,7 @@ namespace garlic::clove {
     RenderSystem::~RenderSystem() = default;
 
     void RenderSystem::update(World &world, DeltaTime deltaTime) {
-        CLV_PROFILE_FUNCTION();
+        CLOVE_PROFILE_FUNCTION();
 
         //Transform and submit cameras
         for(auto &&[transform, camera] : world.getComponentSets<TransformComponent, CameraComponent>()) {

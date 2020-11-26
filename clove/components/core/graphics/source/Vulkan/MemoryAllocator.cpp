@@ -14,7 +14,7 @@ namespace garlic::clove {
             }
         }
 
-        GARLIC_ASSERT(false, "{0}: Failed to find the specified index", GARLIC_FUNCTION_NAME);
+        CLOVE_ASSERT(false, "{0}: Failed to find the specified index", CLOVE_FUNCTION_NAME);
         return -1;
     }
 
@@ -159,7 +159,7 @@ namespace garlic::clove {
             VkDeviceSize const size{ std::max(memoryRequirements.size, blockSize) };
             memoryBlocks.emplace_back(device.get(), size, memoryTypeIndex);
             freeChunk = memoryBlocks.back().allocate(memoryRequirements.size, memoryRequirements.alignment);
-            GARLIC_ASSERT(freeChunk != nullptr, "{0}: Newly allocated Block does not have enough room", GARLIC_FUNCTION_NAME_PRETTY);
+            CLOVE_ASSERT(freeChunk != nullptr, "{0}: Newly allocated Block does not have enough room", CLOVE_FUNCTION_NAME_PRETTY);
         }
 
         return freeChunk;

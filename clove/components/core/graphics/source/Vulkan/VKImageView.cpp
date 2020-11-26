@@ -41,7 +41,7 @@ namespace garlic::clove {
 
         VkImageView imageView;
         if(vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create texture image view");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create texture image view");
             return VK_NULL_HANDLE;
         }
 

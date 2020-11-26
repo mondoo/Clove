@@ -22,5 +22,5 @@ namespace garlic::clove {
         virtual ~Shader() = default;
     };
 
-    GARLIC_ENUM_BIT_FLAG_OPERATORS(Shader::Stage, Shader::StageType)
+    CLOVE_ENUM_BIT_FLAG_OPERATORS(Shader::Stage, Shader::StageType)
 }

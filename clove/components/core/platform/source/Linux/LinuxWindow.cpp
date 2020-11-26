@@ -5,13 +5,13 @@
 
 namespace garlic::clove {
     LinuxWindow::LinuxWindow(WindowDescriptor const &descriptor) {
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
         display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
 
         if(!display) {
             //TODO: Exception
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Could not open display");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Could not open display");
             return;
         }
 
@@ -45,11 +45,11 @@ namespace garlic::clove {
 
         open = true;
 
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Window created");
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Window created");
     }
 
     LinuxWindow::LinuxWindow(Window const &parentWindow, vec2i const &position, vec2i const &size) {
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
 
         auto [pDisplay, pWindow] = std::any_cast<std::pair<Display*, ::Window>>(parentWindow.getNativeWindow());
 
@@ -57,7 +57,7 @@ namespace garlic::clove {
 
         if(!display) {
             //TODO: Exception
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Could not open display");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Could not open display");
             return;
         }
 
@@ -89,7 +89,7 @@ namespace garlic::clove {
 
         open = true;
 
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Window created");
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Window created");
     }
 
     LinuxWindow::~LinuxWindow() {
@@ -114,7 +114,7 @@ namespace garlic::clove {
         if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
             return { posX, posY };
         } else {
-            GARLIC_ASSERT(false, "Could not get window geometry");
+            CLOVE_ASSERT(false, "Could not get window geometry");
             return { 0, 0 };
         }
     }
@@ -131,7 +131,7 @@ namespace garlic::clove {
         if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
             return { width, height };
         } else {
-            GARLIC_ASSERT(false, "Could not get window geometry");
+            CLOVE_ASSERT(false, "Could not get window geometry");
             return { 0, 0 };
         }
     }

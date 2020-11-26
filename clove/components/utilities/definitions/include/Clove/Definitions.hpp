@@ -1,29 +1,21 @@
 #pragma once
 
 #if defined(__clang__)
-    #define GARLIC_DEBUG_BREAK __builtin_debugtrap()
+    #define CLOVE_DEBUG_BREAK __builtin_debugtrap()
 #elif(defined(__GNUC__) || defined(__GNUG__))
-    #define GARLIC_DEBUG_BREAK __builtin_trap()
+    #define CLOVE_DEBUG_BREAK __builtin_trap()
 #elif defined(_MSC_VER)
-    #define GARLIC_DEBUG_BREAK __debugbreak()
+    #define CLOVE_DEBUG_BREAK __debugbreak()
 #endif
 
-#define GARLIC_FUNCTION_NAME __FUNCTION__
+#define CLOVE_FUNCTION_NAME __FUNCTION__
 #if defined(_MSC_VER)
-    #define GARLIC_FUNCTION_NAME_PRETTY __FUNCSIG__
+    #define CLOVE_FUNCTION_NAME_PRETTY __FUNCSIG__
 #else
-    #define GARLIC_FUNCTION_NAME_PRETTY __PRETTY_FUNCTION__
+    #define CLOVE_FUNCTION_NAME_PRETTY __PRETTY_FUNCTION__
 #endif
 
-#if GARLIC_PLATFORM_WINDOWS
-    #define GARLIC_APIENTRY __stdcall
-#else
-    #define GARLIC_APIENTRY
-#endif
-
-#define GARLIC_BIT(x) (1 << x)
-
-#define GARLIC_ENUM_BIT_FLAG_OPERATORS(EnumType, IntegralType)                                     \
+#define CLOVE_ENUM_BIT_FLAG_OPERATORS(EnumType, IntegralType)                                     \
     inline constexpr EnumType operator&(EnumType l, EnumType r) {                                  \
         return static_cast<EnumType>(static_cast<IntegralType>(l) & static_cast<IntegralType>(r)); \
     }                                                                                              \

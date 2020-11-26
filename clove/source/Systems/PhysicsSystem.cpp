@@ -61,7 +61,7 @@ namespace garlic::clove {
     }
 
     void PhysicsSystem::preUpdate(World &world) {
-        CLV_PROFILE_FUNCTION();
+        CLOVE_PROFILE_FUNCTION();
 
         //Make sure any colliders are properly paired with their rigid body
         for(auto &&[cubeCollider, rigidBody] : world.getComponentSets<CubeColliderComponent, RigidBodyComponent>()) {
@@ -109,7 +109,7 @@ namespace garlic::clove {
     }
 
     void PhysicsSystem::update(World &world, DeltaTime deltaTime) {
-        CLV_PROFILE_FUNCTION();
+        CLOVE_PROFILE_FUNCTION();
 
         auto const cubeColliders = world.getComponentSets<TransformComponent, CubeColliderComponent>();
         auto const rigidBodies   = world.getComponentSets<TransformComponent, RigidBodyComponent>();

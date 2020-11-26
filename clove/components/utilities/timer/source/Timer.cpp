@@ -2,7 +2,7 @@
 
 #include <thread>
 
-#if CLV_ENABLE_PROFILING
+#if CLOVE_ENABLE_PROFILING
 namespace garlic::clove {
     Timer::Timer()
         : currentSession(nullptr)

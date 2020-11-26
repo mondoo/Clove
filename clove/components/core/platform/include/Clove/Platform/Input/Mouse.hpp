@@ -10,11 +10,11 @@
 
 namespace garlic::clove {
     class Mouse {
-#if GARLIC_PLATFORM_WINDOWS
+#if CLOVE_PLATFORM_WINDOWS
         friend class WindowsWindow;
-#elif GARLIC_PLATFORM_LINUX
+#elif CLOVE_PLATFORM_LINUX
         friend class LinuxWindow;
-#elif GARLIC_PLATFORM_MACOS
+#elif CLOVE_PLATFORM_MACOS
         friend class MacWindow;
 #endif
 

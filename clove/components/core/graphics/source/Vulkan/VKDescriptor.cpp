@@ -11,7 +11,7 @@ namespace garlic::clove {
             case DescriptorType::CombinedImageSampler:
                 return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown type", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
                 return VK_DESCRIPTOR_TYPE_MAX_ENUM;
         }
     }

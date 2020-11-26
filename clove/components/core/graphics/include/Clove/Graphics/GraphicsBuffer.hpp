@@ -49,5 +49,5 @@ namespace garlic::clove {
         virtual void read(void *data, size_t const offset, size_t const size) = 0;
     };
 
-    GARLIC_ENUM_BIT_FLAG_OPERATORS(GraphicsBuffer::UsageMode, GraphicsBuffer::UsageModeType)
+    CLOVE_ENUM_BIT_FLAG_OPERATORS(GraphicsBuffer::UsageMode, GraphicsBuffer::UsageModeType)
 }

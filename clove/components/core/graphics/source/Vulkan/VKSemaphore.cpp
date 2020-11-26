@@ -9,7 +9,7 @@ namespace garlic::clove {
         createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
         if(vkCreateSemaphore(this->device.get(), &createInfo, nullptr, &semaphore) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create semaphore");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create semaphore");
         }
     }
 

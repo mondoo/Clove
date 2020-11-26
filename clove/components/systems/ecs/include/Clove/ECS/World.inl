@@ -23,7 +23,7 @@ namespace garlic::clove {
 
     template<typename... ComponentTypes>
     ComponentSet<ComponentTypes...> World::getComponentSets() {
-        CLV_PROFILE_FUNCTION();
+        CLOVE_PROFILE_FUNCTION();
 
         std::vector<std::tuple<ComponentPtr<ComponentTypes>...>> componentSets;
         for(EntityID entityID : activeIDs) {

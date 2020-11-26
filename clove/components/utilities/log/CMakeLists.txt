@@ -1,4 +1,4 @@
-option(GAR_ENABLE_ASSERTIONS "Enables the GARLIC_ASSERT macro. Allowing the program to debug break if certain conditions fail." ON)
+option(CLOVE_ENABLE_ASSERTIONS "Enables the CLOVE_ASSERT macro. Allowing the program to debug break if certain conditions fail." ON)
 
 set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/Log)
 set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
@@ -37,5 +37,5 @@ target_compile_definitions(
 	CloveLog
 
 	PUBLIC
-		GARLIC_ENABLE_ASSERTIONS=$<BOOL:${GAR_ENABLE_ASSERTIONS}>
+		CLOVE_ENABLE_ASSERTIONS=$<BOOL:${GAR_ENABLE_ASSERTIONS}>
 )

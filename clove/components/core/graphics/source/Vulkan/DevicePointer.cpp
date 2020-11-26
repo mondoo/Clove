@@ -83,7 +83,7 @@ namespace garlic::clove {
 
     void DevicePointer::release() {
         if(counter != nullptr && --(*counter) == 0) {
-#if GARLIC_DEBUG
+#if CLOVE_DEBUG
             destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #endif
 

@@ -59,7 +59,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateBuffer(this->device.get(), &createInfo, nullptr, &buffer) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create buffer");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create buffer");
             return;
         }
 
@@ -81,7 +81,7 @@ namespace garlic::clove {
     }
 
     void VKBuffer::write(void const *data, size_t const offset, size_t const size) {
-        GARLIC_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only write to SystemMemory buffers", GARLIC_FUNCTION_NAME_PRETTY);
+        CLOVE_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only write to SystemMemory buffers", CLOVE_FUNCTION_NAME_PRETTY);
 
         void *cpuAccessibleMemory{ nullptr };
 
@@ -91,7 +91,7 @@ namespace garlic::clove {
     }
 
     void VKBuffer::read(void *data, size_t const offset, size_t const size) {
-        GARLIC_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only read from SystemMemory buffers", GARLIC_FUNCTION_NAME_PRETTY);
+        CLOVE_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only read from SystemMemory buffers", CLOVE_FUNCTION_NAME_PRETTY);
 
         void *cpuAccessibleMemory{ nullptr };
 

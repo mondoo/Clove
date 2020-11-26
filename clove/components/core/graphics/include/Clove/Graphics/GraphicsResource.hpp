@@ -26,5 +26,5 @@ namespace garlic::clove {
         DepthStencilAttachmentRead  = 1 << 3,
         DepthStencilAttachmentWrite = 1 << 4
     };
-    GARLIC_ENUM_BIT_FLAG_OPERATORS(AccessFlags, AccessFlagsType)
+    CLOVE_ENUM_BIT_FLAG_OPERATORS(AccessFlags, AccessFlagsType)
 }

@@ -27,7 +27,7 @@ namespace garlic::clove::ShaderTranspiler {
             // case garlic::clove::Shader::Stage::Geometry:
             // 	return EShLanguage::EShLangGeometry;
             default:
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Unsupported shader stage {0}", GARLIC_FUNCTION_NAME);
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Unsupported shader stage {0}", CLOVE_FUNCTION_NAME);
                 return EShLanguage::EShLangVertex;
         }
     }
@@ -176,13 +176,13 @@ namespace garlic::clove::ShaderTranspiler {
         char const *log = shader.getInfoLog();
 
         if(strlen(log) > 0) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Error compiling shader: {0}", log);
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Error compiling shader: {0}", log);
             return "";
         }
 
         glslang::SpvOptions spvOptions{};
         spvOptions.validate = false;
-#if GARLIC_DEBUG
+#if CLOVE_DEBUG
         spvOptions.generateDebugInfo = true;
         spvOptions.disableOptimizer  = true;
 #else

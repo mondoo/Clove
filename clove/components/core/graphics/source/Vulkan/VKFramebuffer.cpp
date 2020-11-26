@@ -28,7 +28,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateFramebuffer(this->device.get(), &framebufferInfo, nullptr, &framebuffer) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create framebuffer");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create framebuffer");
         }
     }
 

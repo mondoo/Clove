@@ -4,7 +4,7 @@
 #include <string_view>
 #include <memory>
 
-#define GARLIC_DECLARE_LOG_CATEGORY(categoryName)                \
+#define CLOVE_DECLARE_LOG_CATEGORY(categoryName)                \
     struct LOG_CATEGORY_##categoryName {                         \
         static std::string_view constexpr name{ #categoryName }; \
     };
@@ -45,20 +45,20 @@ namespace garlic::clove {
     };
 }
 
-#define GARLIC_LOG(category, level, ...) ::garlic::clove::Logger::log(category::name, level, __VA_ARGS__);
+#define CLOVE_LOG(category, level, ...) ::garlic::clove::Logger::log(category::name, level, __VA_ARGS__);
 
-#if GARLIC_ENABLE_ASSERTIONS
-    #define GARLIC_ASSERT(x, ...)                                                                                        \
+#if CLOVE_ENABLE_ASSERTIONS
+    #define CLOVE_ASSERT(x, ...)                                                                                        \
         {                                                                                                                \
             if(!(x)) {                                                                                                   \
-                GARLIC_LOG(LOG_CATEGORY_CLOVE, ::garlic::clove::LogLevel::Error, "Assertion Failed: {0}", __VA_ARGS__); \
-                GARLIC_DEBUG_BREAK;                                                                                      \
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, ::garlic::clove::LogLevel::Error, "Assertion Failed: {0}", __VA_ARGS__); \
+                CLOVE_DEBUG_BREAK;                                                                                      \
             }                                                                                                            \
         }
 #else
-    #define GARLIC_ASSERT(x, ...) (x)
+    #define CLOVE_ASSERT(x, ...) (x)
 #endif
 
 #include "Log.inl"
 
-GARLIC_DECLARE_LOG_CATEGORY(CLOVE)
+CLOVE_DECLARE_LOG_CATEGORY(CLOVE)

@@ -19,12 +19,12 @@ namespace garlic::clove {
     AudioSystem::~AudioSystem() = default;
 
     void AudioSystem::update(World &world, DeltaTime deltaTime) {
-        CLV_PROFILE_FUNCTION();
+        CLOVE_PROFILE_FUNCTION();
 
         //Listener
         auto const listenerSet{ world.getComponentSets<TransformComponent, AudioListenerComponent>() };
         size_t const numListeners{ std::size(listenerSet) };
-        GARLIC_ASSERT(numListeners <= 1, "Only one listener is allowed per world");
+        CLOVE_ASSERT(numListeners <= 1, "Only one listener is allowed per world");
         if(numListeners > 0) {
             auto &&[transform, listener] = listenerSet[0];
 

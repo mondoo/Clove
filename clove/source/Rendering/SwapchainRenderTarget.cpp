@@ -25,7 +25,7 @@ namespace garlic::clove {
         if(expectedPresentQueue.hasValue()) {
             presentQueue = std::move(expectedPresentQueue.getValue());
         } else {
-            GARLIC_ASSERT(false, expectedPresentQueue.getError());
+            CLOVE_ASSERT(false, expectedPresentQueue.getError());
         }
 
         //We won't be allocating any buffers from this queue, only using it to submit
@@ -122,7 +122,7 @@ namespace garlic::clove {
         if(expectedSwapchain.hasValue()) {
             swapchain = std::move(expectedSwapchain.getValue());
         } else {
-            GARLIC_ASSERT(false, expectedSwapchain.getError());
+            CLOVE_ASSERT(false, expectedSwapchain.getError());
         }
 
         imagesInFlight.resize(std::size(swapchain->getImageViews()));

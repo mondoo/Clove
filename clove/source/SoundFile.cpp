@@ -14,7 +14,7 @@ namespace garlic::clove {
             case SoundFile::SeekPosition::End:
                 return SEEK_END;
             default:
-                GARLIC_ASSERT(false, "{0}: Default statement hit", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Default statement hit", CLOVE_FUNCTION_NAME);
                 return 0;
         }
     }
@@ -61,7 +61,7 @@ namespace garlic::clove {
             return Format::S32;
         }
 
-        GARLIC_ASSERT(false, "{0}, Unknown file format", GARLIC_FUNCTION_NAME_PRETTY);
+        CLOVE_ASSERT(false, "{0}, Unknown file format", CLOVE_FUNCTION_NAME_PRETTY);
         return Format::Unknown;
     }
 

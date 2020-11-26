@@ -1,11 +1,11 @@
 #pragma once
 
-#if GARLIC_PLATFORM_WINDOWS
+#if CLOVE_PLATFORM_WINDOWS
     #include "Clove/Platform/Windows/CloveWindows.hpp"
-#elif GARLIC_PLATFORM_LINUX
+#elif CLOVE_PLATFORM_LINUX
     #include <X11/keysym.h>
     #include <X11/keysymdef.h>
-#elif GARLIC_PLATFORM_MACOS
+#elif CLOVE_PLATFORM_MACOS
     #include <Carbon/Carbon.h>//Cocoa keycodes are the same as Carbon's
 #endif
 
@@ -16,7 +16,7 @@ namespace garlic::clove {
         None      = -2,
         Undefined = -1,
 
-#if GARLIC_PLATFORM_WINDOWS
+#if CLOVE_PLATFORM_WINDOWS
         //Regular keys
         Space         = VK_SPACE,
         Apostrophe    = VK_OEM_7,
@@ -133,7 +133,7 @@ namespace garlic::clove {
         Alt_Right       = VK_MENU,
         Super_Left      = VK_LWIN,
         Super_Right     = VK_RWIN
-#elif GARLIC_PLATFORM_LINUX
+#elif CLOVE_PLATFORM_LINUX
         //Regular keys
         Space         = XK_space,
         Apostrophe    = XK_apostrophe,
@@ -250,7 +250,7 @@ namespace garlic::clove {
         Alt_Right       = XK_Alt_L,
         Super_Left      = XK_Super_L,
         Super_Right     = XK_Super_R
-#elif GARLIC_PLATFORM_MACOS
+#elif CLOVE_PLATFORM_MACOS
         //Regular keys
         Space         = kVK_Space,
         Apostrophe    = kVK_ANSI_Quote,

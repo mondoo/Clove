@@ -202,7 +202,7 @@ namespace garlic::clove {
         //Aquire the next available image from the render target
         Expected<uint32_t, std::string> const result = renderTarget->aquireNextImage(currentFrame);
         if(!result.hasValue()) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, result.getError());
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, result.getError());
             return;
         }
 

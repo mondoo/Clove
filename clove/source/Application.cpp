@@ -149,7 +149,7 @@ namespace garlic::clove {
     }
 
     Application::Application() {
-        GARLIC_ASSERT(instance == nullptr, "Only one Application can be active");
+        CLOVE_ASSERT(instance == nullptr, "Only one Application can be active");
         instance = this;
 
         prevFrameTime = std::chrono::system_clock::now();

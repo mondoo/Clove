@@ -11,7 +11,7 @@ namespace garlic::clove {
             case Sampler::Filter::Linear:
                 return VK_FILTER_LINEAR;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown type", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
                 return VK_FILTER_NEAREST;
         }
     }
@@ -27,7 +27,7 @@ namespace garlic::clove {
             case Sampler::AddressMode::ClampToBorder:
                 return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown type", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
                 return VK_SAMPLER_ADDRESS_MODE_REPEAT;
         }
     }
@@ -56,7 +56,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateSampler(this->device.get(), &createInfo, nullptr, &sampler) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to create sampler", GARLIC_FUNCTION_NAME);
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to create sampler", CLOVE_FUNCTION_NAME);
         }
     }
 

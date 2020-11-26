@@ -18,7 +18,7 @@ namespace garlic::clove {
         }
 
         //Fall back to the first one if we can't find a surface format we want
-        GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Swapchain could not find desired format. Using first available format from the surface");
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Swapchain could not find desired format. Using first available format from the surface");
         return availableFormats[0];
     }
 
@@ -86,7 +86,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateSwapchainKHR(this->device.get(), &createInfo, nullptr, &swapchain) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create swap chain");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create swap chain");
             return;
         }
 

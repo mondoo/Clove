@@ -14,7 +14,7 @@ namespace garlic::clove {
     public:
         SpdLogOutput() {
             auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-            auto fileSink    = std::make_shared<spdlog::sinks::basic_file_sink_mt>("GARLIC_LOG.txt", true);
+            auto fileSink    = std::make_shared<spdlog::sinks::basic_file_sink_mt>("CLOVE_LOG.txt", true);
 
             consoleSink->set_pattern("%^[%T] %v%$");
             fileSink->set_pattern("[%D %T][%l] %v");

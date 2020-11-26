@@ -24,7 +24,7 @@ namespace garlic::clove {
             case VertexAttributeFormat::R32G32B32A32_SINT:
                 return VK_FORMAT_R32G32B32A32_SINT;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown format passed", GARLIC_FUNCTION_NAME_PRETTY);
+                CLOVE_ASSERT(false, "{0}: Unkown format passed", CLOVE_FUNCTION_NAME_PRETTY);
                 return VK_FORMAT_UNDEFINED;
         }
     }
@@ -203,7 +203,7 @@ namespace garlic::clove {
         };
 
         if(vkCreatePipelineLayout(this->device.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create pipeline layout");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create pipeline layout");
             return;
         }
 
@@ -230,7 +230,7 @@ namespace garlic::clove {
         };
 
         if(vkCreateGraphicsPipelines(this->device.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS) {
-            GARLIC_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create graphics pipeline");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create graphics pipeline");
         }
     }
 
@@ -264,7 +264,7 @@ namespace garlic::clove {
             case Stage::ColourAttachmentOutput:
                 return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
             default:
-                GARLIC_ASSERT(false, "{0}: Unkown pipeline stage", GARLIC_FUNCTION_NAME);
+                CLOVE_ASSERT(false, "{0}: Unkown pipeline stage", CLOVE_FUNCTION_NAME);
                 return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         }
     }
