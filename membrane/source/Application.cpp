@@ -64,6 +64,12 @@ namespace garlic::membrane {
         app->tick();
     }
 
+    void Application::render(System::IntPtr backBuffer) {
+        auto const renderTargetBuffer = renderTarget->getNextReadyBuffer();
+        size_t constexpr bbp{ 4 };
+        renderTargetBuffer->read(backBuffer.ToPointer(), 0, width * height * bbp);
+    }
+
     void Application::shutdown() {
         app->shutdown();
     }
@@ -76,9 +82,7 @@ namespace garlic::membrane {
         this->height = height;
     }
 
-    void Application::render(System::IntPtr backBuffer) {
-        auto const renderTargetBuffer = renderTarget->getNextReadyBuffer();
-        size_t constexpr bbp{ 4 };
-        renderTargetBuffer->read(backBuffer.ToPointer(), 0, width * height * bbp);
+    void Application::addEntity(){
+        (*layer)->addEntity();
     }
 }

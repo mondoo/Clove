@@ -6,11 +6,11 @@ namespace Garlic.Bulb
 {
     public class MainWindowViewModel : ViewModel
     {
-		//Commands
-		public ICommand AddEntityCommand { get; set; }
+        //Commands
+        public ICommand AddEntityCommand { get; private set; }
 
-		//Properties
-		public string LogText
+        //Properties
+        public string LogText
         {
             get { return logText; }
             set
@@ -23,8 +23,19 @@ namespace Garlic.Bulb
 
         public ObservableCollection<object> Entities { get; set; } = new ObservableCollection<object>();
 
-		public MainWindowViewModel() {
-            AddEntityCommand = new RelayCommand(() => Entities.Add(new object()));
-		}
-	};
+        public delegate void AddEntityEventHandler();
+        public event AddEntityEventHandler AddEntity;
+
+        public MainWindowViewModel()
+        {
+            AddEntityCommand = new RelayCommand(() =>
+            {
+                if (AddEntity != null)
+                {
+                    AddEntity.Invoke();
+                    Entities.Add(new object());
+                }
+            });
+        }
+    };
 }

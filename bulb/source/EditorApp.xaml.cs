@@ -34,6 +34,8 @@ namespace Garlic.Bulb
         private void EditorStartup(object sender, StartupEventArgs e)
         {
             editorWindowViewModel = new MainWindowViewModel();
+            //TODO: use lock or the dispatcher
+            editorWindowViewModel.AddEntity += () => engineApp.addEntity();
 
             editorLogger = new EditorLogger();
             editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => editorWindowViewModel.LogText += e2.Text;

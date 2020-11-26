@@ -7,7 +7,6 @@
 namespace garlic::membrane {
     class EditorLayer : public clove::Layer {
     private:
-        clove::Entity cubeEnt;
         clove::Entity camEnt;
 
         clove::Viewport viewport;
@@ -20,5 +19,7 @@ namespace garlic::membrane {
         void onDetach() override;
 
         void resizeViewport(clove::vec2ui size);
+
+        void addEntity();
     };
 }

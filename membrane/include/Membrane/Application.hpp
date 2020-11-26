@@ -28,10 +28,11 @@ public ref class Application {
 
         bool isRunning();
         void tick();
+        void render(System::IntPtr backBuffer);
         void shutdown();
 
         void resize(int width, int height);
 
-        void render(System::IntPtr backBuffer);
+        void addEntity();
     };
 }

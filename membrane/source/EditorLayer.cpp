@@ -18,10 +18,6 @@ namespace garlic::membrane {
     void EditorLayer::onAttach() {
         auto *const world = clove::Application::get().getECSWorld();
 
-        cubeEnt = world->createEntity();
-        cubeEnt.addComponent<clove::TransformComponent>();
-        cubeEnt.addComponent<clove::StaticModelComponent>(clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
-
         auto lightEnt = world->createEntity();
         lightEnt.addComponent<clove::TransformComponent>()->setPosition({ 5.0f, 0.0f, 0.0f });
         lightEnt.addComponent<clove::PointLightComponent>();
@@ -32,10 +28,7 @@ namespace garlic::membrane {
     }
 
     void EditorLayer::onUpdate(clove::DeltaTime const deltaTime) {
-        static float time{ 0.0f };
-        time += deltaTime;
-
-        cubeEnt.getComponent<clove::TransformComponent>()->setPosition({ 0.0f, sin(time), 0.0f });
+        
     }
 
     void EditorLayer::onDetach() {
@@ -46,5 +39,11 @@ namespace garlic::membrane {
         viewport.width  = size.x;
         viewport.height = size.y;
         camEnt.getComponent<clove::CameraComponent>()->setViewport(viewport);
+    }
+
+    void EditorLayer::addEntity(){
+        auto cubeEnt = clove::Application::get().getECSWorld()->createEntity();
+        cubeEnt.addComponent<clove::TransformComponent>();
+        cubeEnt.addComponent<clove::StaticModelComponent>(clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
     }
 }
