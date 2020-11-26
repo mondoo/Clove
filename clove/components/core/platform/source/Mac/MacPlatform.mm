@@ -20,8 +20,4 @@ namespace garlic::clove{
 	std::shared_ptr<Window> MacPlatform::createWindow(const WindowDescriptor& props){
         return std::make_shared<MacWindow>(props);
     }
-	
-	std::shared_ptr<Window> MacPlatform::createChildWindow(const Window& parentWindow, const vec2i& position, const vec2i& size, const gfx::API api){
-		return std::make_shared<MacWindow>(parentWindow, position, size, api);
-	}
 }

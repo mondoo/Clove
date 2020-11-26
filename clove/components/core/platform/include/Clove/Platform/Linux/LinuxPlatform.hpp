@@ -17,6 +17,5 @@ namespace garlic::clove {
         ~LinuxPlatform();
 
         std::shared_ptr<Window> createWindow(WindowDescriptor const &props) override;
-        std::shared_ptr<Window> createChildWindow(Window const &parentWindow, vec2i const &position, vec2i const &size) override;
     };
 }

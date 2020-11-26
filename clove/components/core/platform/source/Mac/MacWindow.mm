@@ -23,26 +23,6 @@
 	return self;
 }
 
-- (instancetype)initWithParentWindow:(MTLView*)view parentWindow:(const Window&)parentWindow position:(const vec2i&)position size:(const vec2i&)size{
-	const NSRect rect = NSMakeRect(position.x, position.y, size.x, size.y);
-	const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
-	
-	_window = [[NSWindow alloc] initWithContentRect:rect
-										 styleMask:styleMask
-										   backing:NSBackingStoreBuffered
-											 defer:NO];
-
-	[_window setDelegate:self];
-	[_window makeKeyAndOrderFront:nil];
-	
-	[_window setContentView:view];
-
-	NSWindow* nativeParentWindow = reinterpret_cast<NSWindow*>(parentWindow.getNativeWindow());
-	[nativeParentWindow addChildWindow:_window ordered:NSWindowAbove];
-	
-	return self;
-}
-
 - (void)windowWillClose:(NSNotification *)notification{
 	//The application shouldn't shut down when a window closes on MacOS, but this'll do for now
 	_cloveWindow->close();
@@ -66,21 +46,6 @@ namespace garlic::clove{
 
 		open = true;
     }
-	
-	MacWindow::MacWindow(const Window& parentWindow, const vec2i& position, const vec2i& size, const gfx::API api){
-		MacData data = { { size.x, size.y } };
-		
-		//graphicsFactory = gfx::initialise(api);
-		//surface = graphicsFactory->createSurface(&data);
-		
-		windowProxy = [[MacWindowProxy alloc] initWithParentWindow:std::static_pointer_cast<gfx::mtl::MTLSurface>(surface)->getMTLView()
-													  parentWindow:parentWindow
-														  position:position
-															  size:size];
-		windowProxy.cloveWindow = this;
-
-		open = true;
-	}
 
 	MacWindow::~MacWindow(){
 		[windowProxy release];

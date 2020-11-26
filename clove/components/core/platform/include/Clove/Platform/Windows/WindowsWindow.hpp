@@ -18,7 +18,6 @@ namespace garlic::clove {
     public:
         WindowsWindow() = delete;
         WindowsWindow(WindowDescriptor const &descriptor);
-        WindowsWindow(Window const &parentWindow, vec2i const &position, vec2i const &size);
 
         WindowsWindow(WindowsWindow const &other)     = delete;
         WindowsWindow(WindowsWindow &&other) noexcept = delete;

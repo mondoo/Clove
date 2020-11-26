@@ -48,50 +48,6 @@ namespace garlic::clove {
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Window created");
     }
 
-    LinuxWindow::LinuxWindow(Window const &parentWindow, vec2i const &position, vec2i const &size) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
-
-        auto [pDisplay, pWindow] = std::any_cast<std::pair<Display*, ::Window>>(parentWindow.getNativeWindow());
-
-        display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
-
-        if(!display) {
-            //TODO: Exception
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Could not open display");
-            return;
-        }
-
-        screen   = DefaultScreenOfDisplay(display);//Get the screen of the display
-        screenID = DefaultScreen(display);
-
-        windowAttribs                   = {};
-        windowAttribs.border_pixel      = BlackPixel(display, screenID);
-        windowAttribs.background_pixel  = WhitePixel(display, screenID);
-        windowAttribs.override_redirect = true;
-        windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), screen->root_visual, AllocNone);
-        windowAttribs.event_mask        = ExposureMask;
-
-        window = XCreateWindow(display, pWindow, position.x, position.y, size.x, size.y, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
-
-        //Remap the delete window message so we can gracefully close the application
-        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
-        XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
-
-        XSync(display, false);//Passing true here flushes the event queue
-
-        long const keyboardMask{ KeyPressMask | KeyReleaseMask | KeymapStateMask };
-        long const mouseMask{ PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask };
-
-        XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
-
-        XClearWindow(display, window);
-        XMapRaised(display, window);
-
-        open = true;
-
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Window created");
-    }
-
     LinuxWindow::~LinuxWindow() {
         XFreeColormap(display, windowAttribs.colormap);
         XDestroyWindow(display, window);
