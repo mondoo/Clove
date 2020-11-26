@@ -26,16 +26,15 @@ namespace Garlic.Bulb
         private object backBufferLock = new object();
 
         private Thread engineThread;
+        private object threadLock = new object();
         private bool exitThread = false;
 
         private Size size = new Size();
-        private bool sizeChanged = false;
 
         private void EditorStartup(object sender, StartupEventArgs e)
         {
             editorWindowViewModel = new MainWindowViewModel();
-            //TODO: use lock or the dispatcher
-            editorWindowViewModel.AddEntity += () => engineApp.addEntity();
+            editorWindowViewModel.AddEntity += CreateEntity;
 
             editorLogger = new EditorLogger();
             editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => editorWindowViewModel.LogText += e2.Text;
@@ -65,11 +64,22 @@ namespace Garlic.Bulb
             engineThread.Start();
         }
 
+        private void CreateEntity()
+        {
+            lock (threadLock)
+            {
+                engineApp.addEntity();
+            }
+        }
+
         private void OnRenderAreaSizeChanged(object sender, SizeChangedEventArgs e)
         {
             size = e.NewSize;
             CreateImageSource(size);
-            sizeChanged = true;
+            lock (threadLock)
+            {
+                engineApp.resize((int)size.Width, (int)size.Height);
+            }
         }
 
         private void StopEngine(object sender, CancelEventArgs e)
@@ -92,35 +102,32 @@ namespace Garlic.Bulb
         {
             while (!exitThread)
             {
-                if (sizeChanged)
+                lock (threadLock)
                 {
-                    engineApp.resize((int)size.Width, (int)size.Height);
-                    sizeChanged = false;
-                }
-
-                if (engineApp.isRunning())
-                {
-                    //Update the application
-                    engineApp.tick();
-
-                    //Render to image
-                    lock (backBufferLock)
+                    if (engineApp.isRunning())
                     {
-                        engineApp.render(backBuffer);
+                        //Update the application
+                        engineApp.tick();
+
+                        //Render to image
+                        lock (backBufferLock)
+                        {
+                            engineApp.render(backBuffer);
+                        }
+
+                        //Update the image source through the dispatcher on the thread that owns the image
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
+                        {
+                            imageSource.Lock();
+                            imageSource.AddDirtyRect(new Int32Rect(0, 0, (int)imageSource.Width, (int)imageSource.Height));
+                            imageSource.Unlock();
+                        }));
                     }
-
-                    //Update the image source through the dispatcher on the thread that owns the image
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
+                    else
                     {
-                        imageSource.Lock();
-                        imageSource.AddDirtyRect(new Int32Rect(0, 0, (int)imageSource.Width, (int)imageSource.Height));
-                        imageSource.Unlock();
-                    }));
-                }
-                else
-                {
-                    //Return to avoid calling shutdown if the app exits by itself
-                    return;
+                        //Return to avoid calling shutdown if the app exits by itself
+                        return;
+                    }
                 }
             }
 
