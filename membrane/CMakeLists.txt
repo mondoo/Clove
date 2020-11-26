@@ -6,6 +6,9 @@ add_library(
     Membrane SHARED
         ${INCLUDE}/Application.hpp
         ${SOURCE}/Application.cpp
+
+        ${INCLUDE}/EditorLayer.hpp
+        ${SOURCE}/EditorLayer.cpp
 )
 
 #Include

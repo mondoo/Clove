@@ -1,71 +1,16 @@
 #include "Membrane/Application.hpp"
 
+#include "Membrane/EditorLayer.hpp"
+
 #include <Clove/Application.hpp>
 #include <Clove/Audio/Audio.hpp>
-#include <Clove/Components/CameraComponent.hpp>
-#include <Clove/Components/PointLightComponent.hpp>
-#include <Clove/Components/StaticModelComponent.hpp>
-#include <Clove/Components/TransformComponent.hpp>
-#include <Clove/ECS/Entity.hpp>
-#include <Clove/ECS/World.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
-#include <Clove/Layer.hpp>
 #include <Clove/Log/Log.hpp>
-#include <Clove/ModelLoader.hpp>
-#include <Clove/Rendering/Camera.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
-#include <Clove/Systems/RenderSystem.hpp>
 
 namespace garlic::membrane {
-    class TestLayer : public clove::Layer {
-    private:
-        clove::Entity cubeEnt;
-        clove::Entity camEnt;
-
-        clove::Viewport viewport;
-
-    public:
-        TestLayer(clove::vec2ui size)
-            : viewport{ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) } {
-            clove::Application::get().getECSWorld()->addSystem<clove::RenderSystem>();
-        }
-
-        void onAttach() override {
-            auto *const world = clove::Application::get().getECSWorld();
-
-            cubeEnt = world->createEntity();
-            cubeEnt.addComponent<clove::TransformComponent>();
-            cubeEnt.addComponent<clove::StaticModelComponent>(clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
-
-            auto lightEnt = world->createEntity();
-            lightEnt.addComponent<clove::TransformComponent>()->setPosition({ 5.0f, 0.0f, 0.0f });
-            lightEnt.addComponent<clove::PointLightComponent>();
-
-            camEnt = world->createEntity();
-            camEnt.addComponent<clove::TransformComponent>()->setPosition({ 0.0f, 0.0f, -10.0f });
-            camEnt.addComponent<clove::CameraComponent>(clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
-        }
-
-        void onUpdate(clove::DeltaTime const deltaTime) override {
-            static float time{ 0.0f };
-            time += deltaTime;
-
-            cubeEnt.getComponent<clove::TransformComponent>()->setPosition({ 0.0f, sin(time), 0.0f });
-        }
-
-        void onDetach() override {
-            clove::Application::get().getECSWorld()->destroyAllEntites();
-        }
-
-        void resize(clove::vec2ui size) {
-            viewport.width  = size.x;
-            viewport.height = size.y;
-            camEnt.getComponent<clove::CameraComponent>()->setViewport(viewport);
-        }
-    };
-
     class ConsoleLogger : public clove::Logger::Output {
     public:
         void doLog(clove::LogLevel level, std::string_view msg) override {
@@ -97,8 +42,8 @@ namespace garlic::membrane {
         app          = pair.first.release();
         renderTarget = pair.second;
 
-        layer  = new std::shared_ptr<TestLayer>();
-        *layer = std::make_shared<TestLayer>(clove::vec2ui{ width, height });
+        layer  = new std::shared_ptr<EditorLayer>();
+        *layer = std::make_shared<EditorLayer>(clove::vec2ui{ width, height });
         app->pushLayer(*layer);
     }
 
@@ -125,7 +70,7 @@ namespace garlic::membrane {
 
     void Application::resize(int width, int height) {
         renderTarget->resize({ width, height });
-        (*layer)->resize({ width, height });
+        (*layer)->resizeViewport({ width, height });
 
         this->width  = width;
         this->height = height;
