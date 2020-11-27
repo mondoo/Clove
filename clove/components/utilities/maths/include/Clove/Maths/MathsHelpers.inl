@@ -1,7 +1,7 @@
+#include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <glm/ext/matrix_clip_space.hpp>
 
 //These are being brought in from somewhere so undefine them
 #undef near
@@ -103,16 +103,14 @@ namespace garlic::clove {
 
     template<typename T>
     vec<3, T> screenToWorld(vec<2, T> const &screenPos, T screenDepth, vec<2, T> const &screenSize, mat<4, 4, T> const &viewMatrix, mat<4, 4, T> const &projectionMatrix) {
-        vec<4, T> NDC{
+        vec<4, T> screenPosNDC{
             ((screenPos.x / screenSize.x) - 0.5f) * 2.0f,
-            -((screenPos.y / screenSize.y) - 0.5f) * 2.0f,
+            ((screenPos.y / screenSize.y) - 0.5f) * 2.0f,
             screenDepth,
-            1.0f
+            1.0f,
         };
 
-        mat<4, 4, T> inverseProjView = inverse(projectionMatrix * viewMatrix);
-
-        vec<4, T> world = inverseProjView * NDC;
+        vec<4, T> world = inverse(projectionMatrix * viewMatrix) * screenPosNDC;
         world /= world.w;
 
         return vec<3, T>{ world.x, world.y, world.z };

@@ -53,6 +53,11 @@ namespace garlic::clove {
     template<typename T>
     mat<4, 4, T> quaternionToMatrix4(quat<T> const &quat);
 
+    /**
+     * @brief Transform a screen space coord to world space.
+     * @param screenDepth a value from 0 - 1. 0 being on the near plane and 1 being on the far plane.
+     * @note When manually calculating screenDepth: near -> far isn't linear if projectionMatrix is a perspective one.
+     */
     template<typename T>
     vec<3, T> screenToWorld(vec<2, T> const &screenPos, T screenDepth, vec<2, T> const &screenSize, mat<4, 4, T> const &viewMatrix, mat<4, 4, T> const &projectionMatrix);
 }
