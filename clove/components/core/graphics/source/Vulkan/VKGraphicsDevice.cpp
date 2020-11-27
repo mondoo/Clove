@@ -23,17 +23,19 @@
 #include <Clove/Log/Log.hpp>
 #include <set>
 
+CLOVE_DECLARE_LOG_CATEGORY(VULKAN)
+
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messagType,
     VkDebugUtilsMessengerCallbackDataEXT const *pCallbackData,
     void *pUserData) {
     if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) != 0) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Trace, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_VULKAN, garlic::clove::LogLevel::Trace, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) != 0) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Warning, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_VULKAN, garlic::clove::LogLevel::Warning, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) != 0) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Error, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_VULKAN, garlic::clove::LogLevel::Error, pCallbackData->pMessage);
     }
 
     return VK_FALSE;
