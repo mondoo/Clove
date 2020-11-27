@@ -10,11 +10,11 @@ namespace garlic::clove {
 
     InputResponse UIFrame::propagateInput(InputEvent const &inputEvent) {
         switch(inputEvent.eventType) {
-            case InputEventType::Keyboard:
+            case InputEvent::Type::Keyboard:
                 //TODO: Needs to check if the elemet has focus
                 break;
 
-            case InputEventType::Mouse: {
+            case InputEvent::Type::Mouse: {
                 auto const &mouseEvent = std::get<Mouse::Event>(inputEvent.event);
                 for(auto &element : inputElements) {
                     ElementBounds const bounds = element->getBounds();

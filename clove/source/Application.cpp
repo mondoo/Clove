@@ -86,7 +86,7 @@ namespace garlic::clove {
             window->processInput();
 
             while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
-                InputEvent const event{ *keyEvent, InputEventType::Keyboard };
+                InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
                 for(auto const &layer : layerStack) {
                     if(layer->onInputEvent(event) == InputResponse::Consumed) {
                         break;
@@ -94,7 +94,7 @@ namespace garlic::clove {
                 }
             }
             while(auto mouseEvent = window->getMouse().getEvent()) {
-                InputEvent const event{ *mouseEvent, InputEventType::Mouse };
+                InputEvent const event{ *mouseEvent, InputEvent::Type::Mouse };
                 for(auto const &layer : layerStack) {
                     if(layer->onInputEvent(event) == InputResponse::Consumed) {
                         break;
