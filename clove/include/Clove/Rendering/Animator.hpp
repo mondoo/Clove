@@ -7,8 +7,8 @@
 #include <array>
 
 namespace garlic::clove {
-    class AnimationClip;
-    class AnimationPose;
+    struct AnimationClip;
+    struct AnimationPose;
 }
 
 namespace garlic::clove {

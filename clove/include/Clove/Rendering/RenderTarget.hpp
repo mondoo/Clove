@@ -8,7 +8,7 @@
 namespace garlic::clove {
     class Semaphore;
     class FrameBuffer;
-    class GraphicsSubmitInfo;
+    struct GraphicsSubmitInfo;
 }
 
 namespace garlic::clove {
