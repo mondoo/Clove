@@ -3,11 +3,10 @@
 namespace garlic::clove {
     Mouse::Event::Event() = default;
 
-    Mouse::Event::Event(Type type, MouseButton button, int32_t x, int32_t y)
-        : type(type)
-        , button(button)
-        , x(x)
-        , y(y) {
+    Mouse::Event::Event(Type type, MouseButton button, vec2i pos)
+        : type{ type }
+        , button{ button }
+        , pos{ std::move(pos) } {
     }
 
     Mouse::Event::Type Mouse::Event::getType() const {
@@ -18,8 +17,8 @@ namespace garlic::clove {
         return type != Type::Invalid && button > MouseButton::Undefined;
     }
 
-    std::pair<int32_t, int32_t> Mouse::Event::getPos() const {
-        return { x, y };
+    vec2i const &Mouse::Event::getPos() const {
+        return pos;
     }
 
     MouseButton Mouse::Event::getButton() const {
@@ -48,8 +47,8 @@ namespace garlic::clove {
         }
     }
 
-    vec2i Mouse::getPosition() const {
-        return { x, y };
+    vec2i const &Mouse::getPosition() const {
+        return pos;
     }
 
     bool Mouse::isInWindow() const {
@@ -65,28 +64,25 @@ namespace garlic::clove {
     }
 
     void Mouse::onMouseMove(int32_t x, int32_t y) {
-        this->x = x;
-        this->y = y;
+        pos = { x, y };
 
-        buffer.push({ Mouse::Event::Type::Move, MouseButton::None, x, y });
+        buffer.push({ Mouse::Event::Type::Move, MouseButton::None, pos });
         trimBuffer();
     }
 
     void Mouse::onButtonPressed(MouseButton button, int32_t x, int32_t y) {
-        this->x = x;
-        this->y = y;
+        pos = { x, y };
 
         buttonStates[button] = true;
-        buffer.push({ Mouse::Event::Type::Pressed, button, x, y });
+        buffer.push({ Mouse::Event::Type::Pressed, button, pos });
         trimBuffer();
     }
 
     void Mouse::onButtonReleased(MouseButton button, int32_t x, int32_t y) {
-        this->x = x;
-        this->y = y;
+        pos = { x, y };
 
         buttonStates[button] = false;
-        buffer.push({ Mouse::Event::Type::Released, button, x, y });
+        buffer.push({ Mouse::Event::Type::Released, button, pos });
         trimBuffer();
     }
 
@@ -103,32 +99,30 @@ namespace garlic::clove {
     }
 
     void Mouse::onWheelUp(int32_t x, int32_t y) {
-        this->x = x;
-        this->y = y;
+        pos = { x, y };
 
-        buffer.push({ Mouse::Event::Type::WheelUp, MouseButton::None, x, y });
+        buffer.push({ Mouse::Event::Type::WheelUp, MouseButton::None, pos });
         trimBuffer();
     }
 
     void Mouse::onWheelDown(int32_t x, int32_t y) {
-        this->x = x;
-        this->y = y;
+        pos = { x, y };
 
-        buffer.push({ Mouse::Event::Type::WheelDown, MouseButton::None, x, y });
+        buffer.push({ Mouse::Event::Type::WheelDown, MouseButton::None, pos });
         trimBuffer();
     }
 
     void Mouse::onMouseLeave() {
         inWindow = false;
 
-        buffer.push({ Mouse::Event::Type::Leave, MouseButton::None, x, y });
+        buffer.push({ Mouse::Event::Type::Leave, MouseButton::None, pos });
         trimBuffer();
     }
 
     void Mouse::onMouseEnter() {
         inWindow = true;
 
-        buffer.push({ Mouse::Event::Type::Enter, MouseButton::None, x, y });
+        buffer.push({ Mouse::Event::Type::Enter, MouseButton::None, pos });
         trimBuffer();
     }
 
