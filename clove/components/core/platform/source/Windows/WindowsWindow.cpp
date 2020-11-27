@@ -56,46 +56,6 @@ namespace garlic::clove {
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Window created");
     }
 
-    WindowsWindow::WindowsWindow(Window const &parentWindow, vec2i const &position, vec2i const &size) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating child window: ({1}, {2})", size.x, size.y);
-
-        WNDCLASSEX wc{};
-        wc.cbSize        = sizeof(wc);
-        wc.style         = CS_OWNDC;
-        wc.lpfnWndProc   = HandleMsgSetup;
-        wc.cbClsExtra    = 0;
-        wc.cbWndExtra    = 0;
-        wc.hInstance     = instance;
-        wc.hIcon         = nullptr;
-        wc.hCursor       = nullptr;
-        wc.hbrBackground = nullptr;
-        wc.lpszMenuName  = nullptr;
-        wc.lpszClassName = className;
-
-        RegisterClassEx(&wc);
-
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Windows class registered");
-
-        DWORD const windowStyle{ WS_CHILD | WS_VISIBLE };
-
-        windowsHandle = CreateWindow(
-            wc.lpszClassName,
-            "",
-            windowStyle,
-            position.x,
-            position.y,
-            size.x,
-            size.y,
-            std::any_cast<HWND>(parentWindow.getNativeWindow()),
-            nullptr,
-            instance,
-            this);
-
-        open = true;
-
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Window created");
-    }
-
     WindowsWindow::~WindowsWindow() {
         UnregisterClass(className, instance);
         DestroyWindow(windowsHandle);

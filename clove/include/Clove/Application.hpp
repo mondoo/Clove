@@ -34,7 +34,6 @@ namespace garlic::clove {
     private:
         static Application *instance;
 
-        std::unique_ptr<Platform> platformInstance;
         std::unique_ptr<GraphicsDevice> graphicsDevice;
         std::unique_ptr<AudioFactory> audioFactory;
 
