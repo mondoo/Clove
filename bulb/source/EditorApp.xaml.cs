@@ -25,7 +25,7 @@ namespace Garlic.Bulb
         private IntPtr backBuffer;
 
         private Thread engineThread;
-        private object threadLock = new object();
+        private object updateEngineLock = new object();
         private bool exitThread = false;
 
         private Size size = new Size();
@@ -67,7 +67,7 @@ namespace Garlic.Bulb
 
         private void CreateEntity()
         {
-            lock (threadLock)
+            lock (updateEngineLock)
             {
                 engineApp.addEntity();
             }
@@ -104,7 +104,10 @@ namespace Garlic.Bulb
                 if (engineApp.isRunning())
                 {
                     //Update the application
-                    engineApp.tick();
+                    lock (updateEngineLock)
+                    {
+                        engineApp.tick();
+                    }
 
                     //Render to image
                     lock (resizeLock)
@@ -116,7 +119,7 @@ namespace Garlic.Bulb
                         }
                         engineApp.render(backBuffer);
                     }
-                    
+
                     //Update the image source through the dispatcher on the thread that owns the image
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
                     {
