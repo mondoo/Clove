@@ -129,6 +129,7 @@ add_library(
 		${INCLUDE}/Rendering/Animator.hpp
 		${SOURCE}/Rendering/Animator.cpp
 		${INCLUDE}/Rendering/Camera.hpp
+		${INCLUDE}/Rendering/Camera.inl
 		${SOURCE}/Rendering/Camera.cpp
 		${INCLUDE}/Rendering/ForwardRenderer3D.hpp
 		${SOURCE}/Rendering/ForwardRenderer3D.cpp

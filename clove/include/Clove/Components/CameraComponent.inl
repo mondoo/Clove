@@ -1,4 +1,12 @@
 namespace garlic::clove {
+    float CameraComponent::getNearPlane() const {
+        return camera.getNearPlane();
+    }
+
+    float CameraComponent::getFarPlane() const {
+        return camera.getFarPlane();
+    }
+
     void CameraComponent::setView(mat4f view) {
         camera.setView(std::move(view));
     }

@@ -25,6 +25,9 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
+        static float constexpr nearPlane{ 0.5f };
+        static float constexpr farPlane{ 10000.0f };
+
         ProjectionMode currentProjectionMode;
         mat4f view{ 1.0f };
         mat4f projection{ 1.0f };
@@ -49,6 +52,9 @@ namespace garlic::clove {
 
         ~Camera();
 
+        inline float getNearPlane() const;
+        inline float getFarPlane() const;
+
         void setView(mat4f view);
         void setProjectionMode(ProjectionMode const mode);
 
@@ -64,3 +70,5 @@ namespace garlic::clove {
         Viewport const &getViewport() const;
     };
 }
+
+#include "Camera.inl"

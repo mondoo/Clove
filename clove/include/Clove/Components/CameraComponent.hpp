@@ -26,6 +26,9 @@ namespace garlic::clove {
 
         ~CameraComponent();
 
+        inline float getNearPlane() const;
+        inline float getFarPlane() const;
+
         inline void setView(mat4f view);
         inline void setProjectionMode(Camera::ProjectionMode const mode);
 

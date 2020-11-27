@@ -40,9 +40,6 @@ namespace garlic::clove {
         float const height{ static_cast<float>(viewport.height) };
         float const aspect{ height > 0.0f ? width / height : 0.0f };
 
-        float constexpr nearPlane{ 0.5f };
-        float constexpr farPlane{ 10000.0f };
-
         currentProjectionMode = mode;
 
         switch(currentProjectionMode) {
