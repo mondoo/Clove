@@ -375,6 +375,8 @@ namespace garlic::clove {
                     return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Native window is in use." } };
                 case VK_ERROR_INITIALIZATION_FAILED:
                     return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Initialisation has failed." } };
+                case VK_ERROR_VALIDATION_FAILED_EXT:
+                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Validation has failed." } };
                 default:
                     return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Reason unkown." } };
             }
