@@ -17,16 +17,14 @@ namespace garlic::clove {
         //VARIABLES
     private:
         DevicePointer devicePtr;
-
         QueueFamilyIndices queueFamilyIndices;
-        std::optional<SwapchainSupportDetails> swapchainSupportDetails;
 
         std::shared_ptr<MemoryAllocator> memoryAllocator;
 
         //FUNCTIONS
     public:
         VKGraphicsFactory() = delete;
-        VKGraphicsFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices, std::optional<SwapchainSupportDetails> swapchainSupportDetails);
+        VKGraphicsFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices);
 
         VKGraphicsFactory(VKGraphicsFactory const &other) = delete;
         VKGraphicsFactory(VKGraphicsFactory &&other) noexcept;

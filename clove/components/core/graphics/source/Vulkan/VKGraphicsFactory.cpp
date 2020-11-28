@@ -241,10 +241,9 @@ namespace garlic::clove {
         }
     }
 
-    VKGraphicsFactory::VKGraphicsFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices, std::optional<SwapchainSupportDetails> swapchainSupportDetails)
-        : devicePtr(std::move(devicePtr))
-        , queueFamilyIndices(std::move(queueFamilyIndices))
-        , swapchainSupportDetails(std::move(swapchainSupportDetails)) {
+    VKGraphicsFactory::VKGraphicsFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices)
+        : devicePtr{ std::move(devicePtr) }
+        , queueFamilyIndices{ std::move(queueFamilyIndices) } {
         memoryAllocator = std::make_shared<MemoryAllocator>(this->devicePtr);
     }
 
@@ -322,20 +321,22 @@ namespace garlic::clove {
     }
 
     Expected<std::unique_ptr<Swapchain>, std::runtime_error> VKGraphicsFactory::createSwapChain(Swapchain::Descriptor descriptor) {
-        if(!swapchainSupportDetails.has_value()) {
+        if(devicePtr.getSurface() == VK_NULL_HANDLE) {
             return Unexpected{ std::runtime_error{ "Swapchain is not available. GraphicsDevice is likely headless" } };
         }
 
         VkExtent2D const windowExtent{ descriptor.extent.x, descriptor.extent.y };
 
-        VkSurfaceFormatKHR surfaceFormat{ chooseSwapSurfaceFormat(swapchainSupportDetails->formats) };
-        VkPresentModeKHR presentMode{ chooseSwapPresentMode(swapchainSupportDetails->presentModes) };
-        VkExtent2D extent{ chooseSwapExtent(swapchainSupportDetails->capabilities, windowExtent) };
+        SurfaceSupportDetails const surfaceSupport{ SurfaceSupportDetails::query(devicePtr.getPhysical(), devicePtr.getSurface()) };
+
+        VkSurfaceFormatKHR const surfaceFormat{ chooseSwapSurfaceFormat(surfaceSupport.formats) };
+        VkPresentModeKHR const presentMode{ chooseSwapPresentMode(surfaceSupport.presentModes) };
+        VkExtent2D const swapchainExtent{ chooseSwapExtent(surfaceSupport.capabilities, windowExtent) };
 
         //Request one more than the minimum images the swap chain can support because sometimes we might need to wait for the driver
-        uint32_t imageCount = swapchainSupportDetails->capabilities.minImageCount + 1;
-        if(swapchainSupportDetails->capabilities.maxImageCount > 0 && imageCount > swapchainSupportDetails->capabilities.maxImageCount) {
-            imageCount = swapchainSupportDetails->capabilities.maxImageCount;
+        uint32_t imageCount = surfaceSupport.capabilities.minImageCount + 1;
+        if(surfaceSupport.capabilities.maxImageCount > 0 && imageCount > surfaceSupport.capabilities.maxImageCount) {
+            imageCount = surfaceSupport.capabilities.maxImageCount;
         }
 
         std::array const familyIndices{ *queueFamilyIndices.graphicsFamily, *queueFamilyIndices.presentFamily };
@@ -347,13 +348,13 @@ namespace garlic::clove {
             .minImageCount         = imageCount,
             .imageFormat           = surfaceFormat.format,
             .imageColorSpace       = surfaceFormat.colorSpace,
-            .imageExtent           = extent,
+            .imageExtent           = swapchainExtent,
             .imageArrayLayers      = 1,
             .imageUsage            = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
             .imageSharingMode      = differentQueueIndices ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
             .queueFamilyIndexCount = differentQueueIndices ? static_cast<uint32_t>(std::size(familyIndices)) : 0,
             .pQueueFamilyIndices   = differentQueueIndices ? std::data(familyIndices) : nullptr,
-            .preTransform          = swapchainSupportDetails->capabilities.currentTransform,
+            .preTransform          = surfaceSupport.capabilities.currentTransform,
             .compositeAlpha        = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
             .presentMode           = presentMode,
             .clipped               = VK_TRUE,
@@ -382,7 +383,7 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<Swapchain>{ std::make_unique<VKSwapchain>(devicePtr, swapchain, chooseSwapSurfaceFormat(swapchainSupportDetails->formats).format, chooseSwapExtent(swapchainSupportDetails->capabilities, windowExtent)) };
+        return std::unique_ptr<Swapchain>{ std::make_unique<VKSwapchain>(devicePtr, swapchain, surfaceFormat.format, std::move(swapchainExtent)) };
     }
 
     Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::string_view filePath) {
