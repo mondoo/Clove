@@ -14,7 +14,8 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        ALSource();
+        ALSource() = delete;
+        ALSource(ALuint source);
 
         ALSource(ALSource const &other) = delete;
         ALSource(ALSource &&other) noexcept;

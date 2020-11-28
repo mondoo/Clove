@@ -2,6 +2,8 @@
 
 #include "Clove/Audio/OpenAL/ALError.hpp"
 
+#include <utility>
+
 namespace garlic::clove {
     static ALenum convertFormat(AudioBuffer::Format format) {
         switch(format) {
@@ -16,9 +18,9 @@ namespace garlic::clove {
         }
     }
 
-    ALBuffer::ALBuffer(Descriptor descriptor)
-        : descriptor(std::move(descriptor)) {
-        alCall(alGenBuffers(1, &buffer));
+    ALBuffer::ALBuffer(ALuint buffer, Descriptor descriptor)
+        : buffer{ buffer }
+        , descriptor{ std::move(descriptor) } {
     }
 
     ALBuffer::ALBuffer(ALBuffer &&other) noexcept = default;

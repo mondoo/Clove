@@ -1,6 +1,7 @@
 #include "Clove/Audio/OpenAL/ALFactory.hpp"
 
 #include "Clove/Audio/OpenAL/ALBuffer.hpp"
+#include "Clove/Audio/OpenAL/ALError.hpp"
 #include "Clove/Audio/OpenAL/ALListener.hpp"
 #include "Clove/Audio/OpenAL/ALSource.hpp"
 
@@ -13,15 +14,33 @@ namespace garlic::clove {
 
     ALFactory::~ALFactory() = default;
 
-    std::unique_ptr<AudioBuffer> ALFactory::createAudioBuffer(AudioBuffer::Descriptor descriptor) {
-        return std::make_unique<ALBuffer>(std::move(descriptor));
+    Expected<std::unique_ptr<AudioBuffer>, std::exception> ALFactory::createAudioBuffer(AudioBuffer::Descriptor descriptor) {
+        ALuint buffer;
+        alGenBuffers(1, &buffer);
+
+        ALenum const error{ alGetError() };
+        if(error != AL_NO_ERROR) {
+            printErrorAl(error, __FILE__, __LINE__);
+            return Unexpected{ std::exception{ "Failed to create AudioBuffer. See log for details." } };
+        }
+
+        return std::unique_ptr<AudioBuffer>{ std::make_unique<ALBuffer>(buffer, std::move(descriptor)) };
     }
 
-    std::unique_ptr<AudioSource> ALFactory::createAudioSource() {
-        return std::make_unique<ALSource>();
+    Expected<std::unique_ptr<AudioSource>, std::exception> ALFactory::createAudioSource() {
+        ALuint source;
+        alGenSources(1, &source);
+
+        ALenum const error{ alGetError() };
+        if(error != AL_NO_ERROR){
+            printErrorAl(error, __FILE__, __LINE__);
+            return Unexpected{ std::exception{ "Failed to create AudioSource. See log for details." } };
+        }
+
+        return std::unique_ptr<AudioSource>{ std::make_unique<ALSource>(source) };
     }
 
-    std::unique_ptr<AudioListener> ALFactory::createAudioListener() {
-        return std::make_unique<ALListener>();
+    Expected<std::unique_ptr<AudioListener>, std::exception> ALFactory::createAudioListener() {
+        return std::unique_ptr<AudioListener>{ std::make_unique<ALListener>() };
     }
 }

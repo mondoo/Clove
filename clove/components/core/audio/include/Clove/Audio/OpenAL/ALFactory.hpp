@@ -16,8 +16,8 @@ namespace garlic::clove {
 
         ~ALFactory();
 
-        std::unique_ptr<AudioBuffer> createAudioBuffer(AudioBuffer::Descriptor descriptor) override;
-        std::unique_ptr<AudioSource> createAudioSource() override;
-        std::unique_ptr<AudioListener> createAudioListener() override;
+        Expected<std::unique_ptr<AudioBuffer>, std::exception> createAudioBuffer(AudioBuffer::Descriptor descriptor) override;
+        Expected<std::unique_ptr<AudioSource>, std::exception> createAudioSource() override;
+        Expected<std::unique_ptr<AudioListener>, std::exception> createAudioListener() override;
     };
 }

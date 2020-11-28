@@ -13,7 +13,8 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        ALBuffer(Descriptor descriptor);
+        ALBuffer() = delete;
+        ALBuffer(ALuint buffer, Descriptor descriptor);
 
         ALBuffer(ALBuffer const &other) = delete;
         ALBuffer(ALBuffer &&other) noexcept;

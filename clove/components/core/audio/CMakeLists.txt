@@ -43,7 +43,8 @@ target_link_libraries(
     CloveAudio
 
     PUBLIC
-        CloveCast
+		CloveCast
+		CloveExpected
         CloveLog
         CloveMaths
 
