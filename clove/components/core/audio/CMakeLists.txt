@@ -10,12 +10,15 @@ add_library(
     ${INCLUDE}/Audio.hpp
 	${SOURCE}/Audio.cpp
 	${INCLUDE}/AudioBuffer.hpp
+	${INCLUDE}/AudioDevice.hpp
 	${INCLUDE}/AudioFactory.hpp
 	${INCLUDE}/AudioListener.hpp
     ${INCLUDE}/AudioSource.hpp
         
     ${INCLUDE}/OpenAL/ALBuffer.hpp
 	${SOURCE}/OpenAL/ALBuffer.cpp
+	${INCLUDE}/OpenAL/ALDevice.hpp
+	${SOURCE}/OpenAL/ALDevice.cpp
 	${INCLUDE}/OpenAL/ALError.hpp
 	${SOURCE}/OpenAL/ALError.cpp
 	${INCLUDE}/OpenAL/ALFactory.hpp

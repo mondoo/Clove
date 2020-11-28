@@ -2,15 +2,8 @@
 
 #include "Clove/Audio/AudioFactory.hpp"
 
-#include <AL/alc.h>
-
 namespace garlic::clove {
     class ALFactory : public AudioFactory {
-        //VARIABLES
-    private:
-        ALCdevice *alDevice{ nullptr };
-        ALCcontext *alContext{ nullptr };
-
         //FUNCTIONS
     public:
         ALFactory();
