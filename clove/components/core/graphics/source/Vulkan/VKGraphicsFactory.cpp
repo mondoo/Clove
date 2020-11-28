@@ -339,9 +339,6 @@ namespace garlic::clove {
             imageCount = surfaceSupport.capabilities.maxImageCount;
         }
 
-        std::array const familyIndices{ *queueFamilyIndices.graphicsFamily, *queueFamilyIndices.presentFamily };
-        bool const differentQueueIndices{ *queueFamilyIndices.graphicsFamily != *queueFamilyIndices.presentFamily };
-
         VkSwapchainCreateInfoKHR const createInfo{
             .sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
             .surface               = devicePtr.getSurface(),
@@ -351,9 +348,9 @@ namespace garlic::clove {
             .imageExtent           = swapchainExtent,
             .imageArrayLayers      = 1,
             .imageUsage            = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-            .imageSharingMode      = differentQueueIndices ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
-            .queueFamilyIndexCount = differentQueueIndices ? static_cast<uint32_t>(std::size(familyIndices)) : 0,
-            .pQueueFamilyIndices   = differentQueueIndices ? std::data(familyIndices) : nullptr,
+            .imageSharingMode      = VK_SHARING_MODE_EXCLUSIVE,
+            .queueFamilyIndexCount = 0,
+            .pQueueFamilyIndices   = nullptr,
             .preTransform          = surfaceSupport.capabilities.currentTransform,
             .compositeAlpha        = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
             .presentMode           = presentMode,
