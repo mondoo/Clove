@@ -254,7 +254,7 @@ namespace garlic::clove {
 
     VKGraphicsFactory::~VKGraphicsFactory() = default;
 
-    Expected<std::unique_ptr<GraphicsQueue>, std::exception> VKGraphicsFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
+    Expected<std::unique_ptr<GraphicsQueue>, std::runtime_error> VKGraphicsFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
         uint32_t const familyIndex{ *queueFamilyIndices.graphicsFamily };
 
         VkCommandPoolCreateInfo poolInfo{
@@ -268,9 +268,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create GraphicsQueue. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsQueue. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create GraphicsQueue. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsQueue. Out of device memory" } };
                 default:
                     break;
             }
@@ -282,9 +282,9 @@ namespace garlic::clove {
         return std::unique_ptr<GraphicsQueue>{ std::make_unique<VKGraphicsQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
     }
 
-    Expected<std::unique_ptr<PresentQueue>, std::exception> VKGraphicsFactory::createPresentQueue() {
+    Expected<std::unique_ptr<PresentQueue>, std::runtime_error> VKGraphicsFactory::createPresentQueue() {
         if(!queueFamilyIndices.presentFamily.has_value()) {
-            return Unexpected{ std::exception{ "Presentation queue not available. GraphicsDevice is likely headless" } };
+            return Unexpected{ std::runtime_error{ "Presentation queue not available. GraphicsDevice is likely headless" } };
         }
 
         VkQueue queue;
@@ -293,7 +293,7 @@ namespace garlic::clove {
         return std::unique_ptr<PresentQueue>{ std::make_unique<VKPresentQueue>(devicePtr, queue) };
     }
 
-    Expected<std::unique_ptr<TransferQueue>, std::exception> VKGraphicsFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
+    Expected<std::unique_ptr<TransferQueue>, std::runtime_error> VKGraphicsFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
         uint32_t const familyIndex{ *queueFamilyIndices.transferFamily };
 
         VkCommandPoolCreateInfo const poolInfo{
@@ -307,9 +307,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create TransferQueue. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create TransferQueue. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create TransferQueue. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create TransferQueue. Out of device memory" } };
                 default:
                     break;
             }
@@ -321,9 +321,9 @@ namespace garlic::clove {
         return std::unique_ptr<TransferQueue>{ std::make_unique<VKTransferQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
     }
 
-    Expected<std::unique_ptr<Swapchain>, std::exception> VKGraphicsFactory::createSwapChain(Swapchain::Descriptor descriptor) {
+    Expected<std::unique_ptr<Swapchain>, std::runtime_error> VKGraphicsFactory::createSwapChain(Swapchain::Descriptor descriptor) {
         if(!swapchainSupportDetails.has_value()) {
-            return Unexpected{ std::exception{ "Swapchain is not available. GraphicsDevice is likely headless" } };
+            return Unexpected{ std::runtime_error{ "Swapchain is not available. GraphicsDevice is likely headless" } };
         }
 
         VkExtent2D const windowExtent{ descriptor.extent.x, descriptor.extent.y };
@@ -364,17 +364,17 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateSwapchainKHR(devicePtr.get(), &createInfo, nullptr, &swapchain); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create Swapchain. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create Swapchain. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Out of device memory" } };
                 case VK_ERROR_DEVICE_LOST:
-                    return Unexpected{ std::exception{ "Failed to create Swapchain. Device lost." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Device lost." } };
                 case VK_ERROR_SURFACE_LOST_KHR:
-                    return Unexpected{ std::exception{ "Failed to create Swapchain. Surface lost." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Surface lost." } };
                 case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
-                    return Unexpected{ std::exception{ "Failed to create Swapchain. Native window is in use." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Native window is in use." } };
                 case VK_ERROR_INITIALIZATION_FAILED:
-                    return Unexpected{ std::exception{ "Failed to create Swapchain. Initialisation has failed." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Initialisation has failed." } };
                 default:
                     break;
             }
@@ -383,11 +383,11 @@ namespace garlic::clove {
         return std::unique_ptr<Swapchain>{ std::make_unique<VKSwapchain>(devicePtr, swapchain, chooseSwapSurfaceFormat(swapchainSupportDetails->formats).format, chooseSwapExtent(swapchainSupportDetails->capabilities, windowExtent)) };
     }
 
-    Expected<std::unique_ptr<Shader>, std::exception> VKGraphicsFactory::createShader(std::string_view filePath) {
+    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::string_view filePath) {
         return createShader(readFile(filePath));
     }
 
-    Expected<std::unique_ptr<Shader>, std::exception> VKGraphicsFactory::createShader(std::span<std::byte const> byteCode) {
+    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::span<std::byte const> byteCode) {
         VkShaderModuleCreateInfo const createInfo{
             .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
             .pNext    = nullptr,
@@ -400,11 +400,11 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateShaderModule(devicePtr.get(), &createInfo, nullptr, &module); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create Shader. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create Shader. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Out of device memory" } };
                 case VK_ERROR_INVALID_SHADER_NV:
-                    return Unexpected{ std::exception{ "Failed to create Shader. Shader failed to compile." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Shader failed to compile." } };
                 default:
                     break;
             }
@@ -413,7 +413,7 @@ namespace garlic::clove {
         return std::unique_ptr<Shader>{ std::make_unique<VKShader>(devicePtr, module) };
     }
 
-    Expected<std::unique_ptr<RenderPass>, std::exception> VKGraphicsFactory::createRenderPass(RenderPass::Descriptor descriptor) {
+    Expected<std::unique_ptr<RenderPass>, std::runtime_error> VKGraphicsFactory::createRenderPass(RenderPass::Descriptor descriptor) {
         //Attachments
         const size_t attachmentSize = std::size(descriptor.attachments);
         std::vector<VkAttachmentDescription> attachments(attachmentSize);
@@ -500,9 +500,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateRenderPass(devicePtr.get(), &renderPassInfo, nullptr, &renderPass); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create RenderPass. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create RenderPass. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create RenderPass. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create RenderPass. Out of device memory" } };
                 default:
                     break;
             }
@@ -511,7 +511,7 @@ namespace garlic::clove {
         return std::unique_ptr<RenderPass>{ std::make_unique<VKRenderPass>(devicePtr, renderPass) };
     }
 
-    Expected<std::unique_ptr<DescriptorSetLayout>, std::exception> VKGraphicsFactory::createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) {
+    Expected<std::unique_ptr<DescriptorSetLayout>, std::runtime_error> VKGraphicsFactory::createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) {
         std::vector<VkDescriptorSetLayoutBinding> layoutBindings(std::size(descriptor.bindings));
         for(size_t i = 0; i < std::size(layoutBindings); ++i) {
             auto const &bindingDescriptor = descriptor.bindings[i];
@@ -536,9 +536,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateDescriptorSetLayout(devicePtr.get(), &createInfo, nullptr, &layout); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create DescriptorSetLayout. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create DescriptorSetLayout. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create DescriptorSetLayout. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create DescriptorSetLayout. Out of device memory" } };
                 default:
                     break;
             }
@@ -547,7 +547,7 @@ namespace garlic::clove {
         return std::unique_ptr<DescriptorSetLayout>{ std::make_unique<VKDescriptorSetLayout>(devicePtr, layout, std::move(descriptor)) };
     }
 
-    Expected<std::unique_ptr<PipelineObject>, std::exception> VKGraphicsFactory::createPipelineObject(PipelineObject::Descriptor descriptor) {
+    Expected<std::unique_ptr<PipelineObject>, std::runtime_error> VKGraphicsFactory::createPipelineObject(PipelineObject::Descriptor descriptor) {
         //Descriptor set layouts
         size_t const descriptorLayoutCount{ std::size(descriptor.descriptorSetLayouts) };
         std::vector<VkDescriptorSetLayout> descriptorLayouts(descriptorLayoutCount);
@@ -578,9 +578,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreatePipelineLayout(devicePtr.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create PipelineObject's layout. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject's layout. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create PipelineObject's layout. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject's layout. Out of device memory" } };
                     break;
             }
         }
@@ -743,9 +743,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateGraphicsPipelines(devicePtr.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create PipelineObject. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create PipelineObject. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject. Out of device memory" } };
                 default:
                     break;
             }
@@ -754,7 +754,7 @@ namespace garlic::clove {
         return std::unique_ptr<PipelineObject>{ std::make_unique<VKPipelineObject>(devicePtr, pipeline, pipelineLayout) };
     }
 
-    Expected<std::unique_ptr<Framebuffer>, std::exception> VKGraphicsFactory::createFramebuffer(Framebuffer::Descriptor descriptor) {
+    Expected<std::unique_ptr<Framebuffer>, std::runtime_error> VKGraphicsFactory::createFramebuffer(Framebuffer::Descriptor descriptor) {
         std::vector<VkImageView> attachments;
         attachments.reserve(std::size(descriptor.attachments));
         for(auto &attachment : descriptor.attachments) {
@@ -777,9 +777,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateFramebuffer(devicePtr.get(), &framebufferInfo, nullptr, &framebuffer); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create Framebuffer. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Framebuffer. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create Framebuffer. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Framebuffer. Out of device memory" } };
                 default:
                     break;
             }
@@ -788,7 +788,7 @@ namespace garlic::clove {
         return std::unique_ptr<Framebuffer>{ std::make_unique<VKFramebuffer>(devicePtr, framebuffer) };
     }
 
-    Expected<std::unique_ptr<DescriptorPool>, std::exception> VKGraphicsFactory::createDescriptorPool(DescriptorPool::Descriptor descriptor) {
+    Expected<std::unique_ptr<DescriptorPool>, std::runtime_error> VKGraphicsFactory::createDescriptorPool(DescriptorPool::Descriptor descriptor) {
         size_t const numDescriptorTypes = std::size(descriptor.poolTypes);
         std::vector<VkDescriptorPoolSize> poolSizes(numDescriptorTypes);
         for(size_t i = 0; i < numDescriptorTypes; ++i) {
@@ -811,11 +811,11 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateDescriptorPool(devicePtr.get(), &createInfo, nullptr, &pool); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create DescriptorPool. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create DescriptorPool. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create DescriptorPool. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create DescriptorPool. Out of device memory" } };
                 case VK_ERROR_FRAGMENTATION_EXT:
-                    return Unexpected{ std::exception{ "Failed to create DescriptorPool. Memory is too fragmented" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create DescriptorPool. Memory is too fragmented" } };
                 default:
                     break;
             }
@@ -824,7 +824,7 @@ namespace garlic::clove {
         return std::unique_ptr<DescriptorPool>{ std::make_unique<VKDescriptorPool>(devicePtr, pool, std::move(descriptor)) };
     }
 
-    Expected<std::unique_ptr<Semaphore>, std::exception> VKGraphicsFactory::createSemaphore() {
+    Expected<std::unique_ptr<Semaphore>, std::runtime_error> VKGraphicsFactory::createSemaphore() {
         VkSemaphoreCreateInfo const createInfo{
             .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
         };
@@ -833,9 +833,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateSemaphore(devicePtr.get(), &createInfo, nullptr, &semaphore); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create Semaphore. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Semaphore. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create Semaphore. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Semaphore. Out of device memory" } };
                 default:
                     break;
             }
@@ -844,7 +844,7 @@ namespace garlic::clove {
         return std::unique_ptr<Semaphore>{ std::make_unique<VKSemaphore>(devicePtr, semaphore) };
     }
 
-    Expected<std::unique_ptr<Fence>, std::exception> VKGraphicsFactory::createFence(Fence::Descriptor descriptor) {
+    Expected<std::unique_ptr<Fence>, std::runtime_error> VKGraphicsFactory::createFence(Fence::Descriptor descriptor) {
         VkFenceCreateInfo createInfo{
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
             .flags = descriptor.signaled ? VK_FENCE_CREATE_SIGNALED_BIT : static_cast<VkFenceCreateFlags>(0),
@@ -854,9 +854,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateFence(devicePtr.get(), &createInfo, nullptr, &fence); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create Fence. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Fence. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create Fence. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Fence. Out of device memory" } };
                 default:
                     break;
             }
@@ -865,7 +865,7 @@ namespace garlic::clove {
         return std::unique_ptr<Fence>{ std::make_unique<VKFence>(devicePtr, fence) };
     }
 
-    Expected<std::unique_ptr<GraphicsBuffer>, std::exception> VKGraphicsFactory::createBuffer(GraphicsBuffer::Descriptor descriptor) {
+    Expected<std::unique_ptr<GraphicsBuffer>, std::runtime_error> VKGraphicsFactory::createBuffer(GraphicsBuffer::Descriptor descriptor) {
         std::array const sharedQueueIndices{ *queueFamilyIndices.graphicsFamily, *queueFamilyIndices.transferFamily };
         bool const isExclusive{ descriptor.sharingMode == SharingMode::Exclusive };
 
@@ -884,9 +884,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateBuffer(devicePtr.get(), &createInfo, nullptr, &buffer); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create GraphicsBuffer. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsBuffer. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create GraphicsBuffer. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsBuffer. Out of device memory" } };
                 default:
                     break;
             }
@@ -895,7 +895,7 @@ namespace garlic::clove {
         return std::unique_ptr<GraphicsBuffer>{ std::make_unique<VKBuffer>(devicePtr, buffer, std::move(descriptor), memoryAllocator) };
     }
 
-    Expected<std::unique_ptr<GraphicsImage>, std::exception> VKGraphicsFactory::createImage(GraphicsImage::Descriptor descriptor) {
+    Expected<std::unique_ptr<GraphicsImage>, std::runtime_error> VKGraphicsFactory::createImage(GraphicsImage::Descriptor descriptor) {
         std::array const sharedQueueIndices{ *queueFamilyIndices.graphicsFamily, *queueFamilyIndices.transferFamily };
         bool const isExclusive{ descriptor.sharingMode == SharingMode::Exclusive };
         bool const isCube{ descriptor.type == GraphicsImage::Type::Cube };
@@ -922,9 +922,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateImage(devicePtr.get(), &createInfo, nullptr, &image); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create GraphicsImage. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create GraphicsImage. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Out of device memory" } };
                 default:
                     break;
             }
@@ -933,7 +933,7 @@ namespace garlic::clove {
         return std::unique_ptr<GraphicsImage>{ std::make_unique<VKImage>(devicePtr, image, std::move(descriptor), memoryAllocator) };
     }
 
-    Expected<std::unique_ptr<Sampler>, std::exception> VKGraphicsFactory::createSampler(Sampler::Descriptor descriptor) {
+    Expected<std::unique_ptr<Sampler>, std::runtime_error> VKGraphicsFactory::createSampler(Sampler::Descriptor descriptor) {
         VkSamplerCreateInfo const createInfo{
             .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .pNext                   = nullptr,
@@ -959,9 +959,9 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateSampler(devicePtr.get(), &createInfo, nullptr, &sampler); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create GraphicsImage. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::exception{ "Failed to create GraphicsImage. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Out of device memory" } };
                 default:
                     break;
             }

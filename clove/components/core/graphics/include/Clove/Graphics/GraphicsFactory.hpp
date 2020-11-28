@@ -18,6 +18,7 @@
 
 #include <Clove/Expected.hpp>
 #include <span>
+#include <stdexcept>
 #include <string>
 
 namespace garlic::clove {
@@ -29,29 +30,29 @@ namespace garlic::clove {
     public:
         virtual ~GraphicsFactory() = default;
 
-        virtual Expected<std::unique_ptr<GraphicsQueue>, std::exception> createGraphicsQueue(CommandQueueDescriptor descriptor) = 0;
-        virtual Expected<std::unique_ptr<PresentQueue>, std::exception> createPresentQueue()                                    = 0;
-        virtual Expected<std::unique_ptr<TransferQueue>, std::exception> createTransferQueue(CommandQueueDescriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<GraphicsQueue>, std::runtime_error> createGraphicsQueue(CommandQueueDescriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<PresentQueue>, std::runtime_error> createPresentQueue()                                    = 0;
+        virtual Expected<std::unique_ptr<TransferQueue>, std::runtime_error> createTransferQueue(CommandQueueDescriptor descriptor) = 0;
 
-        virtual Expected<std::unique_ptr<Swapchain>, std::exception> createSwapChain(Swapchain::Descriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<Swapchain>, std::runtime_error> createSwapChain(Swapchain::Descriptor descriptor) = 0;
 
-        virtual Expected<std::unique_ptr<Shader>, std::exception> createShader(std::string_view filePath)           = 0;
-        virtual Expected<std::unique_ptr<Shader>, std::exception> createShader(std::span<std::byte const> byteCode) = 0;
+        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::string_view filePath)           = 0;
+        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::span<std::byte const> byteCode) = 0;
 
-        virtual Expected<std::unique_ptr<RenderPass>, std::exception> createRenderPass(RenderPass::Descriptor descriptor)                            = 0;
-        virtual Expected<std::unique_ptr<DescriptorSetLayout>, std::exception> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<RenderPass>, std::runtime_error> createRenderPass(RenderPass::Descriptor descriptor)                            = 0;
+        virtual Expected<std::unique_ptr<DescriptorSetLayout>, std::runtime_error> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) = 0;
 
-        virtual Expected<std::unique_ptr<PipelineObject>, std::exception> createPipelineObject(PipelineObject::Descriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<PipelineObject>, std::runtime_error> createPipelineObject(PipelineObject::Descriptor descriptor) = 0;
 
-        virtual Expected<std::unique_ptr<Framebuffer>, std::exception> createFramebuffer(Framebuffer::Descriptor descriptor)          = 0;
-        virtual Expected<std::unique_ptr<DescriptorPool>, std::exception> createDescriptorPool(DescriptorPool::Descriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<Framebuffer>, std::runtime_error> createFramebuffer(Framebuffer::Descriptor descriptor)          = 0;
+        virtual Expected<std::unique_ptr<DescriptorPool>, std::runtime_error> createDescriptorPool(DescriptorPool::Descriptor descriptor) = 0;
 
-        virtual Expected<std::unique_ptr<Semaphore>, std::exception> createSemaphore()                     = 0;
-        virtual Expected<std::unique_ptr<Fence>, std::exception> createFence(Fence::Descriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<Semaphore>, std::runtime_error> createSemaphore()                     = 0;
+        virtual Expected<std::unique_ptr<Fence>, std::runtime_error> createFence(Fence::Descriptor descriptor) = 0;
 
-        virtual Expected<std::unique_ptr<GraphicsBuffer>, std::exception> createBuffer(GraphicsBuffer::Descriptor descriptor) = 0;
-        virtual Expected<std::unique_ptr<GraphicsImage>, std::exception> createImage(GraphicsImage::Descriptor descriptor)    = 0;
+        virtual Expected<std::unique_ptr<GraphicsBuffer>, std::runtime_error> createBuffer(GraphicsBuffer::Descriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<GraphicsImage>, std::runtime_error> createImage(GraphicsImage::Descriptor descriptor)    = 0;
 
-        virtual Expected<std::unique_ptr<Sampler>, std::exception> createSampler(Sampler::Descriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<Sampler>, std::runtime_error> createSampler(Sampler::Descriptor descriptor) = 0;
     };
 }
