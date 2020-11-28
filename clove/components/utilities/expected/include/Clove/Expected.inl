@@ -93,12 +93,12 @@ namespace garlic::clove {
 
     template<typename T, typename E>
     T &&Expected<T, E>::operator*() && {
-        return getValue();
+        return std::move(getValue());
     }
 
     template<typename T, typename E>
     T const &&Expected<T, E>::operator*() const && {
-        return getValue();
+        return std::move(getValue());
     }
 
     template<typename T, typename E>

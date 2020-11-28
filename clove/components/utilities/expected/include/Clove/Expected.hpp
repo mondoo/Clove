@@ -70,6 +70,9 @@ namespace garlic::clove {
         bool hasValue() const noexcept;
         operator bool() const noexcept;
 
+        /**
+         * @brief Returns the contained value. If this contains an error 'throw' is called instead.
+         */
         T &getValue() &;
         T const &getValue() const &;
         T &&getValue() &&;
@@ -83,6 +86,9 @@ namespace garlic::clove {
         T &&operator*() &&;
         T const &&operator*() const &&;
 
+        /**
+         * @brief Returns the contained error. If this contains a value 'assert' is called instead.
+         */
         E &getError() &;
         E const &getError() const &;
         E &&getError() &&;
