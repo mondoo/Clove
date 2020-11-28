@@ -9,7 +9,7 @@
 
 namespace garlic::clove {
     AudioSourceComponent::AudioSourceComponent() {
-        source = Application::get().getAudioDevice()->getAudioFactory()->createAudioSource();
+        source = *Application::get().getAudioDevice()->getAudioFactory()->createAudioSource();
     }
 
     AudioSourceComponent::AudioSourceComponent(AudioSourceComponent &&other) noexcept = default;

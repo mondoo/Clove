@@ -8,7 +8,7 @@
 
 namespace garlic::clove {
     AudioListenerComponent::AudioListenerComponent() {
-        listener = Application::get().getAudioDevice()->getAudioFactory()->createAudioListener();
+        listener = *Application::get().getAudioDevice()->getAudioFactory()->createAudioListener();
     }
 
     AudioListenerComponent::AudioListenerComponent(AudioListenerComponent &&other) noexcept = default;
