@@ -85,6 +85,8 @@ namespace garlic::clove {
         //Make sure we're not using the image when we re-create it
         frameInFlight->wait();
 
+        onPropertiesChangedBegin.broadcast();
+
         renderTargetImage = *factory->createImage(imageDescriptor);
         renderTargetView  = renderTargetImage->createView(GraphicsImageView::Descriptor{
             .type       = GraphicsImageView::Type::_2D,
@@ -116,6 +118,6 @@ namespace garlic::clove {
         transferCommandBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { imageDescriptor.dimensions, 1 }, *renderTargetBuffer, 0);
         transferCommandBuffer->endRecording();
 
-        onPropertiesChanged.broadcast();
+        onPropertiesChangedEnd.broadcast();
     }
 }

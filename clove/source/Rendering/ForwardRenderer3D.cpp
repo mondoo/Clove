@@ -48,7 +48,8 @@ extern "C" const size_t font_pLength;
 namespace garlic::clove {
     ForwardRenderer3D::ForwardRenderer3D(std::unique_ptr<RenderTarget> renderTarget)
         : renderTarget(std::move(renderTarget)) {
-        renderTargetPropertyChangedHandle = this->renderTarget->onPropertiesChanged.bind(&ForwardRenderer3D::onRenderTargetPropertiesChanged, this);
+        renderTargetPropertyChangedBeginHandle = this->renderTarget->onPropertiesChangedBegin.bind(&ForwardRenderer3D::cleanupRenderTargetResources, this);
+        renderTargetPropertyChangedEndHandle   = this->renderTarget->onPropertiesChangedEnd.bind(&ForwardRenderer3D::createRenderTargetResources, this);
 
         graphicsDevice  = Application::get().getGraphicsDevice();
         graphicsFactory = graphicsDevice->getGraphicsFactory();
@@ -66,7 +67,7 @@ namespace garlic::clove {
 
         createDepthBuffer();
 
-        onRenderTargetPropertiesChanged();//Also creates the pipeline for the final colour
+        createRenderTargetResources();//Also creates the pipeline for the final colour
 
         //Create semaphores for frame synchronisation
         for(auto &shadowFinishedSemaphore : shadowFinishedSemaphores) {
@@ -504,16 +505,24 @@ namespace garlic::clove {
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
 
-    void ForwardRenderer3D::onRenderTargetPropertiesChanged() {
+    void ForwardRenderer3D::cleanupRenderTargetResources() {
         graphicsDevice->waitForIdleDevice();
 
-        //Explicitly free resources to avoid problems when recreating the swap chain itself
-        staticMeshPipelineObject.reset();
         frameBuffers.clear();
+
+        staticMeshPipelineObject.reset();
+        animatedMeshPipelineObject.reset();
+        widgetPipelineObject.reset();
+        textPipelineObject.reset();
+
         for(auto &imageData : inFlightImageData) {
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
         }
 
+        renderPass.reset();
+    }
+
+    void ForwardRenderer3D::createRenderTargetResources() {
         createRenderpass();
 
         createDepthBuffer();

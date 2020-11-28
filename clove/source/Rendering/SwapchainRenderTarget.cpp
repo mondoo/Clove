@@ -40,6 +40,11 @@ namespace garlic::clove {
             return Unexpected<std::string>{ "Cannot acquire image while Window is minimised." };
         }
 
+        if(requiresNewSwapchain) {
+            createSwapchain();
+            return Unexpected<std::string>{ "Swapchain was recreated." };
+        }
+
         if(std::size(imageAvailableSemaphores) <= frameId) {
             imageAvailableSemaphores.emplace_back(*graphicsFactory->createSemaphore());
         }
@@ -102,21 +107,28 @@ namespace garlic::clove {
     }
 
     void SwapchainRenderTarget::onWindowSizeChanged(vec2ui const &size) {
-        windowSize = size;
-        createSwapchain();
+        windowSize           = size;
+        requiresNewSwapchain = true;
     }
 
     void SwapchainRenderTarget::createSwapchain() {
+        requiresNewSwapchain = true;
+
         if(windowSize.x == 0 || windowSize.y == 0) {
             return;
         }
 
+        onPropertiesChangedBegin.broadcast();
+
         graphicsDevice->waitForIdleDevice();
 
+        swapchain.reset();
         swapchain = *graphicsFactory->createSwapChain({ windowSize });
 
         imagesInFlight.resize(std::size(swapchain->getImageViews()));
 
-        onPropertiesChanged.broadcast();
+        onPropertiesChangedEnd.broadcast();
+
+        requiresNewSwapchain = false;
     }
 }

@@ -2,8 +2,8 @@
 
 #include "Clove/Graphics/GraphicsImage.hpp"
 
-#include <Clove/Expected.hpp>
 #include <Clove/Delegate/MultiCastDelegate.hpp>
+#include <Clove/Expected.hpp>
 
 namespace garlic::clove {
     class Semaphore;
@@ -18,14 +18,22 @@ namespace garlic::clove {
     class RenderTarget {
         //VARIABLES
     public:
-        //Gets called when the properties of this RenderTarget change. Usually requiring rendering primitives to be recreated.
-        MultiCastDelegate<void()> onPropertiesChanged{};
+        /**
+         * @brief Gets called when properties of this render target are about to change. 
+         * Allowing objects referencing any (i.e ImageViews) to be reset ahead of time.
+         */
+        MultiCastDelegate<void()> onPropertiesChangedBegin{};
+        /**
+         * @brief Gets called once properties of the render target have finished changing.
+         * Allowing objects referencing those properties to be created
+         */
+        MultiCastDelegate<void()> onPropertiesChangedEnd{};
 
         //FUNCTIONS
     public:
         RenderTarget() = default;
 
-        RenderTarget(RenderTarget const &other) = delete;
+        RenderTarget(RenderTarget const &other)     = delete;
         RenderTarget(RenderTarget &&other) noexcept = default;
 
         RenderTarget &operator=(RenderTarget const &other) = delete;
@@ -51,7 +59,7 @@ namespace garlic::clove {
         virtual void submit(uint32_t imageIndex, size_t const frameId, garlic::clove::GraphicsSubmitInfo submission) = 0;
 
         virtual garlic::clove::GraphicsImage::Format getImageFormat() const = 0;
-        virtual vec2ui getSize() const                       = 0;
+        virtual vec2ui getSize() const                                      = 0;
 
         virtual std::vector<std::shared_ptr<garlic::clove::GraphicsImageView>> getImageViews() const = 0;
     };
