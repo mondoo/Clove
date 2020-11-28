@@ -202,6 +202,20 @@ TEST(ExpectedTests, ThrowsWhenAccessingTheValueWhenItIsAnError) {
 }
 
 TEST(ExpectedTests, CanReturnProperlyFromAFunction) {
+    class NotCopyable{
+        public:
+
+            NotCopyable() = default;
+
+            NotCopyable(NotCopyable const &other)     = delete;
+            NotCopyable(NotCopyable &&other) noexcept = default;
+
+            NotCopyable &operator=(NotCopyable const &other) = delete;
+            NotCopyable &operator=(NotCopyable &&other) noexcept = default;
+
+            ~NotCopyable() = default;
+    };
+
     class ExpectedReturner {
     public:
         Expected<int32_t, std::exception> return42() {
@@ -211,12 +225,17 @@ TEST(ExpectedTests, CanReturnProperlyFromAFunction) {
         Expected<int32_t, std::exception> returnException() {
             return Unexpected{ std::exception{} };
         }
+
+        Expected<NotCopyable, std::exception> returnNonCopyable() {
+            return NotCopyable{};
+        }
     };
 
     ExpectedReturner helper;
 
     auto value = helper.return42();
     auto error = helper.returnException();
+    NotCopyable notCopyableObj = helper.returnNonCopyable().getValue();
 
     EXPECT_TRUE(value.hasValue());
     EXPECT_FALSE(error.hasValue());

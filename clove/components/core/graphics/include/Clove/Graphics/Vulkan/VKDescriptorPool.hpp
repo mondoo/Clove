@@ -10,15 +10,14 @@ namespace garlic::clove {
         //VARIABLES
     private:
         DevicePointer device;
+        VkDescriptorPool pool{ VK_NULL_HANDLE };
 
         Descriptor descriptor;
-
-        VkDescriptorPool pool{ VK_NULL_HANDLE };
 
         //FUNCTIONS
     public:
         VKDescriptorPool() = delete;
-        VKDescriptorPool(DevicePointer device, Descriptor descriptor);
+        VKDescriptorPool(DevicePointer device, VkDescriptorPool pool, Descriptor descriptor);
 
         VKDescriptorPool(VKDescriptorPool const &other) = delete;
         VKDescriptorPool(VKDescriptorPool &&other) noexcept;

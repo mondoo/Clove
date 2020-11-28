@@ -16,7 +16,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKSemaphore() = delete;
-        VKSemaphore(DevicePointer device);
+        VKSemaphore(DevicePointer device, VkSemaphore semaphore);
 
         VKSemaphore(VKSemaphore const &other) = delete;
         VKSemaphore(VKSemaphore &&other) noexcept;

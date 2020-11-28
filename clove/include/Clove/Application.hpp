@@ -18,7 +18,7 @@ namespace garlic::clove {
     class Layer;
     class ForwardRenderer3D;
     class GraphicsImageRenderTarget;
-    class AudioFactory;
+    class AudioDevice;
 }
 
 namespace garlic::clove {
@@ -35,7 +35,7 @@ namespace garlic::clove {
         static Application *instance;
 
         std::unique_ptr<GraphicsDevice> graphicsDevice;
-        std::unique_ptr<AudioFactory> audioFactory;
+        std::unique_ptr<AudioDevice> audioDevice;
 
         std::shared_ptr<Window> window;
         std::unique_ptr<ForwardRenderer3D> renderer;
@@ -58,12 +58,12 @@ namespace garlic::clove {
         /**
          * @brief Creates a standard Garlic application that opens and manages it's own window
          */
-        static std::unique_ptr<Application> create(GraphicsApi graphicsApi, AudioAPI audioApi, WindowDescriptor windowDescriptor);
+        static std::unique_ptr<Application> create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor);
 
         /**
          * @brief Create a headles Garlic application without a window.
          */
-        static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioAPI audioApi, GraphicsImage::Descriptor renderTargetDescriptor);
+        static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor);
 
         static Application &get();
 
@@ -84,7 +84,7 @@ namespace garlic::clove {
         void shutdown();
 
         GraphicsDevice *getGraphicsDevice() const;
-        AudioFactory *getAudioFactory() const;
+        AudioDevice *getAudioDevice() const;
 
         std::shared_ptr<Window> const &getWindow() const;
         ForwardRenderer3D *getRenderer() const;

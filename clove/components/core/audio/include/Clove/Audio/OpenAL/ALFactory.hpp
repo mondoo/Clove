@@ -2,15 +2,8 @@
 
 #include "Clove/Audio/AudioFactory.hpp"
 
-#include <AL/alc.h>
-
 namespace garlic::clove {
     class ALFactory : public AudioFactory {
-        //VARIABLES
-    private:
-        ALCdevice *alDevice{ nullptr };
-        ALCcontext *alContext{ nullptr };
-
         //FUNCTIONS
     public:
         ALFactory();
@@ -23,8 +16,8 @@ namespace garlic::clove {
 
         ~ALFactory();
 
-        std::unique_ptr<AudioBuffer> createAudioBuffer(AudioBuffer::Descriptor descriptor) override;
-        std::unique_ptr<AudioSource> createAudioSource() override;
-        std::unique_ptr<AudioListener> createAudioListener() override;
+        Expected<std::unique_ptr<AudioBuffer>, std::runtime_error> createAudioBuffer(AudioBuffer::Descriptor descriptor) override;
+        Expected<std::unique_ptr<AudioSource>, std::runtime_error> createAudioSource() override;
+        Expected<std::unique_ptr<AudioListener>, std::runtime_error> createAudioListener() override;
     };
 }

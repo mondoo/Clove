@@ -3,13 +3,13 @@
 #include <memory>
 
 namespace garlic::clove {
-    enum class AudioAPI {
+    enum class AudioApi {
         OpenAl
     };
 
-    class AudioFactory;
+    class AudioDevice;
 }
 
 namespace garlic::clove {
-    std::unique_ptr<AudioFactory> createAudioFactory(AudioAPI api);
+    std::unique_ptr<AudioDevice> createAudioDevice(AudioApi api);
 }

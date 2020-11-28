@@ -93,7 +93,7 @@ namespace garlic::membrane {
         renderTargetImageDescriptor.sharingMode = SharingMode::Concurrent;
 
         //Use pair as there seems to be an issue when using structured bindings
-        auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioAPI::OpenAl, std::move(renderTargetImageDescriptor)) };
+        auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor)) };
         app          = pair.first.release();
         renderTarget = pair.second;
 

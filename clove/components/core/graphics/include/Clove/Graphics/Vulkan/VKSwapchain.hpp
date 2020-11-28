@@ -26,7 +26,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKSwapchain() = delete;
-        VKSwapchain(DevicePointer device, SwapchainSupportDetails supportDetails, QueueFamilyIndices const &familyIndices, Descriptor descriptor);
+        VKSwapchain(DevicePointer device, VkSwapchainKHR swapchain, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent);
 
         VKSwapchain(VKSwapchain const &other) = delete;
         VKSwapchain(VKSwapchain &&other) noexcept;

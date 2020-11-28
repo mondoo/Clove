@@ -16,7 +16,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKRenderPass() = delete;
-        VKRenderPass(DevicePointer device, Descriptor descriptor);
+        VKRenderPass(DevicePointer device, VkRenderPass renderPass);
 
         VKRenderPass(VKRenderPass const &other) = delete;
         VKRenderPass(VKRenderPass &&other) noexcept;

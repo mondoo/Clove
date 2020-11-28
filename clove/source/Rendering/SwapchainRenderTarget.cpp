@@ -8,8 +8,8 @@
 #include <Clove/Graphics/PresentQueue.hpp>
 #include <Clove/Graphics/Semaphore.hpp>
 #include <Clove/Graphics/Swapchain.hpp>
-#include <Clove/Platform/Window.hpp>
 #include <Clove/Log/Log.hpp>
+#include <Clove/Platform/Window.hpp>
 
 namespace garlic::clove {
     SwapchainRenderTarget::SwapchainRenderTarget()
@@ -21,15 +21,10 @@ namespace garlic::clove {
         windowSize         = window->getSize();
         windowResizeHandle = window->onWindowResize.bind(&SwapchainRenderTarget::onWindowSizeChanged, this);
 
-        auto expectedPresentQueue{ graphicsFactory->createPresentQueue() };
-        if(expectedPresentQueue.hasValue()) {
-            presentQueue = std::move(expectedPresentQueue.getValue());
-        } else {
-            CLOVE_ASSERT(false, expectedPresentQueue.getError());
-        }
+        presentQueue = *graphicsFactory->createPresentQueue();
 
         //We won't be allocating any buffers from this queue, only using it to submit
-        graphicsQueue = graphicsFactory->createGraphicsQueue(garlic::clove::CommandQueueDescriptor{ .flags = garlic::clove::QueueFlags::None });
+        graphicsQueue = *graphicsFactory->createGraphicsQueue(garlic::clove::CommandQueueDescriptor{ .flags = garlic::clove::QueueFlags::None });
 
         createSwapchain();
     }
@@ -46,10 +41,10 @@ namespace garlic::clove {
         }
 
         if(std::size(imageAvailableSemaphores) <= frameId) {
-            imageAvailableSemaphores.emplace_back(graphicsFactory->createSemaphore());
+            imageAvailableSemaphores.emplace_back(*graphicsFactory->createSemaphore());
         }
         if(std::size(framesInFlight) <= frameId) {
-            framesInFlight.emplace_back(graphicsFactory->createFence({ true }));
+            framesInFlight.emplace_back(*graphicsFactory->createFence({ true }));
         }
 
         //Wait for the graphics queue to be finished with the frame we want to render
@@ -74,7 +69,7 @@ namespace garlic::clove {
 
     void SwapchainRenderTarget::submit(uint32_t imageIndex, size_t const frameId, garlic::clove::GraphicsSubmitInfo submission) {
         if(std::size(renderFinishedSemaphores) <= frameId) {
-            renderFinishedSemaphores.emplace_back(graphicsFactory->createSemaphore());
+            renderFinishedSemaphores.emplace_back(*graphicsFactory->createSemaphore());
         }
 
         //Inject the sempahores we use to synchronise with the swapchain and present queue

@@ -36,29 +36,29 @@ namespace garlic::clove {
 
         ~VKGraphicsFactory();
 
-        std::unique_ptr<GraphicsQueue> createGraphicsQueue(CommandQueueDescriptor descriptor) override;
-        Expected<std::unique_ptr<PresentQueue>, std::string> createPresentQueue() override;
-        std::unique_ptr<TransferQueue> createTransferQueue(CommandQueueDescriptor descriptor) override;
+        Expected<std::unique_ptr<GraphicsQueue>, std::runtime_error> createGraphicsQueue(CommandQueueDescriptor descriptor) override;
+        Expected<std::unique_ptr<PresentQueue>, std::runtime_error> createPresentQueue() override;
+        Expected<std::unique_ptr<TransferQueue>, std::runtime_error> createTransferQueue(CommandQueueDescriptor descriptor) override;
 
-        Expected<std::unique_ptr<Swapchain>, std::string> createSwapChain(Swapchain::Descriptor descriptor) override;
+        Expected<std::unique_ptr<Swapchain>, std::runtime_error> createSwapChain(Swapchain::Descriptor descriptor) override;
 
-        std::unique_ptr<Shader> createShader(std::string_view filePath) override;
-        std::unique_ptr<Shader> createShader(std::span<std::byte const> byteCode) override;
+        Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::string_view filePath) override;
+        Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::span<std::byte const> byteCode) override;
 
-        std::unique_ptr<RenderPass> createRenderPass(RenderPass::Descriptor descriptor) override;
-        std::unique_ptr<DescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) override;
+        Expected<std::unique_ptr<RenderPass>, std::runtime_error> createRenderPass(RenderPass::Descriptor descriptor) override;
+        Expected<std::unique_ptr<DescriptorSetLayout>, std::runtime_error> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) override;
 
-        std::unique_ptr<PipelineObject> createPipelineObject(PipelineObject::Descriptor descriptor) override;
+        Expected<std::unique_ptr<PipelineObject>, std::runtime_error> createPipelineObject(PipelineObject::Descriptor descriptor) override;
 
-        std::unique_ptr<Framebuffer> createFramebuffer(Framebuffer::Descriptor descriptor) override;
-        std::unique_ptr<DescriptorPool> createDescriptorPool(DescriptorPool::Descriptor descriptor) override;
+        Expected<std::unique_ptr<Framebuffer>, std::runtime_error> createFramebuffer(Framebuffer::Descriptor descriptor) override;
+        Expected<std::unique_ptr<DescriptorPool>, std::runtime_error> createDescriptorPool(DescriptorPool::Descriptor descriptor) override;
 
-        std::unique_ptr<Semaphore> createSemaphore() override;
-        std::unique_ptr<Fence> createFence(Fence::Descriptor descriptor) override;
+        Expected<std::unique_ptr<Semaphore>, std::runtime_error> createSemaphore() override;
+        Expected<std::unique_ptr<Fence>, std::runtime_error> createFence(Fence::Descriptor descriptor) override;
 
-        std::unique_ptr<GraphicsBuffer> createBuffer(GraphicsBuffer::Descriptor descriptor) override;
-        std::unique_ptr<GraphicsImage> createImage(GraphicsImage::Descriptor descriptor) override;
+        Expected<std::unique_ptr<GraphicsBuffer>, std::runtime_error> createBuffer(GraphicsBuffer::Descriptor descriptor) override;
+        Expected<std::unique_ptr<GraphicsImage>, std::runtime_error> createImage(GraphicsImage::Descriptor descriptor) override;
 
-        std::unique_ptr<Sampler> createSampler(Sampler::Descriptor descriptor) override;
+        Expected<std::unique_ptr<Sampler>, std::runtime_error> createSampler(Sampler::Descriptor descriptor) override;
     };
 }

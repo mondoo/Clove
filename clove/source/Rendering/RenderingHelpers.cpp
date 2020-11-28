@@ -44,7 +44,7 @@ namespace garlic::clove {
                 .stage     = Shader::Stage::Pixel,
             };
 
-            setLayouts[DescriptorSetSlots::Mesh] = factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
+            setLayouts[DescriptorSetSlots::Mesh] = *factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
                 .bindings = {
                     std::move(textureBinding),
                     std::move(modelBinding),
@@ -70,7 +70,7 @@ namespace garlic::clove {
                 .stage     = Shader::Stage::Pixel,
             };
 
-            setLayouts[DescriptorSetSlots::View] = factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
+            setLayouts[DescriptorSetSlots::View] = *factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
                 .bindings = {
                     std::move(viewDataBinding),
                     std::move(viewPosBinding),
@@ -115,7 +115,7 @@ namespace garlic::clove {
                 .stage     = Shader::Stage::Pixel,
             };
 
-            setLayouts[DescriptorSetSlots::Lighting] = factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
+            setLayouts[DescriptorSetSlots::Lighting] = *factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
                 .bindings = {
                     std::move(lightDataBinding),
                     std::move(numLightBinding),
@@ -135,7 +135,7 @@ namespace garlic::clove {
                 .stage     = Shader::Stage::Pixel,
             };
 
-            setLayouts[DescriptorSetSlots::UI] = factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
+            setLayouts[DescriptorSetSlots::UI] = *factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
                 .bindings = {
                     std::move(textureBinding),
                 },
@@ -187,15 +187,15 @@ namespace garlic::clove {
         vec3i constexpr imageOffset{ 0, 0, 0 };
         vec3ui const imageExtent{ imageDescriptor.dimensions.x, imageDescriptor.dimensions.y, 1 };
 
-        auto transferQueue = factory.createTransferQueue({ QueueFlags::Transient });
-        auto graphicsQueue = factory.createGraphicsQueue({ QueueFlags::Transient });
+        auto transferQueue = *factory.createTransferQueue({ QueueFlags::Transient });
+        auto graphicsQueue = *factory.createGraphicsQueue({ QueueFlags::Transient });
 
         std::shared_ptr<TransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
         std::shared_ptr<GraphicsCommandBuffer> graphicsCommandBuffer = graphicsQueue->allocateCommandBuffer();
 
-        auto image = factory.createImage(std::move(imageDescriptor));
+        auto image = *factory.createImage(std::move(imageDescriptor));
 
-        auto transferBuffer = factory.createBuffer(GraphicsBuffer::Descriptor{
+        auto transferBuffer = *factory.createBuffer(GraphicsBuffer::Descriptor{
             .size        = dataSize,
             .usageFlags  = GraphicsBuffer::UsageMode::TransferSource,
             .sharingMode = SharingMode::Exclusive,
@@ -215,15 +215,15 @@ namespace garlic::clove {
         graphicsCommandBuffer->imageMemoryBarrier(*image, std::move(graphicsQueueAcquireInfo), PipelineObject::Stage::Transfer, PipelineObject::Stage::PixelShader);
         graphicsCommandBuffer->endRecording();
 
-        auto transferQueueFinishedFence = factory.createFence({ false });
-        auto graphicsQueueFinishedFence = factory.createFence({ false });
+        auto transferQueueFinishedFence{ *factory.createFence({ false }) };
+        auto graphicsQueueFinishedFence{ *factory.createFence({ false }) };
 
         transferQueue->submit({ TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer } } }, transferQueueFinishedFence.get());
         graphicsQueue->submit({ GraphicsSubmitInfo{ .commandBuffers = { graphicsCommandBuffer } } }, graphicsQueueFinishedFence.get());
 
         transferQueueFinishedFence->wait();
         transferQueue->freeCommandBuffer(*transferCommandBuffer);
-        
+
         graphicsQueueFinishedFence->wait();
         graphicsQueue->freeCommandBuffer(*graphicsCommandBuffer);
 

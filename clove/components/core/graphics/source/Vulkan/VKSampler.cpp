@@ -4,60 +4,9 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    static VkFilter getFilter(Sampler::Filter garlicfilter) {
-        switch(garlicfilter) {
-            case Sampler::Filter::Nearest:
-                return VK_FILTER_NEAREST;
-            case Sampler::Filter::Linear:
-                return VK_FILTER_LINEAR;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
-                return VK_FILTER_NEAREST;
-        }
-    }
-
-    static VkSamplerAddressMode getAddressMode(Sampler::AddressMode garlicMode) {
-        switch(garlicMode) {
-            case Sampler::AddressMode::Repeat:
-                return VK_SAMPLER_ADDRESS_MODE_REPEAT;
-            case Sampler::AddressMode::MirroredRepeat:
-                return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
-            case Sampler::AddressMode::ClampToEdge:
-                return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-            case Sampler::AddressMode::ClampToBorder:
-                return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
-                return VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        }
-    }
-
-    VKSampler::VKSampler(DevicePointer device, Descriptor descriptor)
-        : device(std::move(device)) {
-        VkSamplerCreateInfo createInfo{
-            .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-            .pNext                   = nullptr,
-            .flags                   = 0,
-            .magFilter               = getFilter(descriptor.magFilter),
-            .minFilter               = getFilter(descriptor.minFilter),
-            .mipmapMode              = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-            .addressModeU            = getAddressMode(descriptor.addressModeU),
-            .addressModeV            = getAddressMode(descriptor.addressModeV),
-            .addressModeW            = getAddressMode(descriptor.addressModeW),
-            .mipLodBias              = 0.0f,
-            .anisotropyEnable        = static_cast<VkBool32>(descriptor.enableAnisotropy ? VK_TRUE : VK_FALSE),
-            .maxAnisotropy           = descriptor.maxAnisotropy,
-            .compareEnable           = VK_FALSE,
-            .compareOp               = VK_COMPARE_OP_ALWAYS,
-            .minLod                  = 0.0f,
-            .maxLod                  = 0.0f,
-            .borderColor             = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
-            .unnormalizedCoordinates = VK_FALSE,
-        };
-
-        if(vkCreateSampler(this->device.get(), &createInfo, nullptr, &sampler) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to create sampler", CLOVE_FUNCTION_NAME);
-        }
+    VKSampler::VKSampler(DevicePointer device, VkSampler sampler)
+        : device{ std::move(device) }
+        , sampler{ sampler } {
     }
 
     VKSampler::VKSampler(VKSampler &&other) noexcept = default;
