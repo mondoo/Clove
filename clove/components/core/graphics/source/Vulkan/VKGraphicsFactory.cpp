@@ -272,7 +272,7 @@ namespace garlic::clove {
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create GraphicsQueue. Out of device memory" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsQueue. Reason unkown." } };
             }
         }
 
@@ -311,7 +311,7 @@ namespace garlic::clove {
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create TransferQueue. Out of device memory" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create TransferQueue. Reason unkown." } };
             }
         }
 
@@ -376,7 +376,7 @@ namespace garlic::clove {
                 case VK_ERROR_INITIALIZATION_FAILED:
                     return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Initialisation has failed." } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Reason unkown." } };
             }
         }
 
@@ -406,7 +406,7 @@ namespace garlic::clove {
                 case VK_ERROR_INVALID_SHADER_NV:
                     return Unexpected{ std::runtime_error{ "Failed to create Shader. Shader failed to compile." } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Reason unkown." } };
             }
         }
 
@@ -504,7 +504,7 @@ namespace garlic::clove {
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create RenderPass. Out of device memory" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create RenderPass. Reason unkown." } };
             }
         }
 
@@ -540,7 +540,7 @@ namespace garlic::clove {
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create DescriptorSetLayout. Out of device memory" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create DescriptorSetLayout. Reason unkown." } };
             }
         }
 
@@ -581,7 +581,8 @@ namespace garlic::clove {
                     return Unexpected{ std::runtime_error{ "Failed to create PipelineObject's layout. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create PipelineObject's layout. Out of device memory" } };
-                    break;
+                default:
+                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject's layout. Reason unkown." } };
             }
         }
 
@@ -747,7 +748,7 @@ namespace garlic::clove {
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create PipelineObject. Out of device memory" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject. Reason unkown." } };
             }
         }
 
@@ -781,7 +782,7 @@ namespace garlic::clove {
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create Framebuffer. Out of device memory" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create Framebuffer. Reason unkown." } };
             }
         }
 
@@ -817,7 +818,7 @@ namespace garlic::clove {
                 case VK_ERROR_FRAGMENTATION_EXT:
                     return Unexpected{ std::runtime_error{ "Failed to create DescriptorPool. Memory is too fragmented" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create DescriptorPool. Reason unkown." } };
             }
         }
 
@@ -837,7 +838,7 @@ namespace garlic::clove {
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create Semaphore. Out of device memory" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create Semaphore. Reason unkown." } };
             }
         }
 
@@ -858,7 +859,7 @@ namespace garlic::clove {
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create Fence. Out of device memory" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create Fence. Reason unkown." } };
             }
         }
 
@@ -888,7 +889,7 @@ namespace garlic::clove {
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create GraphicsBuffer. Out of device memory" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsBuffer. Reason unkown." } };
             }
         }
 
@@ -926,7 +927,7 @@ namespace garlic::clove {
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Out of device memory" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Reason unkown." } };
             }
         }
 
@@ -959,11 +960,11 @@ namespace garlic::clove {
         if(VkResult const result = vkCreateSampler(devicePtr.get(), &createInfo, nullptr, &sampler); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Sampler. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create Sampler. Out of device memory" } };
                 default:
-                    break;
+                    return Unexpected{ std::runtime_error{ "Failed to create Sampler. Reason unkown." } };
             }
         }
 
