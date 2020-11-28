@@ -113,12 +113,7 @@ namespace garlic::clove {
 
         graphicsDevice->waitForIdleDevice();
 
-        auto expectedSwapchain{ graphicsFactory->createSwapChain({ windowSize }) };
-        if(expectedSwapchain.hasValue()) {
-            swapchain = std::move(expectedSwapchain.getValue());
-        } else {
-            CLOVE_ASSERT(false, expectedSwapchain.getError());
-        }
+        swapchain = *graphicsFactory->createSwapChain({ windowSize });
 
         imagesInFlight.resize(std::size(swapchain->getImageViews()));
 
