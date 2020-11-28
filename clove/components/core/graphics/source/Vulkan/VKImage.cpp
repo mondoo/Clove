@@ -24,6 +24,7 @@ namespace garlic::clove {
 
     VKImage::VKImage(DevicePointer device, VkImage image, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device{ std::move(device) }
+        , image{ image }
         , descriptor{ std::move(descriptor) }
         , memoryAllocator{ std::move(memoryAllocator) } {
         VkMemoryRequirements memoryRequirements{};
