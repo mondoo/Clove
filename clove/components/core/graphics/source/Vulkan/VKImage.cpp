@@ -8,41 +8,6 @@
 #include <array>
 
 namespace garlic::clove {
-    static VkImageUsageFlags getUsageFlags(GraphicsImage::UsageMode garlicUsageFlags) {
-        VkBufferUsageFlags flags = 0;
-
-        if((garlicUsageFlags & GraphicsImage::UsageMode::TransferSource) != 0) {
-            flags |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-        }
-        if((garlicUsageFlags & GraphicsImage::UsageMode::TransferDestination) != 0) {
-            flags |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        }
-        if((garlicUsageFlags & GraphicsImage::UsageMode::Sampled) != 0) {
-            flags |= VK_IMAGE_USAGE_SAMPLED_BIT;
-        }
-        if((garlicUsageFlags & GraphicsImage::UsageMode::ColourAttachment) != 0) {
-            flags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-        }
-        if((garlicUsageFlags & GraphicsImage::UsageMode::DepthStencilAttachment) != 0) {
-            flags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-        }
-
-        return flags;
-    }
-
-    static VkImageType getImageType(GraphicsImage::Type garlicImageType) {
-        switch(garlicImageType) {
-            case GraphicsImage::Type::_2D:
-            case GraphicsImage::Type::Cube:
-                return VK_IMAGE_TYPE_2D;
-            case GraphicsImage::Type::_3D:
-                return VK_IMAGE_TYPE_3D;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unhandled image type");
-                return VK_IMAGE_TYPE_2D;
-        }
-    }
-
     static VkImageViewType getImageViewType(GraphicsImageView::Type garlicImageType) {
         switch(garlicImageType) {
             case GraphicsImageView::Type::_2D:
@@ -57,38 +22,10 @@ namespace garlic::clove {
         }
     }
 
-    VKImage::VKImage(DevicePointer device, Descriptor descriptor, QueueFamilyIndices const &familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
-        : device(std::move(device))
-        , descriptor(std::move(descriptor))
-        , memoryAllocator(std::move(memoryAllocator)) {
-        std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
-
-        bool const isExclusive{ this->descriptor.sharingMode == SharingMode::Exclusive };
-        bool const isCube{ this->descriptor.type == GraphicsImage::Type::Cube };
-
-        VkImageCreateInfo createInfo{
-            .sType                 = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-            .pNext                 = nullptr,
-            .flags                 = isCube ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0u,
-            .imageType             = getImageType(this->descriptor.type),
-            .format                = convertFormat(this->descriptor.format),
-            .extent                = { this->descriptor.dimensions.x, this->descriptor.dimensions.y, 1 },
-            .mipLevels             = 1,
-            .arrayLayers           = isCube ? 6u : 1u,
-            .samples               = VK_SAMPLE_COUNT_1_BIT,
-            .tiling                = VK_IMAGE_TILING_OPTIMAL,
-            .usage                 = getUsageFlags(this->descriptor.usageFlags),
-            .sharingMode           = isExclusive ? VK_SHARING_MODE_EXCLUSIVE : VK_SHARING_MODE_CONCURRENT,
-            .queueFamilyIndexCount = isExclusive ? 0 : static_cast<uint32_t>(std::size(sharedQueueIndices)),
-            .pQueueFamilyIndices   = isExclusive ? nullptr : std::data(sharedQueueIndices),
-            .initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED,
-        };
-
-        if(vkCreateImage(this->device.get(), &createInfo, nullptr, &image) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create image");
-            return;
-        }
-
+    VKImage::VKImage(DevicePointer device, VkImage image, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator)
+        : device{ std::move(device) }
+        , descriptor{ std::move(descriptor) }
+        , memoryAllocator{ std::move(memoryAllocator) } {
         VkMemoryRequirements memoryRequirements{};
         vkGetImageMemoryRequirements(this->device.get(), image, &memoryRequirements);
 

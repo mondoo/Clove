@@ -3,13 +3,9 @@
 #include <utility>
 
 namespace garlic::clove {
-    VKFence::VKFence(DevicePointer device, Descriptor descriptor)
-        : device(std::move(device)) {
-        VkFenceCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-        createInfo.flags = descriptor.signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
-
-        vkCreateFence(this->device.get(), &createInfo, nullptr, &fence);
+    VKFence::VKFence(DevicePointer device, VkFence fence)
+        : device{ std::move(device) }
+        , fence{ fence } {
     }
 
     VKFence::VKFence(VKFence &&other) noexcept = default;

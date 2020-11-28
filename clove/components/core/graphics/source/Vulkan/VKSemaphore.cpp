@@ -1,16 +1,11 @@
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 
-#include <Clove/Log/Log.hpp>
+#include <utility>
 
 namespace garlic::clove {
-    VKSemaphore::VKSemaphore(DevicePointer device)
-        : device(std::move(device)) {
-        VkSemaphoreCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-        if(vkCreateSemaphore(this->device.get(), &createInfo, nullptr, &semaphore) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create semaphore");
-        }
+    VKSemaphore::VKSemaphore(DevicePointer device, VkSemaphore semaphore)
+        : device{ std::move(device) }
+        , semaphore{ semaphore } {
     }
 
     VKSemaphore::VKSemaphore(VKSemaphore &&other) noexcept = default;

@@ -27,7 +27,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKImage() = delete;
-        VKImage(DevicePointer device, Descriptor descriptor, QueueFamilyIndices const& familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator);
+        VKImage(DevicePointer device, VkImage image, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator);
 
         VKImage(VKImage const& other) = delete;
         VKImage(VKImage&& other) noexcept;

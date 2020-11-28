@@ -19,7 +19,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKGraphicsQueue() = delete;
-        VKGraphicsQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor);
+        VKGraphicsQueue(DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices);
 
         VKGraphicsQueue(VKGraphicsQueue const &other) = delete;
         VKGraphicsQueue(VKGraphicsQueue &&other) noexcept;

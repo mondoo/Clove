@@ -26,7 +26,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKBuffer() = delete;
-        VKBuffer(DevicePointer device, Descriptor descriptor, QueueFamilyIndices const &familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator);
+        VKBuffer(DevicePointer device, VkBuffer buffer, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator);
 
         VKBuffer(VKBuffer const &other) = delete;
         VKBuffer(VKBuffer &&other) noexcept;

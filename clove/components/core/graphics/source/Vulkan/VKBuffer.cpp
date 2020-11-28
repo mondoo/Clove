@@ -16,53 +16,12 @@ namespace garlic::clove {
                 break;
         }
     }
-    
-    static VkBufferUsageFlags getUsageFlags(GraphicsBuffer::UsageMode garlicUsageFlags) {
-        VkBufferUsageFlags flags = 0;
 
-        if((garlicUsageFlags & GraphicsBuffer::UsageMode::TransferSource) != 0) {
-            flags |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-        }
-        if((garlicUsageFlags & GraphicsBuffer::UsageMode::TransferDestination) != 0) {
-            flags |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-        }
-        if((garlicUsageFlags & GraphicsBuffer::UsageMode::VertexBuffer) != 0) {
-            flags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-        }
-        if((garlicUsageFlags & GraphicsBuffer::UsageMode::IndexBuffer) != 0) {
-            flags |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-        }
-        if((garlicUsageFlags & GraphicsBuffer::UsageMode::UniformBuffer) != 0) {
-            flags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-        }
-
-        return flags;
-    }
-
-    VKBuffer::VKBuffer(DevicePointer device, Descriptor descriptor, QueueFamilyIndices const &familyIndices, std::shared_ptr<MemoryAllocator> memoryAllocator)
-        : device(std::move(device))
-        , descriptor(std::move(descriptor))
-        , memoryAllocator(std::move(memoryAllocator)) {
-        std::array sharedQueueIndices = { *familyIndices.graphicsFamily, *familyIndices.transferFamily };
-
-        bool const isExclusive = this->descriptor.sharingMode == SharingMode::Exclusive;
-
-        VkBufferCreateInfo createInfo{
-            .sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-            .pNext                 = nullptr,
-            .flags                 = 0,
-            .size                  = descriptor.size,
-            .usage                 = getUsageFlags(this->descriptor.usageFlags),
-            .sharingMode           = isExclusive ? VK_SHARING_MODE_EXCLUSIVE : VK_SHARING_MODE_CONCURRENT,
-            .queueFamilyIndexCount = isExclusive ? 0 : static_cast<uint32_t>(std::size(sharedQueueIndices)),
-            .pQueueFamilyIndices   = isExclusive ? nullptr : std::data(sharedQueueIndices),
-        };
-
-        if(vkCreateBuffer(this->device.get(), &createInfo, nullptr, &buffer) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create buffer");
-            return;
-        }
-
+    VKBuffer::VKBuffer(DevicePointer device, VkBuffer buffer, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator)
+        : device{ std::move(device) }
+        , buffer{ buffer }
+        , descriptor{ std::move(descriptor) }
+        , memoryAllocator{ std::move(memoryAllocator) } {
         VkMemoryRequirements memoryRequirements{};
         vkGetBufferMemoryRequirements(this->device.get(), buffer, &memoryRequirements);
 

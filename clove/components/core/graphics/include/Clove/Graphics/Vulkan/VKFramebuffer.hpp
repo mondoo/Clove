@@ -16,7 +16,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKFramebuffer() = delete;
-        VKFramebuffer(DevicePointer device, Descriptor descriptor);
+        VKFramebuffer(DevicePointer device, VkFramebuffer framebuffer);
 
         VKFramebuffer(VKFramebuffer const &other) = delete;
         VKFramebuffer(VKFramebuffer &&other) noexcept;

@@ -18,9 +18,14 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
         VKTransferQueue() = delete;
-        VKTransferQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor);
+        VKTransferQueue(DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices);
+
+        VKTransferQueue(VKTransferQueue const &other) = delete;
+        VKTransferQueue(VKTransferQueue &&other) noexcept;
+
+        VKTransferQueue &operator=(VKTransferQueue const &other) = delete;
+        VKTransferQueue &operator=(VKTransferQueue &&other) noexcept;
 
         ~VKTransferQueue();
 

@@ -16,7 +16,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKFence() = delete;
-        VKFence(DevicePointer device, Descriptor descriptor);
+        VKFence(DevicePointer device, VkFence fence);
 
         VKFence(VKFence const &other) = delete;
         VKFence(VKFence &&other) noexcept;
