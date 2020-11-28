@@ -34,7 +34,7 @@ namespace garlic::clove {
 
         Viewport viewport;
 
-        float zoomLevel = 1.0f;
+        float zoomLevel{ 1.0f };
 
         DelegateHandle windowResizeHandle;
 
@@ -48,7 +48,7 @@ namespace garlic::clove {
         Camera(Camera &&other) noexcept;
 
         Camera &operator=(Camera const &other) = delete;
-        Camera &operator=(Camera &&other) noexcept;
+        Camera &operator                       =(Camera &&other) noexcept;
 
         ~Camera();
 
