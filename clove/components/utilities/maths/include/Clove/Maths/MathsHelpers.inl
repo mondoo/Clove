@@ -102,11 +102,12 @@ namespace garlic::clove {
     }
 
     template<typename T>
-    vec<3, T> screenToWorld(vec<2, T> const &screenPos, T distance, vec<2, T> const &screenSize, mat<4, 4, T> const &viewMatrix, mat<4, 4, T> const &projectionMatrix) {
-        vec<4, T> screenDistance{ projectionMatrix * viewMatrix * vec<4, T>{ 0.0f, 0.0f, distance, 1.0f } };
+    vec<3, T> screenToWorld(vec<2, T> const &screenPos, T distance, vec<2, T> const &screenSize, vec<3, T> const &forward, mat<4, 4, T> const &viewMatrix, mat<4, 4, T> const &projectionMatrix) {
+        //Convert the distance as a point into screen space so we can get the correct depth (z) value for the NDC
+        vec<4, T> screenDistance{ projectionMatrix * viewMatrix * vec<4, T>{ forward * distance, 1.0f } };
         screenDistance /= screenDistance.w;
 
-        vec<4, T> screenPosNDC{
+        vec<4, T> const screenPosNDC{
             ((screenPos.x / screenSize.x) - 0.5f) * 2.0f,
             ((screenPos.y / screenSize.y) - 0.5f) * 2.0f,
             screenDistance.z,
