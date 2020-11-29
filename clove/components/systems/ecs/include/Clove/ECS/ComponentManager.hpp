@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Clove/ECS/Component.hpp"
-#include "Clove/ECS/ECSTypes.hpp"
+#include "Clove/ECS/Entity.hpp"
 
 #include <Clove/Memory/PoolAllocator.hpp>
 #include <memory>
@@ -18,10 +18,10 @@ namespace garlic::clove {
     public:
         virtual ~ComponentContainerInterface();
 
-        virtual bool hasComponent(EntityID entityId) const = 0;
+        virtual bool hasComponent(Entity entity) const = 0;
 
-        virtual void cloneComponent(EntityID fromId, EntityID toId) = 0;
-        virtual void removeComponent(EntityID entityId)             = 0;
+        virtual void cloneComponent(Entity from, Entity to) = 0;
+        virtual void removeComponent(Entity entity)         = 0;
     };
 
     template<typename ComponentType>
@@ -30,7 +30,7 @@ namespace garlic::clove {
     private:
         PoolAllocator<ComponentType, AllocatorStrategy::Dynamic> componentAllocator;
 
-        std::unordered_map<EntityID, size_t> entityIDToIndex;
+        std::unordered_map<Entity, size_t> entityToIndex;
         std::vector<ComponentType *> components;
 
         EventDispatcher *ecsEventDispatcher;
@@ -48,14 +48,14 @@ namespace garlic::clove {
 
         ~ComponentContainer();
 
-        bool hasComponent(EntityID entityId) const final;
+        bool hasComponent(Entity entity) const final;
 
-        void cloneComponent(EntityID fromId, EntityID toId) final;
-        void removeComponent(EntityID entityId) final;
+        void cloneComponent(Entity from, Entity to) final;
+        void removeComponent(Entity entity) final;
 
         template<typename... ConstructArgs>
-        ComponentPtr<ComponentType> addComponent(EntityID entityId, ConstructArgs &&... args);
-        ComponentPtr<ComponentType> getComponent(EntityID entityId);
+        ComponentPtr<ComponentType> addComponent(Entity entity, ConstructArgs &&... args);
+        ComponentPtr<ComponentType> getComponent(Entity entity);
     };
 
     class ComponentManager {
@@ -81,9 +81,9 @@ namespace garlic::clove {
         template<typename ComponentType>
         ComponentContainer<ComponentType> &getComponentContainer();
 
-        void cloneEntitiesComponents(EntityID fromID, EntityID toID);
+        void cloneEntitiesComponents(Entity from, Entity to);
 
-        void onEntityDestroyed(EntityID entityID);
+        void onEntityDestroyed(Entity entity);
     };
 }
 

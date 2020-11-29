@@ -81,7 +81,7 @@ namespace garlic::clove {
 
         //Make sure any recently un-paired colliders are updated
         for(auto &&[cubeCollider] : world.getComponentSets<CubeColliderComponent>()) {
-            if(world.hasComponent<RigidBodyComponent>(cubeCollider->getEntityID())) {
+            if(world.hasComponent<RigidBodyComponent>(cubeCollider->getEntity())) {
                 continue;
             }
 
@@ -93,7 +93,7 @@ namespace garlic::clove {
 
         //Make sure any recently un-paired rigid bodies are updated
         for(auto &&[rigidBody] : world.getComponentSets<RigidBodyComponent>()) {
-            if(world.hasComponent<CubeColliderComponent>(rigidBody->getEntityID())) {
+            if(world.hasComponent<CubeColliderComponent>(rigidBody->getEntity())) {
                 continue;
             }
 
@@ -126,7 +126,7 @@ namespace garlic::clove {
 
         //Notify Bullet of the location of the colliders
         for(auto &&[transform, cubeCollider] : cubeColliders) {
-            if(world.hasComponent<RigidBodyComponent>(cubeCollider->getEntityID())) {
+            if(world.hasComponent<RigidBodyComponent>(cubeCollider->getEntity())) {
                 continue;
             }
 
@@ -150,7 +150,7 @@ namespace garlic::clove {
 
         //Apply any simulation updates
         for(auto &&[transform, cubeCollider] : cubeColliders) {
-            if(world.hasComponent<RigidBodyComponent>(cubeCollider->getEntityID())) {
+            if(world.hasComponent<RigidBodyComponent>(cubeCollider->getEntity())) {
                 continue;
             }
 
@@ -172,8 +172,8 @@ namespace garlic::clove {
                 btCollisionObject const *obA{ manifold->getBody0() };
                 btCollisionObject const *obB{ manifold->getBody1() };
 
-                auto const entityA{ static_cast<EntityID>(obA->getUserIndex()) };
-                auto const entityB{ static_cast<EntityID>(obB->getUserIndex()) };
+                auto const entityA{ static_cast<Entity>(obA->getUserIndex()) };
+                auto const entityB{ static_cast<Entity>(obB->getUserIndex()) };
 
                 newCollisions.emplace(CollisionManifold{ entityA, entityB });
             }
@@ -196,14 +196,14 @@ namespace garlic::clove {
 
         //Broadcast collision begin events
         for(auto const &manifold : collisionBeginManifolds) {
-            Entity const entityA{ world.getEntity(manifold.entityA) };
-            Entity const entityB{ world.getEntity(manifold.entityB) };
+            Entity const entityA{ manifold.entityA };
+            Entity const entityB{ manifold.entityB };
 
-            if(auto entityAComp = entityA.getComponent<CollisionResponseComponent>()) {
+            if(auto entityAComp = world.getComponent<CollisionResponseComponent>(entityA)) {
                 entityAComp->onCollisionBegin.broadcast(Collision{ entityA, entityB });
             }
 
-            if(auto entityBComp = entityB.getComponent<CollisionResponseComponent>()) {
+            if(auto entityBComp = world.getComponent<CollisionResponseComponent>(entityB)) {
                 entityBComp->onCollisionBegin.broadcast(Collision{ entityB, entityA });
             }
 
@@ -212,14 +212,14 @@ namespace garlic::clove {
 
         //Broadcast collision end events
         for(auto const &manifold : collisionEndManifolds) {
-            Entity const entityA{ world.getEntity(manifold.entityA) };
-            Entity const entityB{ world.getEntity(manifold.entityB) };
+            Entity const entityA{ manifold.entityA };
+            Entity const entityB{ manifold.entityB };
 
-            if(auto entityAComp = entityA.getComponent<CollisionResponseComponent>()) {
+            if(auto entityAComp = world.getComponent<CollisionResponseComponent>(entityA)) {
                 entityAComp->onCollisionEnd.broadcast(Collision{ entityA, entityB });
             }
 
-            if(auto entityBComp = entityB.getComponent<CollisionResponseComponent>()) {
+            if(auto entityBComp = world.getComponent<CollisionResponseComponent>(entityB)) {
                 entityBComp->onCollisionEnd.broadcast(Collision{ entityB, entityA });
             }
 
@@ -227,11 +227,11 @@ namespace garlic::clove {
         }
     }
 
-    EntityID PhysicsSystem::rayCast(vec3f const &begin, vec3f const &end) {
+    Entity PhysicsSystem::rayCast(vec3f const &begin, vec3f const &end) {
         return rayCast(begin, end, ~0, ~0);
     }
 
-    EntityID PhysicsSystem::rayCast(vec3f const &begin, vec3f const &end, uint32_t const collisionGroup, uint32_t const collisionMask) {
+    Entity PhysicsSystem::rayCast(vec3f const &begin, vec3f const &end, uint32_t const collisionGroup, uint32_t const collisionMask) {
         btVector3 const btBegin{ begin.x, begin.y, begin.z };
         btVector3 const btEnd{ end.x, end.y, end.z };
 
@@ -243,7 +243,7 @@ namespace garlic::clove {
         if(callBack.m_collisionObject != nullptr) {
             return callBack.m_collisionObject->getUserIndex();
         } else {
-            return INVALID_ENTITY_ID;
+            return NullEntity;
         }
     }
 
@@ -267,11 +267,11 @@ namespace garlic::clove {
 
     void PhysicsSystem::addBodyToWorld(RigidBodyComponent const &rigidBodyComponent) {
         dynamicsWorld->addRigidBody(rigidBodyComponent.body.get(), rigidBodyComponent.descriptor.collisionGroup, rigidBodyComponent.descriptor.collisionMask);
-        rigidBodyComponent.body->setUserIndex(rigidBodyComponent.getEntityID());
+        rigidBodyComponent.body->setUserIndex(rigidBodyComponent.getEntity());
     }
 
     void PhysicsSystem::addColliderToWorld(CubeColliderComponent const &colliderComponent) {
         dynamicsWorld->addCollisionObject(colliderComponent.collisionObject.get(), ~0, ~0);//Add the collider to every group and collide with every other group
-        colliderComponent.collisionObject->setUserIndex(colliderComponent.getEntityID());
+        colliderComponent.collisionObject->setUserIndex(colliderComponent.getEntity());
     }
 }

@@ -21,8 +21,8 @@ namespace garlic::clove {
     ComponentContainer<ComponentType>::~ComponentContainer() = default;
 
     template<typename ComponentType>
-    bool ComponentContainer<ComponentType>::hasComponent(EntityID entityId) const {
-        if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
+    bool ComponentContainer<ComponentType>::hasComponent(Entity entity) const {
+        if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
             return components[iter->second] != nullptr;
         } else {
             return false;
@@ -30,11 +30,11 @@ namespace garlic::clove {
     }
 
     template<typename ComponentType>
-    void ComponentContainer<ComponentType>::cloneComponent(EntityID fromId, EntityID toId) {
+    void ComponentContainer<ComponentType>::cloneComponent(Entity from, Entity to) {
         if constexpr(std::is_copy_constructible_v<ComponentType>) {
-            if(auto iter = entityIDToIndex.find(fromId); iter != entityIDToIndex.end()) {
+            if(auto iter = entityToIndex.find(from); iter != entityToIndex.end()) {
                 ComponentType *componentPtr = components[iter->second];
-                addComponent(toId, *componentPtr);
+                addComponent(to, *componentPtr);
             }
         } else {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Component that is not copyable was attempted to be copied. Entity will be incomplete");
@@ -42,10 +42,10 @@ namespace garlic::clove {
     }
 
     template<typename ComponentType>
-    void ComponentContainer<ComponentType>::removeComponent(EntityID entityId) {
-        if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
-            const size_t index     = iter->second;
-            const size_t lastIndex = components.size() - 1;
+    void ComponentContainer<ComponentType>::removeComponent(Entity entity) {
+        if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
+            size_t const index{ iter->second };
+            size_t const lastIndex{ components.size() - 1 };
 
             ComponentType *removedComp = components[index];
 
@@ -53,12 +53,12 @@ namespace garlic::clove {
                 components[index] = components.back();
             }
             components.pop_back();
-            entityIDToIndex.erase(entityId);
+            entityToIndex.erase(entity);
 
             //Update the index map so it knows about the moved component
             if(index < lastIndex) {
-                EntityID movedCompEntityID         = components[index]->entityID;
-                entityIDToIndex[movedCompEntityID] = index;
+                Entity movedCompEntity{ components[index]->entity };
+                entityToIndex[movedCompEntity] = index;
             }
 
             ecsEventDispatcher->broadCastEvent(ComponentRemovedEvent<ComponentType>{ removedComp });
@@ -69,21 +69,21 @@ namespace garlic::clove {
 
     template<typename ComponentType>
     template<typename... ConstructArgs>
-    ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(EntityID entityId, ConstructArgs &&... args) {
+    ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(Entity entity, ConstructArgs &&... args) {
         ComponentType *comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
         if(comp == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Could not create component", CLOVE_FUNCTION_NAME_PRETTY);
             return { comp };
         }
 
-        comp->entityID = entityId;
+        comp->entity = entity;
 
-        if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
+        if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
             CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", CLOVE_FUNCTION_NAME_PRETTY);
             components[iter->second] = comp;
         } else {
             components.push_back(comp);
-            entityIDToIndex[entityId] = components.size() - 1;
+            entityToIndex[entity] = components.size() - 1;
         }
 
         ComponentAddedEvent<ComponentType> event{ comp };
@@ -93,8 +93,8 @@ namespace garlic::clove {
     }
 
     template<typename ComponentType>
-    ComponentPtr<ComponentType> ComponentContainer<ComponentType>::getComponent(EntityID entityId) {
-        if(auto iter = entityIDToIndex.find(entityId); iter != entityIDToIndex.end()) {
+    ComponentPtr<ComponentType> ComponentContainer<ComponentType>::getComponent(Entity entity) {
+        if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
             return { components[iter->second] };
         } else {
             return {};

@@ -14,8 +14,6 @@ add_library(
 	${INCLUDE}/ECSEvents.hpp
 	${INCLUDE}/ECSTypes.hpp
 	${INCLUDE}/Entity.hpp
-	${INCLUDE}/Entity.inl
-	${SOURCE}/Entity.cpp
 	${INCLUDE}/World.hpp
 	${INCLUDE}/World.inl
 	${SOURCE}/World.cpp

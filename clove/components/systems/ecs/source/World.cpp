@@ -1,35 +1,34 @@
 #include "Clove/ECS/World.hpp"
 
-#include "Clove/ECS/Entity.hpp"
 #include "Clove/ECS/System.hpp"
 
 namespace garlic::clove {
-    EntityID World::nextID = 1;
+    Entity World::nextEntity = 1;
 
     World::World()
         : componentManager(&ecsEventDispatcher) {
     }
 
     World::~World() {
-        destroyAllEntites();
+        destroyAll();
     }
 
     void World::update(DeltaTime deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
-        if(pendingDestroyIDs.size() > 0) {
+        if(pendingDestroyEntities.size() > 0) {
             CLOVE_PROFILE_SCOPE("Destroying pendining entities");
 
-            for(EntityID id : pendingDestroyIDs) {
-                componentManager.onEntityDestroyed(id);
+            for(Entity entity : pendingDestroyEntities) {
+                componentManager.onEntityDestroyed(entity);
             }
 
-            auto const removeIter = std::remove_if(activeIDs.begin(), activeIDs.end(), [this](EntityID id) {
-                return pendingDestroyIDs.find(id) != pendingDestroyIDs.end();
+            auto const removeIter = std::remove_if(activeEntities.begin(), activeEntities.end(), [this](Entity entity) {
+                return pendingDestroyEntities.find(entity) != pendingDestroyEntities.end();
             });
-            activeIDs.erase(removeIter, activeIDs.end());
+            activeEntities.erase(removeIter, activeEntities.end());
 
-            pendingDestroyIDs.clear();
+            pendingDestroyEntities.clear();
         }
 
         for(auto const &system : systems) {
@@ -45,61 +44,42 @@ namespace garlic::clove {
         }
     }
 
-    Entity World::createEntity() {
-        EntityID ID = nextID++;
+    Entity World::create() {
+        Entity entity = nextEntity++;
+        activeEntities.push_back(entity);
 
-        activeIDs.push_back(ID);
-
-        return { ID, this };
+        return entity;
     }
 
-    Entity World::cloneEntitiesComponents(EntityID ID) {
-        Entity clonedEntity = createEntity();
-
-        componentManager.cloneEntitiesComponents(ID, clonedEntity.getID());
+    Entity World::clone(Entity entity) {
+        Entity clonedEntity = create();
+        componentManager.cloneEntitiesComponents(entity, clonedEntity);
 
         return clonedEntity;
     }
 
-    bool World::isEntityValid(EntityID ID) {
-        if(ID != INVALID_ENTITY_ID) {
-            return std::find(activeIDs.begin(), activeIDs.end(), ID) != activeIDs.end();
-        } else {
-            return false;
-        }
-    }
+    void World::destroy(Entity entity) {
+        auto foundIDIter = std::find(activeEntities.begin(), activeEntities.end(), entity);
 
-    Entity World::getEntity(EntityID ID) {
-        if(isEntityValid(ID)) {
-            return { ID, this };
-        } else {
-            return {};
-        }
-    }
-
-    std::vector<Entity> World::getActiveEntities() {
-        std::vector<Entity> entities;
-        entities.reserve(activeIDs.size());
-        for(EntityID id : activeIDs) {
-            entities.emplace_back(id, this);
-        }
-        return entities;
-    }
-
-    void World::destroyEntity(EntityID ID) {
-        auto foundIDIter = std::find(activeIDs.begin(), activeIDs.end(), ID);
-
-        if(ID == INVALID_ENTITY_ID || foundIDIter == activeIDs.end()) {
+        if(entity == NullEntity || foundIDIter == activeEntities.end()) {
             return;
         }
 
-        pendingDestroyIDs.emplace(ID);
+        pendingDestroyEntities.emplace(entity);
     }
 
-    void World::destroyAllEntites() {
-        for(EntityID id : activeIDs) {
-            componentManager.onEntityDestroyed(id);
+    void World::destroyAll() {
+        for(Entity entity : activeEntities) {
+            componentManager.onEntityDestroyed(entity);
         }
-        activeIDs.clear();
+        activeEntities.clear();
+    }
+
+    bool World::isValid(Entity entity) {
+        if(entity != NullEntity) {
+            return std::find(activeEntities.begin(), activeEntities.end(), entity) != activeEntities.end();
+        } else {
+            return false;
+        }
     }
 }
