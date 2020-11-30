@@ -21,7 +21,18 @@ namespace Garlic.Bulb
         }
         private string logText;
 
-        public ObservableCollection<EntityViewModel> Entities { get; set; } = new ObservableCollection<EntityViewModel>();
+        public ObservableCollection<EntityViewModel> Entities { get; } = new ObservableCollection<EntityViewModel>();
+
+        public EntityViewModel SelectedEntity
+        {
+            get { return selectedEntity; }
+            set
+            {
+                selectedEntity = value;
+                OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedEntity)));
+            }
+        }
+        private EntityViewModel selectedEntity;
 
         public delegate void AddEntityEventHandler();
         public AddEntityEventHandler CreateEntity;
@@ -35,6 +46,7 @@ namespace Garlic.Bulb
                     CreateEntity.Invoke();
 
                     var entityVM = new EntityViewModel();
+                    entityVM.OnSelected += (EntityViewModel viewModel) => SelectedEntity = viewModel;
 
                     Entities.Add(entityVM);
                 }
