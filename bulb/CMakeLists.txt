@@ -18,6 +18,8 @@ add_executable(
         
 	    ${SOURCE}/MainWindow.xaml
 		${SOURCE}/MainWindow.xaml.cs
+
+		${SOURCE}/RelayCommand.cs
 		
 		${SOURCE}/MainWindowViewModel.cs
 		
