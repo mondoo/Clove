@@ -6,6 +6,8 @@ set(CMAKE_CSharp_FLAGS "/langversion:8.0")
 
 set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 
+add_subdirectory(components)
+
 #Executable
 add_executable(
     Bulb
@@ -17,11 +19,8 @@ add_executable(
 	    ${SOURCE}/MainWindow.xaml
 		${SOURCE}/MainWindow.xaml.cs
 		
-		${SOURCE}/ViewModel.cs
 		${SOURCE}/MainWindowViewModel.cs
 		
-		${SOURCE}/RelayCommand.cs
-
 		${SOURCE}/EditorLogger.cs
 )
 
@@ -29,7 +28,8 @@ add_executable(
 target_link_libraries(
     Bulb
 
-    PUBLIC
+	PUBLIC
+		BulbUI
         Membrane   
 )
 
