@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
@@ -16,6 +17,8 @@ namespace Garlic.Bulb
             }
         }
         private string name = "New Entity";
+
+        public ObservableCollection<object> Components { get; set; } = new ObservableCollection<object>();
 
         public ICommand SelectedCommand { get; private set; }
 

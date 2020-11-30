@@ -31,6 +31,7 @@
 			<ItemsControl x:Name="EntityList" ItemsSource="{Binding Entities}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
+						<!-- TODO: Change to a ListBox and ListBoxItem to handle selected / deselected -->
 						<Button Command="{Binding SelectedCommand}">
 							<TextBox Text="{Binding Name, Mode=TwoWay}"/>
 						</Button>
@@ -42,14 +43,16 @@
 		<Image x:Name="RenderArea" Grid.Column="1" Stretch="Fill"/>
 		<TextBox x:Name="Log" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Text="{Binding LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8" BorderBrush="{x:Null}" BorderThickness="0"/>
 
-		<StackPanel x:Name="EntityView" Grid.Column="2">
+		<StackPanel x:Name="EntityView" Grid.Column="2" Visibility="{Binding EntityViewVisibility}">
 			<TextBlock Text="{Binding SelectedEntity.Name}"/>
-			<ListBox>
-				<TextBlock Text="example"/>
-				<TextBlock Text="example"/>
-				<TextBlock Text="example"/>
+			<ListBox ItemsSource="{Binding SelectedEntity.Components}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<ListBoxItem Content="Test Component"/>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
 			</ListBox>
-			<Button Content="Add Component"/>
+			<Button Content="Add Component" Command="{Binding AddComponentCommand}"/>
 		</StackPanel>
 	</Grid>
 </Window>
