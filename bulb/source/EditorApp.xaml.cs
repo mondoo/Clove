@@ -7,6 +7,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.ComponentModel;
 
+using Membrane = garlic.membrane;
+
 namespace Garlic.Bulb
 {
     /// <summary>
@@ -19,7 +21,7 @@ namespace Garlic.Bulb
 
         private EditorLogger editorLogger;
 
-        private garlic.membrane.Application engineApp;
+        private Membrane.Application engineApp;
 
         private WriteableBitmap imageSource; //Owning this here for now as the UI thread needs to lock it
         private IntPtr backBuffer;
@@ -58,7 +60,7 @@ namespace Garlic.Bulb
             size = new Size(width, width);
             CreateImageSource(size);
 
-            engineApp = new garlic.membrane.Application(width, height);
+            engineApp = new Membrane.Application(width, height);
 
             engineThread = new Thread(new ThreadStart(RunEngineApplication));
             engineThread.Name = "Garlic application thread";
