@@ -10,6 +10,6 @@ add_library(
 
 #Target properties
 set_target_properties(BulbUI PROPERTIES 
-		VS_DOTNET_FRAMEWORK_VERSION "4.8"
+		DOTNET_TARGET_FRAMEWORK_VERISON "v4.8"
         VS_DOTNET_REFERENCES "Microsoft.CSharp;System;"
 )
