@@ -21,6 +21,7 @@ add_executable(
 
 		${SOURCE}/RelayCommand.cs
 		
+		${SOURCE}/EntityViewModel.cs
 		${SOURCE}/MainWindowViewModel.cs
 		
 		${SOURCE}/EditorLogger.cs
@@ -53,7 +54,7 @@ set_source_files_properties(${SOURCE}/EditorApp.xaml PROPERTIES VS_XAML_TYPE "Ap
 
 #Target properties
 set_target_properties(Bulb PROPERTIES 
-		VS_DOTNET_FRAMEWORK_VERSION "4.8"
+		VS_DOTNET_FRAMEWORK "v5.0"
         VS_DOTNET_REFERENCES "Microsoft.CSharp;PresentationCore;PresentationFramework;System;System.Core;System.Data;System.Xaml;System.Xml;WindowsBase"
 )
 

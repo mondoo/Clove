@@ -28,13 +28,15 @@
 				<Button Grid.Column="1" Content="Create Entity" Command="{Binding CreateEntityCommand}"/>
 			</Grid>
 
-			<ListBox x:Name="EntityList" ItemsSource="{Binding Entities}">
-				<ListBox.ItemTemplate>
+			<ItemsControl x:Name="EntityList" ItemsSource="{Binding Entities}">
+				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<TextBlock Text="Entity test"/>
+						<Button Command="{Binding SelectedCommand}">
+							<TextBox Text="{Binding Name, Mode=TwoWay}"/>
+						</Button>
 					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
 		</StackPanel>
 		
 		<Image x:Name="RenderArea" Grid.Column="1" Stretch="Fill"/>

@@ -21,7 +21,7 @@ namespace Garlic.Bulb
         }
         private string logText;
 
-        public ObservableCollection<object> Entities { get; set; } = new ObservableCollection<object>();
+        public ObservableCollection<EntityViewModel> Entities { get; set; } = new ObservableCollection<EntityViewModel>();
 
         public delegate void AddEntityEventHandler();
         public AddEntityEventHandler CreateEntity;
@@ -33,7 +33,10 @@ namespace Garlic.Bulb
                 if (CreateEntity != null)
                 {
                     CreateEntity.Invoke();
-                    Entities.Add(new object());
+
+                    var entityVM = new EntityViewModel();
+
+                    Entities.Add(entityVM);
                 }
             });
         }
