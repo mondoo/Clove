@@ -83,14 +83,16 @@ namespace garlic::clove {
          */
         void shutdown();
 
-        GraphicsDevice *getGraphicsDevice() const;
-        AudioDevice *getAudioDevice() const;
+        inline GraphicsDevice *getGraphicsDevice() const;
+        inline AudioDevice *getAudioDevice() const;
 
-        std::shared_ptr<Window> const &getWindow() const;
-        ForwardRenderer3D *getRenderer() const;
-        World *getECSWorld() const;
+        inline std::shared_ptr<Window> const &getWindow() const;
+        inline ForwardRenderer3D *getRenderer() const;
+        inline World *getECSWorld() const;
 
     private:
         Application();
     };
 }
+
+#include "Application.inl"

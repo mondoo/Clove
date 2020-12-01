@@ -177,6 +177,7 @@ add_library(
 		${SOURCE}/UI/UIFrame.cpp
 
 		${INCLUDE}/Application.hpp
+		${INCLUDE}/Application.inl
 		${SOURCE}/Application.cpp
 
 		${INCLUDE}/InputEvent.hpp
