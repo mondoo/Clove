@@ -7,8 +7,8 @@ namespace garlic::clove{
         return audioDevice.get();
     }
 
-    std::shared_ptr<Window> const &Application::getWindow() const {
-        return window;
+    Window *Application::getWindow() const {
+        return window.get();
     }
 
     ForwardRenderer3D *Application::getRenderer() const {

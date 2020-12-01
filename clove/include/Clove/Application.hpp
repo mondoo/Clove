@@ -37,7 +37,7 @@ namespace garlic::clove {
         std::unique_ptr<GraphicsDevice> graphicsDevice;
         std::unique_ptr<AudioDevice> audioDevice;
 
-        std::shared_ptr<Window> window;
+        std::unique_ptr<Window> window;
         std::unique_ptr<ForwardRenderer3D> renderer;
         std::unique_ptr<World> world;
 
@@ -86,7 +86,7 @@ namespace garlic::clove {
         inline GraphicsDevice *getGraphicsDevice() const;
         inline AudioDevice *getAudioDevice() const;
 
-        inline std::shared_ptr<Window> const &getWindow() const;
+        inline Window *getWindow() const;
         inline ForwardRenderer3D *getRenderer() const;
         inline World *getECSWorld() const;
 
