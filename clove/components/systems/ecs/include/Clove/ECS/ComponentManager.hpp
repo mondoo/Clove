@@ -31,7 +31,7 @@ namespace garlic::clove {
         PoolAllocator<ComponentType, AllocatorStrategy::Dynamic> componentAllocator;
 
         std::unordered_map<Entity, size_t> entityToIndex;
-        std::vector<ComponentType *> components;
+        std::vector<ComponentType *> components;//Pointers into the componentAllocator for convienient lookup
 
         EventDispatcher *ecsEventDispatcher;
 

@@ -26,7 +26,7 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        Entity entity = NullEntity;
+        Entity entity{ NullEntity };
 
         std::list<ComponentPtr<DerivedClassType> *> pointers;
 

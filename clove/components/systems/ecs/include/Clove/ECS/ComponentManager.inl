@@ -103,11 +103,11 @@ namespace garlic::clove {
 
     template<typename ComponentType>
     ComponentContainer<ComponentType> &ComponentManager::getComponentContainer() {
-        ComponentID const componentID = ComponentType::id();
+        ComponentID const componentID{ ComponentType::id() };
         if(auto iter = containers.find(componentID); iter != containers.end()) {
             return static_cast<ComponentContainer<ComponentType> &>(*iter->second.get());
         } else {
-            auto container = std::make_unique<ComponentContainer<ComponentType>>(ecsEventDispatcher);
+            auto container{ std::make_unique<ComponentContainer<ComponentType>>(ecsEventDispatcher) };
 
             containers[componentID] = std::move(container);
             return static_cast<ComponentContainer<ComponentType> &>(*containers[componentID].get());

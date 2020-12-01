@@ -45,21 +45,21 @@ namespace garlic::clove {
     }
 
     Entity World::create() {
-        Entity entity = nextEntity++;
+        Entity entity{ nextEntity++ };
         activeEntities.push_back(entity);
 
         return entity;
     }
 
     Entity World::clone(Entity entity) {
-        Entity clonedEntity = create();
+        Entity clonedEntity{ create() };
         componentManager.cloneEntitiesComponents(entity, clonedEntity);
 
         return clonedEntity;
     }
 
     void World::destroy(Entity entity) {
-        auto foundIDIter = std::find(activeEntities.begin(), activeEntities.end(), entity);
+        auto foundIDIter{ std::find(activeEntities.begin(), activeEntities.end(), entity) };
 
         if(entity == NullEntity || foundIDIter == activeEntities.end()) {
             return;
