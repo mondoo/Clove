@@ -6,6 +6,7 @@
 #include <Clove/Event/EventHandle.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <unordered_set>
+#include <memory>
 
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
