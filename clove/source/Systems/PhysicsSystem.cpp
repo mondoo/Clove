@@ -227,6 +227,10 @@ namespace garlic::clove {
         }
     }
 
+    void PhysicsSystem::setGravity(vec3f const &gravity) {
+        dynamicsWorld->setGravity({ gravity.x, gravity.y, gravity.z });
+    }
+
     Entity PhysicsSystem::rayCast(vec3f const &begin, vec3f const &end) {
         return rayCast(begin, end, ~0, ~0);
     }

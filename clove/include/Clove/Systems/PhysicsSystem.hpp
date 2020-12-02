@@ -79,6 +79,8 @@ namespace garlic::clove {
         void update(World &world, DeltaTime deltaTime) override;
         void postUpdate(World &world) override;
 
+        void setGravity(vec3f const &gravity);
+
         /**
          * @brief Fires a ray into the world.
          * @returns The ID of the first Entity hit.
