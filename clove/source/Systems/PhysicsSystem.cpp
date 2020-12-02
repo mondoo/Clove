@@ -5,11 +5,11 @@
 #include "Clove/Components/RigidBodyComponent.hpp"
 #include "Clove/Components/TransformComponent.hpp"
 
-#include <Clove/ECS/World.hpp>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <Clove/Delegate/MultiCastDelegate.hpp>
+#include <Clove/ECS/World.hpp>
 #include <Clove/Event/EventDispatcher.hpp>
 #include <btBulletDynamicsCommon.h>
-#include <Clove/Delegate/MultiCastDelegate.hpp>
 
 namespace garlic::clove {
     PhysicsSystem::PhysicsSystem() {
@@ -111,12 +111,12 @@ namespace garlic::clove {
     void PhysicsSystem::update(World &world, DeltaTime deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
-        auto const cubeColliders = world.getComponentSets<TransformComponent, CubeColliderComponent>();
-        auto const rigidBodies   = world.getComponentSets<TransformComponent, RigidBodyComponent>();
+        auto const cubeColliders{ world.getComponentSets<TransformComponent, CubeColliderComponent>() };
+        auto const rigidBodies{ world.getComponentSets<TransformComponent, RigidBodyComponent>() };
 
         auto const updateCollider = [](TransformComponent const &transform, btCollisionObject &collisionObject) {
-            auto const pos = transform.getPosition(TransformSpace::World);
-            auto const rot = transform.getRotation(TransformSpace::World);
+            auto const pos{ transform.getPosition(TransformSpace::World) };
+            auto const rot{ transform.getRotation(TransformSpace::World) };
 
             btTransform btTrans = collisionObject.getWorldTransform();
             btTrans.setOrigin({ pos.x, pos.y, pos.z });
@@ -140,9 +140,9 @@ namespace garlic::clove {
         dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 
         auto const updateTransform = [](TransformComponent &transform, btCollisionObject const &collisionObject) {
-            btTransform const &btTrans = collisionObject.getWorldTransform();
-            btVector3 const &pos       = btTrans.getOrigin();
-            btQuaternion const &rot    = btTrans.getRotation();
+            btTransform const &btTrans{ collisionObject.getWorldTransform() };
+            btVector3 const &pos{ btTrans.getOrigin() };
+            btQuaternion const &rot{ btTrans.getRotation() };
 
             transform.setPosition({ pos.x(), pos.y(), pos.z() }, TransformSpace::World);
             transform.setRotation({ rot.getW(), rot.getX(), rot.getY(), rot.getZ() }, TransformSpace::World);

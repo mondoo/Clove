@@ -23,10 +23,10 @@ namespace garlic::clove {
     public:
         struct Descriptor {
             float mass{ 1.0f };
-            bool isKinematic{ false }; /**< If true, stops the body being affected by gravity */
+            bool isKinematic{ false }; /**< If true, signifies this rigid body is not affected by physics but should be collided with. */
 
-            uint32_t collisionGroup{ 0 }; /**< Bit flag of the collision groups this body is a part of */
-            uint32_t collisionMask{ 0 };  /**< Bit flag of which collision groups this body collides with */
+            uint32_t collisionGroup{ 0 }; /**< Bit flag of the collision groups this body is a part of. */
+            uint32_t collisionMask{ 0 };  /**< Bit flag of which collision groups this body collides with. */
         };
 
         //VARIABLES
