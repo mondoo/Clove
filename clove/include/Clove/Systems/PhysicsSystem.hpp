@@ -6,6 +6,7 @@
 #include <Clove/Event/EventHandle.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <unordered_set>
+#include <memory>
 
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
@@ -23,8 +24,8 @@ namespace garlic::clove {
         //TYPES
     private:
         struct CollisionManifold {
-            EntityID entityA;
-            EntityID entityB;
+            Entity entityA;
+            Entity entityB;
 
             constexpr friend bool operator==(CollisionManifold const &lhs, CollisionManifold const &rhs) {
                 return (lhs.entityA == rhs.entityA && lhs.entityB == rhs.entityB) ||
@@ -37,8 +38,8 @@ namespace garlic::clove {
 
         struct ManifoldHasher {
             size_t operator()(CollisionManifold const &manifold) const {
-                size_t a = std::hash<EntityID>{}(manifold.entityA);
-                size_t b = std::hash<EntityID>{}(manifold.entityB);
+                size_t a = std::hash<Entity>{}(manifold.entityA);
+                size_t b = std::hash<Entity>{}(manifold.entityB);
                 return a ^ (b << 1);
             }
         };
@@ -82,14 +83,14 @@ namespace garlic::clove {
          * @brief Fires a ray into the world.
          * @returns The ID of the first Entity hit.
          */
-        EntityID rayCast(vec3f const &begin, vec3f const &end);
+        Entity rayCast(vec3f const &begin, vec3f const &end);
         /**
          * @brief Fires a ray into the world.
          * @param collisionGroup Bit flag of the collision groups the ray belongs to.
          * @param collisionMask Bit flag of the collision groups the ray collides with.
          * @return The ID of the first Entity hit.
          */
-        EntityID rayCast(vec3f const &begin, vec3f const &end, uint32_t const collisionGroup, uint32_t const collisionMask);
+        Entity rayCast(vec3f const &begin, vec3f const &end, uint32_t const collisionGroup, uint32_t const collisionMask);
 
     private:
         void onCubeColliderAdded(ComponentAddedEvent<CubeColliderComponent> const &event);

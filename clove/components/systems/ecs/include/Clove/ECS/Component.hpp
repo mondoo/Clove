@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/ECS/ECSTypes.hpp"
+#include "Clove/ECS/Entity.hpp"
 
 #include <list>
 
@@ -25,7 +26,7 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        EntityID entityID = INVALID_ENTITY_ID;
+        Entity entity{ NullEntity };
 
         std::list<ComponentPtr<DerivedClassType> *> pointers;
 
@@ -44,7 +45,7 @@ namespace garlic::clove {
         static ComponentID id();
         ComponentID getComponentID() const;
 
-        EntityID getEntityID() const;
+        Entity getEntity() const;
 
     private:
         void attachPointer(ComponentPtr<DerivedClassType> *ptr);
@@ -64,7 +65,7 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        ComponentType *component = nullptr;
+        ComponentType *component{ nullptr };
 
         //FUNCTIONS
     public:

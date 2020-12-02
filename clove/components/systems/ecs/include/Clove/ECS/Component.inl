@@ -9,7 +9,7 @@ namespace garlic::clove {
 
     template<typename DerivedClassType>
     Component<DerivedClassType>::Component(Component &&other) noexcept {
-        entityID = std::move(other.entityID);
+        entity   = std::move(other.entity);
         pointers = std::move(other.pointers);
     }
 
@@ -18,7 +18,7 @@ namespace garlic::clove {
 
     template<typename DerivedClassType>
     Component<DerivedClassType> &Component<DerivedClassType>::operator=(Component &&other) noexcept {
-        entityID = std::move(other.entityID);
+        entity   = std::move(other.entity);
         pointers = std::move(other.pointers);
 
         return *this;
@@ -42,8 +42,8 @@ namespace garlic::clove {
     }
 
     template<typename DerivedClassType>
-    EntityID Component<DerivedClassType>::getEntityID() const {
-        return entityID;
+    Entity Component<DerivedClassType>::getEntity() const {
+        return entity;
     }
 
     template<typename DerivedClassType>

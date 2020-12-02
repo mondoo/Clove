@@ -3,6 +3,7 @@
 #include "Clove/ECS/ComponentManager.hpp"
 #include "Clove/ECS/ComponentSet.hpp"
 #include "Clove/ECS/ECSTypes.hpp"
+#include "Clove/ECS/Entity.hpp"
 #include "Clove/ECS/System.hpp"
 
 #include <Clove/Event/EventDispatcher.hpp>
@@ -10,7 +11,6 @@
 #include <vector>
 
 namespace garlic::clove {
-    class Entity;
     class System;
 }
 
@@ -28,9 +28,9 @@ namespace garlic::clove {
 
         std::vector<std::unique_ptr<System>> systems;
 
-        static EntityID nextID;
-        std::vector<EntityID> activeIDs;
-        std::set<EntityID> pendingDestroyIDs;
+        static Entity nextEntity;
+        std::vector<Entity> activeEntities;
+        std::set<Entity> pendingDestroyEntities;
 
         //FUNCTIONS
     public:
@@ -55,13 +55,25 @@ namespace garlic::clove {
 		 * @brief Creates an entity to be part of this World.
 		 * @return The newly created entity.
 		 */
-        Entity createEntity();
+        Entity create();
         /**
 		 * @brief Clones an Entiy's Components, returning a new Entity with the same Component layout.
 		 * @param ID The Id of the entity to be cloned.
 		 * @return The newly cloned entity.
 		 */
-        Entity cloneEntitiesComponents(EntityID ID);
+        Entity clone(Entity entity);
+
+        /**
+		 * @brief Removes the Entity from this World.
+		 * @details Entities are removed the next time update is called.
+		 * @param ID The Entity to remove.
+		 */
+        void destroy(Entity entity);
+        /**
+		 * @brief Destroys all Entities in this World.
+		 * @details Entities are destroyed immediately.
+		 */
+        void destroyAll();
 
         /**
 		 * @brief Checks if an Entity is valid.
@@ -69,32 +81,7 @@ namespace garlic::clove {
 		 * @param ID The Entity to check.
 		 * @return Returns true if the entity is valid.
 		 */
-        bool isEntityValid(EntityID ID);
-
-        /**
-		 * @brief Returns an Entity wrapper for the given Id.
-		 * @param ID The entity to get.
-		 * @return The Entity wrapper for the given ID.
-		 * @see	Entity.
-		 */
-        Entity getEntity(EntityID ID);
-        /**
-		 * @brief Gets all of the active Entities that are part of this World.
-		 * @return A vector of type Entity.
-		 */
-        std::vector<Entity> getActiveEntities();
-
-        /**
-		 * @brief Removes the Entity from this World.
-		 * @details Entities are removed the next time update is called.
-		 * @param ID The Entity to remove.
-		 */
-        void destroyEntity(EntityID ID);
-        /**
-		 * @brief Destroys all Entities in this World.
-		 * @details Entities are destroyed immediately.
-		 */
-        void destroyAllEntites();
+        bool isValid(Entity entity);
 
         /**
 		 * @brief Adds a Component to this world.
@@ -105,7 +92,7 @@ namespace garlic::clove {
 		 * @see	ComponentPtr.
 		 */
         template<typename ComponentType, typename... ConstructArgs>
-        ComponentPtr<ComponentType> addComponent(EntityID entityId, ConstructArgs &&... args);
+        ComponentPtr<ComponentType> addComponent(Entity entity, ConstructArgs &&... args);
         /**
 		 * @brief Gets the Component for an Entity.
 		 * @tparam ComponentType The type of Component to get.
@@ -114,7 +101,7 @@ namespace garlic::clove {
 		 * @see ComponentPtr.
 		 */
         template<typename ComponentType>
-        ComponentPtr<ComponentType> getComponent(EntityID entityId);
+        ComponentPtr<ComponentType> getComponent(Entity entity);
         /**
 		 * @brief Checks to see if the component exists on an Entity.
 		 * @tparam ComponentType The type of the Component to check for.
@@ -122,14 +109,14 @@ namespace garlic::clove {
 		 * @return Returns true if the Component exists on the Entity.
 		 */
         template<typename ComponentType>
-        bool hasComponent(EntityID entityId);
+        bool hasComponent(Entity entity);
         /**
 		 * @brief Removes a component from an Entity.
 		 * @tparam ComponentType The type of Component to remove.
 		 * @param entiyId The Entity to remove the Component from.
 		 */
         template<typename ComponentType>
-        void removeComponent(EntityID entityId);
+        void removeComponent(Entity entity);
 
         /**
 		 * @brief Finds all entitys that have the same components as ComponentTypes and returns them as a ComponentSet.

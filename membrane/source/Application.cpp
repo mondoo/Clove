@@ -35,34 +35,34 @@ namespace garlic::membrane {
         void onAttach() override {
             auto *const world = clove::Application::get().getECSWorld();
 
-            cubeEnt = world->createEntity();
-            cubeEnt.addComponent<clove::TransformComponent>();
-            cubeEnt.addComponent<clove::StaticModelComponent>(clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
+            cubeEnt = world->create();
+            world->addComponent<clove::TransformComponent>(cubeEnt);
+            world->addComponent<clove::StaticModelComponent>(cubeEnt, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
 
-            auto lightEnt = world->createEntity();
-            lightEnt.addComponent<clove::TransformComponent>()->setPosition({ 5.0f, 0.0f, 0.0f });
-            lightEnt.addComponent<clove::PointLightComponent>();
+            auto lightEnt = world->create();
+            world->addComponent<clove::TransformComponent>(lightEnt)->setPosition({ 5.0f, 0.0f, 0.0f });
+            world->addComponent<clove::PointLightComponent>(lightEnt);
 
-            camEnt = world->createEntity();
-            camEnt.addComponent<clove::TransformComponent>()->setPosition({ 0.0f, 0.0f, -10.0f });
-            camEnt.addComponent<clove::CameraComponent>(clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
+            camEnt = world->create();
+            world->addComponent<clove::TransformComponent>(camEnt)->setPosition({ 0.0f, 0.0f, -10.0f });
+            world->addComponent<clove::CameraComponent>(camEnt, clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
         }
 
         void onUpdate(clove::DeltaTime const deltaTime) override {
             static float time{ 0.0f };
             time += deltaTime;
 
-            cubeEnt.getComponent<clove::TransformComponent>()->setPosition({ 0.0f, sin(time), 0.0f });
+            clove::Application::get().getECSWorld()->getComponent<clove::TransformComponent>(cubeEnt)->setPosition({ 0.0f, sin(time), 0.0f });
         }
 
         void onDetach() override {
-            clove::Application::get().getECSWorld()->destroyAllEntites();
+            clove::Application::get().getECSWorld()->destroyAll();
         }
 
         void resize(clove::vec2ui size) {
             viewport.width  = size.x;
             viewport.height = size.y;
-            camEnt.getComponent<clove::CameraComponent>()->setViewport(viewport);
+            clove::Application::get().getECSWorld()->getComponent<clove::CameraComponent>(camEnt)->setViewport(viewport);
         }
     };
 
