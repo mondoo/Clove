@@ -25,8 +25,8 @@ namespace garlic::clove {
             float mass{ 1.0f };
             bool isKinematic{ false }; /**< If true, signifies this rigid body is not affected by physics but should be collided with. */
 
-            uint32_t collisionGroup{ 0 }; /**< Bit flag of the collision groups this body is a part of. */
-            uint32_t collisionMask{ 0 };  /**< Bit flag of which collision groups this body collides with. */
+            uint32_t collisionGroup{ ~0u }; /**< Bit flag of the collision groups this body is a part of. */
+            uint32_t collisionMask{ ~0u };  /**< Bit flag of which collision groups this body collides with. */
         };
 
         //VARIABLES
