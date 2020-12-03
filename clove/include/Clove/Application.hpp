@@ -68,6 +68,7 @@ namespace garlic::clove {
         static Application &get();
 
         void pushLayer(std::shared_ptr<Layer> layer);
+        void pushOverlay(std::shared_ptr<Layer> overlay);
 
         State getState() const;
 

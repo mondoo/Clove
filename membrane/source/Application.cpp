@@ -1,6 +1,7 @@
 #include "Membrane/Application.hpp"
 
 #include "Membrane/EditorLayer.hpp"
+#include "Membrane/RuntimeLayer.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Audio/Audio.hpp>
@@ -46,9 +47,14 @@ namespace garlic::membrane {
         //Add systems
         app->getECSWorld()->addSystem<clove::RenderSystem>();
 
-        layer  = new std::shared_ptr<EditorLayer>();
-        *layer = std::make_shared<EditorLayer>(clove::vec2ui{ width, height });
-        app->pushLayer(*layer);
+        editorLayer  = new std::shared_ptr<EditorLayer>();
+        *editorLayer = std::make_shared<EditorLayer>(clove::vec2ui{ width, height });
+
+        runtimeLayer  = new std::shared_ptr<RuntimeLayer>();
+        *runtimeLayer = std::make_shared<RuntimeLayer>();
+
+        app->pushLayer(*runtimeLayer);
+        app->pushOverlay(*editorLayer);
     }
 
     Application::~Application() {
@@ -57,7 +63,8 @@ namespace garlic::membrane {
 
     Application::!Application() {
         delete app;
-        delete layer;
+        delete editorLayer;
+        delete runtimeLayer;
     }
 
     bool Application::isRunning() {
@@ -69,7 +76,7 @@ namespace garlic::membrane {
     }
 
     void Application::render(System::IntPtr backBuffer) {
-        auto const renderTargetBuffer = renderTarget->getNextReadyBuffer();
+        auto const renderTargetBuffer{ renderTarget->getNextReadyBuffer() };
         size_t constexpr bbp{ 4 };
         renderTargetBuffer->read(backBuffer.ToPointer(), 0, width * height * bbp);
     }
@@ -80,13 +87,13 @@ namespace garlic::membrane {
 
     void Application::resize(int width, int height) {
         renderTarget->resize({ width, height });
-        (*layer)->resizeViewport({ width, height });
+        (*editorLayer)->resizeViewport({ width, height });
 
         this->width  = width;
         this->height = height;
     }
 
-    void Application::addEntity(){
-        (*layer)->addEntity();
+    void Application::addEntity() {
+        (*runtimeLayer)->addEntity();
     }
 }

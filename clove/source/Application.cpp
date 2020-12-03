@@ -64,6 +64,10 @@ namespace garlic::clove {
         layerStack.pushLayer(std::move(layer));
     }
 
+    void Application::pushOverlay(std::shared_ptr<Layer> overlay) {
+        layerStack.pushOverlay(std::move(overlay));
+    }
+
     Application::State Application::getState() const {
         if(window != nullptr) {
             return window->isOpen() ? State::Running : State::Stopped;

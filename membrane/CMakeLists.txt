@@ -9,6 +9,8 @@ add_library(
 
         ${INCLUDE}/EditorLayer.hpp
         ${SOURCE}/EditorLayer.cpp
+        ${INCLUDE}/RuntimeLayer.hpp
+        ${SOURCE}/RuntimeLayer.cpp
 )
 
 #Include

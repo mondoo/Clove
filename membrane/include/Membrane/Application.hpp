@@ -8,6 +8,7 @@ namespace garlic::clove {
 
 namespace garlic::membrane{
     class EditorLayer;
+    class RuntimeLayer;
 }
 
 namespace garlic::membrane {
@@ -16,7 +17,8 @@ public ref class Application {
         clove::Application *app;
         clove::GraphicsImageRenderTarget *renderTarget;
 
-        std::shared_ptr<EditorLayer> *layer;
+        std::shared_ptr<EditorLayer> *editorLayer;
+        std::shared_ptr<RuntimeLayer> *runtimeLayer;
 
         int width;
         int height;
