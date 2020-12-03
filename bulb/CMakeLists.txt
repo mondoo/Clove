@@ -21,7 +21,7 @@ add_executable(
 		${SOURCE}/RelayCommand.cs
 		
 		${SOURCE}/EntityViewModel.cs
-		${SOURCE}/MainWindowViewModel.cs
+		${SOURCE}/SceneViewModel.cs
 		
 		${SOURCE}/EditorLogger.cs
 )

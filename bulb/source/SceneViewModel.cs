@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace Garlic.Bulb
 {
-    public class MainWindowViewModel : ViewModel
+    public class SceneViewModel : ViewModel
     {
         //Commands
         public ICommand CreateEntityCommand { get; private set; }
@@ -48,7 +48,7 @@ namespace Garlic.Bulb
         public delegate void AddEntityEventHandler();
         public AddEntityEventHandler CreateEntity;
 
-        public MainWindowViewModel()
+        public SceneViewModel()
         {
             CreateEntityCommand = new RelayCommand(() =>
             {

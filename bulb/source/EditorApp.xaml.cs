@@ -17,7 +17,7 @@ namespace Garlic.Bulb
     public partial class EditorApp : Application
     {
         private MainWindow editorWindow;
-        private MainWindowViewModel editorWindowViewModel;
+        private SceneViewModel sceneViewModel;
 
         private EditorLogger editorLogger;
 
@@ -36,17 +36,17 @@ namespace Garlic.Bulb
 
         private void EditorStartup(object sender, StartupEventArgs e)
         {
-            editorWindowViewModel = new MainWindowViewModel();
-            editorWindowViewModel.CreateEntity = CreateEntity;
+            sceneViewModel = new SceneViewModel();
+            sceneViewModel.CreateEntity = CreateEntity;
 
             editorLogger = new EditorLogger();
-            editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => editorWindowViewModel.LogText += e2.Text;
+            editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => sceneViewModel.LogText += e2.Text;
 
             Console.SetOut(editorLogger);
 
             //Initialise the editor window
             editorWindow = new MainWindow();
-            editorWindow.DataContext = editorWindowViewModel;
+            editorWindow.DataContext = sceneViewModel;
 
             editorWindow.RenderArea.SizeChanged += OnRenderAreaSizeChanged;
             editorWindow.Closing += StopEngine;
