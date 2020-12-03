@@ -12,7 +12,6 @@
 namespace garlic::membrane {
     EditorLayer::EditorLayer(clove::vec2ui size)
         : viewport{ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) } {
-        clove::Application::get().getECSWorld()->addSystem<clove::RenderSystem>();
     }
 
     void EditorLayer::onAttach() {

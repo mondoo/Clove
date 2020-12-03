@@ -9,6 +9,7 @@
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
+#include <Clove/Systems/RenderSystem.hpp>
 
 namespace garlic::membrane {
     class ConsoleLogger : public clove::Logger::Output {
@@ -41,6 +42,9 @@ namespace garlic::membrane {
         auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioAPI::OpenAl, std::move(renderTargetImageDescriptor)) };
         app          = pair.first.release();
         renderTarget = pair.second;
+
+        //Add systems
+        app->getECSWorld()->addSystem<clove::RenderSystem>();
 
         layer  = new std::shared_ptr<EditorLayer>();
         *layer = std::make_shared<EditorLayer>(clove::vec2ui{ width, height });
