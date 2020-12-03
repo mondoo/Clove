@@ -15,7 +15,7 @@ class btSequentialImpulseConstraintSolver;
 class btDiscreteDynamicsWorld;
 
 namespace garlic::clove {
-    class CubeColliderComponent;
+    class CollisionShapeComponent;
     class RigidBodyComponent;
 }
 
@@ -53,8 +53,8 @@ namespace garlic::clove {
 
         std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
 
-        EventHandle cubeColliderAddedHandle;
-        EventHandle cubeColliderRemovedHandle;
+        EventHandle collisionShapeAddedHandle;
+        EventHandle collisionShapeRemovedHandle;
 
         EventHandle rigidBodyAddedHandle;
         EventHandle rigidBodyRemovedHandle;
@@ -95,13 +95,13 @@ namespace garlic::clove {
         Entity rayCast(vec3f const &begin, vec3f const &end, uint32_t const collisionGroup, uint32_t const collisionMask);
 
     private:
-        void onCubeColliderAdded(ComponentAddedEvent<CubeColliderComponent> const &event);
-        void onCubeColliderRemoved(ComponentRemovedEvent<CubeColliderComponent> const &event);
+        void onCollisionShapeAdded(ComponentAddedEvent<CollisionShapeComponent> const &event);
+        void onCollisionShapeRemoved(ComponentRemovedEvent<CollisionShapeComponent> const &event);
 
         void onRigidBodyAdded(ComponentAddedEvent<RigidBodyComponent> const &event);
         void onRigidBodyRemoved(ComponentRemovedEvent<RigidBodyComponent> const &event);
 
         void addBodyToWorld(RigidBodyComponent const &rigidBodyComponent);
-        void addColliderToWorld(CubeColliderComponent const &colliderComponent);
+        void addColliderToWorld(CollisionShapeComponent const &colliderComponent);
     };
 }

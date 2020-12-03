@@ -13,7 +13,7 @@ namespace garlic::clove {
 	 * @brief Enables an entity to respond to physics events.
 	 * @details Entities with a RigidBodyComponent can collide with other
 	 * entities and be affected by gravity. If the entity also has a
-	 * CubeColliderComponent or similar the rigid body will use that shape
+	 * CollisionShapeComponent then the rigid body will use that shape
 	 * to detect collisions.
 	 */
     class RigidBodyComponent : public Component<RigidBodyComponent> {
@@ -33,7 +33,7 @@ namespace garlic::clove {
     private:
         Descriptor descriptor;
 
-        std::unique_ptr<btSphereShape> standInShape; /**< Stand in shape until a _ColliderComponent has been added */
+        std::unique_ptr<btSphereShape> standInShape; /**< Stand in shape until a CollisionShapeComponent has been added */
         std::unique_ptr<btRigidBody> body;
 
         std::unique_ptr<btDefaultMotionState> motionState;

@@ -108,8 +108,8 @@ add_library(
 		${INCLUDE}/Components/CameraComponent.inl
 		${SOURCE}/Components/CameraComponent.cpp
 		${INCLUDE}/Components/CollisionResponseComponent.hpp
-		${INCLUDE}/Components/CubeColliderComponent.hpp
-		${SOURCE}/Components/CubeColliderComponent.cpp
+		${INCLUDE}/Components/CollisionShapeComponent.hpp
+		${SOURCE}/Components/CollisionShapeComponent.cpp
 		${INCLUDE}/Components/DirectionalLightComponent.hpp
 		${INCLUDE}/Components/DirectionalLightComponent.inl
 		${SOURCE}/Components/DirectionalLightComponent.cpp
