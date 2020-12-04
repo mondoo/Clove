@@ -14,11 +14,11 @@ namespace garlic::clove {
         auto const graphicsFactory = Application::get().getGraphicsDevice()->getGraphicsFactory();
 
         //We won't be allocating any buffers from this queue, only using it to submit
-        graphicsQueue = graphicsFactory->createGraphicsQueue(garlic::clove::CommandQueueDescriptor{ .flags = garlic::clove::QueueFlags::None });
-        transferQueue = graphicsFactory->createTransferQueue(garlic::clove::CommandQueueDescriptor{ .flags = garlic::clove::QueueFlags::ReuseBuffers });
+        graphicsQueue = *graphicsFactory->createGraphicsQueue(garlic::clove::CommandQueueDescriptor{ .flags = garlic::clove::QueueFlags::None });
+        transferQueue = *graphicsFactory->createTransferQueue(garlic::clove::CommandQueueDescriptor{ .flags = garlic::clove::QueueFlags::ReuseBuffers });
 
-        frameInFlight           = graphicsFactory->createFence({ true });
-        renderFinishedSemaphore = graphicsFactory->createSemaphore();
+        frameInFlight           = *graphicsFactory->createFence({ true });
+        renderFinishedSemaphore = *graphicsFactory->createSemaphore();
 
         transferCommandBuffer = transferQueue->allocateCommandBuffer();
 
@@ -85,7 +85,9 @@ namespace garlic::clove {
         //Make sure we're not using the image when we re-create it
         frameInFlight->wait();
 
-        renderTargetImage = factory->createImage(imageDescriptor);
+        onPropertiesChangedBegin.broadcast();
+
+        renderTargetImage = *factory->createImage(imageDescriptor);
         renderTargetView  = renderTargetImage->createView(GraphicsImageView::Descriptor{
             .type       = GraphicsImageView::Type::_2D,
             .layer      = 0,
@@ -94,7 +96,7 @@ namespace garlic::clove {
 
         size_t constexpr bytesPerPixel{ 4 };//Assuming image format is 4 bbp
         size_t const bufferSize{ imageDescriptor.dimensions.x * imageDescriptor.dimensions.y * bytesPerPixel };
-        renderTargetBuffer = factory->createBuffer(GraphicsBuffer::Descriptor{
+        renderTargetBuffer = *factory->createBuffer(GraphicsBuffer::Descriptor{
             .size        = bufferSize,
             .usageFlags  = GraphicsBuffer::UsageMode::TransferDestination,
             .sharingMode = SharingMode::Exclusive,
@@ -116,6 +118,6 @@ namespace garlic::clove {
         transferCommandBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { imageDescriptor.dimensions, 1 }, *renderTargetBuffer, 0);
         transferCommandBuffer->endRecording();
 
-        onPropertiesChanged.broadcast();
+        onPropertiesChangedEnd.broadcast();
     }
 }

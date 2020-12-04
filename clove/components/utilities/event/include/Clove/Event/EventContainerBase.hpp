@@ -5,12 +5,12 @@
 #include <list>
 
 namespace garlic::clove {
-    class EventHandle;
+    struct EventHandle;
 }
 
 namespace garlic::clove {
     class EventContainerBase {
-        friend class EventHandle;
+        friend EventHandle;
 
         //VARIABLES
     protected:

@@ -39,6 +39,8 @@ namespace garlic::clove {
         vec2ui windowSize{};
         DelegateHandle windowResizeHandle;
 
+        bool requiresNewSwapchain{ false };
+
         //FUNCTIONS
     public:
         SwapchainRenderTarget();

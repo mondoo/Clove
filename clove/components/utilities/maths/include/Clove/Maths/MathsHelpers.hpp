@@ -53,8 +53,13 @@ namespace garlic::clove {
     template<typename T>
     mat<4, 4, T> quaternionToMatrix4(quat<T> const &quat);
 
+    /**
+     * @brief Transform a screen space coord to world space.
+     * @param distance The distance from origin. You'd expect it to be the distance from the object to the camera but that is partly contained in the viewMatrix
+     * @param forward The forward vector of the projection. Usually the canmera's forward vector
+     */
     template<typename T>
-    vec<3, T> screenToWorld(vec<2, T> const &screenPos, T screenDepth, vec<2, T> const &screenSize, mat<4, 4, T> const &viewMatrix, mat<4, 4, T> const &projectionMatrix);
+    vec<3, T> screenToWorld(vec<2, T> const &screenPos, T distance, vec<2, T> const &screenSize, vec<3, T> const &forward, mat<4, 4, T> const &viewMatrix, mat<4, 4, T> const &projectionMatrix);
 }
 
 #include "MathsHelpers.inl"

@@ -2,8 +2,8 @@
 
 #include "Clove/Application.hpp"
 
-#include <Clove/Platform/Window.hpp>
 #include <Clove/Maths/MathsHelpers.hpp>
+#include <Clove/Platform/Window.hpp>
 
 namespace garlic::clove {
     Camera::Camera(Viewport viewport, ProjectionMode const projection)
@@ -22,9 +22,29 @@ namespace garlic::clove {
         setProjectionMode(projection);
     }
 
-    Camera::Camera(Camera &&other) noexcept = default;
+    Camera::Camera(Camera &&other) noexcept
+        : currentProjectionMode{ other.currentProjectionMode }
+        , view{ std::move(other.view) }
+        , projection{ std::move(other.projection) }
+        , viewport{ std::move(other.viewport) }
+        , zoomLevel{ other.zoomLevel } {
+        windowResizeHandle = Application::get().getWindow()->onWindowResize.bind([this](vec2ui const &size) {
+            setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
+        });
+    }
 
-    Camera &Camera::operator=(Camera &&other) noexcept = default;
+    Camera &Camera::operator=(Camera &&other) noexcept {
+        currentProjectionMode = other.currentProjectionMode;
+        view                  = std::move(other.view);
+        projection            = std::move(other.projection);
+        viewport              = std::move(other.viewport);
+        zoomLevel             = other.zoomLevel;
+        windowResizeHandle    = Application::get().getWindow()->onWindowResize.bind([this](vec2ui const &size) {
+            setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
+        });
+
+        return *this;
+    }
 
     Camera::~Camera() = default;
 
@@ -39,9 +59,6 @@ namespace garlic::clove {
         float const width{ static_cast<float>(viewport.width) };
         float const height{ static_cast<float>(viewport.height) };
         float const aspect{ height > 0.0f ? width / height : 0.0f };
-
-        float constexpr nearPlane{ 0.5f };
-        float constexpr farPlane{ 10000.0f };
 
         currentProjectionMode = mode;
 

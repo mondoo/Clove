@@ -18,7 +18,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKDescriptorSetLayout() = delete;
-        VKDescriptorSetLayout(DevicePointer device, Descriptor descriptor);
+        VKDescriptorSetLayout(DevicePointer device, VkDescriptorSetLayout layout, Descriptor descriptor);
 
         VKDescriptorSetLayout(VKDescriptorSetLayout const &other) = delete;
         VKDescriptorSetLayout(VKDescriptorSetLayout &&other) noexcept;

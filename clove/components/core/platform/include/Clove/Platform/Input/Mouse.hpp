@@ -2,11 +2,11 @@
 
 #include "Clove/Platform/Input/MouseButtonCodes.hpp"
 
+#include <Clove/Maths/Vector.hpp>
 #include <bitset>
 #include <optional>
 #include <queue>
 #include <unordered_map>
-#include <Clove/Maths/Vector.hpp>
 
 namespace garlic::clove {
     class Mouse {
@@ -39,18 +39,17 @@ namespace garlic::clove {
             Type type{ Type::Invalid };
             MouseButton button{ MouseButton::None };
 
-            int32_t x{ 0 };
-            int32_t y{ 0 };
+            vec2i pos;
 
             //FUNCTIONS
         public:
             Event();
-            Event(Type type, MouseButton button, int32_t x, int32_t y);
+            Event(Type type, MouseButton button, vec2i pos);
 
             Type getType() const;
             bool isValid() const;
 
-            std::pair<int32_t, int32_t> getPos() const;
+            vec2i const &getPos() const;
 
             MouseButton getButton() const;
         };
@@ -59,8 +58,7 @@ namespace garlic::clove {
     private:
         static constexpr uint32_t bufferSize{ 16u };
 
-        int32_t x{ 0 };
-        int32_t y{ 0 };
+        vec2i pos;
 
         int32_t wheelDelta{ 0 };
 
@@ -84,7 +82,7 @@ namespace garlic::clove {
         bool isButtonPressed(MouseButton button) const;
         std::optional<Event> getEvent();
 
-        vec2i getPosition() const;
+        vec2i const &getPosition() const;
 
         bool isInWindow() const;
 

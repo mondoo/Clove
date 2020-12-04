@@ -15,18 +15,18 @@ namespace garlic::membrane {
     void EditorLayer::onAttach() {
         auto *const world{ clove::Application::get().getECSWorld() };
 
-        editorCamera = world->createEntity();
-        editorCamera.addComponent<clove::TransformComponent>()->setPosition({ 0.0f, 0.0f, -10.0f });
-        editorCamera.addComponent<clove::CameraComponent>(clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
+        editorCamera = world->create();
+        world->addComponent<clove::TransformComponent>(editorCamera)->setPosition({ 0.0f, 0.0f, -10.0f });
+        world->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
     }
 
     void EditorLayer::onDetach() {
-        clove::Application::get().getECSWorld()->destroyEntity(editorCamera);
+        clove::Application::get().getECSWorld()->destroy(editorCamera);
     }
 
     void EditorLayer::resizeViewport(clove::vec2ui size) {
         viewport.width  = size.x;
         viewport.height = size.y;
-        editorCamera.getComponent<clove::CameraComponent>()->setViewport(viewport);
+        clove::Application::get().getECSWorld()->getComponent<clove::CameraComponent>(editorCamera)->setViewport(viewport);
     }
 }

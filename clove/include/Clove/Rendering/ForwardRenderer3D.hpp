@@ -105,7 +105,8 @@ namespace garlic::clove {
         static size_t constexpr maxFramesInFlight{ 2 };
         size_t currentFrame{ 0 };//The current frame we're operating on
 
-        DelegateHandle renderTargetPropertyChangedHandle;
+        DelegateHandle renderTargetPropertyChangedBeginHandle;
+        DelegateHandle renderTargetPropertyChangedEndHandle;
         std::unique_ptr<RenderTarget> renderTarget;
         std::vector<std::shared_ptr<garlic::clove::Framebuffer>> frameBuffers;
 
@@ -180,7 +181,8 @@ namespace garlic::clove {
         void end();
 
     private:
-        void onRenderTargetPropertiesChanged();
+        void cleanupRenderTargetResources();
+        void createRenderTargetResources();
 
         void createRenderpass();
         void createShadowMapRenderpass();

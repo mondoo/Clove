@@ -2,7 +2,6 @@
 
 #include "Clove/Graphics/Vulkan/VKFence.hpp"
 #include "Clove/Graphics/Vulkan/VKPipelineObject.hpp"
-#include "Clove/Graphics/Vulkan/VKQueue.hpp"
 #include "Clove/Graphics/Vulkan/VKSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VKTransferCommandBuffer.hpp"
 
@@ -11,24 +10,16 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    VKTransferQueue::VKTransferQueue(DevicePointer device, QueueFamilyIndices queueFamilyIndices, CommandQueueDescriptor descriptor)
-        : device(std::move(device))
-        , queueFamilyIndices(std::move(queueFamilyIndices)) {
-        uint32_t const familyIndex = *this->queueFamilyIndices.transferFamily;
-
-        vkGetDeviceQueue(this->device.get(), familyIndex, 0, &queue);
-
-        VkCommandPoolCreateInfo poolInfo{
-            .sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-            .pNext            = nullptr,
-            .flags            = convertCommandPoolCreateFlags(descriptor.flags),
-            .queueFamilyIndex = familyIndex,
-        };
-
-        if(vkCreateCommandPool(this->device.get(), &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create graphics command pool");
-        }
+    VKTransferQueue::VKTransferQueue(DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices)
+        : device{ std::move(device) }
+        , queue{ queue }
+        , commandPool{ commandPool }
+        , queueFamilyIndices{ std::move(queueFamilyIndices) } {
     }
+
+    VKTransferQueue::VKTransferQueue(VKTransferQueue &&other) noexcept = default;
+
+    VKTransferQueue &VKTransferQueue::operator=(VKTransferQueue &&other) noexcept = default;
 
     VKTransferQueue::~VKTransferQueue() {
         vkDestroyCommandPool(device.get(), commandPool, nullptr);

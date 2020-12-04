@@ -18,8 +18,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKShader() = delete;
-        VKShader(DevicePointer device, std::string_view filePath);
-        VKShader(DevicePointer device, std::span<std::byte const> byteCode);
+        VKShader(DevicePointer device, VkShaderModule module);
 
         VKShader(VKShader const &other) = delete;
         VKShader(VKShader &&other) noexcept;

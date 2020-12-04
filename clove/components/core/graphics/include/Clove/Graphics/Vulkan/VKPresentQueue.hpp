@@ -15,7 +15,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKPresentQueue() = delete;
-        VKPresentQueue(DevicePointer device, uint32_t queueFamilyIndex);
+        VKPresentQueue(DevicePointer device, VkQueue queue);
 
         VKPresentQueue(const VKPresentQueue& other) = delete;
         VKPresentQueue(VKPresentQueue&& other) noexcept;

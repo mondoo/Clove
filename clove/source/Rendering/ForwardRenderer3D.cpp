@@ -12,8 +12,8 @@
 #include <Clove/Graphics/DescriptorSet.hpp>
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Graphics/GraphicsImageView.hpp>
-#include <Clove/Platform/Window.hpp>
 #include <Clove/Log/Log.hpp>
+#include <Clove/Platform/Window.hpp>
 
 using namespace garlic::clove;
 
@@ -48,13 +48,14 @@ extern "C" const size_t font_pLength;
 namespace garlic::clove {
     ForwardRenderer3D::ForwardRenderer3D(std::unique_ptr<RenderTarget> renderTarget)
         : renderTarget(std::move(renderTarget)) {
-        renderTargetPropertyChangedHandle = this->renderTarget->onPropertiesChanged.bind(&ForwardRenderer3D::onRenderTargetPropertiesChanged, this);
+        renderTargetPropertyChangedBeginHandle = this->renderTarget->onPropertiesChangedBegin.bind(&ForwardRenderer3D::cleanupRenderTargetResources, this);
+        renderTargetPropertyChangedEndHandle   = this->renderTarget->onPropertiesChangedEnd.bind(&ForwardRenderer3D::createRenderTargetResources, this);
 
         graphicsDevice  = Application::get().getGraphicsDevice();
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
         //Object initialisation
-        graphicsQueue = graphicsFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
+        graphicsQueue = *graphicsFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
 
         descriptorSetLayouts = createDescriptorSetLayouts(*graphicsFactory);
 
@@ -66,17 +67,17 @@ namespace garlic::clove {
 
         createDepthBuffer();
 
-        onRenderTargetPropertiesChanged();//Also creates the pipeline for the final colour
+        createRenderTargetResources();//Also creates the pipeline for the final colour
 
         //Create semaphores for frame synchronisation
         for(auto &shadowFinishedSemaphore : shadowFinishedSemaphores) {
-            shadowFinishedSemaphore = graphicsFactory->createSemaphore();
+            shadowFinishedSemaphore = graphicsFactory->createSemaphore().getValue();
         }
         for(auto &cubeShadowFinishedSemaphore : cubeShadowFinishedSemaphores) {
-            cubeShadowFinishedSemaphore = graphicsFactory->createSemaphore();
+            cubeShadowFinishedSemaphore = graphicsFactory->createSemaphore().getValue();
         }
 
-        textureSampler = graphicsFactory->createSampler(Sampler::Descriptor{
+        textureSampler = *graphicsFactory->createSampler(Sampler::Descriptor{
             .minFilter        = Sampler::Filter::Linear,
             .magFilter        = Sampler::Filter::Linear,
             .addressModeU     = Sampler::AddressMode::Repeat,
@@ -86,7 +87,7 @@ namespace garlic::clove {
             .maxAnisotropy    = 16.0f,
         });
 
-        uiSampler = graphicsFactory->createSampler(Sampler::Descriptor{
+        uiSampler = *graphicsFactory->createSampler(Sampler::Descriptor{
             .minFilter        = Sampler::Filter::Nearest,
             .magFilter        = Sampler::Filter::Nearest,
             .addressModeU     = Sampler::AddressMode::ClampToBorder,
@@ -95,7 +96,7 @@ namespace garlic::clove {
             .enableAnisotropy = false,
         });
 
-        shadowSampler = graphicsFactory->createSampler(Sampler::Descriptor{
+        shadowSampler = *graphicsFactory->createSampler(Sampler::Descriptor{
             .minFilter        = Sampler::Filter::Linear,
             .magFilter        = Sampler::Filter::Linear,
             .addressModeU     = Sampler::AddressMode::ClampToBorder,
@@ -267,7 +268,7 @@ namespace garlic::clove {
 
         auto const writeObjectBuffer = [&graphicsFactory = graphicsFactory](std::unique_ptr<GraphicsBuffer> &buffer, MeshUBOLayout const &layout) {
             if(buffer == nullptr) {
-                buffer = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
+                buffer = *graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
                     .size        = sizeof(layout),
                     .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
                     .sharingMode = SharingMode::Exclusive,
@@ -504,16 +505,24 @@ namespace garlic::clove {
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
 
-    void ForwardRenderer3D::onRenderTargetPropertiesChanged() {
+    void ForwardRenderer3D::cleanupRenderTargetResources() {
         graphicsDevice->waitForIdleDevice();
 
-        //Explicitly free resources to avoid problems when recreating the swap chain itself
-        staticMeshPipelineObject.reset();
         frameBuffers.clear();
+
+        staticMeshPipelineObject.reset();
+        animatedMeshPipelineObject.reset();
+        widgetPipelineObject.reset();
+        textPipelineObject.reset();
+
         for(auto &imageData : inFlightImageData) {
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
         }
 
+        renderPass.reset();
+    }
+
+    void ForwardRenderer3D::createRenderTargetResources() {
         createRenderpass();
 
         createDepthBuffer();
@@ -543,7 +552,7 @@ namespace garlic::clove {
             imageData.cubeShadowMapCommandBuffer = graphicsQueue->allocateCommandBuffer();
 
             //Create uniform buffers
-            imageData.frameDataBuffer = graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
+            imageData.frameDataBuffer = *graphicsFactory->createBuffer(GraphicsBuffer::Descriptor{
                 .size        = sizeof(FrameData),
                 .usageFlags  = GraphicsBuffer::UsageMode::UniformBuffer,
                 .sharingMode = SharingMode::Exclusive,
@@ -567,7 +576,7 @@ namespace garlic::clove {
             //Create the shadow maps for each frame
             for(size_t i = 0; i < MAX_LIGHTS; ++i) {
                 //Directional
-                imageData.shadowMaps[i]     = graphicsFactory->createImage(GraphicsImage::Descriptor{
+                imageData.shadowMaps[i]     = *graphicsFactory->createImage(GraphicsImage::Descriptor{
                     .type        = GraphicsImage::Type::_2D,
                     .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
                     .dimensions  = { shadowMapSize, shadowMapSize },
@@ -580,7 +589,7 @@ namespace garlic::clove {
                     .layerCount = 1,
                 });
 
-                imageData.shadowMapFrameBuffers[i] = graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
+                imageData.shadowMapFrameBuffers[i] = *graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
                     .renderPass  = shadowMapRenderPass,
                     .attachments = { imageData.shadowMapViews[i] },
                     .width       = shadowMapSize,
@@ -588,7 +597,7 @@ namespace garlic::clove {
                 });
 
                 //Point
-                imageData.cubeShadowMaps[i]     = graphicsFactory->createImage(GraphicsImage::Descriptor{
+                imageData.cubeShadowMaps[i]     = *graphicsFactory->createImage(GraphicsImage::Descriptor{
                     .type        = GraphicsImage::Type::Cube,
                     .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::DepthStencilAttachment,
                     .dimensions  = { shadowMapSize, shadowMapSize },
@@ -608,7 +617,7 @@ namespace garlic::clove {
                         .layerCount = 1,
                     });
 
-                    imageData.cubeShadowMapFrameBuffers[i][j] = graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
+                    imageData.cubeShadowMapFrameBuffers[i][j] = *graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
                         .renderPass  = shadowMapRenderPass,
                         .attachments = { imageData.cubeShadowMapFaceViews[i][j] },
                         .width       = shadowMapSize,
@@ -670,7 +679,7 @@ namespace garlic::clove {
             .dependencies = { std::move(dependency) },
         };
 
-        renderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
+        renderPass = *graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
     }
 
     void ForwardRenderer3D::createShadowMapRenderpass() {
@@ -698,7 +707,7 @@ namespace garlic::clove {
             .dependencies = {},
         };
 
-        shadowMapRenderPass = graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
+        shadowMapRenderPass = *graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
     }
 
     void ForwardRenderer3D::createDepthBuffer() {
@@ -710,7 +719,7 @@ namespace garlic::clove {
             .sharingMode = SharingMode::Exclusive,
         };
 
-        depthImage     = graphicsFactory->createImage(std::move(depthDescriptor));
+        depthImage     = *graphicsFactory->createImage(std::move(depthDescriptor));
         depthImageView = depthImage->createView(GraphicsImageView::Descriptor{
             .type       = GraphicsImageView::Type::_2D,
             .layer      = 0,
@@ -752,8 +761,8 @@ namespace garlic::clove {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmesh_v), staticmesh_vLength }),
-            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(mesh_p), mesh_pLength }),
+            .vertexShader         = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmesh_v), staticmesh_vLength }),
+            .fragmentShader       = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(mesh_p), mesh_pLength }),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -767,7 +776,7 @@ namespace garlic::clove {
             .pushConstants = {},
         };
 
-        staticMeshPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+        staticMeshPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
 
         //Modify the pipeline for animated meshes
         vertexAttributes.emplace_back(VertexAttributeDescriptor{
@@ -781,10 +790,10 @@ namespace garlic::clove {
             .offset   = offsetof(Vertex, weights),
         });
 
-        pipelineDescriptor.vertexShader     = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmesh_v), animatedmesh_vLength });
+        pipelineDescriptor.vertexShader     = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmesh_v), animatedmesh_vLength });
         pipelineDescriptor.vertexAttributes = std::move(vertexAttributes);
 
-        animatedMeshPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+        animatedMeshPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
     void ForwardRenderer3D::createUiPipeline() {
@@ -826,8 +835,8 @@ namespace garlic::clove {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(ui_v), ui_vLength }),
-            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(widget_p), widget_pLength }),
+            .vertexShader         = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(ui_v), ui_vLength }),
+            .fragmentShader       = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(widget_p), widget_pLength }),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -838,11 +847,11 @@ namespace garlic::clove {
             .pushConstants        = { std::move(vertexPushConstant), std::move(pixelPushConstant) },
         };
 
-        widgetPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+        widgetPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
 
-        pipelineDescriptor.fragmentShader = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(font_p), font_pLength });
+        pipelineDescriptor.fragmentShader = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(font_p), font_pLength });
 
-        textPipelineObject = graphicsFactory->createPipelineObject(std::move(pipelineDescriptor));
+        textPipelineObject = *graphicsFactory->createPipelineObject(std::move(pipelineDescriptor));
     }
 
     void ForwardRenderer3D::createShadowMapPipeline() {
@@ -868,8 +877,8 @@ namespace garlic::clove {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmeshshadowmap_v), staticmeshshadowmap_vLength }),
-            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(meshshadowmap_p), meshshadowmap_pLength }),
+            .vertexShader         = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmeshshadowmap_v), staticmeshshadowmap_vLength }),
+            .fragmentShader       = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(meshshadowmap_p), meshshadowmap_pLength }),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -880,7 +889,7 @@ namespace garlic::clove {
             .pushConstants        = { pushConstant },
         };
 
-        staticMeshShadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+        staticMeshShadowMapPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
 
         vertexAttributes.emplace_back(VertexAttributeDescriptor{
             .location = 4,
@@ -893,11 +902,11 @@ namespace garlic::clove {
             .offset   = offsetof(Vertex, weights),
         });
 
-        pipelineDescriptor.vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmeshshadowmap_v), animatedmeshshadowmap_vLength });
+        pipelineDescriptor.vertexShader         = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmeshshadowmap_v), animatedmeshshadowmap_vLength });
         pipelineDescriptor.vertexAttributes     = std::move(vertexAttributes);
         pipelineDescriptor.descriptorSetLayouts = { descriptorSetLayouts[DescriptorSetSlots::Mesh] };
 
-        animatedMeshShadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+        animatedMeshShadowMapPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
     void ForwardRenderer3D::createCubeShadowMapPipeline() {
@@ -929,8 +938,8 @@ namespace garlic::clove {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmeshcubeshadowmap_v), staticmeshcubeshadowmap_vLength }),
-            .fragmentShader       = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(meshcubeshadowmap_p), meshcubeshadowmap_pLength }),
+            .vertexShader         = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(staticmeshcubeshadowmap_v), staticmeshcubeshadowmap_vLength }),
+            .fragmentShader       = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(meshcubeshadowmap_p), meshcubeshadowmap_pLength }),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -941,7 +950,7 @@ namespace garlic::clove {
             .pushConstants        = { vertexPushConstant, pixelPushConstant },
         };
 
-        staticMeshCubeShadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+        staticMeshCubeShadowMapPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
 
         vertexAttributes.emplace_back(VertexAttributeDescriptor{
             .location = 4,
@@ -954,16 +963,16 @@ namespace garlic::clove {
             .offset   = offsetof(Vertex, weights),
         });
 
-        pipelineDescriptor.vertexShader         = graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmeshcubeshadowmap_v), animatedmeshcubeshadowmap_vLength });
+        pipelineDescriptor.vertexShader         = *graphicsFactory->createShader({ reinterpret_cast<std::byte const *>(animatedmeshcubeshadowmap_v), animatedmeshcubeshadowmap_vLength });
         pipelineDescriptor.vertexAttributes     = std::move(vertexAttributes);
         pipelineDescriptor.descriptorSetLayouts = { descriptorSetLayouts[DescriptorSetSlots::Mesh] };
 
-        animatedMeshCubeShadowMapPipelineObject = graphicsFactory->createPipelineObject(pipelineDescriptor);
+        animatedMeshCubeShadowMapPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
     void ForwardRenderer3D::createRenderTargetFrameBuffers() {
         for(auto &imageView : renderTarget->getImageViews()) {
-            frameBuffers.emplace_back(graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
+            frameBuffers.emplace_back(*graphicsFactory->createFramebuffer(Framebuffer::Descriptor{
                 .renderPass  = renderPass,
                 .attachments = { imageView, depthImageView },
                 .width       = renderTarget->getSize().x,
@@ -989,6 +998,6 @@ namespace garlic::clove {
             .maxSets   = setCount,
         };
 
-        return graphicsFactory->createDescriptorPool(std::move(poolDescriptor));
+        return *graphicsFactory->createDescriptorPool(std::move(poolDescriptor));
     }
 }

@@ -32,7 +32,7 @@ namespace garlic::clove {
     ItemType *PoolAllocator<ItemType, strategy>::alloc(Args &&... args) {
         if(nextFree == nullptr) {
             if constexpr(strategy == AllocatorStrategy::Dynamic) {
-                auto newArena  = std::make_unique<PoolArena>(elementsPerArena);
+                auto newArena{ std::make_unique<PoolArena>(elementsPerArena) };
                 newArena->next = std::move(arena);
                 arena          = std::move(newArena);
                 nextFree       = &arena->storage[0];
@@ -55,8 +55,8 @@ namespace garlic::clove {
     void PoolAllocator<ItemType, strategy>::free(ItemType *item) {
         item->~ItemType();
 
-        PoolItem *poolItem = reinterpret_cast<PoolItem *>(item);
-        poolItem->next     = nextFree;
-        nextFree           = poolItem;
+        PoolItem *poolItem{ reinterpret_cast<PoolItem *>(item) };
+        poolItem->next = nextFree;
+        nextFree       = poolItem;
     }
 }

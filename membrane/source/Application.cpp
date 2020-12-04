@@ -11,6 +11,7 @@
 #include <Clove/Log/Log.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
 #include <Clove/Systems/RenderSystem.hpp>
+#include <Clove/ECS/World.hpp>
 
 namespace garlic::membrane {
     class ConsoleLogger : public clove::Logger::Output {
@@ -40,7 +41,7 @@ namespace garlic::membrane {
         renderTargetImageDescriptor.sharingMode = SharingMode::Concurrent;
 
         //Use pair as there seems to be an issue when using structured bindings
-        auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioAPI::OpenAl, std::move(renderTargetImageDescriptor)) };
+        auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor)) };
         app          = pair.first.release();
         renderTarget = pair.second;
 

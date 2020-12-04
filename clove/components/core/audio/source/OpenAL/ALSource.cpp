@@ -9,8 +9,8 @@
 #include <set>
 
 namespace garlic::clove {
-    ALSource::ALSource() {
-        alCall(alGenSources(1, &source));
+    ALSource::ALSource(ALuint source)
+        : source{ source  } {
     }
 
     ALSource::ALSource(ALSource &&other) noexcept = default;

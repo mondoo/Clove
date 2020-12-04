@@ -108,8 +108,8 @@ add_library(
 		${INCLUDE}/Components/CameraComponent.inl
 		${SOURCE}/Components/CameraComponent.cpp
 		${INCLUDE}/Components/CollisionResponseComponent.hpp
-		${INCLUDE}/Components/CubeColliderComponent.hpp
-		${SOURCE}/Components/CubeColliderComponent.cpp
+		${INCLUDE}/Components/CollisionShapeComponent.hpp
+		${SOURCE}/Components/CollisionShapeComponent.cpp
 		${INCLUDE}/Components/DirectionalLightComponent.hpp
 		${INCLUDE}/Components/DirectionalLightComponent.inl
 		${SOURCE}/Components/DirectionalLightComponent.cpp
@@ -129,6 +129,7 @@ add_library(
 		${INCLUDE}/Rendering/Animator.hpp
 		${SOURCE}/Rendering/Animator.cpp
 		${INCLUDE}/Rendering/Camera.hpp
+		${INCLUDE}/Rendering/Camera.inl
 		${SOURCE}/Rendering/Camera.cpp
 		${INCLUDE}/Rendering/ForwardRenderer3D.hpp
 		${SOURCE}/Rendering/ForwardRenderer3D.cpp
@@ -176,6 +177,7 @@ add_library(
 		${SOURCE}/UI/UIFrame.cpp
 
 		${INCLUDE}/Application.hpp
+		${INCLUDE}/Application.inl
 		${SOURCE}/Application.cpp
 
 		${INCLUDE}/InputEvent.hpp

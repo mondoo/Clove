@@ -16,7 +16,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKSampler() = delete;
-        VKSampler(DevicePointer device, Descriptor descriptor);
+        VKSampler(DevicePointer device, VkSampler sampler);
 
         VKSampler(VKSampler const& other) = delete;
         VKSampler(VKSampler&& other) noexcept;

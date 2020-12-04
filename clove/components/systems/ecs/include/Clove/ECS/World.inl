@@ -2,23 +2,23 @@
 
 namespace garlic::clove {
     template<typename ComponentType, typename... ConstructArgs>
-    ComponentPtr<ComponentType> World::addComponent(EntityID entityId, ConstructArgs &&... args) {
-        return componentManager.getComponentContainer<ComponentType>().addComponent(entityId, std::forward<ConstructArgs>(args)...);
+    ComponentPtr<ComponentType> World::addComponent(Entity entity, ConstructArgs &&... args) {
+        return componentManager.getComponentContainer<ComponentType>().addComponent(entity, std::forward<ConstructArgs>(args)...);
     }
 
     template<typename ComponentType>
-    ComponentPtr<ComponentType> World::getComponent(EntityID entityId) {
-        return componentManager.getComponentContainer<ComponentType>().getComponent(entityId);
+    ComponentPtr<ComponentType> World::getComponent(Entity entity) {
+        return componentManager.getComponentContainer<ComponentType>().getComponent(entity);
     }
 
     template<typename ComponentType>
-    bool World::hasComponent(EntityID entityId) {
-        return componentManager.getComponentContainer<ComponentType>().hasComponent(entityId);
+    bool World::hasComponent(Entity entity) {
+        return componentManager.getComponentContainer<ComponentType>().hasComponent(entity);
     }
 
     template<typename ComponentType>
-    void World::removeComponent(EntityID entityId) {
-        componentManager.getComponentContainer<ComponentType>().removeComponent(entityId);
+    void World::removeComponent(Entity entity) {
+        componentManager.getComponentContainer<ComponentType>().removeComponent(entity);
     }
 
     template<typename... ComponentTypes>
@@ -26,8 +26,8 @@ namespace garlic::clove {
         CLOVE_PROFILE_FUNCTION();
 
         std::vector<std::tuple<ComponentPtr<ComponentTypes>...>> componentSets;
-        for(EntityID entityID : activeIDs) {
-            std::tuple<ComponentPtr<ComponentTypes>...> tuple = std::make_tuple(getComponent<ComponentTypes>(entityID)...);
+        for(Entity entity : activeEntities) {
+            std::tuple<ComponentPtr<ComponentTypes>...> tuple = std::make_tuple(getComponent<ComponentTypes>(entity)...);
             if(checkForNullptr<0, ComponentTypes...>(tuple) != FoundState::NullptrFound) {
                 componentSets.push_back(std::move(tuple));
             }

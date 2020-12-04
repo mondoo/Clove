@@ -17,7 +17,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         VKPipelineObject() = delete;
-        VKPipelineObject(DevicePointer device, Descriptor descriptor);
+        VKPipelineObject(DevicePointer device, VkPipeline pipeline, VkPipelineLayout pipelineLayout);
 
         VKPipelineObject(VKPipelineObject const &other) = delete;
         VKPipelineObject(VKPipelineObject &&other) noexcept;

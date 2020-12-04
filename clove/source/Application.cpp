@@ -6,7 +6,7 @@
 #include "Clove/Rendering/GraphicsImageRenderTarget.hpp"
 #include "Clove/Rendering/SwapchainRenderTarget.hpp"
 
-#include <Clove/Audio/AudioFactory.hpp>
+#include <Clove/Audio/AudioDevice.hpp>
 #include <Clove/Definitions.hpp>
 #include <Clove/ECS/World.hpp>
 #include <Clove/Graphics/Graphics.hpp>
@@ -20,7 +20,7 @@ namespace garlic::clove {
 
     Application::~Application() = default;
 
-    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioAPI audioApi, WindowDescriptor windowDescriptor) {
+    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor) {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
 
         //Platform
@@ -31,14 +31,14 @@ namespace garlic::clove {
         app->renderer       = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
 
         //Audio
-        app->audioFactory = createAudioFactory(audioApi);
+        app->audioDevice = createAudioDevice(audioApi);
 
         app->world = std::make_unique<World>();
 
         return app;
     }
 
-    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioAPI audioApi, GraphicsImage::Descriptor renderTargetDescriptor) {
+    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor) {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
 
         //Graphics
@@ -49,7 +49,7 @@ namespace garlic::clove {
         app->renderer = std::make_unique<ForwardRenderer3D>(std::move(renderTarget));
 
         //Audio
-        app->audioFactory = createAudioFactory(audioApi);
+        app->audioDevice = createAudioDevice(audioApi);
 
         app->world = std::make_unique<World>();
 
@@ -90,7 +90,7 @@ namespace garlic::clove {
             window->processInput();
 
             while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
-                InputEvent const event{ *keyEvent, InputEventType::Keyboard };
+                InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
                 for(auto const &layer : layerStack) {
                     if(layer->onInputEvent(event) == InputResponse::Consumed) {
                         break;
@@ -98,7 +98,7 @@ namespace garlic::clove {
                 }
             }
             while(auto mouseEvent = window->getMouse().getEvent()) {
-                InputEvent const event{ *mouseEvent, InputEventType::Mouse };
+                InputEvent const event{ *mouseEvent, InputEvent::Type::Mouse };
                 for(auto const &layer : layerStack) {
                     if(layer->onInputEvent(event) == InputResponse::Consumed) {
                         break;
@@ -126,26 +126,6 @@ namespace garlic::clove {
         if(window != nullptr) {
             window->close();
         }
-    }
-
-    GraphicsDevice *Application::getGraphicsDevice() const {
-        return graphicsDevice.get();
-    }
-
-    AudioFactory *Application::getAudioFactory() const {
-        return audioFactory.get();
-    }
-
-    std::shared_ptr<Window> const &Application::getWindow() const {
-        return window;
-    }
-
-    ForwardRenderer3D *Application::getRenderer() const {
-        return renderer.get();
-    }
-
-    World *Application::getECSWorld() const {
-        return world.get();
     }
 
     Application::Application() {

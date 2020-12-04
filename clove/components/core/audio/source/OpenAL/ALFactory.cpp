@@ -5,40 +5,42 @@
 #include "Clove/Audio/OpenAL/ALListener.hpp"
 #include "Clove/Audio/OpenAL/ALSource.hpp"
 
-#include <Clove/Log/Log.hpp>
-
 namespace garlic::clove {
-    ALFactory::ALFactory() {
-        alDevice = alcOpenDevice(nullptr);
-        if(!alDevice) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create OpenAL device");
-            return;
-        }
-
-        alcCall(alContext = alcCreateContext(alDevice, nullptr), alDevice);
-        alcCall(alcMakeContextCurrent(alContext), alDevice);
-    }
+    ALFactory::ALFactory() = default;
 
     ALFactory::ALFactory(ALFactory &&other) noexcept = default;
 
     ALFactory &ALFactory::operator=(ALFactory &&other) noexcept = default;
 
-    ALFactory::~ALFactory() {
-        alcCall(alcMakeContextCurrent(nullptr), alDevice);
-        alcCall(alcDestroyContext(alContext), alDevice);
+    ALFactory::~ALFactory() = default;
 
-        alcCloseDevice(alDevice);
+    Expected<std::unique_ptr<AudioBuffer>, std::runtime_error> ALFactory::createAudioBuffer(AudioBuffer::Descriptor descriptor) {
+        ALuint buffer;
+        alGenBuffers(1, &buffer);
+
+        ALenum const error{ alGetError() };
+        if(error != AL_NO_ERROR) {
+            printErrorAl(error, __FILE__, __LINE__);
+            return Unexpected{ std::runtime_error{ "Failed to create AudioBuffer. See log for details." } };
+        }
+
+        return std::unique_ptr<AudioBuffer>{ std::make_unique<ALBuffer>(buffer, std::move(descriptor)) };
     }
 
-    std::unique_ptr<AudioBuffer> ALFactory::createAudioBuffer(AudioBuffer::Descriptor descriptor) {
-        return std::make_unique<ALBuffer>(std::move(descriptor));
+    Expected<std::unique_ptr<AudioSource>, std::runtime_error> ALFactory::createAudioSource() {
+        ALuint source;
+        alGenSources(1, &source);
+
+        ALenum const error{ alGetError() };
+        if(error != AL_NO_ERROR){
+            printErrorAl(error, __FILE__, __LINE__);
+            return Unexpected{ std::runtime_error{ "Failed to create AudioSource. See log for details." } };
+        }
+
+        return std::unique_ptr<AudioSource>{ std::make_unique<ALSource>(source) };
     }
 
-    std::unique_ptr<AudioSource> ALFactory::createAudioSource() {
-        return std::make_unique<ALSource>();
-    }
-
-    std::unique_ptr<AudioListener> ALFactory::createAudioListener() {
-        return std::make_unique<ALListener>();
+    Expected<std::unique_ptr<AudioListener>, std::runtime_error> ALFactory::createAudioListener() {
+        return std::unique_ptr<AudioListener>{ std::make_unique<ALListener>() };
     }
 }

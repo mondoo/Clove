@@ -2,47 +2,12 @@
 
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
-#include <fstream>
 #include <vector>
 
 namespace garlic::clove {
-    static std::vector<std::byte> readFile(std::string_view filePath) {
-        //Start at the end so we can get the file size
-        std::basic_ifstream<std::byte> file(filePath.data(), std::ios::ate | std::ios::binary);
-
-        if(!file.is_open()) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
-            return {};
-        }
-
-        size_t const fileSize = file.tellg();
-        std::vector<std::byte> buffer(fileSize);
-
-        file.seekg(0);
-        file.read(buffer.data(), fileSize);
-
-        file.close();
-
-        return buffer;
-    }
-
-    VKShader::VKShader(DevicePointer device, std::string_view filePath)
-        : VKShader(std::move(device), readFile(filePath)) {
-    }
-
-    VKShader::VKShader(DevicePointer device, std::span<std::byte const> byteCode)
-        : device(std::move(device)) {
-        VkShaderModuleCreateInfo createInfo{
-            .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-            .pNext    = nullptr,
-            .flags    = 0,
-            .codeSize = byteCode.size_bytes(),
-            .pCode    = reinterpret_cast<uint32_t const *>(std::data(byteCode)),
-        };
-
-        if(vkCreateShaderModule(this->device.get(), &createInfo, nullptr, &module) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create shader module");
-        }
+    VKShader::VKShader(DevicePointer device, VkShaderModule module)
+        : device{ std::move(device) }
+        , module{ module } {
     }
 
     VKShader::VKShader(VKShader &&other) noexcept = default;

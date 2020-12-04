@@ -100,6 +100,9 @@ namespace garlic::clove {
             flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
         }
         body->setCollisionFlags(flags);
+
+        //Use nullptr here as using bullet's default motion state causes issues with transforms with parents.
+        body->setMotionState(nullptr);
     }
 
     std::unique_ptr<btSphereShape> RigidBodyComponent::createStandInShape() {

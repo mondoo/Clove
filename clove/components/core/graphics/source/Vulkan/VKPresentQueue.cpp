@@ -8,9 +8,9 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
-    VKPresentQueue::VKPresentQueue(DevicePointer device, uint32_t queueFamilyIndex)
-        : device(std::move(device)) {
-        vkGetDeviceQueue(this->device.get(), queueFamilyIndex, 0, &queue);
+    VKPresentQueue::VKPresentQueue(DevicePointer device, VkQueue queue)
+        : device{ std::move(device) }
+        , queue{ queue } {
     }
 
     VKPresentQueue::VKPresentQueue(VKPresentQueue &&other) noexcept = default;
@@ -39,7 +39,7 @@ namespace garlic::clove {
             .pImageIndices      = imageIndices,
         };
 
-        VkResult const result{vkQueuePresentKHR(queue, &vkpresentInfo)};
+        VkResult const result{ vkQueuePresentKHR(queue, &vkpresentInfo) };
 
         return convertResult(result);
     }

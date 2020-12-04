@@ -20,12 +20,12 @@ namespace garlic::clove {
         vertexOffset = 0;
         indexOffset  = vertexBufferSize;
 
-        auto transferQueue = factory.createTransferQueue({ QueueFlags::Transient });
+        auto transferQueue{ *factory.createTransferQueue({ QueueFlags::Transient }) };
 
         std::shared_ptr<TransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
 
         //Staging buffer
-        auto stagingBuffer = factory.createBuffer(GraphicsBuffer::Descriptor{
+        auto stagingBuffer = *factory.createBuffer(GraphicsBuffer::Descriptor{
             .size        = totalSize,
             .usageFlags  = GraphicsBuffer::UsageMode::TransferSource,
             .sharingMode = SharingMode::Exclusive,
@@ -33,7 +33,7 @@ namespace garlic::clove {
         });
 
         //Buffer
-        buffer = factory.createBuffer(GraphicsBuffer::Descriptor{
+        buffer = *factory.createBuffer(GraphicsBuffer::Descriptor{
             .size        = totalSize,
             .usageFlags  = GraphicsBuffer::UsageMode::TransferDestination | GraphicsBuffer::UsageMode::VertexBuffer | GraphicsBuffer::UsageMode::IndexBuffer,
             .sharingMode = SharingMode::Concurrent,
@@ -49,7 +49,7 @@ namespace garlic::clove {
         transferCommandBuffer->copyBufferToBuffer(*stagingBuffer, 0, *buffer, 0, totalSize);
         transferCommandBuffer->endRecording();
 
-        auto transferQueueFinishedFence = factory.createFence({ false });
+        auto transferQueueFinishedFence{ *factory.createFence({ false }) };
 
         transferQueue->submit({ TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer } } }, transferQueueFinishedFence.get());
 

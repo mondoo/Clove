@@ -5,13 +5,13 @@
 #include <variant>
 
 namespace garlic::clove {
-    enum class InputEventType {
-        Keyboard,
-        Mouse
-    };
-
     struct InputEvent {
+        enum class Type {
+            Keyboard,
+            Mouse
+        };
+
         std::variant<Keyboard::Event, Mouse::Event> event;
-        InputEventType eventType;
+        Type eventType;
     };
 }

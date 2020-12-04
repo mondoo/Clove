@@ -14,7 +14,7 @@ namespace garlic::clove {
      * @brief A CollisionResponseComponent exposes collision callbacks for an Entity.
      * @details Everytime a callback is triggered means another entity has collided
      * with this entity. Note that on it's own this component does nothing. The Entity
-     * needs a RigidBodyComponent or a ColliderComponent to response to collisions.
+     * needs a RigidBodyComponent or a CollisionShapeComponent to response to collisions.
      */
     class CollisionResponseComponent : public Component<CollisionResponseComponent> {
         //VARIABLES

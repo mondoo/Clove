@@ -23,17 +23,19 @@
 #include <Clove/Log/Log.hpp>
 #include <set>
 
+CLOVE_DECLARE_LOG_CATEGORY(VULKAN)
+
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messagType,
     VkDebugUtilsMessengerCallbackDataEXT const *pCallbackData,
     void *pUserData) {
     if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) != 0) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Trace, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_VULKAN, garlic::clove::LogLevel::Trace, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) != 0) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Warning, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_VULKAN, garlic::clove::LogLevel::Warning, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) != 0) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, garlic::clove::LogLevel::Error, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_VULKAN, garlic::clove::LogLevel::Error, pCallbackData->pMessage);
     }
 
     return VK_FALSE;
@@ -139,57 +141,27 @@ namespace garlic::clove {
         return true;
     }
 
-    static SwapchainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface) {
-        SwapchainSupportDetails details;
-
-        //Surface capabilities
-        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
-
-        //Surface formats
-        uint32_t formatCount;
-        vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
-
-        if(formatCount > 0) {
-            details.formats.resize(formatCount);
-            vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
-        }
-
-        //Surface presentation modes
-        uint32_t presentModeCount;
-        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
-
-        if(presentModeCount > 0) {
-            details.presentModes.resize(presentModeCount);
-            vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
-        }
-
-        return details;
-    }
-
     static bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, std::vector<char const *> const &extensions) {
-        //TODO: It might be better to give each physical device a score in future, so we can try and get the best one but fall back to others if not
-
-        //Feature (texture compression, 64 bit floats, multi viewport rendering)
         VkPhysicalDeviceFeatures deviceFeatures;
         vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
-        QueueFamilyIndices indices        = findQueueFamilies(device, surface);
-        bool const extentionsAreSupported = checkDeviceExtensionsSupport(device, extensions);
+        QueueFamilyIndices indices{ findQueueFamilies(device, surface) };
+        bool const extentionsAreSupported{ checkDeviceExtensionsSupport(device, extensions) };
 
-        std::optional<bool> swapChainIsAdequate{};
+        std::optional<bool> surfaceIsAdequate{};
         if(extentionsAreSupported) {
             //If we don't have a surface then we're headless
             if(surface != VK_NULL_HANDLE) {
-                SwapchainSupportDetails const swapChainSupport{ querySwapChainSupport(device, surface) };
-                //We'll consider the swap chain adequate if we have one supported image format and presentation mode
-                swapChainIsAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+                SurfaceSupportDetails const surfaceSupport{ SurfaceSupportDetails::query(device, surface) };
+                //We'll consider the surface adequate if we have one supported image format and presentation mode
+                surfaceIsAdequate = !surfaceSupport.formats.empty() && !surfaceSupport.presentModes.empty();
             }
         } else {
-            swapChainIsAdequate = false;
+            surfaceIsAdequate = false;
         }
 
         bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
-        return indices.isComplete(requirePresentFamily) && extentionsAreSupported && swapChainIsAdequate.value_or(true) && deviceFeatures.samplerAnisotropy;
+        return indices.isComplete(requirePresentFamily) && extentionsAreSupported && surfaceIsAdequate.value_or(true) && deviceFeatures.samplerAnisotropy;
     }
 
     VKGraphicsDevice::VKGraphicsDevice(std::any nativeWindow) {
@@ -290,7 +262,7 @@ namespace garlic::clove {
 #elif CLOVE_PLATFORM_MACOS
             CLOVE_ASSERT(false, "Vulkan implementation not provided on MacOS");
 #elif CLOVE_PLATFORM_LINUX
-            auto const [display, window] = std::any_cast<std::pair<Display * , ::Window>>(nativeWindow);
+            auto const [display, window] = std::any_cast<std::pair<Display *, ::Window>>(nativeWindow);
 
             VkXlibSurfaceCreateInfoKHR createInfo{
                 .sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
@@ -391,12 +363,8 @@ namespace garlic::clove {
             }
         }
 
-        devicePtr = DevicePointer(instance, surface, physicalDevice, logicalDevice, debugMessenger);
-        if(surface != VK_NULL_HANDLE) {
-            factory = std::make_shared<VKGraphicsFactory>(devicePtr, std::move(queueFamilyIndices), querySwapChainSupport(physicalDevice, surface));
-        } else {
-            factory = std::make_shared<VKGraphicsFactory>(devicePtr, std::move(queueFamilyIndices), std::nullopt);
-        }
+        devicePtr = DevicePointer{ instance, surface, physicalDevice, logicalDevice, debugMessenger };
+        factory   = std::make_shared<VKGraphicsFactory>(devicePtr, std::move(queueFamilyIndices));
     }
 
     VKGraphicsDevice::VKGraphicsDevice(VKGraphicsDevice &&other) noexcept = default;

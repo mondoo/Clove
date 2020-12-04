@@ -3,12 +3,13 @@
 #include "Clove/Application.hpp"
 
 #include <Clove/Audio/AudioBuffer.hpp>
+#include <Clove/Audio/AudioDevice.hpp>
 #include <Clove/Audio/AudioFactory.hpp>
 #include <Clove/Audio/AudioSource.hpp>
 
 namespace garlic::clove {
     AudioSourceComponent::AudioSourceComponent() {
-        source = Application::get().getAudioFactory()->createAudioSource();
+        source = *Application::get().getAudioDevice()->getAudioFactory()->createAudioSource();
     }
 
     AudioSourceComponent::AudioSourceComponent(AudioSourceComponent &&other) noexcept = default;

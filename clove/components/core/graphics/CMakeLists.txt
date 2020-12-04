@@ -53,8 +53,6 @@ add_library(
 		${SOURCE}/Vulkan/VKBuffer.cpp
 		${INCLUDE}/Vulkan/VKCommandBuffer.hpp
 		${SOURCE}/Vulkan/VKCommandBuffer.cpp
-		${INCLUDE}/Vulkan/VKDescriptor.hpp
-		${SOURCE}/Vulkan/VKDescriptor.cpp
 		${INCLUDE}/Vulkan/VKDescriptorPool.hpp
 		${INCLUDE}/Vulkan/VKDescriptorPool.inl
 		${SOURCE}/Vulkan/VKDescriptorPool.cpp
@@ -89,8 +87,6 @@ add_library(
 		${SOURCE}/Vulkan/VKPipelineObject.cpp
 		${INCLUDE}/Vulkan/VKPresentQueue.hpp
 		${SOURCE}/Vulkan/VKPresentQueue.cpp
-		${INCLUDE}/Vulkan/VKQueue.hpp
-		${SOURCE}/Vulkan/VKQueue.cpp
 		${INCLUDE}/Vulkan/VKRenderPass.hpp
 		${SOURCE}/Vulkan/VKRenderPass.cpp
 		${INCLUDE}/Vulkan/VKResult.hpp
