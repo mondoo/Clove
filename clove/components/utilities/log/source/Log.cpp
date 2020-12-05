@@ -4,6 +4,8 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
+#include <iostream>
+
 namespace garlic::clove {
     class SpdLogOutput : public Logger::Output {
         //VARIABLES
@@ -45,5 +47,9 @@ namespace garlic::clove {
         }
     };
 
-    std::unique_ptr<Logger::Output> Logger::out = std::make_unique<SpdLogOutput>();
+    Logger::Logger()
+        : out{ std::make_unique<SpdLogOutput>() } {
+    }
+
+    Logger::~Logger() = default;
 }
