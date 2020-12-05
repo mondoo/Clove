@@ -6,6 +6,6 @@ namespace Garlic.Bulb
     {
         public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
 
-        protected void OnPropertyChanged(object sender, PropertyChangedEventArgs e) => PropertyChanged(sender, e);
+        protected void OnPropertyChanged(string propertyName) => PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
     }
 }

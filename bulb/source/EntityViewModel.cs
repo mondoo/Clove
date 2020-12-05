@@ -13,7 +13,7 @@ namespace Garlic.Bulb
             set
             {
                 name = value;
-                OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(Name)));
+                OnPropertyChanged(nameof(Name));
             }
         }
         private string name = "New Entity";

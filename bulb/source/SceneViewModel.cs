@@ -18,7 +18,7 @@ namespace Garlic.Bulb
             set
             {
                 logText = value;
-                OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(LogText)));
+                OnPropertyChanged(nameof(LogText));
             }
         }
         private string logText;
@@ -31,8 +31,8 @@ namespace Garlic.Bulb
             set
             {
                 selectedEntity = value;
-                OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedEntity)));
-                OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(EntityViewVisibility)));
+                OnPropertyChanged(nameof(SelectedEntity));
+                OnPropertyChanged(nameof(EntityViewVisibility));
             }
         }
         private EntityViewModel selectedEntity;
