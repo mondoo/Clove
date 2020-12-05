@@ -30,7 +30,7 @@ namespace garlic::membrane {
         using namespace garlic::clove;
 
         //Set the logger for Clove to redirect to System.Console
-        Logger::setOutput(std::make_unique<ConsoleLogger>());
+        Logger::get().setOutput(std::make_unique<ConsoleLogger>());
 
         //Hard coding format to B8G8R8A8_SRGB
         GraphicsImage::Descriptor renderTargetImageDescriptor{};

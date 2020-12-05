@@ -1,10 +1,10 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <string_view>
-#include <memory>
 
-#define CLOVE_DECLARE_LOG_CATEGORY(categoryName)                \
+#define CLOVE_DECLARE_LOG_CATEGORY(categoryName)                 \
     struct LOG_CATEGORY_##categoryName {                         \
         static std::string_view constexpr name{ #categoryName }; \
     };
@@ -32,31 +32,36 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        static std::unique_ptr<Output> out;
+        std::unique_ptr<Output> out;
 
         //FUNCTIONS
     public:
-        static inline void setOutput(std::unique_ptr<Output> newOut);
+        Logger();
+        ~Logger();
+
+        static inline Logger &get();
+
+        inline void setOutput(std::unique_ptr<Output> newOut);
 
         template<typename... Args>
-        static void log(std::string_view category, LogLevel level, std::string_view msg, Args &&... args);
+        void log(std::string_view category, LogLevel level, std::string_view msg, Args &&... args);
     };
 }
 
-#define CLOVE_LOG(category, level, ...) ::garlic::clove::Logger::log(category::name, level, __VA_ARGS__);
+#define CLOVE_LOG(category, level, ...) ::garlic::clove::Logger::get().log(category::name, level, __VA_ARGS__);
 #if CLOVE_DEBUG
-    #define CLOVE_LOG_DEBUG(category, level, ...) ::garlic::clove::Logger::log(category::name, level, __VA_ARGS__);
+    #define CLOVE_LOG_DEBUG(category, level, ...) ::garlic::clove::Logger::get().log(category::name, level, __VA_ARGS__);
 #else
     #define CLOVE_LOG_DEBUG(category, level, ...)
 #endif
 
 #if CLOVE_ENABLE_ASSERTIONS
-    #define CLOVE_ASSERT(x, ...)                                                                                        \
-        {                                                                                                                \
-            if(!(x)) {                                                                                                   \
+    #define CLOVE_ASSERT(x, ...)                                                                                       \
+        {                                                                                                              \
+            if(!(x)) {                                                                                                 \
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, ::garlic::clove::LogLevel::Error, "Assertion Failed: {0}", __VA_ARGS__); \
-                CLOVE_DEBUG_BREAK;                                                                                      \
-            }                                                                                                            \
+                CLOVE_DEBUG_BREAK;                                                                                     \
+            }                                                                                                          \
         }
 #else
     #define CLOVE_ASSERT(x, ...) (x)

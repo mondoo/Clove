@@ -1,6 +1,16 @@
 #include <spdlog/fmt/fmt.h>
 
 namespace garlic::clove {
+    Logger &Logger::get(){
+        static Logger *instance{ nullptr };
+
+        if(instance == nullptr){
+            instance = new Logger;
+        }
+
+        return *instance;
+    }
+
     void Logger::setOutput(std::unique_ptr<Output> newOut) {
         out = std::move(newOut);
     };
