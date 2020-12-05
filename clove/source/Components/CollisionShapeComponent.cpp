@@ -3,8 +3,11 @@
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 #include <btBulletDynamicsCommon.h>
 
+template<typename... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
+
 namespace garlic::clove {
-    CollisionShapeComponent::CollisionShapeComponent(CollisionShape shape)
+    CollisionShapeComponent::CollisionShapeComponent(ShapeVariant shape)
         : shape(std::move(shape)) {
         initialiseCollisionShape();
     }
@@ -28,28 +31,21 @@ namespace garlic::clove {
 
     CollisionShapeComponent::~CollisionShapeComponent() = default;
 
-    void CollisionShapeComponent::setShape(CollisionShape shape) {
+    void CollisionShapeComponent::setShape(ShapeVariant shape) {
         shape = std::move(shape);
         initialiseCollisionShape();
     }
 
-    CollisionShape const &CollisionShapeComponent::getShape() const {
+    ShapeVariant const &CollisionShapeComponent::getShape() const {
         return shape;
     }
 
     void CollisionShapeComponent::initialiseCollisionShape() {
-        switch(shape.type) {
-            case ShapeType::Sphere: {
-                auto const sphere{ std::get<SphereShape>(shape.shape) };
-                collisionShape = std::make_unique<btSphereShape>(sphere.radius);
-            } break;
-            case ShapeType::Cube: {
-                auto const cube{ std::get<CubeShape>(shape.shape) };
-                collisionShape = std::make_unique<btBoxShape>(btVector3{ cube.halfExtents.x, cube.halfExtents.y, cube.halfExtents.z });
-            } break;
-            default:
-                break;
-        }
+        std::visit(overloaded{
+           [&](SphereShape sphere) { collisionShape = std::make_unique<btSphereShape>(sphere.radius); },
+           [&](CubeShape cube) { collisionShape = std::make_unique<btBoxShape>(btVector3{ cube.halfExtents.x, cube.halfExtents.y, cube.halfExtents.z }); }
+        }, shape);
+
         constructCollisionObject();
     }
 

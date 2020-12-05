@@ -21,10 +21,7 @@ namespace garlic::clove{
         vec3f halfExtents{ 1.0f, 1.0f, 1.0f };
     };
 
-    struct CollisionShape{
-        ShapeType type;
-        std::variant<SphereShape, CubeShape> shape;
-    };
+    using ShapeVariant = std::variant<SphereShape, CubeShape>;
 }
 
 namespace garlic::clove {
@@ -45,12 +42,12 @@ namespace garlic::clove {
         std::unique_ptr<btCollisionShape> collisionShape;
         std::unique_ptr<btGhostObject> collisionObject; /**< Acts as a stand in until the Entity has a RigidBodyComponent. */
 
-        CollisionShape shape;
+        ShapeVariant shape;
 
         //FUNCTIONS
     public:
         CollisionShapeComponent() = delete;
-        CollisionShapeComponent(CollisionShape shape);
+        CollisionShapeComponent(ShapeVariant shape);
 
         CollisionShapeComponent(CollisionShapeComponent const &other);
         CollisionShapeComponent(CollisionShapeComponent &&other) noexcept;
@@ -60,8 +57,8 @@ namespace garlic::clove {
 
         ~CollisionShapeComponent();
 
-        void setShape(CollisionShape shape);
-        CollisionShape const &getShape() const;
+        void setShape(ShapeVariant shape);
+        ShapeVariant const &getShape() const;
 
     private:
         void initialiseCollisionShape();
