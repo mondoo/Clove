@@ -4,6 +4,10 @@
 #include <Clove/Layer.hpp>
 #include <vector>
 
+namespace garlic::clove{
+    class World;
+}
+
 namespace garlic::membrane {
     /**
      * @brief The layer that contains all the run time components.
@@ -12,17 +16,18 @@ namespace garlic::membrane {
      */
     class RuntimeLayer : public clove::Layer {
         //VARIABLES
-    private:
-        std::vector<clove::Entity> runtimeEntities;
+        private:
+            clove::World *ecsWorld{ nullptr };
+            std::vector<clove::Entity> runtimeEntities;
 
-        //FUNCTIONS
-    public:
-        RuntimeLayer()
-            : clove::Layer("Runtime Layer") {}
+            //FUNCTIONS
+        public:
+            RuntimeLayer();
 
-        void onAttach() override;
-        void onDetach() override;
+            void onAttach() override;
+            void onDetach() override;
 
-        void addEntity();
+            clove::Entity addEntity();
+            void removeEntity(clove::Entity entity);
     };
 }

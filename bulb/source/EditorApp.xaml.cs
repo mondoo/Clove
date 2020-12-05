@@ -17,13 +17,13 @@ namespace Garlic.Bulb
     public partial class EditorApp : Application
     {
         private MainWindow editorWindow;
-        private SceneViewModel sceneViewModel;
 
         private EditorLogger editorLogger;
 
         private Membrane.Application engineApp;
 
-        private WriteableBitmap imageSource; //Owning this here for now as the UI thread needs to lock it
+        //TODO: Move to MainWindow
+        private WriteableBitmap imageSource;
         private IntPtr backBuffer;
 
         private Thread engineThread;
@@ -36,17 +36,24 @@ namespace Garlic.Bulb
 
         private void EditorStartup(object sender, StartupEventArgs e)
         {
-            sceneViewModel = new SceneViewModel();
-            sceneViewModel.CreateEntity = CreateEntity;
+            //Initialise the editor window
+            var sessionVM = new EditorSessionViewModel();
+            sessionVM.OnCreateEntity += () =>
+            {
+                lock (updateEngineLock)
+                {
+                    return engineApp.addEntity();
+                }
+            };
 
+            editorWindow = new MainWindow();
+            editorWindow.DataContext = sessionVM;
+
+            //Forward the logs to the editor's window
             editorLogger = new EditorLogger();
-            editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => sceneViewModel.LogText += e2.Text;
+            editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => sessionVM.Scene.LogText += e2.Text;
 
             Console.SetOut(editorLogger);
-
-            //Initialise the editor window
-            editorWindow = new MainWindow();
-            editorWindow.DataContext = sceneViewModel;
 
             editorWindow.RenderArea.SizeChanged += OnRenderAreaSizeChanged;
             editorWindow.Closing += StopEngine;
@@ -65,14 +72,6 @@ namespace Garlic.Bulb
             engineThread = new Thread(new ThreadStart(RunEngineApplication));
             engineThread.Name = "Garlic application thread";
             engineThread.Start();
-        }
-
-        private void CreateEntity()
-        {
-            lock (updateEngineLock)
-            {
-                engineApp.addEntity();
-            }
         }
 
         private void OnRenderAreaSizeChanged(object sender, SizeChangedEventArgs e)

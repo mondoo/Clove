@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Clove/Application.hpp>
+#include <Clove/ECS/Entity.hpp>
 
 namespace garlic::clove {
     class GraphicsImageRenderTarget;
@@ -12,6 +13,9 @@ namespace garlic::membrane{
 }
 
 namespace garlic::membrane {
+    /**
+     * @brief Translates a Clove session into C++/CLI
+     */
 public ref class Application {
     private:
         clove::Application *app;
@@ -35,6 +39,7 @@ public ref class Application {
 
         void resize(int width, int height);
 
-        void addEntity();
+        clove::Entity addEntity();
+        void removeEntity(clove::Entity entity);
     };
 }

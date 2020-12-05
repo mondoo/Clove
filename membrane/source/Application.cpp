@@ -32,12 +32,11 @@ namespace garlic::membrane {
         //Set the logger for Clove to redirect to System.Console
         Logger::get().setOutput(std::make_unique<ConsoleLogger>());
 
-        //Hard coding format to B8G8R8A8_SRGB
         GraphicsImage::Descriptor renderTargetImageDescriptor{};
         renderTargetImageDescriptor.type        = GraphicsImage::Type::_2D;
         renderTargetImageDescriptor.usageFlags  = GraphicsImage::UsageMode::ColourAttachment | GraphicsImage::UsageMode::TransferSource;
         renderTargetImageDescriptor.dimensions  = { width, height };
-        renderTargetImageDescriptor.format      = GraphicsImage::Format::B8G8R8A8_SRGB;
+        renderTargetImageDescriptor.format      = GraphicsImage::Format::B8G8R8A8_SRGB;//Hard coding format to B8G8R8A8_SRGB as that is what the WriteableBitmap is set to
         renderTargetImageDescriptor.sharingMode = SharingMode::Concurrent;
 
         //Use pair as there seems to be an issue when using structured bindings
@@ -94,7 +93,11 @@ namespace garlic::membrane {
         this->height = height;
     }
 
-    void Application::addEntity() {
-        (*runtimeLayer)->addEntity();
+    clove::Entity Application::addEntity() {
+        return (*runtimeLayer)->addEntity();
+    }
+
+    void Application::removeEntity(clove::Entity entity) {
+        (*runtimeLayer)->removeEntity(entity);
     }
 }

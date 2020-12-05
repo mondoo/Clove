@@ -5,13 +5,15 @@ using System.Windows;
 
 namespace Garlic.Bulb
 {
+    /// <summary>
+    /// The View Model for the editor's current scene.
+    /// </summary>
     public class SceneViewModel : ViewModel
     {
-        //Commands
-        public ICommand CreateEntityCommand { get; private set; }
-        public ICommand AddComponentCommand { get; private set; }
+        public ICommand CreateEntityCommand { get; }
+        public ICommand AddComponentCommand { get; }
 
-        //Properties
+        //TODO: Move to it's own view model
         public string LogText
         {
             get { return logText; }
@@ -45,31 +47,23 @@ namespace Garlic.Bulb
             }
         }
 
-        public delegate void AddEntityEventHandler();
-        public AddEntityEventHandler CreateEntity;
+        public delegate EntityViewModel AddEntityEventHandler();
+        public AddEntityEventHandler OnCreateEntity;
 
         public SceneViewModel()
         {
             CreateEntityCommand = new RelayCommand(() =>
             {
-                if (CreateEntity != null)
+                if (OnCreateEntity != null)
                 {
-                    CreateEntity.Invoke();
-
-                    var entityVM = new EntityViewModel();
-                    entityVM.OnSelected += (EntityViewModel viewModel) => SelectedEntity = viewModel;
+                    var entityVM = OnCreateEntity.Invoke();
+                    entityVM.OnSelected = (EntityViewModel viewModel) => SelectedEntity = viewModel;
 
                     Entities.Add(entityVM);
                 }
             });
 
-            AddComponentCommand = new RelayCommand(() =>
-            {
-                if (SelectedEntity != null)
-                {
-                    SelectedEntity.Components.Add(new object());
-                }
-            });
+            AddComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent());
         }
     };
 }

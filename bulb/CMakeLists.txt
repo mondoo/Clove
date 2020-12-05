@@ -20,8 +20,9 @@ add_executable(
 
 		${SOURCE}/RelayCommand.cs
 		
-		${SOURCE}/EntityViewModel.cs
+		${SOURCE}/EditorSessionViewModel.cs
 		${SOURCE}/SceneViewModel.cs
+		${SOURCE}/EntityViewModel.cs
 		
 		${SOURCE}/EditorLogger.cs
 )
