@@ -9,14 +9,16 @@ namespace Garlic.Bulb
     {
         public SceneViewModel Scene
         {
-            get { return sceneViewModel; }
+            get { return scene; }
             set
             {
-                sceneViewModel = value;
+                scene = value;
                 OnPropertyChanged(nameof(Scene));
             }
         }
-        private SceneViewModel sceneViewModel;
+        private SceneViewModel scene;
+
+        public LogViewModel Log { get; } = new LogViewModel();
 
         public delegate uint AddEntityEventHandler(); //Expecting a uint here as that's what a 
         public AddEntityEventHandler OnCreateEntity;

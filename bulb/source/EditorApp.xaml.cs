@@ -51,7 +51,7 @@ namespace Garlic.Bulb
 
             //Forward the logs to the editor's window
             editorLogger = new EditorLogger();
-            editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => sessionVM.Scene.LogText += e2.Text;
+            editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => sessionVM.Log.LogText += e2.Text;
 
             Console.SetOut(editorLogger);
 

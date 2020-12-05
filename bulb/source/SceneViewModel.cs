@@ -13,18 +13,6 @@ namespace Garlic.Bulb
         public ICommand CreateEntityCommand { get; }
         public ICommand AddComponentCommand { get; }
 
-        //TODO: Move to it's own view model
-        public string LogText
-        {
-            get { return logText; }
-            set
-            {
-                logText = value;
-                OnPropertyChanged(nameof(LogText));
-            }
-        }
-        private string logText;
-
         public ObservableCollection<EntityViewModel> Entities { get; } = new ObservableCollection<EntityViewModel>();
 
         public EntityViewModel SelectedEntity

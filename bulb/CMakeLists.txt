@@ -23,6 +23,7 @@ add_executable(
 		${SOURCE}/EditorSessionViewModel.cs
 		${SOURCE}/SceneViewModel.cs
 		${SOURCE}/EntityViewModel.cs
+		${SOURCE}/LogViewModel.cs
 		
 		${SOURCE}/EditorLogger.cs
 )
