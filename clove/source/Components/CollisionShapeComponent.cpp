@@ -5,6 +5,8 @@
 
 template<typename... Ts>
 struct match : Ts... { using Ts::operator()...; };
+template<typename... Ts>
+match(Ts...) -> match<Ts...>;
 
 namespace garlic::clove {
     CollisionShapeComponent::CollisionShapeComponent(ShapeVariant shape)
