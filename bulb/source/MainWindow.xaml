@@ -48,7 +48,7 @@
 			<ListBox ItemsSource="{Binding Scene.SelectedEntity.Components}">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
-						<ListBoxItem Content="Test Component"/>
+						<ListBoxItem Content="{Binding Name}"/>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>

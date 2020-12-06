@@ -26,15 +26,26 @@ namespace Garlic.Bulb
         public EditorSessionViewModel()
         {
             Scene = new SceneViewModel();
-            Scene.OnCreateEntity += () =>
-            {
-                var entityId = OnCreateEntity?.Invoke();
-                var entityVm = new EntityViewModel();
+            Scene.OnCreateEntity = CreateEntity;
+        }
 
-                entityVm.OnAddComponent = () => Console.WriteLine("Component added to (id): " + entityId);
+        private EntityViewModel CreateEntity()
+        {
+            var entityId = OnCreateEntity.Invoke();
+            var entityVm = new EntityViewModel();
 
-                return entityVm;
-            };
+            entityVm.OnAddComponent = () => CreateComponent(entityId);
+
+            return entityVm;
+        }
+
+        private ComponentViewModel CreateComponent(uint entityId)
+        {
+            Console.WriteLine($"Component created for: {entityId}");
+            var vm = new ComponentViewModel();
+            vm.Name = "Custom comp";
+
+            return vm;
         }
     }
 }

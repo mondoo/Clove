@@ -24,6 +24,7 @@ add_executable(
 		${SOURCE}/SceneViewModel.cs
 		${SOURCE}/EntityViewModel.cs
 		${SOURCE}/LogViewModel.cs
+		${SOURCE}/ComponentViewModel.cs
 		
 		${SOURCE}/EditorLogger.cs
 )

@@ -18,14 +18,14 @@ namespace Garlic.Bulb
         }
         private string name = "New Entity";
 
-        public ObservableCollection<object> Components { get; } = new ObservableCollection<object>();
+        public ObservableCollection<ComponentViewModel> Components { get; } = new ObservableCollection<ComponentViewModel>();
 
         public ICommand SelectedCommand { get; }
 
         public delegate void SelectionHandler(EntityViewModel viewModel);
         public SelectionHandler OnSelected;
 
-        public delegate void AddComponentHandler();
+        public delegate ComponentViewModel AddComponentHandler();
         public AddComponentHandler OnAddComponent;
 
         public EntityViewModel()
@@ -35,8 +35,7 @@ namespace Garlic.Bulb
 
         //TODO: Take in a component type
         public void AddComponent(){
-            OnAddComponent?.Invoke();
-            Components.Add(new object());//Debug
+            Components.Add(OnAddComponent?.Invoke());
         }
     }
 }
