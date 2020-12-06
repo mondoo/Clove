@@ -34,16 +34,16 @@ namespace Garlic.Bulb
             var entityId = OnCreateEntity.Invoke();
             var entityVm = new EntityViewModel();
 
-            entityVm.OnAddComponent = () => CreateComponent(entityId);
+            entityVm.OnAddComponent = (componentType) => CreateComponent(entityId, componentType);
 
             return entityVm;
         }
 
-        private ComponentViewModel CreateComponent(uint entityId)
+        private ComponentViewModel CreateComponent(uint entityId, ComponentType componentType)
         {
-            Console.WriteLine($"Component created for: {entityId}");
+            Console.WriteLine($"{componentType} component created for: {entityId}");
             var vm = new ComponentViewModel();
-            vm.Name = "Custom comp";
+            vm.Name = $"{componentType}";
 
             return vm;
         }

@@ -54,8 +54,8 @@
 			</ListBox>
 			<Menu HorizontalAlignment="Center">
 				<MenuItem Header="Add Component">
-					<MenuItem Header="Transform Component" Command="{Binding Scene.AddComponentCommand}"/>
-					<MenuItem Header="Mesh Component" Command="{Binding Scene.AddComponentCommand}"/>
+					<MenuItem Header="Transform Component" Command="{Binding Scene.AddTransformComponentCommand}"/>
+					<MenuItem Header="Mesh Component" Command="{Binding Scene.AddMeshComponentCommand}"/>
 				</MenuItem>
 			</Menu>
 		</StackPanel>

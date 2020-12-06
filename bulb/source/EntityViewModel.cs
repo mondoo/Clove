@@ -5,6 +5,11 @@ using System.Windows.Input;
 
 namespace Garlic.Bulb
 {
+    public enum ComponentType {
+        Transform,
+        Mesh
+    }
+
     public class EntityViewModel : ViewModel
     {
         public string Name
@@ -25,7 +30,7 @@ namespace Garlic.Bulb
         public delegate void SelectionHandler(EntityViewModel viewModel);
         public SelectionHandler OnSelected;
 
-        public delegate ComponentViewModel AddComponentHandler();
+        public delegate ComponentViewModel AddComponentHandler(ComponentType componentType);
         public AddComponentHandler OnAddComponent;
 
         public EntityViewModel()
@@ -33,9 +38,8 @@ namespace Garlic.Bulb
             SelectedCommand = new RelayCommand(() => OnSelected?.Invoke(this));
         }
 
-        //TODO: Take in a component type
-        public void AddComponent(){
-            Components.Add(OnAddComponent?.Invoke());
+        public void AddComponent(ComponentType componentType) {
+            Components.Add(OnAddComponent?.Invoke(componentType));
         }
     }
 }

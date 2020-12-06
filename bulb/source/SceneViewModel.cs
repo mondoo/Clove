@@ -11,7 +11,8 @@ namespace Garlic.Bulb
     public class SceneViewModel : ViewModel
     {
         public ICommand CreateEntityCommand { get; }
-        public ICommand AddComponentCommand { get; }
+        public ICommand AddTransformComponentCommand { get; }
+        public ICommand AddMeshComponentCommand { get; }
 
         public ObservableCollection<EntityViewModel> Entities { get; } = new ObservableCollection<EntityViewModel>();
 
@@ -51,7 +52,8 @@ namespace Garlic.Bulb
                 }
             });
 
-            AddComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent());
+            AddTransformComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(ComponentType.Transform));
+            AddMeshComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(ComponentType.Mesh));
         }
     };
 }
