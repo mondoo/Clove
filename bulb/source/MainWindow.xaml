@@ -52,7 +52,12 @@
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>
-			<Button Content="Add Component" Command="{Binding Scene.AddComponentCommand}"/>
+			<Menu HorizontalAlignment="Center">
+				<MenuItem Header="Add Component">
+					<MenuItem Header="Transform Component" Command="{Binding Scene.AddComponentCommand}"/>
+					<MenuItem Header="Mesh Component" Command="{Binding Scene.AddComponentCommand}"/>
+				</MenuItem>
+			</Menu>
 		</StackPanel>
 	</Grid>
 </Window>
