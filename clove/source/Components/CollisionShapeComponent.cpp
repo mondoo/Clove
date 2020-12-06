@@ -4,7 +4,9 @@
 #include <btBulletDynamicsCommon.h>
 
 template<typename... Ts>
-struct overloaded : Ts... { using Ts::operator()...; };
+struct match : Ts... { using Ts::operator()...; };
+template<typename... Ts>
+match(Ts...) -> match<Ts...>;
 
 namespace garlic::clove {
     CollisionShapeComponent::CollisionShapeComponent(ShapeVariant shape)
@@ -41,7 +43,7 @@ namespace garlic::clove {
     }
 
     void CollisionShapeComponent::initialiseCollisionShape() {
-        std::visit(overloaded{
+        std::visit(match{
            [&](SphereShape sphere) { collisionShape = std::make_unique<btSphereShape>(sphere.radius); },
            [&](CubeShape cube) { collisionShape = std::make_unique<btBoxShape>(btVector3{ cube.halfExtents.x, cube.halfExtents.y, cube.halfExtents.z }); }
         }, shape);
