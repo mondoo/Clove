@@ -10,6 +10,11 @@ namespace garlic::clove {
 namespace garlic::membrane{
     class EditorLayer;
     class RuntimeLayer;
+
+    public enum class ComponentType {
+        Transform,
+        Mesh
+    };
 }
 
 namespace garlic::membrane {
@@ -41,5 +46,7 @@ public ref class Application {
 
         clove::Entity addEntity();
         void removeEntity(clove::Entity entity);
+
+        void createComponent(clove::Entity entity, ComponentType componentType);
     };
 }

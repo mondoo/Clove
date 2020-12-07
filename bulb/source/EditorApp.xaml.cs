@@ -38,11 +38,18 @@ namespace Garlic.Bulb
         {
             //Initialise the editor window
             var sessionVM = new EditorSessionViewModel();
-            sessionVM.OnCreateEntity += () =>
+            sessionVM.OnCreateEntity = () =>
             {
                 lock (updateEngineLock)
                 {
                     return engineApp.addEntity();
+                }
+            };
+            sessionVM.OnCreateComponent = (entityId, componentType) =>
+            {
+                lock (updateEngineLock)
+                {
+                    engineApp.createComponent(entityId, componentType);
                 }
             };
 

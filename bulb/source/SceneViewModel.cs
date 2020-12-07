@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows;
+using garlic.membrane;
 
 namespace Garlic.Bulb
 {

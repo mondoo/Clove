@@ -5,7 +5,6 @@
 #include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/World.hpp>
-#include <Clove/ModelLoader.hpp>
 
 namespace garlic::membrane {
     RuntimeLayer::RuntimeLayer()
@@ -27,14 +26,9 @@ namespace garlic::membrane {
     }
 
     clove::Entity RuntimeLayer::addEntity() {
-        auto cubeEnt{ ecsWorld->create() };
-        runtimeEntities.push_back(cubeEnt);
-        
-        //TEMP: Add some components for debugging
-        ecsWorld->addComponent<clove::TransformComponent>(cubeEnt);
-        ecsWorld->addComponent<clove::StaticModelComponent>(cubeEnt, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
-
-        return cubeEnt;
+        auto entity{ ecsWorld->create() };
+        runtimeEntities.push_back(entity);
+        return entity;
     }
 
     void RuntimeLayer::removeEntity(clove::Entity entity) {

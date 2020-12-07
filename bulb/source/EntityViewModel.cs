@@ -2,14 +2,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using garlic.membrane;
 
 namespace Garlic.Bulb
 {
-    public enum ComponentType {
-        Transform,
-        Mesh
-    }
-
     public class EntityViewModel : ViewModel
     {
         public string Name

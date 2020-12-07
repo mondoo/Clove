@@ -1,4 +1,5 @@
 using System;
+using garlic.membrane;
 
 namespace Garlic.Bulb
 {
@@ -23,6 +24,9 @@ namespace Garlic.Bulb
         public delegate uint AddEntityEventHandler(); //Expecting a uint here as that's what a 
         public AddEntityEventHandler OnCreateEntity;
 
+        public delegate void AddComponentEventHandler(uint entityId, ComponentType componentType);
+        public AddComponentEventHandler OnCreateComponent;
+
         public EditorSessionViewModel()
         {
             Scene = new SceneViewModel();
@@ -41,9 +45,10 @@ namespace Garlic.Bulb
 
         private ComponentViewModel CreateComponent(uint entityId, ComponentType componentType)
         {
-            Console.WriteLine($"{componentType} component created for: {entityId}");
             var vm = new ComponentViewModel();
             vm.Name = $"{componentType}";
+
+            OnCreateComponent.Invoke(entityId, componentType);
 
             return vm;
         }
