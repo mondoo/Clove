@@ -6,7 +6,7 @@
 
 class btSphereShape;
 class btRigidBody;
-class btDefaultMotionState;
+struct btDefaultMotionState;
 
 namespace garlic::clove {
     /**
@@ -22,8 +22,7 @@ namespace garlic::clove {
         //TYPES
     public:
         struct Descriptor {
-            float mass{ 1.0f };
-            bool isKinematic{ false }; /**< If true, signifies this rigid body is not affected by physics but should be collided with. */
+            float mass{ 1.0f }; /**< The mass of the body. If 0 then the body will be able to be collided with but not respond to physics. */
 
             uint32_t collisionGroup{ ~0u }; /**< Bit flag of the collision groups this body is a part of. */
             uint32_t collisionMask{ ~0u };  /**< Bit flag of which collision groups this body collides with. */

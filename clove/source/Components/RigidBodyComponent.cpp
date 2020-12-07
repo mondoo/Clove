@@ -33,8 +33,7 @@ namespace garlic::clove {
     RigidBodyComponent::~RigidBodyComponent() = default;
 
     void RigidBodyComponent::setLinearVelocity(vec3f const &velocity) {
-        btVector3 const btvel{ velocity.x, velocity.y, velocity.z };
-        body->setLinearVelocity(btvel);
+        body->setLinearVelocity({ velocity.x, velocity.y, velocity.z });
 
         body->activate();
     }
@@ -80,29 +79,12 @@ namespace garlic::clove {
     void RigidBodyComponent::initialiseRigidBody() {
         standInShape = createStandInShape();
 
-        btVector3 localInertia(0, 0, 0);
-        btTransform startTransform;
-        startTransform.setIdentity();
-
-        if(descriptor.isKinematic && descriptor.mass > 0.0f) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Kinematic RigidBody has non 0 mass. Kinematic takes precedence");
-        } else {
+        btVector3 localInertia{ 0, 0, 0 };
+        if(descriptor.mass > 0.0f) {
             standInShape->calculateLocalInertia(descriptor.mass, localInertia);
         }
 
-        motionState = std::make_unique<btDefaultMotionState>(startTransform);
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(descriptor.mass, motionState.get(), standInShape.get(), localInertia);
-
-        body = std::make_unique<btRigidBody>(rbInfo);
-
-        int flags = body->getCollisionFlags();
-        if(descriptor.isKinematic) {
-            flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
-        }
-        body->setCollisionFlags(flags);
-
-        //Use nullptr here as using bullet's default motion state causes issues with transforms with parents.
-        body->setMotionState(nullptr);
+        body = std::make_unique<btRigidBody>(btRigidBody::btRigidBodyConstructionInfo{ descriptor.mass, nullptr, standInShape.get(), localInertia });
     }
 
     std::unique_ptr<btSphereShape> RigidBodyComponent::createStandInShape() {
