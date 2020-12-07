@@ -7,6 +7,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.ComponentModel;
 
+using Membrane = garlic.membrane;
+
 namespace Garlic.Bulb
 {
     /// <summary>
@@ -15,16 +17,17 @@ namespace Garlic.Bulb
     public partial class EditorApp : Application
     {
         private MainWindow editorWindow;
-        private MainWindowViewModel editorWindowViewModel;
 
         private EditorLogger editorLogger;
 
-        private garlic.membrane.Application engineApp;
+        private Membrane.Application engineApp;
 
-        private WriteableBitmap imageSource; //Owning this here for now as the UI thread needs to lock it
+        //TODO: Move to MainWindow
+        private WriteableBitmap imageSource;
         private IntPtr backBuffer;
 
         private Thread engineThread;
+        private object updateEngineLock = new object();
         private bool exitThread = false;
 
         private Size size = new Size();
@@ -33,16 +36,31 @@ namespace Garlic.Bulb
 
         private void EditorStartup(object sender, StartupEventArgs e)
         {
-            editorWindowViewModel = new MainWindowViewModel();
+            //Initialise the editor window
+            var sessionVM = new EditorSessionViewModel();
+            sessionVM.OnCreateEntity = () =>
+            {
+                lock (updateEngineLock)
+                {
+                    return engineApp.addEntity();
+                }
+            };
+            sessionVM.OnCreateComponent = (entityId, componentType) =>
+            {
+                lock (updateEngineLock)
+                {
+                    engineApp.createComponent(entityId, componentType);
+                }
+            };
 
+            editorWindow = new MainWindow();
+            editorWindow.DataContext = sessionVM;
+
+            //Forward the logs to the editor's window
             editorLogger = new EditorLogger();
-            editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => editorWindowViewModel.LogText += e2.Text;
+            editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => sessionVM.Log.LogText += e2.Text;
 
             Console.SetOut(editorLogger);
-
-            //Initialise the editor window
-            editorWindow = new MainWindow();
-            editorWindow.DataContext = editorWindowViewModel;
 
             editorWindow.RenderArea.SizeChanged += OnRenderAreaSizeChanged;
             editorWindow.Closing += StopEngine;
@@ -56,7 +74,7 @@ namespace Garlic.Bulb
             size = new Size(width, width);
             CreateImageSource(size);
 
-            engineApp = new garlic.membrane.Application(width, height);
+            engineApp = new Membrane.Application(width, height);
 
             engineThread = new Thread(new ThreadStart(RunEngineApplication));
             engineThread.Name = "Garlic application thread";
@@ -94,7 +112,10 @@ namespace Garlic.Bulb
                 if (engineApp.isRunning())
                 {
                     //Update the application
-                    engineApp.tick();
+                    lock (updateEngineLock)
+                    {
+                        engineApp.tick();
+                    }
 
                     //Render to image
                     lock (resizeLock)

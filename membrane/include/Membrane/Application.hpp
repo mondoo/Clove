@@ -1,22 +1,33 @@
 #pragma once
 
 #include <Clove/Application.hpp>
+#include <Clove/ECS/Entity.hpp>
 
 namespace garlic::clove {
     class GraphicsImageRenderTarget;
 }
 
 namespace garlic::membrane{
-    class TestLayer;
+    class EditorLayer;
+    class RuntimeLayer;
+
+    public enum class ComponentType {
+        Transform,
+        Mesh
+    };
 }
 
 namespace garlic::membrane {
+    /**
+     * @brief Translates a Clove session into C++/CLI
+     */
 public ref class Application {
     private:
         clove::Application *app;
         clove::GraphicsImageRenderTarget *renderTarget;
 
-        std::shared_ptr<TestLayer> *layer;
+        std::shared_ptr<EditorLayer> *editorLayer;
+        std::shared_ptr<RuntimeLayer> *runtimeLayer;
 
         int width;
         int height;
@@ -28,10 +39,14 @@ public ref class Application {
 
         bool isRunning();
         void tick();
+        void render(System::IntPtr backBuffer);
         void shutdown();
 
         void resize(int width, int height);
 
-        void render(System::IntPtr backBuffer);
+        clove::Entity addEntity();
+        void removeEntity(clove::Entity entity);
+
+        void createComponent(clove::Entity entity, ComponentType componentType);
     };
 }

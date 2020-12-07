@@ -6,6 +6,11 @@ add_library(
     Membrane SHARED
         ${INCLUDE}/Application.hpp
         ${SOURCE}/Application.cpp
+
+        ${INCLUDE}/EditorLayer.hpp
+        ${SOURCE}/EditorLayer.cpp
+        ${INCLUDE}/RuntimeLayer.hpp
+        ${SOURCE}/RuntimeLayer.cpp
 )
 
 #Include
@@ -20,7 +25,7 @@ target_include_directories(
 target_link_libraries(
     Membrane
 
-    PUBLIC
+    PRIVATE
         Clove
 )
 
