@@ -15,16 +15,16 @@ namespace garlic::clove {
     PhysicsSystem::PhysicsSystem() {
         collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
         dispatcher             = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
-        overlappingPairCache   = std::make_unique<btDbvtBroadphase>();
+        broadphase             = std::make_unique<btDbvtBroadphase>();
         solver                 = std::make_unique<btSequentialImpulseConstraintSolver>();
 
-        dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(), overlappingPairCache.get(), solver.get(), collisionConfiguration.get());
+        dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get());
     }
 
     PhysicsSystem::PhysicsSystem(PhysicsSystem &&other) noexcept {
         collisionConfiguration = std::move(other.collisionConfiguration);
         dispatcher             = std::move(other.dispatcher);
-        overlappingPairCache   = std::move(other.overlappingPairCache);
+        broadphase             = std::move(other.broadphase);
         solver                 = std::move(other.solver);
 
         dynamicsWorld = std::move(other.dynamicsWorld);
@@ -43,14 +43,14 @@ namespace garlic::clove {
     PhysicsSystem::~PhysicsSystem() = default;
 
     void PhysicsSystem::registerToEvents(EventDispatcher &dispatcher) {
-        collisionShapeAddedHandle = dispatcher.bindToEvent<ComponentAddedEvent<CollisionShapeComponent>>([this](ComponentAddedEvent<CollisionShapeComponent> const &event) {
+        collisionShapeAddedHandle   = dispatcher.bindToEvent<ComponentAddedEvent<CollisionShapeComponent>>([this](ComponentAddedEvent<CollisionShapeComponent> const &event) {
             onCollisionShapeAdded(event);
         });
         collisionShapeRemovedHandle = dispatcher.bindToEvent<ComponentRemovedEvent<CollisionShapeComponent>>([this](ComponentRemovedEvent<CollisionShapeComponent> const &event) {
             onCollisionShapeRemoved(event);
         });
 
-        rigidBodyAddedHandle = dispatcher.bindToEvent<ComponentAddedEvent<RigidBodyComponent>>([this](ComponentAddedEvent<RigidBodyComponent> const &event) {
+        rigidBodyAddedHandle   = dispatcher.bindToEvent<ComponentAddedEvent<RigidBodyComponent>>([this](ComponentAddedEvent<RigidBodyComponent> const &event) {
             onRigidBodyAdded(event);
         });
         rigidBodyRemovedHandle = dispatcher.bindToEvent<ComponentRemovedEvent<RigidBodyComponent>>([this](ComponentRemovedEvent<RigidBodyComponent> const &event) {
@@ -70,10 +70,18 @@ namespace garlic::clove {
 
             if(rigidBody->standInShape != nullptr) {
                 dynamicsWorld->removeCollisionObject(rigidBody->body.get());
-                rigidBody->body->setCollisionShape(collider->collisionShape.get());
-                addBodyToWorld(*rigidBody);
-
                 rigidBody->standInShape.reset();
+
+                rigidBody->body->setCollisionShape(collider->collisionShape.get());
+
+                btVector3 inertia{ 0.0f, 0.0f, 0.0f };
+                if(rigidBody->descriptor.mass > 0.0f) {
+                    collider->collisionShape->calculateLocalInertia(rigidBody->descriptor.mass, inertia);
+                }
+                rigidBody->body->setMassProps(rigidBody->descriptor.mass, inertia);
+                rigidBody->body->updateInertiaTensor();
+
+                addBodyToWorld(*rigidBody);
             }
         }
 
