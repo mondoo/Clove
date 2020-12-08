@@ -42,6 +42,11 @@ namespace garlic::clove {
         for(auto const &system : systems) {
             system->postUpdate(*this);
         }
+
+        //Temp
+        for(auto &func : funcs){
+            func();
+        }
     }
 
     Entity World::create() {

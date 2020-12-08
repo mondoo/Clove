@@ -139,6 +139,19 @@ namespace garlic::clove {
         template<typename SystemType, typename... ConstructArgs>
         SystemType *addSystem(ConstructArgs &&... args);
 
+        std::vector<std::function<void()>> funcs;
+
+        template<typename SystemType, /* typename ReturnType, */ typename... ComponentTypes>
+        void registerSystem(/* ReturnType */ void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system) {
+            funcs.emplace_back([system, updateFunction, this]() {
+                for(Entity entity : activeEntities) {
+                    if((hasComponent<std::remove_reference_t<ComponentTypes>>(entity) && ...)) {
+                        (system->*updateFunction)(*getComponent<std::remove_reference_t<ComponentTypes>>(entity)...);
+                    }
+                }
+            });
+        }
+
     private:
         enum class FoundState { NullptrFound,
                                 EndOfTuple };
