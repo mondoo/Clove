@@ -150,13 +150,27 @@ namespace garlic::clove {
             });
         }
 
-        template<typename SystemType, typename... ComponentTypes>
+		template<typename SystemType, typename... ComponentTypes>
         void registerSystem(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system) {
             funcs.emplace_back([system, updateFunction, this](Entity entity) {
                 if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                     (system->*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
                 }
             });
+        }
+
+		template<typename SystemType, typename... ComponentTypes>
+        void registerSystem(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system) {
+            funcs.emplace_back([system, updateFunction, this](Entity entity) {
+                if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
+                    (system->*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
+                }
+            });
+        }
+
+		template<typename CallableType>
+        void registerSystem(CallableType callable) {
+            registerSystem(&CallableType::operator(), &callable);
         }
 
     private:

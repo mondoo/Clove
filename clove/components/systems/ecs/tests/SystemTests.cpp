@@ -68,3 +68,28 @@ TEST(ECSSystemTests, CanUseFreeFunction){
         EXPECT_TRUE(world.getComponent<BoolComponent>(entity)->value);
     }
 }
+
+TEST(ECSSystemTests, CanUseLambdaFunction) {
+    World world;
+
+    std::vector<Entity> entities;
+    for(int i = 0; i < 5; ++i) {
+        auto entity{ world.create() };
+        world.addComponent<ValueComponent>(entity);
+        world.addComponent<BoolComponent>(entity);
+        entities.push_back(entity);
+    }
+
+    int32_t const entityVal{ 32 };
+    world.registerSystem([entityVal](ValueComponent &valComp, BoolComponent &boolComp) {
+        valComp.value = entityVal;
+        boolComp.value = true;
+    });
+
+    world.update(0.0f);
+
+    for(auto entity : entities) {
+        EXPECT_EQ(world.getComponent<ValueComponent>(entity)->value, entityVal);
+        EXPECT_TRUE(world.getComponent<BoolComponent>(entity)->value);
+    }
+}
