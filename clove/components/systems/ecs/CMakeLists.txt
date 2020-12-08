@@ -40,3 +40,7 @@ target_link_libraries(
 		CloveMemory
 		CloveTimer
 )
+
+if(GAR_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()
