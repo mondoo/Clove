@@ -44,8 +44,10 @@ namespace garlic::clove {
         }
 
         //Temp
-        for(auto &func : funcs){
-            func();
+        for(Entity entity : activeEntities) {
+            for(auto &func : funcs) {
+                func(entity);
+            }
         }
     }
 
