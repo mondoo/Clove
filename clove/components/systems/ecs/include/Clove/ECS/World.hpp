@@ -141,6 +141,15 @@ namespace garlic::clove {
 
         std::vector<std::function<void(Entity)>> funcs;
 
+        template<typename... ComponentTypes>
+        void registerSystem(void (*updateFunction)(ComponentTypes...)) {
+            funcs.emplace_back([updateFunction, this](Entity entity) {
+                if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
+                    (*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
+                }
+            });
+        }
+
         template<typename SystemType, typename... ComponentTypes>
         void registerSystem(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system) {
             funcs.emplace_back([system, updateFunction, this](Entity entity) {
