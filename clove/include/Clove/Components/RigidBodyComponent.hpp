@@ -58,12 +58,14 @@ namespace garlic::clove {
         void setRestitution(float restitution);
 
         void setAngularFactor(vec3f const &factor);
+        void setLinearFactor(vec3f const &factor);
 
         vec3f getLinearVelocity() const;
 
         float getRestitution() const;
 
         vec3f getAngularFactor() const;
+        vec3f getLinearFactor() const;
 
     private:
         void initialiseRigidBody();

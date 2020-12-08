@@ -62,8 +62,12 @@ namespace garlic::clove {
         body->setAngularFactor({ factor.x, factor.y, factor.z });
     }
 
+    void RigidBodyComponent::setLinearFactor(vec3f const &factor) {
+        body->setLinearFactor({ factor.x, factor.y, factor.z });
+    }
+
     vec3f RigidBodyComponent::getLinearVelocity() const {
-        btVector3 const btvel = body->getLinearVelocity();
+        btVector3 const btvel{ body->getLinearVelocity() };
         return { btvel.x(), btvel.y(), btvel.z() };
     }
 
@@ -72,7 +76,12 @@ namespace garlic::clove {
     }
 
     vec3f RigidBodyComponent::getAngularFactor() const {
-        auto const factor = body->getAngularFactor();
+        auto const factor{ body->getAngularFactor() };
+        return { factor.x(), factor.y(), factor.z() };
+    }
+
+    vec3f RigidBodyComponent::getLinearFactor() const {
+        auto const factor{ body->getLinearFactor() };
         return { factor.x(), factor.y(), factor.z() };
     }
 
