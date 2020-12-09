@@ -46,11 +46,18 @@
 		<StackPanel x:Name="EntityView" Grid.Column="2" Visibility="{Binding Scene.EntityViewVisibility}">
 			<TextBlock Text="{Binding Scene.SelectedEntity.Name}"/>
 			<ListBox ItemsSource="{Binding Scene.SelectedEntity.Components}">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
+				<ListBox.Resources>
+					<DataTemplate DataType="{x:Type local:TransformComponentViewModel}">
+						<StackPanel>
+							<ListBoxItem Content="{Binding Name}"/>
+							<local:Vector3Box/>
+						</StackPanel>
+					</DataTemplate>
+					
+					<DataTemplate DataType="{x:Type local:ComponentViewModel}">
 						<ListBoxItem Content="{Binding Name}"/>
 					</DataTemplate>
-				</ListBox.ItemTemplate>
+				</ListBox.Resources>
 			</ListBox>
 			<Menu HorizontalAlignment="Center">
 				<MenuItem Header="Add Component">

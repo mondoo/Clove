@@ -45,7 +45,18 @@ namespace Garlic.Bulb
 
         private ComponentViewModel CreateComponent(uint entityId, ComponentType componentType)
         {
-            var vm = new ComponentViewModel();
+            ComponentViewModel vm;
+
+            switch (componentType)
+            {
+                case ComponentType.Transform:
+                    vm = new TransformComponentViewModel();
+                    break;
+                default:
+                    vm = new ComponentViewModel();
+                    break;
+            }
+
             vm.Name = $"{componentType}";
 
             OnCreateComponent.Invoke(entityId, componentType);
