@@ -4,7 +4,9 @@ set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 
 add_subdirectory(external)
 
-find_package(Vulkan REQUIRED)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	find_package(Vulkan REQUIRED)
+endif(())
 
 #Library
 add_library(
