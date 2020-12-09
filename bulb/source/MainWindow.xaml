@@ -50,7 +50,7 @@
 					<DataTemplate DataType="{x:Type local:TransformComponentViewModel}">
 						<StackPanel>
 							<ListBoxItem Content="{Binding Name}"/>
-							<local:Vector3Box/>
+							<local:Vector3Box XText="A"/>
 						</StackPanel>
 					</DataTemplate>
 					
