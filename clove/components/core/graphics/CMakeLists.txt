@@ -6,46 +6,14 @@ add_subdirectory(external)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	find_package(Vulkan REQUIRED)
-endif(())
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	find_library(CLV_METAL_LIB Metal)
+endif()
 
-#Library
-add_library(
-	CloveGraphics STATIC
-		${INCLUDE}/CommandBuffer.hpp
-		${INCLUDE}/Descriptor.hpp
-		${INCLUDE}/DescriptorPool.hpp
-		${INCLUDE}/DescriptorSet.hpp
-		${INCLUDE}/DescriptorSetLayout.hpp
-		${INCLUDE}/Fence.hpp
-		${INCLUDE}/Framebuffer.hpp
-		${INCLUDE}/Graphics.hpp		
-		${SOURCE}/Graphics.cpp
-		${INCLUDE}/GraphicsAPI.hpp
-		${INCLUDE}/GraphicsBuffer.hpp
-		${INCLUDE}/GraphicsCommandBuffer.hpp
-		${INCLUDE}/GraphicsDevice.hpp
-		${INCLUDE}/GraphicsFactory.hpp
-		${INCLUDE}/GraphicsImage.hpp
-		${INCLUDE}/GraphicsImageView.hpp
-		${INCLUDE}/GraphicsQueue.hpp
-		${INCLUDE}/GraphicsResource.hpp
-		${INCLUDE}/MemoryBarrier.hpp
-		${INCLUDE}/PipelineObject.hpp
-		${INCLUDE}/PresentQueue.hpp
-		${INCLUDE}/Queue.hpp
-		${INCLUDE}/RenderPass.hpp
-		${INCLUDE}/Result.hpp
-		${INCLUDE}/Sampler.hpp
-		${INCLUDE}/Semaphore.hpp
-		${INCLUDE}/Shader.hpp
-		${INCLUDE}/ShaderTranspiler.hpp		
-		${SOURCE}/ShaderTranspiler.cpp
-		${INCLUDE}/Swapchain.hpp
-		${INCLUDE}/TransferCommandBuffer.hpp
-        ${INCLUDE}/TransferQueue.hpp
-        
-        #Vulkan
-        ${INCLUDE}/Vulkan/DevicePointer.hpp
+#Vulkan Implementation
+set(
+	VulkanFiles
+		${INCLUDE}/Vulkan/DevicePointer.hpp
 		${INCLUDE}/Vulkan/DevicePointer.inl
 		${SOURCE}/Vulkan/DevicePointer.cpp
 		${INCLUDE}/Vulkan/MemoryAllocator.hpp
@@ -109,6 +77,45 @@ add_library(
 		${INCLUDE}/Vulkan/VulkanTypes.hpp
 )
 
+#Library
+add_library(
+	CloveGraphics STATIC
+		${INCLUDE}/CommandBuffer.hpp
+		${INCLUDE}/Descriptor.hpp
+		${INCLUDE}/DescriptorPool.hpp
+		${INCLUDE}/DescriptorSet.hpp
+		${INCLUDE}/DescriptorSetLayout.hpp
+		${INCLUDE}/Fence.hpp
+		${INCLUDE}/Framebuffer.hpp
+		${INCLUDE}/Graphics.hpp		
+		${SOURCE}/Graphics.cpp
+		${INCLUDE}/GraphicsAPI.hpp
+		${INCLUDE}/GraphicsBuffer.hpp
+		${INCLUDE}/GraphicsCommandBuffer.hpp
+		${INCLUDE}/GraphicsDevice.hpp
+		${INCLUDE}/GraphicsFactory.hpp
+		${INCLUDE}/GraphicsImage.hpp
+		${INCLUDE}/GraphicsImageView.hpp
+		${INCLUDE}/GraphicsQueue.hpp
+		${INCLUDE}/GraphicsResource.hpp
+		${INCLUDE}/MemoryBarrier.hpp
+		${INCLUDE}/PipelineObject.hpp
+		${INCLUDE}/PresentQueue.hpp
+		${INCLUDE}/Queue.hpp
+		${INCLUDE}/RenderPass.hpp
+		${INCLUDE}/Result.hpp
+		${INCLUDE}/Sampler.hpp
+		${INCLUDE}/Semaphore.hpp
+		${INCLUDE}/Shader.hpp
+		${INCLUDE}/ShaderTranspiler.hpp		
+		${SOURCE}/ShaderTranspiler.cpp
+		${INCLUDE}/Swapchain.hpp
+		${INCLUDE}/TransferCommandBuffer.hpp
+		${INCLUDE}/TransferQueue.hpp
+		
+		${VulkanFiles}
+)
+
 #Includes
 target_include_directories(
     CloveGraphics
@@ -144,7 +151,18 @@ target_link_libraries(
 	PRIVATE
 		$<$<PLATFORM_ID:Windows>:Vulkan::Vulkan>
 
+	#MacOS
+	PRIVATE
+		$<$<PLATFORM_ID:Darwin>:${CLV_METAL_LIB}>
+
 	#Linux
 	PRIVATE
 		$<$<PLATFORM_ID:Linux>:Vulkan::Vulkan>
 )
+
+#Don't compile files not supported on certain platforms
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set_source_files_properties(${VulkanFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+endif()
