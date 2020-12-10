@@ -1,21 +1,37 @@
 #include "Clove/SoundFile.hpp"
 
+#include <Clove/Application.hpp>
+#include <Clove/Audio/AudioBuffer.hpp>
+#include <Clove/Audio/AudioDevice.hpp>
+#include <Clove/Audio/AudioFactory.hpp>
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 #include <sndfile.h>
 
 namespace garlic::clove {
-    static int getWhence(SoundFile::SeekPosition position) {
-        switch(position) {
-            case SoundFile::SeekPosition::Beginning:
-                return SEEK_SET;
-            case SoundFile::SeekPosition::Current:
-                return SEEK_CUR;
-            case SoundFile::SeekPosition::End:
-                return SEEK_END;
-            default:
-                CLOVE_ASSERT(false, "{0}: Default statement hit", CLOVE_FUNCTION_NAME);
-                return 0;
+    namespace {
+        int getWhence(SoundFile::SeekPosition position) {
+            switch(position) {
+                case SoundFile::SeekPosition::Beginning:
+                    return SEEK_SET;
+                case SoundFile::SeekPosition::Current:
+                    return SEEK_CUR;
+                case SoundFile::SeekPosition::End:
+                    return SEEK_END;
+                default:
+                    CLOVE_ASSERT(false, "{0}: Default statement hit", CLOVE_FUNCTION_NAME);
+                    return 0;
+            }
+        }
+
+        AudioBuffer::Format getBufferFormat(SoundFile::Format format, uint32_t channels) {
+            bool const is16{ format == SoundFile::Format::S16 };
+
+            if(channels == 1) {
+                return is16 ? AudioBuffer::Format::Mono16 : AudioBuffer::Format::Mono8;
+            } else {
+                return is16 ? AudioBuffer::Format::Stereo16 : AudioBuffer::Format::Stereo8;
+            }
         }
     }
 
@@ -25,8 +41,7 @@ namespace garlic::clove {
     };
 
     SoundFile::SoundFile(std::string_view file) {
-        data = std::make_unique<FileData>();
-
+        data       = std::make_unique<FileData>();
         data->file = sf_open(file.data(), SFM_READ, &data->fileInfo);
     }
 
@@ -65,10 +80,22 @@ namespace garlic::clove {
         return Format::Unknown;
     }
 
-    std::pair<short *, size_t> SoundFile::read(const uint32_t frames) {
-        size_t const elementCount = frames * getChannels();
-        size_t const bufferSize   = elementCount * sizeof(short);
-        short *buffer             = reinterpret_cast<short *>(malloc(bufferSize));
+    std::shared_ptr<AudioBuffer> SoundFile::read(uint32_t const frames) {
+        auto audioBuffer  = *Application::get().getAudioDevice()->getAudioFactory()->createAudioBuffer(AudioBuffer::Descriptor{
+            .format     = getBufferFormat(getFormat(), getChannels()),
+            .sampleRate = getSampleRate(),
+        });
+        auto [data, size] = readRaw(frames);
+
+        audioBuffer->write(data, size);
+
+        return audioBuffer;
+    }
+
+    std::pair<short *, size_t> SoundFile::readRaw(uint32_t const frames) {
+        size_t const elementCount{ frames * getChannels() };
+        size_t const bufferSize{ elementCount * sizeof(short) };
+        short *buffer{ reinterpret_cast<short *>(malloc(bufferSize)) };
 
         sf_readf_short(data->file, buffer, frames);
 

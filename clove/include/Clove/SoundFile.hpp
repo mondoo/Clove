@@ -4,6 +4,10 @@
 #include <string_view>
 
 namespace garlic::clove {
+    class AudioBuffer;
+}
+
+namespace garlic::clove {
     /**
 	 * @brief Opens a sound file (.wav etc.) and allows acess to the data
 	 */
@@ -50,6 +54,14 @@ namespace garlic::clove {
         Format getFormat() const;
 
         /**
+		 * @brief Reads the amount of frames and returns an AudioBuffer to that data
+		 * @details Reads from the current seek position (default start of file) and
+		 * moves the cursor frames amount long.
+		 * @param frames How many frames to read
+		 */
+        std::shared_ptr<AudioBuffer> read(uint32_t const frames);
+
+        /**
 		 * @brief Reads the amount of frames and returns a pointer to that data
 		 * @details Reads from the current seek position (default start of file) and
 		 * moves the cursor frames amount long. Note that the caller is expected to 
@@ -57,14 +69,14 @@ namespace garlic::clove {
 		 * @param frames How many frames to read
 		 * @returns Returns an std::pair containing a pointer to the data and how many btyes long the buffer is
 		 */
-        std::pair<short *, size_t> read(uint32_t const frames);
+        std::pair<short *, size_t> readRaw(uint32_t const frames);
 
         /**
 		 * @brief Moves the internal cursor.
 		 * @details The next read called after calling seek will cause the data to
 		 * be read from that position.
-		 *@param position Where to start the seek from
-		 *@param frames How many frames from position to put the cursor
+		 * @param position Where to start the seek from
+		 * @param frames How many frames from position to put the cursor
 		 */
         void seek(SeekPosition position, uint32_t frames = 0);
     };
