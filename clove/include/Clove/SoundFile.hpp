@@ -69,7 +69,7 @@ namespace garlic::clove {
 		 * @param frames How many frames to read
 		 * @returns Returns an std::pair containing a pointer to the data and how many btyes long the buffer is
 		 */
-        std::pair<short *, size_t> readRaw(uint32_t const frames);
+        std::pair<std::unique_ptr<short>, size_t> readRaw(uint32_t const frames);
 
         /**
 		 * @brief Moves the internal cursor.

@@ -87,19 +87,19 @@ namespace garlic::clove {
         });
         auto [data, size] = readRaw(frames);
 
-        audioBuffer->write(data, size);
+        audioBuffer->write(data.get(), size);
 
         return audioBuffer;
     }
 
-    std::pair<short *, size_t> SoundFile::readRaw(uint32_t const frames) {
+    std::pair<std::unique_ptr<short>, size_t> SoundFile::readRaw(uint32_t const frames) {
         size_t const elementCount{ frames * getChannels() };
+        auto buffer{ std::unique_ptr<short>(new short[elementCount]) };
+
+        sf_readf_short(data->file, buffer.get(), frames);
+
         size_t const bufferSize{ elementCount * sizeof(short) };
-        short *buffer{ reinterpret_cast<short *>(malloc(bufferSize)) };
-
-        sf_readf_short(data->file, buffer, frames);
-
-        return { buffer, bufferSize };
+        return { std::move(buffer), bufferSize };
     }
 
     void SoundFile::seek(SeekPosition position, uint32_t frames) {
