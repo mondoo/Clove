@@ -92,4 +92,16 @@ TEST(ECSSystemTests, CanUseLambdaFunction) {
         EXPECT_EQ(world.getComponent<ValueComponent>(entity)->value, entityVal);
         EXPECT_TRUE(world.getComponent<BoolComponent>(entity)->value);
     }
+
+    auto func = [entityVal](BoolComponent &boolComp) {
+        boolComp.value = false;
+    };
+
+    world.registerSystem(func);
+
+    world.update(0.0f);
+
+    for(auto entity : entities) {
+        EXPECT_FALSE(world.getComponent<BoolComponent>(entity)->value);
+    }
 }
