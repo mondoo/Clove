@@ -1,12 +1,14 @@
 #pragma once
 
-#include <Clove/ECS/System.hpp>
+namespace garlic::clove {
+    class World;
+}
 
 namespace garlic::clove {
     /**
-	 * @brief Enables an ecs::World to play poisitional audio
+	 * @brief Plays poisitional audio
 	 */
-    class AudioSystem : public System {
+    class AudioSystem {
         //FUNCTIONS
     public:
         AudioSystem();
@@ -19,6 +21,6 @@ namespace garlic::clove {
 
         ~AudioSystem();
 
-        void update(World &world, DeltaTime deltaTime) override;
+        void update(World &world);
     };
 }

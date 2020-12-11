@@ -2,9 +2,9 @@
 
 #include <Clove/ECS/ECSEvents.hpp>
 #include <Clove/ECS/Entity.hpp>
-#include <Clove/ECS/System.hpp>
 #include <Clove/Event/EventHandle.hpp>
 #include <Clove/Maths/Vector.hpp>
+#include <Clove/DeltaTime.hpp>
 #include <unordered_set>
 #include <memory>
 
@@ -17,10 +17,11 @@ class btDiscreteDynamicsWorld;
 namespace garlic::clove {
     class CollisionShapeComponent;
     class RigidBodyComponent;
+    class World;
 }
 
 namespace garlic::clove {
-    class PhysicsSystem : public System {
+    class PhysicsSystem {
         //TYPES
     private:
         struct CollisionManifold {
@@ -73,11 +74,11 @@ namespace garlic::clove {
 
         ~PhysicsSystem();
 
-        void registerToEvents(EventDispatcher &dispatcher) override;
+        void registerToEvents(World &world);
 
-        void preUpdate(World &world) override;
-        void update(World &world, DeltaTime deltaTime) override;
-        void postUpdate(World &world) override;
+        void preUpdate(World &world);
+        void update(World &world, DeltaTime deltaTime);
+        void postUpdate(World &world);
 
         void setGravity(vec3f const &gravity);
 

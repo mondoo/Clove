@@ -4,9 +4,9 @@
 #include "Clove/Components/AudioSourceComponent.hpp"
 #include "Clove/Components/TransformComponent.hpp"
 
-#include <Clove/ECS/World.hpp>
 #include <Clove/Audio/AudioListener.hpp>
 #include <Clove/Audio/AudioSource.hpp>
+#include <Clove/ECS/World.hpp>
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
@@ -18,30 +18,25 @@ namespace garlic::clove {
 
     AudioSystem::~AudioSystem() = default;
 
-    void AudioSystem::update(World &world, DeltaTime deltaTime) {
+    void AudioSystem::update(World &world) {
         CLOVE_PROFILE_FUNCTION();
 
         //Listener
-        auto const listenerSet{ world.getComponentSets<TransformComponent, AudioListenerComponent>() };
-        size_t const numListeners{ std::size(listenerSet) };
-        CLOVE_ASSERT(numListeners <= 1, "Only one listener is allowed per world");
-        if(numListeners > 0) {
-            auto &&[transform, listener] = listenerSet[0];
+        world.forEach([](TransformComponent const &transform, AudioListenerComponent &listener) {
+            vec3f const prevPos{ listener.listener->getPosition() };
+            vec3f const currPos{ transform.getPosition() };
 
-            vec3f const prevPos{ listener->listener->getPosition() };
-            vec3f const currPos{ transform->getPosition() };
-
-            listener->listener->setPosition(currPos);
-            listener->listener->setVelocity(currPos - prevPos);
-        }
+            listener.listener->setPosition(currPos);
+            listener.listener->setVelocity(currPos - prevPos);
+        });
 
         //Source
-        for(auto &&[transform, source] : world.getComponentSets<TransformComponent, AudioSourceComponent>()) {
-            vec3f const prevPos{ source->source->getPosition() };
-            vec3f const currPos{ transform->getPosition() };
+        world.forEach([](TransformComponent const &transform, AudioSourceComponent &source) {
+            vec3f const prevPos{ source.source->getPosition() };
+            vec3f const currPos{ transform.getPosition() };
 
-            source->source->setPosition(currPos);
-            source->source->setVelocity(currPos - prevPos);
-        }
+            source.source->setPosition(currPos);
+            source.source->setVelocity(currPos - prevPos);
+        });
     }
 }

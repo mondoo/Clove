@@ -85,7 +85,8 @@ namespace garlic::clove {
         std::chrono::duration<float> const deltaSeonds{ currFrameTime - prevFrameTime };
         prevFrameTime = currFrameTime;
 
-        //Respond to input
+        renderer->begin();
+
         if(window != nullptr) {
             window->processInput();
 
@@ -107,17 +108,10 @@ namespace garlic::clove {
             }
         }
 
-        //Do client logic
         for(auto const &layer : layerStack) {
             layer->onUpdate(deltaSeonds.count());
         }
 
-        renderer->begin();
-
-        //Update ECS
-        world->update(deltaSeonds.count());
-
-        //Render
         renderer->end();
     }
 

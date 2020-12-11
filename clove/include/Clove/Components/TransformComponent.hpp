@@ -50,7 +50,7 @@ namespace garlic::clove {
         vec3f getRight() const;
         vec3f getUp() const;
 
-        inline mat4f getTransformationMatrix(TransformSpace space);
+        inline mat4f getTransformationMatrix(TransformSpace space) const;
 
         inline ComponentPtr<TransformComponent> getParent() const;
 

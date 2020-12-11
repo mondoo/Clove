@@ -1,17 +1,14 @@
 #pragma once
 
-#include <Clove/ECS/System.hpp>
-
-namespace clv::plt {
-    class Window;
-}
+#include <Clove/DeltaTime.hpp>
 
 namespace garlic::clove {
     class ForwardRenderer3D;
+    class World;
 }
 
 namespace garlic::clove {
-    class RenderSystem : public System {
+    class RenderSystem {
         //VARIABLES
     private:
         ForwardRenderer3D *renderer;
@@ -28,6 +25,6 @@ namespace garlic::clove {
 
         ~RenderSystem();
 
-        void update(World &world, DeltaTime deltaTime) override;
+        void update(World &world, DeltaTime deltaTime);
     };
 }

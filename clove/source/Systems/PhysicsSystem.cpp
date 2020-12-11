@@ -42,7 +42,9 @@ namespace garlic::clove {
 
     PhysicsSystem::~PhysicsSystem() = default;
 
-    void PhysicsSystem::registerToEvents(EventDispatcher &dispatcher) {
+    void PhysicsSystem::registerToEvents(World &world) {
+        EventDispatcher &dispatcher{ world.getDispatcher() };
+
         collisionShapeAddedHandle   = dispatcher.bindToEvent<ComponentAddedEvent<CollisionShapeComponent>>([this](ComponentAddedEvent<CollisionShapeComponent> const &event) {
             onCollisionShapeAdded(event);
         });
@@ -62,63 +64,56 @@ namespace garlic::clove {
         CLOVE_PROFILE_FUNCTION();
 
         //Make sure any colliders are properly paired with their rigid body
-        for(auto &&[collider, rigidBody] : world.getComponentSets<CollisionShapeComponent, RigidBodyComponent>()) {
-            if(collider->collisionObject != nullptr) {
-                dynamicsWorld->removeCollisionObject(collider->collisionObject.get());
-                collider->collisionObject.reset();
+        world.forEach([this](CollisionShapeComponent &shape, RigidBodyComponent &body) {
+            if(shape.collisionObject != nullptr) {
+                dynamicsWorld->removeCollisionObject(shape.collisionObject.get());
+                shape.collisionObject.reset();
             }
 
-            if(rigidBody->standInShape != nullptr) {
-                dynamicsWorld->removeCollisionObject(rigidBody->body.get());
-                rigidBody->standInShape.reset();
+            if(body.standInShape != nullptr) {
+                dynamicsWorld->removeCollisionObject(body.body.get());
+                body.standInShape.reset();
 
-                rigidBody->body->setCollisionShape(collider->collisionShape.get());
+                body.body->setCollisionShape(shape.collisionShape.get());
 
                 btVector3 inertia{ 0.0f, 0.0f, 0.0f };
-                if(rigidBody->descriptor.mass > 0.0f) {
-                    collider->collisionShape->calculateLocalInertia(rigidBody->descriptor.mass, inertia);
+                if(body.descriptor.mass > 0.0f) {
+                    shape.collisionShape->calculateLocalInertia(body.descriptor.mass, inertia);
                 }
-                rigidBody->body->setMassProps(rigidBody->descriptor.mass, inertia);
-                rigidBody->body->updateInertiaTensor();
+                body.body->setMassProps(body.descriptor.mass, inertia);
+                body.body->updateInertiaTensor();
 
-                addBodyToWorld(*rigidBody);
+                addBodyToWorld(body);
             }
-        }
+        });
 
         //Make sure any recently un-paired colliders are updated
-        for(auto &&[collider] : world.getComponentSets<CollisionShapeComponent>()) {
-            if(world.hasComponent<RigidBodyComponent>(collider->getEntity())) {
-                continue;
+        world.forEach([this, &world](CollisionShapeComponent &shape) {
+            if(!world.hasComponent<RigidBodyComponent>(shape.getEntity())) {
+                if(shape.collisionObject == nullptr) {
+                    shape.constructCollisionObject();
+                    addColliderToWorld(shape);
+                }
             }
-
-            if(collider->collisionObject == nullptr) {
-                collider->constructCollisionObject();
-                addColliderToWorld(*collider);
-            }
-        }
+        });
 
         //Make sure any recently un-paired rigid bodies are updated
-        for(auto &&[rigidBody] : world.getComponentSets<RigidBodyComponent>()) {
-            if(world.hasComponent<CollisionShapeComponent>(rigidBody->getEntity())) {
-                continue;
-            }
+        world.forEach([this, &world](RigidBodyComponent &body) {
+            if(!world.hasComponent<CollisionShapeComponent>(body.getEntity())) {
+                if(body.standInShape == nullptr) {
+                    btRigidBody *const btBody{ body.body.get() };
 
-            if(rigidBody->standInShape == nullptr) {
-                btRigidBody *body = rigidBody->body.get();
-
-                dynamicsWorld->removeCollisionObject(body);
-                rigidBody->standInShape = RigidBodyComponent::createStandInShape();
-                body->setCollisionShape(rigidBody->standInShape.get());
-                addBodyToWorld(*rigidBody);
+                    dynamicsWorld->removeCollisionObject(btBody);
+                    body.standInShape = RigidBodyComponent::createStandInShape();
+                    btBody->setCollisionShape(body.standInShape.get());
+                    addBodyToWorld(body);
+                }
             }
-        }
+        });
     }
 
     void PhysicsSystem::update(World &world, DeltaTime deltaTime) {
         CLOVE_PROFILE_FUNCTION();
-
-        auto const collisionShapes{ world.getComponentSets<TransformComponent, CollisionShapeComponent>() };
-        auto const rigidBodies{ world.getComponentSets<TransformComponent, RigidBodyComponent>() };
 
         auto const updateCollider = [](TransformComponent const &transform, btCollisionObject &collisionObject) {
             auto const pos{ transform.getPosition(TransformSpace::World) };
@@ -131,16 +126,14 @@ namespace garlic::clove {
         };
 
         //Notify Bullet of the location of the colliders
-        for(auto &&[transform, collider] : collisionShapes) {
-            if(world.hasComponent<RigidBodyComponent>(collider->getEntity())) {
-                continue;
+        world.forEach([&](TransformComponent const &transform, CollisionShapeComponent &shape) {
+            if(!world.hasComponent<RigidBodyComponent>(shape.getEntity())) {
+                updateCollider(transform, *shape.collisionObject);
             }
-
-            updateCollider(*transform, *collider->collisionObject);
-        }
-        for(auto &&[transform, rigidBody] : rigidBodies) {
-            updateCollider(*transform, *rigidBody->body);
-        }
+        });
+        world.forEach([&](TransformComponent const &transform, RigidBodyComponent &body) {
+            updateCollider(transform, *body.body);
+        });
 
         //Step physics world
         dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
@@ -155,16 +148,14 @@ namespace garlic::clove {
         };
 
         //Apply any simulation updates
-        for(auto &&[transform, collider] : collisionShapes) {
-            if(world.hasComponent<RigidBodyComponent>(collider->getEntity())) {
-                continue;
+        world.forEach([&](TransformComponent &transform, CollisionShapeComponent const &shape) {
+            if(!world.hasComponent<RigidBodyComponent>(shape.getEntity())) {
+                updateTransform(transform, *shape.collisionObject);
             }
-
-            updateTransform(*transform, *collider->collisionObject);
-        }
-        for(auto &&[transform, rigidBody] : rigidBodies) {
-            updateTransform(*transform, *rigidBody->body);
-        }
+        });
+        world.forEach([&](TransformComponent &transform, RigidBodyComponent const &body) {
+            updateTransform(transform, *body.body);
+        });
     }
 
     void PhysicsSystem::postUpdate(World &world) {

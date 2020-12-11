@@ -1,7 +1,5 @@
 #include "Clove/ECS/World.hpp"
 
-#include "Clove/ECS/System.hpp"
-
 namespace garlic::clove {
     Entity World::nextEntity = 1;
 
@@ -11,37 +9,6 @@ namespace garlic::clove {
 
     World::~World() {
         destroyAll();
-    }
-
-    void World::update(DeltaTime deltaTime) {
-        CLOVE_PROFILE_FUNCTION();
-
-        if(pendingDestroyEntities.size() > 0) {
-            CLOVE_PROFILE_SCOPE("Destroying pendining entities");
-
-            for(Entity entity : pendingDestroyEntities) {
-                componentManager.onEntityDestroyed(entity);
-            }
-
-            auto const removeIter = std::remove_if(activeEntities.begin(), activeEntities.end(), [this](Entity entity) {
-                return pendingDestroyEntities.find(entity) != pendingDestroyEntities.end();
-            });
-            activeEntities.erase(removeIter, activeEntities.end());
-
-            pendingDestroyEntities.clear();
-        }
-
-        for(auto const &system : systems) {
-            system->preUpdate(*this);
-        }
-
-        for(auto const &system : systems) {
-            system->update(*this, deltaTime);
-        }
-
-        for(auto const &system : systems) {
-            system->postUpdate(*this);
-        }
     }
 
     Entity World::create() {

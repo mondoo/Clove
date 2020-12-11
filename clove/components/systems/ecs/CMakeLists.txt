@@ -17,7 +17,6 @@ add_library(
 	${INCLUDE}/World.hpp
 	${INCLUDE}/World.inl
 	${SOURCE}/World.cpp
-	${INCLUDE}/System.hpp
 )
 
 #Includes
