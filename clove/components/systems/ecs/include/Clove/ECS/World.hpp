@@ -139,52 +139,45 @@ namespace garlic::clove {
         template<typename SystemType, typename... ConstructArgs>
         SystemType *addSystem(ConstructArgs &&... args);
 
-        std::vector<std::function<void(Entity)>> funcs;
-
-        // class SystemManager{
-        //     public:
-
-        // }
-
         template<typename... ComponentTypes>
-        void registerSystem(void (*updateFunction)(ComponentTypes...)) {
-            funcs.emplace_back([updateFunction, this](Entity entity) {
+        void forEach(void (*updateFunction)(ComponentTypes...)) {
+            for(Entity entity : activeEntities) {
                 if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                     (*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
                 }
-            });
+            }
         }
 
         template<typename SystemType, typename... ComponentTypes>
-        void registerSystem(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system) {
-            funcs.emplace_back([system, updateFunction, this](Entity entity) {
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system) {
+            for(Entity entity : activeEntities) {
                 if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                     (system->*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
                 }
-            });
+            }
         }
 
         template<typename SystemType, typename... ComponentTypes>
-        void registerSystem(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system) {
-            funcs.emplace_back([system, updateFunction, this](Entity entity) {
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system) {
+            for(Entity entity : activeEntities) {
                 if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                     (system->*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
                 }
-            });
+            }
         }
 
         template<typename SystemType, typename... ComponentTypes>
-        void registerSystem(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system) {
-            funcs.emplace_back([system = std::move(system), updateFunction, this](Entity entity) {
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system) {
+            for(Entity entity : activeEntities) {
                 if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                     (system.*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
                 }
-            });
+            }
         }
 
         template<typename CallableType>
-        void registerSystem(CallableType callable) {
-             registerSystem(&CallableType::operator(), std::move(callable));
+        void forEach(CallableType callable) {
+            forEach(&CallableType::operator(), std::move(callable));
         }
 
     private:

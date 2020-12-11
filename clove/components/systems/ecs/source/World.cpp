@@ -42,13 +42,6 @@ namespace garlic::clove {
         for(auto const &system : systems) {
             system->postUpdate(*this);
         }
-
-        //Temp
-        for(Entity entity : activeEntities) {
-            for(auto &func : funcs) {
-                func(entity);
-            }
-        }
     }
 
     Entity World::create() {

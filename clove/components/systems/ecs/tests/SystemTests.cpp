@@ -37,12 +37,9 @@ TEST(ECSSystemTests, CanUseMemberFunction) {
             component.value = entityValue;
         }
     };
-
     TestSystem system;
 
-    world.registerSystem(&TestSystem::update, &system);
-
-    world.update(0.0f);
+    world.forEach(&TestSystem::update, &system);
 
     for(auto entity : entities){
         EXPECT_EQ(world.getComponent<ValueComponent>(entity)->value, system.entityValue);
@@ -60,9 +57,7 @@ TEST(ECSSystemTests, CanUseFreeFunction){
         entities.push_back(entity);
     }
 
-    world.registerSystem(&makeTrue);
-
-    world.update(0.0f);
+    world.forEach(&makeTrue);
 
     for(auto entity : entities) {
         EXPECT_TRUE(world.getComponent<BoolComponent>(entity)->value);
@@ -81,12 +76,10 @@ TEST(ECSSystemTests, CanUseLambdaFunction) {
     }
 
     int32_t const entityVal{ 32 };
-    world.registerSystem([entityVal](ValueComponent &valComp, BoolComponent &boolComp) {
+    world.forEach([entityVal](ValueComponent &valComp, BoolComponent &boolComp) {
         valComp.value = entityVal;
         boolComp.value = true;
     });
-
-    world.update(0.0f);
 
     for(auto entity : entities) {
         EXPECT_EQ(world.getComponent<ValueComponent>(entity)->value, entityVal);
@@ -97,9 +90,7 @@ TEST(ECSSystemTests, CanUseLambdaFunction) {
         boolComp.value = false;
     };
 
-    world.registerSystem(func);
-
-    world.update(0.0f);
+    world.forEach(func);
 
     for(auto entity : entities) {
         EXPECT_FALSE(world.getComponent<BoolComponent>(entity)->value);
