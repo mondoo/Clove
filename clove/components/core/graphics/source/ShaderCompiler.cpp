@@ -112,23 +112,20 @@ namespace garlic::clove::ShaderCompiler {
 
     std::vector<std::byte> compileFromFile(std::string_view filePath, Shader::Stage shaderStage, ShaderType outputType) {
         //return compileFromSource(readFile(filePath), shaderStage, outputType);
-        return {}; //TODO
+        return {};//TODO
     }
 
     std::vector<std::byte> compileFromSource(std::span<std::byte const> source, Shader::Stage shaderStage, ShaderType outputType) {
-        std::string shaderSource;
-        //shaderSource.append(source);
-
         glslang::InitializeProcess();
 
         EShLanguage const eshstage{ getEShStage(shaderStage) };
         glslang::TShader shader(eshstage);
 
-        char const *rawSource = shaderSource.data();
-        shader.setStrings(&rawSource, 1);
+        char const *shaderSourceAsString{ reinterpret_cast<char const *>(std::data(source)) };
+        shader.setStrings(&shaderSourceAsString, 1);
 
         TBuiltInResource const builtInResources{ glslang::DefaultTBuiltInResource };
-        EShMessages const messages{ static_cast<EShMessages>( EShMsgSpvRules | EShMsgKeepUncalled | EShMsgSuppressWarnings) };
+        EShMessages const messages{ static_cast<EShMessages>(EShMsgSpvRules | EShMsgKeepUncalled | EShMsgSuppressWarnings) };
 
         shader.setEnvTargetHlslFunctionality1();
         shader.setAutoMapBindings(true);
@@ -160,17 +157,19 @@ namespace garlic::clove::ShaderCompiler {
 
         std::vector<uint32_t> spirvSource;
         spv::SpvBuildLogger logger;
-        glslang::TIntermediate *inter = shader.getIntermediate();
+        glslang::TIntermediate *inter{ shader.getIntermediate() };
         glslang::GlslangToSpv(*inter, spirvSource, &logger, &spvOptions);
 
         glslang::FinalizeProcess();
 
         switch(outputType) {
             default:
-            case ShaderType::SPIRV:
-                CLOVE_ASSERT("SPIR-V output not supported!");
-                //return { std::begin(spirvSource), std::end(spirvSource) };
-                return {}; //TODO
+            case ShaderType::SPIRV: {
+                std::vector<std::byte> bytes;
+                bytes.resize(std::size(spirvSource) * sizeof(uint32_t));
+                memcpy(std::data(bytes), std::data(spirvSource), std::size(bytes));
+                return bytes;
+            }
             case ShaderType::HLSL:
                 return spirvToHLSL(spirvSource);
             case ShaderType::MSL:
