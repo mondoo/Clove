@@ -102,9 +102,6 @@ namespace garlic::clove::ShaderCompiler {
 
     std::string compileFromSource(std::string_view source, Shader::Stage stage, ShaderType outputType) {
         std::string shaderSource;
-        if(outputType == ShaderType::GLSL) {
-            shaderSource = "#define GLSL\n\n";
-        }
         shaderSource.append(source);
 
         glslang::InitializeProcess();
