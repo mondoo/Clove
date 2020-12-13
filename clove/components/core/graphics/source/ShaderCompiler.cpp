@@ -24,54 +24,14 @@ namespace garlic::clove::ShaderCompiler {
                 return EShLanguage::EShLangVertex;
             case Shader::Stage::Pixel:
                 return EShLanguage::EShLangFragment;
-            // case garlic::clove::Shader::Stage::Geometry:
-            // 	return EShLanguage::EShLangGeometry;
             default:
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Unsupported shader stage {0}", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT("Unsupported shader stage {0}", CLOVE_FUNCTION_NAME);
                 return EShLanguage::EShLangVertex;
         }
     }
 
-    static std::string spirvToGlsl(Shader::Stage stage, std::vector<uint32_t> const &spirvSource) {
-        spirv_cross::CompilerGLSL glsl(spirvSource);
-        spirv_cross::CompilerGLSL::Options scoptions;
-
-        scoptions.version                  = 460;
-        scoptions.es                       = false;
-        scoptions.enable_420pack_extension = false;
-        glsl.set_common_options(scoptions);
-
-        glsl.build_combined_image_samplers();
-
-        spirv_cross::ShaderResources resources = glsl.get_shader_resources();
-
-        //Make sure the combined image/samplers keep the binding id
-        std::map<spirv_cross::ID, uint32_t> samplerBindings;
-        for(auto &resource : resources.separate_samplers) {
-            samplerBindings[resource.id] = glsl.get_decoration(resource.id, spv::DecorationBinding);
-        }
-        for(auto &remap : glsl.get_combined_image_samplers()) {
-            glsl.set_decoration(remap.combined_id, spv::DecorationBinding, samplerBindings[remap.sampler_id]);
-        }
-
-        //Remap names to semantics
-        if(stage == Shader::Stage::Vertex) {
-            for(auto &resource : resources.stage_inputs) {
-                const uint32_t location = glsl.get_decoration(resource.id, spv::DecorationLocation);
-                std::string str         = glsl.get_decoration_string(resource.id, spv::DecorationUserSemantic);
-
-                glsl.set_name(resource.id, str);
-            }
-        }
-
-        // if(stage == Shader::Stage::Geometry) {
-        // 	const uint32_t invocations = glsl.get_execution_mode_argument(spv::ExecutionMode::ExecutionModeInvocations);
-        // 	if(invocations == 196624) { //Unset invocations default to this, unset it
-        // 		glsl.unset_execution_mode(spv::ExecutionMode::ExecutionModeInvocations);
-        // 	}
-        // }
-
-        return glsl.compile();
+    static std::string spirvToHLSL(Shader::Stage stage, std::vector<uint32_t> const &sprivSource) {
+        CLOVE_ASSERT("SPIR-V to HLSL not supported!");
     }
 
     static std::string spirvToMSL(Shader::Stage stage, std::vector<uint32_t> const &spirvSource) {
@@ -197,12 +157,14 @@ namespace garlic::clove::ShaderCompiler {
 
         glslang::FinalizeProcess();
 
-        if(outputType == ShaderType::GLSL) {
-            return spirvToGlsl(stage, spirvSource);
-        } else if(outputType == ShaderType::MSL) {
-            return spirvToMSL(stage, spirvSource);
+        switch(outputType) {
+            case ShaderType::SPIRV:
+                CLOVE_ASSERT("SPIR-V output not supported!");
+                return "";
+            case ShaderType::HLSL:
+                return spirvToHLSL(stage, spirvSource);
+            case ShaderType::MSL:
+                return spirvToMSL(stage, spirvSource);
         }
-
-        return "";
     }
 }
