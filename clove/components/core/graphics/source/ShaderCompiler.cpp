@@ -1,4 +1,4 @@
-#include "Clove/Graphics/ShaderTranspiler.hpp"
+#include "Clove/Graphics/ShaderCompiler.hpp"
 
 #define ENABLE_HLSL
 
@@ -17,7 +17,7 @@
 #include <spirv_msl.hpp>
 #include <sstream>
 
-namespace garlic::clove::ShaderTranspiler {
+namespace garlic::clove::ShaderCompiler {
     static EShLanguage getEShStage(Shader::Stage stage) {
         switch(stage) {
             case Shader::Stage::Vertex:
@@ -124,7 +124,7 @@ namespace garlic::clove::ShaderTranspiler {
         return msl.compile();
     }
 
-    std::string transpileFromFile(std::string_view filePath, Shader::Stage stage, ShaderType outputType) {
+    std::string compileFromFile(std::string_view filePath, Shader::Stage stage, ShaderType outputType) {
         std::ifstream stream(filePath.data());
 
         std::string line;
@@ -133,14 +133,14 @@ namespace garlic::clove::ShaderTranspiler {
             ss << line << '\n';
         }
 
-        return transpileFromSource(ss.str(), stage, outputType);
+        return compileFromSource(ss.str(), stage, outputType);
     }
 
-    std::string transpileFromBytes(char const *bytes, std::size_t const size, Shader::Stage stage, ShaderType outputType) {
-        return transpileFromSource({ bytes, size }, stage, outputType);
+    std::string compileFromBytes(char const *bytes, std::size_t const size, Shader::Stage stage, ShaderType outputType) {
+        return compileFromSource({ bytes, size }, stage, outputType);
     }
 
-    std::string transpileFromSource(std::string_view source, Shader::Stage stage, ShaderType outputType) {
+    std::string compileFromSource(std::string_view source, Shader::Stage stage, ShaderType outputType) {
         std::string shaderSource;
         if(outputType == ShaderType::GLSL) {
             shaderSource = "#define GLSL\n\n";

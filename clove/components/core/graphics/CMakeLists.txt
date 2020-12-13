@@ -36,8 +36,8 @@ add_library(
 		${INCLUDE}/Sampler.hpp
 		${INCLUDE}/Semaphore.hpp
 		${INCLUDE}/Shader.hpp
-		${INCLUDE}/ShaderTranspiler.hpp		
-		${SOURCE}/ShaderTranspiler.cpp
+		${INCLUDE}/ShaderCompiler.hpp		
+		${SOURCE}/ShaderCompiler.cpp
 		${INCLUDE}/Swapchain.hpp
 		${INCLUDE}/TransferCommandBuffer.hpp
         ${INCLUDE}/TransferQueue.hpp
