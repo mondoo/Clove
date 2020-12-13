@@ -364,12 +364,12 @@ namespace garlic::clove {
         return std::unique_ptr<Swapchain>{ std::make_unique<VKSwapchain>(devicePtr, swapchain, surfaceFormat.format, std::move(swapchainExtent)) };
     }
 
-    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::string_view filePath) {
-        return createShaderObject(ShaderCompiler::compileFromFile(filePath, ShaderType::SPIRV));
+    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::string_view filePath, Shader::Stage shaderStage) {
+        return createShaderObject(ShaderCompiler::compileFromFile(filePath, shaderStage, ShaderType::SPIRV));
     }
 
-    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::span<std::byte const> source) {
-        return createShaderObject(ShaderCompiler::compileFromSource(source, ShaderType::SPIRV));
+    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::span<std::byte const> source, Shader::Stage shaderStage) {
+        return createShaderObject(ShaderCompiler::compileFromSource(source, shaderStage, ShaderType::SPIRV));
     }
 
     Expected<std::unique_ptr<RenderPass>, std::runtime_error> VKGraphicsFactory::createRenderPass(RenderPass::Descriptor descriptor) {
@@ -935,8 +935,8 @@ namespace garlic::clove {
             .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
             .pNext    = nullptr,
             .flags    = 0,
-            .codeSize = compiledSpirv.size_bytes(),
-            .pCode    = reinterpret_cast<uint32_t const *>(std::data(compiledSpirv)),
+            .codeSize = spirvSource.size_bytes(),
+            .pCode    = reinterpret_cast<uint32_t const *>(std::data(spirvSource)),
         };
 
         VkShaderModule module;

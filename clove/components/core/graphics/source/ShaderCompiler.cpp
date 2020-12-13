@@ -51,12 +51,12 @@ namespace garlic::clove::ShaderCompiler {
             return buffer;
         }
 
-        std::vector<std::byte> spirvToHLSL(Shader::Stage stage, std::vector<uint32_t> const &sprivSource) {
+        std::vector<std::byte> spirvToHLSL(std::vector<uint32_t> const &sprivSource) {
             CLOVE_ASSERT("SPIR-V to HLSL not supported!");
             return {};
         }
 
-        std::vector<std::byte> spirvToMSL(Shader::Stage stage, std::vector<uint32_t> const &spirvSource) {
+        std::vector<std::byte> spirvToMSL(Shader::Stage shaderStage, std::vector<uint32_t> const &spirvSource) {
             spirv_cross::CompilerMSL msl(spirvSource);
             spirv_cross::CompilerMSL::Options scoptions;
 
@@ -94,7 +94,7 @@ namespace garlic::clove::ShaderCompiler {
             }
 
             //Remap names to semantics
-            if(stage == Shader::Stage::Vertex) {
+            if(shaderStage == Shader::Stage::Vertex) {
                 for(auto &resource : resources.stage_inputs) {
                     uint32_t const location{ msl.get_decoration(resource.id, spv::DecorationLocation) };
                     std::string str{ msl.get_decoration_string(resource.id, spv::DecorationUserSemantic) };
@@ -104,36 +104,34 @@ namespace garlic::clove::ShaderCompiler {
             }
 
             //return msl.compile();
+
+            CLOVE_ASSERT("SPIR-V to HLSL not fully supported!");
             return {};
         }
     }
 
-    std::vector<std::byte> compileFromFile(std::string_view filePath, ShaderType outputType) {
-        //TODO: Use readFile
-        return {};
+    std::vector<std::byte> compileFromFile(std::string_view filePath, Shader::Stage shaderStage, ShaderType outputType) {
+        //return compileFromSource(readFile(filePath), shaderStage, outputType);
+        return {}; //TODO
     }
 
-    std::vector<std::byte> compileFromSource(std::span<std::byte const> source, ShaderType outputType) {
+    std::vector<std::byte> compileFromSource(std::span<std::byte const> source, Shader::Stage shaderStage, ShaderType outputType) {
         std::string shaderSource;
         //shaderSource.append(source);
 
         glslang::InitializeProcess();
 
-        EShLanguage const eshstage{ EShLangFragment }; //TODO: Is stage required??
+        EShLanguage const eshstage{ getEShStage(shaderStage) };
         glslang::TShader shader(eshstage);
 
         char const *rawSource = shaderSource.data();
         shader.setStrings(&rawSource, 1);
 
-        TBuiltInResource builtInResources = glslang::DefaultTBuiltInResource;
-        EShMessages messages              = static_cast<EShMessages>(
-            EShMsgSpvRules |
-            EShMsgReadHlsl | EShMsgHlslOffsets | EShMsgHlslLegalization |
-            EShMsgKeepUncalled | EShMsgSuppressWarnings);
+        TBuiltInResource const builtInResources{ glslang::DefaultTBuiltInResource };
+        EShMessages const messages{ static_cast<EShMessages>( EShMsgSpvRules | EShMsgKeepUncalled | EShMsgSuppressWarnings) };
 
         shader.setEnvTargetHlslFunctionality1();
         shader.setAutoMapBindings(true);
-        shader.setHlslIoMapping(true);
         shader.setAutoMapLocations(true);
 
         shader.setEntryPoint("main");
@@ -168,17 +166,15 @@ namespace garlic::clove::ShaderCompiler {
         glslang::FinalizeProcess();
 
         switch(outputType) {
+            default:
             case ShaderType::SPIRV:
                 CLOVE_ASSERT("SPIR-V output not supported!");
-                return {};
+                //return { std::begin(spirvSource), std::end(spirvSource) };
+                return {}; //TODO
             case ShaderType::HLSL:
-                //return spirvToHLSL(stage, spirvSource);
-                break;
+                return spirvToHLSL(spirvSource);
             case ShaderType::MSL:
-                //return spirvToMSL(stage, spirvSource);
-                break;
+                return spirvToMSL(shaderStage, spirvSource);
         }
-
-        return {};
     }
 }
