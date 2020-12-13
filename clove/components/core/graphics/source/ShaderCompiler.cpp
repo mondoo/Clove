@@ -18,95 +18,108 @@
 #include <sstream>
 
 namespace garlic::clove::ShaderCompiler {
-    static EShLanguage getEShStage(Shader::Stage stage) {
-        switch(stage) {
-            case Shader::Stage::Vertex:
-                return EShLanguage::EShLangVertex;
-            case Shader::Stage::Pixel:
-                return EShLanguage::EShLangFragment;
-            default:
-                CLOVE_ASSERT("Unsupported shader stage {0}", CLOVE_FUNCTION_NAME);
-                return EShLanguage::EShLangVertex;
-        }
-    }
-
-    static std::string spirvToHLSL(Shader::Stage stage, std::vector<uint32_t> const &sprivSource) {
-        CLOVE_ASSERT("SPIR-V to HLSL not supported!");
-    }
-
-    static std::string spirvToMSL(Shader::Stage stage, std::vector<uint32_t> const &spirvSource) {
-        spirv_cross::CompilerMSL msl(spirvSource);
-        spirv_cross::CompilerMSL::Options scoptions;
-
-        scoptions.platform = spirv_cross::CompilerMSL::Options::Platform::macOS;
-        msl.set_msl_options(scoptions);
-
-        spirv_cross::ShaderResources resources = msl.get_shader_resources();
-
-        auto const remapMSLBindings = [&msl](uint32_t const binding, spirv_cross::ID const resourceID) {
-            spirv_cross::MSLResourceBinding resourceBinding;
-            resourceBinding.stage    = msl.get_execution_model();
-            resourceBinding.desc_set = msl.get_decoration(resourceID, spv::DecorationDescriptorSet);
-            resourceBinding.binding  = binding;
-            //Can cause issue if not all are set
-            resourceBinding.msl_buffer  = binding;
-            resourceBinding.msl_texture = binding;
-            resourceBinding.msl_sampler = binding;
-            msl.add_msl_resource_binding(resourceBinding);
-        };
-
-        //Set up correct buffer bindings
-        for(auto &resource : resources.uniform_buffers) {
-            uint32_t const binding{ msl.get_decoration(resource.id, spv::DecorationBinding) };
-            remapMSLBindings(binding, resource.id);
-        }
-
-        //Set up correct texture bindings
-        for(auto &resource : resources.separate_images) {
-            uint32_t const binding{ msl.get_decoration(resource.id, spv::DecorationBinding) };
-            remapMSLBindings(binding, resource.id);
-        }
-        for(auto &resource : resources.separate_samplers) {
-            uint32_t const binding{ msl.get_decoration(resource.id, spv::DecorationBinding) };
-            remapMSLBindings(binding, resource.id);
-        }
-
-        //Remap names to semantics
-        if(stage == Shader::Stage::Vertex) {
-            for(auto &resource : resources.stage_inputs) {
-                uint32_t const location{ msl.get_decoration(resource.id, spv::DecorationLocation) };
-                std::string str{ msl.get_decoration_string(resource.id, spv::DecorationUserSemantic) };
-
-                msl.set_name(resource.id, str);
+    namespace {
+        EShLanguage getEShStage(Shader::Stage stage) {
+            switch(stage) {
+                case Shader::Stage::Vertex:
+                    return EShLanguage::EShLangVertex;
+                case Shader::Stage::Pixel:
+                    return EShLanguage::EShLangFragment;
+                default:
+                    CLOVE_ASSERT("Unsupported shader stage {0}", CLOVE_FUNCTION_NAME);
+                    return EShLanguage::EShLangVertex;
             }
         }
 
-        return msl.compile();
-    }
+        std::vector<std::byte> readFile(std::string_view filePath) {
+            //Start at the end so we can get the file size
+            std::basic_ifstream<std::byte> file(filePath.data(), std::ios::ate | std::ios::binary);
 
-    std::string compileFromFile(std::string_view filePath, Shader::Stage stage, ShaderType outputType) {
-        std::ifstream stream(filePath.data());
+            if(!file.is_open()) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
+                return {};
+            }
 
-        std::string line;
-        std::stringstream ss;
-        while(getline(stream, line)) {
-            ss << line << '\n';
+            size_t const fileSize{ static_cast<size_t>(file.tellg()) };
+            std::vector<std::byte> buffer(fileSize);
+
+            file.seekg(0);
+            file.read(buffer.data(), fileSize);
+
+            file.close();
+
+            return buffer;
         }
 
-        return compileFromSource(ss.str(), stage, outputType);
+        std::vector<std::byte> spirvToHLSL(Shader::Stage stage, std::vector<uint32_t> const &sprivSource) {
+            CLOVE_ASSERT("SPIR-V to HLSL not supported!");
+            return {};
+        }
+
+        std::vector<std::byte> spirvToMSL(Shader::Stage stage, std::vector<uint32_t> const &spirvSource) {
+            spirv_cross::CompilerMSL msl(spirvSource);
+            spirv_cross::CompilerMSL::Options scoptions;
+
+            scoptions.platform = spirv_cross::CompilerMSL::Options::Platform::macOS;
+            msl.set_msl_options(scoptions);
+
+            spirv_cross::ShaderResources resources = msl.get_shader_resources();
+
+            auto const remapMSLBindings = [&msl](uint32_t const binding, spirv_cross::ID const resourceID) {
+                spirv_cross::MSLResourceBinding resourceBinding;
+                resourceBinding.stage    = msl.get_execution_model();
+                resourceBinding.desc_set = msl.get_decoration(resourceID, spv::DecorationDescriptorSet);
+                resourceBinding.binding  = binding;
+                //Can cause issue if not all are set
+                resourceBinding.msl_buffer  = binding;
+                resourceBinding.msl_texture = binding;
+                resourceBinding.msl_sampler = binding;
+                msl.add_msl_resource_binding(resourceBinding);
+            };
+
+            //Set up correct buffer bindings
+            for(auto &resource : resources.uniform_buffers) {
+                uint32_t const binding{ msl.get_decoration(resource.id, spv::DecorationBinding) };
+                remapMSLBindings(binding, resource.id);
+            }
+
+            //Set up correct texture bindings
+            for(auto &resource : resources.separate_images) {
+                uint32_t const binding{ msl.get_decoration(resource.id, spv::DecorationBinding) };
+                remapMSLBindings(binding, resource.id);
+            }
+            for(auto &resource : resources.separate_samplers) {
+                uint32_t const binding{ msl.get_decoration(resource.id, spv::DecorationBinding) };
+                remapMSLBindings(binding, resource.id);
+            }
+
+            //Remap names to semantics
+            if(stage == Shader::Stage::Vertex) {
+                for(auto &resource : resources.stage_inputs) {
+                    uint32_t const location{ msl.get_decoration(resource.id, spv::DecorationLocation) };
+                    std::string str{ msl.get_decoration_string(resource.id, spv::DecorationUserSemantic) };
+
+                    msl.set_name(resource.id, str);
+                }
+            }
+
+            //return msl.compile();
+            return {};
+        }
     }
 
-    std::string compileFromBytes(char const *bytes, std::size_t const size, Shader::Stage stage, ShaderType outputType) {
-        return compileFromSource({ bytes, size }, stage, outputType);
+    std::vector<std::byte> compileFromFile(std::string_view filePath, ShaderType outputType) {
+        //TODO: Use readFile
+        return {};
     }
 
-    std::string compileFromSource(std::string_view source, Shader::Stage stage, ShaderType outputType) {
+    std::vector<std::byte> compileFromSource(std::span<std::byte const> source, ShaderType outputType) {
         std::string shaderSource;
-        shaderSource.append(source);
+        //shaderSource.append(source);
 
         glslang::InitializeProcess();
 
-        EShLanguage const eshstage = getEShStage(stage);
+        EShLanguage const eshstage{ EShLangFragment }; //TODO: Is stage required??
         glslang::TShader shader(eshstage);
 
         char const *rawSource = shaderSource.data();
@@ -134,7 +147,7 @@ namespace garlic::clove::ShaderCompiler {
 
         if(strlen(log) > 0) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Error compiling shader: {0}", log);
-            return "";
+            return {};
         }
 
         glslang::SpvOptions spvOptions{};
@@ -157,11 +170,15 @@ namespace garlic::clove::ShaderCompiler {
         switch(outputType) {
             case ShaderType::SPIRV:
                 CLOVE_ASSERT("SPIR-V output not supported!");
-                return "";
+                return {};
             case ShaderType::HLSL:
-                return spirvToHLSL(stage, spirvSource);
+                //return spirvToHLSL(stage, spirvSource);
+                break;
             case ShaderType::MSL:
-                return spirvToMSL(stage, spirvSource);
+                //return spirvToMSL(stage, spirvSource);
+                break;
         }
+
+        return {};
     }
 }

@@ -2,7 +2,9 @@
 
 #include "Clove/Graphics/Shader.hpp"
 
+#include <span>
 #include <string_view>
+#include <vector>
 
 namespace garlic::clove {
     enum class ShaderType {
@@ -13,7 +15,6 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove::ShaderCompiler {
-    std::string compileFromFile(std::string_view filePath, Shader::Stage stage, ShaderType outputType);
-    std::string compileFromBytes(char const *bytes, std::size_t const size, Shader::Stage stage, ShaderType outputType);
-    std::string compileFromSource(std::string_view source, Shader::Stage stage, ShaderType outputType);
+    std::vector<std::byte> compileFromFile(std::string_view filePath, ShaderType outputType);
+    std::vector<std::byte> compileFromSource(std::span<std::byte const> source, ShaderType outputType);
 }

@@ -1,5 +1,6 @@
 #include "Clove/Graphics/Vulkan/VKGraphicsFactory.hpp"
 
+#include "Clove/Graphics/ShaderCompiler.hpp"
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 #include "Clove/Graphics/Vulkan/VKBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VKDescriptorPool.hpp"
@@ -69,26 +70,6 @@ namespace garlic::clove {
                 .height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, windowExtent.height)),
             };
         }
-    }
-
-    static std::vector<std::byte> readFile(std::string_view filePath) {
-        //Start at the end so we can get the file size
-        std::basic_ifstream<std::byte> file(filePath.data(), std::ios::ate | std::ios::binary);
-
-        if(!file.is_open()) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
-            return {};
-        }
-
-        size_t const fileSize = file.tellg();
-        std::vector<std::byte> buffer(fileSize);
-
-        file.seekg(0);
-        file.read(buffer.data(), fileSize);
-
-        file.close();
-
-        return buffer;
     }
 
     static VkAttachmentLoadOp convertLoadOp(LoadOperation garlicOperation) {
@@ -384,33 +365,11 @@ namespace garlic::clove {
     }
 
     Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::string_view filePath) {
-        return createShader(readFile(filePath));
+        return createShaderObject(ShaderCompiler::compileFromFile(filePath, ShaderType::SPIRV));
     }
 
-    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::span<std::byte const> byteCode) {
-        VkShaderModuleCreateInfo const createInfo{
-            .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-            .pNext    = nullptr,
-            .flags    = 0,
-            .codeSize = byteCode.size_bytes(),
-            .pCode    = reinterpret_cast<uint32_t const *>(std::data(byteCode)),
-        };
-
-        VkShaderModule module;
-        if(VkResult const result = vkCreateShaderModule(devicePtr.get(), &createInfo, nullptr, &module); result != VK_SUCCESS) {
-            switch(result) {
-                case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Out of host memory" } };
-                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Out of device memory" } };
-                case VK_ERROR_INVALID_SHADER_NV:
-                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Shader failed to compile." } };
-                default:
-                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Reason unkown." } };
-            }
-        }
-
-        return std::unique_ptr<Shader>{ std::make_unique<VKShader>(devicePtr, module) };
+    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::span<std::byte const> source) {
+        return createShaderObject(ShaderCompiler::compileFromSource(source, ShaderType::SPIRV));
     }
 
     Expected<std::unique_ptr<RenderPass>, std::runtime_error> VKGraphicsFactory::createRenderPass(RenderPass::Descriptor descriptor) {
@@ -969,5 +928,31 @@ namespace garlic::clove {
         }
 
         return std::unique_ptr<Sampler>{ std::make_unique<VKSampler>(devicePtr, sampler) };
+    }
+
+    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShaderObject(std::span<std::byte const> spirvSource) {
+        VkShaderModuleCreateInfo const createInfo{
+            .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+            .pNext    = nullptr,
+            .flags    = 0,
+            .codeSize = compiledSpirv.size_bytes(),
+            .pCode    = reinterpret_cast<uint32_t const *>(std::data(compiledSpirv)),
+        };
+
+        VkShaderModule module;
+        if(VkResult const result = vkCreateShaderModule(devicePtr.get(), &createInfo, nullptr, &module); result != VK_SUCCESS) {
+            switch(result) {
+                case VK_ERROR_OUT_OF_HOST_MEMORY:
+                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Out of host memory" } };
+                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Out of device memory" } };
+                case VK_ERROR_INVALID_SHADER_NV:
+                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Shader failed to compile." } };
+                default:
+                    return Unexpected{ std::runtime_error{ "Failed to create Shader. Reason unkown." } };
+            }
+        }
+
+        return std::unique_ptr<Shader>{ std::make_unique<VKShader>(devicePtr, module) };
     }
 }
