@@ -5,6 +5,11 @@ namespace Garlic.Bulb
     /// </summary>
     public class ComponentViewModel : ViewModel
     {
-        public string Name { get; set; }
+        public string Name
+        {
+            get { return name; }
+            set { name = value; OnPropertyChanged(nameof(name)); }
+        }
+        private string name = "";
     }
 }
