@@ -130,8 +130,7 @@ target_link_libraries(
         CloveMaths
 
     PRIVATE
-        glslang
-		glslang-default-resource-limits
+        shaderc
 		SPIRV
 		spirv-cross-core
 		spirv-cross-glsl

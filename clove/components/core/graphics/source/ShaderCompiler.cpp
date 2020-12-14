@@ -1,10 +1,7 @@
 #include "Clove/Graphics/ShaderCompiler.hpp"
 
-#define ENABLE_HLSL
-
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
-#include <SPIRV/GlslangToSpv.h>
 #include <SPIRV/SPVRemapper.h>
 #include <SPIRV/disassemble.h>
 #include <SPIRV/doc.h>
@@ -16,18 +13,19 @@
 #include <spirv_hlsl.hpp>
 #include <spirv_msl.hpp>
 #include <sstream>
+#include <shaderc/shaderc.hpp>
 
 namespace garlic::clove::ShaderCompiler {
     namespace {
-        EShLanguage getEShStage(Shader::Stage stage) {
+        shaderc_shader_kind getShadercStage(Shader::Stage stage) {
             switch(stage) {
                 case Shader::Stage::Vertex:
-                    return EShLanguage::EShLangVertex;
+                    return shaderc_vertex_shader;
                 case Shader::Stage::Pixel:
-                    return EShLanguage::EShLangFragment;
+                    return shaderc_fragment_shader;
                 default:
                     CLOVE_ASSERT("Unsupported shader stage {0}", CLOVE_FUNCTION_NAME);
-                    return EShLanguage::EShLangVertex;
+                    return shaderc_vertex_shader;
             }
         }
 
@@ -116,51 +114,11 @@ namespace garlic::clove::ShaderCompiler {
     }
 
     std::vector<std::byte> compileFromSource(std::span<std::byte const> source, Shader::Stage shaderStage, ShaderType outputType) {
-        glslang::InitializeProcess();
+        //shaderc::CompileOptions options{};
+        shaderc::Compiler compiler{};
 
-        EShLanguage const eshstage{ getEShStage(shaderStage) };
-        glslang::TShader shader(eshstage);
-
-        char const *shaderSourceAsString{ reinterpret_cast<char const *>(std::data(source)) };
-        shader.setStrings(&shaderSourceAsString, 1);
-
-        TBuiltInResource const builtInResources{ glslang::DefaultTBuiltInResource };
-        EShMessages const messages{ static_cast<EShMessages>(EShMsgSpvRules | EShMsgKeepUncalled | EShMsgSuppressWarnings) };
-
-        shader.setEnvTargetHlslFunctionality1();
-        shader.setAutoMapBindings(true);
-        shader.setAutoMapLocations(true);
-
-        shader.setEntryPoint("main");
-        shader.setEnvInput(glslang::EShSourceHlsl, eshstage, glslang::EShClientOpenGL, 450);
-        shader.setEnvClient(glslang::EShClientOpenGL, glslang::EShTargetOpenGL_450);
-        shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_5);
-
-        shader.parse(&builtInResources, 100, true, messages);
-
-        char const *log = shader.getInfoLog();
-
-        if(strlen(log) > 0) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Error compiling shader: {0}", log);
-            return {};
-        }
-
-        glslang::SpvOptions spvOptions{};
-        spvOptions.validate = false;
-#if CLOVE_DEBUG
-        spvOptions.generateDebugInfo = true;
-        spvOptions.disableOptimizer  = true;
-#else
-        spvOptions.generateDebugInfo = false;
-        spvOptions.disableOptimizer  = false;
-#endif
-
-        std::vector<uint32_t> spirvSource;
-        spv::SpvBuildLogger logger;
-        glslang::TIntermediate *inter{ shader.getIntermediate() };
-        glslang::GlslangToSpv(*inter, spirvSource, &logger, &spvOptions);
-
-        glslang::FinalizeProcess();
+        auto spirv = compiler.CompileGlslToSpv(reinterpret_cast<char const *>(std::data(source)), std::size(source), getShadercStage(shaderStage), "\0");
+        std::vector<uint32_t> spirvSource{ spirv.begin(), spirv.end() };
 
         switch(outputType) {
             default:
