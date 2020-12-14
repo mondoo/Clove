@@ -14,25 +14,52 @@ namespace Garlic.Bulb
         public string XText { get; } = "X";
         public string XValue
         {
-            get { return xValue; }
-            set { xValue = value; OnPropertyChanged(nameof(xValue)); }
+            get { return xValue.ToString(); }
+            set
+            {
+                double number;
+                if (double.TryParse(value, out number))
+                {
+                    xValue = number;
+                }
+                //Broadcast even if it isn't a match to reset the view back to the last valid number
+                OnPropertyChanged(nameof(xValue));
+            }
         }
-        private string xValue = "0";
+        private double xValue = 0;
 
         public string YText { get; } = "Y";
         public string YValue
         {
-            get { return yValue; }
-            set { yValue = value; OnPropertyChanged(nameof(yValue)); }
+            get { return yValue.ToString(); }
+            set
+            {
+                double number;
+                if (double.TryParse(value, out number))
+                {
+                    yValue = number;
+                }
+                //Broadcast even if it isn't a match to reset the view back to the last valid number
+                OnPropertyChanged(nameof(yValue));
+            }
         }
-        private string yValue = "0";
+        private double yValue = 0;
 
         public string ZText { get; } = "Z";
         public string ZValue
         {
-            get { return zValue; }
-            set { zValue = value; OnPropertyChanged(nameof(zValue)); }
+            get { return zValue.ToString(); }
+            set
+            {
+                double number;
+                if (double.TryParse(value, out number))
+                {
+                    zValue = number;
+                }
+                //Broadcast even if it isn't a match to reset the view back to the last valid number
+                OnPropertyChanged(nameof(zValue));
+            }
         }
-        private string zValue = "0";
+        private double zValue = 0;
     }
 }
