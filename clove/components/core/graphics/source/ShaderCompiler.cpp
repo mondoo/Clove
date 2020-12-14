@@ -2,18 +2,13 @@
 
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
-#include <SPIRV/SPVRemapper.h>
-#include <SPIRV/disassemble.h>
-#include <SPIRV/doc.h>
-#include <StandAlone/ResourceLimits.h>
 #include <fstream>
-#include <glslang/Public/ShaderLang.h>
+#include <shaderc/shaderc.hpp>
 #include <spirv.hpp>
 #include <spirv_glsl.hpp>
 #include <spirv_hlsl.hpp>
 #include <spirv_msl.hpp>
 #include <sstream>
-#include <shaderc/shaderc.hpp>
 
 namespace garlic::clove::ShaderCompiler {
     namespace {
@@ -114,10 +109,12 @@ namespace garlic::clove::ShaderCompiler {
     }
 
     std::vector<std::byte> compileFromSource(std::span<std::byte const> source, Shader::Stage shaderStage, ShaderType outputType) {
-        //shaderc::CompileOptions options{};
+        shaderc::CompileOptions options{};
+        //options.SetIncluder();
+
         shaderc::Compiler compiler{};
 
-        auto spirv = compiler.CompileGlslToSpv(reinterpret_cast<char const *>(std::data(source)), std::size(source), getShadercStage(shaderStage), "\0");
+        auto spirv = compiler.CompileGlslToSpv(reinterpret_cast<char const *>(std::data(source)), std::size(source), getShadercStage(shaderStage), "\0", options);
         std::vector<uint32_t> spirvSource{ spirv.begin(), spirv.end() };
 
         switch(outputType) {
