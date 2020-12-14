@@ -50,7 +50,7 @@
 					<DataTemplate DataType="{x:Type local:TransformComponentViewModel}">
 						<StackPanel>
 							<ListBoxItem Content="{Binding Name}"/>
-							<local:Vector3Box LeftFieldText="A" LeftFieldValue="1000" RightFieldText="1"/>
+							<local:Vector3Box LeftFieldText="{Binding XText}" LeftFieldValue="{Binding XValue}" CenterFieldText="{Binding YText}" CenterFieldValue="{Binding YValue}" RightFieldText="{Binding ZText}" RightFieldValue="{Binding ZValue}"/>
 						</StackPanel>
 					</DataTemplate>
 					
