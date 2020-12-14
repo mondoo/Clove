@@ -21,8 +21,8 @@
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
-			<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=XText}"/>
-			<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=XValue, Mode=TwoWay}"/>
+			<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=LeftFieldText}"/>
+			<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=LeftFieldValue, Mode=TwoWay}"/>
 		</Grid>
 
 		<Grid Grid.Column="1" Margin="3,0">
@@ -31,8 +31,8 @@
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
-			<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=YText}"/>
-			<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=YValue, Mode=TwoWay}"/>
+			<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=CenterFieldText}"/>
+			<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=CenterFieldValue, Mode=TwoWay}"/>
 		</Grid>
 
 		<Grid Grid.Column="2" Margin="3,0">
@@ -41,8 +41,8 @@
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
-			<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=ZText}"/>
-			<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=YValue, Mode=TwoWay}"/>
+			<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=RightFieldText}"/>
+			<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=RightFieldValue, Mode=TwoWay}"/>
 		</Grid>
 	</Grid>
 </UserControl>

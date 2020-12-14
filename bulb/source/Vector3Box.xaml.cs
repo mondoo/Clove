@@ -1,4 +1,4 @@
-using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Garlic.Bulb
@@ -6,28 +6,29 @@ namespace Garlic.Bulb
     /// <summary>
     /// A UserControl for displaying 3 component vectors
     /// </summary>
-    public partial class Vector3Box : UserControl, INotifyPropertyChanged {
-        public string XText { get { return xtext; } set {
-                xtext = value;
-                OnPropertyChanged(nameof(XText));
-            }
-        }
-        private string xtext = "x";
-        public string XValue { get; set; } = "0";
+    public partial class Vector3Box : UserControl
+    {
+        public string LeftFieldText { get; set; }
+        public string LeftFieldValue { get; set; }
 
-        public string YText { get; set; } = "Y";
-        public string YValue { get; set; } = "0";
+        public string CenterFieldText { get; set; }
+        public string CenterFieldValue { get; set; }
 
-        public string ZText { get; set; } = "Z";
-        public string ZValue { get; set; } = "0";
+        public string RightFieldText { get; set; }
+        public string RightFieldValue { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
+        public static DependencyProperty XTextProperty = DependencyProperty.Register(nameof(LeftFieldText), typeof(object), typeof(Vector3Box), new PropertyMetadata(null));
+        public static DependencyProperty XValueProperty = DependencyProperty.Register(nameof(LeftFieldValue), typeof(object), typeof(Vector3Box), new PropertyMetadata(null));
 
-        public Vector3Box(){
+        public static DependencyProperty YTextProperty = DependencyProperty.Register(nameof(CenterFieldText), typeof(object), typeof(Vector3Box), new PropertyMetadata(null));
+        public static DependencyProperty YValueProperty = DependencyProperty.Register(nameof(CenterFieldValue), typeof(object), typeof(Vector3Box), new PropertyMetadata(null));
+
+        public static DependencyProperty ZTextProperty = DependencyProperty.Register(nameof(RightFieldText), typeof(object), typeof(Vector3Box), new PropertyMetadata(null));
+        public static DependencyProperty ZValueProperty = DependencyProperty.Register(nameof(RightFieldValue), typeof(object), typeof(Vector3Box), new PropertyMetadata(null));
+
+        public Vector3Box()
+        {
             InitializeComponent();
         }
-
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        
     }
 }
