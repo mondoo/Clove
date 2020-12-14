@@ -104,8 +104,8 @@ namespace garlic::clove::ShaderCompiler {
     }
 
     std::vector<std::byte> compileFromFile(std::string_view filePath, Shader::Stage shaderStage, ShaderType outputType) {
-        //return compileFromSource(readFile(filePath), shaderStage, outputType);
-        return {};//TODO
+        auto const source{ readFile(filePath) };
+        return compileFromSource({ std::begin(source), std::end(source) }, shaderStage, outputType);
     }
 
     std::vector<std::byte> compileFromSource(std::span<std::byte const> source, Shader::Stage shaderStage, ShaderType outputType) {
