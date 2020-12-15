@@ -29,24 +29,30 @@ TEST(ECSSystemTests, CanUseMemberFunction) {
         entities.push_back(entity);
     }
 
-    class TestSystem{
-        public:
-            int32_t const entityValue{ 18 };
-
-        void update(ValueComponent& component){
+    class TestSystem {
+    public:
+        int32_t const entityValue{ 18 };
+        bool const boolVal{ true };
+        
+        void update(ValueComponent &component) {
             component.value = entityValue;
+        }
+        void update_const(BoolComponent &component) const {
+            component.value = boolVal;
         }
     };
     TestSystem system;
 
     world.forEach(&TestSystem::update, &system);
+    world.forEach(&TestSystem::update_const, &system);
 
-    for(auto entity : entities){
+    for(auto entity : entities) {
         EXPECT_EQ(world.getComponent<ValueComponent>(entity)->value, system.entityValue);
+        EXPECT_TRUE(world.getComponent<BoolComponent>(entity)->value);
     }
 }
 
-TEST(ECSSystemTests, CanUseFreeFunction){
+TEST(ECSSystemTests, CanUseFreeFunction) {
     World world;
 
     std::vector<Entity> entities;
@@ -77,7 +83,7 @@ TEST(ECSSystemTests, CanUseLambdaFunction) {
 
     int32_t const entityVal{ 32 };
     world.forEach([entityVal](ValueComponent &valComp, BoolComponent &boolComp) {
-        valComp.value = entityVal;
+        valComp.value  = entityVal;
         boolComp.value = true;
     });
 
