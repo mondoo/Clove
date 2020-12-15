@@ -40,3 +40,8 @@ This can be achieved by putting the following snippet inside the CMakeLists that
 ```
 set_target_properties(OpenAL PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 ```
+
+If getting an error along the lines of '' when linking against Clove. Put the following command in your top most CMakeLists:
+```
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+```

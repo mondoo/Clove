@@ -30,7 +30,7 @@ namespace garlic::clove {
         VKGraphicsFactory(VKGraphicsFactory &&other) noexcept;
 
         VKGraphicsFactory &operator=(VKGraphicsFactory const &other) = delete;
-        VKGraphicsFactory &operator=(VKGraphicsFactory &&other) noexcept;
+        VKGraphicsFactory &operator                                  =(VKGraphicsFactory &&other) noexcept;
 
         ~VKGraphicsFactory();
 
@@ -40,8 +40,8 @@ namespace garlic::clove {
 
         Expected<std::unique_ptr<Swapchain>, std::runtime_error> createSwapChain(Swapchain::Descriptor descriptor) override;
 
-        Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::string_view filePath) override;
-        Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::span<std::byte const> byteCode) override;
+        Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::string_view filePath, Shader::Stage shaderStage) override;
+        Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::span<std::byte const> source, Shader::Stage shaderStage) override;
 
         Expected<std::unique_ptr<RenderPass>, std::runtime_error> createRenderPass(RenderPass::Descriptor descriptor) override;
         Expected<std::unique_ptr<DescriptorSetLayout>, std::runtime_error> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) override;
@@ -58,5 +58,11 @@ namespace garlic::clove {
         Expected<std::unique_ptr<GraphicsImage>, std::runtime_error> createImage(GraphicsImage::Descriptor descriptor) override;
 
         Expected<std::unique_ptr<Sampler>, std::runtime_error> createSampler(Sampler::Descriptor descriptor) override;
+
+    private:
+        /**
+         * @brief Creates a Vulkan shader object from SPIR-V
+         */
+        Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderObject(std::span<std::byte const> spirvSource);
     };
 }
