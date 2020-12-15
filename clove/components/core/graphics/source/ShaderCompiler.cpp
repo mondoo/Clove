@@ -32,6 +32,9 @@ namespace garlic::clove::ShaderCompiler {
         }
 
         std::vector<std::byte> readFile(std::string_view filePath) {
+            /* below is causing compile errors due to includes
+             * commenting out until implemented properly
+             
             //Start at the end so we can get the file size
             std::basic_ifstream<std::byte> file(filePath.data(), std::ios::ate | std::ios::binary);
 
@@ -49,6 +52,8 @@ namespace garlic::clove::ShaderCompiler {
             file.close();
 
             return buffer;
+            */
+            return {};
         }
 
         std::vector<std::byte> spirvToHLSL(std::vector<uint32_t> const &sprivSource) {
