@@ -5,6 +5,9 @@
 #include "Clove/Rendering/ForwardRenderer3D.hpp"
 #include "Clove/Rendering/GraphicsImageRenderTarget.hpp"
 #include "Clove/Rendering/SwapchainRenderTarget.hpp"
+#include "Clove/Systems/AudioSystem.hpp"
+#include "Clove/Systems/PhysicsSystem.hpp"
+#include "Clove/Systems/RenderSystem.hpp"
 
 #include <Clove/Audio/AudioDevice.hpp>
 #include <Clove/Definitions.hpp>
@@ -16,6 +19,28 @@
 #include <Clove/Platform/Window.hpp>
 
 namespace garlic::clove {
+    namespace {
+        class ApplicationLayer : public Layer {
+            AudioSystem audioSystem{};
+            PhysicsSystem physicsSystem{};
+            RenderSystem renderSystem{};
+
+            World *ecsWorld{ nullptr };
+
+        public:
+            ApplicationLayer(World *ecsWorld)
+                : Layer("Application")
+                , ecsWorld(ecsWorld) {
+            }
+
+            void onUpdate(DeltaTime const deltaTime) override {
+                audioSystem.update(*ecsWorld);
+                physicsSystem.update(*ecsWorld, deltaTime);
+                renderSystem.update(*ecsWorld, deltaTime);
+            }
+        };
+    }
+
     Application *Application::instance{ nullptr };
 
     Application::~Application() = default;
@@ -33,7 +58,11 @@ namespace garlic::clove {
         //Audio
         app->audioDevice = createAudioDevice(audioApi);
 
+        //ECS
         app->world = std::make_unique<World>();
+
+        //Layer
+        app->layerStack.pushLayer(std::make_shared<ApplicationLayer>(app->world.get()));
 
         return app;
     }
@@ -51,9 +80,13 @@ namespace garlic::clove {
         //Audio
         app->audioDevice = createAudioDevice(audioApi);
 
+        //ECS
         app->world = std::make_unique<World>();
 
-        return std::make_pair(std::move(app), renderTargetPtr);
+        //Layer
+        app->layerStack.pushLayer(std::make_shared<ApplicationLayer>(app->world.get()));
+
+        return { std::move(app), renderTargetPtr };
     }
 
     Application &Application::get() {
