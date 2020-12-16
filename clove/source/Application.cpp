@@ -61,8 +61,8 @@ namespace garlic::clove {
         //ECS
         app->world = std::make_unique<World>();
 
-        //Layer
-        app->layerStack.pushLayer(std::make_shared<ApplicationLayer>(app->world.get()));
+        //Layers
+        app->pushLayer(std::make_shared<ApplicationLayer>(app->world.get()));
 
         return app;
     }
@@ -83,8 +83,8 @@ namespace garlic::clove {
         //ECS
         app->world = std::make_unique<World>();
 
-        //Layer
-        app->layerStack.pushLayer(std::make_shared<ApplicationLayer>(app->world.get()));
+        //Layers
+        app->pushLayer(std::make_shared<ApplicationLayer>(app->world.get()));
 
         return { std::move(app), renderTargetPtr };
     }
@@ -93,12 +93,20 @@ namespace garlic::clove {
         return *instance;
     }
 
-    void Application::pushLayer(std::shared_ptr<Layer> layer) {
-        layerStack.pushLayer(std::move(layer));
+    void Application::pushLayer(std::shared_ptr<Layer> layer, LayerGroup group) {
+        CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Attached layer: {0}", layer->getName());
+        layers[group].push_back(std::move(layer));
     }
 
-    void Application::pushOverlay(std::shared_ptr<Layer> overlay) {
-        layerStack.pushOverlay(std::move(overlay));
+    void Application::popLayer(std::shared_ptr<Layer> const &layer) {
+        for(auto &&[key, group] : layers) {
+            if(auto it = std::find(group.begin(), group.end(), layer); it != group.end()) {
+                CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Popped layer: {0}", (*it)->getName());
+                (*it)->onDetach();
+                group.erase(it);
+                break;
+            }
+        }
     }
 
     Application::State Application::getState() const {
@@ -125,24 +133,30 @@ namespace garlic::clove {
 
             while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
                 InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
-                for(auto const &layer : layerStack) {
-                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                        break;
+                for(auto &&[key, group] : layers) {
+                    for(auto &layer : group) {
+                        if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                            break;
+                        }
                     }
                 }
             }
             while(auto mouseEvent = window->getMouse().getEvent()) {
                 InputEvent const event{ *mouseEvent, InputEvent::Type::Mouse };
-                for(auto const &layer : layerStack) {
-                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                        break;
+                for(auto &&[key, group] : layers) {
+                    for(auto &layer : group) {
+                        if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                            break;
+                        }
                     }
                 }
             }
         }
 
-        for(auto const &layer : layerStack) {
-            layer->onUpdate(deltaSeonds.count());
+        for(auto &&[key, group] : layers) {
+            for(auto &layer : group) {
+                layer->onUpdate(deltaSeonds.count());
+            }
         }
 
         renderer->end();

@@ -186,9 +186,6 @@ add_library(
 		${INCLUDE}/Layer.hpp
 		${INCLUDE}/Layer.inl
 		${SOURCE}/Layer.cpp
-		${INCLUDE}/LayerStack.hpp
-		${INCLUDE}/LayerStack.inl
-		${SOURCE}/LayerStack.cpp
 		
 		${INCLUDE}/ModelLoader.hpp
 		${SOURCE}/ModelLoader.cpp
