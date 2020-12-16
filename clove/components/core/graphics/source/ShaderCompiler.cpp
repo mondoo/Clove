@@ -2,7 +2,9 @@
 
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
+#include <file_includer.h>
 #include <fstream>
+#include <libshaderc_util/file_finder.h>
 #include <shaderc/shaderc.hpp>
 #include <spirv.hpp>
 #include <spirv_glsl.hpp>
@@ -109,8 +111,11 @@ namespace garlic::clove::ShaderCompiler {
     }
 
     std::vector<std::byte> compileFromSource(std::span<std::byte const> source, Shader::Stage shaderStage, ShaderType outputType) {
+        shaderc_util::FileFinder fileFinder{};
+        auto fileIncluder{ std::make_unique<glslc::FileIncluder>(&fileFinder) };
+
         shaderc::CompileOptions options{};
-        //options.SetIncluder();
+        options.SetIncluder(std::move(fileIncluder));
 
         shaderc::Compiler compiler{};
 
