@@ -10,7 +10,6 @@
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
-#include <Clove/Systems/RenderSystem.hpp>
 #include <Clove/ECS/World.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
