@@ -53,7 +53,7 @@ namespace garlic::membrane {
         *runtimeLayer = std::make_shared<RuntimeLayer>();
 
         app->pushLayer(*runtimeLayer);
-        app->pushOverlay(*editorLayer);
+        app->pushLayer(*editorLayer);
     }
 
     Application::~Application() {
