@@ -112,6 +112,8 @@ namespace garlic::clove::ShaderCompiler {
 
     std::vector<std::byte> compileFromSource(std::span<std::byte const> source, Shader::Stage shaderStage, ShaderType outputType) {
         shaderc_util::FileFinder fileFinder{};
+        //TEMP: Hardcoding in a search path for testing
+        fileFinder.search_path().push_back("/home/alex/Documents/Dev/sandbox/garlic/clove/source/Shaders");
         auto fileIncluder{ std::make_unique<glslc::FileIncluder>(&fileFinder) };
 
         shaderc::CompileOptions options{};
