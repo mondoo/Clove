@@ -3,7 +3,7 @@
 #include "Clove/Layer.hpp"
 
 namespace garlic::clove {
-    class World;
+    class EntityManager;
 }
 
 namespace garlic::clove {
@@ -13,7 +13,7 @@ namespace garlic::clove {
     class AudioLayer : public Layer{
         //VARIABLES
     private:
-        World *world{ nullptr };
+        EntityManager *entityManager{ nullptr };
         
         //FUNCTIONS
     public:

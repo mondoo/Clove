@@ -1,5 +1,5 @@
 #include <Clove/ECS/Component.hpp>
-#include <Clove/ECS/World.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <gtest/gtest.h>
 
 using namespace garlic::clove;
@@ -19,13 +19,13 @@ void makeTrue(BoolComponent &comp) {
 }
 
 TEST(ECSSystemTests, CanUseMemberFunction) {
-    World world;
+    EntityManager entityManager;
 
     std::vector<Entity> entities;
     for(int i = 0; i < 5; ++i) {
-        auto entity{ world.create() };
-        world.addComponent<ValueComponent>(entity);
-        world.addComponent<BoolComponent>(entity);
+        auto entity{ entityManager.create() };
+        entityManager.addComponent<ValueComponent>(entity);
+        entityManager.addComponent<BoolComponent>(entity);
         entities.push_back(entity);
     }
 
@@ -43,62 +43,62 @@ TEST(ECSSystemTests, CanUseMemberFunction) {
     };
     TestSystem system;
 
-    world.forEach(&TestSystem::update, &system);
-    world.forEach(&TestSystem::update_const, &system);
+    entityManager.forEach(&TestSystem::update, &system);
+    entityManager.forEach(&TestSystem::update_const, &system);
 
     for(auto entity : entities) {
-        EXPECT_EQ(world.getComponent<ValueComponent>(entity)->value, system.entityValue);
-        EXPECT_TRUE(world.getComponent<BoolComponent>(entity)->value);
+        EXPECT_EQ(entityManager.getComponent<ValueComponent>(entity)->value, system.entityValue);
+        EXPECT_TRUE(entityManager.getComponent<BoolComponent>(entity)->value);
     }
 }
 
 TEST(ECSSystemTests, CanUseFreeFunction) {
-    World world;
+    EntityManager entityManager;
 
     std::vector<Entity> entities;
     for(int i = 0; i < 5; ++i) {
-        auto entity{ world.create() };
-        world.addComponent<ValueComponent>(entity);
-        world.addComponent<BoolComponent>(entity);
+        auto entity{ entityManager.create() };
+        entityManager.addComponent<ValueComponent>(entity);
+        entityManager.addComponent<BoolComponent>(entity);
         entities.push_back(entity);
     }
 
-    world.forEach(&makeTrue);
+    entityManager.forEach(&makeTrue);
 
     for(auto entity : entities) {
-        EXPECT_TRUE(world.getComponent<BoolComponent>(entity)->value);
+        EXPECT_TRUE(entityManager.getComponent<BoolComponent>(entity)->value);
     }
 }
 
 TEST(ECSSystemTests, CanUseLambdaFunction) {
-    World world;
+    EntityManager entityManager;
 
     std::vector<Entity> entities;
     for(int i = 0; i < 5; ++i) {
-        auto entity{ world.create() };
-        world.addComponent<ValueComponent>(entity);
-        world.addComponent<BoolComponent>(entity);
+        auto entity{ entityManager.create() };
+        entityManager.addComponent<ValueComponent>(entity);
+        entityManager.addComponent<BoolComponent>(entity);
         entities.push_back(entity);
     }
 
     int32_t const entityVal{ 32 };
-    world.forEach([entityVal](ValueComponent &valComp, BoolComponent &boolComp) {
+    entityManager.forEach([entityVal](ValueComponent &valComp, BoolComponent &boolComp) {
         valComp.value  = entityVal;
         boolComp.value = true;
     });
 
     for(auto entity : entities) {
-        EXPECT_EQ(world.getComponent<ValueComponent>(entity)->value, entityVal);
-        EXPECT_TRUE(world.getComponent<BoolComponent>(entity)->value);
+        EXPECT_EQ(entityManager.getComponent<ValueComponent>(entity)->value, entityVal);
+        EXPECT_TRUE(entityManager.getComponent<BoolComponent>(entity)->value);
     }
 
     auto func = [entityVal](BoolComponent &boolComp) {
         boolComp.value = false;
     };
 
-    world.forEach(func);
+    entityManager.forEach(func);
 
     for(auto entity : entities) {
-        EXPECT_FALSE(world.getComponent<BoolComponent>(entity)->value);
+        EXPECT_FALSE(entityManager.getComponent<BoolComponent>(entity)->value);
     }
 }

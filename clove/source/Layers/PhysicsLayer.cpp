@@ -8,14 +8,14 @@
 
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 #include <Clove/Delegate/MultiCastDelegate.hpp>
-#include <Clove/ECS/World.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Event/EventDispatcher.hpp>
 #include <btBulletDynamicsCommon.h>
 
 namespace garlic::clove {
     PhysicsLayer::PhysicsLayer()
         : Layer("Physics")
-        , ecsWorld{ Application::get().getECSWorld() } {
+        , entityManager{ Application::get().getEntityManager() } {
         collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
         dispatcher             = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
         broadphase             = std::make_unique<btDbvtBroadphase>();
@@ -23,11 +23,11 @@ namespace garlic::clove {
 
         dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get());
 
-        registerToEvents(*ecsWorld);
+        registerToEvents(*entityManager);
     }
 
     PhysicsLayer::PhysicsLayer(PhysicsLayer &&other) noexcept {
-        ecsWorld = other.ecsWorld;
+        entityManager = other.entityManager;
 
         collisionConfiguration = std::move(other.collisionConfiguration);
         dispatcher             = std::move(other.dispatcher);
@@ -38,11 +38,11 @@ namespace garlic::clove {
 
         currentCollisions = std::move(other.currentCollisions);
 
-        registerToEvents(*ecsWorld);
+        registerToEvents(*entityManager);
     }
 
     PhysicsLayer &PhysicsLayer::operator=(PhysicsLayer &&other) noexcept {
-        ecsWorld = other.ecsWorld;
+        entityManager = other.entityManager;
 
         collisionConfiguration = std::move(other.collisionConfiguration);
         dispatcher             = std::move(other.dispatcher);
@@ -53,15 +53,15 @@ namespace garlic::clove {
 
         currentCollisions = std::move(other.currentCollisions);
 
-        registerToEvents(*ecsWorld);
+        registerToEvents(*entityManager);
 
         return *this;
     }
 
     PhysicsLayer::~PhysicsLayer() = default;
 
-    void PhysicsLayer::registerToEvents(World &world) {
-        EventDispatcher &dispatcher{ world.getDispatcher() };
+    void PhysicsLayer::registerToEvents(EntityManager &entityManager) {
+        EventDispatcher &dispatcher{ entityManager.getDispatcher() };
 
         collisionShapeAddedHandle   = dispatcher.bindToEvent<ComponentAddedEvent<CollisionShapeComponent>>([this](ComponentAddedEvent<CollisionShapeComponent> const &event) {
             onCollisionShapeAdded(event);
@@ -82,7 +82,7 @@ namespace garlic::clove {
         CLOVE_PROFILE_FUNCTION();
 
         //Make sure any colliders are properly paired with their rigid body
-        ecsWorld->forEach([this](CollisionShapeComponent &shape, RigidBodyComponent &body) {
+        entityManager->forEach([this](CollisionShapeComponent &shape, RigidBodyComponent &body) {
             if(shape.collisionObject != nullptr) {
                 dynamicsWorld->removeCollisionObject(shape.collisionObject.get());
                 shape.collisionObject.reset();
@@ -106,8 +106,8 @@ namespace garlic::clove {
         });
 
         //Make sure any recently un-paired colliders are updated
-        ecsWorld->forEach([this](CollisionShapeComponent &shape) {
-            if(!ecsWorld->hasComponent<RigidBodyComponent>(shape.getEntity())) {
+        entityManager->forEach([this](CollisionShapeComponent &shape) {
+            if(!entityManager->hasComponent<RigidBodyComponent>(shape.getEntity())) {
                 if(shape.collisionObject == nullptr) {
                     shape.constructCollisionObject();
                     addColliderToWorld(shape);
@@ -116,8 +116,8 @@ namespace garlic::clove {
         });
 
         //Make sure any recently un-paired rigid bodies are updated
-        ecsWorld->forEach([this](RigidBodyComponent &body) {
-            if(!ecsWorld->hasComponent<CollisionShapeComponent>(body.getEntity())) {
+        entityManager->forEach([this](RigidBodyComponent &body) {
+            if(!entityManager->hasComponent<CollisionShapeComponent>(body.getEntity())) {
                 if(body.standInShape == nullptr) {
                     btRigidBody *const btBody{ body.body.get() };
 
@@ -140,12 +140,12 @@ namespace garlic::clove {
         };
 
         //Notify Bullet of the location of the colliders
-        ecsWorld->forEach([&](TransformComponent const &transform, CollisionShapeComponent &shape) {
-            if(!ecsWorld->hasComponent<RigidBodyComponent>(shape.getEntity())) {
+        entityManager->forEach([&](TransformComponent const &transform, CollisionShapeComponent &shape) {
+            if(!entityManager->hasComponent<RigidBodyComponent>(shape.getEntity())) {
                 updateCollider(transform, *shape.collisionObject);
             }
         });
-        ecsWorld->forEach([&](TransformComponent const &transform, RigidBodyComponent &body) {
+        entityManager->forEach([&](TransformComponent const &transform, RigidBodyComponent &body) {
             updateCollider(transform, *body.body);
         });
 
@@ -162,12 +162,12 @@ namespace garlic::clove {
         };
 
         //Apply any simulation updates
-        ecsWorld->forEach([&](TransformComponent &transform, CollisionShapeComponent const &shape) {
-            if(!ecsWorld->hasComponent<RigidBodyComponent>(shape.getEntity())) {
+        entityManager->forEach([&](TransformComponent &transform, CollisionShapeComponent const &shape) {
+            if(!entityManager->hasComponent<RigidBodyComponent>(shape.getEntity())) {
                 updateTransform(transform, *shape.collisionObject);
             }
         });
-        ecsWorld->forEach([&](TransformComponent &transform, RigidBodyComponent const &body) {
+        entityManager->forEach([&](TransformComponent &transform, RigidBodyComponent const &body) {
             updateTransform(transform, *body.body);
         });
 
@@ -210,11 +210,11 @@ namespace garlic::clove {
             Entity const entityA{ manifold.entityA };
             Entity const entityB{ manifold.entityB };
 
-            if(auto entityAComp = ecsWorld->getComponent<CollisionResponseComponent>(entityA)) {
+            if(auto entityAComp = entityManager->getComponent<CollisionResponseComponent>(entityA)) {
                 entityAComp->onCollisionBegin.broadcast(Collision{ entityA, entityB });
             }
 
-            if(auto entityBComp = ecsWorld->getComponent<CollisionResponseComponent>(entityB)) {
+            if(auto entityBComp = entityManager->getComponent<CollisionResponseComponent>(entityB)) {
                 entityBComp->onCollisionBegin.broadcast(Collision{ entityB, entityA });
             }
 
@@ -226,11 +226,11 @@ namespace garlic::clove {
             Entity const entityA{ manifold.entityA };
             Entity const entityB{ manifold.entityB };
 
-            if(auto entityAComp = ecsWorld->getComponent<CollisionResponseComponent>(entityA)) {
+            if(auto entityAComp = entityManager->getComponent<CollisionResponseComponent>(entityA)) {
                 entityAComp->onCollisionEnd.broadcast(Collision{ entityA, entityB });
             }
 
-            if(auto entityBComp = ecsWorld->getComponent<CollisionResponseComponent>(entityB)) {
+            if(auto entityBComp = entityManager->getComponent<CollisionResponseComponent>(entityB)) {
                 entityBComp->onCollisionEnd.broadcast(Collision{ entityB, entityA });
             }
 

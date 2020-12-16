@@ -14,9 +14,9 @@ add_library(
 	${INCLUDE}/ECSEvents.hpp
 	${INCLUDE}/ECSTypes.hpp
 	${INCLUDE}/Entity.hpp
-	${INCLUDE}/World.hpp
-	${INCLUDE}/World.inl
-	${SOURCE}/World.cpp
+	${INCLUDE}/EntityManager.hpp
+	${INCLUDE}/EntityManager.inl
+	${SOURCE}/EntityManager.cpp
 )
 
 #Includes

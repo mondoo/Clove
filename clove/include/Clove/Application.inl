@@ -15,7 +15,7 @@ namespace garlic::clove{
         return renderer.get();
     }
 
-    World *Application::getECSWorld() const {
-        return world.get();
+    EntityManager *Application::getEntityManager() const {
+        return entityManager.get();
     }
 }

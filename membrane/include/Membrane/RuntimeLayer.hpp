@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace garlic::clove{
-    class World;
+    class EntityManager;
 }
 
 namespace garlic::membrane {
@@ -17,7 +17,7 @@ namespace garlic::membrane {
     class RuntimeLayer : public clove::Layer {
         //VARIABLES
         private:
-            clove::World *ecsWorld{ nullptr };
+            clove::EntityManager *entityManager{ nullptr };
             std::vector<clove::Entity> runtimeEntities;
 
             //FUNCTIONS

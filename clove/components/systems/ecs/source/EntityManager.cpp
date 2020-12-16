@@ -1,31 +1,31 @@
-#include "Clove/ECS/World.hpp"
+#include "Clove/ECS/EntityManager.hpp"
 
 namespace garlic::clove {
-    Entity World::nextEntity = 1;
+    Entity EntityManager::nextEntity = 1;
 
-    World::World()
+    EntityManager::EntityManager()
         : componentManager(&ecsEventDispatcher) {
     }
 
-    World::~World() {
+    EntityManager::~EntityManager() {
         destroyAll();
     }
 
-    Entity World::create() {
+    Entity EntityManager::create() {
         Entity entity{ nextEntity++ };
         activeEntities.push_back(entity);
 
         return entity;
     }
 
-    Entity World::clone(Entity entity) {
+    Entity EntityManager::clone(Entity entity) {
         Entity clonedEntity{ create() };
         componentManager.cloneEntitiesComponents(entity, clonedEntity);
 
         return clonedEntity;
     }
 
-    void World::destroy(Entity entity) {
+    void EntityManager::destroy(Entity entity) {
         auto foundIDIter{ std::find(activeEntities.begin(), activeEntities.end(), entity) };
 
         if(entity == NullEntity || foundIDIter == activeEntities.end()) {
@@ -35,14 +35,14 @@ namespace garlic::clove {
         pendingDestroyEntities.emplace(entity);
     }
 
-    void World::destroyAll() {
+    void EntityManager::destroyAll() {
         for(Entity entity : activeEntities) {
             componentManager.onEntityDestroyed(entity);
         }
         activeEntities.clear();
     }
 
-    bool World::isValid(Entity entity) {
+    bool EntityManager::isValid(Entity entity) {
         if(entity != NullEntity) {
             return std::find(activeEntities.begin(), activeEntities.end(), entity) != activeEntities.end();
         } else {

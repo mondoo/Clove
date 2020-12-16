@@ -13,7 +13,7 @@ namespace garlic::clove {
     class Platform;
     class Window;
     class GraphicsDevice;
-    class World;
+    class EntityManager;
     class Layer;
     class ForwardRenderer3D;
     class GraphicsImageRenderTarget;
@@ -45,7 +45,7 @@ namespace garlic::clove {
 
         std::unique_ptr<Window> window;
         std::unique_ptr<ForwardRenderer3D> renderer;
-        std::unique_ptr<World> world;
+        std::unique_ptr<EntityManager> entityManager;
 
         std::map<LayerGroup, std::vector<std::shared_ptr<Layer>>> layers;
 
@@ -95,7 +95,7 @@ namespace garlic::clove {
 
         inline Window *getWindow() const;
         inline ForwardRenderer3D *getRenderer() const;
-        inline World *getECSWorld() const;
+        inline EntityManager *getEntityManager() const;
 
     private:
         Application();

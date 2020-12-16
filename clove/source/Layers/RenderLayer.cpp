@@ -10,14 +10,14 @@
 #include "Clove/Rendering/ForwardRenderer3D.hpp"
 #include "Clove/Rendering/Renderables/Mesh.hpp"
 
-#include <Clove/ECS/World.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Maths/Maths.hpp>
 
 namespace garlic::clove {
     RenderLayer::RenderLayer()
         : Layer("Render")
         , renderer{ Application::get().getRenderer() }
-        , world{ Application::get().getECSWorld() } {
+        , entityManager{ Application::get().getEntityManager() } {
     }
 
     RenderLayer::RenderLayer(RenderLayer &&other) noexcept = default;
@@ -30,7 +30,7 @@ namespace garlic::clove {
         CLOVE_PROFILE_FUNCTION();
 
         //Transform and submit cameras
-        world->forEach([this](TransformComponent const &transform, CameraComponent &camera) {
+        entityManager->forEach([this](TransformComponent const &transform, CameraComponent &camera) {
             vec3f const position{ transform.getPosition(TransformSpace::World) };
 
             vec3f const camFront{ transform.getForward() };
@@ -42,7 +42,7 @@ namespace garlic::clove {
         });
 
         //Submit static meshes
-        world->forEach([this](TransformComponent const &transform, StaticModelComponent const &staticModel) {
+        entityManager->forEach([this](TransformComponent const &transform, StaticModelComponent const &staticModel) {
             mat4f const modelTransform{ transform.getTransformationMatrix(TransformSpace::World) };
 
             for(auto &mesh : staticModel.model.getMeshes()) {
@@ -50,7 +50,7 @@ namespace garlic::clove {
             }
         });
         //Submit animated meshes
-        world->forEach([this, &deltaTime](TransformComponent const &transform, AnimatedModelComponent &animatedModel) {
+        entityManager->forEach([this, &deltaTime](TransformComponent const &transform, AnimatedModelComponent &animatedModel) {
             mat4f const modelTransform{ transform.getTransformationMatrix(TransformSpace::World) };
             auto const matrixPalet{ animatedModel.model.update(deltaTime) };
 
@@ -60,13 +60,13 @@ namespace garlic::clove {
         });
 
         //Submit directional lights
-        world->forEach([this](DirectionalLightComponent &light) {
+        entityManager->forEach([this](DirectionalLightComponent &light) {
             light.lightData.shadowTransform = light.shadowProj * lookAt(-normalise(light.lightData.data.direction) * (light.farDist / 2.0f), vec3f{ 0.0f, 0.0f, 0.0f }, vec3f{ 0.0f, 1.0f, 0.0f });
 
             renderer->submitLight(light.lightData);
         });
         //Submit point lights
-        world->forEach([this](TransformComponent const &transform, PointLightComponent &light) {
+        entityManager->forEach([this](TransformComponent const &transform, PointLightComponent &light) {
             vec3f const &position{ transform.getPosition() };
 
             light.lightData.data.position       = position;

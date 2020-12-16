@@ -5,15 +5,15 @@
 
 #include <Clove/Application.hpp>
 #include <Clove/Audio/Audio.hpp>
+#include <Clove/Components/StaticModelComponent.hpp>
+#include <Clove/Components/TransformComponent.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Log/Log.hpp>
-#include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
-#include <Clove/ECS/World.hpp>
-#include <Clove/Components/TransformComponent.hpp>
-#include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/ModelLoader.hpp>
+#include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
 
 namespace garlic::membrane {
     class ConsoleLogger : public clove::Logger::Output {
@@ -103,10 +103,10 @@ namespace garlic::membrane {
     void Application::createComponent(clove::Entity entity, ComponentType componentType) {
         switch(componentType) {
             case ComponentType::Transform:
-                app->getECSWorld()->addComponent<clove::TransformComponent>(entity);
+                app->getEntityManager()->addComponent<clove::TransformComponent>(entity);
                 break;
             case ComponentType::Mesh:
-                app->getECSWorld()->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
+                app->getEntityManager()->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
                 break;
             default:
                 break;

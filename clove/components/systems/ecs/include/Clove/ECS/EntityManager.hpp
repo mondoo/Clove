@@ -15,10 +15,9 @@ namespace garlic::clove {
 
 namespace garlic::clove {
     /**
-	 * @brief The ECS World that contains the Entities Systems and Components.
-	 * @details A World acts as a container that stores all of the elements that make an ECS.
+	 * @brief The EntityManager that contains the Entities and their Components.
 	 */
-    class World {
+    class EntityManager {
         //VARIABLES
     private:
         EventDispatcher ecsEventDispatcher;
@@ -31,20 +30,20 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        World();
+        EntityManager();
 
-        World(World const &other)     = delete;
-        World(World &&other) noexcept = delete;
+        EntityManager(EntityManager const &other)     = delete;
+        EntityManager(EntityManager &&other) noexcept = delete;
 
-        World &operator=(World const &other) = delete;
-        World &operator=(World &&other) noexcept = delete;
+        EntityManager &operator=(EntityManager const &other) = delete;
+        EntityManager &operator=(EntityManager &&other) noexcept = delete;
 
-        ~World();
+        ~EntityManager();
 
         inline EventDispatcher &getDispatcher();
 
         /**
-		 * @brief Creates an entity to be part of this World.
+		 * @brief Creates an entity to be part of this EntityManager.
 		 * @return The newly created entity.
 		 */
         Entity create();
@@ -56,27 +55,27 @@ namespace garlic::clove {
         Entity clone(Entity entity);
 
         /**
-		 * @brief Removes the Entity from this World.
+		 * @brief Removes the Entity from this EntityManager.
 		 * @details Entities are removed the next time update is called.
 		 * @param ID The Entity to remove.
 		 */
         void destroy(Entity entity);
         /**
-		 * @brief Destroys all Entities in this World.
+		 * @brief Destroys all Entities in this EntityManager.
 		 * @details Entities are destroyed immediately.
 		 */
         void destroyAll();
 
         /**
 		 * @brief Checks if an Entity is valid.
-		 * @details An entity is valid if it is part of this World and has a valid EntityID.
+		 * @details An entity is valid if it is part of this EntityManager and has a valid EntityID.
 		 * @param ID The Entity to check.
 		 * @return Returns true if the entity is valid.
 		 */
         bool isValid(Entity entity);
 
         /**
-		 * @brief Adds a Component to this world.
+		 * @brief Adds a Component to this entityManager.
 		 * @tparam ComponentType The type of Component to add.
 		 * @param entityId The Entity to add the component to.
 		 * @param args Construction arguments to be forwarded to the component's constructor.
@@ -111,31 +110,31 @@ namespace garlic::clove {
         void removeComponent(Entity entity);
 
         /**
-         * @brief Calls the function for every Entity in the world.
+         * @brief Calls the function for every Entity in the entityManager.
          */
         template<typename... ComponentTypes>
         void forEach(void (*updateFunction)(ComponentTypes...));
         /**
-         * @brief Calls the member function for every Entity in the world.
+         * @brief Calls the member function for every Entity in the entityManager.
          */
         template<typename SystemType, typename... ComponentTypes>
         void forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system);
         /**
-         * @brief Calls the member function for every Entity in the world.
+         * @brief Calls the member function for every Entity in the entityManager.
          */
         template<typename SystemType, typename... ComponentTypes>
         void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system);
         /**
-         * @brief Calls the member function for every Entity in the world.
+         * @brief Calls the member function for every Entity in the entityManager.
          */
         template<typename SystemType, typename... ComponentTypes>
         void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system);
         /**
-         * @brief Takes a callable type (such as a lambda) and calls it for every Entity in the world.
+         * @brief Takes a callable type (such as a lambda) and calls it for every Entity in the entityManager.
          */
         template<typename CallableType>
         void forEach(CallableType callable);
     };
 }
 
-#include "World.inl"
+#include "EntityManager.inl"

@@ -12,7 +12,7 @@ namespace garlic::clove {
 namespace garlic::clove {
     /**
 	 * @brief Allows an entity to determine where a sound comes from
-	 * @details Every ecs::World can only have 1 AudioListenerComponent
+	 * @details Every ecs::EntityManager can only have 1 AudioListenerComponent
 	 */
     class AudioListenerComponent : public Component<AudioListenerComponent> {
         friend class AudioLayer;

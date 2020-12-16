@@ -6,7 +6,7 @@
 
 namespace garlic::clove {
     class ForwardRenderer3D;
-    class World;
+    class EntityManager;
 }
 
 namespace garlic::clove {
@@ -14,7 +14,7 @@ namespace garlic::clove {
         //VARIABLES
     private:
         ForwardRenderer3D *renderer{ nullptr };
-        World *world{ nullptr };
+        EntityManager *entityManager{ nullptr };
 
         //FUNCTIONS
     public:

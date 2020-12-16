@@ -19,7 +19,7 @@ class btDiscreteDynamicsWorld;
 namespace garlic::clove {
     class CollisionShapeComponent;
     class RigidBodyComponent;
-    class World;
+    class EntityManager;
 }
 
 namespace garlic::clove {
@@ -49,7 +49,7 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        World *ecsWorld{ nullptr };
+        EntityManager *entityManager{ nullptr };
 
         std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
         std::unique_ptr<btCollisionDispatcher> dispatcher;
@@ -78,7 +78,7 @@ namespace garlic::clove {
 
         ~PhysicsLayer();
 
-        void registerToEvents(World &world);
+        void registerToEvents(EntityManager &entityManager);
 
         void onUpdate(DeltaTime const deltaTime) override;
 

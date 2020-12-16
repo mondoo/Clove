@@ -7,13 +7,13 @@
 
 #include <Clove/Audio/AudioListener.hpp>
 #include <Clove/Audio/AudioSource.hpp>
-#include <Clove/ECS/World.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
     AudioLayer::AudioLayer()
         : Layer("Audio")
-        , world{ Application::get().getECSWorld()} {
+        , entityManager{ Application::get().getEntityManager()} {
 
     }
 
@@ -27,7 +27,7 @@ namespace garlic::clove {
         CLOVE_PROFILE_FUNCTION();
 
         //Listener
-        world->forEach([](TransformComponent const &transform, AudioListenerComponent &listener) {
+        entityManager->forEach([](TransformComponent const &transform, AudioListenerComponent &listener) {
             vec3f const prevPos{ listener.listener->getPosition() };
             vec3f const currPos{ transform.getPosition() };
 
@@ -36,7 +36,7 @@ namespace garlic::clove {
         });
 
         //Source
-        world->forEach([](TransformComponent const &transform, AudioSourceComponent &source) {
+        entityManager->forEach([](TransformComponent const &transform, AudioSourceComponent &source) {
             vec3f const prevPos{ source.source->getPosition() };
             vec3f const currPos{ transform.getPosition() };
 

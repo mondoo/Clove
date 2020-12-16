@@ -11,7 +11,7 @@
 
 #include <Clove/Audio/AudioDevice.hpp>
 #include <Clove/Definitions.hpp>
-#include <Clove/ECS/World.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Log/Log.hpp>
@@ -37,7 +37,7 @@ namespace garlic::clove {
         app->audioDevice = createAudioDevice(audioApi);
 
         //ECS
-        app->world = std::make_unique<World>();
+        app->entityManager = std::make_unique<EntityManager>();
 
         //Layers
         app->pushLayer(std::make_shared<PhysicsLayer>(), LayerGroup::Initialisation);
@@ -61,7 +61,7 @@ namespace garlic::clove {
         app->audioDevice = createAudioDevice(audioApi);
 
         //ECS
-        app->world = std::make_unique<World>();
+        app->entityManager = std::make_unique<EntityManager>();
 
         //Layers
         app->pushLayer(std::make_shared<PhysicsLayer>(), LayerGroup::Initialisation);
