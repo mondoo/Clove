@@ -47,9 +47,6 @@ namespace garlic::membrane {
         app          = pair.first.release();
         renderTarget = pair.second;
 
-        //Add systems
-        //app->getECSWorld()->addSystem<clove::RenderSystem>();
-
         editorLayer  = new std::shared_ptr<EditorLayer>();
         *editorLayer = std::make_shared<EditorLayer>(clove::vec2ui{ width, height });
 

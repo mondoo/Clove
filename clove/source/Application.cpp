@@ -5,9 +5,9 @@
 #include "Clove/Rendering/ForwardRenderer3D.hpp"
 #include "Clove/Rendering/GraphicsImageRenderTarget.hpp"
 #include "Clove/Rendering/SwapchainRenderTarget.hpp"
-#include "Clove/Systems/AudioSystem.hpp"
-#include "Clove/Systems/PhysicsSystem.hpp"
-#include "Clove/Systems/RenderSystem.hpp"
+#include "Clove/Layers/AudioLayer.hpp"
+#include "Clove/Layers/PhysicsLayer.hpp"
+#include "Clove/Layers/RenderLayer.hpp"
 
 #include <Clove/Audio/AudioDevice.hpp>
 #include <Clove/Definitions.hpp>
@@ -19,28 +19,6 @@
 #include <Clove/Platform/Window.hpp>
 
 namespace garlic::clove {
-    namespace {
-        class ApplicationLayer : public Layer {
-            AudioSystem audioSystem{};
-            PhysicsSystem physicsSystem{};
-            RenderSystem renderSystem{};
-
-            World *ecsWorld{ nullptr };
-
-        public:
-            ApplicationLayer(World *ecsWorld)
-                : Layer("Application")
-                , ecsWorld(ecsWorld) {
-            }
-
-            void onUpdate(DeltaTime const deltaTime) override {
-                audioSystem.update(*ecsWorld);
-                physicsSystem.update(*ecsWorld, deltaTime);
-                renderSystem.update(*ecsWorld, deltaTime);
-            }
-        };
-    }
-
     Application *Application::instance{ nullptr };
 
     Application::~Application() = default;
@@ -62,7 +40,9 @@ namespace garlic::clove {
         app->world = std::make_unique<World>();
 
         //Layers
-        app->pushLayer(std::make_shared<ApplicationLayer>(app->world.get()));
+        app->pushLayer(std::make_shared<PhysicsLayer>(), LayerGroup::Initialisation);
+        app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
+        app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
 
         return app;
     }
@@ -84,7 +64,9 @@ namespace garlic::clove {
         app->world = std::make_unique<World>();
 
         //Layers
-        app->pushLayer(std::make_shared<ApplicationLayer>(app->world.get()));
+        app->pushLayer(std::make_shared<PhysicsLayer>(), LayerGroup::Initialisation);
+        app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
+        app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
 
         return { std::move(app), renderTargetPtr };
     }

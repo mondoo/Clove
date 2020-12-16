@@ -1,5 +1,6 @@
-#include "Clove/Systems/AudioSystem.hpp"
+#include "Clove/Layers/AudioLayer.hpp"
 
+#include "Clove/Application.hpp"
 #include "Clove/Components/AudioListenerComponent.hpp"
 #include "Clove/Components/AudioSourceComponent.hpp"
 #include "Clove/Components/TransformComponent.hpp"
@@ -10,19 +11,23 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    AudioSystem::AudioSystem() = default;
+    AudioLayer::AudioLayer()
+        : Layer("Audio")
+        , world{ Application::get().getECSWorld()} {
 
-    AudioSystem::AudioSystem(AudioSystem &&other) noexcept = default;
+    }
 
-    AudioSystem &AudioSystem::operator=(AudioSystem &&other) noexcept = default;
+    AudioLayer::AudioLayer(AudioLayer &&other) noexcept = default;
 
-    AudioSystem::~AudioSystem() = default;
+    AudioLayer &AudioLayer::operator=(AudioLayer &&other) noexcept = default;
 
-    void AudioSystem::update(World &world) {
+    AudioLayer::~AudioLayer() = default;
+
+    void AudioLayer::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
         //Listener
-        world.forEach([](TransformComponent const &transform, AudioListenerComponent &listener) {
+        world->forEach([](TransformComponent const &transform, AudioListenerComponent &listener) {
             vec3f const prevPos{ listener.listener->getPosition() };
             vec3f const currPos{ transform.getPosition() };
 
@@ -31,7 +36,7 @@ namespace garlic::clove {
         });
 
         //Source
-        world.forEach([](TransformComponent const &transform, AudioSourceComponent &source) {
+        world->forEach([](TransformComponent const &transform, AudioSourceComponent &source) {
             vec3f const prevPos{ source.source->getPosition() };
             vec3f const currPos{ transform.getPosition() };
 

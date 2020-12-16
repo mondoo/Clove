@@ -35,7 +35,7 @@ namespace garlic::clove {
      * @see RigidBodyComponent
      */
     class CollisionShapeComponent : public Component<CollisionShapeComponent> {
-        friend class PhysicsSystem;
+        friend class PhysicsLayer;
 
         //VARIABLES
     private:

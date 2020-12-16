@@ -1,4 +1,4 @@
-#include "Clove/Systems/RenderSystem.hpp"
+#include "Clove/Layers/RenderLayer.hpp"
 
 #include "Clove/Application.hpp"
 #include "Clove/Components/AnimatedModelComponent.hpp"
@@ -14,21 +14,23 @@
 #include <Clove/Maths/Maths.hpp>
 
 namespace garlic::clove {
-    RenderSystem::RenderSystem()
-        : renderer(Application::get().getRenderer()) {
+    RenderLayer::RenderLayer()
+        : Layer("Render")
+        , renderer{ Application::get().getRenderer() }
+        , world{ Application::get().getECSWorld() } {
     }
 
-    RenderSystem::RenderSystem(RenderSystem &&other) noexcept = default;
+    RenderLayer::RenderLayer(RenderLayer &&other) noexcept = default;
 
-    RenderSystem &RenderSystem::operator=(RenderSystem &&other) noexcept = default;
+    RenderLayer &RenderLayer::operator=(RenderLayer &&other) noexcept = default;
 
-    RenderSystem::~RenderSystem() = default;
+    RenderLayer::~RenderLayer() = default;
 
-    void RenderSystem::update(World &world, DeltaTime deltaTime) {
+    void RenderLayer::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
         //Transform and submit cameras
-        world.forEach([this](TransformComponent const &transform, CameraComponent &camera) {
+        world->forEach([this](TransformComponent const &transform, CameraComponent &camera) {
             vec3f const position{ transform.getPosition(TransformSpace::World) };
 
             vec3f const camFront{ transform.getForward() };
@@ -40,7 +42,7 @@ namespace garlic::clove {
         });
 
         //Submit static meshes
-        world.forEach([this](TransformComponent const &transform, StaticModelComponent const &staticModel) {
+        world->forEach([this](TransformComponent const &transform, StaticModelComponent const &staticModel) {
             mat4f const modelTransform{ transform.getTransformationMatrix(TransformSpace::World) };
 
             for(auto &mesh : staticModel.model.getMeshes()) {
@@ -48,7 +50,7 @@ namespace garlic::clove {
             }
         });
         //Submit animated meshes
-        world.forEach([this, &deltaTime](TransformComponent const &transform, AnimatedModelComponent &animatedModel) {
+        world->forEach([this, &deltaTime](TransformComponent const &transform, AnimatedModelComponent &animatedModel) {
             mat4f const modelTransform{ transform.getTransformationMatrix(TransformSpace::World) };
             auto const matrixPalet{ animatedModel.model.update(deltaTime) };
 
@@ -58,13 +60,13 @@ namespace garlic::clove {
         });
 
         //Submit directional lights
-        world.forEach([this](DirectionalLightComponent &light) {
+        world->forEach([this](DirectionalLightComponent &light) {
             light.lightData.shadowTransform = light.shadowProj * lookAt(-normalise(light.lightData.data.direction) * (light.farDist / 2.0f), vec3f{ 0.0f, 0.0f, 0.0f }, vec3f{ 0.0f, 1.0f, 0.0f });
 
             renderer->submitLight(light.lightData);
         });
         //Submit point lights
-        world.forEach([this](TransformComponent const &transform, PointLightComponent &light) {
+        world->forEach([this](TransformComponent const &transform, PointLightComponent &light) {
             vec3f const &position{ transform.getPosition() };
 
             light.lightData.data.position       = position;

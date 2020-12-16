@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Clove/Layer.hpp"
+
 #include <Clove/ECS/ECSEvents.hpp>
 #include <Clove/ECS/Entity.hpp>
 #include <Clove/Event/EventHandle.hpp>
@@ -21,7 +23,7 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove {
-    class PhysicsSystem {
+    class PhysicsLayer : public Layer {
         //TYPES
     private:
         struct CollisionManifold {
@@ -47,6 +49,8 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
+        World *ecsWorld{ nullptr };
+
         std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
         std::unique_ptr<btCollisionDispatcher> dispatcher;
         std::unique_ptr<btBroadphaseInterface> broadphase;
@@ -64,21 +68,19 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        PhysicsSystem();
+        PhysicsLayer();
 
-        PhysicsSystem(PhysicsSystem const &other) = delete;
-        PhysicsSystem(PhysicsSystem &&other) noexcept;
+        PhysicsLayer(PhysicsLayer const &other) = delete;
+        PhysicsLayer(PhysicsLayer &&other) noexcept;
 
-        PhysicsSystem &operator=(PhysicsSystem const &other) = delete;
-        PhysicsSystem &operator=(PhysicsSystem &&other) noexcept;
+        PhysicsLayer &operator=(PhysicsLayer const &other) = delete;
+        PhysicsLayer &operator=(PhysicsLayer &&other) noexcept;
 
-        ~PhysicsSystem();
+        ~PhysicsLayer();
 
         void registerToEvents(World &world);
 
-        void preUpdate(World &world);
-        void update(World &world, DeltaTime deltaTime);
-        void postUpdate(World &world);
+        void onUpdate(DeltaTime const deltaTime) override;
 
         void setGravity(vec3f const &gravity);
 
