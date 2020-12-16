@@ -158,12 +158,12 @@ add_library(
 		${INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${SOURCE}/Rendering/Renderables/StaticModel.cpp
 
-		${INCLUDE}/Systems/AudioSystem.hpp
-		${SOURCE}/Systems/AudioSystem.cpp
-		${INCLUDE}/Systems/RenderSystem.hpp
-		${SOURCE}/Systems/RenderSystem.cpp
-		${INCLUDE}/Systems/PhysicsSystem.hpp
-		${SOURCE}/Systems/PhysicsSystem.cpp
+		${INCLUDE}/Layers/AudioLayer.hpp
+		${SOURCE}/Layers/AudioLayer.cpp
+		${INCLUDE}/Layers/RenderLayer.hpp
+		${SOURCE}/Layers/RenderLayer.cpp
+		${INCLUDE}/Layers/PhysicsLayer.hpp
+		${SOURCE}/Layers/PhysicsLayer.cpp
 
 		${INCLUDE}/UI/DrawableElement.hpp
 		${INCLUDE}/UI/Image.hpp
@@ -186,9 +186,6 @@ add_library(
 		${INCLUDE}/Layer.hpp
 		${INCLUDE}/Layer.inl
 		${SOURCE}/Layer.cpp
-		${INCLUDE}/LayerStack.hpp
-		${INCLUDE}/LayerStack.inl
-		${SOURCE}/LayerStack.cpp
 		
 		${INCLUDE}/ModelLoader.hpp
 		${SOURCE}/ModelLoader.cpp

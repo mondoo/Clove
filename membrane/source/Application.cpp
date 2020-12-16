@@ -10,7 +10,6 @@
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
-#include <Clove/Systems/RenderSystem.hpp>
 #include <Clove/ECS/World.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
@@ -47,9 +46,6 @@ namespace garlic::membrane {
         app          = pair.first.release();
         renderTarget = pair.second;
 
-        //Add systems
-        app->getECSWorld()->addSystem<clove::RenderSystem>();
-
         editorLayer  = new std::shared_ptr<EditorLayer>();
         *editorLayer = std::make_shared<EditorLayer>(clove::vec2ui{ width, height });
 
@@ -57,7 +53,7 @@ namespace garlic::membrane {
         *runtimeLayer = std::make_shared<RuntimeLayer>();
 
         app->pushLayer(*runtimeLayer);
-        app->pushOverlay(*editorLayer);
+        app->pushLayer(*editorLayer);
     }
 
     Application::~Application() {

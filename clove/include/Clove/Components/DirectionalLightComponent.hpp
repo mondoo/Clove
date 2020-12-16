@@ -9,7 +9,7 @@
 
 namespace garlic::clove {
     class DirectionalLightComponent : public Component<DirectionalLightComponent> {
-        friend class RenderSystem;
+        friend class RenderLayer;
 
         //VARIABLES
     private:

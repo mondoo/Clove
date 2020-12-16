@@ -15,7 +15,7 @@ namespace garlic::clove {
 	 * @details Every ecs::World can only have 1 AudioListenerComponent
 	 */
     class AudioListenerComponent : public Component<AudioListenerComponent> {
-        friend class AudioSystem;
+        friend class AudioLayer;
 
         //VARIABLES
     private:

@@ -4,7 +4,6 @@
 #include "Clove/ECS/ComponentSet.hpp"
 #include "Clove/ECS/ECSTypes.hpp"
 #include "Clove/ECS/Entity.hpp"
-#include "Clove/ECS/System.hpp"
 
 #include <Clove/Event/EventDispatcher.hpp>
 #include <set>
@@ -26,8 +25,6 @@ namespace garlic::clove {
 
         ComponentManager componentManager;
 
-        std::vector<std::unique_ptr<System>> systems;
-
         static Entity nextEntity;
         std::vector<Entity> activeEntities;
         std::set<Entity> pendingDestroyEntities;
@@ -44,12 +41,7 @@ namespace garlic::clove {
 
         ~World();
 
-        /**
-		 * @brief Update the ECS world.
-		 * @details Called once per frame. Goes through each System in the World
-		 * and updates them.
-		 */
-        void update(DeltaTime deltaTime);
+        inline EventDispatcher &getDispatcher();
 
         /**
 		 * @brief Creates an entity to be part of this World.
@@ -119,31 +111,30 @@ namespace garlic::clove {
         void removeComponent(Entity entity);
 
         /**
-		 * @brief Finds all entitys that have the same components as ComponentTypes and returns them as a ComponentSet.
-		 * @details	A ComponentSet is an array of tuples where each tuple are the components for a given entity.
-		 * @tparam ComponentTypes A variadic template of the components needed.
-		 * @return A vector of tuples of Components for each entity that matches.
-		 * @see	ComponentPtr.
-		 * @see ComponentSet.
-		 */
+         * @brief Calls the function for every Entity in the world.
+         */
         template<typename... ComponentTypes>
-        ComponentSet<ComponentTypes...> getComponentSets();
-
+        void forEach(void (*updateFunction)(ComponentTypes...));
         /**
-		 * @brief Adds a System to the World.
-		 * @note The lifetime of the System is tied to the World
-		 * @tparam SystemType The type of System to add.
-		 * @param args Construction arguments that'll be forwarded to the System.
-		 * @return Returns a pointer to the System.
-		 */
-        template<typename SystemType, typename... ConstructArgs>
-        SystemType *addSystem(ConstructArgs &&... args);
-
-    private:
-        enum class FoundState { NullptrFound,
-                                EndOfTuple };
-        template<std::size_t index, typename... ComponentTypes>
-        FoundState checkForNullptr(std::tuple<ComponentPtr<ComponentTypes>...> const &tuple);
+         * @brief Calls the member function for every Entity in the world.
+         */
+        template<typename SystemType, typename... ComponentTypes>
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system);
+        /**
+         * @brief Calls the member function for every Entity in the world.
+         */
+        template<typename SystemType, typename... ComponentTypes>
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system);
+        /**
+         * @brief Calls the member function for every Entity in the world.
+         */
+        template<typename SystemType, typename... ComponentTypes>
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system);
+        /**
+         * @brief Takes a callable type (such as a lambda) and calls it for every Entity in the world.
+         */
+        template<typename CallableType>
+        void forEach(CallableType callable);
     };
 }
 

@@ -17,7 +17,6 @@ add_library(
 	${INCLUDE}/World.hpp
 	${INCLUDE}/World.inl
 	${SOURCE}/World.cpp
-	${INCLUDE}/System.hpp
 )
 
 #Includes
@@ -40,3 +39,7 @@ target_link_libraries(
 		CloveMemory
 		CloveTimer
 )
+
+if(GAR_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()

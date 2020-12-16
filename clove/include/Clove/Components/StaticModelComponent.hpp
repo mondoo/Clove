@@ -6,7 +6,7 @@
 
 namespace garlic::clove {
     class StaticModelComponent : public Component<StaticModelComponent> {
-        friend class RenderSystem;
+        friend class RenderLayer;
 
         //VARIABLES
     private:

@@ -17,7 +17,7 @@ namespace garlic::clove {
 	 * to detect collisions.
 	 */
     class RigidBodyComponent : public Component<RigidBodyComponent> {
-        friend class PhysicsSystem;
+        friend class PhysicsLayer;
 
         //TYPES
     public:

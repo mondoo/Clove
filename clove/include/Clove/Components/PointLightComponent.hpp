@@ -9,7 +9,7 @@
 
 namespace garlic::clove {
     class PointLightComponent : public Component<PointLightComponent> {
-        friend class RenderSystem;
+        friend class RenderLayer;
 
         //VARIABLES
     private:
