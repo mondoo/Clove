@@ -41,9 +41,7 @@ namespace garlic::clove {
 
         ~World();
 
-        EventDispatcher &getDispatcher() {
-            return ecsEventDispatcher;
-        }
+        inline EventDispatcher &getDispatcher();
 
         /**
 		 * @brief Creates an entity to be part of this World.
@@ -112,42 +110,31 @@ namespace garlic::clove {
         template<typename ComponentType>
         void removeComponent(Entity entity);
 
+        /**
+         * @brief Calls the function for every Entity in the world.
+         */
         template<typename... ComponentTypes>
-        void forEach(void (*updateFunction)(ComponentTypes...)) {
-            for(Entity entity : activeEntities) {
-                if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                    (*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
-                }
-            }
-        }
+        void forEach(void (*updateFunction)(ComponentTypes...));
+        /**
+         * @brief Calls the member function for every Entity in the world.
+         */
         template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system) {
-            for(Entity entity : activeEntities) {
-                if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                    (system->*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
-                }
-            }
-        }
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system);
+        /**
+         * @brief Calls the member function for every Entity in the world.
+         */
         template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system) {
-            for(Entity entity : activeEntities) {
-                if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                    (system->*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
-                }
-            }
-        }
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system);
+        /**
+         * @brief Calls the member function for every Entity in the world.
+         */
         template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system) {
-            for(Entity entity : activeEntities) {
-                if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                    (system.*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
-                }
-            }
-        }
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system);
+        /**
+         * @brief Takes a callable type (such as a lambda) and calls it for every Entity in the world.
+         */
         template<typename CallableType>
-        void forEach(CallableType callable) {
-            forEach(&CallableType::operator(), std::move(callable));
-        }
+        void forEach(CallableType callable);
     };
 }
 
