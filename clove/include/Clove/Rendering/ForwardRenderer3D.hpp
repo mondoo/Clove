@@ -160,7 +160,7 @@ namespace garlic::clove {
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D &operator=(ForwardRenderer3D const &other) = delete;
-        ForwardRenderer3D &operato=(ForwardRenderer3D &&other) noexcept;
+        ForwardRenderer3D &operator=(ForwardRenderer3D &&other) noexcept;
 
         ~ForwardRenderer3D();
 
