@@ -3,6 +3,7 @@
 #include "Clove/Rendering/RenderTarget.hpp"
 
 #include <Clove/Delegate/DelegateHandle.hpp>
+#include <vector>
 
 namespace garlic::clove {
     class Swapchain;
