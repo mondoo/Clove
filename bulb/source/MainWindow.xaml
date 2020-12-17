@@ -51,7 +51,7 @@
 						<StackPanel>
 							<ListBoxItem Content="{Binding Name}"/>
 							<TextBlock Text="Position"/>
-							<local:Vector3Box LeftFieldText="{Binding XText}" LeftFieldValue="{Binding XValue, Mode=TwoWay}" CenterFieldText="{Binding YText}" CenterFieldValue="{Binding YValue, Mode=TwoWay}" RightFieldText="{Binding ZText}" RightFieldValue="{Binding ZValue, Mode=TwoWay}"/>
+							<local:Vector3Box LeftFieldText="X" LeftFieldValue="{Binding XValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding YValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding ZValue, Mode=TwoWay}"/>
 						</StackPanel>
 					</DataTemplate>
 					

@@ -5,7 +5,6 @@ namespace Garlic.Bulb
     /// </summary>
     public class TransformComponentViewModel : ComponentViewModel
     {
-        public string XText { get; } = "X";
         public string XValue
         {
             get { return xValue.ToString(); }
@@ -23,7 +22,6 @@ namespace Garlic.Bulb
         }
         private float xValue = 0;
 
-        public string YText { get; } = "Y";
         public string YValue
         {
             get { return yValue.ToString(); }
@@ -41,7 +39,6 @@ namespace Garlic.Bulb
         }
         private float yValue = 0;
 
-        public string ZText { get; } = "Z";
         public string ZValue
         {
             get { return zValue.ToString(); }
