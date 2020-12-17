@@ -5,16 +5,16 @@
 
 #include <Clove/Application.hpp>
 #include <Clove/Audio/Audio.hpp>
+#include <Clove/Components/StaticModelComponent.hpp>
+#include <Clove/Components/TransformComponent.hpp>
+#include <Clove/ECS/World.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Log/Log.hpp>
+#include <Clove/ModelLoader.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
 #include <Clove/Systems/RenderSystem.hpp>
-#include <Clove/ECS/World.hpp>
-#include <Clove/Components/TransformComponent.hpp>
-#include <Clove/Components/StaticModelComponent.hpp>
-#include <Clove/ModelLoader.hpp>
 
 namespace garlic::membrane {
     class ConsoleLogger : public clove::Logger::Output {
@@ -115,5 +115,9 @@ namespace garlic::membrane {
             default:
                 break;
         }
+    }
+
+    void Application::setPosition(clove::Entity entitiy, float x, float y, float z) {
+        app->getECSWorld()->getComponent<clove::TransformComponent>(entitiy)->setPosition({ x, y, z });
     }
 }

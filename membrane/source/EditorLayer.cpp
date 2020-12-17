@@ -20,6 +20,15 @@ namespace garlic::membrane {
         world->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
     }
 
+    void EditorLayer::onUpdate(clove::DeltaTime const deltaTime) {
+        /*
+        update view logic in here?
+
+        Could have a system that just goes through all transform components and updates them
+            - Not the most scalable solution by any means
+        */
+    }
+
     void EditorLayer::onDetach() {
         clove::Application::get().getECSWorld()->destroy(editorCamera);
     }

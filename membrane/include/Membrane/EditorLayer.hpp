@@ -18,6 +18,7 @@ namespace garlic::membrane {
         EditorLayer(clove::vec2ui size);
 
         void onAttach() override;
+        void onUpdate(clove::DeltaTime const deltaTime) override;
         void onDetach() override;
 
         void resizeViewport(clove::vec2ui size);

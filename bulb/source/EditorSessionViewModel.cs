@@ -27,6 +27,10 @@ namespace Garlic.Bulb
         public delegate void AddComponentEventHandler(uint entityId, ComponentType componentType);
         public AddComponentEventHandler OnCreateComponent;
 
+        //TEMP: Brute force position changes
+        public delegate void SetPositionEventHandler(uint entityId, float x, float y, float z);
+        public SetPositionEventHandler SetPosition;
+
         public EditorSessionViewModel()
         {
             Scene = new SceneViewModel();
@@ -50,7 +54,11 @@ namespace Garlic.Bulb
             switch (componentType)
             {
                 case ComponentType.Transform:
-                    vm = new TransformComponentViewModel();
+                    {
+                        var transVm = new TransformComponentViewModel();
+                        transVm.OnPositionChanged = (x, y, z) => SetPosition(entityId, x, y, z);
+                        vm = transVm;
+                    }
                     break;
                 default:
                     vm = new ComponentViewModel();

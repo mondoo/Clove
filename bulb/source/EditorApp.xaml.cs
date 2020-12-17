@@ -52,6 +52,14 @@ namespace Garlic.Bulb
                     engineApp.createComponent(entityId, componentType);
                 }
             };
+            //TEMP
+            sessionVM.SetPosition = (entityId, x, y, z) =>
+            {
+                lock (updateEngineLock)
+                {
+                    engineApp.setPosition(entityId, x, y, z);
+                }
+            };
 
             editorWindow = new MainWindow();
             editorWindow.DataContext = sessionVM;
