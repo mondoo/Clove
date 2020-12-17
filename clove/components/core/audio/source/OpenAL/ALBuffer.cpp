@@ -5,16 +5,18 @@
 #include <utility>
 
 namespace garlic::clove {
-    static ALenum convertFormat(AudioBuffer::Format format) {
-        switch(format) {
-            case AudioBuffer::Format::Mono8:
-                return AL_FORMAT_MONO8;
-            case AudioBuffer::Format::Mono16:
-                return AL_FORMAT_MONO16;
-            case AudioBuffer::Format::Stereo8:
-                return AL_FORMAT_STEREO8;
-            case AudioBuffer::Format::Stereo16:
-                return AL_FORMAT_STEREO16;
+    namespace {
+        ALenum convertFormat(AudioBuffer::Format format) {
+            switch(format) {
+                case AudioBuffer::Format::Mono8:
+                    return AL_FORMAT_MONO8;
+                case AudioBuffer::Format::Mono16:
+                    return AL_FORMAT_MONO16;
+                case AudioBuffer::Format::Stereo8:
+                    return AL_FORMAT_STEREO8;
+                case AudioBuffer::Format::Stereo16:
+                    return AL_FORMAT_STEREO16;
+            }
         }
     }
 

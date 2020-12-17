@@ -6,14 +6,16 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    static VkMemoryPropertyFlags getMemoryPropertyFlags(MemoryType garlicProperties) {
-        switch(garlicProperties) {
-            case MemoryType::VideoMemory:
-                return VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-            case MemoryType::SystemMemory:
-                return VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;//Including HOST_COHERENT here as this makes mapping memory more simple
-            default:
-                break;
+    namespace {
+        VkMemoryPropertyFlags getMemoryPropertyFlags(MemoryType garlicProperties) {
+            switch(garlicProperties) {
+                case MemoryType::VideoMemory:
+                    return VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+                case MemoryType::SystemMemory:
+                    return VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;//Including HOST_COHERENT here as this makes mapping memory more simple
+                default:
+                    break;
+            }
         }
     }
 

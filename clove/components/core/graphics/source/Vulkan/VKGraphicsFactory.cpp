@@ -24,220 +24,222 @@
 #include <fstream>
 
 namespace garlic::clove {
-    static VkCommandPoolCreateFlags convertCommandPoolCreateFlags(QueueFlags garlicFlags) {
-        switch(garlicFlags) {
-            case QueueFlags::None:
-                return 0;
-            case QueueFlags::Transient:
-                return VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
-            case QueueFlags::ReuseBuffers:
-                return VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unkown queue flag", CLOVE_FUNCTION_NAME);
-                return 0;
-        }
-    }
-
-    static VkSurfaceFormatKHR chooseSwapSurfaceFormat(std::vector<VkSurfaceFormatKHR> const &availableFormats) {
-        for(auto const &availableFormat : availableFormats) {
-            if(availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
-                return availableFormat;
+    namespace {
+        VkCommandPoolCreateFlags convertCommandPoolCreateFlags(QueueFlags garlicFlags) {
+            switch(garlicFlags) {
+                case QueueFlags::None:
+                    return 0;
+                case QueueFlags::Transient:
+                    return VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+                case QueueFlags::ReuseBuffers:
+                    return VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+                default:
+                    CLOVE_ASSERT(false, "{0}: Unkown queue flag", CLOVE_FUNCTION_NAME);
+                    return 0;
             }
         }
 
-        //Fall back to the first one if we can't find a surface format we want
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Swapchain could not find desired format. Using first available format from the surface");
-        return availableFormats[0];
-    }
+        VkSurfaceFormatKHR chooseSwapSurfaceFormat(std::vector<VkSurfaceFormatKHR> const &availableFormats) {
+            for(auto const &availableFormat : availableFormats) {
+                if(availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+                    return availableFormat;
+                }
+            }
 
-    static VkPresentModeKHR chooseSwapPresentMode(std::vector<VkPresentModeKHR> const &availablePresentModes) {
-        for(auto const &availablePresentMode : availablePresentModes) {
-            if(availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
-                return availablePresentMode;
+            //Fall back to the first one if we can't find a surface format we want
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Swapchain could not find desired format. Using first available format from the surface");
+            return availableFormats[0];
+        }
+
+        VkPresentModeKHR chooseSwapPresentMode(std::vector<VkPresentModeKHR> const &availablePresentModes) {
+            for(auto const &availablePresentMode : availablePresentModes) {
+                if(availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+                    return availablePresentMode;
+                }
+            }
+
+            return VK_PRESENT_MODE_FIFO_KHR;
+        }
+
+        VkExtent2D chooseSwapExtent(VkSurfaceCapabilitiesKHR const &capabilities, VkExtent2D const &windowExtent) {
+            if(capabilities.currentExtent.width != UINT32_MAX) {//If width / height are max then the window manager is allowing us to differ in size
+                return capabilities.currentExtent;
+            } else {
+                return VkExtent2D{
+                    .width  = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, windowExtent.width)),
+                    .height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, windowExtent.height)),
+                };
             }
         }
 
-        return VK_PRESENT_MODE_FIFO_KHR;
-    }
+        std::vector<std::byte> readFile(std::string_view filePath) {
+            //Start at the end so we can get the file size
+            std::basic_ifstream<std::byte> file(filePath.data(), std::ios::ate | std::ios::binary);
 
-    static VkExtent2D chooseSwapExtent(VkSurfaceCapabilitiesKHR const &capabilities, VkExtent2D const &windowExtent) {
-        if(capabilities.currentExtent.width != UINT32_MAX) {//If width / height are max then the window manager is allowing us to differ in size
-            return capabilities.currentExtent;
-        } else {
-            return VkExtent2D{
-                .width  = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, windowExtent.width)),
-                .height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, windowExtent.height)),
-            };
-        }
-    }
+            if(!file.is_open()) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
+                return {};
+            }
 
-    static std::vector<std::byte> readFile(std::string_view filePath) {
-        //Start at the end so we can get the file size
-        std::basic_ifstream<std::byte> file(filePath.data(), std::ios::ate | std::ios::binary);
+            size_t const fileSize = file.tellg();
+            std::vector<std::byte> buffer(fileSize);
 
-        if(!file.is_open()) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
-            return {};
+            file.seekg(0);
+            file.read(buffer.data(), fileSize);
+
+            file.close();
+
+            return buffer;
         }
 
-        size_t const fileSize = file.tellg();
-        std::vector<std::byte> buffer(fileSize);
-
-        file.seekg(0);
-        file.read(buffer.data(), fileSize);
-
-        file.close();
-
-        return buffer;
-    }
-
-    static VkAttachmentLoadOp convertLoadOp(LoadOperation garlicOperation) {
-        switch(garlicOperation) {
-            case LoadOperation::DontCare:
-                return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-            case LoadOperation::Clear:
-                return VK_ATTACHMENT_LOAD_OP_CLEAR;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
-                return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        }
-    }
-
-    static VkAttachmentStoreOp convertStoreOp(StoreOperation garlicOperation) {
-        switch(garlicOperation) {
-            case StoreOperation::DontCare:
-                return VK_ATTACHMENT_STORE_OP_DONT_CARE;
-            case StoreOperation::Store:
-                return VK_ATTACHMENT_STORE_OP_STORE;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
-                return VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        }
-    }
-
-    static VkDescriptorType getDescriptorType(DescriptorType garlicType) {
-        switch(garlicType) {
-            case DescriptorType::UniformBuffer:
-                return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            case DescriptorType::CombinedImageSampler:
-                return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
-                return VK_DESCRIPTOR_TYPE_MAX_ENUM;
-        }
-    }
-
-    static VkFormat convertAttributeFormat(VertexAttributeFormat garlicFormat) {
-        switch(garlicFormat) {
-            case VertexAttributeFormat::R32_SFLOAT:
-                return VK_FORMAT_R32_SFLOAT;
-            case VertexAttributeFormat::R32G32_SFLOAT:
-                return VK_FORMAT_R32G32_SFLOAT;
-            case VertexAttributeFormat::R32G32B32_SFLOAT:
-                return VK_FORMAT_R32G32B32_SFLOAT;
-            case VertexAttributeFormat::R32G32B32A32_SFLOAT:
-                return VK_FORMAT_R32G32B32A32_SFLOAT;
-            case VertexAttributeFormat::R32G32B32A32_SINT:
-                return VK_FORMAT_R32G32B32A32_SINT;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unkown format passed", CLOVE_FUNCTION_NAME_PRETTY);
-                return VK_FORMAT_UNDEFINED;
-        }
-    }
-
-    static VkDescriptorPoolCreateFlags getDescriptorPoolFlags(DescriptorPool::Flag garlicFlag) {
-        switch(garlicFlag) {
-            case DescriptorPool::Flag::None:
-                return 0;
-            case DescriptorPool::Flag::FreeDescriptorSet:
-                return VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-            default:
-                CLOVE_ASSERT(false, "{0} Unknown flag", CLOVE_FUNCTION_NAME);
-        }
-    }
-
-    static VkBufferUsageFlags getUsageFlags(GraphicsBuffer::UsageMode garlicUsageFlags) {
-        VkBufferUsageFlags flags = 0;
-
-        if((garlicUsageFlags & GraphicsBuffer::UsageMode::TransferSource) != 0) {
-            flags |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-        }
-        if((garlicUsageFlags & GraphicsBuffer::UsageMode::TransferDestination) != 0) {
-            flags |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-        }
-        if((garlicUsageFlags & GraphicsBuffer::UsageMode::VertexBuffer) != 0) {
-            flags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-        }
-        if((garlicUsageFlags & GraphicsBuffer::UsageMode::IndexBuffer) != 0) {
-            flags |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-        }
-        if((garlicUsageFlags & GraphicsBuffer::UsageMode::UniformBuffer) != 0) {
-            flags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+        VkAttachmentLoadOp convertLoadOp(LoadOperation garlicOperation) {
+            switch(garlicOperation) {
+                case LoadOperation::DontCare:
+                    return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+                case LoadOperation::Clear:
+                    return VK_ATTACHMENT_LOAD_OP_CLEAR;
+                default:
+                    CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
+                    return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+            }
         }
 
-        return flags;
-    }
-
-    static VkImageUsageFlags getUsageFlags(GraphicsImage::UsageMode garlicUsageFlags) {
-        VkImageUsageFlags flags = 0;
-
-        if((garlicUsageFlags & GraphicsImage::UsageMode::TransferSource) != 0) {
-            flags |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-        }
-        if((garlicUsageFlags & GraphicsImage::UsageMode::TransferDestination) != 0) {
-            flags |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        }
-        if((garlicUsageFlags & GraphicsImage::UsageMode::Sampled) != 0) {
-            flags |= VK_IMAGE_USAGE_SAMPLED_BIT;
-        }
-        if((garlicUsageFlags & GraphicsImage::UsageMode::ColourAttachment) != 0) {
-            flags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-        }
-        if((garlicUsageFlags & GraphicsImage::UsageMode::DepthStencilAttachment) != 0) {
-            flags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+        VkAttachmentStoreOp convertStoreOp(StoreOperation garlicOperation) {
+            switch(garlicOperation) {
+                case StoreOperation::DontCare:
+                    return VK_ATTACHMENT_STORE_OP_DONT_CARE;
+                case StoreOperation::Store:
+                    return VK_ATTACHMENT_STORE_OP_STORE;
+                default:
+                    CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
+                    return VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            }
         }
 
-        return flags;
-    }
-
-    static VkImageType getImageType(GraphicsImage::Type garlicImageType) {
-        switch(garlicImageType) {
-            case GraphicsImage::Type::_2D:
-            case GraphicsImage::Type::Cube:
-                return VK_IMAGE_TYPE_2D;
-            case GraphicsImage::Type::_3D:
-                return VK_IMAGE_TYPE_3D;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unhandled image type");
-                return VK_IMAGE_TYPE_2D;
+        VkDescriptorType getDescriptorType(DescriptorType garlicType) {
+            switch(garlicType) {
+                case DescriptorType::UniformBuffer:
+                    return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                case DescriptorType::CombinedImageSampler:
+                    return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                default:
+                    CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
+                    return VK_DESCRIPTOR_TYPE_MAX_ENUM;
+            }
         }
-    }
 
-    static VkFilter getFilter(Sampler::Filter garlicfilter) {
-        switch(garlicfilter) {
-            case Sampler::Filter::Nearest:
-                return VK_FILTER_NEAREST;
-            case Sampler::Filter::Linear:
-                return VK_FILTER_LINEAR;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
-                return VK_FILTER_NEAREST;
+        VkFormat convertAttributeFormat(VertexAttributeFormat garlicFormat) {
+            switch(garlicFormat) {
+                case VertexAttributeFormat::R32_SFLOAT:
+                    return VK_FORMAT_R32_SFLOAT;
+                case VertexAttributeFormat::R32G32_SFLOAT:
+                    return VK_FORMAT_R32G32_SFLOAT;
+                case VertexAttributeFormat::R32G32B32_SFLOAT:
+                    return VK_FORMAT_R32G32B32_SFLOAT;
+                case VertexAttributeFormat::R32G32B32A32_SFLOAT:
+                    return VK_FORMAT_R32G32B32A32_SFLOAT;
+                case VertexAttributeFormat::R32G32B32A32_SINT:
+                    return VK_FORMAT_R32G32B32A32_SINT;
+                default:
+                    CLOVE_ASSERT(false, "{0}: Unkown format passed", CLOVE_FUNCTION_NAME_PRETTY);
+                    return VK_FORMAT_UNDEFINED;
+            }
         }
-    }
 
-    static VkSamplerAddressMode getAddressMode(Sampler::AddressMode garlicMode) {
-        switch(garlicMode) {
-            case Sampler::AddressMode::Repeat:
-                return VK_SAMPLER_ADDRESS_MODE_REPEAT;
-            case Sampler::AddressMode::MirroredRepeat:
-                return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
-            case Sampler::AddressMode::ClampToEdge:
-                return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-            case Sampler::AddressMode::ClampToBorder:
-                return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
-                return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        VkDescriptorPoolCreateFlags getDescriptorPoolFlags(DescriptorPool::Flag garlicFlag) {
+            switch(garlicFlag) {
+                case DescriptorPool::Flag::None:
+                    return 0;
+                case DescriptorPool::Flag::FreeDescriptorSet:
+                    return VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+                default:
+                    CLOVE_ASSERT(false, "{0} Unknown flag", CLOVE_FUNCTION_NAME);
+            }
+        }
+
+        VkBufferUsageFlags getUsageFlags(GraphicsBuffer::UsageMode garlicUsageFlags) {
+            VkBufferUsageFlags flags = 0;
+
+            if((garlicUsageFlags & GraphicsBuffer::UsageMode::TransferSource) != 0) {
+                flags |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+            }
+            if((garlicUsageFlags & GraphicsBuffer::UsageMode::TransferDestination) != 0) {
+                flags |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+            }
+            if((garlicUsageFlags & GraphicsBuffer::UsageMode::VertexBuffer) != 0) {
+                flags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+            }
+            if((garlicUsageFlags & GraphicsBuffer::UsageMode::IndexBuffer) != 0) {
+                flags |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+            }
+            if((garlicUsageFlags & GraphicsBuffer::UsageMode::UniformBuffer) != 0) {
+                flags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+            }
+
+            return flags;
+        }
+
+        VkImageUsageFlags getUsageFlags(GraphicsImage::UsageMode garlicUsageFlags) {
+            VkImageUsageFlags flags = 0;
+
+            if((garlicUsageFlags & GraphicsImage::UsageMode::TransferSource) != 0) {
+                flags |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+            }
+            if((garlicUsageFlags & GraphicsImage::UsageMode::TransferDestination) != 0) {
+                flags |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+            }
+            if((garlicUsageFlags & GraphicsImage::UsageMode::Sampled) != 0) {
+                flags |= VK_IMAGE_USAGE_SAMPLED_BIT;
+            }
+            if((garlicUsageFlags & GraphicsImage::UsageMode::ColourAttachment) != 0) {
+                flags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            }
+            if((garlicUsageFlags & GraphicsImage::UsageMode::DepthStencilAttachment) != 0) {
+                flags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+            }
+
+            return flags;
+        }
+
+        VkImageType getImageType(GraphicsImage::Type garlicImageType) {
+            switch(garlicImageType) {
+                case GraphicsImage::Type::_2D:
+                case GraphicsImage::Type::Cube:
+                    return VK_IMAGE_TYPE_2D;
+                case GraphicsImage::Type::_3D:
+                    return VK_IMAGE_TYPE_3D;
+                default:
+                    CLOVE_ASSERT(false, "{0}: Unhandled image type");
+                    return VK_IMAGE_TYPE_2D;
+            }
+        }
+
+        VkFilter getFilter(Sampler::Filter garlicfilter) {
+            switch(garlicfilter) {
+                case Sampler::Filter::Nearest:
+                    return VK_FILTER_NEAREST;
+                case Sampler::Filter::Linear:
+                    return VK_FILTER_LINEAR;
+                default:
+                    CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
+                    return VK_FILTER_NEAREST;
+            }
+        }
+
+        VkSamplerAddressMode getAddressMode(Sampler::AddressMode garlicMode) {
+            switch(garlicMode) {
+                case Sampler::AddressMode::Repeat:
+                    return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+                case Sampler::AddressMode::MirroredRepeat:
+                    return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+                case Sampler::AddressMode::ClampToEdge:
+                    return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+                case Sampler::AddressMode::ClampToBorder:
+                    return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+                default:
+                    CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
+                    return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+            }
         }
     }
 
@@ -264,7 +266,7 @@ namespace garlic::clove {
         };
 
         VkCommandPool commandPool;
-        if(VkResult const result = vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create GraphicsQueue. Out of host memory" } };
@@ -303,7 +305,7 @@ namespace garlic::clove {
         };
 
         VkCommandPool commandPool;
-        if(VkResult const result = vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create TransferQueue. Out of host memory" } };
@@ -359,7 +361,7 @@ namespace garlic::clove {
         };
 
         VkSwapchainKHR swapchain;
-        if(VkResult const result = vkCreateSwapchainKHR(devicePtr.get(), &createInfo, nullptr, &swapchain); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateSwapchainKHR(devicePtr.get(), &createInfo, nullptr, &swapchain) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Out of host memory" } };
@@ -397,7 +399,7 @@ namespace garlic::clove {
         };
 
         VkShaderModule module;
-        if(VkResult const result = vkCreateShaderModule(devicePtr.get(), &createInfo, nullptr, &module); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateShaderModule(devicePtr.get(), &createInfo, nullptr, &module) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create Shader. Out of host memory" } };
@@ -497,7 +499,7 @@ namespace garlic::clove {
         };
 
         VkRenderPass renderPass;
-        if(VkResult const result = vkCreateRenderPass(devicePtr.get(), &renderPassInfo, nullptr, &renderPass); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateRenderPass(devicePtr.get(), &renderPassInfo, nullptr, &renderPass) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create RenderPass. Out of host memory" } };
@@ -514,8 +516,8 @@ namespace garlic::clove {
     Expected<std::unique_ptr<DescriptorSetLayout>, std::runtime_error> VKGraphicsFactory::createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) {
         std::vector<VkDescriptorSetLayoutBinding> layoutBindings(std::size(descriptor.bindings));
         for(size_t i = 0; i < std::size(layoutBindings); ++i) {
-            auto const &bindingDescriptor = descriptor.bindings[i];
-            layoutBindings[i]             = VkDescriptorSetLayoutBinding{
+            auto const &bindingDescriptor{ descriptor.bindings[i] };
+            layoutBindings[i] = VkDescriptorSetLayoutBinding{
                 .binding            = bindingDescriptor.binding,
                 .descriptorType     = getDescriptorType(bindingDescriptor.type),
                 .descriptorCount    = static_cast<uint32_t>(bindingDescriptor.arraySize),
@@ -533,7 +535,7 @@ namespace garlic::clove {
         };
 
         VkDescriptorSetLayout layout;
-        if(VkResult const result = vkCreateDescriptorSetLayout(devicePtr.get(), &createInfo, nullptr, &layout); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateDescriptorSetLayout(devicePtr.get(), &createInfo, nullptr, &layout) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create DescriptorSetLayout. Out of host memory" } };
@@ -575,7 +577,7 @@ namespace garlic::clove {
         };
 
         VkPipelineLayout pipelineLayout;
-        if(VkResult const result = vkCreatePipelineLayout(devicePtr.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreatePipelineLayout(devicePtr.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create PipelineObject's layout. Out of host memory" } };
@@ -741,7 +743,7 @@ namespace garlic::clove {
         };
 
         VkPipeline pipeline;
-        if(VkResult const result = vkCreateGraphicsPipelines(devicePtr.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateGraphicsPipelines(devicePtr.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create PipelineObject. Out of host memory" } };
@@ -775,7 +777,7 @@ namespace garlic::clove {
         };
 
         VkFramebuffer framebuffer;
-        if(VkResult const result = vkCreateFramebuffer(devicePtr.get(), &framebufferInfo, nullptr, &framebuffer); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateFramebuffer(devicePtr.get(), &framebufferInfo, nullptr, &framebuffer) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create Framebuffer. Out of host memory" } };
@@ -809,7 +811,7 @@ namespace garlic::clove {
         };
 
         VkDescriptorPool pool;
-        if(VkResult const result = vkCreateDescriptorPool(devicePtr.get(), &createInfo, nullptr, &pool); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateDescriptorPool(devicePtr.get(), &createInfo, nullptr, &pool) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create DescriptorPool. Out of host memory" } };
@@ -831,7 +833,7 @@ namespace garlic::clove {
         };
 
         VkSemaphore semaphore;
-        if(VkResult const result = vkCreateSemaphore(devicePtr.get(), &createInfo, nullptr, &semaphore); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateSemaphore(devicePtr.get(), &createInfo, nullptr, &semaphore) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create Semaphore. Out of host memory" } };
@@ -852,7 +854,7 @@ namespace garlic::clove {
         };
 
         VkFence fence;
-        if(VkResult const result = vkCreateFence(devicePtr.get(), &createInfo, nullptr, &fence); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateFence(devicePtr.get(), &createInfo, nullptr, &fence) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create Fence. Out of host memory" } };
@@ -882,7 +884,7 @@ namespace garlic::clove {
         };
 
         VkBuffer buffer;
-        if(VkResult const result = vkCreateBuffer(devicePtr.get(), &createInfo, nullptr, &buffer); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateBuffer(devicePtr.get(), &createInfo, nullptr, &buffer) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create GraphicsBuffer. Out of host memory" } };
@@ -920,7 +922,7 @@ namespace garlic::clove {
         };
 
         VkImage image;
-        if(VkResult const result = vkCreateImage(devicePtr.get(), &createInfo, nullptr, &image); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateImage(devicePtr.get(), &createInfo, nullptr, &image) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Out of host memory" } };
@@ -957,7 +959,7 @@ namespace garlic::clove {
         };
 
         VkSampler sampler;
-        if(VkResult const result = vkCreateSampler(devicePtr.get(), &createInfo, nullptr, &sampler); result != VK_SUCCESS) {
+        if(VkResult const result{ vkCreateSampler(devicePtr.get(), &createInfo, nullptr, &sampler) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
                     return Unexpected{ std::runtime_error{ "Failed to create Sampler. Out of host memory" } };
