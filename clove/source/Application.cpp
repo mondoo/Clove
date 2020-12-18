@@ -5,10 +5,13 @@
 #include "Clove/Rendering/ForwardRenderer3D.hpp"
 #include "Clove/Rendering/GraphicsImageRenderTarget.hpp"
 #include "Clove/Rendering/SwapchainRenderTarget.hpp"
+#include "Clove/Layers/AudioLayer.hpp"
+#include "Clove/Layers/PhysicsLayer.hpp"
+#include "Clove/Layers/RenderLayer.hpp"
 
 #include <Clove/Audio/AudioDevice.hpp>
 #include <Clove/Definitions.hpp>
-#include <Clove/ECS/World.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Log/Log.hpp>
@@ -33,7 +36,13 @@ namespace garlic::clove {
         //Audio
         app->audioDevice = createAudioDevice(audioApi);
 
-        app->world = std::make_unique<World>();
+        //ECS
+        app->entityManager = std::make_unique<EntityManager>();
+
+        //Layers
+        app->pushLayer(std::make_shared<PhysicsLayer>(), LayerGroup::Initialisation);
+        app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
+        app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
 
         return app;
     }
@@ -51,21 +60,36 @@ namespace garlic::clove {
         //Audio
         app->audioDevice = createAudioDevice(audioApi);
 
-        app->world = std::make_unique<World>();
+        //ECS
+        app->entityManager = std::make_unique<EntityManager>();
 
-        return std::make_pair(std::move(app), renderTargetPtr);
+        //Layers
+        app->pushLayer(std::make_shared<PhysicsLayer>(), LayerGroup::Initialisation);
+        app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
+        app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
+
+        return { std::move(app), renderTargetPtr };
     }
 
     Application &Application::get() {
         return *instance;
     }
 
-    void Application::pushLayer(std::shared_ptr<Layer> layer) {
-        layerStack.pushLayer(std::move(layer));
+    void Application::pushLayer(std::shared_ptr<Layer> layer, LayerGroup group) {
+        CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Attached layer: {0}", layer->getName());
+        layer->onAttach();
+        layers[group].push_back(std::move(layer));
     }
 
-    void Application::pushOverlay(std::shared_ptr<Layer> overlay) {
-        layerStack.pushOverlay(std::move(overlay));
+    void Application::popLayer(std::shared_ptr<Layer> const &layer) {
+        for(auto &&[key, group] : layers) {
+            if(auto it = std::find(group.begin(), group.end(), layer); it != group.end()) {
+                CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Popped layer: {0}", (*it)->getName());
+                (*it)->onDetach();
+                group.erase(it);
+                break;
+            }
+        }
     }
 
     Application::State Application::getState() const {
@@ -85,39 +109,39 @@ namespace garlic::clove {
         std::chrono::duration<float> const deltaSeonds{ currFrameTime - prevFrameTime };
         prevFrameTime = currFrameTime;
 
-        //Respond to input
+        renderer->begin();
+
         if(window != nullptr) {
             window->processInput();
 
             while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
                 InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
-                for(auto const &layer : layerStack) {
-                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                        break;
+                for(auto &&[key, group] : layers) {
+                    for(auto &layer : group) {
+                        if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                            break;
+                        }
                     }
                 }
             }
             while(auto mouseEvent = window->getMouse().getEvent()) {
                 InputEvent const event{ *mouseEvent, InputEvent::Type::Mouse };
-                for(auto const &layer : layerStack) {
-                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                        break;
+                for(auto &&[key, group] : layers) {
+                    for(auto &layer : group) {
+                        if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                            break;
+                        }
                     }
                 }
             }
         }
 
-        //Do client logic
-        for(auto const &layer : layerStack) {
-            layer->onUpdate(deltaSeonds.count());
+        for(auto &&[key, group] : layers) {
+            for(auto &layer : group) {
+                layer->onUpdate(deltaSeonds.count());
+            }
         }
 
-        renderer->begin();
-
-        //Update ECS
-        world->update(deltaSeonds.count());
-
-        //Render
         renderer->end();
     }
 

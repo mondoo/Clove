@@ -42,126 +42,128 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 }
 
 namespace garlic::clove {
-    static VkResult createDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerCreateInfoEXT const *pCreateInfo, VkAllocationCallbacks const *pAllocator, VkDebugUtilsMessengerEXT *pDebugMessenger) {
-        auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-        if(func != nullptr) {
-            return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
-        } else {
-            return VK_ERROR_EXTENSION_NOT_PRESENT;
+    namespace {
+        VkResult createDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerCreateInfoEXT const *pCreateInfo, VkAllocationCallbacks const *pAllocator, VkDebugUtilsMessengerEXT *pDebugMessenger) {
+            auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+            if(func != nullptr) {
+                return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
+            } else {
+                return VK_ERROR_EXTENSION_NOT_PRESENT;
+            }
         }
-    }
 
-    static bool checkValidationLayerSupport(std::vector<char const *> const &validationLayers) {
-        uint32_t layerCount;
-        vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+        bool checkValidationLayerSupport(std::vector<char const *> const &validationLayers) {
+            uint32_t layerCount;
+            vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
-        std::vector<VkLayerProperties> availableLayers(layerCount);
-        vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+            std::vector<VkLayerProperties> availableLayers(layerCount);
+            vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-        for(char const *layerName : validationLayers) {
-            bool layerFound = false;
+            for(char const *layerName : validationLayers) {
+                bool layerFound = false;
 
-            for(auto const &layerProperties : availableLayers) {
-                if(std::strcmp(layerName, layerProperties.layerName) == 0) {
-                    layerFound = true;
+                for(auto const &layerProperties : availableLayers) {
+                    if(std::strcmp(layerName, layerProperties.layerName) == 0) {
+                        layerFound = true;
+                        break;
+                    }
+                }
+
+                if(!layerFound) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
+            QueueFamilyIndices indices;
+
+            uint32_t queueFamilyCount{ 0 };
+            vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+            std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+            vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+            for(int i{ 0 }; auto const &queueFamily : queueFamilies) {
+                //Make sure we have the queue family that'll let us render graphics
+                if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                    indices.graphicsFamily = i;
+                }
+
+                //If we have a surface, check if we have presentation support. Otherwise we're running headless
+                if(surface != VK_NULL_HANDLE) {
+                    VkBool32 presentSupport{ VK_FALSE };
+                    vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+                    if(presentSupport == VK_TRUE) {
+                        indices.presentFamily = i;
+                    }
+                }
+
+                //Find a transfer queue family that specifically doesn't support graphics
+                if(queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT && !(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
+                    indices.transferFamily = i;
+                }
+
+                bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
+                if(indices.isComplete(requirePresentFamily)) {
                     break;
                 }
+
+                ++i;
             }
 
-            if(!layerFound) {
-                return false;
-            }
+            return indices;
         }
 
-        return true;
-    }
+        bool checkDeviceExtensionsSupport(VkPhysicalDevice device, std::vector<char const *> const &extensions) {
+            uint32_t extensionCount;
+            vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
-    static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
-        QueueFamilyIndices indices;
+            std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+            vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
 
-        uint32_t queueFamilyCount{ 0 };
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+            for(char const *extensionName : extensions) {
+                bool found = false;
 
-        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+                for(auto const &extensionProperties : availableExtensions) {
+                    if(std::strcmp(extensionName, extensionProperties.extensionName) == 0) {
+                        found = true;
+                        break;
+                    }
+                }
 
-        for(int i{ 0 }; auto const &queueFamily : queueFamilies) {
-            //Make sure we have the queue family that'll let us render graphics
-            if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-                indices.graphicsFamily = i;
-            }
-
-            //If we have a surface, check if we have presentation support. Otherwise we're running headless
-            if(surface != VK_NULL_HANDLE) {
-                VkBool32 presentSupport{ VK_FALSE };
-                vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
-                if(presentSupport == VK_TRUE) {
-                    indices.presentFamily = i;
+                if(!found) {
+                    return false;
                 }
             }
 
-            //Find a transfer queue family that specifically doesn't support graphics
-            if(queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT && !(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
-                indices.transferFamily = i;
+            return true;
+        }
+
+        bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, std::vector<char const *> const &extensions) {
+            VkPhysicalDeviceFeatures deviceFeatures;
+            vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+            QueueFamilyIndices indices{ findQueueFamilies(device, surface) };
+            bool const extentionsAreSupported{ checkDeviceExtensionsSupport(device, extensions) };
+
+            std::optional<bool> surfaceIsAdequate{};
+            if(extentionsAreSupported) {
+                //If we don't have a surface then we're headless
+                if(surface != VK_NULL_HANDLE) {
+                    SurfaceSupportDetails const surfaceSupport{ SurfaceSupportDetails::query(device, surface) };
+                    //We'll consider the surface adequate if we have one supported image format and presentation mode
+                    surfaceIsAdequate = !surfaceSupport.formats.empty() && !surfaceSupport.presentModes.empty();
+                }
+            } else {
+                surfaceIsAdequate = false;
             }
 
             bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
-            if(indices.isComplete(requirePresentFamily)) {
-                break;
-            }
-
-            ++i;
+            return indices.isComplete(requirePresentFamily) && extentionsAreSupported && surfaceIsAdequate.value_or(true) && deviceFeatures.samplerAnisotropy;
         }
-
-        return indices;
-    }
-
-    static bool checkDeviceExtensionsSupport(VkPhysicalDevice device, std::vector<char const *> const &extensions) {
-        uint32_t extensionCount;
-        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
-
-        std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
-
-        for(char const *extensionName : extensions) {
-            bool found = false;
-
-            for(auto const &extensionProperties : availableExtensions) {
-                if(std::strcmp(extensionName, extensionProperties.extensionName) == 0) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if(!found) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    static bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, std::vector<char const *> const &extensions) {
-        VkPhysicalDeviceFeatures deviceFeatures;
-        vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
-
-        QueueFamilyIndices indices{ findQueueFamilies(device, surface) };
-        bool const extentionsAreSupported{ checkDeviceExtensionsSupport(device, extensions) };
-
-        std::optional<bool> surfaceIsAdequate{};
-        if(extentionsAreSupported) {
-            //If we don't have a surface then we're headless
-            if(surface != VK_NULL_HANDLE) {
-                SurfaceSupportDetails const surfaceSupport{ SurfaceSupportDetails::query(device, surface) };
-                //We'll consider the surface adequate if we have one supported image format and presentation mode
-                surfaceIsAdequate = !surfaceSupport.formats.empty() && !surfaceSupport.presentModes.empty();
-            }
-        } else {
-            surfaceIsAdequate = false;
-        }
-
-        bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
-        return indices.isComplete(requirePresentFamily) && extentionsAreSupported && surfaceIsAdequate.value_or(true) && deviceFeatures.samplerAnisotropy;
     }
 
     VKGraphicsDevice::VKGraphicsDevice(std::any nativeWindow) {

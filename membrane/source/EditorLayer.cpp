@@ -3,7 +3,7 @@
 #include <Clove/Application.hpp>
 #include <Clove/Components/CameraComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
-#include <Clove/ECS/World.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/ModelLoader.hpp>
 
 namespace garlic::membrane {
@@ -13,11 +13,11 @@ namespace garlic::membrane {
     }
 
     void EditorLayer::onAttach() {
-        auto *const world{ clove::Application::get().getECSWorld() };
+        auto *const entityManager{ clove::Application::get().getEntityManager() };
 
-        editorCamera = world->create();
-        world->addComponent<clove::TransformComponent>(editorCamera)->setPosition({ 0.0f, 0.0f, -10.0f });
-        world->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
+        editorCamera = entityManager->create();
+        entityManager->addComponent<clove::TransformComponent>(editorCamera)->setPosition({ 0.0f, 0.0f, -10.0f });
+        entityManager->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
     }
 
     void EditorLayer::onUpdate(clove::DeltaTime const deltaTime) {
@@ -30,12 +30,12 @@ namespace garlic::membrane {
     }
 
     void EditorLayer::onDetach() {
-        clove::Application::get().getECSWorld()->destroy(editorCamera);
+        clove::Application::get().getEntityManager()->destroy(editorCamera);
     }
 
     void EditorLayer::resizeViewport(clove::vec2ui size) {
         viewport.width  = size.x;
         viewport.height = size.y;
-        clove::Application::get().getECSWorld()->getComponent<clove::CameraComponent>(editorCamera)->setViewport(viewport);
+        clove::Application::get().getEntityManager()->getComponent<clove::CameraComponent>(editorCamera)->setViewport(viewport);
     }
 }

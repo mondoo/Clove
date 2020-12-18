@@ -1,20 +1,19 @@
 #pragma once
 
-#include "Clove/LayerStack.hpp"
-
 #include <Clove/Audio/Audio.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Platform/PlatformTypes.hpp>
 #include <chrono>
-#include <optional>
 #include <memory>
+#include <map>
+#include <vector>
 
 namespace garlic::clove {
     class Platform;
     class Window;
     class GraphicsDevice;
-    class World;
+    class EntityManager;
     class Layer;
     class ForwardRenderer3D;
     class GraphicsImageRenderTarget;
@@ -30,6 +29,13 @@ namespace garlic::clove {
             Stopped
         };
 
+        enum class LayerGroup {
+            Initialisation, /**< For layers that need to perform logic before anything else. */
+            Core,           /**< The default group. For layers that contain core / general functionality. */
+            Interface,      /**< For layers that contain interface logic. Usually UI */
+            Render,         /**< For layers that need be run very last. Usually for some form of rendering logic. */
+        };
+
         //VARIABLES
     private:
         static Application *instance;
@@ -39,9 +45,9 @@ namespace garlic::clove {
 
         std::unique_ptr<Window> window;
         std::unique_ptr<ForwardRenderer3D> renderer;
-        std::unique_ptr<World> world;
+        std::unique_ptr<EntityManager> entityManager;
 
-        LayerStack layerStack;
+        std::map<LayerGroup, std::vector<std::shared_ptr<Layer>>> layers;
 
         std::chrono::system_clock::time_point prevFrameTime;
 
@@ -67,8 +73,8 @@ namespace garlic::clove {
 
         static Application &get();
 
-        void pushLayer(std::shared_ptr<Layer> layer);
-        void pushOverlay(std::shared_ptr<Layer> overlay);
+        void pushLayer(std::shared_ptr<Layer> layer, LayerGroup group = LayerGroup::Core);
+        void popLayer(std::shared_ptr<Layer> const &layer);
 
         State getState() const;
 
@@ -89,7 +95,7 @@ namespace garlic::clove {
 
         inline Window *getWindow() const;
         inline ForwardRenderer3D *getRenderer() const;
-        inline World *getECSWorld() const;
+        inline EntityManager *getEntityManager() const;
 
     private:
         Application();

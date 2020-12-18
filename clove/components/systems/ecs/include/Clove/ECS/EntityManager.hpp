@@ -4,7 +4,6 @@
 #include "Clove/ECS/ComponentSet.hpp"
 #include "Clove/ECS/ECSTypes.hpp"
 #include "Clove/ECS/Entity.hpp"
-#include "Clove/ECS/System.hpp"
 
 #include <Clove/Event/EventDispatcher.hpp>
 #include <set>
@@ -16,17 +15,14 @@ namespace garlic::clove {
 
 namespace garlic::clove {
     /**
-	 * @brief The ECS World that contains the Entities Systems and Components.
-	 * @details A World acts as a container that stores all of the elements that make an ECS.
+	 * @brief The EntityManager that contains the Entities and their Components.
 	 */
-    class World {
+    class EntityManager {
         //VARIABLES
     private:
         EventDispatcher ecsEventDispatcher;
 
         ComponentManager componentManager;
-
-        std::vector<std::unique_ptr<System>> systems;
 
         static Entity nextEntity;
         std::vector<Entity> activeEntities;
@@ -34,25 +30,20 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        World();
+        EntityManager();
 
-        World(World const &other)     = delete;
-        World(World &&other) noexcept = delete;
+        EntityManager(EntityManager const &other)     = delete;
+        EntityManager(EntityManager &&other) noexcept = delete;
 
-        World &operator=(World const &other) = delete;
-        World &operator=(World &&other) noexcept = delete;
+        EntityManager &operator=(EntityManager const &other) = delete;
+        EntityManager &operator=(EntityManager &&other) noexcept = delete;
 
-        ~World();
+        ~EntityManager();
 
-        /**
-		 * @brief Update the ECS world.
-		 * @details Called once per frame. Goes through each System in the World
-		 * and updates them.
-		 */
-        void update(DeltaTime deltaTime);
+        inline EventDispatcher &getDispatcher();
 
         /**
-		 * @brief Creates an entity to be part of this World.
+		 * @brief Creates an entity to be part of this EntityManager.
 		 * @return The newly created entity.
 		 */
         Entity create();
@@ -64,27 +55,27 @@ namespace garlic::clove {
         Entity clone(Entity entity);
 
         /**
-		 * @brief Removes the Entity from this World.
+		 * @brief Removes the Entity from this EntityManager.
 		 * @details Entities are removed the next time update is called.
 		 * @param ID The Entity to remove.
 		 */
         void destroy(Entity entity);
         /**
-		 * @brief Destroys all Entities in this World.
+		 * @brief Destroys all Entities in this EntityManager.
 		 * @details Entities are destroyed immediately.
 		 */
         void destroyAll();
 
         /**
 		 * @brief Checks if an Entity is valid.
-		 * @details An entity is valid if it is part of this World and has a valid EntityID.
+		 * @details An entity is valid if it is part of this EntityManager and has a valid EntityID.
 		 * @param ID The Entity to check.
 		 * @return Returns true if the entity is valid.
 		 */
         bool isValid(Entity entity);
 
         /**
-		 * @brief Adds a Component to this world.
+		 * @brief Adds a Component to this entityManager.
 		 * @tparam ComponentType The type of Component to add.
 		 * @param entityId The Entity to add the component to.
 		 * @param args Construction arguments to be forwarded to the component's constructor.
@@ -119,32 +110,31 @@ namespace garlic::clove {
         void removeComponent(Entity entity);
 
         /**
-		 * @brief Finds all entitys that have the same components as ComponentTypes and returns them as a ComponentSet.
-		 * @details	A ComponentSet is an array of tuples where each tuple are the components for a given entity.
-		 * @tparam ComponentTypes A variadic template of the components needed.
-		 * @return A vector of tuples of Components for each entity that matches.
-		 * @see	ComponentPtr.
-		 * @see ComponentSet.
-		 */
+         * @brief Calls the function for every Entity in the entityManager.
+         */
         template<typename... ComponentTypes>
-        ComponentSet<ComponentTypes...> getComponentSets();
-
+        void forEach(void (*updateFunction)(ComponentTypes...));
         /**
-		 * @brief Adds a System to the World.
-		 * @note The lifetime of the System is tied to the World
-		 * @tparam SystemType The type of System to add.
-		 * @param args Construction arguments that'll be forwarded to the System.
-		 * @return Returns a pointer to the System.
-		 */
-        template<typename SystemType, typename... ConstructArgs>
-        SystemType *addSystem(ConstructArgs &&... args);
-
-    private:
-        enum class FoundState { NullptrFound,
-                                EndOfTuple };
-        template<std::size_t index, typename... ComponentTypes>
-        FoundState checkForNullptr(std::tuple<ComponentPtr<ComponentTypes>...> const &tuple);
+         * @brief Calls the member function for every Entity in the entityManager.
+         */
+        template<typename SystemType, typename... ComponentTypes>
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system);
+        /**
+         * @brief Calls the member function for every Entity in the entityManager.
+         */
+        template<typename SystemType, typename... ComponentTypes>
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system);
+        /**
+         * @brief Calls the member function for every Entity in the entityManager.
+         */
+        template<typename SystemType, typename... ComponentTypes>
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system);
+        /**
+         * @brief Takes a callable type (such as a lambda) and calls it for every Entity in the entityManager.
+         */
+        template<typename CallableType>
+        void forEach(CallableType callable);
     };
 }
 
-#include "World.inl"
+#include "EntityManager.inl"

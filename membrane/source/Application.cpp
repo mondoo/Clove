@@ -7,14 +7,13 @@
 #include <Clove/Audio/Audio.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
-#include <Clove/ECS/World.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/ModelLoader.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
-#include <Clove/Systems/RenderSystem.hpp>
 
 namespace garlic::membrane {
     class ConsoleLogger : public clove::Logger::Output {
@@ -47,9 +46,6 @@ namespace garlic::membrane {
         app          = pair.first.release();
         renderTarget = pair.second;
 
-        //Add systems
-        app->getECSWorld()->addSystem<clove::RenderSystem>();
-
         editorLayer  = new std::shared_ptr<EditorLayer>();
         *editorLayer = std::make_shared<EditorLayer>(clove::vec2ui{ width, height });
 
@@ -57,7 +53,7 @@ namespace garlic::membrane {
         *runtimeLayer = std::make_shared<RuntimeLayer>();
 
         app->pushLayer(*runtimeLayer);
-        app->pushOverlay(*editorLayer);
+        app->pushLayer(*editorLayer);
     }
 
     Application::~Application() {
@@ -107,10 +103,10 @@ namespace garlic::membrane {
     void Application::createComponent(clove::Entity entity, ComponentType componentType) {
         switch(componentType) {
             case ComponentType::Transform:
-                app->getECSWorld()->addComponent<clove::TransformComponent>(entity);
+                app->getEntityManager()->addComponent<clove::TransformComponent>(entity);
                 break;
             case ComponentType::Mesh:
-                app->getECSWorld()->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
+                app->getEntityManager()->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
                 break;
             default:
                 break;
@@ -118,6 +114,6 @@ namespace garlic::membrane {
     }
 
     void Application::setPosition(clove::Entity entitiy, float x, float y, float z) {
-        app->getECSWorld()->getComponent<clove::TransformComponent>(entitiy)->setPosition({ x, y, z });
+        app->getEntityManager()->getComponent<clove::TransformComponent>(entitiy)->setPosition({ x, y, z });
     }
 }

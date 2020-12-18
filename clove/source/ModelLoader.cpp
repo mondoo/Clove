@@ -69,7 +69,7 @@ namespace garlic::clove::ModelLoader {
                 return static_cast<JointIndexType>(i);
             }
         }
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0}: Joint \"{1}\" has a parent but it couldn't be found in the skeleton", CLOVE_FUNCTION_NAME, jointName);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: Joint \"{1}\" has a parent but it couldn't be found in the skeleton", CLOVE_FUNCTION_NAME, jointName);
 
         return {};
     }

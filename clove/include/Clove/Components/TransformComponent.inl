@@ -71,7 +71,7 @@ namespace garlic::clove {
         }
     }
 
-    mat4f TransformComponent::getTransformationMatrix(TransformSpace space) {
+    mat4f TransformComponent::getTransformationMatrix(TransformSpace space) const {
         switch(space) {
             case TransformSpace::Local:
                 return getLocalTransformMatrix();
