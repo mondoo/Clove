@@ -77,6 +77,7 @@ namespace garlic::clove {
 
     void Application::pushLayer(std::shared_ptr<Layer> layer, LayerGroup group) {
         CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Attached layer: {0}", layer->getName());
+        layer->onAttach();
         layers[group].push_back(std::move(layer));
     }
 
