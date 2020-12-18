@@ -29,7 +29,7 @@ namespace Garlic.Bulb
 
         //TEMP: Brute force position changes
         public delegate void SetPositionEventHandler(uint entityId, float x, float y, float z);
-        public SetPositionEventHandler SetPosition;
+        public SetPositionEventHandler OnSetPosition;
 
         public EditorSessionViewModel()
         {
@@ -56,7 +56,7 @@ namespace Garlic.Bulb
                 case ComponentType.Transform:
                     {
                         var transVm = new TransformComponentViewModel();
-                        transVm.OnPositionChanged = (x, y, z) => SetPosition(entityId, x, y, z);
+                        transVm.OnPositionChanged = (x, y, z) => OnSetPosition(entityId, x, y, z);
                         vm = transVm;
                     }
                     break;

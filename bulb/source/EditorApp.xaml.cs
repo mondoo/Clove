@@ -30,7 +30,7 @@ namespace Garlic.Bulb
         private object updateEngineLock = new object();
         private bool exitThread = false;
 
-        private Size size = new Size();
+        private Size size = new Size(1, 1);
         private bool sizeChanged = false;
         private object resizeLock = new object();
 
@@ -53,7 +53,7 @@ namespace Garlic.Bulb
                 }
             };
             //TEMP
-            sessionVM.SetPosition = (entityId, x, y, z) =>
+            sessionVM.OnSetPosition = (entityId, x, y, z) =>
             {
                 lock (updateEngineLock)
                 {
@@ -76,14 +76,11 @@ namespace Garlic.Bulb
             editorWindow.Show();
             MainWindow = editorWindow;
 
-            //Initialise and start the application loop
-            int width = editorWindow.RenderArea.ActualWidth > 0 ? (int)editorWindow.RenderArea.ActualWidth : 1;
-            int height = editorWindow.RenderArea.ActualHeight > 0 ? (int)editorWindow.RenderArea.ActualHeight : 1;
-            size = new Size(width, width);
             CreateImageSource(size);
 
-            engineApp = new Membrane.Application(width, height);
-
+            //Initialise the engine
+            engineApp = new Membrane.Application((int)size.Width, (int)size.Height);
+            
             engineThread = new Thread(new ThreadStart(RunEngineApplication));
             engineThread.Name = "Garlic application thread";
             engineThread.Start();
