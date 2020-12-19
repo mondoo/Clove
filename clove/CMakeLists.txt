@@ -113,6 +113,7 @@ add_library(
 		${INCLUDE}/Components/DirectionalLightComponent.hpp
 		${INCLUDE}/Components/DirectionalLightComponent.inl
 		${SOURCE}/Components/DirectionalLightComponent.cpp
+		${INCLUDE}/Components/ParentComponent.hpp
 		${INCLUDE}/Components/PointLightComponent.hpp
 		${INCLUDE}/Components/PointLightComponent.inl
 		${SOURCE}/Components/PointLightComponent.cpp
@@ -122,7 +123,6 @@ add_library(
 		${INCLUDE}/Components/StaticModelComponent.inl
 		${SOURCE}/Components/StaticModelComponent.cpp
 		${INCLUDE}/Components/TransformComponent.hpp
-		${INCLUDE}/Components/TransformComponent.inl
 		${SOURCE}/Components/TransformComponent.cpp
 
 		${INCLUDE}/Rendering/AnimationTypes.hpp
