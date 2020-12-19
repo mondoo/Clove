@@ -160,10 +160,12 @@ add_library(
 
 		${INCLUDE}/Layers/AudioLayer.hpp
 		${SOURCE}/Layers/AudioLayer.cpp
-		${INCLUDE}/Layers/RenderLayer.hpp
-		${SOURCE}/Layers/RenderLayer.cpp
 		${INCLUDE}/Layers/PhysicsLayer.hpp
 		${SOURCE}/Layers/PhysicsLayer.cpp
+		${INCLUDE}/Layers/RenderLayer.hpp
+		${SOURCE}/Layers/RenderLayer.cpp
+		${INCLUDE}/Layers/TransformLayer.hpp
+		${SOURCE}/Layers/TransformLayer.cpp
 
 		${INCLUDE}/UI/DrawableElement.hpp
 		${INCLUDE}/UI/Image.hpp
