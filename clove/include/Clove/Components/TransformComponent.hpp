@@ -23,9 +23,6 @@ namespace garlic::clove {
         quatf localRotation{ quatf({ 0.0f, 0.0f, 0.0f }) };
         vec3f localScale{ 1.0f, 1.0f, 1.0f };
 
-        ComponentPtr<TransformComponent> parent;
-        std::vector<ComponentPtr<TransformComponent>> children;
-
         //FUNCTIONS
     public:
         TransformComponent();
@@ -51,12 +48,6 @@ namespace garlic::clove {
         vec3f getUp() const;
 
         inline mat4f getTransformationMatrix(TransformSpace space) const;
-
-        inline ComponentPtr<TransformComponent> getParent() const;
-
-        void addChild(ComponentPtr<TransformComponent> child);
-        void removeChild(ComponentPtr<TransformComponent> child);
-        std::vector<ComponentPtr<TransformComponent>> const &getChildren() const;
 
     private:
         mat4f getWorldTransformMatrix() const;

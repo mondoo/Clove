@@ -82,8 +82,4 @@ namespace garlic::clove {
                 return {};
         }
     }
-
-    ComponentPtr<TransformComponent> TransformComponent::getParent() const {
-        return parent;
-    }
 }
