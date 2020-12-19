@@ -31,7 +31,7 @@ namespace garlic::clove {
 
         //Transform and submit cameras
         entityManager->forEach([this](TransformComponent const &transform, CameraComponent &camera) {
-            vec3f const position{ transform.getPosition(TransformSpace::World) };
+            vec3f const position{ transform.position };
 
             vec3f const camFront{ transform.getForward() };
             vec3f const camUp{ transform.getUp() };
@@ -43,7 +43,7 @@ namespace garlic::clove {
 
         //Submit static meshes
         entityManager->forEach([this](TransformComponent const &transform, StaticModelComponent const &staticModel) {
-            mat4f const modelTransform{ transform.getTransformationMatrix(TransformSpace::World) };
+            mat4f const modelTransform{ transform.worldMatrix };
 
             for(auto &mesh : staticModel.model.getMeshes()) {
                 renderer->submitStaticMesh(ForwardRenderer3D::StaticMeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform });
@@ -51,7 +51,7 @@ namespace garlic::clove {
         });
         //Submit animated meshes
         entityManager->forEach([this, &deltaTime](TransformComponent const &transform, AnimatedModelComponent &animatedModel) {
-            mat4f const modelTransform{ transform.getTransformationMatrix(TransformSpace::World) };
+            mat4f const modelTransform{ transform.worldMatrix };
             auto const matrixPalet{ animatedModel.model.update(deltaTime) };
 
             for(auto &mesh : animatedModel.model.getMeshes()) {
@@ -67,7 +67,7 @@ namespace garlic::clove {
         });
         //Submit point lights
         entityManager->forEach([this](TransformComponent const &transform, PointLightComponent &light) {
-            vec3f const &position{ transform.getPosition() };
+            vec3f const &position{ transform.position };
 
             light.lightData.data.position       = position;
             light.lightData.shadowTransforms[0] = light.shadowProj * lookAt(position, position + vec3f{ 1.0f, 0.0f, 0.0f }, vec3f{ 0.0f, 1.0f, 0.0f });

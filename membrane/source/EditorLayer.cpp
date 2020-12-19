@@ -16,7 +16,7 @@ namespace garlic::membrane {
         auto *const entityManager{ clove::Application::get().getEntityManager() };
 
         editorCamera = entityManager->create();
-        entityManager->addComponent<clove::TransformComponent>(editorCamera)->setPosition({ 0.0f, 0.0f, -10.0f });
+        entityManager->addComponent<clove::TransformComponent>(editorCamera)->position = clove::vec3f{ 0.0f, 0.0f, -10.0f };
         entityManager->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
     }
 

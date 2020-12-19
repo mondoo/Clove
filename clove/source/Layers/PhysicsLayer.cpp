@@ -130,8 +130,8 @@ namespace garlic::clove {
         });
 
         auto const updateCollider = [](TransformComponent const &transform, btCollisionObject &collisionObject) {
-            auto const pos{ transform.getPosition(TransformSpace::World) };
-            auto const rot{ transform.getRotation(TransformSpace::World) };
+            auto const pos{ transform.position };
+            auto const rot{ transform.rotation };
 
             btTransform btTrans = collisionObject.getWorldTransform();
             btTrans.setOrigin({ pos.x, pos.y, pos.z });
@@ -157,8 +157,8 @@ namespace garlic::clove {
             btVector3 const &pos{ btTrans.getOrigin() };
             btQuaternion const &rot{ btTrans.getRotation() };
 
-            transform.setPosition({ pos.x(), pos.y(), pos.z() }, TransformSpace::World);
-            transform.setRotation({ rot.getW(), rot.getX(), rot.getY(), rot.getZ() }, TransformSpace::World);
+            transform.position = vec3f{ pos.x(), pos.y(), pos.z() };
+            transform.rotation = quatf{ rot.getW(), rot.getX(), rot.getY(), rot.getZ() };
         };
 
         //Apply any simulation updates
