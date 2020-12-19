@@ -13,6 +13,10 @@ namespace garlic::clove {
         quatf rotation{ vec3f{ 0.0f, 0.0f, 0.0f } };
         vec3f scale{ 1.0f, 1.0f, 1.0f };
 
+        /**
+         * @brief This matrix is calculated inside TransformLayer. One frame needs to pass
+         * before it is updated
+         */
         mat4f worldMatrix{ 1.0f };
 
         vec3f getForward() const;
