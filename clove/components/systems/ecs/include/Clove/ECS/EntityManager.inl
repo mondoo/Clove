@@ -6,12 +6,12 @@ namespace garlic::clove {
     }
 
     template<typename ComponentType, typename... ConstructArgs>
-    ComponentPtr<ComponentType> EntityManager::addComponent(Entity entity, ConstructArgs &&... args) {
+    ComponentType &EntityManager::addComponent(Entity entity, ConstructArgs &&... args) {
         return componentManager.getComponentContainer<ComponentType>().addComponent(entity, std::forward<ConstructArgs>(args)...);
     }
 
     template<typename ComponentType>
-    ComponentPtr<ComponentType> EntityManager::getComponent(Entity entity) {
+    ComponentType &EntityManager::getComponent(Entity entity) {
         return componentManager.getComponentContainer<ComponentType>().getComponent(entity);
     }
 
@@ -29,7 +29,7 @@ namespace garlic::clove {
     void EntityManager::forEach(void (*updateFunction)(ComponentTypes...)) {
         for(Entity entity : activeEntities) {
             if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                (*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
+                (*updateFunction)(getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
     }
@@ -38,7 +38,7 @@ namespace garlic::clove {
     void EntityManager::forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system) {
         for(Entity entity : activeEntities) {
             if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                (system->*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
+                (system->*updateFunction)(getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
     }
@@ -47,7 +47,7 @@ namespace garlic::clove {
     void EntityManager::forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system) {
         for(Entity entity : activeEntities) {
             if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                (system->*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
+                (system->*updateFunction)(getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
     }
@@ -56,7 +56,7 @@ namespace garlic::clove {
     void EntityManager::forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system) {
         for(Entity entity : activeEntities) {
             if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                (system.*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
+                (system.*updateFunction)(getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
     }

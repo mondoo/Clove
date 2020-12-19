@@ -13,7 +13,7 @@ namespace garlic::membrane {
 
     void RuntimeLayer::onAttach() {
         auto lightEnt{ entityManager->create() };
-        entityManager->addComponent<clove::TransformComponent>(lightEnt)->position = clove::vec3f{ 5.0f, 0.0f, 0.0f };
+        entityManager->addComponent<clove::TransformComponent>(lightEnt).position = clove::vec3f{ 5.0f, 0.0f, 0.0f };
         entityManager->addComponent<clove::PointLightComponent>(lightEnt);
 
         runtimeEntities.push_back(lightEnt);

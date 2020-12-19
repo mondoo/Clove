@@ -83,7 +83,7 @@ namespace garlic::clove {
 		 * @see	ComponentPtr.
 		 */
         template<typename ComponentType, typename... ConstructArgs>
-        ComponentPtr<ComponentType> addComponent(Entity entity, ConstructArgs &&... args);
+        ComponentType &addComponent(Entity entity, ConstructArgs &&... args);
         /**
 		 * @brief Gets the Component for an Entity.
 		 * @tparam ComponentType The type of Component to get.
@@ -92,7 +92,7 @@ namespace garlic::clove {
 		 * @see ComponentPtr.
 		 */
         template<typename ComponentType>
-        ComponentPtr<ComponentType> getComponent(Entity entity);
+        ComponentType &getComponent(Entity entity);
         /**
 		 * @brief Checks to see if the component exists on an Entity.
 		 * @tparam ComponentType The type of the Component to check for.

@@ -54,8 +54,8 @@ namespace garlic::clove {
         void removeComponent(Entity entity) final;
 
         template<typename... ConstructArgs>
-        ComponentPtr<ComponentType> addComponent(Entity entity, ConstructArgs &&... args);
-        ComponentPtr<ComponentType> getComponent(Entity entity);
+        ComponentType &addComponent(Entity entity, ConstructArgs &&... args);
+        ComponentType &getComponent(Entity entity);
     };
 
     class ComponentManager {

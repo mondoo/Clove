@@ -210,12 +210,12 @@ namespace garlic::clove {
             Entity const entityA{ manifold.entityA };
             Entity const entityB{ manifold.entityB };
 
-            if(auto entityAComp = entityManager->getComponent<CollisionResponseComponent>(entityA)) {
-                entityAComp->onCollisionBegin.broadcast(Collision{ entityA, entityB });
+            if(entityManager->hasComponent<CollisionResponseComponent>(entityA)) {
+                entityManager->getComponent<CollisionResponseComponent>(entityA).onCollisionBegin.broadcast(Collision{ entityA, entityB });
             }
 
-            if(auto entityBComp = entityManager->getComponent<CollisionResponseComponent>(entityB)) {
-                entityBComp->onCollisionBegin.broadcast(Collision{ entityB, entityA });
+            if(entityManager->hasComponent<CollisionResponseComponent>(entityB)) {
+                entityManager->getComponent<CollisionResponseComponent>(entityB).onCollisionBegin.broadcast(Collision{ entityB, entityA });
             }
 
             currentCollisions.emplace(manifold);
@@ -226,12 +226,12 @@ namespace garlic::clove {
             Entity const entityA{ manifold.entityA };
             Entity const entityB{ manifold.entityB };
 
-            if(auto entityAComp = entityManager->getComponent<CollisionResponseComponent>(entityA)) {
-                entityAComp->onCollisionEnd.broadcast(Collision{ entityA, entityB });
+            if(entityManager->hasComponent<CollisionResponseComponent>(entityA)) {
+                entityManager->getComponent<CollisionResponseComponent>(entityA).onCollisionEnd.broadcast(Collision{ entityA, entityB });
             }
 
-            if(auto entityBComp = entityManager->getComponent<CollisionResponseComponent>(entityB)) {
-                entityBComp->onCollisionEnd.broadcast(Collision{ entityB, entityA });
+            if(entityManager->hasComponent<CollisionResponseComponent>(entityB)) {
+                entityManager->getComponent<CollisionResponseComponent>(entityB).onCollisionEnd.broadcast(Collision{ entityB, entityA });
             }
 
             currentCollisions.erase(manifold);

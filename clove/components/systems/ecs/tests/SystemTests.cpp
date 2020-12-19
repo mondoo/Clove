@@ -47,8 +47,8 @@ TEST(ECSSystemTests, CanUseMemberFunction) {
     entityManager.forEach(&TestSystem::update_const, &system);
 
     for(auto entity : entities) {
-        EXPECT_EQ(entityManager.getComponent<ValueComponent>(entity)->value, system.entityValue);
-        EXPECT_TRUE(entityManager.getComponent<BoolComponent>(entity)->value);
+        EXPECT_EQ(entityManager.getComponent<ValueComponent>(entity).value, system.entityValue);
+        EXPECT_TRUE(entityManager.getComponent<BoolComponent>(entity).value);
     }
 }
 
@@ -66,7 +66,7 @@ TEST(ECSSystemTests, CanUseFreeFunction) {
     entityManager.forEach(&makeTrue);
 
     for(auto entity : entities) {
-        EXPECT_TRUE(entityManager.getComponent<BoolComponent>(entity)->value);
+        EXPECT_TRUE(entityManager.getComponent<BoolComponent>(entity).value);
     }
 }
 
@@ -88,8 +88,8 @@ TEST(ECSSystemTests, CanUseLambdaFunction) {
     });
 
     for(auto entity : entities) {
-        EXPECT_EQ(entityManager.getComponent<ValueComponent>(entity)->value, entityVal);
-        EXPECT_TRUE(entityManager.getComponent<BoolComponent>(entity)->value);
+        EXPECT_EQ(entityManager.getComponent<ValueComponent>(entity).value, entityVal);
+        EXPECT_TRUE(entityManager.getComponent<BoolComponent>(entity).value);
     }
 
     auto func = [entityVal](BoolComponent &boolComp) {
@@ -99,6 +99,6 @@ TEST(ECSSystemTests, CanUseLambdaFunction) {
     entityManager.forEach(func);
 
     for(auto entity : entities) {
-        EXPECT_FALSE(entityManager.getComponent<BoolComponent>(entity)->value);
+        EXPECT_FALSE(entityManager.getComponent<BoolComponent>(entity).value);
     }
 }

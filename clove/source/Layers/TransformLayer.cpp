@@ -12,10 +12,14 @@ namespace garlic::clove {
     namespace {
         mat4f calculateWorldMatrix(EntityManager *entityManager, TransformComponent &transform, Entity parent) {
             if(entityManager->hasComponent<TransformComponent>(parent)) {
-                auto parentTransform{ entityManager->getComponent<TransformComponent>(parent) };
-                auto parentParent{ entityManager->getComponent<ParentComponent>(parent) };
+                auto &parentTransform{ entityManager->getComponent<TransformComponent>(parent) };
+                
+                Entity parentsParent{ NullEntity };
+                if(entityManager->hasComponent<ParentComponent>(parent)){
+                    parentsParent = entityManager->getComponent<ParentComponent>(parent).parent;
+                }
 
-                return calculateWorldMatrix(entityManager, *parentTransform, parentParent ? parentParent->parent : NullEntity) * transform.worldMatrix;
+                return calculateWorldMatrix(entityManager, parentTransform, parentsParent) * transform.worldMatrix;
             } else {
                 return transform.worldMatrix;
             }

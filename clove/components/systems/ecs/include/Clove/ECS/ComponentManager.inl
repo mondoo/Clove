@@ -69,11 +69,11 @@ namespace garlic::clove {
 
     template<typename ComponentType>
     template<typename... ConstructArgs>
-    ComponentPtr<ComponentType> ComponentContainer<ComponentType>::addComponent(Entity entity, ConstructArgs &&... args) {
-        ComponentType *comp = componentAllocator.alloc(std::forward<ConstructArgs>(args)...);
+    ComponentType &ComponentContainer<ComponentType>::addComponent(Entity entity, ConstructArgs &&... args) {
+        ComponentType *comp{ componentAllocator.alloc(std::forward<ConstructArgs>(args)...) };
         if(comp == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Could not create component", CLOVE_FUNCTION_NAME_PRETTY);
-            return { comp };
+            return *comp;
         }
 
         comp->entity = entity;
@@ -89,15 +89,18 @@ namespace garlic::clove {
         ComponentAddedEvent<ComponentType> event{ comp };
         ecsEventDispatcher->broadCastEvent<ComponentAddedEvent<ComponentType>>(event);
 
-        return { comp };
+        return *comp;
     }
 
     template<typename ComponentType>
-    ComponentPtr<ComponentType> ComponentContainer<ComponentType>::getComponent(Entity entity) {
+    ComponentType &ComponentContainer<ComponentType>::getComponent(Entity entity) {
         if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-            return { components[iter->second] };
+            return *components[iter->second];
         } else {
-            return {};
+            //TODO: return Excepted type?
+            CLOVE_ASSERT(false, "Entity does not have component of specified type!");
+            ComponentType *nullComp{ nullptr };
+            return *nullComp;
         }
     }
 
