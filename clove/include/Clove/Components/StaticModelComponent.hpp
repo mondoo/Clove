@@ -2,10 +2,8 @@
 
 #include "Clove/Rendering/Renderables/StaticModel.hpp"
 
-#include <Clove/ECS/Component.hpp>
-
 namespace garlic::clove {
-    class StaticModelComponent : public Component<StaticModelComponent> {
+    class StaticModelComponent {
         friend class RenderLayer;
 
         //VARIABLES

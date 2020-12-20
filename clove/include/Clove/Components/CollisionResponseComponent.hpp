@@ -1,12 +1,11 @@
 #pragma once
 
-#include <Clove/ECS/Component.hpp>
-#include <Clove/ECS/Entity.hpp>
 #include <Clove/Delegate/MultiCastDelegate.hpp>
+#include <Clove/ECS/Entity.hpp>
 
 namespace garlic::clove {
     struct Collision {
-        Entity entity; /**< 'this' Entity. */
+        Entity entity;   /**< 'this' Entity. */
         Entity collider; /**< The Entity that collided with this entity */
     };
 
@@ -16,7 +15,7 @@ namespace garlic::clove {
      * with this entity. Note that on it's own this component does nothing. The Entity
      * needs a RigidBodyComponent or a CollisionShapeComponent to response to collisions.
      */
-    class CollisionResponseComponent : public Component<CollisionResponseComponent> {
+    class CollisionResponseComponent {
         //VARIABLES
     public:
         /**

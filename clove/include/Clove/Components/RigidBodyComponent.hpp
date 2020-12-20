@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Clove/ECS/Component.hpp>
 #include <memory>
 #include <Clove/Maths/Vector.hpp>
 
@@ -16,7 +15,7 @@ namespace garlic::clove {
 	 * CollisionShapeComponent then the rigid body will use that shape
 	 * to detect collisions.
 	 */
-    class RigidBodyComponent : public Component<RigidBodyComponent> {
+    class RigidBodyComponent {
         friend class PhysicsLayer;
 
         //TYPES

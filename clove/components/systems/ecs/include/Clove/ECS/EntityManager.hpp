@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Clove/ECS/ComponentManager.hpp"
-#include "Clove/ECS/ComponentSet.hpp"
-#include "Clove/ECS/ECSTypes.hpp"
 #include "Clove/ECS/Entity.hpp"
 
 #include <Clove/Event/EventDispatcher.hpp>

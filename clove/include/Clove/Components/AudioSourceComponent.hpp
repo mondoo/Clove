@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Clove/ECS/Component.hpp>
-
 #include <vector>
 #include <memory>
 
@@ -20,7 +18,7 @@ namespace garlic::clove {
     /**
 	 * @brief Allows an entity to determine where a sound is coming from
 	 */
-    class AudioSourceComponent : public Component<AudioSourceComponent> {
+    class AudioSourceComponent {
         friend class AudioLayer;
 
         //VARIABLES

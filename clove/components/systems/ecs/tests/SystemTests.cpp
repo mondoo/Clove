@@ -1,15 +1,14 @@
-#include <Clove/ECS/Component.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <gtest/gtest.h>
 
 using namespace garlic::clove;
 
-class ValueComponent : public Component<ValueComponent> {
+class ValueComponent {
 public:
     int32_t value{ 0 };
 };
 
-class BoolComponent : public Component<BoolComponent> {
+class BoolComponent {
 public:
     bool value{ false };
 };

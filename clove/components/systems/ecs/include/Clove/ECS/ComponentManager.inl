@@ -47,21 +47,23 @@ namespace garlic::clove {
             size_t const index{ iter->second };
             size_t const lastIndex{ components.size() - 1 };
 
-            ComponentType *removedComp = components[index];
+            ComponentType *const removedComp{ components[index] };
 
             if(index < lastIndex) {
                 components[index] = components.back();
+
+                //Update the index map so it knows about the moved component
+                for(auto [entityId, componentIndex] : entityToIndex) {
+                    if(componentIndex == lastIndex) {
+                        entityToIndex[entityId] = index;
+                        break;
+                    }
+                }
             }
             components.pop_back();
             entityToIndex.erase(entity);
 
-            //Update the index map so it knows about the moved component
-            if(index < lastIndex) {
-                Entity movedCompEntity{ components[index]->entity };
-                entityToIndex[movedCompEntity] = index;
-            }
-
-            ecsEventDispatcher->broadCastEvent(ComponentRemovedEvent<ComponentType>{ removedComp });
+            ecsEventDispatcher->broadCastEvent(ComponentRemovedEvent<ComponentType>{ entity, *removedComp });
 
             componentAllocator.free(removedComp);
         }
@@ -76,8 +78,6 @@ namespace garlic::clove {
             return *comp;
         }
 
-        comp->entity = entity;
-
         if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
             CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", CLOVE_FUNCTION_NAME_PRETTY);
             components[iter->second] = comp;
@@ -86,8 +86,7 @@ namespace garlic::clove {
             entityToIndex[entity] = components.size() - 1;
         }
 
-        ComponentAddedEvent<ComponentType> event{ comp };
-        ecsEventDispatcher->broadCastEvent<ComponentAddedEvent<ComponentType>>(event);
+        ecsEventDispatcher->broadCastEvent(ComponentAddedEvent<ComponentType>{ entity, *comp });
 
         return *comp;
     }
@@ -106,14 +105,14 @@ namespace garlic::clove {
 
     template<typename ComponentType>
     ComponentContainer<ComponentType> &ComponentManager::getComponentContainer() {
-        ComponentID const componentID{ ComponentType::id() };
-        if(auto iter = containers.find(componentID); iter != containers.end()) {
+        ComponentId const componentId{ typeid(ComponentType).hash_code() };
+        if(auto iter = containers.find(componentId); iter != containers.end()) {
             return static_cast<ComponentContainer<ComponentType> &>(*iter->second.get());
         } else {
             auto container{ std::make_unique<ComponentContainer<ComponentType>>(ecsEventDispatcher) };
 
-            containers[componentID] = std::move(container);
-            return static_cast<ComponentContainer<ComponentType> &>(*containers[componentID].get());
+            containers[componentId] = std::move(container);
+            return static_cast<ComponentContainer<ComponentType> &>(*containers[componentId].get());
         }
     }
 }

@@ -104,7 +104,7 @@ namespace garlic::clove {
         void onRigidBodyAdded(ComponentAddedEvent<RigidBodyComponent> const &event);
         void onRigidBodyRemoved(ComponentRemovedEvent<RigidBodyComponent> const &event);
 
-        void addBodyToWorld(RigidBodyComponent const &rigidBodyComponent);
-        void addColliderToWorld(CollisionShapeComponent const &colliderComponent);
+        void addBodyToWorld(RigidBodyComponent const &rigidBodyComponent, Entity const entity);
+        void addColliderToWorld(CollisionShapeComponent const &colliderComponent, Entity const entity);
     };
 }

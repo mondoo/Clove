@@ -2,11 +2,10 @@
 
 #include "Clove/Rendering/Camera.hpp"
 
-#include <Clove/ECS/Component.hpp>
 #include <Clove/Maths/Matrix.hpp>
 
 namespace garlic::clove {
-    class CameraComponent : public Component<CameraComponent> {
+    class CameraComponent {
         friend class RenderLayer;
 
         //VARIABLES

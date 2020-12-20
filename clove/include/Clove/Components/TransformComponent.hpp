@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Clove/ECS/Component.hpp>
 #include <Clove/Maths/MathsTypes.hpp>
 #include <vector>
 
@@ -8,7 +7,7 @@ namespace garlic::clove {
     /**
      * @brief A TransformComponent holds the position, rotation and scale of an Entity.
      */
-    struct TransformComponent : public Component<TransformComponent> {
+    struct TransformComponent {
         vec3f position{ 0.0f, 0.0f, 0.0f };
         quatf rotation{ vec3f{ 0.0f, 0.0f, 0.0f } };
         vec3f scale{ 1.0f, 1.0f, 1.0f };

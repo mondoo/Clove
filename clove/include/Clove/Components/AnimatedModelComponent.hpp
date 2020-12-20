@@ -2,10 +2,8 @@
 
 #include "Clove/Rendering/Renderables/AnimatedModel.hpp"
 
-#include <Clove/ECS/Component.hpp>
-
 namespace garlic::clove {
-    class AnimatedModelComponent : public Component<AnimatedModelComponent> {
+    class AnimatedModelComponent {
         friend class RenderLayer;
 
         //VARIABLES

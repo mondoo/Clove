@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Clove/ECS/Component.hpp"
 #include "Clove/ECS/Entity.hpp"
 
 #include <Clove/Memory/PoolAllocator.hpp>
@@ -59,9 +58,13 @@ namespace garlic::clove {
     };
 
     class ComponentManager {
+        //TYPES
+    private:
+        using ComponentId = size_t;
+
         //VARIABLES
     private:
-        std::unordered_map<ComponentID, std::unique_ptr<ComponentContainerInterface>> containers;
+        std::unordered_map<ComponentId, std::unique_ptr<ComponentContainerInterface>> containers;
 
         EventDispatcher *ecsEventDispatcher;
 

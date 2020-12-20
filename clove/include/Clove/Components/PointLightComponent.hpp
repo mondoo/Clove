@@ -2,13 +2,12 @@
 
 #include "Clove/Rendering/ShaderBufferTypes.hpp"
 
-#include <Clove/ECS/Component.hpp>
 #include <Clove/Maths/Matrix.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <Clove/Maths/MathsHelpers.hpp>
 
 namespace garlic::clove {
-    class PointLightComponent : public Component<PointLightComponent> {
+    class PointLightComponent {
         friend class RenderLayer;
 
         //VARIABLES

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Clove/ECS/Component.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <memory>
 #include <variant>
@@ -34,7 +33,7 @@ namespace garlic::clove {
      * @see CollisionResponseComponent
      * @see RigidBodyComponent
      */
-    class CollisionShapeComponent : public Component<CollisionShapeComponent> {
+    class CollisionShapeComponent {
         friend class PhysicsLayer;
 
         //VARIABLES

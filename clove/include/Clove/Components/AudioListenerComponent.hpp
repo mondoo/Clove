@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Clove/ECS/Component.hpp>
-
 #include <memory>
 
 namespace garlic::clove {
@@ -14,7 +12,7 @@ namespace garlic::clove {
 	 * @brief Allows an entity to determine where a sound comes from
 	 * @details Every ecs::EntityManager can only have 1 AudioListenerComponent
 	 */
-    class AudioListenerComponent : public Component<AudioListenerComponent> {
+    class AudioListenerComponent {
         friend class AudioLayer;
 
         //VARIABLES
