@@ -12,53 +12,53 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove {
-    class ComponentContainerInterface {
-        //FUNCTIONS
-    public:
-        virtual ~ComponentContainerInterface();
-
-        virtual bool hasComponent(Entity entity) const = 0;
-
-        virtual void cloneComponent(Entity from, Entity to) = 0;
-        virtual void removeComponent(Entity entity)         = 0;
-    };
-
-    template<typename ComponentType>
-    class ComponentContainer : public ComponentContainerInterface {
-        //VARIABLES
-    private:
-        std::unordered_map<Entity, size_t> entityToIndex;
-        std::vector<ComponentType> components;
-
-        EventDispatcher *ecsEventDispatcher;
-
-        //FUNCTIONS
-    public:
-        ComponentContainer() = delete;
-        ComponentContainer(EventDispatcher *dispatcher);
-
-        ComponentContainer(ComponentContainer const &other) = delete;
-        ComponentContainer(ComponentContainer &&other) noexcept;
-
-        ComponentContainer &operator=(ComponentContainer const &other) = delete;
-        ComponentContainer &operator=(ComponentContainer &&other) noexcept;
-
-        ~ComponentContainer();
-
-        bool hasComponent(Entity entity) const final;
-
-        void cloneComponent(Entity from, Entity to) final;
-        void removeComponent(Entity entity) final;
-
-        template<typename... ConstructArgs>
-        ComponentType &addComponent(Entity entity, ConstructArgs &&... args);
-        ComponentType &getComponent(Entity entity);
-    };
-
     class ComponentManager {
         //TYPES
     private:
         using ComponentId = size_t;
+
+        class ComponentContainerInterface {
+            //FUNCTIONS
+        public:
+            virtual ~ComponentContainerInterface();
+
+            virtual bool hasComponent(Entity entity) const = 0;
+
+            virtual void cloneComponent(Entity from, Entity to) = 0;
+            virtual void removeComponent(Entity entity)         = 0;
+        };
+
+        template<typename ComponentType>
+        class ComponentContainer : public ComponentContainerInterface {
+            //VARIABLES
+        private:
+            std::unordered_map<Entity, size_t> entityToIndex;
+            std::vector<ComponentType> components;
+
+            EventDispatcher *ecsEventDispatcher;
+
+            //FUNCTIONS
+        public:
+            ComponentContainer() = delete;
+            ComponentContainer(EventDispatcher *dispatcher);
+
+            ComponentContainer(ComponentContainer const &other) = delete;
+            ComponentContainer(ComponentContainer &&other) noexcept;
+
+            ComponentContainer &operator=(ComponentContainer const &other) = delete;
+            ComponentContainer &operator=(ComponentContainer &&other) noexcept;
+
+            ~ComponentContainer();
+
+            bool hasComponent(Entity entity) const final;
+
+            void cloneComponent(Entity from, Entity to) final;
+            void removeComponent(Entity entity) final;
+
+            template<typename... ConstructArgs>
+            ComponentType &addComponent(Entity entity, ConstructArgs &&... args);
+            ComponentType &getComponent(Entity entity);
+        };
 
         //VARIABLES
     private:

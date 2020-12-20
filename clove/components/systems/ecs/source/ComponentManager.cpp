@@ -1,7 +1,7 @@
 #include "Clove/ECS/ComponentManager.hpp"
 
 namespace garlic::clove {
-    ComponentContainerInterface::~ComponentContainerInterface() = default;
+    ComponentManager::ComponentContainerInterface::~ComponentContainerInterface() = default;
 
     ComponentManager::ComponentManager(EventDispatcher *dispatcher)
         : ecsEventDispatcher(dispatcher) {

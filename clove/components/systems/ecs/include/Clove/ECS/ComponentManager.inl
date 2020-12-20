@@ -6,27 +6,27 @@
 
 namespace garlic::clove {
     template<typename ComponentType>
-    ComponentContainer<ComponentType>::ComponentContainer(EventDispatcher *dispatcher)
+    ComponentManager::ComponentContainer<ComponentType>::ComponentContainer(EventDispatcher *dispatcher)
         : ecsEventDispatcher{ dispatcher } {
     }
 
     template<typename ComponentType>
-    ComponentContainer<ComponentType>::ComponentContainer(ComponentContainer &&other) noexcept = default;
+    ComponentManager::ComponentContainer<ComponentType>::ComponentContainer(ComponentContainer &&other) noexcept = default;
 
     template<typename ComponentType>
-    ComponentContainer<ComponentType> &ComponentContainer<ComponentType>::operator=(ComponentContainer &&other) noexcept = default;
+    ComponentManager::ComponentContainer<ComponentType> &ComponentManager::ComponentContainer<ComponentType>::operator=(ComponentContainer &&other) noexcept = default;
 
     template<typename ComponentType>
-    ComponentContainer<ComponentType>::~ComponentContainer() = default;
+    ComponentManager::ComponentContainer<ComponentType>::~ComponentContainer() = default;
 
     template<typename ComponentType>
-    bool ComponentContainer<ComponentType>::hasComponent(Entity entity) const {
+    bool ComponentManager::ComponentContainer<ComponentType>::hasComponent(Entity entity) const {
         auto iter{ entityToIndex.find(entity) };
         return iter != entityToIndex.end();
     }
 
     template<typename ComponentType>
-    void ComponentContainer<ComponentType>::cloneComponent(Entity from, Entity to) {
+    void ComponentManager::ComponentContainer<ComponentType>::cloneComponent(Entity from, Entity to) {
         if constexpr(std::is_copy_constructible_v<ComponentType>) {
             if(auto iter = entityToIndex.find(from); iter != entityToIndex.end()) {
                 ComponentType &component{ components[iter->second] };
@@ -38,7 +38,7 @@ namespace garlic::clove {
     }
 
     template<typename ComponentType>
-    void ComponentContainer<ComponentType>::removeComponent(Entity entity) {
+    void ComponentManager::ComponentContainer<ComponentType>::removeComponent(Entity entity) {
         if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
             size_t const index{ iter->second };
             size_t const lastIndex{ components.size() - 1 };
@@ -65,7 +65,7 @@ namespace garlic::clove {
 
     template<typename ComponentType>
     template<typename... ConstructArgs>
-    ComponentType &ComponentContainer<ComponentType>::addComponent(Entity entity, ConstructArgs &&... args) {
+    ComponentType &ComponentManager::ComponentContainer<ComponentType>::addComponent(Entity entity, ConstructArgs &&... args) {
         ComponentType *addedComp{ nullptr };
 
         if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
@@ -84,7 +84,7 @@ namespace garlic::clove {
     }
 
     template<typename ComponentType>
-    ComponentType &ComponentContainer<ComponentType>::getComponent(Entity entity) {
+    ComponentType &ComponentManager::ComponentContainer<ComponentType>::getComponent(Entity entity) {
         if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
             return components[iter->second];
         } else {
@@ -96,7 +96,7 @@ namespace garlic::clove {
     }
 
     template<typename ComponentType>
-    ComponentContainer<ComponentType> &ComponentManager::getComponentContainer() {
+    ComponentManager::ComponentContainer<ComponentType> &ComponentManager::getComponentContainer() {
         ComponentId const componentId{ typeid(ComponentType).hash_code() };
         if(auto iter = containers.find(componentId); iter != containers.end()) {
             return static_cast<ComponentContainer<ComponentType> &>(*iter->second.get());
