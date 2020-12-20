@@ -114,21 +114,33 @@ namespace garlic::clove {
          */
         template<typename... ComponentTypes>
         void forEach(void (*updateFunction)(ComponentTypes...));
+        template<typename... ComponentTypes>
+        void forEach(void (*updateFunction)(Entity, ComponentTypes...));
+
         /**
          * @brief Calls the member function for every Entity in the entityManager.
          */
         template<typename SystemType, typename... ComponentTypes>
         void forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system);
+        template<typename SystemType, typename... ComponentTypes>
+        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...), SystemType *system);
+
         /**
          * @brief Calls the member function for every Entity in the entityManager.
          */
         template<typename SystemType, typename... ComponentTypes>
         void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system);
+        template<typename SystemType, typename... ComponentTypes>
+        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...) const, SystemType *system);
+
         /**
          * @brief Calls the member function for every Entity in the entityManager.
          */
         template<typename SystemType, typename... ComponentTypes>
         void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system);
+        template<typename SystemType, typename... ComponentTypes>
+        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...) const, SystemType system);
+
         /**
          * @brief Takes a callable type (such as a lambda) and calls it for every Entity in the entityManager.
          */

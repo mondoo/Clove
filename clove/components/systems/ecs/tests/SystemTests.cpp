@@ -102,3 +102,20 @@ TEST(ECSSystemTests, CanUseLambdaFunction) {
         EXPECT_FALSE(entityManager.getComponent<BoolComponent>(entity).value);
     }
 }
+
+TEST(ECSSystemTests, CanGetEntityId) {
+    EntityManager entityManager;
+
+    std::vector<Entity> entities;
+    for(int i = 0; i < 5; ++i) {
+        auto entity{ entityManager.create() };
+        entityManager.addComponent<ValueComponent>(entity);
+        entityManager.addComponent<BoolComponent>(entity);
+        entities.push_back(entity);
+    }
+
+    entityManager.forEach([&](Entity entity, BoolComponent &boolComp) {
+        EXPECT_TRUE(entity != NullEntity);
+        EXPECT_TRUE(entityManager.hasComponent<ValueComponent>(entity));
+    });
+}
