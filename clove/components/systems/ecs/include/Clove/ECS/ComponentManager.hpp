@@ -27,10 +27,8 @@ namespace garlic::clove {
     class ComponentContainer : public ComponentContainerInterface {
         //VARIABLES
     private:
-        PoolAllocator<ComponentType, AllocatorStrategy::Dynamic> componentAllocator;
-
         std::unordered_map<Entity, size_t> entityToIndex;
-        std::vector<ComponentType *> components;//Pointers into the componentAllocator for convienient lookup
+        std::vector<ComponentType> components;
 
         EventDispatcher *ecsEventDispatcher;
 

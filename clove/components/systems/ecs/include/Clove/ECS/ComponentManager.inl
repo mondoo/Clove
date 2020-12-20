@@ -7,8 +7,7 @@
 namespace garlic::clove {
     template<typename ComponentType>
     ComponentContainer<ComponentType>::ComponentContainer(EventDispatcher *dispatcher)
-        : ecsEventDispatcher{ dispatcher }
-        , componentAllocator{ 100 } {
+        : ecsEventDispatcher{ dispatcher } {
     }
 
     template<typename ComponentType>
@@ -22,19 +21,16 @@ namespace garlic::clove {
 
     template<typename ComponentType>
     bool ComponentContainer<ComponentType>::hasComponent(Entity entity) const {
-        if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-            return components[iter->second] != nullptr;
-        } else {
-            return false;
-        }
+        auto iter{ entityToIndex.find(entity) };
+        return iter != entityToIndex.end();
     }
 
     template<typename ComponentType>
     void ComponentContainer<ComponentType>::cloneComponent(Entity from, Entity to) {
         if constexpr(std::is_copy_constructible_v<ComponentType>) {
             if(auto iter = entityToIndex.find(from); iter != entityToIndex.end()) {
-                ComponentType *componentPtr = components[iter->second];
-                addComponent(to, *componentPtr);
+                ComponentType &component{ components[iter->second] };
+                addComponent(to, component);
             }
         } else {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Component that is not copyable was attempted to be copied. Entity will be incomplete");
@@ -47,10 +43,10 @@ namespace garlic::clove {
             size_t const index{ iter->second };
             size_t const lastIndex{ components.size() - 1 };
 
-            ComponentType *const removedComp{ components[index] };
+            ComponentType removedComp{ std::move(components[index]) };
 
             if(index < lastIndex) {
-                components[index] = components.back();
+                components[index] = std::move(components.back());
 
                 //Update the index map so it knows about the moved component
                 for(auto [entityId, componentIndex] : entityToIndex) {
@@ -63,38 +59,34 @@ namespace garlic::clove {
             components.pop_back();
             entityToIndex.erase(entity);
 
-            ecsEventDispatcher->broadCastEvent(ComponentRemovedEvent<ComponentType>{ entity, *removedComp });
-
-            componentAllocator.free(removedComp);
+            ecsEventDispatcher->broadCastEvent(ComponentRemovedEvent<ComponentType>{ entity, removedComp });
         }
     }
 
     template<typename ComponentType>
     template<typename... ConstructArgs>
     ComponentType &ComponentContainer<ComponentType>::addComponent(Entity entity, ConstructArgs &&... args) {
-        ComponentType *comp{ componentAllocator.alloc(std::forward<ConstructArgs>(args)...) };
-        if(comp == nullptr) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Could not create component", CLOVE_FUNCTION_NAME_PRETTY);
-            return *comp;
-        }
+        ComponentType *addedComp{ nullptr };
 
         if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
             CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", CLOVE_FUNCTION_NAME_PRETTY);
-            components[iter->second] = comp;
+            components[iter->second] = ComponentType{ std::forward<ConstructArgs>(args)... };
+            addedComp                = &components[iter->second];
         } else {
-            components.push_back(comp);
+            components.emplace_back(std::forward<ConstructArgs>(args)...);
             entityToIndex[entity] = components.size() - 1;
+            addedComp             = &components.back();
         }
 
-        ecsEventDispatcher->broadCastEvent(ComponentAddedEvent<ComponentType>{ entity, *comp });
+        ecsEventDispatcher->broadCastEvent(ComponentAddedEvent<ComponentType>{ entity, *addedComp });
 
-        return *comp;
+        return *addedComp;
     }
 
     template<typename ComponentType>
     ComponentType &ComponentContainer<ComponentType>::getComponent(Entity entity) {
         if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-            return *components[iter->second];
+            return components[iter->second];
         } else {
             //TODO: return Excepted type?
             CLOVE_ASSERT(false, "Entity does not have component of specified type!");
