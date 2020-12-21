@@ -64,6 +64,10 @@ namespace garlic::clove {
 
             return rawBody;
         }
+
+        btVector3 toBt(vec3f const &vec) {
+            return btVector3{ vec.x, vec.y, vec.z };
+        }
     }
 
     PhysicsLayer::PhysicsLayer()
@@ -110,10 +114,32 @@ namespace garlic::clove {
         entityManager->forEach(&PhysicsLayer::initialiseRigidBody, this, Exclude<PhysicsProxyComponent, CollisionShapeComponent>{});
         entityManager->forEach(&PhysicsLayer::initialiseRigidBodyShape, this, Exclude<PhysicsProxyComponent>{});
 
+        //Apply any updates to the rigid body
+        entityManager->forEach([&](RigidBodyComponent const &body, PhysicsProxyComponent const &proxy) {
+            auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) };
+
+            if(body.linearVelocity.has_value()) {
+                btBody->setLinearVelocity(toBt(*body.linearVelocity));
+            }
+
+            btBody->setRestitution(body.restitution);
+
+            btBody->setAngularFactor(toBt(body.angularFactor));
+            btBody->setLinearFactor(toBt(body.linearFactor));
+
+            if(body.appliedForce.has_value()) {
+                btBody->applyForce(toBt(body.appliedForce->amount), toBt(body.appliedForce->offset));
+            }
+
+            if(body.appliedImpulse.has_value()) {
+                btBody->applyForce(toBt(body.appliedImpulse->amount), toBt(body.appliedImpulse->offset));
+            }
+        });
+
         //Notify Bullet of the location of the colliders
         entityManager->forEach([&](TransformComponent const &transform, PhysicsProxyComponent const &proxy) {
-            auto const pos{ transform.position };
-            auto const rot{ transform.rotation };
+            auto const &pos{ transform.position };
+            auto const &rot{ transform.rotation };
 
             btTransform btTrans = proxy.collisionObject->getWorldTransform();
             btTrans.setOrigin({ pos.x, pos.y, pos.z });

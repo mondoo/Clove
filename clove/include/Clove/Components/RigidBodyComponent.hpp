@@ -1,5 +1,9 @@
 #pragma once
 
+#include <Clove/Maths/Vector.hpp>
+#include <cinttypes>
+#include <optional>
+
 namespace garlic::clove {
     /**
 	 * @brief Enables an entity to respond to physics events.
@@ -9,9 +13,68 @@ namespace garlic::clove {
 	 * to detect collisions.
 	 */
     struct RigidBodyComponent {
-        float mass{ 1.0f }; /**< The mass of the body. If 0 then the body will be able to be collided with but not respond to physics. */
+        friend class PhysicsLayer;
 
-        uint32_t collisionGroup{ ~0u }; /**< Bit flag of the collision groups this body is a part of. */
-        uint32_t collisionMask{ ~0u };  /**< Bit flag of which collision groups this body collides with. */
+    private:
+        struct ForceApplication {
+            vec3f amount{ 0.0f, 0.0f, 0.0f };
+            vec3f offset{ 0.0f, 0.0f, 0.0f };
+        };
+
+    public:
+        /**
+         * @brief Bit flag of the collision groups this body is a part of.
+         */
+        uint32_t collisionGroup{ ~0u };
+        /**
+         * @brief Bit flag of which collision groups this body collides with.
+         */
+        uint32_t collisionMask{ ~0u };
+
+        /**
+         * @brief The mass of the body. If 0 then the body will be able to be collided with but not respond to physics.
+         */
+        float mass{ 1.0f };
+
+        /**
+         * @brief Sets a consistent velocity for the body to move in.
+         */
+        std::optional<vec3f> linearVelocity{};
+
+        /**
+         * @brief The bouncyness of this body. Anything higher than 0 will cause the body to increase in bouncyness.
+         */
+        float restitution{ 0.0f };
+
+        /**
+         * @brief Acts as a multiplier to any rotational forces applied to this body.
+         */
+        vec3f angularFactor{ 1.0f, 1.0f, 1.0f };
+        /**
+         * @brief Acts as a multiplier to any linear forces applied to this body.
+         */
+        vec3f linearFactor{ 1.0f, 1.0f, 1.0f };
+
+        /**
+         * @brief Apply a consistent force to this body.
+         * @param force The direction + power of the force.
+         * @param relativeOffset The offset in relation to the body's center of mass.
+         */
+        void applyForce(vec3f force, vec3f relativeOffset = { 0.0f, 0.0f, 0.0f }){
+            appliedForce = ForceApplication{ .amount = std::move(force), .offset = std::move(relativeOffset) };
+        }
+
+        /**
+         * @brief Apply a 1 frame burst of force to this body.
+         * @param impulse The direction + power of the impulse.
+         * @param relativeOffset The offset in relation to the body's center of mass.
+         */
+        void applyImpulse(vec3f impulse, vec3f relativeOffset = { 0.0f, 0.0f, 0.0f }){
+            appliedImpulse = ForceApplication{ .amount = std::move(impulse), .offset = std::move(relativeOffset) };
+        }
+
+    private:
+        std::optional<ForceApplication> appliedForce{};
+        std::optional<ForceApplication> appliedImpulse{};
     };
 }
