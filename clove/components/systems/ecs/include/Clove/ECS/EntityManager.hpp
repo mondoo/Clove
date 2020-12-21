@@ -8,10 +8,6 @@
 #include <vector>
 
 namespace garlic::clove {
-    class System;
-}
-
-namespace garlic::clove {
     /**
 	 * @brief The EntityManager that contains the Entities and their Components.
 	 */
