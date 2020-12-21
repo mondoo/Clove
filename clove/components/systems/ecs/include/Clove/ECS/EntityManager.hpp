@@ -8,6 +8,13 @@
 #include <vector>
 
 namespace garlic::clove {
+    template<typename... Types>
+    struct Exclude {
+        static size_t constexpr size{ sizeof...(Types) };
+    };
+}
+
+namespace garlic::clove {
     /**
 	 * @brief The EntityManager that contains the Entities and their Components.
 	 */
@@ -105,41 +112,42 @@ namespace garlic::clove {
 
         /**
          * @brief Calls the function for every Entity in the entityManager.
+         * @tparam ComponentTypes The components to iterate over.
+         * @tparam ExcludeTypes The components to exclude from this iteration.
          */
-        template<typename... ComponentTypes>
-        void forEach(void (*updateFunction)(ComponentTypes...));
-        template<typename... ComponentTypes>
-        void forEach(void (*updateFunction)(Entity, ComponentTypes...));
+        template<typename... ComponentTypes, typename... ExcludeTypes>
+        void forEach(void (*updateFunction)(ComponentTypes...), Exclude<ExcludeTypes...> = {});
+        /*! @copydoc forEach */
+        template<typename... ComponentTypes, typename... ExcludeTypes>
+        void forEach(void (*updateFunction)(Entity, ComponentTypes...), Exclude<ExcludeTypes...> = {});
 
-        /**
-         * @brief Calls the member function for every Entity in the entityManager.
-         */
-        template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system);
-        template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...), SystemType *system);
+        /*! @copydoc forEach */
+        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system, Exclude<ExcludeTypes...> = {});
+        /*! @copydoc forEach */
+        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
+        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...), SystemType *system, Exclude<ExcludeTypes...> = {});
 
-        /**
-         * @brief Calls the member function for every Entity in the entityManager.
-         */
-        template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system);
-        template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...) const, SystemType *system);
+        /*! @copydoc forEach */
+        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system, Exclude<ExcludeTypes...> = {});
+        /*! @copydoc forEach */
+        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
+        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...) const, SystemType *system, Exclude<ExcludeTypes...> = {});
 
-        /**
-         * @brief Calls the member function for every Entity in the entityManager.
-         */
-        template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system);
-        template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...) const, SystemType system);
+        /*! @copydoc forEach */
+        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
+        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system, Exclude<ExcludeTypes...> = {});
+        /*! @copydoc forEach */
+        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
+        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...) const, SystemType system, Exclude<ExcludeTypes...> = {});
 
         /**
          * @brief Takes a callable type (such as a lambda) and calls it for every Entity in the entityManager.
+         * @tparam ExcludeTypes The components to exclude from this iteration.
          */
-        template<typename CallableType>
-        void forEach(CallableType callable);
+        template<typename CallableType, typename... ExcludeTypes>
+        void forEach(CallableType callable, Exclude<ExcludeTypes...> = {});
     };
 }
 

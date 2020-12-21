@@ -20,6 +20,26 @@ void makeTrue(BoolComponent &comp) {
 TEST(ECSSystemTests, CanUseMemberFunction) {
     EntityManager entityManager;
 
+    class TestSystem {
+    public:
+        int32_t const entityValue{ 18 };
+        bool const boolVal{ true };
+
+        bool excludeCalled{ false };
+
+        void update(ValueComponent &component) {
+            component.value = entityValue;
+        }
+        void update_const(BoolComponent &component) const {
+            component.value = boolVal;
+        }
+
+        void update_exclude(ValueComponent &component) {
+            excludeCalled = true;
+        }
+    };
+    TestSystem system;
+
     std::vector<Entity> entities;
     for(int i = 0; i < 5; ++i) {
         auto entity{ entityManager.create() };
@@ -28,20 +48,6 @@ TEST(ECSSystemTests, CanUseMemberFunction) {
         entities.push_back(entity);
     }
 
-    class TestSystem {
-    public:
-        int32_t const entityValue{ 18 };
-        bool const boolVal{ true };
-        
-        void update(ValueComponent &component) {
-            component.value = entityValue;
-        }
-        void update_const(BoolComponent &component) const {
-            component.value = boolVal;
-        }
-    };
-    TestSystem system;
-
     entityManager.forEach(&TestSystem::update, &system);
     entityManager.forEach(&TestSystem::update_const, &system);
 
@@ -49,6 +55,18 @@ TEST(ECSSystemTests, CanUseMemberFunction) {
         EXPECT_EQ(entityManager.getComponent<ValueComponent>(entity).value, system.entityValue);
         EXPECT_TRUE(entityManager.getComponent<BoolComponent>(entity).value);
     }
+
+    entityManager.forEach(&TestSystem::update_exclude, &system, Exclude<BoolComponent>{});
+
+    EXPECT_FALSE(system.excludeCalled);
+
+    auto entity{ entityManager.create() };
+    entityManager.addComponent<ValueComponent>(entity);
+    entities.push_back(entity);
+
+    entityManager.forEach(&TestSystem::update_exclude, &system, Exclude<BoolComponent>{});
+
+    EXPECT_TRUE(system.excludeCalled);
 }
 
 TEST(ECSSystemTests, CanUseFreeFunction) {
@@ -80,7 +98,7 @@ TEST(ECSSystemTests, CanUseLambdaFunction) {
         entities.push_back(entity);
     }
 
-    int32_t const entityVal{ 32 };
+    int32_t constexpr entityVal{ 32 };
     entityManager.forEach([entityVal](ValueComponent &valComp, BoolComponent &boolComp) {
         valComp.value  = entityVal;
         boolComp.value = true;
@@ -94,12 +112,27 @@ TEST(ECSSystemTests, CanUseLambdaFunction) {
     auto func = [entityVal](BoolComponent &boolComp) {
         boolComp.value = false;
     };
-
     entityManager.forEach(func);
 
     for(auto entity : entities) {
         EXPECT_FALSE(entityManager.getComponent<BoolComponent>(entity).value);
     }
+
+    bool excludeCalled{ false };
+    auto excludeTestFunc = [&excludeCalled](BoolComponent &boolComp) {
+        excludeCalled = true;
+    };
+    entityManager.forEach(excludeTestFunc, Exclude<ValueComponent>{});
+
+    EXPECT_FALSE(excludeCalled);
+
+    auto entity{ entityManager.create() };
+    entityManager.addComponent<BoolComponent>(entity);
+    entities.push_back(entity);
+
+    entityManager.forEach(excludeTestFunc, Exclude<ValueComponent>{});
+
+    EXPECT_TRUE(excludeCalled);
 }
 
 TEST(ECSSystemTests, CanGetEntityId) {
