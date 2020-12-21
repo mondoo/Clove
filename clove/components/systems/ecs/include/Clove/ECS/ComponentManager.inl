@@ -73,7 +73,7 @@ namespace garlic::clove {
             components[iter->second] = ComponentType{ std::forward<ConstructArgs>(args)... };
             addedComp                = &components[iter->second];
         } else {
-            components.emplace_back(std::forward<ConstructArgs>(args)...);
+            components.emplace_back(ComponentType{ std::forward<ConstructArgs>(args)... });
             entityToIndex[entity] = components.size() - 1;
             addedComp             = &components.back();
         }
