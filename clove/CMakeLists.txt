@@ -109,7 +109,6 @@ add_library(
 		${SOURCE}/Components/CameraComponent.cpp
 		${INCLUDE}/Components/CollisionResponseComponent.hpp
 		${INCLUDE}/Components/CollisionShapeComponent.hpp
-		${SOURCE}/Components/CollisionShapeComponent.cpp
 		${INCLUDE}/Components/DirectionalLightComponent.hpp
 		${INCLUDE}/Components/DirectionalLightComponent.inl
 		${SOURCE}/Components/DirectionalLightComponent.cpp
@@ -118,7 +117,6 @@ add_library(
 		${INCLUDE}/Components/PointLightComponent.inl
 		${SOURCE}/Components/PointLightComponent.cpp
 		${INCLUDE}/Components/RigidBodyComponent.hpp
-		${SOURCE}/Components/RigidBodyComponent.cpp
 		${INCLUDE}/Components/StaticModelComponent.hpp
 		${INCLUDE}/Components/StaticModelComponent.inl
 		${SOURCE}/Components/StaticModelComponent.cpp
