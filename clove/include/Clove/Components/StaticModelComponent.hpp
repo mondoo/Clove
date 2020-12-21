@@ -3,28 +3,7 @@
 #include "Clove/Rendering/Renderables/StaticModel.hpp"
 
 namespace garlic::clove {
-    class StaticModelComponent {
-        friend class RenderLayer;
-
-        //VARIABLES
-    private:
+    struct StaticModelComponent {
         StaticModel model;
-
-        //FUNCTIONS
-    public:
-        StaticModelComponent() = delete;
-        StaticModelComponent(StaticModel model);
-
-        StaticModelComponent(StaticModelComponent const &other);
-        StaticModelComponent(StaticModelComponent &&other) noexcept;
-
-        StaticModelComponent &operator=(StaticModelComponent const &other);
-        StaticModelComponent &operator=(StaticModelComponent &&other) noexcept;
-
-        ~StaticModelComponent();
-
-        inline StaticModel &getModel();
     };
 }
-
-#include "StaticModelComponent.inl"

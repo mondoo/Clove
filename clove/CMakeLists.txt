@@ -98,28 +98,18 @@ add_library(
 	Clove STATIC
 
 		${INCLUDE}/Components/AnimatedModelComponent.hpp
-		${INCLUDE}/Components/AnimatedModelComponent.inl
-		${SOURCE}/Components/AnimatedModelComponent.cpp
 		${INCLUDE}/Components/AudioListenerComponent.hpp
 		${SOURCE}/Components/AudioListenerComponent.cpp
 		${INCLUDE}/Components/AudioSourceComponent.hpp
 		${SOURCE}/Components/AudioSourceComponent.cpp
 		${INCLUDE}/Components/CameraComponent.hpp
-		${INCLUDE}/Components/CameraComponent.inl
-		${SOURCE}/Components/CameraComponent.cpp
 		${INCLUDE}/Components/CollisionResponseComponent.hpp
 		${INCLUDE}/Components/CollisionShapeComponent.hpp
 		${INCLUDE}/Components/DirectionalLightComponent.hpp
-		${INCLUDE}/Components/DirectionalLightComponent.inl
-		${SOURCE}/Components/DirectionalLightComponent.cpp
 		${INCLUDE}/Components/ParentComponent.hpp
 		${INCLUDE}/Components/PointLightComponent.hpp
-		${INCLUDE}/Components/PointLightComponent.inl
-		${SOURCE}/Components/PointLightComponent.cpp
 		${INCLUDE}/Components/RigidBodyComponent.hpp
 		${INCLUDE}/Components/StaticModelComponent.hpp
-		${INCLUDE}/Components/StaticModelComponent.inl
-		${SOURCE}/Components/StaticModelComponent.cpp
 		${INCLUDE}/Components/TransformComponent.hpp
 		${SOURCE}/Components/TransformComponent.cpp
 

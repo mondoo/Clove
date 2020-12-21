@@ -61,11 +61,24 @@ namespace garlic::clove {
 
     //For renderer - TODO Move into that header
     struct DirectionalLight {
-        DirectionalLightData data{};
+        DirectionalLightData data{
+            .direction = { 0.0f, 0.0f, 0.0f },
+            .ambient   = { 0.01f, 0.01f, 0.01f },
+            .diffuse   = { 0.75f, 0.75f, 0.75f },
+            .specular  = { 1.0f, 1.0f, 1.0f },
+        };
         mat4f shadowTransform{};
     };
     struct PointLight {
-        PointLightData data{};
+        PointLightData data{
+            .constant  = 1.0f,
+            .ambient   = { 0.01f, 0.01f, 0.01f },
+            .linear    = 0.0014f,
+            .diffuse   = { 0.75f, 0.75f, 0.75f },
+            .quadratic = 0.000007f,
+            .specular  = { 1.0f, 1.0f, 1.0f },
+            .farPlane  = 0.0f,
+        };
         std::array<mat4f, 6> shadowTransforms{};
     };
 

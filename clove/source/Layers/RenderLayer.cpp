@@ -36,7 +36,7 @@ namespace garlic::clove {
             vec3f const camFront{ transform.getForward() };
             vec3f const camUp{ transform.getUp() };
 
-            camera.setView(lookAt(position, position + camFront, camUp));
+            camera.camera.setView(lookAt(position, position + camFront, camUp));
 
             renderer->submitCamera(camera.camera, std::move(position));
         });
@@ -61,23 +61,47 @@ namespace garlic::clove {
 
         //Submit directional lights
         entityManager->forEach([this](DirectionalLightComponent &light) {
-            light.lightData.shadowTransform = light.shadowProj * lookAt(-normalise(light.lightData.data.direction) * (light.farDist / 2.0f), vec3f{ 0.0f, 0.0f, 0.0f }, vec3f{ 0.0f, 1.0f, 0.0f });
+            float constexpr farDist{ 1000.0f };
+            mat4f const shadowProj{ createOrthographicMatrix(-50.0f, 50.0f, -50.0f, 50.0f, 0.5f, farDist) };
 
-            renderer->submitLight(light.lightData);
+            DirectionalLight lightProxy{
+                .data = {
+                    .direction = light.direction,
+                    .ambient   = light.ambientColour,
+                    .diffuse   = light.diffuseColour,
+                    .specular  = light.specularColour,
+                },
+                .shadowTransform = shadowProj * lookAt(-normalise(light.direction) * (farDist / 2.0f), vec3f{ 0.0f, 0.0f, 0.0f }, vec3f{ 0.0f, 1.0f, 0.0f }),
+            };
+
+            renderer->submitLight(std::move(lightProxy));
         });
         //Submit point lights
         entityManager->forEach([this](TransformComponent const &transform, PointLightComponent &light) {
+            float constexpr farDist{ 100.0f };
+            mat4f const shadowProj{ createPerspectiveMatrix(asRadians(90.0f), 1.0f, 0.5f, farDist) };
+
             vec3f const &position{ transform.position };
 
-            light.lightData.data.position       = position;
-            light.lightData.shadowTransforms[0] = light.shadowProj * lookAt(position, position + vec3f{ 1.0f, 0.0f, 0.0f }, vec3f{ 0.0f, 1.0f, 0.0f });
-            light.lightData.shadowTransforms[1] = light.shadowProj * lookAt(position, position + vec3f{ -1.0f, 0.0f, 0.0f }, vec3f{ 0.0f, 1.0f, 0.0f });
-            light.lightData.shadowTransforms[2] = light.shadowProj * lookAt(position, position + vec3f{ 0.0f, 1.0f, 0.0f }, vec3f{ 0.0f, 0.0f, -1.0f });
-            light.lightData.shadowTransforms[3] = light.shadowProj * lookAt(position, position + vec3f{ 0.0f, -1.0f, 0.0f }, vec3f{ 0.0f, 0.0f, 1.0f });
-            light.lightData.shadowTransforms[4] = light.shadowProj * lookAt(position, position + vec3f{ 0.0f, 0.0f, 1.0f }, vec3f{ 0.0f, 1.0f, 0.0f });
-            light.lightData.shadowTransforms[5] = light.shadowProj * lookAt(position, position + vec3f{ 0.0f, 0.0f, -1.0f }, vec3f{ 0.0f, 1.0f, 0.0f });
+            PointLight lightProxy{
+                .data = {
+                    .position = position,
+                    .ambient  = light.ambientColour,
+                    .diffuse  = light.diffuseColour,
+                    .specular = light.specularColour,
+                    .farPlane = farDist,
+                },
+                .shadowTransforms = {
+                    shadowProj * lookAt(position, position + vec3f{ 1.0f, 0.0f, 0.0f }, vec3f{ 0.0f, 1.0f, 0.0f }),
+                    shadowProj * lookAt(position, position + vec3f{ -1.0f, 0.0f, 0.0f }, vec3f{ 0.0f, 1.0f, 0.0f }),
+                    shadowProj * lookAt(position, position + vec3f{ 0.0f, 1.0f, 0.0f }, vec3f{ 0.0f, 0.0f, -1.0f }),
+                    shadowProj * lookAt(position, position + vec3f{ 0.0f, -1.0f, 0.0f }, vec3f{ 0.0f, 0.0f, 1.0f }),
+                    shadowProj * lookAt(position, position + vec3f{ 0.0f, 0.0f, 1.0f }, vec3f{ 0.0f, 1.0f, 0.0f }),
+                    shadowProj * lookAt(position, position + vec3f{ 0.0f, 0.0f, -1.0f }, vec3f{ 0.0f, 1.0f, 0.0f }),
+                }
+            };
 
-            renderer->submitLight(light.lightData);
+            renderer->submitLight(std::move(lightProxy));
         });
     }
 }
