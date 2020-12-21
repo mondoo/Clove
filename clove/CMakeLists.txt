@@ -99,9 +99,7 @@ add_library(
 
 		${INCLUDE}/Components/AnimatedModelComponent.hpp
 		${INCLUDE}/Components/AudioListenerComponent.hpp
-		${SOURCE}/Components/AudioListenerComponent.cpp
 		${INCLUDE}/Components/AudioSourceComponent.hpp
-		${SOURCE}/Components/AudioSourceComponent.cpp
 		${INCLUDE}/Components/CameraComponent.hpp
 		${INCLUDE}/Components/CollisionResponseComponent.hpp
 		${INCLUDE}/Components/CollisionShapeComponent.hpp
