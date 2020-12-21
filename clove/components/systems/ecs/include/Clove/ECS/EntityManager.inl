@@ -28,12 +28,13 @@ namespace garlic::clove {
     template<typename... ComponentTypes, typename... ExcludeTypes>
     void EntityManager::forEach(void (*updateFunction)(ComponentTypes...), Exclude<ExcludeTypes...>) {
         for(Entity entity : activeEntities) {
-            bool hasExcludes{ false };
-            if(Exclude<ExcludeTypes...>::size > 0){
-                hasExcludes = (hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) && ...);
+            if(Exclude<ExcludeTypes...>::size > 0) {
+                if((hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) || ...)) {
+                    continue;
+                }
             }
 
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...) && !hasExcludes) {
+            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                 (*updateFunction)(getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
@@ -42,12 +43,13 @@ namespace garlic::clove {
     template<typename... ComponentTypes, typename... ExcludeTypes>
     void EntityManager::forEach(void (*updateFunction)(Entity, ComponentTypes...), Exclude<ExcludeTypes...>) {
         for(Entity entity : activeEntities) {
-            bool hasExcludes{ false };
             if(Exclude<ExcludeTypes...>::size > 0) {
-                hasExcludes = (hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) && ...);
+                if((hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) || ...)) {
+                    continue;
+                }
             }
 
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...) && !hasExcludes) {
+            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                 (*updateFunction)(entity, getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
@@ -56,12 +58,13 @@ namespace garlic::clove {
     template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
     void EntityManager::forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system, Exclude<ExcludeTypes...>) {
         for(Entity entity : activeEntities) {
-            bool hasExcludes{ false };
             if(Exclude<ExcludeTypes...>::size > 0) {
-                hasExcludes = (hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) && ...);
+                if((hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) || ...)) {
+                    continue;
+                }
             }
 
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...) && !hasExcludes) {
+            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                 (system->*updateFunction)(getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
@@ -70,12 +73,13 @@ namespace garlic::clove {
     template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
     void EntityManager::forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...), SystemType *system, Exclude<ExcludeTypes...>) {
         for(Entity entity : activeEntities) {
-            bool hasExcludes{ false };
             if(Exclude<ExcludeTypes...>::size > 0) {
-                hasExcludes = (hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) && ...);
+                if((hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) || ...)){
+                    continue;
+                }
             }
 
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...) && !hasExcludes) {
+            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                 (system->*updateFunction)(entity, getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
@@ -84,12 +88,13 @@ namespace garlic::clove {
     template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
     void EntityManager::forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system, Exclude<ExcludeTypes...>) {
         for(Entity entity : activeEntities) {
-            bool hasExcludes{ false };
             if(Exclude<ExcludeTypes...>::size > 0) {
-                hasExcludes = (hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) && ...);
+                if((hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) || ...)) {
+                    continue;
+                }
             }
 
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...) && !hasExcludes) {
+            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                 (system->*updateFunction)(getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
@@ -98,12 +103,13 @@ namespace garlic::clove {
     template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
     void EntityManager::forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...) const, SystemType *system, Exclude<ExcludeTypes...>) {
         for(Entity entity : activeEntities) {
-            bool hasExcludes{ false };
             if(Exclude<ExcludeTypes...>::size > 0) {
-                hasExcludes = (hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) && ...);
+                if((hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) || ...)) {
+                    continue;
+                }
             }
 
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...) && !hasExcludes) {
+            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                 (system->*updateFunction)(entity, getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
@@ -112,12 +118,13 @@ namespace garlic::clove {
     template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
     void EntityManager::forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system, Exclude<ExcludeTypes...>) {
         for(Entity entity : activeEntities) {
-            bool hasExcludes{ false };
             if(Exclude<ExcludeTypes...>::size > 0) {
-                hasExcludes = (hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) && ...);
+                if((hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) || ...)) {
+                    continue;
+                }
             }
 
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...) && !hasExcludes) {
+            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                 (system.*updateFunction)(getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
@@ -126,12 +133,13 @@ namespace garlic::clove {
     template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
     void EntityManager::forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...) const, SystemType system, Exclude<ExcludeTypes...>) {
         for(Entity entity : activeEntities) {
-            bool hasExcludes{ false };
             if(Exclude<ExcludeTypes...>::size > 0) {
-                hasExcludes = (hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) && ...);
+                if((hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) || ...)) {
+                    continue;
+                }
             }
 
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...) && !hasExcludes) {
+            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
                 (system.*updateFunction)(entity, getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
             }
         }
