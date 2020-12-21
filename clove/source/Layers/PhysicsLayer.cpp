@@ -27,6 +27,18 @@ namespace garlic::clove {
             std::unique_ptr<btCollisionShape> collisionShape;
         };
 
+        /**
+         * @brief Tag component for entities that physics knows only about it's shape.
+         */
+        struct ShapeOnlyComponent {};
+        /**
+         * @brief Tag component for entities that physics knows only about it's rigid body.
+         */
+        struct BodyOnlyComponent {};
+
+        /**
+         * @brief Initialises proxy with the correct shape.
+         */
         void createProxyShape(PhysicsProxyComponent &proxy, CollisionShapeComponent const &shape) {
             std::visit(match{
                            [&](CollisionShapeComponent::Sphere const &sphere) { proxy.collisionShape = std::make_unique<btSphereShape>(sphere.radius); },
@@ -35,6 +47,10 @@ namespace garlic::clove {
                        shape.shape);
         }
 
+        /**
+         * @brief Initialises proxy with a btRigidBody.
+         * @return The created body so it can be added to the world.
+         */
         btRigidBody *createProxyBody(PhysicsProxyComponent &proxy, RigidBodyComponent const &body) {
             btVector3 localInertia{ 0.0f, 0.0f, 0.0f };
             if(body.mass > 0.0f) {
@@ -119,6 +135,26 @@ namespace garlic::clove {
         CLOVE_PROFILE_FUNCTION();
 
         //Create proxies for any new entities
+        //If any component compositions have changed then these need to be reset
+        entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body, PhysicsProxyComponent const &proxy, ShapeOnlyComponent const &shapeOnly) {
+            dynamicsWorld->removeCollisionObject(proxy.collisionObject.get());
+            entityManager->removeComponent<PhysicsProxyComponent>(entity);
+            entityManager->removeComponent<ShapeOnlyComponent>(entity);
+        });
+        entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body, PhysicsProxyComponent const &proxy, BodyOnlyComponent const &shapeOnly) {
+            dynamicsWorld->removeCollisionObject(proxy.collisionObject.get());
+            entityManager->removeComponent<PhysicsProxyComponent>(entity);
+            entityManager->removeComponent<BodyOnlyComponent>(entity);
+        });
+        entityManager->forEach([&](Entity entity, PhysicsProxyComponent const &proxy) {
+            if(!entityManager->hasComponent<CollisionShapeComponent>(entity) || !entityManager->hasComponent<RigidBodyComponent>(entity)) {
+                dynamicsWorld->removeCollisionObject(proxy.collisionObject.get());
+                entityManager->removeComponent<PhysicsProxyComponent>(entity);
+            }
+        },
+                               Exclude<ShapeOnlyComponent, BodyOnlyComponent>{});
+
+        //Create proxies for any new / modified entities
         entityManager->forEach(&PhysicsLayer::initialiseCollisionShape, this, Exclude<PhysicsProxyComponent, RigidBodyComponent>{});
         entityManager->forEach(&PhysicsLayer::initialiseRigidBody, this, Exclude<PhysicsProxyComponent, CollisionShapeComponent>{});
         entityManager->forEach(&PhysicsLayer::initialiseRigidBodyShape, this, Exclude<PhysicsProxyComponent>{});
@@ -250,6 +286,7 @@ namespace garlic::clove {
         dynamicsWorld->addCollisionObject(proxy.collisionObject.get(), ~0, ~0);//Add the collider to every group and collide with every other group
 
         entityManager->addComponent<PhysicsProxyComponent>(entity, std::move(proxy));
+        entityManager->addComponent<ShapeOnlyComponent>(entity);
     }
 
     void PhysicsLayer::initialiseRigidBody(Entity entity, RigidBodyComponent const &body) {
@@ -262,6 +299,7 @@ namespace garlic::clove {
         dynamicsWorld->addRigidBody(rawBody, body.collisionGroup, body.collisionMask);
 
         entityManager->addComponent<PhysicsProxyComponent>(entity, std::move(proxy));
+        entityManager->addComponent<BodyOnlyComponent>(entity);
     }
 
     void PhysicsLayer::initialiseRigidBodyShape(Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body) {
