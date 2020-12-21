@@ -16,8 +16,6 @@ class btCollisionDispatcher;
 class btBroadphaseInterface;
 class btSequentialImpulseConstraintSolver;
 class btDiscreteDynamicsWorld;
-class btRigidBody;
-class btCollisionShape;
 
 namespace garlic::clove {
     struct CollisionShapeComponent;
@@ -81,8 +79,6 @@ namespace garlic::clove {
 
         ~PhysicsLayer();
 
-        void registerToEvents(EntityManager &entityManager);
-
         void onUpdate(DeltaTime const deltaTime) override;
 
         void setGravity(vec3f const &gravity);
@@ -104,14 +100,5 @@ namespace garlic::clove {
         void initialiseCollisionShape(Entity entity, CollisionShapeComponent const &shape);
         void initialiseRigidBody(Entity entity, RigidBodyComponent const &body);
         void initialiseRigidBodyShape(Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body);
-
-        void onCollisionShapeAdded(ComponentAddedEvent<CollisionShapeComponent> const &event);
-        void onCollisionShapeRemoved(ComponentRemovedEvent<CollisionShapeComponent> const &event);
-
-        void onRigidBodyAdded(ComponentAddedEvent<RigidBodyComponent> const &event);
-        void onRigidBodyRemoved(ComponentRemovedEvent<RigidBodyComponent> const &event);
-
-        void addBodyToWorld(RigidBodyComponent const &rigidBodyComponent, Entity const entity);
-        void addColliderToWorld(CollisionShapeComponent const &colliderComponent, Entity const entity);
     };
 }

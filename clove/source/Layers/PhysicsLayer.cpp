@@ -75,66 +75,17 @@ namespace garlic::clove {
         solver                 = std::make_unique<btSequentialImpulseConstraintSolver>();
 
         dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get());
-
-        registerToEvents(*entityManager);
     }
 
-    PhysicsLayer::PhysicsLayer(PhysicsLayer &&other) noexcept {
-        entityManager = other.entityManager;
+    PhysicsLayer::PhysicsLayer(PhysicsLayer &&other) noexcept = default;
 
-        collisionConfiguration = std::move(other.collisionConfiguration);
-        dispatcher             = std::move(other.dispatcher);
-        broadphase             = std::move(other.broadphase);
-        solver                 = std::move(other.solver);
-
-        dynamicsWorld = std::move(other.dynamicsWorld);
-
-        currentCollisions = std::move(other.currentCollisions);
-
-        registerToEvents(*entityManager);
-    }
-
-    PhysicsLayer &PhysicsLayer::operator=(PhysicsLayer &&other) noexcept {
-        entityManager = other.entityManager;
-
-        collisionConfiguration = std::move(other.collisionConfiguration);
-        dispatcher             = std::move(other.dispatcher);
-        broadphase             = std::move(other.broadphase);
-        solver                 = std::move(other.solver);
-
-        dynamicsWorld = std::move(other.dynamicsWorld);
-
-        currentCollisions = std::move(other.currentCollisions);
-
-        registerToEvents(*entityManager);
-
-        return *this;
-    }
+    PhysicsLayer &PhysicsLayer::operator=(PhysicsLayer &&other) noexcept = default;
 
     PhysicsLayer::~PhysicsLayer() = default;
-
-    void PhysicsLayer::registerToEvents(EntityManager &entityManager) {
-        EventDispatcher &dispatcher{ entityManager.getDispatcher() };
-
-        collisionShapeAddedHandle   = dispatcher.bindToEvent<ComponentAddedEvent<CollisionShapeComponent>>([this](ComponentAddedEvent<CollisionShapeComponent> const &event) {
-            onCollisionShapeAdded(event);
-        });
-        collisionShapeRemovedHandle = dispatcher.bindToEvent<ComponentRemovedEvent<CollisionShapeComponent>>([this](ComponentRemovedEvent<CollisionShapeComponent> const &event) {
-            onCollisionShapeRemoved(event);
-        });
-
-        rigidBodyAddedHandle   = dispatcher.bindToEvent<ComponentAddedEvent<RigidBodyComponent>>([this](ComponentAddedEvent<RigidBodyComponent> const &event) {
-            onRigidBodyAdded(event);
-        });
-        rigidBodyRemovedHandle = dispatcher.bindToEvent<ComponentRemovedEvent<RigidBodyComponent>>([this](ComponentRemovedEvent<RigidBodyComponent> const &event) {
-            onRigidBodyRemoved(event);
-        });
-    }
 
     void PhysicsLayer::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
-        //Create proxies for any new entities
         //If any component compositions have changed then these need to be reset
         entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body, PhysicsProxyComponent const &proxy, ShapeOnlyComponent const &shapeOnly) {
             dynamicsWorld->removeCollisionObject(proxy.collisionObject.get());
@@ -311,33 +262,5 @@ namespace garlic::clove {
         dynamicsWorld->addRigidBody(rawBody, body.collisionGroup, body.collisionMask);
 
         entityManager->addComponent<PhysicsProxyComponent>(entity, std::move(proxy));
-    }
-
-    void PhysicsLayer::onCollisionShapeAdded(ComponentAddedEvent<CollisionShapeComponent> const &event) {
-        addColliderToWorld(event.component, event.entity);
-    }
-
-    void PhysicsLayer::onCollisionShapeRemoved(ComponentRemovedEvent<CollisionShapeComponent> const &event) {
-        // if(btCollisionObject *object = event.component.collisionObject.get()) {
-        //     dynamicsWorld->removeCollisionObject(object);
-        // }
-    }
-
-    void PhysicsLayer::onRigidBodyAdded(ComponentAddedEvent<RigidBodyComponent> const &event) {
-        addBodyToWorld(event.component, event.entity);
-    }
-
-    void PhysicsLayer::onRigidBodyRemoved(ComponentRemovedEvent<RigidBodyComponent> const &event) {
-        //dynamicsWorld->removeCollisionObject(event.component.body.get());
-    }
-
-    void PhysicsLayer::addBodyToWorld(RigidBodyComponent const &rigidBodyComponent, Entity const entity) {
-        // dynamicsWorld->addRigidBody(rigidBodyComponent.body.get(), rigidBodyComponent.descriptor.collisionGroup, rigidBodyComponent.descriptor.collisionMask);
-        // rigidBodyComponent.body->setUserIndex(entity);
-    }
-
-    void PhysicsLayer::addColliderToWorld(CollisionShapeComponent const &colliderComponent, Entity const entity) {
-        // dynamicsWorld->addCollisionObject(colliderComponent.collisionObject.get(), ~0, ~0);//Add the collider to every group and collide with every other group
-        // colliderComponent.collisionObject->setUserIndex(entity);
     }
 }
