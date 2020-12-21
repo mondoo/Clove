@@ -15,9 +15,7 @@ namespace garlic::clove {
      * with this entity. Note that on it's own this component does nothing. The Entity
      * needs a RigidBodyComponent or a CollisionShapeComponent to response to collisions.
      */
-    class CollisionResponseComponent {
-        //VARIABLES
-    public:
+    struct CollisionResponseComponent {
         /**
          * @brief Called on the frame the collision event starts.
          */
