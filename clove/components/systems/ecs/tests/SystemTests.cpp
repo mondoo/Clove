@@ -1,5 +1,6 @@
 #include <Clove/ECS/EntityManager.hpp>
 #include <gtest/gtest.h>
+#include <set>
 
 using namespace garlic::clove;
 
@@ -146,8 +147,12 @@ TEST(ECSSystemTests, CanGetEntityId) {
         entities.push_back(entity);
     }
 
+    std::set<Entity> seenEntities;
     entityManager.forEach([&](Entity entity, BoolComponent &boolComp) {
         EXPECT_TRUE(entity != NullEntity);
         EXPECT_TRUE(entityManager.hasComponent<ValueComponent>(entity));
+        seenEntities.emplace(entity);
     });
+
+    EXPECT_EQ(std::size(entities), std::size(seenEntities));
 }
