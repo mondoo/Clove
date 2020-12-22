@@ -43,13 +43,5 @@ public ref class Application {
         void shutdown();
 
         void resize(int width, int height);
-
-        clove::Entity addEntity();
-        void removeEntity(clove::Entity entity);
-
-        void createComponent(clove::Entity entity, ComponentType componentType);
-
-        //TEMP: Brute force position update
-        void setPosition(clove::Entity entitiy, float x, float y, float z);
     };
 }

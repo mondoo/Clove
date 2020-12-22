@@ -1,10 +1,13 @@
 #pragma once
 
+#include "Membrane/MessageHandler.hpp"
+
 #include <Clove/ECS/Entity.hpp>
 #include <Clove/Layer.hpp>
+#include <msclr/gcroot.h>
 #include <vector>
 
-namespace garlic::clove{
+namespace garlic::clove {
     class EntityManager;
 }
 
@@ -15,19 +18,23 @@ namespace garlic::membrane {
      * make up the game.
      */
     class RuntimeLayer : public clove::Layer {
+        friend ref class RuntimeLayerMessageProxy;
+
         //VARIABLES
-        private:
-            clove::EntityManager *entityManager{ nullptr };
-            std::vector<clove::Entity> runtimeEntities;
+    private:
+        msclr::gcroot<RuntimeLayerMessageProxy ^> proxy;
 
-            //FUNCTIONS
-        public:
-            RuntimeLayer();
+        clove::EntityManager *entityManager{ nullptr };
+        std::vector<clove::Entity> runtimeEntities;
 
-            void onAttach() override;
-            void onDetach() override;
+        //FUNCTIONS
+    public:
+        RuntimeLayer();
 
-            clove::Entity addEntity();
-            void removeEntity(clove::Entity entity);
+        void onAttach() override;
+        void onDetach() override;
+
+    private:
+        void createEntity();
     };
 }

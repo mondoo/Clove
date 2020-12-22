@@ -2,7 +2,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows;
-using garlic.membrane;
+
+using Membrane = garlic.membrane;
 
 namespace Garlic.Bulb
 {
@@ -37,24 +38,24 @@ namespace Garlic.Bulb
             }
         }
 
-        public delegate EntityViewModel AddEntityEventHandler();
-        public AddEntityEventHandler OnCreateEntity;
-
         public SceneViewModel()
         {
+            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnEntityCreated>(OnEntityCreated);
+
             CreateEntityCommand = new RelayCommand(() =>
             {
-                if (OnCreateEntity != null)
-                {
-                    var entityVM = OnCreateEntity.Invoke();
-                    entityVM.OnSelected = (EntityViewModel viewModel) => SelectedEntity = viewModel;
-
-                    Entities.Add(entityVM);
-                }
+                Membrane.MessageHandler.sendMessage(new Membrane.Editor_CreateEntity());
             });
 
-            AddTransformComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(ComponentType.Transform));
-            AddMeshComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(ComponentType.Mesh));
+            //AddTransformComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(ComponentType.Transform));
+            //AddMeshComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(ComponentType.Mesh));
+        }
+
+        private void OnEntityCreated(Membrane.Engine_OnEntityCreated message){
+            var entityVm = new EntityViewModel();
+            entityVm.OnSelected = (EntityViewModel viewModel) => SelectedEntity = viewModel;
+
+            Entities.Add(entityVm);
         }
     };
 }

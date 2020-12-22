@@ -7,9 +7,36 @@
 #include <Clove/ECS/EntityManager.hpp>
 
 namespace garlic::membrane {
+    // clang-format off
+    /**
+     * @brief 
+     */
+    private ref class RuntimeLayerMessageProxy {
+        //VARIABLES
+    private:
+        class RuntimeLayer *layer{ nullptr };
+
+        //FUNCTIONS
+    public:
+        RuntimeLayerMessageProxy(class RuntimeLayer *layer)
+            : layer{ layer } {
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &RuntimeLayerMessageProxy::createEntity));
+        }
+
+    private:
+        void createEntity(Editor_CreateEntity ^ message) {
+            layer->createEntity();
+        }
+    };
+    // clang-format on
+}
+
+namespace garlic::membrane {
     RuntimeLayer::RuntimeLayer()
         : clove::Layer{ "Runtime Layer" }
-        , entityManager{ clove::Application::get().getEntityManager() } {}
+        , entityManager{ clove::Application::get().getEntityManager() } {
+        proxy = gcnew RuntimeLayerMessageProxy(this);
+    }
 
     void RuntimeLayer::onAttach() {
         auto lightEnt{ entityManager->create() };
@@ -25,16 +52,11 @@ namespace garlic::membrane {
         }
     }
 
-    clove::Entity RuntimeLayer::addEntity() {
-        auto entity{ entityManager->create() };
-        runtimeEntities.push_back(entity);
-        return entity;
-    }
+    void RuntimeLayer::createEntity() {
+        clove::Entity entity{ entityManager->create() };
 
-    void RuntimeLayer::removeEntity(clove::Entity entity) {
-        auto entityIter{ std::find(std::begin(runtimeEntities), std::end(runtimeEntities), entity) };
-        if(entityIter != std::end(runtimeEntities)){
-            runtimeEntities.erase(entityIter);
-        }
+        Engine_OnEntityCreated ^ message { gcnew Engine_OnEntityCreated };
+        message->entity = entity;
+        MessageHandler::sendMessage(message);
     }
 }

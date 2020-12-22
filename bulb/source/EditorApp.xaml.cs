@@ -41,29 +41,6 @@ namespace Garlic.Bulb
             editorWindow = new MainWindow();
             sessionViewModel = new EditorSessionViewModel();
 
-            sessionViewModel.OnCreateEntity = () =>
-            {
-                lock (updateEngineLock)
-                {
-                    return engineApp.addEntity();
-                }
-            };
-            sessionViewModel.OnCreateComponent = (entityId, componentType) =>
-            {
-                lock (updateEngineLock)
-                {
-                    engineApp.createComponent(entityId, componentType);
-                }
-            };
-            //TEMP
-            sessionViewModel.OnSetPosition = (entityId, x, y, z) =>
-            {
-                lock (updateEngineLock)
-                {
-                    engineApp.setPosition(entityId, x, y, z);
-                }
-            };
-
             editorWindow.DataContext = sessionViewModel;
             editorWindow.RenderArea.SizeChanged += OnRenderAreaSizeChanged;
             editorWindow.Closing += StopEngine;
@@ -78,8 +55,6 @@ namespace Garlic.Bulb
 
             CreateImageSource(size);
 
-            Membrane.MessageHandler.bindToMessage<Membrane::Engine_OnEntityCreated>(TestMessageHandling);
-
             //Initialise the engine
             engineApp = new Membrane.Application((int)size.Width, (int)size.Height);
             
@@ -88,10 +63,6 @@ namespace Garlic.Bulb
             engineThread.Start();
 
         }
-
-        private void TestMessageHandling(Membrane::Engine_OnEntityCreated entityCreatedMessage) {
-            Console.WriteLine($"Message recieved! ({entityCreatedMessage.entity})");
-		}
 
         private void OnRenderAreaSizeChanged(object sender, SizeChangedEventArgs e)
         {

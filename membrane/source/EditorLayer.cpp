@@ -20,13 +20,9 @@ namespace garlic::membrane {
         editorCamera = entityManager->create();
         entityManager->addComponent<clove::TransformComponent>(editorCamera)->setPosition({ 0.0f, 0.0f, -10.0f });
         entityManager->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
-
-        Engine_OnEntityCreated ^ message = gcnew Engine_OnEntityCreated;
-        MessageHandler::sendMessage(message);
     }
 
     void EditorLayer::onUpdate(clove::DeltaTime const deltaTime) {
-        
     }
 
     void EditorLayer::onDetach() {

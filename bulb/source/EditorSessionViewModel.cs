@@ -34,7 +34,6 @@ namespace Garlic.Bulb
         public EditorSessionViewModel()
         {
             Scene = new SceneViewModel();
-            Scene.OnCreateEntity = CreateEntity;
         }
 
         private EntityViewModel CreateEntity()

@@ -91,29 +91,4 @@ namespace garlic::membrane {
         this->width  = width;
         this->height = height;
     }
-
-    clove::Entity Application::addEntity() {
-        return (*runtimeLayer)->addEntity();
-    }
-
-    void Application::removeEntity(clove::Entity entity) {
-        (*runtimeLayer)->removeEntity(entity);
-    }
-
-    void Application::createComponent(clove::Entity entity, ComponentType componentType) {
-        switch(componentType) {
-            case ComponentType::Transform:
-                app->getEntityManager()->addComponent<clove::TransformComponent>(entity);
-                break;
-            case ComponentType::Mesh:
-                app->getEntityManager()->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
-                break;
-            default:
-                break;
-        }
-    }
-
-    void Application::setPosition(clove::Entity entitiy, float x, float y, float z) {
-        app->getEntityManager()->getComponent<clove::TransformComponent>(entitiy)->setPosition({ x, y, z });
-    }
 }
