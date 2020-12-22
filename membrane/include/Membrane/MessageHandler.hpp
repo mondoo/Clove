@@ -1,13 +1,32 @@
 #pragma once
 
 namespace garlic::membrane {
-    //Editor messages. What the editor sends and the engine listens to.
-    public ref class Editor_CreateEntity {};
+    // clang-format off
 
-    //Engine messages.  What the engine sends and the editor listens to.
+    //Editor_ are messages that the editor sends and the engine listens to.
+    //Engine_ are messages that the engine sends and the editor listens to.
+
+    public enum class ComponentType {
+        Transform,
+        Mesh
+    };
+
+    //Messages
+    public ref class Editor_CreateEntity {};
     public ref class Engine_OnEntityCreated {
     public:
         System::UInt32 entity;
+    };
+
+    public ref class Editor_CreateComponent {
+    public:
+        System::UInt32 entity;
+        ComponentType componentType;
+    };
+    public ref class Engine_OnComponentCreated {
+    public:
+        System::UInt32 entity;
+        ComponentType componentType;
     };
 
     //Delegates
@@ -30,8 +49,8 @@ namespace garlic::membrane {
     public:
         generic<class MessageType> 
         static void bindToMessage(MessageSentHandler<MessageType> ^ handler) {
-            MessageDelegateWrapper<MessageType> ^ wrapper = gcnew MessageDelegateWrapper<MessageType>;
-            wrapper->handler                               = handler;
+            MessageDelegateWrapper<MessageType> ^ wrapper { gcnew MessageDelegateWrapper<MessageType> };
+            wrapper->handler = handler;
             delegates->Add(wrapper);
         }
 
@@ -44,4 +63,6 @@ namespace garlic::membrane {
             }
         }
     };
+
+    // clang-format on
 }

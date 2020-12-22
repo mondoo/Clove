@@ -36,5 +36,6 @@ namespace garlic::membrane {
 
     private:
         void createEntity();
+        void createComponent(clove::Entity entity, ComponentType componentType);
     };
 }

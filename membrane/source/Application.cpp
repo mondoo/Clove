@@ -12,7 +12,6 @@
 #include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Log/Log.hpp>
-#include <Clove/ModelLoader.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
 
 namespace garlic::membrane {

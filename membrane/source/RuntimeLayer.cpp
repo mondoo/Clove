@@ -5,6 +5,7 @@
 #include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
+#include <Clove/ModelLoader.hpp>
 
 namespace garlic::membrane {
     // clang-format off
@@ -21,11 +22,16 @@ namespace garlic::membrane {
         RuntimeLayerMessageProxy(class RuntimeLayer *layer)
             : layer{ layer } {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &RuntimeLayerMessageProxy::createEntity));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateComponent ^>(this, &RuntimeLayerMessageProxy::createComponent));
         }
 
     private:
         void createEntity(Editor_CreateEntity ^ message) {
             layer->createEntity();
+        }
+
+        void createComponent(Editor_CreateComponent ^ message){
+            layer->createComponent(message->entity, message->componentType);
         }
     };
     // clang-format on
@@ -57,6 +63,22 @@ namespace garlic::membrane {
 
         Engine_OnEntityCreated ^ message { gcnew Engine_OnEntityCreated };
         message->entity = entity;
+        MessageHandler::sendMessage(message);
+    }
+
+    void RuntimeLayer::createComponent(clove::Entity entity, ComponentType componentType) {
+        switch(componentType) {
+            case ComponentType::Transform:
+                entityManager->addComponent<clove::TransformComponent>(entity);
+                break;
+            case ComponentType::Mesh:
+                entityManager->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
+                break;
+        }
+
+        Engine_OnComponentCreated ^ message { gcnew Engine_OnComponentCreated };
+        message->entity = entity;
+        message->componentType = componentType;
         MessageHandler::sendMessage(message);
     }
 }

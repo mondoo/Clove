@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows;
@@ -40,19 +41,18 @@ namespace Garlic.Bulb
 
         public SceneViewModel()
         {
+            //Bind to messages
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnEntityCreated>(OnEntityCreated);
 
-            CreateEntityCommand = new RelayCommand(() =>
-            {
-                Membrane.MessageHandler.sendMessage(new Membrane.Editor_CreateEntity());
-            });
-
-            //AddTransformComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(ComponentType.Transform));
-            //AddMeshComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(ComponentType.Mesh));
+            //Set up commands
+            CreateEntityCommand = new RelayCommand(() => Membrane.MessageHandler.sendMessage(new Membrane.Editor_CreateEntity()));
+            AddTransformComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(Membrane.ComponentType.Transform));
+            AddMeshComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(Membrane.ComponentType.Mesh));
         }
 
         private void OnEntityCreated(Membrane.Engine_OnEntityCreated message){
             var entityVm = new EntityViewModel();
+            entityVm.EntityId = message.entity;
             entityVm.OnSelected = (EntityViewModel viewModel) => SelectedEntity = viewModel;
 
             Entities.Add(entityVm);
