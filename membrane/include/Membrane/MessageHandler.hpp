@@ -44,22 +44,40 @@ namespace garlic::membrane {
 
     public ref class MessageHandler {
     private:
+        static int loopCount{0};
+
         static System::Collections::Generic::List<IMessageDelegateWrapper^> ^ delegates = gcnew System::Collections::Generic::List<IMessageDelegateWrapper^>;
+        static System::Collections::Generic::List<IMessageDelegateWrapper^> ^ deferedDelegates = gcnew System::Collections::Generic::List<IMessageDelegateWrapper^>;
 
     public:
         generic<class MessageType> 
         static void bindToMessage(MessageSentHandler<MessageType> ^ handler) {
             MessageDelegateWrapper<MessageType> ^ wrapper { gcnew MessageDelegateWrapper<MessageType> };
             wrapper->handler = handler;
-            delegates->Add(wrapper);
+
+            //Make sure we don't add to the current list while looping
+            if(loopCount == 0){
+                delegates->Add(wrapper);
+            }else{
+                deferedDelegates->Add(wrapper);
+            }
         }
 
         generic<class MessageType> 
         static void sendMessage(MessageType message){
+            ++loopCount;
             for each(IMessageDelegateWrapper^ wrapper in delegates){
                 if(wrapper->GetType() == MessageDelegateWrapper<MessageType>::typeid) {
                     ((MessageDelegateWrapper<MessageType>^)wrapper)->handler->Invoke(message);
                 }
+            }
+            --loopCount;
+
+            if(loopCount == 0){
+                for each(IMessageDelegateWrapper^ wrapper in deferedDelegates){
+                    delegates->Add(wrapper);
+                }
+                deferedDelegates->Clear();
             }
         }
     };
