@@ -22,6 +22,5 @@ namespace garlic::membrane {
         void onDetach() override;
 
         void resizeViewport(clove::vec2ui size);
-
     };
 }

@@ -1,5 +1,7 @@
 #include "Membrane/EditorLayer.hpp"
 
+#include "Membrane/MessageHandler.hpp"
+
 #include <Clove/Application.hpp>
 #include <Clove/Components/CameraComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
@@ -18,15 +20,13 @@ namespace garlic::membrane {
         editorCamera = entityManager->create();
         entityManager->addComponent<clove::TransformComponent>(editorCamera)->setPosition({ 0.0f, 0.0f, -10.0f });
         entityManager->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
+
+        Engine_OnEntityCreated ^ message = gcnew Engine_OnEntityCreated;
+        MessageHandler::sendMessage(message);
     }
 
     void EditorLayer::onUpdate(clove::DeltaTime const deltaTime) {
-        /*
-        update view logic in here?
-
-        Could have a system that just goes through all transform components and updates them
-            - Not the most scalable solution by any means
-        */
+        
     }
 
     void EditorLayer::onDetach() {

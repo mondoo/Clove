@@ -7,6 +7,9 @@ add_library(
         ${INCLUDE}/Application.hpp
         ${SOURCE}/Application.cpp
 
+        ${INCLUDE}/MessageHandler.hpp
+        ${SOURCE}/MessageHandler.cpp
+
         ${INCLUDE}/EditorLayer.hpp
         ${SOURCE}/EditorLayer.cpp
         ${INCLUDE}/RuntimeLayer.hpp
