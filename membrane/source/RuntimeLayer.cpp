@@ -67,18 +67,27 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::createComponent(clove::Entity entity, ComponentType componentType) {
+        bool added{ false };
         switch(componentType) {
             case ComponentType::Transform:
-                entityManager->addComponent<clove::TransformComponent>(entity);
+                if(!entityManager->hasComponent<clove::TransformComponent>(entity)) {
+                    entityManager->addComponent<clove::TransformComponent>(entity);
+                    added = true;
+                }
                 break;
             case ComponentType::Mesh:
-                entityManager->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
+                if(!entityManager->hasComponent<clove::StaticModelComponent>(entity)) {
+                    entityManager->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
+                    added = true;
+                }
                 break;
         }
 
-        Engine_OnComponentCreated ^ message { gcnew Engine_OnComponentCreated };
-        message->entity = entity;
-        message->componentType = componentType;
-        MessageHandler::sendMessage(message);
+        if(added) {
+            Engine_OnComponentCreated ^ message { gcnew Engine_OnComponentCreated };
+            message->entity        = entity;
+            message->componentType = componentType;
+            MessageHandler::sendMessage(message);
+        }
     }
 }
