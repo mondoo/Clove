@@ -23,6 +23,7 @@ namespace garlic::membrane {
             : layer{ layer } {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &RuntimeLayerMessageProxy::createEntity));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateComponent ^>(this, &RuntimeLayerMessageProxy::createComponent));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &RuntimeLayerMessageProxy::updateTransform));
         }
 
     private:
@@ -32,6 +33,10 @@ namespace garlic::membrane {
 
         void createComponent(Editor_CreateComponent ^ message){
             layer->createComponent(message->entity, message->componentType);
+        }
+
+        void updateTransform(Editor_UpdateTransform ^ message){
+            layer->updateTransform(message->entity, clove::vec3f{ message->position.x, message->position.y, message->position.z });
         }
     };
     // clang-format on
@@ -50,6 +55,16 @@ namespace garlic::membrane {
         entityManager->addComponent<clove::PointLightComponent>(lightEnt);
 
         runtimeEntities.push_back(lightEnt);
+    }
+
+    void RuntimeLayer::onUpdate(clove::DeltaTime const deltaTime) {
+        entityManager->forEach([](clove::TransformComponent const &transform) {
+            auto const &pos{ transform.getPosition() };
+
+            Engine_OnTransformChanged ^ message { gcnew Engine_OnTransformChanged };
+            message->entity   = transform.getEntity();
+            message->position = Vector3(pos.x, pos.y, pos.z);
+        });
     }
 
     void RuntimeLayer::onDetach() {
@@ -88,6 +103,12 @@ namespace garlic::membrane {
             message->entity        = entity;
             message->componentType = componentType;
             MessageHandler::sendMessage(message);
+        }
+    }
+
+    void RuntimeLayer::updateTransform(clove::Entity entity, clove::vec3f position) {
+        if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
+            entityManager->getComponent<clove::TransformComponent>(entity)->setPosition(position);
         }
     }
 }

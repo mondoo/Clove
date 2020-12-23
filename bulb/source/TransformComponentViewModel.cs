@@ -15,8 +15,6 @@ namespace Garlic.Bulb
                 {
                     xValue = number;
                 }
-                //Broadcast even if it isn't a match to reset the view back to the last valid number
-                OnPropertyChanged(nameof(xValue));
                 OnPositionChanged?.Invoke(xValue, yValue, zValue);
             }
         }
@@ -32,8 +30,6 @@ namespace Garlic.Bulb
                 {
                     yValue = number;
                 }
-                //Broadcast even if it isn't a match to reset the view back to the last valid number
-                OnPropertyChanged(nameof(yValue));
                 OnPositionChanged?.Invoke(xValue, yValue, zValue);
             }
         }
@@ -49,8 +45,6 @@ namespace Garlic.Bulb
                 {
                     zValue = number;
                 }
-                //Broadcast even if it isn't a match to reset the view back to the last valid number
-                OnPropertyChanged(nameof(zValue));
                 OnPositionChanged?.Invoke(xValue, yValue, zValue);
             }
         }
@@ -59,10 +53,14 @@ namespace Garlic.Bulb
         public delegate void PositionChangedHandler(float x, float y, float z);
         public PositionChangedHandler OnPositionChanged;
 
-        // public void SetPosition(float x, float y, float z){
-        //     xValue = x;
-        //     yValue = y;
-        //     zValue = z;
-        // }
+        public void SetPosition(float x, float y, float z){
+            xValue = x;
+            yValue = y;
+            zValue = z;
+
+            OnPropertyChanged(nameof(XValue));
+            OnPropertyChanged(nameof(YValue));
+            OnPropertyChanged(nameof(ZValue));
+        }
     }
 }

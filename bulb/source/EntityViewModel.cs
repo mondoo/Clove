@@ -9,8 +9,8 @@ namespace Garlic.Bulb
 {
     public class EntityViewModel : ViewModel
     {
-        public uint EntityId{ get; set; }
-        
+        public uint EntityId { get; set; }
+
         public string Name
         {
             get { return name; }
@@ -33,12 +33,14 @@ namespace Garlic.Bulb
         {
             //Bind to messages
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnComponentCreated>(OnComponentCreated);
+            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnTransformChanged>(OnTransformChanged);
 
             //Set up commands
             SelectedCommand = new RelayCommand(() => OnSelected?.Invoke(this));
         }
 
-        public void AddComponent(Membrane.ComponentType type) {
+        public void AddComponent(Membrane.ComponentType type)
+        {
             var message = new Membrane.Editor_CreateComponent();
             message.entity = EntityId;
             message.componentType = type;
@@ -46,13 +48,21 @@ namespace Garlic.Bulb
             Membrane.MessageHandler.sendMessage(message);
         }
 
-        private void OnComponentCreated(Membrane.Engine_OnComponentCreated message){
-            if(EntityId == message.entity){
+        private void OnComponentCreated(Membrane.Engine_OnComponentCreated message)
+        {
+            if (EntityId == message.entity)
+            {
                 ComponentViewModel componentVm;
 
-                switch(message.componentType){
+                switch (message.componentType)
+                {
                     case Membrane.ComponentType.Transform:
-                        componentVm = new TransformComponentViewModel();
+                        {
+                            var transformComp = new TransformComponentViewModel();
+                            transformComp.OnPositionChanged = UpdateTransform;
+
+                            componentVm = transformComp;
+                        }
                         break;
                     default:
                         componentVm = new ComponentViewModel();
@@ -62,6 +72,30 @@ namespace Garlic.Bulb
                 componentVm.Name = $"{message.componentType}";
 
                 Components.Add(componentVm);
+            }
+        }
+
+        private void UpdateTransform(float x, float y, float z)
+        {
+            var message = new Membrane.Editor_UpdateTransform();
+            message.entity = EntityId;
+            message.position = new Membrane.Vector3(x, y, z);
+
+            Membrane.MessageHandler.sendMessage(message);
+        }
+
+        private void OnTransformChanged(Membrane.Engine_OnTransformChanged message)
+        {
+            if (EntityId == message.entity)
+            {
+                foreach (ComponentViewModel comp in Components)
+                {
+                    if (comp.GetType() == typeof(TransformComponentViewModel))
+                    {
+                        ((TransformComponentViewModel)comp).SetPosition(message.position.x, message.position.y, message.position.z);
+                        break;
+                    }
+                }
             }
         }
     }

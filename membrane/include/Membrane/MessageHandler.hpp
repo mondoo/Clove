@@ -11,6 +11,16 @@ namespace garlic::membrane {
         Mesh
     };
 
+    public value struct Vector3{
+        float x;
+        float y;
+        float z;
+
+        Vector3(float x, float y, float z)
+            : x{ x }, y{ y }, z{ z }{
+        }
+    };
+
     //Messages
     public ref class Editor_CreateEntity {};
     public ref class Engine_OnEntityCreated {
@@ -27,6 +37,23 @@ namespace garlic::membrane {
     public:
         System::UInt32 entity;
         ComponentType componentType;
+    };
+
+    public ref class Editor_UpdateTransform{
+    public:
+        System::UInt32 entity;
+
+        Vector3 position;
+        Vector3 rotation;
+        Vector3 scale;
+    };
+    public ref class Engine_OnTransformChanged{
+    public:
+        System::UInt32 entity;
+        
+        Vector3 position;
+        Vector3 rotation;
+        Vector3 scale;
     };
 
     //Delegates

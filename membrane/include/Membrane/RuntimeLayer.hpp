@@ -15,7 +15,7 @@ namespace garlic::membrane {
     /**
      * @brief The layer that contains all the run time components.
      * @details This is the layer that will actually hold the entities that
-     * make up the game.
+     * make up the game and what will be serialsed when saving the scene.
      */
     class RuntimeLayer : public clove::Layer {
         friend ref class RuntimeLayerMessageProxy;
@@ -32,10 +32,13 @@ namespace garlic::membrane {
         RuntimeLayer();
 
         void onAttach() override;
+        void onUpdate(clove::DeltaTime const deltaTime) override;
         void onDetach() override;
 
     private:
         void createEntity();
         void createComponent(clove::Entity entity, ComponentType componentType);
+
+        void updateTransform(clove::Entity entity, clove::vec3f position);
     };
 }
