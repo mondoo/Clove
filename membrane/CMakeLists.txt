@@ -7,8 +7,11 @@ add_library(
         ${INCLUDE}/Application.hpp
         ${SOURCE}/Application.cpp
 
+        ${INCLUDE}/EditorTypes.hpp
+
         ${INCLUDE}/MessageHandler.hpp
         ${SOURCE}/MessageHandler.cpp
+        ${INCLUDE}/Messages.hpp
 
         ${INCLUDE}/EditorLayer.hpp
         ${SOURCE}/EditorLayer.cpp

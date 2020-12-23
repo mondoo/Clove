@@ -1,12 +1,13 @@
 #pragma once
 
+#include "Membrane/EditorTypes.hpp"
 #include "Membrane/MessageHandler.hpp"
 
 #include <Clove/ECS/Entity.hpp>
 #include <Clove/Layer.hpp>
 #include <msclr/gcroot.h>
-#include <vector>
 #include <string_view>
+#include <vector>
 
 namespace garlic::clove {
     class EntityManager;

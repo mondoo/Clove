@@ -1,5 +1,7 @@
 #include "Membrane/RuntimeLayer.hpp"
 
+#include "Membrane/Messages.hpp"
+
 #include <Clove/Application.hpp>
 #include <Clove/Components/PointLightComponent.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
