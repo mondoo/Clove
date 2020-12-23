@@ -19,8 +19,6 @@ namespace Garlic.Bulb
         private MainWindow editorWindow;
         private EditorSessionViewModel sessionViewModel;
 
-        private EditorLogger editorLogger;
-
         private Membrane.Application engineApp;
 
         //TODO: Move to MainWindow
@@ -37,18 +35,16 @@ namespace Garlic.Bulb
 
         private void EditorStartup(object sender, StartupEventArgs e)
         {
+            sessionViewModel = new EditorSessionViewModel();
+
+            Membrane.Log.addSink((string message) => sessionViewModel.Log.LogText += message, "%v");
+
             //Initialise the editor window
             editorWindow = new MainWindow();
-            sessionViewModel = new EditorSessionViewModel();
 
             editorWindow.DataContext = sessionViewModel;
             editorWindow.RenderArea.SizeChanged += OnRenderAreaSizeChanged;
             editorWindow.Closing += StopEngine;
-
-            //Forward the logs to the editor's window
-            editorLogger = new EditorLogger();
-            editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => sessionViewModel.Log.LogText += e2.Text;
-            Console.SetOut(editorLogger);
 
             editorWindow.Show();
             MainWindow = editorWindow;
