@@ -37,7 +37,7 @@ namespace garlic::membrane {
 
         void updateTransform(Editor_UpdateTransform ^ message){
             clove::vec3f pos{message->position.x, message->position.y, message->position.z};
-            clove::vec3f rot{message->rotation.x, message->rotation.y, message->rotation.z};
+            clove::vec3f rot{clove::asRadians(message->rotation.x), clove::asRadians(message->rotation.y), clove::asRadians(message->rotation.z)};
             clove::vec3f scale{message->scale.x, message->scale.y, message->scale.z};
 
             layer->updateTransform(message->entity, pos, rot, scale);
@@ -76,7 +76,7 @@ namespace garlic::membrane {
                 Engine_OnTransformChanged ^ message { gcnew Engine_OnTransformChanged };
                 message->entity   = entity;
                 message->position = Vector3(pos.x, pos.y, pos.z);
-                message->rotation = Vector3(rot.x, rot.y, rot.z);
+                message->rotation = Vector3(clove::asDegrees(rot.x), clove::asDegrees(rot.y), clove::asDegrees(rot.z));
                 message->scale    = Vector3(scale.x, scale.y, scale.z);
                 MessageHandler::sendMessage(message);
             }
