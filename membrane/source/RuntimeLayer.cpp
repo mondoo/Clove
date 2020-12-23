@@ -52,9 +52,9 @@ namespace garlic::membrane {
     void RuntimeLayer::onAttach() {
         auto lightEnt{ createEntity("Point Light") };
         createComponent(lightEnt, ComponentType::Transform);
+        createComponent(lightEnt, ComponentType::PointLight);
 
         entityManager->getComponent<clove::TransformComponent>(lightEnt)->setPosition({ 5.0f, 0.0f, 0.0f });
-        entityManager->addComponent<clove::PointLightComponent>(lightEnt);
 
         runtimeEntities.push_back(lightEnt);
     }
@@ -105,6 +105,12 @@ namespace garlic::membrane {
             case ComponentType::Mesh:
                 if(!entityManager->hasComponent<clove::StaticModelComponent>(entity)) {
                     entityManager->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
+                    added = true;
+                }
+                break;
+            case ComponentType::PointLight:
+                if(!entityManager->hasComponent<clove::PointLightComponent>(entity)) {
+                    entityManager->addComponent<clove::PointLightComponent>(entity);
                     added = true;
                 }
                 break;

@@ -8,7 +8,8 @@ namespace garlic::membrane {
 
     public enum class ComponentType {
         Transform,
-        Mesh
+        Mesh,
+        PointLight,
     };
 
     public value struct Vector3{
