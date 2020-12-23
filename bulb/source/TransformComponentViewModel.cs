@@ -11,11 +11,8 @@ namespace Garlic.Bulb
             set
             {
                 float number;
-                if (float.TryParse(value, out number))
-                {
-                    xValue = number;
-                }
-                OnPositionChanged?.Invoke(xValue, yValue, zValue);
+                float.TryParse(value, out number);
+                OnPositionChanged?.Invoke(number, yValue, zValue);
             }
         }
         private float xValue = 0;
@@ -26,11 +23,8 @@ namespace Garlic.Bulb
             set
             {
                 float number;
-                if (float.TryParse(value, out number))
-                {
-                    yValue = number;
-                }
-                OnPositionChanged?.Invoke(xValue, yValue, zValue);
+                float.TryParse(value, out number);
+                OnPositionChanged?.Invoke(xValue, number, zValue);
             }
         }
         private float yValue = 0;
@@ -41,11 +35,8 @@ namespace Garlic.Bulb
             set
             {
                 float number;
-                if (float.TryParse(value, out number))
-                {
-                    zValue = number;
-                }
-                OnPositionChanged?.Invoke(xValue, yValue, zValue);
+                float.TryParse(value, out number);
+                OnPositionChanged?.Invoke(xValue, yValue, number);
             }
         }
         private float zValue = 0;

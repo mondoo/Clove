@@ -60,13 +60,19 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::onUpdate(clove::DeltaTime const deltaTime) {
-        entityManager->forEach([](clove::TransformComponent const &transform) {
-            auto const &pos{ transform.getPosition() };
+        static float time{ 0.0f };
+        time += deltaTime;
 
-            Engine_OnTransformChanged ^ message { gcnew Engine_OnTransformChanged };
-            message->entity   = transform.getEntity();
-            message->position = Vector3(pos.x, pos.y, pos.z);
-        });
+        for(auto &entity : runtimeEntities) {
+            if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
+                auto const &pos{ entityManager->getComponent<clove::TransformComponent>(entity)->getPosition() };
+
+                Engine_OnTransformChanged ^ message { gcnew Engine_OnTransformChanged };
+                message->entity   = entity;
+                message->position = Vector3(pos.x, pos.y, pos.z);
+                MessageHandler::sendMessage(message);
+            }
+        }
     }
 
     void RuntimeLayer::onDetach() {
