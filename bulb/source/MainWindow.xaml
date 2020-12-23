@@ -46,41 +46,14 @@
 		<StackPanel x:Name="EntityView" Grid.Column="2" Visibility="{Binding Scene.EntityViewVisibility}">
 			<TextBox Text="{Binding Scene.SelectedEntity.Name, Mode=TwoWay}"/>
 			<ListBox ItemsSource="{Binding Scene.SelectedEntity.Components}">
-				<!--TODO: Move into own xaml files -->
 				<ListBox.Resources>
 					<DataTemplate DataType="{x:Type local:TransformComponentViewModel}">
 						<StackPanel>
 							<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
 							<StackPanel Margin="10,0,0,0">
-								<Grid>
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*"/>
-										<ColumnDefinition Width="*"/>
-									</Grid.ColumnDefinitions>
-									
-									<TextBlock Grid.Column="0" Text="Position"/>
-									<local:Vector3Box Grid.Column="1" LeftFieldText="X" LeftFieldValue="{Binding PositionXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding PositionYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding PositionZValue, Mode=TwoWay}"/>
-								</Grid>
-
-								<Grid>
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*"/>
-										<ColumnDefinition Width="*"/>
-									</Grid.ColumnDefinitions>
-
-									<TextBlock Grid.Column="0" Text="Rotation"/>
-									<local:Vector3Box Grid.Column="1" LeftFieldText="X" LeftFieldValue="{Binding RotationXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding RotationYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding RotationZValue, Mode=TwoWay}"/>
-								</Grid>
-
-								<Grid>
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*"/>
-										<ColumnDefinition Width="*"/>
-									</Grid.ColumnDefinitions>
-
-									<TextBlock Grid.Column="0" Text="Scale"/>
-									<local:Vector3Box Grid.Column="1" LeftFieldText="X" LeftFieldValue="{Binding ScaleXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding ScaleYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding ScaleZValue, Mode=TwoWay}"/>
-								</Grid>
+								<local:Vector3Box Label="Position" LeftFieldText="X" LeftFieldValue="{Binding PositionXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding PositionYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding PositionZValue, Mode=TwoWay}"/>
+								<local:Vector3Box Label="Rotation" LeftFieldText="X" LeftFieldValue="{Binding RotationXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding RotationYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding RotationZValue, Mode=TwoWay}"/>
+								<local:Vector3Box Label="Scale" LeftFieldText="X" LeftFieldValue="{Binding ScaleXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding ScaleYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding ScaleZValue, Mode=TwoWay}"/>
 							</StackPanel>
 						</StackPanel>
 					</DataTemplate>

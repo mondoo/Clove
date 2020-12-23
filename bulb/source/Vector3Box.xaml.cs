@@ -11,6 +11,12 @@ namespace Garlic.Bulb
     /// </summary>
     public partial class Vector3Box : UserControl
     {
+        public string Label
+        {
+            get { return (string)GetValue(LabelProperty); }
+            set { SetValue(LabelProperty, value); }
+        } 
+        
         public string LeftFieldText
         {
             get { return (string)GetValue(LeftTextProperty); }
@@ -43,6 +49,8 @@ namespace Garlic.Bulb
             get { return (string)GetValue(RightValueProperty); }
             set { SetValue(RightValueProperty, value); }
         }
+
+        public static DependencyProperty LabelProperty = DependencyProperty.Register(nameof(Label), typeof(string), typeof(Vector3Box), new PropertyMetadata(null));
 
         public static DependencyProperty LeftTextProperty = DependencyProperty.Register(nameof(LeftFieldText), typeof(string), typeof(Vector3Box), new PropertyMetadata(null));
         public static DependencyProperty LeftValueProperty = DependencyProperty.Register(nameof(LeftFieldValue), typeof(string), typeof(Vector3Box), new PropertyMetadata(null));

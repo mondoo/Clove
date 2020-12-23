@@ -10,39 +10,47 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 
-		<!--TODO: Create a scalar box to reduce duplication below-->
-		
-		<Grid Grid.Column="0" Margin="3,0">
+		<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=Label}"/>
+		<Grid Grid.Column="1">
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
-			<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=LeftFieldText}"/>
-			<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=LeftFieldValue, Mode=TwoWay}" KeyUp="OnKeyUp"/>
-		</Grid>
+			<!--TODO: Create a scalar box to reduce duplication below-->
 
-		<Grid Grid.Column="1" Margin="3,0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
+			<Grid Grid.Column="0" Margin="3,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
 
-			<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=CenterFieldText}"/>
-			<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=CenterFieldValue, Mode=TwoWay}" KeyUp="OnKeyUp"/>
-		</Grid>
+				<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=LeftFieldText}"/>
+				<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=LeftFieldValue, Mode=TwoWay}" KeyUp="OnKeyUp"/>
+			</Grid>
 
-		<Grid Grid.Column="2" Margin="3,0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
+			<Grid Grid.Column="1" Margin="3,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
 
-			<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=RightFieldText}"/>
-			<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=RightFieldValue, Mode=TwoWay}" KeyUp="OnKeyUp"/>
+				<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=CenterFieldText}"/>
+				<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=CenterFieldValue, Mode=TwoWay}" KeyUp="OnKeyUp"/>
+			</Grid>
+
+			<Grid Grid.Column="2" Margin="3,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+
+				<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=RightFieldText}"/>
+				<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=RightFieldValue, Mode=TwoWay}" KeyUp="OnKeyUp"/>
+			</Grid>
 		</Grid>
 	</Grid>
 </UserControl>
