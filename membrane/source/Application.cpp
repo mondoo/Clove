@@ -12,7 +12,6 @@
 #include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Log/Log.hpp>
-#include <Clove/ModelLoader.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
 
 namespace garlic::membrane {
@@ -90,26 +89,5 @@ namespace garlic::membrane {
 
         this->width  = width;
         this->height = height;
-    }
-
-    clove::Entity Application::addEntity() {
-        return (*runtimeLayer)->addEntity();
-    }
-
-    void Application::removeEntity(clove::Entity entity) {
-        (*runtimeLayer)->removeEntity(entity);
-    }
-
-    void Application::createComponent(clove::Entity entity, ComponentType componentType) {
-        switch(componentType) {
-            case ComponentType::Transform:
-                app->getEntityManager()->addComponent<clove::TransformComponent>(entity);
-                break;
-            case ComponentType::Mesh:
-                app->getEntityManager()->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
-                break;
-            default:
-                break;
-        }
     }
 }
