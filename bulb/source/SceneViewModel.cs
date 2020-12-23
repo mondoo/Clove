@@ -53,6 +53,7 @@ namespace Garlic.Bulb
         private void OnEntityCreated(Membrane.Engine_OnEntityCreated message){
             var entityVm = new EntityViewModel();
             entityVm.EntityId = message.entity;
+            entityVm.Name = message.name;
             entityVm.OnSelected = (EntityViewModel viewModel) => SelectedEntity = viewModel;
 
             Entities.Add(entityVm);

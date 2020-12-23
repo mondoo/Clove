@@ -50,8 +50,10 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::onAttach() {
-        auto lightEnt{ entityManager->create() };
-        entityManager->addComponent<clove::TransformComponent>(lightEnt)->setPosition({ 5.0f, 0.0f, 0.0f });
+        auto lightEnt{ createEntity("Point Light") };
+        createComponent(lightEnt, ComponentType::Transform);
+
+        entityManager->getComponent<clove::TransformComponent>(lightEnt)->setPosition({ 5.0f, 0.0f, 0.0f });
         entityManager->addComponent<clove::PointLightComponent>(lightEnt);
 
         runtimeEntities.push_back(lightEnt);
@@ -73,13 +75,16 @@ namespace garlic::membrane {
         }
     }
 
-    void RuntimeLayer::createEntity() {
+    clove::Entity RuntimeLayer::createEntity(std::string_view name) {
         clove::Entity entity{ entityManager->create() };
         runtimeEntities.push_back(entity);
 
         Engine_OnEntityCreated ^ message { gcnew Engine_OnEntityCreated };
         message->entity = entity;
+        message->name   = gcnew System::String(std::string{ std::begin(name), std::end(name) }.c_str());
         MessageHandler::sendMessage(message);
+
+        return entity;
     }
 
     void RuntimeLayer::createComponent(clove::Entity entity, ComponentType componentType) {

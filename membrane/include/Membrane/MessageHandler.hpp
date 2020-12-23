@@ -26,6 +26,7 @@ namespace garlic::membrane {
     public ref class Engine_OnEntityCreated {
     public:
         System::UInt32 entity;
+        System::String ^name;
     };
 
     public ref class Editor_CreateComponent {
