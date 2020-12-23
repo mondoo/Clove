@@ -23,6 +23,10 @@ namespace garlic::clove {
 
     Logger::~Logger() = default;
 
+    void Logger::addSink(std::shared_ptr<spdlog::sinks::sink> sink){
+        logger->sinks().push_back(std::move(sink));
+    }
+
     void Logger::doLog(LogLevel level, std::string_view msg) {
         switch(level) {
             case LogLevel::Trace:

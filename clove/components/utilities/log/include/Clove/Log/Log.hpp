@@ -11,6 +11,9 @@
 
 namespace spdlog {
     class logger;
+    namespace sinks {
+        class sink;
+    }
 }
 
 namespace garlic::clove {
@@ -37,6 +40,8 @@ namespace garlic::clove {
 
         template<typename... Args>
         void log(std::string_view category, LogLevel level, std::string_view msg, Args &&... args);
+
+        void addSink(std::shared_ptr<spdlog::sinks::sink> sink);
 
     private:
         void doLog(LogLevel level, std::string_view msg);
