@@ -75,6 +75,7 @@ namespace garlic::membrane {
 
     void RuntimeLayer::createEntity() {
         clove::Entity entity{ entityManager->create() };
+        runtimeEntities.push_back(entity);
 
         Engine_OnEntityCreated ^ message { gcnew Engine_OnEntityCreated };
         message->entity = entity;
