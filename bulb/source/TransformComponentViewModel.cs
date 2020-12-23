@@ -1,3 +1,5 @@
+using Membrane = garlic.membrane;
+
 namespace Garlic.Bulb
 {
     /// <summary>
@@ -7,47 +9,52 @@ namespace Garlic.Bulb
     {
         public string XValue
         {
-            get { return xValue.ToString(); }
+            get { return position.x.ToString(); }
             set
             {
                 float number;
                 float.TryParse(value, out number);
-                OnPositionChanged?.Invoke(number, yValue, zValue);
+                var temp = position;
+                temp.x = number;
+                OnTransformChanged?.Invoke(temp, rotation, scale);
             }
         }
-        private float xValue = 0;
 
         public string YValue
         {
-            get { return yValue.ToString(); }
+            get { return position.y.ToString(); }
             set
             {
                 float number;
                 float.TryParse(value, out number);
-                OnPositionChanged?.Invoke(xValue, number, zValue);
+                var temp = position;
+                temp.y = number;
+                OnTransformChanged?.Invoke(temp, rotation, scale);
             }
         }
-        private float yValue = 0;
 
         public string ZValue
         {
-            get { return zValue.ToString(); }
+            get { return position.z.ToString(); }
             set
             {
                 float number;
                 float.TryParse(value, out number);
-                OnPositionChanged?.Invoke(xValue, yValue, number);
+                var temp = position;
+                temp.z = number;
+                OnTransformChanged?.Invoke(temp, rotation, scale);
             }
         }
-        private float zValue = 0;
 
-        public delegate void PositionChangedHandler(float x, float y, float z);
-        public PositionChangedHandler OnPositionChanged;
+        Membrane.Vector3 position = new Membrane.Vector3();
+        Membrane.Vector3 rotation = new Membrane.Vector3();
+        Membrane.Vector3 scale = new Membrane.Vector3(1, 1, 1);
 
-        public void SetPosition(float x, float y, float z){
-            xValue = x;
-            yValue = y;
-            zValue = z;
+        public delegate void TransformChangedHandler(Membrane.Vector3 position, Membrane.Vector3 rotation, Membrane.Vector3 scale);
+        public TransformChangedHandler OnTransformChanged;
+
+        public void Update(Membrane.Vector3 position, Membrane.Vector3 rotation, Membrane.Vector3 scale){
+            this.position = position;
 
             OnPropertyChanged(nameof(XValue));
             OnPropertyChanged(nameof(YValue));

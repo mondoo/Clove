@@ -59,7 +59,7 @@ namespace Garlic.Bulb
                     case Membrane.ComponentType.Transform:
                         {
                             var transformComp = new TransformComponentViewModel();
-                            transformComp.OnPositionChanged = UpdateTransform;
+                            transformComp.OnTransformChanged = UpdateTransform;
 
                             componentVm = transformComp;
                         }
@@ -75,11 +75,13 @@ namespace Garlic.Bulb
             }
         }
 
-        private void UpdateTransform(float x, float y, float z)
+        private void UpdateTransform(Membrane.Vector3 position, Membrane.Vector3 rotation, Membrane.Vector3 scale)
         {
             var message = new Membrane.Editor_UpdateTransform();
             message.entity = EntityId;
-            message.position = new Membrane.Vector3(x, y, z);
+            message.position = position;
+            message.rotation = rotation;
+            message.scale = scale;
 
             Membrane.MessageHandler.sendMessage(message);
         }
@@ -92,7 +94,8 @@ namespace Garlic.Bulb
                 {
                     if (comp.GetType() == typeof(TransformComponentViewModel))
                     {
-                        ((TransformComponentViewModel)comp).SetPosition(message.position.x, message.position.y, message.position.z);
+                        var transform = (TransformComponentViewModel)comp;
+                        transform.Update(message.position, message.rotation, message.scale);
                         break;
                     }
                 }
