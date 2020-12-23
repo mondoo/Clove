@@ -9,6 +9,10 @@
         static std::string_view constexpr name{ #categoryName }; \
     };
 
+namespace spdlog {
+    class logger;
+}
+
 namespace garlic::clove {
     enum class LogLevel {
         Trace,
@@ -20,19 +24,9 @@ namespace garlic::clove {
 
 namespace garlic::clove {
     class Logger {
-        //TYPES
-    public:
-        class Output {
-            //FUNCTIONS
-        public:
-            virtual ~Output() = default;
-
-            virtual void doLog(LogLevel level, std::string_view msg) = 0;
-        };
-
         //VARIABLES
     private:
-        std::unique_ptr<Output> out;
+        std::unique_ptr<spdlog::logger> logger;
 
         //FUNCTIONS
     public:
@@ -41,10 +35,11 @@ namespace garlic::clove {
 
         static inline Logger &get();
 
-        inline void setOutput(std::unique_ptr<Output> newOut);
-
         template<typename... Args>
         void log(std::string_view category, LogLevel level, std::string_view msg, Args &&... args);
+
+    private:
+        void doLog(LogLevel level, std::string_view msg);
     };
 }
 

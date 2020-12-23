@@ -30,8 +30,6 @@ add_executable(
 
 		${SOURCE}/ComponentViewModel.cs
 		${SOURCE}/TransformComponentViewModel.cs
-		
-		${SOURCE}/EditorLogger.cs
 )
 
 #Libraries

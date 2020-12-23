@@ -15,13 +15,13 @@
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
 
 namespace garlic::membrane {
-    class ConsoleLogger : public clove::Logger::Output {
-    public:
-        void doLog(clove::LogLevel level, std::string_view msg) override {
-            //Conver to std::string as there seems to be issues when using std::data(msg)
-            System::Console::WriteLine(gcnew System::String(std::string{ std::begin(msg), std::end(msg) }.c_str()));
-        }
-    };
+    // class ConsoleLogger : public clove::Logger::Output {
+    // public:
+    //     void doLog(clove::LogLevel level, std::string_view msg) override {
+    //         //Conver to std::string as there seems to be issues when using std::data(msg)
+    //         System::Console::WriteLine(gcnew System::String(std::string{ std::begin(msg), std::end(msg) }.c_str()));
+    //     }
+    // };
 }
 
 namespace garlic::membrane {
@@ -31,7 +31,7 @@ namespace garlic::membrane {
         using namespace garlic::clove;
 
         //Set the logger for Clove to redirect to System.Console
-        Logger::get().setOutput(std::make_unique<ConsoleLogger>());
+        //Logger::get().setOutput(std::make_unique<ConsoleLogger>());
 
         GraphicsImage::Descriptor renderTargetImageDescriptor{};
         renderTargetImageDescriptor.type        = GraphicsImage::Type::_2D;
