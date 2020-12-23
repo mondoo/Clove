@@ -35,9 +35,12 @@ namespace Garlic.Bulb
 
         private void EditorStartup(object sender, StartupEventArgs e)
         {
+            sessionViewModel = new EditorSessionViewModel();
+
+            Membrane.Log.addSink((string message) => sessionViewModel.Log.LogText += message, "%v");
+
             //Initialise the editor window
             editorWindow = new MainWindow();
-            sessionViewModel = new EditorSessionViewModel();
 
             editorWindow.DataContext = sessionViewModel;
             editorWindow.RenderArea.SizeChanged += OnRenderAreaSizeChanged;
