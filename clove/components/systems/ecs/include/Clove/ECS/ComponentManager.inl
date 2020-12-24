@@ -35,7 +35,7 @@ namespace garlic::clove {
 
     template<typename... ComponentTypes>
     bool ComponentManager::ComponentContainer<ComponentTypes...>::hasEntity(Entity entity) {
-        return false;
+        return entityToIndex.find(entity) != entityToIndex.end();
     }
 
     template<typename... ComponentTypes>
@@ -92,7 +92,7 @@ namespace garlic::clove {
         auto container{ std::make_unique<ComponentContainer<ComponentType>>() };
         container->addEntity(entity, ComponentType{ std::forward<ConstructArgs>(args)... });
 
-        //ComponentType *comp{ container->getComponent<ComponentType>(entity) };
+        //auto *comp{ container->getComponent<ComponentType>(entity) };
         auto *comp{ reinterpret_cast<ComponentType *>(container->getComponent(entity, ComponentId::get<ComponentType>())) };
 
         containers.emplace_back(std::move(container));
@@ -119,6 +119,12 @@ namespace garlic::clove {
 
     template<typename ComponentType>
     bool ComponentManager::hasComponent(Entity entity) {
+        for(auto& container : containers){
+            if(container->hasEntity(entity)){
+                return container->getComponent<ComponentType>(entity) != nullptr;
+            }
+        }
+
         return false;
     }
 

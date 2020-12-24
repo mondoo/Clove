@@ -7,6 +7,10 @@ struct BoolComponent {
     bool value{ false };
 };
 
+struct FloatComponent {
+    float value{ 0.0f };
+};
+
 TEST(ECSComponentTests, CanAddSingleComponentToEntity) {
     EntityManager manager{};
 
@@ -18,4 +22,14 @@ TEST(ECSComponentTests, CanAddSingleComponentToEntity) {
 
     ASSERT_FALSE(falseComp.value);
     ASSERT_TRUE(trueComp.value);
+}
+
+TEST(ECSComponentTests, CanCheckIfAnEntityHasAComponent) {
+    EntityManager manager{};
+
+    Entity entity{ manager.create() };
+    manager.addComponent<BoolComponent>(entity);
+
+    ASSERT_TRUE(manager.hasComponent<BoolComponent>(entity));
+    ASSERT_FALSE(manager.hasComponent<FloatComponent>(entity));
 }
