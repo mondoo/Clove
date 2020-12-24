@@ -18,10 +18,12 @@ namespace spdlog {
 
 namespace garlic::clove {
     enum class LogLevel {
-        Trace,
-        Info,
-        Warning,
-        Error,
+        Trace,    /**< Extra info which is usually uneccessary. */
+        Debug,    /**< Anything which could help with debugging. */
+        Info,     /**< Useful information to present to the user. */
+        Warning,  /**< When something happened that might cause an error. */
+        Error,    /**< Something has gone wrong but is recoverable. */
+        Critical, /**< Someithng has gone wrong and the application needs to exit. */
     };
 }
 
@@ -56,12 +58,12 @@ namespace garlic::clove {
 #endif
 
 #if CLOVE_ENABLE_ASSERTIONS
-    #define CLOVE_ASSERT(x, ...)                                                                                       \
-        {                                                                                                              \
-            if(!(x)) {                                                                                                 \
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, ::garlic::clove::LogLevel::Error, "Assertion Failed: {0}", __VA_ARGS__); \
-                CLOVE_DEBUG_BREAK;                                                                                     \
-            }                                                                                                          \
+    #define CLOVE_ASSERT(x, ...)                                                                                          \
+        {                                                                                                                 \
+            if(!(x)) {                                                                                                    \
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, ::garlic::clove::LogLevel::Critical, "Assertion Failed: {0}", __VA_ARGS__); \
+                CLOVE_DEBUG_BREAK;                                                                                        \
+            }                                                                                                             \
         }
 #else
     #define CLOVE_ASSERT(x, ...) (x)
