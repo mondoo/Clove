@@ -1,3 +1,8 @@
+#Entity
+add_executable(ECSEntityTest EntityTests.cpp)
+target_link_libraries(ECSEntityTest PRIVATE gtest_main CloveECS)
+add_test(NAME ECSEntityTest COMMAND ECSEntityTest)
+
 #Component
 add_executable(ECSComponentTest ComponentTests.cpp)
 target_link_libraries(ECSComponentTest PRIVATE gtest_main CloveECS)
