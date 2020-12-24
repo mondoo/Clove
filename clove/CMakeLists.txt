@@ -230,8 +230,8 @@ target_link_libraries(
 		CloveLog 
 		CloveMaths 
 		CloveMemory 
-		CloveTimer 
-		
+		CloveTimer
+
 	PRIVATE
 		#Order of these are important
 		BulletDynamics

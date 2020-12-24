@@ -69,7 +69,7 @@ namespace garlic::clove {
         ComponentType *addedComp{ nullptr };
 
         if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-            CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", CLOVE_FUNCTION_NAME_PRETTY);
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", CLOVE_FUNCTION_NAME_PRETTY);
             components[iter->second] = ComponentType{ std::forward<ConstructArgs>(args)... };
             addedComp                = &components[iter->second];
         } else {

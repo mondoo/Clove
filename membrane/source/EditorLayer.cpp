@@ -1,5 +1,7 @@
 #include "Membrane/EditorLayer.hpp"
 
+#include "Membrane/MessageHandler.hpp"
+
 #include <Clove/Application.hpp>
 #include <Clove/Components/CameraComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
@@ -18,6 +20,9 @@ namespace garlic::membrane {
         editorCamera = entityManager->create();
         entityManager->addComponent<clove::TransformComponent>(editorCamera).position = clove::vec3f{ 0.0f, 0.0f, -10.0f };
         entityManager->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
+    }
+
+    void EditorLayer::onUpdate(clove::DeltaTime const deltaTime) {
     }
 
     void EditorLayer::onDetach() {

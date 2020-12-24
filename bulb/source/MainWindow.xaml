@@ -39,18 +39,29 @@
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 		</StackPanel>
-		
+
 		<Image x:Name="RenderArea" Grid.Column="1" Stretch="Fill"/>
 		<TextBox x:Name="Log" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Text="{Binding Log.LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8" BorderBrush="{x:Null}" BorderThickness="0"/>
 
 		<StackPanel x:Name="EntityView" Grid.Column="2" Visibility="{Binding Scene.EntityViewVisibility}">
-			<TextBlock Text="{Binding Scene.SelectedEntity.Name}"/>
+			<TextBox Text="{Binding Scene.SelectedEntity.Name, Mode=TwoWay}"/>
 			<ListBox ItemsSource="{Binding Scene.SelectedEntity.Components}">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<ListBoxItem Content="{Binding Name}"/>
+				<ListBox.Resources>
+					<DataTemplate DataType="{x:Type local:TransformComponentViewModel}">
+						<StackPanel>
+							<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+							<StackPanel Margin="10,0,0,0">
+								<local:Vector3Box Label="Position" LeftFieldText="X" LeftFieldValue="{Binding PositionXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding PositionYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding PositionZValue, Mode=TwoWay}"/>
+								<local:Vector3Box Label="Rotation" LeftFieldText="X" LeftFieldValue="{Binding RotationXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding RotationYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding RotationZValue, Mode=TwoWay}"/>
+								<local:Vector3Box Label="Scale" LeftFieldText="X" LeftFieldValue="{Binding ScaleXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding ScaleYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding ScaleZValue, Mode=TwoWay}"/>
+							</StackPanel>
+						</StackPanel>
 					</DataTemplate>
-				</ListBox.ItemTemplate>
+
+					<DataTemplate DataType="{x:Type local:ComponentViewModel}">
+						<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+					</DataTemplate>
+				</ListBox.Resources>
 			</ListBox>
 			<Menu HorizontalAlignment="Center">
 				<MenuItem Header="Add Component">

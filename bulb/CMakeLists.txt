@@ -18,15 +18,18 @@ add_executable(
 	    ${SOURCE}/MainWindow.xaml
 		${SOURCE}/MainWindow.xaml.cs
 
+		${SOURCE}/Vector3Box.xaml
+		${SOURCE}/Vector3Box.xaml.cs
+
 		${SOURCE}/RelayCommand.cs
 		
 		${SOURCE}/EditorSessionViewModel.cs
 		${SOURCE}/SceneViewModel.cs
 		${SOURCE}/EntityViewModel.cs
 		${SOURCE}/LogViewModel.cs
+
 		${SOURCE}/ComponentViewModel.cs
-		
-		${SOURCE}/EditorLogger.cs
+		${SOURCE}/TransformComponentViewModel.cs
 )
 
 #Libraries
@@ -46,7 +49,10 @@ csharp_set_designer_cs_properties(
 csharp_set_xaml_cs_properties(
 	${SOURCE}/EditorApp.xaml
     ${SOURCE}/EditorApp.xaml.cs
-    
+	
+	${SOURCE}/Vector3Box.xaml
+	${SOURCE}/Vector3Box.xaml.cs
+
 	${SOURCE}/MainWindow.xaml
     ${SOURCE}/MainWindow.xaml.cs
 )
