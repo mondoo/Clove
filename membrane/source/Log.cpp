@@ -69,7 +69,7 @@ namespace garlic::membrane {
         auto delegateSink = std::make_shared<DelegateSink>(sink);
         delegateSink->set_pattern(msclr::interop::marshal_as<std::string>(pattern));
 
-        delegateSink->set_level(spdlog::level::trace);
+        delegateSink->set_level(spdlog::level::debug);
 
         clove::Logger::get().addSink(std::move(delegateSink));
     }
