@@ -7,22 +7,22 @@ namespace garlic::clove {
 
     template<typename ComponentType, typename... ConstructArgs>
     ComponentType &EntityManager::addComponent(Entity entity, ConstructArgs &&... args) {
-        return componentManager.getComponentContainer<ComponentType>().addComponent(entity, std::forward<ConstructArgs>(args)...);
+        return componentManager.addComponent<ComponentType>(entity, std::forward<ConstructArgs>(args)...);
     }
 
     template<typename ComponentType>
     ComponentType &EntityManager::getComponent(Entity entity) {
-        return componentManager.getComponentContainer<ComponentType>().getComponent(entity);
+        return componentManager.getComponent<ComponentType>(entity);
     }
 
     template<typename ComponentType>
     bool EntityManager::hasComponent(Entity entity) {
-        return componentManager.getComponentContainer<ComponentType>().hasComponent(entity);
+        return componentManager.hasComponent<ComponentType>(entity);
     }
 
     template<typename ComponentType>
     void EntityManager::removeComponent(Entity entity) {
-        componentManager.getComponentContainer<ComponentType>().removeComponent(entity);
+        componentManager.removeComponent<ComponentType>(entity);
     }
 
     template<typename... ComponentTypes, typename... ExcludeTypes>

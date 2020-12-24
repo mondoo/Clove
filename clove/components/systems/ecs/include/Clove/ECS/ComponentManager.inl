@@ -5,106 +5,124 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    template<typename ComponentType>
-    ComponentManager::ComponentContainer<ComponentType>::ComponentContainer(EventDispatcher *dispatcher)
-        : ecsEventDispatcher{ dispatcher } {
-    }
-
-    template<typename ComponentType>
-    ComponentManager::ComponentContainer<ComponentType>::ComponentContainer(ComponentContainer &&other) noexcept = default;
-
-    template<typename ComponentType>
-    ComponentManager::ComponentContainer<ComponentType> &ComponentManager::ComponentContainer<ComponentType>::operator=(ComponentContainer &&other) noexcept = default;
-
-    template<typename ComponentType>
-    ComponentManager::ComponentContainer<ComponentType>::~ComponentContainer() = default;
-
-    template<typename ComponentType>
-    bool ComponentManager::ComponentContainer<ComponentType>::hasComponent(Entity entity) const {
-        auto iter{ entityToIndex.find(entity) };
-        return iter != entityToIndex.end();
-    }
-
-    template<typename ComponentType>
-    void ComponentManager::ComponentContainer<ComponentType>::cloneComponent(Entity from, Entity to) {
-        if constexpr(std::is_copy_constructible_v<ComponentType>) {
-            if(auto iter = entityToIndex.find(from); iter != entityToIndex.end()) {
-                ComponentType &component{ components[iter->second] };
-                addComponent(to, component);
-            }
-        } else {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Component that is not copyable was attempted to be copied. Entity will be incomplete");
-        }
-    }
-
-    template<typename ComponentType>
-    void ComponentManager::ComponentContainer<ComponentType>::removeComponent(Entity entity) {
-        if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-            size_t const index{ iter->second };
-            size_t const lastIndex{ components.size() - 1 };
-
-            ComponentType removedComp{ std::move(components[index]) };
-
-            if(index < lastIndex) {
-                components[index] = std::move(components.back());
-
-                //Update the index map so it knows about the moved component
-                for(auto [entityId, componentIndex] : entityToIndex) {
-                    if(componentIndex == lastIndex) {
-                        entityToIndex[entityId] = index;
-                        break;
-                    }
+    namespace {
+        template<size_t index = 0, typename... ComponentTypes>
+        void *getPointerToElement(std::tuple<ComponentTypes...> &tuple, ComponentId_t findId) {
+            if constexpr(index < sizeof...(ComponentTypes)) {
+                auto &component{ std::get<index>(tuple) };
+                if(ComponentId<decltype(component)>::value() == findId) {
+                    return &component;
+                } else {
+                    return getPointerToElement<index + 1, ComponentTypes...>(tuple, findId);
                 }
+            } else {
+                return nullptr;
             }
-            components.pop_back();
-            entityToIndex.erase(entity);
-
-            ecsEventDispatcher->broadCastEvent(ComponentRemovedEvent<ComponentType>{ entity, removedComp });
         }
     }
 
-    template<typename ComponentType>
-    template<typename... ConstructArgs>
-    ComponentType &ComponentManager::ComponentContainer<ComponentType>::addComponent(Entity entity, ConstructArgs &&... args) {
-        ComponentType *addedComp{ nullptr };
+    template<typename... ComponentTypes>
+    ComponentManager::ComponentContainer<ComponentTypes...>::ComponentContainer() = default;
 
+    template<typename... ComponentTypes>
+    ComponentManager::ComponentContainer<ComponentTypes...>::ComponentContainer(ComponentContainer &&other) noexcept = default;
+
+    template<typename... ComponentTypes>
+    ComponentManager::ComponentContainer<ComponentTypes...> &ComponentManager::ComponentContainer<ComponentTypes...>::operator=(ComponentContainer &&other) noexcept = default;
+
+    template<typename... ComponentTypes>
+    ComponentManager::ComponentContainer<ComponentTypes...>::~ComponentContainer() = default;
+
+    template<typename... ComponentTypes>
+    bool ComponentManager::ComponentContainer<ComponentTypes...>::hasEntity(Entity entity) {
+        return false;
+    }
+
+    template<typename... ComponentTypes>
+    void ComponentManager::ComponentContainer<ComponentTypes...>::addEntity(Entity entity, ComponentTypes &&... components) {
+        if(auto iter = entityToIndex.find(entity); iter == entityToIndex.end()) {
+            entityComponents.emplace_back(std::tuple<ComponentTypes...>{ std::forward<ComponentTypes>(components)... });
+            entityToIndex[entity] = entityComponents.size() - 1;
+        }
+    }
+
+    template<typename... ComponentTypes>
+    void ComponentManager::ComponentContainer<ComponentTypes...>::removeEntity(Entity entity) {
+        //     if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
+        //         size_t const index{ iter->second };
+        //         size_t const lastIndex{ components.size() - 1 };
+
+        //         ComponentType removedComp{ std::move(components[index]) };
+
+        //         if(index < lastIndex) {
+        //             components[index] = std::move(components.back());
+
+        //             //Update the index map so it knows about the moved component
+        //             for(auto [entityId, componentIndex] : entityToIndex) {
+        //                 if(componentIndex == lastIndex) {
+        //                     entityToIndex[entityId] = index;
+        //                     break;
+        //                 }
+        //             }
+        //         }
+        //         components.pop_back();
+        //         entityToIndex.erase(entity);
+
+        //         ecsEventDispatcher->broadCastEvent(ComponentRemovedEvent<ComponentType>{ entity, removedComp });
+        //     }
+    }
+
+    template<typename... ComponentTypes>
+    void *ComponentManager::ComponentContainer<ComponentTypes...>::getComponent(Entity entity, ComponentId_t id) {
         if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", CLOVE_FUNCTION_NAME_PRETTY);
-            components[iter->second] = ComponentType{ std::forward<ConstructArgs>(args)... };
-            addedComp                = &components[iter->second];
+            std::tuple<ComponentTypes...> &components{ entityComponents[entityToIndex[entity]] };
+            return getPointerToElement(components, id);
         } else {
-            components.emplace_back(ComponentType{ std::forward<ConstructArgs>(args)... });
-            entityToIndex[entity] = components.size() - 1;
-            addedComp             = &components.back();
-        }
-
-        ecsEventDispatcher->broadCastEvent(ComponentAddedEvent<ComponentType>{ entity, *addedComp });
-
-        return *addedComp;
-    }
-
-    template<typename ComponentType>
-    ComponentType &ComponentManager::ComponentContainer<ComponentType>::getComponent(Entity entity) {
-        if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-            return components[iter->second];
-        } else {
-            //TODO: return Excepted type?
-            CLOVE_ASSERT(false, "Entity does not have component of specified type!");
-            ComponentType *nullComp{ nullptr };
-            return *nullComp;
+            return nullptr;
         }
     }
 
-    template<typename ComponentType>
-    ComponentManager::ComponentContainer<ComponentType> &ComponentManager::getComponentContainer() {
-        ComponentId const componentId{ typeid(ComponentType).hash_code() };
-        if(auto iter = containers.find(componentId); iter != containers.end()) {
-            return static_cast<ComponentContainer<ComponentType> &>(*iter->second.get());
-        } else {
-            auto container{ std::make_unique<ComponentContainer<ComponentType>>(ecsEventDispatcher) };
+    template<typename... ComponentTypes>
+    void ComponentManager::ComponentContainer<ComponentTypes...>::cloneEntity(Entity from, Entity to) {
+    }
 
-            containers[componentId] = std::move(container);
-            return static_cast<ComponentContainer<ComponentType> &>(*containers[componentId].get());
-        }
+    template<typename ComponentType, typename... ConstructArgs>
+    ComponentType &ComponentManager::addComponent(Entity entity, ConstructArgs &&... args) {
+        //TEMP: Just adding them straight in for now
+        auto container{ std::make_unique<ComponentContainer<ComponentType>>() };
+        container->addEntity(entity, ComponentType{ std::forward<ConstructArgs>(args)... });
+
+        //ComponentType *comp{ container->getComponent<ComponentType>(entity) };
+        auto *comp{ reinterpret_cast<ComponentType *>(container->getComponent(entity, ComponentId<ComponentType>::value())) };
+
+        containers.emplace_back(std::move(container));
+
+        //TODO: Broadcast event
+
+        return *comp;
+    }
+
+    template<typename ComponentType>
+    ComponentType &ComponentManager::getComponent(Entity entity) {
+        // if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
+        //     return components[iter->second];
+        // } else {
+        //     //TODO: return Excepted type?
+        //     CLOVE_ASSERT(false, "Entity does not have component of specified type!");
+        //     ComponentType *nullComp{ nullptr };
+        //     return *nullComp;
+        // }
+
+        ComponentType *nullComp{ nullptr };
+        return *nullComp;
+    }
+
+    template<typename ComponentType>
+    bool ComponentManager::hasComponent(Entity entity) {
+        return false;
+    }
+
+    template<typename ComponentType>
+    void ComponentManager::removeComponent(Entity entity) {
     }
 }

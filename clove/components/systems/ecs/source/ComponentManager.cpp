@@ -10,14 +10,14 @@ namespace garlic::clove {
     ComponentManager::~ComponentManager() = default;
 
     void ComponentManager::cloneEntitiesComponents(Entity from, Entity to) {
-        for(auto &[key, container] : containers) {
-            container->cloneComponent(from, to);
-        }
+        // for(auto &[key, container] : containers) {
+        //     //container->cloneComponent(from, to);
+        // }
     }
 
     void ComponentManager::onEntityDestroyed(Entity entity) {
-        for(auto &[key, container] : containers) {
-            container->removeComponent(entity);
-        }
+        // for(auto &[key, container] : containers) {
+        //     //container->removeComponent(entity);
+        // }
     }
 }
