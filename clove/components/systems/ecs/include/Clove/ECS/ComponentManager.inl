@@ -7,10 +7,10 @@
 namespace garlic::clove {
     namespace {
         template<size_t index = 0, typename... ComponentTypes>
-        void *getPointerToElement(std::tuple<ComponentTypes...> &tuple, ComponentId_t findId) {
+        void *getPointerToElement(std::tuple<ComponentTypes...> &tuple, ComponentId::type findId) {
             if constexpr(index < sizeof...(ComponentTypes)) {
                 auto &component{ std::get<index>(tuple) };
-                if(ComponentId<decltype(component)>::value() == findId) {
+                if(ComponentId::get<decltype(component)>() == findId) {
                     return &component;
                 } else {
                     return getPointerToElement<index + 1, ComponentTypes...>(tuple, findId);
@@ -73,7 +73,7 @@ namespace garlic::clove {
     }
 
     template<typename... ComponentTypes>
-    void *ComponentManager::ComponentContainer<ComponentTypes...>::getComponent(Entity entity, ComponentId_t id) {
+    void *ComponentManager::ComponentContainer<ComponentTypes...>::getComponent(Entity entity, ComponentId::type id) {
         if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
             std::tuple<ComponentTypes...> &components{ entityComponents[entityToIndex[entity]] };
             return getPointerToElement(components, id);
@@ -93,7 +93,7 @@ namespace garlic::clove {
         container->addEntity(entity, ComponentType{ std::forward<ConstructArgs>(args)... });
 
         //ComponentType *comp{ container->getComponent<ComponentType>(entity) };
-        auto *comp{ reinterpret_cast<ComponentType *>(container->getComponent(entity, ComponentId<ComponentType>::value())) };
+        auto *comp{ reinterpret_cast<ComponentType *>(container->getComponent(entity, ComponentId::get<ComponentType>())) };
 
         containers.emplace_back(std::move(container));
 

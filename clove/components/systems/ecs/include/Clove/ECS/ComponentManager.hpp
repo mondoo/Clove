@@ -8,25 +8,21 @@
 #include <unordered_map>
 #include <vector>
 
+#include <Clove/Log/Log.hpp>
+
 namespace garlic::clove {
     class EventDispatcher;
 
-    //TODO: Put in inl
-    //namespace internal {
-    using ComponentId_t = size_t;
-
-    template<typename ComponentType>
     struct ComponentId {
-    private:
-        static inline ComponentId_t counter{ 0 };
+        using type = size_t;
 
-    public:
-        static inline ComponentId_t const value() {
-            static ComponentId_t const id{ counter++ };
+        template<typename ComponentType>
+        static inline type const get() {
+            static type const id{ typeid(ComponentType).hash_code() };
             return id;
         }
     };
-    //}
+
 }
 
 namespace garlic::clove {
@@ -46,11 +42,11 @@ namespace garlic::clove {
             //virtual void addEntity(Entity entity)    = 0;
             virtual void removeEntity(Entity entity) = 0;
 
-            virtual void *getComponent(Entity entity, ComponentId_t id) = 0;
+            virtual void *getComponent(Entity entity, ComponentId::type id) = 0;
 
             template<typename ComponentType>
             ComponentType *getComponent(Entity entity) {
-                return reinterpret_cast<ComponentType *>(getComponent(entity, ComponentId<ComponentType>::value()));
+                return reinterpret_cast<ComponentType *>(getComponent(entity, ComponentId::get<ComponentType>()));
             }
 
             virtual void cloneEntity(Entity from, Entity to) = 0;
@@ -95,7 +91,7 @@ namespace garlic::clove {
             void addEntity(Entity entity, ComponentTypes &&... components) /* final */;
             void removeEntity(Entity entity) final;
 
-            void *getComponent(Entity entity, ComponentId_t id) final;
+            void *getComponent(Entity entity, ComponentId::type id) final;
 
             void cloneEntity(Entity from, Entity to) final;
         };
