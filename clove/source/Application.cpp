@@ -76,7 +76,7 @@ namespace garlic::clove {
     }
 
     void Application::pushLayer(std::shared_ptr<Layer> layer, LayerGroup group) {
-        CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Attached layer: {0}", layer->getName());
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Attached layer: {0}", layer->getName());
         layer->onAttach();
         layers[group].push_back(std::move(layer));
     }
@@ -84,7 +84,7 @@ namespace garlic::clove {
     void Application::popLayer(std::shared_ptr<Layer> const &layer) {
         for(auto &&[key, group] : layers) {
             if(auto it = std::find(group.begin(), group.end(), layer); it != group.end()) {
-                CLOVE_LOG_DEBUG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Popped layer: {0}", (*it)->getName());
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Popped layer: {0}", (*it)->getName());
                 (*it)->onDetach();
                 group.erase(it);
                 break;

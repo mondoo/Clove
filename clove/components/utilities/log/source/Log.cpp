@@ -14,7 +14,11 @@ namespace garlic::clove {
         fileSink->set_pattern("[%D %T][%l] %v");
 
         consoleSink->set_level(spdlog::level::trace);
+#if CLOVE_DEBUG
         fileSink->set_level(spdlog::level::trace);
+#else
+        fileSink->set_level(spdlog::level::info);
+#endif
 
         std::vector<spdlog::sink_ptr> sinks{ consoleSink, fileSink };
         logger = std::make_unique<spdlog::logger>("GARLIC_LOGGER", sinks.begin(), sinks.end());
@@ -23,7 +27,7 @@ namespace garlic::clove {
 
     Logger::~Logger() = default;
 
-    void Logger::addSink(std::shared_ptr<spdlog::sinks::sink> sink){
+    void Logger::addSink(std::shared_ptr<spdlog::sinks::sink> sink) {
         logger->sinks().push_back(std::move(sink));
     }
 
