@@ -7,8 +7,7 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
-
-#include <Clove/Log/Log.hpp>
+#include <typeinfo>
 
 namespace garlic::clove {
     class EventDispatcher;
