@@ -17,12 +17,16 @@ namespace garlic::membrane {
                 default:
                 case LogLevel::Trace:
                     return clove::LogLevel::Trace;
+                case LogLevel::Debug:
+                    return clove::LogLevel::Debug;
                 case LogLevel::Info:
                     return clove::LogLevel::Info;
                 case LogLevel::Warning:
                     return clove::LogLevel::Warning;
                 case LogLevel::Error:
                     return clove::LogLevel::Error;
+                case LogLevel::Critical:
+                    return clove::LogLevel::Critical;
             }
         }
 

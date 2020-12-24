@@ -3,9 +3,11 @@
 namespace garlic::membrane {
     public enum class LogLevel {
         Trace,
+        Debug,
         Info,
         Warning,
         Error,
+        Critical,
     };
 }
 
