@@ -26,7 +26,6 @@ namespace Garlic.Bulb
         private IntPtr backBuffer;
 
         private Thread engineThread;
-        private object updateEngineLock = new object();
         private bool exitThread = false;
 
         private Size size = new Size(1, 1);
@@ -91,10 +90,7 @@ namespace Garlic.Bulb
                 if (engineApp.isRunning())
                 {
                     //Update the application
-                    lock (updateEngineLock)
-                    {
-                        engineApp.tick();
-                    }
+                    engineApp.tick();
 
                     //Render to image
                     lock (resizeLock)
