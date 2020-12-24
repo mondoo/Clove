@@ -1,3 +1,8 @@
+#Component
+add_executable(ECSComponentTest ComponentTests.cpp)
+target_link_libraries(ECSComponentTest PRIVATE gtest_main CloveECS)
+add_test(NAME ECSComponentTest COMMAND ECSComponentTest)
+
 #System
 add_executable(ECSSystemTest SystemTests.cpp)
 target_link_libraries(ECSSystemTest PRIVATE gtest_main CloveECS)
