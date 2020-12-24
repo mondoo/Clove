@@ -30,14 +30,6 @@ namespace garlic::membrane {
             }
         }
 
-        struct NullMutex {
-            void lock() const {}
-            void unlock() const {}
-            bool try_lock() const {
-                return true;
-            }
-        };
-
         class DelegateSink : public spdlog::sinks::sink {
             //VARIABLES
         public:
