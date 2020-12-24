@@ -13,12 +13,12 @@ namespace garlic::clove {
         consoleSink->set_pattern("%^[%T] %v%$");
         fileSink->set_pattern("[%D %T][%l] %v");
 
-        consoleSink->set_level(spdlog::level::trace);
 #if CLOVE_DEBUG
-        fileSink->set_level(spdlog::level::trace);
+        consoleSink->set_level(spdlog::level::trace);
 #else
-        fileSink->set_level(spdlog::level::info);
+        consoleSink->set_level(spdlog::level::info);
 #endif
+        fileSink->set_level(spdlog::level::trace);
 
         std::vector<spdlog::sink_ptr> sinks{ consoleSink, fileSink };
         logger = std::make_unique<spdlog::logger>("GARLIC_LOGGER", sinks.begin(), sinks.end());
