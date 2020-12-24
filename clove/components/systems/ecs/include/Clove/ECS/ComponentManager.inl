@@ -92,11 +92,10 @@ namespace garlic::clove {
         auto container{ std::make_unique<ComponentContainer<ComponentType>>() };
         container->addEntity(entity, ComponentType{ std::forward<ConstructArgs>(args)... });
 
-        //auto *comp{ container->getComponent<ComponentType>(entity) };
-        auto *comp{ reinterpret_cast<ComponentType *>(container->getComponent(entity, ComponentId::get<ComponentType>())) };
-
+        auto *comp{ container->getComponent<ComponentType>(entity) };
+        
         containers.emplace_back(std::move(container));
-
+        
         //TODO: Broadcast event
 
         return *comp;

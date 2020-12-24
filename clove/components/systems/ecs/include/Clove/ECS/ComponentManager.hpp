@@ -42,7 +42,6 @@ namespace garlic::clove {
             virtual void removeEntity(Entity entity) = 0;
 
             virtual void *getComponent(Entity entity, ComponentId::type id) = 0;
-
             template<typename ComponentType>
             ComponentType *getComponent(Entity entity) {
                 return reinterpret_cast<ComponentType *>(getComponent(entity, ComponentId::get<ComponentType>()));
@@ -91,6 +90,7 @@ namespace garlic::clove {
             void removeEntity(Entity entity) final;
 
             void *getComponent(Entity entity, ComponentId::type id) final;
+            using ComponentContainerInterface::getComponent; //Make sure to bring in the base implementation
 
             void cloneEntity(Entity from, Entity to) final;
         };
