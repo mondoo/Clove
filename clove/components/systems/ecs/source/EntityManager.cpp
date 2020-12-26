@@ -20,7 +20,7 @@ namespace garlic::clove {
 
     Entity EntityManager::clone(Entity entity) {
         Entity clonedEntity{ create() };
-        componentManager.cloneEntitiesComponents(entity, clonedEntity);
+        //componentManager.cloneEntitiesComponents(entity, clonedEntity);
 
         return clonedEntity;
     }
@@ -37,7 +37,7 @@ namespace garlic::clove {
 
     void EntityManager::destroyAll() {
         for(Entity entity : activeEntities) {
-            componentManager.onEntityDestroyed(entity);
+            //componentManager.onEntityDestroyed(entity);
         }
         activeEntities.clear();
     }

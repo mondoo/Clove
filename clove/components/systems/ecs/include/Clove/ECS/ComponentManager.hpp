@@ -5,23 +5,23 @@
 #include <Clove/Memory/PoolAllocator.hpp>
 #include <array>
 #include <memory>
+#include <type_traits>
+#include <typeinfo>
 #include <unordered_map>
 #include <vector>
-#include <typeinfo>
 
 namespace garlic::clove {
     class EventDispatcher;
 
     struct ComponentId {
-        using type = size_t;
+        using Type = size_t;
 
         template<typename ComponentType>
-        static inline type const get() {
-            static type const id{ typeid(ComponentType).hash_code() };
+        static inline size_t const get() {
+            static size_t const id{ typeid(ComponentType).hash_code() };
             return id;
         }
     };
-
 }
 
 namespace garlic::clove {
@@ -29,75 +29,156 @@ namespace garlic::clove {
         //TYPES
     private:
         /**
-         * @brief Interface class to allow component containers to be stored in an array.
-         */
-        class ComponentContainerInterface {
-            //FUNCTIONS
-        public:
-            virtual ~ComponentContainerInterface();
-
-            virtual bool hasEntity(Entity entity) = 0;
-
-            //virtual void addEntity(Entity entity)    = 0;
-            virtual void removeEntity(Entity entity) = 0;
-
-            virtual void *getComponent(Entity entity, ComponentId::type id) = 0;
-            template<typename ComponentType>
-            ComponentType *getComponent(Entity entity) {
-                return reinterpret_cast<ComponentType *>(getComponent(entity, ComponentId::get<ComponentType>()));
-            }
-
-            virtual void cloneEntity(Entity from, Entity to) = 0;
-        };
-
-        /**
          * @brief Contains all componenties for an entity of a specific component composition.
          * @details Whenever a component is added or removed from an entitiy it is moved to a 
          * different container. This ensures cache friendly access when iterating over components
          * of a certain type.
          * @tparam ComponentTypes The components that make up an entity's type.
          */
-        template<typename... ComponentTypes>
-        class ComponentContainer : public ComponentContainerInterface {
+        //template<typename... ComponentTypes>
+        class ComponentContainer /* : public ComponentContainerInterface */ {
+            //TYPES
+        private:
+            struct ComponentMetaData {
+                ComponentId::Type id;
+                size_t size;
+                size_t alignment;
+            };
+
             //VARIABLES
         private:
-            /**
-             * @brief Maps the Entity id to an index into entityComponents
-             */
-            std::unordered_map<Entity, size_t> entityToIndex;
-            std::vector<std::tuple<ComponentTypes...>> entityComponents;
+            using TupleType = std::tuple<int>;
 
-            /**
-             * @brief Contains the Ids of the components this container holds.
-             */
-            //std::array<ComponentId_t, sizeof...(ComponentTypes)> const componentIds{ ComponentId<ComponentTypes>::value()... };
+            //TODO: std::byte
+            std::vector<char> buffer{};                         /**< Raw buffer of component types. */
+            std::unordered_map<Entity, size_t> entityToIndex{}; /**< Maps the Entity id to an index into entityComponents. */
+            std::vector<ComponentMetaData> const data{};        /**< MetaData about a single element. */
 
             //FUNCTIONS
         public:
-            ComponentContainer();
+            ComponentContainer(std::vector<ComponentMetaData> data, size_t stride)
+                : data{ std::move(data) } {
+            }
 
-            ComponentContainer(ComponentContainer const &other) = delete;
-            ComponentContainer(ComponentContainer &&other) noexcept;
+            ComponentContainer(ComponentContainer const &other)     = delete;
+            ComponentContainer(ComponentContainer &&other) noexcept = default;
 
             ComponentContainer &operator=(ComponentContainer const &other) = delete;
-            ComponentContainer &operator=(ComponentContainer &&other) noexcept;
+            ComponentContainer &operator=(ComponentContainer &&other) noexcept = default;
 
-            ~ComponentContainer();
+            ~ComponentContainer() = default;
 
-            bool hasEntity(Entity entity) final;
+            template<typename ComponentType>
+            static ComponentContainer create() {
+                ComponentMetaData data{};
+                data.id        = ComponentId::get<ComponentType>();
+                data.size      = sizeof(ComponentType);
+                data.alignment = alignof(ComponentType);
 
-            void addEntity(Entity entity, ComponentTypes &&... components) /* final */;
-            void removeEntity(Entity entity) final;
+                return { { std::move(data) } };
+            }
 
-            void *getComponent(Entity entity, ComponentId::type id) final;
-            using ComponentContainerInterface::getComponent; //Make sure to bring in the base implementation
+            template<typename ComponentType>
+            static ComponentContainer appendType(ComponentContainer const &from) {
+                ComponentMetaData data{};
+                data.id        = ComponentId::get<ComponentType>();
+                data.size      = sizeof(ComponentType);
+                data.alignment = alignof(ComponentType);
 
-            void cloneEntity(Entity from, Entity to) final;
+                auto elementData{ from.data };
+
+                elementData.push_back(data);
+
+                return { { std::move(elementData) } };
+            }
+
+            bool hasEntity(Entity entity) /* final */ {
+                return entityToIndex.find(entity) != entityToIndex.end();
+            }
+
+            void addEntity(Entity entity, void *components) {
+                size_t const totalSize{ std::size(buffer) };
+                buffer.resize(totalSize + getElementSize());
+
+                char *back{ &buffer.back() };
+                back -= getElementSize();
+
+                memcpy(back, components, getElementSize());
+            }
+
+            void *removeEntity(Entity entity) {
+                size_t const index{ entityToIndex[entity] };
+                size_t const lastIndex{ (std::size(data) / getElementSize()) - 1 };
+
+                char *element{ std::data(buffer) + index * getElementSize() };
+
+                char *data = reinterpret_cast<char *>(malloc(getElementSize()));
+                memcpy(data, element, getElementSize());
+
+                if(index < lastIndex) {
+                    char *back{ &buffer.back() };
+                    back -= getElementSize();
+                    memcpy(element, back, getElementSize());
+
+                    //Update the index map so it knows about the moved component
+                    for(auto [entityId, componentIndex] : entityToIndex) {
+                        if(componentIndex == lastIndex) {
+                            entityToIndex[entityId] = index;
+                            break;
+                        }
+                    }
+                }
+
+                size_t const totalSize{ std::size(buffer) };
+                buffer.resize(totalSize - getElementSize());
+
+                return data;
+            }
+
+            template<typename ComponentType>
+            bool hasComponent(Entity entity) {
+                return canStoreComponent<ComponentType>() && hasEntity(entity);
+            }
+
+            template<typename ComponentType>
+            bool canStoreComponent() {
+                for(auto id : data) {
+                    if(id.id == ComponentId::get<ComponentType>()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            template<typename ComponentType>
+            ComponentType &getComponent(Entity entity) {
+                CLOVE_ASSERT(hasEntity(entity), "");
+                size_t const index{ entityToIndex[entity] };
+                char *const element{ std::data(buffer) + index * getElementSize() };
+
+                char *component{ element };
+                for(size_t i{ 0 }; i < std::size(data); ++i) {
+                    if(data[i].id != ComponentId::get<ComponentType>()) {
+                        component += data[i].size;
+                    }
+                }
+
+                return reinterpret_cast<ComponentType *>(component);
+            }
+
+        private:
+            size_t getElementSize() {
+                size_t size{ 0 };
+                for(auto id : data) {
+                    size += id.size;
+                }
+                return size;
+            }
         };
 
         //VARIABLES
     private:
-        std::vector<std::unique_ptr<ComponentContainerInterface>> containers;
+        std::vector<ComponentContainer> containers;
 
         EventDispatcher *ecsEventDispatcher{ nullptr };
 
@@ -115,19 +196,29 @@ namespace garlic::clove {
         ~ComponentManager();
 
         template<typename ComponentType, typename... ConstructArgs>
-        ComponentType &addComponent(Entity entity, ConstructArgs &&... args);
-        template<typename ComponentType>
-        ComponentType &getComponent(Entity entity);
+        ComponentType &addComponent(Entity entity, ConstructArgs &&... args) {
+            ComponentType *nullComp{ nullptr };
+            return *nullComp;
+        }
 
         template<typename ComponentType>
-        bool hasComponent(Entity entity);
+        ComponentType &getComponent(Entity entity) {
+            ComponentType *nullComp{ nullptr };
+            return *nullComp;
+        }
 
         template<typename ComponentType>
-        void removeComponent(Entity entity);
+        bool hasComponent(Entity entity) {
+            return false;
+        }
 
-        void cloneEntitiesComponents(Entity from, Entity to);
+        template<typename ComponentType>
+        void removeComponent(Entity entity) {
+        }
 
-        void onEntityDestroyed(Entity entity);
+        //void cloneEntitiesComponents(Entity from, Entity to);
+
+        //void onEntityDestroyed(Entity entity);
 
         //TODO:
         //template<typename ComponentTypes...>
