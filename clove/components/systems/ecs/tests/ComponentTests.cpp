@@ -18,7 +18,7 @@ TEST(ECSComponentTests, CanAddSingleComponentToEntity) {
     Entity valueEntity{ manager.create() };
 
     auto &falseComp{ manager.addComponent<BoolComponent>(defaultEntity) };
-    auto &trueComp{ manager.addComponent<BoolComponent>(defaultEntity, true) };
+    auto &trueComp{ manager.addComponent<BoolComponent>(valueEntity, true) };
 
     ASSERT_FALSE(falseComp.value);
     ASSERT_TRUE(trueComp.value);
