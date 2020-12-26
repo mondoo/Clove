@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <functional>
+#include <string_view>
 
 namespace garlic::clove::TextureLoader {
     struct LoadedTextureData {
