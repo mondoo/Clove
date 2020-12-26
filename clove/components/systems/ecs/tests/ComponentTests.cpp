@@ -22,14 +22,32 @@ TEST(ECSComponentTests, CanAddSingleComponentToEntity) {
 
     ASSERT_FALSE(falseComp.value);
     ASSERT_TRUE(trueComp.value);
+
+    //TODO: Tests for adding a component to an entity that already exists
+    //TODO: Tests for adding a component to an entity that doesn't exist
 }
 
-TEST(ECSComponentTests, CanCheckIfAnEntityHasAComponent) {
-    EntityManager manager{};
+// TEST(ECSComponentTests, CanCheckIfAnEntityHasAComponent) {
+//     EntityManager manager{};
 
-    Entity entity{ manager.create() };
-    manager.addComponent<BoolComponent>(entity);
+//     Entity entity{ manager.create() };
+//     manager.addComponent<BoolComponent>(entity);
 
-    ASSERT_TRUE(manager.hasComponent<BoolComponent>(entity));
-    ASSERT_FALSE(manager.hasComponent<FloatComponent>(entity));
-}
+//     ASSERT_TRUE(manager.hasComponent<BoolComponent>(entity));
+//     ASSERT_FALSE(manager.hasComponent<FloatComponent>(entity));
+// }
+
+// TEST(ECSComponentTests, CanGetAnEntitysComponent) {
+//     //TODO Make sure to assert_death for ones that do not have component type.
+// }
+
+// TEST(ECSComponentTests, CanAddMultipleComponentsToEntity) {
+//     EntityManager manager{};
+
+//     Entity entity{ manager.create() };
+//     manager.addComponent<BoolComponent>(entity);
+//     manager.addComponent<FloatComponent>(entity);
+
+//     ASSERT_TRUE(manager.hasComponent<BoolComponent>(entity));
+//     ASSERT_TRUE(manager.hasComponent<FloatComponent>(entity));
+// }

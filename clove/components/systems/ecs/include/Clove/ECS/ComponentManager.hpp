@@ -3,6 +3,7 @@
 #include "Clove/ECS/Entity.hpp"
 
 #include <Clove/Memory/PoolAllocator.hpp>
+#include <any>
 #include <array>
 #include <memory>
 #include <type_traits>
@@ -28,6 +29,18 @@ namespace garlic::clove {
     class ComponentManager {
         //TYPES
     private:
+        class ComponentContainerInterface {
+        public:
+            virtual bool canHold(std::vector<std::any> const &components) = 0;
+            virtual bool canHold(std::type_info const &component)         = 0;
+
+            virtual bool hasEntity(Entity entity)                                   = 0;
+            virtual void addEntity(Entity entity, std::vector<std::any> components) = 0;
+            virtual std::vector<std::any> removeEntity(Entity entity)               = 0;
+
+            virtual void *getComponent(Entity entity, std::type_info const &info) = 0;
+        };
+
         /**
          * @brief Contains all componenties for an entity of a specific component composition.
          * @details Whenever a component is added or removed from an entitiy it is moved to a 
@@ -35,30 +48,16 @@ namespace garlic::clove {
          * of a certain type.
          * @tparam ComponentTypes The components that make up an entity's type.
          */
-        //template<typename... ComponentTypes>
-        class ComponentContainer /* : public ComponentContainerInterface */ {
-            //TYPES
-        private:
-            struct ComponentMetaData {
-                ComponentId::Type id;
-                size_t size;
-                size_t alignment;
-            };
-
+        template<typename... ComponentTypes>
+        class ComponentContainer : public ComponentContainerInterface {
             //VARIABLES
         private:
-            using TupleType = std::tuple<int>;
-
-            //TODO: std::byte
-            std::vector<char> buffer{};                         /**< Raw buffer of component types. */
-            std::unordered_map<Entity, size_t> entityToIndex{}; /**< Maps the Entity id to an index into entityComponents. */
-            std::vector<ComponentMetaData> const data{};        /**< MetaData about a single element. */
+            std::unordered_map<Entity, size_t> entityToIndex{};            /**< Maps the Entity id to an index into entityComponents. */
+            std::vector<std::tuple<ComponentTypes...>> entityComponents{}; /**< Contains a tuple of components for each entity. */
 
             //FUNCTIONS
         public:
-            ComponentContainer(std::vector<ComponentMetaData> data, size_t stride)
-                : data{ std::move(data) } {
-            }
+            ComponentContainer() = default;
 
             ComponentContainer(ComponentContainer const &other)     = delete;
             ComponentContainer(ComponentContainer &&other) noexcept = default;
@@ -68,117 +67,145 @@ namespace garlic::clove {
 
             ~ComponentContainer() = default;
 
-            template<typename ComponentType>
-            static ComponentContainer create() {
-                ComponentMetaData data{};
-                data.id        = ComponentId::get<ComponentType>();
-                data.size      = sizeof(ComponentType);
-                data.alignment = alignof(ComponentType);
+            bool canHold(std::vector<std::any> const &components) final {
+                if(std::size(components) != sizeof...(ComponentTypes)) {
+                    return false;
+                }
 
-                return { { std::move(data) } };
+                return areSame(components, std::make_index_sequence<sizeof...(ComponentTypes)>{});
             }
 
-            template<typename ComponentType>
-            static ComponentContainer appendType(ComponentContainer const &from) {
-                ComponentMetaData data{};
-                data.id        = ComponentId::get<ComponentType>();
-                data.size      = sizeof(ComponentType);
-                data.alignment = alignof(ComponentType);
-
-                auto elementData{ from.data };
-
-                elementData.push_back(data);
-
-                return { { std::move(elementData) } };
+            bool canHold(std::type_info const &component) final {
+                return ((typeid(ComponentTypes) == component) || ...);
             }
 
-            bool hasEntity(Entity entity) /* final */ {
+            bool hasEntity(Entity entity) final {
                 return entityToIndex.find(entity) != entityToIndex.end();
             }
 
-            void addEntity(Entity entity, void *components) {
-                size_t const totalSize{ std::size(buffer) };
-                buffer.resize(totalSize + getElementSize());
+            void addEntity(Entity entity, std::vector<std::any> components) final {
+                //TODO: Needed?
+                //if(canHold(components)) {
+                auto compTuple{ convert(components, std::make_index_sequence<sizeof...(ComponentTypes)>{}) };
 
-                char *back{ &buffer.back() };
-                back -= getElementSize();
-
-                memcpy(back, components, getElementSize());
+                if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
+                    entityComponents[iter->second] = std::move(compTuple);
+                } else {
+                    entityComponents.emplace_back(std::move(compTuple));
+                    entityToIndex[entity] = entityComponents.size() - 1;
+                }
+                //}
+                //TODO: Error if not
             }
 
-            void *removeEntity(Entity entity) {
-                size_t const index{ entityToIndex[entity] };
-                size_t const lastIndex{ (std::size(data) / getElementSize()) - 1 };
+            std::vector<std::any> removeEntity(Entity entity) final {
+                if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
+                    size_t const index{ iter->second };
+                    size_t const lastIndex{ entityComponents.size() - 1 };
 
-                char *element{ std::data(buffer) + index * getElementSize() };
+                    std::tuple<ComponentTypes...> removedComponents{ std::move(entityComponents[index]) };
 
-                char *data = reinterpret_cast<char *>(malloc(getElementSize()));
-                memcpy(data, element, getElementSize());
+                    if(index < lastIndex) {
+                        entityComponents[index] = std::move(entityComponents.back());
 
-                if(index < lastIndex) {
-                    char *back{ &buffer.back() };
-                    back -= getElementSize();
-                    memcpy(element, back, getElementSize());
-
-                    //Update the index map so it knows about the moved component
-                    for(auto [entityId, componentIndex] : entityToIndex) {
-                        if(componentIndex == lastIndex) {
-                            entityToIndex[entityId] = index;
-                            break;
+                        //Update the index map so it knows about the moved component
+                        for(auto [entityId, componentIndex] : entityToIndex) {
+                            if(componentIndex == lastIndex) {
+                                entityToIndex[entityId] = index;
+                                break;
+                            }
                         }
                     }
+                    entityComponents.pop_back();
+                    entityToIndex.erase(entity);
+
+                    return { std::get<ComponentTypes>(removedComponents)... };
                 }
 
-                size_t const totalSize{ std::size(buffer) };
-                buffer.resize(totalSize - getElementSize());
-
-                return data;
+                //TODO: Expected??
+                return {};
             }
 
-            template<typename ComponentType>
-            bool hasComponent(Entity entity) {
-                return canStoreComponent<ComponentType>() && hasEntity(entity);
+            // template<typename ComponentType>
+            // bool hasComponent(Entity entity) {
+            // }
+
+            void *getComponent(Entity entity, std::type_info const &info) final {
+                //TODO: Check entity is in here
+                return getPointerToElement<0>(info, entityComponents[entityToIndex[entity]]);
             }
 
-            template<typename ComponentType>
-            bool canStoreComponent() {
-                for(auto id : data) {
-                    if(id.id == ComponentId::get<ComponentType>()) {
-                        return true;
+        private:
+            template<size_t index>
+            void *getPointerToElement(std::type_info const &elementType, std::tuple<ComponentTypes...> &searchTuple) {
+                if constexpr(index < sizeof...(ComponentTypes)) {
+                    auto &component{ std::get<index>(searchTuple) };
+                    if(typeid(decltype(component)) == elementType) {
+                        return &component;
+                    } else {
+                        return getPointerToElement<index + 1>(elementType, searchTuple);
                     }
+                } else {
+                    return nullptr;
                 }
-                return false;
+            }
+
+            template<size_t... indices>
+            bool areSame(std::vector<std::any> const &components, std::index_sequence<indices...>) {
+                return ((components[indices].type() == typeid(ComponentTypes)) && ...);
+            }
+
+            template<size_t... indices>
+            std::tuple<ComponentTypes...> convert(std::vector<std::any> const &components, std::index_sequence<indices...>) {
+                return std::make_tuple(std::any_cast<std::tuple_element_t<indices, std::tuple<ComponentTypes...>>>(components[indices])...);
+            }
+        };
+
+        //TODO: Temp name
+        class TypeErasedContainer {
+        public:
+            std::unique_ptr<ComponentContainerInterface> container{};
+
+        public:
+            template<typename... ComponentTypes>
+            static TypeErasedContainer create() {
+                TypeErasedContainer container{};
+                container.container = std::make_unique<ComponentContainer<ComponentTypes...>>();
+
+                return container;
+            }
+
+            bool canHold(std::vector<std::any> const &components) {
+                return container->canHold(components);
+            }
+
+            template<typename ComponentType>
+            bool canHold() {
+                return container->canHold(typeid(ComponentType));
+            }
+
+            bool hasEntity(Entity entity) {
+                return container->hasEntity(entity);
+            }
+
+            void addEntity(Entity entity, std::vector<std::any> components) {
+                container->addEntity(entity, std::move(components));
+            }
+
+            std::vector<std::any> removeEntity(Entity entity) {
+                return container->removeEntity(entity);
             }
 
             template<typename ComponentType>
             ComponentType &getComponent(Entity entity) {
-                CLOVE_ASSERT(hasEntity(entity), "");
-                size_t const index{ entityToIndex[entity] };
-                char *const element{ std::data(buffer) + index * getElementSize() };
-
-                char *component{ element };
-                for(size_t i{ 0 }; i < std::size(data); ++i) {
-                    if(data[i].id != ComponentId::get<ComponentType>()) {
-                        component += data[i].size;
-                    }
-                }
-
-                return reinterpret_cast<ComponentType *>(component);
-            }
-
-        private:
-            size_t getElementSize() {
-                size_t size{ 0 };
-                for(auto id : data) {
-                    size += id.size;
-                }
-                return size;
+                //TODO: Check for nullptr
+                return *reinterpret_cast<ComponentType *>(container->getComponent(entity, typeid(ComponentType)));
             }
         };
 
         //VARIABLES
     private:
-        std::vector<ComponentContainer> containers;
+        std::vector<TypeErasedContainer> containers;
 
         EventDispatcher *ecsEventDispatcher{ nullptr };
 
@@ -197,12 +224,54 @@ namespace garlic::clove {
 
         template<typename ComponentType, typename... ConstructArgs>
         ComponentType &addComponent(Entity entity, ConstructArgs &&... args) {
-            ComponentType *nullComp{ nullptr };
-            return *nullComp;
+            //TODO: Properly inforce or handle non copyable types?
+            if constexpr(!std::is_copy_constructible_v<ComponentType>) {
+                ComponentType *nullComp{ nullptr };
+                return *nullComp;
+            } else {
+                for(auto &container : containers) {
+                    if(container.hasEntity(entity)) {
+                        if(container.canHold<ComponentType>()) {
+                            ComponentType &comp{ container.getComponent<ComponentType>(entity) };
+                            comp = std::move(ComponentType{ std::forward<ConstructArgs>(args)... });
+
+                            return comp;
+                        } else {
+                            std::vector<std::any> components{ container.removeEntity(entity) };
+                            ComponentType newComp{ std::forward<ConstructArgs>(args)... };
+                            components.emplace_back(std::any{ std::move(newComp) });
+
+                            //TODO: Skip current container
+                            for(auto &otherContainer : containers) {
+                                if(otherContainer.canHold(components)) {
+                                    otherContainer.addEntity(entity, std::move(components));
+                                    return container.getComponent<ComponentType>(entity);
+                                }
+                            }
+
+                            //TODO
+                            //Add expanded archetype container
+                        }
+                    }
+                }
+
+                auto newContainer{ TypeErasedContainer::create<ComponentType>() };
+                newContainer.addEntity(entity, { ComponentType{ std::forward<ConstructArgs>(args)... } });
+                containers.emplace_back(std::move(newContainer));
+
+                return containers.back().getComponent<ComponentType>(entity);
+            }
         }
 
         template<typename ComponentType>
         ComponentType &getComponent(Entity entity) {
+            for(auto &container : containers) {
+                if(container.hasEntity(entity)) {
+                    return container.getComponent<ComponentType>(entity);
+                }
+            }
+
+            //TODO: Handle
             ComponentType *nullComp{ nullptr };
             return *nullComp;
         }
@@ -215,14 +284,6 @@ namespace garlic::clove {
         template<typename ComponentType>
         void removeComponent(Entity entity) {
         }
-
-        //void cloneEntitiesComponents(Entity from, Entity to);
-
-        //void onEntityDestroyed(Entity entity);
-
-        //TODO:
-        //template<typename ComponentTypes...>
-        //iterType createIterator()
     };
 }
 
