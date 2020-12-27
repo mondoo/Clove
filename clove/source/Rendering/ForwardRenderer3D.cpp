@@ -849,7 +849,7 @@ namespace garlic::clove {
 
         widgetPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
 
-        pipelineDescriptor.fragmentShader = *graphicsFactory->createShaderFromSource(font_p, Shader::Stage::Vertex);
+        pipelineDescriptor.fragmentShader = *graphicsFactory->createShaderFromSource(font_p, Shader::Stage::Pixel);
 
         textPipelineObject = *graphicsFactory->createPipelineObject(std::move(pipelineDescriptor));
     }
