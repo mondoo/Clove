@@ -48,7 +48,9 @@ int main(int argc, char** argv) {
 		}
 	} while(nread > 0);
 
-	if(lineCount > 0) {
+    fprintf(out, "0x00"); //Insert a null character at the end. Might cause issues on non-text files.
+
+    if(lineCount > 0) {
 		fprintf(out, "\n");
 	}
 	fprintf(out, "};\n\n");
