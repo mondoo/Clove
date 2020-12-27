@@ -367,11 +367,13 @@ namespace garlic::clove {
     }
 
     Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::string_view filePath, Shader::Stage shaderStage) {
-        return createShaderObject(ShaderCompiler::compileFromFile(filePath, shaderStage, ShaderType::SPIRV));
+        std::vector<uint32_t> spirvSource{ ShaderCompiler::compileFromFile(filePath, shaderStage, ShaderType::SPIRV) };
+        return createShaderObject({ spirvSource.begin(), spirvSource.end() });
     }
 
-    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::span<std::byte const> source, Shader::Stage shaderStage) {
-        return createShaderObject(ShaderCompiler::compileFromSource(source, shaderStage, ShaderType::SPIRV));
+    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::span<std::byte> source, Shader::Stage shaderStage) {
+        std::vector<uint32_t> spirvSource{ ShaderCompiler::compileFromSource(source, shaderStage, ShaderType::SPIRV) };
+        return createShaderObject({ spirvSource.begin(), spirvSource.end() });
     }
 
     Expected<std::unique_ptr<RenderPass>, std::runtime_error> VKGraphicsFactory::createRenderPass(RenderPass::Descriptor descriptor) {
@@ -932,13 +934,13 @@ namespace garlic::clove {
         return std::unique_ptr<Sampler>{ std::make_unique<VKSampler>(devicePtr, sampler) };
     }
 
-    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShaderObject(std::span<std::byte const> spirvSource) {
+    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShaderObject(std::span<uint32_t> spirvSource) {
         VkShaderModuleCreateInfo const createInfo{
             .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
             .pNext    = nullptr,
             .flags    = 0,
             .codeSize = spirvSource.size_bytes(),
-            .pCode    = reinterpret_cast<uint32_t const *>(std::data(spirvSource)),
+            .pCode    = std::data(spirvSource),
         };
 
         VkShaderModule module;

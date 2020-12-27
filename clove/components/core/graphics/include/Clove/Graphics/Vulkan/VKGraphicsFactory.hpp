@@ -41,7 +41,7 @@ namespace garlic::clove {
         Expected<std::unique_ptr<Swapchain>, std::runtime_error> createSwapChain(Swapchain::Descriptor descriptor) override;
 
         Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::string_view filePath, Shader::Stage shaderStage) override;
-        Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::span<std::byte const> source, Shader::Stage shaderStage) override;
+        Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::span<std::byte> source, Shader::Stage shaderStage) override;
 
         Expected<std::unique_ptr<RenderPass>, std::runtime_error> createRenderPass(RenderPass::Descriptor descriptor) override;
         Expected<std::unique_ptr<DescriptorSetLayout>, std::runtime_error> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) override;
@@ -63,6 +63,6 @@ namespace garlic::clove {
         /**
          * @brief Creates a Vulkan shader object from SPIR-V
          */
-        Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderObject(std::span<std::byte const> spirvSource);
+        Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderObject(std::span<uint32_t> spirvSource);
     };
 }

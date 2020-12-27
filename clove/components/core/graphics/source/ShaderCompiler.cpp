@@ -46,12 +46,12 @@ namespace garlic::clove::ShaderCompiler {
             return buffer;
         }
 
-        std::vector<std::byte> spirvToHLSL(std::vector<uint32_t> const &sprivSource) {
+        std::vector<uint32_t> spirvToHLSL(std::vector<uint32_t> const &sprivSource) {
             CLOVE_ASSERT("SPIR-V to HLSL not supported!");
             return {};
         }
 
-        std::vector<std::byte> spirvToMSL(Shader::Stage shaderStage, std::vector<uint32_t> const &spirvSource) {
+        std::vector<uint32_t> spirvToMSL(Shader::Stage shaderStage, std::vector<uint32_t> const &spirvSource) {
             spirv_cross::CompilerMSL msl(spirvSource);
             spirv_cross::CompilerMSL::Options scoptions;
 
@@ -105,12 +105,14 @@ namespace garlic::clove::ShaderCompiler {
         }
     }
 
-    std::vector<std::byte> compileFromFile(std::string_view filePath, Shader::Stage shaderStage, ShaderType outputType) {
-        auto const source{ readFile(filePath) };
-        return compileFromSource({ std::begin(source), std::end(source) }, shaderStage, outputType);
+    std::vector<uint32_t> compileFromFile(std::string_view filePath, Shader::Stage shaderStage, ShaderType outputType) {
+        std::vector<std::byte> source{ readFile(filePath) };
+        return compileFromSource({ source.begin(), source.end() }, shaderStage, outputType);
     }
 
-    std::vector<std::byte> compileFromSource(std::span<std::byte const> source, Shader::Stage shaderStage, ShaderType outputType) {
+    std::vector<uint32_t> compileFromSource(std::span<std::byte> source, Shader::Stage shaderStage, ShaderType outputType) {
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Compiling shader...");
+
         shaderc_util::FileFinder fileFinder{};
         //TEMP: Hardcoding in a search path for testing
         fileFinder.search_path().push_back("/home/alex/Documents/Dev/sandbox/garlic/clove/source/Shaders");
@@ -121,17 +123,22 @@ namespace garlic::clove::ShaderCompiler {
 
         shaderc::Compiler compiler{};
 
-        auto spirv = compiler.CompileGlslToSpv(reinterpret_cast<char const *>(std::data(source)), std::size(source), getShadercStage(shaderStage), "\0", options);
-        std::vector<uint32_t> spirvSource{ spirv.begin(), spirv.end() };
+        shaderc::SpvCompilationResult spirvResult{ compiler.CompileGlslToSpv(reinterpret_cast<char const *>(std::data(source)), std::size(source), getShadercStage(shaderStage), "\0", options) };
+        if(spirvResult.GetCompilationStatus() != shaderc_compilation_status_success) {
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to compile shader:\n\t{0}", spirvResult.GetErrorMessage());
+
+            //TODO: Expected
+            return {};
+        }
+
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Successfully compiled shader!");
+
+        std::vector<uint32_t> spirvSource{ spirvResult.begin(), spirvResult.end() };
 
         switch(outputType) {
             default:
-            case ShaderType::SPIRV: {
-                std::vector<std::byte> bytes;
-                bytes.resize(std::size(spirvSource) * sizeof(uint32_t));
-                memcpy(std::data(bytes), std::data(spirvSource), std::size(bytes));
-                return bytes;
-            }
+            case ShaderType::SPIRV:
+                return spirvSource;
             case ShaderType::HLSL:
                 return spirvToHLSL(spirvSource);
             case ShaderType::MSL:
