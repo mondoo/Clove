@@ -5,7 +5,6 @@
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <optional>
-#include <span>
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
@@ -40,8 +39,8 @@ namespace garlic::clove {
 
         Expected<std::unique_ptr<Swapchain>, std::runtime_error> createSwapChain(Swapchain::Descriptor descriptor) override;
 
-        Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::string_view filePath, Shader::Stage shaderStage) override;
-        Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::span<std::byte> source, Shader::Stage shaderStage) override;
+        Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderFromFile(std::string_view filePath, Shader::Stage shaderStage) override;
+        Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderFromSource(std::string_view source, Shader::Stage shaderStage) override;
 
         Expected<std::unique_ptr<RenderPass>, std::runtime_error> createRenderPass(RenderPass::Descriptor descriptor) override;
         Expected<std::unique_ptr<DescriptorSetLayout>, std::runtime_error> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) override;

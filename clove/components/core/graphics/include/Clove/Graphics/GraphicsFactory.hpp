@@ -17,10 +17,8 @@
 #include "Clove/Graphics/TransferQueue.hpp"
 
 #include <Clove/Expected.hpp>
-#include <cstddef>
-#include <span>
 #include <stdexcept>
-#include <string>
+#include <string_view>
 
 namespace garlic::clove {
     /**
@@ -40,11 +38,11 @@ namespace garlic::clove {
         /**
          * @brief Compile a GLSL file and return the Shader object
          */
-        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::string_view filePath, Shader::Stage shaderStage) = 0;
+        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderFromFile(std::string_view filePath, Shader::Stage shaderStage) = 0;
         /**
          * @brief Compile GLSL source code and return the Shader object
          */
-        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::span<std::byte> source, Shader::Stage shaderStage) = 0;
+        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderFromSource(std::string_view source, Shader::Stage shaderStage) = 0;
 
         virtual Expected<std::unique_ptr<RenderPass>, std::runtime_error> createRenderPass(RenderPass::Descriptor descriptor)                            = 0;
         virtual Expected<std::unique_ptr<DescriptorSetLayout>, std::runtime_error> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) = 0;

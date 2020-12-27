@@ -366,12 +366,12 @@ namespace garlic::clove {
         return std::unique_ptr<Swapchain>{ std::make_unique<VKSwapchain>(devicePtr, swapchain, surfaceFormat.format, std::move(swapchainExtent)) };
     }
 
-    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::string_view filePath, Shader::Stage shaderStage) {
+    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShaderFromFile(std::string_view filePath, Shader::Stage shaderStage) {
         std::vector<uint32_t> spirvSource{ ShaderCompiler::compileFromFile(filePath, shaderStage, ShaderType::SPIRV) };
         return createShaderObject({ spirvSource.begin(), spirvSource.end() });
     }
 
-    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShader(std::span<std::byte> source, Shader::Stage shaderStage) {
+    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShaderFromSource(std::string_view source, Shader::Stage shaderStage) {
         std::vector<uint32_t> spirvSource{ ShaderCompiler::compileFromSource(source, shaderStage, ShaderType::SPIRV) };
         return createShaderObject({ spirvSource.begin(), spirvSource.end() });
     }

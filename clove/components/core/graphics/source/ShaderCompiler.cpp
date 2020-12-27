@@ -26,9 +26,9 @@ namespace garlic::clove::ShaderCompiler {
             }
         }
 
-        std::vector<std::byte> readFile(std::string_view filePath) {
+        std::vector<char> readFile(std::string_view filePath) {
             //Start at the end so we can get the file size
-            std::basic_ifstream<std::byte> file(filePath.data(), std::ios::ate | std::ios::binary);
+            std::ifstream file(filePath.data(), std::ios::ate | std::ios::binary);
 
             if(!file.is_open()) {
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
@@ -36,7 +36,7 @@ namespace garlic::clove::ShaderCompiler {
             }
 
             size_t const fileSize{ static_cast<size_t>(file.tellg()) };
-            std::vector<std::byte> buffer(fileSize);
+            std::vector<char> buffer(fileSize);
 
             file.seekg(0);
             file.read(buffer.data(), fileSize);
@@ -106,11 +106,11 @@ namespace garlic::clove::ShaderCompiler {
     }
 
     std::vector<uint32_t> compileFromFile(std::string_view filePath, Shader::Stage shaderStage, ShaderType outputType) {
-        std::vector<std::byte> source{ readFile(filePath) };
-        return compileFromSource({ source.begin(), source.end() }, shaderStage, outputType);
+        std::vector<char> source{ readFile(filePath) };
+        return compileFromSource(source.data(), shaderStage, outputType);
     }
 
-    std::vector<uint32_t> compileFromSource(std::span<std::byte> source, Shader::Stage shaderStage, ShaderType outputType) {
+    std::vector<uint32_t> compileFromSource(std::string_view source, Shader::Stage shaderStage, ShaderType outputType) {
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Compiling shader...");
 
         shaderc_util::FileFinder fileFinder{};
@@ -123,7 +123,7 @@ namespace garlic::clove::ShaderCompiler {
 
         shaderc::Compiler compiler{};
 
-        shaderc::SpvCompilationResult spirvResult{ compiler.CompileGlslToSpv(reinterpret_cast<char const *>(std::data(source)), std::size(source), getShadercStage(shaderStage), "\0", options) };
+        shaderc::SpvCompilationResult spirvResult{ compiler.CompileGlslToSpv(source.data(), source.size(), getShadercStage(shaderStage), "\0", options) };
         if(spirvResult.GetCompilationStatus() != shaderc_compilation_status_success) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to compile shader:\n\t{0}", spirvResult.GetErrorMessage());
 
