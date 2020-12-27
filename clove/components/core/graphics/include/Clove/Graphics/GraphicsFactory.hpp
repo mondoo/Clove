@@ -19,6 +19,7 @@
 #include <Clove/Expected.hpp>
 #include <stdexcept>
 #include <string_view>
+#include <filesystem>
 
 namespace garlic::clove {
     /**
@@ -36,9 +37,12 @@ namespace garlic::clove {
         virtual Expected<std::unique_ptr<Swapchain>, std::runtime_error> createSwapChain(Swapchain::Descriptor descriptor) = 0;
 
         /**
-         * @brief Compile a GLSL file and return the Shader object
+         * @brief Compile a GLSL file and return the Shader object.
+         * @param file Absolute path to the file.
+         * @param shaderStage Which shader stage to compile.
+         * @return Compiled shader module.
          */
-        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderFromFile(std::string_view filePath, Shader::Stage shaderStage) = 0;
+        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderFromFile(std::filesystem::path const &file, Shader::Stage shaderStage) = 0;
         /**
          * @brief Compile GLSL source code and return the Shader object
          */

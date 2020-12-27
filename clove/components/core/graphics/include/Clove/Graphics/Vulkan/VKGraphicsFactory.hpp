@@ -29,7 +29,7 @@ namespace garlic::clove {
         VKGraphicsFactory(VKGraphicsFactory &&other) noexcept;
 
         VKGraphicsFactory &operator=(VKGraphicsFactory const &other) = delete;
-        VKGraphicsFactory &operator                                  =(VKGraphicsFactory &&other) noexcept;
+        VKGraphicsFactory &operator=(VKGraphicsFactory &&other) noexcept;
 
         ~VKGraphicsFactory();
 
@@ -39,7 +39,7 @@ namespace garlic::clove {
 
         Expected<std::unique_ptr<Swapchain>, std::runtime_error> createSwapChain(Swapchain::Descriptor descriptor) override;
 
-        Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderFromFile(std::string_view filePath, Shader::Stage shaderStage) override;
+        Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderFromFile(std::filesystem::path const &file, Shader::Stage shaderStage) override;
         Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderFromSource(std::string_view source, Shader::Stage shaderStage) override;
 
         Expected<std::unique_ptr<RenderPass>, std::runtime_error> createRenderPass(RenderPass::Descriptor descriptor) override;

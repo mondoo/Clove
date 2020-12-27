@@ -105,9 +105,13 @@ namespace garlic::clove::ShaderCompiler {
         }
     }
 
-    std::vector<uint32_t> compileFromFile(std::string_view filePath, Shader::Stage shaderStage, ShaderType outputType) {
-        std::vector<char> source{ readFile(filePath) };
-        return compileFromSource(source.data(), shaderStage, outputType);
+    std::vector<uint32_t> compileFromFile(std::filesystem::path const &file, Shader::Stage shaderStage, ShaderType outputType) {
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Compiling file {0}", file.c_str());
+
+        //if(path.)
+        //std::vector<char> source{ readFile(filePath) };
+        //return compileFromSource(source.data(), shaderStage, outputType);
+        return {};
     }
 
     std::vector<uint32_t> compileFromSource(std::string_view source, Shader::Stage shaderStage, ShaderType outputType) {
