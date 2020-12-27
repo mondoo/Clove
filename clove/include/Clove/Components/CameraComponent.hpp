@@ -7,7 +7,7 @@
 
 namespace garlic::clove {
     class CameraComponent : public Component<CameraComponent> {
-        friend class RenderSystem;
+        friend class RenderLayer;
 
         //VARIABLES
     private:

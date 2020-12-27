@@ -14,10 +14,9 @@ add_library(
 	${INCLUDE}/ECSEvents.hpp
 	${INCLUDE}/ECSTypes.hpp
 	${INCLUDE}/Entity.hpp
-	${INCLUDE}/World.hpp
-	${INCLUDE}/World.inl
-	${SOURCE}/World.cpp
-	${INCLUDE}/System.hpp
+	${INCLUDE}/EntityManager.hpp
+	${INCLUDE}/EntityManager.inl
+	${SOURCE}/EntityManager.cpp
 )
 
 #Includes
@@ -40,3 +39,7 @@ target_link_libraries(
 		CloveMemory
 		CloveTimer
 )
+
+if(GAR_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()

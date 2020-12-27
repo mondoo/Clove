@@ -6,7 +6,7 @@
 
 namespace garlic::clove {
     class AnimatedModelComponent : public Component<AnimatedModelComponent> {
-        friend class RenderSystem;
+        friend class RenderLayer;
 
         //VARIABLES
     private:
