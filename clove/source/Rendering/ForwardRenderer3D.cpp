@@ -668,8 +668,8 @@ namespace garlic::clove {
             .destinationSubpass = 0,
             .sourceStage        = PipelineObject::Stage::ColourAttachmentOutput,
             .destinationStage   = PipelineObject::Stage::ColourAttachmentOutput,
-            .sourceAccess       = AccessFlags::None,
-            .destinationAccess  = AccessFlags::ColourAttachmentWrite,
+            .currentAccess       = AccessFlags::None,
+            .newAccess  = AccessFlags::ColourAttachmentWrite,
         };
 
         //Create render pass

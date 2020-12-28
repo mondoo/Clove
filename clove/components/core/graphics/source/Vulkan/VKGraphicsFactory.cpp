@@ -482,8 +482,8 @@ namespace garlic::clove {
                 .dstSubpass    = descriptor.dependencies[i].destinationSubpass == SUBPASS_EXTERNAL ? VK_SUBPASS_EXTERNAL : descriptor.dependencies[i].destinationSubpass,
                 .srcStageMask  = VKPipelineObject::convertStage(descriptor.dependencies[i].sourceStage),
                 .dstStageMask  = VKPipelineObject::convertStage(descriptor.dependencies[i].destinationStage),
-                .srcAccessMask = convertAccessFlags(descriptor.dependencies[i].sourceAccess),
-                .dstAccessMask = convertAccessFlags(descriptor.dependencies[i].destinationAccess),
+                .srcAccessMask = convertAccessFlags(descriptor.dependencies[i].currentAccess),
+                .dstAccessMask = convertAccessFlags(descriptor.dependencies[i].newAccess),
             };
         }
 
