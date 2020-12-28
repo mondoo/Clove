@@ -14,14 +14,33 @@ struct FloatComponent {
 TEST(ECSComponentTests, CanAddSingleComponentToEntity) {
     EntityManager manager{};
 
-    Entity defaultEntity{ manager.create() };
-    Entity valueEntity{ manager.create() };
+    {
+        Entity defaultEntity{ manager.create() };
+        Entity valueEntity{ manager.create() };
 
-    auto &falseComp{ manager.addComponent<BoolComponent>(defaultEntity) };
-    auto &trueComp{ manager.addComponent<BoolComponent>(valueEntity, true) };
+        auto &falseComp{ manager.addComponent<BoolComponent>(defaultEntity) };
+        auto &trueComp{ manager.addComponent<BoolComponent>(valueEntity, true) };
 
-    ASSERT_FALSE(falseComp.value);
-    ASSERT_TRUE(trueComp.value);
+        ASSERT_FALSE(falseComp.value);
+        ASSERT_TRUE(trueComp.value);
+    }
+
+    {
+        Entity trueOrFalseEntity{ manager.create() };
+        auto &trueOrFalseComp{ manager.addComponent<BoolComponent>(trueOrFalseEntity) };
+
+        ASSERT_FALSE(trueOrFalseComp.value);
+
+        auto &trueComp{ manager.addComponent<BoolComponent>(trueOrFalseEntity, true) };
+
+        ASSERT_TRUE(trueOrFalseComp.value);
+        ASSERT_TRUE(trueComp.value);
+
+        trueOrFalseComp.value = false;
+
+        ASSERT_FALSE(trueOrFalseComp.value);
+        ASSERT_FALSE(trueComp.value);
+    }
 
     //TODO: Tests for adding a component to an entity that already exists
     //TODO: Tests for adding a component to an entity that doesn't exist
