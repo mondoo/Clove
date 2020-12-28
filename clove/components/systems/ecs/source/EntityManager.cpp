@@ -24,18 +24,17 @@ namespace garlic::clove {
     }
 
     void EntityManager::destroy(Entity entity) {
-        auto foundIDIter{ std::find(activeEntities.begin(), activeEntities.end(), entity) };
-
-        if(entity == NullEntity || foundIDIter == activeEntities.end()) {
+        if(!isValid(entity)){
             return;
         }
 
-        pendingDestroyEntities.emplace(entity);
+        std::erase(activeEntities, entity);
+        componentManager.removeEntity(entity);
     }
 
     void EntityManager::destroyAll() {
         for(Entity entity : activeEntities) {
-            //componentManager.onEntityDestroyed(entity);
+            componentManager.removeEntity(entity);
         }
         activeEntities.clear();
     }

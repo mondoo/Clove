@@ -26,6 +26,8 @@ namespace garlic::clove {
 
             virtual bool hasComponent(Entity entity) const      = 0;
             virtual void cloneComponent(Entity from, Entity to) = 0;
+
+            virtual void removeComponent(Entity entity) = 0;
         };
 
         template<typename ComponentType>
@@ -82,7 +84,7 @@ namespace garlic::clove {
                 }
             }
 
-            void removeComponent(Entity entity) {
+            void removeComponent(Entity entity) final {
                 if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
                     size_t const index{ iter->second };
                     size_t const lastIndex{ components.size() - 1 };
@@ -151,6 +153,14 @@ namespace garlic::clove {
         template<typename ComponentType>
         void removeComponent(Entity entity) {
             getContainer<ComponentType>().removeComponent(entity);
+        }
+
+        void removeEntity(Entity entity){
+            for(auto &[key, container] : containers) {
+                if(container->hasComponent(entity)) {
+                    container->removeComponent(entity);
+                }
+            }
         }
 
     private:
