@@ -15,11 +15,20 @@ TEST(ECSEntityTests, CreateEntity) {
 
     EXPECT_NE(entity, NullEntity);
 
-    Entity entityA{ manager.create() };
-    Entity entityB{ manager.create() };
-    Entity entityC{ manager.create() };
+    std::vector<Entity> entities{};
+    for(int i{ 0 }; i < 10000; ++i) {
+        Entity entity{ manager.create() };
 
-    EXPECT_NE(entityA, entityB);
-    EXPECT_NE(entityA, entityC);
-    EXPECT_NE(entityB, entityC);
+        entities.push_back(entity);
+
+        for(int j{ i - 1 }; j >= 0; --j) {
+            EXPECT_NE(entity, entities[j]);
+        }
+    }
 }
+
+//TODO: isValid
+//TODO: clone
+//TODO: destroy
+//TODO: destroyAll
+//TODO: Create an entity in one manager and access it in another

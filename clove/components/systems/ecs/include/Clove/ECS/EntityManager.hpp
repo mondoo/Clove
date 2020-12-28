@@ -25,7 +25,7 @@ namespace garlic::clove {
 
         ComponentManager componentManager;
 
-        static Entity nextEntity;
+        Entity nextEntity{ 1 };
         std::vector<Entity> activeEntities;
         std::set<Entity> pendingDestroyEntities;
 

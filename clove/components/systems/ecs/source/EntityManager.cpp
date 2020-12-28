@@ -1,8 +1,6 @@
 #include "Clove/ECS/EntityManager.hpp"
 
 namespace garlic::clove {
-    Entity EntityManager::nextEntity = 1;
-
     EntityManager::EntityManager()
         : componentManager(&ecsEventDispatcher) {
     }
