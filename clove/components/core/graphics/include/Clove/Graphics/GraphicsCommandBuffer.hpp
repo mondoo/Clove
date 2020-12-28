@@ -83,7 +83,7 @@ namespace garlic::clove {
          * @brief Creates a memory barrier for a buffer. Allowing for how it's accessed to be changed and/or to transfer queue ownership.
          * @param buffer The buffer to create the barrier for.
          * @param barrierInfo The information about the barrier.
-         * @param sourceStage THe pipeline stage that gets executed before the barrier.
+         * @param sourceStage The pipeline stage that gets executed before the barrier.
          * @param destinationStage The pipeline stage executed after the barrier that waits for the results of the sourceStage.
          */
         virtual void bufferMemoryBarrier(GraphicsBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) = 0;
@@ -91,7 +91,7 @@ namespace garlic::clove {
          * @brief Creates a memory barrier for an image. Allowing for how it's accessed, it's layout and queue ownership to change.
          * @param image The image to create the barrier for.
          * @param barrierInfo The information about the barrier.
-         * @param sourceStage THe pipeline stage that gets executed before the barrier.
+         * @param sourceStage The pipeline stage that gets executed before the barrier.
          * @param destinationStage The pipeline stage executed after the barrier that waits for the results of the sourceStage.
          */
         virtual void imageMemoryBarrier(GraphicsImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) = 0;
