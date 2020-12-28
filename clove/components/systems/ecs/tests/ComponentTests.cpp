@@ -76,9 +76,23 @@ TEST(ECSComponentTests, CanCheckIfAnEntityHasAComponent) {
     EXPECT_FALSE(manager.hasComponent<BoolComponent>(badEntity));
 }
 
-// TEST(ECSComponentTests, CanGetAnEntitysComponent) {
-//     //TODO Make sure to assert_death for ones that do not have component type.
-// }
+TEST(ECSComponentTests, CanGetAnEntitysComponent) {
+    ASSERT_TRUE(CLOVE_ENABLE_ASSERTIONS);
+
+    EntityManager manager{};
+
+    Entity entity{ manager.create() };
+    manager.addComponent<BoolComponent>(entity, true);
+
+    auto trueComp{ manager.getComponent<BoolComponent>(entity) };
+    EXPECT_TRUE(trueComp.value);
+    EXPECT_DEATH(manager.getComponent<FloatComponent>(entity), "");
+
+    EXPECT_DEATH(manager.getComponent<FloatComponent>(NullEntity), "");
+
+    Entity badEntity{ 999999999 };
+    EXPECT_DEATH(manager.getComponent<FloatComponent>(badEntity), "");
+}
 
 // TEST(ECSComponentTests, CanAddMultipleComponentsToEntity) {
 //     EntityManager manager{};
@@ -90,3 +104,6 @@ TEST(ECSComponentTests, CanCheckIfAnEntityHasAComponent) {
 //     ASSERT_TRUE(manager.hasComponent<BoolComponent>(entity));
 //     ASSERT_TRUE(manager.hasComponent<FloatComponent>(entity));
 // }
+
+//TODO: Remove
+//TODO: Clone

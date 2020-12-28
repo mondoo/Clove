@@ -71,6 +71,8 @@ namespace garlic::clove {
                 }
             }
             ComponentType &getComponent(Entity entity) {
+                CLOVE_ASSERT(hasComponent(entity), "{0}: Entity does not have component", CLOVE_FUNCTION_NAME_PRETTY);
+                return components[entityToIndex[entity]];
             }
         };
 
@@ -100,8 +102,7 @@ namespace garlic::clove {
 
         template<typename ComponentType>
         ComponentType &getComponent(Entity entity) {
-            ComponentType *nullComp{ nullptr };
-            return *nullComp;
+            return getContainer<ComponentType>().getComponent(entity);
         }
 
         template<typename ComponentType>
