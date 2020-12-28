@@ -138,4 +138,27 @@ TEST(ECSComponentTests, CanRemoveComponentFromEntity) {
     EXPECT_TRUE(manager.getComponent<BoolComponent>(entityB).value);
 }
 
-//TODO: Clone
+TEST(ECSComponentTests, CanCloneEntities) {
+    EntityManager manager{};
+
+    Entity entityA{ manager.create() };
+
+    manager.addComponent<ComplexComponent>(entityA, 1, 2, 3);
+
+    Entity entityB{ manager.clone(entityA) };
+
+    auto aComp{ manager.getComponent<ComplexComponent>(entityA) };
+    auto bComp{ manager.getComponent<ComplexComponent>(entityB) };
+
+    EXPECT_EQ(aComp.a, bComp.a);
+    EXPECT_EQ(aComp.b, bComp.b);
+    EXPECT_EQ(aComp.c, bComp.c);
+
+    aComp.a = 100;
+    aComp.b = 200;
+    aComp.c = 300;
+
+    EXPECT_NE(aComp.a, bComp.a);
+    EXPECT_NE(aComp.b, bComp.b);
+    EXPECT_NE(aComp.c, bComp.c);
+}

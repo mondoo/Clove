@@ -23,6 +23,9 @@ namespace garlic::clove {
             //FUNCTIONS
         public:
             virtual ~ContainerInterface() = default;
+
+            virtual bool hasComponent(Entity entity) const      = 0;
+            virtual void cloneComponent(Entity from, Entity to) = 0;
         };
 
         template<typename ComponentType>
@@ -62,7 +65,7 @@ namespace garlic::clove {
                 }
             }
 
-            bool hasComponent(Entity entity) const {
+            bool hasComponent(Entity entity) const final {
                 return entityToIndex.find(entity) != entityToIndex.end();
             }
 
@@ -71,7 +74,12 @@ namespace garlic::clove {
                 return components[entityToIndex[entity]];
             }
 
-            void cloneComponent(Entity from, Entity to) {
+            void cloneComponent(Entity from, Entity to) final {
+                if constexpr(std::is_copy_constructible_v<ComponentType>){
+                    addComponent(to, getComponent(from));
+                }else{
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: Component is not copy constructable. Entity {1} will be incomplete.", CLOVE_FUNCTION_NAME_PRETTY, to);
+                }
             }
 
             void removeComponent(Entity entity) {
@@ -130,6 +138,14 @@ namespace garlic::clove {
         template<typename ComponentType>
         bool hasComponent(Entity entity) {
             return getContainer<ComponentType>().hasComponent(entity);
+        }
+
+        void cloneComponents(Entity from, Entity to) {
+            for(auto &[key, container] : containers) {
+                if(container->hasComponent(from)) {
+                    container->cloneComponent(from, to);
+                }
+            }
         }
 
         template<typename ComponentType>
