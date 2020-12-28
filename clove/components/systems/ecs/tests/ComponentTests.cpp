@@ -52,6 +52,13 @@ TEST(ECSComponentTests, CanAddSingleComponentToEntity) {
     trueOrFalseCompA.value = false;
     EXPECT_FALSE(trueOrFalseCompA.value);
     EXPECT_FALSE(trueOrFalseCompB.value);
+
+    ASSERT_TRUE(CLOVE_ENABLE_ASSERTIONS);
+
+    EXPECT_DEATH(manager.addComponent<BoolComponent>(NullEntity), "");
+    
+    Entity badEntity{ 999999999 };
+    EXPECT_DEATH(manager.addComponent<BoolComponent>(badEntity), "");
 }
 
 // TEST(ECSComponentTests, CanCheckIfAnEntityHasAComponent) {
