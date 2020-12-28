@@ -39,73 +39,23 @@ namespace garlic::clove {
 
             //FUNCTIONS
         public:
-            Container() = default;
+            Container();
 
-            Container(Container const &other)     = delete;
-            Container(Container &&other) noexcept = default;
+            Container(Container const &other) = delete;
+            Container(Container &&other) noexcept;
 
             Container &operator=(Container const &other) = delete;
-            Container &operator=(Container &&other) noexcept = default;
+            Container &operator=(Container &&other) noexcept;
 
-            ~Container() = default;
+            ~Container();
 
             template<typename... ConstructArgs>
-            ComponentType &addComponent(Entity entity, ConstructArgs &&... args) {
-                if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-                    components[iter->second] = ComponentType{ std::forward<ConstructArgs>(args)... };
+            ComponentType &addComponent(Entity entity, ConstructArgs &&... args);
+            ComponentType &getComponent(Entity entity);
 
-                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "{0} was called for Entity {1} that alread has that component. Old component is replaced with a new one", CLOVE_FUNCTION_NAME_PRETTY, entity);
-
-                    return components[iter->second];
-                } else {
-                    components.emplace_back(ComponentType{ std::forward<ConstructArgs>(args)... });
-                    entityToIndex[entity] = components.size() - 1;
-
-                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} added new entry for Entity {1}. Index in array is {2}", CLOVE_FUNCTION_NAME_PRETTY, entity, entityToIndex[entity]);
-
-                    return components[entityToIndex[entity]];
-                }
-            }
-
-            bool hasComponent(Entity entity) const final {
-                return entityToIndex.find(entity) != entityToIndex.end();
-            }
-
-            ComponentType &getComponent(Entity entity) {
-                CLOVE_ASSERT(hasComponent(entity), "{0}: Entity does not have component", CLOVE_FUNCTION_NAME_PRETTY);
-                return components[entityToIndex[entity]];
-            }
-
-            void cloneComponent(Entity from, Entity to) final {
-                if constexpr(std::is_copy_constructible_v<ComponentType>){
-                    addComponent(to, getComponent(from));
-                }else{
-                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: Component is not copy constructable. Entity {1} will be incomplete.", CLOVE_FUNCTION_NAME_PRETTY, to);
-                }
-            }
-
-            void removeComponent(Entity entity) final {
-                if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-                    size_t const index{ iter->second };
-                    size_t const lastIndex{ components.size() - 1 };
-
-                    ComponentType removedComp{ std::move(components[index]) };
-
-                    if(index < lastIndex) {
-                        components[index] = std::move(components.back());
-
-                        //Update the index map so it knows about the moved component
-                        for(auto [entityId, componentIndex] : entityToIndex) {
-                            if(componentIndex == lastIndex) {
-                                entityToIndex[entityId] = index;
-                                break;
-                            }
-                        }
-                    }
-                    components.pop_back();
-                    entityToIndex.erase(entity);
-                }
-            }
+            bool hasComponent(Entity entity) const final;
+            void cloneComponent(Entity from, Entity to) final;
+            void removeComponent(Entity entity) final;
         };
 
         //VARIABLES
@@ -128,53 +78,21 @@ namespace garlic::clove {
         ~ComponentManager();
 
         template<typename ComponentType, typename... ConstructArgs>
-        ComponentType &addComponent(Entity entity, ConstructArgs &&... args) {
-            return getContainer<ComponentType>().addComponent(entity, std::forward<ConstructArgs>(args)...);
-        }
+        ComponentType &addComponent(Entity entity, ConstructArgs &&... args);
+        template<typename ComponentType>
+        ComponentType &getComponent(Entity entity);
 
         template<typename ComponentType>
-        ComponentType &getComponent(Entity entity) {
-            return getContainer<ComponentType>().getComponent(entity);
-        }
-
+        bool hasComponent(Entity entity);
+        void cloneComponents(Entity from, Entity to);
         template<typename ComponentType>
-        bool hasComponent(Entity entity) {
-            return getContainer<ComponentType>().hasComponent(entity);
-        }
+        void removeComponent(Entity entity);
 
-        void cloneComponents(Entity from, Entity to) {
-            for(auto &[key, container] : containers) {
-                if(container->hasComponent(from)) {
-                    container->cloneComponent(from, to);
-                }
-            }
-        }
-
-        template<typename ComponentType>
-        void removeComponent(Entity entity) {
-            getContainer<ComponentType>().removeComponent(entity);
-        }
-
-        void removeEntity(Entity entity){
-            for(auto &[key, container] : containers) {
-                if(container->hasComponent(entity)) {
-                    container->removeComponent(entity);
-                }
-            }
-        }
+        void removeEntity(Entity entity);
 
     private:
         template<typename ComponentType>
-        Container<ComponentType> &getContainer() {
-            std::type_index const componentIndex{ typeid(ComponentType) };
-
-            if(auto iter{ containers.find(componentIndex) }; iter != containers.end()) {
-                return static_cast<Container<ComponentType> &>(*iter->second.get());
-            } else {
-                containers[componentIndex] = std::make_unique<Container<ComponentType>>();
-                return static_cast<Container<ComponentType> &>(*containers[componentIndex].get());
-            }
-        }
+        Container<ComponentType> &getContainer();
     };
 }
 

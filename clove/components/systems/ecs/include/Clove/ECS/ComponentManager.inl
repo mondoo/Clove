@@ -5,120 +5,110 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    // template<typename... ComponentTypes>
-    // ComponentManager::ComponentContainer<ComponentTypes...>::ComponentContainer() = default;
+    template<typename ComponentType>
+    ComponentManager::Container<ComponentType>::Container() = default;
 
-    // template<typename... ComponentTypes>
-    // ComponentManager::ComponentContainer<ComponentTypes...>::ComponentContainer(ComponentContainer &&other) noexcept = default;
+    template<typename ComponentType>
+    ComponentManager::Container<ComponentType>::Container(Container &&other) noexcept = default;
 
-    // template<typename... ComponentTypes>
-    // ComponentManager::ComponentContainer<ComponentTypes...> &ComponentManager::ComponentContainer<ComponentTypes...>::operator=(ComponentContainer &&other) noexcept = default;
+    template<typename ComponentType>
+    ComponentManager::Container<ComponentType> &ComponentManager::Container<ComponentType>::operator=(Container &&other) noexcept;
 
-    // template<typename... ComponentTypes>
-    // ComponentManager::ComponentContainer<ComponentTypes...>::~ComponentContainer() = default;
+    template<typename ComponentType>
+    ComponentManager::Container<ComponentType>::~Container() = default;
 
-    // template<typename... ComponentTypes>
-    // bool ComponentManager::ComponentContainer<ComponentTypes...>::hasEntity(Entity entity) {
-    //     return entityToIndex.find(entity) != entityToIndex.end();
-    // }
+    template<typename ComponentType>
+    template<typename... ConstructArgs>
+    ComponentType &ComponentManager::Container<ComponentType>::addComponent(Entity entity, ConstructArgs &&... args) {
+        if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
+            components[iter->second] = ComponentType{ std::forward<ConstructArgs>(args)... };
 
-    // template<typename... ComponentTypes>
-    // void ComponentManager::ComponentContainer<ComponentTypes...>::addEntity(Entity entity, ComponentTypes &&... components) {
-    //     addEntity(entity, std::make_tuple<ComponentTypes...>(std::forward<ComponentTypes>(components)...));
-    // }
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "{0} was called for Entity {1} that alread has that component. Old component is replaced with a new one", CLOVE_FUNCTION_NAME_PRETTY, entity);
 
-    // template<typename... ComponentTypes>
-    // void ComponentManager::ComponentContainer<ComponentTypes...>::addEntity(Entity entity, std::tuple<ComponentTypes...> &&components) {
-    //     if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-    //         entityComponents[iter->second] = std::move(components);
-    //     } else {
-    //         entityComponents.emplace_back(std::move(components));
-    //         entityToIndex[entity] = entityComponents.size() - 1;
-    //     }
-    // }
+            return components[iter->second];
+        } else {
+            components.emplace_back(ComponentType{ std::forward<ConstructArgs>(args)... });
+            entityToIndex[entity] = components.size() - 1;
 
-    // template<typename... ComponentTypes>
-    // std::tuple<ComponentTypes...> ComponentManager::ComponentContainer<ComponentTypes...>::removeEntity(Entity entity) {
-    //     if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-    //         size_t const index{ iter->second };
-    //         size_t const lastIndex{ entityComponents.size() - 1 };
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} added new entry for Entity {1}. Index in array is {2}", CLOVE_FUNCTION_NAME_PRETTY, entity, entityToIndex[entity]);
 
-    //         std::tuple<ComponentTypes...> removedComponents{ std::move(entityComponents[index]) };
+            return components[entityToIndex[entity]];
+        }
+    }
 
-    //         if(index < lastIndex) {
-    //             entityComponents[index] = std::move(entityComponents.back());
+    template<typename ComponentType>
+    ComponentType &ComponentManager::Container<ComponentType>::getComponent(Entity entity) {
+        CLOVE_ASSERT(hasComponent(entity), "{0}: Entity does not have component", CLOVE_FUNCTION_NAME_PRETTY);
+        return components[entityToIndex[entity]];
+    }
 
-    //             //Update the index map so it knows about the moved component
-    //             for(auto [entityId, componentIndex] : entityToIndex) {
-    //                 if(componentIndex == lastIndex) {
-    //                     entityToIndex[entityId] = index;
-    //                     break;
-    //                 }
-    //             }
-    //         }
-    //         entityComponents.pop_back();
-    //         entityToIndex.erase(entity);
+    template<typename ComponentType>
+    bool ComponentManager::Container<ComponentType>::hasComponent(Entity entity) const {
+        return entityToIndex.find(entity) != entityToIndex.end();
+    }
 
-    //         return removedComponents;
-    //     }
+    template<typename ComponentType>
+    void ComponentManager::Container<ComponentType>::cloneComponent(Entity from, Entity to) {
+        if constexpr(std::is_copy_constructible_v<ComponentType>) {
+            addComponent(to, getComponent(from));
+        } else {
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: Component is not copy constructable. Entity {1} will be incomplete.", CLOVE_FUNCTION_NAME_PRETTY, to);
+        }
+    }
 
-    //     //TODO: Expected??
-    //     return {};
-    // }
+    template<typename ComponentType>
+    void ComponentManager::Container<ComponentType>::removeComponent(Entity entity) {
+        if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
+            size_t const index{ iter->second };
+            size_t const lastIndex{ components.size() - 1 };
 
-    // template<typename ComponentType, typename... ConstructArgs>
-    // ComponentType &ComponentManager::addComponent(Entity entity, ConstructArgs &&... args) {
-    //     ComponentContainerInterface *entityContainer{ nullptr };
-    //     for(auto &container : containers) {
-    //         if(container->hasEntity(entity)) {
-    //             entityContainer = container.get();
-    //             break;
-    //         }
-    //     }
+            ComponentType removedComp{ std::move(components[index]) };
 
-    //     if(entityContainer != nullptr) {
-    //         if(entityContainer->canStoreComponent<ComponentType>()) {
-    //             return entityContainer->getComponent<ComponentType>(entity);
-    //         } /*  else {
-    //             auto containerType{ entityContainer->getContainerType() };
-    //             containerType.push_back(ComponentId::get<ComponentType>());
-    //         } */
-    //     }
+            if(index < lastIndex) {
+                components[index] = std::move(components.back());
 
-    //     std::unique_ptr<ComponentContainerInterface> container{ std::make_unique<ComponentContainer<ComponentType>>() };
+                //Update the index map so it knows about the moved component
+                for(auto [entityId, componentIndex] : entityToIndex) {
+                    if(componentIndex == lastIndex) {
+                        entityToIndex[entityId] = index;
+                        break;
+                    }
+                }
+            }
+            components.pop_back();
+            entityToIndex.erase(entity);
+        }
+    }
 
-    //     container->addEntity(entity, ComponentType{ std::forward<ConstructArgs>(args)... });
-    //     return container->getComponent<ComponentType>(entity);
-    // }
+    template<typename ComponentType, typename... ConstructArgs>
+    ComponentType &ComponentManager::addComponent(Entity entity, ConstructArgs &&... args) {
+        return getContainer<ComponentType>().addComponent(entity, std::forward<ConstructArgs>(args)...);
+    }
 
-    // template<typename ComponentType>
-    // ComponentType &ComponentManager::getComponent(Entity entity) {
-    //     // if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-    //     //     return components[iter->second];
-    //     // } else {
-    //     //     //TODO: return Excepted type?
-    //     //     CLOVE_ASSERT(false, "Entity does not have component of specified type!");
-    //     //     ComponentType *nullComp{ nullptr };
-    //     //     return *nullComp;
-    //     // }
+    template<typename ComponentType>
+    ComponentType &ComponentManager::getComponent(Entity entity) {
+        return getContainer<ComponentType>().getComponent(entity);
+    }
 
-    //     ComponentType *nullComp{ nullptr };
-    //     return *nullComp;
-    // }
+    template<typename ComponentType>
+    bool ComponentManager::hasComponent(Entity entity) {
+        return getContainer<ComponentType>().hasComponent(entity);
+    }
 
-    // template<typename ComponentType>
-    // bool ComponentManager::hasComponent(Entity entity) {
-    //     for(auto &container : containers) {
-    //         if(container->hasEntity(entity)) {
-    //             return container->hasComponent<ComponentType>(entity);
-    //         }
-    //     }
+    template<typename ComponentType>
+    void ComponentManager::removeComponent(Entity entity) {
+        getContainer<ComponentType>().removeComponent(entity);
+    }
 
-    //     return false;
-    // }
+    template<typename ComponentType>
+    ComponentManager::Container<ComponentType> &ComponentManager::getContainer() {
+        std::type_index const componentIndex{ typeid(ComponentType) };
 
-    // template<typename ComponentType>
-    // void ComponentManager::removeComponent(Entity entity) {
-    //     //ecsEventDispatcher->broadCastEvent(ComponentRemovedEvent<ComponentType>{ entity, removedComp });
-    // }
+        if(auto iter{ containers.find(componentIndex) }; iter != containers.end()) {
+            return static_cast<Container<ComponentType> &>(*iter->second.get());
+        } else {
+            containers[componentIndex] = std::make_unique<Container<ComponentType>>();
+            return static_cast<Container<ComponentType> &>(*containers[componentIndex].get());
+        }
+    }
 }
