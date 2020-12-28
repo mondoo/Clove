@@ -1,6 +1,8 @@
 #include "Clove/ECS/EntityManager.hpp"
 
 namespace garlic::clove {
+    Entity EntityManager::nextEntity{ 1 };
+
     EntityManager::EntityManager()
         : componentManager(&ecsEventDispatcher) {
     }
@@ -24,7 +26,7 @@ namespace garlic::clove {
     }
 
     void EntityManager::destroy(Entity entity) {
-        if(!isValid(entity)){
+        if(!isValid(entity)) {
             return;
         }
 
