@@ -94,16 +94,48 @@ TEST(ECSComponentTests, CanGetAnEntitysComponent) {
     EXPECT_DEATH(manager.getComponent<FloatComponent>(badEntity), "");
 }
 
-// TEST(ECSComponentTests, CanAddMultipleComponentsToEntity) {
-//     EntityManager manager{};
+TEST(ECSComponentTests, CanAddMultipleComponentsToEntity) {
+    EntityManager manager{};
 
-//     Entity entity{ manager.create() };
-//     manager.addComponent<BoolComponent>(entity);
-//     manager.addComponent<FloatComponent>(entity);
+    Entity entity{ manager.create() };
+    manager.addComponent<BoolComponent>(entity);
+    manager.addComponent<FloatComponent>(entity);
 
-//     ASSERT_TRUE(manager.hasComponent<BoolComponent>(entity));
-//     ASSERT_TRUE(manager.hasComponent<FloatComponent>(entity));
-// }
+    EXPECT_TRUE(manager.hasComponent<BoolComponent>(entity));
+    EXPECT_TRUE(manager.hasComponent<FloatComponent>(entity));
+}
 
-//TODO: Remove
+TEST(ECSComponentTests, CanRemoveComponentFromEntity) {
+    EntityManager manager{};
+
+    Entity entity{ manager.create() };
+    manager.addComponent<BoolComponent>(entity);
+    manager.addComponent<FloatComponent>(entity);
+
+    EXPECT_TRUE(manager.hasComponent<BoolComponent>(entity));
+    EXPECT_TRUE(manager.hasComponent<FloatComponent>(entity));
+
+    manager.removeComponent<FloatComponent>(entity);
+
+    EXPECT_FALSE(manager.hasComponent<FloatComponent>(entity));
+
+    ASSERT_TRUE(CLOVE_ENABLE_ASSERTIONS);
+
+    EXPECT_DEATH(manager.getComponent<FloatComponent>(entity), "");
+
+    Entity entityA{ manager.create() };
+    Entity entityB{ manager.create() };
+
+    manager.addComponent<BoolComponent>(entityA, false);
+    manager.addComponent<BoolComponent>(entityB, true);
+
+    EXPECT_FALSE(manager.getComponent<BoolComponent>(entityA).value);
+    EXPECT_TRUE(manager.getComponent<BoolComponent>(entityB).value);
+
+    manager.removeComponent<BoolComponent>(entityA);
+
+    EXPECT_TRUE(manager.hasComponent<BoolComponent>(entityB));
+    EXPECT_TRUE(manager.getComponent<BoolComponent>(entityB).value);
+}
+
 //TODO: Clone
