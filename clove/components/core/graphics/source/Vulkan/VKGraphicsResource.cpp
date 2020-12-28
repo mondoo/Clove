@@ -8,6 +8,10 @@ namespace garlic::clove {
         VkAccessFlags flags = 0;
         uint32_t total      = 0;
 
+        if((garlicAccess & AccessFlags::TransferRead) != 0) {
+            flags |= VK_ACCESS_TRANSFER_READ_BIT;
+            total += static_cast<AccessFlagsType>(AccessFlags::TransferRead);
+        }
         if((garlicAccess & AccessFlags::TransferWrite) != 0) {
             flags |= VK_ACCESS_TRANSFER_WRITE_BIT;
             total += static_cast<AccessFlagsType>(AccessFlags::TransferWrite);

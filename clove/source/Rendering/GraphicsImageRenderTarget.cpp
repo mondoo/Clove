@@ -106,7 +106,7 @@ namespace garlic::clove {
         //Pre-record the transfer command
         ImageMemoryBarrierInfo constexpr layoutTransferInfo{
             .currentAccess      = AccessFlags::None,
-            .newAccess          = AccessFlags::TransferWrite,
+            .newAccess          = AccessFlags::TransferRead,
             .currentImageLayout = GraphicsImage::Layout::Undefined,
             .newImageLayout     = GraphicsImage::Layout::TransferSourceOptimal,
             .sourceQueue        = QueueType::None,
