@@ -126,8 +126,8 @@ namespace garlic::clove {
         VkBufferMemoryBarrier barrier{
             .sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
             .pNext               = nullptr,
-            .srcAccessMask       = convertAccessFlags(barrierInfo.sourceAccess),
-            .dstAccessMask       = convertAccessFlags(barrierInfo.destinationAccess),
+            .srcAccessMask       = convertAccessFlags(barrierInfo.currentAccess),
+            .dstAccessMask       = convertAccessFlags(barrierInfo.newAccess),
             .srcQueueFamilyIndex = sourceFamilyIndex,
             .dstQueueFamilyIndex = destinationFamilyIndex,
             .buffer              = polyCast<VKBuffer>(&buffer)->getBuffer(),
@@ -148,9 +148,9 @@ namespace garlic::clove {
         VkImageMemoryBarrier barrier{
             .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
             .pNext               = nullptr,
-            .srcAccessMask       = convertAccessFlags(barrierInfo.sourceAccess),
-            .dstAccessMask       = convertAccessFlags(barrierInfo.destinationAccess),
-            .oldLayout           = VKImage::convertLayout(barrierInfo.oldImageLayout),
+            .srcAccessMask       = convertAccessFlags(barrierInfo.currentAccess),
+            .dstAccessMask       = convertAccessFlags(barrierInfo.newAccess),
+            .oldLayout           = VKImage::convertLayout(barrierInfo.currentImageLayout),
             .newLayout           = VKImage::convertLayout(barrierInfo.newImageLayout),
             .srcQueueFamilyIndex = sourceFamilyIndex,
             .dstQueueFamilyIndex = destinationFamilyIndex,

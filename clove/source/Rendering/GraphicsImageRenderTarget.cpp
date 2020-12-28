@@ -3,10 +3,10 @@
 #include "Clove/Application.hpp"
 
 #include <Clove/Graphics/Fence.hpp>
+#include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
 #include <Clove/Graphics/GraphicsQueue.hpp>
-#include <Clove/Graphics/GraphicsBuffer.hpp>
 
 namespace garlic::clove {
     GraphicsImageRenderTarget::GraphicsImageRenderTarget(garlic::clove::GraphicsImage::Descriptor imageDescriptor)
@@ -105,12 +105,12 @@ namespace garlic::clove {
 
         //Pre-record the transfer command
         ImageMemoryBarrierInfo constexpr layoutTransferInfo{
-            .sourceAccess      = AccessFlags::None,
-            .destinationAccess = AccessFlags::TransferWrite,
-            .oldImageLayout    = GraphicsImage::Layout::Undefined,
-            .newImageLayout    = GraphicsImage::Layout::TransferSourceOptimal,
-            .sourceQueue       = QueueType::None,
-            .destinationQueue  = QueueType::None,
+            .currentAccess      = AccessFlags::None,
+            .newAccess          = AccessFlags::TransferWrite,
+            .currentImageLayout = GraphicsImage::Layout::Undefined,
+            .newImageLayout     = GraphicsImage::Layout::TransferSourceOptimal,
+            .sourceQueue        = QueueType::None,
+            .destinationQueue   = QueueType::None,
         };
 
         transferCommandBuffer->beginRecording(CommandBufferUsage::Default);
