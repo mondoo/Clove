@@ -19,6 +19,10 @@ namespace garlic::clove {
     }
 
     Entity EntityManager::clone(Entity entity) {
+        if(!isValid(entity)){
+            return NullEntity;
+        }
+
         Entity clonedEntity{ create() };
         componentManager.cloneComponents(entity, clonedEntity);
 

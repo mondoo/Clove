@@ -46,7 +46,7 @@ TEST(ECSEntityTests, CheckEntityValidity) {
     Entity wrongEntity{ otherManager.create() };
 
     EXPECT_FALSE(manager.isValid(wrongEntity));
-    EXPECT_DEATH(manager.clone(wrongEntity), "");
+    EXPECT_EQ(manager.clone(wrongEntity), NullEntity);
 }
 
 TEST(ECSEntityTests, DestroySingleEntity){
