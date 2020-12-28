@@ -5,6 +5,8 @@ set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/ECS)
 add_library(
     CloveECS STATIC
 
+	${INCLUDE}/ComponentContainer.hpp
+	${INCLUDE}/ComponentContainer.inl
 	${INCLUDE}/ComponentManager.hpp
 	${INCLUDE}/ComponentManager.inl
 	${SOURCE}/ComponentManager.cpp
