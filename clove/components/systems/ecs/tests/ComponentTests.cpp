@@ -61,15 +61,20 @@ TEST(ECSComponentTests, CanAddSingleComponentToEntity) {
     EXPECT_DEATH(manager.addComponent<BoolComponent>(badEntity), "");
 }
 
-// TEST(ECSComponentTests, CanCheckIfAnEntityHasAComponent) {
-//     EntityManager manager{};
+TEST(ECSComponentTests, CanCheckIfAnEntityHasAComponent) {
+    EntityManager manager{};
 
-//     Entity entity{ manager.create() };
-//     manager.addComponent<BoolComponent>(entity);
+    Entity entity{ manager.create() };
 
-//     ASSERT_TRUE(manager.hasComponent<BoolComponent>(entity));
-//     ASSERT_FALSE(manager.hasComponent<FloatComponent>(entity));
-// }
+    manager.addComponent<BoolComponent>(entity);
+    EXPECT_TRUE(manager.hasComponent<BoolComponent>(entity));
+    EXPECT_FALSE(manager.hasComponent<FloatComponent>(entity));
+
+    EXPECT_FALSE(manager.hasComponent<FloatComponent>(NullEntity));
+
+    Entity badEntity{ 999999999 };
+    EXPECT_FALSE(manager.hasComponent<BoolComponent>(badEntity));
+}
 
 // TEST(ECSComponentTests, CanGetAnEntitysComponent) {
 //     //TODO Make sure to assert_death for ones that do not have component type.

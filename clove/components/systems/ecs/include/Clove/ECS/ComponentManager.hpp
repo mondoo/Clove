@@ -23,11 +23,6 @@ namespace garlic::clove {
             //FUNCTIONS
         public:
             virtual ~ContainerInterface() = default;
-
-            virtual bool hasComponent(Entity entity) const = 0;
-
-            virtual void cloneComponent(Entity from, Entity to) = 0;
-            virtual void removeComponent(Entity entity)         = 0;
         };
 
         template<typename ComponentType>
@@ -49,13 +44,13 @@ namespace garlic::clove {
 
             ~Container() = default;
 
-            bool hasComponent(Entity entity) const final {
-                return false;
+            bool hasComponent(Entity entity) const {
+                return entityToIndex.find(entity) != entityToIndex.end();
             }
 
-            void cloneComponent(Entity from, Entity to) final {
+            void cloneComponent(Entity from, Entity to) {
             }
-            void removeComponent(Entity entity) final {
+            void removeComponent(Entity entity) {
             }
 
             template<typename... ConstructArgs>
@@ -111,7 +106,7 @@ namespace garlic::clove {
 
         template<typename ComponentType>
         bool hasComponent(Entity entity) {
-            return false;
+            return getContainer<ComponentType>().hasComponent(entity);
         }
 
         template<typename ComponentType>

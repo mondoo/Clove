@@ -19,7 +19,7 @@ namespace garlic::clove {
 
     template<typename ComponentType>
     bool EntityManager::hasComponent(Entity entity) {
-        if(!isValid(entity)) {
+        if(isValid(entity)) {
             return componentManager.hasComponent<ComponentType>(entity);
         } else {
             return false;
