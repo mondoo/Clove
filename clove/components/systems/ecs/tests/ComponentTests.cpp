@@ -7,6 +7,12 @@ struct BoolComponent {
     bool value{ false };
 };
 
+struct ComplexComponent {
+    int32_t a{ 0 };
+    int32_t b{ 0 };
+    int32_t c{ 0 };
+};
+
 struct FloatComponent {
     float value{ 0.0f };
 };
@@ -14,36 +20,38 @@ struct FloatComponent {
 TEST(ECSComponentTests, CanAddSingleComponentToEntity) {
     EntityManager manager{};
 
-    {
-        Entity defaultEntity{ manager.create() };
-        Entity valueEntity{ manager.create() };
+    Entity defaultEntity{ manager.create() };
+    Entity falseEntity{ manager.create() };
+    Entity trueEntity{ manager.create() };
 
-        auto &falseComp{ manager.addComponent<BoolComponent>(defaultEntity) };
-        auto &trueComp{ manager.addComponent<BoolComponent>(valueEntity, true) };
+    auto &defaultComp{ manager.addComponent<BoolComponent>(defaultEntity) };
+    EXPECT_EQ(defaultComp.value, BoolComponent{}.value);
 
-        ASSERT_FALSE(falseComp.value);
-        ASSERT_TRUE(trueComp.value);
-    }
+    auto &falseComp{ manager.addComponent<BoolComponent>(falseEntity, false) };
+    EXPECT_FALSE(falseComp.value);
 
-    {
-        Entity trueOrFalseEntity{ manager.create() };
-        auto &trueOrFalseComp{ manager.addComponent<BoolComponent>(trueOrFalseEntity) };
+    auto &trueComp{ manager.addComponent<BoolComponent>(trueEntity, true) };
+    EXPECT_TRUE(trueComp.value);
 
-        ASSERT_FALSE(trueOrFalseComp.value);
+    Entity complexEntity{ manager.create() };
 
-        auto &trueComp{ manager.addComponent<BoolComponent>(trueOrFalseEntity, true) };
+    auto &complexComp{ manager.addComponent<ComplexComponent>(complexEntity, 1, 2, 3) };
+    EXPECT_EQ(complexComp.a, 1);
+    EXPECT_EQ(complexComp.b, 2);
+    EXPECT_EQ(complexComp.c, 3);
 
-        ASSERT_TRUE(trueOrFalseComp.value);
-        ASSERT_TRUE(trueComp.value);
+    Entity trueOrFalseEntity{ manager.create() };
 
-        trueOrFalseComp.value = false;
+    auto &trueOrFalseCompA{ manager.addComponent<BoolComponent>(trueOrFalseEntity, false) };
+    EXPECT_FALSE(trueOrFalseCompA.value);
 
-        ASSERT_FALSE(trueOrFalseComp.value);
-        ASSERT_FALSE(trueComp.value);
-    }
+    auto &trueOrFalseCompB{ manager.addComponent<BoolComponent>(trueOrFalseEntity, true) };
+    EXPECT_TRUE(trueOrFalseCompA.value);
+    EXPECT_TRUE(trueOrFalseCompB.value);
 
-    //TODO: Tests for adding a component to an entity that already exists
-    //TODO: Tests for adding a component to an entity that doesn't exist
+    trueOrFalseCompA.value = false;
+    EXPECT_FALSE(trueOrFalseCompA.value);
+    EXPECT_FALSE(trueOrFalseCompB.value);
 }
 
 // TEST(ECSComponentTests, CanCheckIfAnEntityHasAComponent) {

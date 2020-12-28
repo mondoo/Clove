@@ -60,19 +60,20 @@ namespace garlic::clove {
 
             template<typename... ConstructArgs>
             ComponentType &addComponent(Entity entity, ConstructArgs &&... args) {
-                ComponentType *addedComp{ nullptr };
-
                 if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "{0} was called on an Entity that alread has that component. Old component will be replaced with the new one", CLOVE_FUNCTION_NAME_PRETTY);
                     components[iter->second] = ComponentType{ std::forward<ConstructArgs>(args)... };
-                    addedComp                = &components[iter->second];
+                    
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "{0} was called for Entity {1} that alread has that component. Old component is replaced with a new one", CLOVE_FUNCTION_NAME_PRETTY, entity);
+                    
+                    return components[iter->second];
                 } else {
                     components.emplace_back(ComponentType{ std::forward<ConstructArgs>(args)... });
                     entityToIndex[entity] = components.size() - 1;
-                    addedComp             = &components.back();
+                    
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} added new entry for Entity {1}. Index in array is {2}", CLOVE_FUNCTION_NAME_PRETTY, entity, entityToIndex[entity]);
+                    
+                    return components[entityToIndex[entity]];
                 }
-
-                return *addedComp;
             }
             ComponentType &getComponent(Entity entity) {
             }
@@ -80,7 +81,7 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        std::unordered_map<std::type_index, std::unique_ptr<ContainerInterface>> containers;
+        std::unordered_map<std::type_index, std::unique_ptr<ContainerInterface>> containers{};
 
         EventDispatcher *ecsEventDispatcher{ nullptr };
 
