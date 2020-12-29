@@ -10,7 +10,7 @@ namespace garlic::clove {
     ComponentContainer<ComponentType>::ComponentContainer(ComponentContainer &&other) noexcept = default;
 
     template<typename ComponentType>
-    ComponentContainer<ComponentType> &ComponentContainer<ComponentType>::operator=(ComponentContainer &&other) noexcept;
+    ComponentContainer<ComponentType> &ComponentContainer<ComponentType>::operator=(ComponentContainer &&other) noexcept = default;
 
     template<typename ComponentType>
     ComponentContainer<ComponentType>::~ComponentContainer() = default;
