@@ -35,17 +35,7 @@ namespace garlic::clove {
 
     template<typename... ComponentTypes, typename... ExcludeTypes>
     void EntityManager::forEach(void (*updateFunction)(ComponentTypes...), Exclude<ExcludeTypes...>) {
-        for(Entity entity : activeEntities) {
-            if(Exclude<ExcludeTypes...>::size > 0) {
-                if((hasComponent<std::remove_const_t<std::remove_reference_t<ExcludeTypes>>>(entity) || ...)) {
-                    continue;
-                }
-            }
-
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                (*updateFunction)(getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
-            }
-        }
+        componentManager.generateView<std::decay_t<ComponentTypes>...>().forEach(updateFunction);
     }
 
     template<typename... ComponentTypes, typename... ExcludeTypes>

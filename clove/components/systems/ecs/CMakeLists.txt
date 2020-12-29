@@ -10,6 +10,8 @@ add_library(
 	${INCLUDE}/ComponentManager.hpp
 	${INCLUDE}/ComponentManager.inl
 	${SOURCE}/ComponentManager.cpp
+	${INCLUDE}/ComponentView.hpp
+	${INCLUDE}/ComponentView.inl
 	${INCLUDE}/ECSEvents.hpp
 	${INCLUDE}/Entity.hpp
 	${INCLUDE}/EntityManager.hpp

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/ECS/ComponentContainer.hpp"
+#include "Clove/ECS/ComponentView.hpp"
 #include "Clove/ECS/Entity.hpp"
 
 #include <memory>
@@ -44,6 +45,11 @@ namespace garlic::clove {
         void removeComponent(Entity entity);
 
         void removeEntity(Entity entity);
+
+        template<typename... ComponentTypes>
+        ComponentView<ComponentTypes...> generateView() /* const */ {
+            return { std::make_tuple(&getContainer<ComponentTypes>()...) };
+        }
 
     private:
         template<typename ComponentType>
