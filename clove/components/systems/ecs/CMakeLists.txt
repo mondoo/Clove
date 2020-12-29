@@ -6,8 +6,8 @@ add_library(
     CloveECS STATIC
 
 	${INCLUDE}/ComponentContainer.hpp
-	${INCLUDE}/ComponentContainer.cpp
 	${INCLUDE}/ComponentContainer.inl
+	${SOURCE}/ComponentContainer.cpp
 	${INCLUDE}/ComponentManager.hpp
 	${INCLUDE}/ComponentManager.inl
 	${SOURCE}/ComponentManager.cpp

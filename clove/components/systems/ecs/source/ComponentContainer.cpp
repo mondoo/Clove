@@ -1,4 +1,4 @@
-#include "ComponentContainer.hpp"
+#include "Clove/ECS/ComponentContainer.hpp"
 
 namespace garlic::clove{
     ComponentContainerInterface::ComponentContainerInterface() = default;
