@@ -8,13 +8,6 @@
 #include <vector>
 
 namespace garlic::clove {
-    template<typename... Types>
-    struct Exclude {
-        static size_t constexpr size{ sizeof...(Types) };
-    };
-}
-
-namespace garlic::clove {
     /**
 	 * @brief The EntityManager that contains the Entities and their Components.
 	 */
