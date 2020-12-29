@@ -6,6 +6,7 @@
 #include <Clove/Event/EventDispatcher.hpp>
 #include <set>
 #include <vector>
+#include <utility>
 
 namespace garlic::clove {
     /**
@@ -104,43 +105,38 @@ namespace garlic::clove {
         void removeComponent(Entity entity);
 
         /**
-         * @brief Calls the function for every Entity in the entityManager.
-         * @tparam ComponentTypes The components to iterate over.
-         * @tparam ExcludeTypes The components to exclude from this iteration.
+         * @brief Calls the function for every Entity that has the components of the function arguments.
+         * @param callable 
          */
-        template<typename... ComponentTypes, typename... ExcludeTypes>
-        void forEach(void (*updateFunction)(ComponentTypes...), Exclude<ExcludeTypes...> = {});
-        /*! @copydoc forEach */
-        template<typename... ComponentTypes, typename... ExcludeTypes>
-        void forEach(void (*updateFunction)(Entity, ComponentTypes...), Exclude<ExcludeTypes...> = {});
-
-        /*! @copydoc forEach */
-        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system, Exclude<ExcludeTypes...> = {});
-        /*! @copydoc forEach */
-        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
-        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...), SystemType *system, Exclude<ExcludeTypes...> = {});
-
-        /*! @copydoc forEach */
-        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system, Exclude<ExcludeTypes...> = {});
-        /*! @copydoc forEach */
-        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
-        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...) const, SystemType *system, Exclude<ExcludeTypes...> = {});
-
-        /*! @copydoc forEach */
-        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system, Exclude<ExcludeTypes...> = {});
-        /*! @copydoc forEach */
-        template<typename SystemType, typename... ComponentTypes, typename... ExcludeTypes>
-        void forEach(void (SystemType::*updateFunction)(Entity, ComponentTypes...) const, SystemType system, Exclude<ExcludeTypes...> = {});
+        template<typename FunctionType, typename... ExcludeTypes>
+        void forEach(FunctionType function, Exclude<ExcludeTypes...> = {}) {
+            generateViewFromFunction<FunctionType>(std::make_index_sequence<FunctionTraits<FunctionType>::arity>{}, Exclude<ExcludeTypes...>{}).forEach(function);
+        }
 
         /**
-         * @brief Takes a callable type (such as a lambda) and calls it for every Entity in the entityManager.
-         * @tparam ExcludeTypes The components to exclude from this iteration.
+         * @brief Calls the member function for every Entity that has the components of the function arguments.
+         * @param callable 
+         * @param object 
          */
-        template<typename CallableType, typename... ExcludeTypes>
-        void forEach(CallableType callable, Exclude<ExcludeTypes...> = {});
+        template<typename FunctionType, typename ClassType, typename... ExcludeTypes>
+        void forEach(FunctionType function, ClassType *object, Exclude<ExcludeTypes...> = {}) {
+            generateViewFromFunction<FunctionType>(std::make_index_sequence<FunctionTraits<FunctionType>::arity>{}, Exclude<ExcludeTypes...>{}).forEach(function, object);
+        }
+
+    private:
+        template<typename FunctionType, size_t... indices, typename... ExcludeTypes>
+        auto generateViewFromFunction(std::index_sequence<indices...>, Exclude<ExcludeTypes...> = {}) {
+            return generateView<std::tuple_element_t<indices, FunctionTraits<FunctionType>::DecayParameterTypesTuple>...>(Exclude<ExcludeTypes...>{});
+        }
+
+        template<typename ComponentType, typename... ComponentTypes, typename... ExcludeTypes>
+        auto generateView(Exclude<ExcludeTypes...> = {}) {
+            if constexpr(std::is_same_v<ComponentType, Entity>){
+                return componentManager.generateView<std::decay_t<ComponentTypes>...>(Exclude<ExcludeTypes...>{});
+            }else{
+                return componentManager.generateView<std::decay_t<ComponentType>, std::decay_t<ComponentTypes>...>(Exclude<ExcludeTypes...>{});
+            }
+        }
     };
 }
 
