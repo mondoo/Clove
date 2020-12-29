@@ -16,7 +16,7 @@ public:
 
 class FloatComponent {
 public:
-    bool value{ 0.0f };
+    float value{ 0.0f };
 };
 
 void makeTrue(BoolComponent &comp) {
