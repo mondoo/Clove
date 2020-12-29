@@ -27,7 +27,7 @@ namespace garlic::clove {
     }
 
     TransformLayer::TransformLayer()
-        : Layer("Audio")
+        : Layer("Transform")
         , entityManager{ Application::get().getEntityManager() } {
     }
 
