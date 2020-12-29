@@ -1,7 +1,7 @@
 #include "Clove/ECS/EntityManager.hpp"
 
 namespace garlic::clove {
-    Entity EntityManager::nextEntity = 1;
+    Entity EntityManager::nextEntity{ 1 };
 
     EntityManager::EntityManager()
         : componentManager(&ecsEventDispatcher) {
@@ -19,25 +19,28 @@ namespace garlic::clove {
     }
 
     Entity EntityManager::clone(Entity entity) {
+        if(!isValid(entity)){
+            return NullEntity;
+        }
+
         Entity clonedEntity{ create() };
-        componentManager.cloneEntitiesComponents(entity, clonedEntity);
+        componentManager.cloneComponents(entity, clonedEntity);
 
         return clonedEntity;
     }
 
     void EntityManager::destroy(Entity entity) {
-        auto foundIDIter{ std::find(activeEntities.begin(), activeEntities.end(), entity) };
-
-        if(entity == NullEntity || foundIDIter == activeEntities.end()) {
+        if(!isValid(entity)) {
             return;
         }
 
-        pendingDestroyEntities.emplace(entity);
+        std::erase(activeEntities, entity);
+        componentManager.removeEntity(entity);
     }
 
     void EntityManager::destroyAll() {
         for(Entity entity : activeEntities) {
-            componentManager.onEntityDestroyed(entity);
+            componentManager.removeEntity(entity);
         }
         activeEntities.clear();
     }

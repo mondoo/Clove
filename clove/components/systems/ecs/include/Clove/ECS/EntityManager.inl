@@ -6,63 +6,54 @@ namespace garlic::clove {
     }
 
     template<typename ComponentType, typename... ConstructArgs>
-    ComponentPtr<ComponentType> EntityManager::addComponent(Entity entity, ConstructArgs &&... args) {
-        return componentManager.getComponentContainer<ComponentType>().addComponent(entity, std::forward<ConstructArgs>(args)...);
+    ComponentType &EntityManager::addComponent(Entity entity, ConstructArgs &&... args) {
+        CLOVE_ASSERT(isValid(entity), "{0}: Invalid entity provided", CLOVE_FUNCTION_NAME_PRETTY);
+        return componentManager.addComponent<ComponentType>(entity, std::forward<ConstructArgs>(args)...);
     }
 
     template<typename ComponentType>
-    ComponentPtr<ComponentType> EntityManager::getComponent(Entity entity) {
-        return componentManager.getComponentContainer<ComponentType>().getComponent(entity);
+    ComponentType &EntityManager::getComponent(Entity entity) {
+        CLOVE_ASSERT(isValid(entity), "{0}: Invalid entity provided", CLOVE_FUNCTION_NAME_PRETTY);
+        return componentManager.getComponent<ComponentType>(entity);
     }
 
     template<typename ComponentType>
     bool EntityManager::hasComponent(Entity entity) {
-        return componentManager.getComponentContainer<ComponentType>().hasComponent(entity);
+        if(isValid(entity)) {
+            return componentManager.hasComponent<ComponentType>(entity);
+        } else {
+            return false;
+        }
     }
 
     template<typename ComponentType>
     void EntityManager::removeComponent(Entity entity) {
-        componentManager.getComponentContainer<ComponentType>().removeComponent(entity);
-    }
-
-    template<typename... ComponentTypes>
-    void EntityManager::forEach(void (*updateFunction)(ComponentTypes...)) {
-        for(Entity entity : activeEntities) {
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                (*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
-            }
+        if(isValid(entity)) {
+            componentManager.removeComponent<ComponentType>(entity);
         }
     }
 
-    template<typename SystemType, typename... ComponentTypes>
-    void EntityManager::forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system) {
-        for(Entity entity : activeEntities) {
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                (system->*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
-            }
-        }
+    template<typename FunctionType, typename... ExcludeTypes>
+    void EntityManager::forEach(FunctionType function, Exclude<ExcludeTypes...>) {
+        generateViewFromFunction<FunctionType>(std::make_index_sequence<FunctionTraits<FunctionType>::arity>{}, Exclude<ExcludeTypes...>{}).forEach(function);
     }
 
-    template<typename SystemType, typename... ComponentTypes>
-    void EntityManager::forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system) {
-        for(Entity entity : activeEntities) {
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                (system->*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
-            }
-        }
+    template<typename FunctionType, typename ClassType, typename... ExcludeTypes>
+    void EntityManager::forEach(FunctionType function, ClassType *object, Exclude<ExcludeTypes...>) {
+        generateViewFromFunction<FunctionType>(std::make_index_sequence<FunctionTraits<FunctionType>::arity>{}, Exclude<ExcludeTypes...>{}).forEach(function, object);
     }
 
-    template<typename SystemType, typename... ComponentTypes>
-    void EntityManager::forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system) {
-        for(Entity entity : activeEntities) {
-            if((hasComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity) && ...)) {
-                (system.*updateFunction)(*getComponent<std::remove_const_t<std::remove_reference_t<ComponentTypes>>>(entity)...);
-            }
-        }
+    template<typename FunctionType, size_t... indices, typename... ExcludeTypes>
+    auto EntityManager::generateViewFromFunction(std::index_sequence<indices...>, Exclude<ExcludeTypes...>) {
+        return generateView<std::tuple_element_t<indices, typename FunctionTraits<FunctionType>::DecayParameterTypesTuple>...>(Exclude<ExcludeTypes...>{});
     }
 
-    template<typename CallableType>
-    void EntityManager::forEach(CallableType callable) {
-        forEach(&CallableType::operator(), std::move(callable));
+    template<typename ComponentType, typename... ComponentTypes, typename... ExcludeTypes>
+    auto EntityManager::generateView(Exclude<ExcludeTypes...>) {
+        if constexpr(std::is_same_v<ComponentType, Entity>) {
+            return componentManager.generateView<std::decay_t<ComponentTypes>...>(Exclude<ExcludeTypes...>{});
+        } else {
+            return componentManager.generateView<std::decay_t<ComponentType>, std::decay_t<ComponentTypes>...>(Exclude<ExcludeTypes...>{});
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace garlic::membrane {
         auto *const entityManager{ clove::Application::get().getEntityManager() };
 
         editorCamera = entityManager->create();
-        entityManager->addComponent<clove::TransformComponent>(editorCamera)->setPosition({ 0.0f, 0.0f, -10.0f });
+        entityManager->addComponent<clove::TransformComponent>(editorCamera).position = clove::vec3f{ 0.0f, 0.0f, -10.0f };
         entityManager->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
     }
 
@@ -32,6 +32,6 @@ namespace garlic::membrane {
     void EditorLayer::resizeViewport(clove::vec2ui size) {
         viewport.width  = size.x;
         viewport.height = size.y;
-        clove::Application::get().getEntityManager()->getComponent<clove::CameraComponent>(editorCamera)->setViewport(viewport);
+        clove::Application::get().getEntityManager()->getComponent<clove::CameraComponent>(editorCamera).camera.setViewport(viewport);
     }
 }

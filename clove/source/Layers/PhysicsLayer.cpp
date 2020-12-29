@@ -12,7 +12,64 @@
 #include <Clove/Event/EventDispatcher.hpp>
 #include <btBulletDynamicsCommon.h>
 
+template<typename... Ts>
+struct match : Ts... { using Ts::operator()...; };
+template<typename... Ts>
+match(Ts...) -> match<Ts...>;
+
 namespace garlic::clove {
+    namespace {
+        /**
+         * @brief Added to an entity when the system knows about it. Contains the Bullet types.
+         */
+        struct PhysicsProxyComponent {
+            std::unique_ptr<btCollisionObject> collisionObject;
+            std::unique_ptr<btCollisionShape> collisionShape;
+        };
+
+        /**
+         * @brief Tag component for entities that physics knows only about it's shape.
+         */
+        struct ShapeOnlyComponent {};
+        /**
+         * @brief Tag component for entities that physics knows only about it's rigid body.
+         */
+        struct BodyOnlyComponent {};
+
+        /**
+         * @brief Initialises proxy with the correct shape.
+         */
+        void createProxyShape(PhysicsProxyComponent &proxy, CollisionShapeComponent const &shape) {
+            std::visit(match{
+                           [&](CollisionShapeComponent::Sphere const &sphere) { proxy.collisionShape = std::make_unique<btSphereShape>(sphere.radius); },
+                           [&](CollisionShapeComponent::Cube const &cube) { proxy.collisionShape = std::make_unique<btBoxShape>(btVector3{ cube.halfExtents.x, cube.halfExtents.y, cube.halfExtents.z }); },
+                       },
+                       shape.shape);
+        }
+
+        /**
+         * @brief Initialises proxy with a btRigidBody.
+         * @return The created body so it can be added to the world.
+         */
+        btRigidBody *createProxyBody(PhysicsProxyComponent &proxy, RigidBodyComponent const &body) {
+            btVector3 localInertia{ 0.0f, 0.0f, 0.0f };
+            if(body.mass > 0.0f) {
+                proxy.collisionShape->calculateLocalInertia(body.mass, localInertia);
+            }
+
+            auto proxyBody{ std::make_unique<btRigidBody>(btRigidBody::btRigidBodyConstructionInfo{ body.mass, nullptr, proxy.collisionShape.get(), localInertia }) };
+            btRigidBody *rawBody{ proxyBody.get() };
+
+            proxy.collisionObject = std::move(proxyBody);
+
+            return rawBody;
+        }
+
+        btVector3 toBt(vec3f const &vec) {
+            return btVector3{ vec.x, vec.y, vec.z };
+        }
+    }
+
     PhysicsLayer::PhysicsLayer()
         : Layer("Physics")
         , entityManager{ Application::get().getEntityManager() } {
@@ -22,156 +79,86 @@ namespace garlic::clove {
         solver                 = std::make_unique<btSequentialImpulseConstraintSolver>();
 
         dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get());
-
-        registerToEvents(*entityManager);
     }
 
-    PhysicsLayer::PhysicsLayer(PhysicsLayer &&other) noexcept {
-        entityManager = other.entityManager;
+    PhysicsLayer::PhysicsLayer(PhysicsLayer &&other) noexcept = default;
 
-        collisionConfiguration = std::move(other.collisionConfiguration);
-        dispatcher             = std::move(other.dispatcher);
-        broadphase             = std::move(other.broadphase);
-        solver                 = std::move(other.solver);
-
-        dynamicsWorld = std::move(other.dynamicsWorld);
-
-        currentCollisions = std::move(other.currentCollisions);
-
-        registerToEvents(*entityManager);
-    }
-
-    PhysicsLayer &PhysicsLayer::operator=(PhysicsLayer &&other) noexcept {
-        entityManager = other.entityManager;
-
-        collisionConfiguration = std::move(other.collisionConfiguration);
-        dispatcher             = std::move(other.dispatcher);
-        broadphase             = std::move(other.broadphase);
-        solver                 = std::move(other.solver);
-
-        dynamicsWorld = std::move(other.dynamicsWorld);
-
-        currentCollisions = std::move(other.currentCollisions);
-
-        registerToEvents(*entityManager);
-
-        return *this;
-    }
+    PhysicsLayer &PhysicsLayer::operator=(PhysicsLayer &&other) noexcept = default;
 
     PhysicsLayer::~PhysicsLayer() = default;
-
-    void PhysicsLayer::registerToEvents(EntityManager &entityManager) {
-        EventDispatcher &dispatcher{ entityManager.getDispatcher() };
-
-        collisionShapeAddedHandle   = dispatcher.bindToEvent<ComponentAddedEvent<CollisionShapeComponent>>([this](ComponentAddedEvent<CollisionShapeComponent> const &event) {
-            onCollisionShapeAdded(event);
-        });
-        collisionShapeRemovedHandle = dispatcher.bindToEvent<ComponentRemovedEvent<CollisionShapeComponent>>([this](ComponentRemovedEvent<CollisionShapeComponent> const &event) {
-            onCollisionShapeRemoved(event);
-        });
-
-        rigidBodyAddedHandle   = dispatcher.bindToEvent<ComponentAddedEvent<RigidBodyComponent>>([this](ComponentAddedEvent<RigidBodyComponent> const &event) {
-            onRigidBodyAdded(event);
-        });
-        rigidBodyRemovedHandle = dispatcher.bindToEvent<ComponentRemovedEvent<RigidBodyComponent>>([this](ComponentRemovedEvent<RigidBodyComponent> const &event) {
-            onRigidBodyRemoved(event);
-        });
-    }
 
     void PhysicsLayer::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
-        //Make sure any colliders are properly paired with their rigid body
-        entityManager->forEach([this](CollisionShapeComponent &shape, RigidBodyComponent &body) {
-            if(shape.collisionObject != nullptr) {
-                dynamicsWorld->removeCollisionObject(shape.collisionObject.get());
-                shape.collisionObject.reset();
+        //If any component compositions have changed then these need to be reset
+        entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body, PhysicsProxyComponent const &proxy, ShapeOnlyComponent const &shapeOnly) {
+            dynamicsWorld->removeCollisionObject(proxy.collisionObject.get());
+            entityManager->removeComponent<PhysicsProxyComponent>(entity);
+            entityManager->removeComponent<ShapeOnlyComponent>(entity);
+        });
+        entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body, PhysicsProxyComponent const &proxy, BodyOnlyComponent const &shapeOnly) {
+            dynamicsWorld->removeCollisionObject(proxy.collisionObject.get());
+            entityManager->removeComponent<PhysicsProxyComponent>(entity);
+            entityManager->removeComponent<BodyOnlyComponent>(entity);
+        });
+        entityManager->forEach([&](Entity entity, PhysicsProxyComponent const &proxy) {
+            if(!entityManager->hasComponent<CollisionShapeComponent>(entity) || !entityManager->hasComponent<RigidBodyComponent>(entity)) {
+                dynamicsWorld->removeCollisionObject(proxy.collisionObject.get());
+                entityManager->removeComponent<PhysicsProxyComponent>(entity);
+            }
+        },
+                               Exclude<ShapeOnlyComponent, BodyOnlyComponent>{});
+
+        //Create proxies for any new / modified entities
+        entityManager->forEach(&PhysicsLayer::initialiseCollisionShape, this, Exclude<PhysicsProxyComponent, RigidBodyComponent>{});
+        entityManager->forEach(&PhysicsLayer::initialiseRigidBody, this, Exclude<PhysicsProxyComponent, CollisionShapeComponent>{});
+        entityManager->forEach(&PhysicsLayer::initialiseRigidBodyShape, this, Exclude<PhysicsProxyComponent>{});
+
+        //Apply any updates to the rigid body
+        entityManager->forEach([&](RigidBodyComponent const &body, PhysicsProxyComponent const &proxy) {
+            auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) };
+
+            if(body.linearVelocity.has_value()) {
+                btBody->setLinearVelocity(toBt(*body.linearVelocity));
             }
 
-            if(body.standInShape != nullptr) {
-                dynamicsWorld->removeCollisionObject(body.body.get());
-                body.standInShape.reset();
+            btBody->setRestitution(body.restitution);
 
-                body.body->setCollisionShape(shape.collisionShape.get());
+            btBody->setAngularFactor(toBt(body.angularFactor));
+            btBody->setLinearFactor(toBt(body.linearFactor));
 
-                btVector3 inertia{ 0.0f, 0.0f, 0.0f };
-                if(body.descriptor.mass > 0.0f) {
-                    shape.collisionShape->calculateLocalInertia(body.descriptor.mass, inertia);
-                }
-                body.body->setMassProps(body.descriptor.mass, inertia);
-                body.body->updateInertiaTensor();
+            if(body.appliedForce.has_value()) {
+                btBody->applyForce(toBt(body.appliedForce->amount), toBt(body.appliedForce->offset));
+            }
 
-                addBodyToWorld(body);
+            if(body.appliedImpulse.has_value()) {
+                btBody->applyForce(toBt(body.appliedImpulse->amount), toBt(body.appliedImpulse->offset));
             }
         });
-
-        //Make sure any recently un-paired colliders are updated
-        entityManager->forEach([this](CollisionShapeComponent &shape) {
-            if(!entityManager->hasComponent<RigidBodyComponent>(shape.getEntity())) {
-                if(shape.collisionObject == nullptr) {
-                    shape.constructCollisionObject();
-                    addColliderToWorld(shape);
-                }
-            }
-        });
-
-        //Make sure any recently un-paired rigid bodies are updated
-        entityManager->forEach([this](RigidBodyComponent &body) {
-            if(!entityManager->hasComponent<CollisionShapeComponent>(body.getEntity())) {
-                if(body.standInShape == nullptr) {
-                    btRigidBody *const btBody{ body.body.get() };
-
-                    dynamicsWorld->removeCollisionObject(btBody);
-                    body.standInShape = RigidBodyComponent::createStandInShape();
-                    btBody->setCollisionShape(body.standInShape.get());
-                    addBodyToWorld(body);
-                }
-            }
-        });
-
-        auto const updateCollider = [](TransformComponent const &transform, btCollisionObject &collisionObject) {
-            auto const pos{ transform.getPosition(TransformSpace::World) };
-            auto const rot{ transform.getRotation(TransformSpace::World) };
-
-            btTransform btTrans = collisionObject.getWorldTransform();
-            btTrans.setOrigin({ pos.x, pos.y, pos.z });
-            btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w });
-            collisionObject.setWorldTransform(btTrans);
-        };
 
         //Notify Bullet of the location of the colliders
-        entityManager->forEach([&](TransformComponent const &transform, CollisionShapeComponent &shape) {
-            if(!entityManager->hasComponent<RigidBodyComponent>(shape.getEntity())) {
-                updateCollider(transform, *shape.collisionObject);
-            }
-        });
-        entityManager->forEach([&](TransformComponent const &transform, RigidBodyComponent &body) {
-            updateCollider(transform, *body.body);
+        entityManager->forEach([&](TransformComponent const &transform, PhysicsProxyComponent const &proxy) {
+            auto const &pos{ transform.position };
+            auto const &rot{ transform.rotation };
+
+            btTransform btTrans = proxy.collisionObject->getWorldTransform();
+            btTrans.setOrigin({ pos.x, pos.y, pos.z });
+            btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w });
+            proxy.collisionObject->setWorldTransform(btTrans);
         });
 
         //Step physics world
         dynamicsWorld->stepSimulation(deltaTime.getDeltaSeconds());
 
-        auto const updateTransform = [](TransformComponent &transform, btCollisionObject const &collisionObject) {
-            btTransform const &btTrans{ collisionObject.getWorldTransform() };
+        //Apply any simulation updates
+        entityManager->forEach([&](TransformComponent &transform, PhysicsProxyComponent const &proxy) {
+            btTransform const &btTrans{ proxy.collisionObject->getWorldTransform() };
             btVector3 const &pos{ btTrans.getOrigin() };
             btQuaternion const &rot{ btTrans.getRotation() };
 
-            transform.setPosition({ pos.x(), pos.y(), pos.z() }, TransformSpace::World);
-            transform.setRotation({ rot.getW(), rot.getX(), rot.getY(), rot.getZ() }, TransformSpace::World);
-        };
-
-        //Apply any simulation updates
-        entityManager->forEach([&](TransformComponent &transform, CollisionShapeComponent const &shape) {
-            if(!entityManager->hasComponent<RigidBodyComponent>(shape.getEntity())) {
-                updateTransform(transform, *shape.collisionObject);
-            }
+            transform.position = vec3f{ pos.x(), pos.y(), pos.z() };
+            transform.rotation = quatf{ rot.getW(), rot.getX(), rot.getY(), rot.getZ() };
         });
-        entityManager->forEach([&](TransformComponent &transform, RigidBodyComponent const &body) {
-            updateTransform(transform, *body.body);
-        });
-
-        //TODO: Move collision broadcasting to it's own layer to be handled last
 
         //Gather collision manifolds
         int const numManifolds = dispatcher->getNumManifolds();
@@ -210,12 +197,12 @@ namespace garlic::clove {
             Entity const entityA{ manifold.entityA };
             Entity const entityB{ manifold.entityB };
 
-            if(auto entityAComp = entityManager->getComponent<CollisionResponseComponent>(entityA)) {
-                entityAComp->onCollisionBegin.broadcast(Collision{ entityA, entityB });
+            if(entityManager->hasComponent<CollisionResponseComponent>(entityA)) {
+                entityManager->getComponent<CollisionResponseComponent>(entityA).onCollisionBegin.broadcast(Collision{ entityA, entityB });
             }
 
-            if(auto entityBComp = entityManager->getComponent<CollisionResponseComponent>(entityB)) {
-                entityBComp->onCollisionBegin.broadcast(Collision{ entityB, entityA });
+            if(entityManager->hasComponent<CollisionResponseComponent>(entityB)) {
+                entityManager->getComponent<CollisionResponseComponent>(entityB).onCollisionBegin.broadcast(Collision{ entityB, entityA });
             }
 
             currentCollisions.emplace(manifold);
@@ -226,12 +213,12 @@ namespace garlic::clove {
             Entity const entityA{ manifold.entityA };
             Entity const entityB{ manifold.entityB };
 
-            if(auto entityAComp = entityManager->getComponent<CollisionResponseComponent>(entityA)) {
-                entityAComp->onCollisionEnd.broadcast(Collision{ entityA, entityB });
+            if(entityManager->hasComponent<CollisionResponseComponent>(entityA)) {
+                entityManager->getComponent<CollisionResponseComponent>(entityA).onCollisionEnd.broadcast(Collision{ entityA, entityB });
             }
 
-            if(auto entityBComp = entityManager->getComponent<CollisionResponseComponent>(entityB)) {
-                entityBComp->onCollisionEnd.broadcast(Collision{ entityB, entityA });
+            if(entityManager->hasComponent<CollisionResponseComponent>(entityB)) {
+                entityManager->getComponent<CollisionResponseComponent>(entityB).onCollisionEnd.broadcast(Collision{ entityB, entityA });
             }
 
             currentCollisions.erase(manifold);
@@ -262,31 +249,44 @@ namespace garlic::clove {
         }
     }
 
-    void PhysicsLayer::onCollisionShapeAdded(ComponentAddedEvent<CollisionShapeComponent> const &event) {
-        addColliderToWorld(*event.component);
+    void PhysicsLayer::initialiseCollisionShape(Entity entity, CollisionShapeComponent const &shape) {
+        PhysicsProxyComponent proxy{
+            .collisionObject = std::make_unique<btGhostObject>(),
+        };
+
+        createProxyShape(proxy, shape);
+
+        proxy.collisionObject->setCollisionShape(proxy.collisionShape.get());
+        proxy.collisionObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
+        proxy.collisionObject->setUserIndex(entity);
+
+        dynamicsWorld->addCollisionObject(proxy.collisionObject.get(), ~0, ~0);//Add the collider to every group and collide with every other group
+
+        entityManager->addComponent<PhysicsProxyComponent>(entity, std::move(proxy));
+        entityManager->addComponent<ShapeOnlyComponent>(entity);
     }
 
-    void PhysicsLayer::onCollisionShapeRemoved(ComponentRemovedEvent<CollisionShapeComponent> const &event) {
-        if(btCollisionObject *object = event.component->collisionObject.get()) {
-            dynamicsWorld->removeCollisionObject(object);
-        }
+    void PhysicsLayer::initialiseRigidBody(Entity entity, RigidBodyComponent const &body) {
+        PhysicsProxyComponent proxy{
+            .collisionShape = std::make_unique<btSphereShape>(0.1f),
+        };
+
+        btRigidBody *rawBody{ createProxyBody(proxy, body) };
+
+        dynamicsWorld->addRigidBody(rawBody, body.collisionGroup, body.collisionMask);
+
+        entityManager->addComponent<PhysicsProxyComponent>(entity, std::move(proxy));
+        entityManager->addComponent<BodyOnlyComponent>(entity);
     }
 
-    void PhysicsLayer::onRigidBodyAdded(ComponentAddedEvent<RigidBodyComponent> const &event) {
-        addBodyToWorld(*event.component);
-    }
+    void PhysicsLayer::initialiseRigidBodyShape(Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body) {
+        PhysicsProxyComponent proxy{};
 
-    void PhysicsLayer::onRigidBodyRemoved(ComponentRemovedEvent<RigidBodyComponent> const &event) {
-        dynamicsWorld->removeCollisionObject(event.component->body.get());
-    }
+        createProxyShape(proxy, shape);
+        btRigidBody *rawBody{ createProxyBody(proxy, body) };
 
-    void PhysicsLayer::addBodyToWorld(RigidBodyComponent const &rigidBodyComponent) {
-        dynamicsWorld->addRigidBody(rigidBodyComponent.body.get(), rigidBodyComponent.descriptor.collisionGroup, rigidBodyComponent.descriptor.collisionMask);
-        rigidBodyComponent.body->setUserIndex(rigidBodyComponent.getEntity());
-    }
+        dynamicsWorld->addRigidBody(rawBody, body.collisionGroup, body.collisionMask);
 
-    void PhysicsLayer::addColliderToWorld(CollisionShapeComponent const &colliderComponent) {
-        dynamicsWorld->addCollisionObject(colliderComponent.collisionObject.get(), ~0, ~0);//Add the collider to every group and collide with every other group
-        colliderComponent.collisionObject->setUserIndex(colliderComponent.getEntity());
+        entityManager->addComponent<PhysicsProxyComponent>(entity, std::move(proxy));
     }
 }

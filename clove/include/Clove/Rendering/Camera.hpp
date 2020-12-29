@@ -48,7 +48,7 @@ namespace garlic::clove {
         Camera(Camera &&other) noexcept;
 
         Camera &operator=(Camera const &other) = delete;
-        Camera &operator                       =(Camera &&other) noexcept;
+        Camera &operator=(Camera &&other) noexcept;
 
         ~Camera();
 

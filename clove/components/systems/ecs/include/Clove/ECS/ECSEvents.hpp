@@ -1,13 +1,17 @@
 #pragma once
 
+#include "Clove/ECS/Entity.hpp"
+
 namespace garlic::clove {
     template<typename ComponentType>
     struct ComponentAddedEvent {
-        ComponentType *component{ nullptr };
+        Entity entity;
+        ComponentType &component;
     };
 
     template<typename ComponentType>
     struct ComponentRemovedEvent {
-        ComponentType *component{ nullptr };
+        Entity entity;
+        ComponentType &component;
     };
 }

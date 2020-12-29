@@ -60,7 +60,7 @@ namespace garlic::membrane {
         createComponent(lightEnt, ComponentType::Transform);
         createComponent(lightEnt, ComponentType::PointLight);
 
-        entityManager->getComponent<clove::TransformComponent>(lightEnt)->setPosition({ 5.0f, 0.0f, 0.0f });
+        entityManager->getComponent<clove::TransformComponent>(lightEnt).position = clove::vec3f{ 5.0f, 0.0f, 0.0f };
 
         runtimeEntities.push_back(lightEnt);
     }
@@ -71,9 +71,9 @@ namespace garlic::membrane {
 
         for(auto &entity : runtimeEntities) {
             if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
-                auto const pos{ entityManager->getComponent<clove::TransformComponent>(entity)->getPosition() };
-                auto const rot{ clove::quaternionToEuler(entityManager->getComponent<clove::TransformComponent>(entity)->getRotation()) };
-                auto const scale{ entityManager->getComponent<clove::TransformComponent>(entity)->getScale() };
+                auto const &pos{ entityManager->getComponent<clove::TransformComponent>(entity).position };
+                auto const &rot{ clove::quaternionToEuler(entityManager->getComponent<clove::TransformComponent>(entity).rotation) };
+                auto const &scale{ entityManager->getComponent<clove::TransformComponent>(entity).scale };
 
                 Engine_OnTransformChanged ^ message { gcnew Engine_OnTransformChanged };
                 message->entity   = entity;
@@ -136,9 +136,9 @@ namespace garlic::membrane {
 
     void RuntimeLayer::updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale) {
         if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
-            entityManager->getComponent<clove::TransformComponent>(entity)->setPosition(position);
-            entityManager->getComponent<clove::TransformComponent>(entity)->setRotation(clove::eulerToQuaternion(rotation));
-            entityManager->getComponent<clove::TransformComponent>(entity)->setScale(scale);
+            entityManager->getComponent<clove::TransformComponent>(entity).position = position;
+            entityManager->getComponent<clove::TransformComponent>(entity).rotation = clove::eulerToQuaternion(rotation);
+            entityManager->getComponent<clove::TransformComponent>(entity).scale = scale;
         }
     }
 }

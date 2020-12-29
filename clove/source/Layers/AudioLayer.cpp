@@ -29,7 +29,7 @@ namespace garlic::clove {
         //Listener
         entityManager->forEach([](TransformComponent const &transform, AudioListenerComponent &listener) {
             vec3f const prevPos{ listener.listener->getPosition() };
-            vec3f const currPos{ transform.getPosition() };
+            vec3f const currPos{ transform.position };
 
             listener.listener->setPosition(currPos);
             listener.listener->setVelocity(currPos - prevPos);
@@ -38,7 +38,7 @@ namespace garlic::clove {
         //Source
         entityManager->forEach([](TransformComponent const &transform, AudioSourceComponent &source) {
             vec3f const prevPos{ source.source->getPosition() };
-            vec3f const currPos{ transform.getPosition() };
+            vec3f const currPos{ transform.position };
 
             source.source->setPosition(currPos);
             source.source->setVelocity(currPos - prevPos);

@@ -2,13 +2,14 @@
 
 #include "Clove/Layer.hpp"
 
+#include <Clove/DeltaTime.hpp>
 #include <Clove/ECS/ECSEvents.hpp>
 #include <Clove/ECS/Entity.hpp>
 #include <Clove/Event/EventHandle.hpp>
 #include <Clove/Maths/Vector.hpp>
-#include <Clove/DeltaTime.hpp>
-#include <unordered_set>
 #include <memory>
+#include <unordered_map>
+#include <unordered_set>
 
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
@@ -17,8 +18,8 @@ class btSequentialImpulseConstraintSolver;
 class btDiscreteDynamicsWorld;
 
 namespace garlic::clove {
-    class CollisionShapeComponent;
-    class RigidBodyComponent;
+    struct CollisionShapeComponent;
+    struct RigidBodyComponent;
     class EntityManager;
 }
 
@@ -78,8 +79,6 @@ namespace garlic::clove {
 
         ~PhysicsLayer();
 
-        void registerToEvents(EntityManager &entityManager);
-
         void onUpdate(DeltaTime const deltaTime) override;
 
         void setGravity(vec3f const &gravity);
@@ -98,13 +97,8 @@ namespace garlic::clove {
         Entity rayCast(vec3f const &begin, vec3f const &end, uint32_t const collisionGroup, uint32_t const collisionMask);
 
     private:
-        void onCollisionShapeAdded(ComponentAddedEvent<CollisionShapeComponent> const &event);
-        void onCollisionShapeRemoved(ComponentRemovedEvent<CollisionShapeComponent> const &event);
-
-        void onRigidBodyAdded(ComponentAddedEvent<RigidBodyComponent> const &event);
-        void onRigidBodyRemoved(ComponentRemovedEvent<RigidBodyComponent> const &event);
-
-        void addBodyToWorld(RigidBodyComponent const &rigidBodyComponent);
-        void addColliderToWorld(CollisionShapeComponent const &colliderComponent);
+        void initialiseCollisionShape(Entity entity, CollisionShapeComponent const &shape);
+        void initialiseRigidBody(Entity entity, RigidBodyComponent const &body);
+        void initialiseRigidBodyShape(Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body);
     };
 }

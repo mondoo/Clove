@@ -1,17 +1,12 @@
 #pragma once
 
 #include "Clove/ECS/ComponentManager.hpp"
-#include "Clove/ECS/ComponentSet.hpp"
-#include "Clove/ECS/ECSTypes.hpp"
 #include "Clove/ECS/Entity.hpp"
 
 #include <Clove/Event/EventDispatcher.hpp>
 #include <set>
 #include <vector>
-
-namespace garlic::clove {
-    class System;
-}
+#include <utility>
 
 namespace garlic::clove {
     /**
@@ -83,7 +78,7 @@ namespace garlic::clove {
 		 * @see	ComponentPtr.
 		 */
         template<typename ComponentType, typename... ConstructArgs>
-        ComponentPtr<ComponentType> addComponent(Entity entity, ConstructArgs &&... args);
+        ComponentType &addComponent(Entity entity, ConstructArgs &&... args);
         /**
 		 * @brief Gets the Component for an Entity.
 		 * @tparam ComponentType The type of Component to get.
@@ -92,7 +87,7 @@ namespace garlic::clove {
 		 * @see ComponentPtr.
 		 */
         template<typename ComponentType>
-        ComponentPtr<ComponentType> getComponent(Entity entity);
+        ComponentType &getComponent(Entity entity);
         /**
 		 * @brief Checks to see if the component exists on an Entity.
 		 * @tparam ComponentType The type of the Component to check for.
@@ -110,30 +105,23 @@ namespace garlic::clove {
         void removeComponent(Entity entity);
 
         /**
-         * @brief Calls the function for every Entity in the entityManager.
+         * @brief Calls the function for every Entity that has the components of the function arguments.
          */
-        template<typename... ComponentTypes>
-        void forEach(void (*updateFunction)(ComponentTypes...));
+        template<typename FunctionType, typename... ExcludeTypes>
+        void forEach(FunctionType function, Exclude<ExcludeTypes...> = {});
+
         /**
-         * @brief Calls the member function for every Entity in the entityManager.
+         * @brief Calls the member function for every Entity that has the components of the function arguments.
          */
-        template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...), SystemType *system);
-        /**
-         * @brief Calls the member function for every Entity in the entityManager.
-         */
-        template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType *system);
-        /**
-         * @brief Calls the member function for every Entity in the entityManager.
-         */
-        template<typename SystemType, typename... ComponentTypes>
-        void forEach(void (SystemType::*updateFunction)(ComponentTypes...) const, SystemType system);
-        /**
-         * @brief Takes a callable type (such as a lambda) and calls it for every Entity in the entityManager.
-         */
-        template<typename CallableType>
-        void forEach(CallableType callable);
+        template<typename FunctionType, typename ClassType, typename... ExcludeTypes>
+        void forEach(FunctionType function, ClassType *object, Exclude<ExcludeTypes...> = {});
+
+    private:
+        template<typename FunctionType, size_t... indices, typename... ExcludeTypes>
+        auto generateViewFromFunction(std::index_sequence<indices...>, Exclude<ExcludeTypes...> = {});
+
+        template<typename ComponentType, typename... ComponentTypes, typename... ExcludeTypes>
+        auto generateView(Exclude<ExcludeTypes...> = {});
     };
 }
 
