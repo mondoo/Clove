@@ -25,6 +25,8 @@ namespace garlic::clove {
         using ContainerType = std::vector<T>;
 
         using IndexType = typename ContainerType<ComponentType>::size_type;
+        using Iterator  = typename ContainerType<Entity>::iterator;
+
         //VARIABLES
     private:
         static inline IndexType constexpr nullIndex{ ~0u };
@@ -53,6 +55,14 @@ namespace garlic::clove {
         bool hasComponent(Entity entity) const final;
         void cloneComponent(Entity from, Entity to) final;
         void removeComponent(Entity entity) final;
+
+        Iterator begin() noexcept {
+            return entities.begin();
+        }
+
+        Iterator end() noexcept {
+            return entities.end();
+        }
     };
 }
 
