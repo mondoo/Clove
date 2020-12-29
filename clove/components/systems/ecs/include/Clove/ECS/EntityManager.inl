@@ -32,4 +32,28 @@ namespace garlic::clove {
             componentManager.removeComponent<ComponentType>(entity);
         }
     }
+
+    template<typename FunctionType, typename... ExcludeTypes>
+    void EntityManager::forEach(FunctionType function, Exclude<ExcludeTypes...>) {
+        generateViewFromFunction<FunctionType>(std::make_index_sequence<FunctionTraits<FunctionType>::arity>{}, Exclude<ExcludeTypes...>{}).forEach(function);
+    }
+
+    template<typename FunctionType, typename ClassType, typename... ExcludeTypes>
+    void EntityManager::forEach(FunctionType function, ClassType *object, Exclude<ExcludeTypes...>) {
+        generateViewFromFunction<FunctionType>(std::make_index_sequence<FunctionTraits<FunctionType>::arity>{}, Exclude<ExcludeTypes...>{}).forEach(function, object);
+    }
+
+    template<typename FunctionType, size_t... indices, typename... ExcludeTypes>
+    auto EntityManager::generateViewFromFunction(std::index_sequence<indices...>, Exclude<ExcludeTypes...>) {
+        return generateView<std::tuple_element_t<indices, typename FunctionTraits<FunctionType>::DecayParameterTypesTuple>...>(Exclude<ExcludeTypes...>{});
+    }
+
+    template<typename ComponentType, typename... ComponentTypes, typename... ExcludeTypes>
+    auto EntityManager::generateView(Exclude<ExcludeTypes...>) {
+        if constexpr(std::is_same_v<ComponentType, Entity>) {
+            return componentManager.generateView<std::decay_t<ComponentTypes>...>(Exclude<ExcludeTypes...>{});
+        } else {
+            return componentManager.generateView<std::decay_t<ComponentType>, std::decay_t<ComponentTypes>...>(Exclude<ExcludeTypes...>{});
+        }
+    }
 }

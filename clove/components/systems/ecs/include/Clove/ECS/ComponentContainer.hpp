@@ -24,25 +24,25 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
-        virtual ~ComponentContainerInterface() = default;
+        ComponentContainerInterface();
 
-        virtual bool hasComponent(Entity entity) const      = 0;//TODO: Implement here
+        ComponentContainerInterface(ComponentContainerInterface const &other) = delete;
+        ComponentContainerInterface(ComponentContainerInterface &&other) noexcept;
+
+        ComponentContainerInterface &operator=(ComponentContainerInterface const &other) = delete;
+        ComponentContainerInterface &operator=(ComponentContainerInterface &&other) noexcept;
+
+        virtual ~ComponentContainerInterface();
+
+        inline bool hasComponent(Entity entity);
         virtual void cloneComponent(Entity from, Entity to) = 0;
 
         virtual void removeComponent(Entity entity) = 0;
 
-        IndexType size() const {
-            return entities.size();
-        }
+        inline IndexType size() const;
 
-        Iterator begin() noexcept {
-            return entities.begin();
-        }
-
-        Iterator end() noexcept {
-            return entities.end();
-        }
+        inline Iterator begin() noexcept;
+        inline Iterator end() noexcept;
     };
 
     template<typename ComponentType>
@@ -67,7 +67,6 @@ namespace garlic::clove {
         ComponentType &addComponent(Entity entity, ConstructArgs &&... args);
         ComponentType &getComponent(Entity entity);
 
-        bool hasComponent(Entity entity) const final;
         void cloneComponent(Entity from, Entity to) final;
         void removeComponent(Entity entity) final;
     };

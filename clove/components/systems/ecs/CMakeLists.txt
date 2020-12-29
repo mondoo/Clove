@@ -6,6 +6,7 @@ add_library(
     CloveECS STATIC
 
 	${INCLUDE}/ComponentContainer.hpp
+	${INCLUDE}/ComponentContainer.cpp
 	${INCLUDE}/ComponentContainer.inl
 	${INCLUDE}/ComponentManager.hpp
 	${INCLUDE}/ComponentManager.inl
@@ -17,6 +18,8 @@ add_library(
 	${INCLUDE}/EntityManager.hpp
 	${INCLUDE}/EntityManager.inl
 	${SOURCE}/EntityManager.cpp
+	${INCLUDE}/Exclude.hpp
+	${INCLUDE}/FunctionTraits.hpp
 )
 
 #Includes

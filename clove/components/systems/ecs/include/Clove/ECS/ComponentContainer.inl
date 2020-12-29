@@ -3,6 +3,22 @@
 #include <type_traits>
 
 namespace garlic::clove {
+    bool ComponentContainerInterface::hasComponent(Entity entity) {
+        return entity != NullEntity && entityToIndex.size() > entity && entityToIndex[entity] != nullIndex;
+    }
+
+    ComponentContainerInterface::IndexType ComponentContainerInterface::size() const {
+        return entities.size();
+    }
+
+    ComponentContainerInterface::Iterator ComponentContainerInterface::begin() noexcept {
+        return entities.begin();
+    }
+
+    ComponentContainerInterface::Iterator ComponentContainerInterface::end() noexcept {
+        return entities.end();
+    }
+
     template<typename ComponentType>
     ComponentContainer<ComponentType>::ComponentContainer() = default;
 
@@ -38,11 +54,6 @@ namespace garlic::clove {
     ComponentType &ComponentContainer<ComponentType>::getComponent(Entity entity) {
         CLOVE_ASSERT(hasComponent(entity), "{0}: Entity does not have component", CLOVE_FUNCTION_NAME_PRETTY);
         return components[entityToIndex[entity]];
-    }
-
-    template<typename ComponentType>
-    bool ComponentContainer<ComponentType>::hasComponent(Entity entity) const {
-        return entity != NullEntity && entityToIndex.size() > entity && entityToIndex[entity] != nullIndex;
     }
 
     template<typename ComponentType>

@@ -106,37 +106,22 @@ namespace garlic::clove {
 
         /**
          * @brief Calls the function for every Entity that has the components of the function arguments.
-         * @param callable 
          */
         template<typename FunctionType, typename... ExcludeTypes>
-        void forEach(FunctionType function, Exclude<ExcludeTypes...> = {}) {
-            generateViewFromFunction<FunctionType>(std::make_index_sequence<FunctionTraits<FunctionType>::arity>{}, Exclude<ExcludeTypes...>{}).forEach(function);
-        }
+        void forEach(FunctionType function, Exclude<ExcludeTypes...> = {});
 
         /**
          * @brief Calls the member function for every Entity that has the components of the function arguments.
-         * @param callable 
-         * @param object 
          */
         template<typename FunctionType, typename ClassType, typename... ExcludeTypes>
-        void forEach(FunctionType function, ClassType *object, Exclude<ExcludeTypes...> = {}) {
-            generateViewFromFunction<FunctionType>(std::make_index_sequence<FunctionTraits<FunctionType>::arity>{}, Exclude<ExcludeTypes...>{}).forEach(function, object);
-        }
+        void forEach(FunctionType function, ClassType *object, Exclude<ExcludeTypes...> = {});
 
     private:
         template<typename FunctionType, size_t... indices, typename... ExcludeTypes>
-        auto generateViewFromFunction(std::index_sequence<indices...>, Exclude<ExcludeTypes...> = {}) {
-            return generateView<std::tuple_element_t<indices, typename FunctionTraits<FunctionType>::DecayParameterTypesTuple>...>(Exclude<ExcludeTypes...>{});
-        }
+        auto generateViewFromFunction(std::index_sequence<indices...>, Exclude<ExcludeTypes...> = {});
 
         template<typename ComponentType, typename... ComponentTypes, typename... ExcludeTypes>
-        auto generateView(Exclude<ExcludeTypes...> = {}) {
-            if constexpr(std::is_same_v<ComponentType, Entity>){
-                return componentManager.generateView<std::decay_t<ComponentTypes>...>(Exclude<ExcludeTypes...>{});
-            }else{
-                return componentManager.generateView<std::decay_t<ComponentType>, std::decay_t<ComponentTypes>...>(Exclude<ExcludeTypes...>{});
-            }
-        }
+        auto generateView(Exclude<ExcludeTypes...> = {});
     };
 }
 

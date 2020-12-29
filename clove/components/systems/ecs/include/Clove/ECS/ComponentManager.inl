@@ -24,6 +24,17 @@ namespace garlic::clove {
         getContainer<ComponentType>().removeComponent(entity);
     }
 
+    template<typename... ComponentTypes, typename... ExcludeTypes>
+    ComponentView<Exclude<ExcludeTypes...>, ComponentTypes...> ComponentManager::generateView(Exclude<ExcludeTypes...>) {
+        if constexpr(sizeof...(ExcludeTypes) > 0) {
+            return { std::make_tuple(&getContainer<ComponentTypes>()...), std::make_tuple(&getContainer<ExcludeTypes>()...) };
+        } else if constexpr(sizeof...(ComponentTypes) > 1) {
+            return { std::make_tuple(&getContainer<ComponentTypes>()...) };
+        } else {
+            return { &getContainer<ComponentTypes>()... };
+        }
+    }
+
     template<typename ComponentType>
     ComponentContainer<ComponentType> &ComponentManager::getContainer() {
         std::type_index const componentIndex{ typeid(ComponentType) };
