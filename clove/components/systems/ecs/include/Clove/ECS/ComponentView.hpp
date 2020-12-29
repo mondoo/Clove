@@ -9,6 +9,19 @@ namespace garlic::clove {
     struct Exclude {
         static size_t constexpr size{ sizeof...(Types) };
     };
+
+    template<typename FunctionType>
+    struct FunctionTraits;
+
+    template<typename RetType, typename... ParameterTypes>
+    struct FunctionTraits<RetType (ParameterTypes...)> {
+        using ReturnType = RetType;
+        using ParameterTypesTuple = std::tuple<ParameterTypes...>;
+    };
+
+    template<typename RetType, typename... ParameterTypes>
+    struct FunctionTraits<RetType(*)(ParameterTypes...)> : public FunctionTraits<RetType(ParameterTypes...)> {
+    };
 }
 
 namespace garlic::clove {
@@ -42,7 +55,7 @@ namespace garlic::clove {
         //TODO: Ctors
 
         template<typename CallableType>
-        void forEach(CallableType &&callable) {
+        void forEach(CallableType callable) {
             for(auto entity : *drivingContainer) {
                 if constexpr(sizeof...(ExcludedTypes) > 0) {
                     if((std::get<ComponentContainer<ExcludedTypes> *>(excludedContainers)->hasComponent(entity) || ...)) {
@@ -51,7 +64,12 @@ namespace garlic::clove {
                 }
 
                 if((std::get<ComponentContainer<ComponentTypes> *>(containerViews)->hasComponent(entity) && ...)) {
-                    callable(std::get<ComponentContainer<ComponentTypes> *>(containerViews)->getComponent(entity)...);
+                    //Call with entity if it's the first argument
+                    if constexpr(std::is_same_v<Entity, std::tuple_element_t<0, FunctionTraits<CallableType>::ParameterTypesTuple>>) {
+                        callable(entity, std::get<ComponentContainer<ComponentTypes> *>(containerViews)->getComponent(entity)...);
+                    } else {
+                        callable(std::get<ComponentContainer<ComponentTypes> *>(containerViews)->getComponent(entity)...);
+                    }
                 }
             }
         }
@@ -85,10 +103,16 @@ namespace garlic::clove {
         //TODO: Ctors
 
         template<typename CallableType>
-        void forEach(CallableType &&callable) {
+        void forEach(CallableType callable) {
             for(auto entity : *container) {
-                //TODO: Just iterate components here.
-                callable(container->getComponent(entity));
+                //TODO: Just iterate components here?
+
+                //Call with entity if it's the first argument
+                if constexpr(std::is_same_v<Entity, std::tuple_element_t<0, FunctionTraits<CallableType>::ParameterTypesTuple>>) {
+                    callable(entity, container->getComponent(entity));
+                } else {
+                    callable(container->getComponent(entity));
+                }
             }
         }
     };

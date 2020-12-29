@@ -23,6 +23,10 @@ void makeTrue(BoolComponent &comp) {
     comp.value = true;
 }
 
+void makeTrue_Entity(Entity entity, BoolComponent &comp) {
+    comp.value = true;
+}
+
 TEST(ECSSystemTests, CanUseMemberFunction) {
     EntityManager entityManager;
 
@@ -114,7 +118,7 @@ TEST(ECSSystemTests, CanGetEntityId) {
     for(int i = 0; i < 5; ++i) {
         auto entity{ entityManager.create() };
         entityManager.addComponent<ValueComponent>(entity);
-        entityManager.addComponent<BoolComponent>(entity);
+        entityManager.addComponent<BoolComponent>(entity, false);
         entities.push_back(entity);
     }
 
@@ -126,6 +130,22 @@ TEST(ECSSystemTests, CanGetEntityId) {
     });
 
     EXPECT_EQ(std::size(entities), std::size(seenEntities));
+
+    entityManager.forEach(&makeTrue_Entity);
+
+    for(auto entity : entities) {
+        EXPECT_TRUE(entityManager.getComponent<BoolComponent>(entity).value);
+    }
+
+    class TestSystem {
+    public:
+        void update(Entity entity, ValueComponent &component) {
+            EXPECT_TRUE(entity != NullEntity);
+        }
+    };
+    TestSystem system{};
+
+    entityManager.forEach(&TestSystem::update, &system);
 }
 
 TEST(ECSSystemTests, CanExcludeComponentsWithFunction) {
