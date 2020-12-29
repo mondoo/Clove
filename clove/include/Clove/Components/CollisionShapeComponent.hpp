@@ -22,6 +22,6 @@ namespace garlic::clove {
         };
         using ShapeVariant = std::variant<Sphere, Cube>;
 
-        ShapeVariant shape{};
+        ShapeVariant shape{Sphere{}}; //Provide a constructed shape to work around a problem on g++/clang 10
     };
 }
