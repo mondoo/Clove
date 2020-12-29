@@ -50,8 +50,10 @@ namespace garlic::clove {
         ComponentView<Exclude<ExcludeTypes...>, ComponentTypes...> generateView(Exclude<ExcludeTypes...>) /* const */ {
             if constexpr(sizeof...(ExcludeTypes) > 0) {
                 return { std::make_tuple(&getContainer<ComponentTypes>()...), std::make_tuple(&getContainer<ExcludeTypes>()...) };
-            } else {
+            } else if constexpr(sizeof...(ComponentTypes) > 1) {
                 return { std::make_tuple(&getContainer<ComponentTypes>()...) };
+            } else{
+                return { &getContainer<ComponentTypes>()... };
             }
         }
 

@@ -15,7 +15,7 @@ namespace garlic::clove {
     template<typename...>
     class ComponentView;
 
-    //Multi-component view specialisation.
+    //Multi-Component view specialisation.
     template<typename... ExcludedTypes, typename... ComponentTypes>
     class ComponentView<Exclude<ExcludedTypes...>, ComponentTypes...> {
         //VARIABLES
@@ -64,6 +64,32 @@ namespace garlic::clove {
             return std::min({ std::get<ComponentContainer<ComponentTypes> *>(containerViews)... }, [](auto const *const lhs, auto const *const rhs) {
                 return lhs->size() < rhs->size();
             });
+        }
+    };
+
+    //Single-Component view specialisation
+    template<typename ComponentType>
+    class ComponentView<Exclude<>, ComponentType> {
+        //VARIABLES
+    private:
+        ComponentContainer<ComponentType> *container{};
+
+        //FUNCTIONS
+    public:
+        ComponentView() = delete;
+
+        ComponentView(ComponentContainer<ComponentType> *container)
+            : container{ container } {
+        }
+
+        //TODO: Ctors
+
+        template<typename CallableType>
+        void forEach(CallableType &&callable) {
+            for(auto entity : *container) {
+                //TODO: Just iterate components here.
+                callable(container->getComponent(entity));
+            }
         }
     };
 
