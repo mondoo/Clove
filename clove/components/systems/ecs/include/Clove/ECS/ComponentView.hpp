@@ -81,7 +81,7 @@ namespace garlic::clove {
 
                 if((std::get<ComponentContainer<ComponentTypes> *>(containerViews)->hasComponent(entity) && ...)) {
                     //Call with entity if it's the first argument
-                    if constexpr(std::is_same_v<Entity, std::tuple_element_t<0, FunctionTraits<CallableType>::ParameterTypesTuple>>) {
+                    if constexpr(std::is_same_v<Entity, std::tuple_element_t<0, typename FunctionTraits<CallableType>::ParameterTypesTuple>>) {
                         callable(entity, std::get<ComponentContainer<ComponentTypes> *>(containerViews)->getComponent(entity)...);
                     } else {
                         callable(std::get<ComponentContainer<ComponentTypes> *>(containerViews)->getComponent(entity)...);
@@ -102,7 +102,7 @@ namespace garlic::clove {
 
                 if((std::get<ComponentContainer<ComponentTypes> *>(containerViews)->hasComponent(entity) && ...)) {
                     //Call with entity if it's the first argument
-                    if constexpr(std::is_same_v<Entity, std::tuple_element_t<0, FunctionTraits<FunctionType>::ParameterTypesTuple>>) {
+                    if constexpr(std::is_same_v<Entity, std::tuple_element_t<0, typename FunctionTraits<FunctionType>::ParameterTypesTuple>>) {
                         (object->*function)(entity, std::get<ComponentContainer<ComponentTypes> *>(containerViews)->getComponent(entity)...);
                     } else {
                         (object->*function)(std::get<ComponentContainer<ComponentTypes> *>(containerViews)->getComponent(entity)...);
@@ -146,7 +146,7 @@ namespace garlic::clove {
                 //TODO: Just iterate components here?
 
                 //Call with entity if it's the first argument
-                if constexpr(std::is_same_v<Entity, std::tuple_element_t<0, FunctionTraits<CallableType>::ParameterTypesTuple>>) {
+                if constexpr(std::is_same_v<Entity, std::tuple_element_t<0, typename FunctionTraits<CallableType>::ParameterTypesTuple>>) {
                     callable(entity, container->getComponent(entity));
                 } else {
                     callable(container->getComponent(entity));
@@ -161,7 +161,7 @@ namespace garlic::clove {
                 //TODO: Just iterate components here?
 
                 //Call with entity if it's the first argument
-                if constexpr(std::is_same_v<Entity, std::tuple_element_t<0, FunctionTraits<FunctionType>::ParameterTypesTuple>>) {
+                if constexpr(std::is_same_v<Entity, std::tuple_element_t<0, typename FunctionTraits<FunctionType>::ParameterTypesTuple>>) {
                     (object->*function)(entity, container->getComponent(entity));
                 } else {
                     (object->*function)(container->getComponent(entity));

@@ -126,7 +126,7 @@ namespace garlic::clove {
     private:
         template<typename FunctionType, size_t... indices, typename... ExcludeTypes>
         auto generateViewFromFunction(std::index_sequence<indices...>, Exclude<ExcludeTypes...> = {}) {
-            return generateView<std::tuple_element_t<indices, FunctionTraits<FunctionType>::DecayParameterTypesTuple>...>(Exclude<ExcludeTypes...>{});
+            return generateView<std::tuple_element_t<indices, typename FunctionTraits<FunctionType>::DecayParameterTypesTuple>...>(Exclude<ExcludeTypes...>{});
         }
 
         template<typename ComponentType, typename... ComponentTypes, typename... ExcludeTypes>
