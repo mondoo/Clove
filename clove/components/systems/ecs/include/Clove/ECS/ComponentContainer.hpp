@@ -7,33 +7,48 @@
 
 namespace garlic::clove {
     class ComponentContainerInterface {
-        //FUNCTIONS
-    public:
-        virtual ~ComponentContainerInterface() = default;
-
-        virtual bool hasComponent(Entity entity) const      = 0;
-        virtual void cloneComponent(Entity from, Entity to) = 0;
-
-        virtual void removeComponent(Entity entity) = 0;
-    };
-
-    template<typename ComponentType>
-    class ComponentContainer : public ComponentContainerInterface {
         //TYPES
     public:
         template<typename T>
         using ContainerType = std::vector<T>;
 
-        using IndexType = typename ContainerType<ComponentType>::size_type;
+        using IndexType = typename ContainerType<Entity>::size_type;
         using Iterator  = typename ContainerType<Entity>::iterator;
 
         //VARIABLES
-    private:
+    protected:
         static inline IndexType constexpr nullIndex{ ~0u };
 
         ContainerType<IndexType> entityToIndex{}; /**< Sparse vector of indices. Used to index into either packed array. Entity is an index into this array */
+        ContainerType<Entity> entities{};         /**< Packed vector of entities. Used when iterating over just the entities this container is aware of. */
 
-        ContainerType<Entity> entities{};          /**< Packed vector of entities. Used when iterating over just the entities this container is aware of. */
+        //FUNCTIONS
+    public:
+        //TODO: Ctors
+        virtual ~ComponentContainerInterface() = default;
+
+        virtual bool hasComponent(Entity entity) const      = 0;//TODO: Implement here
+        virtual void cloneComponent(Entity from, Entity to) = 0;
+
+        virtual void removeComponent(Entity entity) = 0;
+
+        IndexType size() const {
+            return entities.size();
+        }
+
+        Iterator begin() noexcept {
+            return entities.begin();
+        }
+
+        Iterator end() noexcept {
+            return entities.end();
+        }
+    };
+
+    template<typename ComponentType>
+    class ComponentContainer : public ComponentContainerInterface {
+        //VARIABLES
+    private:
         ContainerType<ComponentType> components{}; /**< Packed vector of components. Storage for components and used when iterating over just the components this container owns. */
 
         //FUNCTIONS
@@ -55,14 +70,6 @@ namespace garlic::clove {
         bool hasComponent(Entity entity) const final;
         void cloneComponent(Entity from, Entity to) final;
         void removeComponent(Entity entity) final;
-
-        Iterator begin() noexcept {
-            return entities.begin();
-        }
-
-        Iterator end() noexcept {
-            return entities.end();
-        }
     };
 }
 
