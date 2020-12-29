@@ -18,20 +18,20 @@ namespace garlic::clove {
     template<typename ComponentType>
     template<typename... ConstructArgs>
     ComponentType &ComponentContainer<ComponentType>::addComponent(Entity entity, ConstructArgs &&... args) {
-        if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-            components[iter->second] = ComponentType{ std::forward<ConstructArgs>(args)... };
+        if(!hasComponent(entity)) {
+            if(entityToIndex.size() <= entity) {
+                entityToIndex.resize(entity + 1, nullIndex);
+            }
 
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "{0} was called for Entity {1} that alread has that component. Old component is replaced with a new one", CLOVE_FUNCTION_NAME_PRETTY, entity);
-
-            return components[iter->second];
-        } else {
+            entities.push_back(entity);
             components.emplace_back(ComponentType{ std::forward<ConstructArgs>(args)... });
-            entityToIndex[entity] = components.size() - 1;
 
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} added new entry for Entity {1}. Index in array is {2}", CLOVE_FUNCTION_NAME_PRETTY, entity, entityToIndex[entity]);
-
-            return components[entityToIndex[entity]];
+            entityToIndex[entity] = entities.size() - 1;
+        } else {
+            components[entityToIndex[entity]] = ComponentType{ std::forward<ConstructArgs>(args)... };
         }
+
+        return components[entityToIndex[entity]];
     }
 
     template<typename ComponentType>
@@ -42,7 +42,7 @@ namespace garlic::clove {
 
     template<typename ComponentType>
     bool ComponentContainer<ComponentType>::hasComponent(Entity entity) const {
-        return entityToIndex.find(entity) != entityToIndex.end();
+        return entity != NullEntity && entityToIndex.size() > entity && entityToIndex[entity] != nullIndex;
     }
 
     template<typename ComponentType>
@@ -56,25 +56,23 @@ namespace garlic::clove {
 
     template<typename ComponentType>
     void ComponentContainer<ComponentType>::removeComponent(Entity entity) {
-        if(auto iter = entityToIndex.find(entity); iter != entityToIndex.end()) {
-            size_t const index{ iter->second };
-            size_t const lastIndex{ components.size() - 1 };
-
-            ComponentType removedComp{ std::move(components[index]) };
+        if(hasComponent(entity)) {
+            IndexType const index{ entityToIndex[entity] };
+            IndexType const lastIndex{ entities.size() - 1 };
 
             if(index < lastIndex) {
+                Entity const movedEntity{ entities[lastIndex] };
+
+                entities[index]   = std::move(entities.back());
                 components[index] = std::move(components.back());
 
-                //Update the index map so it knows about the moved component
-                for(auto [entityId, componentIndex] : entityToIndex) {
-                    if(componentIndex == lastIndex) {
-                        entityToIndex[entityId] = index;
-                        break;
-                    }
-                }
+                entityToIndex[movedEntity] = index;
             }
+
+            entities.pop_back();
             components.pop_back();
-            entityToIndex.erase(entity);
+
+            entityToIndex[entity] = nullIndex;
         }
     }
 }

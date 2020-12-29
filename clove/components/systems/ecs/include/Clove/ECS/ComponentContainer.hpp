@@ -19,10 +19,20 @@ namespace garlic::clove {
 
     template<typename ComponentType>
     class ComponentContainer : public ComponentContainerInterface {
+        //TYPES
+    public:
+        template<typename T>
+        using ContainerType = std::vector<T>;
+
+        using IndexType = typename ContainerType<ComponentType>::size_type;
         //VARIABLES
     private:
-        std::unordered_map<Entity, size_t> entityToIndex{};
-        std::vector<ComponentType> components{};
+        static inline IndexType constexpr nullIndex{ ~0u };
+
+        ContainerType<IndexType> entityToIndex{}; /**< Sparse vector of indices. Used to index into either packed array. Entity is an index into this array */
+
+        ContainerType<Entity> entities{};          /**< Packed vector of entities. Used when iterating over just the entities this container is aware of. */
+        ContainerType<ComponentType> components{}; /**< Packed vector of components. Storage for components and used when iterating over just the components this container owns. */
 
         //FUNCTIONS
     public:
