@@ -1,4 +1,7 @@
+#include "Clove/ECS/ECSEvents.hpp"
+
 #include <Clove/Definitions.hpp>
+#include <Clove/Event/EventDispatcher.hpp>
 #include <Clove/Log/Log.hpp>
 #include <type_traits>
 
@@ -20,7 +23,9 @@ namespace garlic::clove {
     }
 
     template<typename ComponentType>
-    ComponentContainer<ComponentType>::ComponentContainer() = default;
+    ComponentContainer<ComponentType>::ComponentContainer(EventDispatcher *dispatcher)
+        : ecsEventDispatcher{ dispatcher } {
+    }
 
     template<typename ComponentType>
     ComponentContainer<ComponentType>::ComponentContainer(ComponentContainer &&other) noexcept = default;
@@ -47,6 +52,8 @@ namespace garlic::clove {
             components[entityToIndex[entity]] = ComponentType{ std::forward<ConstructArgs>(args)... };
         }
 
+        ecsEventDispatcher->broadCastEvent(ComponentAddedEvent<ComponentType>{ entity, components[entityToIndex[entity]] });
+
         return components[entityToIndex[entity]];
     }
 
@@ -68,6 +75,8 @@ namespace garlic::clove {
     template<typename ComponentType>
     void ComponentContainer<ComponentType>::removeComponent(Entity entity) {
         if(hasComponent(entity)) {
+            ecsEventDispatcher->broadCastEvent(ComponentRemovedEvent<ComponentType>{ entity, components[entityToIndex[entity]] });
+
             IndexType const index{ entityToIndex[entity] };
             IndexType const lastIndex{ entities.size() - 1 };
 

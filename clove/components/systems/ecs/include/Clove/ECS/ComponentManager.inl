@@ -42,7 +42,7 @@ namespace garlic::clove {
         if(auto iter{ containers.find(componentIndex) }; iter != containers.end()) {
             return static_cast<ComponentContainer<ComponentType> &>(*iter->second.get());
         } else {
-            containers[componentIndex] = std::make_unique<ComponentContainer<ComponentType>>();
+            containers[componentIndex] = std::make_unique<ComponentContainer<ComponentType>>(ecsEventDispatcher);
             return static_cast<ComponentContainer<ComponentType> &>(*containers[componentIndex].get());
         }
     }

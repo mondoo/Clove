@@ -6,6 +6,10 @@
 #include <vector>
 
 namespace garlic::clove {
+    class EventDispatcher;
+}
+
+namespace garlic::clove {
     class ComponentContainerInterface {
         //TYPES
     public:
@@ -51,9 +55,12 @@ namespace garlic::clove {
     private:
         ContainerType<ComponentType> components{}; /**< Packed vector of components. Storage for components and used when iterating over just the components this container owns. */
 
+        EventDispatcher *ecsEventDispatcher{ nullptr };
+
         //FUNCTIONS
     public:
-        ComponentContainer();
+        ComponentContainer() = delete;
+        ComponentContainer(EventDispatcher *dispatcher);
 
         ComponentContainer(ComponentContainer const &other) = delete;
         ComponentContainer(ComponentContainer &&other) noexcept;
