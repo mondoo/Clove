@@ -115,11 +115,12 @@ namespace garlic::clove {
         entityManager->forEach(&PhysicsLayer::initialiseRigidBodyShape, this, Exclude<PhysicsProxyComponent>{});
 
         //Apply any updates to the rigid body
-        entityManager->forEach([&](RigidBodyComponent const &body, PhysicsProxyComponent const &proxy) {
+        entityManager->forEach([&](RigidBodyComponent &body, PhysicsProxyComponent const &proxy) {
             auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) };
 
             if(body.linearVelocity.has_value()) {
                 btBody->setLinearVelocity(toBt(*body.linearVelocity));
+                body.linearVelocity = std::nullopt;
             }
 
             btBody->setRestitution(body.restitution);
@@ -129,10 +130,12 @@ namespace garlic::clove {
 
             if(body.appliedForce.has_value()) {
                 btBody->applyForce(toBt(body.appliedForce->amount), toBt(body.appliedForce->offset));
+                body.appliedForce = std::nullopt;
             }
 
             if(body.appliedImpulse.has_value()) {
                 btBody->applyForce(toBt(body.appliedImpulse->amount), toBt(body.appliedImpulse->offset));
+                body.appliedImpulse = std::nullopt;
             }
         });
 
