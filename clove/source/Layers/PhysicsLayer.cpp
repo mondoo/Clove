@@ -11,6 +11,7 @@
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Event/EventDispatcher.hpp>
 #include <btBulletDynamicsCommon.h>
+#include <Clove/Delegate/SingleCastDelegate.hpp>
 
 namespace garlic::clove {
     namespace {
@@ -18,14 +19,6 @@ namespace garlic::clove {
         struct match : Ts... { using Ts::operator()...; };
         template<typename... Ts>
         match(Ts...) -> match<Ts...>;
-
-        /**
-         * @brief Added to an entity when the system knows about it. Contains the Bullet types.
-         */
-        struct PhysicsProxyComponent {
-            std::unique_ptr<btCollisionObject> collisionObject;
-            std::unique_ptr<btCollisionShape> collisionShape;
-        };
 
         /**
          * @brief Tag component for entities that physics knows only about it's shape.
@@ -65,7 +58,7 @@ namespace garlic::clove {
 
             return rawBody;
         }
-
+        
         btVector3 toBt(vec3f const &vec) {
             return btVector3{ vec.x, vec.y, vec.z };
         }
@@ -80,6 +73,10 @@ namespace garlic::clove {
         solver                 = std::make_unique<btSequentialImpulseConstraintSolver>();
 
         dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get());
+
+        proxyRemovedHandle = entityManager->getDispatcher().bindToEvent<ComponentRemovedEvent<PhysicsProxyComponent>>([this](ComponentRemovedEvent<PhysicsProxyComponent> const &event) {
+            onProxyRemoved(event);
+        });
     }
 
     PhysicsLayer::PhysicsLayer(PhysicsLayer &&other) noexcept = default;
@@ -93,18 +90,15 @@ namespace garlic::clove {
 
         //If any component compositions have changed then these need to be reset
         entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body, PhysicsProxyComponent const &proxy, ShapeOnlyComponent const &shapeOnly) {
-            dynamicsWorld->removeCollisionObject(proxy.collisionObject.get());
             entityManager->removeComponent<PhysicsProxyComponent>(entity);
             entityManager->removeComponent<ShapeOnlyComponent>(entity);
         });
         entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body, PhysicsProxyComponent const &proxy, BodyOnlyComponent const &shapeOnly) {
-            dynamicsWorld->removeCollisionObject(proxy.collisionObject.get());
             entityManager->removeComponent<PhysicsProxyComponent>(entity);
             entityManager->removeComponent<BodyOnlyComponent>(entity);
         });
         entityManager->forEach([&](Entity entity, PhysicsProxyComponent const &proxy) {
             if(!entityManager->hasComponent<CollisionShapeComponent>(entity) || !entityManager->hasComponent<RigidBodyComponent>(entity)) {
-                dynamicsWorld->removeCollisionObject(proxy.collisionObject.get());
                 entityManager->removeComponent<PhysicsProxyComponent>(entity);
             }
         },
@@ -289,9 +283,12 @@ namespace garlic::clove {
         createProxyShape(proxy, shape);
         btRigidBody *rawBody{ createProxyBody(proxy, body, entity) };
         
-
         dynamicsWorld->addRigidBody(rawBody, body.collisionGroup, body.collisionMask);
 
         entityManager->addComponent<PhysicsProxyComponent>(entity, std::move(proxy));
+    }
+
+    void PhysicsLayer::onProxyRemoved(ComponentRemovedEvent<PhysicsProxyComponent> const &event) {
+        dynamicsWorld->removeCollisionObject(event.component.collisionObject.get());
     }
 }

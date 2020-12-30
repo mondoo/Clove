@@ -16,11 +16,21 @@ class btCollisionDispatcher;
 class btBroadphaseInterface;
 class btSequentialImpulseConstraintSolver;
 class btDiscreteDynamicsWorld;
+class btCollisionObject;
+class btCollisionShape;
 
 namespace garlic::clove {
     struct CollisionShapeComponent;
     struct RigidBodyComponent;
     class EntityManager;
+
+    /**
+     * @brief Added to an entity when the system knows about it. Contains the Bullet types.
+     */
+    struct PhysicsProxyComponent {
+        std::unique_ptr<btCollisionObject> collisionObject;
+        std::unique_ptr<btCollisionShape> collisionShape;
+    };
 }
 
 namespace garlic::clove {
@@ -59,12 +69,8 @@ namespace garlic::clove {
 
         std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
 
-        EventHandle collisionShapeAddedHandle;
-        EventHandle collisionShapeRemovedHandle;
-
-        EventHandle rigidBodyAddedHandle;
-        EventHandle rigidBodyRemovedHandle;
-
+        EventHandle proxyRemovedHandle;
+        
         std::unordered_set<CollisionManifold, ManifoldHasher> currentCollisions;
 
         //FUNCTIONS
@@ -100,5 +106,7 @@ namespace garlic::clove {
         void initialiseCollisionShape(Entity entity, CollisionShapeComponent const &shape);
         void initialiseRigidBody(Entity entity, RigidBodyComponent const &body);
         void initialiseRigidBodyShape(Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body);
+
+        void onProxyRemoved(ComponentRemovedEvent<PhysicsProxyComponent> const &event);
     };
 }
