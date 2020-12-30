@@ -1,10 +1,8 @@
 #pragma once
 
-#include <memory>
+#include <Clove/Audio/AudioSource.hpp>
 
-namespace garlic::clove {
-    class AudioSource;
-}
+#include <memory>
 
 namespace garlic::clove {
     /**
