@@ -51,7 +51,7 @@ namespace garlic::clove {
          * @brief Initialises proxy with a btRigidBody.
          * @return The created body so it can be added to the world.
          */
-        btRigidBody *createProxyBody(PhysicsProxyComponent &proxy, RigidBodyComponent const &body) {
+        btRigidBody *createProxyBody(PhysicsProxyComponent &proxy, RigidBodyComponent const &body, Entity entity) {
             btVector3 localInertia{ 0.0f, 0.0f, 0.0f };
             if(body.mass > 0.0f) {
                 proxy.collisionShape->calculateLocalInertia(body.mass, localInertia);
@@ -61,6 +61,7 @@ namespace garlic::clove {
             btRigidBody *rawBody{ proxyBody.get() };
 
             proxy.collisionObject = std::move(proxyBody);
+            proxy.collisionObject->setUserIndex(entity);
 
             return rawBody;
         }
@@ -274,7 +275,7 @@ namespace garlic::clove {
             .collisionShape = std::make_unique<btSphereShape>(0.1f),
         };
 
-        btRigidBody *rawBody{ createProxyBody(proxy, body) };
+        btRigidBody *rawBody{ createProxyBody(proxy, body, entity) };
 
         dynamicsWorld->addRigidBody(rawBody, body.collisionGroup, body.collisionMask);
 
@@ -286,7 +287,8 @@ namespace garlic::clove {
         PhysicsProxyComponent proxy{};
 
         createProxyShape(proxy, shape);
-        btRigidBody *rawBody{ createProxyBody(proxy, body) };
+        btRigidBody *rawBody{ createProxyBody(proxy, body, entity) };
+        
 
         dynamicsWorld->addRigidBody(rawBody, body.collisionGroup, body.collisionMask);
 
