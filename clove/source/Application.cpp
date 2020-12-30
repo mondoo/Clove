@@ -41,8 +41,9 @@ namespace garlic::clove {
         app->entityManager = std::make_unique<EntityManager>();
 
         //Layers
+        app->physicsLayer = std::make_shared<PhysicsLayer>();
         app->pushLayer(std::make_shared<TransformLayer>(), LayerGroup::Initialisation);
-        app->pushLayer(std::make_shared<PhysicsLayer>(), LayerGroup::Initialisation);
+        app->pushLayer(app->physicsLayer, LayerGroup::Initialisation);
         app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
         app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
 
@@ -66,8 +67,9 @@ namespace garlic::clove {
         app->entityManager = std::make_unique<EntityManager>();
 
         //Layers
+        app->physicsLayer = std::make_shared<PhysicsLayer>();
         app->pushLayer(std::make_shared<TransformLayer>(), LayerGroup::Initialisation);
-        app->pushLayer(std::make_shared<PhysicsLayer>(), LayerGroup::Initialisation);
+        app->pushLayer(app->physicsLayer, LayerGroup::Initialisation);
         app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
         app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
 

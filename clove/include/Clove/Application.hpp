@@ -18,6 +18,7 @@ namespace garlic::clove {
     class ForwardRenderer3D;
     class GraphicsImageRenderTarget;
     class AudioDevice;
+    class PhysicsLayer;
 }
 
 namespace garlic::clove {
@@ -46,6 +47,7 @@ namespace garlic::clove {
         std::unique_ptr<Window> window;
         std::unique_ptr<ForwardRenderer3D> renderer;
         std::unique_ptr<EntityManager> entityManager;
+        std::shared_ptr<PhysicsLayer> physicsLayer;
 
         std::map<LayerGroup, std::vector<std::shared_ptr<Layer>>> layers;
 
@@ -90,12 +92,15 @@ namespace garlic::clove {
          */
         void shutdown();
 
+        //Devices
         inline GraphicsDevice *getGraphicsDevice() const;
         inline AudioDevice *getAudioDevice() const;
 
+        //Systems
         inline Window *getWindow() const;
         inline ForwardRenderer3D *getRenderer() const;
         inline EntityManager *getEntityManager() const;
+        inline PhysicsLayer *getPhysicsLayer() const;
 
     private:
         Application();
