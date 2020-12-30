@@ -24,6 +24,11 @@ namespace garlic::clove {
                     return VK_INDEX_TYPE_UINT16;
             }
         }
+
+        template<typename... Ts>
+        struct match : Ts... { using Ts::operator()...; };
+        template<typename... Ts>
+        match(Ts...) -> match<Ts...>;
     }
 
     VKGraphicsCommandBuffer::VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
@@ -57,14 +62,12 @@ namespace garlic::clove {
 
     void VKGraphicsCommandBuffer::beginRenderPass(RenderPass &renderPass, Framebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) {
         std::vector<VkClearValue> vkClearValues(std::size(clearValues));
-        for(uint32_t index = 0; auto &clearValue : clearValues) {
-            auto const &colour       = clearValue.colour;
-            auto const &depthStencil = clearValue.depthStencil;
-
-            vkClearValues[index].color        = { colour.r, colour.g, colour.b, colour.a };
-            vkClearValues[index].depthStencil = { depthStencil.depth, depthStencil.stencil };
-
-            ++index;
+        for(uint32_t i{ 0 }; i < clearValues.size(); ++i) {
+            std::visit(match{
+                           [&](ColourValue const &colour) { vkClearValues[i].color = { colour.r, colour.g, colour.b, colour.a }; },
+                           [&](DepthStencilValue const &depthStencil) { vkClearValues[i].depthStencil = { depthStencil.depth, depthStencil.stencil }; },
+                       },
+                       clearValues[i]);
         }
 
         VkRenderPassBeginInfo renderPassInfo{

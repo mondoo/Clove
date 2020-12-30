@@ -203,7 +203,7 @@ namespace garlic::clove {
         //Aquire the next available image from the render target
         Expected<uint32_t, std::string> const result = renderTarget->aquireNextImage(currentFrame);
         if(!result.hasValue()) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, result.getError());
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, result.getError());
             return;
         }
 
@@ -225,11 +225,11 @@ namespace garlic::clove {
         DepthStencilValue depthStencilClearValue{ 1.0f, 0 };
 
         std::array<ClearValue, 2> outputClearValues{
-            ClearValue{ clearColour, {} },
-            ClearValue{ {}, depthStencilClearValue }
+            clearColour,
+            depthStencilClearValue
         };
         std::array<ClearValue, 1> shadowMapClearValues{
-            ClearValue{ {}, depthStencilClearValue }
+            depthStencilClearValue
         };
 
         size_t const staticMeshCount   = std::size(currentFrameData.staticMeshes);

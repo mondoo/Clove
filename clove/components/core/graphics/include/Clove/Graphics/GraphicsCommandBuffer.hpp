@@ -7,6 +7,7 @@
 
 #include <Clove/Maths/Vector.hpp>
 #include <span>
+#include <variant>
 
 namespace garlic::clove {
     class RenderPass;
@@ -24,15 +25,14 @@ namespace garlic::clove {
         vec2ui size;
     };
 
+    using ColourValue = vec4f;
+
     struct DepthStencilValue {
         float depth{ 0.0f };
         uint32_t stencil{ 0 };
     };
 
-    struct ClearValue {
-        vec4f colour;
-        DepthStencilValue depthStencil;
-    };
+    using ClearValue = std::variant<ColourValue, DepthStencilValue>;
 
     enum class IndexType {
         Uint16

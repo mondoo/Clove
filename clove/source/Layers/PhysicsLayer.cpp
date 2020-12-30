@@ -12,13 +12,13 @@
 #include <Clove/Event/EventDispatcher.hpp>
 #include <btBulletDynamicsCommon.h>
 
-template<typename... Ts>
-struct match : Ts... { using Ts::operator()...; };
-template<typename... Ts>
-match(Ts...) -> match<Ts...>;
-
 namespace garlic::clove {
     namespace {
+        template<typename... Ts>
+        struct match : Ts... { using Ts::operator()...; };
+        template<typename... Ts>
+        match(Ts...) -> match<Ts...>;
+
         /**
          * @brief Added to an entity when the system knows about it. Contains the Bullet types.
          */
