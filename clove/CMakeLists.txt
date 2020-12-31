@@ -57,8 +57,13 @@ function(embeddSOURCE SOURCEs readType)
 	set(ResourceBinaries ${ResourceBinaries} ${files} PARENT_SCOPE)
 endfunction()
 
+#Assets
 embeddSOURCE("${ASSETS}/fonts/Roboto/Roboto-Black.ttf" "rb")
 
+#Shader include
+embeddSOURCE("${SOURCE}/Shaders/Constants.glsl" "r")
+
+#Shader source
 embeddSOURCE("${SOURCE}/Shaders/StaticMesh-v.glsl" "r")
 embeddSOURCE("${SOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "r")
 embeddSOURCE("${SOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "r")
