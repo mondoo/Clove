@@ -59,21 +59,21 @@ endfunction()
 
 embeddSOURCE("${ASSETS}/fonts/Roboto/Roboto-Black.ttf" "rb")
 
-embeddSOURCE("${SOURCE}/Shaders/StaticMesh-v.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "rb")
+embeddSOURCE("${SOURCE}/Shaders/StaticMesh-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "r")
 
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMesh-v.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl" "rb")
+embeddSOURCE("${SOURCE}/Shaders/AnimatedMesh-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl" "r")
 
-embeddSOURCE("${SOURCE}/Shaders/Mesh-p.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/MeshShadowMap-p.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "rb")
+embeddSOURCE("${SOURCE}/Shaders/Mesh-p.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/MeshShadowMap-p.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "r")
 
-embeddSOURCE("${SOURCE}/Shaders/UI-v.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/Widget-p.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/Font-p.glsl" "rb")
+embeddSOURCE("${SOURCE}/Shaders/UI-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/Widget-p.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/Font-p.glsl" "r")
 
 #Library
 add_library(

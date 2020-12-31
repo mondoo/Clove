@@ -761,8 +761,8 @@ namespace garlic::clove {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = *graphicsFactory->createShaderFromSource(staticmesh_v, Shader::Stage::Vertex),
-            .fragmentShader       = *graphicsFactory->createShaderFromSource(mesh_p, Shader::Stage::Pixel),
+            .vertexShader         = *graphicsFactory->createShaderFromSource({ staticmesh_v, staticmesh_vLength }, Shader::Stage::Vertex),
+            .fragmentShader       = *graphicsFactory->createShaderFromSource({ mesh_p, mesh_pLength }, Shader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -790,7 +790,7 @@ namespace garlic::clove {
             .offset   = offsetof(Vertex, weights),
         });
 
-        pipelineDescriptor.vertexShader     = *graphicsFactory->createShaderFromSource(animatedmesh_v, Shader::Stage::Vertex);
+        pipelineDescriptor.vertexShader     = *graphicsFactory->createShaderFromSource({ animatedmesh_v, animatedmesh_vLength }, Shader::Stage::Vertex);
         pipelineDescriptor.vertexAttributes = std::move(vertexAttributes);
 
         animatedMeshPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
@@ -835,8 +835,8 @@ namespace garlic::clove {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = *graphicsFactory->createShaderFromSource(ui_v, Shader::Stage::Vertex),
-            .fragmentShader       = *graphicsFactory->createShaderFromSource(widget_p, Shader::Stage::Pixel),
+            .vertexShader         = *graphicsFactory->createShaderFromSource({ ui_v, ui_vLength }, Shader::Stage::Vertex),
+            .fragmentShader       = *graphicsFactory->createShaderFromSource({ widget_p, widget_pLength }, Shader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -849,7 +849,7 @@ namespace garlic::clove {
 
         widgetPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
 
-        pipelineDescriptor.fragmentShader = *graphicsFactory->createShaderFromSource(font_p, Shader::Stage::Pixel);
+        pipelineDescriptor.fragmentShader = *graphicsFactory->createShaderFromSource({ font_p, font_pLength }, Shader::Stage::Pixel);
 
         textPipelineObject = *graphicsFactory->createPipelineObject(std::move(pipelineDescriptor));
     }
@@ -877,8 +877,8 @@ namespace garlic::clove {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = *graphicsFactory->createShaderFromSource(staticmeshshadowmap_v, Shader::Stage::Vertex),
-            .fragmentShader       = *graphicsFactory->createShaderFromSource(meshshadowmap_p, Shader::Stage::Pixel),
+            .vertexShader         = *graphicsFactory->createShaderFromSource({ staticmeshshadowmap_v, staticmeshshadowmap_vLength }, Shader::Stage::Vertex),
+            .fragmentShader       = *graphicsFactory->createShaderFromSource({ meshshadowmap_p, meshshadowmap_pLength }, Shader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -902,7 +902,7 @@ namespace garlic::clove {
             .offset   = offsetof(Vertex, weights),
         });
 
-        pipelineDescriptor.vertexShader         = *graphicsFactory->createShaderFromSource(animatedmeshshadowmap_v, Shader::Stage::Vertex);
+        pipelineDescriptor.vertexShader         = *graphicsFactory->createShaderFromSource({ animatedmeshshadowmap_v, animatedmeshshadowmap_vLength }, Shader::Stage::Vertex);
         pipelineDescriptor.vertexAttributes     = std::move(vertexAttributes);
         pipelineDescriptor.descriptorSetLayouts = { descriptorSetLayouts[DescriptorSetSlots::Mesh] };
 
@@ -938,8 +938,8 @@ namespace garlic::clove {
         };
 
         PipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = *graphicsFactory->createShaderFromSource(staticmeshcubeshadowmap_v, Shader::Stage::Vertex),
-            .fragmentShader       = *graphicsFactory->createShaderFromSource(meshcubeshadowmap_p, Shader::Stage::Pixel),
+            .vertexShader         = *graphicsFactory->createShaderFromSource({ staticmeshcubeshadowmap_v, staticmeshcubeshadowmap_vLength }, Shader::Stage::Vertex),
+            .fragmentShader       = *graphicsFactory->createShaderFromSource({ meshcubeshadowmap_p, meshcubeshadowmap_pLength }, Shader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -963,7 +963,7 @@ namespace garlic::clove {
             .offset   = offsetof(Vertex, weights),
         });
 
-        pipelineDescriptor.vertexShader         = *graphicsFactory->createShaderFromSource(animatedmeshcubeshadowmap_v, Shader::Stage::Vertex);
+        pipelineDescriptor.vertexShader         = *graphicsFactory->createShaderFromSource({ animatedmeshcubeshadowmap_v, animatedmeshcubeshadowmap_vLength }, Shader::Stage::Vertex);
         pipelineDescriptor.vertexAttributes     = std::move(vertexAttributes);
         pipelineDescriptor.descriptorSetLayouts = { descriptorSetLayouts[DescriptorSetSlots::Mesh] };
 
