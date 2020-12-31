@@ -14,6 +14,56 @@
 
 namespace garlic::clove::ShaderCompiler {
     namespace {
+        /**
+         * @brief Keeps a map for shader source strings to provide as included files.
+         */
+        class EmbeddedSourceIncluder : public shaderc::CompileOptions::IncluderInterface {
+            //VARIABLES
+        private:
+            std::unordered_map<std::string, std::string> includeSources;
+
+            //FUNCTIONS
+        public:
+            EmbeddedSourceIncluder() = delete;
+            EmbeddedSourceIncluder(std::unordered_map<std::string, std::string> includeSources)
+                : includeSources{ std::move(includeSources) } {
+            }
+
+            EmbeddedSourceIncluder(EmbeddedSourceIncluder const &other)     = default;
+            EmbeddedSourceIncluder(EmbeddedSourceIncluder &&other) noexcept = default;
+
+            EmbeddedSourceIncluder &operator=(EmbeddedSourceIncluder const &other) = default;
+            EmbeddedSourceIncluder &operator=(EmbeddedSourceIncluder &&other) noexcept = default;
+
+            ~EmbeddedSourceIncluder() = default;
+
+            shaderc_include_result *GetInclude(const char *requested_source, shaderc_include_type type, const char *requesting_source, size_t include_depth) override {
+                auto result{ new shaderc_include_result };
+
+                if(includeSources.find(requested_source) != includeSources.end()) {
+                    std::string &source{ includeSources[requested_source] };
+
+                    result->source_name        = requested_source;
+                    result->source_name_length = strlen(requested_source);
+                    result->content            = source.c_str();
+                    result->content_length     = source.length();
+                } else {
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Requested source {1} was not found.", CLOVE_FUNCTION_NAME_PRETTY, requested_source);
+
+                    std::string error{ "Source not available in map" };
+
+                    result->content        = error.c_str();
+                    result->content_length = error.length();
+                }
+
+                return result;
+            }
+
+            void ReleaseInclude(shaderc_include_result *data) override {
+                delete data;
+            }
+        };
+
         shaderc_shader_kind getShadercStage(Shader::Stage stage) {
             switch(stage) {
                 case Shader::Stage::Vertex:
@@ -26,7 +76,8 @@ namespace garlic::clove::ShaderCompiler {
             }
         }
 
-        std::vector<char> readFile(std::string_view filePath) {
+        std::vector<char>
+        readFile(std::string_view filePath) {
             //Start at the end so we can get the file size
             std::ifstream file(filePath.data(), std::ios::ate | std::ios::binary);
 
@@ -103,50 +154,61 @@ namespace garlic::clove::ShaderCompiler {
             CLOVE_ASSERT("SPIR-V to HLSL not fully supported!");
             return {};
         }
+
+        std::vector<uint32_t> compile(std::string_view source, std::unique_ptr<shaderc::CompileOptions::IncluderInterface> includer, std::string_view shaderName, Shader::Stage shaderStage, ShaderType outputType) {
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Compiling shader {0}...", shaderName);
+
+            shaderc::CompileOptions options{};
+            options.SetIncluder(std::move(includer));
+
+            shaderc::Compiler compiler{};
+
+            shaderc::SpvCompilationResult spirvResult{ compiler.CompileGlslToSpv(source.data(), source.size(), getShadercStage(shaderStage), shaderName.data(), options) };
+            if(spirvResult.GetCompilationStatus() != shaderc_compilation_status_success) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to compile shader {0}:\n\t{1}", shaderName, spirvResult.GetErrorMessage());
+
+                //TODO: Expected
+                return {};
+            }
+
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Successfully compiled shader {0}!", shaderName);
+
+            std::vector<uint32_t> spirvSource{ spirvResult.begin(), spirvResult.end() };
+
+            switch(outputType) {
+                default:
+                case ShaderType::SPIRV:
+                    return spirvSource;
+                case ShaderType::HLSL:
+                    return spirvToHLSL(spirvSource);
+                case ShaderType::MSL:
+                    return spirvToMSL(shaderStage, spirvSource);
+            }
+        }
     }
 
     std::vector<uint32_t> compileFromFile(std::filesystem::path const &file, Shader::Stage shaderStage, ShaderType outputType) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Compiling file {0}", file.c_str());
+        
 
         //if(path.)
         //std::vector<char> source{ readFile(filePath) };
         //return compileFromSource(source.data(), shaderStage, outputType);
+
+        //Assume include path is same
+        //Srtip name from path
+
+        //Probably need to make another helper function that takes an includer.
+
+        //shaderc_util::FileFinder fileFinder{};
+        //shaderc_util::FileFinder fileFinder{};
+        //TEMP: Hardcoding in a search path for testing
+        //fileFinder.search_path().push_back("/home/alex/Documents/Dev/sandbox/garlic/clove/source/Shaders");
+        //auto fileIncluder{ std::make_unique<glslc::FileIncluder>(&fileFinder) };
+
         return {};
     }
 
-    std::vector<uint32_t> compileFromSource(std::string_view source, Shader::Stage shaderStage, ShaderType outputType) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Compiling shader...");
-
-        shaderc_util::FileFinder fileFinder{};
-        //TEMP: Hardcoding in a search path for testing
-        fileFinder.search_path().push_back("/home/alex/Documents/Dev/sandbox/garlic/clove/source/Shaders");
-        auto fileIncluder{ std::make_unique<glslc::FileIncluder>(&fileFinder) };
-
-        shaderc::CompileOptions options{};
-        options.SetIncluder(std::move(fileIncluder));
-
-        shaderc::Compiler compiler{};
-
-        shaderc::SpvCompilationResult spirvResult{ compiler.CompileGlslToSpv(source.data(), source.size(), getShadercStage(shaderStage), "\0", options) };
-        if(spirvResult.GetCompilationStatus() != shaderc_compilation_status_success) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to compile shader:\n\t{0}", spirvResult.GetErrorMessage());
-
-            //TODO: Expected
-            return {};
-        }
-
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Successfully compiled shader!");
-
-        std::vector<uint32_t> spirvSource{ spirvResult.begin(), spirvResult.end() };
-
-        switch(outputType) {
-            default:
-            case ShaderType::SPIRV:
-                return spirvSource;
-            case ShaderType::HLSL:
-                return spirvToHLSL(spirvSource);
-            case ShaderType::MSL:
-                return spirvToMSL(shaderStage, spirvSource);
-        }
+    std::vector<uint32_t> compileFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, Shader::Stage shaderStage, ShaderType outputType) {
+        return compile(source, std::make_unique<EmbeddedSourceIncluder>(std::move(includeSources)), shaderName, shaderStage, outputType);
     }
 }
