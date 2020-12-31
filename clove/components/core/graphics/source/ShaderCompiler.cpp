@@ -76,10 +76,9 @@ namespace garlic::clove::ShaderCompiler {
             }
         }
 
-        std::vector<char>
-        readFile(std::string_view filePath) {
+        std::vector<char> readFile(std::filesystem::path const &filePath) {
             //Start at the end so we can get the file size
-            std::ifstream file(filePath.data(), std::ios::ate | std::ios::binary);
+            std::ifstream file(filePath.c_str(), std::ios::ate | std::ios::binary);
 
             if(!file.is_open()) {
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
@@ -193,22 +192,19 @@ namespace garlic::clove::ShaderCompiler {
     }
 
     std::vector<uint32_t> compileFromFile(std::filesystem::path const &file, Shader::Stage shaderStage, ShaderType outputType) {
-        //if(path.)
-        //std::vector<char> source{ readFile(filePath) };
-        //return compileFromSource(source.data(), shaderStage, outputType);
+        if(!file.has_filename()){
+            //TODO: Error
+            return {};
+        }
 
-        //Assume include path is same
-        //Srtip name from path
+        shaderc_util::FileFinder fileFinder{};
+        fileFinder.search_path().push_back(std::filesystem::path{ file }.remove_filename().c_str());
 
-        //Probably need to make another helper function that takes an includer.
+        std::vector<char> source{ readFile(file) };
+        auto fileIncluder{ std::make_unique<glslc::FileIncluder>(&fileFinder) };
+        std::string shaderName{ file.stem() };
 
-        //shaderc_util::FileFinder fileFinder{};
-        //shaderc_util::FileFinder fileFinder{};
-        //TEMP: Hardcoding in a search path for testing
-        //fileFinder.search_path().push_back("/home/alex/Documents/Dev/sandbox/garlic/clove/source/Shaders");
-        //auto fileIncluder{ std::make_unique<glslc::FileIncluder>(&fileFinder) };
-
-        return {};
+        return compile({ source.data(), source.size() }, std::move(fileIncluder), shaderName, shaderStage, outputType);
     }
 
     std::vector<uint32_t> compileFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, Shader::Stage shaderStage, ShaderType outputType) {
