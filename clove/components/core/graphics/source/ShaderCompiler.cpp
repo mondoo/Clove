@@ -160,6 +160,11 @@ namespace garlic::clove::ShaderCompiler {
 
             shaderc::CompileOptions options{};
             options.SetIncluder(std::move(includer));
+#if !CLOVE_DEBUG
+            options.SetOptimizationLevel(shaderc_optimization_level_performance);
+#else
+            options.SetOptimizationLevel(shaderc_optimization_level_zero);
+#endif
 
             shaderc::Compiler compiler{};
 
@@ -188,8 +193,6 @@ namespace garlic::clove::ShaderCompiler {
     }
 
     std::vector<uint32_t> compileFromFile(std::filesystem::path const &file, Shader::Stage shaderStage, ShaderType outputType) {
-        
-
         //if(path.)
         //std::vector<char> source{ readFile(filePath) };
         //return compileFromSource(source.data(), shaderStage, outputType);
