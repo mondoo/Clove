@@ -795,7 +795,7 @@ namespace garlic::clove {
             .offset   = offsetof(Vertex, weights),
         });
 
-        pipelineDescriptor.vertexShader     = *graphicsFactory->createShaderFromSource({ animatedmesh_v, animatedmesh_vLength }, shaderIncludes, "Animated Mesh (vertex)", Shader::Stage::Vertex);
+        pipelineDescriptor.vertexShader     = *graphicsFactory->createShaderFromFile("/home/alex/Documents/Dev/sandbox/garlic/clove/source/Shaders/AnimatedMesh-v.glsl", Shader::Stage::Vertex);
         pipelineDescriptor.vertexAttributes = std::move(vertexAttributes);
 
         animatedMeshPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);

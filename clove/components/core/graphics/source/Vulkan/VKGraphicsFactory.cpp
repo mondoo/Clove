@@ -367,13 +367,23 @@ namespace garlic::clove {
     }
 
     Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShaderFromFile(std::filesystem::path const &file, Shader::Stage shaderStage) {
-        std::vector<uint32_t> spirvSource{ ShaderCompiler::compileFromFile(file, shaderStage, ShaderType::SPIRV) };
-        return createShaderObject({ spirvSource.begin(), spirvSource.end() });
+        Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromFile(file, shaderStage, ShaderType::SPIRV) };
+        if(compilationResult.hasValue()) {
+            std::vector<uint32_t> spirvSource{ std::move(compilationResult.getValue()) };
+            return createShaderObject({ spirvSource.begin(), spirvSource.end() });
+        } else {
+            return Unexpected{ std::move(compilationResult.getError()) };
+        }
     }
 
     Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShaderFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, Shader::Stage shaderStage) {
-        std::vector<uint32_t> spirvSource{ ShaderCompiler::compileFromSource(source, std::move(includeSources), shaderName, shaderStage, ShaderType::SPIRV) };
-        return createShaderObject({ spirvSource.begin(), spirvSource.end() });
+        Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromSource(source, std::move(includeSources), shaderName, shaderStage, ShaderType::SPIRV) };
+        if(compilationResult.hasValue()) {
+            std::vector<uint32_t> spirvSource{ std::move(compilationResult.getValue()) };
+            return createShaderObject({ spirvSource.begin(), spirvSource.end() });
+        } else {
+            return Unexpected{ std::move(compilationResult.getError()) };
+        }
     }
 
     Expected<std::unique_ptr<RenderPass>, std::runtime_error> VKGraphicsFactory::createRenderPass(RenderPass::Descriptor descriptor) {

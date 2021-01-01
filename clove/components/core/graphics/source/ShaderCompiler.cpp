@@ -154,7 +154,7 @@ namespace garlic::clove::ShaderCompiler {
             return {};
         }
 
-        std::vector<uint32_t> compile(std::string_view source, std::unique_ptr<shaderc::CompileOptions::IncluderInterface> includer, std::string_view shaderName, Shader::Stage shaderStage, ShaderType outputType) {
+        Expected<std::vector<uint32_t>, std::runtime_error> compile(std::string_view source, std::unique_ptr<shaderc::CompileOptions::IncluderInterface> includer, std::string_view shaderName, Shader::Stage shaderStage, ShaderType outputType) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Compiling shader {0}...", shaderName);
 
             shaderc::CompileOptions options{};
@@ -166,13 +166,11 @@ namespace garlic::clove::ShaderCompiler {
 #endif
 
             shaderc::Compiler compiler{};
-
             shaderc::SpvCompilationResult spirvResult{ compiler.CompileGlslToSpv(source.data(), source.size(), getShadercStage(shaderStage), shaderName.data(), options) };
+            
             if(spirvResult.GetCompilationStatus() != shaderc_compilation_status_success) {
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to compile shader {0}:\n\t{1}", shaderName, spirvResult.GetErrorMessage());
-
-                //TODO: Expected
-                return {};
+                return Unexpected{ std::runtime_error{ "Failed to compile shader. See output log for details." } };
             }
 
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Successfully compiled shader {0}!", shaderName);
@@ -191,10 +189,9 @@ namespace garlic::clove::ShaderCompiler {
         }
     }
 
-    std::vector<uint32_t> compileFromFile(std::filesystem::path const &file, Shader::Stage shaderStage, ShaderType outputType) {
-        if(!file.has_filename()){
-            //TODO: Error
-            return {};
+    Expected<std::vector<uint32_t>, std::runtime_error> compileFromFile(std::filesystem::path const &file, Shader::Stage shaderStage, ShaderType outputType) {
+        if(!file.has_filename()) {
+            return Unexpected{ std::runtime_error{ "Path does not have a file name" } };
         }
 
         shaderc_util::FileFinder fileFinder{};
@@ -207,7 +204,7 @@ namespace garlic::clove::ShaderCompiler {
         return compile({ source.data(), source.size() }, std::move(fileIncluder), shaderName, shaderStage, outputType);
     }
 
-    std::vector<uint32_t> compileFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, Shader::Stage shaderStage, ShaderType outputType) {
+    Expected<std::vector<uint32_t>, std::runtime_error> compileFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, Shader::Stage shaderStage, ShaderType outputType) {
         return compile(source, std::make_unique<EmbeddedSourceIncluder>(std::move(includeSources)), shaderName, shaderStage, outputType);
     }
 }
