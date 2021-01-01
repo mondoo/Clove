@@ -80,7 +80,7 @@ namespace garlic::clove {
         return Format::Unknown;
     }
 
-    std::shared_ptr<AudioBuffer> SoundFile::read(uint32_t const frames) {
+    std::unique_ptr<AudioBuffer> SoundFile::read(uint32_t const frames) {
         auto audioBuffer  = *Application::get().getAudioDevice()->getAudioFactory()->createAudioBuffer(AudioBuffer::Descriptor{
             .format     = getBufferFormat(getFormat(), getChannels()),
             .sampleRate = getSampleRate(),

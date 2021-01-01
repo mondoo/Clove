@@ -18,15 +18,18 @@ add_executable(
 	    ${SOURCE}/MainWindow.xaml
 		${SOURCE}/MainWindow.xaml.cs
 
+		${SOURCE}/Vector3Box.xaml
+		${SOURCE}/Vector3Box.xaml.cs
+
 		${SOURCE}/RelayCommand.cs
 		
 		${SOURCE}/EditorSessionViewModel.cs
 		${SOURCE}/SceneViewModel.cs
 		${SOURCE}/EntityViewModel.cs
 		${SOURCE}/LogViewModel.cs
+
 		${SOURCE}/ComponentViewModel.cs
-		
-		${SOURCE}/EditorLogger.cs
+		${SOURCE}/TransformComponentViewModel.cs
 )
 
 #Libraries
@@ -46,7 +49,10 @@ csharp_set_designer_cs_properties(
 csharp_set_xaml_cs_properties(
 	${SOURCE}/EditorApp.xaml
     ${SOURCE}/EditorApp.xaml.cs
-    
+	
+	${SOURCE}/Vector3Box.xaml
+	${SOURCE}/Vector3Box.xaml.cs
+
 	${SOURCE}/MainWindow.xaml
     ${SOURCE}/MainWindow.xaml.cs
 )
@@ -60,5 +66,8 @@ set_target_properties(Bulb PROPERTIES
         VS_DOTNET_REFERENCES "Microsoft.CSharp;PresentationCore;PresentationFramework;System;System.Core;System.Data;System.Xaml;System.Xml;WindowsBase"
 )
 
-#Set the output directory of OpenAL
-set_target_properties(OpenAL PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+#Copy OpenAL dll
+add_custom_command(TARGET Bulb POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:OpenAL> $<TARGET_FILE_DIR:Bulb>
+)

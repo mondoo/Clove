@@ -14,14 +14,21 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
-    static VkIndexType getIndexType(IndexType garlicType) {
-        switch(garlicType) {
-            case IndexType::Uint16:
-                return VK_INDEX_TYPE_UINT16;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
-                return VK_INDEX_TYPE_UINT16;
+    namespace {
+        VkIndexType getIndexType(IndexType garlicType) {
+            switch(garlicType) {
+                case IndexType::Uint16:
+                    return VK_INDEX_TYPE_UINT16;
+                default:
+                    CLOVE_ASSERT(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
+                    return VK_INDEX_TYPE_UINT16;
+            }
         }
+
+        template<typename... Ts>
+        struct match : Ts... { using Ts::operator()...; };
+        template<typename... Ts>
+        match(Ts...) -> match<Ts...>;
     }
 
     VKGraphicsCommandBuffer::VKGraphicsCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
@@ -55,14 +62,12 @@ namespace garlic::clove {
 
     void VKGraphicsCommandBuffer::beginRenderPass(RenderPass &renderPass, Framebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) {
         std::vector<VkClearValue> vkClearValues(std::size(clearValues));
-        for(uint32_t index = 0; auto &clearValue : clearValues) {
-            auto const &colour       = clearValue.colour;
-            auto const &depthStencil = clearValue.depthStencil;
-
-            vkClearValues[index].color        = { colour.r, colour.g, colour.b, colour.a };
-            vkClearValues[index].depthStencil = { depthStencil.depth, depthStencil.stencil };
-
-            ++index;
+        for(uint32_t i{ 0 }; i < clearValues.size(); ++i) {
+            std::visit(match{
+                           [&](ColourValue const &colour) { vkClearValues[i].color = { colour.r, colour.g, colour.b, colour.a }; },
+                           [&](DepthStencilValue const &depthStencil) { vkClearValues[i].depthStencil = { depthStencil.depth, depthStencil.stencil }; },
+                       },
+                       clearValues[i]);
         }
 
         VkRenderPassBeginInfo renderPassInfo{
@@ -124,8 +129,8 @@ namespace garlic::clove {
         VkBufferMemoryBarrier barrier{
             .sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
             .pNext               = nullptr,
-            .srcAccessMask       = convertAccessFlags(barrierInfo.sourceAccess),
-            .dstAccessMask       = convertAccessFlags(barrierInfo.destinationAccess),
+            .srcAccessMask       = convertAccessFlags(barrierInfo.currentAccess),
+            .dstAccessMask       = convertAccessFlags(barrierInfo.newAccess),
             .srcQueueFamilyIndex = sourceFamilyIndex,
             .dstQueueFamilyIndex = destinationFamilyIndex,
             .buffer              = polyCast<VKBuffer>(&buffer)->getBuffer(),
@@ -146,9 +151,9 @@ namespace garlic::clove {
         VkImageMemoryBarrier barrier{
             .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
             .pNext               = nullptr,
-            .srcAccessMask       = convertAccessFlags(barrierInfo.sourceAccess),
-            .dstAccessMask       = convertAccessFlags(barrierInfo.destinationAccess),
-            .oldLayout           = VKImage::convertLayout(barrierInfo.oldImageLayout),
+            .srcAccessMask       = convertAccessFlags(barrierInfo.currentAccess),
+            .dstAccessMask       = convertAccessFlags(barrierInfo.newAccess),
+            .oldLayout           = VKImage::convertLayout(barrierInfo.currentImageLayout),
             .newLayout           = VKImage::convertLayout(barrierInfo.newImageLayout),
             .srcQueueFamilyIndex = sourceFamilyIndex,
             .dstQueueFamilyIndex = destinationFamilyIndex,

@@ -6,6 +6,9 @@
 #include <Clove/DeltaTime.hpp>
 
 namespace garlic::clove {
+    /**
+     * @brief A Layer represents a slice of functionality that can be injected into Clove.
+     */
     class Layer {
         //VARIABLES
     protected:

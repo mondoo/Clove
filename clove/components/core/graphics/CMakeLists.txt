@@ -125,6 +125,7 @@ target_include_directories(
 
 	PRIVATE
 		Vulkan::Vulkan
+		external/shaderc/glslc/src
 )
 
 #Libraries
@@ -139,8 +140,9 @@ target_link_libraries(
         CloveMaths
 
     PRIVATE
-        glslang
-		glslang-default-resource-limits
+        shaderc
+		shaderc_util
+		glslc
 		SPIRV
 		spirv-cross-core
 		spirv-cross-glsl

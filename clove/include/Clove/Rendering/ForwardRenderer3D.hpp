@@ -8,6 +8,7 @@
 #include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
 #include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Clove/Delegate/DelegateHandle.hpp>
 #include <unordered_map>
 
 namespace garlic::clove {
@@ -105,6 +106,8 @@ namespace garlic::clove {
     private:
         static size_t constexpr maxFramesInFlight{ 2 };
         size_t currentFrame{ 0 };//The current frame we're operating on
+
+        std::unordered_map<std::string, std::string> shaderIncludes;
 
         DelegateHandle renderTargetPropertyChangedBeginHandle;
         DelegateHandle renderTargetPropertyChangedEndHandle;

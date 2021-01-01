@@ -23,23 +23,23 @@ namespace garlic::clove {
 
     //Lighting data passed to GPU
     struct DirectionalLightData {
-        alignas(16) vec3f direction{};
+        alignas(16) vec3f direction{ 0.0f, 0.0f, 0.0f };
 
-        alignas(16) vec3f ambient{};
-        alignas(16) vec3f diffuse{};
-        alignas(16) vec3f specular{};
+        alignas(16) vec3f ambient{ 0.01f, 0.01f, 0.01f };
+        alignas(16) vec3f diffuse{ 0.75f, 0.75f, 0.75f };
+        alignas(16) vec3f specular{ 1.0f, 1.0f, 1.0f };
     };
     struct PointLightData {
-        vec3f position{};
+        vec3f position{ 0.0f, 0.0f, 0.0f };
 
-        float constant = 0;
-        vec3f ambient{};
-        float linear = 0;
-        vec3f diffuse{};
-        float quadratic = 0;
-        vec3f specular{};
+        float constant{ 1.0f };
+        vec3f ambient{ 0.01f, 0.01f, 0.01f };
+        float linear{ 0.0014f };
+        vec3f diffuse{ 0.75f, 0.75f, 0.75f };
+        float quadratic{ 0.000007f };
+        vec3f specular{ 1.0f, 1.0f, 1.0f };
 
-        float farPlane = 0;
+        float farPlane{ 0 };
     };
     struct LightDataArray {
         std::array<DirectionalLightData, MAX_LIGHTS> directionalLights{};

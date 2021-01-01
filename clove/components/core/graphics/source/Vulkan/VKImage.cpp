@@ -8,17 +8,19 @@
 #include <array>
 
 namespace garlic::clove {
-    static VkImageViewType getImageViewType(GraphicsImageView::Type garlicImageType) {
-        switch(garlicImageType) {
-            case GraphicsImageView::Type::_2D:
-                return VK_IMAGE_VIEW_TYPE_2D;
-            case GraphicsImageView::Type::_3D:
-                return VK_IMAGE_VIEW_TYPE_3D;
-            case GraphicsImageView::Type::Cube:
-                return VK_IMAGE_VIEW_TYPE_CUBE;
-            default:
-                CLOVE_ASSERT(false, "{0}: Unhandled image type");
-                return VK_IMAGE_VIEW_TYPE_2D;
+    namespace {
+        VkImageViewType getImageViewType(GraphicsImageView::Type garlicImageType) {
+            switch(garlicImageType) {
+                case GraphicsImageView::Type::_2D:
+                    return VK_IMAGE_VIEW_TYPE_2D;
+                case GraphicsImageView::Type::_3D:
+                    return VK_IMAGE_VIEW_TYPE_3D;
+                case GraphicsImageView::Type::Cube:
+                    return VK_IMAGE_VIEW_TYPE_CUBE;
+                default:
+                    CLOVE_ASSERT(false, "{0}: Unhandled image type");
+                    return VK_IMAGE_VIEW_TYPE_2D;
+            }
         }
     }
 

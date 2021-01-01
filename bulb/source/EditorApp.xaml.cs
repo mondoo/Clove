@@ -17,8 +17,7 @@ namespace Garlic.Bulb
     public partial class EditorApp : Application
     {
         private MainWindow editorWindow;
-
-        private EditorLogger editorLogger;
+        private EditorSessionViewModel sessionViewModel;
 
         private Membrane.Application engineApp;
 
@@ -27,58 +26,37 @@ namespace Garlic.Bulb
         private IntPtr backBuffer;
 
         private Thread engineThread;
-        private object updateEngineLock = new object();
         private bool exitThread = false;
 
-        private Size size = new Size();
+        private Size size = new Size(1, 1);
         private bool sizeChanged = false;
         private object resizeLock = new object();
 
         private void EditorStartup(object sender, StartupEventArgs e)
         {
+            sessionViewModel = new EditorSessionViewModel();
+
+            Membrane.Log.addSink((string message) => sessionViewModel.Log.LogText += message, "%v");
+
             //Initialise the editor window
-            var sessionVM = new EditorSessionViewModel();
-            sessionVM.OnCreateEntity = () =>
-            {
-                lock (updateEngineLock)
-                {
-                    return engineApp.addEntity();
-                }
-            };
-            sessionVM.OnCreateComponent = (entityId, componentType) =>
-            {
-                lock (updateEngineLock)
-                {
-                    engineApp.createComponent(entityId, componentType);
-                }
-            };
-
             editorWindow = new MainWindow();
-            editorWindow.DataContext = sessionVM;
 
-            //Forward the logs to the editor's window
-            editorLogger = new EditorLogger();
-            editorLogger.WriteTextEvent += (object sender2, TextEventArgs e2) => sessionVM.Log.LogText += e2.Text;
-
-            Console.SetOut(editorLogger);
-
+            editorWindow.DataContext = sessionViewModel;
             editorWindow.RenderArea.SizeChanged += OnRenderAreaSizeChanged;
             editorWindow.Closing += StopEngine;
 
             editorWindow.Show();
             MainWindow = editorWindow;
 
-            //Initialise and start the application loop
-            int width = editorWindow.RenderArea.ActualWidth > 0 ? (int)editorWindow.RenderArea.ActualWidth : 1;
-            int height = editorWindow.RenderArea.ActualHeight > 0 ? (int)editorWindow.RenderArea.ActualHeight : 1;
-            size = new Size(width, width);
             CreateImageSource(size);
 
-            engineApp = new Membrane.Application(width, height);
-
+            //Initialise the engine
+            engineApp = new Membrane.Application((int)size.Width, (int)size.Height);
+            
             engineThread = new Thread(new ThreadStart(RunEngineApplication));
             engineThread.Name = "Garlic application thread";
             engineThread.Start();
+
         }
 
         private void OnRenderAreaSizeChanged(object sender, SizeChangedEventArgs e)
@@ -112,10 +90,7 @@ namespace Garlic.Bulb
                 if (engineApp.isRunning())
                 {
                     //Update the application
-                    lock (updateEngineLock)
-                    {
-                        engineApp.tick();
-                    }
+                    engineApp.tick();
 
                     //Render to image
                     lock (resizeLock)

@@ -28,7 +28,7 @@ namespace garlic::clove {
         , projection{ std::move(other.projection) }
         , viewport{ std::move(other.viewport) }
         , zoomLevel{ other.zoomLevel } {
-        if(windowResizeHandle.isValid()) {
+        if(other.windowResizeHandle.isValid()) {
             windowResizeHandle = Application::get().getWindow()->onWindowResize.bind([this](vec2ui const &size) {
                 setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
             });
@@ -41,7 +41,7 @@ namespace garlic::clove {
         projection            = std::move(other.projection);
         viewport              = std::move(other.viewport);
         zoomLevel             = other.zoomLevel;
-        if(windowResizeHandle.isValid()) {
+        if(other.windowResizeHandle.isValid()) {
             windowResizeHandle = Application::get().getWindow()->onWindowResize.bind([this](vec2ui const &size) {
                 setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
             });

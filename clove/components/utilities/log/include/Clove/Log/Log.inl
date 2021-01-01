@@ -11,10 +11,6 @@ namespace garlic::clove {
         return *instance;
     }
 
-    void Logger::setOutput(std::unique_ptr<Output> newOut) {
-        out = std::move(newOut);
-    };
-
     template<typename... Args>
     void Logger::log(std::string_view category, LogLevel level, std::string_view msg, Args &&... args) {
         std::string_view constexpr fullMessageFormat = "{}: {}";
@@ -25,6 +21,6 @@ namespace garlic::clove {
         fmt::basic_memory_buffer<char, 250> fullMessageBuffer;
         fmt::format_to(fullMessageBuffer, fullMessageFormat, category, std::string_view(messageBuffer.data(), messageBuffer.size()));
 
-        out->doLog(level, std::string_view(fullMessageBuffer.data(), fullMessageBuffer.size()));
+        doLog(level, std::string_view(fullMessageBuffer.data(), fullMessageBuffer.size()));
     }
 }

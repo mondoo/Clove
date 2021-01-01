@@ -20,11 +20,12 @@ namespace garlic::clove {
      */
     enum class AccessFlags : AccessFlagsType {
         None                        = 0,
-        TransferWrite               = 1 << 0,
-        ShaderRead                  = 1 << 1,
-        ColourAttachmentWrite       = 1 << 2,
-        DepthStencilAttachmentRead  = 1 << 3,
-        DepthStencilAttachmentWrite = 1 << 4
+        TransferRead                = 1 << 0,
+        TransferWrite               = 1 << 1,
+        ShaderRead                  = 1 << 2,
+        ColourAttachmentWrite       = 1 << 3,
+        DepthStencilAttachmentRead  = 1 << 4,
+        DepthStencilAttachmentWrite = 1 << 5
     };
     CLOVE_ENUM_BIT_FLAG_OPERATORS(AccessFlags, AccessFlagsType)
 }

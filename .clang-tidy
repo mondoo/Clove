@@ -10,4 +10,5 @@ cppcoreguidelines-*,
 -readability-else-after-return,
 -readability-avoid-const-params-in-decls,
 -readability-uppercase-literal-suffix,
--readability-redundant-access-specifiers'
+-readability-redundant-access-specifiers,
+-cppcoreguidelines-macro-usage'

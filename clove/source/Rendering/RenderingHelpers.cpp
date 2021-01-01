@@ -157,30 +157,30 @@ namespace garlic::clove {
 
     std::unique_ptr<GraphicsImage> createImageWithData(GraphicsFactory &factory, GraphicsImage::Descriptor imageDescriptor, void const *data, size_t const dataSize) {
         ImageMemoryBarrierInfo constexpr layoutTransferInfo{
-            .sourceAccess      = AccessFlags::None,
-            .destinationAccess = AccessFlags::TransferWrite,
-            .oldImageLayout    = GraphicsImage::Layout::Undefined,
-            .newImageLayout    = GraphicsImage::Layout::TransferDestinationOptimal,
-            .sourceQueue       = QueueType::None,
-            .destinationQueue  = QueueType::None,
+            .currentAccess      = AccessFlags::None,
+            .newAccess          = AccessFlags::TransferWrite,
+            .currentImageLayout = GraphicsImage::Layout::Undefined,
+            .newImageLayout     = GraphicsImage::Layout::TransferDestinationOptimal,
+            .sourceQueue        = QueueType::None,
+            .destinationQueue   = QueueType::None,
         };
 
         ImageMemoryBarrierInfo constexpr transferQueueReleaseInfo{
-            .sourceAccess      = AccessFlags::TransferWrite,
-            .destinationAccess = AccessFlags::None,
-            .oldImageLayout    = GraphicsImage::Layout::TransferDestinationOptimal,
-            .newImageLayout    = GraphicsImage::Layout::TransferDestinationOptimal,
-            .sourceQueue       = QueueType::Transfer,
-            .destinationQueue  = QueueType::Graphics,
+            .currentAccess      = AccessFlags::TransferWrite,
+            .newAccess          = AccessFlags::None,
+            .currentImageLayout = GraphicsImage::Layout::TransferDestinationOptimal,
+            .newImageLayout     = GraphicsImage::Layout::TransferDestinationOptimal,
+            .sourceQueue        = QueueType::Transfer,
+            .destinationQueue   = QueueType::Graphics,
         };
 
         ImageMemoryBarrierInfo constexpr graphicsQueueAcquireInfo{
-            .sourceAccess      = AccessFlags::TransferWrite,
-            .destinationAccess = AccessFlags::ShaderRead,
-            .oldImageLayout    = GraphicsImage::Layout::TransferDestinationOptimal,
-            .newImageLayout    = GraphicsImage::Layout::ShaderReadOnlyOptimal,
-            .sourceQueue       = QueueType::Transfer,
-            .destinationQueue  = QueueType::Graphics,
+            .currentAccess      = AccessFlags::TransferWrite,
+            .newAccess          = AccessFlags::ShaderRead,
+            .currentImageLayout = GraphicsImage::Layout::TransferDestinationOptimal,
+            .newImageLayout     = GraphicsImage::Layout::ShaderReadOnlyOptimal,
+            .sourceQueue        = QueueType::Transfer,
+            .destinationQueue   = QueueType::Graphics,
         };
 
         size_t constexpr bufferOffset{ 0 };

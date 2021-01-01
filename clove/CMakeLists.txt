@@ -4,7 +4,6 @@ set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 
 add_subdirectory(components)
 add_subdirectory(external)
-add_subdirectory(tools)
 
 #Prepare SOURCEs to be inbedded
 set(
@@ -47,7 +46,7 @@ function(embeddSOURCE SOURCEs readType)
 
 		add_custom_command(
 			OUTPUT ${fileName}.c
-			COMMAND ResourceEmbedder ${fileName} ${res} ${readType}
+			COMMAND reb ${fileName} ${res} ${readType}
 			DEPENDS ${res}
 		)
 
@@ -57,54 +56,45 @@ function(embeddSOURCE SOURCEs readType)
 	set(ResourceBinaries ${ResourceBinaries} ${files} PARENT_SCOPE)
 endfunction()
 
+#Assets
 embeddSOURCE("${ASSETS}/fonts/Roboto/Roboto-Black.ttf" "rb")
 
-embeddSOURCE("${SOURCE}/Shaders/StaticMesh-v.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "rb")
+#Shader include
+embeddSOURCE("${SOURCE}/Shaders/Constants.glsl" "r")
 
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMesh-v.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl" "rb")
+#Shader source
+embeddSOURCE("${SOURCE}/Shaders/StaticMesh-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "r")
 
-embeddSOURCE("${SOURCE}/Shaders/Mesh-p.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/MeshShadowMap-p.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "rb")
+embeddSOURCE("${SOURCE}/Shaders/AnimatedMesh-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl" "r")
 
-embeddSOURCE("${SOURCE}/Shaders/UI-v.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/Widget-p.glsl" "rb")
-embeddSOURCE("${SOURCE}/Shaders/Font-p.glsl" "rb")
+embeddSOURCE("${SOURCE}/Shaders/Mesh-p.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/MeshShadowMap-p.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "r")
+
+embeddSOURCE("${SOURCE}/Shaders/UI-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/Widget-p.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/Font-p.glsl" "r")
 
 #Library
 add_library(
 	Clove STATIC
 
 		${INCLUDE}/Components/AnimatedModelComponent.hpp
-		${INCLUDE}/Components/AnimatedModelComponent.inl
-		${SOURCE}/Components/AnimatedModelComponent.cpp
 		${INCLUDE}/Components/AudioListenerComponent.hpp
-		${SOURCE}/Components/AudioListenerComponent.cpp
 		${INCLUDE}/Components/AudioSourceComponent.hpp
-		${SOURCE}/Components/AudioSourceComponent.cpp
 		${INCLUDE}/Components/CameraComponent.hpp
-		${INCLUDE}/Components/CameraComponent.inl
-		${SOURCE}/Components/CameraComponent.cpp
 		${INCLUDE}/Components/CollisionResponseComponent.hpp
 		${INCLUDE}/Components/CollisionShapeComponent.hpp
-		${SOURCE}/Components/CollisionShapeComponent.cpp
 		${INCLUDE}/Components/DirectionalLightComponent.hpp
-		${INCLUDE}/Components/DirectionalLightComponent.inl
-		${SOURCE}/Components/DirectionalLightComponent.cpp
+		${INCLUDE}/Components/ParentComponent.hpp
 		${INCLUDE}/Components/PointLightComponent.hpp
-		${INCLUDE}/Components/PointLightComponent.inl
-		${SOURCE}/Components/PointLightComponent.cpp
 		${INCLUDE}/Components/RigidBodyComponent.hpp
-		${SOURCE}/Components/RigidBodyComponent.cpp
 		${INCLUDE}/Components/StaticModelComponent.hpp
-		${INCLUDE}/Components/StaticModelComponent.inl
-		${SOURCE}/Components/StaticModelComponent.cpp
 		${INCLUDE}/Components/TransformComponent.hpp
-		${INCLUDE}/Components/TransformComponent.inl
 		${SOURCE}/Components/TransformComponent.cpp
 
 		${INCLUDE}/Rendering/AnimationTypes.hpp
@@ -140,12 +130,14 @@ add_library(
 		${INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${SOURCE}/Rendering/Renderables/StaticModel.cpp
 
-		${INCLUDE}/Systems/AudioSystem.hpp
-		${SOURCE}/Systems/AudioSystem.cpp
-		${INCLUDE}/Systems/RenderSystem.hpp
-		${SOURCE}/Systems/RenderSystem.cpp
-		${INCLUDE}/Systems/PhysicsSystem.hpp
-		${SOURCE}/Systems/PhysicsSystem.cpp
+		${INCLUDE}/Layers/AudioLayer.hpp
+		${SOURCE}/Layers/AudioLayer.cpp
+		${INCLUDE}/Layers/PhysicsLayer.hpp
+		${SOURCE}/Layers/PhysicsLayer.cpp
+		${INCLUDE}/Layers/RenderLayer.hpp
+		${SOURCE}/Layers/RenderLayer.cpp
+		${INCLUDE}/Layers/TransformLayer.hpp
+		${SOURCE}/Layers/TransformLayer.cpp
 
 		${INCLUDE}/UI/DrawableElement.hpp
 		${INCLUDE}/UI/Image.hpp
@@ -168,9 +160,6 @@ add_library(
 		${INCLUDE}/Layer.hpp
 		${INCLUDE}/Layer.inl
 		${SOURCE}/Layer.cpp
-		${INCLUDE}/LayerStack.hpp
-		${INCLUDE}/LayerStack.inl
-		${SOURCE}/LayerStack.cpp
 		
 		${INCLUDE}/ModelLoader.hpp
 		${SOURCE}/ModelLoader.cpp
@@ -227,8 +216,8 @@ target_link_libraries(
 		CloveLog 
 		CloveMaths 
 		CloveMemory 
-		CloveTimer 
-		
+		CloveTimer
+
 	PRIVATE
 		#Order of these are important
 		BulletDynamics

@@ -1,16 +1,11 @@
 #include "Clove/Graphics/ShaderCompiler.hpp"
 
-#define ENABLE_HLSL
-
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
-#include <SPIRV/GlslangToSpv.h>
-#include <SPIRV/SPVRemapper.h>
-#include <SPIRV/disassemble.h>
-#include <SPIRV/doc.h>
-#include <StandAlone/ResourceLimits.h>
+#include <file_includer.h>
 #include <fstream>
-#include <glslang/Public/ShaderLang.h>
+#include <libshaderc_util/file_finder.h>
+#include <shaderc/shaderc.hpp>
 #include <spirv.hpp>
 #include <spirv_glsl.hpp>
 #include <spirv_hlsl.hpp>
@@ -19,24 +14,71 @@
 
 namespace garlic::clove::ShaderCompiler {
     namespace {
-        EShLanguage getEShStage(Shader::Stage stage) {
+        /**
+         * @brief Keeps a map for shader source strings to provide as included files.
+         */
+        class EmbeddedSourceIncluder : public shaderc::CompileOptions::IncluderInterface {
+            //VARIABLES
+        private:
+            std::unordered_map<std::string, std::string> includeSources;
+
+            //FUNCTIONS
+        public:
+            EmbeddedSourceIncluder() = delete;
+            EmbeddedSourceIncluder(std::unordered_map<std::string, std::string> includeSources)
+                : includeSources{ std::move(includeSources) } {
+            }
+
+            EmbeddedSourceIncluder(EmbeddedSourceIncluder const &other)     = default;
+            EmbeddedSourceIncluder(EmbeddedSourceIncluder &&other) noexcept = default;
+
+            EmbeddedSourceIncluder &operator=(EmbeddedSourceIncluder const &other) = default;
+            EmbeddedSourceIncluder &operator=(EmbeddedSourceIncluder &&other) noexcept = default;
+
+            ~EmbeddedSourceIncluder() = default;
+
+            shaderc_include_result *GetInclude(const char *requested_source, shaderc_include_type type, const char *requesting_source, size_t include_depth) override {
+                auto result{ new shaderc_include_result };
+
+                if(includeSources.find(requested_source) != includeSources.end()) {
+                    std::string &source{ includeSources[requested_source] };
+
+                    result->source_name        = requested_source;
+                    result->source_name_length = strlen(requested_source);
+                    result->content            = source.c_str();
+                    result->content_length     = source.length();
+                } else {
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Requested source {1} was not found.", CLOVE_FUNCTION_NAME_PRETTY, requested_source);
+
+                    std::string error{ "Source not available in map" };
+
+                    result->content        = error.c_str();
+                    result->content_length = error.length();
+                }
+
+                return result;
+            }
+
+            void ReleaseInclude(shaderc_include_result *data) override {
+                delete data;
+            }
+        };
+
+        shaderc_shader_kind getShadercStage(Shader::Stage stage) {
             switch(stage) {
                 case Shader::Stage::Vertex:
-                    return EShLanguage::EShLangVertex;
+                    return shaderc_vertex_shader;
                 case Shader::Stage::Pixel:
-                    return EShLanguage::EShLangFragment;
+                    return shaderc_fragment_shader;
                 default:
                     CLOVE_ASSERT("Unsupported shader stage {0}", CLOVE_FUNCTION_NAME);
-                    return EShLanguage::EShLangVertex;
+                    return shaderc_vertex_shader;
             }
         }
 
-        std::vector<std::byte> readFile(std::string_view filePath) {
-            /* below is causing compile errors due to includes
-             * commenting out until implemented properly
-             
+        std::vector<char> readFile(std::filesystem::path const &filePath) {
             //Start at the end so we can get the file size
-            std::basic_ifstream<std::byte> file(filePath.data(), std::ios::ate | std::ios::binary);
+            std::ifstream file(filePath.c_str(), std::ios::ate | std::ios::binary);
 
             if(!file.is_open()) {
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
@@ -44,7 +86,7 @@ namespace garlic::clove::ShaderCompiler {
             }
 
             size_t const fileSize{ static_cast<size_t>(file.tellg()) };
-            std::vector<std::byte> buffer(fileSize);
+            std::vector<char> buffer(fileSize);
 
             file.seekg(0);
             file.read(buffer.data(), fileSize);
@@ -52,16 +94,14 @@ namespace garlic::clove::ShaderCompiler {
             file.close();
 
             return buffer;
-            */
+        }
+
+        std::vector<uint32_t> spirvToHLSL(std::vector<uint32_t> const &sprivSource) {
+            CLOVE_ASSERT(false, "SPIR-V to HLSL not supported!");
             return {};
         }
 
-        std::vector<std::byte> spirvToHLSL(std::vector<uint32_t> const &sprivSource) {
-            CLOVE_ASSERT("SPIR-V to HLSL not supported!");
-            return {};
-        }
-
-        std::vector<std::byte> spirvToMSL(Shader::Stage shaderStage, std::vector<uint32_t> const &spirvSource) {
+        std::vector<uint32_t> spirvToMSL(Shader::Stage shaderStage, std::vector<uint32_t> const &spirvSource) {
             spirv_cross::CompilerMSL msl(spirvSource);
             spirv_cross::CompilerMSL::Options scoptions;
 
@@ -110,75 +150,61 @@ namespace garlic::clove::ShaderCompiler {
 
             //return msl.compile();
 
-            CLOVE_ASSERT("SPIR-V to HLSL not fully supported!");
-            return {};
-        }
-    }
-
-    std::vector<std::byte> compileFromFile(std::string_view filePath, Shader::Stage shaderStage, ShaderType outputType) {
-        //return compileFromSource(readFile(filePath), shaderStage, outputType);
-        return {};//TODO
-    }
-
-    std::vector<std::byte> compileFromSource(std::span<std::byte const> source, Shader::Stage shaderStage, ShaderType outputType) {
-        glslang::InitializeProcess();
-
-        EShLanguage const eshstage{ getEShStage(shaderStage) };
-        glslang::TShader shader(eshstage);
-
-        char const *shaderSourceAsString{ reinterpret_cast<char const *>(std::data(source)) };
-        shader.setStrings(&shaderSourceAsString, 1);
-
-        TBuiltInResource const builtInResources{ glslang::DefaultTBuiltInResource };
-        EShMessages const messages{ static_cast<EShMessages>(EShMsgSpvRules | EShMsgKeepUncalled | EShMsgSuppressWarnings) };
-
-        shader.setEnvTargetHlslFunctionality1();
-        shader.setAutoMapBindings(true);
-        shader.setAutoMapLocations(true);
-
-        shader.setEntryPoint("main");
-        shader.setEnvInput(glslang::EShSourceHlsl, eshstage, glslang::EShClientOpenGL, 450);
-        shader.setEnvClient(glslang::EShClientOpenGL, glslang::EShTargetOpenGL_450);
-        shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_5);
-
-        shader.parse(&builtInResources, 100, true, messages);
-
-        char const *log = shader.getInfoLog();
-
-        if(strlen(log) > 0) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Error compiling shader: {0}", log);
+            CLOVE_ASSERT(false, "SPIR-V to HLSL not fully supported!");
             return {};
         }
 
-        glslang::SpvOptions spvOptions{};
-        spvOptions.validate = false;
-#if CLOVE_DEBUG
-        spvOptions.generateDebugInfo = true;
-        spvOptions.disableOptimizer  = true;
+        Expected<std::vector<uint32_t>, std::runtime_error> compile(std::string_view source, std::unique_ptr<shaderc::CompileOptions::IncluderInterface> includer, std::string_view shaderName, Shader::Stage shaderStage, ShaderType outputType) {
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Compiling shader {0}...", shaderName);
+
+            shaderc::CompileOptions options{};
+            options.SetIncluder(std::move(includer));
+#if !CLOVE_DEBUG
+            options.SetOptimizationLevel(shaderc_optimization_level_performance);
 #else
-        spvOptions.generateDebugInfo = false;
-        spvOptions.disableOptimizer  = false;
+            options.SetOptimizationLevel(shaderc_optimization_level_zero);
 #endif
 
-        std::vector<uint32_t> spirvSource;
-        spv::SpvBuildLogger logger;
-        glslang::TIntermediate *inter{ shader.getIntermediate() };
-        glslang::GlslangToSpv(*inter, spirvSource, &logger, &spvOptions);
-
-        glslang::FinalizeProcess();
-
-        switch(outputType) {
-            default:
-            case ShaderType::SPIRV: {
-                std::vector<std::byte> bytes;
-                bytes.resize(std::size(spirvSource) * sizeof(uint32_t));
-                memcpy(std::data(bytes), std::data(spirvSource), std::size(bytes));
-                return bytes;
+            shaderc::Compiler compiler{};
+            shaderc::SpvCompilationResult spirvResult{ compiler.CompileGlslToSpv(source.data(), source.size(), getShadercStage(shaderStage), shaderName.data(), options) };
+            
+            if(spirvResult.GetCompilationStatus() != shaderc_compilation_status_success) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to compile shader {0}:\n\t{1}", shaderName, spirvResult.GetErrorMessage());
+                return Unexpected{ std::runtime_error{ "Failed to compile shader. See output log for details." } };
             }
-            case ShaderType::HLSL:
-                return spirvToHLSL(spirvSource);
-            case ShaderType::MSL:
-                return spirvToMSL(shaderStage, spirvSource);
+
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Successfully compiled shader {0}!", shaderName);
+
+            std::vector<uint32_t> spirvSource{ spirvResult.begin(), spirvResult.end() };
+
+            switch(outputType) {
+                default:
+                case ShaderType::SPIRV:
+                    return spirvSource;
+                case ShaderType::HLSL:
+                    return spirvToHLSL(spirvSource);
+                case ShaderType::MSL:
+                    return spirvToMSL(shaderStage, spirvSource);
+            }
         }
+    }
+
+    Expected<std::vector<uint32_t>, std::runtime_error> compileFromFile(std::filesystem::path const &file, Shader::Stage shaderStage, ShaderType outputType) {
+        if(!file.has_filename()) {
+            return Unexpected{ std::runtime_error{ "Path does not have a file name" } };
+        }
+
+        shaderc_util::FileFinder fileFinder{};
+        fileFinder.search_path().emplace_back(std::filesystem::path{ file }.remove_filename().string());
+
+        std::vector<char> source{ readFile(file) };
+        auto fileIncluder{ std::make_unique<glslc::FileIncluder>(&fileFinder) };
+        std::string shaderName{ file.stem().string() };
+
+        return compile({ source.data(), source.size() }, std::move(fileIncluder), shaderName, shaderStage, outputType);
+    }
+
+    Expected<std::vector<uint32_t>, std::runtime_error> compileFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, Shader::Stage shaderStage, ShaderType outputType) {
+        return compile(source, std::make_unique<EmbeddedSourceIncluder>(std::move(includeSources)), shaderName, shaderStage, outputType);
     }
 }

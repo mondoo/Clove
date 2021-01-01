@@ -49,17 +49,17 @@ namespace garlic::clove {
     };
 
     /**
-     * @brief Describes a dependency between two subpasses for at what point can an attachment's layout be transitioned.
+     * @brief Describes a dependency between two subpasses, allowing a subpass to be executed after another.
      */
     struct SubpassDependency {
         uint32_t sourceSubpass;      /**< Index of the dependency subpass (inside RenderPassDescriptor::subpasses or SUBPASS_EXTERNAL) */
-        uint32_t destinationSubpass; /**< Index of the dependent subpass (inside RenderPassDescriptor::subpasses or SUBPASS_EXTERNAL) */
+        uint32_t destinationSubpass; /**< Index of the dependent subpass (inside RenderPassDescriptor::subpasses or SUBPASS_EXTERNAL). Must be higher than sourceSubpass. */
 
-        PipelineObject::Stage sourceStage;      /**< Which PipelineStage on the sourceSubpass we wait on */
-        PipelineObject::Stage destinationStage; /**< Which PipelineStage on the destinationSubpass that waits on this dependency */
+        PipelineObject::Stage sourceStage;      /**< The pipeline stage that gets executed before the dependency in sourceSubpass. */
+        PipelineObject::Stage destinationStage; /**< The pipeline stage executed after the barrier in destinationSubpass that waits for the results of the sourceStage. */
 
-        AccessFlags sourceAccess;      /**< Which operation on the sourceSubpass we wait on */
-        AccessFlags destinationAccess; /**< Which operation on the destinationSubpass that should wait on this dependency */
+        AccessFlags currentAccess; /**< How the attachment(s) in the sourceSubpass are currently being accessed. */
+        AccessFlags newAccess;     /**< How the attachment(s) in the destinationSubpass will be accessed. */
     };
 
     /**

@@ -5,19 +5,21 @@ set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/ECS)
 add_library(
     CloveECS STATIC
 
-    ${INCLUDE}/Component.hpp
-	${INCLUDE}/Component.inl
+	${INCLUDE}/ComponentContainer.hpp
+	${INCLUDE}/ComponentContainer.inl
+	${SOURCE}/ComponentContainer.cpp
 	${INCLUDE}/ComponentManager.hpp
 	${INCLUDE}/ComponentManager.inl
-	${INCLUDE}/ComponentSet.hpp
 	${SOURCE}/ComponentManager.cpp
+	${INCLUDE}/ComponentView.hpp
+	${INCLUDE}/ComponentView.inl
 	${INCLUDE}/ECSEvents.hpp
-	${INCLUDE}/ECSTypes.hpp
 	${INCLUDE}/Entity.hpp
-	${INCLUDE}/World.hpp
-	${INCLUDE}/World.inl
-	${SOURCE}/World.cpp
-	${INCLUDE}/System.hpp
+	${INCLUDE}/EntityManager.hpp
+	${INCLUDE}/EntityManager.inl
+	${SOURCE}/EntityManager.cpp
+	${INCLUDE}/Exclude.hpp
+	${INCLUDE}/FunctionTraits.hpp
 )
 
 #Includes
@@ -40,3 +42,7 @@ target_link_libraries(
 		CloveMemory
 		CloveTimer
 )
+
+if(GAR_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()

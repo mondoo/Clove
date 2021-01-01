@@ -17,9 +17,10 @@
 #include "Clove/Graphics/TransferQueue.hpp"
 
 #include <Clove/Expected.hpp>
-#include <span>
+#include <filesystem>
 #include <stdexcept>
-#include <string>
+#include <string_view>
+#include <unordered_map>
 
 namespace garlic::clove {
     /**
@@ -37,13 +38,19 @@ namespace garlic::clove {
         virtual Expected<std::unique_ptr<Swapchain>, std::runtime_error> createSwapChain(Swapchain::Descriptor descriptor) = 0;
 
         /**
-         * @brief Compile a GLSL file and return the Shader object
+         * @brief Compile a GLSL file and return the Shader object.
+         * @param file Absolute path to the file.
+         * @param shaderStage Which shader stage to compile.
+         * @return Compiled shader module.
          */
-        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::string_view filePath, Shader::Stage shaderStage) = 0;
+        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderFromFile(std::filesystem::path const &file, Shader::Stage shaderStage) = 0;
         /**
          * @brief Compile GLSL source code and return the Shader object
+         * @param includeSources std::unordered map of shader source strings to use as includes. Key is the name of the include and value is the string of the include.
+         * @param shaderName The name of the shader being compiled. Used for debug purposes, can be empty.
+         * @return Compiled shader module.
          */
-        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShader(std::span<std::byte const> source, Shader::Stage shaderStage) = 0;
+        virtual Expected<std::unique_ptr<Shader>, std::runtime_error> createShaderFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, Shader::Stage shaderStage) = 0;
 
         virtual Expected<std::unique_ptr<RenderPass>, std::runtime_error> createRenderPass(RenderPass::Descriptor descriptor)                            = 0;
         virtual Expected<std::unique_ptr<DescriptorSetLayout>, std::runtime_error> createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) = 0;

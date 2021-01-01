@@ -1,69 +1,24 @@
 #pragma once
 
-#include "Clove/ECS/Component.hpp"
+#include "Clove/ECS/ComponentContainer.hpp"
+#include "Clove/ECS/ComponentView.hpp"
 #include "Clove/ECS/Entity.hpp"
 
-#include <Clove/Memory/PoolAllocator.hpp>
 #include <memory>
+#include <typeindex>
 #include <unordered_map>
-#include <vector>
 
 namespace garlic::clove {
     class EventDispatcher;
 }
 
 namespace garlic::clove {
-    class ComponentContainerInterface {
-        //FUNCTIONS
-    public:
-        virtual ~ComponentContainerInterface();
-
-        virtual bool hasComponent(Entity entity) const = 0;
-
-        virtual void cloneComponent(Entity from, Entity to) = 0;
-        virtual void removeComponent(Entity entity)         = 0;
-    };
-
-    template<typename ComponentType>
-    class ComponentContainer : public ComponentContainerInterface {
-        //VARIABLES
-    private:
-        PoolAllocator<ComponentType, AllocatorStrategy::Dynamic> componentAllocator;
-
-        std::unordered_map<Entity, size_t> entityToIndex;
-        std::vector<ComponentType *> components;//Pointers into the componentAllocator for convienient lookup
-
-        EventDispatcher *ecsEventDispatcher;
-
-        //FUNCTIONS
-    public:
-        ComponentContainer() = delete;
-        ComponentContainer(EventDispatcher *dispatcher);
-
-        ComponentContainer(ComponentContainer const &other) = delete;
-        ComponentContainer(ComponentContainer &&other) noexcept;
-
-        ComponentContainer &operator=(ComponentContainer const &other) = delete;
-        ComponentContainer &operator=(ComponentContainer &&other) noexcept;
-
-        ~ComponentContainer();
-
-        bool hasComponent(Entity entity) const final;
-
-        void cloneComponent(Entity from, Entity to) final;
-        void removeComponent(Entity entity) final;
-
-        template<typename... ConstructArgs>
-        ComponentPtr<ComponentType> addComponent(Entity entity, ConstructArgs &&... args);
-        ComponentPtr<ComponentType> getComponent(Entity entity);
-    };
-
     class ComponentManager {
         //VARIABLES
     private:
-        std::unordered_map<ComponentID, std::unique_ptr<ComponentContainerInterface>> containers;
+        std::unordered_map<std::type_index, std::unique_ptr<ComponentContainerInterface>> containers{};
 
-        EventDispatcher *ecsEventDispatcher;
+        EventDispatcher *ecsEventDispatcher{ nullptr };
 
         //FUNCTIONS
     public:
@@ -78,12 +33,25 @@ namespace garlic::clove {
 
         ~ComponentManager();
 
+        template<typename ComponentType, typename... ConstructArgs>
+        ComponentType &addComponent(Entity entity, ConstructArgs &&... args);
         template<typename ComponentType>
-        ComponentContainer<ComponentType> &getComponentContainer();
+        ComponentType &getComponent(Entity entity);
 
-        void cloneEntitiesComponents(Entity from, Entity to);
+        template<typename ComponentType>
+        bool hasComponent(Entity entity);
+        void cloneComponents(Entity from, Entity to);
+        template<typename ComponentType>
+        void removeComponent(Entity entity);
 
-        void onEntityDestroyed(Entity entity);
+        void removeEntity(Entity entity);
+
+        template<typename... ComponentTypes, typename... ExcludeTypes>
+        ComponentView<Exclude<ExcludeTypes...>, ComponentTypes...> generateView(Exclude<ExcludeTypes...>);
+
+    private:
+        template<typename ComponentType>
+        ComponentContainer<ComponentType> &getContainer();
     };
 }
 

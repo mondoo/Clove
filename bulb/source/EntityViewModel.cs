@@ -2,12 +2,15 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using garlic.membrane;
+
+using Membrane = garlic.membrane;
 
 namespace Garlic.Bulb
 {
     public class EntityViewModel : ViewModel
     {
+        public uint EntityId { get; set; }
+
         public string Name
         {
             get { return name; }
@@ -26,16 +29,77 @@ namespace Garlic.Bulb
         public delegate void SelectionHandler(EntityViewModel viewModel);
         public SelectionHandler OnSelected;
 
-        public delegate ComponentViewModel AddComponentHandler(ComponentType componentType);
-        public AddComponentHandler OnAddComponent;
-
         public EntityViewModel()
         {
+            //Bind to messages
+            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnComponentCreated>(OnComponentCreated);
+            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnTransformChanged>(OnTransformChanged);
+
+            //Set up commands
             SelectedCommand = new RelayCommand(() => OnSelected?.Invoke(this));
         }
 
-        public void AddComponent(ComponentType componentType) {
-            Components.Add(OnAddComponent?.Invoke(componentType));
+        public void AddComponent(Membrane.ComponentType type)
+        {
+            var message = new Membrane.Editor_CreateComponent();
+            message.entity = EntityId;
+            message.componentType = type;
+
+            Membrane.MessageHandler.sendMessage(message);
+        }
+
+        private void OnComponentCreated(Membrane.Engine_OnComponentCreated message)
+        {
+            if (EntityId == message.entity)
+            {
+                ComponentViewModel componentVm;
+
+                switch (message.componentType)
+                {
+                    case Membrane.ComponentType.Transform:
+                        {
+                            var transformComp = new TransformComponentViewModel();
+                            transformComp.OnTransformChanged = UpdateTransform;
+
+                            componentVm = transformComp;
+                        }
+                        break;
+                    default:
+                        componentVm = new ComponentViewModel();
+                        break;
+                }
+
+                componentVm.Name = $"{message.componentType}";
+
+                Components.Add(componentVm);
+            }
+        }
+
+        private void UpdateTransform(Membrane.Vector3 position, Membrane.Vector3 rotation, Membrane.Vector3 scale)
+        {
+            var message = new Membrane.Editor_UpdateTransform();
+            message.entity = EntityId;
+            message.position = position;
+            message.rotation = rotation;
+            message.scale = scale;
+
+            Membrane.MessageHandler.sendMessage(message);
+        }
+
+        private void OnTransformChanged(Membrane.Engine_OnTransformChanged message)
+        {
+            if (EntityId == message.entity)
+            {
+                foreach (ComponentViewModel comp in Components)
+                {
+                    if (comp.GetType() == typeof(TransformComponentViewModel))
+                    {
+                        var transform = (TransformComponentViewModel)comp;
+                        transform.Update(message.position, message.rotation, message.scale);
+                        break;
+                    }
+                }
+            }
         }
     }
 }

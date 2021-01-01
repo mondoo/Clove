@@ -59,7 +59,7 @@ namespace garlic::clove {
 		 * moves the cursor frames amount long.
 		 * @param frames How many frames to read
 		 */
-        std::shared_ptr<AudioBuffer> read(uint32_t const frames);
+        std::unique_ptr<AudioBuffer> read(uint32_t const frames);
 
         /**
 		 * @brief Reads the amount of frames and returns a pointer to that data

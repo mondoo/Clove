@@ -7,9 +7,15 @@
 [submodule "glm"]
 	path = clove/components/utilities/maths/external/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "SPIRV-Headers"]
+	path = clove/components/core/graphics/external/SPIRV-Headers
+	url = https://github.com/KhronosGroup/SPIRV-Headers.git
 [submodule "SPIRV-Cross"]
 	path = clove/components/core/graphics/external/SPIRV-Cross
 	url = https://github.com/KhronosGroup/SPIRV-Cross.git
+[submodule "SPIRV-Tools"]
+	path = clove/components/core/graphics/external/SPIRV-Tools
+	url = https://github.com/AGarlicMonkey/SPIRV-Tools.git
 [submodule "glslang"]
 	path = clove/components/core/graphics/external/glslang
 	url = https://github.com/KhronosGroup/glslang.git
@@ -28,3 +34,9 @@
 [submodule "libsndfile"]
 	path = clove/external/libsndfile
 	url = https://github.com/erikd/libsndfile.git
+[submodule "shaderc"]
+	path = clove/components/core/graphics/external/shaderc
+	url = https://github.com/AGarlicMonkey/shaderc.git
+[submodule "reb"]
+	path = clove/external/reb
+	url = https://gitlab.com/digital-vessel/reb.git

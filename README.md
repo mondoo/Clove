@@ -38,7 +38,10 @@ cmake --build .
 If using Garlic as a `sub_directory` inside a CMakeLists then OpenAL will need to be placed into the same directory as your exe.  
 This can be achieved by putting the following snippet inside the CMakeLists that builds your executable:
 ```
-set_target_properties(OpenAL PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+add_custom_command(TARGET yourprog POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:OpenAL> $<TARGET_FILE_DIR:yourprog>
+)
 ```
 
 If getting an error along the lines of '' when linking against Clove. Put the following command in your top most CMakeLists:

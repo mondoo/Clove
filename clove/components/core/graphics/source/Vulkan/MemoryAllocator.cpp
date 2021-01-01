@@ -4,18 +4,20 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    static uint32_t getMemoryTypeIndex(uint32_t typeBits, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice) {
-        VkPhysicalDeviceMemoryProperties memoryType{};
-        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryType);
+    namespace {
+        uint32_t getMemoryTypeIndex(uint32_t typeBits, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice) {
+            VkPhysicalDeviceMemoryProperties memoryType{};
+            vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryType);
 
-        for(uint32_t i = 0; i < memoryType.memoryTypeCount; ++i) {
-            if((typeBits & (1 << i)) != 0 && (memoryType.memoryTypes[i].propertyFlags & properties) == properties) {
-                return i;
+            for(uint32_t i = 0; i < memoryType.memoryTypeCount; ++i) {
+                if((typeBits & (1 << i)) != 0 && (memoryType.memoryTypes[i].propertyFlags & properties) == properties) {
+                    return i;
+                }
             }
-        }
 
-        CLOVE_ASSERT(false, "{0}: Failed to find the specified index", CLOVE_FUNCTION_NAME);
-        return -1;
+            CLOVE_ASSERT(false, "{0}: Failed to find the specified index", CLOVE_FUNCTION_NAME);
+            return -1;
+        }
     }
 
     MemoryAllocator::Block::Block(VkDevice device, VkDeviceSize size, uint32_t memoryTypeIndex)

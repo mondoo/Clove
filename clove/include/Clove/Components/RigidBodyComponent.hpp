@@ -1,12 +1,8 @@
 #pragma once
 
-#include <Clove/ECS/Component.hpp>
-#include <memory>
 #include <Clove/Maths/Vector.hpp>
-
-class btSphereShape;
-class btRigidBody;
-struct btDefaultMotionState;
+#include <cinttypes>
+#include <optional>
 
 namespace garlic::clove {
     /**
@@ -16,60 +12,69 @@ namespace garlic::clove {
 	 * CollisionShapeComponent then the rigid body will use that shape
 	 * to detect collisions.
 	 */
-    class RigidBodyComponent : public Component<RigidBodyComponent> {
-        friend class PhysicsSystem;
+    struct RigidBodyComponent {
+        friend class PhysicsLayer;
 
-        //TYPES
-    public:
-        struct Descriptor {
-            float mass{ 1.0f }; /**< The mass of the body. If 0 then the body will be able to be collided with but not respond to physics. */
-
-            uint32_t collisionGroup{ ~0u }; /**< Bit flag of the collision groups this body is a part of. */
-            uint32_t collisionMask{ ~0u };  /**< Bit flag of which collision groups this body collides with. */
+    private:
+        struct ForceApplication {
+            vec3f amount{ 0.0f, 0.0f, 0.0f };
+            vec3f offset{ 0.0f, 0.0f, 0.0f };
         };
 
-        //VARIABLES
-    private:
-        Descriptor descriptor;
-
-        std::unique_ptr<btSphereShape> standInShape; /**< Stand in shape until a CollisionShapeComponent has been added */
-        std::unique_ptr<btRigidBody> body;
-
-        std::unique_ptr<btDefaultMotionState> motionState;
-
-        //FUNCTIONS
     public:
-        RigidBodyComponent();
-        RigidBodyComponent(Descriptor descriptor);
+        /**
+         * @brief Bit flag of the collision groups this body is a part of.
+         */
+        uint32_t collisionGroup{ ~0u };
+        /**
+         * @brief Bit flag of which collision groups this body collides with.
+         */
+        uint32_t collisionMask{ ~0u };
 
-        RigidBodyComponent(RigidBodyComponent const &other);
-        RigidBodyComponent(RigidBodyComponent &&other) noexcept;
+        /**
+         * @brief The mass of the body. If 0 then the body will be able to be collided with but not respond to physics.
+         */
+        float mass{ 1.0f };
 
-        RigidBodyComponent &operator=(RigidBodyComponent const &other);
-        RigidBodyComponent &operator=(RigidBodyComponent &&other) noexcept;
+        /**
+         * @brief Sets a consistent velocity for the body to move in.
+         */
+        std::optional<vec3f> linearVelocity{};
 
-        ~RigidBodyComponent();
+        /**
+         * @brief The bouncyness of this body. Anything higher than 0 will cause the body to increase in bouncyness.
+         */
+        float restitution{ 0.0f };
 
-        void setLinearVelocity(vec3f const &velocity);
+        /**
+         * @brief Acts as a multiplier to any rotational forces applied to this body.
+         */
+        vec3f angularFactor{ 1.0f, 1.0f, 1.0f };
+        /**
+         * @brief Acts as a multiplier to any linear forces applied to this body.
+         */
+        vec3f linearFactor{ 1.0f, 1.0f, 1.0f };
 
-        void applyForce(vec3f const &force, vec3f const &relativeOffset = { 0.0f, 0.0f, 0.0f });
-        void applyImpulse(vec3f const &impulse, vec3f const &relativeOffset = { 0.0f, 0.0f, 0.0f });
+        /**
+         * @brief Apply a consistent force to this body.
+         * @param force The direction + power of the force.
+         * @param relativeOffset The offset in relation to the body's center of mass.
+         */
+        void applyForce(vec3f force, vec3f relativeOffset = { 0.0f, 0.0f, 0.0f }){
+            appliedForce = ForceApplication{ .amount = std::move(force), .offset = std::move(relativeOffset) };
+        }
 
-        void setRestitution(float restitution);
-
-        void setAngularFactor(vec3f const &factor);
-        void setLinearFactor(vec3f const &factor);
-
-        vec3f getLinearVelocity() const;
-
-        float getRestitution() const;
-
-        vec3f getAngularFactor() const;
-        vec3f getLinearFactor() const;
+        /**
+         * @brief Apply a 1 frame burst of force to this body.
+         * @param impulse The direction + power of the impulse.
+         * @param relativeOffset The offset in relation to the body's center of mass.
+         */
+        void applyImpulse(vec3f impulse, vec3f relativeOffset = { 0.0f, 0.0f, 0.0f }){
+            appliedImpulse = ForceApplication{ .amount = std::move(impulse), .offset = std::move(relativeOffset) };
+        }
 
     private:
-        void initialiseRigidBody();
-
-        static std::unique_ptr<btSphereShape> createStandInShape();
+        std::optional<ForceApplication> appliedForce{};
+        std::optional<ForceApplication> appliedImpulse{};
     };
 }

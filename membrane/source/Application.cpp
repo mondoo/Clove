@@ -5,35 +5,20 @@
 
 #include <Clove/Application.hpp>
 #include <Clove/Audio/Audio.hpp>
+#include <Clove/Components/StaticModelComponent.hpp>
+#include <Clove/Components/TransformComponent.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Graphics/GraphicsBuffer.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
-#include <Clove/Systems/RenderSystem.hpp>
-#include <Clove/ECS/World.hpp>
-#include <Clove/Components/TransformComponent.hpp>
-#include <Clove/Components/StaticModelComponent.hpp>
-#include <Clove/ModelLoader.hpp>
-
-namespace garlic::membrane {
-    class ConsoleLogger : public clove::Logger::Output {
-    public:
-        void doLog(clove::LogLevel level, std::string_view msg) override {
-            //Conver to std::string as there seems to be issues when using std::data(msg)
-            System::Console::WriteLine(gcnew System::String(std::string{ std::begin(msg), std::end(msg) }.c_str()));
-        }
-    };
-}
 
 namespace garlic::membrane {
     Application::Application(int const width, int const height)
         : width{ width }
         , height{ height } {
         using namespace garlic::clove;
-
-        //Set the logger for Clove to redirect to System.Console
-        Logger::get().setOutput(std::make_unique<ConsoleLogger>());
 
         GraphicsImage::Descriptor renderTargetImageDescriptor{};
         renderTargetImageDescriptor.type        = GraphicsImage::Type::_2D;
@@ -47,9 +32,6 @@ namespace garlic::membrane {
         app          = pair.first.release();
         renderTarget = pair.second;
 
-        //Add systems
-        app->getECSWorld()->addSystem<clove::RenderSystem>();
-
         editorLayer  = new std::shared_ptr<EditorLayer>();
         *editorLayer = std::make_shared<EditorLayer>(clove::vec2ui{ width, height });
 
@@ -57,7 +39,7 @@ namespace garlic::membrane {
         *runtimeLayer = std::make_shared<RuntimeLayer>();
 
         app->pushLayer(*runtimeLayer);
-        app->pushOverlay(*editorLayer);
+        app->pushLayer(*editorLayer);
     }
 
     Application::~Application() {
@@ -94,26 +76,5 @@ namespace garlic::membrane {
 
         this->width  = width;
         this->height = height;
-    }
-
-    clove::Entity Application::addEntity() {
-        return (*runtimeLayer)->addEntity();
-    }
-
-    void Application::removeEntity(clove::Entity entity) {
-        (*runtimeLayer)->removeEntity(entity);
-    }
-
-    void Application::createComponent(clove::Entity entity, ComponentType componentType) {
-        switch(componentType) {
-            case ComponentType::Transform:
-                app->getECSWorld()->addComponent<clove::TransformComponent>(entity);
-                break;
-            case ComponentType::Mesh:
-                app->getECSWorld()->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
-                break;
-            default:
-                break;
-        }
     }
 }
