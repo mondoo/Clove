@@ -199,7 +199,7 @@ namespace garlic::clove::ShaderCompiler {
 
         std::vector<char> source{ readFile(file) };
         auto fileIncluder{ std::make_unique<glslc::FileIncluder>(&fileFinder) };
-        std::string shaderName{ file.stem() };
+        std::string shaderName{ file.stem().string() };
 
         return compile({ source.data(), source.size() }, std::move(fileIncluder), shaderName, shaderStage, outputType);
     }
