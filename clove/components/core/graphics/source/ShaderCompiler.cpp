@@ -97,7 +97,7 @@ namespace garlic::clove::ShaderCompiler {
         }
 
         std::vector<uint32_t> spirvToHLSL(std::vector<uint32_t> const &sprivSource) {
-            CLOVE_ASSERT("SPIR-V to HLSL not supported!");
+            CLOVE_ASSERT(false, "SPIR-V to HLSL not supported!");
             return {};
         }
 
@@ -150,7 +150,7 @@ namespace garlic::clove::ShaderCompiler {
 
             //return msl.compile();
 
-            CLOVE_ASSERT("SPIR-V to HLSL not fully supported!");
+            CLOVE_ASSERT(false, "SPIR-V to HLSL not fully supported!");
             return {};
         }
 
