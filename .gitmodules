@@ -37,3 +37,6 @@
 [submodule "shaderc"]
 	path = clove/components/core/graphics/external/shaderc
 	url = https://github.com/AGarlicMonkey/shaderc.git
+[submodule "reb"]
+	path = clove/external/reb
+	url = https://gitlab.com/digital-vessel/reb.git

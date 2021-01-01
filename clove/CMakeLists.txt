@@ -4,7 +4,6 @@ set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 
 add_subdirectory(components)
 add_subdirectory(external)
-add_subdirectory(tools)
 
 #Prepare SOURCEs to be inbedded
 set(
@@ -47,7 +46,7 @@ function(embeddSOURCE SOURCEs readType)
 
 		add_custom_command(
 			OUTPUT ${fileName}.c
-			COMMAND ResourceEmbedder ${fileName} ${res} ${readType}
+			COMMAND reb ${fileName} ${res} ${readType}
 			DEPENDS ${res}
 		)
 
