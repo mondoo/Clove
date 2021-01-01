@@ -18,6 +18,7 @@ add_subdirectory(SPIRV-Tools)
 #glslang
 set(SKIP_GLSLANG_INSTALL ON CACHE BOOL "Skip installation")
 set(HLSLCC_LIBRARY_SHARED OFF CACHE BOOL "Build shared library instead of static.")
+set(ENABLE_CTEST OFF CACHE BOOL "Enables testing")
 add_subdirectory(glslang)
 
 #shaderc (needs to be last as it depends on above)
