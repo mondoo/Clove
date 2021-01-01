@@ -36,8 +36,8 @@ add_library(
 		${INCLUDE}/Sampler.hpp
 		${INCLUDE}/Semaphore.hpp
 		${INCLUDE}/Shader.hpp
-		${INCLUDE}/ShaderTranspiler.hpp		
-		${SOURCE}/ShaderTranspiler.cpp
+		${INCLUDE}/ShaderCompiler.hpp		
+		${SOURCE}/ShaderCompiler.cpp
 		${INCLUDE}/Swapchain.hpp
 		${INCLUDE}/TransferCommandBuffer.hpp
         ${INCLUDE}/TransferQueue.hpp
@@ -116,6 +116,7 @@ target_include_directories(
 
 	PRIVATE
 		Vulkan::Vulkan
+		external/shaderc/glslc/src
 )
 
 #Libraries
@@ -130,8 +131,9 @@ target_link_libraries(
         CloveMaths
 
     PRIVATE
-        glslang
-		glslang-default-resource-limits
+        shaderc
+		shaderc_util
+		glslc
 		SPIRV
 		spirv-cross-core
 		spirv-cross-glsl
