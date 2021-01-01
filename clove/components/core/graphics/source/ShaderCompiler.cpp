@@ -195,7 +195,7 @@ namespace garlic::clove::ShaderCompiler {
         }
 
         shaderc_util::FileFinder fileFinder{};
-        fileFinder.search_path().push_back(std::filesystem::path{ file }.remove_filename().c_str());
+        fileFinder.search_path().emplace_back(std::filesystem::path{ file }.remove_filename().string());
 
         std::vector<char> source{ readFile(file) };
         auto fileIncluder{ std::make_unique<glslc::FileIncluder>(&fileFinder) };
