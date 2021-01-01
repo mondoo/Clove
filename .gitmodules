@@ -15,7 +15,7 @@
 	url = https://github.com/KhronosGroup/SPIRV-Cross.git
 [submodule "SPIRV-Tools"]
 	path = clove/components/core/graphics/external/SPIRV-Tools
-	url = https://github.com/KhronosGroup/SPIRV-Tools.git
+	url = https://github.com/AGarlicMonkey/SPIRV-Tools.git
 [submodule "glslang"]
 	path = clove/components/core/graphics/external/glslang
 	url = https://github.com/KhronosGroup/glslang.git
@@ -36,4 +36,4 @@
 	url = https://github.com/erikd/libsndfile.git
 [submodule "shaderc"]
 	path = clove/components/core/graphics/external/shaderc
-	url = https://github.com/google/shaderc.git
+	url = https://github.com/AGarlicMonkey/shaderc.git
