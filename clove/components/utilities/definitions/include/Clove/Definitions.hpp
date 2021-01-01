@@ -15,7 +15,7 @@
     #define CLOVE_FUNCTION_NAME_PRETTY __PRETTY_FUNCTION__
 #endif
 
-#define CLOVE_ENUM_BIT_FLAG_OPERATORS(EnumType, IntegralType)                                     \
+#define CLOVE_ENUM_BIT_FLAG_OPERATORS(EnumType, IntegralType)                                      \
     inline constexpr EnumType operator&(EnumType l, EnumType r) {                                  \
         return static_cast<EnumType>(static_cast<IntegralType>(l) & static_cast<IntegralType>(r)); \
     }                                                                                              \
