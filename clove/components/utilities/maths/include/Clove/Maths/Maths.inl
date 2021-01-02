@@ -54,12 +54,10 @@ namespace garlic::clove {
     }
 
     template<typename T>
-    quat<T> rotate(T angle, vec<3, T> const &v) {
+    quat<T> constexpr rotate(T angle, vec<3, T> const &v) {
         return {
             cos(angle / 2.0f),
-            sin((angle * v.x) / 2.0f),
-            sin((angle * v.y) / 2.0f),
-            sin((angle * v.z) / 2.0f)
+            sin(angle / 2.0f) * v
         };
     }
 

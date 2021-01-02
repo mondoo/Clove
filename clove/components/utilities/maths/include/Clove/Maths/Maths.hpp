@@ -34,7 +34,7 @@ namespace garlic::clove {
     mat<4, 4, T> rotate(mat<4, 4, T> const &m, T angle, vec<3, T> const &v);
 
     template<typename T>
-    quat<T> rotate(T angle, vec<3, T> const &v);
+    quat<T> constexpr rotate(T angle, vec<3, T> const &v);
 
     template<typename T>
     mat<4, 4, T> scale(mat<4, 4, T> const &m, vec<3, T> const &v);
