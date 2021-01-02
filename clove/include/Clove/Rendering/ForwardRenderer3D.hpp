@@ -2,6 +2,7 @@
 
 #include "Clove/Rendering/ShaderBufferTypes.hpp"
 
+#include <Clove/Delegate/DelegateHandle.hpp>
 #include <Clove/Graphics/DescriptorSetLayout.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Graphics/GraphicsBuffer.hpp>
@@ -77,7 +78,7 @@ namespace garlic::clove {
             std::shared_ptr<garlic::clove::GraphicsCommandBuffer> shadowMapCommandBuffer;
             std::shared_ptr<garlic::clove::GraphicsCommandBuffer> cubeShadowMapCommandBuffer;
 
-            std::shared_ptr<garlic::clove::GraphicsBuffer> frameDataBuffer;               //Holds data used across all meshes (lighting, camera etc.)
+            std::shared_ptr<garlic::clove::GraphicsBuffer> frameDataBuffer;           //Holds data used across all meshes (lighting, camera etc.)
             std::vector<std::unique_ptr<garlic::clove::GraphicsBuffer>> objectBuffers;//Holds the data for each object
 
             //Descriptor pool for sets that change per frame
@@ -116,7 +117,7 @@ namespace garlic::clove {
         //'Square' mesh used to render UI
         std::unique_ptr<Mesh> uiMesh;
 
-        garlic::clove::GraphicsDevice* graphicsDevice;
+        garlic::clove::GraphicsDevice *graphicsDevice;
         std::shared_ptr<garlic::clove::GraphicsFactory> graphicsFactory;
 
         std::shared_ptr<garlic::clove::GraphicsQueue> graphicsQueue;

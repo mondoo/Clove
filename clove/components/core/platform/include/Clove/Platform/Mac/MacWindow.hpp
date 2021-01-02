@@ -4,10 +4,6 @@
 
 #include "Clove/Platform/Mac/CloveMac.hpp"
 
-#include <MetalKit/MetalKit.h>
-
-@class MTLView;
-
 namespace garlic::clove {
     class Window;
 	class MacWindow;
@@ -18,7 +14,7 @@ namespace garlic::clove {
 @property(readonly) NSWindow* window;
 @property garlic::clove::MacWindow *cloveWindow;
 
-- (instancetype)initWithWindowData:(MTLView*)view width:(unsigned int)width height:(unsigned int)height name: (NSString*)name;
+- (instancetype)initWithWindowData:(NSView*)view width:(unsigned int)width height:(unsigned int)height name: (NSString*)name;
 
 @end
 
@@ -47,7 +43,7 @@ namespace garlic::clove {
 
 		~MacWindow();
 
-		void* getNativeWindow() const override;
+		std::any getNativeWindow() const override;
 		
 		vec2i getPosition() const override;
 		vec2i getSize() const override;
@@ -57,7 +53,7 @@ namespace garlic::clove {
 
 		bool isOpen() const override;
 
-		void close();
+		void close() override;
 
 	protected:
 		virtual void processInput() override;
