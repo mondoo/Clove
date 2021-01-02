@@ -7,6 +7,9 @@ namespace garlic::clove {
     vec<L, T> normalise(vec<L, T> const &v);
 
     template<typename T>
+    quat<T> normalise(quat<T> const &q);
+
+    template<typename T>
     vec<3, T> cross(vec<3, T> const &v1, vec<3, T> const &v2);
 
     template<length_t L, typename T>
