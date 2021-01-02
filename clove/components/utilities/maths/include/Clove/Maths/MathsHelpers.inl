@@ -60,11 +60,6 @@ namespace garlic::clove {
     }
 
     template<typename T>
-    quat<T> eulerToQuaternion(vec<3, T> const &euler) {
-        return matrixToQuaternion(glm::yawPitchRoll(euler.y, euler.x, euler.z));
-    }
-
-    template<typename T>
     vec<3, T> matrixToEuler(mat<4, 4, T> const &mat) {
         vec<3, T> vec;
         glm::extractEulerAngleXYZ(mat, vec.x, vec.y, vec.z);
@@ -88,7 +83,7 @@ namespace garlic::clove {
 
     template<typename T>
     vec<3, T> quaternionToEuler(quat<T> const &quat) {
-        return (glm::axis(quat) * glm::angle(quat));
+        return { glm::axis(quat) * glm::angle(quat) };
     }
 
     template<typename T>

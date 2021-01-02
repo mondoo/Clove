@@ -30,9 +30,6 @@ namespace garlic::clove {
     mat<4, 4, T> constexpr createPerspectiveMatrix(T fovy, T aspect, T zNear, T zFar);
 
     template<typename T>
-    quat<T> eulerToQuaternion(vec<3, T> const &euler);
-
-    template<typename T>
     vec<3, T> matrixToEuler(mat<4, 4, T> const &mat);
 
     template<typename T>
