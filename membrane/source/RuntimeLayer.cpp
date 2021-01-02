@@ -137,7 +137,7 @@ namespace garlic::membrane {
     void RuntimeLayer::updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale) {
         if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
             entityManager->getComponent<clove::TransformComponent>(entity).position = position;
-            entityManager->getComponent<clove::TransformComponent>(entity).rotation = clove::eulerToQuaternion(rotation);
+            entityManager->getComponent<clove::TransformComponent>(entity).rotation = rotation;
             entityManager->getComponent<clove::TransformComponent>(entity).scale = scale;
         }
     }
