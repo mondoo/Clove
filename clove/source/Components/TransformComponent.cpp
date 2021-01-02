@@ -7,14 +7,8 @@
 
 namespace garlic::clove {
     vec3f TransformComponent::getForward() const {
-        vec3f const eulerRot{ quaternionToEuler(rotation) };
-
-        vec3f front;
-        front.x = sin(eulerRot.y) * cos(eulerRot.x);
-        front.y = sin(eulerRot.x);
-        front.z = cos(eulerRot.y) * cos(eulerRot.x);
-
-        return normalise(front);
+        vec3f constexpr worldForward{ 0.0f, 0.0f, 1.0f };
+        return normalise(rotation * worldForward);
     }
 
     vec3f TransformComponent::getRight() const {
