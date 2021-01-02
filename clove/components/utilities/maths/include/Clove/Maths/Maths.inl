@@ -14,7 +14,7 @@ namespace garlic::clove {
     }
 
     template<length_t L, typename T>
-    vec<L, T> dot(vec<L, T> const &v1, vec<L, T> const &v2) {
+    T dot(vec<L, T> const &v1, vec<L, T> const &v2) {
         return glm::dot(v1, v2);
     }
 

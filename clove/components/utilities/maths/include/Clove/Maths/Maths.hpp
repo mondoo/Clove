@@ -10,7 +10,7 @@ namespace garlic::clove {
     vec<3, T> cross(vec<3, T> const &v1, vec<3, T> const &v2);
 
     template<length_t L, typename T>
-    vec<L, T> dot(vec<L, T> const &v1, vec<L, T> const &v2);
+    T dot(vec<L, T> const &v1, vec<L, T> const &v2);
 
     template<length_t L, typename T>
     T distance(vec<L, T> const &v1, vec<L, T> const &v2);
