@@ -1,17 +1,3 @@
-#bullet3
-set(BUILD_BULLET2_DEMOS OFF CACHE BOOL "Set when you want to build the Bullet 2 demos")
-set(BUILD_CLSOCKET OFF CACHE BOOL "Set when you want to build apps with enet TCP networking support")
-set(BUILD_CPU_DEMOS OFF CACHE BOOL "Set to build original Bullet CPU demos")
-set(BUILD_EGL OFF CACHE BOOL "OpenGL/EGL")
-set(BUILD_ENET OFF CACHE BOOL "Set when you want to build apps with enet UDP networking support")
-set(BUILD_EXTRAS OFF CACHE BOOL "Set when you want to build extras")
-set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "Set when you want to build Bullet 3 OpenGL3+ demos")
-set(BUILD_UNIT_TESTS OFF CACHE BOOL "Build unit tests")
-set(BUILD_REGTEST OFF CACHE BOOL "")
-set(USE_GLUT OFF CACHE BOOL "Use GLUT")
-set(USE_GRAPHICAL_BENCHMARK OFF CACHE BOOL "Use graphical benchmark")
-add_subdirectory(bullet3)
-
 #assimp
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "If the test suit for assimp is built in addition to the library")
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "If the supplimentary tools for Assimp are built in addition to the library")

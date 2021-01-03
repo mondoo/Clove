@@ -16,8 +16,7 @@ if(NOT MSVC)
 endif()
 
 #Set up conan
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
 #default settings
 set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")

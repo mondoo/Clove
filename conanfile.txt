@@ -1,5 +1,7 @@
 [requires]
+bullet3/3.07
 gtest/1.10.0
 
 [generators]
-cmake
+cmake_find_package
+cmake_paths

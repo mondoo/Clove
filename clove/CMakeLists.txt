@@ -5,6 +5,8 @@ set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 add_subdirectory(components)
 add_subdirectory(external)
 
+find_package(Bullet)
+
 #Prepare SOURCEs to be inbedded
 set(
 	ShaderIncludes
@@ -187,7 +189,7 @@ target_include_directories(
 
 	PRIVATE
 		external/freetype2/include
-		external/bullet3/src
+		Bullet::Bullet
 )
 
 #Libraries
@@ -206,7 +208,7 @@ target_link_libraries(
 		CloveECS 
 		CloveStateMachine
 		 
-		#Utilities 
+		#Utilities
 		CloveCast 
 		CloveDefinitions 
 		CloveDelegate 
@@ -219,13 +221,9 @@ target_link_libraries(
 		CloveTimer
 
 	PRIVATE
-		#Order of these are important
-		BulletDynamics
-		BulletCollision
-		LinearMath
-
 		assimp
-		stb
+		Bullet::Bullet
 		freetype
 		sndfile
+		stb
 )

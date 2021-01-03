@@ -22,9 +22,6 @@
 [submodule "assimp"]
 	path = clove/external/assimp
 	url = https://github.com/assimp/assimp.git
-[submodule "bullet3"]
-	path = clove/external/bullet3
-	url = https://github.com/bulletphysics/bullet3.git
 [submodule "freetype2"]
 	path = clove/external/freetype2
 	url = https://git.savannah.gnu.org/git/freetype/freetype2.git
