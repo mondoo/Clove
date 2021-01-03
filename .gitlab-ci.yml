@@ -9,7 +9,7 @@
     - curl.exe -o vksdk.exe https://sdk.lunarg.com/sdk/download/1.2.154.1/windows/VulkanSDK-1.2.154.1-Installer.exe?Human=true
     - .\vksdk.exe /S /D=C:\VulkanSDK | Out-Null
     - $env:VULKAN_SDK = 'C:\VulkanSDK'
-    - $env:Path += ';C:\Program Files\CMake\bin;C:\VulkanSDK\Bin'
+    - $env:Path += ';C:\Program Files\CMake\bin;C:\VulkanSDK\Bin;C:\Program Files\Conan\conan'
 
 .windows_tag: &windows_runner_tags
   tags:
