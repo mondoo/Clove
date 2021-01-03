@@ -2,6 +2,7 @@
 .windows_prepare: &set_up_windows_env
   before_script:
     - git submodule update --init --recursive
+    - choco install -y conan
     - choco install -y cmake
     - choco install -y python
     - choco upgrade -y visualstudio2019buildtools
@@ -15,7 +16,7 @@
     - windows-1809
 
 .linux_image: &linux_env_image
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:4.0.0
+  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:5.0.0
 
 stages:
   - build
@@ -29,6 +30,7 @@ build-release-msvc:
   script:
     - mkdir build
     - cd build
+    - conan install -s build_type=Release ..
     - cmake -DGAR_BUILD_TESTS=ON -G "Visual Studio 16 2019" ..
     - cmake --build . --target ALL_BUILD --config Release
   artifacts:
@@ -42,6 +44,7 @@ build-debug-msvc:
   script:
     - mkdir build
     - cd build
+    - conan install -s build_type=Debug ..
     - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -G "Visual Studio 16 2019" ..
     - cmake --build . --target ALL_BUILD --config Debug
   artifacts:
@@ -56,6 +59,7 @@ build-release-gcc:
   script:
     - mkdir build
     - cd build
+    - conan install -s build_type=Release ..
     - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
@@ -70,6 +74,7 @@ build-debug-gcc:
   script:
     - mkdir build
     - cd build
+    - conan install -s build_type=Debug ..
     - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
@@ -84,6 +89,7 @@ build-release-clang:
   script:
     - mkdir build
     - cd build
+    - conan install -s build_type=Release ..
     - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
@@ -98,6 +104,7 @@ build-debug-clang:
   script:
     - mkdir build
     - cd build
+    - conan install -s build_type=Debug ..
     - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
