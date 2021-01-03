@@ -59,7 +59,7 @@ build-release-gcc:
   script:
     - mkdir build
     - cd build
-    - conan install -s build_type=Release ..
+    - conan install -s build_type=Release -s compiler=gcc-10 ..
     - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
@@ -74,7 +74,7 @@ build-debug-gcc:
   script:
     - mkdir build
     - cd build
-    - conan install -s build_type=Debug ..
+    - conan install -s build_type=Debug -s compiler=gcc-10 ..
     - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
@@ -89,7 +89,7 @@ build-release-clang:
   script:
     - mkdir build
     - cd build
-    - conan install -s build_type=Release ..
+    - conan install -s build_type=Release -s compiler=clang-10 ..
     - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
@@ -104,7 +104,7 @@ build-debug-clang:
   script:
     - mkdir build
     - cd build
-    - conan install -s build_type=Debug ..
+    - conan install -s build_type=Debug -s compiler=clang-10 ..
     - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
