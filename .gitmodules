@@ -1,6 +1,3 @@
-[submodule "googletest"]
-	path = external/googletest
-	url = https://github.com/google/googletest.git
 [submodule "spdlog"]
 	path = clove/components/utilities/log/external/spdlog
 	url = https://github.com/gabime/spdlog.git

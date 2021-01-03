@@ -15,6 +15,10 @@ if(NOT MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 endif()
 
+#Set up conan
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+
 #default settings
 set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
@@ -27,9 +31,6 @@ option(GAR_BUILD_BULB "Build Bulb, Garlic's editor" ON)
 option(GAR_BUILD_TESTS "Build Garlic's tests" OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-#Dependencies
-add_subdirectory(external)
 
 #Engine
 add_subdirectory(clove)
