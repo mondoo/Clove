@@ -1,6 +1,3 @@
-[submodule "glm"]
-	path = clove/components/utilities/maths/external/glm
-	url = https://github.com/g-truc/glm.git
 [submodule "reb"]
 	path = clove/external/reb
 	url = https://gitlab.com/digital-vessel/reb.git
