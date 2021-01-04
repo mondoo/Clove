@@ -99,7 +99,7 @@ build-debug-clang:
   script:
     - mkdir build
     - cd build
-    - cmake -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
+    - cmake -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
     paths:
