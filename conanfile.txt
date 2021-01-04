@@ -5,3 +5,4 @@ freetype/2.10.4
 gtest/1.10.0
 libsndfile/1.0.30
 shaderc/2019.0
+spirv-cross/20200917

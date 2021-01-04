@@ -4,9 +4,6 @@
 [submodule "glm"]
 	path = clove/components/utilities/maths/external/glm
 	url = https://github.com/g-truc/glm.git
-[submodule "SPIRV-Cross"]
-	path = clove/components/core/graphics/external/SPIRV-Cross
-	url = https://github.com/KhronosGroup/SPIRV-Cross.git
 [submodule "openal-soft"]
 	path = clove/components/core/audio/external/openal-soft
 	url = https://github.com/kcat/openal-soft.git

@@ -2,8 +2,6 @@ set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/Graphics)
 set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 
-add_subdirectory(external)
-
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	find_package(Vulkan REQUIRED)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
@@ -152,11 +150,7 @@ target_link_libraries(
 
     PRIVATE
         CONAN_PKG::shaderc
-		SPIRV
-		spirv-cross-core
-		spirv-cross-glsl
-		spirv-cross-hlsl
-		spirv-cross-msl
+		CONAN_PKG::spirv-cross
 
 	#Windows
 	PRIVATE
