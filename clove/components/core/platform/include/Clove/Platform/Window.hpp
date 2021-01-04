@@ -10,6 +10,9 @@
 #include <any>
 
 namespace garlic::clove {
+    /**
+     * @brief An abstraction over a platform's native window
+     */
     class Window {
         //VARIABLES
     public:
@@ -32,6 +35,9 @@ namespace garlic::clove {
 
         virtual ~Window() = default;
 
+        /**
+         * @brief Pumps the message queue of the window. Populating the Mouse and Keyboard classes with events.
+         */
         virtual void processInput() = 0;
 
         virtual std::any getNativeWindow() const = 0;
