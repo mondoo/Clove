@@ -13,16 +13,16 @@ namespace garlic::clove {
     class Window {
         //VARIABLES
     public:
-        SingleCastDelegate<void()> onWindowCloseDelegate;
-        MultiCastDelegate<void(vec2ui const &)> onWindowResize;
+        SingleCastDelegate<void()> onWindowCloseDelegate{};
+        MultiCastDelegate<void(vec2ui const &)> onWindowResize{};
 
     protected:
-        Keyboard keyboard;
-        Mouse mouse;
+        Keyboard keyboard{};
+        Mouse mouse{};
 
         //FUNCTIONS
     public:
-        Window();
+        Window() = default;
 
         Window(Window const &other)     = delete;
         Window(Window &&other) noexcept = delete;
@@ -30,7 +30,7 @@ namespace garlic::clove {
         Window &operator=(Window const &other) = delete;
         Window &operator=(Window &&other) noexcept = delete;
 
-        virtual ~Window();
+        virtual ~Window() = default;
 
         virtual void processInput() = 0;
 
@@ -46,7 +46,9 @@ namespace garlic::clove {
 
         virtual void close() = 0;
 
-        Keyboard &getKeyboard();
-        Mouse &getMouse();
+        inline Keyboard &getKeyboard();
+        inline Mouse &getMouse();
     };
 }
+
+#include "Window.inl"

@@ -6,7 +6,7 @@ set(
 		${INCLUDE}/Platform.hpp
 		${INCLUDE}/PlatformTypes.hpp
 		${INCLUDE}/Window.hpp
-		${SOURCE}/Window.cpp
+		${INCLUDE}/Window.inl
 )
 
 set(
