@@ -6,4 +6,5 @@ gtest/1.10.0
 libsndfile/1.0.30
 openal/1.21.0
 shaderc/2019.0
+spdlog/1.8.2
 spirv-cross/20200917
