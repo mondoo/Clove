@@ -31,11 +31,6 @@ endif()
 #Required for linking shared object (*.so) files on Linux
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-#Make pthread is included while linked (still sometimes requires this in external projects when used as a sub_directory)
-if(NOT MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-endif()
-
 #default settings
 set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
