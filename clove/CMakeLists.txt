@@ -218,6 +218,6 @@ target_link_libraries(
 		CONAN_PKG::assimp
 		CONAN_PKG::bullet3
 		CONAN_PKG::freetype
-		sndfile
+		CONAN_PKG::libsndfile
 		stb
 )
