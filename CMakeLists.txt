@@ -7,6 +7,8 @@ project(Garlic LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(GAR_BUILD_PACKAGES "Manually build packages pulled from conan. Useful if debugging symbols are required" OFF)
+
 #Set up conan
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
@@ -14,11 +16,16 @@ if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
                   "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
 
+set(CONAN_BUILD missing)
+if(GAR_BUILD_PACKAGES)
+	set(CONAN_BUILD all)
+endif()
+
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 if(${GENERATOR_IS_MULTI_CONFIG})
-	conan_cmake_run(CONANFILE conanfile.txt BASIC_SETUP CMAKE_TARGETS BUILD missing CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}")
+	conan_cmake_run(CONANFILE conanfile.txt BASIC_SETUP CMAKE_TARGETS BUILD ${CONAN_BUILD} CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}")
 else()
-	conan_cmake_run(CONANFILE conanfile.txt BASIC_SETUP CMAKE_TARGETS BUILD missing BUILD_TYPE "${CMAKE_BUILD_TYPE}")
+	conan_cmake_run(CONANFILE conanfile.txt BASIC_SETUP CMAKE_TARGETS BUILD ${CONAN_BUILD} BUILD_TYPE "${CMAKE_BUILD_TYPE}")
 endif()
 
 #Required for linking shared object (*.so) files on Linux
