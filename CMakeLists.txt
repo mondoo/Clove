@@ -7,6 +7,20 @@ project(Garlic LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+#Set up conan
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+   message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+   file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/master/conan.cmake"
+                  "${CMAKE_BINARY_DIR}/conan.cmake")
+endif()
+
+include(${CMAKE_BINARY_DIR}/conan.cmake)
+if(${GENERATOR_IS_MULTI_CONFIG})
+	conan_cmake_run(CONANFILE conanfile.txt BASIC_SETUP CMAKE_TARGETS BUILD missing CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}")
+else()
+	conan_cmake_run(CONANFILE conanfile.txt BASIC_SETUP CMAKE_TARGETS BUILD missing BUILD_TYPE "${CMAKE_BUILD_TYPE}")
+endif()
+
 #Required for linking shared object (*.so) files on Linux
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -14,9 +28,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 if(NOT MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 endif()
-
-#Set up conan
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
 #default settings
 set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples")

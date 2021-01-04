@@ -5,8 +5,6 @@ set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 add_subdirectory(components)
 add_subdirectory(external)
 
-find_package(Bullet)
-
 #Prepare SOURCEs to be inbedded
 set(
 	ShaderIncludes
@@ -222,7 +220,7 @@ target_link_libraries(
 
 	PRIVATE
 		assimp
-		Bullet::Bullet
+		CONAN_PKG::bullet3
 		freetype
 		sndfile
 		stb
