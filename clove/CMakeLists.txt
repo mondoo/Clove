@@ -184,10 +184,6 @@ target_include_directories(
 
 	PUBLIC
 		include
-
-	PRIVATE
-		external/freetype2/include
-		Bullet::Bullet
 )
 
 #Libraries
@@ -221,7 +217,7 @@ target_link_libraries(
 	PRIVATE
 		CONAN_PKG::assimp
 		CONAN_PKG::bullet3
-		freetype
+		CONAN_PKG::freetype
 		sndfile
 		stb
 )

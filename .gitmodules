@@ -19,9 +19,6 @@
 [submodule "openal-soft"]
 	path = clove/components/core/audio/external/openal-soft
 	url = https://github.com/kcat/openal-soft.git
-[submodule "freetype2"]
-	path = clove/external/freetype2
-	url = https://git.savannah.gnu.org/git/freetype/freetype2.git
 [submodule "libsndfile"]
 	path = clove/external/libsndfile
 	url = https://github.com/erikd/libsndfile.git
