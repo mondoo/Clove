@@ -171,6 +171,8 @@ add_library(
 		${SOURCE}/TextureLoader.cpp
 
 		${INCLUDE}/Viewport.hpp
+		${INCLUDE}/WindowViewport.hpp
+		${SOURCE}/WindowViewport.cpp
 
 		${ShaderFiles}
 
