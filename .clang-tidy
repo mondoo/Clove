@@ -11,4 +11,5 @@ cppcoreguidelines-*,
 -readability-avoid-const-params-in-decls,
 -readability-uppercase-literal-suffix,
 -readability-redundant-access-specifiers,
--cppcoreguidelines-macro-usage'
+-cppcoreguidelines-macro-usage
+-cppcoreguidelines-non-private-member-variables-in-classes'
