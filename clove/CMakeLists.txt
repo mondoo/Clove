@@ -219,7 +219,7 @@ target_link_libraries(
 		CloveTimer
 
 	PRIVATE
-		assimp
+		CONAN_PKG::assimp
 		CONAN_PKG::bullet3
 		freetype
 		sndfile

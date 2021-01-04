@@ -1,3 +1,4 @@
 [requires]
+assimp/5.0.1
 bullet3/3.07
 gtest/1.10.0
