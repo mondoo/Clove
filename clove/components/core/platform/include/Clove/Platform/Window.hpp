@@ -10,12 +10,6 @@
 #include <any>
 
 namespace garlic::clove {
-    enum class GraphicsApi;
-    class GraphicsFactory;
-    class Surface;
-}
-
-namespace garlic::clove {
     class Window {
         //VARIABLES
     public:
