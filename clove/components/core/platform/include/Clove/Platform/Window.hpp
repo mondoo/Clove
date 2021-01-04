@@ -34,9 +34,6 @@ namespace garlic::clove {
 
         virtual void processInput() = 0;
 
-        void setVSync(bool enabled);
-        bool isVSync() const;
-
         virtual std::any getNativeWindow() const = 0;
 
         virtual vec2i getPosition() const = 0;
