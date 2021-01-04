@@ -43,7 +43,7 @@ build-debug-msvc:
   script:
     - mkdir build
     - cd build
-    - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -G "Visual Studio 16 2019" ..
+    - cmake -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -G "Visual Studio 16 2019" ..
     - cmake --build . --target ALL_BUILD --config Debug
   artifacts:
     paths:
@@ -71,7 +71,7 @@ build-debug-gcc:
   script:
     - mkdir build
     - cd build
-    - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
+    - cmake -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
     paths:
@@ -99,7 +99,7 @@ build-debug-clang:
   script:
     - mkdir build
     - cd build
-    - cmake -DGAR_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
+    - cmake -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
     paths:
