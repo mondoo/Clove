@@ -170,6 +170,8 @@ add_library(
 		${INCLUDE}/TextureLoader.hpp
 		${SOURCE}/TextureLoader.cpp
 
+		${INCLUDE}/Viewport.hpp
+
 		${ShaderFiles}
 
 		${ResourceBinaries}
