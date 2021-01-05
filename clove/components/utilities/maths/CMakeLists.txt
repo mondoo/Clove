@@ -1,5 +1,3 @@
-add_subdirectory(external)
-
 #Library
 add_library(
     CloveMaths INTERFACE
@@ -18,7 +16,7 @@ target_link_libraries(
 	CloveMaths
 
 	INTERFACE
-		glm
+		CONAN_PKG::glm
 )
 
 #Definitions

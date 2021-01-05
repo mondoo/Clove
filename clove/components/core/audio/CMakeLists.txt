@@ -1,8 +1,6 @@
 set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/Audio)
 
-add_subdirectory(external)
-
 #Library
 add_library(
     CloveAudio STATIC
@@ -49,5 +47,5 @@ target_link_libraries(
         CloveMaths
 
     PRIVATE
-        OpenAL
+        CONAN_PKG::openal
 )
