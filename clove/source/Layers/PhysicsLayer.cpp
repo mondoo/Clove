@@ -7,11 +7,12 @@
 #include "Clove/Components/TransformComponent.hpp"
 
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <Clove/Cast.hpp>
 #include <Clove/Delegate/MultiCastDelegate.hpp>
+#include <Clove/Delegate/SingleCastDelegate.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Event/EventDispatcher.hpp>
 #include <btBulletDynamicsCommon.h>
-#include <Clove/Delegate/SingleCastDelegate.hpp>
 
 namespace garlic::clove {
     namespace {
@@ -58,12 +59,12 @@ namespace garlic::clove {
 
             return rawBody;
         }
-        
+
         btVector3 toBt(vec3f const &vec) {
             return btVector3{ vec.x, vec.y, vec.z };
         }
 
-        vec3f toGar(btVector3 const &vec){
+        vec3f toGar(btVector3 const &vec) {
             return vec3f{ vec.getX(), vec.getY(), vec.getZ() };
         }
     }
@@ -115,7 +116,7 @@ namespace garlic::clove {
 
         //Apply any updates to the rigid body
         entityManager->forEach([&](RigidBodyComponent &body, PhysicsProxyComponent const &proxy) {
-            auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) };
+            auto *btBody{ polyCast<btRigidBody>(proxy.collisionObject.get()) };
 
             if(body.appliedVelocity.has_value()) {
                 btBody->setLinearVelocity(toBt(*body.appliedVelocity));
@@ -165,7 +166,7 @@ namespace garlic::clove {
             transform.rotation = quatf{ rot.getW(), rot.getX(), rot.getY(), rot.getZ() };
         });
         entityManager->forEach([](RigidBodyComponent &body, PhysicsProxyComponent const &proxy) {
-            auto *btBody{ static_cast<btRigidBody *>(proxy.collisionObject.get()) };
+            auto *btBody{ polyCast<btRigidBody>(proxy.collisionObject.get()) };
             body.currentVelocity = toGar(btBody->getLinearVelocity());
         });
 
@@ -293,7 +294,7 @@ namespace garlic::clove {
 
         createProxyShape(proxy, shape);
         btRigidBody *rawBody{ createProxyBody(proxy, body, entity) };
-        
+
         dynamicsWorld->addRigidBody(rawBody, body.collisionGroup, body.collisionMask);
 
         entityManager->addComponent<PhysicsProxyComponent>(entity, std::move(proxy));
