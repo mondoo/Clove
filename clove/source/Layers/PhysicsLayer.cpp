@@ -119,6 +119,7 @@ namespace garlic::clove {
 
             if(body.appliedVelocity.has_value()) {
                 btBody->setLinearVelocity(toBt(*body.appliedVelocity));
+                btBody->activate();
                 body.appliedVelocity = std::nullopt;
             }
 
@@ -129,11 +130,13 @@ namespace garlic::clove {
 
             if(body.appliedForce.has_value()) {
                 btBody->applyForce(toBt(body.appliedForce->amount), toBt(body.appliedForce->offset));
+                btBody->activate();
                 body.appliedForce = std::nullopt;
             }
 
             if(body.appliedImpulse.has_value()) {
                 btBody->applyForce(toBt(body.appliedImpulse->amount), toBt(body.appliedImpulse->offset));
+                btBody->activate();
                 body.appliedImpulse = std::nullopt;
             }
         });
