@@ -62,6 +62,10 @@ namespace garlic::clove {
         btVector3 toBt(vec3f const &vec) {
             return btVector3{ vec.x, vec.y, vec.z };
         }
+
+        vec3f toGar(btVector3 const &vec){
+            return vec3f{ vec.getX(), vec.getY(), vec.getZ() };
+        }
     }
 
     PhysicsLayer::PhysicsLayer()
@@ -113,9 +117,9 @@ namespace garlic::clove {
         entityManager->forEach([&](RigidBodyComponent &body, PhysicsProxyComponent const &proxy) {
             auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) };
 
-            if(body.linearVelocity.has_value()) {
-                btBody->setLinearVelocity(toBt(*body.linearVelocity));
-                body.linearVelocity = std::nullopt;
+            if(body.appliedVelocity.has_value()) {
+                btBody->setLinearVelocity(toBt(*body.appliedVelocity));
+                body.appliedVelocity = std::nullopt;
             }
 
             btBody->setRestitution(body.restitution);
@@ -156,6 +160,10 @@ namespace garlic::clove {
 
             transform.position = vec3f{ pos.x(), pos.y(), pos.z() };
             transform.rotation = quatf{ rot.getW(), rot.getX(), rot.getY(), rot.getZ() };
+        });
+        entityManager->forEach([](RigidBodyComponent &body, PhysicsProxyComponent const &proxy) {
+            auto *btBody{ static_cast<btRigidBody *>(proxy.collisionObject.get()) };
+            body.currentVelocity = toGar(btBody->getLinearVelocity());
         });
 
         //Gather collision manifolds
