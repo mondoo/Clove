@@ -40,7 +40,7 @@ namespace garlic::clove {
         //VARIABLES
     private:
         static Application *instance;
-        State currentState{ State::Stopped };
+        State currentState{ State::Running }; //Assumed to be initialised to the running state.
 
         std::unique_ptr<Surface> surface;
 
