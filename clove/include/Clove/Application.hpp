@@ -5,8 +5,8 @@
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Platform/PlatformTypes.hpp>
 #include <chrono>
-#include <memory>
 #include <map>
+#include <memory>
 #include <vector>
 
 namespace garlic::clove {
@@ -40,6 +40,7 @@ namespace garlic::clove {
         //VARIABLES
     private:
         static Application *instance;
+        State currentState{ State::Stopped };
 
         std::unique_ptr<Surface> surface;
 
@@ -79,7 +80,7 @@ namespace garlic::clove {
         void pushLayer(std::shared_ptr<Layer> layer, LayerGroup group = LayerGroup::Core);
         void popLayer(std::shared_ptr<Layer> const &layer);
 
-        State getState() const;
+        inline State getState() const;
 
         /**
          * @brief Performs a single iteration of the main application loop.

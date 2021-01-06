@@ -2,13 +2,13 @@
 
 #include "Clove/InputEvent.hpp"
 #include "Clove/Layer.hpp"
-#include "Clove/Rendering/ForwardRenderer3D.hpp"
-#include "Clove/Rendering/GraphicsImageRenderTarget.hpp"
-#include "Clove/Rendering/SwapchainRenderTarget.hpp"
 #include "Clove/Layers/AudioLayer.hpp"
 #include "Clove/Layers/PhysicsLayer.hpp"
 #include "Clove/Layers/RenderLayer.hpp"
 #include "Clove/Layers/TransformLayer.hpp"
+#include "Clove/Rendering/ForwardRenderer3D.hpp"
+#include "Clove/Rendering/GraphicsImageRenderTarget.hpp"
+#include "Clove/Rendering/SwapchainRenderTarget.hpp"
 #include "Clove/WindowSurface.hpp"
 
 #include <Clove/Audio/AudioDevice.hpp>
@@ -32,10 +32,10 @@ namespace garlic::clove {
 
         //Devices
         app->graphicsDevice = createGraphicsDevice(graphicsApi, window->getNativeWindow());
-        app->audioDevice = createAudioDevice(audioApi);
+        app->audioDevice    = createAudioDevice(audioApi);
 
         //Systems
-        app->renderer       = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
+        app->renderer      = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
         app->entityManager = std::make_unique<EntityManager>();
 
         //Layers
@@ -96,16 +96,8 @@ namespace garlic::clove {
         }
     }
 
-    Application::State Application::getState() const {
-        if(surface != nullptr) {
-            return surface->isOpen() ? State::Running : State::Stopped;
-        } else {
-            return State::Running;
-        }
-    }
-
     void Application::tick() {
-        if(getState() != State::Running) {
+        if(currentState != State::Running) {
             return;
         }
 
@@ -148,9 +140,7 @@ namespace garlic::clove {
 
     void Application::shutdown() {
         graphicsDevice->waitForIdleDevice();
-        if(surface != nullptr) {
-            surface->close();
-        }
+        surface.reset();
     }
 
     Application::Application() {

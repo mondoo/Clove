@@ -1,4 +1,8 @@
 namespace garlic::clove {
+    Application::State Application::getState() const {
+        return currentState;
+    }
+    
     Surface *Application::getSurface() const {
         return surface.get();
     }
