@@ -9,10 +9,10 @@ namespace garlic::clove {
     /**
      * @brief Provides an abstraction over a renderable area that handles input.
      */
-    class Viewport {
+    class Surface {
         //FUNCTIONS
     public:
-        virtual ~Viewport() = default;
+        virtual ~Surface() = default;
 
         virtual void processInput() = 0;
 
