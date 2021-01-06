@@ -115,26 +115,23 @@ namespace garlic::clove {
 
         renderer->begin();
 
-        if(surface != nullptr) {
-            surface->processInput();
-
-            while(auto keyEvent = surface->getKeyboard().getKeyEvent()) {
-                InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
-                for(auto &&[key, group] : layers) {
-                    for(auto &layer : group) {
-                        if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                            break;
-                        }
+        surface->processInput();
+        while(auto keyEvent = surface->getKeyboard().getKeyEvent()) {
+            InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
+            for(auto &&[key, group] : layers) {
+                for(auto &layer : group) {
+                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                        break;
                     }
                 }
             }
-            while(auto mouseEvent = surface->getMouse().getEvent()) {
-                InputEvent const event{ *mouseEvent, InputEvent::Type::Mouse };
-                for(auto &&[key, group] : layers) {
-                    for(auto &layer : group) {
-                        if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                            break;
-                        }
+        }
+        while(auto mouseEvent = surface->getMouse().getEvent()) {
+            InputEvent const event{ *mouseEvent, InputEvent::Type::Mouse };
+            for(auto &&[key, group] : layers) {
+                for(auto &layer : group) {
+                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                        break;
                     }
                 }
             }
