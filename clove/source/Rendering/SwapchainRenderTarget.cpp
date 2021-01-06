@@ -124,7 +124,7 @@ namespace garlic::clove {
         graphicsDevice->waitForIdleDevice();
 
         swapchain.reset();
-        swapchain = *graphicsFactory->createSwapChain({ windowSize });
+        swapchain = *graphicsFactory->createSwapChain({ surfaceSize });
 
         imagesInFlight.resize(std::size(swapchain->getImageViews()));
 
