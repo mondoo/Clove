@@ -9,6 +9,7 @@
 #include "Clove/Layers/PhysicsLayer.hpp"
 #include "Clove/Layers/RenderLayer.hpp"
 #include "Clove/Layers/TransformLayer.hpp"
+#include "Clove/WindowSurface.hpp"
 
 #include <Clove/Audio/AudioDevice.hpp>
 #include <Clove/Definitions.hpp>
@@ -27,17 +28,14 @@ namespace garlic::clove {
     std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor) {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
 
-        //Platform
-        app->window = Platform::createWindow(std::move(windowDescriptor));
+        auto window{ Platform::createWindow(std::move(windowDescriptor)) };
 
-        //Graphics
-        app->graphicsDevice = createGraphicsDevice(graphicsApi, app->window->getNativeWindow());
-        app->renderer       = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
-
-        //Audio
+        //Devices
+        app->graphicsDevice = createGraphicsDevice(graphicsApi, window->getNativeWindow());
         app->audioDevice = createAudioDevice(audioApi);
 
-        //ECS
+        //Systems
+        app->renderer       = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
         app->entityManager = std::make_unique<EntityManager>();
 
         //Layers
@@ -46,6 +44,8 @@ namespace garlic::clove {
         app->pushLayer(app->physicsLayer, LayerGroup::Initialisation);
         app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
         app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
+
+        app->surface = std::make_unique<WindowSurface>(std::move(window));
 
         return app;
     }
@@ -53,17 +53,12 @@ namespace garlic::clove {
     std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor) {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
 
-        //Graphics
+        //Devices
         app->graphicsDevice = createGraphicsDevice(graphicsApi, std::any{});
+        app->audioDevice    = createAudioDevice(audioApi);
 
-        auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(std::move(renderTargetDescriptor)) };
-        auto *renderTargetPtr{ renderTarget.get() };
-        app->renderer = std::make_unique<ForwardRenderer3D>(std::move(renderTarget));
-
-        //Audio
-        app->audioDevice = createAudioDevice(audioApi);
-
-        //ECS
+        //Systems
+        app->renderer      = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
         app->entityManager = std::make_unique<EntityManager>();
 
         //Layers
@@ -72,6 +67,10 @@ namespace garlic::clove {
         app->pushLayer(app->physicsLayer, LayerGroup::Initialisation);
         app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
         app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
+
+        auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(std::move(renderTargetDescriptor)) };
+        auto *renderTargetPtr{ renderTarget.get() };
+        app->renderer = std::make_unique<ForwardRenderer3D>(std::move(renderTarget));
 
         return { std::move(app), renderTargetPtr };
     }
@@ -98,8 +97,8 @@ namespace garlic::clove {
     }
 
     Application::State Application::getState() const {
-        if(window != nullptr) {
-            return window->isOpen() ? State::Running : State::Stopped;
+        if(surface != nullptr) {
+            return surface->isOpen() ? State::Running : State::Stopped;
         } else {
             return State::Running;
         }
@@ -116,10 +115,10 @@ namespace garlic::clove {
 
         renderer->begin();
 
-        if(window != nullptr) {
-            window->processInput();
+        if(surface != nullptr) {
+            surface->processInput();
 
-            while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
+            while(auto keyEvent = surface->getKeyboard().getKeyEvent()) {
                 InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
                 for(auto &&[key, group] : layers) {
                     for(auto &layer : group) {
@@ -129,7 +128,7 @@ namespace garlic::clove {
                     }
                 }
             }
-            while(auto mouseEvent = window->getMouse().getEvent()) {
+            while(auto mouseEvent = surface->getMouse().getEvent()) {
                 InputEvent const event{ *mouseEvent, InputEvent::Type::Mouse };
                 for(auto &&[key, group] : layers) {
                     for(auto &layer : group) {
@@ -152,8 +151,8 @@ namespace garlic::clove {
 
     void Application::shutdown() {
         graphicsDevice->waitForIdleDevice();
-        if(window != nullptr) {
-            window->close();
+        if(surface != nullptr) {
+            surface->close();
         }
     }
 

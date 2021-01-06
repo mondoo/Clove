@@ -11,7 +11,7 @@
 
 namespace garlic::clove {
     class Platform;
-    class Window;
+    class Surface;
     class GraphicsDevice;
     class EntityManager;
     class Layer;
@@ -41,10 +41,11 @@ namespace garlic::clove {
     private:
         static Application *instance;
 
+        std::unique_ptr<Surface> surface;
+
         std::unique_ptr<GraphicsDevice> graphicsDevice;
         std::unique_ptr<AudioDevice> audioDevice;
 
-        std::unique_ptr<Window> window;
         std::unique_ptr<ForwardRenderer3D> renderer;
         std::unique_ptr<EntityManager> entityManager;
         std::shared_ptr<PhysicsLayer> physicsLayer;
@@ -92,12 +93,13 @@ namespace garlic::clove {
          */
         void shutdown();
 
+        inline Surface *getSurface() const;
+
         //Devices
         inline GraphicsDevice *getGraphicsDevice() const;
         inline AudioDevice *getAudioDevice() const;
 
         //Systems
-        inline Window *getWindow() const;
         inline ForwardRenderer3D *getRenderer() const;
         inline EntityManager *getEntityManager() const;
         inline PhysicsLayer *getPhysicsLayer() const;

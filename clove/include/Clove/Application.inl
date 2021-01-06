@@ -1,14 +1,14 @@
-namespace garlic::clove{
+namespace garlic::clove {
+    Surface *Application::getSurface() const {
+        return surface.get();
+    }
+
     GraphicsDevice *Application::getGraphicsDevice() const {
         return graphicsDevice.get();
     }
 
     AudioDevice *Application::getAudioDevice() const {
         return audioDevice.get();
-    }
-
-    Window *Application::getWindow() const {
-        return window.get();
     }
 
     ForwardRenderer3D *Application::getRenderer() const {
@@ -19,7 +19,7 @@ namespace garlic::clove{
         return entityManager.get();
     }
 
-    PhysicsLayer *Application::getPhysicsLayer() const{
+    PhysicsLayer *Application::getPhysicsLayer() const {
         return physicsLayer.get();
     }
 }
