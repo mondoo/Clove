@@ -36,10 +36,7 @@ namespace garlic::clove {
          */
         float mass{ 1.0f };
 
-        /**
-         * @brief Sets a consistent velocity for the body to move in.
-         */
-        std::optional<vec3f> linearVelocity{};
+        
 
         /**
          * @brief The bouncyness of this body. Anything higher than 0 will cause the body to increase in bouncyness.
@@ -54,6 +51,20 @@ namespace garlic::clove {
          * @brief Acts as a multiplier to any linear forces applied to this body.
          */
         vec3f linearFactor{ 1.0f, 1.0f, 1.0f };
+
+        /**
+         * @brief Sets a consistent velocity for the body to move in.
+         */
+        void setLinearVelocity(vec3f velocity){
+            appliedVelocity = velocity;
+        }
+
+        /**
+         * @brief Returns the current velocity of the body
+         */
+        vec3f getLinearVelocity(){
+            return currentVelocity;
+        }
 
         /**
          * @brief Apply a consistent force to this body.
@@ -74,7 +85,11 @@ namespace garlic::clove {
         }
 
     private:
+        std::optional<vec3f> appliedVelocity{};
+
         std::optional<ForceApplication> appliedForce{};
         std::optional<ForceApplication> appliedImpulse{};
+
+        vec3f currentVelocity{};
     };
 }

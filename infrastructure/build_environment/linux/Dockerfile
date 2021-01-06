@@ -15,13 +15,15 @@ RUN make install
 
 FROM ubuntu:20.04
 
-RUN apt-get update -y
+RUN apt-get update -y --fix-missing
 RUN apt-get install -y
 
 #Install any utilities
 RUN apt-get install -y git
 RUN apt-get install -y make
 RUN apt-get install -y wget
+RUN apt-get install -y python3.4
+RUN apt-get install -y python3-pip
 
 #Install the compilers
 RUN apt-get install -y g++-10
@@ -30,6 +32,9 @@ RUN apt-get install -y clang-10
 #Install cmake
 COPY --from=cmake_builder /cmake_install /cmake_install
 ENV PATH "/cmake_install/bin:$PATH"
+
+#Install conan
+RUN pip3 install conan
 
 #Install X11
 RUN apt-get install -y libx11-dev

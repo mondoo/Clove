@@ -2,8 +2,6 @@ set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/Graphics)
 set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 
-add_subdirectory(external)
-
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	find_package(Vulkan REQUIRED)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
@@ -114,6 +112,17 @@ add_library(
 		${INCLUDE}/TransferQueue.hpp
 		
 		${VulkanFiles}
+
+		#shaderc files required to use the file includer
+		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc/glslc/file_includer.h
+		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc/glslc/file_includer.cc
+
+		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc/libshaderc_util/file_finder.h
+		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc/libshaderc_util/file_finder.cc
+		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc/libshaderc_util/io.h
+		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc/libshaderc_util/io.cc
+		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc/libshaderc_util/string_piece.h
+		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc/libshaderc_util/universal_unistd.h
 )
 
 #Includes
@@ -125,7 +134,7 @@ target_include_directories(
 
 	PRIVATE
 		Vulkan::Vulkan
-		external/shaderc/glslc/src
+		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc
 )
 
 #Libraries
@@ -140,14 +149,8 @@ target_link_libraries(
         CloveMaths
 
     PRIVATE
-        shaderc
-		shaderc_util
-		glslc
-		SPIRV
-		spirv-cross-core
-		spirv-cross-glsl
-		spirv-cross-hlsl
-		spirv-cross-msl
+        CONAN_PKG::shaderc
+		CONAN_PKG::spirv-cross
 
 	#Windows
 	PRIVATE

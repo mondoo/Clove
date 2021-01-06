@@ -65,9 +65,3 @@ set_target_properties(Bulb PROPERTIES
 		DOTNET_TARGET_FRAMEWORK_VERISON "v4.8"
         VS_DOTNET_REFERENCES "Microsoft.CSharp;PresentationCore;PresentationFramework;System;System.Core;System.Data;System.Xaml;System.Xml;WindowsBase"
 )
-
-#Copy OpenAL dll
-add_custom_command(TARGET Bulb POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:OpenAL> $<TARGET_FILE_DIR:Bulb>
-)

@@ -188,10 +188,6 @@ target_include_directories(
 
 	PUBLIC
 		include
-
-	PRIVATE
-		external/freetype2/include
-		external/bullet3/src
 )
 
 #Libraries
@@ -210,7 +206,7 @@ target_link_libraries(
 		CloveECS 
 		CloveStateMachine
 		 
-		#Utilities 
+		#Utilities
 		CloveCast 
 		CloveDefinitions 
 		CloveDelegate 
@@ -223,13 +219,9 @@ target_link_libraries(
 		CloveTimer
 
 	PRIVATE
-		#Order of these are important
-		BulletDynamics
-		BulletCollision
-		LinearMath
-
-		assimp
+		CONAN_PKG::assimp
+		CONAN_PKG::bullet3
+		CONAN_PKG::freetype
+		CONAN_PKG::libsndfile
 		stb
-		freetype
-		sndfile
 )
