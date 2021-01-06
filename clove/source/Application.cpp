@@ -34,8 +34,10 @@ namespace garlic::clove {
         app->graphicsDevice = createGraphicsDevice(graphicsApi, window->getNativeWindow());
         app->audioDevice    = createAudioDevice(audioApi);
 
+        app->surface = std::make_unique<WindowSurface>(std::move(window));
+
         //Systems
-        app->renderer      = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
+        app->renderer      = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>(*app->surface, app->graphicsDevice.get()));
         app->entityManager = std::make_unique<EntityManager>();
 
         //Layers
@@ -44,8 +46,6 @@ namespace garlic::clove {
         app->pushLayer(app->physicsLayer, LayerGroup::Initialisation);
         app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
         app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
-
-        app->surface = std::make_unique<WindowSurface>(std::move(window));
 
         return app;
     }

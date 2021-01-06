@@ -12,10 +12,7 @@ namespace garlic::clove {
     class GraphicsDevice;
     class GraphicsFactory;
     class Fence;
-}
-
-namespace clv::plt {
-    class Window;
+    class Surface;
 }
 
 namespace garlic::clove {
@@ -25,17 +22,17 @@ namespace garlic::clove {
     class SwapchainRenderTarget : public RenderTarget {
         //VARIABLES
     private:
-        garlic::clove::GraphicsDevice *graphicsDevice;
-        std::shared_ptr<garlic::clove::GraphicsFactory> graphicsFactory;
+        GraphicsDevice *graphicsDevice;
+        std::shared_ptr<GraphicsFactory> graphicsFactory;
 
-        std::shared_ptr<garlic::clove::Swapchain> swapchain;
-        std::shared_ptr<garlic::clove::PresentQueue> presentQueue;
-        std::shared_ptr<garlic::clove::GraphicsQueue> graphicsQueue;
+        std::shared_ptr<Swapchain> swapchain;
+        std::shared_ptr<PresentQueue> presentQueue;
+        std::shared_ptr<GraphicsQueue> graphicsQueue;
 
-        std::vector<std::shared_ptr<garlic::clove::Semaphore>> renderFinishedSemaphores;
-        std::vector<std::shared_ptr<garlic::clove::Semaphore>> imageAvailableSemaphores;
-        std::vector<std::shared_ptr<garlic::clove::Fence>> framesInFlight;
-        std::vector<std::shared_ptr<garlic::clove::Fence>> imagesInFlight;
+        std::vector<std::shared_ptr<Semaphore>> renderFinishedSemaphores;
+        std::vector<std::shared_ptr<Semaphore>> imageAvailableSemaphores;
+        std::vector<std::shared_ptr<Fence>> framesInFlight;
+        std::vector<std::shared_ptr<Fence>> imagesInFlight;
 
         vec2ui surfaceSize{};
         DelegateHandle surfaceResizeHandle;
@@ -44,7 +41,8 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        SwapchainRenderTarget();
+        SwapchainRenderTarget() = delete;
+        SwapchainRenderTarget(Surface &swapchainSurface, GraphicsDevice *graphicsDevice);
 
         SwapchainRenderTarget(SwapchainRenderTarget const &other);
         SwapchainRenderTarget(SwapchainRenderTarget &&other) noexcept;
@@ -56,12 +54,12 @@ namespace garlic::clove {
 
         Expected<uint32_t, std::string> aquireNextImage(size_t const frameId) override;
 
-        void submit(uint32_t imageIndex, size_t const frameId, garlic::clove::GraphicsSubmitInfo submission) override;
+        void submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) override;
 
-        garlic::clove::GraphicsImage::Format getImageFormat() const override;
+        GraphicsImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<std::shared_ptr<garlic::clove::GraphicsImageView>> getImageViews() const override;
+        std::vector<std::shared_ptr<GraphicsImageView>> getImageViews() const override;
 
     private:
         void onSurfaceSizeChanged(vec2ui const &size);

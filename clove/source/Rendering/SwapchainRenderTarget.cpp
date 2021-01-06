@@ -12,20 +12,17 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    SwapchainRenderTarget::SwapchainRenderTarget()
-        : graphicsDevice{ Application::get().getGraphicsDevice() } {
+    SwapchainRenderTarget::SwapchainRenderTarget(Surface &swapchainSurface, GraphicsDevice *graphicsDevice)
+        : graphicsDevice{ graphicsDevice } {
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
-        //Get the surface (window) that this render
-        auto const surface{ Application::get().getSurface() };
-
-        surfaceSize         = surface->getSize();
-        surfaceResizeHandle = surface->onSurfaceResize().bind(&SwapchainRenderTarget::onSurfaceSizeChanged, this);
+        surfaceSize         = swapchainSurface.getSize();
+        surfaceResizeHandle = swapchainSurface.onSurfaceResize().bind(&SwapchainRenderTarget::onSurfaceSizeChanged, this);
 
         presentQueue = *graphicsFactory->createPresentQueue();
 
         //We won't be allocating any buffers from this queue, only using it to submit
-        graphicsQueue = *graphicsFactory->createGraphicsQueue(garlic::clove::CommandQueueDescriptor{ .flags = garlic::clove::QueueFlags::None });
+        graphicsQueue = *graphicsFactory->createGraphicsQueue(CommandQueueDescriptor{ .flags = QueueFlags::None });
 
         createSwapchain();
     }
@@ -57,7 +54,7 @@ namespace garlic::clove {
         framesInFlight[frameId]->wait();
 
         auto const [imageIndex, result] = swapchain->aquireNextImage(imageAvailableSemaphores[frameId].get());
-        if(result == garlic::clove::Result::Error_SwapchainOutOfDate) {
+        if(result == Result::Error_SwapchainOutOfDate) {
             createSwapchain();
             return Unexpected<std::string>{ "Swapchain was recreated." };
         }
@@ -73,29 +70,29 @@ namespace garlic::clove {
         return imageIndex;
     }
 
-    void SwapchainRenderTarget::submit(uint32_t imageIndex, size_t const frameId, garlic::clove::GraphicsSubmitInfo submission) {
+    void SwapchainRenderTarget::submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) {
         if(std::size(renderFinishedSemaphores) <= frameId) {
             renderFinishedSemaphores.emplace_back(*graphicsFactory->createSemaphore());
         }
 
         //Inject the sempahores we use to synchronise with the swapchain and present queue
-        submission.waitSemaphores.push_back({ imageAvailableSemaphores[frameId], garlic::clove::PipelineObject::Stage::ColourAttachmentOutput });
+        submission.waitSemaphores.push_back({ imageAvailableSemaphores[frameId], PipelineObject::Stage::ColourAttachmentOutput });
         submission.signalSemaphores.push_back(renderFinishedSemaphores[frameId]);
 
         graphicsQueue->submit({ std::move(submission) }, framesInFlight[frameId].get());
 
-        auto const result = presentQueue->present(garlic::clove::PresentInfo{
+        auto const result = presentQueue->present(PresentInfo{
             .waitSemaphores = { renderFinishedSemaphores[frameId] },
             .swapChain      = swapchain,
             .imageIndex     = imageIndex,
         });
 
-        if(result == garlic::clove::Result::Error_SwapchainOutOfDate || result == garlic::clove::Result::Success_SwapchainSuboptimal) {
+        if(result == Result::Error_SwapchainOutOfDate || result == Result::Success_SwapchainSuboptimal) {
             createSwapchain();
         }
     }
 
-    garlic::clove::GraphicsImage::Format SwapchainRenderTarget::getImageFormat() const {
+    GraphicsImage::Format SwapchainRenderTarget::getImageFormat() const {
         return swapchain->getImageFormat();
     }
 
@@ -103,7 +100,7 @@ namespace garlic::clove {
         return swapchain->getSize();
     }
 
-    std::vector<std::shared_ptr<garlic::clove::GraphicsImageView>> SwapchainRenderTarget::getImageViews() const {
+    std::vector<std::shared_ptr<GraphicsImageView>> SwapchainRenderTarget::getImageViews() const {
         return swapchain->getImageViews();
     }
 
