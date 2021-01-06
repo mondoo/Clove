@@ -29,6 +29,7 @@ namespace garlic::clove {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
 
         auto window{ Platform::createWindow(std::move(windowDescriptor)) };
+        window->onWindowCloseDelegate.bind(&Application::shutdown, app.get());
 
         //Devices
         app->graphicsDevice = createGraphicsDevice(graphicsApi, window->getNativeWindow());
@@ -97,6 +98,9 @@ namespace garlic::clove {
     }
 
     void Application::tick() {
+        //Process input first incase we get a close event.
+        surface->processInput();
+
         if(currentState != State::Running) {
             return;
         }
@@ -107,7 +111,6 @@ namespace garlic::clove {
 
         renderer->begin();
 
-        surface->processInput();
         while(auto keyEvent = surface->getKeyboard().getKeyEvent()) {
             InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
             for(auto &&[key, group] : layers) {
@@ -139,6 +142,7 @@ namespace garlic::clove {
     }
 
     void Application::shutdown() {
+        currentState = State::Stopped;
         graphicsDevice->waitForIdleDevice();
         surface.reset();
     }
