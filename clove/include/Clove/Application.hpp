@@ -66,14 +66,23 @@ namespace garlic::clove {
         ~Application();
 
         /**
-         * @brief Creates a standard Garlic application that opens and manages it's own window
+         * @brief Creates a standard Garlic application that opens and manages it's own window.
+         * @param graphicsApi Which graphics api to use.
+         * @param audioApi Which audio api to use.
+         * @param windowDescriptor A descriptor describing the properties of the window.
+         * @return The created application instance.
          */
         static std::unique_ptr<Application> create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor);
 
         /**
-         * @brief Create a headles Garlic application without a window.
+         * @brief Create a Garlic application without a window that is capable of offscreen rendering.
+         * @param graphicsApi Which graphics api to use.
+         * @param audioApi Which audio api to use.
+         * @param renderTargetDescriptor A descriptor describing the format of the target that'll be rendered to.
+         * @param surface A surface to provide input functionality to the application.
+         * @return A pair with the created application instance and a pointer to the render target of the application.
          */
-        static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor);
+        static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface);
 
         static Application &get();
 

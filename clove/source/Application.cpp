@@ -51,15 +51,20 @@ namespace garlic::clove {
         return app;
     }
 
-    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor) {
+    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface) {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
+
+        app->surface = std::move(surface);
 
         //Devices
         app->graphicsDevice = createGraphicsDevice(graphicsApi, std::any{});
         app->audioDevice    = createAudioDevice(audioApi);
 
+        auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(std::move(renderTargetDescriptor), app->graphicsDevice->getGraphicsFactory()) };
+        auto *renderTargetPtr{ renderTarget.get() };
+
         //Systems
-        app->renderer      = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
+        app->renderer      = std::make_unique<ForwardRenderer3D>(std::move(renderTarget));
         app->entityManager = std::make_unique<EntityManager>();
 
         //Layers
@@ -68,10 +73,6 @@ namespace garlic::clove {
         app->pushLayer(app->physicsLayer, LayerGroup::Initialisation);
         app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
         app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
-
-        auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(std::move(renderTargetDescriptor)) };
-        auto *renderTargetPtr{ renderTarget.get() };
-        app->renderer = std::make_unique<ForwardRenderer3D>(std::move(renderTarget));
 
         return { std::move(app), renderTargetPtr };
     }
