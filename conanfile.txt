@@ -9,3 +9,6 @@ openal/1.21.0
 shaderc/2019.0
 spdlog/1.8.2
 spirv-cross/20200917
+
+[generators]
+cmake
