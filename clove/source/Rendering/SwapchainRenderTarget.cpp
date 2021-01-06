@@ -1,6 +1,7 @@
 #include "Clove/Rendering/SwapchainRenderTarget.hpp"
 
 #include "Clove/Application.hpp"
+#include "Clove/Surface.hpp"
 
 #include <Clove/Graphics/Fence.hpp>
 #include <Clove/Graphics/GraphicsDevice.hpp>
@@ -9,17 +10,17 @@
 #include <Clove/Graphics/Semaphore.hpp>
 #include <Clove/Graphics/Swapchain.hpp>
 #include <Clove/Log/Log.hpp>
-#include <Clove/Platform/Window.hpp>
 
 namespace garlic::clove {
     SwapchainRenderTarget::SwapchainRenderTarget()
         : graphicsDevice{ Application::get().getGraphicsDevice() } {
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
-        auto const window{ Application::get().getWindow() };
+        //Get the surface (window) that this render
+        auto const surface{ Application::get().getSurface() };
 
-        windowSize         = window->getSize();
-        windowResizeHandle = window->onWindowResize.bind(&SwapchainRenderTarget::onWindowSizeChanged, this);
+        surfaceSize         = surface->getSize();
+        surfaceResizeHandle = surface->onSurfaceResize().bind(&SwapchainRenderTarget::onSurfaceSizeChanged, this);
 
         presentQueue = *graphicsFactory->createPresentQueue();
 
@@ -36,7 +37,7 @@ namespace garlic::clove {
     SwapchainRenderTarget::~SwapchainRenderTarget() = default;
 
     Expected<uint32_t, std::string> SwapchainRenderTarget::aquireNextImage(size_t const frameId) {
-        if(windowSize.x == 0 || windowSize.y == 0) {
+        if(surfaceSize.x == 0 || surfaceSize.y == 0) {
             return Unexpected<std::string>{ "Cannot acquire image while Window is minimised." };
         }
 
@@ -106,15 +107,15 @@ namespace garlic::clove {
         return swapchain->getImageViews();
     }
 
-    void SwapchainRenderTarget::onWindowSizeChanged(vec2ui const &size) {
-        windowSize           = size;
+    void SwapchainRenderTarget::onSurfaceSizeChanged(vec2ui const &size) {
+        surfaceSize           = size;
         requiresNewSwapchain = true;
     }
 
     void SwapchainRenderTarget::createSwapchain() {
         requiresNewSwapchain = true;
 
-        if(windowSize.x == 0 || windowSize.y == 0) {
+        if(surfaceSize.x == 0 || surfaceSize.y == 0) {
             return;
         }
 

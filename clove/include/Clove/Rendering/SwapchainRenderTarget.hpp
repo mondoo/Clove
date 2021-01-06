@@ -37,8 +37,8 @@ namespace garlic::clove {
         std::vector<std::shared_ptr<garlic::clove::Fence>> framesInFlight;
         std::vector<std::shared_ptr<garlic::clove::Fence>> imagesInFlight;
 
-        vec2ui windowSize{};
-        DelegateHandle windowResizeHandle;
+        vec2ui surfaceSize{};
+        DelegateHandle surfaceResizeHandle;
 
         bool requiresNewSwapchain{ false };
 
@@ -64,7 +64,7 @@ namespace garlic::clove {
         std::vector<std::shared_ptr<garlic::clove::GraphicsImageView>> getImageViews() const override;
 
     private:
-        void onWindowSizeChanged(vec2ui const &size);
+        void onSurfaceSizeChanged(vec2ui const &size);
         void createSwapchain();
     };
 }

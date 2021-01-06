@@ -30,7 +30,11 @@ namespace garlic::clove {
 
         ~WindowSurface();
 
+        MultiCastDelegate<void(vec2ui const &)> &onSurfaceResize() override;
+
         void processInput() override;
+
+        vec2i getSize() const override;
 
         Keyboard &getKeyboard() override;
         Mouse &getMouse() override;

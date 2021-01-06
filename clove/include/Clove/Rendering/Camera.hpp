@@ -36,7 +36,7 @@ namespace garlic::clove {
 
         float zoomLevel{ 1.0f };
 
-        DelegateHandle windowResizeHandle;
+        DelegateHandle surfaceResizeHandle;
 
         //FUNCTIONS
     public:

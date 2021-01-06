@@ -13,8 +13,16 @@ namespace garlic::clove {
 
     WindowSurface::~WindowSurface() = default;
 
+    MultiCastDelegate<void(vec2ui const &)> &WindowSurface::onSurfaceResize() {
+        return window->onWindowResize;
+    }
+
     void WindowSurface::processInput() {
         window->processInput();
+    }
+
+    vec2i WindowSurface::getSize() const {
+        return window->getSize();
     }
 
     Keyboard &WindowSurface::getKeyboard() {

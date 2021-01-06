@@ -1,9 +1,9 @@
 #include "Clove/Rendering/Camera.hpp"
 
 #include "Clove/Application.hpp"
+#include "Clove/Surface.hpp"
 
 #include <Clove/Maths/MathsHelpers.hpp>
-#include <Clove/Platform/Window.hpp>
 
 namespace garlic::clove {
     Camera::Camera(Viewport viewport, ProjectionMode const projection)
@@ -12,9 +12,9 @@ namespace garlic::clove {
     }
 
     Camera::Camera(ProjectionMode const projection) {
-        auto window{ Application::get().getWindow() };
+        auto window{ Application::get().getSurface() };
 
-        windowResizeHandle = window->onWindowResize.bind([this](vec2ui const &size) {
+        surfaceResizeHandle = window->onSurfaceResize().bind([this](vec2ui const &size) {
             setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
         });
 
@@ -28,8 +28,8 @@ namespace garlic::clove {
         , projection{ std::move(other.projection) }
         , viewport{ std::move(other.viewport) }
         , zoomLevel{ other.zoomLevel } {
-        if(other.windowResizeHandle.isValid()) {
-            windowResizeHandle = Application::get().getWindow()->onWindowResize.bind([this](vec2ui const &size) {
+        if(other.surfaceResizeHandle.isValid()) {
+            surfaceResizeHandle = Application::get().getSurface()->onSurfaceResize().bind([this](vec2ui const &size) {
                 setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
             });
         }
@@ -41,8 +41,8 @@ namespace garlic::clove {
         projection            = std::move(other.projection);
         viewport              = std::move(other.viewport);
         zoomLevel             = other.zoomLevel;
-        if(other.windowResizeHandle.isValid()) {
-            windowResizeHandle = Application::get().getWindow()->onWindowResize.bind([this](vec2ui const &size) {
+        if(other.surfaceResizeHandle.isValid()) {
+            surfaceResizeHandle = Application::get().getSurface()->onSurfaceResize().bind([this](vec2ui const &size) {
                 setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
             });
         }
