@@ -34,8 +34,6 @@ else()
 	conan_basic_setup(TARGETS)
 endif()
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
 #Engine
 add_subdirectory(clove)
 
