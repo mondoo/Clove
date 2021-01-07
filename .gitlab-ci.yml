@@ -19,6 +19,9 @@
   image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:5.0.0
 
 variables:
+  CMAKE_COMPILER_MSVC: -G "Visual Studio 16 2019"
+  CMAKE_COMPILER_GCC: -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles"
+  CMAKE_COMPILER_CLANG: -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles"
   CMAKE_RELEASE: -DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=ON -DGAR_BUILD_EXAMPLES=ON -DGAR_BUILD_TESTS=ON
   CMAKE_TEST: -DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=OFF -DGAR_BUILD_EXAMPLES=OFF -DGAR_BUILD_TESTS=ON
   CMAKE_DEBUG: -DCLOVE_ENABLE_ASSERTIONS=OFF -DCLOVE_ENABLE_DEBUG_DEFINITION=OFF -DCLOVE_ENABLE_PROFILING=OFF -DGAR_BUILD_EXAMPLES=OFF -DGAR_BUILD_TESTS=OFF
@@ -41,7 +44,7 @@ build-release-msvc:
   script:
     - mkdir build
     - cd build
-    - cmake $EDITOR_CMAKE_RELEASE -G "Visual Studio 16 2019" ..
+    - cmake $EDITOR_CMAKE_RELEASE $CMAKE_COMPILER_MSVC ..
     - cmake --build . --target ALL_BUILD --config Release
   artifacts:
     paths:
@@ -57,7 +60,7 @@ build-test-msvc:
   script:
     - mkdir build
     - cd build
-    - cmake $EDITOR_CMAKE_TEST -G "Visual Studio 16 2019" ..
+    - cmake $EDITOR_CMAKE_TEST $CMAKE_COMPILER_MSVC ..
     - cmake --build . --target ALL_BUILD --config Release
   artifacts:
     paths:
@@ -70,7 +73,7 @@ build-debug-msvc:
   script:
     - mkdir build
     - cd build
-    - cmake $EDITOR_CMAKE_DEBUG -G "Visual Studio 16 2019" ..
+    - cmake $EDITOR_CMAKE_DEBUG $CMAKE_COMPILER_MSVC ..
     - cmake --build . --target ALL_BUILD --config Debug
 
 build-release-gcc:
@@ -81,7 +84,7 @@ build-release-gcc:
   script:
     - mkdir build
     - cd build
-    - cmake $ENGINE_CMAKE_RELEASE -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
+    - cmake $ENGINE_CMAKE_RELEASE -DCMAKE_BUILD_TYPE=Release $CMAKE_COMPILER_GCC ..
     - cmake --build .
   artifacts:
     paths:
@@ -98,7 +101,7 @@ build-test-gcc:
   script:
     - mkdir build
     - cd build
-    - cmake $ENGINE_CMAKE_TEST -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
+    - cmake $ENGINE_CMAKE_TEST -DCMAKE_BUILD_TYPE=Release $CMAKE_COMPILER_GCC ..
     - cmake --build .
   artifacts:
     paths:
@@ -112,7 +115,7 @@ build-debug-gcc:
   script:
     - mkdir build
     - cd build
-    - cmake $ENGINE_CMAKE_DEBUG -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
+    - cmake $ENGINE_CMAKE_DEBUG -DCMAKE_BUILD_TYPE=Debug $CMAKE_COMPILER_GCC ..
     - cmake --build .
 
 build-release-clang:
@@ -123,7 +126,7 @@ build-release-clang:
   script:
     - mkdir build
     - cd build
-    - cmake $ENGINE_CMAKE_RELEASE -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
+    - cmake $ENGINE_CMAKE_RELEASE -DCMAKE_BUILD_TYPE=Release $CMAKE_COMPILER_CLANG ..
     - cmake --build .
   artifacts:
     paths:
@@ -140,7 +143,7 @@ build-test-clang:
   script:
     - mkdir build
     - cd build
-    - cmake $ENGINE_CMAKE_TEST -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
+    - cmake $ENGINE_CMAKE_TEST -DCMAKE_BUILD_TYPE=Release $CMAKE_COMPILER_CLANG ..
     - cmake --build .
   artifacts:
     paths:
@@ -154,7 +157,7 @@ build-debug-clang:
   script:
     - mkdir build
     - cd build
-    - cmake $ENGINE_CMAKE_DEBUG -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
+    - cmake $ENGINE_CMAKE_DEBUG -DCMAKE_BUILD_TYPE=Debug $CMAKE_COMPILER_CLANG ..
     - cmake --build .
 
 #Test
