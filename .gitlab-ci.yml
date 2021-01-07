@@ -1,15 +1,14 @@
 #Variables / Anchors
 .windows_prepare: &set_up_windows_env
-  before_script:
-    - git submodule update --init --recursive
-    - choco install -y conan
-    - choco install -y cmake
-    - choco install -y python
-    - choco upgrade -y visualstudio2019buildtools
-    - curl.exe -o vksdk.exe https://sdk.lunarg.com/sdk/download/1.2.154.1/windows/VulkanSDK-1.2.154.1-Installer.exe?Human=true
-    - .\vksdk.exe /S /D=C:\VulkanSDK | Out-Null
-    - $env:VULKAN_SDK = 'C:\VulkanSDK'
-    - $env:Path += ';C:\Program Files\CMake\bin;C:\VulkanSDK\Bin;C:\Program Files\Conan\conan'
+  - git submodule update --init --recursive
+  - choco install -y conan
+  - choco install -y cmake
+  - choco install -y python
+  - choco upgrade -y visualstudio2019buildtools
+  - curl.exe -o vksdk.exe https://sdk.lunarg.com/sdk/download/1.2.154.1/windows/VulkanSDK-1.2.154.1-Installer.exe?Human=true
+  - .\vksdk.exe /S /D=C:\VulkanSDK | Out-Null
+  - $env:VULKAN_SDK = 'C:\VulkanSDK'
+  - $env:Path += ';C:\Program Files\CMake\bin;C:\VulkanSDK\Bin;C:\Program Files\Conan\conan'
 
 .windows_tag: &windows_runner_tags
   tags:
@@ -26,7 +25,8 @@ stages:
 build-release-msvc:
   stage: build
   <<: *windows_runner_tags
-  <<: *set_up_windows_env
+  before_script:
+    <<: *set_up_windows_env
   script:
     - mkdir build
     - cd build
@@ -39,7 +39,8 @@ build-release-msvc:
 build-debug-msvc:
   stage: build
   <<: *windows_runner_tags
-  <<: *set_up_windows_env
+  before_script:
+    <<: *set_up_windows_env
   script:
     - mkdir build
     - cd build
