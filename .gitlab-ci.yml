@@ -35,6 +35,9 @@ build-release-msvc:
   artifacts:
     paths:
       - build/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
 
 build-test-msvc:
   stage: build
@@ -72,6 +75,9 @@ build-release-gcc:
   artifacts:
     paths:
       - build/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
 
 build-test-gcc:
   stage: build
@@ -111,6 +117,9 @@ build-release-clang:
   artifacts:
     paths:
       - build/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
 
 build-test-clang:
   stage: build
