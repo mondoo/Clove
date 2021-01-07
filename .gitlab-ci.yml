@@ -58,9 +58,6 @@ build-debug-msvc:
     - cd build
     - cmake -DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=ON -DGAR_BUILD_BULB=ON -DGAR_BUILD_EXAMPLES=ON -DGAR_BUILD_TESTS=ON -G "Visual Studio 16 2019" ..
     - cmake --build . --target ALL_BUILD --config Debug
-  artifacts:
-    paths:
-      - build/
 
 build-release-gcc:
   stage: build
@@ -100,9 +97,6 @@ build-debug-gcc:
     - cd build
     - cmake -DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=ON -DGAR_BUILD_BULB=OFF -DGAR_BUILD_EXAMPLES=ON -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
     - cmake --build .
-  artifacts:
-    paths:
-      - build/
 
 build-release-clang:
   stage: build
@@ -142,9 +136,6 @@ build-debug-clang:
     - cd build
     - cmake -DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=ON -DGAR_BUILD_BULB=OFF -DGAR_BUILD_EXAMPLES=ON -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
     - cmake --build .
-  artifacts:
-    paths:
-      - build/
 
 #Test
 test-msvc:
