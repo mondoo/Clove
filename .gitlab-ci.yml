@@ -206,4 +206,4 @@ doxygen:
     - doxygen Doxyfile
   artifacts:
     paths:
-      - docs/
+      - html/
