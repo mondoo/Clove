@@ -40,7 +40,10 @@
 			</ItemsControl>
 		</StackPanel>
 
-		<UserControl x:Name="RenderAreaFocusHandler" Grid.Column="1" KeyUp="UserControl_KeyUp" MouseDoubleClick="UserControl_MouseDoubleClick" Focusable="True" GotFocus="UserControl_GotFocus" IsTabStop="True">
+		<UserControl x:Name="RenderAreaFocusHandler" Grid.Column="1"
+					 Focusable="True" GotFocus="UserControl_GotFocus" IsTabStop="True"
+					 KeyUp="UserControl_KeyUp"
+					 MouseEnter="RenderAreaFocusHandler_MouseEnter" MouseLeave="RenderAreaFocusHandler_MouseLeave">
 			<Image x:Name="RenderArea" Stretch="Fill"/>
 		</UserControl>
 		<TextBox x:Name="Log" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Text="{Binding Log.LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8" BorderBrush="{x:Null}" BorderThickness="0" VerticalScrollBarVisibility="Auto"/>
