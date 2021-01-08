@@ -13,15 +13,20 @@ namespace garlic::membrane {
     private:
         clove::MultiCastDelegate<void(clove::vec2ui const &)> resizeDelegate{};
 
+        clove::vec2i size{};
+
         clove::Keyboard keyboard{};
         clove::Mouse mouse{};
 
         //FUNCTIONS
     public:
+        //TODO: Ctors
+
         clove::MultiCastDelegate<void(clove::vec2ui const &)> &onSurfaceResize() override;
 
         void processInput() override;
 
+        void setSize(clove::vec2i size);
         clove::vec2i getSize() const override;
 
         clove::Keyboard &getKeyboard() override;

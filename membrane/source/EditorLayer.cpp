@@ -9,17 +9,20 @@
 #include <Clove/ModelLoader.hpp>
 
 namespace garlic::membrane {
-    EditorLayer::EditorLayer(clove::vec2ui size)
-        : clove::Layer("Editor Layer")
-        , viewport{ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) } {
+    EditorLayer::EditorLayer()
+        : clove::Layer{ "Editor Layer" } {
     }
 
     void EditorLayer::onAttach() {
         auto *const entityManager{ clove::Application::get().getEntityManager() };
 
-        editorCamera = entityManager->create();
+        editorCamera                                                                  = entityManager->create();
         entityManager->addComponent<clove::TransformComponent>(editorCamera).position = clove::vec3f{ 0.0f, 0.0f, -10.0f };
-        entityManager->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ viewport, clove::Camera::ProjectionMode::Perspective });
+        entityManager->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ clove::Camera::ProjectionMode::Perspective });
+    }
+
+    clove::InputResponse EditorLayer::onInputEvent(clove::InputEvent const &inputEvent) {
+        return clove::InputResponse::Ignored;
     }
 
     void EditorLayer::onUpdate(clove::DeltaTime const deltaTime) {
@@ -27,11 +30,5 @@ namespace garlic::membrane {
 
     void EditorLayer::onDetach() {
         clove::Application::get().getEntityManager()->destroy(editorCamera);
-    }
-
-    void EditorLayer::resizeViewport(clove::vec2ui size) {
-        viewport.width  = size.x;
-        viewport.height = size.y;
-        clove::Application::get().getEntityManager()->getComponent<clove::CameraComponent>(editorCamera).camera.setViewport(viewport);
     }
 }

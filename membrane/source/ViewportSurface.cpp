@@ -11,8 +11,13 @@ namespace garlic::membrane {
 
     };
 
-    vec2i ViewportSurface::getSize() const{
-        return { 1.0f, 1.0f };
+    void ViewportSurface::setSize(clove::vec2i size) {
+        this->size = size;
+        resizeDelegate.broadcast(this->size);
+    }
+
+    vec2i ViewportSurface::getSize() const {
+        return size;
     }
 
     Keyboard &ViewportSurface::getKeyboard() {
