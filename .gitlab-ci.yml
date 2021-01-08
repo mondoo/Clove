@@ -15,9 +15,6 @@
   tags:
     - windows-1809
 
-.linux_image: &linux_env_image
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:5.0.0
-
 variables:
   CMAKE_COMPILER_GCC: '-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10'
   CMAKE_COMPILER_CLANG: '-DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10'
@@ -30,6 +27,7 @@ variables:
   EDITOR_CMAKE_RELEASE: '$ENGINE_CMAKE_RELEASE -DGAR_BUILD_BULB=ON'
   EDITOR_CMAKE_TEST: '$ENGINE_CMAKE_TEST -DGAR_BUILD_BULB=ON'
   EDITOR_CMAKE_DEBUG: '$ENGINE_CMAKE_DEBUG -DGAR_BUILD_BULB=ON'
+  DOCKER_LINUX_BUILD: 'registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:5.0.0'
 
 stages:
   - build
@@ -77,7 +75,7 @@ build-debug-msvc:
 
 build-release-gcc:
   stage: build
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   before_script:
     - git submodule update --init --recursive
   script:
@@ -94,7 +92,7 @@ build-release-gcc:
 
 build-test-gcc:
   stage: build
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   before_script:
     - git submodule update --init --recursive
   script:
@@ -108,7 +106,7 @@ build-test-gcc:
 
 build-debug-gcc:
   stage: build
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   before_script:
     - git submodule update --init --recursive
   script:
@@ -119,7 +117,7 @@ build-debug-gcc:
 
 build-release-clang:
   stage: build
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   before_script:
     - git submodule update --init --recursive
   script:
@@ -136,7 +134,7 @@ build-release-clang:
 
 build-test-clang:
   stage: build
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   before_script:
     - git submodule update --init --recursive
   script:
@@ -150,7 +148,7 @@ build-test-clang:
 
 build-debug-clang:
   stage: build
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   before_script:
     - git submodule update --init --recursive
   script:
@@ -162,7 +160,7 @@ build-debug-clang:
 #Test
 test-msvc:
   stage: test
-  <<: *windows_runner_tags
+  image: $DOCKER_LINUX_BUILD
   before_script:
     - choco install -y cmake
     - $env:Path += ';C:\Program Files\CMake\bin'
@@ -176,7 +174,7 @@ test-msvc:
 
 test-gcc:
   stage: test
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   script:
     - cd build
     - ctest -C Release
@@ -187,7 +185,7 @@ test-gcc:
 
 test-clang:
   stage: test
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   script:
     - cd build
     - ctest -C Release
