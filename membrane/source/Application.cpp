@@ -2,6 +2,7 @@
 
 #include "Membrane/EditorLayer.hpp"
 #include "Membrane/RuntimeLayer.hpp"
+#include "Membrane/ViewportSurface.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Audio/Audio.hpp>
@@ -28,7 +29,8 @@ namespace garlic::membrane {
         renderTargetImageDescriptor.sharingMode = SharingMode::Concurrent;
 
         //Use pair as there seems to be an issue when using structured bindings
-        auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor)) };
+        auto surface{ std::make_unique<ViewportSurface>() };
+        auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor), std::move(surface)) };
         app          = pair.first.release();
         renderTarget = pair.second;
 
