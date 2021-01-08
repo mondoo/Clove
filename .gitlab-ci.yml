@@ -32,6 +32,7 @@ variables:
 stages:
   - build
   - test
+  - deploy
 
 #Build
 build-release-msvc:
@@ -193,3 +194,16 @@ test-clang:
     - build-test-clang
   needs:
     - build-test-clang
+
+#Deploy
+doxygen:
+  stage: deploy
+  image: alpine
+  before_script:
+    - apk update
+    - apk add doxygen
+  script:
+    - doxygen Doxyfile
+  artifacts:
+    paths:
+      - docs/
