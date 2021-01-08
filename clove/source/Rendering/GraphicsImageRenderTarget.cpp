@@ -14,11 +14,11 @@ namespace garlic::clove {
         , factory{ std::move(factory) } {
 
         //We won't be allocating any buffers from this queue, only using it to submit
-        graphicsQueue = *factory->createGraphicsQueue(CommandQueueDescriptor{ .flags = QueueFlags::None });
-        transferQueue = *factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers });
+        graphicsQueue = *this->factory->createGraphicsQueue(CommandQueueDescriptor{ .flags = QueueFlags::None });
+        transferQueue = *this->factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers });
 
-        frameInFlight           = *factory->createFence({ true });
-        renderFinishedSemaphore = *factory->createSemaphore();
+        frameInFlight           = *this->factory->createFence({ true });
+        renderFinishedSemaphore = *this->factory->createSemaphore();
 
         transferCommandBuffer = transferQueue->allocateCommandBuffer();
 
