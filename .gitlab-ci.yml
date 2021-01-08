@@ -161,7 +161,7 @@ build-debug-clang:
 #Test
 test-msvc:
   stage: test
-  image: $DOCKER_LINUX_BUILD
+  <<: *windows_runner_tags
   before_script:
     - choco install -y cmake
     - $env:Path += ';C:\Program Files\CMake\bin'
