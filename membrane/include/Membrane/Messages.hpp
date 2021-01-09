@@ -2,7 +2,7 @@
 
 #include "Membrane/EditorTypes.hpp"
 
-namespace garlic::membrane{
+namespace garlic::membrane {
     // clang-format off
     public ref class Editor_CreateEntity {};
     public ref class Engine_OnEntityCreated {
@@ -37,6 +37,22 @@ namespace garlic::membrane{
         Vector3 position;
         Vector3 rotation;
         Vector3 scale;
+    };
+
+    public ref class Editor_ViewportMouseEvent{
+        //TODO
+    };
+
+    public ref class Editor_ViewportKeyEvent{
+    public:
+        enum class Type{
+            Pressed,
+            Released,
+        };
+
+    public:
+        System::Windows::Input::Key key;
+        Type type;
     };
     // clang-format on
 }

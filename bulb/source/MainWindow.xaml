@@ -43,7 +43,7 @@
 		<!--TODO: Make this user control it's own xaml file-->
 		<UserControl x:Name="EditorViewport" Grid.Column="1"
 					 Focusable="True" GotFocus="EditorViewport_GotFocus" IsTabStop="True"
-					 KeyUp="EditorViewport_KeyUp" KeyDown="EditorViewport_KeyDown"
+					 KeyUp="EditorViewport_Key" KeyDown="EditorViewport_Key"
 					 MouseLeftButtonUp="EditorViewport_MouseLeftButtonUp" MouseEnter="EditorViewport_MouseEnter" MouseLeave="EditorViewport_MouseLeave">
 			<Image x:Name="RenderArea" Stretch="Fill"/>
 		</UserControl>
