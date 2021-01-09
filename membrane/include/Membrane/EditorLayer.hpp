@@ -15,6 +15,10 @@ namespace garlic::membrane {
     private:
         clove::Entity editorCamera;
 
+        clove::vec2i prevMousePos{};
+        float mouseLookYaw{};
+        float mouseLookPitch{};
+
         //FUNCTIONS
     public:
         EditorLayer();
