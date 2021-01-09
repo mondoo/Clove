@@ -37,7 +37,8 @@ namespace Garlic.Bulb {
 			e.Handled = true;
 		}
 
-		private void EditorViewport_MouseMove(object sender, MouseEventArgs e) {
+		//Capture mouse move on the window if the user moves their mouse out of the viewport will moving the camera
+		private void Window_MouseMove(object sender, MouseEventArgs e) {
 			if(EditorViewport.IsFocused) {
 				var message = new Membrane.Editor_ViewportMouseMoveEvent();
 				message.position = e.GetPosition(EditorViewport);

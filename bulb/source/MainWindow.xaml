@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Garlic.Bulb"
         mc:Ignorable="d"
-        Title="MainWindow" Width="1280" Height="720">
+        Title="MainWindow" Width="1280" Height="720"
+		MouseMove="Window_MouseMove">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
@@ -44,7 +45,6 @@
 		<UserControl x:Name="EditorViewport" Grid.Column="1"
 					 Focusable="True" IsTabStop="True"
 					 KeyUp="EditorViewport_Key" KeyDown="EditorViewport_Key"
-					 MouseMove="EditorViewport_MouseMove"
 					 MouseDown="EditorViewport_MouseButton" MouseUp="EditorViewport_MouseButton">
 			<Image x:Name="RenderArea" Stretch="Fill"/>
 		</UserControl>
