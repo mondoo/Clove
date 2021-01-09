@@ -3,6 +3,8 @@
 #include "Membrane/MessageHandler.hpp"
 #include "Membrane/Messages.hpp"
 
+#include <Clove/Log/Log.hpp>
+
 using namespace garlic::clove;
 
 namespace garlic::membrane {
@@ -217,6 +219,23 @@ namespace garlic::membrane {
                     return Key::Undefined;
             }
         }
+
+        MouseButton convertMouseButton(System::Windows::Input::MouseButton button) {
+            switch(button) {
+                case System::Windows::Input::MouseButton::Left:
+                    return MouseButton::Left;
+                case System::Windows::Input::MouseButton::Middle:
+                    return MouseButton::Middle;
+                case System::Windows::Input::MouseButton::Right:
+                    return MouseButton::Right;
+                case System::Windows::Input::MouseButton::XButton1:
+                    return MouseButton::_4;
+                case System::Windows::Input::MouseButton::XButton2:
+                    return MouseButton::_5;
+                default:
+                    return MouseButton::Undefined;
+            }
+        }
     }
 
     // clang-format off
@@ -233,6 +252,8 @@ namespace garlic::membrane {
         ViewportSurfaceMessageProxy(ViewportSurface *surface)
             : surface{ surface } {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_ViewportKeyEvent ^>(this, &ViewportSurfaceMessageProxy::onKeyEvent));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_ViewportMouseButtonEvent ^>(this, &ViewportSurfaceMessageProxy::onMouseButtonEvent));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_ViewportMouseMoveEvent ^>(this, &ViewportSurfaceMessageProxy::onMouseMoveEvent));
         }
 
     private:
@@ -245,6 +266,23 @@ namespace garlic::membrane {
                     surface->keyboardDispatcher.onKeyReleased(convertKey(event->key));
                     break;
             }
+        }
+
+        void onMouseButtonEvent(Editor_ViewportMouseButtonEvent ^event){
+            switch (event->state){
+                case System::Windows::Input::MouseButtonState::Pressed:
+                    surface->mouseDispatcher.onButtonPressed(convertMouseButton(event->button), event->position.X, event->position.Y);
+                    break;
+                case System::Windows::Input::MouseButtonState::Released:
+                    surface->mouseDispatcher.onButtonReleased(convertMouseButton(event->button), event->position.X, event->position.Y);
+                    break;
+		        default:
+	                break;
+	        }
+        }
+
+        void onMouseMoveEvent(Editor_ViewportMouseMoveEvent ^event){
+            surface->mouseDispatcher.onMouseMove(event->position.X, event->position.Y);
         }
     };
     // clang-format on

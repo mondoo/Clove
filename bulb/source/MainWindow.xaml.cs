@@ -12,33 +12,40 @@ namespace Garlic.Bulb {
 			InitializeComponent();
 		}
 
-		private void EditorViewport_GotFocus(object sender, RoutedEventArgs e) {
-
-		}
-
 		private void EditorViewport_Key(object sender, KeyEventArgs e) {
 			var message = new Membrane.Editor_ViewportKeyEvent();
 			message.key = e.Key;
 			message.type = e.IsDown ? Membrane.Editor_ViewportKeyEvent.Type.Pressed : Membrane.Editor_ViewportKeyEvent.Type.Released;
 
 			Membrane.MessageHandler.sendMessage(message);
+
+			e.Handled = true;
 		}
 
-		private void EditorViewport_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
-			if(EditorViewport.IsFocused) {
-				//TODO: Mouse events
-			} else {
-				//Input propagation relies on the viewport being focused
+		private void EditorViewport_MouseButton(object sender, MouseButtonEventArgs e) {
+			if(!EditorViewport.IsFocused) {
 				EditorViewport.Focus();
 			}
+
+			var message = new Membrane.Editor_ViewportMouseButtonEvent();
+			message.button = e.ChangedButton;
+			message.state = e.ButtonState;
+			message.position = e.GetPosition(EditorViewport);
+
+			Membrane.MessageHandler.sendMessage(message);
+
+			e.Handled = true;
 		}
 
-		private void EditorViewport_MouseEnter(object sender, MouseEventArgs e) {
-			//Membrane.Log.write(Membrane.LogLevel.Debug, "Render area mouse enter");
-		}
+		private void EditorViewport_MouseMove(object sender, MouseEventArgs e) {
+			if(EditorViewport.IsFocused) {
+				var message = new Membrane.Editor_ViewportMouseMoveEvent();
+				message.position = e.GetPosition(EditorViewport);
 
-		private void EditorViewport_MouseLeave(object sender, MouseEventArgs e) {
-			//Membrane.Log.write(Membrane.LogLevel.Debug, "Render area mouse leave");
+				Membrane.MessageHandler.sendMessage(message);
+
+				e.Handled = true;
+			}
 		}
 	}
 }

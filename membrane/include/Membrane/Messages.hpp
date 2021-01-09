@@ -39,10 +39,6 @@ namespace garlic::membrane {
         Vector3 scale;
     };
 
-    public ref class Editor_ViewportMouseEvent{
-        //TODO
-    };
-
     public ref class Editor_ViewportKeyEvent{
     public:
         enum class Type{
@@ -53,6 +49,18 @@ namespace garlic::membrane {
     public:
         System::Windows::Input::Key key;
         Type type;
+    };
+
+    public ref class Editor_ViewportMouseButtonEvent{
+    public:
+        System::Windows::Input::MouseButton button;
+        System::Windows::Input::MouseButtonState state;
+        System::Windows::Point position;
+    };
+
+    public ref class Editor_ViewportMouseMoveEvent{
+    public:
+        System::Windows::Point position;
     };
     // clang-format on
 }

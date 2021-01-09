@@ -42,9 +42,10 @@
 
 		<!--TODO: Make this user control it's own xaml file-->
 		<UserControl x:Name="EditorViewport" Grid.Column="1"
-					 Focusable="True" GotFocus="EditorViewport_GotFocus" IsTabStop="True"
+					 Focusable="True" IsTabStop="True"
 					 KeyUp="EditorViewport_Key" KeyDown="EditorViewport_Key"
-					 MouseLeftButtonUp="EditorViewport_MouseLeftButtonUp" MouseEnter="EditorViewport_MouseEnter" MouseLeave="EditorViewport_MouseLeave">
+					 MouseMove="EditorViewport_MouseMove"
+					 MouseDown="EditorViewport_MouseButton" MouseUp="EditorViewport_MouseButton">
 			<Image x:Name="RenderArea" Stretch="Fill"/>
 		</UserControl>
 		<TextBox x:Name="Log" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Text="{Binding Log.LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8" BorderBrush="{x:Null}" BorderThickness="0" VerticalScrollBarVisibility="Auto"/>
