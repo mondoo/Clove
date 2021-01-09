@@ -40,11 +40,15 @@
 			</ItemsControl>
 		</StackPanel>
 
+		<!--TODO: Make this user control it's own xaml file-->
 		<UserControl x:Name="RenderAreaFocusHandler" Grid.Column="1"
-					 Focusable="True" GotFocus="UserControl_GotFocus" IsTabStop="True"
-					 KeyUp="UserControl_KeyUp"
+					 Focusable="True" GotFocus="RenderAreaFocusHandler_GotFocus" IsTabStop="True"
+					 KeyUp="RenderAreaFocusHandler_KeyUp" KeyDown="RenderAreaFocusHandler_KeyDown"
 					 MouseEnter="RenderAreaFocusHandler_MouseEnter" MouseLeave="RenderAreaFocusHandler_MouseLeave">
 			<Image x:Name="RenderArea" Stretch="Fill"/>
+			<UserControl.InputBindings>
+				<MouseBinding Gesture="LeftClick" Command="{Binding EditorViewport.SelectedCommand}"/>
+			</UserControl.InputBindings>
 		</UserControl>
 		<TextBox x:Name="Log" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Text="{Binding Log.LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8" BorderBrush="{x:Null}" BorderThickness="0" VerticalScrollBarVisibility="Auto"/>
 		
