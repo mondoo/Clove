@@ -41,6 +41,9 @@ namespace garlic::clove {
             Key getKey() const;
         };
 
+        /**
+         * @brief Recieves events for a Keyboard object 
+         */
         class Dispatcher {
             friend Keyboard;
 
