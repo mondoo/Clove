@@ -14,7 +14,6 @@ namespace Garlic.Bulb {
 		}
 		private SceneViewModel scene;
 
-		public ViewportViewModel EditorViewport { get; } = new ViewportViewModel();
 		public LogViewModel Log { get; } = new LogViewModel();
 
 		public EditorSessionViewModel() {
