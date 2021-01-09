@@ -258,31 +258,30 @@ namespace garlic::membrane {
 
     private:
         void onKeyEvent(Editor_ViewportKeyEvent^ event){
-            switch (event->type){
-                case Editor_ViewportKeyEvent::Type::Pressed:
-                    surface->keyboardDispatcher.onKeyPressed(convertKey(event->key));
-                    break;
-                case Editor_ViewportKeyEvent::Type::Released:
-                    surface->keyboardDispatcher.onKeyReleased(convertKey(event->key));
-                    break;
-            }
+            ViewportSurface::GenericEvent genericEvent{};
+            genericEvent.type = ViewportSurface::GenericEvent::Type::Keyboard;
+            genericEvent.state = event->type == Editor_ViewportKeyEvent::Type::Pressed ? ViewportSurface::GenericEvent::State::Pressed : ViewportSurface::GenericEvent::State::Released;
+            genericEvent.key = convertKey(event->key);
+            
+            surface->events.push_back(std::move(genericEvent));
         }
 
         void onMouseButtonEvent(Editor_ViewportMouseButtonEvent ^event){
-            switch (event->state){
-                case System::Windows::Input::MouseButtonState::Pressed:
-                    surface->mouseDispatcher.onButtonPressed(convertMouseButton(event->button), event->position.X, event->position.Y);
-                    break;
-                case System::Windows::Input::MouseButtonState::Released:
-                    surface->mouseDispatcher.onButtonReleased(convertMouseButton(event->button), event->position.X, event->position.Y);
-                    break;
-		        default:
-	                break;
-	        }
+            ViewportSurface::GenericEvent genericEvent{};
+            genericEvent.type = ViewportSurface::GenericEvent::Type::Mouse;
+            genericEvent.state = event->state == System::Windows::Input::MouseButtonState::Pressed ? ViewportSurface::GenericEvent::State::Pressed : ViewportSurface::GenericEvent::State::Released;
+            genericEvent.button = convertMouseButton(event->button);
+            genericEvent.pos = {event->position.X, event->position.Y};
+            
+            surface->events.push_back(std::move(genericEvent));
         }
 
         void onMouseMoveEvent(Editor_ViewportMouseMoveEvent ^event){
-            surface->mouseDispatcher.onMouseMove(event->position.X, event->position.Y);
+            ViewportSurface::GenericEvent genericEvent{};
+            genericEvent.type = ViewportSurface::GenericEvent::Type::Mouse;
+            genericEvent.pos = {event->position.X, event->position.Y};
+            
+            surface->events.push_back(std::move(genericEvent));
         }
     };
     // clang-format on
@@ -300,7 +299,34 @@ namespace garlic::membrane {
     }
 
     void ViewportSurface::processInput(){
-        //TODO: Cache input and then dispatcher here to keep input within frames
+        for(auto &event : events) {
+            switch(event.type) {
+                case GenericEvent::Type::Keyboard:
+                    if(event.state == GenericEvent::State::Pressed) {
+                        if(!keyboard.isKeyPressed(event.key) || keyboard.isAutoRepeatEnabled()) {
+                            keyboardDispatcher.onKeyPressed(event.key);
+                        }
+                    } else if(event.state == GenericEvent::State::Released) {
+                        keyboardDispatcher.onKeyReleased(event.key);
+                    }
+                    break;
+                case GenericEvent::Type::Mouse:
+                    if(event.button != clove::MouseButton::None) {
+                        if(event.state == GenericEvent::State::Pressed) {
+                            mouseDispatcher.onButtonPressed(event.button, event.pos.x, event.pos.y);
+                        } else if(event.state == GenericEvent::State::Released) {
+                            mouseDispatcher.onButtonReleased(event.button, event.pos.x, event.pos.y);
+                        }
+                    } else {
+                        mouseDispatcher.onMouseMove(event.pos.x, event.pos.y);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        events.clear();
     };
 
     void ViewportSurface::setSize(clove::vec2i size) {

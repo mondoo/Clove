@@ -4,6 +4,7 @@
 #include <Clove/Platform/Input/Mouse.hpp>
 #include <Clove/Surface.hpp>
 #include <msclr/gcroot.h>
+#include <vector>
 
 namespace garlic::membrane {
     /**
@@ -12,6 +13,31 @@ namespace garlic::membrane {
     class ViewportSurface : public clove::Surface {
         friend ref class ViewportSurfaceMessageProxy;
 
+        //TYPES
+    private:
+        /**
+         * @brief Holds any input event recieved.
+         */
+        struct GenericEvent{
+            enum class Type{
+                Keyboard,
+                Mouse
+            };
+            enum class State{
+                None,
+                Pressed,
+                Released,
+            };
+
+            Type type;
+            State state;
+
+            clove::Key key{ clove::Key::None };
+
+            clove::MouseButton button{ clove::MouseButton::None };
+            clove::vec2i pos{};
+        };
+
         //VARIABLES
     private:
         msclr::gcroot<ViewportSurfaceMessageProxy ^> messageProxy;
@@ -19,6 +45,8 @@ namespace garlic::membrane {
         clove::MultiCastDelegate<void(clove::vec2ui const &)> resizeDelegate{};
 
         clove::vec2i size{};
+
+        std::vector<GenericEvent> events;
 
         clove::Keyboard keyboard;
         clove::Mouse mouse;
