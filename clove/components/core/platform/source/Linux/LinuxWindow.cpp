@@ -4,7 +4,8 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    LinuxWindow::LinuxWindow(WindowDescriptor const &descriptor) {
+    LinuxWindow::LinuxWindow(WindowDescriptor const &descriptor)
+        : Window(keyboardDispatcher, mouseDispatcher) {
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
         display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
@@ -131,7 +132,7 @@ namespace garlic::clove {
                     break;
 
                 case FocusOut:
-                    keyboard.clearState();
+                    keyboardDispatcher.clearState();
                     break;
 
                 case KeymapNotify:
@@ -141,7 +142,7 @@ namespace garlic::clove {
 
                 case KeyPress:
                     xkeysym = XLookupKeysym(&xevent.xkey, 0);
-                    keyboard.onKeyPressed(static_cast<Key>(xkeysym));
+                    keyboardDispatcher.onKeyPressed(static_cast<Key>(xkeysym));
                     break;
 
                 case KeyRelease: {
@@ -160,32 +161,32 @@ namespace garlic::clove {
 
                     if(!isRepeat || keyboard.isAutoRepeatEnabled()) {
                         xkeysym = XLookupKeysym(&xevent.xkey, 0);
-                        keyboard.onKeyReleased(static_cast<Key>(xkeysym));
+                        keyboardDispatcher.onKeyReleased(static_cast<Key>(xkeysym));
                     }
                 } break;
 
                     //TODO: Char (I don't think Xlib has a 'typed' event)
 
                 case EnterNotify:
-                    mouse.onMouseEnter();
+                    mouseDispatcher.onMouseEnter();
                     break;
 
                 case LeaveNotify:
-                    mouse.onMouseLeave();
+                    mouseDispatcher.onMouseLeave();
                     break;
 
                 case ButtonPress:
                     if(xevent.xbutton.button == 4) {
-                        mouse.onWheelDelta(CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
+                        mouseDispatcher.onWheelDelta(CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
                     } else if(xevent.xbutton.button == 5) {
-                        mouse.onWheelDelta(-CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
+                        mouseDispatcher.onWheelDelta(-CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
                     } else {
-                        mouse.onButtonPressed(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
+                        mouseDispatcher.onButtonPressed(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
                     }
                     break;
 
                 case ButtonRelease:
-                    mouse.onButtonReleased(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
+                    mouseDispatcher.onButtonReleased(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
                     break;
 
                 //Window

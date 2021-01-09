@@ -15,8 +15,11 @@ namespace garlic::membrane {
 
         clove::vec2i size{};
 
-        clove::Keyboard keyboard{};
-        clove::Mouse mouse{};
+        clove::Keyboard keyboard;
+        clove::Mouse mouse;
+
+        clove::Keyboard::Dispatcher keyboardDispatcher{};
+        clove::Mouse::Dispatcher mouseDispatcher{};
 
         //FUNCTIONS
     public:

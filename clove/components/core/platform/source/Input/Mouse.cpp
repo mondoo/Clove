@@ -25,52 +25,26 @@ namespace garlic::clove {
         return button;
     }
 
-    Mouse::Mouse() = default;
+    Mouse::Dispatcher::Dispatcher() = default;
 
-    Mouse::~Mouse() = default;
+    Mouse::Dispatcher::Dispatcher(Dispatcher const &other) = default;
 
-    bool Mouse::isButtonPressed(MouseButton button) const {
-        if(const auto buttonIt = buttonStates.find(button); buttonIt != buttonStates.end()) {
-            return buttonIt->second;
-        } else {
-            return false;
-        }
-    }
+    Mouse::Dispatcher::Dispatcher(Dispatcher &&other) noexcept = default;
 
-    std::optional<Mouse::Event> Mouse::getEvent() {
-        if(!isBufferEmpty()) {
-            Mouse::Event e = buffer.front();
-            buffer.pop();
-            return e;
-        } else {
-            return {};
-        }
-    }
+    Mouse::Dispatcher &Mouse::Dispatcher::operator=(Dispatcher const &other) = default;
 
-    vec2i const &Mouse::getPosition() const {
-        return pos;
-    }
+    Mouse::Dispatcher &Mouse::Dispatcher::operator=(Dispatcher &&other) noexcept = default;
 
-    bool Mouse::isInWindow() const {
-        return inWindow;
-    }
+    Mouse::Dispatcher::~Dispatcher() = default;
 
-    bool Mouse::isBufferEmpty() const {
-        return buffer.empty();
-    }
-
-    void Mouse::flush() {
-        buffer = std::queue<Mouse::Event>();
-    }
-
-    void Mouse::onMouseMove(int32_t x, int32_t y) {
+    void Mouse::Dispatcher::onMouseMove(int32_t x, int32_t y) {
         pos = { x, y };
 
         buffer.push({ Mouse::Event::Type::Move, MouseButton::None, pos });
         trimBuffer();
     }
 
-    void Mouse::onButtonPressed(MouseButton button, int32_t x, int32_t y) {
+    void Mouse::Dispatcher::onButtonPressed(MouseButton button, int32_t x, int32_t y) {
         pos = { x, y };
 
         buttonStates[button] = true;
@@ -78,7 +52,7 @@ namespace garlic::clove {
         trimBuffer();
     }
 
-    void Mouse::onButtonReleased(MouseButton button, int32_t x, int32_t y) {
+    void Mouse::Dispatcher::onButtonReleased(MouseButton button, int32_t x, int32_t y) {
         pos = { x, y };
 
         buttonStates[button] = false;
@@ -86,7 +60,7 @@ namespace garlic::clove {
         trimBuffer();
     }
 
-    void Mouse::onWheelDelta(int32_t delta, int32_t x, int32_t y) {
+    void Mouse::Dispatcher::onWheelDelta(int32_t delta, int32_t x, int32_t y) {
         wheelDelta += delta;
         while(wheelDelta >= CLV_WHEEL_DELTA) {
             wheelDelta -= CLV_WHEEL_DELTA;
@@ -98,41 +72,81 @@ namespace garlic::clove {
         }
     }
 
-    void Mouse::onWheelUp(int32_t x, int32_t y) {
+    void Mouse::Dispatcher::onWheelUp(int32_t x, int32_t y) {
         pos = { x, y };
 
         buffer.push({ Mouse::Event::Type::WheelUp, MouseButton::None, pos });
         trimBuffer();
     }
 
-    void Mouse::onWheelDown(int32_t x, int32_t y) {
+    void Mouse::Dispatcher::onWheelDown(int32_t x, int32_t y) {
         pos = { x, y };
 
         buffer.push({ Mouse::Event::Type::WheelDown, MouseButton::None, pos });
         trimBuffer();
     }
 
-    void Mouse::onMouseLeave() {
+    void Mouse::Dispatcher::onMouseLeave() {
         inWindow = false;
 
         buffer.push({ Mouse::Event::Type::Leave, MouseButton::None, pos });
         trimBuffer();
     }
 
-    void Mouse::onMouseEnter() {
+    void Mouse::Dispatcher::onMouseEnter() {
         inWindow = true;
 
         buffer.push({ Mouse::Event::Type::Enter, MouseButton::None, pos });
         trimBuffer();
     }
 
-    void Mouse::clearState() {
+    void Mouse::Dispatcher::clearState() {
         buttonStates.clear();
     }
 
-    void Mouse::trimBuffer() {
+    void Mouse::Dispatcher::trimBuffer() {
         while(buffer.size() > bufferSize) {
             buffer.pop();
         }
+    }
+
+    Mouse::Mouse(Dispatcher &dispatcher)
+        : dispatcher{ dispatcher } {
+    }
+
+    Mouse::~Mouse() = default;
+
+    bool Mouse::isButtonPressed(MouseButton button) const {
+        if(const auto buttonIt = dispatcher.buttonStates.find(button); buttonIt != dispatcher.buttonStates.end()) {
+            return buttonIt->second;
+        } else {
+            return false;
+        }
+    }
+
+    std::optional<Mouse::Event> Mouse::getEvent() {
+        if(!isBufferEmpty()) {
+            Mouse::Event e{ std::move(dispatcher.buffer.front()) };
+            dispatcher.buffer.pop();
+            return e;
+        } else {
+            return {};
+        }
+    }
+
+    vec2i const &Mouse::getPosition() const {
+        return dispatcher.pos;
+    }
+
+    bool Mouse::isInWindow() const {
+        return dispatcher.inWindow;
+    }
+
+    bool Mouse::isBufferEmpty() const {
+        return dispatcher.buffer.empty();
+    }
+
+    void Mouse::flush() {
+        dispatcher.buffer = std::queue<Mouse::Event>();
     }
 }

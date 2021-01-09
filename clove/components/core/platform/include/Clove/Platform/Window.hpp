@@ -20,12 +20,16 @@ namespace garlic::clove {
         MultiCastDelegate<void(vec2ui const &)> onWindowResize{};
 
     protected:
-        Keyboard keyboard{};
-        Mouse mouse{};
+        Keyboard keyboard;
+        Mouse mouse;
 
         //FUNCTIONS
     public:
-        Window() = default;
+        Window() = delete;
+        Window(Keyboard::Dispatcher &keyboardDispatcher, Mouse::Dispatcher &mouseDispatcher)
+            : keyboard{ keyboardDispatcher }
+            , mouse{ mouseDispatcher } {
+        }
 
         Window(Window const &other)     = delete;
         Window(Window &&other) noexcept = delete;

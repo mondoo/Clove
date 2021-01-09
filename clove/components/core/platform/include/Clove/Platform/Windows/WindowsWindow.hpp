@@ -14,6 +14,9 @@ namespace garlic::clove {
         HINSTANCE instance;
         HWND windowsHandle;
 
+        Keyboard::Dispatcher keyboardDispatcher{};
+        Mouse::Dispatcher mouseDispatcher{};
+
         //FUNCTIONS
     public:
         WindowsWindow() = delete;

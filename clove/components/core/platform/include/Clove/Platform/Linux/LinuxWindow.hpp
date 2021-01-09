@@ -19,12 +19,15 @@ namespace garlic::clove {
         int32_t screenID;
 
         XEvent xevent;
-		
+
         XSetWindowAttributes windowAttribs;
 
         Atom atomWmDeleteWindow;
 
-        vec2i prevConfigureNotifySize = {};
+        vec2i prevConfigureNotifySize{};
+
+        Keyboard::Dispatcher keyboardDispatcher{};
+        Mouse::Dispatcher mouseDispatcher{};
 
         //FUNCTIONS
     public:

@@ -3,6 +3,12 @@
 using namespace garlic::clove;
 
 namespace garlic::membrane {
+    ViewportSurface::ViewportSurface()
+        : keyboard{ keyboardDispatcher } 
+        , mouse{ mouseDispatcher } {
+        messageProxy = gcnew ViewportSurfaceMessageProxy(this);
+    }
+
     MultiCastDelegate<void(vec2ui const &)> &ViewportSurface::onSurfaceResize() {
         return resizeDelegate;
     }

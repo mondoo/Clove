@@ -26,7 +26,8 @@
 @end
 
 namespace garlic::clove{
-    MacWindow::MacWindow(const WindowDescriptor& descriptor){
+    MacWindow::MacWindow(const WindowDescriptor& descriptor)
+        : Window(keyboardDispatcher, mouseDispatcher) {
 		NSString* nameString = [NSString stringWithCString:descriptor.title.c_str() encoding:[NSString defaultCStringEncoding]];
 		
 		//TODO: Retrieve MTLView from GraphicsDevice on initialisation
@@ -90,65 +91,65 @@ namespace garlic::clove{
 				vec2i mouseLoc{ static_cast<int32_t>([NSEvent mouseLocation].x), static_cast<int32_t>([NSEvent mouseLocation].y) };
 				switch ([event type]){
 					case NSEventTypeKeyDown:
-						keyboard.onKeyPressed(static_cast<Key>([event keyCode]));
+						keyboardDispatcher.onKeyPressed(static_cast<Key>([event keyCode]));
 						break;
 					
 					case NSEventTypeKeyUp:
-						keyboard.onKeyReleased(static_cast<Key>([event keyCode]));
+						keyboardDispatcher.onKeyReleased(static_cast<Key>([event keyCode]));
 						break;
 					
 					//TODO: Is there a char or key typed event?
 				
 					case NSEventTypeMouseEntered:
-						mouse.onMouseEnter();
+						mouseDispatcher.onMouseEnter();
 						break;
 					
 					case NSEventTypeMouseExited:
-						mouse.onMouseLeave();
+						mouseDispatcher.onMouseLeave();
 						break;
 					
 					case NSEventTypeMouseMoved:
-						mouse.onMouseMove(mouseLoc.x, mouseLoc.y);
+						mouseDispatcher.onMouseMove(mouseLoc.x, mouseLoc.y);
 						break;
 					
 					case NSEventTypeLeftMouseDown:
-						mouse.onButtonPressed(MouseButton::_1, mouseLoc.x, mouseLoc.y);
+						mouseDispatcher.onButtonPressed(MouseButton::_1, mouseLoc.x, mouseLoc.y);
 						break;
 					
 					case NSEventTypeLeftMouseUp:
-						mouse.onButtonReleased(MouseButton::_1, mouseLoc.x, mouseLoc.y);
+						mouseDispatcher.onButtonReleased(MouseButton::_1, mouseLoc.x, mouseLoc.y);
 						break;
 					
 					case NSEventTypeRightMouseDown:
-						mouse.onButtonPressed(MouseButton::_2, mouseLoc.x, mouseLoc.y);
+						mouseDispatcher.onButtonPressed(MouseButton::_2, mouseLoc.x, mouseLoc.y);
 						break;
 					
 					case NSEventTypeRightMouseUp:
-						mouse.onButtonReleased(MouseButton::_2, mouseLoc.x, mouseLoc.y);
+						mouseDispatcher.onButtonReleased(MouseButton::_2, mouseLoc.x, mouseLoc.y);
 						break;
 					
 					case NSEventTypeOtherMouseDown:
 						if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_3)) != 0){
-							mouse.onButtonPressed(MouseButton::_3, mouseLoc.x, mouseLoc.y);
+							mouseDispatcher.onButtonPressed(MouseButton::_3, mouseLoc.x, mouseLoc.y);
 						}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_4)) != 0){
-							mouse.onButtonPressed(MouseButton::_4, mouseLoc.x, mouseLoc.y);
+							mouseDispatcher.onButtonPressed(MouseButton::_4, mouseLoc.x, mouseLoc.y);
 						}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_5)) != 0){
-							mouse.onButtonPressed(MouseButton::_5, mouseLoc.x, mouseLoc.y);
+							mouseDispatcher.onButtonPressed(MouseButton::_5, mouseLoc.x, mouseLoc.y);
 						}
 						break;
 					
 					case NSEventTypeOtherMouseUp:
 						if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_3)) != 0){
-							mouse.onButtonReleased(MouseButton::_3, mouseLoc.x, mouseLoc.y);
+							mouseDispatcher.onButtonReleased(MouseButton::_3, mouseLoc.x, mouseLoc.y);
 						}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_4)) != 0){
-							mouse.onButtonReleased(MouseButton::_4, mouseLoc.x, mouseLoc.y);
+							mouseDispatcher.onButtonReleased(MouseButton::_4, mouseLoc.x, mouseLoc.y);
 						}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_5)) != 0){
-							mouse.onButtonReleased(MouseButton::_5, mouseLoc.x, mouseLoc.y);
+							mouseDispatcher.onButtonReleased(MouseButton::_5, mouseLoc.x, mouseLoc.y);
 						}
 						break;
 					
 					case NSEventTypeScrollWheel:
-						mouse.onWheelDelta(static_cast<int32_t>([event scrollingDeltaY]), mouseLoc.x, mouseLoc.y);
+						mouseDispatcher.onWheelDelta(static_cast<int32_t>([event scrollingDeltaY]), mouseLoc.x, mouseLoc.y);
 						break;
 						
 					default:

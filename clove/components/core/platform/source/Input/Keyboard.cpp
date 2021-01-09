@@ -28,12 +28,47 @@ namespace garlic::clove {
         return key;
     }
 
-    Keyboard::Keyboard() = default;
+    Keyboard::Dispatcher::Dispatcher() = default;
+
+    Keyboard::Dispatcher::Dispatcher(Dispatcher const &other) = default;
+
+    Keyboard::Dispatcher::Dispatcher(Dispatcher &&other) noexcept = default;
+
+    Keyboard::Dispatcher &Keyboard::Dispatcher::operator=(Dispatcher const &other) = default;
+
+    Keyboard::Dispatcher &Keyboard::Dispatcher::operator=(Dispatcher &&other) noexcept = default;
+
+    Keyboard::Dispatcher::~Dispatcher() = default;
+
+    void Keyboard::Dispatcher::onKeyPressed(Key key) {
+        keyStates[key] = true;
+        keyBuffer.push({ Keyboard::Event::Type::Pressed, key });
+        trimBuffer(keyBuffer);
+    }
+
+    void Keyboard::Dispatcher::onKeyReleased(Key key) {
+        keyStates[key] = false;
+        keyBuffer.push({ Keyboard::Event::Type::Released, key });
+        trimBuffer(keyBuffer);
+    }
+
+    void Keyboard::Dispatcher::onChar(char character) {
+        charBuffer.push(character);
+        trimBuffer(charBuffer);
+    }
+
+    void Keyboard::Dispatcher::clearState() {
+        keyStates.clear();
+    }
+
+    Keyboard::Keyboard(Dispatcher &dispatcher)
+        : dispatcher{ dispatcher } {
+    }
 
     Keyboard::~Keyboard() = default;
 
     bool Keyboard::isKeyPressed(Key key) const {
-        if(const auto keyIt = keyStates.find(key); keyIt != keyStates.end()) {
+        if(const auto keyIt = dispatcher.keyStates.find(key); keyIt != dispatcher.keyStates.end()) {
             return keyIt->second;
         } else {
             return false;
@@ -41,13 +76,13 @@ namespace garlic::clove {
     }
 
     bool Keyboard::isKeyBufferEmpty() const {
-        return keyBuffer.empty();
+        return dispatcher.keyBuffer.empty();
     }
 
     std::optional<Keyboard::Event> Keyboard::getKeyEvent() {
         if(!isKeyBufferEmpty()) {
-            Keyboard::Event e = keyBuffer.front();
-            keyBuffer.pop();
+            Keyboard::Event e{ std::move(dispatcher.keyBuffer.front()) };
+            dispatcher.keyBuffer.pop();
             return e;
         } else {
             return {};
@@ -56,8 +91,8 @@ namespace garlic::clove {
 
     std::optional<char> Keyboard::getCharEvent() {
         if(!isCharBufferEmpty()) {
-            char charCode = charBuffer.front();
-            charBuffer.pop();
+            char charCode {std::move(dispatcher.charBuffer.front())};
+            dispatcher.charBuffer.pop();
             return charCode;
         } else {
             return {};
@@ -65,15 +100,15 @@ namespace garlic::clove {
     }
 
     void Keyboard::flushKeyBuffer() {
-        keyBuffer = std::queue<Event>();
+        dispatcher.keyBuffer = std::queue<Event>();
     }
 
     void Keyboard::flushCharBuffer() {
-        charBuffer = std::queue<char>();
+        dispatcher.charBuffer = std::queue<char>();
     }
 
     bool Keyboard::isCharBufferEmpty() const {
-        return charBuffer.empty();
+        return dispatcher.charBuffer.empty();
     }
 
     void Keyboard::flush() {
@@ -82,35 +117,14 @@ namespace garlic::clove {
     }
 
     void Keyboard::enableAutoRepeat() {
-        autoRepeatEnabled = true;
+        dispatcher.autoRepeatEnabled = true;
     }
 
     void Keyboard::disableAutoRepeat() {
-        autoRepeatEnabled = false;
+        dispatcher.autoRepeatEnabled = false;
     }
 
     bool Keyboard::isAutoRepeatEnabled() const {
-        return autoRepeatEnabled;
-    }
-
-    void Keyboard::onKeyPressed(Key key) {
-        keyStates[key] = true;
-        keyBuffer.push({ Keyboard::Event::Type::Pressed, key });
-        trimBuffer(keyBuffer);
-    }
-
-    void Keyboard::onKeyReleased(Key key) {
-        keyStates[key] = false;
-        keyBuffer.push({ Keyboard::Event::Type::Released, key });
-        trimBuffer(keyBuffer);
-    }
-
-    void Keyboard::onChar(char character) {
-        charBuffer.push(character);
-        trimBuffer(charBuffer);
-    }
-
-    void Keyboard::clearState() {
-        keyStates.clear();
+        return dispatcher.autoRepeatEnabled;
     }
 }
