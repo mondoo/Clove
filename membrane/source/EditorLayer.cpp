@@ -43,10 +43,10 @@ namespace garlic::membrane {
         if(keyBoard.isKeyPressed(clove::Key::D)) {
             pos.x += 1.0f;
         }
-        if(keyBoard.isKeyPressed(clove::Key::Space)) {
+        if(keyBoard.isKeyPressed(clove::Key::Space) || keyBoard.isKeyPressed(clove::Key::E)) {
             pos.y += 1.0f;
         }
-        if(keyBoard.isKeyPressed(clove::Key::Shift_Left)) {
+        if(keyBoard.isKeyPressed(clove::Key::Shift_Left) || keyBoard.isKeyPressed(clove::Key::Q)) {
             pos.y -= 1.0f;
         }
 
