@@ -2,13 +2,14 @@
 
 #include "Clove/InputEvent.hpp"
 #include "Clove/Layer.hpp"
-#include "Clove/Rendering/ForwardRenderer3D.hpp"
-#include "Clove/Rendering/GraphicsImageRenderTarget.hpp"
-#include "Clove/Rendering/SwapchainRenderTarget.hpp"
 #include "Clove/Layers/AudioLayer.hpp"
 #include "Clove/Layers/PhysicsLayer.hpp"
 #include "Clove/Layers/RenderLayer.hpp"
 #include "Clove/Layers/TransformLayer.hpp"
+#include "Clove/Rendering/ForwardRenderer3D.hpp"
+#include "Clove/Rendering/GraphicsImageRenderTarget.hpp"
+#include "Clove/Rendering/SwapchainRenderTarget.hpp"
+#include "Clove/WindowSurface.hpp"
 
 #include <Clove/Audio/AudioDevice.hpp>
 #include <Clove/Definitions.hpp>
@@ -27,17 +28,17 @@ namespace garlic::clove {
     std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor) {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
 
-        //Platform
-        app->window = Platform::createWindow(std::move(windowDescriptor));
+        auto window{ Platform::createWindow(std::move(windowDescriptor)) };
+        window->onWindowCloseDelegate.bind(&Application::shutdown, app.get());
 
-        //Graphics
-        app->graphicsDevice = createGraphicsDevice(graphicsApi, app->window->getNativeWindow());
-        app->renderer       = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>());
+        //Devices
+        app->graphicsDevice = createGraphicsDevice(graphicsApi, window->getNativeWindow());
+        app->audioDevice    = createAudioDevice(audioApi);
 
-        //Audio
-        app->audioDevice = createAudioDevice(audioApi);
+        app->surface = std::make_unique<WindowSurface>(std::move(window));
 
-        //ECS
+        //Systems
+        app->renderer      = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>(*app->surface, app->graphicsDevice.get()));
         app->entityManager = std::make_unique<EntityManager>();
 
         //Layers
@@ -50,20 +51,20 @@ namespace garlic::clove {
         return app;
     }
 
-    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor) {
+    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface) {
         std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
 
-        //Graphics
+        app->surface = std::move(surface);
+
+        //Devices
         app->graphicsDevice = createGraphicsDevice(graphicsApi, std::any{});
+        app->audioDevice    = createAudioDevice(audioApi);
 
-        auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(std::move(renderTargetDescriptor)) };
+        auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(std::move(renderTargetDescriptor), app->graphicsDevice->getGraphicsFactory()) };
         auto *renderTargetPtr{ renderTarget.get() };
-        app->renderer = std::make_unique<ForwardRenderer3D>(std::move(renderTarget));
 
-        //Audio
-        app->audioDevice = createAudioDevice(audioApi);
-
-        //ECS
+        //Systems
+        app->renderer      = std::make_unique<ForwardRenderer3D>(std::move(renderTarget));
         app->entityManager = std::make_unique<EntityManager>();
 
         //Layers
@@ -97,16 +98,11 @@ namespace garlic::clove {
         }
     }
 
-    Application::State Application::getState() const {
-        if(window != nullptr) {
-            return window->isOpen() ? State::Running : State::Stopped;
-        } else {
-            return State::Running;
-        }
-    }
-
     void Application::tick() {
-        if(getState() != State::Running) {
+        //Process input first incase we get a close event.
+        surface->processInput();
+
+        if(currentState != State::Running) {
             return;
         }
 
@@ -116,26 +112,22 @@ namespace garlic::clove {
 
         renderer->begin();
 
-        if(window != nullptr) {
-            window->processInput();
-
-            while(auto keyEvent = window->getKeyboard().getKeyEvent()) {
-                InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
-                for(auto &&[key, group] : layers) {
-                    for(auto &layer : group) {
-                        if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                            break;
-                        }
+        while(auto keyEvent = surface->getKeyboard().getKeyEvent()) {
+            InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
+            for(auto &&[key, group] : layers) {
+                for(auto &layer : group) {
+                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                        break;
                     }
                 }
             }
-            while(auto mouseEvent = window->getMouse().getEvent()) {
-                InputEvent const event{ *mouseEvent, InputEvent::Type::Mouse };
-                for(auto &&[key, group] : layers) {
-                    for(auto &layer : group) {
-                        if(layer->onInputEvent(event) == InputResponse::Consumed) {
-                            break;
-                        }
+        }
+        while(auto mouseEvent = surface->getMouse().getEvent()) {
+            InputEvent const event{ *mouseEvent, InputEvent::Type::Mouse };
+            for(auto &&[key, group] : layers) {
+                for(auto &layer : group) {
+                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                        break;
                     }
                 }
             }
@@ -151,10 +143,9 @@ namespace garlic::clove {
     }
 
     void Application::shutdown() {
+        currentState = State::Stopped;
         graphicsDevice->waitForIdleDevice();
-        if(window != nullptr) {
-            window->close();
-        }
+        surface.reset();
     }
 
     Application::Application() {

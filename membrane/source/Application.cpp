@@ -2,6 +2,7 @@
 
 #include "Membrane/EditorLayer.hpp"
 #include "Membrane/RuntimeLayer.hpp"
+#include "Membrane/ViewportSurface.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Audio/Audio.hpp>
@@ -28,12 +29,14 @@ namespace garlic::membrane {
         renderTargetImageDescriptor.sharingMode = SharingMode::Concurrent;
 
         //Use pair as there seems to be an issue when using structured bindings
-        auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor)) };
+        auto vpSurface{ std::make_unique<ViewportSurface>() };
+        surface = vpSurface.get();
+        auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor), std::move(vpSurface)) };
         app          = pair.first.release();
         renderTarget = pair.second;
 
         editorLayer  = new std::shared_ptr<EditorLayer>();
-        *editorLayer = std::make_shared<EditorLayer>(clove::vec2ui{ width, height });
+        *editorLayer = std::make_shared<EditorLayer>();
 
         runtimeLayer  = new std::shared_ptr<RuntimeLayer>();
         *runtimeLayer = std::make_shared<RuntimeLayer>();
@@ -71,8 +74,9 @@ namespace garlic::membrane {
     }
 
     void Application::resize(int width, int height) {
-        renderTarget->resize({ width, height });
-        (*editorLayer)->resizeViewport({ width, height });
+        clove::vec2i const size{ width, height };
+        renderTarget->resize(size);
+        surface->setSize(std::move(size));
 
         this->width  = width;
         this->height = height;

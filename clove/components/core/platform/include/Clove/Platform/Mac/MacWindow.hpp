@@ -30,7 +30,10 @@ namespace garlic::clove {
 
 		MacWindowProxy* windowProxy;
 
-		//FUNCTIONS
+        Keyboard::Dispatcher keyboardDispatcher{};
+        Mouse::Dispatcher mouseDispatcher{};
+
+        //FUNCTIONS
 	public:
 		MacWindow() = delete;
 		MacWindow(const WindowDescriptor& descriptor);

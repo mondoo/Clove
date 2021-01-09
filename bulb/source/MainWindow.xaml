@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Garlic.Bulb"
         mc:Ignorable="d"
-        Title="MainWindow" Width="1280" Height="720">
+        Title="MainWindow" Width="1280" Height="720"
+		MouseMove="Window_MouseMove">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
@@ -40,9 +41,15 @@
 			</ItemsControl>
 		</StackPanel>
 
-		<Image x:Name="RenderArea" Grid.Column="1" Stretch="Fill"/>
-		<TextBox x:Name="Log" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Text="{Binding Log.LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8" BorderBrush="{x:Null}" BorderThickness="0"/>
-
+		<!--TODO: Make this user control it's own xaml file-->
+		<UserControl x:Name="EditorViewport" Grid.Column="1"
+					 Focusable="True" IsTabStop="True"
+					 KeyUp="EditorViewport_Key" KeyDown="EditorViewport_Key"
+					 MouseDown="EditorViewport_MouseButton" MouseUp="EditorViewport_MouseButton">
+			<Image x:Name="RenderArea" Stretch="Fill"/>
+		</UserControl>
+		<TextBox x:Name="Log" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Text="{Binding Log.LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8" BorderBrush="{x:Null}" BorderThickness="0" VerticalScrollBarVisibility="Auto"/>
+		
 		<StackPanel x:Name="EntityView" Grid.Column="2" Visibility="{Binding Scene.EntityViewVisibility}">
 			<TextBox Text="{Binding Scene.SelectedEntity.Name, Mode=TwoWay}"/>
 			<ListBox ItemsSource="{Binding Scene.SelectedEntity.Components}">

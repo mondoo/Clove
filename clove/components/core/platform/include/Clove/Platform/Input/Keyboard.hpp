@@ -9,16 +9,11 @@
 
 namespace garlic::clove {
     class Keyboard {
-#if CLOVE_PLATFORM_WINDOWS
-        friend class WindowsWindow;
-#elif CLOVE_PLATFORM_LINUX
-        friend class LinuxWindow;
-#elif CLOVE_PLATFORM_MACOS
-        friend class MacWindow;
-#endif
-
         //TYPES
     public:
+        /**
+         * @brief Represents a single key event (pressed, released etc.)
+         */
         struct Event {
             //TYPES
         public:
@@ -46,19 +41,53 @@ namespace garlic::clove {
             Key getKey() const;
         };
 
+        /**
+         * @brief Recieves events for a Keyboard object 
+         */
+        class Dispatcher {
+            friend Keyboard;
+
+            //VARIABLES
+        private:
+            static constexpr uint32_t bufferSize{ 16u };
+
+            bool autoRepeatEnabled{ false };
+
+            std::unordered_map<Key, bool> keyStates;
+            std::queue<Event> keyBuffer;
+            std::queue<char> charBuffer;
+
+            //FUNCTIONS
+        public:
+            Dispatcher();
+
+            Dispatcher(Dispatcher const &other);
+            Dispatcher(Dispatcher &&other) noexcept;
+
+            Dispatcher &operator=(Dispatcher const &other);
+            Dispatcher &operator=(Dispatcher &&other) noexcept;
+
+            ~Dispatcher();
+
+            void onKeyPressed(Key key);
+            void onKeyReleased(Key key);
+
+            void onChar(char character);
+
+            void clearState();
+
+            template<typename T>
+            static void trimBuffer(std::queue<T> &buffer);
+        };
+
         //VARIABLES
     private:
-        static constexpr uint32_t bufferSize{ 16u };
-
-        bool autoRepeatEnabled{ false };
-
-        std::unordered_map<Key, bool> keyStates;
-        std::queue<Event> keyBuffer;
-        std::queue<char> charBuffer;
+        Dispatcher &dispatcher;
 
         //FUNCTIONS
     public:
-        Keyboard();
+        Keyboard() = delete;
+        Keyboard(Dispatcher &dispatcher);
 
         Keyboard(Keyboard const &other)     = delete;
         Keyboard(Keyboard &&other) noexcept = delete;
@@ -82,17 +111,6 @@ namespace garlic::clove {
         void enableAutoRepeat();
         void disableAutoRepeat();
         bool isAutoRepeatEnabled() const;
-
-    private:
-        void onKeyPressed(Key key);
-        void onKeyReleased(Key key);
-
-        void onChar(char character);
-
-        void clearState();
-
-        template<typename T>
-        static void trimBuffer(std::queue<T> &buffer);
     };
 }
 

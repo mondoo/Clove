@@ -9,16 +9,16 @@
 #include <Clove/Graphics/GraphicsQueue.hpp>
 
 namespace garlic::clove {
-    GraphicsImageRenderTarget::GraphicsImageRenderTarget(garlic::clove::GraphicsImage::Descriptor imageDescriptor)
-        : imageDescriptor{ std::move(imageDescriptor) } {
-        auto const graphicsFactory = Application::get().getGraphicsDevice()->getGraphicsFactory();
+    GraphicsImageRenderTarget::GraphicsImageRenderTarget(GraphicsImage::Descriptor imageDescriptor, std::shared_ptr<GraphicsFactory> factory)
+        : imageDescriptor{ std::move(imageDescriptor) }
+        , factory{ std::move(factory) } {
 
         //We won't be allocating any buffers from this queue, only using it to submit
-        graphicsQueue = *graphicsFactory->createGraphicsQueue(garlic::clove::CommandQueueDescriptor{ .flags = garlic::clove::QueueFlags::None });
-        transferQueue = *graphicsFactory->createTransferQueue(garlic::clove::CommandQueueDescriptor{ .flags = garlic::clove::QueueFlags::ReuseBuffers });
+        graphicsQueue = *this->factory->createGraphicsQueue(CommandQueueDescriptor{ .flags = QueueFlags::None });
+        transferQueue = *this->factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers });
 
-        frameInFlight           = *graphicsFactory->createFence({ true });
-        renderFinishedSemaphore = *graphicsFactory->createSemaphore();
+        frameInFlight           = *this->factory->createFence({ true });
+        renderFinishedSemaphore = *this->factory->createSemaphore();
 
         transferCommandBuffer = transferQueue->allocateCommandBuffer();
 
@@ -39,7 +39,7 @@ namespace garlic::clove {
         return 0;
     }
 
-    void GraphicsImageRenderTarget::submit(uint32_t imageIndex, size_t const frameId, garlic::clove::GraphicsSubmitInfo submission) {
+    void GraphicsImageRenderTarget::submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) {
         using namespace garlic::clove;
 
         submission.signalSemaphores.push_back(renderFinishedSemaphore);
@@ -52,7 +52,7 @@ namespace garlic::clove {
         transferQueue->submit({ std::move(transferSubmission) }, frameInFlight.get());
     }
 
-    garlic::clove::GraphicsImage::Format GraphicsImageRenderTarget::getImageFormat() const {
+    GraphicsImage::Format GraphicsImageRenderTarget::getImageFormat() const {
         return imageDescriptor.format;
     }
 
@@ -60,7 +60,7 @@ namespace garlic::clove {
         return imageDescriptor.dimensions;
     }
 
-    std::vector<std::shared_ptr<garlic::clove::GraphicsImageView>> GraphicsImageRenderTarget::getImageViews() const {
+    std::vector<std::shared_ptr<GraphicsImageView>> GraphicsImageRenderTarget::getImageViews() const {
         return { renderTargetView };
     }
 
@@ -69,7 +69,7 @@ namespace garlic::clove {
         createImages();
     }
 
-    std::shared_ptr<garlic::clove::GraphicsBuffer> GraphicsImageRenderTarget::getNextReadyBuffer() {
+    std::shared_ptr<GraphicsBuffer> GraphicsImageRenderTarget::getNextReadyBuffer() {
         //Stall until we are ready to return the image.
         frameInFlight->wait();
 
@@ -78,9 +78,6 @@ namespace garlic::clove {
 
     void GraphicsImageRenderTarget::createImages() {
         using namespace garlic::clove;
-
-        auto const device{ Application::get().getGraphicsDevice() };
-        auto const factory{ device->getGraphicsFactory() };
 
         //Make sure we're not using the image when we re-create it
         frameInFlight->wait();

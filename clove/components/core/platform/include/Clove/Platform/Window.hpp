@@ -10,6 +10,9 @@
 #include <any>
 
 namespace garlic::clove {
+    /**
+     * @brief An abstraction over a platform's native window
+     */
     class Window {
         //VARIABLES
     public:
@@ -17,12 +20,16 @@ namespace garlic::clove {
         MultiCastDelegate<void(vec2ui const &)> onWindowResize{};
 
     protected:
-        Keyboard keyboard{};
-        Mouse mouse{};
+        Keyboard keyboard;
+        Mouse mouse;
 
         //FUNCTIONS
     public:
-        Window() = default;
+        Window() = delete;
+        Window(Keyboard::Dispatcher &keyboardDispatcher, Mouse::Dispatcher &mouseDispatcher)
+            : keyboard{ keyboardDispatcher }
+            , mouse{ mouseDispatcher } {
+        }
 
         Window(Window const &other)     = delete;
         Window(Window &&other) noexcept = delete;
@@ -32,6 +39,9 @@ namespace garlic::clove {
 
         virtual ~Window() = default;
 
+        /**
+         * @brief Pumps the message queue of the window. Populating the Mouse and Keyboard classes with events.
+         */
         virtual void processInput() = 0;
 
         virtual std::any getNativeWindow() const = 0;

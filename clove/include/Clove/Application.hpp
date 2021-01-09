@@ -5,13 +5,13 @@
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <Clove/Platform/PlatformTypes.hpp>
 #include <chrono>
-#include <memory>
 #include <map>
+#include <memory>
 #include <vector>
 
 namespace garlic::clove {
     class Platform;
-    class Window;
+    class Surface;
     class GraphicsDevice;
     class EntityManager;
     class Layer;
@@ -40,11 +40,13 @@ namespace garlic::clove {
         //VARIABLES
     private:
         static Application *instance;
+        State currentState{ State::Running }; //Assumed to be initialised to the running state.
+
+        std::unique_ptr<Surface> surface;
 
         std::unique_ptr<GraphicsDevice> graphicsDevice;
         std::unique_ptr<AudioDevice> audioDevice;
 
-        std::unique_ptr<Window> window;
         std::unique_ptr<ForwardRenderer3D> renderer;
         std::unique_ptr<EntityManager> entityManager;
         std::shared_ptr<PhysicsLayer> physicsLayer;
@@ -64,21 +66,30 @@ namespace garlic::clove {
         ~Application();
 
         /**
-         * @brief Creates a standard Garlic application that opens and manages it's own window
+         * @brief Creates a standard Garlic application that opens and manages it's own window.
+         * @param graphicsApi Which graphics api to use.
+         * @param audioApi Which audio api to use.
+         * @param windowDescriptor A descriptor describing the properties of the window.
+         * @return The created application instance.
          */
         static std::unique_ptr<Application> create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor);
 
         /**
-         * @brief Create a headles Garlic application without a window.
+         * @brief Create a Garlic application without a window that is capable of offscreen rendering.
+         * @param graphicsApi Which graphics api to use.
+         * @param audioApi Which audio api to use.
+         * @param renderTargetDescriptor A descriptor describing the format of the target that'll be rendered to.
+         * @param surface A surface to provide input functionality to the application.
+         * @return A pair with the created application instance and a pointer to the render target of the application.
          */
-        static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor);
+        static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface);
 
         static Application &get();
 
         void pushLayer(std::shared_ptr<Layer> layer, LayerGroup group = LayerGroup::Core);
         void popLayer(std::shared_ptr<Layer> const &layer);
 
-        State getState() const;
+        inline State getState() const;
 
         /**
          * @brief Performs a single iteration of the main application loop.
@@ -92,12 +103,13 @@ namespace garlic::clove {
          */
         void shutdown();
 
+        inline Surface *getSurface() const;
+
         //Devices
         inline GraphicsDevice *getGraphicsDevice() const;
         inline AudioDevice *getAudioDevice() const;
 
         //Systems
-        inline Window *getWindow() const;
         inline ForwardRenderer3D *getRenderer() const;
         inline EntityManager *getEntityManager() const;
         inline PhysicsLayer *getPhysicsLayer() const;

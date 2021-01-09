@@ -6,7 +6,8 @@
 #define CLV_WINDOWS_QUIT 25397841//Note: this number is completely random
 
 namespace garlic::clove {
-    WindowsWindow::WindowsWindow(WindowDescriptor const &descriptor) {
+    WindowsWindow::WindowsWindow(WindowDescriptor const &descriptor)
+        : Window(keyboardDispatcher, mouseDispatcher) {
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
         instance = GetModuleHandle(nullptr);
@@ -144,70 +145,70 @@ namespace garlic::clove {
                 return 0;
 
             case WM_KILLFOCUS:
-                keyboard.clearState();
+                keyboardDispatcher.clearState();
                 break;
 
                 //Keyboard
             case WM_KEYDOWN:
             case WM_SYSKEYDOWN:
                 if(!(lParam & (1 << 30)) || keyboard.isAutoRepeatEnabled()) {
-                    keyboard.onKeyPressed(static_cast<Key>(wParam));
+                    keyboardDispatcher.onKeyPressed(static_cast<Key>(wParam));
                 }
                 break;
 
             case WM_KEYUP:
             case WM_SYSKEYUP:
-                keyboard.onKeyReleased(static_cast<Key>(wParam));
+                keyboardDispatcher.onKeyReleased(static_cast<Key>(wParam));
                 break;
 
             case WM_CHAR:
-                keyboard.onChar(static_cast<char>(wParam));
+                keyboardDispatcher.onChar(static_cast<char>(wParam));
                 break;
 
                 //Mouse
             case WM_MOUSEMOVE:
                 if(pt.x >= 0 && pt.x < getSize().x && pt.y >= 0 && pt.y < getSize().y) {
-                    mouse.onMouseMove(pt.x, pt.y);
+                    mouseDispatcher.onMouseMove(pt.x, pt.y);
                     if(!mouse.isInWindow()) {
-                        mouse.onMouseEnter();
+                        mouseDispatcher.onMouseEnter();
                         SetCapture(hWnd);
                     }
                 } else {
                     if(mouse.isButtonPressed(MouseButton::Left) || mouse.isButtonPressed(MouseButton::Right)) {
-                        mouse.onMouseMove(pt.x, pt.y);
+                        mouseDispatcher.onMouseMove(pt.x, pt.y);
                     } else {
-                        mouse.onMouseLeave();
+                        mouseDispatcher.onMouseLeave();
                         ReleaseCapture();
                     }
                 }
                 break;
 
             case WM_LBUTTONDOWN:
-                mouse.onButtonPressed(MouseButton::Left, pt.x, pt.y);
+                mouseDispatcher.onButtonPressed(MouseButton::Left, pt.x, pt.y);
                 break;
 
             case WM_LBUTTONUP:
-                mouse.onButtonReleased(MouseButton::Left, pt.x, pt.y);
+                mouseDispatcher.onButtonReleased(MouseButton::Left, pt.x, pt.y);
                 break;
 
             case WM_RBUTTONDOWN:
-                mouse.onButtonPressed(MouseButton::Right, pt.x, pt.y);
+                mouseDispatcher.onButtonPressed(MouseButton::Right, pt.x, pt.y);
                 break;
 
             case WM_RBUTTONUP:
-                mouse.onButtonReleased(MouseButton::Right, pt.x, pt.y);
+                mouseDispatcher.onButtonReleased(MouseButton::Right, pt.x, pt.y);
                 break;
 
             case WM_XBUTTONDOWN:
-                mouse.onButtonPressed(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pt.x, pt.y);
+                mouseDispatcher.onButtonPressed(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pt.x, pt.y);
                 break;
 
             case WM_XBUTTONUP:
-                mouse.onButtonReleased(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pt.x, pt.y);
+                mouseDispatcher.onButtonReleased(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pt.x, pt.y);
                 break;
 
             case WM_MOUSEWHEEL:
-                mouse.onWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam), pt.x, pt.y);
+                mouseDispatcher.onWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam), pt.x, pt.y);
                 break;
 
                 //Window

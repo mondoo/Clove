@@ -10,16 +10,11 @@
 
 namespace garlic::clove {
     class Mouse {
-#if CLOVE_PLATFORM_WINDOWS
-        friend class WindowsWindow;
-#elif CLOVE_PLATFORM_LINUX
-        friend class LinuxWindow;
-#elif CLOVE_PLATFORM_MACOS
-        friend class MacWindow;
-#endif
-
         //TYPES
     public:
+        /**
+         * @brief Represents a single mouse event (clicked, moved etc.)
+         */
         struct Event {
             //TYPES
         public:
@@ -54,22 +49,62 @@ namespace garlic::clove {
             MouseButton getButton() const;
         };
 
+        /**
+         * @brief Recieves events for a Mouse object 
+         */
+        class Dispatcher {
+            friend Mouse;
+
+            //VARIABLES
+        private:
+            static constexpr uint32_t bufferSize{ 16u };
+
+            vec2i pos;
+
+            int32_t wheelDelta{ 0 };
+
+            bool inWindow = false;
+
+            std::unordered_map<MouseButton, bool> buttonStates;
+            std::queue<Event> buffer;
+
+            //FUNCTIONS
+        public:
+            Dispatcher();
+
+            Dispatcher(Dispatcher const &other);
+            Dispatcher(Dispatcher&& other) noexcept;
+            
+            Dispatcher &operator=(Dispatcher const &other);
+            Dispatcher &operator=(Dispatcher &&other) noexcept;
+
+            ~Dispatcher();
+
+            void onMouseMove(int32_t x, int32_t y);
+
+            void onButtonPressed(MouseButton button, int32_t x, int32_t y);
+            void onButtonReleased(MouseButton button, int32_t x, int32_t y);
+
+            void onWheelDelta(int32_t delta, int32_t x, int32_t y);
+            void onWheelUp(int32_t x, int32_t y);
+            void onWheelDown(int32_t x, int32_t y);
+
+            void onMouseLeave();
+            void onMouseEnter();
+
+            void clearState();
+
+            void trimBuffer();
+        };
+
         //VARIABLES
     private:
-        static constexpr uint32_t bufferSize{ 16u };
-
-        vec2i pos;
-
-        int32_t wheelDelta{ 0 };
-
-        bool inWindow = false;
-
-        std::unordered_map<MouseButton, bool> buttonStates;
-        std::queue<Event> buffer;
+        Dispatcher &dispatcher;
 
         //FUNCTIONS
     public:
-        Mouse();
+        Mouse() = delete;
+        Mouse(Dispatcher &dispatcher);
 
         Mouse(Mouse const &other)     = delete;
         Mouse(Mouse &&other) noexcept = delete;
@@ -89,22 +124,5 @@ namespace garlic::clove {
         bool isBufferEmpty() const;
 
         void flush();
-
-    private:
-        void onMouseMove(int32_t x, int32_t y);
-
-        void onButtonPressed(MouseButton button, int32_t x, int32_t y);
-        void onButtonReleased(MouseButton button, int32_t x, int32_t y);
-
-        void onWheelDelta(int32_t delta, int32_t x, int32_t y);
-        void onWheelUp(int32_t x, int32_t y);
-        void onWheelDown(int32_t x, int32_t y);
-
-        void onMouseLeave();
-        void onMouseEnter();
-
-        void clearState();
-
-        void trimBuffer();
     };
 }

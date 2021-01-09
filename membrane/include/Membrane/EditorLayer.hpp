@@ -14,19 +14,18 @@ namespace garlic::membrane {
         //VARIABLES
     private:
         clove::Entity editorCamera;
-        clove::Viewport viewport;
+
+        clove::vec2i prevMousePos{};
+        float mouseLookYaw{};
+        float mouseLookPitch{};
 
         //FUNCTIONS
     public:
-        EditorLayer(clove::vec2ui size);
+        EditorLayer();
 
         void onAttach() override;
+        clove::InputResponse onInputEvent(clove::InputEvent const &inputEvent) override;
         void onUpdate(clove::DeltaTime const deltaTime) override;
         void onDetach() override;
-
-        void resizeViewport(clove::vec2ui size);
-
-    private:
-        void createEntity();
     };
 }
