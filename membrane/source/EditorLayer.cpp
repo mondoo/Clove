@@ -7,6 +7,7 @@
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/ModelLoader.hpp>
+#include <Clove/Surface.hpp>
 
 namespace garlic::membrane {
     EditorLayer::EditorLayer()
@@ -26,6 +27,24 @@ namespace garlic::membrane {
     }
 
     void EditorLayer::onUpdate(clove::DeltaTime const deltaTime) {
+        clove::vec3f pos{};
+        auto &keyBoard{ clove::Application::get().getSurface()->getKeyboard() };
+        auto *const entityManager{ clove::Application::get().getEntityManager() };
+
+        if(keyBoard.isKeyPressed(clove::Key::W)) {
+            pos.z += 1.0f;
+        } 
+        if(keyBoard.isKeyPressed(clove::Key::S)) {
+            pos.z -= 1.0f;
+        }
+        if(keyBoard.isKeyPressed(clove::Key::A)) {
+            pos.x -= 1.0f;
+        }
+        if(keyBoard.isKeyPressed(clove::Key::D)) {
+            pos.x += 1.0f;
+        }
+
+        entityManager->getComponent<clove::TransformComponent>(editorCamera).position += pos * 10.0f * deltaTime.getDeltaSeconds();
     }
 
     void EditorLayer::onDetach() {
