@@ -43,8 +43,16 @@ namespace garlic::membrane {
         if(keyBoard.isKeyPressed(clove::Key::D)) {
             pos.x += 1.0f;
         }
+        if(keyBoard.isKeyPressed(clove::Key::Space)) {
+            pos.y += 1.0f;
+        }
+        if(keyBoard.isKeyPressed(clove::Key::Shift_Left)) {
+            pos.y -= 1.0f;
+        }
 
-        entityManager->getComponent<clove::TransformComponent>(editorCamera).position += pos * 10.0f * deltaTime.getDeltaSeconds();
+        auto &camTrans{ entityManager->getComponent<clove::TransformComponent>(editorCamera) };
+
+        camTrans.position += camTrans.rotation * pos * 10.0f * deltaTime.getDeltaSeconds();
     }
 
     void EditorLayer::onDetach() {
