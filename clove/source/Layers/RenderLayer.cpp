@@ -29,8 +29,10 @@ namespace garlic::clove {
     void RenderLayer::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
+        Entity activeCamera{};
+
         //Transform and submit cameras
-        entityManager->forEach([this](TransformComponent const &transform, CameraComponent &camera) {
+        entityManager->forEach([this, &activeCamera](Entity entity, TransformComponent const &transform, CameraComponent &camera) {
             vec3f const position{ transform.position };
 
             vec3f const camFront{ transform.getForward() };
@@ -39,6 +41,8 @@ namespace garlic::clove {
             camera.camera.setView(lookAt(position, position + camFront, camUp));
 
             renderer->submitCamera(camera.camera, std::move(position));
+
+            activeCamera = entity;
         });
 
         //Submit static meshes
@@ -60,9 +64,12 @@ namespace garlic::clove {
         });
 
         //Submit directional lights
-        entityManager->forEach([this](DirectionalLightComponent &light) {
-            float constexpr farDist{ 1000.0f };
-            mat4f const shadowProj{ createOrthographicMatrix(-50.0f, 50.0f, -50.0f, 50.0f, 0.5f, farDist) };
+        vec3f const dirLightPos{ activeCamera != NullEntity ? entityManager->getComponent<TransformComponent>(activeCamera).position : vec3f{ 0.0f } };
+        entityManager->forEach([this, &dirLightPos](DirectionalLightComponent &light) {
+            float constexpr mapSize{ 30.0f };
+            float constexpr nearDist{ -100.0f };//Negative near dist means we don't have to move the light along it's direction vector
+            float constexpr farDist{ 100.0f };
+            mat4f const shadowProj{ createOrthographicMatrix(-mapSize, mapSize, -mapSize, mapSize, nearDist, farDist) };
 
             DirectionalLight lightProxy{
                 .data = {
@@ -71,7 +78,7 @@ namespace garlic::clove {
                     .diffuse   = light.diffuseColour,
                     .specular  = light.specularColour,
                 },
-                .shadowTransform = shadowProj * lookAt(-normalise(light.direction) * (farDist / 2.0f), vec3f{ 0.0f, 0.0f, 0.0f }, vec3f{ 0.0f, 1.0f, 0.0f }),
+                .shadowTransform = shadowProj * lookAt(dirLightPos, dirLightPos + light.direction, vec3f{ 0.0f, 1.0f, 0.0f }),
             };
 
             renderer->submitLight(std::move(lightProxy));
