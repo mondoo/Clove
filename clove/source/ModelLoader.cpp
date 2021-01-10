@@ -236,7 +236,7 @@ namespace garlic::clove::ModelLoader {
         }
 
         aiScene const *openFile(std::string_view modelFilePath, Assimp::Importer &importer) {
-            return importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_MakeLeftHanded | aiProcess_FlipUVs );
+            return importer.ReadFile(modelFilePath.data(), aiProcess_JoinIdenticalVertices | aiProcess_MakeLeftHanded | aiProcess_Triangulate | aiProcess_FlipUVs);
         }
     }
 
