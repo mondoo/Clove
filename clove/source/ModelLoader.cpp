@@ -346,6 +346,8 @@ namespace garlic::clove::ModelLoader {
 
             std::map<float, size_t> framePoseIndexMap;
 
+            std::unordered_map<std::string, JointIndexType> assimpFbxIndexCache;
+
             //Get each channel's pose at each time
             for(float frame : frames) {
                 AnimationPose animPose{};
@@ -360,7 +362,29 @@ namespace garlic::clove::ModelLoader {
                         continue;
                     }
 
-                    JointIndexType const jointIndex{ getJointIndex(*skeleton, channel->mNodeName.C_Str()).getValue() };
+                    //Assimp appears to have trouble importing FBX animations. So we need to see if it's added nodes and then map them to the correct ones.
+                    std::string const nodeName{ channel->mNodeName.C_Str() };
+                    auto jointIdResult{ getJointIndex(*skeleton, nodeName) };
+                    if(!jointIdResult.hasValue()) {
+                        std::string_view constexpr assimpFbx{ "_$AssimpFbx$_" };
+
+                        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} not found in skeleton, searching for {1}...", nodeName, assimpFbx);
+                        size_t const pos{ nodeName.find(assimpFbx) };
+
+                        if(pos != nodeName.npos) {
+                            if(!assimpFbxIndexCache.contains(nodeName)) {
+                                std::string const jointName{ nodeName.substr(0, pos) };
+                                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} substr found! Attempting to find index for {1}", assimpFbx, jointName);
+                                assimpFbxIndexCache[nodeName] = getJointIndex(*skeleton, jointName).getValue();
+                            }
+
+                            jointIdResult = assimpFbxIndexCache[nodeName];
+                        } else {
+                            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Could not find {0} in skeleton or a substr of {1} in {0}.", nodeName, assimpFbx);
+                        }
+                    }
+
+                    JointIndexType const jointIndex{ std::move(jointIdResult.getValue()) };
                     JointPose &jointPose{ animPose.poses[jointIndex] };
 
                     bool positionFound{ false };
