@@ -243,6 +243,8 @@ namespace garlic::clove::ModelLoader {
     StaticModel loadStaticModel(std::string_view modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
 
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Loading static model: {0}", modelFilePath);
+
         std::vector<std::shared_ptr<Mesh>> meshes;
 
         Assimp::Importer importer;
@@ -262,6 +264,8 @@ namespace garlic::clove::ModelLoader {
 
     AnimatedModel loadAnimatedModel(std::string_view modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
+
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Loading animated model: {0}", modelFilePath);
 
         std::vector<std::shared_ptr<Mesh>> meshes;
 
@@ -303,7 +307,11 @@ namespace garlic::clove::ModelLoader {
         //Set parents
         for(auto &joint : skeleton->joints) {
             if(auto *aiJoint{ nodeNameMap[joint.name] }; aiJoint->mParent != nullptr) {
-                joint.parentIndex = getJointParentId(*skeleton, aiJoint, true).getValue();
+                if(aiJoint->mParent != scene->mRootNode){
+                    joint.parentIndex = getJointParentId(*skeleton, aiJoint, true).getValue();
+                }else{
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0}'s parent is root node. Skipping id retrieval.", joint.name);
+                }
             }
         }
 
