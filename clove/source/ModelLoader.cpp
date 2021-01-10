@@ -236,7 +236,7 @@ namespace garlic::clove::ModelLoader {
         }
 
         aiScene const *openFile(std::string_view modelFilePath, Assimp::Importer &importer) {
-            return importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
+            return importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_MakeLeftHanded | aiProcess_FlipUVs );
         }
     }
 
@@ -255,10 +255,11 @@ namespace garlic::clove::ModelLoader {
         }
 
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
-            aiMesh *mesh = scene->mMeshes[i];
+            aiMesh *mesh{ scene->mMeshes[i] };
             meshes.emplace_back(processMesh(mesh, scene, MeshType::Default));
         }
 
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Finished loading static model: {0}", modelFilePath);
         return { meshes, std::make_shared<Material>() };
     }
 
@@ -307,9 +308,9 @@ namespace garlic::clove::ModelLoader {
         //Set parents
         for(auto &joint : skeleton->joints) {
             if(auto *aiJoint{ nodeNameMap[joint.name] }; aiJoint->mParent != nullptr) {
-                if(aiJoint->mParent != scene->mRootNode){
+                if(aiJoint->mParent != scene->mRootNode) {
                     joint.parentIndex = getJointParentId(*skeleton, aiJoint, true).getValue();
-                }else{
+                } else {
                     CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0}'s parent is root node. Skipping id retrieval.", joint.name);
                 }
             }
@@ -362,9 +363,9 @@ namespace garlic::clove::ModelLoader {
                     JointIndexType const jointIndex{ getJointIndex(*skeleton, channel->mNodeName.C_Str()).getValue() };
                     JointPose &jointPose{ animPose.poses[jointIndex] };
 
-                    bool positionFound = false;
-                    bool rotationFound = false;
-                    bool scaleFound    = false;
+                    bool positionFound{ false };
+                    bool rotationFound{ false };
+                    bool scaleFound{ false };
 
                     for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
                         if(channel->mPositionKeys[key].mTime == frame) {
@@ -466,6 +467,7 @@ namespace garlic::clove::ModelLoader {
             }
         }
 
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Finished loading animated model: {0}", modelFilePath);
         return { meshes, std::make_shared<Material>(), std::move(skeleton), std::move(animationClips) };
     }
 }
