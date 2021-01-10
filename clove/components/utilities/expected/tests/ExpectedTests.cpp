@@ -197,7 +197,6 @@ TEST(ExpectedTests, ThrowsWhenAccessingTheValueWhenItIsAnError) {
     Expected<int32_t, std::string> stringAsErrorExpected{ std::string{ "Error!" } };
 
     EXPECT_ANY_THROW(expected.getValue());
-    EXPECT_ANY_THROW(std::move(movedExpected.getValue()));
     EXPECT_ANY_THROW(int32_t explicitlyMovedInt{ std::move(movedExpected.getValue()) });
     EXPECT_ANY_THROW(stringAsErrorExpected.getValue());
 }
