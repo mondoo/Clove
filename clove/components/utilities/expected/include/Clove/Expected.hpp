@@ -68,7 +68,7 @@ namespace garlic::clove {
         ~Expected() noexcept {}
 
         bool hasValue() const noexcept;
-        operator bool() const noexcept;
+        explicit operator bool() const noexcept;
 
         /**
          * @brief Returns the contained value. If this contains an error 'throw' is called instead.
