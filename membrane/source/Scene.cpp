@@ -2,6 +2,8 @@
 
 #include <Clove/Application.hpp>
 #include <Clove/Components/TransformComponent.hpp>
+#include <Clove/Components/StaticModelComponent.hpp>
+#include <Clove/Components/PointLightComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <fstream>
 #include <yaml-cpp/yaml.h>
@@ -70,6 +72,18 @@ namespace garlic::membrane {
                 emitter << YAML::EndSeq;
                 emitter << YAML::EndMap;
             }
+            if(manager->hasComponent<StaticModelComponent>(entity)) {
+                auto &comp{ manager->getComponent<StaticModelComponent>(entity) };
+                emitter << YAML::BeginMap;
+                emitter << YAML::Key << "id" << YAML::Value << typeid(comp).hash_code();
+                emitter << YAML::EndMap;
+            }
+            if(manager->hasComponent<PointLightComponent>(entity)) {
+                auto &comp{ manager->getComponent<PointLightComponent>(entity) };
+                emitter << YAML::BeginMap;
+                emitter << YAML::Key << "id" << YAML::Value << typeid(comp).hash_code();
+                emitter << YAML::EndMap;
+            }
             emitter << YAML::EndSeq;
             emitter << YAML::EndMap;
         }
@@ -77,10 +91,8 @@ namespace garlic::membrane {
         emitter << YAML::EndMap;
 
         //TEMP: Testing using nodes:
-        YAML::Node test{ YAML::NodeType::Sequence };
-        test.push_back(1);
-        test.push_back(1);
-        test.push_back(1);
+        YAML::Node test{ YAML::NodeType::Map };
+        test["data"] = std::vector{ 1, 3, 4 };
         emitter << test;
 
         //TODO: Using just yaml for now but we'd probably want our own type.
