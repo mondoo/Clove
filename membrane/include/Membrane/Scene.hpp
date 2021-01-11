@@ -10,6 +10,7 @@ namespace garlic::membrane {
     class Scene {
         //VARIABLES
     private:
+        std::vector<clove::Entity> entities;
 
         //FUNCTIONS
     public:

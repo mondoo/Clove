@@ -1,5 +1,8 @@
 #include "Membrane/Scene.hpp"
 
+#include <Clove/ECS/EntityManager.hpp>
+#include <Clove/Application.hpp>
+
 namespace garlic::membrane {
     Scene::Scene(std::filesystem::path scenefile) {
         //Load
@@ -10,7 +13,9 @@ namespace garlic::membrane {
     }
 
     clove::Entity Scene::createEntity() {
-        return clove::Entity();
+        auto entity{ clove::Application::get().getEntityManager()->create() };
+        entities.push_back(entity);
+        return entity;
     }
 
     void Scene::save() {

@@ -86,13 +86,14 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::onDetach() {
-        for(auto &entity : runtimeEntities) {
+        //TODO: Handled by the scene?
+        /*for(auto &entity : runtimeEntities) {
             entityManager->destroy(entity);
-        }
+        }*/
     }
 
     clove::Entity RuntimeLayer::createEntity(std::string_view name) {
-        clove::Entity entity{ entityManager->create() };
+        clove::Entity entity{ currentScene.createEntity() };
         runtimeEntities.push_back(entity);
 
         Engine_OnEntityCreated ^ message { gcnew Engine_OnEntityCreated };
