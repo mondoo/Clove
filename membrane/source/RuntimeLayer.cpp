@@ -26,6 +26,8 @@ namespace garlic::membrane {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &RuntimeLayerMessageProxy::createEntity));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateComponent ^>(this, &RuntimeLayerMessageProxy::createComponent));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &RuntimeLayerMessageProxy::updateTransform));
+
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_SaveScene ^>(this, &RuntimeLayerMessageProxy::saveScene));
         }
 
     private:
@@ -43,6 +45,10 @@ namespace garlic::membrane {
             clove::vec3f scale{message->scale.x, message->scale.y, message->scale.z};
 
             layer->updateTransform(message->entity, pos, rot, scale);
+        }
+
+        void saveScene(Editor_SaveScene ^message){
+            layer->currentScene.save();
         }
     };
     // clang-format on

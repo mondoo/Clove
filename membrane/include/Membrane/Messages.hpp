@@ -62,5 +62,7 @@ namespace garlic::membrane {
     public:
         System::Windows::Point position;
     };
+
+    public ref class Editor_SaveScene{};
     // clang-format on
 }
