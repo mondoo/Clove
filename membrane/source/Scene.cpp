@@ -25,8 +25,8 @@ namespace garlic::membrane {
         //NOTE: this node will be loaded from a file.
         YAML::Node rootNode;
 
-        rootNode["Version"] = 0;
-        rootNode["SceneId"] = 1234567890;
+        rootNode["version"] = -1;
+        rootNode["sceneid"] = -1;
 
         for(auto entity : entities) {
             YAML::Node entityData;
@@ -35,11 +35,20 @@ namespace garlic::membrane {
 
             rootNode["Entities"].push_back(entityData);
 
-            YAML::Node components;
-            components["TestComponent_1"] = std::vector<float>{ 100.3f, 29.1f, 999.0f };
-            components["TestComponent_2"] = "Name: XYZ";
+            YAML::Node component1;
+            component1["id"] = 123;
+            component1["data"].push_back(1);
+            component1["data"].push_back(1);
 
-            entityData["components"].push_back(components);
+            entityData["components"].push_back(component1);
+
+            YAML::Node component2;
+            component2["id"] = 456;
+            component2["data"].push_back("first");
+            component2["data"].push_back("second");
+
+            entityData["components"].push_back(component2);
+
         }
 
         YAML::Emitter emitter;
