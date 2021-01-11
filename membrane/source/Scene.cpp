@@ -1,9 +1,30 @@
 #include "Membrane/Scene.hpp"
 
 #include <Clove/Application.hpp>
+#include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <fstream>
 #include <yaml-cpp/yaml.h>
+
+using namespace garlic::clove;
+
+namespace YAML {
+    template<>
+    struct convert<TransformComponent> {
+        static Node encode(TransformComponent const &rhs) {
+            Node root;
+
+            //Required?
+
+            return root;
+        }
+
+        static bool decode(Node const &node, TransformComponent &rhs) {
+            //TODO:
+            return false;
+        }
+    };
+}
 
 namespace garlic::membrane {
     Scene::Scene(std::filesystem::path scenefile) {
@@ -22,37 +43,45 @@ namespace garlic::membrane {
 
     //TODO: Nodes should be built when created. This should just emitt to file.
     void Scene::save() {
-        //NOTE: this node will be loaded from a file.
-        YAML::Node rootNode;
-
-        rootNode["version"] = -1;
-        rootNode["sceneid"] = -1;
-
-        for(auto entity : entities) {
-            YAML::Node entityData;
-            entityData["id"]   = entity;
-            entityData["name"] = "Test Entity Name";
-
-            rootNode["Entities"].push_back(entityData);
-
-            YAML::Node component1;
-            component1["id"] = 123;
-            component1["data"].push_back(1);
-            component1["data"].push_back(1);
-
-            entityData["components"].push_back(component1);
-
-            YAML::Node component2;
-            component2["id"] = 456;
-            component2["data"].push_back("first");
-            component2["data"].push_back("second");
-
-            entityData["components"].push_back(component2);
-
-        }
+        auto *manager{ clove::Application::get().getEntityManager() };
 
         YAML::Emitter emitter;
-        emitter << rootNode;
+
+        emitter << YAML::BeginMap;
+        emitter << YAML::Key << "version" << YAML::Value << -1;
+        emitter << YAML::Key << "sceneid" << YAML::Value << -1;
+        emitter << YAML::Key << "entities";
+        emitter << YAML::BeginSeq;
+        for(auto entity : entities) {
+            emitter << YAML::BeginMap;
+            emitter << YAML::Key << "id" << YAML::Value << entity;
+            emitter << YAML::Key << "name" << YAML::Value << "Test";
+            emitter << YAML::Key << "components";
+            emitter << YAML::BeginSeq;
+            if(manager->hasComponent<TransformComponent>(entity)) {
+                auto &comp{ manager->getComponent<TransformComponent>(entity) };
+                emitter << YAML::BeginMap;
+                emitter << YAML::Key << "id" << YAML::Value << typeid(comp).hash_code();
+                emitter << YAML::Key << "data";
+                emitter << YAML::BeginSeq;
+                emitter << YAML::Flow << std::vector{ comp.position.x, comp.position.y, comp.position.z };
+                emitter << YAML::Flow << std::vector{ comp.rotation.x, comp.rotation.y, comp.rotation.z, comp.rotation.w };
+                emitter << YAML::Flow << std::vector{ comp.scale.x, comp.scale.y, comp.scale.z };
+                emitter << YAML::EndSeq;
+                emitter << YAML::EndMap;
+            }
+            emitter << YAML::EndSeq;
+            emitter << YAML::EndMap;
+        }
+        emitter << YAML::EndSeq;
+        emitter << YAML::EndMap;
+
+        //TEMP: Testing using nodes:
+        YAML::Node test{ YAML::NodeType::Sequence };
+        test.push_back(1);
+        test.push_back(1);
+        test.push_back(1);
+        emitter << test;
 
         //TODO: Using just yaml for now but we'd probably want our own type.
         std::filesystem::path outPath{ std::filesystem::current_path() / "scene.yaml" };
