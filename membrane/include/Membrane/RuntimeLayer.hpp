@@ -27,7 +27,7 @@ namespace garlic::membrane {
     private:
         msclr::gcroot<RuntimeLayerMessageProxy ^> proxy;
 
-        Scene currentScene{ "" }; //TEMP: not loading in a file for now
+        Scene currentScene{ "scene.yaml" }; //TEMP: not loading in a file for now
 
         clove::EntityManager *entityManager{ nullptr };
         std::vector<clove::Entity> runtimeEntities; //TODO: Remove? Keeping just so update transforms etc.

@@ -64,5 +64,7 @@ namespace garlic::membrane {
     };
 
     public ref class Editor_SaveScene{};
+
+    public ref class Editor_LoadScene{};
     // clang-format on
 }

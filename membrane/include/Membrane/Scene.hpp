@@ -11,15 +11,17 @@ namespace garlic::membrane {
         //VARIABLES
     private:
         std::vector<clove::Entity> entities;
+        std::filesystem::path sceneFile;
 
         //FUNCTIONS
     public:
         //TODO: Ctors
-        Scene(std::filesystem::path scenefile);
+        Scene(std::filesystem::path sceneFile);
         ~Scene();
 
         clove::Entity createEntity();
 
         void save();
+        std::vector<clove::Entity> const &load();
     };
 }

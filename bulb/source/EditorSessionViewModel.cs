@@ -24,7 +24,8 @@ namespace Garlic.Bulb {
 
 		public EditorSessionViewModel() {
 			LoadSceneCommand = new RelayCommand(() => { 
-				Membrane.Log.write(Membrane.LogLevel.Debug, "Load"); 
+				Membrane.Log.write(Membrane.LogLevel.Debug, "Load command sent");
+				Membrane.MessageHandler.sendMessage(new Membrane.Editor_LoadScene());
 			});
 			SaveSceneCommand = new RelayCommand(() => {
 				Membrane.Log.write(Membrane.LogLevel.Debug, "Save command sent");

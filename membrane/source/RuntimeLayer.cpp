@@ -28,6 +28,7 @@ namespace garlic::membrane {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &RuntimeLayerMessageProxy::updateTransform));
 
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_SaveScene ^>(this, &RuntimeLayerMessageProxy::saveScene));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_LoadScene ^>(this, &RuntimeLayerMessageProxy::loadScene));
         }
 
     private:
@@ -49,6 +50,10 @@ namespace garlic::membrane {
 
         void saveScene(Editor_SaveScene ^message){
             layer->currentScene.save();
+        }
+
+        void loadScene(Editor_LoadScene ^message){
+            layer->currentScene.load();
         }
     };
     // clang-format on
