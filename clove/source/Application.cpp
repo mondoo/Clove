@@ -39,15 +39,7 @@ namespace garlic::clove {
 
         //Systems
         app->renderer      = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>(*app->surface, app->graphicsDevice.get()));
-        app->entityManager = std::make_unique<EntityManager>();
-
-        //Layers
-        app->physicsLayer = std::make_shared<PhysicsLayer>();
-        app->pushLayer(std::make_shared<TransformLayer>(), LayerGroup::Initialisation);
-        app->pushLayer(app->physicsLayer, LayerGroup::Initialisation);
-        app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
-        app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
-
+        
         return app;
     }
 
@@ -65,14 +57,6 @@ namespace garlic::clove {
 
         //Systems
         app->renderer      = std::make_unique<ForwardRenderer3D>(std::move(renderTarget));
-        app->entityManager = std::make_unique<EntityManager>();
-
-        //Layers
-        app->physicsLayer = std::make_shared<PhysicsLayer>();
-        app->pushLayer(std::make_shared<TransformLayer>(), LayerGroup::Initialisation);
-        app->pushLayer(app->physicsLayer, LayerGroup::Initialisation);
-        app->pushLayer(std::make_shared<AudioLayer>(), LayerGroup::Render);
-        app->pushLayer(std::make_shared<RenderLayer>(), LayerGroup::Render);
 
         return { std::move(app), renderTargetPtr };
     }
@@ -110,7 +94,7 @@ namespace garlic::clove {
         std::chrono::duration<float> const deltaSeonds{ currFrameTime - prevFrameTime };
         prevFrameTime = currFrameTime;
 
-        renderer->begin();
+        //renderer->begin();
 
         while(auto keyEvent = surface->getKeyboard().getKeyEvent()) {
             InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
@@ -139,7 +123,7 @@ namespace garlic::clove {
             }
         }
 
-        renderer->end();
+        //renderer->end();
     }
 
     void Application::shutdown() {
@@ -153,5 +137,16 @@ namespace garlic::clove {
         instance = this;
 
         prevFrameTime = std::chrono::system_clock::now();
+		
+		//Systems
+		entityManager = std::make_unique<EntityManager>();
+		
+		//Layers
+		physicsLayer = std::make_shared<PhysicsLayer>(entityManager.get());
+		
+		pushLayer(std::make_shared<TransformLayer>(entityManager.get()), LayerGroup::Initialisation);
+		pushLayer(physicsLayer, LayerGroup::Initialisation);
+		pushLayer(std::make_shared<AudioLayer>(entityManager.get()), LayerGroup::Render);
+		pushLayer(std::make_shared<RenderLayer>(entityManager.get()), LayerGroup::Render);
     }
 }
