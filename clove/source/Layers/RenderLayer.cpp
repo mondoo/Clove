@@ -14,9 +14,9 @@
 #include <Clove/Maths/Maths.hpp>
 
 namespace garlic::clove {
-    RenderLayer::RenderLayer(EntityManager *entityManager)
+    RenderLayer::RenderLayer(ForwardRenderer3D *renderer, EntityManager *entityManager)
         : Layer("Render")
-        , renderer{ Application::get().getRenderer() }
+        , renderer{ renderer }
         , entityManager{ entityManager } {
     }
 
