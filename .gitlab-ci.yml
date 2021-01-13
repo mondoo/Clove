@@ -48,7 +48,7 @@ build-release-msvc:
     paths:
       - build/
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "master" || $BUILD_RELEASE'
       when: always
 
 build-test-msvc:
@@ -88,7 +88,7 @@ build-release-gcc:
     paths:
       - build/
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "master" || $BUILD_RELEASE'
       when: always
 
 build-test-gcc:
@@ -130,7 +130,7 @@ build-release-clang:
     paths:
       - build/
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "master" || $BUILD_RELEASE'
       when: always
 
 build-test-clang:
