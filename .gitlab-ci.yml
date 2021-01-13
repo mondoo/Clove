@@ -15,12 +15,24 @@
   tags:
     - windows-1809
 
-.linux_image: &linux_env_image
-  image: registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:5.0.0
+variables:
+  CMAKE_COMPILER_GCC: '-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10'
+  CMAKE_COMPILER_CLANG: '-DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10'
+  CMAKE_RELEASE: '-DCLOVE_ENABLE_ASSERTIONS=OFF -DCLOVE_ENABLE_DEBUG_DEFINITION=OFF -DCLOVE_ENABLE_PROFILING=OFF -DGAR_BUILD_EXAMPLES=OFF -DGAR_BUILD_TESTS=OFF'
+  CMAKE_TEST: '-DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=OFF -DGAR_BUILD_EXAMPLES=OFF -DGAR_BUILD_TESTS=ON'
+  CMAKE_DEBUG: '-DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=ON -DGAR_BUILD_EXAMPLES=ON -DGAR_BUILD_TESTS=OFF'
+  ENGINE_CMAKE_RELEASE: '$CMAKE_RELEASE -DGAR_BUILD_BULB=OFF'
+  ENGINE_CMAKE_TEST: '$CMAKE_TEST -DGAR_BUILD_BULB=OFF'
+  ENGINE_CMAKE_DEBUG: '$CMAKE_DEBUG -DGAR_BUILD_BULB=OFF'
+  EDITOR_CMAKE_RELEASE: '$ENGINE_CMAKE_RELEASE -DGAR_BUILD_BULB=ON'
+  EDITOR_CMAKE_TEST: '$ENGINE_CMAKE_TEST -DGAR_BUILD_BULB=ON'
+  EDITOR_CMAKE_DEBUG: '$ENGINE_CMAKE_DEBUG -DGAR_BUILD_BULB=ON'
+  DOCKER_LINUX_BUILD: 'registry.gitlab.com/digital-vessel/garlic-engine/garlic/build_environment/linux:5.0.0'
 
 stages:
   - build
   - test
+  - deploy
 
 #Build
 build-release-msvc:
@@ -30,7 +42,23 @@ build-release-msvc:
   script:
     - mkdir build
     - cd build
-    - cmake -DGAR_BUILD_TESTS=ON -G "Visual Studio 16 2019" ..
+    - cmake $EDITOR_CMAKE_RELEASE -G "Visual Studio 16 2019" ..
+    - cmake --build . --target ALL_BUILD --config Release
+  artifacts:
+    paths:
+      - build/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $BUILD_RELEASE'
+      when: always
+
+build-test-msvc:
+  stage: build
+  <<: *windows_runner_tags
+  <<: *set_up_windows_env
+  script:
+    - mkdir build
+    - cd build
+    - cmake $EDITOR_CMAKE_TEST -G "Visual Studio 16 2019" ..
     - cmake --build . --target ALL_BUILD --config Release
   artifacts:
     paths:
@@ -43,21 +71,35 @@ build-debug-msvc:
   script:
     - mkdir build
     - cd build
-    - cmake -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -G "Visual Studio 16 2019" ..
+    - cmake $EDITOR_CMAKE_DEBUG -G "Visual Studio 16 2019" ..
     - cmake --build . --target ALL_BUILD --config Debug
-  artifacts:
-    paths:
-      - build/
 
 build-release-gcc:
   stage: build
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   before_script:
     - git submodule update --init --recursive
   script:
     - mkdir build
     - cd build
-    - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
+    - cmake $ENGINE_CMAKE_RELEASE -DCMAKE_BUILD_TYPE=Release $CMAKE_COMPILER_GCC -G "Unix Makefiles" ..
+    - cmake --build .
+  artifacts:
+    paths:
+      - build/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $BUILD_RELEASE'
+      when: always
+
+build-test-gcc:
+  stage: build
+  image: $DOCKER_LINUX_BUILD
+  before_script:
+    - git submodule update --init --recursive
+  script:
+    - mkdir build
+    - cd build
+    - cmake $ENGINE_CMAKE_TEST -DCMAKE_BUILD_TYPE=Release $CMAKE_COMPILER_GCC -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
     paths:
@@ -65,27 +107,41 @@ build-release-gcc:
 
 build-debug-gcc:
   stage: build
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   before_script:
     - git submodule update --init --recursive
   script:
     - mkdir build
     - cd build
-    - cmake -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
+    - cmake $ENGINE_CMAKE_DEBUG -DCMAKE_BUILD_TYPE=Debug $CMAKE_COMPILER_GCC -G "Unix Makefiles" ..
+    - cmake --build .
+
+build-release-clang:
+  stage: build
+  image: $DOCKER_LINUX_BUILD
+  before_script:
+    - git submodule update --init --recursive
+  script:
+    - mkdir build
+    - cd build
+    - cmake $ENGINE_CMAKE_RELEASE -DCMAKE_BUILD_TYPE=Release $CMAKE_COMPILER_CLANG -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
     paths:
       - build/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $BUILD_RELEASE'
+      when: always
 
-build-release-clang:
+build-test-clang:
   stage: build
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   before_script:
     - git submodule update --init --recursive
   script:
     - mkdir build
     - cd build
-    - cmake -DGAR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
+    - cmake $ENGINE_CMAKE_TEST -DCMAKE_BUILD_TYPE=Release $CMAKE_COMPILER_CLANG -G "Unix Makefiles" ..
     - cmake --build .
   artifacts:
     paths:
@@ -93,17 +149,14 @@ build-release-clang:
 
 build-debug-clang:
   stage: build
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   before_script:
     - git submodule update --init --recursive
   script:
     - mkdir build
     - cd build
-    - cmake -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
+    - cmake $ENGINE_CMAKE_DEBUG -DCMAKE_BUILD_TYPE=Debug $CMAKE_COMPILER_CLANG -G "Unix Makefiles" ..
     - cmake --build .
-  artifacts:
-    paths:
-      - build/
 
 #Test
 test-msvc:
@@ -116,28 +169,41 @@ test-msvc:
     - cd build
     - ctest -C Release
   dependencies:
-    - build-release-msvc
+    - build-test-msvc
   needs:
-    - build-release-msvc
+    - build-test-msvc
 
 test-gcc:
   stage: test
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   script:
     - cd build
     - ctest -C Release
   dependencies:
-    - build-release-gcc
+    - build-test-gcc
   needs:
-    - build-release-gcc
+    - build-test-gcc
 
 test-clang:
   stage: test
-  <<: *linux_env_image
+  image: $DOCKER_LINUX_BUILD
   script:
     - cd build
     - ctest -C Release
   dependencies:
-    - build-release-clang
+    - build-test-clang
   needs:
-    - build-release-clang
+    - build-test-clang
+
+#Deploy
+doxygen:
+  stage: deploy
+  image: alpine
+  before_script:
+    - apk update
+    - apk add doxygen
+  script:
+    - doxygen Doxyfile
+  artifacts:
+    paths:
+      - html/

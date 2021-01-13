@@ -1,6 +1,7 @@
 #include "Clove/Timer.hpp"
 
 #include <thread>
+#include <algorithm>
 
 #if CLOVE_ENABLE_PROFILING
 namespace garlic::clove {
