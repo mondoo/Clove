@@ -26,37 +26,30 @@ namespace garlic::clove {
     Application::~Application() = default;
 
     std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor) {
-        std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
-
         auto window{ Platform::createWindow(std::move(windowDescriptor)) };
-        window->onWindowCloseDelegate.bind(&Application::shutdown, app.get());
-
-        //Devices
-        app->graphicsDevice = createGraphicsDevice(graphicsApi, window->getNativeWindow());
-        app->audioDevice    = createAudioDevice(audioApi);
-
-        app->surface = std::make_unique<WindowSurface>(std::move(window));
-
-        //Systems
-        app->renderer      = std::make_unique<ForwardRenderer3D>(std::make_unique<SwapchainRenderTarget>(*app->surface, app->graphicsDevice.get()));
-        
+		auto *windowPtr{ window.get() };
+		
+		auto graphicsDevice{ createGraphicsDevice(graphicsApi, window->getNativeWindow()) };
+		auto audioDevice{ createAudioDevice(audioApi) };
+		
+		auto surface{ std::make_unique<WindowSurface>(std::move(window)) };
+		
+		auto renderTarget{ std::make_unique<SwapchainRenderTarget>(*surface, graphicsDevice.get()) };
+		
+		std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
+		windowPtr->onWindowCloseDelegate.bind(&Application::shutdown, app.get());
+		
         return app;
     }
 
     std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface) {
-        std::unique_ptr<Application> app{ new Application };//Initialise without make_unique because we can only access the ctor here
-
-        app->surface = std::move(surface);
-
-        //Devices
-        app->graphicsDevice = createGraphicsDevice(graphicsApi, std::any{});
-        app->audioDevice    = createAudioDevice(audioApi);
-
-        auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(std::move(renderTargetDescriptor), app->graphicsDevice->getGraphicsFactory()) };
-        auto *renderTargetPtr{ renderTarget.get() };
-
-        //Systems
-        app->renderer      = std::make_unique<ForwardRenderer3D>(std::move(renderTarget));
+		auto graphicsDevice{ createGraphicsDevice(graphicsApi, std::any{}) };
+		auto audioDevice{ createAudioDevice(audioApi) };
+		
+		auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(std::move(renderTargetDescriptor), graphicsDevice->getGraphicsFactory()) };
+		auto *renderTargetPtr{ renderTarget.get() };
+		
+		std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
 
         return { std::move(app), renderTargetPtr };
     }
@@ -132,13 +125,17 @@ namespace garlic::clove {
         surface.reset();
     }
 
-    Application::Application() {
+    Application::Application(std::unique_ptr<GraphicsDevice> graphicsDevice, std::unique_ptr<AudioDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget)
+		: graphicsDevice{ std::move(graphicsDevice) }
+		, audioDevice{ std::move(audioDevice) }
+		, surface{ std::move(surface) }{
         CLOVE_ASSERT(instance == nullptr, "Only one Application can be active");
         instance = this;
 
         prevFrameTime = std::chrono::system_clock::now();
 		
 		//Systems
+		renderer = std::make_unique<ForwardRenderer3D>(this->graphicsDevice.get(), std::move(renderTarget));
 		entityManager = std::make_unique<EntityManager>();
 		
 		//Layers
@@ -147,6 +144,6 @@ namespace garlic::clove {
 		pushLayer(std::make_shared<TransformLayer>(entityManager.get()), LayerGroup::Initialisation);
 		pushLayer(physicsLayer, LayerGroup::Initialisation);
 		pushLayer(std::make_shared<AudioLayer>(entityManager.get()), LayerGroup::Render);
-		pushLayer(std::make_shared<RenderLayer>(entityManager.get()), LayerGroup::Render);
+		pushLayer(std::make_shared<RenderLayer>(renderer.get(), entityManager.get()), LayerGroup::Render);
     }
 }

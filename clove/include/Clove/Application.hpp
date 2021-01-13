@@ -19,6 +19,7 @@ namespace garlic::clove {
     class GraphicsImageRenderTarget;
     class AudioDevice;
     class PhysicsLayer;
+	class RenderTarget;
 }
 
 namespace garlic::clove {
@@ -42,10 +43,10 @@ namespace garlic::clove {
         static Application *instance;
         State currentState{ State::Running }; //Assumed to be initialised to the running state.
 
-        std::unique_ptr<Surface> surface;
-
         std::unique_ptr<GraphicsDevice> graphicsDevice;
         std::unique_ptr<AudioDevice> audioDevice;
+		
+		std::unique_ptr<Surface> surface;
 
         std::unique_ptr<ForwardRenderer3D> renderer;
         std::unique_ptr<EntityManager> entityManager;
@@ -57,6 +58,8 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
+		Application() = delete;
+		
         Application(Application const &other)     = delete;
         Application(Application &&other) noexcept = delete;
 
@@ -115,7 +118,7 @@ namespace garlic::clove {
         inline PhysicsLayer *getPhysicsLayer() const;
 
     private:
-        Application();
+        Application(std::unique_ptr<GraphicsDevice> graphicsDevice, std::unique_ptr<AudioDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget);
     };
 }
 
