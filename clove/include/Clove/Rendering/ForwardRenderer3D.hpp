@@ -157,7 +157,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         ForwardRenderer3D() = delete;
-        ForwardRenderer3D(std::unique_ptr<RenderTarget> renderTarget);
+        ForwardRenderer3D(GraphicsDevice *graphicsDevice, std::unique_ptr<RenderTarget> renderTarget);
 
         ForwardRenderer3D(ForwardRenderer3D const &other) = delete;
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
