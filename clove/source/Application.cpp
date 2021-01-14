@@ -90,7 +90,7 @@ namespace garlic::clove {
         std::chrono::duration<float> const deltaSeonds{ currFrameTime - prevFrameTime };
         prevFrameTime = currFrameTime;
 
-        //renderer->begin();
+        renderer->begin();
 
         while(auto keyEvent = surface->getKeyboard().getKeyEvent()) {
             InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
@@ -119,7 +119,7 @@ namespace garlic::clove {
             }
         }
 
-        //renderer->end();
+        renderer->end();
     }
 
     void Application::shutdown() {
