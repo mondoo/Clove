@@ -59,7 +59,7 @@ namespace garlic::clove {
         return std::make_pair(display, window);
     }
 
-    vec2i LinuxWindow::getPosition() const {
+    vec2i LinuxWindow::getPosition(bool clientArea) const {
         ::Window rootWindow;
         int32_t posX;
         int32_t posY;

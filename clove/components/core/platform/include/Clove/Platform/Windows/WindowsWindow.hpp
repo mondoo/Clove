@@ -32,7 +32,7 @@ namespace garlic::clove {
 
         std::any getNativeWindow() const override;
 
-        vec2i getPosition() const override;
+        vec2i getPosition(bool clientArea) const override;
         vec2i getSize() const override;
 
         void moveWindow(vec2i const &position) override;

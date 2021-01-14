@@ -47,9 +47,9 @@ namespace garlic::clove {
 		~MacWindow();
 
 		std::any getNativeWindow() const override;
-		
-		vec2i getPosition() const override;
-		vec2i getSize() const override;
+
+        vec2i getPosition(bool clientArea) const override;
+        vec2i getSize() const override;
 
 		void moveWindow(const vec2i& position) override;
 		void resizeWindow(const vec2i& size) override;

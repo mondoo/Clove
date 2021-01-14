@@ -48,7 +48,7 @@ namespace garlic::clove{
 		return [windowProxy window];
 	}
 	
-	vec2i MacWindow::getPosition() const{
+	vec2i MacWindow::getPosition(bool clientArea) const{
 		NSRect frame = [[windowProxy window] frame];
 		return { frame.origin.x, frame.origin.y };
 	}
@@ -59,12 +59,12 @@ namespace garlic::clove{
 	}
 
 	void MacWindow::moveWindow(const vec2i& position){
-		const vec2i size = getSize();
+		vec2i const size{ getSize() };
 		[[windowProxy window] setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}
 	
 	void MacWindow::resizeWindow(const vec2i& size){
-		const vec2i position = getPosition();
+		vec2i const position{ getPosition() };
 		[[windowProxy window] setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}
 	

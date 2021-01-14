@@ -66,7 +66,7 @@ namespace garlic::clove {
         return windowsHandle;
     }
 
-    vec2i WindowsWindow::getPosition() const {
+    vec2i WindowsWindow::getPosition(bool clientArea) const {
         RECT windowRect;
         GetWindowRect(windowsHandle, &windowRect);
         MapWindowPoints(HWND_DESKTOP, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
