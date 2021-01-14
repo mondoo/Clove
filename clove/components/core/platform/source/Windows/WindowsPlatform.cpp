@@ -1,5 +1,6 @@
 #include "Clove/Platform/Platform.hpp"
 
+#include "Clove/Platform/Windows/CloveWindows.hpp"
 #include "Clove/Platform/Windows/WindowsWindow.hpp"
 
 namespace garlic::clove {
@@ -8,6 +9,6 @@ namespace garlic::clove {
     }
 
     void Platform::showCursor(bool show) {
-       
+        ShowCursor(show);
     }
 }
