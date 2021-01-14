@@ -67,28 +67,33 @@ namespace garlic::clove {
     }
 
     vec2i WindowsWindow::getPosition(bool clientArea) const {
-        RECT windowRect;
-        GetWindowRect(windowsHandle, &windowRect);
-        MapWindowPoints(HWND_DESKTOP, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
+        RECT windowRect{};
+        if(clientArea) {
+            GetClientRect(windowsHandle, &windowRect);
+            MapWindowPoints(windowsHandle, HWND_DESKTOP, (LPPOINT)&windowRect, 2);
+        } else {
+            GetWindowRect(windowsHandle, &windowRect);
+            MapWindowPoints(HWND_DESKTOP, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
+        }
 
         return { windowRect.left, windowRect.top };
     }
 
     vec2i WindowsWindow::getSize() const {
-        RECT windowRect;
+        RECT windowRect{};
         GetClientRect(windowsHandle, &windowRect);
 
         return { windowRect.right - windowRect.left, windowRect.bottom - windowRect.top };
     }
 
     void WindowsWindow::moveWindow(vec2i const &position) {
-        vec2i const size = getSize();
-        BOOL const moved = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
+        vec2i const size{ getSize() };
+        MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
     }
 
     void WindowsWindow::resizeWindow(vec2i const &size) {
-        vec2i const position = getPosition();
-        BOOL const resized   = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
+        vec2i const position{ getPosition(false) };
+        MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
     }
 
     bool WindowsWindow::isOpen() const {
