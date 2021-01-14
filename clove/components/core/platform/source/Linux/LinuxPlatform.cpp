@@ -6,4 +6,8 @@ namespace garlic::clove {
     std::unique_ptr<Window> Platform::createWindow(WindowDescriptor const &descriptor) {
         return std::make_unique<LinuxWindow>(descriptor);
     }
+
+    void Platform::showCursor(bool show) {
+        
+    }
 }
