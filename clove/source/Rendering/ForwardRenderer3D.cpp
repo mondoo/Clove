@@ -49,14 +49,14 @@ extern "C" const char font_p[];
 extern "C" const size_t font_pLength;
 
 namespace garlic::clove {
-    ForwardRenderer3D::ForwardRenderer3D(std::unique_ptr<RenderTarget> renderTarget)
-        : renderTarget(std::move(renderTarget)) {
+    ForwardRenderer3D::ForwardRenderer3D(GraphicsDevice *graphicsDevice, std::unique_ptr<RenderTarget> renderTarget)
+		: graphicsDevice{ graphicsDevice }
+		, renderTarget{ std::move(renderTarget) } {
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
 
         renderTargetPropertyChangedBeginHandle = this->renderTarget->onPropertiesChangedBegin.bind(&ForwardRenderer3D::cleanupRenderTargetResources, this);
         renderTargetPropertyChangedEndHandle   = this->renderTarget->onPropertiesChangedEnd.bind(&ForwardRenderer3D::createRenderTargetResources, this);
 
-        graphicsDevice  = Application::get().getGraphicsDevice();
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
         //Object initialisation

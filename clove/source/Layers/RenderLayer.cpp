@@ -14,10 +14,10 @@
 #include <Clove/Maths/Maths.hpp>
 
 namespace garlic::clove {
-    RenderLayer::RenderLayer()
+    RenderLayer::RenderLayer(ForwardRenderer3D *renderer, EntityManager *entityManager)
         : Layer("Render")
-        , renderer{ Application::get().getRenderer() }
-        , entityManager{ Application::get().getEntityManager() } {
+        , renderer{ renderer }
+        , entityManager{ entityManager } {
     }
 
     RenderLayer::RenderLayer(RenderLayer &&other) noexcept = default;
