@@ -15,6 +15,6 @@ namespace garlic::clove {
     public:
         static std::unique_ptr<Window> createWindow(WindowDescriptor const &descriptor);
 
-        static bool showCursor(bool show);
+        static void showCursor(bool show);
     };
 }
