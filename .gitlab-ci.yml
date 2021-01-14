@@ -207,3 +207,6 @@ doxygen:
   artifacts:
     paths:
       - html/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
