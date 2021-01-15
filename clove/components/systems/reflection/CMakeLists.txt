@@ -1,0 +1,29 @@
+set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/Reflection)
+set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
+
+#Library
+add_library(
+    CloveReflection STATIC
+        ${INCLUDE}/Reflect.hpp
+        ${SOURCE}/Reflect.cpp
+)
+
+#Includes
+target_include_directories(
+    CloveReflection
+    
+	PUBLIC
+		include
+)
+
+#Libraries
+target_link_libraries(
+    CloveReflection
+
+	PUBLIC
+		CloveDefinitions
+)
+
+if(GAR_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()

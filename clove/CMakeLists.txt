@@ -203,7 +203,8 @@ target_link_libraries(
  
 		#Systems
 		CloveAI
-		CloveECS 
+		CloveECS
+		CloveReflection
 		CloveStateMachine
 		 
 		#Utilities
