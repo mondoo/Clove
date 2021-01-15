@@ -52,51 +52,11 @@ namespace garlic::clove::ModelLoader {
             return { aiQuat.w, aiQuat.x, aiQuat.y, aiQuat.z };
         }
 
-        void buildNodeNameMap(std::unordered_map<std::string_view, aiNode *> &map, aiNode *rootNode) {
+        void buildNodeNameMap(std::unordered_map<std::string, aiNode *> &map, aiNode *rootNode) {
             map[rootNode->mName.C_Str()] = rootNode;
             for(size_t i = 0; i < rootNode->mNumChildren; ++i) {
                 buildNodeNameMap(map, rootNode->mChildren[i]);
             }
-        }
-
-        /**
-         * @brief Id of the jointNode's parent.
-         * @param skeleton Skeleton to search in.
-         * @param jointNode aiNode to find the parent for.
-         * @param recusriveSearch If jointNode's parent isn't in the skeleton, keep traversing through parents until one is.
-         * @return The index or a std::runtime_error if one couldn't be found. 
-         */
-        Expected<JointIndexType, std::runtime_error> getJointParentId(Skeleton const &skeleton, aiNode *jointNode, bool recusriveSearch) {
-            if(jointNode == nullptr) {
-                return Unexpected{ std::runtime_error{ CLOVE_FUNCTION_NAME ": joint is nullptr." } };
-            }
-
-            if(jointNode->mParent == nullptr) {
-                return Unexpected{ std::runtime_error{ CLOVE_FUNCTION_NAME ": joint does not have a parent." } };
-            }
-
-            aiString const *const parentName{ &jointNode->mParent->mName };
-            for(size_t i = 0; i < skeleton.joints.size(); ++i) {
-                if(skeleton.joints[i].name == parentName->C_Str()) {
-                    return static_cast<JointIndexType>(i);
-                }
-            }
-
-            if(jointNode->mParent->mParent != nullptr && recusriveSearch) {
-                return getJointParentId(skeleton, jointNode->mParent, recusriveSearch);
-            }
-
-            return Unexpected{ std::runtime_error{ CLOVE_FUNCTION_NAME ": could not locate parent in skeleton." } };
-        }
-
-        Expected<JointIndexType, std::runtime_error> getJointIndex(Skeleton const &skeleton, std::string_view jointName) {
-            for(size_t i = 0; i < skeleton.joints.size(); ++i) {
-                if(skeleton.joints[i].name == jointName) {
-                    return static_cast<JointIndexType>(i);
-                }
-            }
-
-            return Unexpected{ std::runtime_error{ CLOVE_FUNCTION_NAME ": could not locate joint in skeleton." } };
         }
 
         size_t getPreviousIndex(AnimationClip const &clip, float frame, float framesPerSecond, JointIndexType jointIndex, std::map<float, size_t> &framePoseIndexMap, std::map<float, std::vector<JointIndexType>> &missingPoseMap) {
@@ -280,8 +240,9 @@ namespace garlic::clove::ModelLoader {
         //TODO: Support multiple skeletons?
         std::unique_ptr<Skeleton> skeleton = std::make_unique<Skeleton>();
 
-        //Build scene map
-        std::unordered_map<std::string_view, aiNode *> nodeNameMap;
+        //Lookup maps
+        std::unordered_map<std::string, aiNode *> nodeNameMap;
+        std::unordered_map<std::string, JointIndexType> jointNameIdMap;
         buildNodeNameMap(nodeNameMap, scene->mRootNode);
 
         //Build skeleton
@@ -299,6 +260,8 @@ namespace garlic::clove::ModelLoader {
                 aiBone *bone{ mesh->mBones[i] };
                 skeleton->joints[i].name            = bone->mName.C_Str();
                 skeleton->joints[i].inverseBindPose = convertToGarlicMatrix(bone->mOffsetMatrix);
+
+                jointNameIdMap[skeleton->joints[i].name] = i;
             }
 
             //Only doing one sekelton for now
@@ -308,10 +271,8 @@ namespace garlic::clove::ModelLoader {
         //Set parents
         for(auto &joint : skeleton->joints) {
             if(auto *aiJoint{ nodeNameMap[joint.name] }; aiJoint->mParent != nullptr) {
-                if(aiJoint->mParent != scene->mRootNode) {
-                    joint.parentIndex = getJointParentId(*skeleton, aiJoint, true).getValue();
-                } else {
-                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0}'s parent is root node. Skipping id retrieval.", joint.name);
+                if(jointNameIdMap.contains(aiJoint->mParent->mName.C_Str())) {
+                    joint.parentIndex = jointNameIdMap[aiJoint->mParent->mName.C_Str()];
                 }
             }
         }
@@ -346,8 +307,6 @@ namespace garlic::clove::ModelLoader {
 
             std::map<float, size_t> framePoseIndexMap;
 
-            std::unordered_map<std::string, JointIndexType> assimpFbxIndexCache;
-
             //Get each channel's pose at each time
             for(float frame : frames) {
                 AnimationPose animPose{};
@@ -364,27 +323,23 @@ namespace garlic::clove::ModelLoader {
 
                     //Assimp appears to have trouble importing FBX animations. So we need to see if it's added nodes and then map them to the correct ones.
                     std::string const nodeName{ channel->mNodeName.C_Str() };
-                    auto jointIdResult{ getJointIndex(*skeleton, nodeName) };
-                    if(!jointIdResult.hasValue()) {
+                    if(!jointNameIdMap.contains(nodeName)){
                         std::string_view constexpr assimpFbx{ "_$AssimpFbx$_" };
 
                         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} not found in skeleton, searching for {1}...", nodeName, assimpFbx);
                         size_t const pos{ nodeName.find(assimpFbx) };
 
                         if(pos != nodeName.npos) {
-                            if(!assimpFbxIndexCache.contains(nodeName)) {
-                                std::string const jointName{ nodeName.substr(0, pos) };
-                                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} substr found! Attempting to find index for {1}", assimpFbx, jointName);
-                                assimpFbxIndexCache[nodeName] = getJointIndex(*skeleton, jointName).getValue();
-                            }
-
-                            jointIdResult = assimpFbxIndexCache[nodeName];
+                            std::string const jointName{ nodeName.substr(0, pos) };
+                            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} substr found! Using index for {1}", assimpFbx, jointName);
+                            jointNameIdMap[nodeName] = jointNameIdMap[jointName];
                         } else {
                             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Could not find {0} in skeleton or a substr of {1} in {0}.", nodeName, assimpFbx);
+                            continue;
                         }
                     }
 
-                    JointIndexType const jointIndex{ std::move(jointIdResult.getValue()) };
+                    JointIndexType const jointIndex{ jointNameIdMap[nodeName] };
                     JointPose &jointPose{ animPose.poses[jointIndex] };
 
                     bool positionFound{ false };
