@@ -280,125 +280,148 @@ namespace garlic::clove::ModelLoader {
                 animPose.timeStamp = frame / animation->mTicksPerSecond;
                 animPose.poses.resize(skeleton->joints.size());
 
-                for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
-                    aiNodeAnim *const channel{ animation->mChannels[channelIndex] };
+                for(JointIndexType i{ 0 }; i < skeleton->joints.size(); ++i) {
+                    JointPose &jointPose{ animPose.poses[i] };
 
-                    JointIndexType const jointIndex{ jointNameIdMap[channel->mNodeName.C_Str()] };
-                    JointPose &jointPose{ animPose.poses[jointIndex] };
-
-                    //Set the position for the current pose
-                    {
-                        bool positionFound{ false };
-                        std::optional<size_t> prevKey{};
-                        std::optional<size_t> nextKey{};
-                        for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
-                            if(channel->mPositionKeys[key].mTime == frame) {
-                                jointPose.position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
-                                positionFound      = true;
-                                break;
-                            }
-
-                            if(channel->mPositionKeys[key].mTime < frame) {
-                                prevKey = key;
-                            }
-                            if(channel->mPositionKeys[key].mTime > frame) {
-                                nextKey = key;
-                                break;//If we're past our current frame then stop searching
-                            }
-                        }
-                        //Interpolate the missing frame
-                        if(!positionFound) {
-                            if(prevKey.has_value() && nextKey.has_value()) {
-                                aiVectorKey const &prevPos{ channel->mPositionKeys[*prevKey] };
-                                aiVectorKey const &nextPos{ channel->mPositionKeys[*nextKey] };
-
-                                double const timeBetweenPoses{ nextPos.mTime - prevPos.mTime };
-                                double const timeFromPrevPose{ frame - prevPos.mTime };
-                                double const normTime{ timeFromPrevPose / timeBetweenPoses };
-
-                                jointPose.position = lerp(convertToGarlicVec(prevPos.mValue), convertToGarlicVec(nextPos.mValue), static_cast<float>(normTime));
-                            } else if(prevKey.has_value()) {
-                                jointPose.position = convertToGarlicVec(channel->mPositionKeys[*prevKey].mValue);
-                            } else if(nextKey.has_value()) {
-                                jointPose.position = convertToGarlicVec(channel->mPositionKeys[*nextKey].mValue);
-                            }
+                    //Find the channel with the same name as ours, decompose otherwise.
+                    aiNodeAnim const *channel{ nullptr };
+                    for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
+                        if(animation->mChannels[channelIndex]->mNodeName.C_Str() == skeleton->joints[i].name) {
+                            channel = animation->mChannels[channelIndex];
+                            break;
                         }
                     }
 
-                    //Set the rotation for the current pose
-                    {
-                        bool rotationFound{ false };
-                        std::optional<size_t> prevKey{};
-                        std::optional<size_t> nextKey{};
-                        for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
-                            if(channel->mRotationKeys[key].mTime == frame) {
-                                jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
-                                rotationFound      = true;
-                                break;
-                            }
+                    if(channel != nullptr) {
+                        //Set the position for the current pose
+                        {
+                            bool positionFound{ false };
+                            std::optional<size_t> prevKey{};
+                            std::optional<size_t> nextKey{};
+                            for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
+                                if(channel->mPositionKeys[key].mTime == frame) {
+                                    jointPose.position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
+                                    positionFound      = true;
+                                    break;
+                                }
 
-                            if(channel->mRotationKeys[key].mTime < frame) {
-                                prevKey = key;
+                                if(channel->mPositionKeys[key].mTime < frame) {
+                                    prevKey = key;
+                                }
+                                if(channel->mPositionKeys[key].mTime > frame) {
+                                    nextKey = key;
+                                    break;//If we're past our current frame then stop searching
+                                }
                             }
-                            if(channel->mRotationKeys[key].mTime > frame) {
-                                nextKey = key;
-                                break;//If we're past our current frame then stop searching
+                            //Interpolate the missing frame
+                            if(!positionFound) {
+                                if(prevKey.has_value() && nextKey.has_value()) {
+                                    aiVectorKey const &prevPos{ channel->mPositionKeys[*prevKey] };
+                                    aiVectorKey const &nextPos{ channel->mPositionKeys[*nextKey] };
+
+                                    double const timeBetweenPoses{ nextPos.mTime - prevPos.mTime };
+                                    double const timeFromPrevPose{ frame - prevPos.mTime };
+                                    double const normTime{ timeFromPrevPose / timeBetweenPoses };
+
+                                    jointPose.position = lerp(convertToGarlicVec(prevPos.mValue), convertToGarlicVec(nextPos.mValue), static_cast<float>(normTime));
+                                } else if(prevKey.has_value()) {
+                                    jointPose.position = convertToGarlicVec(channel->mPositionKeys[*prevKey].mValue);
+                                } else if(nextKey.has_value()) {
+                                    jointPose.position = convertToGarlicVec(channel->mPositionKeys[*nextKey].mValue);
+                                } else {
+                                    CLOVE_ASSERT(false);
+                                }
                             }
                         }
-                        if(!rotationFound) {
-                            if(prevKey.has_value() && nextKey.has_value()) {
-                                aiQuatKey const &prevRot{ channel->mRotationKeys[*prevKey] };
-                                aiQuatKey const &nextRot{ channel->mRotationKeys[*nextKey] };
 
-                                double const timeBetweenPoses{ nextRot.mTime - prevRot.mTime };
-                                double const timeFromPrevPose{ frame - prevRot.mTime };
-                                double const normTime{ timeFromPrevPose / timeBetweenPoses };
+                        //Set the rotation for the current pose
+                        {
+                            bool rotationFound{ false };
+                            std::optional<size_t> prevKey{};
+                            std::optional<size_t> nextKey{};
+                            for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
+                                if(channel->mRotationKeys[key].mTime == frame) {
+                                    jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
+                                    rotationFound      = true;
+                                    break;
+                                }
 
-                                jointPose.rotation = slerp(convertToGarlicQuat(prevRot.mValue), convertToGarlicQuat(nextRot.mValue), static_cast<float>(normTime));
-                            } else if(prevKey.has_value()) {
-                                jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[*prevKey].mValue);
-                            } else if(nextKey.has_value()) {
-                                jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[*nextKey].mValue);
+                                if(channel->mRotationKeys[key].mTime < frame) {
+                                    prevKey = key;
+                                }
+                                if(channel->mRotationKeys[key].mTime > frame) {
+                                    nextKey = key;
+                                    break;//If we're past our current frame then stop searching
+                                }
+                            }
+                            if(!rotationFound) {
+                                if(prevKey.has_value() && nextKey.has_value()) {
+                                    aiQuatKey const &prevRot{ channel->mRotationKeys[*prevKey] };
+                                    aiQuatKey const &nextRot{ channel->mRotationKeys[*nextKey] };
+
+                                    double const timeBetweenPoses{ nextRot.mTime - prevRot.mTime };
+                                    double const timeFromPrevPose{ frame - prevRot.mTime };
+                                    double const normTime{ timeFromPrevPose / timeBetweenPoses };
+
+                                    jointPose.rotation = slerp(convertToGarlicQuat(prevRot.mValue), convertToGarlicQuat(nextRot.mValue), static_cast<float>(normTime));
+                                } else if(prevKey.has_value()) {
+                                    jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[*prevKey].mValue);
+                                } else if(nextKey.has_value()) {
+                                    jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[*nextKey].mValue);
+                                } else {
+                                    CLOVE_ASSERT(false);
+                                }
                             }
                         }
-                    }
 
-                    //Set the scale for the current pose
-                    {
-                        bool scaleFound{ false };
-                        std::optional<size_t> prevKey{};
-                        std::optional<size_t> nextKey{};
-                        for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
-                            if(channel->mScalingKeys[key].mTime == frame) {
-                                jointPose.scale = convertToGarlicVec(channel->mScalingKeys[key].mValue);
-                                scaleFound      = true;
-                                break;
-                            }
+                        //Set the scale for the current pose
+                        {
+                            bool scaleFound{ false };
+                            std::optional<size_t> prevKey{};
+                            std::optional<size_t> nextKey{};
+                            for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
+                                if(channel->mScalingKeys[key].mTime == frame) {
+                                    jointPose.scale = convertToGarlicVec(channel->mScalingKeys[key].mValue);
+                                    scaleFound      = true;
+                                    break;
+                                }
 
-                            if(channel->mScalingKeys[key].mTime < frame) {
-                                prevKey = key;
+                                if(channel->mScalingKeys[key].mTime < frame) {
+                                    prevKey = key;
+                                }
+                                if(channel->mScalingKeys[key].mTime > frame) {
+                                    nextKey = key;
+                                    break;//If we're past our current frame then stop searching
+                                }
                             }
-                            if(channel->mScalingKeys[key].mTime > frame) {
-                                nextKey = key;
-                                break;//If we're past our current frame then stop searching
+                            if(!scaleFound) {
+                                if(prevKey.has_value() && nextKey.has_value()) {
+                                    aiVectorKey const &prevScale{ channel->mScalingKeys[*prevKey] };
+                                    aiVectorKey const &nextScale{ channel->mScalingKeys[*nextKey] };
+
+                                    double const timeBetweenPoses{ nextScale.mTime - prevScale.mTime };
+                                    double const timeFromPrevPose{ frame - prevScale.mTime };
+                                    double const normTime{ timeFromPrevPose / timeBetweenPoses };
+
+                                    jointPose.scale = lerp(convertToGarlicVec(prevScale.mValue), convertToGarlicVec(nextScale.mValue), static_cast<float>(normTime));
+                                } else if(prevKey.has_value()) {
+                                    jointPose.scale = convertToGarlicVec(channel->mScalingKeys[*prevKey].mValue);
+                                } else if(nextKey.has_value()) {
+                                    jointPose.scale = convertToGarlicVec(channel->mScalingKeys[*nextKey].mValue);
+                                } else {
+                                    CLOVE_ASSERT(false);
+                                }
                             }
                         }
-                        if(!scaleFound) {
-                            if(prevKey.has_value() && nextKey.has_value()) {
-                                aiVectorKey const &prevScale{ channel->mScalingKeys[*prevKey] };
-                                aiVectorKey const &nextScale{ channel->mScalingKeys[*nextKey] };
+                    } else {
+                        aiVector3D position{};
+                        aiQuaternion rotation{};
+                        aiVector3D scale{};
+                        nodeNameMap[skeleton->joints[i].name]->mTransformation.Decompose(scale, rotation, position);
 
-                                double const timeBetweenPoses{ nextScale.mTime - prevScale.mTime };
-                                double const timeFromPrevPose{ frame - prevScale.mTime };
-                                double const normTime{ timeFromPrevPose / timeBetweenPoses };
-
-                                jointPose.scale = lerp(convertToGarlicVec(prevScale.mValue), convertToGarlicVec(nextScale.mValue), static_cast<float>(normTime));
-                            } else if(prevKey.has_value()) {
-                                jointPose.scale = convertToGarlicVec(channel->mScalingKeys[*prevKey].mValue);
-                            } else if(nextKey.has_value()) {
-                                jointPose.scale = convertToGarlicVec(channel->mScalingKeys[*nextKey].mValue);
-                            }
-                        }
+                        jointPose.position  = convertToGarlicVec(position);
+                        jointPose.rotation  = convertToGarlicQuat(rotation);
+                        jointPose.scale     = convertToGarlicVec(scale);
                     }
                 }
 
