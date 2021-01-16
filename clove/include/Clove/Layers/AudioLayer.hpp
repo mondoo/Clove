@@ -17,7 +17,8 @@ namespace garlic::clove {
         
         //FUNCTIONS
     public:
-        AudioLayer();
+		AudioLayer() = delete;
+        AudioLayer(EntityManager *entityManager);
 
         AudioLayer(AudioLayer const &other) = delete;
         AudioLayer(AudioLayer &&other) noexcept;

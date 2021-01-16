@@ -26,9 +26,9 @@ namespace garlic::clove {
         }
     }
 
-    TransformLayer::TransformLayer()
+    TransformLayer::TransformLayer(EntityManager *entityManager)
         : Layer("Transform")
-        , entityManager{ Application::get().getEntityManager() } {
+        , entityManager{ entityManager } {
     }
 
     TransformLayer::TransformLayer(TransformLayer &&other) noexcept = default;

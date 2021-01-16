@@ -18,7 +18,8 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        RenderLayer();
+		RenderLayer() = delete;
+        RenderLayer(ForwardRenderer3D *renderer, EntityManager *entityManager);
 
         RenderLayer(RenderLayer const &other) = delete;
         RenderLayer(RenderLayer &&other) noexcept;

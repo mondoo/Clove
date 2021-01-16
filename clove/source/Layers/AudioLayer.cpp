@@ -11,10 +11,9 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    AudioLayer::AudioLayer()
+    AudioLayer::AudioLayer(EntityManager *entityManager)
         : Layer("Audio")
-        , entityManager{ Application::get().getEntityManager()} {
-
+        , entityManager{ entityManager } {
     }
 
     AudioLayer::AudioLayer(AudioLayer &&other) noexcept = default;

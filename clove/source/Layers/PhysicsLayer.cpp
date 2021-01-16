@@ -69,9 +69,9 @@ namespace garlic::clove {
         }
     }
 
-    PhysicsLayer::PhysicsLayer()
+    PhysicsLayer::PhysicsLayer(EntityManager *entityManager)
         : Layer("Physics")
-        , entityManager{ Application::get().getEntityManager() } {
+        , entityManager{ entityManager } {
         collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
         dispatcher             = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
         broadphase             = std::make_unique<btDbvtBroadphase>();
