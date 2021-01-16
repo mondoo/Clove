@@ -328,8 +328,6 @@ namespace garlic::clove::ModelLoader {
                                     jointPose.position = convertToGarlicVec(channel->mPositionKeys[*prevKey].mValue);
                                 } else if(nextKey.has_value()) {
                                     jointPose.position = convertToGarlicVec(channel->mPositionKeys[*nextKey].mValue);
-                                } else {
-                                    CLOVE_ASSERT(false);
                                 }
                             }
                         }
@@ -368,8 +366,6 @@ namespace garlic::clove::ModelLoader {
                                     jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[*prevKey].mValue);
                                 } else if(nextKey.has_value()) {
                                     jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[*nextKey].mValue);
-                                } else {
-                                    CLOVE_ASSERT(false);
                                 }
                             }
                         }
@@ -408,8 +404,6 @@ namespace garlic::clove::ModelLoader {
                                     jointPose.scale = convertToGarlicVec(channel->mScalingKeys[*prevKey].mValue);
                                 } else if(nextKey.has_value()) {
                                     jointPose.scale = convertToGarlicVec(channel->mScalingKeys[*nextKey].mValue);
-                                } else {
-                                    CLOVE_ASSERT(false);
                                 }
                             }
                         }
@@ -419,9 +413,9 @@ namespace garlic::clove::ModelLoader {
                         aiVector3D scale{};
                         nodeNameMap[skeleton->joints[i].name]->mTransformation.Decompose(scale, rotation, position);
 
-                        jointPose.position  = convertToGarlicVec(position);
-                        jointPose.rotation  = convertToGarlicQuat(rotation);
-                        jointPose.scale     = convertToGarlicVec(scale);
+                        jointPose.position = convertToGarlicVec(position);
+                        jointPose.rotation = convertToGarlicQuat(rotation);
+                        jointPose.scale    = convertToGarlicVec(scale);
                     }
                 }
 
