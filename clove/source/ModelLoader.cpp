@@ -59,6 +59,27 @@ namespace garlic::clove::ModelLoader {
             }
         }
 
+        mat4f getNodeIbp(aiNode const *const node, aiMesh const *const mesh) {
+            for(size_t i = 0; i < mesh->mNumBones; i++) {
+                if(node->mName == mesh->mBones[i]->mName) {
+                    return convertToGarlicMatrix(mesh->mBones[i]->mOffsetMatrix);
+                }
+            }
+            return mat4f{ 1.0f };
+        }
+
+        void buildSkeleton(std::unique_ptr<Skeleton> &skeleton, aiNode const *const node, aiMesh const *const mesh, std::optional<JointIndexType> parentIndex) {
+            skeleton->joints.emplace_back(Joint{
+                .name            = node->mName.C_Str(),
+                .inverseBindPose = getNodeIbp(node, mesh),
+                .parentIndex     = parentIndex,
+            });
+
+            JointIndexType const id{ static_cast<JointIndexType>(skeleton->joints.size() - 1) };
+            for(size_t i{ 0 }; i < node->mNumChildren; ++i) {
+                buildSkeleton(skeleton, node->mChildren[i], mesh, id);
+            }
+        }
         //static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<garlic::clove::GraphicsFactory>& graphicsFactory) {
         //	std::shared_ptr<gfx::Texture> texture;
 
@@ -78,8 +99,8 @@ namespace garlic::clove::ModelLoader {
             Default,
             Animated
         };
-        std::shared_ptr<Mesh> processMesh(aiMesh *mesh, aiScene const *scene, MeshType const meshType) {
-            size_t const vertexCount = mesh->mNumVertices;
+        std::shared_ptr<Mesh> processMesh(aiMesh *mesh, aiScene const *scene, MeshType const meshType, std::unordered_map<std::string, JointIndexType> const &jointNameIdMap = {}) {
+            size_t const vertexCount{ mesh->mNumVertices };
 
             std::vector<Vertex> vertices(vertexCount);
             std::vector<uint16_t> indices;
@@ -88,10 +109,11 @@ namespace garlic::clove::ModelLoader {
             std::unordered_map<size_t, std::vector<std::pair<JointIndexType, float>>> vertWeightPairs;
             if(meshType == MeshType::Animated) {
                 for(JointIndexType i = 0; i < mesh->mNumBones; ++i) {
-                    aiBone *bone = mesh->mBones[i];
+                    aiBone const *const bone{ mesh->mBones[i] };
                     for(size_t j = 0; j < bone->mNumWeights; ++j) {
-                        aiVertexWeight const &vertexWeight = bone->mWeights[j];
-                        vertWeightPairs[vertexWeight.mVertexId].emplace_back(i, vertexWeight.mWeight);
+                        aiVertexWeight const &vertexWeight{ bone->mWeights[j] };
+                        JointIndexType const jointId{ jointNameIdMap.at(bone->mName.C_Str()) };
+                        vertWeightPairs[vertexWeight.mVertexId].emplace_back(jointId, vertexWeight.mWeight);
                     }
                 }
             }
@@ -164,6 +186,8 @@ namespace garlic::clove::ModelLoader {
         }
 
         aiScene const *openFile(std::string_view modelFilePath, Assimp::Importer &importer) {
+            importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_CAMERAS, false);
+            importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_LIGHTS, false);
             return importer.ReadFile(modelFilePath.data(), aiProcess_JoinIdenticalVertices | aiProcess_MakeLeftHanded | aiProcess_Triangulate | aiProcess_FlipUVs);
         }
     }
@@ -214,50 +238,31 @@ namespace garlic::clove::ModelLoader {
         buildNodeNameMap(nodeNameMap, scene->mRootNode);
 
         //Build skeleton
-        bool skeletonSet{ false };
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
             aiMesh *mesh{ scene->mMeshes[i] };
-            meshes.emplace_back(processMesh(mesh, scene, MeshType::Animated));
 
-            if(mesh->mNumBones <= 0 || skeletonSet) {
-                continue;
-            }
-
-            skeleton->joints.resize(mesh->mNumBones);
-            for(size_t i = 0; i < mesh->mNumBones; i++) {
-                aiBone *bone{ mesh->mBones[i] };
-                skeleton->joints[i].name            = bone->mName.C_Str();
-                skeleton->joints[i].inverseBindPose = convertToGarlicMatrix(bone->mOffsetMatrix);
-
+            //Assimp can add in nodes so we build our skeleton from the node hierarchy instead of the bone hierarchy
+            buildSkeleton(skeleton, scene->mRootNode, mesh, std::nullopt);
+            for(size_t i{ 0 }; i < skeleton->joints.size(); ++i) {
                 jointNameIdMap[skeleton->joints[i].name] = i;
             }
 
-            //Only doing one sekelton for now
-            skeletonSet = true;
-        }
-
-        //Set parents
-        for(auto &joint : skeleton->joints) {
-            if(auto *aiJoint{ nodeNameMap[joint.name] }; aiJoint->mParent != nullptr) {
-                if(jointNameIdMap.contains(aiJoint->mParent->mName.C_Str())) {
-                    joint.parentIndex = jointNameIdMap[aiJoint->mParent->mName.C_Str()];
-                }
-            }
+            meshes.emplace_back(processMesh(mesh, scene, MeshType::Animated, jointNameIdMap));
         }
 
         //Load animations
         std::vector<AnimationClip> animationClips(scene->mNumAnimations);
         for(size_t animIndex = 0; animIndex < scene->mNumAnimations; ++animIndex) {
-            aiAnimation *animation  = scene->mAnimations[animIndex];
-            AnimationClip &animClip = animationClips[animIndex];
+            aiAnimation const *const animation{ scene->mAnimations[animIndex] };
+            AnimationClip &animClip{ animationClips[animIndex] };
 
             animClip.skeleton = skeleton.get();
             animClip.duration = animation->mDuration / animation->mTicksPerSecond;//Our clip is in seconds where as the animation is in frames
 
-            //Get all the key frame times for every possible channel
+            //Get all the key frame times for every possible channel. This is required as we want a full skeletal pose for each keyframe.
             std::set<float> frames;
             for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
-                aiNodeAnim *channel = animation->mChannels[channelIndex];
+                aiNodeAnim const *const channel{ animation->mChannels[channelIndex] };
                 for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
                     frames.emplace(static_cast<float>(channel->mPositionKeys[key].mTime));
                 }
@@ -273,35 +278,12 @@ namespace garlic::clove::ModelLoader {
             for(float frame : frames) {
                 AnimationPose animPose{};
                 animPose.timeStamp = frame / animation->mTicksPerSecond;
-                animPose.poses.resize(std::size(skeleton->joints));
+                animPose.poses.resize(skeleton->joints.size());
 
                 for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
-                    aiNodeAnim *channel = animation->mChannels[channelIndex];
+                    aiNodeAnim *const channel{ animation->mChannels[channelIndex] };
 
-                    //TODO: The 'Armature' represents the root motion (I think). If so then this should contribute to the model and not the animation
-                    if(strcmp(channel->mNodeName.C_Str(), "Armature") == 0) {
-                        continue;
-                    }
-
-                    //Assimp appears to have trouble importing FBX animations. So we need to see if it's added nodes and then map them to the correct ones.
-                    std::string const nodeName{ channel->mNodeName.C_Str() };
-                    if(!jointNameIdMap.contains(nodeName)){
-                        std::string_view constexpr assimpFbx{ "_$AssimpFbx$_" };
-
-                        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} not found in skeleton, searching for {1}...", nodeName, assimpFbx);
-                        size_t const pos{ nodeName.find(assimpFbx) };
-
-                        if(pos != nodeName.npos) {
-                            std::string const jointName{ nodeName.substr(0, pos) };
-                            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} substr found! Using index for {1}", assimpFbx, jointName);
-                            jointNameIdMap[nodeName] = jointNameIdMap[jointName];
-                        } else {
-                            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Could not find {0} in skeleton or a substr of {1} in {0}.", nodeName, assimpFbx);
-                            continue;
-                        }
-                    }
-
-                    JointIndexType const jointIndex{ jointNameIdMap[nodeName] };
+                    JointIndexType const jointIndex{ jointNameIdMap[channel->mNodeName.C_Str()] };
                     JointPose &jointPose{ animPose.poses[jointIndex] };
 
                     //Set the position for the current pose
@@ -310,13 +292,14 @@ namespace garlic::clove::ModelLoader {
                         std::optional<size_t> prevKey{};
                         std::optional<size_t> nextKey{};
                         for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
-                            if(channel->mPositionKeys[key].mTime < frame) {
-                                prevKey = key;
-                            }
                             if(channel->mPositionKeys[key].mTime == frame) {
                                 jointPose.position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
                                 positionFound      = true;
                                 break;
+                            }
+
+                            if(channel->mPositionKeys[key].mTime < frame) {
+                                prevKey = key;
                             }
                             if(channel->mPositionKeys[key].mTime > frame) {
                                 nextKey = key;
@@ -348,13 +331,14 @@ namespace garlic::clove::ModelLoader {
                         std::optional<size_t> prevKey{};
                         std::optional<size_t> nextKey{};
                         for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
-                            if(channel->mRotationKeys[key].mTime < frame) {
-                                prevKey = key;
-                            }
                             if(channel->mRotationKeys[key].mTime == frame) {
                                 jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
                                 rotationFound      = true;
                                 break;
+                            }
+
+                            if(channel->mRotationKeys[key].mTime < frame) {
+                                prevKey = key;
                             }
                             if(channel->mRotationKeys[key].mTime > frame) {
                                 nextKey = key;
@@ -385,13 +369,14 @@ namespace garlic::clove::ModelLoader {
                         std::optional<size_t> prevKey{};
                         std::optional<size_t> nextKey{};
                         for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
-                            if(channel->mScalingKeys[key].mTime < frame) {
-                                prevKey = key;
-                            }
                             if(channel->mScalingKeys[key].mTime == frame) {
                                 jointPose.scale = convertToGarlicVec(channel->mScalingKeys[key].mValue);
                                 scaleFound      = true;
                                 break;
+                            }
+
+                            if(channel->mScalingKeys[key].mTime < frame) {
+                                prevKey = key;
                             }
                             if(channel->mScalingKeys[key].mTime > frame) {
                                 nextKey = key;
