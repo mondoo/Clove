@@ -23,9 +23,9 @@ namespace garlic::clove {
 
     //The position that the joint will be in when this pose is applied to it (in joint space relative to parent)
     struct JointPose {
-        quatf rotation;
-        vec3f position;
-        vec3f scale;
+        quatf rotation{ vec3f{ 0.0f } };
+        vec3f position{ 0.0f };
+        vec3f scale{ 1.0f };
     };
 
     //The pose for an entire skeleton, a keyframe in the animation

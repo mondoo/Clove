@@ -59,36 +59,36 @@ namespace garlic::clove::ModelLoader {
             }
         }
 
-        size_t getPreviousIndex(AnimationClip const &clip, float frame, float framesPerSecond, JointIndexType jointIndex, std::map<float, size_t> &framePoseIndexMap, std::map<float, std::vector<JointIndexType>> &missingPoseMap) {
-            size_t const currIndex = framePoseIndexMap[frame];
-            for(int i = currIndex - 1; i >= 0; --i) {
-                float const poseFrame   = clip.poses[i].timeStamp * framesPerSecond;//Get the time of the pose before this one to check if it's not a missing pose
-                auto const missingPoses = missingPoseMap[poseFrame];
+        std::optional<size_t> getPreviousIndex(AnimationClip const &clip, float frame, float framesPerSecond, JointIndexType jointIndex, std::map<float, size_t> &framePoseIndexMap, std::map<float, std::vector<JointIndexType>> &missingPoseMap) {
+            size_t const currIndex{ framePoseIndexMap[frame] };
 
-                bool const isValidTimeStamp = framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end();
-                bool const isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
+            for(int i = currIndex - 1; i >= 0; --i) {
+                float const poseFrame{ clip.poses[i].timeStamp * framesPerSecond };//Get the time of the pose before this one to check if it's not a missing pose
+                auto const &missingPoses{ missingPoseMap[poseFrame] };
+
+                bool const isValidTimeStamp{ framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end() };
+                bool const isMissingPose{ std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end() };
                 if(isValidTimeStamp && !isMissingPose) {
                     return i;
                 }
             }
-
-            return -1;
+            return std::nullopt;
         }
 
-        size_t getNextIndex(AnimationClip const &clip, float frame, float framesPerSecond, JointIndexType jointIndex, std::map<float, size_t> &framePoseIndexMap, std::map<float, std::vector<JointIndexType>> &missingPoseMap) {
-            size_t const currIndex = framePoseIndexMap[frame];
+        std::optional<size_t> getNextIndex(AnimationClip const &clip, float frame, float framesPerSecond, JointIndexType jointIndex, std::map<float, size_t> &framePoseIndexMap, std::map<float, std::vector<JointIndexType>> &missingPoseMap) {
+            size_t const currIndex{ framePoseIndexMap[frame] };
             for(int i = currIndex + 1; i < clip.poses.size(); ++i) {
-                float const poseFrame   = clip.poses[i].timeStamp * framesPerSecond;//Get the time of the pose after this one to check if it's not a missing pose
-                auto const missingPoses = missingPoseMap[poseFrame];
+                float const poseFrame{ clip.poses[i].timeStamp * framesPerSecond };//Get the time of the pose after this one to check if it's not a missing pose
+                auto const &missingPoses{ missingPoseMap[poseFrame] };
 
-                bool const isValidTimeStamp = framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end();
-                bool const isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
+                bool const isValidTimeStamp{ framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end() };
+                bool const isMissingPose{ std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end() };
                 if(isValidTimeStamp && !isMissingPose) {
                     return i;
                 }
             }
 
-            return -1;
+            return std::nullopt;
         }
 
         //static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<garlic::clove::GraphicsFactory>& graphicsFactory) {
@@ -388,60 +388,77 @@ namespace garlic::clove::ModelLoader {
 
             auto const retrieveJointPoses = [&](float time, JointIndexType jointIndex, AnimationPose const &currAnimPose, std::map<float, std::vector<JointIndexType>> &missingElementMap) {
                 struct LerpData {
+                    bool isValid{ false };
                     float const lerpTime;
-                    JointPose const &prevPose;
-                    JointPose const &nextPose;
+                    JointPose const *prevPose;
+                    JointPose const *nextPose;
                 };
 
-                size_t const prevPoseIndex{ getPreviousIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap) };
-                size_t const nextPoseIndex{ getNextIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap) };
+                std::optional<size_t> const prevPoseIndex{ getPreviousIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap) };
+                std::optional<size_t> const nextPoseIndex{ getNextIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap) };
 
-                AnimationPose const &prevAnimPose = animClip.poses[prevPoseIndex];
-                AnimationPose const &nextAnimPose = animClip.poses[nextPoseIndex];
+                if(!prevPoseIndex || !nextPoseIndex) {
+                    return LerpData{ false };
+                }
 
-                float const timeBetweenPoses = nextAnimPose.timeStamp - prevAnimPose.timeStamp;
-                float const timeFromPrevPose = currAnimPose.timeStamp - prevAnimPose.timeStamp;
-                float const normTime         = timeFromPrevPose / timeBetweenPoses;
+                AnimationPose const &prevAnimPose{ animClip.poses[*prevPoseIndex] };
+                AnimationPose const &nextAnimPose{ animClip.poses[*nextPoseIndex] };
+
+                float const timeBetweenPoses{ nextAnimPose.timeStamp - prevAnimPose.timeStamp };
+                float const timeFromPrevPose{ currAnimPose.timeStamp - prevAnimPose.timeStamp };
+                float const normTime{ timeFromPrevPose / timeBetweenPoses };
 
                 return LerpData{
-                    normTime,
-                    prevAnimPose.poses[jointIndex],
-                    nextAnimPose.poses[jointIndex],
+                    .lerpTime = normTime,
+                    .prevPose = &prevAnimPose.poses[jointIndex],
+                    .nextPose = &nextAnimPose.poses[jointIndex],
                 };
             };
 
             //Interpolate missing keyframes
             for(auto &[time, jointIndices] : missingPositions) {
-                size_t const currPoseIndex  = framePoseIndexMap[time];
-                AnimationPose &currAnimPose = animClip.poses[currPoseIndex];
+                size_t const currPoseIndex{ framePoseIndexMap[time] };
+                AnimationPose &currAnimPose{ animClip.poses[currPoseIndex] };
 
                 for(JointIndexType jointIndex : jointIndices) {
-                    auto const lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingPositions);
+                    auto const lerpData{ retrieveJointPoses(time, jointIndex, currAnimPose, missingPositions) };
 
-                    JointPose &pose = currAnimPose.poses[jointIndex];
-                    pose.position   = lerp(lerpData.prevPose.position, lerpData.nextPose.position, lerpData.lerpTime);
+                    if(!lerpData.isValid){
+                        continue;
+                    }
+
+                    JointPose &pose{ currAnimPose.poses[jointIndex] };
+                    pose.position = lerp(lerpData.prevPose->position, lerpData.nextPose->position, lerpData.lerpTime);
                 }
             }
             for(auto &[time, jointIndices] : missingRotations) {
-                size_t const currPoseIndex  = framePoseIndexMap[time];
-                AnimationPose &currAnimPose = animClip.poses[currPoseIndex];
+                size_t const currPoseIndex{ framePoseIndexMap[time] };
+                AnimationPose &currAnimPose{ animClip.poses[currPoseIndex] };
 
                 for(JointIndexType jointIndex : jointIndices) {
-                    auto const lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingRotations);
+                    auto const lerpData{ retrieveJointPoses(time, jointIndex, currAnimPose, missingRotations) };
 
-                    JointPose &pose = currAnimPose.poses[jointIndex];
-                    pose.rotation   = slerp(lerpData.prevPose.rotation, lerpData.nextPose.rotation, lerpData.lerpTime);
+                    if(!lerpData.isValid) {
+                        continue;
+                    }
+
+                    JointPose &pose{ currAnimPose.poses[jointIndex] };
+                    pose.rotation = slerp(lerpData.prevPose->rotation, lerpData.nextPose->rotation, lerpData.lerpTime);
                 }
             }
             for(auto &[time, jointIndices] : missingScale) {
-                size_t const currPoseIndex  = framePoseIndexMap[time];
-                AnimationPose &currAnimPose = animClip.poses[currPoseIndex];
+                size_t const currPoseIndex{ framePoseIndexMap[time] };
+                AnimationPose &currAnimPose{ animClip.poses[currPoseIndex] };
 
                 for(JointIndexType jointIndex : jointIndices) {
-                    auto const lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingScale);
+                    auto const lerpData{ retrieveJointPoses(time, jointIndex, currAnimPose, missingScale) };
 
-                    JointPose &pose = currAnimPose.poses[jointIndex];
-                    pose.scale      = lerp(lerpData.prevPose.scale, lerpData.nextPose.scale, lerpData.lerpTime);
+                    if(!lerpData.isValid) {
+                        continue;
+                    }
+
+                    JointPose &pose{ currAnimPose.poses[jointIndex] };
+                    pose.scale = lerp(lerpData.prevPose->scale, lerpData.nextPose->scale, lerpData.lerpTime);
                 }
             }
         }
