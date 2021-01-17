@@ -136,16 +136,16 @@ namespace garlic::clove::ModelLoader {
                     vertices[i].texCoord.y = mesh->mTextureCoords[0][i].y;
                 }
                 if(mesh->HasVertexColors(0)) {
-                    aiColor4D const &colour = mesh->mColors[0][i];
-                    vertices[i].colour      = { colour.r, colour.g, colour.b };
+                    aiColor4D const &colour{ mesh->mColors[0][i] };
+                    vertices[i].colour = { colour.r, colour.g, colour.b };
                 } else {
                     vertices[i].colour = { 1.0f, 1.0f, 1.0f };
                 }
                 if(meshType == MeshType::Animated) {
-                    vec4i &jointIds = vertices[i].jointIds;
-                    vec4f &weights  = vertices[i].weights;
+                    vec4i &jointIds{ vertices[i].jointIds };
+                    vec4f &weights{ vertices[i].weights };
 
-                    std::vector<std::pair<JointIndexType, float>> const &weightPairs = vertWeightPairs[i];
+                    std::vector<std::pair<JointIndexType, float>> const &weightPairs{ vertWeightPairs[i] };
 
                     for(size_t j = 0; j < 4; ++j) {
                         if(j < weightPairs.size()) {
