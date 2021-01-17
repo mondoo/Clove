@@ -1,6 +1,7 @@
 #include "Clove/ModelLoader.hpp"
 
 #include "Clove/Rendering/Renderables/Mesh.hpp"
+#include "Clove/Rendering/RenderingConstants.hpp"
 
 #include <Clove/Expected.hpp>
 #include <Clove/Log/Log.hpp>
@@ -195,12 +196,12 @@ namespace garlic::clove::ModelLoader {
     StaticModel loadStaticModel(std::string_view modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Loading static model: {0}", modelFilePath);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Loading static model: {0}", modelFilePath);
 
         std::vector<std::shared_ptr<Mesh>> meshes;
 
         Assimp::Importer importer;
-        const aiScene *scene = openFile(modelFilePath.data(), importer);
+        const aiScene *scene{ openFile(modelFilePath.data(), importer) };
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>() };
@@ -218,26 +219,23 @@ namespace garlic::clove::ModelLoader {
     AnimatedModel loadAnimatedModel(std::string_view modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Loading animated model: {0}", modelFilePath);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Loading animated model: {0}", modelFilePath);
 
         std::vector<std::shared_ptr<Mesh>> meshes;
+        std::unique_ptr<Skeleton> skeleton{ std::make_unique<Skeleton>() };//TODO: Support multiple skeletons?
 
         Assimp::Importer importer;
-        const aiScene *scene = openFile(modelFilePath.data(), importer);
+        const aiScene *scene{ openFile(modelFilePath.data(), importer) };
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>(), nullptr, {} };
         }
-
-        //TODO: Support multiple skeletons?
-        std::unique_ptr<Skeleton> skeleton = std::make_unique<Skeleton>();
 
         //Lookup maps
         std::unordered_map<std::string, aiNode *> nodeNameMap;
         std::unordered_map<std::string, JointIndexType> jointNameIdMap;
         buildNodeNameMap(nodeNameMap, scene->mRootNode);
 
-        //Build skeleton
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
             aiMesh *mesh{ scene->mMeshes[i] };
 
@@ -248,6 +246,11 @@ namespace garlic::clove::ModelLoader {
             }
 
             meshes.emplace_back(processMesh(mesh, scene, MeshType::Animated, jointNameIdMap));
+        }
+
+        if(skeleton->joints.size() > MAX_JOINTS) {
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} has too many joints (Max supported {1}, current amount {2}). Could not import animations", modelFilePath, MAX_JOINTS, skeleton->joints.size());
+            return { meshes, std::make_shared<Material>(), nullptr, {} };
         }
 
         //Load animations

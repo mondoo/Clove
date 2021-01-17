@@ -70,9 +70,11 @@ namespace garlic::clove {
     std::array<mat4f, MAX_JOINTS> Animator::update(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
+        std::array<mat4f, MAX_JOINTS> skinningMatrix;
+        skinningMatrix.fill(mat4f{ 1.0f });
+
         if(currentClip == nullptr) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Current clip is not set, could not create palet", CLOVE_FUNCTION_NAME);
-            return {};
+            return skinningMatrix;
         }
 
         //TODO: single play (current will loop)
@@ -92,13 +94,8 @@ namespace garlic::clove {
         auto const currentJointToModel{ calculateCurrentJointToModelMatrices(currentAnimPose, currentClip->skeleton) };
 
         //Calculate skinning matrix K = Cj->m * Bm->j (right to left)
-        std::array<mat4f, MAX_JOINTS> skinningMatrix;
-        for(size_t i = 0; i < std::size(skinningMatrix); ++i) {
-            if(i < std::size(currentJointToModel)) {
-                skinningMatrix[i] = currentJointToModel[i] * currentClip->skeleton->joints[i].inverseBindPose;
-            } else {
-                skinningMatrix[i] = mat4f{ 1.0f };
-            }
+        for(size_t i = 0; i < currentJointToModel.size(); ++i) {
+            skinningMatrix[i] = currentJointToModel[i] * currentClip->skeleton->joints[i].inverseBindPose;
         }
 
         return skinningMatrix;
