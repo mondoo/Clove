@@ -1,12 +1,14 @@
 #include "Clove/ModelLoader.hpp"
 
 #include "Clove/Rendering/Renderables/Mesh.hpp"
+#include "Clove/Rendering/RenderingConstants.hpp"
 
+#include <Clove/Expected.hpp>
 #include <Clove/Log/Log.hpp>
+#include <Clove/Maths/Maths.hpp>
 #include <Clove/Maths/Matrix.hpp>
 #include <Clove/Maths/Quaternion.hpp>
 #include <Clove/Maths/Vector.hpp>
-#include <Clove/Maths/Maths.hpp>
 #include <Clove/Platform/Window.hpp>
 #include <Clove/Timer.hpp>
 #include <assimp/Importer.hpp>
@@ -16,268 +18,395 @@
 #include <set>
 
 namespace garlic::clove::ModelLoader {
-    static mat4f convertToGarlicMatrix(aiMatrix4x4 const &aiMat) {
-        mat4f garlicMat;
+    namespace {
+        mat4f convert(aiMatrix4x4 const &aiMat) {
+            mat4f garlicMat;
 
-        garlicMat[0][0] = aiMat.a1;
-        garlicMat[0][1] = aiMat.b1;
-        garlicMat[0][2] = aiMat.c1;
-        garlicMat[0][3] = aiMat.d1;
+            garlicMat[0][0] = aiMat.a1;
+            garlicMat[0][1] = aiMat.b1;
+            garlicMat[0][2] = aiMat.c1;
+            garlicMat[0][3] = aiMat.d1;
 
-        garlicMat[1][0] = aiMat.a2;
-        garlicMat[1][1] = aiMat.b2;
-        garlicMat[1][2] = aiMat.c2;
-        garlicMat[1][3] = aiMat.d2;
+            garlicMat[1][0] = aiMat.a2;
+            garlicMat[1][1] = aiMat.b2;
+            garlicMat[1][2] = aiMat.c2;
+            garlicMat[1][3] = aiMat.d2;
 
-        garlicMat[2][0] = aiMat.a3;
-        garlicMat[2][1] = aiMat.b3;
-        garlicMat[2][2] = aiMat.c3;
-        garlicMat[2][3] = aiMat.d3;
+            garlicMat[2][0] = aiMat.a3;
+            garlicMat[2][1] = aiMat.b3;
+            garlicMat[2][2] = aiMat.c3;
+            garlicMat[2][3] = aiMat.d3;
 
-        garlicMat[3][0] = aiMat.a4;
-        garlicMat[3][1] = aiMat.b4;
-        garlicMat[3][2] = aiMat.c4;
-        garlicMat[3][3] = aiMat.d4;
+            garlicMat[3][0] = aiMat.a4;
+            garlicMat[3][1] = aiMat.b4;
+            garlicMat[3][2] = aiMat.c4;
+            garlicMat[3][3] = aiMat.d4;
 
-        return garlicMat;
-    }
-
-    static vec3f convertToGarlicVec(aiVector3D const &aiVec) {
-        return { aiVec.x, aiVec.y, aiVec.z };
-    }
-
-    static quatf convertToGarlicQuat(aiQuaternion const &aiQuat) {
-        return { aiQuat.w, aiQuat.x, aiQuat.y, aiQuat.z };
-    }
-
-    static void buildNodeNameMap(std::unordered_map<std::string_view, aiNode *> &map, aiNode *rootNode) {
-        map[rootNode->mName.C_Str()] = rootNode;
-        for(size_t i = 0; i < rootNode->mNumChildren; ++i) {
-            buildNodeNameMap(map, rootNode->mChildren[i]);
-        }
-    }
-
-    static std::optional<JointIndexType> getJointParentId(Skeleton const &skeleton, std::string_view jointName, std::unordered_map<std::string_view, aiNode *> &nodeNameMap) {
-        aiNode *jointNode = nodeNameMap[jointName];
-        if(jointNode->mParent == nullptr) {
-            return {};
+            return garlicMat;
         }
 
-        aiString *parentName = &jointNode->mParent->mName;
-        for(size_t i = 0; i < skeleton.joints.size(); ++i) {
-            if(skeleton.joints[i].name == parentName->C_Str()) {
-                return static_cast<JointIndexType>(i);
-            }
+        vec3f convert(aiVector3D const &rhs) {
+            return { rhs.x, rhs.y, rhs.z };
         }
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: Joint \"{1}\" has a parent but it couldn't be found in the skeleton", CLOVE_FUNCTION_NAME, jointName);
-
-        return {};
-    }
-
-    static JointIndexType getJointIndex(Skeleton const &skeleton, std::string_view jointName) {
-        for(size_t i = 0; i < skeleton.joints.size(); ++i) {
-            if(skeleton.joints[i].name == jointName) {
-                return static_cast<JointIndexType>(i);
-            }
+        aiVector3D convert(vec3f const &rhs) {
+            return { rhs.x, rhs.y, rhs.z };
         }
-        //TODO: Error
-        return std::numeric_limits<JointIndexType>::max();
-    }
 
-    static size_t getPreviousIndex(AnimationClip const &clip, float frame, float framesPerSecond, JointIndexType jointIndex, std::map<float, size_t> &framePoseIndexMap, std::map<float, std::vector<JointIndexType>> &missingPoseMap) {
-        size_t const currIndex = framePoseIndexMap[frame];
-        for(int i = currIndex - 1; i >= 0; --i) {
-            float const poseFrame   = clip.poses[i].timeStamp * framesPerSecond;//Get the time of the pose before this one to check if it's not a missing pose
-            auto const missingPoses = missingPoseMap[poseFrame];
+        quatf convert(aiQuaternion const &rhs) {
+            return { rhs.w, rhs.x, rhs.y, rhs.z };
+        }
+        aiQuaternion convert(quatf const &rhs) {
+            return { rhs.w, rhs.x, rhs.y, rhs.z };
+        }
 
-            bool const isValidTimeStamp = framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end();
-            bool const isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
-            if(isValidTimeStamp && !isMissingPose) {
-                return i;
+        void buildNodeNameMap(std::unordered_map<std::string, aiNode *> &map, aiNode *rootNode) {
+            map[rootNode->mName.C_Str()] = rootNode;
+            for(size_t i = 0; i < rootNode->mNumChildren; ++i) {
+                buildNodeNameMap(map, rootNode->mChildren[i]);
             }
         }
 
-        return -1;
-    }
+        /**
+         * @brief Recursively searches the node tree until a valid parent within the skeleton is found.
+         */
+        std::optional<JointIndexType> getJointIndex(aiNode const *const node, std::unordered_map<std::string, JointIndexType> const &jointNameIdMap) {
+            if(node == nullptr) {
+                return std::nullopt;
+            }
 
-    static size_t getNextIndex(AnimationClip const &clip, float frame, float framesPerSecond, JointIndexType jointIndex, std::map<float, size_t> &framePoseIndexMap, std::map<float, std::vector<JointIndexType>> &missingPoseMap) {
-        size_t const currIndex = framePoseIndexMap[frame];
-        for(int i = currIndex + 1; i < clip.poses.size(); ++i) {
-            float const poseFrame   = clip.poses[i].timeStamp * framesPerSecond;//Get the time of the pose after this one to check if it's not a missing pose
-            auto const missingPoses = missingPoseMap[poseFrame];
-
-            bool const isValidTimeStamp = framePoseIndexMap.find(poseFrame) != framePoseIndexMap.end();
-            bool const isMissingPose    = std::find(missingPoses.begin(), missingPoses.end(), jointIndex) != missingPoses.end();
-            if(isValidTimeStamp && !isMissingPose) {
-                return i;
+            if(jointNameIdMap.contains(node->mName.C_Str())){
+                return jointNameIdMap.at(node->mName.C_Str());
+            }else{
+                return getJointIndex(node->mParent, jointNameIdMap);
             }
         }
 
-        return -1;
-    }
+        /**
+         * @brief Gets the current pose transform for a given node. Recursively searching for a valid joint if need be.
+         */
+        aiMatrix4x4 getJointPoseTransform(aiNode const *const node, aiNode const *const parentToStopAt, float const frame, aiAnimation const *const animation, std::unordered_map<std::string, JointIndexType> const &jointNameIdMap) {
+            if(node == parentToStopAt) {
+                return {};
+            }
 
-    //static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<garlic::clove::GraphicsFactory>& graphicsFactory) {
-    //	std::shared_ptr<gfx::Texture> texture;
-
-    //	//TODO: Support multiple textures of the same type
-    //	if(material->GetTextureCount(type) > 0) {
-    //		aiString path;
-    //		material->GetTexture(type, 0, &path);
-
-    //		gfx::TextureDescriptor descriptor{};
-    //		texture = graphicsFactory->createTexture(descriptor, path.C_Str());
-    //	}
-
-    //	return texture;
-    //}
-
-    enum class MeshType {
-        Default,
-        Animated
-    };
-    static std::shared_ptr<Mesh> processMesh(aiMesh *mesh, aiScene const *scene, MeshType const meshType) {
-        size_t const vertexCount = mesh->mNumVertices;
-
-        std::vector<Vertex> vertices(vertexCount);
-        std::vector<uint16_t> indices;
-
-        //Build the map of jointIds + weights for each vertex
-        std::unordered_map<size_t, std::vector<std::pair<JointIndexType, float>>> vertWeightPairs;
-        if(meshType == MeshType::Animated) {
-            for(JointIndexType i = 0; i < mesh->mNumBones; ++i) {
-                aiBone *bone = mesh->mBones[i];
-                for(size_t j = 0; j < bone->mNumWeights; ++j) {
-                    aiVertexWeight const &vertexWeight = bone->mWeights[j];
-                    vertWeightPairs[vertexWeight.mVertexId].emplace_back(i, vertexWeight.mWeight);
+            aiNodeAnim const *channel{ nullptr };
+            for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
+                if(animation->mChannels[channelIndex]->mNodeName == node->mName) {
+                    channel = animation->mChannels[channelIndex];
+                    break;
                 }
             }
-        }
 
-        //Build the vertex array
-        for(size_t i = 0; i < vertexCount; ++i) {
-            if(mesh->HasPositions()) {
-                vertices[i].position.x = mesh->mVertices[i].x;
-                vertices[i].position.y = mesh->mVertices[i].y;
-                vertices[i].position.z = mesh->mVertices[i].z;
-            }
-            if(mesh->HasNormals()) {
-                vertices[i].normal.x = mesh->mNormals[i].x;
-                vertices[i].normal.y = mesh->mNormals[i].y;
-                vertices[i].normal.z = mesh->mNormals[i].z;
-            }
-            if(mesh->HasTextureCoords(0)) {
-                vertices[i].texCoord.x = mesh->mTextureCoords[0][i].x;
-                vertices[i].texCoord.y = mesh->mTextureCoords[0][i].y;
-            }
-            if(mesh->HasVertexColors(0)) {
-                aiColor4D const &colour = mesh->mColors[0][i];
-                vertices[i].colour      = { colour.r, colour.g, colour.b };
-            } else {
-                vertices[i].colour = { 1.0f, 1.0f, 1.0f };
-            }
-            if(meshType == MeshType::Animated) {
-                vec4i &jointIds = vertices[i].jointIds;
-                vec4f &weights  = vertices[i].weights;
+            aiMatrix4x4 const parentTransformation{ getJointPoseTransform(node->mParent, parentToStopAt, frame, animation, jointNameIdMap) };
 
-                std::vector<std::pair<JointIndexType, float>> const &weightPairs = vertWeightPairs[i];
+            if(!channel) {
+                return parentTransformation * node->mTransformation;
+            }
 
-                for(size_t j = 0; j < 4; ++j) {
-                    if(j < weightPairs.size()) {
-                        jointIds[j] = weightPairs[j].first;
-                        weights[j]  = weightPairs[j].second;
-                    } else {
-                        jointIds[j] = 0;
-                        weights[j]  = 0.0f;
+            aiVector3D position{};
+            aiQuaternion rotation{};
+            aiVector3D scale{};
+
+            //Set the position for the current pose
+            {
+                bool positionFound{ false };
+                std::optional<size_t> prevKey{};
+                std::optional<size_t> nextKey{};
+                for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
+                    if(channel->mPositionKeys[key].mTime == frame) {
+                        position      = channel->mPositionKeys[key].mValue;
+                        positionFound = true;
+                        break;
+                    }
+
+                    if(channel->mPositionKeys[key].mTime < frame) {
+                        prevKey = key;
+                    }
+                    if(channel->mPositionKeys[key].mTime > frame) {
+                        nextKey = key;
+                        break;//If we're past our current frame then stop searching
+                    }
+                }
+                //Interpolate the missing frame
+                if(!positionFound) {
+                    if(prevKey.has_value() && nextKey.has_value()) {
+                        aiVectorKey const &prevPos{ channel->mPositionKeys[*prevKey] };
+                        aiVectorKey const &nextPos{ channel->mPositionKeys[*nextKey] };
+
+                        double const timeBetweenPoses{ nextPos.mTime - prevPos.mTime };
+                        double const timeFromPrevPose{ frame - prevPos.mTime };
+                        double const normTime{ timeFromPrevPose / timeBetweenPoses };
+
+                        position = convert(lerp(convert(prevPos.mValue), convert(nextPos.mValue), static_cast<float>(normTime)));
+                    } else if(prevKey.has_value()) {
+                        position = channel->mPositionKeys[*prevKey].mValue;
+                    } else if(nextKey.has_value()) {
+                        position = channel->mPositionKeys[*nextKey].mValue;
                     }
                 }
             }
-        }
 
-        //Build the index array
-        for(size_t i = 0; i < mesh->mNumFaces; ++i) {
-            aiFace face = mesh->mFaces[i];
-            for(size_t j = 0; j < face.mNumIndices; ++j) {
-                indices.emplace_back(face.mIndices[j]);
+            //Set the rotation for the current pose
+            {
+                bool rotationFound{ false };
+                std::optional<size_t> prevKey{};
+                std::optional<size_t> nextKey{};
+                for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
+                    if(channel->mRotationKeys[key].mTime == frame) {
+                        rotation      = channel->mRotationKeys[key].mValue;
+                        rotationFound = true;
+                        break;
+                    }
+
+                    if(channel->mRotationKeys[key].mTime < frame) {
+                        prevKey = key;
+                    }
+                    if(channel->mRotationKeys[key].mTime > frame) {
+                        nextKey = key;
+                        break;//If we're past our current frame then stop searching
+                    }
+                }
+                if(!rotationFound) {
+                    if(prevKey.has_value() && nextKey.has_value()) {
+                        aiQuatKey const &prevRot{ channel->mRotationKeys[*prevKey] };
+                        aiQuatKey const &nextRot{ channel->mRotationKeys[*nextKey] };
+
+                        double const timeBetweenPoses{ nextRot.mTime - prevRot.mTime };
+                        double const timeFromPrevPose{ frame - prevRot.mTime };
+                        double const normTime{ timeFromPrevPose / timeBetweenPoses };
+
+                        rotation = convert(slerp(convert(prevRot.mValue), convert(nextRot.mValue), static_cast<float>(normTime)));
+                    } else if(prevKey.has_value()) {
+                        rotation = channel->mRotationKeys[*prevKey].mValue;
+                    } else if(nextKey.has_value()) {
+                        rotation = channel->mRotationKeys[*nextKey].mValue;
+                    }
+                }
             }
+
+            //Set the scale for the current pose
+            {
+                bool scaleFound{ false };
+                std::optional<size_t> prevKey{};
+                std::optional<size_t> nextKey{};
+                for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
+                    if(channel->mScalingKeys[key].mTime == frame) {
+                        scale      = channel->mScalingKeys[key].mValue;
+                        scaleFound = true;
+                        break;
+                    }
+
+                    if(channel->mScalingKeys[key].mTime < frame) {
+                        prevKey = key;
+                    }
+                    if(channel->mScalingKeys[key].mTime > frame) {
+                        nextKey = key;
+                        break;//If we're past our current frame then stop searching
+                    }
+                }
+                if(!scaleFound) {
+                    if(prevKey.has_value() && nextKey.has_value()) {
+                        aiVectorKey const &prevScale{ channel->mScalingKeys[*prevKey] };
+                        aiVectorKey const &nextScale{ channel->mScalingKeys[*nextKey] };
+
+                        double const timeBetweenPoses{ nextScale.mTime - prevScale.mTime };
+                        double const timeFromPrevPose{ frame - prevScale.mTime };
+                        double const normTime{ timeFromPrevPose / timeBetweenPoses };
+
+                        scale = convert(lerp(convert(prevScale.mValue), convert(nextScale.mValue), static_cast<float>(normTime)));
+                    } else if(prevKey.has_value()) {
+                        scale = channel->mScalingKeys[*prevKey].mValue;
+                    } else if(nextKey.has_value()) {
+                        scale = channel->mScalingKeys[*nextKey].mValue;
+                    }
+                }
+            }
+
+            return parentTransformation * aiMatrix4x4{ scale, rotation, position };
         }
 
-        //Set up the Material for the mesh
-        if(mesh->mMaterialIndex >= 0) {
-            //TODO
-            /*aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        //static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<garlic::clove::GraphicsFactory>& graphicsFactory) {
+        //	std::shared_ptr<gfx::Texture> texture;
 
-			auto diffuseTexture = loadMaterialTexture(material, aiTextureType_DIFFUSE, graphicsFactory);
-			auto specularTexture = loadMaterialTexture(material, aiTextureType_SPECULAR, graphicsFactory);
+        //	//TODO: Support multiple textures of the same type
+        //	if(material->GetTextureCount(type) > 0) {
+        //		aiString path;
+        //		material->GetTexture(type, 0, &path);
 
-			if(diffuseTexture) {
-				meshMaterial->setAlbedoTexture(std::move(diffuseTexture));
-			}
-			if(specularTexture) {
-				meshMaterial->setSpecularTexture(std::move(specularTexture));
-			}*/
+        //		gfx::TextureDescriptor descriptor{};
+        //		texture = graphicsFactory->createTexture(descriptor, path.C_Str());
+        //	}
+
+        //	return texture;
+        //}
+
+        enum class MeshType {
+            Default,
+            Animated
+        };
+        std::shared_ptr<Mesh> processMesh(aiMesh *mesh, aiScene const *scene, MeshType const meshType, std::unordered_map<std::string, JointIndexType> const &jointNameIdMap = {}) {
+            size_t const vertexCount{ mesh->mNumVertices };
+
+            std::vector<Vertex> vertices(vertexCount);
+            std::vector<uint16_t> indices;
+
+            //Build the map of jointIds + weights for each vertex
+            std::unordered_map<size_t, std::vector<std::pair<JointIndexType, float>>> vertWeightPairs;
+            if(meshType == MeshType::Animated) {
+                for(JointIndexType i = 0; i < mesh->mNumBones; ++i) {
+                    aiBone const *const bone{ mesh->mBones[i] };
+                    for(size_t j = 0; j < bone->mNumWeights; ++j) {
+                        aiVertexWeight const &vertexWeight{ bone->mWeights[j] };
+                        JointIndexType const jointId{ i };
+                        vertWeightPairs[vertexWeight.mVertexId].emplace_back(jointId, vertexWeight.mWeight);
+                    }
+                }
+            }
+
+            //Build the vertex array
+            for(size_t i = 0; i < vertexCount; ++i) {
+                if(mesh->HasPositions()) {
+                    vertices[i].position.x = mesh->mVertices[i].x;
+                    vertices[i].position.y = mesh->mVertices[i].y;
+                    vertices[i].position.z = mesh->mVertices[i].z;
+                }
+                if(mesh->HasNormals()) {
+                    vertices[i].normal.x = mesh->mNormals[i].x;
+                    vertices[i].normal.y = mesh->mNormals[i].y;
+                    vertices[i].normal.z = mesh->mNormals[i].z;
+                }
+                if(mesh->HasTextureCoords(0)) {
+                    vertices[i].texCoord.x = mesh->mTextureCoords[0][i].x;
+                    vertices[i].texCoord.y = mesh->mTextureCoords[0][i].y;
+                }
+                if(mesh->HasVertexColors(0)) {
+                    aiColor4D const &colour{ mesh->mColors[0][i] };
+                    vertices[i].colour = { colour.r, colour.g, colour.b };
+                } else {
+                    vertices[i].colour = { 1.0f, 1.0f, 1.0f };
+                }
+                if(meshType == MeshType::Animated) {
+                    vec4i &jointIds{ vertices[i].jointIds };
+                    vec4f &weights{ vertices[i].weights };
+
+                    std::vector<std::pair<JointIndexType, float>> const &weightPairs{ vertWeightPairs[i] };
+
+                    for(size_t j = 0; j < 4; ++j) {
+                        if(j < weightPairs.size()) {
+                            jointIds[j] = weightPairs[j].first;
+                            weights[j]  = weightPairs[j].second;
+                        } else {
+                            jointIds[j] = 0;
+                            weights[j]  = 0.0f;
+                        }
+                    }
+                }
+            }
+
+            //Build the index array
+            for(size_t i = 0; i < mesh->mNumFaces; ++i) {
+                aiFace face = mesh->mFaces[i];
+                for(size_t j = 0; j < face.mNumIndices; ++j) {
+                    indices.emplace_back(face.mIndices[j]);
+                }
+            }
+
+            //Set up the Material for the mesh
+            if(mesh->mMaterialIndex >= 0) {
+                //TODO
+                /*aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
+			    auto diffuseTexture = loadMaterialTexture(material, aiTextureType_DIFFUSE, graphicsFactory);
+			    auto specularTexture = loadMaterialTexture(material, aiTextureType_SPECULAR, graphicsFactory);
+
+			    if(diffuseTexture) {
+			    	meshMaterial->setAlbedoTexture(std::move(diffuseTexture));
+			    }
+			    if(specularTexture) {
+			    	meshMaterial->setSpecularTexture(std::move(specularTexture));
+			    }*/
+            }
+
+            return std::make_shared<Mesh>(std::move(vertices), std::move(indices));
         }
 
-        return std::make_shared<Mesh>(std::move(vertices), std::move(indices));
-    }
+        aiScene const *openFile(std::string_view modelFilePath, Assimp::Importer &importer) {
+            importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_CAMERAS, false);
+            importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_LIGHTS, false);
 
-    static const aiScene *openFile(std::string_view modelFilePath, Assimp::Importer &importer) {
-        return importer.ReadFile(modelFilePath.data(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
+            unsigned int postProcessFlags{
+                aiProcess_ConvertToLeftHanded |
+                aiProcessPreset_TargetRealtime_Quality |
+                aiProcess_OptimizeGraph
+            };
+
+            return importer.ReadFile(modelFilePath.data(), postProcessFlags);
+        }
     }
 
     StaticModel loadStaticModel(std::string_view modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
 
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Loading static model: {0}", modelFilePath);
+
         std::vector<std::shared_ptr<Mesh>> meshes;
 
         Assimp::Importer importer;
-        const aiScene *scene = openFile(modelFilePath.data(), importer);
+        const aiScene *scene{ openFile(modelFilePath.data(), importer) };
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>() };
         }
 
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
-            aiMesh *mesh = scene->mMeshes[i];
+            aiMesh *mesh{ scene->mMeshes[i] };
             meshes.emplace_back(processMesh(mesh, scene, MeshType::Default));
         }
 
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Finished loading static model: {0}", modelFilePath);
         return { meshes, std::make_shared<Material>() };
     }
 
     AnimatedModel loadAnimatedModel(std::string_view modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
 
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Loading animated model: {0}", modelFilePath);
+
         std::vector<std::shared_ptr<Mesh>> meshes;
+        std::unique_ptr<Skeleton> skeleton{ std::make_unique<Skeleton>() };//TODO: Support multiple skeletons?
 
         Assimp::Importer importer;
-        const aiScene *scene = openFile(modelFilePath.data(), importer);
+        const aiScene *scene{ openFile(modelFilePath.data(), importer) };
         if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>(), nullptr, {} };
         }
 
-        //TODO: Support multiple skeletons?
-        std::unique_ptr<Skeleton> skeleton = std::make_unique<Skeleton>();
-
-        //Build scene map
-        std::unordered_map<std::string_view, aiNode *> nodeNameMap;
+        //Lookup maps
+        std::unordered_map<std::string, aiNode *> nodeNameMap;
+        std::unordered_map<std::string, JointIndexType> jointNameIdMap;
         buildNodeNameMap(nodeNameMap, scene->mRootNode);
 
-        //Build skeleton
-        bool skeletonSet = false;
+        bool skeletonSet{ false };
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
-            aiMesh *mesh = scene->mMeshes[i];
+            aiMesh *mesh{ scene->mMeshes[i] };
             meshes.emplace_back(processMesh(mesh, scene, MeshType::Animated));
 
-            if(mesh->mNumBones <= 0 || skeletonSet) {
+            if(mesh->mNumBones <= 0) {
+                continue;
+            } else if(skeletonSet) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Multiple skeletons detected in {0}. Currently Clove only support one skeleton per model. Animations may be innacrate.", modelFilePath);
                 continue;
             }
 
+            //Build skeleton
             skeleton->joints.resize(mesh->mNumBones);
             for(size_t i = 0; i < mesh->mNumBones; i++) {
-                aiBone *bone                        = mesh->mBones[i];
+                aiBone *bone{ mesh->mBones[i] };
                 skeleton->joints[i].name            = bone->mName.C_Str();
-                skeleton->joints[i].inverseBindPose = convertToGarlicMatrix(bone->mOffsetMatrix);
+                skeleton->joints[i].inverseBindPose = convert(bone->mOffsetMatrix);
+
+                jointNameIdMap[skeleton->joints[i].name] = i;
             }
 
             //Only doing one sekelton for now
@@ -286,22 +415,29 @@ namespace garlic::clove::ModelLoader {
 
         //Set parents
         for(auto &joint : skeleton->joints) {
-            joint.parentIndex = getJointParentId(*skeleton, joint.name, nodeNameMap);
+            if(auto *node{ nodeNameMap[joint.name] }; node->mParent != nullptr) {
+                joint.parentIndex = getJointIndex(node->mParent, jointNameIdMap);
+            }
+        }
+
+        if(skeleton->joints.size() > MAX_JOINTS) {
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} has too many joints (Max supported {1}, current amount {2}). Could not import animations", modelFilePath, MAX_JOINTS, skeleton->joints.size());
+            return { meshes, std::make_shared<Material>(), nullptr, {} };
         }
 
         //Load animations
         std::vector<AnimationClip> animationClips(scene->mNumAnimations);
         for(size_t animIndex = 0; animIndex < scene->mNumAnimations; ++animIndex) {
-            aiAnimation *animation  = scene->mAnimations[animIndex];
-            AnimationClip &animClip = animationClips[animIndex];
+            aiAnimation const *const animation{ scene->mAnimations[animIndex] };
+            AnimationClip &animClip{ animationClips[animIndex] };
 
             animClip.skeleton = skeleton.get();
             animClip.duration = animation->mDuration / animation->mTicksPerSecond;//Our clip is in seconds where as the animation is in frames
 
-            //Get all the key frame times for every possible channel
+            //Get all the key frame times for every possible channel. This is required as we want a full skeletal pose for each keyframe.
             std::set<float> frames;
             for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
-                aiNodeAnim *channel = animation->mChannels[channelIndex];
+                aiNodeAnim const *const channel{ animation->mChannels[channelIndex] };
                 for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
                     frames.emplace(static_cast<float>(channel->mPositionKeys[key].mTime));
                 }
@@ -313,133 +449,34 @@ namespace garlic::clove::ModelLoader {
                 }
             }
 
-            std::map<float, std::vector<JointIndexType>> missingPositions;
-            std::map<float, std::vector<JointIndexType>> missingRotations;
-            std::map<float, std::vector<JointIndexType>> missingScale;
-
-            std::map<float, size_t> framePoseIndexMap;
-
             //Get each channel's pose at each time
             for(float frame : frames) {
                 AnimationPose animPose{};
                 animPose.timeStamp = frame / animation->mTicksPerSecond;
-                animPose.poses.resize(std::size(skeleton->joints));
+                animPose.poses.resize(skeleton->joints.size());
 
-                for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
-                    aiNodeAnim *channel = animation->mChannels[channelIndex];
+                for(JointIndexType i{ 0 }; i < skeleton->joints.size(); ++i) {
+                    JointPose &jointPose{ animPose.poses[i] };
+                    Joint &joint{ skeleton->joints[i] };
 
-                    //TODO: The 'Armature' represents the root motion (I think). If so then this should contribute to the model and not the animation
-                    if(strcmp(channel->mNodeName.C_Str(), "Armature") == 0) {
-                        continue;
-                    }
+                    aiNode *nodeToAnimate{ nodeNameMap[joint.name] };
+                    aiNode *nodeParentInSkeleton{ joint.parentIndex.has_value() ? nodeNameMap[skeleton->joints[*joint.parentIndex].name] : nodeToAnimate->mParent };
 
-                    JointIndexType const jointIndex = getJointIndex(*skeleton, channel->mNodeName.C_Str());
-                    JointPose &jointPose            = animPose.poses[jointIndex];
+                    aiVector3D position{};
+                    aiQuaternion rotation{};
+                    aiVector3D scale{};
+                    getJointPoseTransform(nodeToAnimate, nodeParentInSkeleton, frame, animation, jointNameIdMap).Decompose(scale, rotation, position);
 
-                    bool positionFound = false;
-                    bool rotationFound = false;
-                    bool scaleFound    = false;
-
-                    for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
-                        if(channel->mPositionKeys[key].mTime == frame) {
-                            jointPose.position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
-                            positionFound      = true;
-                            break;
-                        }
-                    }
-                    for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
-                        if(channel->mRotationKeys[key].mTime == frame) {
-                            jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
-                            rotationFound      = true;
-                            break;
-                        }
-                    }
-                    for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
-                        if(channel->mScalingKeys[key].mTime == frame) {
-                            jointPose.scale = convertToGarlicVec(channel->mScalingKeys[key].mValue);
-                            scaleFound      = true;
-                            break;
-                        }
-                    }
-
-                    //Because the Animator expects every AnimationPose to have a pose for every joint
-                    //we need to keep track of all the missing elements so we can interpolate between them later
-                    //TODO: To simplify this we can refactor the animator to handle a pose not having an entry for every joints
-                    if(!positionFound) {
-                        missingPositions[frame].push_back(jointIndex);
-                    }
-                    if(!rotationFound) {
-                        missingRotations[frame].push_back(jointIndex);
-                    }
-                    if(!scaleFound) {
-                        missingScale[frame].push_back(jointIndex);
-                    }
+                    jointPose.position = convert(position);
+                    jointPose.rotation = convert(rotation);
+                    jointPose.scale    = convert(scale);
                 }
 
                 animClip.poses.emplace_back(std::move(animPose));
-                framePoseIndexMap[frame] = std::size(animClip.poses) - 1;
-            }
-
-            auto const retrieveJointPoses = [&](float time, JointIndexType jointIndex, AnimationPose const &currAnimPose, std::map<float, std::vector<JointIndexType>> &missingElementMap) {
-                struct LerpData {
-                    float const lerpTime;
-                    JointPose const &prevPose;
-                    JointPose const &nextPose;
-                };
-
-                size_t const prevPoseIndex = getPreviousIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap);
-                size_t const nextPoseIndex = getNextIndex(animClip, time, animation->mTicksPerSecond, jointIndex, framePoseIndexMap, missingElementMap);
-
-                AnimationPose const &prevAnimPose = animClip.poses[prevPoseIndex];
-                AnimationPose const &nextAnimPose = animClip.poses[nextPoseIndex];
-
-                float const timeBetweenPoses = nextAnimPose.timeStamp - prevAnimPose.timeStamp;
-                float const timeFromPrevPose = currAnimPose.timeStamp - prevAnimPose.timeStamp;
-                float const normTime         = timeFromPrevPose / timeBetweenPoses;
-
-                return LerpData{
-                    normTime,
-                    prevAnimPose.poses[jointIndex],
-                    nextAnimPose.poses[jointIndex],
-                };
-            };
-
-            //Interpolate missing keyframes
-            for(auto &[time, jointIndices] : missingPositions) {
-                size_t const currPoseIndex  = framePoseIndexMap[time];
-                AnimationPose &currAnimPose = animClip.poses[currPoseIndex];
-
-                for(JointIndexType jointIndex : jointIndices) {
-                    auto const lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingPositions);
-
-                    JointPose &pose = currAnimPose.poses[jointIndex];
-                    pose.position   = lerp(lerpData.prevPose.position, lerpData.nextPose.position, lerpData.lerpTime);
-                }
-            }
-            for(auto &[time, jointIndices] : missingRotations) {
-                size_t const currPoseIndex  = framePoseIndexMap[time];
-                AnimationPose &currAnimPose = animClip.poses[currPoseIndex];
-
-                for(JointIndexType jointIndex : jointIndices) {
-                    auto const lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingRotations);
-
-                    JointPose &pose = currAnimPose.poses[jointIndex];
-                    pose.rotation   = slerp(lerpData.prevPose.rotation, lerpData.nextPose.rotation, lerpData.lerpTime);
-                }
-            }
-            for(auto &[time, jointIndices] : missingScale) {
-                size_t const currPoseIndex  = framePoseIndexMap[time];
-                AnimationPose &currAnimPose = animClip.poses[currPoseIndex];
-
-                for(JointIndexType jointIndex : jointIndices) {
-                    auto const lerpData = retrieveJointPoses(time, jointIndex, currAnimPose, missingScale);
-
-                    JointPose &pose = currAnimPose.poses[jointIndex];
-                    pose.scale      = lerp(lerpData.prevPose.scale, lerpData.nextPose.scale, lerpData.lerpTime);
-                }
             }
         }
 
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Finished loading animated model: {0}", modelFilePath);
         return { meshes, std::make_shared<Material>(), std::move(skeleton), std::move(animationClips) };
     }
 }

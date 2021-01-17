@@ -13,8 +13,10 @@ namespace garlic::clove {
         consoleSink->set_pattern("%^[%T] %v%$");
         fileSink->set_pattern("[%D %T][%l] %v");
 
-#if CLOVE_DEBUG
+#if CLOVE_LOG_LEVEL == 2
         consoleSink->set_level(spdlog::level::trace);
+#elif CLOVE_LOG_LEVEL == 1
+        consoleSink->set_level(spdlog::level::debug);
 #else
         consoleSink->set_level(spdlog::level::info);
 #endif
