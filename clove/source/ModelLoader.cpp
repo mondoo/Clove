@@ -189,7 +189,15 @@ namespace garlic::clove::ModelLoader {
         aiScene const *openFile(std::string_view modelFilePath, Assimp::Importer &importer) {
             importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_CAMERAS, false);
             importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_LIGHTS, false);
-            return importer.ReadFile(modelFilePath.data(), aiProcess_JoinIdenticalVertices | aiProcess_MakeLeftHanded | aiProcess_Triangulate | aiProcess_FlipUVs);
+
+            unsigned int postProcessFlags{
+                aiProcess_ConvertToLeftHanded |
+
+                aiProcess_JoinIdenticalVertices |
+                aiProcess_Triangulate
+            };
+
+            return importer.ReadFile(modelFilePath.data(), postProcessFlags);
         }
     }
 
