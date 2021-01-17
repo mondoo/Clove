@@ -192,9 +192,10 @@ namespace garlic::clove::ModelLoader {
 
             unsigned int postProcessFlags{
                 aiProcess_ConvertToLeftHanded |
+                aiProcessPreset_TargetRealtime_MaxQuality |
 
-                aiProcess_JoinIdenticalVertices |
-                aiProcess_Triangulate
+                aiProcess_ValidateDataStructure |
+                aiProcess_OptimizeGraph
             };
 
             return importer.ReadFile(modelFilePath.data(), postProcessFlags);
