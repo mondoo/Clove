@@ -19,7 +19,7 @@
 
 namespace garlic::clove::ModelLoader {
     namespace {
-        mat4f convertToGarlicMatrix(aiMatrix4x4 const &aiMat) {
+        mat4f convert(aiMatrix4x4 const &aiMat) {
             mat4f garlicMat;
 
             garlicMat[0][0] = aiMat.a1;
@@ -45,12 +45,18 @@ namespace garlic::clove::ModelLoader {
             return garlicMat;
         }
 
-        vec3f convertToGarlicVec(aiVector3D const &aiVec) {
-            return { aiVec.x, aiVec.y, aiVec.z };
+        vec3f convert(aiVector3D const &rhs) {
+            return { rhs.x, rhs.y, rhs.z };
+        }
+        aiVector3D convert(vec3f const &rhs) {
+            return { rhs.x, rhs.y, rhs.z };
         }
 
-        quatf convertToGarlicQuat(aiQuaternion const &aiQuat) {
-            return { aiQuat.w, aiQuat.x, aiQuat.y, aiQuat.z };
+        quatf convert(aiQuaternion const &rhs) {
+            return { rhs.w, rhs.x, rhs.y, rhs.z };
+        }
+        aiQuaternion convert(quatf const &rhs) {
+            return { rhs.w, rhs.x, rhs.y, rhs.z };
         }
 
         void buildNodeNameMap(std::unordered_map<std::string, aiNode *> &map, aiNode *rootNode) {
@@ -60,27 +66,165 @@ namespace garlic::clove::ModelLoader {
             }
         }
 
-        mat4f getNodeIbp(aiNode const *const node, aiMesh const *const mesh) {
-            for(size_t i = 0; i < mesh->mNumBones; i++) {
-                if(node->mName == mesh->mBones[i]->mName) {
-                    return convertToGarlicMatrix(mesh->mBones[i]->mOffsetMatrix);
+        /**
+         * @brief Recursively searches the node tree until a valid parent within the skeleton is found.
+         */
+        std::optional<JointIndexType> getJointIndex(aiNode const *const node, std::unordered_map<std::string, JointIndexType> const &jointNameIdMap) {
+            if(node == nullptr) {
+                return std::nullopt;
+            }
+
+            if(jointNameIdMap.contains(node->mName.C_Str())){
+                return jointNameIdMap.at(node->mName.C_Str());
+            }else{
+                return getJointIndex(node->mParent, jointNameIdMap);
+            }
+        }
+
+        /**
+         * @brief Gets the current pose transform for a given node. Recursively searching for a valid joint if need be.
+         */
+        aiMatrix4x4 getJointPoseTransform(aiNode const *const node, aiNode const *const parentToStopAt, float const frame, aiAnimation const *const animation, std::unordered_map<std::string, JointIndexType> const &jointNameIdMap) {
+            if(node == parentToStopAt) {
+                return {};
+            }
+
+            aiNodeAnim const *channel{ nullptr };
+            for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
+                if(animation->mChannels[channelIndex]->mNodeName == node->mName) {
+                    channel = animation->mChannels[channelIndex];
+                    break;
                 }
             }
-            return mat4f{ 1.0f };
-        }
 
-        void buildSkeleton(std::unique_ptr<Skeleton> &skeleton, aiNode const *const node, aiMesh const *const mesh, std::optional<JointIndexType> parentIndex) {
-            skeleton->joints.emplace_back(Joint{
-                .name            = node->mName.C_Str(),
-                .inverseBindPose = getNodeIbp(node, mesh),
-                .parentIndex     = parentIndex,
-            });
+            aiMatrix4x4 const parentTransformation{ getJointPoseTransform(node->mParent, parentToStopAt, frame, animation, jointNameIdMap) };
 
-            JointIndexType const id{ static_cast<JointIndexType>(skeleton->joints.size() - 1) };
-            for(size_t i{ 0 }; i < node->mNumChildren; ++i) {
-                buildSkeleton(skeleton, node->mChildren[i], mesh, id);
+            if(!channel) {
+                return parentTransformation * node->mTransformation;
             }
+
+            aiVector3D position{};
+            aiQuaternion rotation{};
+            aiVector3D scale{};
+
+            //Set the position for the current pose
+            {
+                bool positionFound{ false };
+                std::optional<size_t> prevKey{};
+                std::optional<size_t> nextKey{};
+                for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
+                    if(channel->mPositionKeys[key].mTime == frame) {
+                        position      = channel->mPositionKeys[key].mValue;
+                        positionFound = true;
+                        break;
+                    }
+
+                    if(channel->mPositionKeys[key].mTime < frame) {
+                        prevKey = key;
+                    }
+                    if(channel->mPositionKeys[key].mTime > frame) {
+                        nextKey = key;
+                        break;//If we're past our current frame then stop searching
+                    }
+                }
+                //Interpolate the missing frame
+                if(!positionFound) {
+                    if(prevKey.has_value() && nextKey.has_value()) {
+                        aiVectorKey const &prevPos{ channel->mPositionKeys[*prevKey] };
+                        aiVectorKey const &nextPos{ channel->mPositionKeys[*nextKey] };
+
+                        double const timeBetweenPoses{ nextPos.mTime - prevPos.mTime };
+                        double const timeFromPrevPose{ frame - prevPos.mTime };
+                        double const normTime{ timeFromPrevPose / timeBetweenPoses };
+
+                        position = convert(lerp(convert(prevPos.mValue), convert(nextPos.mValue), static_cast<float>(normTime)));
+                    } else if(prevKey.has_value()) {
+                        position = channel->mPositionKeys[*prevKey].mValue;
+                    } else if(nextKey.has_value()) {
+                        position = channel->mPositionKeys[*nextKey].mValue;
+                    }
+                }
+            }
+
+            //Set the rotation for the current pose
+            {
+                bool rotationFound{ false };
+                std::optional<size_t> prevKey{};
+                std::optional<size_t> nextKey{};
+                for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
+                    if(channel->mRotationKeys[key].mTime == frame) {
+                        rotation      = channel->mRotationKeys[key].mValue;
+                        rotationFound = true;
+                        break;
+                    }
+
+                    if(channel->mRotationKeys[key].mTime < frame) {
+                        prevKey = key;
+                    }
+                    if(channel->mRotationKeys[key].mTime > frame) {
+                        nextKey = key;
+                        break;//If we're past our current frame then stop searching
+                    }
+                }
+                if(!rotationFound) {
+                    if(prevKey.has_value() && nextKey.has_value()) {
+                        aiQuatKey const &prevRot{ channel->mRotationKeys[*prevKey] };
+                        aiQuatKey const &nextRot{ channel->mRotationKeys[*nextKey] };
+
+                        double const timeBetweenPoses{ nextRot.mTime - prevRot.mTime };
+                        double const timeFromPrevPose{ frame - prevRot.mTime };
+                        double const normTime{ timeFromPrevPose / timeBetweenPoses };
+
+                        rotation = convert(slerp(convert(prevRot.mValue), convert(nextRot.mValue), static_cast<float>(normTime)));
+                    } else if(prevKey.has_value()) {
+                        rotation = channel->mRotationKeys[*prevKey].mValue;
+                    } else if(nextKey.has_value()) {
+                        rotation = channel->mRotationKeys[*nextKey].mValue;
+                    }
+                }
+            }
+
+            //Set the scale for the current pose
+            {
+                bool scaleFound{ false };
+                std::optional<size_t> prevKey{};
+                std::optional<size_t> nextKey{};
+                for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
+                    if(channel->mScalingKeys[key].mTime == frame) {
+                        scale      = channel->mScalingKeys[key].mValue;
+                        scaleFound = true;
+                        break;
+                    }
+
+                    if(channel->mScalingKeys[key].mTime < frame) {
+                        prevKey = key;
+                    }
+                    if(channel->mScalingKeys[key].mTime > frame) {
+                        nextKey = key;
+                        break;//If we're past our current frame then stop searching
+                    }
+                }
+                if(!scaleFound) {
+                    if(prevKey.has_value() && nextKey.has_value()) {
+                        aiVectorKey const &prevScale{ channel->mScalingKeys[*prevKey] };
+                        aiVectorKey const &nextScale{ channel->mScalingKeys[*nextKey] };
+
+                        double const timeBetweenPoses{ nextScale.mTime - prevScale.mTime };
+                        double const timeFromPrevPose{ frame - prevScale.mTime };
+                        double const normTime{ timeFromPrevPose / timeBetweenPoses };
+
+                        scale = convert(lerp(convert(prevScale.mValue), convert(nextScale.mValue), static_cast<float>(normTime)));
+                    } else if(prevKey.has_value()) {
+                        scale = channel->mScalingKeys[*prevKey].mValue;
+                    } else if(nextKey.has_value()) {
+                        scale = channel->mScalingKeys[*nextKey].mValue;
+                    }
+                }
+            }
+
+            return parentTransformation * aiMatrix4x4{ scale, rotation, position };
         }
+
         //static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<garlic::clove::GraphicsFactory>& graphicsFactory) {
         //	std::shared_ptr<gfx::Texture> texture;
 
@@ -113,7 +257,7 @@ namespace garlic::clove::ModelLoader {
                     aiBone const *const bone{ mesh->mBones[i] };
                     for(size_t j = 0; j < bone->mNumWeights; ++j) {
                         aiVertexWeight const &vertexWeight{ bone->mWeights[j] };
-                        JointIndexType const jointId{ jointNameIdMap.at(bone->mName.C_Str()) };
+                        JointIndexType const jointId{ i };
                         vertWeightPairs[vertexWeight.mVertexId].emplace_back(jointId, vertexWeight.mWeight);
                     }
                 }
@@ -192,9 +336,7 @@ namespace garlic::clove::ModelLoader {
 
             unsigned int postProcessFlags{
                 aiProcess_ConvertToLeftHanded |
-                aiProcessPreset_TargetRealtime_MaxQuality |
-
-                aiProcess_ValidateDataStructure |
+                aiProcessPreset_TargetRealtime_Quality |
                 aiProcess_OptimizeGraph
             };
 
@@ -245,16 +387,37 @@ namespace garlic::clove::ModelLoader {
         std::unordered_map<std::string, JointIndexType> jointNameIdMap;
         buildNodeNameMap(nodeNameMap, scene->mRootNode);
 
+        bool skeletonSet{ false };
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
             aiMesh *mesh{ scene->mMeshes[i] };
+            meshes.emplace_back(processMesh(mesh, scene, MeshType::Animated));
 
-            //Assimp can add in nodes so we build our skeleton from the node hierarchy instead of the bone hierarchy
-            buildSkeleton(skeleton, scene->mRootNode, mesh, std::nullopt);
-            for(size_t i{ 0 }; i < skeleton->joints.size(); ++i) {
+            if(mesh->mNumBones <= 0) {
+                continue;
+            } else if(skeletonSet) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Multiple skeletons detected in {0}. Currently Clove only support one skeleton per model. Animations may be innacrate.", modelFilePath);
+                continue;
+            }
+
+            //Build skeleton
+            skeleton->joints.resize(mesh->mNumBones);
+            for(size_t i = 0; i < mesh->mNumBones; i++) {
+                aiBone *bone{ mesh->mBones[i] };
+                skeleton->joints[i].name            = bone->mName.C_Str();
+                skeleton->joints[i].inverseBindPose = convert(bone->mOffsetMatrix);
+
                 jointNameIdMap[skeleton->joints[i].name] = i;
             }
 
-            meshes.emplace_back(processMesh(mesh, scene, MeshType::Animated, jointNameIdMap));
+            //Only doing one sekelton for now
+            skeletonSet = true;
+        }
+
+        //Set parents
+        for(auto &joint : skeleton->joints) {
+            if(auto *node{ nodeNameMap[joint.name] }; node->mParent != nullptr) {
+                joint.parentIndex = getJointIndex(node->mParent, jointNameIdMap);
+            }
         }
 
         if(skeleton->joints.size() > MAX_JOINTS) {
@@ -294,141 +457,19 @@ namespace garlic::clove::ModelLoader {
 
                 for(JointIndexType i{ 0 }; i < skeleton->joints.size(); ++i) {
                     JointPose &jointPose{ animPose.poses[i] };
+                    Joint &joint{ skeleton->joints[i] };
 
-                    //Find the channel with the same name as ours, decompose otherwise.
-                    aiNodeAnim const *channel{ nullptr };
-                    for(size_t channelIndex = 0; channelIndex < animation->mNumChannels; ++channelIndex) {
-                        if(animation->mChannels[channelIndex]->mNodeName.C_Str() == skeleton->joints[i].name) {
-                            channel = animation->mChannels[channelIndex];
-                            break;
-                        }
-                    }
+                    aiNode *nodeToAnimate{ nodeNameMap[joint.name] };
+                    aiNode *nodeParentInSkeleton{ joint.parentIndex.has_value() ? nodeNameMap[skeleton->joints[*joint.parentIndex].name] : nodeToAnimate->mParent };
 
-                    if(channel != nullptr) {
-                        //Set the position for the current pose
-                        {
-                            bool positionFound{ false };
-                            std::optional<size_t> prevKey{};
-                            std::optional<size_t> nextKey{};
-                            for(size_t key = 0; key < channel->mNumPositionKeys; ++key) {
-                                if(channel->mPositionKeys[key].mTime == frame) {
-                                    jointPose.position = convertToGarlicVec(channel->mPositionKeys[key].mValue);
-                                    positionFound      = true;
-                                    break;
-                                }
+                    aiVector3D position{};
+                    aiQuaternion rotation{};
+                    aiVector3D scale{};
+                    getJointPoseTransform(nodeToAnimate, nodeParentInSkeleton, frame, animation, jointNameIdMap).Decompose(scale, rotation, position);
 
-                                if(channel->mPositionKeys[key].mTime < frame) {
-                                    prevKey = key;
-                                }
-                                if(channel->mPositionKeys[key].mTime > frame) {
-                                    nextKey = key;
-                                    break;//If we're past our current frame then stop searching
-                                }
-                            }
-                            //Interpolate the missing frame
-                            if(!positionFound) {
-                                if(prevKey.has_value() && nextKey.has_value()) {
-                                    aiVectorKey const &prevPos{ channel->mPositionKeys[*prevKey] };
-                                    aiVectorKey const &nextPos{ channel->mPositionKeys[*nextKey] };
-
-                                    double const timeBetweenPoses{ nextPos.mTime - prevPos.mTime };
-                                    double const timeFromPrevPose{ frame - prevPos.mTime };
-                                    double const normTime{ timeFromPrevPose / timeBetweenPoses };
-
-                                    jointPose.position = lerp(convertToGarlicVec(prevPos.mValue), convertToGarlicVec(nextPos.mValue), static_cast<float>(normTime));
-                                } else if(prevKey.has_value()) {
-                                    jointPose.position = convertToGarlicVec(channel->mPositionKeys[*prevKey].mValue);
-                                } else if(nextKey.has_value()) {
-                                    jointPose.position = convertToGarlicVec(channel->mPositionKeys[*nextKey].mValue);
-                                }
-                            }
-                        }
-
-                        //Set the rotation for the current pose
-                        {
-                            bool rotationFound{ false };
-                            std::optional<size_t> prevKey{};
-                            std::optional<size_t> nextKey{};
-                            for(size_t key = 0; key < channel->mNumRotationKeys; ++key) {
-                                if(channel->mRotationKeys[key].mTime == frame) {
-                                    jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[key].mValue);
-                                    rotationFound      = true;
-                                    break;
-                                }
-
-                                if(channel->mRotationKeys[key].mTime < frame) {
-                                    prevKey = key;
-                                }
-                                if(channel->mRotationKeys[key].mTime > frame) {
-                                    nextKey = key;
-                                    break;//If we're past our current frame then stop searching
-                                }
-                            }
-                            if(!rotationFound) {
-                                if(prevKey.has_value() && nextKey.has_value()) {
-                                    aiQuatKey const &prevRot{ channel->mRotationKeys[*prevKey] };
-                                    aiQuatKey const &nextRot{ channel->mRotationKeys[*nextKey] };
-
-                                    double const timeBetweenPoses{ nextRot.mTime - prevRot.mTime };
-                                    double const timeFromPrevPose{ frame - prevRot.mTime };
-                                    double const normTime{ timeFromPrevPose / timeBetweenPoses };
-
-                                    jointPose.rotation = slerp(convertToGarlicQuat(prevRot.mValue), convertToGarlicQuat(nextRot.mValue), static_cast<float>(normTime));
-                                } else if(prevKey.has_value()) {
-                                    jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[*prevKey].mValue);
-                                } else if(nextKey.has_value()) {
-                                    jointPose.rotation = convertToGarlicQuat(channel->mRotationKeys[*nextKey].mValue);
-                                }
-                            }
-                        }
-
-                        //Set the scale for the current pose
-                        {
-                            bool scaleFound{ false };
-                            std::optional<size_t> prevKey{};
-                            std::optional<size_t> nextKey{};
-                            for(size_t key = 0; key < channel->mNumScalingKeys; ++key) {
-                                if(channel->mScalingKeys[key].mTime == frame) {
-                                    jointPose.scale = convertToGarlicVec(channel->mScalingKeys[key].mValue);
-                                    scaleFound      = true;
-                                    break;
-                                }
-
-                                if(channel->mScalingKeys[key].mTime < frame) {
-                                    prevKey = key;
-                                }
-                                if(channel->mScalingKeys[key].mTime > frame) {
-                                    nextKey = key;
-                                    break;//If we're past our current frame then stop searching
-                                }
-                            }
-                            if(!scaleFound) {
-                                if(prevKey.has_value() && nextKey.has_value()) {
-                                    aiVectorKey const &prevScale{ channel->mScalingKeys[*prevKey] };
-                                    aiVectorKey const &nextScale{ channel->mScalingKeys[*nextKey] };
-
-                                    double const timeBetweenPoses{ nextScale.mTime - prevScale.mTime };
-                                    double const timeFromPrevPose{ frame - prevScale.mTime };
-                                    double const normTime{ timeFromPrevPose / timeBetweenPoses };
-
-                                    jointPose.scale = lerp(convertToGarlicVec(prevScale.mValue), convertToGarlicVec(nextScale.mValue), static_cast<float>(normTime));
-                                } else if(prevKey.has_value()) {
-                                    jointPose.scale = convertToGarlicVec(channel->mScalingKeys[*prevKey].mValue);
-                                } else if(nextKey.has_value()) {
-                                    jointPose.scale = convertToGarlicVec(channel->mScalingKeys[*nextKey].mValue);
-                                }
-                            }
-                        }
-                    } else {
-                        aiVector3D position{};
-                        aiQuaternion rotation{};
-                        aiVector3D scale{};
-                        nodeNameMap[skeleton->joints[i].name]->mTransformation.Decompose(scale, rotation, position);
-
-                        jointPose.position = convertToGarlicVec(position);
-                        jointPose.rotation = convertToGarlicQuat(rotation);
-                        jointPose.scale    = convertToGarlicVec(scale);
-                    }
+                    jointPose.position = convert(position);
+                    jointPose.rotation = convert(rotation);
+                    jointPose.scale    = convert(scale);
                 }
 
                 animClip.poses.emplace_back(std::move(animPose));
