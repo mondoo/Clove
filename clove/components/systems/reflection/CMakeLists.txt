@@ -5,7 +5,8 @@ set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 add_library(
     CloveReflection STATIC
         ${INCLUDE}/Reflect.hpp
-        ${SOURCE}/Reflect.cpp
+        ${INCLUDE}/Serialise.hpp
+        ${SOURCE}/Serialise.cpp
 )
 
 #Includes
@@ -21,7 +22,10 @@ target_link_libraries(
     CloveReflection
 
 	PUBLIC
-		CloveDefinitions
+        CloveDefinitions
+
+    PRIVATE
+        CONAN_PKG::yaml-cpp
 )
 
 if(GAR_BUILD_TESTS)
