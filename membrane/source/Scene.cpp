@@ -6,13 +6,13 @@
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <fstream>
-#include <yaml-cpp/yaml.h>
+//#include <yaml-cpp/yaml.h>
 #include <Clove/ModelLoader.hpp>
 
 using namespace garlic::clove;
 
 namespace YAML {
-    template<>
+    /* template<>
     struct convert<vec3f> {
         static Node encode(vec3f const &rhs) {
             Node root{};
@@ -58,7 +58,7 @@ namespace YAML {
             rhs.w = node[3].as<float>();
             return true;
         }
-    };
+    }; */
 }
 
 namespace garlic::membrane {
@@ -83,7 +83,7 @@ namespace garlic::membrane {
     void Scene::save() {
         auto *manager{ clove::Application::get().getEntityManager() };
 
-        YAML::Node rootNode;
+        /* YAML::Node rootNode;
 
         rootNode["version"] = -1;
         rootNode["sceneid"] = -1;
@@ -125,7 +125,7 @@ namespace garlic::membrane {
         emitter << rootNode;
 
         std::ofstream outSteam{ sceneFile };
-        outSteam << emitter.c_str();
+        outSteam << emitter.c_str(); */
     }
 
     std::vector<clove::Entity> const &Scene::load() {
@@ -134,7 +134,7 @@ namespace garlic::membrane {
             manager->destroy(entity);
         }
 
-        YAML::Node scene{ YAML::LoadFile(sceneFile.string()) };
+        /* YAML::Node scene{ YAML::LoadFile(sceneFile.string()) };
 
         for(auto &entityNode : scene["entities"]) {
             //TODO: Assign an entity id somehow.
@@ -154,7 +154,7 @@ namespace garlic::membrane {
                 }
             }
             entities.push_back(entity);
-        }
+        } */
 
         return entities;
     }

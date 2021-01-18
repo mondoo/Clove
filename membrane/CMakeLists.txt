@@ -42,8 +42,6 @@ target_link_libraries(
 
     PRIVATE
         Clove
-        
-        CONAN_PKG::yaml-cpp
 )
 
 #Definitions
