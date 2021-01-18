@@ -3,6 +3,24 @@
 
 using namespace garlic::clove;
 
+struct NonReflectedClass {
+    float member;
+};
+
+TEST(ReflectionTests, GetClassWithoutReflecting) {
+    Class testClassInfo{ getClass<NonReflectedClass>() };
+
+    EXPECT_EQ(testClassInfo.name, "");
+    EXPECT_EQ(testClassInfo.size, 0);
+    EXPECT_EQ(testClassInfo.members.size(), 0);
+
+    Class basicTypeClass{ getClass<int32_t>() };
+
+    EXPECT_EQ(basicTypeClass.name, "");
+    EXPECT_EQ(basicTypeClass.size, 0);
+    EXPECT_EQ(basicTypeClass.members.size(), 0);
+}
+
 struct SimpleTestClass {
     int32_t intMember;
 };
@@ -21,8 +39,8 @@ struct SimpleMemberTestClass {
 };
 CLOVE_REFLECT_CLASS(
     SimpleMemberTestClass,
-    intMember,
-    floatMember
+    CLOVE_REFLECT_CLASS_MEMBER(SimpleMemberTestClass, intMember),
+    CLOVE_REFLECT_CLASS_MEMBER(SimpleMemberTestClass, floatMember), 
 );
 
 TEST(ReflectionTests, CanGetBasicMemberInformationOnAType) {

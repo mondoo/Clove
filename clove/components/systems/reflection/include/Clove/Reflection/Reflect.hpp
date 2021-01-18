@@ -25,21 +25,22 @@ namespace garlic::clove {
     }
 }
 
-#define CLOVE_REFLECT_CLASS_MEMBER(classType, member) \
-    Member {                                          \
-        .name   = #member,                            \
-        .size   = sizeof(classType::member),          \
-        .offset = offsetof(classType, member)         \
+#define CLOVE_REFLECT_CLASS_MEMBER(classType, memberName) \
+    Member {                                              \
+        .name   = #memberName,                            \
+        .size   = sizeof(classType::memberName),          \
+        .offset = offsetof(classType, memberName)         \
     }
 
-#define CLOVE_REFLECT_CLASS(class, ...) \
-    namespace garlic::clove {           \
-        template<>                      \
-        Class getClass<class>() {       \
-            return {                    \
-                .name = #class,         \
-                .size = sizeof(class),  \
-                                        \
-            };                          \
-        }                               \
+#define CLOVE_REFLECT_CLASS(classType, ...)   \
+    namespace garlic::clove {                 \
+        template<>                            \
+        Class getClass<classType>() {         \
+            return {                          \
+                .name    = #classType,        \
+                .size    = sizeof(classType), \
+                .members = {                  \
+                    __VA_ARGS__ }             \
+            };                                \
+        }                                     \
     }
