@@ -31,6 +31,7 @@ TEST(ReflectionTests, CanGetBasicInformationOnAType) {
 
     EXPECT_EQ(testClassInfo.name, "SimpleTestClass");
     EXPECT_EQ(testClassInfo.size, sizeof(SimpleTestClass));
+    EXPECT_EQ(testClassInfo.members.size(), 0);
 }
 
 struct SimpleMemberTestClass {
@@ -54,13 +55,3 @@ TEST(ReflectionTests, CanGetBasicMemberInformationOnAType) {
     EXPECT_EQ(testClassInfo.members[1].size, sizeof(SimpleMemberTestClass::floatMember));
     EXPECT_EQ(testClassInfo.members[1].offset, offsetof(SimpleMemberTestClass, floatMember));
 }
-
-//Get member names?
-//Get user members
-//Get nested members (declared inside classes?)
-//Get pointer members
-
-//Get member functions
-
-//Inheritance?
-//Templated types/functions?

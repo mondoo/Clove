@@ -20,7 +20,6 @@ namespace garlic::clove {
 namespace garlic::clove {
     template<typename T>
     Class getClass() {
-        //TODO: Error
         return {};
     }
 }
