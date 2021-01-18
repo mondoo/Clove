@@ -5,8 +5,9 @@ set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 add_library(
     CloveReflection STATIC
         ${INCLUDE}/Reflect.hpp
-        ${INCLUDE}/Serialise.hpp
-        ${SOURCE}/Serialise.cpp
+        ${INCLUDE}/Serialiser.hpp
+        ${INCLUDE}/YamlSerialiser.hpp
+        ${SOURCE}/YamlSerialiser.cpp
 )
 
 #Includes
