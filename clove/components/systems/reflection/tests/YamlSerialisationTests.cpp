@@ -31,27 +31,28 @@ TEST(YamlSerialisationTests, CanPushANodeWithAValue) {
     EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nvalue: 5");
 }
 
-struct TestClass {
-    int32_t memberOne;
-    int32_t memberTwo;
-    float memberThree;
-};
-CLOVE_REFLECT_CLASS(
-    TestClass,
-    CLOVE_REFLECT_CLASS_MEMBER(TestClass, memberOne),
-    CLOVE_REFLECT_CLASS_MEMBER(TestClass, memberTwo),
-    CLOVE_REFLECT_CLASS_MEMBER(TestClass, memberThree), )
+// struct TestClass {
+//     int32_t memberOne;
+//     int32_t memberTwo;
+//     float memberThree;
+// };
+// CLOVE_REFLECT_CLASS(
+//     TestClass,
+//     CLOVE_REFLECT_CLASS_MEMBER(TestClass, memberOne),
+//     CLOVE_REFLECT_CLASS_MEMBER(TestClass, memberTwo),
+//     CLOVE_REFLECT_CLASS_MEMBER(TestClass, memberThree), )
 
 TEST(YamlSerialisationTests, CanPushAReflectedClass) {
-    YamlSerialiser serialiser{};
+    // YamlSerialiser serialiser{};
 
-    TestClass testClass{
-        .memberOne   = 1,
-        .memberTwo   = 2,
-        .memberThree = 3.0f,
-    };
+    // TestClass testClass{
+    //     .memberOne   = 1,
+    //     .memberTwo   = 2,
+    //     .memberThree = 3.0f,
+    // };
 
-    serialiser.push("testClass", testClass);
+    // serialiser.push("testClass", testClass);
 
-    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nTestClass:\n  memberOne: 0\n  memberTwo: 0\n  memberThree: 0");
+    // EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nTestClass:\n  memberOne: 1\n  memberTwo: 2\n  memberThree: 3");
+    EXPECT_TRUE(false);
 }

@@ -64,16 +64,16 @@ namespace garlic::clove {
 
         template<typename T>
         void push(std::string_view name, T const &type) {
-            Class typeInfo{ getClass(type) };
-            if(typeInfo.name.length() <= 0){
-                //TODO: Error
-                return;
-            }
+            // Class typeInfo{ getClass(type) };
+            // if(typeInfo.name.length() <= 0){
+            //     //TODO: Error
+            //     return;
+            // }
 
-            push(typeInfo.name);
-            for(auto &member : typeInfo.members){
-                push(member.name);//TODO: Value of member
-            }
+            // push(typeInfo.name);
+            // for(auto &member : typeInfo.members){
+            //     push(member.name);//TODO: Value of member
+            // }
         }
 
         //TODO: ofsteam override. Takes a file name
