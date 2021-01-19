@@ -4,20 +4,16 @@
 
 #include <fstream>
 #include <string>
+#include <variant>
 #include <vector>
 
 namespace garlic::clove {
-    struct Node {
-        std::string name;
-        std::vector<Node> children{};
-    };
-
     class Serialiser {
         //TYPES
     public:
         struct Node {
             std::string name;
-            std::vector<Node> children{};
+            std::variant<float, std::vector<Node>> value{};
         };
 
         //VARIABLES
@@ -32,19 +28,36 @@ namespace garlic::clove {
         //TODO: inl
 
         void push(std::string_view name) {
-            if(head == nullptr){
-                head = &root;
+            if(head == nullptr) {
+                head       = &root;
                 head->name = name;
-            }else{
+            } else {
                 Node node{};
                 node.name = name;
-                head->children.emplace_back(node);
+                if(auto *children{ std::get_if<std::vector<Node>>(&node.value) }) {
+                    children->emplace_back(std::move(node));
+                } else {
+                    head->value = std::vector<Node>{ std::move(node) };
+                }
             }
         }
 
-        template<typename T>
-        void push(std::string_view name, T value) {
-            
+        //template<typename T>
+        void push(std::string_view name, float value) {
+            if(head == nullptr) {
+                head        = &root;
+                head->name  = name;
+                head->value = value;
+            } else {
+                Node node{};
+                node.name  = name;
+                node.value = value;
+                if(auto *children{ std::get_if<std::vector<Node>>(&node.value) }) {
+                    children->emplace_back(std::move(node));
+                } else {
+                    head->value = std::vector<Node>{ std::move(node) };
+                }
+            }
         }
 
         //TODO: Add push with a value

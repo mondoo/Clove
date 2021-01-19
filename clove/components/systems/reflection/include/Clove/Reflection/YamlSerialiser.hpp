@@ -8,6 +8,6 @@ namespace garlic::clove{
     private:
         //FUNCTIONS
     public:
-        std::string emitt() override;
+        std::string emitt() final;
     };
 }

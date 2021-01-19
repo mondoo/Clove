@@ -16,7 +16,19 @@ TEST(YamlSerialisationTests, CanPushANode) {
 
     serialiser.push("Start");
 
-    EXPECT_EQ(serialiser.emitt(), "Start");
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nStart: 0");
+
+    serialiser.push("Node");
+
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nStart:\n  Node: 0");
+}
+
+TEST(YamlSerialisationTests, CanPushANodeWithAValue) {
+    YamlSerialiser serialiser{};
+
+    serialiser.push("value", 5.0f);
+
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nvalue: 5");
 }
 
 struct TestClass {
