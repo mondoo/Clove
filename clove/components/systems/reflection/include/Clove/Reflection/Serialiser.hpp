@@ -27,6 +27,8 @@ namespace garlic::clove {
 
         //TODO: inl
 
+        //TODO: Have begin and end for parent nodes and set for leaf nodes.
+
         void push(std::string_view name) {
             if(head == nullptr) {
                 head       = &root;
@@ -34,7 +36,7 @@ namespace garlic::clove {
             } else {
                 Node node{};
                 node.name = name;
-                if(auto *children{ std::get_if<std::vector<Node>>(&node.value) }) {
+                if(auto *children{ std::get_if<std::vector<Node>>(&head->value) }) {
                     children->emplace_back(std::move(node));
                 } else {
                     head->value = std::vector<Node>{ std::move(node) };
@@ -52,7 +54,7 @@ namespace garlic::clove {
                 Node node{};
                 node.name  = name;
                 node.value = value;
-                if(auto *children{ std::get_if<std::vector<Node>>(&node.value) }) {
+                if(auto *children{ std::get_if<std::vector<Node>>(&head->value) }) {
                     children->emplace_back(std::move(node));
                 } else {
                     head->value = std::vector<Node>{ std::move(node) };
@@ -60,18 +62,19 @@ namespace garlic::clove {
             }
         }
 
-        //TODO: Add push with a value
+        template<typename T>
+        void push(std::string_view name, T const &type) {
+            Class typeInfo{ getClass<T>() };
+            if(typeInfo.name.length() <= 0){
+                //TODO: Error
+                return;
+            }
 
-        /*
-            TODO: Push type T
-                - pushes class name as like the parent node
-                - goes through members and pushes their value
-        */
-
-        /* template<typename T>
-        void push(T &&type, std::string_view name) {
-            
-        } */
+            push(typeInfo.name);
+            for(auto &member : typeInfo.members){
+                push(member.name);//TODO: Value of member
+            }
+        }
 
         //TODO: ofsteam override. Takes a file name
         virtual std::string emitt() = 0;

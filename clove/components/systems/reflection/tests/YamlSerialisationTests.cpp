@@ -42,7 +42,7 @@ CLOVE_REFLECT_CLASS(
     CLOVE_REFLECT_CLASS_MEMBER(TestClass, memberTwo),
     CLOVE_REFLECT_CLASS_MEMBER(TestClass, memberThree), )
 
-/* TEST(YamlSerialisationTests, CanConsumeAReflectedClass) {
+TEST(YamlSerialisationTests, CanPushAReflectedClass) {
     YamlSerialiser serialiser{};
 
     TestClass testClass{
@@ -51,7 +51,7 @@ CLOVE_REFLECT_CLASS(
         .memberThree = 3.0f,
     };
 
-    serialiser.push(testClass, "testClass");
+    serialiser.push("testClass", testClass);
 
-    //EXPECT_TRUE(false);
-} */
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nTestClass:\n  memberOne: 0\n  memberTwo: 0\n  memberThree: 0");
+}
