@@ -64,7 +64,7 @@ namespace garlic::clove {
 
         template<typename T>
         void push(std::string_view name, T const &type) {
-            Class typeInfo{ getClass<T>() };
+            Class typeInfo{ getClass(type) };
             if(typeInfo.name.length() <= 0){
                 //TODO: Error
                 return;

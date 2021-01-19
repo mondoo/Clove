@@ -8,13 +8,15 @@ struct NonReflectedClass {
 };
 
 TEST(ReflectionTests, GetClassWithoutReflecting) {
-    Class testClassInfo{ getClass<NonReflectedClass>() };
+    NonReflectedClass testClass{};
+    Class testClassInfo{ getClass(testClass) };
 
     EXPECT_EQ(testClassInfo.name, "");
     EXPECT_EQ(testClassInfo.size, 0);
     EXPECT_EQ(testClassInfo.members.size(), 0);
 
-    Class basicTypeClass{ getClass<int32_t>() };
+    int32_t basicType{};
+    Class basicTypeClass{ getClass(basicType) };
 
     EXPECT_EQ(basicTypeClass.name, "");
     EXPECT_EQ(basicTypeClass.size, 0);
@@ -27,7 +29,8 @@ struct SimpleTestClass {
 CLOVE_REFLECT_CLASS(SimpleTestClass);
 
 TEST(ReflectionTests, CanGetBasicInformationOnAType) {
-    Class testClassInfo{ getClass<SimpleTestClass>() };
+    SimpleTestClass testClass{};
+    Class testClassInfo{ getClass(testClass) };
 
     EXPECT_EQ(testClassInfo.name, "SimpleTestClass");
     EXPECT_EQ(testClassInfo.size, sizeof(SimpleTestClass));
@@ -45,7 +48,8 @@ CLOVE_REFLECT_CLASS(
 );
 
 TEST(ReflectionTests, CanGetBasicMemberInformationOnAType) {
-    Class testClassInfo{ getClass<SimpleMemberTestClass>() };
+    SimpleMemberTestClass testClass{};
+    Class testClassInfo{ getClass(testClass) };
 
     ASSERT_EQ(testClassInfo.members.size(), 2);
     EXPECT_EQ(testClassInfo.members[0].name, "intMember");

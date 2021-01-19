@@ -9,15 +9,15 @@
         .offset = offsetof(classType, memberName)         \
     }
 
-#define CLOVE_REFLECT_CLASS(classType, ...)   \
-    namespace garlic::clove {                 \
-        template<>                            \
-        Class getClass<classType>() {         \
-            return {                          \
-                .name    = #classType,        \
-                .size    = sizeof(classType), \
-                .members = {                  \
-                    __VA_ARGS__ }             \
-            };                                \
-        }                                     \
+#define CLOVE_REFLECT_CLASS(classType, ...)                  \
+    namespace garlic::clove {                                \
+        template<>                                           \
+        Class getClass<classType>(classType const &object) { \
+            return {                                         \
+                .name    = #classType,                       \
+                .size    = sizeof(classType),                \
+                .members = {                                 \
+                    __VA_ARGS__ }                            \
+            };                                               \
+        }                                                    \
     }

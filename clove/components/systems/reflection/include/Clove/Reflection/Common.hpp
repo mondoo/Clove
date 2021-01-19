@@ -19,7 +19,7 @@ namespace garlic::clove {
 
 namespace garlic::clove {
     template<typename T>
-    Class getClass() {
+    Class getClass(T const &object) {
         return {};
     }
 }
