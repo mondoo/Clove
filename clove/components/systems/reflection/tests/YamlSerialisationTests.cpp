@@ -5,7 +5,13 @@
 
 using namespace garlic::clove;
 
-TEST(YamlSerialisationTests, CanPushANode){
+TEST(YamlSerialisationTests, CanEmittDefaultInformation) {
+    YamlSerialiser serialiser{};
+
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1");
+}
+
+TEST(YamlSerialisationTests, CanPushANode) {
     YamlSerialiser serialiser{};
 
     serialiser.push("Start");

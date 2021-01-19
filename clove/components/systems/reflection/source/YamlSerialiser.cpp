@@ -5,8 +5,15 @@
 
 namespace garlic::clove {
     std::string YamlSerialiser::emitt() {
-        YAML::Emitter emitter;
-        emitter << YAML::BeginMap << root.name << YAML::EndMap;
+        YAML::Node emitterNode{};
+
+        emitterNode["type"] = "yaml";
+        emitterNode["version"] = 1;
+
+        emittNode(emitterNode, root);
+
+        YAML::Emitter emitter{};
+        emitter << emitterNode;
 
         std::stringstream stream;
         stream << emitter.c_str();
