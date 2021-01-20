@@ -73,7 +73,6 @@ namespace garlic::clove {
             MapWindowPoints(windowsHandle, HWND_DESKTOP, (LPPOINT)&windowRect, 2);
         } else {
             GetWindowRect(windowsHandle, &windowRect);
-            MapWindowPoints(HWND_DESKTOP, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
         }
 
         return { windowRect.left, windowRect.top };
