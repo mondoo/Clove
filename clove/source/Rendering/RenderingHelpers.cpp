@@ -7,6 +7,7 @@
 #include <Clove/Graphics/GraphicsQueue.hpp>
 #include <Clove/Graphics/Shader.hpp>
 #include <Clove/Graphics/TransferQueue.hpp>
+#include <Clove/TextureLoader.hpp>
 
 using namespace garlic::clove;
 
@@ -156,6 +157,9 @@ namespace garlic::clove {
     }
 
     std::unique_ptr<GraphicsImage> createImageWithData(GraphicsFactory &factory, GraphicsImage::Descriptor imageDescriptor, void const *data, size_t const dataSize) {
+        //Make sure the image is set up to be transfered to.
+        imageDescriptor.usageFlags |= GraphicsImage::UsageMode::TransferDestination;
+
         ImageMemoryBarrierInfo constexpr layoutTransferInfo{
             .currentAccess      = AccessFlags::None,
             .newAccess          = AccessFlags::TransferWrite,
@@ -228,5 +232,21 @@ namespace garlic::clove {
         graphicsQueue->freeCommandBuffer(*graphicsCommandBuffer);
 
         return image;
+    }
+
+    std::unique_ptr<GraphicsImage> createImageFromPath(GraphicsFactory &factory, std::filesystem::path const &path) {
+        TextureLoader::LoadedTextureData const textureData{ TextureLoader::loadTexture(path).getValue() };
+
+        GraphicsImage::Descriptor const textureDesc{
+            .type        = GraphicsImage::Type::_2D,
+            .usageFlags  = GraphicsImage::UsageMode::Sampled,
+            .dimensions  = textureData.dimensions,
+            .format      = GraphicsImage::Format::R8G8B8A8_SRGB,
+            .sharingMode = SharingMode::Exclusive,
+        };
+
+        size_t const size{ textureData.dimensions.x * textureData.dimensions.y * textureData.channels };
+
+        return createImageWithData(factory, std::move(textureDesc), textureData.buffer.get(), size);
     }
 }

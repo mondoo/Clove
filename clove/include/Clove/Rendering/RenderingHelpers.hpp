@@ -5,6 +5,7 @@
 #include <Clove/Graphics/Descriptor.hpp>
 #include <Clove/Graphics/GraphicsImage.hpp>
 #include <unordered_map>
+#include <filesystem>
 
 namespace garlic::clove {
     class DescriptorSetLayout;
@@ -27,4 +28,9 @@ namespace garlic::clove {
      * @brief Creates an image and then transfers the data into it.
      */
     std::unique_ptr<GraphicsImage> createImageWithData(GraphicsFactory &factory, GraphicsImage::Descriptor imageDescriptor, void const *data, size_t const dataSize);
+
+    /**
+     * @brief Creates an image from the specified path
+     */
+    std::unique_ptr<GraphicsImage> createImageFromPath(GraphicsFactory &factory, std::filesystem::path const &path);
 }
