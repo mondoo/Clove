@@ -18,12 +18,15 @@
             template<size_t /* , typename T */>                           \
             struct MemberInfo;
 
-#define CLOVE_REFLECT_MEMBER(member)                       \
-    template</* typename T */>                             \
-    struct MemberInfo<__COUNTER__ - memberIndexOffset> {   \
-        using Type = decltype(Type::member);               \
-                                                           \
-        static std::string_view constexpr name{ #member }; \
+#define CLOVE_REFLECT_MEMBER(member)                                    \
+    template</* typename T */>                                          \
+    struct MemberInfo<__COUNTER__ - memberIndexOffset> {                \
+        using ParentType = Type;                                        \
+        using Type       = decltype(ParentType::member);                \
+                                                                        \
+        static std::string_view constexpr name{ #member };              \
+        static size_t constexpr size{ sizeof(Type) };                   \
+        static size_t constexpr offset{ offsetof(ParentType, member) }; \
     };
 
 #define CLOVE_REFLECT_END                                                   \
