@@ -4,12 +4,12 @@
 
 namespace garlic::clove {
     /**
-     * @brief Represents a view on a subset of a GraphicsImage.
-     * @details GraphicsImages are not directly accessed by shaders for reading / writing.
+     * @brief Represents a view on a subset of a GhaImage.
+     * @details GhaImages are not directly accessed by shaders for reading / writing.
      * Instead, a view onto that image is used.
-     * @see GraphicsImage::createView
+     * @see GhaImage::createView
      */
-    class GraphicsImageView {
+    class GhaImageView {
         //TYPES
     public:
         enum class Type {
@@ -26,6 +26,6 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        virtual ~GraphicsImageView() = default;
+        virtual ~GhaImageView() = default;
     };
 }

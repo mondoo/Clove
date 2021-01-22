@@ -11,7 +11,7 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    std::unique_ptr<GraphicsDevice> createGraphicsDevice(GraphicsApi api, std::any nativeWindow) {
+    std::unique_ptr<GhaDevice> createGraphicsDevice(GraphicsApi api, std::any nativeWindow) {
         switch(api) {
 #if CLOVE_PLATFORM_WINDOWS
             case GraphicsApi::Vulkan:

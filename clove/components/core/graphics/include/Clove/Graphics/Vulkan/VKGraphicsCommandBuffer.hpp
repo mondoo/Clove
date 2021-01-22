@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsCommandBuffer.hpp"
+#include "Clove/Graphics/GhaGraphicsCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKGraphicsCommandBuffer : public GraphicsCommandBuffer {
+    class VKGraphicsCommandBuffer : public GhaGraphicsCommandBuffer {
         //VARIABLES
     private:
         VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
@@ -31,20 +31,20 @@ namespace garlic::clove {
         void beginRecording(CommandBufferUsage usageFlag) override;
         void endRecording() override;
 
-        void beginRenderPass(RenderPass &renderPass, Framebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) override;
+        void beginRenderPass(GhaRenderPass &renderPass, GhaFramebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) override;
         void endRenderPass() override;
 
-        void bindPipelineObject(PipelineObject &pipelineObject) override;
-        void bindVertexBuffer(GraphicsBuffer &vertexBuffer, size_t const offset) override;
-        void bindIndexBuffer(GraphicsBuffer &indexBuffer, size_t const offset, IndexType indexType) override;
-        void bindDescriptorSet(DescriptorSet &descriptorSet, uint32_t const setNum) override;
+        void bindPipelineObject(GhaPipelineObject &pipelineObject) override;
+        void bindVertexBuffer(GhaBuffer &vertexBuffer, size_t const offset) override;
+        void bindIndexBuffer(GhaBuffer &indexBuffer, size_t const offset, IndexType indexType) override;
+        void bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) override;
 
-        void pushConstant(Shader::Stage const stage, size_t const offset, size_t const size, void const *data) override;
+        void pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) override;
 
         void drawIndexed(size_t const indexCount) override;
 
-        void bufferMemoryBarrier(GraphicsBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) override;
-        void imageMemoryBarrier(GraphicsImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) override;
+        void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) override;
+        void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) override;
 
         VkCommandBuffer getCommandBuffer() const;
     };

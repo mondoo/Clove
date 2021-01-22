@@ -375,7 +375,7 @@ namespace garlic::clove {
 
     VKGraphicsDevice::~VKGraphicsDevice() = default;
 
-    std::shared_ptr<GraphicsFactory> VKGraphicsDevice::getGraphicsFactory() const {
+    std::shared_ptr<GhaFactory> VKGraphicsDevice::getGraphicsFactory() const {
         return factory;
     }
 
@@ -383,7 +383,7 @@ namespace garlic::clove {
         vkDeviceWaitIdle(devicePtr.get());
     }
 
-    GraphicsDevice::Limits VKGraphicsDevice::getLimits() const {
+    GhaDevice::Limits VKGraphicsDevice::getLimits() const {
         VkPhysicalDeviceProperties devicePoperties;
         vkGetPhysicalDeviceProperties(devicePtr.getPhysical(), &devicePoperties);
 

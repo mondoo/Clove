@@ -6,17 +6,17 @@
 #include <Clove/Maths/Vector.hpp>
 
 namespace garlic::clove {
-    class GraphicsFactory;
-    class GraphicsImage;
-    class GraphicsImageView;
+    class GhaFactory;
+    class GhaImage;
+    class GhaImageView;
 }
 
 namespace garlic::clove {
     class Image : public DrawableElement {
         //VARIABLES
     private:
-        std::shared_ptr<GraphicsImage> image;
-        std::shared_ptr<GraphicsImageView> imageView;
+        std::shared_ptr<GhaImage> image;
+        std::shared_ptr<GhaImageView> imageView;
 
         vec2f position{ 0.0f, 0.0f };
         float rotation{ 0.0f };
@@ -25,7 +25,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         Image();
-        Image(std::shared_ptr<GraphicsImage> graphicsImage);
+        Image(std::shared_ptr<GhaImage> graphicsImage);
 
         Image(Image const &other);
         Image(Image &&other) noexcept;

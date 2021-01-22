@@ -80,36 +80,36 @@ add_library(
 	CloveGraphics STATIC
 		${INCLUDE}/CommandBuffer.hpp
 		${INCLUDE}/Descriptor.hpp
-		${INCLUDE}/DescriptorPool.hpp
-		${INCLUDE}/DescriptorSet.hpp
-		${INCLUDE}/DescriptorSetLayout.hpp
-		${INCLUDE}/Fence.hpp
-		${INCLUDE}/Framebuffer.hpp
+		${INCLUDE}/GhaBuffer.hpp
+		${INCLUDE}/GhaDescriptorPool.hpp
+		${INCLUDE}/GhaDescriptorSet.hpp
+		${INCLUDE}/GhaDescriptorSetLayout.hpp
+		${INCLUDE}/GhaDevice.hpp
+		${INCLUDE}/GhaFactory.hpp
+		${INCLUDE}/GhaFence.hpp
+		${INCLUDE}/GhaFramebuffer.hpp
+		${INCLUDE}/GhaGraphicsCommandBuffer.hpp
+		${INCLUDE}/GhaGraphicsQueue.hpp
+		${INCLUDE}/GhaImage.hpp
+		${INCLUDE}/GhaImageView.hpp
+		${INCLUDE}/GhaPipelineObject.hpp
+		${INCLUDE}/GhaPresentQueue.hpp
+		${INCLUDE}/GhaRenderPass.hpp
+		${INCLUDE}/GhaSampler.hpp
+		${INCLUDE}/GhaSemaphore.hpp
+		${INCLUDE}/GhaShader.hpp
+		${INCLUDE}/GhaSwapchain.hpp
+		${INCLUDE}/GhaTransferCommandBuffer.hpp
+		${INCLUDE}/GhaTransferQueue.hpp
 		${INCLUDE}/Graphics.hpp		
 		${SOURCE}/Graphics.cpp
 		${INCLUDE}/GraphicsAPI.hpp
-		${INCLUDE}/GraphicsBuffer.hpp
-		${INCLUDE}/GraphicsCommandBuffer.hpp
-		${INCLUDE}/GraphicsDevice.hpp
-		${INCLUDE}/GraphicsFactory.hpp
-		${INCLUDE}/GraphicsImage.hpp
-		${INCLUDE}/GraphicsImageView.hpp
-		${INCLUDE}/GraphicsQueue.hpp
-		${INCLUDE}/GraphicsResource.hpp
 		${INCLUDE}/MemoryBarrier.hpp
-		${INCLUDE}/PipelineObject.hpp
-		${INCLUDE}/PresentQueue.hpp
 		${INCLUDE}/Queue.hpp
-		${INCLUDE}/RenderPass.hpp
+		${INCLUDE}/Resource.hpp
 		${INCLUDE}/Result.hpp
-		${INCLUDE}/Sampler.hpp
-		${INCLUDE}/Semaphore.hpp
-		${INCLUDE}/Shader.hpp
 		${INCLUDE}/ShaderCompiler.hpp		
 		${SOURCE}/ShaderCompiler.cpp
-		${INCLUDE}/Swapchain.hpp
-		${INCLUDE}/TransferCommandBuffer.hpp
-		${INCLUDE}/TransferQueue.hpp
 		
 		${VulkanFiles}
 

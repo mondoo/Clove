@@ -7,7 +7,7 @@ namespace garlic::clove {
         return surface.get();
     }
 
-    GraphicsDevice *Application::getGraphicsDevice() const {
+    GhaDevice *Application::getGraphicsDevice() const {
         return graphicsDevice.get();
     }
 

@@ -5,9 +5,9 @@
 
 namespace garlic::clove {
     /**
-     * @brief A Shader represents a small piece of code that runs on the GPU
+     * @brief A GhaShader represents a small piece of code that runs on the GPU
      */
-    class Shader {
+    class GhaShader {
         //TYPES
     public:
         using StageType = uint16_t;
@@ -19,8 +19,8 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        virtual ~Shader() = default;
+        virtual ~GhaShader() = default;
     };
 
-    CLOVE_ENUM_BIT_FLAG_OPERATORS(Shader::Stage, Shader::StageType)
+    CLOVE_ENUM_BIT_FLAG_OPERATORS(GhaShader::Stage, GhaShader::StageType)
 }

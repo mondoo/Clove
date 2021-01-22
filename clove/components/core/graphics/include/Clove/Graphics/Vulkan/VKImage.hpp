@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsImage.hpp"
+#include "Clove/Graphics/GhaImage.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
@@ -12,7 +12,7 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove {
-    class VKImage : public GraphicsImage {
+    class VKImage : public GhaImage {
         //VARIABLES
     private:
         DevicePointer device;
@@ -37,7 +37,7 @@ namespace garlic::clove {
 
         ~VKImage();
 
-        std::unique_ptr<GraphicsImageView> createView(GraphicsImageView::Descriptor viewDescriptor) const override;
+        std::unique_ptr<GhaImageView> createView(GhaImageView::Descriptor viewDescriptor) const override;
 
         inline VkImage getImage() const;
 

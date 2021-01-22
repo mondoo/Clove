@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/TransferCommandBuffer.hpp"
+#include "Clove/Graphics/GhaTransferCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKTransferCommandBuffer : public TransferCommandBuffer {
+    class VKTransferCommandBuffer : public GhaTransferCommandBuffer {
         //VARIABLES
     private:
         VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
@@ -29,13 +29,13 @@ namespace garlic::clove {
         void beginRecording(CommandBufferUsage usageFlag) override;
         void endRecording() override;
 
-        void copyBufferToBuffer(GraphicsBuffer &source, size_t const sourceOffset, GraphicsBuffer &destination, size_t const destinationOffset, size_t const sizeBytes) override;
-        void copyBufferToImage(GraphicsBuffer &source, size_t const sourceOffset, GraphicsImage &destination, vec3i const &destinationOffset, vec3ui const &destinationExtent) override;
+        void copyBufferToBuffer(GhaBuffer &source, size_t const sourceOffset, GhaBuffer &destination, size_t const destinationOffset, size_t const sizeBytes) override;
+        void copyBufferToImage(GhaBuffer &source, size_t const sourceOffset, GhaImage &destination, vec3i const &destinationOffset, vec3ui const &destinationExtent) override;
 
-        void copyImageToBuffer(GraphicsImage &source, vec3i const &sourceOffset, vec3ui const &sourceExtent, GraphicsBuffer &destination, size_t const destinationOffset) override;
+        void copyImageToBuffer(GhaImage &source, vec3i const &sourceOffset, vec3ui const &sourceExtent, GhaBuffer &destination, size_t const destinationOffset) override;
 
-        void bufferMemoryBarrier(GraphicsBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) override;
-        void imageMemoryBarrier(GraphicsImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) override;
+        void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) override;
+        void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) override;
 
         VkCommandBuffer getCommandBuffer() const;
     };

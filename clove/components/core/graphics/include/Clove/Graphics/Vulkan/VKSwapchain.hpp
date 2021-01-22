@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Swapchain.hpp"
+#include "Clove/Graphics/GhaSwapchain.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
@@ -11,7 +11,7 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove {
-    class VKSwapchain : public Swapchain {
+    class VKSwapchain : public GhaSwapchain {
         //VARIABLES
     private:
         DevicePointer device;
@@ -36,12 +36,12 @@ namespace garlic::clove {
 
         ~VKSwapchain();
 
-        std::pair<uint32_t, Result> aquireNextImage(Semaphore const *availableSemaphore) override;
+        std::pair<uint32_t, Result> aquireNextImage(GhaSemaphore const *availableSemaphore) override;
         
-        GraphicsImage::Format getImageFormat() const override;
+        GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<std::shared_ptr<GraphicsImageView>> getImageViews() const override;
+        std::vector<std::shared_ptr<GhaImageView>> getImageViews() const override;
 
         VkSwapchainKHR getSwapchain() const;
     };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsResource.hpp"
+#include "Clove/Graphics/Resource.hpp"
 
 #include <Clove/Definitions.hpp>
 #include <cstddef>
@@ -9,7 +9,7 @@ namespace garlic::clove {
     /**
      * @brief Represents an arbitrary section of memory. Used in graphics operations.
      */
-    class GraphicsBuffer {
+    class GhaBuffer {
         //TYPES
     public:
         using UsageModeType = uint8_t;
@@ -30,7 +30,7 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        virtual ~GraphicsBuffer() = default;
+        virtual ~GhaBuffer() = default;
 
         /**
          * @brief Write data into the buffer. Requires the buffer to be created with MemoryType::SystemMemory.
@@ -49,5 +49,5 @@ namespace garlic::clove {
         virtual void read(void *data, size_t const offset, size_t const size) = 0;
     };
 
-    CLOVE_ENUM_BIT_FLAG_OPERATORS(GraphicsBuffer::UsageMode, GraphicsBuffer::UsageModeType)
+    CLOVE_ENUM_BIT_FLAG_OPERATORS(GhaBuffer::UsageMode, GhaBuffer::UsageModeType)
 }

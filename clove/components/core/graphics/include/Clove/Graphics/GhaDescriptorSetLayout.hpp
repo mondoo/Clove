@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/Descriptor.hpp"
-#include "Clove/Graphics/Shader.hpp"
+#include "Clove/Graphics/GhaShader.hpp"
 
 #include <vector>
 
@@ -10,19 +10,19 @@ namespace garlic::clove {
         uint32_t binding{ 0 };
         DescriptorType type;
         size_t arraySize{ 1 }; /**< If this descriptor represents an array it'll be the size of the array else 1 */
-        Shader::Stage stage;
+        GhaShader::Stage stage;
     };
 
     /**
-     * @brief Describes the layout of an entire DescriptorSet.
+     * @brief Describes the layout of an entire GhaDescriptorSet.
      * @details A 'set' is defined in the shader by: layout(set = 0, binding = 1). This
      * layout describes the type of binding in each binding slot for a given set. The index
      * of the set is defined in the array of DescriptorSetLayouts given to the 
      * PiplineObject::Descriptor.
-     * @see DescriptorSet
-     * @see DescriptorPool
+     * @see GhaDescriptorSet
+     * @see GhaDescriptorPool
      */
-    class DescriptorSetLayout {
+    class GhaDescriptorSetLayout {
         //TYPES
     public:
         struct Descriptor {
@@ -31,7 +31,7 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        virtual ~DescriptorSetLayout() = default;
+        virtual ~GhaDescriptorSetLayout() = default;
 
         virtual const Descriptor& getDescriptor() const = 0;
     };

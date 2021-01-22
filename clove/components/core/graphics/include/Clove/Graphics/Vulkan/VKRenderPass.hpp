@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/RenderPass.hpp"
+#include "Clove/Graphics/GhaRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKRenderPass : public RenderPass {
+    class VKRenderPass : public GhaRenderPass {
         //VARIABLES
     private:
         DevicePointer device;

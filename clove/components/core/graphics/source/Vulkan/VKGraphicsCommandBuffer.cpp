@@ -60,7 +60,7 @@ namespace garlic::clove {
         }
     }
 
-    void VKGraphicsCommandBuffer::beginRenderPass(RenderPass &renderPass, Framebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) {
+    void VKGraphicsCommandBuffer::beginRenderPass(GhaRenderPass &renderPass, GhaFramebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) {
         std::vector<VkClearValue> vkClearValues(std::size(clearValues));
         for(uint32_t i{ 0 }; i < clearValues.size(); ++i) {
             std::visit(match{
@@ -89,7 +89,7 @@ namespace garlic::clove {
         vkCmdEndRenderPass(commandBuffer);
     }
 
-    void VKGraphicsCommandBuffer::bindPipelineObject(PipelineObject &pipelineObject) {
+    void VKGraphicsCommandBuffer::bindPipelineObject(GhaPipelineObject &pipelineObject) {
         auto const *pipeline = polyCast<VKPipelineObject>(&pipelineObject);
 
         currentLayout = pipeline->getLayout();
@@ -97,24 +97,24 @@ namespace garlic::clove {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->getPipeline());
     }
 
-    void VKGraphicsCommandBuffer::bindVertexBuffer(GraphicsBuffer &vertexBuffer, size_t const offset) {
+    void VKGraphicsCommandBuffer::bindVertexBuffer(GhaBuffer &vertexBuffer, size_t const offset) {
         VkBuffer buffers[]     = { polyCast<VKBuffer>(&vertexBuffer)->getBuffer() };
         VkDeviceSize offsets[] = { offset };
 
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
     }
 
-    void VKGraphicsCommandBuffer::bindIndexBuffer(GraphicsBuffer &indexBuffer, size_t const offset, IndexType indexType) {
+    void VKGraphicsCommandBuffer::bindIndexBuffer(GhaBuffer &indexBuffer, size_t const offset, IndexType indexType) {
         vkCmdBindIndexBuffer(commandBuffer, polyCast<VKBuffer>(&indexBuffer)->getBuffer(), offset, getIndexType(indexType));
     }
 
-    void VKGraphicsCommandBuffer::bindDescriptorSet(DescriptorSet &descriptorSet, uint32_t const setNum) {
+    void VKGraphicsCommandBuffer::bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) {
         VkDescriptorSet sets[] = { polyCast<VKDescriptorSet>(&descriptorSet)->getDescriptorSet() };
 
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, currentLayout, setNum, 1, sets, 0, nullptr);
     }
 
-    void VKGraphicsCommandBuffer::pushConstant(Shader::Stage const stage, size_t const offset, size_t const size, void const *data) {
+    void VKGraphicsCommandBuffer::pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) {
         vkCmdPushConstants(commandBuffer, currentLayout, VKShader::convertStage(stage), offset, size, data);
     }
 
@@ -122,7 +122,7 @@ namespace garlic::clove {
         vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
     }
 
-    void VKGraphicsCommandBuffer::bufferMemoryBarrier(GraphicsBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
+    void VKGraphicsCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) {
         const uint32_t sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
         const uint32_t destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
 
@@ -144,7 +144,7 @@ namespace garlic::clove {
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
     }
 
-    void VKGraphicsCommandBuffer::imageMemoryBarrier(GraphicsImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
+    void VKGraphicsCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) {
         uint32_t const sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
         uint32_t const destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
 

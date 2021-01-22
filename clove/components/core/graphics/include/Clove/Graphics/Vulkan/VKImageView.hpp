@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsImageView.hpp"
+#include "Clove/Graphics/GhaImageView.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKImageView : public GraphicsImageView {
+    class VKImageView : public GhaImageView {
         //VARIABLES
     private:
         VkDevice device = VK_NULL_HANDLE;

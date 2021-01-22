@@ -6,33 +6,33 @@
 #include <vector>
 
 namespace garlic::clove {
-    class Swapchain;
-    class PresentQueue;
-    class GraphicsQueue;
-    class GraphicsDevice;
-    class GraphicsFactory;
-    class Fence;
+    class GhaSwapchain;
+    class GhaPresentQueue;
+    class GhaGraphicsQueue;
+    class GhaDevice;
+    class GhaFactory;
+    class GhaFence;
     class Surface;
 }
 
 namespace garlic::clove {
     /**
-     * @brief Swapchain backed RenderTarget.
+     * @brief GhaSwapchain backed RenderTarget.
      */
     class SwapchainRenderTarget : public RenderTarget {
         //VARIABLES
     private:
-        GraphicsDevice *graphicsDevice;
-        std::shared_ptr<GraphicsFactory> graphicsFactory;
+        GhaDevice *graphicsDevice;
+        std::shared_ptr<GhaFactory> graphicsFactory;
 
-        std::shared_ptr<Swapchain> swapchain;
-        std::shared_ptr<PresentQueue> presentQueue;
-        std::shared_ptr<GraphicsQueue> graphicsQueue;
+        std::shared_ptr<GhaSwapchain> swapchain;
+        std::shared_ptr<GhaPresentQueue> presentQueue;
+        std::shared_ptr<GhaGraphicsQueue> graphicsQueue;
 
-        std::vector<std::shared_ptr<Semaphore>> renderFinishedSemaphores;
-        std::vector<std::shared_ptr<Semaphore>> imageAvailableSemaphores;
-        std::vector<std::shared_ptr<Fence>> framesInFlight;
-        std::vector<std::shared_ptr<Fence>> imagesInFlight;
+        std::vector<std::shared_ptr<GhaSemaphore>> renderFinishedSemaphores;
+        std::vector<std::shared_ptr<GhaSemaphore>> imageAvailableSemaphores;
+        std::vector<std::shared_ptr<GhaFence>> framesInFlight;
+        std::vector<std::shared_ptr<GhaFence>> imagesInFlight;
 
         vec2ui surfaceSize{};
         DelegateHandle surfaceResizeHandle;
@@ -42,7 +42,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         SwapchainRenderTarget() = delete;
-        SwapchainRenderTarget(Surface &swapchainSurface, GraphicsDevice *graphicsDevice);
+        SwapchainRenderTarget(Surface &swapchainSurface, GhaDevice *graphicsDevice);
 
         SwapchainRenderTarget(SwapchainRenderTarget const &other);
         SwapchainRenderTarget(SwapchainRenderTarget &&other) noexcept;
@@ -56,10 +56,10 @@ namespace garlic::clove {
 
         void submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) override;
 
-        GraphicsImage::Format getImageFormat() const override;
+        GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<std::shared_ptr<GraphicsImageView>> getImageViews() const override;
+        std::vector<std::shared_ptr<GhaImageView>> getImageViews() const override;
 
     private:
         void onSurfaceSizeChanged(vec2ui const &size);

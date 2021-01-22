@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/Fence.hpp"
+#include "Clove/Graphics/GhaFence.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKFence : public Fence {
+    class VKFence : public GhaFence {
         //VARIABLES
     private:
         DevicePointer device;

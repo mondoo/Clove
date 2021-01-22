@@ -19,7 +19,7 @@ namespace garlic::clove {
 @end
 
 namespace garlic::clove{
-	class GraphicsFactory;
+	class GhaFactory;
 }
 
 namespace garlic::clove {

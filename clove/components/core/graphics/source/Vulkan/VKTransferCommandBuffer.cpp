@@ -41,7 +41,7 @@ namespace garlic::clove {
         }
     }
 
-    void VKTransferCommandBuffer::copyBufferToBuffer(GraphicsBuffer &source, size_t const sourceOffset, GraphicsBuffer &destination, size_t const destinationOffset, size_t const sizeBytes) {
+    void VKTransferCommandBuffer::copyBufferToBuffer(GhaBuffer &source, size_t const sourceOffset, GhaBuffer &destination, size_t const destinationOffset, size_t const sizeBytes) {
         VkBufferCopy copyRegion{
             .srcOffset = sourceOffset,
             .dstOffset = destinationOffset,
@@ -51,7 +51,7 @@ namespace garlic::clove {
         vkCmdCopyBuffer(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKBuffer>(&destination)->getBuffer(), 1, &copyRegion);
     }
 
-    void VKTransferCommandBuffer::copyBufferToImage(GraphicsBuffer &source, size_t const sourceOffset, GraphicsImage &destination, vec3i const &destinationOffset, vec3ui const &destinationExtent) {
+    void VKTransferCommandBuffer::copyBufferToImage(GhaBuffer &source, size_t const sourceOffset, GhaImage &destination, vec3i const &destinationOffset, vec3ui const &destinationExtent) {
         VkBufferImageCopy copyRegion{
             .bufferOffset      = sourceOffset,
             .bufferRowLength   = 0,//Tightly packed
@@ -69,7 +69,7 @@ namespace garlic::clove {
         vkCmdCopyBufferToImage(commandBuffer, polyCast<VKBuffer>(&source)->getBuffer(), polyCast<VKImage>(&destination)->getImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
     }
 
-    void VKTransferCommandBuffer::copyImageToBuffer(GraphicsImage &source, vec3i const &sourceOffset, vec3ui const &sourceExtent, GraphicsBuffer &destination, size_t const destinationOffset) {
+    void VKTransferCommandBuffer::copyImageToBuffer(GhaImage &source, vec3i const &sourceOffset, vec3ui const &sourceExtent, GhaBuffer &destination, size_t const destinationOffset) {
         VkBufferImageCopy copyRegion{
             .bufferOffset      = destinationOffset,
             .bufferRowLength   = 0,//Tightly packed
@@ -87,7 +87,7 @@ namespace garlic::clove {
         vkCmdCopyImageToBuffer(commandBuffer, polyCast<VKImage>(&source)->getImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, polyCast<VKBuffer>(&destination)->getBuffer(), 1, &copyRegion);
     }
 
-    void VKTransferCommandBuffer::bufferMemoryBarrier(GraphicsBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
+    void VKTransferCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) {
         uint32_t const sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
         uint32_t const destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
 
@@ -109,12 +109,12 @@ namespace garlic::clove {
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
     }
 
-    void VKTransferCommandBuffer::imageMemoryBarrier(GraphicsImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineObject::Stage sourceStage, PipelineObject::Stage destinationStage) {
+    void VKTransferCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) {
         bool const isValidLayout =
-            barrierInfo.newImageLayout != GraphicsImage::Layout::ShaderReadOnlyOptimal &&
-            barrierInfo.newImageLayout != GraphicsImage::Layout::ColourAttachmentOptimal &&
-            barrierInfo.newImageLayout != GraphicsImage::Layout::DepthStencilAttachmentOptimal &&
-            barrierInfo.newImageLayout != GraphicsImage::Layout::DepthStencilReadOnlyOptimal;
+            barrierInfo.newImageLayout != GhaImage::Layout::ShaderReadOnlyOptimal &&
+            barrierInfo.newImageLayout != GhaImage::Layout::ColourAttachmentOptimal &&
+            barrierInfo.newImageLayout != GhaImage::Layout::DepthStencilAttachmentOptimal &&
+            barrierInfo.newImageLayout != GhaImage::Layout::DepthStencilReadOnlyOptimal;
 
         if(!isValidLayout) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Invalid newLayout. This command buffer cannot handle transfering images to the following layouts:\n\tImageLayout::ShaderReadOnlyOptimal\n\tImageLayout::ColourAttachmentOptimal\n\tImageLayout::DepthStencilAttachmentOptimal\n\tImageLayout::DepthStencilReadOnlyOptimal", CLOVE_FUNCTION_NAME);

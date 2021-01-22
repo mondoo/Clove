@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/DescriptorSetLayout.hpp"
+#include "Clove/Graphics/GhaDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKDescriptorSetLayout : public DescriptorSetLayout {
+    class VKDescriptorSetLayout : public GhaDescriptorSetLayout {
         //VARIABLES
     private:
         DevicePointer device;

@@ -10,9 +10,9 @@ typedef struct FT_LibraryRec_ *FT_Library;
 typedef struct FT_FaceRec_ *FT_Face;
 
 namespace garlic::clove {
-    class GraphicsFactory;
-    class GraphicsImage;
-    class GraphicsImageView;
+    class GhaFactory;
+    class GhaImage;
+    class GhaImageView;
 }
 
 namespace garlic::clove {
@@ -23,8 +23,8 @@ namespace garlic::clove {
             vec2ui size{};
             vec2i bearing{};
             vec2i advance{};
-            std::shared_ptr<GraphicsImage> character;
-            std::shared_ptr<GraphicsImageView> characterView;
+            std::shared_ptr<GhaImage> character;
+            std::shared_ptr<GhaImageView> characterView;
         };
 
         using FTLibWeakPtr   = std::weak_ptr<std::remove_pointer_t<FT_Library>>;
@@ -34,7 +34,7 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        std::shared_ptr<GraphicsFactory> graphicsFactory;
+        std::shared_ptr<GhaFactory> graphicsFactory;
 
         static FTLibWeakPtr ftLib;
         FTLibSharedPtr ftLibReference;

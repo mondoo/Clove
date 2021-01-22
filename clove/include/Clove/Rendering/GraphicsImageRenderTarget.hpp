@@ -2,19 +2,19 @@
 
 #include "Clove/Rendering/RenderTarget.hpp"
 
-#include <Clove/Graphics/GraphicsImage.hpp>
-#include <Clove/Graphics/GraphicsImageView.hpp>
+#include <Clove/Graphics/GhaImage.hpp>
+#include <Clove/Graphics/GhaImageView.hpp>
 
 #include <queue>
 
 namespace garlic::clove{
-    class Fence;
-    class Semaphore;
-    class GraphicsQueue;
-    class TransferQueue;
-    class TransferCommandBuffer;
-    class GraphicsBuffer;
-    class GraphicsFactory;
+    class GhaFence;
+    class GhaSemaphore;
+    class GhaGraphicsQueue;
+    class GhaTransferQueue;
+    class GhaTransferCommandBuffer;
+    class GhaBuffer;
+    class GhaFactory;
 }
 
 namespace garlic::clove {
@@ -24,25 +24,25 @@ namespace garlic::clove {
     class GraphicsImageRenderTarget : public RenderTarget {
         //VARIABLES
     private:
-        GraphicsImage::Descriptor imageDescriptor;
+        GhaImage::Descriptor imageDescriptor;
 
-        std::shared_ptr<GraphicsFactory> factory;
+        std::shared_ptr<GhaFactory> factory;
 
-        std::shared_ptr<GraphicsQueue> graphicsQueue;
-        std::shared_ptr<TransferQueue> transferQueue;
-        std::shared_ptr<TransferCommandBuffer> transferCommandBuffer;
+        std::shared_ptr<GhaGraphicsQueue> graphicsQueue;
+        std::shared_ptr<GhaTransferQueue> transferQueue;
+        std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer;
 
-        std::shared_ptr<Semaphore> renderFinishedSemaphore;
-        std::shared_ptr<Fence> frameInFlight;
+        std::shared_ptr<GhaSemaphore> renderFinishedSemaphore;
+        std::shared_ptr<GhaFence> frameInFlight;
 
-        std::shared_ptr<GraphicsImage> renderTargetImage;
-        std::shared_ptr<GraphicsImageView> renderTargetView;
-        std::shared_ptr<GraphicsBuffer> renderTargetBuffer;
+        std::shared_ptr<GhaImage> renderTargetImage;
+        std::shared_ptr<GhaImageView> renderTargetView;
+        std::shared_ptr<GhaBuffer> renderTargetBuffer;
 
         //FUNCTIONS
     public:
         GraphicsImageRenderTarget() = delete;
-        GraphicsImageRenderTarget(GraphicsImage::Descriptor imageDescriptor, std::shared_ptr<GraphicsFactory> factory);
+        GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, std::shared_ptr<GhaFactory> factory);
 
         GraphicsImageRenderTarget(GraphicsImageRenderTarget const &other) = delete;
         GraphicsImageRenderTarget(GraphicsImageRenderTarget &&other) noexcept;
@@ -56,17 +56,17 @@ namespace garlic::clove {
 
         void submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) override;
 
-        GraphicsImage::Format getImageFormat() const override;
+        GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<std::shared_ptr<GraphicsImageView>> getImageViews() const override;
+        std::vector<std::shared_ptr<GhaImageView>> getImageViews() const override;
 
         void resize(vec2ui size);
 
         /**
          * @brief Returns a buffer containing the data of a recently written to image.
          */
-        std::shared_ptr<GraphicsBuffer> getNextReadyBuffer();
+        std::shared_ptr<GhaBuffer> getNextReadyBuffer();
 
     private:
         void createImages();

@@ -1,32 +1,32 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsImageView.hpp"
-#include "Clove/Graphics/GraphicsResource.hpp"
+#include "Clove/Graphics/GhaImageView.hpp"
+#include "Clove/Graphics/Resource.hpp"
 
 #include <Clove/Definitions.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <memory>
 
 namespace garlic::clove {
-    class GraphicsImageView;
+    class GhaImageView;
 }
 
 namespace garlic::clove {
     /**
      * @brief Represents an arbitrary multidimensional (up to 3) array of sections of memory. Used in graphics operations.
-     * @details Images can't be written to by the CPU directly. Data must be transferred into an image using a GraphicsBuffer
-     * and a TransferQueue.
+     * @details Images can't be written to by the CPU directly. Data must be transferred into an image using a GhaBuffer
+     * and a GhaTransferQueue.
      */
-    class GraphicsImage {
+    class GhaImage {
         //TYPES
     public:
         using UsageModeType = uint8_t;
         enum class UsageMode : UsageModeType {
             TransferSource         = 1 << 0, /**< To be used as a source in a transfer operation. */
             TransferDestination    = 1 << 1, /**< To be used as a destination in a transfer operation. Such as writing data from a system memory backed buffer to a video memory backed buffer */
-            Sampled                = 1 << 2, /**< To be used in a GraphicsImageView that's sampled in a shader */
-            ColourAttachment       = 1 << 3, /**< To be used in a GraphicsImageView for a frame buffer */
-            DepthStencilAttachment = 1 << 4, /**< To be used in a GraphicsImageView for a depth / stencil attachment */
+            Sampled                = 1 << 2, /**< To be used in a GhaImageView that's sampled in a shader */
+            ColourAttachment       = 1 << 3, /**< To be used in a GhaImageView for a frame buffer */
+            DepthStencilAttachment = 1 << 4, /**< To be used in a GhaImageView for a depth / stencil attachment */
         };
 
         enum class Type {
@@ -68,10 +68,10 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        virtual ~GraphicsImage() = default;
+        virtual ~GhaImage() = default;
 
-        virtual std::unique_ptr<GraphicsImageView> createView(GraphicsImageView::Descriptor viewDescriptor) const = 0;
+        virtual std::unique_ptr<GhaImageView> createView(GhaImageView::Descriptor viewDescriptor) const = 0;
     };
 
-    CLOVE_ENUM_BIT_FLAG_OPERATORS(GraphicsImage::UsageMode, GraphicsImage::UsageModeType)
+    CLOVE_ENUM_BIT_FLAG_OPERATORS(GhaImage::UsageMode, GhaImage::UsageModeType)
 }

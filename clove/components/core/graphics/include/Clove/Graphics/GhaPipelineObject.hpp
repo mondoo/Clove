@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Clove/Graphics/Shader.hpp"
+#include "Clove/Graphics/GhaShader.hpp"
 
 #include <Clove/Maths/Vector.hpp>
 #include <memory>
 #include <vector>
 
 namespace garlic::clove {
-    class Shader;
-    class RenderPass;
-    class DescriptorSetLayout;
+    class GhaShader;
+    class GhaRenderPass;
+    class GhaDescriptorSetLayout;
 
     enum class VertexAttributeFormat {
         R32_SFLOAT,
@@ -44,13 +44,13 @@ namespace garlic::clove {
         //TODO
     };
 
-    struct DepthStateDescriptor{
+    struct DepthStateDescriptor {
         bool depthTest{ true };
         bool depthWrite{ true };
     };
 
     struct PushConstantDescriptor {
-        Shader::Stage stage;
+        GhaShader::Stage stage;
         size_t offset{ 0 }; /**< Offset specified in the shader (layout(offset = x)). Required if using different push constants for different stages. */
         size_t size{ 0 };
     };
@@ -60,12 +60,12 @@ namespace garlic::clove {
     /**
      * @brief Represents the state of the current graphics pipeline.
      */
-    class PipelineObject {
+    class GhaPipelineObject {
         //TYPES
     public:
         struct Descriptor {
-            std::shared_ptr<Shader> vertexShader;
-            std::shared_ptr<Shader> fragmentShader;
+            std::shared_ptr<GhaShader> vertexShader;
+            std::shared_ptr<GhaShader> fragmentShader;
 
             VertexInputBindingDescriptor vertexInput;
             std::vector<VertexAttributeDescriptor> vertexAttributes;
@@ -79,9 +79,9 @@ namespace garlic::clove {
 
             bool enableBlending{ true };
 
-            std::shared_ptr<RenderPass> renderPass;
+            std::shared_ptr<GhaRenderPass> renderPass;
 
-            std::vector<std::shared_ptr<DescriptorSetLayout>> descriptorSetLayouts;
+            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts;
             std::vector<PushConstantDescriptor> pushConstants;
         };
 
@@ -95,6 +95,6 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        virtual ~PipelineObject() = default;
+        virtual ~GhaPipelineObject() = default;
     };
 }

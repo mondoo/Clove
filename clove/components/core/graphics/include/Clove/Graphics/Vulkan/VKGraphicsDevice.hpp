@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsDevice.hpp"
+#include "Clove/Graphics/GhaDevice.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
@@ -12,7 +12,7 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove {
-    class VKGraphicsDevice : public GraphicsDevice {
+    class VKGraphicsDevice : public GhaDevice {
         //VARIABLES
     private:
         DevicePointer devicePtr;
@@ -32,7 +32,7 @@ namespace garlic::clove {
 
         ~VKGraphicsDevice();
 
-        std::shared_ptr<GraphicsFactory> getGraphicsFactory() const override;
+        std::shared_ptr<GhaFactory> getGraphicsFactory() const override;
 
         void waitForIdleDevice() override;
 

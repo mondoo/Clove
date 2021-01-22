@@ -1,5 +1,5 @@
 namespace garlic::clove {
-    DescriptorSetLayout::Descriptor const &VKDescriptorSetLayout::getDescriptor() const {
+    GhaDescriptorSetLayout::Descriptor const &VKDescriptorSetLayout::getDescriptor() const {
         return descriptor;
     }
 

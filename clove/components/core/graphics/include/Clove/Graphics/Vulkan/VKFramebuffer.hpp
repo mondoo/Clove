@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/Framebuffer.hpp"
+#include "Clove/Graphics/GhaFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKFramebuffer : public Framebuffer {
+    class VKFramebuffer : public GhaFramebuffer {
         //VARIABLES
     private:
         DevicePointer device;

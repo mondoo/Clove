@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/PresentQueue.hpp"
+#include "Clove/Graphics/GhaPresentQueue.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKPresentQueue : public PresentQueue {
+    class VKPresentQueue : public GhaPresentQueue {
         //VARIABLES
     private:
         DevicePointer device;

@@ -7,7 +7,7 @@
 #include <memory>
 
 namespace garlic::clove {
-    class GraphicsDevice;
+    class GhaDevice;
 }
 
 namespace garlic::clove {
@@ -17,5 +17,5 @@ namespace garlic::clove {
      * @param nativeWindow The window to bind to. Using an empty std::any will create a headless device.
      * @return 
      */
-    std::unique_ptr<GraphicsDevice> createGraphicsDevice(GraphicsApi api, std::any nativeWindow);
+    std::unique_ptr<GhaDevice> createGraphicsDevice(GraphicsApi api, std::any nativeWindow);
 }

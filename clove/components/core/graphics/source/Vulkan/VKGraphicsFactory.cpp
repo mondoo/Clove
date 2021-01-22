@@ -48,7 +48,7 @@ namespace garlic::clove {
             }
 
             //Fall back to the first one if we can't find a surface format we want
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Swapchain could not find desired format. Using first available format from the surface");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "GhaSwapchain could not find desired format. Using first available format from the surface");
             return availableFormats[0];
         }
 
@@ -127,67 +127,67 @@ namespace garlic::clove {
             }
         }
 
-        VkDescriptorPoolCreateFlags getDescriptorPoolFlags(DescriptorPool::Flag garlicFlag) {
+        VkDescriptorPoolCreateFlags getDescriptorPoolFlags(GhaDescriptorPool::Flag garlicFlag) {
             switch(garlicFlag) {
-                case DescriptorPool::Flag::None:
+                case GhaDescriptorPool::Flag::None:
                     return 0;
-                case DescriptorPool::Flag::FreeDescriptorSet:
+                case GhaDescriptorPool::Flag::FreeDescriptorSet:
                     return VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
                 default:
                     CLOVE_ASSERT(false, "{0} Unknown flag", CLOVE_FUNCTION_NAME);
             }
         }
 
-        VkBufferUsageFlags getUsageFlags(GraphicsBuffer::UsageMode garlicUsageFlags) {
+        VkBufferUsageFlags getUsageFlags(GhaBuffer::UsageMode garlicUsageFlags) {
             VkBufferUsageFlags flags = 0;
 
-            if((garlicUsageFlags & GraphicsBuffer::UsageMode::TransferSource) != 0) {
+            if((garlicUsageFlags & GhaBuffer::UsageMode::TransferSource) != 0) {
                 flags |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
             }
-            if((garlicUsageFlags & GraphicsBuffer::UsageMode::TransferDestination) != 0) {
+            if((garlicUsageFlags & GhaBuffer::UsageMode::TransferDestination) != 0) {
                 flags |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
             }
-            if((garlicUsageFlags & GraphicsBuffer::UsageMode::VertexBuffer) != 0) {
+            if((garlicUsageFlags & GhaBuffer::UsageMode::VertexBuffer) != 0) {
                 flags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
             }
-            if((garlicUsageFlags & GraphicsBuffer::UsageMode::IndexBuffer) != 0) {
+            if((garlicUsageFlags & GhaBuffer::UsageMode::IndexBuffer) != 0) {
                 flags |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
             }
-            if((garlicUsageFlags & GraphicsBuffer::UsageMode::UniformBuffer) != 0) {
+            if((garlicUsageFlags & GhaBuffer::UsageMode::UniformBuffer) != 0) {
                 flags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
             }
 
             return flags;
         }
 
-        VkImageUsageFlags getUsageFlags(GraphicsImage::UsageMode garlicUsageFlags) {
+        VkImageUsageFlags getUsageFlags(GhaImage::UsageMode garlicUsageFlags) {
             VkImageUsageFlags flags = 0;
 
-            if((garlicUsageFlags & GraphicsImage::UsageMode::TransferSource) != 0) {
+            if((garlicUsageFlags & GhaImage::UsageMode::TransferSource) != 0) {
                 flags |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
             }
-            if((garlicUsageFlags & GraphicsImage::UsageMode::TransferDestination) != 0) {
+            if((garlicUsageFlags & GhaImage::UsageMode::TransferDestination) != 0) {
                 flags |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
             }
-            if((garlicUsageFlags & GraphicsImage::UsageMode::Sampled) != 0) {
+            if((garlicUsageFlags & GhaImage::UsageMode::Sampled) != 0) {
                 flags |= VK_IMAGE_USAGE_SAMPLED_BIT;
             }
-            if((garlicUsageFlags & GraphicsImage::UsageMode::ColourAttachment) != 0) {
+            if((garlicUsageFlags & GhaImage::UsageMode::ColourAttachment) != 0) {
                 flags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
             }
-            if((garlicUsageFlags & GraphicsImage::UsageMode::DepthStencilAttachment) != 0) {
+            if((garlicUsageFlags & GhaImage::UsageMode::DepthStencilAttachment) != 0) {
                 flags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
             }
 
             return flags;
         }
 
-        VkImageType getImageType(GraphicsImage::Type garlicImageType) {
+        VkImageType getImageType(GhaImage::Type garlicImageType) {
             switch(garlicImageType) {
-                case GraphicsImage::Type::_2D:
-                case GraphicsImage::Type::Cube:
+                case GhaImage::Type::_2D:
+                case GhaImage::Type::Cube:
                     return VK_IMAGE_TYPE_2D;
-                case GraphicsImage::Type::_3D:
+                case GhaImage::Type::_3D:
                     return VK_IMAGE_TYPE_3D;
                 default:
                     CLOVE_ASSERT(false, "{0}: Unhandled image type");
@@ -195,11 +195,11 @@ namespace garlic::clove {
             }
         }
 
-        VkFilter getFilter(Sampler::Filter garlicfilter) {
+        VkFilter getFilter(GhaSampler::Filter garlicfilter) {
             switch(garlicfilter) {
-                case Sampler::Filter::Nearest:
+                case GhaSampler::Filter::Nearest:
                     return VK_FILTER_NEAREST;
-                case Sampler::Filter::Linear:
+                case GhaSampler::Filter::Linear:
                     return VK_FILTER_LINEAR;
                 default:
                     CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
@@ -207,15 +207,15 @@ namespace garlic::clove {
             }
         }
 
-        VkSamplerAddressMode getAddressMode(Sampler::AddressMode garlicMode) {
+        VkSamplerAddressMode getAddressMode(GhaSampler::AddressMode garlicMode) {
             switch(garlicMode) {
-                case Sampler::AddressMode::Repeat:
+                case GhaSampler::AddressMode::Repeat:
                     return VK_SAMPLER_ADDRESS_MODE_REPEAT;
-                case Sampler::AddressMode::MirroredRepeat:
+                case GhaSampler::AddressMode::MirroredRepeat:
                     return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
-                case Sampler::AddressMode::ClampToEdge:
+                case GhaSampler::AddressMode::ClampToEdge:
                     return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-                case Sampler::AddressMode::ClampToBorder:
+                case GhaSampler::AddressMode::ClampToBorder:
                     return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
                 default:
                     CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
@@ -236,7 +236,7 @@ namespace garlic::clove {
 
     VKGraphicsFactory::~VKGraphicsFactory() = default;
 
-    Expected<std::unique_ptr<GraphicsQueue>, std::runtime_error> VKGraphicsFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
+    Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> VKGraphicsFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
         uint32_t const familyIndex{ *queueFamilyIndices.graphicsFamily };
 
         VkCommandPoolCreateInfo poolInfo{
@@ -250,32 +250,32 @@ namespace garlic::clove {
         if(VkResult const result{ vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsQueue. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaGraphicsQueue. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsQueue. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaGraphicsQueue. Out of device memory" } };
                 default:
-                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsQueue. Reason unkown." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaGraphicsQueue. Reason unkown." } };
             }
         }
 
         VkQueue queue;
         vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
 
-        return std::unique_ptr<GraphicsQueue>{ std::make_unique<VKGraphicsQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
+        return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<VKGraphicsQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
     }
 
-    Expected<std::unique_ptr<PresentQueue>, std::runtime_error> VKGraphicsFactory::createPresentQueue() {
+    Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> VKGraphicsFactory::createPresentQueue() {
         if(!queueFamilyIndices.presentFamily.has_value()) {
-            return Unexpected{ std::runtime_error{ "Presentation queue not available. GraphicsDevice is likely headless" } };
+            return Unexpected{ std::runtime_error{ "Presentation queue not available. GhaDevice is likely headless" } };
         }
 
         VkQueue queue;
         vkGetDeviceQueue(devicePtr.get(), *queueFamilyIndices.presentFamily, 0, &queue);
 
-        return std::unique_ptr<PresentQueue>{ std::make_unique<VKPresentQueue>(devicePtr, queue) };
+        return std::unique_ptr<GhaPresentQueue>{ std::make_unique<VKPresentQueue>(devicePtr, queue) };
     }
 
-    Expected<std::unique_ptr<TransferQueue>, std::runtime_error> VKGraphicsFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
+    Expected<std::unique_ptr<GhaTransferQueue>, std::runtime_error> VKGraphicsFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
         uint32_t const familyIndex{ *queueFamilyIndices.transferFamily };
 
         VkCommandPoolCreateInfo const poolInfo{
@@ -289,23 +289,23 @@ namespace garlic::clove {
         if(VkResult const result{ vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create TransferQueue. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaTransferQueue. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create TransferQueue. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaTransferQueue. Out of device memory" } };
                 default:
-                    return Unexpected{ std::runtime_error{ "Failed to create TransferQueue. Reason unkown." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaTransferQueue. Reason unkown." } };
             }
         }
 
         VkQueue queue;
         vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
 
-        return std::unique_ptr<TransferQueue>{ std::make_unique<VKTransferQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
+        return std::unique_ptr<GhaTransferQueue>{ std::make_unique<VKTransferQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
     }
 
-    Expected<std::unique_ptr<Swapchain>, std::runtime_error> VKGraphicsFactory::createSwapChain(Swapchain::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> VKGraphicsFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {
         if(devicePtr.getSurface() == VK_NULL_HANDLE) {
-            return Unexpected{ std::runtime_error{ "Swapchain is not available. GraphicsDevice is likely headless" } };
+            return Unexpected{ std::runtime_error{ "GhaSwapchain is not available. GhaDevice is likely headless" } };
         }
 
         VkExtent2D const windowExtent{ descriptor.extent.x, descriptor.extent.y };
@@ -345,28 +345,28 @@ namespace garlic::clove {
         if(VkResult const result{ vkCreateSwapchainKHR(devicePtr.get(), &createInfo, nullptr, &swapchain) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaSwapchain. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaSwapchain. Out of device memory" } };
                 case VK_ERROR_DEVICE_LOST:
-                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Device lost." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaSwapchain. Device lost." } };
                 case VK_ERROR_SURFACE_LOST_KHR:
-                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Surface lost." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaSwapchain. Surface lost." } };
                 case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
-                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Native window is in use." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaSwapchain. Native window is in use." } };
                 case VK_ERROR_INITIALIZATION_FAILED:
-                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Initialisation has failed." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaSwapchain. Initialisation has failed." } };
                 case VK_ERROR_VALIDATION_FAILED_EXT:
-                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Validation has failed." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaSwapchain. Validation has failed." } };
                 default:
-                    return Unexpected{ std::runtime_error{ "Failed to create Swapchain. Reason unkown." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaSwapchain. Reason unkown." } };
             }
         }
 
-        return std::unique_ptr<Swapchain>{ std::make_unique<VKSwapchain>(devicePtr, swapchain, surfaceFormat.format, std::move(swapchainExtent)) };
+        return std::unique_ptr<GhaSwapchain>{ std::make_unique<VKSwapchain>(devicePtr, swapchain, surfaceFormat.format, std::move(swapchainExtent)) };
     }
 
-    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShaderFromFile(std::filesystem::path const &file, Shader::Stage shaderStage) {
+    Expected<std::unique_ptr<GhaShader>, std::runtime_error> VKGraphicsFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
         Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromFile(file, shaderStage, ShaderType::SPIRV) };
         if(compilationResult.hasValue()) {
             std::vector<uint32_t> spirvSource{ std::move(compilationResult.getValue()) };
@@ -376,7 +376,7 @@ namespace garlic::clove {
         }
     }
 
-    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShaderFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, Shader::Stage shaderStage) {
+    Expected<std::unique_ptr<GhaShader>, std::runtime_error> VKGraphicsFactory::createShaderFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
         Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromSource(source, std::move(includeSources), shaderName, shaderStage, ShaderType::SPIRV) };
         if(compilationResult.hasValue()) {
             std::vector<uint32_t> spirvSource{ std::move(compilationResult.getValue()) };
@@ -386,7 +386,7 @@ namespace garlic::clove {
         }
     }
 
-    Expected<std::unique_ptr<RenderPass>, std::runtime_error> VKGraphicsFactory::createRenderPass(RenderPass::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaRenderPass>, std::runtime_error> VKGraphicsFactory::createRenderPass(GhaRenderPass::Descriptor descriptor) {
         //Attachments
         const size_t attachmentSize = std::size(descriptor.attachments);
         std::vector<VkAttachmentDescription> attachments(attachmentSize);
@@ -481,10 +481,10 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<RenderPass>{ std::make_unique<VKRenderPass>(devicePtr, renderPass) };
+        return std::unique_ptr<GhaRenderPass>{ std::make_unique<VKRenderPass>(devicePtr, renderPass) };
     }
 
-    Expected<std::unique_ptr<DescriptorSetLayout>, std::runtime_error> VKGraphicsFactory::createDescriptorSetLayout(DescriptorSetLayout::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> VKGraphicsFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
         std::vector<VkDescriptorSetLayoutBinding> layoutBindings(std::size(descriptor.bindings));
         for(size_t i = 0; i < std::size(layoutBindings); ++i) {
             auto const &bindingDescriptor{ descriptor.bindings[i] };
@@ -517,10 +517,10 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<DescriptorSetLayout>{ std::make_unique<VKDescriptorSetLayout>(devicePtr, layout, std::move(descriptor)) };
+        return std::unique_ptr<GhaDescriptorSetLayout>{ std::make_unique<VKDescriptorSetLayout>(devicePtr, layout, std::move(descriptor)) };
     }
 
-    Expected<std::unique_ptr<PipelineObject>, std::runtime_error> VKGraphicsFactory::createPipelineObject(PipelineObject::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaPipelineObject>, std::runtime_error> VKGraphicsFactory::createPipelineObject(GhaPipelineObject::Descriptor descriptor) {
         //Descriptor set layouts
         size_t const descriptorLayoutCount{ std::size(descriptor.descriptorSetLayouts) };
         std::vector<VkDescriptorSetLayout> descriptorLayouts(descriptorLayoutCount);
@@ -725,10 +725,10 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<PipelineObject>{ std::make_unique<VKPipelineObject>(devicePtr, pipeline, pipelineLayout) };
+        return std::unique_ptr<GhaPipelineObject>{ std::make_unique<VKPipelineObject>(devicePtr, pipeline, pipelineLayout) };
     }
 
-    Expected<std::unique_ptr<Framebuffer>, std::runtime_error> VKGraphicsFactory::createFramebuffer(Framebuffer::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> VKGraphicsFactory::createFramebuffer(GhaFramebuffer::Descriptor descriptor) {
         std::vector<VkImageView> attachments;
         attachments.reserve(std::size(descriptor.attachments));
         for(auto &attachment : descriptor.attachments) {
@@ -751,18 +751,18 @@ namespace garlic::clove {
         if(VkResult const result{ vkCreateFramebuffer(devicePtr.get(), &framebufferInfo, nullptr, &framebuffer) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create Framebuffer. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaFramebuffer. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create Framebuffer. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaFramebuffer. Out of device memory" } };
                 default:
-                    return Unexpected{ std::runtime_error{ "Failed to create Framebuffer. Reason unkown." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaFramebuffer. Reason unkown." } };
             }
         }
 
-        return std::unique_ptr<Framebuffer>{ std::make_unique<VKFramebuffer>(devicePtr, framebuffer) };
+        return std::unique_ptr<GhaFramebuffer>{ std::make_unique<VKFramebuffer>(devicePtr, framebuffer) };
     }
 
-    Expected<std::unique_ptr<DescriptorPool>, std::runtime_error> VKGraphicsFactory::createDescriptorPool(DescriptorPool::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaDescriptorPool>, std::runtime_error> VKGraphicsFactory::createDescriptorPool(GhaDescriptorPool::Descriptor descriptor) {
         size_t const numDescriptorTypes = std::size(descriptor.poolTypes);
         std::vector<VkDescriptorPoolSize> poolSizes(numDescriptorTypes);
         for(size_t i = 0; i < numDescriptorTypes; ++i) {
@@ -785,20 +785,20 @@ namespace garlic::clove {
         if(VkResult const result{ vkCreateDescriptorPool(devicePtr.get(), &createInfo, nullptr, &pool) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create DescriptorPool. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaDescriptorPool. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create DescriptorPool. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaDescriptorPool. Out of device memory" } };
                 case VK_ERROR_FRAGMENTATION_EXT:
-                    return Unexpected{ std::runtime_error{ "Failed to create DescriptorPool. Memory is too fragmented" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaDescriptorPool. Memory is too fragmented" } };
                 default:
-                    return Unexpected{ std::runtime_error{ "Failed to create DescriptorPool. Reason unkown." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaDescriptorPool. Reason unkown." } };
             }
         }
 
-        return std::unique_ptr<DescriptorPool>{ std::make_unique<VKDescriptorPool>(devicePtr, pool, std::move(descriptor)) };
+        return std::unique_ptr<GhaDescriptorPool>{ std::make_unique<VKDescriptorPool>(devicePtr, pool, std::move(descriptor)) };
     }
 
-    Expected<std::unique_ptr<Semaphore>, std::runtime_error> VKGraphicsFactory::createSemaphore() {
+    Expected<std::unique_ptr<GhaSemaphore>, std::runtime_error> VKGraphicsFactory::createSemaphore() {
         VkSemaphoreCreateInfo const createInfo{
             .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
         };
@@ -815,10 +815,10 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<Semaphore>{ std::make_unique<VKSemaphore>(devicePtr, semaphore) };
+        return std::unique_ptr<GhaSemaphore>{ std::make_unique<VKSemaphore>(devicePtr, semaphore) };
     }
 
-    Expected<std::unique_ptr<Fence>, std::runtime_error> VKGraphicsFactory::createFence(Fence::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaFence>, std::runtime_error> VKGraphicsFactory::createFence(GhaFence::Descriptor descriptor) {
         VkFenceCreateInfo createInfo{
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
             .flags = descriptor.signaled ? VK_FENCE_CREATE_SIGNALED_BIT : static_cast<VkFenceCreateFlags>(0),
@@ -828,18 +828,18 @@ namespace garlic::clove {
         if(VkResult const result{ vkCreateFence(devicePtr.get(), &createInfo, nullptr, &fence) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create Fence. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaFence. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create Fence. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaFence. Out of device memory" } };
                 default:
-                    return Unexpected{ std::runtime_error{ "Failed to create Fence. Reason unkown." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaFence. Reason unkown." } };
             }
         }
 
-        return std::unique_ptr<Fence>{ std::make_unique<VKFence>(devicePtr, fence) };
+        return std::unique_ptr<GhaFence>{ std::make_unique<VKFence>(devicePtr, fence) };
     }
 
-    Expected<std::unique_ptr<GraphicsBuffer>, std::runtime_error> VKGraphicsFactory::createBuffer(GraphicsBuffer::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaBuffer>, std::runtime_error> VKGraphicsFactory::createBuffer(GhaBuffer::Descriptor descriptor) {
         std::array const sharedQueueIndices{ *queueFamilyIndices.graphicsFamily, *queueFamilyIndices.transferFamily };
         bool const isExclusive{ descriptor.sharingMode == SharingMode::Exclusive };
 
@@ -858,21 +858,21 @@ namespace garlic::clove {
         if(VkResult const result{ vkCreateBuffer(devicePtr.get(), &createInfo, nullptr, &buffer) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsBuffer. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaBuffer. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsBuffer. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaBuffer. Out of device memory" } };
                 default:
-                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsBuffer. Reason unkown." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaBuffer. Reason unkown." } };
             }
         }
 
-        return std::unique_ptr<GraphicsBuffer>{ std::make_unique<VKBuffer>(devicePtr, buffer, std::move(descriptor), memoryAllocator) };
+        return std::unique_ptr<GhaBuffer>{ std::make_unique<VKBuffer>(devicePtr, buffer, std::move(descriptor), memoryAllocator) };
     }
 
-    Expected<std::unique_ptr<GraphicsImage>, std::runtime_error> VKGraphicsFactory::createImage(GraphicsImage::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaImage>, std::runtime_error> VKGraphicsFactory::createImage(GhaImage::Descriptor descriptor) {
         std::array const sharedQueueIndices{ *queueFamilyIndices.graphicsFamily, *queueFamilyIndices.transferFamily };
         bool const isExclusive{ descriptor.sharingMode == SharingMode::Exclusive };
-        bool const isCube{ descriptor.type == GraphicsImage::Type::Cube };
+        bool const isCube{ descriptor.type == GhaImage::Type::Cube };
 
         VkImageCreateInfo const createInfo{
             .sType                 = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -896,18 +896,18 @@ namespace garlic::clove {
         if(VkResult const result{ vkCreateImage(devicePtr.get(), &createInfo, nullptr, &image) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaImage. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaImage. Out of device memory" } };
                 default:
-                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsImage. Reason unkown." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaImage. Reason unkown." } };
             }
         }
 
-        return std::unique_ptr<GraphicsImage>{ std::make_unique<VKImage>(devicePtr, image, std::move(descriptor), memoryAllocator) };
+        return std::unique_ptr<GhaImage>{ std::make_unique<VKImage>(devicePtr, image, std::move(descriptor), memoryAllocator) };
     }
 
-    Expected<std::unique_ptr<Sampler>, std::runtime_error> VKGraphicsFactory::createSampler(Sampler::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaSampler>, std::runtime_error> VKGraphicsFactory::createSampler(GhaSampler::Descriptor descriptor) {
         VkSamplerCreateInfo const createInfo{
             .sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .pNext                   = nullptr,
@@ -941,10 +941,10 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<Sampler>{ std::make_unique<VKSampler>(devicePtr, sampler) };
+        return std::unique_ptr<GhaSampler>{ std::make_unique<VKSampler>(devicePtr, sampler) };
     }
 
-    Expected<std::unique_ptr<Shader>, std::runtime_error> VKGraphicsFactory::createShaderObject(std::span<uint32_t> spirvSource) {
+    Expected<std::unique_ptr<GhaShader>, std::runtime_error> VKGraphicsFactory::createShaderObject(std::span<uint32_t> spirvSource) {
         VkShaderModuleCreateInfo const createInfo{
             .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
             .pNext    = nullptr,
@@ -967,6 +967,6 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<Shader>{ std::make_unique<VKShader>(devicePtr, module) };
+        return std::unique_ptr<GhaShader>{ std::make_unique<VKShader>(devicePtr, module) };
     }
 }

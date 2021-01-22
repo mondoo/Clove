@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/Sampler.hpp"
+#include "Clove/Graphics/GhaSampler.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKSampler : public Sampler {
+    class VKSampler : public GhaSampler {
         //VARIABLES
     private:
         DevicePointer device;

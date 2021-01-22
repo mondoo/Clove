@@ -2,9 +2,9 @@
 
 namespace garlic::clove {
     /**
-     * @brief Describes how a shader should sample a GraphicsImage.
+     * @brief Describes how a shader should sample a GhaImage.
      */
-    class Sampler {
+    class GhaSampler {
         //TYPES
     public:
         enum class Filter {
@@ -30,6 +30,6 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        virtual ~Sampler() = default;
+        virtual ~GhaSampler() = default;
     };
 }

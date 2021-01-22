@@ -24,10 +24,10 @@ namespace garlic::clove {
 
     VkShaderStageFlags VKShader::convertStage(Stage stage) {
         VkShaderStageFlags vkStage{ 0 };
-        if((stage & Shader::Stage::Vertex) != 0) {
+        if((stage & GhaShader::Stage::Vertex) != 0) {
             vkStage |= VK_SHADER_STAGE_VERTEX_BIT;
         }
-        if((stage & Shader::Stage::Pixel) != 0) {
+        if((stage & GhaShader::Stage::Pixel) != 0) {
             vkStage |= VK_SHADER_STAGE_FRAGMENT_BIT;
         }
         return vkStage;

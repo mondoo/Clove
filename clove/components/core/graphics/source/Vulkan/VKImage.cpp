@@ -9,13 +9,13 @@
 
 namespace garlic::clove {
     namespace {
-        VkImageViewType getImageViewType(GraphicsImageView::Type garlicImageType) {
+        VkImageViewType getImageViewType(GhaImageView::Type garlicImageType) {
             switch(garlicImageType) {
-                case GraphicsImageView::Type::_2D:
+                case GhaImageView::Type::_2D:
                     return VK_IMAGE_VIEW_TYPE_2D;
-                case GraphicsImageView::Type::_3D:
+                case GhaImageView::Type::_3D:
                     return VK_IMAGE_VIEW_TYPE_3D;
-                case GraphicsImageView::Type::Cube:
+                case GhaImageView::Type::Cube:
                     return VK_IMAGE_VIEW_TYPE_CUBE;
                 default:
                     CLOVE_ASSERT(false, "{0}: Unhandled image type");
@@ -46,17 +46,17 @@ namespace garlic::clove {
         memoryAllocator->free(allocatedBlock);
     }
 
-    std::unique_ptr<GraphicsImageView> VKImage::createView(GraphicsImageView::Descriptor viewDescriptor) const {
+    std::unique_ptr<GhaImageView> VKImage::createView(GhaImageView::Descriptor viewDescriptor) const {
         {
             uint32_t const maxLayers = descriptor.type == Type::Cube ? 6 : 1;
-            CLOVE_ASSERT(viewDescriptor.layer + viewDescriptor.layerCount <= maxLayers, "{0}: GraphicsImageView is not compatible!", CLOVE_FUNCTION_NAME_PRETTY);
+            CLOVE_ASSERT(viewDescriptor.layer + viewDescriptor.layerCount <= maxLayers, "{0}: GhaImageView is not compatible!", CLOVE_FUNCTION_NAME_PRETTY);
         }
 
         VkImageAspectFlags const aspectFlags = descriptor.format == Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
         return std::make_unique<VKImageView>(device.get(), VKImageView::create(device.get(), image, getImageViewType(viewDescriptor.type), convertFormat(descriptor.format), aspectFlags, viewDescriptor.layer, viewDescriptor.layerCount));
     }
 
-    GraphicsImage::Format VKImage::convertFormat(VkFormat vulkanFormat) {
+    GhaImage::Format VKImage::convertFormat(VkFormat vulkanFormat) {
         switch(vulkanFormat) {
             case VK_FORMAT_R8_UNORM:
                 return Format::R8_UNORM;

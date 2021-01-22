@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/DescriptorPool.hpp"
+#include "Clove/Graphics/GhaDescriptorPool.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKDescriptorPool : public DescriptorPool {
+    class VKDescriptorPool : public GhaDescriptorPool {
         //VARIABLES
     private:
         DevicePointer device;
@@ -29,11 +29,11 @@ namespace garlic::clove {
 
         inline Descriptor const &getDescriptor() const override;
 
-        std::shared_ptr<DescriptorSet> allocateDescriptorSets(std::shared_ptr<DescriptorSetLayout> const &layout) override;
-        std::vector<std::shared_ptr<DescriptorSet>> allocateDescriptorSets(std::vector<std::shared_ptr<DescriptorSetLayout>> const &layouts) override;
+        std::shared_ptr<GhaDescriptorSet> allocateDescriptorSets(std::shared_ptr<GhaDescriptorSetLayout> const &layout) override;
+        std::vector<std::shared_ptr<GhaDescriptorSet>> allocateDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSetLayout>> const &layouts) override;
 
-        void freeDescriptorSets(std::shared_ptr<DescriptorSet> const &descriptorSet) override;
-        void freeDescriptorSets(std::vector<std::shared_ptr<DescriptorSet>> const &descriptorSets) override;
+        void freeDescriptorSets(std::shared_ptr<GhaDescriptorSet> const &descriptorSet) override;
+        void freeDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSet>> const &descriptorSets) override;
 
         void reset() override;
     };

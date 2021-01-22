@@ -25,7 +25,7 @@ namespace garlic::clove {
         vkDestroyCommandPool(device.get(), commandPool, nullptr);
     }
 
-    std::unique_ptr<TransferCommandBuffer> VKTransferQueue::allocateCommandBuffer() {
+    std::unique_ptr<GhaTransferCommandBuffer> VKTransferQueue::allocateCommandBuffer() {
         //TODO: Multiple command buffer allocation
 
         VkCommandBuffer commandBuffer;
@@ -45,12 +45,12 @@ namespace garlic::clove {
         return std::make_unique<VKTransferCommandBuffer>(commandBuffer, queueFamilyIndices);
     }
 
-    void VKTransferQueue::freeCommandBuffer(TransferCommandBuffer &buffer) {
+    void VKTransferQueue::freeCommandBuffer(GhaTransferCommandBuffer &buffer) {
         VkCommandBuffer buffers[] = { polyCast<VKTransferCommandBuffer>(&buffer)->getCommandBuffer() };
         vkFreeCommandBuffers(device.get(), commandPool, 1, buffers);
     }
 
-    void VKTransferQueue::submit(std::vector<TransferSubmitInfo> const &submissions, Fence const *signalFence) {
+    void VKTransferQueue::submit(std::vector<TransferSubmitInfo> const &submissions, GhaFence const *signalFence) {
         auto const submissioncount{ std::size(submissions) };
         std::vector<VkSubmitInfo> vkSubmissions;
         vkSubmissions.reserve(submissioncount);

@@ -7,8 +7,8 @@
 #include <memory>
 
 namespace garlic::clove {
-    class DescriptorSet;
-    class DescriptorSetLayout;
+    class GhaDescriptorSet;
+    class GhaDescriptorSetLayout;
 
     struct DescriptorInfo {
         DescriptorType type;
@@ -18,9 +18,9 @@ namespace garlic::clove {
 
 namespace garlic::clove {
     /**
-     * @brief Used to allocate DescriptorSets from a DescriptorSetLayout.
+     * @brief Used to allocate DescriptorSets from a GhaDescriptorSetLayout.
      */
-    class DescriptorPool {
+    class GhaDescriptorPool {
         //TYPES
     public:
         enum class Flag {
@@ -36,18 +36,18 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        virtual ~DescriptorPool() = default;
+        virtual ~GhaDescriptorPool() = default;
 
         virtual const Descriptor &getDescriptor() const = 0;
 
         /** 
          * @brief Allocates a descriptor set for each layout provided.
          */
-        virtual std::shared_ptr<DescriptorSet> allocateDescriptorSets(std::shared_ptr<DescriptorSetLayout> const &layout)                            = 0;
-        virtual std::vector<std::shared_ptr<DescriptorSet>> allocateDescriptorSets(std::vector<std::shared_ptr<DescriptorSetLayout>> const &layouts) = 0;
+        virtual std::shared_ptr<GhaDescriptorSet> allocateDescriptorSets(std::shared_ptr<GhaDescriptorSetLayout> const &layout)                            = 0;
+        virtual std::vector<std::shared_ptr<GhaDescriptorSet>> allocateDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSetLayout>> const &layouts) = 0;
 
-        virtual void freeDescriptorSets(std::shared_ptr<DescriptorSet> const &descriptorSet)               = 0;
-        virtual void freeDescriptorSets(std::vector<std::shared_ptr<DescriptorSet>> const &descriptorSets) = 0;
+        virtual void freeDescriptorSets(std::shared_ptr<GhaDescriptorSet> const &descriptorSet)               = 0;
+        virtual void freeDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSet>> const &descriptorSets) = 0;
 
         /**
          * @brief Resets this pool freeing all DescriptorSets allocated from it.

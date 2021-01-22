@@ -19,7 +19,7 @@ namespace garlic::clove {
 
     VKDescriptorSet::~VKDescriptorSet() = default;
 
-    void VKDescriptorSet::map(GraphicsBuffer const &buffer, size_t const offset, size_t const range, uint32_t const bindingSlot) {
+    void VKDescriptorSet::map(GhaBuffer const &buffer, size_t const offset, size_t const range, uint32_t const bindingSlot) {
         auto const *vkBuffer = polyCast<VKBuffer const>(&buffer);
 
         VkDescriptorBufferInfo bufferInfo{
@@ -44,7 +44,7 @@ namespace garlic::clove {
         vkUpdateDescriptorSets(device, 1, &writeInfo, 0, nullptr);
     }
 
-    void VKDescriptorSet::map(GraphicsImageView const &imageView, Sampler const &sampler, GraphicsImage::Layout const layout, uint32_t const bindingSlot) {
+    void VKDescriptorSet::map(GhaImageView const &imageView, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) {
         auto const *vkSampler{ polyCast<VKSampler const>(&sampler) };
         auto const *vkImageView{ polyCast<VKImageView const>(&imageView) };
 
@@ -70,7 +70,7 @@ namespace garlic::clove {
         vkUpdateDescriptorSets(device, 1, &writeInfo, 0, nullptr);
     }
 
-    void VKDescriptorSet::map(std::span<std::shared_ptr<GraphicsImageView>> imageViews, Sampler const &sampler, GraphicsImage::Layout const layout, uint32_t const bindingSlot) {
+    void VKDescriptorSet::map(std::span<std::shared_ptr<GhaImageView>> imageViews, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) {
         auto const *vkSampler{ polyCast<VKSampler const>(&sampler) };
         std::vector<VkDescriptorImageInfo> imageInfos(std::size(imageViews));
 

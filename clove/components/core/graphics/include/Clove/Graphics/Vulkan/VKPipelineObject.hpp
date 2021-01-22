@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/PipelineObject.hpp"
+#include "Clove/Graphics/GhaPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKPipelineObject : public PipelineObject {
+    class VKPipelineObject : public GhaPipelineObject {
         //VARIABLES
     private:
         DevicePointer device;

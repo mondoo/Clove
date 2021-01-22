@@ -3,16 +3,16 @@
 #include "Clove/Application.hpp"
 #include "Clove/Surface.hpp"
 
-#include <Clove/Graphics/Fence.hpp>
-#include <Clove/Graphics/GraphicsDevice.hpp>
-#include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Graphics/PresentQueue.hpp>
-#include <Clove/Graphics/Semaphore.hpp>
-#include <Clove/Graphics/Swapchain.hpp>
+#include <Clove/Graphics/GhaFence.hpp>
+#include <Clove/Graphics/GhaDevice.hpp>
+#include <Clove/Graphics/GhaFactory.hpp>
+#include <Clove/Graphics/GhaPresentQueue.hpp>
+#include <Clove/Graphics/GhaSemaphore.hpp>
+#include <Clove/Graphics/GhaSwapchain.hpp>
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    SwapchainRenderTarget::SwapchainRenderTarget(Surface &swapchainSurface, GraphicsDevice *graphicsDevice)
+    SwapchainRenderTarget::SwapchainRenderTarget(Surface &swapchainSurface, GhaDevice *graphicsDevice)
         : graphicsDevice{ graphicsDevice } {
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
@@ -40,7 +40,7 @@ namespace garlic::clove {
 
         if(requiresNewSwapchain) {
             createSwapchain();
-            return Unexpected<std::string>{ "Swapchain was recreated." };
+            return Unexpected<std::string>{ "GhaSwapchain was recreated." };
         }
 
         if(std::size(imageAvailableSemaphores) <= frameId) {
@@ -56,7 +56,7 @@ namespace garlic::clove {
         auto const [imageIndex, result] = swapchain->aquireNextImage(imageAvailableSemaphores[frameId].get());
         if(result == Result::Error_SwapchainOutOfDate) {
             createSwapchain();
-            return Unexpected<std::string>{ "Swapchain was recreated." };
+            return Unexpected<std::string>{ "GhaSwapchain was recreated." };
         }
 
         //Make sure we're not about to start using an image that hasn't been rendered to yet
@@ -76,7 +76,7 @@ namespace garlic::clove {
         }
 
         //Inject the sempahores we use to synchronise with the swapchain and present queue
-        submission.waitSemaphores.push_back({ imageAvailableSemaphores[frameId], PipelineObject::Stage::ColourAttachmentOutput });
+        submission.waitSemaphores.push_back({ imageAvailableSemaphores[frameId], GhaPipelineObject::Stage::ColourAttachmentOutput });
         submission.signalSemaphores.push_back(renderFinishedSemaphores[frameId]);
 
         graphicsQueue->submit({ std::move(submission) }, framesInFlight[frameId].get());
@@ -92,7 +92,7 @@ namespace garlic::clove {
         }
     }
 
-    GraphicsImage::Format SwapchainRenderTarget::getImageFormat() const {
+    GhaImage::Format SwapchainRenderTarget::getImageFormat() const {
         return swapchain->getImageFormat();
     }
 
@@ -100,7 +100,7 @@ namespace garlic::clove {
         return swapchain->getSize();
     }
 
-    std::vector<std::shared_ptr<GraphicsImageView>> SwapchainRenderTarget::getImageViews() const {
+    std::vector<std::shared_ptr<GhaImageView>> SwapchainRenderTarget::getImageViews() const {
         return swapchain->getImageViews();
     }
 

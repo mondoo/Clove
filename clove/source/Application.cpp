@@ -15,7 +15,7 @@
 #include <Clove/Definitions.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/Graphics.hpp>
-#include <Clove/Graphics/GraphicsDevice.hpp>
+#include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Platform/Platform.hpp>
 #include <Clove/Platform/Window.hpp>
@@ -45,7 +45,7 @@ namespace garlic::clove {
         return app;
     }
 
-    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface) {
+    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GhaImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface) {
 		auto graphicsDevice{ createGraphicsDevice(graphicsApi, std::any{}) };
 		auto audioDevice{ createAudioDevice(audioApi) };
 		
@@ -128,7 +128,7 @@ namespace garlic::clove {
         surface.reset();
     }
 
-    Application::Application(std::unique_ptr<GraphicsDevice> graphicsDevice, std::unique_ptr<AudioDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget)
+    Application::Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AudioDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget)
 		: graphicsDevice{ std::move(graphicsDevice) }
 		, audioDevice{ std::move(audioDevice) }
 		, surface{ std::move(surface) }{

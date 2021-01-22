@@ -6,13 +6,13 @@
 #include <vector>
 
 namespace garlic::clove {
-    class Semaphore;
-    class Swapchain;
+    class GhaSemaphore;
+    class GhaSwapchain;
 
     struct PresentInfo {
-        std::vector<std::shared_ptr<Semaphore>> waitSemaphores;
+        std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores;
 
-        std::shared_ptr<Swapchain> swapChain;
+        std::shared_ptr<GhaSwapchain> swapChain;
         uint32_t imageIndex;
     };
 }
@@ -20,12 +20,12 @@ namespace garlic::clove {
 namespace garlic::clove {
     /**
 	 * @brief Presents a swapchain. Displaying it's contents on the Window / Surface it represents.
-     * @details Note that unlike the other queues, a PresentQueue does not need a command buffer.
+     * @details Note that unlike the other queues, a GhaPresentQueue does not need a command buffer.
 	 */
-    class PresentQueue {
+    class GhaPresentQueue {
         //FUNCTIONS
     public:
-        virtual ~PresentQueue() = default;
+        virtual ~GhaPresentQueue() = default;
 
         virtual Result present(PresentInfo const &presentInfo) = 0;
     };

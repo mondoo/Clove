@@ -32,7 +32,7 @@ namespace garlic::clove {
         vkDestroySwapchainKHR(device.get(), swapchain, nullptr);
     }
 
-    std::pair<uint32_t, Result> VKSwapchain::aquireNextImage(Semaphore const *availableSemaphore) {
+    std::pair<uint32_t, Result> VKSwapchain::aquireNextImage(GhaSemaphore const *availableSemaphore) {
         uint32_t outImageIndex{ 0 };
         VkSemaphore vkSemaphore{ availableSemaphore ? polyCast<const VKSemaphore>(availableSemaphore)->getSemaphore() : VK_NULL_HANDLE };
         VkResult const result{ vkAcquireNextImageKHR(device.get(), swapchain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex) };
@@ -40,7 +40,7 @@ namespace garlic::clove {
         return { outImageIndex, convertResult(result) };
     }
 
-    GraphicsImage::Format VKSwapchain::getImageFormat() const {
+    GhaImage::Format VKSwapchain::getImageFormat() const {
         return VKImage::convertFormat(swapChainImageFormat);
     }
 
@@ -48,7 +48,7 @@ namespace garlic::clove {
         return { swapChainExtent.width, swapChainExtent.height };
     }
 
-    std::vector<std::shared_ptr<GraphicsImageView>> VKSwapchain::getImageViews() const {
+    std::vector<std::shared_ptr<GhaImageView>> VKSwapchain::getImageViews() const {
         return { imageViews.begin(), imageViews.end() };
     }
 

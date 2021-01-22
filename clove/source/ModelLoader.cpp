@@ -225,7 +225,7 @@ namespace garlic::clove::ModelLoader {
             return parentTransformation * aiMatrix4x4{ scale, rotation, position };
         }
 
-        //static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<garlic::clove::GraphicsFactory>& graphicsFactory) {
+        //static std::shared_ptr<gfx::Texture> loadMaterialTexture(aiMaterial* material, aiTextureType type, const std::shared_ptr<garlic::clove::GhaFactory>& graphicsFactory) {
         //	std::shared_ptr<gfx::Texture> texture;
 
         //	//TODO: Support multiple textures of the same type

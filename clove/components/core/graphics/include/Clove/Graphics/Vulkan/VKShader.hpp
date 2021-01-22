@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/Shader.hpp"
+#include "Clove/Graphics/GhaShader.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <span>
@@ -8,7 +8,7 @@
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKShader : public Shader {
+    class VKShader : public GhaShader {
         //VARIABLES
     private:
         DevicePointer device;

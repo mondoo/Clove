@@ -21,11 +21,11 @@ namespace garlic::clove {
         vkDestroyDescriptorPool(device.get(), pool, nullptr);
     }
 
-    std::shared_ptr<DescriptorSet> VKDescriptorPool::allocateDescriptorSets(std::shared_ptr<DescriptorSetLayout> const &layout) {
+    std::shared_ptr<GhaDescriptorSet> VKDescriptorPool::allocateDescriptorSets(std::shared_ptr<GhaDescriptorSetLayout> const &layout) {
         return allocateDescriptorSets(std::vector{ layout })[0];
     }
 
-    std::vector<std::shared_ptr<DescriptorSet>> VKDescriptorPool::allocateDescriptorSets(std::vector<std::shared_ptr<DescriptorSetLayout>> const &layouts) {
+    std::vector<std::shared_ptr<GhaDescriptorSet>> VKDescriptorPool::allocateDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSetLayout>> const &layouts) {
         size_t const numSets = std::size(layouts);
 
         std::vector<VkDescriptorSetLayout> vulkanLayouts(numSets);
@@ -48,7 +48,7 @@ namespace garlic::clove {
             return {};
         }
 
-        std::vector<std::shared_ptr<DescriptorSet>> descriptorSets(numSets);
+        std::vector<std::shared_ptr<GhaDescriptorSet>> descriptorSets(numSets);
         for(size_t i = 0; i < numSets; ++i) {
             descriptorSets[i] = std::make_shared<VKDescriptorSet>(device.get(), vulkanSets[i]);
         }
@@ -56,11 +56,11 @@ namespace garlic::clove {
         return descriptorSets;
     }
 
-    void VKDescriptorPool::freeDescriptorSets(std::shared_ptr<DescriptorSet> const &descriptorSet) {
+    void VKDescriptorPool::freeDescriptorSets(std::shared_ptr<GhaDescriptorSet> const &descriptorSet) {
         freeDescriptorSets(std::vector{ descriptorSet });
     }
 
-    void VKDescriptorPool::freeDescriptorSets(std::vector<std::shared_ptr<DescriptorSet>> const &descriptorSets) {
+    void VKDescriptorPool::freeDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSet>> const &descriptorSets) {
         size_t const numSets = std::size(descriptorSets);
 
         std::vector<VkDescriptorSet> vulkanSets(numSets);

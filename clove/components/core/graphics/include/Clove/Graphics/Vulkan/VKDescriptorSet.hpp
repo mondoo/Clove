@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Clove/Graphics/DescriptorSet.hpp"
+#include "Clove/Graphics/GhaDescriptorSet.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKDescriptorSet : public DescriptorSet {
+    class VKDescriptorSet : public GhaDescriptorSet {
         //VARIABLES
     private:
         VkDevice device = VK_NULL_HANDLE;
@@ -25,10 +25,10 @@ namespace garlic::clove {
 
         ~VKDescriptorSet();
 
-        void map(GraphicsBuffer const &buffer, size_t const offset, size_t const range, uint32_t const bindingSlot) override;
+        void map(GhaBuffer const &buffer, size_t const offset, size_t const range, uint32_t const bindingSlot) override;
 
-        void map(GraphicsImageView const &imageView, Sampler const &sampler, GraphicsImage::Layout const layout, uint32_t const bindingSlot) override;
-        void map(std::span<std::shared_ptr<GraphicsImageView>> imageViews, Sampler const &sampler, GraphicsImage::Layout const layout, uint32_t const bindingSlot) override;
+        void map(GhaImageView const &imageView, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) override;
+        void map(std::span<std::shared_ptr<GhaImageView>> imageViews, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) override;
 
         VkDescriptorSet getDescriptorSet() const;
     };

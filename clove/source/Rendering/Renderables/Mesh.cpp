@@ -2,8 +2,8 @@
 
 #include "Clove/Application.hpp"
 
-#include <Clove/Graphics/GraphicsDevice.hpp>
-#include <Clove/Graphics/GraphicsFactory.hpp>
+#include <Clove/Graphics/GhaDevice.hpp>
+#include <Clove/Graphics/GhaFactory.hpp>
 
 namespace garlic::clove {
     Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices)
@@ -11,7 +11,7 @@ namespace garlic::clove {
         , indices(std::move(indices)) {
         using namespace garlic::clove;
 
-        garlic::clove::GraphicsFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
+        garlic::clove::GhaFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
 
         size_t const vertexBufferSize{ sizeof(Vertex) * std::size(this->vertices) };
         size_t const indexBufferSize{ sizeof(uint16_t) * std::size(this->indices) };
@@ -22,20 +22,20 @@ namespace garlic::clove {
 
         auto transferQueue{ *factory.createTransferQueue({ QueueFlags::Transient }) };
 
-        std::shared_ptr<TransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
+        std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
 
         //Staging buffer
-        auto stagingBuffer = *factory.createBuffer(GraphicsBuffer::Descriptor{
+        auto stagingBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = totalSize,
-            .usageFlags  = GraphicsBuffer::UsageMode::TransferSource,
+            .usageFlags  = GhaBuffer::UsageMode::TransferSource,
             .sharingMode = SharingMode::Exclusive,
             .memoryType  = MemoryType::SystemMemory,
         });
 
         //Buffer
-        buffer = *factory.createBuffer(GraphicsBuffer::Descriptor{
+        buffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = totalSize,
-            .usageFlags  = GraphicsBuffer::UsageMode::TransferDestination | GraphicsBuffer::UsageMode::VertexBuffer | GraphicsBuffer::UsageMode::IndexBuffer,
+            .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
             .sharingMode = SharingMode::Concurrent,
             .memoryType  = MemoryType::VideoMemory,
         });

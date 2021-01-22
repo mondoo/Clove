@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsBuffer.hpp"
+#include "Clove/Graphics/GhaBuffer.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 
@@ -11,7 +11,7 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove {
-    class VKBuffer : public GraphicsBuffer {
+    class VKBuffer : public GhaBuffer {
         //VARIABLES
     private:
         DevicePointer device;

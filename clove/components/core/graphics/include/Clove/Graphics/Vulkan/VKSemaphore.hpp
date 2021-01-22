@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/Semaphore.hpp"
+#include "Clove/Graphics/GhaSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKSemaphore : public Semaphore {
+    class VKSemaphore : public GhaSemaphore {
         //VARIABLES
     private:
         DevicePointer device;

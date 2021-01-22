@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsQueue.hpp"
+#include "Clove/Graphics/GhaGraphicsQueue.hpp"
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {
-    class VKGraphicsQueue : public GraphicsQueue {
+    class VKGraphicsQueue : public GhaGraphicsQueue {
         //VARIABLES
     private:
         DevicePointer device;
@@ -29,9 +29,9 @@ namespace garlic::clove {
 
         ~VKGraphicsQueue();
 
-        std::unique_ptr<GraphicsCommandBuffer> allocateCommandBuffer() override;
-        void freeCommandBuffer(GraphicsCommandBuffer &buffer) override;
+        std::unique_ptr<GhaGraphicsCommandBuffer> allocateCommandBuffer() override;
+        void freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) override;
 
-        void submit(std::vector<GraphicsSubmitInfo> const &submissions, Fence const *signalFence) override;
+        void submit(std::vector<GraphicsSubmitInfo> const &submissions, GhaFence const *signalFence) override;
     };
 }

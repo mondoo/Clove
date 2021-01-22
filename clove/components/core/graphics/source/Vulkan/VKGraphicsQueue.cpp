@@ -25,7 +25,7 @@ namespace garlic::clove {
         vkDestroyCommandPool(device.get(), commandPool, nullptr);
     }
 
-    std::unique_ptr<GraphicsCommandBuffer> VKGraphicsQueue::allocateCommandBuffer() {
+    std::unique_ptr<GhaGraphicsCommandBuffer> VKGraphicsQueue::allocateCommandBuffer() {
         VkCommandBuffer commandBuffer;
 
         VkCommandBufferAllocateInfo allocInfo{
@@ -43,12 +43,12 @@ namespace garlic::clove {
         return std::make_unique<VKGraphicsCommandBuffer>(commandBuffer, queueFamilyIndices);
     }
 
-    void VKGraphicsQueue::freeCommandBuffer(GraphicsCommandBuffer &buffer) {
+    void VKGraphicsQueue::freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) {
         VkCommandBuffer buffers[] = { polyCast<VKGraphicsCommandBuffer>(&buffer)->getCommandBuffer() };
         vkFreeCommandBuffers(device.get(), commandPool, 1, buffers);
     }
 
-    void VKGraphicsQueue::submit(std::vector<GraphicsSubmitInfo> const &submissions, Fence const *signalFence) {
+    void VKGraphicsQueue::submit(std::vector<GraphicsSubmitInfo> const &submissions, GhaFence const *signalFence) {
         auto const submissioncount{ std::size(submissions) };
         std::vector<VkSubmitInfo> vkSubmissions;
         vkSubmissions.reserve(submissioncount);
