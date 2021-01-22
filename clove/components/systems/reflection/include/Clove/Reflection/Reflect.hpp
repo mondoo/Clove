@@ -8,6 +8,8 @@
     namespace garlic::clove {                                             \
         template<>                                                        \
         struct TypeInfo<type> {                                           \
+            using Type = type;                                            \
+                                                                          \
             static std::string_view constexpr name{ #type };              \
             static size_t constexpr size{ sizeof(type) };                 \
                                                                           \
@@ -19,6 +21,8 @@
 #define CLOVE_REFLECT_MEMBER(member)                       \
     template</* typename T */>                             \
     struct MemberInfo<__COUNTER__ - memberIndexOffset> {   \
+        using Type = decltype(Type::member);               \
+                                                           \
         static std::string_view constexpr name{ #member }; \
     };
 

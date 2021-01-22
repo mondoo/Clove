@@ -10,6 +10,7 @@ CLOVE_REFLECT_TYPE(SimpleTestClass);
 CLOVE_REFLECT_END
 
 TEST(ReflectionTests, CanGetBasicStaticInformationOnAType) {
+    EXPECT_EQ(typeid(TypeInfo<SimpleTestClass>::Type).name(), typeid(SimpleTestClass).name());
     EXPECT_EQ(TypeInfo<SimpleTestClass>::name, "SimpleTestClass");
     EXPECT_EQ(TypeInfo<SimpleTestClass>::size, sizeof(SimpleTestClass));
     EXPECT_EQ(TypeInfo<SimpleTestClass>::memberCount, 0);
@@ -35,9 +36,11 @@ CLOVE_REFLECT_END
 
 TEST(ReflectionTests, CanGetBasicStaticMemberInformationOnAType) {
     ASSERT_EQ(TypeInfo<SimpleMemberTestClass>::memberCount, 2);
+    EXPECT_EQ(typeid(TypeInfo<SimpleMemberTestClass>::MemberInfo<0>::Type).name(), typeid(SimpleMemberTestClass::intMember).name());
     EXPECT_EQ(TypeInfo<SimpleMemberTestClass>::MemberInfo<0>::name, "intMember");
     //EXPECT_EQ(testClassInfo.members[0].size, sizeof(SimpleMemberTestClass::intMember));
     //EXPECT_EQ(testClassInfo.members[0].offset, offsetof(SimpleMemberTestClass, intMember));
+    EXPECT_EQ(typeid(TypeInfo<SimpleMemberTestClass>::MemberInfo<1>::Type).name(), typeid(SimpleMemberTestClass::floatMember).name());
     EXPECT_EQ(TypeInfo<SimpleMemberTestClass>::MemberInfo<1>::name, "floatMember");
     //EXPECT_EQ(testClassInfo.members[1].size, sizeof(SimpleMemberTestClass::floatMember));
     //EXPECT_EQ(testClassInfo.members[1].offset, offsetof(SimpleMemberTestClass, floatMember));
