@@ -9,10 +9,10 @@ namespace garlic::clove {
 	 * exposes functions for setting values on the listener object. Such as
 	 * setting the position
 	 */
-    class AudioListener {
+    class AhaListener {
         //FUNCTIONS
     public:
-        virtual ~AudioListener() = default;
+        virtual ~AhaListener() = default;
 
         virtual void setPosition(vec3f const& position) = 0;
         virtual void setVelocity(vec3f const& velocity) = 0;

@@ -6,15 +6,15 @@
 
 namespace garlic::clove {
     namespace {
-        ALenum convertFormat(AudioBuffer::Format format) {
+        ALenum convertFormat(AhaBuffer::Format format) {
             switch(format) {
-                case AudioBuffer::Format::Mono8:
+                case AhaBuffer::Format::Mono8:
                     return AL_FORMAT_MONO8;
-                case AudioBuffer::Format::Mono16:
+                case AhaBuffer::Format::Mono16:
                     return AL_FORMAT_MONO16;
-                case AudioBuffer::Format::Stereo8:
+                case AhaBuffer::Format::Stereo8:
                     return AL_FORMAT_STEREO8;
-                case AudioBuffer::Format::Stereo16:
+                case AhaBuffer::Format::Stereo16:
                     return AL_FORMAT_STEREO16;
             }
         }

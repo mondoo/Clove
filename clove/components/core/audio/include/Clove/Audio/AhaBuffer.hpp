@@ -4,11 +4,11 @@
 
 namespace garlic::clove {
 	/**
-	 * @brief Represents a buffer of data that can be played with an AudioSource
-	 * @details Created from an AudioFactory. Can be created empty and then
+	 * @brief Represents a buffer of data that can be played with an AhaSource
+	 * @details Created from an AhaFactory. Can be created empty and then
 	 * updated later.
 	 */
-    class AudioBuffer {
+    class AhaBuffer {
 		//TYPES
 	public:
 		enum class Format {
@@ -25,7 +25,7 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        virtual ~AudioBuffer() = default;
+        virtual ~AhaBuffer() = default;
 
         /**
          * @brief Write data into the buffer.

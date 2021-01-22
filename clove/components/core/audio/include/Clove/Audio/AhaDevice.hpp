@@ -3,7 +3,7 @@
 #include <memory>
 
 namespace garlic::clove {
-    class AudioFactory;
+    class AhaFactory;
 }
 
 namespace garlic::clove {
@@ -15,6 +15,6 @@ namespace garlic::clove {
     public:
         virtual ~AudioDevice() = default;
 
-        virtual std::shared_ptr<AudioFactory> getAudioFactory() const = 0;
+        virtual std::shared_ptr<AhaFactory> getAudioFactory() const = 0;
     };
 }

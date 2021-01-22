@@ -62,7 +62,7 @@ namespace garlic::clove {
         alcCloseDevice(alDevice);
     }
 
-    std::shared_ptr<AudioFactory> ALDevice::getAudioFactory() const {
+    std::shared_ptr<AhaFactory> ALDevice::getAudioFactory() const {
         return factory;
     }
 }

@@ -5,29 +5,29 @@
 #include <vector>
 
 namespace garlic::clove {
-    class AudioBuffer;
+    class AhaBuffer;
 }
 
 namespace garlic::clove {
     /**
-	 * @brief An AudioSource allows sound to played from a cetain point in space
+	 * @brief An AhaSource allows sound to played from a cetain point in space
 	 */
-    class AudioSource {
+    class AhaSource {
         //FUNCTIONS
     public:
-        virtual ~AudioSource() = default;
+        virtual ~AhaSource() = default;
 
         /**
 		 * @brief Sets buffer to play audio from
 		 */
-        virtual void setBuffer(std::shared_ptr<AudioBuffer> buffer) = 0;
+        virtual void setBuffer(std::shared_ptr<AhaBuffer> buffer) = 0;
 
         /**
 		 * @brief Queues buffers to be played sequentially.
 		 * @details Buffers are appended to the end of the current queue.
 		 * @param buffers Vector of buffers to add to the queue.
 		 */
-        virtual void queueBuffers(std::vector<std::shared_ptr<AudioBuffer>> buffers) = 0;
+        virtual void queueBuffers(std::vector<std::shared_ptr<AhaBuffer>> buffers) = 0;
         /**
 		 * @brief Removes processed buffers from the queue.
 		 * @details Processed buffers can be removed from the queue, allowing their data 
@@ -36,7 +36,7 @@ namespace garlic::clove {
 		 * @param numToQueue The number of buffers to remove from the queue. must be <= getNumBuffersProcessed.
 		 * @returns A vector of AudioBuffers removed from the queue.
 		 */
-        virtual std::vector<std::shared_ptr<AudioBuffer>> unQueueBuffers(uint32_t const numToUnqueue) = 0;
+        virtual std::vector<std::shared_ptr<AhaBuffer>> unQueueBuffers(uint32_t const numToUnqueue) = 0;
 
         virtual void setPitch(float pitch)      = 0;
         virtual void setLooping(bool isLooping) = 0;

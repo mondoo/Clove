@@ -21,14 +21,14 @@ namespace garlic::clove {
         alCall(alDeleteSources(1, &source));
     }
 
-    void ALSource::setBuffer(std::shared_ptr<AudioBuffer> buffer) {
+    void ALSource::setBuffer(std::shared_ptr<AhaBuffer> buffer) {
         ALBuffer const *alBuffer{ polyCast<ALBuffer const>(buffer.get()) };
         alCall(alSourcei(source, AL_BUFFER, alBuffer->getBufferId()));
 
         bufferQueue = { buffer };
     }
 
-    void ALSource::queueBuffers(std::vector<std::shared_ptr<AudioBuffer>> buffers) {
+    void ALSource::queueBuffers(std::vector<std::shared_ptr<AhaBuffer>> buffers) {
         //Get the buffer Id of all of the buffers to placed into the queue
         std::vector<ALuint> alBuffers(std::size(buffers));
         for(size_t i = 0; i < std::size(alBuffers); ++i) {
@@ -41,7 +41,7 @@ namespace garlic::clove {
         bufferQueue.insert(std::end(bufferQueue), std::begin(buffers), std::end(buffers));
     }
 
-    std::vector<std::shared_ptr<AudioBuffer>> ALSource::unQueueBuffers(uint32_t const numToUnqueue) {
+    std::vector<std::shared_ptr<AhaBuffer>> ALSource::unQueueBuffers(uint32_t const numToUnqueue) {
 #if CLOVE_DEBUG
         const uint32_t maxAbleToUnQueue = getNumBuffersProcessed();
         CLOVE_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}, Can't unqueue {1} buffers. Only {2} buffers have been processed", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
@@ -57,10 +57,10 @@ namespace garlic::clove {
 
         delete[] buffers;
 
-        std::vector<std::shared_ptr<AudioBuffer>> removedBuffers;
+        std::vector<std::shared_ptr<AhaBuffer>> removedBuffers;
         removedBuffers.reserve(numToUnqueue);
 
-        auto removeIter = std::remove_if(std::begin(bufferQueue), std::end(bufferQueue), [&](std::shared_ptr<AudioBuffer> const &buffer) {
+        auto removeIter = std::remove_if(std::begin(bufferQueue), std::end(bufferQueue), [&](std::shared_ptr<AhaBuffer> const &buffer) {
             ALBuffer const *alBuffer{ polyCast<const ALBuffer>(buffer.get()) };
             ALuint const bufferId{ alBuffer->getBufferId() };
 

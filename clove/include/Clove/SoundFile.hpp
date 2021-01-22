@@ -4,7 +4,7 @@
 #include <string_view>
 
 namespace garlic::clove {
-    class AudioBuffer;
+    class AhaBuffer;
 }
 
 namespace garlic::clove {
@@ -54,12 +54,12 @@ namespace garlic::clove {
         Format getFormat() const;
 
         /**
-		 * @brief Reads the amount of frames and returns an AudioBuffer to that data
+		 * @brief Reads the amount of frames and returns an AhaBuffer to that data
 		 * @details Reads from the current seek position (default start of file) and
 		 * moves the cursor frames amount long.
 		 * @param frames How many frames to read
 		 */
-        std::unique_ptr<AudioBuffer> read(uint32_t const frames);
+        std::unique_ptr<AhaBuffer> read(uint32_t const frames);
 
         /**
 		 * @brief Reads the amount of frames and returns a pointer to that data

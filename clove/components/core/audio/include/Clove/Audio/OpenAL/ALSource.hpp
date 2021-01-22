@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Clove/Audio/AudioSource.hpp"
+#include "Clove/Audio/AhaSource.hpp"
 
 #include <AL/al.h>
 
 namespace garlic::clove {
-    class ALSource : public AudioSource {
+    class ALSource : public AhaSource {
         //VARIABLES
     private:
         ALuint source;
 
-        std::vector<std::shared_ptr<AudioBuffer>> bufferQueue;
+        std::vector<std::shared_ptr<AhaBuffer>> bufferQueue;
 
         //FUNCTIONS
     public:
@@ -25,10 +25,10 @@ namespace garlic::clove {
 
         ~ALSource();
 
-        void setBuffer(std::shared_ptr<AudioBuffer> buffer) override;
+        void setBuffer(std::shared_ptr<AhaBuffer> buffer) override;
 
-        void queueBuffers(std::vector<std::shared_ptr<AudioBuffer>> buffers) override;
-        std::vector<std::shared_ptr<AudioBuffer>> unQueueBuffers(uint32_t const numToUnqueue) override;
+        void queueBuffers(std::vector<std::shared_ptr<AhaBuffer>> buffers) override;
+        std::vector<std::shared_ptr<AhaBuffer>> unQueueBuffers(uint32_t const numToUnqueue) override;
 
         void setPitch(float pitch) override;
         void setLooping(bool isLooping) override;

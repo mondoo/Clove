@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Clove/Audio/AudioFactory.hpp"
+#include "Clove/Audio/AhaFactory.hpp"
 
 namespace garlic::clove {
-    class ALFactory : public AudioFactory {
+    class ALFactory : public AhaFactory {
         //FUNCTIONS
     public:
         ALFactory();
@@ -16,8 +16,8 @@ namespace garlic::clove {
 
         ~ALFactory();
 
-        Expected<std::unique_ptr<AudioBuffer>, std::runtime_error> createAudioBuffer(AudioBuffer::Descriptor descriptor) override;
-        Expected<std::unique_ptr<AudioSource>, std::runtime_error> createAudioSource() override;
-        Expected<std::unique_ptr<AudioListener>, std::runtime_error> createAudioListener() override;
+        Expected<std::unique_ptr<AhaBuffer>, std::runtime_error> createAudioBuffer(AhaBuffer::Descriptor descriptor) override;
+        Expected<std::unique_ptr<AhaSource>, std::runtime_error> createAudioSource() override;
+        Expected<std::unique_ptr<AhaListener>, std::runtime_error> createAudioListener() override;
     };
 }

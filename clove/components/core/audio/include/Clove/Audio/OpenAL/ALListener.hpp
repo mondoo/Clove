@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Clove/Audio/AudioListener.hpp"
+#include "Clove/Audio/AhaListener.hpp"
 
 #include <AL/al.h>
 
 namespace garlic::clove {
-    class ALListener : public AudioListener {
+    class ALListener : public AhaListener {
         //FUNCTIONS
     public:
         ALListener();

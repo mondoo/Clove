@@ -7,11 +7,11 @@ add_library(
 
     ${INCLUDE}/Audio.hpp
 	${SOURCE}/Audio.cpp
-	${INCLUDE}/AudioBuffer.hpp
-	${INCLUDE}/AudioDevice.hpp
-	${INCLUDE}/AudioFactory.hpp
-	${INCLUDE}/AudioListener.hpp
-    ${INCLUDE}/AudioSource.hpp
+	${INCLUDE}/AhaBuffer.hpp
+	${INCLUDE}/AhaDevice.hpp
+	${INCLUDE}/AhaFactory.hpp
+	${INCLUDE}/AhaListener.hpp
+    ${INCLUDE}/AhaSource.hpp
         
     ${INCLUDE}/OpenAL/ALBuffer.hpp
 	${SOURCE}/OpenAL/ALBuffer.cpp

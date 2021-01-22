@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Clove/Audio/AudioBuffer.hpp"
+#include "Clove/Audio/AhaBuffer.hpp"
 
 #include <AL/al.h>
 
 namespace garlic::clove {
-    class ALBuffer : public AudioBuffer {
+    class ALBuffer : public AhaBuffer {
         //VARIABLES
     private:
         ALuint buffer{ 0 };

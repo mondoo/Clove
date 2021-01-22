@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Audio/AudioDevice.hpp"
+#include "Clove/Audio/AhaDevice.hpp"
 
 #include <AL/alc.h>
 
@@ -32,6 +32,6 @@ namespace garlic::clove {
 
         ~ALDevice();
 
-        std::shared_ptr<AudioFactory> getAudioFactory() const override;
+        std::shared_ptr<AhaFactory> getAudioFactory() const override;
     };
 }
