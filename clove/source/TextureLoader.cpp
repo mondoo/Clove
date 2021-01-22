@@ -4,8 +4,6 @@
 
 namespace garlic::clove::TextureLoader {
     Expected<LoadedTextureData, std::runtime_error> loadTexture(std::filesystem::path const &path) {
-        stbi_set_flip_vertically_on_load(1);//Note: Might need to change this when other APIs come into play
-
         int width;
         int height;
         int channels;
