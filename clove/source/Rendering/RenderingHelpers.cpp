@@ -202,10 +202,10 @@ namespace garlic::clove {
         auto transferQueue = *factory.createTransferQueue({ QueueFlags::Transient });
         auto graphicsQueue = *factory.createGraphicsQueue({ QueueFlags::Transient });
 
-        std::shared_ptr<TransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
-        std::shared_ptr<GraphicsCommandBuffer> graphicsCommandBuffer = graphicsQueue->allocateCommandBuffer();
+        std::shared_ptr<TransferCommandBuffer> transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
+        std::shared_ptr<GraphicsCommandBuffer> graphicsCommandBuffer{ graphicsQueue->allocateCommandBuffer() };
 
-        auto image = *factory.createImage(std::move(imageDescriptor));
+        auto image{ *factory.createImage(std::move(imageDescriptor)) };
 
         auto transferBuffer = *factory.createBuffer(GraphicsBuffer::Descriptor{
             .size        = dataSize,
