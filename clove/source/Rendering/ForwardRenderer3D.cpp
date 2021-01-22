@@ -300,8 +300,9 @@ namespace garlic::clove {
 
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
             meshDescriptorSet->map(*meshInfo.material->diffuseView, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
-            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), 1);
-            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, colour), sizeof(vec4f), 3);
+            meshDescriptorSet->map(*meshInfo.material->specularView, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 1);
+            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), 2);
+            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, colour), sizeof(vec4f), 4);
 
             ++index;
         }
@@ -319,9 +320,10 @@ namespace garlic::clove {
 
             std::shared_ptr<DescriptorSet> &meshDescriptorSet = meshSets[index];
             meshDescriptorSet->map(*meshInfo.material->diffuseView, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 0);
-            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), 1);
-            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, matrixPallet), sizeof(mat4f) * MAX_JOINTS, 2);
-            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, colour), sizeof(vec4f), 3);
+            meshDescriptorSet->map(*meshInfo.material->specularView, *textureSampler, GraphicsImage::Layout::ShaderReadOnlyOptimal, 1);
+            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), 2);
+            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, matrixPallet), sizeof(mat4f) * MAX_JOINTS, 3);
+            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, colour), sizeof(vec4f), 4);
 
             ++index;
         }

@@ -17,29 +17,36 @@ namespace garlic::clove {
 
         //MESH SET
         {
-            DescriptorSetBindingInfo textureBinding{
+            DescriptorSetBindingInfo diffuseTextureBinding{
                 .binding   = 0,
                 .type      = DescriptorType::CombinedImageSampler,
                 .arraySize = 1,
                 .stage     = Shader::Stage::Pixel,
             };
 
-            DescriptorSetBindingInfo modelBinding{
+            DescriptorSetBindingInfo specularTextureBinding{
                 .binding   = 1,
-                .type      = DescriptorType::UniformBuffer,
+                .type      = DescriptorType::CombinedImageSampler,
                 .arraySize = 1,
-                .stage     = Shader::Stage::Vertex,
+                .stage     = Shader::Stage::Pixel,
             };
 
-            DescriptorSetBindingInfo skeletonBinding{
+            DescriptorSetBindingInfo modelBinding{
                 .binding   = 2,
                 .type      = DescriptorType::UniformBuffer,
                 .arraySize = 1,
                 .stage     = Shader::Stage::Vertex,
             };
 
-            DescriptorSetBindingInfo colourBinding{
+            DescriptorSetBindingInfo skeletonBinding{
                 .binding   = 3,
+                .type      = DescriptorType::UniformBuffer,
+                .arraySize = 1,
+                .stage     = Shader::Stage::Vertex,
+            };
+
+            DescriptorSetBindingInfo colourBinding{
+                .binding   = 4,
                 .type      = DescriptorType::UniformBuffer,
                 .arraySize = 1,
                 .stage     = Shader::Stage::Pixel,
@@ -47,7 +54,8 @@ namespace garlic::clove {
 
             setLayouts[DescriptorSetSlots::Mesh] = *factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
                 .bindings = {
-                    std::move(textureBinding),
+                    std::move(diffuseTextureBinding),
+                    std::move(specularTextureBinding),
                     std::move(modelBinding),
                     std::move(skeletonBinding),
                     std::move(colourBinding),
