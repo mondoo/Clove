@@ -1,6 +1,6 @@
-#include "Clove/Audio/OpenAL/ALDevice.hpp"
+#include "Clove/Audio/OpenAL/OpenAlDevice.hpp"
 
-#include "Clove/Audio/OpenAL/ALFactory.hpp"
+#include "Clove/Audio/OpenAL/OpenAlFactory.hpp"
 
 #include <AL/al.h>
 #include <Clove/Log/Log.hpp>
@@ -39,8 +39,8 @@ namespace garlic::clove {
         }                                             \
     }
 
-    ALDevice::ALDevice()
-        : factory{ std::make_shared<ALFactory>() } {
+    OpenAlDevice::OpenAlDevice()
+        : factory{ std::make_shared<OpenAlFactory>() } {
         alDevice = alcOpenDevice(nullptr);
         if(!alDevice) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create OpenAL device");
@@ -51,18 +51,18 @@ namespace garlic::clove {
         alcCall(alcMakeContextCurrent(alContext), alDevice);
     }
 
-    ALDevice::ALDevice(ALDevice &&other) noexcept = default;
+    OpenAlDevice::OpenAlDevice(OpenAlDevice &&other) noexcept = default;
 
-    ALDevice &ALDevice::operator=(ALDevice &&other) noexcept = default;
+    OpenAlDevice &OpenAlDevice::operator=(OpenAlDevice &&other) noexcept = default;
 
-    ALDevice::~ALDevice() {
+    OpenAlDevice::~OpenAlDevice() {
         alcCall(alcMakeContextCurrent(nullptr), alDevice);
         alcCall(alcDestroyContext(alContext), alDevice);
 
         alcCloseDevice(alDevice);
     }
 
-    std::shared_ptr<AhaFactory> ALDevice::getAudioFactory() const {
+    std::shared_ptr<AhaFactory> OpenAlDevice::getAudioFactory() const {
         return factory;
     }
 }

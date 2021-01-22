@@ -3,18 +3,18 @@
 #include "Clove/Audio/AhaFactory.hpp"
 
 namespace garlic::clove {
-    class ALFactory : public AhaFactory {
+    class OpenAlFactory : public AhaFactory {
         //FUNCTIONS
     public:
-        ALFactory();
+        OpenAlFactory();
 
-        ALFactory(ALFactory const &other) = delete;
-        ALFactory(ALFactory &&other) noexcept;
+        OpenAlFactory(OpenAlFactory const &other) = delete;
+        OpenAlFactory(OpenAlFactory &&other) noexcept;
 
-        ALFactory &operator=(ALFactory const &other) = delete;
-        ALFactory &operator=(ALFactory &&other) noexcept;
+        OpenAlFactory &operator=(OpenAlFactory const &other) = delete;
+        OpenAlFactory &operator=(OpenAlFactory &&other) noexcept;
 
-        ~ALFactory();
+        ~OpenAlFactory();
 
         Expected<std::unique_ptr<AhaBuffer>, std::runtime_error> createAudioBuffer(AhaBuffer::Descriptor descriptor) override;
         Expected<std::unique_ptr<AhaSource>, std::runtime_error> createAudioSource() override;

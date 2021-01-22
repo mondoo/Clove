@@ -5,32 +5,32 @@
 #include <AL/alc.h>
 
 namespace garlic::clove {
-    class ALFactory;
+    class OpenAlFactory;
 }
 
 namespace garlic::clove {
     /**
      * @brief Represents the actual hardware used for audio rendering. Can be quieried for info about the device.
      */
-    class ALDevice : public AudioDevice {
+    class OpenAlDevice : public AudioDevice {
         //VARIABLES
     private:
         ALCdevice *alDevice{ nullptr };
         ALCcontext *alContext{ nullptr };
 
-        std::shared_ptr<ALFactory> factory;
+        std::shared_ptr<OpenAlFactory> factory;
 
         //FUNCTIONS
     public:
-        ALDevice();
+        OpenAlDevice();
 
-        ALDevice(ALDevice const &other) = delete;
-        ALDevice(ALDevice &&other) noexcept;
+        OpenAlDevice(OpenAlDevice const &other) = delete;
+        OpenAlDevice(OpenAlDevice &&other) noexcept;
 
-        ALDevice &operator=(ALDevice const &other) = delete;
-        ALDevice &operator=(ALDevice &&other) noexcept;
+        OpenAlDevice &operator=(OpenAlDevice const &other) = delete;
+        OpenAlDevice &operator=(OpenAlDevice &&other) noexcept;
 
-        ~ALDevice();
+        ~OpenAlDevice();
 
         std::shared_ptr<AhaFactory> getAudioFactory() const override;
     };

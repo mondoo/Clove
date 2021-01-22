@@ -1,6 +1,6 @@
-#include "Clove/Audio/OpenAL/ALBuffer.hpp"
+#include "Clove/Audio/OpenAL/OpenAlBuffer.hpp"
 
-#include "Clove/Audio/OpenAL/ALError.hpp"
+#include "Clove/Audio/OpenAL/OpenAlError.hpp"
 
 #include <utility>
 
@@ -20,24 +20,24 @@ namespace garlic::clove {
         }
     }
 
-    ALBuffer::ALBuffer(ALuint buffer, Descriptor descriptor)
+    OpenAlBuffer::OpenAlBuffer(ALuint buffer, Descriptor descriptor)
         : buffer{ buffer }
         , descriptor{ std::move(descriptor) } {
     }
 
-    ALBuffer::ALBuffer(ALBuffer &&other) noexcept = default;
+    OpenAlBuffer::OpenAlBuffer(OpenAlBuffer &&other) noexcept = default;
 
-    ALBuffer &ALBuffer::operator=(ALBuffer &&other) noexcept = default;
+    OpenAlBuffer &OpenAlBuffer::operator=(OpenAlBuffer &&other) noexcept = default;
 
-    ALBuffer::~ALBuffer() {
+    OpenAlBuffer::~OpenAlBuffer() {
         alCall(alDeleteBuffers(1, &buffer));
     }
 
-    void ALBuffer::write(void const *data, size_t const size) {
+    void OpenAlBuffer::write(void const *data, size_t const size) {
         alCall(alBufferData(buffer, convertFormat(descriptor.format), data, size, descriptor.sampleRate));
     }
 
-    ALuint ALBuffer::getBufferId() const {
+    ALuint OpenAlBuffer::getBufferId() const {
         return buffer;
     }
 }

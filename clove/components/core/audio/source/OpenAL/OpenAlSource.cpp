@@ -1,7 +1,7 @@
-#include "Clove/Audio/OpenAL/ALSource.hpp"
+#include "Clove/Audio/OpenAL/OpenAlSource.hpp"
 
-#include "Clove/Audio/OpenAL/ALBuffer.hpp"
-#include "Clove/Audio/OpenAL/ALError.hpp"
+#include "Clove/Audio/OpenAL/OpenAlBuffer.hpp"
+#include "Clove/Audio/OpenAL/OpenAlError.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Definitions.hpp>
@@ -9,30 +9,30 @@
 #include <set>
 
 namespace garlic::clove {
-    ALSource::ALSource(ALuint source)
+    OpenAlSource::OpenAlSource(ALuint source)
         : source{ source  } {
     }
 
-    ALSource::ALSource(ALSource &&other) noexcept = default;
+    OpenAlSource::OpenAlSource(OpenAlSource &&other) noexcept = default;
 
-    ALSource &ALSource::operator=(ALSource &&other) noexcept = default;
+    OpenAlSource &OpenAlSource::operator=(OpenAlSource &&other) noexcept = default;
 
-    ALSource::~ALSource() {
+    OpenAlSource::~OpenAlSource() {
         alCall(alDeleteSources(1, &source));
     }
 
-    void ALSource::setBuffer(std::shared_ptr<AhaBuffer> buffer) {
-        ALBuffer const *alBuffer{ polyCast<ALBuffer const>(buffer.get()) };
+    void OpenAlSource::setBuffer(std::shared_ptr<AhaBuffer> buffer) {
+        OpenAlBuffer const *alBuffer{ polyCast<OpenAlBuffer const>(buffer.get()) };
         alCall(alSourcei(source, AL_BUFFER, alBuffer->getBufferId()));
 
         bufferQueue = { buffer };
     }
 
-    void ALSource::queueBuffers(std::vector<std::shared_ptr<AhaBuffer>> buffers) {
+    void OpenAlSource::queueBuffers(std::vector<std::shared_ptr<AhaBuffer>> buffers) {
         //Get the buffer Id of all of the buffers to placed into the queue
         std::vector<ALuint> alBuffers(std::size(buffers));
         for(size_t i = 0; i < std::size(alBuffers); ++i) {
-            ALBuffer const *alBuffer{ polyCast<ALBuffer const>(buffers[i].get()) };
+            OpenAlBuffer const *alBuffer{ polyCast<OpenAlBuffer const>(buffers[i].get()) };
             alBuffers[i] = alBuffer->getBufferId();
         }
 
@@ -41,7 +41,7 @@ namespace garlic::clove {
         bufferQueue.insert(std::end(bufferQueue), std::begin(buffers), std::end(buffers));
     }
 
-    std::vector<std::shared_ptr<AhaBuffer>> ALSource::unQueueBuffers(uint32_t const numToUnqueue) {
+    std::vector<std::shared_ptr<AhaBuffer>> OpenAlSource::unQueueBuffers(uint32_t const numToUnqueue) {
 #if CLOVE_DEBUG
         const uint32_t maxAbleToUnQueue = getNumBuffersProcessed();
         CLOVE_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}, Can't unqueue {1} buffers. Only {2} buffers have been processed", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
@@ -61,7 +61,7 @@ namespace garlic::clove {
         removedBuffers.reserve(numToUnqueue);
 
         auto removeIter = std::remove_if(std::begin(bufferQueue), std::end(bufferQueue), [&](std::shared_ptr<AhaBuffer> const &buffer) {
-            ALBuffer const *alBuffer{ polyCast<const ALBuffer>(buffer.get()) };
+            OpenAlBuffer const *alBuffer{ polyCast<const OpenAlBuffer>(buffer.get()) };
             ALuint const bufferId{ alBuffer->getBufferId() };
 
             if(pendingBuffers.find(bufferId) != pendingBuffers.end()) {
@@ -77,59 +77,59 @@ namespace garlic::clove {
         return removedBuffers;
     }
 
-    void ALSource::setPitch(float pitch) {
+    void OpenAlSource::setPitch(float pitch) {
         alCall(alSourcef(source, AL_PITCH, pitch));
     }
 
-    void ALSource::setLooping(bool isLooping) {
+    void OpenAlSource::setLooping(bool isLooping) {
         alCall(alSourcei(source, AL_LOOPING, isLooping ? AL_TRUE : AL_FALSE));
     }
 
-    void ALSource::setPosition(vec3f const &position) {
+    void OpenAlSource::setPosition(vec3f const &position) {
         alCall(alSource3f(source, AL_POSITION, position.x, position.y, position.z));
     }
 
-    void ALSource::setVelocity(vec3f const &velocity) {
+    void OpenAlSource::setVelocity(vec3f const &velocity) {
         alCall(alSource3f(source, AL_VELOCITY, velocity.x, velocity.y, velocity.z));
     }
 
-    vec3f ALSource::getPosition() const {
+    vec3f OpenAlSource::getPosition() const {
         vec3f position{};
         alCall(alGetSource3f(source, AL_POSITION, &position.x, &position.y, &position.z));
         return position;
     }
 
-    vec3f ALSource::getVelocity() const {
+    vec3f OpenAlSource::getVelocity() const {
         vec3f velocity{};
         alCall(alGetSource3f(source, AL_VELOCITY, &velocity.x, &velocity.y, &velocity.z));
         return velocity;
     }
 
-    uint32_t ALSource::getNumBuffersQueued() const {
+    uint32_t OpenAlSource::getNumBuffersQueued() const {
         ALint buffersQeued = 0;
         alCall(alGetSourcei(source, AL_BUFFERS_QUEUED, &buffersQeued));
         return static_cast<uint32_t>(buffersQeued);
     }
 
-    uint32_t ALSource::getNumBuffersProcessed() const {
+    uint32_t OpenAlSource::getNumBuffersProcessed() const {
         ALint buffersProcessed = 0;
         alCall(alGetSourcei(source, AL_BUFFERS_PROCESSED, &buffersProcessed));
         return static_cast<uint32_t>(buffersProcessed);
     }
 
-    void ALSource::play() {
+    void OpenAlSource::play() {
         alCall(alSourcePlay(source));
     }
 
-    void ALSource::pause() {
+    void OpenAlSource::pause() {
         alCall(alSourcePause(source));
     }
 
-    void ALSource::stop() {
+    void OpenAlSource::stop() {
         alCall(alSourceStop(source));
     }
 
-    void ALSource::rewind() {
+    void OpenAlSource::rewind() {
         alCall(alSourceRewind(source));
     }
 }

@@ -5,7 +5,7 @@
 #include <AL/al.h>
 
 namespace garlic::clove {
-    class ALSource : public AhaSource {
+    class OpenAlSource : public AhaSource {
         //VARIABLES
     private:
         ALuint source;
@@ -14,16 +14,16 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        ALSource() = delete;
-        ALSource(ALuint source);
+        OpenAlSource() = delete;
+        OpenAlSource(ALuint source);
 
-        ALSource(ALSource const &other) = delete;
-        ALSource(ALSource &&other) noexcept;
+        OpenAlSource(OpenAlSource const &other) = delete;
+        OpenAlSource(OpenAlSource &&other) noexcept;
 
-        ALSource &operator=(ALSource const &other) = delete;
-        ALSource &operator=(ALSource &&other) noexcept;
+        OpenAlSource &operator=(OpenAlSource const &other) = delete;
+        OpenAlSource &operator=(OpenAlSource &&other) noexcept;
 
-        ~ALSource();
+        ~OpenAlSource();
 
         void setBuffer(std::shared_ptr<AhaBuffer> buffer) override;
 
