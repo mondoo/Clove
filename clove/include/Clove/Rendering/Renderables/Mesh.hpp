@@ -35,15 +35,18 @@ namespace garlic::clove {
 
         ~Mesh();
 
-        inline std::shared_ptr<garlic::clove::GhaBuffer> const &getGraphicsBuffer() const;
+        /**
+         * @brief Returns a GhaBuffer containing both vertices and indices
+         */
+        inline std::shared_ptr<garlic::clove::GhaBuffer> const &getGhaBuffer() const;
 
         /**
-         * @brief Returns the offset into the graphics buffer for the vertices.
+         * @brief Returns the offset into the GhaBuffer for the vertices.
          */
         inline size_t getVertexOffset() const;
 
         /**
-         * @brief Returns the offset into the graphics buffer for the indices.
+         * @brief Returns the offset into the GhaBuffer for the indices.
          */
         inline size_t getIndexOffset() const;
         inline size_t getIndexCount() const;

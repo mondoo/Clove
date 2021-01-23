@@ -10,8 +10,8 @@
 #include "Clove/TextureLoader.hpp"
 
 #include <Clove/Graphics/GhaDescriptorSet.hpp>
-#include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Graphics/GhaImageView.hpp>
+#include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Platform/Window.hpp>
 
@@ -50,8 +50,8 @@ extern "C" const size_t font_pLength;
 
 namespace garlic::clove {
     ForwardRenderer3D::ForwardRenderer3D(GhaDevice *graphicsDevice, std::unique_ptr<RenderTarget> renderTarget)
-		: graphicsDevice{ graphicsDevice }
-		, renderTarget{ std::move(renderTarget) } {
+        : graphicsDevice{ graphicsDevice }
+        , renderTarget{ std::move(renderTarget) } {
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
 
         renderTargetPropertyChangedBeginHandle = this->renderTarget->onPropertiesChangedBegin.bind(&ForwardRenderer3D::cleanupRenderTargetResources, this);
@@ -206,7 +206,7 @@ namespace garlic::clove {
 
     void ForwardRenderer3D::end() {
         //Aquire the next available image from the render target
-        Expected<uint32_t, std::string> const result = renderTarget->aquireNextImage(currentFrame);
+        Expected<uint32_t, std::string> const result{ renderTarget->aquireNextImage(currentFrame) };
         if(!result.hasValue()) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, result.getError());
             return;
@@ -330,8 +330,8 @@ namespace garlic::clove {
 
         //Lambda used to draw a mesh
         auto const drawMesh = [](GhaGraphicsCommandBuffer &commandBuffer, Mesh const &mesh) {
-            commandBuffer.bindVertexBuffer(*mesh.getGraphicsBuffer(), mesh.getVertexOffset());
-            commandBuffer.bindIndexBuffer(*mesh.getGraphicsBuffer(), mesh.getIndexOffset(), IndexType::Uint16);
+            commandBuffer.bindVertexBuffer(*mesh.getGhaBuffer(), mesh.getVertexOffset());
+            commandBuffer.bindIndexBuffer(*mesh.getGhaBuffer(), mesh.getIndexOffset(), IndexType::Uint16);
 
             commandBuffer.drawIndexed(mesh.getIndexCount());
         };
@@ -543,8 +543,8 @@ namespace garlic::clove {
         inFlightImageData.resize(imageCount);
 
         //Allocate frame scope descriptor pools
-        auto viewSetBindingCount     = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::View]);
-        auto lightingSetBindingCount = countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Lighting]);
+        auto viewSetBindingCount{ countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::View]) };
+        auto lightingSetBindingCount{ countDescriptorBindingTypes(*descriptorSetLayouts[DescriptorSetSlots::Lighting]) };
 
         uint32_t constexpr totalSets{ 2 };//Only 2 sets will be allocated from these pools (view + lighting)
         auto bindingCounts = viewSetBindingCount;
@@ -675,8 +675,8 @@ namespace garlic::clove {
             .destinationSubpass = 0,
             .sourceStage        = GhaPipelineObject::Stage::ColourAttachmentOutput,
             .destinationStage   = GhaPipelineObject::Stage::ColourAttachmentOutput,
-            .currentAccess       = AccessFlags::None,
-            .newAccess  = AccessFlags::ColourAttachmentWrite,
+            .currentAccess      = AccessFlags::None,
+            .newAccess          = AccessFlags::ColourAttachmentWrite,
         };
 
         //Create render pass
@@ -991,12 +991,10 @@ namespace garlic::clove {
     std::shared_ptr<GhaDescriptorPool> ForwardRenderer3D::createDescriptorPool(std::unordered_map<DescriptorType, uint32_t> const &bindingCount, uint32_t const setCount) {
         std::vector<DescriptorInfo> poolTypes;
         for(auto &&[type, count] : bindingCount) {
-            DescriptorInfo info{
+            poolTypes.emplace_back(DescriptorInfo{
                 .type  = type,
                 .count = count,
-            };
-
-            poolTypes.emplace_back(info);
+            });
         }
 
         GhaDescriptorPool::Descriptor poolDescriptor{
