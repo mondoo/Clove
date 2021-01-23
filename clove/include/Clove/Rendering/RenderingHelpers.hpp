@@ -13,10 +13,16 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove {
+    //TODO: Remove
     /**
      * @brief Creates all descriptor sets according to DescriptorSetSlots.
      */
     std::unordered_map<DescriptorSetSlots, std::shared_ptr<GhaDescriptorSetLayout>> createDescriptorSetLayouts(GhaFactory &factory);
+
+    std::unique_ptr<GhaDescriptorSetLayout> createMeshDescriptorSetLayout(GhaFactory &factory);
+    std::unique_ptr<GhaDescriptorSetLayout> createViewDescriptorSetLayout(GhaFactory &factory);
+    std::unique_ptr<GhaDescriptorSetLayout> createLightingDescriptorSetLayout(GhaFactory &factory);
+    std::unique_ptr<GhaDescriptorSetLayout> createUiDescriptorSetLayout(GhaFactory &factory);
 
     /**
      * @brief Counts the different binding types in a DescriptorSetLayout.
