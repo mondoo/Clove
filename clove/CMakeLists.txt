@@ -129,6 +129,7 @@ add_library(
 		${INCLUDE}/Rendering/Renderables/StaticModel.hpp
 		${INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${SOURCE}/Rendering/Renderables/StaticModel.cpp
+		${INCLUDE}/Rendering/RenderPasses/GeometryPass.hpp
 
 		${INCLUDE}/Layers/AudioLayer.hpp
 		${SOURCE}/Layers/AudioLayer.cpp
