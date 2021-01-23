@@ -65,14 +65,15 @@ namespace garlic::clove {
         descriptorSetLayouts = createDescriptorSetLayouts(*graphicsFactory);
 
         createRenderpass();
+        createRenderpass();
         createShadowMapRenderpass();
 
+        createPipeline();
+        createUiPipeline();
         createShadowMapPipeline();
         createCubeShadowMapPipeline();
 
-        createDepthBuffer();
-
-        createRenderTargetResources();//Also creates the pipeline for the final colour
+        createRenderTargetResources();
 
         //Create semaphores for frame synchronisation
         for(auto &shadowFinishedSemaphore : shadowFinishedSemaphores) {
@@ -449,6 +450,9 @@ namespace garlic::clove {
             currentImageData.commandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
             currentImageData.commandBuffer->beginRenderPass(*renderPass, *frameBuffers[imageIndex], renderArea, outputClearValues);
 
+            currentImageData.commandBuffer->setViewport(vec2i{ 0 }, renderTarget->getSize());
+            currentImageData.commandBuffer->setScissor(vec2i{ 0 }, renderTarget->getSize());
+
             //Static
             currentImageData.commandBuffer->bindPipelineObject(*staticMeshPipelineObject);
 
@@ -517,28 +521,16 @@ namespace garlic::clove {
 
         frameBuffers.clear();
 
-        staticMeshPipelineObject.reset();
-        animatedMeshPipelineObject.reset();
-        widgetPipelineObject.reset();
-        textPipelineObject.reset();
-
         for(auto &imageData : inFlightImageData) {
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
         }
-
-        renderPass.reset();
     }
 
     void ForwardRenderer3D::createRenderTargetResources() {
-        createRenderpass();
-
         createDepthBuffer();
-
-        createPipeline();
-        createUiPipeline();
         createRenderTargetFrameBuffers();
 
-        size_t const imageCount = std::size(frameBuffers);
+        size_t const imageCount{ std::size(frameBuffers) };
 
         inFlightImageData.resize(imageCount);
 
@@ -718,15 +710,13 @@ namespace garlic::clove {
     }
 
     void ForwardRenderer3D::createDepthBuffer() {
-        GhaImage::Descriptor depthDescriptor{
+        depthImage     = *graphicsFactory->createImage(GhaImage::Descriptor{
             .type        = GhaImage::Type::_2D,
             .usageFlags  = GhaImage::UsageMode::DepthStencilAttachment,
             .dimensions  = renderTarget->getSize(),
             .format      = GhaImage::Format::D32_SFLOAT,
             .sharingMode = SharingMode::Exclusive,
-        };
-
-        depthImage     = *graphicsFactory->createImage(std::move(depthDescriptor));
+        });
         depthImageView = depthImage->createView(GhaImageView::Descriptor{
             .type       = GhaImageView::Type::_2D,
             .layer      = 0,
@@ -762,9 +752,7 @@ namespace garlic::clove {
         });
 
         AreaDescriptor viewScissorArea{
-            .state    = ElementState::Static,
-            .position = { 0.0f, 0.0f },
-            .size     = renderTarget->getSize(),
+            .state = ElementState::Dynamic,
         };
 
         GhaPipelineObject::Descriptor pipelineDescriptor{
@@ -820,9 +808,7 @@ namespace garlic::clove {
         });
 
         AreaDescriptor viewScissorArea{
-            .state    = ElementState::Static,
-            .position = { 0.0f, 0.0f },
-            .size     = renderTarget->getSize(),
+            .state = ElementState::Dynamic,
         };
 
         DepthStateDescriptor depthState{

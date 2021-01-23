@@ -8,12 +8,12 @@
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsQueue.hpp"
-#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPresentQueue.hpp"
 #include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
+#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSampler.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
@@ -612,27 +612,44 @@ namespace garlic::clove {
         };
 
         //Viewport + Scissor
-        //TODO: Dynamic viewport / scissor rect
-        VkViewport const viewport{
-            .x        = static_cast<float>(descriptor.viewportDescriptor.position.x),
-            .y        = static_cast<float>(descriptor.viewportDescriptor.position.y),
-            .width    = static_cast<float>(descriptor.viewportDescriptor.size.x),
-            .height   = static_cast<float>(descriptor.viewportDescriptor.size.y),
-            .minDepth = 0.0f,
-            .maxDepth = 1.0f,
-        };
+        std::vector<VkViewport> viewportStates{};
+        std::vector<VkRect2D> scissorStates{};
+        std::vector<VkDynamicState> dynamicStates{};
 
-        VkRect2D const scissor{
-            .offset = { descriptor.scissorDescriptor.position.x, descriptor.scissorDescriptor.position.y },
-            .extent = { descriptor.scissorDescriptor.size.x, descriptor.scissorDescriptor.size.y },
-        };
+        if(descriptor.viewportDescriptor.state == ElementState::Static) {
+            viewportStates.emplace_back(VkViewport{
+                .x        = static_cast<float>(descriptor.viewportDescriptor.position.x),
+                .y        = static_cast<float>(descriptor.viewportDescriptor.position.y),
+                .width    = static_cast<float>(descriptor.viewportDescriptor.size.x),
+                .height   = static_cast<float>(descriptor.viewportDescriptor.size.y),
+                .minDepth = 0.0f,
+                .maxDepth = 1.0f,
+            });
+        } else {
+            dynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
+        }
+
+        if(descriptor.scissorDescriptor.state == ElementState::Static) {
+            scissorStates.emplace_back(VkRect2D{
+                .offset = { descriptor.scissorDescriptor.position.x, descriptor.scissorDescriptor.position.y },
+                .extent = { descriptor.scissorDescriptor.size.x, descriptor.scissorDescriptor.size.y },
+            });
+        } else {
+            dynamicStates.push_back(VK_DYNAMIC_STATE_SCISSOR);
+        }
 
         VkPipelineViewportStateCreateInfo const viewportState{
             .sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-            .viewportCount = 1,
-            .pViewports    = &viewport,
-            .scissorCount  = 1,
-            .pScissors     = &scissor,
+            .viewportCount = static_cast<uint32_t>(viewportStates.size()),
+            .pViewports    = viewportStates.data(),
+            .scissorCount  = static_cast<uint32_t>(scissorStates.size()),
+            .pScissors     = scissorStates.data(),
+        };
+
+        VkPipelineDynamicStateCreateInfo const dynamicViewportState{
+            .sType             = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+            .dynamicStateCount = static_cast<uint32_t>(dynamicStates.size()),
+            .pDynamicStates    = dynamicStates.data(),
         };
 
         //Rasteriser
@@ -705,7 +722,7 @@ namespace garlic::clove {
             .pMultisampleState   = &multisampling,
             .pDepthStencilState  = &depthStencil,
             .pColorBlendState    = &colorBlending,
-            .pDynamicState       = nullptr,//TODO
+            .pDynamicState       = &dynamicViewportState,
             .layout              = pipelineLayout,
             .renderPass          = polyCast<VulkanRenderPass>(descriptor.renderPass.get())->getRenderPass(),
             .subpass             = 0,//The subpass of the renderpass that'll use this pipeline

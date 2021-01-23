@@ -34,6 +34,9 @@ namespace garlic::clove {
         void beginRenderPass(GhaRenderPass &renderPass, GhaFramebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) override;
         void endRenderPass() override;
 
+        void setViewport(vec2i position, vec2ui size) override;
+        void setScissor(vec2i position, vec2ui size) override;
+
         void bindPipelineObject(GhaPipelineObject &pipelineObject) override;
         void bindVertexBuffer(GhaBuffer &vertexBuffer, size_t const offset) override;
         void bindIndexBuffer(GhaBuffer &indexBuffer, size_t const offset, IndexType indexType) override;
