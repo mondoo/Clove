@@ -10,23 +10,28 @@ namespace garlic::clove {
     class GhaRenderPass;
 }
 
-//TODO: Rename to lightingpass
-
 namespace garlic::clove {
+    //TODO + Own file
+    /* class AnimatedColourPass : public GeometryPass{
+    }; */
+
+    //TODO: StaticColourPass
     class ColourPass : public GeometryPass {
         //VARIABLES
     private:
-        std::unordered_map<DescriptorSetSlots, std::shared_ptr<garlic::clove::GhaDescriptorSetLayout>> descriptorSetLayouts;
-        
-        std::unique_ptr<GhaPipelineObject> staticMeshPipeline;
-        std::unique_ptr<GhaPipelineObject> animatedMeshPipeline;
+        std::unique_ptr<GhaPipelineObject> pipeline;
+
+        std::vector<Job> jobs;
+        //std::unique_ptr<GhaPipelineObject> animatedMeshPipeline;
 
         //FUNCTIONS
     public:
         //TODO: Ctors
-        ColourPass(GhaFactory &ghaFactory); //Takes an attachment descriptor for the output
+        ColourPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
         ~ColourPass();
 
-        void recordPass(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) override;
+        void addJob(Job job) override;
+
+        void flushJobs(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) override;
     };
 }

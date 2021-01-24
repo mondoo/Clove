@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Clove/Rendering/Proxies.hpp"
-
 #include <vector>
+#include <memory>
 
 namespace garlic::clove {
     class GhaDescriptorSet;
@@ -17,24 +16,30 @@ namespace garlic::clove {
     class GeometryPass {
         //TYPES
     public:
-        //TODO: Something like this? Passed into every pass, should only be global data (in frame scope)
-        struct FrameData{
-            std::shared_ptr<GhaDescriptorSet> viewDescriptorSet;
-            std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet;
+        /**
+         * @brief Data a GeometryPass will need for a given frame.
+         */
+        struct FrameData {
+            std::vector<std::shared_ptr<GhaDescriptorSet>> meshDescriptorSets{}; /**< Descriptor set for each mesh submitted for the frame. */
 
-            //TODO: Not have these in the framedata. There should be another way for a mesh to register itself to a pass (like a RenderTechnique that encompasses many passes)
-            std::vector<std::shared_ptr<Mesh>> const &staticMeshes;
-            std::vector<std::shared_ptr<Mesh>> const &animatedMeshes;
+            std::shared_ptr<GhaDescriptorSet> viewDescriptorSet{ nullptr };     /**< Descriptor set for view specific data. */
+            std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet{ nullptr }; /**< Descriptor set for lighting specific data. */
         };
 
-        //TODO: Make the models a drawable/renderable? Then they can bind themselves?
+        /**
+         * @brief A single unit of work for a GeometryPass.
+         */
+        struct Job {
+            size_t meshDescriptorIndex{ 0 };
+            std::shared_ptr<Mesh> mesh{ nullptr };
+        };
 
         //FUNCTIONS
     public:
         virtual ~GeometryPass() = default;
 
-        //TODO: Not perform a pass on every mesh. Only those that require it
+        virtual void addJob(Job job) = 0;
 
-        virtual void recordPass(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) = 0;
+        virtual void flushJobs(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) = 0;
     };
 }

@@ -2,11 +2,11 @@
 
 #include "Constants.glsl"
 
-layout(set = SET_MESH, binding = 0) uniform sampler2D diffuseSampler;
-layout(set = SET_MESH, binding = 1) uniform sampler2D specularSampler;
+layout(set = 0, binding = 0) uniform sampler2D diffuseSampler;
+layout(set = 0, binding = 1) uniform sampler2D specularSampler;
 
-layout(set = SET_LIGHTING, binding = 3) uniform sampler2D directionalDepthSampler[MAX_LIGHTS];
-layout(set = SET_LIGHTING, binding = 4) uniform samplerCube pointLightDepthSampler[MAX_LIGHTS];
+layout(set = 2, binding = 3) uniform sampler2D directionalDepthSampler[MAX_LIGHTS];
+layout(set = 2, binding = 4) uniform samplerCube pointLightDepthSampler[MAX_LIGHTS];
 
 layout(set = SET_VIEW, binding = 1) uniform ViewPosition{
 	vec3 viewPos;
@@ -31,16 +31,16 @@ struct PointLightData{
 	
 	float farplane;
 };
-layout(std140, set = SET_LIGHTING, binding = 0) uniform Lights{
+layout(std140, set = 2, binding = 0) uniform Lights{
 	DirectionalLightData directionalLights[MAX_LIGHTS];
 	PointLightData pointLights[MAX_LIGHTS];
 };
-layout(std140, set = SET_LIGHTING, binding = 1) uniform NumLights{
+layout(std140, set = 2, binding = 1) uniform NumLights{
 	int numDirLights;
 	int numPointLights;
 };
 
-layout(std140, set = SET_MESH, binding = 4) uniform Colour{
+layout(std140, set = 0, binding = 4) uniform Colour{
 	vec4 colour;
 };
 
@@ -58,8 +58,8 @@ float adjustBias(float minBias, float maxBias, vec3 normal, vec3 lightDir){
 }
 
 void main(){
-	const vec3 diffuseColour = vec3(texture(diffuseSampler, fragTexCoord));
-	const vec3 specularColour = vec3(texture(specularSampler, fragTexCoord));
+	const vec3 diffuseColour = texture(diffuseSampler, fragTexCoord).rgb;
+	const vec3 specularColour = texture(specularSampler, fragTexCoord).rgb;
 
 	vec3 viewDir = normalize(viewPos - fragPos);
 
@@ -143,5 +143,5 @@ void main(){
 
 	const vec3 lighting = (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)));
 
-	outColour = vec4(lighting, 1.0) * colour;
+	outColour = vec4(lighting, 1.0f) * colour;
 }

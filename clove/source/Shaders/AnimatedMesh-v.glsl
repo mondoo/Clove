@@ -2,25 +2,25 @@
 
 #include "Constants.glsl"
 
-layout(std140, set = SET_MESH, binding = 2) uniform Model{
+layout(std140, set = 0, binding = 2) uniform Model{
 	mat4 model;
 	mat4 normalMatrix;
 };
 
-layout(std140, set = SET_MESH, binding = 3) uniform Skeleton{
+layout(std140, set = 0, binding = 3) uniform Skeleton{
 	mat4 matrixPalet[MAX_JOINTS];
 };
 
-layout(std140, set = SET_VIEW, binding = 0) uniform ViewProj{
+layout(std140, set = 1, binding = 0) uniform ViewProj{
 	mat4 view;
 	mat4 proj;
 };
 
-layout(std140, set = SET_LIGHTING, binding = 1) uniform NumLights{
+layout(std140, set = 2, binding = 1) uniform NumLights{
 	int numDirLights;
 	int numPointLights;
 };
-layout(std140, set = SET_LIGHTING, binding = 2) uniform LightMatrix{
+layout(std140, set = 2, binding = 2) uniform LightMatrix{
 	mat4 lightSpaceMatrices[MAX_LIGHTS];
 };
 

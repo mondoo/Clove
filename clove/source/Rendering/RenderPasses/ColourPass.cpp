@@ -1,7 +1,7 @@
 #include "Clove/Rendering/RenderPasses/ColourPass.hpp"
 
-#include "Clove/Rendering/Vertex.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
+#include "Clove/Rendering/Vertex.hpp"
 
 #include <Clove/Graphics/GhaFactory.hpp>
 #include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
@@ -20,10 +20,7 @@ extern "C" const char mesh_p[];
 extern "C" const size_t mesh_pLength;
 
 namespace garlic::clove {
-    ColourPass::ColourPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> const &ghaRenderPass) {
-        //Renderpass
-        //TODO
-
+    ColourPass::ColourPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass) {
         //Pipeline
         std::unordered_map<std::string, std::string> shaderIncludes;
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
@@ -65,7 +62,7 @@ namespace garlic::clove {
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
-            .renderPass           = nullptr, //TODO
+            .renderPass           = std::move(ghaRenderPass),
             .descriptorSetLayouts = {
                 createMeshDescriptorSetLayout(ghaFactory),
                 createViewDescriptorSetLayout(ghaFactory),
@@ -74,10 +71,10 @@ namespace garlic::clove {
             .pushConstants = {},
         };
 
-        staticMeshPipeline = *ghaFactory->createPipelineObject(pipelineDescriptor);
+        pipeline = *ghaFactory->createPipelineObject(pipelineDescriptor);
 
         //Modify the pipeline for animated meshes
-        vertexAttributes.emplace_back(VertexAttributeDescriptor{
+        /* vertexAttributes.emplace_back(VertexAttributeDescriptor{
             .location = 4,
             .format   = VertexAttributeFormat::R32G32B32A32_SINT,
             .offset   = offsetof(Vertex, jointIds),
@@ -91,28 +88,32 @@ namespace garlic::clove {
         pipelineDescriptor.vertexShader     = *ghaFactory->createShaderFromSource({ animatedmesh_v, animatedmesh_vLength }, shaderIncludes, "Animated Mesh (vertex)", GhaShader::Stage::Vertex);
         pipelineDescriptor.vertexAttributes = std::move(vertexAttributes);
 
-        animatedMeshPipeline = *ghaFactory->createPipelineObject(pipelineDescriptor);
+        animatedMeshPipeline = *ghaFactory->createPipelineObject(pipelineDescriptor); */
     }
 
-    ColourPass::recordPass(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
-        //Static
-        commandBuffer.bindPipelineObject(*staticMeshPipeline);
+    void ColourPass::addJob(Job job) {
+        jobs.emplace_back(std::move(job));
+    }
+
+    void ColourPass::flushJobs(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
+        commandBuffer.bindPipelineObject(*pipeline);
 
         commandBuffer.bindDescriptorSet(*frameData.viewDescriptorSet, 1);
         commandBuffer.bindDescriptorSet(*frameData.lightingDescriptorSet, 2);
 
-        for(auto &staticMesh : frameData.staticMeshes){
-            //TODO: Mesh descriptor set
-            //commandBuffer->bindDescriptorSet(*meshSets[index], 0);
+        for(auto &job : jobs) {
+            commandBuffer->bindDescriptorSet(*frameData.meshDescriptorSets[job.meshDescriptorIndex], 0);
 
-            commandBuffer.bindVertexBuffer(*staticMesh.getGhaBuffer(), staticMesh.getVertexOffset());
-            commandBuffer.bindIndexBuffer(*staticMesh.getGhaBuffer(), staticMesh.getIndexOffset(), IndexType::Uint16);
+            commandBuffer.bindVertexBuffer(*job.mesh->getGhaBuffer(), job.mesh->.getVertexOffset());
+            commandBuffer.bindIndexBuffer(*job.mesh->.getGhaBuffer(), job.mesh->.getIndexOffset(), IndexType::Uint16);
 
-            commandBuffer.drawIndexed(staticMesh.getIndexCount());
+            commandBuffer.drawIndexed(job.mesh->.getIndexCount());
         }
 
+        jobs.clear();
+
         //Animated
-        commandBuffer.bindPipelineObject(*animatedMeshPipeline);
+        /* commandBuffer.bindPipelineObject(*animatedMeshPipeline);
 
         commandBuffer.bindDescriptorSet(*frameData.viewDescriptorSet, 1);
         commandBuffer.bindDescriptorSet(*frameData.lightingDescriptorSet, 2);
@@ -125,6 +126,6 @@ namespace garlic::clove {
             commandBuffer.bindIndexBuffer(*animatedMesh.getGhaBuffer(), animatedMesh.getIndexOffset(), IndexType::Uint16);
 
             commandBuffer.drawIndexed(animatedMesh.getIndexCount());
-        }
+        } */
     }
 }
