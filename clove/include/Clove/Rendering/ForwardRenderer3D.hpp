@@ -1,14 +1,14 @@
 #pragma once
 
+#include "Clove/Rendering/RenderPasses/GeometryPass.hpp"
 #include "Clove/Rendering/ShaderBufferTypes.hpp"
 
 #include <Clove/Delegate/DelegateHandle.hpp>
-#include <Clove/Graphics/GhaDescriptorSetLayout.hpp>
-#include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Graphics/GhaBuffer.hpp>
+#include <Clove/Graphics/GhaDescriptorSetLayout.hpp>
 #include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Graphics/GhaFactory.hpp>
-#include <Clove/Delegate/DelegateHandle.hpp>
+#include <Clove/Graphics/GraphicsAPI.hpp>
 #include <unordered_map>
 
 namespace garlic::clove {
@@ -72,34 +72,33 @@ namespace garlic::clove {
             }
         };
 
-        //Objects that hold the state / data of each image (in flight)
+        /**
+         * @brief Objects that hold the state / data of each image (in flight)
+         */
         struct ImageData {
-            std::shared_ptr<garlic::clove::GhaGraphicsCommandBuffer> commandBuffer;
-            std::shared_ptr<garlic::clove::GhaGraphicsCommandBuffer> shadowMapCommandBuffer;
-            std::shared_ptr<garlic::clove::GhaGraphicsCommandBuffer> cubeShadowMapCommandBuffer;
+            std::shared_ptr<GhaGraphicsCommandBuffer> commandBuffer;
+            std::shared_ptr<GhaGraphicsCommandBuffer> shadowMapCommandBuffer;
+            std::shared_ptr<GhaGraphicsCommandBuffer> cubeShadowMapCommandBuffer;
 
-            std::shared_ptr<garlic::clove::GhaBuffer> frameDataBuffer;           //Holds data used across all meshes (lighting, camera etc.)
-            std::vector<std::unique_ptr<garlic::clove::GhaBuffer>> objectBuffers;//Holds the data for each object
+            std::shared_ptr<GhaBuffer> frameDataBuffer;            /**< Holds data used across all meshes (lighting, camera etc.). */
+            std::vector<std::unique_ptr<GhaBuffer>> objectBuffers; /**< Holds the data for each object. */
 
-            //Descriptor pool for sets that change per frame
-            std::shared_ptr<garlic::clove::GhaDescriptorPool> frameDescriptorPool;
-            //Descriptor pool for sets that are for a single mesh's material
-            std::shared_ptr<garlic::clove::GhaDescriptorPool> meshDescriptorPool;
-            //Descriptor pool for sets that are for a ui element.
-            std::shared_ptr<garlic::clove::GhaDescriptorPool> uiDescriptorPool;
+            std::shared_ptr<GhaDescriptorPool> frameDescriptorPool; /**< Descriptor pool for sets that change per frame. */
+            std::shared_ptr<GhaDescriptorPool> meshDescriptorPool;  /**< Descriptor pool for sets that are for a single mesh's material. */
+            std::shared_ptr<GhaDescriptorPool> uiDescriptorPool;    /**< Descriptor pool for sets that are for a ui element. */
 
-            std::shared_ptr<garlic::clove::GhaDescriptorSet> viewDescriptorSet;
-            std::shared_ptr<garlic::clove::GhaDescriptorSet> lightingDescriptorSet;
-            std::shared_ptr<garlic::clove::GhaDescriptorSet> uiDescriptorSet;
+            std::shared_ptr<GhaDescriptorSet> viewDescriptorSet;
+            std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet;
+            std::shared_ptr<GhaDescriptorSet> uiDescriptorSet;
 
-            std::array<std::shared_ptr<garlic::clove::GhaImage>, MAX_LIGHTS> shadowMaps;
-            std::array<std::shared_ptr<garlic::clove::GhaImageView>, MAX_LIGHTS> shadowMapViews;
-            std::array<std::shared_ptr<garlic::clove::GhaFramebuffer>, MAX_LIGHTS> shadowMapFrameBuffers;
+            std::array<std::shared_ptr<GhaImage>, MAX_LIGHTS> shadowMaps;
+            std::array<std::shared_ptr<GhaImageView>, MAX_LIGHTS> shadowMapViews;
+            std::array<std::shared_ptr<GhaFramebuffer>, MAX_LIGHTS> shadowMapFrameBuffers;
 
-            std::array<std::shared_ptr<garlic::clove::GhaImage>, MAX_LIGHTS> cubeShadowMaps;
-            std::array<std::shared_ptr<garlic::clove::GhaImageView>, MAX_LIGHTS> cubeShadowMapViews;                   //Views the whole cube
-            std::array<std::array<std::shared_ptr<garlic::clove::GhaImageView>, 6>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
-            std::array<std::array<std::shared_ptr<garlic::clove::GhaFramebuffer>, 6>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
+            std::array<std::shared_ptr<GhaImage>, MAX_LIGHTS> cubeShadowMaps;
+            std::array<std::shared_ptr<GhaImageView>, MAX_LIGHTS> cubeShadowMapViews;                   //Views the whole cube
+            std::array<std::array<std::shared_ptr<GhaImageView>, 6>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
+            std::array<std::array<std::shared_ptr<GhaFramebuffer>, 6>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
         };
 
         //VARIABLES
@@ -112,7 +111,7 @@ namespace garlic::clove {
         DelegateHandle renderTargetPropertyChangedBeginHandle;
         DelegateHandle renderTargetPropertyChangedEndHandle;
         std::unique_ptr<RenderTarget> renderTarget;
-        std::vector<std::shared_ptr<garlic::clove::GhaFramebuffer>> frameBuffers;
+        std::vector<std::shared_ptr<GhaFramebuffer>> frameBuffers;//TODO: Move inside the ImageData
 
         //'Square' mesh used to render UI
         std::unique_ptr<Mesh> uiMesh;
@@ -133,10 +132,10 @@ namespace garlic::clove {
         std::shared_ptr<garlic::clove::GhaSampler> uiSampler;
         std::shared_ptr<garlic::clove::GhaSampler> shadowSampler;
 
+        //Geometry passes
+        std::unique_ptr<GeometryPass> colourPass;
         //Objects for the final colour render pass
         std::shared_ptr<garlic::clove::GhaRenderPass> renderPass;
-        std::shared_ptr<garlic::clove::GhaPipelineObject> staticMeshPipelineObject;
-        std::shared_ptr<garlic::clove::GhaPipelineObject> animatedMeshPipelineObject;
         std::shared_ptr<garlic::clove::GhaPipelineObject> widgetPipelineObject;
         std::shared_ptr<garlic::clove::GhaPipelineObject> textPipelineObject;
 
@@ -193,7 +192,6 @@ namespace garlic::clove {
 
         void createDepthBuffer();
 
-        void createPipeline();
         void createShadowMapPipeline();
         void createCubeShadowMapPipeline();
         void createUiPipeline();

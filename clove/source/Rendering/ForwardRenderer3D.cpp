@@ -3,11 +3,11 @@
 #include "Clove/Application.hpp"
 #include "Clove/Rendering/Camera.hpp"
 #include "Clove/Rendering/Material.hpp"
+#include "Clove/Rendering/RenderPasses/ColourPass.hpp"
 #include "Clove/Rendering/RenderTarget.hpp"
 #include "Clove/Rendering/Renderables/Mesh.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
 #include "Clove/Rendering/Vertex.hpp"
-#include "Clove/TextureLoader.hpp"
 
 #include <Clove/Graphics/GhaDescriptorSet.hpp>
 #include <Clove/Graphics/GhaImageView.hpp>
@@ -20,22 +20,16 @@ using namespace garlic::clove;
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
 
-extern "C" const char staticmesh_v[];
-extern "C" const size_t staticmesh_vLength;
 extern "C" const char staticmeshshadowmap_v[];
 extern "C" const size_t staticmeshshadowmap_vLength;
 extern "C" const char staticmeshcubeshadowmap_v[];
 extern "C" const size_t staticmeshcubeshadowmap_vLength;
 
-extern "C" const char animatedmesh_v[];
-extern "C" const size_t animatedmesh_vLength;
 extern "C" const char animatedmeshshadowmap_v[];
 extern "C" const size_t animatedmeshshadowmap_vLength;
 extern "C" const char animatedmeshcubeshadowmap_v[];
 extern "C" const size_t animatedmeshcubeshadowmap_vLength;
 
-extern "C" const char mesh_p[];
-extern "C" const size_t mesh_pLength;
 extern "C" const char meshshadowmap_p[];
 extern "C" const size_t meshshadowmap_pLength;
 extern "C" const char meshcubeshadowmap_p[];
@@ -65,10 +59,11 @@ namespace garlic::clove {
         descriptorSetLayouts = createDescriptorSetLayouts(*graphicsFactory);
 
         createRenderpass();
-        createRenderpass();
         createShadowMapRenderpass();
 
-        createPipeline();
+        //Creating here as it's after the render pass is initialised
+        colourPass = std::make_unique<ColourPass>(*graphicsFactory, renderPass);
+
         createUiPipeline();
         createShadowMapPipeline();
         createCubeShadowMapPipeline();
@@ -177,6 +172,8 @@ namespace garlic::clove {
 
     void ForwardRenderer3D::submitStaticMesh(StaticMeshInfo meshInfo) {
         currentFrameData.staticMeshes.push_back(std::move(meshInfo));
+        //TEMP: Static meshes are manually added as jobs
+        colourPass->addJob({ currentFrameData.staticMeshes.size() - 1, currentFrameData.staticMeshes.back().mesh });
     }
 
     void ForwardRenderer3D::submitAnimatedMesh(AnimatedMeshInfo meshInfo) {
@@ -238,10 +235,10 @@ namespace garlic::clove {
             depthStencilClearValue
         };
 
-        size_t const staticMeshCount   = std::size(currentFrameData.staticMeshes);
-        size_t const animatedMeshCount = std::size(currentFrameData.animatedMeshes);
+        size_t const staticMeshCount{ currentFrameData.staticMeshes.size() };
+        size_t const animatedMeshCount{ currentFrameData.animatedMeshes.size() };
 
-        size_t const meshCount = staticMeshCount + animatedMeshCount;
+        size_t const meshCount{ staticMeshCount + animatedMeshCount };
 
         //We can just write the struct straight in as all the mappings are based off of it's layout
         currentImageData.frameDataBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
@@ -442,30 +439,20 @@ namespace garlic::clove {
 
         //FINAL COLOUR
         {
-            auto const render = [&](Mesh const &mesh, size_t const index) {
-                currentImageData.commandBuffer->bindDescriptorSet(*meshSets[index], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
-                drawMesh(*currentImageData.commandBuffer, mesh);
-            };
-
             currentImageData.commandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
             currentImageData.commandBuffer->beginRenderPass(*renderPass, *frameBuffers[imageIndex], renderArea, outputClearValues);
 
             currentImageData.commandBuffer->setViewport(vec2i{ 0 }, renderTarget->getSize());
             currentImageData.commandBuffer->setScissor(vec2i{ 0 }, renderTarget->getSize());
 
-            //Static
-            currentImageData.commandBuffer->bindPipelineObject(*staticMeshPipelineObject);
+            //TEMP: Manually creating the geometry frame data here
+            GeometryPass::FrameData data{
+                .meshDescriptorSets    = meshSets,
+                .viewDescriptorSet     = currentImageData.viewDescriptorSet,
+                .lightingDescriptorSet = currentImageData.lightingDescriptorSet,
+            };
 
-            currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::View));
-            currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
-            currentFrameData.forEachStaticMesh(render);
-
-            //Animated
-            currentImageData.commandBuffer->bindPipelineObject(*animatedMeshPipelineObject);
-
-            currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.viewDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::View));
-            currentImageData.commandBuffer->bindDescriptorSet(*currentImageData.lightingDescriptorSet, static_cast<uint32_t>(DescriptorSetSlots::Lighting));
-            currentFrameData.forEachAnimatedMesh(render);
+            colourPass->flushJobs(*currentImageData.commandBuffer, data);
 
             //Widgets
             currentImageData.commandBuffer->bindPipelineObject(*widgetPipelineObject);
@@ -722,73 +709,6 @@ namespace garlic::clove {
             .layer      = 0,
             .layerCount = 1,
         });
-    }
-
-    void ForwardRenderer3D::createPipeline() {
-        //Create attributes for non-animated meshes
-        size_t constexpr totalAttributes{ 6 };
-        std::vector<VertexAttributeDescriptor> vertexAttributes{};
-        vertexAttributes.reserve(totalAttributes);
-
-        vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .location = 0,
-            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
-            .offset   = offsetof(Vertex, position),
-        });
-        vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .location = 1,
-            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
-            .offset   = offsetof(Vertex, normal),
-        });
-        vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .location = 2,
-            .format   = VertexAttributeFormat::R32G32_SFLOAT,
-            .offset   = offsetof(Vertex, texCoord),
-        });
-        vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .location = 3,
-            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
-            .offset   = offsetof(Vertex, colour),
-        });
-
-        AreaDescriptor viewScissorArea{
-            .state = ElementState::Dynamic,
-        };
-
-        GhaPipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = *graphicsFactory->createShaderFromSource({ staticmesh_v, staticmesh_vLength }, shaderIncludes, "Static Mesh (vertex)", GhaShader::Stage::Vertex),
-            .fragmentShader       = *graphicsFactory->createShaderFromSource({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
-            .vertexInput          = Vertex::getInputBindingDescriptor(),
-            .vertexAttributes     = vertexAttributes,
-            .viewportDescriptor   = viewScissorArea,
-            .scissorDescriptor    = viewScissorArea,
-            .renderPass           = renderPass,
-            .descriptorSetLayouts = {
-                descriptorSetLayouts[DescriptorSetSlots::Mesh],
-                descriptorSetLayouts[DescriptorSetSlots::View],
-                descriptorSetLayouts[DescriptorSetSlots::Lighting],
-            },
-            .pushConstants = {},
-        };
-
-        staticMeshPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
-
-        //Modify the pipeline for animated meshes
-        vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .location = 4,
-            .format   = VertexAttributeFormat::R32G32B32A32_SINT,
-            .offset   = offsetof(Vertex, jointIds),
-        });
-        vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .location = 5,
-            .format   = VertexAttributeFormat::R32G32B32A32_SFLOAT,
-            .offset   = offsetof(Vertex, weights),
-        });
-
-        pipelineDescriptor.vertexShader     = *graphicsFactory->createShaderFromSource({ animatedmesh_v, animatedmesh_vLength }, shaderIncludes, "Animated Mesh (vertex)", GhaShader::Stage::Vertex);
-        pipelineDescriptor.vertexAttributes = std::move(vertexAttributes);
-
-        animatedMeshPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
     void ForwardRenderer3D::createUiPipeline() {
