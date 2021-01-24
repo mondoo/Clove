@@ -75,10 +75,12 @@ namespace garlic::clove {
 
         VkAttachmentLoadOp convertLoadOp(LoadOperation garlicOperation) {
             switch(garlicOperation) {
-                case LoadOperation::DontCare:
-                    return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+                case LoadOperation::Load:
+                    return VK_ATTACHMENT_LOAD_OP_LOAD;
                 case LoadOperation::Clear:
                     return VK_ATTACHMENT_LOAD_OP_CLEAR;
+                case LoadOperation::DontCare:
+                    return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
                 default:
                     CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
                     return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -87,10 +89,10 @@ namespace garlic::clove {
 
         VkAttachmentStoreOp convertStoreOp(StoreOperation garlicOperation) {
             switch(garlicOperation) {
-                case StoreOperation::DontCare:
-                    return VK_ATTACHMENT_STORE_OP_DONT_CARE;
                 case StoreOperation::Store:
                     return VK_ATTACHMENT_STORE_OP_STORE;
+                case StoreOperation::DontCare:
+                    return VK_ATTACHMENT_STORE_OP_DONT_CARE;
                 default:
                     CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
                     return VK_ATTACHMENT_STORE_OP_DONT_CARE;

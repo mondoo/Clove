@@ -12,13 +12,14 @@ namespace garlic::clove {
     inline constexpr uint32_t SUBPASS_EXTERNAL = ~0U;
 
     enum class LoadOperation {
-        DontCare,
+        Load,
         Clear,
+        DontCare,
     };
 
     enum class StoreOperation {
-        DontCare,
         Store,
+        DontCare,
     };
 
     /**
