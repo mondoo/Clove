@@ -132,6 +132,7 @@ add_library(
 		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
 		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
 		${INCLUDE}/Rendering/RenderPasses/GeometryPass.hpp
+		${INCLUDE}/Rendering/Techniques/Technique.hpp
 
 		${INCLUDE}/Layers/AudioLayer.hpp
 		${SOURCE}/Layers/AudioLayer.cpp

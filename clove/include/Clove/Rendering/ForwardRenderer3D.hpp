@@ -168,6 +168,16 @@ namespace garlic::clove {
 
         void begin();
 
+        template<typename GeometryPass>
+        bool supportsPass(){
+            return false;//TODO
+        }
+
+        template<typename ...GeometryPasses>
+        void submitMesh(std::shared_ptr<Mesh> mesh){
+            //TODO:
+        }
+
         /**
          * @brief Submit the active camera the renderer will use.
          */
