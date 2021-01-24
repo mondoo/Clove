@@ -1,5 +1,6 @@
 #include "Clove/Rendering/RenderPasses/ColourPass.hpp"
 
+#include "Clove/Rendering/Renderables/Mesh.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
 #include "Clove/Rendering/Vertex.hpp"
 
@@ -56,8 +57,8 @@ namespace garlic::clove {
         };
 
         GhaPipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = *ghaFactory->createShaderFromSource({ staticmesh_v, staticmesh_vLength }, shaderIncludes, "Static Mesh (vertex)", GhaShader::Stage::Vertex),
-            .fragmentShader       = *ghaFactory->createShaderFromSource({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
+            .vertexShader         = *ghaFactory.createShaderFromSource({ staticmesh_v, staticmesh_vLength }, shaderIncludes, "Static Mesh (vertex)", GhaShader::Stage::Vertex),
+            .fragmentShader       = *ghaFactory.createShaderFromSource({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -71,7 +72,7 @@ namespace garlic::clove {
             .pushConstants = {},
         };
 
-        pipeline = *ghaFactory->createPipelineObject(pipelineDescriptor);
+        pipeline = *ghaFactory.createPipelineObject(pipelineDescriptor);
 
         //Modify the pipeline for animated meshes
         /* vertexAttributes.emplace_back(VertexAttributeDescriptor{
@@ -91,6 +92,8 @@ namespace garlic::clove {
         animatedMeshPipeline = *ghaFactory->createPipelineObject(pipelineDescriptor); */
     }
 
+    ColourPass::~ColourPass() = default;
+
     void ColourPass::addJob(Job job) {
         jobs.emplace_back(std::move(job));
     }
@@ -102,12 +105,12 @@ namespace garlic::clove {
         commandBuffer.bindDescriptorSet(*frameData.lightingDescriptorSet, 2);
 
         for(auto &job : jobs) {
-            commandBuffer->bindDescriptorSet(*frameData.meshDescriptorSets[job.meshDescriptorIndex], 0);
+            commandBuffer.bindDescriptorSet(*frameData.meshDescriptorSets[job.meshDescriptorIndex], 0);
 
-            commandBuffer.bindVertexBuffer(*job.mesh->getGhaBuffer(), job.mesh->.getVertexOffset());
-            commandBuffer.bindIndexBuffer(*job.mesh->.getGhaBuffer(), job.mesh->.getIndexOffset(), IndexType::Uint16);
+            commandBuffer.bindVertexBuffer(*job.mesh->getGhaBuffer(), job.mesh->getVertexOffset());
+            commandBuffer.bindIndexBuffer(*job.mesh->getGhaBuffer(), job.mesh->getIndexOffset(), IndexType::Uint16);
 
-            commandBuffer.drawIndexed(job.mesh->.getIndexCount());
+            commandBuffer.drawIndexed(job.mesh->getIndexCount());
         }
 
         jobs.clear();
