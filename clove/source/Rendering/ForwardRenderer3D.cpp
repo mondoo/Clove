@@ -3,7 +3,7 @@
 #include "Clove/Application.hpp"
 #include "Clove/Rendering/Camera.hpp"
 #include "Clove/Rendering/Material.hpp"
-#include "Clove/Rendering/RenderPasses/ColourPass.hpp"
+#include "Clove/Rendering/RenderPasses/ForwardColourPass.hpp"
 #include "Clove/Rendering/RenderTarget.hpp"
 #include "Clove/Rendering/Renderables/Mesh.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
@@ -62,7 +62,7 @@ namespace garlic::clove {
         createShadowMapRenderpass();
 
         //Creating here as it's after the render pass is initialised
-        colourPass = std::make_unique<ColourPass>(*graphicsFactory, renderPass);
+        colourPass = std::make_unique<ForwardColourPass>(*graphicsFactory, renderPass);
 
         createUiPipeline();
         createShadowMapPipeline();

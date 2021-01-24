@@ -129,8 +129,8 @@ add_library(
 		${INCLUDE}/Rendering/Renderables/StaticModel.hpp
 		${INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${SOURCE}/Rendering/Renderables/StaticModel.cpp
-		${INCLUDE}/Rendering/RenderPasses/ColourPass.hpp
-		${SOURCE}/Rendering/RenderPasses/ColourPass.cpp
+		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
+		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
 		${INCLUDE}/Rendering/RenderPasses/GeometryPass.hpp
 
 		${INCLUDE}/Layers/AudioLayer.hpp

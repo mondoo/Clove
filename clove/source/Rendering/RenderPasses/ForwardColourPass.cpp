@@ -1,4 +1,4 @@
-#include "Clove/Rendering/RenderPasses/ColourPass.hpp"
+#include "Clove/Rendering/RenderPasses/ForwardColourPass.hpp"
 
 #include "Clove/Rendering/Renderables/Mesh.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
@@ -21,7 +21,7 @@ extern "C" const char mesh_p[];
 extern "C" const size_t mesh_pLength;
 
 namespace garlic::clove {
-    ColourPass::ColourPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass) {
+    ForwardColourPass::ForwardColourPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass) {
         //Pipeline
         std::unordered_map<std::string, std::string> shaderIncludes;
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
@@ -92,13 +92,13 @@ namespace garlic::clove {
         animatedMeshPipeline = *ghaFactory->createPipelineObject(pipelineDescriptor); */
     }
 
-    ColourPass::~ColourPass() = default;
+    ForwardColourPass::~ForwardColourPass() = default;
 
-    void ColourPass::addJob(Job job) {
+    void ForwardColourPass::addJob(Job job) {
         jobs.emplace_back(std::move(job));
     }
 
-    void ColourPass::flushJobs(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
+    void ForwardColourPass::flushJobs(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
         commandBuffer.bindPipelineObject(*pipeline);
 
         commandBuffer.bindDescriptorSet(*frameData.viewDescriptorSet, 1);

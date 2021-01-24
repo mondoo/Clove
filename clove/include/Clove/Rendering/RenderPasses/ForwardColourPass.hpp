@@ -16,7 +16,7 @@ namespace garlic::clove {
     }; */
 
     //TODO: StaticColourPass
-    class ColourPass : public GeometryPass {
+    class ForwardColourPass : public GeometryPass {
         //VARIABLES
     private:
         std::unique_ptr<GhaPipelineObject> pipeline;
@@ -27,8 +27,8 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         //TODO: Ctors
-        ColourPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
-        ~ColourPass();
+        ForwardColourPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
+        ~ForwardColourPass();
 
         void addJob(Job job) override;
 
