@@ -23,7 +23,7 @@ namespace garlic::clove {
         return setLayouts;
     }
 
-    std::sunique_ptrhared_ptr<GhaDescriptorSetLayout> createMeshDescriptorSetLayout(GhaFactory &factory) {
+    std::unique_ptr<GhaDescriptorSetLayout> createMeshDescriptorSetLayout(GhaFactory &factory) {
         DescriptorSetBindingInfo const diffuseTextureBinding{
             .binding   = 0,
             .type      = DescriptorType::CombinedImageSampler,
