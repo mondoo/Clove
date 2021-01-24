@@ -642,9 +642,9 @@ namespace garlic::clove {
 
         VkPipelineViewportStateCreateInfo const viewportState{
             .sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-            .viewportCount = static_cast<uint32_t>(viewportStates.size()),
+            .viewportCount = 1,//Dynamic or not vulkan expects 1 viewport to be bound
             .pViewports    = viewportStates.data(),
-            .scissorCount  = static_cast<uint32_t>(scissorStates.size()),
+            .scissorCount  = 1,//Dynamic or not vulkan expects 1 scissor rect to be bound
             .pScissors     = scissorStates.data(),
         };
 
