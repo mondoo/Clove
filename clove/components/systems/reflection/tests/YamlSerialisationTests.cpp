@@ -36,11 +36,6 @@ struct TestClass {
     float memberTwo;
     float memberThree;
 };
-CLOVE_REFLECT_TYPE(TestClass)
-CLOVE_REFLECT_FIELD(memberOne)
-CLOVE_REFLECT_FIELD(memberTwo)
-CLOVE_REFLECT_FIELD(memberThree)
-CLOVE_REFLECT_END
 
 TEST(YamlSerialisationTests, CanPushAReflectedClass) {
     YamlSerialiser serialiser{};

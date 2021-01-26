@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Clove/Reflection/Common.hpp"
-
 #include <fstream>
 #include <string>
 #include <variant>
@@ -64,13 +62,8 @@ namespace garlic::clove {
 
         template<typename T>
         void push(std::string_view name, T const &type) {
-            Type typeInfo{ reflect(type) };
-
-            push(typeInfo.name);
-            for(auto const &field : typeInfo.fields){
-                //TEMP: All members are floats
-                push(field.name, std::any_cast<float>(field.value));
-            }
+            
+            
         }
 
         //TODO: ofsteam override. Takes a file name
