@@ -57,7 +57,8 @@ namespace garlic::clove{
 	}
 	
 	std::any MacWindow::getNativeWindow() const{
-		return windowProxy;
+		//Make sure the any holds an NSWindow and not our custom window.
+		return static_cast<NSWindow*>(windowProxy);
 	}
 	
 	vec2i MacWindow::getPosition() const{
