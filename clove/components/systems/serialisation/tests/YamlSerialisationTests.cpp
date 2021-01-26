@@ -38,13 +38,11 @@ struct TestStruct {
 namespace garlic::clove {
     template<>
     Serialiser::Node serialise<TestStruct>(TestStruct const &object) {
-        std::vector<Serialiser::Node> nodes{
-            { "memberOne", object.memberOne },
-            { "memberTwo", object.memberTwo },
-            { "memberThree", object.memberThree },
-        };
-
-        return { "", std::move(nodes) };
+        Serialiser::Node node{};
+        node["memberOne"]   = object.memberOne;
+        node["memberTwo"]   = object.memberTwo;
+        node["memberThree"] = object.memberThree;
+        return node;
     }
 
     template<>
@@ -66,3 +64,5 @@ TEST(YamlSerialisationTests, CanPushASerialisableStruct) {
 
     EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\ntestStruct:\n  memberOne: 1\n  memberTwo: 2\n  memberThree: 3");
 }
+
+//TODO: Deserialise

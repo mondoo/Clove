@@ -1,7 +1,7 @@
 #pragma once
 
-#include <fstream>
 #include <string>
+#include <string_view>
 #include <variant>
 #include <vector>
 
@@ -12,6 +12,32 @@ namespace garlic::clove {
         struct Node {
             std::string name;
             std::variant<float, std::vector<Node>> value{};
+
+            Node &operator=(float scalar) {
+                value = scalar;
+                return *this;
+            }
+
+            Node &operator[](std::string_view nodeName) {
+                //Turn this node into a parent node if not already
+                if(!std::holds_alternative<std::vector<Node>>(value)) {
+                    value = std::vector<Node>{};
+                }
+
+                auto &nodes{ std::get<std::vector<Node>>(value) };
+
+                for(auto &node : nodes) {
+                    if(node.name == nodeName) {
+                        return node;
+                    }
+                }
+
+                Node node{};
+                node.name = nodeName;
+                nodes.push_back(std::move(node));
+
+                return nodes.back();
+            }
         };
 
         //VARIABLES
@@ -23,51 +49,33 @@ namespace garlic::clove {
     public:
         virtual ~Serialiser() = default;
 
-        //TODO: inl
-
         //TODO: Have begin and end for parent nodes and set for leaf nodes.
 
-        void push(std::string_view name) {
-            if(head == nullptr) {
-                head       = &root;
-                head->name = name;
-            } else {
-                Node node{};
-                node.name = name;
-                if(auto *children{ std::get_if<std::vector<Node>>(&head->value) }) {
-                    children->emplace_back(std::move(node));
-                } else {
-                    head->value = std::vector<Node>{ std::move(node) };
-                }
-            }
-        }
+        /**
+         * @brief Push an empy node.
+         * @param name Name of the node.
+         */
+        void push(std::string_view name);
 
-        //template<typename T>
-        void push(std::string_view name, float value) {
-            if(head == nullptr) {
-                head        = &root;
-                head->name  = name;
-                head->value = value;
-            } else {
-                Node node{};
-                node.name  = name;
-                node.value = value;
-                if(auto *children{ std::get_if<std::vector<Node>>(&head->value) }) {
-                    children->emplace_back(std::move(node));
-                } else {
-                    head->value = std::vector<Node>{ std::move(node) };
-                }
-            }
-        }
+        /**
+         * @brief Push a node with a value.
+         * @param name Name of the node.
+         * @param value Value of the node.
+         */
+        void push(std::string_view name, float value);
 
+        /**
+         * @brief Push back a generic type. Expects a specialisation of serialise for the type.
+         * @param name Overrides the name of the root node for the type.
+         * @param object The object to serialise.
+         */
         template<typename T>
-        void push(std::string_view name, T const &type);
+        void push(std::string_view name, T const &object);
 
-        //TODO: ofsteam override. Takes a file name
+        /**
+         * @brief Emitts the current node heriachy as a string.
+         */
         virtual std::string emitt() = 0;
-
-    private:
-        
     };
 }
 
