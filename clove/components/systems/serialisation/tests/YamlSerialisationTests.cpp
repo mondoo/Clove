@@ -69,11 +69,6 @@ namespace garlic::clove {
         node["memberThree"] = object.memberThree;
         return node;
     }
-
-    template<>
-    TestStruct deserialise<TestStruct>(Serialiser::Node const &object) {
-        return {};
-    }
 }
 
 TEST(YamlSerialisationTests, CanPushASerialisableStruct) {
@@ -82,7 +77,7 @@ TEST(YamlSerialisationTests, CanPushASerialisableStruct) {
     TestStruct testStruct{
         .memberOne   = 1,
         .memberTwo   = 2,
-        .memberThree = 3.0f,
+        .memberThree = 3,
     };
 
     serialiser.push("testStruct", testStruct);
@@ -90,6 +85,37 @@ TEST(YamlSerialisationTests, CanPushASerialisableStruct) {
     EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\ntestStruct:\n  memberOne: 1\n  memberTwo: 2\n  memberThree: 3");
 }
 
-//TODO: SerialiseNested types
+struct NestedTestStruct {
+    float memberOne;
+    TestStruct memberTwo;
+};
+
+namespace garlic::clove {
+    template<>
+    Serialiser::Node serialise<NestedTestStruct>(NestedTestStruct const &object) {
+        Serialiser::Node node{};
+        node["memberOne"] = object.memberOne;
+        //TODO: node["memberTwo"] = object.memberTwo;
+        node["memberTwo"].value = serialise(object.memberTwo).value;
+        return node;
+    }
+}
+
+TEST(YamlSerialisationTests, CanPushANestedSerialisableStruct) {
+    YamlSerialiser serialiser{};
+
+    NestedTestStruct testStruct{
+        .memberOne = 1,
+        .memberTwo = {
+            .memberOne   = 1,
+            .memberTwo   = 2,
+            .memberThree = 3,
+        },
+    };
+
+    serialiser.push("testStruct", testStruct);
+
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\ntestStruct:\n  memberOne: 1\n  memberTwo:\n    memberOne: 1\n    memberTwo: 2\n    memberThree: 3");
+}
 
 //TODO: Deserialise
