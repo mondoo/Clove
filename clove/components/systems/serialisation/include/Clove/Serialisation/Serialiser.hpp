@@ -43,7 +43,6 @@ namespace garlic::clove {
         //VARIABLES
     protected://TODO: Private with protected getters
         Node root{};
-        Node *head{ nullptr };
 
         //FUNCTIONS
     public:

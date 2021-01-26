@@ -28,7 +28,11 @@ namespace garlic::clove {
                 emitterNode["type"]    = "yaml";
                 emitterNode["version"] = 1;
 
-                emittNode(emitterNode, rootNode);
+                if(auto *children{ std::get_if<std::vector<Serialiser::Node>>(&rootNode.value) }; children != nullptr) {
+                    for(auto &child : *children) {
+                        emittNode(emitterNode, child);
+                    }
+                }
 
                 YAML::Emitter emitter{};
                 emitter << emitterNode;

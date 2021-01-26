@@ -18,7 +18,7 @@ TEST(YamlSerialisationTests, CanPushANode) {
 
     serialiser.push("Node");
 
-    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nStart:\n  Node: 0");
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nStart: 0\nNode: 0");
 }
 
 TEST(YamlSerialisationTests, CanPushANodeWithAValue) {
@@ -44,14 +44,14 @@ TEST(YamlSerialisationTests, CanPushACustomNode) {
 
     serialiser.push(std::move(parentNode));
 
-    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nCustomNode:\n  ParentNode:\n    value1: 42\n    value2: 100");
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nCustomNode: 1\nParentNode:\n  value1: 42\n  value2: 100");
 
     Serialiser::Node otherNode{ "OtherNode" };
     otherNode = 3;
 
     serialiser.push(std::move(otherNode));
 
-    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nCustomNode:\n  ParentNode:\n    value1: 42\n    value2: 100\n  OtherNode: 3");
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nCustomNode: 1\nParentNode:\n  value1: 42\n  value2: 100\nOtherNode: 3");
 }
 
 struct TestStruct {
