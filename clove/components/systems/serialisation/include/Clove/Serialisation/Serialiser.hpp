@@ -61,15 +61,26 @@ namespace garlic::clove {
         }
 
         template<typename T>
-        void push(std::string_view name, T const &type) {
-            
-            
-        }
+        void push(std::string_view name, T const &type);
 
         //TODO: ofsteam override. Takes a file name
         virtual std::string emitt() = 0;
 
     private:
-        //virtual void addClass(Class class) = 0;
+        
     };
 }
+
+namespace garlic::clove {
+    template<typename UnkownType>
+    Serialiser::Node serialise(UnkownType const &object) {
+        return {};
+    }
+
+    template<typename UnkownType>
+    UnkownType deserialise(Serialiser::Node const &node) {
+        return {};
+    }
+}
+
+#include "Serialiser.inl"

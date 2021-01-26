@@ -1,6 +1,4 @@
-
-#include <Clove/Reflection/Reflect.hpp>
-#include <Clove/Reflection/YamlSerialiser.hpp>
+#include <Clove/Serialisation/YamlSerialiser.hpp>
 #include <gtest/gtest.h>
 
 using namespace garlic::clove;
@@ -31,22 +29,40 @@ TEST(YamlSerialisationTests, CanPushANodeWithAValue) {
     EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nvalue: 5");
 }
 
-struct TestClass {
-    float memberOne;
-    float memberTwo;
+struct TestStruct {
+    int32_t memberOne;
+    int32_t memberTwo;
     float memberThree;
 };
 
-TEST(YamlSerialisationTests, CanPushAReflectedClass) {
+namespace garlic::clove {
+    template<>
+    Serialiser::Node serialise<TestStruct>(TestStruct const &object) {
+        std::vector<Serialiser::Node> nodes{
+            { "memberOne", object.memberOne },
+            { "memberTwo", object.memberTwo },
+            { "memberThree", object.memberThree },
+        };
+
+        return { "", std::move(nodes) };
+    }
+
+    template<>
+    TestStruct deserialise<TestStruct>(Serialiser::Node const &object) {
+        return {};
+    }
+}
+
+TEST(YamlSerialisationTests, CanPushASerialisableStruct) {
     YamlSerialiser serialiser{};
 
-    TestClass testClass{
+    TestStruct testStruct{
         .memberOne   = 1,
         .memberTwo   = 2,
         .memberThree = 3.0f,
     };
 
-    serialiser.push("testClass", testClass);
+    serialiser.push("testStruct", testStruct);
 
-    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nTestClass:\n  memberOne: 1\n  memberTwo: 2\n  memberThree: 3");
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\ntestStruct:\n  memberOne: 1\n  memberTwo: 2\n  memberThree: 3");
 }

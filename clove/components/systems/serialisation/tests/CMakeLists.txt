@@ -1,4 +1,4 @@
 #Serialisation
 add_executable(YamlSerialisationTest YamlSerialisationTests.cpp)
-target_link_libraries(YamlSerialisationTest PRIVATE CONAN_PKG::gtest CloveReflection)
+target_link_libraries(YamlSerialisationTest PRIVATE CONAN_PKG::gtest CloveSerialisation)
 add_test(NAME YamlSerialisationTest COMMAND YamlSerialisationTest)

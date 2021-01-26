@@ -1,17 +1,19 @@
-set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/Reflection)
+set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/Serialisation)
 set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 
 #Library
 add_library(
-    CloveReflection STATIC
+    CloveSerialisation STATIC
         ${INCLUDE}/Serialiser.hpp
+        ${INCLUDE}/Serialiser.inl
+        ${SOURCE}/Serialiser.cpp
         ${INCLUDE}/YamlSerialiser.hpp
         ${SOURCE}/YamlSerialiser.cpp
 )
 
 #Includes
 target_include_directories(
-    CloveReflection
+    CloveSerialisation
     
 	PUBLIC
 		include
@@ -19,7 +21,7 @@ target_include_directories(
 
 #Libraries
 target_link_libraries(
-    CloveReflection
+    CloveSerialisation
 
 	PUBLIC
         CloveDefinitions
