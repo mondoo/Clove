@@ -29,6 +29,31 @@ TEST(YamlSerialisationTests, CanPushANodeWithAValue) {
     EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nvalue: 5");
 }
 
+TEST(YamlSerialisationTests, CanPushACustomNode) {
+    YamlSerialiser serialiser{};
+
+    Serialiser::Node node{ "CustomNode" };
+    node = 1;
+    serialiser.push(std::move(node));
+
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nCustomNode: 1");
+
+    Serialiser::Node parentNode{ "ParentNode" };
+    parentNode["value1"] = 42;
+    parentNode["value2"] = 100;
+
+    serialiser.push(std::move(parentNode));
+
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nCustomNode:\n  ParentNode:\n    value1: 42\n    value2: 100");
+
+    Serialiser::Node otherNode{ "OtherNode" };
+    otherNode = 3;
+
+    serialiser.push(std::move(otherNode));
+
+    EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\nCustomNode:\n  ParentNode:\n    value1: 42\n    value2: 100\n  OtherNode: 3");
+}
+
 struct TestStruct {
     int32_t memberOne;
     int32_t memberTwo;
@@ -64,5 +89,7 @@ TEST(YamlSerialisationTests, CanPushASerialisableStruct) {
 
     EXPECT_EQ(serialiser.emitt(), "type: yaml\nversion: 1\ntestStruct:\n  memberOne: 1\n  memberTwo: 2\n  memberThree: 3");
 }
+
+//TODO: SerialiseNested types
 
 //TODO: Deserialise

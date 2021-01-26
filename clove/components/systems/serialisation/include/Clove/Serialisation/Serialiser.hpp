@@ -58,6 +58,11 @@ namespace garlic::clove {
         void push(std::string_view name);
 
         /**
+         * @brief Push a custom node.
+         */
+        void push(Node node);
+
+        /**
          * @brief Push a node with a value.
          * @param name Name of the node.
          * @param value Value of the node.
