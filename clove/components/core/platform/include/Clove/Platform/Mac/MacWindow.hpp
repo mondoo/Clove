@@ -9,18 +9,11 @@ namespace garlic::clove {
 	class MacWindow;
 }
 
-@interface MacWindowProxy : NSObject <NSWindowDelegate>
+@interface MacWindowProxy : NSWindow <NSWindowDelegate>
 
-@property(readonly) NSWindow* window;
 @property garlic::clove::MacWindow *cloveWindow;
 
-- (instancetype)initWithWindowData:(NSView*)view width:(unsigned int)width height:(unsigned int)height name: (NSString*)name;
-
 @end
-
-namespace garlic::clove{
-	class GhaFactory;
-}
 
 namespace garlic::clove {
     class MacWindow : public Window{
@@ -45,6 +38,8 @@ namespace garlic::clove {
 		MacWindow& operator=(MacWindow&& other) noexcept = delete;
 
 		~MacWindow();
+		
+		void processInput() override;
 
 		std::any getNativeWindow() const override;
 		
@@ -57,8 +52,7 @@ namespace garlic::clove {
 		bool isOpen() const override;
 
 		void close() override;
-
-	protected:
-		virtual void processInput() override;
+		
+		void handleNsEvent(NSEvent* event);
 	};
 }
