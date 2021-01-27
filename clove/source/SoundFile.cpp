@@ -1,9 +1,9 @@
 #include "Clove/SoundFile.hpp"
 
 #include <Clove/Application.hpp>
-#include <Clove/Audio/AudioBuffer.hpp>
-#include <Clove/Audio/AudioDevice.hpp>
-#include <Clove/Audio/AudioFactory.hpp>
+#include <Clove/Audio/AhaBuffer.hpp>
+#include <Clove/Audio/AhaDevice.hpp>
+#include <Clove/Audio/AhaFactory.hpp>
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 #include <sndfile.h>
@@ -24,13 +24,13 @@ namespace garlic::clove {
             }
         }
 
-        AudioBuffer::Format getBufferFormat(SoundFile::Format format, uint32_t channels) {
+        AhaBuffer::Format getBufferFormat(SoundFile::Format format, uint32_t channels) {
             bool const is16{ format == SoundFile::Format::S16 };
 
             if(channels == 1) {
-                return is16 ? AudioBuffer::Format::Mono16 : AudioBuffer::Format::Mono8;
+                return is16 ? AhaBuffer::Format::Mono16 : AhaBuffer::Format::Mono8;
             } else {
-                return is16 ? AudioBuffer::Format::Stereo16 : AudioBuffer::Format::Stereo8;
+                return is16 ? AhaBuffer::Format::Stereo16 : AhaBuffer::Format::Stereo8;
             }
         }
     }
@@ -80,8 +80,8 @@ namespace garlic::clove {
         return Format::Unknown;
     }
 
-    std::unique_ptr<AudioBuffer> SoundFile::read(uint32_t const frames) {
-        auto audioBuffer  = *Application::get().getAudioDevice()->getAudioFactory()->createAudioBuffer(AudioBuffer::Descriptor{
+    std::unique_ptr<AhaBuffer> SoundFile::read(uint32_t const frames) {
+        auto audioBuffer  = *Application::get().getAudioDevice()->getAudioFactory()->createAudioBuffer(AhaBuffer::Descriptor{
             .format     = getBufferFormat(getFormat(), getChannels()),
             .sampleRate = getSampleRate(),
         });

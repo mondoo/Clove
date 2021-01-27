@@ -1,3 +1,6 @@
+#CMake
+option(CLOVE_USE_SAFE_CAST "When set to ON polyCast will dynamic_cast instead of static. Useful in debug builds to catch any errors" OFF)
+
 #Library
 add_library(
     CloveCast INTERFACE
@@ -16,6 +19,13 @@ target_link_libraries(
     CloveCast
 
     INTERFACE
-        CloveDefinitions
         CloveLog
+)
+
+#Preprocessor
+target_compile_definitions(
+	CloveCast
+
+	INTERFACE
+		CLOVE_SAFE_CAST=$<BOOL:${CLOVE_USE_SAFE_CAST}>
 )

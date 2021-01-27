@@ -4,10 +4,10 @@
 #include "Clove/Rendering/ForwardRenderer3D.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
 
-#include <Clove/Graphics/GraphicsDevice.hpp>
-#include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Graphics/GraphicsImage.hpp>
-#include <Clove/Graphics/GraphicsImageView.hpp>
+#include <Clove/Graphics/GhaDevice.hpp>
+#include <Clove/Graphics/GhaFactory.hpp>
+#include <Clove/Graphics/GhaImage.hpp>
+#include <Clove/Graphics/GhaImageView.hpp>
 #include <Clove/Maths/Maths.hpp>
 #include <Clove/Maths/MathsHelpers.hpp>
 
@@ -17,25 +17,25 @@ namespace garlic::clove {
         uint32_t constexpr bytesPerTexel{ 4 };
         uint32_t constexpr white{ 0xffffffff };
 
-        GraphicsFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
+        GhaFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
 
-        GraphicsImage::Descriptor constexpr imageDescriptor{
-            .type        = GraphicsImage::Type::_2D,
-            .usageFlags  = GraphicsImage::UsageMode::TransferDestination | GraphicsImage::UsageMode::Sampled,
+        GhaImage::Descriptor constexpr imageDescriptor{
+            .type        = GhaImage::Type::_2D,
+            .usageFlags  = GhaImage::UsageMode::TransferDestination | GhaImage::UsageMode::Sampled,
             .dimensions  = imageDimensions,
-            .format      = GraphicsImage::Format::R8G8B8A8_SRGB,
+            .format      = GhaImage::Format::R8G8B8A8_SRGB,
             .sharingMode = SharingMode::Exclusive,
         };
 
         image     = createImageWithData(factory, std::move(imageDescriptor), &white, bytesPerTexel);
-        imageView = image->createView(GraphicsImageView::Descriptor{
-            .type       = GraphicsImageView::Type::_2D,
+        imageView = image->createView(GhaImageView::Descriptor{
+            .type       = GhaImageView::Type::_2D,
             .layer      = 0,
             .layerCount = 1,
         });
     }
 
-    Image::Image(std::shared_ptr<garlic::clove::GraphicsImage> graphicsImage)
+    Image::Image(std::shared_ptr<garlic::clove::GhaImage> graphicsImage)
         : image(std::move(image)) {
     }
 

@@ -2,14 +2,14 @@
 
 #include "Clove/Application.hpp"
 
-#include <Clove/Graphics/Fence.hpp>
-#include <Clove/Graphics/GraphicsBuffer.hpp>
-#include <Clove/Graphics/GraphicsDevice.hpp>
-#include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Graphics/GraphicsQueue.hpp>
+#include <Clove/Graphics/GhaFence.hpp>
+#include <Clove/Graphics/GhaBuffer.hpp>
+#include <Clove/Graphics/GhaDevice.hpp>
+#include <Clove/Graphics/GhaFactory.hpp>
+#include <Clove/Graphics/GhaGraphicsQueue.hpp>
 
 namespace garlic::clove {
-    GraphicsImageRenderTarget::GraphicsImageRenderTarget(GraphicsImage::Descriptor imageDescriptor, std::shared_ptr<GraphicsFactory> factory)
+    GraphicsImageRenderTarget::GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, std::shared_ptr<GhaFactory> factory)
         : imageDescriptor{ std::move(imageDescriptor) }
         , factory{ std::move(factory) } {
 
@@ -46,13 +46,13 @@ namespace garlic::clove {
         graphicsQueue->submit({ std::move(submission) }, nullptr);
 
         TransferSubmitInfo transferSubmission{
-            .waitSemaphores = { { renderFinishedSemaphore, PipelineObject::Stage::Transfer } },
+            .waitSemaphores = { { renderFinishedSemaphore, GhaPipelineObject::Stage::Transfer } },
             .commandBuffers = { transferCommandBuffer },
         };
         transferQueue->submit({ std::move(transferSubmission) }, frameInFlight.get());
     }
 
-    GraphicsImage::Format GraphicsImageRenderTarget::getImageFormat() const {
+    GhaImage::Format GraphicsImageRenderTarget::getImageFormat() const {
         return imageDescriptor.format;
     }
 
@@ -60,7 +60,7 @@ namespace garlic::clove {
         return imageDescriptor.dimensions;
     }
 
-    std::vector<std::shared_ptr<GraphicsImageView>> GraphicsImageRenderTarget::getImageViews() const {
+    std::vector<std::shared_ptr<GhaImageView>> GraphicsImageRenderTarget::getImageViews() const {
         return { renderTargetView };
     }
 
@@ -69,7 +69,7 @@ namespace garlic::clove {
         createImages();
     }
 
-    std::shared_ptr<GraphicsBuffer> GraphicsImageRenderTarget::getNextReadyBuffer() {
+    std::shared_ptr<GhaBuffer> GraphicsImageRenderTarget::getNextReadyBuffer() {
         //Stall until we are ready to return the image.
         frameInFlight->wait();
 
@@ -85,17 +85,17 @@ namespace garlic::clove {
         onPropertiesChangedBegin.broadcast();
 
         renderTargetImage = *factory->createImage(imageDescriptor);
-        renderTargetView  = renderTargetImage->createView(GraphicsImageView::Descriptor{
-            .type       = GraphicsImageView::Type::_2D,
+        renderTargetView  = renderTargetImage->createView(GhaImageView::Descriptor{
+            .type       = GhaImageView::Type::_2D,
             .layer      = 0,
             .layerCount = 1,
         });
 
         size_t constexpr bytesPerPixel{ 4 };//Assuming image format is 4 bbp
         size_t const bufferSize{ imageDescriptor.dimensions.x * imageDescriptor.dimensions.y * bytesPerPixel };
-        renderTargetBuffer = *factory->createBuffer(GraphicsBuffer::Descriptor{
+        renderTargetBuffer = *factory->createBuffer(GhaBuffer::Descriptor{
             .size        = bufferSize,
-            .usageFlags  = GraphicsBuffer::UsageMode::TransferDestination,
+            .usageFlags  = GhaBuffer::UsageMode::TransferDestination,
             .sharingMode = SharingMode::Exclusive,
             .memoryType  = MemoryType::SystemMemory,
         });
@@ -104,14 +104,14 @@ namespace garlic::clove {
         ImageMemoryBarrierInfo constexpr layoutTransferInfo{
             .currentAccess      = AccessFlags::None,
             .newAccess          = AccessFlags::TransferRead,
-            .currentImageLayout = GraphicsImage::Layout::Undefined,
-            .newImageLayout     = GraphicsImage::Layout::TransferSourceOptimal,
+            .currentImageLayout = GhaImage::Layout::Undefined,
+            .newImageLayout     = GhaImage::Layout::TransferSourceOptimal,
             .sourceQueue        = QueueType::None,
             .destinationQueue   = QueueType::None,
         };
 
         transferCommandBuffer->beginRecording(CommandBufferUsage::Default);
-        transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, std::move(layoutTransferInfo), PipelineObject::Stage::Top, PipelineObject::Stage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, std::move(layoutTransferInfo), GhaPipelineObject::Stage::Top, GhaPipelineObject::Stage::Transfer);
         transferCommandBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { imageDescriptor.dimensions, 1 }, *renderTargetBuffer, 0);
         transferCommandBuffer->endRecording();
 

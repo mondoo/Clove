@@ -17,7 +17,8 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        TransformLayer();
+        TransformLayer() = delete;
+		TransformLayer(EntityManager *entityManager);
 
         TransformLayer(TransformLayer const &other) = delete;
         TransformLayer(TransformLayer &&other) noexcept;

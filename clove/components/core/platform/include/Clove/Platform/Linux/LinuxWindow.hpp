@@ -4,7 +4,7 @@
 #include "Clove/Platform/Window.hpp"
 
 namespace garlic::clove {
-    class GraphicsFactory;
+    class GhaFactory;
 }
 
 namespace garlic::clove {

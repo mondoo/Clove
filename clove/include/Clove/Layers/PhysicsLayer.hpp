@@ -75,7 +75,8 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        PhysicsLayer();
+		PhysicsLayer() = delete;
+		PhysicsLayer(EntityManager *entityManager);
 
         PhysicsLayer(PhysicsLayer const &other) = delete;
         PhysicsLayer(PhysicsLayer &&other) noexcept;

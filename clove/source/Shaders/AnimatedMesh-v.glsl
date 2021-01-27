@@ -2,12 +2,12 @@
 
 #include "Constants.glsl"
 
-layout(std140, set = SET_MESH, binding = 1) uniform Model{
+layout(std140, set = SET_MESH, binding = 2) uniform Model{
 	mat4 model;
 	mat4 normalMatrix;
 };
 
-layout(std140, set = SET_MESH, binding = 2) uniform Skeleton{
+layout(std140, set = SET_MESH, binding = 3) uniform Skeleton{
 	mat4 matrixPalet[MAX_JOINTS];
 };
 

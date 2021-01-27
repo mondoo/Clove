@@ -1,5 +1,5 @@
 #define MAX_LIGHTS 10
-#define MAX_JOINTS 255 //std::numeric_limits<uint8_t>::max();
+#define MAX_JOINTS 255 //std::numeric_limits<JointIndexType>::max();
 
 //Descriptor Sets
 #define SET_MESH 0

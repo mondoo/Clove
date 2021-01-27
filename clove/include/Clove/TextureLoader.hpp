@@ -1,10 +1,11 @@
 #pragma once
 
+#include <Clove/Expected.hpp>
 #include <Clove/Maths/Vector.hpp>
+#include <filesystem>
+#include <functional>
 #include <memory>
 #include <vector>
-#include <functional>
-#include <string_view>
 
 namespace garlic::clove::TextureLoader {
     struct LoadedTextureData {
@@ -15,5 +16,5 @@ namespace garlic::clove::TextureLoader {
 }
 
 namespace garlic::clove::TextureLoader {
-    LoadedTextureData loadTexture(std::string_view texturePath);
+    Expected<LoadedTextureData, std::runtime_error> loadTexture(std::filesystem::path const &path);
 }

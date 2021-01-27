@@ -8,49 +8,51 @@
 #include <Clove/Timer.hpp>
 
 namespace garlic::clove {
-    static std::vector<JointPose> lerpJointPoses(AnimationPose const &posesA, AnimationPose const &posesB, float const time) {
-        size_t const jointCount{ posesA.poses.size() };
+    namespace {
+        std::vector<JointPose> lerpJointPoses(AnimationPose const &posesA, AnimationPose const &posesB, float const time) {
+            size_t const jointCount{ posesA.poses.size() };
 
-        std::vector<JointPose> lerpedPoses;
-        lerpedPoses.resize(jointCount);
+            std::vector<JointPose> lerpedPoses;
+            lerpedPoses.resize(jointCount);
 
-        for(size_t i = 0; i < jointCount; ++i) {
-            auto const pos{ lerp(posesA.poses[i].position, posesB.poses[i].position, time) };
-            auto const rot{ slerp(posesA.poses[i].rotation, posesB.poses[i].rotation, time) };
-            auto const scale{ lerp(posesA.poses[i].scale, posesB.poses[i].scale, time) };
+            for(size_t i = 0; i < jointCount; ++i) {
+                auto const pos{ lerp(posesA.poses[i].position, posesB.poses[i].position, time) };
+                auto const rot{ slerp(posesA.poses[i].rotation, posesB.poses[i].rotation, time) };
+                auto const scale{ lerp(posesA.poses[i].scale, posesB.poses[i].scale, time) };
 
-            lerpedPoses[i] = { rot, pos, scale };
+                lerpedPoses[i] = { rot, pos, scale };
+            }
+
+            return lerpedPoses;
         }
 
-        return lerpedPoses;
-    }
+        mat4f getJointToModelMatrix(JointPose const &pose, std::optional<JointIndexType> const &parentIndex, std::vector<JointPose> const &poses, Skeleton const *skeleton) {
+            //TODO: A lot of recalculations here, perhaps we can make it so we don't revisit joints once they are done
 
-    static mat4f getJointToModelMatrix(JointPose const &pose, std::optional<JointIndexType> const &parentIndex, std::vector<JointPose> const &poses, Skeleton const *skeleton) {
-        //TODO: A lot of recalculations here, perhaps we can make it so we don't revisit joints once they are done
+            mat4f const translationMatrix{ translate(mat4f(1.0f), pose.position) };
+            mat4f const rotationMatrix{ quaternionToMatrix4(pose.rotation) };
+            mat4f const scaleMatrix{ scale(mat4f(1.0f), pose.scale) };
 
-        mat4f const translationMatrix{ translate(mat4f(1.0f), pose.position) };
-        mat4f const rotationMatrix{ quaternionToMatrix4(pose.rotation) };
-        mat4f const scaleMatrix{ scale(mat4f(1.0f), pose.scale) };
+            mat4f const poseTransform{ translationMatrix * rotationMatrix * scaleMatrix };
 
-        mat4f const poseTransform{ translationMatrix * rotationMatrix * scaleMatrix };
+            if(parentIndex.has_value()) {
+                JointIndexType const index{ parentIndex.value() };
+                mat4f const parentPoseTransform{ getJointToModelMatrix(poses[index], skeleton->joints[index].parentIndex, poses, skeleton) };
 
-        if(parentIndex.has_value()) {
-            JointIndexType const index{ parentIndex.value() };
-            mat4f const parentPoseTransform{ getJointToModelMatrix(poses[index], skeleton->joints[index].parentIndex, poses, skeleton) };
-
-            return parentPoseTransform * poseTransform;
-        } else {
-            return poseTransform;
+                return parentPoseTransform * poseTransform;
+            } else {
+                return poseTransform;
+            }
         }
-    }
 
-    static std::vector<mat4f> calculateCurrentJointToModelMatrices(std::vector<JointPose> const &poses, Skeleton const *skeleton) {
-        size_t const size{ poses.size() };
-        std::vector<mat4f> jointToModelMatrices(size);
-        for(size_t i = 0; i < size; ++i) {
-            jointToModelMatrices[i] = getJointToModelMatrix(poses[i], skeleton->joints[i].parentIndex, poses, skeleton);
+        std::vector<mat4f> calculateCurrentJointToModelMatrices(std::vector<JointPose> const &poses, Skeleton const *skeleton) {
+            size_t const size{ poses.size() };
+            std::vector<mat4f> jointToModelMatrices(size);
+            for(size_t i = 0; i < size; ++i) {
+                jointToModelMatrices[i] = getJointToModelMatrix(poses[i], skeleton->joints[i].parentIndex, poses, skeleton);
+            }
+            return jointToModelMatrices;
         }
-        return jointToModelMatrices;
     }
 
     Animator::Animator() = default;
@@ -68,9 +70,11 @@ namespace garlic::clove {
     std::array<mat4f, MAX_JOINTS> Animator::update(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
+        std::array<mat4f, MAX_JOINTS> skinningMatrix;
+        skinningMatrix.fill(mat4f{ 1.0f });
+
         if(currentClip == nullptr) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Current clip is not set, could not create palet", CLOVE_FUNCTION_NAME);
-            return {};
+            return skinningMatrix;
         }
 
         //TODO: single play (current will loop)
@@ -90,13 +94,8 @@ namespace garlic::clove {
         auto const currentJointToModel{ calculateCurrentJointToModelMatrices(currentAnimPose, currentClip->skeleton) };
 
         //Calculate skinning matrix K = Cj->m * Bm->j (right to left)
-        std::array<mat4f, MAX_JOINTS> skinningMatrix;
-        for(size_t i = 0; i < std::size(skinningMatrix); ++i) {
-            if(i < std::size(currentJointToModel)) {
-                skinningMatrix[i] = currentJointToModel[i] * currentClip->skeleton->joints[i].inverseBindPose;
-            } else {
-                skinningMatrix[i] = mat4f{ 1.0f };
-            }
+        for(size_t i = 0; i < currentJointToModel.size(); ++i) {
+            skinningMatrix[i] = currentJointToModel[i] * currentClip->skeleton->joints[i].inverseBindPose;
         }
 
         return skinningMatrix;

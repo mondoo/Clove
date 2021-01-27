@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Clove/Graphics/GraphicsImage.hpp"
+#include "Clove/Graphics/GhaImage.hpp"
 
 #include <Clove/Delegate/MultiCastDelegate.hpp>
 #include <Clove/Expected.hpp>
 
 namespace garlic::clove {
-    class Semaphore;
+    class GhaSemaphore;
     class FrameBuffer;
     struct GraphicsSubmitInfo;
 }
@@ -58,9 +58,9 @@ namespace garlic::clove {
          */
         virtual void submit(uint32_t imageIndex, size_t const frameId, garlic::clove::GraphicsSubmitInfo submission) = 0;
 
-        virtual garlic::clove::GraphicsImage::Format getImageFormat() const = 0;
+        virtual garlic::clove::GhaImage::Format getImageFormat() const = 0;
         virtual vec2ui getSize() const                                      = 0;
 
-        virtual std::vector<std::shared_ptr<garlic::clove::GraphicsImageView>> getImageViews() const = 0;
+        virtual std::vector<std::shared_ptr<garlic::clove::GhaImageView>> getImageViews() const = 0;
     };
 }

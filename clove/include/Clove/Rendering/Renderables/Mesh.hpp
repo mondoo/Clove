@@ -3,18 +3,18 @@
 #include "Clove/Rendering/Vertex.hpp"
 
 namespace garlic::clove {
-    class GraphicsBuffer;
+    class GhaBuffer;
     class VertexLayout;
     class VertexBufferData;
     class CommandBuffer;
-    class GraphicsFactory;
+    class GhaFactory;
 }
 
 namespace garlic::clove {
     class Mesh {
         //VARIABLES
     private:
-        std::shared_ptr<garlic::clove::GraphicsBuffer> buffer;
+        std::shared_ptr<garlic::clove::GhaBuffer> buffer;
 
         std::vector<Vertex> vertices;
         std::vector<uint16_t> indices;
@@ -35,7 +35,7 @@ namespace garlic::clove {
 
         ~Mesh();
 
-        inline std::shared_ptr<garlic::clove::GraphicsBuffer> const &getGraphicsBuffer() const;
+        inline std::shared_ptr<garlic::clove::GhaBuffer> const &getGraphicsBuffer() const;
 
         /**
          * @brief Returns the offset into the graphics buffer for the vertices.
