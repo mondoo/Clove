@@ -45,11 +45,13 @@ namespace garlic::clove {
 
     template<typename FunctionType, size_t... indices, typename... ExcludeTypes>
     auto EntityManager::generateViewFromFunction(std::index_sequence<indices...>, Exclude<ExcludeTypes...>) {
+        //Expand the functions parameter tuple by using std::index_sequence to access each tuple element
         return generateView<std::tuple_element_t<indices, typename FunctionTraits<FunctionType>::DecayParameterTypesTuple>...>(Exclude<ExcludeTypes...>{});
     }
 
     template<typename ComponentType, typename... ComponentTypes, typename... ExcludeTypes>
     auto EntityManager::generateView(Exclude<ExcludeTypes...>) {
+        //If the first template is of type Entity then pass the rest of the arguments to generateView
         if constexpr(std::is_same_v<ComponentType, Entity>) {
             return componentManager.generateView<std::decay_t<ComponentTypes>...>(Exclude<ExcludeTypes...>{});
         } else {
