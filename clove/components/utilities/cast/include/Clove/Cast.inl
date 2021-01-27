@@ -1,11 +1,10 @@
-#include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
     template<typename DestType, typename SourceType>
     DestType *polyCast(SourceType *source) {
-#if CLOVE_DEBUG
-        auto *result = dynamic_cast<DestType *>(source);
+#if CLOVE_SAFE_CAST
+        auto *result{ dynamic_cast<DestType *>(source) };
         CLOVE_ASSERT(result != nullptr, "Cast failed");
         return result;
 #else
