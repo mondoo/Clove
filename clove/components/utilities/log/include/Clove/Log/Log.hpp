@@ -4,6 +4,8 @@
 #include <string>
 #include <string_view>
 
+#include <Clove/Definitions.hpp>
+
 #define CLOVE_DECLARE_LOG_CATEGORY(categoryName)                 \
     struct LOG_CATEGORY_##categoryName {                         \
         static std::string_view constexpr name{ #categoryName }; \
