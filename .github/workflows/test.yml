@@ -1,0 +1,186 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+env:
+  CMAKE_FLAGS: '-DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=OFF -DCLOVE_LOG_LEVEL=1 -DCLOVE_USE_SAFE_CAST=ON -DGAR_BUILD_TESTS=ON'
+  BUILD_TYPE: Release
+
+jobs:
+  #Windows Jobs
+  build-windows-msvc:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Setup environment
+      run: |
+        mkdir build
+        choco install -y conan
+        curl.exe -o vksdk.exe https://sdk.lunarg.com/sdk/download/1.2.154.1/windows/VulkanSDK-1.2.154.1-Installer.exe?Human=true
+        .\vksdk.exe /S /D=C:\VulkanSDK | Out-Null
+    - name: Configure CMake
+      working-directory: ${{ github.workspace }}/build
+      run: |
+        $env:VULKAN_SDK = 'C:\VulkanSDK'
+        $env:Path += ';C:\VulkanSDK\Bin;C:\Program Files\Conan\conan'
+        cmake ${env:CMAKE_FLAGS} -G "Visual Studio 16 2019" ..
+    - name: Build
+      working-directory: ${{ github.workspace }}/build
+      run: cmake --build . --target ALL_BUILD --config ${env:BUILD_TYPE}
+    - name: Upload artefacts
+      uses: actions/upload-artifact@master
+      with:
+        name: windows-msvc
+        path: build/
+        retention-days: 1
+  unit_test-windows-msvc:
+    needs: [build-windows-msvc]
+    runs-on: windows-latest
+    steps:
+      - name: Download build artefacts
+        uses: actions/download-artifact@v2
+        with:
+          name: windows-msvc
+          path: build/
+      - name: Test
+        working-directory: ${{ github.workspace }}/build
+        run: ctest -C $env:BUILD_TYPE
+  #macOS Jobs
+  build-macos-apple_clang:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Setup environment
+        run: |
+          mkdir build
+          brew update
+          brew install conan
+      - name: Configure CMake
+        working-directory: ${{ github.workspace }}/build
+        run: cmake $CMAKE_FLAGS -G "Xcode" ..
+      - name: Build
+        working-directory: ${{ github.workspace }}/build
+        run: cmake --build . --target ALL_BUILD --config $BUILD_TYPE
+      - name: Tar files to preserve permissions
+        run: tar -cvf build_files.tar build/
+      - name: Upload artefacts
+        uses: actions/upload-artifact@master
+        with:
+          name: macos-apple_clang
+          path: build_files.tar
+          retention-days: 1
+  unit_test-macos-apple_clang:
+    needs: [build-macos-apple_clang]
+    runs-on: macos-latest
+    steps:
+      - name: Download build artefacts
+        uses: actions/download-artifact@v2
+        with:
+          name: macos-apple_clang
+          path: ./
+      - name: Extract tar files
+        run: tar -xvf build_files.tar
+      - name: Test
+        working-directory: ${{ github.workspace }}/build
+        run: ctest -C $BUILD_TYPE
+  #Linux Jobs
+  build-linux-gcc:
+    runs-on: ubuntu-latest
+    container:
+      image: docker.pkg.github.com/agarlicmonkey/garlic/linux_build:0.4.0
+      credentials:
+        username: ${{ secrets.DOCKER_LOGIN_USERNAME }}
+        password: ${{ secrets.DOCKER_LOGIN_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Setup environment
+        run: mkdir build
+      - name: Configure CMake
+        working-directory: ${{ github.workspace }}/build
+        run: cmake $CMAKE_FLAGS -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" ..
+      - name: Build
+        working-directory: ${{ github.workspace }}/build
+        run: cmake --build .
+      - name: Tar files to preserve permissions
+        run: tar -cvf build_files.tar build/
+      - name: Upload artefacts
+        uses: actions/upload-artifact@master
+        with:
+          name: linux-gcc
+          path: build_files.tar
+          retention-days: 1
+  build-linux-clang:
+    runs-on: ubuntu-latest
+    container:
+      image: docker.pkg.github.com/agarlicmonkey/garlic/linux_build:0.4.0
+      credentials:
+        username: ${{ secrets.DOCKER_LOGIN_USERNAME }}
+        password: ${{ secrets.DOCKER_LOGIN_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Setup environment
+        run: mkdir build
+      - name: Configure CMake
+        working-directory: ${{ github.workspace }}/build
+        run: cmake $CMAKE_FLAGS -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -G "Unix Makefiles" ..
+      - name: Build
+        working-directory: ${{ github.workspace }}/build
+        run: cmake --build .
+      - name: Tar files to preserve permissions
+        run: tar -cvf build_files.tar build/
+      - name: Upload artefacts
+        uses: actions/upload-artifact@master
+        with:
+          name: linux-clang
+          path: build_files.tar
+          retention-days: 1
+  unit_test-linux-gcc:
+    needs: [build-linux-gcc]
+    runs-on: ubuntu-latest
+    container:
+      image: docker.pkg.github.com/agarlicmonkey/garlic/linux_build:0.4.0
+      credentials:
+        username: ${{ secrets.DOCKER_LOGIN_USERNAME }}
+        password: ${{ secrets.DOCKER_LOGIN_TOKEN }}
+    steps:
+      - name: Download build artefacts
+        uses: actions/download-artifact@v2
+        with:
+          name: linux-gcc
+          path: ./
+      - name: Extract tar files
+        run: tar -xvf build_files.tar
+      - name: Test
+        working-directory: ${{ github.workspace }}/build
+        run: ctest -C $BUILD_TYPE
+  unit_test-linux-clang:
+    needs: [build-linux-clang]
+    runs-on: ubuntu-latest
+    container:
+      image: docker.pkg.github.com/agarlicmonkey/garlic/linux_build:0.4.0
+      credentials:
+        username: ${{ secrets.DOCKER_LOGIN_USERNAME }}
+        password: ${{ secrets.DOCKER_LOGIN_TOKEN }}
+    steps:
+      - name: Download build artefacts
+        uses: actions/download-artifact@v2
+        with:
+          name: linux-clang
+          path: ./
+      - name: Extract tar files
+        run: tar -xvf build_files.tar
+      - name: Test
+        working-directory: ${{ github.workspace }}/build
+        run: ctest -C $BUILD_TYPE
+        
