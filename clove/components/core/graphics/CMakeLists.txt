@@ -5,7 +5,8 @@ set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	find_package(Vulkan REQUIRED)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-	find_library(CLV_METAL_LIB Metal)
+	find_library(CLOVE_METAL_LIB Metal)
+	find_library(CLOVE_METALKIT_LIB MetalKit)
 endif()
 
 #Vulkan Implementation
@@ -158,7 +159,8 @@ target_link_libraries(
 
 	#MacOS
 	PRIVATE
-		$<$<PLATFORM_ID:Darwin>:${CLV_METAL_LIB}>
+		$<$<PLATFORM_ID:Darwin>:${CLOVE_METAL_LIB}>
+		$<$<PLATFORM_ID:Darwin>:${CLOVE_METALKIT_LIB}>
 
 	#Linux
 	PRIVATE
