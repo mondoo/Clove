@@ -1,14 +1,10 @@
 name: Test
-
 on:
   pull_request:
     branches: [master]
-  workflow_dispatch:
-
 env:
   CMAKE_FLAGS: -DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=OFF -DCLOVE_LOG_LEVEL=1 -DCLOVE_USE_SAFE_CAST=ON -DGAR_BUILD_TESTS=ON
   BUILD_TYPE: Release
-
 jobs:
   #Windows Jobs
   build-windows-msvc:
