@@ -25,10 +25,7 @@ namespace garlic::clove {
 
     Application::~Application() = default;
 
-    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor) {
-        //If we're managing our own window then we need to do any platform initialisation
-		Platform::initialise();
-		
+    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor) {	
 		auto window{ Platform::createWindow(std::move(windowDescriptor)) };
 		auto *windowPtr{ window.get() };
 		

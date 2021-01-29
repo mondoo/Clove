@@ -13,11 +13,6 @@ namespace garlic::clove {
     class Platform {
         //FUNCTIONS
     public:
-		/**
-		 * @details Performs any platform specific initialisation that might be required.
-		 */
-		static void initialise();
-		
         static std::unique_ptr<Window> createWindow(WindowDescriptor const &descriptor);
 
         static void showCursor(bool show);

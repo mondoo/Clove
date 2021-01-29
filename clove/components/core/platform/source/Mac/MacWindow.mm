@@ -15,6 +15,14 @@
 namespace garlic::clove{
     MacWindow::MacWindow(const WindowDescriptor& descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
+		//Application specific init
+		[NSApplication sharedApplication];
+	 	[NSApp finishLaunching];
+		
+	 	//This makes it get treated like an app
+		[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+
+		//Window specific init
 		NSString* nameString = [NSString stringWithCString:descriptor.title.c_str() encoding:[NSString defaultCStringEncoding]];
 		NSRect const rect{ NSMakeRect(0, 0, descriptor.width, descriptor.height) };
 		NSWindowStyleMask const styleMask{ NSWindowStyleMaskHUDWindow | NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable };
