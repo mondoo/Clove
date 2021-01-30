@@ -93,30 +93,57 @@ namespace garlic::clove {
     void PhysicsLayer::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
+        std::vector<Entity> proxiesToRemove{};
+        std::vector<Entity> shapeTagsToRemove{};
+        std::vector<Entity> bodyTagsToRemove{};
         //If any component compositions have changed then these need to be reset
         entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body, PhysicsProxyComponent const &proxy, ShapeOnlyComponent const &shapeOnly) {
-            entityManager->removeComponent<PhysicsProxyComponent>(entity);
-            entityManager->removeComponent<ShapeOnlyComponent>(entity);
+            proxiesToRemove.push_back(entity);
+            shapeTagsToRemove.push_back(entity);
         });
         entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body, PhysicsProxyComponent const &proxy, BodyOnlyComponent const &shapeOnly) {
-            entityManager->removeComponent<PhysicsProxyComponent>(entity);
-            entityManager->removeComponent<BodyOnlyComponent>(entity);
+            proxiesToRemove.push_back(entity);
+            bodyTagsToRemove.push_back(entity);
         });
         entityManager->forEach([&](Entity entity, PhysicsProxyComponent const &proxy) {
             if(!entityManager->hasComponent<CollisionShapeComponent>(entity) || !entityManager->hasComponent<RigidBodyComponent>(entity)) {
-                entityManager->removeComponent<PhysicsProxyComponent>(entity);
+                proxiesToRemove.push_back(entity);
             }
         },
                                Exclude<ShapeOnlyComponent, BodyOnlyComponent>{});
 
+        //Remove them outside of the loops their found in.
+        for(auto entity : proxiesToRemove) {
+            entityManager->removeComponent<PhysicsProxyComponent>(entity);
+        }
+        for(auto entity : shapeTagsToRemove) {
+            entityManager->removeComponent<ShapeOnlyComponent>(entity);
+        }
+        for(auto entity : bodyTagsToRemove) {
+            entityManager->removeComponent<BodyOnlyComponent>(entity);
+        }
+
+        std::vector<Entity> requiresCollisionShape{};
+        std::vector<Entity> requiresRigidBody{};
+        std::vector<Entity> requiresRigidBodyShape{};
         //Create proxies for any new / modified entities
-        entityManager->forEach(&PhysicsLayer::initialiseCollisionShape, this, Exclude<PhysicsProxyComponent, RigidBodyComponent>{});
-        entityManager->forEach(&PhysicsLayer::initialiseRigidBody, this, Exclude<PhysicsProxyComponent, CollisionShapeComponent>{});
-        entityManager->forEach(&PhysicsLayer::initialiseRigidBodyShape, this, Exclude<PhysicsProxyComponent>{});
+        entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape) { requiresCollisionShape.push_back(entity); }, Exclude<PhysicsProxyComponent, RigidBodyComponent>{});
+        entityManager->forEach([&](Entity entity, RigidBodyComponent const &rigidBody) { requiresRigidBody.push_back(entity); }, Exclude<PhysicsProxyComponent, CollisionShapeComponent>{});
+        entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body) { requiresRigidBodyShape.push_back(entity); }, Exclude<PhysicsProxyComponent>{});
+
+        for(auto entity : requiresCollisionShape){
+            initialiseCollisionShape(entity, entityManager->getComponent<CollisionShapeComponent>(entity));
+        }
+        for(auto entity : requiresRigidBody){
+            initialiseRigidBody(entity, entityManager->getComponent<RigidBodyComponent>(entity));
+        }
+        for(auto entity : requiresRigidBodyShape){
+            initialiseRigidBodyShape(entity, entityManager->getComponent<CollisionShapeComponent>(entity), entityManager->getComponent<RigidBodyComponent>(entity));
+        }
 
         //Apply any updates to the rigid body
         entityManager->forEach([&](RigidBodyComponent &body, PhysicsProxyComponent const &proxy) {
-            auto *btBody{ polyCast<btRigidBody>(proxy.collisionObject.get()) };
+            auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) };
 
             if(body.appliedVelocity.has_value()) {
                 btBody->setLinearVelocity(toBt(*body.appliedVelocity));
@@ -166,7 +193,7 @@ namespace garlic::clove {
             transform.rotation = quatf{ rot.getW(), rot.getX(), rot.getY(), rot.getZ() };
         });
         entityManager->forEach([](RigidBodyComponent &body, PhysicsProxyComponent const &proxy) {
-            auto *btBody{ polyCast<btRigidBody>(proxy.collisionObject.get()) };
+            auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) };
             body.currentVelocity = toGar(btBody->getLinearVelocity());
         });
 
@@ -266,6 +293,7 @@ namespace garlic::clove {
 
         createProxyShape(proxy, shape);
 
+        //Manually set the properties of the dummy collision object
         proxy.collisionObject->setCollisionShape(proxy.collisionShape.get());
         proxy.collisionObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
         proxy.collisionObject->setUserIndex(entity);
