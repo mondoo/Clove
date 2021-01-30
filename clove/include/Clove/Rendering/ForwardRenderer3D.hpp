@@ -136,8 +136,6 @@ namespace garlic::clove {
 
         //Objects for the shadow map pass
         std::shared_ptr<garlic::clove::GhaRenderPass> shadowMapRenderPass;
-        //std::shared_ptr<garlic::clove::GhaPipelineObject> staticMeshShadowMapPipelineObject;
-        std::shared_ptr<garlic::clove::GhaPipelineObject> animatedMeshShadowMapPipelineObject;
         //std::shared_ptr<garlic::clove::GhaPipelineObject> staticMeshCubeShadowMapPipelineObject;
         std::shared_ptr<garlic::clove::GhaPipelineObject> animatedMeshCubeShadowMapPipelineObject;
 
@@ -181,10 +179,9 @@ namespace garlic::clove {
 
         void createRenderpass();
         void createShadowMapRenderpass();
-
+       
         void createDepthBuffer();
 
-        void createShadowMapPipeline();
         void createCubeShadowMapPipeline();
         void createUiPipeline();
 

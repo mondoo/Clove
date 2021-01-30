@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Clove/Rendering/ShaderBufferTypes.hpp"
+
+#include <Clove/Maths/Matrix.hpp>
 #include <memory>
 #include <vector>
 #include <type_traits>
@@ -28,6 +31,9 @@ namespace garlic::clove {
 
             std::shared_ptr<GhaDescriptorSet> viewDescriptorSet{ nullptr };     /**< Descriptor set for view specific data. */
             std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet{ nullptr }; /**< Descriptor set for lighting specific data. */
+
+            //TODO: This is specific to the directional light pass. Should it be in here?
+            mat4f *currentDirLightTransform{ nullptr };
         };
 
         /**
@@ -35,7 +41,7 @@ namespace garlic::clove {
          */
         struct Job {
             size_t meshDescriptorIndex{ 0 }; /**< Index into FrameData::meshDescriptorSets */
-            std::shared_ptr<Mesh> mesh{ nullptr };
+            std::shared_ptr<Mesh> mesh{ nullptr }; //TODO: Move into frame data
         };
 
         //FUNCTIONS
@@ -54,10 +60,15 @@ namespace garlic::clove {
         virtual void addJob(Job job) = 0;
 
         /**
-         * @brief Submits all jobs into the commandBuffer and clears the queue ready for a new pass.
+         * @brief Clears the job queue
+         */
+        virtual void flushJobs() = 0;
+
+        /**
+         * @brief Submits all jobs into the commandBuffer.
          * @param commandBuffer GhaGraphicsCommandBuffer to record commands into.
          * @param frameData Data that describes the current frame.
          */
-        virtual void flushJobs(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) = 0;
+        virtual void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) = 0;
     };
 }

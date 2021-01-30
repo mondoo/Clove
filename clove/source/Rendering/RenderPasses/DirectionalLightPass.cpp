@@ -1,4 +1,4 @@
-#include "Clove/Rendering/RenderPasses/ForwardColourPass.hpp"
+#include "Clove/Rendering/RenderPasses/DirectionalLightPass.hpp"
 
 #include "Clove/Rendering/Renderables/Mesh.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
@@ -12,41 +12,26 @@
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
 
-//extern "C" const char staticmesh_v[];
-//extern "C" const size_t staticmesh_vLength;
-extern "C" const char animatedmesh_v[];
-extern "C" const size_t animatedmesh_vLength;
+//extern "C" const char staticmeshshadowmap_v[];
+//extern "C" const size_t staticmeshshadowmap_vLength;
+extern "C" const char animatedmeshshadowmap_v[];
+extern "C" const size_t animatedmeshshadowmap_vLength;
 
-extern "C" const char mesh_p[];
-extern "C" const size_t mesh_pLength;
+extern "C" const char meshshadowmap_p[];
+extern "C" const size_t meshshadowmap_pLength;
 
 namespace garlic::clove {
-    ForwardColourPass::ForwardColourPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass) {
+    DirectionalLightPass::DirectionalLightPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass) {
         //Build include map
         std::unordered_map<std::string, std::string> shaderIncludes;
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
 
-        //Create attributes for animated meshes
+        //Pipeline
         std::vector<VertexAttributeDescriptor> const vertexAttributes{
             VertexAttributeDescriptor{
                 .location = 0,
                 .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
                 .offset   = offsetof(Vertex, position),
-            },
-            VertexAttributeDescriptor{
-                .location = 1,
-                .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
-                .offset   = offsetof(Vertex, normal),
-            },
-            VertexAttributeDescriptor{
-                .location = 2,
-                .format   = VertexAttributeFormat::R32G32_SFLOAT,
-                .offset   = offsetof(Vertex, texCoord),
-            },
-            VertexAttributeDescriptor{
-                .location = 3,
-                .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
-                .offset   = offsetof(Vertex, colour),
             },
             VertexAttributeDescriptor{
                 .location = 4,
@@ -60,44 +45,53 @@ namespace garlic::clove {
             }
         };
 
+        PushConstantDescriptor const pushConstant{
+            .stage = GhaShader::Stage::Vertex,
+            .size  = sizeof(mat4f),
+        };
+
         AreaDescriptor const viewScissorArea{
-            .state = ElementState::Dynamic,
+            .state    = ElementState::Static,
+            .position = { 0.0f, 0.0f },
+            .size     = { shadowMapSize, shadowMapSize }
         };
 
         pipeline = *ghaFactory.createPipelineObject(GhaPipelineObject::Descriptor{
-            .vertexShader         = *ghaFactory.createShaderFromSource({ animatedmesh_v, animatedmesh_vLength }, shaderIncludes, "Animated Mesh (vertex)", GhaShader::Stage::Vertex),
-            .fragmentShader       = *ghaFactory.createShaderFromSource({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
+            .vertexShader         = *ghaFactory.createShaderFromSource({ animatedmeshshadowmap_v, animatedmeshshadowmap_vLength }, shaderIncludes, "Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex),
+            .fragmentShader       = *ghaFactory.createShaderFromSource({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Shadow Map (pixel)", GhaShader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = std::move(vertexAttributes),
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
+            .enableBlending       = false,
             .renderPass           = std::move(ghaRenderPass),
             .descriptorSetLayouts = {
                 createMeshDescriptorSetLayout(ghaFactory),
-                createViewDescriptorSetLayout(ghaFactory),
-                createLightingDescriptorSetLayout(ghaFactory),
             },
-            .pushConstants = {},
+            .pushConstants = { 
+                std::move(pushConstant),
+            },
         });
     }
 
-    ForwardColourPass::~ForwardColourPass() = default;
+    DirectionalLightPass::~DirectionalLightPass() = default;
 
-    void ForwardColourPass::addJob(Job job) {
+    void DirectionalLightPass::addJob(Job job) {
         jobs.emplace_back(std::move(job));
     }
 
-    void ForwardColourPass::flushJobs() {
+    void DirectionalLightPass::flushJobs() {
         jobs.clear();
     }
 
-    void ForwardColourPass::execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
+    void DirectionalLightPass::execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
         commandBuffer.bindPipelineObject(*pipeline);
 
-        commandBuffer.bindDescriptorSet(*frameData.viewDescriptorSet, 1);
-        commandBuffer.bindDescriptorSet(*frameData.lightingDescriptorSet, 2);
-
         for(auto &job : jobs) {
+            mat4f const *pushConstantData{ frameData.currentDirLightTransform };
+            size_t const pushConstantSize{ sizeof(mat4f) };
+
+            commandBuffer.pushConstant(GhaShader::Stage::Vertex, 0, pushConstantSize, pushConstantData);
             commandBuffer.bindDescriptorSet(*frameData.meshDescriptorSets[job.meshDescriptorIndex], 0);
 
             commandBuffer.bindVertexBuffer(*job.mesh->getGhaBuffer(), job.mesh->getVertexOffset());
@@ -105,7 +99,5 @@ namespace garlic::clove {
 
             commandBuffer.drawIndexed(job.mesh->getIndexCount());
         }
-
-        jobs.clear();
     }
 }

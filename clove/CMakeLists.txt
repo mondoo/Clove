@@ -131,6 +131,8 @@ add_library(
 		${SOURCE}/Rendering/Renderables/StaticModel.cpp
 		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
 		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
+		${INCLUDE}/Rendering/RenderPasses/DirectionalLightPass.hpp
+		${SOURCE}/Rendering/RenderPasses/DirectionalLightPass.cpp
 		${INCLUDE}/Rendering/RenderPasses/GeometryPass.hpp
 		${INCLUDE}/Rendering/Techniques/ForwardLightingTechnique.hpp
 		${SOURCE}/Rendering/Techniques/ForwardLightingTechnique.cpp
