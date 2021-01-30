@@ -2,11 +2,15 @@
 
 #include "Clove/Rendering/Material.hpp"
 
-#include <vector>
+//TEMP?
+#include "Clove/Rendering/Techniques/Technique.hpp"
+
 #include <memory>
+#include <vector>
 
 namespace garlic::clove {
     class Mesh;
+    //class TechniqueInterface;
 }
 
 namespace garlic::clove {
@@ -15,9 +19,15 @@ namespace garlic::clove {
      */
     class StaticModel {
         //VARIABLES
+    public:
+        //TEMP: public
+        std::vector<Technique> techniques{{}};
+
     private:
         std::vector<std::shared_ptr<Mesh>> meshes;
         std::shared_ptr<Material> material;
+
+        //std::vector<std::unique_ptr<TechniqueInterface>> techniques;
 
         //FUNCTIONS
     public:
@@ -25,10 +35,10 @@ namespace garlic::clove {
         StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material);
 
         StaticModel(StaticModel const &other);
-        StaticModel(StaticModel &&other);
+        StaticModel(StaticModel &&other) noexcept;
 
         StaticModel &operator=(StaticModel const &other);
-        StaticModel &operator=(StaticModel &&other);
+        StaticModel &operator=(StaticModel &&other) noexcept;
 
         ~StaticModel();
 

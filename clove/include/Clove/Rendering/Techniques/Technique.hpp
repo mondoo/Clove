@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Clove/Rendering/ForwardRenderer3D.hpp"
-
-#include <vector>
+#include <set>
 
 namespace garlic::clove {
     class Mesh;
@@ -10,11 +8,7 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove {
-    class TechniqueInterface {
-        //FUNCTIONS
-    public:
-        virtual void submit(ForwardRenderer3D &renderer, std::shared_ptr<Mesh> mesh) = 0;
-    };
+    //TODO: It might make it more difficult to use types. Perhaps each pass should have an id?
 
     /**
      * @brief Describes the steps involved to render geometry in a certain way.
@@ -22,8 +16,8 @@ namespace garlic::clove {
      * the correct individual GeometryPasses. For example a lighting technique will
      * add a mesh into a shadow pass and then a colour pass.
      */
-    template<typename... GeometryPasses>
-    class Technique : public TechniqueInterface{
+    //template<typename... GeometryPasses>
+    class Technique/*  : public TechniqueInterface */{
         //TYPES
     public:
         /**
@@ -34,8 +28,9 @@ namespace garlic::clove {
         }; */
 
         //VARIABLES
-    private:
-        //std::vector<Step> steps;
+    //private:
+    public: //TEMP: public
+        std::set<size_t> passIds{1}; //TODO: Use PassId type
 
         //FUNCTIONS
     public:
@@ -47,10 +42,10 @@ namespace garlic::clove {
          * @param renderer Renderer to render the technique with.
          * @param mesh Mesh to perform the technique on.
          */
-        void submit(ForwardRenderer3D &renderer, std::shared_ptr<Mesh> mesh) override {
-            if(renderer.supportsPass<GeometryPasses>() && ...) {
+        /* void submit(ForwardRenderer3D &renderer, std::shared_ptr<Mesh> mesh) override {
+            if((renderer.supportsPass<GeometryPasses>() && ...)) {
                 renderer.submitMesh<GeometryPasses...>(std::move(mesh));
             }
-        }
+        } */
     };
 }

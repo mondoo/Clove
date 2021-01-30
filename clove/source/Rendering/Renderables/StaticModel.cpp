@@ -16,7 +16,7 @@ namespace garlic::clove {
         }
     }
 
-    StaticModel::StaticModel(StaticModel &&other) = default;
+    StaticModel::StaticModel(StaticModel &&other) noexcept = default;
 
     StaticModel &StaticModel::operator=(StaticModel const &other) {
         material = std::make_shared<Material>(*other.material);
@@ -28,7 +28,7 @@ namespace garlic::clove {
         return *this;
     }
 
-    StaticModel &StaticModel::operator=(StaticModel &&other) = default;
+    StaticModel &StaticModel::operator=(StaticModel &&other) noexcept = default;
 
     StaticModel::~StaticModel() = default;
 }

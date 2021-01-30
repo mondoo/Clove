@@ -11,6 +11,8 @@
 #include <Clove/Graphics/GraphicsAPI.hpp>
 #include <unordered_map>
 
+#include <set>
+
 namespace garlic::clove {
     class RenderTarget;
     class Window;
@@ -25,12 +27,7 @@ namespace garlic::clove {
     class ForwardRenderer3D {
         //TYPES
     public:
-        struct StaticMeshInfo {
-            std::shared_ptr<Mesh> mesh;
-            std::shared_ptr<Material> material;
-            mat4f transform;
-        };
-        struct AnimatedMeshInfo {
+        struct MeshInfo {
             std::shared_ptr<Mesh> mesh;
             std::shared_ptr<Material> material;
             mat4f transform;
@@ -54,19 +51,13 @@ namespace garlic::clove {
 
             std::array<std::array<mat4f, 6>, MAX_LIGHTS> pointShadowTransforms;
 
-            std::vector<StaticMeshInfo> staticMeshes;
-            std::vector<AnimatedMeshInfo> animatedMeshes;
+            std::vector<MeshInfo> meshes;
 
-            std::vector<std::pair<std::shared_ptr<garlic::clove::GhaImageView>, mat4f>> widgets;
-            std::vector<std::pair<std::shared_ptr<garlic::clove::GhaImageView>, mat4f>> text;
+            std::vector<std::pair<std::shared_ptr<GhaImageView>, mat4f>> widgets;
+            std::vector<std::pair<std::shared_ptr<GhaImageView>, mat4f>> text;
 
-            void forEachStaticMesh(std::function<void(Mesh const &, size_t const index)> func) {
-                for(size_t index = 0; auto const &meshInfo : staticMeshes) {
-                    func(*meshInfo.mesh, index++);
-                }
-            }
-            void forEachAnimatedMesh(std::function<void(Mesh const &, size_t const index)> func) {
-                for(size_t index = std::size(staticMeshes); auto const &meshInfo : animatedMeshes) {
+            void forEachMesh(std::function<void(Mesh const &, size_t const index)> func) {
+                for(size_t index = 0; auto const &meshInfo : meshes) {
                     func(*meshInfo.mesh, index++);
                 }
             }
@@ -134,6 +125,7 @@ namespace garlic::clove {
 
         //Geometry passes
         std::unique_ptr<GeometryPass> colourPass;
+
         //Objects for the final colour render pass
         std::shared_ptr<garlic::clove::GhaRenderPass> renderPass;
         std::shared_ptr<garlic::clove::GhaPipelineObject> widgetPipelineObject;
@@ -144,9 +136,9 @@ namespace garlic::clove {
 
         //Objects for the shadow map pass
         std::shared_ptr<garlic::clove::GhaRenderPass> shadowMapRenderPass;
-        std::shared_ptr<garlic::clove::GhaPipelineObject> staticMeshShadowMapPipelineObject;
+        //std::shared_ptr<garlic::clove::GhaPipelineObject> staticMeshShadowMapPipelineObject;
         std::shared_ptr<garlic::clove::GhaPipelineObject> animatedMeshShadowMapPipelineObject;
-        std::shared_ptr<garlic::clove::GhaPipelineObject> staticMeshCubeShadowMapPipelineObject;
+        //std::shared_ptr<garlic::clove::GhaPipelineObject> staticMeshCubeShadowMapPipelineObject;
         std::shared_ptr<garlic::clove::GhaPipelineObject> animatedMeshCubeShadowMapPipelineObject;
 
         //Synchronisation obects
@@ -168,14 +160,14 @@ namespace garlic::clove {
 
         void begin();
 
-        template<typename GeometryPass>
-        bool supportsPass(){
-            return false;//TODO
-        }
+        //TODO: Figuring out the best way for a technique to represent multiple passes
 
-        template<typename ...GeometryPasses>
-        void submitMesh(std::shared_ptr<Mesh> mesh){
-            //TODO:
+        using PassId = size_t;
+        void submitMesh(MeshInfo meshInfo, std::set<PassId> geometryPassIds) {
+            //TEMP: Assuming we're only handling static meshes
+            currentFrameData.meshes.push_back(std::move(meshInfo));
+            //TEMP: Static meshes are manually added as jobs
+            colourPass->addJob({ currentFrameData.meshes.size() - 1, currentFrameData.meshes.back().mesh });
         }
 
         /**
@@ -183,8 +175,6 @@ namespace garlic::clove {
          */
         void submitCamera(Camera const &camera, vec3f position);
 
-        void submitStaticMesh(StaticMeshInfo meshInfo);
-        void submitAnimatedMesh(AnimatedMeshInfo meshInfo);
         void submitLight(DirectionalLight const &light);
         void submitLight(PointLight const &light);
 

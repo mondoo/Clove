@@ -48,9 +48,21 @@ namespace garlic::clove {
         //Submit static meshes
         entityManager->forEach([this](TransformComponent const &transform, StaticModelComponent const &staticModel) {
             mat4f const modelTransform{ transform.worldMatrix };
+            std::array<mat4f, MAX_JOINTS> matrixPalet;
+            matrixPalet.fill(mat4f{ 1.0f });
+
+            //TODO: Currently trying to figure out the best way to submit each technique of each mesh
+
+            std::set<size_t> passIds;//TODO: Use PassId type
+
+            for(auto &technique : staticModel.model.techniques) {
+                passIds.insert(technique.passIds.begin(), technique.passIds.end());
+            }
 
             for(auto &mesh : staticModel.model.getMeshes()) {
-                renderer->submitStaticMesh(ForwardRenderer3D::StaticMeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform });
+                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform, matrixPalet }, std::move(passIds));
+
+                //renderer->submitStaticMesh(ForwardRenderer3D::StaticMeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform });
             }
         });
         //Submit animated meshes
@@ -58,8 +70,14 @@ namespace garlic::clove {
             mat4f const modelTransform{ transform.worldMatrix };
             auto const matrixPalet{ animatedModel.model.update(deltaTime) };
 
+            std::set<size_t> passIds;//TODO: Use PassId type
+
+            for(auto &technique : animatedModel.model.techniques) {
+                passIds.insert(technique.passIds.begin(), technique.passIds.end());
+            }
+
             for(auto &mesh : animatedModel.model.getMeshes()) {
-                renderer->submitAnimatedMesh(ForwardRenderer3D::AnimatedMeshInfo{ mesh, animatedModel.model.getMaterial(), modelTransform, matrixPalet });
+                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.model.getMaterial(), modelTransform, matrixPalet }, std::move(passIds));
             }
         });
 

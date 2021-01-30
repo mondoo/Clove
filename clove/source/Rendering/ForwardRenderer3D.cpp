@@ -62,7 +62,7 @@ namespace garlic::clove {
         createShadowMapRenderpass();
 
         //Creating here as it's after the render pass is initialised
-        colourPass = std::make_unique<ForwardColourPass>(*graphicsFactory, renderPass);
+        colourPass = std::make_unique<ForwardColourPass>(graphicsFactory.get(), renderPass);
 
         createUiPipeline();
         createShadowMapPipeline();
@@ -154,8 +154,7 @@ namespace garlic::clove {
     }
 
     void ForwardRenderer3D::begin() {
-        currentFrameData.staticMeshes.clear();
-        currentFrameData.animatedMeshes.clear();
+        currentFrameData.meshes.clear();
         currentFrameData.widgets.clear();
         currentFrameData.text.clear();
 
@@ -168,16 +167,6 @@ namespace garlic::clove {
         currentFrameData.bufferData.viewData.projection = camera.getProjection();
 
         currentFrameData.bufferData.viewPosition = position;
-    }
-
-    void ForwardRenderer3D::submitStaticMesh(StaticMeshInfo meshInfo) {
-        currentFrameData.staticMeshes.push_back(std::move(meshInfo));
-        //TEMP: Static meshes are manually added as jobs
-        colourPass->addJob({ currentFrameData.staticMeshes.size() - 1, currentFrameData.staticMeshes.back().mesh });
-    }
-
-    void ForwardRenderer3D::submitAnimatedMesh(AnimatedMeshInfo meshInfo) {
-        currentFrameData.animatedMeshes.push_back(std::move(meshInfo));
     }
 
     void ForwardRenderer3D::submitLight(DirectionalLight const &light) {
@@ -235,10 +224,7 @@ namespace garlic::clove {
             depthStencilClearValue
         };
 
-        size_t const staticMeshCount{ currentFrameData.staticMeshes.size() };
-        size_t const animatedMeshCount{ currentFrameData.animatedMeshes.size() };
-
-        size_t const meshCount{ staticMeshCount + animatedMeshCount };
+        size_t const meshCount{ currentFrameData.meshes.size() };
 
         //We can just write the struct straight in as all the mappings are based off of it's layout
         currentImageData.frameDataBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
@@ -285,26 +271,7 @@ namespace garlic::clove {
         if(std::size(currentImageData.objectBuffers) < meshCount) {
             currentImageData.objectBuffers.resize(meshCount);
         }
-        for(size_t index = 0; auto &meshInfo : currentFrameData.staticMeshes) {
-            MeshUBOLayout layout{
-                .model{
-                    meshInfo.transform,
-                    inverse(transpose(meshInfo.transform)),
-                },
-                .colour = meshInfo.material->colour,
-            };
-
-            writeObjectBuffer(currentImageData.objectBuffers[index], layout);
-
-            std::shared_ptr<GhaDescriptorSet> &meshDescriptorSet = meshSets[index];
-            meshDescriptorSet->map(*meshInfo.material->diffuseView, *textureSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 0);
-            meshDescriptorSet->map(*meshInfo.material->specularView, *textureSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 1);
-            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), 2);
-            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, colour), sizeof(vec4f), 4);
-
-            ++index;
-        }
-        for(size_t index = staticMeshCount; auto &meshInfo : currentFrameData.animatedMeshes) {
+        for(size_t index = 0; auto &meshInfo : currentFrameData.meshes) {
             MeshUBOLayout layout{
                 .model{
                     meshInfo.transform,
@@ -351,12 +318,12 @@ namespace garlic::clove {
                 };
 
                 //Static
-                currentImageData.shadowMapCommandBuffer->bindPipelineObject(*staticMeshShadowMapPipelineObject);
-                currentFrameData.forEachStaticMesh(generateShadowMap);
+                //currentImageData.shadowMapCommandBuffer->bindPipelineObject(*staticMeshShadowMapPipelineObject);
+                //currentFrameData.forEachStaticMesh(generateShadowMap);
 
                 //Animated
                 currentImageData.shadowMapCommandBuffer->bindPipelineObject(*animatedMeshShadowMapPipelineObject);
-                currentFrameData.forEachAnimatedMesh(generateShadowMap);
+                currentFrameData.forEachMesh(generateShadowMap);
             }
             currentImageData.shadowMapCommandBuffer->endRenderPass();
         }
@@ -398,12 +365,12 @@ namespace garlic::clove {
                     };
 
                     //Static
-                    currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*staticMeshCubeShadowMapPipelineObject);
-                    currentFrameData.forEachStaticMesh(generateCubeShadowMap);
+                    //currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*staticMeshCubeShadowMapPipelineObject);
+                    //currentFrameData.forEachStaticMesh(generateCubeShadowMap);
 
                     //Animated
                     currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*animatedMeshCubeShadowMapPipelineObject);
-                    currentFrameData.forEachAnimatedMesh(generateCubeShadowMap);
+                    currentFrameData.forEachMesh(generateCubeShadowMap);
                 }
                 currentImageData.cubeShadowMapCommandBuffer->endRenderPass();
             }
@@ -802,7 +769,7 @@ namespace garlic::clove {
             .pushConstants        = { pushConstant },
         };
 
-        staticMeshShadowMapPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
+        //staticMeshShadowMapPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
 
         vertexAttributes.emplace_back(VertexAttributeDescriptor{
             .location = 4,
@@ -863,7 +830,7 @@ namespace garlic::clove {
             .pushConstants        = { vertexPushConstant, pixelPushConstant },
         };
 
-        staticMeshCubeShadowMapPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
+        //staticMeshCubeShadowMapPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
 
         vertexAttributes.emplace_back(VertexAttributeDescriptor{
             .location = 4,
