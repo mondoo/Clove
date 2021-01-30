@@ -5,6 +5,7 @@
 #include "Clove/Rendering/Material.hpp"
 #include "Clove/Rendering/RenderPasses/DirectionalLightPass.hpp"
 #include "Clove/Rendering/RenderPasses/ForwardColourPass.hpp"
+#include "Clove/Rendering/RenderPasses/PointLightPass.hpp"
 #include "Clove/Rendering/RenderTarget.hpp"
 #include "Clove/Rendering/Renderables/Mesh.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
@@ -16,25 +17,8 @@
 #include <Clove/Log/Log.hpp>
 #include <Clove/Platform/Window.hpp>
 
-using namespace garlic::clove;
-
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
-
-extern "C" const char staticmeshshadowmap_v[];
-extern "C" const size_t staticmeshshadowmap_vLength;
-extern "C" const char staticmeshcubeshadowmap_v[];
-extern "C" const size_t staticmeshcubeshadowmap_vLength;
-
-extern "C" const char animatedmeshshadowmap_v[];
-extern "C" const size_t animatedmeshshadowmap_vLength;
-extern "C" const char animatedmeshcubeshadowmap_v[];
-extern "C" const size_t animatedmeshcubeshadowmap_vLength;
-
-extern "C" const char meshshadowmap_p[];
-extern "C" const size_t meshshadowmap_pLength;
-extern "C" const char meshcubeshadowmap_p[];
-extern "C" const size_t meshcubeshadowmap_pLength;
 
 extern "C" const char ui_v[];
 extern "C" const size_t ui_vLength;
@@ -65,9 +49,9 @@ namespace garlic::clove {
         //Create the geometry passes this renderer supports
         geometryPasses[GeometryPass::getId<ForwardColourPass>()]    = std::make_unique<ForwardColourPass>(*graphicsFactory, renderPass);
         geometryPasses[GeometryPass::getId<DirectionalLightPass>()] = std::make_unique<DirectionalLightPass>(*graphicsFactory, shadowMapRenderPass);
+        geometryPasses[GeometryPass::getId<PointLightPass>()]       = std::make_unique<PointLightPass>(*graphicsFactory, shadowMapRenderPass);
 
         createUiPipeline();
-        createCubeShadowMapPipeline();
 
         createRenderTargetResources();
 
@@ -344,39 +328,16 @@ namespace garlic::clove {
                 //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
                 currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
                 if(i < currentFrameData.bufferData.numLights.numPoint) {
-                    mat4f const &vertPushConstantData{ currentFrameData.pointShadowTransforms[i][j] };
-                    size_t const vertPushConstantSize = sizeof(vertPushConstantData);
-
-                    struct {
-                        vec3f pos{};
-                        float farPlane{};
-                    } const pixelPushConstantData{
-                        .pos      = currentFrameData.bufferData.lights.pointLights[i].position,
-                        .farPlane = currentFrameData.bufferData.lights.pointLights[i].farPlane,
-                    };
-                    size_t const pixelPushConstantOffset = vertPushConstantSize;
-                    size_t const pixelPushConstantSize   = sizeof(pixelPushConstantData);
-
-                    auto const generateCubeShadowMap = [&](Mesh const &mesh, size_t const index) {
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(GhaShader::Stage::Vertex, 0, vertPushConstantSize, &vertPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->pushConstant(GhaShader::Stage::Pixel, pixelPushConstantOffset, pixelPushConstantSize, &pixelPushConstantData);
-                        currentImageData.cubeShadowMapCommandBuffer->bindDescriptorSet(*meshSets[index], static_cast<uint32_t>(DescriptorSetSlots::Mesh));
-
-                        drawMesh(*currentImageData.cubeShadowMapCommandBuffer, mesh);
-                    };
-
-                    //Static
-                    //currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*staticMeshCubeShadowMapPipelineObject);
-                    //currentFrameData.forEachStaticMesh(generateCubeShadowMap);
-
-                    //Animated
-                    currentImageData.cubeShadowMapCommandBuffer->bindPipelineObject(*animatedMeshCubeShadowMapPipelineObject);
-                    currentFrameData.forEachMesh(generateCubeShadowMap);
+                    geometryPassData.currentPointLightTransform = &currentFrameData.pointShadowTransforms[i][j];
+                    geometryPassData.currentPointLightPosition  = currentFrameData.bufferData.lights.pointLights[i].position;
+                    geometryPassData.currentPointLightFarPlane  = currentFrameData.bufferData.lights.pointLights[i].farPlane;
+                    geometryPasses[GeometryPass::getId<PointLightPass>()]->execute(*currentImageData.cubeShadowMapCommandBuffer, geometryPassData);
                 }
                 currentImageData.cubeShadowMapCommandBuffer->endRenderPass();
             }
         }
         currentImageData.cubeShadowMapCommandBuffer->endRecording();
+        geometryPasses[GeometryPass::getId<PointLightPass>()]->flushJobs();
 
         //Submit the command buffer for the point shadow map
         GraphicsSubmitInfo cubeShadowSubmitInfo{
@@ -727,67 +688,6 @@ namespace garlic::clove {
         pipelineDescriptor.fragmentShader = *graphicsFactory->createShaderFromSource({ font_p, font_pLength }, shaderIncludes, "Font (pixel)", GhaShader::Stage::Pixel);
 
         textPipelineObject = *graphicsFactory->createPipelineObject(std::move(pipelineDescriptor));
-    }
-
-    void ForwardRenderer3D::createCubeShadowMapPipeline() {
-        size_t constexpr totalAttributes{ 3 };
-        std::vector<VertexAttributeDescriptor> vertexAttributes{};
-        vertexAttributes.reserve(totalAttributes);
-
-        vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .location = 0,
-            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
-            .offset   = offsetof(Vertex, position),
-        });
-
-        PushConstantDescriptor vertexPushConstant{
-            .stage  = GhaShader::Stage::Vertex,
-            .offset = 0,
-            .size   = sizeof(mat4f),
-        };
-        PushConstantDescriptor pixelPushConstant{
-            .stage  = GhaShader::Stage::Pixel,
-            .offset = vertexPushConstant.size,
-            .size   = sizeof(vec3f) + sizeof(float),
-        };
-
-        AreaDescriptor viewScissorArea{
-            .state    = ElementState::Static,
-            .position = { 0.0f, 0.0f },
-            .size     = { shadowMapSize, shadowMapSize }
-        };
-
-        GhaPipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = *graphicsFactory->createShaderFromSource({ staticmeshcubeshadowmap_v, staticmeshcubeshadowmap_vLength }, shaderIncludes, "Cube Shadow Map - Static Mesh (vertex)", GhaShader::Stage::Vertex),
-            .fragmentShader       = *graphicsFactory->createShaderFromSource({ meshcubeshadowmap_p, meshcubeshadowmap_pLength }, shaderIncludes, "Cube Shadow Map (pixel)", GhaShader::Stage::Pixel),
-            .vertexInput          = Vertex::getInputBindingDescriptor(),
-            .vertexAttributes     = vertexAttributes,
-            .viewportDescriptor   = viewScissorArea,
-            .scissorDescriptor    = viewScissorArea,
-            .enableBlending       = false,
-            .renderPass           = shadowMapRenderPass,
-            .descriptorSetLayouts = { descriptorSetLayouts[DescriptorSetSlots::Mesh] },
-            .pushConstants        = { vertexPushConstant, pixelPushConstant },
-        };
-
-        //staticMeshCubeShadowMapPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
-
-        vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .location = 4,
-            .format   = VertexAttributeFormat::R32G32B32A32_SINT,
-            .offset   = offsetof(Vertex, jointIds),
-        });
-        vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .location = 5,
-            .format   = VertexAttributeFormat::R32G32B32A32_SFLOAT,
-            .offset   = offsetof(Vertex, weights),
-        });
-
-        pipelineDescriptor.vertexShader         = *graphicsFactory->createShaderFromSource({ animatedmeshcubeshadowmap_v, animatedmeshcubeshadowmap_vLength }, shaderIncludes, "Cube Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex);
-        pipelineDescriptor.vertexAttributes     = std::move(vertexAttributes);
-        pipelineDescriptor.descriptorSetLayouts = { descriptorSetLayouts[DescriptorSetSlots::Mesh] };
-
-        animatedMeshCubeShadowMapPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
     }
 
     void ForwardRenderer3D::createRenderTargetFrameBuffers() {

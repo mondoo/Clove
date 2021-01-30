@@ -32,8 +32,12 @@ namespace garlic::clove {
             std::shared_ptr<GhaDescriptorSet> viewDescriptorSet{ nullptr };     /**< Descriptor set for view specific data. */
             std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet{ nullptr }; /**< Descriptor set for lighting specific data. */
 
-            //TODO: This is specific to the directional light pass. Should it be in here?
+            //TODO: This is specific to the light passes. Should it be in here?
             mat4f *currentDirLightTransform{ nullptr };
+
+            mat4f *currentPointLightTransform{ nullptr };
+            vec3f currentPointLightPosition{};
+            float currentPointLightFarPlane{};
         };
 
         /**

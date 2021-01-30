@@ -107,41 +107,39 @@ namespace garlic::clove {
         //'Square' mesh used to render UI
         std::unique_ptr<Mesh> uiMesh;
 
-        garlic::clove::GhaDevice *graphicsDevice;
-        std::shared_ptr<garlic::clove::GhaFactory> graphicsFactory;
+        GhaDevice *graphicsDevice;
+        std::shared_ptr<GhaFactory> graphicsFactory;
 
-        std::shared_ptr<garlic::clove::GhaGraphicsQueue> graphicsQueue;
+        std::shared_ptr<GhaGraphicsQueue> graphicsQueue;
 
-        std::unordered_map<DescriptorSetSlots, std::shared_ptr<garlic::clove::GhaDescriptorSetLayout>> descriptorSetLayouts;
+        std::unordered_map<DescriptorSetSlots, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts;
 
         //Frame / image data objects
         FrameData currentFrameData;
         std::vector<ImageData> inFlightImageData;
 
         //Samplers passed along with textures
-        std::shared_ptr<garlic::clove::GhaSampler> textureSampler;
-        std::shared_ptr<garlic::clove::GhaSampler> uiSampler;
-        std::shared_ptr<garlic::clove::GhaSampler> shadowSampler;
+        std::shared_ptr<GhaSampler> textureSampler;
+        std::shared_ptr<GhaSampler> uiSampler;
+        std::shared_ptr<GhaSampler> shadowSampler;
 
         //Geometry passes. TODO: Use vector?
         std::unordered_map<GeometryPass::Id, std::unique_ptr<GeometryPass>> geometryPasses;
 
         //Objects for the final colour render pass
-        std::shared_ptr<garlic::clove::GhaRenderPass> renderPass;
-        std::shared_ptr<garlic::clove::GhaPipelineObject> widgetPipelineObject;
-        std::shared_ptr<garlic::clove::GhaPipelineObject> textPipelineObject;
+        std::shared_ptr<GhaRenderPass> renderPass;
+        std::shared_ptr<GhaPipelineObject> widgetPipelineObject;
+        std::shared_ptr<GhaPipelineObject> textPipelineObject;
 
-        std::shared_ptr<garlic::clove::GhaImage> depthImage;
-        std::shared_ptr<garlic::clove::GhaImageView> depthImageView;
+        std::shared_ptr<GhaImage> depthImage;
+        std::shared_ptr<GhaImageView> depthImageView;
 
         //Objects for the shadow map pass
-        std::shared_ptr<garlic::clove::GhaRenderPass> shadowMapRenderPass;
-        //std::shared_ptr<garlic::clove::GhaPipelineObject> staticMeshCubeShadowMapPipelineObject;
-        std::shared_ptr<garlic::clove::GhaPipelineObject> animatedMeshCubeShadowMapPipelineObject;
+        std::shared_ptr<GhaRenderPass> shadowMapRenderPass;
 
         //Synchronisation obects
-        std::array<std::shared_ptr<garlic::clove::GhaSemaphore>, maxFramesInFlight> shadowFinishedSemaphores;
-        std::array<std::shared_ptr<garlic::clove::GhaSemaphore>, maxFramesInFlight> cubeShadowFinishedSemaphores;
+        std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> shadowFinishedSemaphores;
+        std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> cubeShadowFinishedSemaphores;
 
         //FUNCTIONS
     public:
@@ -168,8 +166,8 @@ namespace garlic::clove {
         void submitLight(DirectionalLight const &light);
         void submitLight(PointLight const &light);
 
-        void submitWidget(std::shared_ptr<garlic::clove::GhaImageView> const widget, mat4f const modelProjection);
-        void submitText(std::shared_ptr<garlic::clove::GhaImageView> const text, mat4f const modelProjection);
+        void submitWidget(std::shared_ptr<GhaImageView> const widget, mat4f const modelProjection);
+        void submitText(std::shared_ptr<GhaImageView> const text, mat4f const modelProjection);
 
         void end();
 
@@ -182,11 +180,10 @@ namespace garlic::clove {
        
         void createDepthBuffer();
 
-        void createCubeShadowMapPipeline();
         void createUiPipeline();
 
         void createRenderTargetFrameBuffers();
 
-        std::shared_ptr<garlic::clove::GhaDescriptorPool> createDescriptorPool(std::unordered_map<garlic::clove::DescriptorType, uint32_t> const &bindingCount, uint32_t const setCount);
+        std::shared_ptr<GhaDescriptorPool> createDescriptorPool(std::unordered_map<DescriptorType, uint32_t> const &bindingCount, uint32_t const setCount);
     };
 }

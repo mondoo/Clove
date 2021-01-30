@@ -2,6 +2,7 @@
 
 #include "Clove/Rendering/RenderPasses/ForwardColourPass.hpp"
 #include "Clove/Rendering/RenderPasses/DirectionalLightPass.hpp"
+#include "Clove/Rendering/RenderPasses/PointLightPass.hpp"
 
 namespace garlic::clove {
     Technique createForwardLightingTechnique() {
@@ -9,6 +10,7 @@ namespace garlic::clove {
             .passIds = std::set<GeometryPass::Id>{
                 GeometryPass::getId<ForwardColourPass>(),
                 GeometryPass::getId<DirectionalLightPass>(),
+                GeometryPass::getId<PointLightPass>(),
             },
         };
     }
