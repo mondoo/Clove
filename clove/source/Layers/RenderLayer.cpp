@@ -51,18 +51,12 @@ namespace garlic::clove {
             std::array<mat4f, MAX_JOINTS> matrixPalet;
             matrixPalet.fill(mat4f{ 1.0f });
 
-            //TODO: Currently trying to figure out the best way to submit each technique of each mesh
-
-            std::set<size_t> passIds;//TODO: Use PassId type
-
-            for(auto &technique : staticModel.model.techniques) {
+            std::set<GeometryPass::Id> passIds;
+            for(auto &technique : staticModel.model.getTechniques()) {
                 passIds.insert(technique.passIds.begin(), technique.passIds.end());
             }
-
             for(auto &mesh : staticModel.model.getMeshes()) {
                 renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform, matrixPalet }, std::move(passIds));
-
-                //renderer->submitStaticMesh(ForwardRenderer3D::StaticMeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform });
             }
         });
         //Submit animated meshes
@@ -70,12 +64,10 @@ namespace garlic::clove {
             mat4f const modelTransform{ transform.worldMatrix };
             auto const matrixPalet{ animatedModel.model.update(deltaTime) };
 
-            std::set<size_t> passIds;//TODO: Use PassId type
-
-            for(auto &technique : animatedModel.model.techniques) {
+            std::set<GeometryPass::Id> passIds;
+            for(auto &technique : animatedModel.model.getTechniques()) {
                 passIds.insert(technique.passIds.begin(), technique.passIds.end());
             }
-
             for(auto &mesh : animatedModel.model.getMeshes()) {
                 renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.model.getMaterial(), modelTransform, matrixPalet }, std::move(passIds));
             }

@@ -11,6 +11,10 @@ namespace garlic::clove {
         return meshes;
     }
 
+    std::vector<Technique> const &StaticModel::getTechniques() const {
+        return techniques;
+    }
+
     std::shared_ptr<Mesh> &StaticModel::operator[](size_t index) {
         return meshes[index];
     }

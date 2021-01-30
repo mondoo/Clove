@@ -11,20 +11,13 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove {
-    //TODO + Own file
-    /* class AnimatedColourPass : public GeometryPass{
-    }; */
-
-    //TODO: StaticColourPass
     class ForwardColourPass : public GeometryPass {
         //VARIABLES
     private:
         GhaFactory *ghaFactory{ nullptr };
-
-        std::unique_ptr<GhaPipelineObject> pipeline;
+        std::unique_ptr<GhaPipelineObject> pipeline{ nullptr };
 
         std::vector<Job> jobs;
-        //std::unique_ptr<GhaPipelineObject> animatedMeshPipeline;
 
         //FUNCTIONS
     public:

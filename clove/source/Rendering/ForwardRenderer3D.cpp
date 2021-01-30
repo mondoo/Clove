@@ -62,7 +62,7 @@ namespace garlic::clove {
         createShadowMapRenderpass();
 
         //Creating here as it's after the render pass is initialised
-        colourPass = std::make_unique<ForwardColourPass>(graphicsFactory.get(), renderPass);
+        geometryPasses[GeometryPass::getId<ForwardColourPass>()] = std::make_unique<ForwardColourPass>(graphicsFactory.get(), renderPass);
 
         createUiPipeline();
         createShadowMapPipeline();
@@ -160,6 +160,13 @@ namespace garlic::clove {
 
         currentFrameData.bufferData.numLights.numDirectional = 0;
         currentFrameData.bufferData.numLights.numPoint       = 0;
+    }
+
+    void ForwardRenderer3D::submitMesh(MeshInfo meshInfo, std::set<GeometryPass::Id> geometryPassIds) {
+        currentFrameData.meshes.push_back(std::move(meshInfo));
+        for(auto id : geometryPassIds) {
+            geometryPasses[id]->addJob({ currentFrameData.meshes.size() - 1, currentFrameData.meshes.back().mesh });
+        }
     }
 
     void ForwardRenderer3D::submitCamera(Camera const &camera, vec3f position) {
@@ -419,7 +426,8 @@ namespace garlic::clove {
                 .lightingDescriptorSet = currentImageData.lightingDescriptorSet,
             };
 
-            colourPass->flushJobs(*currentImageData.commandBuffer, data);
+            //TODO: Iterate through the map
+            geometryPasses[GeometryPass::getId<ForwardColourPass>()]->flushJobs(*currentImageData.commandBuffer, data);
 
             //Widgets
             currentImageData.commandBuffer->bindPipelineObject(*widgetPipelineObject);

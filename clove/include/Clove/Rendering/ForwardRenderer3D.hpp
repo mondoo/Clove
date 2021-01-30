@@ -9,9 +9,8 @@
 #include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Graphics/GhaFactory.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
-#include <unordered_map>
-
 #include <set>
+#include <unordered_map>
 
 namespace garlic::clove {
     class RenderTarget;
@@ -27,6 +26,7 @@ namespace garlic::clove {
     class ForwardRenderer3D {
         //TYPES
     public:
+        //TODO: Currently transform and matrixPalet are copied per mesh for each model. This should be avoided
         struct MeshInfo {
             std::shared_ptr<Mesh> mesh;
             std::shared_ptr<Material> material;
@@ -123,8 +123,8 @@ namespace garlic::clove {
         std::shared_ptr<garlic::clove::GhaSampler> uiSampler;
         std::shared_ptr<garlic::clove::GhaSampler> shadowSampler;
 
-        //Geometry passes
-        std::unique_ptr<GeometryPass> colourPass;
+        //Geometry passes. TODO: Use vector?
+        std::unordered_map<GeometryPass::Id, std::unique_ptr<GeometryPass>> geometryPasses;
 
         //Objects for the final colour render pass
         std::shared_ptr<garlic::clove::GhaRenderPass> renderPass;
@@ -160,15 +160,7 @@ namespace garlic::clove {
 
         void begin();
 
-        //TODO: Figuring out the best way for a technique to represent multiple passes
-
-        using PassId = size_t;
-        void submitMesh(MeshInfo meshInfo, std::set<PassId> geometryPassIds) {
-            //TEMP: Assuming we're only handling static meshes
-            currentFrameData.meshes.push_back(std::move(meshInfo));
-            //TEMP: Static meshes are manually added as jobs
-            colourPass->addJob({ currentFrameData.meshes.size() - 1, currentFrameData.meshes.back().mesh });
-        }
+        void submitMesh(MeshInfo meshInfo, std::set<GeometryPass::Id> geometryPassIds);
 
         /**
          * @brief Submit the active camera the renderer will use.
