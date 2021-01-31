@@ -74,6 +74,10 @@ namespace garlic::clove {
         });
     }
 
+    DirectionalLightPass::DirectionalLightPass(DirectionalLightPass &&other) noexcept = default;
+
+    DirectionalLightPass &DirectionalLightPass::operator=(DirectionalLightPass &&other) noexcept = default;
+
     DirectionalLightPass::~DirectionalLightPass() = default;
 
     void DirectionalLightPass::addJob(Job job) {

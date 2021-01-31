@@ -20,8 +20,15 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
+        PointLightPass() = delete;
         PointLightPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
+
+        PointLightPass(PointLightPass const &other) = delete;
+        PointLightPass(PointLightPass &&other) noexcept;
+
+        PointLightPass &operator=(PointLightPass const &other) = delete;
+        PointLightPass &operator=(PointLightPass &&other) noexcept;
+
         ~PointLightPass();
 
         void addJob(Job job) override;

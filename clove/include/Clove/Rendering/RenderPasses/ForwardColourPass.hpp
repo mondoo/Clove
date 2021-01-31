@@ -20,8 +20,15 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
+        ForwardColourPass() = delete;
         ForwardColourPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
+
+        ForwardColourPass(ForwardColourPass const &other) = delete;
+        ForwardColourPass(ForwardColourPass &&other) noexcept;
+
+        ForwardColourPass &operator=(ForwardColourPass const &other) = delete;
+        ForwardColourPass &operator=(ForwardColourPass &&other) noexcept;
+
         ~ForwardColourPass();
 
         void addJob(Job job) override;

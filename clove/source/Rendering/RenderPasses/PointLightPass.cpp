@@ -81,6 +81,10 @@ namespace garlic::clove {
         });
     }
 
+    PointLightPass::PointLightPass(PointLightPass &&other) noexcept = default;
+
+    PointLightPass &PointLightPass::operator=(PointLightPass &&other) noexcept = default;
+
     PointLightPass::~PointLightPass() = default;
 
     void PointLightPass::addJob(Job job) {

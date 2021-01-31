@@ -81,6 +81,10 @@ namespace garlic::clove {
         });
     }
 
+    ForwardColourPass::ForwardColourPass(ForwardColourPass &&other) noexcept = default;
+
+    ForwardColourPass &ForwardColourPass::operator=(ForwardColourPass &&other) noexcept = default;
+
     ForwardColourPass::~ForwardColourPass() = default;
 
     void ForwardColourPass::addJob(Job job) {
