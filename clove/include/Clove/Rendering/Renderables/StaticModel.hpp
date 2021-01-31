@@ -43,6 +43,9 @@ namespace garlic::clove {
 
         inline std::vector<Technique> const &getTechniques() const;
 
+        inline void addTechnique(Technique technique);
+        inline void removeTechnique(Technique const &technique);
+
         inline std::shared_ptr<Mesh> &operator[](size_t index);
     };
 }

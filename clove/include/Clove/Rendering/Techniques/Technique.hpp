@@ -16,7 +16,15 @@ namespace garlic::clove {
      * the correct individual GeometryPasses. For example a lighting technique will
      * add a mesh into a shadow pass and then a colour pass.
      */
-    struct Technique{
+    struct Technique {
         std::set<GeometryPass::Id> passIds{};
+
+        friend bool operator==(Technique const &lhs, Technique const &rhs) {
+            return lhs.passIds == rhs.passIds;
+        }
+
+        friend bool operator!=(Technique const &lhs, Technique const &rhs) {
+            return !(lhs == rhs);
+        }
     };
 }
