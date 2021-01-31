@@ -1,5 +1,5 @@
 namespace garlic::clove {
-    std::shared_ptr<garlic::clove::GhaBuffer> const &Mesh::getGraphicsBuffer() const {
+    std::shared_ptr<garlic::clove::GhaBuffer> const &Mesh::getGhaBuffer() const {
         return buffer;
     }
 

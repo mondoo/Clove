@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Clove/Graphics/CommandBuffer.hpp"
-#include "Clove/Graphics/MemoryBarrier.hpp"
 #include "Clove/Graphics/GhaPipelineObject.hpp"
 #include "Clove/Graphics/GhaShader.hpp"
+#include "Clove/Graphics/MemoryBarrier.hpp"
 
 #include <Clove/Maths/Vector.hpp>
 #include <span>
@@ -60,7 +60,10 @@ namespace garlic::clove {
          * @param clearValues An array of clear values. Each element in the array represents an attachment in the frameBuffer.
          */
         virtual void beginRenderPass(GhaRenderPass &renderPass, GhaFramebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) = 0;
-        virtual void endRenderPass()                                                                                                                    = 0;
+        virtual void endRenderPass()                                                                                                                          = 0;
+
+        virtual void setViewport(vec2i position, vec2ui size) = 0;
+        virtual void setScissor(vec2i position, vec2ui size)  = 0;
 
         virtual void bindPipelineObject(GhaPipelineObject &pipelineObject) = 0;
         /**
@@ -73,7 +76,7 @@ namespace garlic::clove {
          * @param offset Offset into the buffer where the indices begin.
          */
         virtual void bindIndexBuffer(GhaBuffer &indexBuffer, size_t const offset, IndexType indexType) = 0;
-        virtual void bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum)                 = 0;
+        virtual void bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum)         = 0;
 
         virtual void pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) = 0;
 
