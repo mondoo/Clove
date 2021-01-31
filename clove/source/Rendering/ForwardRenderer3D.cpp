@@ -41,7 +41,10 @@ namespace garlic::clove {
         //Object initialisation
         graphicsQueue = *graphicsFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
 
-        descriptorSetLayouts = createDescriptorSetLayouts(*graphicsFactory);
+        descriptorSetLayouts[DescriptorSetSlots::Mesh]     = createMeshDescriptorSetLayout(*graphicsFactory);
+        descriptorSetLayouts[DescriptorSetSlots::View]     = createViewDescriptorSetLayout(*graphicsFactory);
+        descriptorSetLayouts[DescriptorSetSlots::Lighting] = createLightingDescriptorSetLayout(*graphicsFactory);
+        descriptorSetLayouts[DescriptorSetSlots::UI]       = createUiDescriptorSetLayout(*graphicsFactory);
 
         createRenderpass();
         createShadowMapRenderpass();

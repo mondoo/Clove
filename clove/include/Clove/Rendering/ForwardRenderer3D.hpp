@@ -34,6 +34,13 @@ namespace garlic::clove {
             std::array<mat4f, MAX_JOINTS> matrixPalet;
         };
 
+        enum class DescriptorSetSlots {
+            Mesh,
+            View,
+            Lighting,
+            UI,
+        };
+
     private:
         //Data for an entire frame
         struct FrameData {
@@ -150,7 +157,7 @@ namespace garlic::clove {
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D &operator=(ForwardRenderer3D const &other) = delete;
-        ForwardRenderer3D &operator=(ForwardRenderer3D &&other) noexcept;
+        ForwardRenderer3D &operator                                  =(ForwardRenderer3D &&other) noexcept;
 
         ~ForwardRenderer3D();
 
@@ -177,7 +184,7 @@ namespace garlic::clove {
 
         void createRenderpass();
         void createShadowMapRenderpass();
-       
+
         void createDepthBuffer();
 
         void createUiPipeline();

@@ -12,17 +12,6 @@
 using namespace garlic::clove;
 
 namespace garlic::clove {
-    std::unordered_map<DescriptorSetSlots, std::shared_ptr<GhaDescriptorSetLayout>> createDescriptorSetLayouts(GhaFactory &factory) {
-        std::unordered_map<DescriptorSetSlots, std::shared_ptr<GhaDescriptorSetLayout>> setLayouts;
-
-        setLayouts[DescriptorSetSlots::Mesh]     = createMeshDescriptorSetLayout(factory);
-        setLayouts[DescriptorSetSlots::View]     = createViewDescriptorSetLayout(factory);
-        setLayouts[DescriptorSetSlots::Lighting] = createLightingDescriptorSetLayout(factory);
-        setLayouts[DescriptorSetSlots::UI]       = createUiDescriptorSetLayout(factory);
-
-        return setLayouts;
-    }
-
     std::unique_ptr<GhaDescriptorSetLayout> createMeshDescriptorSetLayout(GhaFactory &factory) {
         DescriptorSetBindingInfo const diffuseTextureBinding{
             .binding   = 0,

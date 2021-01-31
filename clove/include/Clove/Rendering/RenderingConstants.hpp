@@ -12,15 +12,4 @@ namespace garlic::clove {
 
     //General constants
     inline constexpr uint32_t shadowMapSize{ 1024u };
-
-    //TODO: Remove
-    /**
-	 * @brief Defines a mapping between set slots
-	 */
-    enum class DescriptorSetSlots {
-        Mesh     = 0,
-        View     = 1,
-        Lighting = 2,
-        UI       = 3,
-    };
 }
