@@ -56,7 +56,7 @@ namespace garlic::clove {
                 passIds.insert(technique.passIds.begin(), technique.passIds.end());
             }
             for(auto &mesh : staticModel.model.getMeshes()) {
-                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform, matrixPalet }, std::move(passIds));
+                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform, matrixPalet }, passIds);
             }
         });
         //Submit animated meshes
@@ -69,7 +69,7 @@ namespace garlic::clove {
                 passIds.insert(technique.passIds.begin(), technique.passIds.end());
             }
             for(auto &mesh : animatedModel.model.getMeshes()) {
-                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.model.getMaterial(), modelTransform, matrixPalet }, std::move(passIds));
+                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.model.getMaterial(), modelTransform, matrixPalet }, passIds);
             }
         });
 
