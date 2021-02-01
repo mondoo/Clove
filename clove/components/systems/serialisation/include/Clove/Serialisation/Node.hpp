@@ -4,6 +4,7 @@
 #include <string_view>
 #include <variant>
 #include <vector>
+#include <type_traits>
 
 namespace garlic::clove::serialiser {
     struct Node;
@@ -26,8 +27,18 @@ namespace garlic::clove::serialiser {
         std::string name;
         std::variant<float, std::vector<Node>> value{};
 
-        Node &operator=(float scalar) {
-            value = scalar;
+        template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
+        Node &operator=(T scalar) {
+            value = static_cast<float>(scalar);
+            return *this;
+        }
+
+        template<typename T, std::enable_if_t<!std::is_arithmetic_v<T>, int> = 0>
+        Node &operator=(const T &object) {
+            std::string const prevName{ name };
+            *this = serialise(object);
+            name  = prevName;
+
             return *this;
         }
 
@@ -45,9 +56,9 @@ namespace garlic::clove::serialiser {
                 }
             }
 
-            Node node{};
-            node.name = nodeName;
-            nodes.push_back(std::move(node));
+            nodes.emplace_back(Node{
+                .name = std::string{ nodeName },
+            });
 
             return nodes.back();
         }

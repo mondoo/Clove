@@ -26,9 +26,21 @@ TEST(YamlSerialisationTests, CanAddAChildNode) {
 TEST(YamlSerialisationTests, CanAddAChildNodeWithAValue) {
     Node root{};
 
-    root["value"] = 5.0f;
+    float f{ 99.0f };
+    int32_t i{ 100 };
+    uint32_t ui{ 200 };
+    int16_t i16{ 16 };
+    uint16_t ui16{ 1600 };
 
-    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nvalue: 5");
+    root["value1"]   = 5.0f;
+    root["value2"]   = 3;
+    root["float"]    = f;
+    root["int32_t"]  = i;
+    root["uint32_t"] = ui;
+    root["int16_t"]  = i16;
+    root["uint16_t"] = ui16;
+
+    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nvalue1: 5\nvalue2: 3\nfloat: 99\nint32_t: 100\nuint32_t: 200\nint16_t: 16\nuint16_t: 1600");
 }
 
 TEST(YamlSerialisationTests, CanAddANodeAsAChildNode) {
@@ -65,7 +77,7 @@ namespace garlic::clove {
     }
 }
 
-TEST(YamlSerialisationTests, CanPushASerialisableStruct) {
+TEST(YamlSerialisationTests, CanAddASerialisableStruct) {
     Node root{};
 
     TestStruct testStruct{
@@ -74,8 +86,7 @@ TEST(YamlSerialisationTests, CanPushASerialisableStruct) {
         .memberThree = 3,
     };
 
-    //TODO: root["testStruct"] = testStruct;
-    root["testStruct"].value = serialise(testStruct).value;
+    root["testStruct"] = testStruct;
 
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\ntestStruct:\n  memberOne: 1\n  memberTwo: 2\n  memberThree: 3");
 }
@@ -90,13 +101,12 @@ namespace garlic::clove {
     Node serialise<NestedTestStruct>(NestedTestStruct const &object) {
         Node node{};
         node["memberOne"] = object.memberOne;
-        //TODO: node["memberTwo"] = object.memberTwo;
-        node["memberTwo"].value = serialise(object.memberTwo).value;
+        node["memberTwo"] = object.memberTwo;
         return node;
     }
 }
 
-TEST(YamlSerialisationTests, CanPushANestedSerialisableStruct) {
+TEST(YamlSerialisationTests, CanAddANestedSerialisableStruct) {
     Node root{};
 
     NestedTestStruct testStruct{
@@ -108,8 +118,7 @@ TEST(YamlSerialisationTests, CanPushANestedSerialisableStruct) {
         },
     };
 
-    //TODO: root["testStruct"] = testStruct;
-    root["testStruct"].value = serialise(testStruct).value;
+    root["testStruct"] = testStruct;
 
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\ntestStruct:\n  memberOne: 1\n  memberTwo:\n    memberOne: 1\n    memberTwo: 2\n    memberThree: 3");
 }
