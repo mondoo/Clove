@@ -4,9 +4,9 @@
 #include <memory>
 
 namespace garlic::clove {
-    class GraphicsFactory;
-    class GraphicsImage;
-    class GraphicsImageView;
+    class GhaFactory;
+    class GhaImage;
+    class GhaImageView;
 }
 
 namespace garlic::clove {
@@ -19,13 +19,13 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        static std::weak_ptr<GraphicsImage> defaultImage;
+        static std::weak_ptr<GhaImage> defaultImage;
 
-        std::shared_ptr<GraphicsImage> diffuseImage;
-        std::shared_ptr<GraphicsImage> specularImage;
+        std::shared_ptr<GhaImage> diffuseImage;
+        std::shared_ptr<GhaImage> specularImage;
 
-        std::shared_ptr<GraphicsImageView> diffuseView;
-        std::shared_ptr<GraphicsImageView> specularView;
+        std::shared_ptr<GhaImageView> diffuseView;
+        std::shared_ptr<GhaImageView> specularView;
 
         vec4f colour{ 1.0f };
         float shininess{ 32.0f };
@@ -42,8 +42,8 @@ namespace garlic::clove {
 
         ~Material();
 
-        void setDiffuseTexture(std::shared_ptr<garlic::clove::GraphicsImage> image);
-        void setSpecularTexture(std::shared_ptr<garlic::clove::GraphicsImage> image);
+        void setDiffuseTexture(std::shared_ptr<garlic::clove::GhaImage> image);
+        void setSpecularTexture(std::shared_ptr<garlic::clove::GhaImage> image);
 
         inline void setColour(vec4f colour);
         inline void setShininess(float shininess);

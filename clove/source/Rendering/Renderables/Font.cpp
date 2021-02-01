@@ -3,9 +3,9 @@
 #include "Clove/Application.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
 
-#include <Clove/Graphics/GraphicsDevice.hpp>
-#include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Graphics/GraphicsImage.hpp>
+#include <Clove/Graphics/GhaDevice.hpp>
+#include <Clove/Graphics/GhaFactory.hpp>
+#include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Log/Log.hpp>
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -109,17 +109,17 @@ namespace garlic::clove {
         size_t constexpr bytesPerTexel{ 1 };//FT uses 1 byte per texel/pixel
         size_t const sizeBytes{ static_cast<size_t>(glyph.size.x * glyph.size.y * bytesPerTexel) };
 
-        GraphicsImage::Descriptor const glyphImageDescriptor{
-            .type        = GraphicsImage::Type::_2D,
-            .usageFlags  = GraphicsImage::UsageMode::Sampled | GraphicsImage::UsageMode::TransferDestination,
+        GhaImage::Descriptor const glyphImageDescriptor{
+            .type        = GhaImage::Type::_2D,
+            .usageFlags  = GhaImage::UsageMode::Sampled | GhaImage::UsageMode::TransferDestination,
             .dimensions  = glyph.size,
-            .format      = GraphicsImage::Format::R8_UNORM,//The bitmaps only use the red channel
+            .format      = GhaImage::Format::R8_UNORM,//The bitmaps only use the red channel
             .sharingMode = SharingMode::Exclusive,
         };
 
         glyph.character     = createImageWithData(*graphicsFactory, std::move(glyphImageDescriptor), faceBuffer, sizeBytes);
-        glyph.characterView = glyph.character->createView(GraphicsImageView::Descriptor{
-            .type       = GraphicsImageView::Type::_2D,
+        glyph.characterView = glyph.character->createView(GhaImageView::Descriptor{
+            .type       = GhaImageView::Type::_2D,
             .layer      = 0,
             .layerCount = 1,
         });

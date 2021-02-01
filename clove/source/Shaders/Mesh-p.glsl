@@ -2,9 +2,11 @@
 
 #include "Constants.glsl"
 
-layout(set = SET_MESH, binding = 0) uniform sampler2D texSampler;
-layout(set = SET_LIGHTING, binding = 3) uniform sampler2D directionalDepthSampler[MAX_LIGHTS];
-layout(set = SET_LIGHTING, binding = 4) uniform samplerCube pointLightDepthSampler[MAX_LIGHTS];
+layout(set = 0, binding = 0) uniform sampler2D diffuseSampler;
+layout(set = 0, binding = 1) uniform sampler2D specularSampler;
+
+layout(set = 2, binding = 3) uniform sampler2D directionalDepthSampler[MAX_LIGHTS];
+layout(set = 2, binding = 4) uniform samplerCube pointLightDepthSampler[MAX_LIGHTS];
 
 layout(set = SET_VIEW, binding = 1) uniform ViewPosition{
 	vec3 viewPos;
@@ -29,16 +31,16 @@ struct PointLightData{
 	
 	float farplane;
 };
-layout(std140, set = SET_LIGHTING, binding = 0) uniform Lights{
+layout(std140, set = 2, binding = 0) uniform Lights{
 	DirectionalLightData directionalLights[MAX_LIGHTS];
 	PointLightData pointLights[MAX_LIGHTS];
 };
-layout(std140, set = SET_LIGHTING, binding = 1) uniform NumLights{
+layout(std140, set = 2, binding = 1) uniform NumLights{
 	int numDirLights;
 	int numPointLights;
 };
 
-layout(std140, set = SET_MESH, binding = 3) uniform Colour{
+layout(std140, set = 0, binding = 4) uniform Colour{
 	vec4 colour;
 };
 
@@ -56,7 +58,8 @@ float adjustBias(float minBias, float maxBias, vec3 normal, vec3 lightDir){
 }
 
 void main(){
-	vec3 texelColour = vec3(texture(texSampler, fragTexCoord));
+	const vec3 diffuseColour = texture(diffuseSampler, fragTexCoord).rgb;
+	const vec3 specularColour = texture(specularSampler, fragTexCoord).rgb;
 
 	vec3 viewDir = normalize(viewPos - fragPos);
 
@@ -78,16 +81,16 @@ void main(){
 		const vec3 lightDir = normalize(-directionalLights[i].direction); //Gets the direction towards the light
 		
 		//Ambient
-		totalAmbient += directionalLights[i].ambient;
+		totalAmbient += diffuseColour * directionalLights[i].ambient;
 	
 		//Diffuse
 		const float diffIntensity = max(dot(normal, lightDir), 0.0f);
-		totalDiffuse += directionalLights[i].diffuse * diffIntensity;
+		totalDiffuse += diffuseColour * directionalLights[i].diffuse * diffIntensity;
 
 		//Specular
 		const vec3 reflectDir = reflect(-lightDir, normal);
 		const float specIntensity = pow(max(dot(viewDir, reflectDir), 0.0f), shiniess);
-		totalSpecular += directionalLights[i].specular * specIntensity;
+		totalSpecular += specularColour * directionalLights[i].specular * specIntensity;
 
 		//Shadow
 		vec3 projCoords = fragPosLightSpaces[i].xyz / fragPosLightSpaces[i].w;
@@ -104,16 +107,16 @@ void main(){
 		const vec3 lightDir = normalize(pointLights[i].position - fragPos);
 
 		//Ambient
-		vec3 ambient = pointLights[i].ambient;
+		vec3 ambient = diffuseColour * pointLights[i].ambient;
 
 		//Diffuse
 		const float diffIntensity = max(dot(normal, lightDir), 0.0f);
-		vec3 diffuse = pointLights[i].diffuse * diffIntensity;
+		vec3 diffuse = diffuseColour * pointLights[i].diffuse * diffIntensity;
 
 		//Specular
 		const vec3 reflectDir = reflect(-lightDir, normal);
 		const float specIntensity = pow(max(dot(viewDir, reflectDir), 0.0f), shiniess);
-		vec3 specular = pointLights[i].specular * specIntensity;
+		vec3 specular = specularColour * pointLights[i].specular * specIntensity;
 
 		//Attenuation
 		float dist = length(pointLights[i].position - fragPos);
@@ -137,7 +140,8 @@ void main(){
 	}
 
 	shadow /= (numDirLights + numPointLights);
-	const vec3 lighting = (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular))) * texelColour;
 
-	outColour = vec4(lighting, 1.0) * colour;
+	const vec3 lighting = (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)));
+
+	outColour = vec4(lighting, 1.0f) * colour;
 }

@@ -2,8 +2,8 @@
 
 @implementation MacWindowProxy
 - (instancetype)initWithWindowData:(NSView*)view width: (unsigned int)width height:(unsigned int)height name:(NSString*)name{
-	const NSRect rect = NSMakeRect(0, 0, width, height);
-	const NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
+	NSRect const rect{ NSMakeRect(0, 0, width, height) };
+	NSWindowStyleMask const styleMask{ NSWindowStyleMaskHUDWindow | NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable };
 	
 	_window = [[NSWindow alloc] initWithContentRect:rect
 										  styleMask:styleMask
@@ -12,9 +12,10 @@
 
 	[_window setTitle:name];
 	[_window setDelegate:self];
+	[_window setBackgroundColor:NSColor.redColor];
 	[_window makeKeyAndOrderFront:nil];
 
-	[_window setContentView:view];
+	//[_window setContentView:view];
 	
 	return self;
 }
@@ -81,13 +82,7 @@ namespace garlic::clove{
 
 	void MacWindow::processInput(){
 		@autoreleasepool {
-			NSEvent* event;
-			do{
-				event = [NSApp nextEventMatchingMask:NSEventMaskAny
-										   untilDate:nil
-											  inMode:NSDefaultRunLoopMode
-											 dequeue:YES];
-			
+			while(NSEvent* event = [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:nil inMode:NSDefaultRunLoopMode dequeue:YES]){
 				vec2i mouseLoc{ static_cast<int32_t>([NSEvent mouseLocation].x), static_cast<int32_t>([NSEvent mouseLocation].y) };
 				switch ([event type]){
 					case NSEventTypeKeyDown:
@@ -156,7 +151,7 @@ namespace garlic::clove{
 						[NSApp sendEvent:event];
 						break;
 				}
-			} while (event != nil);
+			}
 		}
 	}
 }

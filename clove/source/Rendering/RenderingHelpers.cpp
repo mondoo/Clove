@@ -2,152 +2,151 @@
 
 #include "Clove/Rendering/RenderingConstants.hpp"
 
-#include <Clove/Graphics/DescriptorSetLayout.hpp>
-#include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Graphics/GraphicsQueue.hpp>
-#include <Clove/Graphics/Shader.hpp>
-#include <Clove/Graphics/TransferQueue.hpp>
+#include <Clove/Graphics/GhaDescriptorSetLayout.hpp>
+#include <Clove/Graphics/GhaFactory.hpp>
+#include <Clove/Graphics/GhaGraphicsQueue.hpp>
+#include <Clove/Graphics/GhaShader.hpp>
+#include <Clove/Graphics/GhaTransferQueue.hpp>
+#include <Clove/TextureLoader.hpp>
 
 using namespace garlic::clove;
 
 namespace garlic::clove {
-    std::unordered_map<DescriptorSetSlots, std::shared_ptr<DescriptorSetLayout>> createDescriptorSetLayouts(GraphicsFactory &factory) {
-        std::unordered_map<DescriptorSetSlots, std::shared_ptr<DescriptorSetLayout>> setLayouts;
+    std::unique_ptr<GhaDescriptorSetLayout> createMeshDescriptorSetLayout(GhaFactory &factory) {
+        DescriptorSetBindingInfo const diffuseTextureBinding{
+            .binding   = 0,
+            .type      = DescriptorType::CombinedImageSampler,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Pixel,
+        };
 
-        //MESH SET
-        {
-            DescriptorSetBindingInfo textureBinding{
-                .binding   = 0,
-                .type      = DescriptorType::CombinedImageSampler,
-                .arraySize = 1,
-                .stage     = Shader::Stage::Pixel,
-            };
+        DescriptorSetBindingInfo const specularTextureBinding{
+            .binding   = 1,
+            .type      = DescriptorType::CombinedImageSampler,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Pixel,
+        };
 
-            DescriptorSetBindingInfo modelBinding{
-                .binding   = 1,
-                .type      = DescriptorType::UniformBuffer,
-                .arraySize = 1,
-                .stage     = Shader::Stage::Vertex,
-            };
+        DescriptorSetBindingInfo const modelBinding{
+            .binding   = 2,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Vertex,
+        };
 
-            DescriptorSetBindingInfo skeletonBinding{
-                .binding   = 2,
-                .type      = DescriptorType::UniformBuffer,
-                .arraySize = 1,
-                .stage     = Shader::Stage::Vertex,
-            };
+        DescriptorSetBindingInfo const skeletonBinding{
+            .binding   = 3,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Vertex,
+        };
 
-            DescriptorSetBindingInfo colourBinding{
-                .binding   = 3,
-                .type      = DescriptorType::UniformBuffer,
-                .arraySize = 1,
-                .stage     = Shader::Stage::Pixel,
-            };
+        DescriptorSetBindingInfo const colourBinding{
+            .binding   = 4,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Pixel,
+        };
 
-            setLayouts[DescriptorSetSlots::Mesh] = *factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
-                .bindings = {
-                    std::move(textureBinding),
-                    std::move(modelBinding),
-                    std::move(skeletonBinding),
-                    std::move(colourBinding),
-                },
-            });
-        }
-
-        //VIEW SET
-        {
-            DescriptorSetBindingInfo viewDataBinding{
-                .binding   = 0,
-                .type      = DescriptorType::UniformBuffer,
-                .arraySize = 1,
-                .stage     = Shader::Stage::Vertex,
-            };
-
-            DescriptorSetBindingInfo viewPosBinding{
-                .binding   = 1,
-                .type      = DescriptorType::UniformBuffer,
-                .arraySize = 1,
-                .stage     = Shader::Stage::Pixel,
-            };
-
-            setLayouts[DescriptorSetSlots::View] = *factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
-                .bindings = {
-                    std::move(viewDataBinding),
-                    std::move(viewPosBinding),
-                },
-            });
-        }
-
-        //LIGHTING SET
-        {
-            DescriptorSetBindingInfo lightDataBinding{
-                .binding   = 0,
-                .type      = DescriptorType::UniformBuffer,
-                .arraySize = 1,
-                .stage     = Shader::Stage::Pixel,
-            };
-
-            DescriptorSetBindingInfo numLightBinding{
-                .binding   = 1,
-                .type      = DescriptorType::UniformBuffer,
-                .arraySize = 1,
-                .stage     = Shader::Stage::Vertex | Shader::Stage::Pixel,
-            };
-
-            DescriptorSetBindingInfo directionalShadowTransformBinding{
-                .binding   = 2,
-                .type      = DescriptorType::UniformBuffer,
-                .arraySize = 1,
-                .stage     = Shader::Stage::Vertex,
-            };
-
-            DescriptorSetBindingInfo directionalShadowMapBinding{
-                .binding   = 3,
-                .type      = DescriptorType::CombinedImageSampler,
-                .arraySize = MAX_LIGHTS,
-                .stage     = Shader::Stage::Pixel,
-            };
-
-            DescriptorSetBindingInfo pointShadowMapBinding{
-                .binding   = 4,
-                .type      = DescriptorType::CombinedImageSampler,
-                .arraySize = MAX_LIGHTS,
-                .stage     = Shader::Stage::Pixel,
-            };
-
-            setLayouts[DescriptorSetSlots::Lighting] = *factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
-                .bindings = {
-                    std::move(lightDataBinding),
-                    std::move(numLightBinding),
-                    std::move(directionalShadowTransformBinding),
-                    std::move(directionalShadowMapBinding),
-                    std::move(pointShadowMapBinding),
-                },
-            });
-        }
-
-        //UI SET
-        {
-            DescriptorSetBindingInfo textureBinding{
-                .binding   = 0,
-                .type      = DescriptorType::CombinedImageSampler,
-                .arraySize = 1,
-                .stage     = Shader::Stage::Pixel,
-            };
-
-            setLayouts[DescriptorSetSlots::UI] = *factory.createDescriptorSetLayout(DescriptorSetLayout::Descriptor{
-                .bindings = {
-                    std::move(textureBinding),
-                },
-            });
-        }
-
-        return setLayouts;
+        return *factory.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
+            .bindings = {
+                std::move(diffuseTextureBinding),
+                std::move(specularTextureBinding),
+                std::move(modelBinding),
+                std::move(skeletonBinding),
+                std::move(colourBinding),
+            },
+        });
     }
 
-    std::unordered_map<DescriptorType, uint32_t> countDescriptorBindingTypes(DescriptorSetLayout const &descriptorSetLayout) {
+    std::unique_ptr<GhaDescriptorSetLayout> createViewDescriptorSetLayout(GhaFactory &factory) {
+        DescriptorSetBindingInfo const viewDataBinding{
+            .binding   = 0,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Vertex,
+        };
+
+        DescriptorSetBindingInfo const viewPosBinding{
+            .binding   = 1,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Pixel,
+        };
+
+        return *factory.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
+            .bindings = {
+                std::move(viewDataBinding),
+                std::move(viewPosBinding),
+            },
+        });
+    }
+
+    std::unique_ptr<GhaDescriptorSetLayout> createLightingDescriptorSetLayout(GhaFactory &factory) {
+        DescriptorSetBindingInfo const lightDataBinding{
+            .binding   = 0,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Pixel,
+        };
+
+        DescriptorSetBindingInfo const numLightBinding{
+            .binding   = 1,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Vertex | GhaShader::Stage::Pixel,
+        };
+
+        DescriptorSetBindingInfo const directionalShadowTransformBinding{
+            .binding   = 2,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Vertex,
+        };
+
+        DescriptorSetBindingInfo const directionalShadowMapBinding{
+            .binding   = 3,
+            .type      = DescriptorType::CombinedImageSampler,
+            .arraySize = MAX_LIGHTS,
+            .stage     = GhaShader::Stage::Pixel,
+        };
+
+        DescriptorSetBindingInfo const pointShadowMapBinding{
+            .binding   = 4,
+            .type      = DescriptorType::CombinedImageSampler,
+            .arraySize = MAX_LIGHTS,
+            .stage     = GhaShader::Stage::Pixel,
+        };
+
+        return *factory.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
+            .bindings = {
+                std::move(lightDataBinding),
+                std::move(numLightBinding),
+                std::move(directionalShadowTransformBinding),
+                std::move(directionalShadowMapBinding),
+                std::move(pointShadowMapBinding),
+            },
+        });
+    }
+
+    std::unique_ptr<GhaDescriptorSetLayout> createUiDescriptorSetLayout(GhaFactory &factory) {
+        DescriptorSetBindingInfo const textureBinding{
+            .binding   = 0,
+            .type      = DescriptorType::CombinedImageSampler,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Pixel,
+        };
+
+        return *factory.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
+            .bindings = {
+                std::move(textureBinding),
+            },
+        });
+    }
+
+    std::unordered_map<DescriptorType, uint32_t> countDescriptorBindingTypes(GhaDescriptorSetLayout const &descriptorSetLayout) {
         std::unordered_map<DescriptorType, uint32_t> counts;
-        auto const &descriptor = descriptorSetLayout.getDescriptor();
+        auto const &descriptor{ descriptorSetLayout.getDescriptor() };
         for(auto &binding : descriptor.bindings) {
             counts[binding.type] += binding.arraySize;
         }
@@ -155,12 +154,15 @@ namespace garlic::clove {
         return counts;
     }
 
-    std::unique_ptr<GraphicsImage> createImageWithData(GraphicsFactory &factory, GraphicsImage::Descriptor imageDescriptor, void const *data, size_t const dataSize) {
+    std::unique_ptr<GhaImage> createImageWithData(GhaFactory &factory, GhaImage::Descriptor imageDescriptor, void const *data, size_t const dataSize) {
+        //Make sure the image is set up to be transfered to.
+        imageDescriptor.usageFlags |= GhaImage::UsageMode::TransferDestination;
+
         ImageMemoryBarrierInfo constexpr layoutTransferInfo{
             .currentAccess      = AccessFlags::None,
             .newAccess          = AccessFlags::TransferWrite,
-            .currentImageLayout = GraphicsImage::Layout::Undefined,
-            .newImageLayout     = GraphicsImage::Layout::TransferDestinationOptimal,
+            .currentImageLayout = GhaImage::Layout::Undefined,
+            .newImageLayout     = GhaImage::Layout::TransferDestinationOptimal,
             .sourceQueue        = QueueType::None,
             .destinationQueue   = QueueType::None,
         };
@@ -168,8 +170,8 @@ namespace garlic::clove {
         ImageMemoryBarrierInfo constexpr transferQueueReleaseInfo{
             .currentAccess      = AccessFlags::TransferWrite,
             .newAccess          = AccessFlags::None,
-            .currentImageLayout = GraphicsImage::Layout::TransferDestinationOptimal,
-            .newImageLayout     = GraphicsImage::Layout::TransferDestinationOptimal,
+            .currentImageLayout = GhaImage::Layout::TransferDestinationOptimal,
+            .newImageLayout     = GhaImage::Layout::TransferDestinationOptimal,
             .sourceQueue        = QueueType::Transfer,
             .destinationQueue   = QueueType::Graphics,
         };
@@ -177,8 +179,8 @@ namespace garlic::clove {
         ImageMemoryBarrierInfo constexpr graphicsQueueAcquireInfo{
             .currentAccess      = AccessFlags::TransferWrite,
             .newAccess          = AccessFlags::ShaderRead,
-            .currentImageLayout = GraphicsImage::Layout::TransferDestinationOptimal,
-            .newImageLayout     = GraphicsImage::Layout::ShaderReadOnlyOptimal,
+            .currentImageLayout = GhaImage::Layout::TransferDestinationOptimal,
+            .newImageLayout     = GhaImage::Layout::ShaderReadOnlyOptimal,
             .sourceQueue        = QueueType::Transfer,
             .destinationQueue   = QueueType::Graphics,
         };
@@ -190,14 +192,14 @@ namespace garlic::clove {
         auto transferQueue = *factory.createTransferQueue({ QueueFlags::Transient });
         auto graphicsQueue = *factory.createGraphicsQueue({ QueueFlags::Transient });
 
-        std::shared_ptr<TransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
-        std::shared_ptr<GraphicsCommandBuffer> graphicsCommandBuffer = graphicsQueue->allocateCommandBuffer();
+        std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
+        std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBuffer{ graphicsQueue->allocateCommandBuffer() };
 
-        auto image = *factory.createImage(std::move(imageDescriptor));
+        auto image{ *factory.createImage(std::move(imageDescriptor)) };
 
-        auto transferBuffer = *factory.createBuffer(GraphicsBuffer::Descriptor{
+        auto transferBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = dataSize,
-            .usageFlags  = GraphicsBuffer::UsageMode::TransferSource,
+            .usageFlags  = GhaBuffer::UsageMode::TransferSource,
             .sharingMode = SharingMode::Exclusive,
             .memoryType  = MemoryType::SystemMemory,
         });
@@ -205,14 +207,14 @@ namespace garlic::clove {
 
         //Change the layout of the image, write the buffer into it and then release the queue ownership
         transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        transferCommandBuffer->imageMemoryBarrier(*image, std::move(layoutTransferInfo), PipelineObject::Stage::Top, PipelineObject::Stage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*image, std::move(layoutTransferInfo), GhaPipelineObject::Stage::Top, GhaPipelineObject::Stage::Transfer);
         transferCommandBuffer->copyBufferToImage(*transferBuffer, bufferOffset, *image, imageOffset, imageExtent);
-        transferCommandBuffer->imageMemoryBarrier(*image, std::move(transferQueueReleaseInfo), PipelineObject::Stage::Transfer, PipelineObject::Stage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*image, std::move(transferQueueReleaseInfo), GhaPipelineObject::Stage::Transfer, GhaPipelineObject::Stage::Transfer);
         transferCommandBuffer->endRecording();
 
         //Acquire ownership of the image to a graphics queue
         graphicsCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        graphicsCommandBuffer->imageMemoryBarrier(*image, std::move(graphicsQueueAcquireInfo), PipelineObject::Stage::Transfer, PipelineObject::Stage::PixelShader);
+        graphicsCommandBuffer->imageMemoryBarrier(*image, std::move(graphicsQueueAcquireInfo), GhaPipelineObject::Stage::Transfer, GhaPipelineObject::Stage::PixelShader);
         graphicsCommandBuffer->endRecording();
 
         auto transferQueueFinishedFence{ *factory.createFence({ false }) };
@@ -228,5 +230,21 @@ namespace garlic::clove {
         graphicsQueue->freeCommandBuffer(*graphicsCommandBuffer);
 
         return image;
+    }
+
+    std::unique_ptr<GhaImage> createImageFromPath(GhaFactory &factory, std::filesystem::path const &path) {
+        TextureLoader::LoadedTextureData const textureData{ TextureLoader::loadTexture(path).getValue() };
+
+        GhaImage::Descriptor const textureDesc{
+            .type        = GhaImage::Type::_2D,
+            .usageFlags  = GhaImage::UsageMode::Sampled,
+            .dimensions  = textureData.dimensions,
+            .format      = GhaImage::Format::R8G8B8A8_SRGB,
+            .sharingMode = SharingMode::Exclusive,
+        };
+
+        size_t const size{ textureData.dimensions.x * textureData.dimensions.y * textureData.channels };
+
+        return createImageWithData(factory, std::move(textureDesc), textureData.buffer.get(), size);
     }
 }

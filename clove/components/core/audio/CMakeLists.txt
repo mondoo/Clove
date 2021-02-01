@@ -7,24 +7,24 @@ add_library(
 
     ${INCLUDE}/Audio.hpp
 	${SOURCE}/Audio.cpp
-	${INCLUDE}/AudioBuffer.hpp
-	${INCLUDE}/AudioDevice.hpp
-	${INCLUDE}/AudioFactory.hpp
-	${INCLUDE}/AudioListener.hpp
-    ${INCLUDE}/AudioSource.hpp
+	${INCLUDE}/AhaBuffer.hpp
+	${INCLUDE}/AhaDevice.hpp
+	${INCLUDE}/AhaFactory.hpp
+	${INCLUDE}/AhaListener.hpp
+    ${INCLUDE}/AhaSource.hpp
         
-    ${INCLUDE}/OpenAL/ALBuffer.hpp
-	${SOURCE}/OpenAL/ALBuffer.cpp
-	${INCLUDE}/OpenAL/ALDevice.hpp
-	${SOURCE}/OpenAL/ALDevice.cpp
-	${INCLUDE}/OpenAL/ALError.hpp
-	${SOURCE}/OpenAL/ALError.cpp
-	${INCLUDE}/OpenAL/ALFactory.hpp
-	${SOURCE}/OpenAL/ALFactory.cpp
-	${INCLUDE}/OpenAL/ALListener.hpp
-	${SOURCE}/OpenAL/ALListener.cpp
-	${INCLUDE}/OpenAL/ALSource.hpp
-	${SOURCE}/OpenAL/ALSource.cpp
+    ${INCLUDE}/OpenAL/OpenAlBuffer.hpp
+	${SOURCE}/OpenAL/OpenAlBuffer.cpp
+	${INCLUDE}/OpenAL/OpenAlDevice.hpp
+	${SOURCE}/OpenAL/OpenAlDevice.cpp
+	${INCLUDE}/OpenAL/OpenAlError.hpp
+	${SOURCE}/OpenAL/OpenAlError.cpp
+	${INCLUDE}/OpenAL/OpenAlFactory.hpp
+	${SOURCE}/OpenAL/OpenAlFactory.cpp
+	${INCLUDE}/OpenAL/OpenAlListener.hpp
+	${SOURCE}/OpenAL/OpenAlListener.cpp
+	${INCLUDE}/OpenAL/OpenAlSource.hpp
+	${SOURCE}/OpenAL/OpenAlSource.cpp
 )
 
 #Includes

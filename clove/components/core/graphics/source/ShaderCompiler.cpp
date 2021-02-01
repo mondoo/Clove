@@ -64,11 +64,11 @@ namespace garlic::clove::ShaderCompiler {
             }
         };
 
-        shaderc_shader_kind getShadercStage(Shader::Stage stage) {
+        shaderc_shader_kind getShadercStage(GhaShader::Stage stage) {
             switch(stage) {
-                case Shader::Stage::Vertex:
+                case GhaShader::Stage::Vertex:
                     return shaderc_vertex_shader;
-                case Shader::Stage::Pixel:
+                case GhaShader::Stage::Pixel:
                     return shaderc_fragment_shader;
                 default:
                     CLOVE_ASSERT("Unsupported shader stage {0}", CLOVE_FUNCTION_NAME);
@@ -101,7 +101,7 @@ namespace garlic::clove::ShaderCompiler {
             return {};
         }
 
-        std::vector<uint32_t> spirvToMSL(Shader::Stage shaderStage, std::vector<uint32_t> const &spirvSource) {
+        std::vector<uint32_t> spirvToMSL(GhaShader::Stage shaderStage, std::vector<uint32_t> const &spirvSource) {
             spirv_cross::CompilerMSL msl(spirvSource);
             spirv_cross::CompilerMSL::Options scoptions;
 
@@ -139,7 +139,7 @@ namespace garlic::clove::ShaderCompiler {
             }
 
             //Remap names to semantics
-            if(shaderStage == Shader::Stage::Vertex) {
+            if(shaderStage == GhaShader::Stage::Vertex) {
                 for(auto &resource : resources.stage_inputs) {
                     uint32_t const location{ msl.get_decoration(resource.id, spv::DecorationLocation) };
                     std::string str{ msl.get_decoration_string(resource.id, spv::DecorationUserSemantic) };
@@ -154,7 +154,7 @@ namespace garlic::clove::ShaderCompiler {
             return {};
         }
 
-        Expected<std::vector<uint32_t>, std::runtime_error> compile(std::string_view source, std::unique_ptr<shaderc::CompileOptions::IncluderInterface> includer, std::string_view shaderName, Shader::Stage shaderStage, ShaderType outputType) {
+        Expected<std::vector<uint32_t>, std::runtime_error> compile(std::string_view source, std::unique_ptr<shaderc::CompileOptions::IncluderInterface> includer, std::string_view shaderName, GhaShader::Stage shaderStage, ShaderType outputType) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Compiling shader {0}...", shaderName);
 
             shaderc::CompileOptions options{};
@@ -189,7 +189,7 @@ namespace garlic::clove::ShaderCompiler {
         }
     }
 
-    Expected<std::vector<uint32_t>, std::runtime_error> compileFromFile(std::filesystem::path const &file, Shader::Stage shaderStage, ShaderType outputType) {
+    Expected<std::vector<uint32_t>, std::runtime_error> compileFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage, ShaderType outputType) {
         if(!file.has_filename()) {
             return Unexpected{ std::runtime_error{ "Path does not have a file name" } };
         }
@@ -204,7 +204,7 @@ namespace garlic::clove::ShaderCompiler {
         return compile({ source.data(), source.size() }, std::move(fileIncluder), shaderName, shaderStage, outputType);
     }
 
-    Expected<std::vector<uint32_t>, std::runtime_error> compileFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, Shader::Stage shaderStage, ShaderType outputType) {
+    Expected<std::vector<uint32_t>, std::runtime_error> compileFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage, ShaderType outputType) {
         return compile(source, std::make_unique<EmbeddedSourceIncluder>(std::move(includeSources)), shaderName, shaderStage, outputType);
     }
 }

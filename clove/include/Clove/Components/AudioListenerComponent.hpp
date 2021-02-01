@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Clove/Audio/AudioListener.hpp>
-
+#include <Clove/Audio/AhaListener.hpp>
 #include <memory>
 
 namespace garlic::clove {
@@ -10,6 +9,6 @@ namespace garlic::clove {
 	 * @details Every ecs::EntityManager can only have 1 AudioListenerComponent.
 	 */
     struct AudioListenerComponent {
-        std::unique_ptr<AudioListener> listener;
+        std::unique_ptr<AhaListener> listener;
     };
 }

@@ -10,8 +10,8 @@
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
-#include <Clove/Graphics/GraphicsBuffer.hpp>
-#include <Clove/Graphics/GraphicsImage.hpp>
+#include <Clove/Graphics/GhaBuffer.hpp>
+#include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
 
@@ -21,11 +21,11 @@ namespace garlic::membrane {
         , height{ height } {
         using namespace garlic::clove;
 
-        GraphicsImage::Descriptor renderTargetImageDescriptor{};
-        renderTargetImageDescriptor.type        = GraphicsImage::Type::_2D;
-        renderTargetImageDescriptor.usageFlags  = GraphicsImage::UsageMode::ColourAttachment | GraphicsImage::UsageMode::TransferSource;
+        GhaImage::Descriptor renderTargetImageDescriptor{};
+        renderTargetImageDescriptor.type        = GhaImage::Type::_2D;
+        renderTargetImageDescriptor.usageFlags  = GhaImage::UsageMode::ColourAttachment | GhaImage::UsageMode::TransferSource;
         renderTargetImageDescriptor.dimensions  = { width, height };
-        renderTargetImageDescriptor.format      = GraphicsImage::Format::B8G8R8A8_SRGB;//Hard coding format to B8G8R8A8_SRGB as that is what the WriteableBitmap is set to
+        renderTargetImageDescriptor.format      = GhaImage::Format::B8G8R8A8_SRGB;//Hard coding format to B8G8R8A8_SRGB as that is what the WriteableBitmap is set to
         renderTargetImageDescriptor.sharingMode = SharingMode::Concurrent;
 
         //Use pair as there seems to be an issue when using structured bindings

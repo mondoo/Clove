@@ -5,16 +5,15 @@
 #include "Clove/Components/AudioSourceComponent.hpp"
 #include "Clove/Components/TransformComponent.hpp"
 
-#include <Clove/Audio/AudioListener.hpp>
-#include <Clove/Audio/AudioSource.hpp>
+#include <Clove/Audio/AhaListener.hpp>
+#include <Clove/Audio/AhaSource.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    AudioLayer::AudioLayer()
+    AudioLayer::AudioLayer(EntityManager *entityManager)
         : Layer("Audio")
-        , entityManager{ Application::get().getEntityManager()} {
-
+        , entityManager{ entityManager } {
     }
 
     AudioLayer::AudioLayer(AudioLayer &&other) noexcept = default;

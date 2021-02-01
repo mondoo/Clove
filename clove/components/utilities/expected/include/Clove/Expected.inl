@@ -24,6 +24,50 @@ namespace garlic::clove {
     }
 
     template<typename T, typename E>
+    Expected<T, E>::Expected(Expected const &other)
+        : ok{ other.ok } {
+        if(ok) {
+            value = other.value;
+        } else {
+            error = other.error;
+        }
+    }
+
+    template<typename T, typename E>
+    Expected<T, E>::Expected(Expected &&other) noexcept
+        : ok{ other.ok } {
+        if(ok) {
+            value = std::move(other.value);
+        } else {
+            error = std::move(other.error);
+        }
+    }
+
+    template<typename T, typename E>
+    Expected<T, E> &Expected<T, E>::operator=(Expected const &other) {
+        ok = other.ok;
+        if(ok) {
+            value = other.value;
+        } else {
+            error = other.error;
+        }
+
+        return *this;
+    }
+
+    template<typename T, typename E>
+    Expected<T, E> &Expected<T, E>::operator=(Expected &&other) noexcept {
+        ok = other.ok;
+        if(ok) {
+            value = std::move(other.value);
+        } else {
+            error = std::move(other.error);
+        }
+
+        return *this;
+    }
+
+    template<typename T, typename E>
     bool Expected<T, E>::hasValue() const noexcept {
         return ok;
     }

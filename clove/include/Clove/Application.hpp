@@ -2,7 +2,7 @@
 
 #include <Clove/Audio/Audio.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
-#include <Clove/Graphics/GraphicsImage.hpp>
+#include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Platform/PlatformTypes.hpp>
 #include <chrono>
 #include <map>
@@ -12,13 +12,14 @@
 namespace garlic::clove {
     class Platform;
     class Surface;
-    class GraphicsDevice;
+    class GhaDevice;
     class EntityManager;
     class Layer;
     class ForwardRenderer3D;
     class GraphicsImageRenderTarget;
     class AudioDevice;
     class PhysicsLayer;
+	class RenderTarget;
 }
 
 namespace garlic::clove {
@@ -42,10 +43,10 @@ namespace garlic::clove {
         static Application *instance;
         State currentState{ State::Running }; //Assumed to be initialised to the running state.
 
-        std::unique_ptr<Surface> surface;
-
-        std::unique_ptr<GraphicsDevice> graphicsDevice;
+        std::unique_ptr<GhaDevice> graphicsDevice;
         std::unique_ptr<AudioDevice> audioDevice;
+		
+		std::unique_ptr<Surface> surface;
 
         std::unique_ptr<ForwardRenderer3D> renderer;
         std::unique_ptr<EntityManager> entityManager;
@@ -57,6 +58,8 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
+		Application() = delete;
+		
         Application(Application const &other)     = delete;
         Application(Application &&other) noexcept = delete;
 
@@ -82,7 +85,7 @@ namespace garlic::clove {
          * @param surface A surface to provide input functionality to the application.
          * @return A pair with the created application instance and a pointer to the render target of the application.
          */
-        static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GraphicsImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface);
+        static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GhaImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface);
 
         static Application &get();
 
@@ -106,7 +109,7 @@ namespace garlic::clove {
         inline Surface *getSurface() const;
 
         //Devices
-        inline GraphicsDevice *getGraphicsDevice() const;
+        inline GhaDevice *getGraphicsDevice() const;
         inline AudioDevice *getAudioDevice() const;
 
         //Systems
@@ -115,7 +118,7 @@ namespace garlic::clove {
         inline PhysicsLayer *getPhysicsLayer() const;
 
     private:
-        Application();
+        Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AudioDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget);
     };
 }
 

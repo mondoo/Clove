@@ -2,12 +2,12 @@
 
 #include "Constants.glsl"
 
-layout(std140, set = SET_MESH, binding = 1) uniform Model{
+layout(std140, set = SET_MESH, binding = 2) uniform Model{
 	mat4 model;
 	mat4 normalMatrix;
 };
 
-layout(std140, set = SET_MESH, binding = 2) uniform Skeleton{
+layout(std140, set = SET_MESH, binding = 3) uniform Skeleton{
 	mat4 matrixPalet[MAX_JOINTS];
 };
 
@@ -16,8 +16,8 @@ layout(std140, push_constant) uniform LightSpace{
 };
 
 layout(location = 0) in vec3 position;
-layout(location = 4) in ivec4 jointIds;
-layout(location = 5) in vec4 weights;
+layout(location = 1) in ivec4 jointIds;
+layout(location = 2) in vec4 weights;
 
 void main(){
     const mat4 mvp = lightSpaceMatrix * model;

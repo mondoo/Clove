@@ -59,11 +59,11 @@ namespace garlic::clove {
         Expected(Unexpected<E> const &error) noexcept;
         Expected(Unexpected<E> &&error) noexcept;
 
-        Expected(Expected const &other)     = default;
-        Expected(Expected &&other) noexcept = default;
+        Expected(Expected const &other);
+        Expected(Expected &&other) noexcept;
 
-        Expected &operator=(Expected const &other) = default;
-        Expected &operator=(Expected &&other) noexcept = default;
+        Expected &operator=(Expected const &other);
+        Expected &operator=(Expected &&other) noexcept;
 
         ~Expected() noexcept {}
 

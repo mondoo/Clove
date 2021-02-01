@@ -5,10 +5,10 @@ namespace garlic::clove {
         None,
 #if CLOVE_PLATFORM_WINDOWS
         Vulkan,
+#elif CLOVE_PLATFORM_MACOS
+        Metal,
 #elif CLOVE_PLATFORM_LINUX
         Vulkan,
-#elif CLOVE_PLATFORM_MACOS
-//TODO: Metal
 #endif
     };
 }

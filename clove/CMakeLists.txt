@@ -129,6 +129,16 @@ add_library(
 		${INCLUDE}/Rendering/Renderables/StaticModel.hpp
 		${INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${SOURCE}/Rendering/Renderables/StaticModel.cpp
+		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
+		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
+		${INCLUDE}/Rendering/RenderPasses/DirectionalLightPass.hpp
+		${SOURCE}/Rendering/RenderPasses/DirectionalLightPass.cpp
+		${INCLUDE}/Rendering/RenderPasses/GeometryPass.hpp
+		${INCLUDE}/Rendering/RenderPasses/PointLightPass.hpp
+		${SOURCE}/Rendering/RenderPasses/PointLightPass.cpp
+		${INCLUDE}/Rendering/Techniques/ForwardLightingTechnique.hpp
+		${SOURCE}/Rendering/Techniques/ForwardLightingTechnique.cpp
+		${INCLUDE}/Rendering/Techniques/Technique.hpp
 
 		${INCLUDE}/Layers/AudioLayer.hpp
 		${SOURCE}/Layers/AudioLayer.cpp

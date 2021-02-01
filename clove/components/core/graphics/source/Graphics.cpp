@@ -1,25 +1,25 @@
 #include "Clove/Graphics/Graphics.hpp"
 
 #if CLOVE_PLATFORM_WINDOWS
-    #include "Clove/Graphics/Vulkan/VKGraphicsDevice.hpp"
+    #include "Clove/Graphics/Vulkan/VulkanDevice.hpp"
 #elif CLOVE_PLATFORM_MACOS
 #elif CLOVE_PLATFORM_LINUX
-    #include "Clove/Graphics/Vulkan/VKGraphicsDevice.hpp"
+    #include "Clove/Graphics/Vulkan/VulkanDevice.hpp"
 #endif
 
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    std::unique_ptr<GraphicsDevice> createGraphicsDevice(GraphicsApi api, std::any nativeWindow) {
+    std::unique_ptr<GhaDevice> createGraphicsDevice(GraphicsApi api, std::any nativeWindow) {
         switch(api) {
 #if CLOVE_PLATFORM_WINDOWS
             case GraphicsApi::Vulkan:
-                return std::make_unique<VKGraphicsDevice>(std::move(nativeWindow));
+                return std::make_unique<VulkanDevice>(std::move(nativeWindow));
 #elif CLOVE_PLATFORM_MACOS
 #elif CLOVE_PLATFORM_LINUX
             case GraphicsApi::Vulkan:
-                return std::make_unique<VKGraphicsDevice>(std::move(nativeWindow));
+                return std::make_unique<VulkanDevice>(std::move(nativeWindow));
 #endif
             default:
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Default statement hit. Could not initialise RenderAPI: {0}", CLOVE_FUNCTION_NAME);

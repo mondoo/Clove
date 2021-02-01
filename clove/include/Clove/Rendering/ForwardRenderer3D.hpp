@@ -1,14 +1,15 @@
 #pragma once
 
+#include "Clove/Rendering/RenderPasses/GeometryPass.hpp"
 #include "Clove/Rendering/ShaderBufferTypes.hpp"
 
 #include <Clove/Delegate/DelegateHandle.hpp>
-#include <Clove/Graphics/DescriptorSetLayout.hpp>
+#include <Clove/Graphics/GhaBuffer.hpp>
+#include <Clove/Graphics/GhaDescriptorSetLayout.hpp>
+#include <Clove/Graphics/GhaDevice.hpp>
+#include <Clove/Graphics/GhaFactory.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
-#include <Clove/Graphics/GraphicsBuffer.hpp>
-#include <Clove/Graphics/GraphicsDevice.hpp>
-#include <Clove/Graphics/GraphicsFactory.hpp>
-#include <Clove/Delegate/DelegateHandle.hpp>
+#include <set>
 #include <unordered_map>
 
 namespace garlic::clove {
@@ -25,16 +26,19 @@ namespace garlic::clove {
     class ForwardRenderer3D {
         //TYPES
     public:
-        struct StaticMeshInfo {
-            std::shared_ptr<Mesh> mesh;
-            std::shared_ptr<Material> material;
-            mat4f transform;
-        };
-        struct AnimatedMeshInfo {
+        //TODO: Currently transform and matrixPalet are copied per mesh for each model. This should be avoided
+        struct MeshInfo {
             std::shared_ptr<Mesh> mesh;
             std::shared_ptr<Material> material;
             mat4f transform;
             std::array<mat4f, MAX_JOINTS> matrixPalet;
+        };
+
+        enum class DescriptorSetSlots {
+            Mesh,
+            View,
+            Lighting,
+            UI,
         };
 
     private:
@@ -54,52 +58,45 @@ namespace garlic::clove {
 
             std::array<std::array<mat4f, 6>, MAX_LIGHTS> pointShadowTransforms;
 
-            std::vector<StaticMeshInfo> staticMeshes;
-            std::vector<AnimatedMeshInfo> animatedMeshes;
+            std::vector<MeshInfo> meshes;
 
-            std::vector<std::pair<std::shared_ptr<garlic::clove::GraphicsImageView>, mat4f>> widgets;
-            std::vector<std::pair<std::shared_ptr<garlic::clove::GraphicsImageView>, mat4f>> text;
+            std::vector<std::pair<std::shared_ptr<GhaImageView>, mat4f>> widgets;
+            std::vector<std::pair<std::shared_ptr<GhaImageView>, mat4f>> text;
 
-            void forEachStaticMesh(std::function<void(Mesh const &, size_t const index)> func) {
-                for(size_t index = 0; auto const &meshInfo : staticMeshes) {
-                    func(*meshInfo.mesh, index++);
-                }
-            }
-            void forEachAnimatedMesh(std::function<void(Mesh const &, size_t const index)> func) {
-                for(size_t index = std::size(staticMeshes); auto const &meshInfo : animatedMeshes) {
+            void forEachMesh(std::function<void(Mesh const &, size_t const index)> func) {
+                for(size_t index = 0; auto const &meshInfo : meshes) {
                     func(*meshInfo.mesh, index++);
                 }
             }
         };
 
-        //Objects that hold the state / data of each image (in flight)
+        /**
+         * @brief Objects that hold the state / data of each image (in flight)
+         */
         struct ImageData {
-            std::shared_ptr<garlic::clove::GraphicsCommandBuffer> commandBuffer;
-            std::shared_ptr<garlic::clove::GraphicsCommandBuffer> shadowMapCommandBuffer;
-            std::shared_ptr<garlic::clove::GraphicsCommandBuffer> cubeShadowMapCommandBuffer;
+            std::shared_ptr<GhaGraphicsCommandBuffer> commandBuffer;
+            std::shared_ptr<GhaGraphicsCommandBuffer> shadowMapCommandBuffer;
+            std::shared_ptr<GhaGraphicsCommandBuffer> cubeShadowMapCommandBuffer;
 
-            std::shared_ptr<garlic::clove::GraphicsBuffer> frameDataBuffer;           //Holds data used across all meshes (lighting, camera etc.)
-            std::vector<std::unique_ptr<garlic::clove::GraphicsBuffer>> objectBuffers;//Holds the data for each object
+            std::shared_ptr<GhaBuffer> frameDataBuffer;            /**< Holds data used across all meshes (lighting, camera etc.). */
+            std::vector<std::unique_ptr<GhaBuffer>> objectBuffers; /**< Holds the data for each object. */
 
-            //Descriptor pool for sets that change per frame
-            std::shared_ptr<garlic::clove::DescriptorPool> frameDescriptorPool;
-            //Descriptor pool for sets that are for a single mesh's material
-            std::shared_ptr<garlic::clove::DescriptorPool> meshDescriptorPool;
-            //Descriptor pool for sets that are for a ui element.
-            std::shared_ptr<garlic::clove::DescriptorPool> uiDescriptorPool;
+            std::shared_ptr<GhaDescriptorPool> frameDescriptorPool; /**< Descriptor pool for sets that change per frame. */
+            std::shared_ptr<GhaDescriptorPool> meshDescriptorPool;  /**< Descriptor pool for sets that are for a single mesh's material. */
+            std::shared_ptr<GhaDescriptorPool> uiDescriptorPool;    /**< Descriptor pool for sets that are for a ui element. */
 
-            std::shared_ptr<garlic::clove::DescriptorSet> viewDescriptorSet;
-            std::shared_ptr<garlic::clove::DescriptorSet> lightingDescriptorSet;
-            std::shared_ptr<garlic::clove::DescriptorSet> uiDescriptorSet;
+            std::shared_ptr<GhaDescriptorSet> viewDescriptorSet;
+            std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet;
+            std::shared_ptr<GhaDescriptorSet> uiDescriptorSet;
 
-            std::array<std::shared_ptr<garlic::clove::GraphicsImage>, MAX_LIGHTS> shadowMaps;
-            std::array<std::shared_ptr<garlic::clove::GraphicsImageView>, MAX_LIGHTS> shadowMapViews;
-            std::array<std::shared_ptr<garlic::clove::Framebuffer>, MAX_LIGHTS> shadowMapFrameBuffers;
+            std::array<std::shared_ptr<GhaImage>, MAX_LIGHTS> shadowMaps;
+            std::array<std::shared_ptr<GhaImageView>, MAX_LIGHTS> shadowMapViews;
+            std::array<std::shared_ptr<GhaFramebuffer>, MAX_LIGHTS> shadowMapFrameBuffers;
 
-            std::array<std::shared_ptr<garlic::clove::GraphicsImage>, MAX_LIGHTS> cubeShadowMaps;
-            std::array<std::shared_ptr<garlic::clove::GraphicsImageView>, MAX_LIGHTS> cubeShadowMapViews;                   //Views the whole cube
-            std::array<std::array<std::shared_ptr<garlic::clove::GraphicsImageView>, 6>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
-            std::array<std::array<std::shared_ptr<garlic::clove::Framebuffer>, 6>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
+            std::array<std::shared_ptr<GhaImage>, MAX_LIGHTS> cubeShadowMaps;
+            std::array<std::shared_ptr<GhaImageView>, MAX_LIGHTS> cubeShadowMapViews;                   //Views the whole cube
+            std::array<std::array<std::shared_ptr<GhaImageView>, 6>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
+            std::array<std::array<std::shared_ptr<GhaFramebuffer>, 6>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
         };
 
         //VARIABLES
@@ -112,75 +109,72 @@ namespace garlic::clove {
         DelegateHandle renderTargetPropertyChangedBeginHandle;
         DelegateHandle renderTargetPropertyChangedEndHandle;
         std::unique_ptr<RenderTarget> renderTarget;
-        std::vector<std::shared_ptr<garlic::clove::Framebuffer>> frameBuffers;
+        std::vector<std::shared_ptr<GhaFramebuffer>> frameBuffers;//TODO: Move inside the ImageData
 
         //'Square' mesh used to render UI
         std::unique_ptr<Mesh> uiMesh;
 
-        garlic::clove::GraphicsDevice *graphicsDevice;
-        std::shared_ptr<garlic::clove::GraphicsFactory> graphicsFactory;
+        GhaDevice *graphicsDevice;
+        std::shared_ptr<GhaFactory> graphicsFactory;
 
-        std::shared_ptr<garlic::clove::GraphicsQueue> graphicsQueue;
+        std::shared_ptr<GhaGraphicsQueue> graphicsQueue;
 
-        std::unordered_map<DescriptorSetSlots, std::shared_ptr<garlic::clove::DescriptorSetLayout>> descriptorSetLayouts;
+        std::unordered_map<DescriptorSetSlots, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts;
 
         //Frame / image data objects
         FrameData currentFrameData;
         std::vector<ImageData> inFlightImageData;
 
         //Samplers passed along with textures
-        std::shared_ptr<garlic::clove::Sampler> textureSampler;
-        std::shared_ptr<garlic::clove::Sampler> uiSampler;
-        std::shared_ptr<garlic::clove::Sampler> shadowSampler;
+        std::shared_ptr<GhaSampler> textureSampler;
+        std::shared_ptr<GhaSampler> uiSampler;
+        std::shared_ptr<GhaSampler> shadowSampler;
+
+        //Geometry passes. TODO: Use vector?
+        std::unordered_map<GeometryPass::Id, std::unique_ptr<GeometryPass>> geometryPasses;
 
         //Objects for the final colour render pass
-        std::shared_ptr<garlic::clove::RenderPass> renderPass;
-        std::shared_ptr<garlic::clove::PipelineObject> staticMeshPipelineObject;
-        std::shared_ptr<garlic::clove::PipelineObject> animatedMeshPipelineObject;
-        std::shared_ptr<garlic::clove::PipelineObject> widgetPipelineObject;
-        std::shared_ptr<garlic::clove::PipelineObject> textPipelineObject;
+        std::shared_ptr<GhaRenderPass> renderPass;
+        std::shared_ptr<GhaPipelineObject> widgetPipelineObject;
+        std::shared_ptr<GhaPipelineObject> textPipelineObject;
 
-        std::shared_ptr<garlic::clove::GraphicsImage> depthImage;
-        std::shared_ptr<garlic::clove::GraphicsImageView> depthImageView;
+        std::shared_ptr<GhaImage> depthImage;
+        std::shared_ptr<GhaImageView> depthImageView;
 
         //Objects for the shadow map pass
-        std::shared_ptr<garlic::clove::RenderPass> shadowMapRenderPass;
-        std::shared_ptr<garlic::clove::PipelineObject> staticMeshShadowMapPipelineObject;
-        std::shared_ptr<garlic::clove::PipelineObject> animatedMeshShadowMapPipelineObject;
-        std::shared_ptr<garlic::clove::PipelineObject> staticMeshCubeShadowMapPipelineObject;
-        std::shared_ptr<garlic::clove::PipelineObject> animatedMeshCubeShadowMapPipelineObject;
+        std::shared_ptr<GhaRenderPass> shadowMapRenderPass;
 
         //Synchronisation obects
-        std::array<std::shared_ptr<garlic::clove::Semaphore>, maxFramesInFlight> shadowFinishedSemaphores;
-        std::array<std::shared_ptr<garlic::clove::Semaphore>, maxFramesInFlight> cubeShadowFinishedSemaphores;
+        std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> shadowFinishedSemaphores;
+        std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> cubeShadowFinishedSemaphores;
 
         //FUNCTIONS
     public:
         ForwardRenderer3D() = delete;
-        ForwardRenderer3D(std::unique_ptr<RenderTarget> renderTarget);
+        ForwardRenderer3D(GhaDevice *graphicsDevice, std::unique_ptr<RenderTarget> renderTarget);
 
         ForwardRenderer3D(ForwardRenderer3D const &other) = delete;
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D &operator=(ForwardRenderer3D const &other) = delete;
-        ForwardRenderer3D &operator=(ForwardRenderer3D &&other) noexcept;
+        ForwardRenderer3D &operator                                  =(ForwardRenderer3D &&other) noexcept;
 
         ~ForwardRenderer3D();
 
         void begin();
+
+        void submitMesh(MeshInfo meshInfo, std::set<GeometryPass::Id> geometryPassIds);
 
         /**
          * @brief Submit the active camera the renderer will use.
          */
         void submitCamera(Camera const &camera, vec3f position);
 
-        void submitStaticMesh(StaticMeshInfo meshInfo);
-        void submitAnimatedMesh(AnimatedMeshInfo meshInfo);
         void submitLight(DirectionalLight const &light);
         void submitLight(PointLight const &light);
 
-        void submitWidget(std::shared_ptr<garlic::clove::GraphicsImageView> const widget, mat4f const modelProjection);
-        void submitText(std::shared_ptr<garlic::clove::GraphicsImageView> const text, mat4f const modelProjection);
+        void submitWidget(std::shared_ptr<GhaImageView> const widget, mat4f const modelProjection);
+        void submitText(std::shared_ptr<GhaImageView> const text, mat4f const modelProjection);
 
         void end();
 
@@ -193,13 +187,10 @@ namespace garlic::clove {
 
         void createDepthBuffer();
 
-        void createPipeline();
-        void createShadowMapPipeline();
-        void createCubeShadowMapPipeline();
         void createUiPipeline();
 
         void createRenderTargetFrameBuffers();
 
-        std::shared_ptr<garlic::clove::DescriptorPool> createDescriptorPool(std::unordered_map<garlic::clove::DescriptorType, uint32_t> const &bindingCount, uint32_t const setCount);
+        std::shared_ptr<GhaDescriptorPool> createDescriptorPool(std::unordered_map<DescriptorType, uint32_t> const &bindingCount, uint32_t const setCount);
     };
 }

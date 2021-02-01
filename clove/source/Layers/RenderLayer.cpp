@@ -14,10 +14,10 @@
 #include <Clove/Maths/Maths.hpp>
 
 namespace garlic::clove {
-    RenderLayer::RenderLayer()
+    RenderLayer::RenderLayer(ForwardRenderer3D *renderer, EntityManager *entityManager)
         : Layer("Render")
-        , renderer{ Application::get().getRenderer() }
-        , entityManager{ Application::get().getEntityManager() } {
+        , renderer{ renderer }
+        , entityManager{ entityManager } {
     }
 
     RenderLayer::RenderLayer(RenderLayer &&other) noexcept = default;
@@ -48,9 +48,15 @@ namespace garlic::clove {
         //Submit static meshes
         entityManager->forEach([this](TransformComponent const &transform, StaticModelComponent const &staticModel) {
             mat4f const modelTransform{ transform.worldMatrix };
+            std::array<mat4f, MAX_JOINTS> matrixPalet;
+            matrixPalet.fill(mat4f{ 1.0f });
 
+            std::set<GeometryPass::Id> passIds;
+            for(auto &technique : staticModel.model.getTechniques()) {
+                passIds.insert(technique.passIds.begin(), technique.passIds.end());
+            }
             for(auto &mesh : staticModel.model.getMeshes()) {
-                renderer->submitStaticMesh(ForwardRenderer3D::StaticMeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform });
+                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform, matrixPalet }, passIds);
             }
         });
         //Submit animated meshes
@@ -58,8 +64,12 @@ namespace garlic::clove {
             mat4f const modelTransform{ transform.worldMatrix };
             auto const matrixPalet{ animatedModel.model.update(deltaTime) };
 
+            std::set<GeometryPass::Id> passIds;
+            for(auto &technique : animatedModel.model.getTechniques()) {
+                passIds.insert(technique.passIds.begin(), technique.passIds.end());
+            }
             for(auto &mesh : animatedModel.model.getMeshes()) {
-                renderer->submitAnimatedMesh(ForwardRenderer3D::AnimatedMeshInfo{ mesh, animatedModel.model.getMaterial(), modelTransform, matrixPalet });
+                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.model.getMaterial(), modelTransform, matrixPalet }, passIds);
             }
         });
 
