@@ -27,62 +27,26 @@ namespace garlic::clove::serialiser {
         std::string name;
         std::variant<float, std::vector<Node>> value{};
 
+        Node();
+        Node(std::string name);
+        Node(std::string_view name);
+
+        Node(Node const &other);
+        Node(Node &&other) noexcept;
+
+        Node &operator=(Node const &other);
+        Node &operator=(Node &&other) noexcept;
+
         template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
-        Node &operator=(T scalar) {
-            value = static_cast<float>(scalar);
-            return *this;
-        }
+        Node &operator=(T scalar);
 
         template<typename T, std::enable_if_t<!std::is_arithmetic_v<T>, int> = 0>
-        Node &operator=(const T &object) {
-            std::string const prevName{ name };
-            *this = serialise(object);
-            name  = prevName;
+        Node &operator=(const T &object);
 
-            return *this;
-        }
+        ~Node();
 
-        Node() = default;
-        Node(std::string name)
-            : name{ std::move(name) } {
-        }
-        Node(std::string_view name)
-            : name{ name } {
-        }
-
-        Node(Node const &other) = default;
-        Node(Node &&other)      = default;
-
-        Node &operator=(Node const &other) {
-            //Note: Not taking name on assignment only
-            value = other.value;
-            return *this;
-        }
-
-        Node &operator=(Node &&other) noexcept {
-            value = std::move(other.value);
-            return *this;
-        }
-
-        ~Node() = default;
-
-        Node &operator[](std::string_view nodeName) {
-            //Turn this node into a parent node if not already
-            if(!std::holds_alternative<std::vector<Node>>(value)) {
-                value = std::vector<Node>{};
-            }
-
-            auto &nodes{ std::get<std::vector<Node>>(value) };
-
-            for(auto &node : nodes) {
-                if(node.name == nodeName) {
-                    return node;
-                }
-            }
-
-            nodes.emplace_back(nodeName);
-
-            return nodes.back();
-        }
+        Node &operator[](std::string_view nodeName);
     };
 }
+
+#include "Node.inl"
