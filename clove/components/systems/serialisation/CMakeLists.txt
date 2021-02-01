@@ -4,11 +4,10 @@ set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 #Library
 add_library(
     CloveSerialisation STATIC
-        ${INCLUDE}/Serialiser.hpp
-        ${INCLUDE}/Serialiser.inl
-        ${SOURCE}/Serialiser.cpp
-        ${INCLUDE}/YamlSerialiser.hpp
-        ${SOURCE}/YamlSerialiser.cpp
+        ${INCLUDE}/Node.hpp
+        ${SOURCE}/Node.cpp
+        ${INCLUDE}/Yaml.hpp
+        ${SOURCE}/Yaml.cpp
 )
 
 #Includes
