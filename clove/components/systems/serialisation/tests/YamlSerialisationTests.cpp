@@ -50,8 +50,7 @@ TEST(YamlSerialisationTests, CanAddANodeAsAChildNode) {
     parentNode["value1"] = 42;
     parentNode["value2"] = 100;
 
-    //TODO: root["ParentNode"] = parentNode;
-    root["ParentNode"].value = parentNode.value;
+    root["ParentNode"] = parentNode;
 
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nParentNode:\n  value1: 42\n  value2: 100");
 

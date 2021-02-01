@@ -2,9 +2,9 @@
 
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <variant>
 #include <vector>
-#include <type_traits>
 
 namespace garlic::clove::serialiser {
     struct Node;
@@ -42,6 +42,30 @@ namespace garlic::clove::serialiser {
             return *this;
         }
 
+        Node() = default;
+        Node(std::string name)
+            : name{ std::move(name) } {
+        }
+        Node(std::string_view name)
+            : name{ name } {
+        }
+
+        Node(Node const &other) = default;
+        Node(Node &&other)      = default;
+
+        Node &operator=(Node const &other) {
+            //Note: Not taking name on assignment only
+            value = other.value;
+            return *this;
+        }
+
+        Node &operator=(Node &&other) noexcept {
+            value = std::move(other.value);
+            return *this;
+        }
+
+        ~Node() = default;
+
         Node &operator[](std::string_view nodeName) {
             //Turn this node into a parent node if not already
             if(!std::holds_alternative<std::vector<Node>>(value)) {
@@ -56,9 +80,7 @@ namespace garlic::clove::serialiser {
                 }
             }
 
-            nodes.emplace_back(Node{
-                .name = std::string{ nodeName },
-            });
+            nodes.emplace_back(nodeName);
 
             return nodes.back();
         }
