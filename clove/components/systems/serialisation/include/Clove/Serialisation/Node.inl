@@ -21,11 +21,15 @@ namespace garlic::clove::serialiser {
         if constexpr(std::is_arithmetic_v<T>) {
             if(float const *floatValue{ std::get_if<float>(&value) }) {
                 return *floatValue;
-            }else{
+            } else {
                 throw std::runtime_error{ "Node is not holding a value!" };
             }
         } else {
-            static_assert(false, "Unsupported type conversion");
+            if(std::vector<Node> const *nodeValue{ std::get_if<std::vector<Node>>(&value) }){
+                return deserialise<T>(*this);
+            }else{
+                throw std::runtime_error{ "Node is not holding any nodes!" };
+            }
         }
     }
 }

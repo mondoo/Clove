@@ -23,6 +23,21 @@ namespace garlic::clove {
             }
         }
 
+        Node buildNode(YAML::Node const &node) {
+            Node outNode{};
+
+            for(YAML::const_iterator it{ node.begin() }; it != node.end(); ++it) {
+                std::string const name{ it->first.as<std::string>() };
+                if(it->second.IsScalar()) {
+                    outNode[name] = it->second.as<float>();
+                } else {
+                    outNode[name] = buildNode(it->second);
+                }
+            }
+
+            return outNode;
+        }
+
         namespace v1 {
             std::string emitt(Node const &rootNode) {
                 YAML::Node emitterNode{};
@@ -55,7 +70,11 @@ namespace garlic::clove {
                         continue;
                     }
 
-                    deserialisedFile[name] = it->second.as<float>();
+                    if(it->second.IsScalar()) {
+                        deserialisedFile[name] = it->second.as<float>();
+                    } else {
+                        deserialisedFile[name] = buildNode(it->second);
+                    }
                 }
 
                 return deserialisedFile;

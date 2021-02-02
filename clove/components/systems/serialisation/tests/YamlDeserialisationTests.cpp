@@ -38,7 +38,12 @@ namespace garlic::clove {
 }
 
 TEST(YamlDeserialisationTests, CanLoadSerialisableTypeFromFile){
+    Node file{ loadYaml(FILE_DIR "/TestFile.yaml") };
 
+    auto type{ file["TestType"].as<BasicSerialisableType>() };
+
+    EXPECT_EQ(type.memberOne, 420);
+    EXPECT_EQ(type.memberTwo, 1.5f);
 }
 
 //TODO: Parent nodes

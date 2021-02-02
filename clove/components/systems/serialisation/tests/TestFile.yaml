@@ -2,3 +2,6 @@ type: yaml
 version: 1
 IntValue: 3
 FloatValue: 4.5
+TestType:
+  memberOne: 420
+  memberTwo: 1.5
