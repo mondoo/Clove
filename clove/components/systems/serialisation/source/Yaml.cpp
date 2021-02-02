@@ -44,10 +44,32 @@ namespace garlic::clove {
 
                 return stream.str();
             }
+
+            Node build(YAML::Node const &file) {
+                return {};
+            }
         }
     }
 
-    std::string emittYaml(Node const &node){
+    std::string emittYaml(Node const &node) {
         return v1::emitt(node);
+    }
+
+    Node loadYaml(std::filesystem::path const &filePath) {
+        YAML::Node file{ YAML::LoadFile(filePath.string()) };
+
+        if(file["type"].as<std::string>() != "yaml") {
+            //TODO: Error / exected
+            return {};
+        }
+
+        int32_t const version{ file["version"].as<int32_t>() };
+        switch(version) {
+            case 1:
+                return v1::build(file);
+            default:
+                //TODO: Error / expected
+                return {};
+        }
     }
 }

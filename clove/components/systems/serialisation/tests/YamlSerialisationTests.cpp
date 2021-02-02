@@ -121,5 +121,3 @@ TEST(YamlSerialisationTests, CanAddANestedSerialisableStruct) {
 
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\ntestStruct:\n  memberOne: 1\n  memberTwo:\n    memberOne: 1\n    memberTwo: 2\n    memberThree: 3");
 }
-
-//TODO: Deserialise
