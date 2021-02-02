@@ -46,9 +46,10 @@ namespace garlic::clove::serialiser {
         ~Node();
 
         template<typename T>
-        T as();
+        T as() const;
 
         Node &operator[](std::string_view nodeName);
+        Node const &operator[](std::string_view nodeName) const;
     };
 }
 

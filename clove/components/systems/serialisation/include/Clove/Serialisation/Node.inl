@@ -17,9 +17,9 @@ namespace garlic::clove::serialiser {
     }
 
     template<typename T>
-    T Node::as() {
+    T Node::as() const {
         if constexpr(std::is_arithmetic_v<T>) {
-            if(float *floatValue{ std::get_if<float>(&value) }) {
+            if(float const *floatValue{ std::get_if<float>(&value) }) {
                 return *floatValue;
             }else{
                 throw std::runtime_error{ "Node is not holding a value!" };

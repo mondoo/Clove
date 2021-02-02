@@ -32,15 +32,27 @@ namespace garlic::clove::serialiser {
         }
 
         auto &nodes{ std::get<std::vector<Node>>(value) };
-
         for(auto &node : nodes) {
             if(node.name == nodeName) {
                 return node;
             }
         }
 
-        nodes.emplace_back(nodeName);
+        return nodes.emplace_back(nodeName);
+    }
 
-        return nodes.back();
+    Node const &Node::operator[](std::string_view nodeName) const {
+        if(!std::holds_alternative<std::vector<Node>>(value)) {
+            throw std::runtime_error{ "Node does not contain child nodes." };
+        }
+
+        auto &nodes{ std::get<std::vector<Node>>(value) };
+        for(auto const &node : nodes) {
+            if(node.name == nodeName) {
+                return node;
+            }
+        }
+
+        throw std::runtime_error{ "Node does not have requested child." };
     }
 }
