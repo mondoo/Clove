@@ -4,7 +4,9 @@
 
 #include <any>
 #include <memory>
+#ifdef __OBJC__
 #include <MetalKit/MetalKit.h>
+#endif
 
 namespace garlic::clove {
 	class MetalFactory;
@@ -14,7 +16,9 @@ namespace garlic::clove {
 	class MetalDevice : public GhaDevice {
 		//VARIABLES
 	private:
+#ifdef __OBJC__
 		id<MTLDevice> device{ nullptr };
+#endif
 		
 		std::shared_ptr<MetalFactory> factory;
 		
