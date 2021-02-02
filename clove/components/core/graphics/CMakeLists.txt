@@ -79,6 +79,8 @@ set(
 #Metal Implementation
 set(
 	MetalFiles
+		${INCLUDE}/Metal/MetalBuffer.hpp
+		${SOURCE}/Metal/MetalBuffer.mm
 		${INCLUDE}/Metal/MetalDevice.hpp
 		${SOURCE}/Metal/MetalDevice.mm
 		${INCLUDE}/Metal/MetalFactory.hpp

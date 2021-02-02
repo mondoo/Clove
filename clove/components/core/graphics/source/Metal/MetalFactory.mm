@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Metal/MetalFactory.hpp"
 
+#include "Clove/Graphics/Metal/MetalBuffer.hpp"
+
 namespace garlic::clove {
 	MetalFactory::MetalFactory(id<MTLDevice> device)
 		: device{ device }{
@@ -64,7 +66,25 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaBuffer>, std::runtime_error> MetalFactory::createBuffer(GhaBuffer::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		MTLResourceOptions resourceOptions{};
+		
+		//Usage mode -- not needed
+		//Sharing mode -- not needed
+		
+		switch (descriptor.memoryType) {
+			case MemoryType::VideoMemory:
+				resourceOptions |= MTLResourceStorageModePrivate;
+				break;
+			case MemoryType::SystemMemory:
+				resourceOptions |= MTLResourceStorageModeShared | MTLResourceCPUCacheModeDefaultCache;//Including MTLResourceCPUCacheModeDefaultCache here as this makes mapping memory more simple
+				break;
+			default:
+				break;
+		}
+		
+		id<MTLBuffer> buffer{ [device newBufferWithLength:descriptor.size options:resourceOptions] };
+		
+		return std::unique_ptr<GhaBuffer>{ std::make_unique<MetalBuffer>(buffer, std::move(descriptor)) };
 	}
 	
 	Expected<std::unique_ptr<GhaImage>, std::runtime_error> MetalFactory::createImage(GhaImage::Descriptor descriptor) {
