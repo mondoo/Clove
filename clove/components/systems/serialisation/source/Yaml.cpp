@@ -46,7 +46,19 @@ namespace garlic::clove {
             }
 
             Node build(YAML::Node const &file) {
-                return {};
+                Node deserialisedFile{};
+
+                for(YAML::const_iterator it{ file.begin() }; it != file.end(); ++it) {
+                    std::string const name{ it->first.as<std::string>() };
+                    //Skip the type and version as these will have been checked
+                    if(name == "type" || name == "version") {
+                        continue;
+                    }
+
+                    deserialisedFile[name] = it->second.as<float>();
+                }
+
+                return deserialisedFile;
             }
         }
     }

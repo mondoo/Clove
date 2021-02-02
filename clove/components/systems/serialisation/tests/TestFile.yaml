@@ -1,3 +1,4 @@
 type: yaml
 version: 1
-TestValue: 3
+IntValue: 3
+FloatValue: 4.5

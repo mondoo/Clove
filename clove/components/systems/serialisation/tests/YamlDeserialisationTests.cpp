@@ -30,5 +30,6 @@ namespace garlic::clove {
 TEST(YamlDeserialisationTests, CanLoadSimpleValueFromFile){
     Node file{ loadYaml(FILE_DIR "/TestFile.yaml") };
 
-    EXPECT_EQ(file["TestValue"].as<int32_t>(), 3);
+    EXPECT_EQ(file["IntValue"].as<int32_t>(), 3);
+    EXPECT_EQ(file["FloatValue"].as<float>(), 4.5f);
 }
