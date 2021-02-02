@@ -76,6 +76,15 @@ set(
 		${INCLUDE}/Vulkan/VulkanTypes.hpp
 )
 
+#Metal Implementation
+set(
+	MetalFiles
+		${INCLUDE}/Metal/MetalDevice.hpp
+		${SOURCE}/Metal/MetalDevice.mm
+		${INCLUDE}/Metal/MetalFactory.hpp
+		${SOURCE}/Metal/MetalFactory.mm
+)
+
 #Library
 add_library(
 	CloveGraphics STATIC
@@ -113,6 +122,7 @@ add_library(
 		${SOURCE}/ShaderCompiler.cpp
 		
 		${VulkanFiles}
+		${MetalFiles}
 
 		#shaderc files required to use the file includer
 		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc/glslc/file_includer.h
@@ -169,7 +179,9 @@ target_link_libraries(
 
 #Don't compile files not supported on certain platforms
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	set_source_files_properties(${MetalFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set_source_files_properties(${VulkanFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set_source_files_properties(${MetalFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 endif()
