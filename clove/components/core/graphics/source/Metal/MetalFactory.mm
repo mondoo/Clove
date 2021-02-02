@@ -1,6 +1,10 @@
 #include "Clove/Graphics/Metal/MetalFactory.hpp"
 
 namespace garlic::clove {
+	MetalFactory::MetalFactory(id<MTLDevice> device)
+		: device{ device }{
+	}
+	
 	MetalFactory::MetalFactory(MetalFactory &&other) noexcept = default;
 
 	MetalFactory &MetalFactory::operator=(MetalFactory &&other) noexcept = default;

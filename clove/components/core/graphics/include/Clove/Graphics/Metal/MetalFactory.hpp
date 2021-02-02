@@ -2,15 +2,18 @@
 
 #include "Clove/Graphics/GhaFactory.hpp"
 
+#include <MetalKit/MetalKit.h>
+
 namespace garlic::clove {
 	class MetalFactory : public GhaFactory {
 		//VARIABLES
 	private:
+		id<MTLDevice> device{ nullptr };
 		
 		//FUNCTIONS
 	public:
-		//TODO: Ctor
-		MetalFactory() = default;
+		MetalFactory() = delete;
+		MetalFactory(id<MTLDevice> device);
 
 		MetalFactory(MetalFactory const &other) = delete;
 		MetalFactory(MetalFactory &&other) noexcept;
