@@ -3,7 +3,6 @@ set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/Platform)
 
 set(
 	PlatformFiles
-		${INCLUDE}/PlatformTypes.hpp
 		${INCLUDE}/Window.hpp
 		${INCLUDE}/Window.inl
 )

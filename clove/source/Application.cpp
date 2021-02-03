@@ -17,16 +17,14 @@
 #include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Log/Log.hpp>
-#include <Clove/Platform/Platform.hpp>
-#include <Clove/Platform/Window.hpp>
 
 namespace garlic::clove {
     Application *Application::instance{ nullptr };
 
     Application::~Application() = default;
 
-    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor) {	
-		auto window{ Platform::createWindow(std::move(windowDescriptor)) };
+    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, Window::Descriptor windowDescriptor) {	
+		auto window{ Window::create(std::move(windowDescriptor)) };
 		auto *windowPtr{ window.get() };
 		
 		auto graphicsDevice{ createGraphicsDevice(graphicsApi, window->getNativeWindow()) };

@@ -20,7 +20,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         WindowsWindow() = delete;
-        WindowsWindow(WindowDescriptor const &descriptor);
+        WindowsWindow(Descriptor const &descriptor);
 
         WindowsWindow(WindowsWindow const &other)     = delete;
         WindowsWindow(WindowsWindow &&other) noexcept = delete;

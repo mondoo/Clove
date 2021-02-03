@@ -13,7 +13,7 @@
 @end
 
 namespace garlic::clove{
-    MacWindow::MacWindow(const WindowDescriptor& descriptor)
+    MacWindow::MacWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
 		//Application specific init
 		[NSApplication sharedApplication];
@@ -49,6 +49,10 @@ namespace garlic::clove{
 	MacWindow::~MacWindow(){
 		[windowProxy release];
 	}
+
+	std::unique_ptr<Window> Window::create(Descriptor descriptor) {
+        return std::make_unique<MacWindow>(std::move(descriptor));
+    }
 	
 	void MacWindow::processInput(){
 		@autoreleasepool {
@@ -79,12 +83,12 @@ namespace garlic::clove{
 		return { frame.size.width, frame.size.height };
 	}
 
-	void MacWindow::moveWindow(const vec2i& position){
+	void MacWindow::moveWindow(vec2i const &position){
 		vec2i const size{ getSize() };
 		[windowProxy setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}
 	
-	void MacWindow::resizeWindow(const vec2i& size){
+	void MacWindow::resizeWindow(vec2i const &size){
 		vec2i const position{ getPosition() };
 		[windowProxy setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}

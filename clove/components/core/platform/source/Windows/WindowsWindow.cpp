@@ -6,7 +6,7 @@
 #define CLV_WINDOWS_QUIT 25397841//Note: this number is completely random
 
 namespace garlic::clove {
-    WindowsWindow::WindowsWindow(WindowDescriptor const &descriptor)
+    WindowsWindow::WindowsWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
@@ -60,6 +60,10 @@ namespace garlic::clove {
     WindowsWindow::~WindowsWindow() {
         UnregisterClass(className, instance);
         DestroyWindow(windowsHandle);
+    }
+
+    std::unique_ptr<Window> Window::create(Descriptor descriptor) {
+        return std::make_unique<WindowsWindow>(std::move(descriptor));
     }
 
     std::any WindowsWindow::getNativeWindow() const {

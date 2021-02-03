@@ -4,7 +4,7 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    LinuxWindow::LinuxWindow(WindowDescriptor const &descriptor)
+    LinuxWindow::LinuxWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
@@ -53,6 +53,10 @@ namespace garlic::clove {
         XFreeColormap(display, windowAttribs.colormap);
         XDestroyWindow(display, window);
         XCloseDisplay(display);
+    }
+
+    std::unique_ptr<Window> Window::create(Descriptor descriptor) {
+        return std::make_unique<LinuxWindow>(std::move(descriptor));
     }
 
     std::any LinuxWindow::getNativeWindow() const {

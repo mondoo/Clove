@@ -32,7 +32,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         LinuxWindow() = delete;
-        LinuxWindow(WindowDescriptor const &descriptor);
+        LinuxWindow(Descriptor const &descriptor);
 
         LinuxWindow(LinuxWindow const &other)     = delete;
         LinuxWindow(LinuxWindow &&other) noexcept = delete;

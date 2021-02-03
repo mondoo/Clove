@@ -2,7 +2,6 @@
 
 #include "Clove/Platform/Input/Keyboard.hpp"
 #include "Clove/Platform/Input/Mouse.hpp"
-#include "Clove/Platform/PlatformTypes.hpp"
 
 #include <Clove/Delegate/MultiCastDelegate.hpp>
 #include <Clove/Delegate/SingleCastDelegate.hpp>
@@ -14,6 +13,14 @@ namespace garlic::clove {
      * @brief An abstraction over a platform's native window
      */
     class Window {
+        //TYPES
+    public:
+        struct Descriptor {
+            std::string title{ "Clove window" };
+            int32_t width{ 800 };
+            int32_t height{ 600 };
+        };
+
         //VARIABLES
     public:
         SingleCastDelegate<void()> onWindowCloseDelegate{};
@@ -38,6 +45,8 @@ namespace garlic::clove {
         Window &operator=(Window &&other) noexcept = delete;
 
         virtual ~Window() = default;
+
+        static std::unique_ptr<Window> create(Descriptor descriptor);
 
         /**
          * @brief Pumps the message queue of the window. Populating the Mouse and Keyboard classes with events.
