@@ -128,8 +128,15 @@ namespace garlic::clove {
         bool isButtonPressed(MouseButton button) const;
         /**
          * @brief Gets the current position of the mouse relative to the window's client rect
+         * @details This the current position at the time of calling this function
+         * and not the position of the last event. This can be useful when setting the position
+         * manually and mouse move events need to be ignored.
          */
         vec2i getPosition() const;
+        /**
+         * @brief Sets the position of the mouse. This will generate a mouse move event.
+         */
+        void setPosition(vec2i const &position);
 
         bool isInWindow() const;
 
