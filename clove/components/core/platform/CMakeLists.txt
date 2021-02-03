@@ -10,6 +10,7 @@ set(
 set(
 	WindowsPlatformFiles
 		${INCLUDE}/Windows/CloveWindows.hpp
+		${SOURCE}/Windows/WindowsMouse.cpp
 		${INCLUDE}/Windows/WindowsWindow.hpp
 		${SOURCE}/Windows/WindowsWindow.cpp
 )

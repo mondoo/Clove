@@ -37,50 +37,52 @@ namespace garlic::clove {
 
     Mouse::Dispatcher::~Dispatcher() = default;
 
-    void Mouse::Dispatcher::onMouseMove(int32_t x, int32_t y) {
-        pos = { x, y };
-
+    void Mouse::Dispatcher::onMouseMove(vec2i pos) {
+        lastPos = pos;
+        
         buffer.push({ Mouse::Event::Type::Move, MouseButton::None, pos });
         trimBuffer();
     }
 
-    void Mouse::Dispatcher::onButtonPressed(MouseButton button, int32_t x, int32_t y) {
-        pos = { x, y };
+    void Mouse::Dispatcher::onButtonPressed(MouseButton button, vec2i pos) {
+        lastPos = pos;
 
         buttonStates[button] = true;
         buffer.push({ Mouse::Event::Type::Pressed, button, pos });
         trimBuffer();
     }
 
-    void Mouse::Dispatcher::onButtonReleased(MouseButton button, int32_t x, int32_t y) {
-        pos = { x, y };
+    void Mouse::Dispatcher::onButtonReleased(MouseButton button, vec2i pos) {
+        lastPos = pos;
 
         buttonStates[button] = false;
         buffer.push({ Mouse::Event::Type::Released, button, pos });
         trimBuffer();
     }
 
-    void Mouse::Dispatcher::onWheelDelta(int32_t delta, int32_t x, int32_t y) {
+    void Mouse::Dispatcher::onWheelDelta(int32_t delta, vec2i pos) {
+        lastPos = pos;
+
         wheelDelta += delta;
         while(wheelDelta >= CLV_WHEEL_DELTA) {
             wheelDelta -= CLV_WHEEL_DELTA;
-            onWheelUp(x, y);
+            onWheelUp(pos);
         }
         while(wheelDelta <= -CLV_WHEEL_DELTA) {
             wheelDelta += CLV_WHEEL_DELTA;
-            onWheelDown(x, y);
+            onWheelDown(pos);
         }
     }
 
-    void Mouse::Dispatcher::onWheelUp(int32_t x, int32_t y) {
-        pos = { x, y };
+    void Mouse::Dispatcher::onWheelUp(vec2i pos) {
+        lastPos = pos;
 
         buffer.push({ Mouse::Event::Type::WheelUp, MouseButton::None, pos });
         trimBuffer();
     }
 
-    void Mouse::Dispatcher::onWheelDown(int32_t x, int32_t y) {
-        pos = { x, y };
+    void Mouse::Dispatcher::onWheelDown(vec2i pos) {
+        lastPos = pos;
 
         buffer.push({ Mouse::Event::Type::WheelDown, MouseButton::None, pos });
         trimBuffer();
@@ -89,14 +91,14 @@ namespace garlic::clove {
     void Mouse::Dispatcher::onMouseLeave() {
         inWindow = false;
 
-        buffer.push({ Mouse::Event::Type::Leave, MouseButton::None, pos });
+        buffer.push({ Mouse::Event::Type::Leave, MouseButton::None, lastPos });
         trimBuffer();
     }
 
     void Mouse::Dispatcher::onMouseEnter() {
         inWindow = true;
 
-        buffer.push({ Mouse::Event::Type::Enter, MouseButton::None, pos });
+        buffer.push({ Mouse::Event::Type::Enter, MouseButton::None, lastPos });
         trimBuffer();
     }
 
@@ -132,10 +134,6 @@ namespace garlic::clove {
         } else {
             return {};
         }
-    }
-
-    vec2i const &Mouse::getPosition() const {
-        return dispatcher.pos;
     }
 
     bool Mouse::isInWindow() const {

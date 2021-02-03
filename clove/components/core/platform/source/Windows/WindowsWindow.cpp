@@ -126,8 +126,8 @@ namespace garlic::clove {
     LRESULT CALLBACK WindowsWindow::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         if(msg == WM_NCCREATE) {
             //Extract the ptr to our window class
-            const CREATESTRUCTW *const create = reinterpret_cast<CREATESTRUCTW *>(lParam);
-            WindowsWindow *const window       = static_cast<WindowsWindow *>(create->lpCreateParams);
+            CREATESTRUCTW const *const create{ reinterpret_cast<CREATESTRUCTW *>(lParam) };
+            WindowsWindow *const window{ static_cast<WindowsWindow *>(create->lpCreateParams) };
             //Store our windows class into the windows api
             SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
             //Switch over to the normal procedure handler
@@ -140,12 +140,13 @@ namespace garlic::clove {
 
     LRESULT CALLBACK WindowsWindow::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         //Forward message to our windows instance
-        WindowsWindow *const window = reinterpret_cast<WindowsWindow *>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+        WindowsWindow *const window{ reinterpret_cast<WindowsWindow *>(GetWindowLongPtr(hWnd, GWLP_USERDATA)) };
         return window->HandleMsg(hWnd, msg, wParam, lParam);
     }
 
     LRESULT WindowsWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-        const POINTS pt = MAKEPOINTS(lParam);
+        POINTS const pt{ MAKEPOINTS(lParam) };
+        vec2i const pos{ pt.x, pt.y };
 
         switch(msg) {
             case WM_CLOSE:
@@ -175,15 +176,15 @@ namespace garlic::clove {
 
                 //Mouse
             case WM_MOUSEMOVE:
-                if(pt.x >= 0 && pt.x < getSize().x && pt.y >= 0 && pt.y < getSize().y) {
-                    mouseDispatcher.onMouseMove(pt.x, pt.y);
+                if(pos.x >= 0 && pos.x < getSize().x && pos.y >= 0 && pos.y < getSize().y) {
+                    mouseDispatcher.onMouseMove(pos);
                     if(!mouse.isInWindow()) {
                         mouseDispatcher.onMouseEnter();
                         SetCapture(hWnd);
                     }
                 } else {
                     if(mouse.isButtonPressed(MouseButton::Left) || mouse.isButtonPressed(MouseButton::Right)) {
-                        mouseDispatcher.onMouseMove(pt.x, pt.y);
+                        mouseDispatcher.onMouseMove(pos);
                     } else {
                         mouseDispatcher.onMouseLeave();
                         ReleaseCapture();
@@ -192,31 +193,31 @@ namespace garlic::clove {
                 break;
 
             case WM_LBUTTONDOWN:
-                mouseDispatcher.onButtonPressed(MouseButton::Left, pt.x, pt.y);
+                mouseDispatcher.onButtonPressed(MouseButton::Left, pos);
                 break;
 
             case WM_LBUTTONUP:
-                mouseDispatcher.onButtonReleased(MouseButton::Left, pt.x, pt.y);
+                mouseDispatcher.onButtonReleased(MouseButton::Left, pos);
                 break;
 
             case WM_RBUTTONDOWN:
-                mouseDispatcher.onButtonPressed(MouseButton::Right, pt.x, pt.y);
+                mouseDispatcher.onButtonPressed(MouseButton::Right, pos);
                 break;
 
             case WM_RBUTTONUP:
-                mouseDispatcher.onButtonReleased(MouseButton::Right, pt.x, pt.y);
+                mouseDispatcher.onButtonReleased(MouseButton::Right, pos);
                 break;
 
             case WM_XBUTTONDOWN:
-                mouseDispatcher.onButtonPressed(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pt.x, pt.y);
+                mouseDispatcher.onButtonPressed(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pos);
                 break;
 
             case WM_XBUTTONUP:
-                mouseDispatcher.onButtonReleased(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pt.x, pt.y);
+                mouseDispatcher.onButtonReleased(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pos);
                 break;
 
             case WM_MOUSEWHEEL:
-                mouseDispatcher.onWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam), pt.x, pt.y);
+                mouseDispatcher.onWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam), pos);
                 break;
 
                 //Window

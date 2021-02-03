@@ -313,12 +313,12 @@ namespace garlic::membrane {
                 case GenericEvent::Type::Mouse:
                     if(event.button != clove::MouseButton::None) {
                         if(event.state == GenericEvent::State::Pressed) {
-                            mouseDispatcher.onButtonPressed(event.button, event.pos.x, event.pos.y);
+                            mouseDispatcher.onButtonPressed(event.button, event.pos);
                         } else if(event.state == GenericEvent::State::Released) {
-                            mouseDispatcher.onButtonReleased(event.button, event.pos.x, event.pos.y);
+                            mouseDispatcher.onButtonReleased(event.button, event.pos);
                         }
                     } else {
-                        mouseDispatcher.onMouseMove(event.pos.x, event.pos.y);
+                        mouseDispatcher.onMouseMove(event.pos);
                     }
                     break;
                 default:
