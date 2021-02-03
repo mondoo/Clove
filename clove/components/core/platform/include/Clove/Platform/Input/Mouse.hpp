@@ -126,6 +126,7 @@ namespace garlic::clove {
         std::optional<Event> getEvent();
 
         bool isButtonPressed(MouseButton button) const;
+        
         /**
          * @brief Gets the current position of the mouse relative to the window's client rect
          * @details This the current position at the time of calling this function
@@ -137,6 +138,11 @@ namespace garlic::clove {
          * @brief Sets the position of the mouse. This will generate a mouse move event.
          */
         void setPosition(vec2i const &position);
+
+        /**
+         * @brief Shows / hides the mouse.
+         */
+        void show(bool shouldShow);
 
         bool isInWindow() const;
 

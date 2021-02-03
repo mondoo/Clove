@@ -11,4 +11,8 @@ namespace garlic::clove {
     void Mouse::setPosition(vec2i const &position) {
         SetCursorPos(position.x, position.y);
     }
+
+    void Mouse::show(bool shouldShow) {
+        ShowCursor(shouldShow);
+    }
 }
