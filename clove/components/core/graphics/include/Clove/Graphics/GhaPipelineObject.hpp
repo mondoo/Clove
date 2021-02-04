@@ -35,9 +35,9 @@ namespace garlic::clove {
     };
 
     struct AreaDescriptor {
-        ElementState state{ ElementState::Static };
-        vec2i position{ 0.0f, 0.0f };
-        vec2ui size{ 0.0f, 0.0f };
+        ElementState state{ ElementState::Static }; /**< Dynamic states stop the pipeline object being recreated if changed but require their size is recorded everyframe. */
+        vec2i position{ 0 };                        /**< Not required if state is dynamic. */
+        vec2ui size{ 0 };                           /**< Not required if state is dynamic. */
     };
 
     struct RasteriserDescriptor {

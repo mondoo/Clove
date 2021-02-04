@@ -16,8 +16,8 @@ layout(std140, push_constant) uniform LightSpace{
 };
 
 layout(location = 0) in vec3 position;
-layout(location = 4) in ivec4 jointIds;
-layout(location = 5) in vec4 weights;
+layout(location = 1) in ivec4 jointIds;
+layout(location = 2) in vec4 weights;
 
 void main(){
     const mat4 mvp = lightSpaceMatrix * model;

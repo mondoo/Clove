@@ -4,11 +4,11 @@
 #include "Clove/Graphics/Vulkan/VulkanCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFramebuffer.hpp"
-#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanMemoryBarrier.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
+#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
 
 #include <Clove/Cast.hpp>
@@ -87,6 +87,28 @@ namespace garlic::clove {
 
     void VulkanGraphicsCommandBuffer::endRenderPass() {
         vkCmdEndRenderPass(commandBuffer);
+    }
+
+    void VulkanGraphicsCommandBuffer::setViewport(vec2i position, vec2ui size) {
+        VkViewport const viewport{
+            .x        = static_cast<float>(position.x),
+            .y        = static_cast<float>(position.y),
+            .width    = static_cast<float>(size.x),
+            .height   = static_cast<float>(size.y),
+            .minDepth = 0.0f,
+            .maxDepth = 1.0f,
+        };
+
+        vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+    }
+
+    void VulkanGraphicsCommandBuffer::setScissor(vec2i position, vec2ui size) {
+        VkRect2D const scissor{
+            .offset = { position.x, position.y },
+            .extent = { size.x, size.y },
+        };
+
+        vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     }
 
     void VulkanGraphicsCommandBuffer::bindPipelineObject(GhaPipelineObject &pipelineObject) {
